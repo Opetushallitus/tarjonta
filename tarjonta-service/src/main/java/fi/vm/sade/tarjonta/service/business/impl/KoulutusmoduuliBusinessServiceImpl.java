@@ -37,7 +37,7 @@ public class KoulutusmoduuliBusinessServiceImpl implements KoulutusmoduuliBusine
     @Override
     public Koulutusmoduuli save(Koulutusmoduuli moduuli) {
         if (moduuli.getOid() == null) {
-            // fake setting Oid
+            // TODO: fake setting OID
             moduuli.setOid(UUID.randomUUID().toString());
             return koulutusmoduuliDAO.insert(moduuli);
         } else {

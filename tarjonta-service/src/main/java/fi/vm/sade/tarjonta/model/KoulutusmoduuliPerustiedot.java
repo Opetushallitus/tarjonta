@@ -23,5 +23,7 @@ import fi.vm.sade.generic.model.BaseEntity;
  */
 public class KoulutusmoduuliPerustiedot extends BaseEntity {
     
+    
+    
 }
 

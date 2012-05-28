@@ -17,14 +17,22 @@ package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  *
  * @author Jukka Raanamo
  */
 @Entity
+@Table(name=TutkintoOhjelma.TABLE_NAME)
 public class TutkintoOhjelma extends Koulutusmoduuli {
 
+    
+    /**
+     * Overrides table name from Koulutusmoduuli
+     */
+    public static final String TABLE_NAME = "tutkinto_ohjelma";
+    
     public TutkintoOhjelma() {
         super(KoulutusmoduuliTyyppi.TUTKINTOON_JOHTAVA);
         // tutkinto-ohjelma will always have perustiedot

@@ -18,6 +18,8 @@ package fi.vm.sade.tarjonta.dao.impl;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliSisaltyvyys;
+import java.util.List;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -26,6 +28,12 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, Long> implements KoulutusmoduuliDAO {
-    
+
+    public List<KoulutusmoduuliSisaltyvyys> findAllSisaltyvyys() {
+        return getEntityManager().
+            createQuery("from " + KoulutusmoduuliSisaltyvyys.class.getSimpleName() + " as s").
+            getResultList();
+    }
+
 }
 

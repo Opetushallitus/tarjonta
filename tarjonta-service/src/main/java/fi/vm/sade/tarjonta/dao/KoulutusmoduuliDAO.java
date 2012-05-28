@@ -24,5 +24,6 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
  */
 public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
     
+    
 }
 

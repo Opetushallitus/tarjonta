@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -25,20 +27,22 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  *
  * @author Jukka Raanamo
  */
-/**
- * Dependency rules of how one Koulutusmoduuli belongs to another.
- */
 @Entity
+@Table(name=KoulutusmoduuliSisaltyvyys.TABLE_NAME)
 public class KoulutusmoduuliSisaltyvyys extends BaseEntity {
 
+    public static final String TABLE_NAME = "koulutusmoduuli_sisaltyvyys";
+    
     /**
-     * The container.
-     */    
+     * The parent.
+     */
+    @ManyToOne
     private Koulutusmoduuli parent;
 
     /**
-     * The contained.
+     * The child.
      */
+    @ManyToOne
     private Koulutusmoduuli child;
 
     /**
@@ -65,6 +69,12 @@ public class KoulutusmoduuliSisaltyvyys extends BaseEntity {
     public Koulutusmoduuli getChild() {
         return child;
     }
+
+    public boolean isOptional() {
+        return optional;
+    }
+    
+    
 
     @Override
     public boolean equals(Object o) {

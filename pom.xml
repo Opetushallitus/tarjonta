@@ -18,6 +18,7 @@
 	<modules>
 		<module>tarjonta-api</module>
 		<module>tarjonta-service</module>
+		<module>tarjonta-app</module>
 	</modules>
 
 </project>

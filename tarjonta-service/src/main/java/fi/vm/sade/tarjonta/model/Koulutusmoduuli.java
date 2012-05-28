@@ -29,8 +29,11 @@ import org.slf4j.LoggerFactory;
  * @author Jukka Raanamo
  */
 @Entity
-@Inheritance(strategy=InheritanceType.JOINED)
+@Table(name = Koulutusmoduuli.TABLE_NAME)
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
+
+    public static final String TABLE_NAME = "koulutusmoduuli";
 
     private static Logger log = LoggerFactory.getLogger(Koulutusmoduuli.class);
 
@@ -39,7 +42,7 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
     private KoulutusmoduuliTila tila;
 
     private KoulutusmoduuliPerustiedot perustiedot;
-   
+
     /**
      *
      */
@@ -48,13 +51,13 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
     /**
      * Set of Koulutusmoduuli where this Koulutusmoduuli is in a role of child.
      */
-    @ManyToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "child", orphanRemoval = true)
     private Set<KoulutusmoduuliSisaltyvyys> parents = new HashSet<KoulutusmoduuliSisaltyvyys>();
 
     /**
      * Set of Koulutusmoduuli for which this Koulutusmoduulis is in a role of parent.
      */
-    @ManyToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "parent", orphanRemoval = true)
     private Set<KoulutusmoduuliSisaltyvyys> children = new HashSet<KoulutusmoduuliSisaltyvyys>();
 
     /**
@@ -77,7 +80,7 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
     public String getOid() {
         return oid;
     }
-    
+
     public void setOid(String oid) {
         this.oid = oid;
     }
@@ -140,7 +143,7 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
         final KoulutusmoduuliSisaltyvyys sisaltyvyys = new KoulutusmoduuliSisaltyvyys(parent, this, optional);
 
         addParent(sisaltyvyys);
-        parent.addChild(sisaltyvyys);
+        parent.addChildRelationship(sisaltyvyys);
 
         return true;
 
@@ -183,7 +186,7 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
         }
 
         final KoulutusmoduuliSisaltyvyys sisaltyvyys = new KoulutusmoduuliSisaltyvyys(this, child, optional);
-        if (!addChild(sisaltyvyys)) {
+        if (!addChildRelationship(sisaltyvyys)) {
             return false;
         }
 
@@ -192,14 +195,12 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
         return true;
     }
 
-    private boolean addChild(KoulutusmoduuliSisaltyvyys sisaltyvyys) {
+    private boolean addChildRelationship(KoulutusmoduuliSisaltyvyys sisaltyvyys) {
 
         if (children.contains(sisaltyvyys)) {
-            log.info("children already contains: " + sisaltyvyys);
             return false;
         }
 
-        log.info("no such child: " + sisaltyvyys + " in " + children);
         children.add(sisaltyvyys);
         return true;
 
