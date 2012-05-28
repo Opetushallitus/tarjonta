@@ -1,0 +1,821 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <koodi id="3" koodiuri="http://www.kunnat.fi/kunta/005" version="0"/>
+  <koodi id="5" koodiuri="http://www.kunnat.fi/kunta/009" version="0"/>
+  <koodi id="7" koodiuri="http://www.kunnat.fi/kunta/010" version="0"/>
+  <koodi id="9" koodiuri="http://www.kunnat.fi/kunta/016" version="0"/>
+  <koodi id="11" koodiuri="http://www.kunnat.fi/kunta/018" version="0"/>
+  <koodi id="13" koodiuri="http://www.kunnat.fi/kunta/019" version="0"/>
+  <koodi id="15" koodiuri="http://www.kunnat.fi/kunta/020" version="0"/>
+  <koodi id="17" koodiuri="http://www.kunnat.fi/kunta/035" version="0"/>
+  <koodi id="19" koodiuri="http://www.kunnat.fi/kunta/043" version="0"/>
+  <koodi id="21" koodiuri="http://www.kunnat.fi/kunta/046" version="0"/>
+  <koodi id="23" koodiuri="http://www.kunnat.fi/kunta/047" version="0"/>
+  <koodi id="25" koodiuri="http://www.kunnat.fi/kunta/049" version="0"/>
+  <koodi id="27" koodiuri="http://www.kunnat.fi/kunta/050" version="0"/>
+  <koodi id="29" koodiuri="http://www.kunnat.fi/kunta/051" version="0"/>
+  <koodi id="31" koodiuri="http://www.kunnat.fi/kunta/052" version="0"/>
+  <koodi id="33" koodiuri="http://www.kunnat.fi/kunta/060" version="0"/>
+  <koodi id="35" koodiuri="http://www.kunnat.fi/kunta/061" version="0"/>
+  <koodi id="37" koodiuri="http://www.kunnat.fi/kunta/062" version="0"/>
+  <koodi id="39" koodiuri="http://www.kunnat.fi/kunta/065" version="0"/>
+  <koodi id="41" koodiuri="http://www.kunnat.fi/kunta/069" version="0"/>
+  <koodi id="43" koodiuri="http://www.kunnat.fi/kunta/071" version="0"/>
+  <koodi id="45" koodiuri="http://www.kunnat.fi/kunta/072" version="0"/>
+  <koodi id="47" koodiuri="http://www.kunnat.fi/kunta/074" version="0"/>
+  <koodi id="49" koodiuri="http://www.kunnat.fi/kunta/075" version="0"/>
+  <koodi id="51" koodiuri="http://www.kunnat.fi/kunta/076" version="0"/>
+  <koodi id="53" koodiuri="http://www.kunnat.fi/kunta/077" version="0"/>
+  <koodi id="55" koodiuri="http://www.kunnat.fi/kunta/078" version="0"/>
+  <koodi id="57" koodiuri="http://www.kunnat.fi/kunta/079" version="0"/>
+  <koodi id="59" koodiuri="http://www.kunnat.fi/kunta/081" version="0"/>
+  <koodi id="61" koodiuri="http://www.kunnat.fi/kunta/082" version="0"/>
+  <koodi id="63" koodiuri="http://www.kunnat.fi/kunta/084" version="0"/>
+  <koodi id="65" koodiuri="http://www.kunnat.fi/kunta/086" version="0"/>
+  <koodi id="67" koodiuri="http://www.kunnat.fi/kunta/090" version="0"/>
+  <koodi id="69" koodiuri="http://www.kunnat.fi/kunta/091" version="0"/>
+  <koodi id="71" koodiuri="http://www.kunnat.fi/kunta/092" version="0"/>
+  <koodi id="73" koodiuri="http://www.kunnat.fi/kunta/097" version="0"/>
+  <koodi id="75" koodiuri="http://www.kunnat.fi/kunta/098" version="0"/>
+  <koodi id="77" koodiuri="http://www.kunnat.fi/kunta/099" version="0"/>
+  <koodi id="79" koodiuri="http://www.kunnat.fi/kunta/102" version="0"/>
+  <koodi id="81" koodiuri="http://www.kunnat.fi/kunta/103" version="0"/>
+  <koodi id="83" koodiuri="http://www.kunnat.fi/kunta/105" version="0"/>
+  <koodi id="85" koodiuri="http://www.kunnat.fi/kunta/106" version="0"/>
+  <koodi id="87" koodiuri="http://www.kunnat.fi/kunta/108" version="0"/>
+  <koodi id="89" koodiuri="http://www.kunnat.fi/kunta/109" version="0"/>
+  <koodi id="91" koodiuri="http://www.kunnat.fi/kunta/111" version="0"/>
+  <koodi id="93" koodiuri="http://www.kunnat.fi/kunta/139" version="0"/>
+  <koodi id="95" koodiuri="http://www.kunnat.fi/kunta/140" version="0"/>
+  <koodi id="97" koodiuri="http://www.kunnat.fi/kunta/142" version="0"/>
+  <koodi id="99" koodiuri="http://www.kunnat.fi/kunta/143" version="0"/>
+  <koodi id="101" koodiuri="http://www.kunnat.fi/kunta/145" version="0"/>
+  <koodi id="103" koodiuri="http://www.kunnat.fi/kunta/146" version="0"/>
+  <koodi id="105" koodiuri="http://www.kunnat.fi/kunta/148" version="0"/>
+  <koodi id="107" koodiuri="http://www.kunnat.fi/kunta/149" version="0"/>
+  <koodi id="109" koodiuri="http://www.kunnat.fi/kunta/151" version="0"/>
+  <koodi id="111" koodiuri="http://www.kunnat.fi/kunta/152" version="0"/>
+  <koodi id="113" koodiuri="http://www.kunnat.fi/kunta/153" version="0"/>
+  <koodi id="115" koodiuri="http://www.kunnat.fi/kunta/164" version="0"/>
+  <koodi id="117" koodiuri="http://www.kunnat.fi/kunta/165" version="0"/>
+  <koodi id="119" koodiuri="http://www.kunnat.fi/kunta/167" version="0"/>
+  <koodi id="121" koodiuri="http://www.kunnat.fi/kunta/169" version="0"/>
+  <koodi id="123" koodiuri="http://www.kunnat.fi/kunta/170" version="0"/>
+  <koodi id="125" koodiuri="http://www.kunnat.fi/kunta/171" version="0"/>
+  <koodi id="127" koodiuri="http://www.kunnat.fi/kunta/172" version="0"/>
+  <koodi id="129" koodiuri="http://www.kunnat.fi/kunta/174" version="0"/>
+  <koodi id="131" koodiuri="http://www.kunnat.fi/kunta/176" version="0"/>
+  <koodi id="133" koodiuri="http://www.kunnat.fi/kunta/177" version="0"/>
+  <koodi id="135" koodiuri="http://www.kunnat.fi/kunta/178" version="0"/>
+  <koodi id="137" koodiuri="http://www.kunnat.fi/kunta/179" version="0"/>
+  <koodi id="139" koodiuri="http://www.kunnat.fi/kunta/181" version="0"/>
+  <koodi id="141" koodiuri="http://www.kunnat.fi/kunta/182" version="0"/>
+  <koodi id="143" koodiuri="http://www.kunnat.fi/kunta/186" version="0"/>
+  <koodi id="145" koodiuri="http://www.kunnat.fi/kunta/200" version="0"/>
+  <koodi id="147" koodiuri="http://www.kunnat.fi/kunta/202" version="0"/>
+  <koodi id="149" koodiuri="http://www.kunnat.fi/kunta/204" version="0"/>
+  <koodi id="151" koodiuri="http://www.kunnat.fi/kunta/205" version="0"/>
+  <koodi id="153" koodiuri="http://www.kunnat.fi/kunta/208" version="0"/>
+  <koodi id="155" koodiuri="http://www.kunnat.fi/kunta/211" version="0"/>
+  <koodi id="157" koodiuri="http://www.kunnat.fi/kunta/213" version="0"/>
+  <koodi id="159" koodiuri="http://www.kunnat.fi/kunta/214" version="0"/>
+  <koodi id="161" koodiuri="http://www.kunnat.fi/kunta/216" version="0"/>
+  <koodi id="163" koodiuri="http://www.kunnat.fi/kunta/217" version="0"/>
+  <koodi id="165" koodiuri="http://www.kunnat.fi/kunta/218" version="0"/>
+  <koodi id="167" koodiuri="http://www.kunnat.fi/kunta/223" version="0"/>
+  <koodi id="169" koodiuri="http://www.kunnat.fi/kunta/224" version="0"/>
+  <koodi id="171" koodiuri="http://www.kunnat.fi/kunta/226" version="0"/>
+  <koodi id="173" koodiuri="http://www.kunnat.fi/kunta/230" version="0"/>
+  <koodi id="175" koodiuri="http://www.kunnat.fi/kunta/231" version="0"/>
+  <koodi id="177" koodiuri="http://www.kunnat.fi/kunta/232" version="0"/>
+  <koodi id="179" koodiuri="http://www.kunnat.fi/kunta/233" version="0"/>
+  <koodi id="181" koodiuri="http://www.kunnat.fi/kunta/235" version="0"/>
+  <koodi id="183" koodiuri="http://www.kunnat.fi/kunta/236" version="0"/>
+  <koodi id="185" koodiuri="http://www.kunnat.fi/kunta/239" version="0"/>
+  <koodi id="187" koodiuri="http://www.kunnat.fi/kunta/240" version="0"/>
+  <koodi id="189" koodiuri="http://www.kunnat.fi/kunta/241" version="0"/>
+  <koodi id="191" koodiuri="http://www.kunnat.fi/kunta/244" version="0"/>
+  <koodi id="193" koodiuri="http://www.kunnat.fi/kunta/245" version="0"/>
+  <koodi id="195" koodiuri="http://www.kunnat.fi/kunta/246" version="0"/>
+  <koodi id="197" koodiuri="http://www.kunnat.fi/kunta/248" version="0"/>
+  <koodi id="199" koodiuri="http://www.kunnat.fi/kunta/249" version="0"/>
+  <koodi id="201" koodiuri="http://www.kunnat.fi/kunta/250" version="0"/>
+  <koodi id="305" koodiuri="http://www.kunnat.fi/maakunta/01" version="0"/>
+  <koodi id="307" koodiuri="http://www.kunnat.fi/maakunta/02" version="0"/>
+  <koodi id="309" koodiuri="http://www.kunnat.fi/maakunta/04" version="0"/>
+  <koodi id="311" koodiuri="http://www.kunnat.fi/maakunta/05" version="0"/>
+  <koodi id="313" koodiuri="http://www.kunnat.fi/maakunta/06" version="0"/>
+  <koodi id="315" koodiuri="http://www.kunnat.fi/maakunta/07" version="0"/>
+  <koodi id="317" koodiuri="http://www.kunnat.fi/maakunta/08" version="0"/>
+  <koodi id="319" koodiuri="http://www.kunnat.fi/maakunta/09" version="0"/>
+  <koodi id="321" koodiuri="http://www.kunnat.fi/maakunta/10" version="0"/>
+  <koodi id="323" koodiuri="http://www.kunnat.fi/maakunta/11" version="0"/>
+  <koodi id="325" koodiuri="http://www.kunnat.fi/maakunta/12" version="0"/>
+  <koodi id="327" koodiuri="http://www.kunnat.fi/maakunta/13" version="0"/>
+  <koodi id="329" koodiuri="http://www.kunnat.fi/maakunta/14" version="0"/>
+  <koodi id="331" koodiuri="http://www.kunnat.fi/maakunta/15" version="0"/>
+  <koodi id="333" koodiuri="http://www.kunnat.fi/maakunta/16" version="0"/>
+  <koodi id="335" koodiuri="http://www.kunnat.fi/maakunta/17" version="0"/>
+  <koodi id="337" koodiuri="http://www.kunnat.fi/maakunta/18" version="0"/>
+  <koodi id="339" koodiuri="http://www.kunnat.fi/maakunta/19" version="0"/>
+  <koodi id="341" koodiuri="http://www.kunnat.fi/maakunta/21" version="0"/>
+  <koodi id="343" koodiuri="http://www.kunnat.fi/maakunta/99" version="0"/>
+  <koodi id="367" koodiuri="http://www.avi.fi/aluevirasto/1" version="0"/>
+  <koodi id="369" koodiuri="http://www.avi.fi/aluevirasto/2" version="0"/>
+  <koodi id="371" koodiuri="http://www.avi.fi/aluevirasto/3" version="0"/>
+  <koodi id="373" koodiuri="http://www.avi.fi/aluevirasto/4" version="0"/>
+  <koodi id="375" koodiuri="http://www.avi.fi/aluevirasto/5" version="0"/>
+  <koodi id="377" koodiuri="http://www.avi.fi/aluevirasto/6" version="0"/>
+  <koodi id="379" koodiuri="http://www.avi.fi/aluevirasto/7" version="0"/>
+  <koodi id="381" koodiuri="http://www.avi.fi/aluevirasto/9" version="0"/>
+  <koodi id="410" koodiuri="http://testikoodisto.fi/eka" version="0"/>
+  <koodi id="411" koodiuri="http://testikoodisto.fi/toka" version="0"/>
+  <koodi id="435" koodiuri="http://paljon_versioita/1/1" version="0"/>
+  <koodi id="436" koodiuri="http://paljon_versioita/1/2" version="0"/>
+  <koodiversio id="3" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="3" koodiarvo="005"/>
+  <koodiversio id="5" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="5" koodiarvo="009"/>
+  <koodiversio id="7" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="7" koodiarvo="010"/>
+  <koodiversio id="9" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="9" koodiarvo="016"/>
+  <koodiversio id="11" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="11" koodiarvo="018"/>
+  <koodiversio id="13" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="13" koodiarvo="019"/>
+  <koodiversio id="15" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="2007-01-01" koodi_id="15" koodiarvo="020"/>
+  <koodiversio id="17" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="17" koodiarvo="035"/>
+  <koodiversio id="19" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="19" koodiarvo="043"/>
+  <koodiversio id="21" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="21" koodiarvo="046"/>
+  <koodiversio id="23" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="23" koodiarvo="047"/>
+  <koodiversio id="25" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="25" koodiarvo="049"/>
+  <koodiversio id="27" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="27" koodiarvo="050"/>
+  <koodiversio id="29" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="29" koodiarvo="051"/>
+  <koodiversio id="31" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="31" koodiarvo="052"/>
+  <koodiversio id="33" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="33" koodiarvo="060"/>
+  <koodiversio id="35" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="35" koodiarvo="061"/>
+  <koodiversio id="37" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="37" koodiarvo="062"/>
+  <koodiversio id="39" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="39" koodiarvo="065"/>
+  <koodiversio id="41" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="41" koodiarvo="069"/>
+  <koodiversio id="43" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="43" koodiarvo="071"/>
+  <koodiversio id="45" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="45" koodiarvo="072"/>
+  <koodiversio id="47" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="47" koodiarvo="074"/>
+  <koodiversio id="49" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="49" koodiarvo="075"/>
+  <koodiversio id="51" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="51" koodiarvo="076"/>
+  <koodiversio id="53" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="53" koodiarvo="077"/>
+  <koodiversio id="55" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="55" koodiarvo="078"/>
+  <koodiversio id="57" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="57" koodiarvo="079"/>
+  <koodiversio id="59" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="59" koodiarvo="081"/>
+  <koodiversio id="61" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="61" koodiarvo="082"/>
+  <koodiversio id="63" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="63" koodiarvo="084"/>
+  <koodiversio id="65" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="65" koodiarvo="086"/>
+  <koodiversio id="67" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="67" koodiarvo="090"/>
+  <koodiversio id="69" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="69" koodiarvo="091"/>
+  <koodiversio id="71" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="71" koodiarvo="092"/>
+  <koodiversio id="73" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="73" koodiarvo="097"/>
+  <koodiversio id="75" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="75" koodiarvo="098"/>
+  <koodiversio id="77" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="77" koodiarvo="099"/>
+  <koodiversio id="79" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="79" koodiarvo="102"/>
+  <koodiversio id="81" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="81" koodiarvo="103"/>
+  <koodiversio id="83" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="83" koodiarvo="105"/>
+  <koodiversio id="85" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="85" koodiarvo="106"/>
+  <koodiversio id="87" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="87" koodiarvo="108"/>
+  <koodiversio id="89" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="89" koodiarvo="109" />
+  <koodiversio id="91" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1997-01-01" koodi_id="91" koodiarvo="111"/>
+  <koodiversio id="93" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="93" koodiarvo="139"/>
+  <koodiversio id="95" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="95" koodiarvo="140"/>
+  <koodiversio id="97" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="97" koodiarvo="142"/>
+  <koodiversio id="99" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="99" koodiarvo="143"/>
+  <koodiversio id="101" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="101" koodiarvo="145"/>
+  <koodiversio id="103" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="103" koodiarvo="146"/>
+  <koodiversio id="105" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="105" koodiarvo="148"/>
+  <koodiversio id="107" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="107" koodiarvo="149"/>
+  <koodiversio id="109" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="109" koodiarvo="151"/>
+  <koodiversio id="111" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="111" koodiarvo="152"/>
+  <koodiversio id="113" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="113" koodiarvo="153"/>
+  <koodiversio id="115" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="115" koodiarvo="164"/>
+  <koodiversio id="117" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="117" koodiarvo="165"/>
+  <koodiversio id="119" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="119" koodiarvo="167"/>
+  <koodiversio id="121" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="121" koodiarvo="169"/>
+  <koodiversio id="123" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="123" koodiarvo="170"/>
+  <koodiversio id="125" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="125" koodiarvo="171"/>
+  <koodiversio id="127" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="127" koodiarvo="172" />
+  <koodiversio id="129" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="129" koodiarvo="174"/>
+  <koodiversio id="131" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="131" koodiarvo="176"/>
+  <koodiversio id="133" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="133" koodiarvo="177"/>
+  <koodiversio id="135" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="135" koodiarvo="178"/>
+  <koodiversio id="137" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="137" koodiarvo="179"/>
+  <koodiversio id="139" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="139" koodiarvo="181"/>
+  <koodiversio id="141" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="141" koodiarvo="182"/>
+  <koodiversio id="143" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="143" koodiarvo="186"/>
+  <koodiversio id="145" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="145" koodiarvo="200"/>
+  <koodiversio id="147" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="147" koodiarvo="202"/>
+  <koodiversio id="149" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="149" koodiarvo="204"/>
+  <koodiversio id="151" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="151" koodiarvo="205"/>
+  <koodiversio id="153" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="153" koodiarvo="208"/>
+  <koodiversio id="155" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="155" koodiarvo="211"/>
+  <koodiversio id="157" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="157" koodiarvo="213"/>
+  <koodiversio id="159" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="159" koodiarvo="214"/>
+  <koodiversio id="161" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="161" koodiarvo="216"/>
+  <koodiversio id="163" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="163" koodiarvo="217"/>
+  <koodiversio id="165" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="165" koodiarvo="218"/>
+  <koodiversio id="167" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="167" koodiarvo="223"/>
+  <koodiversio id="169" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="169" koodiarvo="224"/>
+  <koodiversio id="171" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="171" koodiarvo="226"/>
+  <koodiversio id="173" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="173" koodiarvo="230"/>
+  <koodiversio id="175" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="175" koodiarvo="231"/>
+  <koodiversio id="177" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="177" koodiarvo="232"/>
+  <koodiversio id="179" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="179" koodiarvo="233"/>
+  <koodiversio id="181" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="181" koodiarvo="235"/>
+  <koodiversio id="183" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="183" koodiarvo="236"/>
+  <koodiversio id="185" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="185" koodiarvo="239"/>
+  <koodiversio id="187" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="187" koodiarvo="240"/>
+  <koodiversio id="189" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="189" koodiarvo="241"/>
+  <koodiversio id="191" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="191" koodiarvo="244"/>
+  <koodiversio id="193" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="193" koodiarvo="245"/>
+  <koodiversio id="195" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="195" koodiarvo="246"/>
+  <koodiversio id="197" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="197" koodiarvo="248"/>
+  <koodiversio id="199" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="199" koodiarvo="249"/>
+  <koodiversio id="201" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1990-01-01" koodi_id="201" koodiarvo="250"/>
+  <koodiversio id="305" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="305" koodiarvo="01"/>
+  <koodiversio id="307" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="307" koodiarvo="02"/>
+  <koodiversio id="309" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="309" koodiarvo="04"/>
+  <koodiversio id="311" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1998-03-01" koodi_id="311" koodiarvo="05"/>
+  <koodiversio id="313" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="313" koodiarvo="06"/>
+  <koodiversio id="315" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="315" koodiarvo="07"/>
+  <koodiversio id="317" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="317" koodiarvo="08"/>
+  <koodiversio id="319" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="319" koodiarvo="09"/>
+  <koodiversio id="321" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="321" koodiarvo="10"/>
+  <koodiversio id="323" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="323" koodiarvo="11"/>
+  <koodiversio id="325" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="325" koodiarvo="12"/>
+  <koodiversio id="327" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="327" koodiarvo="13"/>
+  <koodiversio id="329" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="329" koodiarvo="14"/>
+  <koodiversio id="331" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1998-03-01" koodi_id="331" koodiarvo="15"/>
+  <koodiversio id="333" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="333" koodiarvo="16"/>
+  <koodiversio id="335" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="335" koodiarvo="17"/>
+  <koodiversio id="337" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="337" koodiarvo="18"/>
+  <koodiversio id="339" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="339" koodiarvo="19"/>
+  <koodiversio id="341" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="341" koodiarvo="21"/>
+  <koodiversio id="343" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="1993-01-01" koodi_id="343" koodiarvo="99"/>
+  <koodiversio id="367" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="2010-01-01" koodi_id="367" koodiarvo="1"/>
+  <koodiversio id="369" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="2010-01-01" koodi_id="369" koodiarvo="2"/>
+  <koodiversio id="371" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="2010-01-01" koodi_id="371" koodiarvo="3"/>
+  <koodiversio id="373" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="2010-01-01" koodi_id="373" koodiarvo="4" />
+  <koodiversio id="375" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="2010-01-01" koodi_id="375" koodiarvo="5"/>
+  <koodiversio id="377" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="2010-01-01" koodi_id="377" koodiarvo="6"/>
+  <koodiversio id="379" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="2010-01-01" koodi_id="379" koodiarvo="7"/>
+  <koodiversio id="381" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="2010-01-01" koodi_id="381" koodiarvo="9"/>
+  <koodiversio id="410" version="0" paivityspvm="2012-04-29" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="2010-01-01" koodi_id="410" koodiarvo="ekakoodi ver 1"/>
+  <koodiversio id="411" version="0" paivityspvm="2012-04-29" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="2010-01-01" koodi_id="411" koodiarvo="tokakoodi ver 1"/>
+  <koodiversio id="412" version="0" paivityspvm="2012-04-30" tila="PASSIIVINEN" versio="2" voimassaalkupvm="2012-04-30" koodi_id="410" koodiarvo="ekakoodi ver 2"/>
+  <koodiversio id="413" version="0" paivityspvm="2012-04-30" tila="HYVAKSYTTY" versio="2" voimassaalkupvm="2012-04-30" koodi_id="411" koodiarvo="tokakoodi ver 2"/>
+  <koodiversio id="437" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="2012-04-01" koodi_id="435" koodiarvo="versio 1"/>
+  <koodiversio id="438" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="2" voimassaalkupvm="2012-04-03" koodi_id="435" koodiarvo="versio 2"/>
+  <koodiversio id="439" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="3" voimassaalkupvm="2012-04-05" koodi_id="435" koodiarvo="versio 3"/>
+  <koodiversio id="440" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="4" voimassaalkupvm="2012-04-07" koodi_id="435" koodiarvo="versio 4"/>
+  <koodiversio id="441" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="5" voimassaalkupvm="2012-04-09" koodi_id="435" koodiarvo="versio 5"/>
+  <koodiversio id="442" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="6" voimassaalkupvm="2012-04-11" koodi_id="435" koodiarvo="versio 6"/>
+  <koodiversio id="443" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="7" voimassaalkupvm="2012-04-13" koodi_id="435" koodiarvo="versio 7"/>
+  <koodiversio id="444" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="8" voimassaalkupvm="2012-04-15" koodi_id="435" koodiarvo="versio 8"/>
+  <koodiversio id="445" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="9" voimassaalkupvm="2012-04-17" koodi_id="435" koodiarvo="versio 9"/>
+  <koodiversio id="446" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="10" voimassaalkupvm="2012-04-19" koodi_id="435" koodiarvo="versio 10"/>
+  <koodiversio id="447" version="0" paivityspvm="2012-05-11" tila="LUONNOS" versio="11" voimassaalkupvm="2012-04-21" koodi_id="435" koodiarvo="versio 11"/>
+  <koodiversio id="448" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="1" voimassaalkupvm="2012-04-01" koodi_id="436" koodiarvo="versio 1"/>
+  <koodiversio id="449" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="2" voimassaalkupvm="2012-04-03" koodi_id="436" koodiarvo="versio 2"/>
+  <koodiversio id="450" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="3" voimassaalkupvm="2012-04-05" koodi_id="436" koodiarvo="versio 3"/>
+  <koodiversio id="451" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="4" voimassaalkupvm="2012-04-07" koodi_id="436" koodiarvo="versio 4"/>
+  <koodiversio id="452" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="5" voimassaalkupvm="2012-04-09" koodi_id="436" koodiarvo="versio 5"/>
+  <koodiversio id="453" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="6" voimassaalkupvm="2012-04-11" koodi_id="436" koodiarvo="versio 6"/>
+  <koodiversio id="454" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="7" voimassaalkupvm="2012-04-13" koodi_id="436" koodiarvo="versio 7"/>
+  <koodiversio id="455" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="8" voimassaalkupvm="2012-04-15" koodi_id="436" koodiarvo="versio 8"/>
+  <koodiversio id="456" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="9" voimassaalkupvm="2012-04-17" koodi_id="436" koodiarvo="versio 9"/>
+  <koodiversio id="457" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="10" voimassaalkupvm="2012-04-19" koodi_id="436" koodiarvo="versio 10"/>
+  <koodiversio id="458" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="11" voimassaalkupvm="2012-04-21" koodi_id="436" koodiarvo="versio 11"/>
+  <koodimetadata id="4" kieli="FI" nimi="Alaj&#228;rvi" version="0" koodiversio_id="3"/>
+  <koodimetadata id="6" kieli="FI" nimi="Alavieska" version="0" koodiversio_id="5"/>
+  <koodimetadata id="8" kieli="FI" nimi="Alavus" version="0" koodiversio_id="7"/>
+  <koodimetadata id="10" kieli="FI" nimi="Asikkala" version="0" koodiversio_id="9"/>
+  <koodimetadata id="12" kieli="FI" nimi="Askola" version="0" koodiversio_id="11"/>
+  <koodimetadata id="14" kieli="FI" nimi="Aura" version="0" koodiversio_id="13"/>
+  <koodimetadata id="16" kieli="FI" nimi="Akaa" version="0" koodiversio_id="15"/>
+  <koodimetadata id="18" kieli="FI" nimi="Br&#228;nd&#246;" version="0" koodiversio_id="17"/>
+  <koodimetadata id="20" kieli="FI" nimi="Ecker&#246;" version="0" koodiversio_id="19"/>
+  <koodimetadata id="22" kieli="FI" nimi="Enonkoski" version="0" koodiversio_id="21"/>
+  <koodimetadata id="24" kieli="FI" nimi="Enonteki&#246;" version="0" koodiversio_id="23"/>
+  <koodimetadata id="26" kieli="FI" nimi="Espoo" version="0" koodiversio_id="25"/>
+  <koodimetadata id="28" kieli="FI" nimi="Eura" version="0" koodiversio_id="27"/>
+  <koodimetadata id="30" kieli="FI" nimi="Eurajoki" version="0" koodiversio_id="29"/>
+  <koodimetadata id="32" kieli="FI" nimi="Evij&#228;rvi" version="0" koodiversio_id="31"/>
+  <koodimetadata id="34" kieli="FI" nimi="Finstr&#246;m" version="0" koodiversio_id="33"/>
+  <koodimetadata id="36" kieli="FI" nimi="Forssa" version="0" koodiversio_id="35"/>
+  <koodimetadata id="38" kieli="FI" nimi="F&#246;gl&#246;" version="0" koodiversio_id="37"/>
+  <koodimetadata id="40" kieli="FI" nimi="Geta" version="0" koodiversio_id="39"/>
+  <koodimetadata id="42" kieli="FI" nimi="Haapaj&#228;rvi" version="0" koodiversio_id="41"/>
+  <koodimetadata id="44" kieli="FI" nimi="Haapavesi" version="0" koodiversio_id="43"/>
+  <koodimetadata id="46" kieli="FI" nimi="Hailuoto" version="0" koodiversio_id="45"/>
+  <koodimetadata id="48" kieli="FI" nimi="Halsua" version="0" koodiversio_id="47"/>
+  <koodimetadata id="50" kieli="FI" nimi="Hamina" version="0" koodiversio_id="49"/>
+  <koodimetadata id="52" kieli="FI" nimi="Hammarland" version="0" koodiversio_id="51"/>
+  <koodimetadata id="54" kieli="FI" nimi="Hankasalmi" version="0" koodiversio_id="53"/>
+  <koodimetadata id="56" kieli="FI" nimi="Hanko" version="0" koodiversio_id="55"/>
+  <koodimetadata id="58" kieli="FI" nimi="Harjavalta" version="0" koodiversio_id="57"/>
+  <koodimetadata id="60" kieli="FI" nimi="Hartola" version="0" koodiversio_id="59"/>
+  <koodimetadata id="62" kieli="FI" nimi="Hattula" version="0" koodiversio_id="61"/>
+  <koodimetadata id="64" kieli="FI" nimi="Haukipudas" version="0" koodiversio_id="63"/>
+  <koodimetadata id="66" kieli="FI" nimi="Hausj&#228;rvi" version="0" koodiversio_id="65"/>
+  <koodimetadata id="68" kieli="FI" nimi="Hein&#228;vesi" version="0" koodiversio_id="67"/>
+  <koodimetadata id="70" kieli="FI" nimi="Helsinki" version="0" koodiversio_id="69"/>
+  <koodimetadata id="72" kieli="FI" nimi="Vantaa" version="0" koodiversio_id="71"/>
+  <koodimetadata id="74" kieli="FI" nimi="Hirvensalmi" version="0" koodiversio_id="73"/>
+  <koodimetadata id="76" kieli="FI" nimi="Hollola" version="0" koodiversio_id="75"/>
+  <koodimetadata id="78" kieli="FI" nimi="Honkajoki" version="0" koodiversio_id="77"/>
+  <koodimetadata id="80" kieli="FI" nimi="Huittinen" version="0" koodiversio_id="79"/>
+  <koodimetadata id="82" kieli="FI" nimi="Humppila" version="0" koodiversio_id="81"/>
+  <koodimetadata id="84" kieli="FI" nimi="Hyrynsalmi" version="0" koodiversio_id="83"/>
+  <koodimetadata id="86" kieli="FI" nimi="Hyvink&#228;&#228;" version="0" koodiversio_id="85"/>
+  <koodimetadata id="88" kieli="FI" nimi="H&#228;meenkyr&#246;" version="0" koodiversio_id="87"/>
+  <koodimetadata id="90" kieli="FI" nimi="H&#228;meenlinna" version="0" koodiversio_id="89"/>
+  <koodimetadata id="92" kieli="FI" nimi="Heinola" version="0" koodiversio_id="91"/>
+  <koodimetadata id="94" kieli="FI" nimi="Ii" version="0" koodiversio_id="93"/>
+  <koodimetadata id="96" kieli="FI" nimi="Iisalmi" version="0" koodiversio_id="95"/>
+  <koodimetadata id="98" kieli="FI" nimi="Iitti" version="0" koodiversio_id="97"/>
+  <koodimetadata id="100" kieli="FI" nimi="Ikaalinen" version="0" koodiversio_id="99"/>
+  <koodimetadata id="102" kieli="FI" nimi="Ilmajoki" version="0" koodiversio_id="101"/>
+  <koodimetadata id="104" kieli="FI" nimi="Ilomantsi" version="0" koodiversio_id="103"/>
+  <koodimetadata id="106" kieli="FI" nimi="Inari" version="0" koodiversio_id="105"/>
+  <koodimetadata id="108" kieli="FI" nimi="Inkoo" version="0" koodiversio_id="107"/>
+  <koodimetadata id="110" kieli="FI" nimi="Isojoki" version="0" koodiversio_id="109"/>
+  <koodimetadata id="112" kieli="FI" nimi="Isokyr&#246;" version="0" koodiversio_id="111"/>
+  <koodimetadata id="114" kieli="FI" nimi="Imatra" version="0" koodiversio_id="113"/>
+  <koodimetadata id="116" kieli="FI" nimi="Jalasj&#228;rvi" version="0" koodiversio_id="115"/>
+  <koodimetadata id="118" kieli="FI" nimi="Janakkala" version="0" koodiversio_id="117"/>
+  <koodimetadata id="120" kieli="FI" nimi="Joensuu" version="0" koodiversio_id="119"/>
+  <koodimetadata id="122" kieli="FI" nimi="Jokioinen" version="0" koodiversio_id="121"/>
+  <koodimetadata id="124" kieli="FI" nimi="Jomala" version="0" koodiversio_id="123"/>
+  <koodimetadata id="126" kieli="FI" nimi="Joroinen" version="0" koodiversio_id="125"/>
+  <koodimetadata id="128" kieli="FI" nimi="Joutsa" version="0" koodiversio_id="127"/>
+  <koodimetadata id="130" kieli="FI" nimi="Juankoski" version="0" koodiversio_id="129"/>
+  <koodimetadata id="132" kieli="FI" nimi="Juuka" version="0" koodiversio_id="131"/>
+  <koodimetadata id="134" kieli="FI" nimi="Juupajoki" version="0" koodiversio_id="133"/>
+  <koodimetadata id="136" kieli="FI" nimi="Juva" version="0" koodiversio_id="135"/>
+  <koodimetadata id="138" kieli="FI" nimi="Jyv&#228;skyl&#228;" version="0" koodiversio_id="137"/>
+  <koodimetadata id="140" kieli="FI" nimi="J&#228;mij&#228;rvi" version="0" koodiversio_id="139"/>
+  <koodimetadata id="142" kieli="FI" nimi="J&#228;ms&#228;" version="0" koodiversio_id="141"/>
+  <koodimetadata id="144" kieli="FI" nimi="J&#228;rvenp&#228;&#228;" version="0" koodiversio_id="143"/>
+  <koodimetadata id="146" kieli="FI" nimi="Ulkomaa" version="0" koodiversio_id="145"/>
+  <koodimetadata id="148" kieli="FI" nimi="Kaarina" version="0" koodiversio_id="147"/>
+  <koodimetadata id="150" kieli="FI" nimi="Kaavi" version="0" koodiversio_id="149"/>
+  <koodimetadata id="152" kieli="FI" nimi="Kajaani" version="0" koodiversio_id="151"/>
+  <koodimetadata id="154" kieli="FI" nimi="Kalajoki" version="0" koodiversio_id="153"/>
+  <koodimetadata id="156" kieli="FI" nimi="Kangasala" version="0" koodiversio_id="155"/>
+  <koodimetadata id="158" kieli="FI" nimi="Kangasniemi" version="0" koodiversio_id="157"/>
+  <koodimetadata id="160" kieli="FI" nimi="Kankaanp&#228;&#228;" version="0" koodiversio_id="159"/>
+  <koodimetadata id="162" kieli="FI" nimi="Kannonkoski" version="0" koodiversio_id="161"/>
+  <koodimetadata id="164" kieli="FI" nimi="Kannus" version="0" koodiversio_id="163"/>
+  <koodimetadata id="166" kieli="FI" nimi="Karijoki" version="0" koodiversio_id="165"/>
+  <koodimetadata id="168" kieli="FI" nimi="Karjalohja" version="0" koodiversio_id="167"/>
+  <koodimetadata id="170" kieli="FI" nimi="Karkkila" version="0" koodiversio_id="169"/>
+  <koodimetadata id="172" kieli="FI" nimi="Karstula" version="0" koodiversio_id="171"/>
+  <koodimetadata id="174" kieli="FI" nimi="Karvia" version="0" koodiversio_id="173"/>
+  <koodimetadata id="176" kieli="FI" nimi="Kaskinen" version="0" koodiversio_id="175"/>
+  <koodimetadata id="178" kieli="FI" nimi="Kauhajoki" version="0" koodiversio_id="177"/>
+  <koodimetadata id="180" kieli="FI" nimi="Kauhava" version="0" koodiversio_id="179"/>
+  <koodimetadata id="182" kieli="FI" nimi="Kauniainen" version="0" koodiversio_id="181"/>
+  <koodimetadata id="184" kieli="FI" nimi="Kaustinen" version="0" koodiversio_id="183"/>
+  <koodimetadata id="186" kieli="FI" nimi="Keitele" version="0" koodiversio_id="185"/>
+  <koodimetadata id="188" kieli="FI" nimi="Kemi" version="0" koodiversio_id="187"/>
+  <koodimetadata id="190" kieli="FI" nimi="Keminmaa" version="0" koodiversio_id="189"/>
+  <koodimetadata id="192" kieli="FI" nimi="Kempele" version="0" koodiversio_id="191"/>
+  <koodimetadata id="194" kieli="FI" nimi="Kerava" version="0" koodiversio_id="193"/>
+  <koodimetadata id="196" kieli="FI" nimi="Kerim&#228;ki" version="0" koodiversio_id="195"/>
+  <koodimetadata id="198" kieli="FI" nimi="Kes&#228;lahti" version="0" koodiversio_id="197"/>
+  <koodimetadata id="200" kieli="FI" nimi="Keuruu" version="0" koodiversio_id="199"/>
+  <koodimetadata id="202" kieli="FI" nimi="Kihni&#246;" version="0" koodiversio_id="201"/>
+  <koodimetadata id="203" kieli="SV" nimi="Alaj&#228;rvi" version="0" koodiversio_id="3"/>
+  <koodimetadata id="204" kieli="SV" nimi="Alavieska" version="0" koodiversio_id="5"/>
+  <koodimetadata id="205" kieli="SV" nimi="Alavo" version="0" koodiversio_id="7"/>
+  <koodimetadata id="206" kieli="SV" nimi="Asikkala" version="0" koodiversio_id="9"/>
+  <koodimetadata id="207" kieli="SV" nimi="Askola" version="0" koodiversio_id="11"/>
+  <koodimetadata id="208" kieli="SV" nimi="Aura" version="0" koodiversio_id="13"/>
+  <koodimetadata id="209" kieli="SV" nimi="Akaa" version="0" koodiversio_id="15"/>
+  <koodimetadata id="210" kieli="SV" nimi="Br&#228;nd&#246;" version="0" koodiversio_id="17"/>
+  <koodimetadata id="211" kieli="SV" nimi="Ecker&#246;" version="0" koodiversio_id="19"/>
+  <koodimetadata id="212" kieli="SV" nimi="Enonkoski" version="0" koodiversio_id="21"/>
+  <koodimetadata id="213" kieli="SV" nimi="Enontekis" version="0" koodiversio_id="23"/>
+  <koodimetadata id="214" kieli="SV" nimi="Esbo" version="0" koodiversio_id="25"/>
+  <koodimetadata id="215" kieli="SV" nimi="Eura" version="0" koodiversio_id="27"/>
+  <koodimetadata id="216" kieli="SV" nimi="Eura&#229;minne" version="0" koodiversio_id="29"/>
+  <koodimetadata id="217" kieli="SV" nimi="Evij&#228;rvi" version="0" koodiversio_id="31"/>
+  <koodimetadata id="218" kieli="SV" nimi="Finstr&#246;m" version="0" koodiversio_id="33"/>
+  <koodimetadata id="219" kieli="SV" nimi="Forssa" version="0" koodiversio_id="35"/>
+  <koodimetadata id="220" kieli="SV" nimi="F&#246;gl&#246;" version="0" koodiversio_id="37"/>
+  <koodimetadata id="221" kieli="SV" nimi="Geta" version="0" koodiversio_id="39"/>
+  <koodimetadata id="222" kieli="SV" nimi="Haapaj&#228;rvi" version="0" koodiversio_id="41"/>
+  <koodimetadata id="223" kieli="SV" nimi="Haapavesi" version="0" koodiversio_id="43"/>
+  <koodimetadata id="224" kieli="SV" nimi="Karl&#246;" version="0" koodiversio_id="45"/>
+  <koodimetadata id="225" kieli="SV" nimi="Halsua" version="0" koodiversio_id="47"/>
+  <koodimetadata id="226" kieli="SV" nimi="Fredrikshamn" version="0" koodiversio_id="49"/>
+  <koodimetadata id="227" kieli="SV" nimi="Hammarland" version="0" koodiversio_id="51"/>
+  <koodimetadata id="228" kieli="SV" nimi="Hankasalmi" version="0" koodiversio_id="53"/>
+  <koodimetadata id="229" kieli="SV" nimi="Hang&#246;" version="0" koodiversio_id="55"/>
+  <koodimetadata id="230" kieli="SV" nimi="Harjavalta" version="0" koodiversio_id="57"/>
+  <koodimetadata id="231" kieli="SV" nimi="Hartola" version="0" koodiversio_id="59"/>
+  <koodimetadata id="232" kieli="SV" nimi="Hattula" version="0" koodiversio_id="61"/>
+  <koodimetadata id="233" kieli="SV" nimi="Haukipudas" version="0" koodiversio_id="63"/>
+  <koodimetadata id="234" kieli="SV" nimi="Hausj&#228;rvi" version="0" koodiversio_id="65"/>
+  <koodimetadata id="235" kieli="SV" nimi="Hein&#228;vesi" version="0" koodiversio_id="67"/>
+  <koodimetadata id="236" kieli="SV" nimi="Helsingfors" version="0" koodiversio_id="69"/>
+  <koodimetadata id="237" kieli="SV" nimi="Vanda" version="0" koodiversio_id="71"/>
+  <koodimetadata id="238" kieli="SV" nimi="Hirvensalmi" version="0" koodiversio_id="73"/>
+  <koodimetadata id="239" kieli="SV" nimi="Hollola" version="0" koodiversio_id="75"/>
+  <koodimetadata id="240" kieli="SV" nimi="Honkajoki" version="0" koodiversio_id="77"/>
+  <koodimetadata id="241" kieli="SV" nimi="Huittinen" version="0" koodiversio_id="79"/>
+  <koodimetadata id="242" kieli="SV" nimi="Humppila" version="0" koodiversio_id="81"/>
+  <koodimetadata id="243" kieli="SV" nimi="Hyrynsalmi" version="0" koodiversio_id="83"/>
+  <koodimetadata id="244" kieli="SV" nimi="Hyvinge" version="0" koodiversio_id="85"/>
+  <koodimetadata id="245" kieli="SV" nimi="Tavastkyro" version="0" koodiversio_id="87"/>
+  <koodimetadata id="246" kieli="SV" nimi="Tavastehus" version="0" koodiversio_id="89"/>
+  <koodimetadata id="247" kieli="SV" nimi="Heinola" version="0" koodiversio_id="91"/>
+  <koodimetadata id="248" kieli="SV" nimi="Ii" version="0" koodiversio_id="93"/>
+  <koodimetadata id="249" kieli="SV" nimi="Idensalmi" version="0" koodiversio_id="95"/>
+  <koodimetadata id="250" kieli="SV" nimi="Iitti" version="0" koodiversio_id="97"/>
+  <koodimetadata id="251" kieli="SV" nimi="Ikalis" version="0" koodiversio_id="99"/>
+  <koodimetadata id="252" kieli="SV" nimi="Ilmajoki" version="0" koodiversio_id="101"/>
+  <koodimetadata id="253" kieli="SV" nimi="Ilomants" version="0" koodiversio_id="103"/>
+  <koodimetadata id="254" kieli="SV" nimi="Enare" version="0" koodiversio_id="105"/>
+  <koodimetadata id="255" kieli="SV" nimi="Ing&#229;" version="0" koodiversio_id="107"/>
+  <koodimetadata id="256" kieli="SV" nimi="Stor&#229;" version="0" koodiversio_id="109"/>
+  <koodimetadata id="257" kieli="SV" nimi="Storkyro" version="0" koodiversio_id="111"/>
+  <koodimetadata id="258" kieli="SV" nimi="Imatra" version="0" koodiversio_id="113"/>
+  <koodimetadata id="259" kieli="SV" nimi="Jalasj&#228;rvi" version="0" koodiversio_id="115"/>
+  <koodimetadata id="260" kieli="SV" nimi="Janakkala" version="0" koodiversio_id="117"/>
+  <koodimetadata id="261" kieli="SV" nimi="Joensuu" version="0" koodiversio_id="119"/>
+  <koodimetadata id="262" kieli="SV" nimi="Jokioinen" version="0" koodiversio_id="121"/>
+  <koodimetadata id="263" kieli="SV" nimi="Jomala" version="0" koodiversio_id="123"/>
+  <koodimetadata id="264" kieli="SV" nimi="Jorois" version="0" koodiversio_id="125"/>
+  <koodimetadata id="265" kieli="SV" nimi="Joutsa" version="0" koodiversio_id="127"/>
+  <koodimetadata id="266" kieli="SV" nimi="Juankoski" version="0" koodiversio_id="129"/>
+  <koodimetadata id="267" kieli="SV" nimi="Juuka" version="0" koodiversio_id="131"/>
+  <koodimetadata id="268" kieli="SV" nimi="Juupajoki" version="0" koodiversio_id="133"/>
+  <koodimetadata id="269" kieli="SV" nimi="Juva" version="0" koodiversio_id="135"/>
+  <koodimetadata id="270" kieli="SV" nimi="Jyv&#228;skyl&#228;" version="0" koodiversio_id="137"/>
+  <koodimetadata id="271" kieli="SV" nimi="J&#228;mij&#228;rvi" version="0" koodiversio_id="139"/>
+  <koodimetadata id="272" kieli="SV" nimi="J&#228;ms&#228;" version="0" koodiversio_id="141"/>
+  <koodimetadata id="273" kieli="SV" nimi="Tr&#228;sk&#228;nda" version="0" koodiversio_id="143"/>
+  <koodimetadata id="274" kieli="SV" nimi="Utlandet" version="0" koodiversio_id="145"/>
+  <koodimetadata id="275" kieli="SV" nimi="St Karins" version="0" koodiversio_id="147"/>
+  <koodimetadata id="276" kieli="SV" nimi="Kaavi" version="0" koodiversio_id="149"/>
+  <koodimetadata id="277" kieli="SV" nimi="Kajana" version="0" koodiversio_id="151"/>
+  <koodimetadata id="278" kieli="SV" nimi="Kalajoki" version="0" koodiversio_id="153"/>
+  <koodimetadata id="279" kieli="SV" nimi="Kangasala" version="0" koodiversio_id="155"/>
+  <koodimetadata id="280" kieli="SV" nimi="Kangasniemi" version="0" koodiversio_id="157"/>
+  <koodimetadata id="281" kieli="SV" nimi="Kankaanp&#228;&#228;" version="0" koodiversio_id="159"/>
+  <koodimetadata id="282" kieli="SV" nimi="Kannonkoski" version="0" koodiversio_id="161"/>
+  <koodimetadata id="283" kieli="SV" nimi="Kannus" version="0" koodiversio_id="163"/>
+  <koodimetadata id="284" kieli="SV" nimi="B&#246;tom" version="0" koodiversio_id="165"/>
+  <koodimetadata id="285" kieli="SV" nimi="Karislojo" version="0" koodiversio_id="167"/>
+  <koodimetadata id="286" kieli="SV" nimi="H&#246;gfors" version="0" koodiversio_id="169"/>
+  <koodimetadata id="287" kieli="SV" nimi="Karstula" version="0" koodiversio_id="171"/>
+  <koodimetadata id="288" kieli="SV" nimi="Karvia" version="0" koodiversio_id="173"/>
+  <koodimetadata id="289" kieli="SV" nimi="Kask&#246;" version="0" koodiversio_id="175"/>
+  <koodimetadata id="290" kieli="SV" nimi="Kauhajoki" version="0" koodiversio_id="177"/>
+  <koodimetadata id="291" kieli="SV" nimi="Kauhava" version="0" koodiversio_id="179"/>
+  <koodimetadata id="292" kieli="SV" nimi="Grankulla" version="0" koodiversio_id="181"/>
+  <koodimetadata id="293" kieli="SV" nimi="Kaustby" version="0" koodiversio_id="183"/>
+  <koodimetadata id="294" kieli="SV" nimi="Keitele" version="0" koodiversio_id="185"/>
+  <koodimetadata id="295" kieli="SV" nimi="Kemi" version="0" koodiversio_id="187"/>
+  <koodimetadata id="296" kieli="SV" nimi="Keminmaa" version="0" koodiversio_id="189"/>
+  <koodimetadata id="297" kieli="SV" nimi="Kempele" version="0" koodiversio_id="191"/>
+  <koodimetadata id="298" kieli="SV" nimi="Kervo" version="0" koodiversio_id="193"/>
+  <koodimetadata id="299" kieli="SV" nimi="Kerim&#228;ki" version="0" koodiversio_id="195"/>
+  <koodimetadata id="300" kieli="SV" nimi="Kes&#228;lahti" version="0" koodiversio_id="197"/>
+  <koodimetadata id="301" kieli="SV" nimi="Keuruu" version="0" koodiversio_id="199"/>
+  <koodimetadata id="302" kieli="SV" nimi="Kihni&#246;" version="0" koodiversio_id="201"/>
+  <koodimetadata id="306" kieli="FI" nimi="Uusimaa" version="0" koodiversio_id="305"/>
+  <koodimetadata id="308" kieli="FI" nimi="Varsinais-Suomi" version="0" koodiversio_id="307"/>
+  <koodimetadata id="310" kieli="FI" nimi="Satakunta" version="0" koodiversio_id="309"/>
+  <koodimetadata id="312" kieli="FI" nimi="Kanta-H&#228;me" version="0" koodiversio_id="311"/>
+  <koodimetadata id="314" kieli="FI" nimi="Pirkanmaa" version="0" koodiversio_id="313"/>
+  <koodimetadata id="316" kieli="FI" nimi="P&#228;ij&#228;t-H&#228;me" version="0" koodiversio_id="315"/>
+  <koodimetadata id="318" kieli="FI" nimi="Kymenlaakso" version="0" koodiversio_id="317"/>
+  <koodimetadata id="320" kieli="FI" nimi="Etel&#228;-Karjala" version="0" koodiversio_id="319"/>
+  <koodimetadata id="322" kieli="FI" nimi="Etel&#228;-Savo" version="0" koodiversio_id="321"/>
+  <koodimetadata id="324" kieli="FI" nimi="Pohjois-Savo" version="0" koodiversio_id="323"/>
+  <koodimetadata id="326" kieli="FI" nimi="Pohjois-Karjala" version="0" koodiversio_id="325"/>
+  <koodimetadata id="328" kieli="FI" nimi="Keski-Suomi" version="0" koodiversio_id="327"/>
+  <koodimetadata id="330" kieli="FI" nimi="Etel&#228;-Pohjanmaa" version="0" koodiversio_id="329"/>
+  <koodimetadata id="332" kieli="FI" nimi="Pohjanmaa" version="0" koodiversio_id="331"/>
+  <koodimetadata id="334" kieli="FI" nimi="Keski-Pohjanmaa" version="0" koodiversio_id="333"/>
+  <koodimetadata id="336" kieli="FI" nimi="Pohjois-Pohjanmaa" version="0" koodiversio_id="335"/>
+  <koodimetadata id="338" kieli="FI" nimi="Kainuu" version="0" koodiversio_id="337"/>
+  <koodimetadata id="340" kieli="FI" nimi="Lappi" version="0" koodiversio_id="339"/>
+  <koodimetadata id="342" kieli="FI" nimi="Ahvenanmaa" version="0" koodiversio_id="341"/>
+  <koodimetadata id="344" kieli="FI" nimi="Ei tiedossa (maakunta)" version="0" koodiversio_id="343"/>
+  <koodimetadata id="345" kieli="SV" nimi="Nyland" version="0" koodiversio_id="305"/>
+  <koodimetadata id="346" kieli="SV" nimi="Egentliga Finland" version="0" koodiversio_id="307"/>
+  <koodimetadata id="347" kieli="SV" nimi="Satakunta" version="0" koodiversio_id="309"/>
+  <koodimetadata id="348" kieli="SV" nimi="Egentliga Tavastland" version="0" koodiversio_id="311"/>
+  <koodimetadata id="349" kieli="SV" nimi="Birkaland" version="0" koodiversio_id="313"/>
+  <koodimetadata id="350" kieli="SV" nimi="P&#228;ij&#228;nne-Tavastland" version="0" koodiversio_id="315"/>
+  <koodimetadata id="351" kieli="SV" nimi="Kymmenedalen" version="0" koodiversio_id="317"/>
+  <koodimetadata id="352" kieli="SV" nimi="S&#246;dra Karelen" version="0" koodiversio_id="319"/>
+  <koodimetadata id="353" kieli="SV" nimi="S&#246;dra Savolax" version="0" koodiversio_id="321"/>
+  <koodimetadata id="354" kieli="SV" nimi="Norra Savolax" version="0" koodiversio_id="323"/>
+  <koodimetadata id="355" kieli="SV" nimi="Norra Karelen" version="0" koodiversio_id="325"/>
+  <koodimetadata id="356" kieli="SV" nimi="Mellersta Finland" version="0" koodiversio_id="327"/>
+  <koodimetadata id="357" kieli="SV" nimi="S&#246;dra &#214;sterbotten" version="0" koodiversio_id="329"/>
+  <koodimetadata id="358" kieli="SV" nimi="&#214;sterbotten" version="0" koodiversio_id="331"/>
+  <koodimetadata id="359" kieli="SV" nimi="Mellersta &#214;sterbotten" version="0" koodiversio_id="333"/>
+  <koodimetadata id="360" kieli="SV" nimi="Norra &#214;sterbotten" version="0" koodiversio_id="335"/>
+  <koodimetadata id="361" kieli="SV" nimi="Kajanaland" version="0" koodiversio_id="337"/>
+  <koodimetadata id="362" kieli="SV" nimi="Lappland" version="0" koodiversio_id="339"/>
+  <koodimetadata id="363" kieli="SV" nimi="&#197;land" version="0" koodiversio_id="341"/>
+  <koodimetadata id="364" kieli="SV" nimi="Ok&#228;nt landskap" version="0" koodiversio_id="343"/>
+  <koodimetadata id="368" kieli="FI" nimi="Etel&#228;-Suomen AVI" version="0" koodiversio_id="367"/>
+  <koodimetadata id="370" kieli="FI" nimi="Lounais-Suomen AVI" version="0" koodiversio_id="369"/>
+  <koodimetadata id="372" kieli="FI" nimi="It&#228;-Suomen AVI" version="0" koodiversio_id="371"/>
+  <koodimetadata id="374" kieli="FI" nimi="L&#228;nsi- ja Sis&#228;-Suomen AVI" version="0" koodiversio_id="373"/>
+  <koodimetadata id="376" kieli="FI" nimi="Pohjois-Suomen AVI" version="0" koodiversio_id="375"/>
+  <koodimetadata id="378" kieli="FI" nimi="Lapin AVI" version="0" koodiversio_id="377"/>
+  <koodimetadata id="380" kieli="FI" nimi="Ahvenanmaan valtionvirasto" version="0" koodiversio_id="379"/>
+  <koodimetadata id="382" kieli="FI" nimi="Ei tiedossa (AVI)" version="0" koodiversio_id="381"/>
+  <koodimetadata id="384" kieli="SV" nimi="S&#246;dra Finlands RFV" version="0" koodiversio_id="367"/>
+  <koodimetadata id="385" kieli="SV" nimi="Sydv&#228;stra Finlands RFV" version="0" koodiversio_id="369"/>
+  <koodimetadata id="386" kieli="SV" nimi="&#214;stra Finlands RFV" version="0" koodiversio_id="371"/>
+  <koodimetadata id="387" kieli="SV" nimi="V&#228;stra och Inre Finlands RFV" version="0" koodiversio_id="373"/>
+  <koodimetadata id="388" kieli="SV" nimi="Norra Finlands RFV" version="0" koodiversio_id="375"/>
+  <koodimetadata id="389" kieli="SV" nimi="Lapin AVI" version="0" koodiversio_id="377"/>
+  <koodimetadata id="390" kieli="SV" nimi="Statens &#228;mbetsverk p&#229; &#197;land" version="0" koodiversio_id="379"/>
+  <koodimetadata id="391" kieli="SV" nimi="Ok&#228;nt (RFV)" version="0" koodiversio_id="381"/>
+  <koodimetadata id="414" kieli="FI" nimi="ekakoodi FI - ver 1" version="0" koodiversio_id="410"/>
+  <koodimetadata id="415" kieli="SV" nimi="ekakoodi SV - ver 1" version="0" koodiversio_id="410"/>
+  <koodimetadata id="416" kieli="FI" nimi="tokakoodi FI - ver 1" version="0" koodiversio_id="411"/>
+  <koodimetadata id="417" kieli="SV" nimi="tokakoodi SV - ver 1" version="0" koodiversio_id="411"/>
+  <koodimetadata id="418" kieli="FI" nimi="ekakoodi FI - ver 2" version="0" koodiversio_id="412"/>
+  <koodimetadata id="419" kieli="SV" nimi="ekakoodi SV - ver 2" version="0" koodiversio_id="412"/>
+  <koodimetadata id="420" kieli="FI" nimi="tokakoodi FI - ver 2" version="0" koodiversio_id="413"/>
+  <koodimetadata id="421" kieli="SV" nimi="tokakoodi SV - ver 2" version="0" koodiversio_id="413"/>
+  <koodimetadata id="459" kieli="FI" nimi="koodi 1 versio 1" version="0" koodiversio_id="437"/>
+  <koodimetadata id="460" kieli="FI" nimi="koodi 1 versio 2" version="0" koodiversio_id="438"/>
+  <koodimetadata id="461" kieli="FI" nimi="koodi 1 versio 3" version="0" koodiversio_id="439"/>
+  <koodimetadata id="462" kieli="FI" nimi="koodi 1 versio 4" version="0" koodiversio_id="440"/>
+  <koodimetadata id="463" kieli="FI" nimi="koodi 1 versio 5" version="0" koodiversio_id="441"/>
+  <koodimetadata id="464" kieli="FI" nimi="koodi 1 versio 6" version="0" koodiversio_id="442"/>
+  <koodimetadata id="465" kieli="FI" nimi="koodi 1 versio 7" version="0" koodiversio_id="443"/>
+  <koodimetadata id="466" kieli="FI" nimi="koodi 1 versio 8" version="0" koodiversio_id="444"/>
+  <koodimetadata id="467" kieli="FI" nimi="koodi 1 versio 9" version="0" koodiversio_id="445"/>
+  <koodimetadata id="468" kieli="FI" nimi="koodi 1 versio 10" version="0" koodiversio_id="446"/>
+  <koodimetadata id="469" kieli="FI" nimi="koodi 1 versio 11" version="0" koodiversio_id="447"/>
+  <koodimetadata id="485" kieli="SV" nimi="kåådi 1 versiå 1" version="0" koodiversio_id="437"/>
+  <koodimetadata id="486" kieli="SV" nimi="kåådi 1 versiå 2" version="0" koodiversio_id="438"/>
+  <koodimetadata id="487" kieli="SV" nimi="kåådi 1 versiå 3" version="0" koodiversio_id="439"/>
+  <koodimetadata id="488" kieli="SV" nimi="kåådi 1 versiå 4" version="0" koodiversio_id="440"/>
+  <koodimetadata id="489" kieli="SV" nimi="kåådi 1 versiå 5" version="0" koodiversio_id="441"/>
+  <koodimetadata id="490" kieli="SV" nimi="kåådi 1 versiå 6" version="0" koodiversio_id="442"/>
+  <koodimetadata id="491" kieli="SV" nimi="kåådi 1 versiå 7" version="0" koodiversio_id="443"/>
+  <koodimetadata id="492" kieli="SV" nimi="kåådi 1 versiå 8" version="0" koodiversio_id="444"/>
+  <koodimetadata id="493" kieli="SV" nimi="kåådi 1 versiå 9" version="0" koodiversio_id="445"/>
+  <koodimetadata id="494" kieli="SV" nimi="kåådi 1 versiå 10" version="0" koodiversio_id="446"/>
+  <koodimetadata id="495" kieli="SV" nimi="kåådi 1 versiå 11" version="0" koodiversio_id="447"/>
+  <koodimetadata id="496" kieli="EN" nimi="code 1 version 1" version="0" koodiversio_id="437"/>
+  <koodimetadata id="497" kieli="EN" nimi="code 1 version 2" version="0" koodiversio_id="438"/>
+  <koodimetadata id="498" kieli="EN" nimi="code 1 version 3" version="0" koodiversio_id="439"/>
+  <koodimetadata id="499" kieli="EN" nimi="code 1 version 4" version="0" koodiversio_id="440"/>
+  <koodimetadata id="500" kieli="EN" nimi="code 1 version 5" version="0" koodiversio_id="441"/>
+  <koodimetadata id="501" kieli="EN" nimi="code 1 version 6" version="0" koodiversio_id="442"/>
+  <koodimetadata id="502" kieli="EN" nimi="code 1 version 7" version="0" koodiversio_id="443"/>
+  <koodimetadata id="503" kieli="EN" nimi="code 1 version 8" version="0" koodiversio_id="444"/>
+  <koodimetadata id="504" kieli="EN" nimi="code 1 version 9" version="0" koodiversio_id="445"/>
+  <koodimetadata id="505" kieli="EN" nimi="code 1 version 10" version="0" koodiversio_id="446"/>
+  <koodimetadata id="506" kieli="EN" nimi="code 1 version 11" version="0" koodiversio_id="447"/>
+  <koodimetadata id="470" kieli="FI" nimi="koodi 2 versio 1" version="0" koodiversio_id="448"/>
+  <koodimetadata id="471" kieli="FI" nimi="koodi 2 versio 2" version="0" koodiversio_id="449"/>
+  <koodimetadata id="472" kieli="FI" nimi="koodi 2 versio 3" version="0" koodiversio_id="450"/>
+  <koodimetadata id="473" kieli="FI" nimi="koodi 2 versio 4" version="0" koodiversio_id="451"/>
+  <koodimetadata id="474" kieli="FI" nimi="koodi 2 versio 5" version="0" koodiversio_id="452"/>
+  <koodimetadata id="475" kieli="FI" nimi="koodi 2 versio 6" version="0" koodiversio_id="453"/>
+  <koodimetadata id="476" kieli="FI" nimi="koodi 2 versio 7" version="0" koodiversio_id="454"/>
+  <koodimetadata id="477" kieli="FI" nimi="koodi 2 versio 8" version="0" koodiversio_id="455"/>
+  <koodimetadata id="478" kieli="FI" nimi="koodi 2 versio 9" version="0" koodiversio_id="456"/>
+  <koodimetadata id="479" kieli="FI" nimi="koodi 2 versio 10" version="0" koodiversio_id="457"/>
+  <koodimetadata id="480" kieli="FI" nimi="koodi 2 versio 11" version="0" koodiversio_id="458"/>
+  <koodimetadata id="507" kieli="SV" nimi="cåådi 2 versiå 1" version="0" koodiversio_id="448"/>
+  <koodimetadata id="508" kieli="SV" nimi="cåådi 2 versiå 2" version="0" koodiversio_id="449"/>
+  <koodimetadata id="509" kieli="SV" nimi="cåådi 2 versiå 3" version="0" koodiversio_id="450"/>
+  <koodimetadata id="510" kieli="SV" nimi="cåådi 2 versiå 4" version="0" koodiversio_id="451"/>
+  <koodimetadata id="511" kieli="SV" nimi="cåådi 2 versiå 5" version="0" koodiversio_id="452"/>
+  <koodimetadata id="512" kieli="SV" nimi="cåådi 2 versiå 6" version="0" koodiversio_id="453"/>
+  <koodimetadata id="513" kieli="SV" nimi="cåådi 2 versiå 7" version="0" koodiversio_id="454"/>
+  <koodimetadata id="514" kieli="SV" nimi="cåådi 2 versiå 8" version="0" koodiversio_id="455"/>
+  <koodimetadata id="515" kieli="SV" nimi="cåådi 2 versiå 9" version="0" koodiversio_id="456"/>
+  <koodimetadata id="516" kieli="SV" nimi="cåådi 2 versiå 10" version="0" koodiversio_id="457"/>
+  <koodimetadata id="517" kieli="SV" nimi="cåådi 2 versiå 11" version="0" koodiversio_id="458"/>
+  <koodimetadata id="518" kieli="EN" nimi="code 2 version 1" version="0" koodiversio_id="448"/>
+  <koodimetadata id="519" kieli="EN" nimi="code 2 version 2" version="0" koodiversio_id="449"/>
+  <koodimetadata id="520" kieli="EN" nimi="code 2 version 3" version="0" koodiversio_id="450"/>
+  <koodimetadata id="521" kieli="EN" nimi="code 2 version 4" version="0" koodiversio_id="451"/>
+  <koodimetadata id="522" kieli="EN" nimi="code 2 version 5" version="0" koodiversio_id="452"/>
+  <koodimetadata id="523" kieli="EN" nimi="code 2 version 6" version="0" koodiversio_id="453"/>
+  <koodimetadata id="524" kieli="EN" nimi="code 2 version 7" version="0" koodiversio_id="454"/>
+  <koodimetadata id="525" kieli="EN" nimi="code 2 version 8" version="0" koodiversio_id="455"/>
+  <koodimetadata id="526" kieli="EN" nimi="code 2 version 9" version="0" koodiversio_id="456"/>
+  <koodimetadata id="527" kieli="EN" nimi="code 2 version 10" version="0" koodiversio_id="457"/>
+  <koodimetadata id="528" kieli="EN" nimi="code 2 version 11" version="0" koodiversio_id="458"/>
+  <koodinsuhde id="1" alakoodi_id="3" ylakoodi_id="7" suhteentyyppi="RINNASTEINEN" version="0"/>
+  <koodinsuhde id="2" alakoodi_id="7" ylakoodi_id="5" suhteentyyppi="RINNASTEINEN" version="0"/>
+  <koodinsuhde id="3" alakoodi_id="5" ylakoodi_id="3" suhteentyyppi="RINNASTEINEN" version="0"/>
+  <koodinsuhde id="4" alakoodi_id="3" ylakoodi_id="9" suhteentyyppi="SISALTYY" version="0"/>
+  <koodinsuhde id="5" alakoodi_id="9" ylakoodi_id="3" suhteentyyppi="SISALTYY" version="0"/>
+  <koodinsuhde id="6" alakoodi_id="11" ylakoodi_id="3" suhteentyyppi="SISALTYY" version="0"/>
+  <koodinsuhde id="7" alakoodi_id="410" ylakoodi_id="411" suhteentyyppi="RINNASTEINEN" version="0"/>
+  <koodisto id="1" koodistouri="http://www.kunnat.fi/kunta" version="0"/>
+  <koodisto id="303" koodistouri="http://www.kunnat.fi/maakunta" version="0"/>
+  <koodisto id="365" koodistouri="http://www.avi.fi/aluevirasto" version="0"/>
+  <koodisto id="398" koodistouri="http://testi.fi" lukittu="false" omistaja="jorma" sitovuustaso="adfasdf" version="2"/>
+  <koodisto id="399" koodistouri="http://testikoodisto.fi" version="0"/>
+  <koodisto id="422" koodistouri="http://testikoodisto-2.fi" version="0"/>
+  <koodisto id="430" koodistouri="http://paljon_versioita.fi/1" version="0"/>
+  <koodistoversio id="1" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" koodisto_id="1"/>
+  <koodistoversio id="303" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" koodisto_id="303"/>
+  <koodistoversio id="365" version="0" paivityspvm="2012-03-22" tila="HYVAKSYTTY" versio="1" koodisto_id="365"/>
+  <koodistoversio id="398" version="2" paivityspvm="2012-04-13" tila="HYVAKSYTTY" versio="1" koodisto_id="398"/>
+  <koodistoversio id="399" version="0" paivityspvm="2012-04-29" tila="HYVAKSYTTY" versio="1" koodisto_id="399"/>
+  <koodistoversio id="400" version="0" paivityspvm="2012-04-30" tila="PASSIIVINEN" versio="2" koodisto_id="399"/>
+  <koodistoversio id="423" version="0" paivityspvm="2012-05-03" tila="HYVAKSYTTY" versio="1" koodisto_id="422"/>
+  <koodistoversio id="431" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="1" koodisto_id="430"/>
+  <koodistoversio id="481" version="0" paivityspvm="2012-05-11" tila="HYVAKSYTTY" versio="2" koodisto_id="430"/>
+  <koodistometadata id="2" kieli="FI" nimi="Kunnat" version="0" koodistoversio_id="1"/>
+  <koodistometadata id="304" kieli="FI" nimi="Maakunnat" version="0" koodistoversio_id="303"/>
+  <koodistometadata id="305" kieli="FI" nimi="Foobaar!" version="0" koodistoversio_id="398"/>
+  <koodistometadata id="366" kieli="FI" nimi="Aluevirastot" version="0" koodistoversio_id="365"/>
+  <koodistometadata id="383" kieli="SV" nimi="Regionf&#246;rvaltning" version="0" koodistoversio_id="365"/>
+  <koodistometadata id="392" kieli="EN" nimi="NI!" version="0" koodistoversio_id="365"/>
+  <koodistometadata id="395" kieli="SV" nimi="Kommuner" version="0" koodistoversio_id="1"/>
+  <koodistometadata id="396" kieli="EN" nimi="Communes" version="0" koodistoversio_id="1"/>
+  <koodistometadata id="401" kieli="FI" nimi="testikoodistoFI" version="0" koodistoversio_id="399"/>
+  <koodistometadata id="402" kieli="SV" nimi="testikoodistoSV" version="0" koodistoversio_id="399"/>
+  <koodistometadata id="403" kieli="EN" nimi="testikoodistoEN" version="0" koodistoversio_id="399"/>
+  <koodistometadata id="404" kieli="FI" nimi="testikoodistoFI - ver 2" version="0" koodistoversio_id="400"/>
+  <koodistometadata id="405" kieli="SV" nimi="testikoodistoSV - ver 2" version="0" koodistoversio_id="400"/>
+  <koodistometadata id="406" kieli="EN" nimi="testikoodistoEN - ver 2" version="0" koodistoversio_id="400"/>
+  <koodistometadata id="424" kieli="FI" nimi="testing 2 FI" version="0" koodistoversio_id="423"/>
+  <koodistometadata id="425" kieli="SV" nimi="testing 2 SV" version="0" koodistoversio_id="423"/>
+  <koodistometadata id="432" kieli="FI" nimi="paljon versioita koodistossa" version="0" koodistoversio_id="431"/>
+  <koodistometadata id="433" kieli="SV" nimi="mycket av versioner i koodisto" version="0" koodistoversio_id="431"/>
+  <koodistometadata id="434" kieli="EN" nimi="lots of versions in koodisto" version="0" koodistoversio_id="431"/>
+  <koodistometadata id="482" kieli="FI" nimi="paljon versioita koodistossa" version="0" koodistoversio_id="481"/>
+  <koodistometadata id="483" kieli="SV" nimi="mycket av versioner i koodisto" version="0" koodistoversio_id="481"/>
+  <koodistometadata id="484" kieli="EN" nimi="lots of versions in koodisto" version="0" koodistoversio_id="481"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="3"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="5"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="7"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="9"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="11"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="13"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="15"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="17"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="19"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="21"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="23"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="25"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="27"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="29"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="31"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="33"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="35"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="37"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="39"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="41"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="43"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="45"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="47"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="49"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="51"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="53"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="55"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="57"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="59"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="61"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="63"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="65"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="67"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="69"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="71"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="73"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="75"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="77"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="79"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="81"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="83"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="85"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="87"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="89"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="91"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="93"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="95"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="97"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="99"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="101"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="103"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="105"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="107"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="109"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="111"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="113"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="115"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="117"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="119"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="121"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="123"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="125"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="127"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="129"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="131"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="133"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="135"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="137"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="139"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="141"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="143"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="145"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="147"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="149"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="151"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="153"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="155"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="157"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="159"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="161"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="163"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="165"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="167"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="169"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="171"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="173"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="175"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="177"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="179"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="181"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="183"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="185"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="187"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="189"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="191"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="193"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="195"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="197"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="199"/>
+  <koodistoversio_koodiversio koodistoversio_id="1" koodiversio_id="201"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="305"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="307"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="309"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="311"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="313"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="315"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="317"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="319"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="321"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="323"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="325"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="327"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="329"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="331"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="333"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="335"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="337"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="339"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="341"/>
+  <koodistoversio_koodiversio koodistoversio_id="303" koodiversio_id="343"/>
+  <koodistoversio_koodiversio koodistoversio_id="365" koodiversio_id="367"/>
+  <koodistoversio_koodiversio koodistoversio_id="365" koodiversio_id="369"/>
+  <koodistoversio_koodiversio koodistoversio_id="365" koodiversio_id="371"/>
+  <koodistoversio_koodiversio koodistoversio_id="365" koodiversio_id="373"/>
+  <koodistoversio_koodiversio koodistoversio_id="365" koodiversio_id="375"/>
+  <koodistoversio_koodiversio koodistoversio_id="365" koodiversio_id="377"/>
+  <koodistoversio_koodiversio koodistoversio_id="365" koodiversio_id="379"/>
+  <koodistoversio_koodiversio koodistoversio_id="365" koodiversio_id="381"/>
+  <koodistoversio_koodiversio koodistoversio_id="399" koodiversio_id="410"/>
+  <koodistoversio_koodiversio koodistoversio_id="399" koodiversio_id="411"/>
+  <koodistoversio_koodiversio koodistoversio_id="400" koodiversio_id="412"/>
+  <koodistoversio_koodiversio koodistoversio_id="400" koodiversio_id="413"/>
+  <koodistoversio_koodiversio koodistoversio_id="423" koodiversio_id="412"/>
+  <koodistoversio_koodiversio koodistoversio_id="423" koodiversio_id="413"/>
+  <koodistoversio_koodiversio koodistoversio_id="431" koodiversio_id="440"/>
+  <koodistoversio_koodiversio koodistoversio_id="431" koodiversio_id="453"/>
+  <koodistoversio_koodiversio koodistoversio_id="481" koodiversio_id="447"/>
+  <koodistoversio_koodiversio koodistoversio_id="481" koodiversio_id="458"/>
+  <koodistoryhma id="1" koodistoryhmauri="foobarrr" version="0"/>
+  <koodistoryhma id="2" koodistoryhmauri="baafoorrr" version="0"/>
+  <koodistoryhma id="407" koodistoryhmauri="testikoodistoryhma" version="0"/>
+  <koodistoryhma id="426" koodistoryhmauri="http://paljon_versioita.fi" version="0"/>
+  <koodistoryhma_koodisto koodistoryhma_id="1" koodisto_id="1"/>
+  <koodistoryhma_koodisto koodistoryhma_id="2" koodisto_id="303"/>
+  <koodistoryhma_koodisto koodistoryhma_id="2" koodisto_id="365"/>
+  <koodistoryhma_koodisto koodistoryhma_id="407" koodisto_id="399"/>
+  <koodistoryhma_koodisto koodistoryhma_id="407" koodisto_id="422"/>
+  <koodistoryhma_koodisto koodistoryhma_id="426" koodisto_id="430"/>
+  <koodistoryhmametadata id="1" koodistoryhma_id="1" kieli="FI" nimi="nimi1" version="0"/>
+  <koodistoryhmametadata id="2" koodistoryhma_id="1" kieli="SV" nimi="namn1" version="0"/>
+  <koodistoryhmametadata id="3" koodistoryhma_id="2" kieli="FI" nimi="nimi2" version="0"/>
+  <koodistoryhmametadata id="4" koodistoryhma_id="2" kieli="SV" nimi="namn2" version="0"/>
+  <koodistoryhmametadata id="408" koodistoryhma_id="407" kieli="FI" nimi="testFI" version="0"/>
+  <koodistoryhmametadata id="409" koodistoryhma_id="407" kieli="SV" nimi="testSV" version="0"/>
+  <koodistoryhmametadata id="427" koodistoryhma_id="426" kieli="FI" nimi="paljon versioita" version="0"/>
+  <koodistoryhmametadata id="428" koodistoryhma_id="426" kieli="SV" nimi="mycket av versioner" version="0"/>
+  <koodistoryhmametadata id="429" koodistoryhma_id="426" kieli="EN" nimi="lots of versions" version="0"/>
+</dataset>
