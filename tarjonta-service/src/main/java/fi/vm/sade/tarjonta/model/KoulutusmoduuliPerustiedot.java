@@ -22,8 +22,33 @@ import fi.vm.sade.generic.model.BaseEntity;
  * @author Jukka Raanamo
  */
 public class KoulutusmoduuliPerustiedot extends BaseEntity {
-    
-    
-    
+
+    /**
+     * TODO: this is just best guess, validate from model and Seppo where to place this information and what is the role of the link.
+     */
+    private String organisaatioOid;
+
+    /**
+     * TODO: this is just best guess, validate from model and Seppo what is the "name" of this field and if values are stored by value or by reference and
+     * computed at runtime. Here runtime is guessed.
+     */
+    private String koulutusKoodiUrl;
+
+    public void setOrganisaatioOid(String organisaatioOid) {
+        this.organisaatioOid = organisaatioOid;
+    }
+
+    public String getOrganisaatioOid() {
+        return organisaatioOid;
+    }
+
+    public void setKoulutusKoodiUrl(String koulutusKoodiUrl) {
+        this.koulutusKoodiUrl = koulutusKoodiUrl;
+    }
+
+    public String getKoulutusKoodiUrl() {
+        return koulutusKoodiUrl;
+    }
+
 }
 

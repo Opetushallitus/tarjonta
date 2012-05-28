@@ -16,11 +16,12 @@
 package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliPerustiedot;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliSisaltyvyys;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
 import java.util.List;
-import org.junit.*;
 import static org.junit.Assert.*;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -42,10 +43,15 @@ public class KoulutusmoduuliDAOTest {
     @Test
     public void testSimpleSaveAndRead() {
 
-        final String oid = "http://junit.test";
+        final String oid = "http://someurl";
         
         TutkintoOhjelma t1 = new TutkintoOhjelma();
         t1.setOid(oid);
+        
+        KoulutusmoduuliPerustiedot p = new KoulutusmoduuliPerustiedot();
+        p.setOrganisaatioOid(oid);
+        
+        t1.setPerustiedot(p);
         t1 = (TutkintoOhjelma) dao.insert(t1);
 
         assertNotNull(t1.getId());
@@ -53,6 +59,7 @@ public class KoulutusmoduuliDAOTest {
         TutkintoOhjelma t2 = read(t1.getId());
         assertNotNull(t2);
         assertEquals(oid, t2.getOid());
+        assertEquals(oid, t2.getPerustiedot().getOrganisaatioOid());
 
     }
     

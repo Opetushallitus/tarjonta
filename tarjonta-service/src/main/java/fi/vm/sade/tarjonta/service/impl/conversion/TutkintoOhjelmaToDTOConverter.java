@@ -16,8 +16,10 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliPerustiedot;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 
 /**
@@ -33,10 +35,25 @@ public class TutkintoOhjelmaToDTOConverter<T extends KoulutusmoduuliDTO> extends
         TutkintoOhjelmaDTO dto = new TutkintoOhjelmaDTO();
         dto.setTila(source.getTila().name());
         dto.setOid(source.getOid());
+        dto.setPerustiedot(convert(source.getPerustiedot()));
         
         return (T) dto;
 
     }
 
+    
+    private KoulutusmoduuliPerustiedotDTO convert(KoulutusmoduuliPerustiedot source) {
+        
+        if (source == null) {
+            return null;
+        }
+        
+        KoulutusmoduuliPerustiedotDTO dto = new KoulutusmoduuliPerustiedotDTO();
+        dto.setOrganisaatioOid(source.getOrganisaatioOid());
+        
+        return dto;
+        
+    }
+    
 }
 

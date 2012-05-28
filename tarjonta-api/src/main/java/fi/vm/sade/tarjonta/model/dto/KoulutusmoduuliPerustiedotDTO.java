@@ -20,6 +20,16 @@ package fi.vm.sade.tarjonta.model.dto;
  * @author Jukka Raanamo
  */
 public class KoulutusmoduuliPerustiedotDTO {
-    
+
+    private String organisaatioOid;
+
+    public void setOrganisaatioOid(String organisaatioOid) {
+        this.organisaatioOid = organisaatioOid;
+    }
+
+    public String getOrganisaatioOid() {
+        return organisaatioOid;
+    }
+
 }
 
