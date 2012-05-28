@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliPerustiedot;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliSisaltyvyys;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
@@ -62,6 +63,30 @@ public class KoulutusmoduuliDAOTest {
         assertEquals(oid, t2.getPerustiedot().getOrganisaatioOid());
 
     }
+    
+    @Test
+    public void testMultipleParents() throws Exception {
+        
+        Koulutusmoduuli parent1 = new TutkintoOhjelma();
+        Koulutusmoduuli parent2 = new TutkintoOhjelma();
+        Koulutusmoduuli child = new TutkintoOhjelma();
+        
+        dao.insert(parent1);
+        dao.insert(parent2);
+        dao.insert(child);
+        
+        parent1.addChild(child, true);
+        parent2.addChild(child, true);
+        
+        dao.update(parent1);
+        dao.update(parent2);
+        
+        child = read(child.getId());
+        
+        assertEquals(2, child.getParents().size());
+        
+    }
+    
     
     @Test
     public void testDelete() {

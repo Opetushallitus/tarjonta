@@ -47,21 +47,21 @@ public class KoulutusmoduuliTest {
     }
 
     @Test
-    public void testAddAsParent() throws Exception {
+    public void testAddParent() throws Exception {
 
         Koulutusmoduuli parent = newModuuli();
         Koulutusmoduuli child = newModuuli();
 
         assertTrue(child.addParent(parent, false));
 
-        assertEquals(1, parent.getChildren().
-            size());
-        assertEquals(1, child.getParents().
-            size());
+        assertEquals(1, parent.getChildren().size());
+        assertEquals(1, child.getParents().size());
 
         assertTrue(parent.hasAsChild(child));
 
     }
+    
+    
 
     @Test
     public void testEquals() {
@@ -88,19 +88,15 @@ public class KoulutusmoduuliTest {
         parent.addChild(child, true);
 
         // before remove
-        assertEquals(1, parent.getChildren().
-            size());
-        assertEquals(1, child.getParents().
-            size());
+        assertEquals(1, parent.getChildren().size());
+        assertEquals(1, child.getParents().size());
 
         // was removed
         assertTrue(parent.removeChild(child));
 
         // after remove
-        assertEquals(0, parent.getChildren().
-            size());
-        assertEquals(0, child.getParents().
-            size());
+        assertEquals(0, parent.getChildren().size());
+        assertEquals(0, child.getParents().size());
 
     }
 
@@ -128,6 +124,20 @@ public class KoulutusmoduuliTest {
         b.addChild(c, true);
 
         c.addChild(a2, true);
+
+    }
+
+    public void testMoveChild() throws Exception {
+
+        Koulutusmoduuli firstParent = newModuuli();
+        Koulutusmoduuli secondParent = newModuuli();
+
+        Koulutusmoduuli child = newModuuli();
+
+        firstParent.addChild(child, true);
+
+        // todo: what are the rules of adding a child
+        //firstParent.moveChild(child, secondParent);
 
     }
 

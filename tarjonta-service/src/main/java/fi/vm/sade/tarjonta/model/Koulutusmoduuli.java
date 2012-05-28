@@ -233,7 +233,8 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
         return removed;
 
     }
-
+    
+  
     /**
      * Returns all those Koulutusmoduuli that this Koulutusmoduuli includes. The returned list is immutable.
      *
