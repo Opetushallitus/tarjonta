@@ -47,11 +47,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public KoulutusmoduuliDTO save(KoulutusmoduuliDTO dto) {
         
-        Koulutusmoduuli model = conversionService.convert(dto, Koulutusmoduuli.class);
-        
-        model = businessService.save(model);
-        
-        return conversionService.convert(model, KoulutusmoduuliDTO.class);
+        Koulutusmoduuli model = conversionService.convert(dto, Koulutusmoduuli.class);        
+        model = businessService.save(model);        
+        return conversionService.convert(model, TutkintoOhjelmaDTO.class);
         
         
     }

@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.service.business.impl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.business.KoulutusmoduuliBusinessService;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,8 @@ public class KoulutusmoduuliBusinessServiceImpl implements KoulutusmoduuliBusine
     @Override
     public Koulutusmoduuli save(Koulutusmoduuli moduuli) {
         if (moduuli.getOid() == null) {
+            // fake setting Oid
+            moduuli.setOid(UUID.randomUUID().toString());
             return koulutusmoduuliDAO.insert(moduuli);
         } else {
             koulutusmoduuliDAO.update(moduuli);

@@ -77,6 +77,10 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
     public String getOid() {
         return oid;
     }
+    
+    public void setOid(String oid) {
+        this.oid = oid;
+    }
 
     /**
      * Returns the state (tila) this Koulutusmoduuli is in.

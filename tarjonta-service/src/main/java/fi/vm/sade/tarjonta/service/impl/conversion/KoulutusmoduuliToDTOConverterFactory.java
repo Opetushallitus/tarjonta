@@ -15,28 +15,31 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
-import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.convert.converter.ConverterFactory;
 
 /**
- * TODO: maybe inherit from KoulutusOhjelmaDTOConverter?
+ * 
  * 
  * @author Jukka Raanamo
  */
-public class TutkintoOhjelmaToDTOConverter<T extends KoulutusmoduuliDTO> extends AbstractFromDomainConverter<TutkintoOhjelma, T> {
+public class KoulutusmoduuliToDTOConverterFactory implements ConverterFactory<Koulutusmoduuli, KoulutusmoduuliDTO> {
 
     @Override
-    public T convert(TutkintoOhjelma source) {
-
-        TutkintoOhjelmaDTO dto = new TutkintoOhjelmaDTO();
-        dto.setTila(source.getTila().name());
-        dto.setOid(source.getOid());
+    public <T extends KoulutusmoduuliDTO> Converter<Koulutusmoduuli, T> getConverter(Class<T> targetType) {
         
-        return (T) dto;
-
+        if (targetType.equals(TutkintoOhjelmaDTO.class)) {
+            return new TutkintoOhjelmaToDTOConverter();
+        }
+        
+        throw new IllegalArgumentException("dont know how to convert to target type: " + targetType);
+        
     }
+    
 
+    
 }
 
