@@ -28,9 +28,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 /**
- * This could be moved as common base class.
+ * TODO This could be moved as common base class.
  *
  * @author Jukka Raanamo
+ * @author Marko Lyly
  */
 public abstract class AbstractSadeApplication extends Application implements TransactionListener, HttpServletRequestListener {
 
@@ -47,7 +48,7 @@ public abstract class AbstractSadeApplication extends Application implements Tra
     public static final String THEME_NAME = "sade";
 
     /**
-     * Threadlocal handling of Blackboard
+     * Thread local handling of Blackboard event bus
      */
     private static ThreadLocal<Blackboard> blackboard = new ThreadLocal<Blackboard>();
     private final Blackboard blackboardInstance = new Blackboard();
@@ -90,9 +91,9 @@ public abstract class AbstractSadeApplication extends Application implements Tra
         super.setLocale(locale);
     }
 
-    //
-    // implement TransactionListener interface
-    //
+    /*
+     * Implement TransactionListener interface
+     */
     @Override
     public void transactionStart(Application application, Object transactionData) {
         if (application == this) {
@@ -107,25 +108,25 @@ public abstract class AbstractSadeApplication extends Application implements Tra
         }
     }
 
-    // interface HttpServletRequestListener
+    /*
+     * Implement HttpServletRequestListener interface
+     */
     @Override
     public void onRequestStart(HttpServletRequest request, HttpServletResponse response) {
         onRequestStart(request);
     }
 
-    // interface HttpServletRequestListener
     @Override
     public void onRequestEnd(HttpServletRequest request, HttpServletResponse response) {
+        // empty
     }
 
-    public static Blackboard getBlackboard() {
-        return blackboard.get();
-    }
-
-    public static void setBlackBoard(Blackboard blackBoard) {
-        blackboard.set(blackBoard);
-    }
-
+    /**
+     * Get "lang" request parameter (if present) and set current locale for the application and
+     * I18N service.
+     *
+     * @param request
+     */
     protected void onRequestStart(Object request) {
         // TODO: testejä varten - HUOM! lang-parametrin ohessa pitää antaa myös 'restartApplication', muuten locale ei vaihdu oikein
         String langParam = getParameter(request, "lang");
@@ -137,14 +138,56 @@ public abstract class AbstractSadeApplication extends Application implements Tra
         log.debug("onRequestStart(): ", requestInfo(request));
     }
 
+    /**
+     * Get ThreadLocal Blackboard instance
+     * @return
+     */
+    public static Blackboard getBlackboard() {
+        return blackboard.get();
+    }
+
+    /**
+     * Set ThreadLocal Blackboard intance
+     *
+     * @param blackBoard
+     */
+    public static void setBlackBoard(Blackboard blackBoard) {
+        blackboard.set(blackBoard);
+    }
+
+    /**
+     * Gets parameter value from HttpServletRequest.
+     *
+     * @param req
+     * @param name
+     * @return
+     */
     protected String getParameter(Object req, String name) {
         HttpServletRequest request = (HttpServletRequest) req;
         return request.getParameter(name);
     }
 
+    /**
+     * Create string information from the given (http) request (for debugging purposes).
+     *
+     * @param req
+     * @return
+     */
     protected String requestInfo(Object req) {
         HttpServletRequest request = (HttpServletRequest) req;
-        return ", sessionLocale: " + sessionLocale + ", langParam: " + request.getParameter("lang") + ", url: " + request.getRequestURL()
-                + ", i18n.locale: " + I18N.getLocale() + ", default locale: " + Locale.getDefault();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(", sessionLocale: ");
+        sb.append(sessionLocale.toString());
+        sb.append(", langParam: ");
+        sb.append(request.getParameter("lang"));
+        sb.append(", url: ");
+        sb.append(request.getRequestURL());
+        sb.append(", i18n.locale: ");
+        sb.append(I18N.getLocale());
+        sb.append(", default locale: ");
+        sb.append(Locale.getDefault());
+
+        return sb.toString();
     }
 }

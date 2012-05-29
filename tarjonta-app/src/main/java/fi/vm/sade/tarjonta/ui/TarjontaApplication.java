@@ -40,7 +40,7 @@ public class TarjontaApplication extends AbstractSadeApplication {
     @Override
     protected void registerListeners(Blackboard blackboard) {
         log.info("registerListeners() - for blackboard.");
-        // todo: register events once defined
+        // TODO register events once defined
     }
 }
 

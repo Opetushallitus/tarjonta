@@ -27,23 +27,38 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  * @author Antti
+ * @author Marko Lyly
  */
 @Configurable(preConstruction = false)
 public abstract class AbstractSadePortletApplication extends AbstractSadeApplication implements PortletRequestListener {
 
-    // Override to get params from portlet request
+    /*
+     * Override to get params from portlet request
+     */
     @Override
     protected String getParameter(Object req, String name) {
         PortletRequest request = (PortletRequest) req;
         return request.getParameter(name);
     }
 
-    // Override from the base class (has to use protlet request)
+    /*
+     * Override from the base class (has to use portlet request)
+     */
     @Override
     protected String requestInfo(Object req) {
         PortletRequest request = (PortletRequest) req;
-        return ", sessionLocale: " + sessionLocale + ", langParam: " + request.getPublicParameterMap().get("lang") + ", url: ***"
-                + ", i18n.locale: " + I18N.getLocale() + ", default locale: " + Locale.getDefault();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(", sessionLocale: ");
+        sb.append(sessionLocale.toString());
+        sb.append(", langParam: ");
+        sb.append(request.getPublicParameterMap().get("lang"));
+        sb.append(", i18n.locale: ");
+        sb.append(I18N.getLocale());
+        sb.append(", default locale: ");
+        sb.append(Locale.getDefault());
+
+        return sb.toString();
     }
 
     @Override

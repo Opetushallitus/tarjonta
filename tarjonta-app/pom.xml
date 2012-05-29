@@ -58,38 +58,23 @@
 
     </build>
 
-	<!-- <pluginRepositories> <pluginRepository> <id>codehaus-snapshots</id> 
-		<url>http://nexus.codehaus.org/snapshots</url> <snapshots> <enabled>true</enabled> 
-		</snapshots> <releases> <enabled>false</enabled> </releases> </pluginRepository> 
-		<pluginRepository> <id>vaadin-snapshots</id> <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url> 
-		<snapshots> <enabled>true</enabled> </snapshots> <releases> <enabled>false</enabled> 
-		</releases> </pluginRepository> </pluginRepositories> -->
-
     <dependencies>
         <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-test-support</artifactId>
-            <scope>test</scope>
+            <groupId>fi.vm.sade.tarjonta</groupId>
+            <artifactId>tarjonta-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-common</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin</artifactId>
         </dependency>
-		<!-- <dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-user</artifactId>
-			<version>${gwt.version}</version>
-			<scope>runtime</scope>
-		</dependency> -->
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
@@ -126,11 +111,7 @@
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http</artifactId>
         </dependency>
-        <dependency>
-            <groupId>fi.vm.sade.tarjonta</groupId>
-            <artifactId>tarjonta-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.vaadin.addons</groupId>
             <artifactId>formbinder</artifactId>
@@ -173,19 +154,12 @@
             <scope>provided</scope>
         </dependency>
 
-		<!-- <dependency> <groupId>com.google.gwt</groupId> <artifactId>gwt-user</artifactId> 
-			<version>${gwt.version}</version> <scope>provided</scope> </dependency> <dependency> 
-			<groupId>javax.validation</groupId> <artifactId>validation-api</artifactId> 
-			<version>1.0.0.GA</version> <scope>provided</scope> </dependency> <dependency> 
-			<groupId>javax.validation</groupId> <artifactId>validation-api</artifactId> 
-			<version>1.0.0.GA</version> <classifier>sources</classifier> <scope>provided</scope> 
-			</dependency> -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
-        </dependency> 
-		
+        </dependency>
+
         <dependency>
             <groupId>javax.portlet</groupId>
             <artifactId>portlet-api</artifactId>
@@ -207,20 +181,26 @@
             <version>0.4</version>
             <scope>test</scope>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-test-support</artifactId>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.liferay.portal</groupId>
             <artifactId>portal-service</artifactId>
             <version>6.1.0</version>
             <scope>provided</scope>
         </dependency>
-        
+
     </dependencies>
 
 </project>

@@ -37,7 +37,7 @@ public class TarjontaPortletApplication extends AbstractSadePortletApplication {
     @Override
     protected void registerListeners(Blackboard blackboard) {
         log.info("registerListeners() - for blackboard.");
-        // empty
+        // TODO reqister listeners for this application
     }
 
 }
