@@ -251,8 +251,7 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
     public boolean hasAsChild(Koulutusmoduuli child, int depth) {
 
         KoulutusmoduuliTreeWalker.NodeEqualsTester tester = new KoulutusmoduuliTreeWalker.NodeEqualsTester(child);
-        KoulutusmoduuliTreeWalker.createWalker(depth, tester).
-            walkDown(this);
+        KoulutusmoduuliTreeWalker.createWalker(depth, tester).walkDown(this);
 
         return tester.isFound();
 

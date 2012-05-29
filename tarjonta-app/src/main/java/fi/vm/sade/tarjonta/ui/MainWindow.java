@@ -15,9 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.KoulutusmoduuliEditView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,13 +36,24 @@ public class MainWindow extends Window {
         init();
     }
 
-
     private void init() {
         LOG.info("init()");
 
-        // main horizontal two column layout
-        final HorizontalLayout mainLayout = new HorizontalLayout();
+        final VerticalLayout mainLayout = new VerticalLayout();
+        mainLayout.addComponent(createTabs());
         addComponent(mainLayout);
+
     }
+
+    private TabSheet createTabs() {
+
+        final TabSheet tabs = new TabSheet();
+        tabs.setSizeFull();
+        tabs.addTab(new KoulutusmoduuliEditView(), I18N.getMessage("tarjonta.tabs.koulutusmoduulit"));
+        
+        return tabs;
+
+    }
+
 }
 

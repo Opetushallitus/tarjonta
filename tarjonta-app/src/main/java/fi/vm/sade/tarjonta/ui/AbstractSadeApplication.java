@@ -63,7 +63,8 @@ public abstract class AbstractSadeApplication extends Application implements Tra
         log.info("init(), current locale: {}, reset to session locale: {}" , I18N.getLocale(), sessionLocale);
         setLocale(sessionLocale);
 
-        setTheme(THEME_NAME);
+        // theme files are not yet included, they may go into parent project
+        //setTheme(THEME_NAME);
 
         //Init blackboard event bus
         blackboard.set(blackboardInstance);

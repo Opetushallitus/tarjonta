@@ -24,6 +24,8 @@ public abstract class KoulutusmoduuliDTO {
     private String tila;
 
     private String oid;
+    
+    private Long id;
 
     private KoulutusmoduuliPerustiedotDTO perustiedot;
 
@@ -42,6 +44,15 @@ public abstract class KoulutusmoduuliDTO {
     public void setOid(String oid) {
         this.oid = oid;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+    
 
     public void setPerustiedot(KoulutusmoduuliPerustiedotDTO perustiedot) {
         this.perustiedot = perustiedot;
