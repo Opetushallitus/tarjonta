@@ -16,7 +16,9 @@
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli;
 
 import com.vaadin.ui.*;
+import fi.vm.sade.tarjonta.ui.service.TarjontaUiService;
 import fi.vm.sade.tarjonta.ui.util.I18NHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.addon.formbinder.ViewBoundForm;
 
 /**
@@ -32,6 +34,9 @@ public class KoulutusmoduuliEditView extends CustomComponent {
     private Label moduuliStatusLabel;
     
     private Form form;
+    
+    @Autowired
+    private TarjontaUiService uiService;
     
     private static final int VIEW_WIDTH = 100;
     private static final int LEFT_SIDE_WIDTH_PERCENTAGE = 1;

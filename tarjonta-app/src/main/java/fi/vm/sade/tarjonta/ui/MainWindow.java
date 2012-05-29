@@ -37,11 +37,10 @@ public class MainWindow extends Window {
     }
 
     private void init() {
-        LOG.info("init()");
-
+        
         final VerticalLayout mainLayout = new VerticalLayout();
         mainLayout.addComponent(createTabs());
-        addComponent(mainLayout);
+        setContent(mainLayout);
 
     }
 
