@@ -48,7 +48,7 @@ public class MainWindow extends Window {
     private TabSheet createTabs() {
 
         final TabSheet tabs = new TabSheet();
-        tabs.setSizeFull();
+        tabs.setWidth(100, UNITS_PERCENTAGE);
         tabs.addTab(new KoulutusmoduuliEditView(), I18N.getMessage("tarjonta.tabs.koulutusmoduulit"));
         
         return tabs;

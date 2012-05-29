@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.koulutusmoduuli;
 
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.ui.util.I18NHelper;
 
 /**
  *
@@ -30,6 +31,8 @@ public class KoulutusmoduuliEditForm extends CustomComponent {
     private TextField organisaatioField;
 
     private TextField koulutusField;
+    
+    private static I18NHelper i18n = new I18NHelper(KoulutusmoduuliEditForm.class);
 
     public KoulutusmoduuliEditForm() {
 
@@ -48,8 +51,8 @@ public class KoulutusmoduuliEditForm extends CustomComponent {
         organisaatioField = new TextField();
         koulutusField = new TextField();
 
-        addField(mainLayout, new Label(I18N.getMessage("KoulutusmoduuliEditorPanel.organisaatioLabel")), organisaatioField);
-        addField(mainLayout, new Label(I18N.getMessage("KoulutusmoduuliEditorPanel.koulutusLabel")), koulutusField);
+        addField(mainLayout, new Label(i18n.getMessage("organisaatioLabel")), organisaatioField);
+        addField(mainLayout, new Label(i18n.getMessage("koulutusLabel")), koulutusField);
 
     }
 

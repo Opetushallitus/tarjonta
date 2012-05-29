@@ -16,7 +16,7 @@
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli;
 
 import com.vaadin.ui.*;
-import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.ui.util.I18NHelper;
 import org.vaadin.addon.formbinder.ViewBoundForm;
 
 /**
@@ -32,13 +32,19 @@ public class KoulutusmoduuliEditView extends CustomComponent {
     private Label moduuliStatusLabel;
     
     private Form form;
+    
+    private static final int VIEW_WIDTH = 100;
+    private static final int LEFT_SIDE_WIDTH_PERCENTAGE = 1;
+    private static final int RIGHT_SIDE_WIDTH_PERCENTAGE = VIEW_WIDTH - LEFT_SIDE_WIDTH_PERCENTAGE;
+    
+    private static I18NHelper i18n = new I18NHelper(KoulutusmoduuliEditView.class);
 
     public KoulutusmoduuliEditView() {
 
         super();
-
+        
         mainLayout = new HorizontalLayout();
-        mainLayout.setSizeFull();
+        mainLayout.setWidth(VIEW_WIDTH, UNITS_PERCENTAGE);
         mainLayout.addComponent(createLeftPanel());
         mainLayout.addComponent(createEditForm());
 
@@ -51,12 +57,15 @@ public class KoulutusmoduuliEditView extends CustomComponent {
      * @return
      */
     private Component createLeftPanel() {
-        return new Label("left");
+        Label label = new Label("left");
+        label.setWidth(LEFT_SIDE_WIDTH_PERCENTAGE, UNITS_PERCENTAGE);        
+        return label;
     }
 
     private Component createEditForm() {
 
         final VerticalLayout formLayout = new VerticalLayout();
+        formLayout.setSpacing(true);
 
         moduuliTitleLabel = new Label("title");
         moduuliStatusLabel = new Label("status");
@@ -64,34 +73,72 @@ public class KoulutusmoduuliEditView extends CustomComponent {
         formLayout.addComponent(moduuliTitleLabel);
         formLayout.addComponent(moduuliStatusLabel);
 
-        // two column layout for left hand side is for organisaatio and koodisto
-        // right hand side is for relationships of this module        
-        final HorizontalLayout content = new HorizontalLayout();
-        content.setSpacing(true);
-        content.addComponent(createFieldsPanel());
-        content.addComponent(createRelationshipsPanel());
-
-        formLayout.addComponent(content);
-
-        this.form = new ViewBoundForm(formLayout);        
+        formLayout.addComponent(createMainFieldsAndNavigation());        
+        formLayout.addComponent(createMultilingualEditors());
+        formLayout.addComponent(createActionButtons());
+        
+        // wrap all panels in ViewBoundForm to bind fields from multiple
+        // components
+        Form boundForm = new ViewBoundForm(formLayout);        
+        
+        boundForm.setWidth(RIGHT_SIDE_WIDTH_PERCENTAGE, UNITS_PERCENTAGE);
+        
+        this.form = boundForm;
+        
         return form;
 
     }
+    
+    private Component createMainFieldsAndNavigation() {
+        // two column layout for left hand side is for organisaatio and koodisto
+        // right hand side is for relationships of this module        
+        final HorizontalLayout layout = new HorizontalLayout();
+        layout.setWidth(100, UNITS_PERCENTAGE);
+        layout.setSpacing(true);
+        layout.addComponent(createFieldsPanel());
+        layout.addComponent(createRelationshipsPanel());
+        return layout;
+    }
 
     private Component createFieldsPanel() {
-
-        return new KoulutusmoduuliEditForm();
-
+        KoulutusmoduuliEditForm editForm = new KoulutusmoduuliEditForm();
+        return editForm;
+    }
+    
+    private Component createActionButtons() {
+        
+        final HorizontalLayout layout = new HorizontalLayout();
+        layout.setSpacing(true);
+        
+        final Button saveButton = new Button(i18n.getMessage("saveButton"));
+        
+        layout.addComponent(saveButton);
+        
+        return layout;
+        
+        
+    }
+    
+    private Component createMultilingualEditors() {
+        // this is a placeholder, create actual editor component here
+        Panel p = new Panel("multilingual editor placeholder");
+        // add some artificial height
+        p.setWidth(100, UNITS_PERCENTAGE);
+        p.setHeight(400, UNITS_PIXELS);        
+        return p;
     }
 
     private Component createRelationshipsPanel() {
 
         final VerticalLayout layout = new VerticalLayout();
         layout.setSpacing(true);
+        layout.setWidth(100, UNITS_PERCENTAGE);
 
         // replace with actual panels
-        final Panel parents = new Panel(I18N.getMessage("KoulutusmoduuliEditorPanel.sisaltyyModuleihin"));
-        final Panel children = new Panel(I18N.getMessage("KoulutusmoduuliEditorPanel.sisaltyvatModuulit"));
+        final Panel parents = new Panel(i18n.getMessage("sisaltyyModuleihin"));
+        final Panel children = new Panel(i18n.getMessage("sisaltyvatModuulit"));
+        parents.setWidth(100, UNITS_PERCENTAGE);
+        children.setWidth(100, UNITS_PERCENTAGE);
 
         layout.addComponent(parents);
         layout.addComponent(children);
