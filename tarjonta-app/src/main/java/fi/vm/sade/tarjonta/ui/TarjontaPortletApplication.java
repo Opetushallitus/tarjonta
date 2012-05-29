@@ -1,4 +1,5 @@
-/*
+/**
+ *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -13,34 +14,30 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
+
 package fi.vm.sade.tarjonta.ui;
 
+
 import com.github.wolfie.blackboard.Blackboard;
-import com.vaadin.ui.Window;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Jukka Raanamo
+ * @author mlyly
  */
-public class TarjontaApplication extends AbstractSadeApplication {
+public class TarjontaPortletApplication extends AbstractSadePortletApplication {
 
     @Override
     public synchronized void init() {
-        log.info("init()");
+        log.info("init() - portlet");
         super.init();
-
-        createMainWindow();
-    }
-
-    private void createMainWindow() {
-        log.info("createMainWindow()");
-        setMainWindow(new MainWindow());
     }
 
     @Override
     protected void registerListeners(Blackboard blackboard) {
         log.info("registerListeners() - for blackboard.");
-        // todo: register events once defined
+        // empty
     }
-}
 
+}
