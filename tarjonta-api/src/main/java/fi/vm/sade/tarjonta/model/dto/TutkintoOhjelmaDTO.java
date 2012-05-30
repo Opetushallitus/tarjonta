@@ -15,11 +15,14 @@
  */
 package fi.vm.sade.tarjonta.model.dto;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Jukka Raanamo
  */
-public class TutkintoOhjelmaDTO extends KoulutusmoduuliDTO {
-    
+public class TutkintoOhjelmaDTO extends KoulutusmoduuliDTO implements Serializable {
+
+    private static final long serialVersionUID = 7115965299342123962L;
 }
 

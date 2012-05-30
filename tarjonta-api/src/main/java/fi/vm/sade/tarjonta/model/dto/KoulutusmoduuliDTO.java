@@ -15,16 +15,21 @@
  */
 package fi.vm.sade.tarjonta.model.dto;
 
+import java.io.Serializable;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  *
  * @author Jukka Raanamo
  */
-public abstract class KoulutusmoduuliDTO {
+public abstract class KoulutusmoduuliDTO implements Serializable {
+
+    private static final long serialVersionUID = 1340505119049507211L;
 
     private String tila;
 
     private String oid;
-    
+
     private Long id;
 
     private KoulutusmoduuliPerustiedotDTO perustiedot;
@@ -52,7 +57,6 @@ public abstract class KoulutusmoduuliDTO {
     public Long getId() {
         return id;
     }
-    
 
     public void setPerustiedot(KoulutusmoduuliPerustiedotDTO perustiedot) {
         this.perustiedot = perustiedot;
@@ -60,6 +64,11 @@ public abstract class KoulutusmoduuliDTO {
 
     public KoulutusmoduuliPerustiedotDTO getPerustiedot() {
         return perustiedot;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("oid", oid).append("tila", tila).append(perustiedot).toString();
     }
 
 }

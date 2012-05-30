@@ -26,12 +26,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 /**
  *
  * @author Jukka Raanamo
  * @author Marko Lyly
  */
 public class TarjontaServiceMock implements TarjontaAdminService {
+    
+    private static final Logger log = LoggerFactory.getLogger(TarjontaServiceMock.class);
 
     private Map<Long, KoulutusmoduuliDTO> koulutusModuuliMap = new HashMap<Long, KoulutusmoduuliDTO>();
 
@@ -51,6 +57,8 @@ public class TarjontaServiceMock implements TarjontaAdminService {
     @Override
     public KoulutusmoduuliDTO save(KoulutusmoduuliDTO koulutusModuuli) {
 
+        log.debug("saving " + koulutusModuuli);
+        
         if (koulutusModuuli.getId() == null) {
             koulutusModuuli.setId(idCounter.incrementAndGet());
         }

@@ -15,11 +15,16 @@
  */
 package fi.vm.sade.tarjonta.model.dto;
 
+import java.io.Serializable;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  *
  * @author Jukka Raanamo
  */
-public class KoulutusmoduuliPerustiedotDTO {
+public class KoulutusmoduuliPerustiedotDTO implements Serializable {
+
+    private static final long serialVersionUID = 4328770061817006214L;
 
     private String organisaatioOid;
 
@@ -29,6 +34,11 @@ public class KoulutusmoduuliPerustiedotDTO {
 
     public String getOrganisaatioOid() {
         return organisaatioOid;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("organisaatioId", organisaatioOid).toString();
     }
 
 }
