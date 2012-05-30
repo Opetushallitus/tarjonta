@@ -13,30 +13,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.service;
+package fi.vm.sade.tarjonta.ui.koulutusmoduuli.tutkintoohjelma;
 
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.AbstractKoulutusmoduuliFormModel;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 
 /**
  *
  * @author Jukka Raanamo
  */
-public interface TarjontaUiService {
+public class TutkintoOhjelmaFormModel extends AbstractKoulutusmoduuliFormModel<TutkintoOhjelmaDTO> {
+
+    public TutkintoOhjelmaFormModel(TutkintoOhjelmaDTO dto) {
+        super(dto);
+    }
     
-    /**
-     * 
-     * @return
-     */
-    TutkintoOhjelmaDTO createTutkintoOhjelma();
+    public TutkintoOhjelmaDTO getTutkintoOhjelma() {
+        return koulutusmoduuli;
+    }
     
+    public void setTutkintoOhjelma(TutkintoOhjelmaDTO dto) {
+        this.koulutusmoduuli = dto;
+    }
     
-    /**
-     * 
-     * @param koulutusmoduuli
-     * @return
-     */
-    KoulutusmoduuliDTO save(KoulutusmoduuliDTO koulutusmoduuli);
     
 }
 

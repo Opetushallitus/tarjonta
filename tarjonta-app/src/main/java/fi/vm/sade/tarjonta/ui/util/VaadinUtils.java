@@ -13,30 +13,39 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.service;
+package fi.vm.sade.tarjonta.ui.util;
 
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
-import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextField;
 
 /**
  *
  * @author Jukka Raanamo
  */
-public interface TarjontaUiService {
+public class VaadinUtils {
     
     /**
+     * Returns new TextField showing null's as empty string.
      * 
      * @return
      */
-    TutkintoOhjelmaDTO createTutkintoOhjelma();
+    public static TextField newTextField() {
+        
+        TextField f = new TextField();
+        f.setNullRepresentation("");
+        return f;
+        
+    }
     
     
-    /**
-     * 
-     * @param koulutusmoduuli
-     * @return
-     */
-    KoulutusmoduuliDTO save(KoulutusmoduuliDTO koulutusmoduuli);
-    
+    public static HorizontalLayout newTwoColumnHorizontalLayout(Component left, Component right) {
+
+        HorizontalLayout layout = new HorizontalLayout();
+        layout.addComponent(left);
+        layout.addComponent(right);
+        return layout;
+
+    }
 }
 

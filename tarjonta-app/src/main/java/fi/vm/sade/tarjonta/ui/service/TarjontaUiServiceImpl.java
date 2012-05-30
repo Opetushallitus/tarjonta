@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.service;
 
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,6 @@ import org.springframework.stereotype.Service;
  *
  * @author Jukka Raanamo
  */
-@Service
 public class TarjontaUiServiceImpl implements TarjontaUiService {
 
     @Autowired
@@ -34,6 +34,13 @@ public class TarjontaUiServiceImpl implements TarjontaUiService {
     public TutkintoOhjelmaDTO createTutkintoOhjelma() {
         return adminService.createTutkintoOhjelma(null);
     }
+
+    @Override
+    public KoulutusmoduuliDTO save(KoulutusmoduuliDTO koulutusmoduuli) {
+        return adminService.save(koulutusmoduuli);
+    }
+    
+    
 
 }
 

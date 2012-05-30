@@ -28,15 +28,19 @@ public class I18NHelper {
 
     private int prefixLength;
 
-    public I18NHelper(Class from) {
-        keyBuilder.append(from.getSimpleName()).append(".");
+    public I18NHelper(String prefix) {
+        keyBuilder.append(prefix);
         prefixLength = keyBuilder.length();
+    }
+
+    public I18NHelper(Class from) {
+        this(from.getSimpleName() + ".");
     }
 
     public I18NHelper(Object from) {
         this(from.getClass());
     }
-    
+
     String makeKey(String key) {
         keyBuilder.setLength(prefixLength);
         keyBuilder.append(key);
