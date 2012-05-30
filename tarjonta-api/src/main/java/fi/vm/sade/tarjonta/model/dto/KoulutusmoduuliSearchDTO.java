@@ -1,4 +1,5 @@
-/*
+/**
+ *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -13,21 +14,41 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.dao;
 
-import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliSisaltyvyys;
-import java.util.List;
+package fi.vm.sade.tarjonta.model.dto;
 
 /**
  *
- * @author Jukka Raanamo
+ * @author mlyly
  */
-public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
+public class KoulutusmoduuliSearchDTO {
 
-    public List<KoulutusmoduuliSisaltyvyys> findAllSisaltyvyys();
+    private String nimi;
+    long startIndex = 0L;
+    long pageSize = Long.MAX_VALUE;
 
-    public Koulutusmoduuli findByOid(String oid);
+    public String getNimi() {
+        return nimi;
+    }
+
+    public void setNimi(String nimi) {
+        this.nimi = nimi;
+    }
+
+    public long getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(long pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public long getStartIndex() {
+        return startIndex;
+    }
+
+    public void setStartIndex(long startIndex) {
+        this.startIndex = startIndex;
+    }
 
 }

@@ -18,25 +18,27 @@ public class TarjontaAdminServiceTest {
 
     @Autowired
     private TarjontaAdminService adminService;
-    
+
     @Test
     public void testNewKoulutusmoduuliIsInEditState() {
-        
+
         KoulutusmoduuliDTO koulutusModuuli = adminService.createTutkintoOhjelma(null);
         assertEquals(KoulutusmoduuliTila.SUUNNITELUSSA.name(), koulutusModuuli.getTila());
-        
     }
-    
-    
+
+
     @Test
     public void testSavedKoulutusmoduuliHasOid() {
-        
+
         KoulutusmoduuliDTO koulutusmoduuliDTO = adminService.createTutkintoOhjelma(null);
         assertNull(koulutusmoduuliDTO.getOid());
-        
-        koulutusmoduuliDTO = adminService.save(koulutusmoduuliDTO);        
+
+        koulutusmoduuliDTO = adminService.save(koulutusmoduuliDTO);
         assertNotNull(koulutusmoduuliDTO.getOid());
-        
+
+        koulutusmoduuliDTO = adminService.find(koulutusmoduuliDTO.getOid());
+        assertNotNull(koulutusmoduuliDTO);
+        assertNotNull(koulutusmoduuliDTO.getOid());
     }
 
 }
