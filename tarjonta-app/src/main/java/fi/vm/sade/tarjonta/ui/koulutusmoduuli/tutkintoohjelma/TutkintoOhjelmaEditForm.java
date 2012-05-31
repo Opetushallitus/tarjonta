@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,12 +17,20 @@ package fi.vm.sade.tarjonta.ui.koulutusmoduuli.tutkintoohjelma;
 
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.NestedMethodProperty;
+import com.vaadin.terminal.ExternalResource;
+import com.vaadin.terminal.FileResource;
 import com.vaadin.ui.*;
+import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
+import com.vaadin.ui.Upload.SucceededEvent;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.AbstractKoulutusmoduuliEditForm;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.AbstractKoulutusmoduuliFormModel;
 import fi.vm.sade.tarjonta.ui.util.I18NHelper;
 import fi.vm.sade.tarjonta.ui.util.VaadinUtils;
+import java.io.File;
+import java.io.OutputStream;
+import java.util.Locale;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
@@ -62,7 +70,7 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
 
         organisaatioField = VaadinUtils.newTextField();
         koulutusField = VaadinUtils.newTextField();
-        
+
         addFieldWithLabel(grid, new Label(i18n.getMessage("organisaatioLabel")), organisaatioField);
         addFieldWithLabel(grid, new Label(i18n.getMessage("koulutusLabel")), koulutusField);
 
@@ -92,10 +100,9 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
         }
 
         return beanItem;
-
     }
 
-    
+
 
     private Component createKoodistoPanel() {
 
@@ -113,11 +120,64 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
 
     private Component createMultilingualEditors() {
         // this is a placeholder, create actual editor component here
-        Panel p = new Panel("multilingual editor placeholder");
-        // add some artificial height
-        p.setWidth(100, UNITS_PERCENTAGE);
-        p.setHeight(400, UNITS_PIXELS);
-        return p;
+
+        TabSheet tabs = new TabSheet();
+
+        Locale[] locales = new Locale[] {
+            new Locale("fi"), new Locale("sv"), new Locale("en")
+        };
+
+        for (Locale locale : locales) {
+            VerticalLayout vl = new VerticalLayout();
+            vl.setSpacing(true);
+            vl.setCaption(locale.getDisplayLanguage());
+
+            HorizontalLayout hl = new HorizontalLayout();
+            vl.addComponent(hl);
+
+            hl.addComponent(new RichTextArea(i18n.getMessage("tutkinnonRakenne")));
+
+            VerticalLayout vl2 = new VerticalLayout();
+            vl2.setSpacing(true);
+            hl.addComponent(vl2);
+
+            ExternalResource imageResource = new ExternalResource("http://myy.helia.fi/~heita/funktrak.gif");
+            final Embedded embedded = new Embedded("", imageResource);
+            embedded.setWidth("150px");
+
+            Upload uploadImage = new Upload();
+            uploadImage.setCaption(i18n.getMessage("lataaTutkinnonRakenneKuva"));
+
+            vl2.addComponent(uploadImage);
+            vl2.addComponent(embedded);
+
+            vl.addComponent(new RichTextArea(i18n.getMessage("koulutuksellisetTavoitteet")));
+            vl.addComponent(new RichTextArea(i18n.getMessage("sijoittuminenTyoelamaan")));
+
+            vl.addComponent(new Label("Tehtävänimikkeet placeholder"));
+            vl.addComponent(new TextField());
+
+            vl.addComponent(new RichTextArea(i18n.getMessage("koulutuksenSisalto")));
+            vl.addComponent(new RichTextArea(i18n.getMessage("jatkoOpinnot")));
+
+            tabs.addTab(vl, locale.getDisplayLanguage(I18N.getLocale()));
+            tabs.getTab(vl).setClosable(true);
+        }
+
+        final Label addNewLanguage = new Label(i18n.getMessage("lisaaUusiKielisyys"));
+        tabs.addTab(addNewLanguage);
+
+        tabs.addListener(new TabSheet.SelectedTabChangeListener() {
+
+            @Override
+            public void selectedTabChange(SelectedTabChangeEvent event) {
+                if (event.getTabSheet().getSelectedTab() == addNewLanguage) {
+                    getWindow().showNotification("TODO new language tab selected...");
+                }
+            }
+        });
+
+        return tabs;
     }
 
     private Component createNavigations() {

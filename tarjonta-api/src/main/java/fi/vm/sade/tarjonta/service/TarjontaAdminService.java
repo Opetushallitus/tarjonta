@@ -19,12 +19,17 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSearchDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import java.util.List;
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+import org.apache.cxf.annotations.WSDLDocumentation;
 
 /**
  *
  * @author Jukka Raanamo
  * @author Marko Lyly
  */
+@WebService(name="tarjontaAdminService")
+@WSDLDocumentation("Web servicet koulutustarjonnan käsittelyyn.")
 public interface TarjontaAdminService {
 
     /**
@@ -35,6 +40,7 @@ public interface TarjontaAdminService {
      * @param organisaatioOID
      * @return
      */
+    @WebMethod
     TutkintoOhjelmaDTO createTutkintoOhjelma(String organisaatioOID);
 
     /**
@@ -43,22 +49,25 @@ public interface TarjontaAdminService {
      * @param koulutusModuuli
      * @return
      */
+    @WebMethod
     KoulutusmoduuliDTO save(KoulutusmoduuliDTO koulutusModuuli);
 
     /**
-     * Find given koulutusmoduuli by it's OID.
+     * Find given Koulutusmoduuli by it's OID.
      *
      * @param koulutusModuuliOID
      * @return
      */
+    @WebMethod
     KoulutusmoduuliDTO find(String koulutusModuuliOID);
 
     /**
-     * Find koulutusmoduuli's with given search spesification.
+     * Find Koulutusmoduuli's with given search spesification.
      *
      * @param searchSpesification
      * @return
      */
+    @WebMethod
     List<KoulutusmoduuliDTO> find(KoulutusmoduuliSearchDTO searchSpesification);
 
 
