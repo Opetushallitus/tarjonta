@@ -15,21 +15,24 @@
  */
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.tutkintoohjelma;
 
+import com.vaadin.data.util.AbstractProperty;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.terminal.ExternalResource;
-import com.vaadin.terminal.FileResource;
 import com.vaadin.ui.*;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
-import com.vaadin.ui.Upload.SucceededEvent;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
+import fi.vm.sade.tarjonta.ui.TarjontaApplication;
+import fi.vm.sade.tarjonta.ui.event.KoulutusmoduuliChangedEvent;
+import fi.vm.sade.tarjonta.ui.event.KoulutusmoduuliChangedEvent.KoulutusmoduuliChangedEventListener;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.AbstractKoulutusmoduuliEditForm;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.AbstractKoulutusmoduuliFormModel;
 import fi.vm.sade.tarjonta.ui.util.I18NHelper;
 import fi.vm.sade.tarjonta.ui.util.VaadinUtils;
-import java.io.File;
-import java.io.OutputStream;
+import java.util.Date;
+import org.apache.commons.lang.StringUtils;
 import java.util.Locale;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
@@ -42,6 +45,8 @@ import org.vaadin.addon.formbinder.PropertyId;
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<TutkintoOhjelmaDTO> {
 
+    private static final long serialVersionUID = -4038416408035942931L;
+
     private Label moduuliTitleLabel;
 
     private Label moduuliStatusLabel;
@@ -53,23 +58,41 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
     private TextField koulutusField;
 
     private static final I18NHelper i18n = new I18NHelper("TutkintoOhjelmaEditForm.");
+    
+    
+    private KoulutusmoduuliChangedEventListener mSaveHandler = new KoulutusmoduuliChangedEventListener() {
+
+        @Override
+        public void onKoulutusmoduuliChanged(KoulutusmoduuliChangedEvent event) {
+            // todo: fix me: triggers event on status label to force updating changed value
+            // from backing bean (updated timestamp). not the ideal way but did not know what 
+            // is the right practise. this would not be an issue if the form is removed after save
+            // and something else is diplayed
+            moduuliStatusLabel.valueChange(new Label().new ValueChangeEvent(moduuliStatusLabel));
+        }
+    };
 
     public TutkintoOhjelmaEditForm() {
 
         final VerticalLayout mainLayout = new VerticalLayout();
         mainLayout.setSpacing(true);
 
-        moduuliTitleLabel = new Label("title");
-        moduuliStatusLabel = new Label("status");
-
-        mainLayout.addComponent(moduuliTitleLabel);
-        mainLayout.addComponent(moduuliStatusLabel);
-
         final GridLayout grid = new GridLayout(2, 2);
         grid.setSpacing(true);
 
         organisaatioField = VaadinUtils.newTextField();
         koulutusField = VaadinUtils.newTextField();
+
+        moduuliTitleLabel = new Label("title");
+        moduuliStatusLabel = new Label();
+
+        mainLayout.addComponent(moduuliTitleLabel);
+        mainLayout.addComponent(moduuliStatusLabel);
+
+        organisaatioField.addListener(moduuliTitleLabel);
+        koulutusField.addListener(moduuliTitleLabel);
+        organisaatioField.setImmediate(true);
+        koulutusField.setImmediate(true);
 
         addFieldWithLabel(grid, new Label(i18n.getMessage("organisaatioLabel")), organisaatioField);
         addFieldWithLabel(grid, new Label(i18n.getMessage("koulutusLabel")), koulutusField);
@@ -80,6 +103,8 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
 
         mainLayout.addComponent(VaadinUtils.newTwoColumnHorizontalLayout(vertical, createNavigations()));
         mainLayout.addComponent(createMultilingualEditors());
+        
+        TarjontaApplication.getBlackboard().addListener(mSaveHandler);
 
         setCompositionRoot(mainLayout);
     }
@@ -90,6 +115,10 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
         final TutkintoOhjelmaFormModel model = new TutkintoOhjelmaFormModel(dto);
         final BeanItem<TutkintoOhjelmaFormModel> beanItem = new BeanItem<TutkintoOhjelmaFormModel>(model);
 
+        // this is not getting set via bean item??
+        moduuliStatusLabel.setPropertyDataSource(new OrganisaatioStatusProperty(dto));
+        moduuliTitleLabel.setPropertyDataSource(new OrganisaatioLabelProperty());
+        
         // todo: add bean properties to populate
         final String[] properties = {
             "organisaatioOid"
@@ -101,7 +130,6 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
 
         return beanItem;
     }
-
 
 
     private Component createKoodistoPanel() {
@@ -199,6 +227,77 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
         return layout;
 
     }
+    
+    
+   
+    private class OrganisaatioStatusProperty extends AbstractProperty {
+
+        private static final long serialVersionUID = -8671743512655403988L;
+
+        private KoulutusmoduuliDTO koulutusmoduuli;
+
+        public OrganisaatioStatusProperty(KoulutusmoduuliDTO koulutusmoduuli) {
+            this.koulutusmoduuli = koulutusmoduuli;
+        }
+
+        @Override
+        public Class<?> getType() {
+            return String.class;
+        }
+
+        @Override
+        public void setValue(Object newValue) throws ReadOnlyException, ConversionException {
+            // read-only
+        }
+
+        @Override
+        public Object getValue() {
+
+            Date updated = koulutusmoduuli.getUpdated();
+            if (updated == null) {
+                return I18N.getMessage("TutkintoOhjelmaFormModel.organisaatioStatus.notSaved");
+            } else {
+                return I18N.getMessage("TutkintoOhjelmaFormModel.organisaatioStatus.savedLuonnos", updated);
+            }
+
+        }
+
+    }
+
+
+    private class OrganisaatioLabelProperty extends AbstractProperty {
+
+        private static final long serialVersionUID = -3220959237478842249L;
+
+        @Override
+        public Class<?> getType() {
+            return String.class;
+        }
+
+        @Override
+        public void setValue(Object newValue) throws ReadOnlyException, ConversionException {
+            // read-only
+        }
+
+        @Override
+        public Object getValue() {
+
+            String organisaatioNimi = (String) organisaatioField.getValue();
+            if (organisaatioNimi == null) {
+                return i18n.getMessage("organisaatioLabel.emptyValue");
+            } else {
+                String koulutus = (String) koulutusField.getValue();
+                if (StringUtils.isNotEmpty(koulutus)) {
+                    return organisaatioNimi + ", " + koulutus;
+                } else {
+                    return organisaatioNimi;
+                }
+            }
+
+        }
+
+    }
+
 
 }
 

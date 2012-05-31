@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSearchDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,7 @@ public class TarjontaServiceMock implements TarjontaAdminService {
         if (koulutusModuuli.getId() == null) {
             koulutusModuuli.setId(idCounter.incrementAndGet());
         }
+        koulutusModuuli.setUpdated(new Date());
         koulutusModuuliMap.put(koulutusModuuli.getId(), koulutusModuuli);
         return koulutusModuuli;
 
@@ -83,15 +85,15 @@ public class TarjontaServiceMock implements TarjontaAdminService {
     }
 
     @Override
-    public List<KoulutusmoduuliDTO> find(KoulutusmoduuliSearchDTO searchSpesification) {
-        if (searchSpesification == null) {
-            throw new IllegalArgumentException("Search spesification required.");
+    public List<KoulutusmoduuliDTO> find(KoulutusmoduuliSearchDTO searchSpecification) {
+        if (searchSpecification == null) {
+            throw new IllegalArgumentException("Search specification required.");
         }
 
         List<KoulutusmoduuliDTO> result = new ArrayList<KoulutusmoduuliDTO>();
 
         for (KoulutusmoduuliDTO koulutusmoduuliDTO : koulutusModuuliMap.values()) {
-            if (match(koulutusmoduuliDTO, searchSpesification)) {
+            if (match(koulutusmoduuliDTO, searchSpecification)) {
                 result.add(koulutusmoduuliDTO);
             }
         }

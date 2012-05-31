@@ -16,12 +16,16 @@
 package fi.vm.sade.tarjonta.ui;
 
 import com.github.wolfie.blackboard.Blackboard;
+import fi.vm.sade.tarjonta.ui.event.KoulutusmoduuliChangedEvent;
+import fi.vm.sade.tarjonta.ui.event.KoulutusmoduuliChangedEvent.KoulutusmoduuliChangedEventListener;
 
 /**
  *
  * @author Jukka Raanamo
  */
 public class TarjontaApplication extends AbstractSadeApplication {
+
+    private static final long serialVersionUID = 8699081177720065569L;
 
     @Override
     public synchronized void init() {
@@ -35,12 +39,9 @@ public class TarjontaApplication extends AbstractSadeApplication {
 
     @Override
     protected void registerListeners(Blackboard blackboard) {
-        log.info("registerListeners() - blackboard");
+        blackboard.register(KoulutusmoduuliChangedEventListener.class, KoulutusmoduuliChangedEvent.class);
         blackboard.enableLogging();
-
-        // TODO register events once defined
-
-        // blackboard.register(Listener.class, Event.class);
     }
+
 }
 

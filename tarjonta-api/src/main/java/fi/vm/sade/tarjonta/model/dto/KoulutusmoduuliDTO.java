@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.model.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -31,6 +32,8 @@ public abstract class KoulutusmoduuliDTO implements Serializable {
     private String oid;
 
     private Long id;
+
+    private Date updated;
 
     private KoulutusmoduuliPerustiedotDTO perustiedot;
 
@@ -66,9 +69,18 @@ public abstract class KoulutusmoduuliDTO implements Serializable {
         return perustiedot;
     }
 
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("oid", oid).append("tila", tila).append(perustiedot).toString();
+        return new ToStringBuilder(this).append("oid", oid).append("tila", tila).append("updated", updated)
+            .append(perustiedot).toString();
     }
 
 }

@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.model;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
@@ -33,6 +34,8 @@ import org.slf4j.LoggerFactory;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
 
+    private static final long serialVersionUID = 4545498514452280033L;
+
     public static final String TABLE_NAME = "koulutusmoduuli";
 
     private static Logger log = LoggerFactory.getLogger(Koulutusmoduuli.class);
@@ -42,6 +45,9 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
     private KoulutusmoduuliTila tila;
 
     private KoulutusmoduuliPerustiedot perustiedot;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updated;
 
     /**
      *
@@ -75,6 +81,15 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
         this();
         this.tyyppi = tyyppi;
         this.tila = KoulutusmoduuliTila.SUUNNITELUSSA;
+    }
+
+    /**
+     * Returns timestamp when this Koulutusmoduuli was updated or null if has never been persisted.
+     *
+     * @return
+     */
+    public Date getUpdated() {
+        return updated;
     }
 
     public String getOid() {
@@ -118,6 +133,17 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
      */
     public Set<KoulutusmoduuliSisaltyvyys> getParents() {
         return Collections.unmodifiableSet(parents);
+    }
+
+    @PreUpdate
+    protected void beforeUpdate() {
+        updated = new Date();
+    }
+
+    @PrePersist
+    protected void beforePersist() {
+        // do we want to have created separately
+        updated = new Date();
     }
 
     /**
@@ -233,7 +259,6 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
         return removed;
 
     }
-
 
     /**
      * Returns all those Koulutusmoduuli that this Koulutusmoduuli includes. The returned list is immutable.

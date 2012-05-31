@@ -20,10 +20,13 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliPerustiedot;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliSisaltyvyys;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
+import java.util.Date;
 import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -37,6 +40,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 public class KoulutusmoduuliDAOTest {
+    
+    private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliDAOTest.class);
 
     @Autowired
     private KoulutusmoduuliDAO dao;
@@ -53,7 +58,7 @@ public class KoulutusmoduuliDAOTest {
         p.setOrganisaatioOid(oid);
         
         t1.setPerustiedot(p);
-        t1 = (TutkintoOhjelma) dao.insert(t1);
+        t1 = insert(t1);
 
         assertNotNull(t1.getId());
 
@@ -62,6 +67,29 @@ public class KoulutusmoduuliDAOTest {
         assertEquals(oid, t2.getOid());
         assertEquals(oid, t2.getPerustiedot().getOrganisaatioOid());
 
+    }
+    
+    @Test
+    public void savingModuuliUpdatesUpdatedTimestamp() throws Exception {
+        
+        TutkintoOhjelma t = new TutkintoOhjelma();
+        assertNull(t.getUpdated());
+        
+        t = insert(t);
+        
+        Date timeInserted = t.getUpdated();
+        assertNotNull(timeInserted);
+        
+        // wait a moment to make sure some time has elapsed
+        Thread.sleep(50L);
+        
+        t.setOid("new oid");
+        t = update(t);
+        
+        Date timeUpdated = t.getUpdated();
+        
+        assertEquals(1, timeUpdated.compareTo(timeInserted));
+        
     }
     
     @Test
@@ -205,6 +233,14 @@ public class KoulutusmoduuliDAOTest {
         return (TutkintoOhjelma) dao.read(id);
     }
     
+    private TutkintoOhjelma update(TutkintoOhjelma o) {
+        return (TutkintoOhjelma) dao.update(o);
+    }
+    
+    
+    private TutkintoOhjelma insert(TutkintoOhjelma o) {
+        return (TutkintoOhjelma) dao.insert(o);
+    }
 
 }
 

@@ -24,6 +24,8 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Window.Notification;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.ui.TarjontaApplication;
+import fi.vm.sade.tarjonta.ui.event.KoulutusmoduuliChangedEvent;
 import fi.vm.sade.tarjonta.ui.service.TarjontaUiService;
 import fi.vm.sade.tarjonta.ui.util.I18NHelper;
 import java.io.Serializable;
@@ -181,8 +183,14 @@ public class KoulutusmoduuliEditView extends CustomComponent {
     }
 
     private void save() {
+        
         editForm.save(uiService, koulutusmoduuliDTO);
-        getWindow().showNotification(i18n.getMessage("save.success"));
+        
+        final KoulutusmoduuliChangedEvent event = new KoulutusmoduuliChangedEvent(koulutusmoduuliDTO, KoulutusmoduuliChangedEvent.EventType.MODIFIED); 
+        TarjontaApplication.getBlackboard().fire(event);
+        
+        getWindow().showNotification(i18n.getMessage("save.success"));        
+        
     }
 
     private static class KoulutusmoduuliOption implements Serializable {

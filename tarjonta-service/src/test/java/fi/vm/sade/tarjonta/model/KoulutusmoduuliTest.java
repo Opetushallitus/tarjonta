@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import java.util.Date;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -141,6 +142,33 @@ public class KoulutusmoduuliTest {
 
     }
 
+    @Test
+    public void testUpdateTimestampIsSetAtInsert() {
+        
+        Koulutusmoduuli m = newModuuli();
+        m.beforePersist();
+        assertNotNull(m.getUpdated());
+        
+    }
+    
+    @Test
+    public void testUpdateTimestampIsUpdatesAtUpdate() throws Exception {
+        
+        Koulutusmoduuli m = newModuuli();
+        m.beforePersist();
+        Date before = m.getUpdated();
+        
+        Thread.sleep(50L);
+        
+        m.beforeUpdate();
+        Date after = m.getUpdated();
+        
+        assertEquals(1, after.compareTo(before));
+        
+    }
+    
+    
+    
     private Koulutusmoduuli newModuuli() {
         return new TutkintoOhjelma();
     }

@@ -20,6 +20,8 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliSisaltyvyys;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -30,17 +32,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, Long> implements KoulutusmoduuliDAO {
 
+    private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliDAO.class);
+
     public List<KoulutusmoduuliSisaltyvyys> findAllSisaltyvyys() {
         return getEntityManager().
-                createQuery("from " + KoulutusmoduuliSisaltyvyys.class.getSimpleName() + " as s").
-                getResultList();
+            createQuery("from " + KoulutusmoduuliSisaltyvyys.class.getSimpleName() + " as s").
+            getResultList();
     }
 
     public Koulutusmoduuli findByOid(String oid) {
         Koulutusmoduuli result = null;
 
         List<Koulutusmoduuli> results = findBy("oid", oid);
-        if (results.size() == 0) {
+        if (results.isEmpty()) {
             // TODO not found
         } else if (results.size() == 1) {
             result = results.get(0);
@@ -50,4 +54,6 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
         return result;
     }
+
 }
+

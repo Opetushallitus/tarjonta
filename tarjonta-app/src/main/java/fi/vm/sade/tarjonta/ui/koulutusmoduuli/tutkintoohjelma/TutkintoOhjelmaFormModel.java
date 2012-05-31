@@ -15,14 +15,20 @@
  */
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.tutkintoohjelma;
 
-import fi.vm.sade.tarjonta.ui.koulutusmoduuli.AbstractKoulutusmoduuliFormModel;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.AbstractKoulutusmoduuliFormModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Jukka Raanamo
  */
 public class TutkintoOhjelmaFormModel extends AbstractKoulutusmoduuliFormModel<TutkintoOhjelmaDTO> {
+
+    private static final long serialVersionUID = 492232378548775918L;
+    
+    private static final Logger log = LoggerFactory.getLogger(TutkintoOhjelmaFormModel.class);
 
     public TutkintoOhjelmaFormModel(TutkintoOhjelmaDTO dto) {
         super(dto);

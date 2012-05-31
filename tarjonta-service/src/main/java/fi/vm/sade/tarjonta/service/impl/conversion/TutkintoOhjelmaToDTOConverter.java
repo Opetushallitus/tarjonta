@@ -25,6 +25,7 @@ import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 /**
  * TODO: maybe inherit from KoulutusOhjelmaDTOConverter?
  * 
+ * @param <T> 
  * @author Jukka Raanamo
  */
 public class TutkintoOhjelmaToDTOConverter<T extends KoulutusmoduuliDTO> extends AbstractFromDomainConverter<TutkintoOhjelma, T> {
@@ -35,6 +36,7 @@ public class TutkintoOhjelmaToDTOConverter<T extends KoulutusmoduuliDTO> extends
         TutkintoOhjelmaDTO dto = new TutkintoOhjelmaDTO();
         dto.setTila(source.getTila().name());
         dto.setOid(source.getOid());
+        dto.setUpdated(source.getUpdated());
         dto.setPerustiedot(convert(source.getPerustiedot()));
         
         return (T) dto;
