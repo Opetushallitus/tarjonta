@@ -234,7 +234,8 @@ public class KoulutusmoduuliDAOTest {
     }
     
     private TutkintoOhjelma update(TutkintoOhjelma o) {
-        return (TutkintoOhjelma) dao.update(o);
+        dao.update(o);
+        return o;
     }
     
     
