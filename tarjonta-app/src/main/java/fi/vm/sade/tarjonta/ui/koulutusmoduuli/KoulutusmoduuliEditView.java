@@ -193,6 +193,9 @@ public class KoulutusmoduuliEditView extends CustomComponent {
         
     }
 
+    /**
+     * Helper class for Select widgets to pick Koulutusmoduuli type.
+     */
     private static class KoulutusmoduuliOption implements Serializable {
 
         private static final long serialVersionUID = 376737094560614828L;

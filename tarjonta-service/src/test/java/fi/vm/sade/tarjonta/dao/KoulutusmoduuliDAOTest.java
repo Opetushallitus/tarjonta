@@ -210,6 +210,7 @@ public class KoulutusmoduuliDAOTest {
     
     
     @Test
+    // todo: you actually can,what are the constraints?
     public void testCannotAddSameRelatioshipTwice() throws Exception {
         
         TutkintoOhjelma parent = new TutkintoOhjelma();
@@ -224,8 +225,6 @@ public class KoulutusmoduuliDAOTest {
         
         parent.addChild(child, true);
         dao.update(parent);
-        
-        // this actually works: what are the constraints
         
     }
     

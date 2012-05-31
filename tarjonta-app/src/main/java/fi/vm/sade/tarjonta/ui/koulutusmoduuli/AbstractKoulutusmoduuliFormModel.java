@@ -15,10 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli;
 
-import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import java.io.Serializable;
-import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +50,6 @@ public class AbstractKoulutusmoduuliFormModel<T extends KoulutusmoduuliDTO> impl
     }
 
     public void setOrganisaatioOid(String organisaatioOid) {
-        log.debug("setOrganisaationOid: " + organisaatioOid);
         koulutusmoduuli.getPerustiedot().setOrganisaatioOid(organisaatioOid);
     }
 
