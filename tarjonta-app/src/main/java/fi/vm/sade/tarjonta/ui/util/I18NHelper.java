@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.ui.util;
 
 import fi.vm.sade.generic.common.I18N;
-import sun.tools.tree.OrExpression;
 
 /**
  *
