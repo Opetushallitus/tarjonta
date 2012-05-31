@@ -15,13 +15,20 @@
  */
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.tutkintoohjelma.TutkintoOhjelmaEditForm;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Window.Notification;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.ui.service.TarjontaUiService;
 import fi.vm.sade.tarjonta.ui.util.I18NHelper;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.addon.formbinder.ViewBoundForm;
@@ -34,13 +41,22 @@ import org.vaadin.addon.formbinder.ViewBoundForm;
 @Configurable(preConstruction = true)
 public class KoulutusmoduuliEditView extends CustomComponent {
 
-    private HorizontalLayout mainLayout;
+    /**
+     * Container whos only child is the form used to edit currently selected Koulutusmoduuli.
+     */
+    private ComponentContainer editFormContainer;
 
+    /**
+     * Form that knows how to handle currently selected Koulutusmoduuli.
+     */
     private AbstractKoulutusmoduuliEditForm editForm;
 
-    private ViewBoundForm viewBoundForm;
+    /**
+     * Wrapper which binds our for which is not of type Form to form model.
+     */
+    private ViewBoundForm editFormBinding;
 
-    private KoulutusmoduuliDTO koulutusmoduuli;
+    private KoulutusmoduuliDTO koulutusmoduuliDTO;
 
     @Autowired
     private TarjontaUiService uiService;
@@ -51,16 +67,16 @@ public class KoulutusmoduuliEditView extends CustomComponent {
 
         super();
 
-        // todo: dummy for now
-        koulutusmoduuli = uiService.createTutkintoOhjelma();
-
-        mainLayout = new HorizontalLayout();
+        final HorizontalLayout mainLayout = new HorizontalLayout();
         // todo: added to make all components visible, remove when we have some CSS in place
         mainLayout.setSizeFull();
         mainLayout.addComponent(createLeftPanel());
 
         final VerticalLayout formAndButtons = new VerticalLayout();
-        formAndButtons.addComponent(createEditForm());
+
+        editFormContainer = new Panel((String) null);
+        formAndButtons.addComponent(editFormContainer);
+
         formAndButtons.addComponent(createActionButtons());
 
         mainLayout.addComponent(formAndButtons);
@@ -69,14 +85,59 @@ public class KoulutusmoduuliEditView extends CustomComponent {
     }
 
     /**
-     * Creates left hand side, i.e. organisaatio with moduulit tree.
+     * Creates left hand side, i.e. organisaatio + koulutusmoduuli -tree.
      *
      * @return
      */
     private Component createLeftPanel() {
-        Label label = new Label("left");
-        label.setSizeUndefined();
-        return label;
+
+        final VerticalLayout layout = new VerticalLayout();
+
+        final ComboBox createNewModuuli = new ComboBox(null, createNewModuuliOptions());
+        createNewModuuli.setInputPrompt(i18n.getMessage("uusiKoulutusmoduuliSelect.prompt"));
+        createNewModuuli.setNullSelectionAllowed(false);
+        createNewModuuli.setImmediate(true);
+        createNewModuuli.addListener(new Property.ValueChangeListener() {
+
+            private static final long serialVersionUID = -382717228031608542L;
+
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                doCreateNewModuuli((KoulutusmoduuliOption) createNewModuuli.getValue());
+            }
+
+        });
+        layout.addComponent(createNewModuuli);
+
+        return layout;
+    }
+
+    private void doCreateNewModuuli(KoulutusmoduuliOption option) {
+
+        if (option.tyyppi == null) {
+            getWindow().showNotification(option.title + " is not yet implemented", Notification.TYPE_WARNING_MESSAGE);
+            return;
+        }
+
+        // todo: should check if current dto has been modified
+
+        koulutusmoduuliDTO = uiService.createTutkintoOhjelma();
+
+        final ViewBoundForm oldForm = editFormBinding;
+        final ViewBoundForm newForm = createTutkintoOhjelmaEditForm();
+
+        editFormContainer.replaceComponent(oldForm, newForm);
+        editFormBinding = newForm;
+
+    }
+
+    private Collection createNewModuuliOptions() {
+
+        return Arrays.asList(
+            new KoulutusmoduuliOption(KoulutusmoduuliTyyppi.TUTKINTOON_JOHTAVA, i18n.getMessage("uusiKoulutusmoduuliSelect.tutkintoonJohtava")),
+            new KoulutusmoduuliOption(null, i18n.getMessage("uusiKoulutusmoduuliSelect.opintokokonaisuus")),
+            new KoulutusmoduuliOption(null, i18n.getMessage("uusiKoulutusmoduuliSelect.opinto")));
+
     }
 
     /**
@@ -84,13 +145,12 @@ public class KoulutusmoduuliEditView extends CustomComponent {
      *
      * @return
      */
-    private Component createEditForm() {
+    private ViewBoundForm createTutkintoOhjelmaEditForm() {
 
-        // todo: what triggers the type?
         editForm = new TutkintoOhjelmaEditForm();
+        final ViewBoundForm viewBoundForm = new ViewBoundForm(editForm);
 
-        viewBoundForm = new ViewBoundForm(editForm);
-        final BeanItem<KoulutusmoduuliDTO> beanItem = editForm.createBeanItem(koulutusmoduuli);
+        final BeanItem<KoulutusmoduuliDTO> beanItem = editForm.createBeanItem(koulutusmoduuliDTO);
         viewBoundForm.setItemDataSource(beanItem);
 
         return viewBoundForm;
@@ -107,7 +167,7 @@ public class KoulutusmoduuliEditView extends CustomComponent {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                viewBoundForm.commit();
+                editFormBinding.commit();
                 save();
             }
 
@@ -121,9 +181,30 @@ public class KoulutusmoduuliEditView extends CustomComponent {
     }
 
     private void save() {
-        editForm.save(uiService, koulutusmoduuli);
+        editForm.save(uiService, koulutusmoduuliDTO);
         getWindow().showNotification(i18n.getMessage("save.success"));
     }
+
+    private static class KoulutusmoduuliOption implements Serializable {
+
+        private static final long serialVersionUID = 376737094560614828L;
+
+        private KoulutusmoduuliTyyppi tyyppi;
+
+        private String title;
+
+        public KoulutusmoduuliOption(KoulutusmoduuliTyyppi tyyppi, String title) {
+            this.tyyppi = tyyppi;
+            this.title = title;
+        }
+
+        @Override
+        public String toString() {
+            return title;
+        }
+
+    }
+
 
 }
 
