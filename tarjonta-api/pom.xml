@@ -14,6 +14,7 @@
 	<properties>
 		<felix.Import-Package>
 			javax.jws,
+			javax.xml.ws,
 			javax.xml.bind.annotation,
 			org.apache.cxf.annotations,
 			org.apache.commons.lang.builder,

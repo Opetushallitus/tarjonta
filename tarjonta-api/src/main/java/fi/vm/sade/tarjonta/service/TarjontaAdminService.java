@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSearchDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import java.util.List;
 import javax.jws.WebMethod;
@@ -69,6 +70,16 @@ public interface TarjontaAdminService {
      */
     @WebMethod
     List<KoulutusmoduuliDTO> find(KoulutusmoduuliSearchDTO searchSpesification);
+    
+    
+    /**
+     * 
+     * @param moduuliOID
+     * @return
+     * @throws NoSuchOIDException  
+     */
+    @WebMethod
+    List<KoulutusmoduuliSummaryDTO> getParentModuulis(String moduuliOID) throws NoSuchOIDException;
 
 
 }

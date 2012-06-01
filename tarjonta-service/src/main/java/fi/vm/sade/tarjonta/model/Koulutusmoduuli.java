@@ -42,6 +42,8 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
 
     private KoulutusmoduuliTyyppi tyyppi;
 
+    private String nimi;
+
     private KoulutusmoduuliTila tila;
 
     private KoulutusmoduuliPerustiedot perustiedot;
@@ -107,6 +109,19 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
      */
     public KoulutusmoduuliTila getTila() {
         return tila;
+    }
+
+    public String getNimi() {
+        return nimi;
+    }
+
+    /**
+     * todo: can you set value directly or was it calculated from some other properties?
+     * 
+     * @param nimi
+     */
+    public void setNimi(String nimi) {
+        this.nimi = nimi;
     }
 
     /**

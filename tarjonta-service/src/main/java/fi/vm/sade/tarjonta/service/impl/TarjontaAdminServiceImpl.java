@@ -17,11 +17,18 @@ package fi.vm.sade.tarjonta.service.impl;
 
 import fi.vm.sade.generic.service.conversion.SadeConversionService;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliSisaltyvyys;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
-import fi.vm.sade.tarjonta.model.dto.*;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSearchDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
+import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
+import fi.vm.sade.tarjonta.service.NoSuchOIDException;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.KoulutusmoduuliBusinessService;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -62,6 +69,29 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public List<KoulutusmoduuliDTO> find(KoulutusmoduuliSearchDTO searchSpesification) {
         throw new UnsupportedOperationException("NOT IMPEMENTED YET");
     }
+
+    @Override
+    public List<KoulutusmoduuliSummaryDTO> getParentModuulis(String moduuliOID) {
+        
+        // todo: we can get parents directly too without going through relations
+        
+        Koulutusmoduuli moduuli = businessService.findByOid(moduuliOID);
+        if (moduuli == null) {
+            throw new NoSuchOIDException("No such oid: " + moduuliOID, null);
+        }
+        
+        Set<KoulutusmoduuliSisaltyvyys> parents = moduuli.getParents();
+        List<KoulutusmoduuliSummaryDTO> summaries = new ArrayList<KoulutusmoduuliSummaryDTO>(parents.size());
+        
+        for (KoulutusmoduuliSisaltyvyys s : moduuli.getParents()) {
+            summaries.add(conversionService.convert(s, KoulutusmoduuliSummaryDTO.class));
+        }
+        
+        return summaries;
+        
+    }
+    
+    
 
 }
 

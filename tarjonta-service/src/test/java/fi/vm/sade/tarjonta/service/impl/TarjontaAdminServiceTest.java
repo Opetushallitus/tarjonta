@@ -1,8 +1,12 @@
 package fi.vm.sade.tarjonta.service.impl;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import fi.vm.sade.tarjonta.service.NoSuchOIDException;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import java.util.List;
+import java.util.UUID;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +30,6 @@ public class TarjontaAdminServiceTest {
         assertEquals(KoulutusmoduuliTila.SUUNNITELUSSA.name(), koulutusModuuli.getTila());
     }
 
-
     @Test
     public void testSavedKoulutusmoduuliHasOid() {
 
@@ -39,6 +42,26 @@ public class TarjontaAdminServiceTest {
         koulutusmoduuliDTO = adminService.find(koulutusmoduuliDTO.getOid());
         assertNotNull(koulutusmoduuliDTO);
         assertNotNull(koulutusmoduuliDTO.getOid());
+    }
+
+    @Test
+    public void testGetParentKoulutusmoduulit() {
+
+        
+        KoulutusmoduuliDTO koulutusmoduuliDTO = adminService.createTutkintoOhjelma(null);
+        koulutusmoduuliDTO = adminService.save(koulutusmoduuliDTO);
+        
+        List<KoulutusmoduuliSummaryDTO> parents = adminService.getParentModuulis(koulutusmoduuliDTO.getOid());
+        assertEquals(0, parents.size());
+        
+
+    }
+    
+    @Test(expected=NoSuchOIDException.class)    
+    public void testUnknownOIDThrowsException() {
+        
+        adminService.getParentModuulis(UUID.randomUUID().toString());
+        
     }
 
 }

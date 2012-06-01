@@ -15,12 +15,10 @@
  */
 package fi.vm.sade.tarjonta.service.mock;
 
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSearchDTO;
-import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
+import fi.vm.sade.tarjonta.model.dto.*;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -117,6 +115,21 @@ public class TarjontaServiceMock implements TarjontaAdminService {
         // no match by default
         return false;
     }
+
+    @Override
+    public List<KoulutusmoduuliSummaryDTO> getParentModuulis(String moduuliOID) {
+       
+        // completely dummy for now, returns all current items as parent
+        List<KoulutusmoduuliSummaryDTO> result = new ArrayList<KoulutusmoduuliSummaryDTO>();
+        for (KoulutusmoduuliDTO dto : koulutusModuuliMap.values()) {
+            result.add(new KoulutusmoduuliSummaryDTO(dto.getOid(), dto.getNimi()));
+        }
+        return Collections.unmodifiableList(result);
+        
+    }
+    
+    
+    
 
 }
 

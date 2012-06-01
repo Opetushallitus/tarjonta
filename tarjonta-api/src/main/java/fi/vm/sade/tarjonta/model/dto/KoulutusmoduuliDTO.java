@@ -31,6 +31,8 @@ public abstract class KoulutusmoduuliDTO implements Serializable {
 
     private String oid;
 
+    private String nimi;
+
     private Long id;
 
     private Date updated;
@@ -61,6 +63,14 @@ public abstract class KoulutusmoduuliDTO implements Serializable {
         return id;
     }
 
+    public String getNimi() {
+        return nimi;
+    }
+
+    public void setNimi(String nimi) {
+        this.nimi = nimi;
+    }
+
     public void setPerustiedot(KoulutusmoduuliPerustiedotDTO perustiedot) {
         this.perustiedot = perustiedot;
     }
@@ -79,8 +89,8 @@ public abstract class KoulutusmoduuliDTO implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("oid", oid).append("tila", tila).append("updated", updated)
-            .append(perustiedot).toString();
+        return new ToStringBuilder(this).append("oid", oid).
+            append("nimi", nimi).append("tila", tila).append("updated", updated).append(perustiedot).toString();
     }
 
 }
