@@ -286,9 +286,7 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
     private Component createNavigations() {
 
         final VerticalLayout layout = new VerticalLayout();
-        layout.setSpacing(true);
-        //layout.setWidth(100, UNITS_PERCENTAGE);
-
+        
         // replace with actual panels
         final Panel parentsContainer = new Panel(i18n.getMessage("sisaltyyModuleihin"));
         final Panel childrenContainer = new Panel(i18n.getMessage("sisaltyvatModuulit"));
