@@ -28,6 +28,8 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
 
     private String organisaatioOid;
 
+    private String koulutusKoodiUri;
+
     public void setOrganisaatioOid(String organisaatioOid) {
         this.organisaatioOid = organisaatioOid;
     }
@@ -36,9 +38,20 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
         return organisaatioOid;
     }
 
+    public String getKoulutusKoodiUri() {
+        return koulutusKoodiUri;
+    }
+
+    public void setKoulutusKoodiUri(String koulutusKoodiUri) {
+        this.koulutusKoodiUri = koulutusKoodiUri;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("organisaatioId", organisaatioOid).toString();
+        return new ToStringBuilder(this).
+            append("organisaatioId", organisaatioOid).
+            append("koulutusKoodiUri", koulutusKoodiUri).
+            toString();
     }
 
 }

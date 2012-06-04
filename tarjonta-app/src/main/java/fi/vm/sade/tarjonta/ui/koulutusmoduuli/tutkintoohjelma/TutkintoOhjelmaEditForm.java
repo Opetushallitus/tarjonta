@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.tutkintoohjelma;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.AbstractProperty;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.NestedMethodProperty;
@@ -23,6 +25,8 @@ import com.vaadin.ui.*;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.koodisto.model.dto.Kieli;
+import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.model.dto.*;
 import fi.vm.sade.tarjonta.ui.TarjontaApplication;
 import fi.vm.sade.tarjonta.ui.event.KoulutusmoduuliChangedEvent;
@@ -35,6 +39,9 @@ import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
@@ -47,22 +54,32 @@ import org.vaadin.addon.formbinder.PropertyId;
 public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<TutkintoOhjelmaDTO> {
 
     private static final long serialVersionUID = -4038416408035942931L;
-    
+
     private static final int NUM_RELATED_ITEMS_TO_DISPLAY = 5;
+
+    private static final String KOODISTO_URI_KOULUTUKSET = "http://postinumero";
+
+    private static final String PROPERTY_KOULUTUS_KOODI_URI = "koulutusKoodiUri";
+
+    private static final String PROPERTY_ORGANISAATIO_OID = "organisaatioOid";
+
+    private static final Logger log = LoggerFactory.getLogger(TutkintoOhjelmaEditForm.class);
 
     private Label moduuliTitleLabel;
 
     private Label moduuliStatusLabel;
 
-    @PropertyId("organisaatioOid")
+    @PropertyId(PROPERTY_ORGANISAATIO_OID)
     private TextField organisaatioField;
 
-    @PropertyId("todo_koulutus")
-    private TextField koulutusField;
-    
+    @PropertyId(PROPERTY_KOULUTUS_KOODI_URI)
+    private KoodistoComponent koulutusKoodi;
+
     private Table childrenTable;
-    
+
     private Table parentsTable;
+    
+    private KoulutusPanel koulutusPanel;
 
     private static final I18NHelper i18n = new I18NHelper("TutkintoOhjelmaEditForm.");
 
@@ -79,45 +96,61 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
 
     };
 
+    private Property.ValueChangeListener koulutusSelectedListener = new Property.ValueChangeListener() {
+
+        private static final long serialVersionUID = -382717228031608542L;
+
+        @Override
+        public void valueChange(final ValueChangeEvent event) {
+
+            handleKoulutusChangedEvent(event);
+
+        }
+
+    };
+
     public TutkintoOhjelmaEditForm() {
 
         final VerticalLayout mainLayout = new VerticalLayout();
         mainLayout.setSpacing(true);
 
-        final GridLayout grid = new GridLayout(2, 2);
-        grid.setSpacing(true);
-
-        organisaatioField = VaadinUtils.newTextField();
-        koulutusField = VaadinUtils.newTextField();
-
         moduuliTitleLabel = new Label("title");
         moduuliStatusLabel = new Label();
+        koulutusPanel = new KoulutusPanel();
+
+        organisaatioField = VaadinUtils.newTextField();
+        organisaatioField.setImmediate(true);
+        organisaatioField.addListener(moduuliTitleLabel);
+
+        koulutusKoodi = createKoulutusAutocompleteField();
+        koulutusKoodi.addListener(moduuliTitleLabel);
 
         mainLayout.addComponent(moduuliTitleLabel);
         mainLayout.addComponent(moduuliStatusLabel);
 
-        organisaatioField.addListener(moduuliTitleLabel);
-        koulutusField.addListener(moduuliTitleLabel);
-        organisaatioField.setImmediate(true);
-        koulutusField.setImmediate(true);
-
+        GridLayout grid = new GridLayout(2, 2);
         addFieldWithLabel(grid, new Label(i18n.getMessage("organisaatioLabel")), organisaatioField);
-        addFieldWithLabel(grid, new Label(i18n.getMessage("koulutusLabel")), koulutusField);
+        addFieldWithLabel(grid, new Label(i18n.getMessage("koulutusLabel")), koulutusKoodi);
 
-        VerticalLayout vertical = new VerticalLayout();
-        vertical.addComponent(grid);
-        vertical.addComponent(createKoodistoPanel());
-
-        mainLayout.addComponent(VaadinUtils.newTwoColumnHorizontalLayout(vertical, createNavigations()));
+        VerticalLayout fieldsAndKoodisto = new VerticalLayout();
         
+        fieldsAndKoodisto.addComponent(grid);
+        fieldsAndKoodisto.addComponent(koulutusPanel);
+
+        HorizontalLayout leftAndRight = new HorizontalLayout();
+        leftAndRight.addComponent(fieldsAndKoodisto);
+        leftAndRight.addComponent(createNavigations());
+
+        mainLayout.addComponent(leftAndRight);
+
         //
-        // commented out since not included in spring 2
+        // commented out since not included in sprint 2
         //
         //mainLayout.addComponent(createMultilingualEditors());
 
-        TarjontaApplication.getBlackboard().addListener(saveHandler);
-
         setCompositionRoot(mainLayout);
+
+        TarjontaApplication.getBlackboard().addListener(saveHandler);
     }
 
     @Override
@@ -132,13 +165,14 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
 
         // todo: add bean properties to populate
         final String[] properties = {
-            "organisaatioOid"
+            PROPERTY_ORGANISAATIO_OID,
+            PROPERTY_KOULUTUS_KOODI_URI
         };
 
         for (String property : properties) {
             beanItem.addItemProperty(property, new NestedMethodProperty(model, property));
         }
-        
+
         // todo: i'd rather see this being trigged by an event
         populateKoulutusmoduuliChildren(dto.getOid());
         populateKoulutusmoduuliParents(dto.getOid());
@@ -148,7 +182,34 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
 
     private Component createKoodistoPanel() {
 
-        return new Panel("Koodisto field");
+        
+        return new KoulutusPanel();
+
+    }
+
+    /**
+     * Triggered when user selects a new koulutus from autocomplete. Fires loading koodisto data from server.
+     *
+     * @param event
+     */
+    private void handleKoulutusChangedEvent(ValueChangeEvent event) {
+        
+        koulutusPanel.update((String) event.getProperty().getValue());
+        
+    }
+
+    private KoodistoComponent createKoulutusAutocompleteField() {
+
+        final ComboBox combo = new ComboBox();
+        combo.setFilteringMode(AbstractSelect.Filtering.FILTERINGMODE_CONTAINS);
+        combo.setImmediate(true);
+
+        KoodistoComponent wrapper = new KoodistoComponent(KOODISTO_URI_KOULUTUKSET, Kieli.getKieliForLocale(I18N.getLocale()));
+        wrapper.setField(combo);
+        wrapper.addListener(koulutusSelectedListener);
+
+        return wrapper;
+
 
     }
 
@@ -161,7 +222,6 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
     }
 
     private Component createMultilingualEditors() {
-        // this is a placeholder, create actual editor component here
 
         TabSheet tabs = new TabSheet();
 
@@ -227,7 +287,7 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
 
         final VerticalLayout layout = new VerticalLayout();
         layout.setSpacing(true);
-        layout.setWidth(100, UNITS_PERCENTAGE);
+        //layout.setWidth(100, UNITS_PERCENTAGE);
 
         // replace with actual panels
         final Panel parentsContainer = new Panel(i18n.getMessage("sisaltyyModuleihin"));
@@ -237,14 +297,14 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
         childrenTable.addContainerProperty(i18n.getMessage("sisaltyyModuleihin.col1"), String.class, null);
         childrenTable.setPageLength(NUM_RELATED_ITEMS_TO_DISPLAY);
         childrenContainer.addComponent(childrenTable);
-        
-        parentsTable = new Table();        
+
+        parentsTable = new Table();
         parentsTable.addContainerProperty(i18n.getMessage("sisaltyvatModuulit.col1"), String.class, null);
         parentsTable.setPageLength(NUM_RELATED_ITEMS_TO_DISPLAY);
         parentsContainer.addComponent(parentsTable);
 
-        parentsContainer.setWidth(100, UNITS_PERCENTAGE);
-        childrenContainer.setWidth(100, UNITS_PERCENTAGE);
+        //parentsContainer.setWidth(100, UNITS_PERCENTAGE);
+        //childrenContainer.setWidth(100, UNITS_PERCENTAGE);
 
         layout.addComponent(parentsContainer);
         layout.addComponent(childrenContainer);
@@ -252,29 +312,28 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
         return layout;
 
     }
-    
+
     private void populateKoulutusmoduuliChildren(String koulutusmoduuliOID) {
-        
+
         childrenTable.removeAllItems();
-        
+
         List<KoulutusmoduuliSummaryDTO> children = uiService.getChildModuulis(koulutusmoduuliOID);
         for (KoulutusmoduuliSummaryDTO child : children) {
             final String[] rowData = new String[] {child.getNimi()};
             childrenTable.addItem(rowData, child);
-        }        
-        
+        }
+
     }
-    
-    
+
     private void populateKoulutusmoduuliParents(String koulutusmoduuliOid) {
-        
+
         parentsTable.removeAllItems();
         List<KoulutusmoduuliSummaryDTO> parents = uiService.getParentModuulis(koulutusmoduuliOid);
         for (KoulutusmoduuliSummaryDTO parent : parents) {
             final String[] rowData = new String[] {parent.getNimi()};
             parentsTable.addItem(rowData, parent);
         }
-        
+
     }
 
     private class OrganisaatioStatusProperty extends AbstractProperty {
@@ -333,14 +392,75 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
             if (organisaatioNimi == null) {
                 return i18n.getMessage("organisaatioLabel.emptyValue");
             } else {
-                String koulutus = (String) koulutusField.getValue();
-                if (StringUtils.isNotEmpty(koulutus)) {
-                    return organisaatioNimi + ", " + koulutus;
+                
+                final ComboBox combo = (ComboBox) koulutusKoodi.getField();
+                final String koulutusName = combo.getItemCaption(combo.getValue());
+                
+                if (StringUtils.isNotEmpty(koulutusName)) {
+                    return organisaatioNimi + ", " + koulutusName;
                 } else {
                     return organisaatioNimi;
                 }
             }
 
+        }
+
+    }
+
+
+    /**
+     * Static fields for demonstration only.
+     */
+    private class KoulutusPanel extends CustomComponent {
+
+        private static final long serialVersionUID = -5449743469080570194L;
+
+        private Label koulutusala = new Label();
+
+        private Label opintoala = new Label();
+
+        private Label tutkinnonNimi = new Label();
+
+        private Label tutkintoNimike = new Label();
+
+        private Label laajuusYksikko = new Label();
+
+        private Label laajuus = new Label();
+
+        private Label koulutuskoodi = new Label();
+        
+        private AtomicInteger counter = new AtomicInteger();
+
+        public KoulutusPanel() {
+            GridLayout grid = new GridLayout(2, 7);
+            grid.setSpacing(true);
+            addWithCaption(grid, "Koulutusala:", koulutusala);
+            addWithCaption(grid, "Opintoala:", opintoala);
+            addWithCaption(grid, "Tutkinnon nimi:", tutkinnonNimi);
+            addWithCaption(grid, "Tutkintonimike:", tutkintoNimike);
+            addWithCaption(grid, "Opintojen laajuusyksikko:", laajuusYksikko);
+            addWithCaption(grid, "Opintojen laajuus:", laajuus);
+            addWithCaption(grid, "Koulutuskoodi:", koulutuskoodi);            
+            setCompositionRoot(grid);
+        }
+        
+        private void addWithCaption(GridLayout grid, String caption, Label label) {
+            Label captionLabel = new Label(caption);
+            grid.addComponent(captionLabel);
+            grid.setComponentAlignment(captionLabel, Alignment.MIDDLE_RIGHT);
+            grid.addComponent(label);                
+            label.setImmediate(true);
+        }
+
+        public void update(String koulutusUri) {
+            final String i = "(" + counter.incrementAndGet() + ") ";            
+            koulutusala.setValue(i + "Luonnontieteiden ala");
+            opintoala.setValue(i + "Tietojenkasittely");
+            tutkinnonNimi.setValue(i + "Liiketalouden ammattikorkeatutkinto");
+            tutkintoNimike.setValue(i + "Tradenomi");
+            laajuusYksikko.setValue(i + "Opintopisteet");
+            laajuus.setValue(i + "210 op");
+            koulutuskoodi.setValue(i + "123456");            
         }
 
     }

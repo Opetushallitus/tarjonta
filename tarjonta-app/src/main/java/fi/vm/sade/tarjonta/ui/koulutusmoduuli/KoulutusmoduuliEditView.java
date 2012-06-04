@@ -164,8 +164,8 @@ public class KoulutusmoduuliEditView extends CustomComponent {
         final HorizontalLayout layout = new HorizontalLayout();
         layout.setSpacing(true);
 
-        final Button saveButton = new Button(i18n.getMessage("saveButton"));
-        saveButton.addListener(new Button.ClickListener() {
+        final Button saveAsDraftButton = new Button(i18n.getMessage("saveAsDraftButton"));
+        saveAsDraftButton.addListener(new Button.ClickListener() {
 
             @Override
             public void buttonClick(ClickEvent event) {
@@ -174,8 +174,23 @@ public class KoulutusmoduuliEditView extends CustomComponent {
             }
 
         });
+        
+        final Button saveAsCompleteButton = new Button(i18n.getMessage("saveAsCompleteButton"));
+        saveAsCompleteButton.addListener(new Button.ClickListener() {
 
-        layout.addComponent(saveButton);
+            @Override
+            public void buttonClick(ClickEvent event) {
+                editFormBinding.commit();
+                // same logic here
+                save();
+            }
+        });
+
+        final Button cancelButton = new Button(i18n.getMessage("cancelButton"));
+        
+        layout.addComponent(cancelButton);
+        layout.addComponent(saveAsDraftButton);
+        layout.addComponent(saveAsCompleteButton);
 
         return layout;
 

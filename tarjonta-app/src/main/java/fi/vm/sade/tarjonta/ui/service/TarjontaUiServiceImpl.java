@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Jukka Raanamo
  */
+@SuppressWarnings("serial")
 public class TarjontaUiServiceImpl implements TarjontaUiService {
 
     @Autowired

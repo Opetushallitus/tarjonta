@@ -69,7 +69,7 @@
         <!-- Koodisto integration -->
         <dependency>
             <groupId>fi.vm.sade.koodisto</groupId>
-            <artifactId>koodisto-api</artifactId>
+            <artifactId>koodisto-widget</artifactId>
             <version>${project.version}</version>
         </dependency>
         

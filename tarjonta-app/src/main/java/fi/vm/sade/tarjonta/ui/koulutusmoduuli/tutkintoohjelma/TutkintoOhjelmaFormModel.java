@@ -41,6 +41,14 @@ public class TutkintoOhjelmaFormModel extends AbstractKoulutusmoduuliFormModel<T
     public void setTutkintoOhjelma(TutkintoOhjelmaDTO dto) {
         this.koulutusmoduuli = dto;
     }
+    
+    public String getKoulutusKoodiUri() {
+        return getPerustiedot().getKoulutusKoodiUri();
+    }
+    
+    public void setKoulutusKoodiUri(String value) {
+        getPerustiedot().setKoulutusKoodiUri(value);
+    }
 
 
 }

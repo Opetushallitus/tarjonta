@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
 import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,15 @@ public class AbstractKoulutusmoduuliFormModel<T extends KoulutusmoduuliDTO> impl
 
     public T getKoulutusmoduuli() {
         return koulutusmoduuli;
+    }
+    
+    
+    public KoulutusmoduuliPerustiedotDTO getPerustiedot() {
+        return koulutusmoduuli.getPerustiedot();
+    }
+    
+    public void setPerustiedot(KoulutusmoduuliPerustiedotDTO perustiedot) {
+        // get is enough for setting its properties
     }
 
     public void setOrganisaatioOid(String organisaatioOid) {
