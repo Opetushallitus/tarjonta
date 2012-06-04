@@ -82,5 +82,8 @@ public interface TarjontaAdminService {
     List<KoulutusmoduuliSummaryDTO> getParentModuulis(String moduuliOID) throws NoSuchOIDException;
 
 
+    @WebMethod
+    List<KoulutusmoduuliSummaryDTO> getChildModuulis(String moduuliOID) throws NoSuchOIDException;
+    
 }
 

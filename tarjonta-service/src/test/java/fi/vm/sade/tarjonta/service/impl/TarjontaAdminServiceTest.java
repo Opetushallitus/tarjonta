@@ -47,7 +47,6 @@ public class TarjontaAdminServiceTest {
     @Test
     public void testGetParentKoulutusmoduulit() {
 
-        
         KoulutusmoduuliDTO koulutusmoduuliDTO = adminService.createTutkintoOhjelma(null);
         koulutusmoduuliDTO = adminService.save(koulutusmoduuliDTO);
         
@@ -56,6 +55,7 @@ public class TarjontaAdminServiceTest {
         
 
     }
+    
     
     @Test(expected=NoSuchOIDException.class)    
     public void testUnknownOIDThrowsException() {

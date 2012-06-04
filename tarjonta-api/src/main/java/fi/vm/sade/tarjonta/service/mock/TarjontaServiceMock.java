@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.service.mock;
 
 import fi.vm.sade.tarjonta.model.dto.*;
+import fi.vm.sade.tarjonta.service.NoSuchOIDException;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,14 +29,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  *
  * @author Jukka Raanamo
  * @author Marko Lyly
  */
 public class TarjontaServiceMock implements TarjontaAdminService {
-    
+
     private static final Logger log = LoggerFactory.getLogger(TarjontaServiceMock.class);
 
     private Map<Long, KoulutusmoduuliDTO> koulutusModuuliMap = new HashMap<Long, KoulutusmoduuliDTO>();
@@ -57,7 +57,7 @@ public class TarjontaServiceMock implements TarjontaAdminService {
     public KoulutusmoduuliDTO save(KoulutusmoduuliDTO koulutusModuuli) {
 
         log.debug("saving " + koulutusModuuli);
-        
+
         if (koulutusModuuli.getId() == null) {
             koulutusModuuli.setId(idCounter.incrementAndGet());
         }
@@ -118,18 +118,35 @@ public class TarjontaServiceMock implements TarjontaAdminService {
 
     @Override
     public List<KoulutusmoduuliSummaryDTO> getParentModuulis(String moduuliOID) {
-       
-        // completely dummy for now, returns all current items as parent
+
         List<KoulutusmoduuliSummaryDTO> result = new ArrayList<KoulutusmoduuliSummaryDTO>();
-        for (KoulutusmoduuliDTO dto : koulutusModuuliMap.values()) {
-            result.add(new KoulutusmoduuliSummaryDTO(dto.getOid(), dto.getNimi()));
+
+        for (int i = 0; i < 5; i++) {
+            KoulutusmoduuliSummaryDTO summary = new KoulutusmoduuliSummaryDTO("http://koulutusmoduuli/" + i,
+                "Koulutusmoduuli (yla) " + i);
+            result.add(summary);
         }
-        return Collections.unmodifiableList(result);
         
+        return result;
+
     }
-    
-    
-    
+
+    @Override
+    public List<KoulutusmoduuliSummaryDTO> getChildModuulis(String moduuliOID) throws NoSuchOIDException {
+
+        List<KoulutusmoduuliSummaryDTO> result = new ArrayList<KoulutusmoduuliSummaryDTO>();
+
+        for (int i = 0; i < 5; i++) {
+            KoulutusmoduuliSummaryDTO summary = new KoulutusmoduuliSummaryDTO("http://koulutusmoduuli/" + i,
+                "Koulutusmoduuli (ala) " + i);
+            result.add(summary);
+        }
+        
+        return result;
+
+
+
+    }
 
 }
 

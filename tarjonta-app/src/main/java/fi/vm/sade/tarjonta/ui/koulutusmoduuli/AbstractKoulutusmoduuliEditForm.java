@@ -19,6 +19,8 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.CustomComponent;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.ui.service.TarjontaUiService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  * Base class for editing KoulutusmoduuliDTO. 
@@ -27,7 +29,12 @@ import fi.vm.sade.tarjonta.ui.service.TarjontaUiService;
  * 
  * @author Jukka Raanamo
  */
+@Configurable(preConstruction = true)
 public abstract class AbstractKoulutusmoduuliEditForm<T extends KoulutusmoduuliDTO> extends CustomComponent {
+    
+    
+    @Autowired
+    protected TarjontaUiService uiService;
 
     /**
      * Create BeanItem binding properties from given KoulutusmoduuliDTO.

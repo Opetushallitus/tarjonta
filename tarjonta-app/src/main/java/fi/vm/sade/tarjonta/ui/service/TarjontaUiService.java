@@ -16,7 +16,9 @@
 package fi.vm.sade.tarjonta.ui.service;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
+import java.util.List;
 
 /**
  *
@@ -37,6 +39,12 @@ public interface TarjontaUiService {
      * @return
      */
     KoulutusmoduuliDTO save(KoulutusmoduuliDTO koulutusmoduuli);
+    
+    
+    List<KoulutusmoduuliSummaryDTO> getChildModuulis(String koulutusmoduuliOID);
+    
+    
+    List<KoulutusmoduuliSummaryDTO> getParentModuulis(String koulutusmoduuliOID);
     
 }
 

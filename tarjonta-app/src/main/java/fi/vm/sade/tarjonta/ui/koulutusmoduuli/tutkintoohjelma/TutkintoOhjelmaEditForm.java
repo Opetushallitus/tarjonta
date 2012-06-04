@@ -23,7 +23,7 @@ import com.vaadin.ui.*;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
+import fi.vm.sade.tarjonta.model.dto.*;
 import fi.vm.sade.tarjonta.ui.TarjontaApplication;
 import fi.vm.sade.tarjonta.ui.event.KoulutusmoduuliChangedEvent;
 import fi.vm.sade.tarjonta.ui.event.KoulutusmoduuliChangedEvent.KoulutusmoduuliChangedEventListener;
@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.ui.koulutusmoduuli.AbstractKoulutusmoduuliFormModel;
 import fi.vm.sade.tarjonta.ui.util.I18NHelper;
 import fi.vm.sade.tarjonta.ui.util.VaadinUtils;
 import java.util.Date;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import java.util.Locale;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -46,6 +47,8 @@ import org.vaadin.addon.formbinder.PropertyId;
 public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<TutkintoOhjelmaDTO> {
 
     private static final long serialVersionUID = -4038416408035942931L;
+    
+    private static final int NUM_RELATED_ITEMS_TO_DISPLAY = 5;
 
     private Label moduuliTitleLabel;
 
@@ -56,11 +59,14 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
 
     @PropertyId("todo_koulutus")
     private TextField koulutusField;
+    
+    private Table childrenTable;
+    
+    private Table parentsTable;
 
     private static final I18NHelper i18n = new I18NHelper("TutkintoOhjelmaEditForm.");
-    
-    
-    private KoulutusmoduuliChangedEventListener mSaveHandler = new KoulutusmoduuliChangedEventListener() {
+
+    private KoulutusmoduuliChangedEventListener saveHandler = new KoulutusmoduuliChangedEventListener() {
 
         @Override
         public void onKoulutusmoduuliChanged(KoulutusmoduuliChangedEvent event) {
@@ -70,6 +76,7 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
             // and something else is diplayed
             moduuliStatusLabel.valueChange(new Label().new ValueChangeEvent(moduuliStatusLabel));
         }
+
     };
 
     public TutkintoOhjelmaEditForm() {
@@ -102,9 +109,13 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
         vertical.addComponent(createKoodistoPanel());
 
         mainLayout.addComponent(VaadinUtils.newTwoColumnHorizontalLayout(vertical, createNavigations()));
-        mainLayout.addComponent(createMultilingualEditors());
         
-        TarjontaApplication.getBlackboard().addListener(mSaveHandler);
+        //
+        // commented out since not included in spring 2
+        //
+        //mainLayout.addComponent(createMultilingualEditors());
+
+        TarjontaApplication.getBlackboard().addListener(saveHandler);
 
         setCompositionRoot(mainLayout);
     }
@@ -118,7 +129,7 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
         // this is not getting set via bean item??
         moduuliStatusLabel.setPropertyDataSource(new OrganisaatioStatusProperty(dto));
         moduuliTitleLabel.setPropertyDataSource(new OrganisaatioLabelProperty());
-        
+
         // todo: add bean properties to populate
         final String[] properties = {
             "organisaatioOid"
@@ -127,10 +138,13 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
         for (String property : properties) {
             beanItem.addItemProperty(property, new NestedMethodProperty(model, property));
         }
+        
+        // todo: i'd rather see this being trigged by an event
+        populateKoulutusmoduuliChildren(dto.getOid());
+        populateKoulutusmoduuliParents(dto.getOid());
 
         return beanItem;
     }
-
 
     private Component createKoodistoPanel() {
 
@@ -203,6 +217,7 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
                     getWindow().showNotification("TODO new language tab selected...");
                 }
             }
+
         });
 
         return tabs;
@@ -215,21 +230,53 @@ public class TutkintoOhjelmaEditForm extends AbstractKoulutusmoduuliEditForm<Tut
         layout.setWidth(100, UNITS_PERCENTAGE);
 
         // replace with actual panels
-        final Panel parents = new Panel(i18n.getMessage("sisaltyyModuleihin"));
-        final Panel children = new Panel(i18n.getMessage("sisaltyvatModuulit"));
+        final Panel parentsContainer = new Panel(i18n.getMessage("sisaltyyModuleihin"));
+        final Panel childrenContainer = new Panel(i18n.getMessage("sisaltyvatModuulit"));
 
-        parents.setWidth(100, UNITS_PERCENTAGE);
-        children.setWidth(100, UNITS_PERCENTAGE);
+        childrenTable = new Table();
+        childrenTable.addContainerProperty(i18n.getMessage("sisaltyyModuleihin.col1"), String.class, null);
+        childrenTable.setPageLength(NUM_RELATED_ITEMS_TO_DISPLAY);
+        childrenContainer.addComponent(childrenTable);
+        
+        parentsTable = new Table();        
+        parentsTable.addContainerProperty(i18n.getMessage("sisaltyvatModuulit.col1"), String.class, null);
+        parentsTable.setPageLength(NUM_RELATED_ITEMS_TO_DISPLAY);
+        parentsContainer.addComponent(parentsTable);
 
-        layout.addComponent(parents);
-        layout.addComponent(children);
+        parentsContainer.setWidth(100, UNITS_PERCENTAGE);
+        childrenContainer.setWidth(100, UNITS_PERCENTAGE);
+
+        layout.addComponent(parentsContainer);
+        layout.addComponent(childrenContainer);
 
         return layout;
 
     }
     
+    private void populateKoulutusmoduuliChildren(String koulutusmoduuliOID) {
+        
+        childrenTable.removeAllItems();
+        
+        List<KoulutusmoduuliSummaryDTO> children = uiService.getChildModuulis(koulutusmoduuliOID);
+        for (KoulutusmoduuliSummaryDTO child : children) {
+            final String[] rowData = new String[] {child.getNimi()};
+            childrenTable.addItem(rowData, child);
+        }        
+        
+    }
     
-   
+    
+    private void populateKoulutusmoduuliParents(String koulutusmoduuliOid) {
+        
+        parentsTable.removeAllItems();
+        List<KoulutusmoduuliSummaryDTO> parents = uiService.getParentModuulis(koulutusmoduuliOid);
+        for (KoulutusmoduuliSummaryDTO parent : parents) {
+            final String[] rowData = new String[] {parent.getNimi()};
+            parentsTable.addItem(rowData, parent);
+        }
+        
+    }
+
     private class OrganisaatioStatusProperty extends AbstractProperty {
 
         private static final long serialVersionUID = -8671743512655403988L;

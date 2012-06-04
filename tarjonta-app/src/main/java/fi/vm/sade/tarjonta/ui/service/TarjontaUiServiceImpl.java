@@ -16,10 +16,11 @@
 package fi.vm.sade.tarjonta.ui.service;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  *
@@ -39,8 +40,16 @@ public class TarjontaUiServiceImpl implements TarjontaUiService {
     public KoulutusmoduuliDTO save(KoulutusmoduuliDTO koulutusmoduuli) {
         return adminService.save(koulutusmoduuli);
     }
-    
-    
+
+    @Override
+    public List<KoulutusmoduuliSummaryDTO> getChildModuulis(String koulutusmoduuliOID) {
+        return adminService.getChildModuulis(koulutusmoduuliOID);
+    }
+
+    @Override
+    public List<KoulutusmoduuliSummaryDTO> getParentModuulis(String koulutusmoduuliOID) {
+        return adminService.getParentModuulis(koulutusmoduuliOID);
+    }
 
 }
 

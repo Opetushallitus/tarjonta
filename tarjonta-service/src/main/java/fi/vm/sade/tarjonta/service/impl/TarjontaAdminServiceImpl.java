@@ -75,19 +75,49 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         
         // todo: we can get parents directly too without going through relations
         
-        Koulutusmoduuli moduuli = businessService.findByOid(moduuliOID);
-        if (moduuli == null) {
-            throw new NoSuchOIDException("No such oid: " + moduuliOID, null);
-        }
+        Koulutusmoduuli moduuli = loadKoulutusmoduuli(moduuliOID);
         
         Set<KoulutusmoduuliSisaltyvyys> parents = moduuli.getParents();
         List<KoulutusmoduuliSummaryDTO> summaries = new ArrayList<KoulutusmoduuliSummaryDTO>(parents.size());
         
-        for (KoulutusmoduuliSisaltyvyys s : moduuli.getParents()) {
+        for (KoulutusmoduuliSisaltyvyys s : parents) {
             summaries.add(conversionService.convert(s, KoulutusmoduuliSummaryDTO.class));
         }
         
         return summaries;
+        
+    }
+
+    @Override
+    public List<KoulutusmoduuliSummaryDTO> getChildModuulis(String moduuliOID) throws NoSuchOIDException {
+        
+        Koulutusmoduuli moduuli = loadKoulutusmoduuli(moduuliOID);
+        Set<KoulutusmoduuliSisaltyvyys> children = moduuli.getChildren();
+        List<KoulutusmoduuliSummaryDTO> summaries = new ArrayList<KoulutusmoduuliSummaryDTO>(children.size());
+        
+        for (KoulutusmoduuliSisaltyvyys s : children) {
+            summaries.add(conversionService.convert(s, KoulutusmoduuliSummaryDTO.class));
+        }
+        
+        return summaries;
+        
+    }
+    
+    
+    /**
+     * Returns a non null Koulutusmoduuli or throws exception if one does not exist for given oid.
+     *
+     * @param oid
+     * @return
+     * @throws NoSuchOIDException
+     */
+    private Koulutusmoduuli loadKoulutusmoduuli(String oid) throws NoSuchOIDException {
+        
+        Koulutusmoduuli k = businessService.findByOid(oid);
+        if (k == null) {
+            throw new NoSuchOIDException("No such oid: " + oid, null);
+        }
+        return k;
         
     }
     
