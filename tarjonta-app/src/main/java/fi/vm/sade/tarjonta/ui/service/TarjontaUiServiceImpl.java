@@ -33,8 +33,8 @@ public class TarjontaUiServiceImpl implements TarjontaUiService {
     private TarjontaAdminService adminService;
 
     @Override
-    public TutkintoOhjelmaDTO createTutkintoOhjelma() {
-        return adminService.createTutkintoOhjelma(null);
+    public TutkintoOhjelmaDTO createTutkintoOhjelma(String organisaatioOID) {
+        return adminService.createTutkintoOhjelma(organisaatioOID);
     }
 
     @Override

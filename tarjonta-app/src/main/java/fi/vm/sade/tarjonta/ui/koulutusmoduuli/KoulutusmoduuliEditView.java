@@ -17,12 +17,14 @@ package fi.vm.sade.tarjonta.ui.koulutusmoduuli;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import fi.vm.sade.tarjonta.ui.koulutusmoduuli.tutkintoohjelma.TutkintoOhjelmaEditForm;
+import com.vaadin.data.Validator;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.tutkintoohjelma.TutkintoOhjelmaEditPanel;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Window.Notification;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.ui.TarjontaApplication;
 import fi.vm.sade.tarjonta.ui.event.KoulutusmoduuliChangedEvent;
@@ -51,17 +53,21 @@ public class KoulutusmoduuliEditView extends CustomComponent {
     /**
      * Form that knows how to handle currently selected Koulutusmoduuli.
      */
-    private AbstractKoulutusmoduuliEditForm editForm;
+    private AbstractKoulutusmoduuliEditPanel koulutusmoduuliEditPanel;
 
     /**
      * Wrapper which binds our for which is not of type Form to form model.
      */
-    private ViewBoundForm editFormBinding;
+    private ViewBoundForm editForm;
 
     private KoulutusmoduuliDTO koulutusmoduuliDTO;
 
     @Autowired
     private TarjontaUiService uiService;
+    
+    private Button saveAsDraft;
+    
+    private Button saveAsFinal;
 
     private static I18NHelper i18n = new I18NHelper("KoulutusmoduuliEditView.");
 
@@ -80,6 +86,7 @@ public class KoulutusmoduuliEditView extends CustomComponent {
         formAndButtons.addComponent(editFormContainer);
 
         formAndButtons.addComponent(createActionButtons());
+        enableActionButtons(false);
 
         mainLayout.addComponent(formAndButtons);
 
@@ -111,6 +118,8 @@ public class KoulutusmoduuliEditView extends CustomComponent {
         });
         layout.addComponent(createNewModuuli);
 
+
+
         return layout;
     }
 
@@ -122,14 +131,19 @@ public class KoulutusmoduuliEditView extends CustomComponent {
         }
 
         // todo: should check if current dto has been modified
+        
+        // todo: when UI flow is defined, organisatioOID will be given to use from .... somewhere
 
-        koulutusmoduuliDTO = uiService.createTutkintoOhjelma();
+        koulutusmoduuliDTO = uiService.createTutkintoOhjelma("http://organisaatio.fi/suborganisaatio");
 
-        final ViewBoundForm oldForm = editFormBinding;
+        final ViewBoundForm oldForm = editForm;
         final ViewBoundForm newForm = createTutkintoOhjelmaEditForm();
 
+        // could go with "selected" event too
+        enableActionButtons(true);
+        
         editFormContainer.replaceComponent(oldForm, newForm);
-        editFormBinding = newForm;
+        editForm = newForm;
 
     }
 
@@ -149,14 +163,19 @@ public class KoulutusmoduuliEditView extends CustomComponent {
      */
     private ViewBoundForm createTutkintoOhjelmaEditForm() {
 
-        editForm = new TutkintoOhjelmaEditForm();
-        final ViewBoundForm viewBoundForm = new ViewBoundForm(editForm);
+        koulutusmoduuliEditPanel = new TutkintoOhjelmaEditPanel();
+        final ViewBoundForm viewBoundForm = new ViewBoundForm(koulutusmoduuliEditPanel);
 
-        final BeanItem<KoulutusmoduuliDTO> beanItem = editForm.createBeanItem(koulutusmoduuliDTO);
+        final BeanItem<KoulutusmoduuliDTO> beanItem = koulutusmoduuliEditPanel.createBeanItem(koulutusmoduuliDTO);
         viewBoundForm.setItemDataSource(beanItem);
 
         return viewBoundForm;
 
+    }
+    
+    private void enableActionButtons(boolean enable) {
+        saveAsDraft.setEnabled(enable);
+        saveAsFinal.setEnabled(enable);
     }
 
     private Component createActionButtons() {
@@ -164,48 +183,74 @@ public class KoulutusmoduuliEditView extends CustomComponent {
         final HorizontalLayout layout = new HorizontalLayout();
         layout.setSpacing(true);
 
-        final Button saveAsDraftButton = new Button(i18n.getMessage("saveAsDraftButton"));
-        saveAsDraftButton.addListener(new Button.ClickListener() {
+        saveAsDraft = new Button(i18n.getMessage("saveAsDraftButton"));
+        saveAsDraft.addListener(new Button.ClickListener() {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                editFormBinding.commit();
-                save();
+                saveAsDraft();
             }
 
         });
-        
-        final Button saveAsCompleteButton = new Button(i18n.getMessage("saveAsCompleteButton"));
-        saveAsCompleteButton.addListener(new Button.ClickListener() {
+
+        saveAsFinal = new Button(i18n.getMessage("saveAsCompleteButton"));
+        saveAsFinal.addListener(new Button.ClickListener() {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                editFormBinding.commit();
-                // same logic here
-                save();
+                saveAsComplete();
             }
+
         });
 
         final Button cancelButton = new Button(i18n.getMessage("cancelButton"));
-        
+
         layout.addComponent(cancelButton);
-        layout.addComponent(saveAsDraftButton);
-        layout.addComponent(saveAsCompleteButton);
+        layout.addComponent(saveAsDraft);
+        layout.addComponent(saveAsFinal);
 
         return layout;
 
 
     }
 
+    private void saveAsDraft() {
+        koulutusmoduuliDTO.setTila(KoulutusmoduuliTila.SUUNNITELUSSA.name());
+        save();
+    }
+
+    private void saveAsComplete() {
+        koulutusmoduuliDTO.setTila(KoulutusmoduuliTila.VALMIS.name());
+        save();
+    }
+
     private void save() {
-        
-        editForm.save(uiService, koulutusmoduuliDTO);
-        
-        final KoulutusmoduuliChangedEvent event = new KoulutusmoduuliChangedEvent(koulutusmoduuliDTO, KoulutusmoduuliChangedEvent.EventType.MODIFIED); 
-        TarjontaApplication.getBlackboard().fire(event);
-        
-        getWindow().showNotification(i18n.getMessage("save.success"));        
-        
+
+        if (!editForm.isValid()) {
+
+            getWindow().showNotification(i18n.getMessage("save.notValid"));
+            editForm.setValidationVisible(true);
+
+        } else {
+
+            try {
+                // flush values through form model to dto
+                editForm.commit();
+
+                // current edit panel know how to push state to server
+                koulutusmoduuliEditPanel.save(uiService, koulutusmoduuliDTO);
+
+                TarjontaApplication.getBlackboard().fire(new KoulutusmoduuliChangedEvent(koulutusmoduuliDTO,
+                    KoulutusmoduuliChangedEvent.EventType.MODIFIED));
+
+                getWindow().showNotification(i18n.getMessage("save.success"));
+
+            } catch (Validator.EmptyValueException e) {
+                // no-op
+            }
+
+        }
+
     }
 
     /**

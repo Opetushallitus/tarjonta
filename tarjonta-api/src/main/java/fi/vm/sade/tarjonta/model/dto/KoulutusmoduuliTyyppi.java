@@ -15,11 +15,13 @@
  */
 package fi.vm.sade.tarjonta.model.dto;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Jukka Raanamo
  */
-public enum KoulutusmoduuliTyyppi {
+public enum KoulutusmoduuliTyyppi implements Serializable {
     
     TUTKINTOON_JOHTAVA,
     

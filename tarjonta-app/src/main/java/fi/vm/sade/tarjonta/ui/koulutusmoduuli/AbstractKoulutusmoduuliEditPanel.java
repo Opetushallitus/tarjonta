@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author Jukka Raanamo
  */
 @Configurable(preConstruction = true)
-public abstract class AbstractKoulutusmoduuliEditForm<T extends KoulutusmoduuliDTO> extends CustomComponent {
+public abstract class AbstractKoulutusmoduuliEditPanel<T extends KoulutusmoduuliDTO> extends CustomComponent {
     
     
     @Autowired

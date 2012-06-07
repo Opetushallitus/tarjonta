@@ -30,7 +30,7 @@ public interface TarjontaUiService {
      * 
      * @return
      */
-    TutkintoOhjelmaDTO createTutkintoOhjelma();
+    TutkintoOhjelmaDTO createTutkintoOhjelma(String organisaatioOID);
     
     
     /**

@@ -45,9 +45,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private SadeConversionService conversionService;
 
     @Override
-    public TutkintoOhjelmaDTO createTutkintoOhjelma(String organisaatioUri) {
+    public TutkintoOhjelmaDTO createTutkintoOhjelma(String organisaatioOID) {
 
         TutkintoOhjelma newModule = new TutkintoOhjelma();
+        newModule.setOid(organisaatioOID);
         return conversionService.convert(newModule, TutkintoOhjelmaDTO.class);
 
     }
