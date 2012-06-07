@@ -20,12 +20,13 @@ import com.vaadin.Application;
 import com.vaadin.service.ApplicationContext.TransactionListener;
 import com.vaadin.terminal.gwt.server.HttpServletRequestListener;
 import fi.vm.sade.generic.common.I18N;
-import java.util.Locale;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
 
 /**
  * TODO This could be moved as common base class.
@@ -51,7 +52,6 @@ public abstract class AbstractSadeApplication extends Application implements Tra
      * Thread local handling of Blackboard event bus
      */
     private static ThreadLocal<Blackboard> blackboard = new ThreadLocal<Blackboard>();
-    private final Blackboard blackboardInstance = new Blackboard();
 
     protected Locale sessionLocale = new Locale(DEFAULT_LOCALE);
 
@@ -67,8 +67,7 @@ public abstract class AbstractSadeApplication extends Application implements Tra
         //setTheme(THEME_NAME);
 
         //Init blackboard event bus
-        blackboard.set(blackboardInstance);
-        registerListeners(blackboardInstance);
+        registerListeners(getBlackboard());
 
         // At every "transaction" start set the threadlocal blackboard instance
         getContext().addTransactionListener(this);
@@ -97,9 +96,6 @@ public abstract class AbstractSadeApplication extends Application implements Tra
      */
     @Override
     public void transactionStart(Application application, Object transactionData) {
-        if (application == this) {
-            blackboard.set(blackboardInstance);
-        }
     }
 
     @Override
@@ -144,6 +140,9 @@ public abstract class AbstractSadeApplication extends Application implements Tra
      * @return
      */
     public static Blackboard getBlackboard() {
+        if (blackboard.get() == null) {
+            blackboard.set(new Blackboard());
+        }
         return blackboard.get();
     }
 

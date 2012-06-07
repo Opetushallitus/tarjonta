@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.ui.koulutusmoduuli;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Validator;
-import fi.vm.sade.tarjonta.ui.koulutusmoduuli.tutkintoohjelma.TutkintoOhjelmaEditPanel;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
@@ -28,14 +27,16 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.ui.TarjontaApplication;
 import fi.vm.sade.tarjonta.ui.event.KoulutusmoduuliChangedEvent;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.tutkintoohjelma.TutkintoOhjelmaEditPanel;
 import fi.vm.sade.tarjonta.ui.service.TarjontaUiService;
 import fi.vm.sade.tarjonta.ui.util.I18NHelper;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.addon.formbinder.ViewBoundForm;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Main view for editing different types of Koulutusmoduuli.
@@ -70,6 +71,7 @@ public class KoulutusmoduuliEditView extends CustomComponent {
     private Button saveAsFinal;
 
     private static I18NHelper i18n = new I18NHelper("KoulutusmoduuliEditView.");
+    private ComboBox createNewModuuli;
 
     public KoulutusmoduuliEditView() {
 
@@ -102,7 +104,7 @@ public class KoulutusmoduuliEditView extends CustomComponent {
 
         final VerticalLayout layout = new VerticalLayout();
 
-        final ComboBox createNewModuuli = new ComboBox(null, createNewModuuliOptions());
+        createNewModuuli = new ComboBox(null, createNewModuuliOptions());
         createNewModuuli.setInputPrompt(i18n.getMessage("uusiKoulutusmoduuliSelect.prompt"));
         createNewModuuli.setNullSelectionAllowed(false);
         createNewModuuli.setImmediate(true);
@@ -276,6 +278,8 @@ public class KoulutusmoduuliEditView extends CustomComponent {
 
     }
 
-
+    public ComboBox getCreateNewModuuli() {
+        return createNewModuuli;
+    }
 }
 

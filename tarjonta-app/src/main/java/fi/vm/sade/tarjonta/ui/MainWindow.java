@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 public class MainWindow extends Window {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainWindow.class);
+    private KoulutusmoduuliEditView koulutusmoduuliEditView;
 
     public MainWindow() {
         super(I18N.getMessage("tarjonta.title"));
@@ -48,11 +49,15 @@ public class MainWindow extends Window {
 
         final TabSheet tabs = new TabSheet();
         tabs.setWidth(100, UNITS_PERCENTAGE);
-        tabs.addTab(new KoulutusmoduuliEditView(), I18N.getMessage("tarjonta.tabs.koulutusmoduulit"));
+        koulutusmoduuliEditView = new KoulutusmoduuliEditView();
+        tabs.addTab(koulutusmoduuliEditView, I18N.getMessage("tarjonta.tabs.koulutusmoduulit"));
         
         return tabs;
 
     }
 
+    public KoulutusmoduuliEditView getKoulutusmoduuliEditView() {
+        return koulutusmoduuliEditView;
+    }
 }
 

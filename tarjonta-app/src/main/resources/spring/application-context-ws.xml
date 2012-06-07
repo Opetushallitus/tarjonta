@@ -1,36 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:jaxws="http://cxf.apache.org/jaxws"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-<!--
-    <jaxws:client id="koodistoService"
-                serviceClass="fi.vm.sade.koodisto.service.KoodistoAdminService"
-                address="${koodisto.webservice.url}"/>
-                
-    <jaxws:client id="koodiService"
-         serviceClass="fi.vm.sade.koodisto.service.KoodiAdminService"
-         address="${koodi.webservice.url}"/>
-         
-     <jaxws:client id="koodiPublicService"
-     	serviceClass="fi.vm.sade.koodisto.service.KoodiPublicService"
-     	address="${koodi.public.webservice.url}" />
+    <bean id="tarjontaService" class="fi.vm.sade.tarjonta.service.mock.TarjontaServiceMock" />
 
-    <jaxws:client id="uploadService"
-        serviceClass="fi.vm.sade.koodisto.service.UploadService"
-        address="${upload.webservice.url}"/>
-        
-        
-    <jaxws:client id="downloadService"
-        serviceClass="fi.vm.sade.koodisto.service.DownloadService"
-        address="${download.webservice.url}"/>
--->
+
+    <!-- Koodisto service (mock) -->
+    <bean id="mockDataHandler" class="fi.vm.sade.koodisto.service.mock.MockDataHandler"/>
+
+    <bean id="koodiService" class="fi.vm.sade.koodisto.service.mock.KoodiServiceMock">
+        <property name="mockDataHandler" ref="mockDataHandler"/>
+    </bean>
+
+    <bean id="koodistoService" class="fi.vm.sade.koodisto.service.mock.KoodistoServiceMock">
+        <property name="mockDataHandler" ref="mockDataHandler"/>
+    </bean>
+
+    <bean class="fi.vm.sade.koodisto.widget.factory.WidgetFactory" />
+
 
 </beans>
-
-
-
-
