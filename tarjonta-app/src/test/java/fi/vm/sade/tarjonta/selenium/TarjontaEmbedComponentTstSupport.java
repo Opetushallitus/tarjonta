@@ -12,7 +12,7 @@ public class TarjontaEmbedComponentTstSupport<COMPONENT extends Component> exten
     protected MainWindowPageObject mainWindowPageObject;
 
     public TarjontaEmbedComponentTstSupport() {
-        super(true);
+        super(true, true);
     }
 
     @Override
