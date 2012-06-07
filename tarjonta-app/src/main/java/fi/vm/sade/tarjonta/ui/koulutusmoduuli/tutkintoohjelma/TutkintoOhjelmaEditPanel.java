@@ -24,8 +24,10 @@ import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.*;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
+import fi.vm.sade.generic.ui.component.DebugId;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.model.dto.Kieli;
+import fi.vm.sade.koodisto.service.mock.MockDataHandler;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.model.dto.*;
 import fi.vm.sade.tarjonta.ui.TarjontaApplication;
@@ -56,11 +58,11 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
 
     private static final int NUM_RELATED_ITEMS_TO_DISPLAY = 5;
 
-    private static final String KOODISTO_URI_KOULUTUKSET = "http://postinumero";
+    private static final String KOODISTO_URI_KOULUTUKSET = MockDataHandler.KOULUTUS_URI;
 
-    private static final String PROPERTY_KOULUTUS_KOODI_URI = "koulutusKoodiUri";
+    private static final String PROPERTY_KOULUTUS_KOODI = "koulutusKoodiUri";
 
-    private static final String PROPERTY_ORGANISAATIO_OID = "organisaatioOid";
+    private static final String PROPERTY_ORGANISAATIO = "organisaatioOid";
 
     private static final Logger log = LoggerFactory.getLogger(TutkintoOhjelmaEditPanel.class);
 
@@ -68,10 +70,10 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
 
     private Label moduuliStatusLabel;
 
-    @PropertyId(PROPERTY_ORGANISAATIO_OID)
+    @PropertyId(PROPERTY_ORGANISAATIO)
     private TextField organisaatioField;
 
-    @PropertyId(PROPERTY_KOULUTUS_KOODI_URI)
+    @PropertyId(PROPERTY_KOULUTUS_KOODI)
     private KoodistoComponent koulutusKoodi;
 
     private Table childrenTable;
@@ -147,10 +149,14 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
         TarjontaApplication.getBlackboard().addListener(saveHandler);
     }
 
+    public KoodistoComponent getKoulutusComponent() {
+        return koulutusKoodi;
+    }
+
     /**
-     * Returns text field to display organisaatio. This has been changed to read-only for now since 
-     * it is assumed that organisaatio has been selected prior to opening this panel.
-     * 
+     * Returns text field to display organisaatio. This has been changed to read-only for now since it is assumed that organisaatio has been selected prior to
+     * opening this panel.
+     *
      * @return
      */
     private TextField createOrganisaatioField() {
@@ -178,8 +184,8 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
 
         // todo: add bean properties to populate
         final String[] properties = {
-            PROPERTY_ORGANISAATIO_OID,
-            PROPERTY_KOULUTUS_KOODI_URI
+            PROPERTY_ORGANISAATIO,
+            PROPERTY_KOULUTUS_KOODI
         };
 
         for (String property : properties) {
@@ -216,6 +222,7 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
         final ComboBox combo = new ComboBox();
         combo.setFilteringMode(AbstractSelect.Filtering.FILTERINGMODE_CONTAINS);
         combo.setImmediate(true);
+        combo.setDebugId(PROPERTY_KOULUTUS_KOODI);
 
         KoodistoComponent wrapper = new KoodistoComponent(KOODISTO_URI_KOULUTUKSET, Kieli.getKieliForLocale(I18N.getLocale()));
         wrapper.setField(combo);
@@ -223,6 +230,7 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
         wrapper.setRequiredError(i18n.getMessage("koulutusIsRequired"));
         wrapper.setCaption(i18n.getMessage("koulutusLabel"));
         wrapper.addListener(koulutusSelectedListener);
+        
 
         return wrapper;
 

@@ -19,15 +19,21 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import java.io.Serializable;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author Jukka Raanamo
  */
 @SuppressWarnings("serial")
-public class TarjontaUiServiceImpl implements TarjontaUiService {
+public class TarjontaUiServiceImpl implements TarjontaUiService, Serializable {
+
+    // this and serializable can be removed is this class is annotated as service but this currenly 
+    // creates dublicate beans since it's also declared as spring bean in xml.
+    private static final long serialVersionUID = 1L;
 
     @Autowired
     private TarjontaAdminService adminService;

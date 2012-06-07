@@ -24,6 +24,7 @@ import java.util.List;
  *
  * @author Jukka Raanamo
  */
+@SuppressWarnings("serial")
 public interface TarjontaUiService {
     
     /**

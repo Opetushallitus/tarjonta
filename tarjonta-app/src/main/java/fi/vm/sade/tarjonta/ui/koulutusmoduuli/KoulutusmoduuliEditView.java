@@ -65,12 +65,13 @@ public class KoulutusmoduuliEditView extends CustomComponent {
 
     @Autowired
     private TarjontaUiService uiService;
-    
+
     private Button saveAsDraft;
-    
+
     private Button saveAsFinal;
 
     private static I18NHelper i18n = new I18NHelper("KoulutusmoduuliEditView.");
+
     private ComboBox createNewModuuli;
 
     public KoulutusmoduuliEditView() {
@@ -133,7 +134,7 @@ public class KoulutusmoduuliEditView extends CustomComponent {
         }
 
         // todo: should check if current dto has been modified
-        
+
         // todo: when UI flow is defined, organisatioOID will be given to use from .... somewhere
 
         koulutusmoduuliDTO = uiService.createTutkintoOhjelma("http://organisaatio.fi/suborganisaatio");
@@ -143,7 +144,7 @@ public class KoulutusmoduuliEditView extends CustomComponent {
 
         // could go with "selected" event too
         enableActionButtons(true);
-        
+
         editFormContainer.replaceComponent(oldForm, newForm);
         editForm = newForm;
 
@@ -174,7 +175,7 @@ public class KoulutusmoduuliEditView extends CustomComponent {
         return viewBoundForm;
 
     }
-    
+
     private void enableActionButtons(boolean enable) {
         saveAsDraft.setEnabled(enable);
         saveAsFinal.setEnabled(enable);
@@ -278,8 +279,26 @@ public class KoulutusmoduuliEditView extends CustomComponent {
 
     }
 
+
     public ComboBox getCreateNewModuuli() {
         return createNewModuuli;
     }
+
+    public Button getSaveAsDraftButton() {
+        return saveAsDraft;
+    }
+
+    public Button getSaveAsFinalButton() {
+        return saveAsFinal;
+    }
+
+    public KoulutusmoduuliDTO getKoulutusmoduuliDTO() {
+        return koulutusmoduuliDTO;
+    }
+    
+    public AbstractKoulutusmoduuliEditPanel getKoulutusmoduuliEditPanel() {
+        return koulutusmoduuliEditPanel;
+    }
+
 }
 
