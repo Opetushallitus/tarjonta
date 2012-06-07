@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.service.mock;
 import fi.vm.sade.tarjonta.model.dto.*;
 import fi.vm.sade.tarjonta.service.NoSuchOIDException;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -34,7 +35,10 @@ import org.slf4j.LoggerFactory;
  * @author Jukka Raanamo
  * @author Marko Lyly
  */
-public class TarjontaServiceMock implements TarjontaAdminService {
+public class TarjontaServiceMock implements TarjontaAdminService, Serializable {
+    
+    // todo: remove if this is annotated as service
+    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(TarjontaServiceMock.class);
 

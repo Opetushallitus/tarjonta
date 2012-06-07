@@ -11,6 +11,8 @@
         <class>fi.vm.sade.tarjonta.model.TutkintoOhjelma</class>
         <class>fi.vm.sade.tarjonta.model.KoulutusmoduuliSisaltyvyys</class>
         <class>fi.vm.sade.tarjonta.model.KoulutusmoduuliPerustiedot</class>
+        <class>fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus</class>
+        <class>fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutusTarjoaja</class>
 
 
         <properties>

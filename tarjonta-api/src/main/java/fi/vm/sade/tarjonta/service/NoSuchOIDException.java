@@ -30,6 +30,10 @@ public class NoSuchOIDException extends RuntimeException {
 
     public NoSuchOIDException() {
     }
+    
+    public NoSuchOIDException(String message) {
+        this(message, null);
+    }
 
     public NoSuchOIDException(String message, FaultBean faultBean, Throwable throwable) {
         super(message, throwable);

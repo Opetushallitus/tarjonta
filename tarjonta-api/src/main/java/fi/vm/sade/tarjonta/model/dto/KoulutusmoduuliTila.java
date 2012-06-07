@@ -18,7 +18,9 @@ package fi.vm.sade.tarjonta.model.dto;
 import java.io.Serializable;
 
 /**
- *
+ * TODO: if this state enumeration is same and shared between Koulutusmoduuli and KoulutusmoduuliToteutus, 
+ * rename it e.g. to TarjontaTila
+ * 
  * @author Jukka Raanamo
  */
 public enum KoulutusmoduuliTila implements Serializable {

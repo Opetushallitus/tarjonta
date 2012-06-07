@@ -34,8 +34,6 @@ import org.slf4j.LoggerFactory;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
 
-    private static final long serialVersionUID = 4545498514452280033L;
-
     public static final String TABLE_NAME = "koulutusmoduuli";
 
     private static Logger log = LoggerFactory.getLogger(Koulutusmoduuli.class);
@@ -44,6 +42,7 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
 
     private String nimi;
 
+    // todo: do we need one for dto and one for api or can we just use api's?
     private KoulutusmoduuliTila tila;
 
     private KoulutusmoduuliPerustiedot perustiedot;
@@ -117,7 +116,7 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
 
     /**
      * todo: can you set value directly or was it calculated from some other properties?
-     * 
+     *
      * @param nimi
      */
     public void setNimi(String nimi) {
