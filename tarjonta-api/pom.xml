@@ -9,9 +9,10 @@
 	</parent>
 	<artifactId>tarjonta-api</artifactId>
 	<name>Tarjonta :: API</name>
-	<packaging>bundle</packaging>
+    <!--<packaging>bundle</packaging>-->
+    <packaging>jar</packaging>
 
-	<properties>
+    <properties>
 		<felix.Import-Package>
 			javax.jws,
 			javax.xml.ws,
@@ -80,11 +81,22 @@
 			<artifactId>slf4j-simple</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.jvnet.jaxb2_commons</groupId>
+            <artifactId>jaxb2-basics-runtime</artifactId>
+            <version>0.6.3</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>generic-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>
 			<!-- make felix osgi bundle -->
+            <!--
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -105,33 +117,40 @@
 					</instructions>
 				</configuration>
 			</plugin>
-			<!--<plugin>
+			-->
+			<plugin>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-codegen-plugin</artifactId>
 				<version>${cxf.version}</version>
 				<executions>
-					<execution>
-						<id>generate-koodi-wsdl</id>
-						<phase>generate-sources</phase>
-						<configuration>
-							<sourceRoot>${project.build.directory}/generated/cxf</sourceRoot>
-							<wsdlOptions>
-							     <wsdlOption>
-							         <wsdl>src/main/resources/wsdl/koodiAdminService.wsdl</wsdl>
-							         <wsdl>src/main/resources/wsdl/koodistoAdminService.wsdl</wsdl>
-							         <wsdl>src/main/resources/wsdl/koodiPublicService.wsdl</wsdl>
-							         <wsdl>src/main/resources/wsdl/koodistoPublicService.wsdl</wsdl>
-							         <wsdl>src/main/resources/wsdl/uploadService.wsdl</wsdl>
-                                     <wsdl>src/main/resources/wsdl/downloadService.wsdl</wsdl>
-							     </wsdlOption>
-							</wsdlOptions>
-						</configuration>
-						<goals>
-							<goal>wsdl2java</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>-->
+                    <execution>
+                        <id>generate-wsdl2java</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sourceRoot>target/generated-sources/java</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>src/main/resources/wsdl/hakueraService.wsdl</wsdl>
+                                    <extraargs>
+                                        <extraarg>-xjc-XhashCode</extraarg>
+                                        <extraarg>-xjc-Xequals</extraarg>
+                                    </extraargs>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-basics</artifactId>
+                        <version>0.6.3</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 		</plugins>
 	</build>
 

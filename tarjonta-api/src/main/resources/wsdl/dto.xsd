@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xs:schema version="1.0" elementFormDefault="unqualified"
+           targetNamespace="http://service.tarjonta.sade.vm.fi/types/dto"
+           xmlns:tns="http://service.tarjonta.sade.vm.fi/types/dto"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <!-- TODO: oidString ja defaultLongString johonkin genericiin?? -->
+
+    <xs:simpleType name="oidString">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9\.]*" />
+            <xs:minLength value="14" />
+            <xs:maxLength value="30" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="defaultLongString">
+        <xs:restriction base="xs:string">
+            <xs:length value="255" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="hakueraSimpleDTO">
+        <xs:sequence>
+            <!-- TODO: tartteeko max/min occursit milloin? -->
+            <xs:element minOccurs="1" maxOccurs="1" name="oid" type="tns:oidString" />
+            <xs:element minOccurs="1" maxOccurs="1" name="nimi" type="tns:defaultLongString" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="searchCriteriaDTO">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="paattyneet" type="xs:boolean" />
+            <xs:element minOccurs="0" name="meneillaan" type="xs:boolean" />
+            <xs:element minOccurs="0" name="tulevat" type="xs:boolean" />
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

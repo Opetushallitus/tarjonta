@@ -17,7 +17,7 @@
 package fi.vm.sade.tarjonta.ui.haku;
 
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
+import fi.vm.sade.tarjonta.ui.hakuera.HakueraList;
 
 /**
  * The container for displaying the Haku listing and Hakulomake.
@@ -27,13 +27,12 @@ import com.vaadin.ui.Label;
  */
 public class HakuView extends HorizontalLayout {
     
-    private HakuEditForm hakuForm;
-    Label hakuListing;
+    private HakuEditForm hakuForm = new HakuEditForm();
+    private HakueraList hakueraList = new HakueraList(hakuForm);
     
     public HakuView() {
-        hakuListing = new Label("TODO: hakulistaus!!!");
-        addComponent(hakuListing);
-        hakuForm = new HakuEditForm();
+        addComponent(hakueraList);
         addComponent(hakuForm);
+        hakuForm.setImmediate(true); // needed to hear events from table
     }
 }

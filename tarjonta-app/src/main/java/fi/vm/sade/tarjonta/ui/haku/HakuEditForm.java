@@ -17,29 +17,20 @@
 
 package fi.vm.sade.tarjonta.ui.haku;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Configurable;
-import org.vaadin.addon.formbinder.FormFieldMatch;
-import org.vaadin.addon.formbinder.FormView;
-
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.OptionGroup;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.AbstractSelect.Filtering;
-
+import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.component.MultiLingualTextField;
 import fi.vm.sade.koodisto.model.dto.Kieli;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
+import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.vaadin.addon.formbinder.FormFieldMatch;
+import org.vaadin.addon.formbinder.FormView;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * The form for creating and modifying a Haku (Hakuerä).
@@ -202,5 +193,10 @@ public class HakuEditForm extends CustomComponent {
 
     public Button getCancelButton() {
         return cancelButton;
+    }
+
+    public void populate(HakueraSimpleDTO value) {
+        // TODO: bindaukset
+        haunNimi.getTextFi().setValue(value.getNimi());
     }
 }

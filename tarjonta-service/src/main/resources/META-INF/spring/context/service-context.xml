@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
 	<!-- Conversion service -->
@@ -15,9 +11,12 @@
             <list>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToDTOConverterFactory"/>                
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToDTOConverter"/>                
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaDTOToTutkintoOhjelmaConverter"/>                
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliDTOToKoulutusmoduuliConverter"/>                
-            </list>                
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaDTOToTutkintoOhjelmaConverter"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliDTOToKoulutusmoduuliConverter"/>
+
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraToSimpleDTOConverter"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraFromSimpleDTOConverter"/>
+            </list>
         </property>
     </bean>
 	

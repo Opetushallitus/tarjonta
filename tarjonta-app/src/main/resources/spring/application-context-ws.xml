@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="tarjontaService" class="fi.vm.sade.tarjonta.service.mock.TarjontaServiceMock" />
-
+    <bean id="hakueraService" class="fi.vm.sade.tarjonta.service.mock.HakueraServiceMock" />
 
     <!-- Koodisto service (mock) -->
     <bean id="mockDataHandler" class="fi.vm.sade.koodisto.service.mock.MockDataHandler"/>
