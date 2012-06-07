@@ -49,6 +49,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     private Set<KoulutusmoduuliToteutusTarjoaja> tarjoajat = new HashSet<KoulutusmoduuliToteutusTarjoaja>();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinTable(name=TABLE_NAME + "_tarjoaja")
     private Koulutusmoduuli koulutusmoduuli;
 
     /**
