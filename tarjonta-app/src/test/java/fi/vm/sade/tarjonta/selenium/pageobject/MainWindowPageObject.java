@@ -5,6 +5,7 @@ import fi.vm.sade.support.selenium.SeleniumUtils;
 import fi.vm.sade.support.selenium.VaadinPageObjectSupport;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.ui.MainWindow;
+import org.openqa.selenium.By;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.KoulutusmoduuliEditView;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -26,6 +27,10 @@ public class MainWindowPageObject extends VaadinPageObjectSupport<MainWindow> {
         WebElement combo = SeleniumUtils.waitForElement(getKoulutusmoduuliEditView().getCreateNewModuuli());
         SeleniumUtils.select(combo, I18N.getMessage("KoulutusmoduuliEditView.uusiKoulutusmoduuliSelect.tutkintoonJohtava"));
         return new KoulutusmoduuliEditViewPageObject(driver, component.getKoulutusmoduuliEditView());
+    }
+    
+    public void openHakuTab() {
+        driver.findElement(By.xpath("//*[@class='v-caption' and contains(.,'Haut')]")).click();
     }
     
     
