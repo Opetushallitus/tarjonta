@@ -18,7 +18,7 @@ package fi.vm.sade.tarjonta.ui.service;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
-import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.service.KoulutusmoduuliAdminService;
 import java.io.Serializable;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class TarjontaUiServiceImpl implements TarjontaUiService, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Autowired
-    private TarjontaAdminService adminService;
+    private KoulutusmoduuliAdminService adminService;
 
     @Override
     public TutkintoOhjelmaDTO createTutkintoOhjelma(String organisaatioOID) {
