@@ -25,6 +25,7 @@ import fi.vm.sade.koodisto.model.dto.Kieli;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
+import fi.vm.sade.tarjonta.ui.hakuera.HakueraList;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
@@ -195,7 +196,7 @@ public class HakuEditForm extends CustomComponent {
         return cancelButton;
     }
 
-    public void populate(HakueraSimpleDTO value) {
+    public void populate(HakueraList.HakueraSimple value) {
         // TODO: bindaukset
         haunNimi.getTextFi().setValue(value.getNimi());
     }

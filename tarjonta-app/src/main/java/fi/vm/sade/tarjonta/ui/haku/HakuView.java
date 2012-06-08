@@ -16,7 +16,9 @@
  */
 package fi.vm.sade.tarjonta.ui.haku;
 
+import com.vaadin.data.Property;
 import com.vaadin.ui.HorizontalLayout;
+import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
 import fi.vm.sade.tarjonta.ui.hakuera.HakueraList;
 
 /**
@@ -28,11 +30,16 @@ import fi.vm.sade.tarjonta.ui.hakuera.HakueraList;
 public class HakuView extends HorizontalLayout {
     
     private HakuEditForm hakuForm = new HakuEditForm();
-    private HakueraList hakueraList = new HakueraList(hakuForm);
+    private HakueraList hakueraList = new HakueraList();
     
     public HakuView() {
         addComponent(hakueraList);
         addComponent(hakuForm);
+        hakueraList.getTable().addListener(new Property.ValueChangeListener() {
+            public void valueChange(Property.ValueChangeEvent event) {
+                hakuForm.populate((HakueraList.HakueraSimple) hakueraList.getTable().getValue());
+            }
+        });
         hakuForm.setImmediate(true); // needed to hear events from table
     }
 }

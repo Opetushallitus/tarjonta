@@ -40,7 +40,9 @@ public class Hakuera extends BaseEntity {
     public static final String HAUN_LOPPUMIS_PVM = "haunLoppumisPvm";
 
     private String oid;
-    private String nimi;
+    private String nimiFi;
+    private String nimiSv;
+    private String nimiEn;
     private Date haunAlkamisPvm;
     private Date haunLoppumisPvm;
 
@@ -52,12 +54,28 @@ public class Hakuera extends BaseEntity {
         this.oid = oid;
     }
 
-    public String getNimi() {
-        return nimi;
+    public String getNimiFi() {
+        return nimiFi;
     }
 
-    public void setNimi(String nimi) {
-        this.nimi = nimi;
+    public void setNimiFi(String nimiFi) {
+        this.nimiFi = nimiFi;
+    }
+
+    public String getNimiSv() {
+        return nimiSv;
+    }
+
+    public void setNimiSv(String nimiSv) {
+        this.nimiSv = nimiSv;
+    }
+
+    public String getNimiEn() {
+        return nimiEn;
+    }
+
+    public void setNimiEn(String nimiEn) {
+        this.nimiEn = nimiEn;
     }
 
     public Date getHaunAlkamisPvm() {

@@ -32,7 +32,9 @@ public class HakueraServiceMock implements HakueraService {
     private HakueraSimpleDTO create(String oid, String nimi) {
         HakueraSimpleDTO hakuera = new HakueraSimpleDTO();
         hakuera.setOid(oid);
-        hakuera.setNimi(nimi);
+        hakuera.setNimiFi(nimi+" FI");
+        hakuera.setNimiSv(nimi+" SV");
+        hakuera.setNimiEn(nimi+" EN");
         return hakuera;
     }
 
@@ -40,9 +42,9 @@ public class HakueraServiceMock implements HakueraService {
     public List<HakueraSimpleDTO> findAll(SearchCriteriaDTO searchCriteria) {
         List<HakueraSimpleDTO> result = new ArrayList<HakueraSimpleDTO>();
         for (HakueraSimpleDTO hakuera : mockRepository) {
-            if (searchCriteria.isPaattyneet() && hakuera.getNimi().contains("paattynyt")
-                    || searchCriteria.isTulevat() && hakuera.getNimi().contains("tuleva")
-                    || searchCriteria.isMeneillaan() && hakuera.getNimi().contains("meneillaan")) {
+            if (searchCriteria.isPaattyneet() && hakuera.getNimiFi().contains("paattynyt")
+                    || searchCriteria.isTulevat() && hakuera.getNimiFi().contains("tuleva")
+                    || searchCriteria.isMeneillaan() && hakuera.getNimiFi().contains("meneillaan")) {
                 result.add(hakuera);
             }
         }

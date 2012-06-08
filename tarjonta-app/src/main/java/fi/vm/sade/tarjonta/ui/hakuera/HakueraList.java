@@ -4,6 +4,7 @@ import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.ui.component.MultiLingualTextImpl;
 import fi.vm.sade.tarjonta.service.HakueraService;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
@@ -12,7 +13,9 @@ import fi.vm.sade.tarjonta.ui.haku.HakuEditForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Antti
@@ -28,18 +31,10 @@ public class HakueraList extends CustomComponent {
     private CheckBox paattyneet = checkbox("HakueraList.cb_paattyneet");
     private CheckBox meneillaan = new CheckBox(I18N.getMessage("HakueraList.cb_meneillaan"), true);
     private CheckBox tulevat = new CheckBox(I18N.getMessage("HakueraList.cb_tulevat"), true);
-    private HakuEditForm hakuEditForm;
 
-    public HakueraList(final HakuEditForm hakuEditForm) {
-        this.hakuEditForm = hakuEditForm; // TODO: replace with blackboard?
-
+    public HakueraList() {
         table.setSelectable(true);
         table.setImmediate(true);
-        table.addListener(new Property.ValueChangeListener() {
-            public void valueChange(Property.ValueChangeEvent event) {
-                hakuEditForm.populate((HakueraSimpleDTO)table.getValue());
-            }
-        });
 
         reload();
 
@@ -51,8 +46,12 @@ public class HakueraList extends CustomComponent {
     }
 
     private void reload() {
-        List<HakueraSimpleDTO> hakueras = hakueraService.findAll(buildSearchCriteria());
-        final BeanItemContainer<HakueraSimpleDTO> tableContainer = new BeanItemContainer<HakueraSimpleDTO>(HakueraSimpleDTO.class, hakueras);
+        List<HakueraSimpleDTO> hakueraDtos = hakueraService.findAll(buildSearchCriteria());
+        List<HakueraSimple> hakueras = new ArrayList<HakueraSimple>();
+        for (HakueraSimpleDTO dto : hakueraDtos) {
+            hakueras.add(new HakueraSimple(dto));
+        }
+        final BeanItemContainer<HakueraSimple> tableContainer = new BeanItemContainer<HakueraSimple>(HakueraSimple.class, hakueras);
         tableContainer.addNestedContainerProperty("nimi");
         //tableContainer.setColumnHeader("nimi", I18N.getMessage("HakueraList.nimi"));
         table.setContainerDataSource(tableContainer);
@@ -92,5 +91,25 @@ public class HakueraList extends CustomComponent {
         });
         checkBox.setImmediate(true);
         return checkBox;
+    }
+
+    public static class HakueraSimple {
+        private HakueraSimpleDTO dto;
+        private MultiLingualTextImpl nimiMl;
+        private String nimi;
+        private String oid;
+
+        public HakueraSimple(HakueraSimpleDTO dto) {
+            this.dto = dto;
+            nimi = new MultiLingualTextImpl(dto, "nimi").getClosest(Locale.getDefault());
+        }
+
+        public String getNimi() {
+            return nimi;
+        }
+
+        public String getOid() {
+            return oid;
+        }
     }
 }

@@ -13,7 +13,9 @@ public class HakueraToSimpleDTOConverter extends AbstractFromDomainConverter<Hak
     public HakueraSimpleDTO convert(Hakuera hakuera) {
         HakueraSimpleDTO dto = new HakueraSimpleDTO();
         dto.setOid(hakuera.getOid());
-        dto.setNimi(hakuera.getNimi());
+        dto.setNimiFi(hakuera.getNimiFi());
+        dto.setNimiSv(hakuera.getNimiSv());
+        dto.setNimiEn(hakuera.getNimiEn());
         return dto;
     }
 }
