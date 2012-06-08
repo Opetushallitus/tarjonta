@@ -16,8 +16,8 @@
 package fi.vm.sade.tarjonta.ui;
 
 import com.github.wolfie.blackboard.Blackboard;
-import fi.vm.sade.tarjonta.ui.event.KoulutusmoduuliChangedEvent;
-import fi.vm.sade.tarjonta.ui.event.KoulutusmoduuliChangedEvent.KoulutusmoduuliChangedEventListener;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.event.KoulutusmoduuliChangedEvent;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.event.KoulutusmoduuliChangedEvent.KoulutusmoduuliChangedEventListener;
 
 /**
  *

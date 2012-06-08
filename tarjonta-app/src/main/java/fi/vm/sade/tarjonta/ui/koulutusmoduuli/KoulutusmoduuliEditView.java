@@ -26,7 +26,7 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.ui.TarjontaApplication;
-import fi.vm.sade.tarjonta.ui.event.KoulutusmoduuliChangedEvent;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.event.KoulutusmoduuliChangedEvent;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.tutkintoohjelma.TutkintoOhjelmaEditPanel;
 import fi.vm.sade.tarjonta.ui.service.TarjontaUiService;
 import fi.vm.sade.tarjonta.ui.util.I18NHelper;
