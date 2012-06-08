@@ -29,9 +29,9 @@ import org.apache.cxf.annotations.WSDLDocumentation;
  * @author Jukka Raanamo
  * @author Marko Lyly
  */
-@WebService(name="tarjontaAdminService")
-@WSDLDocumentation("Web servicet koulutustarjonnan käsittelyyn.")
-public interface TarjontaAdminService {
+@WebService(name="koulutusmoduuliAdminService")
+@WSDLDocumentation("Web servicet koulutustarjonnan moduulien käsittelyyn.")
+public interface KoulutusmoduuliAdminService {
 
     /**
      * Creates a new TutkintoOhjelma. At this point, nothing is stored to persistent
