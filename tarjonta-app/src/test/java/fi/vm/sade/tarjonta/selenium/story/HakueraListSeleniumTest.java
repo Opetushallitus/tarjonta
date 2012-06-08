@@ -35,6 +35,7 @@ public class HakueraListSeleniumTest extends TarjontaEmbedComponentTstSupport<Ha
         hakueraEdit = new HakueraEditFormPageObject(driver, getComponentByType(HakuEditForm.class));
     }
 
+    
     @Test
     public void hakueraListWorksCorrectly() throws Throwable {
         STEP("aluksi lista näyttää kaikki hakuerät");

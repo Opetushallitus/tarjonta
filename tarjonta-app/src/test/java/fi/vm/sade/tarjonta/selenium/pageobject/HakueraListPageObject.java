@@ -1,8 +1,7 @@
 package fi.vm.sade.tarjonta.selenium.pageobject;
 
-import fi.vm.sade.support.selenium.SeleniumUtils;
+import com.vaadin.ui.Component;
 import fi.vm.sade.support.selenium.VaadinPageObjectSupport;
-import fi.vm.sade.tarjonta.ui.MainWindow;
 import fi.vm.sade.tarjonta.ui.hakuera.HakueraList;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -35,15 +34,25 @@ public class HakueraListPageObject extends VaadinPageObjectSupport<HakueraList> 
         return table.findElements(By.xpath("//tr[contains(@class,'v-table-row')]"));
     }
 
+    /**
+     * Convenience method that triggers a click on the WebElement of type "input" represented by given 
+     * Vaadin component.
+     * 
+     * @param component the component to click
+     */
+    private void clickInput(Component component) {
+        click(By.id(component.getDebugId()), "input");
+    }
+    
     public void clickFilters(boolean paattyneet, boolean meneillaan, boolean tulevat) {
         if (paattyneet) {
-            click(By.id(component.getPaattyneet().getDebugId()));
+            clickInput(component.getPaattyneet());            
         }
         if (meneillaan) {
-            click(By.id(component.getMeneillaan().getDebugId()));
+            clickInput(component.getMeneillaan());
         }
-        if (paattyneet) {
-            click(By.id(component.getTulevat().getDebugId()));
+        if (tulevat) {
+            clickInput(component.getTulevat());
         }
     }
 

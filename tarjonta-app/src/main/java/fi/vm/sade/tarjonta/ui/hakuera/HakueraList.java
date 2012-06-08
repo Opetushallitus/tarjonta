@@ -8,7 +8,6 @@ import fi.vm.sade.generic.ui.component.MultiLingualTextImpl;
 import fi.vm.sade.tarjonta.service.HakueraService;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
-import fi.vm.sade.tarjonta.ui.AbstractSadeApplication;
 import fi.vm.sade.tarjonta.ui.haku.HakuEditForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -29,8 +28,8 @@ public class HakueraList extends CustomComponent {
     private Layout layout = new VerticalLayout();
     private Table table = new Table();
     private CheckBox paattyneet = checkbox("HakueraList.cb_paattyneet");
-    private CheckBox meneillaan = new CheckBox(I18N.getMessage("HakueraList.cb_meneillaan"), true);
-    private CheckBox tulevat = new CheckBox(I18N.getMessage("HakueraList.cb_tulevat"), true);
+    private CheckBox meneillaan = checkbox("HakueraList.cb_meneillaan");
+    private CheckBox tulevat = checkbox("HakueraList.cb_tulevat");
 
     public HakueraList() {
         table.setSelectable(true);
