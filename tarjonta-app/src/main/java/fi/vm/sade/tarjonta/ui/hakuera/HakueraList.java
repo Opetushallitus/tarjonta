@@ -55,6 +55,7 @@ public class HakueraList extends CustomComponent {
         tableContainer.addNestedContainerProperty("nimi");
         //tableContainer.setColumnHeader("nimi", I18N.getMessage("HakueraList.nimi"));
         table.setContainerDataSource(tableContainer);
+        table.setVisibleColumns(new Object[] {"nimi"});
     }
 
     private SearchCriteriaDTO buildSearchCriteria() {

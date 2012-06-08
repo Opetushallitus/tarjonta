@@ -1,4 +1,4 @@
-package fi.vm.sade.tarjonta.service.impl;
+package fi.vm.sade.tarjonta.service;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;

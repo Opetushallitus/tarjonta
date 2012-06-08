@@ -27,6 +27,9 @@ public class HakueraServiceImpl implements HakueraService {
 
     @Override
     public List<HakueraSimpleDTO> findAll(SearchCriteriaDTO searchCriteria) {
+        if (searchCriteria == null) {
+            return new ArrayList<HakueraSimpleDTO>();
+        }
         return convert(businessService.findAll(searchCriteria));
     }
 

@@ -19,10 +19,8 @@ import fi.vm.sade.generic.model.BaseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -39,11 +37,19 @@ public class Hakuera extends BaseEntity {
     public static final String HAUN_ALKAMIS_PVM = "haunAlkamisPvm";
     public static final String HAUN_LOPPUMIS_PVM = "haunLoppumisPvm";
 
+    @NotNull
     private String oid;
+    @NotNull
     private String nimiFi;
+    @NotNull
     private String nimiSv;
+    @NotNull
     private String nimiEn;
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
     private Date haunAlkamisPvm;
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
     private Date haunLoppumisPvm;
 
     public String getOid() {

@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
+import fi.vm.sade.tarjonta.HakueraTstHelper;
 import fi.vm.sade.tarjonta.dao.impl.HakueraDAOImpl;
 import fi.vm.sade.tarjonta.model.Hakuera;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
@@ -45,71 +46,58 @@ public class HakueraDAOTest {
 
     @Autowired
     private HakueraDAOImpl dao;
+    @Autowired
+    private HakueraTstHelper helper;
 
     @Test
     public void findAll_dateSearchWorks() {
         long now = new Date().getTime();
         int dif = 10000;
-        Hakuera meneillaan = create(now-dif, now+dif);
-        Hakuera tuleva = create(now+dif, now+2*dif);
-        Hakuera paattynyt = create(now-2*dif, now-dif);
+        Hakuera meneillaan = helper.create(now-dif, now+dif);
+        Hakuera tuleva = helper.create(now+dif, now+2*dif);
+        Hakuera paattynyt = helper.create(now-2*dif, now-dif);
         List<Hakuera> l;
 
         // kaikki
-        assertEquals(3, dao.findAll(criteria(true, true, true)).size());
+        assertEquals(3, dao.findAll(helper.criteria(true, true, true)).size());
 
         // päättyneet ja meneillään -> alkuaika pienempi kuin nyt
-        l = dao.findAll(criteria(true, true, false));
+        l = dao.findAll(helper.criteria(true, true, false));
         assertEquals(2, l.size());
         assertTrue(l.contains(paattynyt));
         assertTrue(l.contains(meneillaan));
 
         // meneilläään ja tulevat -> loppuaika suurempi kuin nyt
-        l = dao.findAll(criteria(false, true, true));
+        l = dao.findAll(helper.criteria(false, true, true));
         assertEquals(2, l.size());
         assertTrue(l.contains(meneillaan));
         assertTrue(l.contains(tuleva));
 
         // päättyneet ja tulevat -> loppuaika pienempi kuin nyt TAI alkuaika suurempi kuin nyt
-        l = dao.findAll(criteria(true, false, true));
+        l = dao.findAll(helper.criteria(true, false, true));
         assertEquals(2, l.size());
         assertTrue(l.contains(paattynyt));
         assertTrue(l.contains(tuleva));
 
         // päättyneet -> loppuaika pienempi kuin nyt
-        l = dao.findAll(criteria(true, false, false));
+        l = dao.findAll(helper.criteria(true, false, false));
         assertEquals(1, l.size());
         assertTrue(l.contains(paattynyt));
 
         // meneillään -> alkuaika pienempi kuin nyt JA loppuaika suurempi kuin nyt
-        l = dao.findAll(criteria(false, true, false));
+        l = dao.findAll(helper.criteria(false, true, false));
         assertEquals(1, l.size());
         assertTrue(l.contains(meneillaan));
 
         // tulevat -> alkuaika suurempi kuin nyt
-        l = dao.findAll(criteria(false, false, true));
+        l = dao.findAll(helper.criteria(false, false, true));
         assertEquals(1, l.size());
         assertTrue(l.contains(tuleva));
 
         // ei mitään
-        l = dao.findAll(criteria(false, false, false));
+        l = dao.findAll(helper.criteria(false, false, false));
         assertEquals(0, l.size());
 
-    }
-
-    private SearchCriteriaDTO criteria(boolean paattyneet, boolean meneillaan, boolean tuleva) {
-        SearchCriteriaDTO criteria = new SearchCriteriaDTO();
-        criteria.setPaattyneet(paattyneet);
-        criteria.setMeneillaan(meneillaan);
-        criteria.setTulevat(tuleva);
-        return criteria;
-    }
-
-    private Hakuera create(long alkuPvm, long loppuPvm) {
-        Hakuera h = new Hakuera();
-        h.setHaunAlkamisPvm(new Date(alkuPvm));
-        h.setHaunLoppumisPvm(new Date(loppuPvm));
-        return dao.insert(h);
     }
 
 }

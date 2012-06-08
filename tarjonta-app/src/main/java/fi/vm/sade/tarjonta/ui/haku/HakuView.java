@@ -40,6 +40,5 @@ public class HakuView extends HorizontalLayout {
                 hakuForm.populate((HakueraList.HakueraSimple) hakueraList.getTable().getValue());
             }
         });
-        hakuForm.setImmediate(true); // needed to hear events from table
     }
 }
