@@ -19,8 +19,11 @@ import fi.vm.sade.generic.model.BaseEntity;
 import javax.persistence.MappedSuperclass;
 
 /**
- * This base class introduces EU standard properties into this system.
+ * A single occurrence of a learning opportunity. Unlike a Learning Opportunity Specification, 
+ * a Learning Opportunity Instance is not abstract, may be bound to particular dates or locations, 
+ * and may be applied for or participated in by learners.
  * 
+ * @see http://mjukis.blogg.skolverket.se/files/2008/10/mlo-ad-v5.pdf
  * @author Jukka Raanamo
  */
 @MappedSuperclass

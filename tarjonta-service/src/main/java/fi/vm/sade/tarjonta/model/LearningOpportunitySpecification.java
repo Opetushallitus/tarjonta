@@ -19,7 +19,10 @@ import fi.vm.sade.generic.model.BaseEntity;
 import javax.persistence.MappedSuperclass;
 
 /**
- *
+ * An abstract description of a learning opportunity, consisting of information that will be 
+ * consistent across multiple instances of the learning opportunity.
+ * 
+ * @see http://mjukis.blogg.skolverket.se/files/2008/10/mlo-ad-v5.pdf
  * @author Jukka Raanamo
  */
 @MappedSuperclass
