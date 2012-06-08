@@ -24,10 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,14 +42,16 @@ public class HakueraDAOImpl extends AbstractJpaDAOImpl<Hakuera, Long> implements
 
     @Override
     public List<Hakuera> findAll(SearchCriteriaDTO searchCriteria) {
-        boolean p = Boolean.TRUE.equals(searchCriteria.isPaattyneet());
-        boolean m = Boolean.TRUE.equals(searchCriteria.isMeneillaan());
-        boolean t = Boolean.TRUE.equals(searchCriteria.isTulevat());
+        boolean p = searchCriteria.isPaattyneet();
+        boolean m = searchCriteria.isMeneillaan();
+        boolean t = searchCriteria.isTulevat();
+        String lang = searchCriteria.getLang();
 
         EntityManager em = getEntityManager();
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Hakuera> query = cb.createQuery(Hakuera.class);
         Root<Hakuera> hakuera = query.from(Hakuera.class);
+        query.orderBy(createOrderBy(lang, cb, hakuera));
         Predicate where = null;
 
         if (m && p && t) {
@@ -89,6 +88,18 @@ public class HakueraDAOImpl extends AbstractJpaDAOImpl<Hakuera, Long> implements
         }
 
         return getEntityManager().createQuery(query).getResultList();
+    }
+
+    private Order createOrderBy(String lang, CriteriaBuilder cb, Root<Hakuera> hakuera) {
+        Order orderBy;
+        if ("sv".equals(lang)) {
+            orderBy = cb.asc(hakuera.get("nimiSv"));
+        } else if ("en".equals(lang)) {
+            orderBy = cb.asc(hakuera.get("nimiEn"));
+        } else {
+            orderBy = cb.asc(hakuera.get("nimiFi"));
+        }
+        return orderBy;
     }
 }
 

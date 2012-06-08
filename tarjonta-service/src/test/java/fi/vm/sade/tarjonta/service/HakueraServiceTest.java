@@ -1,11 +1,9 @@
 package fi.vm.sade.tarjonta.service;
 
 import fi.vm.sade.tarjonta.HakueraTstHelper;
-import fi.vm.sade.tarjonta.dao.impl.HakueraDAOImpl;
 import fi.vm.sade.tarjonta.model.Hakuera;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +42,7 @@ public class HakueraServiceTest {
 
         // test happy path & conversions (search logic tested in dao test)
 
-        List<HakueraSimpleDTO> result = hakueraService.findAll(helper.criteria(true, true, true));
+        List<HakueraSimpleDTO> result = hakueraService.findAll(helper.criteria(true, true, true, "fi"));
         assertEquals(3, result.size());
         helper.assertHakueraSimpleDTO(meneillaan, result.get(0));
         helper.assertHakueraSimpleDTO(tuleva, result.get(1));

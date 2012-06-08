@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.dao;
 import fi.vm.sade.tarjonta.HakueraTstHelper;
 import fi.vm.sade.tarjonta.dao.impl.HakueraDAOImpl;
 import fi.vm.sade.tarjonta.model.Hakuera;
-import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -59,44 +58,78 @@ public class HakueraDAOTest {
         List<Hakuera> l;
 
         // kaikki
-        assertEquals(3, dao.findAll(helper.criteria(true, true, true)).size());
+        assertEquals(3, dao.findAll(helper.criteria(true, true, true, "fi")).size());
 
         // päättyneet ja meneillään -> alkuaika pienempi kuin nyt
-        l = dao.findAll(helper.criteria(true, true, false));
+        l = dao.findAll(helper.criteria(true, true, false, "fi"));
         assertEquals(2, l.size());
         assertTrue(l.contains(paattynyt));
         assertTrue(l.contains(meneillaan));
 
         // meneilläään ja tulevat -> loppuaika suurempi kuin nyt
-        l = dao.findAll(helper.criteria(false, true, true));
+        l = dao.findAll(helper.criteria(false, true, true, "fi"));
         assertEquals(2, l.size());
         assertTrue(l.contains(meneillaan));
         assertTrue(l.contains(tuleva));
 
         // päättyneet ja tulevat -> loppuaika pienempi kuin nyt TAI alkuaika suurempi kuin nyt
-        l = dao.findAll(helper.criteria(true, false, true));
+        l = dao.findAll(helper.criteria(true, false, true, "fi"));
         assertEquals(2, l.size());
         assertTrue(l.contains(paattynyt));
         assertTrue(l.contains(tuleva));
 
         // päättyneet -> loppuaika pienempi kuin nyt
-        l = dao.findAll(helper.criteria(true, false, false));
+        l = dao.findAll(helper.criteria(true, false, false, "fi"));
         assertEquals(1, l.size());
         assertTrue(l.contains(paattynyt));
 
         // meneillään -> alkuaika pienempi kuin nyt JA loppuaika suurempi kuin nyt
-        l = dao.findAll(helper.criteria(false, true, false));
+        l = dao.findAll(helper.criteria(false, true, false, "fi"));
         assertEquals(1, l.size());
         assertTrue(l.contains(meneillaan));
 
         // tulevat -> alkuaika suurempi kuin nyt
-        l = dao.findAll(helper.criteria(false, false, true));
+        l = dao.findAll(helper.criteria(false, false, true, "fi"));
         assertEquals(1, l.size());
         assertTrue(l.contains(tuleva));
 
         // ei mitään
-        l = dao.findAll(helper.criteria(false, false, false));
+        l = dao.findAll(helper.criteria(false, false, false, "fi"));
         assertEquals(0, l.size());
+
+    }
+
+    @Test
+    public void findAll_sortingByABC() {
+        long now = new Date().getTime();
+        Hakuera h1 = helper.create(now, now, "bbb");
+        Hakuera h2 = helper.create(now, now, "aaa");
+        Hakuera h3 = helper.create(now, now, "ccc");
+
+        // fi
+
+        List<Hakuera> l = dao.findAll(helper.criteria(true, true, true, "fi"));
+        assertEquals("aaa FI", l.get(0).getNimiFi());
+        assertEquals("bbb FI", l.get(1).getNimiFi());
+        assertEquals("ccc FI", l.get(2).getNimiFi());
+
+        // sv
+
+        h2.setNimiSv("ddd");
+        dao.update(h2);
+        l = dao.findAll(helper.criteria(true, true, true, "sv"));
+        assertEquals("bbb SV", l.get(0).getNimiSv());
+        assertEquals("ccc SV", l.get(1).getNimiSv());
+        assertEquals("ddd", l.get(2).getNimiSv());
+
+        // en
+
+        h1.setNimiEn("xxx");
+        dao.update(h1);
+        l = dao.findAll(helper.criteria(true, true, true, "en"));
+        assertEquals("aaa EN", l.get(0).getNimiEn());
+        assertEquals("ccc EN", l.get(1).getNimiEn());
+        assertEquals("xxx", l.get(2).getNimiEn());
 
     }
 

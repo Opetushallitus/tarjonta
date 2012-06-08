@@ -24,7 +24,7 @@ import java.util.Locale;
 public class HakueraList extends CustomComponent {
 
     @Autowired
-    private HakueraService hakueraService; // TODO: ui-service kehiin
+    private HakueraService hakueraService;
 
     private Layout layout = new VerticalLayout();
     private Table table = new Table();
@@ -63,6 +63,7 @@ public class HakueraList extends CustomComponent {
         searchCriteria.setPaattyneet(Boolean.TRUE.equals(paattyneet.getValue()));
         searchCriteria.setMeneillaan(Boolean.TRUE.equals(meneillaan.getValue()));
         searchCriteria.setTulevat(Boolean.TRUE.equals(tulevat.getValue()));
+        searchCriteria.setLang(Locale.getDefault().getLanguage());
         return searchCriteria;
     }
 

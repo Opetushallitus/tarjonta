@@ -32,6 +32,7 @@
             <xs:element minOccurs="1" maxOccurs="1" name="paattyneet" type="xs:boolean" />
             <xs:element minOccurs="1" maxOccurs="1" name="meneillaan" type="xs:boolean" />
             <xs:element minOccurs="1" maxOccurs="1" name="tulevat" type="xs:boolean" />
+            <xs:element minOccurs="1" maxOccurs="1" name="lang" type="xs:string" />
         </xs:sequence>
     </xs:complexType>
 

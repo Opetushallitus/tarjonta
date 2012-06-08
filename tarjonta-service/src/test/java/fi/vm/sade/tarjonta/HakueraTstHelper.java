@@ -21,22 +21,28 @@ public class HakueraTstHelper {
     private HakueraDAOImpl dao;
 
     public Hakuera create(long alkuPvm, long loppuPvm) {
-        Hakuera h = new Hakuera();
         long now = System.currentTimeMillis();
-        h.setOid(""+now);
-        h.setNimiFi(""+now+" FI");
-        h.setNimiSv(""+now+" SV");
-        h.setNimiEn(""+now+" EN");
+        String name = "" + now;
+        return create(alkuPvm, loppuPvm, name);
+    }
+
+    public Hakuera create(long alkuPvm, long loppuPvm, String name) {
+        Hakuera h = new Hakuera();
+        h.setOid(name);
+        h.setNimiFi(name + " FI");
+        h.setNimiSv(name + " SV");
+        h.setNimiEn(name + " EN");
         h.setHaunAlkamisPvm(new Date(alkuPvm));
         h.setHaunLoppumisPvm(new Date(loppuPvm));
         return dao.insert(h);
     }
 
-    public SearchCriteriaDTO criteria(boolean paattyneet, boolean meneillaan, boolean tuleva) {
+    public SearchCriteriaDTO criteria(boolean paattyneet, boolean meneillaan, boolean tuleva, String lang) {
         SearchCriteriaDTO criteria = new SearchCriteriaDTO();
         criteria.setPaattyneet(paattyneet);
         criteria.setMeneillaan(meneillaan);
         criteria.setTulevat(tuleva);
+        criteria.setLang(lang);
         return criteria;
     }
 
