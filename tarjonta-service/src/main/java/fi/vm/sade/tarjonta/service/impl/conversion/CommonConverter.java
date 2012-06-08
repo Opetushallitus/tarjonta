@@ -15,34 +15,30 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliPerustiedot;
-import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
-import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 
 /**
- * TODO: maybe inherit from KoulutusOhjelmaDTOConverter?
  *
- * @param <T>
  * @author Jukka Raanamo
  */
-public class TutkintoOhjelmaToDTOConverter<T extends KoulutusmoduuliDTO> extends AbstractFromDomainConverter<TutkintoOhjelma, T> {
-
-    @Override
-    public T convert(TutkintoOhjelma source) {
-
-        TutkintoOhjelmaDTO dto = new TutkintoOhjelmaDTO();
-        dto.setTila(source.getTila().name());
-        dto.setOid(source.getOid());
-        dto.setNimi(source.getNimi());
-        dto.setUpdated(source.getUpdated());
-        dto.setPerustiedot(CommonConverter.convert(source.getPerustiedot()));
-
-        return (T) dto;
-
+public final class CommonConverter {
+    
+    private CommonConverter() {        
     }
-
+    
+    public static KoulutusmoduuliPerustiedotDTO convert(KoulutusmoduuliPerustiedot source) {
+        
+        if (source == null) {
+            return null;
+        }
+        
+        KoulutusmoduuliPerustiedotDTO dto = new KoulutusmoduuliPerustiedotDTO();
+        dto.setOrganisaatioOid(source.getOrganisaatioOid());
+        
+        return dto;
+        
+    }
+    
 }
 

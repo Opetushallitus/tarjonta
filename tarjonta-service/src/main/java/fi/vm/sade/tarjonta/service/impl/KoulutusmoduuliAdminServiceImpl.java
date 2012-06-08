@@ -24,7 +24,7 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSearchDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import fi.vm.sade.tarjonta.service.NoSuchOIDException;
-import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.service.KoulutusmoduuliAdminService;
 import fi.vm.sade.tarjonta.service.business.KoulutusmoduuliBusinessService;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Jukka Raanamo
  * @author Marko Lyly
  */
-public class TarjontaAdminServiceImpl implements TarjontaAdminService {
+public class KoulutusmoduuliAdminServiceImpl implements KoulutusmoduuliAdminService {
 
     @Autowired
     private KoulutusmoduuliBusinessService businessService;

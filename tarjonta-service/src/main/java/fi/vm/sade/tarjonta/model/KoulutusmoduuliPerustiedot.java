@@ -32,7 +32,7 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
      * TODO: this is just best guess, validate from model and Seppo what is the "name" of this field and if values are stored by value or by reference and
      * computed at runtime. Here runtime is guessed.
      */
-    private String koulutusKoodiUrl;
+    private String koulutusKoodiUri;
 
     public void setOrganisaatioOid(String organisaatioOid) {
         this.organisaatioOid = organisaatioOid;
@@ -42,12 +42,12 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
         return organisaatioOid;
     }
 
-    public void setKoulutusKoodiUrl(String koulutusKoodiUrl) {
-        this.koulutusKoodiUrl = koulutusKoodiUrl;
+    public void setKoulutusKoodiUri(String koulutusKoodiUrl) {
+        this.koulutusKoodiUri = koulutusKoodiUrl;
     }
 
-    public String getKoulutusKoodiUrl() {
-        return koulutusKoodiUrl;
+    public String getKoulutusKoodiUri() {
+        return koulutusKoodiUri;
     }
 
 }

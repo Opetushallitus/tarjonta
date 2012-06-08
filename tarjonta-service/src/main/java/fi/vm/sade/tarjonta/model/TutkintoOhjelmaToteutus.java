@@ -33,14 +33,17 @@ public class TutkintoOhjelmaToteutus extends KoulutusmoduuliToteutus {
      */
     public static final String TABLE_NAME = "tutkinto_ohjelma_toteutus";
 
-    protected TutkintoOhjelmaToteutus() {
-        super();
-    }
-
     public TutkintoOhjelmaToteutus(Koulutusmoduuli moduuli) {
         super(moduuli);
         // tutkinto-ohjelma will always have perustiedot
         setPerustiedot(new KoulutusmoduuliPerustiedot());
+    }
+
+    /**
+     * Public constructor required at least by converted
+     */
+    public TutkintoOhjelmaToteutus() {
+        this(null);
     }
 
 }

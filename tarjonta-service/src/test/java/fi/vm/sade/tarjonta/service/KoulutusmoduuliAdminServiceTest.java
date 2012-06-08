@@ -4,7 +4,7 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 import fi.vm.sade.tarjonta.service.NoSuchOIDException;
-import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.service.KoulutusmoduuliAdminService;
 import java.util.List;
 import java.util.UUID;
 import static org.junit.Assert.*;
@@ -18,10 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class TarjontaAdminServiceTest {
+public class KoulutusmoduuliAdminServiceTest {
 
     @Autowired
-    private TarjontaAdminService adminService;
+    private KoulutusmoduuliAdminService adminService;
 
     @Test
     public void testNewKoulutusmoduuliIsInEditState() {

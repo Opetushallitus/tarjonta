@@ -15,32 +15,33 @@
  */
 package fi.vm.sade.tarjonta.service.business;
 
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.NoSuchOIDException;
 
 /**
- * Service to be used internally by public services to centralize Koulutusmoduuli operations.
- * 
+ * Service to be used internally by public services to centralize KoulutusmoduuliToteutus operations.
+ *
  * @author Jukka Raanamo
  */
-public interface KoulutusmoduuliBusinessService {
+public interface KoulutusmoduuliToteutusBusinessService {
 
     /**
-     * Insert or update given Koulutusmoduuli
-     *
-     * @param moduuli
+     * Insert or update given KoulutusmoduuliToteutus
+     * 
+     * @param toteutus 
      * @return
      */
-    Koulutusmoduuli save(Koulutusmoduuli moduuli);
+    KoulutusmoduuliToteutus save(KoulutusmoduuliToteutus toteutus);
 
     /**
-     * Looks up Koulutusmoduuli by its public OID
-     *
+     * Lookup KoulutusmoduuliToteutus by its public OID.
+     * 
      * @param koulutusmoduuliOID
      * @return
-     * @throws NoSuchOIDException if no match is found 
+     * @throws NoSuchOIDException if match is not found
      */
-    Koulutusmoduuli findByOid(String koulutusmoduuliOID) throws NoSuchOIDException;
+    KoulutusmoduuliToteutus findByOid(String koulutusmoduuliOID)
+        throws NoSuchOIDException;
 
 }
 

@@ -36,6 +36,9 @@ public class KoulutusmoduuliBusinessServiceImpl implements KoulutusmoduuliBusine
 
     @Override
     public Koulutusmoduuli save(Koulutusmoduuli moduuli) {
+        
+        // TODO: we need to update any existing entity by copying those fields that have been overwritten
+        
         if (moduuli.getOid() == null) {
             // TODO: fake setting OID
             moduuli.setOid(UUID.randomUUID().toString());

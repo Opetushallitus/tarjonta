@@ -16,6 +16,11 @@
 
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraToSimpleDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraFromSimpleDTOConverter"/>
+                
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToteutusToDTOConverter"/>                                
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToteutusDTOToModelConverter"/>                                
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToteutusDTOToModelConverter"/>                                
+                
             </list>
         </property>
     </bean>

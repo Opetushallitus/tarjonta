@@ -70,8 +70,6 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
      */
     public KoulutusmoduuliToteutus(Koulutusmoduuli moduuli) {
         this();
-        // we may have to relax this
-        assert moduuli != null : "koulutusmoduuli cannot be null";
         this.koulutusmoduuli = moduuli;
     }
 
@@ -126,6 +124,10 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     public Koulutusmoduuli getKoulutusmoduuli() {
         return koulutusmoduuli;
     }
+    
+    public void setKoulutusmoduuli(Koulutusmoduuli moduuli) {
+        koulutusmoduuli = moduuli;
+    } 
 
     /**
      * Returns immutable set of currently added tarjoajat.

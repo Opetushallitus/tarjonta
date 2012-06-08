@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<context:annotation-config />
+    <context:annotation-config />
         
-        <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl" /> 
-<!--
-	<bean id="koodiAdminService" class="fi.vm.sade.koodisto.service.impl.KoodiAdminServiceImpl" />
-	<bean id="koodistoAdminService" class="fi.vm.sade.koodisto.service.impl.KoodistoAdminServiceImpl" />
-	<bean id="koodiPublicService" class="fi.vm.sade.koodisto.service.impl.KoodiPublicServiceImpl" />
-	<bean id="koodistoPublicService" class="fi.vm.sade.koodisto.service.impl.KoodistoPublicServiceImpl" />
--->
+    <bean id="koulutusmoduuliAdminService" class="fi.vm.sade.tarjonta.service.impl.KoulutusmoduuliAdminServiceImpl" /> 
+    <bean id="koulutusmoduuliToteutusAdminService" class="fi.vm.sade.tarjonta.service.impl.KoulutusmoduuliToteutusAdminServiceImpl" /> 
 
- </beans>
+</beans>
