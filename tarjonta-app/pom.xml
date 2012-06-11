@@ -13,7 +13,13 @@
     <name>Tarjonta :: APP</name>
 
     <dependencies>
-        
+
+        <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>generic-test-support</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-api</artifactId>
