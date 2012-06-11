@@ -34,7 +34,7 @@ public final class CommonConverter {
         }
         
         KoulutusmoduuliPerustiedotDTO dto = new KoulutusmoduuliPerustiedotDTO();
-        dto.setOrganisaatioOid(source.getOrganisaatioOid());
+        dto.setKoulutusKoodiUri(source.getKoulutusKoodiUri());
         
         return dto;
         

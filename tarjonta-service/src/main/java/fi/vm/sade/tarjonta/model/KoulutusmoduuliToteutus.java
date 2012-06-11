@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
@@ -40,6 +41,10 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
 
     private String nimi;
 
+    /**
+     * todo: make this embedded?
+     */
+    @OneToOne(cascade = CascadeType.ALL)
     private KoulutusmoduuliPerustiedot perustiedot;
 
     @Enumerated(EnumType.STRING)
@@ -49,8 +54,23 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     private Set<KoulutusmoduuliToteutusTarjoaja> tarjoajat = new HashSet<KoulutusmoduuliToteutusTarjoaja>();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinTable(name=TABLE_NAME + "_tarjoaja")
+    @JoinTable(name = TABLE_NAME + "_tarjoaja")
     private Koulutusmoduuli koulutusmoduuli;
+
+    /**
+     * Koodisto Uri. Example display values 'Nuorten koulutus, Aikuisten koulutus'.
+     *
+     * <p>Note 11.06.2012: as per today, when looking at the "model" you'll find this attribute from Koulutusmoduuli. This is a mistake, the model is just not
+     * updated.</p>
+     *
+     */
+    private String koulutusLajiUri;
+
+    /**
+     * <p>Note 11.06.2012: this attribute has been added via wire frame and at least as per today, does not exists in the model</p>
+     */
+    @Temporal(TemporalType.DATE)
+    private Date koulutuksenAlkamisPvm;
 
     /**
      * OID for this entity.
@@ -65,7 +85,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     }
 
     /**
-     * 
+     *
      * @param moduuli
      */
     public KoulutusmoduuliToteutus(Koulutusmoduuli moduuli) {
@@ -124,10 +144,10 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     public Koulutusmoduuli getKoulutusmoduuli() {
         return koulutusmoduuli;
     }
-    
+
     public void setKoulutusmoduuli(Koulutusmoduuli moduuli) {
         koulutusmoduuli = moduuli;
-    } 
+    }
 
     /**
      * Returns immutable set of currently added tarjoajat.
@@ -163,6 +183,34 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     public boolean removeTarjoaja(String organisaatioOID) {
         KoulutusmoduuliToteutusTarjoaja t = new KoulutusmoduuliToteutusTarjoaja(organisaatioOID);
         return tarjoajat.remove(t);
+    }
+
+    /**
+     * @return the koulutusLajiUri
+     */
+    public String getKoulutusLajiUri() {
+        return koulutusLajiUri;
+    }
+
+    /**
+     * @param koulutusLajiUri the koulutusLajiUri to set
+     */
+    public void setKoulutusLajiUri(String koulutusLajiUri) {
+        this.koulutusLajiUri = koulutusLajiUri;
+    }
+
+    /**
+     * @return the koulutuksenAlkamisPvm
+     */
+    public Date getKoulutuksenAlkamisPvm() {
+        return koulutuksenAlkamisPvm;
+    }
+
+    /**
+     * @param koulutuksenAlkamisPvm the koulutuksenAlkamisPvm to set
+     */
+    public void setKoulutuksenAlkamisPvm(Date koulutuksenAlkamisPvm) {
+        this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
     }
 
 }

@@ -36,22 +36,33 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
 
     public static final String TABLE_NAME = "koulutusmoduuli";
 
+    private static final long serialVersionUID = -3359195324699691606L;
+
     private static Logger log = LoggerFactory.getLogger(Koulutusmoduuli.class);
 
+    @Enumerated(EnumType.STRING)
     private KoulutusmoduuliTyyppi tyyppi;
 
     private String nimi;
 
     // todo: do we need one for dto and one for api or can we just use api's?
+    @Enumerated(EnumType.STRING)
     private KoulutusmoduuliTila tila;
 
+    @OneToOne(cascade = CascadeType.ALL)
     private KoulutusmoduuliPerustiedot perustiedot;
+
+    /**
+     * The "owner" of this koulutusmoduuli.
+     */
+    @Column(name = "organisaatio_oid")
+    private String organisaatioOid;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
     /**
-     *
+     * OID of this koulutusmoduuli.
      */
     private String oid;
 
@@ -294,6 +305,20 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
 
         return tester.isFound();
 
+    }
+
+    /**
+     * @return the organisaatioOid
+     */
+    public String getOrganisaatioOid() {
+        return organisaatioOid;
+    }
+
+    /**
+     * @param organisaatioOid the organisaatioOid to set
+     */
+    public void setOrganisaatioOid(String organisaatioOid) {
+        this.organisaatioOid = organisaatioOid;
     }
 
 }

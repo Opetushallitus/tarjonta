@@ -15,29 +15,16 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import org.junit.Test;
 
 /**
  *
  * @author Jukka Raanamo
  */
-@Entity
-@Table(name = TutkintoOhjelma.TABLE_NAME)
-public class TutkintoOhjelma extends Koulutusmoduuli {
+public class KoulutusmoduuliToteutusTest {
 
-    private static final long serialVersionUID = 5126887997800825478L;
-
-    /*
-     * Overrides table name from Koulutusmoduuli
-     */
-    public static final String TABLE_NAME = "tutkinto_ohjelma";
-
-    public TutkintoOhjelma() {
-        super(KoulutusmoduuliTyyppi.TUTKINTOON_JOHTAVA);
-        // tutkinto-ohjelma will always have perustiedot
-        setPerustiedot(new KoulutusmoduuliPerustiedot());
+    @Test
+    public void testNone() {
     }
 
 }

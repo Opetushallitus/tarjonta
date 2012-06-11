@@ -19,6 +19,7 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus;
+import java.util.Date;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -50,6 +51,8 @@ public class KoulutusmoduuliToteutusDAOTest {
     private Koulutusmoduuli defaultModuuli;
 
     private KoulutusmoduuliToteutus defaultToteutus;
+    
+    private static final Date ALKAMIS_PVM = new Date();
 
     private static final String TARJOAJA_1_OID = "http://organisaatio1";
 
@@ -68,6 +71,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         defaultToteutus = new TutkintoOhjelmaToteutus(defaultModuuli);
         defaultToteutus.setNimi(TOTEUTUS_1_NIMI);
         defaultToteutus.setOid(TOTEUTUS_1_OID);
+        defaultToteutus.setKoulutuksenAlkamisPvm(ALKAMIS_PVM);
         toteutusDAO.insert(defaultToteutus);
 
     }
@@ -79,6 +83,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         assertNotNull(loaded);
         assertEquals(TOTEUTUS_1_NIMI, loaded.getNimi());
         assertEquals(TOTEUTUS_1_OID, loaded.getOid());
+        assertEquals(ALKAMIS_PVM, loaded.getKoulutuksenAlkamisPvm());
 
     }
 

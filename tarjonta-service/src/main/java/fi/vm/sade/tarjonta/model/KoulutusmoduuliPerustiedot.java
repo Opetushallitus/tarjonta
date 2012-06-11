@@ -16,38 +16,149 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  *
  * @author Jukka Raanamo
  */
+@Entity
+@Table(name = KoulutusmoduuliPerustiedot.TABLE_NAME)
 public class KoulutusmoduuliPerustiedot extends BaseEntity {
 
-    /**
-     * TODO: this is just best guess, validate from model and Seppo where to place this information and what is the role of the link.
-     */
-    private String organisaatioOid;
+    private static final long serialVersionUID = 9115186990353872981L;
+
+    public static final String TABLE_NAME = "koulutusmoduuli_perustiedot";
 
     /**
      * TODO: this is just best guess, validate from model and Seppo what is the "name" of this field and if values are stored by value or by reference and
      * computed at runtime. Here runtime is guessed.
      */
+    @Column(name = "koulutuskoodi_uri")
     private String koulutusKoodiUri;
 
-    public void setOrganisaatioOid(String organisaatioOid) {
-        this.organisaatioOid = organisaatioOid;
-    }
+    /**
+     * Set of Koodisto uris, one for each "opetuskieli" (teaching language) provided.
+     */
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<KoodistoKoodi> opetuskielis = new HashSet<KoodistoKoodi>();
 
-    public String getOrganisaatioOid() {
-        return organisaatioOid;
-    }
+    /**
+     * Set of Koodisto uris, one for each "opetusmuoto" (form of teaching) provided.
+     */
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<KoodistoKoodi> opetusmuotos = new HashSet<KoodistoKoodi>();
 
+    /**
+     * Set of Koodisto uris, one for each "asiasanoitus" (a.k.a theme/teema) provided.
+     */
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<KoodistoKoodi> asiasanoituses = new HashSet<KoodistoKoodi>();
+
+    /**
+     *
+     * @param koulutusKoodiUrl
+     */
     public void setKoulutusKoodiUri(String koulutusKoodiUrl) {
         this.koulutusKoodiUri = koulutusKoodiUrl;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getKoulutusKoodiUri() {
         return koulutusKoodiUri;
+    }
+
+    /**
+     * Returns immutable, non null, set of "opetuskieli".
+     *
+     * @return
+     */
+    public Set<KoodistoKoodi> getOpetuskieletkielis() {
+        return Collections.unmodifiableSet(opetuskielis);
+    }
+
+    /**
+     * Adds new "opetuskieli"
+     *
+     * @param kieliUri non null koodisto uri to opetuskieli
+     * @return true if item did not exist before
+     */
+    public boolean addOpetuskieli(String kieliUri) {
+        return opetuskielis.add(new KoodistoKoodi(kieliUri));
+    }
+
+    /**
+     *
+     * @param kieliUri
+     * @return true if given kieli existed and was removed
+     */
+    public boolean removeOpetuskieli(final String kieliUri) {
+        return opetuskielis.remove(new KoodistoKoodi(kieliUri));
+    }
+
+    /**
+     * Returns immutable, non null, set of "opetusmuoto".
+     *
+     * @return
+     */
+    public Set<KoodistoKoodi> getOpetusmuotos() {
+        return Collections.unmodifiableSet(opetusmuotos);
+    }
+
+    /**
+     *
+     * @param opetusmuotoUri non-null uri to opetusmuoto
+     * @return true if item did not exist before
+     */
+    public boolean addOpetusmuoto(final String opetusmuotoUri) {
+        return opetusmuotos.add(new KoodistoKoodi(opetusmuotoUri));
+    }
+
+    /**
+     *
+     * @param opetusmuotoUri
+     * @return true if given opetusmuoto existed and was removed
+     */
+    public boolean removeOpetusmuoto(final String opetusmuotoUri) {
+        return opetusmuotos.remove(new KoodistoKoodi(opetusmuotoUri));
+    }
+
+    /**
+     * Returns immutable set of "asiasanoitus", a.k.a "teema" in wire frame.
+     *
+     * @return
+     */
+    public Set<KoodistoKoodi> getAsiasanoituses() {
+        return Collections.unmodifiableSet(asiasanoituses);
+    }
+
+    /**
+     *
+     * @param asiasanoitusUri
+     * @return true if given item did not exist before
+     */
+    public boolean addAsiasanoitus(String asiasanoitusUri) {
+        return asiasanoituses.add(new KoodistoKoodi(asiasanoitusUri));
+    }
+
+    /**
+     *
+     * @param asiasanoitusUri
+     * @return true if given asiasanoitus existed and was removed
+     */
+    public boolean removeAsiasanoitus(String asiasanoitusUri) {
+        return asiasanoituses.remove(new KoodistoKoodi(asiasanoitusUri));
     }
 
 }
