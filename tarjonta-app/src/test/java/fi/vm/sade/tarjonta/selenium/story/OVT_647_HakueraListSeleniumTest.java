@@ -4,8 +4,8 @@ import fi.vm.sade.tarjonta.selenium.TarjontaEmbedComponentTstSupport;
 import fi.vm.sade.tarjonta.selenium.pageobject.HakueraEditFormPageObject;
 import fi.vm.sade.tarjonta.selenium.pageobject.HakueraListPageObject;
 import fi.vm.sade.tarjonta.service.mock.HakueraServiceMock;
-import fi.vm.sade.tarjonta.ui.hakuera.HakueraEditForm;
 import fi.vm.sade.tarjonta.ui.hakuera.HakuView;
+import fi.vm.sade.tarjonta.ui.hakuera.HakueraEditForm;
 import fi.vm.sade.tarjonta.ui.hakuera.HakueraList;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Antti Salonen
  */
-public class HakueraListSeleniumTest extends TarjontaEmbedComponentTstSupport<HakuView> {
+public class OVT_647_HakueraListSeleniumTest extends TarjontaEmbedComponentTstSupport<HakuView> {
 
     private HakueraListPageObject hakueraList;
     private HakueraEditFormPageObject hakueraEdit;
