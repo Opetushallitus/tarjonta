@@ -3,16 +3,14 @@ package fi.vm.sade.tarjonta.ui.hakuera;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.*;
-
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.ui.blackboard.BlackboardContext;
 import fi.vm.sade.generic.ui.component.MultiLingualTextImpl;
 import fi.vm.sade.tarjonta.service.HakueraService;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
-import fi.vm.sade.tarjonta.ui.TarjontaApplication;
 import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent;
 import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent.HakueraSavedEventListener;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -56,9 +54,7 @@ public class HakueraList extends CustomComponent {
         layout.addComponent(tulevat);
         layout.addComponent(table);
         setCompositionRoot(layout);
-        if (TarjontaApplication.getBlackboard() != null) {
-            TarjontaApplication.getBlackboard().addListener(changeHandler);
-        }
+        BlackboardContext.getBlackboard().addListener(changeHandler);
     }
 
     public void reload() {

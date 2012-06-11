@@ -20,24 +20,20 @@ package fi.vm.sade.tarjonta.ui.hakuera;
 import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.ui.AbstractSelect.Filtering;
 import com.vaadin.ui.*;
-
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.ui.blackboard.BlackboardContext;
 import fi.vm.sade.generic.ui.component.MultiLingualTextField;
 import fi.vm.sade.koodisto.model.dto.Kieli;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
-import fi.vm.sade.tarjonta.ui.TarjontaApplication;
+import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
+import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent;
 import fi.vm.sade.tarjonta.ui.service.TarjontaUiService;
 import fi.vm.sade.tarjonta.ui.util.I18NHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent;
-import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
@@ -286,9 +282,7 @@ public class HakueraEditForm extends CustomComponent {
         } else {
             bind(uiService.updateHakuera(model));
         }
-        if (TarjontaApplication.getBlackboard() != null) {
-            TarjontaApplication.getBlackboard().fire(new HakueraSavedEvent(model));
-        }
+        BlackboardContext.getBlackboard().fire(new HakueraSavedEvent(model));
         getWindow().showNotification(I18N.getMessage("save.success"));
     }
 }
