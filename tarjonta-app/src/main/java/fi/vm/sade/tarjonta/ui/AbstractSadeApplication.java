@@ -47,11 +47,6 @@ public abstract class AbstractSadeApplication extends Application implements Tra
      */
     public static final String THEME_NAME = "sade";
 
-    /**
-     * Thread local handling of Blackboard event bus
-     */
-    private static ThreadLocal<Blackboard> blackboard = new ThreadLocal<Blackboard>();
-
     private Blackboard blackboardInstance = new Blackboard();
 
     protected Locale sessionLocale = new Locale(DEFAULT_LOCALE);
@@ -61,14 +56,14 @@ public abstract class AbstractSadeApplication extends Application implements Tra
      */
     @Override
     public synchronized void init() {
-        // For the initialization
-        setBlackBoard(blackboardInstance);
+        //Init blackboard event bus
+        registerListeners(blackboardInstance);
+
+        // set blackboard to threadlocal - NOTE! tehdään transactionStartissa joten tästä pois
+        //setBlackboard(blackboardInstance);
 
         log.info("init(), current locale: {}, reset to session locale: {}" , I18N.getLocale(), sessionLocale);
         setLocale(sessionLocale);
-
-        //Init blackboard event bus
-        registerListeners(getBlackboard());
 
         // At every "transaction" start set the threadlocal blackboard instance
         getContext().addTransactionListener(this);
@@ -98,14 +93,14 @@ public abstract class AbstractSadeApplication extends Application implements Tra
     @Override
     public void transactionStart(Application application, Object transactionData) {
         if (application == this) {
-            setBlackBoard(blackboardInstance);
+            BlackboardContext.setBlackboard(blackboardInstance);
         }
     }
 
     @Override
     public void transactionEnd(Application application, Object transactionData) {
         if (application == this) {
-            blackboard.set(null);
+            BlackboardContext.setBlackboard(null);
         }
     }
 
@@ -144,16 +139,7 @@ public abstract class AbstractSadeApplication extends Application implements Tra
      * @return
      */
     public static Blackboard getBlackboard() {
-        return blackboard.get();
-    }
-
-    /**
-     * Set ThreadLocal Blackboard intance
-     *
-     * @param blackBoard
-     */
-    public static void setBlackBoard(Blackboard blackBoard) {
-        blackboard.set(blackBoard);
+        return BlackboardContext.getBlackboard();
     }
 
     /**

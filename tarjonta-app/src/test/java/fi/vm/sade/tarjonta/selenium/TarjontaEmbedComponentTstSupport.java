@@ -4,6 +4,7 @@ import com.vaadin.ui.Component;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.support.selenium.AbstractEmbedVaadinTest;
 import fi.vm.sade.tarjonta.selenium.pageobject.MainWindowPageObject;
+import fi.vm.sade.tarjonta.ui.BlackboardContext;
 import fi.vm.sade.tarjonta.ui.MainWindow;
 import org.springframework.test.context.ContextConfiguration;
 import static fi.vm.sade.support.selenium.SeleniumUtils.waitForText;
@@ -16,6 +17,8 @@ public class TarjontaEmbedComponentTstSupport<COMPONENT extends Component> exten
     
     public TarjontaEmbedComponentTstSupport() {
         super(true, true);
+        // TODO: yliluokkaan kun blackboardcontext+abstractsadeapplication siirretty sinne
+        BlackboardContext.setBlackboardProvider(new BlackboardContext.SimpleBlackboardProvider());
     }
 
     @Override
