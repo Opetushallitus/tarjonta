@@ -21,6 +21,7 @@ import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.ui.AbstractSelect.Filtering;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.common.validation.MLTextSize;
 import fi.vm.sade.generic.ui.blackboard.BlackboardContext;
 import fi.vm.sade.generic.ui.component.MultiLingualTextField;
 import fi.vm.sade.koodisto.model.dto.Kieli;
@@ -40,6 +41,9 @@ import org.vaadin.addon.formbinder.FormView;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static fi.vm.sade.generic.common.validation.ValidationConstants.GENERIC_MAX;
+import static fi.vm.sade.generic.common.validation.ValidationConstants.GENERIC_MIN;
 
 /**
  * The form for creating and modifying a Haku (Hakuerä).
@@ -82,7 +86,8 @@ public class HakueraEditForm extends CustomComponent {
     private KoodistoComponent koulutuksenAlkamiskausiKoodi;
     private KoodistoComponent haunKohdejoukkoKoodi;
     private KoodistoComponent hakutapaKoodi;
-    
+
+    @MLTextSize(min = GENERIC_MIN, max = GENERIC_MAX, message = "{validation.Organisaatio.nimiFi}", oneRequired = false)
     private MultiLingualTextField haunNimi;
     
     private OptionGroup hakuaikaOptions;
