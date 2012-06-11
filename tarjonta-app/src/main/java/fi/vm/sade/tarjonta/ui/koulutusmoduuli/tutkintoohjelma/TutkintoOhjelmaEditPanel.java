@@ -22,30 +22,32 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.*;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
-import fi.vm.sade.generic.ui.component.DebugId;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
 import fi.vm.sade.koodisto.model.dto.Kieli;
 import fi.vm.sade.koodisto.service.mock.MockDataHandler;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.model.dto.*;
-import fi.vm.sade.tarjonta.ui.TarjontaApplication;
-import fi.vm.sade.tarjonta.ui.koulutusmoduuli.event.KoulutusmoduuliChangedEvent;
-import fi.vm.sade.tarjonta.ui.koulutusmoduuli.event.KoulutusmoduuliChangedEvent.KoulutusmoduuliChangedEventListener;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.AbstractKoulutusmoduuliEditPanel;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.AbstractKoulutusmoduuliFormModel;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.event.KoulutusmoduuliChangedEvent;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.event.KoulutusmoduuliChangedEvent.KoulutusmoduuliChangedEventListener;
 import fi.vm.sade.tarjonta.ui.util.I18NHelper;
-import java.util.Date;
-import java.util.List;
 import org.apache.commons.lang.StringUtils;
-import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
@@ -146,7 +148,7 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
 
         setCompositionRoot(mainLayout);
 
-        TarjontaApplication.getBlackboard().addListener(saveHandler);
+        AbstractSadeApplication.getBlackboard().addListener(saveHandler);
     }
 
     public KoodistoComponent getKoulutusComponent() {

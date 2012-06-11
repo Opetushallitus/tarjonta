@@ -19,8 +19,7 @@ package fi.vm.sade.tarjonta.ui;
 
 
 import com.github.wolfie.blackboard.Blackboard;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
 
 /**
  *

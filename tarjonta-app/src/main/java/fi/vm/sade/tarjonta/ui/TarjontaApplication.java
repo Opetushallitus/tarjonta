@@ -16,7 +16,7 @@
 package fi.vm.sade.tarjonta.ui;
 
 import com.github.wolfie.blackboard.Blackboard;
-
+import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
 import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent;
 import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent.HakueraSavedEventListener;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.event.KoulutusmoduuliChangedEvent;

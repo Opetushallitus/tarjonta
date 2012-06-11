@@ -18,11 +18,7 @@ package fi.vm.sade.tarjonta.ui.hakuera;
 
 import com.vaadin.data.Property;
 import com.vaadin.ui.HorizontalLayout;
-import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
-import fi.vm.sade.tarjonta.ui.AbstractSadeApplication;
-import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent;
-import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent.HakueraSavedEventListener;
 
 /**
  * The container for displaying the Haku listing and Hakulomake.
