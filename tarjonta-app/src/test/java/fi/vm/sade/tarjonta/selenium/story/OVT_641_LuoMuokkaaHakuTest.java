@@ -57,7 +57,6 @@ public class OVT_641_LuoMuokkaaHakuTest extends TarjontaEmbedComponentTstSupport
             public void doAssertion() {
                 assertEquals(4, hakueraList.getResultCount());
             }
-
         });
     }
 

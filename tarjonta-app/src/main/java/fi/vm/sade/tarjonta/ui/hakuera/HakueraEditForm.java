@@ -52,11 +52,11 @@ import java.util.List;
 public class HakueraEditForm extends CustomComponent {
 
 
-    private final static String KOODISTO_HAKUTYYPPI_URI = "http://oppilaitostyyppi";
-    private final static String KOODISTO_HAKUKAUSI_URI = "http://oppilaitostyyppi";
-    private final static String KOODISTO_KOULUTUKSEN_ALKAMIS_URI = "http://oppilaitostyyppi";
-    private final static String KOODISTO_KOHDEJOUKKO_URI = "http://oppilaitostyyppi";
-    private final static String KOODISTO_HAKUTAPA_URI = "http://oppilaitostyyppi";
+    private final static String KOODISTO_HAKUTYYPPI_URI = "http://hakutyyppi";
+    private final static String KOODISTO_HAKUKAUSI_URI = "http://hakukausi";
+    private final static String KOODISTO_KOULUTUKSEN_ALKAMIS_URI = "http://alkamiskausi";
+    private final static String KOODISTO_KOHDEJOUKKO_URI = "http://kohdejoukko";
+    private final static String KOODISTO_HAKUTAPA_URI = "http://hakutapa";
     
     private final static String PROPERTY_HAKUTYYPPI = "hakutyyppi";
     private final static String PROPERTY_HAKUKAUSI = "hakukausi";

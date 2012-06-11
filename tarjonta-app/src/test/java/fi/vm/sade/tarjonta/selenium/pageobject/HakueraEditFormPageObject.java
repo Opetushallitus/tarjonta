@@ -36,8 +36,28 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
     }
 
     public void inputDefaultFields() {
-        selectHakutyyppi("Ammatilliset");
+        selectHakutyyppi("Varsinainen haku");
+        selectHakukausi("Syksy");
+        selectAlkamiskausi("Syksy 2013");
+        selectKohdejoukko("Korkeakoulutus");
+        selectHakutapa("Yhteishaku");
         inputNames("Testihakuera");
+    }
+
+    private void selectHakutapa(String string) {
+        selectKoodistoWithDebugId(component.getHakutapaKoodi().getDebugId(), string); 
+    }
+
+    private void selectKohdejoukko(String string) {
+        selectKoodistoWithDebugId(component.getHaunKohdejoukkoKoodi().getDebugId(), string); 
+    }
+
+    private void selectAlkamiskausi(String string) {
+        selectKoodistoWithDebugId(component.getKoulutuksenAlkamiskausiKoodi().getDebugId(), string);
+    }
+
+    private void selectHakukausi(String string) {
+        selectKoodistoWithDebugId(component.getHakukausiKoodi().getDebugId(), string);
     }
 
     public void save() {
