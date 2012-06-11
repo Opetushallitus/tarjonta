@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.selenium.story;
 
 import fi.vm.sade.generic.common.I18N;
+import static fi.vm.sade.support.selenium.SeleniumUtils.*;
 import fi.vm.sade.tarjonta.selenium.TarjontaEmbedComponentTstSupport;
 import org.junit.Test;
 
@@ -21,19 +22,25 @@ public class OVT_803_KenttienValidointiTest extends TarjontaEmbedComponentTstSup
     private static final String KOULUTUS_KOODI_LABEL = "Tietokenkasittely ko";
     private static final String KOULUTUS_KOODI_VALUE = KOULUTUS_KOODI_LABEL;
     private static final Logger log = LoggerFactory.getLogger(OVT_803_KenttienValidointiTest.class);
-
+    
     private KoulutusmoduuliEditViewPageObject koulutusmoduuliEditView;
 
     @Override
     public void initPageObjects() {
         koulutusmoduuliEditView = new KoulutusmoduuliEditViewPageObject(component);
+        
     }
 
     @Test
     public void testKoulutusIsRequiredField() {
 
+        STEP("Verifying that Koulutus is required'");
         koulutusmoduuliEditView.selectNewKoulutusmoduuliTutkintoonJohtava();
+        
+        STEP("Clicking save without setting any values");
         koulutusmoduuliEditView.clickSaveAsDraft();
+        
+        STEP("Validating that error message was displayed");
         waitForText(I18N.getMessage("KoulutusmoduuliEditView.save.notValid"));
 
     }
@@ -41,10 +48,16 @@ public class OVT_803_KenttienValidointiTest extends TarjontaEmbedComponentTstSup
     @Test
     public void testKoulutusAndOrganisaatioAreStoredToModel() {
         
+        STEP("Verifying that fields are persisted to model");
         koulutusmoduuliEditView.selectNewKoulutusmoduuliTutkintoonJohtava();
+        
+        STEP("Setting 'Koulutus' to " + KOULUTUS_KOODI_LABEL);
         koulutusmoduuliEditView.setKoulutus(KOULUTUS_KOODI_LABEL);
+        
+        STEP("Saving as draft");
         koulutusmoduuliEditView.clickSaveAsDraft();
 
+        STEP("Validating that value in model equals expected value: " + KOULUTUS_KOODI_VALUE);
         assertEquals(KOULUTUS_KOODI_VALUE, getDTO().getPerustiedot().getKoulutusKoodiUri());
         assertNotNull(getDTO().getPerustiedot().getOrganisaatioOid());
 
