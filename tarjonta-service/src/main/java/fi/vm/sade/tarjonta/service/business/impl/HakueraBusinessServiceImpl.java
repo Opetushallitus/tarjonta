@@ -26,4 +26,17 @@ public class HakueraBusinessServiceImpl implements HakueraBusinessService {
         return hakueraDao.findAll(searchCriteria);
     }
 
+    @Override
+    public Hakuera save(Hakuera hakuera) {
+        // TODO Auto-generated method stub
+        return hakueraDao.insert(hakuera);
+    }
+
+    @Override
+    public Hakuera update(Hakuera hakuera) {
+        // TODO Auto-generated method stub
+        hakueraDao.update(hakuera);
+        return hakuera;
+    }
+
 }

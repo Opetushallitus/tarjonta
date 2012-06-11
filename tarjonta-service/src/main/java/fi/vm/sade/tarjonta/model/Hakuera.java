@@ -32,6 +32,7 @@ import java.util.Date;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Hakuera extends BaseEntity {
 
+
     private static Logger log = LoggerFactory.getLogger(Hakuera.class);
     public static final String TABLE_NAME = "hakuera";
     public static final String HAUN_ALKAMIS_PVM = "haunAlkamisPvm";
@@ -51,6 +52,15 @@ public class Hakuera extends BaseEntity {
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date haunLoppumisPvm;
+    
+    private String hakutyyppi;
+    private String hakukausi;
+    private String koulutuksenAlkaminen;
+    private String kohdejoukko;
+    private String hakutapa;
+    private boolean sijoittelu;
+    private String lomake;
+    
 
     public String getOid() {
         return oid;
@@ -98,6 +108,62 @@ public class Hakuera extends BaseEntity {
 
     public void setHaunLoppumisPvm(Date haunLoppumisPvm) {
         this.haunLoppumisPvm = haunLoppumisPvm;
+    }
+
+    public String getHakutyyppi() {
+        return hakutyyppi;
+    }
+
+    public void setHakutyyppi(String hakutyyppi) {
+        this.hakutyyppi = hakutyyppi;
+    }
+
+    public String getHakukausi() {
+        return hakukausi;
+    }
+
+    public void setHakukausi(String hakukausi) {
+        this.hakukausi = hakukausi;
+    }
+
+    public String getKoulutuksenAlkaminen() {
+        return koulutuksenAlkaminen;
+    }
+
+    public void setKoulutuksenAlkaminen(String koulutuksenAlkaminen) {
+        this.koulutuksenAlkaminen = koulutuksenAlkaminen;
+    }
+
+    public String getKohdejoukko() {
+        return kohdejoukko;
+    }
+
+    public void setKohdejoukko(String kohdejoukko) {
+        this.kohdejoukko = kohdejoukko;
+    }
+
+    public String getHakutapa() {
+        return hakutapa;
+    }
+
+    public void setHakutapa(String hakutapa) {
+        this.hakutapa = hakutapa;
+    }
+
+    public boolean isSijoittelu() {
+        return sijoittelu;
+    }
+
+    public void setSijoittelu(boolean sijoittelu) {
+        this.sijoittelu = sijoittelu;
+    }
+
+    public String getLomake() {
+        return lomake;
+    }
+
+    public void setLomake(String lomake) {
+        this.lomake = lomake;
     }
 }
 

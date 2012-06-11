@@ -4,6 +4,7 @@ import fi.vm.sade.tarjonta.HakueraTstHelper;
 import fi.vm.sade.tarjonta.model.Hakuera;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
+import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import static org.junit.Assert.*;
 
@@ -53,5 +58,53 @@ public class HakueraServiceTest {
         assertEquals(0, hakueraService.findAll(null).size());
         assertEquals(0, hakueraService.findAll(new SearchCriteriaDTO()).size());
     }
-
+    
+    @Test
+    public void testCreateHakuera() throws Exception {
+        String oid = "1.2.3.4567";
+        HakueraDTO hakueraDto = new HakueraDTO();
+        hakueraDto.setNimiFi("nimi fi");
+        hakueraDto.setNimiSv("nimi sv");
+        hakueraDto.setNimiEn("nimi en");
+        hakueraDto.setOid(oid);
+        hakueraDto.setHaunAlkamisPvm(convertDate(new Date(System.currentTimeMillis())));
+        hakueraDto.setHaunLoppumisPvm(convertDate(new Date(System.currentTimeMillis() + 10000)));
+        hakueraDto.setHakutyyppi("Ammattikorkeakoulut");
+        HakueraDTO hakuera2 = hakueraService.createHakuera(hakueraDto);
+        assertNotNull(hakuera2);
+        assertEquals(oid, hakuera2.getOid());
+    }
+    
+    @Test
+    public void testUpdateHakuera() throws Exception {
+        String oid = "1.2.3.4568";
+        String hakukausi = "Syksy 2012";
+        HakueraDTO hakueraDto = new HakueraDTO();
+        hakueraDto.setNimiFi("nimi fi");
+        hakueraDto.setNimiSv("nimi sv");
+        hakueraDto.setNimiEn("nimi en");
+        hakueraDto.setOid(oid);
+        hakueraDto.setHaunAlkamisPvm(convertDate(new Date(System.currentTimeMillis())));
+        hakueraDto.setHaunLoppumisPvm(convertDate(new Date(System.currentTimeMillis() + 10000)));
+        hakueraDto.setHakutyyppi("Ammattikorkeakoulut");
+        HakueraDTO hakuera2 = hakueraService.createHakuera(hakueraDto);
+        hakuera2.setHakukausi(hakukausi);
+        HakueraDTO hakuera3 = hakueraService.updateHakuera(hakuera2);
+        assertNotNull(hakuera2);
+        assertEquals(hakukausi, hakuera2.getHakukausi());
+    }
+    
+    private XMLGregorianCalendar convertDate(Date origDate) {
+        XMLGregorianCalendar xmlDate = null;
+        if (origDate != null) {
+            try {
+                GregorianCalendar c = new GregorianCalendar();
+                c.setTime(origDate);
+                xmlDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+            } catch (Exception ex) {
+                
+            }
+        }
+        return xmlDate;
+    }
 }

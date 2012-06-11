@@ -21,8 +21,14 @@ import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import fi.vm.sade.tarjonta.service.KoulutusmoduuliAdminService;
 import java.io.Serializable;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
+import fi.vm.sade.tarjonta.service.HakueraService;
+import fi.vm.sade.tarjonta.ui.hakuera.HakueraEditForm;
 
 /**
  *
@@ -30,6 +36,8 @@ import org.springframework.stereotype.Service;
  */
 @SuppressWarnings("serial")
 public class TarjontaUiServiceImpl implements TarjontaUiService, Serializable {
+    
+    private static final Logger log = LoggerFactory.getLogger(TarjontaUiServiceImpl.class);
 
     // this and serializable can be removed is this class is annotated as service but this currenly 
     // creates dublicate beans since it's also declared as spring bean in xml.
@@ -37,6 +45,9 @@ public class TarjontaUiServiceImpl implements TarjontaUiService, Serializable {
 
     @Autowired
     private KoulutusmoduuliAdminService adminService;
+    
+    @Autowired
+    private HakueraService hakueraService;
 
     @Override
     public TutkintoOhjelmaDTO createTutkintoOhjelma(String organisaatioOID) {
@@ -56,6 +67,16 @@ public class TarjontaUiServiceImpl implements TarjontaUiService, Serializable {
     @Override
     public List<KoulutusmoduuliSummaryDTO> getParentModuulis(String koulutusmoduuliOID) {
         return adminService.getParentModuulis(koulutusmoduuliOID);
+    }
+
+    @Override
+    public HakueraDTO createHakuera(HakueraDTO hakuera) {
+        return hakueraService.createHakuera(hakuera);
+    }
+    
+    @Override
+    public HakueraDTO updateHakuera(HakueraDTO hakuera) {
+        return hakueraService.updateHakuera(hakuera);
     }
 
 }

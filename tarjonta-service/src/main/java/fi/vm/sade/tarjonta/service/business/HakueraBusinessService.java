@@ -10,4 +10,6 @@ import java.util.List;
  */
 public interface HakueraBusinessService {
     List<Hakuera> findAll(SearchCriteriaDTO searchCriteria);
+    Hakuera save(Hakuera hakuera);
+    Hakuera update(Hakuera hakuera);
 }

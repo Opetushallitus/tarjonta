@@ -18,6 +18,9 @@ package fi.vm.sade.tarjonta.dao;
 import fi.vm.sade.tarjonta.HakueraTstHelper;
 import fi.vm.sade.tarjonta.dao.impl.HakueraDAOImpl;
 import fi.vm.sade.tarjonta.model.Hakuera;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliPerustiedot;
+import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -31,6 +34,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -132,6 +136,40 @@ public class HakueraDAOTest {
         assertEquals("xxx", l.get(2).getNimiEn());
 
     }
+    
+    @Test
+    public void testSimpleSaveAndRead() {
+        long now = new Date().getTime();
+        int dif = 10000;
+        String oid = "1.2.34566.3";
+        Hakuera hakuera =  helper.create(now, now+dif, oid);
+
+        assertNotNull(hakuera.getId());
+
+        Hakuera hakuera2 = read(hakuera.getId());
+        assertNotNull(hakuera2);
+        assertEquals(oid, hakuera2.getOid());
+    }
+    
+    @Test
+    public void testSimpleUpdateAndRead() {
+        long now = new Date().getTime();
+        int dif = 10000;
+        String oid = "1.2.34566.4";
+        String hakutyyppi = "Ammattikorkeakoulut";
+        Hakuera hakuera =  helper.create(now, now+dif, oid);
+
+        assertNotNull(hakuera.getId());
+
+        Hakuera hakuera2 = read(hakuera.getId());
+        hakuera2.setHakutyyppi(hakutyyppi);
+        dao.update(hakuera2);
+        Hakuera hakuera3 = read(hakuera.getId());
+        assertEquals(hakutyyppi, hakuera3.getHakutyyppi());        
+    }
+    
+    private Hakuera read(Long id) {
+        return (Hakuera) dao.read(id);
+    }
 
 }
-

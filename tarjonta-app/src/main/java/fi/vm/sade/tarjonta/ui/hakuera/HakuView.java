@@ -14,12 +14,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.haku;
+package fi.vm.sade.tarjonta.ui.hakuera;
 
 import com.vaadin.data.Property;
 import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
-import fi.vm.sade.tarjonta.ui.hakuera.HakueraList;
+import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
+import fi.vm.sade.tarjonta.ui.AbstractSadeApplication;
+import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent;
+import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent.HakueraSavedEventListener;
 
 /**
  * The container for displaying the Haku listing and Hakulomake.
@@ -29,16 +32,20 @@ import fi.vm.sade.tarjonta.ui.hakuera.HakueraList;
  */
 public class HakuView extends HorizontalLayout {
     
-    private HakuEditForm hakuForm = new HakuEditForm();
+    private HakueraEditForm hakuForm = new HakueraEditForm();
     private HakueraList hakueraList = new HakueraList();
     
     public HakuView() {
         addComponent(hakueraList);
+        hakuForm.bind(new HakueraDTO());
         addComponent(hakuForm);
         hakueraList.getTable().addListener(new Property.ValueChangeListener() {
             public void valueChange(Property.ValueChangeEvent event) {
-                hakuForm.populate((HakueraList.HakueraSimple) hakueraList.getTable().getValue());
+                if (hakueraList.getTable().getValue() != null) {
+                    hakuForm.populate((HakueraList.HakueraSimple) hakueraList.getTable().getValue());
+                }
             }
         });
+        
     }
 }

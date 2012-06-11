@@ -1,25 +1,19 @@
 package fi.vm.sade.tarjonta.selenium.story;
 
-import fi.vm.sade.support.selenium.SeleniumContext;
-import fi.vm.sade.support.selenium.SeleniumUtils;
 import fi.vm.sade.tarjonta.selenium.TarjontaEmbedComponentTstSupport;
 import fi.vm.sade.tarjonta.selenium.pageobject.HakueraEditFormPageObject;
 import fi.vm.sade.tarjonta.selenium.pageobject.HakueraListPageObject;
-import fi.vm.sade.tarjonta.ui.haku.HakuEditForm;
-import fi.vm.sade.tarjonta.ui.haku.HakuView;
+import fi.vm.sade.tarjonta.service.mock.HakueraServiceMock;
+import fi.vm.sade.tarjonta.ui.hakuera.HakueraEditForm;
+import fi.vm.sade.tarjonta.ui.hakuera.HakuView;
 import fi.vm.sade.tarjonta.ui.hakuera.HakueraList;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import javax.annotation.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static fi.vm.sade.support.selenium.SeleniumUtils.STEP;
 import static fi.vm.sade.support.selenium.SeleniumUtils.waitForElement;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 /**
  * @author Antti Salonen
@@ -28,11 +22,14 @@ public class HakueraListSeleniumTest extends TarjontaEmbedComponentTstSupport<Ha
 
     private HakueraListPageObject hakueraList;
     private HakueraEditFormPageObject hakueraEdit;
+    
+    @Autowired
+    HakueraServiceMock hakueraService;
 
     @Override
     public void initPageObjects() {
         hakueraList = new HakueraListPageObject(driver, getComponentByType(HakueraList.class));
-        hakueraEdit = new HakueraEditFormPageObject(driver, getComponentByType(HakuEditForm.class));
+        hakueraEdit = new HakueraEditFormPageObject(driver, getComponentByType(HakueraEditForm.class));
     }
 
     
@@ -42,7 +39,7 @@ public class HakueraListSeleniumTest extends TarjontaEmbedComponentTstSupport<Ha
         waitAssert(new AssertionCallback() {
             @Override
             public void doAssertion() {
-                assertEquals(3, hakueraList.getResultCount());
+                assertEquals(hakueraService.getMockRepository().size(), hakueraList.getResultCount());
             }
         });
 
@@ -69,34 +66,5 @@ public class HakueraListSeleniumTest extends TarjontaEmbedComponentTstSupport<Ha
 
     }
 
-    // TODO: siirrä yleisiin
 
-    public void waitAssert(final AssertionCallback assertionCallback) throws Throwable {
-        final Throwable[] exception = new Throwable[1];
-        try {
-            Object result = new WebDriverWait(SeleniumContext.getDriver(), SeleniumUtils.TIME_OUT_IN_SECONDS).until(new ExpectedCondition<Object>() {
-                @Override
-                public Object apply(@Nullable WebDriver webDriver) {
-                    try {
-                        assertionCallback.doAssertion();
-                        return "OK";
-                    } catch (Throwable e) {
-                        exception[0] = e;
-                        log.warn("waitAssert not yet succeeded: " + e);
-                        return null;
-                    }
-                }
-            });
-        } catch (org.openqa.selenium.TimeoutException te) {
-            if (exception[0] != null) {
-                throw exception[0];
-            } else {
-                fail("waitAssert failed but exception is null?!");
-            }
-        }
-    }
-
-    public abstract class AssertionCallback {
-        public abstract void doAssertion();
-    }
 }

@@ -18,6 +18,22 @@
         <wsdl:part element="ns1:findAllResponse" name="parameters">
         </wsdl:part>
     </wsdl:message>
+    <wsdl:message name="createHakuera">
+        <wsdl:part element="ns1:createHakuera" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="createHakueraResponse">
+        <wsdl:part element="ns1:createHakueraResponse" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="updateHakuera">
+        <wsdl:part element="ns1:updateHakuera" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="updateHakueraResponse">
+        <wsdl:part element="ns1:updateHakueraResponse" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
 
     <wsdl:portType name="HakueraService">
         <wsdl:documentation>
@@ -32,6 +48,24 @@
             <wsdl:output message="tns:findAllResponse" name="findAllResponse">
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="createHakuera">
+            <wsdl:documentation>
+                Creates a hakuera
+            </wsdl:documentation>
+            <wsdl:input message="tns:createHakuera" name="createHakuera">
+            </wsdl:input>
+            <wsdl:output message="tns:createHakueraResponse" name="createHakueraResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="updateHakuera">
+            <wsdl:documentation>
+                Updates a hakuera
+            </wsdl:documentation>
+            <wsdl:input message="tns:updateHakuera" name="updateHakuera">
+            </wsdl:input>
+            <wsdl:output message="tns:updateHakueraResponse" name="updateHakueraResponse">
+            </wsdl:output>
+        </wsdl:operation>
     </wsdl:portType>
 
     <wsdl:binding name="HakueraServiceSoapBinding" type="tns:HakueraService">
@@ -42,6 +76,24 @@
                 <soap:body use="literal" />
             </wsdl:input>
             <wsdl:output name="findAllResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="createHakuera">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input name="createHakuera">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="createHakueraResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="updateHakuera">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input name="updateHakuera">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="updateHakueraResponse">
                 <soap:body use="literal" />
             </wsdl:output>
         </wsdl:operation>

@@ -36,4 +36,34 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="hakueraDTO">
+    	 <xs:complexContent>
+    		<xs:extension base="tns:hakueraSimpleDTO">
+    			<xs:sequence>
+    				<xs:element minOccurs="1" maxOccurs="1"
+    					name="hakutyyppi" type="tns:defaultLongString" />
+    				<xs:element minOccurs="1" maxOccurs="1"
+    					name="hakukausi" type="tns:defaultLongString" />
+    				<xs:element minOccurs="1" maxOccurs="1"
+    					name="koulutuksenAlkaminen" type="tns:defaultLongString" />
+    				<xs:element minOccurs="1" maxOccurs="1"
+    					name="kohdejoukko" type="tns:defaultLongString" />
+    				<xs:element minOccurs="1" maxOccurs="1"
+    					name="hakutapa" type="tns:defaultLongString" />
+    				<xs:element minOccurs="1" maxOccurs="1"
+    					name="sijoittelu" type="xs:boolean" />
+    				<xs:element minOccurs="1" maxOccurs="1"
+    					name="lomake" type="xs:anyURI" />
+    				<xs:element minOccurs="1" maxOccurs="1" name="haunAlkamisPvm"
+   						type="xs:date">
+    				</xs:element>
+    				<xs:element minOccurs="1" maxOccurs="1" name="haunLoppumisPvm"
+    					type="xs:date">
+    				</xs:element>
+    			</xs:sequence>
+    		</xs:extension>
+    	</xs:complexContent>
+    </xs:complexType>
+	
+
 </xs:schema>

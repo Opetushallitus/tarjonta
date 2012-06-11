@@ -9,6 +9,10 @@
 
     <xs:element name="findAll" type="tns:FindAll" />
     <xs:element name="findAllResponse" type="tns:FindAllResponse" />
+    <xs:element name="createHakuera" type="tns:CreateHakuera" />
+    <xs:element name="createHakueraResponse" type="tns:CreateHakueraResponse" />
+    <xs:element name="updateHakuera" type="tns:UpdateHakuera" />
+    <xs:element name="updateHakueraResponse" type="tns:UpdateHakueraResponse" />
 
     <xs:complexType name="FindAll">
         <xs:sequence>
@@ -19,6 +23,30 @@
     <xs:complexType name="FindAllResponse">
         <xs:sequence>
             <xs:element minOccurs="0" maxOccurs="unbounded" name="response" type="tnsh:hakueraSimpleDTO" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="CreateHakuera">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakuera" type="tnsh:hakueraDTO" />
+        </xs:sequence>
+    </xs:complexType>
+	
+	<xs:complexType name="CreateHakueraResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakueraResponse" type="tnsh:hakueraDTO" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="UpdateHakuera">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakuera" type="tnsh:hakueraDTO" />
+        </xs:sequence>
+    </xs:complexType>
+	
+	<xs:complexType name="UpdateHakueraResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakueraResponse" type="tnsh:hakueraDTO" />
         </xs:sequence>
     </xs:complexType>
 

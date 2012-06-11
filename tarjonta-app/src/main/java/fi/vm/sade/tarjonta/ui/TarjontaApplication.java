@@ -16,6 +16,9 @@
 package fi.vm.sade.tarjonta.ui;
 
 import com.github.wolfie.blackboard.Blackboard;
+
+import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent;
+import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent.HakueraSavedEventListener;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.event.KoulutusmoduuliChangedEvent;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.event.KoulutusmoduuliChangedEvent.KoulutusmoduuliChangedEventListener;
 
@@ -40,6 +43,7 @@ public class TarjontaApplication extends AbstractSadeApplication {
     @Override
     protected void registerListeners(Blackboard blackboard) {
         blackboard.register(KoulutusmoduuliChangedEventListener.class, KoulutusmoduuliChangedEvent.class);
+        blackboard.register(HakueraSavedEventListener.class, HakueraSavedEvent.class);
         blackboard.enableLogging();
     }
 

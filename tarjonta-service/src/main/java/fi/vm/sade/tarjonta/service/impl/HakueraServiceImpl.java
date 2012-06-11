@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,5 +41,18 @@ public class HakueraServiceImpl implements HakueraService {
         }
         return result;
     }
-
+    
+    @Override
+    public HakueraDTO createHakuera(HakueraDTO hakuera) {
+        Hakuera entity = conversionService.convert(hakuera, Hakuera.class);
+        entity = businessService.save(entity);
+        return conversionService.convert(entity, HakueraDTO.class);
+    }
+    
+    @Override
+    public HakueraDTO updateHakuera(HakueraDTO hakuera) {
+        Hakuera entity = conversionService.convert(hakuera, Hakuera.class);
+        entity = businessService.update(entity);
+        return conversionService.convert(entity, HakueraDTO.class);
+    }
 }

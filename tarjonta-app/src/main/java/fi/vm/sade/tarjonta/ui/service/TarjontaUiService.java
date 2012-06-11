@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.service;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
+import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
 import java.util.List;
 
 /**
@@ -46,6 +47,10 @@ public interface TarjontaUiService {
     
     
     List<KoulutusmoduuliSummaryDTO> getParentModuulis(String koulutusmoduuliOID);
+    
+    HakueraDTO createHakuera(HakueraDTO hakuera);
+    
+    HakueraDTO updateHakuera(HakueraDTO hakuera);
     
 }
 

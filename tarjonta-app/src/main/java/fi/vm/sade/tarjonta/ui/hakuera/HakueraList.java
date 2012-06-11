@@ -3,12 +3,16 @@ package fi.vm.sade.tarjonta.ui.hakuera;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.*;
+
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.component.MultiLingualTextImpl;
 import fi.vm.sade.tarjonta.service.HakueraService;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
-import fi.vm.sade.tarjonta.ui.haku.HakuEditForm;
+import fi.vm.sade.tarjonta.ui.TarjontaApplication;
+import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent;
+import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent.HakueraSavedEventListener;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -30,6 +34,16 @@ public class HakueraList extends CustomComponent {
     private CheckBox paattyneet = checkbox("HakueraList.cb_paattyneet");
     private CheckBox meneillaan = checkbox("HakueraList.cb_meneillaan");
     private CheckBox tulevat = checkbox("HakueraList.cb_tulevat");
+    
+    private HakueraSavedEventListener changeHandler = new HakueraSavedEventListener() {
+
+        @Override
+        public void onHakueraSaved(HakueraSavedEvent event) {
+           reload();
+            
+        }
+
+    };
 
     public HakueraList() {
         table.setSelectable(true);
@@ -42,9 +56,12 @@ public class HakueraList extends CustomComponent {
         layout.addComponent(tulevat);
         layout.addComponent(table);
         setCompositionRoot(layout);
+        if (TarjontaApplication.getBlackboard() != null) {
+            TarjontaApplication.getBlackboard().addListener(changeHandler);
+        }
     }
 
-    private void reload() {
+    public void reload() {
         List<HakueraSimpleDTO> hakueraDtos = hakueraService.findAll(buildSearchCriteria());
         List<HakueraSimple> hakueras = new ArrayList<HakueraSimple>();
         for (HakueraSimpleDTO dto : hakueraDtos) {
@@ -102,7 +119,7 @@ public class HakueraList extends CustomComponent {
 
         public HakueraSimple(HakueraSimpleDTO dto) {
             this.dto = dto;
-            nimi = new MultiLingualTextImpl(dto, "nimi").getClosest(Locale.getDefault());
+            nimi = new MultiLingualTextImpl(dto, "nimi").getClosest(I18N.getLocale());
         }
 
         public String getNimi() {
@@ -111,6 +128,14 @@ public class HakueraList extends CustomComponent {
 
         public String getOid() {
             return oid;
+        }
+        
+        public HakueraSimpleDTO getDto() {
+            return dto;
+        }
+
+        public void setDto(HakueraSimpleDTO dto) {
+            this.dto = dto;
         }
     }
 }
