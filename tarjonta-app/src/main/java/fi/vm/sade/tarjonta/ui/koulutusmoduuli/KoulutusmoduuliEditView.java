@@ -22,7 +22,7 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Window.Notification;
-import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
+import fi.vm.sade.generic.ui.blackboard.BlackboardContext;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
@@ -243,7 +243,7 @@ public class KoulutusmoduuliEditView extends CustomComponent {
                 // current edit panel know how to push state to server
                 koulutusmoduuliEditPanel.save(uiService, koulutusmoduuliDTO);
 
-                AbstractSadeApplication.getBlackboard().fire(new KoulutusmoduuliChangedEvent(koulutusmoduuliDTO,
+                BlackboardContext.getBlackboard().fire(new KoulutusmoduuliChangedEvent(koulutusmoduuliDTO,
                         KoulutusmoduuliChangedEvent.EventType.MODIFIED));
 
                 getWindow().showNotification(i18n.getMessage("save.success"));

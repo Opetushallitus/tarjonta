@@ -24,7 +24,7 @@ import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.*;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
+import fi.vm.sade.generic.ui.blackboard.BlackboardContext;
 import fi.vm.sade.koodisto.model.dto.Kieli;
 import fi.vm.sade.koodisto.service.mock.MockDataHandler;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
@@ -148,7 +148,7 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
 
         setCompositionRoot(mainLayout);
 
-        AbstractSadeApplication.getBlackboard().addListener(saveHandler);
+        BlackboardContext.getBlackboard().addListener(saveHandler);
     }
 
     public KoodistoComponent getKoulutusComponent() {
