@@ -3,7 +3,6 @@ package fi.vm.sade.tarjonta.selenium;
 import com.vaadin.ui.Component;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.blackboard.BlackboardContext;
-import fi.vm.sade.generic.ui.blackboard.SimpleBlackboardProvider;
 import fi.vm.sade.support.selenium.AbstractEmbedVaadinTest;
 import fi.vm.sade.support.selenium.SeleniumContext;
 import fi.vm.sade.support.selenium.SeleniumUtils;
@@ -30,8 +29,6 @@ public class TarjontaEmbedComponentTstSupport<COMPONENT extends Component> exten
 
     public TarjontaEmbedComponentTstSupport() {
         super(true, true);
-        // TODO: yliluokkaan kun blackboardcontext+abstractsadeapplication siirretty sinne
-        BlackboardContext.setBlackboardProvider(new SimpleBlackboardProvider());
         registerListeners();
     }
 
