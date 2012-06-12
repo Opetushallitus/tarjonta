@@ -1,13 +1,5 @@
 package fi.vm.sade.tarjonta.selenium.story;
 
-import static fi.vm.sade.support.selenium.SeleniumUtils.waitForText;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.selenium.TarjontaEmbedComponentTstSupport;
 import fi.vm.sade.tarjonta.selenium.pageobject.HakueraEditFormPageObject;
@@ -16,6 +8,11 @@ import fi.vm.sade.tarjonta.service.mock.HakueraServiceMock;
 import fi.vm.sade.tarjonta.ui.MainWindow;
 import fi.vm.sade.tarjonta.ui.hakuera.HakueraEditForm;
 import fi.vm.sade.tarjonta.ui.hakuera.HakueraList;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static fi.vm.sade.support.selenium.SeleniumUtils.*;
+import static org.junit.Assert.*;
 
 /**
  * Test for HakueraEditForm.  

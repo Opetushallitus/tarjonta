@@ -3,7 +3,6 @@ package fi.vm.sade.tarjonta.selenium.pageobject;
 import fi.vm.sade.support.selenium.SeleniumUtils;
 import fi.vm.sade.support.selenium.VaadinPageObjectSupport;
 import fi.vm.sade.tarjonta.ui.hakuera.HakueraEditForm;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,6 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import javax.annotation.Nullable;
 
 import static fi.vm.sade.support.selenium.SeleniumUtils.waitFor;
+import static fi.vm.sade.support.selenium.SeleniumUtils.waitForElement;
 
 /**
  * @author Antti Salonen
@@ -27,15 +27,27 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
     }
 
     public void inputNames(String string) {
-        WebElement nameFi = SeleniumUtils.waitForElement(component.getHaunNimi().getTextFi());
+        WebElement nameFi = waitForNimiFi();
         String curValue = nameFi.getAttribute("value");
         SeleniumUtils.input(nameFi, curValue + " " + string + " FI");
-        WebElement nameSv = SeleniumUtils.waitForElement(component.getHaunNimi().getTextSv());
+        WebElement nameSv = waitForNimiSv();
         curValue = nameSv.getAttribute("value");
         SeleniumUtils.input(nameSv, curValue + " " + string + " SV");
-        WebElement nameEn = SeleniumUtils.waitForElement(component.getHaunNimi().getTextEn());
+        WebElement nameEn = waitForNimiEn();
         curValue = nameEn.getAttribute("value");
         SeleniumUtils.input(nameEn, curValue + " " + string + " EN");
+    }
+
+    public WebElement waitForNimiEn() {
+        return SeleniumUtils.waitForElement(component.getHaunNimi().getTextEn());
+    }
+
+    public WebElement waitForNimiSv() {
+        return SeleniumUtils.waitForElement(component.getHaunNimi().getTextSv());
+    }
+
+    public WebElement waitForNimiFi() {
+        return SeleniumUtils.waitForElement(component.getHaunNimi().getTextFi());
     }
 
     public void inputDefaultFields() {
@@ -106,4 +118,12 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
         WebElement nameFi = SeleniumUtils.waitForElement(component.getHaunNimi().getTextSv());
         return nameFi.getAttribute("value");
     }
+
+    public WebElement waitForNimi() {
+        return waitForElement(component.getHaunNimi());
+    }
+
+    public WebElement waitForHakulomakeUrl() {
+        return waitForElement(component.getHakulomakeUrl());
+    }    
 }

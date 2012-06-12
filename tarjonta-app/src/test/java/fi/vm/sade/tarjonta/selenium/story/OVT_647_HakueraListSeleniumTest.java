@@ -11,8 +11,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static fi.vm.sade.support.selenium.SeleniumUtils.STEP;
-import static fi.vm.sade.support.selenium.SeleniumUtils.waitForElement;
+import static fi.vm.sade.support.selenium.SeleniumUtils.*;
 import static org.junit.Assert.assertEquals;
 
 /**
