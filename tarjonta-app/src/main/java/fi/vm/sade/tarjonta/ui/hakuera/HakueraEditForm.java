@@ -20,6 +20,7 @@ package fi.vm.sade.tarjonta.ui.hakuera;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.NestedMethodProperty;
+import com.vaadin.event.FieldEvents;
 import com.vaadin.ui.AbstractSelect.Filtering;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
@@ -60,11 +61,11 @@ import static fi.vm.sade.generic.common.validation.ValidationConstants.GENERIC_M
 @Configurable(preConstruction = false)
 public class HakueraEditForm extends CustomComponent {
 
-    private final static String KOODISTO_HAKUTYYPPI_URI = "http://hakutyyppi";
-    private final static String KOODISTO_HAKUKAUSI_URI = "http://hakukausi";
-    private final static String KOODISTO_KOULUTUKSEN_ALKAMIS_URI = "http://alkamiskausi";
-    private final static String KOODISTO_KOHDEJOUKKO_URI = "http://kohdejoukko";
-    private final static String KOODISTO_HAKUTAPA_URI = "http://hakutapa";
+    public final static String KOODISTO_HAKUTYYPPI_URI = "http://hakutyyppi";
+    public final static String KOODISTO_HAKUKAUSI_URI = "http://hakukausi";
+    public final static String KOODISTO_KOULUTUKSEN_ALKAMIS_URI = "http://alkamiskausi";
+    public final static String KOODISTO_KOHDEJOUKKO_URI = "http://kohdejoukko";
+    public final static String KOODISTO_HAKUTAPA_URI = "http://hakutapa";
     
     private final static String PROPERTY_HAKUTYYPPI = "hakutyyppi";
     private final static String PROPERTY_HAKUKAUSI = "hakukausi";
@@ -92,7 +93,7 @@ public class HakueraEditForm extends CustomComponent {
     private KoodistoComponent hakutapaKoodi;
 
     @MLTextSize(min = GENERIC_MIN, max = GENERIC_MAX, message = "{validation.Organisaatio.nimiFi}", oneRequired = false)
-    private MultiLingualTextField haunNimi;
+    private HakueraMlTextField haunNimi;
     
     private OptionGroup hakuaikaOptions;
     private HakuaikaRange haunVoimassaolo;
@@ -107,11 +108,13 @@ public class HakueraEditForm extends CustomComponent {
     private Button cancelButton;
     
     HakueraDTO model;
-    
+
     @Autowired
     protected TarjontaUiService uiService;
     
     private KoodiPublicService koodiService;
+
+    private boolean isNimiEditedByHand = false;
     
     
     public HakueraEditForm() {
@@ -122,8 +125,9 @@ public class HakueraEditForm extends CustomComponent {
         
         FormLayout leftPanel = new FormLayout();
         createKoodistoComponents(leftPanel);
-        haunNimi = new MultiLingualTextField();
+        haunNimi = new HakueraMlTextField(this);
         haunNimi.setCaption(i18n.getMessage(PROPERTY_HAKUNIMI));
+        addNimiListeners();
         leftPanel.addComponent(haunNimi);
         hakuaikaOptions = createOptionGroup(leftPanel, Arrays.asList(new String[]{i18n.getMessage(PROPERTY_YKSI_HAKU), i18n.getMessage(PROPERTY_USEITA_HAKUJA)}), PROPERTY_HAKUAIKA);
         haunVoimassaolo = new HakuaikaRange();
@@ -181,57 +185,10 @@ public class HakueraEditForm extends CustomComponent {
         haunKohdejoukkoKoodi = createKoodistoComponent(KOODISTO_KOHDEJOUKKO_URI, PROPERTY_KOHDEJOUKKO, PROPERTY_KOHDEJOUKKO, layout);
         hakutapaKoodi = createKoodistoComponent(KOODISTO_HAKUTAPA_URI, PROPERTY_HAKUTAPA, PROPERTY_HAKUTAPA, layout);
         addListeners(new KoodistoComponent[]{hakutyyppiKoodi, hakukausiKoodi, haunKohdejoukkoKoodi});
+        this.koodiService = hakutyyppiKoodi.getKoodiService();
     }
     
-    /**
-     * Updating the localized nimi fields of this Hakuera based on values of HakutyyppiKoodi, HakukausiKoodi and haunKohdejoukkoKoodi.
-     * This method is called when the value of one of these components change.
-     */
-    private void updateNimiField() {
-        if (this.koodiService == null) {
-            this.koodiService = hakutyyppiKoodi.getKoodiService();
-        }
-        this.haunNimi.getTextFi().setValue(getNimiValue(Kieli.FI));
-        this.haunNimi.getTextSv().setValue(getNimiValue(Kieli.SV));
-        this.haunNimi.getTextEn().setValue(getNimiValue(Kieli.EN));
-    }
-    
-    /**
-     * Constructing one localized name for this Hakuera.
-     * 
-     * @param lang
-     * @return
-     */
-    private String getNimiValue(Kieli lang) {
-        String nimi = "";
-        nimi += getPartOfNimi(lang, KOODISTO_HAKUTYYPPI_URI, hakutyyppiKoodi);
-        System.out.println("nimi 1: " + nimi);
-        nimi += (nimi.length() > 0) ? ", " : "";
-        System.out.println("nimi 2: " + nimi);
-        nimi += getPartOfNimi(lang, KOODISTO_HAKUKAUSI_URI, hakukausiKoodi);
-        System.out.println("nimi 3: " + nimi);
-        nimi += (nimi.length() > 0) ? ", " : "";
-        System.out.println("nimi 4: " + nimi);
-        nimi += getPartOfNimi(lang, KOODISTO_KOHDEJOUKKO_URI, haunKohdejoukkoKoodi);
-        System.out.println("nimi 5: " + nimi);
-        System.out.println("The nimi to set: " + nimi);
-        return nimi;
-    }
-    
-    private String getPartOfNimi(Kieli lang, String koodistoUri, KoodistoComponent koodistoComp) {
-        String nimiPart = "";
-        if ((koodistoComp.getValue() != null)) {
-            String val = (String)koodistoComp.getValue();
-            System.out.println(koodistoComp.getCaption() + " koodisto component value: " + val);
-            for(KoodiDTO curKoodi:  koodiService.listKoodiByArvo(val, koodistoUri, null)) {
-                if (curKoodi.getKoodiArvo().equals(val)) {
-                    nimiPart += curKoodi.getKoodiMetadataForLanguage(lang).getNimi(); //The catenation of the lang name is for demo purposes only and should be removed whe koodisto will contain real language versions.
-                }    
-            }
-        }
-        System.out.println("Nimi part: " + nimiPart);
-        return nimiPart;
-    }
+   
     
     /**
      * Adding listeners to koodisto components that are used in constructing the 
@@ -245,7 +202,9 @@ public class HakueraEditForm extends CustomComponent {
                 
                 @Override
                 public void valueChange(ValueChangeEvent event) {
-                    updateNimiField();
+                    if (!isNimiEditedByHand) {
+                        haunNimi.updateNimiField();
+                    }
                 }
             });
         }
@@ -326,6 +285,14 @@ public class HakueraEditForm extends CustomComponent {
     public Button getCancelButton() {
         return cancelButton;
     }
+    
+    public KoodiPublicService getKoodiService() {
+        return koodiService;
+    }
+    
+    public HakueraDTO getModel() {
+        return model;
+    }
 
     /**
      * Binding the form fields to the model (HakueraDTO).
@@ -334,6 +301,7 @@ public class HakueraEditForm extends CustomComponent {
      */
     public void bind(HakueraDTO model) {
         this.model = model;
+        isNimiEditedByHand = !haunNimi.nimiMatchesKoodistoFields();
         haunNimi.getTextFi().setPropertyDataSource(new NestedMethodProperty(model, "nimiFi"));
         haunNimi.getTextSv().setPropertyDataSource(new NestedMethodProperty(model, "nimiSv"));
         haunNimi.getTextEn().setPropertyDataSource(new NestedMethodProperty(model, "nimiEn"));
@@ -351,6 +319,8 @@ public class HakueraEditForm extends CustomComponent {
         }
         hakulomakeUrl.setPropertyDataSource(new NestedMethodProperty(model, "lomake"));
     }
+    
+    
 
     /**
      * Populating the HakueraEditForm according to the current selection in the HakueraList.
@@ -383,5 +353,23 @@ public class HakueraEditForm extends CustomComponent {
         }
         BlackboardContext.getBlackboard().fire(new HakueraSavedEvent(model));
         getWindow().showNotification(I18N.getMessage("save.success"));
+    }
+    
+    private void addNimiListeners() {
+        haunNimi.getTextFi().addListener(new FieldEvents.TextChangeListener() {
+            public void textChange(final FieldEvents.TextChangeEvent event) {
+                isNimiEditedByHand = true;
+            }
+        });
+        haunNimi.getTextSv().addListener(new FieldEvents.TextChangeListener() {
+            public void textChange(final FieldEvents.TextChangeEvent event) {
+                isNimiEditedByHand = true;
+            }
+        });
+        haunNimi.getTextEn().addListener(new FieldEvents.TextChangeListener() {
+            public void textChange(final FieldEvents.TextChangeEvent event) {
+                isNimiEditedByHand = true;
+            }
+        });
     }
 }
