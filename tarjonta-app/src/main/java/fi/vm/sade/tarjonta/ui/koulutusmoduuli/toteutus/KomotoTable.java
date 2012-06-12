@@ -78,7 +78,9 @@ public class KomotoTable extends CustomComponent {
             komotoList.setContainerDataSource(tableContainer);
             komotoList.setVisibleColumns(visibleColumns);
             komotoList.setSizeFull();
-            tableGrid.addComponent(komotoList, 0, 2);
+            
+            tableGrid.addComponent(komotoList,0, 2, 1, 2);
+            
         }
         
         public Table getKomotoTable() {

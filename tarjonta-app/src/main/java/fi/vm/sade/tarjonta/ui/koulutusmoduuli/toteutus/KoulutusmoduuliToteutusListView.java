@@ -70,6 +70,7 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
       KomotoTable suunnitteilla = KomotoTableBuilder.komotoTable("Suunnitteilla")
               .withLabel("Suunnitteilla oleva koulutustarjonta")
               .withButton("Luo uusi komoto")
+              .withHeightAndWidth("400px", "200px")
               .withTable(koulutusModulot, visibleColumns)
               .build();
       
@@ -77,6 +78,7 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
       
       KomotoTable julkaistava = KomotoTableBuilder.komotoTable("Julkaistava")
               .withLabel("Julkaistavaksi valmis koulutustarjonta")
+              .withHeightAndWidth("400px", "200px")
               .withTable(koulutusModulot, visibleColumns)
               .build();
       
@@ -84,6 +86,7 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
       
       KomotoTable julkaistu = KomotoTableBuilder.komotoTable("Julkaistu")
               .withLabel("Julkaistu koulutustarjonta")
+              .withHeightAndWidth("400px", "200px")
               .withTable(koulutusModulot, visibleColumns)
               .build();
       

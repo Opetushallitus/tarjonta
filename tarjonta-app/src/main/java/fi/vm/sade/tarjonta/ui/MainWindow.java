@@ -21,6 +21,7 @@ import com.vaadin.ui.Window;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.hakuera.HakuView;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.KoulutusmoduuliEditView;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusmoduuliToteutusListView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,8 @@ public class MainWindow extends Window {
     private static final Logger LOG = LoggerFactory.getLogger(MainWindow.class);
     private KoulutusmoduuliEditView koulutusmoduuliEditView;
     private HakuView hakuView;
-
+    private KoulutusmoduuliToteutusListView toteutusListView;
+    
     public MainWindow() {
         super(I18N.getMessage("tarjonta.title"));
         init();
@@ -55,6 +57,8 @@ public class MainWindow extends Window {
         tabs.addTab(koulutusmoduuliEditView, I18N.getMessage("tarjonta.tabs.koulutusmoduulit"));
         hakuView = new HakuView();
         tabs.addTab(hakuView, I18N.getMessage("tarjonta.tabs.haut"));
+        toteutusListView = new KoulutusmoduuliToteutusListView();
+        tabs.addTab(toteutusListView, I18N.getMessage("tarjonta.tabs.toteutusList"));
         return tabs;
     }
 
