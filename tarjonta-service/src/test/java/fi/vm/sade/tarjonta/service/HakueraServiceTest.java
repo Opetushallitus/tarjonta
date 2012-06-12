@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -70,6 +71,10 @@ public class HakueraServiceTest {
         hakueraDto.setHaunAlkamisPvm(convertDate(new Date(System.currentTimeMillis())));
         hakueraDto.setHaunLoppumisPvm(convertDate(new Date(System.currentTimeMillis() + 10000)));
         hakueraDto.setHakutyyppi("Ammattikorkeakoulut");
+        hakueraDto.setHakukausi("Syksy");
+        hakueraDto.setKoulutuksenAlkaminen("Syksy 2013");
+        hakueraDto.setKohdejoukko("Ammattikoulutus");
+        hakueraDto.setHakutapa("Yhteishaku");
         HakueraDTO hakuera2 = hakueraService.createHakuera(hakueraDto);
         assertNotNull(hakuera2);
         assertEquals(oid, hakuera2.getOid());
@@ -87,6 +92,10 @@ public class HakueraServiceTest {
         hakueraDto.setHaunAlkamisPvm(convertDate(new Date(System.currentTimeMillis())));
         hakueraDto.setHaunLoppumisPvm(convertDate(new Date(System.currentTimeMillis() + 10000)));
         hakueraDto.setHakutyyppi("Ammattikorkeakoulut");
+        hakueraDto.setHakukausi("Syksy");
+        hakueraDto.setKoulutuksenAlkaminen("Syksy 2013");
+        hakueraDto.setKohdejoukko("Ammattikoulutus");
+        hakueraDto.setHakutapa("Yhteishaku");
         HakueraDTO hakuera2 = hakueraService.createHakuera(hakueraDto);
         hakuera2.setHakukausi(hakukausi);
         HakueraDTO hakuera3 = hakueraService.updateHakuera(hakuera2);

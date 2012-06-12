@@ -106,9 +106,9 @@ public class HakueraDAOTest {
     @Test
     public void findAll_sortingByABC() {
         long now = new Date().getTime();
-        Hakuera h1 = helper.create(now, now, "bbb");
-        Hakuera h2 = helper.create(now, now, "aaa");
-        Hakuera h3 = helper.create(now, now, "ccc");
+        Hakuera h1 = helper.create(now, now, "bbb", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku");
+        Hakuera h2 = helper.create(now, now, "aaa", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku");
+        Hakuera h3 = helper.create(now, now, "ccc", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku");
 
         // fi
 
@@ -142,7 +142,7 @@ public class HakueraDAOTest {
         long now = new Date().getTime();
         int dif = 10000;
         String oid = "1.2.34566.3";
-        Hakuera hakuera =  helper.create(now, now+dif, oid);
+        Hakuera hakuera =  helper.create(now, now+dif, oid, "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku");
 
         assertNotNull(hakuera.getId());
 
@@ -157,7 +157,7 @@ public class HakueraDAOTest {
         int dif = 10000;
         String oid = "1.2.34566.4";
         String hakutyyppi = "Ammattikorkeakoulut";
-        Hakuera hakuera =  helper.create(now, now+dif, oid);
+        Hakuera hakuera =  helper.create(now, now+dif, oid, "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku");
 
         assertNotNull(hakuera.getId());
 

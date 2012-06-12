@@ -28,11 +28,14 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
 
     public void inputNames(String string) {
         WebElement nameFi = SeleniumUtils.waitForElement(component.getHaunNimi().getTextFi());
-        SeleniumUtils.input(nameFi, string + " paattynyt FI");
+        String curValue = nameFi.getAttribute("value");
+        SeleniumUtils.input(nameFi, curValue + " " + string + " FI");
         WebElement nameSv = SeleniumUtils.waitForElement(component.getHaunNimi().getTextSv());
-        SeleniumUtils.input(nameSv, string + " paattynyt SV");
+        curValue = nameSv.getAttribute("value");
+        SeleniumUtils.input(nameSv, curValue + " " + string + " SV");
         WebElement nameEn = SeleniumUtils.waitForElement(component.getHaunNimi().getTextEn());
-        SeleniumUtils.input(nameEn, string + " paattynyt EN");
+        curValue = nameEn.getAttribute("value");
+        SeleniumUtils.input(nameEn, curValue + " " + string + " EN");
     }
 
     public void inputDefaultFields() {
@@ -41,7 +44,16 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
         selectAlkamiskausi("Syksy 2013");
         selectKohdejoukko("Korkeakoulutus");
         selectHakutapa("Yhteishaku");
-        inputNames("Testihakuera");
+        inputNames("paattynyt");
+    }
+    
+    public void inputCustomFields(String hakutyyppi, String hakukausi, String alkamiskausi, String kohdejoukko, String hakutapa, String namePostfix) {
+        selectHakutyyppi(((hakutyyppi != null) ? hakutyyppi : "Varsinainen haku"));
+        selectHakukausi(((hakukausi != null) ? hakukausi : "Syksy"));
+        selectAlkamiskausi(((alkamiskausi != null) ? alkamiskausi : "Syksy 2013"));
+        selectKohdejoukko(((kohdejoukko != null) ? kohdejoukko : "Korkeakoulutus"));
+        selectHakutapa(((hakutapa != null) ? hakutapa : "Yhteishaku"));
+        inputNames(((namePostfix != null) ? namePostfix : "paattynyt"));
     }
 
     private void selectHakutapa(String string) {
@@ -78,5 +90,20 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
 
         });
         option.click();
+    }
+    
+    public String getNimiFiValue() {
+        WebElement nameFi = SeleniumUtils.waitForElement(component.getHaunNimi().getTextFi());
+        return nameFi.getAttribute("value");
+    }
+    
+    public String getNimiSvValue() {
+        WebElement nameFi = SeleniumUtils.waitForElement(component.getHaunNimi().getTextSv());
+        return nameFi.getAttribute("value");
+    }
+    
+    public String getNimiEnValue() {
+        WebElement nameFi = SeleniumUtils.waitForElement(component.getHaunNimi().getTextSv());
+        return nameFi.getAttribute("value");
     }
 }

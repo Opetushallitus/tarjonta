@@ -17,6 +17,8 @@
 
 package fi.vm.sade.tarjonta.ui.hakuera;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.ui.AbstractSelect.Filtering;
 import com.vaadin.ui.*;
@@ -25,6 +27,8 @@ import fi.vm.sade.generic.common.validation.MLTextSize;
 import fi.vm.sade.generic.ui.blackboard.BlackboardContext;
 import fi.vm.sade.generic.ui.component.MultiLingualTextField;
 import fi.vm.sade.koodisto.model.dto.Kieli;
+import fi.vm.sade.koodisto.model.dto.KoodiDTO;
+import fi.vm.sade.koodisto.service.KoodiPublicService;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
@@ -41,12 +45,13 @@ import org.vaadin.addon.formbinder.FormView;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
 import static fi.vm.sade.generic.common.validation.ValidationConstants.GENERIC_MAX;
 import static fi.vm.sade.generic.common.validation.ValidationConstants.GENERIC_MIN;
 
 /**
- * The form for creating and modifying a Haku (Hakuerä).
+ * The form for creating and modifying a Hakuera.
  * 
  * @author markus
  *
@@ -54,7 +59,6 @@ import static fi.vm.sade.generic.common.validation.ValidationConstants.GENERIC_M
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = false)
 public class HakueraEditForm extends CustomComponent {
-
 
     private final static String KOODISTO_HAKUTYYPPI_URI = "http://hakutyyppi";
     private final static String KOODISTO_HAKUKAUSI_URI = "http://hakukausi";
@@ -107,6 +111,8 @@ public class HakueraEditForm extends CustomComponent {
     @Autowired
     protected TarjontaUiService uiService;
     
+    private KoodiPublicService koodiService;
+    
     
     public HakueraEditForm() {
         
@@ -131,6 +137,7 @@ public class HakueraEditForm extends CustomComponent {
         hakulomakeUrl = new TextField();
         rightPanel.addComponent(hakulomakeUrl);
         createButtons(leftPanel);
+        
         mainLayout.addComponent(rightPanel);
         
         setCompositionRoot(mainLayout);
@@ -143,6 +150,11 @@ public class HakueraEditForm extends CustomComponent {
         return optGroup;
     }
     
+    /**
+     * Creation of save and cancel buttons. Adding them to the layout.
+     * 
+     * @param layout
+     */
     private void createButtons(FormLayout layout) {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         saveButton = new Button(I18N.getMessage("tarjonta.tallenna"), new Button.ClickListener() {
@@ -168,8 +180,87 @@ public class HakueraEditForm extends CustomComponent {
         koulutuksenAlkamiskausiKoodi = createKoodistoComponent(KOODISTO_KOULUTUKSEN_ALKAMIS_URI, PROPERTY_KOULUTUKSEN_ALKAMINEN, PROPERTY_KOULUTUKSEN_ALKAMINEN, layout);
         haunKohdejoukkoKoodi = createKoodistoComponent(KOODISTO_KOHDEJOUKKO_URI, PROPERTY_KOHDEJOUKKO, PROPERTY_KOHDEJOUKKO, layout);
         hakutapaKoodi = createKoodistoComponent(KOODISTO_HAKUTAPA_URI, PROPERTY_HAKUTAPA, PROPERTY_HAKUTAPA, layout);
+        addListeners(new KoodistoComponent[]{hakutyyppiKoodi, hakukausiKoodi, haunKohdejoukkoKoodi});
     }
     
+    /**
+     * Updating the localized nimi fields of this Hakuera based on values of HakutyyppiKoodi, HakukausiKoodi and haunKohdejoukkoKoodi.
+     * This method is called when the value of one of these components change.
+     */
+    private void updateNimiField() {
+        if (this.koodiService == null) {
+            this.koodiService = hakutyyppiKoodi.getKoodiService();
+        }
+        this.haunNimi.getTextFi().setValue(getNimiValue(Kieli.FI));
+        this.haunNimi.getTextSv().setValue(getNimiValue(Kieli.SV));
+        this.haunNimi.getTextEn().setValue(getNimiValue(Kieli.EN));
+    }
+    
+    /**
+     * Constructing one localized name for this Hakuera.
+     * 
+     * @param lang
+     * @return
+     */
+    private String getNimiValue(Kieli lang) {
+        String nimi = "";
+        nimi += getPartOfNimi(lang, KOODISTO_HAKUTYYPPI_URI, hakutyyppiKoodi);
+        System.out.println("nimi 1: " + nimi);
+        nimi += (nimi.length() > 0) ? ", " : "";
+        System.out.println("nimi 2: " + nimi);
+        nimi += getPartOfNimi(lang, KOODISTO_HAKUKAUSI_URI, hakukausiKoodi);
+        System.out.println("nimi 3: " + nimi);
+        nimi += (nimi.length() > 0) ? ", " : "";
+        System.out.println("nimi 4: " + nimi);
+        nimi += getPartOfNimi(lang, KOODISTO_KOHDEJOUKKO_URI, haunKohdejoukkoKoodi);
+        System.out.println("nimi 5: " + nimi);
+        System.out.println("The nimi to set: " + nimi);
+        return nimi;
+    }
+    
+    private String getPartOfNimi(Kieli lang, String koodistoUri, KoodistoComponent koodistoComp) {
+        String nimiPart = "";
+        if ((koodistoComp.getValue() != null)) {
+            String val = (String)koodistoComp.getValue();
+            System.out.println(koodistoComp.getCaption() + " koodisto component value: " + val);
+            for(KoodiDTO curKoodi:  koodiService.listKoodiByArvo(val, koodistoUri, null)) {
+                if (curKoodi.getKoodiArvo().equals(val)) {
+                    nimiPart += curKoodi.getKoodiMetadataForLanguage(lang).getNimi(); //The catenation of the lang name is for demo purposes only and should be removed whe koodisto will contain real language versions.
+                }    
+            }
+        }
+        System.out.println("Nimi part: " + nimiPart);
+        return nimiPart;
+    }
+    
+    /**
+     * Adding listeners to koodisto components that are used in constructing the 
+     * automatically generated localized names (nimiFi, nimiSv, nimiEn) for the Hakuera.
+     * 
+     * @param koodistoComponents
+     */
+    private void addListeners(KoodistoComponent[] koodistoComponents) {
+        for (KoodistoComponent curComp : koodistoComponents) {
+            curComp.addListener(new Property.ValueChangeListener() {
+                
+                @Override
+                public void valueChange(ValueChangeEvent event) {
+                    updateNimiField();
+                }
+            });
+        }
+    }
+    
+    /**
+     * 
+     * Creationg of a KoodistoComponent. 
+     * 
+     * @param koodistoUri The URI of the koodisto used in this component.
+     * @param captionKey The key of the caption used.
+     * @param debugId The debug id of this component
+     * @param layout The layout where this component will be added.
+     * @return The created KoodistoComponent.
+     */
     private KoodistoComponent createKoodistoComponent(String koodistoUri, String captionKey, String debugId, FormLayout layout) {
         KoodistoComponent koodistoComponent = WidgetFactory.create(koodistoUri, Kieli.FI);
         koodistoComponent.setCaption(i18n.getMessage(captionKey));
@@ -248,7 +339,7 @@ public class HakueraEditForm extends CustomComponent {
         haunNimi.getTextEn().setPropertyDataSource(new NestedMethodProperty(model, "nimiEn"));
         hakutyyppiKoodi.setPropertyDataSource(new NestedMethodProperty(model, PROPERTY_HAKUTYYPPI));
         hakukausiKoodi.setPropertyDataSource(new NestedMethodProperty(model, PROPERTY_HAKUKAUSI));
-        koulutuksenAlkamiskausiKoodi.setPropertyDataSource(new NestedMethodProperty(model, PROPERTY_HAKUKAUSI));
+        koulutuksenAlkamiskausiKoodi.setPropertyDataSource(new NestedMethodProperty(model, PROPERTY_KOULUTUKSEN_ALKAMINEN));
         haunKohdejoukkoKoodi.setPropertyDataSource(new NestedMethodProperty(model, PROPERTY_KOHDEJOUKKO));
         hakutapaKoodi.setPropertyDataSource(new NestedMethodProperty(model, PROPERTY_HAKUTAPA));
         haunVoimassaolo.populateVoimassaoloDates(model);
@@ -280,6 +371,9 @@ public class HakueraEditForm extends CustomComponent {
         }
     }
     
+    /**
+     * Saving the form. If the Hakuera is already in the database (has oid), update is called.
+     */
     private void save() {
         haunVoimassaolo.getVoimassaoloDates(model);
         if (model.getOid() == null) {

@@ -52,11 +52,15 @@ public class Hakuera extends BaseEntity {
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date haunLoppumisPvm;
-    
+    @NotNull
     private String hakutyyppi;
+    @NotNull
     private String hakukausi;
+    @NotNull
     private String koulutuksenAlkaminen;
+    @NotNull
     private String kohdejoukko;
+    @NotNull
     private String hakutapa;
     private boolean sijoittelu;
     private String lomake;

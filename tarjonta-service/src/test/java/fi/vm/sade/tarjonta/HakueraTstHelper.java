@@ -23,10 +23,10 @@ public class HakueraTstHelper {
     public Hakuera create(long alkuPvm, long loppuPvm) {
         long now = System.currentTimeMillis();
         String name = "" + now;
-        return create(alkuPvm, loppuPvm, name);
+        return create(alkuPvm, loppuPvm, name, "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku");
     }
 
-    public Hakuera create(long alkuPvm, long loppuPvm, String name) {
+    public Hakuera create(long alkuPvm, long loppuPvm, String name, String hakutyyppi, String hakukausi, String alkamisKausi, String kohdejoukko, String hakutapa) {
         Hakuera h = new Hakuera();
         h.setOid(name);
         h.setNimiFi(name + " FI");
@@ -34,6 +34,11 @@ public class HakueraTstHelper {
         h.setNimiEn(name + " EN");
         h.setHaunAlkamisPvm(new Date(alkuPvm));
         h.setHaunLoppumisPvm(new Date(loppuPvm));
+        h.setHakutyyppi(hakutyyppi);
+        h.setHakukausi(hakukausi);
+        h.setKoulutuksenAlkaminen(alkamisKausi);
+        h.setKohdejoukko(kohdejoukko);
+        h.setHakutapa(hakutapa);
         return dao.insert(h);
     }
 

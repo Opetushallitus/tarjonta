@@ -3,6 +3,7 @@ package fi.vm.sade.tarjonta.selenium.story;
 import static fi.vm.sade.support.selenium.SeleniumUtils.waitForText;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,9 +56,57 @@ public class OVT_641_LuoMuokkaaHakuTest extends TarjontaEmbedComponentTstSupport
         waitAssert(new AssertionCallback() {
             @Override
             public void doAssertion() {
-                assertEquals(4, hakueraList.getResultCount());
+                assertEquals(hakueraService.getMockRepository().size(), hakueraList.getResultCount());
             }
         });
     }
+    
+    @Test
+    public void automaticNimiConstructionTest() throws Throwable {
+        final String hakutyyppi = "Varsinainen haku";
+        final String hakukausi = "Syksy";
+        final String kohdejoukko = "Aikuiskoulutus";
+        
+        assertNotNull(mainWindowPageObject.getComponent());
+        assertNotNull(mainWindowPageObject.getComponent().getHakuView());
 
+        waitForText(I18N.getMessage("tarjonta.tabs.koulutusmoduulit"));
+        mainWindowPageObject.openHakuTab();
+        waitForText(I18N.getMessage("HakueraEditForm.otsikko"));
+        hakueraEdit.inputCustomFields(hakutyyppi, hakukausi, null, kohdejoukko, null, null);
+        hakueraEdit.save();
+        waitForText(I18N.getMessage("save.success"));
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() {
+                assertEquals(hakueraService.getMockRepository().size(), hakueraList.getResultCount());
+            }
+        });
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() {
+                assertTrue(hakueraEdit.getNimiFiValue().contains(hakutyyppi)
+                        && hakueraEdit.getNimiFiValue().contains(hakukausi)
+                        && hakueraEdit.getNimiFiValue().contains(kohdejoukko));
+            }
+        });
+        
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() {
+                assertTrue(hakueraEdit.getNimiSvValue().contains(hakutyyppi)
+                        && hakueraEdit.getNimiSvValue().contains(hakukausi)
+                        && hakueraEdit.getNimiSvValue().contains(kohdejoukko));
+            }
+        });
+        
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() {
+                assertTrue(hakueraEdit.getNimiEnValue().contains(hakutyyppi)
+                        && hakueraEdit.getNimiEnValue().contains(hakukausi)
+                        && hakueraEdit.getNimiEnValue().contains(kohdejoukko));
+            }
+        });
+    }
 }
