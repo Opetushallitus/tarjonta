@@ -22,18 +22,24 @@ import java.io.Serializable;
  * rename it e.g. to TarjontaTila
  * 
  * @author Jukka Raanamo
+ * 
+ * TKatva, added another tila -> julkaistu
  */
 public enum KoulutusmoduuliTila implements Serializable {
 
     /**
      * Begin planned, not ready for publishing.
      */
-    SUUNNITELUSSA,
+    SUUNNITTELUSSA,
 
     /**
      * Planning completed, ready for publishing.
      */
-    VALMIS
-
+    VALMIS,
+    
+    /*
+     * Published
+     */
+    JULKAISTU   
 }
 

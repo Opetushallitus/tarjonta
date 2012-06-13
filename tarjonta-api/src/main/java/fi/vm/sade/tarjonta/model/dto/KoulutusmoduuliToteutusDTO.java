@@ -25,7 +25,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @SuppressWarnings("serial")
 public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
 
-    private String tila;
+    private KoulutusmoduuliTila tila;
 
     private String oid;
 
@@ -35,13 +35,7 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
 
     private KoulutusmoduuliPerustiedotDTO perustiedot;
 
-    public String getTila() {
-        return tila;
-    }
-
-    public void setTila(String value) {
-        this.tila = value;
-    }
+    
 
     public String getOid() {
         return oid;
@@ -79,9 +73,23 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     public String toString() {
         return new ToStringBuilder(this).append("oid", oid).
             append("nimi", nimi).
-            append("tila", tila).
+            append("tila", getTila()).
             append("toteutettavaKoulutusmoduuliOID", toteutettavaKoulutusmoduuliOID).
             append(perustiedot).toString();
+    }
+
+    /**
+     * @return the tila
+     */
+    public KoulutusmoduuliTila getTila() {
+        return tila;
+    }
+
+    /**
+     * @param tila the tila to set
+     */
+    public void setTila(KoulutusmoduuliTila tila) {
+        this.tila = tila;
     }
 
 }
