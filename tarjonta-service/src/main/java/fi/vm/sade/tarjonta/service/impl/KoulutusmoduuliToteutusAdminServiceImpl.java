@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.model.dto.*;
 import fi.vm.sade.tarjonta.service.KoulutusmoduuliToteutusAdminService;
 import fi.vm.sade.tarjonta.service.business.KoulutusmoduuliBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusmoduuliToteutusBusinessService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -52,5 +53,12 @@ public class KoulutusmoduuliToteutusAdminServiceImpl implements KoulutusmoduuliT
 
     }
 
+    @Override
+    public List<KoulutusmoduuliToteutusDTO> findWithTila(KoulutusmoduuliToteutusSearchDTO criteria) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+  
+    
+    
 }
 
