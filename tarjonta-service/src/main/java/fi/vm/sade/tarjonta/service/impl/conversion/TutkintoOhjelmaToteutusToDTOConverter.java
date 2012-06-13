@@ -32,7 +32,7 @@ public class TutkintoOhjelmaToteutusToDTOConverter<T extends KoulutusmoduuliTote
     public T convert(TutkintoOhjelmaToteutus source) {
 
         TutkintoOhjelmaToteutusDTO dto = new TutkintoOhjelmaToteutusDTO();
-        dto.setTila(source.getTila() != null ? source.getTila().name() : KoulutusmoduuliTila.SUUNNITELUSSA.name());
+        dto.setTila(source.getTila());
         dto.setOid(source.getOid());
         dto.setNimi(source.getNimi());
         dto.setPerustiedot(CommonConverter.convert(source.getPerustiedot()));

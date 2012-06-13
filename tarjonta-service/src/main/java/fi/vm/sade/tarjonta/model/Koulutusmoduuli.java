@@ -92,7 +92,7 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification {
     public Koulutusmoduuli(KoulutusmoduuliTyyppi tyyppi) {
         this();
         this.tyyppi = tyyppi;
-        this.tila = KoulutusmoduuliTila.SUUNNITELUSSA;
+        this.tila = KoulutusmoduuliTila.SUUNNITTELUSSA;
     }
 
     /**

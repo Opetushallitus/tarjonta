@@ -29,7 +29,7 @@ public class KoulutusmoduuliTest {
     @Test
     public void testGetTilaAfterCreate() {
         Koulutusmoduuli moduuli = newModuuli();
-        assertEquals(KoulutusmoduuliTila.SUUNNITELUSSA, moduuli.getTila());
+        assertEquals(KoulutusmoduuliTila.SUUNNITTELUSSA, moduuli.getTila());
     }
 
     @Test

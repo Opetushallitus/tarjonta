@@ -27,7 +27,7 @@ public class KoulutusmoduuliAdminServiceTest {
     public void testNewKoulutusmoduuliIsInEditState() {
 
         KoulutusmoduuliDTO koulutusModuuli = adminService.createTutkintoOhjelma(null);
-        assertEquals(KoulutusmoduuliTila.SUUNNITELUSSA.name(), koulutusModuuli.getTila());
+        assertEquals(KoulutusmoduuliTila.SUUNNITTELUSSA.name(), koulutusModuuli.getTila());
     }
 
     @Test
