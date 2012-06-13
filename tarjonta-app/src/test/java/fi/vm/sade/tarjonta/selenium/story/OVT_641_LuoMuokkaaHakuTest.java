@@ -1,7 +1,7 @@
 package fi.vm.sade.tarjonta.selenium.story;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.support.selenium.SeleniumUtils.AssertionCallback;
+import fi.vm.sade.support.selenium.SeleniumUtils.*;
 import fi.vm.sade.tarjonta.selenium.TarjontaEmbedComponentTstSupport;
 import fi.vm.sade.tarjonta.selenium.pageobject.HakueraEditFormPageObject;
 import fi.vm.sade.tarjonta.selenium.pageobject.HakueraListPageObject;
@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static fi.vm.sade.support.selenium.SeleniumUtils.*;
 import static org.junit.Assert.*;
 
 /**
@@ -53,7 +52,7 @@ public class OVT_641_LuoMuokkaaHakuTest extends TarjontaEmbedComponentTstSupport
         STEP("Luodaan uusi hakuerä, jolloin luotu organisaatio ilmestyy hakulistaukseen");
         hakueraEdit.inputDefaultFields();
         hakueraEdit.save();
-        waitForText(I18N.getMessage("save.success"));
+        waitForText(I18N.getMessage("c_save_successful"));
         waitAssert(new AssertionCallback() {
             @Override
             public void doAssertion() {
@@ -77,7 +76,7 @@ public class OVT_641_LuoMuokkaaHakuTest extends TarjontaEmbedComponentTstSupport
         STEP("Täytetään lomake, jolloin nimi-kenttien arvot täydentyvät valintojen mukaisesti");
         hakueraEdit.inputCustomFields(hakutyyppi, hakukausi, null, kohdejoukko, null, null);
         hakueraEdit.save();
-        waitForText(I18N.getMessage("save.success"));
+        waitForText(I18N.getMessage("c_save_successful"));
         waitAssert(new AssertionCallback() {
             @Override
             public void doAssertion() {

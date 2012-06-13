@@ -44,4 +44,12 @@ public class HakuView extends HorizontalLayout {
         });
         
     }
+
+    public HakueraEditForm getHakuForm() {
+        return hakuForm;
+    }
+
+    public HakueraList getHakueraList() {
+        return hakueraList;
+    }
 }

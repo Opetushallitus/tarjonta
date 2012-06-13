@@ -1,17 +1,18 @@
 package fi.vm.sade.tarjonta.selenium.story;
 
 import fi.vm.sade.generic.common.I18N;
-import static fi.vm.sade.support.selenium.SeleniumUtils.*;
-import fi.vm.sade.tarjonta.selenium.TarjontaEmbedComponentTstSupport;
-import org.junit.Test;
-
-import static fi.vm.sade.support.selenium.SeleniumUtils.waitForText;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
+import fi.vm.sade.tarjonta.selenium.TarjontaEmbedComponentTstSupport;
 import fi.vm.sade.tarjonta.selenium.pageobject.KoulutusmoduuliEditViewPageObject;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.KoulutusmoduuliEditView;
-import static org.junit.Assert.*;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static fi.vm.sade.support.selenium.SeleniumUtils.STEP;
+import static fi.vm.sade.support.selenium.SeleniumUtils.waitForText;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Jukka Raanamo
@@ -38,6 +39,7 @@ public class OVT_803_KenttienValidointiTest extends TarjontaEmbedComponentTstSup
         koulutusmoduuliEditView.selectNewKoulutusmoduuliTutkintoonJohtava();
         
         STEP("Clicking save without setting any values");
+        // TODO: ilm tässä välissä esiintyy satunnaisuutta kun joskus edellinen select -komento ei ole mennyt vielä perille ennen saveAsDraftin klikkausta?
         koulutusmoduuliEditView.clickSaveAsDraft();
         
         STEP("Validating that error message was displayed");

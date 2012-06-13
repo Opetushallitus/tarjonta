@@ -10,8 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 
 import javax.annotation.Nullable;
 
-import static fi.vm.sade.support.selenium.SeleniumUtils.waitFor;
-import static fi.vm.sade.support.selenium.SeleniumUtils.waitForElement;
+import static fi.vm.sade.support.selenium.SeleniumUtils.*;
 
 /**
  * @author Antti Salonen
@@ -52,16 +51,16 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
 
     public void inputDefaultFields() {
         selectHakutyyppi("Varsinainen haku");
-        selectHakukausi("Syksy 2012");
+        selectHakukausi("Syksy");
         selectAlkamiskausi("Syksy 2013");
         selectKohdejoukko("Korkeakoulutus");
-        selectHakutapa("Muu haku");
+        selectHakutapa("Yhteishaku");
         inputNames("paattynyt");
     }
     
     public void inputCustomFields(String hakutyyppi, String hakukausi, String alkamiskausi, String kohdejoukko, String hakutapa, String namePostfix) {
         selectHakutyyppi(((hakutyyppi != null) ? hakutyyppi : "Varsinainen haku"));
-        selectHakukausi(((hakukausi != null) ? hakukausi : "Syksy 2012"));
+        selectHakukausi(((hakukausi != null) ? hakukausi : "Syksy"));
         selectAlkamiskausi(((alkamiskausi != null) ? alkamiskausi : "Syksy 2013"));
         selectKohdejoukko(((kohdejoukko != null) ? kohdejoukko : "Korkeakoulutus"));
         selectHakutapa(((hakutapa != null) ? hakutapa : "Yhteishaku"));
@@ -130,5 +129,13 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
     public void inputHakulomake(String hakulomakeUrl) {
         WebElement lomakeUrlE= SeleniumUtils.waitForElement(component.getHakulomakeUrl());
         SeleniumUtils.input(lomakeUrlE, hakulomakeUrl);
+    }
+
+    public void selectDefaultKoodistoValues() {
+        select(component.getHakutyyppiKoodi(), 1);
+        select(component.getHakukausiKoodi(), 1);
+        select(component.getKoulutuksenAlkamiskausiKoodi(), 1);
+        select(component.getHaunKohdejoukkoKoodi(), 1);
+        select(component.getHakutapaKoodi(), 1);
     }    
 }
