@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliSisaltyvyys;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
 import fi.vm.sade.tarjonta.service.NoSuchOIDException;
 import java.util.List;
 import org.slf4j.Logger;
@@ -49,6 +50,15 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         }
 
     }
+
+    @Override
+    public List<KoulutusmoduuliToteutus> findWithTila(KoulutusmoduuliToteutusSearchDTO criteria) {
+        
+        List<KoulutusmoduuliToteutus> results = findBy("tila",criteria.getTila(),criteria.getStartIndex(),criteria.getPageSize());
+        return results;
+    }
+    
+    
 
 }
 

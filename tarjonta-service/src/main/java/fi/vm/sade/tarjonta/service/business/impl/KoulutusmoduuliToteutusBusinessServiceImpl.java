@@ -18,7 +18,10 @@ package fi.vm.sade.tarjonta.service.business.impl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
 import fi.vm.sade.tarjonta.service.business.KoulutusmoduuliToteutusBusinessService;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,6 +70,13 @@ public class KoulutusmoduuliToteutusBusinessServiceImpl implements Koulutusmoduu
     public KoulutusmoduuliToteutus findByOid(String koulutusmoduuliOID) {
         return toteutusDAO.findByOid(koulutusmoduuliOID);
     }
+
+    @Override
+    public List<KoulutusmoduuliToteutus> findWithTila(KoulutusmoduuliToteutusSearchDTO criteria) {
+        return toteutusDAO.findWithTila(criteria);
+    }
+    
+    
 
 }
 

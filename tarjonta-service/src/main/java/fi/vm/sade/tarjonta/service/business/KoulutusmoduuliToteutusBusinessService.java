@@ -16,7 +16,9 @@
 package fi.vm.sade.tarjonta.service.business;
 
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
 import fi.vm.sade.tarjonta.service.NoSuchOIDException;
+import java.util.List;
 
 /**
  * Service to be used internally by public services to centralize KoulutusmoduuliToteutus operations.
@@ -42,6 +44,15 @@ public interface KoulutusmoduuliToteutusBusinessService {
      */
     KoulutusmoduuliToteutus findByOid(String koulutusmoduuliOID)
         throws NoSuchOIDException;
+    
+    
+    /**
+     * Retrieves List of Koulutusmoduulitoteutus with given search criteria
+     *
+     * @param KoulutusmoduuliToteutusSearchDTO search criteria 
+     * @return List KoulutusmoduuliToteutus
+     */
+    List<KoulutusmoduuliToteutus> findWithTila(KoulutusmoduuliToteutusSearchDTO criteria);
 
 }
 

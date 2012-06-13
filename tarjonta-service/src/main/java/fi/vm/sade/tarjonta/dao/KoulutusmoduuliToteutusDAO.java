@@ -17,7 +17,9 @@ package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
 import fi.vm.sade.tarjonta.service.NoSuchOIDException;
+import java.util.List;
 
 /**
  *
@@ -34,5 +36,14 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
      */
     public KoulutusmoduuliToteutus findByOid(String oid)
         throws NoSuchOIDException;
+    
+    
+    /**
+     * Retrieves List of Koulutusmoduulitoteutus with given search criteria
+     *
+     * @param KoulutusmoduuliToteutusSearchDTO search criteria 
+     * @return List KoulutusmoduuliToteutus
+     */
+    public List<KoulutusmoduuliToteutus> findWithTila(KoulutusmoduuliToteutusSearchDTO criteria);
 
 }

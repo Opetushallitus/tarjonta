@@ -55,7 +55,9 @@ public class KoulutusmoduuliToteutusAdminServiceImpl implements KoulutusmoduuliT
 
     @Override
     public List<KoulutusmoduuliToteutusDTO> findWithTila(KoulutusmoduuliToteutusSearchDTO criteria) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<KoulutusmoduuliToteutus> jpaResults = toteutusService.findWithTila(criteria);
+        return conversionService.convertAll(jpaResults,KoulutusmoduuliToteutusDTO.class);
+        
     }
   
     
