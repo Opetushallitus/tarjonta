@@ -65,7 +65,7 @@ public class OVT_641_LuoMuokkaaHakuTest extends TarjontaEmbedComponentTstSupport
     @Test
     public void automaticNimiConstructionTest() throws Throwable {
         final String hakutyyppi = "Varsinainen haku";
-        final String hakukausi = "Syksy";
+        final String hakukausi = "Syksy 2012";
         final String kohdejoukko = "Aikuiskoulutus";
         STEP("Avataan hakulomake");
         assertNotNull(mainWindowPageObject.getComponent());

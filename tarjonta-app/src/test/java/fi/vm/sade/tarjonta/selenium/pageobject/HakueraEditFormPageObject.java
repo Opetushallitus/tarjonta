@@ -52,7 +52,7 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
 
     public void inputDefaultFields() {
         selectHakutyyppi("Varsinainen haku");
-        selectHakukausi("Syksy");
+        selectHakukausi("Syksy 2012");
         selectAlkamiskausi("Syksy 2013");
         selectKohdejoukko("Korkeakoulutus");
         selectHakutapa("Muu haku");
@@ -61,7 +61,7 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
     
     public void inputCustomFields(String hakutyyppi, String hakukausi, String alkamiskausi, String kohdejoukko, String hakutapa, String namePostfix) {
         selectHakutyyppi(((hakutyyppi != null) ? hakutyyppi : "Varsinainen haku"));
-        selectHakukausi(((hakukausi != null) ? hakukausi : "Syksy"));
+        selectHakukausi(((hakukausi != null) ? hakukausi : "Syksy 2012"));
         selectAlkamiskausi(((alkamiskausi != null) ? alkamiskausi : "Syksy 2013"));
         selectKohdejoukko(((kohdejoukko != null) ? kohdejoukko : "Korkeakoulutus"));
         selectHakutapa(((hakutapa != null) ? hakutapa : "Yhteishaku"));
