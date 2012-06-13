@@ -1,16 +1,46 @@
+/*
+ *
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ */
+
 package fi.vm.sade.tarjonta.ui.hakuera;
+
+import com.vaadin.event.FieldEvents;
 
 import fi.vm.sade.generic.ui.component.MultiLingualTextField;
 import fi.vm.sade.koodisto.model.dto.Kieli;
 import fi.vm.sade.koodisto.model.dto.KoodiDTO;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 
+/**
+ * Extension of MultiLingualTextField that is used in HakueraEditForm.
+ * The extension is done to provide the pre-creation of nimi fields
+ * based on selections from koodisto components. 
+ * 
+ * @author markus
+ *
+ */
 public class HakueraMlTextField extends MultiLingualTextField {
     
-    HakueraEditForm hakueraForm;
+    private HakueraEditForm hakueraForm;
     
+    private boolean isNimiEditedByHand = false;
+
     public HakueraMlTextField(HakueraEditForm hakueraForm) {
         this.hakueraForm = hakueraForm;
+        addNimiListeners();
     }
     
     /**
@@ -21,6 +51,23 @@ public class HakueraMlTextField extends MultiLingualTextField {
         getTextFi().setValue(getNimiValue(Kieli.FI));
         getTextSv().setValue(getNimiValue(Kieli.SV));
         getTextEn().setValue(getNimiValue(Kieli.EN));
+    }
+
+    /**
+     * Sets the value of isNimiEditedByHand based on whether the nimi fields match the values of the koodisto fields based on which
+     * the nimi is pre-constructed.
+     * 
+     */
+    public void setNimiEditedByHand() {
+       isNimiEditedByHand = !nimiMatchesKoodistoFields(); 
+    }
+    
+    public boolean isNimiEditedByHand() {
+        return isNimiEditedByHand;
+    }
+
+    public void setNimiEditedByHand(boolean isNimiEditedByHand) {
+        this.isNimiEditedByHand = isNimiEditedByHand;
     }
     
     /**
@@ -52,7 +99,7 @@ public class HakueraMlTextField extends MultiLingualTextField {
      * 
      * @return
      */
-    public boolean nimiMatchesKoodistoFields() {
+    private boolean nimiMatchesKoodistoFields() {
         return localizedNimiMatches(Kieli.FI) 
                 && localizedNimiMatches(Kieli.SV)
                 && localizedNimiMatches(Kieli.EN); 
@@ -110,7 +157,7 @@ public class HakueraMlTextField extends MultiLingualTextField {
      * @param kohdejoukkoKoodiVal
      * @return
      */
-    String constructNimiFromParts(String hakutyyppiKoodiVal, String hakukausiKoodiVal, String kohdejoukkoKoodiVal) {
+    private String constructNimiFromParts(String hakutyyppiKoodiVal, String hakukausiKoodiVal, String kohdejoukkoKoodiVal) {
         String nimi = "";
         nimi += hakutyyppiKoodiVal;
         nimi += ((hakukausiKoodiVal.length() > 0) && (hakutyyppiKoodiVal.length() > 0))  ? ", "  : "";
@@ -119,4 +166,28 @@ public class HakueraMlTextField extends MultiLingualTextField {
         nimi += kohdejoukkoKoodiVal;
         return nimi;
     }
+    
+    /**
+     * Adds the TextChangeListeners to the nimi fields to detect manual editing of nimi fields.
+     * After manual editing done by user the nimi fields are no longer automatically pre-created.
+     */
+    private void addNimiListeners() {
+        getTextFi().addListener(new FieldEvents.TextChangeListener() {
+            public void textChange(final FieldEvents.TextChangeEvent event) {
+                isNimiEditedByHand = true;
+            }
+        });
+        getTextSv().addListener(new FieldEvents.TextChangeListener() {
+            public void textChange(final FieldEvents.TextChangeEvent event) {
+                isNimiEditedByHand = true;
+            }
+        });
+        getTextEn().addListener(new FieldEvents.TextChangeListener() {
+            public void textChange(final FieldEvents.TextChangeEvent event) {
+                isNimiEditedByHand = true;
+            }
+        });
+    }
+    
+
 }

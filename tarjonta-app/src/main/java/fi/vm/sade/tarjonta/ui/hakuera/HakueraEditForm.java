@@ -113,8 +113,6 @@ public class HakueraEditForm extends CustomComponent {
     protected TarjontaUiService uiService;
     
     private KoodiPublicService koodiService;
-
-    private boolean isNimiEditedByHand = false;
     
     
     public HakueraEditForm() {
@@ -127,7 +125,6 @@ public class HakueraEditForm extends CustomComponent {
         createKoodistoComponents(leftPanel);
         haunNimi = new HakueraMlTextField(this);
         haunNimi.setCaption(i18n.getMessage(PROPERTY_HAKUNIMI));
-        addNimiListeners();
         leftPanel.addComponent(haunNimi);
         hakuaikaOptions = createOptionGroup(leftPanel, Arrays.asList(new String[]{i18n.getMessage(PROPERTY_YKSI_HAKU), i18n.getMessage(PROPERTY_USEITA_HAKUJA)}), PROPERTY_HAKUAIKA);
         haunVoimassaolo = new HakuaikaRange();
@@ -202,7 +199,7 @@ public class HakueraEditForm extends CustomComponent {
                 
                 @Override
                 public void valueChange(ValueChangeEvent event) {
-                    if (!isNimiEditedByHand) {
+                    if (!haunNimi.isNimiEditedByHand()) {
                         haunNimi.updateNimiField();
                     }
                 }
@@ -301,7 +298,7 @@ public class HakueraEditForm extends CustomComponent {
      */
     public void bind(HakueraDTO model) {
         this.model = model;
-        isNimiEditedByHand = !haunNimi.nimiMatchesKoodistoFields();
+        haunNimi.setNimiEditedByHand();
         haunNimi.getTextFi().setPropertyDataSource(new NestedMethodProperty(model, "nimiFi"));
         haunNimi.getTextSv().setPropertyDataSource(new NestedMethodProperty(model, "nimiSv"));
         haunNimi.getTextEn().setPropertyDataSource(new NestedMethodProperty(model, "nimiEn"));
@@ -354,22 +351,5 @@ public class HakueraEditForm extends CustomComponent {
         BlackboardContext.getBlackboard().fire(new HakueraSavedEvent(model));
         getWindow().showNotification(I18N.getMessage("save.success"));
     }
-    
-    private void addNimiListeners() {
-        haunNimi.getTextFi().addListener(new FieldEvents.TextChangeListener() {
-            public void textChange(final FieldEvents.TextChangeEvent event) {
-                isNimiEditedByHand = true;
-            }
-        });
-        haunNimi.getTextSv().addListener(new FieldEvents.TextChangeListener() {
-            public void textChange(final FieldEvents.TextChangeEvent event) {
-                isNimiEditedByHand = true;
-            }
-        });
-        haunNimi.getTextEn().addListener(new FieldEvents.TextChangeListener() {
-            public void textChange(final FieldEvents.TextChangeEvent event) {
-                isNimiEditedByHand = true;
-            }
-        });
-    }
+
 }
