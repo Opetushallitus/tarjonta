@@ -9,7 +9,7 @@ import fi.vm.sade.tarjonta.ui.service.TarjontaUiService;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import sun.awt.VerticalBagLayout;
+
 /*
  *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
