@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.service;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
+import java.util.List;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import org.apache.cxf.annotations.WSDLDocumentation;
@@ -24,6 +26,7 @@ import org.apache.cxf.annotations.WSDLDocumentation;
  *
  * @author Jukka Raanamo
  * @author Marko Lyly
+ * @author Tuomas Katva
  */
 @WebService(name="koulutusmoduuliToteutusAdminService")
 @WSDLDocumentation("Palvelut koulutustarjonnan toteutuksien käsittelyyn.")
@@ -38,6 +41,17 @@ public interface KoulutusmoduuliToteutusAdminService {
      */
     @WebMethod
     KoulutusmoduuliToteutusDTO save(KoulutusmoduuliToteutusDTO toteutus);
+    
+    
+    /**
+     * Retrieves List of Koulutusmoduulitoteutus with given search criteria
+     *
+     * @param KoulutusmoduuliToteutusSearchDTO search criteria 
+     * @return List KoulutusmoduuliToteutusDTO
+     */
+    @WebMethod
+    List<KoulutusmoduuliToteutusDTO> findWithTila(KoulutusmoduuliToteutusSearchDTO criteria);
+        
     
 }
 
