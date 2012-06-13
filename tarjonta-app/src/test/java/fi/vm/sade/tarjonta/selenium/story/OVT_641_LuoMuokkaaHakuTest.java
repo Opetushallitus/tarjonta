@@ -106,4 +106,33 @@ public class OVT_641_LuoMuokkaaHakuTest extends TarjontaEmbedComponentTstSupport
             }
         });
     }
+    
+    @Test
+    public void dynamicFieldsTest() throws Throwable {
+        String yhteishaku = I18N.getMessage("HakueraEditForm.yhteishaku");
+        assertNotNull(mainWindowPageObject.getComponent());
+        assertNotNull(mainWindowPageObject.getComponent().getHakuView());
+
+        waitForText(I18N.getMessage("tarjonta.tabs.koulutusmoduulit"));
+        mainWindowPageObject.openHakuTab();
+        waitForText(I18N.getMessage("HakueraEditForm.otsikko"));
+        hakueraEdit.selectHakutapa(yhteishaku);
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() {
+                assertFalse(hakueraEdit.getComponent().getHakulomakeOptions().isEnabled()
+                            || hakueraEdit.getComponent().getHakuSijoittelu().isEnabled()
+                            || hakueraEdit.getComponent().getHakulomakeUrl().isEnabled());
+            }
+        });
+        hakueraEdit.selectHakutapa("Muu haku");
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() {
+                assertTrue(hakueraEdit.getComponent().getHakulomakeOptions().isEnabled()
+                            && hakueraEdit.getComponent().getHakuSijoittelu().isEnabled()
+                            && hakueraEdit.getComponent().getHakulomakeUrl().isEnabled());
+            }
+        });
+    }
 }

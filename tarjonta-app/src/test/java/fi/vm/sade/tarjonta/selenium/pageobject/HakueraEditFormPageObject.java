@@ -68,7 +68,7 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
         inputNames(((namePostfix != null) ? namePostfix : "paattynyt"));
     }
 
-    private void selectHakutapa(String string) {
+    public void selectHakutapa(String string) {
         selectKoodistoWithDebugId(component.getHakutapaKoodi().getDebugId(), string); 
     }
 

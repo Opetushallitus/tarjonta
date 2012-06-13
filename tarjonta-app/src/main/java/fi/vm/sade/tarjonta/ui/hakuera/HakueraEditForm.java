@@ -133,8 +133,10 @@ public class HakueraEditForm extends CustomComponent {
         
         FormLayout rightPanel = new FormLayout();
         hakuSijoittelu = new CheckBox(i18n.getMessage(PROPERTY_SIJOITTELU));
+        hakuSijoittelu.setImmediate(true);
         rightPanel.addComponent(hakuSijoittelu);
         hakulomakeOptions = createOptionGroup(rightPanel, Arrays.asList(new String[]{i18n.getMessage(PROPERTY_JARJ_LOMAKE), i18n.getMessage(PROPERTY_OMA_LOMAKE)}), "lomakeOptions");
+        hakulomakeOptions.setImmediate(true);
         hakulomakeUrl = new TextField();
         rightPanel.addComponent(hakulomakeUrl);
         createButtons(leftPanel);
@@ -181,10 +183,36 @@ public class HakueraEditForm extends CustomComponent {
         koulutuksenAlkamiskausiKoodi = createKoodistoComponent(KOODISTO_KOULUTUKSEN_ALKAMIS_URI, PROPERTY_KOULUTUKSEN_ALKAMINEN, PROPERTY_KOULUTUKSEN_ALKAMINEN, layout);
         haunKohdejoukkoKoodi = createKoodistoComponent(KOODISTO_KOHDEJOUKKO_URI, PROPERTY_KOHDEJOUKKO, PROPERTY_KOHDEJOUKKO, layout);
         hakutapaKoodi = createKoodistoComponent(KOODISTO_HAKUTAPA_URI, PROPERTY_HAKUTAPA, PROPERTY_HAKUTAPA, layout);
+        hakutapaKoodi.addListener(new Property.ValueChangeListener() {
+            
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                adjustDynamicFields();
+            }
+        });
         addListeners(new KoodistoComponent[]{hakutyyppiKoodi, hakukausiKoodi, haunKohdejoukkoKoodi});
         this.koodiService = hakutyyppiKoodi.getKoodiService();
     }
-    
+
+    /**
+     * Enables or disables hakuSijoittelu, hakulomakeOptions, and hakulomakeUrl components
+     * based on the selection in hakutapaKoodi.
+     * 
+     */
+    private void adjustDynamicFields() {    
+        String val = (String)hakutapaKoodi.getValue();
+        if (i18n.getMessage("yhteishaku").equals(val)) {
+            model.setSijoittelu(true);
+            hakuSijoittelu.setEnabled(false);
+            hakulomakeOptions.setEnabled(false);
+            hakulomakeUrl.setEnabled(false);
+        } else {
+            hakuSijoittelu.setEnabled(true);
+            hakulomakeOptions.setEnabled(true);
+            hakulomakeUrl.setEnabled(true);
+        }
+    }
+
    
     
     /**
