@@ -101,5 +101,13 @@ public class HakueraDAOImpl extends AbstractJpaDAOImpl<Hakuera, Long> implements
         }
         return orderBy;
     }
+    
+    public Hakuera findByOid(String oidString) {
+        List<Hakuera> hakueras = findBy("oid", oidString);
+        if (hakueras.size() == 1) {
+            return hakueras.get(0);
+        }
+        return null;
+    }
 }
 

@@ -277,6 +277,7 @@ public class HakueraEditForm extends GenericForm<HakueraDTO> {
         ComboBox koodistoCombo = new ComboBox();
         koodistoComponent.setDebugId(i18n.getMessage(debugId));
         koodistoCombo.setFilteringMode(Filtering.FILTERINGMODE_CONTAINS);
+        koodistoCombo.setImmediate(true);
         koodistoComponent.setField(koodistoCombo);
         layout.addComponent(koodistoComponent);
         return koodistoComponent;

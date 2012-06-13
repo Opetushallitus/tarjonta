@@ -103,5 +103,14 @@ public class HakueraServiceMock implements HakueraService {
         mockRepository.add(create("oid_2", "hakuera2 (meneillaan)"));
         mockRepository.add(create("oid_3", "hakuera3 (tuleva)"));
     }
-
+    
+    @Override
+    public HakueraDTO findByOid(String oidString) {
+        for (HakueraSimpleDTO curHakuera : mockRepository) {
+            if (curHakuera.getOid().equals(oidString)) {
+                return (HakueraDTO)curHakuera;
+            }
+        }
+        return null;
+    }
 }

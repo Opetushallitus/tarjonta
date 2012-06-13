@@ -55,4 +55,9 @@ public class HakueraServiceImpl implements HakueraService {
         entity = businessService.update(entity);
         return conversionService.convert(entity, HakueraDTO.class);
     }
+    
+    @Override 
+    public HakueraDTO findByOid(String oidString) {
+        return conversionService.convert(businessService.findByOid(oidString), HakueraDTO.class);
+    }
 }

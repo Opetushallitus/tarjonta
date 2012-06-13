@@ -168,6 +168,23 @@ public class HakueraDAOTest {
         assertEquals(hakutyyppi, hakuera3.getHakutyyppi());        
     }
     
+    @Test
+    public void testFindByOid() {
+        long now = new Date().getTime();
+        int dif = 10000;
+        String oid = "1.2.34566.5";
+        String hakutyyppi = "Varsinainen haku";
+        
+        Hakuera hakuera = helper.create(now, now+dif, oid, hakutyyppi, "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku");
+        
+        assertNotNull(hakuera.getId());
+        
+        Hakuera hakuera2 = dao.findByOid(oid);
+        
+        assertEquals(hakutyyppi, hakuera2.getHakutyyppi());
+        
+    }
+    
     private Hakuera read(Long id) {
         return (Hakuera) dao.read(id);
     }

@@ -63,18 +63,7 @@ public class HakueraServiceTest {
     @Test
     public void testCreateHakuera() throws Exception {
         String oid = "1.2.3.4567";
-        HakueraDTO hakueraDto = new HakueraDTO();
-        hakueraDto.setNimiFi("nimi fi");
-        hakueraDto.setNimiSv("nimi sv");
-        hakueraDto.setNimiEn("nimi en");
-        hakueraDto.setOid(oid);
-        hakueraDto.setHaunAlkamisPvm(convertDate(new Date(System.currentTimeMillis())));
-        hakueraDto.setHaunLoppumisPvm(convertDate(new Date(System.currentTimeMillis() + 10000)));
-        hakueraDto.setHakutyyppi("Ammattikorkeakoulut");
-        hakueraDto.setHakukausi("Syksy");
-        hakueraDto.setKoulutuksenAlkaminen("Syksy 2013");
-        hakueraDto.setKohdejoukko("Ammattikoulutus");
-        hakueraDto.setHakutapa("Yhteishaku");
+        HakueraDTO hakueraDto = createHakueraDTO(oid);
         HakueraDTO hakuera2 = hakueraService.createHakuera(hakueraDto);
         assertNotNull(hakuera2);
         assertEquals(oid, hakuera2.getOid());
@@ -84,6 +73,25 @@ public class HakueraServiceTest {
     public void testUpdateHakuera() throws Exception {
         String oid = "1.2.3.4568";
         String hakukausi = "Syksy 2012";
+        HakueraDTO hakueraDto = createHakueraDTO(oid);
+        HakueraDTO hakuera2 = hakueraService.createHakuera(hakueraDto);
+        hakuera2.setHakukausi(hakukausi);
+        HakueraDTO hakuera3 = hakueraService.updateHakuera(hakuera2);
+        assertNotNull(hakuera2);
+        assertEquals(hakukausi, hakuera2.getHakukausi());
+    }
+    
+    @Test
+    public void testFindByOid() throws Exception {
+        String oid = "1.2.3.4569";
+        HakueraDTO hakueraDto = createHakueraDTO(oid);
+        hakueraService.createHakuera(hakueraDto);
+        HakueraDTO hakuera3 = hakueraService.findByOid(oid);
+        assertNotNull(hakuera3);
+        assertEquals(oid, hakuera3.getOid());
+    }
+    
+    private HakueraDTO createHakueraDTO(String oid) {
         HakueraDTO hakueraDto = new HakueraDTO();
         hakueraDto.setNimiFi("nimi fi");
         hakueraDto.setNimiSv("nimi sv");
@@ -96,11 +104,7 @@ public class HakueraServiceTest {
         hakueraDto.setKoulutuksenAlkaminen("Syksy 2013");
         hakueraDto.setKohdejoukko("Ammattikoulutus");
         hakueraDto.setHakutapa("Yhteishaku");
-        HakueraDTO hakuera2 = hakueraService.createHakuera(hakueraDto);
-        hakuera2.setHakukausi(hakukausi);
-        HakueraDTO hakuera3 = hakueraService.updateHakuera(hakuera2);
-        assertNotNull(hakuera2);
-        assertEquals(hakukausi, hakuera2.getHakukausi());
+        return hakueraDto;
     }
     
     private XMLGregorianCalendar convertDate(Date origDate) {

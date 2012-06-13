@@ -54,7 +54,7 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
         selectHakukausi("Syksy");
         selectAlkamiskausi("Syksy 2013");
         selectKohdejoukko("Korkeakoulutus");
-        selectHakutapa("Yhteishaku");
+        selectHakutapa("Muu haku");
         inputNames("paattynyt");
     }
     

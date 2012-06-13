@@ -165,7 +165,7 @@ public class OVT_641_LuoMuokkaaHakuTest extends TarjontaEmbedComponentTstSupport
         
         STEP("Tallennetaan lomake");
         hakueraEdit.save();
-        waitForText(I18N.getMessage("save.success"));
+        waitForText(I18N.getMessage("c_save_successful"));
         
         STEP("kun hakueraa klikkaa listasta, se aukeaa muokkausnakymaan");
         hakueraList.clickHakuera((hakueraService.getMockRepository().size() -1));

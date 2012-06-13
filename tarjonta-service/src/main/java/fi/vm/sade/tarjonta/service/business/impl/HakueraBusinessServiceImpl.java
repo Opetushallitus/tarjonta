@@ -38,5 +38,9 @@ public class HakueraBusinessServiceImpl implements HakueraBusinessService {
         hakueraDao.update(hakuera);
         return hakuera;
     }
+    
+    public Hakuera findByOid(String oidString) {
+        return hakueraDao.findByOid(oidString);
+    }
 
 }

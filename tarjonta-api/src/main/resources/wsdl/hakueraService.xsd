@@ -13,6 +13,8 @@
     <xs:element name="createHakueraResponse" type="tns:CreateHakueraResponse" />
     <xs:element name="updateHakuera" type="tns:UpdateHakuera" />
     <xs:element name="updateHakueraResponse" type="tns:UpdateHakueraResponse" />
+    <xs:element name="findByOid" type="tns:FindByOid" />
+    <xs:element name="findByOidResponse" type="tns:FindByOidResponse" />
 
     <xs:complexType name="FindAll">
         <xs:sequence>
@@ -47,6 +49,18 @@
 	<xs:complexType name="UpdateHakueraResponse">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="hakueraResponse" type="tnsh:hakueraDTO" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="FindByOid">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="oidString" type="tnsh:oidString" />
+        </xs:sequence>
+    </xs:complexType>
+	
+	<xs:complexType name="FindByOidResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="findByOidResponse" type="tnsh:hakueraDTO" />
         </xs:sequence>
     </xs:complexType>
 

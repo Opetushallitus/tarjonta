@@ -11,4 +11,5 @@ import java.util.List;
  */
 public interface HakueraDAO extends JpaDAO<Hakuera, Long> {
     List<Hakuera> findAll(SearchCriteriaDTO searchCriteria);
+    Hakuera findByOid(String oidString);
 }
