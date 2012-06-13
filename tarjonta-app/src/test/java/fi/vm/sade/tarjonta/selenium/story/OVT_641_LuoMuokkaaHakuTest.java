@@ -14,6 +14,7 @@ import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
+import static fi.vm.sade.support.selenium.SeleniumUtils.*;
 
 /**
  * Test for HakueraEditForm.  
