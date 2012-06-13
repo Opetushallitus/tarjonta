@@ -25,8 +25,8 @@ package fi.vm.sade.tarjonta.model.dto;
 public class KoulutusmoduuliToteutusSearchDTO {
     
     private KoulutusmoduuliTila tila;
-    private long startIndex = 0L;
-    private long pageSize = Long.MAX_VALUE;
+    private int startIndex = 0;
+    private int pageSize = Integer.MAX_VALUE;
 
     /**
      * @return the tila
@@ -45,28 +45,28 @@ public class KoulutusmoduuliToteutusSearchDTO {
     /**
      * @return the startIndex
      */
-    public long getStartIndex() {
+    public int getStartIndex() {
         return startIndex;
     }
 
     /**
      * @param startIndex the startIndex to set
      */
-    public void setStartIndex(long startIndex) {
+    public void setStartIndex(int startIndex) {
         this.startIndex = startIndex;
     }
 
     /**
      * @return the pageSize
      */
-    public long getPageSize() {
+    public int getPageSize() {
         return pageSize;
     }
 
     /**
      * @param pageSize the pageSize to set
      */
-    public void setPageSize(long pageSize) {
+    public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }
     
