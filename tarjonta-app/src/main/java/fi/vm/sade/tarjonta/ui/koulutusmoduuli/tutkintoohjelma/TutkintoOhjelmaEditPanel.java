@@ -374,7 +374,7 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
             if (updated == null) {
                 return I18N.getMessage("TutkintoOhjelmaFormModel.organisaatioStatus.notSaved");
             } else {
-                if (KoulutusmoduuliTila.SUUNNITELUSSA.name().equals(koulutusmoduuli.getTila())) {
+                if (KoulutusmoduuliTila.SUUNNITTELUSSA.name().equals(koulutusmoduuli.getTila())) {
                     return I18N.getMessage("TutkintoOhjelmaFormModel.organisaatioStatus.savedLuonnos", updated);
                 } else {
                     return I18N.getMessage("TutkintoOhjelmaFormModel.organisaatioStatus.savedValmis", updated);

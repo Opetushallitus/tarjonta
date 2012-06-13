@@ -218,7 +218,7 @@ public class KoulutusmoduuliEditView extends CustomComponent {
     }
 
     private void saveAsDraft() {
-        koulutusmoduuliDTO.setTila(KoulutusmoduuliTila.SUUNNITELUSSA.name());
+        koulutusmoduuliDTO.setTila(KoulutusmoduuliTila.SUUNNITTELUSSA.name());
         save();
     }
 
