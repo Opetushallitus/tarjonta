@@ -371,9 +371,13 @@ public class HakueraEditForm extends CustomComponent {
      */
     private void save() {
         haunVoimassaolo.getVoimassaoloDates(model);
+        if (!hakulomakeUrl.isEnabled()) {
+            model.setLomake(null);
+        }
         if (model.getOid() == null) {
             bind(uiService.createHakuera(model));
         } else {
+            
             bind(uiService.updateHakuera(model));
         }
         BlackboardContext.getBlackboard().fire(new HakueraSavedEvent(model));

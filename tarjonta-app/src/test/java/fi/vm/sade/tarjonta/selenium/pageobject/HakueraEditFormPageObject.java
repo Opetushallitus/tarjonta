@@ -55,7 +55,7 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
         selectHakukausi("Syksy");
         selectAlkamiskausi("Syksy 2013");
         selectKohdejoukko("Korkeakoulutus");
-        selectHakutapa("Yhteishaku");
+        selectHakutapa("Muu haku");
         inputNames("paattynyt");
     }
     
@@ -125,5 +125,10 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
 
     public WebElement waitForHakulomakeUrl() {
         return waitForElement(component.getHakulomakeUrl());
+    }
+
+    public void inputHakulomake(String hakulomakeUrl) {
+        WebElement lomakeUrlE= SeleniumUtils.waitForElement(component.getHakulomakeUrl());
+        SeleniumUtils.input(lomakeUrlE, hakulomakeUrl);
     }    
 }
