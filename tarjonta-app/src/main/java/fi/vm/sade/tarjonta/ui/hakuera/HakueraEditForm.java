@@ -28,12 +28,12 @@ import fi.vm.sade.generic.ui.blackboard.BlackboardContext;
 import fi.vm.sade.generic.ui.component.GenericForm;
 import fi.vm.sade.generic.ui.component.MultiLingualTextField;
 import fi.vm.sade.generic.ui.component.MultiLingualTextImpl;
+import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.koodisto.model.dto.Kieli;
 import fi.vm.sade.koodisto.service.KoodiPublicService;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
-import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
 import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent;
 import fi.vm.sade.tarjonta.ui.service.TarjontaUiService;
 import fi.vm.sade.tarjonta.ui.util.I18NHelper;
@@ -149,7 +149,7 @@ public class HakueraEditForm extends GenericForm<HakueraDTO> {
         form.setImmediate(true);
 
         // add jsr-303 annotation based validators
-        FieldValidator.addValidatorsBasedONJSR303Annotations(this);
+        JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
 
         // set form as composition root
         setCompositionRoot(form);
