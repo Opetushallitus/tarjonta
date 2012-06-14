@@ -17,7 +17,11 @@
 package fi.vm.sade.tarjonta.ui.hakuera;
 
 import com.vaadin.data.Property;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.VerticalLayout;
+
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
 
 /**
@@ -30,9 +34,31 @@ public class HakuView extends HorizontalLayout {
     
     private HakueraEditForm hakuForm = new HakueraEditForm();
     private HakueraList hakueraList = new HakueraList();
+    private VerticalLayout leftPanel; 
+    private Button createButton; 
     
     public HakuView() {
-        addComponent(hakueraList);
+        initComponents();
+    }
+    
+    /**
+     * Initialization of components and adding them to the layout.
+     */
+    private void initComponents() {
+        leftPanel =  new VerticalLayout();
+        
+        //Create new hakuera button. initializes hakuForm and refreshes hakueraList.
+        createButton = new Button(I18N.getMessage("HakuView.luoUusi"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                hakuForm.bind(new HakueraDTO());
+                hakueraList.reload();
+            }
+        });
+        createButton.setDebugId("luoUusiHakuera");
+        leftPanel.addComponent(createButton);
+        leftPanel.addComponent(hakueraList);
+        addComponent(leftPanel);
         hakuForm.bind(new HakueraDTO());
         addComponent(hakuForm);
         hakueraList.getTable().addListener(new Property.ValueChangeListener() {
@@ -42,7 +68,6 @@ public class HakuView extends HorizontalLayout {
                 }
             }
         });
-        
     }
 
     public HakueraEditForm getHakuForm() {

@@ -137,5 +137,14 @@ public class HakueraEditFormPageObject extends VaadinPageObjectSupport<HakueraEd
         select(component.getKoulutuksenAlkamiskausiKoodi(), 1);
         select(component.getHaunKohdejoukkoKoodi(), 1);
         select(component.getHakutapaKoodi(), 1);
-    }    
+    }
+
+    public void clickLuoUusiButton() {
+        getDriver().findElement(By.id("luoUusiHakuera")).click();
+    }
+
+    public void cancel() {
+        WebElement saveButton = SeleniumUtils.waitForElement(component.getCancelButton());
+        saveButton.click();
+    }
 }

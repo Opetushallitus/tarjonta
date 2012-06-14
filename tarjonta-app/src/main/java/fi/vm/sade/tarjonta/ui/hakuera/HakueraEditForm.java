@@ -189,7 +189,7 @@ public class HakueraEditForm extends GenericForm<HakueraDTO> {
     }
     
     /**
-     * Creation of save and cancel buttons. Adding them to the layout.
+     * Creation of cancel button. Adding them to the layout.
      * 
      * @param layout
      */

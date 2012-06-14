@@ -170,13 +170,128 @@ public class OVT_641_LuoMuokkaaHakuTest extends TarjontaEmbedComponentTstSupport
         STEP("kun hakueraa klikkaa listasta, se aukeaa muokkausnakymaan");
         hakueraList.clickHakuera((hakueraService.getMockRepository().size() -1));
         waitForElement(By.id(hakueraEdit.getComponent().getDebugId()));
-        System.out.println("Hakulomake url: " + hakueraEdit.getComponent().getHakulomakeUrl().getValue());
         
         STEP("Varmistutaan että hakulomakekentän arvo on null");
         waitAssert(new AssertionCallback() {
             @Override
             public void doAssertion() {
                 assertNull(hakueraEdit.getComponent().getHakulomakeUrl().getValue());
+            }
+        });
+        
+    }
+    
+    @Test
+    public void luoUusiButtonTest() throws Throwable {
+        STEP("Avataan hakuformi");
+        assertNotNull(mainWindowPageObject.getComponent());
+        assertNotNull(mainWindowPageObject.getComponent().getHakuView());
+
+        waitForText(I18N.getMessage("tarjonta.tabs.koulutusmoduulit"));
+        mainWindowPageObject.openHakuTab();
+        waitForText(I18N.getMessage("HakueraEditForm.otsikko"));
+        
+        STEP("kun hakueraa klikkaa listasta, se aukeaa muokkausnakymaan");
+        hakueraList.clickHakuera(0);
+        waitForElement(By.id(hakueraEdit.getComponent().getDebugId()));
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() {
+                assertEquals(hakueraList.getItemNimi(0), hakueraEdit.getComponent().getHaunNimi().getTextFi().getValue());
+            }
+        });
+        
+        STEP("Kun klikataan Luo uusi haku -nappia lomake tyhjenee ja puun valinta poistuu");
+        hakueraEdit.clickLuoUusiButton();
+        
+        STEP("Varmistutaan että lomake on tyhjä");
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() {
+                //hakueraEdit = new HakueraEditFormPageObject(driver, getComponentByType(HakueraEditForm.class));
+                assertNull(hakueraEdit.getComponent().getHaunNimi().getTextFi().getValue());
+            }
+        });
+        
+        STEP("Luodaan uusi hakuerä, jolloin luotu organisaatio ilmestyy hakulistaukseen");
+        //hakueraEdit = new HakueraEditFormPageObject(driver, getComponentByType(HakueraEditForm.class));
+        hakueraEdit.inputDefaultFields();
+        hakueraEdit.save();
+        waitForText(I18N.getMessage("c_save_successful"));
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() {
+                assertEquals(hakueraService.getMockRepository().size(), hakueraList.getResultCount());
+            }
+        });
+    }
+    
+    @Test
+    public void cancelButtonTest() throws Throwable {
+        STEP("Avataan hakulomake");
+        hakueraService.resetRepository();
+        hakueraList.getComponent().reload();
+        assertNotNull(mainWindowPageObject.getComponent());
+        assertNotNull(mainWindowPageObject.getComponent().getHakuView());
+
+        waitForText(I18N.getMessage("tarjonta.tabs.koulutusmoduulit"));
+        //KoulutusmoduuliEditViewPageObject editor = mainWindowPageObject.selectLuoUusiTutkintoonJohtava();
+        mainWindowPageObject.openHakuTab();
+        waitForText(I18N.getMessage("HakueraEditForm.otsikko"));
+        
+        STEP("Täytetään hakuformi painamatta tallennusnappia");
+        hakueraEdit.inputDefaultFields();
+        
+        STEP("Painetaa peruaatanappia, jolloin lomake tyhjenee");
+        hakueraEdit.cancel();
+        
+        STEP("Varmistutaan että lomake on tyhjä");
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() {
+                assertNull(hakueraEdit.getComponent().getHaunNimi().getTextFi().getValue());
+            }
+        });
+    }
+    
+    @Test
+    public void modifyHakueraTest() throws Throwable {
+        final String testinimi = "TESTINIMI";
+        STEP("Avataan hakuformi");
+        assertNotNull(mainWindowPageObject.getComponent());
+        assertNotNull(mainWindowPageObject.getComponent().getHakuView());
+
+        waitForText(I18N.getMessage("tarjonta.tabs.koulutusmoduulit"));
+        mainWindowPageObject.openHakuTab();
+        waitForText(I18N.getMessage("HakueraEditForm.otsikko"));
+        
+        STEP("Kun hakueraa klikkaa listasta, se aukeaa muokkausnakymaan");
+        final int initialHakueraCount = hakueraList.getItems().size();
+        hakueraList.clickHakuera(0);
+        waitForElement(By.id(hakueraEdit.getComponent().getDebugId()));
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() {
+                assertEquals(hakueraList.getItemNimi(0), hakueraEdit.getComponent().getHaunNimi().getTextFi().getValue());
+            }
+        });
+        
+        STEP("Muokataan haun nimeä ja tallennetaan");
+        hakueraEdit.inputNames(testinimi);
+        hakueraEdit.save();
+        
+        STEP("Varmistutaan, että hakuerän nimi on muuttunut puussa ja hakuerien määrä ei ole muuttunut.");
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() {
+                assertEquals(initialHakueraCount, hakueraList.getItems().size());
+            }
+        });
+        
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() {
+                assertTrue(hakueraList.getItemNimi(0).contains(testinimi));
             }
         });
         

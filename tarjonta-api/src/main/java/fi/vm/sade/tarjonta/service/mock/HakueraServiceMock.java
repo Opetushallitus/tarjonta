@@ -44,10 +44,10 @@ public class HakueraServiceMock implements HakueraService {
         hakuera.setNimiEn(nimi+" EN");
         hakuera.setHaunAlkamisPvm(convertDate(new Date(System.currentTimeMillis())));
         hakuera.setHaunLoppumisPvm(convertDate(new Date(System.currentTimeMillis() + 10000)));
-        hakuera.setHakutyyppi("Ammattikorkeakoulut");
+        hakuera.setHakutyyppi("Varsinainen haku");
         hakuera.setHakukausi("Syksy 2012");
         hakuera.setKoulutuksenAlkaminen("Syksy 2013");
-        hakuera.setKohdejoukko("Ammattikoulutus");
+        hakuera.setKohdejoukko("Aikuiskoulutus");
         hakuera.setHakutapa("Muu haku");
         return hakuera;
     }
