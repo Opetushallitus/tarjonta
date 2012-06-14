@@ -42,6 +42,7 @@ public class KomotoTable extends CustomComponent {
         private Button tableButton;
         private Button selectAllButton;
         private Table komotoList = new Table();
+        private static int counter = 0;
         
         //Should this be enum ?
         private KoulutusmoduuliTila tila;
@@ -82,6 +83,7 @@ public class KomotoTable extends CustomComponent {
             if (linkStyle) {
                 selectAllButton.setStyleName(BaseTheme.BUTTON_LINK);
             }
+            selectAllButton.setDebugId(createDebugId(selectAllButtonLbl));
             tableGrid.addComponent(selectAllButton, 0, 1);
             tableGrid.setComponentAlignment(selectAllButton, Alignment.BOTTOM_LEFT);
         }
@@ -91,6 +93,7 @@ public class KomotoTable extends CustomComponent {
             if (linkStyle) {
             tableButton.setStyleName(BaseTheme.BUTTON_LINK);
             }
+            tableButton.setDebugId(createDebugId(buttonLabel));
             tableGrid.addComponent(tableButton, 1, 0);
             tableGrid.setComponentAlignment(tableButton, Alignment.BOTTOM_RIGHT);
         }
@@ -100,7 +103,7 @@ public class KomotoTable extends CustomComponent {
             komotoList.setContainerDataSource(tableContainer);
             komotoList.setVisibleColumns(visibleColumns);
             komotoList.setSizeFull();
-            
+            komotoList.setDebugId(createDebugId("komotoTable" +tila.name()));
             tableGrid.addComponent(komotoList,0, 2, 1, 2);
             
         }
@@ -128,4 +131,25 @@ public class KomotoTable extends CustomComponent {
         public void setHeight(String height) {
             tableGrid.setHeight(height);
         }
+
+    /**
+     * @return the tila
+     */
+    public KoulutusmoduuliTila getTila() {
+        return tila;
+    }
+    
+    private String createDebugId(String prefix) {
+        prefix.replaceAll("\\s", "");
+        counter++;
+        return prefix + counter;
+        
+    }
+
+    /**
+     * @param tila the tila to set
+     */
+    public void setTila(KoulutusmoduuliTila tila) {
+        this.tila = tila;
+    }
 }

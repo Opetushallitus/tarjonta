@@ -64,17 +64,17 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
     private VerticalLayout createTables() {
         VerticalLayout tableHolder = new VerticalLayout();
 
-        viimeisimmat = getKomotoTableFactory().createViimTableWithTila(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.VALMIS), viimeisimmatVisibleColumns);
+        setViimeisimmat(getKomotoTableFactory().createViimTableWithTila(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.VALMIS), viimeisimmatVisibleColumns));
 
-        tableHolder.addComponent(viimeisimmat);
+        tableHolder.addComponent(getViimeisimmat());
 
         suunnitteilla = getKomotoTableFactory().createSuunnitteillaOlevaTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.SUUNNITTELUSSA), visibleColumns);
 
         tableHolder.addComponent(suunnitteilla);
 
-        julkaistava = getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.VALMIS), visibleColumns,"Julkaistavaksi valmis koulutustarjonta");
+        setJulkaistava(getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.VALMIS), visibleColumns,"Julkaistavaksi valmis koulutustarjonta"));
 
-        tableHolder.addComponent(julkaistava);
+        tableHolder.addComponent(getJulkaistava());
 
         julkaistu = getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.JULKAISTU), visibleColumns,"Julkaistu koulutustarjonta");
 
@@ -124,5 +124,33 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
      */
     public void setKomotoTableFactory(KomotoTableFactory komotoTableFactory) {
         this.komotoTableFactory = komotoTableFactory;
+    }
+
+    /**
+     * @return the julkaistava
+     */
+    public KomotoTable getJulkaistava() {
+        return julkaistava;
+    }
+
+    /**
+     * @param julkaistava the julkaistava to set
+     */
+    public void setJulkaistava(KomotoTable julkaistava) {
+        this.julkaistava = julkaistava;
+    }
+
+    /**
+     * @return the viimeisimmat
+     */
+    public KomotoTable getViimeisimmat() {
+        return viimeisimmat;
+    }
+
+    /**
+     * @param viimeisimmat the viimeisimmat to set
+     */
+    public void setViimeisimmat(KomotoTable viimeisimmat) {
+        this.viimeisimmat = viimeisimmat;
     }
 }
