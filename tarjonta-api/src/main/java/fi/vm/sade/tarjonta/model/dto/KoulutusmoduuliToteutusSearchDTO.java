@@ -28,6 +28,14 @@ public class KoulutusmoduuliToteutusSearchDTO {
     private int startIndex = 0;
     private int pageSize = Integer.MAX_VALUE;
 
+    
+    public KoulutusmoduuliToteutusSearchDTO () {
+        
+    }
+    
+    public KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila tilaParam) {
+        tila = tilaParam;
+    }
     /**
      * @return the tila
      */

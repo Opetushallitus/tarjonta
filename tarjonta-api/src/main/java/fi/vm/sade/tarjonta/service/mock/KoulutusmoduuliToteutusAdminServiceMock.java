@@ -7,6 +7,7 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
 import fi.vm.sade.tarjonta.service.KoulutusmoduuliToteutusAdminService;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -44,7 +45,13 @@ public class KoulutusmoduuliToteutusAdminServiceMock implements KoulutusmoduuliT
     
     @Override
     public List<KoulutusmoduuliToteutusDTO> findWithTila(KoulutusmoduuliToteutusSearchDTO criteria) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<KoulutusmoduuliToteutusDTO> tilaKomotos = new ArrayList<KoulutusmoduuliToteutusDTO>();
+        for (KoulutusmoduuliToteutusDTO komoto : repo.values()) {
+            if (komoto.getTila() == criteria.getTila()) {
+                tilaKomotos.add(komoto);
+            }
+        }
+        return tilaKomotos;
     }
 
     @Override
