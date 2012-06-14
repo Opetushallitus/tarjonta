@@ -21,14 +21,20 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.Date;
+
+import static fi.vm.sade.generic.common.validation.ValidationConstants.*;
 
 /**
  *
  * @author Antti Salonen
  */
 @Entity
-@Table(name = Hakuera.TABLE_NAME)
+@Table(name = Hakuera.TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(name = "UK_hakuera_01", columnNames = {"oid"})
+})
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Hakuera extends BaseEntity {
 
@@ -41,10 +47,13 @@ public class Hakuera extends BaseEntity {
     @NotNull
     private String oid;
     @NotNull
+    @Size(min = GENERIC_MIN, max = GENERIC_MAX)
     private String nimiFi;
     @NotNull
+    @Size(min = GENERIC_MIN, max = GENERIC_MAX)
     private String nimiSv;
     @NotNull
+    @Size(min = GENERIC_MIN, max = GENERIC_MAX)
     private String nimiEn;
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
@@ -63,7 +72,8 @@ public class Hakuera extends BaseEntity {
     @NotNull
     private String hakutapa;
     private boolean sijoittelu;
-    private String lomake;
+    @Pattern(regexp = WWW_PATTERN)
+    private String hakulomakeUrl;
     
 
     public String getOid() {
@@ -162,12 +172,12 @@ public class Hakuera extends BaseEntity {
         this.sijoittelu = sijoittelu;
     }
 
-    public String getLomake() {
-        return lomake;
+    public String getHakulomakeUrl() {
+        return hakulomakeUrl;
     }
 
-    public void setLomake(String lomake) {
-        this.lomake = lomake;
+    public void setHakulomakeUrl(String hakulomakeUrl) {
+        this.hakulomakeUrl = hakulomakeUrl;
     }
 }
 

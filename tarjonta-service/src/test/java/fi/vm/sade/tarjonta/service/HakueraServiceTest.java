@@ -2,9 +2,9 @@ package fi.vm.sade.tarjonta.service;
 
 import fi.vm.sade.tarjonta.HakueraTstHelper;
 import fi.vm.sade.tarjonta.model.Hakuera;
+import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
-import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +12,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Antti Salonen
@@ -80,7 +79,15 @@ public class HakueraServiceTest {
         assertNotNull(hakuera2);
         assertEquals(hakukausi, hakuera2.getHakukausi());
     }
-    
+
+    @Test(expected = Exception.class)
+    public void testUpdateHakueraOid() throws Exception {
+        Hakuera h = helper.createValidHakuera();
+        HakueraDTO dto = hakueraService.findByOid(h.getOid());
+        dto.setOid("updated_oid");
+        hakueraService.updateHakuera(dto);
+    }
+
     @Test
     public void testFindByOid() throws Exception {
         String oid = "1.2.3.4569";

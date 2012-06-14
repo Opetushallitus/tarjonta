@@ -18,9 +18,6 @@ package fi.vm.sade.tarjonta.dao;
 import fi.vm.sade.tarjonta.HakueraTstHelper;
 import fi.vm.sade.tarjonta.dao.impl.HakueraDAOImpl;
 import fi.vm.sade.tarjonta.model.Hakuera;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliPerustiedot;
-import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -30,12 +27,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.PersistenceException;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Antti Salonen
@@ -184,7 +182,50 @@ public class HakueraDAOTest {
         assertEquals(hakutyyppi, hakuera2.getHakutyyppi());
         
     }
-    
+
+    @Test
+    public void testValidation_notNull() {
+        Hakuera h = helper.createValidHakuera();
+        h.setHakutapa(null);
+        try {
+            dao.update(h);
+            fail("expected an exception");
+        } catch (ConstraintViolationException e) {
+            assertConstraintViolationException(e, "hakutapa", "{javax.validation.constraints.NotNull.message}");
+        }
+    }
+
+    @Test
+    public void testValidation_nimi() {
+        Hakuera h = helper.createValidHakuera();
+        h.setNimiFi("x"); // too short
+        try {
+            dao.update(h);
+            fail("expected an exception");
+        } catch (ConstraintViolationException e) {
+            assertConstraintViolationException(e, "nimiFi", "{javax.validation.constraints.Size.message}");
+        }
+    }
+
+    @Test
+    public void testValidation_uniqueOid() {
+        Hakuera h = helper.createValidHakuera();
+        Hakuera h2 = helper.createValidHakuera();
+        h2.setOid(h.getOid());
+        try {
+            dao.update(h);
+            fail("expected an exception");
+        } catch (PersistenceException e) {
+            assertTrue(e.getMessage().contains("unique constraint or index violation"));
+        }
+    }
+
+    private void assertConstraintViolationException(ConstraintViolationException e, String propertyPath, String messageTemplate) {
+        ConstraintViolation<?> violation = e.getConstraintViolations().iterator().next();
+        assertEquals(propertyPath, violation.getPropertyPath().toString());
+        assertEquals(messageTemplate, violation.getMessageTemplate());
+    }
+
     private Hakuera read(Long id) {
         return (Hakuera) dao.read(id);
     }

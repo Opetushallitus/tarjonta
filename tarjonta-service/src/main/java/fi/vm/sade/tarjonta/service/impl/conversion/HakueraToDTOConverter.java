@@ -1,14 +1,13 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.model.Hakuera;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
+
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class HakueraToDTOConverter extends
         AbstractFromDomainConverter<Hakuera, HakueraDTO> {
@@ -28,7 +27,7 @@ public class HakueraToDTOConverter extends
         hakueraDTO.setOid(entity.getOid());
         hakueraDTO.setKohdejoukko(entity.getKohdejoukko());
         hakueraDTO.setKoulutuksenAlkaminen(entity.getKoulutuksenAlkaminen());
-        hakueraDTO.setLomake(entity.getLomake());
+        hakueraDTO.setHakulomakeUrl(entity.getHakulomakeUrl());
         return hakueraDTO;
     }
     

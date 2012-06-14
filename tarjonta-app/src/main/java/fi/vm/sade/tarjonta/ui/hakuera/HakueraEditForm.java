@@ -120,7 +120,7 @@ public class HakueraEditForm extends GenericForm<HakueraDTO> {
     
     private OptionGroup hakulomakeOptions;
 
-    @PropertyId("lomake")
+    @PropertyId("hakulomakeUrl")
     @Pattern(regexp = WWW_PATTERN, message = "{validation.invalid.www}")
     private TextField hakulomakeUrl;
     
@@ -360,7 +360,7 @@ public class HakueraEditForm extends GenericForm<HakueraDTO> {
         form.addField("haunNimi", haunNimi);
 
         haunVoimassaolo.populateVoimassaoloDates(model);
-        if (model.getLomake() != null) {
+        if (model.getHakulomakeUrl() != null) {
             hakulomakeOptions.setValue(i18n.getMessage(PROPERTY_OMA_LOMAKE));
         } else {
             hakulomakeOptions.setValue(i18n.getMessage(PROPERTY_JARJ_LOMAKE));
@@ -393,7 +393,7 @@ public class HakueraEditForm extends GenericForm<HakueraDTO> {
     protected HakueraDTO save(HakueraDTO model) throws Exception {
         haunVoimassaolo.getVoimassaoloDates(model);
         if (!hakulomakeUrl.isEnabled()) {
-            model.setLomake(null);
+            model.setHakulomakeUrl(null);
         }
         if (model.getOid() == null) {
             model = uiService.createHakuera(model);

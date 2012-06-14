@@ -57,4 +57,10 @@ public class HakueraTstHelper {
         assertEquals(h.getNimiSv(), dto.getNimiSv());
         assertEquals(h.getNimiEn(), dto.getNimiEn());
     }
+
+    public Hakuera createValidHakuera() {
+        long now = new Date().getTime();
+        int dif = 10000;
+        return create(now, now+dif, "oid_"+now, "hakutyyppi", "hakukausi", "alkamiskausi", "kohdejoukko", "hakutapa");
+    }
 }

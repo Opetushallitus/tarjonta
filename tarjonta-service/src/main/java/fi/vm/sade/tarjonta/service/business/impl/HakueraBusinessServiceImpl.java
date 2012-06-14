@@ -28,13 +28,14 @@ public class HakueraBusinessServiceImpl implements HakueraBusinessService {
 
     @Override
     public Hakuera save(Hakuera hakuera) {
-        // TODO Auto-generated method stub
         return hakueraDao.insert(hakuera);
     }
 
     @Override
     public Hakuera update(Hakuera hakuera) {
-        // TODO Auto-generated method stub
+        if (hakuera.getId() == null) {
+            throw new IllegalArgumentException("updating object with null id: "+hakuera);
+        }
         hakueraDao.update(hakuera);
         return hakuera;
     }

@@ -17,18 +17,24 @@ package fi.vm.sade.tarjonta.service.impl;
 
 import fi.vm.sade.generic.service.conversion.SadeConversionService;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.dto.*;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
 import fi.vm.sade.tarjonta.service.KoulutusmoduuliToteutusAdminService;
 import fi.vm.sade.tarjonta.service.business.KoulutusmoduuliBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusmoduuliToteutusBusinessService;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  *
  * @author Jukka Raanamo
  * @author Marko Lyly
  */
+@Transactional
+@Service("koulutusmoduuliToteutusAdminService")
 public class KoulutusmoduuliToteutusAdminServiceImpl implements KoulutusmoduuliToteutusAdminService {
 
     @Autowired

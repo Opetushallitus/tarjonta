@@ -23,19 +23,24 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSearchDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
-import fi.vm.sade.tarjonta.service.NoSuchOIDException;
 import fi.vm.sade.tarjonta.service.KoulutusmoduuliAdminService;
+import fi.vm.sade.tarjonta.service.NoSuchOIDException;
 import fi.vm.sade.tarjonta.service.business.KoulutusmoduuliBusinessService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
  * @author Jukka Raanamo
  * @author Marko Lyly
  */
+@Transactional
+@Service("hakueraService")
 public class KoulutusmoduuliAdminServiceImpl implements KoulutusmoduuliAdminService {
 
     @Autowired

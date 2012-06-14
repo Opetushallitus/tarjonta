@@ -1,21 +1,29 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import java.util.Date;
-
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
+import fi.vm.sade.tarjonta.dao.HakueraDAO;
 import fi.vm.sade.tarjonta.model.Hakuera;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.Date;
 
 public class HakueraFromDTOConverter extends
         AbstractToDomainConverter<HakueraDTO, Hakuera> {
 
+    @Autowired
+    private HakueraDAO dao;
+
     @Override
     public Hakuera convert(HakueraDTO hakueraDTO) {
-        // TODO Auto-generated method stub
-        //return null;
-        Hakuera hakuera = new Hakuera();
+        Hakuera hakuera = null;
+        if (hakueraDTO.getOid() != null) {
+            hakuera = dao.findByOid(hakueraDTO.getOid());
+        }
+        if (hakuera == null) {
+            hakuera = new Hakuera();
+        }
         hakuera.setNimiFi(hakueraDTO.getNimiFi());
         hakuera.setNimiSv(hakueraDTO.getNimiSv());
         hakuera.setNimiEn(hakueraDTO.getNimiEn());
@@ -27,7 +35,7 @@ public class HakueraFromDTOConverter extends
         hakuera.setOid(hakueraDTO.getOid());
         hakuera.setKohdejoukko(hakueraDTO.getKohdejoukko());
         hakuera.setKoulutuksenAlkaminen(hakueraDTO.getKoulutuksenAlkaminen());
-        hakuera.setLomake(hakueraDTO.getLomake());
+        hakuera.setHakulomakeUrl(hakueraDTO.getHakulomakeUrl());
         return hakuera;
     }
     
