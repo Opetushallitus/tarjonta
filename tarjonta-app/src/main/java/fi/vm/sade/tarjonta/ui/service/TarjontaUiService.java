@@ -52,5 +52,7 @@ public interface TarjontaUiService {
     
     HakueraDTO updateHakuera(HakueraDTO hakuera);
     
+    HakueraDTO findHakueraByOid(String oidString);
+    
 }
 

@@ -79,5 +79,11 @@ public class TarjontaUiServiceImpl implements TarjontaUiService, Serializable {
         return hakueraService.updateHakuera(hakuera);
     }
 
+    @Override
+    public HakueraDTO findHakueraByOid(String oidString) {
+        // TODO Auto-generated method stub
+        return hakueraService.findByOid(oidString);
+    }
+
 }
 

@@ -277,7 +277,7 @@ public class HakueraEditForm extends GenericForm<HakueraDTO> {
         ComboBox koodistoCombo = new ComboBox();
         koodistoComponent.setDebugId(i18n.getMessage(debugId));
         koodistoCombo.setFilteringMode(Filtering.FILTERINGMODE_CONTAINS);
-        koodistoCombo.setImmediate(true);
+        //koodistoCombo.setImmediate(true);
         koodistoComponent.setField(koodistoCombo);
         layout.addComponent(koodistoComponent);
         return koodistoComponent;
@@ -369,24 +369,21 @@ public class HakueraEditForm extends GenericForm<HakueraDTO> {
     
     
 
-    // TODO: populate uusiksi kun findByOid valmis
+    
     /**
      * Populating the HakueraEditForm according to the current selection in the HakueraList.
      * 
      * @param value
      */
     public void populate(HakueraList.HakueraSimple value) {
-        HakueraSimpleDTO curHakuera = value.getDto();
-        if (curHakuera instanceof HakueraDTO) {
-            bind((HakueraDTO)curHakuera);
+        HakueraDTO hakuera = uiService.findHakueraByOid(value.getDto().getOid());
+        if (hakuera != null) {
+            bind(hakuera);
         } else {
-            HakueraDTO newModel = new HakueraDTO();
-            newModel.setNimiFi(curHakuera.getNimiFi());
-            newModel.setNimiSv(curHakuera.getNimiSv());
-            newModel.setNimiEn(curHakuera.getNimiEn());
-            newModel.setOid(curHakuera.getOid());
-            bind(newModel);
+            getWindow().showNotification(i18n.getMessage("noDTO"));
+            bind(new HakueraDTO());
         }
+        
     }
     
     /**

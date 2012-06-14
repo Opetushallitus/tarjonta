@@ -6,7 +6,12 @@ import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * @author Antti Salonen
@@ -32,11 +37,18 @@ public class HakueraServiceMock implements HakueraService {
     }
 
     private HakueraSimpleDTO create(String oid, String nimi) {
-        HakueraSimpleDTO hakuera = new HakueraSimpleDTO();
+        HakueraDTO hakuera = new HakueraDTO();
         hakuera.setOid(oid);
         hakuera.setNimiFi(nimi+" FI");
         hakuera.setNimiSv(nimi+" SV");
         hakuera.setNimiEn(nimi+" EN");
+        hakuera.setHaunAlkamisPvm(convertDate(new Date(System.currentTimeMillis())));
+        hakuera.setHaunLoppumisPvm(convertDate(new Date(System.currentTimeMillis() + 10000)));
+        hakuera.setHakutyyppi("Ammattikorkeakoulut");
+        hakuera.setHakukausi("Syksy 2012");
+        hakuera.setKoulutuksenAlkaminen("Syksy 2013");
+        hakuera.setKohdejoukko("Ammattikoulutus");
+        hakuera.setHakutapa("Muu haku");
         return hakuera;
     }
 
@@ -112,5 +124,19 @@ public class HakueraServiceMock implements HakueraService {
             }
         }
         return null;
+    }
+    
+    private XMLGregorianCalendar convertDate(Date origDate) {
+        XMLGregorianCalendar xmlDate = null;
+        if (origDate != null) {
+            try {
+                GregorianCalendar c = new GregorianCalendar();
+                c.setTime(origDate);
+                xmlDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+            } catch (Exception ex) {
+                
+            }
+        }
+        return xmlDate;
     }
 }
