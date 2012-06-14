@@ -2,6 +2,9 @@
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
 
 import com.vaadin.data.Container;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.TableFieldFactory;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 
 
 /*
@@ -29,12 +32,12 @@ public class KomotoTableBuilder {
 
     KomotoTable tableToBuild; 
     
-     public static KomotoTableBuilder komotoTable(String tableTilaType) {
+     public static KomotoTableBuilder komotoTable(KoulutusmoduuliTila tableTilaType) {
          
          return new KomotoTableBuilder(tableTilaType);
      }
      
-     private KomotoTableBuilder(String tilaType) {
+     private KomotoTableBuilder(KoulutusmoduuliTila tilaType) {
          tableToBuild = new KomotoTable(tilaType);
      }
      
@@ -48,8 +51,20 @@ public class KomotoTableBuilder {
          return this;
      }
      
-     public KomotoTableBuilder withButton(String btnLabel) {
-         tableToBuild.addButtonToHdr(btnLabel);
+     public KomotoTableBuilder withButton(String btnLabel,boolean linkStyle) {
+         tableToBuild.addButtonToHdr(btnLabel,linkStyle);
+         return this;
+     }
+     
+     public KomotoTableBuilder withAddTableContainerProperty(String propertyId,Class clazz) {
+         if (tableToBuild.getKomotoTable() != null) {
+             tableToBuild.getKomotoTable().addContainerProperty(propertyId, clazz, null);
+         }
+         return this;
+     }
+     
+     public KomotoTableBuilder withColumnGenerator(String propertyId,Table.ColumnGenerator generator) {
+         tableToBuild.addColumnGenerator(propertyId, generator);
          return this;
      }
      
@@ -58,8 +73,13 @@ public class KomotoTableBuilder {
          return this;
      }
      
-     public KomotoTableBuilder withSearchAllButton(String searchAllBtnLbl) {
-         tableToBuild.addSelectAllButton(searchAllBtnLbl);
+     public KomotoTableBuilder withFieldFactory(TableFieldFactory ff) {
+         tableToBuild.addFieldFactory(ff);
+         return this;
+     }
+     
+     public KomotoTableBuilder withSearchAllButton(String searchAllBtnLbl,boolean linkStyle) {
+         tableToBuild.addSelectAllButton(searchAllBtnLbl,linkStyle);
          return this;
      }
      

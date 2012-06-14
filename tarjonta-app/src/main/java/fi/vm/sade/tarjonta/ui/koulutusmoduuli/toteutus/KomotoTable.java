@@ -1,4 +1,5 @@
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -7,6 +8,8 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.data.Container;
 import com.vaadin.terminal.Sizeable;
+import com.vaadin.ui.TableFieldFactory;
+import com.vaadin.ui.themes.BaseTheme;
 
 
 /*
@@ -38,16 +41,16 @@ public class KomotoTable extends CustomComponent {
         private Label tableHdr;
         private Button tableButton;
         private Button selectAllButton;
-        private Table komotoList;
+        private Table komotoList = new Table();
         
         //Should this be enum ?
-        private String tila;
+        private KoulutusmoduuliTila tila;
         
         //TODO: KomotoTable must listen to blackboard events which 
         //tells about changes in komoto state table removes or adds
         //komotos to it depending on which state it is interested on
         
-        protected KomotoTable(String tableTila) {
+        protected KomotoTable(KoulutusmoduuliTila tableTila) {
             tableGrid = new GridLayout(2, 3);
             tableGrid.setSizeFull();
             tila = tableTila;
@@ -61,20 +64,39 @@ public class KomotoTable extends CustomComponent {
             tableGrid.setComponentAlignment(tableHdr, Alignment.BOTTOM_LEFT);
         }
         
-        protected void addSelectAllButton(String selectAllButtonLbl) {
+        protected void addFieldFactory(TableFieldFactory tableFieldFactory) {
+            if (komotoList != null) 
+            komotoList.setTableFieldFactory(tableFieldFactory);
+            
+        }
+        
+        
+        
+        protected void addColumnGenerator(String propertyName,Table.ColumnGenerator generator) {
+            if (komotoList != null)
+            komotoList.addGeneratedColumn(propertyName, generator);
+        }
+        
+        protected void addSelectAllButton(String selectAllButtonLbl,boolean linkStyle) {
             selectAllButton = new Button(selectAllButtonLbl);
+            if (linkStyle) {
+                selectAllButton.setStyleName(BaseTheme.BUTTON_LINK);
+            }
             tableGrid.addComponent(selectAllButton, 0, 1);
             tableGrid.setComponentAlignment(selectAllButton, Alignment.BOTTOM_LEFT);
         }
         
-        protected void addButtonToHdr(String buttonLabel) {
+        protected void addButtonToHdr(String buttonLabel, boolean linkStyle) {
             tableButton = new Button(buttonLabel);
+            if (linkStyle) {
+            tableButton.setStyleName(BaseTheme.BUTTON_LINK);
+            }
             tableGrid.addComponent(tableButton, 1, 0);
             tableGrid.setComponentAlignment(tableButton, Alignment.BOTTOM_RIGHT);
         }
         
         protected void addTable(Container tableContainer, String[] visibleColumns) {
-            komotoList = new Table();
+            
             komotoList.setContainerDataSource(tableContainer);
             komotoList.setVisibleColumns(visibleColumns);
             komotoList.setSizeFull();

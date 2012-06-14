@@ -1,4 +1,5 @@
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
+
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.VerticalLayout;
@@ -7,6 +8,8 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import fi.vm.sade.tarjonta.ui.service.TarjontaUiService;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -14,19 +17,18 @@ import org.springframework.beans.factory.annotation.Configurable;
  *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
- * soon as they will be approved by the European Commission - subsequent versions
- * of the EUPL (the "Licence");
+ * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
  *
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ * You may not use this work except in compliance with the Licence. You may
+ * obtain a copy of the Licence at: http://www.osor.eu/eupl/
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * European Union Public Licence for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the European Union Public Licence for more
+ * details.
  */
-
 /**
  *
  * @author Tuomas Katva
@@ -38,59 +40,89 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
     //Should this contain Organisaatio search tree ?
     private Panel leftPanel;
     private Panel rightPanel;
-    private String[] visibleColumns = new String[] {"nimi","toteutettavaKoulutusmoduuliOID"};
-    private BeanContainer<String,KoulutusmoduuliToteutusDTO> koulutusModulot = new BeanContainer<String, KoulutusmoduuliToteutusDTO>(KoulutusmoduuliToteutusDTO.class);
+    private final String[] visibleColumns = new String[]{"nimi", "toteutettavaKoulutusmoduuliOID"};
+    private final String[] viimeisimmatVisibleColumns = new String[]{"selected","nimi", "toteutettavaKoulutusmoduuliOID"};
+    private KomotoTable viimeisimmat;
+    private KomotoTable suunnitteilla;
+    private KomotoTable julkaistava;
+    private KomotoTable julkaistu;
     @Autowired
-    private TarjontaUiService uiService;
+    private KomotoTableFactory komotoTableFactory;
 
     public KoulutusmoduuliToteutusListView() {
-       rootLayout = new HorizontalLayout();
-       leftPanel = new Panel("Empty panel");
-       rootLayout.addComponent(leftPanel);
-       
-       rightPanel = new Panel("Koulutustoimija, oppilaitos, toimipiste ....");
-       rightPanel.addComponent(createTables());
-       rootLayout.addComponent(rightPanel);
+        rootLayout = new HorizontalLayout();
+        leftPanel = new Panel("Empty panel");
+        rootLayout.addComponent(leftPanel);
 
-       setCompositionRoot(rootLayout);
+        rightPanel = new Panel("Koulutustoimija, oppilaitos, toimipiste ....");
+        rightPanel.addComponent(createTables());
+        rootLayout.addComponent(rightPanel);
+
+        setCompositionRoot(rootLayout);
     }
-    
+
     private VerticalLayout createTables() {
-         VerticalLayout tableHolder = new VerticalLayout();
-       KomotoTable viimeisimmat = KomotoTableBuilder.komotoTable("Viim")
-               .withLabel("Viimeisimmat toteutuneet KOMOTOt")
-               .withButton("Siirra suunnitteluun")
-               .withSearchAllButton("Valitse kaikki")
-               .withHeightAndWidth("400px", "200px")
-               .withTable(koulutusModulot, visibleColumns)
-               .build();
-       
-      tableHolder.addComponent(viimeisimmat);
-      
-      KomotoTable suunnitteilla = KomotoTableBuilder.komotoTable("Suunnitteilla")
-              .withLabel("Suunnitteilla oleva koulutustarjonta")
-              .withButton("Luo uusi komoto")
-              .withHeightAndWidth("400px", "200px")
-              .withTable(koulutusModulot, visibleColumns)
-              .build();
-      
-      tableHolder.addComponent(suunnitteilla);
-      
-      KomotoTable julkaistava = KomotoTableBuilder.komotoTable("Julkaistava")
-              .withLabel("Julkaistavaksi valmis koulutustarjonta")
-              .withHeightAndWidth("400px", "200px")
-              .withTable(koulutusModulot, visibleColumns)
-              .build();
-      
-      tableHolder.addComponent(julkaistava);
-      
-      KomotoTable julkaistu = KomotoTableBuilder.komotoTable("Julkaistu")
-              .withLabel("Julkaistu koulutustarjonta")
-              .withHeightAndWidth("400px", "200px")
-              .withTable(koulutusModulot, visibleColumns)
-              .build();
-      
-      tableHolder.addComponent(julkaistu);
-      return tableHolder;
+        VerticalLayout tableHolder = new VerticalLayout();
+
+        viimeisimmat = getKomotoTableFactory().createViimTableWithTila(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.VALMIS), viimeisimmatVisibleColumns);
+
+        tableHolder.addComponent(viimeisimmat);
+
+        suunnitteilla = getKomotoTableFactory().createSuunnitteillaOlevaTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.SUUNNITTELUSSA), visibleColumns);
+
+        tableHolder.addComponent(suunnitteilla);
+
+        julkaistava = getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.VALMIS), visibleColumns,"Julkaistavaksi valmis koulutustarjonta");
+
+        tableHolder.addComponent(julkaistava);
+
+        julkaistu = getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.JULKAISTU), visibleColumns,"Julkaistu koulutustarjonta");
+
+        tableHolder.addComponent(julkaistu);
+        return tableHolder;
+    }
+
+  
+
+    /**
+     * @return the suunnitteilla
+     */
+    public KomotoTable getSuunnitteilla() {
+        return suunnitteilla;
+    }
+
+    /**
+     * @param suunnitteilla the suunnitteilla to set
+     */
+    public void setSuunnitteilla(KomotoTable suunnitteilla) {
+        this.suunnitteilla = suunnitteilla;
+    }
+
+    /**
+     * @return the julkaistu
+     */
+    public KomotoTable getJulkaistu() {
+        return julkaistu;
+    }
+
+    /**
+     * @param julkaistu the julkaistu to set
+     */
+    public void setJulkaistu(KomotoTable julkaistu) {
+        this.julkaistu = julkaistu;
+    }
+
+    /**
+     * @return the komotoTableFactory
+     */
+    public KomotoTableFactory getKomotoTableFactory() {
+        return komotoTableFactory;
+    }
+
+    /**
+     * @param komotoTableFactory the komotoTableFactory to set
+     */
+    public void setKomotoTableFactory(KomotoTableFactory komotoTableFactory) {
+        this.komotoTableFactory = komotoTableFactory;
     }
 }
