@@ -16,6 +16,7 @@
 
     <modules>
         <module>tarjonta-api</module>
+        <module>tarjonta-ui-widgets</module>
         <module>tarjonta-service</module>
         <module>tarjonta-app</module>
   </modules>
