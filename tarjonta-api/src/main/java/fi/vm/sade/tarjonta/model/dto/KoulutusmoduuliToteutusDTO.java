@@ -42,7 +42,7 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     
     /*TODO: Miksi tätä ei ole koulutusmoduulin toteutuksessa tietomallissa? Tietomallissa tämä näyttää olevan Koulutusmoduulissa. 
     * Vastaus Sepolta: Tietomallissa virhe*/
-    private String koulutuslaji;
+    private String koulutuslajiUri;
 
     /*TODO: Miksi näitä voi olla tietomallin mukaan monta, vaikka lomakkeessa voi valita vain yhden?
      * Vastaus Sepolta: Oikeasti on vain yksi. Monesta moneen suhde käytännössä syntyy vain monimutkaisten organisaatioiden välisten suhteiden kautta.
@@ -54,9 +54,9 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     /*TODO: Mikä tämä kenttä oikeasti on?
     *Vastaus Sepolta: Tulee kokonaisuudessaan koodistosta.
     */
-    private String suunniteltuKesto;
+    private String suunniteltuKestoUri;
     
-    private List<String> teemas;
+    private List<String> teemaUris;
     
 
     public String getOid() {
@@ -132,16 +132,16 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
      * 
      * @return the koulutuslaji
      */
-    public String getKoulutuslaji() {
-        return koulutuslaji;
+    public String getKoulutuslajiUri() {
+        return koulutuslajiUri;
     }
 
     /**
      * 
      * @param koulutuslaji the koulutuslaji to set
      */
-    public void setKoulutuslaji(String koulutuslaji) {
-        this.koulutuslaji = koulutuslaji;
+    public void setKoulutuslajiUri(String koulutuslajiUri) {
+        this.koulutuslajiUri = koulutuslajiUri;
     }
 
     /**
@@ -180,32 +180,32 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
      * 
      * @return the suunniteltuKesto
      */
-    public String getSuunniteltuKesto() {
-        return suunniteltuKesto;
+    public String getSuunniteltuKestoUri() {
+        return suunniteltuKestoUri;
     }
 
     /**
      * 
-     * @param suunniteltuKesto the suunniteltuKesto to set
+     * @param suunniteltuKesto the suunniteltuKestoUri to set
      */
-    public void setSuunniteltuKesto(String suunniteltuKesto) {
-        this.suunniteltuKesto = suunniteltuKesto;
+    public void setSuunniteltuKestoUri(String suunniteltuKestoUri) {
+        this.suunniteltuKestoUri = suunniteltuKestoUri;
     }
 
     /**
      * 
      * @return the teemas
      */
-    public List<String> getTeemas() {
-        return teemas;
+    public List<String> getTeemaUris() {
+        return teemaUris;
     }
 
     /**
      * 
      * @param teemas the teemas to set
      */
-    public void setTeemas(List<String> teemas) {
-        this.teemas = teemas;
+    public void setTeemaUris(List<String> teemaUris) {
+        this.teemaUris = teemaUris;
     }
 
 }
