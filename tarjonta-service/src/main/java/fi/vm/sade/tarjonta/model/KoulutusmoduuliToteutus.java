@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +72,18 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
      */
     @Temporal(TemporalType.DATE)
     private Date koulutuksenAlkamisPvm;
+    
+    /**
+     * Koodisto Uri. Example display value '7+2 vuotta'. This is different than in the current (15.6.2012) wireframe, but the wireframe is wrong.
+     */
+    private String suunniteltuKestoUri;
+    
+    /**
+     * Set of Koodisto uris, one for each "teema" (theme) provided.
+     */
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<KoodistoKoodi> teemaUris;
+    
 
     /**
      * OID for this entity.
@@ -211,6 +224,37 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
      */
     public void setKoulutuksenAlkamisPvm(Date koulutuksenAlkamisPvm) {
         this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
+    }
+
+    /**
+     * @return the suunniteltuKestoUri
+     */
+    public String getSuunniteltuKestoUri() {
+        return suunniteltuKestoUri;
+    }
+
+    /**
+     * 
+     * @param suunniteltuKestoUri the suunniteltuKestoUri to set
+     */
+    public void setSuunniteltuKestoUri(String suunniteltuKestoUri) {
+        this.suunniteltuKestoUri = suunniteltuKestoUri;
+    }
+
+    /**
+     * 
+     * @return the teemaUris
+     */
+    public Set<KoodistoKoodi> getTeemaUris() {
+        return teemaUris;
+    }
+
+    /**
+     * 
+     * @param teemaUris the teemaUris to set
+     */
+    public void setTeemaUris(Set<KoodistoKoodi> teemaUris) {
+        this.teemaUris = teemaUris;
     }
 
 }

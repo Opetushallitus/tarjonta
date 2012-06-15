@@ -15,7 +15,12 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
+import fi.vm.sade.tarjonta.model.KoodistoKoodi;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutusTarjoaja;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
@@ -36,13 +41,40 @@ public class TutkintoOhjelmaToteutusToDTOConverter<T extends KoulutusmoduuliTote
         dto.setOid(source.getOid());
         dto.setNimi(source.getNimi());
         dto.setPerustiedot(CommonConverter.convert(source.getPerustiedot()));
-        
+        dto.setKoulutuksenAlkamisPvm(source.getKoulutuksenAlkamisPvm());
+        dto.setKoulutuslajiUri(source.getKoulutusLajiUri());
+        dto.setSuunniteltuKestoUri(source.getSuunniteltuKestoUri());
+        dto.setTarjoajat(convertTarjoajat(source));
+        dto.setTeemaUris(convertTeemaUris(source));
+        dto.setToteutettavaKoulutusmoduuliOID(convertKoulutusmoduuli(source));
         return (T) dto;
-
     }
-
     
+    private List<String> convertTarjoajat(TutkintoOhjelmaToteutus source) {
+        if (source.getTarjoajat() == null) {
+            return null;
+        }
+        List<String> tarjoajat = new ArrayList<String>();
+        for (KoulutusmoduuliToteutusTarjoaja curTarjoaja : source.getTarjoajat()) {
+            tarjoajat.add(curTarjoaja.getOrganisaatioOID());
+        }
+        return tarjoajat;
+    }
     
+    private List<String> convertTeemaUris(TutkintoOhjelmaToteutus source) {
+        if (source.getTeemaUris() == null) {
+            return null;
+        }
+        List<String> teemaUris = new ArrayList<String>();
+        for (KoodistoKoodi curTeema : source.getTeemaUris()) {
+            teemaUris.add(curTeema.getKoodiUri());
+        }
+        return teemaUris;
+    }
+    
+    private String convertKoulutusmoduuli(TutkintoOhjelmaToteutus source) {
+        return (source.getKoulutusmoduuli() != null) ? source.getKoulutusmoduuli().getOid() : null; 
+    }
     
 }
 

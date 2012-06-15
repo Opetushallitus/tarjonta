@@ -15,6 +15,11 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import fi.vm.sade.tarjonta.model.KoodistoKoodi;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliPerustiedot;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
 
@@ -35,10 +40,50 @@ public final class CommonConverter {
         
         KoulutusmoduuliPerustiedotDTO dto = new KoulutusmoduuliPerustiedotDTO();
         dto.setKoulutusKoodiUri(source.getKoulutusKoodiUri());
-        
+        dto.setOpetuskielis(convertKoodistoKoodisToString(source.getOpetuskieletkielis()));
+        dto.setOpetusmuotos(convertKoodistoKoodisToString(source.getOpetusmuotos()));
         return dto;
         
     }
+    
+    public static KoulutusmoduuliPerustiedot convert(KoulutusmoduuliPerustiedotDTO source) {
+        
+        if (source == null) {
+            return null;
+        }
+        
+        KoulutusmoduuliPerustiedot model = new KoulutusmoduuliPerustiedot();
+        convertOpetuskielis(source, model);
+        convertOpetusmuotos(source, model);
+        model.setKoulutusKoodiUri(source.getKoulutusKoodiUri());
+        
+        return model;
+        
+    }
+    
+    private static List<String> convertKoodistoKoodisToString(Set<KoodistoKoodi> koodis) {
+        if (koodis == null) {
+            return null;
+        }
+        List<String> opetuskielis = new ArrayList<String>();
+        for (KoodistoKoodi curKieli : koodis) {
+            opetuskielis.add(curKieli.getKoodiUri());
+        }
+        return opetuskielis;
+    }
+    
+    private static void convertOpetuskielis(KoulutusmoduuliPerustiedotDTO source, KoulutusmoduuliPerustiedot model) {
+        for(String curKieli : source.getOpetuskielis()) {
+            model.addOpetuskieli(curKieli);
+        }
+    }
+    
+    private static void convertOpetusmuotos(KoulutusmoduuliPerustiedotDTO source, KoulutusmoduuliPerustiedot model) {
+        for(String curMuoto : source.getOpetusmuotos()) {
+            model.addOpetuskieli(curMuoto);
+        }
+    }
+    
     
 }
 
