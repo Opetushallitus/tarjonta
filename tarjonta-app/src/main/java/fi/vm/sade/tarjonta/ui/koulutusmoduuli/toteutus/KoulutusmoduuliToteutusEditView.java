@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
 
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
@@ -9,7 +10,11 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.OptionGroup;
+import org.vaadin.addon.formbinder.FormView;
+import org.vaadin.addon.formbinder.PropertyId;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
+import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
+import fi.vm.sade.generic.ui.component.GenericForm;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,9 +39,14 @@ import java.util.List;
  *
  * @author Tuomas Katva
  */
-public class KoulutusmoduuliToteutusEditView extends CustomComponent {
+public class KoulutusmoduuliToteutusEditView extends GenericForm<KoulutusmoduuliToteutusDTO> {
         
-    private KoulutusmoduuliToteutusDTO boundDto;
+    
+   private int komotoEditViewWidth =  760;
+   
+   private int komotoEditViewHeight = 560;
+   
+   private KoulutusmoduuliToteutusDTO komoto;
     
    private GridLayout rootLayout;
     
@@ -62,7 +72,7 @@ public class KoulutusmoduuliToteutusEditView extends CustomComponent {
 	
    private Label organisaatioLabel;
 	
-   private TextField suunniteltuKestoTextfield;
+   private ComboBox suunniteltuKestoTextfield;
 	
    private Label suunniteltuKestoLabel;
 	
@@ -86,18 +96,28 @@ public class KoulutusmoduuliToteutusEditView extends CustomComponent {
             "Sosiaaliala,yhteiskunta ja politiikka", "Kielet ja kulttuuri", "Talous, kauppa ja hallinta", "Terveys, hyvinvointi ja lääketiede", 
             "Kasvatus, opetus ja psykologia", "Biologia, kemia ja maantiede","Suojelu ja pelastus" });
 
+    @Override
+    protected void initFields() {
+        buildRootLayout();
+    }
+
     
    public KoulutusmoduuliToteutusEditView() {
-       buildRootLayout();
-       setCompositionRoot(rootLayout);
+       rootLayout = new GridLayout();
+       komoto = new TutkintoOhjelmaToteutusDTO();
+       initForm(komoto, rootLayout);
+       form.getFooter().removeAllComponents();
+       form.setImmediate(true);
+       setCompositionRoot(form);
+       //setCompositionRoot(rootLayout);
    }
    
    private GridLayout buildRootLayout() {
 		// common part: create layout
-		rootLayout = new GridLayout();
+		
 		rootLayout.setImmediate(false);
-		rootLayout.setWidth("760px");
-		rootLayout.setHeight("560px");
+		rootLayout.setWidth(getKomotoEditViewWidth(), Sizeable.UNITS_PIXELS);
+		rootLayout.setHeight(getKomotoEditViewHeight(), Sizeable.UNITS_PIXELS);
 		rootLayout.setMargin(false);
 		rootLayout.setColumns(4);
 		rootLayout.setRows(8);
@@ -165,7 +185,7 @@ public class KoulutusmoduuliToteutusEditView extends CustomComponent {
 		rootLayout.addComponent(suunniteltuKestoLabel, 2, 2);
 		
 		// suunniteltuKestoTextfield
-		suunniteltuKestoTextfield = new TextField();
+		suunniteltuKestoTextfield = new ComboBox();
 		suunniteltuKestoTextfield.setImmediate(false);
 		suunniteltuKestoTextfield.setWidth("166px");
 		suunniteltuKestoTextfield.setHeight("-1px");
@@ -264,6 +284,13 @@ public class KoulutusmoduuliToteutusEditView extends CustomComponent {
 		return rootLayout;
 	}
 
+    @Override
+    protected KoulutusmoduuliToteutusDTO save(KoulutusmoduuliToteutusDTO model) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+        
+   
     /**
      * @return the teematOptionGroup
      */
@@ -271,11 +298,58 @@ public class KoulutusmoduuliToteutusEditView extends CustomComponent {
         return teematOptionGroup;
     }
 
+    @Override
+    protected void processSave() {
+        super.processSave();
+    }
+
     /**
      * @param teematOptionGroup the teematOptionGroup to set
      */
     public void setTeematOptionGroup(OptionGroup teematOptionGroup) {
         this.teematOptionGroup = teematOptionGroup;
+    }
+
+    /**
+     * @return the komoto
+     */
+    public KoulutusmoduuliToteutusDTO getKomoto() {
+        return komoto;
+    }
+
+    /**
+     * @param komoto the komoto to set
+     */
+    public void setKomoto(KoulutusmoduuliToteutusDTO komoto) {
+        this.komoto = komoto;
+    }
+
+    /**
+     * @return the komotoEditViewWidth
+     */
+    public int getKomotoEditViewWidth() {
+        return komotoEditViewWidth;
+    }
+
+    /**
+     * @param komotoEditViewWidth the komotoEditViewWidth to set
+     */
+    public void setKomotoEditViewWidth(int komotoEditViewWidth) {
+        this.komotoEditViewWidth = komotoEditViewWidth;
+    }
+
+    /**
+     * @return the komotoEditViewHeight
+     */
+    public int getKomotoEditViewHeight() {
+        return komotoEditViewHeight;
+    }
+
+    /**
+     * @param komotoEditViewHeight the komotoEditViewHeight to set
+     */
+    public void setKomotoEditViewHeight(int komotoEditViewHeight) {
+        this.komotoEditViewHeight = komotoEditViewHeight;
     }
    
 }

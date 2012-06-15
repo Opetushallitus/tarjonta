@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
 
 import com.vaadin.data.util.BeanContainer;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import fi.vm.sade.tarjonta.ui.service.TarjontaUiService;
@@ -88,11 +89,15 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
                 public void buttonClick(ClickEvent event) {
                     Window komotoEditWindow = new Window();
                     KoulutusmoduuliToteutusEditView komotoEdit = new KoulutusmoduuliToteutusEditView();
+                   
+                    komotoEditWindow.addComponent(komotoEdit);
                     
-                    komotoEditWindow.setContent(komotoEdit);
                     komotoEditWindow.setModal(true);
-                    komotoEdit.setSizeUndefined();
+                    komotoEditWindow.setWidth(komotoEdit.getKomotoEditViewWidth()+ 50, Sizeable.UNITS_PIXELS);
+                    komotoEditWindow.setHeight(komotoEdit.getKomotoEditViewHeight() + 100, Sizeable.UNITS_PIXELS);
                     getApplication().getMainWindow().addWindow(komotoEditWindow);
+                    
+                   
                 }
             });
         }
