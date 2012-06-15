@@ -1,11 +1,8 @@
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
 
 import com.vaadin.data.util.BeanContainer;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Panel;
+import com.vaadin.ui.*;
+import com.vaadin.ui.Button.ClickEvent;
 import fi.vm.sade.tarjonta.ui.service.TarjontaUiService;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
@@ -58,6 +55,7 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
         rightPanel.addComponent(createTables());
         rootLayout.addComponent(rightPanel);
 
+        addListernerToSuunnitteilla();
         setCompositionRoot(rootLayout);
     }
 
@@ -82,7 +80,23 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
         return tableHolder;
     }
 
-  
+    private void addListernerToSuunnitteilla() {
+        if (suunnitteilla != null && suunnitteilla.getTableButton() != null) {
+            suunnitteilla.getTableButton().addListener(new Button.ClickListener() {
+
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    Window komotoEditWindow = new Window();
+                    KoulutusmoduuliToteutusEditView komotoEdit = new KoulutusmoduuliToteutusEditView();
+                    
+                    komotoEditWindow.setContent(komotoEdit);
+                    komotoEditWindow.setModal(true);
+                    komotoEdit.setSizeUndefined();
+                    getApplication().getMainWindow().addWindow(komotoEditWindow);
+                }
+            });
+        }
+    }
 
     /**
      * @return the suunnitteilla
