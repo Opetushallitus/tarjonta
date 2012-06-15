@@ -25,7 +25,6 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.blackboard.BlackboardContext;
-import fi.vm.sade.koodisto.model.dto.Kieli;
 import fi.vm.sade.koodisto.service.mock.MockDataHandler;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
@@ -226,7 +225,7 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
         combo.setImmediate(true);
         combo.setDebugId(PROPERTY_KOULUTUS_KOODI);
 
-        KoodistoComponent wrapper = new KoodistoComponent(KOODISTO_URI_KOULUTUKSET, Kieli.getKieliForLocale(I18N.getLocale()));
+        KoodistoComponent wrapper = new KoodistoComponent(KOODISTO_URI_KOULUTUKSET);
         wrapper.setField(combo);
         wrapper.setRequired(true);
         wrapper.setRequiredError(i18n.getMessage("koulutusIsRequired"));

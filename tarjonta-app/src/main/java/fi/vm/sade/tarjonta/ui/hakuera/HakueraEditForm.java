@@ -29,7 +29,6 @@ import fi.vm.sade.generic.ui.component.GenericForm;
 import fi.vm.sade.generic.ui.component.MultiLingualTextField;
 import fi.vm.sade.generic.ui.component.MultiLingualTextImpl;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
-import fi.vm.sade.koodisto.model.dto.Kieli;
 import fi.vm.sade.koodisto.service.KoodiPublicService;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
@@ -272,7 +271,7 @@ public class HakueraEditForm extends GenericForm<HakueraDTO> {
      * @return The created KoodistoComponent.
      */
     private KoodistoComponent createKoodistoComponent(String koodistoUri, String captionKey, String debugId, FormLayout layout) {
-        KoodistoComponent koodistoComponent = WidgetFactory.create(koodistoUri, Kieli.FI);
+        KoodistoComponent koodistoComponent = WidgetFactory.create(koodistoUri);
         koodistoComponent.setCaption(i18n.getMessage(captionKey));
         ComboBox koodistoCombo = new ComboBox();
         koodistoComponent.setDebugId(i18n.getMessage(debugId));
