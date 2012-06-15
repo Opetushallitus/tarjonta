@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.widget.factory;
 
+import com.vaadin.data.util.NestedMethodProperty;
 import fi.vm.sade.support.selenium.AbstractEmbedVaadinTest;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSearchDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
@@ -26,6 +27,8 @@ public class TarjontaWidgetFactoryTest extends AbstractEmbedVaadinTest<Koulutusm
     @Autowired
     TarjontaWidgetFactory tarjontaWidgetFactory;
 
+    TestDTO dto = new TestDTO();
+
     public TarjontaWidgetFactoryTest() {
         super(true, true);
     }
@@ -47,6 +50,7 @@ public class TarjontaWidgetFactoryTest extends AbstractEmbedVaadinTest<Koulutusm
         searchSpecification.setNimi("ANYTHING_FROM_MOCK");
         KoulutusmoduuliComponent koulutusmoduuliComponent = tarjontaWidgetFactory.createKoulutusmoduuliComponentWithCombobox(searchSpecification);
         koulutusmoduuliComponent.setImmediate(true);
+        koulutusmoduuliComponent.setPropertyDataSource(new NestedMethodProperty(dto, "koulutusmoduuliOid"));
         return koulutusmoduuliComponent;
     }
 
@@ -70,7 +74,9 @@ public class TarjontaWidgetFactoryTest extends AbstractEmbedVaadinTest<Koulutusm
             }
         });
 
-        STEP("arvo päätyy myös dto:lle"); // TODO: dto bindaus
+        STEP("arvo päätyy myös dto:lle");
+        component.commit();
+        assertEquals("oid_koulutusmoduuli2", dto.getKoulutusmoduuliOid());
 
     }
 
@@ -81,4 +87,15 @@ public class TarjontaWidgetFactoryTest extends AbstractEmbedVaadinTest<Koulutusm
         koulutusmoduuliAdminService.save(koulutusModuuli);
     }
 
+    public static class TestDTO {
+        private String koulutusmoduuliOid;
+
+        public String getKoulutusmoduuliOid() {
+            return koulutusmoduuliOid;
+        }
+
+        public void setKoulutusmoduuliOid(String koulutusmoduuliOid) {
+            this.koulutusmoduuliOid = koulutusmoduuliOid;
+        }
+    }
 }
