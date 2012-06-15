@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.model.dto;
 
 import java.io.Serializable;
+import java.util.List;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -29,6 +31,10 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
     private String organisaatioOid;
 
     private String koulutusKoodiUri;
+    
+    private List<String> opetusmuotos;
+    
+    private List<String> opetuskielis;
 
     public void setOrganisaatioOid(String organisaatioOid) {
         this.organisaatioOid = organisaatioOid;
@@ -52,6 +58,38 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
             append("organisaatioId", organisaatioOid).
             append("koulutusKoodiUri", koulutusKoodiUri).
             toString();
+    }
+
+    /**
+     * 
+     * @return the list of opetusmuotos
+     */
+    public List<String> getOpetusmuotos() {
+        return opetusmuotos;
+    }
+
+    /**
+     * 
+     * @param opetusmuotos the list of opetusmuotos to set
+     */
+    public void setOpetusmuotos(List<String> opetusmuotos) {
+        this.opetusmuotos = opetusmuotos;
+    }
+
+    /**
+     * 
+     * @return the opetuskielis
+     */
+    public List<String> getOpetuskielis() {
+        return opetuskielis;
+    }
+
+    /**
+     * 
+     * @param opetuskielis the opetuskielis to set
+     */
+    public void setOpetuskielis(List<String> opetuskielis) {
+        this.opetuskielis = opetuskielis;
     }
 
 }

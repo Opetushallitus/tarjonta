@@ -16,6 +16,9 @@
 package fi.vm.sade.tarjonta.model.dto;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -24,7 +27,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 @SuppressWarnings("serial")
 public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
-    
+
     private boolean selected = false;
 
     private KoulutusmoduuliTila tila;
@@ -36,7 +39,24 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     private String toteutettavaKoulutusmoduuliOID;
 
     private KoulutusmoduuliPerustiedotDTO perustiedot;
+    
+    /*TODO: Miksi tätä ei ole koulutusmoduulin toteutuksessa tietomallissa? Tietomallissa tämä näyttää olevan Koulutusmoduulissa. 
+    * Vastaus Sepolta: Tietomallissa virhe*/
+    private String koulutuslaji;
 
+    /*TODO: Miksi näitä voi olla tietomallin mukaan monta, vaikka lomakkeessa voi valita vain yhden?
+     * Vastaus Sepolta: Oikeasti on vain yksi. Monesta moneen suhde käytännössä syntyy vain monimutkaisten organisaatioiden välisten suhteiden kautta.
+     */
+    private List<String> tarjoajat; 
+    
+    private Date koulutuksenAlkamisPvm;
+    
+    /*TODO: Mikä tämä kenttä oikeasti on?
+    *Vastaus Sepolta: Tulee kokonaisuudessaan koodistosta.
+    */
+    private String suunniteltuKesto;
+    
+    private List<String> teemas;
     
 
     public String getOid() {
@@ -106,6 +126,86 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
      */
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+    
+    /**
+     * 
+     * @return the koulutuslaji
+     */
+    public String getKoulutuslaji() {
+        return koulutuslaji;
+    }
+
+    /**
+     * 
+     * @param koulutuslaji the koulutuslaji to set
+     */
+    public void setKoulutuslaji(String koulutuslaji) {
+        this.koulutuslaji = koulutuslaji;
+    }
+
+    /**
+     * 
+     * @return the list of tarjoaja organisaatio oids.
+     */
+    public List<String> getTarjoajat() {
+        return tarjoajat;
+    }
+
+    /**
+     * 
+     * @param tarjoajat the list of tarjoaja organisaatio oids to set
+     */
+    public void setTarjoajat(List<String> tarjoajat) {
+        this.tarjoajat = tarjoajat;
+    }
+
+    /**
+     * 
+     * @return the koulutuksenAlkamisPvm, i.e. the date the education/training begins
+     */
+    public Date getKoulutuksenAlkamisPvm() {
+        return koulutuksenAlkamisPvm;
+    }
+
+    /**
+     * 
+     * @param koulutuksenAlkamisPvm 
+     */
+    public void setKoulutuksenAlkamisPvm(Date koulutuksenAlkamisPvm) {
+        this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
+    }
+
+    /**
+     * 
+     * @return the suunniteltuKesto
+     */
+    public String getSuunniteltuKesto() {
+        return suunniteltuKesto;
+    }
+
+    /**
+     * 
+     * @param suunniteltuKesto the suunniteltuKesto to set
+     */
+    public void setSuunniteltuKesto(String suunniteltuKesto) {
+        this.suunniteltuKesto = suunniteltuKesto;
+    }
+
+    /**
+     * 
+     * @return the teemas
+     */
+    public List<String> getTeemas() {
+        return teemas;
+    }
+
+    /**
+     * 
+     * @param teemas the teemas to set
+     */
+    public void setTeemas(List<String> teemas) {
+        this.teemas = teemas;
     }
 
 }
