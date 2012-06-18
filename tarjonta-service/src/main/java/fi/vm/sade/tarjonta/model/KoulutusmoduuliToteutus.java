@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
+import org.jvnet.jaxb2_commons.lang.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     private Set<KoulutusmoduuliToteutusTarjoaja> tarjoajat = new HashSet<KoulutusmoduuliToteutusTarjoaja>();
 
     /**
-     * The Koulutusmoduuli this "implementation" implements and/or completes. 
+     * The Koulutusmoduuli this "implementation" implements and/or completes.
      */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinTable(name = TABLE_NAME + "_tarjoaja")
@@ -82,20 +83,25 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
      */
     @Temporal(TemporalType.DATE)
     private Date koulutuksenAlkamisPvm;
-    
+
     /**
      * Koodisto Uri. Example display value '7+2 vuotta'. This is different than in the current (15.6.2012) wireframe, but the wireframe is wrong.
      */
     private String suunniteltuKestoUri;
-    
+
     /**
      * Set of Koodisto uris, one for each "teema" (theme) provided.
      */
     //@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @ElementCollection(fetch= FetchType.LAZY)
-    @CollectionTable(name=TABLE_NAME + "_teema", joinColumns=@JoinColumn(name="koulutusmoduuli_toteutus_id"))    
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_teema", joinColumns =
+    @JoinColumn(name = "koulutusmoduuli_toteutus_id"))
     private Set<KoodistoKoodi> teemaUris;
-    
+
+    /**
+     * If defined, this "koulutus" has a charge. This field defines the amount of the charge.
+     */
+    private String maksullisuus;
 
     /**
      * OID for this entity.
@@ -120,7 +126,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
 
     /**
      * Returns OID for this KoulutusmoduuliToteutus
-     * 
+     *
      * @return
      */
     public String getOid() {
@@ -132,7 +138,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     }
 
     /**
-     * 
+     *
      * @return
      */
     public String getNimi() {
@@ -177,7 +183,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
 
     /**
      * Returns the Koulutusmoduuli this KoulutusmoduuliToteutus "implements".
-     * 
+     *
      * @return
      */
     public Koulutusmoduuli getKoulutusmoduuli() {
@@ -225,8 +231,8 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     }
 
     /**
-     * Koodisto uri 
-     * 
+     * Koodisto uri
+     *
      * @return the koulutusLajiUri
      */
     public String getKoulutusLajiUri() {
@@ -242,7 +248,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
 
     /**
      * The date this KoulutusmoduuliToteutus is scheduled to start.
-     * 
+     *
      * @return the koulutuksenAlkamisPvm
      */
     public Date getKoulutuksenAlkamisPvm() {
@@ -264,7 +270,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     }
 
     /**
-     * 
+     *
      * @param suunniteltuKestoUri the suunniteltuKestoUri to set
      */
     public void setSuunniteltuKestoUri(String suunniteltuKestoUri) {
@@ -272,7 +278,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     }
 
     /**
-     * 
+     *
      * @return the teemaUris
      */
     public Set<KoodistoKoodi> getTeemaUris() {
@@ -280,11 +286,29 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     }
 
     /**
-     * 
+     *
      * @param teemaUris the teemaUris to set
      */
     public void setTeemaUris(Set<KoodistoKoodi> teemaUris) {
         this.teemaUris = teemaUris;
+    }
+
+    /**
+     * Returns non-null value if this KoulutusmoduuliToteutus comes with a charge or null if it is free-of-charge.
+     * 
+     * @return the maksullisuus
+     */
+    public String getMaksullisuus() {
+        return maksullisuus;
+    }
+
+    /**
+     * Set amount of charge or null to make free-of-charge. Empty string will be converted to null.
+     * 
+     * @param maksullisuus the maksullisuus to set
+     */
+    public void setMaksullisuus(String maksullisuus) {        
+        this.maksullisuus = StringUtils.isEmpty(maksullisuus) ? null : maksullisuus;
     }
 
 }

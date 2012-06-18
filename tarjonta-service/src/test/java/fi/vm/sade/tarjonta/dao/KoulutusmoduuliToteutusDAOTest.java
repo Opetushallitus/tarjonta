@@ -59,6 +59,8 @@ public class KoulutusmoduuliToteutusDAOTest {
     private static final String TOTEUTUS_1_NIMI = "Toteutus 1 Nimi";
 
     private static final String TOTEUTUS_1_OID = "Toteutus 1 OID";
+    
+    private static final String MAKSULLISUUS = "5 EUR/month";
 
     @Before
     public void setUp() {
@@ -70,6 +72,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         defaultToteutus.setNimi(TOTEUTUS_1_NIMI);
         defaultToteutus.setOid(TOTEUTUS_1_OID);
         defaultToteutus.setKoulutuksenAlkamisPvm(ALKAMIS_PVM);
+        defaultToteutus.setMaksullisuus(MAKSULLISUUS);
         toteutusDAO.insert(defaultToteutus);
 
     }
@@ -82,6 +85,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         assertEquals(TOTEUTUS_1_NIMI, loaded.getNimi());
         assertEquals(TOTEUTUS_1_OID, loaded.getOid());
         assertEquals(ALKAMIS_PVM, loaded.getKoulutuksenAlkamisPvm());
+        assertEquals(MAKSULLISUUS, loaded.getMaksullisuus());
 
     }
 
