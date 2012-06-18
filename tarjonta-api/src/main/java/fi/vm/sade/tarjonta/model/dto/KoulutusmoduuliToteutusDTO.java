@@ -28,7 +28,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @SuppressWarnings("serial")
 public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
 
-    private boolean selected = false;
+    
 
     private KoulutusmoduuliTila tila;
 
@@ -109,20 +109,6 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
      */
     public void setTila(KoulutusmoduuliTila tila) {
         this.tila = tila;
-    }
-
-    /**
-     * @return the selected
-     */
-    public boolean isSelected() {
-        return selected;
-    }
-
-    /**
-     * @param selected the selected to set
-     */
-    public void setSelected(boolean selected) {
-        this.selected = selected;
     }
 
     /**
