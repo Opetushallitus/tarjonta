@@ -15,10 +15,12 @@
  */
 package fi.vm.sade.tarjonta.service.business.impl;
 
+import fi.vm.sade.oid.service.ExceptionMessage;
+import fi.vm.sade.oid.service.OIDService;
+import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.business.KoulutusmoduuliBusinessService;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,14 +36,16 @@ public class KoulutusmoduuliBusinessServiceImpl implements KoulutusmoduuliBusine
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
+    @Autowired
+    private OIDService oidService;
+
     @Override
     public Koulutusmoduuli save(Koulutusmoduuli moduuli) {
-        
+
         // TODO: we need to update any existing entity by copying those fields that have been overwritten
-        
+
         if (moduuli.getOid() == null) {
-            // TODO: fake setting OID
-            moduuli.setOid(UUID.randomUUID().toString());
+            moduuli.setOid(newKoulutusmoduuliOID());
             return koulutusmoduuliDAO.insert(moduuli);
         } else {
             koulutusmoduuliDAO.update(moduuli);
@@ -52,6 +56,14 @@ public class KoulutusmoduuliBusinessServiceImpl implements KoulutusmoduuliBusine
     @Override
     public Koulutusmoduuli findByOid(String koulutusmoduuliOID) {
         return koulutusmoduuliDAO.findByOid(koulutusmoduuliOID);
+    }
+
+    private String newKoulutusmoduuliOID() {
+        try {
+            return oidService.newOid(NodeClassCode.PALVELUT);
+        } catch (ExceptionMessage e) {
+            throw new RuntimeException("creating OID failed", e);
+        }
     }
 
 }

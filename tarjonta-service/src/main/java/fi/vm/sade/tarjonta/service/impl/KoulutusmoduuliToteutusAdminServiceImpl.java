@@ -20,6 +20,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
 import fi.vm.sade.tarjonta.service.KoulutusmoduuliToteutusAdminService;
+import fi.vm.sade.tarjonta.service.NoSuchOIDException;
 import fi.vm.sade.tarjonta.service.business.KoulutusmoduuliBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusmoduuliToteutusBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,13 +61,19 @@ public class KoulutusmoduuliToteutusAdminServiceImpl implements KoulutusmoduuliT
     }
 
     @Override
+    public KoulutusmoduuliToteutusDTO findByOID(String koulutusmoduuliToteutusOID) throws NoSuchOIDException {
+
+        KoulutusmoduuliToteutus model = toteutusService.findByOid(koulutusmoduuliToteutusOID);
+        return conversionService.convert(model, KoulutusmoduuliToteutusDTO.class);
+
+    }
+
+    @Override
     public List<KoulutusmoduuliToteutusDTO> findWithTila(KoulutusmoduuliToteutusSearchDTO criteria) {
         List<KoulutusmoduuliToteutus> jpaResults = toteutusService.findWithTila(criteria);
-        return conversionService.convertAll(jpaResults,KoulutusmoduuliToteutusDTO.class);
-        
+        return conversionService.convertAll(jpaResults, KoulutusmoduuliToteutusDTO.class);
+
     }
-  
-    
-    
+
 }
 

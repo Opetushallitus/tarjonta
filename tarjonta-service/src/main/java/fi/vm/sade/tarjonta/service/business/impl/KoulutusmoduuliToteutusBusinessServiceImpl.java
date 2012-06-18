@@ -15,6 +15,9 @@
  */
 package fi.vm.sade.tarjonta.service.business.impl;
 
+import fi.vm.sade.oid.service.ExceptionMessage;
+import fi.vm.sade.oid.service.OIDService;
+import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
@@ -37,14 +40,18 @@ public class KoulutusmoduuliToteutusBusinessServiceImpl implements Koulutusmoduu
 
     @Autowired
     private KoulutusmoduuliToteutusDAO toteutusDAO;
-    
-    @Autowired 
+
+    @Autowired
     private KoulutusmoduuliDAO moduuliDAO;
+
+    @Autowired
+    private OIDService oidService;
 
     @Override
     public KoulutusmoduuliToteutus save(KoulutusmoduuliToteutus toteutus) {
 
         if (toteutus.getOid() == null) {
+            toteutus.setOid(newKoulutusmoduuliToteutusOID());
             return insert(toteutus);
         } else {
             return update(toteutus);
@@ -69,6 +76,15 @@ public class KoulutusmoduuliToteutusBusinessServiceImpl implements Koulutusmoduu
     @Override
     public KoulutusmoduuliToteutus findByOid(String koulutusmoduuliOID) {
         return toteutusDAO.findByOid(koulutusmoduuliOID);
+    }
+
+    private String newKoulutusmoduuliToteutusOID() {
+        try {
+            return oidService.newOid(NodeClassCode.PALVELUT);
+        } catch (ExceptionMessage e) {
+            throw new RuntimeException("creating oid failed", e);
+        
+        }
     }
 
     @Override
