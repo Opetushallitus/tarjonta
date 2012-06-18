@@ -3,8 +3,6 @@ package fi.vm.sade.tarjonta.service;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
-import fi.vm.sade.tarjonta.service.NoSuchOIDException;
-import fi.vm.sade.tarjonta.service.KoulutusmoduuliAdminService;
 import java.util.List;
 import java.util.UUID;
 import static org.junit.Assert.*;

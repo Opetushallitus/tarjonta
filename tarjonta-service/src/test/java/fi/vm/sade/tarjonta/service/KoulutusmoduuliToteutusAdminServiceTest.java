@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.service;
 
+import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
 import fi.vm.sade.tarjonta.model.dto.*;
 import java.util.Arrays;
 import java.util.Date;
@@ -18,46 +19,90 @@ import org.springframework.transaction.annotation.Transactional;
 public class KoulutusmoduuliToteutusAdminServiceTest {
 
     @Autowired
-    private KoulutusmoduuliToteutusAdminService adminService;
+    private KoulutusmoduuliToteutusAdminService toteutusService;
 
+    @Autowired
+    private KoulutusmoduuliAdminService moduuliService;
+
+    /**
+     * Newly instantiated toteutus with minimal attributes populated.
+     */
     private KoulutusmoduuliToteutusDTO emptyToteutus;
-
-    private static final String COMPLETE_NAME = "Koulutusmoduuli toteutus 1";
 
     /*
      * Koulutusmoduuli toteutus with most if not all attributes populated.
      */
     private TutkintoOhjelmaToteutusDTO completeToteutus;
 
+    /**
+     * A known Koulutusmoduuli OID we can use when referring to which Koulutusmoduuli any KoulutusmoduuliToteutus is implementing.
+     */
+    private String koulutusmoduuliOid;
+
     private Date today = new Date();
 
     @Before
     public void setUp() {
+
+        initKoulutusmoduuliOID();
+        
         emptyToteutus = new TutkintoOhjelmaToteutusDTO();
-        completeToteutus = createCompleteToteutus();
+        emptyToteutus.setToteutettavaKoulutusmoduuliOID(koulutusmoduuliOid);
+        
+        completeToteutus = createCompleteToteutus();        
+
+    }
+
+    private void initKoulutusmoduuliOID() {
+        if (koulutusmoduuliOid == null) {
+            TutkintoOhjelmaDTO tutkintoOhjelma = moduuliService.createTutkintoOhjelma(null);
+            koulutusmoduuliOid = moduuliService.save(tutkintoOhjelma).getOid();            
+        }
     }
 
     @Test
     public void testSavedKoulutusmoduuliHasOid() {
 
-        KoulutusmoduuliToteutusDTO toteutusDTO = adminService.save(emptyToteutus);
+        
+        KoulutusmoduuliToteutusDTO toteutusDTO = toteutusService.save(emptyToteutus);
         assertNotNull(toteutusDTO.getOid());
 
     }
 
     @Test
-    public void testFindByOid() {
+    public void testSaveAndLoadCompleteToteutus() {
+
+        KoulutusmoduuliToteutusDTO saved = toteutusService.save(completeToteutus);
+        assertNotNull(saved);
+
+        KoulutusmoduuliToteutusDTO loaded = toteutusService.findByOID(saved.getOid());
+        assertNotNull(loaded);
+
+        assertTutkintoOhjelma((TutkintoOhjelmaToteutusDTO) completeToteutus, (TutkintoOhjelmaToteutusDTO) loaded);
+
+    }
+
+    private void assertTutkintoOhjelma(TutkintoOhjelmaToteutusDTO expected, TutkintoOhjelmaToteutusDTO actual) {
+
+        assertEquals(expected.getNimi(), actual.getNimi());
+        assertEquals(expected.getKoulutuksenAlkamisPvm(), actual.getKoulutuksenAlkamisPvm());
+        assertEquals(expected.getKoulutuslajiUri(), actual.getKoulutuslajiUri());
+        assertEquals(expected.getMaksullisuus(), actual.getMaksullisuus());
+        assertEquals(expected.getTarjoajat(), actual.getTarjoajat());
+        assertEquals(expected.getToteutettavaKoulutusmoduuliOID(), actual.getToteutettavaKoulutusmoduuliOID());
+
     }
 
     private TutkintoOhjelmaToteutusDTO createCompleteToteutus() {
 
         TutkintoOhjelmaToteutusDTO toteutus = new TutkintoOhjelmaToteutusDTO();
 
-        toteutus.setNimi(COMPLETE_NAME);
+        toteutus.setNimi("Koulutusmoduuli toteutus");
         toteutus.setKoulutuksenAlkamisPvm(today);
         toteutus.setKoulutuslajiUri("http://koulutuslaji/aikuis");
         toteutus.setTarjoajat(Arrays.asList("http://organisaatio/1", "http://organisaatio/2"));
-        
+        toteutus.setToteutettavaKoulutusmoduuliOID(koulutusmoduuliOid);
+
         KoulutusmoduuliPerustiedotDTO perustiedot = new KoulutusmoduuliPerustiedotDTO();
         perustiedot.setKoulutusKoodiUri("http://koulutusmooduuri");
         perustiedot.setOpetuskielis(Arrays.asList("http://opentuskieli/fi", "http://opetuskieli/en"));
@@ -65,8 +110,6 @@ public class KoulutusmoduuliToteutusAdminServiceTest {
         perustiedot.setAsiasanoituses(Arrays.asList("http://asiasana/talous", "http://asiasana/suojelu"));
 
         toteutus.setPerustiedot(perustiedot);
-
-
 
         return toteutus;
 

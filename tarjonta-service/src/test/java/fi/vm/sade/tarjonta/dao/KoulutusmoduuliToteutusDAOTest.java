@@ -72,7 +72,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         defaultToteutus.setNimi(TOTEUTUS_1_NIMI);
         defaultToteutus.setOid(TOTEUTUS_1_OID);
         defaultToteutus.setKoulutuksenAlkamisPvm(ALKAMIS_PVM);
-        defaultToteutus.setMaksullisuus(MAKSULLISUUS);
+        defaultToteutus.setMaksullisuus(MAKSULLISUUS);        
         toteutusDAO.insert(defaultToteutus);
 
     }
@@ -86,6 +86,8 @@ public class KoulutusmoduuliToteutusDAOTest {
         assertEquals(TOTEUTUS_1_OID, loaded.getOid());
         assertEquals(ALKAMIS_PVM, loaded.getKoulutuksenAlkamisPvm());
         assertEquals(MAKSULLISUUS, loaded.getMaksullisuus());
+        assertEquals(defaultModuuli.getOid(), loaded.getKoulutusmoduuli().getOid());
+        
 
     }
 

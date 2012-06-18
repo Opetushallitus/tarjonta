@@ -20,7 +20,7 @@ public class TutkintoOhjelmaToteutusDTOToModelConverter extends AbstractToDomain
         model.setKoulutuksenAlkamisPvm(source.getKoulutuksenAlkamisPvm());
         model.setKoulutusLajiUri(source.getKoulutuslajiUri());
         convertTarjoajat(source, model);
-        model.setKoulutusmoduuli(convertKoulutusmoduuli(source));
+        
         return model;
     }
     

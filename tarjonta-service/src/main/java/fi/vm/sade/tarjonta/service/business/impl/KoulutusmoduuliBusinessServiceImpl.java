@@ -20,6 +20,7 @@ import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.service.NoSuchOIDException;
 import fi.vm.sade.tarjonta.service.business.KoulutusmoduuliBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,7 +56,11 @@ public class KoulutusmoduuliBusinessServiceImpl implements KoulutusmoduuliBusine
 
     @Override
     public Koulutusmoduuli findByOid(String koulutusmoduuliOID) {
-        return koulutusmoduuliDAO.findByOid(koulutusmoduuliOID);
+        final Koulutusmoduuli koulutusmoduuli = koulutusmoduuliDAO.findByOid(koulutusmoduuliOID);
+        if (koulutusmoduuli == null) {
+            throw new NoSuchOIDException("No such Koulutusmoduuli: " + koulutusmoduuliOID);
+        }
+        return koulutusmoduuli;
     }
 
     private String newKoulutusmoduuliOID() {

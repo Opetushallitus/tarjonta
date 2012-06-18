@@ -27,8 +27,8 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
 
 /**
- * 
- * @param <T> 
+ *
+ * @param <T>
  * @author Jukka Raanamo
  */
 public class TutkintoOhjelmaToteutusToDTOConverter<T extends KoulutusmoduuliToteutusDTO> extends AbstractFromDomainConverter<TutkintoOhjelmaToteutus, T> {
@@ -44,10 +44,11 @@ public class TutkintoOhjelmaToteutusToDTOConverter<T extends KoulutusmoduuliTote
         dto.setKoulutuksenAlkamisPvm(source.getKoulutuksenAlkamisPvm());
         dto.setKoulutuslajiUri(source.getKoulutusLajiUri());
         dto.setTarjoajat(convertTarjoajat(source));
-        dto.setToteutettavaKoulutusmoduuliOID(convertKoulutusmoduuli(source));
+        dto.setToteutettavaKoulutusmoduuliOID(source.getKoulutusmoduuli().getOid());
+
         return (T) dto;
     }
-    
+
     private List<String> convertTarjoajat(TutkintoOhjelmaToteutus source) {
         if (source.getTarjoajat() == null) {
             return null;
@@ -58,21 +59,6 @@ public class TutkintoOhjelmaToteutusToDTOConverter<T extends KoulutusmoduuliTote
         }
         return tarjoajat;
     }
-    
-    private List<String> convertTeemaUris(TutkintoOhjelmaToteutus source) {
-        if (source.getTeemaUris() == null) {
-            return null;
-        }
-        List<String> teemaUris = new ArrayList<String>();
-        for (KoodistoKoodi curTeema : source.getTeemaUris()) {
-            teemaUris.add(curTeema.getKoodiUri());
-        }
-        return teemaUris;
-    }
-    
-    private String convertKoulutusmoduuli(TutkintoOhjelmaToteutus source) {
-        return (source.getKoulutusmoduuli() != null) ? source.getKoulutusmoduuli().getOid() : null; 
-    }
-    
+
 }
 

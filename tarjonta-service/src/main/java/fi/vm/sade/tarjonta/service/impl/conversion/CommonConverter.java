@@ -42,6 +42,7 @@ public final class CommonConverter {
         dto.setKoulutusKoodiUri(source.getKoulutusKoodiUri());
         dto.setOpetuskielis(convertKoodistoKoodisToString(source.getOpetuskieletkielis()));
         dto.setOpetusmuotos(convertKoodistoKoodisToString(source.getOpetusmuotos()));
+        dto.setAsiasanoituses(convertKoodistoKoodisToString(source.getAsiasanoituses()));
         return dto;
         
     }
