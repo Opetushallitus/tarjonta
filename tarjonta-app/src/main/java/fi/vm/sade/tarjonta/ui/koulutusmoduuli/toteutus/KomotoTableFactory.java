@@ -9,7 +9,7 @@ import com.vaadin.ui.Table;
 import fi.vm.sade.tarjonta.service.KoulutusmoduuliToteutusAdminService;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
-import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.TutkintoOhjelmaUiDTO;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.TutkintoOhjelmaUiModel;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,11 +80,11 @@ public class KomotoTableFactory {
                 .build();
     }
 
-    private BeanContainer<String, TutkintoOhjelmaUiDTO> createContainer(List<KoulutusmoduuliToteutusDTO> totModuulit)  {
-        BeanContainer<String, TutkintoOhjelmaUiDTO> komotos = new BeanContainer<String, TutkintoOhjelmaUiDTO>(TutkintoOhjelmaUiDTO.class);
+    private BeanContainer<String, TutkintoOhjelmaUiModel> createContainer(List<KoulutusmoduuliToteutusDTO> totModuulit)  {
+        BeanContainer<String, TutkintoOhjelmaUiModel> komotos = new BeanContainer<String, TutkintoOhjelmaUiModel>(TutkintoOhjelmaUiModel.class);
         for (KoulutusmoduuliToteutusDTO totModuli : totModuulit) {
             try {
-           TutkintoOhjelmaUiDTO uiDto =  new TutkintoOhjelmaUiDTO();
+           TutkintoOhjelmaUiModel uiDto =  new TutkintoOhjelmaUiModel();
            BeanUtils.copyProperties(uiDto, totModuli);
             komotos.addItem(uiDto.getOid(), uiDto);
             }catch (Exception exp) {

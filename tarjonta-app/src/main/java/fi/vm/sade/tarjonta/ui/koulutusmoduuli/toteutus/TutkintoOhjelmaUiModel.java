@@ -27,7 +27,7 @@ import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
  *
  * @author Tuomas Katva
  */
-public class TutkintoOhjelmaUiDTO extends TutkintoOhjelmaDTO {
+public class TutkintoOhjelmaUiModel extends TutkintoOhjelmaDTO {
 
     private boolean selected = false;
     
