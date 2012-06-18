@@ -1,20 +1,18 @@
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
 
+import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.terminal.Sizeable;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.PopupDateField;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.OptionGroup;
-import org.vaadin.addon.formbinder.FormView;
-import org.vaadin.addon.formbinder.PropertyId;
+import com.vaadin.ui.*;
+import fi.vm.sade.generic.ui.component.GenericForm;
+import fi.vm.sade.generic.ui.component.MultipleSelectToTableWrapper;
+import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
-import fi.vm.sade.generic.ui.component.GenericForm;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.vaadin.addon.formbinder.FormFieldMatch;
+import org.vaadin.addon.formbinder.FormView;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,15 +37,17 @@ import java.util.List;
  *
  * @author Tuomas Katva
  */
+@FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
+@Configurable(preConstruction = false)
 public class KoulutusmoduuliToteutusEditView extends GenericForm<KoulutusmoduuliToteutusDTO> {
-        
-    
-   private int komotoEditViewWidth =  760;
+
+    public static final String KOODISTO_KIELI_URI = "http://kieli"; // TODO: tuleeko opetuskieli kieli-koodistosta, vai onko erikseen joku opetuskieli-koodisto?
+    public static final String KOODISTO_OPETUSMUOTO_URI = "http://opetusmuoto"; // TODO: mistä koodistosta oikeasti tulee opetusmuoto?
+
+    private int komotoEditViewWidth =  760;
    
    private int komotoEditViewHeight = 560;
    
-   private KoulutusmoduuliToteutusDTO komoto;
-    
    private GridLayout rootLayout;
     
    private Button tallennaValmiinaBtn;
@@ -59,12 +59,14 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
    private TextField maksullinenKoulutusTextfield;
 	
    private CheckBox maksullinenKoulutusCheckbox;
-	
-   private ComboBox opetusmuotoCombox;
+
+    //@PropertyId("perustiedot.opetusmuotos") - nested properties cannot be bound with @PropertyId? doing bind manually
+    private MultipleSelectToTableWrapper opetusmuotos;
 
    private Label opetusmuotoLabel;
-	
-   private TextField opetuskieliTextfield;
+
+    //@PropertyId("perustiedot.opetuskielis") - nested properties cannot be bound with @PropertyId? doing bind manually
+    private MultipleSelectToTableWrapper opetuskielis;
 	
    private Label opetuskieliLabel;
 	
@@ -104,12 +106,14 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
     
    public KoulutusmoduuliToteutusEditView() {
        rootLayout = new GridLayout();
-       komoto = new TutkintoOhjelmaToteutusDTO();
-       initForm(komoto, rootLayout);
+       model = new TutkintoOhjelmaToteutusDTO();
+       // TODO: pitäiskö komotolla aina olla perustiedot, jolloin perustiedot voisi olla dto:ssa jo muuta kuin null?
+       model.setPerustiedot(new KoulutusmoduuliPerustiedotDTO());
+       initForm(model, rootLayout);
        form.getFooter().removeAllComponents();
        form.setImmediate(true);
+       bind(model);
        setCompositionRoot(form);
-       //setCompositionRoot(rootLayout);
    }
    
    private GridLayout buildRootLayout() {
@@ -213,30 +217,24 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 		opetuskieliLabel.setHeight("-1px");
 		opetuskieliLabel.setValue("Opetuskieli/-kielet");
 		rootLayout.addComponent(opetuskieliLabel, 2, 3);
-		
-		// opetuskieliTextfield
-		opetuskieliTextfield = new TextField();
-		opetuskieliTextfield.setImmediate(false);
-		opetuskieliTextfield.setWidth("166px");
-		opetuskieliTextfield.setHeight("-1px");
-		rootLayout.addComponent(opetuskieliTextfield, 3, 3);
-		
-		// opetusmuotoLabel
+
+       // opetuskielis
+       opetuskielis = createMultipleKoodiField(KOODISTO_KIELI_URI);
+       rootLayout.addComponent(opetuskielis, 3, 3);
+
+       // opetusmuotoLabel
 		opetusmuotoLabel = new Label();
 		opetusmuotoLabel.setImmediate(false);
 		opetusmuotoLabel.setWidth("-1px");
 		opetusmuotoLabel.setHeight("-1px");
 		opetusmuotoLabel.setValue("Opetusmuoto");
 		rootLayout.addComponent(opetusmuotoLabel, 0, 4);
-		
-		// opetusmuotoCombox
-		opetusmuotoCombox = new ComboBox();
-		opetusmuotoCombox.setImmediate(false);
-		opetusmuotoCombox.setWidth("-1px");
-		opetusmuotoCombox.setHeight("-1px");
-		rootLayout.addComponent(opetusmuotoCombox, 1, 4);
-		
-		// maksullinenKoulutusCheckbox
+
+       // opetusmuotos
+       opetusmuotos = createMultipleKoodiField(KOODISTO_OPETUSMUOTO_URI);
+       rootLayout.addComponent(opetusmuotos, 1, 4);
+
+       // maksullinenKoulutusCheckbox
 		maksullinenKoulutusCheckbox = new CheckBox();
 		maksullinenKoulutusCheckbox.setCaption("Koulutus on maksullista");
 		maksullinenKoulutusCheckbox.setImmediate(false);
@@ -284,23 +282,37 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 		return rootLayout;
 	}
 
+    private MultipleSelectToTableWrapper createMultipleKoodiField(String koodistoUri) {
+        final MultipleSelectToTableWrapper field = WidgetFactory.createMultipleKoodiTableField(koodistoUri);
+        final Table table = field.getTable();
+        table.setVisibleColumns(new Object[]{"koodiArvo", MultipleSelectToTableWrapper.REMOVE_BUTTON});
+        table.setPageLength(0); // this will achieve table size to shrink to content size
+        table.setWidth("100%");
+        table.setColumnHeaderMode(Table.COLUMN_HEADER_MODE_HIDDEN); // hide table header
+        return field;
+    }
+
+    @Override
+    public void bind(KoulutusmoduuliToteutusDTO model) {
+        super.bind(model);
+
+        // nested properties cannot be bound with @PropertyId? doing bind manually
+        opetuskielis.setPropertyDataSource(new ObjectProperty(model.getPerustiedot().getOpetuskielis()));
+        opetusmuotos.setPropertyDataSource(new ObjectProperty(model.getPerustiedot().getOpetusmuotos()));
+        form.addField("perustiedot.opetuskielis", opetuskielis);
+        form.addField("perustiedot.opetusmuotos", opetusmuotos);
+    }
+
     @Override
     protected KoulutusmoduuliToteutusDTO save(KoulutusmoduuliToteutusDTO model) throws Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-        
-   
     /**
      * @return the teematOptionGroup
      */
     public OptionGroup getTeematOptionGroup() {
         return teematOptionGroup;
-    }
-
-    @Override
-    protected void processSave() {
-        super.processSave();
     }
 
     /**
@@ -314,14 +326,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
      * @return the komoto
      */
     public KoulutusmoduuliToteutusDTO getKomoto() {
-        return komoto;
-    }
-
-    /**
-     * @param komoto the komoto to set
-     */
-    public void setKomoto(KoulutusmoduuliToteutusDTO komoto) {
-        this.komoto = komoto;
+        return model;
     }
 
     /**
@@ -351,5 +356,92 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
     public void setKomotoEditViewHeight(int komotoEditViewHeight) {
         this.komotoEditViewHeight = komotoEditViewHeight;
     }
-   
+
+    public GridLayout getRootLayout() {
+        return rootLayout;
+    }
+
+    public Button getTallennaValmiinaBtn() {
+        return tallennaValmiinaBtn;
+    }
+
+    public Button getTallennaLuonnoksenaBtn() {
+        return tallennaLuonnoksenaBtn;
+    }
+
+    public Button getPeruutaBtn() {
+        return peruutaBtn;
+    }
+
+    public TextField getMaksullinenKoulutusTextfield() {
+        return maksullinenKoulutusTextfield;
+    }
+
+    public CheckBox getMaksullinenKoulutusCheckbox() {
+        return maksullinenKoulutusCheckbox;
+    }
+
+    public MultipleSelectToTableWrapper getOpetusmuotos() {
+        return opetusmuotos;
+    }
+
+    public Label getOpetusmuotoLabel() {
+        return opetusmuotoLabel;
+    }
+
+    public MultipleSelectToTableWrapper getOpetuskielis() {
+        return opetuskielis;
+    }
+
+    public Label getOpetuskieliLabel() {
+        return opetuskieliLabel;
+    }
+
+    public TextField getOrganisaatioTextfield() {
+        return organisaatioTextfield;
+    }
+
+    public Label getOrganisaatioLabel() {
+        return organisaatioLabel;
+    }
+
+    public ComboBox getSuunniteltuKestoTextfield() {
+        return suunniteltuKestoTextfield;
+    }
+
+    public Label getSuunniteltuKestoLabel() {
+        return suunniteltuKestoLabel;
+    }
+
+    public ComboBox getKoulutusLajiCombobox() {
+        return koulutusLajiCombobox;
+    }
+
+    public Label getKoulutusLajiLabel() {
+        return koulutusLajiLabel;
+    }
+
+    public PopupDateField getKoulutuksenAlkamispvmDatefield() {
+        return koulutuksenAlkamispvmDatefield;
+    }
+
+    public Label getKoulutuksenAlkamisPvmLbl() {
+        return koulutuksenAlkamisPvmLbl;
+    }
+
+    public TextField getKoulutusmoduuliTextfield() {
+        return koulutusmoduuliTextfield;
+    }
+
+    public Label getKoulutusModuliLabel() {
+        return koulutusModuliLabel;
+    }
+
+    public Label getKomotoEditTitle() {
+        return komotoEditTitle;
+    }
+
+    public static List<String> getDummyTeemat() {
+        return dummyTeemat;
+    }
 }

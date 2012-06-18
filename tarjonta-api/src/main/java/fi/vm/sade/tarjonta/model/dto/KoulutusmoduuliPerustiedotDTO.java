@@ -15,10 +15,11 @@
  */
 package fi.vm.sade.tarjonta.model.dto;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -32,9 +33,9 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
 
     private String koulutusKoodiUri;
     
-    private List<String> opetusmuotos;
+    private List<String> opetusmuotos = new ArrayList<String>();
     
-    private List<String> opetuskielis;
+    private List<String> opetuskielis = new ArrayList<String>();
 
     public void setOrganisaatioOid(String organisaatioOid) {
         this.organisaatioOid = organisaatioOid;
