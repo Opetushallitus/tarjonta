@@ -12,6 +12,7 @@ import fi.vm.sade.generic.ui.component.GenericForm;
 import fi.vm.sade.generic.ui.component.MultipleSelectToTableWrapper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
+import fi.vm.sade.organisaatio.ui.widgets.OrganisaatioSearchType;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSearchDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
@@ -19,6 +20,8 @@ import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
 import fi.vm.sade.tarjonta.widget.KoulutusmoduuliComponent;
 import fi.vm.sade.tarjonta.widget.factory.TarjontaWidgetFactory;
 import fi.vm.sade.tarjonta.ui.util.I18NHelper;
+import fi.vm.sade.organisaatio.ui.widgets.OrganisaatioSearchWidget;
+import fi.vm.sade.organisaatio.ui.widgets.factory.OrganisaatioWidgetFactory;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -85,7 +88,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
     //@PropertyId("perustiedot.opetuskielis") - nested properties cannot be bound with @PropertyId? doing bind manually
     private MultipleSelectToTableWrapper opetuskielis;
 	
-   private TextField organisaatioTextfield;
+   private OrganisaatioSearchWidget organisaatioField;
 	
    //@PropertyId("suunniteltuKestoUri")
    private KoodistoComponent suunniteltuKestoKoodisto;
@@ -155,11 +158,9 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 		rootLayout.setImmediate(false);
 	
 		
-		// koulutusmoduuliTextfield
-		//koulutusmoduuliTextfield = new TextField();
-       KoulutusmoduuliSearchDTO searchSpecification = new KoulutusmoduuliSearchDTO();
-       searchSpecification.setNimi(""); // with empty nimi we search all
-       koulutusmoduuliTextfield = tarjontaWidgetFactory.createKoulutusmoduuliComponentWithCombobox(searchSpecification);
+                KoulutusmoduuliSearchDTO searchSpecification = new KoulutusmoduuliSearchDTO();
+                searchSpecification.setNimi(""); // with empty nimi we search all
+                koulutusmoduuliTextfield = tarjontaWidgetFactory.createKoulutusmoduuliComponentWithCombobox(searchSpecification);
                 koulutusmoduuliTextfield.setCaption(SAVE_SUCCESSFUL);
                 koulutusmoduuliTextfield.setCaption(getCaptionForString("koulutusmoduuli"));
 		rootLayout.addComponent(koulutusmoduuliTextfield, "koulutusmoduuli");
@@ -184,10 +185,9 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 		
 		
 		// organisaatioTextfield
-		organisaatioTextfield = new TextField();
-		organisaatioTextfield.setImmediate(false);
-                organisaatioTextfield.setCaption(getCaptionForString("organisaatio"));
-		rootLayout.addComponent(organisaatioTextfield, "organisaatio");
+                organisaatioField = OrganisaatioWidgetFactory.createOrganisaatioSearchWidget(OrganisaatioSearchType.BASIC);
+                organisaatioField.setPropertyDataSource(new NestedMethodProperty(model, "tarjoajat"));
+                rootLayout.addComponent(organisaatioField, "organisaatio");
 		
 		 // opetuskielis
                 opetuskielis = createMultipleKoodiField(KOODISTO_KIELI_URI);
@@ -367,10 +367,6 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
         return opetuskielis;
     }
 
-    public TextField getOrganisaatioTextfield() {
-        return organisaatioTextfield;
-    }
-
     public KoodistoComponent getSuunniteltuKestoTextfield() {
         return suunniteltuKestoKoodisto;
     }
@@ -389,5 +385,19 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 
     public static List<String> getDummyTeemat() {
         return dummyTeemat;
+    }
+
+    /**
+     * @return the organisaatioField
+     */
+    public OrganisaatioSearchWidget getOrganisaatioField() {
+        return organisaatioField;
+    }
+
+    /**
+     * @param organisaatioField the organisaatioField to set
+     */
+    public void setOrganisaatioField(OrganisaatioSearchWidget organisaatioField) {
+        this.organisaatioField = organisaatioField;
     }
 }

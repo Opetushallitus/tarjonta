@@ -11,6 +11,7 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.TutkintoOhjelmaUiModel;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.beanutils.BeanUtils;
@@ -85,10 +86,15 @@ public class KomotoTableFactory {
         for (KoulutusmoduuliToteutusDTO totModuli : totModuulit) {
             try {
            TutkintoOhjelmaUiModel uiDto =  new TutkintoOhjelmaUiModel();
+           if (totModuli.getKoulutuksenAlkamisPvm() == null) {
+               totModuli.setKoulutuksenAlkamisPvm(new Date());
+           }
            BeanUtils.copyProperties(uiDto, totModuli);
+           
             komotos.addItem(uiDto.getOid(), uiDto);
             }catch (Exception exp) {
                 log.warn(exp.getMessage());
+               
             }
         }
 

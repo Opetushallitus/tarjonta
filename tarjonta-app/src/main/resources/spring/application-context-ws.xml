@@ -5,6 +5,7 @@
 
     <bean id="tarjontaService" class="fi.vm.sade.tarjonta.service.mock.TarjontaServiceMock" />
     <bean id="hakueraService" class="fi.vm.sade.tarjonta.service.mock.HakueraServiceMock" />
+    <bean id="organisaatioService" class="fi.vm.sade.organisaatio.service.OrganisaatioServiceMock"/>
     <bean id="koulutusModuuliToteutusAdminService" class="fi.vm.sade.tarjonta.service.mock.KoulutusmoduuliToteutusAdminServiceMock"/>
     <bean id="komotoTableFactory" class="fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KomotoTableFactory"/>
 
@@ -21,5 +22,6 @@
 
     <bean class="fi.vm.sade.koodisto.widget.factory.WidgetFactory" />
 
+    <bean class="fi.vm.sade.organisaatio.ui.widgets.factory.OrganisaatioWidgetFactory"/>
 
 </beans>

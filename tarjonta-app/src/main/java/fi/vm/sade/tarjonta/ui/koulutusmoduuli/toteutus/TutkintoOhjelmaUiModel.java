@@ -4,7 +4,7 @@
  */
 
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
-import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
+import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
 
 /*
  *
@@ -27,7 +27,7 @@ import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
  *
  * @author Tuomas Katva
  */
-public class TutkintoOhjelmaUiModel extends TutkintoOhjelmaDTO {
+public class TutkintoOhjelmaUiModel extends TutkintoOhjelmaToteutusDTO {
 
     private boolean selected = false;
     
