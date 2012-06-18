@@ -90,4 +90,12 @@ public class KoulutusmoduuliToteutusEditViewPageObject extends VaadinPageObjectS
     public void selectKoulutusmoduuli(String koulutusmoduuli) {
         select(component.getKoulutusmoduuliTextfield().getField(), koulutusmoduuli);
     }
+
+    public List<String> getSelectedTeemas() {
+        return getCheckboxOptions(component.getTeemat().getDebugId());
+    }
+
+    public void selectTeema(String teema) {
+        clickCheckbox(component.getTeemat().getDebugId(), teema);
+    }
 }

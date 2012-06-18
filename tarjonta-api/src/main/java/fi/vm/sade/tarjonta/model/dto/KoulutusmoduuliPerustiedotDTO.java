@@ -19,6 +19,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
 
     private List<String> opetuskielis = new ArrayList<String>();
     
-    private List<String> asiasanoituses = new ArrayList<String>();
+    private Collection<String> asiasanoituses = new ArrayList<String>();
 
     /*
      * Uri to Koodisto.
@@ -107,14 +108,14 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
     /**
      * @return the asiasanoituses
      */
-    public List<String> getAsiasanoituses() {
+    public Collection<String> getAsiasanoituses() {
         return asiasanoituses;
     }
 
     /**
      * @param asiasanoituses the asiasanoituses to set
      */
-    public void setAsiasanoituses(List<String> asiasanoituses) {
+    public void setAsiasanoituses(Collection<String> asiasanoituses) {
         this.asiasanoituses = asiasanoituses;
     }
 

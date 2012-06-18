@@ -15,11 +15,11 @@
  */
 package fi.vm.sade.tarjonta.model.dto;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  *
@@ -28,7 +28,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @SuppressWarnings("serial")
 public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
 
-    
+
 
     private KoulutusmoduuliTila tila;
 
@@ -53,9 +53,9 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     private List<String> tarjoajat;
 
     private Date koulutuksenAlkamisPvm;
-        
+
     private String maksullisuus;
-    
+
     public String getOid() {
         return oid;
     }
@@ -91,10 +91,10 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("oid", oid).
-            append("nimi", nimi).
-            append("tila", getTila()).
-            append("toteutettavaKoulutusmoduuliOID", toteutettavaKoulutusmoduuliOID).
-            append(perustiedot).toString();
+                append("nimi", nimi).
+                append("tila", getTila()).
+                append("toteutettavaKoulutusmoduuliOID", toteutettavaKoulutusmoduuliOID).
+                append(perustiedot).toString();
     }
 
     /**
@@ -160,7 +160,7 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     }
 
     /**
-     * 
+     *
      * @return the maksullisuus
      */
     public String getMaksullisuus() {
@@ -168,7 +168,7 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     }
 
     /**
-     * 
+     *
      * @param maksullisuus the maksuullisuus to set
      */
     public void setMaksullisuus(String maksullisuus) {

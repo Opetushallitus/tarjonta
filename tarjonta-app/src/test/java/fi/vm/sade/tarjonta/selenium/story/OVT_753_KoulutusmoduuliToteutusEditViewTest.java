@@ -11,6 +11,9 @@ import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusmoduuliToteutusEd
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import static fi.vm.sade.support.selenium.SeleniumUtils.*;
 import static org.junit.Assert.*;
 
@@ -45,7 +48,8 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
         perustiedot.getOpetuskielis().add("Ruotsi"); // NOTE: uri vs arvo
         perustiedot.getOpetusmuotos().add("opetusmuoto3");
         perustiedot.setSuunniteltuKestoUri("6 kuukautta");
-        komoto.setToteutettavaKoulutusmoduuliOID("oid_koulutusmoduuli1");        
+        perustiedot.setAsiasanoituses(Arrays.asList("Kielet ja kulttuuri"));
+        komoto.setToteutettavaKoulutusmoduuliOID("oid_koulutusmoduuli1");
         komoto.setKoulutuslajiUri("Nuorten koulutus");
         komoto.setMaksullisuus("500 euroa");
         komoto.setPerustiedot(perustiedot);
@@ -165,6 +169,31 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
         STEP("varmistetaan että valinnat päätyvät koodi urina dto:hon formin commitissa");
         component.getForm().commit();
         assertEquals("oid_koulutusmoduuli2", pageObject.getComponent().getKoulutusmoduuliTextfield().getValue());
+    }
+
+    @Test
+    public void testTeemaField() throws Throwable {
+        assertNotNull(component.getForm().getField("teemaUris"));
+
+        STEP("varmistetaan että komotolle ennestään liitetty teema näkyy valittuna");
+        assertEquals(1, pageObject.getSelectedTeemas().size());
+        assertTrue(pageObject.getSelectedTeemas().contains("Kielet ja kulttuuri"));
+
+        STEP("valitaan toinenkin teema");
+        pageObject.selectTeema("Suojelu ja pelastus");
+
+        STEP("varmistetaan että valinnat päätyvät dto:hon formin commitissa");
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() throws Throwable {
+                System.out.println("VAL: "+component.getTeemat().getValue()); // TODO:
+                assertTrue(component.getTeemat().getValue() instanceof Collection);
+            }
+        });
+        component.getForm().commit();
+        assertEquals(2, pageObject.getSelectedTeemas().size());
+        assertTrue(pageObject.getSelectedTeemas().contains("Kielet ja kulttuuri"));
+        assertTrue(pageObject.getSelectedTeemas().contains("Suojelu ja pelastus"));
     }
 
     private void createKoulutusmoduuli(String nimi) {
