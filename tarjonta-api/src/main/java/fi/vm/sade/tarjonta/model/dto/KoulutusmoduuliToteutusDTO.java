@@ -57,8 +57,9 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     private String suunniteltuKestoUri;
     
     private List<String> teemaUris;
+        
+    private String maksullisuus;
     
-
     public String getOid() {
         return oid;
     }
@@ -206,6 +207,22 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
      */
     public void setTeemaUris(List<String> teemaUris) {
         this.teemaUris = teemaUris;
+    }
+    
+    /**
+     * 
+     * @return the maksullisuus
+     */
+    public String getMaksullisuus() {
+        return maksullisuus;
+    }
+
+    /**
+     * 
+     * @param maksullisuus the maksuullisuus to set
+     */
+    public void setMaksullisuus(String maksullisuus) {
+        this.maksullisuus = maksullisuus;
     }
 
 }

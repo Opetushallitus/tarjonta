@@ -68,6 +68,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 	
    private Button peruutaBtn;
 	
+   @PropertyId("maksullisuus")
    private TextField maksullinenKoulutusTextfield;
 	
    private CheckBox maksullinenKoulutusCheckbox;
