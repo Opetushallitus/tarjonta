@@ -15,10 +15,8 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.Embeddable;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -26,9 +24,8 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Jukka Raanamo
  */
-@Entity
-@Table(name = KoodistoKoodi.TABLE_NAME)
-public class KoodistoKoodi extends BaseEntity {
+@Embeddable
+public class KoodistoKoodi  {
 
     public static final String TABLE_NAME = "koodisto_koodi";
 

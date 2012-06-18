@@ -91,7 +91,9 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     /**
      * Set of Koodisto uris, one for each "teema" (theme) provided.
      */
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    //@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @ElementCollection(fetch= FetchType.LAZY)
+    @CollectionTable(name=TABLE_NAME + "_teema", joinColumns=@JoinColumn(name="koulutusmoduuli_toteutus_id"))    
     private Set<KoodistoKoodi> teemaUris;
     
 

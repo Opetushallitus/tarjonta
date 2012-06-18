@@ -15,11 +15,9 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
-import fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus;
+import fi.vm.sade.tarjonta.model.*;
 import java.util.Date;
+import java.util.Set;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -133,6 +131,37 @@ public class KoulutusmoduuliToteutusDAOTest {
         assertNotNull(moduuliDAO.read(defaultModuuli.getId()));
         
     }
+    
+    @Test
+    public void testAddAndSaveAsiasanoitus() {
+        
+        final String asiasanoitusUri = "http://asiasanoitus";
+        
+        defaultToteutus.getPerustiedot().addAsiasanoitus(asiasanoitusUri);        
+        defaultToteutus = updateAndRead(defaultToteutus);
+        
+        final Set<KoodistoKoodi> asiasanoitus = defaultToteutus.getPerustiedot().getAsiasanoituses();
+        
+        assertEquals(1, asiasanoitus.size());
+        assertEquals(asiasanoitusUri, asiasanoitus.iterator().next().getKoodiUri());
+        
+    }
+    
+    @Test
+    public void testRemoveAsiasanoitus() {
+        
+        final String asiasanoitusUri = "http://asiasanoitus";
+        
+        defaultToteutus.getPerustiedot().addAsiasanoitus(asiasanoitusUri);        
+        defaultToteutus = updateAndRead(defaultToteutus);
+        
+        defaultToteutus.getPerustiedot().removeAsiasanoitus(asiasanoitusUri);
+        defaultToteutus = updateAndRead(defaultToteutus);
+        
+        assertEquals(0, defaultToteutus.getPerustiedot().getAsiasanoituses().size());
+        
+    }
+    
 
     private KoulutusmoduuliToteutus updateAndRead(KoulutusmoduuliToteutus toteutus) {
         toteutusDAO.update(toteutus);

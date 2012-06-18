@@ -19,12 +19,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  *
@@ -48,19 +43,22 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
     /**
      * Set of Koodisto uris, one for each "opetuskieli" (teaching language) provided.
      */
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @ElementCollection(fetch= FetchType.LAZY)
+    @CollectionTable(name=TABLE_NAME + "_opetuskieli", joinColumns=@JoinColumn(name="perustiedot_id"))
     private Set<KoodistoKoodi> opetuskielis = new HashSet<KoodistoKoodi>();
 
     /**
      * Set of Koodisto uris, one for each "opetusmuoto" (form of teaching) provided.
      */
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @ElementCollection(fetch= FetchType.LAZY)
+    @CollectionTable(name=TABLE_NAME + "_opetusmuoto", joinColumns=@JoinColumn(name="perustiedot_id"))
     private Set<KoodistoKoodi> opetusmuotos = new HashSet<KoodistoKoodi>();
 
     /**
      * Set of Koodisto uris, one for each "asiasanoitus" (a.k.a theme/teema) provided.
      */
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @ElementCollection(fetch= FetchType.LAZY)
+    @CollectionTable(name=TABLE_NAME + "_asiasanoitus", joinColumns=@JoinColumn(name="perustiedot_id"))
     private Set<KoodistoKoodi> asiasanoituses = new HashSet<KoodistoKoodi>();
 
     /**
