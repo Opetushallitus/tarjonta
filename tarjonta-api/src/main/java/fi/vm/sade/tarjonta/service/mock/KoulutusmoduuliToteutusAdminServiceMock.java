@@ -7,6 +7,7 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
 import fi.vm.sade.tarjonta.service.KoulutusmoduuliToteutusAdminService;
+import fi.vm.sade.tarjonta.service.NoSuchOIDException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +54,20 @@ public class KoulutusmoduuliToteutusAdminServiceMock implements KoulutusmoduuliT
         }
         return tilaKomotos;
     }
+
+    @Override
+    public KoulutusmoduuliToteutusDTO findByOID(String koulutusmoduuliToteutusOID) throws NoSuchOIDException {
+        
+        KoulutusmoduuliToteutusDTO dto = repo.get(koulutusmoduuliToteutusOID);
+        if (dto == null) {
+            throw new NoSuchOIDException(koulutusmoduuliToteutusOID);
+        }
+        return dto;
+        
+    }
+    
+    
+    
 
     @Override
     public KoulutusmoduuliToteutusDTO save(KoulutusmoduuliToteutusDTO toteutus) {

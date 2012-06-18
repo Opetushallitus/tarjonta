@@ -28,11 +28,10 @@ import org.apache.cxf.annotations.WSDLDocumentation;
  * @author Marko Lyly
  * @author Tuomas Katva
  */
-@WebService(name="koulutusmoduuliToteutusAdminService")
+@WebService(name = "koulutusmoduuliToteutusAdminService")
 @WSDLDocumentation("Palvelut koulutustarjonnan toteutuksien käsittelyyn.")
 public interface KoulutusmoduuliToteutusAdminService {
 
-    
     /**
      * Saves given data to persistent storage.
      *
@@ -41,7 +40,18 @@ public interface KoulutusmoduuliToteutusAdminService {
      */
     @WebMethod
     KoulutusmoduuliToteutusDTO save(KoulutusmoduuliToteutusDTO toteutus);
-    
+
+    /**
+     * Returns KoulutusmoduuliToteutusDTO by its OID.
+     * 
+     * @param koulutusmoduuliToteutusOID
+     * @return 
+     * @throws NoSuchOIDException if no such entity exists
+     */
+    @WebMethod
+    KoulutusmoduuliToteutusDTO findByOID(String koulutusmoduuliToteutusOID)
+        throws NoSuchOIDException;
+
     
     /**
      * Retrieves List of Koulutusmoduulitoteutus with given search criteria
