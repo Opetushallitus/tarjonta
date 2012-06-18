@@ -1,17 +1,3 @@
-package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.data.Container;
-import com.vaadin.terminal.Sizeable;
-import com.vaadin.ui.TableFieldFactory;
-import com.vaadin.ui.themes.BaseTheme;
-
-
 /*
  *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
@@ -29,11 +15,24 @@ import com.vaadin.ui.themes.BaseTheme;
  * European Union Public Licence for more details.
  */
 
+package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.data.Container;
+import com.vaadin.terminal.Sizeable;
+import com.vaadin.ui.TableFieldFactory;
+import com.vaadin.ui.themes.BaseTheme;
+
 /**
  *
  * @author Tuomas Katva
  */
-public class KomotoTable extends CustomComponent {
+public class KoulutusModuulinToteutusTable extends CustomComponent {
         
         private GridLayout tableGrid;
         private final float hdrRowLesserRatio = 0.3f;
@@ -51,7 +50,7 @@ public class KomotoTable extends CustomComponent {
         //tells about changes in komoto state table removes or adds
         //komotos to it depending on which state it is interested on
         
-        protected KomotoTable(KoulutusmoduuliTila tableTila) {
+        protected KoulutusModuulinToteutusTable(KoulutusmoduuliTila tableTila) {
             tableGrid = new GridLayout(2, 3);
             tableGrid.setSizeFull();
             tila = tableTila;

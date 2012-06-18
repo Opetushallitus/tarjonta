@@ -1,16 +1,3 @@
-package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
-
-import com.vaadin.data.util.BeanContainer;
-import com.vaadin.terminal.Sizeable;
-import com.vaadin.ui.*;
-import com.vaadin.ui.Button.ClickEvent;
-import fi.vm.sade.tarjonta.ui.service.TarjontaUiService;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-
 /*
  *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
@@ -27,6 +14,20 @@ import org.springframework.beans.factory.annotation.Configurable;
  * FOR A PARTICULAR PURPOSE. See the European Union Public Licence for more
  * details.
  */
+
+
+package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
+
+import com.vaadin.terminal.Sizeable;
+import com.vaadin.ui.*;
+import com.vaadin.ui.Button.ClickEvent;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
+import fi.vm.sade.tarjonta.ui.util.I18NHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
+
 /**
  *
  * @author Tuomas Katva
@@ -40,13 +41,15 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
     private Panel rightPanel;
     private final String[] visibleColumns = new String[]{"nimi", "oid"};
     private final String[] viimeisimmatVisibleColumns = new String[]{"selected","nimi", "oid"};
-    private KomotoTable viimeisimmat;
-    private KomotoTable suunnitteilla;
-    private KomotoTable julkaistava;
-    private KomotoTable julkaistu;
+    private KoulutusModuulinToteutusTable viimeisimmat;
+    private KoulutusModuulinToteutusTable suunnitteilla;
+    private KoulutusModuulinToteutusTable julkaistava;
+    private KoulutusModuulinToteutusTable julkaistu;
     @Autowired
-    private KomotoTableFactory komotoTableFactory;
+    private KoulutusModuulinToteutusTableFactory komotoTableFactory;
 
+    private static final I18NHelper i18n = new I18NHelper("KoulutusmoduuliToteutusListView.");
+    
     public KoulutusmoduuliToteutusListView() {
         rootLayout = new HorizontalLayout();
         leftPanel = new Panel("Empty panel");
@@ -71,16 +74,26 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
 
         tableHolder.addComponent(suunnitteilla);
 
-        setJulkaistava(getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.VALMIS), visibleColumns,"Julkaistavaksi valmis koulutustarjonta"));
+        setJulkaistava(getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.VALMIS), visibleColumns,getCaptionForString("julkaistavaKoulutustarjonta")));
 
         tableHolder.addComponent(getJulkaistava());
 
-        julkaistu = getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.JULKAISTU), visibleColumns,"Julkaistu koulutustarjonta");
+        julkaistu = getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.JULKAISTU), visibleColumns,getCaptionForString("julkaistuKoulutusTarjonta"));
 
         tableHolder.addComponent(julkaistu);
         return tableHolder;
     }
 
+    
+    protected String getCaptionForString(String key) {
+        String retval = i18n.getMessage(key);
+        if (retval == null || retval.length() < 1) {
+            return key;
+        } else {
+            return retval;
+        }
+    }
+    
     private void addListernerToSuunnitteilla() {
         if (suunnitteilla != null && suunnitteilla.getTableButton() != null) {
             suunnitteilla.getTableButton().addListener(new Button.ClickListener() {
@@ -106,70 +119,70 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
     /**
      * @return the suunnitteilla
      */
-    public KomotoTable getSuunnitteilla() {
+    public KoulutusModuulinToteutusTable getSuunnitteilla() {
         return suunnitteilla;
     }
 
     /**
      * @param suunnitteilla the suunnitteilla to set
      */
-    public void setSuunnitteilla(KomotoTable suunnitteilla) {
+    public void setSuunnitteilla(KoulutusModuulinToteutusTable suunnitteilla) {
         this.suunnitteilla = suunnitteilla;
     }
 
     /**
      * @return the julkaistu
      */
-    public KomotoTable getJulkaistu() {
+    public KoulutusModuulinToteutusTable getJulkaistu() {
         return julkaistu;
     }
 
     /**
      * @param julkaistu the julkaistu to set
      */
-    public void setJulkaistu(KomotoTable julkaistu) {
+    public void setJulkaistu(KoulutusModuulinToteutusTable julkaistu) {
         this.julkaistu = julkaistu;
     }
 
     /**
      * @return the komotoTableFactory
      */
-    public KomotoTableFactory getKomotoTableFactory() {
+    public KoulutusModuulinToteutusTableFactory getKomotoTableFactory() {
         return komotoTableFactory;
     }
 
     /**
      * @param komotoTableFactory the komotoTableFactory to set
      */
-    public void setKomotoTableFactory(KomotoTableFactory komotoTableFactory) {
+    public void setKomotoTableFactory(KoulutusModuulinToteutusTableFactory komotoTableFactory) {
         this.komotoTableFactory = komotoTableFactory;
     }
 
     /**
      * @return the julkaistava
      */
-    public KomotoTable getJulkaistava() {
+    public KoulutusModuulinToteutusTable getJulkaistava() {
         return julkaistava;
     }
 
     /**
      * @param julkaistava the julkaistava to set
      */
-    public void setJulkaistava(KomotoTable julkaistava) {
+    public void setJulkaistava(KoulutusModuulinToteutusTable julkaistava) {
         this.julkaistava = julkaistava;
     }
 
     /**
      * @return the viimeisimmat
      */
-    public KomotoTable getViimeisimmat() {
+    public KoulutusModuulinToteutusTable getViimeisimmat() {
         return viimeisimmat;
     }
 
     /**
      * @param viimeisimmat the viimeisimmat to set
      */
-    public void setViimeisimmat(KomotoTable viimeisimmat) {
+    public void setViimeisimmat(KoulutusModuulinToteutusTable viimeisimmat) {
         this.viimeisimmat = viimeisimmat;
     }
 }

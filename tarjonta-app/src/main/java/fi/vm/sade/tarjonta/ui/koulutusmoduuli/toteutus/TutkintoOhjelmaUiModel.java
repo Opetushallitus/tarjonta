@@ -1,10 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
-import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
 
 /*
  *
@@ -22,6 +15,9 @@ import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
+package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
+import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
+
 
 /**
  *

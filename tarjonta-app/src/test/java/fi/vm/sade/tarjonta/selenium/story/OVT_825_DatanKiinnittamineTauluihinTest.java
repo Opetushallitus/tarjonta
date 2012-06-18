@@ -8,7 +8,7 @@ package fi.vm.sade.tarjonta.selenium.story;
 import fi.vm.sade.tarjonta.selenium.TarjontaEmbedComponentTstSupport;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusmoduuliToteutusListView;
 import fi.vm.sade.tarjonta.selenium.pageobject.KoulutusmoduuliToteutusListPageObject;
-import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KomotoTable;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusModuulinToteutusTable;
 import static fi.vm.sade.support.selenium.SeleniumUtils.STEP;
 import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
@@ -51,7 +51,7 @@ public class OVT_825_DatanKiinnittamineTauluihinTest extends TarjontaEmbedCompon
         
         STEP("Verify that suunnitteilla olevat koulutusmoduulin totetukset table exists");
         
-        KomotoTable suunnitteilla = pageObject.getSuunnitteillaOlevat();
+        KoulutusModuulinToteutusTable suunnitteilla = pageObject.getSuunnitteillaOlevat();
         
         assertNotNull(suunnitteilla);
         
@@ -61,7 +61,7 @@ public class OVT_825_DatanKiinnittamineTauluihinTest extends TarjontaEmbedCompon
     public void testValmiitJulkaistavaksi() {
         STEP("Verify that julkaistavaksi valmiit koulutusmoduulin totetukset table exists");
         
-        KomotoTable valmiitJulkaistavaksi = pageObject.getValmiit();
+        KoulutusModuulinToteutusTable valmiitJulkaistavaksi = pageObject.getValmiit();
         
         assertNotNull(valmiitJulkaistavaksi);
         
@@ -71,7 +71,7 @@ public class OVT_825_DatanKiinnittamineTauluihinTest extends TarjontaEmbedCompon
     public void testTableHasData() {
         STEP("Verify that julkaistavaksi valmiit koulutusmoduulin totetukset table exists");
         
-        KomotoTable suunnitteilla = pageObject.getSuunnitteillaOlevat();
+        KoulutusModuulinToteutusTable suunnitteilla = pageObject.getSuunnitteillaOlevat();
         
         int itemCount = suunnitteilla.getKomotoTable().getItemIds().size();
         

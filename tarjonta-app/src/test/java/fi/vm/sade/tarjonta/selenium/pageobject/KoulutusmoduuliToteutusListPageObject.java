@@ -5,7 +5,7 @@ import fi.vm.sade.support.selenium.SeleniumUtils;
 import fi.vm.sade.support.selenium.VaadinPageObjectSupport;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.ui.MainWindow;
-import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KomotoTable;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusModuulinToteutusTable;
 import org.openqa.selenium.By;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusmoduuliToteutusListView;
 import org.openqa.selenium.WebDriver;
@@ -47,12 +47,12 @@ public class KoulutusmoduuliToteutusListPageObject extends VaadinPageObjectSuppo
     
     
     
-    public KomotoTable getSuunnitteillaOlevat() {
+    public KoulutusModuulinToteutusTable getSuunnitteillaOlevat() {
         SeleniumUtils.waitForElement(component.getSuunnitteilla());
         return component.getSuunnitteilla();
     }
     
-    public KomotoTable getValmiit() {
+    public KoulutusModuulinToteutusTable getValmiit() {
         return component.getJulkaistava();
     }
 

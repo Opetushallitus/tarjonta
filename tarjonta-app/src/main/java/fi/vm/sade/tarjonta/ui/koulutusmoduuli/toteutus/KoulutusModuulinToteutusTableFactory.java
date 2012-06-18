@@ -1,22 +1,3 @@
-package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
-
-import com.vaadin.data.Property;
-import com.vaadin.data.util.BeanContainer;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.DefaultFieldFactory;
-import com.vaadin.ui.Table;
-import fi.vm.sade.tarjonta.service.KoulutusmoduuliToteutusAdminService;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
-import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.TutkintoOhjelmaUiModel;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
-import java.util.Date;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.apache.commons.beanutils.BeanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 /*
  *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
@@ -33,21 +14,39 @@ import org.slf4j.LoggerFactory;
  * FOR A PARTICULAR PURPOSE. See the European Union Public Licence for more
  * details.
  */
+
+
+package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
+
+import com.vaadin.data.Property;
+import com.vaadin.data.util.BeanContainer;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Table;
+import fi.vm.sade.tarjonta.service.KoulutusmoduuliToteutusAdminService;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
+import java.util.Date;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.beanutils.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  * @author Tuomas Katva
  */
 //@Configurable(preConstruction = true)
-public class KomotoTableFactory {
+public class KoulutusModuulinToteutusTableFactory {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     
     @Autowired
     private KoulutusmoduuliToteutusAdminService koulutusModuuliToteutusAdminService;
 
-    public KomotoTable createViimTableWithTila(KoulutusmoduuliToteutusSearchDTO criteria, String[] visibleColumns) {
+    public KoulutusModuulinToteutusTable createViimTableWithTila(KoulutusmoduuliToteutusSearchDTO criteria, String[] visibleColumns) {
 
-        return KomotoTableBuilder.komotoTable(criteria.getTila())
+        return KoulutusModuulinToteutusTableBuilder.komotoTable(criteria.getTila())
                 .withLabel("Viimeisimmat toteutuneet KOMOTOt")
                 .withButton("Siirra suunnitteluun", false)
                 .withSearchAllButton("Valitse kaikki",true)
@@ -65,8 +64,8 @@ public class KomotoTableFactory {
 
     }
 
-    public KomotoTable createSuunnitteillaOlevaTable(KoulutusmoduuliToteutusSearchDTO criteria, String[] visibleColumns) {
-        return KomotoTableBuilder.komotoTable(criteria.getTila())
+    public KoulutusModuulinToteutusTable createSuunnitteillaOlevaTable(KoulutusmoduuliToteutusSearchDTO criteria, String[] visibleColumns) {
+        return KoulutusModuulinToteutusTableBuilder.komotoTable(criteria.getTila())
                 .withLabel("Suunnitteilla oleva koulutustarjonta")
                 .withButton("Luo uusi Komoto", false)
                 .withHeightAndWidth("400px", "200px")
@@ -74,8 +73,8 @@ public class KomotoTableFactory {
                 .build();
     }
 
-    public KomotoTable createCommonKomotoTable(KoulutusmoduuliToteutusSearchDTO criteria, String[] visibleColumns, String tableLabel) {
-        return KomotoTableBuilder.komotoTable(criteria.getTila())
+    public KoulutusModuulinToteutusTable createCommonKomotoTable(KoulutusmoduuliToteutusSearchDTO criteria, String[] visibleColumns, String tableLabel) {
+        return KoulutusModuulinToteutusTableBuilder.komotoTable(criteria.getTila())
                 .withLabel(tableLabel).withHeightAndWidth("400px", "200px")
                 .withTable(createContainer(koulutusModuuliToteutusAdminService.findWithTila(criteria)), visibleColumns)
                 .build();

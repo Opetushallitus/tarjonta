@@ -1,12 +1,3 @@
-
-package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
-
-import com.vaadin.data.Container;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.TableFieldFactory;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
-
-
 /*
  *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
@@ -24,66 +15,77 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
  * European Union Public Licence for more details.
  */
 
+
+package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
+
+import com.vaadin.data.Container;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.TableFieldFactory;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+
+
+
+
 /**
  *
  * @author Tuomas Katva
  */
-public class KomotoTableBuilder {
+public class KoulutusModuulinToteutusTableBuilder {
 
-    KomotoTable tableToBuild; 
+    KoulutusModuulinToteutusTable tableToBuild; 
     
-     public static KomotoTableBuilder komotoTable(KoulutusmoduuliTila tableTilaType) {
+     public static KoulutusModuulinToteutusTableBuilder komotoTable(KoulutusmoduuliTila tableTilaType) {
          
-         return new KomotoTableBuilder(tableTilaType);
+         return new KoulutusModuulinToteutusTableBuilder(tableTilaType);
      }
      
-     private KomotoTableBuilder(KoulutusmoduuliTila tilaType) {
-         tableToBuild = new KomotoTable(tilaType);
+     private KoulutusModuulinToteutusTableBuilder(KoulutusmoduuliTila tilaType) {
+         tableToBuild = new KoulutusModuulinToteutusTable(tilaType);
      }
      
-     public KomotoTableBuilder withLabel(String label) {
+     public KoulutusModuulinToteutusTableBuilder withLabel(String label) {
          tableToBuild.addLabelToHdr(label);
          return this;
      }
      
-     public KomotoTableBuilder withHeightAndWidth(String width,String height) {
+     public KoulutusModuulinToteutusTableBuilder withHeightAndWidth(String width,String height) {
          tableToBuild.setWidth(width);
          return this;
      }
      
-     public KomotoTableBuilder withButton(String btnLabel,boolean linkStyle) {
+     public KoulutusModuulinToteutusTableBuilder withButton(String btnLabel,boolean linkStyle) {
          tableToBuild.addButtonToHdr(btnLabel,linkStyle);
          return this;
      }
      
-     public KomotoTableBuilder withAddTableContainerProperty(String propertyId,Class clazz) {
+     public KoulutusModuulinToteutusTableBuilder withAddTableContainerProperty(String propertyId,Class clazz) {
          if (tableToBuild.getKomotoTable() != null) {
              tableToBuild.getKomotoTable().addContainerProperty(propertyId, clazz, null);
          }
          return this;
      }
      
-     public KomotoTableBuilder withColumnGenerator(String propertyId,Table.ColumnGenerator generator) {
+     public KoulutusModuulinToteutusTableBuilder withColumnGenerator(String propertyId,Table.ColumnGenerator generator) {
          tableToBuild.addColumnGenerator(propertyId, generator);
          return this;
      }
      
-     public KomotoTableBuilder withTable(Container dataContainer,String[] visibleColumns) {
+     public KoulutusModuulinToteutusTableBuilder withTable(Container dataContainer,String[] visibleColumns) {
          tableToBuild.addTable(dataContainer, visibleColumns);
          return this;
      }
      
-     public KomotoTableBuilder withFieldFactory(TableFieldFactory ff) {
+     public KoulutusModuulinToteutusTableBuilder withFieldFactory(TableFieldFactory ff) {
          tableToBuild.addFieldFactory(ff);
          return this;
      }
      
-     public KomotoTableBuilder withSearchAllButton(String searchAllBtnLbl,boolean linkStyle) {
+     public KoulutusModuulinToteutusTableBuilder withSearchAllButton(String searchAllBtnLbl,boolean linkStyle) {
          tableToBuild.addSelectAllButton(searchAllBtnLbl,linkStyle);
          return this;
      }
      
-     public KomotoTable build() {
+     public KoulutusModuulinToteutusTable build() {
          return tableToBuild;
      }
      
