@@ -32,6 +32,8 @@ public final class EntityUtils {
         
         target.setNimi(source.getNimi());
         target.setTila(source.getTila());
+        target.setMaksullisuus(source.getMaksullisuus());
+        
         copyFields(source.getPerustiedot(), target.getPerustiedot());
         
     }
@@ -39,6 +41,7 @@ public final class EntityUtils {
     public static void copyFields(KoulutusmoduuliPerustiedot source, KoulutusmoduuliPerustiedot target) {
         
         target.setKoulutusKoodiUri(source.getKoulutusKoodiUri());
+        
         
     }
     

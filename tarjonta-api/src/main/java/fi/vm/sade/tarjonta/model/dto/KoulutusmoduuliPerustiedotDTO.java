@@ -30,12 +30,18 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
     private static final long serialVersionUID = 4328770061817006214L;
 
     private String koulutusKoodiUri;
-    
-    private List<String> opetusmuotos = new ArrayList<String>();
-    
-    private List<String> opetuskielis = new ArrayList<String>();
 
+    private List<String> opetusmuotos = new ArrayList<String>();
+
+    private List<String> opetuskielis = new ArrayList<String>();
     
+    private List<String> asiasanoituses = new ArrayList<String>();
+
+    /*
+     * Uri to Koodisto.
+     */
+    private String suunniteltuKestoUri;
+
     public String getKoulutusKoodiUri() {
         return koulutusKoodiUri;
     }
@@ -46,13 +52,12 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).
-            append("koulutusKoodiUri", koulutusKoodiUri).
+        return new ToStringBuilder(this).append("koulutusKoodiUri", koulutusKoodiUri).
             toString();
     }
 
     /**
-     * 
+     *
      * @return the list of opetusmuotos
      */
     public List<String> getOpetusmuotos() {
@@ -60,7 +65,7 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
     }
 
     /**
-     * 
+     *
      * @param opetusmuotos the list of opetusmuotos to set
      */
     public void setOpetusmuotos(List<String> opetusmuotos) {
@@ -68,7 +73,7 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
     }
 
     /**
-     * 
+     *
      * @return the opetuskielis
      */
     public List<String> getOpetuskielis() {
@@ -76,11 +81,41 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
     }
 
     /**
-     * 
+     *
      * @param opetuskielis the opetuskielis to set
      */
     public void setOpetuskielis(List<String> opetuskielis) {
         this.opetuskielis = opetuskielis;
+    }
+
+    /**
+     *
+     * @return the suunniteltuKesto
+     */
+    public String getSuunniteltuKestoUri() {
+        return suunniteltuKestoUri;
+    }
+
+    /**
+     *
+     * @param suunniteltuKesto the suunniteltuKestoUri to set
+     */
+    public void setSuunniteltuKestoUri(String suunniteltuKestoUri) {
+        this.suunniteltuKestoUri = suunniteltuKestoUri;
+    }
+
+    /**
+     * @return the asiasanoituses
+     */
+    public List<String> getAsiasanoituses() {
+        return asiasanoituses;
+    }
+
+    /**
+     * @param asiasanoituses the asiasanoituses to set
+     */
+    public void setAsiasanoituses(List<String> asiasanoituses) {
+        this.asiasanoituses = asiasanoituses;
     }
 
 }

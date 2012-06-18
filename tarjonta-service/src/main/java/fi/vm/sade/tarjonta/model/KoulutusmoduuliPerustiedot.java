@@ -140,7 +140,9 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
     public Set<KoodistoKoodi> getAsiasanoituses() {
         return Collections.unmodifiableSet(asiasanoituses);
     }
-
+    
+    
+    
     /**
      *
      * @param asiasanoitusUri
@@ -157,6 +159,11 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
      */
     public boolean removeAsiasanoitus(String asiasanoitusUri) {
         return asiasanoituses.remove(new KoodistoKoodi(asiasanoitusUri));
+    }
+    
+    
+    public void setAsiasanoituses(Set<String> asiasanoituses) {
+        
     }
 
 }

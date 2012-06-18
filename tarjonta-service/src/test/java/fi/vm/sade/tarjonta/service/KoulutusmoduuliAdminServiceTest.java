@@ -72,7 +72,6 @@ public class KoulutusmoduuliAdminServiceTest {
         
         koulutusmoduuli = adminService.save(koulutusmoduuli);
         assertEquals("name", koulutusmoduuli.getNimi());
-       
         
         
     }

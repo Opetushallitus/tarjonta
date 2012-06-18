@@ -43,9 +43,7 @@ public class TutkintoOhjelmaToteutusToDTOConverter<T extends KoulutusmoduuliTote
         dto.setPerustiedot(CommonConverter.convert(source.getPerustiedot()));
         dto.setKoulutuksenAlkamisPvm(source.getKoulutuksenAlkamisPvm());
         dto.setKoulutuslajiUri(source.getKoulutusLajiUri());
-        dto.setSuunniteltuKestoUri(source.getSuunniteltuKestoUri());
         dto.setTarjoajat(convertTarjoajat(source));
-        dto.setTeemaUris(convertTeemaUris(source));
         dto.setToteutettavaKoulutusmoduuliOID(convertKoulutusmoduuli(source));
         return (T) dto;
     }

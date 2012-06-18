@@ -44,8 +44,8 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
 //        perustiedot.getOpetusmuotos().add("http://opetusmuoto/opetusmuoto3");
         perustiedot.getOpetuskielis().add("Ruotsi"); // NOTE: uri vs arvo
         perustiedot.getOpetusmuotos().add("opetusmuoto3");
-        komoto.setToteutettavaKoulutusmoduuliOID("oid_koulutusmoduuli1");
-        komoto.setSuunniteltuKestoUri("6 kuukautta");
+        perustiedot.setSuunniteltuKestoUri("6 kuukautta");
+        komoto.setToteutettavaKoulutusmoduuliOID("oid_koulutusmoduuli1");        
         komoto.setKoulutuslajiUri("Nuorten koulutus");
         komoto.setMaksullisuus("500 euroa");
         komoto.setPerustiedot(perustiedot);

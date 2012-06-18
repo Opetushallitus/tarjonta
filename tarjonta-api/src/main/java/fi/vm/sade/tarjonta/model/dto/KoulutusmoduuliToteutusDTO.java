@@ -39,24 +39,20 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     private String toteutettavaKoulutusmoduuliOID;
 
     private KoulutusmoduuliPerustiedotDTO perustiedot;
-    
-    /*TODO: Miksi tätä ei ole koulutusmoduulin toteutuksessa tietomallissa? Tietomallissa tämä näyttää olevan Koulutusmoduulissa. 
-    * Vastaus Sepolta: Tietomallissa virhe*/
+
+    /*
+     * TODO: Miksi tätä ei ole koulutusmoduulin toteutuksessa tietomallissa? Tietomallissa tämä näyttää olevan Koulutusmoduulissa. Vastaus Sepolta:
+     * Tietomallissa virhe
+     */
     private String koulutuslajiUri;
 
-    /*TODO: Miksi näitä voi olla tietomallin mukaan monta, vaikka lomakkeessa voi valita vain yhden?
-     * Vastaus Sepolta: Oikeasti on vain yksi. Monesta moneen suhde käytännössä syntyy vain monimutkaisten organisaatioiden välisten suhteiden kautta.
+    /*
+     * TODO: Miksi näitä voi olla tietomallin mukaan monta, vaikka lomakkeessa voi valita vain yhden? Vastaus Sepolta: Oikeasti on vain yksi. Monesta moneen
+     * suhde käytännössä syntyy vain monimutkaisten organisaatioiden välisten suhteiden kautta.
      */
-    private List<String> tarjoajat; 
-    
+    private List<String> tarjoajat;
+
     private Date koulutuksenAlkamisPvm;
-    
-    /*TODO: Mikä tämä kenttä oikeasti on?
-    *Vastaus Sepolta: Tulee kokonaisuudessaan koodistosta.
-    */
-    private String suunniteltuKestoUri;
-    
-    private List<String> teemaUris;
         
     private String maksullisuus;
     
@@ -128,9 +124,9 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
-    
+
     /**
-     * 
+     *
      * @return the koulutuslaji
      */
     public String getKoulutuslajiUri() {
@@ -138,7 +134,7 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     }
 
     /**
-     * 
+     *
      * @param koulutuslaji the koulutuslaji to set
      */
     public void setKoulutuslajiUri(String koulutuslajiUri) {
@@ -146,7 +142,7 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     }
 
     /**
-     * 
+     *
      * @return the list of tarjoaja organisaatio oids.
      */
     public List<String> getTarjoajat() {
@@ -154,7 +150,7 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     }
 
     /**
-     * 
+     *
      * @param tarjoajat the list of tarjoaja organisaatio oids to set
      */
     public void setTarjoajat(List<String> tarjoajat) {
@@ -162,7 +158,7 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     }
 
     /**
-     * 
+     *
      * @return the koulutuksenAlkamisPvm, i.e. the date the education/training begins
      */
     public Date getKoulutuksenAlkamisPvm() {
@@ -170,45 +166,13 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     }
 
     /**
-     * 
-     * @param koulutuksenAlkamisPvm 
+     *
+     * @param koulutuksenAlkamisPvm
      */
     public void setKoulutuksenAlkamisPvm(Date koulutuksenAlkamisPvm) {
         this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
     }
 
-    /**
-     * 
-     * @return the suunniteltuKesto
-     */
-    public String getSuunniteltuKestoUri() {
-        return suunniteltuKestoUri;
-    }
-
-    /**
-     * 
-     * @param suunniteltuKesto the suunniteltuKestoUri to set
-     */
-    public void setSuunniteltuKestoUri(String suunniteltuKestoUri) {
-        this.suunniteltuKestoUri = suunniteltuKestoUri;
-    }
-
-    /**
-     * 
-     * @return the teemas
-     */
-    public List<String> getTeemaUris() {
-        return teemaUris;
-    }
-
-    /**
-     * 
-     * @param teemas the teemas to set
-     */
-    public void setTeemaUris(List<String> teemaUris) {
-        this.teemaUris = teemaUris;
-    }
-    
     /**
      * 
      * @return the maksullisuus

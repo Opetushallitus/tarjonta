@@ -1,7 +1,8 @@
 package fi.vm.sade.tarjonta.service;
 
-import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.tarjonta.model.dto.*;
+import java.util.Arrays;
+import java.util.Date;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +21,7 @@ public class KoulutusmoduuliToteutusAdminServiceTest {
     private KoulutusmoduuliToteutusAdminService adminService;
 
     private KoulutusmoduuliToteutusDTO emptyToteutus;
-    
+
     private static final String COMPLETE_NAME = "Koulutusmoduuli toteutus 1";
 
     /*
@@ -28,10 +29,12 @@ public class KoulutusmoduuliToteutusAdminServiceTest {
      */
     private TutkintoOhjelmaToteutusDTO completeToteutus;
 
+    private Date today = new Date();
+
     @Before
     public void setUp() {
         emptyToteutus = new TutkintoOhjelmaToteutusDTO();
-        completeToteutus = createFullToteutus();
+        completeToteutus = createCompleteToteutus();
     }
 
     @Test
@@ -46,14 +49,25 @@ public class KoulutusmoduuliToteutusAdminServiceTest {
     public void testFindByOid() {
     }
 
-    private TutkintoOhjelmaToteutusDTO createFullToteutus() {
+    private TutkintoOhjelmaToteutusDTO createCompleteToteutus() {
 
         TutkintoOhjelmaToteutusDTO toteutus = new TutkintoOhjelmaToteutusDTO();
+
         toteutus.setNimi(COMPLETE_NAME);
+        toteutus.setKoulutuksenAlkamisPvm(today);
+        toteutus.setKoulutuslajiUri("http://koulutuslaji/aikuis");
+        toteutus.setTarjoajat(Arrays.asList("http://organisaatio/1", "http://organisaatio/2"));
         
         KoulutusmoduuliPerustiedotDTO perustiedot = new KoulutusmoduuliPerustiedotDTO();
+        perustiedot.setKoulutusKoodiUri("http://koulutusmooduuri");
+        perustiedot.setOpetuskielis(Arrays.asList("http://opentuskieli/fi", "http://opetuskieli/en"));
+        perustiedot.setOpetusmuotos(Arrays.asList("http://opetusmuoto/luokka", "http://opetusmuoto/eta"));
+        perustiedot.setAsiasanoituses(Arrays.asList("http://asiasana/talous", "http://asiasana/suojelu"));
+
         toteutus.setPerustiedot(perustiedot);
-        
+
+
+
         return toteutus;
 
     }
