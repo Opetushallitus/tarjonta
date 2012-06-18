@@ -1,5 +1,8 @@
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.AbstractSelect.Filtering;
@@ -84,7 +87,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 	
    private TextField organisaatioTextfield;
 	
-   @PropertyId("suunniteltuKestoUri")
+   //@PropertyId("suunniteltuKestoUri")
    private KoodistoComponent suunniteltuKestoKoodisto;
 	
    @PropertyId("koulutuslajiUri")
@@ -197,7 +200,15 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
                 // maksullinenKoulutusCheckbox
 		maksullinenKoulutusCheckbox = new CheckBox();
 		maksullinenKoulutusCheckbox.setCaption(getCaptionForString("koulutusMaksullista"));
-		maksullinenKoulutusCheckbox.setImmediate(false);
+		maksullinenKoulutusCheckbox.setImmediate(true);
+		maksullinenKoulutusCheckbox.addListener(new Property.ValueChangeListener() {
+            
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                // TODO Auto-generated method stub
+                maksullinenKoulutusTextfield.setEnabled(maksullinenKoulutusCheckbox.booleanValue());
+            }
+        });
 		rootLayout.addComponent(maksullinenKoulutusCheckbox, "maksullinenKoulutus");
 		
 		// maksullinenKoulutusTextfield
@@ -239,16 +250,27 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
     @Override
     public void bind(KoulutusmoduuliToteutusDTO model) {
         super.bind(model);
+        if (model.getMaksullisuus() == null) {
+            this.maksullinenKoulutusCheckbox.setValue(Boolean.FALSE);
+            this.maksullinenKoulutusTextfield.setEnabled(false);
+        } else {
+            this.maksullinenKoulutusCheckbox.setValue(Boolean.TRUE);
+            this.maksullinenKoulutusTextfield.setEnabled(true);
+        }
 
         // nested properties cannot be bound with @PropertyId? doing bind manually
         opetuskielis.setPropertyDataSource(new ObjectProperty(model.getPerustiedot().getOpetuskielis()));
         opetusmuotos.setPropertyDataSource(new ObjectProperty(model.getPerustiedot().getOpetusmuotos()));
+        suunniteltuKestoKoodisto.setPropertyDataSource(new NestedMethodProperty(model.getPerustiedot(), "suunniteltuKestoUri"));
         form.addField("perustiedot.opetuskielis", opetuskielis);
         form.addField("perustiedot.opetusmuotos", opetusmuotos);
     }
 
     @Override
     protected KoulutusmoduuliToteutusDTO save(KoulutusmoduuliToteutusDTO model) throws Exception {
+        if (!this.maksullinenKoulutusCheckbox.isEnabled()) {
+            model.setMaksullisuus(null);
+        }
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
