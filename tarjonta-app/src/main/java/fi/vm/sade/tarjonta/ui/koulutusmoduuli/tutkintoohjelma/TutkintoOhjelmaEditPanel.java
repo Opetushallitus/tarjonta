@@ -180,8 +180,8 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
         final BeanItem<TutkintoOhjelmaFormModel> beanItem = new BeanItem<TutkintoOhjelmaFormModel>(model);
 
         // this is not getting set via bean item??
-        moduuliStatusLabel.setPropertyDataSource(new OrganisaatioStatusProperty(dto));
-        moduuliTitleLabel.setPropertyDataSource(new OrganisaatioLabelProperty());
+        moduuliStatusLabel.setPropertyDataSource(new KoulutusmoduuliStatusProperty(dto));
+        moduuliTitleLabel.setPropertyDataSource(new KoulutusmoduuliTitleProperty());
 
         // todo: add bean properties to populate
         final String[] properties = {
@@ -346,13 +346,17 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
 
     }
 
-    private class OrganisaatioStatusProperty extends AbstractProperty {
+    /**
+     * Helper class that generates value for Koulutusmoduuli's status by concatenating status and updated 
+     * timestamp if any.
+     */
+    private class KoulutusmoduuliStatusProperty extends AbstractProperty {
 
         private static final long serialVersionUID = -8671743512655403988L;
 
         private KoulutusmoduuliDTO koulutusmoduuli;
 
-        public OrganisaatioStatusProperty(KoulutusmoduuliDTO koulutusmoduuli) {
+        public KoulutusmoduuliStatusProperty(KoulutusmoduuliDTO koulutusmoduuli) {
             this.koulutusmoduuli = koulutusmoduuli;
         }
 
@@ -386,7 +390,11 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
     }
 
 
-    private class OrganisaatioLabelProperty extends AbstractProperty {
+    /**
+     * Helper class that generates the Koulutusmoduuli's title by concatenating owner organisaatio nimi with 
+     * koulutus name if any.
+     */
+    private class KoulutusmoduuliTitleProperty extends AbstractProperty {
 
         private static final long serialVersionUID = -3220959237478842249L;
 
