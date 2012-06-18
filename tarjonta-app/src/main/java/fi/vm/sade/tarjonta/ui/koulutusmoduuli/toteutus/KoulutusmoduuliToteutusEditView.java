@@ -92,8 +92,6 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 	
    private PopupDateField koulutuksenAlkamispvmDatefield;
 	
-   private Label koulutuksenAlkamisPvmLbl;
-
     @PropertyId("toteutettavaKoulutusmoduuliOID")
     private KoulutusmoduuliComponent koulutusmoduuliTextfield;
 	

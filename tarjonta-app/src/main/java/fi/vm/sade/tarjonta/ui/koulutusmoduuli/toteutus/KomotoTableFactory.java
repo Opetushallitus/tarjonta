@@ -9,10 +9,13 @@ import com.vaadin.ui.Table;
 import fi.vm.sade.tarjonta.service.KoulutusmoduuliToteutusAdminService;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.TutkintoOhjelmaUiDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.apache.commons.beanutils.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /*
  *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
@@ -36,6 +39,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 //@Configurable(preConstruction = true)
 public class KomotoTableFactory {
 
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+    
     @Autowired
     private KoulutusmoduuliToteutusAdminService koulutusModuuliToteutusAdminService;
 
@@ -75,14 +80,21 @@ public class KomotoTableFactory {
                 .build();
     }
 
-    private BeanContainer<String, KoulutusmoduuliToteutusDTO> createContainer(List<KoulutusmoduuliToteutusDTO> totModuulit) {
-        BeanContainer<String, KoulutusmoduuliToteutusDTO> komotos = new BeanContainer<String, KoulutusmoduuliToteutusDTO>(KoulutusmoduuliToteutusDTO.class);
+    private BeanContainer<String, TutkintoOhjelmaUiDTO> createContainer(List<KoulutusmoduuliToteutusDTO> totModuulit)  {
+        BeanContainer<String, TutkintoOhjelmaUiDTO> komotos = new BeanContainer<String, TutkintoOhjelmaUiDTO>(TutkintoOhjelmaUiDTO.class);
         for (KoulutusmoduuliToteutusDTO totModuli : totModuulit) {
-            komotos.addItem(totModuli.getToteutettavaKoulutusmoduuliOID(), totModuli);
+            try {
+           TutkintoOhjelmaUiDTO uiDto =  new TutkintoOhjelmaUiDTO();
+           BeanUtils.copyProperties(uiDto, totModuli);
+            komotos.addItem(uiDto.getOid(), uiDto);
+            }catch (Exception exp) {
+                log.warn(exp.getMessage());
+            }
         }
 
         return komotos;
     }
+    
 
     /**
      * @return the koulutusModuuliToteutusAdminService

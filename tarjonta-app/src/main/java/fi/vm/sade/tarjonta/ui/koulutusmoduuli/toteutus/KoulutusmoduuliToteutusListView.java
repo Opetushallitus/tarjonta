@@ -38,8 +38,8 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
     //Should this contain Organisaatio search tree ?
     private Panel leftPanel;
     private Panel rightPanel;
-    private final String[] visibleColumns = new String[]{"nimi", "toteutettavaKoulutusmoduuliOID"};
-    private final String[] viimeisimmatVisibleColumns = new String[]{"selected","nimi", "toteutettavaKoulutusmoduuliOID"};
+    private final String[] visibleColumns = new String[]{"nimi", "oid"};
+    private final String[] viimeisimmatVisibleColumns = new String[]{"selected","nimi", "oid"};
     private KomotoTable viimeisimmat;
     private KomotoTable suunnitteilla;
     private KomotoTable julkaistava;
