@@ -36,6 +36,7 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
 //        perustiedot.getOpetusmuotos().add("http://opetusmuoto/opetusmuoto3");
         perustiedot.getOpetuskielis().add("Ruotsi"); // NOTE: uri vs arvo
         perustiedot.getOpetusmuotos().add("opetusmuoto3");
+        komoto.setSuunniteltuKestoUri("6 kuukautta");
         komoto.setPerustiedot(perustiedot);
         koulutusmoduuliToteutusEditView.bind(komoto);
     }
@@ -120,6 +121,13 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
 //        assertEquals("http://opetusmuoto/opetusmuoto2", component.getKomoto().getPerustiedot().getOpetusmuotos().get(1));
         assertEquals("opetusmuoto1", component.getKomoto().getPerustiedot().getOpetusmuotos().get(0)); // NOTE: uri vs arvo
         assertEquals("opetusmuoto2", component.getKomoto().getPerustiedot().getOpetusmuotos().get(1));
+    }
+    
+    @Test
+    public void testCreateKoulutusmoduulinToteutus() {
+        //TODO: tähän komoton luontitesti
+        
+        assertTrue(component.getSuunniteltuKestoTextfield().getValue().equals("6 kuukautta"));
     }
 
 }

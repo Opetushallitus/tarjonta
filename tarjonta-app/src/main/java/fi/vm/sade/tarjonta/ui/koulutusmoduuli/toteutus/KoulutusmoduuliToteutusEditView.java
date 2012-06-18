@@ -3,6 +3,9 @@ package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
+import com.vaadin.ui.AbstractSelect.Filtering;
+
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.component.GenericForm;
 import fi.vm.sade.generic.ui.component.MultipleSelectToTableWrapper;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
@@ -12,6 +15,10 @@ import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
+import org.vaadin.addon.formbinder.PropertyId;
+
+import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +50,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 
     public static final String KOODISTO_KIELI_URI = "http://kieli"; // TODO: tuleeko opetuskieli kieli-koodistosta, vai onko erikseen joku opetuskieli-koodisto?
     public static final String KOODISTO_OPETUSMUOTO_URI = "http://opetusmuoto"; // TODO: mistä koodistosta oikeasti tulee opetusmuoto?
+    public static String SUUNNITELTU_KESTO_URI = "http://suunniteltuKesto";
 
     private int komotoEditViewWidth =  760;
    
@@ -74,7 +82,8 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 	
    private Label organisaatioLabel;
 	
-   private ComboBox suunniteltuKestoTextfield;
+   @PropertyId("suunniteltuKestoUri")
+   private KoodistoComponent suunniteltuKestoKoodisto;
 	
    private Label suunniteltuKestoLabel;
 	
@@ -189,11 +198,13 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 		rootLayout.addComponent(suunniteltuKestoLabel, 2, 2);
 		
 		// suunniteltuKestoTextfield
-		suunniteltuKestoTextfield = new ComboBox();
+		suunniteltuKestoKoodisto = createKoodistoComponent(SUUNNITELTU_KESTO_URI, "suunniteltuKestoId");
+		rootLayout.addComponent(suunniteltuKestoKoodisto, 3, 2);
+		/*new ComboBox();
 		suunniteltuKestoTextfield.setImmediate(false);
 		suunniteltuKestoTextfield.setWidth("166px");
 		suunniteltuKestoTextfield.setHeight("-1px");
-		rootLayout.addComponent(suunniteltuKestoTextfield, 3, 2);
+		rootLayout.addComponent(suunniteltuKestoTextfield, 3, 2);*/
 		
 		// organisaatioLabel
 		organisaatioLabel = new Label();
@@ -356,6 +367,18 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
     public void setKomotoEditViewHeight(int komotoEditViewHeight) {
         this.komotoEditViewHeight = komotoEditViewHeight;
     }
+    
+    public KoodistoComponent createKoodistoComponent(String koodistoUri, String debugId) {
+        KoodistoComponent koodistoComponent = WidgetFactory.create(koodistoUri);
+        //koodistoComponent.setCaption(I18N.getMessage(captionKey));
+        ComboBox koodistoCombo = new ComboBox();
+        koodistoComponent.setDebugId(debugId);
+        koodistoCombo.setFilteringMode(Filtering.FILTERINGMODE_CONTAINS);
+        //koodistoCombo.setImmediate(true);
+        koodistoComponent.setField(koodistoCombo);
+        //layout.addComponent(koodistoComponent);
+        return koodistoComponent;
+    }
 
     public GridLayout getRootLayout() {
         return rootLayout;
@@ -405,8 +428,8 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
         return organisaatioLabel;
     }
 
-    public ComboBox getSuunniteltuKestoTextfield() {
-        return suunniteltuKestoTextfield;
+    public KoodistoComponent getSuunniteltuKestoTextfield() {
+        return suunniteltuKestoKoodisto;
     }
 
     public Label getSuunniteltuKestoLabel() {
