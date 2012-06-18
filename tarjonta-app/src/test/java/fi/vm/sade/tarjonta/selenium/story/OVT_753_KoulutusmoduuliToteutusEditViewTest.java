@@ -46,6 +46,7 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
         perustiedot.getOpetusmuotos().add("opetusmuoto3");
         komoto.setToteutettavaKoulutusmoduuliOID("oid_koulutusmoduuli1");
         komoto.setSuunniteltuKestoUri("6 kuukautta");
+        komoto.setKoulutuslajiUri("Nuorten koulutus");
         komoto.setPerustiedot(perustiedot);
         koulutusmoduuliToteutusEditView.bind(komoto);
     }
@@ -137,6 +138,7 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
         //TODO: tähän komoton luontitesti
         
         assertTrue(component.getSuunniteltuKestoTextfield().getValue().equals("6 kuukautta"));
+        assertTrue(component.getKoulutusLajiKoodisto().getValue().equals("Nuorten koulutus"));
     }
 
     @Test

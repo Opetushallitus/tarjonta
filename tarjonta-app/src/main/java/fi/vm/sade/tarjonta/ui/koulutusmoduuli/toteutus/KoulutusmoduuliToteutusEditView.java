@@ -49,7 +49,8 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 
     public static final String KOODISTO_KIELI_URI = "http://kieli"; // TODO: tuleeko opetuskieli kieli-koodistosta, vai onko erikseen joku opetuskieli-koodisto?
     public static final String KOODISTO_OPETUSMUOTO_URI = "http://opetusmuoto"; // TODO: mistä koodistosta oikeasti tulee opetusmuoto?
-    public static String SUUNNITELTU_KESTO_URI = "http://suunniteltuKesto";
+    public static final String SUUNNITELTU_KESTO_URI = "http://suunniteltuKesto";
+    public static final String KOULUTUSLAJI_URI = "http://koulutuslaji";
 
 //    @Autowired
 //    private KoulutusmoduuliAdminService koulutusmoduuliAdminService;
@@ -90,7 +91,8 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 	
    private Label suunniteltuKestoLabel;
 	
-   private ComboBox koulutusLajiCombobox;
+   @PropertyId("koulutuslajiUri")
+   private KoodistoComponent koulutusLajiKoodisto;
 	
    private Label koulutusLajiLabel;
 	
@@ -189,11 +191,8 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 		rootLayout.addComponent(koulutusLajiLabel, 0, 2);
 		
 		// koulutusLajiCombobox
-		koulutusLajiCombobox = new ComboBox();
-		koulutusLajiCombobox.setImmediate(false);
-		koulutusLajiCombobox.setWidth("-1px");
-		koulutusLajiCombobox.setHeight("-1px");
-		rootLayout.addComponent(koulutusLajiCombobox, 1, 2);
+		koulutusLajiKoodisto = createKoodistoComponent(KOULUTUSLAJI_URI, "koulutlsajiId");
+		rootLayout.addComponent(koulutusLajiKoodisto, 1, 2);
 		
 		// suunniteltuKestoLabel
 		suunniteltuKestoLabel = new Label();
@@ -206,11 +205,6 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 		// suunniteltuKestoTextfield
 		suunniteltuKestoKoodisto = createKoodistoComponent(SUUNNITELTU_KESTO_URI, "suunniteltuKestoId");
 		rootLayout.addComponent(suunniteltuKestoKoodisto, 3, 2);
-		/*new ComboBox();
-		suunniteltuKestoTextfield.setImmediate(false);
-		suunniteltuKestoTextfield.setWidth("166px");
-		suunniteltuKestoTextfield.setHeight("-1px");
-		rootLayout.addComponent(suunniteltuKestoTextfield, 3, 2);*/
 		
 		// organisaatioLabel
 		organisaatioLabel = new Label();
@@ -442,8 +436,8 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
         return suunniteltuKestoLabel;
     }
 
-    public ComboBox getKoulutusLajiCombobox() {
-        return koulutusLajiCombobox;
+    public KoodistoComponent getKoulutusLajiKoodisto() {
+        return koulutusLajiKoodisto;
     }
 
     public Label getKoulutusLajiLabel() {
