@@ -7,7 +7,7 @@
     <bean id="hakueraService" class="fi.vm.sade.tarjonta.service.mock.HakueraServiceMock" />
     <bean id="organisaatioService" class="fi.vm.sade.organisaatio.service.OrganisaatioServiceMock"/>
     <bean id="koulutusModuuliToteutusAdminService" class="fi.vm.sade.tarjonta.service.mock.KoulutusmoduuliToteutusAdminServiceMock"/>
-    <bean id="komotoTableFactory" class="fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KomotoTableFactory"/>
+    <bean id="komotoTableFactory" class="fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusModuulinToteutusTableFactory"/>
 
     <!-- Koodisto service (mock) -->
     <bean id="mockDataHandler" class="fi.vm.sade.koodisto.service.mock.MockDataHandler"/>
