@@ -40,20 +40,30 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
 
     private static Logger log = LoggerFactory.getLogger(KoulutusmoduuliToteutus.class);
 
+    @Column
     private String nimi;
 
     /**
-     * todo: make this embedded?
+     * todo: would it be better to make this embedded?
      */
     @OneToOne(cascade = CascadeType.ALL)
     private KoulutusmoduuliPerustiedot perustiedot;
 
+    /**
+     * todo: the same state enumeration is now being used as it is for Koulutusmoduuli - verify this.
+     */
     @Enumerated(EnumType.STRING)
     private KoulutusmoduuliTila tila;
 
+    /**
+     * OID references to those Organisaatio that offers this LOS.
+     */
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<KoulutusmoduuliToteutusTarjoaja> tarjoajat = new HashSet<KoulutusmoduuliToteutusTarjoaja>();
 
+    /**
+     * The Koulutusmoduuli this "implementation" implements and/or completes. 
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinTable(name = TABLE_NAME + "_tarjoaja")
     private Koulutusmoduuli koulutusmoduuli;
@@ -99,13 +109,18 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
 
     /**
      *
-     * @param moduuli
+     * @param moduuli Koulutusmoduuli this KoulutusumoduuliToteutus "implements".
      */
     public KoulutusmoduuliToteutus(Koulutusmoduuli moduuli) {
         this();
         this.koulutusmoduuli = moduuli;
     }
 
+    /**
+     * Returns OID for this KoulutusmoduuliToteutus
+     * 
+     * @return
+     */
     public String getOid() {
         return oid;
     }
@@ -114,6 +129,10 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
         this.oid = oid;
     }
 
+    /**
+     * 
+     * @return
+     */
     public String getNimi() {
         return nimi;
     }
@@ -154,6 +173,11 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
         this.perustiedot = perustiedot;
     }
 
+    /**
+     * Returns the Koulutusmoduuli this KoulutusmoduuliToteutus "implements".
+     * 
+     * @return
+     */
     public Koulutusmoduuli getKoulutusmoduuli() {
         return koulutusmoduuli;
     }
@@ -163,7 +187,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     }
 
     /**
-     * Returns immutable set of currently added tarjoajat.
+     * Returns immutable set of OID references to Organisaatio that offer this KoulutusmoduuliToteutus.
      *
      * @return
      */
@@ -199,6 +223,8 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     }
 
     /**
+     * Koodisto uri 
+     * 
      * @return the koulutusLajiUri
      */
     public String getKoulutusLajiUri() {
@@ -213,6 +239,8 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     }
 
     /**
+     * The date this KoulutusmoduuliToteutus is scheduled to start.
+     * 
      * @return the koulutuksenAlkamisPvm
      */
     public Date getKoulutuksenAlkamisPvm() {
