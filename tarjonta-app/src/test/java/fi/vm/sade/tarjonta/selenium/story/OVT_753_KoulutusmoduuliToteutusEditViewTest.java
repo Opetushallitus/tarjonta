@@ -2,10 +2,11 @@ package fi.vm.sade.tarjonta.selenium.story;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
+import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
 import fi.vm.sade.tarjonta.selenium.TarjontaEmbedComponentTstSupport;
 import fi.vm.sade.tarjonta.selenium.pageobject.KoulutusmoduuliToteutusEditViewPageObject;
-import fi.vm.sade.tarjonta.service.mock.HakueraServiceMock;
+import fi.vm.sade.tarjonta.service.KoulutusmoduuliAdminService;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusmoduuliToteutusEditView;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,9 @@ import static org.junit.Assert.*;
 public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedComponentTstSupport<KoulutusmoduuliToteutusEditView> {
 
     private KoulutusmoduuliToteutusEditViewPageObject pageObject;
-    
+
     @Autowired
-    HakueraServiceMock hakueraService;
+    KoulutusmoduuliAdminService koulutusmoduuliAdminService;
 
     @Override
     public void initPageObjects() {
@@ -30,12 +31,20 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
 
     @Override
     protected void initComponent(KoulutusmoduuliToteutusEditView koulutusmoduuliToteutusEditView) {
+
+        // init mock service with some data
+        createKoulutusmoduuli("koulutusmoduuli0");
+        createKoulutusmoduuli("koulutusmoduuli1");
+        createKoulutusmoduuli("koulutusmoduuli2");
+
+        // init component
         KoulutusmoduuliToteutusDTO komoto = new TutkintoOhjelmaToteutusDTO();
         KoulutusmoduuliPerustiedotDTO perustiedot = new KoulutusmoduuliPerustiedotDTO();
 //        perustiedot.getOpetuskielis().add("http://kieli/ruotsi");
 //        perustiedot.getOpetusmuotos().add("http://opetusmuoto/opetusmuoto3");
         perustiedot.getOpetuskielis().add("Ruotsi"); // NOTE: uri vs arvo
         perustiedot.getOpetusmuotos().add("opetusmuoto3");
+        komoto.setToteutettavaKoulutusmoduuliOID("oid_koulutusmoduuli1");
         komoto.setSuunniteltuKestoUri("6 kuukautta");
         komoto.setPerustiedot(perustiedot);
         koulutusmoduuliToteutusEditView.bind(komoto);
@@ -45,7 +54,7 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
     public void testOpetuskieli() throws Throwable {
         assertNotNull(component.getForm().getField("perustiedot.opetuskielis"));
 
-        STEP("varmistetaan että valituissa komotolla ennestään olevat opetuskielet näkyvät");
+        STEP("varmistetaan että komotolla ennestään olevat opetuskielet näkyvät");
         assertTrue(pageObject.getOpetuskieliSelected().contains("Ruotsi"));
 
         STEP("varmistetaan että poistaminen toimii");
@@ -86,7 +95,7 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
     public void testOpetusmuoto() throws Throwable {
         assertNotNull(component.getForm().getField("perustiedot.opetusmuotos"));
 
-        STEP("varmistetaan että valituissa komotolla ennestään olevat opetusmuodot näkyvät");
+        STEP("varmistetaan että komotolla ennestään olevat opetusmuodot näkyvät");
         assertTrue(pageObject.getOpetusmuotoSelected().contains("opetusmuoto3"));
 
         STEP("varmistetaan että poistaminen toimii");
@@ -129,5 +138,36 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
         
         assertTrue(component.getSuunniteltuKestoTextfield().getValue().equals("6 kuukautta"));
     }
+
+    @Test
+    public void testKoulutusmoduuliField() throws Throwable {
+        assertNotNull(component.getForm().getField("toteutettavaKoulutusmoduuliOID"));
+
+        STEP("varmistetaan että komotolle ennestään liitetty koulutusmoduuli näkyy valittuna");
+        assertEquals("oid_koulutusmoduuli1", pageObject.getComponent().getKoulutusmoduuliTextfield().getValue());
+
+        STEP("koulutusmoduuli kentässä näkyy vaihtoehtoina eri koulutusmoduuleja");
+        waitAssert(new AssertionCallback() {
+            @Override
+            public void doAssertion() throws Throwable {
+                assertTrue(pageObject.getKoulutusmoduuliOptions().contains("koulutusmoduuli0"));
+                assertTrue(pageObject.getKoulutusmoduuliOptions().contains("koulutusmoduuli2"));
+            }
+        });
+
+        STEP("valitaan koulutusmoduuli");
+        pageObject.selectKoulutusmoduuli("koulutusmoduuli2");
+
+        STEP("varmistetaan että valinnat päätyvät koodi urina dto:hon formin commitissa");
+        component.getForm().commit();
+        assertEquals("oid_koulutusmoduuli2", pageObject.getComponent().getKoulutusmoduuliTextfield().getValue());
+    }
+
+    private void createKoulutusmoduuli(String nimi) {
+        TutkintoOhjelmaDTO koulutusModuuli = new TutkintoOhjelmaDTO();
+        koulutusModuuli.setNimi(nimi);
+        koulutusModuuli.setOid("oid_"+nimi);
+        koulutusmoduuliAdminService.save(koulutusModuuli);
+    }    
 
 }

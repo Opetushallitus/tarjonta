@@ -17,7 +17,4 @@
         <property name="mockDataHandler" ref="mockDataHandler"/>
     </bean> 
 
-    <bean class="fi.vm.sade.koodisto.widget.factory.WidgetFactory" />
-    
-    
 </beans>

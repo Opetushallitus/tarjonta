@@ -8,7 +8,6 @@ import fi.vm.sade.tarjonta.widget.KoulutusmoduuliComponent;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 /**
  * Factory for creating tarjonta Vaadin components.
@@ -20,15 +19,24 @@ import org.springframework.stereotype.Component;
  */
 @SuppressWarnings("serial")
 @Configurable(preConstruction = true)
-@Component
+//@Component
 public class TarjontaWidgetFactory implements ApplicationContextAware {
 
-    private ApplicationContext applicationContext;
+    private static ApplicationContext applicationContext;
     private KoulutusmoduuliAdminService koulutusmoduuliService;
+    private static TarjontaWidgetFactory instance;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+        TarjontaWidgetFactory.applicationContext = applicationContext;
+    }
+
+    public TarjontaWidgetFactory() {
+        instance = this;
+    }
+
+    public static TarjontaWidgetFactory getInstance() {
+        return instance;
     }
 
     /**

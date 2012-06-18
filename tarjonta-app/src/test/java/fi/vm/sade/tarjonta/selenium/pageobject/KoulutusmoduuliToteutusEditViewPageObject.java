@@ -82,4 +82,12 @@ public class KoulutusmoduuliToteutusEditViewPageObject extends VaadinPageObjectS
         }
         return result;
     }
+
+    public List<String> getKoulutusmoduuliOptions() {
+        return getOptions(waitForElement(component.getKoulutusmoduuliTextfield().getField()));
+    }
+
+    public void selectKoulutusmoduuli(String koulutusmoduuli) {
+        select(component.getKoulutusmoduuliTextfield().getField(), koulutusmoduuli);
+    }
 }

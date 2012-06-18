@@ -25,7 +25,13 @@
             <artifactId>tarjonta-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
+        <dependency>
+            <groupId>fi.vm.sade.tarjonta</groupId>
+            <artifactId>tarjonta-ui-widgets</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Koodisto integration -->
         <dependency>
             <groupId>fi.vm.sade.koodisto</groupId>

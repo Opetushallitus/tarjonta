@@ -2,23 +2,22 @@ package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
 
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.terminal.Sizeable;
-import com.vaadin.ui.*;
 import com.vaadin.ui.AbstractSelect.Filtering;
-
-import fi.vm.sade.generic.common.I18N;
+import com.vaadin.ui.*;
 import fi.vm.sade.generic.ui.component.GenericForm;
 import fi.vm.sade.generic.ui.component.MultipleSelectToTableWrapper;
+import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSearchDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
+import fi.vm.sade.tarjonta.widget.KoulutusmoduuliComponent;
+import fi.vm.sade.tarjonta.widget.factory.TarjontaWidgetFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
-
-import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,6 +50,10 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
     public static final String KOODISTO_KIELI_URI = "http://kieli"; // TODO: tuleeko opetuskieli kieli-koodistosta, vai onko erikseen joku opetuskieli-koodisto?
     public static final String KOODISTO_OPETUSMUOTO_URI = "http://opetusmuoto"; // TODO: mistä koodistosta oikeasti tulee opetusmuoto?
     public static String SUUNNITELTU_KESTO_URI = "http://suunniteltuKesto";
+
+//    @Autowired
+//    private KoulutusmoduuliAdminService koulutusmoduuliAdminService;
+    private TarjontaWidgetFactory tarjontaWidgetFactory = TarjontaWidgetFactory.getInstance();
 
     private int komotoEditViewWidth =  760;
    
@@ -94,8 +97,9 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
    private PopupDateField koulutuksenAlkamispvmDatefield;
 	
    private Label koulutuksenAlkamisPvmLbl;
-	
-   private TextField koulutusmoduuliTextfield;
+
+    @PropertyId("toteutettavaKoulutusmoduuliOID")
+    private KoulutusmoduuliComponent koulutusmoduuliTextfield;
 	
    private Label koulutusModuliLabel;
 	
@@ -152,8 +156,10 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 		rootLayout.addComponent(koulutusModuliLabel, 0, 1);
 		
 		// koulutusmoduuliTextfield
-		koulutusmoduuliTextfield = new TextField();
-		koulutusmoduuliTextfield.setImmediate(false);
+		//koulutusmoduuliTextfield = new TextField();
+       KoulutusmoduuliSearchDTO searchSpecification = new KoulutusmoduuliSearchDTO();
+       searchSpecification.setNimi(""); // with empty nimi we search all
+       koulutusmoduuliTextfield = tarjontaWidgetFactory.createKoulutusmoduuliComponentWithCombobox(searchSpecification);
 		koulutusmoduuliTextfield.setWidth("156px");
 		koulutusmoduuliTextfield.setHeight("-1px");
 		rootLayout.addComponent(koulutusmoduuliTextfield, 1, 1);
@@ -452,7 +458,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
         return koulutuksenAlkamisPvmLbl;
     }
 
-    public TextField getKoulutusmoduuliTextfield() {
+    public KoulutusmoduuliComponent getKoulutusmoduuliTextfield() {
         return koulutusmoduuliTextfield;
     }
 
