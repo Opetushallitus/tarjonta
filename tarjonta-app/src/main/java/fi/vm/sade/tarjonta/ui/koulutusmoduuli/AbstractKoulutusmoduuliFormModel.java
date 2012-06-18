@@ -60,11 +60,11 @@ public class AbstractKoulutusmoduuliFormModel<T extends KoulutusmoduuliDTO> impl
     }
 
     public void setOrganisaatioOid(String organisaatioOid) {
-        koulutusmoduuli.getPerustiedot().setOrganisaatioOid(organisaatioOid);
+        koulutusmoduuli.setOrganisaatioOid(organisaatioOid);
     }
 
     public String getOrganisaatioOid() {
-        return koulutusmoduuli.getPerustiedot().getOrganisaatioOid();
+        return koulutusmoduuli.getOrganisaatioOid();
     }
 
 }

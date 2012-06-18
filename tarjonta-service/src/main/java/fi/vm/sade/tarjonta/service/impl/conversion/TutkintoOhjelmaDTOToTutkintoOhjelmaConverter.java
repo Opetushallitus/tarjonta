@@ -10,7 +10,10 @@ public class TutkintoOhjelmaDTOToTutkintoOhjelmaConverter extends AbstractToDoma
     public TutkintoOhjelma convert(TutkintoOhjelmaDTO source) {
         
         TutkintoOhjelma model = new TutkintoOhjelma();
+        model.setNimi(source.getNimi());
+        model.setOid(source.getOid());
         return model;
+        
     }
 
 }

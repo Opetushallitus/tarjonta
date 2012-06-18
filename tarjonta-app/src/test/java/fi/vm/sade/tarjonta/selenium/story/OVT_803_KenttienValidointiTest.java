@@ -61,7 +61,7 @@ public class OVT_803_KenttienValidointiTest extends TarjontaEmbedComponentTstSup
 
         STEP("Validating that value in model equals expected value: " + KOULUTUS_KOODI_VALUE);
         assertEquals(KOULUTUS_KOODI_VALUE, getDTO().getPerustiedot().getKoulutusKoodiUri());
-        assertNotNull(getDTO().getPerustiedot().getOrganisaatioOid());
+        assertNotNull(getDTO().getOrganisaatioOid());
 
     }
     

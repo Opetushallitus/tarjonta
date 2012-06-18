@@ -31,6 +31,8 @@ public abstract class KoulutusmoduuliDTO implements Serializable {
 
     private String oid;
 
+    private String organisaatioOid;
+
     private String nimi;
 
     private Long id;
@@ -38,6 +40,14 @@ public abstract class KoulutusmoduuliDTO implements Serializable {
     private Date updated;
 
     private KoulutusmoduuliPerustiedotDTO perustiedot;
+
+    public void setOrganisaatioOid(String organisaatioOid) {
+        this.organisaatioOid = organisaatioOid;
+    }
+
+    public String getOrganisaatioOid() {
+        return organisaatioOid;
+    }
 
     public String getTila() {
         return tila;

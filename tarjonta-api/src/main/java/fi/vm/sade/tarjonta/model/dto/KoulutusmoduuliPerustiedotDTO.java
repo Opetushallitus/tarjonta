@@ -29,22 +29,13 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
 
     private static final long serialVersionUID = 4328770061817006214L;
 
-    private String organisaatioOid;
-
     private String koulutusKoodiUri;
     
     private List<String> opetusmuotos = new ArrayList<String>();
     
     private List<String> opetuskielis = new ArrayList<String>();
 
-    public void setOrganisaatioOid(String organisaatioOid) {
-        this.organisaatioOid = organisaatioOid;
-    }
-
-    public String getOrganisaatioOid() {
-        return organisaatioOid;
-    }
-
+    
     public String getKoulutusKoodiUri() {
         return koulutusKoodiUri;
     }
@@ -56,7 +47,6 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).
-            append("organisaatioId", organisaatioOid).
             append("koulutusKoodiUri", koulutusKoodiUri).
             toString();
     }

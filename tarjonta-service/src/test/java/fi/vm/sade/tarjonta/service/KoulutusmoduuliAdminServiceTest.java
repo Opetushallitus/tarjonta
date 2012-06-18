@@ -49,18 +49,31 @@ public class KoulutusmoduuliAdminServiceTest {
 
         KoulutusmoduuliDTO koulutusmoduuliDTO = adminService.createTutkintoOhjelma(null);
         koulutusmoduuliDTO = adminService.save(koulutusmoduuliDTO);
-        
+
         List<KoulutusmoduuliSummaryDTO> parents = adminService.getParentModuulis(koulutusmoduuliDTO.getOid());
         assertEquals(0, parents.size());
-        
+
+
+    }
+
+    @Test(expected = NoSuchOIDException.class)
+    public void testUnknownOIDThrowsException() {
+
+        adminService.getParentModuulis(UUID.randomUUID().toString());
 
     }
     
     
-    @Test(expected=NoSuchOIDException.class)    
-    public void testUnknownOIDThrowsException() {
+    @Test
+    public void testUpdate() {
         
-        adminService.getParentModuulis(UUID.randomUUID().toString());
+        KoulutusmoduuliDTO koulutusmoduuli = adminService.createTutkintoOhjelma(null);
+        koulutusmoduuli.setNimi("name");
+        
+        koulutusmoduuli = adminService.save(koulutusmoduuli);
+        assertEquals("name", koulutusmoduuli.getNimi());
+       
+        
         
     }
 

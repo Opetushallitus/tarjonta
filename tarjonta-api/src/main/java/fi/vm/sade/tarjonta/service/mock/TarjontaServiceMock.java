@@ -47,11 +47,11 @@ public class TarjontaServiceMock implements KoulutusmoduuliAdminService, Seriali
     private AtomicLong idCounter = new AtomicLong(0);
 
     @Override
-    public TutkintoOhjelmaDTO createTutkintoOhjelma(String organisaatioUri) {
+    public TutkintoOhjelmaDTO createTutkintoOhjelma(String organisaatioOid) {
 
         TutkintoOhjelmaDTO ohjelma = new TutkintoOhjelmaDTO();
         KoulutusmoduuliPerustiedotDTO perustiedot = new KoulutusmoduuliPerustiedotDTO();
-        perustiedot.setOrganisaatioOid(organisaatioUri);
+        ohjelma.setOrganisaatioOid(organisaatioOid);
         ohjelma.setPerustiedot(perustiedot);
         return ohjelma;
 
