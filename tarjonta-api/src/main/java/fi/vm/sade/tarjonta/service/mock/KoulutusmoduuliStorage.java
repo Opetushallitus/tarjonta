@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.service.mock;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +27,9 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author Jukka Raanamo
  */
-public class KoulutusmoduuliStorage {
+public class KoulutusmoduuliStorage implements Serializable {
+
+    private static final long serialVersionUID = 8595788752870052865L;
 
     private Map<Long, KoulutusmoduuliDTO> dataMap = new HashMap<Long, KoulutusmoduuliDTO>();
 
@@ -34,7 +37,7 @@ public class KoulutusmoduuliStorage {
 
     /**
      * Adds new item to storage. Id is generated and injected if missing.
-     * 
+     *
      * @param koulutusmoduuli
      */
     public void add(KoulutusmoduuliDTO koulutusmoduuli) {
@@ -46,7 +49,7 @@ public class KoulutusmoduuliStorage {
 
     /**
      * Returns all items in storage.
-     * 
+     *
      * @return
      */
     public Collection<KoulutusmoduuliDTO> getAll() {
@@ -55,23 +58,19 @@ public class KoulutusmoduuliStorage {
 
     /**
      * Returns number of koulutusmoduuli's in storage.
-     * 
+     *
      * @return
      */
     public int size() {
         return dataMap.size();
     }
-    
-    
+
     /**
      * Removes all items from storage.
      */
     public void clear() {
         dataMap.clear();
     }
-    
-    
-    
 
 }
 
