@@ -16,6 +16,8 @@
  */
 package fi.vm.sade.tarjonta.service.mock;
 
+
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
@@ -23,10 +25,12 @@ import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
 import fi.vm.sade.tarjonta.service.KoulutusmoduuliToteutusAdminService;
 import fi.vm.sade.tarjonta.service.NoSuchOIDException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
-      
+import java.util.Random;    
 
 /**
  *
@@ -64,8 +68,6 @@ public class KoulutusmoduuliToteutusAdminServiceMock implements KoulutusmoduuliT
         
     }
     
-    
-    
 
     @Override
     public KoulutusmoduuliToteutusDTO save(KoulutusmoduuliToteutusDTO toteutus) {
@@ -84,10 +86,16 @@ public class KoulutusmoduuliToteutusAdminServiceMock implements KoulutusmoduuliT
     
     private KoulutusmoduuliToteutusDTO randomToteutus() {
         TutkintoOhjelmaToteutusDTO dto = new TutkintoOhjelmaToteutusDTO();
-        
         dto.setOid(new Float(deGenerator.nextFloat()).toString());
         dto.setToteutettavaKoulutusmoduuliOID(new Float(deGenerator.nextFloat()).toString());
         dto.setNimi("Komoto " + deGenerator.nextInt(100));
+        dto.setKoulutuksenAlkamisPvm(Calendar.getInstance().getTime());
+        dto.setKoulutuslajiUri("Nuorten koulutus");//
+        dto.setMaksullisuus("" + (Math.random() * 500) + " euroa");
+        KoulutusmoduuliPerustiedotDTO kmPerus = new KoulutusmoduuliPerustiedotDTO();
+        kmPerus.setAsiasanoituses(new HashSet<String>(Arrays.asList(new String[]{"Sosiaaliala,yhteiskunta ja politiikka", "Kielet ja kulttuuri", "Talous, kauppa ja hallinta"})));
+        kmPerus.setSuunniteltuKestoUri("6 kuukautta");
+        dto.setPerustiedot(kmPerus);
         int tila = deGenerator.nextInt(3) +1;
         switch (tila) {
             case 1 :

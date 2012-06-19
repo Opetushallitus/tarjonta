@@ -1,11 +1,16 @@
 package fi.vm.sade.tarjonta.selenium.pageobject;
 
+import static fi.vm.sade.support.selenium.SeleniumUtils.waitForText;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.support.selenium.SeleniumUtils;
 import fi.vm.sade.support.selenium.VaadinPageObjectSupport;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusModuulinToteutusTable;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusmoduuliToteutusListView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 /*
  *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
@@ -46,6 +51,13 @@ public class KoulutusmoduuliToteutusListPageObject extends VaadinPageObjectSuppo
     
     public KoulutusModuulinToteutusTable getValmiit() {
         return component.getJulkaistava();
+    }
+
+    public void clickItemInTable(
+            KoulutusModuulinToteutusTable table, int index) {
+        WebElement tableE = SeleniumUtils.getWebElementForDebugId(table.getDebugId());
+        tableE.findElements(By.xpath(".//tr[contains(@class, 'v-table-row')]")).get(index).click();//[contains(@class,'atag') and contains(@class ,'btag')]
+        waitForText("Teemat");
     }
 
 }

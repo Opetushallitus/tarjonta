@@ -17,13 +17,19 @@
 
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
+
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Window;
 import com.vaadin.data.Container;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.TableFieldFactory;
 import com.vaadin.ui.themes.BaseTheme;
@@ -34,6 +40,7 @@ import com.vaadin.ui.themes.BaseTheme;
  */
 public class KoulutusModuulinToteutusTable extends CustomComponent {
         
+
         private GridLayout tableGrid;
         private final float hdrRowLesserRatio = 0.3f;
         private final float hdrRowHigherRatio = 1.7f;
@@ -43,6 +50,10 @@ public class KoulutusModuulinToteutusTable extends CustomComponent {
         private Table komotoList = new Table();
         private static int counter = 0;
         
+        private boolean clickable = true;
+        
+        private KoulutusmoduuliToteutusEditView komotoEdit;
+        
         //Should this be enum ?
         private KoulutusmoduuliTila tila;
         
@@ -50,7 +61,8 @@ public class KoulutusModuulinToteutusTable extends CustomComponent {
         //tells about changes in komoto state table removes or adds
         //komotos to it depending on which state it is interested on
         
-        protected KoulutusModuulinToteutusTable(KoulutusmoduuliTila tableTila) {
+        protected KoulutusModuulinToteutusTable(KoulutusmoduuliTila tableTila, boolean clickable) {
+            this.clickable = clickable;
             tableGrid = new GridLayout(2, 3);
             tableGrid.setSizeFull();
             tila = tableTila;
@@ -103,6 +115,27 @@ public class KoulutusModuulinToteutusTable extends CustomComponent {
             komotoList.setVisibleColumns(visibleColumns);
             komotoList.setSizeFull();
             komotoList.setDebugId(createDebugId("komotoTable" +tila.name()));
+            komotoList.setImmediate(true);
+            komotoList.setSelectable(true);
+            if (clickable) {
+                komotoList.addListener(new Property.ValueChangeListener() {
+                    public void valueChange(ValueChangeEvent event) {
+                        Window komotoEditWindow = new Window();
+                        komotoEdit = new KoulutusmoduuliToteutusEditView();
+                        KoulutusmoduuliToteutusDTO ktd = (KoulutusmoduuliToteutusDTO)((BeanItem)(komotoList.getItem(komotoList.getValue()))).getBean();
+                        komotoEdit.bind(ktd);
+
+                        komotoEditWindow.addComponent(komotoEdit);
+
+                        komotoEditWindow.setModal(true);
+                        komotoEditWindow.setWidth(komotoEdit.getKomotoEditViewWidth()+ 50, Sizeable.UNITS_PIXELS);
+                        komotoEditWindow.setHeight(komotoEdit.getKomotoEditViewHeight() + 100, Sizeable.UNITS_PIXELS);
+                        getApplication().getMainWindow().addWindow(komotoEditWindow);
+                    }
+                });
+            }
+            
+            
             tableGrid.addComponent(komotoList,0, 2, 1, 2);
             
         }
@@ -150,5 +183,27 @@ public class KoulutusModuulinToteutusTable extends CustomComponent {
      */
     public void setTila(KoulutusmoduuliTila tila) {
         this.tila = tila;
+    }
+
+    /**
+     * 
+     * @return the clickable
+     */
+    public boolean isClickable() {
+        return clickable;
+    }
+
+    /**
+     * 
+     * @param clickable the clickable to set
+     */
+    public void setClickable(boolean clickable) {
+        this.clickable = clickable;
+    }
+
+    //Getter for komoto edit for selenium use
+    
+    public KoulutusmoduuliToteutusEditView getKomotoEdit() {
+        return komotoEdit;
     }
 }

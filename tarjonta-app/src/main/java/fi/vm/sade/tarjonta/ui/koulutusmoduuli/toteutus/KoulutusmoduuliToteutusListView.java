@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable(preConstruction = true)
 public class KoulutusmoduuliToteutusListView extends CustomComponent {
 
+
     private HorizontalLayout rootLayout;
     //Should this contain Organisaatio search tree ?
     private Panel leftPanel;
@@ -45,6 +46,7 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
     private KoulutusModuulinToteutusTable suunnitteilla;
     private KoulutusModuulinToteutusTable julkaistava;
     private KoulutusModuulinToteutusTable julkaistu;
+    
     @Autowired
     private KoulutusModuulinToteutusTableFactory komotoTableFactory;
 
@@ -66,19 +68,19 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
     private VerticalLayout createTables() {
         VerticalLayout tableHolder = new VerticalLayout();
 
-        setViimeisimmat(getKomotoTableFactory().createViimTableWithTila(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.VALMIS), viimeisimmatVisibleColumns));
+        setViimeisimmat(getKomotoTableFactory().createViimTableWithTila(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.VALMIS), viimeisimmatVisibleColumns, false));
 
         tableHolder.addComponent(getViimeisimmat());
 
-        suunnitteilla = getKomotoTableFactory().createSuunnitteillaOlevaTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.SUUNNITTELUSSA), visibleColumns);
+        suunnitteilla = getKomotoTableFactory().createSuunnitteillaOlevaTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.SUUNNITTELUSSA), visibleColumns, true);
 
         tableHolder.addComponent(suunnitteilla);
 
-        setJulkaistava(getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.VALMIS), visibleColumns,getCaptionForString("julkaistavaKoulutustarjonta")));
+        setJulkaistava(getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.VALMIS), visibleColumns,getCaptionForString("julkaistavaKoulutustarjonta"), true));
 
         tableHolder.addComponent(getJulkaistava());
 
-        julkaistu = getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.JULKAISTU), visibleColumns,getCaptionForString("julkaistuKoulutusTarjonta"));
+        julkaistu = getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.JULKAISTU), visibleColumns,getCaptionForString("julkaistuKoulutusTarjonta"), true);
 
         tableHolder.addComponent(julkaistu);
         return tableHolder;
@@ -101,6 +103,7 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
                 @Override
                 public void buttonClick(ClickEvent event) {
                     Window komotoEditWindow = new Window();
+                    
                     KoulutusmoduuliToteutusEditView komotoEdit = new KoulutusmoduuliToteutusEditView();
                    
                     komotoEditWindow.addComponent(komotoEdit);
@@ -185,4 +188,5 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
     public void setViimeisimmat(KoulutusModuulinToteutusTable viimeisimmat) {
         this.viimeisimmat = viimeisimmat;
     }
+
 }

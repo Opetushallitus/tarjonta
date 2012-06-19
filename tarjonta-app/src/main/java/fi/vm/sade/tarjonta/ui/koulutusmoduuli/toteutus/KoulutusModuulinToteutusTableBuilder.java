@@ -34,13 +34,13 @@ public class KoulutusModuulinToteutusTableBuilder {
 
     KoulutusModuulinToteutusTable tableToBuild; 
     
-     public static KoulutusModuulinToteutusTableBuilder komotoTable(KoulutusmoduuliTila tableTilaType) {
+     public static KoulutusModuulinToteutusTableBuilder komotoTable(KoulutusmoduuliTila tableTilaType, boolean clickable) {
          
-         return new KoulutusModuulinToteutusTableBuilder(tableTilaType);
+         return new KoulutusModuulinToteutusTableBuilder(tableTilaType, clickable);
      }
      
-     private KoulutusModuulinToteutusTableBuilder(KoulutusmoduuliTila tilaType) {
-         tableToBuild = new KoulutusModuulinToteutusTable(tilaType);
+     private KoulutusModuulinToteutusTableBuilder(KoulutusmoduuliTila tilaType, boolean clickable) {
+         tableToBuild = new KoulutusModuulinToteutusTable(tilaType, clickable);
      }
      
      public KoulutusModuulinToteutusTableBuilder withLabel(String label) {

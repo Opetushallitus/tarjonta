@@ -207,7 +207,7 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
         assertTrue(pageObject.getSelectedTeemas().contains("Kielet ja kulttuuri"));
         assertTrue(pageObject.getSelectedTeemas().contains("Suojelu ja pelastus"));
     }
-
+    
     private void createKoulutusmoduuli(String nimi) {
         TutkintoOhjelmaDTO koulutusModuuli = new TutkintoOhjelmaDTO();
         koulutusModuuli.setNimi(nimi);

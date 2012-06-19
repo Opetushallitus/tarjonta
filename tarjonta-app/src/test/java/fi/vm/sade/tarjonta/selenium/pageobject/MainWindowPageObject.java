@@ -30,6 +30,10 @@ public class MainWindowPageObject extends VaadinPageObjectSupport<MainWindow> {
         driver.findElement(By.xpath("//*[@class='v-caption' and contains(.,'Haut')]")).click();
     }
     
+    public void openKomotoTab() {
+        driver.findElement(By.xpath("//*[@class='v-caption' and contains(.,'Koulutusmoduulien toteutukset')]")).click();
+    }
+    
     
     private KoulutusmoduuliEditView getKoulutusmoduuliEditView() {
         return component.getKoulutusmoduuliEditView();

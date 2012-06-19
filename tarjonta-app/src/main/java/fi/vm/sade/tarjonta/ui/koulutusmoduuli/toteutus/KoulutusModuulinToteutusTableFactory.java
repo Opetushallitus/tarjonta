@@ -44,9 +44,9 @@ public class KoulutusModuulinToteutusTableFactory {
     @Autowired
     private KoulutusmoduuliToteutusAdminService koulutusModuuliToteutusAdminService;
 
-    public KoulutusModuulinToteutusTable createViimTableWithTila(KoulutusmoduuliToteutusSearchDTO criteria, String[] visibleColumns) {
+    public KoulutusModuulinToteutusTable createViimTableWithTila(KoulutusmoduuliToteutusSearchDTO criteria, String[] visibleColumns, boolean clickable) {
 
-        return KoulutusModuulinToteutusTableBuilder.komotoTable(criteria.getTila())
+        return KoulutusModuulinToteutusTableBuilder.komotoTable(criteria.getTila(), clickable)
                 .withLabel("Viimeisimmat toteutuneet KOMOTOt")
                 .withButton("Siirra suunnitteluun", false)
                 .withSearchAllButton("Valitse kaikki",true)
@@ -64,8 +64,8 @@ public class KoulutusModuulinToteutusTableFactory {
 
     }
 
-    public KoulutusModuulinToteutusTable createSuunnitteillaOlevaTable(KoulutusmoduuliToteutusSearchDTO criteria, String[] visibleColumns) {
-        return KoulutusModuulinToteutusTableBuilder.komotoTable(criteria.getTila())
+    public KoulutusModuulinToteutusTable createSuunnitteillaOlevaTable(KoulutusmoduuliToteutusSearchDTO criteria, String[] visibleColumns, boolean clickable) {
+        return KoulutusModuulinToteutusTableBuilder.komotoTable(criteria.getTila(), clickable)
                 .withLabel("Suunnitteilla oleva koulutustarjonta")
                 .withButton("Luo uusi Komoto", false)
                 .withHeightAndWidth("400px", "200px")
@@ -73,8 +73,8 @@ public class KoulutusModuulinToteutusTableFactory {
                 .build();
     }
 
-    public KoulutusModuulinToteutusTable createCommonKomotoTable(KoulutusmoduuliToteutusSearchDTO criteria, String[] visibleColumns, String tableLabel) {
-        return KoulutusModuulinToteutusTableBuilder.komotoTable(criteria.getTila())
+    public KoulutusModuulinToteutusTable createCommonKomotoTable(KoulutusmoduuliToteutusSearchDTO criteria, String[] visibleColumns, String tableLabel, boolean clickable) {
+        return KoulutusModuulinToteutusTableBuilder.komotoTable(criteria.getTila(), clickable)
                 .withLabel(tableLabel).withHeightAndWidth("400px", "200px")
                 .withTable(createContainer(koulutusModuuliToteutusAdminService.findWithTila(criteria)), visibleColumns)
                 .build();
@@ -91,6 +91,7 @@ public class KoulutusModuulinToteutusTableFactory {
            BeanUtils.copyProperties(uiDto, totModuli);
            
             komotos.addItem(uiDto.getOid(), uiDto);
+            
             }catch (Exception exp) {
                 log.warn(exp.getMessage());
                
