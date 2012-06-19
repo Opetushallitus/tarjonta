@@ -42,6 +42,8 @@ import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -274,6 +276,14 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 
     @Override
     protected KoulutusmoduuliToteutusDTO save(KoulutusmoduuliToteutusDTO model) throws Exception {
+        
+        if (organisaatioField.getValue() != null) {
+            List<String> organisaatiot = new ArrayList<String>();
+            organisaatiot.add((String)organisaatioField.getValue());
+            model.setTarjoajat(organisaatiot);
+        }
+        
+        
         if (!this.maksullinenKoulutusCheckbox.isEnabled()) {
             model.setMaksullisuus(null);
         }
