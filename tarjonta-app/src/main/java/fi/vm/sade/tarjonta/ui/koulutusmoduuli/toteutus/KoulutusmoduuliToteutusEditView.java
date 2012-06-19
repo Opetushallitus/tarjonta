@@ -178,6 +178,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 
         // koulutusLajiCombobox
         koulutusLajiKoodisto = createKoodistoComponent(KOULUTUSLAJI_URI, "koulutlsajiId");
+        koulutusLajiKoodisto.setCaption(getCaptionForString("koulutuslaji"));
         rootLayout.addComponent(koulutusLajiKoodisto, "koulutuslaji");
 
 
@@ -266,6 +267,10 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
         if (model.getTarjoajat() != null && model.getTarjoajat().size() > 0) {
             organisaatioField.setValue(model.getTarjoajat().get(model.getTarjoajat().size() -1));
         }
+        
+        System.out.println("BIND: opetuskielis: " + opetuskielis
+            + ", model: " + model
+            + ", perustiedot: " + model.getPerustiedot());
         
         // nested properties cannot be bound with @PropertyId? doing bind manually
         opetuskielis.setPropertyDataSource(new ObjectProperty(model.getPerustiedot().getOpetuskielis()));
