@@ -10,8 +10,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * Factory for creating tarjonta Vaadin components.
- * Note that this factory is not singleton, you must instantiate it and set applicationContext via setter or autowiring.
+ * Factory for creating tarjonta Vaadin components. Note that this factory is not singleton, you must instantiate it and set applicationContext via setter or
+ * autowiring.
  *
  * Usage: watch usage from TarjontaWidgetFactoryTest -testcase
  *
@@ -23,7 +23,9 @@ import org.springframework.context.ApplicationContextAware;
 public class TarjontaWidgetFactory implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
+
     private KoulutusmoduuliAdminService koulutusmoduuliService;
+
     private static TarjontaWidgetFactory instance;
 
     @Override
@@ -64,6 +66,16 @@ public class TarjontaWidgetFactory implements ApplicationContextAware {
         return wrapper;
     }
 
+    /**
+     * Assign the service to be used for retrieving data. Normally this does not need to be called since service is 
+     * auto injected. This may be used e.g. for junit testing.
+     * 
+     * @param koulutusmoduuliService
+     */
+    public void setKoulutusmoduuliService(KoulutusmoduuliAdminService koulutusmoduuliService) {
+        this.koulutusmoduuliService = koulutusmoduuliService;
+    }
+
     private void ensureInitialized() {
         if (koulutusmoduuliService == null) {
             if (applicationContext == null) {
@@ -72,4 +84,6 @@ public class TarjontaWidgetFactory implements ApplicationContextAware {
             koulutusmoduuliService = applicationContext.getBean(KoulutusmoduuliAdminService.class);
         }
     }
+
 }
+

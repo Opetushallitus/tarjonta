@@ -13,7 +13,10 @@ import org.springframework.test.context.ContextConfiguration;
 import java.util.List;
 
 import static fi.vm.sade.support.selenium.SeleniumUtils.*;
+import fi.vm.sade.tarjonta.service.mock.KoulutusmoduuliAdminServiceMock;
+import fi.vm.sade.tarjonta.service.mock.KoulutusmoduuliStorage;
 import static org.junit.Assert.assertEquals;
+import org.junit.Before;
 
 /**
  * @author Antti Salonen
@@ -21,8 +24,7 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration("classpath:test-context.xml")
 public class TarjontaWidgetFactoryTest extends AbstractEmbedVaadinTest<KoulutusmoduuliComponent> {
 
-    @Autowired
-    KoulutusmoduuliAdminService koulutusmoduuliAdminService;
+    private KoulutusmoduuliAdminService koulutusmoduuliAdminService = new KoulutusmoduuliAdminServiceMock(new KoulutusmoduuliStorage());
 
     @Autowired
     TarjontaWidgetFactory tarjontaWidgetFactory;
@@ -36,10 +38,13 @@ public class TarjontaWidgetFactoryTest extends AbstractEmbedVaadinTest<Koulutusm
     @Override
     public void initPageObjects() {
     }
-
+    
+    
     @Override
     protected KoulutusmoduuliComponent createComponent() throws Exception {
 
+        tarjontaWidgetFactory.setKoulutusmoduuliService(koulutusmoduuliAdminService);
+        
         // init mock service with some data
         createKoulutusmoduuli("koulutusmoduuli0");
         createKoulutusmoduuli("koulutusmoduuli1");
@@ -68,10 +73,12 @@ public class TarjontaWidgetFactoryTest extends AbstractEmbedVaadinTest<Koulutusm
         STEP("kun koulutusmoduulin valitsee, arvoksi tallennetaan koulutusmoduulin oid");
         select(component, "koulutusmoduuli2");
         waitAssert(new AssertionCallback() {
+
             @Override
             public void doAssertion() throws Throwable {
                 assertEquals("oid_koulutusmoduuli2", component.getValue());
             }
+
         });
 
         STEP("arvo päätyy myös dto:lle");
@@ -83,11 +90,12 @@ public class TarjontaWidgetFactoryTest extends AbstractEmbedVaadinTest<Koulutusm
     private void createKoulutusmoduuli(String nimi) {
         TutkintoOhjelmaDTO koulutusModuuli = new TutkintoOhjelmaDTO();
         koulutusModuuli.setNimi(nimi);
-        koulutusModuuli.setOid("oid_"+nimi);
+        koulutusModuuli.setOid("oid_" + nimi);
         koulutusmoduuliAdminService.save(koulutusModuuli);
     }
 
     public static class TestDTO {
+
         private String koulutusmoduuliOid;
 
         public String getKoulutusmoduuliOid() {
@@ -97,5 +105,8 @@ public class TarjontaWidgetFactoryTest extends AbstractEmbedVaadinTest<Koulutusm
         public void setKoulutusmoduuliOid(String koulutusmoduuliOid) {
             this.koulutusmoduuliOid = koulutusmoduuliOid;
         }
+
     }
+
+
 }
