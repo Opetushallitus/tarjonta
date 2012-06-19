@@ -170,6 +170,18 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
         component.getForm().commit();
         assertEquals("oid_koulutusmoduuli2", pageObject.getComponent().getKoulutusmoduuliTextfield().getValue());
     }
+    
+    @Test
+    public void testOrganisaatioField() throws Throwable {
+        STEP("Testataan että organisaatio widget palauttaa jotain");
+        pageObject.selectOrganisation("Essecraft");
+        
+        String retval = null;
+        STEP("Haetaan organisaatio widgetista arvo:");
+        retval = (String)component.getOrganisaatioField().getValue();
+        STEP(retval);
+        assertNotNull(retval);
+    }
 
     @Test
     public void testTeemaField() throws Throwable {

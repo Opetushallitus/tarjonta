@@ -60,6 +60,13 @@ public class KoulutusmoduuliToteutusEditViewPageObject extends VaadinPageObjectS
     public void removeFirstOpetusmuoto() {
         removeFirstItem(component.getOpetusmuotos());
     }
+    
+    public void selectOrganisation(String orgName) {
+        getDriver().findElement(By.id(component.getOrganisaatioField().getSearchButton().getDebugId())).click();
+        WebElement item = waitForElement(By.xpath("//span[contains(.,'" + orgName + "')]"));
+        item.click();
+        
+    }
 
     private void removeFirstItem(MultipleSelectToTableWrapper wrapper) {
         WebElement removeBtn = getDriver().findElement(By.xpath("//div[@id='"+wrapper.getDebugId()+"']//span[contains(.,'-')]"));
