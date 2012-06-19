@@ -142,10 +142,10 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
     }
 
     public KoulutusmoduuliToteutusEditView() {
+        
         rootLayout = getCustomLayout(getCustomLayoutPath());
+        
         model = new TutkintoOhjelmaToteutusDTO();
-        // TODO: pitäiskö komotolla aina olla perustiedot, jolloin perustiedot voisi olla dto:ssa jo muuta kuin null?
-        model.setPerustiedot(new KoulutusmoduuliPerustiedotDTO());
         initForm(model, rootLayout);
 
         form.setImmediate(true);
@@ -185,6 +185,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 
         // suunniteltuKestoTextfield
         suunniteltuKestoKoodisto = createKoodistoComponent(SUUNNITELTU_KESTO_URI, "suunniteltuKestoId");
+        suunniteltuKestoKoodisto.setCaption(getCaptionForString("suunniteltuKesto"));
         rootLayout.addComponent(suunniteltuKestoKoodisto, "suunniteltuKesto");
 
         // organisaatioTextfield
@@ -196,6 +197,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 
         // opetuskielis
         opetuskielis = createMultipleKoodiField(KOODISTO_KIELI_URI);
+        opetuskielis.setCaption(i18n.getMessage("opetuskielet"));
         rootLayout.addComponent(opetuskielis, "opetuskielet");
 
         // opetusmuotos
@@ -248,7 +250,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 
     private MultipleSelectToTableWrapper createMultipleKoodiField(String koodistoUri) {
         final MultipleSelectToTableWrapper field = WidgetFactory.createMultipleKoodiTableField(koodistoUri);
-        final Table table = field.getTable();
+        final Table table = field.getTable();        
         table.setVisibleColumns(new Object[]{"koodiArvo", MultipleSelectToTableWrapper.REMOVE_BUTTON});
         table.setPageLength(0); // this will achieve table size to shrink to content size
         table.setWidth("100%");
