@@ -21,10 +21,7 @@ import fi.vm.sade.tarjonta.service.KoulutusmoduuliAdminService;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,21 +31,40 @@ import org.slf4j.LoggerFactory;
  * @author Jukka Raanamo
  * @author Marko Lyly
  */
-public class TarjontaServiceMock implements KoulutusmoduuliAdminService, Serializable {
-    
+public class KoulutusmoduuliAdminServiceMock implements KoulutusmoduuliAdminService, Serializable {
+
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(TarjontaServiceMock.class);
+    private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliAdminServiceMock.class);
 
-    private Map<Long, KoulutusmoduuliDTO> koulutusModuuliMap = new HashMap<Long, KoulutusmoduuliDTO>();
+    private KoulutusmoduuliStorage storage = new KoulutusmoduuliStorage();
 
-    private AtomicLong idCounter = new AtomicLong(0);
-
-    public TarjontaServiceMock() {
+    public KoulutusmoduuliAdminServiceMock() {
         initDefaultData();
     }
     
-    
+    /**
+     * Creates service that uses given storage as back end. All items are retrieved from and inserted into
+     * this storage.
+     * 
+     * @param storage
+     */
+    public KoulutusmoduuliAdminServiceMock(KoulutusmoduuliStorage storage) {
+        this.storage = storage;
+    }
+
+    /**
+     * Insert storage to be used as backend for inserting and retrieving data.
+     *
+     * @param storage
+     */
+    public void setStorage(KoulutusmoduuliStorage storage) {
+        this.storage = storage;
+    }
+
+    public KoulutusmoduuliStorage getStorage() {
+        return storage;
+    }
 
     @Override
     public TutkintoOhjelmaDTO createTutkintoOhjelma(String organisaatioOid) {
@@ -64,13 +80,8 @@ public class TarjontaServiceMock implements KoulutusmoduuliAdminService, Seriali
     @Override
     public KoulutusmoduuliDTO save(KoulutusmoduuliDTO koulutusModuuli) {
 
-        log.debug("saving " + koulutusModuuli);
-
-        if (koulutusModuuli.getId() == null) {
-            koulutusModuuli.setId(idCounter.incrementAndGet());
-        }
         koulutusModuuli.setUpdated(new Date());
-        koulutusModuuliMap.put(koulutusModuuli.getId(), koulutusModuuli);
+        storage.add(koulutusModuuli);
         return koulutusModuuli;
 
     }
@@ -80,7 +91,7 @@ public class TarjontaServiceMock implements KoulutusmoduuliAdminService, Seriali
 
         KoulutusmoduuliDTO result = null;
 
-        for (KoulutusmoduuliDTO koulutusmoduuliDTO : koulutusModuuliMap.values()) {
+        for (KoulutusmoduuliDTO koulutusmoduuliDTO : storage.getAll()) {
             if (koulutusmoduuliDTO.getOid().equals(koulutusModuuliOID)) {
                 result = koulutusmoduuliDTO;
                 break;
@@ -98,7 +109,7 @@ public class TarjontaServiceMock implements KoulutusmoduuliAdminService, Seriali
 
         List<KoulutusmoduuliDTO> result = new ArrayList<KoulutusmoduuliDTO>();
 
-        for (KoulutusmoduuliDTO koulutusmoduuliDTO : koulutusModuuliMap.values()) {
+        for (KoulutusmoduuliDTO koulutusmoduuliDTO : storage.getAll()) {
             if (match(koulutusmoduuliDTO, searchSpecification)) {
                 result.add(koulutusmoduuliDTO);
             }
@@ -134,7 +145,7 @@ public class TarjontaServiceMock implements KoulutusmoduuliAdminService, Seriali
                 "Koulutusmoduuli (yla) " + i);
             result.add(summary);
         }
-        
+
         return result;
 
     }
@@ -149,33 +160,32 @@ public class TarjontaServiceMock implements KoulutusmoduuliAdminService, Seriali
                 "Koulutusmoduuli (ala) " + i);
             result.add(summary);
         }
-        
+
         return result;
 
 
 
     }
 
-    
     private void initDefaultData() {
-        
+
         TutkintoOhjelmaDTO tutkintoOhjelma = new TutkintoOhjelmaDTO();
-        
+
         tutkintoOhjelma.setNimi("Oulun Koulu, Tietokenkasittelyn KO");
         tutkintoOhjelma.setOid("123.123.123.123");
         tutkintoOhjelma.setOrganisaatioOid("http://organisaatio/123.123");
-        
+
         // currently there is no view to edit perustiedot for koulutusmoduuli - hence 
         // we'll add no test data yet
         KoulutusmoduuliPerustiedotDTO perustiedot = new KoulutusmoduuliPerustiedotDTO();
         tutkintoOhjelma.setPerustiedot(perustiedot);
-        
+
         tutkintoOhjelma.setTila(KoulutusmoduuliTila.VALMIS.name());
         tutkintoOhjelma.setUpdated(new Date());
-        
+
         save(tutkintoOhjelma);
-        
+
     }
-    
+
 }
 
