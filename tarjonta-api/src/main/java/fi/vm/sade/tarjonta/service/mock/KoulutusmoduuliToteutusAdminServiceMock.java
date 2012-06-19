@@ -1,18 +1,3 @@
-
-
-package fi.vm.sade.tarjonta.service.mock;
-
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
-import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
-import fi.vm.sade.tarjonta.service.KoulutusmoduuliToteutusAdminService;
-import fi.vm.sade.tarjonta.service.NoSuchOIDException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-      
 /*
  *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
@@ -29,6 +14,19 @@ import java.util.Random;
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
+package fi.vm.sade.tarjonta.service.mock;
+
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
+import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
+import fi.vm.sade.tarjonta.service.KoulutusmoduuliToteutusAdminService;
+import fi.vm.sade.tarjonta.service.NoSuchOIDException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+      
 
 /**
  *

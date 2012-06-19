@@ -20,7 +20,6 @@ import fi.vm.sade.tarjonta.service.NoSuchOIDException;
 import fi.vm.sade.tarjonta.service.KoulutusmoduuliAdminService;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +36,6 @@ import org.slf4j.LoggerFactory;
  */
 public class TarjontaServiceMock implements KoulutusmoduuliAdminService, Serializable {
     
-    // todo: remove if this is annotated as service
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(TarjontaServiceMock.class);
@@ -45,6 +43,12 @@ public class TarjontaServiceMock implements KoulutusmoduuliAdminService, Seriali
     private Map<Long, KoulutusmoduuliDTO> koulutusModuuliMap = new HashMap<Long, KoulutusmoduuliDTO>();
 
     private AtomicLong idCounter = new AtomicLong(0);
+
+    public TarjontaServiceMock() {
+        initDefaultData();
+    }
+    
+    
 
     @Override
     public TutkintoOhjelmaDTO createTutkintoOhjelma(String organisaatioOid) {
@@ -152,5 +156,26 @@ public class TarjontaServiceMock implements KoulutusmoduuliAdminService, Seriali
 
     }
 
+    
+    private void initDefaultData() {
+        
+        TutkintoOhjelmaDTO tutkintoOhjelma = new TutkintoOhjelmaDTO();
+        
+        tutkintoOhjelma.setNimi("Oulun Koulu, Tietokenkasittelyn KO");
+        tutkintoOhjelma.setOid("123.123.123.123");
+        tutkintoOhjelma.setOrganisaatioOid("http://organisaatio/123.123");
+        
+        // currently there is no view to edit perustiedot for koulutusmoduuli - hence 
+        // we'll add no test data yet
+        KoulutusmoduuliPerustiedotDTO perustiedot = new KoulutusmoduuliPerustiedotDTO();
+        tutkintoOhjelma.setPerustiedot(perustiedot);
+        
+        tutkintoOhjelma.setTila(KoulutusmoduuliTila.VALMIS.name());
+        tutkintoOhjelma.setUpdated(new Date());
+        
+        save(tutkintoOhjelma);
+        
+    }
+    
 }
 
