@@ -23,6 +23,7 @@ import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.ui.AbstractSelect.Filtering;
 import com.vaadin.ui.*;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.component.GenericForm;
 import fi.vm.sade.generic.ui.component.MultipleSelectToTableWrapper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
@@ -189,6 +190,8 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
         // organisaatioTextfield
         organisaatioField = OrganisaatioWidgetFactory.createOrganisaatioSearchWidget(OrganisaatioSearchType.BASIC);
         organisaatioField.setPropertyDataSource(new NestedMethodProperty(model, "tarjoajat"));
+        organisaatioField.getSearchValueLabel().setValue(i18n.getMessage("organisaatioLabelEmptyCaption"));
+        organisaatioField.getSearchButton().setCaption(i18n.getMessage("organisaatioButtonCaption"));
         rootLayout.addComponent(organisaatioField, "organisaatio");
 
         // opetuskielis
