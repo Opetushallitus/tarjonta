@@ -23,10 +23,6 @@ public class KoulutusmoduuliToteutusEditViewPageObject extends VaadinPageObjectS
         super(driver, component);
     }
 
-    @Override
-    public void initPageObjects() {
-    }
-
     public List<String> getOpetuskieliOptions() {
         return getOptions(getCombo(component.getOpetuskielis()));
     }

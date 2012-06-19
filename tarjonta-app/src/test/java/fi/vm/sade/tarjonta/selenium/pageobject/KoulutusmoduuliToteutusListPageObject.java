@@ -1,15 +1,11 @@
 package fi.vm.sade.tarjonta.selenium.pageobject;
 
-import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.support.selenium.SeleniumUtils;
 import fi.vm.sade.support.selenium.VaadinPageObjectSupport;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
-import fi.vm.sade.tarjonta.ui.MainWindow;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusModuulinToteutusTable;
-import org.openqa.selenium.By;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusmoduuliToteutusListView;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 /*
  *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
@@ -35,10 +31,6 @@ public class KoulutusmoduuliToteutusListPageObject extends VaadinPageObjectSuppo
     
     public KoulutusmoduuliToteutusListPageObject(WebDriver driver, KoulutusmoduuliToteutusListView component) {
         super(driver,component);
-    }
-    
-    @Override
-    public void initPageObjects() {
     }
     
     public void openKomotoTab() {

@@ -1,7 +1,6 @@
 package fi.vm.sade.tarjonta.selenium.pageobject;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.support.selenium.SeleniumContext;
 import fi.vm.sade.support.selenium.SeleniumUtils;
 import fi.vm.sade.support.selenium.VaadinPageObjectSupport;
@@ -21,10 +20,6 @@ public class KoulutusmoduuliEditViewPageObject extends VaadinPageObjectSupport<K
 
     public KoulutusmoduuliEditViewPageObject(KoulutusmoduuliEditView component) {
         this(SeleniumContext.getDriver(), component);
-    }
-
-    @Override
-    public void initPageObjects() {
     }
 
     public void setKoulutus(String value) {

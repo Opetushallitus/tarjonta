@@ -9,7 +9,8 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static fi.vm.sade.support.selenium.SeleniumUtils.*;
+import static fi.vm.sade.support.selenium.SeleniumUtils.click;
+import static fi.vm.sade.support.selenium.SeleniumUtils.getWebElementForDebugId;
 
 /**
  * @author Antti Salonen
@@ -18,10 +19,6 @@ public class HakueraListPageObject extends VaadinPageObjectSupport<HakueraList> 
 
     public HakueraListPageObject(WebDriver driver, HakueraList component) {
         super(driver, component);
-    }
-
-    @Override
-    public void initPageObjects() {
     }
 
     public int getResultCount() {
