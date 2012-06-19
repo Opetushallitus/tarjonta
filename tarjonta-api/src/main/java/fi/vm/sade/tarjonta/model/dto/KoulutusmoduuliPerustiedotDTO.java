@@ -18,9 +18,10 @@ package fi.vm.sade.tarjonta.model.dto;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -32,11 +33,11 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
 
     private String koulutusKoodiUri;
 
-    private List<String> opetusmuotos = new ArrayList<String>();
+    private Set<String> opetusmuotos = new HashSet<String>();
 
-    private List<String> opetuskielis = new ArrayList<String>();
+    private Set<String> opetuskielis = new HashSet<String>();
     
-    private Collection<String> asiasanoituses = new ArrayList<String>();
+    private Set<String> asiasanoituses = new HashSet<String>();
 
     /*
      * Uri to Koodisto.
@@ -61,7 +62,7 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
      *
      * @return the list of opetusmuotos
      */
-    public List<String> getOpetusmuotos() {
+    public Set<String> getOpetusmuotos() {
         return opetusmuotos;
     }
 
@@ -69,7 +70,7 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
      *
      * @param opetusmuotos the list of opetusmuotos to set
      */
-    public void setOpetusmuotos(List<String> opetusmuotos) {
+    public void setOpetusmuotos(Set<String> opetusmuotos) {
         this.opetusmuotos = opetusmuotos;
     }
 
@@ -77,7 +78,7 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
      *
      * @return the opetuskielis
      */
-    public List<String> getOpetuskielis() {
+    public Set<String> getOpetuskielis() {
         return opetuskielis;
     }
 
@@ -85,7 +86,7 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
      *
      * @param opetuskielis the opetuskielis to set
      */
-    public void setOpetuskielis(List<String> opetuskielis) {
+    public void setOpetuskielis(Set<String> opetuskielis) {
         this.opetuskielis = opetuskielis;
     }
 
@@ -108,14 +109,14 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
     /**
      * @return the asiasanoituses
      */
-    public Collection<String> getAsiasanoituses() {
+    public Set<String> getAsiasanoituses() {
         return asiasanoituses;
     }
 
     /**
      * @param asiasanoituses the asiasanoituses to set
      */
-    public void setAsiasanoituses(Collection<String> asiasanoituses) {
+    public void setAsiasanoituses(Set<String> asiasanoituses) {
         this.asiasanoituses = asiasanoituses;
     }
 

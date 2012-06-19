@@ -1,10 +1,14 @@
 package fi.vm.sade.tarjonta.service;
 
-import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
-import fi.vm.sade.tarjonta.model.dto.*;
+import com.google.common.collect.Sets;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
+import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
+import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
+import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
 import java.util.Arrays;
 import java.util.Date;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,11 +77,8 @@ public class KoulutusmoduuliToteutusAdminServiceTest {
     public void testSaveAndLoadCompleteToteutus() {
 
         KoulutusmoduuliToteutusDTO saved = toteutusService.save(completeToteutus);
-        assertNotNull(saved);
-
         KoulutusmoduuliToteutusDTO loaded = toteutusService.findByOID(saved.getOid());
-        assertNotNull(loaded);
-
+        
         assertTutkintoOhjelma((TutkintoOhjelmaToteutusDTO) completeToteutus, (TutkintoOhjelmaToteutusDTO) loaded);
 
     }
@@ -90,8 +91,11 @@ public class KoulutusmoduuliToteutusAdminServiceTest {
         assertEquals(expected.getMaksullisuus(), actual.getMaksullisuus());
         assertEquals(expected.getTarjoajat(), actual.getTarjoajat());
         assertEquals(expected.getToteutettavaKoulutusmoduuliOID(), actual.getToteutettavaKoulutusmoduuliOID());
+        assertPerustiedot(expected.getPerustiedot(), actual.getPerustiedot());
 
     }
+    
+    
 
     private TutkintoOhjelmaToteutusDTO createCompleteToteutus() {
 
@@ -105,14 +109,24 @@ public class KoulutusmoduuliToteutusAdminServiceTest {
 
         KoulutusmoduuliPerustiedotDTO perustiedot = new KoulutusmoduuliPerustiedotDTO();
         perustiedot.setKoulutusKoodiUri("http://koulutusmooduuri");
-        perustiedot.setOpetuskielis(Arrays.asList("http://opentuskieli/fi", "http://opetuskieli/en"));
-        perustiedot.setOpetusmuotos(Arrays.asList("http://opetusmuoto/luokka", "http://opetusmuoto/eta"));
-        perustiedot.setAsiasanoituses(Arrays.asList("http://asiasana/talous", "http://asiasana/suojelu"));
+        perustiedot.setOpetuskielis(Sets.newHashSet("http://opentuskieli/fi", "http://opetuskieli/en"));
+        perustiedot.setOpetusmuotos(Sets.newHashSet("http://opetusmuoto/luokka", "http://opetusmuoto/eta"));
+        perustiedot.setAsiasanoituses(Sets.newHashSet("http://asiasana/talous", "http://asiasana/suojelu"));
 
         toteutus.setPerustiedot(perustiedot);
 
         return toteutus;
 
+    }
+    
+    private void assertPerustiedot(KoulutusmoduuliPerustiedotDTO expected, KoulutusmoduuliPerustiedotDTO actual) {
+        
+        assertEquals(expected.getAsiasanoituses(), actual.getAsiasanoituses());
+        assertEquals(expected.getKoulutusKoodiUri(), actual.getKoulutusKoodiUri());
+        assertEquals(expected.getOpetuskielis(), actual.getOpetuskielis());
+        assertEquals(expected.getOpetusmuotos(), actual.getOpetusmuotos());
+        assertEquals(expected.getSuunniteltuKestoUri(), actual.getSuunniteltuKestoUri());
+        
     }
 
 }

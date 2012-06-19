@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.selenium.story;
 
+import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
@@ -11,7 +12,6 @@ import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusmoduuliToteutusEd
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import static fi.vm.sade.support.selenium.SeleniumUtils.*;
@@ -48,7 +48,7 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
         perustiedot.getOpetuskielis().add("Ruotsi"); // NOTE: uri vs arvo
         perustiedot.getOpetusmuotos().add("opetusmuoto3");
         perustiedot.setSuunniteltuKestoUri("6 kuukautta");
-        perustiedot.setAsiasanoituses(Arrays.asList("Kielet ja kulttuuri"));
+        perustiedot.setAsiasanoituses(Sets.newHashSet("Kielet ja kulttuuri"));
         komoto.setToteutettavaKoulutusmoduuliOID("oid_koulutusmoduuli1");
         komoto.setKoulutuslajiUri("Nuorten koulutus");
         komoto.setMaksullisuus("500 euroa");
@@ -93,8 +93,8 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
         assertEquals(2, component.getKomoto().getPerustiedot().getOpetuskielis().size());
 //        assertEquals("http://kieli/suomi", component.getKomoto().getPerustiedot().getOpetuskielis().get(0));
 //        assertEquals("http://kieli/englanti", component.getKomoto().getPerustiedot().getOpetuskielis().get(1));
-        assertEquals("Suomi", component.getKomoto().getPerustiedot().getOpetuskielis().get(0)); // NOTE: uri vs arvo
-        assertEquals("Englanti", component.getKomoto().getPerustiedot().getOpetuskielis().get(1));
+        assertEquals("Suomi", first(component.getKomoto().getPerustiedot().getOpetuskielis())); // NOTE: uri vs arvo
+        assertEquals("Englanti", first(component.getKomoto().getPerustiedot().getOpetuskielis()));
     }
 
     @Test
@@ -134,8 +134,8 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
         assertEquals(2, component.getKomoto().getPerustiedot().getOpetusmuotos().size());
 //        assertEquals("http://opetusmuoto/opetusmuoto1", component.getKomoto().getPerustiedot().getOpetusmuotos().get(0));
 //        assertEquals("http://opetusmuoto/opetusmuoto2", component.getKomoto().getPerustiedot().getOpetusmuotos().get(1));
-        assertEquals("opetusmuoto1", component.getKomoto().getPerustiedot().getOpetusmuotos().get(0)); // NOTE: uri vs arvo
-        assertEquals("opetusmuoto2", component.getKomoto().getPerustiedot().getOpetusmuotos().get(1));
+        assertEquals("opetusmuoto1", first(component.getKomoto().getPerustiedot().getOpetusmuotos())); // NOTE: uri vs arvo
+        assertEquals("opetusmuoto2", first(component.getKomoto().getPerustiedot().getOpetusmuotos()));
     }
     
     @Test
@@ -214,5 +214,10 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
         koulutusModuuli.setOid("oid_"+nimi);
         koulutusmoduuliAdminService.save(koulutusModuuli);
     }    
+    
+    
+    private static Object first(Collection collection) {
+        return collection.iterator().next();
+    }
 
 }

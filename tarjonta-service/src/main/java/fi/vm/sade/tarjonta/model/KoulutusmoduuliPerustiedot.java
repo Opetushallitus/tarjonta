@@ -43,22 +43,25 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
     /**
      * Set of Koodisto uris, one for each "opetuskieli" (teaching language) provided.
      */
-    @ElementCollection(fetch= FetchType.LAZY)
-    @CollectionTable(name=TABLE_NAME + "_opetuskieli", joinColumns=@JoinColumn(name="perustiedot_id"))
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_opetuskieli", joinColumns =
+    @JoinColumn(name = "perustiedot_id"))
     private Set<KoodistoKoodi> opetuskielis = new HashSet<KoodistoKoodi>();
 
     /**
      * Set of Koodisto uris, one for each "opetusmuoto" (form of teaching) provided.
      */
-    @ElementCollection(fetch= FetchType.LAZY)
-    @CollectionTable(name=TABLE_NAME + "_opetusmuoto", joinColumns=@JoinColumn(name="perustiedot_id"))
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_opetusmuoto", joinColumns =
+    @JoinColumn(name = "perustiedot_id"))
     private Set<KoodistoKoodi> opetusmuotos = new HashSet<KoodistoKoodi>();
 
     /**
      * Set of Koodisto uris, one for each "asiasanoitus" (a.k.a theme/teema) provided.
      */
-    @ElementCollection(fetch= FetchType.LAZY)
-    @CollectionTable(name=TABLE_NAME + "_asiasanoitus", joinColumns=@JoinColumn(name="perustiedot_id"))
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_asiasanoitus", joinColumns =
+    @JoinColumn(name = "perustiedot_id"))
     private Set<KoodistoKoodi> asiasanoituses = new HashSet<KoodistoKoodi>();
 
     /**
@@ -84,6 +87,21 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
      */
     public Set<KoodistoKoodi> getOpetuskieletkielis() {
         return Collections.unmodifiableSet(opetuskielis);
+    }
+
+    /**
+     * Set all opetuskieli uri's in one go. All previously existing uri's will be removed.
+     *
+     * @param newValues
+     * @param opetuskielis
+     */
+    public void setOpetuskielis(Set<String> newValues) {
+
+        opetuskielis.clear();
+        for (String value : newValues) {
+            addOpetuskieli(value);
+        }
+
     }
 
     /**
@@ -115,6 +133,20 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
     }
 
     /**
+     * Sets opetusmuoto uri's in one go. All existing values will be removed.
+     *
+     * @param newValues
+     */
+    public void setOpetusmuotos(Set<String> newValues) {
+
+        opetusmuotos.clear();
+        for (String value : newValues) {
+            addOpetusmuoto(value);
+        }
+
+    }
+
+    /**
      *
      * @param opetusmuotoUri non-null uri to opetusmuoto
      * @return true if item did not exist before
@@ -140,9 +172,21 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
     public Set<KoodistoKoodi> getAsiasanoituses() {
         return Collections.unmodifiableSet(asiasanoituses);
     }
-    
-    
-    
+
+    /**
+     * Sets all asiasanoitus uri's in one go. Any existing values will be removed.
+     *
+     * @param newValues
+     */
+    public void setAsiasanoituses(Set<String> newValues) {
+
+        asiasanoituses.clear();
+        for (String value : newValues) {
+            addAsiasanoitus(value);
+        }
+
+    }
+
     /**
      *
      * @param asiasanoitusUri
@@ -159,11 +203,6 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
      */
     public boolean removeAsiasanoitus(String asiasanoitusUri) {
         return asiasanoituses.remove(new KoodistoKoodi(asiasanoitusUri));
-    }
-    
-    
-    public void setAsiasanoituses(Set<String> asiasanoituses) {
-        
     }
 
 }
