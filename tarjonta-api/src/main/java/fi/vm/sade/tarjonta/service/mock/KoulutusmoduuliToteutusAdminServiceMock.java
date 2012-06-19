@@ -16,7 +16,6 @@
  */
 package fi.vm.sade.tarjonta.service.mock;
 
-
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
@@ -86,6 +85,9 @@ public class KoulutusmoduuliToteutusAdminServiceMock implements KoulutusmoduuliT
     
     private KoulutusmoduuliToteutusDTO randomToteutus() {
         TutkintoOhjelmaToteutusDTO dto = new TutkintoOhjelmaToteutusDTO();
+        // added at least empty perustiedot to start with
+        dto.setPerustiedot(new KoulutusmoduuliPerustiedotDTO());
+        
         dto.setOid(new Float(deGenerator.nextFloat()).toString());
         dto.setToteutettavaKoulutusmoduuliOID(new Float(deGenerator.nextFloat()).toString());
         dto.setNimi("Komoto " + deGenerator.nextInt(100));
