@@ -14,7 +14,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
 
 import com.vaadin.data.Property;
@@ -23,7 +22,6 @@ import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.ui.AbstractSelect.Filtering;
 import com.vaadin.ui.*;
-import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.component.GenericForm;
 import fi.vm.sade.generic.ui.component.MultipleSelectToTableWrapper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
@@ -31,10 +29,10 @@ import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.organisaatio.ui.widgets.OrganisaatioSearchType;
 import fi.vm.sade.organisaatio.ui.widgets.OrganisaatioSearchWidget;
 import fi.vm.sade.organisaatio.ui.widgets.factory.OrganisaatioWidgetFactory;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSearchDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
+import fi.vm.sade.tarjonta.ui.util.CollectionUtils;
 import fi.vm.sade.tarjonta.ui.util.I18NHelper;
 import fi.vm.sade.tarjonta.widget.KoulutusmoduuliComponent;
 import fi.vm.sade.tarjonta.widget.factory.TarjontaWidgetFactory;
@@ -44,8 +42,8 @@ import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-
 
 /**
  * @author Tuomas Katva
@@ -55,14 +53,23 @@ import java.util.List;
 public class KoulutusmoduuliToteutusEditView extends GenericForm<KoulutusmoduuliToteutusDTO> {
 
     public static final String KOODISTO_KIELI_URI = "http://kieli"; // TODO: tuleeko opetuskieli kieli-koodistosta, vai onko erikseen joku opetuskieli-koodisto?
+
     public static final String KOODISTO_OPETUSMUOTO_URI = "http://opetusmuoto"; // TODO: mistä koodistosta oikeasti tulee opetusmuoto?
+
     public static final String SUUNNITELTU_KESTO_URI = "http://suunniteltuKesto";
+
     public static final String KOULUTUSLAJI_URI = "http://koulutuslaji";
+
     public static final String TEEMA_URI = "http://teema";
 
     //    @Autowired
 //    private KoulutusmoduuliAdminService koulutusmoduuliAdminService;
     private TarjontaWidgetFactory tarjontaWidgetFactory = TarjontaWidgetFactory.getInstance();
+
+    /**
+     * Number of teema's user is allowed to select.
+     */
+    private static final int MAX_TEEMA_SELECTIONS = 3;
 
     private int komotoEditViewWidth = 860;
 
@@ -87,7 +94,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
     //@PropertyId("perustiedot.opetuskielis") - nested properties cannot be bound with @PropertyId? doing bind manually
     private MultipleSelectToTableWrapper opetuskielis;
 
-   private OrganisaatioSearchWidget organisaatioField;
+    private OrganisaatioSearchWidget organisaatioField;
 
     //@PropertyId("suunniteltuKestoUri")
     private KoodistoComponent suunniteltuKestoKoodisto;
@@ -102,16 +109,15 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 
     //@PropertyId("teemaUris")
     private KoodistoComponent teemat;
+
     private OptionGroup teematOptionGroup;
 
     private static final I18NHelper i18n = new I18NHelper("KoulutusmoduuliToteutusEditView.");
 
     /*
-    private static final List<String> dummyTeemat = Arrays.asList(new String[] {
-            "Sosiaaliala,yhteiskunta ja politiikka", "Kielet ja kulttuuri", "Talous, kauppa ja hallinta", "Terveys, hyvinvointi ja lääketiede",
-            "Kasvatus, opetus ja psykologia", "Biologia, kemia ja maantiede","Suojelu ja pelastus" });
-    */
-
+     * private static final List<String> dummyTeemat = Arrays.asList(new String[] { "Sosiaaliala,yhteiskunta ja politiikka", "Kielet ja kulttuuri", "Talous,
+     * kauppa ja hallinta", "Terveys, hyvinvointi ja lääketiede", "Kasvatus, opetus ja psykologia", "Biologia, kemia ja maantiede","Suojelu ja pelastus" });
+     */
     @Override
     protected void initFields() {
         buildRootLayout();
@@ -131,7 +137,6 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
         return "layouts/KomotoEdit.html";
     }
 
-
     protected String getCaptionForString(String key) {
         String retval = i18n.getMessage(key);
         if (retval == null || retval.length() < 1) {
@@ -142,9 +147,9 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
     }
 
     public KoulutusmoduuliToteutusEditView() {
-        
+
         rootLayout = getCustomLayout(getCustomLayoutPath());
-        
+
         model = new TutkintoOhjelmaToteutusDTO();
         initForm(model, rootLayout);
 
@@ -215,6 +220,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
                 // TODO Auto-generated method stub
                 maksullinenKoulutusTextfield.setEnabled(maksullinenKoulutusCheckbox.booleanValue());
             }
+
         });
         rootLayout.addComponent(maksullinenKoulutusCheckbox, "maksullinenKoulutus");
 
@@ -228,6 +234,8 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 
         teematOptionGroup = new OptionGroup("Teemat (1-3)");
         teematOptionGroup.setMultiSelect(true);
+        teematOptionGroup.setImmediate(true);
+        teematOptionGroup.addListener(new TeemaOptionHandler());
         teemat = WidgetFactory.create(TEEMA_URI);
         teemat.setField(teematOptionGroup);
         rootLayout.addComponent(teemat, "teemat");
@@ -250,8 +258,8 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 
     private MultipleSelectToTableWrapper createMultipleKoodiField(String koodistoUri) {
         final MultipleSelectToTableWrapper field = WidgetFactory.createMultipleKoodiTableField(koodistoUri);
-        final Table table = field.getTable();        
-        table.setVisibleColumns(new Object[]{"koodiArvo", MultipleSelectToTableWrapper.REMOVE_BUTTON});
+        final Table table = field.getTable();
+        table.setVisibleColumns(new Object[] {"koodiArvo", MultipleSelectToTableWrapper.REMOVE_BUTTON});
         table.setPageLength(0); // this will achieve table size to shrink to content size
         table.setWidth("100%");
         table.setColumnHeaderMode(Table.COLUMN_HEADER_MODE_HIDDEN); // hide table header
@@ -268,15 +276,15 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
             this.maksullinenKoulutusCheckbox.setValue(Boolean.TRUE);
             this.maksullinenKoulutusTextfield.setEnabled(true);
         }
-        
+
         if (model.getTarjoajat() != null && model.getTarjoajat().size() > 0) {
-            organisaatioField.setValue(model.getTarjoajat().get(model.getTarjoajat().size() -1));
+            organisaatioField.setValue(model.getTarjoajat().get(model.getTarjoajat().size() - 1));
         }
-        
+
         System.out.println("BIND: opetuskielis: " + opetuskielis
             + ", model: " + model
             + ", perustiedot: " + model.getPerustiedot());
-        
+
         // nested properties cannot be bound with @PropertyId? doing bind manually
         opetuskielis.setPropertyDataSource(new ObjectProperty(model.getPerustiedot().getOpetuskielis()));
         opetusmuotos.setPropertyDataSource(new ObjectProperty(model.getPerustiedot().getOpetusmuotos()));
@@ -290,14 +298,14 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
 
     @Override
     protected KoulutusmoduuliToteutusDTO save(KoulutusmoduuliToteutusDTO model) throws Exception {
-        
+
         if (organisaatioField.getValue() != null) {
             List<String> organisaatiot = new ArrayList<String>();
-            organisaatiot.add((String)organisaatioField.getValue());
+            organisaatiot.add((String) organisaatioField.getValue());
             model.setTarjoajat(organisaatiot);
         }
-        
-        
+
+
         if (!this.maksullinenKoulutusCheckbox.isEnabled()) {
             model.setMaksullisuus(null);
         }
@@ -431,4 +439,29 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
         this.organisaatioField = organisaatioField;
     }
 
+    private class TeemaOptionHandler implements Property.ValueChangeListener {
+
+        @Override
+        public void valueChange(ValueChangeEvent event) {
+            final Collection selectedItems = (Collection) event.getProperty().getValue();
+            final Collection allItems = teematOptionGroup.getItemIds();
+            final int numSelected = selectedItems.size();
+            if (numSelected == MAX_TEEMA_SELECTIONS) {
+
+                final Collection notSelected = CollectionUtils.notIn(allItems, selectedItems);
+                for (Object o : notSelected) {
+                    teematOptionGroup.setItemEnabled(o, false);
+                }
+
+            } else {
+                for (Object o : allItems) {
+                    teematOptionGroup.setItemEnabled(o, true);
+                }
+            }
+        }
+
+    }
+
+
 }
+
