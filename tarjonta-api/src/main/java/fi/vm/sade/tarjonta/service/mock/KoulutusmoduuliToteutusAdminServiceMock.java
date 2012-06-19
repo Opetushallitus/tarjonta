@@ -85,8 +85,6 @@ public class KoulutusmoduuliToteutusAdminServiceMock implements KoulutusmoduuliT
     
     private KoulutusmoduuliToteutusDTO randomToteutus() {
         TutkintoOhjelmaToteutusDTO dto = new TutkintoOhjelmaToteutusDTO();
-        // added at least empty perustiedot to start with
-        dto.setPerustiedot(new KoulutusmoduuliPerustiedotDTO());
         
         dto.setOid(new Float(deGenerator.nextFloat()).toString());
         dto.setToteutettavaKoulutusmoduuliOID(new Float(deGenerator.nextFloat()).toString());

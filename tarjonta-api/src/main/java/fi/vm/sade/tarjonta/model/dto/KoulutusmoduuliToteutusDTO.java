@@ -28,8 +28,6 @@ import java.util.List;
 @SuppressWarnings("serial")
 public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
 
-
-
     private KoulutusmoduuliTila tila;
 
     private String oid;
@@ -38,7 +36,7 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
 
     private String toteutettavaKoulutusmoduuliOID;
 
-    private KoulutusmoduuliPerustiedotDTO perustiedot;
+    private KoulutusmoduuliPerustiedotDTO perustiedot = new KoulutusmoduuliPerustiedotDTO();
 
     /*
      * TODO: Miksi tätä ei ole koulutusmoduulin toteutuksessa tietomallissa? Tietomallissa tämä näyttää olevan Koulutusmoduulissa. Vastaus Sepolta:
@@ -91,10 +89,10 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("oid", oid).
-                append("nimi", nimi).
-                append("tila", getTila()).
-                append("toteutettavaKoulutusmoduuliOID", toteutettavaKoulutusmoduuliOID).
-                append(perustiedot).toString();
+            append("nimi", nimi).
+            append("tila", getTila()).
+            append("toteutettavaKoulutusmoduuliOID", toteutettavaKoulutusmoduuliOID).
+            append(perustiedot).toString();
     }
 
     /**
