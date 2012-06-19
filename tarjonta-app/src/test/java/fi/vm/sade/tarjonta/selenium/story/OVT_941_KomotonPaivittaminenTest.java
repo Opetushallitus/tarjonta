@@ -8,11 +8,13 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.selenium.TarjontaEmbedComponentTstSupport;
 import fi.vm.sade.tarjonta.selenium.pageobject.KoulutusmoduuliToteutusEditViewPageObject;
 import fi.vm.sade.tarjonta.selenium.pageobject.KoulutusmoduuliToteutusListPageObject;
 import fi.vm.sade.tarjonta.service.KoulutusmoduuliAdminService;
 import fi.vm.sade.tarjonta.ui.MainWindow;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusModuulinToteutusTable;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusmoduuliToteutusEditView;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusmoduuliToteutusListView;
 
@@ -41,8 +43,13 @@ public class OVT_941_KomotonPaivittaminenTest extends TarjontaEmbedComponentTstS
         
         listPageObject.clickItemInTable(listPageObject.getSuunnitteillaOlevat(), 2);
         
-        assertTrue(listPageObject.getSuunnitteillaOlevat().getKomotoEdit().getSuunniteltuKestoTextfield().getValue().equals("6 kuukautta"));
-        assertTrue(listPageObject.getSuunnitteillaOlevat().getKomotoEdit().getKoulutusLajiKoodisto().getValue().equals("Nuorten koulutus"));
+        KoulutusModuulinToteutusTable suunnitteilla = listPageObject.getSuunnitteillaOlevat();
+        KoulutusmoduuliToteutusEditView edit = suunnitteilla.getKomotoEdit();
+        KoodistoComponent suunniteltuKesto = edit.getSuunniteltuKestoTextfield();
+        KoodistoComponent koulutusLaji = edit.getKoulutusLajiKoodisto();
+        
+        assertTrue(suunniteltuKesto.getValue().equals("6 kuukautta"));
+        assertTrue(koulutusLaji.getValue().equals("Nuorten koulutus"));
         
     }
     
