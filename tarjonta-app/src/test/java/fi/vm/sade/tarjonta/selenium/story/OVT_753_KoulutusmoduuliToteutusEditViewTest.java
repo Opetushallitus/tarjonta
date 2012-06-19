@@ -93,8 +93,8 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
         assertEquals(2, component.getKomoto().getPerustiedot().getOpetuskielis().size());
 //        assertEquals("http://kieli/suomi", component.getKomoto().getPerustiedot().getOpetuskielis().get(0));
 //        assertEquals("http://kieli/englanti", component.getKomoto().getPerustiedot().getOpetuskielis().get(1));
-        assertEquals("Suomi", first(component.getKomoto().getPerustiedot().getOpetuskielis())); // NOTE: uri vs arvo
-        assertEquals("Englanti", first(component.getKomoto().getPerustiedot().getOpetuskielis()));
+        assertTrue(component.getKomoto().getPerustiedot().getOpetuskielis().contains("Suomi")); // NOTE: uri vs arvo
+        assertTrue(component.getKomoto().getPerustiedot().getOpetuskielis().contains("Englanti"));
     }
 
     @Test
@@ -134,8 +134,8 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
         assertEquals(2, component.getKomoto().getPerustiedot().getOpetusmuotos().size());
 //        assertEquals("http://opetusmuoto/opetusmuoto1", component.getKomoto().getPerustiedot().getOpetusmuotos().get(0));
 //        assertEquals("http://opetusmuoto/opetusmuoto2", component.getKomoto().getPerustiedot().getOpetusmuotos().get(1));
-        assertEquals("opetusmuoto1", first(component.getKomoto().getPerustiedot().getOpetusmuotos())); // NOTE: uri vs arvo
-        assertEquals("opetusmuoto2", first(component.getKomoto().getPerustiedot().getOpetusmuotos()));
+        assertTrue(component.getKomoto().getPerustiedot().getOpetusmuotos().contains("opetusmuoto1")); // NOTE: uri vs arvo
+        assertTrue(component.getKomoto().getPerustiedot().getOpetusmuotos().contains("opetusmuoto2"));
     }
     
     @Test
@@ -215,9 +215,4 @@ public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedCo
         koulutusmoduuliAdminService.save(koulutusModuuli);
     }    
     
-    
-    private static Object first(Collection collection) {
-        return collection.iterator().next();
-    }
-
 }
