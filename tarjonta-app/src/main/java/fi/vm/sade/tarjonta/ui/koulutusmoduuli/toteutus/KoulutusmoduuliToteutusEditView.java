@@ -262,7 +262,11 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
             this.maksullinenKoulutusCheckbox.setValue(Boolean.TRUE);
             this.maksullinenKoulutusTextfield.setEnabled(true);
         }
-
+        
+        if (model.getTarjoajat() != null && model.getTarjoajat().size() > 0) {
+            organisaatioField.setValue(model.getTarjoajat().get(model.getTarjoajat().size() -1));
+        }
+        
         // nested properties cannot be bound with @PropertyId? doing bind manually
         opetuskielis.setPropertyDataSource(new ObjectProperty(model.getPerustiedot().getOpetuskielis()));
         opetusmuotos.setPropertyDataSource(new ObjectProperty(model.getPerustiedot().getOpetusmuotos()));
