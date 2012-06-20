@@ -49,7 +49,7 @@ public class KoulutusmoduuliTreeWalkerTest {
     private static KoulutusmoduuliTreeWalker.WalkTester tester = new WalkTester() {
 
         @Override
-        public boolean test(Koulutusmoduuli moduuli) {
+        public boolean continueWalking(Koulutusmoduuli moduuli) {
             counter.incrementAndGet();
             return true;
         }

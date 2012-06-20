@@ -18,6 +18,8 @@ package fi.vm.sade.tarjonta.model;
 import java.util.Set;
 
 /**
+ * Helper class that traverses the "tree" of Koulutusmoduuli's and performs a test on tree nodes using WalkTester. 
+ * This can be used to e.g. find parents or children.
  *
  * @author Jukka Raanamo
  */
@@ -50,14 +52,14 @@ public class KoulutusmoduuliTreeWalker {
         walkDown = false;
         walkInternal(startNode);
     }
-    
+
     private boolean walkInternal(Koulutusmoduuli node) {
 
         if (maxDepth != -1 && walkedDepth == maxDepth) {
             return false;
         }
 
-        if (!tester.test(node)) {
+        if (!tester.continueWalking(node)) {
             return false;
         }
 
@@ -74,15 +76,24 @@ public class KoulutusmoduuliTreeWalker {
     }
 
     /**
-     * 
+     *
      */
     public interface WalkTester {
 
-        public boolean test(Koulutusmoduuli moduuli);
+        /**
+         * Tests if walking the tree should continue past given Koulutusmoduuli.
+         * 
+         * @param moduuli
+         * @return
+         */
+        public boolean continueWalking(Koulutusmoduuli moduuli);
 
     }
 
 
+    /**
+     * WalkTester that stops when a node equal to match node is found.
+     */
     public static class NodeEqualsTester implements WalkTester {
 
         private boolean found;
@@ -94,7 +105,7 @@ public class KoulutusmoduuliTreeWalker {
         }
 
         @Override
-        public boolean test(Koulutusmoduuli moduuli) {
+        public boolean continueWalking(Koulutusmoduuli moduuli) {
             if (match.equals(moduuli)) {
                 found = true;
                 return false;
