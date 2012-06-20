@@ -227,6 +227,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
         // maksullinenKoulutusTextfield
         maksullinenKoulutusTextfield = new TextField();
         maksullinenKoulutusTextfield.setImmediate(false);
+        maksullinenKoulutusTextfield.setNullRepresentation("");
         rootLayout.addComponent(maksullinenKoulutusTextfield, "maksullinenKoulutusText");
 
 
@@ -280,10 +281,6 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
         if (model.getTarjoajat() != null && model.getTarjoajat().size() > 0) {
             organisaatioField.setValue(model.getTarjoajat().get(model.getTarjoajat().size() - 1));
         }
-
-        System.out.println("BIND: opetuskielis: " + opetuskielis
-            + ", model: " + model
-            + ", perustiedot: " + model.getPerustiedot());
 
         // nested properties cannot be bound with @PropertyId? doing bind manually
         opetuskielis.setPropertyDataSource(new ObjectProperty(model.getPerustiedot().getOpetuskielis()));
@@ -439,7 +436,13 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
         this.organisaatioField = organisaatioField;
     }
 
+    /**
+     * Helper class that does not allow user to select more than N teema items by 
+     * disabling rest of the items when N is reached.
+     */
     private class TeemaOptionHandler implements Property.ValueChangeListener {
+
+        private static final long serialVersionUID = -5847815251565043840L;
 
         @Override
         public void valueChange(ValueChangeEvent event) {
