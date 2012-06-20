@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  *
@@ -55,6 +56,22 @@ public class CollectionUtils {
         }
         return result;
         
+    }
+    
+    
+    /**
+     * Returns last element from the collection or null if collection is empty.
+     * 
+     * @param collection
+     * @return
+     */
+    public static Object last(Collection collection) {
+        Object last = null;
+        Iterator i = collection.iterator();
+        while (i.hasNext()) {
+            last = i.next();
+        }
+        return last;
     }
     
 }

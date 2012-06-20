@@ -12,8 +12,9 @@
         <class>fi.vm.sade.tarjonta.model.KoulutusmoduuliSisaltyvyys</class>
         <class>fi.vm.sade.tarjonta.model.KoulutusmoduuliPerustiedot</class>
         <class>fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus</class>
-        <class>fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutusTarjoaja</class>
         <class>fi.vm.sade.tarjonta.model.Hakuera</class>
+        <class>fi.vm.sade.tarjonta.model.KoodistoKoodiUri</class>
+        <class>fi.vm.sade.tarjonta.model.Oid</class>
 
 
         <properties>

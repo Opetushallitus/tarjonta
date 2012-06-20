@@ -41,9 +41,9 @@ import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Tuomas Katva
@@ -279,7 +279,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
         }
 
         if (model.getTarjoajat() != null && model.getTarjoajat().size() > 0) {
-            organisaatioField.setValue(model.getTarjoajat().get(model.getTarjoajat().size() - 1));
+            organisaatioField.setValue(CollectionUtils.last(model.getTarjoajat()));
         }
 
         // nested properties cannot be bound with @PropertyId? doing bind manually
@@ -297,7 +297,7 @@ public class KoulutusmoduuliToteutusEditView extends GenericForm<Koulutusmoduuli
     protected KoulutusmoduuliToteutusDTO save(KoulutusmoduuliToteutusDTO model) throws Exception {
 
         if (organisaatioField.getValue() != null) {
-            List<String> organisaatiot = new ArrayList<String>();
+            Set<String> organisaatiot = new HashSet<String>();
             organisaatiot.add((String) organisaatioField.getValue());
             model.setTarjoajat(organisaatiot);
         }

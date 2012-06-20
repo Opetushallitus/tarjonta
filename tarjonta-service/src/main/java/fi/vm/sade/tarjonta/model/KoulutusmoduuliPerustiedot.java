@@ -46,7 +46,7 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_opetuskieli", joinColumns =
     @JoinColumn(name = "perustiedot_id"))
-    private Set<KoodistoKoodi> opetuskielis = new HashSet<KoodistoKoodi>();
+    private Set<KoodistoKoodiUri> opetuskielis = new HashSet<KoodistoKoodiUri>();
 
     /**
      * Set of Koodisto uris, one for each "opetusmuoto" (form of teaching) provided.
@@ -54,7 +54,7 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_opetusmuoto", joinColumns =
     @JoinColumn(name = "perustiedot_id"))
-    private Set<KoodistoKoodi> opetusmuotos = new HashSet<KoodistoKoodi>();
+    private Set<KoodistoKoodiUri> opetusmuotos = new HashSet<KoodistoKoodiUri>();
 
     /**
      * Set of Koodisto uris, one for each "asiasanoitus" (a.k.a theme/teema) provided.
@@ -62,7 +62,7 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_asiasanoitus", joinColumns =
     @JoinColumn(name = "perustiedot_id"))
-    private Set<KoodistoKoodi> asiasanoituses = new HashSet<KoodistoKoodi>();
+    private Set<KoodistoKoodiUri> asiasanoituses = new HashSet<KoodistoKoodiUri>();
 
     /**
      *
@@ -85,7 +85,7 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
      *
      * @return
      */
-    public Set<KoodistoKoodi> getOpetuskieletkielis() {
+    public Set<KoodistoKoodiUri> getOpetuskieletkielis() {
         return Collections.unmodifiableSet(opetuskielis);
     }
 
@@ -111,7 +111,7 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
      * @return true if item did not exist before
      */
     public boolean addOpetuskieli(String kieliUri) {
-        return opetuskielis.add(new KoodistoKoodi(kieliUri));
+        return opetuskielis.add(new KoodistoKoodiUri(kieliUri));
     }
 
     /**
@@ -120,7 +120,7 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
      * @return true if given kieli existed and was removed
      */
     public boolean removeOpetuskieli(final String kieliUri) {
-        return opetuskielis.remove(new KoodistoKoodi(kieliUri));
+        return opetuskielis.remove(new KoodistoKoodiUri(kieliUri));
     }
 
     /**
@@ -128,7 +128,7 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
      *
      * @return
      */
-    public Set<KoodistoKoodi> getOpetusmuotos() {
+    public Set<KoodistoKoodiUri> getOpetusmuotos() {
         return Collections.unmodifiableSet(opetusmuotos);
     }
 
@@ -152,7 +152,7 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
      * @return true if item did not exist before
      */
     public boolean addOpetusmuoto(final String opetusmuotoUri) {
-        return opetusmuotos.add(new KoodistoKoodi(opetusmuotoUri));
+        return opetusmuotos.add(new KoodistoKoodiUri(opetusmuotoUri));
     }
 
     /**
@@ -161,7 +161,7 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
      * @return true if given opetusmuoto existed and was removed
      */
     public boolean removeOpetusmuoto(final String opetusmuotoUri) {
-        return opetusmuotos.remove(new KoodistoKoodi(opetusmuotoUri));
+        return opetusmuotos.remove(new KoodistoKoodiUri(opetusmuotoUri));
     }
 
     /**
@@ -169,7 +169,7 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
      *
      * @return
      */
-    public Set<KoodistoKoodi> getAsiasanoituses() {
+    public Set<KoodistoKoodiUri> getAsiasanoituses() {
         return Collections.unmodifiableSet(asiasanoituses);
     }
 
@@ -193,7 +193,7 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
      * @return true if given item did not exist before
      */
     public boolean addAsiasanoitus(String asiasanoitusUri) {
-        return asiasanoituses.add(new KoodistoKoodi(asiasanoitusUri));
+        return asiasanoituses.add(new KoodistoKoodiUri(asiasanoitusUri));
     }
 
     /**
@@ -202,7 +202,7 @@ public class KoulutusmoduuliPerustiedot extends BaseEntity {
      * @return true if given asiasanoitus existed and was removed
      */
     public boolean removeAsiasanoitus(String asiasanoitusUri) {
-        return asiasanoituses.remove(new KoodistoKoodi(asiasanoitusUri));
+        return asiasanoituses.remove(new KoodistoKoodiUri(asiasanoitusUri));
     }
 
 }

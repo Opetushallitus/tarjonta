@@ -19,10 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
-import fi.vm.sade.tarjonta.model.KoodistoKoodi;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutusTarjoaja;
+import fi.vm.sade.tarjonta.model.Oid;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
 
@@ -43,22 +41,13 @@ public class TutkintoOhjelmaToteutusToDTOConverter<T extends KoulutusmoduuliTote
         dto.setPerustiedot(CommonConverter.convert(source.getPerustiedot()));
         dto.setKoulutuksenAlkamisPvm(source.getKoulutuksenAlkamisPvm());
         dto.setKoulutuslajiUri(source.getKoulutusLajiUri());
-        dto.setTarjoajat(convertTarjoajat(source));
+        dto.setTarjoajat(source.getTarjoajat());
         dto.setToteutettavaKoulutusmoduuliOID(source.getKoulutusmoduuli().getOid());
 
         return (T) dto;
     }
 
-    private List<String> convertTarjoajat(TutkintoOhjelmaToteutus source) {
-        if (source.getTarjoajat() == null) {
-            return null;
-        }
-        List<String> tarjoajat = new ArrayList<String>();
-        for (KoulutusmoduuliToteutusTarjoaja curTarjoaja : source.getTarjoajat()) {
-            tarjoajat.add(curTarjoaja.getOrganisaatioOID());
-        }
-        return tarjoajat;
-    }
+    
 
 }
 

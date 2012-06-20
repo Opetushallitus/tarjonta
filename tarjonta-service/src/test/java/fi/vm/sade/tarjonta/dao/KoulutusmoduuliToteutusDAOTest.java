@@ -146,7 +146,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         defaultToteutus.getPerustiedot().addAsiasanoitus(asiasanoitusUri);        
         defaultToteutus = updateAndRead(defaultToteutus);
         
-        final Set<KoodistoKoodi> asiasanoitus = defaultToteutus.getPerustiedot().getAsiasanoituses();
+        final Set<KoodistoKoodiUri> asiasanoitus = defaultToteutus.getPerustiedot().getAsiasanoituses();
         
         assertEquals(1, asiasanoitus.size());
         assertEquals(asiasanoitusUri, asiasanoitus.iterator().next().getKoodiUri());

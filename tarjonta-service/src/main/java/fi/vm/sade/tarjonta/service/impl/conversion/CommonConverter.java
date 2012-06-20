@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import java.util.Set;
 
-import fi.vm.sade.tarjonta.model.KoodistoKoodi;
+import fi.vm.sade.tarjonta.model.KoodistoKoodiUri;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliPerustiedot;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
 import java.util.HashSet;
@@ -62,14 +62,14 @@ public final class CommonConverter {
 
     }
 
-    private static Set<String> convertKoodistoKoodisToString(Set<KoodistoKoodi> koodis) {
+    private static Set<String> convertKoodistoKoodisToString(Set<KoodistoKoodiUri> koodis) {
 
         if (koodis == null) {
             return null;
         }
         
         final Set<String> opetuskielis = new HashSet<String>();
-        for (KoodistoKoodi curKieli : koodis) {
+        for (KoodistoKoodiUri curKieli : koodis) {
             opetuskielis.add(curKieli.getKoodiUri());
         }
         return opetuskielis;

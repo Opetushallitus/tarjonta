@@ -15,29 +15,34 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * References one Koodisto koodi, usually based on Koodi's Uri.
+ * Container for Koodisto Uri. Use as @Embedded or inside @ElementCollection.
  *
  * @author Jukka Raanamo
  */
 @Embeddable
-public class KoodistoKoodi  {
-
-    public static final String TABLE_NAME = "koodisto_koodi";
+public class KoodistoKoodiUri implements Serializable {
 
     private static final long serialVersionUID = 6772772416321895399L;
 
     @Column(name = "koodi_uri", nullable = false)
     private String koodiUri;
 
-    protected KoodistoKoodi() {
+    /**
+     * JPA constructor.
+     */
+    protected KoodistoKoodiUri() {
     }
 
-    public KoodistoKoodi(String koodiUri) {
+    /**
+     * @param koodiUri a non-empty Uri 
+     */
+    public KoodistoKoodiUri(String koodiUri) {
         this();
         assert StringUtils.isNotEmpty(koodiUri) : "koodiUri cannot be empty string";
         this.koodiUri = koodiUri;
@@ -45,7 +50,7 @@ public class KoodistoKoodi  {
 
     /**
      * Returns a non-null koodi uri.
-     * 
+     *
      * @return
      */
     public String getKoodiUri() {
@@ -60,7 +65,7 @@ public class KoodistoKoodi  {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final KoodistoKoodi other = (KoodistoKoodi) obj;
+        final KoodistoKoodiUri other = (KoodistoKoodiUri) obj;
         if ((this.koodiUri == null) ? (other.koodiUri != null) : !this.koodiUri.equals(other.koodiUri)) {
             return false;
         }

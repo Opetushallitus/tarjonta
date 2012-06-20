@@ -19,7 +19,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -48,7 +48,7 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
      * TODO: Miksi näitä voi olla tietomallin mukaan monta, vaikka lomakkeessa voi valita vain yhden? Vastaus Sepolta: Oikeasti on vain yksi. Monesta moneen
      * suhde käytännössä syntyy vain monimutkaisten organisaatioiden välisten suhteiden kautta.
      */
-    private List<String> tarjoajat;
+    private Set<String> tarjoajat;
 
     private Date koulutuksenAlkamisPvm;
 
@@ -129,7 +129,7 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
      *
      * @return the list of tarjoaja organisaatio oids.
      */
-    public List<String> getTarjoajat() {
+    public Set<String> getTarjoajat() {
         return tarjoajat;
     }
 
@@ -137,7 +137,7 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
      *
      * @param tarjoajat the list of tarjoaja organisaatio oids to set
      */
-    public void setTarjoajat(List<String> tarjoajat) {
+    public void setTarjoajat(Set<String> tarjoajat) {
         this.tarjoajat = tarjoajat;
     }
 

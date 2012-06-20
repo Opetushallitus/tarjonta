@@ -27,6 +27,7 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.blackboard.BlackboardContext;
 import fi.vm.sade.koodisto.service.mock.MockDataHandler;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
@@ -225,7 +226,7 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
         combo.setImmediate(true);
         combo.setDebugId(PROPERTY_KOULUTUS_KOODI);
 
-        KoodistoComponent wrapper = new KoodistoComponent(KOODISTO_URI_KOULUTUKSET);
+        KoodistoComponent wrapper = WidgetFactory.create(KOODISTO_URI_KOULUTUKSET);
         wrapper.setField(combo);
         wrapper.setRequired(true);
         wrapper.setRequiredError(i18n.getMessage("koulutusIsRequired"));

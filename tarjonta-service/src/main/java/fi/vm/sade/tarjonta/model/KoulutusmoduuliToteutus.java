@@ -16,15 +16,12 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
-import org.jvnet.jaxb2_commons.lang.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -39,41 +36,45 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
 
     public static final String TABLE_NAME = "koulutusmoduuli_toteutus";
 
-    private static Logger log = LoggerFactory.getLogger(KoulutusmoduuliToteutus.class);
-
+    /**
+     * Display name, most likely generated from other properties.
+     */
     @Column
     private String nimi;
 
     /**
-     * todo: would it be better to make this embedded?
+     * Most koodisto related values are stored into KoulutusmoduuliPerustiedot.
      */
     @OneToOne(cascade = CascadeType.ALL)
     private KoulutusmoduuliPerustiedot perustiedot;
 
     /**
-     * todo: the same state enumeration is now being used as it is for Koulutusmoduuli - verify this.
+     * <p>Note 20.6.2012: the same state enumeration is now being used as it is for Koulutusmoduuli - verify whether the same state diagram 
+     * applies from Seppo</p>
      */
     @Enumerated(EnumType.STRING)
     private KoulutusmoduuliTila tila;
 
     /**
-     * OID references to those Organisaatio that offers this LOS.
+     * OID references to those Organisaatio that offers this toteutus.
      */
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<KoulutusmoduuliToteutusTarjoaja> tarjoajat = new HashSet<KoulutusmoduuliToteutusTarjoaja>();
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_tarjoaja", joinColumns =
+    @JoinColumn(name = "koulutusmoduuli_toteutus_id"))    
+    private Set<Oid> tarjoajat = new HashSet<Oid>();
 
     /**
      * The Koulutusmoduuli this "implementation" implements and/or completes.
      */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinTable(name = TABLE_NAME + "_tarjoaja")
+    @JoinTable(name = TABLE_NAME + "_koulutusmoduuli")
     private Koulutusmoduuli koulutusmoduuli;
 
     /**
      * Koodisto Uri. Example display values 'Nuorten koulutus, Aikuisten koulutus'.
      *
-     * <p>Note 11.06.2012: as per today, when looking at the "model" you'll find this attribute from Koulutusmoduuli. This is a mistake, the model is just not
-     * updated.</p>
+     * <p>Note 11.06.2012: as per today, when looking at the "model" you'll find this attribute from Koulutusmoduuli. 
+     * This is a mistake, the model is just not updated.</p>
      *
      */
     private String koulutusLajiUri;
@@ -85,21 +86,22 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     private Date koulutuksenAlkamisPvm;
 
     /**
-     * Koodisto Uri. Example display value '7+2 vuotta'. This is different than in the current (15.6.2012) wireframe, but the wireframe is wrong.
+     * Koodisto Uri. Example display value '7+2 vuotta'. This is different from the current (15.6.2012) 
+     * wireframe, but the wireframe is wrong.
      */
     private String suunniteltuKestoUri;
 
     /**
      * Set of Koodisto uris, one for each "teema" (theme) provided.
      */
-    //@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_teema", joinColumns =
     @JoinColumn(name = "koulutusmoduuli_toteutus_id"))
-    private Set<KoodistoKoodi> teemaUris;
+    private Set<KoodistoKoodiUri> teemaUris;
 
     /**
-     * If defined, this "koulutus" has a charge. This field defines the amount of the charge.
+     * If defined, this "koulutus" comes with a charge. This field defines the amount of the charge. The actual content of this 
+     * field is yet to be defined.
      */
     private String maksullisuus;
 
@@ -199,20 +201,24 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
      *
      * @return
      */
-    public Set<KoulutusmoduuliToteutusTarjoaja> getTarjoajat() {
-        return Collections.unmodifiableSet(tarjoajat);
+    public Set<String> getTarjoajat() {
+        Set<String> copy = new HashSet<String>(tarjoajat.size());
+        for (Oid tarjoaja : tarjoajat) {
+            copy.add(tarjoaja.getOid());
+        }
+        return copy;        
     }
 
     /**
-     * Adds a new KoulutusmooduuliToteutusTarjoaja
+     * Adds a new KoulutusmooduuliToteutus tarjoaja
      *
      * @param organisaatioOID a non null organisaatio OID.
      * @return true if this tarjoaja was not already added
      */
     public boolean addTarjoaja(String organisaatioOID) {
-        final KoulutusmoduuliToteutusTarjoaja t = new KoulutusmoduuliToteutusTarjoaja(organisaatioOID);
-        if (!tarjoajat.contains(t)) {
-            tarjoajat.add(t);
+        final Oid tarjoaja = new Oid(organisaatioOID);
+        if (!tarjoajat.contains(tarjoaja)) {
+            tarjoajat.add(tarjoaja);
             return true;
         } else {
             return false;
@@ -226,8 +232,8 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
      * @return true if given OID was previously added and is now removed
      */
     public boolean removeTarjoaja(String organisaatioOID) {
-        KoulutusmoduuliToteutusTarjoaja t = new KoulutusmoduuliToteutusTarjoaja(organisaatioOID);
-        return tarjoajat.remove(t);
+        final Oid tarjoaja = new Oid(organisaatioOID);
+        return tarjoajat.remove(tarjoaja);
     }
 
     /**
@@ -281,7 +287,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
      *
      * @return the teemaUris
      */
-    public Set<KoodistoKoodi> getTeemaUris() {
+    public Set<KoodistoKoodiUri> getTeemaUris() {
         return teemaUris;
     }
 
@@ -289,13 +295,13 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
      *
      * @param teemaUris the teemaUris to set
      */
-    public void setTeemaUris(Set<KoodistoKoodi> teemaUris) {
+    public void setTeemaUris(Set<KoodistoKoodiUri> teemaUris) {
         this.teemaUris = teemaUris;
     }
 
     /**
      * Returns non-null value if this KoulutusmoduuliToteutus comes with a charge or null if it is free-of-charge.
-     * 
+     *
      * @return the maksullisuus
      */
     public String getMaksullisuus() {
@@ -304,10 +310,10 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
 
     /**
      * Set amount of charge or null to make free-of-charge. Empty string will be converted to null.
-     * 
+     *
      * @param maksullisuus the maksullisuus to set
      */
-    public void setMaksullisuus(String maksullisuus) {        
+    public void setMaksullisuus(String maksullisuus) {
         this.maksullisuus = StringUtils.isEmpty(maksullisuus) ? null : maksullisuus;
     }
 

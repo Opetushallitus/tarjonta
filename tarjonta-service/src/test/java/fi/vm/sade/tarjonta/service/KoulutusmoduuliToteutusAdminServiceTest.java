@@ -49,25 +49,25 @@ public class KoulutusmoduuliToteutusAdminServiceTest {
     public void setUp() {
 
         initKoulutusmoduuliOID();
-        
+
         emptyToteutus = new TutkintoOhjelmaToteutusDTO();
         emptyToteutus.setToteutettavaKoulutusmoduuliOID(koulutusmoduuliOid);
-        
-        completeToteutus = createCompleteToteutus();        
+
+        completeToteutus = createCompleteToteutus();
 
     }
 
     private void initKoulutusmoduuliOID() {
         if (koulutusmoduuliOid == null) {
             TutkintoOhjelmaDTO tutkintoOhjelma = moduuliService.createTutkintoOhjelma(null);
-            koulutusmoduuliOid = moduuliService.save(tutkintoOhjelma).getOid();            
+            koulutusmoduuliOid = moduuliService.save(tutkintoOhjelma).getOid();
         }
     }
 
     @Test
     public void testSavedKoulutusmoduuliHasOid() {
 
-        
+
         KoulutusmoduuliToteutusDTO toteutusDTO = toteutusService.save(emptyToteutus);
         assertNotNull(toteutusDTO.getOid());
 
@@ -78,7 +78,7 @@ public class KoulutusmoduuliToteutusAdminServiceTest {
 
         KoulutusmoduuliToteutusDTO saved = toteutusService.save(completeToteutus);
         KoulutusmoduuliToteutusDTO loaded = toteutusService.findByOID(saved.getOid());
-        
+
         assertTutkintoOhjelma((TutkintoOhjelmaToteutusDTO) completeToteutus, (TutkintoOhjelmaToteutusDTO) loaded);
 
     }
@@ -94,8 +94,6 @@ public class KoulutusmoduuliToteutusAdminServiceTest {
         assertPerustiedot(expected.getPerustiedot(), actual.getPerustiedot());
 
     }
-    
-    
 
     private TutkintoOhjelmaToteutusDTO createCompleteToteutus() {
 
@@ -104,11 +102,11 @@ public class KoulutusmoduuliToteutusAdminServiceTest {
         toteutus.setNimi("Koulutusmoduuli toteutus");
         toteutus.setKoulutuksenAlkamisPvm(today);
         toteutus.setKoulutuslajiUri("http://koulutuslaji/aikuis");
-        toteutus.setTarjoajat(Arrays.asList("http://organisaatio/1", "http://organisaatio/2"));
+        toteutus.setTarjoajat(Sets.newHashSet("http://organisaatio/1", "http://organisaatio/2"));
         toteutus.setToteutettavaKoulutusmoduuliOID(koulutusmoduuliOid);
 
         KoulutusmoduuliPerustiedotDTO perustiedot = new KoulutusmoduuliPerustiedotDTO();
-        perustiedot.setKoulutusKoodiUri("http://koulutusmooduuri");
+        perustiedot.setKoulutusKoodiUri("http://koulutusmooduuli");
         perustiedot.setOpetuskielis(Sets.newHashSet("http://opentuskieli/fi", "http://opetuskieli/en"));
         perustiedot.setOpetusmuotos(Sets.newHashSet("http://opetusmuoto/luokka", "http://opetusmuoto/eta"));
         perustiedot.setAsiasanoituses(Sets.newHashSet("http://asiasana/talous", "http://asiasana/suojelu"));
@@ -118,15 +116,15 @@ public class KoulutusmoduuliToteutusAdminServiceTest {
         return toteutus;
 
     }
-    
+
     private void assertPerustiedot(KoulutusmoduuliPerustiedotDTO expected, KoulutusmoduuliPerustiedotDTO actual) {
-        
+
         assertEquals(expected.getAsiasanoituses(), actual.getAsiasanoituses());
         assertEquals(expected.getKoulutusKoodiUri(), actual.getKoulutusKoodiUri());
         assertEquals(expected.getOpetuskielis(), actual.getOpetuskielis());
         assertEquals(expected.getOpetusmuotos(), actual.getOpetusmuotos());
         assertEquals(expected.getSuunniteltuKestoUri(), actual.getSuunniteltuKestoUri());
-        
+
     }
 
 }
