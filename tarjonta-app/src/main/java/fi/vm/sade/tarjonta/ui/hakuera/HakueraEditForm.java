@@ -174,6 +174,7 @@ public class HakueraEditForm extends GenericForm<HakueraDTO> {
         rightPanel.addComponent(hakuSijoittelu);
         hakulomakeOptions = createOptionGroup(rightPanel, Arrays.asList(new String[]{i18n.getMessage(PROPERTY_JARJ_LOMAKE), i18n.getMessage(PROPERTY_OMA_LOMAKE)}), "lomakeOptions");
         hakulomakeUrl = new TextField();
+        hakulomakeUrl.setNullRepresentation("");
         rightPanel.addComponent(hakulomakeUrl);
         createButtons(leftPanel);
 
