@@ -6,6 +6,7 @@ import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -17,7 +18,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * @author Antti Salonen
  */
 public class HakueraServiceMock implements HakueraService {
-
+    
+    
     long oidSequence = 0;
     List<HakueraSimpleDTO> mockRepository = new ArrayList<HakueraSimpleDTO>(){
         @Override
@@ -54,6 +56,13 @@ public class HakueraServiceMock implements HakueraService {
 
     @Override
     public List<HakueraSimpleDTO> findAll(SearchCriteriaDTO searchCriteria) {
+        
+        // jsr: if "all" is selected, returns the entire repo content without
+        // performing any comparison
+        if (searchCriteria.isMeneillaan() && searchCriteria.isPaattyneet() && searchCriteria.isTulevat()) {
+            return Collections.unmodifiableList(mockRepository);
+        }
+        
         List<HakueraSimpleDTO> result = new ArrayList<HakueraSimpleDTO>();
         for (HakueraSimpleDTO hakuera : mockRepository) {
             if (searchCriteria.isPaattyneet() && hakuera.getNimiFi().contains("paattynyt")
@@ -68,6 +77,7 @@ public class HakueraServiceMock implements HakueraService {
     
     @Override 
     public HakueraDTO createHakuera(HakueraDTO hakuera) {
+        
         long newOid = ++oidSequence;
         hakuera.setOid("form_oid_" + newOid);
         mockRepository.add(hakuera);
