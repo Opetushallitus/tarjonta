@@ -20,6 +20,10 @@ package fi.vm.sade.tarjonta.ui;
 
 import com.github.wolfie.blackboard.Blackboard;
 import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
+import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent;
+import fi.vm.sade.tarjonta.ui.hakuera.event.HakueraSavedEvent.HakueraSavedEventListener;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.event.KoulutusmoduuliChangedEvent;
+import fi.vm.sade.tarjonta.ui.koulutusmoduuli.event.KoulutusmoduuliChangedEvent.KoulutusmoduuliChangedEventListener;
 
 /**
  *
@@ -31,12 +35,21 @@ public class TarjontaPortletApplication extends AbstractSadePortletApplication {
     public synchronized void init() {
         log.info("init() - portlet");
         super.init();
+        createMainWindow();
     }
 
     @Override
     protected void registerListeners(Blackboard blackboard) {
         log.info("registerListeners() - for blackboard.");
-        // TODO reqister listeners for this application
+        blackboard.register(KoulutusmoduuliChangedEventListener.class, KoulutusmoduuliChangedEvent.class);
+        blackboard.register(HakueraSavedEventListener.class, HakueraSavedEvent.class);
+        blackboard.enableLogging();
     }
+    
+
+    private void createMainWindow() {
+        setMainWindow(new MainWindow());
+    }
+
 
 }
