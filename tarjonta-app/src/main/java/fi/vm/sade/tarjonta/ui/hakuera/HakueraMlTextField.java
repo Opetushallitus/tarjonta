@@ -20,8 +20,10 @@ package fi.vm.sade.tarjonta.ui.hakuera;
 import com.vaadin.event.FieldEvents;
 
 import fi.vm.sade.generic.ui.component.MultiLingualTextField;
-import fi.vm.sade.koodisto.model.dto.Kieli;
-import fi.vm.sade.koodisto.model.dto.KoodiDTO;
+
+import fi.vm.sade.koodisto.service.types.dto.Kieli;
+import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
+import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 
 /**
@@ -142,7 +144,8 @@ public class HakueraMlTextField extends MultiLingualTextField {
         if (koodiVal != null) {
             for(KoodiDTO curKoodi:  this.hakueraForm.getKoodiService().listKoodiByArvo(koodiVal, koodistoUri, null)) {
                 if (curKoodi.getKoodiArvo().equals(koodiVal)) {
-                    nimiPart += curKoodi.getKoodiMetadataForLanguage(lang).getNimi();
+
+                    nimiPart += KoodistoHelper.getKoodiMetadataForLanguage(curKoodi,lang).getNimi();
                 }    
             }
         }
