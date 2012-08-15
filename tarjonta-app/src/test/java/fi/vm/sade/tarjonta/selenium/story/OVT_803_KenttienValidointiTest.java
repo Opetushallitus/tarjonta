@@ -5,6 +5,7 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.selenium.TarjontaEmbedComponentTstSupport;
 import fi.vm.sade.tarjonta.selenium.pageobject.KoulutusmoduuliEditViewPageObject;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.KoulutusmoduuliEditView;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class OVT_803_KenttienValidointiTest extends TarjontaEmbedComponentTstSup
         //waitForText(I18N.getMessage("KoulutusmoduuliEditView.save.notValid"));
 
     }
-
+    @Ignore
     @Test
     public void testKoulutusAndOrganisaatioAreStoredToModel() {
         
