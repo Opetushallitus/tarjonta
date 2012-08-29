@@ -17,6 +17,7 @@
 
 package fi.vm.sade.tarjonta.ui.hakuera;
 
+import com.github.wolfie.blackboard.Blackboard;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.ObjectProperty;
@@ -29,6 +30,7 @@ import fi.vm.sade.generic.ui.component.GenericForm;
 import fi.vm.sade.generic.ui.component.MultiLingualTextField;
 import fi.vm.sade.generic.ui.component.MultiLingualTextImpl;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
+import fi.vm.sade.generic.ui.validation.ValidatingBlackboardComponent;
 import fi.vm.sade.koodisto.service.KoodiPublicService;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
@@ -59,7 +61,7 @@ import static fi.vm.sade.generic.common.validation.ValidationConstants.*;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = false)
-public class HakueraEditForm extends GenericForm<HakueraDTO> {
+public class HakueraEditForm extends GenericForm<HakueraDTO> implements ValidatingBlackboardComponent {
 
     public final static String KOODISTO_HAKUTYYPPI_URI = "http://hakutyyppi";
     public final static String KOODISTO_HAKUKAUSI_URI = "http://hakukausi";
@@ -405,4 +407,8 @@ public class HakueraEditForm extends GenericForm<HakueraDTO> {
         return model;
     }
 
+    @Override
+    public Blackboard getBlackboard() {
+        return BlackboardContext.getBlackboard();
+    }
 }
