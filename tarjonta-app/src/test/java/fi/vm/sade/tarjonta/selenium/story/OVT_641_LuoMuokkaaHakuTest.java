@@ -9,6 +9,7 @@ import fi.vm.sade.tarjonta.service.mock.HakueraServiceMock;
 import fi.vm.sade.tarjonta.ui.MainWindow;
 import fi.vm.sade.tarjonta.ui.hakuera.HakueraEditForm;
 import fi.vm.sade.tarjonta.ui.hakuera.HakueraList;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import static fi.vm.sade.support.selenium.SeleniumUtils.*;
  * @author markus
  *
  */
+@Ignore
 public class OVT_641_LuoMuokkaaHakuTest extends TarjontaEmbedComponentTstSupport<MainWindow> {
     
     private HakueraListPageObject hakueraList;

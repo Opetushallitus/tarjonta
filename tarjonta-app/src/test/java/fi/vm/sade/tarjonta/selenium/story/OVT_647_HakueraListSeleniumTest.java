@@ -7,6 +7,7 @@ import fi.vm.sade.tarjonta.service.mock.HakueraServiceMock;
 import fi.vm.sade.tarjonta.ui.hakuera.HakuView;
 import fi.vm.sade.tarjonta.ui.hakuera.HakueraEditForm;
 import fi.vm.sade.tarjonta.ui.hakuera.HakueraList;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Antti Salonen
  */
+@Ignore
 public class OVT_647_HakueraListSeleniumTest extends TarjontaEmbedComponentTstSupport<HakuView> {
 
     private HakueraListPageObject hakueraList;
