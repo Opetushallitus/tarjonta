@@ -19,9 +19,7 @@
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
-			<!--  
-			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
-			-->
+            <property name="hibernate.hbm2ddl.auto" value="update" />
             <property name="hibernate.jdbc.batch_size" value="20" />
             <property name="hibernate.transaction.manager_lookup_class"
                                   value="org.hibernate.transaction.JBossTransactionManagerLookup" />
