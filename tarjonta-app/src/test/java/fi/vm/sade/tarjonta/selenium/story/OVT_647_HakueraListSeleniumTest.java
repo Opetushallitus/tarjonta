@@ -18,7 +18,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Antti Salonen
  */
-@Ignore
 public class OVT_647_HakueraListSeleniumTest extends TarjontaEmbedComponentTstSupport<HakuView> {
 
     private HakueraListPageObject hakueraList;
