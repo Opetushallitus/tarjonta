@@ -1,6 +1,8 @@
 package fi.vm.sade.tarjonta.ui.poc;
 
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.Panel;
@@ -10,17 +12,19 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TextField;
+import sun.nio.cs.ext.PCK;
 
 public class Main extends VerticalLayout {
 
     private HorizontalLayout rightBottomResultLayout;
-    private Link link_1;
+    private Link breadCrumb;
     private TabSheet searchResultTab;
     private Panel emptyPanel2;
     private Panel emptyPanel1;
     private VerticalLayout koulutukset;
     private Panel searchResultPanel;
-    private HorizontalLayout searchResultLayout;
+    private VerticalLayout searchVerticalResultLayout;
+    private HorizontalLayout searchHorizontalResultLayout;
     private TreeTable categoryTree;
     private HorizontalLayout rightTopSearchLayout;
     private Button btnTyhjenna;
@@ -33,12 +37,12 @@ public class Main extends VerticalLayout {
     private VerticalLayout mainRightLayout;
     private HorizontalSplitPanel splitPanel;
     private TextField tfSearch;
-    
+    private HorizontalLayout rightMiddleResultLayout;
     private Button btnMuokkaa;
     private Button btnPoista;
     private Button btnLuoUusiHakukohde;
     private Button btnLuoUusiKoulutus;
-    
+    private NativeSelect nsJarjestys;
 
     /**
      * The constructor should first build the main layout, set the composition
@@ -53,14 +57,18 @@ public class Main extends VerticalLayout {
     }
 
     private void buildMainLayout() {
-        link_1 = new Link();
-        link_1.setCaption("Link4444");
-        link_1.setImmediate(false);
-        link_1.setWidth("-1px");
-        link_1.setHeight("-1px");
+        breadCrumb = new Link();
+        breadCrumb.setCaption("Rantalohjan koulutuskuntayhtymä Rantalohjan ammattiopisto");
+        breadCrumb.setImmediate(false);
+        breadCrumb.setWidth("-1px");
+        breadCrumb.setHeight("-1px");
 
-        mainLeftLayout = UI.newHorizontalLayout(null, null);
-        mainRightLayout = UI.newVerticalLayout(null, null);
+        mainLeftLayout = UI.newHorizontalLayout(null, null, true);
+        mainRightLayout = UI.newVerticalLayout(null, null, true);
+        
+        HorizontalLayout breadCrumbLayout = UI.newHorizontalLayout(null, null, new Boolean[]{false, false, true, false});
+        breadCrumbLayout.addComponent(breadCrumb);
+        mainRightLayout.addComponent(breadCrumbLayout);
         mainRightLayout.addComponent(buildTopSearchLayout());
         mainRightLayout.addComponent(buildBottomResultLayout());
 
@@ -75,7 +83,7 @@ public class Main extends VerticalLayout {
 
     private HorizontalLayout buildBottomResultLayout() {
         // right component:
-        rightBottomResultLayout = UI.newHorizontalLayout(null, null);
+        rightBottomResultLayout = UI.newHorizontalLayout(null, null, new Boolean[]{true, false, true, false});
 
         searchResultTab = new TabSheet();
         searchResultTab.setImmediate(true);
@@ -84,11 +92,11 @@ public class Main extends VerticalLayout {
 
         searchResultPanel = buildSearchResultPanel();
         searchResultPanel.setHeight(UI.PCT100);
-        
+
         searchResultTab.addTab(searchResultPanel, "Haut (2 kpl)", null);
         searchResultTab.setWidth(UI.PCT100);
         searchResultTab.setHeight(UI.PCT100);
-        
+
         emptyPanel1 = buildEmptyTabPanel();
         searchResultTab.addTab(emptyPanel1, "Koulutukset (28 kpl)", null);
 
@@ -99,6 +107,32 @@ public class Main extends VerticalLayout {
 
         return rightBottomResultLayout;
 
+    }
+
+    private HorizontalLayout buildMiddleResultLayout() {
+        rightMiddleResultLayout = UI.newHorizontalLayout(null, null, new Boolean[]{true, false, true, false});
+
+        HorizontalLayout leftSide = UI.newHorizontalLayout("325px", null, new Boolean[]{false, true, false, true});
+       
+        final GridLayout grid = new GridLayout(2, 1);
+        grid.setWidth(UI.PCT100);
+
+        btnMuokkaa = UI.newButton("Muokkaa", leftSide);
+        btnPoista = UI.newButton("Poista", leftSide);
+        btnLuoUusiHakukohde = UI.newButton("Luo uusi hakukohde", leftSide);
+        
+
+        grid.addComponent(leftSide, 0, 0);
+        grid.setComponentAlignment(leftSide, Alignment.MIDDLE_LEFT);
+
+        HorizontalLayout rightSide = UI.newHorizontalLayout("450px", null, new Boolean[]{false, true, false, false});
+        btnLuoUusiKoulutus = UI.newButton("luo uusi koulutus", rightSide);
+        nsJarjestys = UI.newCompobox(null, new String[]{"Organisaatiorakenteen mukainen järjestys"}, rightSide);
+        grid.addComponent(rightSide, 1, 0);
+        grid.setComponentAlignment(rightSide, Alignment.MIDDLE_CENTER);
+        rightMiddleResultLayout.addComponent(grid);
+
+        return rightMiddleResultLayout;
     }
 
     private HorizontalLayout buildTopSearchLayout() {
@@ -123,12 +157,17 @@ public class Main extends VerticalLayout {
 
     private Panel buildSearchResultPanel() {
         // common part: create layout
-        searchResultLayout = UI.newHorizontalLayout(null, null);
+        searchVerticalResultLayout = UI.newVerticalLayout(null, null);
+        searchVerticalResultLayout.addComponent(buildMiddleResultLayout());
 
+        searchHorizontalResultLayout = UI.newHorizontalLayout(null, null);
         categoryTree = new CategoryTree();
-        searchResultLayout.addComponent(categoryTree);
-        
-        searchResultPanel = UI.newPanel(null, null, searchResultLayout);
+        searchHorizontalResultLayout.addComponent(categoryTree);
+
+        searchVerticalResultLayout.addComponent(searchHorizontalResultLayout);
+
+        searchResultPanel = UI.newPanel(null, null, searchVerticalResultLayout);
+
 
         return searchResultPanel;
     }

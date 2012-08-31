@@ -17,9 +17,9 @@
     <modules>
         <module>tarjonta-api</module>
         <module>tarjonta-ui-widgets</module>
-        <!--module>tarjonta-service</module-->
-        <!--module>tarjonta-app</module-->
-		<module>tarjonta-app-poc</module>
+        <module>tarjonta-service</module>
+        <module>tarjonta-app</module>
+		<!-- add after dependency is fixed module>module>tarjonta-app-poc</module-->
   </modules>
 
 </project>
