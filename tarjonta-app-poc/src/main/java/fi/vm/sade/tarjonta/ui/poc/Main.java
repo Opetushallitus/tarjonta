@@ -12,6 +12,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TextField;
+import fi.oph.Oph;
 import sun.nio.cs.ext.PCK;
 
 public class Main extends VerticalLayout {
@@ -64,6 +65,8 @@ public class Main extends VerticalLayout {
         breadCrumb.setHeight("-1px");
 
         mainLeftLayout = UI.newHorizontalLayout(null, null, true);
+        UI.newLabel("Organisaation valinta tähän", mainLeftLayout);
+        
         mainRightLayout = UI.newVerticalLayout(null, null, true);
         
         HorizontalLayout breadCrumbLayout = UI.newHorizontalLayout(null, null, new Boolean[]{false, false, true, false});
@@ -74,7 +77,7 @@ public class Main extends VerticalLayout {
 
         // Add a vertical SplitPanel to the lower area
         splitPanel = new HorizontalSplitPanel();
-        splitPanel.setSplitPosition(25); // percent
+        splitPanel.setSplitPosition(1); // percent
 
         splitPanel.addComponent(mainLeftLayout);
         splitPanel.addComponent(mainRightLayout);
@@ -118,9 +121,13 @@ public class Main extends VerticalLayout {
         grid.setWidth(UI.PCT100);
 
         btnMuokkaa = UI.newButton("Muokkaa", leftSide);
-        btnPoista = UI.newButton("Poista", leftSide);
-        btnLuoUusiHakukohde = UI.newButton("Luo uusi hakukohde", leftSide);
+        btnMuokkaa.setStyleName(Oph.BUTTON_PRIMARY);
         
+        btnPoista = UI.newButton("Poista", leftSide);
+        btnPoista.setStyleName(Oph.BUTTON_DEFAULT);
+
+        btnLuoUusiHakukohde = UI.newButton("Luo uusi hakukohde", leftSide);
+        btnLuoUusiHakukohde.addStyleName(Oph.BUTTON_PLUS);
 
         grid.addComponent(leftSide, 0, 0);
         grid.setComponentAlignment(leftSide, Alignment.MIDDLE_LEFT);

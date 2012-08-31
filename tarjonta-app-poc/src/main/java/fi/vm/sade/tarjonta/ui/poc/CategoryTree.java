@@ -19,19 +19,19 @@ import com.vaadin.event.Action;
 public class CategoryTree extends TreeTable {
 
     private static String[] LABEL_ACTIONS = {"Valitse muokkaustoiminto",
-        "N�yt� kohteet", "Poista"};
+        "Näytä kohteet", "Poista"};
     private static final Action SHOW_ITEM_ACTION = new Action(LABEL_ACTIONS[1]);
     private static final Action REMOVE_ITEM_ACTION = new Action(
             LABEL_ACTIONS[2]);
     private static final String COLUMN_A = "Kategoriat";
     private static final String COLUMN_C = "Toiminnot";
     private final String[] kultturiala = {
-        "K�si- ja taideteollisuusalan perustutkinto - Artesaani",
+        "Käsi- ja taideteollisuusalan perustutkinto - Artesaani",
         "Tuotteen suunnittelu ja valmistamisen koulutusohjelma",
-        "Ymp�rist�n suunnittelun ja rakentamisen koulutuohjelma"};
+        "Ympäristön suunnittelun ja rakentamisen koulutuohjelma"};
     private final String[] tekniikanJaLiikenteenAla = {
         "Autoala perustutkinto - Parturi-kampaajan, syksy 2012",
-        "S�hk�- ja automaatitekniikan perustutkinto",
+        "Sähkö- ja automaatitekniikan perustutkinto",
         "Tieto- ja tietliikenneteksniikan perustutkinto",
         "Kone- ja metallialan perustutkinto - ICT-asentaja",
         "Kone- ja metallialan perustutkinto - Koneistaja"};

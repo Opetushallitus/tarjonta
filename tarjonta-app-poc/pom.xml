@@ -41,6 +41,7 @@
             <scope>test</scope>
         </dependency>
 
+<!--
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-api</artifactId>
@@ -64,13 +65,17 @@
             <artifactId>tarjonta-ui-widgets</artifactId>
             <version>${project.version}</version>
         </dependency>
+-->
 
         <!-- Koodisto integration -->
+<!--        
         <dependency>
             <groupId>fi.vm.sade.koodisto</groupId>
             <artifactId>koodisto-widget</artifactId>
             <version>${project.version}</version>
         </dependency>
+-->
+
 
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>

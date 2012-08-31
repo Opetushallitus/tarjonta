@@ -2,7 +2,9 @@ package fi.vm.sade.tarjonta.ui.poc;
 
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
@@ -16,12 +18,27 @@ public class UI {
 
     public static final String PCT100 = "100.0%";
 
+
     private enum Layout {
 
         REINDEER, OPH;
     }
+
     private static final Layout THEME = Layout.REINDEER;
 
+    public static Label newLabel(final String value) {
+        Label l = new Label(value);
+        return l;
+    }
+    
+    public static Label newLabel(final String value, final AbstractOrderedLayout layout) {
+        Label l = UI.newLabel(value);
+        if (layout != null) {
+            layout.addComponent(l);
+        }
+        return l;
+    }
+    
     public static NativeSelect newCompobox(final String name, final String[] items, final AbstractOrderedLayout layout) {
         NativeSelect ns = new NativeSelect(name);
         for (String item : items) {
