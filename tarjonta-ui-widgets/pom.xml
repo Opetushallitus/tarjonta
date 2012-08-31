@@ -7,10 +7,11 @@
         <artifactId>parent-vaadin-app</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
     <groupId>fi.vm.sade.tarjonta</groupId>
     <artifactId>tarjonta-ui-widgets</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>${project.artifactId}</name>
+    <name>Tarjonta :: ${project.artifactId}</name>
 
     <dependencies>
         <dependency>
