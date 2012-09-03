@@ -15,12 +15,8 @@ public class TarjontaPocApplication extends Application {
 
     @Override
     public void init() {
-        Window mainWindow = new Window("Tarjonta Application");
-        mainWindow.setWidth("100%");
-        mainWindow.setHeight("100%");
-
-        Main m = new Main();
-        mainWindow.addComponent(m);
+        Window mainWindow = new Window("Tarjonta", new Main());
+        mainWindow.setSizeFull();
         setMainWindow(mainWindow);
 
         if (UI.isThemeOPH()) {

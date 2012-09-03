@@ -58,7 +58,7 @@ public class Main extends VerticalLayout {
         buildMainLayout();
         // top-level component properties
         setWidth(UI.PCT100);
-        setHeight("500px");
+        setHeight(UI.PCT100);
     }
 
     private void buildMainLayout() {
