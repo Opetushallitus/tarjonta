@@ -2,13 +2,13 @@ package fi.vm.sade.tarjonta.ui.poc;
 
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import fi.oph.Oph;
+import java.text.MessageFormat;
 
 /**
  *
@@ -25,14 +25,18 @@ public class UI {
     }
 
     private static final Layout THEME = Layout.REINDEER;
-
-    public static Label newLabel(final String value) {
-        Label l = new Label(value);
+    
+    public static final String format(String format, Object... args) {
+        return MessageFormat.format(format, args);
+    }
+    
+    public static Label newLabel(final String format, final Object... args) {
+        Label l = new Label(UI.format(format, args));
         return l;
     }
     
-    public static Label newLabel(final String value, final AbstractOrderedLayout layout) {
-        Label l = UI.newLabel(value);
+    public static Label newLabel(final String format, final AbstractOrderedLayout layout, final Object... args) {
+        Label l = UI.newLabel(format, args);
         if (layout != null) {
             layout.addComponent(l);
         }
@@ -72,7 +76,7 @@ public class UI {
         if (layout != null) {
             layout.addComponent(btn);
         }
-
+        
         return btn;
     }
 

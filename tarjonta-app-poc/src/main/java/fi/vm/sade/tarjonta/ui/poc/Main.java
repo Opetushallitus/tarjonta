@@ -2,21 +2,25 @@ package fi.vm.sade.tarjonta.ui.poc;
 
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Link;
+import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.NativeSelect;
-import com.vaadin.ui.TextField;
 import fi.oph.Oph;
-import sun.nio.cs.ext.PCK;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main extends VerticalLayout {
-
+    
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+    
     private HorizontalLayout rightBottomResultLayout;
     private Link breadCrumb;
     private TabSheet searchResultTab;
@@ -131,9 +135,21 @@ public class Main extends VerticalLayout {
 
         grid.addComponent(leftSide, 0, 0);
         grid.setComponentAlignment(leftSide, Alignment.MIDDLE_LEFT);
-
+        
         HorizontalLayout rightSide = UI.newHorizontalLayout("450px", null, new Boolean[]{false, true, false, false});
         btnLuoUusiKoulutus = UI.newButton("luo uusi koulutus", rightSide);
+        btnLuoUusiKoulutus.addListener(new Button.ClickListener() {
+            
+            @Override
+            public void buttonClick(ClickEvent event) {
+                LOG.info("buttonClick() - luo uusi koulutus click...");
+                EditKoulutusForm f = new EditKoulutusForm();
+                mainRightLayout.removeAllComponents();
+                mainRightLayout.addComponent(f);
+            }
+        });
+        
+        
         nsJarjestys = UI.newCompobox(null, new String[]{"Organisaatiorakenteen mukainen järjestys"}, rightSide);
         grid.addComponent(rightSide, 1, 0);
         grid.setComponentAlignment(rightSide, Alignment.MIDDLE_CENTER);
