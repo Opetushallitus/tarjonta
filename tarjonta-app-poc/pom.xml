@@ -43,46 +43,12 @@
 
 <!--
         <dependency>
-            <groupId>fi.vm.sade.tarjonta</groupId>
-            <artifactId>tarjonta-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>fi.vm.sade.organisaatio</groupId>
-            <artifactId>organisaatio-ui-widgets</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>fi.vm.sade.organisaatio</groupId>
-            <artifactId>organisaatio-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>fi.vm.sade.tarjonta</groupId>
-            <artifactId>tarjonta-ui-widgets</artifactId>
-            <version>${project.version}</version>
-        </dependency>
--->
-
-        <!-- Koodisto integration -->
-<!--        
-        <dependency>
-            <groupId>fi.vm.sade.koodisto</groupId>
-            <artifactId>koodisto-widget</artifactId>
-            <version>${project.version}</version>
-        </dependency>
--->
-
-
-        <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-vaadin-widgetset</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>war</type>
         </dependency>
+-->
         
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
@@ -90,10 +56,9 @@
             <version>1.0-SNAPSHOT</version>            
         </dependency>
         
-        
         <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-vaadin-theme-oph</artifactId>
+            <groupId>fi.vm.sade.vaadin</groupId>
+            <artifactId>vaadin-theme-oph</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

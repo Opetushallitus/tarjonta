@@ -7,7 +7,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
-import fi.oph.Oph;
+import fi.vm.sade.vaadin.Oph;
 import java.text.MessageFormat;
 
 /**

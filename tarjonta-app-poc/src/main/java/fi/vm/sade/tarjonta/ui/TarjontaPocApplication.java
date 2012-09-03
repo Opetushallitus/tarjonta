@@ -2,9 +2,9 @@ package fi.vm.sade.tarjonta.ui;
 
 import com.vaadin.Application;
 import com.vaadin.ui.*;
-import fi.oph.Oph;
 import fi.vm.sade.tarjonta.ui.poc.Main;
 import fi.vm.sade.tarjonta.ui.poc.UI;
+import fi.vm.sade.vaadin.Oph;
 
 public class TarjontaPocApplication extends Application {
 
