@@ -143,7 +143,7 @@ public class Main extends VerticalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 LOG.info("buttonClick() - luo uusi koulutus click...");
-                EditKoulutusForm f = new EditKoulutusForm();
+                EditKoulutus f = new EditKoulutus();
                 mainRightLayout.removeAllComponents();
                 mainRightLayout.addComponent(f);
             }

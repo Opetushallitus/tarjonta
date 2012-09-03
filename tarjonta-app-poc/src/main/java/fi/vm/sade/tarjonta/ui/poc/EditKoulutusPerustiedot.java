@@ -7,45 +7,25 @@ package fi.vm.sade.tarjonta.ui.poc;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
-import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Configurable;
 
 /**
- * TODO
- * - give koulutus as a parameter and initialize form
  *
  * @author mlyly
  */
-public class EditKoulutusForm extends VerticalLayout {
+public class EditKoulutusPerustiedot extends VerticalLayout {
     
-    private static final Logger log = LoggerFactory.getLogger(EditKoulutusForm.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedot.class);
     
-    public EditKoulutusForm() {
+    public EditKoulutusPerustiedot() {
         super();
-        log.info("EditKoulutusForm()");
-        
         initialize();
     }
     
     private void initialize() {
-        log.info("initilize()");
-        
-        // Info
-        UI.newLabel("Olet luomassa {0} koulutusta organisaatioon {1}.", this, "tutkintoon johtavaa", "informaatiotekniikan tiedekunta");
-        
-        // Tabs
-        TabSheet tabs = new TabSheet();
-        addComponent(tabs);
-        
-        //
-        // Perustiedot Tab
-        //
-        VerticalLayout perustiedotLayout = UI.newVerticalLayout(null, null);
-        tabs.addTab(perustiedotLayout, "Koulutuksen perustiedot (status)");
+        LOG.info("initialize()");
         
         // Top control buttons
         HorizontalLayout hlControlButtonsTop = UI.newHorizontalLayout(null, null);
@@ -53,15 +33,15 @@ public class EditKoulutusForm extends VerticalLayout {
         UI.newButton("Tallenna luonnoksena", hlControlButtonsTop);
         UI.newButton("Tallenna valmiina", hlControlButtonsTop);
         UI.newButton("Jatka", hlControlButtonsTop);
-        perustiedotLayout.addComponent(hlControlButtonsTop);
+        addComponent(hlControlButtonsTop);
         
         //
         // Perustiedot
         //
         GridLayout perustiedotGrid = new GridLayout(3, 30);
         Panel perustiedotPanel = new Panel("Koulutuksen perustiedot", perustiedotGrid);
-        perustiedotLayout.addComponent(perustiedotPanel);
-
+        addComponent(perustiedotPanel);
+        
         
         // Bottom control buttons
         HorizontalLayout hlControlButtonsBottom = UI.newHorizontalLayout(null, null);
@@ -69,16 +49,7 @@ public class EditKoulutusForm extends VerticalLayout {
         UI.newButton("Tallenna luonnoksena", hlControlButtonsBottom);
         UI.newButton("Tallenna valmiina", hlControlButtonsBottom);
         UI.newButton("Jatka", hlControlButtonsBottom);
-        perustiedotLayout.addComponent(hlControlButtonsBottom);
-        
-        //
-        // Lisätiedot tab
-        //
-        VerticalLayout lisatiedotLaoyout = UI.newVerticalLayout(null, null);
-        tabs.addTab(lisatiedotLaoyout, "Koulutuksen kuvailevat tiedot (status)");
+        addComponent(hlControlButtonsBottom);
     }
-    
-    
-    
     
 }
