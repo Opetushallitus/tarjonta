@@ -108,8 +108,14 @@ public class Main extends VerticalLayout {
                 new WindowOpener("Valitse organisaatio", window);
             }
         });
-    }
+        
+//        mainRightLayout.setComponentAlignment(breadCrumbLayout, Alignment.TOP_LEFT);
+//        mainRightLayout.setComponentAlignment(searchKoulutus, Alignment.TOP_LEFT);
+//        mainRightLayout.setComponentAlignment(rightBottomResultLayout, Alignment.TOP_LEFT);
 
+        mainRightLayout.setExpandRatio(rightBottomResultLayout, 1.0f);
+    }
+    
     private HorizontalLayout buildBottomResultLayout() {
         // right component:
         rightBottomResultLayout = UI.newHorizontalLayout(null, null, new Boolean[]{true, false, true, false});
@@ -133,9 +139,9 @@ public class Main extends VerticalLayout {
         searchResultTab.addTab(emptyPanel2, "Hakukohteet (35 kpl)", null);
 
         rightBottomResultLayout.addComponent(searchResultTab);
+        rightBottomResultLayout.setExpandRatio(searchResultTab, 1.0f);
 
         return rightBottomResultLayout;
-
     }
 
     private HorizontalLayout buildMiddleResultLayout() {
@@ -178,8 +184,7 @@ public class Main extends VerticalLayout {
         searchVerticalResultLayout.addComponent(searchHorizontalResultLayout);
 
         searchResultPanel = UI.newPanel(null, null, searchVerticalResultLayout);
-
-
+        
         return searchResultPanel;
     }
 
