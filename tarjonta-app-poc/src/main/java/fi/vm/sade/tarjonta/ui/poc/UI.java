@@ -1,7 +1,9 @@
 package fi.vm.sade.tarjonta.ui.poc;
 
+import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
@@ -43,7 +45,36 @@ public class UI {
         return l;
     }
     
-    public static NativeSelect newCompobox(final String name, final String[] items, final AbstractOrderedLayout layout) {
+    public static CheckBox newCheckbox(final String name,  final AbstractLayout layout) {
+        CheckBox ns = new CheckBox(name);
+    
+        ns.setImmediate(false);
+        ns.setWidth("-1px");
+        ns.setHeight("-1px");
+    
+        if (layout != null) {
+            layout.addComponent(ns);
+        }
+
+        return ns;
+    }
+    
+    public static Label newLabel(final String name,  final AbstractLayout layout) {
+        Label ns = new Label(name);
+    
+        ns.setImmediate(false);
+        ns.setWidth("-1px");
+        ns.setHeight("-1px");
+    
+        if (layout != null) {
+            layout.addComponent(ns);
+        }
+
+        return ns;
+    }
+    
+    
+    public static NativeSelect newCompobox(final String name, final String[] items, final AbstractLayout layout) {
         NativeSelect ns = new NativeSelect(name);
         for (String item : items) {
             ns.addItem(item);
@@ -62,7 +93,7 @@ public class UI {
         return ns;
     }
 
-    public static Button newButton(final String name, final AbstractOrderedLayout layout) {
+    public static Button newButton(final String name, final AbstractLayout layout) {
         Button btn = new Button();
         btn.setCaption(name);
         btn.setImmediate(true);
@@ -80,7 +111,7 @@ public class UI {
         return btn;
     }
 
-    public static Panel newPanel(final String width, final String height, AbstractOrderedLayout customLayout) {
+    public static Panel newPanel(final String width, final String height, AbstractLayout customLayout) {
         Panel panel = new Panel();
         if (isThemeOPH()) {
             panel.addStyleName(Oph.CONTAINER_SECONDARY);

@@ -13,14 +13,15 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import fi.vm.sade.vaadin.Oph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main extends VerticalLayout {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
-    
+ 
     private HorizontalLayout rightBottomResultLayout;
     private Link breadCrumb;
     private TabSheet searchResultTab;
@@ -48,6 +49,7 @@ public class Main extends VerticalLayout {
     private Button btnLuoUusiHakukohde;
     private Button btnLuoUusiKoulutus;
     private NativeSelect nsJarjestys;
+    private Window window;
 
     /**
      * The constructor should first build the main layout, set the composition
@@ -55,24 +57,32 @@ public class Main extends VerticalLayout {
      */
     public Main() {
 
+
         buildMainLayout();
         // top-level component properties
         setWidth(UI.PCT100);
         setHeight(UI.PCT100);
     }
 
+    public void setMainWindow(Window window) {
+        if (window == null) {
+            throw new NullPointerException("Main window instance cannot be null");
+        }
+
+        this.window = window;
+    }
+
     private void buildMainLayout() {
         breadCrumb = new Link();
         breadCrumb.setCaption("Rantalohjan koulutuskuntayhtymä Rantalohjan ammattiopisto");
         breadCrumb.setImmediate(false);
-        breadCrumb.setWidth("-1px");
-        breadCrumb.setHeight("-1px");
+
 
         mainLeftLayout = UI.newHorizontalLayout(null, null, true);
         UI.newLabel("Organisaation valinta tähän", mainLeftLayout);
-        
+
         mainRightLayout = UI.newVerticalLayout(null, null, true);
-        
+
         HorizontalLayout breadCrumbLayout = UI.newHorizontalLayout(null, null, new Boolean[]{false, false, true, false});
         breadCrumbLayout.addComponent(breadCrumb);
         mainRightLayout.addComponent(breadCrumbLayout);
@@ -86,6 +96,16 @@ public class Main extends VerticalLayout {
         splitPanel.addComponent(mainLeftLayout);
         splitPanel.addComponent(mainRightLayout);
         this.addComponent(splitPanel);
+
+        btnLuoUusiKoulutus.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                LOG.debug("In buttonClick, ClickEvent - Valitse organisaatio");
+
+                //this should be instance factory, now it creates multiple copies of the same window
+                new WindowOpener("Valitse organisaatio", window);
+            }
+        });
     }
 
     private HorizontalLayout buildBottomResultLayout() {
@@ -120,36 +140,22 @@ public class Main extends VerticalLayout {
         rightMiddleResultLayout = UI.newHorizontalLayout(null, null, new Boolean[]{true, false, true, false});
 
         HorizontalLayout leftSide = UI.newHorizontalLayout("325px", null, new Boolean[]{false, true, false, true});
-       
+
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth(UI.PCT100);
 
         btnMuokkaa = UI.newButton("Muokkaa", leftSide);
-        btnMuokkaa.setStyleName(Oph.BUTTON_PRIMARY);
-        
         btnPoista = UI.newButton("Poista", leftSide);
-        btnPoista.setStyleName(Oph.BUTTON_DEFAULT);
-
         btnLuoUusiHakukohde = UI.newButton("Luo uusi hakukohde", leftSide);
-        btnLuoUusiHakukohde.addStyleName(Oph.BUTTON_PLUS);
 
         grid.addComponent(leftSide, 0, 0);
         grid.setComponentAlignment(leftSide, Alignment.MIDDLE_LEFT);
-        
+
         HorizontalLayout rightSide = UI.newHorizontalLayout("450px", null, new Boolean[]{false, true, false, false});
-        btnLuoUusiKoulutus = UI.newButton("luo uusi koulutus", rightSide);
-        btnLuoUusiKoulutus.addListener(new Button.ClickListener() {
-            
-            @Override
-            public void buttonClick(ClickEvent event) {
-                LOG.info("buttonClick() - luo uusi koulutus click...");
-                EditKoulutus f = new EditKoulutus();
-                mainRightLayout.removeAllComponents();
-                mainRightLayout.addComponent(f);
-            }
-        });
+        btnLuoUusiKoulutus = UI.newButton("Luo uusi koulutus", rightSide);
         
-        
+
+
         nsJarjestys = UI.newCompobox(null, new String[]{"Organisaatiorakenteen mukainen järjestys"}, rightSide);
         grid.addComponent(rightSide, 1, 0);
         grid.setComponentAlignment(rightSide, Alignment.MIDDLE_CENTER);
@@ -164,8 +170,6 @@ public class Main extends VerticalLayout {
 
         tfSearch = new TextField("");
         tfSearch.setImmediate(false);
-        tfSearch.setWidth("-1px");
-        tfSearch.setHeight("-1px");
         rightTopSearchLayout.addComponent(tfSearch);
 
         cbHakukausi = UI.newCompobox("Hakukausi", new String[]{"Kevätkausi"}, rightTopSearchLayout);

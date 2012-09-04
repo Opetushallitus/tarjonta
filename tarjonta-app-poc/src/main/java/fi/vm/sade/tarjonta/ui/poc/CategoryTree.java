@@ -6,15 +6,20 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.vaadin.terminal.ThemeResource;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TreeTable;
-import com.vaadin.ui.VerticalLayout;
 
 import com.vaadin.event.Action;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.CustomLayout;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.NativeButton;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CategoryTree extends TreeTable {
 
@@ -82,7 +87,7 @@ public class CategoryTree extends TreeTable {
     }
 
     private void init() {
-
+        this.setSelectable(true);
         // SELECTBOX
         for (String str : LABEL_ACTIONS) {
             selectBox.addItem(str);
@@ -118,6 +123,29 @@ public class CategoryTree extends TreeTable {
 
     }
 
+    private CheckBox buildTreeRow(final String text) {
+        GridLayout grid = new GridLayout(4, 2);
+
+        grid.addComponent(UI.newCheckbox("Click Me!", null), 1, 1);
+        grid.addComponent(UI.newButton("Click Me!", null), 2, 1);
+        grid.addComponent(UI.newLabel(text), 3, 1);
+        CheckBox newCheckbox = UI.newCheckbox(text, null);
+        NativeButton tx = new NativeButton(text);
+//        CustomLayout layout = null;
+//        try {
+//            layout = new CustomLayout(
+//                    new ByteArrayInputStream(
+//                    "Here is a <span location='link1'></span> and here is another <span location='link2'></span>"
+//                    .getBytes()));
+//        } catch (IOException ex) {
+//            Logger.getLogger(CategoryTree.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//        layout.setStyle("v-treetable-treespacer");
+
+        return newCheckbox;
+    }
+
     private void populateTree() {
         map.put("Kulttuuriala (3kpl)", kultturiala);
         map.put("Tekniikan ja liikentee ala (16kpl)", tekniikanJaLiikenteenAla);
@@ -125,24 +153,16 @@ public class CategoryTree extends TreeTable {
         Set<Entry<String, String[]>> set = map.entrySet();
 
         for (Entry<String, String[]> e : set) {
-            this.addContainerProperty(COLUMN_A, String.class, e.getKey());
 
-            this.addContainerProperty(COLUMN_C, NativeSelect.class, null, null,
-                    new ThemeResource("img/test_icon.gif"), null);
-
+            this.addContainerProperty(COLUMN_A, CheckBox.class, buildTreeRow(e.getKey()));
             Object rootItem = this.addItem();
 
-            this.getContainerProperty(rootItem, COLUMN_A).setValue(e.getKey());
-            this.getContainerProperty(rootItem, COLUMN_C).setValue(createNativeSelect());
+            this.getContainerProperty(rootItem, COLUMN_A).setValue(buildTreeRow(e.getKey()));
 
-            for (String arr : e.getValue()) {
-
+            for (String strText : e.getValue()) {
                 Object subItem = this.addItem();
-
                 this.setParent(subItem, rootItem);
-                this.getContainerProperty(subItem, COLUMN_A).setValue(arr);
-                this.getContainerProperty(subItem, COLUMN_C)
-                        .setValue(createNativeSelect());
+                this.getContainerProperty(subItem, COLUMN_A).setValue(buildTreeRow(strText));
             }
         }
         // this.setColumnExpandRatio(COLUMN_A, 1);

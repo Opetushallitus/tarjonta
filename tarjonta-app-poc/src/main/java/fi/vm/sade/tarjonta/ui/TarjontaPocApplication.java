@@ -15,10 +15,12 @@ public class TarjontaPocApplication extends Application {
 
     @Override
     public void init() {
-        Window mainWindow = new Window("Tarjonta", new Main());
+        Main main = new Main();
+        Window mainWindow = new Window("Tarjonta", main);
         mainWindow.setSizeFull();
         setMainWindow(mainWindow);
-
+        main.setMainWindow(mainWindow);
+        
         if (UI.isThemeOPH()) {
             setTheme(Oph.THEME_NAME);
         }
