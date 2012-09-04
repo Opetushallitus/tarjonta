@@ -6,20 +6,13 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TreeTable;
 
 import com.vaadin.event.Action;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.NativeButton;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class CategoryTree extends TreeTable {
 

@@ -82,11 +82,13 @@ public class Main extends VerticalLayout {
         UI.newLabel("Organisaation valinta tähän", mainLeftLayout);
 
         mainRightLayout = UI.newVerticalLayout(null, null, true);
-
+        
+        SearchKoulutus searchKoulutus = new SearchKoulutus();
+        
         HorizontalLayout breadCrumbLayout = UI.newHorizontalLayout(null, null, new Boolean[]{false, false, true, false});
         breadCrumbLayout.addComponent(breadCrumb);
         mainRightLayout.addComponent(breadCrumbLayout);
-        mainRightLayout.addComponent(buildTopSearchLayout());
+        mainRightLayout.addComponent(searchKoulutus);
         mainRightLayout.addComponent(buildBottomResultLayout());
 
         // Add a vertical SplitPanel to the lower area
@@ -162,24 +164,6 @@ public class Main extends VerticalLayout {
         rightMiddleResultLayout.addComponent(grid);
 
         return rightMiddleResultLayout;
-    }
-
-    private HorizontalLayout buildTopSearchLayout() {
-        // common part: create layout
-        rightTopSearchLayout = UI.newHorizontalLayout(null, null);
-
-        tfSearch = new TextField("");
-        tfSearch.setImmediate(false);
-        rightTopSearchLayout.addComponent(tfSearch);
-
-        cbHakukausi = UI.newCompobox("Hakukausi", new String[]{"Kevätkausi"}, rightTopSearchLayout);
-        cbKoulutuksenAlkamiskausi = UI.newCompobox("Koulutuksen alkamiskausi", new String[]{"Syksy 2012"}, rightTopSearchLayout);
-        cbHakutapa = UI.newCompobox("Hakutapa", new String[]{"Kaikki"}, rightTopSearchLayout);
-        cbHakutyyppi = UI.newCompobox("Hakutyyppi", new String[]{"Kaikki"}, rightTopSearchLayout);
-        cbHaunKohdejoukko = UI.newCompobox("Kohdejoukko", new String[]{"Kaikki"}, rightTopSearchLayout);
-        btnTyhjenna = UI.newButton("Tyhjennä", rightTopSearchLayout);
-
-        return rightTopSearchLayout;
     }
 
     private Panel buildSearchResultPanel() {

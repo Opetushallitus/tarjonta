@@ -8,6 +8,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.vaadin.Oph;
 import java.text.MessageFormat;
@@ -20,7 +21,6 @@ public class UI {
 
     public static final String PCT100 = "100.0%";
 
-
     private enum Layout {
 
         REINDEER, OPH;
@@ -30,6 +30,18 @@ public class UI {
     
     public static final String format(String format, Object... args) {
         return MessageFormat.format(format, args);
+    }
+    
+    public static TextField newTextField(String nullRepresentation, String inputPrompt, boolean immediate) {
+        TextField tf = new TextField();
+        if (nullRepresentation != null) {
+            tf.setNullRepresentation(nullRepresentation);
+        }
+        if (inputPrompt != null) {
+            tf.setInputPrompt(inputPrompt);
+        }
+        tf.setImmediate(immediate);
+        return tf;
     }
     
     public static Label newLabel(final String format, final Object... args) {
