@@ -101,6 +101,8 @@ public class WindowOpener extends VerticalLayout
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 LOG.info("buttonClick() - luo uusi koulutus click...");
+                mainwindow.removeWindow(win);
+                
                 EditKoulutus f = new EditKoulutus();
                 mainwindow.removeAllComponents();
                 mainwindow.addComponent(f);
