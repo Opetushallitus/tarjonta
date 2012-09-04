@@ -4,6 +4,8 @@ import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
@@ -21,6 +23,8 @@ public class UI {
 
     public static final String PCT100 = "100.0%";
 
+    
+    
     private enum Layout {
 
         REINDEER, OPH;
@@ -30,6 +34,19 @@ public class UI {
     
     public static final String format(String format, Object... args) {
         return MessageFormat.format(format, args);
+    }
+
+    public static DateField newDate() {
+        return UI.newDate(null, null, null);
+    }
+
+    public static DateField newDate(String caption, String dateFormat, AbstractOrderedLayout layout) {
+        DateField df = new DateField();
+        df.setDateFormat(dateFormat != null ? dateFormat : "dd.MM.yyyy");
+        if (layout != null) {
+            layout.addComponent(df);
+        }
+        return df;
     }
     
     public static TextField newTextField(String nullRepresentation, String inputPrompt, boolean immediate) {

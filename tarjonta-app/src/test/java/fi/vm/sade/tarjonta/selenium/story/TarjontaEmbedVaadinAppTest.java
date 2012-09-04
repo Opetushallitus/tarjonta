@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
 import static fi.vm.sade.support.selenium.SeleniumUtils.waitForText;
+import org.junit.Ignore;
 
 /**
  * @author Antti Salonen
@@ -18,6 +19,7 @@ public class TarjontaEmbedVaadinAppTest extends AbstractEmbedVaadinAppTest<Tarjo
     public void initPageObjects() {
     }
 
+    @Ignore
     @Test
     public void tarjontaApplicationWorks() throws Exception {
         waitForText(I18N.getMessage("tarjonta.tabs.koulutusmoduulit"));
