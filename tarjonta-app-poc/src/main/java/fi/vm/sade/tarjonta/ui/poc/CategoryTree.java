@@ -10,9 +10,14 @@ import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TreeTable;
 
 import com.vaadin.event.Action;
+import com.vaadin.terminal.Resource;
+import com.vaadin.terminal.ThemeResource;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeButton;
+import fi.vm.sade.vaadin.Oph;
 
 public class CategoryTree extends TreeTable {
 
@@ -22,24 +27,13 @@ public class CategoryTree extends TreeTable {
     private static final Action REMOVE_ITEM_ACTION = new Action(
             LABEL_ACTIONS[2]);
     private static final String COLUMN_A = "Kategoriat";
-    private static final String COLUMN_C = "Toiminnot";
-    private final String[] kultturiala = {
-        "Käsi- ja taideteollisuusalan perustutkinto - Artesaani",
-        "Tuotteen suunnittelu ja valmistamisen koulutusohjelma",
-        "Ympäristön suunnittelun ja rakentamisen koulutuohjelma"};
-    private final String[] tekniikanJaLiikenteenAla = {
-        "Autoala perustutkinto - Parturi-kampaajan, syksy 2012",
-        "Sähkö- ja automaatitekniikan perustutkinto",
-        "Tieto- ja tietliikenneteksniikan perustutkinto",
-        "Kone- ja metallialan perustutkinto - ICT-asentaja",
-        "Kone- ja metallialan perustutkinto - Koneistaja"};
-    private final Map<String, String[]> map = new HashMap<String, String[]>();
-    private NativeSelect selectBox = new NativeSelect();
+    private Map<String, String[]> map = new HashMap<String, String[]>();
 
     public CategoryTree() {
         super();
 
         init();
+        addStyleName("kategory-tree");
 
         this.addActionHandler(new Action.Handler() {
             /**
@@ -81,14 +75,8 @@ public class CategoryTree extends TreeTable {
 
     private void init() {
         this.setSelectable(true);
-        // SELECTBOX
-        for (String str : LABEL_ACTIONS) {
-            selectBox.addItem(str);
-        }
-
-        selectBox.setNullSelectionAllowed(false);
-        selectBox.setValue(LABEL_ACTIONS[0]);
-        selectBox.setImmediate(true);
+        this.addStyleName(Oph.TABLE_BORDERLESS); //TODO: TEEMATKAA!
+        this.setColumnHeaderMode(COLUMN_HEADER_MODE_HIDDEN);
 
         // OTHER
 
@@ -97,7 +85,6 @@ public class CategoryTree extends TreeTable {
         this.setImmediate(false);
 
         populateTree();
-
     }
 
     private NativeSelect createNativeSelect() {
@@ -113,41 +100,39 @@ public class CategoryTree extends TreeTable {
         sb.setImmediate(true);
 
         return sb;
-
     }
 
-    private CheckBox buildTreeRow(final String text) {
-        GridLayout grid = new GridLayout(4, 2);
+    private HorizontalLayout buildTreeRow(final String text) {
 
-        grid.addComponent(UI.newCheckbox("Click Me!", null), 1, 1);
-        grid.addComponent(UI.newButton("Click Me!", null), 2, 1);
-        grid.addComponent(UI.newLabel(text), 3, 1);
-        CheckBox newCheckbox = UI.newCheckbox(text, null);
-        NativeButton tx = new NativeButton(text);
-//        CustomLayout layout = null;
-//        try {
-//            layout = new CustomLayout(
-//                    new ByteArrayInputStream(
-//                    "Here is a <span location='link1'></span> and here is another <span location='link2'></span>"
-//                    .getBytes()));
-//        } catch (IOException ex) {
-//            Logger.getLogger(CategoryTree.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        layout.setStyle("v-treetable-treespacer");
+        CheckBox newCheckbox = UI.newCheckbox(null, null);
+        Button button = UI.newButton(null, null);
+        button.setIcon(new ThemeResource("../../themes/oph/img/search.png"));
+        button.addStyleName(Oph.BUTTON_SMALL); //OMA teema
 
-        return newCheckbox;
+        Label label = new Label(text);
+        label.setSizeUndefined(); // -1,-1
+        HorizontalLayout horizontal = new HorizontalLayout();
+        horizontal.setWidth(-1, UNITS_PIXELS);
+        horizontal.setHeight(-1, UNITS_PIXELS); //Tämä toimii!!!
+
+        horizontal.addComponent(newCheckbox);
+        horizontal.addComponent(button);
+        horizontal.addComponent(label);
+
+        horizontal.setExpandRatio(label, 1f); //default == 0
+
+        return horizontal;
     }
 
     private void populateTree() {
-        map.put("Kulttuuriala (3kpl)", kultturiala);
-        map.put("Tekniikan ja liikentee ala (16kpl)", tekniikanJaLiikenteenAla);
+        map.put("Kulttuuriala (3kpl)", UI.KULTTURIALA);
+        map.put("Tekniikan ja liikentee ala (16kpl)", UI.TEKNIIIKAN_JA_LIIKENTEEN_ALA);
 
         Set<Entry<String, String[]>> set = map.entrySet();
 
         for (Entry<String, String[]> e : set) {
 
-            this.addContainerProperty(COLUMN_A, CheckBox.class, buildTreeRow(e.getKey()));
+            this.addContainerProperty(COLUMN_A, HorizontalLayout.class, buildTreeRow(e.getKey()));
             Object rootItem = this.addItem();
 
             this.getContainerProperty(rootItem, COLUMN_A).setValue(buildTreeRow(e.getKey()));

@@ -14,7 +14,7 @@
 
         <init-param>
             <name>application</name>
-            <value>fi.vm.sade.tarjonta.ui.TarjontaPortletApplication</value>
+            <value>fi.vm.sade.tarjonta.ui.TarjontaPocPortletApplication</value>
         </init-param>
 
         <supports>

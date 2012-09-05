@@ -21,17 +21,36 @@ import java.text.MessageFormat;
  */
 public class UI {
 
-    public static final String PCT100 = "100.0%";
+    public static final String PCT100 = "100%";
+    public static final String LOREM_IPSUM_SHORT = "Lorem ipsum dolor sit amet, consectetur "
+            + "adipiscing elit. Ut ut massa eget erat dapibus sollicitudin. Vestibulum ante ipsum "
+            + "primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque a "
+            + "augue. Praesent non elit. Duis sapien dolor, cursus eget, pulvinar eget, eleifend a, "
+            + "est. Integer in nunc. Vivamus consequat ipsum id sapien. Duis eu elit vel libero "
+            + "posuere luctus. Aliquam ac turpis. Aenean vitae justo in sem iaculis pulvinar. "
+            + "Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus "
+            + "mus. Aliquam sit amet mi. "
+            + "<br/>"
+            + "Aenean auctor, mi sit amet ultricies pulvinar, dui urna adipiscing odio, ut "
+            + "faucibus odio mauris eget justo.";
 
-    
+    public static final String[] KULTTURIALA = {
+        "Käsi- ja taideteollisuusalan perustutkinto - Artesaani",
+        "Tuotteen suunnittelu ja valmistamisen koulutusohjelma",
+        "Ympäristön suunnittelun ja rakentamisen koulutuohjelma"};
+    public static final String[] TEKNIIIKAN_JA_LIIKENTEEN_ALA = {
+        "Autoala perustutkinto - Parturi-kampaajan, syksy 2012",
+        "Sähkä- ja automaatitekniikan perustutkinto",
+        "Tieto- ja tietliikenneteksniikan perustutkinto",
+        "Kone- ja metallialan perustutkinto - ICT-asentaja",
+        "Kone- ja metallialan perustutkinto - Koneistaja"};
     
     private enum Layout {
 
         REINDEER, OPH;
     }
+    private static final Layout THEME = Layout.OPH;
 
-    private static final Layout THEME = Layout.REINDEER;
-    
     public static final String format(String format, Object... args) {
         return MessageFormat.format(format, args);
     }
@@ -65,7 +84,7 @@ public class UI {
         Label l = new Label(UI.format(format, args));
         return l;
     }
-    
+
     public static Label newLabel(final String format, final AbstractOrderedLayout layout, final Object... args) {
         Label l = UI.newLabel(format, args);
         if (layout != null) {
@@ -73,38 +92,37 @@ public class UI {
         }
         return l;
     }
-    
-    public static CheckBox newCheckbox(final String name,  final AbstractLayout layout) {
+
+    public static CheckBox newCheckbox(final String name, final AbstractLayout layout) {
         CheckBox ns = new CheckBox(name);
-    
+
         ns.setImmediate(false);
         ns.setWidth("-1px");
         ns.setHeight("-1px");
-    
+
         if (layout != null) {
             layout.addComponent(ns);
         }
 
         return ns;
     }
-    
-    public static Label newLabel(final String name,  final AbstractLayout layout) {
+
+    public static Label newLabel(final String name, final AbstractLayout layout) {
         Label ns = new Label(name);
-    
+
         ns.setImmediate(false);
         ns.setWidth("-1px");
         ns.setHeight("-1px");
-    
+
         if (layout != null) {
             layout.addComponent(ns);
         }
 
         return ns;
     }
-    
-    
-    public static NativeSelect newCompobox(final String name, final String[] items, final AbstractLayout layout) {
-        NativeSelect ns = new NativeSelect(name);
+
+    public static ComboBox newCompobox(final String name, final String[] items, final AbstractLayout layout) {
+        ComboBox ns = new ComboBox(name);
         for (String item : items) {
             ns.addItem(item);
         }
@@ -136,7 +154,7 @@ public class UI {
         if (layout != null) {
             layout.addComponent(btn);
         }
-        
+
         return btn;
     }
 

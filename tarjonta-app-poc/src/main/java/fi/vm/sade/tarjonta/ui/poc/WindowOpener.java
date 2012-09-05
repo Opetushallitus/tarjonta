@@ -25,31 +25,19 @@ import org.slf4j.LoggerFactory;
 public class WindowOpener extends VerticalLayout
         implements Window.CloseListener {
 
-      private static final Logger LOG = LoggerFactory.getLogger(WindowOpener.class);
- 
-    
-    public static final String lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ut massa eget erat dapibus sollicitudin. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque a augue. Praesent non elit. Duis sapien dolor, cursus eget, pulvinar eget, eleifend a, est. Integer in nunc. Vivamus consequat ipsum id sapien. Duis eu elit vel libero posuere luctus. Aliquam ac turpis. Aenean vitae justo in sem iaculis pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam sit amet mi. "
-            + "<br/>"
-            + "Aenean auctor, mi sit amet ultricies pulvinar, dui urna adipiscing odio, ut faucibus odio mauris eget justo.";
+    private static final Logger LOG = LoggerFactory.getLogger(WindowOpener.class);
     private static final String TEKSTI = "Koulutusta ei ole vielä liitetty mihinkään organisaatioon.";
     private static final String COLUMN_A = "Kategoriat";
-    private static final String COLUMN_C = "Toiminnot";
-    private final String[] kultturiala = {
-        "Käsi- ja taideteollisuusalan perustutkinto - Artesaani",
-        "Tuotteen suunnittelu ja valmistamisen koulutusohjelma",
-        "Ympäristön suunnittelun ja rakentamisen koulutuohjelma"};
-    private final String[] tekniikanJaLiikenteenAla = {
-        "Autoala perustutkinto - Parturi-kampaajan, syksy 2012",
-        "Sähkä- ja automaatitekniikan perustutkinto",
-        "Tieto- ja tietliikenneteksniikan perustutkinto",
-        "Kone- ja metallialan perustutkinto - ICT-asentaja",
-        "Kone- ja metallialan perustutkinto - Koneistaja"};
-    private final Map<String, String[]> map = new HashMap<String, String[]>();
-    Window mainwindow;  // Reference to main window
-    Window win;    // The window to be opened
-    Button closebutton; // A button in the window
+    
+   
+    private Map<String, String[]> map = new HashMap<String, String[]>();
+    private Window mainwindow;  // Reference to main window
+    private Window win;    // The window to be opened
+    private Button closebutton; // A button in the window
+    private VerticalLayout rightMainLayout;
 
-    public WindowOpener(String label, Window main) {
+    public WindowOpener(String label, VerticalLayout rightMainLayout, Window main) {
+        this.rightMainLayout = rightMainLayout;
         mainwindow = main;
         win = new Window(label);
         win.setWidth("50%");
@@ -77,7 +65,7 @@ public class WindowOpener extends VerticalLayout
         VerticalLayout newVerticalLayout = UI.newVerticalLayout(null, null);
         HorizontalLayout newHorizontalLayout = UI.newHorizontalLayout(null, null);
 
-        newVerticalLayout.addComponent(new Label(lorem));
+        newVerticalLayout.addComponent(new Label(UI.LOREM_IPSUM_SHORT));
         newVerticalLayout.addComponent(newHorizontalLayout);
 
         Tree tree = new Tree("Hardware Inventory");
@@ -95,28 +83,28 @@ public class WindowOpener extends VerticalLayout
 
         newHorizontalLayout.addComponent(tree);
         newHorizontalLayout.addComponent(new Label(TEKSTI));
-       
+
         Button button = new Button("Jatka");
         button.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 LOG.info("buttonClick() - luo uusi koulutus click...");
                 mainwindow.removeWindow(win);
-                
+
                 EditKoulutus f = new EditKoulutus();
-                mainwindow.removeAllComponents();
-                mainwindow.addComponent(f);
+                //rightMainLayout.removeAllComponents();
+                //rightMainLayout.addComponent(f);
             }
         });
-        
-         newHorizontalLayout.addComponent(button);
-        
+
+        newHorizontalLayout.addComponent(button);
+
         return newVerticalLayout;
     }
 
     private void populateTree(Tree tree) {
-        map.put("Kulttuuriala (3kpl)", kultturiala);
-        map.put("Tekniikan ja liikentee ala (16kpl)", tekniikanJaLiikenteenAla);
+        map.put("Kulttuuriala (3kpl)", UI.KULTTURIALA);
+        map.put("Tekniikan ja liikentee ala (16kpl)", UI.TEKNIIIKAN_JA_LIIKENTEEN_ALA);
 
         Set<Map.Entry<String, String[]>> set = map.entrySet();
         for (Map.Entry<String, String[]> e : set) {
