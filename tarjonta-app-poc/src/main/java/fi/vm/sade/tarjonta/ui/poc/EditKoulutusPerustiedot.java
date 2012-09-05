@@ -139,8 +139,8 @@ public class EditKoulutusPerustiedot extends VerticalLayout {
             vl.addComponent(UI.newTextField("", "Titteli", true));
             vl.addComponent(UI.newTextField("", "Sähköposti", true));
             vl.addComponent(UI.newTextField("", "Puhelinnumero", true));
-            vl.addComponent(UI.newLabel("Yhteyshenkilö opetuskielissä:", null));
-            vl.addComponent(UI.newLabel("[checkboxit tähän]", null));
+            vl.addComponent(UI.newLabel("Yhteyshenkilö opetuskielissä:"));
+            vl.addComponent(UI.newLabel("[checkboxit tähän]"));
             
             hl.addComponent(plusIcon1);
             

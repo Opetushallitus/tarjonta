@@ -9,6 +9,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Panel;
@@ -17,14 +18,23 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.poc.helper.UI;
 import fi.vm.sade.vaadin.Oph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
+@Configurable(preConstruction=true)
 public class MainSplitPanelView extends HorizontalSplitPanel {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainSplitPanelView.class);
+    
+    @Autowired
+    private TarjontaPresenter _presenter;
+    
     private HorizontalLayout rightBottomResultLayout;
     private Link breadCrumb;
     private TabSheet searchResultTab;
@@ -52,6 +62,8 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
     private Button btnLuoUusiKoulutus;
     private ComboBox cbJarjestys;
     
+    @Value("${tarjonta-app.identifier:NA}")
+    private String _identifier;
 
     /**
      * The constructor should first build the main layout, set the composition
@@ -78,6 +90,7 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
         getMainRightLayout().addComponent(breadCrumbLayout);
         getMainRightLayout().addComponent(buildTopSearchLayout());
         getMainRightLayout().addComponent(buildBottomResultLayout());
+        getMainRightLayout().addComponent(new Label("ID=" + _identifier));
 
         // Add a vertical SplitPanel to the lower area
 

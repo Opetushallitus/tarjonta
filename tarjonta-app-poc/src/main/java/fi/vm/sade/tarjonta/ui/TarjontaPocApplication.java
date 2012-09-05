@@ -2,7 +2,10 @@ package fi.vm.sade.tarjonta.ui;
 
 import com.vaadin.Application;
 import fi.vm.sade.tarjonta.ui.poc.TarjontaWindow;
+import org.springframework.beans.factory.annotation.Configurable;
 
+
+@Configurable(preConstruction = false)
 public class TarjontaPocApplication extends Application {
 
     /**

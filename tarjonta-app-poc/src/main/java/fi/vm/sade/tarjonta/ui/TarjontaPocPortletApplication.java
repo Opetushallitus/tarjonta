@@ -17,17 +17,15 @@
 package fi.vm.sade.tarjonta.ui;
 
 import com.github.wolfie.blackboard.Blackboard;
-import com.vaadin.ui.Window;
 import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
-import fi.vm.sade.tarjonta.ui.model.view.MainSplitPanelView;
 import fi.vm.sade.tarjonta.ui.poc.TarjontaWindow;
-import fi.vm.sade.tarjonta.ui.poc.helper.UI;
-import fi.vm.sade.vaadin.Oph;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  *
  * @author mlyly
  */
+@Configurable(preConstruction = false)
 public class TarjontaPocPortletApplication extends AbstractSadePortletApplication {
 
     @Override

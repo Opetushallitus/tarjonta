@@ -4,17 +4,32 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
+import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  *
  * @author mlyly
  */
+@Configurable(preConstruction = false)
 public class TarjontaPresenter {
     
     public static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
     
+    @Autowired(required=true)
+    private TarjontaModel _model;
+    
+    public TarjontaPresenter() {
+        LOG.info("TarjontaPresenter() : model={}", _model);
+    }
+    
+    @PostConstruct
+    public void initialize() {
+        LOG.info("initialize() : model={}", _model);
+    }
     
     public void searchKoulutus() {
         LOG.info("searchKoulutus()");
