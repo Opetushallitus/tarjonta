@@ -19,8 +19,8 @@ package fi.vm.sade.tarjonta.ui;
 import com.github.wolfie.blackboard.Blackboard;
 import com.vaadin.ui.Window;
 import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
-import fi.vm.sade.tarjonta.ui.poc.MainSplitPanel;
-import fi.vm.sade.tarjonta.ui.poc.UI;
+import fi.vm.sade.tarjonta.ui.model.view.MainSplitPanelView;
+import fi.vm.sade.tarjonta.ui.poc.helper.UI;
 import fi.vm.sade.vaadin.Oph;
 
 /**
@@ -43,7 +43,7 @@ public class TarjontaPocPortletApplication extends AbstractSadePortletApplicatio
     }
 
     private void createMainWindow() {
-        MainSplitPanel main = new MainSplitPanel();
+        MainSplitPanelView main = new MainSplitPanelView();
         Window mainWindow = new Window("Tarjonta", main);
         mainWindow.setSizeFull();
         setMainWindow(mainWindow);

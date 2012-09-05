@@ -1,4 +1,4 @@
-package fi.vm.sade.tarjonta.ui.poc;
+package fi.vm.sade.tarjonta.ui.model.view;
 
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -17,13 +17,14 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import fi.vm.sade.tarjonta.ui.poc.helper.UI;
 import fi.vm.sade.vaadin.Oph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MainSplitPanel extends HorizontalSplitPanel {
+public class MainSplitPanelView extends HorizontalSplitPanel {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MainSplitPanel.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MainSplitPanelView.class);
     private HorizontalLayout rightBottomResultLayout;
     private Link breadCrumb;
     private TabSheet searchResultTab;
@@ -56,7 +57,7 @@ public class MainSplitPanel extends HorizontalSplitPanel {
      * The constructor should first build the main layout, set the composition
      * root and then do any custom initialization.
      */
-    public MainSplitPanel() {
+    public MainSplitPanelView() {
         buildMainLayout();
         setHeight(UI.PCT100);
     }
@@ -82,18 +83,16 @@ public class MainSplitPanel extends HorizontalSplitPanel {
 
         HorizontalLayout breadCrumbLayout = UI.newHorizontalLayout(null, null, new Boolean[]{false, false, true, false});
         breadCrumbLayout.addComponent(breadCrumb);
-        mainRightLayout.addComponent(breadCrumbLayout);
-        mainRightLayout.addComponent(buildTopSearchLayout());
-        mainRightLayout.addComponent(buildBottomResultLayout());
+        getMainRightLayout().addComponent(breadCrumbLayout);
+        getMainRightLayout().addComponent(buildTopSearchLayout());
+        getMainRightLayout().addComponent(buildBottomResultLayout());
 
         // Add a vertical SplitPanel to the lower area
 
         setSplitPosition(1); // percent
 
         this.addComponent(mainLeftLayout);
-        this.addComponent(mainRightLayout);
-
-        
+        this.addComponent(getMainRightLayout()); 
     }
 
     private HorizontalLayout buildBottomResultLayout() {
@@ -194,7 +193,7 @@ public class MainSplitPanel extends HorizontalSplitPanel {
         searchVerticalResultLayout.setSpacing(true); //komponentien väliin ilmaa
 
         searchHorizontalResultLayout = UI.newHorizontalLayout(null, null);
-        categoryTree = new CategoryTree();
+        categoryTree = new CategoryTreeView();
         searchHorizontalResultLayout.addComponent(categoryTree);
 
         searchVerticalResultLayout.addComponent(searchHorizontalResultLayout);
@@ -221,5 +220,12 @@ public class MainSplitPanel extends HorizontalSplitPanel {
      */
     public void setBtnLuoUusiKoulutus(Button.ClickListener btnLuoUusiKoulutus) {
         this.btnLuoUusiKoulutus.addListener(btnLuoUusiKoulutus);
+    }
+
+    /**
+     * @return the mainRightLayout
+     */
+    public VerticalLayout getMainRightLayout() {
+        return mainRightLayout;
     }
 }

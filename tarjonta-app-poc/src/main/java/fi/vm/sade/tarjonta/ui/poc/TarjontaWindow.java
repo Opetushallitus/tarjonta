@@ -1,5 +1,8 @@
 package fi.vm.sade.tarjonta.ui.poc;
 
+import fi.vm.sade.tarjonta.ui.model.view.CreateKoulutusView;
+import fi.vm.sade.tarjonta.ui.poc.helper.UI;
+import fi.vm.sade.tarjonta.ui.model.view.MainSplitPanelView;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -12,10 +15,11 @@ import com.vaadin.ui.Window;
  */
 public class TarjontaWindow extends Window {
 
+    private MainSplitPanelView main;
     private ClickListener btnClickListener = new Button.ClickListener() {
         @Override
         public void buttonClick(ClickEvent event) {
-            new WindowOpener("Valitse organisaatio", null, getWindow());
+            new CreateKoulutusView("Valitse organisaatio", main.getMainRightLayout(), getWindow());
         }
     };
 
@@ -24,7 +28,7 @@ public class TarjontaWindow extends Window {
         VerticalLayout layout = UI.newVerticalLayout(null, null);
         setContent(layout); //window käyttää laypottia pohjana
 
-        MainSplitPanel main = new MainSplitPanel();
+        main = new MainSplitPanelView();
         main.setBtnLuoUusiKoulutus(btnClickListener);
         addComponent(main);
     }

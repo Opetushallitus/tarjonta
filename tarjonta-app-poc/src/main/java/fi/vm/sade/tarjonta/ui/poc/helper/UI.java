@@ -1,4 +1,4 @@
-package fi.vm.sade.tarjonta.ui.poc;
+package fi.vm.sade.tarjonta.ui.poc.helper;
 
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractOrderedLayout;

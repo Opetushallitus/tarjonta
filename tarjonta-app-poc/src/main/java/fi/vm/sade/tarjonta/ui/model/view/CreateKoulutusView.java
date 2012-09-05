@@ -1,5 +1,6 @@
-package fi.vm.sade.tarjonta.ui.poc;
+package fi.vm.sade.tarjonta.ui.model.view;
 
+import fi.vm.sade.tarjonta.ui.poc.helper.UI;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.Button;
@@ -9,6 +10,7 @@ import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
+import fi.vm.sade.tarjonta.ui.poc.EditKoulutus;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -22,10 +24,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Component contains a button that allows opening a window.
  */
-public class WindowOpener extends VerticalLayout
+public class CreateKoulutusView extends VerticalLayout
         implements Window.CloseListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(WindowOpener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CreateKoulutusView.class);
     private static final String TEKSTI = "Koulutusta ei ole vielä liitetty mihinkään organisaatioon.";
     private static final String COLUMN_A = "Kategoriat";
     
@@ -36,7 +38,7 @@ public class WindowOpener extends VerticalLayout
     private Button closebutton; // A button in the window
     private VerticalLayout rightMainLayout;
 
-    public WindowOpener(String label, VerticalLayout rightMainLayout, Window main) {
+    public CreateKoulutusView(String label, VerticalLayout rightMainLayout, Window main) {
         this.rightMainLayout = rightMainLayout;
         mainwindow = main;
         win = new Window(label);
@@ -92,8 +94,8 @@ public class WindowOpener extends VerticalLayout
                 mainwindow.removeWindow(win);
 
                 EditKoulutus f = new EditKoulutus();
-                //rightMainLayout.removeAllComponents();
-                //rightMainLayout.addComponent(f);
+                rightMainLayout.removeAllComponents();
+                rightMainLayout.addComponent(f);
             }
         });
 

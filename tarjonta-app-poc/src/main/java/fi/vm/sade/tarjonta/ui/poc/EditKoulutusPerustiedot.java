@@ -4,6 +4,7 @@
  */
 package fi.vm.sade.tarjonta.ui.poc;
 
+import fi.vm.sade.tarjonta.ui.poc.helper.UI;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Alignment;

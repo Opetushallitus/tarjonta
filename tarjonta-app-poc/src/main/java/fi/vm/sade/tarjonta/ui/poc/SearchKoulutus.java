@@ -4,6 +4,7 @@
  */
 package fi.vm.sade.tarjonta.ui.poc;
 
+import fi.vm.sade.tarjonta.ui.poc.helper.UI;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.Button;

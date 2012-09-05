@@ -4,6 +4,7 @@
  */
 package fi.vm.sade.tarjonta.ui.poc;
 
+import fi.vm.sade.tarjonta.ui.poc.helper.UI;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import org.slf4j.Logger;

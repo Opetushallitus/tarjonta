@@ -4,6 +4,7 @@
  */
 package fi.vm.sade.tarjonta.ui.poc;
 
+import fi.vm.sade.tarjonta.ui.poc.helper.UI;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;

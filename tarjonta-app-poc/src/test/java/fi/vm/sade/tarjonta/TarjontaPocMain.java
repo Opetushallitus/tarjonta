@@ -6,7 +6,7 @@ import com.bsb.common.vaadin.embed.support.EmbedVaadin;
 import com.vaadin.ui.Window;
 import fi.vm.sade.generic.common.I18N;
 
-import fi.vm.sade.tarjonta.ui.poc.MainSplitPanel;
+import fi.vm.sade.tarjonta.ui.model.view.MainSplitPanelView;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -25,7 +25,7 @@ public class TarjontaPocMain {
     public static void main(String[] args) throws InterruptedException, IOException {
         I18N.setLocale(new Locale("fi"));
         ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:spring/application-context.xml");
-        MainSplitPanel component = new MainSplitPanel();
+        MainSplitPanelView component = new MainSplitPanelView();
         File moduleBaseDir = new File(".");
         File rootDir = new File(moduleBaseDir, "target/");
         System.out.println("vaadin root dir: " + rootDir.getCanonicalPath());
