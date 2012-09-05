@@ -4,6 +4,9 @@
  */
 package fi.vm.sade.tarjonta.ui.poc;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.terminal.ExternalResource;
@@ -18,6 +21,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +40,16 @@ public class EditKoulutusPerustiedot extends VerticalLayout {
     
     private void initialize() {
         LOG.info("initialize()");
+
+//         
+//        Locale l = Locale.CANADA;
+//        BeanItem<Locale> bi = new BeanItem<Locale>(l);
+//        bi.addItemProperty("class.name", new NestedMethodProperty(l, "class.name"));
+//        
+//        TextField tf = new TextField("Country", bi.getItemProperty("displayCountry"));
+//        addComponent(tf);
+//        TextField tf2 = new TextField("Class name", bi.getItemProperty("class.name"));
+//        addComponent(tf2);
         
         Embedded helpIcon1 = createIcon("http://png-3.findicons.com/files/icons/817/webgloss_3d/48/question.png", "16px", "16px");
         Embedded helpIcon2 = createIcon("http://png-3.findicons.com/files/icons/817/webgloss_3d/48/question.png", "16px", "16px");
