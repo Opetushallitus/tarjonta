@@ -19,6 +19,7 @@ import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.poc.helper.UI;
 import fi.vm.sade.vaadin.Oph;
 import org.slf4j.Logger;
@@ -61,6 +62,8 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
     private Button btnKopioiUudelleKaudelle;
     private Button btnLuoUusiKoulutus;
     private ComboBox cbJarjestys;
+    
+    private I18NHelper i18n = new I18NHelper(this);
     
     /**
      * The constructor should first build the main layout, set the composition
@@ -136,11 +139,11 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
         layout.setMargin(true);
 
         // btnPoista.setEnabled(false);
-        btnKopioiUudelleKaudelle = UI.newButton("Kopio uudelle kaudelle", layout);
+        btnKopioiUudelleKaudelle = UI.newButton(i18n.getMessage("KopioUudelleKaudelle"), layout);
         btnKopioiUudelleKaudelle.addStyleName(Oph.BUTTON_SMALL);
-        btnLuoUusiKoulutus = UI.newButton("Luo uusi koulutus", layout);
+        btnLuoUusiKoulutus = UI.newButton(i18n.getMessage("LuoUusiKoulutus"), layout);
         btnLuoUusiKoulutus.addStyleName(Oph.BUTTON_SMALL);
-        btnPoista = UI.newButton("Poista", layout);
+        btnPoista = UI.newButton(i18n.getMessage("Poista"), layout);
         btnPoista.addStyleName(Oph.BUTTON_SMALL);
 
         cbJarjestys = UI.newCompobox(null, new String[]{"Organisaatiorakenteen mukainen järjestys"}, layout);
@@ -190,7 +193,7 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
         searchVerticalResultLayout.addComponent(buildMiddleResultLayout());
 
         CssLayout wrapper = new CssLayout();
-        wrapper.addComponent(new CheckBox("Valitse kaikki"));
+        wrapper.addComponent(new CheckBox(i18n.getMessage("ValitseKaikki")));
         wrapper.setMargin(false, false, true, true);
  
         searchVerticalResultLayout.addComponent(wrapper);
