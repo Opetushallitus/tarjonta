@@ -51,7 +51,7 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
     private Button btnKopioiUudelleKaudelle;
     private Button btnLuoUusiKoulutus;
     private ComboBox cbJarjestys;
-    private Window window;
+    
 
     /**
      * The constructor should first build the main layout, set the composition
@@ -60,14 +60,6 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
     public MainSplitPanelView() {
         buildMainLayout();
         setHeight(UI.PCT100);
-    }
-
-    public void setMainWindow(Window window) {
-        if (window == null) {
-            throw new NullPointerException("Main window instance cannot be null");
-        }
-
-        this.window = window;
     }
 
     private void buildMainLayout() {

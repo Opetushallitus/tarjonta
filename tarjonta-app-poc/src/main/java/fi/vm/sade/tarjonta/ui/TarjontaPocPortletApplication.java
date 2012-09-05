@@ -20,6 +20,7 @@ import com.github.wolfie.blackboard.Blackboard;
 import com.vaadin.ui.Window;
 import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
 import fi.vm.sade.tarjonta.ui.model.view.MainSplitPanelView;
+import fi.vm.sade.tarjonta.ui.poc.TarjontaWindow;
 import fi.vm.sade.tarjonta.ui.poc.helper.UI;
 import fi.vm.sade.vaadin.Oph;
 
@@ -43,14 +44,9 @@ public class TarjontaPocPortletApplication extends AbstractSadePortletApplicatio
     }
 
     private void createMainWindow() {
-        MainSplitPanelView main = new MainSplitPanelView();
-        Window mainWindow = new Window("Tarjonta", main);
-        mainWindow.setSizeFull();
-        setMainWindow(mainWindow);
-        main.setMainWindow(mainWindow);
+        TarjontaWindow win = new TarjontaWindow();
+        setMainWindow(win);
 
-        if (UI.isThemeOPH()) {
-            setTheme(Oph.THEME_NAME);
-        }
+        setTheme("tarjonta");
     }
 }

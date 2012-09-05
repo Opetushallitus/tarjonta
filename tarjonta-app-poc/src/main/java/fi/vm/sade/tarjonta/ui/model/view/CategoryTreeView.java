@@ -15,6 +15,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import fi.vm.sade.tarjonta.ui.enums.TarjontaStyles;
 import fi.vm.sade.vaadin.Oph;
 
 public class CategoryTreeView extends TreeTable {
@@ -31,7 +32,7 @@ public class CategoryTreeView extends TreeTable {
         super();
 
         init();
-        addStyleName("category-tree");
+        addStyleName(TarjontaStyles.CATEGORY_TREE.getStyleName());
 
         this.addActionHandler(new Action.Handler() {
             /**
