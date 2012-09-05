@@ -46,11 +46,5 @@ public class TarjontaWindow extends Window {
         main = new MainSplitPanelView();
         main.setBtnLuoUusiKoulutus(btnClickListener);
         addComponent(main);        
-    }
-    
-    @PostConstruct
-    private void initialize() {
-        LOG.info("initialize(): presenter={}", _presenter);
-    }
-    
+    }        
 }

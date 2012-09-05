@@ -62,9 +62,6 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
     private Button btnLuoUusiKoulutus;
     private ComboBox cbJarjestys;
     
-    @Value("${tarjonta-app.identifier:NA}")
-    private String _identifier;
-
     /**
      * The constructor should first build the main layout, set the composition
      * root and then do any custom initialization.
@@ -90,7 +87,10 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
         getMainRightLayout().addComponent(breadCrumbLayout);
         getMainRightLayout().addComponent(buildTopSearchLayout());
         getMainRightLayout().addComponent(buildBottomResultLayout());
-        getMainRightLayout().addComponent(new Label("ID=" + _identifier));
+        
+        if (_presenter.showIdentifier()) {
+            getMainRightLayout().addComponent(new Label("ID=" + _presenter.getIdentifier()));
+        }
 
         // Add a vertical SplitPanel to the lower area
 

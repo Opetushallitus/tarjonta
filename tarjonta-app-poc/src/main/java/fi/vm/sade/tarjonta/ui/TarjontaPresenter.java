@@ -63,9 +63,16 @@ public class TarjontaPresenter {
     public void koulutuksenPerustiedotAddNewContactPerson() {
         LOG.info("koulutuksenPerustiedotAddNewContactPerson()");
     }
-    
-    
 
+    /*
+     * APP Identifier.
+     */
+    public boolean showIdentifier() {
+        return _model.getShowIdentifier();
+    }
     
+    public String getIdentifier() {
+        return _model.getIdentifier();
+    }
     
 }

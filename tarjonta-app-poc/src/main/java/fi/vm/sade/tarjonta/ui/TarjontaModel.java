@@ -8,6 +8,7 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
@@ -22,6 +23,12 @@ public class TarjontaModel {
         LOG.info("TarjontaModel()");
     }
     
+    // Show label that shows last modification
+    @Value("${showAppIdentifier:true}")
+    private Boolean _showIdentifier;
+    @Value("${tarjonta-app.identifier:NOT AVAILABLE}")
+    private String _identifier;
+    
     // TODO KoulutusDTO?
     // TODO HakueraDTO?
     // TODO Search results
@@ -29,8 +36,31 @@ public class TarjontaModel {
     // Search specification DTO
     private KoulutusSearchSpesificationDTO searchSpesification = new KoulutusSearchSpesificationDTO();
     
+    /**
+     * Search spesification for Koulutus offerings.
+     * 
+     * @return 
+     */
     public KoulutusSearchSpesificationDTO getSearchSpesification() {
         return searchSpesification;
+    }
+
+    /**
+     * True if app identifier should be shown.
+     * 
+     * @return 
+     */
+    public Boolean getShowIdentifier() {
+        return _showIdentifier;
+    }
+    
+    /**
+     * Get APP identifier.
+     * 
+     * @return 
+     */
+    public String getIdentifier() {
+        return _identifier;
     }
     
 }
