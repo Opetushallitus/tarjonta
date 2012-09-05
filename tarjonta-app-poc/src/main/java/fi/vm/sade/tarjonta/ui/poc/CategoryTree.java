@@ -87,21 +87,6 @@ public class CategoryTree extends TreeTable {
         populateTree();
     }
 
-    private NativeSelect createNativeSelect() {
-        // SELECTBOX
-        NativeSelect sb = new NativeSelect();
-
-        for (String str : LABEL_ACTIONS) {
-            sb.addItem(str);
-        }
-
-        sb.setNullSelectionAllowed(false);
-        sb.setValue(LABEL_ACTIONS[0]);
-        sb.setImmediate(true);
-
-        return sb;
-    }
-
     private HorizontalLayout buildTreeRow(final String text) {
 
         CheckBox newCheckbox = UI.newCheckbox(null, null);

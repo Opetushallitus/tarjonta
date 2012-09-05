@@ -12,7 +12,12 @@ import com.vaadin.ui.Window;
  */
 public class TarjontaWindow extends Window {
 
-    private ClickListener btnClickListener;
+    private ClickListener btnClickListener = new Button.ClickListener() {
+        @Override
+        public void buttonClick(ClickEvent event) {
+            new WindowOpener("Valitse organisaatio", null, getWindow());
+        }
+    };
 
     public TarjontaWindow() {
         super();
@@ -22,13 +27,5 @@ public class TarjontaWindow extends Window {
         MainSplitPanel main = new MainSplitPanel();
         main.setBtnLuoUusiKoulutus(btnClickListener);
         addComponent(main);
-        
-        btnClickListener = new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-
-                new WindowOpener("Valitse organisaatio", null, getWindow());
-            }
-        };
     }
 }

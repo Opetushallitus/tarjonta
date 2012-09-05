@@ -7,6 +7,7 @@ package fi.vm.sade.tarjonta.ui.poc;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TextField;
@@ -25,11 +26,11 @@ public class SearchKoulutus extends VerticalLayout {
     
     private HorizontalLayout layout;
     private TextField tfSearch;
-    private NativeSelect cbHakukausi;
-    private NativeSelect cbKoulutuksenAlkamiskausi;
-    private NativeSelect cbHakutapa;
-    private NativeSelect cbHakutyyppi;
-    private NativeSelect cbHaunKohdejoukko;
+    private ComboBox cbHakukausi;
+    private ComboBox cbKoulutuksenAlkamiskausi;
+    private ComboBox cbHakutapa;
+    private ComboBox cbHakutyyppi;
+    private ComboBox cbHaunKohdejoukko;
     private Button btnTyhjenna;
     
     public SearchKoulutus() {
