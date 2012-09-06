@@ -92,8 +92,9 @@ public class CreateKoulutusView extends VerticalLayout
             public void buttonClick(Button.ClickEvent event) {
                 LOG.info("buttonClick() - luo uusi koulutus click...");
                 mainwindow.removeWindow(win);
-
-                EditKoulutus f = new EditKoulutus();
+                
+                EditKoulutusView f = new EditKoulutusView();
+                // EditKoulutus f = new EditKoulutus();
                 rightMainLayout.removeAllComponents();
                 rightMainLayout.addComponent(f);
             }
