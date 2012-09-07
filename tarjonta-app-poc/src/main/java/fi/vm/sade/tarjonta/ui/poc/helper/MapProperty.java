@@ -63,9 +63,9 @@ public class MapProperty implements Property {
     public void setReadOnly(boolean newStatus) {
         _readonly = newStatus;
     }
-
+    
     @Override
     public String toString() {
-        return "" + getValue();
+        return getValue() == null ? null : "" + getValue();
     }
 }
