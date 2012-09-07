@@ -401,11 +401,12 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
 
     private Label addLabel(PropertysetItem psi, String expression, AbstractOrderedLayout layout) {
         Label c = new Label();
+
         if (psi != null && expression != null) {
             c.setPropertyDataSource(psi.getItemProperty(expression));
         }
 
-        c.addStyleName(Oph.LABEL_SMALL);
+        // c.addStyleName(Oph.LABEL_SMALL);
 
         if (layout != null) {
             layout.addComponent(c);
