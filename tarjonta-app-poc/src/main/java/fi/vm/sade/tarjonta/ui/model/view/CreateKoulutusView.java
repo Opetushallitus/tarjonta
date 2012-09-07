@@ -1,6 +1,6 @@
 package fi.vm.sade.tarjonta.ui.model.view;
 
-import fi.vm.sade.tarjonta.ui.poc.helper.UI;
+import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.Button;
@@ -30,7 +30,6 @@ public class CreateKoulutusView extends VerticalLayout
     private static final Logger LOG = LoggerFactory.getLogger(CreateKoulutusView.class);
     private static final String TEKSTI = "Koulutusta ei ole vielä liitetty mihinkään organisaatioon.";
     private static final String COLUMN_A = "Kategoriat";
-    
    
     private Map<String, String[]> map = new HashMap<String, String[]>();
     private Window mainwindow;  // Reference to main window
@@ -64,10 +63,10 @@ public class CreateKoulutusView extends VerticalLayout
     }
 
     private VerticalLayout buildSearchLayout() {
-        VerticalLayout newVerticalLayout = UI.newVerticalLayout(null, null);
-        HorizontalLayout newHorizontalLayout = UI.newHorizontalLayout(null, null);
+        VerticalLayout newVerticalLayout = UiBuilder.newVerticalLayout(null, null);
+        HorizontalLayout newHorizontalLayout = UiBuilder.newHorizontalLayout();
 
-        newVerticalLayout.addComponent(new Label(UI.LOREM_IPSUM_SHORT));
+        newVerticalLayout.addComponent(new Label(UiBuilder.LOREM_IPSUM_SHORT));
         newVerticalLayout.addComponent(newHorizontalLayout);
 
         Tree tree = new Tree("Hardware Inventory");
@@ -106,8 +105,8 @@ public class CreateKoulutusView extends VerticalLayout
     }
 
     private void populateTree(Tree tree) {
-        map.put("Kulttuuriala (3kpl)", UI.KULTTURIALA);
-        map.put("Tekniikan ja liikentee ala (16kpl)", UI.TEKNIIIKAN_JA_LIIKENTEEN_ALA);
+        map.put("Kulttuuriala (3kpl)", UiBuilder.KULTTURIALA);
+        map.put("Tekniikan ja liikentee ala (16kpl)", UiBuilder.TEKNIIIKAN_JA_LIIKENTEEN_ALA);
 
         Set<Map.Entry<String, String[]>> set = map.entrySet();
         for (Map.Entry<String, String[]> e : set) {

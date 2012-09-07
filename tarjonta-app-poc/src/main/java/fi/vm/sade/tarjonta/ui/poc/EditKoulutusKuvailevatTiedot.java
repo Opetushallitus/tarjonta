@@ -4,7 +4,7 @@
  */
 package fi.vm.sade.tarjonta.ui.poc;
 
-import fi.vm.sade.tarjonta.ui.poc.helper.UI;
+import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -31,11 +31,11 @@ public class EditKoulutusKuvailevatTiedot extends VerticalLayout {
         LOG.info("initialize()");
         
         // Top control buttons
-        HorizontalLayout hlControlButtonsTop = UI.newHorizontalLayout(null, null);
-        UI.newButton("Peruuta", hlControlButtonsTop);
-        UI.newButton("Tallenna luonnoksena", hlControlButtonsTop);
-        UI.newButton("Tallenna valmiina", hlControlButtonsTop);
-        UI.newButton("Jatka", hlControlButtonsTop);
+        HorizontalLayout hlControlButtonsTop = UiBuilder.newHorizontalLayout();
+        UiBuilder.newButton("Peruuta", hlControlButtonsTop);
+        UiBuilder.newButton("Tallenna luonnoksena", hlControlButtonsTop);
+        UiBuilder.newButton("Tallenna valmiina", hlControlButtonsTop);
+        UiBuilder.newButton("Jatka", hlControlButtonsTop);
         addComponent(hlControlButtonsTop);
         
         Panel kuvailevatTiedotPanel = new Panel("Koulutuksen kuvailevat tiedot");
@@ -52,11 +52,11 @@ public class EditKoulutusKuvailevatTiedot extends VerticalLayout {
         addDummyLisatiedotPanel("Lisätietoja");
         
         // Bottom control buttons
-        HorizontalLayout hlControlButtonsBottom = UI.newHorizontalLayout(null, null);
-        UI.newButton("Peruuta", hlControlButtonsBottom);
-        UI.newButton("Tallenna luonnoksena", hlControlButtonsBottom);
-        UI.newButton("Tallenna valmiina", hlControlButtonsBottom);
-        UI.newButton("Jatka", hlControlButtonsBottom);
+        HorizontalLayout hlControlButtonsBottom = UiBuilder.newHorizontalLayout();
+        UiBuilder.newButton("Peruuta", hlControlButtonsBottom);
+        UiBuilder.newButton("Tallenna luonnoksena", hlControlButtonsBottom);
+        UiBuilder.newButton("Tallenna valmiina", hlControlButtonsBottom);
+        UiBuilder.newButton("Jatka", hlControlButtonsBottom);
         addComponent(hlControlButtonsBottom);
     }
     

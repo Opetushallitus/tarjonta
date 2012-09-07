@@ -4,7 +4,7 @@
  */
 package fi.vm.sade.tarjonta.ui.poc;
 
-import fi.vm.sade.tarjonta.ui.poc.helper.UI;
+import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class EditKoulutus extends VerticalLayout {
         LOG.info("initialize()");
         
         // Info
-        UI.newLabel("Olet luomassa {0} koulutusta organisaatioon {1}.", this, "tutkintoon johtavaa", "informaatiotekniikan tiedekunta");
+        UiBuilder.newLabel("Olet luomassa {0} koulutusta organisaatioon {1}.", this, "tutkintoon johtavaa", "informaatiotekniikan tiedekunta");
         
         // Tabs
         TabSheet tabs = new TabSheet();

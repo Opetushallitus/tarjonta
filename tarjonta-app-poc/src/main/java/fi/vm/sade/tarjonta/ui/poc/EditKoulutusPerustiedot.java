@@ -4,7 +4,7 @@
  */
 package fi.vm.sade.tarjonta.ui.poc;
 
-import fi.vm.sade.tarjonta.ui.poc.helper.UI;
+import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Alignment;
@@ -60,12 +60,12 @@ public class EditKoulutusPerustiedot extends VerticalLayout {
         addComponent(perustiedotPanel);
 
         add(perustiedotGrid, new Label("Koulutus / Koulutusohjelma"), Alignment.TOP_RIGHT);
-        add(perustiedotGrid, UI.newTextField("", "Valitse Koulutus / Koulutusohjelma", true), Alignment.TOP_LEFT);
+        add(perustiedotGrid, UiBuilder.newTextField("", "Valitse Koulutus / Koulutusohjelma", true), Alignment.TOP_LEFT);
         add(perustiedotGrid, helpIcon1, Alignment.TOP_RIGHT);
         perustiedotGrid.newLine();
         
         add(perustiedotGrid, new Label("Koulutuksen tyyppi"), Alignment.TOP_RIGHT);
-        add(perustiedotGrid, UI.newCompobox(null, new String[] {"Tyyppi 1", "Tyyppi 2", "Tyyppi 3"}, null), Alignment.TOP_LEFT);
+        add(perustiedotGrid, UiBuilder.newComboBox(null, new String[] {"Tyyppi 1", "Tyyppi 2", "Tyyppi 3"}, null), Alignment.TOP_LEFT);
         perustiedotGrid.newLine();
         
         add(perustiedotGrid, new Label("Koulutusala"), Alignment.TOP_RIGHT);
@@ -93,20 +93,20 @@ public class EditKoulutusPerustiedot extends VerticalLayout {
         perustiedotGrid.newLine();
         
         add(perustiedotGrid, new Label("Opetuskieli"), Alignment.TOP_RIGHT);
-        add(perustiedotGrid, UI.newCompobox(null, new String[] {"Suomi", "Ruotsi", "Englanti", "Swahili"}, null), Alignment.TOP_LEFT);
+        add(perustiedotGrid, UiBuilder.newComboBox(null, new String[] {"Suomi", "Ruotsi", "Englanti", "Swahili"}, null), Alignment.TOP_LEFT);
         // TODO valitut listattuna
         // TODO lisää kaikki linkki
         perustiedotGrid.newLine();
         
         add(perustiedotGrid, new Label("Koulutuksen alkamispäivä"), Alignment.TOP_RIGHT);
-        add(perustiedotGrid, UI.newDate(), Alignment.TOP_LEFT);
+        add(perustiedotGrid, UiBuilder.newDate(), Alignment.TOP_LEFT);
         perustiedotGrid.newLine();
         
         add(perustiedotGrid, new Label("Suunniteltu kesto"), Alignment.TOP_RIGHT);
         {
             HorizontalLayout hl = new HorizontalLayout();
-            hl.addComponent(UI.newTextField("", "Kesto, esim. 1-3", true));
-            hl.addComponent(UI.newCompobox(null, new String[] {"Vuotta", "Kuukautta", "Päivää", "Tuntia"}, null));
+            hl.addComponent(UiBuilder.newTextField("", "Kesto, esim. 1-3", true));
+            hl.addComponent(UiBuilder.newComboBox(null, new String[] {"Vuotta", "Kuukautta", "Päivää", "Tuntia"}, null));
             add(perustiedotGrid, hl, Alignment.TOP_LEFT);
         }
         perustiedotGrid.newLine();
@@ -116,15 +116,15 @@ public class EditKoulutusPerustiedot extends VerticalLayout {
         perustiedotGrid.newLine();
         
         add(perustiedotGrid, new Label("Suuntautumisvaihtoehto / painotus"), Alignment.TOP_RIGHT);
-        add(perustiedotGrid, UI.newTextField("", "Valitse...", true), Alignment.TOP_LEFT);
+        add(perustiedotGrid, UiBuilder.newTextField("", "Valitse...", true), Alignment.TOP_LEFT);
         // TODO "+" button?
         perustiedotGrid.newLine();
         
         add(perustiedotGrid, new Label("Opetusmuoto"), Alignment.TOP_RIGHT);
         {
             HorizontalLayout hl = new HorizontalLayout();
-            hl.addComponent(UI.newCompobox(null, new String[] {"Valitse opetusmuoto", "Lähiopetus", "Aikuisopetus", "Etäopetus"}, null));
-            hl.addComponent(UI.newCompobox(null, new String[] {"Valitse koulutuslaji", "Mikä", "Tämä", "On?"}, null));
+            hl.addComponent(UiBuilder.newComboBox(null, new String[] {"Valitse opetusmuoto", "Lähiopetus", "Aikuisopetus", "Etäopetus"}, null));
+            hl.addComponent(UiBuilder.newComboBox(null, new String[] {"Valitse koulutuslaji", "Mikä", "Tämä", "On?"}, null));
             add(perustiedotGrid, hl, Alignment.TOP_LEFT);
         }
         perustiedotGrid.newLine();
@@ -135,12 +135,12 @@ public class EditKoulutusPerustiedot extends VerticalLayout {
             VerticalLayout vl = new VerticalLayout();
             hl.addComponent(vl);
             
-            vl.addComponent(UI.newTextField("", "Nimi", true));
-            vl.addComponent(UI.newTextField("", "Titteli", true));
-            vl.addComponent(UI.newTextField("", "Sähköposti", true));
-            vl.addComponent(UI.newTextField("", "Puhelinnumero", true));
-            vl.addComponent(UI.newLabel("Yhteyshenkilö opetuskielissä:"));
-            vl.addComponent(UI.newLabel("[checkboxit tähän]"));
+            vl.addComponent(UiBuilder.newTextField("", "Nimi", true));
+            vl.addComponent(UiBuilder.newTextField("", "Titteli", true));
+            vl.addComponent(UiBuilder.newTextField("", "Sähköposti", true));
+            vl.addComponent(UiBuilder.newTextField("", "Puhelinnumero", true));
+            vl.addComponent(UiBuilder.newLabel("Yhteyshenkilö opetuskielissä:"));
+            vl.addComponent(UiBuilder.newLabel("[checkboxit tähän]"));
             
             hl.addComponent(plusIcon1);
             
@@ -150,37 +150,37 @@ public class EditKoulutusPerustiedot extends VerticalLayout {
         perustiedotGrid.newLine();
         
         add(perustiedotGrid, new Label("Linkki opetussuunnitelmaan"), Alignment.TOP_RIGHT);
-        add(perustiedotGrid, UI.newTextField("", "http://www.example.com/data?koodi=1234&kieli=fi_FI", true), Alignment.TOP_LEFT);
+        add(perustiedotGrid, UiBuilder.newTextField("", "http://www.example.com/data?koodi=1234&kieli=fi_FI", true), Alignment.TOP_LEFT);
         perustiedotGrid.newLine();
         
         add(perustiedotGrid, new Label("Linkki oppilaitokseen"), Alignment.TOP_RIGHT);
-        add(perustiedotGrid, UI.newTextField("", "http://www.example.com/data?koodi=1234&kieli=fi_FI", true), Alignment.TOP_LEFT);
+        add(perustiedotGrid, UiBuilder.newTextField("", "http://www.example.com/data?koodi=1234&kieli=fi_FI", true), Alignment.TOP_LEFT);
         perustiedotGrid.newLine();
         
         add(perustiedotGrid, new Label("Sosiaalisen median linkki"), Alignment.TOP_RIGHT);
-        add(perustiedotGrid, UI.newTextField("", "http://www.example.com/data?koodi=1234&kieli=fi_FI", true), Alignment.TOP_LEFT);
+        add(perustiedotGrid, UiBuilder.newTextField("", "http://www.example.com/data?koodi=1234&kieli=fi_FI", true), Alignment.TOP_LEFT);
         perustiedotGrid.newLine();
         
         add(perustiedotGrid, new Label("Multimedialinkki"), Alignment.TOP_RIGHT);
-        add(perustiedotGrid, UI.newTextField("", "http://www.example.com/data?koodi=1234&kieli=fi_FI", true), Alignment.TOP_LEFT);
+        add(perustiedotGrid, UiBuilder.newTextField("", "http://www.example.com/data?koodi=1234&kieli=fi_FI", true), Alignment.TOP_LEFT);
         perustiedotGrid.newLine();
 
         {
             HorizontalLayout hl = new HorizontalLayout();
-            hl.addComponent(UI.newCheckbox(null, null));
-            hl.addComponent(UI.newLabel("Koulutus on maksullista"));
+            hl.addComponent(UiBuilder.newCheckbox(null, null));
+            hl.addComponent(UiBuilder.newLabel("Koulutus on maksullista"));
             add(perustiedotGrid, hl, Alignment.TOP_RIGHT);
         }
-        add(perustiedotGrid, UI.newTextField("", "http://www.example.com/data?koodi=1234&kieli=fi_FI", true), Alignment.TOP_LEFT);
+        add(perustiedotGrid, UiBuilder.newTextField("", "http://www.example.com/data?koodi=1234&kieli=fi_FI", true), Alignment.TOP_LEFT);
         perustiedotGrid.newLine();
         
         {
             HorizontalLayout hl = new HorizontalLayout();
-            hl.addComponent(UI.newCheckbox(null, null));
-            hl.addComponent(UI.newLabel("Stipendimahdollisuus"));
+            hl.addComponent(UiBuilder.newCheckbox(null, null));
+            hl.addComponent(UiBuilder.newLabel("Stipendimahdollisuus"));
             add(perustiedotGrid, hl, Alignment.TOP_RIGHT);
         }
-        add(perustiedotGrid, UI.newTextField("", "http://www.example.com/data?koodi=1234&kieli=fi_FI", true), Alignment.TOP_LEFT);
+        add(perustiedotGrid, UiBuilder.newTextField("", "http://www.example.com/data?koodi=1234&kieli=fi_FI", true), Alignment.TOP_LEFT);
         perustiedotGrid.newLine();
 
         addControlButtons(this);
@@ -195,11 +195,11 @@ public class EditKoulutusPerustiedot extends VerticalLayout {
 
     private void addControlButtons(AbstractOrderedLayout layout) {
         // Top/Bottom control buttons
-        HorizontalLayout buttonsLayout = UI.newHorizontalLayout(null, null);
-        UI.newButton("Peruuta", buttonsLayout);
-        UI.newButton("Tallenna luonnoksena", buttonsLayout);
-        UI.newButton("Tallenna valmiina", buttonsLayout);
-        UI.newButton("Jatka", buttonsLayout);
+        HorizontalLayout buttonsLayout = UiBuilder.newHorizontalLayout();
+        UiBuilder.newButton("Peruuta", buttonsLayout);
+        UiBuilder.newButton("Tallenna luonnoksena", buttonsLayout);
+        UiBuilder.newButton("Tallenna valmiina", buttonsLayout);
+        UiBuilder.newButton("Jatka", buttonsLayout);
         layout.addComponent(buttonsLayout);
     }
     

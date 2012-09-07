@@ -4,7 +4,7 @@
  */
 package fi.vm.sade.tarjonta.ui.poc;
 
-import fi.vm.sade.tarjonta.ui.poc.helper.UI;
+import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.Button;
@@ -43,11 +43,11 @@ public class SearchKoulutus extends VerticalLayout {
     private void initialize() {
         LOG.info("initialize()");
         
-        layout = UI.newHorizontalLayout(null, null);
+        layout = UiBuilder.newHorizontalLayout();
         addComponent(layout);
         
         // Search field
-        tfSearch = UI.newTextField("", "Hae koulutuksia", true);
+        tfSearch = UiBuilder.newTextField("", "Hae koulutuksia", true);
         layout.addComponent(tfSearch);
 
         tfSearch.addListener(new Property.ValueChangeListener() {
@@ -59,12 +59,12 @@ public class SearchKoulutus extends VerticalLayout {
         });
         
         
-        cbHakukausi = UI.newCompobox("Hakukausi", new String[]{"Kevätkausi"}, layout);
-        cbKoulutuksenAlkamiskausi = UI.newCompobox("Koulutuksen alkamiskausi", new String[]{"Syksy 2012"}, layout);
-        cbHakutapa = UI.newCompobox("Hakutapa", new String[]{"Kaikki"}, layout);
-        cbHakutyyppi = UI.newCompobox("Hakutyyppi", new String[]{"Kaikki"}, layout);
-        cbHaunKohdejoukko = UI.newCompobox("Kohdejoukko", new String[]{"Kaikki"}, layout);
-        btnTyhjenna = UI.newButton("Tyhjennä", layout);
+        cbHakukausi = UiBuilder.newComboBox("Hakukausi", new String[]{"Kevätkausi"}, layout);
+        cbKoulutuksenAlkamiskausi = UiBuilder.newComboBox("Koulutuksen alkamiskausi", new String[]{"Syksy 2012"}, layout);
+        cbHakutapa = UiBuilder.newComboBox("Hakutapa", new String[]{"Kaikki"}, layout);
+        cbHakutyyppi = UiBuilder.newComboBox("Hakutyyppi", new String[]{"Kaikki"}, layout);
+        cbHaunKohdejoukko = UiBuilder.newComboBox("Kohdejoukko", new String[]{"Kaikki"}, layout);
+        btnTyhjenna = UiBuilder.newButton("Tyhjennä", layout);
     }
     
 }
