@@ -4,27 +4,22 @@
  */
 package fi.vm.sade.tarjonta.ui.model.view;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.DateField;
-import com.vaadin.ui.Form;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.poc.helper.MapItem;
-import fi.vm.sade.tarjonta.ui.poc.helper.UI;
 import fi.vm.sade.vaadin.Oph;
 import java.util.Date;
 import java.util.HashMap;
@@ -198,8 +193,8 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         
         // tf.setImmediate(true);
         tf.setNullRepresentation("");
-        tf.setStyleName(Oph.TEXTFIELD_SMALL);
-
+        tf.addStyleName(Oph.TEXTFIELD_SMALL);
+        
         if (width != null) {
             tf.setWidth(width);
         }
@@ -220,7 +215,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     private Button addButton(String captionKey, EditKoulutusPerustiedotView target, String methodname, AbstractOrderedLayout layout) {
         Button b = new Button(i18n.getMessage(captionKey), target, methodname);
         b.addStyleName(Oph.BUTTON_SMALL);
-
+        
         if (layout != null) {
             layout.addComponent(b);
         }
@@ -281,11 +276,11 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     }
     
     public void doSaveIncomplete(ClickEvent event) {
-        LOG.info("doSaveIncomplete()");
+        LOG.info("doSaveIncomplete(): data={}", _data);
     }
     
     public void doSaveComplete(ClickEvent event) {
-        LOG.info("doSaveComplete()");
+        LOG.info("doSaveComplete(): data={}", _data);
     }
 
     public void doContinue(ClickEvent event) {
