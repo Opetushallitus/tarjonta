@@ -187,7 +187,9 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
             hl.addComponent(vl);
             grid.addComponent(hl);
             
-            hl.addComponent(addButton("Yhteyshenkilo.LisaaUusi", "onAddNewYhteyshenkilo", null));
+            Button b = addButton("Yhteyshenkilo.LisaaUusi", "onAddNewYhteyshenkilo", null);
+            b.setStyleName(Oph.BUTTON_PLUS);
+            hl.addComponent(b);
             
             grid.newLine();
         }
