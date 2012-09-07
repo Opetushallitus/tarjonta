@@ -119,6 +119,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         grid.addComponent(addLabel("Opintoala", null));
         grid.addComponent(addLabel(mi, "opintoala", null));
         grid.newLine();
+        
         {
             grid.addComponent(addLabel("Opetuskieli", null));
             
@@ -129,11 +130,22 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
             
             grid.newLine();
         }
+        
         grid.addComponent(addLabel("KoulutuksenAlkamisPvm", null));
         grid.addComponent(addDate(mi, "koulutuksenAlkamisPvm", null));
         grid.newLine();
-        grid.addComponent(addLabel("SuuniteltuKesto", null));
-        grid.newLine();
+
+        {        
+            grid.addComponent(addLabel("SuunniteltuKesto", null));
+            
+            HorizontalLayout hl = new HorizontalLayout();
+            hl.addComponent(addTextField(mi, "kesto", "SuunniteltuKesto.prompt", null, null));
+            hl.addComponent(addComboBox(mi, "kestoTyyppi", "SuunniteltuKesto.tyyppi.prompt", createKoulutuslajiContainer(), null, null));
+            grid.addComponent(hl);
+            
+            grid.newLine();
+        }
+        
         {
             Container teemaContaner = createTeemaContainer();
             grid.addComponent(addLabel("Teema", null));
@@ -159,9 +171,26 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
             grid.addComponent(addComboBox(mi, "koulutuslaji", "Koulutuslaji.prompt", koulutuslajiContainer, null, null));
             grid.newLine();
         }
-        
-        grid.addComponent(addLabel("Yhteyshenkilo", null));
-        grid.newLine();
+
+        {
+            // TODO - dynamic addition with plus!
+            grid.addComponent(addLabel("Yhteyshenkilo", null));
+
+            HorizontalLayout hl = new HorizontalLayout();           
+            VerticalLayout vl = new VerticalLayout();    
+            
+            vl.addComponent(addTextField(mi, "yhteyshenkiloNimi", "Yhteyshenkilo.Nimi.prompt", null, null));
+            vl.addComponent(addTextField(mi, "yhteyshenkiloTitteli", "Yhteyshenkilo.Titteli.prompt", null, null));
+            vl.addComponent(addTextField(mi, "yhteyshenkiloEmail", "Yhteyshenkilo.Email.prompt", null, null));
+            vl.addComponent(addTextField(mi, "yhteyshenkiloPuhelin", "Yhteyshenkilo.Puhelin.prompt", null, null));
+            
+            hl.addComponent(vl);
+            grid.addComponent(hl);
+            
+            hl.addComponent(addButton("Yhteyshenkilo.LisaaUusi", "onAddNewYhteyshenkilo", null));
+            
+            grid.newLine();
+        }
 
         {
             grid.addComponent(addLabel("LinkkiOpetussunnitelmaan", null));
@@ -203,21 +232,11 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         }
 
         {
-            grid.addComponent(addLabel("LinkkiMultimedia", null));
-            VerticalLayout vl = new VerticalLayout();
-            vl.addComponent(addTextField(mi, "linkkiMultimedia", "LinkkiMultimedia.prompt", null, null));
-            vl.addComponent(addCheckBox("LinkkiMultimedia.eriOpetusKielet", mi, "multipleLinkkiMultimedia",
-                    "doMultipleLinksForMultimedia", null));
-            grid.addComponent(vl);
-            grid.newLine();
-        }
-
-        {
             grid.addComponent(addCheckBox("KoulutusOnMaksullista", mi, "koulutusOnMaksullista", null, this));
             VerticalLayout vl = new VerticalLayout();
-            vl.addComponent(addTextField(mi, "linkkiKoulutusOnMaksullista", "LinkkiKoulutusOnMaksullista.prompt", null, null));
-            vl.addComponent(addCheckBox("LinkkiKoulutusOnMaksullista.eriOpetusKielet", mi, "multipleLinkkiKoulutusOnMaksullista",
-                    "doMultipleLinksForKoulutusOnMaksullista", null));
+            vl.addComponent(addTextField(mi, "linkkiKoulutusOnMaksullista", "KoulutusOnMaksullista.prompt", null, null));
+            vl.addComponent(addCheckBox("KoulutusOnMaksullista.eriOpetusKielet", mi, "multipleLinkkiKoulutusOnMaksullista",
+                    "doMultipleLinksForMaksullisuus", null));
             grid.addComponent(vl);
             grid.newLine();
         }
@@ -225,9 +244,9 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         {
             grid.addComponent(addCheckBox("StipendiMahdollisuus", mi, "stipendiMahdollisuus", null, this));
             VerticalLayout vl = new VerticalLayout();
-            vl.addComponent(addTextField(mi, "linkkiStipendiMahdollisuus", "LinkkiStipendiMahdollisuus.prompt", null, null));
-            vl.addComponent(addCheckBox("LinkkiStipendiMahdollisuus.eriOpetusKielet", mi, "multipleLinkkiStipendiMahdollisuus",
-                    "doMultipleLinksForStipendiMahdollisuus", null));
+            vl.addComponent(addTextField(mi, "linkkiStipendiMahdollisuus", "StipendiMahdollisuus.prompt", null, null));
+            vl.addComponent(addCheckBox("StipendiMahdollisuus.eriOpetusKielet", mi, "multipleLinkkiStipendiMahdollisuus",
+                    "doMultipleLinksForStipendi", null));
             grid.addComponent(vl);
             grid.newLine();
         }
@@ -639,6 +658,9 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     public void onBottomHelpClicked() {
         LOG.info("onBottomHelpClicked()");                
     }
-
     
+    public void onAddNewYhteyshenkilo() {
+        LOG.info("onAddNewYhteyshenkilo()");                
+    }
+
 }
