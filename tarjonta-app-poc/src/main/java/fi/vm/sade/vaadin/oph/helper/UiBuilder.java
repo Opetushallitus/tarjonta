@@ -16,38 +16,14 @@ import java.text.MessageFormat;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Link;
 import fi.vm.sade.tarjonta.ui.enums.UiMarginEnum;
+import fi.vm.sade.generic.common.I18N;
 
 /**
  *
  * @author jani
  */
 public class UiBuilder extends ComponentUtil{
-
-    public static final String LOREM_IPSUM_SHORT = "Lorem ipsum dolor sit amet, consectetur "
-            + "adipiscing elit. Ut ut massa eget erat dapibus sollicitudin. Vestibulum ante ipsum "
-            + "primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque a "
-            + "augue. Praesent non elit. Duis sapien dolor, cursus eget, pulvinar eget, eleifend a, "
-            + "est. Integer in nunc. Vivamus consequat ipsum id sapien. Duis eu elit vel libero "
-            + "posuere luctus. Aliquam ac turpis. Aenean vitae justo in sem iaculis pulvinar. "
-            + "Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus "
-            + "mus. Aliquam sit amet mi. "
-            + "<br/>"
-            + "Aenean auctor, mi sit amet ultricies pulvinar, dui urna adipiscing odio, ut "
-            + "faucibus odio mauris eget justo.";
-    public static final String[] KULTTURIALA = {
-        "Käsi- ja taideteollisuusalan perustutkinto - Artesaani",
-        "Tuotteen suunnittelu ja valmistamisen koulutusohjelma",
-        "Ympäristön suunnittelun ja rakentamisen koulutuohjelma", "Tuotteen suunnittelu ja valmistamisen koulutusohjelma",
-        "Ympäristön suunnittelun ja rakentamisen koulutuohjelma", "Tuotteen suunnittelu ja valmistamisen koulutusohjelma",
-        "Ympäristön suunnittelun ja rakentamisen koulutuohjelma", "Tuotteen suunnittelu ja valmistamisen koulutusohjelma",
-        "Ympäristön suunnittelun ja rakentamisen koulutuohjelma"};
-    public static final String[] TEKNIIIKAN_JA_LIIKENTEEN_ALA = {
-        "Autoala perustutkinto - Parturi-kampaajan, syksy 2012",
-        "Sähkä- ja automaatitekniikan perustutkinto",
-        "Tieto- ja tietliikenneteksniikan perustutkinto",
-        "Kone- ja metallialan perustutkinto - ICT-asentaja",
-        "Kone- ja metallialan perustutkinto - Koneistaja"};
-
+    
     public static final String format(String format, Object... args) {
         return MessageFormat.format(format, args);
     }

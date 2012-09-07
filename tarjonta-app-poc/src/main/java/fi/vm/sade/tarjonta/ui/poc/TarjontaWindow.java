@@ -1,20 +1,17 @@
 package fi.vm.sade.tarjonta.ui.poc;
 
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.model.view.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.model.view.CreateKoulutusView;
 import fi.vm.sade.tarjonta.ui.model.view.MainResultView;
 import fi.vm.sade.tarjonta.ui.model.view.MainSearchView;
 import fi.vm.sade.tarjonta.ui.model.view.MainSplitPanelView;
+import fi.vm.sade.vaadin.oph.demodata.DataSource;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
-import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,11 +48,12 @@ public class TarjontaWindow extends Window {
         mainSearch = new MainSearchView();
         mainResult = new MainResultView();
         mainResult.setBtnLuoUusiKoulutus(btnClickListener);
+        mainResult.setCategoryDataSource(DataSource.treeTableData());
 
         main = new MainSplitPanelView();
         main.getMainRightLayout().addComponent(mainSearch);
         main.getMainRightLayout().addComponent(mainResult);        
-    
+        
         addComponent(main);
 
     }

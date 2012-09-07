@@ -1,5 +1,7 @@
 package fi.vm.sade.tarjonta.ui.model.view;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -28,7 +30,7 @@ public class MainResultView extends AbstractHorizontalLayout {
     private Panel emptyPanel1;
     private VerticalLayout searchVerticalResultLayout;
     private HorizontalLayout searchHorizontalResultLayout;
-    private TreeTable categoryTree;
+    private CategoryTreeView categoryTree;
     private Button btnKopioiUudelleKaudelle;
     private Button btnPoista;
     private Button btnLuoUusiKoulutus;
@@ -96,7 +98,10 @@ public class MainResultView extends AbstractHorizontalLayout {
 
 
         newPanel.setScrollable(true);
-        newPanel.addComponent(new CategoryTreeView());
+
+        categoryTree = new CategoryTreeView();
+
+        newPanel.addComponent(categoryTree);
         newPanel.setHeight(Sizeable.SIZE_UNDEFINED, 0);
 
         return newPanel;
@@ -116,5 +121,9 @@ public class MainResultView extends AbstractHorizontalLayout {
      */
     public void setBtnLuoUusiKoulutus(Button.ClickListener btnLuoUusiKoulutus) {
         this.btnLuoUusiKoulutus.addListener(btnLuoUusiKoulutus);
+    }
+
+    public void setCategoryDataSource(Container dataSource) {
+        categoryTree.setContainerDataSource(dataSource);
     }
 }

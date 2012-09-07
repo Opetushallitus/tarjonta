@@ -11,6 +11,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
 import fi.vm.sade.tarjonta.ui.poc.EditKoulutus;
+import fi.vm.sade.vaadin.oph.demodata.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -66,7 +67,7 @@ public class CreateKoulutusView extends VerticalLayout
         VerticalLayout newVerticalLayout = UiBuilder.newVerticalLayout(null, null);
         HorizontalLayout newHorizontalLayout = UiBuilder.newHorizontalLayout();
 
-        newVerticalLayout.addComponent(new Label(UiBuilder.LOREM_IPSUM_SHORT));
+        newVerticalLayout.addComponent(new Label(DataSource.LOREM_IPSUM_SHORT));
         newVerticalLayout.addComponent(newHorizontalLayout);
 
         Tree tree = new Tree("Hardware Inventory");
@@ -105,8 +106,8 @@ public class CreateKoulutusView extends VerticalLayout
     }
 
     private void populateTree(Tree tree) {
-        map.put("Kulttuuriala (3kpl)", UiBuilder.KULTTURIALA);
-        map.put("Tekniikan ja liikentee ala (16kpl)", UiBuilder.TEKNIIIKAN_JA_LIIKENTEEN_ALA);
+        map.put("Kulttuuriala (3kpl)", DataSource.KULTTURIALA);
+        map.put("Tekniikan ja liikentee ala (16kpl)", DataSource.TEKNIIIKAN_JA_LIIKENTEEN_ALA);
 
         Set<Map.Entry<String, String[]>> set = map.entrySet();
         for (Map.Entry<String, String[]> e : set) {
@@ -114,15 +115,7 @@ public class CreateKoulutusView extends VerticalLayout
 
             Object rootItem = tree.addItem();
             tree.getContainerProperty(rootItem, COLUMN_A).setValue(e.getKey());
-            // tree.setItemCaptionMode(AbstractSelect.ITEM_CAPTION_MODE_PROPERTY);
-
-//            for (String arr : e.getValue()) {
-//                Object subItem = tree.addItem();
-//
-//                tree.setParent(subItem, rootItem);
-//                tree.getContainerProperty(subItem, COLUMN_A).setValue(arr);
-//                tree.setItemCaptionMode(AbstractSelect.ITEM_CAPTION_MODE_PROPERTY);
-//            }
+         
         }
     }
 
