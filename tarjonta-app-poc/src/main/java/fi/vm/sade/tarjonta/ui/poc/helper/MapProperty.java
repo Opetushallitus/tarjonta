@@ -5,14 +5,20 @@
 package fi.vm.sade.tarjonta.ui.poc.helper;
 
 import com.vaadin.data.Property;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.MethodProperty;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Property that accesses given maps data by given key.
+ * 
+ * These properties will be stored to the "MapItem" (BeanItem-like) datasource.
  *
  * @author mlyly
+ * @see BeanItem
+ * @see MethodProperty
  */
 public class MapProperty implements Property {
 
@@ -50,7 +56,7 @@ public class MapProperty implements Property {
             result = String.class;
         }
 
-        LOG.info("getType() --> {}", result);
+        LOG.debug("getType() --> {}", result);
         return result;
     }
 

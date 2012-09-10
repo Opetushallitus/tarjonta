@@ -12,6 +12,7 @@ import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.AbstractOrderedLayout;
+import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
@@ -25,6 +26,11 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.generic.ui.component.CaptionFormatter;
+import fi.vm.sade.generic.ui.component.FieldValueFormatter;
+import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
+import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.poc.helper.KeyValueBean;
@@ -33,17 +39,19 @@ import fi.vm.sade.vaadin.Oph;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
  * @author mlyly
  */
-@Configurable(preConstruction = false)
+@Configurable(preConstruction = true)
 public class EditKoulutusPerustiedotView extends VerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotView.class);
@@ -51,17 +59,28 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     private TarjontaPresenter _presenter;
     private Map _data = new HashMap();
     private I18NHelper i18n = new I18NHelper(this);
+    
+    @Value("${koodisto-uris.kieli:http://kieli}")
+    private String _koodistoUriKieli;
 
+    @Value("${koodisto-uris.kieli:http://teema}")
+    private String _koodistoUriTeema;
+    
+    @Value("${koodisto-uris.koulutus:http://koulutus}")
+    private String _koodistoUriKoulutus;
+    
     public EditKoulutusPerustiedotView() {
         super();
         setSizeFull();
+        
+        // Remove, when we get data from outside - then build the UI.
         initialize();
     }
 
     //
     // Define data fields
     //
-
+    
     private void initialize() {
         LOG.info("initialize()");
 
@@ -69,7 +88,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         // "Data model"
         //
         _data.put("koulutuksenAlkamisPvm", new Date());
-        _data.put("koulutus", "Filosofian maisteri");
+        // _data.put("koulutus", "Filosofian maisteri");
         _data.put("koulutusala", "Filosofia");
         _data.put("tutkinto", "Maisteri");
         _data.put("tutkintonimike", "Filosofian maisteri");
@@ -77,8 +96,11 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         _data.put("opintojenlaajuus", "300 op");
         _data.put("opintoala", "opintoala ei tiedossa");
 
-        MapItem mi = new MapItem(_data);
+        // _data.put("maaUri", "http://maa/suomi");
 
+        // PropertysetItem to bind data to
+        MapItem mi = new MapItem(_data);
+        
         removeAllComponents();
 
         HorizontalLayout hlButtonsTop = new HorizontalLayout();
@@ -87,7 +109,10 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         addButton("TallennaLuonnoksena", "doSaveIncomplete", hlButtonsTop);
         addButton("TallennaValmiina", "doSaveComplete", hlButtonsTop);
         addButton("Jatka", "doContinue", hlButtonsTop);
-
+        
+        // KoodistoComponent kc = addKoodistoComboBox("http://maa", mi, "maaUri", this);
+        // KoodistoComponent kc2 = addKoodistoTwinColSelect("http://kieli", mi, "opetuskielet2", this);
+        
         Panel p = new Panel(i18n.getMessage("KoulutuksenPerustiedot"));
         p.setSizeUndefined();
         p.setScrollable(true);
@@ -96,11 +121,16 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
 
         GridLayout grid = new GridLayout(3, 1);
         p.setContent(grid);
-
-        grid.addComponent(addLabel("KoulutusTaiKoulutusOhjelma", null));
-        grid.addComponent(addComboBox(mi, "koulutus", "KoulutusTaiKoulutusOhjelma.prompt", createKoulutusohjelmaContainer(), null, this));
-        grid.addComponent(addHelpIcon("http://png.findicons.com/files/icons/2360/spirit20/20/system_question_alt_02.png", "onTopHelpClicked"));
-        grid.newLine();
+        
+        {
+            grid.addComponent(addLabel("KoulutusTaiKoulutusOhjelma", null));            
+            KoodistoComponent kc = addKoodistoComboBox(_koodistoUriKoulutus, mi, "koulutus", "KoulutusTaiKoulutusOhjelma.prompt", null);
+            grid.addComponent(kc);            
+            grid.addComponent(addHelpIcon("http://png.findicons.com/files/icons/2360/spirit20/20/system_question_alt_02.png", "onTopHelpClicked"));
+            grid.newLine();
+        }
+        
+        
         grid.addComponent(addLabel("Koulutusala", null));
         grid.addComponent(addLabel(mi, "koulutusala", null));
         grid.newLine();
@@ -124,7 +154,11 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
             grid.addComponent(addLabel("Opetuskieli", null));
             
             VerticalLayout vl = new VerticalLayout();
-            vl.addComponent(addTwinColSelect(mi, "opetuskielet", createOpetuskieliContainer(), "doOpetuskieletChanged", null));
+            
+            KoodistoComponent kc = addKoodistoTwinColSelect(_koodistoUriKieli, mi, "opetuskielet", null);
+            vl.addComponent(kc);
+            kc.addListener(getValueChangeListener("doOpetuskieletChanged"));
+            
             vl.addComponent(addCheckBox("Opetuskieli.ValitseKaikki", mi, "opetuskieliKaikki", "doOpetuskieletSelectAll", null));
             grid.addComponent(vl);
             
@@ -149,10 +183,11 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         {
             Container teemaContaner = createTeemaContainer();
             grid.addComponent(addLabel("Teema", null));
-
+            
             VerticalLayout vl = new VerticalLayout();
             vl.addComponent(addLabel("ValitseTeemat", null));
-            vl.addComponent(addTwinColSelect(mi, "teemat", teemaContaner, null, null));
+            KoodistoComponent kc = addKoodistoTwinColSelect(_koodistoUriTeema, mi, "teemat", null);
+            vl.addComponent(kc);
             grid.addComponent(vl);
 
             grid.newLine();
@@ -260,6 +295,8 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         addButton("TallennaLuonnoksena", "doSaveIncomplete", hlButtonsBottom);
         addButton("TallennaValmiina", "doSaveComplete", hlButtonsBottom);
         addButton("Jatka", "doContinue", hlButtonsBottom);
+
+        
     }
 
     /*
@@ -278,29 +315,6 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         return c;
     }
 
-    private Container createKoulutusohjelmaContainer() {
-        String[] values = {
-            "Filosofian maisteri",
-            "Tekniikan tohtori",
-            "Taivaanrannan maalari",
-        };
-        
-        return createContainer(values);
-    }
-    
-    private Container createOpetuskieliContainer() {
-        String[] values = {
-            "Suomi",
-            "Ruotsi",
-            "Englanti",
-            "Saksa",
-            "Venäjä"
-        };
-        
-        return createContainer(values);
-    }
-    
-    
     private Container createTeemaContainer() {
         String[] values = new String[]{
             "Filosofia ja teknologia",
@@ -530,6 +544,134 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         return helpIcon1;
     }
     
+    
+    private KoodistoComponent addKoodistoComboBox(final String koodistoUri, PropertysetItem psi, String expression, String promptKey, AbstractOrderedLayout layout) {
+        
+        LOG.info("addKoodistoComboBox({}, ...)", koodistoUri);
+        
+        // Koodisto displayed in ComboBox
+        ComboBox combo = new ComboBox();
+        combo.setFilteringMode(AbstractSelect.Filtering.FILTERINGMODE_CONTAINS);
+        combo.setInputPrompt(i18n.getMessage(promptKey));
+        
+        final KoodistoComponent c = WidgetFactory.create(koodistoUri);
+        
+        // Wire koodisto to combobox
+        c.setField(combo);
+        
+        // Set to be immediate
+        c.setImmediate(true);
+        
+        // DISPLAYED text
+        c.setCaptionFormatter(new CaptionFormatter() {
+            
+            @Override
+            public String formatCaption(Object dto) {
+                LOG.info("formatCaption({})", dto);
+                
+                if (dto instanceof KoodiDTO) {
+                    KoodiDTO kdto = (KoodiDTO) dto;
+                    return kdto.getKoodiArvo();
+                } else {
+                    LOG.info("! KoodiDTO???");
+                    return "" + dto;
+                }
+            }
+        });
+        
+        // BOUND value
+        c.setFieldValueFormatter(new FieldValueFormatter() {
+            
+            @Override
+            public Object formatFieldValue(Object dto) {
+                LOG.info("formatFieldValue({})", dto);
+                
+                if (dto instanceof KoodiDTO) {
+                    KoodiDTO kdto = (KoodiDTO) dto;
+                    return kdto.getKoodiUri();
+                } else {
+                    LOG.info("! KoodiDTO???");
+                    return "" + dto;
+                }
+            }
+        });
+        
+        // Selected data bound there
+        if (psi != null && expression != null) {
+            c.setPropertyDataSource(psi.getItemProperty(expression));
+        }
+        
+        if (layout != null) {
+            layout.addComponent(c);
+        }
+        
+        return c;
+    }
+    
+    
+    private KoodistoComponent addKoodistoTwinColSelect(final String koodistoUri, PropertysetItem psi, String expression, AbstractOrderedLayout layout) {
+        
+        LOG.info("addKoodistoTwinColSelect({}, ...)", koodistoUri);
+        
+        // Koodisto displayed in TwinColSelect
+        TwinColSelect combo = new TwinColSelect();
+        
+        final KoodistoComponent c = WidgetFactory.create(koodistoUri);
+        
+        // Wire koodisto to combobox
+        c.setField(combo);
+        
+        // Set to be immediate
+        c.setImmediate(true);
+        
+        // DISPLAYED text
+        c.setCaptionFormatter(new CaptionFormatter() {
+            
+            @Override
+            public String formatCaption(Object dto) {
+                LOG.info("formatCaption({})", dto);
+                
+                if (dto instanceof KoodiDTO) {
+                    KoodiDTO kdto = (KoodiDTO) dto;
+                    return kdto.getKoodiArvo();
+                } else {
+                    LOG.info("! KoodiDTO???");
+                    return "" + dto;
+                }
+            }
+        });
+        
+        // BOUND value
+        c.setFieldValueFormatter(new FieldValueFormatter() {
+            
+            @Override
+            public Object formatFieldValue(Object dto) {
+                LOG.info("formatFieldValue({})", dto);
+                
+                if (dto instanceof KoodiDTO) {
+                    KoodiDTO kdto = (KoodiDTO) dto;
+                    return kdto.getKoodiUri();
+                } else {
+                    LOG.info("! KoodiDTO???");
+                    return "" + dto;
+                }
+            }
+        });
+        
+        // Selected data bound there
+        if (psi != null && expression != null) {
+            c.setPropertyDataSource(psi.getItemProperty(expression));
+        }
+        
+        if (layout != null) {
+            layout.addComponent(c);
+        }
+        
+        return c;
+    }
+    
+    
+    
 
     /*
      * VIEW ACTIONS
@@ -665,5 +807,6 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     public void onAddNewYhteyshenkilo() {
         LOG.info("onAddNewYhteyshenkilo()");                
     }
+
 
 }

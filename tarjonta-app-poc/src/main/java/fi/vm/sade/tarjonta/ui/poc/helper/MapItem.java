@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Just like BeanItem but for Maps.
- *
+ * 
+ * Each key in the map is mapped to "MapProperty" property.
+ * 
  * For quick prototyping.
  *
  * @author mlyly
