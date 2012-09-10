@@ -135,21 +135,7 @@ public class KoulutusmoduuliAdminServiceMock implements KoulutusmoduuliAdminServ
         return false;
     }
 
-    @Override
-    public List<KoulutusmoduuliSummaryDTO> getParentModuulis(String moduuliOID) {
-
-        List<KoulutusmoduuliSummaryDTO> result = new ArrayList<KoulutusmoduuliSummaryDTO>();
-
-        for (int i = 0; i < 5; i++) {
-            KoulutusmoduuliSummaryDTO summary = new KoulutusmoduuliSummaryDTO("http://koulutusmoduuli/" + i,
-                "Koulutusmoduuli (yla) " + i);
-            result.add(summary);
-        }
-
-        return result;
-
-    }
-
+    
     @Override
     public List<KoulutusmoduuliSummaryDTO> getChildModuulis(String moduuliOID) throws NoSuchOIDException {
 
@@ -180,7 +166,7 @@ public class KoulutusmoduuliAdminServiceMock implements KoulutusmoduuliAdminServ
         KoulutusmoduuliPerustiedotDTO perustiedot = new KoulutusmoduuliPerustiedotDTO();
         tutkintoOhjelma.setPerustiedot(perustiedot);
 
-        tutkintoOhjelma.setTila(KoulutusmoduuliTila.VALMIS.name());
+        tutkintoOhjelma.setTila(KoulutusTila.VALMIS.name());
         tutkintoOhjelma.setUpdated(new Date());
 
         save(tutkintoOhjelma);

@@ -17,7 +17,7 @@
 package fi.vm.sade.tarjonta.service.mock;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliPerustiedotDTO;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
@@ -99,17 +99,17 @@ public class KoulutusmoduuliToteutusAdminServiceMock implements KoulutusmoduuliT
         int tila = deGenerator.nextInt(3) +1;
         switch (tila) {
             case 1 :
-                dto.setTila(KoulutusmoduuliTila.SUUNNITTELUSSA);
+                dto.setTila(KoulutusTila.SUUNNITTELUSSA);
                 break;
             case 2 : 
-                dto.setTila(KoulutusmoduuliTila.VALMIS);
+                dto.setTila(KoulutusTila.VALMIS);
                 break;
             case 3 :
-                dto.setTila(KoulutusmoduuliTila.JULKAISTU);
+                dto.setTila(KoulutusTila.JULKAISTU);
                 break;
                 
             default :
-                dto.setTila(KoulutusmoduuliTila.VALMIS);
+                dto.setTila(KoulutusTila.VALMIS);
                 break;
         }
         

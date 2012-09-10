@@ -18,28 +18,25 @@ package fi.vm.sade.tarjonta.model.dto;
 import java.io.Serializable;
 
 /**
- * TODO: if this state enumeration is same and shared between Koulutusmoduuli and KoulutusmoduuliToteutus, 
- * rename it e.g. to TarjontaTila
- * 
+ * TODO: if this state enumeration is same and shared between Koulutusmoduuli and KoulutusmoduuliToteutus, rename it e.g. to TarjontaTila
+ *
  * @author Jukka Raanamo
- * 
+ *
  * TKatva, added another tila -> julkaistu
  */
-public enum KoulutusmoduuliTila implements Serializable {
+public enum KoulutusTila implements Serializable {
 
     /**
      * Begin planned, not ready for publishing.
      */
     SUUNNITTELUSSA,
-
     /**
      * Planning completed, ready for publishing.
      */
     VALMIS,
-    
     /*
      * Published
      */
-    JULKAISTU   
+    JULKAISTU
 }
 

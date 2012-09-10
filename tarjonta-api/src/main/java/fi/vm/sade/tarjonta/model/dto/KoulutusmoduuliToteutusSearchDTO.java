@@ -1,6 +1,3 @@
-package fi.vm.sade.tarjonta.model.dto;
-
-
 /*
  *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
@@ -17,6 +14,7 @@ package fi.vm.sade.tarjonta.model.dto;
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
+package fi.vm.sade.tarjonta.model.dto;
 
 /**
  *
@@ -24,7 +22,7 @@ package fi.vm.sade.tarjonta.model.dto;
  */
 public class KoulutusmoduuliToteutusSearchDTO {
     
-    private KoulutusmoduuliTila tila;
+    private KoulutusTila tila;
     private int startIndex = 0;
     private int pageSize = Integer.MAX_VALUE;
 
@@ -33,20 +31,20 @@ public class KoulutusmoduuliToteutusSearchDTO {
         
     }
     
-    public KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila tilaParam) {
+    public KoulutusmoduuliToteutusSearchDTO(KoulutusTila tilaParam) {
         tila = tilaParam;
     }
     /**
      * @return the tila
      */
-    public KoulutusmoduuliTila getTila() {
+    public KoulutusTila getTila() {
         return tila;
     }
 
     /**
      * @param tila the tila to set
      */
-    public void setTila(KoulutusmoduuliTila tila) {
+    public void setTila(KoulutusTila tila) {
         this.tila = tila;
     }
 

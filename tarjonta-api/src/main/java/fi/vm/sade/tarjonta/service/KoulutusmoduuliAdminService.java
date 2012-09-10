@@ -29,13 +29,12 @@ import org.apache.cxf.annotations.WSDLDocumentation;
  * @author Jukka Raanamo
  * @author Marko Lyly
  */
-@WebService(name="koulutusmoduuliAdminService")
+@WebService(name = "koulutusmoduuliAdminService")
 @WSDLDocumentation("Web servicet koulutustarjonnan moduulien käsittelyyn.")
 public interface KoulutusmoduuliAdminService {
 
     /**
-     * Creates a new TutkintoOhjelma. At this point, nothing is stored to persistent
-     * storage yet. Call save for that.
+     * Creates a new TutkintoOhjelma. At this point, nothing is stored to persistent storage yet. Call save for that.
      *
      * @param typpi
      * @param organisaatioOID
@@ -70,20 +69,9 @@ public interface KoulutusmoduuliAdminService {
      */
     @WebMethod
     List<KoulutusmoduuliDTO> find(KoulutusmoduuliSearchDTO searchSpesification);
-    
-    
-    /**
-     * 
-     * @param moduuliOID
-     * @return
-     * @throws NoSuchOIDException  
-     */
-    @WebMethod
-    List<KoulutusmoduuliSummaryDTO> getParentModuulis(String moduuliOID) throws NoSuchOIDException;
-
 
     @WebMethod
     List<KoulutusmoduuliSummaryDTO> getChildModuulis(String moduuliOID) throws NoSuchOIDException;
-    
+
 }
 

@@ -28,7 +28,7 @@ import java.util.Set;
 @SuppressWarnings("serial")
 public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
 
-    private KoulutusmoduuliTila tila;
+    private KoulutusTila tila;
 
     private String oid;
 
@@ -98,14 +98,14 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
     /**
      * @return the tila
      */
-    public KoulutusmoduuliTila getTila() {
+    public KoulutusTila getTila() {
         return tila;
     }
 
     /**
      * @param tila the tila to set
      */
-    public void setTila(KoulutusmoduuliTila tila) {
+    public void setTila(KoulutusTila tila) {
         this.tila = tila;
     }
 
