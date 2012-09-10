@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.ui.poc;
 
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -62,7 +63,7 @@ public class TarjontaWindow extends Window {
                     mainModalWindow = null;
                 }
             });
-            
+
             mainModalWindow.buildDialogButtons();
         }
     };
@@ -80,7 +81,7 @@ public class TarjontaWindow extends Window {
                     mainModalWindow = null;
                 }
             });
-            
+
             mainModalWindow.addDialogButton("Jatka", new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
@@ -108,16 +109,21 @@ public class TarjontaWindow extends Window {
         setContent(layout); //window käyttää layouttia pohjana
 
         mainSearch = new MainSearchView();
+
         mainResult = new MainResultView();
+
         mainResult.setBtnListenerLuoUusiKoulutus(clLuoUusiKoulutusClickListener);
         mainResult.setBtnListenerMuokkaa(clSiirraUudelleKaudelleView);
         mainResult.setCategoryDataSource(DataSource.treeTableData(new MultiActionTableStyle()));
 
+
+
         main = new MainSplitPanelView();
         main.getMainRightLayout().addComponent(mainSearch);
         main.getMainRightLayout().addComponent(mainResult);
+        main.getMainRightLayout().setExpandRatio(mainSearch, 0.03f);
+        main.getMainRightLayout().setExpandRatio(mainResult, 0.97f);
 
         addComponent(main);
-
     }
 }

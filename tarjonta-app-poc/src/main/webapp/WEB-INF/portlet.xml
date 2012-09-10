@@ -7,8 +7,8 @@
 
     <portlet>
         <description></description>
-        <portlet-name>TarjontaPortletApplication</portlet-name>
-        <display-name>TarjontaPortletApplication</display-name>
+        <portlet-name>TarjontaPocPortletApplication</portlet-name>
+        <display-name>TarjontaPocPortletApplication</display-name>
 
         <portlet-class>com.vaadin.terminal.gwt.server.ApplicationPortlet2</portlet-class>
 
@@ -25,8 +25,8 @@
         </supports>
 
         <portlet-info>
-            <title>TarjontaPortletApplication</title>
-            <short-title>TarjontaPortletApplication</short-title>
+            <title>TarjontaPocPortletApplication</title>
+            <short-title>TarjontaPortletPocApplication</short-title>
             <keywords></keywords>
         </portlet-info>
     </portlet>

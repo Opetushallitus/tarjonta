@@ -3,6 +3,6 @@
 
 <display>
     <category name="OPH">
-        <portlet id="TarjontaPortletApplication"/>
+        <portlet id="TarjontaPocPortletApplication"/>
     </category>
 </display>

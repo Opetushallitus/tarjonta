@@ -1,7 +1,6 @@
 package fi.vm.sade.tarjonta.ui.model.view;
 
 import com.vaadin.data.Container;
-import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -9,9 +8,9 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.layout.AbstractHorizontalLayout;
@@ -38,36 +37,41 @@ public class MainResultView extends AbstractHorizontalLayout {
 
     public MainResultView() {
         super(true, UiMarginEnum.BOTTOM_LEFT);
-
+       setSizeFull();
         buildLayout();
     }
 
     private void buildLayout() {
         searchResultTab = new TabSheet();
         searchResultTab.setImmediate(true);
-        searchResultTab.setWidth(UiBuilder.PCT100);
-        searchResultTab.setHeight(UiBuilder.PCT100);
+        searchResultTab.setSizeFull();
 
         searchResultPanel = buildSearchResultPanel();
         searchResultPanel.setHeight(UiBuilder.PCT100);
 
         searchResultTab.addTab(searchResultPanel, "Haut (2 kpl)", null);
         searchResultTab.setWidth(UiBuilder.PCT100);
-        searchResultTab.setHeight(UiBuilder.PCT100);
-        
 
+        VerticalLayout newVerticalLayout = UiBuilder.newVerticalLayout();
         emptyPanel1 = buildEmptyTabPanel();
-        searchResultTab.addTab(emptyPanel1, "Koulutukset (28 kpl)", null);
-        emptyPanel1.setHeight("600px");
-        //emptyPanel1.setSizeFull();
+        searchResultTab.addTab(newVerticalLayout, "Koulutukset (28 kpl)", null);
+
+        newVerticalLayout.setCaption("!!!!!!!!!!!!!!");
+        Label label = new Label("LABEL");
+        label.setSizeFull();
+        newVerticalLayout.addComponent(label);
+        newVerticalLayout.setComponentAlignment(label, Alignment.BOTTOM_RIGHT);
+
 
         emptyPanel2 = buildEmptyTabPanel();
         searchResultTab.addTab(emptyPanel2, "Hakukohteet (35 kpl)", null);
 
         //SET SELECTED TAB!
         searchResultTab.setSelectedTab(emptyPanel1);
-        
         this.addComponent(searchResultTab);
+        setComponentAlignment(searchResultTab, Alignment.TOP_LEFT);
+
+
     }
 
     private HorizontalLayout buildMiddleResultLayout() {
@@ -125,8 +129,8 @@ public class MainResultView extends AbstractHorizontalLayout {
     public void setBtnListenerLuoUusiKoulutus(Button.ClickListener btnLuoUusiKoulutus) {
         this.btnLuoUusiKoulutus.addListener(btnLuoUusiKoulutus);
     }
-    
-     /**
+
+    /**
      * @param btnListenerMuokkaa( the btnLuoUusiKoulutus to set
      */
     public void setBtnListenerMuokkaa(Button.ClickListener btnKopioiUudelleKaudelle) {

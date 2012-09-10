@@ -1,12 +1,6 @@
 package fi.vm.sade.vaadin.oph.demodata;
 
 import com.vaadin.data.util.HierarchicalContainer;
-import com.vaadin.terminal.Sizeable;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import fi.vm.sade.vaadin.oph.layout.RowMenuBar;
-import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
