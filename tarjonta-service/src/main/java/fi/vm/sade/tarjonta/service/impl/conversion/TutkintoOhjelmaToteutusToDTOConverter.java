@@ -15,11 +15,8 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
-import fi.vm.sade.tarjonta.model.Oid;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
@@ -38,9 +35,8 @@ public class TutkintoOhjelmaToteutusToDTOConverter<T extends KoulutusmoduuliTote
         dto.setTila(source.getTila());
         dto.setOid(source.getOid());
         dto.setNimi(source.getNimi());
-        dto.setPerustiedot(CommonConverter.convert(source.getPerustiedot()));
         dto.setKoulutuksenAlkamisPvm(source.getKoulutuksenAlkamisPvm());
-        dto.setKoulutuslajiUri(source.getKoulutusLajiUri());
+        dto.setKoulutuslajiUri(source.getKoulutusLaji());
         dto.setTarjoajat(source.getTarjoajat());
         dto.setToteutettavaKoulutusmoduuliOID(source.getKoulutusmoduuli().getOid());
 

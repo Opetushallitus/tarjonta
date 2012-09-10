@@ -15,19 +15,13 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import javax.persistence.DiscriminatorValue;
 
 /**
  *
  * @author Jukka Raanamo
  */
-public class TutkintoOhjelmaTest {
-   
-    @Test
-    public void testTutkintoOhjelmaAlwaysHasPerustiedot() {
-        assertNotNull(new TutkintoOhjelma().getPerustiedot());
-    }
-    
+@DiscriminatorValue(Koulutus.KoulutusTyyppit.TUTKINNON_OSA)
+public class TutkinnonOsa extends Koulutusmoduuli {
 }
 

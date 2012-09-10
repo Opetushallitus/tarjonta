@@ -15,26 +15,20 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
 import org.apache.commons.lang.StringUtils;
 
-
 /**
  *
  * @author Jukka Raanamo
  */
 @Entity
-@Table(name = KoulutusmoduuliToteutus.TABLE_NAME)
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecification {
+public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstance {
 
     private static final long serialVersionUID = -1278564574746813425L;
-
-    public static final String TABLE_NAME = "koulutusmoduuli_toteutus";
 
     /**
      * Display name, most likely generated from other properties.
@@ -43,24 +37,11 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     private String nimi;
 
     /**
-     * Most koodisto related values are stored into KoulutusmoduuliPerustiedot.
-     */
-    @OneToOne(cascade = CascadeType.ALL)
-    private KoulutusmoduuliPerustiedot perustiedot;
-
-    /**
-     * <p>Note 20.6.2012: the same state enumeration is now being used as it is for Koulutusmoduuli - verify whether the same state diagram 
-     * applies from Seppo</p>
-     */
-    @Enumerated(EnumType.STRING)
-    private KoulutusmoduuliTila tila;
-
-    /**
      * OID references to those Organisaatio that offers this toteutus.
      */
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_tarjoaja", joinColumns =
-    @JoinColumn(name = "koulutusmoduuli_toteutus_id"))    
+    @JoinColumn(name = "koulutusmoduuli_toteutus_id"))
     private Set<Oid> tarjoajat = new HashSet<Oid>();
 
     /**
@@ -72,24 +53,22 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
 
     /**
      * Koodisto Uri. Example display values 'Nuorten koulutus, Aikuisten koulutus'.
-     *
-     * <p>Note 11.06.2012: as per today, when looking at the "model" you'll find this attribute from Koulutusmoduuli. 
-     * This is a mistake, the model is just not updated.</p>
-     *
      */
-    private String koulutusLajiUri;
+    @Column(name = "koulutus_laji")
+    private String koulutusLaji;
 
     /**
-     * <p>Note 11.06.2012: this attribute has been added via wire frame and at least as per today, does not exists in the model</p>
+     * TODO: can we set this attribute to "required"?
      */
     @Temporal(TemporalType.DATE)
+    @Column(name = "koulutuksen_alkamis_pvm")
     private Date koulutuksenAlkamisPvm;
 
     /**
-     * Koodisto Uri. Example display value '7+2 vuotta'. This is different from the current (15.6.2012) 
-     * wireframe, but the wireframe is wrong.
+     * Koodisto Uri. Example display value '7+2 vuotta'. This is different from the current (15.6.2012) wireframe, but the wireframe is wrong.
      */
-    private String suunniteltuKestoUri;
+    @Column(name = "suunniteltu_kesto")
+    private String suunniteltuKesto;
 
     /**
      * Set of Koodisto uris, one for each "teema" (theme) provided.
@@ -100,15 +79,9 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     private Set<KoodistoKoodiUri> teemaUris;
 
     /**
-     * If defined, this "koulutus" comes with a charge. This field defines the amount of the charge. The actual content of this 
-     * field is yet to be defined.
+     * If defined, this "koulutus" comes with a charge. This field defines the amount of the charge. The actual content of this field is yet to be defined.
      */
     private String maksullisuus;
-
-    /**
-     * OID for this entity.
-     */
-    private String oid;
 
     /**
      * Constructor for JPA
@@ -127,19 +100,6 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     }
 
     /**
-     * Returns OID for this KoulutusmoduuliToteutus
-     *
-     * @return
-     */
-    public String getOid() {
-        return oid;
-    }
-
-    public void setOid(String oid) {
-        this.oid = oid;
-    }
-
-    /**
      *
      * @return
      */
@@ -152,35 +112,6 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
      */
     public void setNimi(String nimi) {
         this.nimi = nimi;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public KoulutusmoduuliTila getTila() {
-        return tila;
-    }
-
-    public void setTila(KoulutusmoduuliTila tila) {
-        this.tila = tila;
-    }
-
-    /**
-     * Returns perustiedot, may be null.
-     *
-     * @return
-     */
-    public KoulutusmoduuliPerustiedot getPerustiedot() {
-        return perustiedot;
-    }
-
-    /**
-     *
-     * @param perustiedot
-     */
-    public void setPerustiedot(KoulutusmoduuliPerustiedot perustiedot) {
-        this.perustiedot = perustiedot;
     }
 
     /**
@@ -206,7 +137,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
         for (Oid tarjoaja : tarjoajat) {
             copy.add(tarjoaja.getOid());
         }
-        return copy;        
+        return copy;
     }
 
     /**
@@ -241,15 +172,15 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
      *
      * @return the koulutusLajiUri
      */
-    public String getKoulutusLajiUri() {
-        return koulutusLajiUri;
+    public String getKoulutusLaji() {
+        return koulutusLaji;
     }
 
     /**
      * @param koulutusLajiUri the koulutusLajiUri to set
      */
-    public void setKoulutusLajiUri(String koulutusLajiUri) {
-        this.koulutusLajiUri = koulutusLajiUri;
+    public void setKoulutusLaji(String koulutusLajiUri) {
+        this.koulutusLaji = koulutusLajiUri;
     }
 
     /**
@@ -271,16 +202,16 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunitySpecifi
     /**
      * @return the suunniteltuKestoUri
      */
-    public String getSuunniteltuKestoUri() {
-        return suunniteltuKestoUri;
+    public String getSuunniteltuKesto() {
+        return suunniteltuKesto;
     }
 
     /**
      *
      * @param suunniteltuKestoUri the suunniteltuKestoUri to set
      */
-    public void setSuunniteltuKestoUri(String suunniteltuKestoUri) {
-        this.suunniteltuKestoUri = suunniteltuKestoUri;
+    public void setSuunniteltuKesto(String suunniteltuKestoUri) {
+        this.suunniteltuKesto = suunniteltuKestoUri;
     }
 
     /**

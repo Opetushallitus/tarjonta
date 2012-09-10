@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -23,7 +24,7 @@ import javax.persistence.Table;
  * @author Jukka Raanamo
  */
 @Entity
-@Table(name = TutkintoOhjelmaToteutus.TABLE_NAME)
+@DiscriminatorValue(Koulutus.KoulutusTyyppit.TUTKINTO_OHJELMA_TOTEUTUS)
 public class TutkintoOhjelmaToteutus extends KoulutusmoduuliToteutus {
 
     private static final long serialVersionUID = -9026147669046987148L;
@@ -34,9 +35,7 @@ public class TutkintoOhjelmaToteutus extends KoulutusmoduuliToteutus {
     public static final String TABLE_NAME = "tutkinto_ohjelma_toteutus";
 
     public TutkintoOhjelmaToteutus(Koulutusmoduuli moduuli) {
-        super(moduuli);
-        // tutkinto-ohjelma will always have perustiedot
-        setPerustiedot(new KoulutusmoduuliPerustiedot());
+        super(moduuli);        
     }
 
     /**

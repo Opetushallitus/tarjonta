@@ -13,9 +13,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.model;
+package fi.vm.sade.tarjonta.model.util;
 
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTreeWalker.WalkTester;
+import fi.vm.sade.tarjonta.model.Koulutus;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
+import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker.NodeHandler;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
@@ -46,17 +49,17 @@ public class KoulutusmoduuliTreeWalkerTest {
 
     private static AtomicInteger counter = new AtomicInteger(0);
 
-    private static KoulutusmoduuliTreeWalker.WalkTester tester = new WalkTester() {
+    private static final KoulutusTreeWalker.NodeHandler matcher = new NodeHandler() {
 
         @Override
-        public boolean continueWalking(Koulutusmoduuli moduuli) {
+        public boolean match(Koulutus moduuli) {
             counter.incrementAndGet();
             return true;
         }
 
     };
 
-    private static KoulutusmoduuliTreeWalker walker = KoulutusmoduuliTreeWalker.createWalker(-1, tester);
+    private static KoulutusTreeWalker walker = new KoulutusTreeWalker(-1, matcher);
 
     @BeforeClass
     public static void setUpTree() throws Exception {
@@ -79,19 +82,9 @@ public class KoulutusmoduuliTreeWalkerTest {
 
         // walk down from root node
         counter.set(0);
-        walker.walkDown(root);
+        walker.walk(root);
         assertEquals(4, counter.intValue());
 
-
-    }
-
-    @Test
-    public void testWalkUp() {
-
-        // walk up: C-A-R
-        counter.set(0);
-        walker.walkUp(level_2_child_0);
-        assertEquals(3, counter.intValue());
 
     }
 

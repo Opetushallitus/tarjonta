@@ -16,34 +16,27 @@
 package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
-import fi.vm.sade.tarjonta.service.NoSuchOIDException;
+import fi.vm.sade.tarjonta.model.Koulutus;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
+// todo: this needs to come from xml schema
+import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
 import java.util.List;
 
 /**
  *
- * @author Jukka Raanamo
  */
-public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteutus, Long> {
+public interface KoulutusDAO extends JpaDAO<Koulutus, Long> {
 
-    
     /**
-     * 
-     * @param oid
+     * If this was here only for unit testing, remove it and access entity manager from test.
      * @return
-     * @throws NoSuchOIDException todo: this comes from a bad package for this DAO
      */
-    public KoulutusmoduuliToteutus findByOid(String oid)
-        throws NoSuchOIDException;
+    public List<KoulutusSisaltyvyys> findAllSisaltyvyys();
+    
+    public List<Koulutus> find(KoulutusTila tila, int startIndex, int pageSize);
     
     
-    /**
-     * Retrieves List of Koulutusmoduulitoteutus with given search criteria
-     *
-     * @param KoulutusmoduuliToteutusSearchDTO search criteria 
-     * @return List KoulutusmoduuliToteutus
-     */
-    public List<KoulutusmoduuliToteutus> findWithTila(KoulutusmoduuliToteutusSearchDTO criteria);
+    public <T> List<T> findAllVersions(Class<T> type, String oid);
 
 }
+

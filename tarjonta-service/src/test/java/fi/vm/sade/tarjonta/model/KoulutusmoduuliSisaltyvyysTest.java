@@ -34,12 +34,12 @@ public class KoulutusmoduuliSisaltyvyysTest {
         Koulutusmoduuli parent = newModuuli();
         Koulutusmoduuli child = newModuuli();
         
-        KoulutusmoduuliSisaltyvyys r1 = new KoulutusmoduuliSisaltyvyys(parent, child, true);
-        KoulutusmoduuliSisaltyvyys r2 = new KoulutusmoduuliSisaltyvyys(parent, child, true);
+        KoulutusSisaltyvyys r1 = new KoulutusSisaltyvyys(parent, child, true);
+        KoulutusSisaltyvyys r2 = new KoulutusSisaltyvyys(parent, child, true);
         
         assertTrue(r1.equals(r2));
         
-        assertFalse(r1.equals(new KoulutusmoduuliSisaltyvyys(child, parent, true)));
+        assertFalse(r1.equals(new KoulutusSisaltyvyys(child, parent, true)));
         
     }
     

@@ -1,29 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.0"
-             xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-    <persistence-unit name="tarjonta" transaction-type="JTA">
-		
-        <provider>org.hibernate.ejb.HibernatePersistence</provider>
-		
-        <jta-data-source>java:/tarjontaDS</jta-data-source>		
-
-        <class>fi.vm.sade.tarjonta.model.TutkintoOhjelma</class>
-        <class>fi.vm.sade.tarjonta.model.KoulutusmoduuliSisaltyvyys</class>
-        <class>fi.vm.sade.tarjonta.model.KoulutusmoduuliPerustiedot</class>
-        <class>fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus</class>
-        <class>fi.vm.sade.tarjonta.model.Hakuera</class>
-        <class>fi.vm.sade.tarjonta.model.KoodistoKoodiUri</class>
-        <class>fi.vm.sade.tarjonta.model.Oid</class>
-
-
-        <properties>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
-            <property name="hibernate.hbm2ddl.auto" value="update" />
-            <property name="hibernate.jdbc.batch_size" value="20" />
-            <property name="hibernate.transaction.manager_lookup_class"
-                                  value="org.hibernate.transaction.JBossTransactionManagerLookup" />
-        </properties>
-
-    </persistence-unit>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+  <persistence-unit name="tarjonta" transaction-type="JTA">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <jta-data-source>java:/tarjontaDS</jta-data-source>
+    <class>fi.vm.sade.tarjonta.model.Koulutus</class>
+    <class>fi.vm.sade.tarjonta.model.TutkintoOhjelma</class>
+    <class>fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus</class>
+    <class>fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys</class>
+    <class>fi.vm.sade.tarjonta.model.Hakuera</class>
+    <class>fi.vm.sade.tarjonta.model.KoodistoKoodiUri</class>
+    <class>fi.vm.sade.tarjonta.model.Oid</class>
+    <properties>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+      <!--  
+	    <property name="hibernate.hbm2ddl.auto" value="create-drop" />
+	    -->
+      <property name="hibernate.jdbc.batch_size" value="20"/>
+      <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
+    </properties>
+  </persistence-unit>
 </persistence>

@@ -16,28 +16,82 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 /**
- *
- * @author Jukka Raanamo
+ * Concrete type of Koulutusmoduuli.
  */
 @Entity
-@Table(name = TutkintoOhjelma.TABLE_NAME)
+@DiscriminatorValue(Koulutus.KoulutusTyyppit.TUTKINTO_OHJELMA)
 public class TutkintoOhjelma extends Koulutusmoduuli {
 
     private static final long serialVersionUID = 5126887997800825478L;
 
-    /*
-     * Overrides table name from Koulutusmoduuli
-     */
-    public static final String TABLE_NAME = "tutkinto_ohjelma";
+    @NotNull
+    @Column(name = "koulutus_luokitus_koodi")
+    private String koulutusLuokitusKoodi;
+
+    @NotNull
+    @Column(name = "tutkinto_ohjelman_nimi")
+    private String tutkintoOhjelmanNimi;
 
     public TutkintoOhjelma() {
-        super(KoulutusmoduuliTyyppi.TUTKINTOON_JOHTAVA);
-        // tutkinto-ohjelma will always have perustiedot
-        setPerustiedot(new KoulutusmoduuliPerustiedot());
+        super(KoulutusmoduuliTyyppi.TUTKINTOON_JOHTAVA);        
+    }
+
+    /**
+     *
+     * @see #setKoulutusKoodi(java.lang.String)
+     * @return
+     */
+    public String getKoulutusLuokitusKoodi() {
+        return koulutusLuokitusKoodi;
+    }
+
+    /**
+     * Koulutus luokitus koodi assigned by Tilastokeskus.
+     *
+     * @see http://www.stat.fi/meta/luokitukset/koulutus/001-2010/index.html
+     * @param koulutusKoodiUri
+     */
+    public void setKoulutusKoodi(String koulutusKoodiUri) {
+        this.koulutusLuokitusKoodi = koulutusKoodiUri;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getKoulutusNimi() {
+        return getNimi();
+    }
+
+    /**
+     * If the value comes from Tilastokeskus - should we group setting the code and name?
+     *
+     * @param koulutusNimi
+     */
+    public void setKoulutusNimi(String koulutusNimi) {
+        setNimi(koulutusNimi);
+    }
+
+    /**
+     * Finnish explanation: Pääaineen koulutusohjelman tai vastaavan nimi. This corresponds to: ects:DegreeProgrammeTitle.
+     *
+     * @return the tutkintoOhjelmanNimi
+     */
+    public String getTutkintoOhjelmanNimi() {
+        return tutkintoOhjelmanNimi;
+    }
+
+    /**
+     * @param tutkintoOhjelmanNimi the tutkintoOhjelmanNimi to set
+     */
+    public void setTutkintoOhjelmanNimi(String tutkintoOhjelmanNimi) {
+        this.tutkintoOhjelmanNimi = tutkintoOhjelmanNimi;
     }
 
 }

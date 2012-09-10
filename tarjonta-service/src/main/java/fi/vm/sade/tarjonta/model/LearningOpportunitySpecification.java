@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -23,10 +22,9 @@ import javax.persistence.MappedSuperclass;
  * consistent across multiple instances of the learning opportunity.
  * 
  * @see http://mjukis.blogg.skolverket.se/files/2008/10/mlo-ad-v5.pdf
- * @author Jukka Raanamo
  */
 @MappedSuperclass
-public abstract class LearningOpportunitySpecification extends BaseEntity {
+public abstract class LearningOpportunitySpecification extends Koulutus {
     
 }
 

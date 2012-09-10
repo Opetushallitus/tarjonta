@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
 import java.util.Date;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class KoulutusmoduuliTest {
     @Test
     public void testGetTilaAfterCreate() {
         Koulutusmoduuli moduuli = newModuuli();
-        assertEquals(KoulutusmoduuliTila.SUUNNITTELUSSA, moduuli.getTila());
+        assertEquals(KoulutusTila.SUUNNITTELUSSA, moduuli.getTila());
     }
 
     @Test
@@ -46,40 +46,10 @@ public class KoulutusmoduuliTest {
         assertFalse(parent.addChild(child, false));
 
     }
-
-    @Test
-    public void testAddParent() throws Exception {
-
-        Koulutusmoduuli parent = newModuuli();
-        Koulutusmoduuli child = newModuuli();
-
-        assertTrue(child.addParent(parent, false));
-
-        assertEquals(1, parent.getChildren().size());
-        assertEquals(1, child.getParents().size());
-
-        assertTrue(parent.hasAsChild(child));
-
-    }
     
     
 
-    @Test
-    public void testEquals() {
-
-        Koulutusmoduuli k1 = newModuuli();
-        Koulutusmoduuli k2 = newModuuli();
-
-        assertFalse(k1.equals(k2));
-
-        // equality is based on db id's
-        k1.setId(0L);
-        k2.setId(0L);
-
-        assertTrue(k1.equals(k2));
-
-    }
-
+    
     @Test
     public void testRemoveChild() throws Exception {
 
@@ -90,43 +60,15 @@ public class KoulutusmoduuliTest {
 
         // before remove
         assertEquals(1, parent.getChildren().size());
-        assertEquals(1, child.getParents().size());
-
+        
         // was removed
         assertTrue(parent.removeChild(child));
 
         // after remove
-        assertEquals(0, parent.getChildren().size());
-        assertEquals(0, child.getParents().size());
+        assertEquals(0, parent.getChildren().size());        
 
     }
 
-    @Test(expected = CyclicReferenceException.class)
-    public void testCannotAddChildThatIsAlreadyOurDirectParent() throws Exception {
-
-        Koulutusmoduuli parent = newModuuli();
-        Koulutusmoduuli child = newModuuli();
-
-        parent.addChild(child, true);
-        child.addChild(parent, true);
-
-    }
-
-    @Test(expected = CyclicReferenceException.class)
-    public void testCannotAddChildThatIsAlreadyOurIndirectParent() throws Exception {
-
-        Koulutusmoduuli a1 = newModuuli();
-        Koulutusmoduuli a2 = newModuuli();
-        Koulutusmoduuli b = newModuuli();
-        Koulutusmoduuli c = newModuuli();
-
-        a1.addChild(b, true);
-        a2.addChild(b, true);
-        b.addChild(c, true);
-
-        c.addChild(a2, true);
-
-    }
 
     public void testMoveChild() throws Exception {
 

@@ -7,6 +7,9 @@ import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaToteutusDTO;
 
+/**
+ * NOTE: this class was created in the sprint that was interrupted due to changes in Tarjonta specs. Revalidate.
+ */
 public class TutkintoOhjelmaToteutusDTOToModelConverter extends AbstractToDomainConverter<TutkintoOhjelmaToteutusDTO, TutkintoOhjelmaToteutus> {
 
     @Override
@@ -16,9 +19,8 @@ public class TutkintoOhjelmaToteutusDTOToModelConverter extends AbstractToDomain
         model.setTila(source.getTila());
         model.setOid(source.getOid());
         model.setNimi(source.getNimi());
-        model.setPerustiedot(CommonConverter.convert(source.getPerustiedot()));
         model.setKoulutuksenAlkamisPvm(source.getKoulutuksenAlkamisPvm());
-        model.setKoulutusLajiUri(source.getKoulutuslajiUri());
+        model.setKoulutusLaji(source.getKoulutuslajiUri());
         convertTarjoajat(source, model);
         
         return model;

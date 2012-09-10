@@ -19,7 +19,7 @@ package fi.vm.sade.tarjonta.model;
  *
  * @author Jukka Raanamo
  */
-public class CyclicReferenceException extends Exception {
+public class CyclicReferenceException extends RuntimeException {
 
     public CyclicReferenceException(String string) {
         super(string);

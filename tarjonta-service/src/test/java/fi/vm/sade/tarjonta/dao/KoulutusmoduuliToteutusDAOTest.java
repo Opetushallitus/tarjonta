@@ -30,8 +30,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- *
- * @author Jukka Raanamo
+ * KoulutusmoduuliDAO and KoulutusmoduuliTotetusDAO were merged hence dao under test is KoulutusDAO. TOOD: merge tests too.
  */
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -41,15 +40,12 @@ public class KoulutusmoduuliToteutusDAOTest {
     private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliToteutusDAOTest.class);
 
     @Autowired
-    private KoulutusmoduuliToteutusDAO toteutusDAO;
+    private KoulutusDAO koulutusDAO;
 
-    @Autowired
-    private KoulutusmoduuliDAO moduuliDAO;
-
-    private Koulutusmoduuli defaultModuuli;
+    private TutkintoOhjelma defaultModuuli;
 
     private KoulutusmoduuliToteutus defaultToteutus;
-    
+
     private static final Date ALKAMIS_PVM = new Date();
 
     private static final String TARJOAJA_1_OID = "http://organisaatio1";
@@ -59,35 +55,38 @@ public class KoulutusmoduuliToteutusDAOTest {
     private static final String TOTEUTUS_1_NIMI = "Toteutus 1 Nimi";
 
     private static final String TOTEUTUS_1_OID = "Toteutus 1 OID";
-    
+
     private static final String MAKSULLISUUS = "5 EUR/month";
 
     @Before
     public void setUp() {
 
         defaultModuuli = new TutkintoOhjelma();
-        moduuliDAO.insert(defaultModuuli);
+        defaultModuuli.setOid("http://someoid");
+        defaultModuuli.setTutkintoOhjelmanNimi("Junit Tutkinto");
+        defaultModuuli.setKoulutusKoodi("123456");
+        koulutusDAO.insert(defaultModuuli);
 
         defaultToteutus = new TutkintoOhjelmaToteutus(defaultModuuli);
         defaultToteutus.setNimi(TOTEUTUS_1_NIMI);
         defaultToteutus.setOid(TOTEUTUS_1_OID);
         defaultToteutus.setKoulutuksenAlkamisPvm(ALKAMIS_PVM);
-        defaultToteutus.setMaksullisuus(MAKSULLISUUS);        
-        toteutusDAO.insert(defaultToteutus);
+        defaultToteutus.setMaksullisuus(MAKSULLISUUS);
+        koulutusDAO.insert(defaultToteutus);
 
     }
 
     @Test
     public void testSavedTutkintoOhjelmaCanBeFoundById() {
 
-        KoulutusmoduuliToteutus loaded = toteutusDAO.read(defaultToteutus.getId());
+        KoulutusmoduuliToteutus loaded = (KoulutusmoduuliToteutus) koulutusDAO.read(defaultToteutus.getId());
         assertNotNull(loaded);
         assertEquals(TOTEUTUS_1_NIMI, loaded.getNimi());
         assertEquals(TOTEUTUS_1_OID, loaded.getOid());
         assertEquals(ALKAMIS_PVM, loaded.getKoulutuksenAlkamisPvm());
         assertEquals(MAKSULLISUUS, loaded.getMaksullisuus());
         assertEquals(defaultModuuli.getOid(), loaded.getKoulutusmoduuli().getOid());
-        
+
 
     }
 
@@ -131,47 +130,18 @@ public class KoulutusmoduuliToteutusDAOTest {
     @Test
     public void testDeletingToteutusDoesNotDeleteModuuli() {
 
-        toteutusDAO.remove(defaultToteutus);
-        assertEquals(0, toteutusDAO.findAll().size());
+        // delete KoulutusmoduuliToteutus 
+        koulutusDAO.remove(defaultToteutus);
+        
+        // check that we can still load Koulutusmoduuli
+        assertNotNull(koulutusDAO.read(defaultModuuli.getId()));
 
-        assertNotNull(moduuliDAO.read(defaultModuuli.getId()));
-        
     }
-    
-    @Test
-    public void testAddAndSaveAsiasanoitus() {
-        
-        final String asiasanoitusUri = "http://asiasanoitus";
-        
-        defaultToteutus.getPerustiedot().addAsiasanoitus(asiasanoitusUri);        
-        defaultToteutus = updateAndRead(defaultToteutus);
-        
-        final Set<KoodistoKoodiUri> asiasanoitus = defaultToteutus.getPerustiedot().getAsiasanoituses();
-        
-        assertEquals(1, asiasanoitus.size());
-        assertEquals(asiasanoitusUri, asiasanoitus.iterator().next().getKoodiUri());
-        
-    }
-    
-    @Test
-    public void testRemoveAsiasanoitus() {
-        
-        final String asiasanoitusUri = "http://asiasanoitus";
-        
-        defaultToteutus.getPerustiedot().addAsiasanoitus(asiasanoitusUri);        
-        defaultToteutus = updateAndRead(defaultToteutus);
-        
-        defaultToteutus.getPerustiedot().removeAsiasanoitus(asiasanoitusUri);
-        defaultToteutus = updateAndRead(defaultToteutus);
-        
-        assertEquals(0, defaultToteutus.getPerustiedot().getAsiasanoituses().size());
-        
-    }
-    
 
+    
     private KoulutusmoduuliToteutus updateAndRead(KoulutusmoduuliToteutus toteutus) {
-        toteutusDAO.update(toteutus);
-        return toteutusDAO.read(toteutus.getId());
+        koulutusDAO.update(toteutus);
+        return (KoulutusmoduuliToteutus) koulutusDAO.read(toteutus.getId());
     }
 
 }

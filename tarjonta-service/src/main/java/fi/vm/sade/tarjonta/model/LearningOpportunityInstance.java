@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -27,7 +26,7 @@ import javax.persistence.MappedSuperclass;
  * @author Jukka Raanamo
  */
 @MappedSuperclass
-public abstract class LearningOpportunityInstance extends BaseEntity {
+public abstract class LearningOpportunityInstance extends Koulutus {
     
 }
 

@@ -13,59 +13,51 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.model;
+package fi.vm.sade.tarjonta.model.util;
 
+import fi.vm.sade.tarjonta.model.Koulutus;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import java.util.Set;
 
 /**
- * Helper class that traverses the "tree" of Koulutusmoduuli's and performs a test on tree nodes using WalkTester. 
+ * Helper class that traverses the "tree" of Koulutus in breath first and performs a test on tree nodes using WalkTester. 
  * This can be used to e.g. find parents or children.
  *
  * @author Jukka Raanamo
  */
-public class KoulutusmoduuliTreeWalker {
+public class KoulutusTreeWalker {
 
     private int walkedDepth;
 
     private int maxDepth;
 
-    private boolean walkDown;
+    private NodeHandler matcher;
 
-    private WalkTester tester;
+    public KoulutusTreeWalker(int maxDepth, NodeHandler matcher) {
 
-    public static KoulutusmoduuliTreeWalker createWalker(int maxDepth, WalkTester tester) {
-
-        KoulutusmoduuliTreeWalker walker = new KoulutusmoduuliTreeWalker();
-        walker.maxDepth = maxDepth;
-        walker.tester = tester;
-
-        return walker;
+        this.maxDepth = maxDepth;
+        this.matcher = matcher;
 
     }
 
-    public void walkDown(Koulutusmoduuli startNode) {
-        walkDown = true;
+    public void walk(Koulutus startNode) {
         walkInternal(startNode);
     }
 
-    public void walkUp(Koulutusmoduuli startNode) {
-        walkDown = false;
-        walkInternal(startNode);
-    }
 
-    private boolean walkInternal(Koulutusmoduuli node) {
+    private boolean walkInternal(Koulutus node) {
 
         if (maxDepth != -1 && walkedDepth == maxDepth) {
             return false;
         }
 
-        if (!tester.continueWalking(node)) {
+        if (!matcher.match(node)) {
             return false;
         }
 
-        Set<KoulutusmoduuliSisaltyvyys> nextSet = (walkDown ? node.getChildren() : node.getParents());
-        for (KoulutusmoduuliSisaltyvyys s : nextSet) {
-            Koulutusmoduuli nextNode = (walkDown ? s.getChild() : s.getParent());
+        final Set<KoulutusSisaltyvyys> nextSet = node.getChildren();
+        for (KoulutusSisaltyvyys s : nextSet) {
+            final Koulutus nextNode = s.getChild();
             if (!walkInternal(nextNode)) {
                 return false;
             }
@@ -78,15 +70,15 @@ public class KoulutusmoduuliTreeWalker {
     /**
      *
      */
-    public interface WalkTester {
+    public interface NodeHandler {
 
         /**
-         * Tests if walking the tree should continue past given Koulutusmoduuli.
+         * Tests if walking the tree should continue past given Koulutus.
          * 
          * @param moduuli
          * @return
          */
-        public boolean continueWalking(Koulutusmoduuli moduuli);
+        public boolean match(Koulutus kolutus);
 
     }
 
@@ -94,19 +86,19 @@ public class KoulutusmoduuliTreeWalker {
     /**
      * WalkTester that stops when a node equal to match node is found.
      */
-    public static class NodeEqualsTester implements WalkTester {
+    public static class EqualsMatcher implements NodeHandler {
 
         private boolean found;
 
-        private Koulutusmoduuli match;
+        private Koulutus koulutus;
 
-        public NodeEqualsTester(Koulutusmoduuli match) {
-            this.match = match;
+        public EqualsMatcher(Koulutus koulutus) {
+            this.koulutus = koulutus;
         }
 
         @Override
-        public boolean continueWalking(Koulutusmoduuli moduuli) {
-            if (match.equals(moduuli)) {
+        public boolean match(Koulutus k) {
+            if (koulutus.equals(k)) {
                 found = true;
                 return false;
             }

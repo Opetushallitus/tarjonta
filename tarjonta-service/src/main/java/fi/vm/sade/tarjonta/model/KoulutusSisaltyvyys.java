@@ -24,62 +24,78 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
+ * A Koulutus object may consist multiple child Koulutus objects as its parts. This object describes the link from the parent Koulutus to child Koulutus. It
+ * also adds information into this relation, such whether the child is considered as optional or mandatory part.
  *
  * @author Jukka Raanamo
  */
 @Entity
-@Table(name=KoulutusmoduuliSisaltyvyys.TABLE_NAME)
-public class KoulutusmoduuliSisaltyvyys extends BaseEntity {
+@Table(name = KoulutusSisaltyvyys.TABLE_NAME)
+public class KoulutusSisaltyvyys extends BaseEntity {
 
-    public static final String TABLE_NAME = "koulutusmoduuli_sisaltyvyys";
-    
+    public static final String TABLE_NAME = "koulutus_sisaltyvyys";
+
     /**
-     * The parent.
+     * The parent Koulutus.
      */
     @ManyToOne
-    private Koulutusmoduuli parent;
+    private Koulutus parent;
 
     /**
-     * The child.
+     * The child Koulutus.
      */
     @ManyToOne
-    private Koulutusmoduuli child;
+    private Koulutus child;
 
     /**
-     * If the contained module is optional or not.
+     * If the contained koulutus, in this relationship, is optional or not.
      */
     private boolean optional;
 
     /**
      * JPA only.
      */
-    protected KoulutusmoduuliSisaltyvyys() {
+    protected KoulutusSisaltyvyys() {
     }
 
-    public KoulutusmoduuliSisaltyvyys(Koulutusmoduuli parent, Koulutusmoduuli child, boolean optional) {
+    public KoulutusSisaltyvyys(Koulutus parent, Koulutus child, boolean optional) {
         this.parent = parent;
         this.child = child;
         this.optional = optional;
     }
 
-    public Koulutusmoduuli getParent() {
+    /**
+     * Returns non-null parent.
+     *
+     * @return
+     */
+    public Koulutus getParent() {
         return parent;
     }
 
-    public Koulutusmoduuli getChild() {
+    /**
+     * Returns non-null child.
+     *
+     * @return
+     */
+    public Koulutus getChild() {
         return child;
     }
 
+    /**
+     * True if the relationship from the parent to the child is considered optional, the actual meaning of optionality depends on the types of Koulutus in
+     * question.
+     *
+     * @return
+     */
     public boolean isOptional() {
         return optional;
     }
-    
-    
 
     @Override
     public boolean equals(Object o) {
 
-        if (o instanceof KoulutusmoduuliSisaltyvyys == false) {
+        if (o instanceof KoulutusSisaltyvyys == false) {
             return false;
         }
 
@@ -87,7 +103,7 @@ public class KoulutusmoduuliSisaltyvyys extends BaseEntity {
             return true;
         }
 
-        KoulutusmoduuliSisaltyvyys s = (KoulutusmoduuliSisaltyvyys) o;
+        KoulutusSisaltyvyys s = (KoulutusSisaltyvyys) o;
 
         // TOOD: are we equals if the optionality is different?
         return new EqualsBuilder().append(parent, s.parent).

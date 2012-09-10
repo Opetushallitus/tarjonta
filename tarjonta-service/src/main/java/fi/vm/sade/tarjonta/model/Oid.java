@@ -21,16 +21,14 @@ import javax.persistence.Embeddable;
 import org.apache.commons.lang.StringUtils;
 
 /**
-* Container for OID. Use as @Embedded or inside @ElementCollection.
- *
- * @author Jukka Raanamo
+ * Container for OID. Use as @Embedded or inside @ElementCollection.
  */
 @Embeddable
 public class Oid implements Serializable {
 
     private static final long serialVersionUID = 6886982838559131251L;
 
-    @Column(name = "oid", nullable=false)
+    @Column(name = "oid", nullable = false)
     private String oid;
 
     protected Oid() {

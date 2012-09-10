@@ -13,23 +13,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.business.impl;
+package fi.vm.sade.tarjonta.model.util;
 
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.Koulutus;
 
 /**
+ * As per discussion with Seppo today (7.9.2012) - further development of the copy functionality has been put on hold until there are some more concrete
+ * documentation what it actually means to copy and/or version nodes.
  *
  * @author Jukka Raanamo
  */
-public final class EntityUtils {
+public class KoulutusTreeCopier {
 
-    private EntityUtils() {
-    }
+    private Koulutus sourceRootNode;
 
-    public static void copyFields(KoulutusmoduuliToteutus source, KoulutusmoduuliToteutus target) {
-        target.setNimi(source.getNimi());
-        target.setTila(source.getTila());
-        target.setMaksullisuus(source.getMaksullisuus());
+    private Koulutus targetRootNode;
+
+    public void copy() {
     }
 
 }
