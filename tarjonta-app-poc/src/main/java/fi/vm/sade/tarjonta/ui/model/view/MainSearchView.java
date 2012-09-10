@@ -4,7 +4,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.TextField;
-import fi.vm.sade.tarjonta.ui.enums.UiMarginEnum;
+import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.layout.AbstractHorizontalLayout;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import fi.vm.sade.vaadin.Oph;

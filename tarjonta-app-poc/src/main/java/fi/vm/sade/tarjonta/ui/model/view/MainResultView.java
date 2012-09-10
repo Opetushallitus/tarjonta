@@ -13,7 +13,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.tarjonta.ui.enums.UiMarginEnum;
+import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.layout.AbstractHorizontalLayout;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import fi.vm.sade.vaadin.Oph;
@@ -54,13 +54,19 @@ public class MainResultView extends AbstractHorizontalLayout {
         searchResultTab.addTab(searchResultPanel, "Haut (2 kpl)", null);
         searchResultTab.setWidth(UiBuilder.PCT100);
         searchResultTab.setHeight(UiBuilder.PCT100);
+        
 
         emptyPanel1 = buildEmptyTabPanel();
         searchResultTab.addTab(emptyPanel1, "Koulutukset (28 kpl)", null);
+        emptyPanel1.setHeight("600px");
+        //emptyPanel1.setSizeFull();
 
         emptyPanel2 = buildEmptyTabPanel();
         searchResultTab.addTab(emptyPanel2, "Hakukohteet (35 kpl)", null);
 
+        //SET SELECTED TAB!
+        searchResultTab.setSelectedTab(emptyPanel1);
+        
         this.addComponent(searchResultTab);
     }
 
@@ -95,12 +101,9 @@ public class MainResultView extends AbstractHorizontalLayout {
         wrapper.addComponent(new CheckBox(i18n.getMessage("ValitseKaikki")));
         newPanel.addComponent(wrapper);
 
-
-
         newPanel.setScrollable(true);
 
         categoryTree = new CategoryTreeView();
-
         newPanel.addComponent(categoryTree);
         newPanel.setHeight(Sizeable.SIZE_UNDEFINED, 0);
 
@@ -109,18 +112,25 @@ public class MainResultView extends AbstractHorizontalLayout {
 
     private Panel buildEmptyTabPanel() {
         // common part: create layout
-        emptyPanel1 = UiBuilder.newPanel();
-        emptyPanel1.setSizeFull();
-        emptyPanel1.setContent(UiBuilder.newVerticalLayout());
+        Panel panel = UiBuilder.newPanel();
+        panel.setSizeFull();
+        panel.setContent(UiBuilder.newVerticalLayout());
 
-        return emptyPanel1;
+        return panel;
     }
 
     /**
      * @param btnLuoUusiKoulutus the btnLuoUusiKoulutus to set
      */
-    public void setBtnLuoUusiKoulutus(Button.ClickListener btnLuoUusiKoulutus) {
+    public void setBtnListenerLuoUusiKoulutus(Button.ClickListener btnLuoUusiKoulutus) {
         this.btnLuoUusiKoulutus.addListener(btnLuoUusiKoulutus);
+    }
+    
+     /**
+     * @param btnListenerMuokkaa( the btnLuoUusiKoulutus to set
+     */
+    public void setBtnListenerMuokkaa(Button.ClickListener btnKopioiUudelleKaudelle) {
+        this.btnKopioiUudelleKaudelle.addListener(btnKopioiUudelleKaudelle);
     }
 
     public void setCategoryDataSource(Container dataSource) {

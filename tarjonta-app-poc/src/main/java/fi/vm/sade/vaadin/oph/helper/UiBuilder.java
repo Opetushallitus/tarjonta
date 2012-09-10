@@ -15,15 +15,17 @@ import fi.vm.sade.vaadin.Oph;
 import java.text.MessageFormat;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Link;
-import fi.vm.sade.tarjonta.ui.enums.UiMarginEnum;
+import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.vaadin.oph.dto.LabelDTO;
+import fi.vm.sade.vaadin.oph.enums.LabelStyle;
 
 /**
  *
  * @author jani
  */
-public class UiBuilder extends ComponentUtil{
-    
+public class UiBuilder extends ComponentUtil {
+
     public static final String format(String format, Object... args) {
         return MessageFormat.format(format, args);
     }
@@ -68,8 +70,30 @@ public class UiBuilder extends ComponentUtil{
         return l;
     }
 
-    public static Label newLabel(final String format, final AbstractOrderedLayout layout, final Object... args) {
+    public static Label newLabel(final String format, final AbstractLayout layout, final Object... args) {
         Label l = UiBuilder.newLabel(format, args);
+        handleAddComponent(layout, l);
+        return l;
+    }
+
+    public static Label newLabel(final LabelDTO label, final AbstractLayout layout) {
+        return newLabel(label.getFormat(), layout, LabelStyle.TEXT, label.getStyle(), label.getFormatArgs());
+    }
+
+    public static Label newLabel(final String format, final AbstractLayout layout, final LabelStyle style, final Object... args) {
+        Label l = UiBuilder.newLabel(format, args);
+        switch (style) {
+            case H1:
+                l.addStyleName(Oph.LABEL_H1);
+                break;
+            case H2:
+                l.addStyleName(Oph.LABEL_H2);
+                break;
+            case TEXT:
+                l.addStyleName(Oph.LABEL_SMALL);
+                break;
+
+        }
         handleAddComponent(layout, l);
         return l;
     }
@@ -128,7 +152,14 @@ public class UiBuilder extends ComponentUtil{
 
     public static Panel newTextPanel(final String text, final String width, final String height, AbstractLayout layout) {
         Panel panel = newPanel(width, height, null, layout);
-        newLabel(text, layout);
+        panel.addComponent(new Label(text));
+
+        return panel;
+    }
+
+    public static Panel newTextPanel(final LabelDTO label, final String width, final String height, AbstractLayout layout) {
+        Panel panel = newPanel(width, height, null, layout);
+        panel.addComponent(new Label(label.getFormat()));
 
         return panel;
     }

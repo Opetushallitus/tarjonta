@@ -5,7 +5,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import fi.vm.sade.tarjonta.ui.poc.RowMenuBar;
+import fi.vm.sade.vaadin.oph.layout.RowMenuBar;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class DataSource {
         "Kone- ja metallialan perustutkinto - Koneistaja"};
     private static final String COLUMN_A = "Kategoriat";
 
-    public static HierarchicalContainer treeTableData() {
+    public static HierarchicalContainer treeTableData(ITableRowFormat rowStyle) {
         Map<String, String[]> map = new HashMap<String, String[]>();
 
         map.put("Kulttuuriala (3kpl)", KULTTURIALA);
@@ -51,39 +51,22 @@ public class DataSource {
         Set<Map.Entry<String, String[]>> set = map.entrySet();
 
         HierarchicalContainer hc = new HierarchicalContainer();
-
+        Object format =  rowStyle.format("");
+        
         for (Map.Entry<String, String[]> e : set) {
 
-            hc.addContainerProperty(COLUMN_A, HorizontalLayout.class, buildTreeRow(e.getKey()));
+            hc.addContainerProperty(COLUMN_A, format.getClass(), rowStyle.format(e.getKey()));
             Object rootItem = hc.addItem();
 
-            hc.getContainerProperty(rootItem, COLUMN_A).setValue(buildTreeRow(e.getKey()));
+            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey()));
 
             for (String strText : e.getValue()) {
                 Object subItem = hc.addItem();
                 hc.setParent(subItem, rootItem);
-                hc.getContainerProperty(subItem, COLUMN_A).setValue(buildTreeRow(strText));
+                hc.getContainerProperty(subItem, COLUMN_A).setValue(rowStyle.format(strText));
             }
         }
 
         return hc;
     }
-    
-    private static HorizontalLayout buildTreeRow(final String text) {
-        CheckBox newCheckbox = UiBuilder.newCheckbox(null, null);
-        Label label = new Label(text);
-        label.setSizeUndefined(); // -1,-1
-        HorizontalLayout horizontal = new HorizontalLayout();
-        horizontal.setWidth(-1, Sizeable.UNITS_PIXELS);
-        horizontal.setHeight(-1, Sizeable.UNITS_PIXELS); //Tämä toimii!!!
-
-        horizontal.addComponent(newCheckbox);
-        horizontal.addComponent(new RowMenuBar());
-        horizontal.addComponent(label);
-
-        horizontal.setExpandRatio(label, 1f); //default == 0
-
-        return horizontal;
-    }
-
 }

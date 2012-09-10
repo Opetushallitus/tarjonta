@@ -4,3 +4,8 @@
 .category-tree  .v-treetable-treespacer{
     float: left;
 }
+
+.v-menubar {
+    background-image: none;
+    background:none;
+}

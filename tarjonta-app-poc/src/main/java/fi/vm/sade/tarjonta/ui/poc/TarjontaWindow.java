@@ -7,11 +7,15 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.model.view.CreateKoulutusView;
+import fi.vm.sade.tarjonta.ui.model.view.EditKoulutusView;
+import fi.vm.sade.tarjonta.ui.model.view.EditSiirraUudelleKaudelleView;
 import fi.vm.sade.tarjonta.ui.model.view.MainResultView;
 import fi.vm.sade.tarjonta.ui.model.view.MainSearchView;
 import fi.vm.sade.tarjonta.ui.model.view.MainSplitPanelView;
 import fi.vm.sade.vaadin.oph.demodata.DataSource;
+import fi.vm.sade.vaadin.oph.demodata.row.MultiActionTableStyle;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
+import fi.vm.sade.vaadin.oph.layout.AbstractDialogWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +34,69 @@ public class TarjontaWindow extends Window {
     private MainSplitPanelView main;
     private MainSearchView mainSearch;
     private MainResultView mainResult;
-    private CreateKoulutusView mainDialog;
-    private ClickListener btnClickListener = new Button.ClickListener() {
+    private AbstractDialogWindow mainModalWindow;
+    private ClickListener clLuoUusiKoulutusClickListener = new Button.ClickListener() {
         @Override
         public void buttonClick(ClickEvent event) {
-            mainDialog = new CreateKoulutusView("Valitse organisaatio", main.getMainRightLayout(), getWindow());
+            mainModalWindow = new CreateKoulutusView("Luo uusi koulutus");
+            getWindow().addWindow(mainModalWindow);
+
+            mainModalWindow.addDialogButton("Peruuta", new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    getWindow().removeWindow(mainModalWindow);
+                    mainModalWindow.removeDialogButtons();
+                    mainModalWindow = null;
+                }
+            });
+
+            mainModalWindow.addDialogButton("Jatka", new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    LOG.info("buttonClick() - luo uusi koulutus click...");
+                    EditKoulutusView f = new EditKoulutusView();
+                    getWindow().removeAllComponents();
+                    getWindow().addComponent(f);
+                    getWindow().removeWindow(mainModalWindow);
+                    mainModalWindow.removeDialogButtons();
+                    mainModalWindow = null;
+                }
+            });
+            
+            mainModalWindow.buildDialogButtons();
+        }
+    };
+    private ClickListener clSiirraUudelleKaudelleView = new Button.ClickListener() {
+        @Override
+        public void buttonClick(ClickEvent event) {
+            mainModalWindow = new EditSiirraUudelleKaudelleView("Kopioi uudelle kaudelle");
+            getWindow().addWindow(mainModalWindow);
+
+            mainModalWindow.addDialogButton("Peruuta", new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    getWindow().removeWindow(mainModalWindow);
+                    mainModalWindow.removeDialogButtons();
+                    mainModalWindow = null;
+                }
+            });
+            
+            mainModalWindow.addDialogButton("Jatka", new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    LOG.info("buttonClick() - Siirra uudelle kaudelle click...");
+                    getWindow().removeWindow(mainModalWindow);
+
+                    EditKoulutusView f = new EditKoulutusView();
+                    getWindow().removeAllComponents();
+                    getWindow().addComponent(f);
+                    getWindow().removeWindow(mainModalWindow);
+                    mainModalWindow.removeDialogButtons();
+                    mainModalWindow = null;
+                }
+            });
+
+            mainModalWindow.buildDialogButtons();
         }
     };
 
@@ -47,13 +109,14 @@ public class TarjontaWindow extends Window {
 
         mainSearch = new MainSearchView();
         mainResult = new MainResultView();
-        mainResult.setBtnLuoUusiKoulutus(btnClickListener);
-        mainResult.setCategoryDataSource(DataSource.treeTableData());
+        mainResult.setBtnListenerLuoUusiKoulutus(clLuoUusiKoulutusClickListener);
+        mainResult.setBtnListenerMuokkaa(clSiirraUudelleKaudelleView);
+        mainResult.setCategoryDataSource(DataSource.treeTableData(new MultiActionTableStyle()));
 
         main = new MainSplitPanelView();
         main.getMainRightLayout().addComponent(mainSearch);
-        main.getMainRightLayout().addComponent(mainResult);        
-        
+        main.getMainRightLayout().addComponent(mainResult);
+
         addComponent(main);
 
     }

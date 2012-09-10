@@ -1,20 +1,17 @@
 package fi.vm.sade.tarjonta.ui.model.view;
 
+import com.vaadin.ui.AbstractComponentContainer;
+import com.vaadin.ui.AbstractLayout;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Tree;
+import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
-import fi.vm.sade.tarjonta.ui.poc.EditKoulutus;
+import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.demodata.DataSource;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import fi.vm.sade.vaadin.oph.demodata.row.CheckBoxTableStyle;
+import fi.vm.sade.vaadin.oph.layout.AbstractDialogWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,101 +19,44 @@ import org.slf4j.LoggerFactory;
  *
  * @author jani
  */
-/**
- * Component contains a button that allows opening a window.
- */
-public class CreateKoulutusView extends VerticalLayout
-        implements Window.CloseListener {
+public class CreateKoulutusView extends AbstractDialogWindow<VerticalLayout> {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateKoulutusView.class);
     private static final String TEKSTI = "Koulutusta ei ole vielä liitetty mihinkään organisaatioon.";
-    private static final String COLUMN_A = "Kategoriat";
-   
-    private Map<String, String[]> map = new HashMap<String, String[]>();
-    private Window mainwindow;  // Reference to main window
-    private Window win;    // The window to be opened
-    private Button closebutton; // A button in the window
-    private VerticalLayout rightMainLayout;
+    private CreateKoulutusTreeView createKoulutusTreeView;
 
-    public CreateKoulutusView(String label, VerticalLayout rightMainLayout, Window main) {
-        this.rightMainLayout = rightMainLayout;
-        mainwindow = main;
-        win = new Window(label);
-        win.setWidth("50%");
-        win.setHeight("50%");
-        win.center();
-        this.setSizeFull();
+    public CreateKoulutusView(String label) {
+        super(
+                label,
+                UiBuilder.format("Olet luomassa {0} {1}", "tutkintoon johtavaa", "koulutusta"),
+                DataSource.LOREM_IPSUM_SHORT);
 
-        mainwindow.addWindow(win);
-
-        //win.addComponent(new Label("A text label in the window."));
-        closebutton = new Button("Close");
-
-        closebutton.addListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                mainwindow.removeWindow(win);
-            }
-        });
-
-        win.addComponent(closebutton);
-        win.addComponent(buildSearchLayout());
     }
 
-    private VerticalLayout buildSearchLayout() {
-        VerticalLayout newVerticalLayout = UiBuilder.newVerticalLayout(null, null);
-        HorizontalLayout newHorizontalLayout = UiBuilder.newHorizontalLayout();
+    @Override
+    public void buildLayout(AbstractLayout layout) {
 
-        newVerticalLayout.addComponent(new Label(DataSource.LOREM_IPSUM_SHORT));
-        newVerticalLayout.addComponent(newHorizontalLayout);
+        /* YOUR LAYOUT BETWEEN TOPIC AND BUTTONS */
 
-        Tree tree = new Tree("Hardware Inventory");
-        // Set multiselect mode
-        tree.setMultiSelect(true);
-        tree.setImmediate(true);
-        tree.addListener(new ValueChangeListener() {
-            public void valueChange(ValueChangeEvent event) {
-                Tree t = (Tree) event.getProperty();
-                // enable if something is selected, returns a set
-            }
-        });
+        HorizontalSplitPanel splitPanel = new HorizontalSplitPanel();
+        splitPanel.setSplitPosition(50); // percent
 
-        populateTree(tree);
+        VerticalLayout vLeft = UiBuilder.newVerticalLayout();
+        VerticalLayout vRight = UiBuilder.newVerticalLayout(false, UiMarginEnum.LEFT);
 
-        newHorizontalLayout.addComponent(tree);
-        newHorizontalLayout.addComponent(new Label(TEKSTI));
+        splitPanel.addComponent(vLeft);
+        splitPanel.addComponent(vRight);
 
-        Button button = new Button("Jatka");
-        button.addListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                LOG.info("buttonClick() - luo uusi koulutus click...");
-                mainwindow.removeWindow(win);
-                
-                EditKoulutusView f = new EditKoulutusView();
-                // EditKoulutus f = new EditKoulutus();
-                rightMainLayout.removeAllComponents();
-                rightMainLayout.addComponent(f);
-            }
-        });
+        createKoulutusTreeView = new CreateKoulutusTreeView();
+        createKoulutusTreeView.setContainerDataSource(DataSource.treeTableData(new CheckBoxTableStyle()));
+        vLeft.addComponent(createKoulutusTreeView);
 
-        newHorizontalLayout.addComponent(button);
-
-        return newVerticalLayout;
-    }
-
-    private void populateTree(Tree tree) {
-        map.put("Kulttuuriala (3kpl)", DataSource.KULTTURIALA);
-        map.put("Tekniikan ja liikentee ala (16kpl)", DataSource.TEKNIIIKAN_JA_LIIKENTEEN_ALA);
-
-        Set<Map.Entry<String, String[]>> set = map.entrySet();
-        for (Map.Entry<String, String[]> e : set) {
-            tree.addContainerProperty(COLUMN_A, String.class, e.getKey());
-
-            Object rootItem = tree.addItem();
-            tree.getContainerProperty(rootItem, COLUMN_A).setValue(e.getKey());
-         
-        }
+        HorizontalLayout middleLayout = UiBuilder.newHorizontalLayout();
+        Panel newTextPanel = UiBuilder.newTextPanel(TEKSTI, null, UiBuilder.DEFAULT_REALTIVE_SIZE, middleLayout);
+        newTextPanel.setSizeFull();
+        vRight.addComponent(newTextPanel);
+        
+        layout.addComponent(splitPanel);
     }
 
     /**
@@ -124,5 +64,8 @@ public class CreateKoulutusView extends VerticalLayout
      */
     @Override
     public void windowClose(CloseEvent e) {
+        LOG.debug("In windowClose - close event");
+        removeDialogButtons();
+        createKoulutusTreeView = null;
     }
 }

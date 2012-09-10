@@ -2,7 +2,7 @@ package fi.vm.sade.vaadin.oph.layout;
 
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.HorizontalLayout;
-import fi.vm.sade.tarjonta.ui.enums.UiMarginEnum;
+import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.helper.ComponentUtil;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
 
@@ -33,8 +33,6 @@ public abstract class AbstractHorizontalLayout extends HorizontalLayout {
     }
 
     protected void init(boolean spacing, UiMarginEnum margin, String width, String height) {
-//        this.setWidth("100%");
-//        this.setHeight(-1, Sizeable.UNITS_PIXELS);
         this.setSpacing(spacing);
         ComponentUtil.handleWidth(this, width);
         ComponentUtil.handleHeight(this, height);
