@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Configurable;
  * 
  * @param <T> type of Koulutusmoduuli to edit with this form
  * 
- * @author Jukka Raanamo
  */
 @Configurable(preConstruction = true)
 public abstract class AbstractKoulutusmoduuliEditPanel<T extends KoulutusmoduuliDTO> extends CustomComponent {

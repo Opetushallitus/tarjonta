@@ -16,7 +16,7 @@
  */
 
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 
 import com.vaadin.ui.Table;
@@ -55,13 +55,13 @@ public class KoulutusModuulinToteutusTable extends CustomComponent {
         private KoulutusmoduuliToteutusEditView komotoEdit;
         
         //Should this be enum ?
-        private KoulutusmoduuliTila tila;
+        private KoulutusTila tila;
         
         //TODO: KomotoTable must listen to blackboard events which 
         //tells about changes in komoto state table removes or adds
         //komotos to it depending on which state it is interested on
         
-        protected KoulutusModuulinToteutusTable(KoulutusmoduuliTila tableTila, boolean clickable) {
+        protected KoulutusModuulinToteutusTable(KoulutusTila tableTila, boolean clickable) {
             this.clickable = clickable;
             tableGrid = new GridLayout(2, 3);
             tableGrid.setSizeFull();
@@ -167,7 +167,7 @@ public class KoulutusModuulinToteutusTable extends CustomComponent {
     /**
      * @return the tila
      */
-    public KoulutusmoduuliTila getTila() {
+    public KoulutusTila getTila() {
         return tila;
     }
     
@@ -181,7 +181,7 @@ public class KoulutusModuulinToteutusTable extends CustomComponent {
     /**
      * @param tila the tila to set
      */
-    public void setTila(KoulutusmoduuliTila tila) {
+    public void setTila(KoulutusTila tila) {
         this.tila = tila;
     }
 

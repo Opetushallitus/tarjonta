@@ -36,7 +36,7 @@ import fi.vm.sade.tarjonta.ui.hakuera.HakueraEditForm;
  */
 @SuppressWarnings("serial")
 public class TarjontaUiServiceImpl implements TarjontaUiService, Serializable {
-    
+
     private static final Logger log = LoggerFactory.getLogger(TarjontaUiServiceImpl.class);
 
     // this and serializable can be removed is this class is annotated as service but this currenly 
@@ -45,7 +45,7 @@ public class TarjontaUiServiceImpl implements TarjontaUiService, Serializable {
 
     @Autowired
     private KoulutusmoduuliAdminService adminService;
-    
+
     @Autowired
     private HakueraService hakueraService;
 
@@ -65,15 +65,10 @@ public class TarjontaUiServiceImpl implements TarjontaUiService, Serializable {
     }
 
     @Override
-    public List<KoulutusmoduuliSummaryDTO> getParentModuulis(String koulutusmoduuliOID) {
-        return adminService.getParentModuulis(koulutusmoduuliOID);
-    }
-
-    @Override
     public HakueraDTO createHakuera(HakueraDTO hakuera) {
         return hakueraService.createHakuera(hakuera);
     }
-    
+
     @Override
     public HakueraDTO updateHakuera(HakueraDTO hakuera) {
         return hakueraService.updateHakuera(hakuera);

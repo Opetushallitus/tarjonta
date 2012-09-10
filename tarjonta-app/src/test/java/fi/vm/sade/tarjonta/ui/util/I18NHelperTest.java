@@ -20,7 +20,6 @@ import org.junit.Test;
 
 /**
  *
- * @author Jukka Raanamo
  */
 public class I18NHelperTest {
     

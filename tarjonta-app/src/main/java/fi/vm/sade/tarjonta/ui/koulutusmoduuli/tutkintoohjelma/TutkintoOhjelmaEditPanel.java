@@ -30,7 +30,7 @@ import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.AbstractKoulutusmoduuliEditPanel;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.AbstractKoulutusmoduuliFormModel;
@@ -338,12 +338,14 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
 
     private void populateKoulutusmoduuliParents(String koulutusmoduuliOid) {
 
-        parentsTable.removeAllItems();
-        List<KoulutusmoduuliSummaryDTO> parents = uiService.getParentModuulis(koulutusmoduuliOid);
-        for (KoulutusmoduuliSummaryDTO parent : parents) {
-            final String[] rowData = new String[] {parent.getNimi()};
-            parentsTable.addItem(rowData, parent);
-        }
+        // does not exist in current wireframes anymore
+        
+//        parentsTable.removeAllItems();
+//        List<KoulutusmoduuliSummaryDTO> parents = uiService.getParentModuulis(koulutusmoduuliOid);
+//        for (KoulutusmoduuliSummaryDTO parent : parents) {
+//            final String[] rowData = new String[] {parent.getNimi()};
+//            parentsTable.addItem(rowData, parent);
+//        }
 
     }
 
@@ -378,7 +380,7 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
             if (updated == null) {
                 return I18N.getMessage("TutkintoOhjelmaFormModel.organisaatioStatus.notSaved");
             } else {
-                if (KoulutusmoduuliTila.SUUNNITTELUSSA.name().equals(koulutusmoduuli.getTila())) {
+                if (KoulutusTila.SUUNNITTELUSSA.name().equals(koulutusmoduuli.getTila())) {
                     return I18N.getMessage("TutkintoOhjelmaFormModel.organisaatioStatus.savedLuonnos", updated);
                 } else {
                     return I18N.getMessage("TutkintoOhjelmaFormModel.organisaatioStatus.savedValmis", updated);

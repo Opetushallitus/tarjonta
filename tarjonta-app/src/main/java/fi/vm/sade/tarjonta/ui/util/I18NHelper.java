@@ -19,7 +19,6 @@ import fi.vm.sade.generic.common.I18N;
 
 /**
  *
- * @author Jukka Raanamo
  */
 public class I18NHelper {
 

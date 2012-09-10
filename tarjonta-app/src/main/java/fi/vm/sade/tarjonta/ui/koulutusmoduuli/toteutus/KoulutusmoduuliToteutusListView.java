@@ -21,7 +21,7 @@ package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusSearchDTO;
 import fi.vm.sade.tarjonta.ui.util.I18NHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,19 +68,19 @@ public class KoulutusmoduuliToteutusListView extends CustomComponent {
     private VerticalLayout createTables() {
         VerticalLayout tableHolder = new VerticalLayout();
 
-        setViimeisimmat(getKomotoTableFactory().createViimTableWithTila(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.VALMIS), viimeisimmatVisibleColumns, false));
+        setViimeisimmat(getKomotoTableFactory().createViimTableWithTila(new KoulutusmoduuliToteutusSearchDTO(KoulutusTila.VALMIS), viimeisimmatVisibleColumns, false));
 
         tableHolder.addComponent(getViimeisimmat());
 
-        suunnitteilla = getKomotoTableFactory().createSuunnitteillaOlevaTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.SUUNNITTELUSSA), visibleColumns, true);
+        suunnitteilla = getKomotoTableFactory().createSuunnitteillaOlevaTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusTila.SUUNNITTELUSSA), visibleColumns, true);
 
         tableHolder.addComponent(suunnitteilla);
 
-        setJulkaistava(getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.VALMIS), visibleColumns,getCaptionForString("julkaistavaKoulutustarjonta"), true));
+        setJulkaistava(getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusTila.VALMIS), visibleColumns,getCaptionForString("julkaistavaKoulutustarjonta"), true));
 
         tableHolder.addComponent(getJulkaistava());
 
-        julkaistu = getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusmoduuliTila.JULKAISTU), visibleColumns,getCaptionForString("julkaistuKoulutusTarjonta"), true);
+        julkaistu = getKomotoTableFactory().createCommonKomotoTable(new KoulutusmoduuliToteutusSearchDTO(KoulutusTila.JULKAISTU), visibleColumns,getCaptionForString("julkaistuKoulutusTarjonta"), true);
 
         tableHolder.addComponent(julkaistu);
         return tableHolder;

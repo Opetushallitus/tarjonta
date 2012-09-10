@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> type of KoulutusmoduuliDTO to wrap
  *
- * @author Jukka Raanamo
  */
 @SuppressWarnings("serial")
 public class AbstractKoulutusmoduuliFormModel<T extends KoulutusmoduuliDTO> implements Serializable {

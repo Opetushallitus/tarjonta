@@ -23,36 +23,31 @@ import java.util.List;
 
 /**
  *
- * @author Jukka Raanamo
+ *
  */
 @SuppressWarnings("serial")
 public interface TarjontaUiService {
-    
+
     /**
-     * 
+     *
      * @return
      */
     TutkintoOhjelmaDTO createTutkintoOhjelma(String organisaatioOID);
-    
-    
+
     /**
-     * 
+     *
      * @param koulutusmoduuli
      * @return
      */
     KoulutusmoduuliDTO save(KoulutusmoduuliDTO koulutusmoduuli);
-    
-    
+
     List<KoulutusmoduuliSummaryDTO> getChildModuulis(String koulutusmoduuliOID);
-    
-    
-    List<KoulutusmoduuliSummaryDTO> getParentModuulis(String koulutusmoduuliOID);
-    
+
     HakueraDTO createHakuera(HakueraDTO hakuera);
-    
+
     HakueraDTO updateHakuera(HakueraDTO hakuera);
-    
+
     HakueraDTO findHakueraByOid(String oidString);
-    
+
 }
 

@@ -24,7 +24,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Window.Notification;
 import fi.vm.sade.generic.ui.blackboard.BlackboardContext;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTila;
+import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.event.KoulutusmoduuliChangedEvent;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.tutkintoohjelma.TutkintoOhjelmaEditPanel;
@@ -218,12 +218,12 @@ public class KoulutusmoduuliEditView extends CustomComponent {
     }
 
     private void saveAsDraft() {
-        koulutusmoduuliDTO.setTila(KoulutusmoduuliTila.SUUNNITTELUSSA.name());
+        koulutusmoduuliDTO.setTila(KoulutusTila.SUUNNITTELUSSA.name());
         save();
     }
 
     private void saveAsComplete() {
-        koulutusmoduuliDTO.setTila(KoulutusmoduuliTila.VALMIS.name());
+        koulutusmoduuliDTO.setTila(KoulutusTila.VALMIS.name());
         save();
     }
 

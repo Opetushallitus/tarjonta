@@ -21,7 +21,6 @@ import java.util.Iterator;
 
 /**
  *
- * @author Jukka Raanamo
  */
 public class CollectionUtils {
     
