@@ -4,7 +4,6 @@
  */
 package fi.vm.sade.tarjonta.ui.model.view;
 
-import com.vaadin.ui.Accordion;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
@@ -33,12 +32,13 @@ public class EditKoulutusView extends VerticalLayout {
         setSizeUndefined();
         setWidth("100%");
         setMargin(false, false, false, true);
+        setSpacing(true);
 
-        addComponent(new Label("Olet luomassa ...."));
-
+        addComponent(new Label("Olet luomassa [tutkintoon johtavaa] koulutusta organisaatioon [informaatiotekniikan tiedekunta]"));
+        
         TabSheet tabs = new TabSheet();
         tabs.addTab(new EditKoulutusPerustiedotView(), "Koulutuksen perustiedot (status)");
-        tabs.addTab(new Label("NA"), "Koulutuksen lisätiedot (status)");
+        tabs.addTab(new EditKoulutusKuvailevattiedotView(), "Koulutuksen kuvailevat tiedot (status)");
 
         addComponent(tabs);
     }

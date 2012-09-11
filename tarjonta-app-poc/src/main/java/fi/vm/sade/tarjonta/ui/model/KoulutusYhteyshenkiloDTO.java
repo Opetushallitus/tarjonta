@@ -19,7 +19,9 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,8 +35,9 @@ public class KoulutusYhteyshenkiloDTO implements Serializable {
     private String _titteli;
     private String _email;
     private String _puhelin;
+
     // Koodisto: kieli
-    private List<String> _kielet = new ArrayList<String>();
+    private Set<String> _kielet = new HashSet<String> ();
 
     @Override
     public String toString() {
@@ -98,11 +101,11 @@ public class KoulutusYhteyshenkiloDTO implements Serializable {
         this._puhelin = puhelin;
     }
 
-    public List<String> getKielet() {
+    public Set<String> getKielet() {
         return _kielet;
     }
 
-    public void setKielet(List<String> kielet) {
+    public void setKielet(Set<String> kielet) {
         this._kielet = kielet;
     }
 }

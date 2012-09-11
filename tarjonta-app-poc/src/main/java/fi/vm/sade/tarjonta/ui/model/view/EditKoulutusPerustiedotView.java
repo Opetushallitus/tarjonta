@@ -8,6 +8,7 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.terminal.ExternalResource;
@@ -201,84 +202,95 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
             grid.newLine();
         }
 
-        if (false) {
+        if (true) {
             // TODO - dynamic addition with plus!
             // TODO - contack persons for given languages
             grid.addComponent(addLabel("Yhteyshenkilo", null));
 
-            HorizontalLayout hl = new HorizontalLayout();           
-            VerticalLayout vl = new VerticalLayout();    
-            
-            vl.addComponent(addTextField(mi, "yhteyshenkiloNimi", "Yhteyshenkilo.Nimi.prompt", null, null));
-            vl.addComponent(addTextField(mi, "yhteyshenkiloTitteli", "Yhteyshenkilo.Titteli.prompt", null, null));
-            vl.addComponent(addTextField(mi, "yhteyshenkiloEmail", "Yhteyshenkilo.Email.prompt", null, null));
-            vl.addComponent(addTextField(mi, "yhteyshenkiloPuhelin", "Yhteyshenkilo.Puhelin.prompt", null, null));
-            
+            HorizontalLayout hl = new HorizontalLayout();
+            hl.setSpacing(true);
+            VerticalLayout vl = new VerticalLayout();
+            vl.setSpacing(true);
+
+            mi.addItemProperty("yhteyshenkilo.nimi", new NestedMethodProperty(_dto, "yhteyshenkilo.nimi"));
+            mi.addItemProperty("yhteyshenkilo.titteli", new NestedMethodProperty(_dto, "yhteyshenkilo.titteli"));
+            mi.addItemProperty("yhteyshenkilo.email", new NestedMethodProperty(_dto, "yhteyshenkilo.email"));
+            mi.addItemProperty("yhteyshenkilo.puhelin", new NestedMethodProperty(_dto, "yhteyshenkilo.puhelin"));
+            mi.addItemProperty("yhteyshenkilo.kielet", new NestedMethodProperty(_dto, "yhteyshenkilo.kielet"));
+
+            vl.addComponent(addTextField(mi, "yhteyshenkilo.nimi", "Yhteyshenkilo.Nimi.prompt", null, null));
+            vl.addComponent(addTextField(mi, "yhteyshenkilo.titteli", "Yhteyshenkilo.Titteli.prompt", null, null));
+            vl.addComponent(addTextField(mi, "yhteyshenkilo.email", "Yhteyshenkilo.Email.prompt", null, null));
+            vl.addComponent(addTextField(mi, "yhteyshenkilo.puhelin", "Yhteyshenkilo.Puhelin.prompt", null, null));
+
             hl.addComponent(vl);
-            grid.addComponent(hl);
-            
+            hl.addComponent(addKoodistoTwinColSelect(_koodistoUriKieli, mi, "yhteyshenkilo.kielet", null));
+
             Button b = addButton("Yhteyshenkilo.LisaaUusi", "onAddNewYhteyshenkilo", null);
             b.setStyleName(Oph.BUTTON_PLUS);
             hl.addComponent(b);
 
+            grid.addComponent(hl);
+
             grid.newLine();
         }
 
-        if (false) {
+        {
+            // TODO multiple
             grid.addComponent(addLabel("LinkkiOpetussunnitelmaan", null));
             VerticalLayout vl = new VerticalLayout();
             vl.addComponent(addTextField(mi, "linkkiOpetussuunnitelma", "LinkkiOpetussunnitelmaan.prompt", null, null));
-            vl.addComponent(addCheckBox("LinkkiOpetussunnitelmaan.eriOpetusKielet", mi, "multipleLinkkiOpetussunnitelmaan",
-                    "doMultipleLinksForOpetussuunnitelma", null));
+            vl.addComponent(addCheckBox("LinkkiOpetussunnitelmaan.eriOpetusKielet", mi, null, "doMultipleLinksForOpetussuunnitelma", null));
             grid.addComponent(vl);
             grid.newLine();
         }
         
-        if (false) {
+        {
+            // TODO multiple
             grid.addComponent(addLabel("LinkkiOppilaitokseen", null));
             VerticalLayout vl = new VerticalLayout();
             vl.addComponent(addTextField(mi, "linkkiOppilaitokseen", "LinkkiOppilaitokseen.prompt", null, null));
-            vl.addComponent(addCheckBox("LinkkiOppilaitokseen.eriOpetusKielet", mi, "multipleLinkkiOppilaitos", "doMultipleLinksForOppilaitos", null));
+            vl.addComponent(addCheckBox("LinkkiOppilaitokseen.eriOpetusKielet", mi, null "doMultipleLinksForOppilaitos", null));
             grid.addComponent(vl);
             grid.newLine();
         }
         
-        if (false) {
+        {
+            // TODO multiple
             grid.addComponent(addLabel("LinkkiSOME", null));
             VerticalLayout vl = new VerticalLayout();
             vl.addComponent(addTextField(mi, "linkkiSOME", "LinkkiSOME.prompt", null, null));
-            vl.addComponent(addCheckBox("LinkkiSOME.eriOpetusKielet", mi, "multipleLinkkiSOME",
-                    "doMultipleLinksForSOME", null));
+            vl.addComponent(addCheckBox("LinkkiSOME.eriOpetusKielet", mi, null, "doMultipleLinksForSOME", null));
             grid.addComponent(vl);
             grid.newLine();
         }
         
-        if (false) {
+        {
+            // TODO multiple
             grid.addComponent(addLabel("LinkkiMultimedia", null));
             VerticalLayout vl = new VerticalLayout();
             vl.addComponent(addTextField(mi, "linkkiMultimedia", "LinkkiMultimedia.prompt", null, null));
-            vl.addComponent(addCheckBox("LinkkiMultimedia.eriOpetusKielet", mi, "multipleLinkkiMultimedia",
-                    "doMultipleLinksForMultimedia", null));
+            vl.addComponent(addCheckBox("LinkkiMultimedia.eriOpetusKielet", mi, null, "doMultipleLinksForMultimedia", null));
             grid.addComponent(vl);
             grid.newLine();
         }
 
-        if (false) {
+        {
+            // TODO multiple
             grid.addComponent(addCheckBox("KoulutusOnMaksullista", mi, "koulutusOnMaksullista", null, this));
             VerticalLayout vl = new VerticalLayout();
-            vl.addComponent(addTextField(mi, "linkkiKoulutusOnMaksullista", "KoulutusOnMaksullista.prompt", null, null));
-            vl.addComponent(addCheckBox("KoulutusOnMaksullista.eriOpetusKielet", mi, "multipleLinkkiKoulutusOnMaksullista",
-                    "doMultipleLinksForMaksullisuus", null));
+            vl.addComponent(addTextField(mi, "linkkiMaksullisuus", "KoulutusOnMaksullista.prompt", null, null));
+            vl.addComponent(addCheckBox("KoulutusOnMaksullista.eriOpetusKielet", mi, null, "doMultipleLinksForMaksullisuus", null));
             grid.addComponent(vl);
             grid.newLine();
         }
 
-        if (false) {
-            grid.addComponent(addCheckBox("StipendiMahdollisuus", mi, "stipendiMahdollisuus", null, this));
+        {
+            // TODO multiple
+            grid.addComponent(addCheckBox("StipendiMahdollisuus", mi, "koulutusStipendiMahdollisuus", null, this));
             VerticalLayout vl = new VerticalLayout();
             vl.addComponent(addTextField(mi, "linkkiStipendiMahdollisuus", "StipendiMahdollisuus.prompt", null, null));
-            vl.addComponent(addCheckBox("StipendiMahdollisuus.eriOpetusKielet", mi, "multipleLinkkiStipendiMahdollisuus",
-                    "doMultipleLinksForStipendi", null));
+            vl.addComponent(addCheckBox("StipendiMahdollisuus.eriOpetusKielet", mi, null, "doMultipleLinksForStipendi", null));
             grid.addComponent(vl);
             grid.newLine();
         }

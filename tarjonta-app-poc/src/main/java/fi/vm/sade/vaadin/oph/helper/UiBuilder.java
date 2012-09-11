@@ -1,5 +1,6 @@
 package fi.vm.sade.vaadin.oph.helper;
 
+import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Button;
@@ -15,8 +16,11 @@ import fi.vm.sade.vaadin.Oph;
 import java.text.MessageFormat;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Link;
+import com.vaadin.ui.RichTextArea;
+import com.vaadin.ui.TabSheet;
 import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.ui.model.view.EditKoulutusKuvailevattiedotView;
 import fi.vm.sade.vaadin.oph.dto.LabelDTO;
 import fi.vm.sade.vaadin.oph.enums.LabelStyle;
 
@@ -292,5 +296,45 @@ public class UiBuilder extends ComponentUtil {
     private static HorizontalLayout newHorizontalLayout(boolean spacing, final Boolean[] margin) {
         //height is set to use relative size.
         return newHorizontalLayout(spacing, margin, null, DEFAULT_REALTIVE_SIZE);
+    }
+
+    /**
+     * Create new tabsheet.
+     *
+     * @param layout
+     * @return
+     */
+    public static TabSheet newTabSheet(AbstractOrderedLayout layout) {
+        TabSheet tabs = new TabSheet();
+
+        if (layout != null) {
+            layout.addComponent(tabs);
+        }
+
+        return tabs;
+    }
+
+    /**
+     * Create RichTextArea.
+     *
+     * @param psi
+     * @param expression
+     * @param layout
+     * @return
+     */
+    public static RichTextArea newRichTextArea(PropertysetItem psi, String expression, AbstractOrderedLayout layout) {
+
+        RichTextArea rta = new RichTextArea();
+
+        // Bind to model
+        if (psi != null && expression != null) {
+            rta.setPropertyDataSource(psi.getItemProperty(expression));
+        }
+
+        if (layout != null) {
+            layout.addComponent(rta);
+        }
+
+        return rta;
     }
 }
