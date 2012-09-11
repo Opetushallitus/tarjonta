@@ -250,7 +250,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
             grid.addComponent(addLabel("LinkkiOppilaitokseen", null));
             VerticalLayout vl = new VerticalLayout();
             vl.addComponent(addTextField(mi, "linkkiOppilaitokseen", "LinkkiOppilaitokseen.prompt", null, null));
-            vl.addComponent(addCheckBox("LinkkiOppilaitokseen.eriOpetusKielet", mi, null "doMultipleLinksForOppilaitos", null));
+            vl.addComponent(addCheckBox("LinkkiOppilaitokseen.eriOpetusKielet", mi, null, "doMultipleLinksForOppilaitos", null));
             grid.addComponent(vl);
             grid.newLine();
         }
