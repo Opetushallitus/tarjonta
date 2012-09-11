@@ -4,6 +4,9 @@
  */
 package fi.vm.sade.tarjonta.ui.model.view;
 
+import com.vaadin.ui.Accordion;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
 import org.slf4j.Logger;
@@ -26,8 +29,18 @@ public class EditKoulutusView extends VerticalLayout {
     public EditKoulutusView() {
         super();
         LOG.info("EditKoulutusView()");
-        
-        addComponent(new EditKoulutusPerustiedotView());
+
+        setSizeUndefined();
+        setWidth("100%");
+        setMargin(false, false, false, true);
+
+        addComponent(new Label("Olet luomassa ...."));
+
+        TabSheet tabs = new TabSheet();
+        tabs.addTab(new EditKoulutusPerustiedotView(), "Koulutuksen perustiedot (status)");
+        tabs.addTab(new Label("NA"), "Koulutuksen lisätiedot (status)");
+
+        addComponent(tabs);
     }
     
 }

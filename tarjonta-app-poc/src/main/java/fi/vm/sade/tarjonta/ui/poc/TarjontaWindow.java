@@ -56,8 +56,9 @@ public class TarjontaWindow extends Window {
                 public void buttonClick(Button.ClickEvent event) {
                     LOG.info("buttonClick() - luo uusi koulutus click...");
                     EditKoulutusView f = new EditKoulutusView();
-                    getWindow().removeAllComponents();
-                    getWindow().addComponent(f);
+                    main.getMainRightLayout().removeAllComponents();
+                    main.getMainRightLayout().addComponent(f);
+
                     getWindow().removeWindow(mainModalWindow);
                     mainModalWindow.removeDialogButtons();
                     mainModalWindow = null;
