@@ -130,13 +130,12 @@ public class TarjontaWindow extends Window {
         main.getMainRightLayout().setExpandRatio(mainSearch, 0.03f);
         main.getMainRightLayout().setExpandRatio(mainResult, 0.97f);
 
+        layout.addComponent(main);
+
         if (_presenter != null && _presenter.showIdentifier()) {
-            main.getMainRightLayout().addComponent(new Label("ID=" + _presenter.getIdentifier()));
+            layout.addComponent(new Label("ID=" + _presenter.getIdentifier()));
         }
 
-        layout.addComponent(main);
         layout.setExpandRatio(main, 1f);
-
-
     }
 }
