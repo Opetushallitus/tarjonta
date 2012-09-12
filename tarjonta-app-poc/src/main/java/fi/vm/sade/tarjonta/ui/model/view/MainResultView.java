@@ -105,7 +105,7 @@ public class MainResultView extends AbstractHorizontalLayout {
 
                 final EditSiirraUudelleKaudelleView modal = new EditSiirraUudelleKaudelleView(i18n.getMessage("KopioUudelleKaudelle"));
                 getWindow().addWindow(modal);
-                
+
                 modal.addDialogButton("Peruuta", new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
@@ -120,7 +120,6 @@ public class MainResultView extends AbstractHorizontalLayout {
                         getWindow().removeWindow(modal);
                         modal.removeDialogButtons();
 
-                        // TODO EditSiirraUudelleKaudelleView
                         _presenter.showMainKoulutusView();
                     }
                 });
