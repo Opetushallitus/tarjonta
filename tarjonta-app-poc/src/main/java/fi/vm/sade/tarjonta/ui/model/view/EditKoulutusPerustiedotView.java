@@ -546,7 +546,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     public void doCancel() {
         LOG.info("doCancel()");
         // TODO Check for changes, ask "really?" if any
-        _presenter.showMainSearchView();
+        _presenter.showMainKoulutusView();
     }
 
     public void doSaveIncomplete() {

@@ -46,7 +46,7 @@ public class DataSource {
 
         HierarchicalContainer hc = new HierarchicalContainer();
         Object format =  rowStyle.format("");
-        
+
         for (Map.Entry<String, String[]> e : set) {
 
             hc.addContainerProperty(COLUMN_A, format.getClass(), rowStyle.format(e.getKey()));
@@ -58,6 +58,7 @@ public class DataSource {
                 Object subItem = hc.addItem();
                 hc.setParent(subItem, rootItem);
                 hc.getContainerProperty(subItem, COLUMN_A).setValue(rowStyle.format(strText));
+                hc.setChildrenAllowed(subItem, false);
             }
         }
 

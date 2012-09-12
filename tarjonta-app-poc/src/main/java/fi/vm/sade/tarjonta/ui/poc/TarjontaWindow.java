@@ -68,7 +68,7 @@ public class TarjontaWindow extends Window {
 
         layout.setExpandRatio(mainSplitPanel, 1f);
 
-        _presenter.showMainSearchView();
+        _presenter.showMainKoulutusView();
     }
 
     public MainSplitPanelView getMainSplitPanel() {

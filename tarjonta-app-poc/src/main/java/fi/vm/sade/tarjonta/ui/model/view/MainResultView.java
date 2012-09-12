@@ -103,9 +103,9 @@ public class MainResultView extends AbstractHorizontalLayout {
             @Override
             public void buttonClick(Button.ClickEvent event) {
 
-                final CreateKoulutusView modal = new CreateKoulutusView(i18n.getMessage("LuoUusiKoulutus"));
+                final EditSiirraUudelleKaudelleView modal = new EditSiirraUudelleKaudelleView(i18n.getMessage("KopioUudelleKaudelle"));
                 getWindow().addWindow(modal);
-
+                
                 modal.addDialogButton("Peruuta", new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
@@ -117,15 +117,11 @@ public class MainResultView extends AbstractHorizontalLayout {
                 modal.addDialogButton("Jatka", new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
-                        LOG.info("buttonClick() - luo uusi koulutus click...");
-                        _presenter.showEditKolutusView();
-
-                        //                        EditKoulutusView f = new EditKoulutusView();
-                        //                        mainSplitPanel.getMainRightLayout().removeAllComponents();
-                        //                        mainSplitPanel.getMainRightLayout().addComponent(f);
-
                         getWindow().removeWindow(modal);
                         modal.removeDialogButtons();
+
+                        // TODO EditSiirraUudelleKaudelleView
+                        _presenter.showMainKoulutusView();
                     }
                 });
 

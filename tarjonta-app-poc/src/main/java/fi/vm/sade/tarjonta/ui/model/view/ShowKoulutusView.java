@@ -47,7 +47,7 @@ public class ShowKoulutusView extends VerticalLayout {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                _presenter.showMainSearchView();
+                _presenter.showMainKoulutusView();
             }
         });
     }

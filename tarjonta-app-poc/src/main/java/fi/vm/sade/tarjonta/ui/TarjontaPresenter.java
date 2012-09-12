@@ -80,8 +80,8 @@ public class TarjontaPresenter {
     /**
      * Switch to main search view.
      */
-    public void showMainSearchView() {
-        LOG.info("showMainSearchView()");
+    public void showMainKoulutusView() {
+        LOG.info("showMainKoulutusView()");
         _tarjontaWindow.getMainSplitPanel().getMainRightLayout().removeAllComponents();
         _tarjontaWindow.getMainSplitPanel().getMainRightLayout().addComponent(new MainKoulutusView());
     }
