@@ -34,8 +34,10 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class TarjontaWindow extends Window {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaWindow.class);
-    @Autowired
+
+    @Autowired(required=true)
     private TarjontaPresenter _presenter;
+
     private MainSplitPanelView main;
     private MainSearchView mainSearch;
     private MainResultView mainResult;

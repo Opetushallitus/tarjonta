@@ -12,11 +12,9 @@ import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
  */
 public abstract class AbstractHorizontalLayout extends HorizontalLayout {
 
-    protected I18NHelper i18n = new I18NHelper(this);
-    
     public AbstractHorizontalLayout() {
         super();
-        
+
         init(false, UiMarginEnum.NONE, null, ComponentUtil.DEFAULT_REALTIVE_SIZE);
     }
 

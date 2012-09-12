@@ -17,6 +17,7 @@ import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
 import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.layout.AbstractHorizontalLayout;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
@@ -40,6 +41,8 @@ public class MainResultView extends AbstractHorizontalLayout {
     private Button btnPoista;
     private Button btnLuoUusiKoulutus;
     private ComboBox cbJarjestys;
+
+    private I18NHelper i18n = new I18NHelper(this);
 
     public MainResultView() {
         super(true, UiMarginEnum.BOTTOM_LEFT);
@@ -118,9 +121,9 @@ public class MainResultView extends AbstractHorizontalLayout {
         layout.setExpandRatio(wrapper, 0.07f);
         layout.setExpandRatio(categoryTree, 0.80f);
         layout.setMargin(true);
-        
-        
-        
+
+
+
         return layout;
     }
 
