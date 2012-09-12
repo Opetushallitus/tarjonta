@@ -26,7 +26,7 @@ public class EditSiirraUudelleKaudelleView extends AbstractDialogWindow<Vertical
     }
 
     @Override
-    public void buildLayout(AbstractLayout layout) {
+    public void buildLayout(VerticalLayout layout) {
         UiBuilder.newComboBox("Aseta kaikille sama koulutusten alkamiskausi*", new String[]{"Syksy 2012", "Talvi 2013"}, layout);
         DateField newDate = UiBuilder.newDate();
         newDate.setCaption("Aseta kaikille sama koulutusten alkamispäivä");

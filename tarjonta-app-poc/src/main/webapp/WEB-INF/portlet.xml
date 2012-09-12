@@ -26,7 +26,7 @@
 
         <portlet-info>
             <title>TarjontaPocPortletApplication</title>
-            <short-title>TarjontaPortletPocApplication</short-title>
+            <short-title>TarjontaPocPortletApplication</short-title>
             <keywords></keywords>
         </portlet-info>
     </portlet>

@@ -1,6 +1,5 @@
 package fi.vm.sade.vaadin.oph.layout;
 
-import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -8,7 +7,6 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
-import fi.vm.sade.vaadin.oph.demodata.DataSource;
 import fi.vm.sade.vaadin.oph.enums.LabelStyle;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import java.util.ArrayList;
@@ -29,9 +27,12 @@ public abstract class AbstractDialogWindow<T extends AbstractLayout> extends Abs
     private Label topic;
 
     public AbstractDialogWindow(String winLabel, String topic, String message) {
-        super(winLabel, false); //do not build layout in root class
+        super(winLabel, false); //false, do not build layout in parent abstract class
         setDialogMessages(topic, message);
-        buildLayout(getLayout());
+        buildLayout((T) getLayout());
+        getLayout().setMargin(true);
+        setHeight("65%");
+        setWidth("65%");
     }
 
     public void buildDialogButtons() {

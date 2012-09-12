@@ -34,7 +34,7 @@ public class MainSearchView extends AbstractHorizontalLayout {
         tfSearch.setImmediate(false);
         this.addComponent(tfSearch);
         
-        Button btnHaku = UiBuilder.newButton("Search", this);
+        Button btnHaku = UiBuilder.newButton("Hae", this);
         btnHaku.addStyleName(Oph.BUTTON_SMALL);
 
         //TODO: Koulutuksen alkamiskausi tekstille oma style!!!!

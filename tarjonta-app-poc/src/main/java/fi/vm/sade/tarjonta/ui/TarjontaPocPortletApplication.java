@@ -17,8 +17,16 @@
 package fi.vm.sade.tarjonta.ui;
 
 import com.github.wolfie.blackboard.Blackboard;
+import com.vaadin.Application;
+import com.vaadin.terminal.Sizeable;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
 import fi.vm.sade.tarjonta.ui.poc.TarjontaWindow;
+import fi.vm.sade.vaadin.Oph;
+import fi.vm.sade.vaadin.oph.helper.ComponentUtil;
+import java.util.Locale;
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
@@ -28,11 +36,29 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable(preConstruction = false)
 public class TarjontaPocPortletApplication extends AbstractSadePortletApplication {
 
+    private TarjontaWindow win;
+
     @Override
     public void init() {
         log.info("init() - TarjontaPocPortletApplication");
         super.init();
-        createMainWindow();
+
+        win = new TarjontaWindow();
+        setMainWindow(win);
+        win.getContent().setHeight(650, Sizeable.UNITS_PIXELS);
+        //setTheme("tarjonta");
+        setTheme(Oph.THEME_NAME);
+    }
+
+    @Override
+    public void transactionStart(Application application, Object transactionData) {
+        super.transactionStart(application, transactionData);
+    }
+
+    @Override
+    public void transactionEnd(Application application, Object transactionData) {
+        super.transactionEnd(application, transactionData);
+
     }
 
     @Override
@@ -41,10 +67,26 @@ public class TarjontaPocPortletApplication extends AbstractSadePortletApplicatio
         blackboard.enableLogging();
     }
 
-    private void createMainWindow() {
-        TarjontaWindow win = new TarjontaWindow();
-        setMainWindow(win);
+    @Override
+    public void onRequestStart(PortletRequest portletRequest, PortletResponse portletResponse) {
+        log.info("In onRequestStart");
+        super.onRequestStart(portletRequest, portletResponse);
+    }
 
-        setTheme("tarjonta");
+    @Override
+    public void onRequestEnd(PortletRequest portletRequest, PortletResponse portletResponse) {
+        log.info("In onRequestEnd");
+        super.onRequestEnd(portletRequest, portletResponse);
+    }
+
+    protected String getParameter(Object req, String name) {
+        PortletRequest request = (PortletRequest) req;
+        return request.getParameter(name);
+    }
+
+    protected String requestInfo(Object req) {
+        PortletRequest request = (PortletRequest) req;
+        return " langParam: " + request.getPublicParameterMap().get("lang") + ", url: ***"
+                + ", i18n.locale: " + I18N.getLocale() + ", default locale: " + Locale.getDefault();
     }
 }

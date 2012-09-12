@@ -14,7 +14,7 @@ import fi.vm.sade.vaadin.oph.helper.UiBuilder;
  */
 public abstract class AbstractWindow<T extends AbstractLayout> extends Window implements Window.CloseListener {
 
-    private AbstractLayout windowLayout;
+    private T windowLayout;
 
     public AbstractWindow(String label) {
         super(label);
@@ -43,24 +43,24 @@ public abstract class AbstractWindow<T extends AbstractLayout> extends Window im
         setModal(true);
 
         if (layout == null) {
-            windowLayout = UiBuilder.newVerticalLayout(true, UiMarginEnum.NONE);
+            windowLayout = (T) UiBuilder.newVerticalLayout(true, UiMarginEnum.NONE);
         } else {
             windowLayout = (T) layout;
         }
 
         windowLayout.setSizeFull();
-        this.addComponent(windowLayout);
+        this.setContent(windowLayout);
 
         if (doLayout) {
             buildOrder(windowLayout);
         }
     }
 
-    protected void buildOrder(AbstractLayout layout) {
+    protected void buildOrder(T layout) {
         buildLayout(layout);
     }
 
-    public abstract void buildLayout(AbstractLayout layout);
+    public abstract void buildLayout(T layout);
 
     @Override
     public void windowClose(CloseEvent e) {

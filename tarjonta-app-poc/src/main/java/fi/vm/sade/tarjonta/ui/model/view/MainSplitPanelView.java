@@ -19,17 +19,18 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainSplitPanelView.class);
     private static final int DEFAULT_SPLIT_PCT = 1;
-    @Autowired(required=true)
+    @Autowired(required = true)
     private TarjontaPresenter _presenter;
     private Link breadCrumb;
     private HorizontalLayout mainLeftLayout;
     private VerticalLayout mainRightLayout;
-    
+
     /**
      * The constructor should first build the main layout, set the composition
      * root and then do any custom initialization.
      */
     public MainSplitPanelView() {
+        LOG.info("In MainSplitPanelView");
         buildMainLayout();
 
     }
@@ -48,13 +49,12 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
         //LEFT LAYOUT IN SPLIT PANEL 
         UiBuilder.newLabel("Organisaation valinta tähän", mainLeftLayout);
 
-        if (_presenter.showIdentifier()) {
-            getMainRightLayout().addComponent(new Label("ID=" + _presenter.getIdentifier()));
-        }
+
     }
 
     private void buildBreadCrumb(VerticalLayout vlayout) {
-        HorizontalLayout breadCrumblayout = UiBuilder.newHorizontalLayout(true, UiMarginEnum.TOP_LEFT);
+        HorizontalLayout breadCrumblayout = UiBuilder.newHorizontalLayout(true, UiMarginEnum.TOP_LEFT_BOTTOM);
+
         breadCrumb = UiBuilder.newLink("Rantalohjan koulutuskuntayhtymä Rantalohjan ammattiopisto", breadCrumblayout);
 
         vlayout.addComponent(breadCrumblayout);

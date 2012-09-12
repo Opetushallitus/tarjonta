@@ -1,9 +1,11 @@
 package fi.vm.sade.tarjonta.ui.poc;
 
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
@@ -13,6 +15,7 @@ import fi.vm.sade.tarjonta.ui.model.view.EditSiirraUudelleKaudelleView;
 import fi.vm.sade.tarjonta.ui.model.view.MainResultView;
 import fi.vm.sade.tarjonta.ui.model.view.MainSearchView;
 import fi.vm.sade.tarjonta.ui.model.view.MainSplitPanelView;
+import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.oph.demodata.DataSource;
 import fi.vm.sade.vaadin.oph.demodata.row.MultiActionTableStyle;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
@@ -87,7 +90,6 @@ public class TarjontaWindow extends Window {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
                     LOG.info("buttonClick() - Siirra uudelle kaudelle click...");
-                    getWindow().removeWindow(mainModalWindow);
 
                     EditKoulutusView f = new EditKoulutusView();
                     getWindow().removeAllComponents();
@@ -107,17 +109,16 @@ public class TarjontaWindow extends Window {
         LOG.info("TarjontaWindow(): {}", _presenter);
 
         VerticalLayout layout = UiBuilder.newVerticalLayout();
+        layout.setSizeFull();
         setContent(layout); //window käyttää layouttia pohjana
+        layout.addStyleName(Oph.CONTAINER_MAIN);
 
         mainSearch = new MainSearchView();
-
         mainResult = new MainResultView();
 
         mainResult.setBtnListenerLuoUusiKoulutus(clLuoUusiKoulutusClickListener);
         mainResult.setBtnListenerMuokkaa(clSiirraUudelleKaudelleView);
         mainResult.setCategoryDataSource(DataSource.treeTableData(new MultiActionTableStyle()));
-
-
 
         main = new MainSplitPanelView();
         main.getMainRightLayout().addComponent(mainSearch);
@@ -125,6 +126,13 @@ public class TarjontaWindow extends Window {
         main.getMainRightLayout().setExpandRatio(mainSearch, 0.03f);
         main.getMainRightLayout().setExpandRatio(mainResult, 0.97f);
 
-        addComponent(main);
+        if (_presenter != null && _presenter.showIdentifier()) {
+            main.getMainRightLayout().addComponent(new Label("ID=" + _presenter.getIdentifier()));
+        }
+
+        layout.addComponent(main);
+        layout.setExpandRatio(main, 1f);
+
+
     }
 }

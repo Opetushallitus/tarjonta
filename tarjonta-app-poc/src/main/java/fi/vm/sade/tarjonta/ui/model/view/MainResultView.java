@@ -1,21 +1,27 @@
 package fi.vm.sade.tarjonta.ui.model.view;
 
 import com.vaadin.data.Container;
+import com.vaadin.event.MouseEvents.ClickEvent;
+import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.layout.AbstractHorizontalLayout;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import fi.vm.sade.vaadin.Oph;
+
 
 /**
  *
@@ -24,7 +30,7 @@ import fi.vm.sade.vaadin.Oph;
 public class MainResultView extends AbstractHorizontalLayout {
 
     private TabSheet searchResultTab;
-    private Panel searchResultPanel;
+    private VerticalLayout searchResul;
     private Panel emptyPanel2;
     private Panel emptyPanel1;
     private VerticalLayout searchVerticalResultLayout;
@@ -37,7 +43,7 @@ public class MainResultView extends AbstractHorizontalLayout {
 
     public MainResultView() {
         super(true, UiMarginEnum.BOTTOM_LEFT);
-       setSizeFull();
+        setSizeFull();
         buildLayout();
     }
 
@@ -46,17 +52,16 @@ public class MainResultView extends AbstractHorizontalLayout {
         searchResultTab.setImmediate(true);
         searchResultTab.setSizeFull();
 
-        searchResultPanel = buildSearchResultPanel();
-        searchResultPanel.setHeight(UiBuilder.PCT100);
+        searchResul = buildSearchResult();
+        searchResul.setHeight(UiBuilder.PCT100);
 
-        searchResultTab.addTab(searchResultPanel, "Haut (2 kpl)", null);
+        searchResultTab.addTab(searchResul, "Haut (2 kpl)", null);
         searchResultTab.setWidth(UiBuilder.PCT100);
 
         VerticalLayout newVerticalLayout = UiBuilder.newVerticalLayout();
         emptyPanel1 = buildEmptyTabPanel();
         searchResultTab.addTab(newVerticalLayout, "Koulutukset (28 kpl)", null);
 
-        newVerticalLayout.setCaption("!!!!!!!!!!!!!!");
         Label label = new Label("LABEL");
         label.setSizeFull();
         newVerticalLayout.addComponent(label);
@@ -95,23 +100,28 @@ public class MainResultView extends AbstractHorizontalLayout {
         return layout;
     }
 
-    private Panel buildSearchResultPanel() {
+    private VerticalLayout buildSearchResult() {
         // common part: create layout
-        Panel newPanel = UiBuilder.newPanel();
-        newPanel.setWidth(UiBuilder.PCT100);
-        newPanel.addComponent(buildMiddleResultLayout());
+        VerticalLayout layout = UiBuilder.newVerticalLayout();
+        layout.setWidth(UiBuilder.PCT100);
+        HorizontalLayout buildMiddleResultLayout = buildMiddleResultLayout();
+        layout.addComponent(buildMiddleResultLayout);
 
         CssLayout wrapper = UiBuilder.newCssLayout(UiMarginEnum.BOTTOM);
         wrapper.addComponent(new CheckBox(i18n.getMessage("ValitseKaikki")));
-        newPanel.addComponent(wrapper);
-
-        newPanel.setScrollable(true);
+        layout.addComponent(wrapper);
 
         categoryTree = new CategoryTreeView();
-        newPanel.addComponent(categoryTree);
-        newPanel.setHeight(Sizeable.SIZE_UNDEFINED, 0);
+        layout.addComponent(categoryTree);
+        layout.setHeight(Sizeable.SIZE_UNDEFINED, 0);
 
-        return newPanel;
+        layout.setExpandRatio(wrapper, 0.07f);
+        layout.setExpandRatio(categoryTree, 0.80f);
+        layout.setMargin(true);
+        
+        
+        
+        return layout;
     }
 
     private Panel buildEmptyTabPanel() {
@@ -140,4 +150,5 @@ public class MainResultView extends AbstractHorizontalLayout {
     public void setCategoryDataSource(Container dataSource) {
         categoryTree.setContainerDataSource(dataSource);
     }
+
 }

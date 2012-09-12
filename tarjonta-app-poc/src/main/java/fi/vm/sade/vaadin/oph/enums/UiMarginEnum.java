@@ -16,6 +16,7 @@ public enum UiMarginEnum {
     BOTTOM_LEFT(new Boolean[]{false, false, true, true}),
     RIGHT_BOTTOM_LEFT(new Boolean[]{false, true, true, true}),
     TOP_RIGHT_BOTTOM(new Boolean[]{true, true, true, false}),
+     TOP_LEFT_BOTTOM(new Boolean[]{true, false, true, true}),
     TOP_LEFT_RIGHT(new Boolean[]{true, true, false, true}),
     ALL(new Boolean[]{true}),
     NONE(new Boolean[]{false});
