@@ -62,7 +62,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     private String _koodistoUriKieli;
     @Value("${koodisto-uris.kieli:http://teema}")
     private String _koodistoUriTeema;
-    @Value("${koodisto-uris.koulutus:http://koulutus}")
+   @Value("${koodisto-uris.koulutus:http://koulutus}")
     private String _koodistoUriKoulutus;
     @Value("${koodisto-uris.suunniteltuKesto:http://suunniteltuKesto}")
     private String _koodistoUriSuunniteltuKesto;
@@ -117,6 +117,9 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
             grid.newLine();
         }
 
+        grid.addComponent(addLabel("KoulutuksenTyyppi", null));
+        grid.addComponent(addKoodistoComboBox(_koodistoUriKoulutus, mi, "koulutusTyyppi", null, null));
+        grid.newLine();
 
         grid.addComponent(addLabel("Koulutusala", null));
         grid.addComponent(addLabel(mi, "koulutusala", null));
@@ -562,6 +565,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         LOG.info("doContinue()");
         // TODO check for changes, ask to save if any
         // TODO go to "overview page"?
+        _presenter.showShowKoulutusView();
     }
 
     public void doMultipleLinksForOpetussuunnitelma() {

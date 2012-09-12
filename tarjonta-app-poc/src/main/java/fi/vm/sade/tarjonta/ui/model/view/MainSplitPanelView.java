@@ -18,10 +18,12 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class MainSplitPanelView extends HorizontalSplitPanel {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainSplitPanelView.class);
+
     private static final int DEFAULT_SPLIT_PCT = 1;
+
     @Autowired(required = true)
     private TarjontaPresenter _presenter;
-    private Link breadCrumb;
+
     private HorizontalLayout mainLeftLayout;
     private VerticalLayout mainRightLayout;
 
@@ -43,23 +45,10 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
         this.addComponent(mainLeftLayout);
         this.addComponent(mainRightLayout);
 
-        //RIGHT LAYOUT IN SPLIT PANEL 
-        buildBreadCrumb(mainRightLayout);
-
-        //LEFT LAYOUT IN SPLIT PANEL 
+        //LEFT LAYOUT IN SPLIT PANEL
         UiBuilder.newLabel("Organisaation valinta tähän", mainLeftLayout);
-
-
     }
 
-    private void buildBreadCrumb(VerticalLayout vlayout) {
-        HorizontalLayout breadCrumblayout = UiBuilder.newHorizontalLayout(true, UiMarginEnum.TOP_LEFT_BOTTOM);
-
-        breadCrumb = UiBuilder.newLink("Rantalohjan koulutuskuntayhtymä Rantalohjan ammattiopisto", breadCrumblayout);
-
-        vlayout.addComponent(breadCrumblayout);
-        vlayout.setComponentAlignment(breadCrumblayout, Alignment.TOP_LEFT);
-    }
 
     /**
      * @return the mainRightLayout

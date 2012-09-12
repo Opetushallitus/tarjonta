@@ -57,8 +57,8 @@ public class MainSearchView extends AbstractHorizontalLayout {
 
         //TODO: Koulutuksen alkamiskausi tekstille oma style!!!!
 
-        cbKoulutuksenAlkamiskausi = UiBuilder.newComboBox(i18n.getMessage("KoulutuksenAlkamiskausi"), new String[]{"Syksy 2012"}, this);
         cbHakukausi = UiBuilder.newComboBox(i18n.getMessage("Hakukausi"), new String[]{"Kevätkausi"}, this);
+        cbKoulutuksenAlkamiskausi = UiBuilder.newComboBox(i18n.getMessage("KoulutuksenAlkamiskausi"), new String[]{"Syksy 2012"}, this);
         cbHakutapa = UiBuilder.newComboBox(i18n.getMessage("Hakutapa"), new String[]{"Kaikki"}, this);
         cbHakutyyppi = UiBuilder.newComboBox(i18n.getMessage("Hakutyyppi"), new String[]{"Kaikki"}, this);
         cbHaunKohdejoukko = UiBuilder.newComboBox(i18n.getMessage("Kohdejoukko"), new String[]{"Kaikki"}, this);

@@ -1,34 +1,37 @@
 package fi.vm.sade.tarjonta.ui.model.view;
 
 import com.vaadin.data.Container;
-import com.vaadin.event.MouseEvents.ClickEvent;
-import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
 import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.layout.AbstractHorizontalLayout;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import fi.vm.sade.vaadin.Oph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 
 /**
  *
  * @author jani
  */
+@Configurable(preConstruction=true)
 public class MainResultView extends AbstractHorizontalLayout {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MainResultView.class);
 
     private TabSheet searchResultTab;
     private VerticalLayout searchResul;
@@ -44,6 +47,9 @@ public class MainResultView extends AbstractHorizontalLayout {
 
     private I18NHelper i18n = new I18NHelper(this);
 
+    @Autowired(required=true)
+    private TarjontaPresenter _presenter;
+
     public MainResultView() {
         super(true, UiMarginEnum.BOTTOM_LEFT);
         setSizeFull();
@@ -55,27 +61,31 @@ public class MainResultView extends AbstractHorizontalLayout {
         searchResultTab.setImmediate(true);
         searchResultTab.setSizeFull();
 
-        searchResul = buildSearchResult();
-        searchResul.setHeight(UiBuilder.PCT100);
+        VerticalLayout hautTabLayout = UiBuilder.newVerticalLayout();
+        {
+            searchResultTab.addTab(hautTabLayout, "Haut (2 kpl)", null);
 
-        searchResultTab.addTab(searchResul, "Haut (2 kpl)", null);
-        searchResultTab.setWidth(UiBuilder.PCT100);
+            Label label = new Label("LABEL");
+            label.setSizeFull();
+            hautTabLayout.addComponent(label);
+            hautTabLayout.setComponentAlignment(label, Alignment.BOTTOM_RIGHT);
+        }
 
-        VerticalLayout newVerticalLayout = UiBuilder.newVerticalLayout();
-        emptyPanel1 = buildEmptyTabPanel();
-        searchResultTab.addTab(newVerticalLayout, "Koulutukset (28 kpl)", null);
+        {
+            searchResul = buildSearchResult();
+            searchResul.setHeight(UiBuilder.PCT100);
 
-        Label label = new Label("LABEL");
-        label.setSizeFull();
-        newVerticalLayout.addComponent(label);
-        newVerticalLayout.setComponentAlignment(label, Alignment.BOTTOM_RIGHT);
+            searchResultTab.addTab(searchResul, "Koulutukset (28 kpl)", null);
+            searchResultTab.setWidth(UiBuilder.PCT100);
+        }
 
-
-        emptyPanel2 = buildEmptyTabPanel();
-        searchResultTab.addTab(emptyPanel2, "Hakukohteet (35 kpl)", null);
+        {
+            emptyPanel2 = buildEmptyTabPanel();
+            searchResultTab.addTab(emptyPanel2, "Hakukohteet (35 kpl)", null);
+        }
 
         //SET SELECTED TAB!
-        searchResultTab.setSelectedTab(emptyPanel1);
+        searchResultTab.setSelectedTab(searchResul);
         this.addComponent(searchResultTab);
         setComponentAlignment(searchResultTab, Alignment.TOP_LEFT);
 
@@ -88,8 +98,77 @@ public class MainResultView extends AbstractHorizontalLayout {
         btnKopioiUudelleKaudelle = UiBuilder.newButton(i18n.getMessage("KopioUudelleKaudelle"), layout);
         btnKopioiUudelleKaudelle.addStyleName(Oph.BUTTON_SMALL);
 
+        btnKopioiUudelleKaudelle.addListener(new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+
+                final CreateKoulutusView modal = new CreateKoulutusView(i18n.getMessage("LuoUusiKoulutus"));
+                getWindow().addWindow(modal);
+
+                modal.addDialogButton("Peruuta", new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        getWindow().removeWindow(modal);
+                        modal.removeDialogButtons();
+                    }
+                });
+
+                modal.addDialogButton("Jatka", new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        LOG.info("buttonClick() - luo uusi koulutus click...");
+                        _presenter.showEditKolutusView();
+
+                        //                        EditKoulutusView f = new EditKoulutusView();
+                        //                        mainSplitPanel.getMainRightLayout().removeAllComponents();
+                        //                        mainSplitPanel.getMainRightLayout().addComponent(f);
+
+                        getWindow().removeWindow(modal);
+                        modal.removeDialogButtons();
+                    }
+                });
+
+                modal.buildDialogButtons();
+            }
+        });
+
+
         btnLuoUusiKoulutus = UiBuilder.newButton(i18n.getMessage("LuoUusiKoulutus"), layout);
         btnLuoUusiKoulutus.addStyleName(Oph.BUTTON_SMALL);
+
+        btnLuoUusiKoulutus.addListener(new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+
+                final CreateKoulutusView modal = new CreateKoulutusView(i18n.getMessage("LuoUusiKoulutus"));
+                getWindow().addWindow(modal);
+
+                modal.addDialogButton("Peruuta", new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        getWindow().removeWindow(modal);
+                        modal.removeDialogButtons();
+                    }
+                });
+
+                modal.addDialogButton("Jatka", new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        LOG.info("buttonClick() - luo uusi koulutus click...");
+
+                        getWindow().removeWindow(modal);
+                        modal.removeDialogButtons();
+
+                        _presenter.showEditKolutusView();
+                    }
+                });
+
+                modal.buildDialogButtons();
+            }
+        });
+
 
         btnPoista = UiBuilder.newButton(i18n.getMessage("Poista"), layout);
         btnPoista.addStyleName(Oph.BUTTON_SMALL);

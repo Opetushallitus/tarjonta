@@ -13,6 +13,7 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusPerustiedotDTO;
 import fi.vm.sade.tarjonta.ui.model.view.CreateKoulutusView;
 import fi.vm.sade.tarjonta.ui.model.view.EditKoulutusView;
 import fi.vm.sade.tarjonta.ui.model.view.EditSiirraUudelleKaudelleView;
+import fi.vm.sade.tarjonta.ui.model.view.MainKoulutusView;
 import fi.vm.sade.tarjonta.ui.model.view.MainResultView;
 import fi.vm.sade.tarjonta.ui.model.view.MainSearchView;
 import fi.vm.sade.tarjonta.ui.model.view.MainSplitPanelView;
@@ -38,104 +39,41 @@ public class TarjontaWindow extends Window {
     @Autowired(required=true)
     private TarjontaPresenter _presenter;
 
-    private MainSplitPanelView main;
+    private MainSplitPanelView mainSplitPanel;
     private MainSearchView mainSearch;
     private MainResultView mainResult;
     private AbstractDialogWindow mainModalWindow;
-    private ClickListener clLuoUusiKoulutusClickListener = new Button.ClickListener() {
-        @Override
-        public void buttonClick(ClickEvent event) {
-            mainModalWindow = new CreateKoulutusView("Luo uusi koulutus");
-            getWindow().addWindow(mainModalWindow);
 
-            mainModalWindow.addDialogButton("Peruuta", new Button.ClickListener() {
-                @Override
-                public void buttonClick(Button.ClickEvent event) {
-                    getWindow().removeWindow(mainModalWindow);
-                    mainModalWindow.removeDialogButtons();
-                    mainModalWindow = null;
-                }
-            });
-
-            mainModalWindow.addDialogButton("Jatka", new Button.ClickListener() {
-                @Override
-                public void buttonClick(Button.ClickEvent event) {
-                    LOG.info("buttonClick() - luo uusi koulutus click...");
-
-                    EditKoulutusView f = new EditKoulutusView();
-                    main.getMainRightLayout().removeAllComponents();
-                    main.getMainRightLayout().addComponent(f);
-
-                    getWindow().removeWindow(mainModalWindow);
-                    mainModalWindow.removeDialogButtons();
-                    mainModalWindow = null;
-                }
-            });
-
-            mainModalWindow.buildDialogButtons();
-        }
-    };
-    private ClickListener clSiirraUudelleKaudelleView = new Button.ClickListener() {
-        @Override
-        public void buttonClick(ClickEvent event) {
-            mainModalWindow = new EditSiirraUudelleKaudelleView("Kopioi uudelle kaudelle");
-            getWindow().addWindow(mainModalWindow);
-
-            mainModalWindow.addDialogButton("Peruuta", new Button.ClickListener() {
-                @Override
-                public void buttonClick(Button.ClickEvent event) {
-                    getWindow().removeWindow(mainModalWindow);
-                    mainModalWindow.removeDialogButtons();
-                    mainModalWindow = null;
-                }
-            });
-
-            mainModalWindow.addDialogButton("Jatka", new Button.ClickListener() {
-                @Override
-                public void buttonClick(Button.ClickEvent event) {
-                    LOG.info("buttonClick() - Siirra uudelle kaudelle click...");
-
-                    EditKoulutusView f = new EditKoulutusView();
-                    getWindow().removeAllComponents();
-                    getWindow().addComponent(f);
-                    getWindow().removeWindow(mainModalWindow);
-                    mainModalWindow.removeDialogButtons();
-                    mainModalWindow = null;
-                }
-            });
-
-            mainModalWindow.buildDialogButtons();
-        }
-    };
+    private MainKoulutusView mainKoulutusView;
 
     public TarjontaWindow() {
         super();
         LOG.info("TarjontaWindow(): {}", _presenter);
+
+        _presenter.setTarjontaWindow(this);
 
         VerticalLayout layout = UiBuilder.newVerticalLayout();
         layout.setSizeFull();
         setContent(layout); //window käyttää layouttia pohjana
         layout.addStyleName(Oph.CONTAINER_MAIN);
 
-        mainSearch = new MainSearchView();
-        mainResult = new MainResultView();
+        mainSplitPanel = new MainSplitPanelView();
+        mainSplitPanel.getMainRightLayout().addComponent(new Label("NOT INITIALIZED"));
 
-        mainResult.setBtnListenerLuoUusiKoulutus(clLuoUusiKoulutusClickListener);
-        mainResult.setBtnListenerMuokkaa(clSiirraUudelleKaudelleView);
-        mainResult.setCategoryDataSource(DataSource.treeTableData(new MultiActionTableStyle()));
-
-        main = new MainSplitPanelView();
-        main.getMainRightLayout().addComponent(mainSearch);
-        main.getMainRightLayout().addComponent(mainResult);
-        main.getMainRightLayout().setExpandRatio(mainSearch, 0.03f);
-        main.getMainRightLayout().setExpandRatio(mainResult, 0.97f);
-
-        layout.addComponent(main);
+        layout.addComponent(mainSplitPanel);
 
         if (_presenter != null && _presenter.showIdentifier()) {
             layout.addComponent(new Label("ID=" + _presenter.getIdentifier()));
         }
 
-        layout.setExpandRatio(main, 1f);
+        layout.setExpandRatio(mainSplitPanel, 1f);
+
+        _presenter.showMainSearchView();
     }
+
+    public MainSplitPanelView getMainSplitPanel() {
+        return mainSplitPanel;
+    }
+
+
 }

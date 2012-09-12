@@ -32,6 +32,7 @@ public class KoulutusPerustiedotDTO implements Serializable {
     // Koodisto: koulutus
     private String _koulutus;
     // TODO Mistä nämä tulevat?
+    private String _koulutusTyyppi;
     private String _koulutusala = "Filosofia";
     private String _tutkinto = "Maisteri";
     private String _tutkintonimike = "Filosofian maisteri";
@@ -114,6 +115,14 @@ public class KoulutusPerustiedotDTO implements Serializable {
 
     public void setKoulutus(String koulutus) {
         this._koulutus = koulutus;
+    }
+
+    public String getKoulutusTyyppi() {
+        return _koulutusTyyppi;
+    }
+
+    public void setKoulutusTyyppi(String _koulutusTyyppi) {
+        this._koulutusTyyppi = _koulutusTyyppi;
     }
 
     public String getKoulutusala() {
