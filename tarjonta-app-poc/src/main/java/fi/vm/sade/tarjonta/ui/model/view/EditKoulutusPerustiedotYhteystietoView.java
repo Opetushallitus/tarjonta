@@ -16,19 +16,15 @@
 package fi.vm.sade.tarjonta.ui.model.view;
 
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.Form;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloDTO;
-import fi.vm.sade.tarjonta.ui.poc.EditKoulutus;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.addon.customfield.CustomField;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
-import org.vaadin.addon.formbinder.ViewBoundForm;
 
 /**
  *
