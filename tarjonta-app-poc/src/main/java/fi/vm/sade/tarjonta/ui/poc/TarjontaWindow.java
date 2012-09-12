@@ -9,6 +9,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.model.KoulutusPerustiedotDTO;
 import fi.vm.sade.tarjonta.ui.model.view.CreateKoulutusView;
 import fi.vm.sade.tarjonta.ui.model.view.EditKoulutusView;
 import fi.vm.sade.tarjonta.ui.model.view.EditSiirraUudelleKaudelleView;
@@ -58,6 +59,7 @@ public class TarjontaWindow extends Window {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
                     LOG.info("buttonClick() - luo uusi koulutus click...");
+
                     EditKoulutusView f = new EditKoulutusView();
                     main.getMainRightLayout().removeAllComponents();
                     main.getMainRightLayout().addComponent(f);

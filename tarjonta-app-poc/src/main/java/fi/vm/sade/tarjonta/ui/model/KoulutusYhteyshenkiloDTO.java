@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -16,14 +16,9 @@
 package fi.vm.sade.tarjonta.ui.model;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -37,7 +32,7 @@ public class KoulutusYhteyshenkiloDTO implements Serializable {
     private String _puhelin;
 
     // Koodisto: kieli
-    private Set<String> _kielet = new HashSet<String> ();
+    private Set<String> _kielet = new HashSet<String>();
 
     @Override
     public String toString() {
@@ -56,8 +51,14 @@ public class KoulutusYhteyshenkiloDTO implements Serializable {
 
             sb.append(field.getName());
             sb.append("=");
+
             try {
-                sb.append("" + field.get(this));
+                Object v = field.get(this);
+                if (v == null) {
+                    sb.append("NULL");
+                } else {
+                    sb.append(v.toString());
+                }
             } catch (Throwable ex) {
                 sb.append("FAILED TO GET VALUE");
             }

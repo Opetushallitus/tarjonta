@@ -4,20 +4,58 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import java.lang.reflect.Field;
+
 /**
  *
  * @author mlyly
  */
 public class KoulutusSearchSpesificationDTO {
-    
+
     private String searchSpec;
-    
+
     // TODO mitä nämä on, eli mitä formaattia - omia DTOta?
     private String hakukausi;
     private String koulutuksenAlkamiskausi;
     private String hakutapa;
     private String hakutyyppi;
     private String hanKohdejoukko;
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append("[");
+
+        Field[] fields = this.getClass().getDeclaredFields();
+
+        boolean isFirstField = true;
+
+        for (Field field : fields) {
+            if (!isFirstField) {
+                sb.append(", ");
+            }
+
+            sb.append(field.getName());
+            sb.append("=");
+
+            try {
+                Object v = field.get(this);
+                if (v == null) {
+                    sb.append("NULL");
+                } else {
+                    sb.append(v.toString());
+                }
+            } catch (Throwable ex) {
+                sb.append("FAILED TO GET VALUE");
+            }
+
+            isFirstField = false;
+        }
+
+        sb.append("]");
+        return sb.toString();
+    }
 
     public String getSearchSpec() {
         return searchSpec;
@@ -66,5 +104,4 @@ public class KoulutusSearchSpesificationDTO {
     public void setHanKohdejoukko(String hanKohdejoukko) {
         this.hanKohdejoukko = hanKohdejoukko;
     }
-    
 }

@@ -54,16 +54,12 @@ public class TarjontaPresenter {
     public void selectKoulutusAll() {
         LOG.info("selectKoulutusAll()");
     }
-    
-    public void saveKoulutusPerustiedot() {
-        LOG.info("saveKoulutusPerustiedot()");
-        // Get from model, validate any extra stuff needed and call service save
-    }
-    
-    public void koulutuksenPerustiedotAddNewContactPerson() {
-        LOG.info("koulutuksenPerustiedotAddNewContactPerson()");
-    }
 
+    public void saveKoulutusPerustiedot(boolean isComplete) {
+        LOG.info("saveKoulutusPerustiedot(): complete: {}", isComplete);
+        // TODO Get from model, validate any extra stuff needed and call service save
+    }
+    
     /*
      * APP Identifier.
      */
@@ -73,6 +69,14 @@ public class TarjontaPresenter {
     
     public String getIdentifier() {
         return _model.getIdentifier();
+    }
+
+
+    /**
+     * Switch to main search view.
+     */
+    public void showMainSearchView() {
+        LOG.info("showMainSearchView()");
     }
     
 }

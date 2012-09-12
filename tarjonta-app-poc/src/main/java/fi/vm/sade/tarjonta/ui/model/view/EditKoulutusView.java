@@ -9,6 +9,8 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
+import fi.vm.sade.vaadin.oph.enums.LabelStyle;
+import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +31,12 @@ public class EditKoulutusView extends Panel {
         super();
         LOG.info("EditKoulutusView()");
 
-        addComponent(new Label("Olet luomassa [tutkintoon johtavaa] koulutusta organisaatioon [informaatiotekniikan tiedekunta]"));
         setSizeFull();
         setScrollable(true);
+
+        String message = "Olet luomassa {0} koulutusta organisaatioon {1}";
+
+        addComponent(UiBuilder.newLabel(message, null, LabelStyle.H2, "tutkintoon johtavaa", "Informaatiotekniikan tiedekunta"));
 
         TabSheet tabs = new TabSheet();
         tabs.setSizeFull();

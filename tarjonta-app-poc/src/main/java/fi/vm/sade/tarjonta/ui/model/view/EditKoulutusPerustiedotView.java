@@ -307,29 +307,12 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @return
      */
     private TextField addTextField(PropertysetItem psi, String expression, String promptKey, String width, AbstractOrderedLayout layout) {
-        TextField c = new TextField();
-
-        if (psi != null && expression != null) {
-            c.setPropertyDataSource(psi.getItemProperty(expression));
-        }
-
-        // tf.setImmediate(true);
-        c.setNullRepresentation("");
-        c.addStyleName(Oph.TEXTFIELD_SEARCH);
+        TextField c = UiBuilder.newTextField(psi, expression, null, i18n.getMessage(promptKey), layout);
+        // c.setImmediate(true);
 
         if (width != null) {
             c.setWidth(width);
         }
-
-
-        if (promptKey != null) {
-            c.setInputPrompt(i18n.getMessage(promptKey));
-        }
-
-        if (layout != null) {
-            layout.addComponent(c);
-        }
-
 
         return c;
     }
@@ -343,20 +326,10 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @return
      */
     private Button addButton(String captionKey, String onClickMethodName, AbstractOrderedLayout layout) {
-        Button c = new Button(i18n.getMessage(captionKey));
-        c.setImmediate(true);
-
+        Button c = UiBuilder.newButton(i18n.getMessage(captionKey), layout);
         if (onClickMethodName != null) {
             c.addListener(getClickListener(onClickMethodName));
         }
-
-        c.addStyleName(Oph.BUTTON_PRIMARY);
-        c.addStyleName(Oph.BUTTON_SMALL);
-
-        if (layout != null) {
-            layout.addComponent(c);
-        }
-
         return c;
     }
 
@@ -368,18 +341,12 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @return
      */
     private Label addLabel(String captionKey, AbstractOrderedLayout layout) {
-        Label c = new Label(i18n.getMessage(captionKey));
-        // c.addStyleName(Oph.LABEL_SMALL);
-
-        if (layout != null) {
-            layout.addComponent(c);
-        }
-
+        Label c = UiBuilder.newLabel(i18n.getMessage(captionKey), layout);
         return c;
     }
 
     /**
-     * Simple model bould label.
+     * Simple model bound label.
      *
      * @param psi
      * @param expression
@@ -387,18 +354,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @return
      */
     private Label addLabel(PropertysetItem psi, String expression, AbstractOrderedLayout layout) {
-        Label c = new Label();
-
-        if (psi != null && expression != null) {
-            c.setPropertyDataSource(psi.getItemProperty(expression));
-        }
-
-        // c.addStyleName(Oph.LABEL_SMALL);
-
-        if (layout != null) {
-            layout.addComponent(c);
-        }
-
+        Label c = UiBuilder.newLabel(psi, expression, layout);
         return c;
     }
 
@@ -411,106 +367,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @return
      */
     private DateField addDate(PropertysetItem psi, String expression, AbstractOrderedLayout layout) {
-        DateField c = new DateField();
-        c.setDateFormat("dd.MM.yyyy");
-
-        if (psi != null && expression != null) {
-            c.setPropertyDataSource(psi.getItemProperty(expression));
-        }
-
-        // TODO what is the style?
-        // df.addStyleName(Oph.DATE);
-
-        if (layout != null) {
-            layout.addComponent(c);
-        }
-
-        return c;
-    }
-
-    /**
-     * Create ComboBox and bind to model.
-     *
-     * @param psi
-     * @param expression
-     * @param inputPromptKey
-     * @param container
-     * @param valueChangeListenerMethod
-     * @param layout
-     * @return
-     */
-    private ComboBox addComboBox(PropertysetItem psi, String expression, String inputPromptKey, Container container, String valueChangeListenerMethod, AbstractOrderedLayout layout) {
-        ComboBox c = new ComboBox();
-        // TODO cb.addStyleName(Oph.COMBOBOX);
-        c.setImmediate(true);
-
-        if (valueChangeListenerMethod != null) {
-            c.addListener(getValueChangeListener(valueChangeListenerMethod));
-        }
-
-        if (inputPromptKey != null) {
-            c.setInputPrompt(i18n.getMessage(inputPromptKey));
-        }
-
-        // Data to be shown
-        if (container != null) {
-            c.setContainerDataSource(container);
-        }
-
-        // Selected data
-        if (psi != null && expression != null) {
-            c.setPropertyDataSource(psi.getItemProperty(expression));
-        }
-
-        if (layout != null) {
-            layout.addComponent(c);
-        }
-
-        c.setItemCaptionPropertyId(KeyValueBean.VALUE);
-
-        return c;
-    }
-
-    /**
-     * Create TwinColSelect and bind it to a model.
-     *
-     * @param psi
-     * @param expression
-     * @param container
-     * @param valueChangeListenerMethod
-     * @param layout
-     * @return
-     */
-    private TwinColSelect addTwinColSelect(PropertysetItem psi, String expression, Container container, String valueChangeListenerMethod, AbstractOrderedLayout layout) {
-        TwinColSelect c = new TwinColSelect();
-
-        // List values only!
-        c.setMultiSelect(true);
-
-        // TODO s.addStyleName(Oph.TWINCOLSELECT);
-
-        c.setImmediate(true);
-
-        if (valueChangeListenerMethod != null) {
-            c.addListener(getValueChangeListener(valueChangeListenerMethod));
-        }
-
-        // Data to be shown
-        if (container != null) {
-            c.setContainerDataSource(container);
-        }
-
-        // Selected data
-        if (psi != null && expression != null) {
-            c.setPropertyDataSource(psi.getItemProperty(expression));
-        }
-
-        if (layout != null) {
-            layout.addComponent(c);
-        }
-
-        c.setItemCaptionPropertyId(KeyValueBean.VALUE);
-
+        DateField c = UiBuilder.newDateField(null, null, psi, expression, layout);
         return c;
     }
 
@@ -525,20 +382,11 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @return
      */
     private CheckBox addCheckBox(String captionKey, PropertysetItem psi, String expression, String valueChangeListenerMethod, AbstractOrderedLayout layout) {
-        CheckBox c = new CheckBox(i18n.getMessage(captionKey));
-
-        // Selected data
-        if (psi != null && expression != null) {
-            c.setPropertyDataSource(psi.getItemProperty(expression));
-        }
+        CheckBox c = UiBuilder.addCheckBox(i18n.getMessage(captionKey), psi, expression, layout);
 
         // Routes "clicks" to methods
         if (valueChangeListenerMethod != null) {
             c.addListener(getValueChangeListener(valueChangeListenerMethod));
-        }
-
-        if (layout != null) {
-            layout.addComponent(c);
         }
 
         c.setImmediate(true);
@@ -576,65 +424,8 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @return
      */
     private KoodistoComponent addKoodistoComboBox(final String koodistoUri, PropertysetItem psi, String expression, String promptKey, AbstractOrderedLayout layout) {
-
         LOG.debug("addKoodistoComboBox({}, ...)", koodistoUri);
-
-        // Koodisto displayed in ComboBox
-        ComboBox combo = new ComboBox();
-        combo.setFilteringMode(AbstractSelect.Filtering.FILTERINGMODE_CONTAINS);
-        combo.setInputPrompt(i18n.getMessage(promptKey));
-        // TODO combo.addStyleName(Oph.XXX);
-
-        final KoodistoComponent c = WidgetFactory.create(koodistoUri);
-
-        // Wire koodisto to combobox
-        c.setField(combo);
-
-        // Set to be immediate
-        c.setImmediate(true);
-
-        // DISPLAYED text
-        c.setCaptionFormatter(new CaptionFormatter() {
-            @Override
-            public String formatCaption(Object dto) {
-                LOG.debug("formatCaption({})", dto);
-
-                if (dto instanceof KoodiDTO) {
-                    KoodiDTO kdto = (KoodiDTO) dto;
-                    return kdto.getKoodiArvo();
-                } else {
-                    LOG.info("! KoodiDTO???");
-                    return "" + dto;
-                }
-            }
-        });
-
-        // BOUND value
-        c.setFieldValueFormatter(new FieldValueFormatter() {
-            @Override
-            public Object formatFieldValue(Object dto) {
-                LOG.debug("formatFieldValue({})", dto);
-
-                if (dto instanceof KoodiDTO) {
-                    KoodiDTO kdto = (KoodiDTO) dto;
-                    return kdto.getKoodiUri();
-                } else {
-                    LOG.info("! KoodiDTO???");
-                    return "" + dto;
-                }
-            }
-        });
-
-        // Selected data bound there
-        if (psi != null && expression != null) {
-            c.setPropertyDataSource(psi.getItemProperty(expression));
-        }
-
-        if (layout != null) {
-            layout.addComponent(c);
-        }
-
-        return c;
+        return UiBuilder.newKoodistoComboBox(koodistoUri, psi, expression, i18n.getMessage(promptKey), layout);
     }
 
     /**
@@ -647,65 +438,8 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @return
      */
     private KoodistoComponent addKoodistoTwinColSelect(final String koodistoUri, PropertysetItem psi, String expression, AbstractOrderedLayout layout) {
-
         LOG.debug("addKoodistoTwinColSelect({}, ...)", koodistoUri);
-
-        // Koodisto displayed in TwinColSelect
-        TwinColSelect combo = new TwinColSelect();
-
-        // Only multiple (list) values!
-        combo.setMultiSelect(true);
-
-        final KoodistoComponent c = WidgetFactory.create(koodistoUri);
-
-        // Wire koodisto to combobox
-        c.setField(combo);
-
-        // Set to be immediate
-        c.setImmediate(true);
-
-        // DISPLAYED text
-        c.setCaptionFormatter(new CaptionFormatter() {
-            @Override
-            public String formatCaption(Object dto) {
-                LOG.debug("formatCaption({})", dto);
-
-                if (dto instanceof KoodiDTO) {
-                    KoodiDTO kdto = (KoodiDTO) dto;
-                    return kdto.getKoodiArvo();
-                } else {
-                    LOG.info("! KoodiDTO???");
-                    return "" + dto;
-                }
-            }
-        });
-
-        // BOUND value
-        c.setFieldValueFormatter(new FieldValueFormatter() {
-            @Override
-            public Object formatFieldValue(Object dto) {
-                LOG.debug("formatFieldValue({})", dto);
-
-                if (dto instanceof KoodiDTO) {
-                    KoodiDTO kdto = (KoodiDTO) dto;
-                    return kdto.getKoodiUri();
-                } else {
-                    LOG.info("! KoodiDTO???");
-                    return "" + dto;
-                }
-            }
-        });
-
-        // Selected data bound there
-        if (psi != null && expression != null) {
-            c.setPropertyDataSource(psi.getItemProperty(expression));
-        }
-
-        if (layout != null) {
-            layout.addComponent(c);
-        }
-
-        return c;
+        return UiBuilder.newKoodistoTwinColSelect(koodistoUri, psi, expression, layout);
     }
 
     /*
@@ -808,18 +542,26 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      */
     public void doCancel() {
         LOG.info("doCancel()");
+        // TODO Check for changes, ask "really?" if any
+        _presenter.showMainSearchView();
     }
 
     public void doSaveIncomplete() {
         LOG.info("doSaveIncomplete(): dto={}", _dto);
+        // TODO validate
+        _presenter.saveKoulutusPerustiedot(false);
     }
 
     public void doSaveComplete() {
         LOG.info("doSaveComplete(): dto={}", _dto);
+        // TODO validate
+        _presenter.saveKoulutusPerustiedot(true);
     }
 
     public void doContinue() {
-        LOG.info("doCantinue()");
+        LOG.info("doContinue()");
+        // TODO check for changes, ask to save if any
+        // TODO go to "overview page"?
     }
 
     public void doMultipleLinksForOpetussuunnitelma() {
@@ -857,6 +599,9 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         LOG.info("doOpetuskieletSelectAll()");
     }
 
+    /*
+     * Display some help
+     */
     public void onTopHelpClicked() {
         LOG.info("onTopHelpClicked()");
     }
@@ -865,7 +610,14 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         LOG.info("onBottomHelpClicked()");
     }
 
+    /*
+     * Yhteyshenkilö area
+     */
     public void onAddNewYhteyshenkilo() {
+        LOG.info("onAddNewYhteyshenkilo()");
+    }
+
+    public void onRemoveYhteyshenkilo() {
         LOG.info("onAddNewYhteyshenkilo()");
     }
 }
