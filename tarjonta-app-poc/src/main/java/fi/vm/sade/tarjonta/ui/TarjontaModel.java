@@ -25,7 +25,7 @@ public class TarjontaModel {
     }
 
     // Show label that shows last modification
-    @Value("${showAppIdentifier:true}")
+    @Value("${common.showAppIdentifier:true}")
     private Boolean _showIdentifier;
     @Value("${tarjonta-app.identifier:APPLICATION IDENTIFIER NOT AVAILABLE}")
     private String _identifier;
