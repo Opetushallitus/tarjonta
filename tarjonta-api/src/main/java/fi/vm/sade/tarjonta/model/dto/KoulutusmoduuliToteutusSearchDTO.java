@@ -22,7 +22,7 @@ package fi.vm.sade.tarjonta.model.dto;
  */
 public class KoulutusmoduuliToteutusSearchDTO {
     
-    private KoulutusTila tila;
+    private String tila;
     private int startIndex = 0;
     private int pageSize = Integer.MAX_VALUE;
 
@@ -31,20 +31,20 @@ public class KoulutusmoduuliToteutusSearchDTO {
         
     }
     
-    public KoulutusmoduuliToteutusSearchDTO(KoulutusTila tilaParam) {
+    public KoulutusmoduuliToteutusSearchDTO(String tilaParam) {
         tila = tilaParam;
     }
     /**
      * @return the tila
      */
-    public KoulutusTila getTila() {
+    public String getTila() {
         return tila;
     }
 
     /**
      * @param tila the tila to set
      */
-    public void setTila(KoulutusTila tila) {
+    public void setTila(String tila) {
         this.tila = tila;
     }
 

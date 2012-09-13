@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.service.mock;
 
+import fi.vm.sade.tarjonta.model.KoodistoContract;
 import fi.vm.sade.tarjonta.model.dto.*;
 import fi.vm.sade.tarjonta.service.NoSuchOIDException;
 import fi.vm.sade.tarjonta.service.KoulutusmoduuliAdminService;
@@ -166,7 +167,7 @@ public class KoulutusmoduuliAdminServiceMock implements KoulutusmoduuliAdminServ
         KoulutusmoduuliPerustiedotDTO perustiedot = new KoulutusmoduuliPerustiedotDTO();
         tutkintoOhjelma.setPerustiedot(perustiedot);
 
-        tutkintoOhjelma.setTila(KoulutusTila.VALMIS.name());
+        tutkintoOhjelma.setTila(KoodistoContract.TarjontaTilat.JULKAISTU);
         tutkintoOhjelma.setUpdated(new Date());
 
         save(tutkintoOhjelma);
