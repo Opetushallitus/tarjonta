@@ -19,7 +19,6 @@ import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutus;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
-import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -46,7 +45,7 @@ public class KoulutusDAOImpl extends AbstractJpaDAOImpl<Koulutus, Long> implemen
     }
 
     @Override
-    public List<Koulutus> find(KoulutusTila tila, int startIndex, int pageSize) {
+    public List<Koulutus> find(String tila, int startIndex, int pageSize) {
 
         return findBy("tila", tila, startIndex, pageSize);
         

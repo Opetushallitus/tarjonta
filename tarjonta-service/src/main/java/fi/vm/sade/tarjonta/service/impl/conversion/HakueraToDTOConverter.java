@@ -1,7 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
-import fi.vm.sade.tarjonta.model.Hakuera;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -10,23 +10,23 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class HakueraToDTOConverter extends
-        AbstractFromDomainConverter<Hakuera, HakueraDTO> {
+        AbstractFromDomainConverter<Haku, HakueraDTO> {
 
     @Override
     public HakueraDTO convert(
-            Hakuera entity) {
+            Haku entity) {
         HakueraDTO hakueraDTO = new HakueraDTO();
         hakueraDTO.setNimiFi(entity.getNimiFi());
         hakueraDTO.setNimiSv(entity.getNimiSv());
         hakueraDTO.setNimiEn(entity.getNimiEn());
-        hakueraDTO.setHakutyyppi(entity.getHakutyyppi());
-        hakueraDTO.setHakukausi(entity.getHakukausi());
-        hakueraDTO.setHakutapa(entity.getHakutapa());
+        hakueraDTO.setHakutyyppi(entity.getHakutyyppiUri());
+        hakueraDTO.setHakukausi(entity.getHakukausiUri());
+        hakueraDTO.setHakutapa(entity.getHakutapaUri());
         hakueraDTO.setHaunAlkamisPvm(convertDate(entity.getHaunAlkamisPvm()));
         hakueraDTO.setHaunLoppumisPvm(convertDate(entity.getHaunLoppumisPvm()));
         hakueraDTO.setOid(entity.getOid());
-        hakueraDTO.setKohdejoukko(entity.getKohdejoukko());
-        hakueraDTO.setKoulutuksenAlkaminen(entity.getKoulutuksenAlkaminen());
+        hakueraDTO.setKohdejoukko(entity.getKohdejoukkoUri());
+        hakueraDTO.setKoulutuksenAlkaminen(entity.getKoulutuksenAlkamiskausiUri());
         hakueraDTO.setHakulomakeUrl(entity.getHakulomakeUrl());
         return hakueraDTO;
     }

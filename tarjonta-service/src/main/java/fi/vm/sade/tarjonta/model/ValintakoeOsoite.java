@@ -15,28 +15,17 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import javax.persistence.DiscriminatorValue;
+import fi.vm.sade.generic.model.BaseEntity;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  *
  */
 @Entity
-@DiscriminatorValue(Koulutus.KoulutusTyyppit.TUTKINTO_OHJELMA_TOTEUTUS)
-public class TutkintoOhjelmaToteutus extends KoulutusmoduuliToteutus {
+@Table(name="valintakoe_osoite")
+public class ValintakoeOsoite extends BaseEntity {
 
-    private static final long serialVersionUID = -9026147669046987148L;
-
-    public TutkintoOhjelmaToteutus(Koulutusmoduuli moduuli) {
-        super(moduuli);
-    }
-
-    /**
-     * Public constructor required at least by converted
-     */
-    public TutkintoOhjelmaToteutus() {
-        this(null);
-    }
-
+    private static final long serialVersionUID = 1433944293857682921L;
 }
 

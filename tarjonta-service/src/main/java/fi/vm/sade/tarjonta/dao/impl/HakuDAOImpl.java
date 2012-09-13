@@ -16,8 +16,8 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.tarjonta.dao.HakueraDAO;
-import fi.vm.sade.tarjonta.model.Hakuera;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,19 +29,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static fi.vm.sade.tarjonta.model.Hakuera.HAUN_ALKAMIS_PVM;
-import static fi.vm.sade.tarjonta.model.Hakuera.HAUN_LOPPUMIS_PVM;
+import static fi.vm.sade.tarjonta.model.Haku.HAUN_ALKAMIS_PVM;
+import static fi.vm.sade.tarjonta.model.Haku.HAUN_LOPPUMIS_PVM;
 
 /**
  * @author Antti Salonen
  */
 @Repository
-public class HakueraDAOImpl extends AbstractJpaDAOImpl<Hakuera, Long> implements HakueraDAO {
+public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuDAO {
 
-    private static final Logger log = LoggerFactory.getLogger(HakueraDAOImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(HakuDAOImpl.class);
 
     @Override
-    public List<Hakuera> findAll(SearchCriteriaDTO searchCriteria) {
+    public List<Haku> findAll(SearchCriteriaDTO searchCriteria) {
+        
+        // TODO: this will fail because translated texts were moved to KaannosTeksti instead keeping 
+        // fixed fields for set of languages. instead of using criteria api, try using the DSL metadata
+        // generated for this domain
+        
+        
         boolean p = searchCriteria.isPaattyneet();
         boolean m = searchCriteria.isMeneillaan();
         boolean t = searchCriteria.isTulevat();
@@ -49,9 +55,12 @@ public class HakueraDAOImpl extends AbstractJpaDAOImpl<Hakuera, Long> implements
 
         EntityManager em = getEntityManager();
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Hakuera> query = cb.createQuery(Hakuera.class);
-        Root<Hakuera> hakuera = query.from(Hakuera.class);
-        query.orderBy(createOrderBy(lang, cb, hakuera));
+        CriteriaQuery<Haku> query = cb.createQuery(Haku.class);
+        Root<Haku> hakuera = query.from(Haku.class);
+        
+        // disabled for now - see comments above
+        //query.orderBy(createOrderBy(lang, cb, hakuera));
+        
         Predicate where = null;
 
         if (m && p && t) {
@@ -79,7 +88,7 @@ public class HakueraDAOImpl extends AbstractJpaDAOImpl<Hakuera, Long> implements
             where = cb.greaterThan(hakuera.<Date>get(HAUN_ALKAMIS_PVM), cb.currentTimestamp());
         } else { // (!m && !p && !t)
             // ei mitään
-            return new ArrayList<Hakuera>();
+            return new ArrayList<Haku>();
         }
 
         query.select(hakuera);
@@ -90,7 +99,7 @@ public class HakueraDAOImpl extends AbstractJpaDAOImpl<Hakuera, Long> implements
         return getEntityManager().createQuery(query).getResultList();
     }
 
-    private Order createOrderBy(String lang, CriteriaBuilder cb, Root<Hakuera> hakuera) {
+    private Order createOrderBy(String lang, CriteriaBuilder cb, Root<Haku> hakuera) {
         Order orderBy;
         if ("sv".equals(lang)) {
             orderBy = cb.asc(hakuera.get("nimiSv"));
@@ -102,8 +111,8 @@ public class HakueraDAOImpl extends AbstractJpaDAOImpl<Hakuera, Long> implements
         return orderBy;
     }
     
-    public Hakuera findByOid(String oidString) {
-        List<Hakuera> hakueras = findBy("oid", oidString);
+    public Haku findByOid(String oidString) {
+        List<Haku> hakueras = findBy("oid", oidString);
         if (hakueras.size() == 1) {
             return hakueras.get(0);
         }

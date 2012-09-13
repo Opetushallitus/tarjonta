@@ -1,8 +1,8 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
-import fi.vm.sade.tarjonta.dao.HakueraDAO;
-import fi.vm.sade.tarjonta.model.Hakuera;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -10,31 +10,31 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Date;
 
 public class HakueraFromDTOConverter extends
-        AbstractToDomainConverter<HakueraDTO, Hakuera> {
+        AbstractToDomainConverter<HakueraDTO, Haku> {
 
     @Autowired
-    private HakueraDAO dao;
+    private HakuDAO dao;
 
     @Override
-    public Hakuera convert(HakueraDTO hakueraDTO) {
-        Hakuera hakuera = null;
+    public Haku convert(HakueraDTO hakueraDTO) {
+        Haku hakuera = null;
         if (hakueraDTO.getOid() != null) {
             hakuera = dao.findByOid(hakueraDTO.getOid());
         }
         if (hakuera == null) {
-            hakuera = new Hakuera();
+            hakuera = new Haku();
         }
         hakuera.setNimiFi(hakueraDTO.getNimiFi());
         hakuera.setNimiSv(hakueraDTO.getNimiSv());
         hakuera.setNimiEn(hakueraDTO.getNimiEn());
-        hakuera.setHakutyyppi(hakueraDTO.getHakutyyppi());
-        hakuera.setHakukausi(hakueraDTO.getHakukausi());
-        hakuera.setHakutapa(hakueraDTO.getHakutapa());
+        hakuera.setHakutyyppiUri(hakueraDTO.getHakutyyppi());
+        hakuera.setHakukausiUri(hakueraDTO.getHakukausi());
+        hakuera.setHakutapaUri(hakueraDTO.getHakutapa());
         hakuera.setHaunAlkamisPvm(convertDate(hakueraDTO.getHaunAlkamisPvm()));
         hakuera.setHaunLoppumisPvm(convertDate(hakueraDTO.getHaunLoppumisPvm()));
         hakuera.setOid(hakueraDTO.getOid());
-        hakuera.setKohdejoukko(hakueraDTO.getKohdejoukko());
-        hakuera.setKoulutuksenAlkaminen(hakueraDTO.getKoulutuksenAlkaminen());
+        hakuera.setKohdejoukkoUri(hakueraDTO.getKohdejoukko());
+        hakuera.setKoulutuksenAlkamiskausiUri(hakueraDTO.getKoulutuksenAlkaminen());
         hakuera.setHakulomakeUrl(hakueraDTO.getHakulomakeUrl());
         return hakuera;
     }

@@ -15,28 +15,32 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import java.util.HashSet;
+import java.util.Set;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-@Entity
-@DiscriminatorValue(Koulutus.KoulutusTyyppit.TUTKINTO_OHJELMA_TOTEUTUS)
-public class TutkintoOhjelmaToteutus extends KoulutusmoduuliToteutus {
+public class ValintakoeTest {
 
-    private static final long serialVersionUID = -9026147669046987148L;
+    @Test
+    public void testEquals() {
 
-    public TutkintoOhjelmaToteutus(Koulutusmoduuli moduuli) {
-        super(moduuli);
+        Valintakoe a = new Valintakoe();
+        Valintakoe b = new Valintakoe();
+
+        assertFalse(a.equals(b));
+
+        a.setId(100L);
+        b.setId(100L);
+
+        assertEquals(a, b);
+        
     }
-
-    /**
-     * Public constructor required at least by converted
-     */
-    public TutkintoOhjelmaToteutus() {
-        this(null);
-    }
+    
+    
 
 }
 

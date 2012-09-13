@@ -19,7 +19,6 @@ import javax.persistence.DiscriminatorValue;
 
 /**
  *
- * @author Jukka Raanamo
  */
 @DiscriminatorValue(Koulutus.KoulutusTyyppit.TUTKINNON_OSA)
 public class TutkinnonOsa extends Koulutusmoduuli {

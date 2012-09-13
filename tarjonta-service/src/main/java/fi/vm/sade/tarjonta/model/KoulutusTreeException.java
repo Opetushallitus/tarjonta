@@ -15,27 +15,15 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
 /**
+ * Thrown by the tarjonta domain classes if an invalid/illegal tree structure is attempted to be constructed.
  *
+ * @author Jukka Raanamo
  */
-@Entity
-@DiscriminatorValue(Koulutus.KoulutusTyyppit.TUTKINTO_OHJELMA_TOTEUTUS)
-public class TutkintoOhjelmaToteutus extends KoulutusmoduuliToteutus {
+public class KoulutusTreeException extends RuntimeException {
 
-    private static final long serialVersionUID = -9026147669046987148L;
-
-    public TutkintoOhjelmaToteutus(Koulutusmoduuli moduuli) {
-        super(moduuli);
-    }
-
-    /**
-     * Public constructor required at least by converted
-     */
-    public TutkintoOhjelmaToteutus() {
-        this(null);
+    public KoulutusTreeException(String string) {
+        super(string);
     }
 
 }

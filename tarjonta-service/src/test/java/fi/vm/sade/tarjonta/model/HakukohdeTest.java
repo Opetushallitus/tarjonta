@@ -13,15 +13,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta;
+package fi.vm.sade.tarjonta.model;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
- * @author Jukka Raanamo
  */
-public class KoulutusmoduuliRepository {
+public class HakukohdeTest {
     
-    public static final String OID_TIETOJENKASITTELYN_KOULUTUS = "dummy";
+    @Test
+    public void testRemoveValintakoe() {
+        
+        Hakukohde h = new Hakukohde();
+        Valintakoe v = new Valintakoe();
+        
+        h.addValintakoe(v);
+        assertEquals(1, h.getValintakoes().size());
+        
+        Valintakoe v2 = h.getValintakoes().iterator().next();
+        h.removeValintakoe(v2);
+        
+        assertEquals(0, h.getValintakoes().size());
+        
+    }
     
 }
 

@@ -1,7 +1,7 @@
 package fi.vm.sade.tarjonta.service;
 
 import fi.vm.sade.tarjonta.HakueraTstHelper;
-import fi.vm.sade.tarjonta.model.Hakuera;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
@@ -41,9 +41,9 @@ public class HakueraServiceTest {
 
         long now = new Date().getTime();
         int dif = 10000;
-        Hakuera meneillaan = helper.create(now-dif, now+dif);
-        Hakuera tuleva = helper.create(now+dif, now+2*dif);
-        Hakuera paattynyt = helper.create(now-2*dif, now-dif);
+        Haku meneillaan = helper.create(now-dif, now+dif);
+        Haku tuleva = helper.create(now+dif, now+2*dif);
+        Haku paattynyt = helper.create(now-2*dif, now-dif);
 
         // test happy path & conversions (search logic tested in dao test)
 
@@ -82,7 +82,7 @@ public class HakueraServiceTest {
 
     @Test(expected = Exception.class)
     public void testUpdateHakueraOid() throws Exception {
-        Hakuera h = helper.createValidHakuera();
+        Haku h = helper.createValidHaku();
         HakueraDTO dto = hakueraService.findByOid(h.getOid());
         dto.setOid("updated_oid");
         hakueraService.updateHakuera(dto);

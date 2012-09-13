@@ -1,5 +1,6 @@
-package fi.vm.sade.tarjonta.service.business;
+package fi.vm.sade.tarjonta.dao;
 
+import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
 
@@ -8,9 +9,11 @@ import java.util.List;
 /**
  * @author Antti
  */
-public interface HakueraBusinessService {
+public interface HakuDAO extends JpaDAO<Haku, Long> {
+
     List<Haku> findAll(SearchCriteriaDTO searchCriteria);
-    Haku save(Haku hakuera);
-    Haku update(Haku hakuera);
+
     Haku findByOid(String oidString);
+
 }
+

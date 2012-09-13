@@ -33,7 +33,7 @@ public class TutkintoOhjelmaToDTOConverter<T extends KoulutusmoduuliDTO> extends
     public T convert(TutkintoOhjelma source) {
 
         TutkintoOhjelmaDTO dto = new TutkintoOhjelmaDTO();
-        dto.setTila(source.getTila().name());
+        dto.setTila(source.getTila());
         dto.setOid(source.getOid());
         dto.setNimi(source.getNimi());
         dto.setUpdated(source.getUpdated());

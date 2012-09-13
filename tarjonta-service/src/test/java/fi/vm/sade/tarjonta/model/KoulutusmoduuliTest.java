@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
 import java.util.Date;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -29,7 +28,7 @@ public class KoulutusmoduuliTest {
     @Test
     public void testGetTilaAfterCreate() {
         Koulutusmoduuli moduuli = newModuuli();
-        assertEquals(KoulutusTila.SUUNNITTELUSSA, moduuli.getTila());
+        assertEquals(KoodistoContract.TarjontaTilat.SUUNNITTELUSSA, moduuli.getTila());
     }
 
     @Test

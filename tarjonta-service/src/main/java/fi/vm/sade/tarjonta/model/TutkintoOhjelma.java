@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -39,7 +38,7 @@ public class TutkintoOhjelma extends Koulutusmoduuli {
     private String tutkintoOhjelmanNimi;
 
     public TutkintoOhjelma() {
-        super(KoulutusmoduuliTyyppi.TUTKINTOON_JOHTAVA);        
+        super();
     }
 
     /**

@@ -1,6 +1,6 @@
 package fi.vm.sade.tarjonta.service.impl;
 
-import fi.vm.sade.tarjonta.model.Hakuera;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.HakueraService;
 import fi.vm.sade.tarjonta.service.business.HakueraBusinessService;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
@@ -34,9 +34,9 @@ public class HakueraServiceImpl implements HakueraService {
         return convert(businessService.findAll(searchCriteria));
     }
 
-    private List<HakueraSimpleDTO> convert(List<Hakuera> hakueras) {
+    private List<HakueraSimpleDTO> convert(List<Haku> hakueras) {
         List<HakueraSimpleDTO> result = new ArrayList<HakueraSimpleDTO>();
-        for (Hakuera hakuera : hakueras) {
+        for (Haku hakuera : hakueras) {
             result.add(conversionService.convert(hakuera, HakueraSimpleDTO.class));
         }
         return result;
@@ -44,14 +44,14 @@ public class HakueraServiceImpl implements HakueraService {
     
     @Override
     public HakueraDTO createHakuera(HakueraDTO hakuera) {
-        Hakuera entity = conversionService.convert(hakuera, Hakuera.class);
+        Haku entity = conversionService.convert(hakuera, Haku.class);
         entity = businessService.save(entity);
         return conversionService.convert(entity, HakueraDTO.class);
     }
     
     @Override
     public HakueraDTO updateHakuera(HakueraDTO hakuera) {
-        Hakuera entity = conversionService.convert(hakuera, Hakuera.class);
+        Haku entity = conversionService.convert(hakuera, Haku.class);
         entity = businessService.update(entity);
         return conversionService.convert(entity, HakueraDTO.class);
     }

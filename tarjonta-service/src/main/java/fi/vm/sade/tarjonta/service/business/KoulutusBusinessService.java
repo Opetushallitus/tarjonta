@@ -34,11 +34,17 @@ public interface KoulutusBusinessService {
      */
     public Koulutusmoduuli create(Koulutusmoduuli koulutus);
 
+    /**
+     * Creates new KoulutusmoduuliToteutus from passed data.
+     *
+     * @param koulutus
+     * @return
+     */
     public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus koulutus);
 
     /**
-     * Stores KoulutusmoduuliToteutus into database, before storing, reference to given Koulutusmoduuli is assigned. If given Koulutusmoduuli is also new, it is
-     * first persisted.
+     * Creates new KoulutusmoduuliToteutus from passed data. Before storing, reference to given Koulutusmoduuli is assigned. If given Koulutusmoduuli is also
+     * new, it is also created.
      *
      * @param toteutus
      * @param moduuli
@@ -49,12 +55,17 @@ public interface KoulutusBusinessService {
     /**
      * Returns a list of Koulutusmoduuli -objects that represent the same learning opportunity specification in it's available versions.
      *
-     * @throws todo: do we
      * @param oid
      * @return
      */
     public List<Koulutusmoduuli> findAllKoulutusmoduuliVersions(String oid);
 
+    /**
+     * Returns a list of KoulutusmoduuliToteutus -objects 
+     * 
+     * @param oid
+     * @return
+     */
     public List<KoulutusmoduuliToteutus> findAllKoulutusmoduuliToteutusVersions(String oid);
 
     /**

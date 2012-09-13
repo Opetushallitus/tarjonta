@@ -18,14 +18,11 @@ package fi.vm.sade.tarjonta.model;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.EnumType;
 import javax.persistence.Column;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
 
 /**
  * An abstract base class for different types of Koulutusmoduuli's. This class adds OPH specified features to LOS.
@@ -36,17 +33,6 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification i
     private static final long serialVersionUID = -3359195324699691606L;
 
     private static Logger log = LoggerFactory.getLogger(Koulutusmoduuli.class);
-
-    /*
-     * This type could be derived from the actual derived class but we want this information to persist in database.
-     */
-    @Enumerated(EnumType.STRING)
-    private KoulutusmoduuliTyyppi tyyppi;
-
-    /**
-     * TODO: double check how and where this is used. There are multiple names for different types of Koulutusmoduuli - make sure they have sensible purpose.
-     */
-    private String nimi;
 
     /**
      * The "owner" of this koulutusmoduuli.
@@ -83,33 +69,6 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification i
      */
     protected Koulutusmoduuli() {
         super();
-    }
-
-    /**
-     *
-     * @param tyyppi
-     */
-    protected Koulutusmoduuli(KoulutusmoduuliTyyppi tyyppi) {
-        this();
-        this.tyyppi = tyyppi;
-    }
-
-    /**
-     *
-     *
-     * @return
-     */
-    public String getNimi() {
-        return nimi;
-    }
-
-    /**
-     * todo: can you set value directly or was it calculated from some other properties?
-     *
-     * @param nimi
-     */
-    public void setNimi(String nimi) {
-        this.nimi = nimi;
     }
 
     /**

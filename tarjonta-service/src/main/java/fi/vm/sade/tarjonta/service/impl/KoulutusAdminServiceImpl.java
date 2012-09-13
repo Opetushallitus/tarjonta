@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
-import fi.vm.sade.tarjonta.KoodistoContract;
+import fi.vm.sade.tarjonta.model.KoodistoContract;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelma;

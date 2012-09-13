@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
 import fi.vm.sade.generic.model.BaseEntity;
-import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -43,23 +42,25 @@ public abstract class Koulutus extends BaseEntity {
     static final String TABLE_NAME = "koulutus";
 
     /**
-     * OID that can be assigned once and once only.
-     * NOTE: for some reason this does not work - could it have something to do with inheritance??
+     * OID that can be assigned once and once only. NOTE: for some reason this does not work - could it have something to do with inheritance??
      */
     @Column(name = OID_COLUMN_NAME, nullable = false, insertable = true, updatable = false)
     private String oid;
 
     /**
-     * TODO: copy constants to server package?
+     * 
      */
-    @Enumerated(EnumType.STRING)
-    private KoulutusTila tila;
+    @Column(name = "tila")
+    private String tila;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
+    @Column(name = "nimi")
+    private String nimi;
+
     /**
-     * Set of Koulutusmoduuli for which this Koulutusmoduulis is in a role of parent.
+     * Hierarchy of Koulutus objects that further break down this Koulutus into smaller parts.
      */
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "parent", orphanRemoval = true)
     private Set<KoulutusSisaltyvyys> children = new HashSet<KoulutusSisaltyvyys>();
@@ -68,7 +69,7 @@ public abstract class Koulutus extends BaseEntity {
      * Always call super when overriding constructor.
      */
     public Koulutus() {
-        this.tila = KoulutusTila.SUUNNITTELUSSA;
+        this.tila = KoodistoContract.TarjontaTilat.SUUNNITTELUSSA;
     }
 
     @PreUpdate
@@ -82,7 +83,7 @@ public abstract class Koulutus extends BaseEntity {
     }
 
     /**
-     * OID of this Koulutus. On database level, this does not uniquely identify Koulutus but for that version needs to be specified.
+     * OID of this Koulutus. On database level, this does not uniquely identify Koulutus. For that version needs to be specified.
      *
      * @return the koulutusOid
      */
@@ -109,21 +110,42 @@ public abstract class Koulutus extends BaseEntity {
     }
 
     /**
-     * Returns the non-null state (tila) this Koulutusmoduuli is in.
+     * Returns uri to koodisto representing current state of this Koulutus.
      *
      * @return
      */
-    public KoulutusTila getTila() {
+    public String getTila() {
         return tila;
     }
 
     /**
-     * TODO: we should not really have setting for state but it's currently used in conversion. This could be fixed by a specific constructor.
-     *
+     * Set uri to koodisto representing the current state of this Koulutus.
+     * 
      * @param tila
      */
-    public void setTila(KoulutusTila tila) {
+    public void setTila(String tila) {
+        // todo: since states come from koodisto, can we do any state lifecycle validation??
         this.tila = tila;
+    }
+
+    /**
+     * Returns "static" name for this Koulutus. The actual content may be calculated dynamically based on other
+     * properties. This 
+     * 
+     * @return the nimi
+     */
+    public String getNimi() {
+        return nimi;
+    }
+
+    /**
+     * Set the display name to be used with this Koulutus. Note that in some cases this value may be recalculated 
+     * dynamically based on other properties. 
+     * 
+     * @param nimi the nimi to set
+     */
+    public void setNimi(String nimi) {
+        this.nimi = nimi;
     }
 
     /**
@@ -134,7 +156,7 @@ public abstract class Koulutus extends BaseEntity {
      * @return
      * @throws CyclicReferenceException
      */
-    public boolean addChild(final Koulutus child, final boolean optional) throws CyclicReferenceException {
+    public boolean addChild(final Koulutus child, final boolean optional) throws KoulutusTreeException {
 
         if (child == null) {
             return false;
@@ -142,7 +164,7 @@ public abstract class Koulutus extends BaseEntity {
 
         if (child == this) {
             // bad use of API, throw to catch bug
-            throw new CyclicReferenceException("you cannot add *this* as a child");
+            throw new KoulutusTreeException("you cannot add *this* as a child");
         }
 
         final KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys(this, child, optional);
@@ -161,13 +183,13 @@ public abstract class Koulutus extends BaseEntity {
      */
     public boolean removeChild(Koulutus child) {
 
-        KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys(this, child, true);
+        final KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys(this, child, true);
         return children.remove(sisaltyvyys);
 
     }
 
     /**
-     * Helper method that checks if relationship already exists.
+     * Helper method that, before adding,  checks if relationship already exists.
      *
      * @param sisaltyvyys
      * @return
@@ -221,15 +243,15 @@ public abstract class Koulutus extends BaseEntity {
     }
 
     /**
-     * Constants to be used as discriminator values for concreted classes inherited from this class.
+     * Constants to be used as discriminator values for *concrete* classes derived from this class.
      */
     interface KoulutusTyyppit {
 
-        String TUTKINNON_OSA = "TUTOSA";
+        String TUTKINNON_OSA = "M10001";
 
-        String TUTKINTO_OHJELMA = "TUTOHJ";
+        String TUTKINTO_OHJELMA = "M10002";
 
-        String TUTKINTO_OHJELMA_TOTEUTUS = "TOHTOT";
+        String TUTKINTO_OHJELMA_TOTEUTUS = "T10002";
     }
 
 

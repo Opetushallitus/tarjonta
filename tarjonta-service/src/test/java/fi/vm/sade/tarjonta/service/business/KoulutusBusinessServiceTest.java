@@ -15,13 +15,8 @@
  */
 package fi.vm.sade.tarjonta.service.business;
 
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
-import fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus;
-import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
-import java.util.Calendar;
-import java.util.Date;
+import fi.vm.sade.tarjonta.KoulutusFixtures;
+import fi.vm.sade.tarjonta.model.*;
 import javax.validation.ValidationException;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -50,36 +45,27 @@ public class KoulutusBusinessServiceTest {
     @Autowired
     private KoulutusBusinessService service;
 
-    private TutkintoOhjelma newTutkintoOhjelma;
+    private TutkintoOhjelma tutkintoOhjelma;
 
-    private TutkintoOhjelmaToteutus newTutkintoOhjelmaToteutus;
+    private TutkintoOhjelmaToteutus tutkintoOhjemanToteutus;
 
-    private Date koulutuksenAlkamisPvm;
+    private KoulutusFixtures fixtures = new KoulutusFixtures();
 
     @Before
     public void setUp() {
 
-        newTutkintoOhjelma = new TutkintoOhjelma();
-        newTutkintoOhjelma.setKoulutusKoodi("123456");
-        newTutkintoOhjelma.setTutkintoOhjelmanNimi("Degree in JUnit testing");
-        newTutkintoOhjelma.setOid("http://moduuli/123456");
-        
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.YEAR, 1);
-        koulutuksenAlkamisPvm = c.getTime();
+        fixtures.recreate();
 
-        newTutkintoOhjelmaToteutus = new TutkintoOhjelmaToteutus();
-        newTutkintoOhjelmaToteutus.setOid("http://toteutus/123456");
-        newTutkintoOhjelmaToteutus.setKoulutuksenAlkamisPvm(koulutuksenAlkamisPvm);
+        tutkintoOhjelma = fixtures.simpleTutkintoOhjelma;
+        tutkintoOhjemanToteutus = fixtures.simpleTutkintoOhjelmaToteutus;
 
     }
 
-    
     @Test
     public void testNewKoulutusmoduuliIsInSuunnitteluState() {
 
-        Koulutusmoduuli k = service.create(newTutkintoOhjelma);
-        assertEquals(KoulutusTila.SUUNNITTELUSSA, k.getTila());
+        Koulutusmoduuli k = service.create(tutkintoOhjelma);
+        assertEquals(KoodistoContract.TarjontaTilat.SUUNNITTELUSSA, k.getTila());
 
     }
 
@@ -90,21 +76,20 @@ public class KoulutusBusinessServiceTest {
 
     @Test
     public void testCreateKoulutusmoduuliWithToteutus() {
-        
-        KoulutusmoduuliToteutus t = service.create(newTutkintoOhjelmaToteutus, newTutkintoOhjelma);
-        
+
+        KoulutusmoduuliToteutus t = service.create(tutkintoOhjemanToteutus, tutkintoOhjelma);
+
         // check that koulutusmoduuli is assigned
-        assertEquals(newTutkintoOhjelma, t.getKoulutusmoduuli());
+        assertEquals(tutkintoOhjelma, t.getKoulutusmoduuli());
 
     }
-    
-    
-    @Test 
+
+    @Test
     public void testFindByOid() {
-        
-        KoulutusmoduuliToteutus t = service.create(newTutkintoOhjelmaToteutus, newTutkintoOhjelma);
+
+        KoulutusmoduuliToteutus t = service.create(tutkintoOhjemanToteutus, tutkintoOhjelma);
         assertNotNull(t.getOid());
-        
+
     }
 
 }

@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
+import fi.vm.sade.tarjonta.KoulutusFixtures;
 import fi.vm.sade.tarjonta.model.*;
 import java.util.Date;
 import java.util.Set;
@@ -45,7 +46,7 @@ public class KoulutusmoduuliToteutusDAOTest {
     private TutkintoOhjelma defaultModuuli;
 
     private KoulutusmoduuliToteutus defaultToteutus;
-
+    
     private static final Date ALKAMIS_PVM = new Date();
 
     private static final String TARJOAJA_1_OID = "http://organisaatio1";
@@ -60,7 +61,7 @@ public class KoulutusmoduuliToteutusDAOTest {
 
     @Before
     public void setUp() {
-
+        
         defaultModuuli = new TutkintoOhjelma();
         defaultModuuli.setOid("http://someoid");
         defaultModuuli.setTutkintoOhjelmanNimi("Junit Tutkinto");
@@ -72,6 +73,8 @@ public class KoulutusmoduuliToteutusDAOTest {
         defaultToteutus.setOid(TOTEUTUS_1_OID);
         defaultToteutus.setKoulutuksenAlkamisPvm(ALKAMIS_PVM);
         defaultToteutus.setMaksullisuus(MAKSULLISUUS);
+        defaultToteutus.addOpetuskieli(new KoodistoUri("http://kielet/fi"));
+        defaultToteutus.addOpetusmuoto(new KoodistoUri("http://opetusmuodot/lahiopetus"));
         koulutusDAO.insert(defaultToteutus);
 
     }

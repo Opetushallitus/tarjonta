@@ -53,7 +53,7 @@ public class KoulutusTest {
 
     }
 
-    @Test(expected = CyclicReferenceException.class)
+    @Test(expected = KoulutusTreeException.class)
     public void testParentCannotBeAddedAsChild() {
 
         Koulutus parent = new TutkintoOhjelma();

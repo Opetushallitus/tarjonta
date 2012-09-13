@@ -15,46 +15,44 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import java.io.Serializable;
+import fi.vm.sade.generic.model.BaseEntity;
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import org.apache.commons.lang.StringUtils;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
- * Container for Koodisto Uri. Use as @Embedded or inside @ElementCollection.
  *
- * @author Jukka Raanamo
  */
-@Embeddable
-public class KoodistoKoodiUri implements Serializable {
+@Entity
+@Table(name = "teksti_kaannos")
+public class TekstiKaannos extends BaseEntity {
 
-    private static final long serialVersionUID = 6772772416321895399L;
+    private static final long serialVersionUID = 8949181662473812771L;
 
-    @Column(name = "koodi_uri", nullable = false)
-    private String koodiUri;
+    @Column(name = "kieli_koodi", length = 2)
+    private String kieliKoodi;
 
-    /**
-     * JPA constructor.
-     */
-    protected KoodistoKoodiUri() {
+    @Column(name = "teksti")
+    private String teksti;
+
+    protected TekstiKaannos() {
     }
 
-    /**
-     * @param koodiUri a non-empty Uri 
-     */
-    public KoodistoKoodiUri(String koodiUri) {
-        this();
-        assert StringUtils.isNotEmpty(koodiUri) : "koodiUri cannot be empty string";
-        this.koodiUri = koodiUri;
+    public TekstiKaannos(String kieliKoodi, String teksti) {
+        this.kieliKoodi = formatKieliKoodi(kieliKoodi);
+        this.teksti = teksti;
     }
 
-    /**
-     * Returns a non-null koodi uri.
-     *
-     * @return
-     */
-    public String getKoodiUri() {
-        return koodiUri;
+    public String getKieliKoodi() {
+        return kieliKoodi;
+    }
+
+    public String getTeksti() {
+        return teksti;
+    }
+
+    static String formatKieliKoodi(String value) {
+        return value.trim().toLowerCase();
     }
 
     @Override
@@ -65,8 +63,8 @@ public class KoodistoKoodiUri implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final KoodistoKoodiUri other = (KoodistoKoodiUri) obj;
-        if ((this.koodiUri == null) ? (other.koodiUri != null) : !this.koodiUri.equals(other.koodiUri)) {
+        final TekstiKaannos other = (TekstiKaannos) obj;
+        if ((this.kieliKoodi == null) ? (other.kieliKoodi != null) : !this.kieliKoodi.equals(other.kieliKoodi)) {
             return false;
         }
         return true;
@@ -75,7 +73,7 @@ public class KoodistoKoodiUri implements Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + (this.koodiUri != null ? this.koodiUri.hashCode() : 0);
+        hash = 71 * hash + (this.kieliKoodi != null ? this.kieliKoodi.hashCode() : 0);
         return hash;
     }
 

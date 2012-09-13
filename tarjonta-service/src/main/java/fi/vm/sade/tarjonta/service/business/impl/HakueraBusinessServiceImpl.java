@@ -1,7 +1,7 @@
 package fi.vm.sade.tarjonta.service.business.impl;
 
-import fi.vm.sade.tarjonta.dao.HakueraDAO;
-import fi.vm.sade.tarjonta.model.Hakuera;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.business.HakueraBusinessService;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +19,20 @@ public class HakueraBusinessServiceImpl implements HakueraBusinessService {
     @Autowired
     private ConversionService conversionService;
     @Autowired
-    private HakueraDAO hakueraDao;
+    private HakuDAO hakueraDao;
 
     @Override
-    public List<Hakuera> findAll(SearchCriteriaDTO searchCriteria) {
+    public List<Haku> findAll(SearchCriteriaDTO searchCriteria) {
         return hakueraDao.findAll(searchCriteria);
     }
 
     @Override
-    public Hakuera save(Hakuera hakuera) {
+    public Haku save(Haku hakuera) {
         return hakueraDao.insert(hakuera);
     }
 
     @Override
-    public Hakuera update(Hakuera hakuera) {
+    public Haku update(Haku hakuera) {
         if (hakuera.getId() == null) {
             throw new IllegalArgumentException("updating object with null id: "+hakuera);
         }
@@ -40,7 +40,7 @@ public class HakueraBusinessServiceImpl implements HakueraBusinessService {
         return hakuera;
     }
     
-    public Hakuera findByOid(String oidString) {
+    public Haku findByOid(String oidString) {
         return hakueraDao.findByOid(oidString);
     }
 

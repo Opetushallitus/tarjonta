@@ -1,6 +1,6 @@
 package fi.vm.sade.tarjonta.service;
 
-import fi.vm.sade.tarjonta.KoodistoContract;
+import fi.vm.sade.tarjonta.model.KoodistoContract;
 import fi.vm.sade.tarjonta.service.impl.KoulutusAdminServiceImpl;
 import fi.vm.sade.tarjonta.service.tarjonta.koulutus._2012._09._04.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.tarjonta.koulutus._2012._09._04.KoulutusmoduuliTyyppi;

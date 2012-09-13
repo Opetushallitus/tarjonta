@@ -18,12 +18,9 @@ package fi.vm.sade.tarjonta.dao;
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Koulutus;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
-// todo: this needs to come from xml schema
-import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
 import java.util.List;
 
 /**
- *
  */
 public interface KoulutusDAO extends JpaDAO<Koulutus, Long> {
 
@@ -33,7 +30,7 @@ public interface KoulutusDAO extends JpaDAO<Koulutus, Long> {
      */
     public List<KoulutusSisaltyvyys> findAllSisaltyvyys();
     
-    public List<Koulutus> find(KoulutusTila tila, int startIndex, int pageSize);
+    public List<Koulutus> find(String tila, int startIndex, int pageSize);
     
     
     public <T> List<T> findAllVersions(Class<T> type, String oid);
