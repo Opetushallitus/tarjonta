@@ -109,6 +109,7 @@ public class MainResultView extends AbstractHorizontalLayout {
                 modal.addDialogButton("Peruuta", new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
+                        // Stay in same view
                         getWindow().removeWindow(modal);
                         modal.removeDialogButtons();
                     }
@@ -143,6 +144,7 @@ public class MainResultView extends AbstractHorizontalLayout {
                 modal.addDialogButton("Peruuta", new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
+                        // Stay in same view
                         getWindow().removeWindow(modal);
                         modal.removeDialogButtons();
                     }

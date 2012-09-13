@@ -4,48 +4,44 @@
  */
 package fi.vm.sade.tarjonta.ui.model.view;
 
-import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.NestedMethodProperty;
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.terminal.ExternalResource;
+import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractOrderedLayout;
-import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.Embedded;
+import com.vaadin.ui.Form;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.generic.ui.component.CaptionFormatter;
-import fi.vm.sade.generic.ui.component.FieldValueFormatter;
-import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
+import com.vaadin.ui.VerticalSplitPanel;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.components.OhjePopupComponent;
 import fi.vm.sade.tarjonta.ui.model.KoulutusPerustiedotDTO;
+import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloDTO;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
-import fi.vm.sade.tarjonta.ui.poc.helper.KeyValueBean;
 import fi.vm.sade.vaadin.Oph;
+import fi.vm.sade.vaadin.oph.enums.LabelStyle;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
+import org.vaadin.addon.formbinder.ViewBoundForm;
 
 /**
  *
@@ -55,14 +51,17 @@ import org.springframework.beans.factory.annotation.Value;
 public class EditKoulutusPerustiedotView extends VerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotView.class);
+
     @Autowired(required = true)
     private TarjontaPresenter _presenter;
+
     private I18NHelper i18n = new I18NHelper(this);
+
     @Value("${koodisto-uris.kieli:http://kieli}")
     private String _koodistoUriKieli;
     @Value("${koodisto-uris.kieli:http://teema}")
     private String _koodistoUriTeema;
-   @Value("${koodisto-uris.koulutus:http://koulutus}")
+    @Value("${koodisto-uris.koulutus:http://koulutus}")
     private String _koodistoUriKoulutus;
     @Value("${koodisto-uris.suunniteltuKesto:http://suunniteltuKesto}")
     private String _koodistoUriSuunniteltuKesto;
@@ -70,7 +69,8 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     private String _koodistoUriOpetusmuoto;
     @Value("${koodisto-uris.koulutuslaji:http://koulutuslaji}")
     private String _koodistoUriKoulutuslaji;
-    // TODO should be set from outside
+
+    // TODO should be set from outside/presenter
     private KoulutusPerustiedotDTO _dto = new KoulutusPerustiedotDTO();
 
     public EditKoulutusPerustiedotView() {
@@ -102,7 +102,9 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         addButton("TallennaValmiina", "doSaveComplete", hlButtonsTop);
         addButton("Jatka", "doContinue", hlButtonsTop);
 
-        addComponent(new Label(i18n.getMessage("KoulutuksenPerustiedot")));
+        addComponent(addLabel("KoulutuksenPerustiedot", LabelStyle.H2, null));
+
+        addHR(this);
 
         GridLayout grid = new GridLayout(3, 1);
         grid.setSizeFull();
@@ -113,12 +115,12 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
 
             KoodistoComponent kc = addKoodistoComboBox(_koodistoUriKoulutus, mi, "koulutus", "KoulutusTaiKoulutusOhjelma.prompt", null);
             grid.addComponent(kc);
-            // grid.addComponent(addHelpIcon("http://png.findicons.com/files/icons/2360/spirit20/20/system_question_alt_02.png", "onTopHelpClicked"));
+            grid.addComponent(new OhjePopupComponent(i18n.getMessage("LOREMIPSUM"), "500px", "300px"));
             grid.newLine();
         }
 
         grid.addComponent(addLabel("KoulutuksenTyyppi", null));
-        grid.addComponent(addKoodistoComboBox(_koodistoUriKoulutus, mi, "koulutusTyyppi", null, null));
+        grid.addComponent(addKoodistoComboBox(_koodistoUriKoulutus, mi, "koulutusTyyppi", "KoulutuksenTyyppi.prompt", null));
         grid.newLine();
 
         grid.addComponent(addLabel("Koulutusala", null));
@@ -192,99 +194,72 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
             grid.newLine();
         }
 
-        if (true) {
-            // TODO - dynamic addition with plus!
-            // TODO - contack persons for given languages
-            grid.addComponent(addLabel("Yhteyshenkilo", null));
+        addYhteyshenkiloSelectorAndEditor(grid);
 
-            HorizontalLayout hl = new HorizontalLayout();
-            hl.setSpacing(true);
-            VerticalLayout vl = UiBuilder.newVerticalLayout();
-            vl.setSpacing(true);
+        // TODO language links!
+        addYhteyshenkiloSelectorAndEditor(grid);
 
-            mi.addItemProperty("yhteyshenkilo.nimi", new NestedMethodProperty(_dto, "yhteyshenkilo.nimi"));
-            mi.addItemProperty("yhteyshenkilo.titteli", new NestedMethodProperty(_dto, "yhteyshenkilo.titteli"));
-            mi.addItemProperty("yhteyshenkilo.email", new NestedMethodProperty(_dto, "yhteyshenkilo.email"));
-            mi.addItemProperty("yhteyshenkilo.puhelin", new NestedMethodProperty(_dto, "yhteyshenkilo.puhelin"));
-            mi.addItemProperty("yhteyshenkilo.kielet", new NestedMethodProperty(_dto, "yhteyshenkilo.kielet"));
+//        {
+//            // TODO multiple
+//            grid.addComponent(addLabel("LinkkiOpetussunnitelmaan", null));
+//            VerticalLayout vl = UiBuilder.newVerticalLayout();
+//            vl.addComponent(addTextField(mi, "linkkiOpetussuunnitelma", "LinkkiOpetussunnitelmaan.prompt", null, null));
+//            vl.addComponent(addCheckBox("LinkkiOpetussunnitelmaan.eriOpetusKielet", mi, null, "doMultipleLinksForOpetussuunnitelma", null));
+//            grid.addComponent(vl);
+//            grid.newLine();
+//        }
+//
+//        {
+//            // TODO multiple
+//            grid.addComponent(addLabel("LinkkiOppilaitokseen", null));
+//            VerticalLayout vl = UiBuilder.newVerticalLayout();
+//            vl.addComponent(addTextField(mi, "linkkiOppilaitokseen", "LinkkiOppilaitokseen.prompt", null, null));
+//            vl.addComponent(addCheckBox("LinkkiOppilaitokseen.eriOpetusKielet", mi, null, "doMultipleLinksForOppilaitos", null));
+//            grid.addComponent(vl);
+//            grid.newLine();
+//        }
+//
+//        {
+//            // TODO multiple
+//            grid.addComponent(addLabel("LinkkiSOME", null));
+//            VerticalLayout vl = UiBuilder.newVerticalLayout();
+//            vl.addComponent(addTextField(mi, "linkkiSOME", "LinkkiSOME.prompt", null, null));
+//            vl.addComponent(addCheckBox("LinkkiSOME.eriOpetusKielet", mi, null, "doMultipleLinksForSOME", null));
+//            grid.addComponent(vl);
+//            grid.newLine();
+//        }
+//
+//        {
+//            // TODO multiple
+//            grid.addComponent(addLabel("LinkkiMultimedia", null));
+//            VerticalLayout vl = UiBuilder.newVerticalLayout();
+//            vl.addComponent(addTextField(mi, "linkkiMultimedia", "LinkkiMultimedia.prompt", null, null));
+//            vl.addComponent(addCheckBox("LinkkiMultimedia.eriOpetusKielet", mi, null, "doMultipleLinksForMultimedia", null));
+//            grid.addComponent(vl);
+//            grid.newLine();
+//        }
+//
+//        {
+//            // TODO multiple
+//            grid.addComponent(addCheckBox("KoulutusOnMaksullista", mi, "koulutusOnMaksullista", null, this));
+//            VerticalLayout vl = UiBuilder.newVerticalLayout();
+//            vl.addComponent(addTextField(mi, "linkkiMaksullisuus", "KoulutusOnMaksullista.prompt", null, null));
+//            vl.addComponent(addCheckBox("KoulutusOnMaksullista.eriOpetusKielet", mi, null, "doMultipleLinksForMaksullisuus", null));
+//            grid.addComponent(vl);
+//            grid.newLine();
+//        }
+//
+//        {
+//            // TODO multiple
+//            grid.addComponent(addCheckBox("StipendiMahdollisuus", mi, "koulutusStipendiMahdollisuus", null, this));
+//            VerticalLayout vl = UiBuilder.newVerticalLayout();
+//            vl.addComponent(addTextField(mi, "linkkiStipendiMahdollisuus", "StipendiMahdollisuus.prompt", null, null));
+//            vl.addComponent(addCheckBox("StipendiMahdollisuus.eriOpetusKielet", mi, null, "doMultipleLinksForStipendi", null));
+//            grid.addComponent(vl);
+//            grid.newLine();
+//        }
 
-            vl.addComponent(addTextField(mi, "yhteyshenkilo.nimi", "Yhteyshenkilo.Nimi.prompt", null, null));
-            vl.addComponent(addTextField(mi, "yhteyshenkilo.titteli", "Yhteyshenkilo.Titteli.prompt", null, null));
-            vl.addComponent(addTextField(mi, "yhteyshenkilo.email", "Yhteyshenkilo.Email.prompt", null, null));
-            vl.addComponent(addTextField(mi, "yhteyshenkilo.puhelin", "Yhteyshenkilo.Puhelin.prompt", null, null));
-
-            hl.addComponent(vl);
-            hl.addComponent(addKoodistoTwinColSelect(_koodistoUriKieli, mi, "yhteyshenkilo.kielet", null));
-
-            Button b = addButton("Yhteyshenkilo.LisaaUusi", "onAddNewYhteyshenkilo", null);
-            b.setStyleName(Oph.BUTTON_PLUS);
-            hl.addComponent(b);
-
-            grid.addComponent(hl);
-
-            grid.newLine();
-        }
-
-        {
-            // TODO multiple
-            grid.addComponent(addLabel("LinkkiOpetussunnitelmaan", null));
-            VerticalLayout vl = UiBuilder.newVerticalLayout();
-            vl.addComponent(addTextField(mi, "linkkiOpetussuunnitelma", "LinkkiOpetussunnitelmaan.prompt", null, null));
-            vl.addComponent(addCheckBox("LinkkiOpetussunnitelmaan.eriOpetusKielet", mi, null, "doMultipleLinksForOpetussuunnitelma", null));
-            grid.addComponent(vl);
-            grid.newLine();
-        }
-
-        {
-            // TODO multiple
-            grid.addComponent(addLabel("LinkkiOppilaitokseen", null));
-            VerticalLayout vl = UiBuilder.newVerticalLayout();
-            vl.addComponent(addTextField(mi, "linkkiOppilaitokseen", "LinkkiOppilaitokseen.prompt", null, null));
-            vl.addComponent(addCheckBox("LinkkiOppilaitokseen.eriOpetusKielet", mi, null, "doMultipleLinksForOppilaitos", null));
-            grid.addComponent(vl);
-            grid.newLine();
-        }
-
-        {
-            // TODO multiple
-            grid.addComponent(addLabel("LinkkiSOME", null));
-            VerticalLayout vl = UiBuilder.newVerticalLayout();
-            vl.addComponent(addTextField(mi, "linkkiSOME", "LinkkiSOME.prompt", null, null));
-            vl.addComponent(addCheckBox("LinkkiSOME.eriOpetusKielet", mi, null, "doMultipleLinksForSOME", null));
-            grid.addComponent(vl);
-            grid.newLine();
-        }
-
-        {
-            // TODO multiple
-            grid.addComponent(addLabel("LinkkiMultimedia", null));
-            VerticalLayout vl = UiBuilder.newVerticalLayout();
-            vl.addComponent(addTextField(mi, "linkkiMultimedia", "LinkkiMultimedia.prompt", null, null));
-            vl.addComponent(addCheckBox("LinkkiMultimedia.eriOpetusKielet", mi, null, "doMultipleLinksForMultimedia", null));
-            grid.addComponent(vl);
-            grid.newLine();
-        }
-
-        {
-            // TODO multiple
-            grid.addComponent(addCheckBox("KoulutusOnMaksullista", mi, "koulutusOnMaksullista", null, this));
-            VerticalLayout vl = UiBuilder.newVerticalLayout();
-            vl.addComponent(addTextField(mi, "linkkiMaksullisuus", "KoulutusOnMaksullista.prompt", null, null));
-            vl.addComponent(addCheckBox("KoulutusOnMaksullista.eriOpetusKielet", mi, null, "doMultipleLinksForMaksullisuus", null));
-            grid.addComponent(vl);
-            grid.newLine();
-        }
-
-        {
-            // TODO multiple
-            grid.addComponent(addCheckBox("StipendiMahdollisuus", mi, "koulutusStipendiMahdollisuus", null, this));
-            VerticalLayout vl = UiBuilder.newVerticalLayout();
-            vl.addComponent(addTextField(mi, "linkkiStipendiMahdollisuus", "StipendiMahdollisuus.prompt", null, null));
-            vl.addComponent(addCheckBox("StipendiMahdollisuus.eriOpetusKielet", mi, null, "doMultipleLinksForStipendi", null));
-            grid.addComponent(vl);
-            grid.newLine();
-        }
-
+        addHR(this);
 
         HorizontalLayout hlButtonsBottom = new HorizontalLayout();
         hlButtonsBottom.setSpacing(true);
@@ -333,6 +308,8 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         if (onClickMethodName != null) {
             c.addListener(getClickListener(onClickMethodName));
         }
+        c.addStyleName(Oph.BUTTON_SMALL);
+
         return c;
     }
 
@@ -345,6 +322,19 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      */
     private Label addLabel(String captionKey, AbstractOrderedLayout layout) {
         Label c = UiBuilder.newLabel(i18n.getMessage(captionKey), layout);
+        return c;
+    }
+
+    /**
+     * Create label with style.
+     *
+     * @param captionKey
+     * @param style
+     * @param layout
+     * @return
+     */
+    private Label addLabel(String captionKey, LabelStyle style, AbstractOrderedLayout layout) {
+        Label c = UiBuilder.newLabel(i18n.getMessage(captionKey), layout, style);
         return c;
     }
 
@@ -416,8 +406,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     }
 
     /**
-     * Create KoodistoComponent with CompboBox as displaying widget and bind to
-     * model.
+     * Create KoodistoComponent with CompboBox as displaying widget and bind to model.
      *
      * @param koodistoUri
      * @param psi
@@ -445,12 +434,134 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         return UiBuilder.newKoodistoTwinColSelect(koodistoUri, psi, expression, layout);
     }
 
+    /**
+     * Add vertical locked splitter.
+     *
+     * @param layout
+     * @return
+     */
+    private VerticalSplitPanel addHR(AbstractLayout layout) {
+        VerticalSplitPanel sp = new VerticalSplitPanel();
+        sp.setLocked(true);
+        sp.setHeight("2px");
+
+        if (layout != null) {
+            layout.addComponent(sp);
+        }
+
+        return sp;
+    }
+
+    /**
+     * Create yhteystiedot part of the form.
+     *
+     * @param grid
+     */
+    private void addYhteyshenkiloSelectorAndEditor(GridLayout grid) {
+        grid.addComponent(addLabel("Yhteyshenkilo", null));
+
+        final BeanItemContainer<KoulutusYhteyshenkiloDTO> yhteyshenkiloContainer = new BeanItemContainer<KoulutusYhteyshenkiloDTO>(KoulutusYhteyshenkiloDTO.class);
+        yhteyshenkiloContainer.addBean(_dto.getYhteyshenkilo());
+
+        HorizontalLayout hl = new HorizontalLayout();
+        hl.setSpacing(true);
+        VerticalLayout vl = new VerticalLayout();
+        hl.addComponent(vl);
+
+        final Table t = new Table(null, yhteyshenkiloContainer);
+        t.setPageLength(10);
+        vl.addComponent(t);
+
+        t.setSelectable(true);
+        t.setImmediate(true);
+
+        t.setColumnHeader("email", "Sähköposti");
+        t.setColumnHeader("puhelin", "Puhelin");
+        t.setColumnHeader("nimi", "Nimi");
+        t.setColumnHeader("kielet", "Pätee kielille");
+
+        t.setVisibleColumns(new Object[]{"nimi", "titteli", "email", "puhelin"});
+
+
+        Button b = addButton("Yhteyshenkilo.LisaaUusi", null, null);
+        b.setStyleName(Oph.BUTTON_PLUS);
+        b.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                KoulutusYhteyshenkiloDTO dto = new KoulutusYhteyshenkiloDTO();
+                BeanItem<KoulutusYhteyshenkiloDTO> bi = yhteyshenkiloContainer.addItem(dto);
+                t.select(dto);
+            }
+        });
+        vl.addComponent(b);
+
+        EditKoulutusPerustiedotYhteystietoView editor = new EditKoulutusPerustiedotYhteystietoView();
+
+        final Form f = new ViewBoundForm(editor);
+        f.setWriteThrough(false);
+        f.setEnabled(false);
+
+        hl.addComponent(f);
+
+        // Span editor and table to two columns
+        int row = grid.getCursorY();
+        grid.addComponent(hl, 1, row, 2, row);
+
+        //
+        // Table selection, update form to edit correct item
+        //
+        t.addListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                KoulutusYhteyshenkiloDTO selected = (KoulutusYhteyshenkiloDTO) event.getProperty().getValue();
+                f.setEnabled(selected != null);
+                if (selected != null) {
+                    f.setItemDataSource(new BeanItem(selected));
+                }
+            }
+        });
+
+        //
+        // Editor actions, commit form and refresh tabel data
+        //
+        editor.addListener(new Listener() {
+            @Override
+            public void componentEvent(Event event) {
+                if (event instanceof EditKoulutusPerustiedotYhteystietoView.CancelEvent) {
+                    f.discard();
+                }
+                if (event instanceof EditKoulutusPerustiedotYhteystietoView.SaveEvent) {
+                    f.commit();
+                    t.refreshRowCache();
+                }
+                if (event instanceof EditKoulutusPerustiedotYhteystietoView.DeleteEvent) {
+                    KoulutusYhteyshenkiloDTO dto = (KoulutusYhteyshenkiloDTO) t.getValue();
+                    if (dto != null) {
+                        yhteyshenkiloContainer.removeItem(dto);
+                        f.setItemDataSource(null);
+                        f.setEnabled(false);
+                    }
+                    getWindow().showNotification(i18n.getMessage("Poistettu"));
+
+                    // Autoselect in table
+                    if (yhteyshenkiloContainer.firstItemId() != null) {
+                        t.setValue(yhteyshenkiloContainer.firstItemId());
+                    }
+                }
+            }
+        });
+
+        // TODO Autoseelect first
+        t.setValue(_dto.getYhteyshenkilo());
+
+        grid.newLine();
+    }
+
     /*
      * Wiring the view actions with reflection listeners, ie. call methods is this class by name.
      */
     /**
-     * Creates a click listener that calls method <string>methodName</string> in
-     * this instance.
+     * Creates a click listener that calls method <string>methodName</string> in this instance.
      *
      * For buttons.
      *
@@ -473,8 +584,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     }
 
     /**
-     * Creates a mouse click listener that calls method
-     * <string>methodName</string> in this instance.
+     * Creates a mouse click listener that calls method <string>methodName</string> in this instance.
      *
      * For icons etc.
      *
@@ -499,8 +609,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     }
 
     /**
-     * Creates a value change listener that calls method
-     * <string>methodName</string> in this instance.
+     * Creates a value change listener that calls method <string>methodName</string> in this instance.
      *
      * Used for data related "events".
      *
