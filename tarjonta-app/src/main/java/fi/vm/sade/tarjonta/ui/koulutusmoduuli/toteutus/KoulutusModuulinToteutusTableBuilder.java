@@ -21,7 +21,6 @@ package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
 import com.vaadin.data.Container;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TableFieldFactory;
-import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
 
 
 
@@ -34,12 +33,12 @@ public class KoulutusModuulinToteutusTableBuilder {
 
     KoulutusModuulinToteutusTable tableToBuild; 
     
-     public static KoulutusModuulinToteutusTableBuilder komotoTable(KoulutusTila tableTilaType, boolean clickable) {
+     public static KoulutusModuulinToteutusTableBuilder komotoTable(String tableTilaType, boolean clickable) {
          
          return new KoulutusModuulinToteutusTableBuilder(tableTilaType, clickable);
      }
      
-     private KoulutusModuulinToteutusTableBuilder(KoulutusTila tilaType, boolean clickable) {
+     private KoulutusModuulinToteutusTableBuilder(String tilaType, boolean clickable) {
          tableToBuild = new KoulutusModuulinToteutusTable(tilaType, clickable);
      }
      

@@ -16,7 +16,6 @@
  */
 
 package fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus;
-import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliToteutusDTO;
 
 import com.vaadin.ui.Table;
@@ -54,14 +53,13 @@ public class KoulutusModuulinToteutusTable extends CustomComponent {
         
         private KoulutusmoduuliToteutusEditView komotoEdit;
         
-        //Should this be enum ?
-        private KoulutusTila tila;
+        private String tila;
         
         //TODO: KomotoTable must listen to blackboard events which 
         //tells about changes in komoto state table removes or adds
         //komotos to it depending on which state it is interested on
         
-        protected KoulutusModuulinToteutusTable(KoulutusTila tableTila, boolean clickable) {
+        protected KoulutusModuulinToteutusTable(String tableTila, boolean clickable) {
             this.clickable = clickable;
             tableGrid = new GridLayout(2, 3);
             tableGrid.setSizeFull();
@@ -114,7 +112,7 @@ public class KoulutusModuulinToteutusTable extends CustomComponent {
             komotoList.setContainerDataSource(tableContainer);
             komotoList.setVisibleColumns(visibleColumns);
             komotoList.setSizeFull();
-            komotoList.setDebugId(createDebugId("komotoTable" +tila.name()));
+            komotoList.setDebugId(createDebugId("komotoTable" +tila));
             komotoList.setImmediate(true);
             komotoList.setSelectable(true);
             if (clickable) {
@@ -167,7 +165,7 @@ public class KoulutusModuulinToteutusTable extends CustomComponent {
     /**
      * @return the tila
      */
-    public KoulutusTila getTila() {
+    public String getTila() {
         return tila;
     }
     
@@ -181,7 +179,7 @@ public class KoulutusModuulinToteutusTable extends CustomComponent {
     /**
      * @param tila the tila to set
      */
-    public void setTila(KoulutusTila tila) {
+    public void setTila(String tila) {
         this.tila = tila;
     }
 

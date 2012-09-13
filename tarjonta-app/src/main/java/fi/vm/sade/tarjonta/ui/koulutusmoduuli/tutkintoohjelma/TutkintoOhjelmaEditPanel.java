@@ -28,9 +28,9 @@ import fi.vm.sade.generic.ui.blackboard.BlackboardContext;
 import fi.vm.sade.koodisto.service.mock.MockDataHandler;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
+import fi.vm.sade.tarjonta.model.KoodistoContract;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliDTO;
 import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSummaryDTO;
-import fi.vm.sade.tarjonta.model.dto.KoulutusTila;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.AbstractKoulutusmoduuliEditPanel;
 import fi.vm.sade.tarjonta.ui.koulutusmoduuli.AbstractKoulutusmoduuliFormModel;
@@ -380,7 +380,7 @@ public class TutkintoOhjelmaEditPanel extends AbstractKoulutusmoduuliEditPanel<T
             if (updated == null) {
                 return I18N.getMessage("TutkintoOhjelmaFormModel.organisaatioStatus.notSaved");
             } else {
-                if (KoulutusTila.SUUNNITTELUSSA.name().equals(koulutusmoduuli.getTila())) {
+                if (KoodistoContract.TarjontaTilat.SUUNNITTELUSSA.equals(koulutusmoduuli.getTila())) {
                     return I18N.getMessage("TutkintoOhjelmaFormModel.organisaatioStatus.savedLuonnos", updated);
                 } else {
                     return I18N.getMessage("TutkintoOhjelmaFormModel.organisaatioStatus.savedValmis", updated);
