@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.ui.model;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -24,8 +26,19 @@ import java.lang.reflect.Field;
  */
 public class KoulutusLinkkiDTO implements Serializable {
 
+    // TODO enum
+    public static final String[] LINKKI_TYYPIT = new String[] {
+        "OPPILAITOS",
+        "KOULUTUSOHJELMA",
+        "SOSIAALINENMEDIA",
+        "MULTIMEDIA",
+        "MAKSULLISUUS",
+        "STIPENDIMAHDOLLISUUS",
+    };
+
+    String _linkkityyppi;
     // Koodisto: kieli
-    String _kieli;
+    Set<String> _kielet;
     String _url;
 
     @Override
@@ -64,12 +77,15 @@ public class KoulutusLinkkiDTO implements Serializable {
         return sb.toString();
     }
 
-    public String getKieli() {
-        return _kieli;
+    public Set<String> getKielet() {
+        if (_kielet == null) {
+            _kielet = new HashSet<String>();
+        }
+        return _kielet;
     }
 
-    public void setKieli(String _kieli) {
-        this._kieli = _kieli;
+    public void setKielet(Set<String> _kielet) {
+        this._kielet = _kielet;
     }
 
     public String getUrl() {
@@ -79,4 +95,31 @@ public class KoulutusLinkkiDTO implements Serializable {
     public void setUrl(String _url) {
         this._url = _url;
     }
+
+    public String getLinkkityyppi() {
+        if (_linkkityyppi == null) {
+            _linkkityyppi = LINKKI_TYYPIT[0];
+        }
+        return _linkkityyppi;
+    }
+
+    public void setLinkkityyppi(String linkkityyppi) {
+        // Make sure value is valid
+        boolean valid = false;
+        for (String tyyppi : LINKKI_TYYPIT) {
+            if (linkkityyppi != null && tyyppi.equals(linkkityyppi)) {
+                valid = true;
+                break;
+            }
+        }
+
+        if (!valid) {
+            this._linkkityyppi = LINKKI_TYYPIT[0];
+        } else {
+            this._linkkityyppi = linkkityyppi;
+        }
+    }
+
+
+
 }

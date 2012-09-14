@@ -29,6 +29,7 @@ import com.vaadin.ui.VerticalSplitPanel;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.components.OhjePopupComponent;
+import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiDTO;
 import fi.vm.sade.tarjonta.ui.model.KoulutusPerustiedotDTO;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloDTO;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
@@ -195,9 +196,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         }
 
         addYhteyshenkiloSelectorAndEditor(grid);
-
-        // TODO language links!
-        addYhteyshenkiloSelectorAndEditor(grid);
+        addLinkkiSelectorAndEditor(grid, mi);
 
 //        {
 //            // TODO multiple
@@ -460,8 +459,9 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     private void addYhteyshenkiloSelectorAndEditor(GridLayout grid) {
         grid.addComponent(addLabel("Yhteyshenkilo", null));
 
-        final BeanItemContainer<KoulutusYhteyshenkiloDTO> yhteyshenkiloContainer = new BeanItemContainer<KoulutusYhteyshenkiloDTO>(KoulutusYhteyshenkiloDTO.class);
-        yhteyshenkiloContainer.addBean(_dto.getYhteyshenkilo());
+        final BeanItemContainer<KoulutusYhteyshenkiloDTO> yhteyshenkiloContainer =
+                new BeanItemContainer<KoulutusYhteyshenkiloDTO>(KoulutusYhteyshenkiloDTO.class);
+        yhteyshenkiloContainer.addAll(_dto.getYhteyshenkilot());
 
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
@@ -551,15 +551,131 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
             }
         });
 
-        // TODO Autoseelect first
-        t.setValue(_dto.getYhteyshenkilo());
+        // Autoseelect first
+        if (!_dto.getYhteyshenkilot().isEmpty()) {
+            t.setValue(_dto.getYhteyshenkilot().get(0));
+        }
 
         grid.newLine();
     }
 
-    /*
-     * Wiring the view actions with reflection listeners, ie. call methods is this class by name.
-     */
+
+    private void addLinkkiSelectorAndEditor(GridLayout grid, PropertysetItem mi) {
+
+        grid.addComponent(addLabel("KoulutusOnMaksullista", null));
+        grid.addComponent(addCheckBox("KoulutusOnMaksullista.checkbox", mi, "koulutusOnMaksullista", null, this));
+        grid.newLine();
+
+        grid.addComponent(addLabel("StipendiMahdollisuus", null));
+        grid.addComponent(addCheckBox("StipendiMahdollisuus.checkbox", mi, "koulutusStipendimahdollisuus", null, this));
+        grid.newLine();
+
+        // Datasource
+        final BeanItemContainer<KoulutusLinkkiDTO> linkkiContainer = new BeanItemContainer<KoulutusLinkkiDTO>(KoulutusLinkkiDTO.class);
+        linkkiContainer.addAll(_dto.getKoulutusLinkit());
+
+        grid.addComponent(addLabel("Linkit", null));
+
+        HorizontalLayout hl = new HorizontalLayout();
+        hl.setSpacing(true);
+
+        int row = grid.getCursorY();
+        grid.addComponent(hl, 1, row, 2, row);
+
+        // Table + add button
+        VerticalLayout vl1 = new VerticalLayout();
+        vl1.setSpacing(true);
+        hl.addComponent(vl1);
+
+        final Table linkkiTable = new Table(null, linkkiContainer);
+        linkkiTable.setPageLength(6);
+        linkkiTable.setSelectable(true);
+        linkkiTable.setImmediate(true);
+
+        linkkiTable.setColumnHeader("linkkityyppi", i18n.getMessage("Linkkityyppi"));
+        linkkiTable.setColumnHeader("url", i18n.getMessage("LinkkiURL"));
+        linkkiTable.setColumnHeader("kielet", i18n.getMessage("LinkkiKielet"));
+
+        linkkiTable.setVisibleColumns(new Object[]{"linkkityyppi", "url", "kielet"});
+
+        vl1.addComponent(linkkiTable);
+
+        Button btnAddNewLinkki = addButton("Linkki.LisaaUusi", null, null);
+        btnAddNewLinkki.setStyleName(Oph.BUTTON_PLUS);
+        btnAddNewLinkki.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                KoulutusLinkkiDTO dto = new KoulutusLinkkiDTO();
+                linkkiContainer.addItem(dto);
+                linkkiTable.select(dto);
+            }
+        });
+        vl1.addComponent(btnAddNewLinkki);
+
+
+        // Link data editing
+
+        EditKoulutusPerustiedotLinkkiView editor = new EditKoulutusPerustiedotLinkkiView();
+        final Form f = new ViewBoundForm(editor);
+        f.setWriteThrough(false);
+        f.setEnabled(false);
+
+        hl.addComponent(f);
+
+        //
+        // Table selection, update form to edit correct item
+        //
+        linkkiTable.addListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                KoulutusLinkkiDTO selected = (KoulutusLinkkiDTO) event.getProperty().getValue();
+                f.setEnabled(selected != null);
+                if (selected != null) {
+                    f.setItemDataSource(new BeanItem(selected));
+                }
+            }
+        });
+
+
+        //
+        // Editor actions, commit form and refresh tabel data
+        //
+        editor.addListener(new Listener() {
+            @Override
+            public void componentEvent(Event event) {
+                if (event instanceof EditKoulutusPerustiedotLinkkiView.CancelEvent) {
+                    f.discard();
+                }
+                if (event instanceof EditKoulutusPerustiedotLinkkiView.SaveEvent) {
+                    f.commit();
+                    linkkiTable.refreshRowCache();
+                }
+                if (event instanceof EditKoulutusPerustiedotLinkkiView.DeleteEvent) {
+                    KoulutusLinkkiDTO dto = (KoulutusLinkkiDTO) linkkiTable.getValue();
+                    if (dto != null) {
+                        linkkiContainer.removeItem(dto);
+                        f.setItemDataSource(null);
+                        f.setEnabled(false);
+                    }
+                    getWindow().showNotification(i18n.getMessage("Poistettu"));
+
+                    // Autoselect in table
+                    if (linkkiContainer.firstItemId() != null) {
+                        linkkiTable.setValue(linkkiContainer.firstItemId());
+                    }
+                }
+            }
+        });
+
+        // Autoseelect first of initial data
+        if (!_dto.getKoulutusLinkit().isEmpty()) {
+            linkkiTable.setValue(_dto.getKoulutusLinkit().get(0));
+        }
+
+        grid.newLine();
+    }
+
+
     /**
      * Creates a click listener that calls method <string>methodName</string> in this instance.
      *
@@ -733,4 +849,5 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     public void onRemoveYhteyshenkilo() {
         LOG.info("onAddNewYhteyshenkilo()");
     }
+
 }

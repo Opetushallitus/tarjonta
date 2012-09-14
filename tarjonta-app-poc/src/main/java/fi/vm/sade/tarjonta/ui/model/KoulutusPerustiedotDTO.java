@@ -53,25 +53,10 @@ public class KoulutusPerustiedotDTO implements Serializable {
     // Koodisto: koulutuslaji
     private String _koulutuslaji;
 
-    // TODO tulevaisuudessa kieliriippuvasti monta yhteyshenkilöä
-    // private List<KoulutusYhteyshenkiloDTO> _yhteyshenkilot = new ArrayList<KoulutusYhteyshenkiloDTO>();
-    private KoulutusYhteyshenkiloDTO _yhteyshenkilo = new KoulutusYhteyshenkiloDTO();
-    private String _linkkiOpetussuunnitelma;
-    private String _linkkiOppilaitokseen;
-    private String _linkkiSOME;
-    private String _linkkiMultimedia;
+    private List<KoulutusYhteyshenkiloDTO> _yhteyshenkilot;
     private boolean _koulutusOnMaksullista;
-    private String _linkkiMaksullisuus;
     private boolean _koulutusStipendiMahdollisuus;
-    private String _linkkiStipendimahdollisuus;
-
-    // TODO kieliriippuvia linkkejä monta!
-//    private List<KoulutusLinkkiDTO> _linkkiOpetussuunnitelma = new ArrayList<KoulutusLinkkiDTO>();
-//    private List<KoulutusLinkkiDTO> _linkkiOppilaitokseen = new ArrayList<KoulutusLinkkiDTO>();
-//    private List<KoulutusLinkkiDTO> _linkkiSOME = new ArrayList<KoulutusLinkkiDTO>();
-//    private List<KoulutusLinkkiDTO> _linkkiMultimedia = new ArrayList<KoulutusLinkkiDTO>();
-//    private List<KoulutusLinkkiDTO> _linkkiMaksullisuus = new ArrayList<KoulutusLinkkiDTO>();
-//    private List<KoulutusLinkkiDTO> _linkkiStipendimahdollisuus = new ArrayList<KoulutusLinkkiDTO>();
+    private List<KoulutusLinkkiDTO> _koulutusLinkit;
 
     @Override
     public String toString() {
@@ -237,38 +222,6 @@ public class KoulutusPerustiedotDTO implements Serializable {
         this._koulutuslaji = koulutuslaji;
     }
 
-    public KoulutusYhteyshenkiloDTO getYhteyshenkilo() {
-        return _yhteyshenkilo;
-    }
-
-    public void setYhteyshenkilo(KoulutusYhteyshenkiloDTO yhteyshenkilo) {
-        this._yhteyshenkilo = yhteyshenkilo;
-    }
-
-    public String getLinkkiOpetussuunnitelma() {
-        return _linkkiOpetussuunnitelma;
-    }
-
-    public void setLinkkiOpetussuunnitelma(String linkkiOpetussuunnitelma) {
-        this._linkkiOpetussuunnitelma = linkkiOpetussuunnitelma;
-    }
-
-    public String getLinkkiSOME() {
-        return _linkkiSOME;
-    }
-
-    public void setLinkkiSOME(String linkkiSOME) {
-        this._linkkiSOME = linkkiSOME;
-    }
-
-    public String getLinkkiMultimedia() {
-        return _linkkiMultimedia;
-    }
-
-    public void setLinkkiMultimedia(String linkkiMultimedia) {
-        this._linkkiMultimedia = linkkiMultimedia;
-    }
-
     public boolean isKoulutusOnMaksullista() {
         return _koulutusOnMaksullista;
     }
@@ -277,13 +230,6 @@ public class KoulutusPerustiedotDTO implements Serializable {
         this._koulutusOnMaksullista = koulutusOnMaksullista;
     }
 
-    public String getLinkkiMaksullisuus() {
-        return _linkkiMaksullisuus;
-    }
-
-    public void setLinkkiMaksullisuus(String linkkiMaksullisuus) {
-        this._linkkiMaksullisuus = linkkiMaksullisuus;
-    }
 
     public boolean isKoulutusStipendiMahdollisuus() {
         return _koulutusStipendiMahdollisuus;
@@ -293,19 +239,27 @@ public class KoulutusPerustiedotDTO implements Serializable {
         this._koulutusStipendiMahdollisuus = koulutusStipendiMahdollisuus;
     }
 
-    public String getLinkkiStipendimahdollisuus() {
-        return _linkkiStipendimahdollisuus;
+    public List<KoulutusLinkkiDTO> getKoulutusLinkit() {
+        if (_koulutusLinkit == null) {
+            _koulutusLinkit = new ArrayList<KoulutusLinkkiDTO>();
+        }
+        return _koulutusLinkit;
     }
 
-    public void setLinkkiStipendimahdollisuus(String linkkiStipendimahdollisuus) {
-        this._linkkiStipendimahdollisuus = linkkiStipendimahdollisuus;
+    public void setKoulutusLinkit(List<KoulutusLinkkiDTO> linkit) {
+        this._koulutusLinkit = linkit;
     }
 
-    public String getLinkkiOppilaitokseen() {
-        return _linkkiOppilaitokseen;
+    public List<KoulutusYhteyshenkiloDTO> getYhteyshenkilot() {
+        if (_yhteyshenkilot == null) {
+            _yhteyshenkilot = new ArrayList<KoulutusYhteyshenkiloDTO>();
+        }
+        return _yhteyshenkilot;
     }
 
-    public void setLinkkiOppilaitokseen(String _linkkiOppilaitokseen) {
-        this._linkkiOppilaitokseen = _linkkiOppilaitokseen;
+    public void setYhteyshenkilot(List<KoulutusYhteyshenkiloDTO> _yhteyshenkilot) {
+        this._yhteyshenkilot = _yhteyshenkilot;
     }
+
+
 }
