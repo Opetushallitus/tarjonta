@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jani
  */
-public abstract class AbstractDialogWindow<T extends AbstractLayout> extends AbstractWindow<T> {
+public abstract class AbstractDialogWindow extends AbstractWindow {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractDialogWindow.class);
     private HorizontalLayout bottomLayout;
@@ -29,7 +29,7 @@ public abstract class AbstractDialogWindow<T extends AbstractLayout> extends Abs
     public AbstractDialogWindow(String winLabel, String topic, String message) {
         super(winLabel, false); //false, do not build layout in parent abstract class
         setDialogMessages(topic, message);
-        buildLayout((T) getLayout());
+        buildLayout(getLayout());
         getLayout().setMargin(true);
         setHeight("65%");
         setWidth("65%");

@@ -176,6 +176,10 @@ public class MainResultView extends AbstractHorizontalLayout {
         layout.setExpandRatio(cbJarjestys, 1f);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
 
+        Button  btnInfo = new Button();
+        btnInfo.addStyleName(Oph.BUTTON_INFO);
+        layout.addComponent(btnInfo);
+
         return layout;
     }
 
@@ -195,7 +199,7 @@ public class MainResultView extends AbstractHorizontalLayout {
         layout.setHeight(Sizeable.SIZE_UNDEFINED, 0);
 
         layout.setExpandRatio(wrapper, 0.07f);
-        layout.setExpandRatio(categoryTree, 0.80f);
+        layout.setExpandRatio(categoryTree, 0.93f);
         layout.setMargin(true);
 
 

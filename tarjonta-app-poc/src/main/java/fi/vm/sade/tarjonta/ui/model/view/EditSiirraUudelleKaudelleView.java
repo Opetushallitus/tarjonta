@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jani
  */
-public class EditSiirraUudelleKaudelleView extends AbstractDialogWindow<VerticalLayout> {
+public class EditSiirraUudelleKaudelleView extends AbstractDialogWindow {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateKoulutusView.class);
 

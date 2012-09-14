@@ -45,7 +45,7 @@ public class TarjontaPocPortletApplication extends AbstractSadePortletApplicatio
 
         win = new TarjontaWindow();
         setMainWindow(win);
-        win.getContent().setHeight(650, Sizeable.UNITS_PIXELS);
+        win.getContent().setHeight(850, Sizeable.UNITS_PIXELS);
         //setTheme("tarjonta");
         setTheme(Oph.THEME_NAME);
     }

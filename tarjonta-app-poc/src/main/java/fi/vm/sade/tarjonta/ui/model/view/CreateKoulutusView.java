@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jani
  */
-public class CreateKoulutusView extends AbstractDialogWindow<VerticalLayout> {
+public class CreateKoulutusView extends AbstractDialogWindow {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateKoulutusView.class);
     private static final String TEKSTI = "Koulutusta ei ole vielä liitetty mihinkään organisaatioon.";

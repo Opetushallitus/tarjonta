@@ -1,25 +1,14 @@
 package fi.vm.sade.tarjonta.ui.poc;
 
-import com.vaadin.terminal.Sizeable;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.model.KoulutusPerustiedotDTO;
-import fi.vm.sade.tarjonta.ui.model.view.CreateKoulutusView;
-import fi.vm.sade.tarjonta.ui.model.view.EditKoulutusView;
-import fi.vm.sade.tarjonta.ui.model.view.EditSiirraUudelleKaudelleView;
 import fi.vm.sade.tarjonta.ui.model.view.MainKoulutusView;
 import fi.vm.sade.tarjonta.ui.model.view.MainResultView;
 import fi.vm.sade.tarjonta.ui.model.view.MainSearchView;
 import fi.vm.sade.tarjonta.ui.model.view.MainSplitPanelView;
 import fi.vm.sade.vaadin.Oph;
-import fi.vm.sade.vaadin.oph.demodata.DataSource;
-import fi.vm.sade.vaadin.oph.demodata.row.MultiActionTableStyle;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import fi.vm.sade.vaadin.oph.layout.AbstractDialogWindow;
 import org.slf4j.Logger;
@@ -40,12 +29,6 @@ public class TarjontaWindow extends Window {
     private TarjontaPresenter _presenter;
 
     private MainSplitPanelView mainSplitPanel;
-    private MainSearchView mainSearch;
-    private MainResultView mainResult;
-    private AbstractDialogWindow mainModalWindow;
-
-    private MainKoulutusView mainKoulutusView;
-
     public TarjontaWindow() {
         super();
         LOG.info("TarjontaWindow(): {}", _presenter);

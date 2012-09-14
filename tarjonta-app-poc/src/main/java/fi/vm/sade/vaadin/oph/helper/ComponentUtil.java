@@ -9,11 +9,12 @@ import com.vaadin.ui.AbstractLayout;
  * @author jani
  */
 public class ComponentUtil {
-    
+
     private static final Layout THEME = Layout.OPH;
     public static final String PCT100 = "100%";
     public static final String DEFAULT_REALTIVE_SIZE = "-1px";
     public static final String UNDEFINED_TEXT = "UNDEFINED";
+    public static final String RESOURCE_URL_OPH = "../../themes/oph/";
 
     private enum Layout {
 

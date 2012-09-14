@@ -2,6 +2,7 @@ package fi.vm.sade.vaadin.oph.layout;
 
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
 import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
@@ -12,9 +13,9 @@ import fi.vm.sade.vaadin.oph.helper.UiBuilder;
  *
  * @author jani
  */
-public abstract class AbstractWindow<T extends AbstractLayout> extends Window implements Window.CloseListener {
+public abstract class AbstractWindow extends Window implements Window.CloseListener {
 
-    private T windowLayout;
+    private VerticalLayout windowLayout;
 
     public AbstractWindow(String label) {
         super(label);
@@ -31,21 +32,21 @@ public abstract class AbstractWindow<T extends AbstractLayout> extends Window im
         init(width, height, modal, null, true);
     }
 
-    public AbstractWindow(String label, String width, String height, boolean modal, T layout) {
+    public AbstractWindow(String label, String width, String height, boolean modal, VerticalLayout layout) {
         super(label);
         init(width, height, modal, layout, true);
     }
 
-    protected void init(String width, String height, boolean modal, T layout, boolean doLayout) {
+    protected void init(String width, String height, boolean modal, VerticalLayout layout, boolean doLayout) {
         ComponentUtil.handleWidth(this, width);
         ComponentUtil.handleHeight(this, height);
         center();
         setModal(true);
 
         if (layout == null) {
-            windowLayout = (T) UiBuilder.newVerticalLayout(true, UiMarginEnum.NONE);
+            windowLayout =  UiBuilder.newVerticalLayout(true, UiMarginEnum.NONE);
         } else {
-            windowLayout = (T) layout;
+            windowLayout =  layout;
         }
 
         windowLayout.setSizeFull();
@@ -56,11 +57,11 @@ public abstract class AbstractWindow<T extends AbstractLayout> extends Window im
         }
     }
 
-    protected void buildOrder(T layout) {
+    protected void buildOrder(VerticalLayout layout) {
         buildLayout(layout);
     }
 
-    public abstract void buildLayout(T layout);
+    public abstract void buildLayout(VerticalLayout layout);
 
     @Override
     public void windowClose(CloseEvent e) {
@@ -71,7 +72,7 @@ public abstract class AbstractWindow<T extends AbstractLayout> extends Window im
         getContent().setHeight("100%");
     }
 
-    public AbstractLayout getLayout() {
+    public VerticalLayout getLayout() {
         return windowLayout;
     }
 

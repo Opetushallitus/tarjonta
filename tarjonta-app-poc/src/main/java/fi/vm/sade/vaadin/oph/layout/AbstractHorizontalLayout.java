@@ -1,10 +1,8 @@
 package fi.vm.sade.vaadin.oph.layout;
 
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.helper.ComponentUtil;
-import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
 
 /**
  *

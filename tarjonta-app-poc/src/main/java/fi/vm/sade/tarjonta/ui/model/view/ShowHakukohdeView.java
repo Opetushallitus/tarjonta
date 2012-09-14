@@ -27,7 +27,6 @@ import com.vaadin.ui.VerticalSplitPanel;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.oph.demodata.DataSource;
 import fi.vm.sade.vaadin.oph.demodata.row.MultiActionTableStyleNoCBox;
-import fi.vm.sade.vaadin.oph.demodata.row.TextTableStyle;
 import fi.vm.sade.vaadin.oph.dto.PageNavigationDTO;
 import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
@@ -41,11 +40,11 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author mlyly
  */
 @Configurable(preConstruction = true)
-public class ShowKoulutusView extends AbstractInfoLayout<VerticalLayout> {
+public class ShowHakukohdeView extends AbstractInfoLayout<VerticalLayout> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ShowKoulutusView.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ShowHakukohdeView.class);
 
-    public ShowKoulutusView(String pageTitle, String message, PageNavigationDTO dto) {
+    public ShowHakukohdeView(String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
 
         addNavigationButton("", new Button.ClickListener() {
@@ -72,100 +71,74 @@ public class ShowKoulutusView extends AbstractInfoLayout<VerticalLayout> {
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
-        addLayoutSplit();
         buildLayoutMiddleTop(layout);
-        addLayoutSplit();
-        buildLayoutMiddleMid1(layout);
-        addLayoutSplit();
-        buildLayoutMiddleMid2(layout);
-        addLayoutSplit();
         buildLayoutMiddleBottom(layout);
-        addLayoutSplit();
     }
 
     private void buildLayoutMiddleTop(VerticalLayout layout) {
-        layout.addComponent(buildHeaderLayout("Koulutuksen perustiedot", "Muokkaa"));
 
-        String[] arr = DataSource.KOULUTUKSEN_PERUSTIEDOT_HEADERS;
+        VerticalSplitPanel panel1 = new VerticalSplitPanel();
+        panel1.setImmediate(false);
+        panel1.setWidth("100%");
+        panel1.setHeight("2px");
+        panel1.setLocked(true);
+        layout.addComponent(panel1);
 
-        GridLayout grid = new GridLayout(2, arr.length + 1);
-        grid.setHeight("100%");
-        grid.setWidth("800px");
+        layout.addComponent(buildHeaderLayout("Hakukohteen tiedot", "Muokkaa"));
 
-        LOG.info("Grid result length : " + arr.length);
-        for (int i = 0; i < arr.length; i++) {
-            grid.addComponent(UiBuilder.newLabel(arr[i]), 0, i);
-        }
+        GridLayout lorem1 = new GridLayout(2, 6);
+        lorem1.setHeight("100%");
+        lorem1.setWidth("800px");
+        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 15)), 0, 0);
+        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 35)), 0, 1);
+        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 15)), 0, 2);
+        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 35)), 0, 3);
+        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 25)), 0, 4);
+        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 25)), 0, 5);
 
-        arr = DataSource.KOULUTUKSEN_PERUSTIEDOT_DATA;
+        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 255)), 1, 0);
+        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 65)), 1, 1);
+        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 45)), 1, 2);
+        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 85)), 1, 3);
+        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 15)), 1, 4);
+        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 1000)), 1, 5);
 
-        for (int i = 0; i < arr.length; i++) {
-            grid.addComponent(UiBuilder.newLabel(arr[i] + " "), 1, i);
-        }
+        lorem1.setColumnExpandRatio(0, 1);
+        lorem1.setColumnExpandRatio(1, 5);
 
-        grid.setColumnExpandRatio(0, 1);
-        grid.setColumnExpandRatio(1, 2);
-
-        for (int row = 0; row < grid.getRows(); row++) {
+        for (int row = 0; row < lorem1.getRows(); row++) {
             //alignment code not working?
-            Component c = grid.getComponent(0, row);
-            grid.setComponentAlignment(c, Alignment.TOP_RIGHT);
+            Component c = lorem1.getComponent(0, row);
+            lorem1.setComponentAlignment(c, Alignment.TOP_RIGHT);
         }
 
-        layout.addComponent(grid);
-        layout.setExpandRatio(grid, 1f);
-    }
 
-    private void buildLayoutMiddleMid1(VerticalLayout layout) {
-        layout.addComponent(buildHeaderLayout("Koulutuksen kuvailevat tiedot", "Muokkaa"));
+        layout.addComponent(lorem1);
+        VerticalSplitPanel panel2 = new VerticalSplitPanel();
+        panel2.setImmediate(false);
+        panel2.setWidth("100%");
+        panel2.setHeight("2px");
+        panel2.setLocked(true);
+        layout.addComponent(panel2);
 
-        String[] arr = DataSource.KOULUTUKSEN_KUVAILEVAT_TIEDOT_HEADERS;
-
-        GridLayout grid = new GridLayout(2, arr.length + 1);
-        grid.setHeight("100%");
-        grid.setWidth("800px");
-
-        for (int i = 0; i < arr.length; i++) {
-            grid.addComponent(UiBuilder.newLabel(arr[i]), 0, i);
-        }
-
-        for (int i = 0; i < arr.length; i++) {
-            grid.addComponent(UiBuilder.newLabel(" - "), 1, i);
-        }
-
-        grid.setColumnExpandRatio(0, 1);
-        grid.setColumnExpandRatio(1, 2);
-
-        for (int row = 0; row < grid.getRows(); row++) {
-            //alignment code not working?
-            Component c = grid.getComponent(0, row);
-            grid.setComponentAlignment(c, Alignment.TOP_RIGHT);
-        }
-
-        layout.addComponent(grid);
-        layout.setExpandRatio(grid, 1f);
-    }
-
-    private void buildLayoutMiddleMid2(VerticalLayout layout) {
-        layout.addComponent(buildHeaderLayout("Sisältyvät opintokokonaisuudet (3 kpl)", "Muokkaa"));
-
-        CategoryTreeView categoryTree = new CategoryTreeView();
-        categoryTree.setHeight("100px");
-        categoryTree.setContainerDataSource(DataSource.treeTableData(new TextTableStyle()));
-        layout.addComponent(categoryTree);
+        layout.setExpandRatio(lorem1, 1f);
     }
 
     private void buildLayoutMiddleBottom(VerticalLayout layout) {
-        layout.addComponent(buildHeaderLayout("Hakukohteet (1 kpl)", "Luo uusi hakukohde"));
+        layout.addComponent(buildHeaderLayout("Hakukohteeseen sisältyvät koulutukset", "Liitä uusi koulutus"));
 
         CategoryTreeView categoryTree = new CategoryTreeView();
-        categoryTree.setHeight("100px");
+        categoryTree.setHeight("200px");
         categoryTree.setContainerDataSource(DataSource.treeTableData(new MultiActionTableStyleNoCBox()));
-        layout.addComponent(categoryTree);
+        layout.addComponent(categoryTree);       
+    }
+
+    private HorizontalLayout buildHeaderLayout(String title) {
+        return buildHeaderLayout(title, null);
     }
 
     private HorizontalLayout buildHeaderLayout(String title, String btnCaption) {
-        HorizontalLayout headerLayout = UiBuilder.newHorizontalLayout(true, UiMarginEnum.NONE);
+        HorizontalLayout headerLayout = UiBuilder.newHorizontalLayout(true, UiMarginEnum.TOP_BOTTOM);
         Label titleLabel = UiBuilder.newLabel(title, headerLayout);
         titleLabel.setStyleName(Oph.LABEL_H2);
 

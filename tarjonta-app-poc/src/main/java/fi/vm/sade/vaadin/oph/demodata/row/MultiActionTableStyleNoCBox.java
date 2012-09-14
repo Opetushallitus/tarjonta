@@ -13,7 +13,7 @@ import fi.vm.sade.vaadin.oph.helper.UiBuilder;
  *
  * @author jani
  */
-public class MultiActionTableStyle implements ITableRowFormat<HorizontalLayout> {
+public class MultiActionTableStyleNoCBox implements ITableRowFormat<HorizontalLayout> {
 
     private MenuBar.Command menuCommand = new MenuBar.Command() {
         @Override
@@ -34,14 +34,12 @@ public class MultiActionTableStyle implements ITableRowFormat<HorizontalLayout> 
 
     @Override
     public HorizontalLayout format(String text) {
-        CheckBox newCheckbox = UiBuilder.newCheckbox(null, null);
         Label label = new Label(text);
         label.setSizeUndefined(); // -1,-1
         HorizontalLayout horizontal = new HorizontalLayout();
         horizontal.setWidth(-1, Sizeable.UNITS_PIXELS);
         horizontal.setHeight(-1, Sizeable.UNITS_PIXELS); //Tämä toimii!!!
 
-        horizontal.addComponent(newCheckbox);
         horizontal.addComponent(newMenuBar());
         horizontal.addComponent(label);
 

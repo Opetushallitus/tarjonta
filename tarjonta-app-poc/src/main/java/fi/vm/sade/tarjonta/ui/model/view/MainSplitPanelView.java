@@ -1,13 +1,9 @@
 package fi.vm.sade.tarjonta.ui.model.view;
 
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
-import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
