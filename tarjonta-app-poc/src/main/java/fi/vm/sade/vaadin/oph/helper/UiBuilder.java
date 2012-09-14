@@ -20,6 +20,7 @@ import com.vaadin.ui.Link;
 import com.vaadin.ui.RichTextArea;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TwinColSelect;
+import com.vaadin.ui.VerticalSplitPanel;
 import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
@@ -172,7 +173,12 @@ public class UiBuilder extends ComponentUtil {
 
 
     public static CheckBox newCheckbox(final String name, final AbstractLayout layout) {
-        CheckBox checkBox = new CheckBox(name);
+        CheckBox checkBox;
+        if (name != null) {
+            checkBox = new CheckBox(name);
+        } else {
+            checkBox = new CheckBox();
+        }
 
         checkBox.setImmediate(false);
         handleWidth(checkBox, DEFAULT_REALTIVE_SIZE);
@@ -573,6 +579,14 @@ public class UiBuilder extends ComponentUtil {
         return kc;
     }
 
+    public static VerticalSplitPanel newHR(VerticalLayout _layout) {
+        VerticalSplitPanel sp = new VerticalSplitPanel();
+        sp.setLocked(true);
+        sp.setHeight("2px");
 
+        handleAddComponent(_layout, sp);
+
+        return sp;
+    }
 
 }

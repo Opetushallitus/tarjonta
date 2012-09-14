@@ -198,66 +198,6 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         addYhteyshenkiloSelectorAndEditor(grid);
         addLinkkiSelectorAndEditor(grid, mi);
 
-//        {
-//            // TODO multiple
-//            grid.addComponent(addLabel("LinkkiOpetussunnitelmaan", null));
-//            VerticalLayout vl = UiBuilder.newVerticalLayout();
-//            vl.addComponent(addTextField(mi, "linkkiOpetussuunnitelma", "LinkkiOpetussunnitelmaan.prompt", null, null));
-//            vl.addComponent(addCheckBox("LinkkiOpetussunnitelmaan.eriOpetusKielet", mi, null, "doMultipleLinksForOpetussuunnitelma", null));
-//            grid.addComponent(vl);
-//            grid.newLine();
-//        }
-//
-//        {
-//            // TODO multiple
-//            grid.addComponent(addLabel("LinkkiOppilaitokseen", null));
-//            VerticalLayout vl = UiBuilder.newVerticalLayout();
-//            vl.addComponent(addTextField(mi, "linkkiOppilaitokseen", "LinkkiOppilaitokseen.prompt", null, null));
-//            vl.addComponent(addCheckBox("LinkkiOppilaitokseen.eriOpetusKielet", mi, null, "doMultipleLinksForOppilaitos", null));
-//            grid.addComponent(vl);
-//            grid.newLine();
-//        }
-//
-//        {
-//            // TODO multiple
-//            grid.addComponent(addLabel("LinkkiSOME", null));
-//            VerticalLayout vl = UiBuilder.newVerticalLayout();
-//            vl.addComponent(addTextField(mi, "linkkiSOME", "LinkkiSOME.prompt", null, null));
-//            vl.addComponent(addCheckBox("LinkkiSOME.eriOpetusKielet", mi, null, "doMultipleLinksForSOME", null));
-//            grid.addComponent(vl);
-//            grid.newLine();
-//        }
-//
-//        {
-//            // TODO multiple
-//            grid.addComponent(addLabel("LinkkiMultimedia", null));
-//            VerticalLayout vl = UiBuilder.newVerticalLayout();
-//            vl.addComponent(addTextField(mi, "linkkiMultimedia", "LinkkiMultimedia.prompt", null, null));
-//            vl.addComponent(addCheckBox("LinkkiMultimedia.eriOpetusKielet", mi, null, "doMultipleLinksForMultimedia", null));
-//            grid.addComponent(vl);
-//            grid.newLine();
-//        }
-//
-//        {
-//            // TODO multiple
-//            grid.addComponent(addCheckBox("KoulutusOnMaksullista", mi, "koulutusOnMaksullista", null, this));
-//            VerticalLayout vl = UiBuilder.newVerticalLayout();
-//            vl.addComponent(addTextField(mi, "linkkiMaksullisuus", "KoulutusOnMaksullista.prompt", null, null));
-//            vl.addComponent(addCheckBox("KoulutusOnMaksullista.eriOpetusKielet", mi, null, "doMultipleLinksForMaksullisuus", null));
-//            grid.addComponent(vl);
-//            grid.newLine();
-//        }
-//
-//        {
-//            // TODO multiple
-//            grid.addComponent(addCheckBox("StipendiMahdollisuus", mi, "koulutusStipendiMahdollisuus", null, this));
-//            VerticalLayout vl = UiBuilder.newVerticalLayout();
-//            vl.addComponent(addTextField(mi, "linkkiStipendiMahdollisuus", "StipendiMahdollisuus.prompt", null, null));
-//            vl.addComponent(addCheckBox("StipendiMahdollisuus.eriOpetusKielet", mi, null, "doMultipleLinksForStipendi", null));
-//            grid.addComponent(vl);
-//            grid.newLine();
-//        }
-
         addHR(this);
 
         HorizontalLayout hlButtonsBottom = new HorizontalLayout();
