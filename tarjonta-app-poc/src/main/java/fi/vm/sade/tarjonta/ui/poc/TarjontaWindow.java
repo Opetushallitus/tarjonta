@@ -5,7 +5,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.model.view.MainKoulutusView;
-import fi.vm.sade.tarjonta.ui.model.view.MainResultView;
+import fi.vm.sade.tarjonta.ui.model.view.MainTabSheetView;
 import fi.vm.sade.tarjonta.ui.model.view.MainSearchView;
 import fi.vm.sade.tarjonta.ui.model.view.MainSplitPanelView;
 import fi.vm.sade.vaadin.Oph;

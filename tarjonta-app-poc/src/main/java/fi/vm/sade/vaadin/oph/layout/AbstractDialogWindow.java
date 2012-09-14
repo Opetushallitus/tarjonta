@@ -50,16 +50,27 @@ public abstract class AbstractDialogWindow extends AbstractWindow {
         getLayout().addComponent(bottomLayout);
     }
 
-    public void addDialogButton(String name, Button.ClickListener listener) {
+    public void addNavigationButton(String name, Button.ClickListener listener) {
+        addNavigationButton(name, listener, null);
+    }
+
+    public void addNavigationButton(String name, Button.ClickListener listener, String... styles) {
         if (bottomLayout == null) {
             //init
             bottomLayout = UiBuilder.newHorizontalLayout();
             buttons = new ArrayList<ButtonContainer>();
         }
 
-        Button newButton = UiBuilder.newButton(name, bottomLayout);
-        newButton.addListener(listener);
-        buttons.add(new ButtonContainer(name, newButton, listener));
+        Button btn = UiBuilder.newButton(name, bottomLayout);
+
+        if (styles != null) {
+            for (String s : styles) {
+                btn.addStyleName(s);
+            }
+        }
+
+        btn.addListener(listener);
+        buttons.add(new ButtonContainer(name, btn, listener));
     }
 
     public void removeDialogButtons() {

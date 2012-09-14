@@ -28,11 +28,10 @@ import fi.vm.sade.vaadin.oph.helper.UiBuilder;
  *
  * @author mlyly
  */
-// @Configurable(preConstruction=true)
 public class MainKoulutusView extends VerticalLayout {
 
     MainSearchView _searchView = new MainSearchView();
-    MainResultView _resultView = new MainResultView();
+    MainTabSheetView _resultView = new MainTabSheetView();
 
     private Link breadCrumb;
 
@@ -47,9 +46,6 @@ public class MainKoulutusView extends VerticalLayout {
 
         this.setExpandRatio(_searchView, 0.03f);
         this.setExpandRatio(_resultView, 0.97f);
-
-        // TODO Dummy data
-        _resultView.setCategoryDataSource(DataSource.treeTableData(new MultiActionTableStyle()));
     }
 
     private void buildBreadCrumb(VerticalLayout vlayout) {

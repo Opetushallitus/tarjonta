@@ -37,14 +37,13 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
         //INIT SPLIT PANEL
         setSplitPosition(DEFAULT_SPLIT_PCT); // percent
         mainLeftLayout = UiBuilder.newHorizontalLayout(); //split panel right
-        setMainRightLayout(UiBuilder.newVerticalLayout()); //Split panel left
+       mainRightLayout = UiBuilder.newVerticalLayout(); //Split panel left
         this.addComponent(mainLeftLayout);
         this.addComponent(mainRightLayout);
 
         //LEFT LAYOUT IN SPLIT PANEL
         UiBuilder.newLabel("Organisaation valinta tähän", mainLeftLayout);
     }
-
 
     /**
      * @return the mainRightLayout

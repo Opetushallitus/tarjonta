@@ -8,88 +8,52 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
-import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
-import fi.vm.sade.vaadin.oph.layout.AbstractHorizontalLayout;
-import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import fi.vm.sade.vaadin.Oph;
+import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
+import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
-
 /**
  *
  * @author jani
  */
-@Configurable(preConstruction=true)
-public class MainResultView extends AbstractHorizontalLayout {
+@Configurable(preConstruction = true)
+public class MainTabKoulutusView extends VerticalLayout {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MainResultView.class);
-
-    private TabSheet searchResultTab;
-    private VerticalLayout searchResul;
-    private Panel emptyPanel2;
-    private Panel emptyPanel1;
-    private VerticalLayout searchVerticalResultLayout;
-    private HorizontalLayout searchHorizontalResultLayout;
-    private CategoryTreeView categoryTree;
+    private static final Logger LOG = LoggerFactory.getLogger(MainTabKoulutusView.class);
     private Button btnKopioiUudelleKaudelle;
     private Button btnPoista;
     private Button btnLuoUusiKoulutus;
     private ComboBox cbJarjestys;
-
+    private CategoryTreeView categoryTree;
     private I18NHelper i18n = new I18NHelper(this);
-
-    @Autowired(required=true)
+    @Autowired(required = true)
     private TarjontaPresenter _presenter;
 
-    public MainResultView() {
-        super(true, UiMarginEnum.BOTTOM_LEFT);
-        setSizeFull();
-        buildLayout();
-    }
+    public MainTabKoulutusView() {
+        setWidth(UiBuilder.PCT100);
+        HorizontalLayout buildMiddleResultLayout = buildMiddleResultLayout();
+        addComponent(buildMiddleResultLayout);
 
-    private void buildLayout() {
-        searchResultTab = new TabSheet();
-        searchResultTab.setImmediate(true);
-        searchResultTab.setSizeFull();
+        CssLayout wrapper = UiBuilder.newCssLayout(UiMarginEnum.BOTTOM);
+        wrapper.addComponent(new CheckBox(i18n.getMessage("ValitseKaikki")));
+        addComponent(wrapper);
 
-        VerticalLayout hautTabLayout = UiBuilder.newVerticalLayout();
-        {
-            searchResultTab.addTab(hautTabLayout, "Haut (2 kpl)", null);
+        categoryTree = new CategoryTreeView();
+        addComponent(categoryTree);
+        setHeight(Sizeable.SIZE_UNDEFINED, 0);
 
-            Label label = new Label("LABEL");
-            label.setSizeFull();
-            hautTabLayout.addComponent(label);
-            hautTabLayout.setComponentAlignment(label, Alignment.BOTTOM_RIGHT);
-        }
+        setExpandRatio(wrapper, 0.07f);
+        setExpandRatio(categoryTree, 0.93f);
+        setMargin(true);
 
-        {
-            searchResul = buildSearchResult();
-            searchResul.setHeight(UiBuilder.PCT100);
-
-            searchResultTab.addTab(searchResul, "Koulutukset (28 kpl)", null);
-            searchResultTab.setWidth(UiBuilder.PCT100);
-        }
-
-        {
-            emptyPanel2 = buildEmptyTabPanel();
-            searchResultTab.addTab(emptyPanel2, "Hakukohteet (35 kpl)", null);
-        }
-
-        //SET SELECTED TAB!
-        searchResultTab.setSelectedTab(searchResul);
-        this.addComponent(searchResultTab);
-        setComponentAlignment(searchResultTab, Alignment.TOP_LEFT);
-
-
+        categoryTree.setContainerDataSource(_presenter.getTreeDataSource());
     }
 
     private HorizontalLayout buildMiddleResultLayout() {
@@ -99,23 +63,22 @@ public class MainResultView extends AbstractHorizontalLayout {
         btnKopioiUudelleKaudelle.addStyleName(Oph.BUTTON_SMALL);
 
         btnKopioiUudelleKaudelle.addListener(new Button.ClickListener() {
-
             @Override
             public void buttonClick(Button.ClickEvent event) {
 
                 final EditSiirraUudelleKaudelleView modal = new EditSiirraUudelleKaudelleView(i18n.getMessage("KopioUudelleKaudelle"));
                 getWindow().addWindow(modal);
 
-                modal.addDialogButton("Peruuta", new Button.ClickListener() {
+                modal.addNavigationButton("Peruuta", new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
                         // Stay in same view
                         getWindow().removeWindow(modal);
                         modal.removeDialogButtons();
                     }
-                });
+                }, Oph.CONTAINER_SECONDARY);
 
-                modal.addDialogButton("Jatka", new Button.ClickListener() {
+                modal.addNavigationButton("Jatka", new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
                         getWindow().removeWindow(modal);
@@ -134,30 +97,30 @@ public class MainResultView extends AbstractHorizontalLayout {
         btnLuoUusiKoulutus.addStyleName(Oph.BUTTON_SMALL);
 
         btnLuoUusiKoulutus.addListener(new Button.ClickListener() {
-
             @Override
             public void buttonClick(Button.ClickEvent event) {
 
                 final CreateKoulutusView modal = new CreateKoulutusView(i18n.getMessage("LuoUusiKoulutus"));
                 getWindow().addWindow(modal);
 
-                modal.addDialogButton("Peruuta", new Button.ClickListener() {
+                modal.addNavigationButton("Peruuta", new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
+                        LOG.debug("buttonClick() - peruuta click...");
                         // Stay in same view
                         getWindow().removeWindow(modal);
                         modal.removeDialogButtons();
                     }
-                });
+                }, Oph.CONTAINER_SECONDARY);
 
-                modal.addDialogButton("Jatka", new Button.ClickListener() {
+                modal.addNavigationButton("Jatka", new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
-                        LOG.info("buttonClick() - luo uusi koulutus click...");
+                        LOG.debug("buttonClick() - luo uusi koulutus click...");
 
                         getWindow().removeWindow(modal);
                         modal.removeDialogButtons();
-
+                        LOG.debug("presenter : " + _presenter);
                         _presenter.showEditKolutusView();
                     }
                 });
@@ -176,44 +139,11 @@ public class MainResultView extends AbstractHorizontalLayout {
         layout.setExpandRatio(cbJarjestys, 1f);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
 
-        Button  btnInfo = new Button();
+        Button btnInfo = new Button();
         btnInfo.addStyleName(Oph.BUTTON_INFO);
         layout.addComponent(btnInfo);
 
         return layout;
-    }
-
-    private VerticalLayout buildSearchResult() {
-        // common part: create layout
-        VerticalLayout layout = UiBuilder.newVerticalLayout();
-        layout.setWidth(UiBuilder.PCT100);
-        HorizontalLayout buildMiddleResultLayout = buildMiddleResultLayout();
-        layout.addComponent(buildMiddleResultLayout);
-
-        CssLayout wrapper = UiBuilder.newCssLayout(UiMarginEnum.BOTTOM);
-        wrapper.addComponent(new CheckBox(i18n.getMessage("ValitseKaikki")));
-        layout.addComponent(wrapper);
-
-        categoryTree = new CategoryTreeView();
-        layout.addComponent(categoryTree);
-        layout.setHeight(Sizeable.SIZE_UNDEFINED, 0);
-
-        layout.setExpandRatio(wrapper, 0.07f);
-        layout.setExpandRatio(categoryTree, 0.93f);
-        layout.setMargin(true);
-
-
-
-        return layout;
-    }
-
-    private Panel buildEmptyTabPanel() {
-        // common part: create layout
-        Panel panel = UiBuilder.newPanel();
-        panel.setSizeFull();
-        panel.setContent(UiBuilder.newVerticalLayout());
-
-        return panel;
     }
 
     /**
@@ -233,5 +163,4 @@ public class MainResultView extends AbstractHorizontalLayout {
     public void setCategoryDataSource(Container dataSource) {
         categoryTree.setContainerDataSource(dataSource);
     }
-
 }
