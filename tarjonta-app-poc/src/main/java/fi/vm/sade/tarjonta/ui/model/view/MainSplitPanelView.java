@@ -15,7 +15,7 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainSplitPanelView.class);
 
-    private static final int DEFAULT_SPLIT_PCT = 1;
+    private static final int DEFAULT_SPLIT_PCT = 0;
 
     @Autowired(required = true)
     private TarjontaPresenter _presenter;

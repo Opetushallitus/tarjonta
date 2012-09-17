@@ -13,6 +13,7 @@ import com.vaadin.event.MouseEvents;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractOrderedLayout;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
@@ -35,6 +36,7 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloDTO;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.oph.enums.LabelStyle;
+import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import java.lang.reflect.Method;
 import org.slf4j.Logger;
@@ -73,7 +75,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     public EditKoulutusPerustiedotView() {
         super();
         setSizeFull();
-        setMargin(true, false, true, true);
+        setMargin(true, true, true, true);
         setSpacing(true);
 
         // Remove, when we get data from outside - then build the UI.
@@ -91,12 +93,12 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
 
         removeAllComponents();
 
-        HorizontalLayout hlButtonsTop = new HorizontalLayout();
-        hlButtonsTop.setSpacing(true);
+        HorizontalLayout hlButtonsTop = UiBuilder.newHorizontalLayout(true, UiMarginEnum.NONE);
+        hlButtonsTop.setSizeUndefined();
         addComponent(hlButtonsTop);
         addButton("Peruuta", "doCancel", hlButtonsTop, UiBuilder.STYLE_BUTTON_SECONDARY);
-        addButton("TallennaLuonnoksena", "doSaveIncomplete", hlButtonsTop,  UiBuilder.STYLE_BUTTON_PRIMARY);
-        addButton("TallennaValmiina", "doSaveComplete", hlButtonsTop,  UiBuilder.STYLE_BUTTON_PRIMARY);
+        addButton("TallennaLuonnoksena", "doSaveIncomplete", hlButtonsTop, UiBuilder.STYLE_BUTTON_PRIMARY);
+        addButton("TallennaValmiina", "doSaveComplete", hlButtonsTop, UiBuilder.STYLE_BUTTON_PRIMARY);
         addButton("Jatka", "doContinue", hlButtonsTop, UiBuilder.STYLE_BUTTON_PRIMARY);
 
         addComponent(addLabel("KoulutuksenPerustiedot", LabelStyle.H2, null));
@@ -191,12 +193,22 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
             grid.newLine();
         }
 
-        addYhteyshenkiloSelectorAndEditor(grid);
-        addLinkkiSelectorAndEditor(grid, mi);
+        {
+            grid.addComponent(addLabel("KoulutusOnMaksullista", null));
+            grid.addComponent(addCheckBox("KoulutusOnMaksullista.checkbox", mi, "koulutusOnMaksullista", null, this));
+            grid.newLine();
 
+            grid.addComponent(addLabel("StipendiMahdollisuus", null));
+            grid.addComponent(addCheckBox("StipendiMahdollisuus.checkbox", mi, "koulutusStipendimahdollisuus", null, this));
+
+        }
         addHR(this);
+        addYhteyshenkiloSelectorAndEditor(this);
+        addHR(this);
+        addLinkkiSelectorAndEditor(this, mi);
 
         HorizontalLayout hlButtonsBottom = new HorizontalLayout();
+        hlButtonsBottom.setSizeUndefined();
         hlButtonsBottom.setSpacing(true);
         addComponent(hlButtonsBottom);
         addButton("Peruuta", "doCancel", hlButtonsBottom, UiBuilder.STYLE_BUTTON_SECONDARY);
@@ -396,26 +408,25 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     /**
      * Create yhteystiedot part of the form.
      *
-     * @param grid
+     * @param layout
      */
-    private void addYhteyshenkiloSelectorAndEditor(GridLayout grid) {
-        grid.addComponent(addLabel("Yhteyshenkilo", null));
+    private void addYhteyshenkiloSelectorAndEditor(VerticalLayout layout) {
+        layout.addComponent(addLabel("Yhteyshenkilo", null));
 
         final BeanItemContainer<KoulutusYhteyshenkiloDTO> yhteyshenkiloContainer =
                 new BeanItemContainer<KoulutusYhteyshenkiloDTO>(KoulutusYhteyshenkiloDTO.class);
         yhteyshenkiloContainer.addAll(_dto.getYhteyshenkilot());
 
-        HorizontalLayout hl = new HorizontalLayout();
+        HorizontalLayout hl = UiBuilder.newHorizontalLayout(true, UiMarginEnum.NONE);
         hl.setSpacing(true);
-        VerticalLayout vl = new VerticalLayout();
-        hl.addComponent(vl);
 
         final Table t = new Table(null, yhteyshenkiloContainer);
         t.setPageLength(10);
-        vl.addComponent(t);
-
+        t.setSizeFull();
         t.setSelectable(true);
         t.setImmediate(true);
+
+        hl.addComponent(t);
 
         t.setColumnHeader("email", "Sähköposti");
         t.setColumnHeader("puhelin", "Puhelin");
@@ -424,9 +435,14 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
 
         t.setVisibleColumns(new Object[]{"nimi", "titteli", "email", "puhelin"});
 
+        t.setColumnWidth("email", 25);
+        t.setColumnWidth("puhelin", 25);
+        t.setColumnWidth("nimi", 25);
+        t.setColumnWidth("kielet", 25);
 
-        Button b = addButton("Yhteyshenkilo.LisaaUusi", null, null, UiBuilder.STYLE_BUTTON_SECONDARY);
-        b.setStyleName(Oph.BUTTON_PLUS);
+        Button b = addButton("Yhteyshenkilo.LisaaUusi", null, null, null);
+        b.addStyleName(Oph.BUTTON_DEFAULT);
+        b.addStyleName(Oph.BUTTON_PLUS);
         b.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -435,19 +451,22 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
                 t.select(dto);
             }
         });
-        vl.addComponent(b);
 
         EditKoulutusPerustiedotYhteystietoView editor = new EditKoulutusPerustiedotYhteystietoView();
 
         final Form f = new ViewBoundForm(editor);
+        f.setSizeFull();
         f.setWriteThrough(false);
         f.setEnabled(false);
-
+        layout.addComponent(b);
         hl.addComponent(f);
 
         // Span editor and table to two columns
-        int row = grid.getCursorY();
-        grid.addComponent(hl, 1, row, 2, row);
+        layout.addComponent(hl);
+
+        hl.setExpandRatio(f, 0.4f);
+        hl.setExpandRatio(t, 0.6f);
+
 
         //
         // Table selection, update form to edit correct item
@@ -498,60 +517,47 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
             t.setValue(_dto.getYhteyshenkilot().get(0));
         }
 
-        grid.newLine();
     }
 
-    private void addLinkkiSelectorAndEditor(GridLayout grid, PropertysetItem mi) {
+    private void addLinkkiSelectorAndEditor(VerticalLayout layout, PropertysetItem mi) {
 
-        grid.addComponent(addLabel("KoulutusOnMaksullista", null));
-        grid.addComponent(addCheckBox("KoulutusOnMaksullista.checkbox", mi, "koulutusOnMaksullista", null, this));
-        grid.newLine();
-
-        grid.addComponent(addLabel("StipendiMahdollisuus", null));
-        grid.addComponent(addCheckBox("StipendiMahdollisuus.checkbox", mi, "koulutusStipendimahdollisuus", null, this));
-        grid.newLine();
 
         // Datasource
         final BeanItemContainer<KoulutusLinkkiDTO> linkkiContainer = new BeanItemContainer<KoulutusLinkkiDTO>(KoulutusLinkkiDTO.class);
         linkkiContainer.addAll(_dto.getKoulutusLinkit());
 
-        grid.addComponent(addLabel("Linkit", null));
-
-        HorizontalLayout hl = new HorizontalLayout();
+        layout.addComponent(addLabel("Linkit", null));
+        HorizontalLayout hl = UiBuilder.newHorizontalLayout(true, UiMarginEnum.NONE);
         hl.setSpacing(true);
 
-        int row = grid.getCursorY();
-        grid.addComponent(hl, 1, row, 2, row);
+        final Table t = new Table(null, linkkiContainer);
+        t.setPageLength(10);
+        t.setSizeFull();
+        t.setSelectable(true);
+        t.setImmediate(true);
 
-        // Table + add button
-        VerticalLayout vl1 = new VerticalLayout();
-        vl1.setSpacing(true);
-        hl.addComponent(vl1);
 
-        final Table linkkiTable = new Table(null, linkkiContainer);
-        linkkiTable.setPageLength(6);
-        linkkiTable.setSelectable(true);
-        linkkiTable.setImmediate(true);
+        hl.addComponent(t);
 
-        linkkiTable.setColumnHeader("linkkityyppi", i18n.getMessage("Linkkityyppi"));
-        linkkiTable.setColumnHeader("url", i18n.getMessage("LinkkiURL"));
-        linkkiTable.setColumnHeader("kielet", i18n.getMessage("LinkkiKielet"));
+        t.setColumnHeader("linkkityyppi", i18n.getMessage("Linkkityyppi"));
+        t.setColumnHeader("url", i18n.getMessage("LinkkiURL"));
+        t.setColumnHeader("kielet", i18n.getMessage("LinkkiKielet"));
 
-        linkkiTable.setVisibleColumns(new Object[]{"linkkityyppi", "url", "kielet"});
+        t.setVisibleColumns(new Object[]{"linkkityyppi", "url", "kielet"});
 
-        vl1.addComponent(linkkiTable);
 
-        Button btnAddNewLinkki = addButton("Linkki.LisaaUusi", null, null, UiBuilder.STYLE_BUTTON_SECONDARY);
-        btnAddNewLinkki.setStyleName(Oph.BUTTON_PLUS);
+        Button btnAddNewLinkki = addButton("Linkki.LisaaUusi", null, null, null);
+        btnAddNewLinkki.addStyleName(Oph.BUTTON_DEFAULT);
+        btnAddNewLinkki.addStyleName(Oph.BUTTON_PLUS);
         btnAddNewLinkki.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 KoulutusLinkkiDTO dto = new KoulutusLinkkiDTO();
                 linkkiContainer.addItem(dto);
-                linkkiTable.select(dto);
+                t.select(dto);
             }
         });
-        vl1.addComponent(btnAddNewLinkki);
+        layout.addComponent(btnAddNewLinkki);
 
 
         // Link data editing
@@ -560,13 +566,14 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         final Form f = new ViewBoundForm(editor);
         f.setWriteThrough(false);
         f.setEnabled(false);
+        f.setSizeFull();
 
         hl.addComponent(f);
 
         //
         // Table selection, update form to edit correct item
         //
-        linkkiTable.addListener(new Property.ValueChangeListener() {
+        t.addListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 KoulutusLinkkiDTO selected = (KoulutusLinkkiDTO) event.getProperty().getValue();
@@ -589,10 +596,10 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
                 }
                 if (event instanceof EditKoulutusPerustiedotLinkkiView.SaveEvent) {
                     f.commit();
-                    linkkiTable.refreshRowCache();
+                    t.refreshRowCache();
                 }
                 if (event instanceof EditKoulutusPerustiedotLinkkiView.DeleteEvent) {
-                    KoulutusLinkkiDTO dto = (KoulutusLinkkiDTO) linkkiTable.getValue();
+                    KoulutusLinkkiDTO dto = (KoulutusLinkkiDTO) t.getValue();
                     if (dto != null) {
                         linkkiContainer.removeItem(dto);
                         f.setItemDataSource(null);
@@ -602,7 +609,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
 
                     // Autoselect in table
                     if (linkkiContainer.firstItemId() != null) {
-                        linkkiTable.setValue(linkkiContainer.firstItemId());
+                        t.setValue(linkkiContainer.firstItemId());
                     }
                 }
             }
@@ -610,10 +617,12 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
 
         // Autoseelect first of initial data
         if (!_dto.getKoulutusLinkit().isEmpty()) {
-            linkkiTable.setValue(_dto.getKoulutusLinkit().get(0));
+            t.setValue(_dto.getKoulutusLinkit().get(0));
         }
 
-        grid.newLine();
+        hl.setExpandRatio(f, 0.4f);
+        hl.setExpandRatio(t, 0.6f);
+        layout.addComponent(hl);
     }
 
     /**

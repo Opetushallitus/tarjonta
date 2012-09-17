@@ -5,6 +5,7 @@ import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateField;
@@ -298,6 +299,19 @@ public class UiBuilder extends ComponentUtil {
         return btn;
     }
 
+     public static Button newButtonSmallSecodary(final String name, final AbstractLayout layout, ClickListener listener) {
+        Button btn = new Button(name, listener);
+        btn.setImmediate(true);
+        handleWidth(btn, DEFAULT_REALTIVE_SIZE);
+        handleHeight(btn, DEFAULT_REALTIVE_SIZE);
+        handleTheme(btn, Oph.CONTAINER_SECONDARY);
+        handleTheme(btn, Oph.BUTTON_SMALL);
+        handleAddComponent(layout, btn);
+
+        return btn;
+    }
+
+    
     public static Panel newTextPanel(final String text, final String width, final String height, AbstractLayout layout) {
         Panel panel = newPanel(width, height, null, layout);
         panel.addComponent(new Label(text));

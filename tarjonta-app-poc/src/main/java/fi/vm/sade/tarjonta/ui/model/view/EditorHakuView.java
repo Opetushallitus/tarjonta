@@ -210,10 +210,7 @@ public class EditorHakuView extends CustomComponent {
             grid.newLine();
         }
 
-
-
         createButtonBar(_layout);
-
         grid.setColumnExpandRatio(1, 1);
         grid.setColumnExpandRatio(2, 5);
     }
@@ -328,6 +325,7 @@ public class EditorHakuView extends CustomComponent {
 
         public ContinueEvent(Component source) {
             super(source);
+              _presenter.showShowHakukohdeView();
         }
     }
 }

@@ -15,7 +15,6 @@ import fi.vm.sade.tarjonta.ui.model.view.MainKoulutusView;
 import fi.vm.sade.tarjonta.ui.model.view.ShowHakukohdeView;
 import fi.vm.sade.tarjonta.ui.model.view.ShowKoulutusView;
 import fi.vm.sade.tarjonta.ui.poc.TarjontaWindow;
-import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.oph.demodata.DataSource;
 import fi.vm.sade.vaadin.oph.demodata.row.MultiActionTableStyle;
 import fi.vm.sade.vaadin.oph.dto.ButtonDTO;

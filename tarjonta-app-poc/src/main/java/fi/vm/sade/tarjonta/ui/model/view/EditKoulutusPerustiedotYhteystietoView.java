@@ -54,9 +54,7 @@ import org.vaadin.addon.formbinder.PropertyId;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
-public class EditKoulutusPerustiedotYhteystietoView extends CustomComponent {
-
-    private VerticalLayout _layout;
+public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout {
 
     @PropertyId("nimi")
     private TextField _tfNimi;
@@ -75,64 +73,56 @@ public class EditKoulutusPerustiedotYhteystietoView extends CustomComponent {
     private String _koodistoUriKieli;
 
     public EditKoulutusPerustiedotYhteystietoView() {
-        _layout = new VerticalLayout();
-        _layout.setSpacing(true);
+       this.setSpacing(true);
 
         _tfNimi = UiBuilder.newTextField("", i18n.getMessage("Nimi.prompt"), true);
         _tfNimi.setRequired(true);
         _tfNimi.setRequiredError(i18n.getMessage("Nimi.tyhja"));
-        _layout.addComponent(_tfNimi);
+       this.addComponent(_tfNimi);
 
         _tfTitteli = UiBuilder.newTextField("", i18n.getMessage("Titteli.prompt"), true);
-        _layout.addComponent(_tfTitteli);
+       this.addComponent(_tfTitteli);
 
         _tfEmail = UiBuilder.newTextField("", i18n.getMessage("Email.prompt"), true);
         _tfEmail.setRequired(true);
         _tfEmail.setRequiredError(i18n.getMessage("Email.tyhja"));
-        _layout.addComponent(_tfEmail);
+       this.addComponent(_tfEmail);
 
         _tfPuhelin = UiBuilder.newTextField("", i18n.getMessage("Puhelin.prompt"), true);
         _tfPuhelin.setRequired(true);
         _tfPuhelin.setRequiredError(i18n.getMessage("Puhelin.tyhja"));
         _tfPuhelin.addValidator(new RegexpValidator("^(\\s+|\\d+)*", i18n.getMessage("Puhelin.muoto")));
-        _layout.addComponent(_tfPuhelin);
+       this.addComponent(_tfPuhelin);
 
-        _layout.addComponent(UiBuilder.newLabel(i18n.getMessage("YhteyshenkiloKielissa"), (AbstractLayout) null));
+       this.addComponent(UiBuilder.newLabel(i18n.getMessage("YhteyshenkiloKielissa"), (AbstractLayout) null));
 
-        _kcKielet = UiBuilder.newKoodistoTwinColSelect(_koodistoUriKieli, null, null, _layout);
+        _kcKielet = UiBuilder.newKoodistoTwinColSelect(_koodistoUriKieli, null, null,this);
 
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
-        _layout.addComponent(hl);
+       this.addComponent(hl);
 
-        Button btnSave = new Button(i18n.getMessage("Tallenna"), new Button.ClickListener() {
+        UiBuilder.newButtonSmallSecodary(i18n.getMessage("Tallenna"), hl, new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new SaveEvent(EditKoulutusPerustiedotYhteystietoView.this));
             }
         });
 
-        Button btnCancel = new Button(i18n.getMessage("Peruuta"), new Button.ClickListener() {
+        UiBuilder.newButtonSmallSecodary(i18n.getMessage("Peruuta"), hl, new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new CancelEvent(EditKoulutusPerustiedotYhteystietoView.this));
             }
         });
 
-        Button btnDelete = new Button(i18n.getMessage("Poista"), new Button.ClickListener() {
+        UiBuilder.newButtonSmallSecodary(i18n.getMessage("Poista"),hl, new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new DeleteEvent(EditKoulutusPerustiedotYhteystietoView.this));
             }
         });
-
-        hl.addComponent(btnDelete);
-        hl.addComponent(btnCancel);
-        hl.addComponent(btnSave);
-
-        setCompositionRoot(_layout);
     }
-
 
     /**
      * Fired when save is pressed.

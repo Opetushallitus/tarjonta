@@ -44,7 +44,7 @@ public class EditKoulutusKuvailevattiedotView extends VerticalLayout {
         setSizeUndefined();
         setWidth("100%");
         setSpacing(true);
-        setMargin(false, false, false, true);
+        setMargin(true, false, true, true);
 
         initialize();
     }
@@ -104,24 +104,16 @@ public class EditKoulutusKuvailevattiedotView extends VerticalLayout {
         HorizontalLayout hl = UiBuilder.newHorizontalLayout();
         hl.setSizeUndefined();
 
-        Button b = UiBuilder.newButton("Peruuta", hl);
-        b.addStyleName(Oph.BUTTON_PRIMARY);
-        b.addStyleName(Oph.BUTTON_SMALL);
+        Button b = UiBuilder.newButtonSmallSecodary("Peruuta", hl);
         b.addListener(l);
 
-        b = UiBuilder.newButton("Tallenna luonnoksena", hl);
-        b.addStyleName(Oph.BUTTON_PRIMARY);
-        b.addStyleName(Oph.BUTTON_SMALL);
+        b = UiBuilder.newButtonSmallPrimary("Tallenna luonnoksena", hl);
         b.addListener(l);
 
-        b = UiBuilder.newButton("Tallenna valmiina", hl);
-        b.addStyleName(Oph.BUTTON_PRIMARY);
-        b.addStyleName(Oph.BUTTON_SMALL);
+        b = UiBuilder.newButtonSmallPrimary("Tallenna valmiina", hl);
         b.addListener(l);
 
-        b = UiBuilder.newButton("Jatka", hl);
-        b.addStyleName(Oph.BUTTON_PRIMARY);
-        b.addStyleName(Oph.BUTTON_SMALL);
+        b = UiBuilder.newButtonSmallPrimary("Jatka", hl);
         b.addListener(l);
 
         if (vl != null) {

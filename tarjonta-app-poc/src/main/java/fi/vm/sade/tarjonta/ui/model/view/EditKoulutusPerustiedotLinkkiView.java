@@ -50,9 +50,7 @@ import org.vaadin.addon.formbinder.PropertyId;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
-public class EditKoulutusPerustiedotLinkkiView extends CustomComponent {
-
-    private VerticalLayout _layout;
+public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout {
 
     @PropertyId("linkkityyppi")
     private Select _sLinkkityyppi;
@@ -67,52 +65,45 @@ public class EditKoulutusPerustiedotLinkkiView extends CustomComponent {
     private String _koodistoUriKieli;
 
     public EditKoulutusPerustiedotLinkkiView() {
-        _layout = new VerticalLayout();
-        _layout.setSpacing(true);
+        this.setSpacing(true);
 
         _sLinkkityyppi = UiBuilder.newComboBox(null, KoulutusLinkkiDTO.LINKKI_TYYPIT, null);
         _sLinkkityyppi.setWidth("100%");
-        _layout.addComponent(_sLinkkityyppi);
+        this.addComponent(_sLinkkityyppi);
 
         _tfUrl = UiBuilder.newTextField("", i18n.getMessage("Linkki.prompt"), false);
         _tfUrl.setRequired(true);
         _tfUrl.setRequiredError(i18n.getMessage("Linkki.tyhja"));
         _tfUrl.setWidth("100%");
-        _layout.addComponent(_tfUrl);
+        this.addComponent(_tfUrl);
 
-        _kcKielet = UiBuilder.newKoodistoTwinColSelect(_koodistoUriKieli, null, null, _layout);
+        _kcKielet = UiBuilder.newKoodistoTwinColSelect(_koodistoUriKieli, null, null, this);
 
 
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
-        _layout.addComponent(hl);
+        this.addComponent(hl);
 
-        Button btnSave = new Button(i18n.getMessage("Tallenna"), new Button.ClickListener() {
+        UiBuilder.newButtonSmallSecodary(i18n.getMessage("Tallenna"), hl,  new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new SaveEvent(EditKoulutusPerustiedotLinkkiView.this));
             }
         });
 
-        Button btnCancel = new Button(i18n.getMessage("Peruuta"), new Button.ClickListener() {
+        UiBuilder.newButtonSmallSecodary(i18n.getMessage("Peruuta"), hl, new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new CancelEvent(EditKoulutusPerustiedotLinkkiView.this));
             }
         });
 
-        Button btnDelete = new Button(i18n.getMessage("Poista"), new Button.ClickListener() {
+       UiBuilder.newButtonSmallSecodary(i18n.getMessage("Poista"), hl, new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new DeleteEvent(EditKoulutusPerustiedotLinkkiView.this));
             }
         });
-
-        hl.addComponent(btnDelete);
-        hl.addComponent(btnCancel);
-        hl.addComponent(btnSave);
-
-        setCompositionRoot(_layout);
     }
 
     /**

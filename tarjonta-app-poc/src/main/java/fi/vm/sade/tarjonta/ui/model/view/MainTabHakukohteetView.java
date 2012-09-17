@@ -12,6 +12,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
 import fi.vm.sade.vaadin.Oph;
+import fi.vm.sade.vaadin.oph.demodata.DataSource;
 import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import org.slf4j.Logger;
@@ -73,8 +74,8 @@ public class MainTabHakukohteetView extends VerticalLayout {
         btnPoista.addStyleName(Oph.BUTTON_SMALL);
         btnPoista.setEnabled(false);
 
-        cbJarjestys = UiBuilder.newComboBox(null, new String[]{"Organisaatiorakenteen mukainen järjestys"}, layout);
-        cbJarjestys.setSizeUndefined();
+        cbJarjestys = UiBuilder.newComboBox(null, DataSource.ORDER_BY, layout);
+        cbJarjestys.setWidth("300px");
         layout.setExpandRatio(cbJarjestys, 1f);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
 

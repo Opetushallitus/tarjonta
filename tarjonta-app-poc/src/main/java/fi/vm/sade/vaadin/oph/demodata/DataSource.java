@@ -70,7 +70,9 @@ public class DataSource {
         "Koulutukselliset ja ammatilliset tavoitteet",
         "Jatk-optomahdollisuudet"
     };
-
+    
+    public static final String[] ORDER_BY = new String[]{"Organisaatiorakenteen mukainen järjestys", "Koulutuksen tilan mukainen järjestys", "Aakkosjärjestys", "Koulutuslajin mukaan"};
+ 
     public static HierarchicalContainer treeTableData(ITableRowFormat rowStyle) {
         Map<String, String[]> map = new HashMap<String, String[]>();
 

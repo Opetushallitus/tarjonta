@@ -26,7 +26,7 @@ public class CreateKoulutusView extends AbstractDialogWindow {
     public CreateKoulutusView(String label) {
         super(
                 label,
-                UiBuilder.format("Olet luomassa {0} {1}", "tutkintoon johtavaa", "koulutusta"),
+                UiBuilder.format("Olet muokkaamassa {0} {1}", "tutkintoon johtavaa", "koulutusta"),
                 DataSource.LOREM_IPSUM_SHORT);
 
         setWidth("600px");
@@ -56,7 +56,7 @@ public class CreateKoulutusView extends AbstractDialogWindow {
         newTextPanel.setHeight(UiBuilder.DEFAULT_REALTIVE_SIZE);
         vRight.addComponent(newTextPanel);
 
-
+       // layout.addComponent(UiBuilder.newComboBox("Tyyppi", new String[]{"Tutkintoon johtava koulutus", "Opintokokonaisuus", "Opinto"}, layout));
         layout.addComponent(splitPanel);
         layout.setExpandRatio(splitPanel, 1f);
     }
