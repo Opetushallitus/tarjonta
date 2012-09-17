@@ -52,12 +52,9 @@ import org.vaadin.addon.formbinder.ViewBoundForm;
 public class EditKoulutusPerustiedotView extends VerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotView.class);
-
     @Autowired(required = true)
     private TarjontaPresenter _presenter;
-
     private I18NHelper i18n = new I18NHelper(this);
-
     @Value("${koodisto-uris.kieli:http://kieli}")
     private String _koodistoUriKieli;
     @Value("${koodisto-uris.kieli:http://teema}")
@@ -70,7 +67,6 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     private String _koodistoUriOpetusmuoto;
     @Value("${koodisto-uris.koulutuslaji:http://koulutuslaji}")
     private String _koodistoUriKoulutuslaji;
-
     // TODO should be set from outside/presenter
     private KoulutusPerustiedotDTO _dto = new KoulutusPerustiedotDTO();
 
@@ -98,10 +94,10 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         HorizontalLayout hlButtonsTop = new HorizontalLayout();
         hlButtonsTop.setSpacing(true);
         addComponent(hlButtonsTop);
-        addButton("Peruuta", "doCancel", hlButtonsTop);
-        addButton("TallennaLuonnoksena", "doSaveIncomplete", hlButtonsTop);
-        addButton("TallennaValmiina", "doSaveComplete", hlButtonsTop);
-        addButton("Jatka", "doContinue", hlButtonsTop);
+        addButton("Peruuta", "doCancel", hlButtonsTop, UiBuilder.STYLE_BUTTON_SECONDARY);
+        addButton("TallennaLuonnoksena", "doSaveIncomplete", hlButtonsTop,  UiBuilder.STYLE_BUTTON_PRIMARY);
+        addButton("TallennaValmiina", "doSaveComplete", hlButtonsTop,  UiBuilder.STYLE_BUTTON_PRIMARY);
+        addButton("Jatka", "doContinue", hlButtonsTop, UiBuilder.STYLE_BUTTON_PRIMARY);
 
         addComponent(addLabel("KoulutuksenPerustiedot", LabelStyle.H2, null));
 
@@ -203,10 +199,10 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         HorizontalLayout hlButtonsBottom = new HorizontalLayout();
         hlButtonsBottom.setSpacing(true);
         addComponent(hlButtonsBottom);
-        addButton("Peruuta", "doCancel", hlButtonsBottom);
-        addButton("TallennaLuonnoksena", "doSaveIncomplete", hlButtonsBottom);
-        addButton("TallennaValmiina", "doSaveComplete", hlButtonsBottom);
-        addButton("Jatka", "doContinue", hlButtonsBottom);
+        addButton("Peruuta", "doCancel", hlButtonsBottom, UiBuilder.STYLE_BUTTON_SECONDARY);
+        addButton("TallennaLuonnoksena", "doSaveIncomplete", hlButtonsBottom, UiBuilder.STYLE_BUTTON_PRIMARY);
+        addButton("TallennaValmiina", "doSaveComplete", hlButtonsBottom, UiBuilder.STYLE_BUTTON_PRIMARY);
+        addButton("Jatka", "doContinue", hlButtonsBottom, UiBuilder.STYLE_BUTTON_PRIMARY);
     }
 
 
@@ -242,12 +238,17 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @param layout
      * @return
      */
-    private Button addButton(String captionKey, String onClickMethodName, AbstractOrderedLayout layout) {
+    private Button addButton(String captionKey, String onClickMethodName, AbstractOrderedLayout layout, String[] styles) {
         Button c = UiBuilder.newButton(i18n.getMessage(captionKey), layout);
         if (onClickMethodName != null) {
             c.addListener(getClickListener(onClickMethodName));
         }
-        c.addStyleName(Oph.BUTTON_SMALL);
+
+        if (styles != null) {
+            for (String style : styles) {
+                c.addStyleName(style);
+            }
+        }
 
         return c;
     }
@@ -345,7 +346,8 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     }
 
     /**
-     * Create KoodistoComponent with CompboBox as displaying widget and bind to model.
+     * Create KoodistoComponent with CompboBox as displaying widget and bind to
+     * model.
      *
      * @param koodistoUri
      * @param psi
@@ -423,7 +425,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         t.setVisibleColumns(new Object[]{"nimi", "titteli", "email", "puhelin"});
 
 
-        Button b = addButton("Yhteyshenkilo.LisaaUusi", null, null);
+        Button b = addButton("Yhteyshenkilo.LisaaUusi", null, null, UiBuilder.STYLE_BUTTON_SECONDARY);
         b.setStyleName(Oph.BUTTON_PLUS);
         b.addListener(new Button.ClickListener() {
             @Override
@@ -499,7 +501,6 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         grid.newLine();
     }
 
-
     private void addLinkkiSelectorAndEditor(GridLayout grid, PropertysetItem mi) {
 
         grid.addComponent(addLabel("KoulutusOnMaksullista", null));
@@ -540,7 +541,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
 
         vl1.addComponent(linkkiTable);
 
-        Button btnAddNewLinkki = addButton("Linkki.LisaaUusi", null, null);
+        Button btnAddNewLinkki = addButton("Linkki.LisaaUusi", null, null, UiBuilder.STYLE_BUTTON_SECONDARY);
         btnAddNewLinkki.setStyleName(Oph.BUTTON_PLUS);
         btnAddNewLinkki.addListener(new Button.ClickListener() {
             @Override
@@ -615,9 +616,9 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         grid.newLine();
     }
 
-
     /**
-     * Creates a click listener that calls method <string>methodName</string> in this instance.
+     * Creates a click listener that calls method <string>methodName</string> in
+     * this instance.
      *
      * For buttons.
      *
@@ -640,7 +641,8 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     }
 
     /**
-     * Creates a mouse click listener that calls method <string>methodName</string> in this instance.
+     * Creates a mouse click listener that calls method
+     * <string>methodName</string> in this instance.
      *
      * For icons etc.
      *
@@ -665,7 +667,8 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     }
 
     /**
-     * Creates a value change listener that calls method <string>methodName</string> in this instance.
+     * Creates a value change listener that calls method
+     * <string>methodName</string> in this instance.
      *
      * Used for data related "events".
      *
@@ -789,5 +792,4 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     public void onRemoveYhteyshenkilo() {
         LOG.info("onAddNewYhteyshenkilo()");
     }
-
 }

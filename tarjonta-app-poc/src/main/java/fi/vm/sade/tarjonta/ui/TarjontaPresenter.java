@@ -20,6 +20,7 @@ import fi.vm.sade.vaadin.oph.demodata.DataSource;
 import fi.vm.sade.vaadin.oph.demodata.row.MultiActionTableStyle;
 import fi.vm.sade.vaadin.oph.dto.ButtonDTO;
 import fi.vm.sade.vaadin.oph.dto.PageNavigationDTO;
+import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -170,7 +171,7 @@ public class TarjontaPresenter {
                 _tarjontaWindow.getWindow().removeWindow(modal);
                 modal.removeDialogButtons();
             }
-        }, Oph.CONTAINER_SECONDARY);
+        }, UiBuilder.STYLE_BUTTON_SECONDARY);
 
         modal.addNavigationButton("Jatka", new Button.ClickListener() {
             @Override
@@ -180,7 +181,7 @@ public class TarjontaPresenter {
 
                 showShowHakukohdeView();
             }
-        });
+        }, UiBuilder.STYLE_BUTTON_PRIMARY);
 
         modal.buildDialogButtons();
     }

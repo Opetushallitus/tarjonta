@@ -123,7 +123,7 @@ public class MainTabKoulutusView extends VerticalLayout {
                         LOG.debug("presenter : " + _presenter);
                         _presenter.showEditKolutusView();
                     }
-                }, UiBuilder.STYLE_BUTTON_SECONDARY);
+                }, UiBuilder.STYLE_BUTTON_PRIMARY);
 
                 modal.buildDialogButtons();
             }

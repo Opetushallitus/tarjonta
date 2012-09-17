@@ -17,7 +17,7 @@ public class ComponentUtil {
     public static final String UNDEFINED_TEXT = "UNDEFINED";
     public static final String RESOURCE_URL_OPH = "../../themes/oph/";
     public static final String[] STYLE_BUTTON_SECONDARY = new String[]{Oph.CONTAINER_SECONDARY, Oph.BUTTON_SMALL};
-    public static final String[] STYLE_BUTTON_PRIMARY = new String[]{Oph.CONTAINER_SECONDARY, Oph.BUTTON_SMALL};
+    public static final String[] STYLE_BUTTON_PRIMARY = new String[]{Oph.BUTTON_PRIMARY, Oph.BUTTON_SMALL};
 
     private enum Layout {
 
