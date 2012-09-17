@@ -23,8 +23,7 @@ public class MultiActionTableStyleNoCBox implements ITableRowFormat<HorizontalLa
     RowMenuBar rowMenuBar;
 
     private RowMenuBar newMenuBar() {
-        rowMenuBar = new RowMenuBar("img/icon-treetable-button.png");
-        rowMenuBar.addStyleName("treetable-dropdown-button");
+        rowMenuBar = new RowMenuBar("../oph/img/icon-treetable-button.png");
         rowMenuBar.addMenuCommand("Luo uusi koulutus", menuCommand);
         rowMenuBar.addMenuCommand("Näytä hakukohteet", menuCommand);
         rowMenuBar.addMenuCommand("Poista", menuCommand);

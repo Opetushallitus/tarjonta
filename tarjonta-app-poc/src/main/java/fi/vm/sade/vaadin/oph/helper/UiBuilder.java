@@ -22,13 +22,11 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.VerticalSplitPanel;
 import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
-import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
-import fi.vm.sade.tarjonta.ui.model.view.EditKoulutusKuvailevattiedotView;
 import fi.vm.sade.vaadin.oph.dto.LabelDTO;
 import fi.vm.sade.vaadin.oph.enums.LabelStyle;
 
@@ -114,8 +112,6 @@ public class UiBuilder extends ComponentUtil {
         return c;
     }
 
-
-
     public static Label newLabel(final String format, final Object... args) {
         Label l = new Label(UiBuilder.format(format, args));
         return l;
@@ -171,7 +167,6 @@ public class UiBuilder extends ComponentUtil {
         return c;
     }
 
-
     public static CheckBox newCheckbox(final String name, final AbstractLayout layout) {
         CheckBox checkBox;
         if (name != null) {
@@ -208,8 +203,6 @@ public class UiBuilder extends ComponentUtil {
 
         return c;
     }
-
-
 
     public static Label newLabel(final String name, final AbstractLayout layout) {
         Label label = new Label(name);
@@ -268,14 +261,38 @@ public class UiBuilder extends ComponentUtil {
         return c;
     }
 
-
     public static Button newButton(final String name, final AbstractLayout layout) {
         Button btn = new Button();
         btn.setCaption(name);
         btn.setImmediate(true);
         handleWidth(btn, DEFAULT_REALTIVE_SIZE);
         handleHeight(btn, DEFAULT_REALTIVE_SIZE);
+        handleAddComponent(layout, btn);
+
+        return btn;
+    }
+
+    public static Button newButtonSmallPrimary(final String name, final AbstractLayout layout) {
+        Button btn = new Button();
+        btn.setCaption(name);
+        btn.setImmediate(true);
+        handleWidth(btn, DEFAULT_REALTIVE_SIZE);
+        handleHeight(btn, DEFAULT_REALTIVE_SIZE);
         handleTheme(btn, Oph.BUTTON_DEFAULT);
+        handleTheme(btn, Oph.BUTTON_SMALL);
+        handleAddComponent(layout, btn);
+
+        return btn;
+    }
+
+    public static Button newButtonSmallSecodary(final String name, final AbstractLayout layout) {
+        Button btn = new Button();
+        btn.setCaption(name);
+        btn.setImmediate(true);
+        handleWidth(btn, DEFAULT_REALTIVE_SIZE);
+        handleHeight(btn, DEFAULT_REALTIVE_SIZE);
+        handleTheme(btn, Oph.CONTAINER_SECONDARY);
+        handleTheme(btn, Oph.BUTTON_SMALL);
         handleAddComponent(layout, btn);
 
         return btn;
@@ -438,8 +455,7 @@ public class UiBuilder extends ComponentUtil {
     }
 
     /**
-     * Create RichTextArea.
-     * Possibly bind to property.
+     * Create RichTextArea. Possibly bind to property.
      *
      * @param psi
      * @param expression
@@ -460,10 +476,8 @@ public class UiBuilder extends ComponentUtil {
         return rta;
     }
 
-
     /**
-     * Create new KoodistoComponent with ComboBox.
-     * Possible bind to a property.
+     * Create new KoodistoComponent with ComboBox. Possible bind to a property.
      *
      * @param koodistoUri
      * @param psi
@@ -526,7 +540,6 @@ public class UiBuilder extends ComponentUtil {
         return c;
     }
 
-
     public static KoodistoComponent newKoodistoTwinColSelect(final String koodistoUri, PropertysetItem psi, String expression, AbstractOrderedLayout layout) {
 
         // Koodisto displayed in TwinColSelect
@@ -588,5 +601,4 @@ public class UiBuilder extends ComponentUtil {
 
         return sp;
     }
-
 }

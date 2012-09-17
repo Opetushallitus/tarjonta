@@ -27,6 +27,7 @@ import fi.vm.sade.vaadin.oph.helper.ComponentUtil;
 import java.util.Locale;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
@@ -40,14 +41,14 @@ public class TarjontaPocPortletApplication extends AbstractSadePortletApplicatio
 
     @Override
     public void init() {
-        log.info("init() - TarjontaPocPortletApplication");
+        log.info("init() - TarjontaPocPortletApplication!");
         super.init();
 
         win = new TarjontaWindow();
         setMainWindow(win);
         win.getContent().setHeight(850, Sizeable.UNITS_PIXELS);
         //setTheme("tarjonta");
-        setTheme(Oph.THEME_NAME);
+        setTheme("oph-app-tarjonta");
     }
 
     @Override

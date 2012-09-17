@@ -4,13 +4,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.model.view.MainKoulutusView;
-import fi.vm.sade.tarjonta.ui.model.view.MainTabSheetView;
-import fi.vm.sade.tarjonta.ui.model.view.MainSearchView;
 import fi.vm.sade.tarjonta.ui.model.view.MainSplitPanelView;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
-import fi.vm.sade.vaadin.oph.layout.AbstractDialogWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +20,10 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class TarjontaWindow extends Window {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaWindow.class);
-
-    @Autowired(required=true)
+    @Autowired(required = true)
     private TarjontaPresenter _presenter;
-
     private MainSplitPanelView mainSplitPanel;
+
     public TarjontaWindow() {
         super();
         LOG.info("TarjontaWindow(): {}", _presenter);
@@ -57,6 +52,4 @@ public class TarjontaWindow extends Window {
     public MainSplitPanelView getMainSplitPanel() {
         return mainSplitPanel;
     }
-
-
 }

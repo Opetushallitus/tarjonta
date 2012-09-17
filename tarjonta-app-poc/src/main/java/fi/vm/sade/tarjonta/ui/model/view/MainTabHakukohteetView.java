@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  *
  * @author jani
  */
-@Configurable(preConstruction=true)
+@Configurable(preConstruction = true)
 public class MainTabHakukohteetView extends VerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainTabHakukohteetView.class);
@@ -51,14 +51,14 @@ public class MainTabHakukohteetView extends VerticalLayout {
         setExpandRatio(wrapper, 0.07f);
         setExpandRatio(categoryTree, 0.93f);
         setMargin(true);
-        
-          categoryTree.setContainerDataSource(_presenter.getTreeDataSource());
+
+        categoryTree.setContainerDataSource(_presenter.getTreeDataSource());
     }
 
     private HorizontalLayout buildMiddleResultLayout() {
         HorizontalLayout layout = UiBuilder.newHorizontalLayout(true, UiMarginEnum.BOTTOM);
 
-        btnLisaaTaydennyshakuun = UiBuilder.newButton(i18n.getMessage("LisaaTaydennyshakuun"), layout);
+        btnLisaaTaydennyshakuun = UiBuilder.newButtonSmallPrimary(i18n.getMessage("LisaaTaydennyshakuun"), layout);
         btnLisaaTaydennyshakuun.addStyleName(Oph.BUTTON_SMALL);
 
         btnLisaaTaydennyshakuun.addListener(new Button.ClickListener() {
@@ -74,7 +74,7 @@ public class MainTabHakukohteetView extends VerticalLayout {
         btnPoista.setEnabled(false);
 
         cbJarjestys = UiBuilder.newComboBox(null, new String[]{"Organisaatiorakenteen mukainen järjestys"}, layout);
-
+        cbJarjestys.setSizeUndefined();
         layout.setExpandRatio(cbJarjestys, 1f);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
 

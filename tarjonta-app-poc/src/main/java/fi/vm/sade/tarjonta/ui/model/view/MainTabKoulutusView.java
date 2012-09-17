@@ -59,7 +59,7 @@ public class MainTabKoulutusView extends VerticalLayout {
     private HorizontalLayout buildMiddleResultLayout() {
         HorizontalLayout layout = UiBuilder.newHorizontalLayout(true, UiMarginEnum.BOTTOM);
 
-        btnKopioiUudelleKaudelle = UiBuilder.newButton(i18n.getMessage("KopioUudelleKaudelle"), layout);
+        btnKopioiUudelleKaudelle = UiBuilder.newButtonSmallPrimary(i18n.getMessage("KopioUudelleKaudelle"), layout);
         btnKopioiUudelleKaudelle.addStyleName(Oph.BUTTON_SMALL);
 
         btnKopioiUudelleKaudelle.addListener(new Button.ClickListener() {
@@ -76,7 +76,7 @@ public class MainTabKoulutusView extends VerticalLayout {
                         getWindow().removeWindow(modal);
                         modal.removeDialogButtons();
                     }
-                }, Oph.CONTAINER_SECONDARY);
+                }, UiBuilder.STYLE_BUTTON_SECONDARY);
 
                 modal.addNavigationButton("Jatka", new Button.ClickListener() {
                     @Override
@@ -86,14 +86,14 @@ public class MainTabKoulutusView extends VerticalLayout {
 
                         _presenter.showMainKoulutusView();
                     }
-                });
+                }, UiBuilder.STYLE_BUTTON_PRIMARY);
 
                 modal.buildDialogButtons();
             }
         });
 
 
-        btnLuoUusiKoulutus = UiBuilder.newButton(i18n.getMessage("LuoUusiKoulutus"), layout);
+        btnLuoUusiKoulutus = UiBuilder.newButtonSmallPrimary(i18n.getMessage("LuoUusiKoulutus"), layout);
         btnLuoUusiKoulutus.addStyleName(Oph.BUTTON_SMALL);
 
         btnLuoUusiKoulutus.addListener(new Button.ClickListener() {
@@ -111,7 +111,7 @@ public class MainTabKoulutusView extends VerticalLayout {
                         getWindow().removeWindow(modal);
                         modal.removeDialogButtons();
                     }
-                }, Oph.CONTAINER_SECONDARY);
+                }, UiBuilder.STYLE_BUTTON_SECONDARY);
 
                 modal.addNavigationButton("Jatka", new Button.ClickListener() {
                     @Override
@@ -123,7 +123,7 @@ public class MainTabKoulutusView extends VerticalLayout {
                         LOG.debug("presenter : " + _presenter);
                         _presenter.showEditKolutusView();
                     }
-                });
+                }, UiBuilder.STYLE_BUTTON_SECONDARY);
 
                 modal.buildDialogButtons();
             }
@@ -135,7 +135,8 @@ public class MainTabKoulutusView extends VerticalLayout {
         btnPoista.setEnabled(false);
 
         cbJarjestys = UiBuilder.newComboBox(null, new String[]{"Organisaatiorakenteen mukainen järjestys"}, layout);
-
+        cbJarjestys.setSizeUndefined();
+        
         layout.setExpandRatio(cbJarjestys, 1f);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
 

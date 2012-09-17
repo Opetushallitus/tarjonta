@@ -1,7 +1,5 @@
 package fi.vm.sade.tarjonta.ui.model.view;
 
-import com.vaadin.ui.AbstractComponentContainer;
-import com.vaadin.ui.AbstractLayout;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
@@ -31,7 +29,8 @@ public class CreateKoulutusView extends AbstractDialogWindow {
                 UiBuilder.format("Olet luomassa {0} {1}", "tutkintoon johtavaa", "koulutusta"),
                 DataSource.LOREM_IPSUM_SHORT);
 
-      
+        setWidth("600px");
+        setHeight("500px");
     }
 
     @Override
@@ -51,12 +50,12 @@ public class CreateKoulutusView extends AbstractDialogWindow {
         createKoulutusTreeView.setContainerDataSource(DataSource.treeTableData(new CheckBoxTableStyle()));
         vLeft.addComponent(createKoulutusTreeView);
 
-      
+
         HorizontalLayout middleLayout = UiBuilder.newHorizontalLayout();
         Panel newTextPanel = UiBuilder.newTextPanel(TEKSTI, null, UiBuilder.DEFAULT_REALTIVE_SIZE, middleLayout);
         newTextPanel.setHeight(UiBuilder.DEFAULT_REALTIVE_SIZE);
         vRight.addComponent(newTextPanel);
-        
+
 
         layout.addComponent(splitPanel);
         layout.setExpandRatio(splitPanel, 1f);

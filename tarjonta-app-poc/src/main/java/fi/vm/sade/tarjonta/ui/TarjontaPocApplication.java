@@ -18,6 +18,6 @@ public class TarjontaPocApplication extends Application {
         TarjontaWindow win = new TarjontaWindow();
         setMainWindow(win);
 
-        setTheme("tarjonta");
+         setTheme("oph-app-tarjonta");
     }
 }

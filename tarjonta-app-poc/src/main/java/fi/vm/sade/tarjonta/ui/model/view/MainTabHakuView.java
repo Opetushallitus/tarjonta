@@ -62,7 +62,7 @@ public class MainTabHakuView extends VerticalLayout {
         btnPoista.addStyleName(Oph.BUTTON_SMALL);
         btnPoista.setEnabled(false);
         
-        btnLuoUusiHaku = UiBuilder.newButton(i18n.getMessage("LuoUusiHaku"), layout);
+        btnLuoUusiHaku = UiBuilder.newButtonSmallPrimary(i18n.getMessage("LuoUusiHaku"), layout);
         btnLuoUusiHaku.addStyleName(Oph.BUTTON_SMALL);
         
         btnLuoUusiHaku.addListener(new Button.ClickListener() {
@@ -73,7 +73,7 @@ public class MainTabHakuView extends VerticalLayout {
         });
         
         cbJarjestys = UiBuilder.newComboBox(null, new String[]{"Organisaatiorakenteen mukainen järjestys"}, layout);
-        
+        cbJarjestys.setSizeUndefined();
         layout.setExpandRatio(btnLuoUusiHaku, 1f);
         layout.setComponentAlignment(btnLuoUusiHaku, Alignment.TOP_RIGHT);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);

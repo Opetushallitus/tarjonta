@@ -11,7 +11,6 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.model.view.AddHakuDokumenttiView;
 import fi.vm.sade.tarjonta.ui.model.view.EditKoulutusView;
 import fi.vm.sade.tarjonta.ui.model.view.EditSiirraHakukohteitaView;
-import fi.vm.sade.tarjonta.ui.model.view.EditSiirraUudelleKaudelleView;
 import fi.vm.sade.tarjonta.ui.model.view.MainKoulutusView;
 import fi.vm.sade.tarjonta.ui.model.view.ShowHakukohdeView;
 import fi.vm.sade.tarjonta.ui.model.view.ShowKoulutusView;

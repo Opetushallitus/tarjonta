@@ -19,16 +19,15 @@ public class MultiActionTableStyle implements ITableRowFormat<HorizontalLayout> 
         @Override
         public void menuSelected(MenuBar.MenuItem selectedItem) {
         }
+        
     };
     RowMenuBar rowMenuBar;
 
     private RowMenuBar newMenuBar() {
-        rowMenuBar = new RowMenuBar("img/icon-treetable-button.png");
-        rowMenuBar.addStyleName("treetable-dropdown-button");
+        rowMenuBar = new RowMenuBar("../oph/img/icon-treetable-button.png");
         rowMenuBar.addMenuCommand("Luo uusi koulutus", menuCommand);
         rowMenuBar.addMenuCommand("Näytä hakukohteet", menuCommand);
         rowMenuBar.addMenuCommand("Poista", menuCommand);
-
         return rowMenuBar;
     }
 

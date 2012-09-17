@@ -47,5 +47,4 @@
     </bean> 
     
     <bean class="fi.vm.sade.koodisto.widget.factory.WidgetFactory" />
-    
 </beans>

@@ -45,7 +45,7 @@ public class MainSearchView extends AbstractHorizontalLayout {
         tfSearch.setImmediate(false);
         this.addComponent(tfSearch);
 
-        Button btnHaku = UiBuilder.newButton(i18n.getMessage("Hae"), this);
+        Button btnHaku = UiBuilder.newButtonSmallPrimary(i18n.getMessage("Hae"), this);
         btnHaku.addStyleName(Oph.BUTTON_SMALL);
         btnHaku.addListener(new Button.ClickListener() {
 
