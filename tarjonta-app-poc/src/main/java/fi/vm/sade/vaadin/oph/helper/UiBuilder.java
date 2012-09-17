@@ -465,6 +465,7 @@ public class UiBuilder extends ComponentUtil {
     public static RichTextArea newRichTextArea(PropertysetItem psi, String expression, AbstractOrderedLayout layout) {
 
         RichTextArea rta = new RichTextArea();
+        rta.setWidth(PCT100);
 
         // Bind to model
         if (psi != null && expression != null) {
