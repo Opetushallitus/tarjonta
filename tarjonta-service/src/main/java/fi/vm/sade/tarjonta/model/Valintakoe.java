@@ -24,6 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -43,6 +44,10 @@ public class Valintakoe extends BaseEntity {
     @JoinColumn(name = "valintakoe_id")
     private Set<ValintakoeAjankohta> ajankohtas = new HashSet<ValintakoeAjankohta>();
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "kuvaus_monikielinenteksti_id")
+    private MonikielinenTeksti kuvaus;
+
     /**
      * Returns an immutable set of Ajankohtas.
      * 
@@ -58,6 +63,20 @@ public class Valintakoe extends BaseEntity {
 
     public void addAjankohta(ValintakoeAjankohta ajankohta) {
         ajankohtas.add(ajankohta);
+    }
+
+    /**
+     * @return the kuvaus
+     */
+    public MonikielinenTeksti getKuvaus() {
+        return kuvaus;
+    }
+
+    /**
+     * @param kuvaus the kuvaus to set
+     */
+    public void setKuvaus(MonikielinenTeksti kuvaus) {
+        this.kuvaus = kuvaus;
     }
 
 }

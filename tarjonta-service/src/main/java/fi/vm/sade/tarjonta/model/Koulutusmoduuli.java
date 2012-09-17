@@ -16,13 +16,20 @@
 package fi.vm.sade.tarjonta.model;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
 
 /**
  * An abstract base class for different types of Koulutusmoduuli's. This class adds OPH specified features to LOS.
@@ -63,6 +70,9 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification i
      */
     @Column(name = "koulutus_aste")
     private String koulutusAste;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "koulutusmoduuli")
+    private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
 
     /**
      * Constructor for JPA
@@ -165,6 +175,40 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification i
      */
     public void setKoulutusAste(String koulutusAste) {
         this.koulutusAste = koulutusAste;
+    }
+
+    public Set<KoulutusmoduuliToteutus> getKoulutusmoduuliToteutuses() {
+
+        return Collections.unmodifiableSet(koulutusmoduuliToteutuses);
+
+    }
+
+    public boolean addKoulutusmoduuliToteutus(KoulutusmoduuliToteutus toteutus) {
+        if (!koulutusmoduuliToteutuses.contains(toteutus)) {
+            koulutusmoduuliToteutuses.add(toteutus);
+            toteutus.setKoulutusmoduuli(this);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removeKoulutusmoduuliToteutus(KoulutusmoduuliToteutus toteutus) {
+        if (koulutusmoduuliToteutuses.remove(toteutus)) {
+            toteutus.setKoulutusmoduuli(null);
+            return true;
+        }
+        return false;
+    }
+
+    public void removeAllKoulutusmoduuliToteutus() {
+
+        // remove all toteutus objects
+        final Set<KoulutusmoduuliToteutus> toteutuses = getKoulutusmoduuliToteutuses();
+        for (KoulutusmoduuliToteutus t : toteutuses) {
+            removeKoulutusmoduuliToteutus(t);
+        }
+
+
     }
 
 }

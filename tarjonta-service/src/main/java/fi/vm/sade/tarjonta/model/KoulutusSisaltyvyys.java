@@ -17,34 +17,43 @@ package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * A Koulutus object may consist multiple child Koulutus objects as its parts. This object describes the link from the parent Koulutus to child Koulutus. It
- * also adds information into this relation, such whether the child is considered as optional or mandatory part.
+ * A Koulutus object may consist multiple child Koulutus objects as its parts. This object describes the link from the 
+ * parent Koulutus to child Koulutus. It also adds information into this relation, such whether the child is considered 
+ * as optional or mandatory part.
  *
- * @author Jukka Raanamo
  */
 @Entity
-@Table(name = KoulutusSisaltyvyys.TABLE_NAME)
-public class KoulutusSisaltyvyys extends BaseEntity {
+@Table(name = KoulutusSisaltyvyys.TABLE_NAME, uniqueConstraints =
+@UniqueConstraint(name = "UK_" + KoulutusSisaltyvyys.TABLE_NAME + "_01",
+columnNames = {
+    KoulutusSisaltyvyys.PARENT_COLUMN_NAME,
+    KoulutusSisaltyvyys.CHILD_COLUMN_NAME
+}))
+public class KoulutusSisaltyvyys extends BaseEntity implements Comparable<KoulutusSisaltyvyys> {
 
     public static final String TABLE_NAME = "koulutus_sisaltyvyys";
 
-    /**
-     * The parent Koulutus.
-     */
+    private static final long serialVersionUID = 9160508919072362147L;
+
+    public static final String PARENT_COLUMN_NAME = "parent_id";
+
+    public static final String CHILD_COLUMN_NAME = "child_id";
+
     @ManyToOne
+    @JoinColumn(name = PARENT_COLUMN_NAME)
     private Koulutus parent;
 
-    /**
-     * The child Koulutus.
-     */
     @ManyToOne
+    @JoinColumn(name = CHILD_COLUMN_NAME)
     private Koulutus child;
 
     /**
@@ -62,6 +71,15 @@ public class KoulutusSisaltyvyys extends BaseEntity {
         this.parent = parent;
         this.child = child;
         this.optional = optional;
+    }
+
+    /**
+     * Copy constructor.
+     * 
+     * @param source
+     */
+    public KoulutusSisaltyvyys(KoulutusSisaltyvyys source) {
+        this(source.getParent(), source.getChild(), source.isOptional());
     }
 
     /**
@@ -128,6 +146,11 @@ public class KoulutusSisaltyvyys extends BaseEntity {
             append("optional", optional).
             toString();
 
+    }
+
+    @Override
+    public int compareTo(KoulutusSisaltyvyys t) {
+        return child.compareTo(t.getChild());
     }
 
 }

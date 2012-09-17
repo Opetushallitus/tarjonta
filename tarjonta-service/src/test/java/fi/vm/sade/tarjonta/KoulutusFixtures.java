@@ -15,14 +15,19 @@
  */
 package fi.vm.sade.tarjonta;
 
+import fi.vm.sade.tarjonta.dao.KoulutusDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.dao.impl.KoulutusDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
 import java.util.Calendar;
-import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Sets up common test fixtures that can be used through out different DAO/service tests.
  *
  */
+@Component
 public class KoulutusFixtures {
 
     public static final String OID_TIETOJENKASITTELYN_KOULUTUS = "dummy";
@@ -31,39 +36,113 @@ public class KoulutusFixtures {
 
     public TutkintoOhjelmaToteutus simpleTutkintoOhjelmaToteutus;
 
+    public TutkinnonOsa simpleTutkinnonOsa;
+
     public Hakukohde simpleHakukohde;
-    
+
     public Hakukohde hakukohdeWithValintakoe;
+
+    @Autowired
+    private KoulutusDAO koulutusDAO;
+
+    @Autowired
+    private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
 
     public KoulutusFixtures() {
         recreate();
     }
 
     public final void recreate() {
-        
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.YEAR, 1);
-        
-        simpleTutkintoOhjelma = new TutkintoOhjelma();
-        simpleTutkintoOhjelma.setOid("http://oph/koulutusmoduuli/simpleTutkintoOhjelma");
-        simpleTutkintoOhjelma.setTutkintoOhjelmanNimi("Simple Tutkinto-Ohjelma");
-        simpleTutkintoOhjelma.setKoulutusKoodi("500001");
 
-        simpleTutkintoOhjelmaToteutus = new TutkintoOhjelmaToteutus(simpleTutkintoOhjelma);
-        simpleTutkintoOhjelmaToteutus.setNimi("Simple Tutkinto-Ohjelma toteutus");
-        simpleTutkintoOhjelmaToteutus.setOid("http://oph/koulutusmoduulitotetutus/simpleTutkintoOhjelma");
-        simpleTutkintoOhjelmaToteutus.setKoulutuksenAlkamisPvm(cal.getTime());
-        simpleTutkintoOhjelmaToteutus.setMaksullisuus(null);
-        simpleTutkintoOhjelmaToteutus.addOpetuskieli(new KoodistoUri("http://kielet/fi"));
-        simpleTutkintoOhjelmaToteutus.addOpetusmuoto(new KoodistoUri("http://opetusmuodot/lahiopetus"));
-        
-        simpleHakukohde = new Hakukohde();
-        simpleHakukohde.setHakukohde("http://hakukohde/yyy");
-        
-        hakukohdeWithValintakoe = new Hakukohde();
-        hakukohdeWithValintakoe.setHakukohde("http://hakukohde/xxx");
+        simpleTutkintoOhjelma = createTutkintoOhjelma();
+        simpleTutkintoOhjelmaToteutus = createTutkintoOhjelmaToteutus();
+        simpleHakukohde = createHakukohde();
+        simpleTutkinnonOsa = createTutkinnonOsa();
+
+        hakukohdeWithValintakoe = createHakukohde();
         hakukohdeWithValintakoe.addValintakoe(new Valintakoe());
 
+    }
+
+    public TutkintoOhjelma createTutkintoOhjelma() {
+
+        TutkintoOhjelma t = new TutkintoOhjelma();
+        t.setOid(randomOid("koulutusmoduuli"));
+        t.setTutkintoOhjelmanNimi("Simple Tutkinto-Ohjelma");
+        t.setKoulutusKoodi("500001");
+
+        return t;
+
+    }
+
+    public TutkintoOhjelmaToteutus createTutkintoOhjelmaToteutus() {
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, 1);
+
+        TutkintoOhjelmaToteutus t = new TutkintoOhjelmaToteutus();
+        t.setNimi("Simple Tutkinto-Ohjelma toteutus");
+        t.setOid(randomOid("koulutusmoduulitotetutus"));
+        t.setKoulutuksenAlkamisPvm(cal.getTime());
+        t.setMaksullisuus(null);
+        t.addOpetuskieli(new KoodistoUri("http://kielet/fi"));
+        t.addOpetusmuoto(new KoodistoUri("http://opetusmuodot/lahiopetus"));
+
+        return t;
+
+    }
+
+    public TutkinnonOsa createTutkinnonOsa() {
+
+        TutkinnonOsa t = new TutkinnonOsa();
+        t.setOid(randomOid("tutkinnonosa"));
+        return t;
+
+    }
+
+    private Hakukohde createHakukohde() {
+
+        Hakukohde h = new Hakukohde();
+        h.setHakukohdeNimi(randomOid("hakukohde"));
+        return h;
+
+    }
+
+    public Koulutusmoduuli simpleKoulutusmoduuliTree() {
+
+        Koulutusmoduuli root = createTutkintoOhjelma();
+        Koulutusmoduuli child1 = createTutkinnonOsa();
+        Koulutusmoduuli child2 = createTutkinnonOsa();
+        Koulutusmoduuli child3 = createTutkinnonOsa();
+
+        koulutusDAO.insert(root);
+        koulutusDAO.insert(child1);
+        koulutusDAO.insert(child2);
+        koulutusDAO.insert(child3);
+
+        sisaltyvyysDAO.insert(new KoulutusSisaltyvyys(root, child1, true));
+        sisaltyvyysDAO.insert(new KoulutusSisaltyvyys(root, child2, true));
+        sisaltyvyysDAO.insert(new KoulutusSisaltyvyys(child1, child3, false));
+        sisaltyvyysDAO.insert(new KoulutusSisaltyvyys(child2, child3, true));
+
+        flush();
+        clear();
+
+        return (Koulutusmoduuli) koulutusDAO.read(root.getId());
+
+    }
+
+    private void flush() {
+        ((KoulutusDAOImpl) koulutusDAO).getEntityManager().flush();
+    }
+
+    private void clear() {
+        ((KoulutusDAOImpl) koulutusDAO).getEntityManager().clear();
+    }
+
+    private String randomOid(String type) {
+
+        return "http://" + type + "/" + System.currentTimeMillis();
 
     }
 

@@ -27,9 +27,20 @@ import java.util.List;
 public interface KoulutusBusinessService {
 
     /**
-     * Creates new Koulutusmoduuli into database. Newly created Koulutusmoduuli will have no implementations (LOIs). Note that OID must be already assigned.
+     * Create new Koulutusmoduuli as a child of Koulutusmoduuli matching given <code>parentOid</code>.
      *
+     * @param parentOid 
+     * @param optional 
+     * @param koulutus 
      * @param koulutusmoduuli
+     * @return
+     */
+    public Koulutusmoduuli create(Koulutusmoduuli koulutus, String parentOid, boolean optional);
+
+    /**
+     * Creates a new top level Koulutusmoduuli.
+     * 
+     * @param koulutus
      * @return
      */
     public Koulutusmoduuli create(Koulutusmoduuli koulutus);

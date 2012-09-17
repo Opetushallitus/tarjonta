@@ -39,13 +39,13 @@ public class Hakukohde extends BaseEntity {
     private Set<Valintakoe> valintakoes = new HashSet<Valintakoe>();
 
     @NotNull
-    @Column(name = "hakukohde", nullable = false)
-    private String hakukohde;
+    @Column(name = "hakukohde_nimi", nullable = false)
+    private String hakukohdeNimi;
 
     @Column(name = "alin_valinta_pistamaara")
     private int alinValintaPistemaara;
-    
-    @Column(name="ylin_valinta_pistemaara")
+
+    @Column(name = "ylin_valinta_pistemaara")
     private int ylinValintaPistemaara;
 
     @Column(name = "aloituspaikat_lkm")
@@ -62,8 +62,15 @@ public class Hakukohde extends BaseEntity {
     private Haku haku;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "hakukohde_id")
-    MonikielinenTeksti valintaperusteKuvaus;
+    @JoinColumn(name = "valintaperustekuvaus_teksti_id")
+    private MonikielinenTeksti valintaperusteKuvaus;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "lisatiedot_teksti_id")
+    private MonikielinenTeksti lisatiedot;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hakukohde")
+    private Set<HakukohdeLiite> liites;
 
     /**
      * @return the koulutuses
@@ -84,8 +91,8 @@ public class Hakukohde extends BaseEntity {
      *
      * @return the nimi
      */
-    public String getHakukohde() {
-        return hakukohde;
+    public String getHakukohdeNimi() {
+        return hakukohdeNimi;
     }
 
     /**
@@ -94,8 +101,8 @@ public class Hakukohde extends BaseEntity {
      *
      * @param uri the nimi to set
      */
-    public void setHakukohde(String hakukohde) {
-        this.hakukohde = hakukohde;
+    public void setHakukohdeNimi(String hakukohde) {
+        this.hakukohdeNimi = hakukohde;
     }
 
     /**
@@ -201,6 +208,34 @@ public class Hakukohde extends BaseEntity {
      */
     public void setHaku(Haku haku) {
         this.haku = haku;
+    }
+
+    public Set<HakukohdeLiite> getLiites() {
+        return Collections.unmodifiableSet(liites);
+    }
+
+    public void addLiite(HakukohdeLiite liite) {
+        liite.setHakukohde(this);
+        liites.add(liite);
+    }
+
+    public void removeLiite(HakukohdeLiite liite) {
+        liites.remove(liite);
+        liite.setHakukohde(null);
+    }
+
+    /**
+     * @return the lisatiedot
+     */
+    public MonikielinenTeksti getLisatiedot() {
+        return lisatiedot;
+    }
+
+    /**
+     * @param lisatiedot the lisatiedot to set
+     */
+    public void setLisatiedot(MonikielinenTeksti lisatiedot) {
+        this.lisatiedot = lisatiedot;
     }
 
 }

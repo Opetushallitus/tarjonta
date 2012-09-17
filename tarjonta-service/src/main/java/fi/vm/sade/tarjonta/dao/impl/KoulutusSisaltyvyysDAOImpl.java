@@ -13,32 +13,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.model;
+package fi.vm.sade.tarjonta.dao.impl;
 
-import fi.vm.sade.generic.model.BaseEntity;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  */
-@Entity
-@Table(name = "valintakoe_osoite")
-public class ValintakoeOsoite extends BaseEntity {
-
-    private static final long serialVersionUID = 1433944293857682921L;
-
-    @Embedded
-    private Osoite osoite;
-
-    public Osoite getOsoite() {
-        return osoite;
-    }
-
-    public void setOsoite(Osoite osoite) {
-        this.osoite = osoite;
-    }
-
+@Repository
+public class KoulutusSisaltyvyysDAOImpl extends AbstractJpaDAOImpl<KoulutusSisaltyvyys, Long> implements KoulutusSisaltyvyysDAO {
 }
 

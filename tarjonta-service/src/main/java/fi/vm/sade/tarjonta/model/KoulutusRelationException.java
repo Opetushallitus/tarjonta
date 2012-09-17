@@ -15,29 +15,15 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 /**
+ * Thrown by the tarjonta domain classes if an invalid/illegal tree structure is attempted to be constructed.
  *
+ * @author Jukka Raanamo
  */
-@Entity
-@Table(name = "valintakoe_osoite")
-public class ValintakoeOsoite extends BaseEntity {
+public class KoulutusRelationException extends RuntimeException {
 
-    private static final long serialVersionUID = 1433944293857682921L;
-
-    @Embedded
-    private Osoite osoite;
-
-    public Osoite getOsoite() {
-        return osoite;
-    }
-
-    public void setOsoite(Osoite osoite) {
-        this.osoite = osoite;
+    public KoulutusRelationException(String string) {
+        super(string);
     }
 
 }

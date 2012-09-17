@@ -15,76 +15,49 @@
  */
 package fi.vm.sade.tarjonta.model.util;
 
+import fi.vm.sade.tarjonta.KoulutusFixtures;
 import fi.vm.sade.tarjonta.model.Koulutus;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker.NodeHandler;
-import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliTyyppi;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 import org.junit.BeforeClass;
 import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Our test tree is:
- * <pre>
- *               R
- *              / \
- *             A   B
- *            /
- *           C
- * </pre>
- *
- * @author Jukka Raanamo
- */
+@ContextConfiguration(locations = "classpath:spring/test-context.xml")
+@RunWith(SpringJUnit4ClassRunner.class)
+@Transactional
 public class KoulutusmoduuliTreeWalkerTest {
 
-    private static Koulutusmoduuli root = newNode();
+    @Autowired
+    private KoulutusFixtures fixtures;
 
-    private static Koulutusmoduuli level_1_child_0 = newNode();
-
-    private static Koulutusmoduuli level_1_child_1 = newNode();
-
-    private static Koulutusmoduuli level_2_child_0 = newNode();
-
-    private static AtomicInteger counter = new AtomicInteger(0);
-
-    private static final KoulutusTreeWalker.NodeHandler matcher = new NodeHandler() {
-
-        @Override
-        public boolean match(Koulutus moduuli) {
-            counter.incrementAndGet();
-            return true;
-        }
-
-    };
-
-    private static KoulutusTreeWalker walker = new KoulutusTreeWalker(-1, matcher);
-
-    @BeforeClass
-    public static void setUpTree() throws Exception {
-
-        root.addChild(level_1_child_0, false);
-        root.addChild(level_1_child_1, false);
-        level_1_child_0.addChild(level_2_child_0, false);
-
-    }
-
-    private static Koulutusmoduuli newNode() {
-        return new TutkintoOhjelma();
-    }
-
-    /**
-     * Test of createWalker method, of class KoulutusmoduuliTreeWalker.
-     */
     @Test
-    public void testWalkDown() {
+    public void testWalk() {
 
-        // walk down from root node
-        counter.set(0);
-        walker.walk(root);
-        assertEquals(4, counter.intValue());
+        final AtomicInteger counter = new AtomicInteger();
 
+        KoulutusTreeWalker.NodeHandler handler = new NodeHandler() {
+
+            @Override
+            public boolean match(Koulutus moduuli) {
+                counter.incrementAndGet();
+                return true;
+            }
+
+        };
+
+
+        new KoulutusTreeWalker(handler).walk(fixtures.simpleKoulutusmoduuliTree());
+
+        // there are 4 nodes but one is shared from via routes
+        assertEquals(5, counter.intValue());
 
     }
 

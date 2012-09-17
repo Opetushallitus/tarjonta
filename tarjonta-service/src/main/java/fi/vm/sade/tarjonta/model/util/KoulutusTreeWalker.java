@@ -40,6 +40,12 @@ public class KoulutusTreeWalker {
 
     }
 
+    public KoulutusTreeWalker(NodeHandler handler) {
+        this(-1, handler);
+    }
+    
+    
+
     public void walk(Koulutus startNode) {
         walkInternal(startNode);
     }
@@ -78,7 +84,7 @@ public class KoulutusTreeWalker {
          * @param moduuli
          * @return
          */
-        public boolean match(Koulutus kolutus);
+        public boolean match(Koulutus koulutus);
 
     }
 

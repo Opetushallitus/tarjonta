@@ -15,41 +15,36 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
-import fi.vm.sade.generic.model.BaseEntity;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.*;
 
+import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
+import fi.vm.sade.generic.model.BaseEntity;
+
 /**
- * Common base class for all entities on both the specification and instance side of learning objects. The CEN MLO model names this as "Learning Opportunity
- * Object".
+ * Common base class for all entities on both the specification and instance side of learning objects. 
+ * The CEN MLO model names this as "Learning Opportunity Object".
  *
  */
 @Entity
 @Table(name = Koulutus.TABLE_NAME)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "koulutus_tyyppi", length = 6)
-public abstract class Koulutus extends BaseEntity {
+public abstract class Koulutus extends BaseEntity implements Comparable<Koulutus> {
 
-    /**
-     * Name of the OID column to be used in queries.
-     */
+    public static final String TABLE_NAME = "koulutus";
+
     public static final String OID_COLUMN_NAME = "oid";
 
-    static final String TABLE_NAME = "koulutus";
+    private static final long serialVersionUID = -8023508784857174305L;
 
-    /**
-     * OID that can be assigned once and once only. NOTE: for some reason this does not work - could it have something to do with inheritance??
-     */
     @Column(name = OID_COLUMN_NAME, nullable = false, insertable = true, updatable = false)
     private String oid;
 
-    /**
-     * 
-     */
     @Column(name = "tila")
     private String tila;
 
@@ -59,11 +54,19 @@ public abstract class Koulutus extends BaseEntity {
     @Column(name = "nimi")
     private String nimi;
 
+    @Column(name = "learning_opportunity_type")
+    private String learningOpportunityType;
+
     /**
-     * Hierarchy of Koulutus objects that further break down this Koulutus into smaller parts.
+     * Used for versioning Koulutus -objects. Do not mix this version field in BaseEntity used by Hibernate.
      */
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "parent", orphanRemoval = true)
+    private int koulutusVersio;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent", orphanRemoval = true)
     private Set<KoulutusSisaltyvyys> children = new HashSet<KoulutusSisaltyvyys>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "child", orphanRemoval = true)
+    private Set<KoulutusSisaltyvyys> parents = new HashSet<KoulutusSisaltyvyys>();
 
     /**
      * Always call super when overriding constructor.
@@ -149,64 +152,7 @@ public abstract class Koulutus extends BaseEntity {
     }
 
     /**
-     * Creates a parent-child relationship to given Koulutus.
-     *
-     * @param child
-     * @param optional
-     * @return
-     * @throws CyclicReferenceException
-     */
-    public boolean addChild(final Koulutus child, final boolean optional) throws KoulutusTreeException {
-
-        if (child == null) {
-            return false;
-        }
-
-        if (child == this) {
-            // bad use of API, throw to catch bug
-            throw new KoulutusTreeException("you cannot add *this* as a child");
-        }
-
-        final KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys(this, child, optional);
-        if (!addChildRelationship(sisaltyvyys)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Removes given Koulutusmoduuli from the "includes" list.
-     *
-     * @param koulutusmoduuli
-     * @return true if moduuli was removed, otherwise false.
-     */
-    public boolean removeChild(Koulutus child) {
-
-        final KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys(this, child, true);
-        return children.remove(sisaltyvyys);
-
-    }
-
-    /**
-     * Helper method that, before adding,  checks if relationship already exists.
-     *
-     * @param sisaltyvyys
-     * @return
-     */
-    private boolean addChildRelationship(KoulutusSisaltyvyys sisaltyvyys) {
-
-        if (children.contains(sisaltyvyys)) {
-            return false;
-        }
-
-        children.add(sisaltyvyys);
-        return true;
-
-    }
-
-    /**
-     * Returns immutable set of child Koulutus -objects.
+     * Returns immutable set of child relations.
      *
      * @return
      */
@@ -215,8 +161,17 @@ public abstract class Koulutus extends BaseEntity {
     }
 
     /**
-     * Returns true if given child is a direct or non-direct (unlimited depth) child of this Koulutus. Note that as children are lazily loaded, each level will
-     * require one more select.
+     * Returns immutable set of parent relations.
+     * 
+     * @return
+     */
+    public Set<KoulutusSisaltyvyys> getParents() {
+        return Collections.unmodifiableSet(parents);
+    }
+
+    /**
+     * Returns true if given child is a direct or non-direct (unlimited depth) child of this Koulutus. 
+     * Note that as children are lazily loaded, each level will require one more select.
      *
      * @param child
      * @return
@@ -243,11 +198,58 @@ public abstract class Koulutus extends BaseEntity {
     }
 
     /**
+     * Convenience method that instead of returning set of KoulutusSisaltyvyys, 
+     * returns only the children from those elements.
+     * 
+     * @return
+     */
+    public Set<Koulutus> getChildNodes() {
+
+        Set<Koulutus> nodes = new HashSet<Koulutus>();
+        for (KoulutusSisaltyvyys s : children) {
+            nodes.add(s.getChild());
+        }
+        return nodes;
+
+    }
+
+    /**
+     * Simple comparison by Koulutus name.
+     * 
+     * @param koulutus
+     * @return
+     */
+    @Override
+    public int compareTo(Koulutus koulutus) {
+        if (nimi == null) {
+            return (koulutus.getNimi() == null ? 0 : 1);
+        } else {
+            return nimi.compareTo(koulutus.getNimi());
+        }
+    }
+
+    /**
+     * @return the learningOpportunityType
+     */
+    public String getLearningOpportunityType() {
+        return learningOpportunityType;
+    }
+
+    /**
+     * @param learningOpportunityType the learningOpportunityType to set
+     */
+    public void setLearningOpportunityType(String learningOpportunityType) {
+        this.learningOpportunityType = learningOpportunityType;
+    }
+
+    /**
      * Constants to be used as discriminator values for *concrete* classes derived from this class.
      */
     interface KoulutusTyyppit {
 
         String TUTKINNON_OSA = "M10001";
+
+        String TUTKINNON_OSA_TOTEUTUS = "T10001";
 
         String TUTKINTO_OHJELMA = "M10002";
 

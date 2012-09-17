@@ -16,65 +16,15 @@
 package fi.vm.sade.tarjonta.model;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
- *
- * @author Jukka Raanamo
+ * Moved relations to dao from model (since it's not domain after all).
  */
 public class KoulutusTest {
 
+    
     @Test
-    public void testKoulutusCanHoldMultipleChildren() {
-
-        Koulutus parent = new TutkintoOhjelma();
-
-        TutkinnonOsa child1 = new TutkinnonOsa();
-        TutkinnonOsa child2 = new TutkinnonOsa();
-
-        parent.addChild(child1, false);
-        parent.addChild(child2, false);
-
-        assertEquals(2, parent.getChildren().size());
-
-    }
-
-    @Test
-    public void testSameChildCanOnlyAddedOnce() {
-
-        Koulutus parent = new TutkintoOhjelma();
-
-        TutkinnonOsa child = new TutkinnonOsa();
-
-        parent.addChild(child, false);
-        assertFalse(parent.addChild(child, false));
-
-        assertEquals(1, parent.getChildren().size());
-
-    }
-
-    @Test(expected = KoulutusTreeException.class)
-    public void testParentCannotBeAddedAsChild() {
-
-        Koulutus parent = new TutkintoOhjelma();
-        parent.addChild(parent, true);
-
-    }
-
-    @Test
-    public void testNodeCanBeShared() {
-
-        Koulutus tree1 = new TutkintoOhjelma();
-        Koulutus tree2 = new TutkintoOhjelma();
-
-        TutkinnonOsa sharedChild = new TutkinnonOsa();
-
-        tree1.addChild(sharedChild, true);
-        tree2.addChild(sharedChild, false);
-
-        assertEquals(1, tree1.getChildren().size());
-        assertEquals(1, tree2.getChildren().size());
-
+    public void testNone() {
     }
 
 }

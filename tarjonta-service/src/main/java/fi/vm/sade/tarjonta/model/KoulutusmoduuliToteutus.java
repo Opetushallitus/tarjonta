@@ -26,7 +26,6 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  *
- * @author Jukka Raanamo
  */
 @Entity
 public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstance {
@@ -90,7 +89,8 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstanc
     private Set<KoodistoUri> opetusmuotos = new HashSet<KoodistoUri>();
 
     /**
-     * If non-null, this "koulutus" comes with a charge. This field defines the amount of the charge. The actual content of this field is yet to be defined.
+     * If non-null, this "koulutus" comes with a charge. This field defines the amount of the charge. 
+     * The actual content of this field is yet to be defined.
      */
     private String maksullisuus;
 
@@ -99,6 +99,29 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstanc
     @JoinColumn(name = "koulutus_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME), inverseJoinColumns =
     @JoinColumn(name = "hakukohde_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME))
     private Set<Hakukohde> hakukohdes = new HashSet<Hakukohde>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Yhteyshenkilo> yhteyshenkilos = new HashSet<Yhteyshenkilo>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "opetussuunnitelma_teskti_id")
+    private MonikielinenTeksti opetussuunnitelmaUrl;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "oppilaitos_teksti_id")
+    private MonikielinenTeksti oppilaitosUrl;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "sosiaalinenmedia_teksti_id")
+    private MonikielinenTeksti sosiaalinenMediaUrl;
+    
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "maksullisuus_teksti_id")
+    private MonikielinenTeksti maksullisuusUrl;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "stipendimahdollisuus_teksti_id")
+    private MonikielinenTeksti stipendimahdollisuusUrl;
 
     /**
      * Constructor for JPA
@@ -113,7 +136,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstanc
      */
     public KoulutusmoduuliToteutus(Koulutusmoduuli moduuli) {
         this();
-        this.koulutusmoduuli = moduuli;
+        setKoulutusmoduuli(moduuli);
     }
 
     /**
@@ -125,8 +148,30 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstanc
         return koulutusmoduuli;
     }
 
-    public void setKoulutusmoduuli(Koulutusmoduuli moduuli) {
-        koulutusmoduuli = moduuli;
+    /**
+     * Set the koulutusmoduuli this toteutus "implements".
+     * 
+     * @param newModuuli
+     */
+    public final void setKoulutusmoduuli(Koulutusmoduuli newModuuli) {
+
+        if (koulutusmoduuli == newModuuli) {
+            return;
+        }
+
+        // use "updatable=false"?
+        if (this.koulutusmoduuli != null && newModuuli != null) {
+            if (!koulutusmoduuli.equals(newModuuli)) {
+                throw new IllegalArgumentException("reference to Koulutusmoduuli cannot be chagned, was: "
+                    + koulutusmoduuli + ", update attempted to: " + newModuuli);
+            }
+        }
+
+        koulutusmoduuli = newModuuli;
+        if (koulutusmoduuli != null) {
+            koulutusmoduuli.addKoulutusmoduuliToteutus(this);
+        }
+
     }
 
     /**
@@ -313,6 +358,76 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstanc
 
     public void removeOpetusmuoto(KoodistoUri opetusmuoto) {
         opetusmuotos.remove(opetusmuoto);
+    }
+
+    public Set<Yhteyshenkilo> getYhteyshenkilos() {
+        return Collections.unmodifiableSet(yhteyshenkilos);
+    }
+
+    public void addYhteyshenkilo(Yhteyshenkilo henkilo) {
+        yhteyshenkilos.add(henkilo);
+    }
+
+    public void removeYhteyshenkilo(Yhteyshenkilo henkilo) {
+        yhteyshenkilos.remove(henkilo);
+    }
+
+    public MonikielinenTeksti getOppilaitosUrl() {
+        return oppilaitosUrl;
+    }
+
+    public void setOppilaitosUrl(MonikielinenTeksti oppilaitosUrl) {
+        this.oppilaitosUrl = oppilaitosUrl;
+    }
+
+    public MonikielinenTeksti getOpetussuunnitelmaUrl() {
+        return opetussuunnitelmaUrl;
+    }
+
+    public void setOpetussuunnitelmaUrl(MonikielinenTeksti opetussuunnitelmaUrl) {
+        this.opetussuunnitelmaUrl = opetussuunnitelmaUrl;
+    }
+
+    /**
+     * @return the sosiaalinenMediaUrl
+     */
+    public MonikielinenTeksti getSosiaalinenMediaUrl() {
+        return sosiaalinenMediaUrl;
+    }
+
+    /**
+     * @param sosiaalinenMediaUrl the sosiaalinenMediaUrl to set
+     */
+    public void setSosiaalinenMediaUrl(MonikielinenTeksti sosiaalinenMediaUrl) {
+        this.sosiaalinenMediaUrl = sosiaalinenMediaUrl;
+    }
+
+    /**
+     * @return the stipendimahdollisuusUrl
+     */
+    public MonikielinenTeksti getStipendimahdollisuusUrl() {
+        return stipendimahdollisuusUrl;
+    }
+
+    /**
+     * @param stipendimahdollisuusUrl the stipendimahdollisuusUrl to set
+     */
+    public void setStipendimahdollisuusUrl(MonikielinenTeksti stipendimahdollisuusUrl) {
+        this.stipendimahdollisuusUrl = stipendimahdollisuusUrl;
+    }
+
+    /**
+     * @return the maksullisuusUrl
+     */
+    public MonikielinenTeksti getMaksullisuusUrl() {
+        return maksullisuusUrl;
+    }
+
+    /**
+     * @param maksullisuusUrl the maksullisuusUrl to set
+     */
+    public void setMaksullisuusUrl(MonikielinenTeksti maksullisuusUrl) {
+        this.maksullisuusUrl = maksullisuusUrl;
     }
 
 }

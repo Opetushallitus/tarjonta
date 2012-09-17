@@ -27,6 +27,7 @@ import javax.persistence.MappedSuperclass;
  */
 @MappedSuperclass
 public abstract class LearningOpportunityInstance extends Koulutus {
-    
+
+    private static final long serialVersionUID = 7347253354901040237L;
 }
 

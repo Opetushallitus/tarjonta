@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.service.business.impl;
 
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.dao.KoulutusDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
@@ -27,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
- * @author Jukka Raanamo
  */
 @Service
 @Transactional
@@ -36,14 +37,33 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     @Autowired
     private KoulutusDAO koulutusDAO;
 
+    @Autowired
+    private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
+
     @Override
-    public Koulutusmoduuli create(Koulutusmoduuli koulutusmoduuli) {
-        return (Koulutusmoduuli) koulutusDAO.insert(koulutusmoduuli);
+    public Koulutusmoduuli create(Koulutusmoduuli koulutusmoduuli, String parentOid, boolean optional) {
+
+        final Koulutusmoduuli newModuuli = create(koulutusmoduuli);
+
+        Koulutusmoduuli parent = koulutusDAO.findByOid(Koulutusmoduuli.class, parentOid);
+        sisaltyvyysDAO.insert(new KoulutusSisaltyvyys(parent, newModuuli, optional));
+
+        return newModuuli;
+
+    }
+
+    @Override
+    public Koulutusmoduuli create(Koulutusmoduuli moduuli) {
+
+        return (Koulutusmoduuli) koulutusDAO.insert(moduuli);
+
     }
 
     @Override
     public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus) {
+        
         return (KoulutusmoduuliToteutus) koulutusDAO.insert(toteutus);
+        
     }
 
     @Override

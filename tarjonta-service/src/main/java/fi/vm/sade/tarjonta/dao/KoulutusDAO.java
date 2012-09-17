@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.dao;
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Koulutus;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import java.util.List;
 
 /**
@@ -29,11 +30,56 @@ public interface KoulutusDAO extends JpaDAO<Koulutus, Long> {
      * @return
      */
     public List<KoulutusSisaltyvyys> findAllSisaltyvyys();
-    
+
+    /**
+     * 
+     * @param tila
+     * @param startIndex
+     * @param pageSize
+     * @return
+     */
     public List<Koulutus> find(String tila, int startIndex, int pageSize);
-    
-    
+
+    /**
+     * 
+     * @param <T>
+     * @param type
+     * @param oid
+     * @return
+     */
     public <T> List<T> findAllVersions(Class<T> type, String oid);
+
+    /**
+     * Returns a list of Koulutus -objects of type <code>type</code>.
+     * 
+     * @param <T> type of 
+     * @param type
+     * @return
+     */
+    public <T extends Koulutus> List<T> findAll(Class<T> type);
+    
+    
+    /**
+     * Returns a list of Koulutusmoduulis that are direct children of given <code>oid</code>
+     * 
+     * @param <T>
+     * @param type
+     * @param oid 
+     * @return
+     */
+    public <T extends Koulutus> List<T> findAllChildren(Class<T> type, String oid);
+    
+    
+    
+    /**
+     * Typed version of read to save from casting.
+     * 
+     * @param <T>
+     * @param type
+     * @param id
+     * @return
+     */
+    public <T extends Koulutus> T findByOid(Class<T> type, String id);
 
 }
 

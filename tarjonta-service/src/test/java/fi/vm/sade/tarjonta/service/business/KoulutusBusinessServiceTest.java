@@ -91,6 +91,15 @@ public class KoulutusBusinessServiceTest {
         assertNotNull(t.getOid());
 
     }
+    
+    
+    @Test
+    public void testCopyStructure() {
+        
+//        Koulutusmoduuli original = fixtures.simpleKoulutusTree;        
+//        Koulutusmoduuli copy = service.createCopy(original);
+        
+    }
 
 }
 

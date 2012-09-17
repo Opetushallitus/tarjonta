@@ -15,10 +15,12 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusDAO;
-import fi.vm.sade.tarjonta.model.Koulutus;
-import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
+import fi.vm.sade.tarjonta.model.*;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -38,6 +40,11 @@ public class KoulutusDAOImpl extends AbstractJpaDAOImpl<Koulutus, Long> implemen
 
     private static final Logger log = LoggerFactory.getLogger(KoulutusDAO.class);
 
+    @Override
+    public <T extends Koulutus> T findByOid(Class<T> type, String oid) {
+        return getEntityManager().find(type, oid);
+    }
+
     public List<KoulutusSisaltyvyys> findAllSisaltyvyys() {
         return getEntityManager().
             createQuery("from " + KoulutusSisaltyvyys.class.getSimpleName() + " as s").
@@ -48,7 +55,7 @@ public class KoulutusDAOImpl extends AbstractJpaDAOImpl<Koulutus, Long> implemen
     public List<Koulutus> find(String tila, int startIndex, int pageSize) {
 
         return findBy("tila", tila, startIndex, pageSize);
-        
+
     }
 
     /**
@@ -61,22 +68,49 @@ public class KoulutusDAOImpl extends AbstractJpaDAOImpl<Koulutus, Long> implemen
      */
     @Override
     public <T> List<T> findAllVersions(Class<T> koulutusType, String oid) {
-       
+
         EntityManager em = getEntityManager();
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<T> query = cb.createQuery(koulutusType);
-        
+
         Root<T> root = query.from(koulutusType);
         Predicate oidCondition = cb.equal(root.get("oid"), oid);
-        
+
         query.select(root).where(oidCondition);
-        
-        return em.createQuery(query).getResultList();            
-        
+
+        return em.createQuery(query).getResultList();
+
     }
-    
-    
-    
+
+    @Override
+    public <T extends Koulutus> List<T> findAll(Class<T> type) {
+
+        QKoulutus koulutus = QKoulutus.koulutus;
+        BooleanExpression typeCriteria = koulutus.instanceOf(type);
+
+        return (List<T>) from(koulutus).where(typeCriteria).list(koulutus);
+
+    }
+
+    @Override
+    public <T extends Koulutus> List<T> findAllChildren(Class<T> type, String oid) {
+
+        QKoulutus koulutus = QKoulutus.koulutus;
+        QKoulutus parent = new QKoulutus("parent");
+        QKoulutusSisaltyvyys sisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
+        BooleanExpression oidEq = parent.oid.eq(oid);
+
+        return (List<T>) from(koulutus).
+            join(koulutus.parents, sisaltyvyys).
+            join(sisaltyvyys.parent, parent).
+            where(oidEq).
+            list(koulutus);
+
+    }
+
+    protected JPAQuery from(EntityPath<?>... o) {
+        return new JPAQuery(getEntityManager()).from(o);
+    }
 
 }
 

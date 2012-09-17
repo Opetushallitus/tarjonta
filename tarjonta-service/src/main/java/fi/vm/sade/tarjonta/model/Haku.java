@@ -28,7 +28,6 @@ import static fi.vm.sade.generic.common.validation.ValidationConstants.*;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.hibernate.cfg.CollectionSecondPass;
 
 /**
  *
@@ -52,6 +51,7 @@ public class Haku extends BaseEntity {
     private String oid;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "nimi_teksti_ids")
     private MonikielinenTeksti nimi;
 
     // todo: i might move this and the next date parameter to a collection that might be required anyways

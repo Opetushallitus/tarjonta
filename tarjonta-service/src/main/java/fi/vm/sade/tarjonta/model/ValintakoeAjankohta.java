@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -24,6 +26,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -41,5 +45,51 @@ public class ValintakoeAjankohta extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "valintakoe_ajankohta_id")
     private Set<ValintakoeOsoite> osoites = new HashSet<ValintakoeOsoite>();
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date alkamisaika;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date paattymisaika;
+
+    private String nimi;
+
+    public Date getAlkamisaika() {
+        return alkamisaika;
+    }
+
+    public void setAlkamisaika(Date alkamisaika) {
+        this.alkamisaika = alkamisaika;
+    }
+
+    public Date getPaattymisaika() {
+        return paattymisaika;
+    }
+
+    public void setPaattymisaika(Date paattymisaika) {
+        this.paattymisaika = paattymisaika;
+    }
+
+    public String getNimi() {
+        return nimi;
+    }
+
+    public void setNimi(String nimi) {
+        this.nimi = nimi;
+    }
+    
+    
+    public Set<ValintakoeOsoite> getOsoites() {
+        return Collections.unmodifiableSet(osoites);
+    }
+    
+    public void addOsoite(ValintakoeOsoite osoite) {
+        osoites.add(osoite);
+    }
+    
+    public void removeOsoite(ValintakoeOsoite osoite) {
+        osoites.remove(osoite);
+    }
+
 }
 

@@ -17,10 +17,8 @@ package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.tarjonta.dao.impl.KoulutusDAOImpl;
 import fi.vm.sade.tarjonta.model.Koulutus;
-import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
 import java.util.Date;
-import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -112,91 +110,6 @@ public class KoulutusmoduuliDAOTest {
 
     }
 
-    @Test
-    public void testAddChildRelationshipToExisting() throws Exception {
-
-        TutkintoOhjelma parent = createTutkintoOhjelma();
-        TutkintoOhjelma child = createTutkintoOhjelma();
-
-        dao.insert(parent);
-        dao.insert(child);
-
-        parent.addChild(child, true);
-
-        dao.update(parent);
-
-        //
-        // check that parent has given child as only child
-        //
-
-        parent = read(parent.getId());
-        assertEquals(1, parent.getChildren().size());
-
-        KoulutusSisaltyvyys parentToChild = parent.getChildren().iterator().next();
-        assertEquals(child, parentToChild.getChild());
-        assertTrue(parentToChild.isOptional());
-
-
-        child = read(child.getId());
-        assertEquals(0, child.getChildren().size());
-
-
-
-    }
-
-    @Test
-    public void testRemovingRelationshipDoesNotRemoveNodes() throws Exception {
-
-        TutkintoOhjelma parent = createTutkintoOhjelma();
-        TutkintoOhjelma child = createTutkintoOhjelma();
-
-        dao.insert(parent);
-        dao.insert(child);
-
-        parent.addChild(child, true);
-        dao.update(parent);
-
-        parent = read(parent.getId());
-        assertTrue(parent.removeChild(child));
-
-        assertEquals(0, parent.getChildren().size());
-
-        // both entities have full cascading to relationships so removing from either end should work
-        dao.update(parent);
-
-        parent = read(parent.getId());
-        child = read(child.getId());
-
-        assertEquals(0, parent.getChildren().size());
-
-        // check that none of the existing relationships are pointing to entities we just created,
-        // unless we clean tables before this test, there may be some relations
-        List<KoulutusSisaltyvyys> rels = ((KoulutusDAOImpl) dao).findAllSisaltyvyys();
-        for (KoulutusSisaltyvyys r : rels) {
-            assertFalse("relationship was not removed", r.getParent().getId() == parent.getId());
-            assertFalse("relationship was not remove", r.getChild().getId() == child.getId());
-        }
-
-    }
-
-    @Test
-    // todo: you actually can,what are the constraints?
-    public void testCannotAddSameRelatioshipTwice() throws Exception {
-
-        TutkintoOhjelma parent = createTutkintoOhjelma();
-        TutkintoOhjelma child = createTutkintoOhjelma();
-
-        dao.insert(parent);
-        dao.insert(child);
-
-        parent.addChild(child, true);
-
-        dao.update(parent);
-
-        parent.addChild(child, true);
-        dao.update(parent);
-
-    }
     
     @Test
     public void testOIDCannotBeUpdated() {
@@ -237,7 +150,7 @@ public class KoulutusmoduuliDAOTest {
     }
 
     private TutkintoOhjelma insert(TutkintoOhjelma o) {
-        return (TutkintoOhjelma) dao.insert(o);
+        return (TutkintoOhjelma) dao.insert(o);        
     }
 
     private TutkintoOhjelma createTutkintoOhjelma() {

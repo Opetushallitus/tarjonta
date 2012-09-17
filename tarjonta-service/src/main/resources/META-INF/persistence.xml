@@ -6,9 +6,12 @@
     <class>fi.vm.sade.tarjonta.model.Koulutus</class>
     <class>fi.vm.sade.tarjonta.model.TutkintoOhjelma</class>
     <class>fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus</class>
+    <class>fi.vm.sade.tarjonta.model.TutkinnonOsa</class>
+    <class>fi.vm.sade.tarjonta.model.TutkinnonOsaToteutus</class>
     <class>fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys</class>
     <class>fi.vm.sade.tarjonta.model.Oid</class>
     <class>fi.vm.sade.tarjonta.model.Hakukohde</class>
+    <class>fi.vm.sade.tarjonta.model.HakukohdeLiite</class>
     <class>fi.vm.sade.tarjonta.model.KoodistoUri</class>
     <class>fi.vm.sade.tarjonta.model.Haku</class>
     <class>fi.vm.sade.tarjonta.model.Valintakoe</class>
@@ -16,6 +19,7 @@
     <class>fi.vm.sade.tarjonta.model.ValintakoeOsoite</class>
     <class>fi.vm.sade.tarjonta.model.MonikielinenTeksti</class>
     <class>fi.vm.sade.tarjonta.model.TekstiKaannos</class>
+    <class>fi.vm.sade.tarjonta.model.Yhteyshenkilo</class>
     <properties>
       <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
       <!--  
