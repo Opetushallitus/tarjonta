@@ -17,11 +17,12 @@ import org.slf4j.LoggerFactory;
 public class EditSiirraUudelleKaudelleView extends AbstractDialogWindow {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditSiirraUudelleKaudelleView.class);
+    private static final String TITLE_FORMAT = "Olet muokkaamassa {0} {1}";
 
     public EditSiirraUudelleKaudelleView(String label) {
         super(
                 label,
-                UiBuilder.format("Olet luomassa {0} {1}", "28", "koulutusta"),
+                UiBuilder.format(TITLE_FORMAT, "28", "koulutusta"),
                 DataSource.LOREM_IPSUM_SHORT);
         setWidth("600px");
         setHeight("500px");

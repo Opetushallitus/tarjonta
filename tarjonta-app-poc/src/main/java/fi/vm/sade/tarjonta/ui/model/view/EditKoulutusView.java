@@ -24,8 +24,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class EditKoulutusView extends Panel {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusView.class);
-    @Autowired(required = true)
-    private TarjontaPresenter _presenter;
+    private static final String TITLE_FORMAT = "Olet muokkaamassa {0} koulutusta organisaatioon {1}";
 
     public EditKoulutusView() {
         super();
@@ -34,9 +33,7 @@ public class EditKoulutusView extends Panel {
         setSizeFull();
         setScrollable(true);
 
-        String message = "Olet luomassa {0} koulutusta organisaatioon {1}";
-
-        addComponent(UiBuilder.newLabel(message, null, LabelStyle.H2, "tutkintoon johtavaa", "Informaatiotekniikan tiedekunta"));
+        addComponent(UiBuilder.newLabel(TITLE_FORMAT, null, LabelStyle.H2, "tutkintoon johtavaa", "Informaatiotekniikan tiedekunta"));
 
         TabSheet tabs = new TabSheet();
         tabs.setSizeFull();

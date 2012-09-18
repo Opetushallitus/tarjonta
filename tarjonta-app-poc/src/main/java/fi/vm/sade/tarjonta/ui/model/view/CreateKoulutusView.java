@@ -21,12 +21,13 @@ public class CreateKoulutusView extends AbstractDialogWindow {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateKoulutusView.class);
     private static final String TEKSTI = "Koulutusta ei ole vielä liitetty mihinkään organisaatioon.";
+    private static final String TITLE_FORMAT = "Olet luomassa {0} {1}";
     private CreateKoulutusTreeView createKoulutusTreeView;
 
     public CreateKoulutusView(String label) {
         super(
                 label,
-                UiBuilder.format("Olet muokkaamassa {0} {1}", "tutkintoon johtavaa", "koulutusta"),
+                UiBuilder.format(TITLE_FORMAT, "tutkintoon johtavaa", "koulutusta"),
                 DataSource.LOREM_IPSUM_SHORT);
 
         setWidth("600px");
