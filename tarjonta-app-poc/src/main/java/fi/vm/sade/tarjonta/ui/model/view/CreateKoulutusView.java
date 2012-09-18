@@ -30,7 +30,7 @@ public class CreateKoulutusView extends AbstractDialogWindow {
                 UiBuilder.format(TITLE_FORMAT, "tutkintoon johtavaa", "koulutusta"),
                 DataSource.LOREM_IPSUM_SHORT);
 
-        setWidth("600px");
+        setWidth("700px");
         setHeight("500px");
     }
 
@@ -48,6 +48,7 @@ public class CreateKoulutusView extends AbstractDialogWindow {
         splitPanel.addComponent(vRight);
 
         createKoulutusTreeView = new CreateKoulutusTreeView();
+        createKoulutusTreeView.setSizeFull();
         createKoulutusTreeView.setContainerDataSource(DataSource.treeTableData(new CheckBoxTableStyle()));
         vLeft.addComponent(createKoulutusTreeView);
 

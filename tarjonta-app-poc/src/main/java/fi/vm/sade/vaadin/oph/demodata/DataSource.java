@@ -70,9 +70,10 @@ public class DataSource {
         "Koulutukselliset ja ammatilliset tavoitteet",
         "Jatk-optomahdollisuudet"
     };
+
     
     public static final String[] ORDER_BY = new String[]{"Organisaatiorakenteen mukainen järjestys", "Koulutuksen tilan mukainen järjestys", "Aakkosjärjestys", "Koulutuslajin mukaan"};
- 
+
     public static HierarchicalContainer treeTableData(ITableRowFormat rowStyle) {
         Map<String, String[]> map = new HashMap<String, String[]>();
 
@@ -111,9 +112,9 @@ public class DataSource {
             if (randomMin < 1 || randomMin > limitMin) {
                 randomMin = limitMin;
             }
-        } 
-        
-        if (max < LOREM_IPSUM_SHORT.length() -1) {
+        }
+
+        if (max < LOREM_IPSUM_SHORT.length() - 1) {
             max = randomizer.nextInt(max);
             if (max < randomMin) {
                 max = randomMin + max + 1;

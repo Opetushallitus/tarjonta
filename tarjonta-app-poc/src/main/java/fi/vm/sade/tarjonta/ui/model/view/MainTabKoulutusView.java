@@ -10,6 +10,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.enums.Notification;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.oph.demodata.DataSource;
@@ -86,6 +87,7 @@ public class MainTabKoulutusView extends VerticalLayout {
                         modal.removeDialogButtons();
 
                         _presenter.showMainKoulutusView();
+                        _presenter.demoInformation(Notification.SAVE_EDITED);
                     }
                 }, UiBuilder.STYLE_BUTTON_PRIMARY);
 
@@ -137,7 +139,7 @@ public class MainTabKoulutusView extends VerticalLayout {
 
         cbJarjestys = UiBuilder.newComboBox(null, DataSource.ORDER_BY, layout);
         cbJarjestys.setWidth("300px");
-        
+
         layout.setExpandRatio(cbJarjestys, 1f);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
 

@@ -8,6 +8,7 @@ import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.tarjonta.ui.enums.Notification;
 import fi.vm.sade.tarjonta.ui.model.view.AddHakuDokumenttiView;
 import fi.vm.sade.tarjonta.ui.model.view.EditKoulutusView;
 import fi.vm.sade.tarjonta.ui.model.view.EditSiirraHakukohteitaView;
@@ -35,9 +36,11 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class TarjontaPresenter {
 
     public static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
+    private static final int PAGE_MAX = 30;
     @Autowired(required = true)
     private TarjontaModel _model;
     private TarjontaWindow _tarjontaWindow;
+    private int pageCurrent = 12;
 
     public TarjontaPresenter() {
         LOG.info("TarjontaPresenter() : model={}", _model);
@@ -77,6 +80,11 @@ public class TarjontaPresenter {
         // TODO Get from model, validate any extra stuff needed and call service save
     }
 
+    public void demoInformation(Notification msg) {
+        LOG.info("Show notification : ", msg);
+        _tarjontaWindow.showNotification("Viesti:", msg.getInfo());
+    }
+
     /*
      * APP Identifier.
      */
@@ -102,14 +110,14 @@ public class TarjontaPresenter {
         ButtonDTO btnPrev = new ButtonDTO("< Edellinen (Sosiaali- ja terveysalan lähitutkinto, pk)", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                showShowKoulutusView();
             }
         });
 
         ButtonDTO btnNext = new ButtonDTO("<(Sähkö- ja automaatiotekniikan perustutkinto, pk) seuraava >", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                showShowKoulutusView();
             }
         });
 
@@ -124,7 +132,6 @@ public class TarjontaPresenter {
         getRightLayout().removeAllComponents();
         getRightLayout().addComponent(new EditKoulutusView());
     }
-    
 
     public void setTarjontaWindow(TarjontaWindow aThis) {
         _tarjontaWindow = aThis;
@@ -135,28 +142,34 @@ public class TarjontaPresenter {
         getRightLayout().removeAllComponents();
         getRightLayout().addComponent(new AddHakuDokumenttiView());
     }
-    
-     public void showShowHakukohdeView() {
-       ButtonDTO btnPrev = new ButtonDTO("< Edellinen (Sosiaali- ja terveysalan lähitutkinto, pk)", new Button.ClickListener() {
+
+    public void showShowHakukohdeView() {
+        ButtonDTO btnPrev = new ButtonDTO("< Edellinen (Sosiaali- ja terveysalan lähitutkinto, pk)", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                if (pageCurrent > 1) {
+                    pageCurrent--;
+                    showShowHakukohdeView();
+                }
             }
         });
 
         ButtonDTO btnNext = new ButtonDTO("<(Sähkö- ja automaatiotekniikan perustutkinto, pk) seuraava >", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                if (pageCurrent < PAGE_MAX) {
+                    ++pageCurrent;
+                    showShowHakukohdeView();
+                }
             }
         });
 
-        PageNavigationDTO dto = new PageNavigationDTO(btnPrev, btnNext, "12 / 30");
+        PageNavigationDTO dto = new PageNavigationDTO(btnPrev, btnNext,  pageCurrent + " / " + PAGE_MAX);
 
         getRightLayout().removeAllComponents();
         getRightLayout().addComponent(new ShowHakukohdeView("Autoalan perustutkinto, kv", null, dto));
     }
-    
+
     public void showEditSiirraHakukohteitaView() {
         LOG.debug("In showEditSiirraHakukohteitaView");
 
@@ -185,8 +198,7 @@ public class TarjontaPresenter {
         modal.buildDialogButtons();
     }
 
-    
-     public HierarchicalContainer getTreeDataSource() {
+    public HierarchicalContainer getTreeDataSource() {
         return DataSource.treeTableData(new MultiActionTableStyle());
     }
 
@@ -196,5 +208,4 @@ public class TarjontaPresenter {
     private VerticalLayout getRightLayout() {
         return _tarjontaWindow.getMainSplitPanel().getMainRightLayout();
     }
-    
 }

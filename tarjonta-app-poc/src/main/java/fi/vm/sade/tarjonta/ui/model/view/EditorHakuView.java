@@ -29,6 +29,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.enums.Notification;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.oph.enums.LabelStyle;
@@ -259,6 +260,7 @@ public class EditorHakuView extends CustomComponent {
             @Override
             public void buttonClick(ClickEvent event) {
                 fireEvent(new SaveEvent(EditorHakuView.this, false));
+                  _presenter.demoInformation( Notification.SAVE_DRAFT);
             }
         });
 
@@ -267,6 +269,7 @@ public class EditorHakuView extends CustomComponent {
             @Override
             public void buttonClick(ClickEvent event) {
                 fireEvent(new SaveEvent(EditorHakuView.this, true));
+                  _presenter.demoInformation( Notification.SAVE);
             }
         });
 
@@ -318,6 +321,7 @@ public class EditorHakuView extends CustomComponent {
         public SaveEvent(Component source, boolean complete) {
             super(source);
             _complete = complete;
+          
         }
 
         public boolean isComplete() {
@@ -332,6 +336,7 @@ public class EditorHakuView extends CustomComponent {
 
         public DeleteEvent(Component source) {
             super(source);
+           
         }
     }
 

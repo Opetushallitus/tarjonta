@@ -24,6 +24,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
+import fi.vm.sade.tarjonta.ui.enums.Notification;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.oph.demodata.DataSource;
 import fi.vm.sade.vaadin.oph.demodata.row.MultiActionTableStyleNoCBox;
@@ -57,14 +58,16 @@ public class ShowHakukohdeView extends AbstractInfoLayout<VerticalLayout> {
         addNavigationButton("Poista", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                _presenter.showMainKoulutusView();
+                _presenter.demoInformation(Notification.DELETE);
             }
         }, Oph.BUTTON_SMALL);
 
         addNavigationButton("Kopioi uudeksi", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                _presenter.demoInformation(Notification.COPY);
+
             }
         }, Oph.BUTTON_SMALL);
     }
@@ -130,11 +133,7 @@ public class ShowHakukohdeView extends AbstractInfoLayout<VerticalLayout> {
         CategoryTreeView categoryTree = new CategoryTreeView();
         categoryTree.setHeight("200px");
         categoryTree.setContainerDataSource(DataSource.treeTableData(new MultiActionTableStyleNoCBox()));
-        layout.addComponent(categoryTree);       
-    }
-
-    private HorizontalLayout buildHeaderLayout(String title) {
-        return buildHeaderLayout(title, null);
+        layout.addComponent(categoryTree);
     }
 
     private HorizontalLayout buildHeaderLayout(String title, String btnCaption) {
@@ -144,9 +143,12 @@ public class ShowHakukohdeView extends AbstractInfoLayout<VerticalLayout> {
 
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);
-            Button btn = UiBuilder.newButton(btnCaption, headerLayout);
-            btn.setStyleName(Oph.CONTAINER_SECONDARY);
-            btn.addStyleName(Oph.BUTTON_SMALL);
+            Button btn = UiBuilder.newButtonSmallSecodary(btnCaption, headerLayout, new Button.ClickListener() {
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    _presenter.demoInformation(Notification.GENERIC_ERROR);
+                }
+            });
 
             headerLayout.setExpandRatio(btn, 1f);
 

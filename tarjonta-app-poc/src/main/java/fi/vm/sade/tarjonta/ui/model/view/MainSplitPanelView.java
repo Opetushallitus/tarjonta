@@ -11,15 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable(preConstruction = true)
-public class MainSplitPanelView extends HorizontalSplitPanel {
+public class MainSplitPanelView extends VerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainSplitPanelView.class);
-
     private static final int DEFAULT_SPLIT_PCT = 0;
-
     @Autowired(required = true)
     private TarjontaPresenter _presenter;
-
     private HorizontalLayout mainLeftLayout;
     private VerticalLayout mainRightLayout;
 
@@ -30,19 +27,20 @@ public class MainSplitPanelView extends HorizontalSplitPanel {
     public MainSplitPanelView() {
         LOG.info("In MainSplitPanelView");
         buildMainLayout();
-
+        mainRightLayout.setHeight(-1, UNITS_PIXELS);
     }
 
     private void buildMainLayout() {
         //INIT SPLIT PANEL
-        setSplitPosition(DEFAULT_SPLIT_PCT); // percent
+        //setSplitPosition(DEFAULT_SPLIT_PCT); // percent
         mainLeftLayout = UiBuilder.newHorizontalLayout(); //split panel right
-       mainRightLayout = UiBuilder.newVerticalLayout(); //Split panel left
+        mainRightLayout = UiBuilder.newVerticalLayout(); //Split panel left
+        mainRightLayout.setHeight(-1, UNITS_PIXELS);
         this.addComponent(mainLeftLayout);
         this.addComponent(mainRightLayout);
 
         //LEFT LAYOUT IN SPLIT PANEL
-        UiBuilder.newLabel("Organisaation valinta tähän", mainLeftLayout);
+       // UiBuilder.newLabel("Organisaation valinta tähän", mainLeftLayout);
     }
 
     /**

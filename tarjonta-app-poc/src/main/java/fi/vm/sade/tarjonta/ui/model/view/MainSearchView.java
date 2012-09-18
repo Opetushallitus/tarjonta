@@ -34,6 +34,7 @@ public class MainSearchView extends AbstractHorizontalLayout {
 
     public MainSearchView() {
         super(true, UiMarginEnum.RIGHT_BOTTOM_LEFT);
+        this.setHeight(-1, UNITS_PIXELS);
         buildLayout();
     }
 

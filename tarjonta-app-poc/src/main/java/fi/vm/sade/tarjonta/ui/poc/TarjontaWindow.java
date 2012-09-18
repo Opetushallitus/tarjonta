@@ -31,7 +31,7 @@ public class TarjontaWindow extends Window {
         _presenter.setTarjontaWindow(this);
 
         VerticalLayout layout = UiBuilder.newVerticalLayout();
-        layout.setSizeFull();
+        layout.setHeight(-1,UNITS_PIXELS);
         setContent(layout); //window käyttää layouttia pohjana
         layout.addStyleName(Oph.CONTAINER_MAIN);
 
@@ -44,7 +44,7 @@ public class TarjontaWindow extends Window {
             layout.addComponent(new Label("ID=" + _presenter.getIdentifier()));
         }
 
-        layout.setExpandRatio(mainSplitPanel, 1f);
+       // layout.setExpandRatio(mainSplitPanel, 1f);
 
         _presenter.showMainKoulutusView();
     }

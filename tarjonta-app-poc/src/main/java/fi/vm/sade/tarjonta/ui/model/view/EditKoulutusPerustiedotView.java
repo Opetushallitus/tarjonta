@@ -30,6 +30,7 @@ import com.vaadin.ui.VerticalSplitPanel;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.components.OhjePopupComponent;
+import fi.vm.sade.tarjonta.ui.enums.Notification;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiDTO;
 import fi.vm.sade.tarjonta.ui.model.KoulutusPerustiedotDTO;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloDTO;
@@ -74,7 +75,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
 
     public EditKoulutusPerustiedotView() {
         super();
-        setSizeFull();
+        setHeight(-1, UNITS_PIXELS);
         setMargin(true, true, true, true);
         setSpacing(true);
 
@@ -730,12 +731,14 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         LOG.info("doSaveIncomplete(): dto={}", _dto);
         // TODO validate
         _presenter.saveKoulutusPerustiedot(false);
+        _presenter.demoInformation(Notification.SAVE_DRAFT);
     }
 
     public void doSaveComplete() {
         LOG.info("doSaveComplete(): dto={}", _dto);
         // TODO validate
         _presenter.saveKoulutusPerustiedot(true);
+        _presenter.demoInformation(Notification.SAVE);
     }
 
     public void doContinue() {

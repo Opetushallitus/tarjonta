@@ -24,6 +24,7 @@ import com.vaadin.ui.RichTextArea;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.enums.Notification;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,7 @@ public class EditKoulutusKuvailevattiedotView extends VerticalLayout {
         p.setWidth("100%");
         addComponent(p);
 
-        String[] s = new String[] {
+        String[] s = new String[]{
             "Tutkinnon rakenne...",
             "Tutkinnon koulutukselliset tavoitteet...",
             "Koulutuksen sisältö...",
@@ -73,8 +74,7 @@ public class EditKoulutusKuvailevattiedotView extends VerticalLayout {
             "Sijoittuminen työelämään...",
             "Kansainvälistyminen ...",
             "Yhteistyö muoden toimijoiden kanssa...",
-            "Lisätietoja...",
-        };
+            "Lisätietoja...",};
 
         for (String string : s) {
             UiBuilder.newTextPanel(string, "100%", null, vl);
@@ -89,45 +89,45 @@ public class EditKoulutusKuvailevattiedotView extends VerticalLayout {
         createButtons(this);
     }
 
-
     private HorizontalLayout createButtons(AbstractLayout vl) {
-
-        final Button.ClickListener l = new Button.ClickListener() {
-
-            @Override
-            public void buttonClick(ClickEvent event) {
-                _presenter.showMainKoulutusView();
-            }
-        };
-
 
         HorizontalLayout hl = UiBuilder.newHorizontalLayout();
         hl.setSizeUndefined();
 
-        Button b = UiBuilder.newButtonSmallSecodary("Peruuta", hl);
-        b.addListener(l);
+        UiBuilder.newButtonSmallSecodary("Peruuta", hl, new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                _presenter.showMainKoulutusView();
+            }
+        });
 
-        b = UiBuilder.newButtonSmallPrimary("Tallenna luonnoksena", hl);
-        b.addListener(l);
+        UiBuilder.newButtonSmallPrimary("Tallenna luonnoksena", hl, new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                _presenter.demoInformation(Notification.SAVE_DRAFT);
+            }
+        });
 
-        b = UiBuilder.newButtonSmallPrimary("Tallenna valmiina", hl);
-        b.addListener(l);
+        UiBuilder.newButtonSmallPrimary("Tallenna valmiina", hl, new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+               _presenter.demoInformation( Notification.SAVE);
+            }
+        });
 
-        b = UiBuilder.newButtonSmallPrimary("Jatka", hl);
-        b.addListener(l);
-
-        if (vl != null) {
-            vl.addComponent(hl);
-        }
+        UiBuilder.newButtonSmallPrimary("Jatka", hl, new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                _presenter.showShowHakukohdeView();
+            }
+        });
 
         return hl;
     }
-
 
     private RichTextArea createRTA() {
         RichTextArea rta = UiBuilder.newRichTextArea(null, null, null);
         rta.setValue("ed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?");
         return rta;
     }
-
 }
