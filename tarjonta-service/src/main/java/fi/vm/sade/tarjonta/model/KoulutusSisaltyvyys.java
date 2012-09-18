@@ -50,11 +50,11 @@ public class KoulutusSisaltyvyys extends BaseEntity implements Comparable<Koulut
 
     @ManyToOne
     @JoinColumn(name = PARENT_COLUMN_NAME)
-    private Koulutus parent;
+    private LearningOpportunityObject parent;
 
     @ManyToOne
     @JoinColumn(name = CHILD_COLUMN_NAME)
-    private Koulutus child;
+    private LearningOpportunityObject child;
 
     /**
      * If the contained koulutus, in this relationship, is optional or not.
@@ -67,7 +67,7 @@ public class KoulutusSisaltyvyys extends BaseEntity implements Comparable<Koulut
     protected KoulutusSisaltyvyys() {
     }
 
-    public KoulutusSisaltyvyys(Koulutus parent, Koulutus child, boolean optional) {
+    public KoulutusSisaltyvyys(LearningOpportunityObject parent, LearningOpportunityObject child, boolean optional) {
         this.parent = parent;
         this.child = child;
         this.optional = optional;
@@ -87,7 +87,7 @@ public class KoulutusSisaltyvyys extends BaseEntity implements Comparable<Koulut
      *
      * @return
      */
-    public Koulutus getParent() {
+    public LearningOpportunityObject getParent() {
         return parent;
     }
 
@@ -96,7 +96,7 @@ public class KoulutusSisaltyvyys extends BaseEntity implements Comparable<Koulut
      *
      * @return
      */
-    public Koulutus getChild() {
+    public LearningOpportunityObject getChild() {
         return child;
     }
 

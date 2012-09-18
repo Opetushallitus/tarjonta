@@ -21,8 +21,8 @@ import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,35 +60,27 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     }
 
     @Override
-    public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus) {
-        
-        return (KoulutusmoduuliToteutus) koulutusDAO.insert(toteutus);
-        
+    public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus, String koulutusmoduuliOid) {
+
+        return create(toteutus, koulutusDAO.findByOid(Koulutusmoduuli.class, koulutusmoduuliOid));
+
     }
 
     @Override
     public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus, Koulutusmoduuli moduuli) {
 
-        final Koulutusmoduuli k = isNew(moduuli) ? create(moduuli) : moduuli;
-        toteutus.setKoulutusmoduuli(moduuli);
+        final Koulutusmoduuli m = isNew(moduuli) ? create(moduuli) : moduuli;
+        toteutus.setLearningOpportunitySpecification(moduuli);
 
-        return create(toteutus);
+        return (KoulutusmoduuliToteutus) koulutusDAO.insert(toteutus);
 
     }
 
     @Override
-    public List<Koulutusmoduuli> findAllKoulutusmoduuliVersions(String oid) {
-        return koulutusDAO.findAllVersions(Koulutusmoduuli.class, oid);
-    }
+    public LearningOpportunityObject findByOid(String oid) {
 
-    @Override
-    public List<KoulutusmoduuliToteutus> findAllKoulutusmoduuliToteutusVersions(String oid) {
-        return koulutusDAO.findAllVersions(KoulutusmoduuliToteutus.class, oid);
-    }
+        return koulutusDAO.findByOid(LearningOpportunityObject.class, oid);
 
-    @Override
-    public Koulutusmoduuli findKoulutusmoduuliByOid(String oid) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private boolean isNew(BaseEntity e) {

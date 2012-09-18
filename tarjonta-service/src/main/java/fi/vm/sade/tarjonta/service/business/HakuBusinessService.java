@@ -8,9 +8,15 @@ import java.util.List;
 /**
  * @author Antti
  */
-public interface HakueraBusinessService {
+public interface HakuBusinessService {
+
     List<Haku> findAll(SearchCriteriaDTO searchCriteria);
-    Haku save(Haku hakuera);
-    Haku update(Haku hakuera);
+
+    Haku save(Haku haku);
+
+    Haku update(Haku haku);
+
     Haku findByOid(String oidString);
+
 }
+

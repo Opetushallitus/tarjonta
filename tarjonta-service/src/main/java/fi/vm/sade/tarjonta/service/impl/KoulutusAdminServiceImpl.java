@@ -58,9 +58,7 @@ public class KoulutusAdminServiceImpl implements KoulutusAdminService {
             final Koulutusmoduuli moduuli = findOrCreateKoulutusmoduuli(koulutus);
             final KoulutusmoduuliToteutus toteutus = extractKoulutusmoduuliToteutus(koulutus);
 
-            // link moduuli with toteutus
-            toteutus.setKoulutusmoduuli(moduuli);
-            final KoulutusmoduuliToteutus newToteutus = koulutusService.create(toteutus);
+            final KoulutusmoduuliToteutus newToteutus = koulutusService.create(toteutus, moduuli);
 
             return convert(moduuli, newToteutus);
 
@@ -98,7 +96,7 @@ public class KoulutusAdminServiceImpl implements KoulutusAdminService {
         Koulutusmoduuli result = null;
 
         if (oid != null) {
-            result = koulutusService.findKoulutusmoduuliByOid(oid);
+            result = (Koulutusmoduuli) koulutusService.findByOid(oid);
         } else {
             // are there other means of identifying an existing Koulutusmoduuli?             
             result = extractKoulutusmoduuli(koulutus);

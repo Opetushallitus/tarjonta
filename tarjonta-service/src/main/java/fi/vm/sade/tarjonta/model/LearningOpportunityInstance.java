@@ -15,7 +15,10 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 
 /**
  * A single occurrence of a learning opportunity. Unlike a Learning Opportunity Specification, 
@@ -23,11 +26,54 @@ import javax.persistence.MappedSuperclass;
  * and may be applied for or participated in by learners.
  * 
  * @see http://mjukis.blogg.skolverket.se/files/2008/10/mlo-ad-v5.pdf
- * @author Jukka Raanamo
  */
-@MappedSuperclass
-public abstract class LearningOpportunityInstance extends Koulutus {
+@Entity
+public abstract class LearningOpportunityInstance extends LearningOpportunityObject {
 
     private static final long serialVersionUID = 7347253354901040237L;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinTable(name = TABLE_NAME + "_koulutusmoduuli")
+    private LearningOpportunitySpecification specification;
+
+    protected LearningOpportunityInstance() {
+        super();
+    }
+
+    public LearningOpportunityInstance(LearningOpportunitySpecification specification) {
+        this();
+        this.specification = specification;
+    }
+
+    /**
+     * Returns the LOS this LOI specifies.
+     *
+     * @return
+     */
+    public LearningOpportunitySpecification getLearningOpportunitySpecification() {
+        return specification;
+    }
+
+    public final void setLearningOpportunitySpecification(LearningOpportunitySpecification newSpecification) {
+
+        if (this.specification == newSpecification) {
+            return;
+        }
+
+        // use "updatable=false"?
+        if (this.specification != null && newSpecification != null) {
+            if (!this.specification.equals(newSpecification)) {
+                throw new IllegalArgumentException("reference to Koulutusmoduuli cannot be chagned, was: "
+                    + specification + ", update attempted to: " + newSpecification);
+            }
+        }
+
+        this.specification = newSpecification;
+        if (this.specification != null) {
+            this.specification.addLearningOpportunityInstance(this);
+        }
+
+    }
+
 }
 

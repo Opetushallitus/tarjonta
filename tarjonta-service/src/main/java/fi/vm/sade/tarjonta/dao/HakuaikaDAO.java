@@ -13,19 +13,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.model;
+package fi.vm.sade.tarjonta.dao;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import fi.vm.sade.generic.dao.JpaDAO;
+import fi.vm.sade.tarjonta.model.Hakuaika;
 
 /**
  *
- * 
  */
-@Entity
-@DiscriminatorValue(LearningOpportunityObject.KoulutusTyyppit.TUTKINNON_OSA)
-public class TutkinnonOsaToteutus extends KoulutusmoduuliToteutus {
-
-    private static final long serialVersionUID = -7406116006428457704L;
+public interface HakuaikaDAO extends JpaDAO<Long, Hakuaika> {
+    
 }
 

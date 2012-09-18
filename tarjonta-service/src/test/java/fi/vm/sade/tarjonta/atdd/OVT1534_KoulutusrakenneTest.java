@@ -19,7 +19,7 @@ import fi.vm.sade.tarjonta.KoulutusDatabasePrinter;
 import fi.vm.sade.tarjonta.KoulutusFixtures;
 import fi.vm.sade.tarjonta.dao.KoulutusDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
-import fi.vm.sade.tarjonta.model.Koulutus;
+import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import static org.junit.Assert.*;
 
@@ -68,12 +68,12 @@ public class OVT1534_KoulutusrakenneTest {
 
         Koulutusmoduuli moduuli = fixtures.simpleKoulutusmoduuliTree();
         
-        Iterator<Koulutus> i = moduuli.getChildNodes().iterator();
-        Koulutus child1 = i.next();
-        Koulutus child2 = i.next();
+        Iterator<LearningOpportunityObject> i = moduuli.getChildNodes().iterator();
+        LearningOpportunityObject child1 = i.next();
+        LearningOpportunityObject child2 = i.next();
         
-        Koulutus child3 = child1.getChildNodes().iterator().next();
-        Koulutus child4 = child2.getChildNodes().iterator().next();
+        LearningOpportunityObject child3 = child1.getChildNodes().iterator().next();
+        LearningOpportunityObject child4 = child2.getChildNodes().iterator().next();
         
         assertEquals(child3, child4);
 
@@ -86,15 +86,15 @@ public class OVT1534_KoulutusrakenneTest {
         TutkintoOhjelmaToteutus toteutusA = new TutkintoOhjelmaToteutus(moduuli);
         TutkintoOhjelmaToteutus toteutusB = new TutkintoOhjelmaToteutus(moduuli);
 
-        moduuli.addKoulutusmoduuliToteutus(toteutusA);
-        moduuli.addKoulutusmoduuliToteutus(toteutusB);
+        moduuli.addLearningOpportunityInstance(toteutusA);
+        moduuli.addLearningOpportunityInstance(toteutusB);
 
         // tarkista että toteutukset on liitetty
-        assertEquals(2, moduuli.getKoulutusmoduuliToteutuses().size());
+        assertEquals(2, moduuli.getLearningOpportunityInstances().size());
 
         // tarkista että toteutukset viittaavat oikean moduuliin
-        assertEquals(moduuli, toteutusA.getKoulutusmoduuli());
-        assertEquals(moduuli, toteutusB.getKoulutusmoduuli());
+        assertEquals(moduuli, toteutusA.getLearningOpportunitySpecification());
+        assertEquals(moduuli, toteutusB.getLearningOpportunitySpecification());
 
     }
 
@@ -107,7 +107,7 @@ public class OVT1534_KoulutusrakenneTest {
         TutkintoOhjelmaToteutus toteutus = new TutkintoOhjelmaToteutus(moduuliA);
 
         // yrita vaihtaa modulia
-        toteutus.setKoulutusmoduuli(moduuliB);
+        toteutus.setLearningOpportunitySpecification(moduuliB);
 
     }
 
@@ -117,14 +117,13 @@ public class OVT1534_KoulutusrakenneTest {
         TutkintoOhjelma moduuli = new TutkintoOhjelma();
         TutkintoOhjelmaToteutus toteutus = new TutkintoOhjelmaToteutus();
 
-        toteutus.setKoulutusmoduuli(moduuli);
+        toteutus.setLearningOpportunitySpecification(moduuli);
 
         // tarkista etta koulutusmoduuli viittaa toteutukseen
-        assertEquals(toteutus, moduuli.getKoulutusmoduuliToteutuses().iterator().next());
+        assertEquals(toteutus, moduuli.getLearningOpportunityInstances().iterator().next());
 
         // tarkista että toteutus viittaa koulutusmoduulin
-        assertEquals(moduuli, toteutus.getKoulutusmoduuli());
-
+        assertEquals(moduuli, toteutus.getLearningOpportunitySpecification());
 
     }
 

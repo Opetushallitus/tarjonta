@@ -77,7 +77,7 @@ public class KoulutusDAOTest {
         assertEquals(NUM_TUTKINTO_OHJELMAS * NUM_TUTKINTO_OHJELMA_FIRST_LEVEL_CHILDREN, tutkinnonOsas.size());
 
         // you cannot search based on base class
-        List<Koulutus> koulutuses = koulutusDAO.findAll(Koulutus.class);
+        List<LearningOpportunityObject> koulutuses = koulutusDAO.findAll(LearningOpportunityObject.class);
         assertEquals(0, koulutuses.size());
 
     }
@@ -85,9 +85,9 @@ public class KoulutusDAOTest {
     @Test
     public void testFindChildrenByParentOid() {
 
-        List<Koulutus> children = koulutusDAO.findAllChildren(Koulutus.class, "1");
+        List<LearningOpportunityObject> children = koulutusDAO.findAllChildren(LearningOpportunityObject.class, "1");
 
-        for (Koulutus c : children) {
+        for (LearningOpportunityObject c : children) {
             System.out.println("child, nimi: " + c.getNimi() + ", oid: " + c.getOid());
         }
 
@@ -211,13 +211,13 @@ public class KoulutusDAOTest {
 
     private void printData() {
 
-        List<Koulutus> allKoulutus = koulutusDAO.findAll();
+        List<LearningOpportunityObject> allKoulutus = koulutusDAO.findAll();
         List<KoulutusSisaltyvyys> allSisaltyvyys = koulutusDAO.findAllSisaltyvyys();
 
         System.out.println("-- KOULUTUS TEST DATA:");
 
         for (int i = 0; i < allKoulutus.size(); i++) {
-            Koulutus k = allKoulutus.get(i);
+            LearningOpportunityObject k = allKoulutus.get(i);
             System.out.println((i + 1) + "\t Koulutus, type: " + k.getClass().getSimpleName() + ", nimi: " + k.getNimi());
         }
 

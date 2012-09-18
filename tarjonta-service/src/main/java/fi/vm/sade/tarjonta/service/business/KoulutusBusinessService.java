@@ -17,11 +17,10 @@ package fi.vm.sade.tarjonta.service.business;
 
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import java.util.List;
+import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
 
 /**
- * Common business logic for manipulating classes inherited from Koulutus. Instances of Koulutusmoduuli and KoulutusmoduuliToteutus have been mostly merged on
- * UI level and the specification team also now speaks about Koulutus instead of the two in separate.
+ * Business logic for manipulating classes inherited from LearningOpportunityObject. 
  *
  */
 public interface KoulutusBusinessService {
@@ -29,10 +28,9 @@ public interface KoulutusBusinessService {
     /**
      * Create new Koulutusmoduuli as a child of Koulutusmoduuli matching given <code>parentOid</code>.
      *
-     * @param parentOid 
-     * @param optional 
-     * @param koulutus 
-     * @param koulutusmoduuli
+     * @param parentOid oid of the parent LOO the new Kulutusmoduuli will be child of
+     * @param optional flag indicating optionality from parent to child
+     * @param koulutus data for the new Koulutusmoduuli
      * @return
      */
     public Koulutusmoduuli create(Koulutusmoduuli koulutus, String parentOid, boolean optional);
@@ -48,14 +46,15 @@ public interface KoulutusBusinessService {
     /**
      * Creates new KoulutusmoduuliToteutus from passed data.
      *
-     * @param koulutus
+     * @param koulutus KoulutusmoduuliToteutus to create
+     * @param koulutusmoduuliOid reference to Koulutusmoduuli that this KoulutusmoduuliToteutus specifies.
      * @return
      */
-    public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus koulutus);
+    public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus, String koulutusmoduuliOid);
 
     /**
-     * Creates new KoulutusmoduuliToteutus from passed data. Before storing, reference to given Koulutusmoduuli is assigned. If given Koulutusmoduuli is also
-     * new, it is also created.
+     * Creates new KoulutusmoduuliToteutus from passed data. Before storing, reference to given Koulutusmoduuli is assigned. 
+     * If given Koulutusmoduuli is also new, it is also created.
      *
      * @param toteutus
      * @param moduuli
@@ -64,28 +63,12 @@ public interface KoulutusBusinessService {
     public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus, Koulutusmoduuli moduuli);
 
     /**
-     * Returns a list of Koulutusmoduuli -objects that represent the same learning opportunity specification in it's available versions.
+     * Returns LearningOpportunityObject with given oid if any.
      *
      * @param oid
      * @return
      */
-    public List<Koulutusmoduuli> findAllKoulutusmoduuliVersions(String oid);
-
-    /**
-     * Returns a list of KoulutusmoduuliToteutus -objects 
-     * 
-     * @param oid
-     * @return
-     */
-    public List<KoulutusmoduuliToteutus> findAllKoulutusmoduuliToteutusVersions(String oid);
-
-    /**
-     * Returns current (latest) Koulutusmoduuli for given oid.
-     *
-     * @param oid
-     * @return
-     */
-    public Koulutusmoduuli findKoulutusmoduuliByOid(String oid);
+    public LearningOpportunityObject findByOid(String oid);
 
 }
 

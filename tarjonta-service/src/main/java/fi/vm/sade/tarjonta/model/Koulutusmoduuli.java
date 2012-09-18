@@ -71,9 +71,7 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification i
     @Column(name = "koulutus_aste")
     private String koulutusAste;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "koulutusmoduuli")
-    private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
-
+    
     /**
      * Constructor for JPA
      */
@@ -177,39 +175,6 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification i
         this.koulutusAste = koulutusAste;
     }
 
-    public Set<KoulutusmoduuliToteutus> getKoulutusmoduuliToteutuses() {
-
-        return Collections.unmodifiableSet(koulutusmoduuliToteutuses);
-
-    }
-
-    public boolean addKoulutusmoduuliToteutus(KoulutusmoduuliToteutus toteutus) {
-        if (!koulutusmoduuliToteutuses.contains(toteutus)) {
-            koulutusmoduuliToteutuses.add(toteutus);
-            toteutus.setKoulutusmoduuli(this);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean removeKoulutusmoduuliToteutus(KoulutusmoduuliToteutus toteutus) {
-        if (koulutusmoduuliToteutuses.remove(toteutus)) {
-            toteutus.setKoulutusmoduuli(null);
-            return true;
-        }
-        return false;
-    }
-
-    public void removeAllKoulutusmoduuliToteutus() {
-
-        // remove all toteutus objects
-        final Set<KoulutusmoduuliToteutus> toteutuses = getKoulutusmoduuliToteutuses();
-        for (KoulutusmoduuliToteutus t : toteutuses) {
-            removeKoulutusmoduuliToteutus(t);
-        }
-
-
-    }
-
+    
 }
 

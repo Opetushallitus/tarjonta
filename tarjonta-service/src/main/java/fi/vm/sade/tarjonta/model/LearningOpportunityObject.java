@@ -31,10 +31,10 @@ import fi.vm.sade.generic.model.BaseEntity;
  *
  */
 @Entity
-@Table(name = Koulutus.TABLE_NAME)
+@Table(name = LearningOpportunityObject.TABLE_NAME)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "koulutus_tyyppi", length = 6)
-public abstract class Koulutus extends BaseEntity implements Comparable<Koulutus> {
+public abstract class LearningOpportunityObject extends BaseEntity implements Comparable<LearningOpportunityObject> {
 
     public static final String TABLE_NAME = "koulutus";
 
@@ -71,7 +71,8 @@ public abstract class Koulutus extends BaseEntity implements Comparable<Koulutus
     /**
      * Always call super when overriding constructor.
      */
-    public Koulutus() {
+    public LearningOpportunityObject() {
+        // can we even assign this value if it comes from koodisto??
         this.tila = KoodistoContract.TarjontaTilat.SUUNNITTELUSSA;
     }
 
@@ -176,7 +177,7 @@ public abstract class Koulutus extends BaseEntity implements Comparable<Koulutus
      * @param child
      * @return
      */
-    public boolean hasAsChild(Koulutus child) {
+    public boolean hasAsChild(LearningOpportunityObject child) {
         return hasAsChild(child, -1);
     }
 
@@ -188,7 +189,7 @@ public abstract class Koulutus extends BaseEntity implements Comparable<Koulutus
      * @param depth maximum depth to use while searching
      * @return
      */
-    public boolean hasAsChild(Koulutus child, int depth) {
+    public boolean hasAsChild(LearningOpportunityObject child, int depth) {
 
         KoulutusTreeWalker.EqualsMatcher matcher = new KoulutusTreeWalker.EqualsMatcher(child);
         new KoulutusTreeWalker(depth, matcher).walk(this);
@@ -203,9 +204,9 @@ public abstract class Koulutus extends BaseEntity implements Comparable<Koulutus
      * 
      * @return
      */
-    public Set<Koulutus> getChildNodes() {
+    public Set<LearningOpportunityObject> getChildNodes() {
 
-        Set<Koulutus> nodes = new HashSet<Koulutus>();
+        Set<LearningOpportunityObject> nodes = new HashSet<LearningOpportunityObject>();
         for (KoulutusSisaltyvyys s : children) {
             nodes.add(s.getChild());
         }
@@ -220,11 +221,11 @@ public abstract class Koulutus extends BaseEntity implements Comparable<Koulutus
      * @return
      */
     @Override
-    public int compareTo(Koulutus koulutus) {
+    public int compareTo(LearningOpportunityObject loo) {
         if (nimi == null) {
-            return (koulutus.getNimi() == null ? 0 : 1);
+            return (loo.getNimi() == null ? 0 : 1);
         } else {
-            return nimi.compareTo(koulutus.getNimi());
+            return nimi.compareTo(loo.getNimi());
         }
     }
 

@@ -15,7 +15,12 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import javax.persistence.MappedSuperclass;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 
 /**
  * An abstract description of a learning opportunity, consisting of information that will be 
@@ -23,8 +28,34 @@ import javax.persistence.MappedSuperclass;
  * 
  * @see http://mjukis.blogg.skolverket.se/files/2008/10/mlo-ad-v5.pdf
  */
-@MappedSuperclass
-public abstract class LearningOpportunitySpecification extends Koulutus {
-    
+@Entity
+public abstract class LearningOpportunitySpecification extends LearningOpportunityObject {
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "specification")
+    private Set<LearningOpportunityInstance> instances = new HashSet<LearningOpportunityInstance>();
+
+    public Set<LearningOpportunityInstance> getLearningOpportunityInstances() {
+
+        return Collections.unmodifiableSet(instances);
+
+    }
+
+    public boolean addLearningOpportunityInstance(LearningOpportunityInstance instance) {
+        if (!instances.contains(instance)) {
+            instances.add(instance);
+            instance.setLearningOpportunitySpecification(this);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removeLearningOppotunityInstance(LearningOpportunityInstance instance) {
+        if (instances.remove(instance)) {
+            instance.setLearningOpportunitySpecification(this);
+            return true;
+        }
+        return false;
+    }
+
 }
 

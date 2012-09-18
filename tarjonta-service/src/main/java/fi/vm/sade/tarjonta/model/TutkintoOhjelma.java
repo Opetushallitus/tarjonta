@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
  * Concrete type of Koulutusmoduuli.
  */
 @Entity
-@DiscriminatorValue(Koulutus.KoulutusTyyppit.TUTKINTO_OHJELMA)
+@DiscriminatorValue(LearningOpportunityObject.KoulutusTyyppit.TUTKINTO_OHJELMA)
 public class TutkintoOhjelma extends Koulutusmoduuli {
 
     private static final long serialVersionUID = 5126887997800825478L;

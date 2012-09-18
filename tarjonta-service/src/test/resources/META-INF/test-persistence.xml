@@ -9,7 +9,9 @@
 
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
 
-        <class>fi.vm.sade.tarjonta.model.Koulutus</class>
+        <class>fi.vm.sade.tarjonta.model.LearningOpportunityObject</class>
+        <class>fi.vm.sade.tarjonta.model.LearningOpportunityInstance</class>
+        <class>fi.vm.sade.tarjonta.model.LearningOpportunitySpecification</class>   
         <class>fi.vm.sade.tarjonta.model.TutkintoOhjelma</class>
         <class>fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus</class>
         <class>fi.vm.sade.tarjonta.model.TutkinnonOsa</class>
@@ -18,6 +20,7 @@
         <class>fi.vm.sade.tarjonta.model.KoodistoUri</class>
         <class>fi.vm.sade.tarjonta.model.Oid</class>
         <class>fi.vm.sade.tarjonta.model.Haku</class>
+        <class>fi.vm.sade.tarjonta.model.Hakuaika</class>
         <class>fi.vm.sade.tarjonta.model.Hakukohde</class>
         <class>fi.vm.sade.tarjonta.model.HakukohdeLiite</class>
         <class>fi.vm.sade.tarjonta.model.Valintakoe</class>

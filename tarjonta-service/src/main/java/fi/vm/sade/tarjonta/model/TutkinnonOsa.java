@@ -22,7 +22,7 @@ import javax.persistence.Entity;
  *
  */
 @Entity
-@DiscriminatorValue(Koulutus.KoulutusTyyppit.TUTKINNON_OSA)
+@DiscriminatorValue(LearningOpportunityObject.KoulutusTyyppit.TUTKINNON_OSA)
 public class TutkinnonOsa extends Koulutusmoduuli {
 
     private static final long serialVersionUID = -155148336318185914L;

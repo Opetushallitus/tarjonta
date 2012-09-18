@@ -88,7 +88,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         assertEquals(TOTEUTUS_1_OID, loaded.getOid());
         assertEquals(ALKAMIS_PVM, loaded.getKoulutuksenAlkamisPvm());
         assertEquals(MAKSULLISUUS, loaded.getMaksullisuus());
-        assertEquals(defaultModuuli.getOid(), loaded.getKoulutusmoduuli().getOid());
+        assertEquals(defaultModuuli.getOid(), loaded.getLearningOpportunitySpecification().getOid());
 
 
     }

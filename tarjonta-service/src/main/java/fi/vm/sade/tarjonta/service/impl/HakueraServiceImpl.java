@@ -2,7 +2,7 @@ package fi.vm.sade.tarjonta.service.impl;
 
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.HakueraService;
-import fi.vm.sade.tarjonta.service.business.HakueraBusinessService;
+import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
@@ -22,7 +22,7 @@ import java.util.List;
 public class HakueraServiceImpl implements HakueraService {
 
     @Autowired
-    private HakueraBusinessService businessService;
+    private HakuBusinessService businessService;
     @Autowired
     private ConversionService conversionService;
 

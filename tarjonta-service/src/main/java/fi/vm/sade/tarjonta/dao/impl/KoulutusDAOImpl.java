@@ -36,13 +36,20 @@ import org.springframework.stereotype.Repository;
  * @author Marko Lyly
  */
 @Repository
-public class KoulutusDAOImpl extends AbstractJpaDAOImpl<Koulutus, Long> implements KoulutusDAO {
+public class KoulutusDAOImpl extends AbstractJpaDAOImpl<LearningOpportunityObject, Long> implements KoulutusDAO {
 
     private static final Logger log = LoggerFactory.getLogger(KoulutusDAO.class);
 
     @Override
-    public <T extends Koulutus> T findByOid(Class<T> type, String oid) {
-        return getEntityManager().find(type, oid);
+    public <T extends LearningOpportunityObject> T findByOid(Class<T> type, String oid) {
+        
+        QLearningOpportunityObject loo = QLearningOpportunityObject.learningOpportunityObject;
+        BooleanExpression typeCriteria = loo.instanceOf(type);
+        BooleanExpression oidCriteria = loo.oid.eq(oid);
+        BooleanExpression andCriteria = typeCriteria.and(oidCriteria);
+
+        return (T) from(loo).where(andCriteria).singleResult(loo);
+        
     }
 
     public List<KoulutusSisaltyvyys> findAllSisaltyvyys() {
@@ -52,7 +59,7 @@ public class KoulutusDAOImpl extends AbstractJpaDAOImpl<Koulutus, Long> implemen
     }
 
     @Override
-    public List<Koulutus> find(String tila, int startIndex, int pageSize) {
+    public List<LearningOpportunityObject> find(String tila, int startIndex, int pageSize) {
 
         return findBy("tila", tila, startIndex, pageSize);
 
@@ -83,28 +90,28 @@ public class KoulutusDAOImpl extends AbstractJpaDAOImpl<Koulutus, Long> implemen
     }
 
     @Override
-    public <T extends Koulutus> List<T> findAll(Class<T> type) {
+    public <T extends LearningOpportunityObject> List<T> findAll(Class<T> type) {
 
-        QKoulutus koulutus = QKoulutus.koulutus;
-        BooleanExpression typeCriteria = koulutus.instanceOf(type);
+        QLearningOpportunityObject loo = QLearningOpportunityObject.learningOpportunityObject;
+        BooleanExpression typeCriteria = loo.instanceOf(type);
 
-        return (List<T>) from(koulutus).where(typeCriteria).list(koulutus);
+        return (List<T>) from(loo).where(typeCriteria).list(loo);
 
     }
 
     @Override
-    public <T extends Koulutus> List<T> findAllChildren(Class<T> type, String oid) {
+    public <T extends LearningOpportunityObject> List<T> findAllChildren(Class<T> type, String oid) {
 
-        QKoulutus koulutus = QKoulutus.koulutus;
-        QKoulutus parent = new QKoulutus("parent");
+        QLearningOpportunityObject loo = QLearningOpportunityObject.learningOpportunityObject;
+        QLearningOpportunityObject parent = new QLearningOpportunityObject("parent");
         QKoulutusSisaltyvyys sisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
         BooleanExpression oidEq = parent.oid.eq(oid);
 
-        return (List<T>) from(koulutus).
-            join(koulutus.parents, sisaltyvyys).
+        return (List<T>) from(loo).
+            join(loo.parents, sisaltyvyys).
             join(sisaltyvyys.parent, parent).
             where(oidEq).
-            list(koulutus);
+            list(loo);
 
     }
 

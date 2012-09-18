@@ -51,7 +51,7 @@ public class Haku extends BaseEntity {
     private String oid;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "nimi_teksti_ids")
+    @JoinColumn(name = "nimi_teksti_id")
     private MonikielinenTeksti nimi;
 
     // todo: i might move this and the next date parameter to a collection that might be required anyways
@@ -94,6 +94,9 @@ public class Haku extends BaseEntity {
 
     @OneToMany
     private Set<Hakukohde> hakukohdes = new HashSet<Hakukohde>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy="haku")
+    private Set<Hakuaika> hakuaikas = new HashSet<Hakuaika>();
 
     public String getOid() {
         return oid;
@@ -258,6 +261,21 @@ public class Haku extends BaseEntity {
 
     public void removeHakukohde(Hakukohde hakukohde) {
         hakukohdes.remove(hakukohde);
+    }
+
+    public Set<Hakuaika> getHakuaikas() {
+        return Collections.unmodifiableSet(hakuaikas);
+    }
+
+    public void addHakuaika(Hakuaika hakuaika) {
+        hakuaika.setHaku(this);
+        hakuaikas.add(hakuaika);
+    }
+
+    public void removeHakuaika(Hakuaika hakuaika) {
+        if (hakuaikas.remove(hakuaika)) {
+            hakuaika.setHaku(null);
+        }
     }
 
 }

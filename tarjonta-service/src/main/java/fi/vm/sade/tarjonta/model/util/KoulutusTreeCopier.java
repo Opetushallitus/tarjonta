@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.model.util;
 
-import fi.vm.sade.tarjonta.model.Koulutus;
+import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
 
 /**
  * As per discussion with Seppo today (7.9.2012) - further development of the copy functionality has been put on hold until there are some more concrete
@@ -25,9 +25,9 @@ import fi.vm.sade.tarjonta.model.Koulutus;
  */
 public class KoulutusTreeCopier {
 
-    private Koulutus sourceRootNode;
+    private LearningOpportunityObject sourceRootNode;
 
-    private Koulutus targetRootNode;
+    private LearningOpportunityObject targetRootNode;
 
     public void copy() {
     }

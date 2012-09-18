@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta;
 
 import fi.vm.sade.tarjonta.dao.KoulutusDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
-import fi.vm.sade.tarjonta.model.Koulutus;
+import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import java.io.PrintWriter;
 import java.util.List;
@@ -53,9 +53,9 @@ public class KoulutusDatabasePrinter {
 
         out.println("-- List of koulutus objects:");
 
-        List<Koulutus> list = koulutusDAO.findAll();
+        List<LearningOpportunityObject> list = koulutusDAO.findAll();
         for (int i = 0; i < list.size(); i++) {
-            Koulutus k = list.get(i);
+            LearningOpportunityObject k = list.get(i);
             out.println((i + 1)
                 + "\n\t type: " + k.getClass().getSimpleName()
                 + "\n\t id: " + k.getId()

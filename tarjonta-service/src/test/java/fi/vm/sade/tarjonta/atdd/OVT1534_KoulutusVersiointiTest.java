@@ -44,7 +44,6 @@ public class OVT1534_KoulutusVersiointiTest {
 
     @Before
     public void setUp() {
-
     }
 
     //@Test
@@ -55,19 +54,19 @@ public class OVT1534_KoulutusVersiointiTest {
 
         // tarkistetaan ylimman tason koulutusmoduuli
         assertNotNull(kopio);
-        assertNotSame(tutkintoOhjelma, kopio);        
+        assertNotSame(tutkintoOhjelma, kopio);
         assertEquals("0", kopio.getNimi());
 
         // tarkistetaan seuraavan tason alimoduulit, maara seka attribuutit
         assertEquals(2, kopio.getChildren().size());
-        Iterator<Koulutus> koulutukset = new TreeSet(kopio.getChildNodes()).iterator();
+        Iterator<LearningOpportunityObject> koulutukset = new TreeSet(kopio.getChildNodes()).iterator();
 
-        Koulutus child1Copy = koulutukset.next();
-        Koulutus child2Copy = koulutukset.next();
+        LearningOpportunityObject child1Copy = koulutukset.next();
+        LearningOpportunityObject child2Copy = koulutukset.next();
 
         assertEquals("1", child1Copy.getNimi());
         assertEquals("2", child2Copy.getNimi());
-        
+
         // tarkistetaan että kopiot ovat omia instansseja
         assertNotSame(child1, child1Copy);
         assertNotSame(child2, child2Copy);
@@ -80,8 +79,8 @@ public class OVT1534_KoulutusVersiointiTest {
         // tarkistetaan kolmannen tason moduulit (attribuutit)
         koulutukset = new TreeSet(child1Copy.getChildNodes()).iterator();
 
-        Koulutus child3 = koulutukset.next();
-        Koulutus child4 = koulutukset.next();
+        LearningOpportunityObject child3 = koulutukset.next();
+        LearningOpportunityObject child4 = koulutukset.next();
 
         assertEquals("3", child3.getNimi());
         assertEquals("4", child4.getNimi());
@@ -90,7 +89,7 @@ public class OVT1534_KoulutusVersiointiTest {
         assertEquals(1, child2Copy.getChildNodes().size());
         koulutukset = new TreeSet(child2Copy.getChildNodes()).iterator();
 
-        Koulutus child5 = koulutukset.next();
+        LearningOpportunityObject child5 = koulutukset.next();
 
         assertEquals("5", child5.getNimi());
 
@@ -104,7 +103,7 @@ public class OVT1534_KoulutusVersiointiTest {
         new KoulutusTreeWalker(new KoulutusTreeWalker.NodeHandler() {
 
             @Override
-            public boolean match(Koulutus koulutus) {
+            public boolean match(LearningOpportunityObject koulutus) {
                 assertNull(koulutus.getId());
                 assertNull(koulutus.getOid());
                 count.incrementAndGet();
@@ -132,11 +131,12 @@ public class OVT1534_KoulutusVersiointiTest {
         new KoulutusTreeWalker(new KoulutusTreeWalker.NodeHandler() {
 
             @Override
-            public boolean match(Koulutus koulutus) {
+            public boolean match(LearningOpportunityObject koulutus) {
 
                 Koulutusmoduuli moduuli = (Koulutusmoduuli) koulutus;
-                assertTrue("did not expect toteutus objects: " + moduuli.getKoulutusmoduuliToteutuses(),
-                    moduuli.getKoulutusmoduuliToteutuses().isEmpty());
+                assertTrue("did not expect toteutus objects: "
+                    + moduuli.getLearningOpportunityInstances(),
+                    moduuli.getLearningOpportunityInstances().isEmpty());
 
                 return true;
             }
@@ -146,14 +146,13 @@ public class OVT1534_KoulutusVersiointiTest {
 
     }
 
-
     private void initTutkintoOhjelmaToteutus() {
 
 
         new KoulutusTreeWalker(new KoulutusTreeWalker.NodeHandler() {
 
             @Override
-            public boolean match(Koulutus koulutus) {
+            public boolean match(LearningOpportunityObject koulutus) {
 
                 KoulutusmoduuliToteutus toteutus = null;
 
@@ -164,7 +163,7 @@ public class OVT1534_KoulutusVersiointiTest {
                 }
 
                 toteutus.setNimi(koulutus.getNimi() + " toteutus");
-                ((Koulutusmoduuli) koulutus).addKoulutusmoduuliToteutus(toteutus);
+                ((Koulutusmoduuli) koulutus).addLearningOpportunityInstance(toteutus);
 
                 return true;
 

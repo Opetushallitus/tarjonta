@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.model.util;
 
-import fi.vm.sade.tarjonta.model.Koulutus;
+import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import java.util.Set;
 
@@ -46,12 +46,12 @@ public class KoulutusTreeWalker {
     
     
 
-    public void walk(Koulutus startNode) {
+    public void walk(LearningOpportunityObject startNode) {
         walkInternal(startNode);
     }
 
 
-    private boolean walkInternal(Koulutus node) {
+    private boolean walkInternal(LearningOpportunityObject node) {
 
         if (maxDepth != -1 && walkedDepth == maxDepth) {
             return false;
@@ -63,7 +63,7 @@ public class KoulutusTreeWalker {
 
         final Set<KoulutusSisaltyvyys> nextSet = node.getChildren();
         for (KoulutusSisaltyvyys s : nextSet) {
-            final Koulutus nextNode = s.getChild();
+            final LearningOpportunityObject nextNode = s.getChild();
             if (!walkInternal(nextNode)) {
                 return false;
             }
@@ -84,7 +84,7 @@ public class KoulutusTreeWalker {
          * @param moduuli
          * @return
          */
-        public boolean match(Koulutus koulutus);
+        public boolean match(LearningOpportunityObject koulutus);
 
     }
 
@@ -96,14 +96,14 @@ public class KoulutusTreeWalker {
 
         private boolean found;
 
-        private Koulutus koulutus;
+        private LearningOpportunityObject koulutus;
 
-        public EqualsMatcher(Koulutus koulutus) {
+        public EqualsMatcher(LearningOpportunityObject koulutus) {
             this.koulutus = koulutus;
         }
 
         @Override
-        public boolean match(Koulutus k) {
+        public boolean match(LearningOpportunityObject k) {
             if (koulutus.equals(k)) {
                 found = true;
                 return false;

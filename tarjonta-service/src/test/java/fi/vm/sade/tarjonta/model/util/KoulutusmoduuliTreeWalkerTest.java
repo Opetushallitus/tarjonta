@@ -16,7 +16,7 @@
 package fi.vm.sade.tarjonta.model.util;
 
 import fi.vm.sade.tarjonta.KoulutusFixtures;
-import fi.vm.sade.tarjonta.model.Koulutus;
+import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker.NodeHandler;
@@ -46,7 +46,7 @@ public class KoulutusmoduuliTreeWalkerTest {
         KoulutusTreeWalker.NodeHandler handler = new NodeHandler() {
 
             @Override
-            public boolean match(Koulutus moduuli) {
+            public boolean match(LearningOpportunityObject moduuli) {
                 counter.incrementAndGet();
                 return true;
             }

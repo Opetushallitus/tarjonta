@@ -3,23 +3,27 @@
   <persistence-unit name="tarjonta" transaction-type="JTA">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <jta-data-source>java:/tarjontaDS</jta-data-source>
-    <class>fi.vm.sade.tarjonta.model.Koulutus</class>
+    <class>fi.vm.sade.tarjonta.model.LearningOpportunityObject</class>
+    <class>fi.vm.sade.tarjonta.model.LearningOpportunityInstance</class>
+    <class>fi.vm.sade.tarjonta.model.LearningOpportunitySpecification</class>
     <class>fi.vm.sade.tarjonta.model.TutkintoOhjelma</class>
     <class>fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus</class>
     <class>fi.vm.sade.tarjonta.model.TutkinnonOsa</class>
     <class>fi.vm.sade.tarjonta.model.TutkinnonOsaToteutus</class>
     <class>fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys</class>
     <class>fi.vm.sade.tarjonta.model.Oid</class>
+    <class>fi.vm.sade.tarjonta.model.Haku</class>
     <class>fi.vm.sade.tarjonta.model.Hakukohde</class>
+    <class>fi.vm.sade.tarjonta.model.Hakuaika</class>
     <class>fi.vm.sade.tarjonta.model.HakukohdeLiite</class>
     <class>fi.vm.sade.tarjonta.model.KoodistoUri</class>
-    <class>fi.vm.sade.tarjonta.model.Haku</class>
     <class>fi.vm.sade.tarjonta.model.Valintakoe</class>
     <class>fi.vm.sade.tarjonta.model.ValintakoeAjankohta</class>
     <class>fi.vm.sade.tarjonta.model.ValintakoeOsoite</class>
     <class>fi.vm.sade.tarjonta.model.MonikielinenTeksti</class>
     <class>fi.vm.sade.tarjonta.model.TekstiKaannos</class>
     <class>fi.vm.sade.tarjonta.model.Yhteyshenkilo</class>
+    
     <properties>
       <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
       <!--  

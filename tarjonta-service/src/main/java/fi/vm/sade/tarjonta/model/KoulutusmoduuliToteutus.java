@@ -40,12 +40,6 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstanc
     @JoinColumn(name = "koulutusmoduuli_toteutus_id"))
     private Set<Oid> tarjoajat = new HashSet<Oid>();
 
-    /**
-     * Realized Koulutusmoduuli.
-     */
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinTable(name = TABLE_NAME + "_koulutusmoduuli")
-    private Koulutusmoduuli koulutusmoduuli;
 
     /**
      * Koodisto Uri. Example display values 'Nuorten koulutus, Aikuisten koulutus'.
@@ -135,44 +129,9 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstanc
      * @param moduuli Koulutusmoduuli this KoulutusumoduuliToteutus "implements".
      */
     public KoulutusmoduuliToteutus(Koulutusmoduuli moduuli) {
-        this();
-        setKoulutusmoduuli(moduuli);
+        super(moduuli);
     }
 
-    /**
-     * Returns the Koulutusmoduuli this KoulutusmoduuliToteutus "implements".
-     *
-     * @return
-     */
-    public Koulutusmoduuli getKoulutusmoduuli() {
-        return koulutusmoduuli;
-    }
-
-    /**
-     * Set the koulutusmoduuli this toteutus "implements".
-     * 
-     * @param newModuuli
-     */
-    public final void setKoulutusmoduuli(Koulutusmoduuli newModuuli) {
-
-        if (koulutusmoduuli == newModuuli) {
-            return;
-        }
-
-        // use "updatable=false"?
-        if (this.koulutusmoduuli != null && newModuuli != null) {
-            if (!koulutusmoduuli.equals(newModuuli)) {
-                throw new IllegalArgumentException("reference to Koulutusmoduuli cannot be chagned, was: "
-                    + koulutusmoduuli + ", update attempted to: " + newModuuli);
-            }
-        }
-
-        koulutusmoduuli = newModuuli;
-        if (koulutusmoduuli != null) {
-            koulutusmoduuli.addKoulutusmoduuliToteutus(this);
-        }
-
-    }
 
     /**
      * Returns immutable set of OID references to Organisaatio that offer this KoulutusmoduuliToteutus.

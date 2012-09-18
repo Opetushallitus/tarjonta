@@ -16,7 +16,7 @@
 package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.tarjonta.dao.impl.KoulutusDAOImpl;
-import fi.vm.sade.tarjonta.model.Koulutus;
+import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
 import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
 import java.util.Date;
 import static org.junit.Assert.*;
@@ -114,7 +114,7 @@ public class KoulutusmoduuliDAOTest {
     @Test
     public void testOIDCannotBeUpdated() {
         
-        Koulutus koulutus = createTutkintoOhjelma();
+        LearningOpportunityObject koulutus = createTutkintoOhjelma();
         dao.insert(koulutus);
         
         // get the oid record was inserted with
@@ -125,7 +125,7 @@ public class KoulutusmoduuliDAOTest {
         dao.update(koulutus);
         
         // re-read state from db and check value
-        Koulutus loaded = dao.read(koulutus.getId());
+        LearningOpportunityObject loaded = dao.read(koulutus.getId());
         
         // for some reason update goes trough - this test will fail if it doesn't to  notify use that something has changed and updatable=false is working!
         assertFalse(originalOid.equals(loaded.getOid()));

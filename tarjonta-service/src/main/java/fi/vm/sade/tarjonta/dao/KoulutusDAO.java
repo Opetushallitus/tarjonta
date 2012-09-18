@@ -16,14 +16,14 @@
 package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.tarjonta.model.Koulutus;
+import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import java.util.List;
 
 /**
  */
-public interface KoulutusDAO extends JpaDAO<Koulutus, Long> {
+public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
 
     /**
      * If this was here only for unit testing, remove it and access entity manager from test.
@@ -38,7 +38,7 @@ public interface KoulutusDAO extends JpaDAO<Koulutus, Long> {
      * @param pageSize
      * @return
      */
-    public List<Koulutus> find(String tila, int startIndex, int pageSize);
+    public List<LearningOpportunityObject> find(String tila, int startIndex, int pageSize);
 
     /**
      * 
@@ -56,7 +56,7 @@ public interface KoulutusDAO extends JpaDAO<Koulutus, Long> {
      * @param type
      * @return
      */
-    public <T extends Koulutus> List<T> findAll(Class<T> type);
+    public <T extends LearningOpportunityObject> List<T> findAll(Class<T> type);
     
     
     /**
@@ -67,7 +67,7 @@ public interface KoulutusDAO extends JpaDAO<Koulutus, Long> {
      * @param oid 
      * @return
      */
-    public <T extends Koulutus> List<T> findAllChildren(Class<T> type, String oid);
+    public <T extends LearningOpportunityObject> List<T> findAllChildren(Class<T> type, String oid);
     
     
     
@@ -79,7 +79,7 @@ public interface KoulutusDAO extends JpaDAO<Koulutus, Long> {
      * @param id
      * @return
      */
-    public <T extends Koulutus> T findByOid(Class<T> type, String id);
+    public <T extends LearningOpportunityObject> T findByOid(Class<T> type, String id);
 
 }
 

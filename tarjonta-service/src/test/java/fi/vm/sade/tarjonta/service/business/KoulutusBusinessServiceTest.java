@@ -80,7 +80,7 @@ public class KoulutusBusinessServiceTest {
         KoulutusmoduuliToteutus t = service.create(tutkintoOhjemanToteutus, tutkintoOhjelma);
 
         // check that koulutusmoduuli is assigned
-        assertEquals(tutkintoOhjelma, t.getKoulutusmoduuli());
+        assertEquals(tutkintoOhjelma, t.getLearningOpportunitySpecification());
 
     }
 
