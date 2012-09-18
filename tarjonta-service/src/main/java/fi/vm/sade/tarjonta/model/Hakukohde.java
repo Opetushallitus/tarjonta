@@ -32,7 +32,7 @@ public class Hakukohde extends BaseEntity {
     private static final long serialVersionUID = -3320464257959195992L;
 
     @ManyToMany(mappedBy = "hakukohdes")
-    private Set<KoulutusmoduuliToteutus> koulutuses = new HashSet<KoulutusmoduuliToteutus>();
+    private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "hakukohde_id")
@@ -52,13 +52,14 @@ public class Hakukohde extends BaseEntity {
     private int aloituspaikatLkm;
 
     @Column(name = "hakukelpoisuusvaatimus")
-    private String hakukelpoisuusvaatimus;
+    private String hakukelpoisuusvaatumus;
 
     /* todo: double check if this is koodisto uri. */
     @Column(name = "tila")
     private String tila;
 
     @ManyToOne
+    @NotNull
     private Haku haku;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -75,15 +76,20 @@ public class Hakukohde extends BaseEntity {
     /**
      * @return the koulutuses
      */
-    public Set<KoulutusmoduuliToteutus> getKoulutuses() {
-        return koulutuses;
+    public Set<KoulutusmoduuliToteutus> getKoulutusmoduuliToteutuses() {
+        return koulutusmoduuliToteutuses;
     }
 
     /**
-     * @param koulutuses the koulutuses to set
+     * @param toteutuses the koulutuses to set
      */
-    public void setKoulutuses(Set<KoulutusmoduuliToteutus> koulutuses) {
-        this.koulutuses = koulutuses;
+    public void setKoulutusmoduuliToteutuses(Set<KoulutusmoduuliToteutus> toteutuses) {
+        this.koulutusmoduuliToteutuses = toteutuses;
+    }
+    
+    
+    public void addKoulutusmoduuliToteutus(KoulutusmoduuliToteutus toteutus) {
+        
     }
 
     /**
@@ -159,11 +165,11 @@ public class Hakukohde extends BaseEntity {
     }
 
     public String getHakukelpoisuusvaatimus() {
-        return hakukelpoisuusvaatimus;
+        return hakukelpoisuusvaatumus;
     }
 
     public void setHakukelpoisuusvaatimus(String hakukelpoisuusvaatimus) {
-        this.hakukelpoisuusvaatimus = hakukelpoisuusvaatimus;
+        this.hakukelpoisuusvaatumus = hakukelpoisuusvaatimus;
     }
 
     public String getTila() {

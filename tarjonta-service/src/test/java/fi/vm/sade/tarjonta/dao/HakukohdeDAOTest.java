@@ -19,6 +19,7 @@ import fi.vm.sade.tarjonta.KoulutusFixtures;
 import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.validation.ValidationException;
 import org.junit.Before;
@@ -57,15 +58,13 @@ public class HakukohdeDAOTest {
      */
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
 
-    private KoulutusFixtures fixtures = new KoulutusFixtures();
-
-    private Hakukohde hakukohde;
+    @Autowired
+    private KoulutusFixtures fixtures;
 
     @Before
     public void setUp() {
 
         fixtures.recreate();
-        hakukohde = fixtures.simpleHakukohde;
 
         setUpKoulutusmoduuliToteutuses();
 
@@ -81,11 +80,10 @@ public class HakukohdeDAOTest {
     @Test
     public void testCreateMinimum() {
 
+        Hakukohde hakukohde = fixtures.createHakukohde();
+        hakukohde.setHaku(fixtures.createPersistedHaku());
+
         hakukohdeDAO.insert(hakukohde);
-
-        Hakukohde loaded = hakukohdeDAO.read(hakukohde.getId());
-
-        assertEquals(hakukohde.getKoulutuses().size(), loaded.getKoulutuses().size());
 
     }
 
@@ -97,25 +95,29 @@ public class HakukohdeDAOTest {
 
         int numToteutuses = koulutusmoduuliToteutuses.size();
 
+        Hakukohde hakukohde = fixtures.simpleHakukohde;
+        hakukohde.setHaku(fixtures.createPersistedHaku());
+
         for (KoulutusmoduuliToteutus t : koulutusmoduuliToteutuses) {
-            hakukohde.getKoulutuses().add(t);
+            hakukohde.getKoulutusmoduuliToteutuses().add(t);
         }
 
-        // insert and load
         hakukohdeDAO.insert(hakukohde);
         Hakukohde loaded = hakukohdeDAO.read(hakukohde.getId());
 
-        assertEquals(numToteutuses, loaded.getKoulutuses().size());
+        assertEquals(numToteutuses, loaded.getKoulutusmoduuliToteutuses().size());
 
     }
 
     @Test
     public void testValintakoeCascadeInsert() {
 
-        final Hakukohde h = fixtures.hakukohdeWithValintakoe;
-        hakukohdeDAO.insert(h);
+        final Hakukohde hk = fixtures.hakukohdeWithValintakoe;
+        hk.setHaku(fixtures.createPersistedHaku());
+        
+        hakukohdeDAO.insert(hk);
 
-        Hakukohde loaded = hakukohdeDAO.read(h.getId());
+        Hakukohde loaded = hakukohdeDAO.read(hk.getId());
         assertEquals(1, loaded.getValintakoes().size());
         assertNotNull(loaded.getValintakoes().iterator().next().getId());
 
@@ -125,6 +127,8 @@ public class HakukohdeDAOTest {
     public void testValintakoeCascadeDelete() {
 
         Hakukohde h = fixtures.hakukohdeWithValintakoe;
+        h.setHaku(fixtures.createPersistedHaku());
+        
         hakukohdeDAO.insert(h);
 
         Valintakoe koe = h.getValintakoes().iterator().next();
@@ -141,33 +145,42 @@ public class HakukohdeDAOTest {
         // assertEquals(0, loaded.getValintakoes().size());
 
     }
-    
-    
+
     @Test
     public void testMonikielinenValintaperusteKuvaus() {
-        
+
         Hakukohde h = fixtures.simpleHakukohde;
-        MonikielinenTeksti tekstis = new MonikielinenTeksti();        
-        tekstis.addTekstiKaannos("fi", "In Finnish");        
+        h.setHaku(fixtures.createPersistedHaku());
+        MonikielinenTeksti tekstis = new MonikielinenTeksti();
+        tekstis.addTekstiKaannos("fi", "In Finnish");
         h.setValintaperusteKuvaus(tekstis);
-        
+
         hakukohdeDAO.insert(h);
-        
+
         flush();
-        
+
         Hakukohde loaded = hakukohdeDAO.read(h.getId());
         assertEquals("In Finnish", loaded.getValintaperusteKuvaus().getTekstiForKieliKoodi("fi"));
-        
-        
+
+
         // update the same language
-        
+
         tekstis.setTekstiKaannos("fi", "In Finnish updated");
         assertEquals("In Finnish updated", loaded.getValintaperusteKuvaus().getTekstiForKieliKoodi("fi"));
-        
-        
+
+
     }
-    
-    
+
+    @Test
+    public void testFindByKoulutusOid() {
+
+        KoulutusmoduuliToteutus t = fixtures.createPersistedKoulutusmoduuliToteutusWithMultipleHakukohde();
+        String koulutusOid = t.getOid();
+
+        List<Hakukohde> hakukohdes = hakukohdeDAO.findByKoulutusOid(koulutusOid);
+        assertEquals(3, hakukohdes.size());
+
+    }
 
     /**
      * 
@@ -175,8 +188,7 @@ public class HakukohdeDAOTest {
     private void setUpKoulutusmoduuliToteutuses() {
 
         koulutusmoduuliToteutuses.clear();
-        fixtures = new KoulutusFixtures();
-
+        
         for (int i = 0; i < 5; i++) {
 
             // re-create new fixtures

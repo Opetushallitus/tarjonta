@@ -13,17 +13,39 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.dao;
+package fi.vm.sade.tarjonta.service.business;
 
-import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import java.util.List;
 
 /**
+ *
  */
-public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
+public interface HakukohdeBusinessService {
 
-    public List<Hakukohde> findByKoulutusOid(String koulutusmoduuliToteutusOid);
+    /**
+     * Creates new Hakukohde based on input data.
+     * 
+     * @param hakukohde
+     * @return
+     */
+    public Hakukohde createHakukohde(Hakukohde hakukohde);
+
+    /**
+     * Updates existing hakukohde.
+     * 
+     * @param hakukohde
+     * @return
+     */
+    public Hakukohde updateHakukohde(Hakukohde hakukohde);
+
+    /**
+     * Returns a list of Hakukohde that refer to KoulutusmoduuliToteutus.
+     * 
+     * @param koulutusmoduuliToteutusOid
+     * @return
+     */
+    public List<Hakukohde> findByKoulutus(String koulutusmoduuliToteutusOid);
 
 }
 

@@ -15,11 +15,15 @@
  */
 package fi.vm.sade.tarjonta;
 
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
 import java.util.Calendar;
+import java.util.Date;
+import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,22 +46,27 @@ public class KoulutusFixtures {
 
     public Hakukohde hakukohdeWithValintakoe;
 
+    public Haku simpleHaku;
+
     @Autowired
     private KoulutusDAO koulutusDAO;
 
     @Autowired
+    private HakukohdeDAO hakukohdeDAO;
+
+    @Autowired
+    private HakuDAO hakuDAO;
+
+    @Autowired
     private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
 
-    public KoulutusFixtures() {
-        recreate();
-    }
-
-    public final void recreate() {
+    public void recreate() {
 
         simpleTutkintoOhjelma = createTutkintoOhjelma();
         simpleTutkintoOhjelmaToteutus = createTutkintoOhjelmaToteutus();
         simpleHakukohde = createHakukohde();
         simpleTutkinnonOsa = createTutkinnonOsa();
+        simpleHaku = createHaku();
 
         hakukohdeWithValintakoe = createHakukohde();
         hakukohdeWithValintakoe.addValintakoe(new Valintakoe());
@@ -100,15 +109,87 @@ public class KoulutusFixtures {
 
     }
 
-    private Hakukohde createHakukohde() {
+    /**
+     * Creates a minimal non-persisted Hakukohde.
+     * 
+     * @return
+     */
+    public Hakukohde createHakukohde() {
 
-        Hakukohde h = new Hakukohde();
-        h.setHakukohdeNimi(randomOid("hakukohde"));
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setHakukohdeNimi(randomOid("hakukohde"));
+        return hakukohde;
+
+    }
+
+    public Hakukohde createPersistedHakukohde() {
+
+        Hakukohde h = createHakukohde();
+        h.setHaku(createPersistedHaku());
+        return hakukohdeDAO.insert(h);
+
+    }
+
+    public Haku createHaku() {
+        Haku haku = new Haku();
+        haku.setOid(randomOid("haku"));
+        haku.setNimiFi("SimpleHaku");
+        haku.setHaunAlkamisPvm(new Date());
+        haku.setHaunLoppumisPvm(new Date());
+        haku.setHakukausiUri(randomUri("hakukausi"));
+        haku.setKoulutuksenAlkamiskausiUri(randomUri("alkamiskausi"));
+        haku.setKohdejoukkoUri(randomUri("haunkohdejoukko"));
+        haku.setHakutapaUri(randomUri("hakutapa"));
+        haku.setHakutyyppiUri(randomUri("hakutyyppi"));
+        return haku;
+    }
+
+    public Haku createPersistedHaku() {
+        return hakuDAO.insert(createHaku());
+    }
+
+    public Hakukohde createPersistedHakukohdeWithKoulutus() {
+
+        Hakukohde h = createHakukohde();
+
+        KoulutusmoduuliToteutus t1 = createTutkintoOhjelmaToteutus();
+        KoulutusmoduuliToteutus t2 = createTutkintoOhjelmaToteutus();
+        KoulutusmoduuliToteutus t3 = createTutkintoOhjelmaToteutus();
+
+        koulutusDAO.insert(t1);
+        koulutusDAO.insert(t2);
+        koulutusDAO.insert(t3);
+
+        h.addKoulutusmoduuliToteutus(t1);
+        h.addKoulutusmoduuliToteutus(t2);
+        h.addKoulutusmoduuliToteutus(t3);
+
+        hakukohdeDAO.update(h);
+
         return h;
 
     }
 
-    public Koulutusmoduuli simpleKoulutusmoduuliTree() {
+    public KoulutusmoduuliToteutus createPersistedKoulutusmoduuliToteutusWithMultipleHakukohde() {
+
+        Hakukohde h1 = createPersistedHakukohde();
+        Hakukohde h2 = createPersistedHakukohde();
+        Hakukohde h3 = createPersistedHakukohde();
+
+        hakukohdeDAO.insert(h1);
+        hakukohdeDAO.insert(h2);
+        hakukohdeDAO.insert(h3);
+
+        KoulutusmoduuliToteutus t1 = createTutkintoOhjelmaToteutus();
+
+        t1.addHakukohde(h1);
+        t1.addHakukohde(h2);
+        t1.addHakukohde(h3);
+
+        return (KoulutusmoduuliToteutus) koulutusDAO.insert(t1);
+    }
+
+    public Koulutusmoduuli createPersistedKoulutusmoduuliTree() {
 
         Koulutusmoduuli root = createTutkintoOhjelma();
         Koulutusmoduuli child1 = createTutkinnonOsa();
@@ -141,9 +222,11 @@ public class KoulutusFixtures {
     }
 
     private String randomOid(String type) {
-
         return "http://" + type + "/" + System.currentTimeMillis();
+    }
 
+    private String randomUri(String context) {
+        return "http://" + context + "/" + System.currentTimeMillis();
     }
 
 }

@@ -54,7 +54,7 @@ public class KoulutusmoduuliTreeWalkerTest {
         };
 
 
-        new KoulutusTreeWalker(handler).walk(fixtures.simpleKoulutusmoduuliTree());
+        new KoulutusTreeWalker(handler).walk(fixtures.createPersistedKoulutusmoduuliTree());
 
         // there are 4 nodes but one is shared from via routes
         assertEquals(5, counter.intValue());

@@ -58,7 +58,7 @@ public class OVT1534_KoulutusrakenneTest {
     @Test
     public void testKoulutusmoduuliSisaltaaKoulutusmouduleita() {
 
-        Koulutusmoduuli moduuli = fixtures.simpleKoulutusmoduuliTree();
+        Koulutusmoduuli moduuli = fixtures.createPersistedKoulutusmoduuliTree();
         assertEquals(2, moduuli.getChildren().size());
 
     }
@@ -66,7 +66,7 @@ public class OVT1534_KoulutusrakenneTest {
     @Test
     public void testKoulutusmoduuliVoidaanJakaa() {
 
-        Koulutusmoduuli moduuli = fixtures.simpleKoulutusmoduuliTree();
+        Koulutusmoduuli moduuli = fixtures.createPersistedKoulutusmoduuliTree();
         
         Iterator<LearningOpportunityObject> i = moduuli.getChildNodes().iterator();
         LearningOpportunityObject child1 = i.next();

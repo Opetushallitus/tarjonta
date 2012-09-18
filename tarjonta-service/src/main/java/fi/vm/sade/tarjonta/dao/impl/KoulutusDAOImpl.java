@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.Expression;
+import com.mysema.query.types.Visitor;
 import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusDAO;
@@ -42,14 +44,14 @@ public class KoulutusDAOImpl extends AbstractJpaDAOImpl<LearningOpportunityObjec
 
     @Override
     public <T extends LearningOpportunityObject> T findByOid(Class<T> type, String oid) {
-        
+
         QLearningOpportunityObject loo = QLearningOpportunityObject.learningOpportunityObject;
         BooleanExpression typeCriteria = loo.instanceOf(type);
         BooleanExpression oidCriteria = loo.oid.eq(oid);
         BooleanExpression andCriteria = typeCriteria.and(oidCriteria);
 
         return (T) from(loo).where(andCriteria).singleResult(loo);
-        
+
     }
 
     public List<KoulutusSisaltyvyys> findAllSisaltyvyys() {
@@ -115,8 +117,43 @@ public class KoulutusDAOImpl extends AbstractJpaDAOImpl<LearningOpportunityObjec
 
     }
 
+    @Override
+    public <T extends LearningOpportunityObject> List<T> search(SearchCriteria criteria) {
+
+        QLearningOpportunityObject loo = QLearningOpportunityObject.learningOpportunityObject;
+        BooleanExpression whereExpr = null;
+
+        // todo: are we searching for LOI or LOS - that group by e.g. per organisaatio is 
+        // take from different attribute
+        Expression groupBy = groupBy(criteria);
+
+        if (criteria.getNimiQuery() != null) {
+            // todo: limit if too expensive - make case insensitive
+            whereExpr = and(whereExpr, loo.nimi.like("%" + criteria.getNimiQuery() + "%"));
+        }
+        if (criteria.getType() != null) {
+            whereExpr = and(whereExpr, loo.instanceOf(criteria.getType()));
+        }
+
+        // todo: joins
+
+        return (List<T>) from(loo).
+            where(whereExpr).
+            list(loo);
+
+    }
+
+    private BooleanExpression and(BooleanExpression existing, BooleanExpression what) {
+        return (existing == null ? what : existing.and(what));
+    }
+
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
+    }
+
+    private Expression groupBy(SearchCriteria criteria) {
+        final SearchCriteria.GroupBy groupBy = criteria.getGroupBy();
+        return null;
     }
 
 }

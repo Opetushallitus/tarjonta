@@ -18,11 +18,9 @@ package fi.vm.sade.tarjonta.service.business.impl;
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.dao.KoulutusDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
-import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,6 +79,66 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         return koulutusDAO.findByOid(LearningOpportunityObject.class, oid);
 
+    }
+
+    @Override
+    public Koulutusmoduuli update(Koulutusmoduuli moduuli) {
+
+        koulutusDAO.update(moduuli);
+        return moduuli;
+
+    }
+
+    @Override
+    public KoulutusmoduuliToteutus update(KoulutusmoduuliToteutus toteutus) {
+
+        koulutusDAO.update(toteutus);
+        return toteutus;
+
+    }
+
+    @Override
+    public void deleteByOid(String oid) {
+
+        List<LearningOpportunityObject> list = koulutusDAO.findBy(LearningOpportunityObject.OID_COLUMN_NAME, oid);
+
+        if (list.isEmpty()) {
+            // nothing to delete
+            return;
+        } else if (list.size() > 1) {
+            // todo: versioning issue needs to be resolved - oid should always be unique
+            throw new IllegalStateException("multiple matches for oid: " + oid + ", refusing to delete");
+        }
+
+        final LearningOpportunityObject loo = list.get(0);
+        final String tila = loo.getTila();
+
+        // validate that state is non-published or ready
+        if (!KoodistoContract.TarjontaTilat.SUUNNITTELUSSA.equals(tila)) {
+            throw new IllegalStateException("refusing to delete LOO in state: " + tila);
+        }
+
+        // validate that we have no children
+        if (!loo.getChildren().isEmpty()) {
+            throw new IllegalStateException("refusing to delete LOO with children");
+        }
+
+        if (loo instanceof Koulutusmoduuli) {
+            delete((Koulutusmoduuli) loo);
+        } else if (loo instanceof KoulutusmoduuliToteutus) {
+            delete((KoulutusmoduuliToteutus) loo);
+        } else {
+            throw new IllegalStateException("unknown type of LearningOpportunityObject: " + loo.getClass().getName());
+        }
+
+    }
+
+    private void delete(Koulutusmoduuli koulutusmoduuli) {
+        // todo: what are the conditions that allow to delete a Koulutusmoduuli
+    }
+
+    private void delete(KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
+        // todo: what are the conditions that allow to delete a KoulutusmoduuliToteutus
     }
 
     private boolean isNew(BaseEntity e) {

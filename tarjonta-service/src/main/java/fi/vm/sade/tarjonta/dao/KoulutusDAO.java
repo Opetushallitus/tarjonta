@@ -57,8 +57,7 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
      * @return
      */
     public <T extends LearningOpportunityObject> List<T> findAll(Class<T> type);
-    
-    
+
     /**
      * Returns a list of Koulutusmoduulis that are direct children of given <code>oid</code>
      * 
@@ -69,8 +68,7 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
      */
     public <T extends LearningOpportunityObject> List<T> findAllChildren(Class<T> type, String oid);
     
-    
-    
+
     /**
      * Typed version of read to save from casting.
      * 
@@ -80,6 +78,62 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
      * @return
      */
     public <T extends LearningOpportunityObject> T findByOid(Class<T> type, String id);
+    
+    
+    
+    /**
+     * Return all LOO objects that match given criteria.
+     * 
+     * @param <T>
+     * @param type
+     * @param criteria
+     * @return
+     */
+    public <T extends LearningOpportunityObject> List<T> search(SearchCriteria criteria);
+
+    /**
+     * Contract and model for searching Koulutus objects.
+     */
+    public static class SearchCriteria {
+
+        private String nimiQuery;
+
+        private Class<? extends LearningOpportunityObject> type;
+
+        private GroupBy groupBy = GroupBy.ORGANISAATIORAKENNE;
+
+        public void setNimiQuery(String nimiQuery) {
+            this.nimiQuery = nimiQuery;
+        }
+
+        public String getNimiQuery() {
+            return nimiQuery;
+        }
+
+        public void setGroupBy(GroupBy groupBy) {
+            this.groupBy = groupBy;
+        }
+
+        public GroupBy getGroupBy() {
+            return groupBy;
+        }
+
+        public void setType(Class<? extends LearningOpportunityObject> type) {
+            this.type = type;
+        }
+
+        public Class<? extends LearningOpportunityObject> getType() {
+            return type;
+        }
+
+        public enum GroupBy {
+
+            ORGANISAATIORAKENNE;
+        }
+
+
+    }
+
 
 }
 

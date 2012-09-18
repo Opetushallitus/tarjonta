@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.service.business;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
+import java.util.List;
 
 /**
  * Business logic for manipulating classes inherited from LearningOpportunityObject. 
@@ -38,10 +39,24 @@ public interface KoulutusBusinessService {
     /**
      * Creates a new top level Koulutusmoduuli.
      * 
-     * @param koulutus
+     * @param moduuli
      * @return
      */
-    public Koulutusmoduuli create(Koulutusmoduuli koulutus);
+    public Koulutusmoduuli create(Koulutusmoduuli moduuli);
+
+    /**
+     * 
+     * @param moduuli
+     * @return
+     */
+    public Koulutusmoduuli update(Koulutusmoduuli moduuli);
+
+    /**
+     * 
+     * @param toteutus
+     * @return
+     */
+    public KoulutusmoduuliToteutus update(KoulutusmoduuliToteutus toteutus);
 
     /**
      * Creates new KoulutusmoduuliToteutus from passed data.
@@ -70,5 +85,22 @@ public interface KoulutusBusinessService {
      */
     public LearningOpportunityObject findByOid(String oid);
 
+    /**
+     * Deletes LearningOpportunityObject if a) it is Koulutusmoduuli and it has no KoulutusmoduuliToteutus and its 
+     * state is "non published" or b) it is KoulutusmoduuliToteutus and it is not reference by any Hakukohde and it it's 
+     * state is "non published".
+     * 
+     * @param oid
+     */
+    public void deleteByOid(String oid);
+
+    /**
+     * Once search criteria tyyppi is declared in WSDL expose this method. The implementation is in place in DAO.
+     * 
+     * @param oid 
+     * @param criteria
+     * @return
+     */
+    //public List<? extends LearningOpportunityObject> search(KoulutusSearchTyyppi criteria);
 }
 

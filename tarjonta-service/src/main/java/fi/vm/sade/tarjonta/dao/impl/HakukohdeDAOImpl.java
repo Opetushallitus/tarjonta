@@ -15,19 +15,41 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.QHakukohde;
+import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-
 
 /**
  */
 @Repository
 public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implements HakukohdeDAO {
 
-    private static final Logger log = LoggerFactory.getLogger(HakukohdeDAOImpl.class);
+    @Override
+    public List<Hakukohde> findByKoulutusOid(String koulutusmoduuliToteutusOid) {
+
+        QHakukohde hakukohde = QHakukohde.hakukohde;
+        QKoulutusmoduuliToteutus toteutus = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        BooleanExpression oidEq = toteutus.oid.eq(koulutusmoduuliToteutusOid);
+
+        return from(hakukohde).
+            join(hakukohde.koulutusmoduuliToteutuses, toteutus).
+            where(oidEq).
+            list(hakukohde);
+
+    }
+
+    protected JPAQuery from(EntityPath<?>... o) {
+        return new JPAQuery(getEntityManager()).from(o);
+    }
+
 }
 

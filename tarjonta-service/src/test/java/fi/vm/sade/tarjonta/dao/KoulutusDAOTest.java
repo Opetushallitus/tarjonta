@@ -47,26 +47,26 @@ public class KoulutusDAOTest {
     @Autowired
     private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
 
+    @Autowired
     private KoulutusFixtures fixtures;
 
     @Before
     public void setUp() {
-        fixtures = new KoulutusFixtures();
+        fixtures.recreate();
         initData();
         printData();
     }
 
-	
-	/*
-	THE ERROR IN BAMBOO:
-	java.lang.AssertionError: expected:<10> but was:<13>
-	at org.junit.Assert.fail(Assert.java:93)
-	at org.junit.Assert.failNotEquals(Assert.java:647)
-	at org.junit.Assert.assertEquals(Assert.java:128)
-	at org.junit.Assert.assertEquals(Assert.java:472)
-	at org.junit.Assert.assertEquals(Assert.java:456)
-	*/
-	@Ignore
+    /*
+     THE ERROR IN BAMBOO:
+     java.lang.AssertionError: expected:<10> but was:<13>
+     at org.junit.Assert.fail(Assert.java:93)
+     at org.junit.Assert.failNotEquals(Assert.java:647)
+     at org.junit.Assert.assertEquals(Assert.java:128)
+     at org.junit.Assert.assertEquals(Assert.java:472)
+     at org.junit.Assert.assertEquals(Assert.java:456)
+     */
+    @Ignore
     @Test
     public void testFindByType() {
 
@@ -86,11 +86,6 @@ public class KoulutusDAOTest {
     public void testFindChildrenByParentOid() {
 
         List<LearningOpportunityObject> children = koulutusDAO.findAllChildren(LearningOpportunityObject.class, "1");
-
-        for (LearningOpportunityObject c : children) {
-            System.out.println("child, nimi: " + c.getNimi() + ", oid: " + c.getOid());
-        }
-
         assertEquals(NUM_TUTKINTO_OHJELMA_FIRST_LEVEL_CHILDREN, children.size());
 
     }
@@ -174,8 +169,39 @@ public class KoulutusDAOTest {
         assertEquals(0, loaded.getYhteyshenkilos().size());
 
     }
-    
-    
+
+    @Test
+    public void testSearch() {
+        
+        KoulutusDAO.SearchCriteria criteria = new KoulutusDAO.SearchCriteria();
+
+        // should match all top level modules
+        criteria.setNimiQuery("Tutkinto");
+        assertResultSize(NUM_TUTKINTO_OHJELMAS, criteria);
+
+        // should match all children
+        criteria.setNimiQuery("Tutkinnon");
+        assertEquals(NUM_TUTKINTO_OHJELMAS * NUM_TUTKINTO_OHJELMA_FIRST_LEVEL_CHILDREN, koulutusDAO.search(criteria).size());
+
+        // should match all top level modules by type
+        criteria.setNimiQuery(null);
+        criteria.setType(TutkintoOhjelma.class);
+        assertEquals(NUM_TUTKINTO_OHJELMAS, koulutusDAO.search(criteria).size());
+
+        // should not match any since all TutkinnonOsa are named "Tutkinnon..."
+        criteria.setNimiQuery("Tutkinto");
+        criteria.setType(TutkinnonOsa.class);
+        assertEquals(0, koulutusDAO.search(criteria).size());
+
+    }
+
+    private void assertResultSize(int expected, KoulutusDAO.SearchCriteria criteria) {
+
+        assertEquals("unexpected number of search results for criteria: "
+            + criteria, expected, koulutusDAO.search(criteria).size());
+
+    }
+
     private void initData() {
 
         TutkintoOhjelma t;
