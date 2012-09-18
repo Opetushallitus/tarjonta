@@ -192,9 +192,26 @@ public class EditorHakuView extends CustomComponent {
         grid.addComponent(_haunTunniste);
         grid.newLine();
 
-        grid.addComponent(UiBuilder.newLabel(T("Hakuaika"), (AbstractLayout) null));
-        grid.addComponent(UiBuilder.newLabel("*** TODO ***", (AbstractLayout) null));
-        grid.newLine();
+        {
+            grid.addComponent(UiBuilder.newLabel(T("Hakuaika"), (AbstractLayout) null));
+
+            VerticalLayout vl = UiBuilder.newVerticalLayout();
+            vl.setSizeUndefined();
+
+            vl.addComponent(UiBuilder.newCheckbox("Yksi hakuaika", null));
+            vl.addComponent(UiBuilder.newCheckbox("Käytä haun sisäisiä hakuaikoja", null));
+
+            HorizontalLayout hl = UiBuilder.newHorizontalLayout();
+            hl.setSizeUndefined();
+            vl.addComponent(hl);
+
+            hl.addComponent(UiBuilder.newDate());
+            hl.addComponent(UiBuilder.newLabel("-", (AbstractLayout) null));
+            hl.addComponent(UiBuilder.newDate());
+
+            grid.addComponent(vl);
+            grid.newLine();
+        }
 
         grid.space();
         grid.addComponent(_kaytetaanSijoittelua);
