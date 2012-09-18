@@ -23,6 +23,7 @@ import static fi.vm.sade.support.selenium.SeleniumUtils.*;
  * @author markus
  *
  */
+@Ignore
 public class OVT_641_LuoMuokkaaHakuTest extends TarjontaEmbedComponentTstSupport<MainWindow> {
     
     private HakueraListPageObject hakueraList;

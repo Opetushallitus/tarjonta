@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 /**
  * @author Antti Salonen
  */
+@Ignore
 public class OVT_753_KoulutusmoduuliToteutusEditViewTest extends TarjontaEmbedComponentTstSupport<KoulutusmoduuliToteutusEditView> {
 
     private KoulutusmoduuliToteutusEditViewPageObject pageObject;
