@@ -50,7 +50,7 @@ public class KoulutusDAOTest {
 
     @Autowired
     private KoulutusFixtures fixtures;
-    
+
     @Autowired
     private KoulutusDatabasePrinter dbPrinter;
 
@@ -61,16 +61,6 @@ public class KoulutusDAOTest {
         printData();
     }
 
-    /*
-     THE ERROR IN BAMBOO:
-     java.lang.AssertionError: expected:<10> but was:<13>
-     at org.junit.Assert.fail(Assert.java:93)
-     at org.junit.Assert.failNotEquals(Assert.java:647)
-     at org.junit.Assert.assertEquals(Assert.java:128)
-     at org.junit.Assert.assertEquals(Assert.java:472)
-     at org.junit.Assert.assertEquals(Assert.java:456)
-     */
-    @Ignore
     @Test
     public void testFindByType() {
 
@@ -174,18 +164,9 @@ public class KoulutusDAOTest {
 
     }
 
-     /*
-     * THE ERROR IN BAMBOO:
-     * java.lang.AssertionError: unexpected number of search results for criteria: fi.vm.sade.tarjonta.dao.KoulutusDAO$SearchCriteria@5bda657 expected:<10> but was:<12>
-	at org.junit.Assert.fail(Assert.java:93)
-	at org.junit.Assert.failNotEquals(Assert.java:647)
-	at org.junit.Assert.assertEquals(Assert.java:128)
-	at org.junit.Assert.assertEquals(Assert.java:472)
-	at fi.vm.sade.tarjonta.dao.KoulutusDAOTest.assertResultSize(KoulutusDAOTest.java:200)
-     */
     @Test
     public void testSearch() {
-        
+
         KoulutusDAO.SearchCriteria criteria = new KoulutusDAO.SearchCriteria();
 
         // should match all top level modules
@@ -208,7 +189,6 @@ public class KoulutusDAOTest {
 
     }
 
-   
     private void assertResultSize(int expected, KoulutusDAO.SearchCriteria criteria) {
 
         assertEquals("unexpected number of search results for criteria: "
@@ -219,7 +199,7 @@ public class KoulutusDAOTest {
     private void initData() {
 
         fixtures.removeAll();
-            
+
         TutkintoOhjelma t;
         TutkinnonOsa o;
 
