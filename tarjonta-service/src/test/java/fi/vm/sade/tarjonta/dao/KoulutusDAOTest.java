@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
+import fi.vm.sade.tarjonta.KoulutusDatabasePrinter;
 import fi.vm.sade.tarjonta.KoulutusFixtures;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
@@ -49,6 +50,9 @@ public class KoulutusDAOTest {
 
     @Autowired
     private KoulutusFixtures fixtures;
+    
+    @Autowired
+    private KoulutusDatabasePrinter dbPrinter;
 
     @Before
     public void setUp() {
@@ -179,7 +183,6 @@ public class KoulutusDAOTest {
 	at org.junit.Assert.assertEquals(Assert.java:472)
 	at fi.vm.sade.tarjonta.dao.KoulutusDAOTest.assertResultSize(KoulutusDAOTest.java:200)
      */
-    @Ignore
     @Test
     public void testSearch() {
         
@@ -215,6 +218,8 @@ public class KoulutusDAOTest {
 
     private void initData() {
 
+        fixtures.removeAll();
+            
         TutkintoOhjelma t;
         TutkinnonOsa o;
 
@@ -248,21 +253,7 @@ public class KoulutusDAOTest {
 
     private void printData() {
 
-        List<LearningOpportunityObject> allKoulutus = koulutusDAO.findAll();
-        List<KoulutusSisaltyvyys> allSisaltyvyys = koulutusDAO.findAllSisaltyvyys();
-
-        System.out.println("-- KOULUTUS TEST DATA:");
-
-        for (int i = 0; i < allKoulutus.size(); i++) {
-            LearningOpportunityObject k = allKoulutus.get(i);
-            System.out.println((i + 1) + "\t Koulutus, type: " + k.getClass().getSimpleName() + ", nimi: " + k.getNimi());
-        }
-
-        for (int i = 0; i < allSisaltyvyys.size(); i++) {
-            KoulutusSisaltyvyys s = allSisaltyvyys.get(i);
-            System.out.println((i + 1) + "\t Sisaltyvyys: parent: " + s.getParent().getOid() + ", child: " + s.getChild().getOid());
-        }
-
+        dbPrinter.printAll();
     }
 
 }

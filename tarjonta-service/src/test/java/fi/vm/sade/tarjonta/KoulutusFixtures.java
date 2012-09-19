@@ -213,6 +213,32 @@ public class KoulutusFixtures {
 
     }
 
+    /**
+     * Deletes all entities used in testing.
+     */
+    public void removeAll() {
+        
+        for (Haku o : hakuDAO.findAll()) {
+            hakuDAO.remove(o);
+        }
+        
+        for (Hakukohde o : hakukohdeDAO.findAll()) {
+            hakukohdeDAO.remove(o);
+        }
+        
+        for (KoulutusSisaltyvyys o : sisaltyvyysDAO.findAll()) {
+            sisaltyvyysDAO.remove(o);
+        }
+
+        for (LearningOpportunityObject o : koulutusDAO.findAll()) {
+            koulutusDAO.remove(simpleTutkinnonOsa);
+        }
+        
+        flush();
+        clear();
+        
+    }
+
     private void flush() {
         ((KoulutusDAOImpl) koulutusDAO).getEntityManager().flush();
     }
