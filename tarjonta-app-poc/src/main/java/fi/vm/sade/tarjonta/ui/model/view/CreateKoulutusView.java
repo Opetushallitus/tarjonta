@@ -49,9 +49,8 @@ public class CreateKoulutusView extends AbstractDialogWindow {
 
         createKoulutusTreeView = new CreateKoulutusTreeView();
         createKoulutusTreeView.setSizeFull();
-        createKoulutusTreeView.setContainerDataSource(DataSource.treeTableData(new CheckBoxTableStyle()));
+        createKoulutusTreeView.setContainerDataSource(DataSource.treeTableData(new CheckBoxTableStyle(), DataSource.ORGANISAATIOT));
         vLeft.addComponent(createKoulutusTreeView);
-
 
         HorizontalLayout middleLayout = UiBuilder.newHorizontalLayout();
         Panel newTextPanel = UiBuilder.newTextPanel(TEKSTI, null, UiBuilder.DEFAULT_REALTIVE_SIZE, middleLayout);

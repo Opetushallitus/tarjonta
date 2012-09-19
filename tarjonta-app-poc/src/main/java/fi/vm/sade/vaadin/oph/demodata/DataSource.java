@@ -38,6 +38,14 @@ public class DataSource {
         "Tieto- ja tietliikenneteksniikan perustutkinto",
         "Kone- ja metallialan perustutkinto - ICT-asentaja",
         "Kone- ja metallialan perustutkinto - Koneistaja"};
+    public static final String[] ORGANISAATIOT = {
+        "Jyväskylän yliopisto",
+        "Cyhdenius-instituutti",
+        "Humanistinen tiedekunta",
+        "Informaatioteknologian tiedekunta",
+        "Jyväskylän yliopiston kauppakorkeakoulu",
+        "Kasvatustieteiden tiedekunta",
+        "Liikunta- ja terveystieteiden tiedekunta"};
     private static final String COLUMN_A = "Kategoriat";
     public static final String[] KOULUTUKSEN_PERUSTIEDOT_HEADERS = {
         "Organisaatio",
@@ -70,15 +78,9 @@ public class DataSource {
         "Koulutukselliset ja ammatilliset tavoitteet",
         "Jatk-optomahdollisuudet"
     };
-
-    
     public static final String[] ORDER_BY = new String[]{"Organisaatiorakenteen mukainen järjestys", "Koulutuksen tilan mukainen järjestys", "Aakkosjärjestys", "Koulutuslajin mukaan"};
 
-    public static HierarchicalContainer treeTableData(ITableRowFormat rowStyle) {
-        Map<String, String[]> map = new HashMap<String, String[]>();
-
-        map.put("Kulttuuriala (3kpl)", KULTTURIALA);
-        map.put("Tekniikan ja liikentee ala (16kpl)", TEKNIIIKAN_JA_LIIKENTEEN_ALA);
+    public static HierarchicalContainer treeTableData(ITableRowFormat rowStyle, Map<String, String[]> map) {
         Set<Map.Entry<String, String[]>> set = map.entrySet();
 
         HierarchicalContainer hc = new HierarchicalContainer();
@@ -100,6 +102,25 @@ public class DataSource {
         }
 
         return hc;
+    }
+    
+     public static HierarchicalContainer treeTableData(ITableRowFormat rowStyle, String[] rows) {
+        Map<String, String[]> map = new HashMap<String, String[]>();
+
+        for(String root :  rows){
+            map.put(root, new String[]{""});
+        }
+
+        return treeTableData(rowStyle, map);
+    }
+
+    public static HierarchicalContainer treeTableData(ITableRowFormat rowStyle) {
+        Map<String, String[]> map = new HashMap<String, String[]>();
+
+        map.put("Kulttuuriala (3kpl)", KULTTURIALA);
+        map.put("Tekniikan ja liikentee ala (16kpl)", TEKNIIIKAN_JA_LIIKENTEEN_ALA);
+
+        return treeTableData(rowStyle, map);
     }
 
     public static String randomLorem(final int limitMin, int max) {
