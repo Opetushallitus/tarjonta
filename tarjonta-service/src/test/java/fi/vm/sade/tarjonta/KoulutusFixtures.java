@@ -231,7 +231,7 @@ public class KoulutusFixtures {
         }
 
         for (LearningOpportunityObject o : koulutusDAO.findAll()) {
-            koulutusDAO.remove(simpleTutkinnonOsa);
+            koulutusDAO.remove(o);
         }
         
         flush();
