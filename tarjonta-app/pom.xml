@@ -13,42 +13,34 @@
     <name>Tarjonta :: APP</name>
 
     <properties>
-      <skipJrebel>true</skipJrebel>
+        <skipJrebel>true</skipJrebel>
     </properties>
 
     <dependencies>
-
-        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-test-support</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>fi.vm.sade.organisaatio</groupId>
             <artifactId>organisaatio-ui-widgets</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        
+
         <dependency>
             <groupId>fi.vm.sade.organisaatio</groupId>
             <artifactId>organisaatio-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-<!--
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-ui-widgets</artifactId>
             <version>${project.version}</version>
         </dependency>
--->
 
         <!-- Koodisto integration -->
         <dependency>
@@ -57,7 +49,7 @@
             <version>${project.version}</version>
         </dependency>
 
-       <dependency>
+        <dependency>
             <groupId>fi.vm.sade.vaadin</groupId>
             <artifactId>vaadin-common</artifactId>
             <version>1.0-SNAPSHOT</version>
@@ -69,17 +61,30 @@
             <version>1.0-SNAPSHOT</version>
             <type>war</type>
         </dependency>
-        
+
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-vaadin-support</artifactId>
-            <version>1.0-SNAPSHOT</version>            
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>generic-portlet-support</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>generic-test-support</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
 
 
-   <profiles>
+    <profiles>
         <profile>
             <id>ui-development</id>
             <activation>
