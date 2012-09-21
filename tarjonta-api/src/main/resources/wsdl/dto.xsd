@@ -54,6 +54,8 @@
                                 name="sijoittelu" type="xs:boolean" />
                     <xs:element minOccurs="0" maxOccurs="1"
                                 name="hakulomakeUrl" type="xs:anyURI" />
+                    <xs:element minOccurs="0" maxOccurs="1"
+                                name="tila" type="xs:anyURI" />
                     <xs:element minOccurs="1" maxOccurs="1" name="haunAlkamisPvm"
                                 type="xs:date">
                     </xs:element>

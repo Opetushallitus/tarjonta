@@ -28,6 +28,7 @@ import org.apache.cxf.annotations.WSDLDocumentation;
  *
  * @author Jukka Raanamo
  * @author Marko Lyly
+ * @deprecated use classes generated from WSDL
  */
 @WebService(name = "koulutusmoduuliAdminService")
 @WSDLDocumentation("Web servicet koulutustarjonnan moduulien käsittelyyn.")

@@ -22,11 +22,12 @@
     
     <wsdl:portType name="KoulutusAdminService">
         <wsdl:documentation>
-            Service for managing "koulutus tarjonta".
+            Admin service for managing "koulutus tarjonta".
         </wsdl:documentation>
         <wsdl:operation name="createKoulutus">
             <wsdl:documentation>
-                TODO DOC 
+                Create Koulutus from passed data. This actual effect of this method is dependant on 
+                user authorization level. 
             </wsdl:documentation>
             <wsdl:input message="tns:createKoulutus" name="createKoulutus">
             </wsdl:input>

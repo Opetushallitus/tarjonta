@@ -19,6 +19,7 @@ import javax.xml.ws.WebFault;
 
 /**
  *
+ * @deprecated use classes generated from WSDL
  * @author Jukka Raanamo
  */
 @WebFault(faultBean = "fi.vm.sade.tarjonta.service.FaultBean")
