@@ -141,6 +141,7 @@ public class KoulutusFixtures {
         haku.setKohdejoukkoUri(randomUri("haunkohdejoukko"));
         haku.setHakutapaUri(randomUri("hakutapa"));
         haku.setHakutyyppiUri(randomUri("hakutyyppi"));
+        haku.setTila(KoodistoContract.TarjontaTilat.SUUNNITTELUSSA);
         return haku;
     }
 

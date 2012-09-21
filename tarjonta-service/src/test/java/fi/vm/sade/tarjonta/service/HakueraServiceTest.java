@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.service;
 
 import fi.vm.sade.tarjonta.HakueraTstHelper;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.KoodistoContract;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
@@ -111,6 +112,7 @@ public class HakueraServiceTest {
         hakueraDto.setKoulutuksenAlkaminen("Syksy 2013");
         hakueraDto.setKohdejoukko("Ammattikoulutus");
         hakueraDto.setHakutapa("Yhteishaku");
+        hakueraDto.setTila(KoodistoContract.TarjontaTilat.SUUNNITTELUSSA);
         return hakueraDto;
     }
     

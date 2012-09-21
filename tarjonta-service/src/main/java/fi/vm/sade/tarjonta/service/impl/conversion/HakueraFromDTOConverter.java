@@ -17,26 +17,27 @@ public class HakueraFromDTOConverter extends
 
     @Override
     public Haku convert(HakueraDTO hakueraDTO) {
-        Haku hakuera = null;
+        Haku haku = null;
         if (hakueraDTO.getOid() != null) {
-            hakuera = dao.findByOid(hakueraDTO.getOid());
+            haku = dao.findByOid(hakueraDTO.getOid());
         }
-        if (hakuera == null) {
-            hakuera = new Haku();
+        if (haku == null) {
+            haku = new Haku();
         }
-        hakuera.setNimiFi(hakueraDTO.getNimiFi());
-        hakuera.setNimiSv(hakueraDTO.getNimiSv());
-        hakuera.setNimiEn(hakueraDTO.getNimiEn());
-        hakuera.setHakutyyppiUri(hakueraDTO.getHakutyyppi());
-        hakuera.setHakukausiUri(hakueraDTO.getHakukausi());
-        hakuera.setHakutapaUri(hakueraDTO.getHakutapa());
-        hakuera.setHaunAlkamisPvm(convertDate(hakueraDTO.getHaunAlkamisPvm()));
-        hakuera.setHaunLoppumisPvm(convertDate(hakueraDTO.getHaunLoppumisPvm()));
-        hakuera.setOid(hakueraDTO.getOid());
-        hakuera.setKohdejoukkoUri(hakueraDTO.getKohdejoukko());
-        hakuera.setKoulutuksenAlkamiskausiUri(hakueraDTO.getKoulutuksenAlkaminen());
-        hakuera.setHakulomakeUrl(hakueraDTO.getHakulomakeUrl());
-        return hakuera;
+        haku.setNimiFi(hakueraDTO.getNimiFi());
+        haku.setNimiSv(hakueraDTO.getNimiSv());
+        haku.setNimiEn(hakueraDTO.getNimiEn());
+        haku.setHakutyyppiUri(hakueraDTO.getHakutyyppi());
+        haku.setHakukausiUri(hakueraDTO.getHakukausi());
+        haku.setHakutapaUri(hakueraDTO.getHakutapa());
+        haku.setHaunAlkamisPvm(convertDate(hakueraDTO.getHaunAlkamisPvm()));
+        haku.setHaunLoppumisPvm(convertDate(hakueraDTO.getHaunLoppumisPvm()));
+        haku.setOid(hakueraDTO.getOid());
+        haku.setKohdejoukkoUri(hakueraDTO.getKohdejoukko());
+        haku.setKoulutuksenAlkamiskausiUri(hakueraDTO.getKoulutuksenAlkaminen());
+        haku.setHakulomakeUrl(hakueraDTO.getHakulomakeUrl());
+        haku.setTila(hakueraDTO.getTila());
+        return haku;
     }
     
     private Date convertDate(XMLGregorianCalendar cal) {

@@ -28,6 +28,7 @@ public class HakueraToDTOConverter extends
         hakueraDTO.setKohdejoukko(entity.getKohdejoukkoUri());
         hakueraDTO.setKoulutuksenAlkaminen(entity.getKoulutuksenAlkamiskausiUri());
         hakueraDTO.setHakulomakeUrl(entity.getHakulomakeUrl());
+        hakueraDTO.setTila(entity.getTila());
         return hakueraDTO;
     }
     

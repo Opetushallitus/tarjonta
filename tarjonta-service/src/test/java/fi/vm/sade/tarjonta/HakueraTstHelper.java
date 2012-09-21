@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta;
 
 import fi.vm.sade.tarjonta.dao.impl.HakuDAOImpl;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.KoodistoContract;
 import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ public class HakueraTstHelper {
         h.setKoulutuksenAlkamiskausiUri(alkamisKausi);
         h.setKohdejoukkoUri(kohdejoukko);
         h.setHakutapaUri(hakutapa);
+        h.setTila(KoodistoContract.TarjontaTilat.SUUNNITTELUSSA);
         return dao.insert(h);
     }
 
