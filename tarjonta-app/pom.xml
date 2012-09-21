@@ -12,6 +12,10 @@
     <packaging>war</packaging>
     <name>Tarjonta :: APP</name>
 
+    <properties>
+      <skipJrebel>true</skipJrebel>
+    </properties>
+
     <dependencies>
 
         <dependency>
@@ -38,17 +42,25 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+<!--
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-ui-widgets</artifactId>
             <version>${project.version}</version>
         </dependency>
+-->
 
         <!-- Koodisto integration -->
         <dependency>
             <groupId>fi.vm.sade.koodisto</groupId>
             <artifactId>koodisto-widget</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+       <dependency>
+            <groupId>fi.vm.sade.vaadin</groupId>
+            <artifactId>vaadin-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -65,5 +77,43 @@
         </dependency>
 
     </dependencies>
+
+
+   <profiles>
+        <profile>
+            <id>ui-development</id>
+            <activation>
+                <property>
+                    <name>netbeans.deploy</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>fi.vm.sade.vaadin</groupId>
+                    <artifactId>vaadin-theme-oph</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                    <type>jar</type>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.zeroturnaround</groupId>
+                        <artifactId>jrebel-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-rebel-xml</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 
 </project>
