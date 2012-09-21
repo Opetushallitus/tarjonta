@@ -68,7 +68,10 @@ public class KoulutusDAOImpl extends AbstractJpaDAOImpl<LearningOpportunityObjec
     }
 
     /**
-     * Returns a list of koulutus in given type that matches given oid.
+     * Returns version history of a LearningOpportunityObject. 
+     * 
+     * TODO: double check if and how version management is handled in LOO. This implementation assumes 
+     * that several LOO's can share a single OID and be separated by version number.
      * 
      * @param <T>
      * @param koulutusType
@@ -76,18 +79,12 @@ public class KoulutusDAOImpl extends AbstractJpaDAOImpl<LearningOpportunityObjec
      * @return
      */
     @Override
-    public <T> List<T> findAllVersions(Class<T> koulutusType, String oid) {
+    public List<? extends LearningOpportunityObject> findAllVersions(String oid) {
 
-        EntityManager em = getEntityManager();
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<T> query = cb.createQuery(koulutusType);
+        QLearningOpportunityObject loo = QLearningOpportunityObject.learningOpportunityObject;
+        BooleanExpression oidEq = loo.oid.eq(oid);
 
-        Root<T> root = query.from(koulutusType);
-        Predicate oidCondition = cb.equal(root.get("oid"), oid);
-
-        query.select(root).where(oidCondition);
-
-        return em.createQuery(query).getResultList();
+        return from(loo).where(oidEq).orderBy(loo.version.asc()).list(loo);
 
     }
 

@@ -18,5 +18,12 @@ public interface HakuBusinessService {
 
     Haku findByOid(String oidString);
 
+    /**
+     * Deletes a Haku if and only if it's state is 
+     * 
+     * @param oid
+     */
+    public void delete(String oid);
+
 }
 

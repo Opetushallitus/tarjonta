@@ -92,10 +92,13 @@ public class Haku extends BaseEntity {
     @Column(name = "hakulomake_url")
     private String hakulomakeUrl;
 
+    @NotNull
+    private String tila;
+
     @OneToMany
     private Set<Hakukohde> hakukohdes = new HashSet<Hakukohde>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy="haku")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "haku")
     private Set<Hakuaika> hakuaikas = new HashSet<Hakuaika>();
 
     public String getOid() {
@@ -276,6 +279,24 @@ public class Haku extends BaseEntity {
         if (hakuaikas.remove(hakuaika)) {
             hakuaika.setHaku(null);
         }
+    }
+
+    /**
+     * Returns current state. Value is a Koodisto uri.
+     * 
+     * @return the tila
+     */
+    public String getTila() {
+        return tila;
+    }
+
+    /**
+     * Set state of this Haku. Value is a Koodisto uri.
+     * 
+     * @param tila the tila to set
+     */
+    public void setTila(String tila) {
+        this.tila = tila;
     }
 
 }

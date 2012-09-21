@@ -28,6 +28,11 @@ import fi.vm.sade.generic.model.BaseEntity;
 /**
  * Common base class for all entities on both the specification and instance side of learning objects. 
  * The CEN MLO model names this as "Learning Opportunity Object".
+ * 
+ * <p>
+ * Note about version management: multiple versions of single LOO is currently not implemented due to the fact that 
+ * LOO's version life cycle is rather lightly documented: https://confluence.csc.fi/pages/viewpage.action?pageId=8688089.
+ * </p>
  *
  */
 @Entity
@@ -69,7 +74,7 @@ public abstract class LearningOpportunityObject extends BaseEntity implements Co
     private Set<KoulutusSisaltyvyys> parents = new HashSet<KoulutusSisaltyvyys>();
 
     /**
-     * Always call super when overriding constructor.
+     * Make sure you call super when overriding constructor.
      */
     public LearningOpportunityObject() {
         // can we even assign this value if it comes from koodisto??

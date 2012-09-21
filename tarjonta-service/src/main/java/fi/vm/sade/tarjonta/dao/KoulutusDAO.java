@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.dao;
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import java.util.List;
 
 /**
@@ -27,6 +26,7 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
 
     /**
      * If this was here only for unit testing, remove it and access entity manager from test.
+     * 
      * @return
      */
     public List<KoulutusSisaltyvyys> findAllSisaltyvyys();
@@ -41,13 +41,14 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
     public List<LearningOpportunityObject> find(String tila, int startIndex, int pageSize);
 
     /**
+     * Returns all existing versions of a LearningOpportunityObject.
      * 
-     * @param <T>
+     * @param <T> the type of the 
      * @param type
      * @param oid
      * @return
      */
-    public <T> List<T> findAllVersions(Class<T> type, String oid);
+    public List<? extends LearningOpportunityObject> findAllVersions(String oid);
 
     /**
      * Returns a list of Koulutus -objects of type <code>type</code>.
@@ -92,7 +93,8 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
     public <T extends LearningOpportunityObject> List<T> search(SearchCriteria criteria);
 
     /**
-     * Contract and model for searching Koulutus objects.
+     * Contract and model for passing search criterias to DAO. Another option would be to use an object declared in WSDL but this would
+     * imply that any and all changes in WSDL are immediately visible on DAO layer and in worst case might require code changes.
      */
     public static class SearchCriteria {
 
