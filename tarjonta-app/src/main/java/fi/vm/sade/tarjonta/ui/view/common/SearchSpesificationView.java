@@ -13,37 +13,32 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui;
+package fi.vm.sade.tarjonta.ui.view.common;
 
-import com.github.wolfie.blackboard.Blackboard;
-import com.vaadin.ui.Window;
-import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
-import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  *
  * @author mlyly
  */
-public class TarjontaPortletApplication extends AbstractSadePortletApplication {
+@Configurable
+public class SearchSpesificationView extends VerticalLayout {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TarjontaPortletApplication.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SearchSpesificationView.class);
 
-    private Window window;
+    @Autowired
+    private TarjontaPresenter _presenter;
 
-    @Override
-    protected void registerListeners(Blackboard blackboard) {
-        LOG.debug("registerListeners()");
+    public SearchSpesificationView() {
+        super();
+
+        addComponent(new Label("searchspesificationview"));
     }
 
-    @Override
-    public synchronized void init() {
-        LOG.debug("init()");
-
-        super.init();
-
-        window = new TarjontaRootView();
-        setMainWindow(window);
-    }
 }

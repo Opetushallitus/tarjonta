@@ -15,10 +15,9 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Window;
 import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
+import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 
 /**
  * Tarjonta WEB application - used for testing and development.
@@ -33,13 +32,7 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
     public synchronized void init() {
         super.init();
 
-        window = new Window("Tarjonta");
-
-        window.addComponent(new Label("TARJONTA"));
-
-        // Component rootComponent = new SampleViewBuilder().createRootComponent(window);
-        // window.addComponent(rootComponent);
-
+        window = new TarjontaRootView();
         setMainWindow(window);
     }
 
