@@ -5,9 +5,9 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
-import fi.vm.sade.vaadin.oph.layout.RowMenuBar;
+import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.oph.demodata.ITableRowFormat;
-import fi.vm.sade.vaadin.oph.helper.UiBuilder;
+import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
  *
@@ -20,10 +20,10 @@ public class MultiActionTableStyleNoCBox implements ITableRowFormat<HorizontalLa
         public void menuSelected(MenuBar.MenuItem selectedItem) {
         }
     };
-    RowMenuBar rowMenuBar;
+    OphRowMenuBar rowMenuBar;
 
-    private RowMenuBar newMenuBar() {
-        rowMenuBar = new RowMenuBar("../oph/img/icon-treetable-button.png");
+    private OphRowMenuBar newMenuBar() {
+        rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
         rowMenuBar.addMenuCommand("Luo uusi koulutus", menuCommand);
         rowMenuBar.addMenuCommand("Näytä hakukohteet", menuCommand);
         rowMenuBar.addMenuCommand("Poista", menuCommand);

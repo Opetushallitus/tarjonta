@@ -22,7 +22,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.PopupView;
 import fi.vm.sade.vaadin.Oph;
-import fi.vm.sade.vaadin.oph.helper.UiBuilder;
+import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
  *
@@ -52,9 +52,8 @@ public class OhjePopupComponent extends HorizontalLayout {
         popupView.setHideOnMouseOut(false);
         addComponent(popupView);
 
-        showPopupBtn = UiBuilder.newButton("", null);
+        showPopupBtn = UiUtil.button(this,"");
         showPopupBtn.setStyleName(Oph.BUTTON_INFO);
-        addComponent(showPopupBtn);
         showPopupBtn.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {

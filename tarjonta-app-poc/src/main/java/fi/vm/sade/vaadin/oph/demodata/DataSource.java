@@ -1,7 +1,7 @@
 package fi.vm.sade.vaadin.oph.demodata;
 
 import com.vaadin.data.util.HierarchicalContainer;
-import fi.vm.sade.vaadin.oph.helper.UiBuilder;
+import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

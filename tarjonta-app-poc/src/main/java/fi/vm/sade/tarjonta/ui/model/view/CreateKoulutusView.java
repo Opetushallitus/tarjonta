@@ -1,15 +1,31 @@
+/*
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ */
 package fi.vm.sade.tarjonta.ui.model.view;
 
-import fi.vm.sade.vaadin.oph.helper.UiBuilder;
+import fi.vm.sade.vaadin.util.UiUtil;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window.CloseEvent;
-import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
+import fi.vm.sade.vaadin.constants.UiConstant;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.demodata.DataSource;
 import fi.vm.sade.vaadin.oph.demodata.row.CheckBoxTableStyle;
-import fi.vm.sade.vaadin.oph.layout.AbstractDialogWindow;
+import fi.vm.sade.vaadin.ui.OphAbstractDialogWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +33,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jani
  */
-public class CreateKoulutusView extends AbstractDialogWindow {
+public class CreateKoulutusView extends OphAbstractDialogWindow {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateKoulutusView.class);
     private static final String TEKSTI = "Koulutusta ei ole vielä liitetty mihinkään organisaatioon.";
@@ -27,7 +43,7 @@ public class CreateKoulutusView extends AbstractDialogWindow {
     public CreateKoulutusView(String label) {
         super(
                 label,
-                UiBuilder.format(TITLE_FORMAT, "tutkintoon johtavaa", "koulutusta"),
+                UiUtil.format(TITLE_FORMAT, "tutkintoon johtavaa", "koulutusta"),
                 DataSource.LOREM_IPSUM_SHORT);
 
         setWidth("700px");
@@ -41,8 +57,8 @@ public class CreateKoulutusView extends AbstractDialogWindow {
 
         HorizontalSplitPanel splitPanel = new HorizontalSplitPanel();
         splitPanel.setSplitPosition(50); // percent
-        VerticalLayout vLeft = UiBuilder.newVerticalLayout();
-        VerticalLayout vRight = UiBuilder.newVerticalLayout(false, UiMarginEnum.LEFT);
+        VerticalLayout vLeft = UiUtil.verticalLayout();
+        VerticalLayout vRight = UiUtil.verticalLayout(false, UiMarginEnum.LEFT);
 
         splitPanel.addComponent(vLeft);
         splitPanel.addComponent(vRight);
@@ -52,9 +68,9 @@ public class CreateKoulutusView extends AbstractDialogWindow {
         createKoulutusTreeView.setContainerDataSource(DataSource.treeTableData(new CheckBoxTableStyle(), DataSource.ORGANISAATIOT));
         vLeft.addComponent(createKoulutusTreeView);
 
-        HorizontalLayout middleLayout = UiBuilder.newHorizontalLayout();
-        Panel newTextPanel = UiBuilder.newTextPanel(TEKSTI, null, UiBuilder.DEFAULT_REALTIVE_SIZE, middleLayout);
-        newTextPanel.setHeight(UiBuilder.DEFAULT_REALTIVE_SIZE);
+        HorizontalLayout middleLayout = UiUtil.horizontalLayout();
+        Panel newTextPanel = UiUtil.textPanel(TEKSTI, null, UiConstant.DEFAULT_REALTIVE_SIZE, middleLayout);
+        newTextPanel.setHeight(UiConstant.DEFAULT_REALTIVE_SIZE);
         vRight.addComponent(newTextPanel);
 
        // layout.addComponent(UiBuilder.newComboBox("Tyyppi", new String[]{"Tutkintoon johtava koulutus", "Opintokokonaisuus", "Opinto"}, layout));

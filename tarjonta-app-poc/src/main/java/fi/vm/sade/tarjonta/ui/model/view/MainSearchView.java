@@ -7,9 +7,9 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.TextField;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
-import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
-import fi.vm.sade.vaadin.oph.layout.AbstractHorizontalLayout;
-import fi.vm.sade.vaadin.oph.helper.UiBuilder;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
+import fi.vm.sade.vaadin.ui.OphHorizontalLayout;
+import fi.vm.sade.vaadin.util.UiUtil;
 import fi.vm.sade.vaadin.Oph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author jani
  */
 @Configurable(preConstruction = true)
-public class MainSearchView extends AbstractHorizontalLayout {
+public class MainSearchView extends OphHorizontalLayout {
 
     private Button btnTyhjenna;
     private ComboBox cbHaunKohdejoukko;
@@ -44,7 +44,7 @@ public class MainSearchView extends AbstractHorizontalLayout {
         tfSearch.setImmediate(false);
         this.addComponent(tfSearch);
 
-        Button btnHaku = UiBuilder.newButtonSmallPrimary(i18n.getMessage("Hae"), this);
+        Button btnHaku = UiUtil.buttonSmallPrimary(this, i18n.getMessage("Hae"));
         btnHaku.addStyleName(Oph.BUTTON_SMALL);
         btnHaku.addListener(new Button.ClickListener() {
             @Override
@@ -53,17 +53,17 @@ public class MainSearchView extends AbstractHorizontalLayout {
             }
         });
 
-        cbHakukausi = UiBuilder.newComboBox(i18n.getMessage("Hakukausi"), new String[]{"Kevätkausi"}, this);
+        cbHakukausi = UiUtil.comboBox(this, i18n.getMessage("Hakukausi"), new String[]{"Kevätkausi"});
         cbHakukausi.setWidth("110px");
-        cbKoulutuksenAlkamiskausi = UiBuilder.newComboBox(i18n.getMessage("KoulutuksenAlkamiskausi"), new String[]{"Syksy 2012"}, this);
+        cbKoulutuksenAlkamiskausi = UiUtil.comboBox(this,i18n.getMessage("KoulutuksenAlkamiskausi"), new String[]{"Syksy 2012"});
         cbKoulutuksenAlkamiskausi.setWidth("200px");
-        cbHakutapa = UiBuilder.newComboBox(i18n.getMessage("Hakutapa"), new String[]{"Kaikki"}, this);
+        cbHakutapa = UiUtil.comboBox(this,i18n.getMessage("Hakutapa"), new String[]{"Kaikki"});
         cbHakutapa.setWidth("110px");
-        cbHakutyyppi = UiBuilder.newComboBox(i18n.getMessage("Hakutyyppi"), new String[]{"Kaikki"}, this);
+        cbHakutyyppi = UiUtil.comboBox(this,i18n.getMessage("Hakutyyppi"), new String[]{"Kaikki"});
         cbHakutyyppi.setWidth("110px");
-        cbHaunKohdejoukko = UiBuilder.newComboBox(i18n.getMessage("Kohdejoukko"), new String[]{"Kaikki"}, this);
+        cbHaunKohdejoukko = UiUtil.comboBox(this,i18n.getMessage("Kohdejoukko"), new String[]{"Kaikki"});
         cbHaunKohdejoukko.setWidth("110px");
-        btnTyhjenna = UiBuilder.newButton(i18n.getMessage("Tyhjennä"), this);
+        btnTyhjenna = UiUtil.button(this, i18n.getMessage("Tyhjennä"));
         btnTyhjenna.addStyleName(Oph.BUTTON_SMALL);
         btnTyhjenna.addListener(new Button.ClickListener() {
             @Override

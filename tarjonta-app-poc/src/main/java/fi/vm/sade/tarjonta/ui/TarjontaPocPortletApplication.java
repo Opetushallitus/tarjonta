@@ -23,7 +23,7 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
 import fi.vm.sade.tarjonta.ui.poc.TarjontaWindow;
 import fi.vm.sade.vaadin.Oph;
-import fi.vm.sade.vaadin.oph.helper.ComponentUtil;
+import fi.vm.sade.vaadin.util.UiBaseUtil;
 import java.util.Locale;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;

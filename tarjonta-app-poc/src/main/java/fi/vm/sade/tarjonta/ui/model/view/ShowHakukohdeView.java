@@ -28,10 +28,9 @@ import fi.vm.sade.tarjonta.ui.enums.Notification;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.oph.demodata.DataSource;
 import fi.vm.sade.vaadin.oph.demodata.row.MultiActionTableStyleNoCBox;
-import fi.vm.sade.vaadin.oph.dto.PageNavigationDTO;
-import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
-import fi.vm.sade.vaadin.oph.helper.UiBuilder;
-import fi.vm.sade.vaadin.oph.layout.AbstractInfoLayout;
+import fi.vm.sade.vaadin.dto.PageNavigationDTO;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
+import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -41,7 +40,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author mlyly
  */
 @Configurable(preConstruction = true)
-public class ShowHakukohdeView extends AbstractInfoLayout<VerticalLayout> {
+public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShowHakukohdeView.class);
 
@@ -51,22 +50,22 @@ public class ShowHakukohdeView extends AbstractInfoLayout<VerticalLayout> {
         addNavigationButton("", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                _presenter.showMainKoulutusView();
+                getPresenter().showMainKoulutusView();
             }
         }, Oph.BUTTON_BACK);
 
         addNavigationButton("Poista", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                _presenter.showMainKoulutusView();
-                _presenter.demoInformation(Notification.DELETE);
+                getPresenter().showMainKoulutusView();
+                getPresenter().demoInformation(Notification.DELETE);
             }
         }, Oph.BUTTON_SMALL);
 
         addNavigationButton("Kopioi uudeksi", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                _presenter.demoInformation(Notification.COPY);
+                getPresenter().demoInformation(Notification.COPY);
 
             }
         }, Oph.BUTTON_SMALL);
@@ -92,19 +91,19 @@ public class ShowHakukohdeView extends AbstractInfoLayout<VerticalLayout> {
         GridLayout lorem1 = new GridLayout(2, 6);
         lorem1.setHeight("100%");
         lorem1.setWidth("800px");
-        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 15)), 0, 0);
-        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 35)), 0, 1);
-        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 15)), 0, 2);
-        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 35)), 0, 3);
-        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 25)), 0, 4);
-        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 25)), 0, 5);
+        lorem1.addComponent(UiUtil.label(null, DataSource.randomLorem(1, 15)), 0, 0);
+        lorem1.addComponent(UiUtil.label(null, DataSource.randomLorem(1, 35)), 0, 1);
+        lorem1.addComponent(UiUtil.label(null, DataSource.randomLorem(1, 15)), 0, 2);
+        lorem1.addComponent(UiUtil.label(null, DataSource.randomLorem(1, 35)), 0, 3);
+        lorem1.addComponent(UiUtil.label(null, DataSource.randomLorem(1, 25)), 0, 4);
+        lorem1.addComponent(UiUtil.label(null, DataSource.randomLorem(1, 25)), 0, 5);
 
-        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 255)), 1, 0);
-        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 65)), 1, 1);
-        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 45)), 1, 2);
-        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 85)), 1, 3);
-        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 15)), 1, 4);
-        lorem1.addComponent(UiBuilder.newLabel(DataSource.randomLorem(1, 1000)), 1, 5);
+        lorem1.addComponent(UiUtil.label(null, DataSource.randomLorem(1, 255)), 1, 0);
+        lorem1.addComponent(UiUtil.label(null, DataSource.randomLorem(1, 65)), 1, 1);
+        lorem1.addComponent(UiUtil.label(null, DataSource.randomLorem(1, 45)), 1, 2);
+        lorem1.addComponent(UiUtil.label(null, DataSource.randomLorem(1, 85)), 1, 3);
+        lorem1.addComponent(UiUtil.label(null, DataSource.randomLorem(1, 15)), 1, 4);
+        lorem1.addComponent(UiUtil.label(null, DataSource.randomLorem(1, 1000)), 1, 5);
 
         lorem1.setColumnExpandRatio(0, 1);
         lorem1.setColumnExpandRatio(1, 5);
@@ -137,16 +136,16 @@ public class ShowHakukohdeView extends AbstractInfoLayout<VerticalLayout> {
     }
 
     private HorizontalLayout buildHeaderLayout(String title, String btnCaption) {
-        HorizontalLayout headerLayout = UiBuilder.newHorizontalLayout(true, UiMarginEnum.TOP_BOTTOM);
-        Label titleLabel = UiBuilder.newLabel(title, headerLayout);
+        HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.TOP_BOTTOM);
+        Label titleLabel = UiUtil.label(headerLayout, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
 
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);
-            Button btn = UiBuilder.newButtonSmallSecodary(btnCaption, headerLayout, new Button.ClickListener() {
+            Button btn = UiUtil.buttonSmallSecodary(headerLayout, btnCaption, new Button.ClickListener() {
                 @Override
                 public void buttonClick(ClickEvent event) {
-                    _presenter.demoInformation(Notification.GENERIC_ERROR);
+                    getPresenter().demoInformation(Notification.GENERIC_ERROR);
                 }
             });
 

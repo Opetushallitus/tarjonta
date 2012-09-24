@@ -19,10 +19,8 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.vaadin.oph.demodata.DataSource;
-import fi.vm.sade.vaadin.oph.demodata.row.MultiActionTableStyle;
-import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
-import fi.vm.sade.vaadin.oph.helper.UiBuilder;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
+import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
  *
@@ -49,9 +47,9 @@ public class MainKoulutusView extends VerticalLayout {
     }
 
     private void buildBreadCrumb(VerticalLayout vlayout) {
-        HorizontalLayout breadCrumblayout = UiBuilder.newHorizontalLayout(true, UiMarginEnum.TOP_LEFT_BOTTOM);
+        HorizontalLayout breadCrumblayout = UiUtil.horizontalLayout(true, UiMarginEnum.TOP_LEFT_BOTTOM);
 
-        breadCrumb = UiBuilder.newLink("Rantalohjan koulutuskuntayhtymä Rantalohjan ammattiopisto", breadCrumblayout);
+        breadCrumb = UiUtil.link(breadCrumblayout,"Rantalohjan koulutuskuntayhtymä Rantalohjan ammattiopisto");
 
         vlayout.addComponent(breadCrumblayout);
         vlayout.setComponentAlignment(breadCrumblayout, Alignment.TOP_LEFT);

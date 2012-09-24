@@ -1,6 +1,17 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
  */
 package fi.vm.sade.tarjonta.ui.model.view;
 
@@ -13,7 +24,6 @@ import com.vaadin.event.MouseEvents;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractOrderedLayout;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
@@ -36,9 +46,11 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusPerustiedotDTO;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloDTO;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
 import fi.vm.sade.vaadin.Oph;
-import fi.vm.sade.vaadin.oph.enums.LabelStyle;
-import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
+import fi.vm.sade.vaadin.constants.LabelStyleEnum;
+import fi.vm.sade.vaadin.constants.StyleEnum;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
+import fi.vm.sade.vaadin.util.UiUtil;
 import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,15 +106,15 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
 
         removeAllComponents();
 
-        HorizontalLayout hlButtonsTop = UiBuilder.newHorizontalLayout(true, UiMarginEnum.NONE);
+        HorizontalLayout hlButtonsTop = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         hlButtonsTop.setSizeUndefined();
         addComponent(hlButtonsTop);
-        addButton("Peruuta", "doCancel", hlButtonsTop, UiBuilder.STYLE_BUTTON_SECONDARY);
-        addButton("TallennaLuonnoksena", "doSaveIncomplete", hlButtonsTop, UiBuilder.STYLE_BUTTON_PRIMARY);
-        addButton("TallennaValmiina", "doSaveComplete", hlButtonsTop, UiBuilder.STYLE_BUTTON_PRIMARY);
-        addButton("Jatka", "doContinue", hlButtonsTop, UiBuilder.STYLE_BUTTON_PRIMARY);
+        addButton("Peruuta", "doCancel", hlButtonsTop,  StyleEnum.STYLE_BUTTON_SECONDARY);
+        addButton("TallennaLuonnoksena", "doSaveIncomplete", hlButtonsTop,  StyleEnum.STYLE_BUTTON_PRIMARY);
+        addButton("TallennaValmiina", "doSaveComplete", hlButtonsTop,  StyleEnum.STYLE_BUTTON_PRIMARY);
+        addButton("Jatka", "doContinue", hlButtonsTop,  StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        addComponent(addLabel("KoulutuksenPerustiedot", LabelStyle.H2, null));
+        addComponent(addLabel("KoulutuksenPerustiedot", LabelStyleEnum.H2, null));
 
         addHR(this);
 
@@ -145,7 +157,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         {
             grid.addComponent(addLabel("Opetuskieli", null));
 
-            VerticalLayout vl = UiBuilder.newVerticalLayout();
+            VerticalLayout vl = UiUtil.verticalLayout();
 
             KoodistoComponent kc = addKoodistoTwinColSelect(_koodistoUriKieli, mi, "opetuskielet", null);
             vl.addComponent(kc);
@@ -173,7 +185,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
 
         {
             grid.addComponent(addLabel("Teema", null));
-            VerticalLayout vl = UiBuilder.newVerticalLayout();
+            VerticalLayout vl = UiUtil.verticalLayout();
             vl.addComponent(addLabel("ValitseTeemat", null));
             KoodistoComponent kc = addKoodistoTwinColSelect(_koodistoUriTeema, mi, "teemat", null);
             vl.addComponent(kc);
@@ -212,10 +224,10 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         hlButtonsBottom.setSizeUndefined();
         hlButtonsBottom.setSpacing(true);
         addComponent(hlButtonsBottom);
-        addButton("Peruuta", "doCancel", hlButtonsBottom, UiBuilder.STYLE_BUTTON_SECONDARY);
-        addButton("TallennaLuonnoksena", "doSaveIncomplete", hlButtonsBottom, UiBuilder.STYLE_BUTTON_PRIMARY);
-        addButton("TallennaValmiina", "doSaveComplete", hlButtonsBottom, UiBuilder.STYLE_BUTTON_PRIMARY);
-        addButton("Jatka", "doContinue", hlButtonsBottom, UiBuilder.STYLE_BUTTON_PRIMARY);
+        addButton("Peruuta", "doCancel", hlButtonsBottom, StyleEnum.STYLE_BUTTON_SECONDARY);
+        addButton("TallennaLuonnoksena", "doSaveIncomplete", hlButtonsBottom,  StyleEnum.STYLE_BUTTON_PRIMARY);
+        addButton("TallennaValmiina", "doSaveComplete", hlButtonsBottom, StyleEnum.STYLE_BUTTON_PRIMARY);
+        addButton("Jatka", "doContinue", hlButtonsBottom,  StyleEnum.STYLE_BUTTON_PRIMARY);
     }
 
 
@@ -232,8 +244,8 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @param layout
      * @return
      */
-    private TextField addTextField(PropertysetItem psi, String expression, String promptKey, String width, AbstractOrderedLayout layout) {
-        TextField c = UiBuilder.newTextField(psi, expression, null, i18n.getMessage(promptKey), layout);
+    private TextField addTextField(PropertysetItem psi, String expression, String promptKey, String width, AbstractLayout layout) {
+        TextField c = UiUtil.textField(layout,psi, expression, null, i18n.getMessage(promptKey));
         // c.setImmediate(true);
 
         if (width != null) {
@@ -251,14 +263,14 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @param layout
      * @return
      */
-    private Button addButton(String captionKey, String onClickMethodName, AbstractOrderedLayout layout, String[] styles) {
-        Button c = UiBuilder.newButton(i18n.getMessage(captionKey), layout);
+    private Button addButton(String captionKey, String onClickMethodName, AbstractOrderedLayout layout, StyleEnum styles) {
+        Button c = UiUtil.button(layout, i18n.getMessage(captionKey));
         if (onClickMethodName != null) {
             c.addListener(getClickListener(onClickMethodName));
         }
 
         if (styles != null) {
-            for (String style : styles) {
+            for (String style : styles.getStyles()) {
                 c.addStyleName(style);
             }
         }
@@ -274,7 +286,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @return
      */
     private Label addLabel(String captionKey, AbstractOrderedLayout layout) {
-        Label c = UiBuilder.newLabel(i18n.getMessage(captionKey), layout);
+        Label c = UiUtil.label(layout, i18n.getMessage(captionKey));
         return c;
     }
 
@@ -286,8 +298,8 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @param layout
      * @return
      */
-    private Label addLabel(String captionKey, LabelStyle style, AbstractOrderedLayout layout) {
-        Label c = UiBuilder.newLabel(i18n.getMessage(captionKey), layout, style);
+    private Label addLabel(String captionKey, LabelStyleEnum style, AbstractOrderedLayout layout) {
+        Label c = UiUtil.label(layout,i18n.getMessage(captionKey), style);
         return c;
     }
 
@@ -300,7 +312,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @return
      */
     private Label addLabel(PropertysetItem psi, String expression, AbstractOrderedLayout layout) {
-        Label c = UiBuilder.newLabel(psi, expression, layout);
+        Label c = UiUtil.label(layout,psi, expression);
         return c;
     }
 
@@ -313,7 +325,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @return
      */
     private DateField addDate(PropertysetItem psi, String expression, AbstractOrderedLayout layout) {
-        DateField c = UiBuilder.newDateField(null, null, psi, expression, layout);
+        DateField c = UiUtil.dateField(layout,null, null, psi, expression);
         return c;
     }
 
@@ -328,7 +340,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      * @return
      */
     private CheckBox addCheckBox(String captionKey, PropertysetItem psi, String expression, String valueChangeListenerMethod, AbstractOrderedLayout layout) {
-        CheckBox c = UiBuilder.addCheckBox(i18n.getMessage(captionKey), psi, expression, layout);
+        CheckBox c = UiUtil.checkBox(layout, i18n.getMessage(captionKey), psi, expression);
 
         // Routes "clicks" to methods
         if (valueChangeListenerMethod != null) {
@@ -371,7 +383,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      */
     private KoodistoComponent addKoodistoComboBox(final String koodistoUri, PropertysetItem psi, String expression, String promptKey, AbstractOrderedLayout layout) {
         LOG.debug("addKoodistoComboBox({}, ...)", koodistoUri);
-        return UiBuilder.newKoodistoComboBox(koodistoUri, psi, expression, i18n.getMessage(promptKey), layout);
+        return UiBuilder.koodistoComboBox(koodistoUri, psi, expression, i18n.getMessage(promptKey), layout);
     }
 
     /**
@@ -385,7 +397,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
      */
     private KoodistoComponent addKoodistoTwinColSelect(final String koodistoUri, PropertysetItem psi, String expression, AbstractOrderedLayout layout) {
         LOG.debug("addKoodistoTwinColSelect({}, ...)", koodistoUri);
-        return UiBuilder.newKoodistoTwinColSelect(koodistoUri, psi, expression, layout);
+        return UiBuilder.koodistoTwinColSelect(koodistoUri, psi, expression, layout);
     }
 
     /**
@@ -418,7 +430,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
                 new BeanItemContainer<KoulutusYhteyshenkiloDTO>(KoulutusYhteyshenkiloDTO.class);
         yhteyshenkiloContainer.addAll(_dto.getYhteyshenkilot());
 
-        HorizontalLayout hl = UiBuilder.newHorizontalLayout(true, UiMarginEnum.NONE);
+        HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         hl.setSpacing(true);
 
         final Table t = new Table(null, yhteyshenkiloContainer);
@@ -528,7 +540,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
         linkkiContainer.addAll(_dto.getKoulutusLinkit());
 
         layout.addComponent(addLabel("Linkit", null));
-        HorizontalLayout hl = UiBuilder.newHorizontalLayout(true, UiMarginEnum.NONE);
+        HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         hl.setSpacing(true);
 
         final Table t = new Table(null, linkkiContainer);

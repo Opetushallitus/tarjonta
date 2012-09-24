@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.ui.model.view;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Select;
 import com.vaadin.ui.TextField;
@@ -26,7 +25,7 @@ import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiDTO;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
-import java.util.Arrays;
+import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -67,38 +66,38 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout {
     public EditKoulutusPerustiedotLinkkiView() {
         this.setSpacing(true);
 
-        _sLinkkityyppi = UiBuilder.newComboBox(null, KoulutusLinkkiDTO.LINKKI_TYYPIT, null);
+        _sLinkkityyppi = UiUtil.comboBox(this, null, KoulutusLinkkiDTO.LINKKI_TYYPIT);
         _sLinkkityyppi.setWidth("100%");
         this.addComponent(_sLinkkityyppi);
 
-        _tfUrl = UiBuilder.newTextField("", i18n.getMessage("Linkki.prompt"), false);
+        _tfUrl = UiUtil.textField(this, "", i18n.getMessage("Linkki.prompt"), false);
         _tfUrl.setRequired(true);
         _tfUrl.setRequiredError(i18n.getMessage("Linkki.tyhja"));
         _tfUrl.setWidth("100%");
         this.addComponent(_tfUrl);
 
-        _kcKielet = UiBuilder.newKoodistoTwinColSelect(_koodistoUriKieli, null, null, this);
+        _kcKielet = UiBuilder.koodistoTwinColSelect(_koodistoUriKieli, null, null, this);
 
 
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
         this.addComponent(hl);
 
-        UiBuilder.newButtonSmallSecodary(i18n.getMessage("Tallenna"), hl,  new Button.ClickListener() {
+        UiUtil.buttonSmallSecodary(hl,  i18n.getMessage("Tallenna"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new SaveEvent(EditKoulutusPerustiedotLinkkiView.this));
             }
         });
 
-        UiBuilder.newButtonSmallSecodary(i18n.getMessage("Peruuta"), hl, new Button.ClickListener() {
+        UiUtil.buttonSmallSecodary(hl,  i18n.getMessage("Peruuta"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new CancelEvent(EditKoulutusPerustiedotLinkkiView.this));
             }
         });
 
-       UiBuilder.newButtonSmallSecodary(i18n.getMessage("Poista"), hl, new Button.ClickListener() {
+       UiUtil.buttonSmallSecodary(hl,  i18n.getMessage("Poista"),  new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new DeleteEvent(EditKoulutusPerustiedotLinkkiView.this));

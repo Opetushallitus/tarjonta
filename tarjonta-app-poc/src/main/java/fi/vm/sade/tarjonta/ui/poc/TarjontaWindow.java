@@ -6,7 +6,7 @@ import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.model.view.MainSplitPanelView;
 import fi.vm.sade.vaadin.Oph;
-import fi.vm.sade.vaadin.oph.helper.UiBuilder;
+import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class TarjontaWindow extends Window {
 
         _presenter.setTarjontaWindow(this);
 
-        VerticalLayout layout = UiBuilder.newVerticalLayout();
+        VerticalLayout layout = UiUtil.verticalLayout();
         layout.setHeight(-1,UNITS_PIXELS);
         setContent(layout); //window käyttää layouttia pohjana
         layout.addStyleName(Oph.CONTAINER_MAIN);

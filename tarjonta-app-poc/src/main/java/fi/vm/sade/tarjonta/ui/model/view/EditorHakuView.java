@@ -32,9 +32,10 @@ import fi.vm.sade.tarjonta.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.enums.Notification;
 import fi.vm.sade.tarjonta.ui.poc.helper.I18NHelper;
 import fi.vm.sade.vaadin.Oph;
-import fi.vm.sade.vaadin.oph.enums.LabelStyle;
-import fi.vm.sade.vaadin.oph.enums.UiMarginEnum;
+import fi.vm.sade.vaadin.constants.LabelStyleEnum;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.oph.helper.UiBuilder;
+import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,56 +109,56 @@ public class EditorHakuView extends CustomComponent {
     private void initialize() {
         LOG.info("inititialize()");
 
-        _layout = UiBuilder.newVerticalLayout(true, UiMarginEnum.ALL);
+        _layout = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
         setCompositionRoot(_layout);
 
         //
         // Init fields
         //
-        _hakutyyppi = UiBuilder.newKoodistoComboBox(_koodistoUriHakutyyppi, null, null, T("Hakutyyppi.prompt"), null);
+        _hakutyyppi = UiBuilder.koodistoComboBox(_koodistoUriHakutyyppi, null, null, T("Hakutyyppi.prompt"), null);
         _hakutyyppi.setSizeUndefined();
-        _hakukausi = UiBuilder.newKoodistoComboBox(_koodistoUriHakukausi, null, null, T("Hakukausi.prompt"), null);
+        _hakukausi = UiBuilder.koodistoComboBox(_koodistoUriHakukausi, null, null, T("Hakukausi.prompt"), null);
         _hakukausi.setSizeUndefined();
-        _hakuvuosi = UiBuilder.newTextField("", T("Hakuvuosi.prompt"), false);
+        _hakuvuosi = UiUtil.textField(null, "", T("Hakuvuosi.prompt"), false);
         _hakuvuosi.setSizeUndefined();
-        _koulutusAlkamiskausi = UiBuilder.newKoodistoComboBox(_koodistoUriAlkamiskausi, null, null, T("KoulutuksenAlkamiskausi.prompt"), null);
+        _koulutusAlkamiskausi =UiBuilder.koodistoComboBox(_koodistoUriAlkamiskausi, null, null, T("KoulutuksenAlkamiskausi.prompt"), null);
         _koulutusAlkamiskausi.setSizeUndefined();
-        _hakuKohdejoukko = UiBuilder.newKoodistoComboBox(_koodistoUriKohdejoukko, null, null, T("HakuKohdejoukko.prompt"), null);
+        _hakuKohdejoukko = UiBuilder.koodistoComboBox(_koodistoUriKohdejoukko, null, null, T("HakuKohdejoukko.prompt"), null);
         _hakuKohdejoukko.setSizeUndefined();
-        _hakutapa = UiBuilder.newKoodistoComboBox(_koodistoUriHakutapa, null, null, T("Hakutapa.prompt"), null);
+        _hakutapa = UiBuilder.koodistoComboBox(_koodistoUriHakutapa, null, null, T("Hakutapa.prompt"), null);
         _hakutapa.setSizeUndefined();
-        _haunNimiFI = UiBuilder.newTextField("", T("HaunNimiFI.prompt"), false);
+        _haunNimiFI = UiUtil.textField(null, "", T("HaunNimiFI.prompt"), false);
         _haunNimiFI.setSizeUndefined();
-        _haunNimiSE = UiBuilder.newTextField("", T("HaunNimiSE.prompt"), false);
+        _haunNimiSE = UiUtil.textField(null, "", T("HaunNimiSE.prompt"), false);
         _haunNimiSE.setSizeUndefined();
-        _haunNimiEN = UiBuilder.newTextField("", T("HaunNimiEN.prompt"), false);
+        _haunNimiEN = UiUtil.textField(null, "", T("HaunNimiEN.prompt"), false);
         _haunNimiEN.setSizeUndefined();
-        _haunTunniste = UiBuilder.newLabel("haunTunniste", (AbstractLayout) null);
+        _haunTunniste = UiUtil.label((AbstractLayout) null, "haunTunniste");
         _haunTunniste.setSizeUndefined();
         // TODO hakuaika
-        _kaytetaanSijoittelua = UiBuilder.newCheckbox(T("KaytetaanSijoittelua"), null);
+        _kaytetaanSijoittelua = UiUtil.checkbox(null, T("KaytetaanSijoittelua"));
         _kaytetaanSijoittelua.setSizeUndefined();
-        _kayteaanJarjestelmanHakulomaketta = UiBuilder.newCheckbox(T("KaytetaanJarjestemanHakulomaketta"), null);
+        _kayteaanJarjestelmanHakulomaketta = UiUtil.checkbox(null, T("KaytetaanJarjestemanHakulomaketta"));
         _kayteaanJarjestelmanHakulomaketta.setSizeUndefined();
-        _muuHakulomakeUrl = UiBuilder.newTextField("", T("MuuHakulomake.prompt"), false);
+        _muuHakulomakeUrl = UiUtil.textField(null, "", T("MuuHakulomake.prompt"), false);
         _muuHakulomakeUrl.setSizeUndefined();
 
         createButtonBar(_layout);
 
-        UiBuilder.newLabel(T("HaunTiedot"), _layout, LabelStyle.H2);
-        UiBuilder.newHR(_layout);
+        UiUtil.label(_layout, T("HaunTiedot"), LabelStyleEnum.H2);
+        UiUtil.newHR(_layout);
 
         GridLayout grid = new GridLayout(3, 1);
         grid.setSpacing(true);
         _layout.addComponent(grid);
 
-        grid.addComponent(UiBuilder.newLabel(T("Hakutyyppi"), (AbstractLayout) null));
+        grid.addComponent(UiUtil.label(null, T("Hakutyyppi")));
         grid.addComponent(_hakutyyppi);
         grid.newLine();
 
         {
-            grid.addComponent(UiBuilder.newLabel(T("HakukausiJaVuosi"), (AbstractLayout) null));
-            HorizontalLayout hl = UiBuilder.newHorizontalLayout();
+            grid.addComponent(UiUtil.label(null, T("HakukausiJaVuosi")));
+            HorizontalLayout hl = UiUtil.horizontalLayout();
             hl.setSpacing(true);
             hl.addComponent(_hakukausi);
             hl.addComponent(_hakuvuosi);
@@ -165,21 +166,21 @@ public class EditorHakuView extends CustomComponent {
             grid.newLine();
         }
 
-        grid.addComponent(UiBuilder.newLabel(T("KoulutuksenAlkamiskausi"), (AbstractLayout) null));
+        grid.addComponent(UiUtil.label(null, T("KoulutuksenAlkamiskausi")));
         grid.addComponent(_koulutusAlkamiskausi);
         grid.newLine();
 
-        grid.addComponent(UiBuilder.newLabel(T("HakuKohdejoukko"), (AbstractLayout) null));
+        grid.addComponent(UiUtil.label(null, T("HakuKohdejoukko")));
         grid.addComponent(_hakuKohdejoukko);
         grid.newLine();
 
-        grid.addComponent(UiBuilder.newLabel(T("Hakutapa"), (AbstractLayout) null));
+        grid.addComponent(UiUtil.label(null, T("Hakutapa")));
         grid.addComponent(_hakutapa);
         grid.newLine();
 
         {
-            grid.addComponent(UiBuilder.newLabel(T("HaunNimi"), (AbstractLayout) null));
-            VerticalLayout vl = UiBuilder.newVerticalLayout(true, UiMarginEnum.NONE);
+            grid.addComponent(UiUtil.label(null, T("HaunNimi")));
+            VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.NONE);
             vl.setSizeUndefined();
 
             vl.addComponent(_haunNimiFI);
@@ -189,26 +190,26 @@ public class EditorHakuView extends CustomComponent {
             grid.newLine();
         }
 
-        grid.addComponent(UiBuilder.newLabel(T("HaunTunniste"), (AbstractLayout) null));
+        grid.addComponent(UiUtil.label(null, T("HaunTunniste")));
         grid.addComponent(_haunTunniste);
         grid.newLine();
 
         {
-            grid.addComponent(UiBuilder.newLabel(T("Hakuaika"), (AbstractLayout) null));
+            grid.addComponent(UiUtil.label(null, T("Hakuaika")));
 
-            VerticalLayout vl = UiBuilder.newVerticalLayout();
+            VerticalLayout vl = UiUtil.verticalLayout();
             vl.setSizeUndefined();
 
-            vl.addComponent(UiBuilder.newCheckbox("Yksi hakuaika", null));
-            vl.addComponent(UiBuilder.newCheckbox("Käytä haun sisäisiä hakuaikoja", null));
+            vl.addComponent(UiUtil.checkbox(null, "Yksi hakuaika"));
+            vl.addComponent(UiUtil.checkbox(null, "Käytä haun sisäisiä hakuaikoja"));
 
-            HorizontalLayout hl = UiBuilder.newHorizontalLayout();
+            HorizontalLayout hl = UiUtil.horizontalLayout();
             hl.setSizeUndefined();
             vl.addComponent(hl);
 
-            hl.addComponent(UiBuilder.newDate());
-            hl.addComponent(UiBuilder.newLabel("-", (AbstractLayout) null));
-            hl.addComponent(UiBuilder.newDate());
+            hl.addComponent(UiUtil.dateField());
+            hl.addComponent(UiUtil.label(null, "-"));
+            hl.addComponent(UiUtil.dateField());
 
             grid.addComponent(vl);
             grid.newLine();
@@ -219,8 +220,8 @@ public class EditorHakuView extends CustomComponent {
         grid.newLine();
 
         {
-            grid.addComponent(UiBuilder.newLabel(T("Hakulomake"), (AbstractLayout) null));
-            VerticalLayout vl = UiBuilder.newVerticalLayout();
+            grid.addComponent(UiUtil.label(null, T("Hakulomake")));
+            VerticalLayout vl = UiUtil.verticalLayout();
             vl.setSpacing(true);
             vl.addComponent(_kayteaanJarjestelmanHakulomaketta);
             vl.addComponent(_muuHakulomakeUrl);
@@ -240,13 +241,13 @@ public class EditorHakuView extends CustomComponent {
      * @return
      */
     private HorizontalLayout createButtonBar(VerticalLayout layout) {
-        HorizontalLayout hl = UiBuilder.newHorizontalLayout(true, UiMarginEnum.NONE);
+        HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
 
         if (layout != null) {
             layout.addComponent(hl);
         }
 
-        Button btnCancel = UiBuilder.newButtonSmallSecodary(T("Peruuta"), hl);
+        Button btnCancel = UiUtil.buttonSmallSecodary(hl, T("Peruuta"));
         btnCancel.addStyleName(Oph.CONTAINER_SECONDARY);
         btnCancel.addListener(new Button.ClickListener() {
             @Override
@@ -255,25 +256,25 @@ public class EditorHakuView extends CustomComponent {
             }
         });
 
-        Button btnSaveUncomplete = UiBuilder.newButtonSmallPrimary(T("TallennaLuonnoksena"), hl);
+        Button btnSaveUncomplete = UiUtil.buttonSmallPrimary(hl, T("TallennaLuonnoksena"));
         btnSaveUncomplete.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 fireEvent(new SaveEvent(EditorHakuView.this, false));
-                  _presenter.demoInformation( Notification.SAVE_DRAFT);
+                _presenter.demoInformation(Notification.SAVE_DRAFT);
             }
         });
 
-        Button btnSaveComplete = UiBuilder.newButtonSmallPrimary(T("TallennaValmiina"), hl);
+        Button btnSaveComplete = UiUtil.buttonSmallPrimary(hl, T("TallennaValmiina"));
         btnSaveComplete.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 fireEvent(new SaveEvent(EditorHakuView.this, true));
-                  _presenter.demoInformation( Notification.SAVE);
+                _presenter.demoInformation(Notification.SAVE);
             }
         });
 
-        Button btnContinue = UiBuilder.newButtonSmallPrimary(T("Jatka"), hl);
+        Button btnContinue = UiUtil.buttonSmallPrimary(hl, T("Jatka"));
         btnContinue.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -321,7 +322,7 @@ public class EditorHakuView extends CustomComponent {
         public SaveEvent(Component source, boolean complete) {
             super(source);
             _complete = complete;
-          
+
         }
 
         public boolean isComplete() {
@@ -336,7 +337,7 @@ public class EditorHakuView extends CustomComponent {
 
         public DeleteEvent(Component source) {
             super(source);
-           
+
         }
     }
 
@@ -347,7 +348,7 @@ public class EditorHakuView extends CustomComponent {
 
         public ContinueEvent(Component source) {
             super(source);
-              _presenter.showShowHakukohdeView();
+            _presenter.showShowHakukohdeView();
         }
     }
 }
