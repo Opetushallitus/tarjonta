@@ -79,22 +79,22 @@ public class TarjontaRootView extends Window {
         _presenter.setTarjontaWindow(this);
 
         // Create root layout
-        VerticalLayout layout = UiBuilder.newVerticalLayout();
+        VerticalLayout layout = UiBuilder.verticalLayout();
         layout.setHeight(-1,UNITS_PIXELS);
         layout.addStyleName(Oph.CONTAINER_MAIN);
         setContent(layout); // root layout
 
         // Create application layout and add to root
-        _appRootLayout = UiBuilder.newHorizontalLayout();
+        _appRootLayout = UiBuilder.horizontalLayout();
         layout.addComponent(_appRootLayout);
 
         // Create left side
-        _appLeftLayout = UiBuilder.newVerticalLayout();
+        _appLeftLayout = UiBuilder.verticalLayout();
         _appLeftLayout.setWidth("25%");
         _appRootLayout.addComponent(_appLeftLayout);
 
         // Create right side
-        _appRightLayout = UiBuilder.newVerticalLayout();
+        _appRightLayout = UiBuilder.verticalLayout();
         _appRootLayout.addComponent(_appRightLayout);
 
         // Show application identifier if needed

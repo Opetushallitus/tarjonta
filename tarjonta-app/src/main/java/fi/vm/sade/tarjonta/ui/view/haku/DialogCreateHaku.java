@@ -16,8 +16,8 @@
 package fi.vm.sade.tarjonta.ui.view.haku;
 
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.tarjonta.ui.helper.AbstractDialogWindow;
 import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
+import fi.vm.sade.vaadin.ui.OphAbstractDialogWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author mlyly
  */
 @Configurable
-public class DialogCreateHaku extends AbstractDialogWindow {
+public class DialogCreateHaku extends OphAbstractDialogWindow {
 
     private static final Logger LOG = LoggerFactory.getLogger(DialogCreateHaku.class);
 
