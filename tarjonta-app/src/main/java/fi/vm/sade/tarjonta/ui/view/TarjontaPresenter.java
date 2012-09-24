@@ -39,9 +39,6 @@ public class TarjontaPresenter {
 
     private TarjontaRootView _rootView;
 
-    private boolean _showIdentifier;
-    private String _identifier;
-
     public TarjontaPresenter() {
     }
 
@@ -63,13 +60,12 @@ public class TarjontaPresenter {
     }
 
     public boolean isShowIdentifier() {
-        return _showIdentifier;
+        return _model.isShowIdentifier();
     }
 
     public String getIdentifier() {
-        return _identifier;
+        return _model.getIdentifier();
     }
-
 
     /**
      * Show main default view
@@ -84,7 +80,7 @@ public class TarjontaPresenter {
 
         _rootView.getAppRightLayout().addComponent(_rootView.getBreadcrumbsView());
         _rootView.getAppRightLayout().addComponent(_rootView.getSearchSpesificationView());
-        _rootView.getAppRightLayout().addComponent(new Label("TABS"));
+        _rootView.getAppRightLayout().addComponent(_rootView.getSearchResultsView());
     }
 
     public void doSearch() {

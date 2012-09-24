@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -56,16 +57,23 @@ public class TarjontaRootView extends Window {
 
     private BreadcrumbsView _breadcrumbsView;
     private SearchSpesificationView _searchSpesificationView;
+    private SearchResultsView _searchResultsView;
 
     public TarjontaRootView() {
         super();
         LOG.info("TarjontaView(): presenter={}", _presenter);
+
+        // Fixi jrebelille...
+        if (_presenter == null) {
+            _presenter = new TarjontaPresenter();
+        }
 
         //
         // Create components
         //
         _breadcrumbsView = new BreadcrumbsView();
         _searchSpesificationView = new SearchSpesificationView();
+        _searchResultsView = new SearchResultsView();
 
         // Initialize presenter with root window
         _presenter.setTarjontaWindow(this);
@@ -82,6 +90,7 @@ public class TarjontaRootView extends Window {
 
         // Create left side
         _appLeftLayout = UiBuilder.newVerticalLayout();
+        _appLeftLayout.setWidth("25%");
         _appRootLayout.addComponent(_appLeftLayout);
 
         // Create right side
@@ -114,6 +123,10 @@ public class TarjontaRootView extends Window {
 
     public BreadcrumbsView getBreadcrumbsView() {
         return _breadcrumbsView;
+    }
+
+    public SearchResultsView getSearchResultsView() {
+        return _searchResultsView;
     }
 
 }
