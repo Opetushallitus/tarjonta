@@ -10,52 +10,20 @@ import java.lang.reflect.Field;
  *
  * @author mlyly
  */
-public class KoulutusSearchSpesificationViewModel {
+public class KoulutusSearchSpesificationViewModel extends BaseUIViewModel {
 
     private String searchSpec;
 
-    // TODO mitä nämä on, eli mitä formaattia - omia DTOta?
+    // Koodisto
     private String hakukausi;
+    // Koodisto
     private String koulutuksenAlkamiskausi;
+    // Koodisto
     private String hakutapa;
+    // Koodisto
     private String hakutyyppi;
-    private String hanKohdejoukko;
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append("[");
-
-        Field[] fields = this.getClass().getDeclaredFields();
-
-        boolean isFirstField = true;
-
-        for (Field field : fields) {
-            if (!isFirstField) {
-                sb.append(", ");
-            }
-
-            sb.append(field.getName());
-            sb.append("=");
-
-            try {
-                Object v = field.get(this);
-                if (v == null) {
-                    sb.append("NULL");
-                } else {
-                    sb.append(v.toString());
-                }
-            } catch (Throwable ex) {
-                sb.append("FAILED TO GET VALUE");
-            }
-
-            isFirstField = false;
-        }
-
-        sb.append("]");
-        return sb.toString();
-    }
+    // Koodisto
+    private String haunKohdejoukko;
 
     public String getSearchSpec() {
         return searchSpec;
@@ -97,11 +65,11 @@ public class KoulutusSearchSpesificationViewModel {
         this.hakutyyppi = hakutyyppi;
     }
 
-    public String getHanKohdejoukko() {
-        return hanKohdejoukko;
+    public String getHaunKohdejoukko() {
+        return haunKohdejoukko;
     }
 
-    public void setHanKohdejoukko(String hanKohdejoukko) {
-        this.hanKohdejoukko = hanKohdejoukko;
+    public void setHaunKohdejoukko(String hanKohdejoukko) {
+        this.haunKohdejoukko = hanKohdejoukko;
     }
 }

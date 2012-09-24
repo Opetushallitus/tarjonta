@@ -39,9 +39,7 @@
     <bean class="fi.vm.sade.tarjonta.widget.factory.TarjontaWidgetFactory"/>
     -->
 
-<!--
     <import resource="application-context-service.xml"/>
     <import resource="application-context-ws.xml"/>
--->
 
 </beans>

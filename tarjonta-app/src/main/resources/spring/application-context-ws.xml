@@ -12,7 +12,6 @@
 -->
 
     <!-- Koodisto service (mock) -->
-<!--
     <bean id="mockDataHandler" class="fi.vm.sade.koodisto.service.mock.MockDataHandler"/>
 
     <bean id="koodiService" class="fi.vm.sade.koodisto.service.mock.KoodiServiceMock">
@@ -25,6 +24,7 @@
 
     <bean class="fi.vm.sade.koodisto.widget.factory.WidgetFactory" />
 
+<!--
     <bean class="fi.vm.sade.organisaatio.ui.widgets.factory.OrganisaatioWidgetFactory"/>
 -->
 

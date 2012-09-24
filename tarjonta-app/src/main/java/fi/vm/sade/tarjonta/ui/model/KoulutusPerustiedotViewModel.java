@@ -27,7 +27,7 @@ import java.util.Set;
  *
  * @author mlyly
  */
-public class KoulutusPerustiedotViewModel implements Serializable {
+public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
 
     // Koodisto: koulutus
     private String _koulutus;
@@ -57,42 +57,6 @@ public class KoulutusPerustiedotViewModel implements Serializable {
     private boolean _koulutusOnMaksullista;
     private boolean _koulutusStipendiMahdollisuus;
     private List<KoulutusLinkkiViewModel> _koulutusLinkit;
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append("[");
-
-        Field[] fields = this.getClass().getDeclaredFields();
-
-        boolean isFirstField = true;
-
-        for (Field field : fields) {
-            if (!isFirstField) {
-                sb.append(", ");
-            }
-
-            sb.append(field.getName());
-            sb.append("=");
-
-            try {
-                Object v = field.get(this);
-                if (v == null) {
-                    sb.append("NULL");
-                } else {
-                    sb.append(v.toString());
-                }
-            } catch (Throwable ex) {
-                sb.append("FAILED TO GET VALUE");
-            }
-
-            isFirstField = false;
-        }
-
-        sb.append("]");
-        return sb.toString();
-    }
 
     public String getKoulutus() {
         return _koulutus;

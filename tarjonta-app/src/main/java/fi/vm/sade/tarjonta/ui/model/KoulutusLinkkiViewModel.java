@@ -24,7 +24,7 @@ import java.util.Set;
  *
  * @author mlyly
  */
-public class KoulutusLinkkiViewModel implements Serializable {
+public class KoulutusLinkkiViewModel extends BaseUIViewModel {
 
     // TODO enum
     public static final String[] LINKKI_TYYPIT = new String[] {
@@ -40,42 +40,6 @@ public class KoulutusLinkkiViewModel implements Serializable {
     // Koodisto: kieli
     Set<String> _kielet;
     String _url;
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append("[");
-
-        Field[] fields = this.getClass().getDeclaredFields();
-
-        boolean isFirstField = true;
-
-        for (Field field : fields) {
-            if (!isFirstField) {
-                sb.append(", ");
-            }
-
-            sb.append(field.getName());
-            sb.append("=");
-
-            try {
-                Object v = field.get(this);
-                if (v == null) {
-                    sb.append("NULL");
-                } else {
-                    sb.append(v.toString());
-                }
-            } catch (Throwable ex) {
-                sb.append("FAILED TO GET VALUE");
-            }
-
-            isFirstField = false;
-        }
-
-        sb.append("]");
-        return sb.toString();
-    }
 
     public Set<String> getKielet() {
         if (_kielet == null) {

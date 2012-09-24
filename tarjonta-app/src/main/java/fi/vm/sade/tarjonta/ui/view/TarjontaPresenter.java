@@ -87,4 +87,7 @@ public class TarjontaPresenter {
         _rootView.getAppRightLayout().addComponent(new Label("TABS"));
     }
 
+    public void doSearch() {
+        LOG.info("doSearch(): searchSpec={}", _model.getSearchSpec());
+    }
 }

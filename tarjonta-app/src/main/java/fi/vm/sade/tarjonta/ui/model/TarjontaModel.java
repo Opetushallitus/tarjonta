@@ -26,13 +26,15 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Configurable
-public class TarjontaModel implements Serializable {
+public class TarjontaModel extends BaseUIViewModel {
 
     // Show label that shows last modification
     @Value("${common.showAppIdentifier:true}")
     private Boolean _showIdentifier;
     @Value("${tarjonta-app.identifier:APPLICATION IDENTIFIER NOT AVAILABLE}")
     private String _identifier;
+
+    private KoulutusSearchSpesificationViewModel _searchSpec = new KoulutusSearchSpesificationViewModel();
 
     public String getIdentifier() {
         return _identifier;
@@ -50,5 +52,8 @@ public class TarjontaModel implements Serializable {
         this._showIdentifier = _showIdentifier;
     }
 
+    public KoulutusSearchSpesificationViewModel getSearchSpec() {
+        return _searchSpec;
+    }
 
 }

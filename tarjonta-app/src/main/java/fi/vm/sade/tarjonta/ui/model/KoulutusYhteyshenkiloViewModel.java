@@ -24,7 +24,7 @@ import java.util.Set;
  *
  * @author mlyly
  */
-public class KoulutusYhteyshenkiloViewModel implements Serializable {
+public class KoulutusYhteyshenkiloViewModel extends BaseUIViewModel {
 
     private String _nimi;
     private String _titteli;
@@ -33,42 +33,6 @@ public class KoulutusYhteyshenkiloViewModel implements Serializable {
 
     // Koodisto: kieli
     private Set<String> _kielet = new HashSet<String>();
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append("[");
-
-        Field[] fields = this.getClass().getDeclaredFields();
-
-        boolean isFirstField = true;
-
-        for (Field field : fields) {
-            if (!isFirstField) {
-                sb.append(", ");
-            }
-
-            sb.append(field.getName());
-            sb.append("=");
-
-            try {
-                Object v = field.get(this);
-                if (v == null) {
-                    sb.append("NULL");
-                } else {
-                    sb.append(v.toString());
-                }
-            } catch (Throwable ex) {
-                sb.append("FAILED TO GET VALUE");
-            }
-
-            isFirstField = false;
-        }
-
-        sb.append("]");
-        return sb.toString();
-    }
 
     public String getNimi() {
         return _nimi;
