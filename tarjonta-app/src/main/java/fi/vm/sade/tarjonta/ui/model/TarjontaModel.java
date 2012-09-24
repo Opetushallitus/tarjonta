@@ -18,17 +18,19 @@ package fi.vm.sade.tarjonta.ui.model;
 import java.io.Serializable;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author mlyly
  */
+@Component
 @Configurable
 public class TarjontaModel implements Serializable {
 
     // Show label that shows last modification
     @Value("${common.showAppIdentifier:true}")
-    private boolean _showIdentifier;
+    private Boolean _showIdentifier;
     @Value("${tarjonta-app.identifier:APPLICATION IDENTIFIER NOT AVAILABLE}")
     private String _identifier;
 

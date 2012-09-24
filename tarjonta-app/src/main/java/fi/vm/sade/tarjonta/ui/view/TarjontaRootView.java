@@ -42,7 +42,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  *
  * @author mlyly
  */
-@Configurable
+@Configurable(preConstruction=true)
 public class TarjontaRootView extends Window {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaRootView.class);

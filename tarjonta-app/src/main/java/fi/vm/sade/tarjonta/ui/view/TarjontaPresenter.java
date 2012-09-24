@@ -22,11 +22,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author mlyly
  */
+@Component
 @Configurable(preConstruction = false)
 public class TarjontaPresenter {
 
@@ -79,7 +81,7 @@ public class TarjontaPresenter {
         _rootView.getAppRightLayout().removeAllComponents();
 
         _rootView.getAppLeftLayout().addComponent(new Label("LEFT"));
-        
+
         _rootView.getAppRightLayout().addComponent(_rootView.getBreadcrumbsView());
         _rootView.getAppRightLayout().addComponent(_rootView.getSearchSpesificationView());
         _rootView.getAppRightLayout().addComponent(new Label("TABS"));
