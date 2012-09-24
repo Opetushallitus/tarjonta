@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions name="tarjontaAdminService"
+                  targetNamespace="http://service.tarjonta.sade.vm.fi/"
+                  xmlns:ns1="http://service.tarjonta.sade.vm.fi/types"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://service.tarjonta.sade.vm.fi/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://service.tarjonta.sade.vm.fi/">
+            <xsd:import namespace="http://service.tarjonta.sade.vm.fi/types" schemaLocation="OPHTarjontaBatchService.xsd" />
+        </xsd:schema>
+    </wsdl:types>
+
+    <wsdl:message name="importTarjontaRequest">
+        <wsdl:part element="ns1:importTarjontaRequest" name="request">
+        </wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="importTarjontaResponse">
+        <wsdl:part element="ns1:importTarjontaResponse" name="response">
+        </wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:portType name="TarjontaBatchService">
+        <wsdl:documentation>
+            Admin service for importing tarjonta data.
+        </wsdl:documentation>
+        <wsdl:operation name="importBatch">
+            <wsdl:documentation>
+                
+            </wsdl:documentation>
+            <wsdl:input message="tns:importTarjontaRequest" name="importTarjontaRequest">
+            </wsdl:input>
+            <wsdl:output message="tns:importTarjontaResponse" name="importTarjontaResponse">
+            </wsdl:output>
+        </wsdl:operation>        
+    </wsdl:portType>
+
+    <wsdl:binding name="TarjontaBatchServiceSoapBinding" type="tns:TarjontaBatchService">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="importBatch">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input name="importTarjontaRequest">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="importTarjontaResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>        
+    </wsdl:binding>
+
+    <wsdl:service name="TarjontaBatchService">
+        <wsdl:port name="TarjontaBatchServicePort" binding="tns:TarjontaBatchServiceSoapBinding">
+            <soap:address location="http://localhost:8181/cxf/tarjontaBatchService" />
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>

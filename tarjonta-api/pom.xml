@@ -154,6 +154,27 @@
                                     <extraargs>
                                         <extraarg>-xjc-XhashCode</extraarg>
                                         <extraarg>-xjc-Xequals</extraarg>
+                                        <extraarg>-verbose</extraarg>
+                                    </extraargs>
+                                </wsdlOption>                                
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                    
+                    <execution>
+                        <id>generate-tarjonta-batch-wsdl2java</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sourceRoot>target/generated-sources/java</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>src/main/resources/wsdl/OPHTarjontaBatchService.wsdl</wsdl>
+                                    <extraargs>
+                                        <extraarg>-xjc-XhashCode</extraarg>
+                                        <extraarg>-xjc-Xequals</extraarg>
                                     </extraargs>
                                 </wsdlOption>                                
                             </wsdlOptions>

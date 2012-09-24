@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xs:schema elementFormDefault="unqualified"
+           targetNamespace="http://service.tarjonta.sade.vm.fi/types" version="1.0"
+           xmlns:tns="http://service.tarjonta.sade.vm.fi/types"
+           xmlns:tnsh="http://service.tarjonta.sade.vm.fi/tarjonta/2012/09/24"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:import namespace="http://service.tarjonta.sade.vm.fi/tarjonta/2012/09/24" schemaLocation="OPHTarjonta20120924.xsd" />
+
+    <xs:element name="importTarjontaRequest" type="tns:ImportTarjontaRequestType" />
+    <xs:element name="importTarjontaResponse" type="tns:ImportTarjontaResponseType" />
+    
+    <xs:complexType name="ImportTarjontaRequestType">
+        <xs:sequence>
+            
+        </xs:sequence>
+    </xs:complexType>
+	
+	<xs:complexType name="ImportTarjontaResponseType">
+        <xs:sequence>
+            
+        </xs:sequence>
+    </xs:complexType>
+    
+</xs:schema>
