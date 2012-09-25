@@ -21,11 +21,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.util.HierarchicalContainer;
+import com.vaadin.ui.Label;
 
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
@@ -42,10 +45,14 @@ import fi.vm.sade.tarjonta.ui.view.haku.ListHakuView;
 @Configurable(preConstruction = false)
 public class HakuPresenter {
     
+    private static final Logger LOG = LoggerFactory.getLogger(HakuPresenter.class);
+    
     private KoulutusSearchSpesificationViewModel searchSpec = new KoulutusSearchSpesificationViewModel();
     private List<HakuViewModel> hakuDb = new ArrayList<HakuViewModel>();
     
     private ListHakuView hakuList;
+    
+    private TarjontaRootView rootView;
 
 
 
@@ -86,20 +93,21 @@ public class HakuPresenter {
         Set<Map.Entry<String, List<HakuViewModel>>> set = map.entrySet();
 
         HierarchicalContainer hc = new HierarchicalContainer();
-        HakuResultRow rowStyle = new HakuResultRow();
-        Object format = rowStyle.format("");
+        
 
         for (Map.Entry<String, List<HakuViewModel>> e : set) {
-
-            hc.addContainerProperty(COLUMN_A, format.getClass(), rowStyle.format(e.getKey()));
+            HakuResultRow rowStyle = new HakuResultRow();
+            Object format = rowStyle.format("", false);
+            hc.addContainerProperty(COLUMN_A, format.getClass(), rowStyle.format(e.getKey(), false));
             Object rootItem = hc.addItem();
 
-            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey()));
+            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey(), false));
 
             for (HakuViewModel curHaku : e.getValue()) {
+                HakuResultRow rowStyleInner = new HakuResultRow(curHaku);
                 Object subItem = hc.addItem();
                 hc.setParent(subItem, rootItem);
-                hc.getContainerProperty(subItem, COLUMN_A).setValue(rowStyle.format(curHaku.getHaunTunniste()));
+                hc.getContainerProperty(subItem, COLUMN_A).setValue(rowStyleInner.format(curHaku.getHaunTunniste(), true));
                 hc.setChildrenAllowed(subItem, false);
             }
         }
@@ -108,6 +116,32 @@ public class HakuPresenter {
 
     public void showAddHakuDokumenttiView() {
         
+        
+    }
+    
+    public void loadViewForm(HakuViewModel haku) {
+        LOG.info("loadViewForm()");
+
+        rootView.getAppLeftLayout().removeAllComponents();
+        rootView.getAppRightLayout().removeAllComponents();
+
+        rootView.getAppLeftLayout().addComponent(new Label("LEFT"));
+
+        rootView.getAppRightLayout().addComponent(rootView.getBreadcrumbsView());
+        rootView.getAppRightLayout().addComponent(new Label("Tähän haun tarkastelunäyttö" + haku.getHaunTunniste()));
+        
+    }
+    
+    public void loadEditForm(HakuViewModel haku) {
+        LOG.info("loadEditForm()");
+
+        rootView.getAppLeftLayout().removeAllComponents();
+        rootView.getAppRightLayout().removeAllComponents();
+
+        rootView.getAppLeftLayout().addComponent(new Label("LEFT"));
+
+        rootView.getAppRightLayout().addComponent(rootView.getBreadcrumbsView());
+        rootView.getAppRightLayout().addComponent(new Label("Tähän haun muokkauslomake: " + haku.getHaunTunniste()));
         
     }
 
@@ -148,6 +182,24 @@ public class HakuPresenter {
         hakuDb.add(hak3);
     }
     
+
+
+    public void setRootView(TarjontaRootView rootView) {
+        this.rootView = rootView;
+    }
+
+    public void removeHaku(HakuViewModel haku) {
+        int index = -1;
+        for (int i = 0; i < hakuDb.size(); ++i) {
+           if (hakuDb.get(i).getHaunTunniste().equals(haku.getHaunTunniste())) {
+               index = i;
+           }
+       }
+        if (index > -1) {
+            hakuDb.remove(index);
+        }
+        hakuList.reload();
+    }
 
 
 }

@@ -58,6 +58,10 @@ public class TarjontaRootView extends Window {
     private BreadcrumbsView _breadcrumbsView;
     private SearchSpesificationView _searchSpesificationView;
     private SearchResultsView _searchResultsView;
+    
+    //hakuPresenter ja kaikki hakutoiminnallisuudet tullaan varmaankin siirtämään pois tarjonnasta.
+    @Autowired(required = true)
+    private HakuPresenter hakuPresenter;
 
     public TarjontaRootView() {
         super();
@@ -103,6 +107,7 @@ public class TarjontaRootView extends Window {
         }
 
         _presenter.showMainDefaultView();
+        hakuPresenter.setRootView(this);
     }
 
     public HorizontalLayout getAppRootLayout() {
