@@ -49,8 +49,8 @@ public class HakuPresenter {
     private static final Logger LOG = LoggerFactory.getLogger(HakuPresenter.class);
     
     private KoulutusSearchSpesificationViewModel searchSpec = new KoulutusSearchSpesificationViewModel();
-    private List<HakuViewModel> hakuDb = new ArrayList<HakuViewModel>();
-    
+    private List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
+
     private ListHakuView hakuList;
     
     private EditHakuView editHaku;
@@ -61,7 +61,7 @@ public class HakuPresenter {
 
 
 
-    private static final String COLUMN_A = "Kategoriat";
+    public static final String COLUMN_A = "Kategoriat";
     
     public HakuPresenter() {
         createData();    
@@ -85,7 +85,7 @@ public class HakuPresenter {
         Map<String, List<HakuViewModel>> map = new HashMap<String, List<HakuViewModel>>();
 
         //Grouping the HakuViewModel objects based on hakutyyppi
-        for (HakuViewModel curHaku : hakuDb) {
+        for (HakuViewModel curHaku : haut) {
             if (!map.containsKey(curHaku.getHakutyyppi())) {
                 List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
                 haut.add(curHaku);
@@ -98,22 +98,25 @@ public class HakuPresenter {
         Set<Map.Entry<String, List<HakuViewModel>>> set = map.entrySet();
 
         HierarchicalContainer hc = new HierarchicalContainer();
-        
+        HakuResultRow rowStyleDef = new HakuResultRow();
+        hc.addContainerProperty(COLUMN_A, HakuResultRow.class, rowStyleDef.format("", false));
 
         for (Map.Entry<String, List<HakuViewModel>> e : set) {
+            LOG.debug("getTreeDataSource()" + e.getKey());
             HakuResultRow rowStyle = new HakuResultRow();
-            Object format = rowStyle.format("", false);
-            hc.addContainerProperty(COLUMN_A, format.getClass(), rowStyle.format(e.getKey(), false));
+            //Object format = rowStyle.format("", false);
+           
             Object rootItem = hc.addItem();
 
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey(), false));
 
             for (HakuViewModel curHaku : e.getValue()) {
                 HakuResultRow rowStyleInner = new HakuResultRow(curHaku);
-                Object subItem = hc.addItem();
-                hc.setParent(subItem, rootItem);
-                hc.getContainerProperty(subItem, COLUMN_A).setValue(rowStyleInner.format(curHaku.getHaunTunniste(), true));
-                hc.setChildrenAllowed(subItem, false);
+                //Object subItem = hc.addItem();
+                hc.addItem(curHaku);
+                hc.setParent(curHaku, rootItem);
+                hc.getContainerProperty(curHaku, COLUMN_A).setValue(rowStyleInner.format(curHaku.getHaunTunniste(), true));
+                hc.setChildrenAllowed(curHaku, false);
             }
         }
         return hc;
@@ -182,9 +185,9 @@ public class HakuPresenter {
         hak3.setHaunTunniste("Kevään 2013 erillishaku");
         hak3.setHakutyyppi("Erillishaut");
         
-        hakuDb.add(hak1);
-        hakuDb.add(hak2);
-        hakuDb.add(hak3);
+        haut.add(hak1);
+        haut.add(hak2);
+        haut.add(hak3);
     }
     
     public void showShowHakukohdeView() {
@@ -211,15 +214,19 @@ public class HakuPresenter {
 
     public void removeHaku(HakuViewModel haku) {
         int index = -1;
-        for (int i = 0; i < hakuDb.size(); ++i) {
-           if (hakuDb.get(i).getHaunTunniste().equals(haku.getHaunTunniste())) {
+        for (int i = 0; i < haut.size(); ++i) {
+           if (haut.get(i).getHaunTunniste().equals(haku.getHaunTunniste())) {
                index = i;
            }
        }
         if (index > -1) {
-            hakuDb.remove(index);
+            haut.remove(index);
         }
         hakuList.reload();
+    }
+    
+    public List<HakuViewModel> getHaut() {
+        return haut;
     }
 
     /**

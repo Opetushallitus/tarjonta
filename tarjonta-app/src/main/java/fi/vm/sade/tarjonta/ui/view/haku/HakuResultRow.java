@@ -39,13 +39,14 @@ import fi.vm.sade.vaadin.util.UiUtil;
  *
  */
 @Configurable(preConstruction = false)
-public class HakuResultRow {
+public class HakuResultRow  extends HorizontalLayout {
     
     private static final Logger LOG = LoggerFactory.getLogger(HakuResultRow.class);
     
     private I18NHelper i18n = new I18NHelper(this);
     private HakuViewModel haku;
-    
+    private CheckBox isSelected;
+
     @Autowired(required = true)
     private HakuPresenter hakuPresenter;
     
@@ -87,23 +88,26 @@ public class HakuResultRow {
      * @param text - the text to be shown on the row.
      * @return
      */
-    public HorizontalLayout format(String text, boolean withMenuBar) {
-        CheckBox newCheckbox = UiUtil.checkbox(null, null);
+    public HakuResultRow format(String text, boolean withMenuBar) {
+        isSelected = UiUtil.checkbox(null, null);
         Label label = new Label(text);
         label.setSizeUndefined(); // -1,-1
-        HorizontalLayout horizontal = new HorizontalLayout();
-        horizontal.setWidth(-1, Sizeable.UNITS_PIXELS);
-        horizontal.setHeight(-1, Sizeable.UNITS_PIXELS); //Tämä toimii!!!
+        setWidth(-1, Sizeable.UNITS_PIXELS);
+        setHeight(-1, Sizeable.UNITS_PIXELS); //Tämä toimii!!!
 
-        horizontal.addComponent(newCheckbox);
+        addComponent(isSelected);
         if (withMenuBar) {
-            horizontal.addComponent(newMenuBar());
+            addComponent(newMenuBar());
         }
-        horizontal.addComponent(label);
+        addComponent(label);
 
-        horizontal.setExpandRatio(label, 1f); //default == 0
+        setExpandRatio(label, 1f); //default == 0
 
-        return horizontal;
+        return this;
+    }
+    
+    public CheckBox getIsSelected() {
+        return isSelected;
     }
 
 }

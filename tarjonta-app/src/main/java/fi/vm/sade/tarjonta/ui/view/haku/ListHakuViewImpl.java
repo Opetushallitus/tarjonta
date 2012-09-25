@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -32,6 +34,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.vaadin.Oph;
@@ -65,7 +68,18 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         addComponent(buildMiddleResultLayout);
 
         CssLayout wrapper = UiUtil.cssLayout(UiMarginEnum.BOTTOM);
-        wrapper.addComponent(new CheckBox(i18n.getMessage("ValitseKaikki")));
+        final CheckBox valKaikki = new CheckBox(i18n.getMessage("ValitseKaikki"));
+        valKaikki.setImmediate(true);
+        valKaikki.addListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                if (valKaikki.booleanValue()) {
+                    changeHakuSelections();
+                }
+            }
+        });
+        wrapper.addComponent(valKaikki);
+        
         addComponent(wrapper);
 
         categoryTree = new CategoryTreeView();
@@ -81,7 +95,16 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     @PostConstruct
     public void setDataSource() {
         presenter.setHakuList(this);
+        categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(presenter.getTreeDataSource());
+    }
+    
+    private void changeHakuSelections() {
+        for (HakuViewModel curHaku : presenter.getHaut()) {
+            //SearchResultRow curRow = (SearchResultRow) (getContainerProperty(curOrg, ORGANISAATIO_PROPERTY).getValue())
+              HakuResultRow curRow = (HakuResultRow)(categoryTree.getContainerProperty(curHaku, presenter.COLUMN_A).getValue());
+              curRow.getIsSelected().setValue(true);
+        }
     }
 
     private HorizontalLayout buildMiddleResultLayout() {
