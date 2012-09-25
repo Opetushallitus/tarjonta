@@ -43,23 +43,21 @@
         		</xs:annotation>
             </xs:element>
        
-       
-       
            <xs:element minOccurs="1" maxOccurs="1" name="haunAlkamisPvm" type="xs:date" >
              	<xs:annotation>
-        			<xs:documentation>Koodiston URI tunniste hakukaudelle. Esm. k tai s (kevät tai syksy)</xs:documentation>
+        			<xs:documentation>Haun alkamispäivä </xs:documentation>
         		</xs:annotation>
             </xs:element>
             <xs:element minOccurs="1" maxOccurs="1" name="haunLoppumisPvm" type="xs:date" >
              	<xs:annotation>
-        			<xs:documentation>Koodiston URI tunniste hakukaudelle. Esm. k tai s (kevät tai syksy)</xs:documentation>
+        			<xs:documentation>Haun loppumispäivä</xs:documentation>
         		</xs:annotation>
             </xs:element>
             
             
             <xs:element minOccurs="1" maxOccurs="1" name="hakuVuosi" type="xs:int" >
              	<xs:annotation>
-        			<xs:documentation>Koodiston URI tunniste hakukaudelle. Esm. k tai s (kevät tai syksy)</xs:documentation>
+        			<xs:documentation>Hakuvuosi ilmaistuna 4 numerolla</xs:documentation>
         		</xs:annotation>
             </xs:element>
             <xs:element minOccurs="1" maxOccurs="1" name="hakukausiUri" type="xs:string" >
