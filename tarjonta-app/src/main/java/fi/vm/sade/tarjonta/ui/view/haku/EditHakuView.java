@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -13,14 +14,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
+
 package fi.vm.sade.tarjonta.ui.view.haku;
 
-
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 
 /**
  *
- * @author mlyly
+ * @author Tuomas Katva
  */
-public class EditHakuView {
+public interface EditHakuView {
+    
+     void initialize(HakuViewModel hakuViewModel);
 
 }

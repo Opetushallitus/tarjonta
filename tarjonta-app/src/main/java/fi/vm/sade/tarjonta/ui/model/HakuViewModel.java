@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.ui.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +28,6 @@ import java.util.List;
  */
 public class HakuViewModel {
 
-    
     private String hakuOid;
     
     private String hakutyyppi;
@@ -40,6 +40,8 @@ public class HakuViewModel {
     
     private String haunKohdejoukko;
     
+    private String hakutapa;
+    
     private String haunTunniste;
     
     private Date alkamisPvm;
@@ -48,9 +50,19 @@ public class HakuViewModel {
     
     private boolean haussaKaytetaanSijoittelua;
     
+    private boolean kaytetaanJarjestelmanHakulomaketta;
+    
     private String hakuLomakeUrl;
     
     private List<HakuaikaViewModel> sisaisetHakuajat;
+    
+    private String nimiFi;
+    
+    private String nimiSe;
+    
+    private String nimiEn;
+    
+    private boolean hakuValmis;
 
     /**
      * @return the hakuOid
@@ -210,15 +222,99 @@ public class HakuViewModel {
      * @return the sisaisetHakuajat
      */
     public List<HakuaikaViewModel> getSisaisetHakuajat() {
+        if (sisaisetHakuajat == null) {
+            sisaisetHakuajat = new ArrayList<HakuaikaViewModel>();
+        }
+        
         return sisaisetHakuajat;
     }
 
+
     /**
-     * @param sisaisetHakuajat the sisaisetHakuajat to set
+     * @return the hakutapa
      */
-    public void setSisaisetHakuajat(List<HakuaikaViewModel> sisaisetHakuajat) {
-        this.sisaisetHakuajat = sisaisetHakuajat;
+    public String getHakutapa() {
+        return hakutapa;
     }
+
+    /**
+     * @param hakutapa the hakutapa to set
+     */
+    public void setHakutapa(String hakutapa) {
+        this.hakutapa = hakutapa;
+    }
+
+    /**
+     * @return the kaytetaanJarjestelmanHakulomaketta
+     */
+    public boolean isKaytetaanJarjestelmanHakulomaketta() {
+        return kaytetaanJarjestelmanHakulomaketta;
+    }
+
+    /**
+     * @param kaytetaanJarjestelmanHakulomaketta the kaytetaanJarjestelmanHakulomaketta to set
+     */
+    public void setKaytetaanJarjestelmanHakulomaketta(boolean kaytetaanJarjestelmanHakulomaketta) {
+        this.kaytetaanJarjestelmanHakulomaketta = kaytetaanJarjestelmanHakulomaketta;
+    }
+
+    /**
+     * @return the nimiFi
+     */
+    public String getNimiFi() {
+        return nimiFi;
+    }
+
+    /**
+     * @param nimiFi the nimiFi to set
+     */
+    public void setNimiFi(String nimiFi) {
+        this.nimiFi = nimiFi;
+    }
+
+    /**
+     * @return the nimiSe
+     */
+    public String getNimiSe() {
+        return nimiSe;
+    }
+
+    /**
+     * @param nimiSe the nimiSe to set
+     */
+    public void setNimiSe(String nimiSe) {
+        this.nimiSe = nimiSe;
+    }
+
+    /**
+     * @return the nimiEn
+     */
+    public String getNimiEn() {
+        return nimiEn;
+    }
+
+    /**
+     * @param nimiEn the nimiEn to set
+     */
+    public void setNimiEn(String nimiEn) {
+        this.nimiEn = nimiEn;
+    }
+
+    /**
+     * @return the hakuValmis
+     */
+    public boolean isHakuValmis() {
+        return hakuValmis;
+    }
+
+    /**
+     * @param hakuValmis the hakuValmis to set
+     */
+    public void setHakuValmis(boolean hakuValmis) {
+        this.hakuValmis = hakuValmis;
+    }
+
+    
     
     
 }

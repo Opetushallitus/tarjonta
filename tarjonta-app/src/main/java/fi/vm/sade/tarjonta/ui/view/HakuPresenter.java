@@ -25,13 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
-
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.ui.Label;
 
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
+import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
 import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuView;
 
@@ -52,7 +53,11 @@ public class HakuPresenter {
     
     private ListHakuView hakuList;
     
+    private EditHakuView editHaku;
+    
     private TarjontaRootView rootView;
+    
+    HakuViewModel hakuModel;
 
 
 
@@ -115,7 +120,7 @@ public class HakuPresenter {
     }
 
     public void showAddHakuDokumenttiView() {
-        
+        loadEditForm(new HakuViewModel());
         
     }
     
@@ -182,7 +187,21 @@ public class HakuPresenter {
         hakuDb.add(hak3);
     }
     
-
+    public void showShowHakukohdeView() {
+        
+    }
+    
+    public void setHakuViewModel(HakuViewModel hakuModelParam) {
+        hakuModel = hakuModelParam;
+    }
+    
+    public void saveHakuLuonnoksenaModel() {
+        LOG.info("Haku tallennettu luonnoksena");
+    }
+    
+    public void saveHakuValmiina() {
+        LOG.info("Haku tallennettu valmiina");
+    }
 
     public void setRootView(TarjontaRootView rootView) {
         this.rootView = rootView;
@@ -201,5 +220,15 @@ public class HakuPresenter {
         hakuList.reload();
     }
 
+    /**
+     * @param editHaku the editHaku to set
+     */
+    public void setEditHaku(EditHakuView editHaku) {
+        this.editHaku = editHaku;
+    }
+
+    public EditHakuView getEditHaku() {
+        return editHaku;
+    }
 
 }
