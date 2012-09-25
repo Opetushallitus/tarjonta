@@ -196,10 +196,12 @@ public class HakuPresenter {
     }
     
     public void saveHakuLuonnoksenaModel() {
+        hakuModel.setHakuValmis(false);
         LOG.info("Haku tallennettu luonnoksena");
     }
     
     public void saveHakuValmiina() {
+        hakuModel.setHakuValmis(true);
         LOG.info("Haku tallennettu valmiina");
     }
 
