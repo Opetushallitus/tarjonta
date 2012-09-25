@@ -1,9 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<wsdl:definitions name="tarjontaService"
+<wsdl:definitions name="tarjontaService" 
                   targetNamespace="http://service.tarjonta.sade.vm.fi/"
                   xmlns:ns1="http://service.tarjonta.sade.vm.fi/types"
-                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://service.tarjonta.sade.vm.fi/"
-                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+                  xmlns:tns="http://service.tarjonta.sade.vm.fi/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
                   
     <wsdl:types>
         <xsd:schema targetNamespace="http://service.tarjonta.sade.vm.fi/">
