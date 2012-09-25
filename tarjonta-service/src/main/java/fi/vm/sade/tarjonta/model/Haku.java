@@ -65,10 +65,16 @@ public class Haku extends BaseEntity {
     @Column(name = "haun_loppumis_pvm")
     private Date haunLoppumisPvm;
 
+    /**
+     * Varsinainen haku tai taydennyshaku
+     */
     @NotNull
     @Column(name = "hakutyyppi")
     private String hakutyyppiUri;
 
+    /**
+     * kevat tai syksy
+     */
     @NotNull
     @Column(name = "hakukausi")
     private String hakukausiUri;
@@ -77,10 +83,17 @@ public class Haku extends BaseEntity {
     @Column(name = "koulutuksen_alkamiskausi")
     private String koulutuksenAlkamiskausiUri;
 
+    /**
+     * yliopistojen / ammattikorkeitten / peruskoulujen jne..
+     * esm. ammatillinen koulutus
+     */
     @NotNull
     @Column(name = "kohdejoukko")
     private String kohdejoukkoUri;
 
+    /**
+     * yhteishaku yms.
+     */
     @NotNull
     @Column(name = "hakutapa")
     private String hakutapaUri;

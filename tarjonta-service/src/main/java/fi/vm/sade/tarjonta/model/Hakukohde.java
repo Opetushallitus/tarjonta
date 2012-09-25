@@ -31,6 +31,9 @@ public class Hakukohde extends BaseEntity {
 
     private static final long serialVersionUID = -3320464257959195992L;
 
+    @Column(name="oid")
+    private String oid; 
+    
     @ManyToMany(mappedBy = "hakukohdes")
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
 
@@ -242,6 +245,14 @@ public class Hakukohde extends BaseEntity {
      */
     public void setLisatiedot(MonikielinenTeksti lisatiedot) {
         this.lisatiedot = lisatiedot;
+    }
+
+    public String getOid() {
+        return oid;
+    }
+
+    public void setOid(String oid) {
+        this.oid = oid;
     }
 
 }
