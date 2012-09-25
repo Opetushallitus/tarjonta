@@ -27,11 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author mlyly
  */
+@Component
 @Configurable(preConstruction = false)
 public class TarjontaPresenter {
 
@@ -203,7 +205,7 @@ public class TarjontaPresenter {
     }
 
     /*
-     * Get a right layout instance from the main split panel. 
+     * Get a right layout instance from the main split panel.
      */
     private VerticalLayout getRightLayout() {
         return _tarjontaWindow.getMainSplitPanel().getMainRightLayout();
