@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.ui.view;
 
 import com.vaadin.ui.Label;
+
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -86,4 +87,6 @@ public class TarjontaPresenter {
     public void doSearch() {
         LOG.info("doSearch(): searchSpec={}", _model.getSearchSpec());
     }
+
+
 }

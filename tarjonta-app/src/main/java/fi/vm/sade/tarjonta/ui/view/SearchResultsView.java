@@ -20,6 +20,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
+import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -46,7 +48,7 @@ public class SearchResultsView extends VerticalLayout{
         TabSheet tabs = new TabSheet();
         addComponent(tabs);
 
-        tabs.addTab(new Label("haut"), T("haut"));
+        tabs.addTab(new ListHakuViewImpl(), T("haut"));
         tabs.addTab(new Label("koulutukset"), T("koulutukset"));
         tabs.addTab(new Label("hakuryhmat"), T("hakuryhmat"));
     }

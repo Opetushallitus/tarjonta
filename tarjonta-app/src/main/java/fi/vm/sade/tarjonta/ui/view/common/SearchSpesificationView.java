@@ -15,9 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
@@ -25,6 +27,8 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
+import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +38,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
+import org.vaadin.addon.formbinder.ViewBoundForm;
 
 /**
  *
@@ -59,7 +64,7 @@ public class SearchSpesificationView extends HorizontalLayout {
     @PropertyId("searchSpec")
     private TextField _tfSearch;
     @Autowired
-    private TarjontaPresenter _presenter;
+    private HakuPresenter _presenter;
     @Value("${koodisto-uris.hakukausi:http://hakukausi}")
     private String _koodistoUriHakukausi;
     @Value("${koodisto-uris.hakutapa:http://hakutapa}")
@@ -71,6 +76,8 @@ public class SearchSpesificationView extends HorizontalLayout {
     @Value("${koodisto-uris.koulutuksenAlkamiskausi:http://alkamiskausi")
     private String _koodistoUriKoulutuksenAlkamiskausi;
     private I18NHelper _i18nHelper = new I18NHelper(this);
+    
+    private Form form;
 
     public SearchSpesificationView() {
         super();
@@ -92,6 +99,7 @@ public class SearchSpesificationView extends HorizontalLayout {
         _btnHae.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
+                form.commit();
                 _presenter.doSearch();
             }
         });
@@ -106,6 +114,10 @@ public class SearchSpesificationView extends HorizontalLayout {
         addComponent(_cbKoulutuksenAlkamiskausi);
 
         addComponent(_btnTyhjenna);
+        
+        BeanItem<KoulutusSearchSpesificationViewModel> beanItem = new BeanItem<KoulutusSearchSpesificationViewModel>(_presenter.getSearchSpec());
+        form = new ViewBoundForm();
+        form.setItemDataSource(beanItem);
     }
 
     private String T(String key) {
