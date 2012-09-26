@@ -12,6 +12,7 @@ import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
+import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
@@ -79,7 +80,7 @@ public class UiBuilder extends UiUtil{
             c.setPropertyDataSource(psi.getItemProperty(expression));
         }
 
-        handleAddComponent(layout, c);
+        UiBaseUtil.handleAddComponent(layout, c);
 
         return c;
     }
@@ -131,7 +132,7 @@ public class UiBuilder extends UiUtil{
             kc.setPropertyDataSource(psi.getItemProperty(expression));
         }
 
-        handleAddComponent(layout, kc);
+        UiBaseUtil.handleAddComponent(layout, kc);
 
         return kc;
     }
@@ -141,7 +142,7 @@ public class UiBuilder extends UiUtil{
         sp.setLocked(true);
         sp.setHeight("2px");
 
-        handleAddComponent(_layout, sp);
+        UiBaseUtil.handleAddComponent(_layout, sp);
 
         return sp;
     }

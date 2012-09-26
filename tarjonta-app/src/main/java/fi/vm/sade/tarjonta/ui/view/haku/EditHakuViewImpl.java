@@ -180,7 +180,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         createButtonBar(_layout);
 
         UiUtil.label(_layout, T("HaunTiedot"), LabelStyleEnum.H2);
-        UiUtil.newHR(_layout);
+        UiUtil.hr(_layout);
 
         GridLayout grid = new GridLayout(3, 1);
         grid.setSpacing(true);
