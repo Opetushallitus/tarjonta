@@ -80,6 +80,12 @@
             <artifactId>generic-test-support</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>fi.vm.sade.oid</groupId>
+            <artifactId>oid-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
     </dependencies>
 
