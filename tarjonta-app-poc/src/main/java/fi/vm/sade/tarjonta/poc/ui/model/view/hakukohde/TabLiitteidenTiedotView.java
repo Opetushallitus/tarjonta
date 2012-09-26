@@ -20,7 +20,6 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -28,8 +27,7 @@ import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
-import fi.vm.sade.tarjonta.poc.ui.helper.KoodistoHelper;
+import fi.vm.sade.tarjonta.poc.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.poc.ui.model.view.AbstractVerticalLayout;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -41,7 +39,6 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
@@ -50,8 +47,6 @@ import org.springframework.beans.factory.annotation.Value;
 @Configurable(preConstruction = true)
 public class TabLiitteidenTiedotView extends AbstractVerticalLayout {
 
-    @Value("${koodisto-uris.kieli:http://kieli}")
-    private String _koodistoUriKieli;
     private static final Logger LOG = LoggerFactory.getLogger(TabLiitteidenTiedotView.class);
     private List<Entry<String, AbstractComponent>> items = new ArrayList<Entry<String, AbstractComponent>>();
 
@@ -77,8 +72,8 @@ public class TabLiitteidenTiedotView extends AbstractVerticalLayout {
         PopupDateField dateField = new PopupDateField();
         dateField.setResolution(PopupDateField.RESOLUTION_DAY);
         hl.addComponent(dateField);
-        
-        
+
+
         UiUtil.label(hl, "").setWidth(20, UNITS_PIXELS);
         Label lableTime = UiUtil.label(hl, T("timeLabel"));
 
@@ -114,38 +109,10 @@ public class TabLiitteidenTiedotView extends AbstractVerticalLayout {
         TextField email = UiUtil.textField(vl);
         email.setWidth(300, UNITS_PIXELS);
         addItem("toimitusosoite", vl);
-
-
     }
 
     private TabSheet buildLanguageTab() {
-        TabSheet tab = new TabSheet();
-
-        KoodistoHelper koodistoHelper = new KoodistoHelper();
-
-        if (_koodistoUriKieli != null) {
-            List<KoodiDTO> koodisto = koodistoHelper.getKoodisto(_koodistoUriKieli);
-
-            for (KoodiDTO k : koodisto) {
-                TextField textField = UiUtil.textField(null);
-                textField.setHeight("100px");
-                textField.setWidth(UiConstant.PCT100);
-
-                tab.addTab(textField, k.getKoodiArvo(), null);
-            }
-        } else {
-            //Do not add this code block to the real application! 
-            //A fix for JRebel development as sometimes the JRebel fails to 
-            //initialize value beans... 
-
-            TextField textField = UiUtil.textField(null);
-            textField.setHeight("100px");
-            textField.setWidth(UiConstant.PCT100);
-
-            tab.addTab(textField, "Suomi", null);
-        }
-
-        return tab;
+         return UiBuilder.koodistoLanguageTabSheets(getPresenter() != null ? getPresenter().getKoodistoKielet() : null);
     }
 
     private void buildTopAreaLanguageTab() {

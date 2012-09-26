@@ -1,24 +1,32 @@
 package fi.vm.sade.tarjonta.poc.ui.helper;
 
 import com.vaadin.data.util.PropertysetItem;
+import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
+import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
+import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
+import java.util.List;
 
 /**
  *
  * @author jani
  */
 public class UiBuilder extends UiUtil {
+
+    private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
 
     /**
      * Create new KoodistoComponent with ComboBox. Possible bind to a property.
@@ -133,5 +141,24 @@ public class UiBuilder extends UiUtil {
         UiBaseUtil.handleAddComponent(layout, kc);
 
         return kc;
+    }
+
+    public static TabSheet koodistoLanguageTabSheets(List<KoodiDTO> koodisto) {
+        TabSheet tab = new TabSheet();
+
+        if (koodisto != null) {
+            for (KoodiDTO k : koodisto) {
+                TextField textField = UiUtil.textField(null);
+                textField.setHeight("100px");
+                textField.setWidth(UiConstant.PCT100);
+
+                tab.addTab(textField, k.getKoodiArvo(), null);
+            }
+        }
+        VerticalLayout l3 = new VerticalLayout();
+        l3.setMargin(true);
+        tab.addTab(l3, "", TAB_ICON_PLUS);
+
+        return tab;
     }
 }

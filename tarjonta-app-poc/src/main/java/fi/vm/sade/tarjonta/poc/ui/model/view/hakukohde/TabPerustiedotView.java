@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.poc.ui.model.view.hakukohde;
 
-import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -25,11 +24,9 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
-import fi.vm.sade.tarjonta.poc.ui.helper.KoodistoHelper;
+import fi.vm.sade.tarjonta.poc.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.poc.ui.model.view.AbstractVerticalLayout;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.UiConstant;
@@ -43,7 +40,6 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
@@ -52,9 +48,6 @@ import org.springframework.beans.factory.annotation.Value;
 @Configurable(preConstruction = true)
 public class TabPerustiedotView extends AbstractVerticalLayout {
 
-    private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
-    @Value("${koodisto-uris.kieli:http://kieli}")
-    private String _koodistoUriKieli;
     private static final Logger LOG = LoggerFactory.getLogger(TabPerustiedotView.class);
     private List<Entry<String, AbstractComponent>> items = new ArrayList<Entry<String, AbstractComponent>>();
 
@@ -84,7 +77,7 @@ public class TabPerustiedotView extends AbstractVerticalLayout {
 
     private void buildHakukode() {
         HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
-        ComboBox comboBox = UiUtil.comboBox(hl, null, new String[]{"1", "2", "3"});
+        ComboBox comboBox = UiUtil.comboBox(hl, null, new String[]{"Tunnistekoodi1", "Tunnistekoodi2", "Tunnistekoodi3"});
         Button button = UiUtil.button(hl, T("tunnistekoodi"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -140,37 +133,7 @@ public class TabPerustiedotView extends AbstractVerticalLayout {
     }
 
     private TabSheet buildLanguageTab() {
-        TabSheet tab = new TabSheet();
-
-        KoodistoHelper koodistoHelper = new KoodistoHelper();
-
-        if (_koodistoUriKieli != null) {
-            List<KoodiDTO> koodisto = koodistoHelper.getKoodisto(_koodistoUriKieli);
-
-            for (KoodiDTO k : koodisto) {
-                TextField textField = UiUtil.textField(null);
-                textField.setHeight("100px");
-                textField.setWidth(UiConstant.PCT100);
-
-                tab.addTab(textField, k.getKoodiArvo(), null);
-            }
-        } else {
-            //Do not add this code block to the real application! 
-            //A fix for JRebel development as sometimes the JRebel fails to 
-            //initialize value beans... 
-
-            TextField textField = UiUtil.textField(null);
-            textField.setHeight("100px");
-            textField.setWidth(UiConstant.PCT100);
-
-            tab.addTab(textField, "Suomi", null);
-        }
-
-        VerticalLayout l3 = new VerticalLayout();
-        l3.setMargin(true);
-        tab.addTab(l3, "", TAB_ICON_PLUS);
-
-        return tab;
+        return UiBuilder.koodistoLanguageTabSheets(getPresenter() != null ? getPresenter().getKoodistoKielet() : null);
     }
 
     private void buildTopAreaLanguageTab() {

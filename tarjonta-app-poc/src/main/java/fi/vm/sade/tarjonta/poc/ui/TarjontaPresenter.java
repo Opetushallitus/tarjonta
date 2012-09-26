@@ -7,7 +7,9 @@ package fi.vm.sade.tarjonta.poc.ui;
 import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
 import fi.vm.sade.tarjonta.poc.ui.enums.Notification;
 import fi.vm.sade.tarjonta.poc.ui.model.view.AddHakuDokumenttiView;
 import fi.vm.sade.tarjonta.poc.ui.model.view.EditKoulutusView;
@@ -19,21 +21,27 @@ import fi.vm.sade.tarjonta.poc.ui.model.view.hakukohde.CreateHakukohdeView;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
 import fi.vm.sade.tarjonta.poc.demodata.row.MultiActionTableStyle;
+import fi.vm.sade.tarjonta.poc.ui.helper.KoodistoHelper;
+import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.dto.ButtonDTO;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
+import fi.vm.sade.vaadin.util.UiUtil;
+import java.io.Serializable;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
  * @author mlyly
  */
 @Configurable(preConstruction = false)
-public class TarjontaPresenter {
+public class TarjontaPresenter implements Serializable{
 
     public static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
     private static final int PAGE_MAX = 30;
@@ -41,6 +49,9 @@ public class TarjontaPresenter {
     private TarjontaModel _model;
     private TarjontaWindow _tarjontaWindow;
     private int pageCurrent = 12;
+    @Value("${koodisto-uris.kieli:http://kieli}")
+    private String _koodistoUriKieli;
+    private KoodistoHelper koodistoHelper;
 
     public TarjontaPresenter() {
         LOG.info("TarjontaPresenter() : model={}", _model);
@@ -49,6 +60,7 @@ public class TarjontaPresenter {
     @PostConstruct
     public void initialize() {
         LOG.info("initialize() : model={}", _model);
+        koodistoHelper = new KoodistoHelper();
     }
 
     public void searchKoulutus() {
@@ -206,6 +218,11 @@ public class TarjontaPresenter {
     public HierarchicalContainer getTreeDataSource() {
         return DataSource.treeTableData(new MultiActionTableStyle());
     }
+
+    public List<KoodiDTO> getKoodistoKielet() {
+        return koodistoHelper.getKoodisto(_koodistoUriKieli);
+    }
+   
 
     /*
      * Get a right layout instance from the main split panel. 

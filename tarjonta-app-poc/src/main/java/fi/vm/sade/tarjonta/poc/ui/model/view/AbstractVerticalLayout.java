@@ -22,11 +22,13 @@ import fi.vm.sade.vaadin.constants.UiConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  *
  * @author Jani Wilén
  */
+@Configurable(preConstruction = true)
 public abstract class AbstractVerticalLayout extends VerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractVerticalLayout.class);
@@ -35,8 +37,8 @@ public abstract class AbstractVerticalLayout extends VerticalLayout {
     private TarjontaPresenter _presenter;
 
     public AbstractVerticalLayout(Class clazz) {
-        setWidth(UiConstant.PCT100);
         LOG.debug("In AbstractBaseView constructor.");
+        setWidth(UiConstant.PCT100);
         _i18n = new I18NHelper(clazz);
     }
 

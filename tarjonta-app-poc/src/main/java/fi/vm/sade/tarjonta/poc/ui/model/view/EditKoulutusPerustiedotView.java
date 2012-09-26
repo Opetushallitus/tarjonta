@@ -116,7 +116,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
 
         addComponent(addLabel("KoulutuksenPerustiedot", LabelStyleEnum.H2, null));
 
-        addHR(this);
+        UiUtil.hr(this);
 
         GridLayout grid = new GridLayout(3, 1);
         grid.setSizeFull();
@@ -215,9 +215,9 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
             grid.addComponent(addCheckBox("StipendiMahdollisuus.checkbox", mi, "koulutusStipendimahdollisuus", null, this));
 
         }
-        addHR(this);
+        UiUtil.hr(this);
         addYhteyshenkiloSelectorAndEditor(this);
-        addHR(this);
+        UiUtil.hr(this);
         addLinkkiSelectorAndEditor(this, mi);
 
         HorizontalLayout hlButtonsBottom = new HorizontalLayout();
@@ -398,24 +398,6 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     private KoodistoComponent addKoodistoTwinColSelect(final String koodistoUri, PropertysetItem psi, String expression, AbstractOrderedLayout layout) {
         LOG.debug("addKoodistoTwinColSelect({}, ...)", koodistoUri);
         return UiBuilder.koodistoTwinColSelect(layout, koodistoUri, psi, expression);
-    }
-
-    /**
-     * Add vertical locked splitter.
-     *
-     * @param layout
-     * @return
-     */
-    private VerticalSplitPanel addHR(AbstractLayout layout) {
-        VerticalSplitPanel sp = new VerticalSplitPanel();
-        sp.setLocked(true);
-        sp.setHeight("2px");
-
-        if (layout != null) {
-            layout.addComponent(sp);
-        }
-
-        return sp;
     }
 
     /**

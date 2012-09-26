@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  *
  * @author jani
  */
+@Configurable(preConstruction = true)
 public abstract class AbstractVerticalInfoLayout extends OphAbstractInfoLayout<VerticalLayout> {
 
     private I18NHelper _i18n;
