@@ -31,7 +31,10 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
 
     // Koodisto: koulutus
     private String _koulutus;
+
     // TODO Mistä nämä tulevat?
+    // TODO Päätellään ilmeisesti koodistosta (koulutus?), tulevat siitä tilastokeskuksen opetuskoodista joka määrittelee nämä
+    // TODO Miten ne on määritelty koodistossa? Metadata? Rinnastuvuus?
     private String _koulutusTyyppi;
     private String _koulutusala = "Filosofia";
     private String _tutkinto = "Maisteri";
@@ -39,6 +42,7 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     private String _opintojenlaajuusyksikko = "Opintopisteet";
     private String _opintojenlaajuus = "300 op";
     private String _opintoala = "opintoala ei tiedossa";
+
     // Koodisto: kieli
     private Set<String> _opetuskielet = new HashSet<String>();
     private boolean _opetuskieletKaikki;

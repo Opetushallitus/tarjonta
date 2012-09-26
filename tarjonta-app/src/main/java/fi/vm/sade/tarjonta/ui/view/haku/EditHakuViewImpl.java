@@ -46,21 +46,23 @@ import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
-import org.vaadin.addon.formbinder.ViewBoundForm;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+
 /**
+ * And editor for "Haku" object.
  *
  * @author mlyly
+ * @see HakuViewModel the model that is bound this edit form, see the PropertyId annotations.
  */
-
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
 public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
-    
     private static final Logger LOG = LoggerFactory.getLogger(EditHakuViewImpl.class);
+
     @Autowired(required = true)
     private HakuPresenter _presenter;
+
     private VerticalLayout _layout;
     @PropertyId("hakutyyppi")
     private KoodistoComponent _hakutyyppi;
@@ -101,26 +103,26 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     private String _koodistoUriHakutapa;
     private I18NHelper _i18n = new I18NHelper(this);
     private Form form;
-    
+
     public EditHakuViewImpl() {
         super();
-        _presenter.setEditHaku(this); 
+        _presenter.setEditHaku(this);
         HakuViewModel haku = new HakuViewModel();
         initialize(haku);
     }
-    
+
     public EditHakuViewImpl(HakuViewModel model) {
         _presenter.setEditHaku(this);
-        
+
         initialize(model);
     }
-    
+
     @Override
     public void attach() {
         super.attach();
         //initialize();
     }
-    
+
     @Override
     public void initialize(HakuViewModel hakuViewModel) {
         LOG.info("inititialize()");
@@ -129,14 +131,20 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         form = new ValidatingViewBoundForm(this);
         form.setItemDataSource(hakuBean);
         _presenter.setHakuViewModel(hakuViewModel);
-        
+
+        // Clean up old components if any
+        if (_layout != null) {
+            _layout.removeAllComponents();
+        }
+
+        // Create root layout for this component
         _layout = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
         setCompositionRoot(_layout);
 
         //
         // Init fields
         //
-        
+
         _hakutyyppi = UiBuilder.koodistoComboBox(null,_koodistoUriHakutyyppi, null, null, T("Hakutyyppi.prompt"));
         _hakutyyppi.setSizeUndefined();
         _hakukausi = UiBuilder.koodistoComboBox(null,_koodistoUriHakukausi, null, null, T("Hakukausi.prompt"));
@@ -258,6 +266,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
      /**
      * Top and botton button bars.
+     * Buttons are bound to send events defined in this class (SaveEvent, DeleteEvent etc.)
      *
      * @param layout
      * @return
@@ -283,7 +292,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             @Override
             public void buttonClick(ClickEvent event) {
                 fireEvent(new SaveEvent(EditHakuViewImpl.this, false));
-                
+
             }
         });
 
@@ -292,7 +301,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             @Override
             public void buttonClick(ClickEvent event) {
                 fireEvent(new SaveEvent(EditHakuViewImpl.this, true));
-                
+
             }
         });
 
@@ -314,7 +323,11 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     }
 
     /**
-     * Translator helper.
+     * Translator helper. Makes code so much more hip... and shorter.
+     *
+     * Its using I18NHelper so the actual translation key will be deducted like this:
+     *
+     * T("Jatka") becomes translation value for "EditHakuViewImpl.Jatka".
      *
      * @param key
      * @return
@@ -323,6 +336,10 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         return _i18n.getMessage(key);
     }
 
+    /*
+     * Component events emitted when buttons are pressed.
+     */
+
     /**
      * Fired when save is pressed.
      */
@@ -330,7 +347,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
         public CancelEvent(Component source) {
             super(source);
-           
+
         }
     }
 

@@ -21,12 +21,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * This class defines links to outside of this system.
+ *
+ * Link contains the language(s) the given URL link is used for.
  *
  * @author mlyly
  */
 public class KoulutusLinkkiViewModel extends BaseUIViewModel {
 
     // TODO enum
+
+    /**
+     * TODO enumiksi?
+     *
+     * Defines
+     *
+     */
     public static final String[] LINKKI_TYYPIT = new String[] {
         "OPPILAITOS",
         "KOULUTUSOHJELMA",
@@ -78,6 +88,7 @@ public class KoulutusLinkkiViewModel extends BaseUIViewModel {
         }
 
         if (!valid) {
+            // Default type is "OPPILAITOS" if invalid value given
             this._linkkityyppi = LINKKI_TYYPIT[0];
         } else {
             this._linkkityyppi = linkkityyppi;

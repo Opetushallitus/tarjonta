@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * TODO since UI is in flux this portlet contains "Haku" functonality which will be moved to "Haut ja valinnat" part at some point.
  *
  * @author mlyly
  */

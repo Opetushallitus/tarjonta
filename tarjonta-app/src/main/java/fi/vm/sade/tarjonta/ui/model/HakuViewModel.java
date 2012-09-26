@@ -1,10 +1,3 @@
-package fi.vm.sade.tarjonta.ui.model;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-
 /*
  *
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
@@ -22,46 +15,55 @@ import java.util.List;
  * European Union Public Licence for more details.
  */
 
+package fi.vm.sade.tarjonta.ui.model;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+
 /**
+ * For editing "Haku" in the UI.
+ *
  *
  * @author Tuomas Katva
  */
-public class HakuViewModel {
+public class HakuViewModel extends BaseUIViewModel {
 
     private String hakuOid;
-    
+
     private String hakutyyppi;
-    
+
     private String hakukausi;
-    
+
     private int hakuvuosi;
-    
+
     private String koulutuksenAlkamisKausi;
-    
+
     private String haunKohdejoukko;
-    
+
     private String hakutapa;
-    
+
     private String haunTunniste;
-    
+
     private Date alkamisPvm;
-    
+
     private Date paattymisPvm;
-    
+
     private boolean haussaKaytetaanSijoittelua;
-    
+
     private boolean kaytetaanJarjestelmanHakulomaketta;
-    
+
     private String hakuLomakeUrl;
-    
+
     private List<HakuaikaViewModel> sisaisetHakuajat;
-    
+
     private String nimiFi;
-    
+
     private String nimiSe;
-    
+
     private String nimiEn;
-    
+
     private boolean hakuValmis;
 
     /**
@@ -225,7 +227,7 @@ public class HakuViewModel {
         if (sisaisetHakuajat == null) {
             sisaisetHakuajat = new ArrayList<HakuaikaViewModel>();
         }
-        
+
         return sisaisetHakuajat;
     }
 
@@ -314,7 +316,7 @@ public class HakuViewModel {
         this.hakuValmis = hakuValmis;
     }
 
-    
-    
-    
+
+
+
 }

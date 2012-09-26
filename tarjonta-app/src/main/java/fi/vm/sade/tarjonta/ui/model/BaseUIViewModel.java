@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 
 /**
+ * Currently used to pretty-print the models contents.
  *
  * @author mlyly
  */
