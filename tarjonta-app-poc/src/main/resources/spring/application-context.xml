@@ -8,7 +8,7 @@
     <!-- Turn on AspectJ @Configurable support -->
     <context:spring-configured />
     <context:annotation-config />
-    <context:component-scan base-package="fi.vm.sade.tarjonta.ui" />
+    <context:component-scan base-package="fi.vm.sade.tarjonta.poc.ui" />
 
     <!-- Turn on @Autowired, @PostConstruct etc support -->
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
@@ -31,8 +31,8 @@
     </bean>
     <bean id="i18n" class="fi.vm.sade.generic.common.I18N"/>
 
-    <bean id="tarjontaPresenter" class="fi.vm.sade.tarjonta.ui.TarjontaPresenter"/>
-    <bean id="tarjontaModel" class="fi.vm.sade.tarjonta.ui.TarjontaModel"/>
+    <bean id="tarjontaPresenter" class="fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter"/>
+    <bean id="tarjontaModel" class="fi.vm.sade.tarjonta.poc.ui.TarjontaModel"/>
         
     
     <!--

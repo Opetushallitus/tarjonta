@@ -28,7 +28,7 @@
         <init-param>
             <description>Vaadin application class to start</description>
             <param-name>application</param-name>
-            <param-value>fi.vm.sade.tarjonta.ui.TarjontaPocApplication</param-value>
+            <param-value>fi.vm.sade.tarjonta.poc.ui.TarjontaPocApplication</param-value>
         </init-param>
     </servlet>
     
