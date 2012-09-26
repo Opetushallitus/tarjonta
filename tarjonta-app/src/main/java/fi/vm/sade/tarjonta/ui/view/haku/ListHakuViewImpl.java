@@ -15,6 +15,10 @@
  */
 package fi.vm.sade.tarjonta.ui.view.haku;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
@@ -22,13 +26,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
@@ -37,6 +44,7 @@ import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
+import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow.HakuRowMenuEvent;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -96,7 +104,44 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     public void setDataSource() {
         presenter.setHakuList(this);
         categoryTree.removeAllItems();
-        categoryTree.setContainerDataSource(presenter.getTreeDataSource());
+        categoryTree.setContainerDataSource(createDataSource(presenter.getTreeDataSource()));
+    }
+    
+    private Container createDataSource(Map<String, List<HakuViewModel>> map) {
+        Set<Map.Entry<String, List<HakuViewModel>>> set = map.entrySet();
+
+        HierarchicalContainer hc = new HierarchicalContainer();
+        HakuResultRow rowStyleDef = new HakuResultRow();
+        hc.addContainerProperty(presenter.COLUMN_A, HakuResultRow.class, rowStyleDef.format("", false));
+
+        for (Map.Entry<String, List<HakuViewModel>> e : set) {
+            LOG.debug("getTreeDataSource()" + e.getKey());
+            HakuResultRow rowStyle = new HakuResultRow();
+           
+            Object rootItem = hc.addItem();
+
+            hc.getContainerProperty(rootItem, presenter.COLUMN_A).setValue(rowStyle.format(e.getKey(), false));
+
+            for (HakuViewModel curHaku : e.getValue()) {
+                HakuResultRow rowStyleInner = new HakuResultRow(curHaku);
+                //Object subItem = hc.addItem();
+                hc.addItem(curHaku);
+                hc.setParent(curHaku, rootItem);
+                hc.getContainerProperty(curHaku, presenter.COLUMN_A).setValue(rowStyleInner.format(curHaku.getHaunTunniste(), true));
+                hc.setChildrenAllowed(curHaku, false);
+                
+                rowStyleInner.addListener(new Listener() {
+
+                    @Override
+                    public void componentEvent(Event event) {
+                        if (event instanceof HakuResultRow.HakuRowMenuEvent) {
+                            fireEvent(event);    
+                        }
+                    }
+                });
+            }
+        }
+        return hc;
     }
     
     private void changeHakuSelections() {
@@ -118,7 +163,9 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         btnLuoUusiHaku.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                presenter.showAddHakuDokumenttiView();
+                //presenter.showAddHakuDokumenttiView();
+                navigateToHakuEditForm();
+                
             }
         });
 
@@ -147,7 +194,20 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
 
     @Override
     public void reload() {
-        categoryTree.setContainerDataSource(presenter.getTreeDataSource());
+        categoryTree.setContainerDataSource(createDataSource(presenter.getTreeDataSource()));
+    }
+    
+    private void navigateToHakuEditForm() {
+        fireEvent(new NewHakuEvent(this));
+    }
+    
+    public class NewHakuEvent extends Component.Event {
+
+        public NewHakuEvent(Component source) {
+            super(source);
+            
+        }
+        
     }
 
 }

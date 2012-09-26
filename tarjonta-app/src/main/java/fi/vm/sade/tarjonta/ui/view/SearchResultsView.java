@@ -20,6 +20,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
+import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,21 @@ public class SearchResultsView extends VerticalLayout{
         TabSheet tabs = new TabSheet();
         addComponent(tabs);
 
-        tabs.addTab(new ListHakuViewImpl(), T("haut"));
+        ListHakuViewImpl hakuList = new ListHakuViewImpl();
+        hakuList.addListener(new Listener() {
+
+            @Override
+            public void componentEvent(Event event) {
+                if (event instanceof HakuResultRow.HakuRowMenuEvent) {
+                    fireEvent(event);
+                } else if (event instanceof ListHakuViewImpl.NewHakuEvent) {
+                    fireEvent(event);
+                }
+                    
+            }
+            
+        });
+        tabs.addTab(hakuList, T("haut"));
         tabs.addTab(new Label("koulutukset"), T("koulutukset"));
         tabs.addTab(new Label("hakuryhmat"), T("hakuryhmat"));
     }

@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
@@ -62,13 +63,8 @@ public class HakuResultRow  extends HorizontalLayout {
         @Override
         public void menuSelected(MenuBar.MenuItem selectedItem) {
             LOG.debug(selectedItem.getText());
-            if (selectedItem.getText().equals(i18n.getMessage("tarkastele"))) {
-                hakuPresenter.loadViewForm(haku);        
-            } else if (selectedItem.getText().equals(i18n.getMessage("muokkaa"))) {
-                hakuPresenter.loadEditForm(haku); 
-            } else if (selectedItem.getText().equals(i18n.getMessage("poista"))) {
-                hakuPresenter.removeHaku(haku);
-            }
+            menuItemClicked(selectedItem.getText());
+
         }
         
     };
@@ -81,6 +77,16 @@ public class HakuResultRow  extends HorizontalLayout {
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaKohteet"), menuCommand);
         rowMenuBar.addMenuCommand(i18n.getMessage("poista"), menuCommand);
         return rowMenuBar;
+    }
+    
+    private void menuItemClicked(String selection) {
+        if (selection.equals(i18n.getMessage("tarkastele"))) {
+            fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.VIEW));    
+        } else if (selection.equals(i18n.getMessage("muokkaa"))) {
+            fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.EDIT));  
+        } else if (selection.equals(i18n.getMessage("poista"))) {
+            fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.REMOVE));  
+        }
     }
 
     /**
@@ -108,6 +114,37 @@ public class HakuResultRow  extends HorizontalLayout {
     
     public CheckBox getIsSelected() {
         return isSelected;
+    }
+    
+    public class HakuRowMenuEvent extends Component.Event {
+        
+        public static final String REMOVE = "remove";
+        public static final String EDIT = "edit";
+        public static final String VIEW = "view";
+        
+        private HakuViewModel haku;
+        private String type;
+
+
+        public HakuRowMenuEvent(Component source, HakuViewModel haku, String type) {
+            super(source);
+            this.haku = haku;
+            this.type = type;
+        }
+        
+        public HakuRowMenuEvent(Component source) {
+            super(source);
+        }
+        
+        
+        public HakuViewModel getHaku() {
+            return haku;
+        }
+        
+
+        public String getType() {
+            return type;
+        }
     }
 
 }

@@ -119,6 +119,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
     @Override
     public void attach() {
+        LOG.debug("attach()");
         super.attach();
         //initialize();
     }

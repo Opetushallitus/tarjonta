@@ -19,21 +19,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import com.vaadin.data.Container;
-import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.ui.Label;
 
-import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
-import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuView;
 
 /**
@@ -80,7 +75,7 @@ public class HakuPresenter {
      * Gets the datasource for hakuList.
      * @return
      */
-    public Container getTreeDataSource() {
+    public Map<String, List<HakuViewModel>> getTreeDataSource() {
          
         Map<String, List<HakuViewModel>> map = new HashMap<String, List<HakuViewModel>>();
 
@@ -93,65 +88,18 @@ public class HakuPresenter {
             } else {
                 map.get(curHaku.getHakutyyppi()).add(curHaku);
             }   
-        }
-        
-        Set<Map.Entry<String, List<HakuViewModel>>> set = map.entrySet();
-
-        HierarchicalContainer hc = new HierarchicalContainer();
-        HakuResultRow rowStyleDef = new HakuResultRow();
-        hc.addContainerProperty(COLUMN_A, HakuResultRow.class, rowStyleDef.format("", false));
-
-        for (Map.Entry<String, List<HakuViewModel>> e : set) {
-            LOG.debug("getTreeDataSource()" + e.getKey());
-            HakuResultRow rowStyle = new HakuResultRow();
-            //Object format = rowStyle.format("", false);
-           
-            Object rootItem = hc.addItem();
-
-            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey(), false));
-
-            for (HakuViewModel curHaku : e.getValue()) {
-                HakuResultRow rowStyleInner = new HakuResultRow(curHaku);
-                //Object subItem = hc.addItem();
-                hc.addItem(curHaku);
-                hc.setParent(curHaku, rootItem);
-                hc.getContainerProperty(curHaku, COLUMN_A).setValue(rowStyleInner.format(curHaku.getHaunTunniste(), true));
-                hc.setChildrenAllowed(curHaku, false);
-            }
-        }
-        return hc;
+        }  
+        return map;
     }
 
     public void showAddHakuDokumenttiView() {
-        loadEditForm(new HakuViewModel());
+        //loadEditForm(new HakuViewModel());
         
     }
     
-    public void loadViewForm(HakuViewModel haku) {
-        LOG.info("loadViewForm()");
-
-        rootView.getAppLeftLayout().removeAllComponents();
-        rootView.getAppRightLayout().removeAllComponents();
-
-        rootView.getAppLeftLayout().addComponent(new Label("LEFT"));
-
-        rootView.getAppRightLayout().addComponent(rootView.getBreadcrumbsView());
-        rootView.getAppRightLayout().addComponent(new Label("Tähän haun tarkastelunäyttö" + haku.getHaunTunniste()));
-        
-    }
     
-    public void loadEditForm(HakuViewModel haku) {
-        LOG.info("loadEditForm()");
-
-        rootView.getAppLeftLayout().removeAllComponents();
-        rootView.getAppRightLayout().removeAllComponents();
-
-        rootView.getAppLeftLayout().addComponent(new Label("LEFT"));
-
-        rootView.getAppRightLayout().addComponent(rootView.getBreadcrumbsView());
-        rootView.getAppRightLayout().addComponent(new Label("Tähän haun muokkauslomake: " + haku.getHaunTunniste()));
-        
-    }
+    
+    
 
     /**
      * Gets the searchSpec object.
