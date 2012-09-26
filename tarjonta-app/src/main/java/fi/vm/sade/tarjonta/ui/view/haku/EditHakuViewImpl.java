@@ -23,6 +23,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -85,6 +86,11 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     @PropertyId("haunTunniste")
     private Label _haunTunniste;
     // TODO hakuaika
+    @PropertyId("alkamisPvm")
+    private DateField hakuAlkaa;
+    @PropertyId("paattymisPvm")
+    private DateField hakuLoppuu;
+    
     @PropertyId("haussaKaytetaanSijoittelua")
     private CheckBox _kaytetaanSijoittelua;
     @PropertyId("kaytetaanJarjestelmanHakulomaketta")
@@ -128,10 +134,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     public void initialize(HakuViewModel hakuViewModel) {
         LOG.info("inititialize()");
 
-        BeanItem<HakuViewModel> hakuBean = new BeanItem<HakuViewModel>(hakuViewModel);
-        form = new ValidatingViewBoundForm(this);
-        form.setItemDataSource(hakuBean);
-        _presenter.setHakuViewModel(hakuViewModel);
+       
 
         // Clean up old components if any
         if (_layout != null) {
@@ -164,7 +167,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         _haunNimiSE.setSizeUndefined();
         _haunNimiEN = UiUtil.textField(null, "", T("HaunNimiEN.prompt"), false);
         _haunNimiEN.setSizeUndefined();
-        _haunTunniste = UiUtil.label((AbstractLayout) null, "haunTunniste");
+        _haunTunniste = UiUtil.label((AbstractLayout) null, hakuViewModel.getHaunTunniste());
         _haunTunniste.setSizeUndefined();
         // TODO hakuaika
         _kaytetaanSijoittelua = UiUtil.checkbox(null, T("KaytetaanSijoittelua"));
@@ -237,10 +240,14 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             HorizontalLayout hl = UiUtil.horizontalLayout();
             hl.setSizeUndefined();
             vl.addComponent(hl);
+            
+            hakuAlkaa = UiUtil.dateField();
 
-            hl.addComponent(UiUtil.dateField());
+            hl.addComponent(hakuAlkaa);
             hl.addComponent(UiUtil.label(null, "-"));
-            hl.addComponent(UiUtil.dateField());
+            
+            this.hakuLoppuu = UiUtil.dateField();
+            hl.addComponent(hakuLoppuu);
 
             grid.addComponent(vl);
             grid.newLine();
@@ -263,6 +270,11 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         createButtonBar(_layout);
         grid.setColumnExpandRatio(1, 1);
         grid.setColumnExpandRatio(2, 5);
+        
+        BeanItem<HakuViewModel> hakuBean = new BeanItem<HakuViewModel>(hakuViewModel);
+        form = new ValidatingViewBoundForm(this);
+        form.setItemDataSource(hakuBean);
+        _presenter.setHakuViewModel(hakuViewModel);
     }
 
      /**
@@ -362,6 +374,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         public SaveEvent(Component source, boolean complete) {
             super(source);
             _complete = complete;
+            form.commit();
             if (complete) {
                 _presenter.saveHakuValmiina();
             } else {

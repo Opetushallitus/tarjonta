@@ -35,6 +35,7 @@ public class SearchResultsView extends VerticalLayout{
 
     @Autowired
     private TarjontaPresenter _presenter;
+    boolean attached = false;
 
     private I18NHelper _i18n = new I18NHelper(this);
 
@@ -44,8 +45,11 @@ public class SearchResultsView extends VerticalLayout{
 
     @Override
     public void attach() {
+        if (attached) return;
+        
+        attached = true;
         super.attach();
-
+        
         TabSheet tabs = new TabSheet();
         addComponent(tabs);
 

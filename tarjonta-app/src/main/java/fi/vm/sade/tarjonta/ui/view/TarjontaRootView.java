@@ -24,6 +24,7 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.common.BreadcrumbsView;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
+import fi.vm.sade.tarjonta.ui.view.haku.EditHakuViewImpl;
 import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
 import fi.vm.sade.vaadin.Oph;
@@ -192,8 +193,35 @@ public class TarjontaRootView extends Window {
         getAppLeftLayout().addComponent(new Label("LEFT"));
 
         getAppRightLayout().addComponent(getBreadcrumbsView());
-        getAppRightLayout().addComponent(new Label("Tähän haun muokkauslomake: " + haku.getHaunTunniste()));
+        EditHakuViewImpl editHakuView = new EditHakuViewImpl(haku);
+        editHakuView.addListener(new Listener() {
+
+            @Override
+            public void componentEvent(Event event) {
+                if (event instanceof EditHakuViewImpl.CancelEvent) {
+                    showMainDefaultView();
+                    hakuPresenter.refreshHakulist();
+                }
+            }
+            
+        });
+        getAppRightLayout().addComponent(editHakuView);
         
     }
+    
+    /**
+     * Show main default view
+     */
+    public void showMainDefaultView() {
+        LOG.info("showMainDefaultView()");
 
+        getAppLeftLayout().removeAllComponents();
+        getAppRightLayout().removeAllComponents();
+
+        getAppLeftLayout().addComponent(new Label("LEFT"));
+
+        getAppRightLayout().addComponent(getBreadcrumbsView());
+        getAppRightLayout().addComponent(getSearchSpesificationView());
+        getAppRightLayout().addComponent(getSearchResultsView());
+    }
 }

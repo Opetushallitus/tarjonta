@@ -44,7 +44,6 @@ import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
-import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow.HakuRowMenuEvent;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -115,7 +114,7 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         hc.addContainerProperty(presenter.COLUMN_A, HakuResultRow.class, rowStyleDef.format("", false));
 
         for (Map.Entry<String, List<HakuViewModel>> e : set) {
-            LOG.debug("getTreeDataSource()" + e.getKey());
+            LOG.info("getTreeDataSource()" + e.getKey());
             HakuResultRow rowStyle = new HakuResultRow();
            
             Object rootItem = hc.addItem();
@@ -124,10 +123,9 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
 
             for (HakuViewModel curHaku : e.getValue()) {
                 HakuResultRow rowStyleInner = new HakuResultRow(curHaku);
-                //Object subItem = hc.addItem();
                 hc.addItem(curHaku);
                 hc.setParent(curHaku, rootItem);
-                hc.getContainerProperty(curHaku, presenter.COLUMN_A).setValue(rowStyleInner.format(curHaku.getHaunTunniste(), true));
+                hc.getContainerProperty(curHaku, presenter.COLUMN_A).setValue(rowStyleInner.format(curHaku.getNimiFi(), true));
                 hc.setChildrenAllowed(curHaku, false);
                 
                 rowStyleInner.addListener(new Listener() {
@@ -146,7 +144,6 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     
     private void changeHakuSelections() {
         for (HakuViewModel curHaku : presenter.getHaut()) {
-            //SearchResultRow curRow = (SearchResultRow) (getContainerProperty(curOrg, ORGANISAATIO_PROPERTY).getValue())
               HakuResultRow curRow = (HakuResultRow)(categoryTree.getContainerProperty(curHaku, presenter.COLUMN_A).getValue());
               curRow.getIsSelected().setValue(true);
         }
@@ -163,7 +160,6 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         btnLuoUusiHaku.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                //presenter.showAddHakuDokumenttiView();
                 navigateToHakuEditForm();
                 
             }
@@ -194,6 +190,7 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
 
     @Override
     public void reload() {
+        categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getTreeDataSource()));
     }
     
@@ -201,6 +198,9 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         fireEvent(new NewHakuEvent(this));
     }
     
+    /**
+     * Event to signal that the user wants to create a new Haku.
+    */
     public class NewHakuEvent extends Component.Event {
 
         public NewHakuEvent(Component source) {
