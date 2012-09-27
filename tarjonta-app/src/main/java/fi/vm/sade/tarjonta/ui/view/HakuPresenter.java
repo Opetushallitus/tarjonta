@@ -33,7 +33,7 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuView;
 
-import fi.vm.sade.koodisto.service.KoodiPublicService;
+import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
@@ -65,7 +65,7 @@ public class HakuPresenter {
     private OIDService oidService;
     
     @Autowired
-    private KoodiPublicService koodiService;
+    private KoodiService koodiService;
 
 
 

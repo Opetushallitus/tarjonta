@@ -16,9 +16,9 @@
  */
 package fi.vm.sade.tarjonta.poc.ui.helper;
 
-import fi.vm.sade.koodisto.service.KoodiPublicService;
+import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
-import fi.vm.sade.koodisto.service.KoodistoPublicService;
+import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.dto.KoodistoDTO;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +32,9 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class KoodistoHelper {
 
     @Autowired(required = true)
-    private KoodiPublicService koodiService;
+    private KoodiService koodiService;
     @Autowired(required = true)
-    private KoodistoPublicService koodistoService;
+    private KoodistoService koodistoService;
 
     public String tryGetKoodistoArvo(String arvo, String koodistoUri) {
         try {
@@ -69,28 +69,28 @@ public class KoodistoHelper {
     /**
      * @return the koodiService
      */
-    public KoodiPublicService getKoodiService() {
+    public KoodiService getKoodiService() {
         return koodiService;
     }
 
     /**
      * @param koodiService the koodiService to set
      */
-    public void setKoodiService(KoodiPublicService koodiService) {
+    public void setKoodiService(KoodiService koodiService) {
         this.koodiService = koodiService;
     }
 
     /**
      * @return the koodistoService
      */
-    public KoodistoPublicService getKoodistoService() {
+    public KoodistoService getKoodistoService() {
         return koodistoService;
     }
 
     /**
      * @param koodistoService the koodistoService to set
      */
-    public void setKoodistoService(KoodistoPublicService koodistoService) {
+    public void setKoodistoService(KoodistoService koodistoService) {
         this.koodistoService = koodistoService;
     }
 }

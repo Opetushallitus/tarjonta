@@ -64,6 +64,8 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     private Button btnPoista;
     private ComboBox cbJarjestys;
     private CategoryTreeView categoryTree;
+    private CheckBox valKaikki;
+    
     private I18NHelper i18n = new I18NHelper(this);
     
     @Autowired(required = true)
@@ -75,7 +77,7 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         addComponent(buildMiddleResultLayout);
 
         CssLayout wrapper = UiUtil.cssLayout(UiMarginEnum.BOTTOM);
-        final CheckBox valKaikki = new CheckBox(i18n.getMessage("ValitseKaikki"));
+        valKaikki = new CheckBox(i18n.getMessage("ValitseKaikki"));
         valKaikki.setImmediate(true);
         valKaikki.addListener(new Property.ValueChangeListener() {
             @Override
@@ -142,11 +144,13 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         return hc;
     }
     
-    private void changeHakuSelections() {
-        for (HakuViewModel curHaku : presenter.getHaut()) {
-              HakuResultRow curRow = (HakuResultRow)(categoryTree.getContainerProperty(curHaku, presenter.COLUMN_A).getValue());
-              curRow.getIsSelected().setValue(true);
+    private void changeHakuSelections() {        
+        HierarchicalContainer hc = (HierarchicalContainer)(this.categoryTree.getContainerDataSource());
+        for (Object item : hc.getItemIds()) {
+            HakuResultRow curRow = (HakuResultRow)(categoryTree.getContainerProperty(item, presenter.COLUMN_A).getValue());
+            curRow.getIsSelected().setValue(true);
         }
+        
     }
 
     private HorizontalLayout buildMiddleResultLayout() {
@@ -192,6 +196,9 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     public void reload() {
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getTreeDataSource()));
+        if (this.valKaikki.booleanValue()) {
+            changeHakuSelections();
+        }
     }
     
     private void navigateToHakuEditForm() {
