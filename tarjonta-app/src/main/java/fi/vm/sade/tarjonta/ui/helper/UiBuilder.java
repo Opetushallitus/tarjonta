@@ -9,7 +9,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
-import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.vaadin.util.UiBaseUtil;
@@ -53,11 +53,11 @@ public class UiBuilder extends UiUtil{
         c.setCaptionFormatter(new CaptionFormatter() {
             @Override
             public String formatCaption(Object dto) {
-                if (dto instanceof KoodiDTO) {
-                    KoodiDTO kdto = (KoodiDTO) dto;
+                if (dto instanceof KoodiType) {
+                    KoodiType kdto = (KoodiType) dto;
                     return kdto.getKoodiArvo();
                 } else {
-                    return "!KoodiDTO - Don't know how to format this: " + dto;
+                    return "!KoodiType - Don't know how to format this: " + dto;
                 }
             }
         });
@@ -66,8 +66,8 @@ public class UiBuilder extends UiUtil{
         c.setFieldValueFormatter(new FieldValueFormatter() {
             @Override
             public Object formatFieldValue(Object dto) {
-                if (dto instanceof KoodiDTO) {
-                    KoodiDTO kdto = (KoodiDTO) dto;
+                if (dto instanceof KoodiType) {
+                    KoodiType kdto = (KoodiType) dto;
                     return kdto.getKoodiUri();
                 } else {
                     return "" + dto;
@@ -105,11 +105,11 @@ public class UiBuilder extends UiUtil{
         kc.setCaptionFormatter(new CaptionFormatter() {
             @Override
             public String formatCaption(Object dto) {
-                if (dto instanceof KoodiDTO) {
-                    KoodiDTO kdto = (KoodiDTO) dto;
+                if (dto instanceof KoodiType) {
+                    KoodiType kdto = (KoodiType) dto;
                     return kdto.getKoodiArvo();
                 } else {
-                    return "!KoodiDTO?: " + dto;
+                    return "!KoodiType?: " + dto;
                 }
             }
         });
@@ -118,8 +118,8 @@ public class UiBuilder extends UiUtil{
         kc.setFieldValueFormatter(new FieldValueFormatter() {
             @Override
             public Object formatFieldValue(Object dto) {
-                if (dto instanceof KoodiDTO) {
-                    KoodiDTO kdto = (KoodiDTO) dto;
+                if (dto instanceof KoodiType) {
+                    KoodiType kdto = (KoodiType) dto;
                     return kdto.getKoodiUri();
                 } else {
                     return "" + dto;

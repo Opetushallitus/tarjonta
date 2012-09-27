@@ -9,7 +9,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.poc.ui.enums.Notification;
 import fi.vm.sade.tarjonta.poc.ui.model.view.AddHakuDokumenttiView;
 import fi.vm.sade.tarjonta.poc.ui.model.view.EditKoulutusView;
@@ -219,7 +219,7 @@ public class TarjontaPresenter implements Serializable{
         return DataSource.treeTableData(new MultiActionTableStyle());
     }
 
-    public List<KoodiDTO> getKoodistoKielet() {
+    public List<KoodiType> getKoodistoKielet() {
         return koodistoHelper.getKoodisto(_koodistoUriKieli);
     }
    

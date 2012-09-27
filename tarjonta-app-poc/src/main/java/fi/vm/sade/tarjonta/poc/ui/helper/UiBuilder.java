@@ -12,7 +12,7 @@ import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
-import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.vaadin.constants.UiConstant;
@@ -59,11 +59,11 @@ public class UiBuilder extends UiUtil {
         c.setCaptionFormatter(new CaptionFormatter() {
             @Override
             public String formatCaption(Object dto) {
-                if (dto instanceof KoodiDTO) {
-                    KoodiDTO kdto = (KoodiDTO) dto;
+                if (dto instanceof KoodiType) {
+                    KoodiType kdto = (KoodiType) dto;
                     return kdto.getKoodiArvo();
                 } else {
-                    return "!KoodiDTO - Don't know how to format this: " + dto;
+                    return "!KoodiType - Don't know how to format this: " + dto;
                 }
             }
         });
@@ -72,8 +72,8 @@ public class UiBuilder extends UiUtil {
         c.setFieldValueFormatter(new FieldValueFormatter() {
             @Override
             public Object formatFieldValue(Object dto) {
-                if (dto instanceof KoodiDTO) {
-                    KoodiDTO kdto = (KoodiDTO) dto;
+                if (dto instanceof KoodiType) {
+                    KoodiType kdto = (KoodiType) dto;
                     return kdto.getKoodiUri();
                 } else {
                     return "" + dto;
@@ -111,11 +111,11 @@ public class UiBuilder extends UiUtil {
         kc.setCaptionFormatter(new CaptionFormatter() {
             @Override
             public String formatCaption(Object dto) {
-                if (dto instanceof KoodiDTO) {
-                    KoodiDTO kdto = (KoodiDTO) dto;
+                if (dto instanceof KoodiType) {
+                    KoodiType kdto = (KoodiType) dto;
                     return kdto.getKoodiArvo();
                 } else {
-                    return "!KoodiDTO?: " + dto;
+                    return "!KoodiType?: " + dto;
                 }
             }
         });
@@ -124,8 +124,8 @@ public class UiBuilder extends UiUtil {
         kc.setFieldValueFormatter(new FieldValueFormatter() {
             @Override
             public Object formatFieldValue(Object dto) {
-                if (dto instanceof KoodiDTO) {
-                    KoodiDTO kdto = (KoodiDTO) dto;
+                if (dto instanceof KoodiType) {
+                    KoodiType kdto = (KoodiType) dto;
                     return kdto.getKoodiUri();
                 } else {
                     return "" + dto;
@@ -143,11 +143,11 @@ public class UiBuilder extends UiUtil {
         return kc;
     }
 
-    public static TabSheet koodistoLanguageTabSheets(List<KoodiDTO> koodisto) {
+    public static TabSheet koodistoLanguageTabSheets(List<KoodiType> koodisto) {
         TabSheet tab = new TabSheet();
 
         if (koodisto != null) {
-            for (KoodiDTO k : koodisto) {
+            for (KoodiType k : koodisto) {
                 TextField textField = UiUtil.textField(null);
                 textField.setHeight("100px");
                 textField.setWidth(UiConstant.PCT100);

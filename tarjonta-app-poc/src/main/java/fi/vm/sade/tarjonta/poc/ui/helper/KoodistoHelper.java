@@ -17,9 +17,9 @@
 package fi.vm.sade.tarjonta.poc.ui.helper;
 
 import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.KoodistoService;
-import fi.vm.sade.koodisto.service.types.dto.KoodistoDTO;
+import fi.vm.sade.koodisto.service.types.common.KoodistoType;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -39,8 +39,8 @@ public class KoodistoHelper {
     public String tryGetKoodistoArvo(String arvo, String koodistoUri) {
         try {
 
-            KoodistoDTO koodisto = getKoodistoService().getLatestAccepted(koodistoUri);
-            List<KoodiDTO> koodit = getKoodiService().listKoodiByArvo(arvo, koodistoUri, new Integer(koodisto.getVersio()));
+            KoodistoType koodisto = getKoodistoService().getLatestAccepted(koodistoUri);
+            List<KoodiType> koodit = getKoodiService().listKoodiByArvo(arvo, koodistoUri, new Integer(koodisto.getVersio()));
             if (koodit != null && koodit.size() > 0) {
                 return koodit.get(0).getKoodiUri();
             } else {
@@ -51,15 +51,15 @@ public class KoodistoHelper {
         }
     }
 
-    public List<KoodiDTO> getKoodisto(String koodistoUri) {
-        KoodistoDTO koodisto = getKoodistoService().getLatestAccepted(koodistoUri);
+    public List<KoodiType> getKoodisto(String koodistoUri) {
+        KoodistoType koodisto = getKoodistoService().getLatestAccepted(koodistoUri);
         return getKoodiService().listKoodisByKoodisto(koodistoUri, koodisto.getVersio());
     }
 
     public String tryGetArvoByKoodi(String koodi) {
         try {
 
-            KoodiDTO koodidto = getKoodiService().getKoodiByUri(koodi);
+            KoodiType koodidto = getKoodiService().getKoodiByUri(koodi);
             return koodidto.getKoodiArvo();
         } catch (Exception exp) {
             return koodi;

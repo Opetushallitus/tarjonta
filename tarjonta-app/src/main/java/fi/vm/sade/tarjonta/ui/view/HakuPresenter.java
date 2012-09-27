@@ -34,7 +34,7 @@ import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuView;
 
 import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.types.dto.KoodiDTO;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 
@@ -99,10 +99,10 @@ public class HakuPresenter {
                 LOG.info("Adding a new key to the map: " + curHaku.getHakutapa());
                 List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
                 haut.add(curHaku);
-                KoodiDTO hakutapaKoodi = this.koodiService.getKoodiByUri(curHaku.getHakutapa());
+                KoodiType hakutapaKoodi = this.koodiService.getKoodiByUri(curHaku.getHakutapa());
                 map.put((hakutapaKoodi != null) ? hakutapaKoodi.getKoodiArvo() : curHaku.getHakutapa(), haut); 
             } else {
-                KoodiDTO hakutapaKoodi = this.koodiService.getKoodiByUri(curHaku.getHakutapa());
+                KoodiType hakutapaKoodi = this.koodiService.getKoodiByUri(curHaku.getHakutapa());
                 map.get((hakutapaKoodi != null) ?  hakutapaKoodi.getKoodiArvo() : curHaku.getHakutapa()).add(curHaku);
             }   
         }  
