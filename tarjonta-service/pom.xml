@@ -162,9 +162,9 @@
 
     <build>
         <finalName>tarjonta-service</finalName>
-        <filters>
+        <!--<filters>
             <filter>src/main/filter/filter-${env}.properties</filter>
-        </filters>
+        </filters>-->
         <plugins>
             
             <plugin>
