@@ -1,109 +1,137 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <xs:schema elementFormDefault="unqualified"
-	targetNamespace="http://service.tarjonta.sade.vm.fi/types/tarjonta"
-	version="1.0" xmlns:tns="http://service.tarjonta.sade.vm.fi/types/tarjonta"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+           targetNamespace="http://service.tarjonta.sade.vm.fi/types/tarjonta"
+           version="1.0" xmlns:tns="http://service.tarjonta.sade.vm.fi/types/tarjonta"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-	<xs:complexType name="TarjontaTyyppi">
-		<xs:sequence>
-			<xs:element name="haku" type="tns:HakuTyyppi" minOccurs="1"
-				maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>
-						Perustiedot hausta.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="hakukohde" type="tns:HakukohdeTyyppi"
-				minOccurs="0" maxOccurs="unbounded">
+    <xs:complexType name="TarjontaTyyppi">
+        <xs:sequence>
+            <xs:element name="haku" type="tns:Haku" minOccurs="1"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Perustiedot hausta.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="hakukohde" type="tns:HakukohdeTyyppi"
+                        minOccurs="0" maxOccurs="unbounded">
 
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="HakukohdeTyyppi">
-		<xs:annotation>
-			<xs:documentation>
-				yksittaisen atomisen hakukohteen kuvaava elementti.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="oid" type="xs:string" minOccurs="1"
-				maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>
-						Yksilollinen tunniste hakukohteelle.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="hakukohdeNimi" type="xs:string"
-				maxOccurs="1" minOccurs="1" />
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="HakukohdeTyyppi">
+        <xs:annotation>
+            <xs:documentation>
+                yksittaisen atomisen hakukohteen kuvaava elementti.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="oid" type="xs:string" minOccurs="1"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Yksilollinen tunniste hakukohteelle.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="hakukohdeNimi" type="xs:string"
+                        maxOccurs="1" minOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="HakuTyyppi">
-		<xs:sequence>
-			<xs:element minOccurs="1" maxOccurs="1" name="oid" type="xs:string">
-				<xs:annotation>
-					<xs:documentation>Yksilollinen tunniste haulle</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element minOccurs="1" maxOccurs="1" name="sijoittelu"
-				type="xs:boolean">
-				<xs:annotation>
-					<xs:documentation>Kaytetaanko sijoittelutoimintoa haulle
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element minOccurs="1" maxOccurs="1" name="haunAlkamisPvm"
-				type="xs:date">
-				<xs:annotation>
-					<xs:documentation>Haun alkamispaiva </xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element minOccurs="1" maxOccurs="1" name="haunLoppumisPvm"
-				type="xs:date">
-				<xs:annotation>
-					<xs:documentation>Haun loppumispaiva</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element minOccurs="1" maxOccurs="1" name="hakuVuosi"
-				type="xs:int">
-				<xs:annotation>
-					<xs:documentation>Hakuvuosi ilmaistuna 4 numerolla
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element minOccurs="1" maxOccurs="1" name="hakukausiUri"
-				type="xs:string">
-				<xs:annotation>
-					<xs:documentation>Koodiston URI tunniste hakukaudelle. Esm. k tai s
-						(kevat tai syksy)</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element minOccurs="1" maxOccurs="1" name="hakutyyppiUri"
-				type="xs:string">
-				<xs:annotation>
-					<xs:documentation>Koodiston URI tunniste haun tyypille. Esm.
-						Varsinainen tai taydennyshaku</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element minOccurs="1" maxOccurs="1" name="kohdejoukkoUri"
-				type="xs:string">
-				<xs:annotation>
-					<xs:documentation>Koodiston URI tunniste kohdejoukolle, eli esm.
-						ammatillinen koulutus tai yliopistot ja ammattikorkakoulut
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element minOccurs="1" maxOccurs="1" name="hakutapaUri"
-				type="xs:string">
-				<xs:annotation>
-					<xs:documentation>Koodiston URI tunniste hakutavalle Esm.
-						yhteishaku</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="Haku">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="oid" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Yksilollinen tunniste haulle</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="haunTunniste" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Haun tunniste</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="haunKielistetytNimet" type="tns:HaunNimi">
+                <xs:annotation>
+                    <xs:documentation>Haun nimet eri kielilla</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="sijoittelu"
+                        type="xs:boolean">
+                <xs:annotation>
+                    <xs:documentation>Kaytetaanko sijoittelutoimintoa haulle
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="haunAlkamisPvm"
+                        type="xs:date">
+                <xs:annotation>
+                    <xs:documentation>Haun alkamispaiva </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="haunLoppumisPvm"
+                        type="xs:date">
+                <xs:annotation>
+                    <xs:documentation>Haun loppumispaiva</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakuVuosi"
+                        type="xs:int">
+                <xs:annotation>
+                    <xs:documentation>Hakuvuosi ilmaistuna 4 numerolla
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukausiUri"
+                        type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Koodiston URI tunniste hakukaudelle. Esm. k tai s
+                        (kevat tai syksy)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakutyyppiUri"
+                        type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Koodiston URI tunniste haun tyypille. Esm.
+                        Varsinainen tai taydennyshaku
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="kohdejoukkoUri"
+                        type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Koodiston URI tunniste kohdejoukolle, eli esm.
+                        ammatillinen koulutus tai yliopistot ja ammattikorkakoulut
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakutapaUri"
+                        type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Koodiston URI tunniste hakutavalle Esm.
+                        yhteishaku
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+        
+    <xs:complexType name="HaunNimi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="kielikoodi" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Haun nimen kielikoodi</xs:documentation>
+                </xs:annotation>   
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="nimi" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Haun nimi</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 
 </xs:schema> 

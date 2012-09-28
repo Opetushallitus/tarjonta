@@ -25,8 +25,28 @@
 	<wsdl:message name="haeTarjontaResponse">
 		<wsdl:part element="ns1:haeTarjontaVastaus" name="parameters"/>
 	</wsdl:message>
-
-
+        
+        
+        <wsdl:message name="lisaaHaku">
+		<wsdl:part element="ns1:lisaaHaku" name="parameters"/>
+	</wsdl:message>
+        <wsdl:message name="lisaaHakuVastaus">
+		<wsdl:part element="ns1:lisaaHakuVastaus" name="parameters"/>
+	</wsdl:message>
+        <wsdl:message name="paivitaHaku">
+		<wsdl:part element="ns1:paivitaHaku" name="parameters"/>
+	</wsdl:message>
+        <wsdl:message name="paivitaHakuVastaus">
+		<wsdl:part element="ns1:paivitaHakuVastaus" name="parameters"/>
+	</wsdl:message>
+        <wsdl:message name="poistaHaku">
+		<wsdl:part element="ns1:poistaHaku" name="parameters"/>
+	</wsdl:message>
+        <wsdl:message name="poistaHakuVastaus">
+		<wsdl:part element="ns1:poistaHakuVastaus" name="parameters"/>
+	</wsdl:message>
+        
+        
     <wsdl:portType name="TarjontaService">
         <wsdl:documentation>
             Palvelu tarjontatiedon hakemiseen
@@ -47,6 +67,33 @@
             <wsdl:input message="tns:haeTarjonta" name="haeTarjonta">
             </wsdl:input>
             <wsdl:output message="tns:haeTarjontaResponse" name="haeTarjontaResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="lisaaHaku">
+            <wsdl:documentation>
+               Lisaa haku
+            </wsdl:documentation>
+            <wsdl:input message="tns:lisaaHaku" name="lisaaHaku">
+            </wsdl:input>
+            <wsdl:output message="tns:lisaaHakuVastaus" name="lisaaHakuVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="paivitaHaku">
+            <wsdl:documentation>
+               Paivita haku
+            </wsdl:documentation>
+            <wsdl:input message="tns:paivitaHaku" name="paivitaHaku">
+            </wsdl:input>
+            <wsdl:output message="tns:paivitaHakuVastaus" name="paivitaHakuVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="poistaHaku">
+            <wsdl:documentation>
+               Poista haku
+            </wsdl:documentation>
+            <wsdl:input message="tns:poistaHaku" name="poistaHaku">
+            </wsdl:input>
+            <wsdl:output message="tns:poistaHakuVastaus" name="poistaHakuVastaus">
             </wsdl:output>
         </wsdl:operation>
         
