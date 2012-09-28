@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuDto;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HaunTila;
 import fi.vm.sade.tarjonta.service.types.tarjonta.SisaisetHakuAjat;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HaunTila;
 
 
 /**
@@ -73,14 +73,14 @@ public class HakuViewModel extends BaseUIViewModel {
 
     private boolean hakuValmis;
     
-    private HakuDto hakuDto;
+    private HakuTyyppi hakuDto;
     
     public HakuViewModel() {
         super();
-        hakuDto = new HakuDto();
+        hakuDto = new HakuTyyppi();
     }
     
-    public HakuViewModel(HakuDto hakuDto) {
+    public HakuViewModel(HakuTyyppi hakuDto) {
         super();
         this.hakuDto = hakuDto;
     }
@@ -411,7 +411,7 @@ public class HakuViewModel extends BaseUIViewModel {
     /**
      * @return the hakuDto
      */
-    public HakuDto getHakuDto() {
+    public HakuTyyppi getHakuDto() {
         return hakuDto;
     }
 

@@ -29,8 +29,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.tarjonta.service.TarjontaService;
-import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuDto;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
@@ -63,10 +61,7 @@ public class HakuPresenter {
     
     private EditHakuView editHaku;
     
-    private TarjontaRootView rootView;
-    
-    HakuViewModel hakuModel;
-
+    private HakuViewModel hakuModel;
 
     @Autowired
     private OIDService oidService;
@@ -260,7 +255,7 @@ public class HakuPresenter {
     
     private List<HakuViewModel> retrieveHaut() {
         List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
-        for (HakuDto curHaku : this.tarjontaService.listHaku(new ListaaHakuTyyppi()).getResponse()) {
+        for (HakuTyyppi curHaku : this.tarjontaService.listHaku(new ListaaHakuTyyppi()).getResponse()) {
             haut.add(new HakuViewModel(curHaku));
         }
         return haut;
