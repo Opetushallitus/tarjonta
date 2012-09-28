@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +30,7 @@ import org.springframework.stereotype.Component;
 
 import fi.vm.sade.tarjonta.service.TarjontaService;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.Haku;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakuDto;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
@@ -151,10 +149,11 @@ public class HakuPresenter {
      * Saves the haku as draft.
      */
     public void saveHakuLuonnoksenaModel() {
-        hakuModel.setHakuValmis(false);
+        hakuModel.setHakuValmis(false);    
         if (hakuModel.getHakuOid() == null) {
             try {
                 hakuModel.setHakuOid(oidService.newOid(NodeClassCode.TEKN_5));
+                hakuModel.setHaunTunniste((hakuModel.getHaunTunniste() == null) ? hakuModel.getHakuOid() : hakuModel.getHaunTunniste());
             } catch (Exception ex) {
                 LOG.error(ex.getMessage());
             }
@@ -174,6 +173,7 @@ public class HakuPresenter {
         if (hakuModel.getHakuOid() == null) {
             try {
                 hakuModel.setHakuOid(oidService.newOid(NodeClassCode.TEKN_5));
+                hakuModel.setHaunTunniste((hakuModel.getHaunTunniste() == null) ? hakuModel.getHakuOid() : hakuModel.getHaunTunniste());
             } catch (Exception ex) {
                 LOG.error(ex.getMessage());
             }
@@ -260,7 +260,7 @@ public class HakuPresenter {
     
     private List<HakuViewModel> retrieveHaut() {
         List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
-        for (Haku curHaku : this.tarjontaService.listHaku(new ListaaHakuTyyppi()).getResponse()) {
+        for (HakuDto curHaku : this.tarjontaService.listHaku(new ListaaHakuTyyppi()).getResponse()) {
             haut.add(new HakuViewModel(curHaku));
         }
         return haut;

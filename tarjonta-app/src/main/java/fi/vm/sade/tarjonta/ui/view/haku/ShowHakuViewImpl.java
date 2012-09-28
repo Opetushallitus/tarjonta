@@ -95,7 +95,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         grid.addComponent(UiUtil.label(null, hakuPresenter.getHakuaika() + " "), 1, 6);
         String hakulomakeStr = hakuPresenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta() 
                                 ? _i18n.getMessage("KaytetaanJarjestelmanHakulomaketta")
-                                        : _i18n.getMessage("KaytetaanOmaaHakulomaketta");
+                                        : hakuPresenter.getHakuModel().getHakuLomakeUrl();
         grid.addComponent(UiUtil.label(null, hakulomakeStr + " "), 1, 7);
 
         grid.setColumnExpandRatio(0, 1);
