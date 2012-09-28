@@ -3,7 +3,7 @@ package fi.vm.sade.tarjonta.service.mock;
 import fi.vm.sade.tarjonta.service.TarjontaService;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.Haku;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakuDto;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaTyyppi;
 import java.util.Date;
@@ -13,7 +13,7 @@ import java.util.UUID;
  
 public class TarjontaServiceMock implements TarjontaService {
 
-    private HashMap<String,Haku> haut = new HashMap<String, Haku>();
+    private HashMap<String,HakuDto> haut = new HashMap<String, HakuDto>();
     
     public TarjontaServiceMock() {
         initDefValues();
@@ -34,26 +34,26 @@ public class TarjontaServiceMock implements TarjontaService {
     }
 
     @Override
-    public Haku paivitaHaku(Haku hakuDto) {
+    public HakuDto paivitaHaku(HakuDto hakuDto) {
         haut.remove(hakuDto.getOid());
         haut.put(hakuDto.getOid(), hakuDto);
         return hakuDto;
     }
 
     @Override
-    public Haku lisaaHaku(Haku hakuDto) {
+    public HakuDto lisaaHaku(HakuDto hakuDto) {
         haut.put(hakuDto.getOid(), hakuDto);
         return hakuDto;
     }
 
     @Override
-    public void poistaHaku(Haku hakuDto) {
+    public void poistaHaku(HakuDto hakuDto) {
         haut.remove(hakuDto.getOid());
     }
     
     
     private void initDefValues() {
-        Haku haku = new Haku();
+        HakuDto haku = new HakuDto();
         HaunNimi nimi = new HaunNimi();
         nimi.setKielikoodi("fi");
         nimi.setNimi("Yhteishaku syksy 2013");
@@ -72,7 +72,7 @@ public class TarjontaServiceMock implements TarjontaService {
        
         haut.put(haku.getOid(), haku);
         
-        Haku haku2 = new Haku();
+        HakuDto haku2 = new HakuDto();
         HaunNimi nimiFi = new HaunNimi();
         nimiFi.setKielikoodi("fi");
         nimiFi.setNimi("Yhteishaku syksy 2014");
