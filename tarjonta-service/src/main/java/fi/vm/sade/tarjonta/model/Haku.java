@@ -80,8 +80,19 @@ public class Haku extends BaseEntity {
     private String hakukausiUri;
 
     @NotNull
+    @Column(name = "hakukausi_vuosi")
+    private Integer hakukausiVuosi;
+    
+    @NotNull
     @Column(name = "koulutuksen_alkamiskausi")
     private String koulutuksenAlkamiskausiUri;
+    
+    @NotNull
+    @Column(name = "koulutuksen_alkamisvuosi")
+    private Integer koulutuksenAlkamisVuosi;
+    
+    @Column(name = "haun_tunniste")
+    private String haunTunniste;
 
     /**
      * yliopistojen / ammattikorkeitten / peruskoulujen jne..
@@ -310,6 +321,48 @@ public class Haku extends BaseEntity {
      */
     public void setTila(String tila) {
         this.tila = tila;
+    }
+
+    /**
+     * @return the hakukausiVuosi
+     */
+    public Integer getHakukausiVuosi() {
+        return hakukausiVuosi;
+    }
+
+    /**
+     * @param hakukausiVuosi the hakukausiVuosi to set
+     */
+    public void setHakukausiVuosi(Integer hakukausiVuosi) {
+        this.hakukausiVuosi = hakukausiVuosi;
+    }
+
+    /**
+     * @return the koulutuksenAlkamisVuosi
+     */
+    public Integer getKoulutuksenAlkamisVuosi() {
+        return koulutuksenAlkamisVuosi;
+    }
+
+    /**
+     * @param koulutuksenAlkamisVuosi the koulutuksenAlkamisVuosi to set
+     */
+    public void setKoulutuksenAlkamisVuosi(Integer koulutuksenAlkamisVuosi) {
+        this.koulutuksenAlkamisVuosi = koulutuksenAlkamisVuosi;
+    }
+
+    /**
+     * @return the haunTunniste
+     */
+    public String getHaunTunniste() {
+        return haunTunniste;
+    }
+
+    /**
+     * @param haunTunniste the haunTunniste to set
+     */
+    public void setHaunTunniste(String haunTunniste) {
+        this.haunTunniste = haunTunniste;
     }
 
 }

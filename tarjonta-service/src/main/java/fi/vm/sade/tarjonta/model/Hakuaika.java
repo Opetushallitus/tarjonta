@@ -35,6 +35,9 @@ public class Hakuaika extends BaseEntity {
 
     private static final long serialVersionUID = 1492826641481066295L;
 
+    @Column(name = "sisaisenhakuajannimi")
+    private String sisaisenHakuajanNimi;
+    
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "alkamispvm")
     private Date alkamisPvm;
@@ -69,6 +72,22 @@ public class Hakuaika extends BaseEntity {
     public void setHaku(Haku haku) {
         this.haku = haku;
     }
+
+    /**
+     * @return the sisaisenHakuajanNimi
+     */
+    public String getSisaisenHakuajanNimi() {
+        return sisaisenHakuajanNimi;
+    }
+
+    /**
+     * @param sisaisenHakuajanNimi the sisaisenHakuajanNimi to set
+     */
+    public void setSisaisenHakuajanNimi(String sisaisenHakuajanNimi) {
+        this.sisaisenHakuajanNimi = sisaisenHakuajanNimi;
+    }
+
+  
 
 }
 
