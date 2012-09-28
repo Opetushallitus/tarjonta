@@ -88,7 +88,7 @@ public class UiBuilder extends UiUtil{
     public static KoodistoComponent koodistoTwinColSelect(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
 
         // Koodisto displayed in TwinColSelect
-        TwinColSelect c = twinColSelect(null, null, null);
+        TwinColSelect c = twinColSelect();
 
         // Only multiple (Set<String>) values allowed!
         c.setMultiSelect(true);

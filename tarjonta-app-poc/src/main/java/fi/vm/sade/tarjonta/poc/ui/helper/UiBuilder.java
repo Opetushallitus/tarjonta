@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.poc.ui.helper;
 
+import com.vaadin.data.Property;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.AbstractComponentContainer;
@@ -16,6 +17,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.vaadin.constants.UiConstant;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.List;
@@ -26,6 +28,8 @@ import java.util.List;
  */
 public class UiBuilder extends UiUtil {
 
+    
+    
     private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
 
     /**
@@ -92,9 +96,13 @@ public class UiBuilder extends UiUtil {
     }
 
     public static KoodistoComponent koodistoTwinColSelect(AbstractOrderedLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
+        return koodistoTwinColSelect(layout, koodistoUri, psi, expression, null);
+    }
+
+    public static KoodistoComponent koodistoTwinColSelect(AbstractOrderedLayout layout, final String koodistoUri, PropertysetItem psi, String expression, Property.ValueChangeListener listener) {
 
         // Koodisto displayed in TwinColSelect
-        TwinColSelect c = twinColSelect(null, null, null);
+        TwinColSelect c = twinColSelect(null, null, listener);
 
         // Only multiple (Set<String>) values allowed!
         c.setMultiSelect(true);
@@ -158,6 +166,16 @@ public class UiBuilder extends UiUtil {
         VerticalLayout l3 = new VerticalLayout();
         l3.setMargin(true);
         tab.addTab(l3, "", TAB_ICON_PLUS);
+
+        return tab;
+    }
+
+    public static TabSheet koodistoLanguageTabSheets(String koodistoUri, Property.ValueChangeListener valueChangeListener) {
+        VerticalLayout vl = verticalLayout(true, UiMarginEnum.NONE);
+        koodistoTwinColSelect(vl, koodistoUri, null, null, valueChangeListener);
+
+        TabSheet tab = new TabSheet();
+        tab.addTab(vl, "", TAB_ICON_PLUS);
 
         return tab;
     }

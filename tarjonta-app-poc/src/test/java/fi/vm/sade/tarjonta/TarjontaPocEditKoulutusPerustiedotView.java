@@ -3,11 +3,10 @@ package fi.vm.sade.tarjonta;
 import com.bsb.common.vaadin.embed.EmbedVaadinServer;
 import com.bsb.common.vaadin.embed.component.EmbedVaadinComponent;
 import com.bsb.common.vaadin.embed.support.EmbedVaadin;
-import com.vaadin.ui.Window;
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.tarjonta.poc.ui.model.view.EditKoulutusPerustiedotView;
+import fi.vm.sade.tarjonta.poc.ui.view.koulutus.EditKoulutusPerustiedotView;
 
-import fi.vm.sade.tarjonta.poc.ui.model.view.MainSplitPanelView;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

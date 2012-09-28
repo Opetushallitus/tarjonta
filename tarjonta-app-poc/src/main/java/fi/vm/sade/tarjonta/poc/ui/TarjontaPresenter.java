@@ -7,25 +7,22 @@ package fi.vm.sade.tarjonta.poc.ui;
 import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.poc.ui.enums.Notification;
-import fi.vm.sade.tarjonta.poc.ui.model.view.AddHakuDokumenttiView;
-import fi.vm.sade.tarjonta.poc.ui.model.view.EditKoulutusView;
-import fi.vm.sade.tarjonta.poc.ui.model.view.EditSiirraHakukohteitaView;
-import fi.vm.sade.tarjonta.poc.ui.model.view.MainKoulutusView;
-import fi.vm.sade.tarjonta.poc.ui.model.view.ShowHakukohdeView;
-import fi.vm.sade.tarjonta.poc.ui.model.view.ShowKoulutusView;
-import fi.vm.sade.tarjonta.poc.ui.model.view.hakukohde.CreateHakukohdeView;
+import fi.vm.sade.tarjonta.poc.ui.view.AddHakuDokumenttiView;
+import fi.vm.sade.tarjonta.poc.ui.view.koulutus.EditKoulutusView;
+import fi.vm.sade.tarjonta.poc.ui.view.hakukohde.CreateHakukohdeView;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
 import fi.vm.sade.tarjonta.poc.demodata.row.MultiActionTableStyle;
 import fi.vm.sade.tarjonta.poc.ui.helper.KoodistoHelper;
-import fi.vm.sade.vaadin.constants.UiConstant;
+import fi.vm.sade.tarjonta.poc.ui.view.EditSiirraHakukohteitaView;
+import fi.vm.sade.tarjonta.poc.ui.view.MainKoulutusView;
+import fi.vm.sade.tarjonta.poc.ui.view.ShowHakukohdeView;
+import fi.vm.sade.tarjonta.poc.ui.view.ShowKoulutusView;
 import fi.vm.sade.vaadin.dto.ButtonDTO;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
-import fi.vm.sade.vaadin.util.UiUtil;
 import java.io.Serializable;
 import java.util.List;
 
@@ -41,7 +38,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @author mlyly
  */
 @Configurable(preConstruction = false)
-public class TarjontaPresenter implements Serializable{
+public class TarjontaPresenter implements Serializable {
 
     public static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
     private static final int PAGE_MAX = 30;
@@ -61,6 +58,10 @@ public class TarjontaPresenter implements Serializable{
     public void initialize() {
         LOG.info("initialize() : model={}", _model);
         koodistoHelper = new KoodistoHelper();
+        List<KoodiType> koodisto = koodistoHelper.getKoodisto(_koodistoUriKieli);
+        for (KoodiType type : koodisto) {
+            LOG.info("APUA : " + type.getKoodiArvo() + " " +  type.getKoodiUri());
+        }
     }
 
     public void searchKoulutus() {
@@ -222,7 +223,7 @@ public class TarjontaPresenter implements Serializable{
     public List<KoodiType> getKoodistoKielet() {
         return koodistoHelper.getKoodisto(_koodistoUriKieli);
     }
-   
+
 
     /*
      * Get a right layout instance from the main split panel. 
