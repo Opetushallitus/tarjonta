@@ -26,31 +26,31 @@
      
     <xs:complexType name="LisaaHakuType">
         <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="hakuDto" type="tarjonta:HakuDto" />
+            <xs:element minOccurs="1" maxOccurs="1" name="hakuDto" type="tarjonta:HakuTyyppi" />
         </xs:sequence>
     </xs:complexType>
     
     <xs:complexType name="LisaaHakuVastausType">
         <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="hakuVastausDto" type="tarjonta:HakuDto" />
+            <xs:element minOccurs="1" maxOccurs="1" name="hakuVastausDto" type="tarjonta:HakuTyyppi" />
         </xs:sequence>
     </xs:complexType>
     
     <xs:complexType name="PaivitaHakuType">
         <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="hakuDto" type="tarjonta:HakuDto"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakuDto" type="tarjonta:HakuTyyppi"/>
         </xs:sequence>
     </xs:complexType>
     
     <xs:complexType name="PaivitaHakuVastausType">
         <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="hakuVastausDto" type="tarjonta:HakuDto"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakuVastausDto" type="tarjonta:HakuTyyppi"/>
         </xs:sequence>
     </xs:complexType>
     
      <xs:complexType name="PoistaHakuType">
         <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="hakuDto" type="tarjonta:HakuDto"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakuDto" type="tarjonta:HakuTyyppi"/>
         </xs:sequence>
     </xs:complexType>
     
@@ -68,7 +68,7 @@
 
     <xs:complexType name="ListHakuVastausTyyppi">
         <xs:sequence> 
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="response" type="tarjonta:HakuDto" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="response" type="tarjonta:HakuTyyppi" />
         </xs:sequence>
     </xs:complexType>
         

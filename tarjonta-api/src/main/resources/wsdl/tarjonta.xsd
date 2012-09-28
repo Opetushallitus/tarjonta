@@ -6,7 +6,7 @@
 
     <xs:complexType name="TarjontaTyyppi">
         <xs:sequence>
-            <xs:element name="haku" type="tns:HakuDto" minOccurs="1"
+            <xs:element name="haku" type="tns:HakuTyyppi" minOccurs="1"
                         maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>
@@ -41,7 +41,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="HakuDto">
+    <xs:complexType name="HakuTyyppi">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="oid" type="xs:string">
                 <xs:annotation>
@@ -63,7 +63,7 @@
                     <xs:documentation>Haun sisaiset hakuajat</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element minOccurs="1" maxOccurs="1" name="haunTila" type="tns:haunTila">
+            <xs:element minOccurs="1" maxOccurs="1" name="haunTila" type="tns:HaunTila">
                 <xs:annotation>
                     <xs:documentation>Haun tila</xs:documentation>
                 </xs:annotation>
@@ -186,7 +186,7 @@
         </xs:sequence>
     </xs:complexType>
     
-    <xs:simpleType name="haunTila">
+    <xs:simpleType name="HaunTila">
         <xs:restriction base="xs:string">
             <xs:enumeration value="LUONNOS"/>
             <xs:enumeration value="VALMIS"/>

@@ -3,7 +3,7 @@ package fi.vm.sade.tarjonta.service.mock;
 import fi.vm.sade.tarjonta.service.TarjontaService;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuDto;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaTyyppi;
 import java.util.Date;
@@ -13,7 +13,7 @@ import java.util.UUID;
  
 public class TarjontaServiceMock implements TarjontaService {
 
-    private HashMap<String,HakuDto> haut = new HashMap<String, HakuDto>();
+    private HashMap<String,HakuTyyppi> haut = new HashMap<String, HakuTyyppi>();
     
     public TarjontaServiceMock() {
         initDefValues();
@@ -34,26 +34,26 @@ public class TarjontaServiceMock implements TarjontaService {
     }
 
     @Override
-    public HakuDto paivitaHaku(HakuDto hakuDto) {
+    public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
         haut.remove(hakuDto.getOid());
         haut.put(hakuDto.getOid(), hakuDto);
         return hakuDto;
     }
 
     @Override
-    public HakuDto lisaaHaku(HakuDto hakuDto) {
+    public HakuTyyppi lisaaHaku(HakuTyyppi hakuDto) {
         haut.put(hakuDto.getOid(), hakuDto);
         return hakuDto;
     }
 
     @Override
-    public void poistaHaku(HakuDto hakuDto) {
+    public void poistaHaku(HakuTyyppi hakuDto) {
         haut.remove(hakuDto.getOid());
     }
     
     
     private void initDefValues() {
-        HakuDto haku = new HakuDto();
+        HakuTyyppi haku = new HakuTyyppi();
         HaunNimi nimi = new HaunNimi();
         nimi.setKielikoodi("fi");
         nimi.setNimi("Yhteishaku syksy 2013");
@@ -72,7 +72,7 @@ public class TarjontaServiceMock implements TarjontaService {
        
         haut.put(haku.getOid(), haku);
         
-        HakuDto haku2 = new HakuDto();
+        HakuTyyppi haku2 = new HakuTyyppi();
         HaunNimi nimiFi = new HaunNimi();
         nimiFi.setKielikoodi("fi");
         nimiFi.setNimi("Yhteishaku syksy 2014");
