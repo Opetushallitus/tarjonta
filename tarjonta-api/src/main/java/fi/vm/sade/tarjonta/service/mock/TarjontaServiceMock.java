@@ -59,7 +59,7 @@ public class TarjontaServiceMock implements TarjontaService {
         nimi.setNimi("Yhteishaku syksy 2013");
         haku.getHaunKielistetytNimet().add(nimi);
         HaunNimi nimiSe = new HaunNimi();
-        nimiSe.setKielikoodi("se");
+        nimiSe.setKielikoodi("sv");
         nimiSe.setNimi("gemensam sökning höst 2013");
         haku.getHaunKielistetytNimet().add(nimiSe);
         haku.setOid(UUID.randomUUID().toString());
@@ -78,7 +78,7 @@ public class TarjontaServiceMock implements TarjontaService {
         nimiFi.setNimi("Yhteishaku syksy 2014");
         haku2.getHaunKielistetytNimet().add(nimiFi);
         HaunNimi nimiSee = new HaunNimi();
-        nimiSee.setKielikoodi("se");
+        nimiSee.setKielikoodi("sv");
         nimiSee.setNimi("gemensam sökning höst 2014");
         haku2.getHaunKielistetytNimet().add(nimiSee);
         haku2.setOid(UUID.randomUUID().toString());

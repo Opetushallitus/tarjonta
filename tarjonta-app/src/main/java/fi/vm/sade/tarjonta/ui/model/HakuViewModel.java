@@ -23,6 +23,7 @@ import java.util.List;
 
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuDto;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HaunTila;
 import fi.vm.sade.tarjonta.service.types.tarjonta.SisaisetHakuAjat;
 
 
@@ -43,6 +44,8 @@ public class HakuViewModel extends BaseUIViewModel {
     private int hakuvuosi;
 
     private String koulutuksenAlkamisKausi;
+    
+    private int koulutuksenAlkamisvuosi;
 
     private String haunKohdejoukko;
 
@@ -370,6 +373,13 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the hakuValmis
      */
     public boolean isHakuValmis() {
+        if (hakuDto.getHaunTila() != null
+                && (hakuDto.getHaunTila().value().equals(HaunTila.VALMIS.value())
+                        || hakuDto.getHaunTila().value().equals(HaunTila.JULKAISTU.value()))) {
+            hakuValmis = true;
+        } else {
+            hakuValmis = false;
+        }
         return hakuValmis;
     }
 
@@ -377,7 +387,25 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param hakuValmis the hakuValmis to set
      */
     public void setHakuValmis(boolean hakuValmis) {
+        hakuDto.setHaunTila(hakuValmis ? HaunTila.VALMIS : HaunTila.LUONNOS);
         this.hakuValmis = hakuValmis;
+    }
+    
+    
+    /**
+     * @return the koulutuksenAlkamisvuosi
+     */
+    public int getKoulutuksenAlkamisvuosi() {
+        koulutuksenAlkamisvuosi = hakuDto.getKoulutuksenAlkamisVuosi();
+        return koulutuksenAlkamisvuosi;
+    }
+
+    /**
+     * @param koulutuksenAlkamisvuosi the koulutuksenAlkamisvuosi to set
+     */
+    public void setKoulutuksenAlkamisvuosi(int koulutuksenAlkamisvuosi) {
+        hakuDto.setKoulutuksenAlkamisVuosi(koulutuksenAlkamisvuosi);
+        this.koulutuksenAlkamisvuosi = koulutuksenAlkamisvuosi;
     }
 
     /**
@@ -412,6 +440,7 @@ public class HakuViewModel extends BaseUIViewModel {
         }
         
     }
+
 
 
 }

@@ -73,6 +73,8 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     private TextField _hakuvuosi;
     @PropertyId("koulutuksenAlkamisKausi")
     private KoodistoComponent _koulutusAlkamiskausi;
+    @PropertyId("koulutuksenAlkamisvuosi")
+    private TextField koulutuksenAlkamisvuosi;
     @PropertyId("haunKohdejoukko")
     private KoodistoComponent _hakuKohdejoukko;
     @PropertyId("hakutapa")
@@ -157,6 +159,8 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         _hakuvuosi.setSizeUndefined();
         _koulutusAlkamiskausi =UiBuilder.koodistoComboBox(null,_koodistoUriAlkamiskausi, null, null, T("KoulutuksenAlkamiskausi.prompt"));
         _koulutusAlkamiskausi.setSizeUndefined();
+         koulutuksenAlkamisvuosi = UiUtil.textField(null, "", T("KoulutuksenAlkamisvuosi.prompt"), false);
+         koulutuksenAlkamisvuosi.setSizeUndefined();
         _hakuKohdejoukko = UiBuilder.koodistoComboBox(null,_koodistoUriKohdejoukko, null, null, T("HakuKohdejoukko.prompt"));
         _hakuKohdejoukko.setSizeUndefined();
         _hakutapa = UiBuilder.koodistoComboBox(null,_koodistoUriHakutapa, null, null, T("Hakutapa.prompt"));
@@ -201,9 +205,15 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             grid.newLine();
         }
 
-        grid.addComponent(UiUtil.label(null, T("KoulutuksenAlkamiskausi")));
-        grid.addComponent(_koulutusAlkamiskausi);
-        grid.newLine();
+        {
+            grid.addComponent(UiUtil.label(null, T("KoulutuksenAlkamiskausi")));
+            HorizontalLayout hl = UiUtil.horizontalLayout();
+            hl.setSpacing(true);
+            hl.addComponent(_koulutusAlkamiskausi);
+            hl.addComponent(koulutuksenAlkamisvuosi);
+            grid.addComponent(hl);
+            grid.newLine();
+        }
 
         grid.addComponent(UiUtil.label(null, T("HakuKohdejoukko")));
         grid.addComponent(_hakuKohdejoukko);
