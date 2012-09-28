@@ -24,7 +24,9 @@
 
     <bean class="fi.vm.sade.koodisto.widget.factory.WidgetFactory" />
     
-    <bean id="oidServiceImplBean" class="fi.vm.sade.oid.service.mock.OIDServiceMock" />  
+    <bean id="oidServiceImplBean" class="fi.vm.sade.oid.service.mock.OIDServiceMock" /> 
+    
+    <bean id="tarjontaServiceImplBean" class="fi.vm.sade.tarjonta.service.mock.TarjontaServiceMock" />  
 
 <!--
     <bean class="fi.vm.sade.organisaatio.ui.widgets.factory.OrganisaatioWidgetFactory"/>

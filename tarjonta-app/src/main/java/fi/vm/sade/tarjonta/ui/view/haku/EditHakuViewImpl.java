@@ -184,6 +184,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
         GridLayout grid = new GridLayout(3, 1);
         grid.setSpacing(true);
+        grid.setSizeUndefined();
         _layout.addComponent(grid);
 
         grid.addComponent(UiUtil.label(null, T("Hakutyyppi")));
@@ -260,6 +261,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         {
             grid.addComponent(UiUtil.label(null, T("Hakulomake")));
             VerticalLayout vl = UiUtil.verticalLayout();
+            vl.setSizeUndefined();
             vl.setSpacing(true);
             vl.addComponent(_kayteaanJarjestelmanHakulomaketta);
             vl.addComponent(_muuHakulomakeUrl);

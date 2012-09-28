@@ -29,6 +29,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
+
+import fi.vm.sade.tarjonta.service.TarjontaService;
+import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.Haku;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
@@ -71,6 +75,9 @@ public class HakuPresenter {
     
     @Autowired
     private KoodiService koodiService;
+    
+    @Autowired
+    private TarjontaService tarjontaService;
 
 
 
@@ -96,16 +103,18 @@ public class HakuPresenter {
     public Map<String, List<HakuViewModel>> getTreeDataSource() {
          
         Map<String, List<HakuViewModel>> map = new HashMap<String, List<HakuViewModel>>();
+        
+        haut = retrieveHaut();
 
         //Grouping the HakuViewModel objects based on hakutyyppi
         for (HakuViewModel curHaku : haut) {
             LOG.info("getTreeDataSource() curHaku: " + curHaku.getHakuOid() + ", hakutyyppi: " + curHaku.getHakutapa());
             if (!map.containsKey(curHaku.getHakutapa())) {
                 LOG.info("Adding a new key to the map: " + curHaku.getHakutapa());
-                List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
-                haut.add(curHaku);
+                List<HakuViewModel> hautM = new ArrayList<HakuViewModel>();
+                hautM.add(curHaku);
                 KoodiType hakutapaKoodi = this.koodiService.getKoodiByUri(curHaku.getHakutapa());
-                map.put((hakutapaKoodi != null) ? hakutapaKoodi.getKoodiArvo() : curHaku.getHakutapa(), haut); 
+                map.put((hakutapaKoodi != null) ? hakutapaKoodi.getKoodiArvo() : curHaku.getHakutapa(), hautM); 
             } else {
                 KoodiType hakutapaKoodi = this.koodiService.getKoodiByUri(curHaku.getHakutapa());
                 map.get((hakutapaKoodi != null) ?  hakutapaKoodi.getKoodiArvo() : curHaku.getHakutapa()).add(curHaku);
@@ -142,17 +151,17 @@ public class HakuPresenter {
      * Saves the haku as draft.
      */
     public void saveHakuLuonnoksenaModel() {
+        hakuModel.setHakuValmis(false);
         if (hakuModel.getHakuOid() == null) {
             try {
                 hakuModel.setHakuOid(oidService.newOid(NodeClassCode.TEKN_5));
             } catch (Exception ex) {
                 LOG.error(ex.getMessage());
             }
-            haut.add(hakuModel);
+            this.tarjontaService.lisaaHaku(hakuModel.getHakuDto());
+        } else {
+            this.tarjontaService.paivitaHaku(hakuModel.getHakuDto());
         }
-        
-        hakuModel.setHakuValmis(false);
-        
         LOG.info("Haku tallennettu luonnoksena");
     }
     
@@ -160,6 +169,7 @@ public class HakuPresenter {
      * Saves haku as ready.
      */
     public void saveHakuValmiina() {
+        hakuModel.setHakuValmis(true);
         LOG.info("Hakutapa: " + hakuModel.getHakutapa());
         if (hakuModel.getHakuOid() == null) {
             try {
@@ -167,11 +177,10 @@ public class HakuPresenter {
             } catch (Exception ex) {
                 LOG.error(ex.getMessage());
             }
-            
-            haut.add(hakuModel);
-            LOG.info("Haut size: " + haut.size());
+            this.tarjontaService.lisaaHaku(hakuModel.getHakuDto());
+        } else {
+            this.tarjontaService.paivitaHaku(hakuModel.getHakuDto());
         }
-        hakuModel.setHakuValmis(true);
         LOG.info("Haku tallennettu valmiina");
     }
 
@@ -189,15 +198,7 @@ public class HakuPresenter {
      * @param haku the haku to remove.
      */
     public void removeHaku(HakuViewModel haku) {
-        int index = -1;
-        for (int i = 0; i < haut.size(); ++i) {
-           if (haut.get(i).getHakuOid().equals(haku.getHakuOid())) {
-               index = i;
-           }
-       }
-        if (index > -1) {
-            haut.remove(index);
-        }
+        this.tarjontaService.poistaHaku(haku.getHakuDto());
         hakuList.reload();
     }
     
@@ -231,47 +232,6 @@ public class HakuPresenter {
         hakuList.reload();
     }
     
-    /**
-     * Creation of some initial mock data.
-     */
-    @PostConstruct
-    private void createData() {
-        haut = new ArrayList<HakuViewModel>();
-        HakuViewModel hak1 = new HakuViewModel();
-        try {
-            hak1.setHakuOid(oidService.newOid(NodeClassCode.TEKN_5));
-        } catch (Exception ex) {
-            LOG.error(ex.getMessage());
-        }
-        hak1.setNimiFi("Kevään 2013 yhteishaku");
-        hak1.setHakutapa("Testiyhteishaut");
-        hak1.setKaytetaanJarjestelmanHakulomaketta(true);
-        
-        HakuViewModel hak2 = new HakuViewModel();
-        try {
-            hak2.setHakuOid(oidService.newOid(NodeClassCode.TEKN_5));
-        } catch (Exception ex) {
-            LOG.error(ex.getMessage());
-        }
-        hak2.setNimiFi("Syksyn 2013 yhteishaku");
-        hak2.setHakutapa("Testiyhteishaut");
-        hak2.setKaytetaanJarjestelmanHakulomaketta(false);
-        
-        HakuViewModel hak3 = new HakuViewModel();
-        try {
-            hak3.setHakuOid(oidService.newOid(NodeClassCode.TEKN_5));
-        } catch (Exception ex) {
-            LOG.error(ex.getMessage());
-        }
-        hak3.setNimiFi("Kevään 2013 erillishaku");
-        hak3.setHakutapa("Testierillishaut");
-        hak3.setKaytetaanJarjestelmanHakulomaketta(true);
-        
-        haut.add(hak1);
-        haut.add(hak2);
-        haut.add(hak3);
-    }
-    
     public HakuViewModel getHakuModel() {
         return hakuModel;
     }
@@ -297,4 +257,13 @@ public class HakuPresenter {
         List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
         return hakukohteet;
     }
+    
+    private List<HakuViewModel> retrieveHaut() {
+        List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
+        for (Haku curHaku : this.tarjontaService.listHaku(new ListaaHakuTyyppi()).getResponse()) {
+            haut.add(new HakuViewModel(curHaku));
+        }
+        return haut;
+    }
+    
 }

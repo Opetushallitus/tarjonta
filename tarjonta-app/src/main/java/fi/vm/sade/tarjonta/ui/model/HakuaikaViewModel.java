@@ -19,8 +19,7 @@ package fi.vm.sade.tarjonta.ui.model;
 
 import java.util.Date;
 
-
-
+import fi.vm.sade.tarjonta.service.types.tarjonta.SisaisetHakuAjat;
 
 /**
  *
@@ -28,14 +27,28 @@ import java.util.Date;
  */
 public class HakuaikaViewModel {
 
+    private String hakuajanKuvaus;
+
     private Date alkamisPvm;
     
     private Date paattymisPvm;
+    
+    SisaisetHakuAjat hakuaikaDto;
+
+    public HakuaikaViewModel(SisaisetHakuAjat hakuaikaDto) {
+        this.hakuaikaDto = hakuaikaDto;
+    }
+    
+    public HakuaikaViewModel() {
+        hakuaikaDto = new SisaisetHakuAjat();
+    }
+
 
     /**
      * @return the alkamisPvm
      */
     public Date getAlkamisPvm() {
+        alkamisPvm = hakuaikaDto.getSisaisenHaunAlkamisPvm();
         return alkamisPvm;
     }
 
@@ -43,6 +56,7 @@ public class HakuaikaViewModel {
      * @param alkamisPvm the alkamisPvm to set
      */
     public void setAlkamisPvm(Date alkamisPvm) {
+        hakuaikaDto.setSisaisenHaunAlkamisPvm(alkamisPvm);
         this.alkamisPvm = alkamisPvm;
     }
 
@@ -50,15 +64,42 @@ public class HakuaikaViewModel {
      * @return the paattymisPvm
      */
     public Date getPaattymisPvm() {
+        paattymisPvm = hakuaikaDto.getSisaisenHaunPaattymisPvm();
         return paattymisPvm;
+    }
+    
+    
+    /**
+     * @return the hakuajanKuvaus
+     */
+    public String getHakuajanKuvaus() {
+        hakuajanKuvaus = hakuaikaDto.getHakuajanKuvaus();
+        return hakuajanKuvaus;
+    }
+
+    /**
+     * @param hakuajanKuvaus the hakuajanKuvaus to set
+     */
+    public void setHakuajanKuvaus(String hakuajanKuvaus) {
+        hakuaikaDto.setHakuajanKuvaus(hakuajanKuvaus);
+        this.hakuajanKuvaus = hakuajanKuvaus;
     }
 
     /**
      * @param paattymisPvm the paattymisPvm to set
      */
     public void setPaattymisPvm(Date paattymisPvm) {
+        hakuaikaDto.setSisaisenHaunPaattymisPvm(paattymisPvm);
         this.paattymisPvm = paattymisPvm;
     }
     
+
+    /**
+     * @return the hakuaikaDto
+     */
+    public SisaisetHakuAjat getHakuaikaDto() {
+        return hakuaikaDto;
+    }
+
     
 }

@@ -21,6 +21,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import fi.vm.sade.tarjonta.service.types.tarjonta.Haku;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.SisaisetHakuAjat;
+
 
 /**
  * For editing "Haku" in the UI.
@@ -65,11 +69,24 @@ public class HakuViewModel extends BaseUIViewModel {
     private String nimiEn;
 
     private boolean hakuValmis;
+    
+    private Haku hakuDto;
+    
+    public HakuViewModel() {
+        super();
+        hakuDto = new Haku();
+    }
+    
+    public HakuViewModel(Haku hakuDto) {
+        super();
+        this.hakuDto = hakuDto;
+    }
 
     /**
      * @return the hakuOid
      */
     public String getHakuOid() {
+        this.hakuOid = hakuDto.getOid();
         return hakuOid;
     }
 
@@ -77,6 +94,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param hakuOid the hakuOid to set
      */
     public void setHakuOid(String hakuOid) {
+        hakuDto.setOid(hakuOid);
         this.hakuOid = hakuOid;
     }
 
@@ -84,6 +102,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the hakutyyppi
      */
     public String getHakutyyppi() {
+        hakutyyppi = hakuDto.getHakutyyppiUri();
         return hakutyyppi;
     }
 
@@ -91,6 +110,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param hakutyyppi the hakutyyppi to set
      */
     public void setHakutyyppi(String hakutyyppi) {
+        hakuDto.setHakutyyppiUri(hakutyyppi);
         this.hakutyyppi = hakutyyppi;
     }
 
@@ -98,6 +118,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the hakukausi
      */
     public String getHakukausi() {
+        hakukausi = hakuDto.getHakukausiUri();
         return hakukausi;
     }
 
@@ -105,6 +126,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param hakukausi the hakukausi to set
      */
     public void setHakukausi(String hakukausi) {
+        hakuDto.setHakukausiUri(hakukausi);
         this.hakukausi = hakukausi;
     }
 
@@ -112,6 +134,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the hakuvuosi
      */
     public int getHakuvuosi() {
+        hakuvuosi = hakuDto.getHakuVuosi();
         return hakuvuosi;
     }
 
@@ -119,6 +142,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param hakuvuosi the hakuvuosi to set
      */
     public void setHakuvuosi(int hakuvuosi) {
+        hakuDto.setHakuVuosi(hakuvuosi);
         this.hakuvuosi = hakuvuosi;
     }
 
@@ -126,6 +150,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the koulutuksenAlkamisKausi
      */
     public String getKoulutuksenAlkamisKausi() {
+        koulutuksenAlkamisKausi = hakuDto.getKoulutuksenAlkamisKausiUri();
         return koulutuksenAlkamisKausi;
     }
 
@@ -133,6 +158,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param koulutuksenAlkamisKausi the koulutuksenAlkamisKausi to set
      */
     public void setKoulutuksenAlkamisKausi(String koulutuksenAlkamisKausi) {
+        hakuDto.setKoulutuksenAlkamisKausiUri(koulutuksenAlkamisKausi);
         this.koulutuksenAlkamisKausi = koulutuksenAlkamisKausi;
     }
 
@@ -140,6 +166,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the haunKohdejoukko
      */
     public String getHaunKohdejoukko() {
+        haunKohdejoukko = hakuDto.getKohdejoukkoUri();
         return haunKohdejoukko;
     }
 
@@ -147,6 +174,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param haunKohdejoukko the haunKohdejoukko to set
      */
     public void setHaunKohdejoukko(String haunKohdejoukko) {
+        hakuDto.setKohdejoukkoUri(haunKohdejoukko);
         this.haunKohdejoukko = haunKohdejoukko;
     }
 
@@ -154,6 +182,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the haunTunniste
      */
     public String getHaunTunniste() {
+        haunTunniste = hakuDto.getHaunTunniste();
         return haunTunniste;
     }
 
@@ -161,6 +190,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param haunTunniste the haunTunniste to set
      */
     public void setHaunTunniste(String haunTunniste) {
+        hakuDto.setHaunTunniste(haunTunniste);
         this.haunTunniste = haunTunniste;
     }
 
@@ -168,6 +198,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the alkamisPvm
      */
     public Date getAlkamisPvm() {
+        alkamisPvm = hakuDto.getHaunAlkamisPvm();
         return alkamisPvm;
     }
 
@@ -175,6 +206,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param alkamisPvm the alkamisPvm to set
      */
     public void setAlkamisPvm(Date alkamisPvm) {
+        hakuDto.setHaunAlkamisPvm(alkamisPvm);
         this.alkamisPvm = alkamisPvm;
     }
 
@@ -182,6 +214,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the paattymisPvm
      */
     public Date getPaattymisPvm() {
+        paattymisPvm = hakuDto.getHaunLoppumisPvm();
         return paattymisPvm;
     }
 
@@ -189,6 +222,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param paattymisPvm the paattymisPvm to set
      */
     public void setPaattymisPvm(Date paattymisPvm) {
+        hakuDto.setHaunLoppumisPvm(paattymisPvm);
         this.paattymisPvm = paattymisPvm;
     }
 
@@ -196,6 +230,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the haussaKaytetaanSijoittelua
      */
     public boolean isHaussaKaytetaanSijoittelua() {
+        haussaKaytetaanSijoittelua = hakuDto.isSijoittelu();
         return haussaKaytetaanSijoittelua;
     }
 
@@ -203,6 +238,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param haussaKaytetaanSijoittelua the haussaKaytetaanSijoittelua to set
      */
     public void setHaussaKaytetaanSijoittelua(boolean haussaKaytetaanSijoittelua) {
+        hakuDto.setSijoittelu(haussaKaytetaanSijoittelua);
         this.haussaKaytetaanSijoittelua = haussaKaytetaanSijoittelua;
     }
 
@@ -210,6 +246,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the hakuLomakeUrl
      */
     public String getHakuLomakeUrl() {
+        hakuLomakeUrl = hakuDto.getHakulomakeUrl();
         return hakuLomakeUrl;
     }
 
@@ -217,6 +254,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param hakuLomakeUrl the hakuLomakeUrl to set
      */
     public void setHakuLomakeUrl(String hakuLomakeUrl) {
+        hakuDto.setHakulomakeUrl(hakuLomakeUrl);
         this.hakuLomakeUrl = hakuLomakeUrl;
     }
 
@@ -227,8 +265,24 @@ public class HakuViewModel extends BaseUIViewModel {
         if (sisaisetHakuajat == null) {
             sisaisetHakuajat = new ArrayList<HakuaikaViewModel>();
         }
+        sisaisetHakuajat.clear();
+        for (SisaisetHakuAjat curHakuaika : hakuDto.getSisaisetHakuajat()) {
+            sisaisetHakuajat.add(new HakuaikaViewModel(curHakuaika));    
+        }
 
         return sisaisetHakuajat;
+    }
+    
+
+    /**
+     * @param sisaisetHakuajat the sisaisethakuajat to set
+     */
+    public void setSisaisetHakuajat(List<HakuaikaViewModel> sisaisetHakuajat) {
+        hakuDto.getSisaisetHakuajat().clear();
+        for (HakuaikaViewModel curHakuaika : sisaisetHakuajat) {
+            hakuDto.getSisaisetHakuajat().add(curHakuaika.getHakuaikaDto());
+        }
+        this.sisaisetHakuajat = sisaisetHakuajat;
     }
 
 
@@ -236,6 +290,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the hakutapa
      */
     public String getHakutapa() {
+        hakutapa = hakuDto.getHakutapaUri();
         return hakutapa;
     }
 
@@ -243,6 +298,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param hakutapa the hakutapa to set
      */
     public void setHakutapa(String hakutapa) {
+        hakuDto.setHakutapaUri(hakutapa);
         this.hakutapa = hakutapa;
     }
 
@@ -250,6 +306,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the kaytetaanJarjestelmanHakulomaketta
      */
     public boolean isKaytetaanJarjestelmanHakulomaketta() {
+        kaytetaanJarjestelmanHakulomaketta = (hakuDto.getHakulomakeUrl() == null);
         return kaytetaanJarjestelmanHakulomaketta;
     }
 
@@ -264,6 +321,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the nimiFi
      */
     public String getNimiFi() {
+        nimiFi = this.getKielistettyNimiFromDto("fi");
         return nimiFi;
     }
 
@@ -271,13 +329,16 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param nimiFi the nimiFi to set
      */
     public void setNimiFi(String nimiFi) {
+        setKielistettyNimiToDto(nimiFi, "fi");
         this.nimiFi = nimiFi;
     }
+
 
     /**
      * @return the nimiSe
      */
     public String getNimiSe() {
+        nimiSe = getKielistettyNimiFromDto("sv");
         return nimiSe;
     }
 
@@ -285,6 +346,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param nimiSe the nimiSe to set
      */
     public void setNimiSe(String nimiSe) {
+        setKielistettyNimiToDto(nimiSe, "sv");
         this.nimiSe = nimiSe;
     }
 
@@ -292,6 +354,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the nimiEn
      */
     public String getNimiEn() {
+        nimiEn = getKielistettyNimiFromDto("en");
         return nimiEn;
     }
 
@@ -299,6 +362,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param nimiEn the nimiEn to set
      */
     public void setNimiEn(String nimiEn) {
+        setKielistettyNimiToDto(nimiEn, "en");
         this.nimiEn = nimiEn;
     }
 
@@ -316,7 +380,38 @@ public class HakuViewModel extends BaseUIViewModel {
         this.hakuValmis = hakuValmis;
     }
 
+    /**
+     * @return the hakuDto
+     */
+    public Haku getHakuDto() {
+        return hakuDto;
+    }
 
+    private String getKielistettyNimiFromDto(String kieliKoodi) {
+        for (HaunNimi haunNimi : hakuDto.getHaunKielistetytNimet()) {
+            if (haunNimi.getKielikoodi().equals(kieliKoodi)) {
+                return haunNimi.getNimi();
+            }
+        }
+        return null;
+    }
+
+    private void setKielistettyNimiToDto(String nimi, String kielikoodi) {
+        boolean nimiExists = false;
+        for (HaunNimi haunNimi : hakuDto.getHaunKielistetytNimet()) {
+            if (haunNimi.getKielikoodi().equals(kielikoodi)) {
+                haunNimi.setNimi(nimi);
+                nimiExists = true;
+            }
+        }
+        if (!nimiExists) {
+            HaunNimi hNimi = new HaunNimi();
+            hNimi.setKielikoodi(kielikoodi);
+            hNimi.setNimi(nimi);
+            hakuDto.getHaunKielistetytNimet().add(hNimi);
+        }
+        
+    }
 
 
 }
