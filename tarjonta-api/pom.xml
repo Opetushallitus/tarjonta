@@ -1,86 +1,86 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>tarjonta</artifactId>
-		<groupId>fi.vm.sade.tarjonta</groupId>
-		<version>1.0-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
-	<artifactId>tarjonta-api</artifactId>
-	<name>Tarjonta :: API</name>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>tarjonta</artifactId>
+        <groupId>fi.vm.sade.tarjonta</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+    <artifactId>tarjonta-api</artifactId>
+    <name>Tarjonta :: API</name>
     <!--<packaging>bundle</packaging>-->
     <packaging>jar</packaging>
 
     <properties>
-		<felix.Import-Package>
-			javax.jws,
-			javax.xml.ws,
-			javax.xml.bind.annotation,
-			org.apache.cxf.annotations,
-			org.apache.commons.lang.builder,
-			javax.activation,
-			javax.validation,
-			javax.validation.constraints,
-			org.hibernate.validator.constraints,
-			javax.xml.ws.soap,
-			javax.annotation,
+        <felix.Import-Package>
+            javax.jws,
+            javax.xml.ws,
+            javax.xml.bind.annotation,
+            org.apache.cxf.annotations,
+            org.apache.commons.lang.builder,
+            javax.activation,
+            javax.validation,
+            javax.validation.constraints,
+            org.hibernate.validator.constraints,
+            javax.xml.ws.soap,
+            javax.annotation,
             org.slf4j,
-			com_*;resolution:=optional<!-- com_*... 
+            com_*;resolution:=optional<!-- com_*... 
 				is for clover -->
-		</felix.Import-Package>
-	</properties>
+        </felix.Import-Package>
+    </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>1.0.0.GA</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>4.2.0.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.0.0.GA</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>4.2.0.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.jvnet.jaxb2_commons</groupId>
             <artifactId>jaxb2-basics-runtime</artifactId>
@@ -93,36 +93,59 @@
         </dependency>
     </dependencies>
 
-	<build>
-		<plugins>
-			<!-- make felix osgi bundle -->
+    <build>
+        <plugins>
+            <!-- make felix osgi bundle -->
             <!--
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-						<Bundle-Description>${project.description}</Bundle-Description>
-						<Export-Package>
-							fi.vm.sade.tarjonta.model.dto,
-							fi.vm.sade.tarjonta.model.dto.simple,
-							fi.vm.sade.tarjonta.service
-						</Export-Package>
-						<Import-Package>
-							${felix.Import-Package}
-						</Import-Package>
-						<Include-Resource>META-INF=target/classes/META-INF</Include-Resource>
-					</instructions>
-				</configuration>
-			</plugin>
-			-->
-			<plugin>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>${cxf.version}</version>
-				<executions>
+         			<plugin>
+                				<groupId>org.apache.felix</groupId>
+                				<artifactId>maven-bundle-plugin</artifactId>
+                				<extensions>true</extensions>
+                				<configuration>
+                       					<instructions>
+                              						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                              						<Bundle-Description>${project.description}</Bundle-Description>
+                              						<Export-Package>
+                                     							fi.vm.sade.tarjonta.model.dto,
+                                     							fi.vm.sade.tarjonta.model.dto.simple,
+                                     							fi.vm.sade.tarjonta.service
+                              						</Export-Package>
+                              						<Import-Package>
+                                     							${felix.Import-Package}
+                              						</Import-Package>
+                              						<Include-Resource>META-INF=target/classes/META-INF</Include-Resource>
+                       					</instructions>
+                				</configuration>
+         			</plugin>
+         			-->
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <version>${cxf.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-tarjonta-wsdl2java</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sourceRoot>target/generated-sources/java</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>src/main/resources/wsdl/tarjontaService.wsdl</wsdl>
+                                    <bindingFiles>
+                                        <bindingFile>src/main/resources/wsdl/binding.xjb</bindingFile>
+                                    </bindingFiles>
+                                    <extraargs>
+                                        <extraarg>-xjc-XhashCode</extraarg>
+                                        <extraarg>-xjc-Xequals</extraarg>
+                                    </extraargs>
+                                </wsdlOption>                                
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>  
+                                    
                     <execution>
                         <id>generate-wsdl2java</id>
                         <phase>generate-sources</phase>
@@ -131,6 +154,9 @@
                             <wsdlOptions>
                                 <wsdlOption>
                                     <wsdl>src/main/resources/wsdl/hakueraService.wsdl</wsdl>
+                                    <bindingFiles>
+                                        <bindingFile>src/main/resources/wsdl/binding.xjb</bindingFile>
+                                    </bindingFiles>
                                     <extraargs>
                                         <extraarg>-xjc-XhashCode</extraarg>
                                         <extraarg>-xjc-Xequals</extraarg>
@@ -184,26 +210,6 @@
                         </goals>
                     </execution>
                                         
-                     <execution>
-                        <id>generate-tarjonta-wsdl2java</id>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <sourceRoot>target/generated-sources/java</sourceRoot>
-                            <wsdlOptions>
-                                <wsdlOption>
-                                    <wsdl>src/main/resources/wsdl/tarjontaService.wsdl</wsdl>
-                                    <extraargs>
-                                        <extraarg>-xjc-XhashCode</extraarg>
-                                        <extraarg>-xjc-Xequals</extraarg>
-                                    </extraargs>
-                                </wsdlOption>                                
-                            </wsdlOptions>
-                        </configuration>
-                        <goals>
-                            <goal>wsdl2java</goal>
-                        </goals>
-                    </execution>
-                    
                 </executions>
                 <dependencies>
                     <dependency>
@@ -213,7 +219,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
-		</plugins>
-	</build>
+        </plugins>
+    </build>
 
 </project>
