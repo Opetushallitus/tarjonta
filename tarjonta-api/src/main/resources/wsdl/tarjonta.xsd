@@ -58,6 +58,11 @@
                     <xs:documentation>Haun nimet eri kielilla</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="sisaisetHakuajat" type="tns:SisaisetHakuAjat">
+                <xs:annotation>
+                    <xs:documentation>Haun sisaiset hakuajat</xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element minOccurs="1" maxOccurs="1" name="sijoittelu"
                         type="xs:boolean">
                 <xs:annotation>
@@ -116,6 +121,13 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakulomakeUrl" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>
+                        Muun hakulomakkeen url
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
         
@@ -129,6 +141,26 @@
             <xs:element minOccurs="1" maxOccurs="1" name="nimi" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Haun nimi</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="SisaisetHakuAjat">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakuajanKuvaus" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Haun sisaisen hakuajan kuvaus</xs:documentation>
+                </xs:annotation>
+            </xs:element> 
+            <xs:element minOccurs="1" maxOccurs="1" name="sisaisenHaunAlkamisPvm" type="xs:date">
+                <xs:annotation>
+                    <xs:documentation>Sisaisen haun alkamispaivamaara</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="sisaisenHaunPaattymisPvm" type="xs:date">
+                <xs:annotation>
+                    <xs:documentation>Sisaisen haun paattymispaivamaara</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
