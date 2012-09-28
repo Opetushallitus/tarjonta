@@ -41,6 +41,8 @@ import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
+import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 
 /**
  * Presenter for searching, creating, editing, and viewing Haku objects.
@@ -179,14 +181,7 @@ public class HakuPresenter {
         LOG.info("Haku tallennettu valmiina");
     }
 
-    /**
-     * Sets the rootView
-     * 
-     * @param rootView the rootView to set.
-     */
-    public void setRootView(TarjontaRootView rootView) {
-        this.rootView = rootView;
-    }
+  
 
     /**
      * Removes the haku given as parameter

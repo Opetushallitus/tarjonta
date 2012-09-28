@@ -131,7 +131,7 @@ public class TarjontaRootView extends Window {
         }
 
         _presenter.showMainDefaultView();
-        hakuPresenter.setRootView(this);
+//        hakuPresenter.setRootView(this);
     }
     
     private void handleHakuRowMenuEvent(HakuResultRow.HakuRowMenuEvent event) {
