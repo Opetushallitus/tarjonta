@@ -28,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
@@ -60,7 +62,8 @@ public class HakuPresenter {
     private TarjontaRootView rootView;
     
     HakuViewModel hakuModel;
-    
+
+
     @Autowired
     private OIDService oidService;
     
@@ -271,5 +274,28 @@ public class HakuPresenter {
         haut.add(hak1);
         haut.add(hak2);
         haut.add(hak3);
+    }
+    
+    public HakuViewModel getHakuModel() {
+        return hakuModel;
+    }
+
+    public String getKoodiArvo(String koodiUri) {
+        KoodiType koodi = this.koodiService.getKoodiByUri(koodiUri);
+        return (koodi != null) ? koodi.getKoodiArvo() : koodiUri; 
+    }
+
+    public String getHakuaika() {
+        return "" + this.hakuModel.getAlkamisPvm() + " - " + this.hakuModel.getPaattymisPvm();
+    }
+
+    public List<HakuaikaViewModel> getSisaisetHautSource() {
+        List<HakuaikaViewModel> sisHaut = new ArrayList<HakuaikaViewModel>();
+        return sisHaut;
+    }
+
+    public List<HakukohdeViewModel> getHakukohteet() {
+        List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
+        return hakukohteet;
     }
 }

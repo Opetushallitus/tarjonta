@@ -19,6 +19,6 @@ package fi.vm.sade.tarjonta.ui.view.haku;
  *
  * @author mlyly
  */
-public class ShowHakuView {
+public interface ShowHakuView {
 
 }

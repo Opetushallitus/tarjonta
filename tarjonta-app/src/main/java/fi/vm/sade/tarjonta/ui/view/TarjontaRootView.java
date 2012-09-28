@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -27,7 +29,11 @@ import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuViewImpl;
 import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
+import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuViewImpl;
 import fi.vm.sade.vaadin.Oph;
+import fi.vm.sade.vaadin.dto.ButtonDTO;
+import fi.vm.sade.vaadin.dto.PageNavigationDTO;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -176,7 +182,23 @@ public class TarjontaRootView extends Window {
         getAppLeftLayout().addComponent(new Label("LEFT"));
 
         getAppRightLayout().addComponent(getBreadcrumbsView());
-        getAppRightLayout().addComponent(new Label("Tähän haun tarkastelunäyttö" + haku.getHaunTunniste()));
+        Button.ClickListener myClickList = new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+        };
+        PageNavigationDTO pNav = new PageNavigationDTO(new ButtonDTO("Edellinen", myClickList), new ButtonDTO("Seuraava", myClickList), "Mokkiteksti");
+        this.hakuPresenter.setHakuViewModel(haku);
+        String messageStr = (haku.getNimiFi() != null) ? haku.getNimiFi() : "-";
+        ShowHakuViewImpl showHaku = new ShowHakuViewImpl(this.hakuPresenter.getHakuModel().getNimiFi(), 
+                this.hakuPresenter.getHakuModel().getNimiFi(), 
+                pNav);
+        //showHaku.buildLayout(layout)
+        getAppRightLayout().addComponent(showHaku);
 
     }
     
