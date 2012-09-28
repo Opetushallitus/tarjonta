@@ -37,10 +37,10 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         super(VerticalLayout.class, pageTitle, message, dto);
         _i18n = new I18NHelper(this);
 
-        addNavigationButton("", new Button.ClickListener() {
+        addNavigationButton(_i18n.getMessage("Takaisin"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                //getPresenter().showMainKoulutusView();
+                backFired();  
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 
@@ -48,8 +48,8 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
             @Override
             public void buttonClick(ClickEvent event) {
                 hakuPresenter.removeHaku(hakuPresenter.getHakuModel());
-                //getPresenter().demoInformation(Notification.DELETE);
-
+                getWindow().showNotification(_i18n.getMessage("HakuPoistettu"));
+                backFired();
             }
         });
         buildLayout(this);
@@ -93,7 +93,10 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiArvo(hakuPresenter.getHakuModel().getHakutapa()) + " "), 1, 4);
         grid.addComponent(UiUtil.label(null, hakuPresenter.getHakuModel().getHaunTunniste() + " "), 1, 5);
         grid.addComponent(UiUtil.label(null, hakuPresenter.getHakuaika() + " "), 1, 6);
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta() + " "), 1, 7);
+        String hakulomakeStr = hakuPresenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta() 
+                                ? _i18n.getMessage("KaytetaanJarjestelmanHakulomaketta")
+                                        : _i18n.getMessage("KaytetaanOmaaHakulomaketta");
+        grid.addComponent(UiUtil.label(null, hakulomakeStr + " "), 1, 7);
 
         grid.setColumnExpandRatio(0, 1);
         grid.setColumnExpandRatio(1, 2);
@@ -121,7 +124,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
 
 
     private void buildLayoutMiddleBottom(VerticalLayout layout) {
-        layout.addComponent(buildHeaderLayout(_i18n.getMessage("Hakukohteet"), _i18n.getMessage("LuoHakukohde")));
+        layout.addComponent(buildBottomHeaderLayout(_i18n.getMessage("Hakukohteet"), _i18n.getMessage("LuoHakukohde")));
 
         CategoryTreeView categoryTree = new CategoryTreeView();
         categoryTree.setHeight("100px");
@@ -141,7 +144,27 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
             Button btn = UiUtil.buttonSmallSecodary(headerLayout, btnCaption, new Button.ClickListener() {
                 @Override
                 public void buttonClick(ClickEvent event) {
-                    //getPresenter().demoInformation(Notification.GENERIC_ERROR);
+                   editFired();
+                }
+            });
+
+            headerLayout.setExpandRatio(btn, 1f);
+            headerLayout.setComponentAlignment(btn, Alignment.TOP_RIGHT);
+        }
+        return headerLayout;
+    }
+    
+    private HorizontalLayout buildBottomHeaderLayout(String title, String btnCaption) {
+        HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
+        Label titleLabel = UiUtil.label(headerLayout, title);
+        titleLabel.setStyleName(Oph.LABEL_H2);
+
+        if (btnCaption != null) {
+            headerLayout.addComponent(titleLabel);
+            Button btn = UiUtil.buttonSmallSecodary(headerLayout, btnCaption, new Button.ClickListener() {
+                @Override
+                public void buttonClick(ClickEvent event) {
+                   LOG.info("Luo hakukohde to be implemented");
                 }
             });
 
@@ -161,6 +184,36 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
             List<HakukohdeViewModel> hakukohteet) {
         HierarchicalContainer hc = new HierarchicalContainer();
         return hc;
+    }
+    
+    private void backFired() {
+        fireEvent(new BackEvent(this));
+    }
+    
+    private void editFired() {
+        fireEvent(new EditEvent(this));
+    }
+    
+    /**
+     * Fired when Back is pressed.
+     */
+    public class BackEvent extends Component.Event {
+
+        public BackEvent(Component source) {
+            super(source);
+            
+        }
+    }
+    
+    /**
+     * Fired when Edit is pressed.
+     */
+    public class EditEvent extends Component.Event {
+
+        public EditEvent(Component source) {
+            super(source);
+            
+        }
     }
 
 }

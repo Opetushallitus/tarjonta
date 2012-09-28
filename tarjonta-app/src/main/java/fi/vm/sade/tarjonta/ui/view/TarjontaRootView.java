@@ -172,7 +172,7 @@ public class TarjontaRootView extends Window {
      * Displays the view component of Haku
      * @param haku
      */
-    private void showHakuView(HakuViewModel haku) {
+    private void showHakuView(final HakuViewModel haku) {
 
         LOG.info("loadViewForm()");
 
@@ -197,7 +197,19 @@ public class TarjontaRootView extends Window {
         ShowHakuViewImpl showHaku = new ShowHakuViewImpl(this.hakuPresenter.getHakuModel().getNimiFi(), 
                 this.hakuPresenter.getHakuModel().getNimiFi(), 
                 pNav);
-        //showHaku.buildLayout(layout)
+        showHaku.addListener(new Listener() {
+
+            @Override
+            public void componentEvent(Event event) {
+                if (event instanceof ShowHakuViewImpl.BackEvent) {
+                    showMainDefaultView();
+                    hakuPresenter.refreshHakulist();
+                } else if (event instanceof ShowHakuViewImpl.EditEvent) {
+                    showHakuEdit(haku);
+                }
+            }
+            
+        });
         getAppRightLayout().addComponent(showHaku);
 
     }
@@ -206,7 +218,7 @@ public class TarjontaRootView extends Window {
      * Displays the edit form of Haku.
      * @param haku
      */
-    public void showHakuEdit(HakuViewModel haku) {
+    public void showHakuEdit(final HakuViewModel haku) {
         LOG.info("showHakuEdit()");
 
         getAppLeftLayout().removeAllComponents();
@@ -223,6 +235,10 @@ public class TarjontaRootView extends Window {
                 if (event instanceof EditHakuViewImpl.CancelEvent) {
                     showMainDefaultView();
                     hakuPresenter.refreshHakulist();
+                } else if (event instanceof EditHakuViewImpl.ContinueEvent) {
+                    if (haku.getHakuOid() != null) {
+                        showHakuView(haku);
+                    } 
                 }
             }
             
@@ -246,4 +262,5 @@ public class TarjontaRootView extends Window {
         getAppRightLayout().addComponent(getSearchSpesificationView());
         getAppRightLayout().addComponent(getSearchResultsView());
     }
+
 }

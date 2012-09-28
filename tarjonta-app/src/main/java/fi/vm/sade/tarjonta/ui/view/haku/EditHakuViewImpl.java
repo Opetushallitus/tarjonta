@@ -322,7 +322,11 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         btnContinue.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                fireEvent(new ContinueEvent(EditHakuViewImpl.this));
+                if (_presenter.getHakuModel().getHakuOid() != null) {
+                    fireEvent(new ContinueEvent(EditHakuViewImpl.this));
+                } else {
+                    getWindow().showNotification(_i18n.getMessage("TallennaEnsin"));
+                }
             }
         });
 
@@ -377,8 +381,10 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             form.commit();
             if (complete) {
                 _presenter.saveHakuValmiina();
+                getWindow().showNotification(_i18n.getMessage("HakuTallennettuValmiina"));
             } else {
                 _presenter.saveHakuLuonnoksenaModel();
+                getWindow().showNotification(_i18n.getMessage("HakuTallennettuLuonnoksena"));
             }
 
         }
@@ -406,7 +412,6 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
         public ContinueEvent(Component source) {
             super(source);
-            _presenter.showShowHakukohdeView();
         }
     }
 

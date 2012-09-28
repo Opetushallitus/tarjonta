@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -128,12 +130,6 @@ public class HakuPresenter {
         this.hakuList = hakuList;
     }
     
-    
-    
-    public void showShowHakukohdeView() {
-        
-    }
-    
     /**
      * Sets the hakuModel, used in the edit form of haku.
      * @param hakuModelParam the hakuModel to set.
@@ -195,7 +191,7 @@ public class HakuPresenter {
     public void removeHaku(HakuViewModel haku) {
         int index = -1;
         for (int i = 0; i < haut.size(); ++i) {
-           if (haut.get(i).getHaunTunniste().equals(haku.getHaunTunniste())) {
+           if (haut.get(i).getHakuOid().equals(haku.getHakuOid())) {
                index = i;
            }
        }
@@ -286,7 +282,10 @@ public class HakuPresenter {
     }
 
     public String getHakuaika() {
-        return "" + this.hakuModel.getAlkamisPvm() + " - " + this.hakuModel.getPaattymisPvm();
+        DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+        String startDateStr = (hakuModel.getAlkamisPvm() != null) ? formatter.format(hakuModel.getAlkamisPvm()) : "";
+        String endDateStr = (hakuModel.getPaattymisPvm() != null) ? formatter.format(hakuModel.getPaattymisPvm()) : "";        
+        return startDateStr  + " - " + endDateStr;
     }
 
     public List<HakuaikaViewModel> getSisaisetHautSource() {
