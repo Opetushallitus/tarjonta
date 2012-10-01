@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:osgi="http://camel.apache.org/schema/osgi"
+       xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xmlns:camel="http://cxf.apache.org/transports/camel"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/osgi http://camel.apache.org/schema/osgi/camel-osgi.xsd
+       http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
+       http://camel.apache.org/schema/cxf
+       http://camel.apache.org/schema/cxf/camel-cxf.xsd
+       http://www.springframework.org/schema/context/spring-context.xsd
+">
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-extension-jms.xml" />
+
+     <context:property-placeholder
+        location="classpath:META-INF/tarjonta-esb.properties, file:///${user.home:''}/oph-configuration/tarjonta-esb.properties"
+        ignore-resource-not-found="true"/>
+     
+      <!-- Define activemq component with activemq url -->
+    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="brokerURL" value="${activeMq.brokerUrl}" />
+    </bean>
+    
+     <!-- Define "listening" endpoint for haku Web Service -->
+    <cxf:cxfEndpoint
+        id="hakuRouter"
+        address="/hakuService"
+        serviceClass="fi.vm.sade.tarjonta.service.HakuService"
+    >
+    </cxf:cxfEndpoint>
+    
+     <!-- Define "to" endpoint, which is activemq queue -->
+    <cxf:cxfEndpoint id="hakuService"
+                     address="camel://activemq:queue:${activeMq.queueName}?useMessageIDAsCorrelationID=true"
+                     serviceClass="fi.vm.sade.tarjonta.service.HakuService">
+        <cxf:properties>
+            <entry key="dataFormat" value="PAYLOAD" />
+        </cxf:properties>
+    </cxf:cxfEndpoint>
+    
+    <!-- define camel route with camel conduit which uses camel's own transport -->
+    <camel:conduit name="*.camel-conduit">     
+        <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">
+            <route id="hakuRoute" >
+                <from uri="cxf:bean:hakuRouter?dataFormat=PAYLOAD" />
+                <to uri="cxf:bean:hakuService" />
+            </route>
+        </camelContext>
+    </camel:conduit>
+    
+</beans>
