@@ -15,8 +15,6 @@
  */
 package fi.vm.sade.tarjonta.model.dto;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -54,7 +52,7 @@ public class KoulutusmoduuliPerustiedotDTO implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("koulutusKoodiUri", koulutusKoodiUri).
+        return new StringBuilder().append("koulutusKoodiUri: ").append(koulutusKoodiUri).
             toString();
     }
 

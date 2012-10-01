@@ -47,7 +47,7 @@
 	</wsdl:message>
         
         
-    <wsdl:portType name="TarjontaService">
+    <wsdl:portType name="HakuService">
         <wsdl:documentation>
             Palvelu tarjontatiedon hakemiseen
         </wsdl:documentation>
@@ -99,7 +99,7 @@
         
     </wsdl:portType>
 
-	<wsdl:binding name="TarjontaServiceSoapBinding" type="tns:TarjontaService">
+	<wsdl:binding name="TarjontaServiceSoapBinding" type="tns:HakuService">
 		<soap:binding style="document"
 			transport="http://schemas.xmlsoap.org/soap/http" />
 		<wsdl:operation name="listHaku">
@@ -122,7 +122,7 @@
 		</wsdl:operation>
 	</wsdl:binding>
 
-    <wsdl:service name="TarjontaService">
+    <wsdl:service name="HakuService">
         <wsdl:port name="TarjontaServicePort" binding="tns:TarjontaServiceSoapBinding">
             <soap:address location="http://localhost:8181/cxf/tarjontaService" />
         </wsdl:port>

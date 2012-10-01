@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -36,7 +34,7 @@ public class KoulutusmoduuliAdminServiceMock implements KoulutusmoduuliAdminServ
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliAdminServiceMock.class);
+
 
     private KoulutusmoduuliStorage storage = new KoulutusmoduuliStorage();
 

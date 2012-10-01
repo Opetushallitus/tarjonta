@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.model.dto;
 
 import java.io.Serializable;
 import java.util.Date;
-import org.apache.commons.lang.builder.ToStringBuilder;
+
 
 /**
  *
@@ -99,8 +99,9 @@ public abstract class KoulutusmoduuliDTO implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("oid", oid).
-            append("nimi", nimi).append("tila", tila).append("updated", updated).append(perustiedot).toString();
+        return new StringBuilder().append("oid : ").append(oid).append("nimi: ").
+            append(nimi).
+            append("tila : ").append(tila).append("updated : ").append(updated).append(perustiedot).toString();
     }
 
 }

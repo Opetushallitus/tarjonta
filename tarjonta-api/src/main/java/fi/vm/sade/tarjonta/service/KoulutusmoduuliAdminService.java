@@ -22,7 +22,7 @@ import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import java.util.List;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import org.apache.cxf.annotations.WSDLDocumentation;
+
 
 /**
  *
@@ -31,7 +31,6 @@ import org.apache.cxf.annotations.WSDLDocumentation;
  * @deprecated use classes generated from WSDL
  */
 @WebService(name = "koulutusmoduuliAdminService")
-@WSDLDocumentation("Web servicet koulutustarjonnan moduulien käsittelyyn.")
 public interface KoulutusmoduuliAdminService {
 
     /**

@@ -1,6 +1,6 @@
 package fi.vm.sade.tarjonta.service.mock;
 
-import fi.vm.sade.tarjonta.service.TarjontaService;
+import fi.vm.sade.tarjonta.service.HakuService;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
  
-public class TarjontaServiceMock implements TarjontaService {
+public class TarjontaServiceMock implements HakuService {
 
     private HashMap<String,HakuTyyppi> haut = new HashMap<String, HakuTyyppi>();
     

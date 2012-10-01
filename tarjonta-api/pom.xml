@@ -10,25 +10,22 @@
     </parent>
     <artifactId>tarjonta-api</artifactId>
     <name>Tarjonta :: API</name>
-    <!--<packaging>bundle</packaging>-->
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
+<!--    <packaging>jar</packaging>-->
 
     <properties>
         <felix.Import-Package>
-            javax.jws,
+           javax.jws,
+            javax.jws.soap,
             javax.xml.ws,
+            javax.xml.bind,
+            javax.xml.datatype,
+            javax.xml.namespace,
             javax.xml.bind.annotation,
-            org.apache.cxf.annotations,
-            org.apache.commons.lang.builder,
-            javax.activation,
-            javax.validation,
-            javax.validation.constraints,
-            org.hibernate.validator.constraints,
+            javax.xml.bind.annotation.adapters,
             javax.xml.ws.soap,
-            javax.annotation,
-            org.slf4j,
-            com_*;resolution:=optional<!-- com_*... 
-				is for clover -->
+            org.springframework.util,
+            com_*;resolution:=optional<!-- com_*... is for clover -->
         </felix.Import-Package>
         
         
@@ -40,21 +37,12 @@
             <artifactId>cxf-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>1.0.0.GA</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>4.2.0.Final</version>
-        </dependency>
-        <dependency>
+            <scope>provided</scope>
+        </dependency>-->
+       <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
@@ -84,16 +72,18 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>org.jvnet.jaxb2_commons</groupId>
             <artifactId>jaxb2-basics-runtime</artifactId>
             <version>0.6.3</version>
-        </dependency>
-        <dependency>
+            <scope>provided</scope>
+        </dependency>-->
+<!--        <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-common</artifactId>
             <version>${project.version}</version>
-        </dependency>
+            <scope>provided</scope>
+        </dependency>-->
         
     </dependencies>
 
@@ -105,29 +95,28 @@
             
             
             <!-- make felix osgi bundle -->
-            <!--
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-						<Bundle-Description>${project.description}</Bundle-Description>
-						<Export-Package>
-							fi.vm.sade.tarjonta.model.dto,
-							fi.vm.sade.tarjonta.model.dto.simple,
-							fi.vm.sade.tarjonta.service
-						</Export-Package>
-						<Import-Package>
-							${felix.Import-Package}
-						</Import-Package>
-						<Include-Resource>META-INF=target/classes/META-INF</Include-Resource>
-					</instructions>
-				</configuration>
-			</plugin>
-			-->
             
+         			<plugin>
+                				<groupId>org.apache.felix</groupId>
+                				<artifactId>maven-bundle-plugin</artifactId>
+                				<extensions>true</extensions>
+                				<configuration>
+                       					<instructions>
+                              						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                              						<Bundle-Description>${project.description}</Bundle-Description>
+                              						<Export-Package>
+                                     							fi.vm.sade.tarjonta.service.types,
+                                     							fi.vm.sade.tarjonta.service.types.tarjonta,
+                                                                                        fi.vm.sade.tarjonta.service
+                                     					</Export-Package>
+                              						<Import-Package>
+                                     							${felix.Import-Package}
+                              						</Import-Package>
+                              						<Include-Resource>META-INF=target/classes/META-INF</Include-Resource>
+                       					</instructions>
+                				</configuration>
+         			</plugin>
+         			
             <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-codegen-plugin</artifactId>
@@ -145,8 +134,6 @@
                                         <bindingFile>src/main/resources/wsdl/binding.xjb</bindingFile>
                                     </bindingFiles>
                                     <extraargs>
-                                        <extraarg>-xjc-XhashCode</extraarg>
-                                        <extraarg>-xjc-Xequals</extraarg>
                                     </extraargs>
                                 </wsdlOption>                                
                             </wsdlOptions>
@@ -168,8 +155,6 @@
                                         <bindingFile>src/main/resources/wsdl/binding.xjb</bindingFile>
                                     </bindingFiles>
                                     <extraargs>
-                                        <extraarg>-xjc-XhashCode</extraarg>
-                                        <extraarg>-xjc-Xequals</extraarg>
                                     </extraargs>
                                 </wsdlOption>                                
                             </wsdlOptions>
@@ -189,10 +174,24 @@
                                 <wsdlOption>
                                     <wsdl>src/main/resources/wsdl/learningUploadService.wsdl</wsdl>
                                     <extraargs>
-                                        <extraarg>-xjc-XhashCode</extraarg>
-                                        <extraarg>-xjc-Xequals</extraarg>
-                                        <extraarg>-xjc-b,${basedir}/src/main/resources/wsdl/bindings.xjb</extraarg>
-                                        <extraarg>-verbose</extraarg>
+                                    </extraargs>
+                                </wsdlOption>                                
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                    
+                    <execution>
+                        <id>generate-tarjonta-batch-wsdl2java</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sourceRoot>target/generated-sources/java</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>src/main/resources/wsdl/OPHTarjontaBatchService.wsdl</wsdl>
+                                    <extraargs>
                                     </extraargs>
                                 </wsdlOption>                                
                             </wsdlOptions>
@@ -203,13 +202,7 @@
                     </execution>
                                         
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jvnet.jaxb2_commons</groupId>
-                        <artifactId>jaxb2-basics</artifactId>
-                        <version>0.6.3</version>
-                    </dependency>                    
-                </dependencies>
+              
             </plugin>
 
         </plugins>
