@@ -13,6 +13,9 @@
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToDTOConverter"/>                
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaDTOToTutkintoOhjelmaConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliDTOToKoulutusmoduuliConverter"/>
+                
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakuFromDTOConverter"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakuToDTOConverter"/>
 
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraToSimpleDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraFromSimpleDTOConverter"/>

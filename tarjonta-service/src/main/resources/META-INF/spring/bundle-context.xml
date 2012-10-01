@@ -9,6 +9,10 @@
 
     <context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.tarjonta" />
+    
+     <context:property-placeholder
+        location="classpath:tarjonta-service.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-service.properties"
+        ignore-resource-not-found="true"/>
 
     <import resource="classpath:META-INF/spring/context/service-context.xml"/>
     <import resource="classpath:META-INF/spring/context/dao-context.xml"/>

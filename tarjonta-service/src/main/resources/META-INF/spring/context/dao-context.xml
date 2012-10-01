@@ -14,6 +14,12 @@
             <bean
                 class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" />
         </property>
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.hbm2ddl.auto" value="${jpa.schemaUpdate}" />
+                <entry key="hibernate.show_sql" value="${jpa.showSql}" />
+            </map>
+        </property>
     </bean>
     <!-- autodetect jta transaction manager -->
     <tx:jta-transaction-manager />

@@ -19,7 +19,7 @@ package fi.vm.sade.tarjonta.service.impl;
 
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.service.TarjontaService;
+import fi.vm.sade.tarjonta.service.HakuService;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 @Service("tarjontaAdminService")
-public class TarjontaServiceImpl implements TarjontaService {
+public class HakuServiceImpl implements HakuService {
 
     @Autowired
     private HakuBusinessService businessService;
@@ -76,7 +76,11 @@ public class TarjontaServiceImpl implements TarjontaService {
     @Override
     public ListHakuVastausTyyppi listHaku(ListaaHakuTyyppi parameters) {
         ListHakuVastausTyyppi hakuVastaus = new ListHakuVastausTyyppi();
-        hakuVastaus.getResponse().addAll(convert(businessService.findAll(new SearchCriteriaDTO())));
+        SearchCriteriaDTO allCriteria = new SearchCriteriaDTO();
+        allCriteria.setMeneillaan(true);
+        allCriteria.setPaattyneet(true);
+        allCriteria.setTulevat(true);
+        hakuVastaus.getResponse().addAll(convert(businessService.findAll(allCriteria)));
         return hakuVastaus;
     }
 

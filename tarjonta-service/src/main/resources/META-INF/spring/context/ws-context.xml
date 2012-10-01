@@ -1,53 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        >
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:beans="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 
-<!--
-    <bean id="koodistoAdminWS" class="fi.vm.sade.koodisto.service.impl.KoodistoAdminServiceImpl" />
-    <bean id="koodiAdminWS" class="fi.vm.sade.koodisto.service.impl.KoodiAdminServiceImpl" />
-    <bean id="koodistoPublicWS" class="fi.vm.sade.koodisto.service.impl.KoodistoPublicServiceImpl" />
-    <bean id="koodiPublicWS" class="fi.vm.sade.koodisto.service.impl.KoodiPublicServiceImpl" />
-  	<bean id="koodiRESTService" class="fi.vm.sade.koodisto.service.impl.KoodiRESTService" />
-  	<bean id="koodistoRESTService" class="fi.vm.sade.koodisto.service.impl.KoodistoRESTService" />
+
+        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+     
     <import resource="classpath:META-INF/cxf/cxf.xml" />
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
--->
+    
+    <bean id="hakuService" class="fi.vm.sade.tarjonta.service.impl.HakuServiceImpl"/>
 
-	<!-- JAX-WS endpoints --> 
-	<!--  
-    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="koodistoEndpoint"
-        address="http://localhost:9090/koodistoWS" implementor="#koodistoWS" />
-
-    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="koodiEndpoint"
-        address="http://localhost:9090/koodiWS" implementor="#koodiWS"/>
-	-->
-<!--
-    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="koodistoAdminEndpoint"
-        address="/koodistoAdmin" implementor="#koodistoAdminWS" />
-
-    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="koodiAdminEndpoint"
-        address="/koodiAdmin" implementor="#koodiAdminWS"/>
-	
-	    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="koodistoPublicEndpoint"
-        address="/koodistoPublic" implementor="#koodistoPublicWS" />
-
-    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="koodiPublicEndpoint"
-        address="/koodiPublic" implementor="#koodiPublicWS"/>
-   -->     
-	<!-- JAX-RS servers -->
-<!--
-	<jaxrs:server id="koodistoREST" address="/koodisto/rest">
-		<jaxrs:serviceBeans>
-			<ref bean="koodistoRESTService" />
-		</jaxrs:serviceBeans>
-	</jaxrs:server>
-	
-	<jaxrs:server id="koodiREST" address="/koodi/rest">
-		<jaxrs:serviceBeans>
-			<ref bean="koodiRESTService" />
-		</jaxrs:serviceBeans>
-	</jaxrs:server> 
--->
-
+     <bean id="jmsConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory"
+          destroy-method="stop">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL">
+                    <value>${activeMq.brokerUrl}</value>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="jmsConfig" class="org.apache.cxf.transport.jms.JMSConfiguration">
+        <property name="connectionFactory" ref="jmsConnectionFactory" />
+        <property name="targetDestination" value="${activeMq.targetDestination}" />
+        <property name="reconnectOnException" value="true"/>
+    </bean>    
+    
+    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="organisaatioEndpoint"
+                    address="jms://" implementor="#hakuService">
+        <jaxws:features>
+            <beans:bean class="org.apache.cxf.transport.jms.JMSConfigFeature">
+                <beans:property name="jmsConfig" ref="jmsConfig" />
+            </beans:bean>
+        </jaxws:features>
+    </jaxws:endpoint>
+    
 </beans>
