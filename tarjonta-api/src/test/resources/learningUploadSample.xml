@@ -5,9 +5,10 @@
     xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
     xsi:schemaLocation='http://service.tarjonta.sade.vm.fi/types  ../../main/resources/wsdl/learningUploadService.xsd'>
 
-
-    <LearningOpportunitySpecification id="LOS1">
+    <LearningOpportunitySpecification id="LOS1" type="DegreeProgramme">
+        <Name xml:lang="fi">Tuotantotalouden koulutusohjelma</Name>
         <OfferedBy ref="LOP1"/>
+        <Credits unit="cu">30</Credits>
         <Structure selector="allOf">
             <SpecificationRef ref="LOS2"/>
             <SpecificationRef ref="LOS3"/>
@@ -15,16 +16,16 @@
     </LearningOpportunitySpecification>
 
 
-    <LearningOpportunitySpecification id="LOS2">
+    <LearningOpportunitySpecification id="LOS2" type="DegreeProgramme">
     </LearningOpportunitySpecification>
 
-    <LearningOpportunitySpecification id="LOS3">
+    <LearningOpportunitySpecification id="LOS3" type="DegreeProgramme">
     </LearningOpportunitySpecification>
 
     <LearningOpportunityProvider id="LOP1">
-        <InstitutionName xml:lang="fi"></InstitutionName>
-        <InstitutionName xml:lang="en"></InstitutionName>
-        <InstitutionName xml:lang="sv"></InstitutionName>
+        <InstitutionName xml:lang="fi">nimi</InstitutionName>
+        <InstitutionName xml:lang="en">name</InstitutionName>
+        <InstitutionName xml:lang="sv">namn</InstitutionName>
 
         <InstitutionAcademicCalendar></InstitutionAcademicCalendar>
         <InstitutionAcademicAuthorities></InstitutionAcademicAuthorities>
