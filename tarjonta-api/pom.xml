@@ -183,7 +183,7 @@
                         </goals>
                     </execution>
                     
-                    <execution>
+<!--                    <execution>
                         <id>generate-tarjonta-batch-wsdl2java</id>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -199,7 +199,7 @@
                         <goals>
                             <goal>wsdl2java</goal>
                         </goals>
-                    </execution>
+                    </execution>-->
                                         
                 </executions>
               
