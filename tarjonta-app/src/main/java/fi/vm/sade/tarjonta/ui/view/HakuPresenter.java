@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.tarjonta.service.TarjontaService;
+import fi.vm.sade.tarjonta.service.HakuService;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
@@ -73,7 +73,7 @@ public class HakuPresenter {
     private KoodiService koodiService;
     
     @Autowired
-    private TarjontaService tarjontaService;
+    private HakuService tarjontaService;
 
 
 

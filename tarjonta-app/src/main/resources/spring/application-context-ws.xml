@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:cxf="http://cxf.apache.org/core"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
 
 <!--
     <bean id="koulutusmoduuliService" class="fi.vm.sade.tarjonta.service.mock.KoulutusmoduuliAdminServiceMock" />
@@ -26,7 +28,11 @@
     
     <bean id="oidServiceImplBean" class="fi.vm.sade.oid.service.mock.OIDServiceMock" /> 
     
-    <bean id="tarjontaServiceImplBean" class="fi.vm.sade.tarjonta.service.mock.TarjontaServiceMock" />  
+<!--    <bean id="tarjontaServiceImplBean" class="fi.vm.sade.tarjonta.service.mock.TarjontaServiceMock" />  -->
+
+       <jaxws:client id="hakuService"
+                   serviceClass="fi.vm.sade.tarjonta.service.HakuService"
+                   address="${tarjonta.haku.webservice.url:http://NO_HAKU_WEBSERVICE_URL_CONFIGURED}"/> 
 
 <!--
     <bean class="fi.vm.sade.organisaatio.ui.widgets.factory.OrganisaatioWidgetFactory"/>
