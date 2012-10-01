@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -29,6 +30,8 @@
             com_*;resolution:=optional<!-- com_*... 
 				is for clover -->
         </felix.Import-Package>
+        
+        
     </properties>
 
     <dependencies>
@@ -91,33 +94,40 @@
             <artifactId>generic-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
     </dependencies>
 
     <build>
+        
+        
+        
         <plugins>
+            
+            
             <!-- make felix osgi bundle -->
             <!--
-         			<plugin>
-                				<groupId>org.apache.felix</groupId>
-                				<artifactId>maven-bundle-plugin</artifactId>
-                				<extensions>true</extensions>
-                				<configuration>
-                       					<instructions>
-                              						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                              						<Bundle-Description>${project.description}</Bundle-Description>
-                              						<Export-Package>
-                                     							fi.vm.sade.tarjonta.model.dto,
-                                     							fi.vm.sade.tarjonta.model.dto.simple,
-                                     							fi.vm.sade.tarjonta.service
-                              						</Export-Package>
-                              						<Import-Package>
-                                     							${felix.Import-Package}
-                              						</Import-Package>
-                              						<Include-Resource>META-INF=target/classes/META-INF</Include-Resource>
-                       					</instructions>
-                				</configuration>
-         			</plugin>
-         			-->
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-Description>${project.description}</Bundle-Description>
+						<Export-Package>
+							fi.vm.sade.tarjonta.model.dto,
+							fi.vm.sade.tarjonta.model.dto.simple,
+							fi.vm.sade.tarjonta.service
+						</Export-Package>
+						<Import-Package>
+							${felix.Import-Package}
+						</Import-Package>
+						<Include-Resource>META-INF=target/classes/META-INF</Include-Resource>
+					</instructions>
+				</configuration>
+			</plugin>
+			-->
+            
             <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-codegen-plugin</artifactId>
@@ -168,39 +178,21 @@
                             <goal>wsdl2java</goal>
                         </goals>
                     </execution>
-                    
+                                
                     <execution>
-                        <id>generate-koulutus-wsdl2java</id>
+                        <id>generate-tarjonta-upload-wsdl2java</id>
                         <phase>generate-sources</phase>
                         <configuration>
+                            <encoding>UTF-8</encoding>                            
                             <sourceRoot>target/generated-sources/java</sourceRoot>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>src/main/resources/wsdl/OPHKoulutusAdminService.wsdl</wsdl>
+                                    <wsdl>src/main/resources/wsdl/learningUploadService.wsdl</wsdl>
                                     <extraargs>
                                         <extraarg>-xjc-XhashCode</extraarg>
                                         <extraarg>-xjc-Xequals</extraarg>
+                                        <extraarg>-xjc-b,${basedir}/src/main/resources/wsdl/bindings.xjb</extraarg>
                                         <extraarg>-verbose</extraarg>
-                                    </extraargs>
-                                </wsdlOption>                                
-                            </wsdlOptions>
-                        </configuration>
-                        <goals>
-                            <goal>wsdl2java</goal>
-                        </goals>
-                    </execution>
-                    
-                    <execution>
-                        <id>generate-tarjonta-batch-wsdl2java</id>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <sourceRoot>target/generated-sources/java</sourceRoot>
-                            <wsdlOptions>
-                                <wsdlOption>
-                                    <wsdl>src/main/resources/wsdl/OPHTarjontaBatchService.wsdl</wsdl>
-                                    <extraargs>
-                                        <extraarg>-xjc-XhashCode</extraarg>
-                                        <extraarg>-xjc-Xequals</extraarg>
                                     </extraargs>
                                 </wsdlOption>                                
                             </wsdlOptions>
@@ -216,10 +208,13 @@
                         <groupId>org.jvnet.jaxb2_commons</groupId>
                         <artifactId>jaxb2-basics</artifactId>
                         <version>0.6.3</version>
-                    </dependency>
+                    </dependency>                    
                 </dependencies>
             </plugin>
+
         </plugins>
     </build>
+    
+    
 
 </project>
