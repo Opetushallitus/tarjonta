@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xs:schema elementFormDefault="qualified"
+           targetNamespace="http://service.tarjonta.sade.vm.fi/types" version="1.0"
+           xmlns:xml="http://www.w3.org/XML/1998/namespace" 
+           xmlns:tns="http://service.tarjonta.sade.vm.fi/types"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+               
+    
+    <xs:element name="LearningUploadRequest" type="tns:LearningUploadRequestType" />
+    <xs:element name="LearningUploadResponse" type="tns:LearningUploadResponseType" />
+    <xs:element name="LearningOpportunityData" type="tns:LearningOpportunityDataType" />
+    
+    <xs:complexType name="LearningUploadResponseType">
+    </xs:complexType>
+    
+    <xs:complexType name="LearningUploadRequestType">
+        <xs:sequence>
+            <xs:element name="LearningOpportunityData" 
+                        type="tns:LearningOpportunityDataType" 
+                        minOccurs="0" 
+                        maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+    <xs:complexType name="LearningOpportunityDataType">
+        <xs:sequence>
+            <xs:element name="LearningOpportunitySpecification" 
+                        type="tns:LearningOpportunitySpecificationType"
+                        minOccurs="0"
+                        maxOccurs="unbounded"/> 
+            <xs:element name="LearningOpportunityProvider" 
+                        type="tns:LearningOpportunityProviderType"
+                        minOccurs="0"
+                        maxOccurs="unbounded"/> 
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="LearningOpportunitySpecificationType">
+        <xs:sequence>
+            <xs:element name="OfferedBy" 
+                        type="tns:LearningOpportunityProviderRefType" 
+                        minOccurs="0" 
+                        maxOccurs="1"/>
+            <xs:element name="Structure" 
+                        type="tns:StructureType" 
+                        minOccurs="0" 
+                        maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="id" 
+                      type="xs:ID" 
+                      use="optional"/>
+    </xs:complexType>   
+    
+    <xs:complexType name="StructureType">
+        <xs:sequence>
+            <xs:element name="SpecificationRef" 
+                        type="tns:LearningOpportunitySpecificationRefType"
+                        minOccurs="1"
+                        maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="selector" type="tns:StructureSelectorType"/>
+    </xs:complexType>    
+    
+    <xs:complexType name="LearningOpportunitySpecificationRefType">
+        <xs:attribute name="ref" 
+                      type="xs:IDREF" 
+                      use="required"/>
+    </xs:complexType>
+    
+    <xs:complexType name="LearningOpportunityProviderRefType">
+        <xs:attribute name="ref"
+                      type="xs:IDREF"
+                      use="required"/>
+    </xs:complexType>
+    
+    <xs:complexType name="LearningOpportunityProviderType">
+        <xs:sequence>            
+        </xs:sequence>        
+        <xs:attribute name="id" 
+                      type="xs:ID" 
+                      use="optional"/>
+    </xs:complexType>
+    
+    
+    <xs:simpleType name="StructureSelectorType">
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="oneOf">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Osista valitaan yksi.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="allOf">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Kaikki osat kuuluvat mukaan koosteeseen.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="numberOf">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Osista valitaan määritelty lukumäärä (min, max) koosteeseen.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="someOf">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Rakenneyksikkö koostetaan epämääräisellä säännöllä. Sääntö kuvataan
+                        annotation-elementissä.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ects">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Koosteeseen otetaan mukaan tietty määrä opintopisteitä (min. max) osista yhteenlaskettuna.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="cu">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Koosteeseen otetaan mukaan tietty määrä opintoviikkoja (min. max) osista yhteenlaskettuna.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+</xs:schema>
