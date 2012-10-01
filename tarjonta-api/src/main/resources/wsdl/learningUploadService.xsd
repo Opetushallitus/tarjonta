@@ -102,29 +102,29 @@
             <xs:enumeration value="numberOf">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
-                        Osista valitaan määritelty lukumäärä (min, max) koosteeseen.
+                        Osista valitaan maaritelty lukumaara (min, max) koosteeseen.
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
             <xs:enumeration value="someOf">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
-                        Rakenneyksikkö koostetaan epämääräisellä säännöllä. Sääntö kuvataan
-                        annotation-elementissä.
+                        Rakenneyksikko koostetaan epamaaraisella saannolla. Saanto kuvataan
+                        annotation-elementissa.
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
             <xs:enumeration value="ects">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
-                        Koosteeseen otetaan mukaan tietty määrä opintopisteitä (min. max) osista yhteenlaskettuna.
+                        Koosteeseen otetaan mukaan tietty maara opintopisteita (min. max) osista yhteenlaskettuna.
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
             <xs:enumeration value="cu">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
-                        Koosteeseen otetaan mukaan tietty määrä opintoviikkoja (min. max) osista yhteenlaskettuna.
+                        Koosteeseen otetaan mukaan tietty maara opintoviikkoja (min. max) osista yhteenlaskettuna.
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
