@@ -106,9 +106,12 @@ public class HakueraDAOTest {
     // criteria api (if any).
     public void findAll_sortingByABC() {
         long now = new Date().getTime();
-        Haku h1 = helper.create(now, now, "bbb", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku");
-        Haku h2 = helper.create(now, now, "aaa", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku");
-        Haku h3 = helper.create(now, now, "ccc", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku");
+        Haku h1 = helper.create(now, now, "bbb", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku",2013,2014);
+       
+        Haku h2 = helper.create(now, now, "aaa", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku",2013,2014);
+
+        Haku h3 = helper.create(now, now, "ccc", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku",2013,2014);
+     
 
         // fi
 
@@ -142,7 +145,7 @@ public class HakueraDAOTest {
         long now = new Date().getTime();
         int dif = 10000;
         String oid = "1.2.34566.3";
-        Haku hakuera =  helper.create(now, now+dif, oid, "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku");
+        Haku hakuera =  helper.create(now, now+dif, oid, "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku",2013,2014);
 
         assertNotNull(hakuera.getId());
 
@@ -157,7 +160,7 @@ public class HakueraDAOTest {
         int dif = 10000;
         String oid = "1.2.34566.4";
         String hakutyyppi = "Ammattikorkeakoulut";
-        Haku hakuera =  helper.create(now, now+dif, oid, "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku");
+        Haku hakuera =  helper.create(now, now+dif, oid, "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku",2013,2014);
 
         assertNotNull(hakuera.getId());
 
@@ -175,7 +178,7 @@ public class HakueraDAOTest {
         String oid = "1.2.34566.5";
         String hakutyyppi = "Varsinainen haku";
         
-        Haku hakuera = helper.create(now, now+dif, oid, hakutyyppi, "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku");
+        Haku hakuera = helper.create(now, now+dif, oid, hakutyyppi, "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku",2013,2014);
         
         assertNotNull(hakuera.getId());
         

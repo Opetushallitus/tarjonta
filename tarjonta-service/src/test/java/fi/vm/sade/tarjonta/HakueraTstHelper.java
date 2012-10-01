@@ -24,10 +24,10 @@ public class HakueraTstHelper {
     public Haku create(long alkuPvm, long loppuPvm) {
         long now = System.currentTimeMillis();
         String name = "" + now;
-        return create(alkuPvm, loppuPvm, name, "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku");
+        return create(alkuPvm, loppuPvm, name, "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku",2013,2014);
     }
 
-    public Haku create(long alkuPvm, long loppuPvm, String name, String hakutyyppi, String hakukausi, String alkamisKausi, String kohdejoukko, String hakutapa) {
+    public Haku create(long alkuPvm, long loppuPvm, String name, String hakutyyppi, String hakukausi, String alkamisKausi, String kohdejoukko, String hakutapa, int hakuVuosi,int koulutusVuosi) {
         Haku h = new Haku();
         h.setOid(name);
         h.setNimiFi(name + " FI");
@@ -36,6 +36,8 @@ public class HakueraTstHelper {
         h.setHaunAlkamisPvm(new Date(alkuPvm));
         h.setHaunLoppumisPvm(new Date(loppuPvm));
         h.setHakutyyppiUri(hakutyyppi);
+        h.setHakukausiVuosi(hakuVuosi);
+        h.setKoulutuksenAlkamisVuosi(koulutusVuosi);
         h.setHakukausiUri(hakukausi);
         h.setKoulutuksenAlkamiskausiUri(alkamisKausi);
         h.setKohdejoukkoUri(kohdejoukko);
@@ -63,6 +65,6 @@ public class HakueraTstHelper {
     public Haku createValidHaku() {
         long now = new Date().getTime();
         int dif = 10000;
-        return create(now, now+dif, "oid_"+now, "hakutyyppi", "hakukausi", "alkamiskausi", "kohdejoukko", "hakutapa");
+        return create(now, now+dif, "oid_"+now, "hakutyyppi", "hakukausi", "alkamiskausi", "kohdejoukko", "hakutapa",2013,2014);
     }
 }

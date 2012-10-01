@@ -136,6 +136,8 @@ public class KoulutusFixtures {
         haku.setNimiFi("SimpleHaku");
         haku.setHaunAlkamisPvm(new Date());
         haku.setHaunLoppumisPvm(new Date());
+        haku.setHakukausiVuosi(2013);
+        haku.setKoulutuksenAlkamisVuosi(2014);
         haku.setHakukausiUri(randomUri("hakukausi"));
         haku.setKoulutuksenAlkamiskausiUri(randomUri("alkamiskausi"));
         haku.setKohdejoukkoUri(randomUri("haunkohdejoukko"));
