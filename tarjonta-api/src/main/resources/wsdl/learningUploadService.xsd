@@ -5,6 +5,15 @@
            xmlns:tns="http://service.tarjonta.sade.vm.fi/types"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+               schemaLocation="http://www.w3.org/2001/03/xml.xsd">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                XML-nimiavaruus xml:lang -attribuutin vuoksi.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:import>
+
 
     <xs:element name="LearningUploadRequest" type="tns:LearningUploadRequestType" />
     <xs:element name="LearningUploadResponse" type="tns:LearningUploadResponseType" />
@@ -36,20 +45,47 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="LearningOpportunitySpecificationType">
+    <xs:complexType name="LearningOpportunityObjectType" abstract="true">
         <xs:sequence>
-            <xs:element name="OfferedBy"
-                        type="tns:LearningOpportunityProviderRefType"
+            <xs:element name="Name"
+                        type="tns:TextType"
                         minOccurs="0"
-                        maxOccurs="1"/>
-            <xs:element name="Structure"
-                        type="tns:StructureType"
-                        minOccurs="0"
-                        maxOccurs="1"/>
+                        maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="id"
-                      type="xs:ID"
-                      use="optional"/>
+    </xs:complexType>
+
+    <xs:attributeGroup name="LearningOpportunityModuleAttrGroup">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Yleisia LearningOpportunity:lle sekä LearningOpportunitySpecification:lle yhteisia attribuutteja.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="type" type="tns:LearningOpportunityType" use="required"/>
+    </xs:attributeGroup>
+
+    <xs:complexType name="LearningOpportunitySpecificationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LearningOpportunityObjectType">
+                <xs:sequence>
+                    <xs:element name="OfferedBy"
+                                type="tns:LearningOpportunityProviderRefType"
+                                minOccurs="0"
+                                maxOccurs="1"/>
+                    <xs:element name="Credits"
+                                type="tns:CreditsType"
+                                minOccurs="0"
+                                maxOccurs="1"/>
+                    <xs:element name="Structure"
+                                type="tns:StructureType"
+                                minOccurs="0"
+                                maxOccurs="1"/>
+                </xs:sequence>
+                <xs:attribute name="id"
+                              type="xs:ID"
+                              use="optional"/>
+                <xs:attributeGroup ref="tns:LearningOpportunityModuleAttrGroup"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="StructureType">
@@ -77,9 +113,9 @@
     <xs:complexType name="LearningOpportunityProviderType">
         <xs:sequence>
             <xs:element name="InstitutionName"
-                        type="xs:string"
+                        type="tns:ExtendedStringType"
                         minOccurs="0"
-                        maxOccurs="1">
+                        maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
                         Organisaation nimi / koulutustoimijan nimi.
@@ -355,6 +391,50 @@
             </xs:enumeration>
         </xs:restriction>
     </xs:simpleType>
+
+
+    <xs:simpleType name="LearningOpportunityType">
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="DegreeProgramme">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Tutkintoon johtava ohjelma
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:complexType name="TextType" mixed="true">
+        <xs:attribute ref="xml:lang"/>
+    </xs:complexType>
+
+    <xs:complexType name="ExtendedStringType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute ref="xml:lang" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- -->
+    <xs:complexType name="CreditsType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="unit" use="required">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <!-- credit units -->
+                            <xs:enumeration value="cu"/>
+                            <!-- ECTS credit -->
+                            <xs:enumeration value="ects"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
 
 
 </xs:schema>
