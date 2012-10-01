@@ -40,6 +40,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
@@ -57,7 +58,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
 @Configurable(preConstruction = false)
 public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     
-    public static final String[] ORDER_BY = new String[]{"Organisaatiorakenteen mukainen järjestys", "Koulutuksen tilan mukainen järjestys", "Aakkosjärjestys", "Koulutuslajin mukaan"};
+    public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListaHakuViewImpl.jarjestys.Hakutapa")};
     
     private static final Logger LOG = LoggerFactory.getLogger(ListHakuViewImpl.class);
     private Button btnLuoUusiHaku;

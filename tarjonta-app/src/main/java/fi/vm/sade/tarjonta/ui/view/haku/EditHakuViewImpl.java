@@ -15,7 +15,12 @@
  */
 package fi.vm.sade.tarjonta.ui.view.haku;
 
+import java.util.Arrays;
+
+import javax.validation.constraints.NotNull;
+
 import com.vaadin.data.Property;
+import com.vaadin.data.Validator;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.AbstractLayout;
@@ -32,6 +37,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Form;
+
+import fi.vm.sade.generic.ui.validation.ErrorMessage;
+import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
@@ -67,20 +75,33 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     private HakuPresenter _presenter;
 
     private VerticalLayout _layout;
+    @NotNull(message="{validation.Haku.hakutyyppiNull}")
     @PropertyId("hakutyyppi")
     private KoodistoComponent _hakutyyppi;
+    
+    @NotNull(message="{validation.Haku.hakukausiNull}")
     @PropertyId("hakukausi")
     private KoodistoComponent _hakukausi;
+    
+    @NotNull(message="{validation.Haku.hakuvuosiNull}")
     @PropertyId("hakuvuosi")
     private TextField _hakuvuosi;
+    @NotNull(message="{validation.Haku.koulutuksenAlkamisKausiNull}")
     @PropertyId("koulutuksenAlkamisKausi")
     private KoodistoComponent _koulutusAlkamiskausi;
+    
+    @NotNull(message="{validation.Haku.koulutuksenAlkamisVuosiNull}")
     @PropertyId("koulutuksenAlkamisvuosi")
     private TextField koulutuksenAlkamisvuosi;
+    
+    @NotNull(message="{validation.Haku.kohdejoukkoNull}")
     @PropertyId("haunKohdejoukko")
     private KoodistoComponent _hakuKohdejoukko;
+    
+    @NotNull(message="{validation.Haku.hakutapaNull}")
     @PropertyId("hakutapa")
     private KoodistoComponent _hakutapa;
+    
     @PropertyId("nimiFi")
     private TextField _haunNimiFI;
     @PropertyId("nimiSe")
@@ -89,6 +110,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     private TextField _haunNimiEN;
     @PropertyId("haunTunniste")
     private Label _haunTunniste;
+    
     // TODO hakuaika
     @PropertyId("alkamisPvm")
     private DateField hakuAlkaa;
@@ -113,6 +135,8 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     private String _koodistoUriHakutapa;
     private I18NHelper _i18n = new I18NHelper(this);
     private Form form;
+    
+    private ErrorMessage errorView;
 
     public EditHakuViewImpl() {
         super();
@@ -297,6 +321,10 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         form = new ValidatingViewBoundForm(this);
         form.setItemDataSource(hakuBean);
         _presenter.setHakuViewModel(hakuViewModel);
+        
+        JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
+        this.form.setValidationVisible(false);
+        this.form.setValidationVisibleOnCommit(false);
     }
 
      /**
@@ -306,12 +334,13 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
      * @param layout
      * @return
      */
-    private HorizontalLayout createButtonBar(VerticalLayout layout) {
-        HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
-
+    private VerticalLayout createButtonBar(VerticalLayout layout) {
+        VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.NONE);
+        vl.setSizeUndefined();
         if (layout != null) {
-            layout.addComponent(hl);
+            layout.addComponent(vl);
         }
+        HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
 
         Button btnCancel = UiUtil.buttonSmallSecodary(hl, T("Peruuta"));
         btnCancel.addStyleName(Oph.CONTAINER_SECONDARY);
@@ -357,8 +386,12 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         hl.setComponentAlignment(btnSaveUncomplete, Alignment.TOP_LEFT);
         hl.setComponentAlignment(btnSaveComplete, Alignment.TOP_LEFT);
         hl.setComponentAlignment(btnContinue, Alignment.TOP_LEFT);
-
-        return hl;
+        vl.addComponent(hl);
+        if (errorView == null) {
+            errorView = new ErrorMessage();
+        }
+        vl.addComponent(errorView);
+        return vl;
     }
 
     /**
@@ -403,13 +436,19 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             if (_presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
                 _presenter.getHakuModel().setHakuLomakeUrl(null);
             }
-            form.commit();
-            if (complete) {
-                _presenter.saveHakuValmiina();
-                getWindow().showNotification(_i18n.getMessage("HakuTallennettuValmiina"));
-            } else {
-                _presenter.saveHakuLuonnoksenaModel();
-                getWindow().showNotification(_i18n.getMessage("HakuTallennettuLuonnoksena"));
+            errorView.resetErrors();
+            try {
+                form.commit();
+            
+                if (complete) {
+                    _presenter.saveHakuValmiina();
+                    getWindow().showNotification(_i18n.getMessage("HakuTallennettuValmiina"));
+                } else {
+                    _presenter.saveHakuLuonnoksenaModel();
+                 getWindow().showNotification(_i18n.getMessage("HakuTallennettuLuonnoksena"));
+                }
+            } catch (Validator.InvalidValueException e) {
+                errorView.addError(e);
             }
 
         }
