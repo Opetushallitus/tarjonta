@@ -4,23 +4,50 @@
     xmlns="http://service.tarjonta.sade.vm.fi/types"
     xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
     xsi:schemaLocation='http://service.tarjonta.sade.vm.fi/types  ../../main/resources/wsdl/learningUploadService.xsd'>
-        
+
 
     <LearningOpportunitySpecification id="LOS1">
         <OfferedBy ref="LOP1"/>
         <Structure selector="allOf">
             <SpecificationRef ref="LOS2"/>
             <SpecificationRef ref="LOS3"/>
-        </Structure>                
+        </Structure>
     </LearningOpportunitySpecification>
-            
-            
-    <LearningOpportunitySpecification id="LOS2">        
+
+
+    <LearningOpportunitySpecification id="LOS2">
     </LearningOpportunitySpecification>
-    
-    <LearningOpportunitySpecification id="LOS3">        
+
+    <LearningOpportunitySpecification id="LOS3">
     </LearningOpportunitySpecification>
-    
-    <LearningOpportunityProvider id="LOP1"></LearningOpportunityProvider>
-            
+
+    <LearningOpportunityProvider id="LOP1">
+        <InstitutionName xml:lang="fi"></InstitutionName>
+        <InstitutionName xml:lang="en"></InstitutionName>
+        <InstitutionName xml:lang="sv"></InstitutionName>
+
+        <InstitutionAcademicCalendar></InstitutionAcademicCalendar>
+        <InstitutionAcademicAuthorities></InstitutionAcademicAuthorities>
+        <InstitutionAdmissionProcedures></InstitutionAdmissionProcedures>
+        <InstitutionGeneralDescription></InstitutionGeneralDescription>
+        <InstitutionalEctsCoordinator></InstitutionalEctsCoordinator>
+        <InstitutionMainUniversityRequlations></InstitutionMainUniversityRequlations>
+
+        <GeneralInformationOnCostOfLiving></GeneralInformationOnCostOfLiving>
+        <GeneralInformationOnMeals></GeneralInformationOnMeals>
+        <GeneralInformationOnMedicalFacilities></GeneralInformationOnMedicalFacilities>
+        <GeneralInformationOnFacilitiesForStudentsWithSpecialNeeds></GeneralInformationOnFacilitiesForStudentsWithSpecialNeeds>
+        <GeneralInformationOnInsurance></GeneralInformationOnInsurance>
+        <GeneralInformationOnFinancialSupport></GeneralInformationOnFinancialSupport>
+        <GeneralInformationOnStudentAffairsOffice></GeneralInformationOnStudentAffairsOffice>
+        <GeneralInformationOnStudyFacilities></GeneralInformationOnStudyFacilities>
+        <GeneralInformationOnInternationalProgrammes></GeneralInformationOnInternationalProgrammes>
+        <GeneralInformationForMobileStudents></GeneralInformationForMobileStudents>
+        <GeneralInformationOnLanguageCourses></GeneralInformationOnLanguageCourses>
+        <GeneralInformationOnInternships></GeneralInformationOnInternships>
+        <GeneralInformationOnSportsFacilities></GeneralInformationOnSportsFacilities>
+        <GeneralInformationOnExtraMuralAndLeisureFacilities></GeneralInformationOnExtraMuralAndLeisureFacilities>
+        <GeneralInformationOnStudentAssociations></GeneralInformationOnStudentAssociations>
+    </LearningOpportunityProvider>
+
 </LearningOpportunityData>
