@@ -5,20 +5,35 @@
     xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
     xsi:schemaLocation='http://service.tarjonta.sade.vm.fi/types  ../../main/resources/wsdl/learningUploadService.xsd'>
 
+    <!--
+        koulutusmoduuli jossa:
+        - attribuutti id on uniikki tässä dokumentissa, käyttö ainoastaan rakenteen luomiseen
+    -->
     <LearningOpportunitySpecification id="LOS1" type="DegreeProgramme">
+
+        <!-- nimi voi toistua n-kertaa eri kielille -->
         <Name xml:lang="fi">Tuotantotalouden koulutusohjelma</Name>
+
+        <!-- viittaus LOP:iin joka tarjoaa "tarjoaa" tämän koulutus moduulin -->
         <OfferedBy ref="LOP1"/>
+
+        <!-- laajuus yksikkö sekä arvo -->
         <Credits unit="cu">30</Credits>
+
+        <!-- sisältyvät moduulit, selector arvo "allOf" määrää että kaikki ovat pakollisia. viittaukset ovat tämän dokumentin sisäisiä. -->
         <Structure selector="allOf">
             <SpecificationRef ref="LOS2"/>
             <SpecificationRef ref="LOS3"/>
         </Structure>
+
     </LearningOpportunitySpecification>
 
 
+    <!-- -->
     <LearningOpportunitySpecification id="LOS2" type="DegreeProgramme">
     </LearningOpportunitySpecification>
 
+    <!-- -->
     <LearningOpportunitySpecification id="LOS3" type="DegreeProgramme">
     </LearningOpportunitySpecification>
 
@@ -26,14 +41,12 @@
         <InstitutionName xml:lang="fi">nimi</InstitutionName>
         <InstitutionName xml:lang="en">name</InstitutionName>
         <InstitutionName xml:lang="sv">namn</InstitutionName>
-
         <InstitutionAcademicCalendar></InstitutionAcademicCalendar>
         <InstitutionAcademicAuthorities></InstitutionAcademicAuthorities>
         <InstitutionAdmissionProcedures></InstitutionAdmissionProcedures>
         <InstitutionGeneralDescription></InstitutionGeneralDescription>
         <InstitutionalEctsCoordinator></InstitutionalEctsCoordinator>
         <InstitutionMainUniversityRequlations></InstitutionMainUniversityRequlations>
-
         <GeneralInformationOnCostOfLiving></GeneralInformationOnCostOfLiving>
         <GeneralInformationOnMeals></GeneralInformationOnMeals>
         <GeneralInformationOnMedicalFacilities></GeneralInformationOnMedicalFacilities>
