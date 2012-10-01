@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
@@ -96,6 +98,18 @@ public class HakuResultRow  extends HorizontalLayout {
      */
     public HakuResultRow format(String text, boolean withMenuBar) {
         isSelected = UiUtil.checkbox(null, null);
+        isSelected.setImmediate(true);
+        isSelected.addListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                if (haku != null
+                        && isSelected.booleanValue()) {
+                    hakuPresenter.getSelectedhaut().add(haku);
+                } else if (haku != null) {
+                    hakuPresenter.getSelectedhaut().remove(haku);
+                }
+            }
+        });
         Label label = new Label(text);
         label.setSizeUndefined(); // -1,-1
         setWidth(-1, Sizeable.UNITS_PIXELS);

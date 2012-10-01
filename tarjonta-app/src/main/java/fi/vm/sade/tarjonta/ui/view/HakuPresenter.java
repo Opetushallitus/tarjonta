@@ -58,6 +58,7 @@ public class HakuPresenter {
     
     private KoulutusSearchSpesificationViewModel searchSpec = new KoulutusSearchSpesificationViewModel();
     private List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
+    private List<HakuViewModel> selectedhaut = new ArrayList<HakuViewModel>();
 
     private ListHakuView hakuList;
     
@@ -222,15 +223,27 @@ public class HakuPresenter {
         hakuList.reload();
     }
     
+    /**
+     * Gets the hakuModel.
+     * @return the hakuModel to return
+     */
     public HakuViewModel getHakuModel() {
         return hakuModel;
     }
 
+    /**
+     * Gets the koodiArvo for a given koodiUri.
+     * @param koodiUri the uri of the koodi to return
+     * @return the returned koodiArvo
+     */
     public String getKoodiArvo(String koodiUri) {
         KoodiType koodi = this.koodiService.getKoodiByUri(koodiUri);
         return (koodi != null) ? koodi.getKoodiArvo() : koodiUri; 
     }
 
+    /**
+     * @return the string representation of a hakuaika range for a haku. 
+     */
     public String getHakuaika() {
         DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         String startDateStr = (hakuModel.getAlkamisPvm() != null) ? formatter.format(hakuModel.getAlkamisPvm()) : "";
@@ -238,14 +251,42 @@ public class HakuPresenter {
         return startDateStr  + " - " + endDateStr;
     }
 
+    /**
+     * 
+     * @return the inner hakuajat for a haku.
+     */
     public List<HakuaikaViewModel> getSisaisetHautSource() {
         List<HakuaikaViewModel> sisHaut = new ArrayList<HakuaikaViewModel>();
         return sisHaut;
     }
 
+    /**
+     * 
+     * @return the hakukohde obects velonging to the hakuModel haku.
+     */
     public List<HakukohdeViewModel> getHakukohteet() {
         List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
         return hakukohteet;
+    }
+    
+
+    /**
+     * Gets the currently selectedHaut.
+     * @return
+     */
+    public List<HakuViewModel> getSelectedhaut() {
+        return selectedhaut;
+    }
+    
+    /**
+     * Removes the selected haku objects from the database.
+     */
+    public void removeSelectedHaut() {
+        for (HakuViewModel curHaku : selectedhaut) {
+            this.tarjontaService.poistaHaku(curHaku.getHakuDto());
+        }
+        selectedhaut.clear();
+        hakuList.reload();
     }
     
     private List<HakuViewModel> retrieveHaut() {
@@ -255,5 +296,5 @@ public class HakuPresenter {
         }
         return haut;
     }
-    
+
 }

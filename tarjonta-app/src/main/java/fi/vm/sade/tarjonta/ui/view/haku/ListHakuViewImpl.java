@@ -144,13 +144,13 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         return hc;
     }
     
-    private void changeHakuSelections() {        
+    private void changeHakuSelections() {  
+        presenter.getSelectedhaut().clear();
         HierarchicalContainer hc = (HierarchicalContainer)(this.categoryTree.getContainerDataSource());
         for (Object item : hc.getItemIds()) {
             HakuResultRow curRow = (HakuResultRow)(categoryTree.getContainerProperty(item, presenter.COLUMN_A).getValue());
             curRow.getIsSelected().setValue(true);
         }
-        
     }
 
     private HorizontalLayout buildMiddleResultLayout() {
@@ -171,7 +171,15 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
 
         btnPoista = UiUtil.button(layout, i18n.getMessage("Poista"));
         btnPoista.addStyleName(Oph.BUTTON_SMALL);
-        btnPoista.setEnabled(false);
+        //btnPoista.setEnabled(false);
+        btnPoista.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                presenter.removeSelectedHaut();
+                
+            }
+        });
+
 
         cbJarjestys = UiUtil.comboBox(layout, null, ORDER_BY);
         cbJarjestys.setWidth("300px");

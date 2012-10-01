@@ -309,7 +309,6 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the kaytetaanJarjestelmanHakulomaketta
      */
     public boolean isKaytetaanJarjestelmanHakulomaketta() {
-        kaytetaanJarjestelmanHakulomaketta = (hakuDto.getHakulomakeUrl() == null);
         return kaytetaanJarjestelmanHakulomaketta;
     }
 

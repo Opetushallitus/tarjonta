@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.view.haku;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
@@ -129,7 +131,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     public void attach() {
         LOG.debug("attach()");
         super.attach();
-        //initialize();
+        this._kayteaanJarjestelmanHakulomaketta.setValue(_presenter.getHakuModel().getHakuLomakeUrl() == null);
     }
 
     @Override
@@ -178,6 +180,14 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         _kaytetaanSijoittelua.setSizeUndefined();
         _kayteaanJarjestelmanHakulomaketta = UiUtil.checkbox(null, T("KaytetaanJarjestemanHakulomaketta"));
         _kayteaanJarjestelmanHakulomaketta.setSizeUndefined();
+        _kayteaanJarjestelmanHakulomaketta.setImmediate(true);
+        _kayteaanJarjestelmanHakulomaketta.addListener(new Property.ValueChangeListener() {
+                @Override
+                public void valueChange(ValueChangeEvent event) {
+                    LOG.debug("Value change for kaytetaan jarjestelman hakulomaketta.");
+                    _muuHakulomakeUrl.setEnabled(!_kayteaanJarjestelmanHakulomaketta.booleanValue());
+                }
+            });
         _muuHakulomakeUrl = UiUtil.textField(null, "", T("MuuHakulomake.prompt"), false);
         _muuHakulomakeUrl.setSizeUndefined();
 
@@ -390,6 +400,9 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         public SaveEvent(Component source, boolean complete) {
             super(source);
             _complete = complete;
+            if (_presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
+                _presenter.getHakuModel().setHakuLomakeUrl(null);
+            }
             form.commit();
             if (complete) {
                 _presenter.saveHakuValmiina();
