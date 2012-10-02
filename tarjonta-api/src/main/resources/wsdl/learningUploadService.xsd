@@ -56,6 +56,16 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
+            <xs:element name="LearningOpportunities" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="InstanceRef"
+                                    type="tns:LearningOpportunityInstanceRefType"
+                                    minOccurs="1"
+                                    maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 
@@ -95,6 +105,27 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="Classification" minOccurs="1" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="fi">
+                                Koulutuksen luokittelutiedot. Jos kaikki luokittelutiedot voidaan kuvata yhdella koodilla josta
+                                erilliset tiedot voidaan johtaa, voidaan kayttaa UnifiedCode elementtia - muuten luokittelu kuvataan
+                                ClassificationItem elementeilla.
+                            </xs:documentation>
+                        </xs:annotation>
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:choice>
+                                    <xs:element name="UnifiedCode"
+                                                type="tns:UnifiedCodeType"/>
+                                    <xs:element name="ClassificationItem"
+                                                type="tns:LearningClassificationItemType"
+                                                minOccurs="1"
+                                                maxOccurs="unbounded"/>
+                                </xs:choice>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
                     <xs:element name="StructureDiagram"
                                 type="xs:string"
                                 minOccurs="0"
@@ -118,6 +149,37 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="CodeLabelType">
+        <xs:sequence>
+            <xs:element name="Code"
+                        type="xs:string"
+                        minOccurs="1"
+                        maxOccurs="1"/>
+            <xs:element name="Label"
+                        type="tns:ExtendedStringType"
+                        minOccurs="0"
+                        maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="version" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="UnifiedCodeType">
+        <xs:complexContent>
+            <xs:extension base="tns:CodeLabelType">
+                <xs:attribute name="scheme" type="tns:LearningClassificationCodeSchemeType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="LearningClassificationItemType">
+        <xs:complexContent>
+            <xs:extension base="tns:CodeLabelType">
+                <xs:attribute name="type" type="tns:LearningClassificationCodeType"/>
+                <xs:attribute name="scheme" type="tns:LearningClassificationCodeSchemeType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="StructureType">
         <xs:sequence>
             <xs:element name="SpecificationRef"
@@ -129,6 +191,12 @@
     </xs:complexType>
 
     <xs:complexType name="LearningOpportunitySpecificationRefType">
+        <xs:attribute name="ref"
+                      type="xs:IDREF"
+                      use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="LearningOpportunityInstanceRefType">
         <xs:attribute name="ref"
                       type="xs:IDREF"
                       use="required"/>
@@ -491,6 +559,53 @@
             </xs:enumeration>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:simpleType name="LearningClassificationCodeType">
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="EducationDomain">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Koulutusala
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="EducationDegree">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Koulutusaste
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="StydyDomain">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Opintoaste
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="LearningClassificationCodeSchemeType">
+        <xs:restriction base="xs:anyURI">
+            <xs:enumeration value="http://oph.fi">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        OPH:n hallitsema koodisto
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="http://stat.fi">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Tilastokeskuksen hallitsema koodisto.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
 
 
     <xs:attributeGroup name="LearningOpportunityModuleAttrGroup">

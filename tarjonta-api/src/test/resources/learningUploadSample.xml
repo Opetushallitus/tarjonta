@@ -3,7 +3,7 @@
 <LearningOpportunityData
     xmlns="http://service.tarjonta.sade.vm.fi/types"
     xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-    xsi:schemaLocation='http://service.tarjonta.sade.vm.fi/types  ../../main/resources/wsdl/learningUploadService.xsd'>
+    xsi:schemaLocation='http://service.tarjonta.sade.vm.fi/types  ../../main/resources/wsdl/learningUploadService.xsd' xmlns:http="null">
 
     <!--
         koulutusmoduuli jossa:
@@ -26,6 +26,12 @@
         <!-- tutkintonimike -->
         <Qualification>Tuotantotalouden mestari</Qualification>
 
+        <Classification>
+            <UnifiedCode scheme="http://oph.fi">
+                <Code>123456</Code>
+            </UnifiedCode>
+        </Classification>
+
         <!-- koulutusrakenteen kuvaus -->
         <StructureDiagram>
             Tekstiä...
@@ -46,10 +52,30 @@
 
     <!-- Koulutusmoduuli johon päätasolta viitataan -->
     <LearningOpportunitySpecification id="LOS2" type="DegreeProgramme">
+        <Classification>
+            <UnifiedCode scheme="http://stat.fi" version="2010">
+                <Code>374116</Code>
+                <Label xml:lang="fi">Sairaankuljettajan ammattitutkinto</Label>
+            </UnifiedCode>
+        </Classification>
     </LearningOpportunitySpecification>
 
     <!-- Koulutusmoduuli johon päätasolta viitataan -->
     <LearningOpportunitySpecification id="LOS3" type="DegreeProgramme">
+        <Classification>
+            <ClassificationItem type="EducationDomain" scheme="http://oph.fi" version="2002">
+                <Code>7</Code>
+                <Label>Sosiaali-, terveys- ja liikunta-ala</Label>
+            </ClassificationItem>
+            <ClassificationItem type="EducationDegree" scheme="http://oph.fi" version="2002">
+                <Code>32</Code>
+                <Label>Ammatillinen koulutus</Label>
+            </ClassificationItem>
+            <ClassificationItem type="StydyDomain" scheme="http://oph.fi" version="2002">
+                <Code>1</Code>
+                <Label>Sosiaaliala</Label>
+            </ClassificationItem>
+        </Classification>
     </LearningOpportunitySpecification>
 
 
@@ -89,8 +115,21 @@
     </LearningOpportunityProvider>
 
 
-    <!-- hakukohteet -->
+    <!-- hakukohteet 0-n kappaletta -->
 
-    <ApplicationObjectGroup></ApplicationObjectGroup>
+    <ApplicationObjectGroup>
+        <!-- koulukset joihin tässä hakukohteessa voidaan hakea -->
+        <LearningOpportunities>
+            <InstanceRef ref="LOS1"/>
+            <InstanceRef ref="LOS2"/>
+        </LearningOpportunities>
+    </ApplicationObjectGroup>
+
+    <ApplicationObjectGroup>
+        <!-- koulukset joihin tässä hakukohteessa voidaan hakea -->
+        <LearningOpportunities>
+            <InstanceRef ref="LOS3"/>
+        </LearningOpportunities>
+    </ApplicationObjectGroup>
 
 </LearningOpportunityData>
