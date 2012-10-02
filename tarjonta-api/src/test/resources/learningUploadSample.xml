@@ -91,7 +91,16 @@
             <AdmissionProcedures></AdmissionProcedures>
             <GeneralDescription></GeneralDescription>
             <EctsCoordinator></EctsCoordinator>
-            <MainUniversityRequlations></MainUniversityRequlations>
+
+            <MainUniversityRequlations xml:lang="fi">
+                on niitä
+            </MainUniversityRequlations>
+            <MainUniversityRequlations xml:lang="sv">
+                det finns några
+            </MainUniversityRequlations>
+            <MainUniversityRequlations xml:lang="en">
+                there are some
+            </MainUniversityRequlations>
         </Institution>
 
         <!-- yleisiä tietoja ryhmittelevä rakenne -->
@@ -110,7 +119,16 @@
             <Internships></Internships>
             <SportsFacilities></SportsFacilities>
             <ExtraMuralAndLeisureFacilities></ExtraMuralAndLeisureFacilities>
-            <StudentAssociations></StudentAssociations>
+            <StudentAssociations xml:lang="fi"><![CDATA[
+                Lisätietoja osoitteesta
+                <a href="http://ayy.fi/">http://ayy.fi</a>
+                ]]>
+            </StudentAssociations>
+            <StudentAssociations xml:lang="en"><![CDATA[
+                More information at
+                <a href="http://ayy.fi/">http://ayy.fi</a>
+                ]]>
+            </StudentAssociations>
         </GeneralInformation>
     </LearningOpportunityProvider>
 

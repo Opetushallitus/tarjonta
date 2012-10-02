@@ -224,9 +224,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="AcademicCalendar"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     lukukausien ja periodien sekä opetustarjonnan ajankohdat kertova koulutustoimijan kalenteri
@@ -234,9 +234,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="AcademicAuthorities"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Opetuksen vastuuhenkilöt.
@@ -244,9 +244,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="AdmissionProcedures"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa opeskelijavalintojen toteutuksesta.
@@ -254,9 +254,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="GeneralDescription"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Organisaation yleiskuvaus.
@@ -264,9 +264,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="EctsCoordinator"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Organisaation ECTS-koordinaattori.
@@ -274,9 +274,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="MainUniversityRequlations"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Opetusten tunnustamissäännöt organisaatiossa.
@@ -291,9 +291,9 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="CostOfLiving"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa elämisen kustannuksista.
@@ -301,9 +301,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="Meals"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa opiskelijaruokalusta.
@@ -311,9 +311,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="MedicalFacilities"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa terveydenhuoltopalveluista.
@@ -321,9 +321,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="FacilitiesForStudentsWithSpecialNeeds"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Esteettömyys ja vammaisten tukipalvelut.
@@ -331,9 +331,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="Insurance"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa vakuutuksista.
@@ -341,9 +341,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="FinancialSupport"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa opintojen rahoituksesta.
@@ -351,9 +351,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="StudentAffairsOffice"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa opintotoimistosta ja opiskelijapalveluista.
@@ -361,9 +361,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="StudyFacilities"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa oppimisympäristöstä.
@@ -371,9 +371,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="InternationalProgrammes"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa kansainvälisistä koulutusohjelmista, vieraskielisistä koulutusohjelmista.
@@ -381,9 +381,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="MobileStudents"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa opiskelijaliikkuvuudesta.
@@ -391,9 +391,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="LanguageCourses"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa kieliopinnoista.
@@ -401,9 +401,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="Internships"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa opintoihin liittyvistä työharjoitteluista.
@@ -411,9 +411,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="SportsFacilities"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa opiskelijaliikunnasta.
@@ -421,9 +421,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="ExtraMuralAndLeisureFacilities"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa vapaa-ajan palveluista.
@@ -431,9 +431,9 @@
                             </xs:annotation>
                         </xs:element>
                         <xs:element name="StudentAssociations"
-                                    type="xs:string"
+                                    type="tns:TextType"
                                     minOccurs="0"
-                                    maxOccurs="1">
+                                    maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Tietoa opiskelijajärjestöistä.
