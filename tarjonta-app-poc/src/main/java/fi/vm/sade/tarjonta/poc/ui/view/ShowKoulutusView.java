@@ -28,7 +28,7 @@ import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
 import fi.vm.sade.tarjonta.poc.demodata.row.MultiActionTableStyleNoCBox;
-import fi.vm.sade.tarjonta.poc.demodata.row.TextTableStyle;
+import fi.vm.sade.tarjonta.poc.demodata.row.LabelTableStyle;
 import fi.vm.sade.tarjonta.poc.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -154,7 +154,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
         CategoryTreeView categoryTree = new CategoryTreeView();
         categoryTree.setHeight("100px");
-        categoryTree.setContainerDataSource(DataSource.treeTableData(new TextTableStyle()));
+        categoryTree.setContainerDataSource(DataSource.treeTableData(new LabelTableStyle()));
         layout.addComponent(categoryTree);
     }
 

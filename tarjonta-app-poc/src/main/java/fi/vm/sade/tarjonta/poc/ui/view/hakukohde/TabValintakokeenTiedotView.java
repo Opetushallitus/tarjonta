@@ -140,18 +140,22 @@ public class TabValintakokeenTiedotView extends AbstractVerticalLayout {
 
     private void buildToimitusosoite() {
         VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.NONE);
-        vl.setSizeUndefined();
+      vl.setSizeUndefined();
         vl.setWidth(UiConstant.PCT100);
         TextField tfAddress1 = UiUtil.textField(vl);
         tfAddress1.setWidth("300px");
+        tfAddress1.setInputPrompt(T("address.street1"));
         TextField tfAddress2 = UiUtil.textField(vl);
         tfAddress2.setWidth("300px");
 
         HorizontalLayout hl = UiUtil.horizontalLayout();
         TextField tfAddress3 = UiUtil.textField(hl);
         tfAddress3.setWidth("100px");
+        tfAddress3.setInputPrompt(T("address.postcode"));
+
         TextField tfAddress4 = UiUtil.textField(hl);
         tfAddress4.setWidth("200px");
+        tfAddress4.setInputPrompt(T("address.city"));
         hl.setExpandRatio(tfAddress4, 1l);
         vl.addComponent(hl);
 
@@ -160,8 +164,11 @@ public class TabValintakokeenTiedotView extends AbstractVerticalLayout {
         vl.addComponent(cssLayout);
 
         HorizontalLayout hl2 = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
-        TextField email = UiUtil.textField(hl2);
-        email.setWidth(300, UNITS_PIXELS);
+        TextField ePostLocation = UiUtil.textField(hl2);
+        ePostLocation.setInputPrompt(T("url")); 
+        ePostLocation.setWidth(300, UNITS_PIXELS);
+        
+       
         Button buttonSmallPlus = UiUtil.buttonSmallPlus(hl2, T("lisaaUusi"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {

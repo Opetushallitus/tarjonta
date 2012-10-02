@@ -9,7 +9,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
  *
  * @author jani
  */
-public class TextTableStyle implements ITableRowFormat<Label> {
+public class LabelTableStyle implements ITableRowFormat<Label> {
 
     @Override
     public Label format(String text) {

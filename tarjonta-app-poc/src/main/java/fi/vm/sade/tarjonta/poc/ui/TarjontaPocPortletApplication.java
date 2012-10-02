@@ -45,9 +45,8 @@ public class TarjontaPocPortletApplication extends AbstractSadePortletApplicatio
 
         win = new TarjontaWindow();
         setMainWindow(win);
-        //win.getContent().setHeight(850, Sizeable.UNITS_PIXELS);
-        //setTheme("tarjonta");
-        setTheme("oph-app-tarjonta");
+        //setTheme("tarjonta"); 
+        setTheme("oph-app-tarjonta"); //include Vaadin Tree Table fix for Liferay
     }
 
     @Override

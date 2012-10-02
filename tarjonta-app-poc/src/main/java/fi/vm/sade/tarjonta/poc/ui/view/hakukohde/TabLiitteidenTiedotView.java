@@ -25,13 +25,10 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.tarjonta.poc.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.poc.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.tarjonta.poc.ui.view.common.LanguageTabSheet;
-import fi.vm.sade.tarjonta.poc.ui.view.common.TwinColSelectKoodisto;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -94,14 +91,18 @@ public class TabLiitteidenTiedotView extends AbstractVerticalLayout {
         vl.setWidth(UiConstant.PCT100);
         TextField tfAddress1 = UiUtil.textField(vl);
         tfAddress1.setWidth("300px");
+        tfAddress1.setInputPrompt(T("address.street1"));
         TextField tfAddress2 = UiUtil.textField(vl);
         tfAddress2.setWidth("300px");
 
         HorizontalLayout hl = UiUtil.horizontalLayout();
         TextField tfAddress3 = UiUtil.textField(hl);
         tfAddress3.setWidth("100px");
+        tfAddress3.setInputPrompt(T("address.postcode"));
+
         TextField tfAddress4 = UiUtil.textField(hl);
         tfAddress4.setWidth("200px");
+        tfAddress4.setInputPrompt(T("address.city"));
         hl.setExpandRatio(tfAddress4, 1l);
         vl.addComponent(hl);
 
@@ -109,8 +110,9 @@ public class TabLiitteidenTiedotView extends AbstractVerticalLayout {
         CheckBox checkbox = UiUtil.checkbox(cssLayout, T("voidaanToimittaaMyosSahkoisesti"));
         vl.addComponent(cssLayout);
 
-        TextField email = UiUtil.textField(vl);
-        email.setWidth(300, UNITS_PIXELS);
+        TextField ePostLocation = UiUtil.textField(vl);
+        ePostLocation.setWidth(300, UNITS_PIXELS);
+        ePostLocation.setInputPrompt(T("url")); 
         addItem("toimitusosoite", vl);
     }
 

@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ */
 package fi.vm.sade.tarjonta.poc.ui;
 
 import com.vaadin.ui.Label;
@@ -31,20 +46,14 @@ public class TarjontaWindow extends Window {
 
         VerticalLayout layout = UiUtil.verticalLayout();
         layout.setHeight(-1,UNITS_PIXELS);
-        setContent(layout); //window käyttää layouttia pohjana
+        setContent(layout); //override default layout
         layout.addStyleName(Oph.CONTAINER_MAIN);
-
         mainSplitPanel = new MainSplitPanelView();
-        mainSplitPanel.getMainRightLayout().addComponent(new Label("NOT INITIALIZED"));
-
         layout.addComponent(mainSplitPanel);
 
         if (_presenter != null && _presenter.showIdentifier()) {
             layout.addComponent(new Label("ID=" + _presenter.getIdentifier()));
         }
-
-       // layout.setExpandRatio(mainSplitPanel, 1f);
-
         _presenter.showMainKoulutusView();
     }
 

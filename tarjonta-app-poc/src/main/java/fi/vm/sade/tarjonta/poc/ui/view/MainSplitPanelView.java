@@ -16,23 +16,19 @@
 package fi.vm.sade.tarjonta.poc.ui.view;
 
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
+import fi.vm.sade.tarjonta.poc.ui.view.common.OrganisaatiohakutView;
+import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable(preConstruction = true)
-public class MainSplitPanelView extends VerticalLayout {
+public class MainSplitPanelView extends HorizontalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainSplitPanelView.class);
-    private static final int DEFAULT_SPLIT_PCT = 0;
-    @Autowired(required = true)
-    private TarjontaPresenter _presenter;
-    private HorizontalLayout mainLeftLayout;
+    private OrganisaatiohakutView mainLeftLayout;
     private VerticalLayout mainRightLayout;
 
     /**
@@ -40,22 +36,25 @@ public class MainSplitPanelView extends VerticalLayout {
      * root and then do any custom initialization.
      */
     public MainSplitPanelView() {
+        /*
+         * REMEBER:
+         * Please do not set width 100% to horizontal layout, or it 
+         * will break the collapsible Organisaatio haku view. * 
+         */
+        
         LOG.info("In MainSplitPanelView");
+        setHeight(-1, UNITS_PIXELS);
         buildMainLayout();
-        mainRightLayout.setHeight(-1, UNITS_PIXELS);
+
     }
 
     private void buildMainLayout() {
-        //INIT SPLIT PANEL
-        //setSplitPosition(DEFAULT_SPLIT_PCT); // percent
-        mainLeftLayout = UiUtil.horizontalLayout(); //split panel right
-        mainRightLayout = UiUtil.verticalLayout(); //Split panel left
+        mainLeftLayout = new OrganisaatiohakutView(); //main collapsible layout left
+        mainRightLayout = UiUtil.verticalLayout(); //main tool layout right
         mainRightLayout.setHeight(-1, UNITS_PIXELS);
-        this.addComponent(mainLeftLayout);
-        this.addComponent(mainRightLayout);
 
-        //LEFT LAYOUT IN SPLIT PANEL
-       // UiBuilder.newLabel("Organisaation valinta tähän", mainLeftLayout);
+        addComponent(mainLeftLayout);
+        addComponent(mainRightLayout);
     }
 
     /**

@@ -46,7 +46,7 @@ public class DataSource {
         "Jyväskylän yliopiston kauppakorkeakoulu",
         "Kasvatustieteiden tiedekunta",
         "Liikunta- ja terveystieteiden tiedekunta"};
-    private static final String COLUMN_A = "Kategoriat";
+    public static final String COLUMN_KEY = "COLUMN";
     public static final String[] KOULUTUKSEN_PERUSTIEDOT_HEADERS = {
         "Organisaatio",
         "Koulutuslaji",
@@ -78,13 +78,11 @@ public class DataSource {
         "Koulutukselliset ja ammatilliset tavoitteet",
         "Jatk-optomahdollisuudet"
     };
-    
     public static final String[] HAKUKOHTEEN_HAUT = {
         "Haun nimi, hakutyyppi, kausi",
         "Hakuryhmä nimi1",
         "Hakuryhmä nimi2"
     };
-    
     public static final String[] ORDER_BY = new String[]{"Organisaatiorakenteen mukainen järjestys", "Koulutuksen tilan mukainen järjestys", "Aakkosjärjestys", "Koulutuslajin mukaan"};
 
     public static HierarchicalContainer treeTableData(ITableRowFormat rowStyle, Map<String, String[]> map) {
@@ -95,27 +93,37 @@ public class DataSource {
 
         for (Map.Entry<String, String[]> e : set) {
 
-            hc.addContainerProperty(COLUMN_A, format.getClass(), rowStyle.format(e.getKey()));
+            hc.addContainerProperty(COLUMN_KEY, format.getClass(), rowStyle.format(e.getKey()));
             Object rootItem = hc.addItem();
 
-            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey()));
+            hc.getContainerProperty(rootItem, COLUMN_KEY).setValue(rowStyle.format(e.getKey()));
 
             for (String strText : e.getValue()) {
                 Object subItem = hc.addItem();
                 hc.setParent(subItem, rootItem);
-                hc.getContainerProperty(subItem, COLUMN_A).setValue(rowStyle.format(strText));
+                hc.getContainerProperty(subItem, COLUMN_KEY).setValue(rowStyle.format(strText));
                 hc.setChildrenAllowed(subItem, false);
             }
         }
 
         return hc;
     }
-    
-     public static HierarchicalContainer treeTableData(ITableRowFormat rowStyle, String[] rows) {
+
+    public static HierarchicalContainer treeTableData(ITableRowFormat rowStyle, String[] rows) {
         Map<String, String[]> map = new HashMap<String, String[]>();
 
-        for(String root :  rows){
+        for (String root : rows) {
             map.put(root, new String[]{""});
+        }
+
+        return treeTableData(rowStyle, map);
+    }
+    
+     public static HierarchicalContainer treeTableData(ITableRowFormat rowStyle, String[] rows,  String[] childRows) {
+        Map<String, String[]> map = new HashMap<String, String[]>();
+
+        for (String root : rows) {
+            map.put(root, childRows);
         }
 
         return treeTableData(rowStyle, map);
