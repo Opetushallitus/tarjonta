@@ -68,14 +68,6 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:attributeGroup name="LearningOpportunityModuleAttrGroup">
-        <xs:annotation>
-            <xs:documentation xml:lang="fi">
-                Yleisia LearningOpportunity:lle sekä LearningOpportunitySpecification:lle yhteisia attribuutteja.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:attribute name="type" type="tns:LearningOpportunityType" use="required"/>
-    </xs:attributeGroup>
 
     <xs:complexType name="LearningOpportunitySpecificationType">
         <xs:complexContent>
@@ -395,6 +387,36 @@
     </xs:complexType>
 
 
+    <xs:complexType name="TextType" mixed="true">
+        <xs:attribute ref="xml:lang"/>
+    </xs:complexType>
+
+    <xs:complexType name="ExtendedStringType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute ref="xml:lang" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- -->
+    <xs:complexType name="CreditsType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="unit" use="required">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="CreditUnits"/>
+                            <xs:enumeration value="ECTS"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+
+
     <xs:simpleType name="StructureSelectorType">
         <xs:restriction base="xs:token">
             <xs:enumeration value="oneOf">
@@ -471,33 +493,15 @@
     </xs:simpleType>
 
 
-    <xs:complexType name="TextType" mixed="true">
-        <xs:attribute ref="xml:lang"/>
-    </xs:complexType>
+    <xs:attributeGroup name="LearningOpportunityModuleAttrGroup">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Yleisia LearningOpportunity:lle sekä LearningOpportunitySpecification:lle yhteisia attribuutteja.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="type" type="tns:LearningOpportunityType" use="required"/>
+    </xs:attributeGroup>
 
-    <xs:complexType name="ExtendedStringType">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute ref="xml:lang" use="optional"/>
-            </xs:extension>
-        </xs:simpleContent>
-    </xs:complexType>
-
-    <!-- -->
-    <xs:complexType name="CreditsType">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="unit" use="required">
-                    <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                            <xs:enumeration value="CreditUnits"/>
-                            <xs:enumeration value="ECTS"/>
-                        </xs:restriction>
-                    </xs:simpleType>
-                </xs:attribute>
-            </xs:extension>
-        </xs:simpleContent>
-    </xs:complexType>
 
 
 </xs:schema>
