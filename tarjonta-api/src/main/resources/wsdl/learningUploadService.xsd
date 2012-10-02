@@ -42,6 +42,20 @@
                         type="tns:LearningOpportunityProviderType"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
+            <xs:element name="ApplicationObjectGroup"
+                        type="tns:ApplicationObjectGroupType"
+                        minOccurs="0"
+                        maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ApplicationObjectGroupType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Suomenkielinen termi: hakukohde
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
         </xs:sequence>
     </xs:complexType>
 
@@ -75,6 +89,30 @@
                                 type="tns:CreditsType"
                                 minOccurs="0"
                                 maxOccurs="1"/>
+                    <xs:element name="EQFClassification"
+                                type="tns:EQFClassificationType"
+                                minOccurs="0"
+                                maxOccurs="1"/>
+                    <xs:element name="Qualification"
+                                type="xs:string"
+                                minOccurs="0"
+                                maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="fi">
+                                Suomenkielinen termi: tutkintonimike
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="StructureDiagram"
+                                type="xs:string"
+                                minOccurs="0"
+                                maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="fi">
+                                Koulutuksen rakenne tekstikuvauksena. (tarvitaanko kaannokset?)
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="Structure"
                                 type="tns:StructureType"
                                 minOccurs="0"
@@ -112,225 +150,238 @@
 
     <xs:complexType name="LearningOpportunityProviderType">
         <xs:sequence>
-            <xs:element name="InstitutionName"
-                        type="tns:ExtendedStringType"
-                        minOccurs="0"
-                        maxOccurs="unbounded">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Organisaation nimi / koulutustoimijan nimi.
-                    </xs:documentation>
-                </xs:annotation>
+            <xs:element name="Institution">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Name"
+                                    type="tns:ExtendedStringType"
+                                    minOccurs="0"
+                                    maxOccurs="unbounded">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Organisaation nimi / koulutustoimijan nimi.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="AcademicCalendar"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    lukukausien ja periodien sekä opetustarjonnan ajankohdat kertova koulutustoimijan kalenteri
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="AcademicAuthorities"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Opetuksen vastuuhenkilöt.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="AdmissionProcedures"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa opeskelijavalintojen toteutuksesta.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="GeneralDescription"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Organisaation yleiskuvaus.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="EctsCoordinator"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Organisaation ECTS-koordinaattori.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="MainUniversityRequlations"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Opetusten tunnustamissäännöt organisaatiossa.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
             </xs:element>
-            <xs:element name="InstitutionAcademicCalendar"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        lukukausien ja periodien sekä opetustarjonnan ajankohdat kertova koulutustoimijan kalenteri
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="InstitutionAcademicAuthorities"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Opetuksen vastuuhenkilöt.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="InstitutionAdmissionProcedures"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa opeskelijavalintojen toteutuksesta.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="InstitutionGeneralDescription"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Organisaation yleiskuvaus.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="InstitutionalEctsCoordinator"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Organisaation ECTS-koordinaattori.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="InstitutionMainUniversityRequlations"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Opetusten tunnustamissäännöt organisaatiossa.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationOnCostOfLiving"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa elämisen kustannuksista.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationOnMeals"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa opiskelijaruokalusta.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationOnMedicalFacilities"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa terveydenhuoltopalveluista.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationOnFacilitiesForStudentsWithSpecialNeeds"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Esteettömyys ja vammaisten tukipalvelut.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationOnInsurance"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa vakuutuksista.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationOnFinancialSupport"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa opintojen rahoituksesta.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationOnStudentAffairsOffice"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa opintotoimistosta ja opiskelijapalveluista.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationOnStudyFacilities"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa oppimisympäristöstä.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationOnInternationalProgrammes"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa kansainvälisistä koulutusohjelmista, vieraskielisistä koulutusohjelmista.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationForMobileStudents"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa opiskelijaliikkuvuudesta.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationOnLanguageCourses"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa kieliopinnoista.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationOnInternships"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa opintoihin liittyvistä työharjoitteluista.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationOnSportsFacilities"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa opiskelijaliikunnasta.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationOnExtraMuralAndLeisureFacilities"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa vapaa-ajan palveluista.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="GeneralInformationOnStudentAssociations"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tietoa opiskelijajärjestöistä.
-                    </xs:documentation>
-                </xs:annotation>
+
+            <xs:element name="GeneralInformation">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="CostOfLiving"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa elämisen kustannuksista.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="Meals"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa opiskelijaruokalusta.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="MedicalFacilities"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa terveydenhuoltopalveluista.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="FacilitiesForStudentsWithSpecialNeeds"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Esteettömyys ja vammaisten tukipalvelut.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="Insurance"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa vakuutuksista.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="FinancialSupport"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa opintojen rahoituksesta.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="StudentAffairsOffice"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa opintotoimistosta ja opiskelijapalveluista.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="StudyFacilities"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa oppimisympäristöstä.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="InternationalProgrammes"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa kansainvälisistä koulutusohjelmista, vieraskielisistä koulutusohjelmista.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="MobileStudents"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa opiskelijaliikkuvuudesta.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="LanguageCourses"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa kieliopinnoista.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="Internships"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa opintoihin liittyvistä työharjoitteluista.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="SportsFacilities"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa opiskelijaliikunnasta.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="ExtraMuralAndLeisureFacilities"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa vapaa-ajan palveluista.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="StudentAssociations"
+                                    type="xs:string"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Tietoa opiskelijajärjestöistä.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
             </xs:element>
         </xs:sequence>
 
@@ -345,7 +396,7 @@
 
 
     <xs:simpleType name="StructureSelectorType">
-        <xs:restriction base="xs:normalizedString">
+        <xs:restriction base="xs:token">
             <xs:enumeration value="oneOf">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
@@ -393,6 +444,20 @@
     </xs:simpleType>
 
 
+    <xs:simpleType name="EQFClassificationType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                European Qualification Framework for referencing academic degrees.
+                See: http://en.wikipedia.org/wiki/European_Qualifications_Framework
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="8"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
     <xs:simpleType name="LearningOpportunityType">
         <xs:restriction base="xs:normalizedString">
             <xs:enumeration value="DegreeProgramme">
@@ -425,10 +490,8 @@
                 <xs:attribute name="unit" use="required">
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
-                            <!-- credit units -->
-                            <xs:enumeration value="cu"/>
-                            <!-- ECTS credit -->
-                            <xs:enumeration value="ects"/>
+                            <xs:enumeration value="CreditUnits"/>
+                            <xs:enumeration value="ECTS"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>

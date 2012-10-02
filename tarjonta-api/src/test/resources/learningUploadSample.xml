@@ -18,9 +18,24 @@
         <OfferedBy ref="LOP1"/>
 
         <!-- laajuus yksikkö sekä arvo -->
-        <Credits unit="cu">30</Credits>
+        <Credits unit="CreditUnits">30</Credits>
 
-        <!-- sisältyvät moduulit, selector arvo "allOf" määrää että kaikki ovat pakollisia. viittaukset ovat tämän dokumentin sisäisiä. -->
+        <!-- tutkinnon EQF luokittelu (arvot 1-8) -->
+        <EQFClassification>6</EQFClassification>
+
+        <!-- tutkintonimike -->
+        <Qualification>Tuotantotalouden mestari</Qualification>
+
+        <!-- koulutusrakenteen kuvaus -->
+        <StructureDiagram>
+            Tekstiä...
+        </StructureDiagram>
+
+        <!--
+            sisältyvät moduulit, selector arvo "allOf" määrää että kaikki ovat pakollisia.
+            viittaukset ovat tämän dokumentin sisäisiä.
+            structure -rakenne voi toistua 0-n kertaa
+        -->
         <Structure selector="allOf">
             <SpecificationRef ref="LOS2"/>
             <SpecificationRef ref="LOS3"/>
@@ -29,39 +44,53 @@
     </LearningOpportunitySpecification>
 
 
-    <!-- -->
+    <!-- Koulutusmoduuli johon päätasolta viitataan -->
     <LearningOpportunitySpecification id="LOS2" type="DegreeProgramme">
     </LearningOpportunitySpecification>
 
-    <!-- -->
+    <!-- Koulutusmoduuli johon päätasolta viitataan -->
     <LearningOpportunitySpecification id="LOS3" type="DegreeProgramme">
     </LearningOpportunitySpecification>
 
+
     <LearningOpportunityProvider id="LOP1">
-        <InstitutionName xml:lang="fi">nimi</InstitutionName>
-        <InstitutionName xml:lang="en">name</InstitutionName>
-        <InstitutionName xml:lang="sv">namn</InstitutionName>
-        <InstitutionAcademicCalendar></InstitutionAcademicCalendar>
-        <InstitutionAcademicAuthorities></InstitutionAcademicAuthorities>
-        <InstitutionAdmissionProcedures></InstitutionAdmissionProcedures>
-        <InstitutionGeneralDescription></InstitutionGeneralDescription>
-        <InstitutionalEctsCoordinator></InstitutionalEctsCoordinator>
-        <InstitutionMainUniversityRequlations></InstitutionMainUniversityRequlations>
-        <GeneralInformationOnCostOfLiving></GeneralInformationOnCostOfLiving>
-        <GeneralInformationOnMeals></GeneralInformationOnMeals>
-        <GeneralInformationOnMedicalFacilities></GeneralInformationOnMedicalFacilities>
-        <GeneralInformationOnFacilitiesForStudentsWithSpecialNeeds></GeneralInformationOnFacilitiesForStudentsWithSpecialNeeds>
-        <GeneralInformationOnInsurance></GeneralInformationOnInsurance>
-        <GeneralInformationOnFinancialSupport></GeneralInformationOnFinancialSupport>
-        <GeneralInformationOnStudentAffairsOffice></GeneralInformationOnStudentAffairsOffice>
-        <GeneralInformationOnStudyFacilities></GeneralInformationOnStudyFacilities>
-        <GeneralInformationOnInternationalProgrammes></GeneralInformationOnInternationalProgrammes>
-        <GeneralInformationForMobileStudents></GeneralInformationForMobileStudents>
-        <GeneralInformationOnLanguageCourses></GeneralInformationOnLanguageCourses>
-        <GeneralInformationOnInternships></GeneralInformationOnInternships>
-        <GeneralInformationOnSportsFacilities></GeneralInformationOnSportsFacilities>
-        <GeneralInformationOnExtraMuralAndLeisureFacilities></GeneralInformationOnExtraMuralAndLeisureFacilities>
-        <GeneralInformationOnStudentAssociations></GeneralInformationOnStudentAssociations>
+
+        <!-- instituutiotietoja ryhmittelevä rakenne -->
+        <Institution>
+            <Name xml:lang="fi">nimi</Name>
+            <Name xml:lang="en">name</Name>
+            <Name xml:lang="sv">namn</Name>
+            <AcademicCalendar></AcademicCalendar>
+            <AcademicAuthorities></AcademicAuthorities>
+            <AdmissionProcedures></AdmissionProcedures>
+            <GeneralDescription></GeneralDescription>
+            <EctsCoordinator></EctsCoordinator>
+            <MainUniversityRequlations></MainUniversityRequlations>
+        </Institution>
+
+        <!-- yleisiä tietoja ryhmittelevä rakenne -->
+        <GeneralInformation>
+            <CostOfLiving></CostOfLiving>
+            <Meals></Meals>
+            <MedicalFacilities></MedicalFacilities>
+            <FacilitiesForStudentsWithSpecialNeeds></FacilitiesForStudentsWithSpecialNeeds>
+            <Insurance></Insurance>
+            <FinancialSupport></FinancialSupport>
+            <StudentAffairsOffice></StudentAffairsOffice>
+            <StudyFacilities></StudyFacilities>
+            <InternationalProgrammes></InternationalProgrammes>
+            <MobileStudents></MobileStudents>
+            <LanguageCourses></LanguageCourses>
+            <Internships></Internships>
+            <SportsFacilities></SportsFacilities>
+            <ExtraMuralAndLeisureFacilities></ExtraMuralAndLeisureFacilities>
+            <StudentAssociations></StudentAssociations>
+        </GeneralInformation>
     </LearningOpportunityProvider>
+
+
+    <!-- hakukohteet -->
+
+    <ApplicationObjectGroup></ApplicationObjectGroup>
 
 </LearningOpportunityData>
