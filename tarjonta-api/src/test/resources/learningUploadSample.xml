@@ -11,8 +11,11 @@
     -->
     <LearningOpportunitySpecification id="LOS1" type="DegreeProgramme">
 
+
         <!-- nimi voi toistua n-kertaa eri kielille -->
         <Name xml:lang="fi">Tuotantotalouden koulutusohjelma</Name>
+
+        <Identifier>LOS1</Identifier>
 
         <!-- viittaus LOP:iin joka tarjoaa "tarjoaa" tämän koulutus moduulin -->
         <OfferedBy ref="LOP1"/>
@@ -20,22 +23,29 @@
         <!-- laajuus yksikkö sekä arvo -->
         <Credits unit="CreditUnits">30</Credits>
 
-        <!-- tutkinnon EQF luokittelu (arvot 1-8) -->
-        <EQFClassification>6</EQFClassification>
 
         <!-- tutkintonimike -->
         <Qualification>Tuotantotalouden mestari</Qualification>
 
         <Classification>
-            <UnifiedCode scheme="http://oph.fi">
+            
+            <ClassificationItem scheme="http://oph.fi">
                 <Code>123456</Code>
-            </UnifiedCode>
+            </ClassificationItem>
+
+            <!-- tutkinnon EQF luokittelu (arvot 1-8) -->
+            <ClassificationItem scheme="NQF">
+                <Code>6</Code>
+            </ClassificationItem>
+
         </Classification>
 
-        <!-- koulutusrakenteen kuvaus -->
-        <StructureDiagram>
-            Tekstiä...
-        </StructureDiagram>
+        <Description>
+            <!-- koulutusrakenteen kuvaus -->
+            <StructureDiagram>
+                Tekstiä...
+            </StructureDiagram>
+        </Description>
 
         <!--
             sisältyvät moduulit, selector arvo "allOf" määrää että kaikki ovat pakollisia.
@@ -52,16 +62,18 @@
 
     <!-- Koulutusmoduuli johon päätasolta viitataan -->
     <LearningOpportunitySpecification id="LOS2" type="DegreeProgramme">
+        <Identifier>LOS2</Identifier>
         <Classification>
-            <UnifiedCode scheme="http://stat.fi" version="2010">
+            <ClassificationItem scheme="http://stat.fi" version="2010">
                 <Code>374116</Code>
                 <Label xml:lang="fi">Sairaankuljettajan ammattitutkinto</Label>
-            </UnifiedCode>
+            </ClassificationItem>
         </Classification>
     </LearningOpportunitySpecification>
 
     <!-- Koulutusmoduuli johon päätasolta viitataan -->
     <LearningOpportunitySpecification id="LOS3" type="DegreeProgramme">
+        <Identifier>LOS3</Identifier>
         <Classification>
             <ClassificationItem type="EducationDomain" scheme="http://oph.fi" version="2002">
                 <Code>7</Code>
@@ -118,7 +130,8 @@
             <LanguageCourses></LanguageCourses>
             <Internships></Internships>
             <SportsFacilities></SportsFacilities>
-            <ExtraMuralAndLeisureFacilities></ExtraMuralAndLeisureFacilities>
+            <ExtraMuralAndLeisureFacilities>
+            </ExtraMuralAndLeisureFacilities>
             <StudentAssociations xml:lang="fi"><![CDATA[
                 Lisätietoja osoitteesta
                 <a href="http://ayy.fi/">http://ayy.fi</a>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Tämä dokumentti todentaa esimerkkidatan siirtotiedosto muodossa. Data löytyy Google Docs:n toiselta välilehdeltä:
+    https://docs.google.com/spreadsheet/ccc?key=0ApG7JFquM4ZDdHI4VmwweFJKanNDZ1Vob0RjVXVRZEE#gid=1
+
+
+    vielä sijoitettavat/ratkaistavat tiedot:
+
+    - pakollisuus (sijoitettava rakenteeseen)
+    - moduulin tila, explisiittinen?
+    - koulutusohjelma (onko tämä viittaus toiseen LOP:iin vai...?)
+
+-->
+<LearningOpportunityData
+    xmlns="http://service.tarjonta.sade.vm.fi/types"
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xsi:schemaLocation='http://service.tarjonta.sade.vm.fi/types  ../../main/resources/wsdl/learningUploadService.xsd'>
+
+    <LearningOpportunitySpecification id="S1508" type="DegreeProgramme">
+
+        <!-- tutkinto-ohjelman nimi / degreeProgrammeTitle -->
+        <Name xml:lang="fi">Ensihoidon koulutusohjelma</Name>
+
+        <!-- tutkinto-ohjelman tunniste -->
+        <Identifier>1508</Identifier>
+
+        <!-- laajuus sekä laajuusyksikkö -->
+        <Credits unit="CreditUnits">120</Credits>
+
+        <!-- tutkintonimike -->
+        <QualificationTitle>lähihoitaja</QualificationTitle>
+
+        <!-- tutkinnon nimi -->
+        <DegreeTitle>sosiaali- ja terveysalan pt</DegreeTitle>
+
+        <Classification>
+
+            <!-- koulutusluokituksen koodi -->
+            <ClassificationItem scheme="http://stat.fi" version="2010">
+                <Code>371101</Code>
+                <Label xml:lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
+            </ClassificationItem>
+
+            <!-- koulutusala -->
+            <ClassificationItem type="EducationDomain" scheme="http://oph.fi" version="2002">
+                <Code>7</Code>
+                <Label>sosiaali- terveys- ja liikunta-ala</Label>
+            </ClassificationItem>
+
+            <!-- koulutusaste -->
+            <ClassificationItem type="EducationDegree" scheme="http://oph.fi" version="2002">
+                <Code>32</Code>
+                <Label>Ammatillinen koulutus</Label>
+            </ClassificationItem>
+
+            <!-- opintoala -->
+            <ClassificationItem type="StydyDomain" scheme="http://oph.fi" version="2002">
+                <Code>703</Code>
+                <Label>sosiaali- ja terveysala</Label>
+            </ClassificationItem>
+
+            <!-- EQF -->
+            <ClassificationItem scheme="EQF">
+                <Code>4</Code>
+            </ClassificationItem>
+
+            <!-- NQF -->
+            <ClassificationItem scheme="NQF">
+                <Code>4</Code>
+            </ClassificationItem>
+
+        </Classification>
+
+        <Description>
+
+            <!-- koulutusrakenteen kuvaus -->
+            <StructureDiagram>
+                Tutkinnon kaikille pakolliset tutkinnon osat ovat kasvun tukeminen ja ohjaus (15 ov),
+                hoito ja huolenpito (20 ov) ja kuntoutumisen tukeminen (15 ov).  Lisäksi suoritetaan
+                valitun koulutusohjelman/osaamisalan pakolliset tutkinnon osat. Ensihoidon
+                koulutusohjelman/osaamisalan pakollinen tutkinnon osa on ensihoitopalvelussa toimiminen
+                (20 ov) ja lisäksi valinnainen joko päivystyspolikliininen hoitotyö (10 ov) tai
+                perioperatiivinen hoitotyö (10 ov).
+            </StructureDiagram>
+
+            <!-- jatko-opintoväylät -->
+            <AccessToFurtherStudies>
+                Ammatillinen perustutkinto antaa yleisen korkeakoulukelpoisuuden.
+            </AccessToFurtherStudies>
+
+        </Description>
+
+    </LearningOpportunitySpecification>
+
+</LearningOpportunityData>
