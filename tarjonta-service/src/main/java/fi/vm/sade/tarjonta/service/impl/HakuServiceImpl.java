@@ -53,9 +53,16 @@ public class HakuServiceImpl implements HakuService {
     
     @Override
     public fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi paivitaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
+        
+        Haku foundHaku = businessService.findByOid(hakuDto.getOid());
+        if (foundHaku != null) {
         Haku haku = conversionService.convert(hakuDto,Haku.class);
+        haku.setId(foundHaku.getId());
         haku = businessService.save(haku);
         return conversionService.convert(haku, HakuTyyppi.class);
+        } else {
+            throw new BusinessException("tarjonta.haku.update.no.oid");
+        }
     }
 
     @Override
