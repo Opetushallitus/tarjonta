@@ -123,15 +123,15 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     private CheckBox _kayteaanJarjestelmanHakulomaketta;
     @PropertyId("hakuLomakeUrl")
     private TextField _muuHakulomakeUrl;
-    @Value("${koodisto-uris.kieli:http://hakutyyppi}")
+    @Value("${koodisto-uris.hakutyyppi:HAKUTYYPPI}")
     private String _koodistoUriHakutyyppi;
-    @Value("${koodisto-uris.kieli:http://hakukausi}")
+    @Value("${koodisto-uris.hakukausi:KAUSI}")
     private String _koodistoUriHakukausi;
-    @Value("${koodisto-uris.kieli:http://alkamiskausi}")
+    @Value("${koodisto-uris.koulutuksenAlkamiskausi:KAUSI}")
     private String _koodistoUriAlkamiskausi;
-    @Value("${koodisto-uris.kieli:http://kohdejoukko}")
+    @Value("${koodisto-uris.haunKohdejoukko:KOULUTUSRYHMÄ}")
     private String _koodistoUriKohdejoukko;
-    @Value("${koodisto-uris.kieli:http://hakutapa}")
+    @Value("${koodisto-uris.hakutapa:HAKUTAPA}")
     private String _koodistoUriHakutapa;
     private I18NHelper _i18n = new I18NHelper(this);
     private Form form;
@@ -155,7 +155,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     public void attach() {
         LOG.debug("attach()");
         super.attach();
-        this._kayteaanJarjestelmanHakulomaketta.setValue(_presenter.getHakuModel().getHakuLomakeUrl() == null);
+        //this._kayteaanJarjestelmanHakulomaketta.setValue(_presenter.getHakuModel().getHakuLomakeUrl() == null);
     }
 
     @Override

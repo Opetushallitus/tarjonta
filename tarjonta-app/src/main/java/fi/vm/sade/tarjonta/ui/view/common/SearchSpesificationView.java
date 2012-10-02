@@ -71,9 +71,9 @@ public class SearchSpesificationView extends HorizontalLayout {
     private String _koodistoUriHakutapa;
     @Value("${koodisto-uris.hakutyyppi:http://hakutyyppi}")
     private String _koodistoUriHakutyyppi;
-    @Value("${koodisto-uris.haunKohdejoukko:http://kohdejoukko}")
+    @Value("${koodisto-uris.haunKohdejoukko:http://haunkohdejoukko}")
     private String _koodistoUriHaunKohdejoukko;
-    @Value("${koodisto-uris.koulutuksenAlkamiskausi:http://alkamiskausi")
+    @Value("${koodisto-uris.koulutuksenAlkamiskausi:http://alkamiskausi}")
     private String _koodistoUriKoulutuksenAlkamiskausi;
     private I18NHelper _i18nHelper = new I18NHelper(this);
     
@@ -87,6 +87,7 @@ public class SearchSpesificationView extends HorizontalLayout {
     public void attach() {
         super.attach();
 
+        LOG.info("Creating koodisto components");
         _cbHakukausi = UiBuilder.koodistoComboBox(null,_koodistoUriHakukausi, null, null, T("hakukausi.prompt"));
         _cbHakutapa = UiBuilder.koodistoComboBox(null,_koodistoUriHakutapa, null, null, T("hakutapa.prompt"));
         _cbHakutyyppi = UiBuilder.koodistoComboBox(null,_koodistoUriHakutyyppi, null, null, T("hakutyyppi.prompt"));

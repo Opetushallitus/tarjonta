@@ -86,11 +86,11 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         
 
         LOG.info("building content labels");
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiArvo(hakuPresenter.getHakuModel().getHakutyyppi()) + " "), 1, 0);
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiArvo(hakuPresenter.getHakuModel().getHakukausi()) + " "), 1, 1);
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiArvo(hakuPresenter.getHakuModel().getKoulutuksenAlkamisKausi()) + " "), 1, 2);
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiArvo(hakuPresenter.getHakuModel().getHaunKohdejoukko()) + " "), 1, 3);
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiArvo(hakuPresenter.getHakuModel().getHakutapa()) + " "), 1, 4);
+        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHakutyyppi()) + " "), 1, 0);
+        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHakukausi()) + " "), 1, 1);
+        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getKoulutuksenAlkamisKausi()) + " "), 1, 2);
+        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHaunKohdejoukko()) + " "), 1, 3);
+        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHakutapa()) + " "), 1, 4);
         grid.addComponent(UiUtil.label(null, hakuPresenter.getHakuModel().getHaunTunniste() + " "), 1, 5);
         grid.addComponent(UiUtil.label(null, hakuPresenter.getHakuaika() + " "), 1, 6);
         String hakulomakeStr = hakuPresenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta() 

@@ -83,6 +83,7 @@ public class HakuViewModel extends BaseUIViewModel {
     public HakuViewModel(HakuTyyppi hakuDto) {
         super();
         this.hakuDto = hakuDto;
+        this.setKaytetaanJarjestelmanHakulomaketta(this.hakuDto.getHakulomakeUrl() == null);
     }
 
     /**

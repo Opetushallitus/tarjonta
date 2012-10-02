@@ -56,10 +56,9 @@ public class HakuServiceImpl implements HakuService {
         
         Haku foundHaku = businessService.findByOid(hakuDto.getOid());
         if (foundHaku != null) {
-        Haku haku = conversionService.convert(hakuDto,Haku.class);
-        haku.setId(foundHaku.getId());
-        haku = businessService.save(haku);
-        return conversionService.convert(haku, HakuTyyppi.class);
+            mergeHaku(conversionService.convert(hakuDto,Haku.class), foundHaku); 
+            foundHaku = businessService.update(foundHaku);
+            return conversionService.convert(foundHaku, HakuTyyppi.class);
         } else {
             throw new BusinessException("tarjonta.haku.update.no.oid");
         }
@@ -143,6 +142,25 @@ public class HakuServiceImpl implements HakuService {
      */
     public void setHakuDao(HakuDAO hakuDao) {
         this.hakuDao = hakuDao;
+    }
+    
+    
+    private void mergeHaku(Haku source, Haku target) {
+        target.setNimi(source.getNimi());
+        target.setOid(source.getOid());
+        target.setHakukausiUri(source.getHakukausiUri());
+        target.setHakukausiVuosi(source.getHakukausiVuosi());
+        target.setHakulomakeUrl(source.getHakulomakeUrl());
+        target.setHakutapaUri(source.getHakutapaUri());
+        target.setHakutyyppiUri(source.getHakutyyppiUri());
+        target.setHaunAlkamisPvm(source.getHaunAlkamisPvm());
+        target.setHaunLoppumisPvm(source.getHaunLoppumisPvm());
+        target.setKohdejoukkoUri(source.getKohdejoukkoUri());
+        target.setKoulutuksenAlkamiskausiUri(source.getKoulutuksenAlkamiskausiUri());
+        target.setKoulutuksenAlkamisVuosi(source.getKoulutuksenAlkamisVuosi());
+        target.setSijoittelu(source.isSijoittelu());
+        target.setTila(source.getTila());
+        target.setHaunTunniste(source.getHaunTunniste());
     }
 
 }

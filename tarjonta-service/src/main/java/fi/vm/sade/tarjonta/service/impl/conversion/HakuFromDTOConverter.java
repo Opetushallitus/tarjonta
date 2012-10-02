@@ -44,6 +44,7 @@ public class HakuFromDTOConverter extends AbstractToDomainConverter<HakuTyyppi, 
         m.setKoulutuksenAlkamisVuosi(s.getKoulutuksenAlkamisVuosi());
         m.setSijoittelu(s.isSijoittelu());
         m.setTila(s.getHaunTila().value());
+        m.setHaunTunniste(s.getHaunTunniste());
         convertSisaisetHaunAlkamisAjat(m, s.getSisaisetHakuajat());
         return m;
     }

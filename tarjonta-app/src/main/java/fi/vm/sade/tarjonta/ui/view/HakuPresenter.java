@@ -37,8 +37,10 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuView;
 
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
@@ -102,18 +104,24 @@ public class HakuPresenter {
         
         haut = retrieveHaut();
 
-        //Grouping the HakuViewModel objects based on hakutyyppi
+        //Grouping the HakuViewModel objects based on hakutapa
         for (HakuViewModel curHaku : haut) {
             LOG.info("getTreeDataSource() curHaku: " + curHaku.getHakuOid() + ", hakutyyppi: " + curHaku.getHakutapa());
-            if (!map.containsKey(curHaku.getHakutapa())) {
+            String hakuKey = "";
+            try {
+                KoodiType hakutapaKoodi = this.koodiService.getKoodiByUri(curHaku.getHakutapa()); 
+                hakuKey = KoodistoHelper.getKoodiMetadataForLanguage(hakutapaKoodi, KoodistoHelper.getKieliForLocale(I18N.getLocale())).getNimi();
+            } catch (Exception ex) {
+                hakuKey = curHaku.getHakutapa();
+            }
+           
+            if (!map.containsKey(hakuKey)) {
                 LOG.info("Adding a new key to the map: " + curHaku.getHakutapa());
                 List<HakuViewModel> hautM = new ArrayList<HakuViewModel>();
                 hautM.add(curHaku);
-                KoodiType hakutapaKoodi = this.koodiService.getKoodiByUri(curHaku.getHakutapa());
-                map.put((hakutapaKoodi != null) ? hakutapaKoodi.getKoodiArvo() : curHaku.getHakutapa(), hautM); 
+                map.put(hakuKey, hautM);
             } else {
-                KoodiType hakutapaKoodi = this.koodiService.getKoodiByUri(curHaku.getHakutapa());
-                map.get((hakutapaKoodi != null) ?  hakutapaKoodi.getKoodiArvo() : curHaku.getHakutapa()).add(curHaku);
+                map.get(hakuKey).add(curHaku);
             }   
         }  
         return map;
@@ -236,9 +244,11 @@ public class HakuPresenter {
      * @param koodiUri the uri of the koodi to return
      * @return the returned koodiArvo
      */
-    public String getKoodiArvo(String koodiUri) {
+    public String getKoodiNimi(String koodiUri) {
         KoodiType koodi = this.koodiService.getKoodiByUri(koodiUri);
-        return (koodi != null) ? koodi.getKoodiArvo() : koodiUri; 
+        return (koodi != null) 
+                ? KoodistoHelper.getKoodiMetadataForLanguage(koodi, KoodistoHelper.getKieliForLocale(I18N.getLocale())).getNimi()  
+                        : koodiUri; 
     }
 
     /**

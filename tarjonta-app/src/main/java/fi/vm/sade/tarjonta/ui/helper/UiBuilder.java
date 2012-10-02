@@ -49,19 +49,6 @@ public class UiBuilder extends UiUtil{
         // Set to be immediate
         // c.setImmediate(true);
 
-        // DISPLAYED text
-        c.setCaptionFormatter(new CaptionFormatter() {
-            @Override
-            public String formatCaption(Object dto) {
-                if (dto instanceof KoodiType) {
-                    KoodiType kdto = (KoodiType) dto;
-                    return kdto.getKoodiArvo();
-                } else {
-                    return "!KoodiType - Don't know how to format this: " + dto;
-                }
-            }
-        });
-
         // BOUND value
         c.setFieldValueFormatter(new FieldValueFormatter() {
             @Override
