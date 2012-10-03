@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.poc.ui.view.common;
 
-import fi.vm.sade.vaadin.ui.AbstractCollapsibleLeft;
+import fi.vm.sade.vaadin.ui.OphAbstractCollapsibleLeft;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.CheckBox;
@@ -35,7 +35,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
  *
  * @author Jani Wilén
  */
-public class OrganisaatiohakutView extends AbstractCollapsibleLeft<VerticalLayout> {
+public class OrganisaatiohakutView extends OphAbstractCollapsibleLeft<VerticalLayout> {
 
     private static I18NHelper i18n = new I18NHelper(OrganisaatiohakutView.class);
     private static final int PANEL_WIDTH = 250;
