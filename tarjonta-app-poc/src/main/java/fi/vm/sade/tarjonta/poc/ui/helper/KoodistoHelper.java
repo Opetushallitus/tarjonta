@@ -16,16 +16,23 @@
  */
 package fi.vm.sade.tarjonta.poc.ui.helper;
 
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
+import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
+import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
+import fi.vm.sade.koodisto.service.types.SearchKoodistosCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.common.KoodistoType;
+import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
+import fi.vm.sade.koodisto.util.KoodistoServiceSearchCriteriaBuilder;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
- *
+ * 
  * @author Tuomas Katva
  */
 @Configurable(preConstruction = true)
@@ -38,9 +45,18 @@ public class KoodistoHelper {
 
     public String tryGetKoodistoArvo(String arvo, String koodistoUri) {
         try {
+            SearchKoodistosCriteriaType koodistoSearchCriteria = KoodistoServiceSearchCriteriaBuilder.latestValidAcceptedKoodistoByUri(koodistoUri);
 
-            KoodistoType koodisto = getKoodistoService().getLatestAccepted(koodistoUri);
-            List<KoodiType> koodit = getKoodiService().listKoodiByArvo(arvo, koodistoUri, new Integer(koodisto.getVersio()));
+            List<KoodistoType> koodistoResult = getKoodistoService().searchKoodistos(koodistoSearchCriteria);
+            if (koodistoResult.size() != 1) {
+                // FIXME: Throw something other than RuntimeException?
+                throw new RuntimeException("No koodisto found for koodisto URI " + koodistoUri);
+            }
+            KoodistoType koodisto = koodistoResult.get(0);
+
+            SearchKoodisByKoodistoCriteriaType koodiSearchCriteria = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUriAndKoodistoVersio(arvo,
+                    koodistoUri, koodisto.getVersio());
+            List<KoodiType> koodit = getKoodiService().searchKoodisByKoodisto(koodiSearchCriteria);
             if (koodit != null && koodit.size() > 0) {
                 return koodit.get(0).getKoodiUri();
             } else {
@@ -52,15 +68,33 @@ public class KoodistoHelper {
     }
 
     public List<KoodiType> getKoodisto(String koodistoUri) {
-        KoodistoType koodisto = getKoodistoService().getLatestAccepted(koodistoUri);
-        return getKoodiService().listKoodisByKoodisto(koodistoUri, koodisto.getVersio());
+        KoodistoServiceSearchCriteriaBuilder.latestValidAcceptedKoodistoByUri(koodistoUri);
+        SearchKoodistosCriteriaType koodistoSearchCriteria = KoodistoServiceSearchCriteriaBuilder.latestValidAcceptedKoodistoByUri(koodistoUri);
+
+        List<KoodistoType> koodistoResult = getKoodistoService().searchKoodistos(koodistoSearchCriteria);
+        if (koodistoResult.size() != 1) {
+            // FIXME: Throw something other than RuntimeException?
+            throw new RuntimeException("No koodisto found for koodisto URI " + koodistoUri);
+        }
+        KoodistoType koodisto = koodistoResult.get(0);
+        SearchKoodisByKoodistoCriteriaType koodiSearchCriteria = KoodiServiceSearchCriteriaBuilder.koodisByKoodistoUriAndKoodistoVersio(koodistoUri,
+                koodisto.getVersio());
+        List<KoodiType> koodit = getKoodiService().searchKoodisByKoodisto(koodiSearchCriteria);
+        return koodit;
     }
 
     public String tryGetArvoByKoodi(String koodi) {
         try {
+            SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.latestValidAcceptedKoodiByUri(koodi);
+            List<KoodiType> result = getKoodiService().searchKoodis(searchCriteria);
+            if (result.size() != 1) {
+                // FIXME: Throw something other than RuntimeException?
+                throw new RuntimeException("No koodi found for koodi URI " + koodi);
+            }
 
-            KoodiType koodidto = getKoodiService().getKoodiByUri(koodi);
-            return koodidto.getKoodiArvo();
+            KoodiType koodidto = result.get(0);
+            return fi.vm.sade.koodisto.util.KoodistoHelper.getKoodiMetadataForLanguage(koodidto,
+                    fi.vm.sade.koodisto.util.KoodistoHelper.getKieliForLocale(I18N.getLocale())).getNimi();
         } catch (Exception exp) {
             return koodi;
         }
@@ -74,7 +108,8 @@ public class KoodistoHelper {
     }
 
     /**
-     * @param koodiService the koodiService to set
+     * @param koodiService
+     *            the koodiService to set
      */
     public void setKoodiService(KoodiService koodiService) {
         this.koodiService = koodiService;
@@ -88,7 +123,8 @@ public class KoodistoHelper {
     }
 
     /**
-     * @param koodistoService the koodistoService to set
+     * @param koodistoService
+     *            the koodistoService to set
      */
     public void setKoodistoService(KoodistoService koodistoService) {
         this.koodistoService = koodistoService;

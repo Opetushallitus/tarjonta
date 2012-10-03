@@ -39,7 +39,9 @@ import fi.vm.sade.tarjonta.ui.view.haku.ListHakuView;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
+import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
@@ -109,7 +111,13 @@ public class HakuPresenter {
             LOG.info("getTreeDataSource() curHaku: " + curHaku.getHakuOid() + ", hakutyyppi: " + curHaku.getHakutapa());
             String hakuKey = "";
             try {
-                KoodiType hakutapaKoodi = this.koodiService.getKoodiByUri(curHaku.getHakutapa()); 
+                SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.latestValidAcceptedKoodiByUri(curHaku.getHakutapa());
+                List<KoodiType> result = this.koodiService.searchKoodis(searchCriteria);
+                if(result.size() != 1) {
+                    throw new RuntimeException("No valid accepted koodi found for URI " + curHaku.getHakutapa());
+                }
+                
+                KoodiType hakutapaKoodi = result.get(0); 
                 hakuKey = KoodistoHelper.getKoodiMetadataForLanguage(hakutapaKoodi, KoodistoHelper.getKieliForLocale(I18N.getLocale())).getNimi();
             } catch (Exception ex) {
                 hakuKey = curHaku.getHakutapa();
@@ -245,10 +253,15 @@ public class HakuPresenter {
      * @return the returned koodiArvo
      */
     public String getKoodiNimi(String koodiUri) {
-        KoodiType koodi = this.koodiService.getKoodiByUri(koodiUri);
-        return (koodi != null) 
-                ? KoodistoHelper.getKoodiMetadataForLanguage(koodi, KoodistoHelper.getKieliForLocale(I18N.getLocale())).getNimi()  
-                        : koodiUri; 
+        SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.latestValidAcceptedKoodiByUri(koodiUri);
+        List<KoodiType> result = this.koodiService.searchKoodis(searchCriteria);
+        
+        String nimi = koodiUri;
+        if(result.size() == 1) {
+            nimi = KoodistoHelper.getKoodiMetadataForLanguage(result.get(0), KoodistoHelper.getKieliForLocale(I18N.getLocale())).getNimi();
+        }
+        
+        return nimi;
     }
 
     /**
