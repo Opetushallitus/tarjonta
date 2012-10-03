@@ -65,6 +65,10 @@
        <jaxws:client id="hakuService"
                    serviceClass="fi.vm.sade.tarjonta.service.HakuService"
                    address="${tarjonta.haku.webservice.url:http://NO_HAKU_WEBSERVICE_URL_CONFIGURED}"/> 
+     
+     <jaxws:client id="organisaatioService"
+                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
+                   address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/> 
 
 <!--
     <bean class="fi.vm.sade.organisaatio.ui.widgets.factory.OrganisaatioWidgetFactory"/>

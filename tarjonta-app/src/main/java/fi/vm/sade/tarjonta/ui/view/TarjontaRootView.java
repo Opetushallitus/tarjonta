@@ -25,6 +25,7 @@ import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.common.BreadcrumbsView;
+import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuViewImpl;
 import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
@@ -33,6 +34,7 @@ import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuViewImpl;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.dto.ButtonDTO;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
+import fi.vm.sade.vaadin.util.UiUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,8 +64,8 @@ public class TarjontaRootView extends Window {
     private TarjontaPresenter _presenter;
 
     private HorizontalLayout _appRootLayout;
-    private VerticalLayout _appLeftLayout;
-    private VerticalLayout _appRightLayout;
+    //private VerticalLayout _appLeftLayout;
+    private HorizontalLayout _appRightLayout;
 
     private BreadcrumbsView _breadcrumbsView;
     private SearchSpesificationView _searchSpesificationView;
@@ -117,12 +119,12 @@ public class TarjontaRootView extends Window {
         layout.addComponent(_appRootLayout);
 
         // Create left side
-        _appLeftLayout = UiBuilder.verticalLayout();
-        _appLeftLayout.setWidth("25%");
-        _appRootLayout.addComponent(_appLeftLayout);
+        //_appLeftLayout = UiBuilder.verticalLayout();
+        //_appLeftLayout.setWidth("25%");
+        //_appRootLayout.addComponent(_appLeftLayout);
 
         // Create right side
-        _appRightLayout = UiBuilder.verticalLayout();
+        _appRightLayout = UiBuilder.horizontalLayout();//verticalLayout();
         _appRootLayout.addComponent(_appRightLayout);
 
         // Show application identifier if needed
@@ -147,12 +149,12 @@ public class TarjontaRootView extends Window {
     public HorizontalLayout getAppRootLayout() {
         return _appRootLayout;
     }
-
+    /*
     public VerticalLayout getAppLeftLayout() {
         return _appLeftLayout;
-    }
+    }*/
 
-    public VerticalLayout getAppRightLayout() {
+    public HorizontalLayout getAppRightLayout() {
         return _appRightLayout;
     }
 
@@ -175,12 +177,12 @@ public class TarjontaRootView extends Window {
     private void showHakuView(final HakuViewModel haku) {
 
         LOG.info("loadViewForm()");
-
+        /*
         getAppLeftLayout().removeAllComponents();
         getAppRightLayout().removeAllComponents();
 
         getAppLeftLayout().addComponent(new Label("LEFT"));
-
+        */
         getAppRightLayout().addComponent(getBreadcrumbsView());
         Button.ClickListener myClickList = new Button.ClickListener() {
 
@@ -220,12 +222,12 @@ public class TarjontaRootView extends Window {
      */
     public void showHakuEdit(final HakuViewModel haku) {
         LOG.info("showHakuEdit()");
-
+        /*
         getAppLeftLayout().removeAllComponents();
         getAppRightLayout().removeAllComponents();
 
         getAppLeftLayout().addComponent(new Label("LEFT"));
-
+        */    
         getAppRightLayout().addComponent(getBreadcrumbsView());
         EditHakuViewImpl editHakuView = new EditHakuViewImpl(haku);
         editHakuView.addListener(new Listener() {
@@ -252,15 +254,18 @@ public class TarjontaRootView extends Window {
      */
     public void showMainDefaultView() {
         LOG.info("showMainDefaultView()");
-
+        /*
         getAppLeftLayout().removeAllComponents();
         getAppRightLayout().removeAllComponents();
 
         getAppLeftLayout().addComponent(new Label("LEFT"));
-
-        getAppRightLayout().addComponent(getBreadcrumbsView());
-        getAppRightLayout().addComponent(getSearchSpesificationView());
-        getAppRightLayout().addComponent(getSearchResultsView());
+        */
+        getAppRightLayout().addComponent(new OrganisaatiohakuView(null));
+        VerticalLayout vl = UiUtil.verticalLayout();
+        vl.addComponent(getBreadcrumbsView());
+        vl.addComponent(getSearchSpesificationView());
+        vl.addComponent(getSearchResultsView());
+        getAppRightLayout().addComponent(vl);
     }
 
 }
