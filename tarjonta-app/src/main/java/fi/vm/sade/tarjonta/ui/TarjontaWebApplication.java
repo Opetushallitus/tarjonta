@@ -34,7 +34,8 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
     public synchronized void init() {
         super.init();
 
-        window = new TarjontaRootView();
+        //HUOM! HakuRootView on nyt asetettu perusikkunaksi, TarjontaRootView:llä näkyy tarjonta.
+        window = new HakuRootView();//TarjontaRootView();
         setMainWindow(window);
     }
 

@@ -10,7 +10,12 @@
         <property name="callback" ref="callback" />
     </bean>
 
+<!-- 
     <bean id="callback" class="fi.vm.sade.generic.ui.portlet.security.mock.MockTicketCallback">
+
+    </bean>
+-->    
+    <bean id="callback" class="fi.vm.sade.generic.ui.app.LiferaySecurityTicketCallback">
 
     </bean>
 

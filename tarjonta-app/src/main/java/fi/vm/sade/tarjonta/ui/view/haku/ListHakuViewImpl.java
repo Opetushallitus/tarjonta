@@ -85,9 +85,9 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         valKaikki.addListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(ValueChangeEvent event) {
-                if (valKaikki.booleanValue()) {
-                    changeHakuSelections();
-                }
+                
+                    changeHakuSelections(valKaikki.booleanValue());
+                
             }
         });
         wrapper.addComponent(valKaikki);
@@ -147,12 +147,12 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         return hc;
     }
     
-    private void changeHakuSelections() {  
+    private void changeHakuSelections(boolean selected) {  
         presenter.getSelectedhaut().clear();
         HierarchicalContainer hc = (HierarchicalContainer)(this.categoryTree.getContainerDataSource());
         for (Object item : hc.getItemIds()) {
             HakuResultRow curRow = (HakuResultRow)(categoryTree.getContainerProperty(item, presenter.COLUMN_A).getValue());
-            curRow.getIsSelected().setValue(true);
+            curRow.getIsSelected().setValue(selected);
         }
     }
 
@@ -207,9 +207,6 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     public void reload() {
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getTreeDataSource()));
-        if (this.valKaikki.booleanValue()) {
-            changeHakuSelections();
-        }
     }
     
     private void navigateToHakuEditForm() {
