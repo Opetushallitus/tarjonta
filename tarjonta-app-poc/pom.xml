@@ -60,13 +60,7 @@
             <artifactId>koodisto-widget</artifactId>
             <type>jar</type>
         </dependency>
-      
-        <dependency>
-            <artifactId>generic-vaadin-widgetset</artifactId>
-            <groupId>fi.vm.sade.generic</groupId>
-            <version>1.0-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
+     
           <!--
         <dependency>
             <groupId>org.vaadin.addons</groupId>
