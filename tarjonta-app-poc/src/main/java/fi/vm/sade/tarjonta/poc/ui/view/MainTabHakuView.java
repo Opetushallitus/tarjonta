@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.poc.ui.view;
 
-import com.vaadin.data.Container;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -23,12 +22,12 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.poc.ui.helper.I18NHelper;
 import fi.vm.sade.vaadin.Oph;
-import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
+import fi.vm.sade.tarjonta.poc.ui.view.common.CategoryTreeView;
+import fi.vm.sade.tarjonta.poc.ui.view.common.AutoSizeVerticalLayout;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
@@ -41,7 +40,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author jani
  */
 @Configurable(preConstruction = true)
-public class MainTabHakuView extends VerticalLayout {
+public class MainTabHakuView extends AutoSizeVerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainTabHakuView.class);
     private Button btnLuoUusiHaku;
@@ -53,7 +52,7 @@ public class MainTabHakuView extends VerticalLayout {
     private TarjontaPresenter _presenter;
 
     public MainTabHakuView() {
-        setWidth(UiConstant.PCT100);
+        super(Type.PCT_100, Type.AUTOSIZE);
         HorizontalLayout buildMiddleResultLayout = buildMiddleResultLayout();
         addComponent(buildMiddleResultLayout);
 
@@ -63,8 +62,6 @@ public class MainTabHakuView extends VerticalLayout {
 
         categoryTree = new CategoryTreeView();
         addComponent(categoryTree);
-        setHeight(Sizeable.SIZE_UNDEFINED, 0);
-
         setExpandRatio(wrapper, 0.07f);
         setExpandRatio(categoryTree, 0.93f);
         setMargin(true);
@@ -74,8 +71,6 @@ public class MainTabHakuView extends VerticalLayout {
 
     private HorizontalLayout buildMiddleResultLayout() {
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
-
-
 
         btnLuoUusiHaku = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("LuoUusiHaku"));
         btnLuoUusiHaku.addStyleName(Oph.BUTTON_SMALL);
@@ -87,18 +82,14 @@ public class MainTabHakuView extends VerticalLayout {
             }
         });
 
-        btnPoista = UiUtil.button(layout, i18n.getMessage("Poista"));
-        btnPoista.addStyleName(Oph.BUTTON_SMALL);
+        btnPoista = UiUtil.buttonSmallSecodary(layout, i18n.getMessage("Poista"));
         btnPoista.setEnabled(false);
 
         cbJarjestys = UiUtil.comboBox(layout, null, DataSource.ORDER_BY);
         cbJarjestys.setWidth("300px");
         layout.setExpandRatio(cbJarjestys, 1f);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
-
-        Button btnInfo = new Button();
-        btnInfo.addStyleName(Oph.BUTTON_INFO);
-        layout.addComponent(btnInfo);
+        Button btnInfo = UiUtil.buttonSmallInfo(layout);
 
         return layout;
     }

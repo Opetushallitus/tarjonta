@@ -25,6 +25,7 @@ import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.poc.ui.model.KoulutusLinkkiDTO;
 import fi.vm.sade.tarjonta.poc.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.poc.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.poc.ui.view.common.AutoSizeVerticalLayout;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +46,7 @@ import org.vaadin.addon.formbinder.PropertyId;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
-public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout {
+public class EditKoulutusPerustiedotLinkkiView extends AutoSizeVerticalLayout {
 
     @PropertyId("linkkityyppi")
     private Select _sLinkkityyppi;
@@ -58,6 +59,7 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout {
     private String _koodistoUriKieli;
 
     public EditKoulutusPerustiedotLinkkiView() {
+        super(Type.PCT_100, Type.AUTOSIZE);
         this.setSpacing(true);
 
         _sLinkkityyppi = UiUtil.comboBox(this, null, KoulutusLinkkiDTO.LINKKI_TYYPIT);

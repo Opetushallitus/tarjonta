@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @author Jani Wilén
  */
 @Configurable(preConstruction = true)
-public abstract class AbstractVerticalLayout extends VerticalLayout {
+public abstract class AbstractVerticalLayout extends AutoSizeVerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractVerticalLayout.class);
     private I18NHelper _i18n;

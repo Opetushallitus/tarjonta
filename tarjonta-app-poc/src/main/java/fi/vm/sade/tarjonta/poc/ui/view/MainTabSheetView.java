@@ -35,14 +35,12 @@ public class MainTabSheetView extends TabSheet {
     private I18NHelper i18n = new I18NHelper(this);
 
     public MainTabSheetView() {
+        setImmediate(true);
         setSizeFull();
         buildLayout();
     }
 
     private void buildLayout() {
-        setImmediate(true);
-        setSizeFull();
-
         tabHaut = new MainTabHakuView();
         addTab(tabHaut, "Haut (2 kpl)", null);
 

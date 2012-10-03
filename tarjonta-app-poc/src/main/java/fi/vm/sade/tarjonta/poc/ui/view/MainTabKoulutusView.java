@@ -23,14 +23,16 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.poc.ui.enums.Notification;
 import fi.vm.sade.tarjonta.poc.ui.helper.I18NHelper;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.StyleEnum;
-import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
+import fi.vm.sade.tarjonta.poc.ui.view.common.CategoryTreeView;
+import fi.vm.sade.tarjonta.poc.ui.view.koulutus.CreateKoulutusView;
+import fi.vm.sade.tarjonta.poc.ui.view.hakukohde.EditSiirraUudelleKaudelleView;
+import fi.vm.sade.tarjonta.poc.ui.view.common.AutoSizeVerticalLayout;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
@@ -43,7 +45,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author jani
  */
 @Configurable(preConstruction = true)
-public class MainTabKoulutusView extends VerticalLayout {
+public class MainTabKoulutusView extends AutoSizeVerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainTabKoulutusView.class);
     private Button btnKopioiUudelleKaudelle;
@@ -56,7 +58,7 @@ public class MainTabKoulutusView extends VerticalLayout {
     private TarjontaPresenter _presenter;
 
     public MainTabKoulutusView() {
-        setWidth(UiConstant.PCT100);
+        super(Type.PCT_100, Type.AUTOSIZE);
         HorizontalLayout buildMiddleResultLayout = buildMiddleResultLayout();
         addComponent(buildMiddleResultLayout);
 
@@ -66,8 +68,6 @@ public class MainTabKoulutusView extends VerticalLayout {
 
         categoryTree = new CategoryTreeView();
         addComponent(categoryTree);
-        setHeight(Sizeable.SIZE_UNDEFINED, 0);
-
         setExpandRatio(wrapper, 0.07f);
         setExpandRatio(categoryTree, 0.93f);
         setMargin(true);

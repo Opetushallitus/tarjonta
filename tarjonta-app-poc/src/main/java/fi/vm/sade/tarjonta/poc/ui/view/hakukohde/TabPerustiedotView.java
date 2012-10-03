@@ -16,22 +16,18 @@
 package fi.vm.sade.tarjonta.poc.ui.view.hakukohde;
 
 import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
-import fi.vm.sade.tarjonta.poc.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.poc.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.tarjonta.poc.ui.view.common.LanguageTabSheet;
-import fi.vm.sade.tarjonta.poc.ui.view.common.TwinColSelectKoodisto;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;

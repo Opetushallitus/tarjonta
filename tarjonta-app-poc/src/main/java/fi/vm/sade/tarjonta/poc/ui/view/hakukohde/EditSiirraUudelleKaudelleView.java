@@ -13,9 +13,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.poc.ui.view;
+package fi.vm.sade.tarjonta.poc.ui.view.hakukohde;
 
 import fi.vm.sade.vaadin.util.UiUtil;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window.CloseEvent;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
@@ -28,23 +29,28 @@ import org.slf4j.LoggerFactory;
  *
  * @author jani
  */
-public class EditSiirraHakukohteitaView extends OphAbstractDialogWindow {
+public class EditSiirraUudelleKaudelleView extends OphAbstractDialogWindow {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditSiirraHakukohteitaView.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EditSiirraUudelleKaudelleView.class);
+    private static final String TITLE_FORMAT = "Olet muokkaamassa {0} {1}";
 
-    public EditSiirraHakukohteitaView(String label) {
+    public EditSiirraUudelleKaudelleView(String label) {
         super(
                 label,
-                UiBaseUtil.format("Olet lisäämässä hakuun {0} {1}", "7", "kohdetta"),
+                UiBaseUtil.format(TITLE_FORMAT, "28", "koulutusta"),
                 DataSource.LOREM_IPSUM_SHORT);
-
         setWidth("600px");
         setHeight("500px");
     }
 
     @Override
     public void buildLayout(VerticalLayout layout) {
-        UiUtil.comboBox(layout, "Lisää hakuun", new String[]{"Täydennyshakuun"});
+        UiUtil.comboBox(layout, "Aseta kaikille sama koulutusten alkamiskausi*", new String[]{"Syksy 2012", "Talvi 2013"});
+        DateField newDate = UiUtil.dateField();
+        newDate.setCaption("Aseta kaikille sama koulutusten alkamispäivä");
+        layout.addComponent(newDate);
+
+        UiUtil.checkbox(layout, "Siirrä myös liittyvät hakukohteet (35)");
     }
 
     /**

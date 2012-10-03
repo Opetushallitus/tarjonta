@@ -25,6 +25,8 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.poc.ui.enums.Notification;
+import fi.vm.sade.tarjonta.poc.ui.view.common.AutoSizeVerticalLayout;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -34,15 +36,13 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author mlyly
  */
 @Configurable
-public class EditKoulutusKuvailevattiedotView extends VerticalLayout {
+public class EditKoulutusKuvailevattiedotView extends AutoSizeVerticalLayout {
 
     @Autowired
     private TarjontaPresenter _presenter;
 
     public EditKoulutusKuvailevattiedotView() {
-        super();
-        setSizeUndefined();
-        setWidth("100%");
+        super(Type.PCT_100, Type.AUTOSIZE);
         setSpacing(true);
         setMargin(true, false, true, true);
 
@@ -55,14 +55,11 @@ public class EditKoulutusKuvailevattiedotView extends VerticalLayout {
         // TOP BUTTONS
         createButtons(this);
 
-        VerticalLayout vl = UiUtil.verticalLayout();
-        vl.setSpacing(true);
-        vl.setWidth("100%");
+        VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.NONE);
 
         Panel p = UiUtil.panel();
         p.setCaption("Koulutuksen kuvaievat tiedot");
         p.setContent(vl);
-        p.setWidth("100%");
         addComponent(p);
 
         String[] s = new String[]{
@@ -82,6 +79,7 @@ public class EditKoulutusKuvailevattiedotView extends VerticalLayout {
             tabs.addTab(createRTA(), "Suomi");
             tabs.addTab(createRTA(), "Ruotsi");
             tabs.addTab(createRTA(), "Englanti");
+            tabs.setSizeUndefined();
         }
 
         // BOTTOM BUTTONS

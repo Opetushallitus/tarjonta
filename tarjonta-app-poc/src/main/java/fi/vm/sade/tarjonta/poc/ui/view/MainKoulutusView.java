@@ -19,6 +19,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.tarjonta.poc.ui.view.common.AutoSizeVerticalLayout;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -26,7 +27,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
  *
  * @author mlyly
  */
-public class MainKoulutusView extends VerticalLayout {
+public class MainKoulutusView extends AutoSizeVerticalLayout {
 
     MainSearchView _searchView = new MainSearchView();
     MainTabSheetView _resultView = new MainTabSheetView();

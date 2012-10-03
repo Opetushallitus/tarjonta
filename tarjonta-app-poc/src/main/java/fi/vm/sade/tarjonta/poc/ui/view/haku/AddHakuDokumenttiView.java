@@ -13,11 +13,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.poc.ui.view;
+package fi.vm.sade.tarjonta.poc.ui.view.haku;
 
+import fi.vm.sade.tarjonta.poc.ui.view.haku.EditorHakuView;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.tarjonta.poc.ui.view.common.AutoSizeVerticalLayout;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +31,7 @@ import org.vaadin.addon.formbinder.ViewBoundForm;
  * @author jani
  */
 @Configurable
-public class AddHakuDokumenttiView extends VerticalLayout {
+public class AddHakuDokumenttiView extends AutoSizeVerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(AddHakuDokumenttiView.class);
 

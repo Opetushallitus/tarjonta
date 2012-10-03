@@ -13,8 +13,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.poc.ui.view;
+package fi.vm.sade.tarjonta.poc.ui.view.hakukohde;
 
+import fi.vm.sade.tarjonta.poc.ui.view.common.CategoryTreeView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;

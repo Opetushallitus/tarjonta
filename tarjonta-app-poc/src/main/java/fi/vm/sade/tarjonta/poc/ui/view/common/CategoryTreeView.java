@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.poc.ui.view;
+package fi.vm.sade.tarjonta.poc.ui.view.common;
 
 import fi.vm.sade.tarjonta.poc.ui.enums.TarjontaStyles;
 import fi.vm.sade.vaadin.ui.OphAbstractTreeTable;
@@ -24,5 +24,6 @@ public class CategoryTreeView extends OphAbstractTreeTable {
         super();
         addStyleName(TarjontaStyles.CATEGORY_TREE.getStyleName());
         setColumnHeaderMode(COLUMN_HEADER_MODE_HIDDEN);
+        setSizeFull();
     }
 }

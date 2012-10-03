@@ -45,6 +45,7 @@ public class TarjontaWindow extends Window {
         _presenter.setTarjontaWindow(this);
 
         VerticalLayout layout = UiUtil.verticalLayout();
+        layout.setWidth(100, UNITS_PERCENTAGE);
         layout.setHeight(-1,UNITS_PIXELS);
         setContent(layout); //override default layout
         layout.addStyleName(Oph.CONTAINER_MAIN);

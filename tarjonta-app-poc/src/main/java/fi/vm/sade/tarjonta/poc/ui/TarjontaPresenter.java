@@ -21,17 +21,17 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.poc.ui.enums.Notification;
-import fi.vm.sade.tarjonta.poc.ui.view.AddHakuDokumenttiView;
+import fi.vm.sade.tarjonta.poc.ui.view.haku.AddHakuDokumenttiView;
 import fi.vm.sade.tarjonta.poc.ui.view.koulutus.EditKoulutusView;
 import fi.vm.sade.tarjonta.poc.ui.view.hakukohde.CreateHakukohdeView;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
 import fi.vm.sade.tarjonta.poc.demodata.row.MultiActionTableStyle;
 import fi.vm.sade.tarjonta.poc.ui.helper.KoodistoHelper;
-import fi.vm.sade.tarjonta.poc.ui.view.EditSiirraHakukohteitaView;
+import fi.vm.sade.tarjonta.poc.ui.view.hakukohde.EditSiirraHakukohteitaView;
 import fi.vm.sade.tarjonta.poc.ui.view.MainKoulutusView;
-import fi.vm.sade.tarjonta.poc.ui.view.ShowHakukohdeView;
-import fi.vm.sade.tarjonta.poc.ui.view.ShowKoulutusView;
+import fi.vm.sade.tarjonta.poc.ui.view.hakukohde.ShowHakukohdeView;
+import fi.vm.sade.tarjonta.poc.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.dto.ButtonDTO;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import java.io.Serializable;
@@ -123,6 +123,9 @@ public class TarjontaPresenter implements Serializable {
         LOG.info("showMainKoulutusView()");
         getRightLayout().removeAllComponents();
         getRightLayout().addComponent(new MainKoulutusView());
+        
+        _tarjontaWindow.getMainSplitPanel().setExpandRatio( getRightLayout(), 1f);
+      
     }
 
     public void showShowKoulutusView() {

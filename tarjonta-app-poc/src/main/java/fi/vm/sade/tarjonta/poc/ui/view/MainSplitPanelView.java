@@ -17,8 +17,7 @@ package fi.vm.sade.tarjonta.poc.ui.view;
 
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.tarjonta.poc.ui.view.common.OrganisaatiohakutView;
-import fi.vm.sade.vaadin.Oph;
+import fi.vm.sade.tarjonta.poc.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +27,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class MainSplitPanelView extends HorizontalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainSplitPanelView.class);
-    private OrganisaatiohakutView mainLeftLayout;
+    private OrganisaatiohakuView mainLeftLayout;
     private VerticalLayout mainRightLayout;
 
     /**
@@ -43,13 +42,13 @@ public class MainSplitPanelView extends HorizontalLayout {
          */
         
         LOG.info("In MainSplitPanelView");
+        setWidth(100, UNITS_PERCENTAGE);
         setHeight(-1, UNITS_PIXELS);
         buildMainLayout();
-
     }
 
     private void buildMainLayout() {
-        mainLeftLayout = new OrganisaatiohakutView(); //main collapsible layout left
+        mainLeftLayout = new OrganisaatiohakuView(); //main collapsible layout left
         mainRightLayout = UiUtil.verticalLayout(); //main tool layout right
         mainRightLayout.setHeight(-1, UNITS_PIXELS);
 

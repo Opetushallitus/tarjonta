@@ -36,7 +36,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.VerticalSplitPanel;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.poc.ui.components.OhjePopupComponent;
@@ -50,6 +49,7 @@ import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.tarjonta.poc.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.poc.ui.view.common.AutoSizeVerticalLayout;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.lang.reflect.Method;
 import org.slf4j.Logger;
@@ -64,7 +64,7 @@ import org.vaadin.addon.formbinder.ViewBoundForm;
  * @author mlyly
  */
 @Configurable(preConstruction = true)
-public class EditKoulutusPerustiedotView extends VerticalLayout {
+public class EditKoulutusPerustiedotView extends AutoSizeVerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotView.class);
     @Autowired(required = true)
@@ -86,8 +86,7 @@ public class EditKoulutusPerustiedotView extends VerticalLayout {
     private KoulutusPerustiedotDTO _dto = new KoulutusPerustiedotDTO();
 
     public EditKoulutusPerustiedotView() {
-        super();
-        setHeight(-1, UNITS_PIXELS);
+        super(Type.PCT_100, Type.AUTOSIZE);
         setMargin(true, true, true, true);
         setSpacing(true);
 

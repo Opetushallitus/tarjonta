@@ -35,9 +35,9 @@ import fi.vm.sade.vaadin.util.UiUtil;
  *
  * @author Jani Wilén
  */
-public class OrganisaatiohakutView extends OphAbstractCollapsibleLeft<VerticalLayout> {
+public class OrganisaatiohakuView extends AbstractCollapsibleLeft<VerticalLayout> {
 
-    private static I18NHelper i18n = new I18NHelper(OrganisaatiohakutView.class);
+    private static I18NHelper i18n = new I18NHelper(OrganisaatiohakuView.class);
     private static final int PANEL_WIDTH = 250;
     private TextField search;
     private ComboBox organisaatioTyyppi;
@@ -46,7 +46,7 @@ public class OrganisaatiohakutView extends OphAbstractCollapsibleLeft<VerticalLa
     private CheckBox suunnitellut;
     private Tree tree;
 
-    public OrganisaatiohakutView() {
+    public OrganisaatiohakuView() {
         super(VerticalLayout.class);
     }
 
@@ -60,6 +60,8 @@ public class OrganisaatiohakutView extends OphAbstractCollapsibleLeft<VerticalLa
         organisaatioTyyppi = UiUtil.comboBox(panelTop, null, new String[]{"Organisaatiotyyppi1", "Organisaatiotyyppi1"});
         organisaatioTyyppi.setSizeUndefined();
         oppilaitosTyyppi = UiUtil.comboBox(panelTop, null, new String[]{"oppilaitostyyppi1", "oppilaitostyyppi2"});
+        oppilaitosTyyppi.setWidth(210, UNITS_PIXELS);
+        
         lakkautetut = UiUtil.checkbox(panelTop, i18n.getMessage("naytaMyosLakkautetut"));
         suunnitellut = UiUtil.checkbox(panelTop, i18n.getMessage("naytaMyosSuunnitellut"));
 

@@ -16,16 +16,15 @@
 package fi.vm.sade.tarjonta.poc.ui.view.koulutus;
 
 import com.vaadin.data.validator.RegexpValidator;
-import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.poc.ui.model.KoulutusYhteyshenkiloDTO;
 import fi.vm.sade.tarjonta.poc.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.poc.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.poc.ui.view.common.AutoSizeVerticalLayout;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +45,7 @@ import org.vaadin.addon.formbinder.PropertyId;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
-public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout {
+public class EditKoulutusPerustiedotYhteystietoView extends AutoSizeVerticalLayout {
 
     @PropertyId("nimi")
     private TextField _tfNimi;
@@ -63,6 +62,7 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout {
     private String _koodistoUriKieli;
 
     public EditKoulutusPerustiedotYhteystietoView() {
+        super(Type.PCT_100, Type.AUTOSIZE);
         this.setSpacing(true);
 
         _tfNimi = UiUtil.textField(null, "", i18n.getMessage("Nimi.prompt"), true);

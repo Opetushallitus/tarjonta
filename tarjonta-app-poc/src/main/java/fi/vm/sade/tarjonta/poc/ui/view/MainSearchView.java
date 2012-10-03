@@ -49,7 +49,7 @@ public class MainSearchView extends OphHorizontalLayout {
 
     public MainSearchView() {
         super(true, UiMarginEnum.RIGHT_BOTTOM_LEFT);
-        this.setHeight(-1, UNITS_PIXELS);
+        setSizeUndefined();
         buildLayout();
     }
 
@@ -70,13 +70,13 @@ public class MainSearchView extends OphHorizontalLayout {
 
         cbHakukausi = UiUtil.comboBox(this, i18n.getMessage("Hakukausi"), new String[]{"Kevätkausi"});
         cbHakukausi.setWidth("110px");
-        cbKoulutuksenAlkamiskausi = UiUtil.comboBox(this,i18n.getMessage("KoulutuksenAlkamiskausi"), new String[]{"Syksy 2012"});
+        cbKoulutuksenAlkamiskausi = UiUtil.comboBox(this, i18n.getMessage("KoulutuksenAlkamiskausi"), new String[]{"Syksy 2012"});
         cbKoulutuksenAlkamiskausi.setWidth("200px");
-        cbHakutapa = UiUtil.comboBox(this,i18n.getMessage("Hakutapa"), new String[]{"Kaikki"});
+        cbHakutapa = UiUtil.comboBox(this, i18n.getMessage("Hakutapa"), new String[]{"Kaikki"});
         cbHakutapa.setWidth("110px");
-        cbHakutyyppi = UiUtil.comboBox(this,i18n.getMessage("Hakutyyppi"), new String[]{"Kaikki"});
+        cbHakutyyppi = UiUtil.comboBox(this, i18n.getMessage("Hakutyyppi"), new String[]{"Kaikki"});
         cbHakutyyppi.setWidth("110px");
-        cbHaunKohdejoukko = UiUtil.comboBox(this,i18n.getMessage("Kohdejoukko"), new String[]{"Kaikki"});
+        cbHaunKohdejoukko = UiUtil.comboBox(this, i18n.getMessage("Kohdejoukko"), new String[]{"Kaikki"});
         cbHaunKohdejoukko.setWidth("110px");
         btnTyhjenna = UiUtil.button(this, i18n.getMessage("Tyhjennä"));
         btnTyhjenna.addStyleName(Oph.BUTTON_SMALL);
