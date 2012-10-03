@@ -30,5 +30,31 @@
             <keywords></keywords>
         </portlet-info>
     </portlet>
+    
+    <portlet>
+        <description></description>
+        <portlet-name>HakuPortletApplication</portlet-name>
+        <display-name>HakuPortletApplication</display-name>
+
+        <portlet-class>com.vaadin.terminal.gwt.server.ApplicationPortlet2</portlet-class>
+
+        <init-param>
+            <name>application</name>
+            <value>fi.vm.sade.tarjonta.ui.HakuPortletApplication</value>
+        </init-param>
+
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+            <portlet-mode>edit</portlet-mode>
+            <portlet-mode>help</portlet-mode>
+        </supports>
+
+        <portlet-info>
+            <title>HakuPortletApplication</title>
+            <short-title>HakuPortletApplication</short-title>
+            <keywords></keywords>
+        </portlet-info>
+    </portlet>
 
 </portlet-app>

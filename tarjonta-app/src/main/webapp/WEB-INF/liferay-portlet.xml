@@ -7,4 +7,9 @@
         <instanceable>false</instanceable>
         <ajaxable>false</ajaxable>
     </portlet>
+    <portlet>
+        <portlet-name>HakuPortletApplication</portlet-name>
+        <instanceable>false</instanceable>
+        <ajaxable>false</ajaxable>
+    </portlet>
 </liferay-portlet-app>

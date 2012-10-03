@@ -15,8 +15,10 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Window;
 import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
+import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 
 /**

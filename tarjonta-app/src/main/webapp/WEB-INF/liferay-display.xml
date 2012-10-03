@@ -4,5 +4,6 @@
 <display>
     <category name="OPH_Vaadin_Portlets">
         <portlet id="TarjontaPortletApplication"/>
+        <portlet id="HakuPortletApplication"/>
     </category>
 </display>

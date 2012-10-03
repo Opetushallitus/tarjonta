@@ -53,21 +53,21 @@ public class SearchResultsView extends VerticalLayout{
         TabSheet tabs = new TabSheet();
         addComponent(tabs);
 
-        ListHakuViewImpl hakuList = new ListHakuViewImpl();
-        hakuList.addListener(new Listener() {
-
-            @Override
-            public void componentEvent(Event event) {
-                if (event instanceof HakuResultRow.HakuRowMenuEvent) {
-                    fireEvent(event);
-                } else if (event instanceof ListHakuViewImpl.NewHakuEvent) {
-                    fireEvent(event);
-                }
-                    
-            }
-            
-        });
-        tabs.addTab(hakuList, T("haut"));
+//        ListHakuViewImpl hakuList = new ListHakuViewImpl();
+//        hakuList.addListener(new Listener() {
+//
+//            @Override
+//            public void componentEvent(Event event) {
+//                if (event instanceof HakuResultRow.HakuRowMenuEvent) {
+//                    fireEvent(event);
+//                } else if (event instanceof ListHakuViewImpl.NewHakuEvent) {
+//                    fireEvent(event);
+//                }
+//                    
+//            }
+//            
+//        });
+//        //tabs.addTab(hakuList, T("haut"));
         tabs.addTab(new Label("koulutukset"), T("koulutukset"));
         tabs.addTab(new Label("hakuryhmat"), T("hakuryhmat"));
     }
