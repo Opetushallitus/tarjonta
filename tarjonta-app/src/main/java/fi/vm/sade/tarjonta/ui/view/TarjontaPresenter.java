@@ -15,8 +15,10 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
@@ -89,6 +91,16 @@ public class TarjontaPresenter {
         vl.addComponent(_rootView.getBreadcrumbsView());
         vl.addComponent(_rootView.getSearchSpesificationView());
         vl.addComponent(_rootView.getSearchResultsView());
+        Button b = new Button("Hakuun");
+        b.addListener(new Button.ClickListener() {
+            
+            @Override
+            public void buttonClick(ClickEvent event) {
+                // TODO Auto-generated method stub
+                _rootView.toHaku();   
+            }
+        });
+        vl.addComponent(b);
         _rootView.getAppRightLayout().addComponent(vl);
         _rootView.getAppRightLayout().setExpandRatio(vl, 1f);
         /*_rootView.getAppRightLayout().addComponent(_rootView.getBreadcrumbsView());
