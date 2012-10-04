@@ -37,6 +37,6 @@ public class BreadcrumbsView extends VerticalLayout {
 
     public BreadcrumbsView() {
         super();
-        addComponent(new Label("bredcrumbsview"));
+        //addComponent(new Label("bredcrumbsview"));
     }
 }

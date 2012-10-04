@@ -78,6 +78,8 @@ public class SearchSpesificationView extends HorizontalLayout {
     private I18NHelper _i18nHelper = new I18NHelper(this);
     
     private Form form;
+    
+    boolean attached = false;
 
     public SearchSpesificationView() {
         super();
@@ -85,6 +87,8 @@ public class SearchSpesificationView extends HorizontalLayout {
 
     @Override
     public void attach() {
+        if (attached) return;
+        attached = true;
         super.attach();
 
         LOG.info("Creating koodisto components");

@@ -58,7 +58,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         super(VerticalLayout.class, pageTitle, message, dto);
         _i18n = new I18NHelper(this);
 
-        addNavigationButton(_i18n.getMessage("Takaisin"), new Button.ClickListener() {
+        addNavigationButton("", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 backFired();  
@@ -108,8 +108,8 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
 
         LOG.info("building content labels");
         grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHakutyyppi()) + " "), 1, 0);
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHakukausi()) + " "), 1, 1);
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getKoulutuksenAlkamisKausi()) + " "), 1, 2);
+        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHakukausi()) + " " + hakuPresenter.getHakuModel().getHakuvuosi() + " "), 1, 1);
+        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getKoulutuksenAlkamisKausi()) + " " + hakuPresenter.getHakuModel().getKoulutuksenAlkamisvuosi() + " "), 1, 2);
         grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHaunKohdejoukko()) + " "), 1, 3);
         grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHakutapa()) + " "), 1, 4);
         grid.addComponent(UiUtil.label(null, hakuPresenter.getHakuModel().getHaunTunniste() + " "), 1, 5);
