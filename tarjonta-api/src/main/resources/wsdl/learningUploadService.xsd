@@ -38,24 +38,96 @@
                         type="tns:LearningOpportunitySpecificationType"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
+            <xs:element name="LearningOpportunityInstance"
+                        type="tns:LearningOpportunityInstanceType"
+                        minOccurs="0"
+                        maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Koulutusmoduulien toteutukset. 0 - n kappaletta.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="LearningOpportunityProvider"
                         type="tns:LearningOpportunityProviderType"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-            <xs:element name="ApplicationObjectGroup"
-                        type="tns:ApplicationObjectGroupType"
+            <xs:element name="ApplicationTarget"
+                        type="tns:ApplicationTargetType"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="ApplicationObjectGroupType">
+    <!-- ============================================================================================ -->
+    <!-- ApplicationTarget                                                                            -->
+    <!-- ============================================================================================ -->
+
+    <xs:complexType name="ApplicationTargetType">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
                 Suomenkielinen termi: hakukohde
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
+
+            <xs:element name="Identifier">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Hakukohteen yksiloiva tunniste. Tarkennettava missa scopessa ja mika formaatti.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string"/>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="Title"
+                        type="tns:ExtendedStringType"
+                        minOccurs="1"
+                        maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>
+                        Hakukohteen nimi, esim. Ensihoidon koulutusohjelma, yo
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="ApplicationSystemRef"
+                        type="tns:ApplicationSystemRefType"
+                        minOccurs="1"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Viittaus hakuun johon kyseinen hakukohde kuuluu.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="EligibilityRequirements"
+                        type="tns:EligibilityRequirementsType"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Hakukelpoisuus vaatimukset.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="SelectionCriterions"
+                        type="tns:SelectionCriterionsType"
+                        minOccurs="1"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Valintaperusteet
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
             <xs:element name="LearningOpportunities" minOccurs="1" maxOccurs="1">
                 <xs:complexType>
                     <xs:sequence>
@@ -66,7 +138,159 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SelectionCriterionsType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Valintaperusteet.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+
+            <xs:element name="StartingQuota" type="xs:integer">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Aloituspaikkojen maara.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="Description"
+                        type="tns:ExtendedStringType"
+                        minOccurs="0"
+                        maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Vapaa kuvaus valintaperusteista eri kielilla.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="EntranceExaminations"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Valintakoe tiedot
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Description"
+                                    type="tns:ExtendedStringType"
+                                    minOccurs="0"
+                                    maxOccurs="unbounded">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    Vapaamuotoinen kuvaus kaikista valintakokeista.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:choice>
+                            <xs:element name="NoExam">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="fi">
+                                        Ei valintakoetta.
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+
+                            <xs:element name="Examination"
+                                        maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+
+                                        <xs:element name="ExaminationType"
+                                                    type="tns:EntranceExaminationTypeType"
+                                                    minOccurs="1"
+                                                    maxOccurs="1">
+                                            <xs:annotation>
+                                                <xs:documentation xml:lang="fi">
+                                                    Kertoo valintakokeen tyypin, esim. "Paasy- ja soveltuvuuskoe"
+                                                </xs:documentation>
+                                            </xs:annotation>
+                                        </xs:element>
+
+                                        <xs:element name="Description"
+                                                    type="tns:ExtendedStringType"
+                                                    minOccurs="0"
+                                                    maxOccurs="unbounded">
+                                            <xs:annotation>
+                                                <xs:documentation xml:lang="fi">
+                                                    Yhden valintakokeen kuvaus halutuilla kielilla.
+                                                </xs:documentation>
+                                            </xs:annotation>
+                                        </xs:element>
+
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+
+                        </xs:choice>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="EntranceExaminationTypeType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Valintakokeen tyyppi.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <!-- todo koodi? -->
+            <!-- todo: monikielinen? -->
+            <xs:element name="Title"
+                        type="tns:ExtendedStringType"
+                        minOccurs="1"
+                        maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="EligibilityRequirementsType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Kelpoisuus vaatimukset.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Description"
+                        type="tns:ExtendedStringType"
+                        minOccurs="1"
+                        maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Vapaa kuvaus valitulla kielella.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ApplicationSystemRefType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Viittaus hakuun.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+            <xs:element name="OidRef" type="tns:OidType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Viittaus hakun haun julkisella OID tunnisteella.
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:element>
+        </xs:choice>
     </xs:complexType>
 
     <xs:complexType name="LearningOpportunityObjectType" abstract="true">
@@ -85,6 +309,10 @@
     </xs:complexType>
 
 
+    <!-- ============================================================================================ -->
+    <!-- LearningOpportunitySpecification                                                             -->
+    <!-- ============================================================================================ -->
+
     <xs:complexType name="LearningOpportunitySpecificationType">
         <xs:complexContent>
             <!-- todo: siirra nimi group:iin -->
@@ -101,16 +329,10 @@
                                 minOccurs="0"
                                 maxOccurs="1"/>
                     <!-- Classification:n alle? -->
-                    <xs:element name="QualificationTitle"
-                                type="tns:ExtendedStringType"
+                    <xs:element name="Qualification"
+                                type="tns:QualificationType"
                                 minOccurs="0"
-                                maxOccurs="1">
-                        <xs:annotation>
-                            <xs:documentation xml:lang="fi">
-                                Suomenkielinen termi: tutkintonimike
-                            </xs:documentation>
-                        </xs:annotation>
-                    </xs:element>
+                                maxOccurs="1"/>
                     <xs:element name="DegreeTitle"
                                 type="tns:ExtendedStringType"
                                 minOccurs="0"
@@ -126,7 +348,7 @@
                             <xs:documentation xml:lang="fi">
                                 Koulutuksen luokittelutiedot. Jos kaikki luokittelutiedot voidaan kuvata yhdella koodilla josta
                                 erilliset tiedot voidaan johtaa, voidaan kayttaa UnifiedCode elementtia - muuten luokittelu kuvataan
-                                ClassificationItem elementeilla.
+                                ClassificationCode elementeilla.
                             </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
@@ -137,8 +359,8 @@
                                     <xs:element name="UnifiedCode"
                                                 type="tns:UnifiedCodeType"/>
                                 -->
-                                <xs:element name="ClassificationItem"
-                                            type="tns:LearningClassificationItemType"
+                                <xs:element name="ClassificationCode"
+                                            type="tns:LearningClassificationCodeType"
                                             minOccurs="1"
                                             maxOccurs="unbounded"/>
                                 <!--
@@ -204,17 +426,348 @@
                                 minOccurs="0"
                                 maxOccurs="1"/>
                 </xs:sequence>
+
                 <xs:attribute name="id"
                               type="xs:ID"
                               use="optional"/>
+
                 <xs:attributeGroup ref="tns:LearningOpportunityModuleAttrGroup"/>
+
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="QualificationType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Koulutuksen suorituksesta myonnettava nimike. Esim. lahihoitaja.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Title"
+                        type="tns:ExtendedStringType"
+                        minOccurs="1"
+                        maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <!-- ============================================================================================ -->
+    <!-- LearningOpportunityInstance                                                                  -->
+    <!-- ============================================================================================ -->
+    <xs:complexType name="LearningOpportunityInstanceType">
+        <xs:sequence>
+
+            <xs:group ref="tns:IdentifierGroup"/>
+
+            <xs:element name="SpecificationRef"
+                        type="tns:LearningOpportunitySpecificationRefType"
+                        minOccurs="1"
+                        maxOccurs="1"/>
+
+            <xs:element name="Prerequisite"
+                        type="tns:PrerequisiteType"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+
+            <xs:element name="Profession"
+                        type="tns:ProfessionCollectionType"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+
+            <xs:element name="Keywords"
+                        minOccurs="0"
+                        maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Keyword"
+                                    type="tns:KeywordType"
+                                    minOccurs="1"
+                                    maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="LanguagesOfInstruction"
+                        type="tns:LanguageCodeCollectionType"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+
+            <xs:element name="FormOfEducation"
+                        type="tns:FormOfEducationType"
+                        minOccurs="1"
+                        maxOccurs="1"/>
+
+            <xs:element name="FormsOfTeaching"
+                        type="tns:FormOfTeachingCollectionType"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+
+            <xs:element name="StartDate"
+                        type="xs:date"
+                        minOccurs="1"
+                        maxOccurs="1"/>
+
+            <xs:element name="AcademicYear"
+                        type="tns:YearType"
+                        minOccurs="1"
+                        maxOccurs="1"/>
+
+            <xs:element name="Duration"
+                        type="xs:duration"
+                        minOccurs="1"
+                        maxOccurs="1"/>
+
+            <xs:element name="Assessments"
+                        type="tns:AssessmentCollectionType"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+
+            <xs:element name="FinalExamination"
+                        type="tns:FinalExaminationCollectionType"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+
+            <xs:element name="CostOfEducation"
+                        type="tns:CostOfEducationType"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+
+            <xs:element name="Scholarship"
+                        type="tns:ScholarshipType"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+
+            <xs:element name="WebLinks"
+                        type="tns:WebLinkCollectionType"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+
+        </xs:sequence>
+
+        <xs:attribute name="id"
+                      type="xs:ID"
+                      use="optional"/>
+
+    </xs:complexType>
+
+    <xs:complexType name="ScholarshipType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Tietoa stipendeista.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Description"
+                        type="tns:ExtendedStringType"
+                        minOccurs="1"
+                        maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>
+                        Vapaa kuvaus stipendimahdollisuuksista.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CostOfEducationType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Kuvaa koulutuksen kustannuksen.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+            <xs:element name="NoCost">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Tyhja elementti jolla ilmoitetaan kouluksen olevan maksutonta.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Fee">
+                <xs:complexType>
+                    <xs:attribute name="amount" type="xs:decimal" use="required"/>
+                    <xs:attribute name="currency" type="tns:CurrencyType" use="required"/>
+                    <xs:attribute name="repeat" type="tns:EducationFeeRepeatType" use="required"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="FinalExaminationCollectionType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Joukko sanallisia kuvausksia koulutuksen loppukokeoista/opinnaytteista.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Description"
+                        type="tns:ExtendedStringType"
+                        minOccurs="1"
+                        maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="AssessmentCollectionType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Joukko arviointikriteereja.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Assessment"
+                        type="tns:ExtendedStringType"
+                        minOccurs="1"
+                        maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Sanallinen kuvaus arviointikriteereista. Mahdollista kuvata eri kielilla.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="FormOfEducationType">
+        <xs:annotation>
+            <xs:documentation>
+                Koulutuslaji
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:ExtendedCodeLabelType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ProfessionCollectionType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Ammattinimikkeet joihin voi valmistua koulutuksesta tai jotka liittyvat koulutukseen
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Title"
+                        minOccurs="1"
+                        maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="tns:ExtendedStringType"/>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="WebLinkCollectionType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Joukko web linkkeja joille voidaan antaa kayttotarkoitus (type).
+                Uri:lle voidaan myos antaa kielistetty nimi mahdollista kayttoliittymaa
+                varten.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Link"
+                        minOccurs="1"
+                        maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+
+                        <xs:element name="Label"
+                                    type="tns:ExtendedStringType"
+                                    minOccurs="0"
+                                    maxOccurs="unbounded"/>
+
+                        <xs:element name="Uri"
+                                    type="xs:anyURI"
+                                    minOccurs="1"
+                                    maxOccurs="1"/>
+
+                    </xs:sequence>
+
+                    <xs:attribute name="type"
+                                  type="xs:string"
+                                  use="optional">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="fi">
+                                Linkin merkitys, tunnettuja vakioita ovat:
+                                HOME, XXX
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LanguageCodeCollectionType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Joukko kieli koodeja.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Language" minOccurs="1" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Name"
+                                    type="tns:ExtendedStringType"
+                                    minOccurs="0"
+                                    maxOccurs="1"/>
+                    </xs:sequence>
+                    <xs:attribute name="code" type="xs:string" use="required"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="scheme" type="tns:LanguageSchemeType" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="FormOfTeachingCollectionType">
+        <xs:annotation>
+            <xs:documentation>
+                Joukko opetusmuotoja
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="FormOfTeaching"
+                        minOccurs="1"
+                        maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="type" type="tns:FormOfTeachingType"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="KeywordType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string"></xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="PrerequisiteType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Kuvaa pohjakoulutusvaatimukset. Voidaan maaritella eri kielilla.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:ExtendedStringType">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
     <xs:complexType name="CodeLabelType">
         <xs:sequence>
-            <xs:element name="Code"
+            <xs:element name="Value"
                         type="xs:string"
                         minOccurs="1"
                         maxOccurs="1"/>
@@ -223,9 +776,24 @@
                         minOccurs="0"
                         maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="version" type="xs:string" use="optional"/>
     </xs:complexType>
 
+    <xs:complexType name="ExtendedCodeLabelType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Laajennettu koodi/arvo elementti jolle voidaan maaritella koodiston hallisija seka
+                koodin versio.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:CodeLabelType">
+                <xs:attribute name="scheme" type="tns:LearningClassificationCodeSchemeType"/>
+                <xs:attribute name="version" type="xs:string" use="optional"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- not in use currently, clean if redundant -->
     <xs:complexType name="UnifiedCodeType">
         <xs:complexContent>
             <xs:extension base="tns:CodeLabelType">
@@ -234,11 +802,10 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="LearningClassificationItemType">
+    <xs:complexType name="LearningClassificationCodeType">
         <xs:complexContent>
-            <xs:extension base="tns:CodeLabelType">
-                <xs:attribute name="type" type="tns:LearningClassificationCodeType"/>
-                <xs:attribute name="scheme" type="tns:LearningClassificationCodeSchemeType"/>
+            <xs:extension base="tns:ExtendedCodeLabelType">
+                <xs:attribute name="category" type="tns:LearningClassificationCategoryType"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -292,7 +859,7 @@
                                     maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
-                                    lukukausien ja periodien sekä opetustarjonnan ajankohdat kertova koulutustoimijan kalenteri
+                                    lukukausien ja periodien seka opetustarjonnan ajankohdat kertova koulutustoimijan kalenteri
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:element>
@@ -302,7 +869,7 @@
                                     maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
-                                    Opetuksen vastuuhenkilöt.
+                                    Opetuksen vastuuhenkilot.
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:element>
@@ -342,7 +909,7 @@
                                     maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
-                                    Opetusten tunnustamissäännöt organisaatiossa.
+                                    Opetusten tunnustamissaannot organisaatiossa.
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:element>
@@ -359,7 +926,7 @@
                                     maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
-                                    Tietoa elämisen kustannuksista.
+                                    Tietoa elamisen kustannuksista.
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:element>
@@ -389,7 +956,7 @@
                                     maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
-                                    Esteettömyys ja vammaisten tukipalvelut.
+                                    Esteettomyys ja vammaisten tukipalvelut.
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:element>
@@ -429,7 +996,7 @@
                                     maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
-                                    Tietoa oppimisympäristöstä.
+                                    Tietoa oppimisymparistosta.
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:element>
@@ -439,7 +1006,7 @@
                                     maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
-                                    Tietoa kansainvälisistä koulutusohjelmista, vieraskielisistä koulutusohjelmista.
+                                    Tietoa kansainvalisista koulutusohjelmista, vieraskielisista koulutusohjelmista.
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:element>
@@ -469,7 +1036,7 @@
                                     maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
-                                    Tietoa opintoihin liittyvistä työharjoitteluista.
+                                    Tietoa opintoihin liittyvista tyoharjoitteluista.
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:element>
@@ -499,7 +1066,7 @@
                                     maxOccurs="unbounded">
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
-                                    Tietoa opiskelijajärjestöistä.
+                                    Tietoa opiskelijajarjestoista.
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:element>
@@ -558,6 +1125,23 @@
         </xs:simpleContent>
     </xs:complexType>
 
+
+    <xs:simpleType name="EducationFeeRepeatType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Koulutuksen kustannuksen toistuminen.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="once">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Veloitus tapahtuu vain kun koulutus alkaa.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
 
 
     <xs:simpleType name="StructureSelectorType">
@@ -628,7 +1212,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="LearningClassificationCodeType">
+    <xs:simpleType name="LearningClassificationCategoryType">
         <xs:restriction base="xs:normalizedString">
             <xs:enumeration value="EducationDomain">
                 <xs:annotation>
@@ -648,6 +1232,18 @@
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
                         Opintoaste
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="LanguageSchemeType">
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="ISO-639-1">
+                <xs:annotation>
+                    <xs:documentation>
+                        ISO 639-1 kieli koodisto.
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
@@ -694,6 +1290,46 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="FormOfTeachingType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Classroom">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Lahiopetus
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="YearType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9]{4}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="OidType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Tietotyyppi OID -tyyppisille arvoille.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="CurrencyType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                ISO 4217 valuutta koodi
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z]{3}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:group name="IdentifierGroup">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
@@ -714,7 +1350,7 @@
     <xs:attributeGroup name="LearningOpportunityModuleAttrGroup">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
-                Yleisia LearningOpportunity:lle sekä LearningOpportunitySpecification:lle yhteisia attribuutteja.
+                Yleisia LearningOpportunity:lle seka LearningOpportunitySpecification:lle yhteisia attribuutteja.
             </xs:documentation>
         </xs:annotation>
         <xs:attribute name="type" type="tns:LearningOpportunityType" use="required"/>

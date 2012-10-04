@@ -25,18 +25,20 @@
 
 
         <!-- tutkintonimike -->
-        <Qualification>Tuotantotalouden mestari</Qualification>
+        <Qualification>
+            <Title>Tuotantotalouden mestari</Title>
+        </Qualification>
 
         <Classification>
 
-            <ClassificationItem scheme="http://oph.fi">
-                <Code>123456</Code>
-            </ClassificationItem>
+            <ClassificationCode scheme="http://oph.fi">
+                <Value>123456</Value>
+            </ClassificationCode>
 
             <!-- tutkinnon EQF luokittelu (arvot 1-8) -->
-            <ClassificationItem scheme="NQF">
-                <Code>6</Code>
-            </ClassificationItem>
+            <ClassificationCode scheme="NQF">
+                <Value>6</Value>
+            </ClassificationCode>
 
         </Classification>
 
@@ -64,30 +66,32 @@
     <LearningOpportunitySpecification id="LOS2" type="DegreeProgramme">
         <Identifier>LOS2</Identifier>
         <Classification>
-            <ClassificationItem scheme="http://stat.fi" version="2010">
-                <Code>374116</Code>
+            <ClassificationCode scheme="http://stat.fi" version="2010">
+                <Value>374116</Value>
                 <Label xml:lang="fi">Sairaankuljettajan ammattitutkinto</Label>
-            </ClassificationItem>
+            </ClassificationCode>
         </Classification>
     </LearningOpportunitySpecification>
 
     <!-- Koulutusmoduuli johon päätasolta viitataan -->
     <LearningOpportunitySpecification id="LOS3" type="DegreeProgramme">
         <Identifier>LOS3</Identifier>
+
         <Classification>
-            <ClassificationItem type="EducationDomain" scheme="http://oph.fi" version="2002">
-                <Code>7</Code>
+            <ClassificationCode category="EducationDomain" scheme="http://oph.fi" version="2002">
+                <Value>7</Value>
                 <Label>Sosiaali-, terveys- ja liikunta-ala</Label>
-            </ClassificationItem>
-            <ClassificationItem type="EducationDegree" scheme="http://oph.fi" version="2002">
-                <Code>32</Code>
+            </ClassificationCode>
+            <ClassificationCode category="EducationDegree" scheme="http://oph.fi" version="2002">
+                <Value>32</Value>
                 <Label>Ammatillinen koulutus</Label>
-            </ClassificationItem>
-            <ClassificationItem type="StydyDomain" scheme="http://oph.fi" version="2002">
-                <Code>1</Code>
+            </ClassificationCode>
+            <ClassificationCode category="StydyDomain" scheme="http://oph.fi" version="2002">
+                <Value>1</Value>
                 <Label>Sosiaaliala</Label>
-            </ClassificationItem>
+            </ClassificationCode>
         </Classification>
+
     </LearningOpportunitySpecification>
 
 
@@ -145,19 +149,30 @@
 
     <!-- hakukohteet 0-n kappaletta -->
 
-    <ApplicationObjectGroup>
+    <ApplicationTarget>
+
+        <Identifier>1.2.3.4.5</Identifier>
+
+        <Title>yleishaku</Title>
+
+        <ApplicationSystemRef>
+            <OidRef>11.2.4.5.6</OidRef>
+        </ApplicationSystemRef>
+
+        <EligibilityRequirements>
+            <Description>foobar</Description>
+        </EligibilityRequirements>
+
+        <SelectionCriterions>
+            <StartingQuota>0</StartingQuota>
+        </SelectionCriterions>
+
         <!-- koulukset joihin tässä hakukohteessa voidaan hakea -->
         <LearningOpportunities>
             <InstanceRef ref="LOS1"/>
             <InstanceRef ref="LOS2"/>
         </LearningOpportunities>
-    </ApplicationObjectGroup>
 
-    <ApplicationObjectGroup>
-        <!-- koulukset joihin tässä hakukohteessa voidaan hakea -->
-        <LearningOpportunities>
-            <InstanceRef ref="LOS3"/>
-        </LearningOpportunities>
-    </ApplicationObjectGroup>
+    </ApplicationTarget>
 
 </LearningOpportunityData>

@@ -8,13 +8,16 @@
 
     - pakollisuus (sijoitettava rakenteeseen)
     - moduulin tila, explisiittinen?
-    - koulutusohjelma (onko tämä viittaus toiseen LOP:iin vai...?)
 
 -->
 <LearningOpportunityData
     xmlns="http://service.tarjonta.sade.vm.fi/types"
     xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
     xsi:schemaLocation='http://service.tarjonta.sade.vm.fi/types  ../../main/resources/wsdl/learningUploadService.xsd'>
+
+    <!-- ========================================================================================= -->
+    <!-- Koulutusmoduuli                                                                           -->
+    <!-- ========================================================================================= -->
 
     <LearningOpportunitySpecification id="S1508" type="DegreeProgramme">
 
@@ -28,7 +31,9 @@
         <Credits unit="CreditUnits">120</Credits>
 
         <!-- tutkintonimike -->
-        <QualificationTitle>lähihoitaja</QualificationTitle>
+        <Qualification>
+            <Title>lähihoitaja</Title>
+        </Qualification>
 
         <!-- tutkinnon nimi -->
         <DegreeTitle>sosiaali- ja terveysalan pt</DegreeTitle>
@@ -36,38 +41,38 @@
         <Classification>
 
             <!-- koulutusluokituksen koodi -->
-            <ClassificationItem scheme="http://stat.fi" version="2010">
-                <Code>371101</Code>
+            <ClassificationCode scheme="http://stat.fi" version="2010">
+                <Value>371101</Value>
                 <Label xml:lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
-            </ClassificationItem>
+            </ClassificationCode>
 
             <!-- koulutusala -->
-            <ClassificationItem type="EducationDomain" scheme="http://oph.fi" version="2002">
-                <Code>7</Code>
+            <ClassificationCode category="EducationDomain" scheme="http://oph.fi" version="2002">
+                <Value>7</Value>
                 <Label>sosiaali- terveys- ja liikunta-ala</Label>
-            </ClassificationItem>
+            </ClassificationCode>
 
             <!-- koulutusaste -->
-            <ClassificationItem type="EducationDegree" scheme="http://oph.fi" version="2002">
-                <Code>32</Code>
+            <ClassificationCode category="EducationDegree" scheme="http://oph.fi" version="2002">
+                <Value>32</Value>
                 <Label>Ammatillinen koulutus</Label>
-            </ClassificationItem>
+            </ClassificationCode>
 
             <!-- opintoala -->
-            <ClassificationItem type="StydyDomain" scheme="http://oph.fi" version="2002">
-                <Code>703</Code>
+            <ClassificationCode category="StydyDomain" scheme="http://oph.fi" version="2002">
+                <Value>703</Value>
                 <Label>sosiaali- ja terveysala</Label>
-            </ClassificationItem>
+            </ClassificationCode>
 
             <!-- EQF -->
-            <ClassificationItem scheme="EQF">
-                <Code>4</Code>
-            </ClassificationItem>
+            <ClassificationCode scheme="EQF">
+                <Value>4</Value>
+            </ClassificationCode>
 
             <!-- NQF -->
-            <ClassificationItem scheme="NQF">
-                <Code>4</Code>
-            </ClassificationItem>
+            <ClassificationCode scheme="NQF">
+                <Value>4</Value>
+            </ClassificationCode>
 
         </Classification>
 
@@ -91,5 +96,202 @@
         </Description>
 
     </LearningOpportunitySpecification>
+
+
+    <!-- ========================================================================================= -->
+    <!-- Koulutusmoduulin toteutus                                                                 -->
+    <!-- ========================================================================================= -->
+
+    <LearningOpportunityInstance id="I1508">
+
+        <!-- Koulutusmoduulin toteutuksen tunniste, koulutuksen tarjoajan jarjestelmassa. -->
+        <Identifier>T1508</Identifier>
+
+        <!-- koulutusmoduuli jota tämä toteutus täydentää -->
+        <SpecificationRef ref="S1508"/>
+
+        <!-- Pohjakoulutus vaatimus -->
+        <Prerequisite>
+            Ylioppilas tai lukion suorittanut
+        </Prerequisite>
+
+        <Profession>
+            <Title>Lähihoitaja</Title>
+            <Title>Perushoitaja</Title>
+            <Title>Ensihoitaja</Title>
+        </Profession>
+
+        <!-- asiasanat -->
+        <Keywords>
+            <Keyword>Lähihoitaja</Keyword>
+            <Keyword>Hoiva-ala</Keyword>
+            <Keyword>Sosiaali- ja terveys</Keyword>
+            <Keyword>Ensihoito</Keyword>
+            <Keyword>Ambulanssi</Keyword>
+        </Keywords>
+
+        <!-- opetuskielet -->
+        <LanguagesOfInstruction scheme="ISO-639-1">
+
+            <!-- opetusta suomeksi -->
+            <Language code="fi"/>
+
+        </LanguagesOfInstruction>
+
+        <!--koulutuslaji -->
+        <FormOfEducation scheme="http://oph.fi">
+            <Value>http://koodistopalvelu.opintopolku.fi/koulutusLaj/1</Value>
+            <Label>nuorten koulutus</Label>
+        </FormOfEducation>
+
+        <!-- joukko opetusmuotoja -->
+        <FormsOfTeaching>
+
+            <!-- lähiopetus -->
+            <FormOfTeaching type="Classroom"/>
+
+        </FormsOfTeaching>
+
+        <!-- koulutuksen alkamispäivämäärä, ISO-8601 muodossa -->
+        <StartDate>2014-09-14</StartDate>
+
+        <!-- lukuvuosi -->
+        <AcademicYear>2014</AcademicYear>
+
+        <!-- koulutuksen kesto, ISO-8601 extended format -->
+        <Duration>P2Y</Duration>
+
+        <!-- arviointi kriteerit -->
+        <Assessments>
+
+            <!-- yleiset arviointi kriteerit suomeksi -->
+            <Assessment xml:lang="fi">
+                Lorem Lipsum
+            </Assessment>
+
+        </Assessments>
+
+        <!-- sanallinen kuvaus koulutuksen loppukokeista -->
+        <FinalExamination>
+
+            <Description xml:lang="fi">
+                Lorem Lipsum
+            </Description>
+
+        </FinalExamination>
+
+        <!-- tieto opiskelun maksullisuudesta -->
+        <CostOfEducation>
+
+            <!-- opiskelu on maksutonta -->
+            <NoCost />
+
+            <!--
+            tai 1 tai useampi maksukuvaus
+            <Fee amount="200" currency="EUR" repeat="once"/>
+            -->
+
+        </CostOfEducation>
+
+        <!-- stipendeihin liittyä tieto -->
+        <Scholarship>
+
+            <!-- yleinen kuvaus stipendimahdollisuuksista -->
+            <Description xml:lang="fi">
+                Lorem Lipsum
+            </Description>
+
+        </Scholarship>
+
+
+        <!-- joukko linkkejä jotka liittyvät toteutukseen -->
+        <WebLinks>
+
+            <!-- linkki oppilaitoksen sivuille sekä optinaalinen label elementti -->
+            <Link type="HOME">
+                <Label xml:lang="fi">Oppilaitoksen sivut</Label>
+                <Uri>http://www.hel.fi/hki/Hesote/fi/Etusivu</Uri>
+            </Link>
+
+        </WebLinks>
+
+    </LearningOpportunityInstance>
+
+
+    <!-- ========================================================================================= -->
+    <!-- Hakukohde                                                                                 -->
+    <!-- ========================================================================================= -->
+
+    <ApplicationTarget>
+
+        <!-- hakukohteen yksilöivä tunniste (missä scopessa?) -->
+        <Identifier>776</Identifier>
+
+        <!-- hakukohteen nimi -->
+        <Title xml:lang="fi">Ensihoidon koulutusohjelma, yo</Title>
+
+        <!-- viittaus hakuun johon tämä hakukohde kuuluu -->
+        <ApplicationSystemRef>
+
+            <!-- viittaus haun julkisella ja yksilöivällä OID:lla  -->
+            <OidRef>1.2.3.4.5</OidRef>
+
+        </ApplicationSystemRef>
+
+        <!-- hakukelpoisuus vaatimukset -->
+        <EligibilityRequirements>
+
+            <!-- vapaasti kuvattu vaatimus suomeksi -->
+            <Description xml:lang="fi">
+                peruskoulu/yo-pohjaisiin kohteisiin lukio
+            </Description>
+
+        </EligibilityRequirements>
+
+        <!-- valintaperusteet -->
+        <SelectionCriterions>
+
+            <!-- aloituspaikkojen määrä -->
+            <StartingQuota>20</StartingQuota>
+
+            <!-- vapaa kuvaus -->
+            <Description xml:lang="fi">
+                Lorem Lipsum
+            </Description>
+
+            <!-- valintakokeet -->
+            <EntranceExaminations>
+
+                <!-- yleinen kuvaus -->
+                <Description xml:lang="fi">
+                    Vapaamuotoinen kuvaus kaikista valintakokeista.
+                </Description>
+
+                <!-- valintakoe -->
+                <Examination>
+
+                    <!-- valintakoe tyyppi -->
+                    <ExaminationType>
+                        <Title xml:lang="fi">Pääsy- ja soveltuvuuskoe</Title>
+                    </ExaminationType>
+
+                    <!-- yhden valintakokeen kuvaus -->
+                    <Description xml:lang="fi">
+                        Lorem Lipsum
+                    </Description>
+
+                </Examination>
+
+            </EntranceExaminations>
+
+        </SelectionCriterions>
+
+        <!-- hakukohteeseen kuuluvat koulutusmoduulin toteutukset -->
+        <LearningOpportunities>
+            <InstanceRef ref="I1508"/>
+        </LearningOpportunities>
+
+    </ApplicationTarget>
+
 
 </LearningOpportunityData>
