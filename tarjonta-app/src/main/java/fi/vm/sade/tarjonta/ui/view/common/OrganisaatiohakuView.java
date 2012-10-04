@@ -97,6 +97,9 @@ public class OrganisaatiohakuView extends
         super(VerticalLayout.class);
         this.rootOrganisaatioOids = rootOrgOids;
         criteria = new OrganisaatioSearchCriteriaDTO();
+        if (rootOrganisaatioOids != null) {
+            criteria.getOidResctrictionList().addAll(rootOrganisaatioOids);
+        }
     }
 
     @Override
