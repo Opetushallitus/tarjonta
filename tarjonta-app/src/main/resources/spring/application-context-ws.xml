@@ -10,11 +10,6 @@
         <property name="callback" ref="callback" />
     </bean>
 
-<!-- 
-    <bean id="callback" class="fi.vm.sade.generic.ui.portlet.security.mock.MockTicketCallback">
-
-    </bean>
--->    
     <bean id="callback" class="fi.vm.sade.generic.ui.app.LiferaySecurityTicketCallback">
 
     </bean>
@@ -28,27 +23,6 @@
     </cxf:bus>
  	
 
-<!--
-    <bean id="koulutusmoduuliService" class="fi.vm.sade.tarjonta.service.mock.KoulutusmoduuliAdminServiceMock" />
-    <bean id="hakueraService" class="fi.vm.sade.tarjonta.service.mock.HakueraServiceMock" />
-    <bean id="organisaatioService" class="fi.vm.sade.organisaatio.api.OrganisaatioServiceMock"/>
-    <bean id="koulutusModuuliToteutusAdminService" class="fi.vm.sade.tarjonta.service.mock.KoulutusmoduuliToteutusAdminServiceMock"/>
-    <bean id="komotoTableFactory" class="fi.vm.sade.tarjonta.ui.koulutusmoduuli.toteutus.KoulutusModuulinToteutusTableFactory"/>
--->
-
-    <!-- Koodisto service (mock) -->
-   <!-- <bean id="mockDataHandler" class="fi.vm.sade.koodisto.service.mock.MockDataHandler"/>
-
-    <bean id="koodiService" class="fi.vm.sade.koodisto.service.mock.KoodiServiceMock">
-        <property name="mockDataHandler" ref="mockDataHandler"/>
-    </bean>
-
-    <bean id="koodistoService" class="fi.vm.sade.koodisto.service.mock.KoodistoServiceMock">
-        <property name="mockDataHandler" ref="mockDataHandler"/>
-    </bean>-->
-    
-    
-    
     <jaxws:client id="koodiPublicService"
                    serviceClass="fi.vm.sade.koodisto.service.KoodiService"
                    address="${koodi.webservice.url:http://NO_KOODI_WEBSERVICE_URL_CONFIGURED}"/>
@@ -59,10 +33,6 @@
 
     <bean class="fi.vm.sade.koodisto.widget.factory.WidgetFactory" />
     
-    <!-- <bean id="oidServiceImplBean" class="fi.vm.sade.oid.service.mock.OIDServiceMock" />--> 
-    
-<!--    <bean id="tarjontaServiceImplBean" class="fi.vm.sade.tarjonta.service.mock.TarjontaServiceMock" />  -->
-
 	<jaxws:client id="oidService"
                    serviceClass="fi.vm.sade.oid.service.OIDService"
                    address="${oid.webservice.url:http://NO_OID_WEBSERVICE_URL_CONFIGURED}"/>
