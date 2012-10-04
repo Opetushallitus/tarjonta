@@ -35,7 +35,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
  *
  * @author Jani Wilén
  */
-public class OrganisaatiohakuView extends AbstractCollapsibleLeft<VerticalLayout> {
+public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLayout> {
 
     private static I18NHelper i18n = new I18NHelper(OrganisaatiohakuView.class);
     private static final int PANEL_WIDTH = 250;

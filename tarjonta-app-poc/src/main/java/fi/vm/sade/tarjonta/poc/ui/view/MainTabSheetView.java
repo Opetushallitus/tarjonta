@@ -42,7 +42,7 @@ public class MainTabSheetView extends TabSheet {
 
     private void buildLayout() {
         tabHaut = new MainTabHakuView();
-        addTab(tabHaut, "Haut (2 kpl)", null);
+        //addTab(tabHaut, "Haut (2 kpl)", null);
 
         tabKoulutukset = new MainTabKoulutusView();
         addTab(tabKoulutukset, "Koulutukset (28 kpl)", null);

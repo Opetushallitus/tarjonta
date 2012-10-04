@@ -15,9 +15,13 @@
  */
 package fi.vm.sade.tarjonta.poc.ui.view.koulutus;
 
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.tarjonta.poc.ui.view.common.AbstractVerticalNavigationLayout;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
+import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,26 +31,58 @@ import org.springframework.beans.factory.annotation.Configurable;
  *
  * @author mlyly
  */
-@Configurable
-public class EditKoulutusView extends Panel {
+@Configurable(preConstruction = true)
+public class EditKoulutusView extends AbstractVerticalNavigationLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusView.class);
     private static final String TITLE_FORMAT = "Olet luomassa {0} koulutusta organisaatioon {1}";
 
     public EditKoulutusView() {
-        super();
+        super(EditKoulutusView.class);
         LOG.info("EditKoulutusView()");
 
-        setSizeFull();
-        setScrollable(true);
+        addNavigationButton("", new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                getPresenter().showMainKoulutusView();
+            }
+        }, StyleEnum.STYLE_BUTTON_BACK);
 
+        addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        });
+
+        addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        });
+
+        addNavigationButton(T("jatka"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                getPresenter().showShowKoulutusView();
+            }
+        });
+
+        setSizeFull();
+
+
+    }
+
+    @Override
+    protected void buildLayout(VerticalLayout layout) {
         UiUtil.label(this, TITLE_FORMAT, LabelStyleEnum.H2, "tutkintoon johtavaa", "Informaatiotekniikan tiedekunta");
 
         TabSheet tabs = new TabSheet();
         tabs.setSizeFull();
-        tabs.addTab(new EditKoulutusPerustiedotView(), "Koulutuksen perustiedot (status)");
+        tabs.addTab(new EditKoulutusPerustiedotToinenAsteView(), "Koulutuksen perustiedot (status)");
         tabs.addTab(new EditKoulutusKuvailevattiedotView(), "Koulutuksen kuvailevat tiedot (status)");
 
-        addComponent(tabs);
+        layout.addComponent(tabs);
     }
 }

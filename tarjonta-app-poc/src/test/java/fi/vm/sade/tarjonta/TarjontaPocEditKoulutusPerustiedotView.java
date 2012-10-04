@@ -4,7 +4,7 @@ import com.bsb.common.vaadin.embed.EmbedVaadinServer;
 import com.bsb.common.vaadin.embed.component.EmbedVaadinComponent;
 import com.bsb.common.vaadin.embed.support.EmbedVaadin;
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.tarjonta.poc.ui.view.koulutus.EditKoulutusPerustiedotView;
+import fi.vm.sade.tarjonta.poc.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
 
 
 import org.springframework.context.ApplicationContext;
@@ -26,7 +26,7 @@ public class TarjontaPocEditKoulutusPerustiedotView {
         I18N.setLocale(new Locale("fi"));
         ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:spring/application-context.xml");
 
-        EditKoulutusPerustiedotView component = new EditKoulutusPerustiedotView();
+        EditKoulutusPerustiedotToinenAsteView component = new EditKoulutusPerustiedotToinenAsteView();
         File moduleBaseDir = new File(".");
         File rootDir = new File(moduleBaseDir, "target/");
         System.out.println("vaadin root dir: " + rootDir.getCanonicalPath());

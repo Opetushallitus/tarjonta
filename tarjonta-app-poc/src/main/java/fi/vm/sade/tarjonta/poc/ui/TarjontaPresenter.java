@@ -31,6 +31,7 @@ import fi.vm.sade.tarjonta.poc.ui.helper.KoodistoHelper;
 import fi.vm.sade.tarjonta.poc.ui.view.hakukohde.EditSiirraHakukohteitaView;
 import fi.vm.sade.tarjonta.poc.ui.view.MainKoulutusView;
 import fi.vm.sade.tarjonta.poc.ui.view.hakukohde.ShowHakukohdeView;
+import fi.vm.sade.tarjonta.poc.ui.view.koulutus.KoulutusAdditionalInfoView;
 import fi.vm.sade.tarjonta.poc.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.dto.ButtonDTO;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
@@ -123,9 +124,9 @@ public class TarjontaPresenter implements Serializable {
         LOG.info("showMainKoulutusView()");
         getRightLayout().removeAllComponents();
         getRightLayout().addComponent(new MainKoulutusView());
-        
-        _tarjontaWindow.getMainSplitPanel().setExpandRatio( getRightLayout(), 1f);
-      
+
+        _tarjontaWindow.getMainSplitPanel().setExpandRatio(getRightLayout(), 1f);
+
     }
 
     public void showShowKoulutusView() {
@@ -220,6 +221,32 @@ public class TarjontaPresenter implements Serializable {
                 modal.removeDialogButtons();
 
                 showCreateHakukohdeView();
+            }
+        }, StyleEnum.STYLE_BUTTON_PRIMARY);
+
+        modal.buildDialogButtons();
+    }
+
+    public void showKoulutusAdditionalInfoView() {
+        LOG.debug("In showKoulutusAdditionalInfoView");
+
+        final KoulutusAdditionalInfoView modal = new KoulutusAdditionalInfoView("Lisää suuntautumisvaihtoehto/opintosuunta");
+        _tarjontaWindow.getWindow().addWindow(modal);
+
+        modal.addNavigationButton("Peruuta", new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                // Stay in same view
+                _tarjontaWindow.getWindow().removeWindow(modal);
+                modal.removeDialogButtons();
+            }
+        }, StyleEnum.STYLE_BUTTON_SECONDARY);
+
+        modal.addNavigationButton("Jatka", new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                _tarjontaWindow.getWindow().removeWindow(modal);
+                modal.removeDialogButtons();
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 

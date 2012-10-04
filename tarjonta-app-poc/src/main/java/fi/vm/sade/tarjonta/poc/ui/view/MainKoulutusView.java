@@ -16,23 +16,35 @@
 package fi.vm.sade.tarjonta.poc.ui.view;
 
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.poc.ui.view.common.AutoSizeVerticalLayout;
+import fi.vm.sade.tarjonta.poc.ui.view.koulutus.CreateKoulutusView;
+import fi.vm.sade.tarjonta.poc.ui.view.koulutus.KoulutusAdditionalInfoView;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  *
  * @author mlyly
  */
+@Configurable(preConstruction = true)
 public class MainKoulutusView extends AutoSizeVerticalLayout {
 
-    MainSearchView _searchView = new MainSearchView();
-    MainTabSheetView _resultView = new MainTabSheetView();
-
-    private Link breadCrumb;
+    private static final Logger LOG = LoggerFactory.getLogger(MainKoulutusView.class);
+    private MainSearchView _searchView = new MainSearchView();
+    private MainTabSheetView _resultView = new MainTabSheetView();
+    private Button breadCrumb;
+    @Autowired
+    private TarjontaPresenter _presenter;
 
     public MainKoulutusView() {
         removeAllComponents();
@@ -50,10 +62,16 @@ public class MainKoulutusView extends AutoSizeVerticalLayout {
     private void buildBreadCrumb(VerticalLayout vlayout) {
         HorizontalLayout breadCrumblayout = UiUtil.horizontalLayout(true, UiMarginEnum.TOP_BOTTOM_LEFT);
 
-        breadCrumb = UiUtil.link(breadCrumblayout,"Rantalohjan koulutuskuntayhtymä Rantalohjan ammattiopisto");
+        breadCrumb = UiUtil.buttonLink(
+                breadCrumblayout,
+                "Rantalohjan koulutuskuntayhtymä Rantalohjan ammattiopisto",
+                new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(ClickEvent event) {
+                    }
+                });
 
         vlayout.addComponent(breadCrumblayout);
         vlayout.setComponentAlignment(breadCrumblayout, Alignment.TOP_LEFT);
     }
-
 }
