@@ -27,13 +27,12 @@ import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 
 /**
  * Main portlet application class for Haku management.
- * 
+ *
  * @author markus
  */
 public class HakuPortletApplication extends AbstractSadePortletApplication {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(TarjontaPortletApplication.class);
 
+    private static final Logger LOG = LoggerFactory.getLogger(TarjontaPortletApplication.class);
     private Window window;
 
     @Override
@@ -49,5 +48,6 @@ public class HakuPortletApplication extends AbstractSadePortletApplication {
 
         window = new HakuRootView();
         setMainWindow(window);
+        setTheme("oph-app-tarjonta"); //include Vaadin Tree Table fix for Liferay
     }
 }

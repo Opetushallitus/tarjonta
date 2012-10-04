@@ -23,14 +23,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * TODO since UI is in flux this portlet contains "Haku" functonality which will be moved to "Haut ja valinnat" part at some point.
+ * TODO since UI is in flux this portlet contains "Haku" functonality which will
+ * be moved to "Haut ja valinnat" part at some point.
  *
  * @author mlyly
  */
 public class TarjontaPortletApplication extends AbstractSadePortletApplication {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPortletApplication.class);
-
     private Window window;
 
     @Override
@@ -43,8 +43,9 @@ public class TarjontaPortletApplication extends AbstractSadePortletApplication {
         LOG.debug("init()");
 
         super.init();
-
+      
         window = new TarjontaRootView();
         setMainWindow(window);
+        setTheme("oph-app-tarjonta"); //include Vaadin Tree Table fix for Liferay
     }
 }
