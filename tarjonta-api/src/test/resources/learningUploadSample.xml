@@ -28,7 +28,7 @@
         <Qualification>Tuotantotalouden mestari</Qualification>
 
         <Classification>
-            
+
             <ClassificationItem scheme="http://oph.fi">
                 <Code>123456</Code>
             </ClassificationItem>
@@ -105,13 +105,10 @@
             <EctsCoordinator></EctsCoordinator>
 
             <MainUniversityRequlations xml:lang="fi">
-                on niitä
-            </MainUniversityRequlations>
-            <MainUniversityRequlations xml:lang="sv">
-                det finns några
+                sääntöjä...
             </MainUniversityRequlations>
             <MainUniversityRequlations xml:lang="en">
-                there are some
+                regulations...
             </MainUniversityRequlations>
         </Institution>
 
