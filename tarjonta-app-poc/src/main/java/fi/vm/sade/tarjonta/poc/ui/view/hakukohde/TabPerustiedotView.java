@@ -24,6 +24,7 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
 import fi.vm.sade.tarjonta.poc.ui.view.common.AbstractVerticalLayout;
@@ -68,7 +69,7 @@ public class TabPerustiedotView extends AbstractVerticalLayout {
         addComponent(buildGrid());
 
         //MID AREA
-        buildMiddleArea();
+        //buildMiddleArea();
 
         //BOTTOM AREA
         UiUtil.horizontalLine(this);
@@ -78,15 +79,11 @@ public class TabPerustiedotView extends AbstractVerticalLayout {
     private void buildHakukode() {
         HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         ComboBox comboBox = UiUtil.comboBox(hl, null, new String[]{"Tunnistekoodi1", "Tunnistekoodi2", "Tunnistekoodi3"});
-        Button button = UiUtil.button(hl, T("tunnistekoodi"), new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        });
+        TextField textField = UiUtil.textField(hl, "",  T("tunnistekoodi"), true);
+        
 
-        hl.setExpandRatio(button, 5l);
-        hl.setComponentAlignment(button, Alignment.TOP_LEFT);
+        hl.setExpandRatio(textField, 5l);
+        hl.setComponentAlignment(textField, Alignment.TOP_LEFT);
         addItem("hakukohteenNimi", hl);
     }
 

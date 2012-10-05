@@ -22,20 +22,19 @@ import java.util.List;
  * @author mlyly
  */
 public class KoulutusToisenAsteenPerustiedotDTO extends KoulutusPerustiedotDTO {
-
+    
     private String koulutusohjelma;
-    
     private String koulutuksenTyyppi;
-    
     private List<AdditionalInfoDTO> info;
-
+    
     public KoulutusToisenAsteenPerustiedotDTO() {
         setKoulutusala("Tekniikan ja liikenteen ala");
         setTutkinto("Autoalan perustutkinto");
         setTutkintonimike("Automaalari");
         setOpintojenlaajuusyksikko("Opintoviikot");
         setOpintojenlaajuus("120 ov");
-        setOpintoala("opintoala ei tiedossa");
+        setOpintoala("Opintoala ei tiedossa");
+        setKoulutuksenTyyppi("Ei valintaa");
     }
 
     /**

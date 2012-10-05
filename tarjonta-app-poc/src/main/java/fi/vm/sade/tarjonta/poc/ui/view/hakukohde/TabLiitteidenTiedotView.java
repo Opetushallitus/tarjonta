@@ -59,8 +59,14 @@ public class TabLiitteidenTiedotView extends AbstractVerticalLayout {
         buildTopAreaLanguageTab();
         buildToimitettavaMennessa();
         buildToimitusosoite();
+        buildLisaaButton();
+
         /* build the grid layout */
         buildGrid();
+    }
+
+    private void buildLisaaButton() {
+        addItem("lisaaLiite", UiUtil.buttonSmallPrimary(null, "Lisää uusi liite"));
     }
 
     private void buildValintakokeenTyyppi() {
@@ -72,7 +78,6 @@ public class TabLiitteidenTiedotView extends AbstractVerticalLayout {
         PopupDateField dateField = new PopupDateField();
         dateField.setResolution(PopupDateField.RESOLUTION_DAY);
         hl.addComponent(dateField);
-
 
         UiUtil.label(hl, "").setWidth(20, UNITS_PIXELS);
         Label lableTime = UiUtil.label(hl, T("timeLabel"));
@@ -112,7 +117,7 @@ public class TabLiitteidenTiedotView extends AbstractVerticalLayout {
 
         TextField ePostLocation = UiUtil.textField(vl);
         ePostLocation.setWidth(300, UNITS_PIXELS);
-        ePostLocation.setInputPrompt(T("url")); 
+        ePostLocation.setInputPrompt(T("url"));
         addItem("toimitusosoite", vl);
     }
 

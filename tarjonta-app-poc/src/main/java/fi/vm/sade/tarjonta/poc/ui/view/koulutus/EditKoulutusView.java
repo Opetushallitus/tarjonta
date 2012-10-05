@@ -68,21 +68,19 @@ public class EditKoulutusView extends AbstractVerticalNavigationLayout {
                 getPresenter().showShowKoulutusView();
             }
         });
-
-        setSizeFull();
-
-
     }
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
+        layout.setMargin(false, false, true, false);
         UiUtil.label(this, TITLE_FORMAT, LabelStyleEnum.H2, "tutkintoon johtavaa", "Informaatiotekniikan tiedekunta");
 
         TabSheet tabs = new TabSheet();
-        tabs.setSizeFull();
+        tabs.setWidth(100, UNITS_PERCENTAGE);
         tabs.addTab(new EditKoulutusPerustiedotToinenAsteView(), "Koulutuksen perustiedot (status)");
         tabs.addTab(new EditKoulutusKuvailevattiedotView(), "Koulutuksen kuvailevat tiedot (status)");
 
         layout.addComponent(tabs);
+
     }
 }

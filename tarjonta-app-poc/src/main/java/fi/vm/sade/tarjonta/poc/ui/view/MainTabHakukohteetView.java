@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.poc.ui.view;
 
 import com.vaadin.data.Container;
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
@@ -26,7 +25,6 @@ import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.poc.ui.helper.I18NHelper;
 import fi.vm.sade.vaadin.Oph;
-import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
 import fi.vm.sade.tarjonta.poc.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.poc.ui.view.common.AutoSizeVerticalLayout;

@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.poc.ui.view;
 
 import com.vaadin.data.Container;
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
@@ -24,14 +23,11 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
-import fi.vm.sade.tarjonta.poc.ui.enums.Notification;
 import fi.vm.sade.tarjonta.poc.ui.helper.I18NHelper;
-import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
 import fi.vm.sade.tarjonta.poc.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.poc.ui.view.koulutus.CreateKoulutusView;
-import fi.vm.sade.tarjonta.poc.ui.view.hakukohde.EditSiirraUudelleKaudelleView;
 import fi.vm.sade.tarjonta.poc.ui.view.common.AutoSizeVerticalLayout;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -48,9 +44,11 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class MainTabKoulutusView extends AutoSizeVerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainTabKoulutusView.class);
-    private Button btnKopioiUudelleKaudelle;
+    private Button btnMuokkaa;
     private Button btnPoista;
+    private Button btnLuoUusiHakukohde;
     private Button btnLuoUusiKoulutus;
+    private Button btnInfo;
     private ComboBox cbJarjestys;
     private CategoryTreeView categoryTree;
     private I18NHelper i18n = new I18NHelper(this);
@@ -78,44 +76,27 @@ public class MainTabKoulutusView extends AutoSizeVerticalLayout {
     private HorizontalLayout buildMiddleResultLayout() {
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
 
-        btnKopioiUudelleKaudelle = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("KopioUudelleKaudelle"));
-        btnKopioiUudelleKaudelle.addStyleName(Oph.BUTTON_SMALL);
-
-        btnKopioiUudelleKaudelle.addListener(new Button.ClickListener() {
+        btnMuokkaa = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("Muokkaa"));
+        btnMuokkaa.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-
-                final EditSiirraUudelleKaudelleView modal = new EditSiirraUudelleKaudelleView(i18n.getMessage("KopioUudelleKaudelle"));
-                getWindow().addWindow(modal);
-
-                modal.addNavigationButton("Peruuta", new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent event) {
-                        // Stay in same view
-                        getWindow().removeWindow(modal);
-                        modal.removeDialogButtons();
-                    }
-                }, StyleEnum.STYLE_BUTTON_SECONDARY);
-
-                modal.addNavigationButton("Jatka", new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent event) {
-                        getWindow().removeWindow(modal);
-                        modal.removeDialogButtons();
-
-                        _presenter.showMainKoulutusView();
-                        _presenter.demoInformation(Notification.SAVE_EDITED);
-                    }
-                }, StyleEnum.STYLE_BUTTON_PRIMARY);
-
-                modal.buildDialogButtons();
+                //TODO: how this should work?
             }
         });
 
+        btnLuoUusiHakukohde = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("LuoUusiHakukohde"));
+        btnLuoUusiHakukohde.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                //Add all selected checkboxes to the luo hakukohde selection.
+                _presenter.showCreateHakukohdeView();
+            }
+        });
+
+        btnPoista = UiUtil.buttonSmallSecodary(layout, i18n.getMessage("Poista"));
+        btnPoista.setEnabled(false);
 
         btnLuoUusiKoulutus = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("LuoUusiKoulutus"));
-        btnLuoUusiKoulutus.addStyleName(Oph.BUTTON_SMALL);
-
         btnLuoUusiKoulutus.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -149,20 +130,13 @@ public class MainTabKoulutusView extends AutoSizeVerticalLayout {
             }
         });
 
-
-        btnPoista = UiUtil.button(layout, i18n.getMessage("Poista"));
-        btnPoista.addStyleName(Oph.BUTTON_SMALL);
-        btnPoista.setEnabled(false);
-
         cbJarjestys = UiUtil.comboBox(layout, null, DataSource.ORDER_BY);
         cbJarjestys.setWidth("300px");
 
-        layout.setExpandRatio(cbJarjestys, 1f);
-        layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
+        layout.setExpandRatio(btnLuoUusiKoulutus, 1f);
+        layout.setComponentAlignment(btnLuoUusiKoulutus, Alignment.TOP_RIGHT);
 
-        Button btnInfo = new Button();
-        btnInfo.addStyleName(Oph.BUTTON_INFO);
-        layout.addComponent(btnInfo);
+        btnInfo = UiUtil.buttonSmallInfo(layout);
 
         return layout;
     }
@@ -178,7 +152,7 @@ public class MainTabKoulutusView extends AutoSizeVerticalLayout {
      * @param btnListenerMuokkaa( the btnLuoUusiKoulutus to set
      */
     public void setBtnListenerMuokkaa(Button.ClickListener btnKopioiUudelleKaudelle) {
-        this.btnKopioiUudelleKaudelle.addListener(btnKopioiUudelleKaudelle);
+        this.btnMuokkaa.addListener(btnKopioiUudelleKaudelle);
     }
 
     public void setCategoryDataSource(Container dataSource) {

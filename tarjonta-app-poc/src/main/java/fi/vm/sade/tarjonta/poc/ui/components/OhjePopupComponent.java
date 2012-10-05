@@ -29,32 +29,30 @@ import fi.vm.sade.vaadin.util.UiUtil;
  * @author Tuomas Katva
  */
 public class OhjePopupComponent extends HorizontalLayout {
-
+    
     private OhjePopup popup;
     private PopupView popupView;
     private Button showPopupBtn;
-
+    
     public OhjePopupComponent(String message) {
         init(message);
     }
-
+    
     public OhjePopupComponent(String message, String popupWidth, String popupHeight) {
         init(message);
         popup.setWidthAndHeight(popupWidth, popupHeight);
     }
-
+    
     private void init(String message) {
         setSpacing(true);
-        setWidth(100, UNITS_PERCENTAGE);
-
+        setSizeUndefined();
+        
         popup = new OhjePopup(message);
         popupView = new PopupView(popup);
         popupView.setHideOnMouseOut(false);
         addComponent(popupView);
-
-        showPopupBtn = UiUtil.button(this,"");
-        showPopupBtn.setStyleName(Oph.BUTTON_INFO);
-        showPopupBtn.addListener(new Button.ClickListener() {
+        
+        showPopupBtn = UiUtil.buttonSmallInfo(this, new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 if (popupView != null) {
@@ -62,7 +60,7 @@ public class OhjePopupComponent extends HorizontalLayout {
                 }
             }
         });
-
+        
         setComponentAlignment(showPopupBtn, Alignment.TOP_RIGHT);
     }
 }

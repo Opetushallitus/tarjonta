@@ -28,6 +28,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.poc.ui.model.AddressDTO;
 import fi.vm.sade.tarjonta.poc.ui.view.common.AbstractVerticalLayout;
@@ -37,6 +38,8 @@ import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 import org.slf4j.Logger;
@@ -68,7 +71,8 @@ public class TabValintakokeenTiedotView extends AbstractVerticalLayout {
         /* build the grid layout */
         buildGrid();
 
-        addSelectorAndEditor(this);
+        //addSelectorAndEditor(this);
+        treeTable();
     }
 
     private void buildValintakokeenTyyppi() {
@@ -133,7 +137,7 @@ public class TabValintakokeenTiedotView extends AbstractVerticalLayout {
 
         // Span editor and table to two columns
         layout.addComponent(hl);
-
+        
     }
 
     private void buildToimitusosoite() {
@@ -179,5 +183,50 @@ public class TabValintakokeenTiedotView extends AbstractVerticalLayout {
         hl2.setExpandRatio(buttonSmallPlus, 1l);
         vl.addComponent(hl2);
         addItem("toimitusosoite", vl);
+    }
+    
+    
+    private void treeTable() {
+    
+        // Calendar
+        Calendar cal = Calendar.getInstance();
+        cal.set(2013, 10, 30, 14, 40, 26);
+
+        // Create the treetable
+        TreeTable treetable = new TreeTable();
+        treetable.setWidth("100%");
+
+        addComponent(treetable);
+
+        // Add Table columns
+        treetable.addContainerProperty("Sijainti", String.class, "");
+        treetable.addContainerProperty("Päivä", Date.class, cal.getTime());
+        treetable.addContainerProperty("Alkaa", Date.class, cal.getTime());
+        treetable.addContainerProperty("Loppuu", Date.class, cal.getTime());
+        treetable.addContainerProperty("Lisätiedot",String.class, "");
+
+
+        Object customerProject1 = treetable.addItem(new Object[] {"Pääsijainti 1",  cal.getTime(),null, null, null }, null);
+        Object customerProject1Implementation = treetable.addItem(new Object[] { "katu 1",  cal.getTime(),null, null, null  }, null);
+        Object customerProject1Planning = treetable.addItem(new Object[] {"katu 2",  cal.getTime() ,null, null, null }, null);
+        Object customerProject1Prototype = treetable.addItem(new Object[] {"katu 3", cal.getTime(),null, null, null  }, null);
+        Object customerProject2 = treetable.addItem(new Object[] { "Pääsijainti 2", cal.getTime() ,null, null, null }, null);
+        Object customerProject2Planning = treetable.addItem(new Object[] { "Katu abc1",  cal.getTime() ,null, null, null }, null);
+
+        // Set hierarchy
+        treetable.setParent(customerProject1Implementation, customerProject1);
+        treetable.setParent(customerProject1Planning, customerProject1);
+        treetable.setParent(customerProject1Prototype, customerProject1);
+        treetable.setParent(customerProject2Planning, customerProject2);
+
+        // Disallow children from leaves
+        treetable.setChildrenAllowed(customerProject1Implementation, false);
+        treetable.setChildrenAllowed(customerProject1Planning, false);
+        treetable.setChildrenAllowed(customerProject1Prototype, false);
+        treetable.setChildrenAllowed(customerProject2Planning, false);
+
+        treetable.setCollapsed(customerProject1, false);
+        treetable.setCollapsed(customerProject2, false);
+
     }
 }

@@ -20,6 +20,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Link;
+import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.poc.ui.view.common.AutoSizeVerticalLayout;
@@ -27,6 +28,8 @@ import fi.vm.sade.tarjonta.poc.ui.view.koulutus.CreateKoulutusView;
 import fi.vm.sade.tarjonta.poc.ui.view.koulutus.KoulutusAdditionalInfoView;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
+import java.util.Calendar;
+import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,5 +76,10 @@ public class MainKoulutusView extends AutoSizeVerticalLayout {
 
         vlayout.addComponent(breadCrumblayout);
         vlayout.setComponentAlignment(breadCrumblayout, Alignment.TOP_LEFT);
+        
+        
     }
+    
+    
+    
 }

@@ -78,12 +78,8 @@ public class EditKoulutusPerustiedotToinenAsteView extends VerticalLayout {
     private BeanItemMapper<KoulutusPerustiedotDTO, EditKoulutusPerustiedotToinenAsteView> bim;
 
     public EditKoulutusPerustiedotToinenAsteView() {
-
-        setMargin(true, true, true, true);
+        setMargin(true);
         setSpacing(true);
-
-
-
         // Remove, when we get data from outside - then build the UI.
         initialize();
     }
@@ -98,12 +94,11 @@ public class EditKoulutusPerustiedotToinenAsteView extends VerticalLayout {
 
         UiUtil.hr(this);
 
-        GridLayout grid = new GridLayout(4, 1);
+        GridLayout grid = new GridLayout(3, 1);
         grid.setSizeFull();
         grid.setColumnExpandRatio(0, 0l);
         grid.setColumnExpandRatio(1, 1l);
         grid.setColumnExpandRatio(2, 20l);
-        grid.setColumnExpandRatio(3, 1l);
         
         addComponent(grid);
         buildKoulutus(grid, "KoulutusTaiTutkinto");
@@ -118,7 +113,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends VerticalLayout {
         buildOpetusmuoto(grid, "Opetusmuoto");
         buildKoulutuslaji(grid, "Koulutuslaji");
         buildMaksullistaCheckBox(grid, "KoulutusOnMaksullista");
-        buildStipendiCheckBoxes(grid, "StipendiMahdollisuus");
+        buildStipendiCheckBox(grid, "StipendiMahdollisuus");
 
         UiUtil.hr(this);
         addYhteyshenkiloSelectorAndEditor(this);
@@ -135,9 +130,14 @@ public class EditKoulutusPerustiedotToinenAsteView extends VerticalLayout {
 
     private void buildKoulutus(GridLayout grid, String propertyKey) {
         label(grid, propertyKey);
-        KoodistoComponent kc = bim.addKoodistoComboBox(null, _koodistoUriKoulutus, "koulutus", "koulutusTaiTutkinto.prompt");
-        grid.addComponent(kc);
-        grid.addComponent(new OhjePopupComponent(i18n.getMessage("LOREMIPSUM"), "500px", "300px"));
+        
+        HorizontalLayout hl = UiUtil.horizontalLayout();
+        KoodistoComponent kc = bim.addKoodistoComboBox(hl, _koodistoUriKoulutus, "koulutus", "koulutusTaiTutkinto.prompt");
+        OhjePopupComponent ohjePopupComponent = new OhjePopupComponent(i18n.getMessage("LOREMIPSUM"), "500px", "300px");
+        hl.addComponent(ohjePopupComponent);
+        hl.setExpandRatio(kc, 1l);
+        
+        grid.addComponent(hl);
         grid.newLine();
     }
 
@@ -181,7 +181,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends VerticalLayout {
 
     private void buildLanguage(GridLayout grid, String propertyKey) {
         label(grid, propertyKey);
-        VerticalLayout vl = UiUtil.verticalLayout();
+        VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.TOP_BOTTOM);
 
         KoodistoComponent kc = bim.addKoodistoTwinColSelect(null, _koodistoUriKieli, "opetuskielet");
         vl.addComponent(kc);
@@ -228,7 +228,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends VerticalLayout {
     private void buildTeema(GridLayout grid, String propertyKey) {
         label(grid, propertyKey);
 
-        VerticalLayout vl = UiUtil.verticalLayout();
+        VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.TOP_BOTTOM);
         vl.addComponent(bim.label(null, "ValitseTeemat"));
         KoodistoComponent kc = bim.addKoodistoTwinColSelect(null, _koodistoUriTeema, "teemat");
         vl.addComponent(kc);
@@ -258,7 +258,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends VerticalLayout {
         grid.newLine();
     }
 
-    private void buildStipendiCheckBoxes(GridLayout grid, String propertyKey) {
+    private void buildStipendiCheckBox(GridLayout grid, String propertyKey) {
         label(grid, propertyKey);
         grid.addComponent(bim.addCheckBox(this, "StipendiMahdollisuus.checkbox", "koulutusStipendimahdollisuus", null));
         grid.newLine();
