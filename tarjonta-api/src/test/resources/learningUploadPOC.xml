@@ -102,6 +102,8 @@
     <!-- Koulutusmoduulin toteutus                                                                 -->
     <!-- ========================================================================================= -->
 
+    <!-- todo: lisattava toteuttava organisaatio -->
+
     <LearningOpportunityInstance id="I1508">
 
         <!-- Koulutusmoduulin toteutuksen tunniste, koulutuksen tarjoajan jarjestelmassa. -->
@@ -110,11 +112,16 @@
         <!-- koulutusmoduuli jota tämä toteutus täydentää -->
         <SpecificationRef ref="S1508"/>
 
+        <!-- koulutustarjoaja joka tarjoaa tätä koulutusta -->
+        <ProviderRef ref="P1"/>
+
         <!-- Pohjakoulutus vaatimus -->
+        <!-- todo: mallissa tämä on koodisto joten arbitraaria dataa ei voida ottaa vastaan. -->
         <Prerequisite>
             Ylioppilas tai lukion suorittanut
         </Prerequisite>
 
+        <!-- ammattinimikkeet -->
         <Profession>
             <Title>Lähihoitaja</Title>
             <Title>Perushoitaja</Title>
@@ -219,6 +226,15 @@
 
 
     <!-- ========================================================================================= -->
+    <!-- Koulutuksen tarjoaja                                                                      -->
+    <!-- ========================================================================================= -->
+
+    <LearningOpportunityProvider id="P1">
+
+    </LearningOpportunityProvider>
+
+
+    <!-- ========================================================================================= -->
     <!-- Hakukohde                                                                                 -->
     <!-- ========================================================================================= -->
 
@@ -280,9 +296,75 @@
                         Lorem Lipsum
                     </Description>
 
+                    <!-- valintakoe tapahtuma -->
+                    <ExaminationEvent>
+
+                        <!-- aloitusaika -->
+                        <Start>2013-09-20T10:00:00</Start>
+
+                        <!-- päättymisaika -->
+                        <End>2013-09-20T14:00:00</End>
+
+                        <!-- sijainnit jossa tapahtuma järjestetään -->
+                        <Locations>
+
+                            <!-- nimetty sijainti -->
+                            <Location>
+                                <Name>Aalto Auditorio</Name>
+                                <AddressLine>Mannerheimintie 3</AddressLine>
+                                <PostalCode>00100</PostalCode>
+                                <City>Helsinki</City>
+                            </Location>
+
+                        </Locations>
+
+                    </ExaminationEvent>
+
                 </Examination>
 
             </EntranceExaminations>
+
+            <!-- vaaditut liitteet -->
+            <Attachments>
+
+                <Attachment>
+
+                    <!-- liitteen tyyppi -->
+                    <Type>
+                        <Value>LT1</Value>
+                        <Label>Ennakkotehtävä</Label>
+                    </Type>
+
+                    <!-- vapaa kuvaus -->
+                    <Description>
+                        <Text xml:lang="fi">
+                            Liitteen sanallinen kuvaus hakijalle.
+                        </Text>
+                    </Description>
+
+                    <!-- liitteen palautus -->
+                    <Return>
+
+                        <!-- viimeinen palautuspäivä -->
+                        <DueDate>2013-04-05T00:00:00</DueDate>
+
+                        <!-- palautusosoite -->
+                        <To>
+                            <EmailAddress>palauta.liite@koulu.edu.fi</EmailAddress>
+                            <PostalAddress>
+                                <Company>Helsingin sosiaali- ja terveysalan oppilaitos, Laakson koulutusyksikkö</Company>
+                                <AddressLine>Mannerheimintie 3</AddressLine>
+                                <PostalCode>00100</PostalCode>
+                                <City>Helsinki</City>
+                            </PostalAddress>
+                        </To>
+
+                    </Return>
+
+                </Attachment>
+
+            </Attachments>
+
 
         </SelectionCriterions>
 
@@ -291,7 +373,14 @@
             <InstanceRef ref="I1508"/>
         </LearningOpportunities>
 
+        <!-- hakukohteen vapaamuotoinen kuvaus -->
+        <Description xml:lang="fi">
+            Lorem Lipsum
+        </Description>
+
     </ApplicationTarget>
+
+
 
 
 </LearningOpportunityData>

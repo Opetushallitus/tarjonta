@@ -32,6 +32,10 @@
     </xs:complexType>
 
 
+    <!-- ============================================================================================ -->
+    <!-- LearningOpportunityData                                                                      -->
+    <!-- ============================================================================================ -->
+
     <xs:complexType name="LearningOpportunityDataType">
         <xs:sequence>
             <xs:element name="LearningOpportunitySpecification"
@@ -128,7 +132,9 @@
                 </xs:annotation>
             </xs:element>
 
-            <xs:element name="LearningOpportunities" minOccurs="1" maxOccurs="1">
+            <xs:element name="LearningOpportunities"
+                        minOccurs="1"
+                        maxOccurs="1">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="InstanceRef"
@@ -137,6 +143,17 @@
                                     maxOccurs="unbounded"/>
                     </xs:sequence>
                 </xs:complexType>
+            </xs:element>
+
+            <xs:element name="Description"
+                        type="tns:ExtendedStringType"
+                        minOccurs="0"
+                        maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Yleinen hakukohteen kuvaus.
+                    </xs:documentation>
+                </xs:annotation>
             </xs:element>
 
         </xs:sequence>
@@ -225,6 +242,17 @@
                                             </xs:annotation>
                                         </xs:element>
 
+                                        <xs:element name="ExaminationEvent"
+                                                    type="tns:ExaminationEventType"
+                                                    minOccurs="1"
+                                                    maxOccurs="unbounded">
+                                            <xs:annotation>
+                                                <xs:documentation xml:lang="fi">
+                                                    Valintakoetapahtuma, 1 tai useampia.
+                                                </xs:documentation>
+                                            </xs:annotation>
+                                        </xs:element>
+
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
@@ -234,9 +262,147 @@
                 </xs:complexType>
             </xs:element>
 
+            <xs:element name="Attachments"
+                        type="tns:AttachmentCollectionType"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Vaadittavat liitteet.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="AttachmentCollectionType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Joukko liitetiedosto kuvauksia (hakukohde).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Attachment"
+                        minOccurs="1"
+                        maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+
+                        <xs:element name="Type"
+                                    type="tns:AttachmentTypeType"
+                                    minOccurs="1"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Liitteen tyyppi, esim. ennakkotehtava
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+
+                        <xs:element name="Description"
+                                    type="tns:LocalizedTextType"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Liitteen vapaa kuvaus
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+
+                        <xs:element name="Return">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Liitteen palautuksen tiedot
+                                </xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                                <xs:sequence>
+
+                                    <xs:element name="DueDate"
+                                                type="xs:dateTime"
+                                                minOccurs="1"
+                                                maxOccurs="1">
+                                        <xs:annotation>
+                                            <xs:documentation xml:lang="fi">
+                                                Viimeinen palautus paiva/aika.
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+
+                                    <xs:element name="To">
+                                        <xs:annotation>
+                                            <xs:documentation xml:lang="fi">
+                                                Liitteen palautus osoite. Todo: halutaanko useita osoitteita,
+                                                seka posti etta sahkoposti tms.
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                        <xs:complexType>
+                                            <xs:all>
+                                                <xs:element ref="tns:EmailAddress" minOccurs="0" maxOccurs="1"/>
+                                                <xs:element ref="tns:PostalAddress" minOccurs="0" maxOccurs="1"/>
+                                            </xs:all>
+                                        </xs:complexType>
+                                    </xs:element>
+
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="AttachmentTypeType">
+        <xs:complexContent>
+            <xs:extension base="tns:CodeLabelType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="ExaminationEventType">
+        <xs:annotation>
+            <xs:documentation>
+                Valintakoetapahtuma, sijoittaa valintakokeen aikaan ja paikkaan.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Start" type="xs:dateTime"></xs:element>
+            <xs:element name="End" type="xs:dateTime"></xs:element>
+            <xs:element name="Locations">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Location"
+                                    minOccurs="1"
+                                    maxOccurs="unbounded">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                </xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="Name"
+                                                type="xs:string"
+                                                minOccurs="0"
+                                                maxOccurs="1">
+                                        <xs:annotation>
+                                            <xs:documentation xml:lang="fi">
+                                                Sijaintia kuvaava nimi.
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:group ref="tns:PostalAddressGroup"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 
     <xs:complexType name="EntranceExaminationTypeType">
         <xs:annotation>
@@ -462,6 +628,11 @@
 
             <xs:element name="SpecificationRef"
                         type="tns:LearningOpportunitySpecificationRefType"
+                        minOccurs="1"
+                        maxOccurs="1"/>
+
+            <xs:element name="ProviderRef"
+                        type="tns:LearningOpportunityProviderRefType"
                         minOccurs="1"
                         maxOccurs="1"/>
 
@@ -840,7 +1011,9 @@
 
     <xs:complexType name="LearningOpportunityProviderType">
         <xs:sequence>
-            <xs:element name="Institution">
+            <xs:element name="InstitutionInfo"
+                        minOccurs="0"
+                        maxOccurs="1">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="Name"
@@ -917,7 +1090,9 @@
                 </xs:complexType>
             </xs:element>
 
-            <xs:element name="GeneralInformation">
+            <xs:element name="GeneralInformation"
+                        minOccurs="0"
+                        maxOccurs="1">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="CostOfLiving"
@@ -1095,6 +1270,20 @@
                 <xs:attribute ref="xml:lang" use="optional"/>
             </xs:extension>
         </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="LocalizedTextType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Rakenne joka tarjoaa joukon tekstikuvauksia eri(?) kielilla.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Text"
+                        type="tns:ExtendedStringType"
+                        minOccurs="1"
+                        maxOccurs="unbounded"/>
+        </xs:sequence>
     </xs:complexType>
 
     <!-- -->
@@ -1329,6 +1518,97 @@
             <xs:pattern value="[A-Z]{3}"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:simpleType name="PostalCodeType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Postinumero
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="3"/>
+            <xs:maxLength value="20"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="EmailAddress">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Rakenne yhden sahkopostiosoittee esittamiseksi
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+
+    <xs:element name="PostalAddress">
+        <xs:complexType>
+            <xs:group ref="tns:PostalAddressGroup"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:group name="PostalAddressGroup">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Rakenne postiosoitteelle.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Name"
+                        type="xs:string"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Vastaaottajan nimi (henkilo)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Company"
+                        type="xs:string"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Vastaaottajan nimi (yritys, organisaatio tms.)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="AddressLine"
+                        type="xs:string"
+                        minOccurs="1"
+                        maxOccurs="5">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Katuosoite rivit
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PostalCode"
+                        type="tns:PostalCodeType"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Postinumero
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="City"
+                        type="xs:string"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Kaupunki
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
 
     <xs:group name="IdentifierGroup">
         <xs:annotation>
