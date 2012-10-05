@@ -6,8 +6,11 @@
 
     vielä sijoitettavat/ratkaistavat tiedot:
 
-    - pakollisuus (sijoitettava rakenteeseen)
     - moduulin tila, explisiittinen?
+
+    muutettava:
+
+    - rakenteita täytyy yhtenäistää (koodi+label -tyyppiset, käännösteksti -tyyppiset)
 
 -->
 <LearningOpportunityData
