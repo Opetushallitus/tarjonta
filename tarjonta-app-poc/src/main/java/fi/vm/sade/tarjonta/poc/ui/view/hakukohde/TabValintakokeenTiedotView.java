@@ -76,7 +76,7 @@ public class TabValintakokeenTiedotView extends AbstractVerticalLayout {
     }
 
     private void buildValintakokeenTyyppi() {
-        addItem("valintakokeenTyyppi", buildLanguageTab());
+        addItem("valintakokeenTyyppi", UiUtil.comboBox(this, "Valitse tyyppi", new String[]{"Tyyppi1"}));
     }
 
    private TabSheet buildLanguageTab() {

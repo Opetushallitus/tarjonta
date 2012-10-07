@@ -209,7 +209,7 @@ public class BeanItemMapper<T, E> {
      * @param layout
      * @return
      */
-    public KoodistoComponent addKoodistoTwinColSelect(AbstractOrderedLayout layout, final String koodistoUri, String expression) {
+    public KoodistoComponent addKoodistoTwinColSelect(AbstractOrderedLayout layout, final String koodistoUri,  String expression) {
         LOG.debug("addKoodistoTwinColSelect({}, ...)", koodistoUri);
         return UiBuilder.koodistoTwinColSelect(layout, koodistoUri, psi, expression, null);
     }

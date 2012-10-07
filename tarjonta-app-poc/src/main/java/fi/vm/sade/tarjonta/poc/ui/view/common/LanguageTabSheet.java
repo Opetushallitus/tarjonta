@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.poc.ui.view.common;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
@@ -43,10 +44,22 @@ public class LanguageTabSheet extends TabSheet implements Property.ValueChangeLi
     private TwinColSelectKoodisto twinColSelect;
 
     public LanguageTabSheet(String koodistoUri) {
+        initialize(koodistoUri, null, null);
+    }
+
+    public LanguageTabSheet(String koodistoUri, PropertysetItem psi, String expression) {
+        initialize(koodistoUri, psi, expression);
+    }
+
+    private void initialize(String koodistoUri, PropertysetItem psi, String expression) {
         twinColSelect = new TwinColSelectKoodisto(koodistoUri);
         twinColSelect.addListener(this);
 
         addTab(twinColSelect, "", TAB_ICON_PLUS);
+
+        if (psi != null && expression != null) {
+            twinColSelect.dataSource(psi, expression);
+        }
     }
 
     @Override

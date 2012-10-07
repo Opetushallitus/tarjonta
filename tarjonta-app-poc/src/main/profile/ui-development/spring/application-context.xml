@@ -37,7 +37,7 @@
     
     <!--
       KOODISTO
-   
+   -->
     <bean id="mockDataHandler" class="fi.vm.sade.koodisto.service.mock.MockDataHandler"/>
     
     <bean id="koodiService" class="fi.vm.sade.koodisto.service.mock.KoodiServiceMock">
@@ -47,9 +47,6 @@
     <bean id="koodistoService" class="fi.vm.sade.koodisto.service.mock.KoodistoServiceMock">
         <property name="mockDataHandler" ref="mockDataHandler"/>
     </bean> 
-     -->
-    
-     <import resource="application-context-ws.xml"/>
-
+     
     <bean class="fi.vm.sade.koodisto.widget.factory.WidgetFactory" />
 </beans>

@@ -184,7 +184,6 @@ public class EditKoulutusPerustiedotToinenAsteView extends VerticalLayout {
         VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.TOP_BOTTOM);
 
         KoodistoComponent kc = bim.addKoodistoTwinColSelect(null, _koodistoUriKieli, "opetuskielet");
-        vl.addComponent(kc);
         kc.addListener(bim.getValueChangeListener("doOpetuskieletChanged"));
 
         vl.addComponent(bim.addCheckBox(null, "Opetuskieli.ValitseKaikki", "opetuskieletKaikki", "doOpetuskieletSelectAll"));

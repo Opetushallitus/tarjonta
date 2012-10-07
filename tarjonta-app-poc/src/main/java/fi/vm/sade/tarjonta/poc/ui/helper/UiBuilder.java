@@ -134,7 +134,7 @@ public class UiBuilder extends UiUtil {
             public Object formatFieldValue(Object dto) {
                 if (dto instanceof KoodiType) {
                     KoodiType kdto = (KoodiType) dto;
-                    return kdto.getKoodiUri();
+                    return kdto.getKoodiArvo();
                 } else {
                     return "" + dto;
                 }
