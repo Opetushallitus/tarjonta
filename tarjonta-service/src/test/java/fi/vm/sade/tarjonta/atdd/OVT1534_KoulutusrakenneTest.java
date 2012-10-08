@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.atdd;
 import fi.vm.sade.tarjonta.KoulutusDatabasePrinter;
 import fi.vm.sade.tarjonta.KoulutusFixtures;
 import fi.vm.sade.tarjonta.dao.KoulutusDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import static org.junit.Assert.*;
@@ -35,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Acceptance tests for OVT-1534
- * 
+ *
  * @see https://liitu.hard.ware.fi/jira/browse/OVT-1534
  */
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
@@ -47,9 +46,6 @@ public class OVT1534_KoulutusrakenneTest {
     private KoulutusDAO koulutusDAO;
 
     @Autowired
-    private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
-
-    @Autowired
     private KoulutusDatabasePrinter dbPrinter;
 
     @Autowired
@@ -58,23 +54,23 @@ public class OVT1534_KoulutusrakenneTest {
     @Test
     public void testKoulutusmoduuliSisaltaaKoulutusmouduleita() {
 
-        Koulutusmoduuli moduuli = fixtures.createPersistedKoulutusmoduuliTree();
-        assertEquals(2, moduuli.getChildren().size());
+        Koulutusmoduuli moduuli = fixtures.createPersistedKoulutusmoduuliStructure();
+        assertEquals(2, moduuli.getStructures().size());
 
     }
 
     @Test
     public void testKoulutusmoduuliVoidaanJakaa() {
 
-        Koulutusmoduuli moduuli = fixtures.createPersistedKoulutusmoduuliTree();
-        
+        Koulutusmoduuli moduuli = fixtures.createPersistedKoulutusmoduuliStructure();
+
         Iterator<LearningOpportunityObject> i = moduuli.getChildNodes().iterator();
         LearningOpportunityObject child1 = i.next();
         LearningOpportunityObject child2 = i.next();
-        
+
         LearningOpportunityObject child3 = child1.getChildNodes().iterator().next();
         LearningOpportunityObject child4 = child2.getChildNodes().iterator().next();
-        
+
         assertEquals(child3, child4);
 
     }

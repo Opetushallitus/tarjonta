@@ -6,11 +6,14 @@
     <class>fi.vm.sade.tarjonta.model.LearningOpportunityObject</class>
     <class>fi.vm.sade.tarjonta.model.LearningOpportunityInstance</class>
     <class>fi.vm.sade.tarjonta.model.LearningOpportunitySpecification</class>
+    <class>fi.vm.sade.tarjonta.model.KoulutusRakenne</class>
     <class>fi.vm.sade.tarjonta.model.TutkintoOhjelma</class>
     <class>fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus</class>
     <class>fi.vm.sade.tarjonta.model.TutkinnonOsa</class>
     <class>fi.vm.sade.tarjonta.model.TutkinnonOsaToteutus</class>
+    <!-- deprecated in favor of KoulutusRakenne
     <class>fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys</class>
+    -->
     <class>fi.vm.sade.tarjonta.model.Oid</class>
     <class>fi.vm.sade.tarjonta.model.Haku</class>
     <class>fi.vm.sade.tarjonta.model.Hakukohde</class>
@@ -23,10 +26,10 @@
     <class>fi.vm.sade.tarjonta.model.MonikielinenTeksti</class>
     <class>fi.vm.sade.tarjonta.model.TekstiKaannos</class>
     <class>fi.vm.sade.tarjonta.model.Yhteyshenkilo</class>
-    
+
     <properties>
       <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-      <!--  
+      <!--
 	    <property name="hibernate.hbm2ddl.auto" value="create-drop" />
 	    -->
       <property name="hibernate.jdbc.batch_size" value="20"/>

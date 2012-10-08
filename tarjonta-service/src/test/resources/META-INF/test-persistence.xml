@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.0"
              xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence 
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
  http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 
 
@@ -11,12 +11,15 @@
 
         <class>fi.vm.sade.tarjonta.model.LearningOpportunityObject</class>
         <class>fi.vm.sade.tarjonta.model.LearningOpportunityInstance</class>
-        <class>fi.vm.sade.tarjonta.model.LearningOpportunitySpecification</class>   
+        <class>fi.vm.sade.tarjonta.model.LearningOpportunitySpecification</class>
+        <class>fi.vm.sade.tarjonta.model.KoulutusRakenne</class>
         <class>fi.vm.sade.tarjonta.model.TutkintoOhjelma</class>
         <class>fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus</class>
         <class>fi.vm.sade.tarjonta.model.TutkinnonOsa</class>
-        <class>fi.vm.sade.tarjonta.model.TutkinnonOsaToteutus</class>    
+        <class>fi.vm.sade.tarjonta.model.TutkinnonOsaToteutus</class>
+        <!-- deprecated in favor of KoulutusRakenne
         <class>fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys</class>
+        -->
         <class>fi.vm.sade.tarjonta.model.KoodistoUri</class>
         <class>fi.vm.sade.tarjonta.model.Oid</class>
         <class>fi.vm.sade.tarjonta.model.Haku</class>
@@ -29,7 +32,7 @@
         <class>fi.vm.sade.tarjonta.model.MonikielinenTeksti</class>
         <class>fi.vm.sade.tarjonta.model.TekstiKaannos</class>
         <class>fi.vm.sade.tarjonta.model.Yhteyshenkilo</class>
-            
+
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update" />
             <property name="hibernate.show_sql" value="false" />
@@ -50,5 +53,5 @@
 
 </persistence>
 
- 
+
 

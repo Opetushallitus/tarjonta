@@ -54,12 +54,6 @@ public class KoulutusDAOImpl extends AbstractJpaDAOImpl<LearningOpportunityObjec
 
     }
 
-    public List<KoulutusSisaltyvyys> findAllSisaltyvyys() {
-        return getEntityManager().
-            createQuery("from " + KoulutusSisaltyvyys.class.getSimpleName() + " as s").
-            getResultList();
-    }
-
     @Override
     public List<LearningOpportunityObject> find(String tila, int startIndex, int pageSize) {
 
@@ -68,11 +62,11 @@ public class KoulutusDAOImpl extends AbstractJpaDAOImpl<LearningOpportunityObjec
     }
 
     /**
-     * Returns version history of a LearningOpportunityObject. 
-     * 
-     * TODO: double check if and how version management is handled in LOO. This implementation assumes 
+     * Returns version history of a LearningOpportunityObject.
+     *
+     * TODO: double check if and how version management is handled in LOO. This implementation assumes
      * that several LOO's can share a single OID and be separated by version number.
-     * 
+     *
      * @param <T>
      * @param koulutusType
      * @param oid
@@ -103,12 +97,12 @@ public class KoulutusDAOImpl extends AbstractJpaDAOImpl<LearningOpportunityObjec
 
         QLearningOpportunityObject loo = QLearningOpportunityObject.learningOpportunityObject;
         QLearningOpportunityObject parent = new QLearningOpportunityObject("parent");
-        QKoulutusSisaltyvyys sisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
+        QKoulutusRakenne rakennes = QKoulutusRakenne.koulutusRakenne;
         BooleanExpression oidEq = parent.oid.eq(oid);
 
         return (List<T>) from(loo).
-            join(loo.parents, sisaltyvyys).
-            join(sisaltyvyys.parent, parent).
+            join(loo.structures, rakennes).
+            join(rakennes.parent, parent).
             where(oidEq).
             list(loo);
 
@@ -120,7 +114,7 @@ public class KoulutusDAOImpl extends AbstractJpaDAOImpl<LearningOpportunityObjec
         QLearningOpportunityObject loo = QLearningOpportunityObject.learningOpportunityObject;
         BooleanExpression whereExpr = null;
 
-        // todo: are we searching for LOI or LOS - that group by e.g. per organisaatio is 
+        // todo: are we searching for LOI or LOS - that group by e.g. per organisaatio is
         // take from different attribute
         Expression groupBy = groupBy(criteria);
 

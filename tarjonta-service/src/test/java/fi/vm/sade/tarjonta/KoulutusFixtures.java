@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,12 +18,11 @@ package fi.vm.sade.tarjonta;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusRakenneDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
 import java.util.Calendar;
 import java.util.Date;
-import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +57,7 @@ public class KoulutusFixtures {
     private HakuDAO hakuDAO;
 
     @Autowired
-    private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
+    private KoulutusRakenneDAO rakenneDAO;
 
     public void recreate() {
 
@@ -111,7 +110,7 @@ public class KoulutusFixtures {
 
     /**
      * Creates a minimal non-persisted Hakukohde.
-     * 
+     *
      * @return
      */
     public Hakukohde createHakukohde() {
@@ -192,7 +191,18 @@ public class KoulutusFixtures {
         return (KoulutusmoduuliToteutus) koulutusDAO.insert(t1);
     }
 
-    public Koulutusmoduuli createPersistedKoulutusmoduuliTree() {
+    /**
+     * Creates structure like (not tree):
+     *
+     *    0
+     *   / \
+     *  1   2
+     *   \ /
+     *    3
+     *
+     * @return
+     */
+    public Koulutusmoduuli createPersistedKoulutusmoduuliStructure() {
 
         Koulutusmoduuli root = createTutkintoOhjelma();
         Koulutusmoduuli child1 = createTutkinnonOsa();
@@ -204,10 +214,10 @@ public class KoulutusFixtures {
         koulutusDAO.insert(child2);
         koulutusDAO.insert(child3);
 
-        sisaltyvyysDAO.insert(new KoulutusSisaltyvyys(root, child1, true));
-        sisaltyvyysDAO.insert(new KoulutusSisaltyvyys(root, child2, true));
-        sisaltyvyysDAO.insert(new KoulutusSisaltyvyys(child1, child3, false));
-        sisaltyvyysDAO.insert(new KoulutusSisaltyvyys(child2, child3, true));
+        rakenneDAO.insert(new KoulutusRakenne(root, child1, KoulutusRakenne.SelectorType.ALL_OFF));
+        rakenneDAO.insert(new KoulutusRakenne(root, child2, KoulutusRakenne.SelectorType.ALL_OFF));
+        rakenneDAO.insert(new KoulutusRakenne(child1, child3, KoulutusRakenne.SelectorType.ALL_OFF));
+        rakenneDAO.insert(new KoulutusRakenne(child2, child3, KoulutusRakenne.SelectorType.SOME_OFF));
 
         flush();
         clear();
@@ -220,26 +230,26 @@ public class KoulutusFixtures {
      * Deletes all entities used in testing.
      */
     public void removeAll() {
-        
+
         for (Haku o : hakuDAO.findAll()) {
             hakuDAO.remove(o);
         }
-        
+
         for (Hakukohde o : hakukohdeDAO.findAll()) {
             hakukohdeDAO.remove(o);
         }
-        
-        for (KoulutusSisaltyvyys o : sisaltyvyysDAO.findAll()) {
-            sisaltyvyysDAO.remove(o);
+
+        for (KoulutusRakenne r : rakenneDAO.findAll()) {
+            rakenneDAO.remove(r);
         }
 
         for (LearningOpportunityObject o : koulutusDAO.findAll()) {
             koulutusDAO.remove(o);
         }
-        
+
         flush();
         clear();
-        
+
     }
 
     private void flush() {

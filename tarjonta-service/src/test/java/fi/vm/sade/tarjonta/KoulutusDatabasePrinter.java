@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -16,9 +16,9 @@
 package fi.vm.sade.tarjonta;
 
 import fi.vm.sade.tarjonta.dao.KoulutusDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusRakenneDAO;
+import fi.vm.sade.tarjonta.model.KoulutusRakenne;
 import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
-import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import java.io.PrintWriter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 /**
  *
- * @author Jukka Raanamo 
+ * @author Jukka Raanamo
  */
 @Component
 public class KoulutusDatabasePrinter {
@@ -35,7 +35,7 @@ public class KoulutusDatabasePrinter {
     private KoulutusDAO koulutusDAO;
 
     @Autowired
-    private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
+    private KoulutusRakenneDAO rakenneDAO;
 
     public void printAll() {
         PrintWriter out = new PrintWriter(System.out);
@@ -46,7 +46,7 @@ public class KoulutusDatabasePrinter {
     public void printAll(PrintWriter out) {
         out.println("---- Tarjonta database dump:");
         printKoulutus(out);
-        printSisaltyvyys(out);
+        printRakenne(out);
     }
 
     public void printKoulutus(PrintWriter out) {
@@ -61,24 +61,23 @@ public class KoulutusDatabasePrinter {
                 + "\n\t id: " + k.getId()
                 + "\n\t oid: " + k.getOid()
                 + "\n\t nimi: " + k.getNimi()
-                + "\n\t parents: " + k.getParents()
-                + "\n\t children: " + k.getChildren());
+                + "\n\t rakenteet: " + k.getStructures());
 
         }
 
     }
 
-    public void printSisaltyvyys(PrintWriter out) {
+    public void printRakenne(PrintWriter out) {
 
-        out.println("-- List of KoulutusSisaltyvyys objects:");
+        out.println("-- List of KoulutusRakenne objects:");
 
-        List<KoulutusSisaltyvyys> list = sisaltyvyysDAO.findAll();
+        List<KoulutusRakenne> list = rakenneDAO.findAll();
         for (int i = 0; i < list.size(); i++) {
-            KoulutusSisaltyvyys s = list.get(i);
+            KoulutusRakenne r = list.get(i);
             out.println((i + 1)
-                + "\t" + "parent: " + s.getParent().getId()
-                + ", child: " + s.getChild().getId()
-                + ", optional: " + s.isOptional());
+                + "\t" + "parent: " + r.getParent().getId()
+                + ", num childred: " + r.getChildren().size()
+                + ", selector: " + r.getSelector());
 
         }
 

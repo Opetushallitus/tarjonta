@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,13 +24,14 @@ import javax.persistence.*;
 
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
 import fi.vm.sade.generic.model.BaseEntity;
+import java.io.Serializable;
 
 /**
- * Common base class for all entities on both the specification and instance side of learning objects. 
+ * Common base class for all entities on both the specification and instance side of learning objects.
  * The CEN MLO model names this as "Learning Opportunity Object".
- * 
+ *
  * <p>
- * Note about version management: multiple versions of single LOO is currently not implemented due to the fact that 
+ * Note about version management: multiple versions of single LOO is currently not implemented due to the fact that
  * LOO's version life cycle is rather lightly documented: https://confluence.csc.fi/pages/viewpage.action?pageId=8688089.
  * </p>
  *
@@ -39,7 +40,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 @Table(name = LearningOpportunityObject.TABLE_NAME)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "koulutus_tyyppi", length = 6)
-public abstract class LearningOpportunityObject extends BaseEntity implements Comparable<LearningOpportunityObject> {
+public abstract class LearningOpportunityObject extends BaseEntity implements Comparable<LearningOpportunityObject>, Serializable {
 
     public static final String TABLE_NAME = "koulutus";
 
@@ -67,11 +68,14 @@ public abstract class LearningOpportunityObject extends BaseEntity implements Co
      */
     private int koulutusVersio;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent", orphanRemoval = true)
-    private Set<KoulutusSisaltyvyys> children = new HashSet<KoulutusSisaltyvyys>();
+    //@OneToMany(fetch = FetchType.LAZY, mappedBy = "parent", orphanRemoval = true)
+    //private Set<KoulutusSisaltyvyys> children = new HashSet<KoulutusSisaltyvyys>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "child", orphanRemoval = true)
-    private Set<KoulutusSisaltyvyys> parents = new HashSet<KoulutusSisaltyvyys>();
+    //@OneToMany(fetch = FetchType.LAZY, mappedBy = "child", orphanRemoval = true)
+    //private Set<KoulutusSisaltyvyys> parents = new HashSet<KoulutusSisaltyvyys>();
+
+    @OneToMany(mappedBy = "parent")
+    private Set<KoulutusRakenne> structures = new HashSet<KoulutusRakenne>();
 
     /**
      * Make sure you call super when overriding constructor.
@@ -129,7 +133,7 @@ public abstract class LearningOpportunityObject extends BaseEntity implements Co
 
     /**
      * Set uri to koodisto representing the current state of this Koulutus.
-     * 
+     *
      * @param tila
      */
     public void setTila(String tila) {
@@ -139,8 +143,8 @@ public abstract class LearningOpportunityObject extends BaseEntity implements Co
 
     /**
      * Returns "static" name for this Koulutus. The actual content may be calculated dynamically based on other
-     * properties. This 
-     * 
+     * properties. This
+     *
      * @return the nimi
      */
     public String getNimi() {
@@ -148,9 +152,9 @@ public abstract class LearningOpportunityObject extends BaseEntity implements Co
     }
 
     /**
-     * Set the display name to be used with this Koulutus. Note that in some cases this value may be recalculated 
-     * dynamically based on other properties. 
-     * 
+     * Set the display name to be used with this Koulutus. Note that in some cases this value may be recalculated
+     * dynamically based on other properties.
+     *
      * @param nimi the nimi to set
      */
     public void setNimi(String nimi) {
@@ -162,21 +166,33 @@ public abstract class LearningOpportunityObject extends BaseEntity implements Co
      *
      * @return
      */
-    public Set<KoulutusSisaltyvyys> getChildren() {
-        return Collections.unmodifiableSet(children);
-    }
+    //public Set<KoulutusSisaltyvyys> getChildren() {
+    //    return Collections.unmodifiableSet(children);
+    //}
 
     /**
      * Returns immutable set of parent relations.
-     * 
+     *
      * @return
      */
-    public Set<KoulutusSisaltyvyys> getParents() {
-        return Collections.unmodifiableSet(parents);
+//    public Set<KoulutusSisaltyvyys> getParents() {
+//        return Collections.unmodifiableSet(parents);
+//    }
+
+    public Set<KoulutusRakenne> getStructures() {
+        return Collections.unmodifiableSet(structures);
+    }
+
+    public void addStructure(KoulutusRakenne structure) {
+        structures.add(structure);
+    }
+
+    public void removeStructure(KoulutusRakenne structure) {
+        structures.remove(structure);
     }
 
     /**
-     * Returns true if given child is a direct or non-direct (unlimited depth) child of this Koulutus. 
+     * Returns true if given child is a direct or non-direct (unlimited depth) child of this Koulutus.
      * Note that as children are lazily loaded, each level will require one more select.
      *
      * @param child
@@ -204,16 +220,18 @@ public abstract class LearningOpportunityObject extends BaseEntity implements Co
     }
 
     /**
-     * Convenience method that instead of returning set of KoulutusSisaltyvyys, 
+     * Convenience method that instead of returning set of KoulutusSisaltyvyys,
      * returns only the children from those elements.
+     *
+     * TODO: since this is only used in unit tests, move to test helper method
      * 
      * @return
      */
     public Set<LearningOpportunityObject> getChildNodes() {
 
         Set<LearningOpportunityObject> nodes = new HashSet<LearningOpportunityObject>();
-        for (KoulutusSisaltyvyys s : children) {
-            nodes.add(s.getChild());
+        for (KoulutusRakenne r : structures) {
+            nodes.addAll(r.getChildren());
         }
         return nodes;
 
@@ -221,7 +239,7 @@ public abstract class LearningOpportunityObject extends BaseEntity implements Co
 
     /**
      * Simple comparison by Koulutus name.
-     * 
+     *
      * @param koulutus
      * @return
      */

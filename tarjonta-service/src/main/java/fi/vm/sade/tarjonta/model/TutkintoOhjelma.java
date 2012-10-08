@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -25,7 +26,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @DiscriminatorValue(LearningOpportunityObject.KoulutusTyyppit.TUTKINTO_OHJELMA)
-public class TutkintoOhjelma extends Koulutusmoduuli {
+public class TutkintoOhjelma extends Koulutusmoduuli implements Serializable {
 
     private static final long serialVersionUID = 5126887997800825478L;
 

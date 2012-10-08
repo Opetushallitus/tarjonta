@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -15,12 +15,12 @@
  */
 package fi.vm.sade.tarjonta.model.util;
 
+import fi.vm.sade.tarjonta.model.KoulutusRakenne;
 import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
-import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import java.util.Set;
 
 /**
- * Helper class that traverses the "tree" of Koulutus in breath first and performs a test on tree nodes using WalkTester. 
+ * Helper class that traverses the "tree" of Koulutus in breath first and performs a test on tree nodes using WalkTester.
  * This can be used to e.g. find parents or children.
  *
  * @author Jukka Raanamo
@@ -43,13 +43,10 @@ public class KoulutusTreeWalker {
     public KoulutusTreeWalker(NodeHandler handler) {
         this(-1, handler);
     }
-    
-    
 
     public void walk(LearningOpportunityObject startNode) {
         walkInternal(startNode);
     }
-
 
     private boolean walkInternal(LearningOpportunityObject node) {
 
@@ -61,11 +58,12 @@ public class KoulutusTreeWalker {
             return false;
         }
 
-        final Set<KoulutusSisaltyvyys> nextSet = node.getChildren();
-        for (KoulutusSisaltyvyys s : nextSet) {
-            final LearningOpportunityObject nextNode = s.getChild();
-            if (!walkInternal(nextNode)) {
-                return false;
+        final Set<KoulutusRakenne> nextSet = node.getStructures();
+        for (KoulutusRakenne r : nextSet) {
+            for (LearningOpportunityObject o : r.getChildren()) {
+                if (!walkInternal(o)) {
+                    return false;
+                }
             }
         }
 
@@ -80,7 +78,7 @@ public class KoulutusTreeWalker {
 
         /**
          * Tests if walking the tree should continue past given Koulutus.
-         * 
+         *
          * @param moduuli
          * @return
          */

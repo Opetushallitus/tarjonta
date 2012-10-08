@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
-import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import java.util.List;
 
 /**
@@ -25,14 +24,7 @@ import java.util.List;
 public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
 
     /**
-     * If this was here only for unit testing, remove it and access entity manager from test.
-     * 
-     * @return
-     */
-    public List<KoulutusSisaltyvyys> findAllSisaltyvyys();
-
-    /**
-     * 
+     *
      * @param tila
      * @param startIndex
      * @param pageSize
@@ -42,8 +34,8 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
 
     /**
      * Returns all existing versions of a LearningOpportunityObject.
-     * 
-     * @param <T> the type of the 
+     *
+     * @param <T> the type of the
      * @param type
      * @param oid
      * @return
@@ -52,8 +44,8 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
 
     /**
      * Returns a list of Koulutus -objects of type <code>type</code>.
-     * 
-     * @param <T> type of 
+     *
+     * @param <T> type of
      * @param type
      * @return
      */
@@ -61,30 +53,27 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
 
     /**
      * Returns a list of Koulutusmoduulis that are direct children of given <code>oid</code>
-     * 
+     *
      * @param <T>
      * @param type
-     * @param oid 
+     * @param oid
      * @return
      */
     public <T extends LearningOpportunityObject> List<T> findAllChildren(Class<T> type, String oid);
-    
 
     /**
      * Typed version of read to save from casting.
-     * 
+     *
      * @param <T>
      * @param type
      * @param id
      * @return
      */
     public <T extends LearningOpportunityObject> T findByOid(Class<T> type, String id);
-    
-    
-    
+
     /**
      * Return all LOO objects that match given criteria.
-     * 
+     *
      * @param <T>
      * @param type
      * @param criteria

@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.service.business.impl;
 
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.dao.KoulutusDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusRakenneDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import java.util.List;
@@ -36,7 +36,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     private KoulutusDAO koulutusDAO;
 
     @Autowired
-    private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
+    private KoulutusRakenneDAO rakenneDAO;
 
     @Override
     public Koulutusmoduuli create(Koulutusmoduuli koulutusmoduuli, String parentOid, boolean optional) {
@@ -44,7 +44,11 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         final Koulutusmoduuli newModuuli = create(koulutusmoduuli);
 
         Koulutusmoduuli parent = koulutusDAO.findByOid(Koulutusmoduuli.class, parentOid);
-        sisaltyvyysDAO.insert(new KoulutusSisaltyvyys(parent, newModuuli, optional));
+
+        // todo: since we added more logic to KoulutusRakenne, plain boolean "optional" will not do anymore, refactor
+        rakenneDAO.insert(new KoulutusRakenne(parent, newModuuli, optional
+            ? KoulutusRakenne.SelectorType.SOME_OFF
+            : KoulutusRakenne.SelectorType.ONE_OFF));
 
         return newModuuli;
 
@@ -119,7 +123,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         }
 
         // validate that we have no children
-        if (!loo.getChildren().isEmpty()) {
+        if (!loo.getStructures().isEmpty()) {
             throw new IllegalStateException("refusing to delete LOO with children");
         }
 
