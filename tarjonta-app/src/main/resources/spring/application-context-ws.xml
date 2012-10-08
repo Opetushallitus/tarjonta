@@ -10,16 +10,11 @@
     <bean id="ticketInterceptor" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptor">
         <property name="callback" ref="callback" />
     </bean>
-     <!--
-    <bean id="callback" class="fi.vm.sade.generic.ui.portlet.security.mock.MockTicketCallback">
 
-    </bean>
--->
     <bean id="callback" class="fi.vm.sade.generic.ui.app.LiferaySecurityTicketCallback">
 
     </bean>
 
-     
     <!-- Configure CXF bus to contain ticketInterceptor -->
     <cxf:bus>
         <cxf:outInterceptors>
@@ -50,8 +45,5 @@
                    serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
                    address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/> 
 
-    <!--
-        <bean class="fi.vm.sade.organisaatio.ui.widgets.factory.OrganisaatioWidgetFactory"/>
-    -->
 
 </beans>

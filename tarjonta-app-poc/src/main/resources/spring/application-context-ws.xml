@@ -8,15 +8,10 @@
     <bean id="ticketInterceptor" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptor">
         <property name="callback" ref="callback" />
     </bean>
-     <!--
-    <bean id="callback" class="fi.vm.sade.generic.ui.portlet.security.mock.MockTicketCallback">
 
-        </bean>
-    -->
     <bean id="callback" class="fi.vm.sade.generic.ui.app.LiferaySecurityTicketCallback">
 
     </bean>
-     
      
     <!-- Configure CXF bus to contain ticketInterceptor -->
     <cxf:bus>
