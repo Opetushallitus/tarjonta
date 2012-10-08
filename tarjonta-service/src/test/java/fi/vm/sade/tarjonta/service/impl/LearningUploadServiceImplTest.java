@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +84,7 @@ public class LearningUploadServiceImplTest {
      * Test of upload method, of class LearningUploadServiceImpl.
      */
     @Test
+    @Ignore
     public void testUpload() throws Exception {
         LOG.info("testUpload: {}", learningUploadService);
 
