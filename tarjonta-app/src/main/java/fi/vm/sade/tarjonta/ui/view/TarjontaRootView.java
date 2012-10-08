@@ -165,5 +165,9 @@ public class TarjontaRootView extends Window {
             this.tWebApp.toHaku();
         }
     }
+    
+    public TarjontaWebApplication gettWebApp() {
+        return tWebApp;
+    }
 
 }

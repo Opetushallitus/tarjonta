@@ -91,16 +91,18 @@ public class TarjontaPresenter {
         vl.addComponent(_rootView.getBreadcrumbsView());
         vl.addComponent(_rootView.getSearchSpesificationView());
         vl.addComponent(_rootView.getSearchResultsView());
-        Button b = new Button("Hakuun");
-        b.addListener(new Button.ClickListener() {
+        if (_rootView.gettWebApp() != null) {
+            Button b = new Button("Hakuun");
+            b.addListener(new Button.ClickListener() {
             
-            @Override
-            public void buttonClick(ClickEvent event) {
-                // TODO Auto-generated method stub
-                _rootView.toHaku();   
-            }
-        });
-        vl.addComponent(b);
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    // TODO Auto-generated method stub
+                    _rootView.toHaku();   
+                }
+            });
+            vl.addComponent(b);
+        }
         _rootView.getAppRightLayout().addComponent(vl);
         _rootView.getAppRightLayout().setExpandRatio(vl, 1f);
         /*_rootView.getAppRightLayout().addComponent(_rootView.getBreadcrumbsView());

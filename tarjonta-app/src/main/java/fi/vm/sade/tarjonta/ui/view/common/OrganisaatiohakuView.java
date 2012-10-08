@@ -36,6 +36,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
@@ -76,6 +77,7 @@ public class OrganisaatiohakuView extends
     private CheckBox lakkautetut;
     private CheckBox suunnitellut;
     private Button searchB;
+    private Button tyhjennaB;
     private Tree tree;
     private HierarchicalContainer hc;
     
@@ -127,13 +129,26 @@ public class OrganisaatiohakuView extends
         
         lakkautetut = UiUtil.checkbox(panelTop, i18n.getMessage("naytaMyosLakkautetut"));
         suunnitellut = UiUtil.checkbox(panelTop, i18n.getMessage("naytaMyosSuunnitellut"));
-        searchB = UiUtil.buttonSmallPlus(panelTop, i18n.getMessage("hae"), new Button.ClickListener() {
+        HorizontalLayout buttonsL = UiUtil.horizontalLayout();
+        searchB = UiUtil.buttonSmallPrimary(buttonsL, i18n.getMessage("hae"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 searchOrganisaatios();         
             }
         });
         
+        tyhjennaB = UiUtil.buttonSmallPrimary(buttonsL, i18n.getMessage("tyhjenna"),  new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                criteria = new OrganisaatioSearchCriteriaDTO();
+                if (rootOrganisaatioOids != null) {
+                    criteria.getOidResctrictionList().addAll(rootOrganisaatioOids);
+                }    
+                initializeData();
+            }
+        });
+        
+        panelTop.addComponent(buttonsL);
         Panel panelBottom = buildPanel(buildTreePanelLayout());
         panelBottom.addStyleName(Oph.CONTAINER_SECONDARY);
 
