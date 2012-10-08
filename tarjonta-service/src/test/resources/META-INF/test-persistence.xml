@@ -17,9 +17,6 @@
         <class>fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus</class>
         <class>fi.vm.sade.tarjonta.model.TutkinnonOsa</class>
         <class>fi.vm.sade.tarjonta.model.TutkinnonOsaToteutus</class>
-        <!-- deprecated in favor of KoulutusRakenne
-        <class>fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys</class>
-        -->
         <class>fi.vm.sade.tarjonta.model.KoodistoUri</class>
         <class>fi.vm.sade.tarjonta.model.Oid</class>
         <class>fi.vm.sade.tarjonta.model.Haku</class>
