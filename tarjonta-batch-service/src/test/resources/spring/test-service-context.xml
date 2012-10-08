@@ -11,10 +11,12 @@
 
     <context:annotation-config />
     <aop:aspectj-autoproxy />
-	
-    <bean id="oidService" class="fi.vm.sade.oid.service.mock.OIDServiceMock" /> 
 
-    <bean id="batchService"
-          class="fi.vm.sade.tarjonta.service.impl.TarjontaBatchServiceImpl" />
-    
+    <bean id="oidService" class="fi.vm.sade.oid.service.mock.OIDServiceMock" />
+
+    <bean id="learningUploadService" class="fi.vm.sade.tarjonta.service.impl.LearningUploadServiceImpl"/>
+
+<!--    <bean id="batchService"
+          class="fi.vm.sade.tarjonta.service.impl.TarjontaBatchServiceImpl" />-->
+
 </beans>

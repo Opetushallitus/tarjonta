@@ -13,10 +13,11 @@
     <packaging>war</packaging>
 
     <dependencies>
+
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-api</artifactId>
-            <version>${project.version}</version>
+            <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
 
@@ -25,8 +26,8 @@
             <artifactId>generic-test-support</artifactId>
             <scope>test</scope>
         </dependency>
-        
-        
+
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -35,32 +36,32 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-api</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.servicemix.bundles</groupId>
             <artifactId>org.apache.servicemix.bundles.commons-dbcp</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -93,14 +94,14 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>fi.vm.sade.oid</groupId>
             <artifactId>oid-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
-        
+
+
     </dependencies>
 
     <build>
@@ -109,10 +110,8 @@
             <filter>src/main/filter/filter-${env}.properties</filter>
         </filters>
         <plugins>
-            
+
         </plugins>
     </build>
-
-    
 
 </project>
