@@ -122,6 +122,7 @@
                 <artifactId>cxf-codegen-plugin</artifactId>
                 <version>${cxf.version}</version>
                 <executions>
+
                     <execution>
                         <id>generate-tarjonta-wsdl2java</id>
                         <phase>generate-sources</phase>

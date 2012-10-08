@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <wsdl:definitions name="learningUploadService"
                   targetNamespace="http://service.tarjonta.sade.vm.fi/"
-                  xmlns:ns1="http://service.tarjonta.sade.vm.fi/types"
+                  xmlns:ns1="http://service.tarjonta.sade.vm.fi/types2"
                   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://service.tarjonta.sade.vm.fi/"
                   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <wsdl:types>
         <xsd:schema targetNamespace="http://service.tarjonta.sade.vm.fi/">
-            <xsd:import namespace="http://service.tarjonta.sade.vm.fi/types" schemaLocation="learningUploadService.xsd" />
+            <xsd:import namespace="http://service.tarjonta.sade.vm.fi/types2" schemaLocation="learningUploadService.xsd" />
         </xsd:schema>
     </wsdl:types>
 
@@ -14,25 +14,25 @@
         <wsdl:part element="ns1:LearningUploadRequest" name="request">
         </wsdl:part>
     </wsdl:message>
-    
+
     <wsdl:message name="learningUploadResponse">
         <wsdl:part element="ns1:LearningUploadResponse" name="response">
         </wsdl:part>
     </wsdl:message>
-    
+
     <wsdl:portType name="LearningUploadService">
         <wsdl:documentation>
             Service for importing learning data.
         </wsdl:documentation>
         <wsdl:operation name="upload">
             <wsdl:documentation>
-                
+
             </wsdl:documentation>
             <wsdl:input message="tns:learningUploadRequest" name="learningUploadRequest">
             </wsdl:input>
             <wsdl:output message="tns:learningUploadResponse" name="learningUploadResponse">
             </wsdl:output>
-        </wsdl:operation>        
+        </wsdl:operation>
     </wsdl:portType>
 
     <wsdl:binding name="LearningUploadServiceSoapBinding" type="tns:LearningUploadService">
@@ -45,7 +45,7 @@
             <wsdl:output name="learningUploadResponse">
                 <soap:body use="literal" />
             </wsdl:output>
-        </wsdl:operation>        
+        </wsdl:operation>
     </wsdl:binding>
 
     <wsdl:service name="LearningUploadService">
