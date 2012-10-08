@@ -102,12 +102,10 @@
 
 
     <!-- ========================================================================================= -->
-    <!-- Koulutusmoduulin toteutus                                                                 -->
+    <!-- Koulutusmoduulin toteutus, YO                                                             -->
     <!-- ========================================================================================= -->
 
-    <!-- todo: lisattava toteuttava organisaatio -->
-
-    <LearningOpportunityInstance id="I1508">
+    <LearningOpportunityInstance id="I1508YO">
 
         <!-- Koulutusmoduulin toteutuksen tunniste, koulutuksen tarjoajan jarjestelmassa. -->
         <Identifier>T1508</Identifier>
@@ -229,10 +227,167 @@
 
 
     <!-- ========================================================================================= -->
+    <!-- Koulutusmoduulin toteutus, PK                                                             -->
+    <!-- ========================================================================================= -->
+
+    <LearningOpportunityInstance id="I1508PK">
+
+        <!-- Koulutusmoduulin toteutuksen tunniste, koulutuksen tarjoajan jarjestelmassa. -->
+        <Identifier>T1508</Identifier>
+
+        <!-- koulutusmoduuli jota tämä toteutus täydentää (sama kuin PK-linjalla) -->
+        <SpecificationRef ref="S1508"/>
+
+        <!-- koulutustarjoaja joka tarjoaa tätä koulutusta -->
+        <ProviderRef ref="P1"/>
+
+        <!-- Pohjakoulutus vaatimus -->
+        <!-- todo: mallissa tämä on koodisto joten arbitraaria dataa ei voida ottaa vastaan. -->
+        <Prerequisite>
+            Perusopetuksen oppimäärä. Ylioppilaat ja lukion suorittaneet eivät hakukelpoisia.
+        </Prerequisite>
+
+        <!-- ammattinimikkeet -->
+        <Profession>
+            <Title>Lähihoitaja</Title>
+            <Title>Perushoitaja</Title>
+            <Title>Ensihoitaja</Title>
+        </Profession>
+
+        <!-- asiasanat -->
+        <Keywords>
+            <Keyword>Lähihoitaja</Keyword>
+            <Keyword>Hoiva-ala</Keyword>
+            <Keyword>Sosiaali- ja terveys</Keyword>
+            <Keyword>Ensihoito</Keyword>
+            <Keyword>Ambulanssi</Keyword>
+        </Keywords>
+
+        <!-- opetuskielet -->
+        <LanguagesOfInstruction scheme="ISO-639-1">
+
+            <!-- opetusta suomeksi -->
+            <Language code="fi"/>
+
+        </LanguagesOfInstruction>
+
+        <!--koulutuslaji -->
+        <FormOfEducation scheme="http://oph.fi">
+            <Value>http://koodistopalvelu.opintopolku.fi/koulutusLaj/1</Value>
+            <Label>nuorten koulutus</Label>
+        </FormOfEducation>
+
+        <!-- joukko opetusmuotoja -->
+        <FormsOfTeaching>
+
+            <!-- lähiopetus -->
+            <FormOfTeaching type="Classroom"/>
+
+        </FormsOfTeaching>
+
+        <!-- koulutuksen alkamispäivämäärä, ISO-8601 muodossa -->
+        <StartDate>2014-09-14</StartDate>
+
+        <!-- lukuvuosi -->
+        <AcademicYear>2014</AcademicYear>
+
+        <!-- koulutuksen kesto, tässä PK toteutus eroaa YO toteutuksesta. -->
+        <Duration>P3Y</Duration>
+
+        <!-- arviointi kriteerit -->
+        <Assessments>
+
+            <!-- yleiset arviointi kriteerit suomeksi -->
+            <Assessment xml:lang="fi">
+                Lorem Lipsum
+            </Assessment>
+
+        </Assessments>
+
+        <!-- sanallinen kuvaus koulutuksen loppukokeista -->
+        <FinalExamination>
+
+            <Description xml:lang="fi">
+                Lorem Lipsum
+            </Description>
+
+        </FinalExamination>
+
+        <!-- tieto opiskelun maksullisuudesta -->
+        <CostOfEducation>
+
+            <!-- opiskelu on maksutonta -->
+            <NoCost />
+
+            <!--
+            tai 1 tai useampi maksukuvaus
+            <Fee amount="200" currency="EUR" repeat="once"/>
+            -->
+
+        </CostOfEducation>
+
+        <!-- stipendeihin liittyä tieto -->
+        <Scholarship>
+
+            <!-- yleinen kuvaus stipendimahdollisuuksista -->
+            <Description xml:lang="fi">
+                Lorem Lipsum
+            </Description>
+
+        </Scholarship>
+
+
+        <!-- joukko linkkejä jotka liittyvät toteutukseen -->
+        <WebLinks>
+
+            <!-- linkki oppilaitoksen sivuille sekä optinaalinen label elementti -->
+            <Link type="HOME">
+                <Label xml:lang="fi">Oppilaitoksen sivut</Label>
+                <Uri>http://www.hel.fi/hki/Hesote/fi/Etusivu</Uri>
+            </Link>
+
+        </WebLinks>
+
+    </LearningOpportunityInstance>
+
+
+    <!-- ========================================================================================= -->
     <!-- Koulutuksen tarjoaja                                                                      -->
     <!-- ========================================================================================= -->
 
     <LearningOpportunityProvider id="P1">
+
+        <!-- viittaus organisaation palvelun organisaatioon jota tämä rakenne kuvailee -->
+        <OrganizationRef>
+            <OidRef>1.2.3.4.5</OidRef>
+        </OrganizationRef>
+
+        <InstitutionInfo>
+            <Name>Helsingin sosiaali- ja terveysalan oppilaitos, Laakson koulutusyksikkö</Name>
+            <AcademicCalendar>Lorem Lipsum</AcademicCalendar>
+            <AcademicAuthorities>Lorem Lipsum</AcademicAuthorities>
+            <AdmissionProcedures>Lorem Lipsum</AdmissionProcedures>
+            <GeneralDescription>Lorem Lipsum</GeneralDescription>
+            <MainUniversityRequlations>Lorem Lipsum</MainUniversityRequlations>
+        </InstitutionInfo>
+
+        <GeneralInformation>
+            <CostOfLiving>Lorem Lipsum</CostOfLiving>
+            <Meals>Lorem Lipsum</Meals>
+            <MedicalFacilities>Lorem Lipsum</MedicalFacilities>
+            <FacilitiesForStudentsWithSpecialNeeds>Lorem Lipsum</FacilitiesForStudentsWithSpecialNeeds>
+            <Insurance>Lorem Lipsum</Insurance>
+            <FinancialSupport>Lorem Lipsum</FinancialSupport>
+            <StudentAffairsOffice>Lorem Lipsum</StudentAffairsOffice>
+            <StudyFacilities>Lorem Lipsum</StudyFacilities>
+            <InternationalProgrammes>Lorem Lipsum</InternationalProgrammes>
+            <MobileStudents>Lorem Lipsum</MobileStudents>
+            <LanguageCourses>Lorem Lipsum</LanguageCourses>
+            <Internships>Lorem Lipsum</Internships>
+            <SportsFacilities>Lorem Lipsum</SportsFacilities>
+            <ExtraMuralAndLeisureFacilities>Lorem Lipsum</ExtraMuralAndLeisureFacilities>
+            <StudentAssociations>Lorem Lipsum</StudentAssociations>
+        </GeneralInformation>
 
     </LearningOpportunityProvider>
 
@@ -272,6 +427,15 @@
 
             <!-- aloituspaikkojen määrä -->
             <StartingQuota>20</StartingQuota>
+
+            <!-- edellisen vuoden alin hyväksytty pistemäärä -->
+            <LastYearMinScore>20</LastYearMinScore>
+
+            <!-- edellisen vuoden ylin hyväksytty pistemäärä -->
+            <LastYearMaxScore>30</LastYearMaxScore>
+
+            <!-- edellisen vuoden hakijoiden määrä -->
+            <LastYearTotalApplicants>300</LastYearTotalApplicants>
 
             <!-- vapaa kuvaus -->
             <Description xml:lang="fi">
@@ -373,7 +537,7 @@
 
         <!-- hakukohteeseen kuuluvat koulutusmoduulin toteutukset -->
         <LearningOpportunities>
-            <InstanceRef ref="I1508"/>
+            <InstanceRef ref="I1508YO"/>
         </LearningOpportunities>
 
         <!-- hakukohteen vapaamuotoinen kuvaus -->

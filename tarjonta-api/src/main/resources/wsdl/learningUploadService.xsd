@@ -167,13 +167,49 @@
         </xs:annotation>
         <xs:sequence>
 
-            <xs:element name="StartingQuota" type="xs:integer">
+            <xs:element name="StartingQuota"
+                        type="xs:integer">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
                         Aloituspaikkojen maara.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+
+            <xs:element name="LastYearMinScore"
+                        type="xs:integer"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Edellisen vuoden alin hyvaksytty pistemaara.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="LastYearMaxScore"
+                        type="xs:integer"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Edellisen vuoden ylin hyvaksytty pistemaara.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+
+            <xs:element name="LastYearTotalApplicants"
+                        type="xs:integer"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Edellisen vuoden hakijoiden maara.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
 
             <xs:element name="Description"
                         type="tns:ExtendedStringType"
@@ -448,7 +484,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:choice>
-            <xs:element name="OidRef" type="tns:OidType">
+            <xs:element name="OidRef" type="tns:OidRefType">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
                         Viittaus hakun haun julkisella OID tunnisteella.
@@ -1009,8 +1045,38 @@
                       use="required"/>
     </xs:complexType>
 
+    <xs:complexType name="OrganizationRefType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                References an organization structure in the OPH Organization Service.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+            <xs:element name="OidRef" type="tns:OidRefType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Viittaus organisaatio rakenteeseen sen OID tunnisteella.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+
     <xs:complexType name="LearningOpportunityProviderType">
         <xs:sequence>
+
+            <xs:element name="OrganizationRef"
+                        type="tns:OrganizationRefType"
+                        minOccurs="1"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Viittaus organisaatioon jolle tama koulutuksen jarjestajan kuvaus kuuluu.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
             <xs:element name="InstitutionInfo"
                         minOccurs="0"
                         maxOccurs="1">
@@ -1382,7 +1448,7 @@
     </xs:simpleType>
 
 
-    <xs:simpleType name="LearningOpportunityType">
+    <xs:simpleType name="LearningOpportunityTypeType">
         <xs:restriction base="xs:normalizedString">
             <xs:enumeration value="DegreeProgramme">
                 <xs:annotation>
@@ -1498,7 +1564,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="OidType">
+    <xs:simpleType name="OidRefType">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
                 Tietotyyppi OID -tyyppisille arvoille.
@@ -1633,7 +1699,7 @@
                 Yleisia LearningOpportunity:lle seka LearningOpportunitySpecification:lle yhteisia attribuutteja.
             </xs:documentation>
         </xs:annotation>
-        <xs:attribute name="type" type="tns:LearningOpportunityType" use="required"/>
+        <xs:attribute name="type" type="tns:LearningOpportunityTypeType" use="required"/>
     </xs:attributeGroup>
 
 
