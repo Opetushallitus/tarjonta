@@ -9,26 +9,28 @@
           class="fi.vm.sade.generic.service.conversion.SadeConversionServiceFactoryBean">
         <property name="converters">
             <list>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToDTOConverterFactory"/>                
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToDTOConverter"/>                
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToDTOConverterFactory"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaDTOToTutkintoOhjelmaConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliDTOToKoulutusmoduuliConverter"/>
-                
+
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakuFromDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakuToDTOConverter"/>
 
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraToSimpleDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraFromSimpleDTOConverter"/>
-                
+
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraToDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraFromDTOConverter"/>
-                
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToteutusToDTOConverter"/>                                
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToteutusDTOToModelConverter"/>                                
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToteutusDTOToModelConverter"/>                                
-                
+
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToteutusToDTOConverter"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToteutusDTOToModelConverter"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToteutusDTOToModelConverter"/>
+
             </list>
         </property>
     </bean>
-	
+
+    <bean id="learningUploadService" class="fi.vm.sade.tarjonta.service.impl.LearningUploadServiceImpl" />
+
 </beans>
