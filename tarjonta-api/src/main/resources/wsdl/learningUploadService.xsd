@@ -15,9 +15,39 @@
     </xs:import>
 
 
-    <xs:element name="LearningUploadRequest" type="tns:LearningUploadRequestType" />
+    <!-- ============================================================================================ -->
+    <!-- Root elements                                                                                -->
+    <!-- ============================================================================================ -->
+
+    <xs:element name="LearningUploadRequest" type="tns:LearningUploadRequestType"/>
     <xs:element name="LearningUploadResponse" type="tns:LearningUploadResponseType" />
     <xs:element name="LearningOpportunityData" type="tns:LearningOpportunityDataType" />
+
+
+    <!-- referenced -->
+
+    <xs:element name="EmailAddress">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Rakenne yhden sahkopostiosoittee esittamiseksi
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+
+    <xs:element name="PostalAddress">
+        <xs:complexType>
+            <xs:group ref="tns:PostalAddressGroup"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- ============================================================================================ -->
+    <!-- Complex types                                                                                -->
+    <!-- ============================================================================================ -->
 
     <xs:complexType name="LearningUploadResponseType">
     </xs:complexType>
@@ -520,21 +550,26 @@
             <!-- todo: siirra nimi group:iin -->
             <xs:extension base="tns:LearningOpportunityObjectType">
                 <xs:sequence>
+
                     <xs:group ref="tns:IdentifierGroup"/>
+
                     <xs:element name="OfferedBy"
                                 type="tns:LearningOpportunityProviderRefType"
                                 minOccurs="0"
                                 maxOccurs="1"/>
+
                     <!-- Classification:n alle? -->
                     <xs:element name="Credits"
                                 type="tns:CreditsType"
                                 minOccurs="0"
                                 maxOccurs="1"/>
+
                     <!-- Classification:n alle? -->
                     <xs:element name="Qualification"
                                 type="tns:QualificationType"
                                 minOccurs="0"
                                 maxOccurs="1"/>
+
                     <xs:element name="DegreeTitle"
                                 type="tns:ExtendedStringType"
                                 minOccurs="0"
@@ -545,6 +580,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
+
                     <xs:element name="Classification" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation xml:lang="fi">
@@ -555,19 +591,12 @@
                         </xs:annotation>
                         <xs:complexType>
                             <xs:sequence>
-                                <!-- maybe deprecated unified code as can be represented with one ClassificationItem
 
-                                <xs:choice>
-                                    <xs:element name="UnifiedCode"
-                                                type="tns:UnifiedCodeType"/>
-                                -->
                                 <xs:element name="ClassificationCode"
                                             type="tns:LearningClassificationCodeType"
                                             minOccurs="1"
                                             maxOccurs="unbounded"/>
-                                <!--
-                                </xs:choice>
-                                -->
+
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
@@ -580,6 +609,7 @@
                         </xs:annotation>
                         <xs:complexType>
                             <xs:sequence>
+
                                 <xs:element name="GeneralDescription"
                                             type="tns:ExtendedStringType"
                                             minOccurs="0"
@@ -590,6 +620,7 @@
                                         </xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
+
                                 <xs:element name="StructureDiagram"
                                             type="xs:string"
                                             minOccurs="0"
@@ -600,6 +631,7 @@
                                         </xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
+
                                 <xs:element name="EducationAndProfessionalGoals"
                                             type="xs:string"
                                             minOccurs="0"
@@ -610,6 +642,7 @@
                                         </xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
+
                                 <xs:element name="AccessToFurtherStudies"
                                             type="xs:string"
                                             minOccurs="0"
@@ -620,18 +653,33 @@
                                         </xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
+
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
+
                     <xs:element name="Structure"
                                 type="tns:StructureType"
                                 minOccurs="0"
-                                maxOccurs="1"/>
+                                maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="fi">
+                                Koulutusmoduuliin sisaltyvat rakenteet ja sisaltyvyys saannot.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+
                 </xs:sequence>
 
                 <xs:attribute name="id"
                               type="xs:ID"
-                              use="optional"/>
+                              use="optional">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="fi">
+                            Rakenteen yksiloiva tunniste. Kaytetaan dokumentit sisaisiin viittauksiin.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
 
                 <xs:attributeGroup ref="tns:LearningOpportunityModuleAttrGroup"/>
 
@@ -1018,6 +1066,11 @@
     </xs:complexType>
 
     <xs:complexType name="StructureType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Kuvaa sisaltyvan koulutusrakenteen.
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="SpecificationRef"
                         type="tns:LearningOpportunitySpecificationRefType"
@@ -1025,6 +1078,8 @@
                         maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="selector" type="tns:StructureSelectorType"/>
+        <xs:attribute name="min" type="xs:integer" use="optional"/>
+        <xs:attribute name="max" type="xs:integer" use="optional"/>
     </xs:complexType>
 
     <xs:complexType name="LearningOpportunitySpecificationRefType">
@@ -1352,7 +1407,6 @@
         </xs:sequence>
     </xs:complexType>
 
-    <!-- -->
     <xs:complexType name="CreditsType">
         <xs:simpleContent>
             <xs:extension base="xs:string">
@@ -1380,6 +1434,100 @@
         </xs:simpleContent>
     </xs:complexType>
 
+    <!-- ============================================================================================ -->
+    <!-- Groups                                                                                       -->
+    <!-- ============================================================================================ -->
+
+    <xs:group name="PostalAddressGroup">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Rakenne postiosoitteelle.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Name"
+                        type="xs:string"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Vastaaottajan nimi (henkilo)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Company"
+                        type="xs:string"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Vastaaottajan nimi (yritys, organisaatio tms.)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="AddressLine"
+                        type="xs:string"
+                        minOccurs="1"
+                        maxOccurs="5">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Katuosoite rivit
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PostalCode"
+                        type="tns:PostalCodeType"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Postinumero
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="City"
+                        type="xs:string"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Kaupunki
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:group name="IdentifierGroup">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Identifier" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Tunniste jonka taytyy olla yksiloiva (uniikki) tiedon omistajan nakokulmasta.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
+
+
+    <xs:attributeGroup name="LearningOpportunityModuleAttrGroup">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Yleisia LearningOpportunity:lle seka LearningOpportunitySpecification:lle yhteisia attribuutteja.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="type" type="tns:LearningOpportunityTypeType" use="required"/>
+    </xs:attributeGroup>
+
+
+    <!-- ============================================================================================ -->
+    <!-- Simple types                                                                                 -->
+    <!-- ============================================================================================ -->
 
     <xs:simpleType name="EducationFeeRepeatType">
         <xs:annotation>
@@ -1596,113 +1744,5 @@
             <xs:maxLength value="20"/>
         </xs:restriction>
     </xs:simpleType>
-
-    <xs:element name="EmailAddress">
-        <xs:annotation>
-            <xs:documentation xml:lang="fi">
-                Rakenne yhden sahkopostiosoittee esittamiseksi
-            </xs:documentation>
-        </xs:annotation>
-        <xs:simpleType>
-            <xs:restriction base="xs:string">
-                <xs:pattern value="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"/>
-            </xs:restriction>
-        </xs:simpleType>
-    </xs:element>
-
-    <xs:element name="PostalAddress">
-        <xs:complexType>
-            <xs:group ref="tns:PostalAddressGroup"/>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:group name="PostalAddressGroup">
-        <xs:annotation>
-            <xs:documentation xml:lang="fi">
-                Rakenne postiosoitteelle.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="Name"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>
-                        Vastaaottajan nimi (henkilo)
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="Company"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>
-                        Vastaaottajan nimi (yritys, organisaatio tms.)
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="AddressLine"
-                        type="xs:string"
-                        minOccurs="1"
-                        maxOccurs="5">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Katuosoite rivit
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="PostalCode"
-                        type="tns:PostalCodeType"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>
-                        Postinumero
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="City"
-                        type="xs:string"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>
-                        Kaupunki
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-        </xs:sequence>
-    </xs:group>
-
-    <xs:group name="IdentifierGroup">
-        <xs:annotation>
-            <xs:documentation xml:lang="fi">
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="Identifier" type="xs:string">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Tunniste jonka taytyy olla yksiloiva (uniikki) tiedon omistajan nakokulmasta.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-        </xs:sequence>
-    </xs:group>
-
-
-    <xs:attributeGroup name="LearningOpportunityModuleAttrGroup">
-        <xs:annotation>
-            <xs:documentation xml:lang="fi">
-                Yleisia LearningOpportunity:lle seka LearningOpportunitySpecification:lle yhteisia attribuutteja.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:attribute name="type" type="tns:LearningOpportunityTypeType" use="required"/>
-    </xs:attributeGroup>
-
-
-
 
 </xs:schema>

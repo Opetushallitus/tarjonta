@@ -30,6 +30,9 @@
         <!-- tutkinto-ohjelman tunniste -->
         <Identifier>1508</Identifier>
 
+
+        <OfferedBy ref="P1"/>
+
         <!-- laajuus sekä laajuusyksikkö -->
         <Credits unit="CreditUnits">120</Credits>
 
@@ -964,7 +967,6 @@
     </ApplicationTarget>
 
 
-
     <!-- ========================================================================================= -->
     <!-- Hakukohde: Sosiaali- ja terveysalan perustutkinto, pk                                     -->
     <!-- ========================================================================================= -->
@@ -1123,8 +1125,5 @@
         </Description>
 
     </ApplicationTarget>
-
-
-
 
 </LearningOpportunityData>
