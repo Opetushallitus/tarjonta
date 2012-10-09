@@ -815,7 +815,7 @@
     <!-- Hakukohde: ensihoidon koulutusohjelma                                                     -->
     <!-- ========================================================================================= -->
 
-    <ApplicationTarget>
+    <ApplicationOption>
 
         <!-- hakukohteen yksilöivä tunniste (missä scopessa?) -->
         <Identifier>776</Identifier>
@@ -964,14 +964,14 @@
             Lorem Lipsum
         </Description>
 
-    </ApplicationTarget>
+    </ApplicationOption>
 
 
     <!-- ========================================================================================= -->
     <!-- Hakukohde: Sosiaali- ja terveysalan perustutkinto, pk                                     -->
     <!-- ========================================================================================= -->
 
-    <ApplicationTarget>
+    <ApplicationOption>
 
         <!-- hakukohteen yksilöivä tunniste (missä scopessa?) -->
         <Identifier>873</Identifier>
@@ -1124,6 +1124,6 @@
             Lorem Lipsum
         </Description>
 
-    </ApplicationTarget>
+    </ApplicationOption>
 
 </LearningOpportunityData>

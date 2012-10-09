@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <LearningOpportunityData
-    xmlns="http://service.tarjonta.sade.vm.fi/types"
+    xmlns="http://service.tarjonta.sade.vm.fi/types2"
     xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-    xsi:schemaLocation='http://service.tarjonta.sade.vm.fi/types  ../../main/resources/wsdl/learningUploadService.xsd' xmlns:http="null">
+    xsi:schemaLocation='http://service.tarjonta.sade.vm.fi/types2  ../../main/resources/wsdl/learningUploadService.xsd' xmlns:http="null">
 
     <!--
         koulutusmoduuli jossa:
@@ -97,8 +97,12 @@
 
     <LearningOpportunityProvider id="LOP1">
 
+        <OrganizationRef>
+            <OidRef>1.2.3.4.5</OidRef>
+        </OrganizationRef>
+
         <!-- instituutiotietoja ryhmittelevä rakenne -->
-        <Institution>
+        <InstitutionInfo>
             <Name xml:lang="fi">nimi</Name>
             <Name xml:lang="en">name</Name>
             <Name xml:lang="sv">namn</Name>
@@ -114,7 +118,7 @@
             <MainUniversityRequlations xml:lang="en">
                 regulations...
             </MainUniversityRequlations>
-        </Institution>
+        </InstitutionInfo>
 
         <!-- yleisiä tietoja ryhmittelevä rakenne -->
         <GeneralInformation>
@@ -149,7 +153,7 @@
 
     <!-- hakukohteet 0-n kappaletta -->
 
-    <ApplicationTarget>
+    <ApplicationOption>
 
         <Identifier>1.2.3.4.5</Identifier>
 
@@ -173,6 +177,6 @@
             <InstanceRef ref="LOS2"/>
         </LearningOpportunities>
 
-    </ApplicationTarget>
+    </ApplicationOption>
 
 </LearningOpportunityData>

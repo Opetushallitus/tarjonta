@@ -86,18 +86,18 @@
                         type="tns:LearningOpportunityProviderType"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-            <xs:element name="ApplicationTarget"
-                        type="tns:ApplicationTargetType"
+            <xs:element name="ApplicationOption"
+                        type="tns:ApplicationOptionType"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
     <!-- ============================================================================================ -->
-    <!-- ApplicationTarget                                                                            -->
+    <!-- ApplicationOption                                                                            -->
     <!-- ============================================================================================ -->
 
-    <xs:complexType name="ApplicationTargetType">
+    <xs:complexType name="ApplicationOptionType">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
                 Suomenkielinen termi: hakukohde
