@@ -15,10 +15,57 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
+import com.vaadin.ui.Button;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
+import fi.vm.sade.vaadin.constants.StyleEnum;
+import org.springframework.beans.factory.annotation.Configurable;
 /**
  *
  * @author mlyly
+ * Tuomas Katva
  */
-public class EditHakukohdeView {
+public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
 
+    public EditHakukohdeView() {
+        super(EditHakukohdeView.class);
+        
+    }
+    
+    @Override
+    protected void buildLayout(VerticalLayout t) {
+        
+    }
+
+    private void createButtons() {
+        addNavigationButton("", new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+//                getPresenter().showMainKoulutusView();
+            }
+        }, StyleEnum.STYLE_BUTTON_BACK);
+        
+        addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        });
+        
+        addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        });
+        
+        addNavigationButton(T("jatka"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+//                getPresenter().showShowHakukohdeView();               
+            }
+        });
+    }
+    
 }
