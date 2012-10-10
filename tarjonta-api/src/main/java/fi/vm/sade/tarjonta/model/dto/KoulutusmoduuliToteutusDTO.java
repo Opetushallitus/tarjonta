@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,7 +21,6 @@ import java.util.Set;
 
 /**
  *
- * @author Jukka Raanamo
  */
 @SuppressWarnings("serial")
 public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
@@ -42,11 +41,7 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
      */
     private String koulutuslajiUri;
 
-    /*
-     * TODO: Miksi näitä voi olla tietomallin mukaan monta, vaikka lomakkeessa voi valita vain yhden? Vastaus Sepolta: Oikeasti on vain yksi. Monesta moneen
-     * suhde käytännössä syntyy vain monimutkaisten organisaatioiden välisten suhteiden kautta.
-     */
-    private Set<String> tarjoajat;
+    private String tarjoajaOid;
 
     private Date koulutuksenAlkamisPvm;
 
@@ -86,9 +81,7 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
 
     @Override
     public String toString() {
-        
-        
-        
+
         return new StringBuilder().append("oid : ").append(oid).append("nimi : ").
             append(nimi).
             append("tila :").
@@ -130,18 +123,18 @@ public abstract class KoulutusmoduuliToteutusDTO implements Serializable {
 
     /**
      *
-     * @return the list of tarjoaja organisaatio oids.
+     * @return tarjoaja organisaatio oid.
      */
-    public Set<String> getTarjoajat() {
-        return tarjoajat;
+    public String getTarjoaja() {
+        return tarjoajaOid;
     }
 
     /**
      *
      * @param tarjoajat the list of tarjoaja organisaatio oids to set
      */
-    public void setTarjoajat(Set<String> tarjoajat) {
-        this.tarjoajat = tarjoajat;
+    public void setTarjoaja(String organisaatioOid) {
+        this.tarjoajaOid = organisaatioOid;
     }
 
     /**
