@@ -14,7 +14,7 @@ public class TutkintoOhjelmaToteutusDTOToModelConverter extends AbstractToDomain
 
     @Override
     public TutkintoOhjelmaToteutus convert(TutkintoOhjelmaToteutusDTO source) {
-        
+
         TutkintoOhjelmaToteutus model = new TutkintoOhjelmaToteutus();
         model.setTila(source.getTila());
         model.setOid(source.getOid());
@@ -22,21 +22,16 @@ public class TutkintoOhjelmaToteutusDTOToModelConverter extends AbstractToDomain
         model.setKoulutuksenAlkamisPvm(source.getKoulutuksenAlkamisPvm());
         model.setKoulutusLaji(source.getKoulutuslajiUri());
         convertTarjoajat(source, model);
-        
+
         return model;
     }
-    
-    private void convertTarjoajat(TutkintoOhjelmaToteutusDTO source, TutkintoOhjelmaToteutus model) {
-        if (source.getTarjoajat() != null) {
-            for (String curTarjoaja : source.getTarjoajat()) {
-                model.addTarjoaja(curTarjoaja);
 
-            }
-        }
+    private void convertTarjoajat(TutkintoOhjelmaToteutusDTO source, TutkintoOhjelmaToteutus model) {
+        model.setTarjoaja(source.getTarjoaja());
 
     }
-    
-    
+
+
     private Koulutusmoduuli convertKoulutusmoduuli(TutkintoOhjelmaToteutusDTO source) {
         if (source.getToteutettavaKoulutusmoduuliOID() != null) {
             Koulutusmoduuli km = new TutkintoOhjelma();
@@ -45,7 +40,7 @@ public class TutkintoOhjelmaToteutusDTOToModelConverter extends AbstractToDomain
         }
         return null;
     }
-    
-    
+
+
 
 }

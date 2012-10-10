@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -46,7 +46,7 @@ public class KoulutusmoduuliToteutusDAOTest {
     private TutkintoOhjelma defaultModuuli;
 
     private KoulutusmoduuliToteutus defaultToteutus;
-    
+
     private static final Date ALKAMIS_PVM = new Date();
 
     private static final String TARJOAJA_1_OID = "http://organisaatio1";
@@ -61,7 +61,7 @@ public class KoulutusmoduuliToteutusDAOTest {
 
     @Before
     public void setUp() {
-        
+
         defaultModuuli = new TutkintoOhjelma();
         defaultModuuli.setOid("http://someoid");
         defaultModuuli.setTutkintoOhjelmanNimi("Junit Tutkinto");
@@ -93,55 +93,20 @@ public class KoulutusmoduuliToteutusDAOTest {
 
     }
 
-    @Test
-    public void testAddTarjoajaToToteutus() {
 
-        assertEquals(0, defaultToteutus.getTarjoajat().size());
-
-        defaultToteutus.addTarjoaja(TARJOAJA_1_OID);
-        KoulutusmoduuliToteutus loaded = updateAndRead(defaultToteutus);
-        assertEquals(1, loaded.getTarjoajat().size());
-
-    }
-
-    @Test
-    public void testAddMultipleTarjoajaToToteutus() {
-
-        defaultToteutus.addTarjoaja(TARJOAJA_1_OID);
-        defaultToteutus.addTarjoaja(TARJOAJA_2_OID);
-        KoulutusmoduuliToteutus loaded = updateAndRead(defaultToteutus);
-        assertEquals(2, loaded.getTarjoajat().size());
-
-    }
-
-    @Test
-    public void testRemoveTarjoaja() {
-
-        defaultToteutus.addTarjoaja(TARJOAJA_1_OID);
-        KoulutusmoduuliToteutus loaded = updateAndRead(defaultToteutus);
-
-        assertEquals(1, loaded.getTarjoajat().size());
-        loaded.removeTarjoaja(TARJOAJA_1_OID);
-
-        assertEquals(0, loaded.getTarjoajat().size());
-
-        loaded = updateAndRead(loaded);
-        assertEquals(0, loaded.getTarjoajat().size());
-
-    }
-
+    
     @Test
     public void testDeletingToteutusDoesNotDeleteModuuli() {
 
-        // delete KoulutusmoduuliToteutus 
+        // delete KoulutusmoduuliToteutus
         koulutusDAO.remove(defaultToteutus);
-        
+
         // check that we can still load Koulutusmoduuli
         assertNotNull(koulutusDAO.read(defaultModuuli.getId()));
 
     }
 
-    
+
     private KoulutusmoduuliToteutus updateAndRead(KoulutusmoduuliToteutus toteutus) {
         koulutusDAO.update(toteutus);
         return (KoulutusmoduuliToteutus) koulutusDAO.read(toteutus.getId());

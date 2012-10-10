@@ -32,14 +32,8 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstanc
 
     private static final long serialVersionUID = -1278564574746813425L;
 
-    /**
-     * Providers of this learning opportunity.
-     */
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = TABLE_NAME + "_tarjoaja", joinColumns =
-    @JoinColumn(name = "koulutusmoduuli_toteutus_id"))
-    private Set<Oid> tarjoajat = new HashSet<Oid>();
-
+    @Column(name = "tarjoaja")
+    private String tarjoaja;
 
     /**
      * Koodisto Uri. Example display values 'Nuorten koulutus, Aikuisten koulutus'.
@@ -83,7 +77,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstanc
     private Set<KoodistoUri> opetusmuotos = new HashSet<KoodistoUri>();
 
     /**
-     * If non-null, this "koulutus" comes with a charge. This field defines the amount of the charge. 
+     * If non-null, this "koulutus" comes with a charge. This field defines the amount of the charge.
      * The actual content of this field is yet to be defined.
      */
     private String maksullisuus;
@@ -108,7 +102,7 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstanc
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "sosiaalinenmedia_teksti_id")
     private MonikielinenTeksti sosiaalinenMediaUrl;
-    
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "maksullisuus_teksti_id")
     private MonikielinenTeksti maksullisuusUrl;
@@ -132,45 +126,20 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstanc
         super(moduuli);
     }
 
-
     /**
-     * Returns immutable set of OID references to Organisaatio that offer this KoulutusmoduuliToteutus.
+     * Palauttaa oid:n joka viittaa organisaatioon joka tarjoaa tata koulutusta.
      *
      * @return
      */
-    public Set<String> getTarjoajat() {
-        Set<String> copy = new HashSet<String>(tarjoajat.size());
-        for (Oid tarjoaja : tarjoajat) {
-            copy.add(tarjoaja.getOid());
-        }
-        return copy;
+    public String getTarjoaja() {
+        return tarjoaja;
     }
 
     /**
-     * Adds a new KoulutusmooduuliToteutus tarjoaja
      *
-     * @param organisaatioOID a non null organisaatio OID.
-     * @return true if this tarjoaja was not already added
      */
-    public boolean addTarjoaja(String organisaatioOID) {
-        final Oid tarjoaja = new Oid(organisaatioOID);
-        if (!tarjoajat.contains(tarjoaja)) {
-            tarjoajat.add(tarjoaja);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Removes tarjoaja with given OID.
-     *
-     * @param organisaatioOID
-     * @return true if given OID was previously added and is now removed
-     */
-    public boolean removeTarjoaja(String organisaatioOID) {
-        final Oid tarjoaja = new Oid(organisaatioOID);
-        return tarjoajat.remove(tarjoaja);
+    public void setTarjoaja(String organisaatioOid) {
+        tarjoaja = organisaatioOid;
     }
 
     /**
