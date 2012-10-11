@@ -30,6 +30,10 @@
         <!-- tutkinto-ohjelman tunniste -->
         <Identifier>1508</Identifier>
 
+        <OrganizationRef>
+            <OidRef>1.2.3.4.5</OidRef>
+        </OrganizationRef>
+
 
         <OfferedBy ref="P1"/>
 
@@ -119,6 +123,11 @@
         <!-- tutkinto-ohjelman tunniste -->
         <Identifier>1598</Identifier>
 
+        <!-- omistaja organisaatio -->
+        <OrganizationRef>
+            <OidRef>1.2.3.4.5</OidRef>
+        </OrganizationRef>
+
         <!-- laajuus sekä laajuusyksikkö -->
         <Credits unit="CreditUnits">120</Credits>
 
@@ -202,6 +211,11 @@
         <!-- tutkinto-ohjelman tunniste -->
         <Identifier>1514</Identifier>
 
+        <!-- omistaja organisaatio -->
+        <OrganizationRef>
+            <OidRef>1.2.3.4.5</OidRef>
+        </OrganizationRef>
+
         <!-- laajuus sekä laajuusyksikkö -->
         <Credits unit="CreditUnits">120</Credits>
 
@@ -284,8 +298,10 @@
         <!-- koulutusmoduuli jota tämä toteutus täydentää -->
         <SpecificationRef ref="S1508"/>
 
-        <!-- koulutustarjoaja joka tarjoaa tätä koulutusta -->
-        <ProviderRef ref="P1"/>
+        <!-- organisaatio joka tarjoaa tätä koulutusta -->
+        <OrganizationRef>
+            <OidRef>1.2.3.4.5</OidRef>
+        </OrganizationRef>
 
         <!-- Pohjakoulutus vaatimus -->
         <!-- todo: mallissa tämä on koodisto joten arbitraaria dataa ei voida ottaa vastaan. -->
@@ -409,8 +425,10 @@
         <!-- koulutusmoduuli jota tämä toteutus täydentää (sama kuin PK-linjalla) -->
         <SpecificationRef ref="S1508"/>
 
-        <!-- koulutustarjoaja joka tarjoaa tätä koulutusta -->
-        <ProviderRef ref="P1"/>
+        <!-- organisaatio joka tarjoaa tätä koulutusta -->
+        <OrganizationRef>
+            <OidRef>1.2.3.4.5</OidRef>
+        </OrganizationRef>
 
         <!-- Pohjakoulutus vaatimus -->
         <!-- todo: mallissa tämä on koodisto joten arbitraaria dataa ei voida ottaa vastaan. -->
@@ -535,8 +553,10 @@
         <!-- koulutusmoduuli jota tämä toteutus täydentää -->
         <SpecificationRef ref="S1514"/>
 
-        <!-- koulutustarjoaja joka tarjoaa tätä koulutusta -->
-        <ProviderRef ref="P1"/>
+        <!-- organisaatio joka tarjoaa tätä koulutusta -->
+        <OrganizationRef>
+            <OidRef>1.2.3.4.5</OidRef>
+        </OrganizationRef>
 
         <!-- Pohjakoulutus vaatimus -->
         <Prerequisite>
@@ -659,8 +679,10 @@
         <!-- koulutusmoduuli jota tämä toteutus täydentää -->
         <SpecificationRef ref="S1598"/>
 
-        <!-- koulutustarjoaja joka tarjoaa tätä koulutusta -->
-        <ProviderRef ref="P1"/>
+        <!-- organisaatio joka tarjoaa tätä koulutusta -->
+        <OrganizationRef>
+            <OidRef>1.2.3.4.5</OidRef>
+        </OrganizationRef>
 
         <!-- Pohjakoulutus vaatimus -->
         <Prerequisite>

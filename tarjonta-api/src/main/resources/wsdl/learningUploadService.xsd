@@ -553,6 +553,11 @@
 
                     <xs:group ref="tns:IdentifierGroup"/>
 
+                    <xs:element name="OrganizationRef"
+                                type="tns:OrganizationRefType"
+                                minOccurs="1"
+                                maxOccurs="1"/>
+
                     <xs:element name="OfferedBy"
                                 type="tns:LearningOpportunityProviderRefType"
                                 minOccurs="0"
@@ -715,8 +720,8 @@
                         minOccurs="1"
                         maxOccurs="1"/>
 
-            <xs:element name="ProviderRef"
-                        type="tns:LearningOpportunityProviderRefType"
+            <xs:element name="OrganizationRef"
+                        type="tns:OrganizationRefType"
                         minOccurs="1"
                         maxOccurs="1"/>
 
