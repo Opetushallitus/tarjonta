@@ -15,7 +15,10 @@
  */
 package fi.vm.sade.tarjonta.ui.view.haku;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
@@ -23,6 +26,7 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -34,6 +38,7 @@ import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Form;
@@ -58,6 +63,7 @@ import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 
 /**
  * And editor for "Haku" object.
@@ -71,6 +77,8 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditHakuViewImpl.class);
 
+    public static final Object[] HAKUAJAT_COLUMNS = new Object[]{"kuvaus", "alkuPvm", "loppuPvm", "poistaB"};
+    
     @Autowired(required = true)
     private HakuPresenter _presenter;
 
@@ -117,6 +125,12 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     @PropertyId("paattymisPvm")
     private DateField hakuLoppuu;
     
+    private CheckBox sisHakuajat;
+    
+    private Table sisaisetHakuajatTable;
+    private HakuajatContainer sisaisetHakuajatContainer;
+    
+    
     @PropertyId("haussaKaytetaanSijoittelua")
     private CheckBox _kaytetaanSijoittelua;
     @PropertyId("kaytetaanJarjestelmanHakulomaketta")
@@ -155,7 +169,18 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     public void attach() {
         LOG.debug("attach()");
         super.attach();
-        //this._kayteaanJarjestelmanHakulomaketta.setValue(_presenter.getHakuModel().getHakuLomakeUrl() == null);
+        this.sisaisetHakuajatContainer = new HakuajatContainer(_presenter.getHakuModel().getSisaisetHakuajat());
+        this.sisaisetHakuajatTable.setContainerDataSource(this.sisaisetHakuajatContainer);
+        this.sisaisetHakuajatTable.setVisibleColumns(HAKUAJAT_COLUMNS);
+        this.sisaisetHakuajatTable.setPageLength((this.sisaisetHakuajatContainer.size() > 5) ? this.sisaisetHakuajatContainer.size() : 5);
+        this.sisaisetHakuajatTable.setColumnHeaders(new String[]{_i18n.getMessage("Kuvaus"), 
+        														_i18n.getMessage("Alkupvm"), 
+        														_i18n.getMessage("Loppupvm"),
+        														_i18n.getMessage("Poista")});
+        
+        if (_presenter.getHakuModel().getSisaisetHakuajat().size() > 0) {
+        	this.sisHakuajat.setValue(true);
+        }
     }
 
     @Override
@@ -279,9 +304,6 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             VerticalLayout vl = UiUtil.verticalLayout();
             vl.setSizeUndefined();
 
-            vl.addComponent(UiUtil.checkbox(null, "Yksi hakuaika"));
-            vl.addComponent(UiUtil.checkbox(null, "Käytä haun sisäisiä hakuaikoja"));
-
             HorizontalLayout hl = UiUtil.horizontalLayout();
             hl.setSizeUndefined();
             vl.addComponent(hl);
@@ -293,6 +315,33 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             
             this.hakuLoppuu = UiUtil.dateField();
             hl.addComponent(hakuLoppuu);
+            
+            //vl.addComponent(UiUtil.checkbox(null, "Yksi hakuaika"));
+            sisHakuajat = UiUtil.checkbox(null, _i18n.getMessage("sisHakuajat"));
+            sisHakuajat.setImmediate(true);
+            sisHakuajat.addListener(new Property.ValueChangeListener() {
+
+				@Override
+				public void valueChange(ValueChangeEvent event) {
+					sisaisetHakuajatTable.setEnabled(sisHakuajat.booleanValue());	
+				}
+            });
+            
+            vl.addComponent(sisHakuajat);
+
+            
+            
+            this.sisaisetHakuajatTable = new Table();
+            this.sisaisetHakuajatTable.setEditable(true);
+            
+            Button lisaaHakuaika = UiUtil.buttonSmallPlus(vl, _i18n.getMessage("LisaaHakuaika"), new Button.ClickListener() {
+				
+				@Override
+				public void buttonClick(ClickEvent event) {
+					sisaisetHakuajatContainer.addRowToHakuajat();
+				}
+			});
+            vl.addComponent(sisaisetHakuajatTable);
 
             grid.addComponent(vl);
             grid.newLine();
@@ -432,6 +481,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
         public SaveEvent(Component source, boolean complete) {
             super(source);
+            sisaisetHakuajatContainer.bindHakuajat();
             _complete = complete;
             if (_presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
                 _presenter.getHakuModel().setHakuLomakeUrl(null);
@@ -477,6 +527,54 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         public ContinueEvent(Component source) {
             super(source);
         }
+    }
+    
+    public class HakuajatContainer extends BeanItemContainer<HakuajatView> implements Serializable {
+    	
+    	public HakuajatContainer(List<HakuaikaViewModel> hakuajat) {
+    		super(HakuajatView.class);
+    		
+    		initHakuaikaContainer(hakuajat);
+    	}
+    	
+    	public void addRowToHakuajat() {
+    		final HakuajatView hakuaikaRow = new HakuajatView(new HakuaikaViewModel());
+			hakuaikaRow.getPoistaB().addListener(new Button.ClickListener() {
+				
+				@Override
+				public void buttonClick(ClickEvent event) {
+					removeItem(hakuaikaRow);
+				}
+			});
+			addItem(hakuaikaRow);
+    	}
+    	
+    	public void bindHakuajat() {
+    		List<HakuaikaViewModel> hakuajat = new ArrayList<HakuaikaViewModel>();
+    		for (HakuajatView curRow : this.getItemIds()) {
+    			hakuajat.add(curRow.getModel());
+    		}
+    		_presenter.getHakuModel().setSisaisetHakuajat(hakuajat);
+    	}
+    	
+    	private void initHakuaikaContainer(List<HakuaikaViewModel> hakuajat) {
+    		if (hakuajat == null || hakuajat.size() == 0) {
+    			addRowToHakuajat();
+    		}
+    		
+    		for (HakuaikaViewModel curHakuaika : hakuajat) {
+    			final HakuajatView hakuaikaRow = new HakuajatView(curHakuaika);
+    			hakuaikaRow.getPoistaB().addListener(new Button.ClickListener() {
+					
+					@Override
+					public void buttonClick(ClickEvent event) {
+						removeItem(hakuaikaRow);
+					}
+				});
+    			addItem(hakuaikaRow);
+    		}
+    	}
+    	
     }
 
 }

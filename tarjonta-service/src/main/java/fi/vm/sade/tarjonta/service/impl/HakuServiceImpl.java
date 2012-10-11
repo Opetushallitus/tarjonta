@@ -21,11 +21,13 @@ package fi.vm.sade.tarjonta.service.impl;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.service.HakuService;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.SisaisetHakuAjat;
 import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaTyyppi;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +68,7 @@ public class HakuServiceImpl implements HakuService {
 
     @Override
     public fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi lisaaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
-        Haku haku = conversionService.convert(hakuDto,Haku.class);
+    	Haku haku = conversionService.convert(hakuDto,Haku.class);
         haku = businessService.save(haku);
         return conversionService.convert(haku, HakuTyyppi.class);
     }
@@ -161,6 +163,22 @@ public class HakuServiceImpl implements HakuService {
         target.setSijoittelu(source.isSijoittelu());
         target.setTila(source.getTila());
         target.setHaunTunniste(source.getHaunTunniste());
+        mergeSisaisetHaunAlkamisAjat(source, target);
     }
+    
+    private void mergeSisaisetHaunAlkamisAjat(Haku source, Haku target) {
+    	List<Hakuaika> hakuajat = new ArrayList<Hakuaika>();
+    	for (Hakuaika curAika: target.getHakuaikas()) {
+    		hakuajat.add(curAika);
+    	}
+    	
+    	for (Hakuaika curHak : hakuajat) {
+    		target.removeHakuaika(curHak);
+    	}
+    	
+    	for (Hakuaika curHakuaika : source.getHakuaikas()) {
+    		target.addHakuaika(curHakuaika);
+    	}
+    } 
 
 }
