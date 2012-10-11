@@ -16,6 +16,10 @@
             <name>application</name>
             <value>fi.vm.sade.tarjonta.ui.TarjontaPortletApplication</value>
         </init-param>
+        <init-param>
+            <name>widgetset</name>
+            <value>fi.vm.sade.widgetset.GoogleMapComponent</value>
+        </init-param>
 
         <supports>
             <mime-type>text/html</mime-type>
@@ -30,7 +34,7 @@
             <keywords></keywords>
         </portlet-info>
     </portlet>
-    
+
     <portlet>
         <description></description>
         <portlet-name>HakuPortletApplication</portlet-name>
@@ -41,6 +45,10 @@
         <init-param>
             <name>application</name>
             <value>fi.vm.sade.tarjonta.ui.HakuPortletApplication</value>
+        </init-param>
+        <init-param>
+            <name>widgetset</name>
+            <value>fi.vm.sade.widgetset.GoogleMapComponent</value>
         </init-param>
 
         <supports>
