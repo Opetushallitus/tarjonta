@@ -60,14 +60,20 @@
             <artifactId>koodisto-widget</artifactId>
             <type>jar</type>
         </dependency>
-     
+
+        <dependency>
+            <groupId>org.vaadin.addons</groupId>
+            <artifactId>vaadin-wrapper-for-tinymce</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+
           <!--
         <dependency>
             <groupId>org.vaadin.addons</groupId>
             <artifactId>animator</artifactId>
             <version>1.6.6</version>
         </dependency>
-       
+
        <dependency>
            <groupId>com.google.gwt</groupId>
            <artifactId>gwt-user</artifactId>
@@ -76,7 +82,7 @@
        </dependency>
         -->
     </dependencies>
-    
+
     <repositories>
         <repository>
             <id>vaadin-addons</id>

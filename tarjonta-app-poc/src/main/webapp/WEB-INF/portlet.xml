@@ -16,6 +16,10 @@
             <name>application</name>
             <value>fi.vm.sade.tarjonta.poc.ui.TarjontaPocPortletApplication</value>
         </init-param>
+        <init-param>
+            <param-name>widgetset</param-name>
+            <param-value>fi.vm.sade.widgetset.GoogleMapComponent</param-value>
+        </init-param>
 
         <supports>
             <mime-type>text/html</mime-type>
