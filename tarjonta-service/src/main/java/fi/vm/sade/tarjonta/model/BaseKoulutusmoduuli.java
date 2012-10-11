@@ -23,7 +23,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 import java.io.Serializable;
 
 /**
- * Yhteinen perusluokka (ei entiteetti) Koulutusmoduuli:lle seka Koulutusmoduulintoteutukselle.
+ * Yhteinen abstrakti perusluokka (ei entiteetti) Koulutusmoduuli:lle seka Koulutusmoduulintoteutukselle.
  */
 @MappedSuperclass
 public abstract class BaseKoulutusmoduuli extends BaseEntity implements Comparable<BaseKoulutusmoduuli>, Serializable {
@@ -131,7 +131,7 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Comparab
     }
 
     /**
-     * Simple comparison by Koulutus name.
+     * Yksinkertainen vertailu nimen perusteella.
      *
      * @param koulutus
      * @return
@@ -144,21 +144,6 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Comparab
             return nimi.compareTo(loo.getNimi());
         }
     }
-
-    /**
-     * Constants to be used as discriminator values for *concrete* classes derived from this class.
-     */
-    interface KoulutusTyyppit {
-
-        String TUTKINNON_OSA = "M10001";
-
-        String TUTKINNON_OSA_TOTEUTUS = "T10001";
-
-        String TUTKINTO_OHJELMA = "M10002";
-
-        String TUTKINTO_OHJELMA_TOTEUTUS = "T10002";
-    }
-
 
 }
 

@@ -173,7 +173,7 @@ public class KoulutusAdminServiceImpl implements KoulutusAdminService {
 
         Koulutusmoduuli t = new Koulutusmoduuli(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
 
-        t.setKoulutusKoodi(source.getKoulutusLuokitusKoodi());
+        t.setKoulutusluokitusKoodi(source.getKoulutusLuokitusKoodi());
         t.setKoulutusNimi(source.getKoulutuksenNimi());
         t.setTutkintoOhjelmanNimi(source.getTutkintoOhjelmanNimi());
         t.setOid(source.getOid());

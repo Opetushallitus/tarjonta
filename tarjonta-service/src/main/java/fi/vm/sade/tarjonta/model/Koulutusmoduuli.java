@@ -32,9 +32,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
+import org.springframework.beans.factory.annotation.Required;
 
 /**
- * An abstract base class for different types of Koulutusmoduuli's. This class adds OPH specified features to LOS.
+ * <p>
+ * Koulutusmoduuli kuvaa koulutuksen perustietoja, luokittelua nimea jne. Asioita jotka sailyvat yleensa
+ * pidempaan eivatka ole aikaan tai paikkaan sidottuja. Kun koulutusmoduulista tehdaan toteutus
+ * ({@link KoulutusmoduuliToteutus}) saadaan mukaan aika seka paikka -ulottuvuus.
+ * </p>
+ * <p>
+ * Koulutusrakenne saadaan aikaiseksi lisaamalla Koulutusmoduulille alimoduuleja kayttamalla {@link KoulutusSisaltyvyys}
+ * sidosluokkaa.
+ * </p>
+ * <p>
+ * Koska kaikki koulutusrakenteen luodaan kayttamalla samaa Koulutusmoduuli -luokkaa, kaytetaan {@link KoulutusmoduuliTyyppi}:ia
+ * kertomaa haluttu tyyppi.
+ * </p>
+ *
+ *
  */
 @Entity
 @Table(name = Koulutusmoduuli.TABLE_NAME)
@@ -84,7 +99,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     private KoulutusmoduuliTyyppi moduuliTyyppi;
 
     @Column(name = "koulutusluokitus_koodi")
-    private String koulutusLuokitusKoodi;
+    private String koulutusluokitusKoodi;
 
     @Column(name = "tutkintoohjelmanimi")
     private String tutkintoOhjelmanNimi;
@@ -246,10 +261,19 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     }
 
+    /**
+     *
+     * @return
+     */
     public Set<KoulutusmoduuliToteutus> getKoulutusmoduuliToteutusList() {
         return Collections.unmodifiableSet(toteutusList);
     }
 
+    /**
+     *
+     * @param toteutus
+     * @return
+     */
     public boolean addKoulutusmoduuliToteutus(KoulutusmoduuliToteutus toteutus) {
         if (!toteutusList.contains(toteutus)) {
             toteutusList.add(toteutus);
@@ -259,6 +283,11 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         return false;
     }
 
+    /**
+     *
+     * @param toteutus
+     * @return
+     */
     public boolean removeKoulutusmoduuliToteutus(KoulutusmoduuliToteutus toteutus) {
         if (toteutusList.remove(toteutus)) {
             toteutus.setKoulutusmoduuli(null);
@@ -267,10 +296,12 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         return false;
     }
 
+    /**
+     *
+     * @return
+     */
     public Set<KoulutusSisaltyvyys> getSisaltyvyysList() {
-
         return Collections.unmodifiableSet(sisaltyvyysList);
-
     }
 
     /**
@@ -278,8 +309,8 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      * @see #setKoulutusKoodi(java.lang.String)
      * @return
      */
-    public String getKoulutusKoodi() {
-        return koulutusLuokitusKoodi;
+    public String getKoulutusluokitusKoodi() {
+        return koulutusluokitusKoodi;
     }
 
     /**
@@ -288,8 +319,8 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      * @see http://www.stat.fi/meta/luokitukset/koulutus/001-2010/index.html
      * @param koulutusKoodiUri
      */
-    public void setKoulutusKoodi(String koulutusKoodiUri) {
-        this.koulutusLuokitusKoodi = koulutusKoodiUri;
+    public void setKoulutusluokitusKoodi(String koulutusKoodiUri) {
+        this.koulutusluokitusKoodi = koulutusKoodiUri;
     }
 
     /**
@@ -310,7 +341,14 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     * Finnish explanation: Pääaineen koulutusohjelman tai vastaavan nimi. This corresponds to: ects:DegreeProgrammeTitle.
+     * <p>
+     * Pääaineen koulutusohjelman tai vastaavan nimi. Tämä attribuutti on pätevä silloin kun {@link Koulutusmoduuli#moduuliTyyppi}
+     * on {@link KoulutusmoduuliTyyppi#TUTKINTO_OHJELMA}.
+     * </p>
+     *
+     * <p>
+     * KV vastaavuus: ects:DegreeProgrammeTitle.
+     * </p>
      *
      * @return the tutkintoOhjelmanNimi
      */
@@ -323,6 +361,15 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      */
     public void setTutkintoOhjelmanNimi(String tutkintoOhjelmanNimi) {
         this.tutkintoOhjelmanNimi = tutkintoOhjelmanNimi;
+    }
+
+    /**
+     * Palautttaa moduulin tyypin joka osaltaa kertoo mikä joukko attribuutteja on päteviä tällä koulutusmoduulilla.
+     *
+     * @return
+     */
+    public KoulutusmoduuliTyyppi getModuuliTyyppi() {
+        return moduuliTyyppi;
     }
 
 }

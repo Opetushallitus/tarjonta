@@ -77,7 +77,7 @@ public class KoulutusFixtures {
         Koulutusmoduuli m = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         m.setOid(randomOid("koulutusmoduuli"));
         m.setTutkintoOhjelmanNimi("Simple Tutkinto-Ohjelma");
-        m.setKoulutusKoodi("500001");
+        m.setKoulutusluokitusKoodi("500001");
 
         return m;
 
