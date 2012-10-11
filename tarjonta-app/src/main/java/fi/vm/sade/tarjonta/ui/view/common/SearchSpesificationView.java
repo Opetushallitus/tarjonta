@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -51,6 +53,7 @@ public class SearchSpesificationView extends HorizontalLayout {
     private static final Logger LOG = LoggerFactory.getLogger(SearchSpesificationView.class);
     private Button _btnTyhjenna;
     private Button _btnHae;
+
     @PropertyId("hanKohdejoukko")
     private KoodistoComponent _cbHaunKohdejoukko;
     @PropertyId("hakutyyppi")
@@ -63,8 +66,11 @@ public class SearchSpesificationView extends HorizontalLayout {
     private KoodistoComponent _cbHakukausi;
     @PropertyId("searchSpec")
     private TextField _tfSearch;
+
+    // TODO hmmm... this is common class, how to know which presenter to use here
     @Autowired
     private HakuPresenter _presenter;
+
     @Value("${koodisto-uris.hakukausi:http://hakukausi}")
     private String _koodistoUriHakukausi;
     @Value("${koodisto-uris.hakutapa:http://hakutapa}")
@@ -75,11 +81,13 @@ public class SearchSpesificationView extends HorizontalLayout {
     private String _koodistoUriHaunKohdejoukko;
     @Value("${koodisto-uris.koulutuksenAlkamiskausi:http://alkamiskausi}")
     private String _koodistoUriKoulutuksenAlkamiskausi;
+
     private I18NHelper _i18nHelper = new I18NHelper(this);
-    
-    private Form form;
-    
-    boolean attached = false;
+
+    /* View bound form for search specs. This for is bound to presenter.getSearchSpec model. */
+    private Form _form;
+
+    private boolean _attached = false;
 
     public SearchSpesificationView() {
         super();
@@ -87,11 +95,18 @@ public class SearchSpesificationView extends HorizontalLayout {
 
     @Override
     public void attach() {
-        if (attached) return;
-        attached = true;
+        LOG.info("attach(): already attached = {}", _attached);
+
+        if (_attached) {
+            return;
+        }
+        _attached = true;
+
         super.attach();
 
-        LOG.info("Creating koodisto components");
+        //
+        // Create fields
+        //
         _cbHakukausi = UiBuilder.koodistoComboBox(null,_koodistoUriHakukausi, null, null, T("hakukausi.prompt"));
         _cbHakutapa = UiBuilder.koodistoComboBox(null,_koodistoUriHakutapa, null, null, T("hakutapa.prompt"));
         _cbHakutyyppi = UiBuilder.koodistoComboBox(null,_koodistoUriHakutyyppi, null, null, T("hakutyyppi.prompt"));
@@ -104,9 +119,9 @@ public class SearchSpesificationView extends HorizontalLayout {
         _btnHae.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                form.commit();
-                _presenter.doSearch();
+                doSearch();
             }
+
         });
 
         addComponent(_tfSearch);
@@ -119,13 +134,35 @@ public class SearchSpesificationView extends HorizontalLayout {
         addComponent(_cbKoulutuksenAlkamiskausi);
 
         addComponent(_btnTyhjenna);
-        
+
+        // Bind fields above to search spesifications
         BeanItem<KoulutusSearchSpesificationViewModel> beanItem = new BeanItem<KoulutusSearchSpesificationViewModel>(_presenter.getSearchSpec());
-        form = new ViewBoundForm();
-        form.setItemDataSource(beanItem);
+        _form = new ViewBoundForm();
+        _form.setItemDataSource(beanItem);
+
+        //
+        // Hook enter to do the search
+        //
+        _tfSearch.setImmediate(true);
+        _tfSearch.addListener(new Property.ValueChangeListener() {
+
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                doSearch();
+            }
+        });
     }
 
     private String T(String key) {
         return _i18nHelper.getMessage(key);
+    }
+
+    /**
+     * Search has been triggered.
+     */
+    private void doSearch() {
+        LOG.info("doSearch()");
+        _form.commit();
+        _presenter.doSearch();
     }
 }

@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.ui;
 
 import com.github.wolfie.blackboard.Listener;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Component.Event;
@@ -38,17 +40,35 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
     @Override
     public synchronized void init() {
         super.init();
-       
-        window = new HakuRootView(this);
+
+        window = new Window("Valitse");
         setMainWindow(window);
+
+        Button tarjontaButton = new Button("Tarjontaan", new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                toTarjonta();
+            }
+        });
+        window.addComponent(tarjontaButton);
+
+        Button hakuButton = new Button("Hakuihin", new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                toHaku();
+            }
+        });
+        window.addComponent(hakuButton);
     }
-    
+
     public void toTarjonta() {
         this.removeWindow(window);
-        window = new TarjontaRootView(this);
+        window = new TarjontaRootView();
         setMainWindow(window);
     }
-    
+
     public void toHaku() {
         this.removeWindow(window);
         window = new HakuRootView(this);

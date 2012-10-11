@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
- * Simple root view.
+ * Simple root view for Tarjonta.
  *
  * <pre>
  * Structure:
@@ -59,27 +59,16 @@ public class TarjontaRootView extends Window {
     //private VerticalLayout _appLeftLayout;
     private HorizontalLayout _appRightLayout;
 
+    private OrganisaatiohakuView _organisationSearchView;
     private BreadcrumbsView _breadcrumbsView;
     private SearchSpesificationView _searchSpesificationView;
     private SearchResultsView _searchResultsView;
-    
-    //Huom tämä on vain kehityksen ajaksi tehty kenttä, mahdollistaa vaihtamisen
-    //Haku- ja Tarjontasovellusten välillä.
-    private TarjontaWebApplication tWebApp;
-    
-    //Tämä on vain kehitystä helpottamaan tehty konstruktori.
-    public TarjontaRootView(TarjontaWebApplication tWebApp) {
-        super();
-        init();
-        this.tWebApp = tWebApp;  
-    }
 
     public TarjontaRootView() {
         super();
         init();
-        
     }
-    
+
     private void init() {
         LOG.info("TarjontaView(): presenter={}", _presenter);
 
@@ -91,19 +80,18 @@ public class TarjontaRootView extends Window {
         //
         // Create components
         //
+        _organisationSearchView = new OrganisaatiohakuView();
         _breadcrumbsView = new BreadcrumbsView();
         _searchSpesificationView = new SearchSpesificationView();
         _searchResultsView = new SearchResultsView();
-        
+
         _presenter.setTarjontaWindow(this);
-        
+
         // Create root layout
         VerticalLayout layout = UiBuilder.verticalLayout();
         layout.setHeight(-1,UNITS_PIXELS);
         layout.addStyleName(Oph.CONTAINER_MAIN);
         setContent(layout); // root layout
-        
-        
 
         // Create application layout and add to root
         _appRootLayout = UiBuilder.horizontalLayout();
@@ -118,8 +106,8 @@ public class TarjontaRootView extends Window {
             layout.addComponent(new Label("ID=" + _presenter.getIdentifier()));
         }
 
+        // The default view to show is main default view (called here since "main" app cannot access presenter)
         _presenter.showMainDefaultView();
-        
     }
 
     public HorizontalLayout getAppRootLayout() {
@@ -142,32 +130,8 @@ public class TarjontaRootView extends Window {
         return _searchResultsView;
     }
 
-    
-    /**
-     * Show main default view
-     */
-    public void showMainDefaultView() {
-        LOG.info("showMainDefaultView()");
-        
-        getAppRightLayout().removeAllComponents();
-
-        getAppRightLayout().addComponent(new OrganisaatiohakuView(null));
-        VerticalLayout vl = UiUtil.verticalLayout();
-        vl.addComponent(getBreadcrumbsView());
-        vl.addComponent(getSearchSpesificationView());
-        vl.addComponent(getSearchResultsView());
-        getAppRightLayout().addComponent(vl);
-        getAppRightLayout().setExpandRatio(vl, 1f);
-    }
-
-    public void toHaku() {
-        if (tWebApp != null) {
-            this.tWebApp.toHaku();
-        }
-    }
-    
-    public TarjontaWebApplication gettWebApp() {
-        return tWebApp;
+    public OrganisaatiohakuView getOrganisaatiohakuView() {
+        return _organisationSearchView;
     }
 
 }

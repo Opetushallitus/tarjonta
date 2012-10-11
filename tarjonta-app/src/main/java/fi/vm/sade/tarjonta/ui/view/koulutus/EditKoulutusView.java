@@ -15,10 +15,27 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
+import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  * @author mlyly
  */
-public class EditKoulutusView {
+public class EditKoulutusView extends AbstractVerticalNavigationLayout {
 
+    private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusView.class);
+
+    public EditKoulutusView() {
+        super(EditKoulutusView.class);
+    }
+
+    @Override
+    protected void buildLayout(VerticalLayout layout) {
+        LOG.info("buildLayout()");
+        layout.addComponent(new Label("EDIT KOULUTUS VIEW"));
+    }
 }

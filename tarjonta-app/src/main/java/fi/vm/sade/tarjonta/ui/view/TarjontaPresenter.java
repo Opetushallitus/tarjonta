@@ -79,35 +79,16 @@ public class TarjontaPresenter {
      */
     public void showMainDefaultView() {
         LOG.info("showMainDefaultView()");
-        /*
-        _rootView.getAppLeftLayout().removeAllComponents();
-        _rootView.getAppRightLayout().removeAllComponents();
 
-        _rootView.getAppLeftLayout().addComponent(new Label("LEFT"));*/
+        // smells bad...
+        _rootView.getAppRightLayout().addComponent(_rootView.getOrganisaatiohakuView());
 
-        _rootView.getAppRightLayout().addComponent(new OrganisaatiohakuView(null));
-        
-        VerticalLayout vl = UiUtil.verticalLayout(); 
+        VerticalLayout vl = UiUtil.verticalLayout();
         vl.addComponent(_rootView.getBreadcrumbsView());
         vl.addComponent(_rootView.getSearchSpesificationView());
         vl.addComponent(_rootView.getSearchResultsView());
-        if (_rootView.gettWebApp() != null) {
-            Button b = new Button("Hakuun");
-            b.addListener(new Button.ClickListener() {
-            
-                @Override
-                public void buttonClick(ClickEvent event) {
-                    // TODO Auto-generated method stub
-                    _rootView.toHaku();   
-                }
-            });
-            vl.addComponent(b);
-        }
         _rootView.getAppRightLayout().addComponent(vl);
         _rootView.getAppRightLayout().setExpandRatio(vl, 1f);
-        /*_rootView.getAppRightLayout().addComponent(_rootView.getBreadcrumbsView());
-        _rootView.getAppRightLayout().addComponent(_rootView.getSearchSpesificationView());
-        _rootView.getAppRightLayout().addComponent(_rootView.getSearchResultsView());*/
     }
 
     public void doSearch() {

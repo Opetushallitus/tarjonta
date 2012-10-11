@@ -50,60 +50,60 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 
 /**
  * Presenter for searching, creating, editing, and viewing Haku objects.
- * 
+ *
  * @author markus
  *
  */
 @Component
 @Configurable(preConstruction = false)
 public class HakuPresenter {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(HakuPresenter.class);
-    
+
     private KoulutusSearchSpesificationViewModel searchSpec = new KoulutusSearchSpesificationViewModel();
     private List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
     private List<HakuViewModel> selectedhaut = new ArrayList<HakuViewModel>();
 
     private ListHakuView hakuList;
-    
+
     private EditHakuView editHaku;
-    
+
     private HakuViewModel hakuModel;
 
     @Autowired
     private OIDService oidService;
-    
+
     @Autowired
     private KoodiService koodiService;
-    
+
     @Autowired
     private HakuService tarjontaService;
 
 
 
     public static final String COLUMN_A = "Kategoriat";
-    
+
     public HakuPresenter() {
-        
-    }
-    
-    /**
-     * Performs the search according to searchSpec 
-     * and reloads the hakuList view.
-     */
-    public void doSearch() { 
-        hakuList.reload();                    
+
     }
 
     /**
-     * 
+     * Performs the search according to searchSpec
+     * and reloads the hakuList view.
+     */
+    public void doSearch() {
+        hakuList.reload();
+    }
+
+    /**
+     *
      * Gets the datasource for hakuList.
      * @return
      */
     public Map<String, List<HakuViewModel>> getTreeDataSource() {
-         
+
         Map<String, List<HakuViewModel>> map = new HashMap<String, List<HakuViewModel>>();
-        
+
         haut = retrieveHaut();
 
         //Grouping the HakuViewModel objects based on hakutapa
@@ -116,13 +116,13 @@ public class HakuPresenter {
                 if(result.size() != 1) {
                     throw new RuntimeException("No valid accepted koodi found for URI " + curHaku.getHakutapa());
                 }
-                
-                KoodiType hakutapaKoodi = result.get(0); 
+
+                KoodiType hakutapaKoodi = result.get(0);
                 hakuKey = KoodistoHelper.getKoodiMetadataForLanguage(hakutapaKoodi, KoodistoHelper.getKieliForLocale(I18N.getLocale())).getNimi();
             } catch (Exception ex) {
                 hakuKey = curHaku.getHakutapa();
             }
-           
+
             if (!map.containsKey(hakuKey)) {
                 LOG.info("Adding a new key to the map: " + curHaku.getHakutapa());
                 List<HakuViewModel> hautM = new ArrayList<HakuViewModel>();
@@ -130,8 +130,8 @@ public class HakuPresenter {
                 map.put(hakuKey, hautM);
             } else {
                 map.get(hakuKey).add(curHaku);
-            }   
-        }  
+            }
+        }
         return map;
     }
 
@@ -150,7 +150,7 @@ public class HakuPresenter {
     public void setHakuList(ListHakuView hakuList) {
         this.hakuList = hakuList;
     }
-    
+
     /**
      * Sets the hakuModel, used in the edit form of haku.
      * @param hakuModelParam the hakuModel to set.
@@ -158,12 +158,12 @@ public class HakuPresenter {
     public void setHakuViewModel(HakuViewModel hakuModelParam) {
         hakuModel = hakuModelParam;
     }
-    
+
     /**
      * Saves the haku as draft.
      */
     public void saveHakuLuonnoksenaModel() {
-        hakuModel.setHakuValmis(false);    
+        hakuModel.setHakuValmis(false);
         if (hakuModel.getHakuOid() == null) {
             try {
                 hakuModel.setHakuOid(oidService.newOid(NodeClassCode.TEKN_5));
@@ -177,7 +177,7 @@ public class HakuPresenter {
         }
         LOG.info("Haku tallennettu luonnoksena");
     }
-    
+
     /**
      * Saves haku as ready.
      */
@@ -198,7 +198,7 @@ public class HakuPresenter {
         LOG.info("Haku tallennettu valmiina");
     }
 
-  
+
 
     /**
      * Removes the haku given as parameter
@@ -208,7 +208,7 @@ public class HakuPresenter {
         this.tarjontaService.poistaHaku(haku.getHakuDto());
         hakuList.reload();
     }
-    
+
     /**
      * Returns the haut.
      * @return
@@ -226,7 +226,7 @@ public class HakuPresenter {
 
     /**
      * returns the editHaku
-     * @return 
+     * @return
      */
     public EditHakuView getEditHaku() {
         return editHaku;
@@ -238,7 +238,7 @@ public class HakuPresenter {
     public void refreshHakulist() {
         hakuList.reload();
     }
-    
+
     /**
      * Gets the hakuModel.
      * @return the hakuModel to return
@@ -255,27 +255,27 @@ public class HakuPresenter {
     public String getKoodiNimi(String koodiUri) {
         SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.latestValidAcceptedKoodiByUri(koodiUri);
         List<KoodiType> result = this.koodiService.searchKoodis(searchCriteria);
-        
+
         String nimi = koodiUri;
         if(result.size() == 1) {
             nimi = KoodistoHelper.getKoodiMetadataForLanguage(result.get(0), KoodistoHelper.getKieliForLocale(I18N.getLocale())).getNimi();
         }
-        
+
         return nimi;
     }
 
     /**
-     * @return the string representation of a hakuaika range for a haku. 
+     * @return the string representation of a hakuaika range for a haku.
      */
     public String getHakuaika() {
         DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         String startDateStr = (hakuModel.getAlkamisPvm() != null) ? formatter.format(hakuModel.getAlkamisPvm()) : "";
-        String endDateStr = (hakuModel.getPaattymisPvm() != null) ? formatter.format(hakuModel.getPaattymisPvm()) : "";        
+        String endDateStr = (hakuModel.getPaattymisPvm() != null) ? formatter.format(hakuModel.getPaattymisPvm()) : "";
         return startDateStr  + " - " + endDateStr;
     }
 
     /**
-     * 
+     *
      * @return the inner hakuajat for a haku.
      */
     public List<HakuaikaViewModel> getSisaisetHautSource() {
@@ -284,14 +284,14 @@ public class HakuPresenter {
     }
 
     /**
-     * 
+     *
      * @return the hakukohde obects velonging to the hakuModel haku.
      */
     public List<HakukohdeViewModel> getHakukohteet() {
         List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
         return hakukohteet;
     }
-    
+
 
     /**
      * Gets the currently selectedHaut.
@@ -300,7 +300,7 @@ public class HakuPresenter {
     public List<HakuViewModel> getSelectedhaut() {
         return selectedhaut;
     }
-    
+
     /**
      * Removes the selected haku objects from the database.
      */
@@ -311,7 +311,7 @@ public class HakuPresenter {
         selectedhaut.clear();
         hakuList.reload();
     }
-    
+
     private List<HakuViewModel> retrieveHaut() {
         List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
         for (HakuTyyppi curHaku : this.tarjontaService.listHaku(new ListaaHakuTyyppi()).getResponse()) {
