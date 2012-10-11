@@ -24,13 +24,13 @@ package fi.vm.sade.tarjonta.ui.model;
  *
  * @author Tuomas Katva
  */
-public class NimiViewModel extends BaseUIViewModel {
+public class KielikaannosViewModel extends BaseUIViewModel {
 
     private String kielikoodi;
 
     private String nimi;
 
-    public NimiViewModel(String kielikoodiParam, String nimiParam) {
+    public KielikaannosViewModel(String kielikoodiParam, String nimiParam) {
         this.kielikoodi = kielikoodiParam;
         this.nimi = nimiParam;
     }
