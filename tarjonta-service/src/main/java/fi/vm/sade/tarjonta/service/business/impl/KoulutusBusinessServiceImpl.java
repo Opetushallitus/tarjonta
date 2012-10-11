@@ -16,8 +16,9 @@
 package fi.vm.sade.tarjonta.service.business.impl;
 
 import fi.vm.sade.generic.model.BaseEntity;
-import fi.vm.sade.tarjonta.dao.KoulutusDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusRakenneDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import java.util.List;
@@ -33,22 +34,24 @@ import org.springframework.transaction.annotation.Transactional;
 public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
     @Autowired
-    private KoulutusDAO koulutusDAO;
+    private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
     @Autowired
-    private KoulutusRakenneDAO rakenneDAO;
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
+    @Autowired
+    private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
 
     @Override
     public Koulutusmoduuli create(Koulutusmoduuli koulutusmoduuli, String parentOid, boolean optional) {
 
         final Koulutusmoduuli newModuuli = create(koulutusmoduuli);
 
-        Koulutusmoduuli parent = koulutusDAO.findByOid(Koulutusmoduuli.class, parentOid);
+        Koulutusmoduuli ylamoduuli = koulutusmoduuliDAO.findByOid(parentOid);
 
-        // todo: since we added more logic to KoulutusRakenne, plain boolean "optional" will not do anymore, refactor
-        rakenneDAO.insert(new KoulutusRakenne(parent, newModuuli, optional
-            ? KoulutusRakenne.SelectorType.SOME_OFF
-            : KoulutusRakenne.SelectorType.ONE_OFF));
+        sisaltyvyysDAO.insert(new KoulutusSisaltyvyys(ylamoduuli, newModuuli, optional
+            ? KoulutusSisaltyvyys.ValintaTyyppi.SOME_OFF
+            : KoulutusSisaltyvyys.ValintaTyyppi.ONE_OFF));
 
         return newModuuli;
 
@@ -57,14 +60,14 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     @Override
     public Koulutusmoduuli create(Koulutusmoduuli moduuli) {
 
-        return (Koulutusmoduuli) koulutusDAO.insert(moduuli);
+        return koulutusmoduuliDAO.insert(moduuli);
 
     }
 
     @Override
     public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus, String koulutusmoduuliOid) {
 
-        return create(toteutus, koulutusDAO.findByOid(Koulutusmoduuli.class, koulutusmoduuliOid));
+        return create(toteutus, koulutusmoduuliDAO.findByOid(koulutusmoduuliOid));
 
     }
 
@@ -72,23 +75,23 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus, Koulutusmoduuli moduuli) {
 
         final Koulutusmoduuli m = isNew(moduuli) ? create(moduuli) : moduuli;
-        toteutus.setLearningOpportunitySpecification(moduuli);
+        toteutus.setKoulutusmoduuli(moduuli);
 
-        return (KoulutusmoduuliToteutus) koulutusDAO.insert(toteutus);
+        return (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.insert(toteutus);
 
     }
 
     @Override
-    public LearningOpportunityObject findByOid(String oid) {
+    public Koulutusmoduuli findByOid(String oid) {
 
-        return koulutusDAO.findByOid(LearningOpportunityObject.class, oid);
+        return koulutusmoduuliDAO.findByOid(oid);
 
     }
 
     @Override
     public Koulutusmoduuli update(Koulutusmoduuli moduuli) {
 
-        koulutusDAO.update(moduuli);
+        koulutusmoduuliDAO.update(moduuli);
         return moduuli;
 
     }
@@ -96,15 +99,15 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     @Override
     public KoulutusmoduuliToteutus update(KoulutusmoduuliToteutus toteutus) {
 
-        koulutusDAO.update(toteutus);
+        koulutusmoduuliToteutusDAO.update(toteutus);
         return toteutus;
 
     }
 
     @Override
-    public void deleteByOid(String oid) {
+    public void deleteKoulutusmoduuliByOid(String oid) {
 
-        List<LearningOpportunityObject> list = koulutusDAO.findBy(LearningOpportunityObject.OID_COLUMN_NAME, oid);
+        List<Koulutusmoduuli> list = koulutusmoduuliDAO.findBy(BaseKoulutusmoduuli.OID_COLUMN_NAME, oid);
 
         if (list.isEmpty()) {
             // nothing to delete
@@ -114,35 +117,21 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             throw new IllegalStateException("multiple matches for oid: " + oid + ", refusing to delete");
         }
 
-        final LearningOpportunityObject loo = list.get(0);
-        final String tila = loo.getTila();
+        final Koulutusmoduuli moduuli = list.get(0);
+        final String tila = moduuli.getTila();
 
         // validate that state is non-published or ready
         if (!KoodistoContract.TarjontaTilat.SUUNNITTELUSSA.equals(tila)) {
-            throw new IllegalStateException("refusing to delete LOO in state: " + tila);
+            throw new IllegalStateException("refusing to delete Koulutusmoduuli in state: " + tila);
         }
 
         // validate that we have no children
-        if (!loo.getStructures().isEmpty()) {
-            throw new IllegalStateException("refusing to delete LOO with children");
+        if (!moduuli.getSisaltyvyysList().isEmpty()) {
+            throw new IllegalStateException("refusing to delete Koulutusmoduuli with children");
         }
 
-        if (loo instanceof Koulutusmoduuli) {
-            delete((Koulutusmoduuli) loo);
-        } else if (loo instanceof KoulutusmoduuliToteutus) {
-            delete((KoulutusmoduuliToteutus) loo);
-        } else {
-            throw new IllegalStateException("unknown type of LearningOpportunityObject: " + loo.getClass().getName());
-        }
+        koulutusmoduuliDAO.remove(moduuli);
 
-    }
-
-    private void delete(Koulutusmoduuli koulutusmoduuli) {
-        // todo: what are the conditions that allow to delete a Koulutusmoduuli
-    }
-
-    private void delete(KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
-        // todo: what are the conditions that allow to delete a KoulutusmoduuliToteutus
     }
 
     private boolean isNew(BaseEntity e) {

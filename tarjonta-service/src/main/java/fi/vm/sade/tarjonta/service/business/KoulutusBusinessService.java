@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,11 +17,11 @@ package fi.vm.sade.tarjonta.service.business;
 
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
+import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import java.util.List;
 
 /**
- * Business logic for manipulating classes inherited from LearningOpportunityObject. 
+ * Business logic for manipulating classes inherited from LearningOpportunityObject.
  *
  */
 public interface KoulutusBusinessService {
@@ -38,21 +38,21 @@ public interface KoulutusBusinessService {
 
     /**
      * Creates a new top level Koulutusmoduuli.
-     * 
+     *
      * @param moduuli
      * @return
      */
     public Koulutusmoduuli create(Koulutusmoduuli moduuli);
 
     /**
-     * 
+     *
      * @param moduuli
      * @return
      */
     public Koulutusmoduuli update(Koulutusmoduuli moduuli);
 
     /**
-     * 
+     *
      * @param toteutus
      * @return
      */
@@ -68,7 +68,7 @@ public interface KoulutusBusinessService {
     public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus, String koulutusmoduuliOid);
 
     /**
-     * Creates new KoulutusmoduuliToteutus from passed data. Before storing, reference to given Koulutusmoduuli is assigned. 
+     * Creates new KoulutusmoduuliToteutus from passed data. Before storing, reference to given Koulutusmoduuli is assigned.
      * If given Koulutusmoduuli is also new, it is also created.
      *
      * @param toteutus
@@ -83,21 +83,21 @@ public interface KoulutusBusinessService {
      * @param oid
      * @return
      */
-    public LearningOpportunityObject findByOid(String oid);
+    public BaseKoulutusmoduuli findByOid(String oid);
 
     /**
-     * Deletes LearningOpportunityObject if a) it is Koulutusmoduuli and it has no KoulutusmoduuliToteutus and its 
-     * state is "non published" or b) it is KoulutusmoduuliToteutus and it is not reference by any Hakukohde and it it's 
+     * Deletes LearningOpportunityObject if a) it is Koulutusmoduuli and it has no KoulutusmoduuliToteutus and its
+     * state is "non published" or b) it is KoulutusmoduuliToteutus and it is not reference by any Hakukohde and it it's
      * state is "non published".
-     * 
+     *
      * @param oid
      */
-    public void deleteByOid(String oid);
+    public void deleteKoulutusmoduuliByOid(String oid);
 
     /**
      * Once search criteria tyyppi is declared in WSDL expose this method. The implementation is in place in DAO.
-     * 
-     * @param oid 
+     *
+     * @param oid
      * @param criteria
      * @return
      */

@@ -17,13 +17,10 @@ package fi.vm.sade.tarjonta.atdd;
 
 import fi.vm.sade.tarjonta.KoulutusDatabasePrinter;
 import fi.vm.sade.tarjonta.KoulutusFixtures;
-import fi.vm.sade.tarjonta.dao.KoulutusDAO;
-import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.model.*;
 import static org.junit.Assert.*;
 
-import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
-import fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus;
 import java.util.Iterator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,10 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class OVT1534_KoulutusrakenneTest {
+public class OVT1534_KoulutusSisaltyvyysTest {
 
     @Autowired
-    private KoulutusDAO koulutusDAO;
+    private KoulutusmoduuliDAO koulutusDAO;
 
     @Autowired
     private KoulutusDatabasePrinter dbPrinter;
@@ -55,7 +52,7 @@ public class OVT1534_KoulutusrakenneTest {
     public void testKoulutusmoduuliSisaltaaKoulutusmouduleita() {
 
         Koulutusmoduuli moduuli = fixtures.createPersistedKoulutusmoduuliStructure();
-        assertEquals(2, moduuli.getStructures().size());
+        assertEquals(2, moduuli.getSisaltyvyysList().size());
 
     }
 
@@ -64,12 +61,12 @@ public class OVT1534_KoulutusrakenneTest {
 
         Koulutusmoduuli moduuli = fixtures.createPersistedKoulutusmoduuliStructure();
 
-        Iterator<LearningOpportunityObject> i = moduuli.getChildNodes().iterator();
-        LearningOpportunityObject child1 = i.next();
-        LearningOpportunityObject child2 = i.next();
+        Iterator<Koulutusmoduuli> i = moduuli.getAlamoduuliList().iterator();
+        Koulutusmoduuli child1 = i.next();
+        Koulutusmoduuli child2 = i.next();
 
-        LearningOpportunityObject child3 = child1.getChildNodes().iterator().next();
-        LearningOpportunityObject child4 = child2.getChildNodes().iterator().next();
+        Koulutusmoduuli child3 = child1.getAlamoduuliList().iterator().next();
+        Koulutusmoduuli child4 = child2.getAlamoduuliList().iterator().next();
 
         assertEquals(child3, child4);
 
@@ -78,48 +75,32 @@ public class OVT1534_KoulutusrakenneTest {
     @Test
     public void testKoulutusmoduuliinVoidaanLiittaaUseitaToteutuksia() {
 
-        TutkintoOhjelma moduuli = new TutkintoOhjelma();
-        TutkintoOhjelmaToteutus toteutusA = new TutkintoOhjelmaToteutus(moduuli);
-        TutkintoOhjelmaToteutus toteutusB = new TutkintoOhjelmaToteutus(moduuli);
+        Koulutusmoduuli moduuli = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        KoulutusmoduuliToteutus toteutusA = new KoulutusmoduuliToteutus(moduuli);
+        KoulutusmoduuliToteutus toteutusB = new KoulutusmoduuliToteutus(moduuli);
 
-        moduuli.addLearningOpportunityInstance(toteutusA);
-        moduuli.addLearningOpportunityInstance(toteutusB);
+        moduuli.addKoulutusmoduuliToteutus(toteutusA);
+        moduuli.addKoulutusmoduuliToteutus(toteutusB);
 
         // tarkista että toteutukset on liitetty
-        assertEquals(2, moduuli.getLearningOpportunityInstances().size());
+        assertEquals(2, moduuli.getKoulutusmoduuliToteutusList().size());
 
         // tarkista että toteutukset viittaavat oikean moduuliin
-        assertEquals(moduuli, toteutusA.getLearningOpportunitySpecification());
-        assertEquals(moduuli, toteutusB.getLearningOpportunitySpecification());
+        assertEquals(moduuli, toteutusA.getKoulutusmoduuli());
+        assertEquals(moduuli, toteutusB.getKoulutusmoduuli());
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = IllegalStateException.class)
     public void testKoulutusmoduulinToteutuksenKoulutusmoduuliaEiVoiMuuttaa() {
 
-        TutkintoOhjelma moduuliA = new TutkintoOhjelma();
-        TutkintoOhjelma moduuliB = new TutkintoOhjelma();
+        Koulutusmoduuli moduuliA = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        Koulutusmoduuli moduuliB = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
 
-        TutkintoOhjelmaToteutus toteutus = new TutkintoOhjelmaToteutus(moduuliA);
+        KoulutusmoduuliToteutus toteutus = new KoulutusmoduuliToteutus(moduuliA);
 
         // yrita vaihtaa modulia
-        toteutus.setLearningOpportunitySpecification(moduuliB);
-
-    }
-
-    @Test
-    public void testViittausToteutuksestaModuuliinOnKaksisuuntainen() {
-
-        TutkintoOhjelma moduuli = new TutkintoOhjelma();
-        TutkintoOhjelmaToteutus toteutus = new TutkintoOhjelmaToteutus();
-
-        toteutus.setLearningOpportunitySpecification(moduuli);
-
-        // tarkista etta koulutusmoduuli viittaa toteutukseen
-        assertEquals(toteutus, moduuli.getLearningOpportunityInstances().iterator().next());
-
-        // tarkista että toteutus viittaa koulutusmoduulin
-        assertEquals(moduuli, toteutus.getLearningOpportunitySpecification());
+        toteutus.setKoulutusmoduuli(moduuliB);
 
     }
 

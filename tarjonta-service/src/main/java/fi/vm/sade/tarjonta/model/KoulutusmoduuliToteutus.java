@@ -25,12 +25,21 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang.StringUtils;
 
 /**
+ * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa Koulutusmoduuli:n tietoja ja antaa
+ * moduulille aika seka paikka ulottuvuuden.
  *
  */
 @Entity
-public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstance {
+@Table(name = KoulutusmoduuliToteutus.TABLE_NAME)
+public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
+
+    public static final String TABLE_NAME = "koulutusmoduuli_toteutus";
 
     private static final long serialVersionUID = -1278564574746813425L;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinTable(name = TABLE_NAME + "_koulutusmoduuli")
+    private Koulutusmoduuli koulutusmoduuli;
 
     @Column(name = "tarjoaja")
     private String tarjoaja;
@@ -123,7 +132,19 @@ public abstract class KoulutusmoduuliToteutus extends LearningOpportunityInstanc
      * @param moduuli Koulutusmoduuli this KoulutusumoduuliToteutus "implements".
      */
     public KoulutusmoduuliToteutus(Koulutusmoduuli moduuli) {
-        super(moduuli);
+        setKoulutusmoduuli(moduuli);
+    }
+
+    public final void setKoulutusmoduuli(Koulutusmoduuli moduuli) {
+        if (this.koulutusmoduuli != null && !this.koulutusmoduuli.equals(moduuli)) {
+            throw new IllegalStateException("trying to change koulutusmoduuli from: "
+                + this.koulutusmoduuli + " to " + moduuli);
+        }
+        this.koulutusmoduuli = moduuli;
+    }
+
+    public Koulutusmoduuli getKoulutusmoduuli() {
+        return koulutusmoduuli;
     }
 
     /**

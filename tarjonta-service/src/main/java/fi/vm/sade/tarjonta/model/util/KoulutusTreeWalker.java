@@ -15,8 +15,9 @@
  */
 package fi.vm.sade.tarjonta.model.util;
 
-import fi.vm.sade.tarjonta.model.KoulutusRakenne;
-import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
+import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import java.util.Set;
 
 /**
@@ -44,23 +45,23 @@ public class KoulutusTreeWalker {
         this(-1, handler);
     }
 
-    public void walk(LearningOpportunityObject startNode) {
+    public void walk(Koulutusmoduuli startNode) {
         walkInternal(startNode);
     }
 
-    private boolean walkInternal(LearningOpportunityObject node) {
+    private boolean walkInternal(Koulutusmoduuli moduuli) {
 
         if (maxDepth != -1 && walkedDepth == maxDepth) {
             return false;
         }
 
-        if (!matcher.match(node)) {
+        if (!matcher.match(moduuli)) {
             return false;
         }
 
-        final Set<KoulutusRakenne> nextSet = node.getStructures();
-        for (KoulutusRakenne r : nextSet) {
-            for (LearningOpportunityObject o : r.getChildren()) {
+        final Set<KoulutusSisaltyvyys> nextSet = moduuli.getSisaltyvyysList();
+        for (KoulutusSisaltyvyys s : nextSet) {
+            for (Koulutusmoduuli o : s.getAlamoduuliList()) {
                 if (!walkInternal(o)) {
                     return false;
                 }
@@ -82,7 +83,7 @@ public class KoulutusTreeWalker {
          * @param moduuli
          * @return
          */
-        public boolean match(LearningOpportunityObject koulutus);
+        public boolean match(Koulutusmoduuli koulutus);
 
     }
 
@@ -94,14 +95,14 @@ public class KoulutusTreeWalker {
 
         private boolean found;
 
-        private LearningOpportunityObject koulutus;
+        private Koulutusmoduuli koulutus;
 
-        public EqualsMatcher(LearningOpportunityObject koulutus) {
+        public EqualsMatcher(Koulutusmoduuli koulutus) {
             this.koulutus = koulutus;
         }
 
         @Override
-        public boolean match(LearningOpportunityObject k) {
+        public boolean match(Koulutusmoduuli k) {
             if (koulutus.equals(k)) {
                 found = true;
                 return false;

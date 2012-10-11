@@ -15,10 +15,11 @@
  */
 package fi.vm.sade.tarjonta;
 
-import fi.vm.sade.tarjonta.dao.KoulutusDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusRakenneDAO;
-import fi.vm.sade.tarjonta.model.KoulutusRakenne;
-import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
+import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import java.io.PrintWriter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +33,10 @@ import org.springframework.stereotype.Component;
 public class KoulutusDatabasePrinter {
 
     @Autowired
-    private KoulutusDAO koulutusDAO;
+    private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
     @Autowired
-    private KoulutusRakenneDAO rakenneDAO;
+    private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
 
     public void printAll() {
         PrintWriter out = new PrintWriter(System.out);
@@ -53,15 +54,15 @@ public class KoulutusDatabasePrinter {
 
         out.println("-- List of koulutus objects:");
 
-        List<LearningOpportunityObject> list = koulutusDAO.findAll();
+        List<Koulutusmoduuli> list = koulutusmoduuliDAO.findAll();
         for (int i = 0; i < list.size(); i++) {
-            LearningOpportunityObject k = list.get(i);
+            Koulutusmoduuli k = list.get(i);
             out.println((i + 1)
                 + "\n\t type: " + k.getClass().getSimpleName()
                 + "\n\t id: " + k.getId()
                 + "\n\t oid: " + k.getOid()
                 + "\n\t nimi: " + k.getNimi()
-                + "\n\t rakenteet: " + k.getStructures());
+                + "\n\t sisaltyvyysList: " + k.getSisaltyvyysList());
 
         }
 
@@ -69,15 +70,15 @@ public class KoulutusDatabasePrinter {
 
     public void printRakenne(PrintWriter out) {
 
-        out.println("-- List of KoulutusRakenne objects:");
+        out.println("-- List of KoulutusSisaltyvyys objects:");
 
-        List<KoulutusRakenne> list = rakenneDAO.findAll();
+        List<KoulutusSisaltyvyys> list = sisaltyvyysDAO.findAll();
         for (int i = 0; i < list.size(); i++) {
-            KoulutusRakenne r = list.get(i);
+            KoulutusSisaltyvyys s = list.get(i);
             out.println((i + 1)
-                + "\t" + "parent: " + r.getParent().getId()
-                + ", num childred: " + r.getChildren().size()
-                + ", selector: " + r.getSelector());
+                + "\t" + "ylamoduuli: " + s.getYlamoduuli().getId()
+                + ", num alamoduulis: " + s.getAlamoduuliList().size()
+                + ", selector: " + s.getValintaTyyppi());
 
         }
 

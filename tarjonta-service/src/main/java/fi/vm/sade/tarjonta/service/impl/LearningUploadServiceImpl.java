@@ -15,17 +15,13 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.LearningOpportunitySpecification;
-import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
-import fi.vm.sade.tarjonta.model.TutkintoOhjelmaToteutus;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.LearningUploadService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.types2.ExtendedStringType;
-import fi.vm.sade.tarjonta.service.types2.LearningClassificationCodeType;
 import fi.vm.sade.tarjonta.service.types2.LearningOpportunityDataType;
 import fi.vm.sade.tarjonta.service.types2.LearningOpportunityInstanceType;
 import fi.vm.sade.tarjonta.service.types2.LearningOpportunityProviderType;
@@ -82,12 +78,13 @@ public class LearningUploadServiceImpl implements LearningUploadService {
         Koulutusmoduuli komo = null;
 
         if (los.getType().equals(LearningOpportunityTypeType.DEGREE_PROGRAMME)) {
-            TutkintoOhjelma to = new TutkintoOhjelma();
+
+            Koulutusmoduuli moduuli = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
 
             // TODO multilingual!
-            to.setTutkintoOhjelmanNimi("-");
+            moduuli.setTutkintoOhjelmanNimi("-");
             for (ExtendedStringType extendedStringType : los.getName()) {
-                to.setTutkintoOhjelmanNimi(extendedStringType.getValue());
+                moduuli.setTutkintoOhjelmanNimi(extendedStringType.getValue());
             }
 
             // TODO koulutusNimi == Nimi! So where to store the "degree title"?
@@ -96,9 +93,9 @@ public class LearningUploadServiceImpl implements LearningUploadService {
             // TODO where is this?
             String tilaskokeskusKoulutusKoodiUrl = "TK KOULUTUS KOODI URL";
             // los.getClassification().getClassificationCode().get(0).getScheme().HTTP_STAT_FI
-            to.setKoulutusKoodi(tilaskokeskusKoulutusKoodiUrl);
+            moduuli.setKoulutusKoodi(tilaskokeskusKoulutusKoodiUrl);
 
-            komo = to;
+            komo = moduuli;
         } else if (los.getType().equals(LearningOpportunityTypeType.COURSE_UNIT)) {
             LOG.error("LOS == Opintojakso (course unit) - NOT IMPLEMENTED");
             return null;
@@ -113,12 +110,12 @@ public class LearningUploadServiceImpl implements LearningUploadService {
         }
 
         komo.setEqfLuokitus("EQF");
-        komo.setKoulutusAla("KOULUTUSALA");
+        komo.setKoulutusala("KOULUTUSALA");
         komo.setKoulutusAste("KOULUTUSASTE");
         komo.setNimi("NIMI");
         komo.setNqfLuokitus("NQF");
         komo.setOid("OID");
-        komo.setOwnerOrganisaatioOid("ORG OID");
+        komo.setOmistajaOrganisaatioOid("ORG OID");
         komo.setTila("KOODISTO TILA");
         komo.setVersion(Long.MIN_VALUE);
 
@@ -136,7 +133,7 @@ public class LearningUploadServiceImpl implements LearningUploadService {
         LOG.info("importOrUpdateLOI() loi={}", loi.getId());
 
         // TODO actual type from los?
-        KoulutusmoduuliToteutus komoto = new TutkintoOhjelmaToteutus();
+        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus(null);
         Koulutusmoduuli komo = null;
 
         LearningOpportunitySpecificationType los = (LearningOpportunitySpecificationType) loi.getSpecificationRef().getRef();

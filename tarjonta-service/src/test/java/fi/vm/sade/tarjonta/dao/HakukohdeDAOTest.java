@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -51,7 +51,10 @@ public class HakukohdeDAOTest {
     private HakukohdeDAO hakukohdeDAO;
 
     @Autowired
-    private KoulutusDAO koulutusDAO;
+    private KoulutusmoduuliDAO koulutusmoduuliDAO;
+
+    @Autowired
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     /**
      * Set of Koulutusmoduulitoteutus persisted into database.
@@ -114,7 +117,7 @@ public class HakukohdeDAOTest {
 
         final Hakukohde hk = fixtures.hakukohdeWithValintakoe;
         hk.setHaku(fixtures.createPersistedHaku());
-        
+
         hakukohdeDAO.insert(hk);
 
         Hakukohde loaded = hakukohdeDAO.read(hk.getId());
@@ -128,7 +131,7 @@ public class HakukohdeDAOTest {
 
         Hakukohde h = fixtures.hakukohdeWithValintakoe;
         h.setHaku(fixtures.createPersistedHaku());
-        
+
         hakukohdeDAO.insert(h);
 
         Valintakoe koe = h.getValintakoes().iterator().next();
@@ -183,19 +186,19 @@ public class HakukohdeDAOTest {
     }
 
     /**
-     * 
+     *
      */
     private void setUpKoulutusmoduuliToteutuses() {
 
         koulutusmoduuliToteutuses.clear();
-        
+
         for (int i = 0; i < 5; i++) {
 
             // re-create new fixtures
             fixtures.recreate();
 
-            TutkintoOhjelma moduuli = (TutkintoOhjelma) koulutusDAO.insert(fixtures.simpleTutkintoOhjelma);
-            TutkintoOhjelmaToteutus toteutus = (TutkintoOhjelmaToteutus) koulutusDAO.insert(fixtures.simpleTutkintoOhjelmaToteutus);
+            Koulutusmoduuli moduuli = koulutusmoduuliDAO.insert(fixtures.simpleTutkintoOhjelma);
+            KoulutusmoduuliToteutus toteutus = koulutusmoduuliToteutusDAO.insert(fixtures.simpleTutkintoOhjelmaToteutus);
 
             koulutusmoduuliToteutuses.add(toteutus);
 

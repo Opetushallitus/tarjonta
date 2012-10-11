@@ -32,93 +32,92 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * LearningOpportunityStructure defines the sub modules that are directly under the
- * container module and the semantics that regulate how those child modules may or
- * need to be used.
+ * KoulutusSisaltyvyys on rakenne jolla Koulutusmoduuli:n alle voidaan liittaa toisia Koulutusmoduuleja.
+ * Tama luokka sistaa myos semanttisia saantoja siita miten opiskelija voi valita alla rakenteita.
  *
  */
 @Entity
-@Table(name = KoulutusRakenne.TABLE_NAME)
-public class KoulutusRakenne extends BaseEntity implements Serializable {
+@Table(name = KoulutusSisaltyvyys.TABLE_NAME)
+public class KoulutusSisaltyvyys extends BaseEntity implements Serializable {
 
-    static final String TABLE_NAME = "koulutus_rakenne";
+    static final String TABLE_NAME = "koulutus_sisaltyvyys";
 
     private static final long serialVersionUID = 7833956682160881671L;
 
     private static final String PARENT_COLUMN_NAME = "parent_id";
 
-    private Integer minValue;
+    private Integer minArvo;
 
-    private Integer maxValue;
+    private Integer maxArvo;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private SelectorType selector;
+    @Column(name = "tyyppi", nullable = false)
+    private ValintaTyyppi valintaTyyppi;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = PARENT_COLUMN_NAME)
-    private LearningOpportunityObject parent;
+    private Koulutusmoduuli ylamoduuli;
 
     @ManyToMany
     @JoinTable(name = TABLE_NAME + "_koulutus", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_" + ID_COLUMN_NAME, referencedColumnName = BaseEntity.ID_COLUMN_NAME), inverseJoinColumns =
-    @JoinColumn(name = LearningOpportunityObject.TABLE_NAME + "_" + LearningOpportunityObject.ID_COLUMN_NAME, referencedColumnName = BaseEntity.ID_COLUMN_NAME))
-    private Set<LearningOpportunityObject> children = new HashSet<LearningOpportunityObject>();
+    @JoinColumn(name = Koulutusmoduuli.TABLE_NAME + "_" + Koulutusmoduuli.ID_COLUMN_NAME, referencedColumnName = BaseEntity.ID_COLUMN_NAME))
+    private Set<Koulutusmoduuli> alamoduuliList = new HashSet<Koulutusmoduuli>();
 
-    public KoulutusRakenne() {
+    public KoulutusSisaltyvyys() {
     }
 
-    public KoulutusRakenne(LearningOpportunityObject parent, LearningOpportunityObject child, SelectorType selector) {
-        this.selector = selector;
-        this.parent = parent;
-        addChild(child);
+    public KoulutusSisaltyvyys(Koulutusmoduuli ylamoduuli, Koulutusmoduuli alamoduuli, ValintaTyyppi valintaTyyppi) {
+        this.valintaTyyppi = valintaTyyppi;
+        this.ylamoduuli = ylamoduuli;
+        addAlamoduuli(alamoduuli);
     }
 
-    public void setParent(LearningOpportunityObject parent) {
-        this.parent = parent;
+    public void setYlamoduuli(Koulutusmoduuli ylamoduuli) {
+        this.ylamoduuli = ylamoduuli;
     }
 
-    public LearningOpportunityObject getParent() {
-        return parent;
+    public Koulutusmoduuli getYlamoduuli() {
+        return ylamoduuli;
     }
 
     public Integer getMax() {
-        return maxValue;
+        return maxArvo;
     }
 
     public Integer getMin() {
-        return minValue;
+        return minArvo;
     }
 
     public void setMax(Integer max) {
-        this.maxValue = max;
+        this.maxArvo = max;
     }
 
     public void setMin(Integer min) {
-        this.minValue = min;
+        this.minArvo = min;
     }
 
-    public SelectorType getSelector() {
-        return selector;
+    public ValintaTyyppi getValintaTyyppi() {
+        return valintaTyyppi;
     }
 
-    public void setSelector(SelectorType selector) {
-        this.selector = selector;
+    public void setValintaTyyppi(ValintaTyyppi selector) {
+        this.valintaTyyppi = selector;
     }
 
-    public Set<LearningOpportunityObject> getChildren() {
-        return Collections.unmodifiableSet(children);
+    public Set<Koulutusmoduuli> getAlamoduuliList() {
+        return Collections.unmodifiableSet(alamoduuliList);
     }
 
-    public void removeChild(LearningOpportunityObject child) {
-        children.remove(child);
+    public void removeAlamoduuli(Koulutusmoduuli moduuli) {
+        alamoduuliList.remove(moduuli);
     }
 
-    public final void addChild(LearningOpportunityObject child) {
-        children.add(child);
+    public final void addAlamoduuli(Koulutusmoduuli moduuli) {
+        alamoduuliList.add(moduuli);
     }
 
-    public enum SelectorType {
+    public enum ValintaTyyppi {
 
         /**
          * All sub modules are mandatory.

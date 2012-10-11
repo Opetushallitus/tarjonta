@@ -15,11 +15,8 @@
  */
 package fi.vm.sade.tarjonta;
 
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusRakenneDAO;
-import fi.vm.sade.tarjonta.dao.impl.KoulutusDAOImpl;
+import fi.vm.sade.tarjonta.dao.*;
+import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,11 +32,11 @@ public class KoulutusFixtures {
 
     public static final String OID_TIETOJENKASITTELYN_KOULUTUS = "dummy";
 
-    public TutkintoOhjelma simpleTutkintoOhjelma;
+    public Koulutusmoduuli simpleTutkintoOhjelma;
 
-    public TutkintoOhjelmaToteutus simpleTutkintoOhjelmaToteutus;
+    public KoulutusmoduuliToteutus simpleTutkintoOhjelmaToteutus;
 
-    public TutkinnonOsa simpleTutkinnonOsa;
+    public Koulutusmoduuli simpleTutkinnonOsa;
 
     public Hakukohde simpleHakukohde;
 
@@ -48,7 +45,10 @@ public class KoulutusFixtures {
     public Haku simpleHaku;
 
     @Autowired
-    private KoulutusDAO koulutusDAO;
+    private KoulutusmoduuliDAO koulutusmoduuliDAO;
+
+    @Autowired
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
@@ -57,7 +57,7 @@ public class KoulutusFixtures {
     private HakuDAO hakuDAO;
 
     @Autowired
-    private KoulutusRakenneDAO rakenneDAO;
+    private KoulutusSisaltyvyysDAO rakenneDAO;
 
     public void recreate() {
 
@@ -72,23 +72,23 @@ public class KoulutusFixtures {
 
     }
 
-    public TutkintoOhjelma createTutkintoOhjelma() {
+    public Koulutusmoduuli createTutkintoOhjelma() {
 
-        TutkintoOhjelma t = new TutkintoOhjelma();
-        t.setOid(randomOid("koulutusmoduuli"));
-        t.setTutkintoOhjelmanNimi("Simple Tutkinto-Ohjelma");
-        t.setKoulutusKoodi("500001");
+        Koulutusmoduuli m = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        m.setOid(randomOid("koulutusmoduuli"));
+        m.setTutkintoOhjelmanNimi("Simple Tutkinto-Ohjelma");
+        m.setKoulutusKoodi("500001");
 
-        return t;
+        return m;
 
     }
 
-    public TutkintoOhjelmaToteutus createTutkintoOhjelmaToteutus() {
+    public KoulutusmoduuliToteutus createTutkintoOhjelmaToteutus() {
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, 1);
 
-        TutkintoOhjelmaToteutus t = new TutkintoOhjelmaToteutus();
+        KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus(null);
         t.setNimi("Simple Tutkinto-Ohjelma toteutus");
         t.setOid(randomOid("koulutusmoduulitotetutus"));
         t.setKoulutuksenAlkamisPvm(cal.getTime());
@@ -100,11 +100,11 @@ public class KoulutusFixtures {
 
     }
 
-    public TutkinnonOsa createTutkinnonOsa() {
+    public Koulutusmoduuli createTutkinnonOsa() {
 
-        TutkinnonOsa t = new TutkinnonOsa();
-        t.setOid(randomOid("tutkinnonosa"));
-        return t;
+        Koulutusmoduuli m = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINNON_OSA);
+        m.setOid(randomOid("tutkinnonosa"));
+        return m;
 
     }
 
@@ -158,9 +158,9 @@ public class KoulutusFixtures {
         KoulutusmoduuliToteutus t2 = createTutkintoOhjelmaToteutus();
         KoulutusmoduuliToteutus t3 = createTutkintoOhjelmaToteutus();
 
-        koulutusDAO.insert(t1);
-        koulutusDAO.insert(t2);
-        koulutusDAO.insert(t3);
+        koulutusmoduuliToteutusDAO.insert(t1);
+        koulutusmoduuliToteutusDAO.insert(t2);
+        koulutusmoduuliToteutusDAO.insert(t3);
 
         h.addKoulutusmoduuliToteutus(t1);
         h.addKoulutusmoduuliToteutus(t2);
@@ -188,7 +188,7 @@ public class KoulutusFixtures {
         t1.addHakukohde(h2);
         t1.addHakukohde(h3);
 
-        return (KoulutusmoduuliToteutus) koulutusDAO.insert(t1);
+        return (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.insert(t1);
     }
 
     /**
@@ -209,20 +209,20 @@ public class KoulutusFixtures {
         Koulutusmoduuli child2 = createTutkinnonOsa();
         Koulutusmoduuli child3 = createTutkinnonOsa();
 
-        koulutusDAO.insert(root);
-        koulutusDAO.insert(child1);
-        koulutusDAO.insert(child2);
-        koulutusDAO.insert(child3);
+        koulutusmoduuliDAO.insert(root);
+        koulutusmoduuliDAO.insert(child1);
+        koulutusmoduuliDAO.insert(child2);
+        koulutusmoduuliDAO.insert(child3);
 
-        rakenneDAO.insert(new KoulutusRakenne(root, child1, KoulutusRakenne.SelectorType.ALL_OFF));
-        rakenneDAO.insert(new KoulutusRakenne(root, child2, KoulutusRakenne.SelectorType.ALL_OFF));
-        rakenneDAO.insert(new KoulutusRakenne(child1, child3, KoulutusRakenne.SelectorType.ALL_OFF));
-        rakenneDAO.insert(new KoulutusRakenne(child2, child3, KoulutusRakenne.SelectorType.SOME_OFF));
+        rakenneDAO.insert(new KoulutusSisaltyvyys(root, child1, KoulutusSisaltyvyys.ValintaTyyppi.ALL_OFF));
+        rakenneDAO.insert(new KoulutusSisaltyvyys(root, child2, KoulutusSisaltyvyys.ValintaTyyppi.ALL_OFF));
+        rakenneDAO.insert(new KoulutusSisaltyvyys(child1, child3, KoulutusSisaltyvyys.ValintaTyyppi.ALL_OFF));
+        rakenneDAO.insert(new KoulutusSisaltyvyys(child2, child3, KoulutusSisaltyvyys.ValintaTyyppi.SOME_OFF));
 
         flush();
         clear();
 
-        return (Koulutusmoduuli) koulutusDAO.read(root.getId());
+        return (Koulutusmoduuli) koulutusmoduuliDAO.read(root.getId());
 
     }
 
@@ -239,12 +239,16 @@ public class KoulutusFixtures {
             hakukohdeDAO.remove(o);
         }
 
-        for (KoulutusRakenne r : rakenneDAO.findAll()) {
+        for (KoulutusSisaltyvyys r : rakenneDAO.findAll()) {
             rakenneDAO.remove(r);
         }
 
-        for (LearningOpportunityObject o : koulutusDAO.findAll()) {
-            koulutusDAO.remove(o);
+        for (KoulutusmoduuliToteutus t : koulutusmoduuliToteutusDAO.findAll()) {
+            koulutusmoduuliToteutusDAO.remove(t);
+        }
+
+        for (Koulutusmoduuli m : koulutusmoduuliDAO.findAll()) {
+            koulutusmoduuliDAO.remove(m);
         }
 
         flush();
@@ -253,11 +257,11 @@ public class KoulutusFixtures {
     }
 
     private void flush() {
-        ((KoulutusDAOImpl) koulutusDAO).getEntityManager().flush();
+        ((KoulutusmoduuliDAOImpl) koulutusmoduuliDAO).getEntityManager().flush();
     }
 
     private void clear() {
-        ((KoulutusDAOImpl) koulutusDAO).getEntityManager().clear();
+        ((KoulutusmoduuliDAOImpl) koulutusmoduuliDAO).getEntityManager().clear();
     }
 
     private String randomOid(String type) {

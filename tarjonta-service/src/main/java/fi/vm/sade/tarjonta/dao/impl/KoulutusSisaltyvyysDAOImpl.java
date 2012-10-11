@@ -13,14 +13,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.dao;
+package fi.vm.sade.tarjonta.dao.impl;
 
-import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.tarjonta.model.KoulutusRakenne;
+import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  */
-public interface KoulutusRakenneDAO extends JpaDAO<KoulutusRakenne, Long> {
+@Repository
+public class KoulutusSisaltyvyysDAOImpl extends AbstractJpaDAOImpl<KoulutusSisaltyvyys, Long> implements KoulutusSisaltyvyysDAO {
 }
 

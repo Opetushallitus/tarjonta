@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.service.impl;
 import fi.vm.sade.tarjonta.model.KoodistoContract;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
 import fi.vm.sade.tarjonta.service.KoulutusAdminService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.tarjonta.koulutus._2012._09._04.KoulutusTyyppi;
@@ -85,7 +84,7 @@ public class KoulutusAdminServiceImpl implements KoulutusAdminService {
      * @param koulutus
      * @throws what-if-bad-koulutusmoduuli-oid
      * @throws what-if-incomplete-input-data
-     * 
+     *
      * @return
      */
     private Koulutusmoduuli findOrCreateKoulutusmoduuli(KoulutusTyyppi koulutus) {
@@ -98,7 +97,7 @@ public class KoulutusAdminServiceImpl implements KoulutusAdminService {
         if (oid != null) {
             result = (Koulutusmoduuli) koulutusService.findByOid(oid);
         } else {
-            // are there other means of identifying an existing Koulutusmoduuli?             
+            // are there other means of identifying an existing Koulutusmoduuli?
             result = extractKoulutusmoduuli(koulutus);
             // if not, we will create one
             result = koulutusService.create(result);
@@ -110,18 +109,18 @@ public class KoulutusAdminServiceImpl implements KoulutusAdminService {
 
     /**
      * TODO
-     * 
+     *
      * @param moduuli
      * @return
      */
-    private KoulutusTyyppi convert(Koulutusmoduuli moduuli) {        
+    private KoulutusTyyppi convert(Koulutusmoduuli moduuli) {
         // just makes unit test happy until more tests are in place
         return new KoulutusTyyppi();
     }
 
     /**
      * TODO
-     * 
+     *
      * @param moduuli
      * @param toteutus
      * @return
@@ -132,7 +131,7 @@ public class KoulutusAdminServiceImpl implements KoulutusAdminService {
 
     /**
      * TODO
-     * 
+     *
      * @param koulutus
      * @return
      */
@@ -142,7 +141,7 @@ public class KoulutusAdminServiceImpl implements KoulutusAdminService {
 
     /**
      * Constructs Koulutusmoduuli based on the moduuliTyyppi from aggregated input data.
-     * 
+     *
      * @param koulutus
      * @return
      */
@@ -155,41 +154,39 @@ public class KoulutusAdminServiceImpl implements KoulutusAdminService {
         final String moduuliTyyppiUri = koulutusmoduuli.getModuulinTyyppi();
 
         if (KoodistoContract.ModuuliTyypit.TUTKINTO_OHJELMA.equals(moduuliTyyppiUri)) {
-            
+
             return extractTutkintoOhjelma(koulutusmoduuli);
-            
+
         } else {
             throw new RuntimeException("unsupported moduuliTyyppi: " + moduuliTyyppiUri);
         }
 
     }
-    
-    
+
     /**
      * Constructs Koulutusmoduuli of type TutkintoOhjelma out of given aggregated input data. This should be refactored into separate class (converter).
-     * 
+     *
      * @param source
      * @return
      */
-    private TutkintoOhjelma extractTutkintoOhjelma(KoulutusmoduuliTyyppi source) {
-        
-        TutkintoOhjelma t = new TutkintoOhjelma();
-        
+    private Koulutusmoduuli extractTutkintoOhjelma(KoulutusmoduuliTyyppi source) {
+
+        Koulutusmoduuli t = new Koulutusmoduuli(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+
         t.setKoulutusKoodi(source.getKoulutusLuokitusKoodi());
         t.setKoulutusNimi(source.getKoulutuksenNimi());
         t.setTutkintoOhjelmanNimi(source.getTutkintoOhjelmanNimi());
         t.setOid(source.getOid());
-        
+
         // todo: where does authorization take place?
-        t.setOwnerOrganisaatioOid(source.getOwnerOrganisaatioOid());
-        
+        t.setOmistajaOrganisaatioOid(source.getOwnerOrganisaatioOid());
+
         return t;
-        
+
     }
-    
 
     /**
-     * Resolves the type of the user (in scope of the admin UI!?!). 
+     * Resolves the type of the user (in scope of the admin UI!?!).
      */
     public interface UserRoleResolver {
 

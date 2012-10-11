@@ -16,13 +16,10 @@
 package fi.vm.sade.tarjonta.model.util;
 
 import fi.vm.sade.tarjonta.KoulutusFixtures;
-import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.TutkintoOhjelma;
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker.NodeHandler;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
-import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +43,7 @@ public class KoulutusmoduuliTreeWalkerTest {
         KoulutusTreeWalker.NodeHandler handler = new NodeHandler() {
 
             @Override
-            public boolean match(LearningOpportunityObject moduuli) {
+            public boolean match(Koulutusmoduuli moduuli) {
                 counter.incrementAndGet();
                 return true;
             }

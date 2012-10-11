@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.dao;
 import fi.vm.sade.tarjonta.KoulutusFixtures;
 import fi.vm.sade.tarjonta.model.*;
 import java.util.Date;
-import java.util.Set;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -41,9 +40,15 @@ public class KoulutusmoduuliToteutusDAOTest {
     private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliToteutusDAOTest.class);
 
     @Autowired
-    private KoulutusDAO koulutusDAO;
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
-    private TutkintoOhjelma defaultModuuli;
+    @Autowired
+    private KoulutusmoduuliDAO koulutusmoduuliDAO;
+
+    @Autowired
+    private KoulutusFixtures fixtures;
+
+    private Koulutusmoduuli defaultModuuli;
 
     private KoulutusmoduuliToteutus defaultToteutus;
 
@@ -62,54 +67,92 @@ public class KoulutusmoduuliToteutusDAOTest {
     @Before
     public void setUp() {
 
-        defaultModuuli = new TutkintoOhjelma();
+        defaultModuuli = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         defaultModuuli.setOid("http://someoid");
         defaultModuuli.setTutkintoOhjelmanNimi("Junit Tutkinto");
         defaultModuuli.setKoulutusKoodi("123456");
-        koulutusDAO.insert(defaultModuuli);
+        koulutusmoduuliDAO.insert(defaultModuuli);
 
-        defaultToteutus = new TutkintoOhjelmaToteutus(defaultModuuli);
+        defaultToteutus = new KoulutusmoduuliToteutus(defaultModuuli);
         defaultToteutus.setNimi(TOTEUTUS_1_NIMI);
         defaultToteutus.setOid(TOTEUTUS_1_OID);
         defaultToteutus.setKoulutuksenAlkamisPvm(ALKAMIS_PVM);
         defaultToteutus.setMaksullisuus(MAKSULLISUUS);
         defaultToteutus.addOpetuskieli(new KoodistoUri("http://kielet/fi"));
         defaultToteutus.addOpetusmuoto(new KoodistoUri("http://opetusmuodot/lahiopetus"));
-        koulutusDAO.insert(defaultToteutus);
+        koulutusmoduuliToteutusDAO.insert(defaultToteutus);
 
     }
 
     @Test
     public void testSavedTutkintoOhjelmaCanBeFoundById() {
 
-        KoulutusmoduuliToteutus loaded = (KoulutusmoduuliToteutus) koulutusDAO.read(defaultToteutus.getId());
+        KoulutusmoduuliToteutus loaded = koulutusmoduuliToteutusDAO.read(defaultToteutus.getId());
         assertNotNull(loaded);
         assertEquals(TOTEUTUS_1_NIMI, loaded.getNimi());
         assertEquals(TOTEUTUS_1_OID, loaded.getOid());
         assertEquals(ALKAMIS_PVM, loaded.getKoulutuksenAlkamisPvm());
         assertEquals(MAKSULLISUUS, loaded.getMaksullisuus());
-        assertEquals(defaultModuuli.getOid(), loaded.getLearningOpportunitySpecification().getOid());
+        assertEquals(defaultModuuli.getOid(), loaded.getKoulutusmoduuli().getOid());
 
 
     }
 
-
-    
     @Test
     public void testDeletingToteutusDoesNotDeleteModuuli() {
 
-        // delete KoulutusmoduuliToteutus
-        koulutusDAO.remove(defaultToteutus);
-
-        // check that we can still load Koulutusmoduuli
-        assertNotNull(koulutusDAO.read(defaultModuuli.getId()));
+        koulutusmoduuliToteutusDAO.remove(defaultToteutus);
+        assertNotNull(koulutusmoduuliDAO.read(defaultModuuli.getId()));
 
     }
 
+    @Test
+    public void testSameYhteyshenkiloCannotBeAddTwice() {
+
+        KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
+        t.addYhteyshenkilo(new Yhteyshenkilo("12345", "fi"));
+        t.addYhteyshenkilo(new Yhteyshenkilo("12345", "fi"));
+
+        assertEquals(1, t.getYhteyshenkilos().size());
+
+    }
+
+    @Test
+    public void testDeleteYhteyshenkilo() {
+
+        KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
+        t.addYhteyshenkilo(new Yhteyshenkilo("12345", "fi"));
+
+        koulutusmoduuliToteutusDAO.insert(t);
+
+        KoulutusmoduuliToteutus loaded = koulutusmoduuliToteutusDAO.read(t.getId());
+        assertEquals(1, loaded.getYhteyshenkilos().size());
+
+        loaded.removeYhteyshenkilo(loaded.getYhteyshenkilos().iterator().next());
+
+        loaded = koulutusmoduuliToteutusDAO.read(t.getId());
+        assertEquals(0, loaded.getYhteyshenkilos().size());
+
+    }
+
+    @Test
+    public void testAddYhteyshenkilo() {
+
+        KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
+        t.addYhteyshenkilo(new Yhteyshenkilo("12345", "fi"));
+
+        koulutusmoduuliToteutusDAO.insert(t);
+
+        KoulutusmoduuliToteutus loaded = (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.read(t.getId());
+        assertEquals(1, loaded.getYhteyshenkilos().size());
+
+    }
 
     private KoulutusmoduuliToteutus updateAndRead(KoulutusmoduuliToteutus toteutus) {
-        koulutusDAO.update(toteutus);
-        return (KoulutusmoduuliToteutus) koulutusDAO.read(toteutus.getId());
+
+        koulutusmoduuliToteutusDAO.update(toteutus);
+        return (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.read(toteutus.getId());
+
     }
 
 }

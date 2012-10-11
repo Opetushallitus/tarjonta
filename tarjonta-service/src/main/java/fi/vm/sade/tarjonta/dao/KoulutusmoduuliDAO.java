@@ -16,12 +16,13 @@
 package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.tarjonta.model.LearningOpportunityObject;
+import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import java.util.List;
 
 /**
  */
-public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
+public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
 
     /**
      *
@@ -30,26 +31,7 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
      * @param pageSize
      * @return
      */
-    public List<LearningOpportunityObject> find(String tila, int startIndex, int pageSize);
-
-    /**
-     * Returns all existing versions of a LearningOpportunityObject.
-     *
-     * @param <T> the type of the
-     * @param type
-     * @param oid
-     * @return
-     */
-    public List<? extends LearningOpportunityObject> findAllVersions(String oid);
-
-    /**
-     * Returns a list of Koulutus -objects of type <code>type</code>.
-     *
-     * @param <T> type of
-     * @param type
-     * @return
-     */
-    public <T extends LearningOpportunityObject> List<T> findAll(Class<T> type);
+    public List<Koulutusmoduuli> find(String tila, int startIndex, int pageSize);
 
     /**
      * Returns a list of Koulutusmoduulis that are direct children of given <code>oid</code>
@@ -59,7 +41,7 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
      * @param oid
      * @return
      */
-    public <T extends LearningOpportunityObject> List<T> findAllChildren(Class<T> type, String oid);
+    public List<Koulutusmoduuli> getAlamoduuliList(String oid);
 
     /**
      * Typed version of read to save from casting.
@@ -69,7 +51,7 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
      * @param id
      * @return
      */
-    public <T extends LearningOpportunityObject> T findByOid(Class<T> type, String id);
+    public Koulutusmoduuli findByOid(String id);
 
     /**
      * Return all LOO objects that match given criteria.
@@ -79,7 +61,7 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
      * @param criteria
      * @return
      */
-    public <T extends LearningOpportunityObject> List<T> search(SearchCriteria criteria);
+    public List<Koulutusmoduuli> search(SearchCriteria criteria);
 
     /**
      * Contract and model for passing search criterias to DAO. Another option would be to use an object declared in WSDL but this would
@@ -89,7 +71,7 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
 
         private String nimiQuery;
 
-        private Class<? extends LearningOpportunityObject> type;
+        private Class<? extends BaseKoulutusmoduuli> type;
 
         private GroupBy groupBy = GroupBy.ORGANISAATIORAKENNE;
 
@@ -109,11 +91,11 @@ public interface KoulutusDAO extends JpaDAO<LearningOpportunityObject, Long> {
             return groupBy;
         }
 
-        public void setType(Class<? extends LearningOpportunityObject> type) {
+        public void setType(Class<? extends BaseKoulutusmoduuli> type) {
             this.type = type;
         }
 
-        public Class<? extends LearningOpportunityObject> getType() {
+        public Class<? extends BaseKoulutusmoduuli> getType() {
             return type;
         }
 

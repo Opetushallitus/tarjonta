@@ -16,14 +16,13 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.tarjonta.dao.KoulutusRakenneDAO;
-import fi.vm.sade.tarjonta.model.KoulutusRakenne;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import org.springframework.stereotype.Repository;
 
 /**
- *
  */
 @Repository
-public class KoulutusRakenneDAOImpl extends AbstractJpaDAOImpl<KoulutusRakenne, Long> implements KoulutusRakenneDAO {
+public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<KoulutusmoduuliToteutus, Long> implements KoulutusmoduuliToteutusDAO {
 }
 

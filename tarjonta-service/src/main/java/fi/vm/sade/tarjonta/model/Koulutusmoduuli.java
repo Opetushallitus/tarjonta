@@ -16,74 +16,106 @@
 package fi.vm.sade.tarjonta.model;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
 
 /**
  * An abstract base class for different types of Koulutusmoduuli's. This class adds OPH specified features to LOS.
  */
 @Entity
-public abstract class Koulutusmoduuli extends LearningOpportunitySpecification implements Serializable {
+@Table(name = Koulutusmoduuli.TABLE_NAME)
+public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable {
+
+    public static final String TABLE_NAME = "koulutusmoduuli";
 
     private static final long serialVersionUID = -3359195324699691606L;
 
     private static Logger log = LoggerFactory.getLogger(Koulutusmoduuli.class);
 
-    /**
-     * The "owner" of this koulutusmoduuli.
-     */
-    @Column(name = "owner_oid")
-    private String ownerOrganisaatioOid;
+    @OneToMany(mappedBy = "ylamoduuli")
+    private Set<KoulutusSisaltyvyys> sisaltyvyysList = new HashSet<KoulutusSisaltyvyys>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "koulutusmoduuli")
+    private Set<KoulutusmoduuliToteutus> toteutusList = new HashSet<KoulutusmoduuliToteutus>();
+
+    @Column(name = "organisaatio")
+    private String omistajaOrganisaatioOid;
 
     /**
      * Koodisto uri. See accessors for more info.
      */
-    @Column(name = "koulutus_ala")
-    private String koulutusAla;
+    @Column(name = "koulutusala")
+    private String koulutusala;
 
     /**
      * Koodisto uri. See accessors for more info.
      */
-    @Column(name = "eqf_luokitus")
+    @Column(name = "eqfluokitus")
     private String eqfLuokitus;
 
     /**
      * Koodisto uri. See accessors for more info.
      */
-    @Column(name = "nqf_luokitus")
+    @Column(name = "nqfluokitus")
     private String nqfLuokitus;
 
     /**
      * Koodisto uri. See accessors for more info.
      */
-    @Column(name = "koulutus_aste")
+    @Column(name = "koulutusaste")
     private String koulutusAste;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "moduulityyppi")
+    private KoulutusmoduuliTyyppi moduuliTyyppi;
+
+    @Column(name = "koulutusluokitus_koodi")
+    private String koulutusLuokitusKoodi;
+
+    @Column(name = "tutkintoohjelmanimi")
+    private String tutkintoOhjelmanNimi;
 
     /**
-     * Constructor for JPA
+     * JPA konstruktori
      */
     protected Koulutusmoduuli() {
         super();
     }
 
     /**
+     *
+     * @param tyyppi
+     */
+    public Koulutusmoduuli(KoulutusmoduuliTyyppi tyyppi) {
+        moduuliTyyppi = tyyppi;
+    }
+
+    /**
      * @return the organisaatioOid
      */
-    public String getOwnerOrganisaatioOid() {
-        return ownerOrganisaatioOid;
+    public String getOmistajaOrganisaatioOid() {
+        return omistajaOrganisaatioOid;
     }
 
     /**
      * @param organisaatioOid the organisaatioOid to set
      */
-    public void setOwnerOrganisaatioOid(String organisaatioOid) {
-        ownerOrganisaatioOid = organisaatioOid;
+    public void setOmistajaOrganisaatioOid(String organisaatioOid) {
+        omistajaOrganisaatioOid = organisaatioOid;
     }
 
     /**
@@ -91,15 +123,15 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification i
      *
      * @return uri to koodisto
      */
-    public String getKoulutusAla() {
-        return koulutusAla;
+    public String getKoulutusala() {
+        return koulutusala;
     }
 
     /**
      * @param koulutusAla the koulutusAla to set
      */
-    public void setKoulutusAla(String koulutusAla) {
-        this.koulutusAla = koulutusAla;
+    public void setKoulutusala(String koulutusAla) {
+        this.koulutusala = koulutusAla;
     }
 
     /**
@@ -168,6 +200,130 @@ public abstract class Koulutusmoduuli extends LearningOpportunitySpecification i
         this.koulutusAste = koulutusAste;
     }
 
+    /**
+     * Returns true if given child is a direct or non-direct (unlimited depth) child of this Koulutus.
+     * Note that as children are lazily loaded, each level will require one more select.
+     *
+     * @param child
+     * @return
+     */
+    public boolean hasAsChild(Koulutusmoduuli child) {
+        return hasAsChild(child, -1);
+    }
+
+    /**
+     * Returns true if given child is a direct or non-direct child of this Koulutus, depth begin limited to
+     * <code>depth</code>.
+     *
+     * @param child child to match
+     * @param depth maximum depth to use while searching
+     * @return
+     */
+    public boolean hasAsChild(Koulutusmoduuli child, int depth) {
+
+        KoulutusTreeWalker.EqualsMatcher matcher = new KoulutusTreeWalker.EqualsMatcher(child);
+        new KoulutusTreeWalker(depth, matcher).walk(this);
+
+        return matcher.isFound();
+
+    }
+
+    /**
+     * Convenience method that instead of returning set of KoulutusSisaltyvyys,
+     * returns only the children from those elements.
+     *
+     * TODO: since this is only used in unit tests, move to test helper method
+     *
+     * @return
+     */
+    public Set<Koulutusmoduuli> getAlamoduuliList() {
+
+        Set<Koulutusmoduuli> result = new HashSet<Koulutusmoduuli>();
+        for (KoulutusSisaltyvyys s : sisaltyvyysList) {
+            result.addAll(s.getAlamoduuliList());
+        }
+        return result;
+
+    }
+
+    public Set<KoulutusmoduuliToteutus> getKoulutusmoduuliToteutusList() {
+        return Collections.unmodifiableSet(toteutusList);
+    }
+
+    public boolean addKoulutusmoduuliToteutus(KoulutusmoduuliToteutus toteutus) {
+        if (!toteutusList.contains(toteutus)) {
+            toteutusList.add(toteutus);
+            toteutus.setKoulutusmoduuli(this);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removeKoulutusmoduuliToteutus(KoulutusmoduuliToteutus toteutus) {
+        if (toteutusList.remove(toteutus)) {
+            toteutus.setKoulutusmoduuli(null);
+            return true;
+        }
+        return false;
+    }
+
+    public Set<KoulutusSisaltyvyys> getSisaltyvyysList() {
+
+        return Collections.unmodifiableSet(sisaltyvyysList);
+
+    }
+
+    /**
+     *
+     * @see #setKoulutusKoodi(java.lang.String)
+     * @return
+     */
+    public String getKoulutusKoodi() {
+        return koulutusLuokitusKoodi;
+    }
+
+    /**
+     * Tilastokeskuksen maarittelema koulutus luokitus koodi.
+     *
+     * @see http://www.stat.fi/meta/luokitukset/koulutus/001-2010/index.html
+     * @param koulutusKoodiUri
+     */
+    public void setKoulutusKoodi(String koulutusKoodiUri) {
+        this.koulutusLuokitusKoodi = koulutusKoodiUri;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getKoulutusNimi() {
+        return getNimi();
+    }
+
+    /**
+     * If the value comes from Tilastokeskus - should we group setting the code and name?
+     *
+     * @param koulutusNimi
+     */
+    public void setKoulutusNimi(String koulutusNimi) {
+        setNimi(koulutusNimi);
+    }
+
+    /**
+     * Finnish explanation: Pääaineen koulutusohjelman tai vastaavan nimi. This corresponds to: ects:DegreeProgrammeTitle.
+     *
+     * @return the tutkintoOhjelmanNimi
+     */
+    public String getTutkintoOhjelmanNimi() {
+        return tutkintoOhjelmanNimi;
+    }
+
+    /**
+     * @param tutkintoOhjelmanNimi the tutkintoOhjelmanNimi to set
+     */
+    public void setTutkintoOhjelmanNimi(String tutkintoOhjelmanNimi) {
+        this.tutkintoOhjelmanNimi = tutkintoOhjelmanNimi;
+    }
 
 }
 
