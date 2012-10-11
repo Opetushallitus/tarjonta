@@ -47,12 +47,12 @@ import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
  * Root view for Haku management.
- * 
+ *
  * @author markus
  */
 @Configurable(preConstruction=true)
 public class HakuRootView extends Window {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaRootView.class);
 
     private HorizontalLayout _appRootLayout;
@@ -62,48 +62,61 @@ public class HakuRootView extends Window {
     private BreadcrumbsView _breadcrumbsView;
     private SearchSpesificationView _searchSpesificationView;
     private HakuSearchResultView _searchResultsView;
-    
+
     //hakuPresenter ja kaikki hakutoiminnallisuudet tullaan varmaankin siirtämään pois tarjonnasta.
     @Autowired(required = true)
     private HakuPresenter hakuPresenter;
-    
+
     private TarjontaWebApplication tWebApp;
-    
+
     public HakuRootView(TarjontaWebApplication webApp) {
         super();
         tWebApp = webApp;
         init();
-        
+
     }
 
     public HakuRootView() {
         super();
 
         init();
-        
+
     }
-    
+
     private void init() {
-        
+
         //
         // Create components
         //
         _breadcrumbsView = new BreadcrumbsView();
         _searchSpesificationView = new SearchSpesificationView();
         _searchResultsView = new HakuSearchResultView();
-        
+
+        _searchSpesificationView.addListener(new Listener() {
+
+            @Override
+            public void componentEvent(Event event) {
+                if (event instanceof SearchSpesificationView.SearchEvent) {
+                    throw new UnsupportedOperationException("Not supported yet. GET THE SEARCH SPEC FROM THE EVENT!!!");
+                } else {
+                    throw new RuntimeException("illegal event from SearchSpesificationView");
+                }
+            }
+        });
+
+
         //Handles navigation to different child views (edit haku, view haku)
         _searchResultsView.addListener(new Listener() {
 
             @Override
             public void componentEvent(Event event) {
                 if (event instanceof HakuResultRow.HakuRowMenuEvent) {
-                    handleHakuRowMenuEvent((HakuResultRow.HakuRowMenuEvent)event);    
+                    handleHakuRowMenuEvent((HakuResultRow.HakuRowMenuEvent)event);
                 } else if (event instanceof ListHakuViewImpl.NewHakuEvent) {
                     showHakuEdit(new HakuViewModel());
                 }
             }
-            
+
         });
 
 
@@ -121,11 +134,11 @@ public class HakuRootView extends Window {
         _appRightLayout = UiBuilder.horizontalLayout();//verticalLayout();
         _appRootLayout.addComponent(_appRightLayout);
 
-        
+
         showMainDefaultView();
-        
+
     }
-    
+
     private void handleHakuRowMenuEvent(HakuResultRow.HakuRowMenuEvent event) {
         if (event.getType().equals(HakuResultRow.HakuRowMenuEvent.VIEW)) {
             showHakuView(event.getHaku());
@@ -155,7 +168,7 @@ public class HakuRootView extends Window {
     public HakuSearchResultView getSearchResultsView() {
         return _searchResultsView;
     }
-    
+
     /**
      * Displays the view component of Haku
      * @param haku
@@ -164,14 +177,14 @@ public class HakuRootView extends Window {
 
         LOG.info("loadViewForm()");
         getAppRightLayout().removeAllComponents();
-        
+
         VerticalLayout vl = UiUtil.verticalLayout();
         vl.addComponent(getBreadcrumbsView());
-        
+
         this.hakuPresenter.setHakuViewModel(haku);
         String messageStr = (haku.getNimiFi() != null) ? haku.getNimiFi() : "-";
-        ShowHakuViewImpl showHaku = new ShowHakuViewImpl(this.hakuPresenter.getHakuModel().getNimiFi(), 
-                this.hakuPresenter.getHakuModel().getNimiFi(), 
+        ShowHakuViewImpl showHaku = new ShowHakuViewImpl(this.hakuPresenter.getHakuModel().getNimiFi(),
+                this.hakuPresenter.getHakuModel().getNimiFi(),
                 null);
         showHaku.addListener(new Listener() {
 
@@ -184,13 +197,13 @@ public class HakuRootView extends Window {
                     showHakuEdit(haku);
                 }
             }
-            
+
         });
         vl.addComponent(showHaku);
         getAppRightLayout().addComponent(vl);
         getAppRightLayout().setExpandRatio(vl, 1f);
     }
-    
+
     /**
      * Displays the edit form of Haku.
      * @param haku
@@ -198,10 +211,10 @@ public class HakuRootView extends Window {
     public void showHakuEdit(final HakuViewModel haku) {
         LOG.info("showHakuEdit()");
         getAppRightLayout().removeAllComponents();
-        
-        
+
+
         VerticalLayout vl = UiUtil.verticalLayout();
-       
+
         vl.addComponent(getBreadcrumbsView());
         EditHakuViewImpl editHakuView = new EditHakuViewImpl(haku);
         editHakuView.addListener(new Listener() {
@@ -214,22 +227,22 @@ public class HakuRootView extends Window {
                 } else if (event instanceof EditHakuViewImpl.ContinueEvent) {
                     if (haku.getHakuOid() != null) {
                         showHakuView(haku);
-                    } 
+                    }
                 }
             }
-            
+
         });
         vl.addComponent(editHakuView);
         getAppRightLayout().addComponent(vl);
         getAppRightLayout().setExpandRatio(vl, 1f);
     }
-    
+
     /**
      * Show main default view
      */
     public void showMainDefaultView() {
         LOG.info("showMainDefaultView()");
-        
+
         getAppRightLayout().removeAllComponents();
         VerticalLayout vl = UiUtil.verticalLayout();
         vl.addComponent(getBreadcrumbsView());
@@ -238,11 +251,11 @@ public class HakuRootView extends Window {
         if (this.tWebApp != null) {
             Button b = new Button("Tarjontaan");
             b.addListener(new Button.ClickListener() {
-            
+
                 @Override
                 public void buttonClick(ClickEvent event) {
                     // TODO Auto-generated method stub
-                    toTarjonta();    
+                    toTarjonta();
                 }
             });
             vl.addComponent(b);
@@ -250,7 +263,7 @@ public class HakuRootView extends Window {
         getAppRightLayout().addComponent(vl);
         getAppRightLayout().setExpandRatio(vl, 1f);
     }
-    
+
     private void toTarjonta() {
         if (tWebApp != null) {
             this.tWebApp.toTarjonta();

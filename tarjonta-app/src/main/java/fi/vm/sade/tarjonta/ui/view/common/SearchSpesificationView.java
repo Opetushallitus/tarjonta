@@ -43,6 +43,7 @@ import org.vaadin.addon.formbinder.PropertyId;
 import org.vaadin.addon.formbinder.ViewBoundForm;
 
 /**
+ * This is the search controller and spesification component used to search Haku and Tarjonta.
  *
  * @author mlyly
  */
@@ -67,10 +68,6 @@ public class SearchSpesificationView extends HorizontalLayout {
     @PropertyId("searchSpec")
     private TextField _tfSearch;
 
-    // TODO hmmm... this is common class, how to know which presenter to use here
-    @Autowired
-    private HakuPresenter _presenter;
-
     @Value("${koodisto-uris.hakukausi:http://hakukausi}")
     private String _koodistoUriHakukausi;
     @Value("${koodisto-uris.hakutapa:http://hakutapa}")
@@ -83,6 +80,9 @@ public class SearchSpesificationView extends HorizontalLayout {
     private String _koodistoUriKoulutuksenAlkamiskausi;
 
     private I18NHelper _i18nHelper = new I18NHelper(this);
+
+    /* Model for search spesifications */
+    private KoulutusSearchSpesificationViewModel _model  = new KoulutusSearchSpesificationViewModel();
 
     /* View bound form for search specs. This for is bound to presenter.getSearchSpec model. */
     private Form _form;
@@ -136,7 +136,7 @@ public class SearchSpesificationView extends HorizontalLayout {
         addComponent(_btnTyhjenna);
 
         // Bind fields above to search spesifications
-        BeanItem<KoulutusSearchSpesificationViewModel> beanItem = new BeanItem<KoulutusSearchSpesificationViewModel>(_presenter.getSearchSpec());
+        BeanItem<KoulutusSearchSpesificationViewModel> beanItem = new BeanItem<KoulutusSearchSpesificationViewModel>(_model);
         _form = new ViewBoundForm();
         _form.setItemDataSource(beanItem);
 
@@ -163,6 +163,21 @@ public class SearchSpesificationView extends HorizontalLayout {
     private void doSearch() {
         LOG.info("doSearch()");
         _form.commit();
-        _presenter.doSearch();
+        fireEvent(new SearchEvent(_model));
     }
+
+
+    public class SearchEvent extends Event {
+        private KoulutusSearchSpesificationViewModel _searchModel;
+
+        public SearchEvent(KoulutusSearchSpesificationViewModel model) {
+            super(SearchSpesificationView.this);
+            _searchModel = model;
+        }
+
+        public KoulutusSearchSpesificationViewModel getModel() {
+            return _searchModel;
+        }
+    }
+    
 }

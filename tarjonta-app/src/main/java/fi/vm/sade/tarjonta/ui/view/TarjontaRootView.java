@@ -85,6 +85,20 @@ public class TarjontaRootView extends Window {
         _searchSpesificationView = new SearchSpesificationView();
         _searchResultsView = new SearchResultsView();
 
+
+        _searchSpesificationView.addListener(new Listener() {
+
+            @Override
+            public void componentEvent(Event event) {
+                if (event instanceof SearchSpesificationView.SearchEvent) {
+                    throw new UnsupportedOperationException("Not supported yet. GET THE SEARCH SPEC FROM THE EVENT!!!");
+                } else {
+                    throw new RuntimeException("illegal event from SearchSpesificationView");
+                }
+            }
+        });
+
+        
         _presenter.setTarjontaWindow(this);
 
         // Create root layout
