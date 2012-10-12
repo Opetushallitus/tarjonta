@@ -12,7 +12,9 @@
     <import resource="classpath:META-INF/cxf/cxf.xml" />
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
     
-    <bean id="hakuService" class="fi.vm.sade.tarjonta.service.impl.HakuServiceImpl"/>
+    <!--<bean id="hakuService" class="fi.vm.sade.tarjonta.service.impl.HakuServiceImpl"/>-->
+    <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl"/>
+    <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicServiceImpl"/>
 
      <bean id="jmsConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory"
           destroy-method="stop">
@@ -25,17 +27,31 @@
         </property>
     </bean>
     
-    <bean id="jmsConfig" class="org.apache.cxf.transport.jms.JMSConfiguration">
+    <bean id="jmsConfigAdmin" class="org.apache.cxf.transport.jms.JMSConfiguration">
         <property name="connectionFactory" ref="jmsConnectionFactory" />
-        <property name="targetDestination" value="${activeMq.targetDestination}" />
+        <property name="targetDestination" value="${activeMq.targetDestinationAdmin}" />
         <property name="reconnectOnException" value="true"/>
     </bean>    
+    <bean id="jmsConfigPublic" class="org.apache.cxf.transport.jms.JMSConfiguration">
+        <property name="connectionFactory" ref="jmsConnectionFactory" />
+        <property name="targetDestination" value="${activeMq.targetDestinationPublic}" />
+        <property name="reconnectOnException" value="true"/>
+    </bean>   
     
-    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="organisaatioEndpoint"
-                    address="jms://" implementor="#hakuService">
+    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="tarjontaAdminEndpoint"
+                    address="jms://" implementor="#tarjontaAdminService">
         <jaxws:features>
             <beans:bean class="org.apache.cxf.transport.jms.JMSConfigFeature">
-                <beans:property name="jmsConfig" ref="jmsConfig" />
+                <beans:property name="jmsConfig" ref="jmsConfigAdmin" />
+            </beans:bean>
+        </jaxws:features>
+    </jaxws:endpoint>
+    
+        <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="tarjontaPublicEndpoint"
+                    address="jms://" implementor="#tarjontaPublicService">
+        <jaxws:features>
+            <beans:bean class="org.apache.cxf.transport.jms.JMSConfigFeature">
+                <beans:property name="jmsConfig" ref="jmsConfigPublic" />
             </beans:bean>
         </jaxws:features>
     </jaxws:endpoint>

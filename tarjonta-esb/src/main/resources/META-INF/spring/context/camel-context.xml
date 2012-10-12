@@ -32,17 +32,51 @@
     </bean>
     
      <!-- Define "listening" endpoint for haku Web Service -->
-    <cxf:cxfEndpoint
+    <!--<cxf:cxfEndpoint
         id="hakuRouter"
         address="/hakuService"
         serviceClass="fi.vm.sade.tarjonta.service.HakuService"
     >
+    </cxf:cxfEndpoint>-->
+    
+         <!-- Define "listening" endpoint for haku Web Service -->
+    <cxf:cxfEndpoint
+        id="tarjontaAdminRouter"
+        address="/tarjontaAdminService"
+        serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService"
+    >
+    </cxf:cxfEndpoint>
+    
+             <!-- Define "listening" endpoint for haku Web Service -->
+    <cxf:cxfEndpoint
+        id="tarjontaPublicRouter"
+        address="/tarjontaPublicService"
+        serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService"
+    >
     </cxf:cxfEndpoint>
     
      <!-- Define "to" endpoint, which is activemq queue -->
-    <cxf:cxfEndpoint id="hakuService"
+    <!--<cxf:cxfEndpoint id="hakuService"
                      address="camel://activemq:queue:${activeMq.queueName}?useMessageIDAsCorrelationID=true"
                      serviceClass="fi.vm.sade.tarjonta.service.HakuService">
+        <cxf:properties>
+            <entry key="dataFormat" value="PAYLOAD" />
+        </cxf:properties>
+    </cxf:cxfEndpoint>-->
+    
+         <!-- Define "to" endpoint, which is activemq queue -->
+    <cxf:cxfEndpoint id="tarjontaAdminService"
+                     address="camel://activemq:queue:${activeMq.queueNameTarjontaAdmin}?useMessageIDAsCorrelationID=true"
+                     serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService">
+        <cxf:properties>
+            <entry key="dataFormat" value="PAYLOAD" />
+        </cxf:properties>
+    </cxf:cxfEndpoint>
+    
+             <!-- Define "to" endpoint, which is activemq queue -->
+    <cxf:cxfEndpoint id="tarjontaPublicService"
+                     address="camel://activemq:queue:${activeMq.queueNameTarjontaPublic}?useMessageIDAsCorrelationID=true"
+                     serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService">
         <cxf:properties>
             <entry key="dataFormat" value="PAYLOAD" />
         </cxf:properties>
@@ -51,9 +85,18 @@
     <!-- define camel route with camel conduit which uses camel's own transport -->
     <camel:conduit name="*.camel-conduit">     
         <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">
-            <route id="hakuRoute" >
+            <!--<route id="hakuRoute" >
                 <from uri="cxf:bean:hakuRouter?dataFormat=PAYLOAD" />
                 <to uri="cxf:bean:hakuService" />
+            </route>-->
+            
+            <route id="tarjontaAdminRoute" >
+                <from uri="cxf:bean:tarjontaAdminRouter?dataFormat=PAYLOAD" />
+                <to uri="cxf:bean:tarjontaAdminService" />
+            </route>
+            <route id="tarjontaPublicRoute" >
+                <from uri="cxf:bean:tarjontaPublicRouter?dataFormat=PAYLOAD" />
+                <to uri="cxf:bean:tarjontaPublicService" />
             </route>
         </camelContext>
     </camel:conduit>

@@ -8,6 +8,8 @@
   http://www.springframework.org/schema/osgi
   http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
-    <osgi:reference id="hakuService" interface="fi.vm.sade.tarjonta.service.HakuService"/>
+    <!--<osgi:reference id="hakuService" interface="fi.vm.sade.tarjonta.service.HakuService"/>-->
+    <osgi:reference id="tarjontaAdminService" interface="fi.vm.sade.tarjonta.service.TarjontaAdminService"/>
+    <osgi:reference id="tarjontaPublicService" interface="fi.vm.sade.tarjonta.service.TarjontaPublicService"/>
 
 </beans>
