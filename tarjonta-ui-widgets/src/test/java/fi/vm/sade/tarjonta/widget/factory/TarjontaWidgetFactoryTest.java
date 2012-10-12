@@ -6,6 +6,8 @@ import fi.vm.sade.tarjonta.model.dto.KoulutusmoduuliSearchDTO;
 import fi.vm.sade.tarjonta.model.dto.TutkintoOhjelmaDTO;
 import fi.vm.sade.tarjonta.service.KoulutusmoduuliAdminService;
 import fi.vm.sade.tarjonta.widget.KoulutusmoduuliComponent;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,6 +24,7 @@ import org.junit.Before;
  * @author Antti Salonen
  */
 @ContextConfiguration("classpath:test-context.xml")
+@Ignore
 public class TarjontaWidgetFactoryTest extends AbstractEmbedVaadinTest<KoulutusmoduuliComponent> {
 
     private KoulutusmoduuliAdminService koulutusmoduuliAdminService = new KoulutusmoduuliAdminServiceMock(new KoulutusmoduuliStorage());
