@@ -151,6 +151,8 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     private Form form;
     
     private ErrorMessage errorView;
+    
+    private boolean attached = false;
 
     public EditHakuViewImpl() {
         super();
@@ -169,6 +171,10 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     public void attach() {
         LOG.debug("attach()");
         super.attach();
+        if (attached) {
+        	return;
+        }
+        attached = true;
         this.sisaisetHakuajatContainer = new HakuajatContainer(_presenter.getHakuModel().getSisaisetHakuajat());
         this.sisaisetHakuajatTable.setContainerDataSource(this.sisaisetHakuajatContainer);
         this.sisaisetHakuajatTable.setVisibleColumns(HAKUAJAT_COLUMNS);
@@ -257,6 +263,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         {
             grid.addComponent(UiUtil.label(null, T("HakukausiJaVuosi")));
             HorizontalLayout hl = UiUtil.horizontalLayout();
+            hl.setSizeUndefined();
             hl.setSpacing(true);
             hl.addComponent(_hakukausi);
             hl.addComponent(_hakuvuosi);
@@ -267,6 +274,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         {
             grid.addComponent(UiUtil.label(null, T("KoulutuksenAlkamiskausi")));
             HorizontalLayout hl = UiUtil.horizontalLayout();
+            hl.setSizeUndefined();
             hl.setSpacing(true);
             hl.addComponent(_koulutusAlkamiskausi);
             hl.addComponent(koulutuksenAlkamisvuosi);
