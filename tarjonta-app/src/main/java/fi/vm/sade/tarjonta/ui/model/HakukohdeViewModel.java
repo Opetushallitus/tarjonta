@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 
 public class HakukohdeViewModel extends BaseUIViewModel {
+	
+	private String organisaatioOid;
 
     private String hakukohdeNimi;
     
@@ -20,6 +22,16 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     
     private List<KielikaannosViewModel> lisatiedot;
 
+    public HakukohdeViewModel() {
+		super();
+	}
+	
+	public HakukohdeViewModel(String hakukohdeNimi, String organisaatioOid) {
+		super();
+		this.hakukohdeNimi = hakukohdeNimi;
+		this.organisaatioOid = organisaatioOid;
+	}
+    
     /**
      * @return the hakukohdeNimi
      */
@@ -109,7 +121,12 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         }
         return lisatiedot;
     }
+    
+    public String getOrganisaatioOid() {
+		return organisaatioOid;
+	}
+	public void setOrganisaatioOid(String organisaatioOid) {
+		this.organisaatioOid = organisaatioOid;
+	}
 
-    
-    
 }

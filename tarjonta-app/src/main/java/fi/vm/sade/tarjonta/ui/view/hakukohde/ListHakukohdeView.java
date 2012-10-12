@@ -19,6 +19,12 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde;
  *
  * @author mlyly
  */
-public class ListHakukohdeView {
+public interface ListHakukohdeView {
+	
+	  /**
+     * Reloads the haku search result list.
+     */
+    public void reload();
+
 
 }

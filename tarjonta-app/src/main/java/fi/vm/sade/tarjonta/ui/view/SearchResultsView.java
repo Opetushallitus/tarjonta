@@ -22,6 +22,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -54,7 +55,7 @@ public class SearchResultsView extends VerticalLayout{
         addComponent(tabs);
 
         tabs.addTab(new Label(T("koulutukset")), T("koulutukset"));
-        tabs.addTab(new Label(T("hakuryhmat")), T("hakuryhmat"));
+        tabs.addTab(new ListHakukohdeViewImpl(), T("hakuryhmat"));
     }
 
     private String T(String key) {

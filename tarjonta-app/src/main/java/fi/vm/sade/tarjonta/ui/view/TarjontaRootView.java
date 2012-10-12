@@ -92,9 +92,9 @@ public class TarjontaRootView extends Window {
             public void componentEvent(Event event) {
                 if (event instanceof SearchSpesificationView.SearchEvent) {
                     throw new UnsupportedOperationException("Not supported yet. GET THE SEARCH SPEC FROM THE EVENT!!!");
-                } else {
+                } /*else {
                     throw new RuntimeException("illegal event from SearchSpesificationView");
-                }
+                }*/
             }
         });
 
