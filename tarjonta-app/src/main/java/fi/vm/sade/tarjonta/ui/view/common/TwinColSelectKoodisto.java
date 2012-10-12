@@ -26,8 +26,13 @@ import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
+import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
+import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.vaadin.util.UiUtil;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +46,7 @@ public class TwinColSelectKoodisto extends CssLayout  {
     private KoodistoComponent kc;
     private TwinColSelect tcs;
     private Set<String> languages = new HashSet<String>();
+    
 
     public TwinColSelectKoodisto(String koodistoUri) {
         tcs = UiUtil.twinColSelect();
@@ -54,31 +60,35 @@ public class TwinColSelectKoodisto extends CssLayout  {
 
     public void dataSource(PropertysetItem psi, String expression) {
         // Selected data bound there
+       
         if (psi != null && expression != null) {
             kc.setPropertyDataSource(psi.getItemProperty(expression));
         }
+        
     }
 
     private void initKoodisto(String koodistoUri) {
         kc = WidgetFactory.create(koodistoUri);
-
+        
         // Wire koodisto to selectable component
         kc.setField(tcs);
-
+        
         // DISPLAYED text
         kc.setCaptionFormatter(new CaptionFormatter() {
             @Override
             public String formatCaption(Object dto) {
                 if (dto instanceof KoodiType) {
                     KoodiType kdto = (KoodiType) dto;
-                    languages.add(kdto.getKoodiArvo());
-                    return kdto.getKoodiArvo();
+                    String arvo = tryToGetLocalisedValue(kdto);
+                    
+                    return arvo;
                 } else {
                     LOG.warn("An unknown DTO : " + dto);
                     return "!KoodiDTO?: " + dto;
                 }
             }
         });
+        
 
         // BOUND value
         kc.setFieldValueFormatter(new FieldValueFormatter() {
@@ -86,7 +96,7 @@ public class TwinColSelectKoodisto extends CssLayout  {
             public Object formatFieldValue(Object dto) {
                 if (dto instanceof KoodiType) {
                     KoodiType kdto = (KoodiType) dto;
-                    return kdto.getKoodiArvo();
+                    return kdto.getKoodiUri();
                 } else {
                     LOG.warn("An unknown DTO : " + dto);
                     return "" + dto;
@@ -94,6 +104,47 @@ public class TwinColSelectKoodisto extends CssLayout  {
             }
         });
         addComponent(kc);
+    }
+    
+    private String tryToGetLocalisedValue(KoodiType kdto) {
+        if (I18N.getLocale() != null) {
+                    String kieliArvo = null;
+                    
+                    for (KoodiMetadataType kmt : kdto.getMetadata()) {
+                        if (kmt.getKieli().value().equalsIgnoreCase(I18N.getLocale().getLanguage())) {
+                            kieliArvo = kmt.getNimi();
+                            
+                        }
+                    }
+                    
+                    if (kieliArvo != null ) {
+                        languages.add(kdto.getKoodiUri());
+                        
+                        return kieliArvo;
+                    } else {
+                        languages.add(kdto.getKoodiArvo());
+                    }
+                    
+                    } else {
+                   languages.add(kdto.getKoodiArvo());
+                    }
+                    return kdto.getKoodiArvo();
+    }
+    
+    public void setValue(Set<String> uris) {
+        kc.setValue(uris);
+    }
+    //Try to get localised name for uri
+    public String getCaptionFor(String uri) {
+         
+        List<KoodiType> koodit = kc.getKoodiService().searchKoodis(KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(uri));
+        if (koodit != null && koodit.size() > 0) {
+            return tryToGetLocalisedValue(koodit.get(0));
+        }  else {
+            return null;
+        }
+        
+        
     }
 
     /**

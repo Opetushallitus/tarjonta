@@ -18,8 +18,11 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
 import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.AbstractSelect;
+import com.vaadin.ui.AbstractSelect.Filtering;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
@@ -32,20 +35,24 @@ import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import fi.vm.sade.generic.common.I18N;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Configurable;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.UiConstant;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import java.util.ArrayList;
+import java.util.List;
 /**
  *
  * @author Tuomas Katva
  */
+@Configurable
 public class PerustiedotView extends CustomComponent {
     
     private static final Logger LOG = LoggerFactory.getLogger(PerustiedotView.class);
-    @Value("${koodisto-uris.kieli:http://kieli}")
-    private String _koodistoUriKieli;
+    
     
     //MainLayout element
     VerticalLayout mainLayout;
@@ -65,6 +72,8 @@ public class PerustiedotView extends CustomComponent {
     Button upRightInfoButton;
     Button downRightInfoButton;
     
+    
+    
     public PerustiedotView() {
         super();
         buildMainLayout();
@@ -80,6 +89,7 @@ public class PerustiedotView extends CustomComponent {
         
         //Add bottom addtional info text areas and info button
         mainLayout.addComponent(buildBottomAreaLanguageTab());
+      
         setCompositionRoot(mainLayout);
     }
     
@@ -114,9 +124,10 @@ public class PerustiedotView extends CustomComponent {
     }
     
     private KoodistoComponent buildHakukelpoisuusVaatimukset() {
-        hakuKelpoisuusVaatimuksetCombo = WidgetFactory.create(_koodistoUriKieli);
-        
-        
+        hakuKelpoisuusVaatimuksetCombo = WidgetFactory.create(KoodistoURIHelper.KOODISTO_KIELI_URI);
+        ComboBox hakuKelpoisuusCombo = new ComboBox();
+        hakuKelpoisuusCombo.setFilteringMode(Filtering.FILTERINGMODE_CONTAINS);
+        hakuKelpoisuusVaatimuksetCombo.setField(hakuKelpoisuusCombo);
         return hakuKelpoisuusVaatimuksetCombo;
     }
     
@@ -134,8 +145,8 @@ public class PerustiedotView extends CustomComponent {
     }
     
     private LanguageTabSheet buildValintaPerusteet() {
-        valintaPerusteidenKuvausTabs = buildLanguageTab();
         
+        valintaPerusteidenKuvausTabs = buildLanguageTab();
         
         return valintaPerusteidenKuvausTabs;
     }
@@ -176,13 +187,15 @@ public class PerustiedotView extends CustomComponent {
         return vl;
     }
     
+    private LanguageTabSheet buildLanguageTab(List<KielikaannosViewModel> arvot) {
+        return new LanguageTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, arvot);
+    }
+    
     private LanguageTabSheet buildLanguageTab() {
-        return new LanguageTabSheet(getKoodistoUriKieli());
+        return new LanguageTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI);
     }
      
-     private String getKoodistoUriKieli() {
-         return _koodistoUriKieli;
-     }
+     
      
      private String T(String key) {
          return I18N.getMessage(key);
