@@ -23,6 +23,7 @@ import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.Embedded;
@@ -59,10 +60,10 @@ public class BeanItemMapper<T, E> {
     /**
      * Add basic TextField with bound data.
      *
+     * @param layout
      * @param expression
      * @param promptKey
      * @param width
-     * @param layout
      * @return
      */
     public TextField addTextField(AbstractLayout layout, String expression, String promptKey, String width) {
@@ -79,9 +80,9 @@ public class BeanItemMapper<T, E> {
     /**
      * Create a button.
      *
+     * @param layout
      * @param captionKey
      * @param onClickMethodName
-     * @param layout
      * @return
      */
     public Button addButton(AbstractLayout layout, String captionKey, String onClickMethodName, StyleEnum styles) {
@@ -100,11 +101,59 @@ public class BeanItemMapper<T, E> {
     }
 
     /**
+     * Create a button.
+     *
+     * @param layout
+     * @param onClickMethodName
+     * @return
+     */
+    public Button addButtonPrimary(AbstractLayout layout, String captionKey, String onClickMethodName) {
+        Button c = UiUtil.buttonSmallPrimary(layout, i18n.getMessage(captionKey));
+        if (onClickMethodName != null) {
+            c.addListener(getClickListener(onClickMethodName));
+        }
+
+        return c;
+    }
+
+    /**
+     * Create a button.
+     *
+     * @param layout
+     * @param clickListener
+     * @return
+     */
+    public Button addButtonPrimary(AbstractLayout layout, String captionKey, ClickListener onClickMethodName) {
+        Button c = UiUtil.buttonSmallPrimary(layout, i18n.getMessage(captionKey));
+        if (onClickMethodName != null) {
+            c.addListener(onClickMethodName);
+        }
+
+        return c;
+    }
+    
+     /**
+     * Create a button.
+     *
+     * @param layout
+     * @param clickListener
+     * @return
+     */
+    public Button addButtonPlus(AbstractLayout layout, String captionKey, ClickListener onClickMethodName) {
+        Button c = UiUtil.buttonSmallPlus(layout, i18n.getMessage(captionKey));
+        if (onClickMethodName != null) {
+            c.addListener(onClickMethodName);
+        }
+
+        return c;
+    }
+
+    /**
      * Create label with style.
      *
+     * @param layout
      * @param captionKey
      * @param style
-     * @param layout
      * @return
      */
     public Label label(AbstractLayout layout, String captionKey, LabelStyleEnum style) {
@@ -120,9 +169,9 @@ public class BeanItemMapper<T, E> {
     /**
      * Create label with style.
      *
+     * @param layout
      * @param captionKey
      * @param style
-     * @param layout
      * @return
      */
     public Label addLabel(AbstractLayout layout, String captionKey) {
@@ -133,9 +182,9 @@ public class BeanItemMapper<T, E> {
     /**
      * Create DateField, bind to model. By default format is "dd.MM.yyyy".
      *
+     * @param layout
      * @param psi
      * @param expression
-     * @param layout
      * @return
      */
     public DateField addDate(AbstractLayout layout, String expression) {
@@ -146,11 +195,11 @@ public class BeanItemMapper<T, E> {
     /**
      * Create CheckBox and bind it to model.
      *
+     * @param layout
      * @param captionKey
      * @param psi
      * @param expression
      * @param valueChangeListenerMethod
-     * @param layout
      * @return
      */
     public CheckBox addCheckBox(AbstractOrderedLayout layout, String captionKey, String expression, String valueChangeListenerMethod) {
@@ -188,11 +237,11 @@ public class BeanItemMapper<T, E> {
      * Create KoodistoComponent with CompboBox as displaying widget and bind to
      * model.
      *
+     * @param layout
      * @param koodistoUri
      * @param psi
      * @param expression
      * @param promptKey
-     * @param layout
      * @return
      */
     public KoodistoComponent addKoodistoComboBox(AbstractLayout layout, final String koodistoUri, String expression, String promptKey) {
@@ -203,13 +252,13 @@ public class BeanItemMapper<T, E> {
     /**
      * Create KoodistoComponent with TwinColSelect as widget and bind to model.
      *
+     * @param layout
      * @param koodistoUri
      * @param psi
      * @param expression
-     * @param layout
      * @return
      */
-    public KoodistoComponent addKoodistoTwinColSelect(AbstractOrderedLayout layout, final String koodistoUri,  String expression) {
+    public KoodistoComponent addKoodistoTwinColSelect(AbstractOrderedLayout layout, final String koodistoUri, String expression) {
         LOG.debug("addKoodistoTwinColSelect({}, ...)", koodistoUri);
         return UiBuilder.koodistoTwinColSelect(layout, koodistoUri, psi, expression, null);
     }

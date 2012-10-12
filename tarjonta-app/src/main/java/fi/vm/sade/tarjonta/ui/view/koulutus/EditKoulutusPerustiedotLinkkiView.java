@@ -25,6 +25,7 @@ import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
+import fi.vm.sade.tarjonta.ui.view.common.DataTableEvent;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +46,7 @@ import org.vaadin.addon.formbinder.PropertyId;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
-public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout {
+public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements Component  {
 
     @PropertyId("linkkityyppi")
     private Select _sLinkkityyppi;
@@ -72,7 +73,6 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout {
 
         _kcKielet = UiBuilder.koodistoTwinColSelect(this, _koodistoUriKieli, null, null, null);
 
-
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
         this.addComponent(hl);
@@ -80,52 +80,22 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout {
         UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Tallenna"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                fireEvent(new SaveEvent(EditKoulutusPerustiedotLinkkiView.this));
+                fireEvent(new DataTableEvent.SaveEvent(EditKoulutusPerustiedotLinkkiView.this));
             }
         });
 
         UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Peruuta"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                fireEvent(new CancelEvent(EditKoulutusPerustiedotLinkkiView.this));
+                fireEvent(new DataTableEvent.CancelEvent(EditKoulutusPerustiedotLinkkiView.this));
             }
         });
 
-        UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Poista"), new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                fireEvent(new DeleteEvent(EditKoulutusPerustiedotLinkkiView.this));
-            }
-        });
-    }
-
-    /**
-     * Fired when save is pressed.
-     */
-    public class CancelEvent extends Component.Event {
-
-        public CancelEvent(Component source) {
-            super(source);
-        }
-    }
-
-    /**
-     * Fired when cancel is pressed.
-     */
-    public class SaveEvent extends Component.Event {
-
-        public SaveEvent(Component source) {
-            super(source);
-        }
-    }
-
-    /**
-     * Fired when delete is pressed.
-     */
-    public class DeleteEvent extends Component.Event {
-
-        public DeleteEvent(Component source) {
-            super(source);
-        }
+//        UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Poista"), new Button.ClickListener() {
+//            @Override
+//            public void buttonClick(Button.ClickEvent event) {
+//                fireEvent(new DataTableEvent.DeleteEvent(EditKoulutusPerustiedotLinkkiView.this));
+//            }
+//        });
     }
 }

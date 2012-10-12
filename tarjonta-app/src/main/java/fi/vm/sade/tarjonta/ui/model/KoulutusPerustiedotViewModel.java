@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
  *
@@ -29,6 +30,7 @@ import java.util.Set;
  */
 public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     // Koodisto: koulutus
+
     private String _koulutus;
     // TODO Mistä nämä tulevat?
     private String _koulutusTyyppi;
@@ -51,7 +53,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     private String _opetusmuoto;
     // Koodisto: koulutuslaji
     private String _koulutuslaji;
-
     private List<KoulutusYhteyshenkiloViewModel> _yhteyshenkilot;
     private boolean _koulutusOnMaksullista;
     private boolean _koulutusStipendiMahdollisuus;
@@ -193,7 +194,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
         this._koulutusOnMaksullista = koulutusOnMaksullista;
     }
 
-
     public boolean isKoulutusStipendiMahdollisuus() {
         return _koulutusStipendiMahdollisuus;
     }
@@ -224,5 +224,8 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
         this._yhteyshenkilot = _yhteyshenkilot;
     }
 
-
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
+    }
 }

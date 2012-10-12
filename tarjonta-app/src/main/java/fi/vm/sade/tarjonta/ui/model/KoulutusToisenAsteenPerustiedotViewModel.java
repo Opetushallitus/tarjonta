@@ -64,4 +64,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     public void setKoulutuksenTyyppi(String koulutuksenTyyppi) {
         this.koulutuksenTyyppi = koulutuksenTyyppi;
     }
+    
+    
 }

@@ -16,14 +16,10 @@
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
 import com.vaadin.ui.Component;
+import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window.CloseEvent;
-import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractDataTableDialog;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
@@ -35,39 +31,24 @@ import org.vaadin.addon.formbinder.ViewBoundForm;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
-public class DialogKoulutusYhteystiedotView extends AbstractDataTableDialog {
+public class DialogKoulutusView extends AbstractDataTableDialog {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DialogKoulutusYhteystiedotView.class);
-    @Autowired(required = true)
-    private TarjontaPresenter _presenter;
     private Form form;
-    private EditKoulutusPerustiedotYhteystietoView editor;
 
-    public DialogKoulutusYhteystiedotView(String label) {
+    public DialogKoulutusView(String label, int width, int height, ComponentContainer component) {
         super(label, null, null);
-        setWidth("700px");
-        setHeight("500px");
+        setWidth(width, UNITS_PIXELS);
+        setHeight(height, UNITS_PIXELS);
 
-        editor = new EditKoulutusPerustiedotYhteystietoView();
-        form = new ViewBoundForm(editor);
+        form = new ViewBoundForm(component);
         form.setSizeFull();
         form.setWriteThrough(false);
         form.setEnabled(true);
-
         addLayoutComponent(form);
     }
 
     @Override
     public void buildLayout(VerticalLayout layout) {
-    }
-
-    /**
-     * In case the window is closed otherwise.
-     */
-    @Override
-    public void windowClose(CloseEvent e) {
-        LOG.debug("In windowClose - close event");
-        removeDialogButtons();
     }
 
     @Override
@@ -77,6 +58,6 @@ public class DialogKoulutusYhteystiedotView extends AbstractDataTableDialog {
 
     @Override
     public Component getInstance() {
-        return editor;
+        return getLayout();
     }
 }

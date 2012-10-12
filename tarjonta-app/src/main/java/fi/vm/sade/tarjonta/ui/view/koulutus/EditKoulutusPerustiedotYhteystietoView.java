@@ -24,6 +24,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.view.common.DataTableEvent;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ import org.vaadin.addon.formbinder.PropertyId;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
-public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout {
+public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout implements Component {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotYhteystietoView.class);
     @PropertyId("nimi")
@@ -97,53 +98,23 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 LOG.info("fire : SaveEvent");
-                fireEvent(new SaveEvent(EditKoulutusPerustiedotYhteystietoView.this));
+
+                fireEvent(new DataTableEvent.SaveEvent(EditKoulutusPerustiedotYhteystietoView.this));
             }
         });
 
         UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Peruuta"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                fireEvent(new CancelEvent(EditKoulutusPerustiedotYhteystietoView.this));
+                fireEvent(new DataTableEvent.CancelEvent(EditKoulutusPerustiedotYhteystietoView.this));
             }
         });
 
-        UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Poista"), new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                fireEvent(new DeleteEvent(EditKoulutusPerustiedotYhteystietoView.this));
-            }
-        });
-    }
-
-    
-    /**
-     * Fired when save is pressed.
-     */
-    public class CancelEvent extends Component.Event {
-
-        public CancelEvent(Component source) {
-            super(source);
-        }
-    }
-
-    /**
-     * Fired when cancel is pressed.
-     */
-    public class SaveEvent extends Component.Event {
-
-        public SaveEvent(Component source) {
-            super(source);
-        }
-    }
-
-    /**
-     * Fired when delete is pressed.
-     */
-    public class DeleteEvent extends Component.Event {
-
-        public DeleteEvent(Component source) {
-            super(source);
-        }
+//        UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Poista"), new Button.ClickListener() {
+//            @Override
+//            public void buttonClick(Button.ClickEvent event) {
+//                fireEvent(new DataTableEvent.DeleteEvent(EditKoulutusPerustiedotYhteystietoView.this));
+//            }
+//        });
     }
 }
