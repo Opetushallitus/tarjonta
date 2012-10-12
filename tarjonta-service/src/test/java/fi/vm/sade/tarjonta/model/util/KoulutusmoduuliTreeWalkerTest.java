@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.model.util;
 
-import fi.vm.sade.tarjonta.KoulutusFixtures;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker.NodeHandler;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class KoulutusmoduuliTreeWalkerTest {
 
     @Autowired
-    private KoulutusFixtures fixtures;
+    private TarjontaFixtures fixtures;
 
     @Test
     public void testWalk() {

@@ -14,36 +14,49 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-
 package fi.vm.sade.tarjonta.service.impl;
 
-
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakuaika;
-import fi.vm.sade.tarjonta.service.TarjontaAdminService;
-import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.util.CollectionUtils;
+import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
+import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetVastausTyyppi.VastausRivi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakuKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusKoosteTyyppi;
 
 /**
  *
  * @author Tuomas Katva
  */
 @Transactional
-@Service("hakuAdminService")
+@Service("tarjontaAdminService")
 public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Autowired
-    private HakuBusinessService businessService;
+    private HakuBusinessService hakuBusinessService;
 
     @Autowired
-    private HakuDAO hakuDao;
+    private HakukohdeDAO hakukohdeDAO;
+
+    @Autowired
+    private HakuDAO hakuDAO;
 
     @Autowired
     private ConversionService conversionService;
@@ -51,10 +64,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi paivitaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
 
-        Haku foundHaku = businessService.findByOid(hakuDto.getOid());
+        Haku foundHaku = hakuBusinessService.findByOid(hakuDto.getOid());
         if (foundHaku != null) {
-            mergeHaku(conversionService.convert(hakuDto,Haku.class), foundHaku);
-            foundHaku = businessService.update(foundHaku);
+            mergeHaku(conversionService.convert(hakuDto, Haku.class), foundHaku);
+            foundHaku = hakuBusinessService.update(foundHaku);
             return conversionService.convert(foundHaku, HakuTyyppi.class);
         } else {
             throw new BusinessException("tarjonta.haku.update.no.oid");
@@ -63,38 +76,39 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     public fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi lisaaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
-    	Haku haku = conversionService.convert(hakuDto,Haku.class);
-        haku = businessService.save(haku);
+        Haku haku = conversionService.convert(hakuDto, Haku.class);
+        haku = hakuBusinessService.save(haku);
         return conversionService.convert(haku, HakuTyyppi.class);
     }
 
     @Override
     public void poistaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
 
-        Haku haku = businessService.findByOid(hakuDto.getOid());
+        Haku haku = hakuBusinessService.findByOid(hakuDto.getOid());
 
-        hakuDao.remove(haku);
+        hakuDAO.remove(haku);
     }
 
     private List<HakuTyyppi> convert(List<Haku> haut) {
         List<HakuTyyppi> tyypit = new ArrayList<HakuTyyppi>();
-        for (Haku haku:haut) {
+        for (Haku haku : haut) {
             tyypit.add(conversionService.convert(haku, HakuTyyppi.class));
         }
         return tyypit;
     }
+
     /**
      * @return the businessService
      */
     public HakuBusinessService getBusinessService() {
-        return businessService;
+        return hakuBusinessService;
     }
 
     /**
      * @param businessService the businessService to set
      */
     public void setBusinessService(HakuBusinessService businessService) {
-        this.businessService = businessService;
+        this.hakuBusinessService = businessService;
     }
 
     /**
@@ -115,16 +129,54 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
      * @return the hakuDao
      */
     public HakuDAO getHakuDao() {
-        return hakuDao;
+        return hakuDAO;
     }
 
     /**
      * @param hakuDao the hakuDao to set
      */
     public void setHakuDao(HakuDAO hakuDao) {
-        this.hakuDao = hakuDao;
+        this.hakuDAO = hakuDao;
     }
 
+    @Override
+    public EtsiHakukohteetVastausTyyppi etsiHakukohteet(EtsiHakukohteetKyselyTyyppi kysely) {
+
+        List<Hakukohde> hakukohteet = hakukohdeDAO.haeHakukohteetJaKoulutukset(kysely);
+        EtsiHakukohteetVastausTyyppi vastaus = new EtsiHakukohteetVastausTyyppi();
+
+        List<VastausRivi> rivit = vastaus.getVastausRivi();
+
+        for (Hakukohde hakukohdeModel : hakukohteet) {
+
+            VastausRivi rivi = new VastausRivi();
+
+            HakukohdeKoosteTyyppi hakukohde = new HakukohdeKoosteTyyppi();
+            HakuKoosteTyyppi haku = new HakuKoosteTyyppi();
+            KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
+
+            hakukohde.setNimi(hakukohdeModel.getHakukohdeNimi());
+            hakukohde.setTila(hakukohdeModel.getTila());
+            hakukohde.setOid(hakukohdeModel.getOid());
+
+            Haku hakuModel = hakukohdeModel.getHaku();
+            haku.setNimi(hakuModel.getNimiFi());
+            haku.setHakutapa(hakuModel.getHakutapaUri());
+            haku.setOid(hakuModel.getOid());
+
+            KoulutusmoduuliToteutus toteutus = CollectionUtils.singleItem(hakukohdeModel.getKoulutusmoduuliToteutuses());
+            koulutus.setTarjoaja(toteutus.getTarjoaja());
+
+            rivi.setHakukohde(hakukohde);
+            rivi.setHaku(haku);
+            rivi.setKoulutus(koulutus);
+            rivit.add(rivi);
+
+        }
+
+        return vastaus;
+
+    }
 
     private void mergeHaku(Haku source, Haku target) {
         target.setNimi(source.getNimi());
@@ -146,18 +198,19 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     private void mergeSisaisetHaunAlkamisAjat(Haku source, Haku target) {
-    	List<Hakuaika> hakuajat = new ArrayList<Hakuaika>();
-    	for (Hakuaika curAika: target.getHakuaikas()) {
-    		hakuajat.add(curAika);
-    	}
+        List<Hakuaika> hakuajat = new ArrayList<Hakuaika>();
+        for (Hakuaika curAika : target.getHakuaikas()) {
+            hakuajat.add(curAika);
+        }
 
-    	for (Hakuaika curHak : hakuajat) {
-    		target.removeHakuaika(curHak);
-    	}
+        for (Hakuaika curHak : hakuajat) {
+            target.removeHakuaika(curHak);
+        }
 
-    	for (Hakuaika curHakuaika : source.getHakuaikas()) {
-    		target.addHakuaika(curHakuaika);
-    	}
+        for (Hakuaika curHakuaika : source.getHakuaikas()) {
+            target.addHakuaika(curHakuaika);
+        }
     }
 
 }
+

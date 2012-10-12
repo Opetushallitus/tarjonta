@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
-import fi.vm.sade.tarjonta.KoulutusFixtures;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.*;
 import java.util.Date;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class KoulutusmoduuliToteutusDAOTest {
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
     @Autowired
-    private KoulutusFixtures fixtures;
+    private TarjontaFixtures fixtures;
 
     private Koulutusmoduuli defaultModuuli;
 

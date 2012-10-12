@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -31,11 +31,11 @@ public class Hakukohde extends BaseEntity {
 
     private static final long serialVersionUID = -3320464257959195992L;
 
-    @Column(name="oid")
-    private String oid; 
-    
+    @Column(name = "oid")
+    private String oid;
+
     @ManyToMany(mappedBy = "hakukohdes")
-    private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
+    private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuseList = new HashSet<KoulutusmoduuliToteutus>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "hakukohde_id")
@@ -80,19 +80,18 @@ public class Hakukohde extends BaseEntity {
      * @return the koulutuses
      */
     public Set<KoulutusmoduuliToteutus> getKoulutusmoduuliToteutuses() {
-        return koulutusmoduuliToteutuses;
+        return Collections.unmodifiableSet(koulutusmoduuliToteutuseList);
     }
 
     /**
      * @param toteutuses the koulutuses to set
      */
     public void setKoulutusmoduuliToteutuses(Set<KoulutusmoduuliToteutus> toteutuses) {
-        this.koulutusmoduuliToteutuses = toteutuses;
+        this.koulutusmoduuliToteutuseList = toteutuses;
     }
-    
-    
+
     public void addKoulutusmoduuliToteutus(KoulutusmoduuliToteutus toteutus) {
-        
+        koulutusmoduuliToteutuseList.add(toteutus);
     }
 
     /**
@@ -160,7 +159,7 @@ public class Hakukohde extends BaseEntity {
 
     /**
      * Note: testing this from JUnit tests might give unexpected results.
-     * 
+     *
      * @param valintakoe
      */
     public void removeValintakoe(Valintakoe valintakoe) {

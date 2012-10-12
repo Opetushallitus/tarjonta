@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.service.business;
 
-import fi.vm.sade.tarjonta.KoulutusFixtures;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.*;
 import javax.validation.ValidationException;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class KoulutusBusinessServiceTest {
 
     private KoulutusmoduuliToteutus tutkintoOhjemanToteutus;
 
-    private KoulutusFixtures fixtures = new KoulutusFixtures();
+    private TarjontaFixtures fixtures = new TarjontaFixtures();
 
     @Before
     public void setUp() {

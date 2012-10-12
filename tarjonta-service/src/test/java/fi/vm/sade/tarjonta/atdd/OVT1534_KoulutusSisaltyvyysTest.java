@@ -15,8 +15,8 @@
  */
 package fi.vm.sade.tarjonta.atdd;
 
-import fi.vm.sade.tarjonta.KoulutusDatabasePrinter;
-import fi.vm.sade.tarjonta.KoulutusFixtures;
+import fi.vm.sade.tarjonta.TarjontaDatabasePrinter;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.*;
 import static org.junit.Assert.*;
@@ -43,10 +43,10 @@ public class OVT1534_KoulutusSisaltyvyysTest {
     private KoulutusmoduuliDAO koulutusDAO;
 
     @Autowired
-    private KoulutusDatabasePrinter dbPrinter;
+    private TarjontaDatabasePrinter dbPrinter;
 
     @Autowired
-    private KoulutusFixtures fixtures;
+    private TarjontaFixtures fixtures;
 
     @Test
     public void testKoulutusmoduuliSisaltaaKoulutusmouduleita() {

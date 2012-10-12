@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
-import fi.vm.sade.tarjonta.KoulutusFixtures;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
@@ -43,7 +43,7 @@ public class KoulutusSisaltyvyysDAOTest {
     private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
 
     @Autowired
-    private KoulutusFixtures fixtures;
+    private TarjontaFixtures fixtures;
 
     private Koulutusmoduuli parent;
 

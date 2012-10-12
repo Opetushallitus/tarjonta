@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-public class KoulutusFixtures {
+public class TarjontaFixtures {
 
     public static final String OID_TIETOJENKASITTELYN_KOULUTUS = "dummy";
 
@@ -229,7 +229,7 @@ public class KoulutusFixtures {
     /**
      * Deletes all entities used in testing.
      */
-    public void removeAll() {
+    public void deleteAll() {
 
         for (Haku o : hakuDAO.findAll()) {
             hakuDAO.remove(o);

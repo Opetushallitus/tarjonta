@@ -13,21 +13,25 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.dao;
+package fi.vm.sade.tarjonta.model.util;
 
-import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetVastausTyyppi;
-import java.util.List;
+import java.util.Collection;
 
 /**
+ *
  */
-public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
+public class CollectionUtils {
 
-    public List<Hakukohde> findByKoulutusOid(String koulutusmoduuliToteutusOid);
 
-    public List<Hakukohde> haeHakukohteetJaKoulutukset(EtsiHakukohteetKyselyTyyppi kysely);
+    public static <T> T singleItem(Collection<T> collection) {
+
+        if (collection == null || collection.isEmpty() || collection.size() > 1) {
+            throw new IllegalStateException("only one item expected in collection: " + collection);
+        }
+
+        return collection.iterator().next();
+
+    }
 
 }
 

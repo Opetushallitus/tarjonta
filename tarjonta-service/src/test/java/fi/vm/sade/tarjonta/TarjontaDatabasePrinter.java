@@ -15,10 +15,11 @@
  */
 package fi.vm.sade.tarjonta;
 
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
-import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import java.io.PrintWriter;
 import java.util.List;
@@ -27,16 +28,18 @@ import org.springframework.stereotype.Component;
 
 /**
  *
- * @author Jukka Raanamo
  */
 @Component
-public class KoulutusDatabasePrinter {
+public class TarjontaDatabasePrinter {
 
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
     @Autowired
     private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
+
+    @Autowired
+    private HakukohdeDAO hakukohdeDAO;
 
     public void printAll() {
         PrintWriter out = new PrintWriter(System.out);
@@ -46,8 +49,22 @@ public class KoulutusDatabasePrinter {
 
     public void printAll(PrintWriter out) {
         out.println("---- Tarjonta database dump:");
+        printHakukohde(out);
         printKoulutus(out);
         printRakenne(out);
+    }
+
+    public void printHakukohde(PrintWriter out) {
+
+        out.println("-- List of hakukohde objects:");
+        List<Hakukohde> list = hakukohdeDAO.findAll();
+
+        for (Hakukohde h : list) {
+            out.println("\t oid: " + h.getOid());
+            out.println("\t nimi: " + h.getHakukohdeNimi());
+            out.println("\t num koulutus: " + h.getKoulutusmoduuliToteutuses().size());
+        }
+
     }
 
     public void printKoulutus(PrintWriter out) {

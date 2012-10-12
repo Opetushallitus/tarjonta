@@ -23,9 +23,8 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.QHakukohde;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetKyselyTyyppi;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -41,8 +40,20 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         BooleanExpression oidEq = toteutus.oid.eq(koulutusmoduuliToteutusOid);
 
         return from(hakukohde).
-            join(hakukohde.koulutusmoduuliToteutuses, toteutus).
+            join(hakukohde.koulutusmoduuliToteutuseList, toteutus).
             where(oidEq).
+            list(hakukohde);
+
+    }
+
+    @Override
+    public List<Hakukohde> haeHakukohteetJaKoulutukset(EtsiHakukohteetKyselyTyyppi kysely) {
+
+        QHakukohde hakukohde = QHakukohde.hakukohde;
+        QKoulutusmoduuliToteutus toteutus = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+        return from(hakukohde, toteutus).
+            leftJoin(hakukohde.koulutusmoduuliToteutuseList, toteutus).fetch().
             list(hakukohde);
 
     }

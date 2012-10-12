@@ -15,8 +15,8 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
-import fi.vm.sade.tarjonta.KoulutusDatabasePrinter;
-import fi.vm.sade.tarjonta.KoulutusFixtures;
+import fi.vm.sade.tarjonta.TarjontaDatabasePrinter;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
 import java.util.Date;
@@ -61,10 +61,10 @@ public class KoulutusmoduuliDAOTest {
     private Koulutusmoduuli newTutkintoOhjelma;
 
     @Autowired
-    private KoulutusFixtures fixtures;
+    private TarjontaFixtures fixtures;
 
     @Autowired
-    private KoulutusDatabasePrinter dbPrinter;
+    private TarjontaDatabasePrinter dbPrinter;
 
     @Before
     public void setUp() {
@@ -213,7 +213,7 @@ public class KoulutusmoduuliDAOTest {
 
     private void initData() {
 
-        fixtures.removeAll();
+        fixtures.deleteAll();
 
         Koulutusmoduuli t;
         Koulutusmoduuli o;

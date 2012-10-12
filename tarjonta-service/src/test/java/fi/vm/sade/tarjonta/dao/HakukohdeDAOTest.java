@@ -15,9 +15,10 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
-import fi.vm.sade.tarjonta.KoulutusFixtures;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetKyselyTyyppi;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,7 +63,7 @@ public class HakukohdeDAOTest {
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
 
     @Autowired
-    private KoulutusFixtures fixtures;
+    private TarjontaFixtures fixtures;
 
     @Before
     public void setUp() {
@@ -102,13 +103,33 @@ public class HakukohdeDAOTest {
         hakukohde.setHaku(fixtures.createPersistedHaku());
 
         for (KoulutusmoduuliToteutus t : koulutusmoduuliToteutuses) {
-            hakukohde.getKoulutusmoduuliToteutuses().add(t);
+            hakukohde.addKoulutusmoduuliToteutus(t);
         }
 
         hakukohdeDAO.insert(hakukohde);
         Hakukohde loaded = hakukohdeDAO.read(hakukohde.getId());
 
         assertEquals(numToteutuses, loaded.getKoulutusmoduuliToteutuses().size());
+
+    }
+
+
+    @Test
+    public void testUpdateWithKoulutus() {
+
+        Hakukohde hakukohde = fixtures.createHakukohde();
+        hakukohde.setHaku(fixtures.createPersistedHaku());
+
+        hakukohdeDAO.insert(hakukohde);
+
+        assertEquals(0, hakukohde.getKoulutusmoduuliToteutuses().size());
+
+        hakukohde.addKoulutusmoduuliToteutus(koulutusmoduuliToteutuses.iterator().next());
+
+        hakukohdeDAO.update(hakukohde);
+
+        hakukohde = hakukohdeDAO.read(hakukohde.getId());
+        assertEquals(1, hakukohde.getKoulutusmoduuliToteutuses().size());
 
     }
 
