@@ -12,10 +12,6 @@
     <packaging>war</packaging>
     <name>Tarjonta :: APP</name>
 
-    <properties>
-        <skipJrebel>true</skipJrebel>
-    </properties>
-
     <dependencies>
 
         <dependency>
@@ -92,7 +88,7 @@
 
     <profiles>
         <profile>
-            <id>ui-development</id>
+            <id>development</id>
             <activation>
                 <property>
                     <name>netbeans.deploy</name>

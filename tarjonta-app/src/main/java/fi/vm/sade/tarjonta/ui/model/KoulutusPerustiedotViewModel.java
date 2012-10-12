@@ -28,21 +28,16 @@ import java.util.Set;
  * @author mlyly
  */
 public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
-
     // Koodisto: koulutus
     private String _koulutus;
-
     // TODO Mistä nämä tulevat?
-    // TODO Päätellään ilmeisesti koodistosta (koulutus?), tulevat siitä tilastokeskuksen opetuskoodista joka määrittelee nämä
-    // TODO Miten ne on määritelty koodistossa? Metadata? Rinnastuvuus?
     private String _koulutusTyyppi;
-    private String _koulutusala = "Filosofia";
-    private String _tutkinto = "Maisteri";
-    private String _tutkintonimike = "Filosofian maisteri";
-    private String _opintojenlaajuusyksikko = "Opintopisteet";
-    private String _opintojenlaajuus = "300 op";
-    private String _opintoala = "opintoala ei tiedossa";
-
+    private String _koulutusala = "";
+    private String _tutkinto = "";
+    private String _tutkintonimike = "";
+    private String _opintojenlaajuusyksikko = "";
+    private String _opintojenlaajuus = "";
+    private String _opintoala = "";
     // Koodisto: kieli
     private Set<String> _opetuskielet = new HashSet<String>();
     private boolean _opetuskieletKaikki;

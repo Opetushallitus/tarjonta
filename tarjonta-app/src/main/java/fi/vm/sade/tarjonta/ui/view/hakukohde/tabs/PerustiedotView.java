@@ -17,38 +17,26 @@
 
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.LanguageTabSheet;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.vaadin.constants.LabelStyleEnum;
-import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Configurable;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.Label;
 import fi.vm.sade.generic.common.I18N;
 import org.springframework.beans.factory.annotation.Value;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
+import fi.vm.sade.vaadin.constants.LabelStyleEnum;
+import fi.vm.sade.vaadin.constants.UiConstant;
 /**
  *
  * @author Tuomas Katva

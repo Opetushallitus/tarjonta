@@ -15,13 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
-import com.vaadin.ui.Accordion;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
-import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
-import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
+import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,34 +30,39 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author mlyly
  */
 @Configurable
-public class SearchResultsView extends VerticalLayout{
+public class SearchResultsView extends VerticalLayout {
 
     @Autowired
     private TarjontaPresenter _presenter;
     boolean attached = false;
-
     private I18NHelper _i18n = new I18NHelper(this);
+    private TabSheet tabs;
 
     public SearchResultsView() {
         super();
+        setHeight(-1, UNITS_PIXELS);
     }
 
     @Override
     public void attach() {
-        if (attached) return;
-        
+        if (attached) {
+            return;
+        }
+
         attached = true;
         super.attach();
-        
-        TabSheet tabs = new TabSheet();
+
+        tabs = new TabSheet();
+        tabs.setHeight(-1, UNITS_PIXELS);
         addComponent(tabs);
 
-        tabs.addTab(new Label(T("koulutukset")), T("koulutukset"));
+        //TODO: replace the KoulutusToisenAsteenPerustiedotViewModel with koulutus search list view! 
+
+        tabs.addTab(new EditKoulutusPerustiedotToinenAsteView(), T("koulutukset"));
         tabs.addTab(new ListHakukohdeViewImpl(), T("hakuryhmat"));
     }
 
     private String T(String key) {
         return _i18n.getMessage(key);
     }
-
 }

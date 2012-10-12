@@ -20,6 +20,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
@@ -30,13 +31,16 @@ import fi.vm.sade.tarjonta.poc.ui.helper.I18NHelper;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Jani Wilén
  */
-public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLayout> {
+public class OrganisaatiohakuView extends AbstractCollapsibleLeft<VerticalLayout> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(OrganisaatiohakuView.class);
     private static I18NHelper i18n = new I18NHelper(OrganisaatiohakuView.class);
     private static final int PANEL_WIDTH = 250;
     private TextField search;
@@ -48,12 +52,8 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
 
     public OrganisaatiohakuView() {
         super(VerticalLayout.class);
-    }
 
-    @Override
-    protected void buildLayout(VerticalLayout layout) {
-        layout.setHeight(-1, UNITS_PERCENTAGE);
-        layout.setWidth(-1, UNITS_PIXELS);
+        LOG.debug("In build organisaatio layout");
         Panel panelTop = buildPanel(buildPanelLayout());
 
         search = UiUtil.textFieldSmallSearch(panelTop);
@@ -61,15 +61,20 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         organisaatioTyyppi.setSizeUndefined();
         oppilaitosTyyppi = UiUtil.comboBox(panelTop, null, new String[]{"oppilaitostyyppi1", "oppilaitostyyppi2"});
         oppilaitosTyyppi.setWidth(210, UNITS_PIXELS);
-        
+
         lakkautetut = UiUtil.checkbox(panelTop, i18n.getMessage("naytaMyosLakkautetut"));
         suunnitellut = UiUtil.checkbox(panelTop, i18n.getMessage("naytaMyosSuunnitellut"));
 
         Panel panelBottom = buildPanel(buildTreePanelLayout());
         panelBottom.addStyleName(Oph.CONTAINER_SECONDARY);
 
-        layout.addComponent(panelTop);
-        layout.addComponent(panelBottom);
+        addLayoutComponent(panelTop);
+        addLayoutComponent(panelBottom);
+    }
+
+    @Override
+    protected void buildLayout(VerticalLayout layout) {
+        //not needed.
     }
 
     private Panel buildPanel(AbstractLayout layout) {
@@ -86,7 +91,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
 
         tree = new Tree();
         tree.setSizeUndefined();
-        
+
         //TODO: REAL DATA
         tree.setItemCaptionPropertyId(DataSource.COLUMN_KEY);
         tree.setItemCaptionMode(Tree.ITEM_CAPTION_MODE_PROPERTY);
@@ -95,7 +100,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         hl.addComponent(tree);
         return hl;
     }
-    
+
     private VerticalLayout buildPanelLayout() {
         VerticalLayout hl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
         hl.setSizeUndefined();

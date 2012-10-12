@@ -15,27 +15,31 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
-import com.github.wolfie.blackboard.Listener;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Component.Event;
 
 import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
-import fi.vm.sade.tarjonta.ui.view.haku.EditHakuViewImpl;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
- * Tarjonta WEB application - used for testing and development.
- * For development purposes the app has methods to switch between Haku and Tarjonta management apps.
+ * Tarjonta WEB application - used for testing and development. For development
+ * purposes the app has methods to switch between Haku and Tarjonta management
+ * apps.
  *
  * @author mlyly
  */
+@Configurable(preConstruction = true)
 public class TarjontaWebApplication extends AbstractSadeApplication {
 
     private Window window;
+    @Value("${tarjonta-app.dev.redirect:}")
+    private String developmentRedirect;
+    @Value("${tarjonta-app.dev.theme:}")
+    private String developmentTheme;
 
     @Override
     public synchronized void init() {
@@ -44,8 +48,9 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         window = new Window("Valitse");
         setMainWindow(window);
 
-        Button tarjontaButton = new Button("Tarjontaan", new Button.ClickListener() {
+       developmentConfiguration();
 
+        Button tarjontaButton = new Button("Tarjontaan", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 toTarjonta();
@@ -54,7 +59,6 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         window.addComponent(tarjontaButton);
 
         Button hakuButton = new Button("Hakuihin", new Button.ClickListener() {
-
             @Override
             public void buttonClick(ClickEvent event) {
                 toHaku();
@@ -74,5 +78,30 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         window = new HakuRootView(this);
         setMainWindow(window);
     }
+    
+    /*
+     * Development configurations, no real use in production environment.
+     */
+    private void developmentConfiguration(){
+         if (developmentTheme != null && developmentTheme.length() > 0) {
+            //set a development theme.
+            setTheme(developmentTheme);
+        }
 
+        if (developmentRedirect != null && developmentRedirect.length() > 0) {
+            //This code block is only for making UI development little bit faster  
+            //Add the property to tarjonta-app.properties:
+            //
+            //tarjonta-app.dev.redirect=KOULUTUS
+
+            if (developmentRedirect.equalsIgnoreCase("HAKU")) {
+                toHaku();
+            }
+
+            if (developmentRedirect.equalsIgnoreCase("KOULUTUS")) {
+                toTarjonta();
+            }
+        }
+    
+    }
 }

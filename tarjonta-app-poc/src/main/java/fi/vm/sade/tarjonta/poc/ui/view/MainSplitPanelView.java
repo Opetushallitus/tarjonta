@@ -40,7 +40,7 @@ public class MainSplitPanelView extends HorizontalLayout {
          * Please do not set width 100% to horizontal layout, or it 
          * will break the collapsible Organisaatio haku view. * 
          */
-        
+
         LOG.info("In MainSplitPanelView");
         setWidth(100, UNITS_PERCENTAGE);
         setHeight(-1, UNITS_PIXELS);
@@ -48,12 +48,13 @@ public class MainSplitPanelView extends HorizontalLayout {
     }
 
     private void buildMainLayout() {
-        mainLeftLayout = new OrganisaatiohakuView(); //main collapsible layout left
+       // mainLeftLayout = new OrganisaatiohakuView(); //main collapsible layout left
         mainRightLayout = UiUtil.verticalLayout(); //main tool layout right
         mainRightLayout.setHeight(-1, UNITS_PIXELS);
 
-        addComponent(mainLeftLayout);
+        //addComponent(mainLeftLayout);
         addComponent(mainRightLayout);
+
     }
 
     /**
@@ -69,4 +70,12 @@ public class MainSplitPanelView extends HorizontalLayout {
     public void setMainRightLayout(VerticalLayout mainRightLayout) {
         this.mainRightLayout = mainRightLayout;
     }
+
+    /**
+     * @return the mainLeftLayout
+     */
+    public OrganisaatiohakuView getMainLeftLayout() {
+        return mainLeftLayout;
+    }
+
 }

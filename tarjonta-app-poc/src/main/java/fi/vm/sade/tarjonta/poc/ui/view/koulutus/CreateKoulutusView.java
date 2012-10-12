@@ -70,8 +70,8 @@ public class CreateKoulutusView extends OphAbstractDialogWindow {
         vLeft.addComponent(createKoulutusTreeView);
 
         HorizontalLayout middleLayout = UiUtil.horizontalLayout();
-        Panel newTextPanel = UiUtil.textPanel(TEKSTI, null, UiConstant.DEFAULT_REALTIVE_SIZE, middleLayout);
-        newTextPanel.setHeight(UiConstant.DEFAULT_REALTIVE_SIZE);
+        Panel newTextPanel = UiUtil.textPanel(TEKSTI, null, UiConstant.DEFAULT_RELATIVE_SIZE, middleLayout);
+        newTextPanel.setHeight(UiConstant.DEFAULT_RELATIVE_SIZE);
         vRight.addComponent(newTextPanel);
 
        // layout.addComponent(UiBuilder.newComboBox("Tyyppi", new String[]{"Tutkintoon johtava koulutus", "Opintokokonaisuus", "Opinto"}, layout));

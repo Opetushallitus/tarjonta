@@ -19,6 +19,6 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
  *
  * @author mlyly
  */
-public class DialogCreateKolutus {
+public class DialogCreateKoulutus {
 
 }

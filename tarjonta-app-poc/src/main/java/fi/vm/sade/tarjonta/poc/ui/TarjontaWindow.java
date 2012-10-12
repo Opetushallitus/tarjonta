@@ -36,7 +36,7 @@ public class TarjontaWindow extends Window {
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaWindow.class);
     @Autowired(required = true)
     private TarjontaPresenter _presenter;
-    private MainSplitPanelView mainSplitPanel;
+    private VerticalLayout layout;
 
     public TarjontaWindow() {
         super();
@@ -44,13 +44,11 @@ public class TarjontaWindow extends Window {
 
         _presenter.setTarjontaWindow(this);
 
-        VerticalLayout layout = UiUtil.verticalLayout();
+        layout = UiUtil.verticalLayout();
         layout.setWidth(100, UNITS_PERCENTAGE);
-        layout.setHeight(-1,UNITS_PIXELS);
+        layout.setHeight(-1, UNITS_PIXELS);
         setContent(layout); //override default layout
         layout.addStyleName(Oph.CONTAINER_MAIN);
-        mainSplitPanel = new MainSplitPanelView();
-        layout.addComponent(mainSplitPanel);
 
         if (_presenter != null && _presenter.showIdentifier()) {
             layout.addComponent(new Label("ID=" + _presenter.getIdentifier()));
@@ -58,7 +56,7 @@ public class TarjontaWindow extends Window {
         _presenter.showMainKoulutusView();
     }
 
-    public MainSplitPanelView getMainSplitPanel() {
-        return mainSplitPanel;
+    public VerticalLayout getMainSplitPanel() {
+        return layout;
     }
 }

@@ -21,7 +21,7 @@ import fi.vm.sade.vaadin.ui.OphAbstractTreeTable;
 public class CreateKoulutusTreeView extends OphAbstractTreeTable {
 
     public CreateKoulutusTreeView() {
-        super(null, UiConstant.DEFAULT_REALTIVE_SIZE);
+        super(null, UiConstant.DEFAULT_RELATIVE_SIZE);
         setColumnHeaderMode(COLUMN_HEADER_MODE_HIDDEN);
     }
 }

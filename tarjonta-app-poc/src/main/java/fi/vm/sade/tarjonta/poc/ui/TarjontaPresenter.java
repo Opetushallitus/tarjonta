@@ -30,11 +30,13 @@ import fi.vm.sade.tarjonta.poc.demodata.row.MultiActionTableStyle;
 import fi.vm.sade.tarjonta.poc.ui.helper.KoodistoHelper;
 import fi.vm.sade.tarjonta.poc.ui.view.hakukohde.EditSiirraHakukohteitaView;
 import fi.vm.sade.tarjonta.poc.ui.view.MainKoulutusView;
+import fi.vm.sade.tarjonta.poc.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.poc.ui.view.hakukohde.ShowHakukohdeView;
 import fi.vm.sade.tarjonta.poc.ui.view.koulutus.KoulutusAdditionalInfoView;
 import fi.vm.sade.tarjonta.poc.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.dto.ButtonDTO;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
+import fi.vm.sade.vaadin.util.UiUtil;
 import java.io.Serializable;
 import java.util.List;
 
@@ -123,10 +125,13 @@ public class TarjontaPresenter implements Serializable {
     public void showMainKoulutusView() {
         LOG.info("showMainKoulutusView()");
         getRightLayout().removeAllComponents();
-        getRightLayout().addComponent(new MainKoulutusView());
 
-        _tarjontaWindow.getMainSplitPanel().setExpandRatio(getRightLayout(), 1f);
+        OrganisaatiohakuView org = new OrganisaatiohakuView(); //main collapsible layout left
+        MainKoulutusView mainKoulutusView = new MainKoulutusView();
+        org.addComponent(mainKoulutusView);
+        getRightLayout().addComponent(org);
 
+        org.setExpandRatio(mainKoulutusView, 1f);
     }
 
     public void showShowKoulutusView() {
@@ -266,6 +271,6 @@ public class TarjontaPresenter implements Serializable {
      * Get a right layout instance from the main split panel. 
      */
     private VerticalLayout getRightLayout() {
-        return _tarjontaWindow.getMainSplitPanel().getMainRightLayout();
+        return _tarjontaWindow.getMainSplitPanel();
     }
 }

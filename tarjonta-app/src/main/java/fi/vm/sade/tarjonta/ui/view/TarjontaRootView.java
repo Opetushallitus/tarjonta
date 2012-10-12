@@ -47,22 +47,27 @@ import org.springframework.beans.factory.annotation.Configurable;
  *
  * @author mlyly
  */
-@Configurable(preConstruction=true)
+@Configurable(preConstruction = true)
 public class TarjontaRootView extends Window {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaRootView.class);
-
     @Autowired(required = true)
     private TarjontaPresenter _presenter;
-
-    private HorizontalLayout _appRootLayout;
-    //private VerticalLayout _appLeftLayout;
-    private HorizontalLayout _appRightLayout;
-
+    private VerticalLayout _appRootLayout;
     private OrganisaatiohakuView _organisationSearchView;
     private BreadcrumbsView _breadcrumbsView;
     private SearchSpesificationView _searchSpesificationView;
     private SearchResultsView _searchResultsView;
+    //Huom tämä on vain kehityksen ajaksi tehty kenttä, mahdollistaa vaihtamisen
+    //Haku- ja Tarjontasovellusten välillä.
+    private TarjontaWebApplication tWebApp;
+
+    //Tämä on vain kehitystä helpottamaan tehty konstruktori.
+    public TarjontaRootView(TarjontaWebApplication tWebApp) {
+        super();
+        init();
+        this.tWebApp = tWebApp;
+    }
 
     public TarjontaRootView() {
         super();
@@ -76,6 +81,14 @@ public class TarjontaRootView extends Window {
         if (_presenter == null) {
             _presenter = new TarjontaPresenter();
         }
+        
+        //
+        // Create root layout
+        //
+        _appRootLayout = UiBuilder.verticalLayout();
+        _appRootLayout.setHeight(-1, UNITS_PIXELS);
+        _appRootLayout.addStyleName(Oph.CONTAINER_MAIN);
+        setContent(_appRootLayout); // root layout
 
         //
         // Create components
@@ -84,10 +97,7 @@ public class TarjontaRootView extends Window {
         _breadcrumbsView = new BreadcrumbsView();
         _searchSpesificationView = new SearchSpesificationView();
         _searchResultsView = new SearchResultsView();
-
-
         _searchSpesificationView.addListener(new Listener() {
-
             @Override
             public void componentEvent(Event event) {
                 if (event instanceof SearchSpesificationView.SearchEvent) {
@@ -97,39 +107,20 @@ public class TarjontaRootView extends Window {
                 }*/
             }
         });
-
         
         _presenter.setTarjontaWindow(this);
 
-        // Create root layout
-        VerticalLayout layout = UiBuilder.verticalLayout();
-        layout.setHeight(-1,UNITS_PIXELS);
-        layout.addStyleName(Oph.CONTAINER_MAIN);
-        setContent(layout); // root layout
-
-        // Create application layout and add to root
-        _appRootLayout = UiBuilder.horizontalLayout();
-        layout.addComponent(_appRootLayout);
-
-        // Create right side
-        _appRightLayout = UiBuilder.horizontalLayout();//verticalLayout();
-        _appRootLayout.addComponent(_appRightLayout);
-
         // Show application identifier if needed
         if (_presenter != null && _presenter.isShowIdentifier()) {
-            layout.addComponent(new Label("ID=" + _presenter.getIdentifier()));
+            _appRootLayout.addComponent(new Label("ID=" + _presenter.getIdentifier()));
         }
 
         // The default view to show is main default view (called here since "main" app cannot access presenter)
         _presenter.showMainDefaultView();
     }
 
-    public HorizontalLayout getAppRootLayout() {
+    public VerticalLayout getAppRootLayout() {
         return _appRootLayout;
-    }
-
-    public HorizontalLayout getAppRightLayout() {
-        return _appRightLayout;
     }
 
     public SearchSpesificationView getSearchSpesificationView() {
