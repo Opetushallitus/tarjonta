@@ -14,20 +14,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-
 package fi.vm.sade.tarjonta.service.impl;
 
-
 import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.service.HakuService;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.SisaisetHakuAjat;
 import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaTyyppi;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,45 +38,17 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Tuomas Katva
  */
 @Transactional
-@Service("tarjontaAdminService")
-public class HakuServiceImpl implements HakuService {
+@Service("tarjontaPublicService")
+public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Autowired
     private HakuBusinessService businessService;
-    
+
     @Autowired
     private HakuDAO hakuDao;
-    
+
     @Autowired
     private ConversionService conversionService;
-    
-    @Override
-    public fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi paivitaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
-        
-        Haku foundHaku = businessService.findByOid(hakuDto.getOid());
-        if (foundHaku != null) {
-            mergeHaku(conversionService.convert(hakuDto,Haku.class), foundHaku); 
-            foundHaku = businessService.update(foundHaku);
-            return conversionService.convert(foundHaku, HakuTyyppi.class);
-        } else {
-            throw new BusinessException("tarjonta.haku.update.no.oid");
-        }
-    }
-
-    @Override
-    public fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi lisaaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
-    	Haku haku = conversionService.convert(hakuDto,Haku.class);
-        haku = businessService.save(haku);
-        return conversionService.convert(haku, HakuTyyppi.class);
-    }
-
-    @Override
-    public void poistaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
-        
-        Haku haku = businessService.findByOid(hakuDto.getOid());
-        
-        hakuDao.remove(haku);
-    }
 
     @Override
     public ListHakuVastausTyyppi listHaku(ListaaHakuTyyppi parameters) {
@@ -99,11 +68,12 @@ public class HakuServiceImpl implements HakuService {
 
     private List<HakuTyyppi> convert(List<Haku> haut) {
         List<HakuTyyppi> tyypit = new ArrayList<HakuTyyppi>();
-        for (Haku haku:haut) {
+        for (Haku haku : haut) {
             tyypit.add(conversionService.convert(haku, HakuTyyppi.class));
         }
         return tyypit;
     }
+
     /**
      * @return the businessService
      */
@@ -145,8 +115,7 @@ public class HakuServiceImpl implements HakuService {
     public void setHakuDao(HakuDAO hakuDao) {
         this.hakuDao = hakuDao;
     }
-    
-    
+
     private void mergeHaku(Haku source, Haku target) {
         target.setNimi(source.getNimi());
         target.setOid(source.getOid());
@@ -165,20 +134,21 @@ public class HakuServiceImpl implements HakuService {
         target.setHaunTunniste(source.getHaunTunniste());
         mergeSisaisetHaunAlkamisAjat(source, target);
     }
-    
+
     private void mergeSisaisetHaunAlkamisAjat(Haku source, Haku target) {
-    	List<Hakuaika> hakuajat = new ArrayList<Hakuaika>();
-    	for (Hakuaika curAika: target.getHakuaikas()) {
-    		hakuajat.add(curAika);
-    	}
-    	
-    	for (Hakuaika curHak : hakuajat) {
-    		target.removeHakuaika(curHak);
-    	}
-    	
-    	for (Hakuaika curHakuaika : source.getHakuaikas()) {
-    		target.addHakuaika(curHakuaika);
-    	}
-    } 
+        List<Hakuaika> hakuajat = new ArrayList<Hakuaika>();
+        for (Hakuaika curAika : target.getHakuaikas()) {
+            hakuajat.add(curAika);
+        }
+
+        for (Hakuaika curHak : hakuajat) {
+            target.removeHakuaika(curHak);
+        }
+
+        for (Hakuaika curHakuaika : source.getHakuaikas()) {
+            target.addHakuaika(curHakuaika);
+        }
+    }
 
 }
+

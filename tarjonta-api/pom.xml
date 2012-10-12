@@ -130,7 +130,28 @@
                             <sourceRoot>target/generated-sources/java</sourceRoot>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>src/main/resources/wsdl/tarjontaService.wsdl</wsdl>
+                                    <wsdl>src/main/resources/wsdl/tarjontaAdminService.wsdl</wsdl>
+                                    <bindingFiles>
+                                        <bindingFile>src/main/resources/wsdl/binding.xjb</bindingFile>
+                                    </bindingFiles>
+                                    <extraargs>
+                                    </extraargs>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>generate-tarjonta-public-wsdl2java</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sourceRoot>target/generated-sources/java</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>src/main/resources/wsdl/tarjontaPublicService.wsdl</wsdl>
                                     <bindingFiles>
                                         <bindingFile>src/main/resources/wsdl/binding.xjb</bindingFile>
                                     </bindingFiles>

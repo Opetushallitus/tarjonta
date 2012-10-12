@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.tarjonta.service.HakuService;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
@@ -45,6 +44,8 @@ import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
+import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 
@@ -61,7 +62,9 @@ public class HakuPresenter {
     private static final Logger LOG = LoggerFactory.getLogger(HakuPresenter.class);
 
     private KoulutusSearchSpesificationViewModel searchSpec = new KoulutusSearchSpesificationViewModel();
+
     private List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
+
     private List<HakuViewModel> selectedhaut = new ArrayList<HakuViewModel>();
 
     private ListHakuView hakuList;
@@ -77,14 +80,14 @@ public class HakuPresenter {
     private KoodiService koodiService;
 
     @Autowired
-    private HakuService tarjontaService;
+    private TarjontaPublicService tarjontaPublicService;
 
-
+    @Autowired
+    private TarjontaAdminService tarjontaAdminService;
 
     public static final String COLUMN_A = "Kategoriat";
 
     public HakuPresenter() {
-
     }
 
     /**
@@ -113,7 +116,7 @@ public class HakuPresenter {
             try {
                 SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.latestValidAcceptedKoodiByUri(curHaku.getHakutapa());
                 List<KoodiType> result = this.koodiService.searchKoodis(searchCriteria);
-                if(result.size() != 1) {
+                if (result.size() != 1) {
                     throw new RuntimeException("No valid accepted koodi found for URI " + curHaku.getHakutapa());
                 }
 
@@ -171,9 +174,9 @@ public class HakuPresenter {
             } catch (Exception ex) {
                 LOG.error(ex.getMessage());
             }
-            this.tarjontaService.lisaaHaku(hakuModel.getHakuDto());
+            tarjontaAdminService.lisaaHaku(hakuModel.getHakuDto());
         } else {
-            this.tarjontaService.paivitaHaku(hakuModel.getHakuDto());
+            tarjontaAdminService.paivitaHaku(hakuModel.getHakuDto());
         }
         LOG.info("Haku tallennettu luonnoksena");
     }
@@ -191,21 +194,19 @@ public class HakuPresenter {
             } catch (Exception ex) {
                 LOG.error(ex.getMessage());
             }
-            this.tarjontaService.lisaaHaku(hakuModel.getHakuDto());
+            tarjontaAdminService.lisaaHaku(hakuModel.getHakuDto());
         } else {
-            this.tarjontaService.paivitaHaku(hakuModel.getHakuDto());
+            tarjontaAdminService.paivitaHaku(hakuModel.getHakuDto());
         }
         LOG.info("Haku tallennettu valmiina");
     }
-
-
 
     /**
      * Removes the haku given as parameter
      * @param haku the haku to remove.
      */
     public void removeHaku(HakuViewModel haku) {
-        this.tarjontaService.poistaHaku(haku.getHakuDto());
+        tarjontaAdminService.poistaHaku(haku.getHakuDto());
         hakuList.reload();
     }
 
@@ -257,7 +258,7 @@ public class HakuPresenter {
         List<KoodiType> result = this.koodiService.searchKoodis(searchCriteria);
 
         String nimi = koodiUri;
-        if(result.size() == 1) {
+        if (result.size() == 1) {
             nimi = KoodistoHelper.getKoodiMetadataForLanguage(result.get(0), KoodistoHelper.getKieliForLocale(I18N.getLocale())).getNimi();
         }
 
@@ -271,7 +272,7 @@ public class HakuPresenter {
         DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         String startDateStr = (hakuModel.getAlkamisPvm() != null) ? formatter.format(hakuModel.getAlkamisPvm()) : "";
         String endDateStr = (hakuModel.getPaattymisPvm() != null) ? formatter.format(hakuModel.getPaattymisPvm()) : "";
-        return startDateStr  + " - " + endDateStr;
+        return startDateStr + " - " + endDateStr;
     }
 
     /**
@@ -292,7 +293,6 @@ public class HakuPresenter {
         return hakukohteet;
     }
 
-
     /**
      * Gets the currently selectedHaut.
      * @return
@@ -306,7 +306,7 @@ public class HakuPresenter {
      */
     public void removeSelectedHaut() {
         for (HakuViewModel curHaku : selectedhaut) {
-            this.tarjontaService.poistaHaku(curHaku.getHakuDto());
+            tarjontaAdminService.poistaHaku(curHaku.getHakuDto());
         }
         selectedhaut.clear();
         hakuList.reload();
@@ -314,10 +314,11 @@ public class HakuPresenter {
 
     private List<HakuViewModel> retrieveHaut() {
         List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
-        for (HakuTyyppi curHaku : this.tarjontaService.listHaku(new ListaaHakuTyyppi()).getResponse()) {
+        for (HakuTyyppi curHaku : tarjontaPublicService.listHaku(new ListaaHakuTyyppi()).getResponse()) {
             haut.add(new HakuViewModel(curHaku));
         }
         return haut;
     }
 
 }
+

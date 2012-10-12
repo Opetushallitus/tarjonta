@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xs:schema elementFormDefault="unqualified"
+           targetNamespace="http://service.tarjonta.sade.vm.fi/types" version="1.0"
+           xmlns:tns="http://service.tarjonta.sade.vm.fi/types"
+           xmlns:tnsh="http://service.tarjonta.sade.vm.fi/types/dto"
+           xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types/tarjonta"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+
+    <xs:import namespace="http://service.tarjonta.sade.vm.fi/types/tarjonta" schemaLocation="tarjonta.xsd" />
+
+
+    <xs:element name="listaaHaku" type="tns:ListaaHakuTyyppi" />
+    <xs:element name="listaaHakuVastaus" type="tns:ListHakuVastausTyyppi" />
+    <xs:element name="haeTarjonta" type="tns:HaeTarjontaTyyppi" />
+    <xs:element name="haeTarjontaVastaus" type="tns:HaeTarjontaVastausTyyppi" />
+
+    
+    <xs:complexType name="ListaaHakuTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="vainSijoittelu" type="xs:boolean" />
+            <xs:element minOccurs="0" maxOccurs="1" name="alkaen" type="xs:date" />
+            <xs:element minOccurs="0" maxOccurs="1" name="loppuen" type="xs:date" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ListHakuVastausTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="response" type="tarjonta:HakuTyyppi" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HaeTarjontaTyyppi">
+    	<xs:sequence>
+    	     	<xs:element minOccurs="1" maxOccurs="1" name="oid" type="xs:string" >
+        		<xs:annotation>
+        			<xs:documentation>Yksilollinen tunniste haulle.</xs:documentation>
+        		</xs:annotation>
+        	</xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HaeTarjontaVastausTyyppi">
+    	<xs:sequence>
+    		<xs:element name="tarjonta" type="tarjonta:TarjontaTyyppi" maxOccurs="1" minOccurs="0">
+
+    		</xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
