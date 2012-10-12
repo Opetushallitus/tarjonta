@@ -52,9 +52,9 @@ import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
+ * Component for listing hakukohde objects.
  * 
  * @author Markus
- *
  */
 @Configurable(preConstruction = false)
 public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukohdeView {
@@ -64,22 +64,47 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 	public static final String COLUMN_A = "Kategoriat";
     
     private static final Logger LOG = LoggerFactory.getLogger(ListHakukohdeViewImpl.class);
+    /**
+     * Button for adding selected Hakukohde objects to a Haku.
+     */
     private Button lisaaHakuunB;
+    
+    /**
+     * Button for removing selected Hakukohde objects.
+     */
     private Button poistaB;
+    
+    /**
+     * Component for selecting desired sorting/grouping criteria for listed Hakukohde objects.
+     */
     private ComboBox cbJarjestys;
+    
+    /**
+     * TreeTable component to display the Hakukohde objects in a grouped/hierarchical manner.
+     */
     private CategoryTreeView categoryTree;
+    
+    /**
+     * Checkbox for selecting all the Hakukohde objects in the list.
+     */
     private CheckBox valKaikki;
     
     private I18NHelper i18n = new I18NHelper(this);
     
+    /**
+     * Presenter object for the Hakukohde listing.
+     */
     @Autowired(required = true)
     private TarjontaPresenter presenter;
 
     public ListHakukohdeViewImpl() {
+    	//Initialization of the view layout
         setWidth(UiConstant.PCT100);
+        //Creation of the button bar above the Hakukohde hierarchical/grouped list.
         HorizontalLayout buildMiddleResultLayout = buildMiddleResultLayout();
         addComponent(buildMiddleResultLayout);
 
+        //Adding the select all checkbox.
         CssLayout wrapper = UiUtil.cssLayout(UiMarginEnum.BOTTOM);
         valKaikki = new CheckBox(i18n.getMessage("ValitseKaikki"));
         valKaikki.setImmediate(true);
@@ -87,7 +112,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             @Override
             public void valueChange(ValueChangeEvent event) {
                 
-                    changeHakuSelections(valKaikki.booleanValue());
+                    toggleHakuSelections(valKaikki.booleanValue());
                 
             }
         });
@@ -95,6 +120,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         
         addComponent(wrapper);
 
+        //Adding the actual Hakukohde-listing component.
         categoryTree = new CategoryTreeView();
         addComponent(categoryTree);
         setHeight(Sizeable.SIZE_UNDEFINED, 0);
@@ -105,6 +131,9 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         
     }
     
+    /**
+     * Sets the datasource for the hierarchical listing of Hakukohde objects.
+     */
     @PostConstruct
     public void setDataSource() {
         presenter.setHakukohdeListView(this);
@@ -112,6 +141,12 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
     }
     
+    /**
+     * Creates the vaadin HierarchicalContainer datasource for the Hakukohde listing
+     * based on data provided by the presenter.
+     * @param map the data map provided by the presenter.
+     * @return the hierarchical container for Hakukokhde listing.
+     */
     private Container createDataSource(Map<String, List<HakukohdeViewModel>> map) {
         Set<Map.Entry<String, List<HakukohdeViewModel>>> set = map.entrySet();
 
@@ -148,7 +183,11 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         return hc;
     }
     
-    private void changeHakuSelections(boolean selected) {  
+    /**
+     * Selects or unselects all the objects in the Hakukohde listing.
+     * @param selected
+     */ 
+    private void toggleHakuSelections(boolean selected) {  
         presenter.getSelectedhakukohteet().clear();
         HierarchicalContainer hc = (HierarchicalContainer)(this.categoryTree.getContainerDataSource());
         for (Object item : hc.getItemIds()) {
@@ -157,6 +196,10 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         }
     }
 
+    /**
+     * Creation of the button bar part above the Hakukohde-listing.
+     * @return
+     */
     private HorizontalLayout buildMiddleResultLayout() {
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
 
@@ -168,7 +211,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         lisaaHakuunB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                navigateToHakuEditForm();
+                navigateToHakukohdeEditForm();
                 
             }
         });
@@ -204,22 +247,28 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         this.lisaaHakuunB.addListener(btnKopioiUudelleKaudelle);
     }
 
+    /**
+     * Reloads the data to the Hakukohde list.
+     */
     @Override
     public void reload() {
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
     }
     
-    private void navigateToHakuEditForm() {
-        fireEvent(new NewHakuEvent(this));
+    /**
+     * fires event to signal navigation to Hakukohde edit form.
+     */
+    private void navigateToHakukohdeEditForm() {
+        fireEvent(new NewHakukohdeEvent(this));
     }
     
     /**
-     * Event to signal that the user wants to create a new Haku.
+     * Event to signal that the user wants to create a new Hakukohde.
     */
-    public class NewHakuEvent extends Component.Event {
+    public class NewHakukohdeEvent extends Component.Event {
 
-        public NewHakuEvent(Component source) {
+        public NewHakukohdeEvent(Component source) {
             super(source);
             
         }

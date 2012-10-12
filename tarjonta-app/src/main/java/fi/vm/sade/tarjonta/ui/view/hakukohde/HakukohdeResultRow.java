@@ -32,7 +32,6 @@ import com.vaadin.ui.MenuBar;
 import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -48,9 +47,19 @@ public class HakukohdeResultRow extends HorizontalLayout {
 private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResultRow.class);
     
     private I18NHelper i18n = new I18NHelper(this);
+    /**
+     * The hakukohde to display on the row.
+     */
     private HakukohdeViewModel hakukohde;
+    
+    /**
+     * Checkbox to indicate if this row is selected.
+     */
     private CheckBox isSelected;
 
+    /**
+     * The presenter object for the component.
+     */
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
     
@@ -62,6 +71,10 @@ private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResultRow.cla
         this.hakukohde = hakukohde;
     }
     
+    /**
+     * Command object for the row menubar. Starts operations
+     * based on user's selection in the menu.
+     */
     private MenuBar.Command menuCommand = new MenuBar.Command() {
         @Override
         public void menuSelected(MenuBar.MenuItem selectedItem) {
@@ -82,6 +95,10 @@ private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResultRow.cla
         return rowMenuBar;
     }
     
+    /**
+     * Fires an event based on user's selection in the row's menubar.
+     * @param selection the selection in the menu.
+     */
     private void menuItemClicked(String selection) {
         if (selection.equals(i18n.getMessage("tarkastele"))) {
             fireEvent(new HakukohdeRowMenuEvent(this, hakukohde, HakukohdeRowMenuEvent.VIEW));    
@@ -93,7 +110,7 @@ private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResultRow.cla
     }
 
     /**
-     * Creation of the row component.
+     * Creation of the row component's layout.
      * @param text - the text to be shown on the row.
      * @return
      */
@@ -127,10 +144,19 @@ private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResultRow.cla
         return this;
     }
     
+    /**
+     * Gets the isSelected checkbox component.
+     * @return
+     */
     public CheckBox getIsSelected() {
         return isSelected;
     }
     
+    /**
+     * Event to be fired by HakukohdeResultRow object when the user
+     * makes a selection in the row's menubar.
+     * @author Markus
+     */
     public class HakukohdeRowMenuEvent extends Component.Event {
         
         public static final String REMOVE = "remove";
