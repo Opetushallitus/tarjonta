@@ -1,22 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Tämä dokumentti todentaa esimerkkidatan siirtotiedosto muodossa. Data löytyy Google Docs:n toiselta välilehdeltä:
-    https://docs.google.com/spreadsheet/ccc?key=0ApG7JFquM4ZDdHI4VmwweFJKanNDZ1Vob0RjVXVRZEE#gid=1
-
-
-    vielä sijoitettavat/ratkaistavat tiedot:
-
-    - moduulin tila, explisiittinen?
-
-    muutettava:
-
-    - rakenteita täytyy yhtenäistää (koodi+label -tyyppiset, käännösteksti -tyyppiset)
-
+    Tarjonnan tunti/vienti rajapinnan esimerkki sanoma (download).
 -->
-<LearningOpportunityUploadData
+<LearningOpportunityDownloadData
     xmlns="http://service.tarjonta.sade.vm.fi/types2"
     xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-    xsi:schemaLocation='http://service.tarjonta.sade.vm.fi/types2  ../../main/resources/wsdl/learningUploadService.xsd'>
+    xsi:schemaLocation='http://service.tarjonta.sade.vm.fi/types2  ../../main/resources/wsdl/learningServiceCommon.xsd'>
 
     <!-- ========================================================================================= -->
     <!-- Koulutusmoduuli, ensihoidon ko, 1508                                                      -->
@@ -832,6 +821,17 @@
 
     </LearningOpportunityProvider>
 
+    <!-- ========================================================================================= -->
+    <!-- Haku:                                                                                     -->
+    <!-- ========================================================================================= -->
+
+    <ApplicationSystem>
+        <Name>
+            <Text xml:lang="fi">Yhteishaku</Text>
+        </Name>
+    </ApplicationSystem>
+
+
 
     <!-- ========================================================================================= -->
     <!-- Hakukohde: ensihoidon koulutusohjelma                                                     -->
@@ -1148,4 +1148,4 @@
 
     </ApplicationOption>
 
-</LearningOpportunityUploadData>
+</LearningOpportunityDownloadData>

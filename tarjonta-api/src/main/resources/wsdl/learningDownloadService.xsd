@@ -12,27 +12,24 @@
     <!-- Root elements                                                                                -->
     <!-- ============================================================================================ -->
 
-    <xs:element name="LearningUploadRequest" type="tns:LearningUploadRequestType"/>
-    <xs:element name="LearningUploadResponse" type="tns:LearningUploadResponseType" />
-
-
-
+    <xs:element name="LearningDownloadRequest" type="tns:LearningDownloadRequestType"/>
+    <xs:element name="LearningDownloadResponse" type="tns:LearningDownloadResponseType" />
 
     <!-- ============================================================================================ -->
-    <!-- Types                                                                                        -->
+    <!-- Root elements                                                                                -->
     <!-- ============================================================================================ -->
 
-    <xs:complexType name="LearningUploadResponseType">
+    <xs:complexType name="LearningDownloadRequestType">
     </xs:complexType>
 
-    <xs:complexType name="LearningUploadRequestType">
+
+    <xs:complexType name="LearningDownloadResponseType">
         <xs:sequence>
-            <xs:element name="LearningOpportunityData"
-                        type="tns:LearningOpportunityUploadDataType"
-                        minOccurs="0"
-                        maxOccurs="1"/>
+            <!-- url to the location where to download data, or some token to ask for url+when its complete...? -->
         </xs:sequence>
     </xs:complexType>
+
+    
 
 
 

@@ -45,7 +45,7 @@ public class LearningUploadServiceImpl implements LearningUploadService {
 
         LearningUploadResponseType result = new LearningUploadResponseType();
 
-        LearningOpportunityDataType lod = request.getLearningOpportunityData();
+        LearningOpportunityUploadDataType lod = request.getLearningOpportunityData();
         if (lod == null) {
             LOG.error("LODT == NULL");
             return result;

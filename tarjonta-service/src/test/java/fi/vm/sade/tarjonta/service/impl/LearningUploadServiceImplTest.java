@@ -16,24 +16,19 @@
 package fi.vm.sade.tarjonta.service.impl;
 
 import fi.vm.sade.tarjonta.service.LearningUploadService;
-import fi.vm.sade.tarjonta.service.types2.LearningOpportunityDataType;
+import fi.vm.sade.tarjonta.service.types2.LearningOpportunityUploadDataType;
 import fi.vm.sade.tarjonta.service.types2.LearningUploadRequestType;
-import fi.vm.sade.tarjonta.service.types2.LearningUploadResponseType;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -91,8 +86,8 @@ public class LearningUploadServiceImplTest {
         // Read test XML
         JAXBContext ctx = JAXBContext.newInstance("fi.vm.sade.tarjonta.service.types2");
         Unmarshaller jaxbUnmarshaller = ctx.createUnmarshaller();
-        JAXBElement<LearningOpportunityDataType> req = jaxbUnmarshaller.unmarshal(XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream(new File("../tarjonta-api/src/test/resources/learningUploadPOC.xml"))),
-                LearningOpportunityDataType.class);
+        JAXBElement<LearningOpportunityUploadDataType> req = jaxbUnmarshaller.unmarshal(XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream(new File("../tarjonta-api/src/test/resources/learningUploadPOC.xml"))),
+                LearningOpportunityUploadDataType.class);
 
         LearningUploadRequestType request = new LearningUploadRequestType();
         request.setLearningOpportunityData(req.getValue());

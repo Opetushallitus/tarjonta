@@ -2,8 +2,11 @@
 <wsdl:definitions name="learningUploadService"
                   targetNamespace="http://service.tarjonta.sade.vm.fi/"
                   xmlns:ns1="http://service.tarjonta.sade.vm.fi/types2"
-                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://service.tarjonta.sade.vm.fi/"
-                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:tns="http://service.tarjonta.sade.vm.fi/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                      
     <wsdl:types>
         <xsd:schema targetNamespace="http://service.tarjonta.sade.vm.fi/">
             <xsd:import namespace="http://service.tarjonta.sade.vm.fi/types2" schemaLocation="learningUploadService.xsd" />
