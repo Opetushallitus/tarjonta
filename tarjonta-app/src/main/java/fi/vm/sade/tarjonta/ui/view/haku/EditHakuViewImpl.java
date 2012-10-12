@@ -38,6 +38,7 @@ import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -125,10 +126,12 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     @PropertyId("paattymisPvm")
     private DateField hakuLoppuu;
     
-    private CheckBox sisHakuajat;
+    private OptionGroup sisHakuajat;
     
     private Table sisaisetHakuajatTable;
     private HakuajatContainer sisaisetHakuajatContainer;
+    
+    private Button lisaaHakuaika;
     
     
     @PropertyId("haussaKaytetaanSijoittelua")
@@ -185,7 +188,9 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         														_i18n.getMessage("Poista")});
         
         if (_presenter.getHakuModel().getSisaisetHakuajat().size() > 0) {
-        	this.sisHakuajat.setValue(true);
+        	this.sisHakuajat.setValue(_i18n.getMessage("sisHakuajat"));
+        } else {
+        	this.sisHakuajat.setValue(_i18n.getMessage("yksiHakuaika"));
         }
     }
 
@@ -312,6 +317,28 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             VerticalLayout vl = UiUtil.verticalLayout();
             vl.setSizeUndefined();
 
+            
+            
+            //vl.addComponent(UiUtil.checkbox(null, "Yksi hakuaika"));
+            sisHakuajat = new OptionGroup();
+            sisHakuajat.addItem(_i18n.getMessage("yksiHakuaika"));
+            sisHakuajat.addItem(_i18n.getMessage("sisHakuajat"));
+            sisHakuajat.setMultiSelect(false);
+            //sisHakuajat = UiUtil.//checkbox(null, _i18n.getMessage("sisHakuajat"));
+            sisHakuajat.setImmediate(true);
+            sisHakuajat.addListener(new Property.ValueChangeListener() {
+
+				@Override
+				public void valueChange(ValueChangeEvent event) {
+					sisaisetHakuajatTable.setEnabled(sisHakuajat.getValue().equals(_i18n.getMessage("sisHakuajat")));
+					lisaaHakuaika.setEnabled(sisHakuajat.getValue().equals(_i18n.getMessage("sisHakuajat")));
+					hakuAlkaa.setEnabled(sisHakuajat.getValue().equals(_i18n.getMessage("yksiHakuaika")));
+					hakuLoppuu.setEnabled(sisHakuajat.getValue().equals(_i18n.getMessage("yksiHakuaika")));
+				}
+            });
+            
+            vl.addComponent(sisHakuajat);
+
             HorizontalLayout hl = UiUtil.horizontalLayout();
             hl.setSizeUndefined();
             vl.addComponent(hl);
@@ -324,25 +351,10 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             this.hakuLoppuu = UiUtil.dateField();
             hl.addComponent(hakuLoppuu);
             
-            //vl.addComponent(UiUtil.checkbox(null, "Yksi hakuaika"));
-            sisHakuajat = UiUtil.checkbox(null, _i18n.getMessage("sisHakuajat"));
-            sisHakuajat.setImmediate(true);
-            sisHakuajat.addListener(new Property.ValueChangeListener() {
-
-				@Override
-				public void valueChange(ValueChangeEvent event) {
-					sisaisetHakuajatTable.setEnabled(sisHakuajat.booleanValue());	
-				}
-            });
-            
-            vl.addComponent(sisHakuajat);
-
-            
-            
             this.sisaisetHakuajatTable = new Table();
             this.sisaisetHakuajatTable.setEditable(true);
             
-            Button lisaaHakuaika = UiUtil.buttonSmallPlus(vl, _i18n.getMessage("LisaaHakuaika"), new Button.ClickListener() {
+            lisaaHakuaika = UiUtil.buttonSmallPlus(vl, _i18n.getMessage("LisaaHakuaika"), new Button.ClickListener() {
 				
 				@Override
 				public void buttonClick(ClickEvent event) {
@@ -490,6 +502,12 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         public SaveEvent(Component source, boolean complete) {
             super(source);
             sisaisetHakuajatContainer.bindHakuajat();
+            if (sisHakuajat.getValue().equals(_i18n.getMessage("yksiHakuaika"))) {
+            	_presenter.getHakuModel().setSisaisetHakuajat(new ArrayList<HakuaikaViewModel>());
+            } else {
+            	_presenter.getHakuModel().setAlkamisPvm(null);
+            	_presenter.getHakuModel().setPaattymisPvm(null);
+            }
             _complete = complete;
             if (_presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
                 _presenter.getHakuModel().setHakuLomakeUrl(null);

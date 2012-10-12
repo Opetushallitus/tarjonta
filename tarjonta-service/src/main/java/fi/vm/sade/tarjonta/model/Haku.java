@@ -27,6 +27,7 @@ import java.util.Date;
 import static fi.vm.sade.generic.common.validation.ValidationConstants.*;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -55,12 +56,12 @@ public class Haku extends BaseEntity {
     private MonikielinenTeksti nimi;
 
     // todo: i might move this and the next date parameter to a collection that might be required anyways
-    @NotNull
+    //@NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "haun_alkamis_pvm")
     private Date haunAlkamisPvm;
 
-    @NotNull
+    //@NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "haun_loppumis_pvm")
     private Date haunLoppumisPvm;
