@@ -61,6 +61,7 @@
     <wsdl:binding name="TarjontaPublicServiceSoapBinding" type="tns:TarjontaPublicService">
         <soap:binding style="document"
                       transport="http://schemas.xmlsoap.org/soap/http" />
+
         <wsdl:operation name="listHaku">
             <soap:operation soapAction="" style="document" />
             <wsdl:input name="listHaku">
@@ -70,6 +71,7 @@
                 <soap:body use="literal" />
             </wsdl:output>
         </wsdl:operation>
+
         <wsdl:operation name="haeTarjonta">
             <soap:operation soapAction="" style="document" />
             <wsdl:input name="haeTarjonta">
@@ -79,6 +81,7 @@
                 <soap:body use="literal" />
             </wsdl:output>
         </wsdl:operation>
+
     </wsdl:binding>
 
     <wsdl:service name="TarjontaPublicService">

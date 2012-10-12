@@ -6,88 +6,86 @@
            xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types/tarjonta"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
- 
+
     <xs:import namespace="http://service.tarjonta.sade.vm.fi/types/tarjonta" schemaLocation="tarjonta.xsd" />
 
- 
-    <xs:element name="listaaHaku" type="tns:ListaaHakuTyyppi" />
-    <xs:element name="listaaHakuVastaus" type="tns:ListHakuVastausTyyppi" />
-    <xs:element name="haeTarjonta" type="tns:HaeTarjontaTyyppi" />
-    <xs:element name="haeTarjontaVastaus" type="tns:HaeTarjontaVastausTyyppi" />
-    
+
     <xs:element name="lisaaHaku" type="tns:LisaaHakuType"/>
-    <xs:element name="lisaaHakuVastaus" type="tns:LisaaHakuVastausType"/> 
-    
+    <xs:element name="lisaaHakuVastaus" type="tns:LisaaHakuVastausType"/>
+
     <xs:element name="paivitaHaku" type="tns:PaivitaHakuType"/>
     <xs:element name="paivitaHakuVastaus" type="tns:PaivitaHakuVastausType"/>
-    
+
     <xs:element name="poistaHaku" type="tns:PoistaHakuType"/>
     <xs:element name="poistaHakuVastaus" type="tns:PoistaHakuVastausType"/>
-     
+
+    <xs:element name="etsiHakukohteetKysely" type="tns:EtsiHakukohteetKyselyTyyppi" />
+    <xs:element name="etsiHakukohteetVastaus" type="tns:EtsiHakukohteetVastausTyyppi" />
+
+
     <xs:complexType name="LisaaHakuType">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="hakuDto" type="tarjonta:HakuTyyppi" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="LisaaHakuVastausType">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="hakuVastausDto" type="tarjonta:HakuTyyppi" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="PaivitaHakuType">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="hakuDto" type="tarjonta:HakuTyyppi"/>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="PaivitaHakuVastausType">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="hakuVastausDto" type="tarjonta:HakuTyyppi"/>
         </xs:sequence>
     </xs:complexType>
-    
-     <xs:complexType name="PoistaHakuType">
+
+    <xs:complexType name="PoistaHakuType">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="hakuDto" type="tarjonta:HakuTyyppi"/>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="PoistaHakuVastausType">
         <xs:sequence/>
     </xs:complexType>
-            
-    <xs:complexType name="ListaaHakuTyyppi">
+
+    <xs:complexType name="EtsiHakukohteetKyselyTyyppi">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Haku objekti jolla valitetaan haku kriteerit.
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="1" name="vainSijoittelu" type="xs:boolean" />
-            <xs:element minOccurs="0" maxOccurs="1" name="alkaen" type="xs:date" />
-            <xs:element minOccurs="0" maxOccurs="1" name="loppuen" type="xs:date" />
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="ListHakuVastausTyyppi">
-        <xs:sequence> 
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="response" type="tarjonta:HakuTyyppi" />
+    <xs:complexType name="EtsiHakukohteetVastausTyyppi">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="VastausRivi"
+                        minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Hakukohde" type="tarjonta:HakukohdeKoosteTyyppi"/>
+                        <xs:element name="Haku" type="tarjonta:HakuKoosteTyyppi"/>
+                        <xs:element name="Koulutus" type="tarjonta:KoulutusKoosteTyyppi"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
-        
-    <xs:complexType name="HaeTarjontaTyyppi">
-    	<xs:sequence>
-    	     	<xs:element minOccurs="1" maxOccurs="1" name="oid" type="xs:string" >
-        		<xs:annotation>
-        			<xs:documentation>Yksilollinen tunniste haulle.</xs:documentation>
-        		</xs:annotation>
-        	</xs:element>
-    	</xs:sequence>
-    </xs:complexType>
-    
-    <xs:complexType name="HaeTarjontaVastausTyyppi">
-    	<xs:sequence>
-    		<xs:element name="tarjonta" type="tarjonta:TarjontaTyyppi" maxOccurs="1" minOccurs="0">
-    		
-    		</xs:element>
-    	</xs:sequence>
-    </xs:complexType>
- 
-</xs:schema> 
+
+
+
+</xs:schema>

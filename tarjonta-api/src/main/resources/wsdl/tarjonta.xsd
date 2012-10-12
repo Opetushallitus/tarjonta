@@ -4,6 +4,14 @@
            version="1.0" xmlns:tns="http://service.tarjonta.sade.vm.fi/types/tarjonta"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
+    <xs:annotation>
+        <xs:documentation>
+            Rakenteet jotka ovat kaytossa TarjontaPublicService WebService:sta. Nama ovat palvelu kohtaisia
+            eika niita pida kayttaa saati muuttaa esimerkiksi TarjontaAdminService:n tarpeiden tai
+            muiden palveluiden tarpeiden mukaan.
+        </xs:documentation>
+    </xs:annotation>
+
     <xs:complexType name="TarjontaTyyppi">
         <xs:sequence>
             <xs:element name="haku" type="tns:HakuTyyppi" minOccurs="1"
@@ -28,6 +36,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
+
             <xs:element name="oid" type="xs:string" minOccurs="1"
                         maxOccurs="1">
                 <xs:annotation>
@@ -36,8 +45,12 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="hakukohdeNimi" type="xs:string"
-                        maxOccurs="1" minOccurs="1" />
+
+            <xs:element name="hakukohdeNimi"
+                        type="xs:string"
+                        maxOccurs="1"
+                        minOccurs="1" />
+
         </xs:sequence>
     </xs:complexType>
 
@@ -150,13 +163,13 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-        
+
     <xs:complexType name="HaunNimi">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="kielikoodi" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Haun nimen kielikoodi</xs:documentation>
-                </xs:annotation>   
+                </xs:annotation>
             </xs:element>
             <xs:element minOccurs="1" maxOccurs="1" name="nimi" type="xs:string">
                 <xs:annotation>
@@ -165,14 +178,14 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="SisaisetHakuAjat">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="hakuajanKuvaus" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Haun sisaisen hakuajan kuvaus</xs:documentation>
                 </xs:annotation>
-            </xs:element> 
+            </xs:element>
             <xs:element minOccurs="1" maxOccurs="1" name="sisaisenHaunAlkamisPvm" type="xs:date">
                 <xs:annotation>
                     <xs:documentation>Sisaisen haun alkamispaivamaara</xs:documentation>
@@ -185,14 +198,41 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:simpleType name="HaunTila">
         <xs:restriction base="xs:string">
             <xs:enumeration value="LUONNOS"/>
             <xs:enumeration value="VALMIS"/>
             <xs:enumeration value="JULKAISTU"/>
         </xs:restriction>
-        
+
     </xs:simpleType>
 
-</xs:schema> 
+
+    <xs:complexType name="HakukohdeKoosteTyyppi">
+        <xs:sequence>
+            <xs:element name="Oid" type="xs:string"></xs:element>
+            <xs:element name="Nimi" type="xs:string"></xs:element>
+            <xs:element name="Tila" type="xs:string"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HakuKoosteTyyppi">
+        <xs:sequence>
+            <xs:element name="Oid" type="xs:string"></xs:element>
+            <xs:element name="Nimi" type="xs:string"></xs:element>
+            <xs:element name="Hakutapa" type="xs:string"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="KoulutusKoosteTyyppi">
+        <xs:sequence>
+            <xs:element name="Nimi" type="xs:string"></xs:element>
+            <xs:element name="Koulutusmoduuli" type="xs:string"></xs:element>
+            <xs:element name="KoulutusmoduuliToteutus" type="xs:string"></xs:element>
+            <xs:element name="Tarjoaja" type="xs:string"></xs:element>
+            <xs:element name="Tila" type="xs:string"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

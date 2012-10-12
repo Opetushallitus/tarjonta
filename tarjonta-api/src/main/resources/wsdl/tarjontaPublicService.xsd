@@ -15,7 +15,7 @@
     <xs:element name="haeTarjonta" type="tns:HaeTarjontaTyyppi" />
     <xs:element name="haeTarjontaVastaus" type="tns:HaeTarjontaVastausTyyppi" />
 
-    
+
     <xs:complexType name="ListaaHakuTyyppi">
         <xs:sequence>
             <xs:element minOccurs="0" maxOccurs="1" name="vainSijoittelu" type="xs:boolean" />

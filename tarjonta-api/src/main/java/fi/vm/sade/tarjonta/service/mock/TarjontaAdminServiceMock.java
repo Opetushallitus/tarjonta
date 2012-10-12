@@ -1,6 +1,8 @@
 package fi.vm.sade.tarjonta.service.mock;
 
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
 import java.util.Date;
@@ -31,6 +33,13 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
     @Override
     public void poistaHaku(HakuTyyppi hakuDto) {
         haut.remove(hakuDto.getOid());
+    }
+
+    @Override
+    public EtsiHakukohteetVastausTyyppi etsiHakukohteet(EtsiHakukohteetKyselyTyyppi kysely) {
+
+        throw new IllegalStateException("todo");
+
     }
 
     private void initDefValues() {
