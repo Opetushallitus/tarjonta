@@ -23,7 +23,7 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.QHakukohde;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
@@ -47,7 +47,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
-    public List<Hakukohde> haeHakukohteetJaKoulutukset(EtsiHakukohteetKyselyTyyppi kysely) {
+    public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely) {
 
         QHakukohde hakukohde = QHakukohde.hakukohde;
         QKoulutusmoduuliToteutus toteutus = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;

@@ -37,13 +37,6 @@
         <wsdl:part element="ns1:poistaHakuVastaus" name="parameters"/>
     </wsdl:message>
 
-    <wsdl:message name="etsiHakukohteetKysely">
-        <wsdl:part element="ns1:etsiHakukohteetKysely" name="kysely"/>
-    </wsdl:message>
-
-    <wsdl:message name="etsiHakukohteetVastaus">
-        <wsdl:part element="ns1:etsiHakukohteetVastaus" name="parameters"/>
-    </wsdl:message>
 
 
 
@@ -84,15 +77,6 @@
         </wsdl:operation>
 
 
-        <wsdl:operation name="etsiHakukohteet">
-            <wsdl:documentation>
-                Hakee joukon hakukohteita ja niiden tarkeimmat tunnusmerkit.
-            </wsdl:documentation>
-            <wsdl:input message="tns:etsiHakukohteetKysely" name="etsiHakukohteetKysely">
-            </wsdl:input>
-            <wsdl:output message="tns:etsiHakukohteetVastaus" name="etsiHakukohteetVastaus">
-            </wsdl:output>
-        </wsdl:operation>
 
     </wsdl:portType>
 
@@ -111,15 +95,7 @@
             </wsdl:output>
         </wsdl:operation>
 
-        <wsdl:operation name="etsiHakukohteet">
-            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/etsiHakukohteet"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
+
 
     </wsdl:binding>
 

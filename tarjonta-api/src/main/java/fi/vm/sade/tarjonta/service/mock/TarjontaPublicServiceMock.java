@@ -1,6 +1,8 @@
 package fi.vm.sade.tarjonta.service.mock;
 
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
@@ -70,6 +72,13 @@ public class TarjontaPublicServiceMock implements TarjontaPublicService {
         haku2.setKoulutuksenAlkamisVuosi(2015);
 
         haut.put(haku2.getOid(), haku2);
+    }
+
+    @Override
+    public HaeHakukohteetVastausTyyppi haeHakukohteet(HaeHakukohteetKyselyTyyppi kysely) {
+
+        throw new IllegalStateException("todo");
+
     }
 
 }

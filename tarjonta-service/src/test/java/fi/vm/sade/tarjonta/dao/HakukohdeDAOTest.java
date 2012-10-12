@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.dao;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetKyselyTyyppi;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

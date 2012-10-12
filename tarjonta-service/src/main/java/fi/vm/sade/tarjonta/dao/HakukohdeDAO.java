@@ -17,8 +17,7 @@ package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import java.util.List;
 
 /**
@@ -27,7 +26,7 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     public List<Hakukohde> findByKoulutusOid(String koulutusmoduuliToteutusOid);
 
-    public List<Hakukohde> haeHakukohteetJaKoulutukset(EtsiHakukohteetKyselyTyyppi kysely);
+    public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely);
 
 }
 

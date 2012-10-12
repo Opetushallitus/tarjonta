@@ -17,15 +17,21 @@
 package fi.vm.sade.tarjonta.service.impl;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +52,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Autowired
     private HakuDAO hakuDao;
+
+    @Autowired
+    private HakukohdeDAO hakukohdeDAO;
 
     @Autowired
     private ConversionService conversionService;
@@ -114,6 +123,45 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
      */
     public void setHakuDao(HakuDAO hakuDao) {
         this.hakuDao = hakuDao;
+    }
+
+    @Override
+    public HaeHakukohteetVastausTyyppi haeHakukohteet(HaeHakukohteetKyselyTyyppi kysely) {
+
+        List<Hakukohde> hakukohteet = hakukohdeDAO.haeHakukohteetJaKoulutukset(kysely);
+        HaeHakukohteetVastausTyyppi vastaus = new HaeHakukohteetVastausTyyppi();
+
+        List<HaeHakukohteetVastausTyyppi.HakukohdeTulos> rivit = vastaus.getHakukohdeTulos();
+
+        for (Hakukohde hakukohdeModel : hakukohteet) {
+
+            HakukohdeTulos tulos = new HakukohdeTulos();
+
+            HakukohdeKoosteTyyppi hakukohde = new HakukohdeKoosteTyyppi();
+            HakuKoosteTyyppi haku = new HakuKoosteTyyppi();
+            KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
+
+            hakukohde.setNimi(hakukohdeModel.getHakukohdeNimi());
+            hakukohde.setTila(hakukohdeModel.getTila());
+            hakukohde.setOid(hakukohdeModel.getOid());
+
+            Haku hakuModel = hakukohdeModel.getHaku();
+            haku.setNimi(hakuModel.getNimiFi());
+            haku.setHakutapa(hakuModel.getHakutapaUri());
+            haku.setOid(hakuModel.getOid());
+
+            KoulutusmoduuliToteutus toteutus = CollectionUtils.singleItem(hakukohdeModel.getKoulutusmoduuliToteutuses());
+            koulutus.setTarjoaja(toteutus.getTarjoaja());
+
+            tulos.setHakukohde(hakukohde);
+            tulos.setHaku(haku);
+            tulos.setKoulutus(koulutus);
+            rivit.add(tulos);
+
+        }
+
+        return vastaus;
+
     }
 
     private void mergeHaku(Haku source, Haku target) {

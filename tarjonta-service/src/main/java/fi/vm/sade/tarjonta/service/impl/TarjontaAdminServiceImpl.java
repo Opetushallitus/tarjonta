@@ -25,21 +25,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
-import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.EtsiHakukohteetVastausTyyppi.VastausRivi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusKoosteTyyppi;
 
 /**
  *
@@ -52,8 +42,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Autowired
     private HakuBusinessService hakuBusinessService;
 
-    @Autowired
-    private HakukohdeDAO hakukohdeDAO;
 
     @Autowired
     private HakuDAO hakuDAO;
@@ -139,44 +127,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         this.hakuDAO = hakuDao;
     }
 
-    @Override
-    public EtsiHakukohteetVastausTyyppi etsiHakukohteet(EtsiHakukohteetKyselyTyyppi kysely) {
-
-        List<Hakukohde> hakukohteet = hakukohdeDAO.haeHakukohteetJaKoulutukset(kysely);
-        EtsiHakukohteetVastausTyyppi vastaus = new EtsiHakukohteetVastausTyyppi();
-
-        List<VastausRivi> rivit = vastaus.getVastausRivi();
-
-        for (Hakukohde hakukohdeModel : hakukohteet) {
-
-            VastausRivi rivi = new VastausRivi();
-
-            HakukohdeKoosteTyyppi hakukohde = new HakukohdeKoosteTyyppi();
-            HakuKoosteTyyppi haku = new HakuKoosteTyyppi();
-            KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
-
-            hakukohde.setNimi(hakukohdeModel.getHakukohdeNimi());
-            hakukohde.setTila(hakukohdeModel.getTila());
-            hakukohde.setOid(hakukohdeModel.getOid());
-
-            Haku hakuModel = hakukohdeModel.getHaku();
-            haku.setNimi(hakuModel.getNimiFi());
-            haku.setHakutapa(hakuModel.getHakutapaUri());
-            haku.setOid(hakuModel.getOid());
-
-            KoulutusmoduuliToteutus toteutus = CollectionUtils.singleItem(hakukohdeModel.getKoulutusmoduuliToteutuses());
-            koulutus.setTarjoaja(toteutus.getTarjoaja());
-
-            rivi.setHakukohde(hakukohde);
-            rivi.setHaku(haku);
-            rivi.setKoulutus(koulutus);
-            rivit.add(rivi);
-
-        }
-
-        return vastaus;
-
-    }
 
     private void mergeHaku(Haku source, Haku target) {
         target.setNimi(source.getNimi());
