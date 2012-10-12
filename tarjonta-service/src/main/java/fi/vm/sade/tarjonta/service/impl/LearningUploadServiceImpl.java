@@ -21,14 +21,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.LearningUploadService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
-import fi.vm.sade.tarjonta.service.types2.ExtendedStringType;
-import fi.vm.sade.tarjonta.service.types2.LearningOpportunityDataType;
-import fi.vm.sade.tarjonta.service.types2.LearningOpportunityInstanceType;
-import fi.vm.sade.tarjonta.service.types2.LearningOpportunityProviderType;
-import fi.vm.sade.tarjonta.service.types2.LearningOpportunitySpecificationType;
-import fi.vm.sade.tarjonta.service.types2.LearningOpportunityTypeType;
-import fi.vm.sade.tarjonta.service.types2.LearningUploadRequestType;
-import fi.vm.sade.tarjonta.service.types2.LearningUploadResponseType;
+import fi.vm.sade.tarjonta.service.types2.*;
 import java.util.Date;
 import java.util.HashSet;
 import org.slf4j.Logger;
@@ -42,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class LearningUploadServiceImpl implements LearningUploadService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LearningUploadServiceImpl.class);
+
     @Autowired
     private KoulutusBusinessService koulutusBusinessService;
 
@@ -117,7 +111,6 @@ public class LearningUploadServiceImpl implements LearningUploadService {
         komo.setOid("OID");
         komo.setOmistajaOrganisaatioOid("ORG OID");
         komo.setTila("KOODISTO TILA");
-        komo.setVersion(Long.MIN_VALUE);
 
         koulutusBusinessService.create(komo);
         LOG.info("Saved: {}", komo);
@@ -137,7 +130,7 @@ public class LearningUploadServiceImpl implements LearningUploadService {
         Koulutusmoduuli komo = null;
 
         LearningOpportunitySpecificationType los = (LearningOpportunitySpecificationType) loi.getSpecificationRef().getRef();
-        LearningOpportunityProviderType lop = (LearningOpportunityProviderType) loi.getProviderRef().getRef();
+        String organizationOidRef = loi.getOrganizationRef().getOidRef();
 
         komoto.setKoulutuksenAlkamisPvm(new Date());
         komoto.setKoulutusLaji("KOULUTUSLAJI");
@@ -157,4 +150,6 @@ public class LearningUploadServiceImpl implements LearningUploadService {
 
         return komoto;
     }
+
 }
+
