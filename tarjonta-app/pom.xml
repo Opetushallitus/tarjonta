@@ -76,7 +76,7 @@
             <artifactId>generic-test-support</artifactId>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>fi.vm.sade.oid</groupId>
             <artifactId>oid-api</artifactId>
@@ -88,12 +88,13 @@
 
     <profiles>
         <profile>
-            <id>development</id>
+            <id>ui-development</id>
             <activation>
                 <property>
                     <name>netbeans.deploy</name>
                 </property>
             </activation>
+
             <dependencies>
                 <dependency>
                     <groupId>fi.vm.sade.vaadin</groupId>
@@ -108,8 +109,8 @@
                     <version>6.1.0</version>
                     <type>jar</type>
                 </dependency>
-
             </dependencies>
+
             <build>
                 <plugins>
                     <plugin>

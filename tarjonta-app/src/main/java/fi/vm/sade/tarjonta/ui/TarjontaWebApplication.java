@@ -78,7 +78,7 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         window = new HakuRootView(this);
         setMainWindow(window);
     }
-    
+
     /*
      * Development configurations, no real use in production environment.
      */
@@ -89,7 +89,7 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         }
 
         if (developmentRedirect != null && developmentRedirect.length() > 0) {
-            //This code block is only for making UI development little bit faster  
+            //This code block is only for making UI development little bit faster
             //Add the property to tarjonta-app.properties:
             //
             //tarjonta-app.dev.redirect=KOULUTUS
@@ -102,6 +102,6 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
                 toTarjonta();
             }
         }
-    
+
     }
 }
