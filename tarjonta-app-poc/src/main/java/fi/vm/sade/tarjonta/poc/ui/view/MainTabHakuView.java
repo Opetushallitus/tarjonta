@@ -23,7 +23,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
-import fi.vm.sade.tarjonta.poc.ui.helper.I18NHelper;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
 import fi.vm.sade.tarjonta.poc.ui.view.common.CategoryTreeView;

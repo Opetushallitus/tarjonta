@@ -143,7 +143,7 @@ public class TarjontaPresenter implements Serializable {
             }
         });
 
-        ButtonDTO btnNext = new ButtonDTO("<(Sähkö- ja automaatiotekniikan perustutkinto, pk) seuraava >", new Button.ClickListener() {
+        ButtonDTO btnNext = new ButtonDTO("(Sähkö- ja automaatiotekniikan perustutkinto, pk) seuraava >", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 showShowKoulutusView();
@@ -268,7 +268,7 @@ public class TarjontaPresenter implements Serializable {
 
 
     /*
-     * Get a right layout instance from the main split panel. 
+     * Get a right layout instance from the main split panel.
      */
     private VerticalLayout getRightLayout() {
         return _tarjontaWindow.getMainSplitPanel();

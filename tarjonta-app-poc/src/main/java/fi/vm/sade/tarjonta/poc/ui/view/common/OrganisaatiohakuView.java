@@ -15,19 +15,17 @@
  */
 package fi.vm.sade.tarjonta.poc.ui.view.common;
 
-import fi.vm.sade.vaadin.ui.OphAbstractCollapsibleLeft;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
 import fi.vm.sade.tarjonta.poc.demodata.row.TextTreeStyle;
-import fi.vm.sade.tarjonta.poc.ui.helper.I18NHelper;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;

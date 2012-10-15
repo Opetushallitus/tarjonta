@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.poc.ui.view.common;
 
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
-import fi.vm.sade.tarjonta.poc.ui.helper.I18NHelper;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

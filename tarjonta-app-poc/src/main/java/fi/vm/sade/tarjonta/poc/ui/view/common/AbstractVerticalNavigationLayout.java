@@ -16,8 +16,8 @@
 package fi.vm.sade.tarjonta.poc.ui.view.common;
 
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
-import fi.vm.sade.tarjonta.poc.ui.helper.I18NHelper;
 import fi.vm.sade.vaadin.ui.OphAbstractNavigationLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +39,12 @@ public abstract class AbstractVerticalNavigationLayout extends OphAbstractNaviga
     public AbstractVerticalNavigationLayout(Class clazz) {
         super(VerticalLayout.class, clazz);
     }
-    
+
     @Override
     protected void initialization(Object obj) {
          _i18n = new I18NHelper((Class) obj);  //set property namespace
     }
-    
+
     protected String T(String key) {
         return _i18n.getMessage(key);
     }
@@ -62,6 +62,6 @@ public abstract class AbstractVerticalNavigationLayout extends OphAbstractNaviga
     protected I18NHelper getI18n() {
         return _i18n;
     }
-    
-    
+
+
 }

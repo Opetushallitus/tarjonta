@@ -29,6 +29,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.poc.ui.components.OhjePopupComponent;
@@ -36,12 +37,11 @@ import fi.vm.sade.tarjonta.poc.ui.enums.Notification;
 import fi.vm.sade.tarjonta.poc.ui.helper.BeanItemMapper;
 import fi.vm.sade.tarjonta.poc.ui.model.KoulutusLinkkiDTO;
 import fi.vm.sade.tarjonta.poc.ui.model.KoulutusPerustiedotDTO;
+import fi.vm.sade.tarjonta.poc.ui.model.KoulutusToisenAsteenPerustiedotDTO;
 import fi.vm.sade.tarjonta.poc.ui.model.KoulutusYhteyshenkiloDTO;
-import fi.vm.sade.tarjonta.poc.ui.helper.I18NHelper;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
-import fi.vm.sade.tarjonta.poc.ui.model.KoulutusToisenAsteenPerustiedotDTO;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +99,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends VerticalLayout {
         grid.setColumnExpandRatio(0, 0l);
         grid.setColumnExpandRatio(1, 1l);
         grid.setColumnExpandRatio(2, 20l);
-        
+
         addComponent(grid);
         buildKoulutus(grid, "KoulutusTaiTutkinto");
         buildKoulutusohjelma(grid, "Koulutusohjelma");
@@ -130,13 +130,13 @@ public class EditKoulutusPerustiedotToinenAsteView extends VerticalLayout {
 
     private void buildKoulutus(GridLayout grid, String propertyKey) {
         label(grid, propertyKey);
-        
+
         HorizontalLayout hl = UiUtil.horizontalLayout();
         KoodistoComponent kc = bim.addKoodistoComboBox(hl, _koodistoUriKoulutus, "koulutus", "koulutusTaiTutkinto.prompt");
         OhjePopupComponent ohjePopupComponent = new OhjePopupComponent(i18n.getMessage("LOREMIPSUM"), "500px", "300px");
         hl.addComponent(ohjePopupComponent);
         hl.setExpandRatio(kc, 1l);
-        
+
         grid.addComponent(hl);
         grid.newLine();
     }

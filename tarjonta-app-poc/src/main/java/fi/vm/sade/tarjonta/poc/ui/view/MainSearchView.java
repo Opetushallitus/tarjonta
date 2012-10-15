@@ -20,12 +20,12 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.TextField;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
-import fi.vm.sade.tarjonta.poc.ui.helper.I18NHelper;
+import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.ui.OphHorizontalLayout;
 import fi.vm.sade.vaadin.util.UiUtil;
-import fi.vm.sade.vaadin.Oph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 

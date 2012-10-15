@@ -16,7 +16,7 @@
 package fi.vm.sade.tarjonta.poc.ui.view;
 
 import com.vaadin.ui.TabSheet;
-import fi.vm.sade.tarjonta.poc.ui.helper.I18NHelper;
+import fi.vm.sade.generic.common.I18NHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
