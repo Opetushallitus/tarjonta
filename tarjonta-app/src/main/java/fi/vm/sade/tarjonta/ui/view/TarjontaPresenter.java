@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
 /**
+ * This class is used to control the "tarjonta" UI.
  *
  * @author mlyly
  */
@@ -49,7 +50,7 @@ public class TarjontaPresenter {
 
     private TarjontaRootView _rootView;
     private ListHakukohdeView _hakukohdeListView;
-    private EditKoulutusPerustiedotToinenAsteView _koulutusPerustiedotView;
+    // private EditKoulutusPerustiedotToinenAsteView _koulutusPerustiedotView;
 
     @PostConstruct
     public void initialize() {
@@ -134,7 +135,7 @@ public class TarjontaPresenter {
         getModel().getSelectedhakukohteet().clear();
 
         // Force UI update.
-        this._hakukohdeListView.reload();
+        getHakukohdeListView().reload();
     }
 
     /**
@@ -144,6 +145,12 @@ public class TarjontaPresenter {
         return getModel().getKoulutusYhteistietoModel();
     }
 
+    /**
+     * Get UI model.
+     * TarjontaModel is initialized and injected by Spring.
+     *
+     * @return
+     */
     public TarjontaModel getModel() {
         if (_model == null) {
             LOG.warn("NOW THIS SHOLD NEVER HAPPEN... TarjontaModel was null (should be autowired from session...) - creating empty model!");
@@ -152,7 +159,7 @@ public class TarjontaPresenter {
         return _model;
     }
 
-    public void setTarjontaWindow(TarjontaRootView rootView) {
+    public void setRootView(TarjontaRootView rootView) {
         _rootView = rootView;
     }
 
@@ -160,10 +167,17 @@ public class TarjontaPresenter {
         return _rootView;
     }
 
+    /**
+     * If true (read from model, value set from application property "common.showAppIdentifier")
+     * UI should show app identifier so that testers know what version was deployed.
+     */
     public boolean isShowIdentifier() {
         return getModel().isShowIdentifier();
     }
 
+    /**
+     * @return application identifier.
+     */
     public String getIdentifier() {
         return getModel().getIdentifier();
     }

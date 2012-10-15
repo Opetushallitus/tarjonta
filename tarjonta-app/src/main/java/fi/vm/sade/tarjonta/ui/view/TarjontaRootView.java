@@ -81,7 +81,7 @@ public class TarjontaRootView extends Window {
         if (_presenter == null) {
             _presenter = new TarjontaPresenter();
         }
-        
+
         //
         // Create root layout
         //
@@ -107,8 +107,8 @@ public class TarjontaRootView extends Window {
                 }*/
             }
         });
-        
-        _presenter.setTarjontaWindow(this);
+
+        _presenter.setRootView(this);
 
         // Show application identifier if needed
         if (_presenter != null && _presenter.isShowIdentifier()) {
