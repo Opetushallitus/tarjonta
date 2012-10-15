@@ -85,7 +85,6 @@
 
     </dependencies>
 
-
     <profiles>
         <profile>
             <id>ui-development</id>
@@ -130,6 +129,5 @@
             </build>
         </profile>
     </profiles>
-
 
 </project>

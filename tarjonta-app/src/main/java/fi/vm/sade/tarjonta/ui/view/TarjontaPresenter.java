@@ -55,13 +55,13 @@ public class TarjontaPresenter {
     private TarjontaModel _model;
 
     private TarjontaRootView _rootView;
-    
+
     private ListHakukohdeView _hakukohdeListView;
-    
-    @Autowired
+
+    @Autowired(required=true)
     private TarjontaAdminService tarjontaAdminService;
-    
-    @Autowired
+
+    @Autowired(required=true)
     private TarjontaPublicService tarjontaPublicService;
 
     @PostConstruct
