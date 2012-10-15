@@ -44,9 +44,6 @@ public abstract class AbstractVerticalInfoLayout extends OphAbstractInfoLayout<V
         super(layoutClass, pageTitle, message, dto);
     }
 
-    /**
-     * @return the _presenter
-     */
     public TarjontaPresenter getPresenter() {
         return _presenter;
     }
@@ -55,9 +52,10 @@ public abstract class AbstractVerticalInfoLayout extends OphAbstractInfoLayout<V
         return getI18n().getMessage(key);
     }
 
-    /**
-     * @return the I18N instance.
-     */
+    protected String T(String key, Object... args) {
+        return getI18n().getMessage(key, args);
+    }
+
     protected I18NHelper getI18n() {
         if (_i18n == null) {
             _i18n = new I18NHelper(this);

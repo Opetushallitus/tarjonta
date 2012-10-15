@@ -51,5 +51,8 @@ public class I18NHelper {
         return I18N.getMessage(makeKey(key));
     }
 
+    public String getMessage(String key, Object... args) {
+        return I18N.getMessage(makeKey(key), args);
+    }
 }
 

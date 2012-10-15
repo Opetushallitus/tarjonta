@@ -15,18 +15,23 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
+import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.StyleEnum;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
+import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
- * Show collected terse information about koulutus.
+ * Show collected information about koulutus.
  *
  * @author mlyly
  */
@@ -67,29 +72,50 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         LOG.info("buildLayout()");
 
         addLayoutSplit();
-        buildLayoutMiddleTop(layout);
+        buildKoulutuksenPerustiedot(layout);
         addLayoutSplit();
-        buildLayoutMiddleMid1(layout);
+        buildKoulutuksenKuvailevatTiedot(layout);
         addLayoutSplit();
-        buildLayoutMiddleMid2(layout);
+        buildKoulutuksenSisaltyvatOpintokokonaisuudet(layout);
         addLayoutSplit();
-        buildLayoutMiddleBottom(layout);
+        buildKoulutuksenHakukohteet(layout);
         addLayoutSplit();
     }
 
-    private void buildLayoutMiddleTop(VerticalLayout layout) {
-        layout.addComponent(new Label("MIDDLE TOP"));
+    private void buildKoulutuksenPerustiedot(VerticalLayout layout) {
+        layout.addComponent(buildHeaderLayout(T("perustiedot"), T("muokkaa")));
     }
 
-    private void buildLayoutMiddleMid1(VerticalLayout layout) {
-        layout.addComponent(new Label("MIDDLE MID1"));
+    private void buildKoulutuksenKuvailevatTiedot(VerticalLayout layout) {
+        layout.addComponent(buildHeaderLayout(T("kuvailevatTiedot"), T("muokkaa")));
     }
 
-    private void buildLayoutMiddleMid2(VerticalLayout layout) {
-        layout.addComponent(new Label("MIDDLE MID2"));
+    private void buildKoulutuksenSisaltyvatOpintokokonaisuudet(VerticalLayout layout) {
+        layout.addComponent(buildHeaderLayout(T("sisaltyvatOpintokokonaisuudet", 3), T("muokkaa")));
     }
 
-    private void buildLayoutMiddleBottom(VerticalLayout layout) {
-        layout.addComponent(new Label("MIDDLE BOTTOM"));
+    private void buildKoulutuksenHakukohteet(VerticalLayout layout) {
+        layout.addComponent(buildHeaderLayout(T("hakukohteet", 2), T("muokkaa")));
     }
+
+    private HorizontalLayout buildHeaderLayout(String title, String btnCaption) {
+        HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
+        Label titleLabel = UiUtil.label(headerLayout, title);
+        titleLabel.setStyleName(Oph.LABEL_H2);
+
+        if (btnCaption != null) {
+            headerLayout.addComponent(titleLabel);
+            Button btn = UiUtil.buttonSmallSecodary(headerLayout, btnCaption, new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    getWindow().showNotification("NOT IMPLEMENTED");
+                }
+            });
+
+            headerLayout.setExpandRatio(btn, 1f);
+            headerLayout.setComponentAlignment(btn, Alignment.TOP_RIGHT);
+        }
+        return headerLayout;
+    }
+
 }
