@@ -151,6 +151,19 @@ public class TarjontaPresenter {
         getHakukohdeListView().reload();
     }
 
+    public void saveKoulutusLuonnoksenaModel() {
+        LOG.info("Koulutus tallennettu luonnoksena");
+        LOG.info( getModel().getKoulutusYhteistietoModel().toString());
+    }
+
+    /**
+     * Saves haku as ready.
+     */
+    public void saveKoulutusValmiina() {
+        LOG.info("Koulutus tallennettu valmiina");
+        LOG.info( getModel().getKoulutusYhteistietoModel().toString());
+    }
+
     /**
      * @return the koulutusYhteistietoModel
      */

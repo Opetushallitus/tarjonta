@@ -38,7 +38,7 @@ public class TarjontaModel extends BaseUIViewModel {
     private String _identifier;
 
     private KoulutusSearchSpesificationViewModel _searchSpec = new KoulutusSearchSpesificationViewModel();
-    private KoulutusToisenAsteenPerustiedotViewModel _koulutusYhteistietoModel;
+    private KoulutusToisenAsteenPerustiedotViewModel _koulutusPerustiedotModel;
 
     private List<HakukohdeTulos> _hakukohteet;
     private List<HakukohdeTulos> _selectedhakukohteet;
@@ -82,10 +82,10 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     public KoulutusToisenAsteenPerustiedotViewModel getKoulutusYhteistietoModel() {
-        if (_koulutusYhteistietoModel == null) {
-            _koulutusYhteistietoModel = new KoulutusToisenAsteenPerustiedotViewModel();
+        if (_koulutusPerustiedotModel == null) {
+            _koulutusPerustiedotModel = new KoulutusToisenAsteenPerustiedotViewModel();
         }
-        return _koulutusYhteistietoModel;
+        return _koulutusPerustiedotModel;
     }
 
 }
