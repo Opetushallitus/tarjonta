@@ -66,7 +66,7 @@ public class HakuajatView {
 		loppuPvm.setPropertyDataSource(new NestedMethodProperty(model, "paattymisPvm"));
 		loppuPvm.setImmediate(true);
 		
-		poistaB = UiUtil.buttonSmallPrimary(null, I18N.getMessage("minus"));
+		poistaB = UiUtil.buttonSmallPrimary(null, i18n.getMessage("minus"));
 	}
 	
 	public DateField getAlkuPvm() {

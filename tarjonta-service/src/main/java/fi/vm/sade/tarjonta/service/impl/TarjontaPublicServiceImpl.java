@@ -34,6 +34,9 @@ import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
 import fi.vm.sade.tarjonta.service.types.tarjonta.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
@@ -58,6 +61,15 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Autowired
     private ConversionService conversionService;
+    
+    public TarjontaPublicServiceImpl() {
+    	super();
+    }
+    
+    @PostConstruct
+    public void initializeDB() {
+    	
+    }
 
     @Override
     public ListHakuVastausTyyppi listHaku(ListaaHakuTyyppi parameters) {
@@ -172,8 +184,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         target.setHakulomakeUrl(source.getHakulomakeUrl());
         target.setHakutapaUri(source.getHakutapaUri());
         target.setHakutyyppiUri(source.getHakutyyppiUri());
-        target.setHaunAlkamisPvm(source.getHaunAlkamisPvm());
-        target.setHaunLoppumisPvm(source.getHaunLoppumisPvm());
         target.setKohdejoukkoUri(source.getKohdejoukkoUri());
         target.setKoulutuksenAlkamiskausiUri(source.getKoulutuksenAlkamiskausiUri());
         target.setKoulutuksenAlkamisVuosi(source.getKoulutuksenAlkamisVuosi());

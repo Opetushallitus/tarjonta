@@ -29,6 +29,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
@@ -50,7 +51,7 @@ private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResultRow.cla
     /**
      * The hakukohde to display on the row.
      */
-    private HakukohdeViewModel hakukohde;
+    private HakukohdeTulos hakukohde;
     
     /**
      * Checkbox to indicate if this row is selected.
@@ -64,10 +65,10 @@ private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResultRow.cla
     private TarjontaPresenter tarjontaPresenter;
     
     public HakukohdeResultRow() {
-        this.hakukohde = new HakukohdeViewModel();
+        this.hakukohde = new HakukohdeTulos();
     }
     
-    public HakukohdeResultRow(HakukohdeViewModel hakukohde) {
+    public HakukohdeResultRow(HakukohdeTulos hakukohde) {
         this.hakukohde = hakukohde;
     }
     
@@ -163,11 +164,11 @@ private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResultRow.cla
         public static final String EDIT = "edit";
         public static final String VIEW = "view";
         
-        private HakukohdeViewModel hakukohde;
+        private HakukohdeTulos hakukohde;
         private String type;
 
 
-        public HakukohdeRowMenuEvent(Component source, HakukohdeViewModel hakukohde, String type) {
+        public HakukohdeRowMenuEvent(Component source, HakukohdeTulos hakukohde, String type) {
             super(source);
             this.hakukohde = hakukohde;
             this.type = type;
@@ -178,7 +179,7 @@ private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResultRow.cla
         }
         
         
-        public HakukohdeViewModel getHaku() {
+        public HakukohdeTulos getHaku() {
             return hakukohde;
         }
         

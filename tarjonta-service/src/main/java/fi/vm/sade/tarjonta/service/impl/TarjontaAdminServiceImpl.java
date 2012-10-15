@@ -136,8 +136,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         target.setHakulomakeUrl(source.getHakulomakeUrl());
         target.setHakutapaUri(source.getHakutapaUri());
         target.setHakutyyppiUri(source.getHakutyyppiUri());
-        target.setHaunAlkamisPvm(source.getHaunAlkamisPvm());
-        target.setHaunLoppumisPvm(source.getHaunLoppumisPvm());
         target.setKohdejoukkoUri(source.getKohdejoukkoUri());
         target.setKoulutuksenAlkamiskausiUri(source.getKoulutuksenAlkamiskausiUri());
         target.setKoulutuksenAlkamisVuosi(source.getKoulutuksenAlkamisVuosi());

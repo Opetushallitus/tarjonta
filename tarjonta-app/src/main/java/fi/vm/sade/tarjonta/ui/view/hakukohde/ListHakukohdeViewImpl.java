@@ -41,6 +41,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
@@ -147,14 +148,14 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      * @param map the data map provided by the presenter.
      * @return the hierarchical container for Hakukokhde listing.
      */
-    private Container createDataSource(Map<String, List<HakukohdeViewModel>> map) {
-        Set<Map.Entry<String, List<HakukohdeViewModel>>> set = map.entrySet();
+    private Container createDataSource(Map<String, List<HakukohdeTulos>> map) {
+        Set<Map.Entry<String, List<HakukohdeTulos>>> set = map.entrySet();
 
         HierarchicalContainer hc = new HierarchicalContainer();
         HakukohdeResultRow rowStyleDef = new HakukohdeResultRow();
         hc.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, rowStyleDef.format("", false));
 
-        for (Map.Entry<String, List<HakukohdeViewModel>> e : set) {
+        for (Map.Entry<String, List<HakukohdeTulos>> e : set) {
             LOG.info("getTreeDataSource()" + e.getKey());
             HakukohdeResultRow rowStyle = new HakukohdeResultRow();
            
@@ -162,11 +163,11 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey(), false));
 
-            for (HakukohdeViewModel curHakukohde : e.getValue()) {
+            for (HakukohdeTulos curHakukohde : e.getValue()) {
                 HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde);
                 hc.addItem(curHakukohde);
                 hc.setParent(curHakukohde, rootItem);
-                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(curHakukohde.getHakukohdeNimi(), true));
+                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(curHakukohde.getHakukohde().getNimi(), true));
                 hc.setChildrenAllowed(curHakukohde, false);
                 
                 rowStyleInner.addListener(new Listener() {

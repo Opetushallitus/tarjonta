@@ -37,8 +37,6 @@ public class HakuFromDTOConverter extends AbstractToDomainConverter<HakuTyyppi, 
         m.setHakulomakeUrl(s.getHakulomakeUrl());
         m.setHakutapaUri(s.getHakutapaUri());
         m.setHakutyyppiUri(s.getHakutyyppiUri());
-        m.setHaunAlkamisPvm(s.getHaunAlkamisPvm());
-        m.setHaunLoppumisPvm(s.getHaunLoppumisPvm());
         m.setKohdejoukkoUri(s.getKohdejoukkoUri());
         m.setKoulutuksenAlkamiskausiUri(s.getKoulutuksenAlkamisKausiUri());
         m.setKoulutuksenAlkamisVuosi(s.getKoulutuksenAlkamisVuosi());

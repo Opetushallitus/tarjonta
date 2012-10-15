@@ -202,7 +202,15 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the alkamisPvm
      */
     public Date getAlkamisPvm() {
-        alkamisPvm = hakuDto.getHaunAlkamisPvm();
+        //alkamisPvm = hakuDto.getHaunAlkamisPvm();
+    	for (HakuaikaViewModel curHA :getSisaisetHakuajat()) {
+    		if (curHA.getAlkamisPvm() == null) {
+    			continue;
+    		} 
+    		if (alkamisPvm == null || curHA.getAlkamisPvm().before(alkamisPvm)) {
+    			alkamisPvm = curHA.getAlkamisPvm();
+    		}
+    	}
         return alkamisPvm;
     }
 
@@ -218,7 +226,14 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the paattymisPvm
      */
     public Date getPaattymisPvm() {
-        paattymisPvm = hakuDto.getHaunLoppumisPvm();
+    	for (HakuaikaViewModel curHA :getSisaisetHakuajat()) {
+    		if (curHA.getPaattymisPvm() == null) {
+    			continue;
+    		} 
+    		if (paattymisPvm == null || curHA.getPaattymisPvm().after(paattymisPvm)) {
+    			paattymisPvm = curHA.getPaattymisPvm();
+    		}
+    	}
         return paattymisPvm;
     }
 

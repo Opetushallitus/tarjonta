@@ -38,8 +38,6 @@ public class HakuToDTOConverter extends AbstractFromDomainConverter<Haku, HakuTy
         h.setHakulomakeUrl(s.getHakulomakeUrl());
         h.setHakutapaUri(s.getHakutapaUri());
         h.setHakutyyppiUri(s.getHakutyyppiUri());
-        h.setHaunAlkamisPvm(s.getHaunAlkamisPvm());
-        h.setHaunLoppumisPvm(s.getHaunLoppumisPvm());
         h.setHaunTila(HaunTila.fromValue(s.getTila()));
         h.setHaunTunniste(s.getHaunTunniste());
         h.setKohdejoukkoUri(s.getKohdejoukkoUri());

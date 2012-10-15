@@ -18,6 +18,8 @@ package fi.vm.sade.tarjonta.dao;
 import fi.vm.sade.tarjonta.HakueraTstHelper;
 import fi.vm.sade.tarjonta.dao.impl.HakuDAOImpl;
 import fi.vm.sade.tarjonta.model.Haku;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -41,6 +43,7 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
+@Ignore
 public class HakueraDAOTest {
     
     private static final Logger log = LoggerFactory.getLogger(HakueraDAOTest.class);

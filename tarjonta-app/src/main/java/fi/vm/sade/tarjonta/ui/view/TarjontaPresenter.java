@@ -17,11 +17,17 @@ package fi.vm.sade.tarjonta.ui.view;
 
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
+
+import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeKoosteTyyppi;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,8 +55,14 @@ public class TarjontaPresenter {
     private TarjontaModel _model;
 
     private TarjontaRootView _rootView;
+    
     private ListHakukohdeView _hakukohdeListView;
-    // private EditKoulutusPerustiedotToinenAsteView _koulutusPerustiedotView;
+    
+    @Autowired
+    private TarjontaAdminService tarjontaAdminService;
+    
+    @Autowired
+    private TarjontaPublicService tarjontaPublicService;
 
     @PostConstruct
     public void initialize() {
@@ -64,8 +76,8 @@ public class TarjontaPresenter {
 
     private void createInitialTemporaryDemoDataDForTestingPurposes() {
         LOG.error("createInitalData() - DEMO DATA CREATED TO UI! I so hope we are not in production :)");
-        getModel().getHakukohteet().add(new HakukohdeViewModel("Testi1", "Organisaatio1"));
-        getModel().getHakukohteet().add(new HakukohdeViewModel("Testi2", "Organisaatio2"));
+        /*getModel().getHakukohteet().add(new HakukohdeViewModel("Testi1", "Organisaatio1"));
+        geModel().getHakukohteet().add(new HakukohdeViewModel("Testi2", "Organisaatio2"));*/
     }
 
     /**
@@ -99,13 +111,14 @@ public class TarjontaPresenter {
         this._hakukohdeListView = hakukohdeListView;
     }
 
-    public Map<String, List<HakukohdeViewModel>> getHakukohdeDataSource() {
-        Map<String, List<HakukohdeViewModel>> map = new HashMap<String, List<HakukohdeViewModel>>();
-        for (HakukohdeViewModel curHk : getModel().getHakukohteet()) {
-            String hkKey = curHk.getOrganisaatioOid();
+    public Map<String, List<HakukohdeTulos>> getHakukohdeDataSource() {
+        Map<String, List<HakukohdeTulos>> map = new HashMap<String, List<HakukohdeTulos>>();
+        getModel().setHakukohteet(tarjontaPublicService.haeHakukohteet(new HaeHakukohteetKyselyTyyppi()).getHakukohdeTulos());
+        for (HakukohdeTulos curHk : getModel().getHakukohteet()) {
+            String hkKey = curHk.getKoulutus().getTarjoaja();
             if (!map.containsKey(hkKey)) {
                 LOG.info("Adding a new key to the map: " + hkKey);
-                List<HakukohdeViewModel> hakukohteetM = new ArrayList<HakukohdeViewModel>();
+                List<HakukohdeTulos> hakukohteetM = new ArrayList<HakukohdeTulos>();
                 hakukohteetM.add(curHk);
                 map.put(hkKey, hakukohteetM);
             } else {
@@ -116,12 +129,12 @@ public class TarjontaPresenter {
         return map;
     }
 
-    /**
+	/**
      * Gets the currently selected hakukohde objects.
      *
      * @return
      */
-    public List<HakukohdeViewModel> getSelectedhakukohteet() {
+    public List<HakukohdeTulos> getSelectedhakukohteet() {
         return getModel().getSelectedhakukohteet();
     }
 
@@ -129,7 +142,7 @@ public class TarjontaPresenter {
      * Removes the selected hakukohde objects from the database.
      */
     public void removeSelectedHakukohteet() {
-        for (HakukohdeViewModel curHakukohde : getModel().getSelectedhakukohteet()) {
+        for (HakukohdeTulos curHakukohde : getModel().getSelectedhakukohteet()) {
             //this.tarjontaService.poistaHakukohde(curHakukohde);
         }
         getModel().getSelectedhakukohteet().clear();

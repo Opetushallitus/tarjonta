@@ -22,8 +22,6 @@ public class HakueraToDTOConverter extends
         hakueraDTO.setHakutyyppi(entity.getHakutyyppiUri());
         hakueraDTO.setHakukausi(entity.getHakukausiUri());
         hakueraDTO.setHakutapa(entity.getHakutapaUri());
-        hakueraDTO.setHaunAlkamisPvm(convertDate(entity.getHaunAlkamisPvm()));
-        hakueraDTO.setHaunLoppumisPvm(convertDate(entity.getHaunLoppumisPvm()));
         hakueraDTO.setOid(entity.getOid());
         hakueraDTO.setKohdejoukko(entity.getKohdejoukkoUri());
         hakueraDTO.setKoulutuksenAlkaminen(entity.getKoulutuksenAlkamiskausiUri());

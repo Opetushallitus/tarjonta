@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+
 /**
  *
  * @author mlyly
@@ -38,8 +40,8 @@ public class TarjontaModel extends BaseUIViewModel {
     private KoulutusSearchSpesificationViewModel _searchSpec = new KoulutusSearchSpesificationViewModel();
     private KoulutusToisenAsteenPerustiedotViewModel _koulutusYhteistietoModel;
 
-    private List<HakukohdeViewModel> _hakukohteet;
-    private List<HakukohdeViewModel> _selectedhakukohteet;
+    private List<HakukohdeTulos> _hakukohteet;
+    private List<HakukohdeTulos> _selectedhakukohteet;
 
     public String getIdentifier() {
         return _identifier;
@@ -61,16 +63,20 @@ public class TarjontaModel extends BaseUIViewModel {
         return _searchSpec;
     }
 
-    public List<HakukohdeViewModel> getHakukohteet() {
+    public List<HakukohdeTulos> getHakukohteet() {
         if (_hakukohteet == null) {
-            _hakukohteet =  new ArrayList<HakukohdeViewModel>();
+            _hakukohteet =  new ArrayList<HakukohdeTulos>();
         }
         return _hakukohteet;
     }
+    
+    public void setHakukohteet(List<HakukohdeTulos> hakukohteet) {
+        this._hakukohteet = hakukohteet;
+    }
 
-    public List<HakukohdeViewModel> getSelectedhakukohteet() {
+    public List<HakukohdeTulos> getSelectedhakukohteet() {
         if (_selectedhakukohteet == null) {
-            _selectedhakukohteet = new ArrayList<HakukohdeViewModel>();
+            _selectedhakukohteet = new ArrayList<HakukohdeTulos>();
         }
         return _selectedhakukohteet;
     }

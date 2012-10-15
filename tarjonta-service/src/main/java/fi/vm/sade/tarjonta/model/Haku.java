@@ -55,17 +55,6 @@ public class Haku extends BaseEntity {
     @JoinColumn(name = "nimi_teksti_id")
     private MonikielinenTeksti nimi;
 
-    // todo: i might move this and the next date parameter to a collection that might be required anyways
-    //@NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "haun_alkamis_pvm")
-    private Date haunAlkamisPvm;
-
-    //@NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "haun_loppumis_pvm")
-    private Date haunLoppumisPvm;
-
     /**
      * Varsinainen haku tai taydennyshaku
      */
@@ -156,22 +145,6 @@ public class Haku extends BaseEntity {
 
     public void setNimiEn(String nimiEn) {
         setNimi("en", nimiEn);
-    }
-
-    public Date getHaunAlkamisPvm() {
-        return haunAlkamisPvm;
-    }
-
-    public void setHaunAlkamisPvm(Date haunAlkamisPvm) {
-        this.haunAlkamisPvm = haunAlkamisPvm;
-    }
-
-    public Date getHaunLoppumisPvm() {
-        return haunLoppumisPvm;
-    }
-
-    public void setHaunLoppumisPvm(Date haunLoppumisPvm) {
-        this.haunLoppumisPvm = haunLoppumisPvm;
     }
 
     /**

@@ -33,8 +33,6 @@ public class HakueraTstHelper {
         h.setNimiFi(name + " FI");
         h.setNimiSv(name + " SV");
         h.setNimiEn(name + " EN");
-        h.setHaunAlkamisPvm(new Date(alkuPvm));
-        h.setHaunLoppumisPvm(new Date(loppuPvm));
         h.setHakutyyppiUri(hakutyyppi);
         h.setHakukausiVuosi(hakuVuosi);
         h.setKoulutuksenAlkamisVuosi(koulutusVuosi);
