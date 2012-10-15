@@ -11,8 +11,11 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaTyyppi;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class TarjontaPublicServiceMock implements TarjontaPublicService {
+
+    private static final Logger LOG = Logger.getAnonymousLogger();
 
     private HashMap<String, HakuTyyppi> haut = new HashMap<String, HakuTyyppi>();
 
@@ -76,9 +79,13 @@ public class TarjontaPublicServiceMock implements TarjontaPublicService {
 
     @Override
     public HaeHakukohteetVastausTyyppi haeHakukohteet(HaeHakukohteetKyselyTyyppi kysely) {
+        LOG.info("haeHakukohteet(): kysely=" + kysely);
 
-        throw new IllegalStateException("todo");
+        HaeHakukohteetVastausTyyppi result = new HaeHakukohteetVastausTyyppi();
 
+        // TODO add something
+
+        return result;
     }
 
 }
