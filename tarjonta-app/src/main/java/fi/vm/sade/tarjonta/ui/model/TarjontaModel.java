@@ -15,7 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -35,6 +36,10 @@ public class TarjontaModel extends BaseUIViewModel {
     private String _identifier;
 
     private KoulutusSearchSpesificationViewModel _searchSpec = new KoulutusSearchSpesificationViewModel();
+    private KoulutusToisenAsteenPerustiedotViewModel _koulutusYhteistietoModel;
+
+    private List<HakukohdeViewModel> _hakukohteet;
+    private List<HakukohdeViewModel> _selectedhakukohteet;
 
     public String getIdentifier() {
         return _identifier;
@@ -54,6 +59,27 @@ public class TarjontaModel extends BaseUIViewModel {
 
     public KoulutusSearchSpesificationViewModel getSearchSpec() {
         return _searchSpec;
+    }
+
+    public List<HakukohdeViewModel> getHakukohteet() {
+        if (_hakukohteet == null) {
+            _hakukohteet =  new ArrayList<HakukohdeViewModel>();
+        }
+        return _hakukohteet;
+    }
+
+    public List<HakukohdeViewModel> getSelectedhakukohteet() {
+        if (_selectedhakukohteet == null) {
+            _selectedhakukohteet = new ArrayList<HakukohdeViewModel>();
+        }
+        return _selectedhakukohteet;
+    }
+
+    public KoulutusToisenAsteenPerustiedotViewModel getKoulutusYhteistietoModel() {
+        if (_koulutusYhteistietoModel == null) {
+            _koulutusYhteistietoModel = new KoulutusToisenAsteenPerustiedotViewModel();
+        }
+        return _koulutusYhteistietoModel;
     }
 
 }

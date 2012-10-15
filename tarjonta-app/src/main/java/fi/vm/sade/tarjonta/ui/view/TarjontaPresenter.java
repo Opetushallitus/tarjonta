@@ -15,25 +15,18 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.vaadin.ui.Button;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
-import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
-
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
-import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
-
 import fi.vm.sade.vaadin.util.UiUtil;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,30 +43,34 @@ import org.springframework.stereotype.Component;
 public class TarjontaPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
+
     @Autowired(required = true)
     private TarjontaModel _model;
+
     private TarjontaRootView _rootView;
-    private ListHakukohdeView hakukohdeListView;
-    private KoulutusToisenAsteenPerustiedotViewModel koulutusYhteistietoModel;
-    private EditKoulutusPerustiedotToinenAsteView koulutusPerustiedot;
-    private List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
-    private List<HakukohdeViewModel> selectedhakukohteet = new ArrayList<HakukohdeViewModel>();
+    private ListHakukohdeView _hakukohdeListView;
+    private EditKoulutusPerustiedotToinenAsteView _koulutusPerustiedotView;
 
     @PostConstruct
     public void initialize() {
-        LOG.info("initialize(): model={}", _model);
-        if (hakukohteet.size() == 0) {
-            createInitialData();
+        LOG.info("initialize(): model={}", getModel());
+
+        // TODO remove me pretty soon please
+        if (getModel().getHakukohteet().isEmpty()) {
+            createInitialTemporaryDemoDataDForTestingPurposes();
         }
     }
 
-    private void createInitialData() {
-        hakukohteet.add(new HakukohdeViewModel("Testi1", "Organisaatio1"));
-        hakukohteet.add(new HakukohdeViewModel("Testi2", "Organisaatio2"));
+    private void createInitialTemporaryDemoDataDForTestingPurposes() {
+        LOG.error("createInitalData() - DEMO DATA CREATED TO UI! I so hope we are not in production :)");
+        getModel().getHakukohteet().add(new HakukohdeViewModel("Testi1", "Organisaatio1"));
+        getModel().getHakukohteet().add(new HakukohdeViewModel("Testi2", "Organisaatio2"));
     }
 
     /**
      * Show main default view
+     *
+     * TODO REMOVE UI CODE FROM PRESENTER!
      */
     public void showMainDefaultView() {
         LOG.info("showMainDefaultView()");
@@ -90,28 +87,24 @@ public class TarjontaPresenter {
     }
 
     public void doSearch() {
-        LOG.info("doSearch(): searchSpec={}", _model.getSearchSpec());
+        LOG.info("doSearch(): searchSpec={}", getModel().getSearchSpec());
     }
 
     public ListHakukohdeView getHakukohdeListView() {
-        return hakukohdeListView;
+        return _hakukohdeListView;
     }
 
     public void showKoulutusPerustiedotToinenAsteView() {
         _rootView.getSearchResultsView();
     }
 
-    public void initKoulutusYhteystietoModel() {
-        koulutusYhteistietoModel = new KoulutusToisenAsteenPerustiedotViewModel();
-    }
-
     public void setHakukohdeListView(ListHakukohdeView hakukohdeListView) {
-        this.hakukohdeListView = hakukohdeListView;
+        this._hakukohdeListView = hakukohdeListView;
     }
 
     public Map<String, List<HakukohdeViewModel>> getHakukohdeDataSource() {
         Map<String, List<HakukohdeViewModel>> map = new HashMap<String, List<HakukohdeViewModel>>();
-        for (HakukohdeViewModel curHk : hakukohteet) {
+        for (HakukohdeViewModel curHk : getModel().getHakukohteet()) {
             String hkKey = curHk.getOrganisaatioOid();
             if (!map.containsKey(hkKey)) {
                 LOG.info("Adding a new key to the map: " + hkKey);
@@ -132,29 +125,34 @@ public class TarjontaPresenter {
      * @return
      */
     public List<HakukohdeViewModel> getSelectedhakukohteet() {
-
-        return selectedhakukohteet;
+        return getModel().getSelectedhakukohteet();
     }
 
     /**
      * Removes the selected hakukohde objects from the database.
      */
     public void removeSelectedHakukohteet() {
-        for (HakukohdeViewModel curHakukohde : selectedhakukohteet) {
+        for (HakukohdeViewModel curHakukohde : getModel().getSelectedhakukohteet()) {
             //this.tarjontaService.poistaHakukohde(curHakukohde);
         }
-        selectedhakukohteet.clear();
-        this.hakukohdeListView.reload();
+        getModel().getSelectedhakukohteet().clear();
+
+        // Force UI update.
+        this._hakukohdeListView.reload();
     }
 
     /**
      * @return the koulutusYhteistietoModel
      */
     public KoulutusToisenAsteenPerustiedotViewModel getKoulutusToisenAsteenPerustiedotViewModel() {
-        return koulutusYhteistietoModel;
+        return getModel().getKoulutusYhteistietoModel();
     }
 
     public TarjontaModel getModel() {
+        if (_model == null) {
+            LOG.warn("NOW THIS SHOLD NEVER HAPPEN... TarjontaModel was null (should be autowired from session...) - creating empty model!");
+            _model = new TarjontaModel();
+        }
         return _model;
     }
 
@@ -167,10 +165,10 @@ public class TarjontaPresenter {
     }
 
     public boolean isShowIdentifier() {
-        return _model.isShowIdentifier();
+        return getModel().isShowIdentifier();
     }
 
     public String getIdentifier() {
-        return _model.getIdentifier();
+        return getModel().getIdentifier();
     }
 }
