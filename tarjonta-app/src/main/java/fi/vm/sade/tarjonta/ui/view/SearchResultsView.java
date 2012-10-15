@@ -15,10 +15,9 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
-import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
@@ -57,7 +56,7 @@ public class SearchResultsView extends VerticalLayout {
         tabs.setHeight(-1, UNITS_PIXELS);
         addComponent(tabs);
 
-        //TODO: replace the KoulutusToisenAsteenPerustiedotViewModel with koulutus search list view! 
+        //TODO: replace the KoulutusToisenAsteenPerustiedotViewModel with koulutus search list view!
 
         tabs.addTab(new EditKoulutusPerustiedotToinenAsteView(), T("koulutukset"));
         tabs.addTab(new ListHakukohdeViewImpl(), T("hakuryhmat"));

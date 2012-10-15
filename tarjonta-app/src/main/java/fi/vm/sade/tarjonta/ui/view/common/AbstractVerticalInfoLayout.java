@@ -15,15 +15,13 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.ui.VerticalLayout;
-
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import fi.vm.sade.vaadin.ui.OphAbstractInfoLayout;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *

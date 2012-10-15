@@ -41,12 +41,10 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
-import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
-import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -54,7 +52,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
  * Component for listing hakukohde objects.
- * 
+ *
  * @author Markus
  */
 @Configurable(preConstruction = false)
@@ -63,35 +61,35 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 	public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListHakukohdeViewImpl.jarjestys.Organisaatio")};
 
 	public static final String COLUMN_A = "Kategoriat";
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ListHakukohdeViewImpl.class);
     /**
      * Button for adding selected Hakukohde objects to a Haku.
      */
     private Button lisaaHakuunB;
-    
+
     /**
      * Button for removing selected Hakukohde objects.
      */
     private Button poistaB;
-    
+
     /**
      * Component for selecting desired sorting/grouping criteria for listed Hakukohde objects.
      */
     private ComboBox cbJarjestys;
-    
+
     /**
      * TreeTable component to display the Hakukohde objects in a grouped/hierarchical manner.
      */
     private CategoryTreeView categoryTree;
-    
+
     /**
      * Checkbox for selecting all the Hakukohde objects in the list.
      */
     private CheckBox valKaikki;
-    
+
     private I18NHelper i18n = new I18NHelper(this);
-    
+
     /**
      * Presenter object for the Hakukohde listing.
      */
@@ -112,13 +110,13 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         valKaikki.addListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(ValueChangeEvent event) {
-                
+
                     toggleHakuSelections(valKaikki.booleanValue());
-                
+
             }
         });
         wrapper.addComponent(valKaikki);
-        
+
         addComponent(wrapper);
 
         //Adding the actual Hakukohde-listing component.
@@ -129,9 +127,9 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         setExpandRatio(wrapper, 0.07f);
         setExpandRatio(categoryTree, 0.93f);
         setMargin(true);
-        
+
     }
-    
+
     /**
      * Sets the datasource for the hierarchical listing of Hakukohde objects.
      */
@@ -141,7 +139,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
     }
-    
+
     /**
      * Creates the vaadin HierarchicalContainer datasource for the Hakukohde listing
      * based on data provided by the presenter.
@@ -158,7 +156,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         for (Map.Entry<String, List<HakukohdeTulos>> e : set) {
             LOG.info("getTreeDataSource()" + e.getKey());
             HakukohdeResultRow rowStyle = new HakukohdeResultRow();
-           
+
             Object rootItem = hc.addItem();
 
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey(), false));
@@ -169,13 +167,13 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 hc.setParent(curHakukohde, rootItem);
                 hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(curHakukohde.getHakukohde().getNimi(), true));
                 hc.setChildrenAllowed(curHakukohde, false);
-                
+
                 rowStyleInner.addListener(new Listener() {
 
                     @Override
                     public void componentEvent(Event event) {
                         if (event instanceof HakukohdeResultRow.HakukohdeRowMenuEvent) {
-                            fireEvent(event);    
+                            fireEvent(event);
                         }
                     }
                 });
@@ -183,12 +181,12 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         }
         return hc;
     }
-    
+
     /**
      * Selects or unselects all the objects in the Hakukohde listing.
      * @param selected
-     */ 
-    private void toggleHakuSelections(boolean selected) {  
+     */
+    private void toggleHakuSelections(boolean selected) {
         presenter.getSelectedhakukohteet().clear();
         HierarchicalContainer hc = (HierarchicalContainer)(this.categoryTree.getContainerDataSource());
         for (Object item : hc.getItemIds()) {
@@ -213,7 +211,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 navigateToHakukohdeEditForm();
-                
+
             }
         });
 
@@ -224,7 +222,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 presenter.removeSelectedHakukohteet();
-                
+
             }
         });
 
@@ -256,14 +254,14 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
     }
-    
+
     /**
      * fires event to signal navigation to Hakukohde edit form.
      */
     private void navigateToHakukohdeEditForm() {
         fireEvent(new NewHakukohdeEvent(this));
     }
-    
+
     /**
      * Event to signal that the user wants to create a new Hakukohde.
     */
@@ -271,9 +269,9 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
         public NewHakukohdeEvent(Component source) {
             super(source);
-            
+
         }
-        
+
     }
 
 }

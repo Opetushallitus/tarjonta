@@ -2,13 +2,12 @@ package fi.vm.sade.tarjonta.ui.view;
 
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
-
-import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
 
 public class HakuSearchResultView extends VerticalLayout {
-    
+
     boolean attached = false;
 
     private I18NHelper _i18n = new I18NHelper(this);
@@ -20,10 +19,10 @@ public class HakuSearchResultView extends VerticalLayout {
     @Override
     public void attach() {
         if (attached) return;
-        
+
         attached = true;
         super.attach();
-        
+
         TabSheet tabs = new TabSheet();
         addComponent(tabs);
 
@@ -37,9 +36,9 @@ public class HakuSearchResultView extends VerticalLayout {
                 } else if (event instanceof ListHakuViewImpl.NewHakuEvent) {
                     fireEvent(event);
                 }
-                    
+
             }
-            
+
         });
         tabs.addTab(hakuList, T("haut"));
     }

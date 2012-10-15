@@ -25,8 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.vaadin.addon.formbinder.FormFieldMatch;
-import org.vaadin.addon.formbinder.FormView;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.Property;
@@ -43,7 +41,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
@@ -59,18 +57,18 @@ import fi.vm.sade.vaadin.util.UiUtil;
  */
 @Configurable(preConstruction = false)
 public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
-    
+
     public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListaHakuViewImpl.jarjestys.Hakutapa")};
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ListHakuViewImpl.class);
     private Button btnLuoUusiHaku;
     private Button btnPoista;
     private ComboBox cbJarjestys;
     private CategoryTreeView categoryTree;
     private CheckBox valKaikki;
-    
+
     private I18NHelper i18n = new I18NHelper(this);
-    
+
     @Autowired(required = true)
     private HakuPresenter presenter;
 
@@ -85,13 +83,13 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         valKaikki.addListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(ValueChangeEvent event) {
-                
+
                     changeHakuSelections(valKaikki.booleanValue());
-                
+
             }
         });
         wrapper.addComponent(valKaikki);
-        
+
         addComponent(wrapper);
 
         categoryTree = new CategoryTreeView();
@@ -101,16 +99,16 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         setExpandRatio(wrapper, 0.07f);
         setExpandRatio(categoryTree, 0.93f);
         setMargin(true);
-        
+
     }
-    
+
     @PostConstruct
     public void setDataSource() {
         presenter.setHakuList(this);
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getTreeDataSource()));
     }
-    
+
     private Container createDataSource(Map<String, List<HakuViewModel>> map) {
         Set<Map.Entry<String, List<HakuViewModel>>> set = map.entrySet();
 
@@ -121,7 +119,7 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         for (Map.Entry<String, List<HakuViewModel>> e : set) {
             LOG.info("getTreeDataSource()" + e.getKey());
             HakuResultRow rowStyle = new HakuResultRow();
-           
+
             Object rootItem = hc.addItem();
 
             hc.getContainerProperty(rootItem, presenter.COLUMN_A).setValue(rowStyle.format(e.getKey(), false));
@@ -132,13 +130,13 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
                 hc.setParent(curHaku, rootItem);
                 hc.getContainerProperty(curHaku, presenter.COLUMN_A).setValue(rowStyleInner.format(curHaku.getNimiFi(), true));
                 hc.setChildrenAllowed(curHaku, false);
-                
+
                 rowStyleInner.addListener(new Listener() {
 
                     @Override
                     public void componentEvent(Event event) {
                         if (event instanceof HakuResultRow.HakuRowMenuEvent) {
-                            fireEvent(event);    
+                            fireEvent(event);
                         }
                     }
                 });
@@ -146,8 +144,8 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         }
         return hc;
     }
-    
-    private void changeHakuSelections(boolean selected) {  
+
+    private void changeHakuSelections(boolean selected) {
         presenter.getSelectedhaut().clear();
         HierarchicalContainer hc = (HierarchicalContainer)(this.categoryTree.getContainerDataSource());
         for (Object item : hc.getItemIds()) {
@@ -168,7 +166,7 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 navigateToHakuEditForm();
-                
+
             }
         });
 
@@ -179,7 +177,7 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 presenter.removeSelectedHaut();
-                
+
             }
         });
 
@@ -208,11 +206,11 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getTreeDataSource()));
     }
-    
+
     private void navigateToHakuEditForm() {
         fireEvent(new NewHakuEvent(this));
     }
-    
+
     /**
      * Event to signal that the user wants to create a new Haku.
     */
@@ -220,9 +218,9 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
 
         public NewHakuEvent(Component source) {
             super(source);
-            
+
         }
-        
+
     }
 
 }
