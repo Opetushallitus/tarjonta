@@ -74,6 +74,9 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditHakuViewImpl.class);
 
+    private static final String ONE_APPLICATION_SYSTEM = "yksiHakuaika";
+    private static final String MULTIPLE_APPLICATION_SYSTEMS = "sisHakuajat";
+
     public static final Object[] HAKUAJAT_COLUMNS = new Object[]{"kuvaus", "alkuPvm", "loppuPvm", "poistaB"};
 
     @Autowired(required = true)
@@ -154,6 +157,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
     private boolean attached = false;
 
+
     public EditHakuViewImpl() {
         super();
         _presenter.setEditHaku(this);
@@ -181,10 +185,11 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         this.sisaisetHakuajatTable.setPageLength((this.sisaisetHakuajatContainer.size() > 5) ? this.sisaisetHakuajatContainer.size() : 5);
         this.sisaisetHakuajatTable.setColumnHeaders(new String[]{T("Kuvaus"), T("Alkupvm"), T("Loppupvm"), T("Poista")});
 
+        // If we have many application times then we enable multiple times for this application systame
         if (_presenter.getHakuModel().getSisaisetHakuajat().size() > 0) {
-        	this.sisHakuajat.setValue(T("sisHakuajat"));
+            this.sisHakuajat.setValue(MULTIPLE_APPLICATION_SYSTEMS);
         } else {
-        	this.sisHakuajat.setValue(T("yksiHakuaika"));
+            this.sisHakuajat.setValue(ONE_APPLICATION_SYSTEM);
         }
     }
 
@@ -312,19 +317,24 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             vl.setSizeUndefined();
 
             sisHakuajat = new OptionGroup();
-            sisHakuajat.addItem(T("yksiHakuaika"));
-            sisHakuajat.addItem(T("sisHakuajat"));
+            sisHakuajat.addItem(ONE_APPLICATION_SYSTEM);
+            sisHakuajat.setItemCaption(ONE_APPLICATION_SYSTEM, T(ONE_APPLICATION_SYSTEM));
+            sisHakuajat.addItem(MULTIPLE_APPLICATION_SYSTEMS);
+            sisHakuajat.setItemCaption(MULTIPLE_APPLICATION_SYSTEMS, T(MULTIPLE_APPLICATION_SYSTEMS));
             sisHakuajat.setMultiSelect(false);
             sisHakuajat.setImmediate(true);
             sisHakuajat.addListener(new Property.ValueChangeListener() {
 
                 @Override
                 public void valueChange(ValueChangeEvent event) {
-                    sisaisetHakuajatTable.setEnabled(sisHakuajat.getValue().equals(T("sisHakuajat")));
-                    lisaaHakuaika.setEnabled(sisHakuajat.getValue().equals(T("sisHakuajat")));
-                    hakuAlkaa.setEnabled(sisHakuajat.getValue().equals(T("yksiHakuaika")));
-					hakuLoppuu.setEnabled(sisHakuajat.getValue().equals(T("yksiHakuaika")));
-				}
+                    // Enable multiple application times table when multiple application systems selected
+                    sisaisetHakuajatTable.setEnabled(sisHakuajat.getValue().equals(MULTIPLE_APPLICATION_SYSTEMS));
+                    lisaaHakuaika.setEnabled(sisHakuajat.getValue().equals(MULTIPLE_APPLICATION_SYSTEMS));
+
+                    // If only one application system then enable the time fields for one application system time
+                    hakuAlkaa.setEnabled(sisHakuajat.getValue().equals(ONE_APPLICATION_SYSTEM));
+                    hakuLoppuu.setEnabled(sisHakuajat.getValue().equals(ONE_APPLICATION_SYSTEM));
+                }
             });
 
             vl.addComponent(sisHakuajat);
@@ -490,14 +500,18 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
      */
     public class SaveEvent extends Component.Event {
 
+        // is this "copleted" or only "draft" save
         boolean _complete = false;
 
         public SaveEvent(Component source, boolean complete) {
             super(source);
             sisaisetHakuajatContainer.bindHakuajat();
-            if (sisHakuajat.getValue().equals(T("yksiHakuaika"))) {
-            	_presenter.getHakuModel().setSisaisetHakuajat(new ArrayList<HakuaikaViewModel>());
+
+            // Reset multiple times if only one application system is wanted
+            if (sisHakuajat.getValue().equals(ONE_APPLICATION_SYSTEM)) {
+                _presenter.getHakuModel().setSisaisetHakuajat(new ArrayList<HakuaikaViewModel>());
             } else {
+                // Othewise clear single application stystem data
             	_presenter.getHakuModel().setAlkamisPvm(null);
             	_presenter.getHakuModel().setPaattymisPvm(null);
             }
