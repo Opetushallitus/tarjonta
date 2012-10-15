@@ -94,10 +94,6 @@ public class TarjontaPresenter {
         return _hakukohdeListView;
     }
 
-    public void showKoulutusPerustiedotToinenAsteView() {
-        _rootView.getSearchResultsView();
-    }
-
     public void setHakukohdeListView(ListHakukohdeView hakukohdeListView) {
         this._hakukohdeListView = hakukohdeListView;
     }
