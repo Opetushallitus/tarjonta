@@ -99,7 +99,10 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     private KoulutusmoduuliTyyppi moduuliTyyppi;
 
     @Column(name = "koulutusluokitus_koodi")
-    private String koulutusluokitusKoodi;
+    private String koulutusKoodi;
+
+    @Column(name = "koulutusohjelmakoodi")
+    private String koulutusohjelmaKoodi;
 
     @Column(name = "tutkintoohjelmanimi")
     private String tutkintoOhjelmanNimi;
@@ -134,9 +137,19 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     * When entered by user this is typically a numeric value. The actual data is stored in Koodisto and this methods returns its uri.
+     * <p>
+     * Koulutusjärjestelmän mukaisia koulutuksia koskeva luokittelu, joka kuvaa koulutusten
+     * sijoittumista tieteen, yhteiskunnan tai työelämän aloille ja jota käytetään koulutusten
+     * suunnitteluun, seurantaan ja säätelyyn Opetushallinnon Koulutusala 2002 -luokittelun
+     * mukaisia koulutusaloja ovat esimerkiksi kulttuuriala sekä tekniikan ja liikenteen ala.
+     * Koulutusalaluokitteluja on tällä hetkellä (kesäkuu 2012) neljä: opetushallinnon Koulutusala
+     * 2002- ja Koulutusala 1995 -luokittelut, ISCED-luokittelu sekä Tilastokeskuksen
+     * koulutusalaluokittelu.
+     * <br/>
+     * Lähde: OKSA sanasto: https://confluence.csc.fi/pages/viewpage.action?pageId=8688189
+     * </p>
      *
-     * @return uri to koodisto
+     * @return uri koodistoon
      */
     public String getKoulutusala() {
         return koulutusala;
@@ -309,18 +322,19 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      * @see #setKoulutusKoodi(java.lang.String)
      * @return
      */
-    public String getKoulutusluokitusKoodi() {
-        return koulutusluokitusKoodi;
+    public String getKoulutusKoodi() {
+        return koulutusKoodi;
     }
 
     /**
-     * Tilastokeskuksen maarittelema koulutus luokitus koodi.
+     * Tilastokeskuksen maarittelema koulutus luokitus koodi. Arvona on uri koodistoon joka esittää kyseistä luokitus koodia.
+     *
      *
      * @see http://www.stat.fi/meta/luokitukset/koulutus/001-2010/index.html
      * @param koulutusKoodiUri
      */
-    public void setKoulutusluokitusKoodi(String koulutusKoodiUri) {
-        this.koulutusluokitusKoodi = koulutusKoodiUri;
+    public void setKoulutusKoodi(String koulutusKoodiUri) {
+        this.koulutusKoodi = koulutusKoodiUri;
     }
 
     /**
@@ -370,6 +384,21 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      */
     public KoulutusmoduuliTyyppi getModuuliTyyppi() {
         return moduuliTyyppi;
+    }
+
+    /**
+     * Palauttaa koodisto uri:n joka viittaa valittuun koulutusohjelmaan.
+     *
+     * Esimerkki koulutusohjelmasta: "Ympäristön suunnittelun ja rakentamisen koulutusohjelma (1603)"
+     *
+     * @return
+     */
+    public String getKoulutusohjelmaKoodi() {
+        return koulutusohjelmaKoodi;
+    }
+
+    public void setKoulutusohjelmaKoodi(String koulutusohjelmaKoodi) {
+        this.koulutusohjelmaKoodi = koulutusohjelmaKoodi;
     }
 
 }

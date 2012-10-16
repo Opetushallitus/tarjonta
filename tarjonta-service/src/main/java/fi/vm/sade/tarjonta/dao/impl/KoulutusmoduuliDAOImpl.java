@@ -95,6 +95,20 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
     }
 
+    @Override
+    public Koulutusmoduuli findTutkintoOhjelma(String koulutusLuokitusUri, String koulutusOhjelmaUri) {
+
+        QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+
+        BooleanExpression koulutusEq = moduuli.koulutusKoodi.eq(koulutusLuokitusUri);
+        BooleanExpression ohjelmaEq = moduuli.koulutusohjelmaKoodi.eq(koulutusOhjelmaUri);
+
+        return from(moduuli).
+            where(koulutusEq.and(ohjelmaEq)).
+            singleResult(moduuli);
+
+    }
+
     private BooleanExpression and(BooleanExpression existing, BooleanExpression what) {
         return (existing == null ? what : existing.and(what));
     }

@@ -63,6 +63,15 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
      */
     public List<Koulutusmoduuli> search(SearchCriteria criteria);
 
+
+    /**
+     * 
+     * @param koulutusLuokitusUri
+     * @param koulutusOhjelmaUri
+     * @return
+     */
+    public Koulutusmoduuli findTutkintoOhjelma(String koulutusLuokitusUri, String koulutusOhjelmaUri);
+
     /**
      * Contract and model for passing search criterias to DAO. Another option would be to use an object declared in WSDL but this would
      * imply that any and all changes in WSDL are immediately visible on DAO layer and in worst case might require code changes.

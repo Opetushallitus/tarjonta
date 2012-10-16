@@ -204,7 +204,7 @@ public class KoulutusmoduuliDAOTest {
     private Koulutusmoduuli createTutkintoOhjelma() {
 
         Koulutusmoduuli m = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-        m.setKoulutusluokitusKoodi("123456");
+        m.setKoulutusKoodi("123456");
         m.setTutkintoOhjelmanNimi("JUnit Tutkinto");
         m.setOid("http://oid/12345");
         return m;

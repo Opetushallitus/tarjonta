@@ -87,7 +87,7 @@ public class LearningUploadServiceImpl implements LearningUploadService {
             // TODO where is this?
             String tilaskokeskusKoulutusKoodiUrl = "TK KOULUTUS KOODI URL";
             // los.getClassification().getClassificationCode().get(0).getScheme().HTTP_STAT_FI
-            moduuli.setKoulutusluokitusKoodi(tilaskokeskusKoulutusKoodiUrl);
+            moduuli.setKoulutusKoodi(tilaskokeskusKoulutusKoodiUrl);
 
             komo = moduuli;
         } else if (los.getType().equals(LearningOpportunityTypeType.COURSE_UNIT)) {

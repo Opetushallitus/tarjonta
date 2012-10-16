@@ -25,10 +25,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
+import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 
 /**
@@ -42,6 +44,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Autowired
     private HakuBusinessService hakuBusinessService;
 
+    @Autowired
+    private KoulutusBusinessService koulutusBusinessService;
 
     @Autowired
     private HakuDAO hakuDAO;
@@ -77,12 +81,44 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakuDAO.remove(haku);
     }
 
+    @Override
+    public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
+
+        Koulutusmoduuli moduuli = koulutusBusinessService.findTutkintoOhjelma(koulutus.getKoulutusKoodi(), koulutus.getKoulutusohjelmaKoodi());
+        if (moduuli == null) {
+            // todo: error reporting
+            throw new IllegalArgumentException("no such Koulutusmoduuli: " + koulutus.getKoulutusKoodi()
+                + ", " + koulutus.getKoulutusohjelmaKoodi());
+        }
+
+        koulutusBusinessService.create(convert(koulutus), moduuli);
+
+        LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
+        return vastaus;
+
+    }
+
     private List<HakuTyyppi> convert(List<Haku> haut) {
         List<HakuTyyppi> tyypit = new ArrayList<HakuTyyppi>();
         for (Haku haku : haut) {
             tyypit.add(conversionService.convert(haku, HakuTyyppi.class));
         }
         return tyypit;
+    }
+
+    private KoulutusmoduuliToteutus convert(LisaaKoulutusTyyppi koulutus) {
+
+        KoulutusmoduuliToteutus toteutus = new KoulutusmoduuliToteutus();
+
+        toteutus.addOpetusmuoto(new KoodistoUri(koulutus.getOpetusmuoto()));
+        toteutus.setOid(koulutus.getOid());
+
+        for (String opetusKieli : koulutus.getOpetuskieli()) {
+            toteutus.addOpetuskieli(new KoodistoUri(opetusKieli));
+        }
+
+        return toteutus;
+
     }
 
     /**
@@ -126,7 +162,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public void setHakuDao(HakuDAO hakuDao) {
         this.hakuDAO = hakuDao;
     }
-
 
     private void mergeHaku(Haku source, Haku target) {
         target.setNimi(source.getNimi());

@@ -18,7 +18,8 @@ package fi.vm.sade.tarjonta.service.business;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
-import java.util.List;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliTyyppi;
 
 /**
  * Business logic for manipulating classes inherited from LearningOpportunityObject.
@@ -51,6 +52,8 @@ public interface KoulutusBusinessService {
      */
     public Koulutusmoduuli update(Koulutusmoduuli moduuli);
 
+
+    
     /**
      *
      * @param toteutus
@@ -93,6 +96,16 @@ public interface KoulutusBusinessService {
      * @param oid
      */
     public void deleteKoulutusmoduuliByOid(String oid);
+
+    /**
+     * Palauttaa {@link KoulutusmoduuliTyyppi#TUTKINTO_OHJELMA} -tyyppisen Koulutusmoduulin jonka koulutusLuokitus sekä koulutusOhjelma
+     * vastaavat annettuja arvoja.
+     *
+     * @param tutkintoUri
+     * @param koulutusUri
+     * @return
+     */
+    public Koulutusmoduuli findTutkintoOhjelma(String koulutusLuokitusUri, String koulutusOhjelmaUri);
 
     /**
      * Once search criteria tyyppi is declared in WSDL expose this method. The implementation is in place in DAO.

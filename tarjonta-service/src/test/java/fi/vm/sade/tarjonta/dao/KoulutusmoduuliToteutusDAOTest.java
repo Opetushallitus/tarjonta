@@ -70,7 +70,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         defaultModuuli = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         defaultModuuli.setOid("http://someoid");
         defaultModuuli.setTutkintoOhjelmanNimi("Junit Tutkinto");
-        defaultModuuli.setKoulutusluokitusKoodi("123456");
+        defaultModuuli.setKoulutusKoodi("123456");
         koulutusmoduuliDAO.insert(defaultModuuli);
 
         defaultToteutus = new KoulutusmoduuliToteutus(defaultModuuli);

@@ -315,4 +315,35 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:group name="KoulutusGroup">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Koulutusta kuvaavat rakenteet.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Oid" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>
+                        KoulutusmoduuliToteutuksen OID.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="KoulutusKoodi" type="xs:string"/>
+            <xs:element name="KoulutusohjelmaKoodi" type="xs:string"/>
+            <xs:element name="Opetusmuoto" type="xs:string"/>
+            <xs:element name="Opetuskieli" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:group>
+
+
+
+    <xs:simpleType name="KoulutusmoduuliTyyppi">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="TUTKINNON_OSA"/>
+            <xs:enumeration value="TUTKINTO_OHJELMA"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
 </xs:schema>

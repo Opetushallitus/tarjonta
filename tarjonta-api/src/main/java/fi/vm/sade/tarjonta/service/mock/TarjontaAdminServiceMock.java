@@ -1,6 +1,8 @@
 package fi.vm.sade.tarjonta.service.mock;
 
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
 import java.util.Date;
@@ -33,6 +35,10 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
         haut.remove(hakuDto.getOid());
     }
 
+    @Override
+    public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi parameters) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     private void initDefValues() {
         HakuTyyppi haku = new HakuTyyppi();

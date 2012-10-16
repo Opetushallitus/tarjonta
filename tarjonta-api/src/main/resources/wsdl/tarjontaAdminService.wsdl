@@ -37,8 +37,13 @@
         <wsdl:part element="ns1:poistaHakuVastaus" name="parameters"/>
     </wsdl:message>
 
+    <wsdl:message name="lisaaKoulutus">
+        <wsdl:part element="ns1:lisaaKoulutus" name="koulutus"/>
+    </wsdl:message>
 
-
+    <wsdl:message name="lisaaKoulutusVastaus">
+        <wsdl:part element="ns1:lisaaKoulutusVastaus" name="parameters"/>
+    </wsdl:message>
 
     <wsdl:portType name="TarjontaAdminService">
 
@@ -76,7 +81,15 @@
             </wsdl:output>
         </wsdl:operation>
 
-
+        <wsdl:operation name="lisaaKoulutus">
+            <wsdl:documentation>
+                Lisaa uusi koulutus
+            </wsdl:documentation>
+            <wsdl:input message="tns:lisaaKoulutus" name="lisaaKoulutus">
+            </wsdl:input>
+            <wsdl:output message="tns:lisaaKoulutusVastaus" name="lisaaKoulutusVastaus">
+            </wsdl:output>
+        </wsdl:operation>
 
     </wsdl:portType>
 
@@ -94,8 +107,6 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-
-
 
     </wsdl:binding>
 

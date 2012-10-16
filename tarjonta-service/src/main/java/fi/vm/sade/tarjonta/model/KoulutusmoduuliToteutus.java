@@ -120,21 +120,22 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinColumn(name = "stipendimahdollisuus_teksti_id")
     private MonikielinenTeksti stipendimahdollisuusUrl;
 
-    /**
-     * Constructor for JPA
-     */
-    protected KoulutusmoduuliToteutus() {
+    public KoulutusmoduuliToteutus() {
         super();
     }
 
     /**
      *
-     * @param moduuli Koulutusmoduuli this KoulutusumoduuliToteutus "implements".
+     * @param moduuli Koulutusmoduuli jota tämä toteutus tarkentaa
      */
     public KoulutusmoduuliToteutus(Koulutusmoduuli moduuli) {
         setKoulutusmoduuli(moduuli);
     }
 
+    /**
+     * 
+     * @param moduuli
+     */
     public final void setKoulutusmoduuli(Koulutusmoduuli moduuli) {
         if (this.koulutusmoduuli != null && !this.koulutusmoduuli.equals(moduuli)) {
             throw new IllegalStateException("trying to change koulutusmoduuli from: "

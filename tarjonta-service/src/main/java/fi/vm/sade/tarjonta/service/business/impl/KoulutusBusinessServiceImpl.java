@@ -75,11 +75,12 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus, Koulutusmoduuli moduuli) {
 
         final Koulutusmoduuli m = isNew(moduuli) ? create(moduuli) : moduuli;
-        toteutus.setKoulutusmoduuli(moduuli);
+        toteutus.setKoulutusmoduuli(m);
 
         return (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.insert(toteutus);
 
     }
+
 
     @Override
     public Koulutusmoduuli findByOid(String oid) {
@@ -101,6 +102,15 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         koulutusmoduuliToteutusDAO.update(toteutus);
         return toteutus;
+
+    }
+
+    @Override
+    public Koulutusmoduuli findTutkintoOhjelma(String koulutusLuokitusUri, String koulutusOhjelmaUri) {
+
+        // todo: dao kerroksen voisi poistaa, ainoastaan vaikeammat haut voisi sijoittaa helper:n taakse
+
+        return koulutusmoduuliDAO.findTutkintoOhjelma(koulutusLuokitusUri, koulutusOhjelmaUri);
 
     }
 

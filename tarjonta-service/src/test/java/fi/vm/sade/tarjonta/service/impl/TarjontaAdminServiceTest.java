@@ -33,9 +33,10 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
-import org.junit.Ignore;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import org.junit.Test;
 
 /**
  *
@@ -48,32 +49,50 @@ import org.junit.Ignore;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-@Ignore // ei vielä testattavia metodeija
 public class TarjontaAdminServiceTest {
 
     @Autowired
-    private TarjontaAdminService service;
+    private TarjontaAdminService adminService;
 
     @Autowired
     private TarjontaFixtures fixtures;
 
     @Autowired
-    private TarjontaDatabasePrinter db;
-
-    @Autowired
-    private HakuDAO hakuDAO;
-
-    @Autowired
-    private HakukohdeDAO hakukohdeDAO;
-
-    @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
-    @Autowired
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     @Before
     public void setUp() {
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCannotCreateKoulutusWithoutKoulutusmoduuli() {
+
+        LisaaKoulutusTyyppi lisaaKoulutus = new LisaaKoulutusTyyppi();
+
+        lisaaKoulutus.setKoulutusKoodi("321101");
+        lisaaKoulutus.setKoulutusohjelmaKoodi("1603");
+
+        adminService.lisaaKoulutus(lisaaKoulutus);
+
+    }
+
+    @Test
+    public void testCreateKoulutusHappyPath() {
+
+        Koulutusmoduuli moduuli = fixtures.createTutkintoOhjelma();
+        moduuli.setKoulutusKoodi("321101");
+        moduuli.setKoulutusohjelmaKoodi("1603");
+        koulutusmoduuliDAO.insert(moduuli);
+
+        LisaaKoulutusTyyppi lisaaKoulutus = new LisaaKoulutusTyyppi();
+        lisaaKoulutus.setKoulutusKoodi("321101");
+        lisaaKoulutus.setKoulutusohjelmaKoodi("1603");
+        lisaaKoulutus.setOpetusmuoto("opetusmuoto/lahiopetus");
+        lisaaKoulutus.getOpetuskieli().add("opetuskieli/fi");
+        lisaaKoulutus.setOid("1.2.3.4.5");
+
+        adminService.lisaaKoulutus(lisaaKoulutus);
+
     }
 
 }
