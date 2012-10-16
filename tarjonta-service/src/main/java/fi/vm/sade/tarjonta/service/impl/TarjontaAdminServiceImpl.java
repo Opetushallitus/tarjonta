@@ -112,9 +112,17 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         toteutus.addOpetusmuoto(new KoodistoUri(koulutus.getOpetusmuoto()));
         toteutus.setOid(koulutus.getOid());
+        toteutus.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime());
+
+        toteutus.setSuunniteltuKestoArvo(koulutus.getKesto().getArvo());
+        toteutus.setSuunniteltuKestoYksikko(koulutus.getKesto().getYksikko());
 
         for (String opetusKieli : koulutus.getOpetuskieli()) {
             toteutus.addOpetuskieli(new KoodistoUri(opetusKieli));
+        }
+
+        for (String koulutuslaji : koulutus.getKoulutuslaji()) {
+            // fix: toteutus should have multiple koulutuslahji
         }
 
         return toteutus;

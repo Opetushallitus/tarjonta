@@ -27,15 +27,16 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.tarjonta.TarjontaDatabasePrinter;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import org.junit.Test;
 
 /**
@@ -60,8 +61,15 @@ public class TarjontaAdminServiceTest {
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
+    private KoulutuksenKestoTyyppi kesto3Vuotta;
+
     @Before
     public void setUp() {
+
+        kesto3Vuotta = new KoulutuksenKestoTyyppi();
+        kesto3Vuotta.setArvo("3");
+        kesto3Vuotta.setYksikko("kesto/vuosi");
+
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -77,7 +85,7 @@ public class TarjontaAdminServiceTest {
     }
 
     @Test
-    public void testCreateKoulutusHappyPath() {
+    public void testCreateKoulutusHappyPath() throws Exception {
 
         Koulutusmoduuli moduuli = fixtures.createTutkintoOhjelma();
         moduuli.setKoulutusKoodi("321101");
@@ -87,12 +95,25 @@ public class TarjontaAdminServiceTest {
         LisaaKoulutusTyyppi lisaaKoulutus = new LisaaKoulutusTyyppi();
         lisaaKoulutus.setKoulutusKoodi("321101");
         lisaaKoulutus.setKoulutusohjelmaKoodi("1603");
-        lisaaKoulutus.setOpetusmuoto("opetusmuoto/lahiopetus");
+        lisaaKoulutus.setOpetusmuoto("opetusmuoto/aikuisopetus");
         lisaaKoulutus.getOpetuskieli().add("opetuskieli/fi");
+        lisaaKoulutus.getKoulutuslaji().add("koulutuslaji/lahiopetus");
         lisaaKoulutus.setOid("1.2.3.4.5");
+        lisaaKoulutus.setKoulutuksenAlkamisPaiva(toXmlDateTime(new Date()));
+        lisaaKoulutus.setKesto(kesto3Vuotta);
 
         adminService.lisaaKoulutus(lisaaKoulutus);
 
+    }
+
+    private XMLGregorianCalendar toXmlDateTime(Date date) {
+        try {
+            GregorianCalendar cal = new GregorianCalendar();
+            cal.setTimeInMillis(date.getTime());
+            return DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+        } catch (Exception e) {
+            throw new RuntimeException("converting date failed: " + date, e);
+        }
     }
 
 }

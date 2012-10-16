@@ -141,7 +141,7 @@ public class LearningUploadServiceImpl implements LearningUploadService {
         komoto.setOppilaitosUrl(null);
         komoto.setSosiaalinenMediaUrl(null);
         komoto.setStipendimahdollisuusUrl(null);
-        komoto.setSuunniteltuKesto("SUUNNITELTU KESTO");
+        komoto.setSuunniteltuKestoArvo("SUUNNITELTU KESTO");
         komoto.setTeemas(new HashSet<KoodistoUri>());
         komoto.setTila("KOODISTO TILA");
 

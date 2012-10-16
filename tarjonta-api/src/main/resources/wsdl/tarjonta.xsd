@@ -50,27 +50,27 @@
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1" />
-            
+
             <xs:element name="hakukohteenHaku"
                         type="tns:HakuTyyppi"
                         maxOccurs="1"
                         minOccurs="1" />
-            
-            <xs:element name="aloituspaikat" 
+
+            <xs:element name="aloituspaikat"
                         type="xs:int"
                         maxOccurs="1"
                         minOccurs="1"/>
-            
+
             <xs:element name="hakukelpoisuusVaatimukset"
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1"/>
-            
+
             <xs:element name="lisatiedot"
                         type="tns:MonikielinenTekstiTyyppi"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-            
+
             <xs:element name="valintaPerusteidenKuvaukset"
                         type="tns:MonikielinenTekstiTyyppi"
                         minOccurs="0"
@@ -203,7 +203,7 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="MonikielinenTekstiTyyppi">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="tekstinKielikoodi" type="xs:string">
@@ -218,7 +218,7 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="ValintakoeTyyppi">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="unbounded" name="ajankohdat" type="tns:AjankohtaTyyppi">
@@ -236,9 +236,9 @@
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
-        
+
     </xs:complexType>
-    
+
     <xs:complexType name="AjankohtaTyyppi">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="kuvaus" type="xs:string">
@@ -333,9 +333,31 @@
             <xs:element name="KoulutusohjelmaKoodi" type="xs:string"/>
             <xs:element name="Opetusmuoto" type="xs:string"/>
             <xs:element name="Opetuskieli" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="KoulutuksenAlkamisPaiva" type="xs:dateTime"/>
+            <xs:element name="Kesto" type="tns:KoulutuksenKestoTyyppi"/>
+            <xs:element name="Koulutuslaji" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:group>
 
+
+    <xs:complexType name="KoulutuksenKestoTyyppi">
+        <xs:sequence>
+            <xs:element name="Arvo" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>
+                        Arvo siten kun kayttaja on sen syottanyt.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Yksikko" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>
+                        Yksikko on koodisto viittaus.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 
 
     <xs:simpleType name="KoulutusmoduuliTyyppi">

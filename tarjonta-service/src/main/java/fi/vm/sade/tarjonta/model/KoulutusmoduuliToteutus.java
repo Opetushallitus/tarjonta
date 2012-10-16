@@ -57,11 +57,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "koulutuksen_alkamis_pvm")
     private Date koulutuksenAlkamisPvm;
 
-    /**
-     * Koodisto Uri. Example display value '7+2 vuotta'. This is different from the current (15.6.2012) wireframe, but the wireframe is wrong.
-     */
-    @Column(name = "suunniteltu_kesto")
-    private String suunniteltuKesto;
+    @Column(name = "suunniteltu_kesto_arvo")
+    private String suunniteltuKestoArvo;
+
+    @Column(name = "suunniteltu_kesto_yksikko")
+    private String suunniteltuKestoYksikko;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_teema", joinColumns =
@@ -133,7 +133,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
-     * 
+     *
      * @param moduuli
      */
     public final void setKoulutusmoduuli(Koulutusmoduuli moduuli) {
@@ -194,21 +194,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      */
     public void setKoulutuksenAlkamisPvm(Date koulutuksenAlkamisPvm) {
         this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
-    }
-
-    /**
-     * @return the suunniteltuKestoUri
-     */
-    public String getSuunniteltuKesto() {
-        return suunniteltuKesto;
-    }
-
-    /**
-     *
-     * @param suunniteltuKestoUri the suunniteltuKestoUri to set
-     */
-    public void setSuunniteltuKesto(String suunniteltuKestoUri) {
-        this.suunniteltuKesto = suunniteltuKestoUri;
     }
 
     /**
@@ -378,6 +363,38 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      */
     public void setMaksullisuusUrl(MonikielinenTeksti maksullisuusUrl) {
         this.maksullisuusUrl = maksullisuusUrl;
+    }
+
+    /**
+     * Koulutuksen keston arvo. Yksikkö on eri kentässä: {@link #getSuunniteltuKestoYksikko() }
+     *
+     * @return the suunniteltuKestoArvo
+     */
+    public String getSuunniteltuKestoArvo() {
+        return suunniteltuKestoArvo;
+    }
+
+    /**
+     * @param suunniteltuKestoArvo the suunniteltuKestoArvo to set
+     */
+    public void setSuunniteltuKestoArvo(String suunniteltuKestoArvo) {
+        this.suunniteltuKestoArvo = suunniteltuKestoArvo;
+    }
+
+    /**
+     * Koodisto uri joka kertoo käytetyt yksiköt kuten "vuosi", "päivä" yms.
+     *
+     * @return the suunniteltuKestoYksikko
+     */
+    public String getSuunniteltuKestoYksikko() {
+        return suunniteltuKestoYksikko;
+    }
+
+    /**
+     * @param suunniteltuKestoYksikko the suunniteltuKestoYksikko to set
+     */
+    public void setSuunniteltuKestoYksikko(String suunniteltuKestoYksikko) {
+        this.suunniteltuKestoYksikko = suunniteltuKestoYksikko;
     }
 
 }
