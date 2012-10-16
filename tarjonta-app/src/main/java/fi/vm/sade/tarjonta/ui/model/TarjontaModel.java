@@ -15,13 +15,10 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 
 /**
  *
@@ -38,10 +35,6 @@ public class TarjontaModel extends BaseUIViewModel {
     private String _identifier;
 
     private KoulutusSearchSpesificationViewModel _searchSpec = new KoulutusSearchSpesificationViewModel();
-    private KoulutusToisenAsteenPerustiedotViewModel _koulutusPerustiedotModel;
-
-    private List<HakukohdeTulos> _hakukohteet;
-    private List<HakukohdeTulos> _selectedhakukohteet;
 
     public String getIdentifier() {
         return _identifier;
@@ -61,31 +54,6 @@ public class TarjontaModel extends BaseUIViewModel {
 
     public KoulutusSearchSpesificationViewModel getSearchSpec() {
         return _searchSpec;
-    }
-
-    public List<HakukohdeTulos> getHakukohteet() {
-        if (_hakukohteet == null) {
-            _hakukohteet =  new ArrayList<HakukohdeTulos>();
-        }
-        return _hakukohteet;
-    }
-    
-    public void setHakukohteet(List<HakukohdeTulos> hakukohteet) {
-        this._hakukohteet = hakukohteet;
-    }
-
-    public List<HakukohdeTulos> getSelectedhakukohteet() {
-        if (_selectedhakukohteet == null) {
-            _selectedhakukohteet = new ArrayList<HakukohdeTulos>();
-        }
-        return _selectedhakukohteet;
-    }
-
-    public KoulutusToisenAsteenPerustiedotViewModel getKoulutusYhteistietoModel() {
-        if (_koulutusPerustiedotModel == null) {
-            _koulutusPerustiedotModel = new KoulutusToisenAsteenPerustiedotViewModel();
-        }
-        return _koulutusPerustiedotModel;
     }
 
 }

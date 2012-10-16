@@ -15,25 +15,30 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
-import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
-
-import fi.vm.sade.tarjonta.service.TarjontaAdminService;
-import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeKoosteTyyppi;
-import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
-import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
-import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
-import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.vaadin.ui.Button;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Button.ClickEvent;
+import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
+
+import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
+import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
+
+import fi.vm.sade.vaadin.util.UiUtil;
+
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +47,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
 /**
- * This class is used to control the "tarjonta" UI.
  *
  * @author mlyly
  */
@@ -50,44 +54,52 @@ import org.springframework.stereotype.Component;
 @Configurable(preConstruction = false)
 public class TarjontaPresenter {
 
+    
+    
+    
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
-
     @Autowired(required = true)
     private TarjontaModel _model;
-
+     @Autowired
+    private TarjontaPublicService tarjontaService;
     private TarjontaRootView _rootView;
-
-    private ListHakukohdeView _hakukohdeListView;
+    private ListHakukohdeView hakukohdeListView;
+    private KoulutusToisenAsteenPerustiedotViewModel koulutusYhteistietoModel;
+    private EditKoulutusPerustiedotToinenAsteView koulutusPerustiedot;
+    private List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
+    private List<HakukohdeViewModel> selectedhakukohteet = new ArrayList<HakukohdeViewModel>();
+    private PerustiedotView hakuKohdePerustiedotView;
+    private HakukohdeViewModel hakuKohde;
+   
     
-    private ListKoulutusView koulutusListView;
-
-
-	@Autowired(required=true)
-    private TarjontaAdminService tarjontaAdminService;
-
-    @Autowired(required=true)
-    private TarjontaPublicService tarjontaPublicService;
-
     @PostConstruct
     public void initialize() {
-        LOG.info("initialize(): model={}", getModel());
-
-        // TODO remove me pretty soon please
-        if (getModel().getHakukohteet().isEmpty()) {
-            createInitialTemporaryDemoDataDForTestingPurposes();
+        LOG.info("initialize(): model={}", _model);
+        if (hakukohteet.size() == 0) {
+            createInitialData();
         }
     }
+    
+    
 
-    private void createInitialTemporaryDemoDataDForTestingPurposes() {
-        LOG.error("createInitalData() - DEMO DATA CREATED TO UI! I so hope we are not in production :)");
-        /*getModel().getHakukohteet().add(new HakukohdeViewModel("Testi1", "Organisaatio1"));
-        geModel().getHakukohteet().add(new HakukohdeViewModel("Testi2", "Organisaatio2"));*/
+    private void createInitialData() {
+    }
+    
+    public void saveHakuKohde() {
+        saveHakuKohdePerustiedot();
+    }
+    
+    public void saveHakuKohdePerustiedot() {
+       LOG.info("Form saved");
+       hakuKohde.getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
+       for (KielikaannosViewModel kieli : hakuKohde.getLisatiedot()) {
+           LOG.info("KIELI : " + kieli.getKielikoodi() + " TEKSTI : " + kieli.getNimi());
+       }
+       
     }
 
     /**
      * Show main default view
-     *
-     * TODO REMOVE UI CODE FROM PRESENTER!
      */
     public void showMainDefaultView() {
         LOG.info("showMainDefaultView()");
@@ -102,27 +114,47 @@ public class TarjontaPresenter {
         organisaatiohakuView.addComponent(vl);
         organisaatiohakuView.setExpandRatio(vl, 1f);
     }
+    
+    public void initHakukohdeForm(HakukohdeViewModel model, PerustiedotView hakuKohdePerustiedotView) {
+        this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
+        if (model == null) {
+            hakuKohde = new HakukohdeViewModel();
+        } else {
+            hakuKohde = model;
+        }
+        ListHakuVastausTyyppi haut = tarjontaService.listHaku(new ListaaHakuTyyppi());
+       
+        this.hakuKohdePerustiedotView.initForm(hakuKohde);
+        this.hakuKohdePerustiedotView.addItemsToHakuCombobox(haut.getResponse());
+    }
 
     public void doSearch() {
-        LOG.info("doSearch(): searchSpec={}", getModel().getSearchSpec());
+        LOG.info("doSearch(): searchSpec={}", _model.getSearchSpec());
     }
 
     public ListHakukohdeView getHakukohdeListView() {
-        return _hakukohdeListView;
+        return hakukohdeListView;
+    }
+
+    public void showKoulutusPerustiedotToinenAsteView() {
+        _rootView.getSearchResultsView();
+    }
+
+    public void initKoulutusYhteystietoModel() {
+        koulutusYhteistietoModel = new KoulutusToisenAsteenPerustiedotViewModel();
     }
 
     public void setHakukohdeListView(ListHakukohdeView hakukohdeListView) {
-        this._hakukohdeListView = hakukohdeListView;
+        this.hakukohdeListView = hakukohdeListView;
     }
 
-    public Map<String, List<HakukohdeTulos>> getHakukohdeDataSource() {
-        Map<String, List<HakukohdeTulos>> map = new HashMap<String, List<HakukohdeTulos>>();
-        getModel().setHakukohteet(tarjontaPublicService.haeHakukohteet(new HaeHakukohteetKyselyTyyppi()).getHakukohdeTulos());
-        for (HakukohdeTulos curHk : getModel().getHakukohteet()) {
-            String hkKey = curHk.getKoulutus().getTarjoaja();
+    public Map<String, List<HakukohdeViewModel>> getHakukohdeDataSource() {
+        Map<String, List<HakukohdeViewModel>> map = new HashMap<String, List<HakukohdeViewModel>>();
+        for (HakukohdeViewModel curHk : hakukohteet) {
+            String hkKey = curHk.getOrganisaatioOid();
             if (!map.containsKey(hkKey)) {
                 LOG.info("Adding a new key to the map: " + hkKey);
-                List<HakukohdeTulos> hakukohteetM = new ArrayList<HakukohdeTulos>();
+                List<HakukohdeViewModel> hakukohteetM = new ArrayList<HakukohdeViewModel>();
                 hakukohteetM.add(curHk);
                 map.put(hkKey, hakukohteetM);
             } else {
@@ -133,63 +165,39 @@ public class TarjontaPresenter {
         return map;
     }
 
-	/**
+    /**
      * Gets the currently selected hakukohde objects.
      *
      * @return
      */
-    public List<HakukohdeTulos> getSelectedhakukohteet() {
-        return getModel().getSelectedhakukohteet();
+    public List<HakukohdeViewModel> getSelectedhakukohteet() {
+
+        return selectedhakukohteet;
     }
 
     /**
      * Removes the selected hakukohde objects from the database.
      */
     public void removeSelectedHakukohteet() {
-        for (HakukohdeTulos curHakukohde : getModel().getSelectedhakukohteet()) {
+        for (HakukohdeViewModel curHakukohde : selectedhakukohteet) {
             //this.tarjontaService.poistaHakukohde(curHakukohde);
         }
-        getModel().getSelectedhakukohteet().clear();
-
-        // Force UI update.
-        getHakukohdeListView().reload();
-    }
-
-    public void saveKoulutusLuonnoksenaModel() {
-        LOG.info("Koulutus tallennettu luonnoksena");
-        LOG.info( getModel().getKoulutusYhteistietoModel().toString());
-    }
-
-    /**
-     * Saves haku as ready.
-     */
-    public void saveKoulutusValmiina() {
-        LOG.info("Koulutus tallennettu valmiina");
-        LOG.info( getModel().getKoulutusYhteistietoModel().toString());
+        selectedhakukohteet.clear();
+        this.hakukohdeListView.reload();
     }
 
     /**
      * @return the koulutusYhteistietoModel
      */
     public KoulutusToisenAsteenPerustiedotViewModel getKoulutusToisenAsteenPerustiedotViewModel() {
-        return getModel().getKoulutusYhteistietoModel();
+        return koulutusYhteistietoModel;
     }
 
-    /**
-     * Get UI model.
-     * TarjontaModel is initialized and injected by Spring.
-     *
-     * @return
-     */
     public TarjontaModel getModel() {
-        if (_model == null) {
-            LOG.warn("NOW THIS SHOLD NEVER HAPPEN... TarjontaModel was null (should be autowired from session...) - creating empty model!");
-            _model = new TarjontaModel();
-        }
         return _model;
     }
 
-    public void setRootView(TarjontaRootView rootView) {
+    public void setTarjontaWindow(TarjontaRootView rootView) {
         _rootView = rootView;
     }
 
@@ -197,46 +205,39 @@ public class TarjontaPresenter {
         return _rootView;
     }
 
-    /**
-     * If true (read from model, value set from application property "common.showAppIdentifier")
-     * UI should show app identifier so that testers know what version was deployed.
-     */
     public boolean isShowIdentifier() {
-        return getModel().isShowIdentifier();
+        return _model.isShowIdentifier();
+    }
+
+    public String getIdentifier() {
+        return _model.getIdentifier();
     }
 
     /**
-     * @return application identifier.
+     * @return the hakuKohdePerustiedotView
      */
-    public String getIdentifier() {
-        return getModel().getIdentifier();
+    public PerustiedotView getHakuKohdePerustiedotView() {
+        return hakuKohdePerustiedotView;
     }
-    
 
-    public ListKoulutusView getKoulutusListView() {
-		return koulutusListView;
-	}
+    /**
+     * @param hakuKohdePerustiedotView the hakuKohdePerustiedotView to set
+     */
+    public void setHakuKohdePerustiedotView(PerustiedotView hakuKohdePerustiedotView) {
+        this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
+    }
 
-	public void setKoulutusListView(ListKoulutusView listKoulutusView) {
-		this.koulutusListView = listKoulutusView;
-	}
+    /**
+     * @return the tarjontaService
+     */
+    public TarjontaPublicService getTarjontaService() {
+        return tarjontaService;
+    }
 
-	//TODO tähän kutsu koulutusten listaukseen kunhan palvelu on toteutettu
-	public Map<String, List<HakukohdeTulos>> getKoulutusDataSource() {
-		Map<String, List<HakukohdeTulos>> map = new HashMap<String, List<HakukohdeTulos>>();
-        getModel().setHakukohteet(tarjontaPublicService.haeHakukohteet(new HaeHakukohteetKyselyTyyppi()).getHakukohdeTulos());
-        for (HakukohdeTulos curHk : getModel().getHakukohteet()) {
-            String hkKey = curHk.getKoulutus().getTarjoaja();
-            if (!map.containsKey(hkKey)) {
-                LOG.info("Adding a new key to the map: " + hkKey);
-                List<HakukohdeTulos> hakukohteetM = new ArrayList<HakukohdeTulos>();
-                hakukohteetM.add(curHk);
-                map.put(hkKey, hakukohteetM);
-            } else {
-                map.get(hkKey).add(curHk);
-            }
-        }
-
-        return map;
-	}
+    /**
+     * @param tarjontaService the tarjontaService to set
+     */
+    public void setTarjontaService(TarjontaPublicService tarjontaService) {
+        this.tarjontaService = tarjontaService;
+    }
 }

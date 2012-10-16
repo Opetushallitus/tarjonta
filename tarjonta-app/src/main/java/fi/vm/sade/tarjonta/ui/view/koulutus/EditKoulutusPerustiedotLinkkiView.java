@@ -21,8 +21,8 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Select;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.view.common.DataTableEvent;
@@ -34,15 +34,12 @@ import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
 /**
- * An editor for KoulutusLinkkiDTO objects.
+ * An editor for KoulutusLinkkiDTO objecst.
  *
- * Fires internal events on actions:
- * <ul>
- *   <li>DataTableEvent.SaveEvent when save is pressed</li>
- *   <li>DataTableEvent.CancelEvent when cancel is pressed</li>
- * </ul>
+ * Fires internal events on actions: <ul> <li>SaveEvent</li>
+ * <li>CancelEvent</li> <li>DeleteEvent</li> </ul>
  *
- * Use "addListener" to catch these events where ever this component is used.
+ * Use "addListener" to catch these.
  *
  * @author mlyly
  * @see KoulutusLinkkiDTO
@@ -57,11 +54,9 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
     private TextField _tfUrl;
     @PropertyId("kielet")
     private KoodistoComponent _kcKielet;
-
+    private I18NHelper i18n = new I18NHelper(this);
     @Value("${koodisto-uris.kieli:http://kieli}")
     private String _koodistoUriKieli;
-
-    private transient I18NHelper _i18n;
 
     public EditKoulutusPerustiedotLinkkiView() {
         this.setSpacing(true);
@@ -70,9 +65,9 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
         _sLinkkityyppi.setWidth("100%");
         this.addComponent(_sLinkkityyppi);
 
-        _tfUrl = UiUtil.textField(this, "", T("Linkki.prompt"), false);
+        _tfUrl = UiUtil.textField(this, "", i18n.getMessage("Linkki.prompt"), false);
         _tfUrl.setRequired(true);
-        _tfUrl.setRequiredError(T("Linkki.tyhja"));
+        _tfUrl.setRequiredError(i18n.getMessage("Linkki.tyhja"));
         _tfUrl.setWidth("100%");
         this.addComponent(_tfUrl);
 
@@ -82,14 +77,14 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
         hl.setSpacing(true);
         this.addComponent(hl);
 
-        UiUtil.buttonSmallSecodary(hl, T("Tallenna"), new Button.ClickListener() {
+        UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Tallenna"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new DataTableEvent.SaveEvent(EditKoulutusPerustiedotLinkkiView.this));
             }
         });
 
-        UiUtil.buttonSmallSecodary(hl, T("Peruuta"), new Button.ClickListener() {
+        UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Peruuta"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new DataTableEvent.CancelEvent(EditKoulutusPerustiedotLinkkiView.this));
@@ -102,20 +97,5 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
 //                fireEvent(new DataTableEvent.DeleteEvent(EditKoulutusPerustiedotLinkkiView.this));
 //            }
 //        });
-    }
-
-
-
-    /**
-     * Translator helper.
-     *
-     * @param key
-     * @return
-     */
-    private String T(String key) {
-        if (_i18n == null) {
-            _i18n = new I18NHelper(this);
-        }
-        return _i18n.getMessage(key);
     }
 }

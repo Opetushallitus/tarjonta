@@ -25,8 +25,8 @@ import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
-import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.helper.BeanItemMapper;
+import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.view.koulutus.DialogKoulutusView;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
@@ -205,7 +205,7 @@ public class DialogDataTable<T> extends Table {
             form.setItemDataSource(null);
             form.setEnabled(false);
         }
-
+     
         // Autoselect in table
         if (container.firstItemId() != null) {
             setValue(container.firstItemId());

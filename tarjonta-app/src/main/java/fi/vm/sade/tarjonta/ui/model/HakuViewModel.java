@@ -199,18 +199,10 @@ public class HakuViewModel extends BaseUIViewModel {
     }
 
     /**
-     * Gets the earlieast start date for the Haku object.
      * @return the alkamisPvm
      */
     public Date getAlkamisPvm() {
-    	for (HakuaikaViewModel curHA :getSisaisetHakuajat()) {
-    		if (curHA.getAlkamisPvm() == null) {
-    			continue;
-    		} 
-    		if (alkamisPvm == null || curHA.getAlkamisPvm().before(alkamisPvm)) {
-    			alkamisPvm = curHA.getAlkamisPvm();
-    		}
-    	}
+        alkamisPvm = hakuDto.getHaunAlkamisPvm();
         return alkamisPvm;
     }
 
@@ -223,18 +215,10 @@ public class HakuViewModel extends BaseUIViewModel {
     }
 
     /**
-     * Gets the latest end date for the Haku object.
      * @return the paattymisPvm
      */
     public Date getPaattymisPvm() {
-    	for (HakuaikaViewModel curHA :getSisaisetHakuajat()) {
-    		if (curHA.getPaattymisPvm() == null) {
-    			continue;
-    		} 
-    		if (paattymisPvm == null || curHA.getPaattymisPvm().after(paattymisPvm)) {
-    			paattymisPvm = curHA.getPaattymisPvm();
-    		}
-    	}
+        paattymisPvm = hakuDto.getHaunLoppumisPvm();
         return paattymisPvm;
     }
 

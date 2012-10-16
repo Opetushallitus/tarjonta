@@ -14,9 +14,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
-import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.vaadin.constants.UiConstant;
@@ -24,7 +22,6 @@ import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.List;
-import java.util.Locale;
 
 /**
  *
@@ -107,7 +104,7 @@ public class UiBuilder extends UiUtil {
             public String formatCaption(Object dto) {
                 if (dto instanceof KoodiType) {
                     KoodiType kdto = (KoodiType) dto;
-                    return KoodistoHelper.getKoodiMetadataForLanguage(kdto, KieliType.FI).getNimi();
+                    return kdto.getKoodiArvo();
                 } else {
                     return "!KoodiType?: " + dto;
                 }
@@ -142,6 +139,7 @@ public class UiBuilder extends UiUtil {
     }
 
     public static KoodistoComponent koodistoTwinColSelect(AbstractOrderedLayout layout, final String koodistoUri, PropertysetItem psi, String expression, Property.ValueChangeListener listener) {
+
         // Koodisto displayed in TwinColSelect
         TwinColSelect c = twinColSelect(null, null, listener);
 
@@ -162,7 +160,7 @@ public class UiBuilder extends UiUtil {
             public String formatCaption(Object dto) {
                 if (dto instanceof KoodiType) {
                     KoodiType kdto = (KoodiType) dto;
-                    return KoodistoHelper.getKoodiMetadataForLanguage(kdto, KieliType.FI).getNimi();
+                    return kdto.getKoodiArvo();
                 } else {
                     return "!KoodiType?: " + dto;
                 }

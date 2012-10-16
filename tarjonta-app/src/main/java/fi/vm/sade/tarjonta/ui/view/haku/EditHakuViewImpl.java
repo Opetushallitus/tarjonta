@@ -27,18 +27,20 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
@@ -118,12 +120,12 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     private Label _haunTunniste;
 
     // TODO hakuaika
-    /*@PropertyId("alkamisPvm")
+    @PropertyId("alkamisPvm")
     private DateField hakuAlkaa;
     @PropertyId("paattymisPvm")
     private DateField hakuLoppuu;
 
-    private OptionGroup sisHakuajat;*/
+    private OptionGroup sisHakuajat;
 
     private Table sisaisetHakuajatTable;
     private HakuajatContainer sisaisetHakuajatContainer;
@@ -184,11 +186,11 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         this.sisaisetHakuajatTable.setColumnHeaders(new String[]{T("Kuvaus"), T("Alkupvm"), T("Loppupvm"), T("Poista")});
 
         // If we have many application times then we enable multiple times for this application systame
-        /*if (_presenter.getHakuModel().getSisaisetHakuajat().size() > 0) {
+        if (_presenter.getHakuModel().getSisaisetHakuajat().size() > 0) {
             this.sisHakuajat.setValue(MULTIPLE_APPLICATION_SYSTEMS);
         } else {
             this.sisHakuajat.setValue(ONE_APPLICATION_SYSTEM);
-        }*/
+        }
     }
 
     @Override
@@ -314,7 +316,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             VerticalLayout vl = UiUtil.verticalLayout();
             vl.setSizeUndefined();
 
-            /*sisHakuajat = new OptionGroup();
+            sisHakuajat = new OptionGroup();
             sisHakuajat.addItem(ONE_APPLICATION_SYSTEM);
             sisHakuajat.setItemCaption(ONE_APPLICATION_SYSTEM, T(ONE_APPLICATION_SYSTEM));
             sisHakuajat.addItem(MULTIPLE_APPLICATION_SYSTEMS);
@@ -335,9 +337,9 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
                 }
             });
 
-            vl.addComponent(sisHakuajat);*/
+            vl.addComponent(sisHakuajat);
 
-            /*HorizontalLayout hl = UiUtil.horizontalLayout();
+            HorizontalLayout hl = UiUtil.horizontalLayout();
             hl.setSizeUndefined();
             vl.addComponent(hl);
 
@@ -347,7 +349,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             hl.addComponent(UiUtil.label(null, "-"));
 
             this.hakuLoppuu = UiUtil.dateField();
-            hl.addComponent(hakuLoppuu);*/
+            hl.addComponent(hakuLoppuu);
 
             this.sisaisetHakuajatTable = new Table();
             this.sisaisetHakuajatTable.setEditable(true);
@@ -506,13 +508,13 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             sisaisetHakuajatContainer.bindHakuajat();
 
             // Reset multiple times if only one application system is wanted
-            /*if (sisHakuajat.getValue().equals(ONE_APPLICATION_SYSTEM)) {
+            if (sisHakuajat.getValue().equals(ONE_APPLICATION_SYSTEM)) {
                 _presenter.getHakuModel().setSisaisetHakuajat(new ArrayList<HakuaikaViewModel>());
             } else {
                 // Othewise clear single application stystem data
             	_presenter.getHakuModel().setAlkamisPvm(null);
             	_presenter.getHakuModel().setPaattymisPvm(null);
-            }*/
+            }
             _complete = complete;
             if (_presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
                 _presenter.getHakuModel().setHakuLomakeUrl(null);

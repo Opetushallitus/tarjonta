@@ -15,6 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.view.haku;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.terminal.Sizeable;
@@ -23,42 +28,39 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
-import fi.vm.sade.generic.common.I18NHelper;
+
+import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  * The component and functioality for showing a haku object in haku search result list.
- *
+ * 
  * @author markus
  *
  */
 @Configurable(preConstruction = false)
 public class HakuResultRow  extends HorizontalLayout {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(HakuResultRow.class);
-
+    
     private I18NHelper i18n = new I18NHelper(this);
     private HakuViewModel haku;
     private CheckBox isSelected;
 
     @Autowired(required = true)
     private HakuPresenter hakuPresenter;
-
+    
     public HakuResultRow() {
         this.haku = new HakuViewModel();
     }
-
+    
     public HakuResultRow(HakuViewModel haku) {
         this.haku = haku;
     }
-
+    
     private MenuBar.Command menuCommand = new MenuBar.Command() {
         @Override
         public void menuSelected(MenuBar.MenuItem selectedItem) {
@@ -66,7 +68,7 @@ public class HakuResultRow  extends HorizontalLayout {
             menuItemClicked(selectedItem.getText());
 
         }
-
+        
     };
     OphRowMenuBar rowMenuBar;
 
@@ -78,14 +80,14 @@ public class HakuResultRow  extends HorizontalLayout {
         rowMenuBar.addMenuCommand(i18n.getMessage("poista"), menuCommand);
         return rowMenuBar;
     }
-
+    
     private void menuItemClicked(String selection) {
         if (selection.equals(i18n.getMessage("tarkastele"))) {
-            fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.VIEW));
+            fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.VIEW));    
         } else if (selection.equals(i18n.getMessage("muokkaa"))) {
-            fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.EDIT));
+            fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.EDIT));  
         } else if (selection.equals(i18n.getMessage("poista"))) {
-            fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.REMOVE));
+            fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.REMOVE));  
         }
     }
 
@@ -123,17 +125,17 @@ public class HakuResultRow  extends HorizontalLayout {
 
         return this;
     }
-
+    
     public CheckBox getIsSelected() {
         return isSelected;
     }
-
+    
     public class HakuRowMenuEvent extends Component.Event {
-
+        
         public static final String REMOVE = "remove";
         public static final String EDIT = "edit";
         public static final String VIEW = "view";
-
+        
         private HakuViewModel haku;
         private String type;
 
@@ -143,16 +145,16 @@ public class HakuResultRow  extends HorizontalLayout {
             this.haku = haku;
             this.type = type;
         }
-
+        
         public HakuRowMenuEvent(Component source) {
             super(source);
         }
-
-
+        
+        
         public HakuViewModel getHaku() {
             return haku;
         }
-
+        
 
         public String getType() {
             return type;

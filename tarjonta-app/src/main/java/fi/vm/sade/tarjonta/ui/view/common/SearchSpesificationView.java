@@ -20,15 +20,21 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
-import fi.vm.sade.generic.common.I18NHelper;
+import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
+import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
+import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -173,5 +179,5 @@ public class SearchSpesificationView extends HorizontalLayout {
             return _searchModel;
         }
     }
-
+    
 }

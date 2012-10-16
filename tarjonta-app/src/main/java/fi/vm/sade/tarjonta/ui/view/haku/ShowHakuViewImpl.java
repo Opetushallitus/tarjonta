@@ -31,8 +31,8 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
-import fi.vm.sade.generic.common.I18NHelper;
 
+import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
@@ -45,12 +45,12 @@ import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
  * Component for viewing Haku objects.
- *
+ * 
  * @author markus
  *
  */
 @Configurable(preConstruction = true)
-public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements ShowHakuView {
+public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements ShowHakuView {    
 
     private static final Logger LOG = LoggerFactory.getLogger(ShowHakuViewImpl.class);
 
@@ -61,7 +61,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         addNavigationButton("", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                backFired();
+                backFired();  
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 
@@ -104,7 +104,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         grid.addComponent(UiUtil.label(null, _i18n.getMessage("HaunTunniste") + ": "), 0, 5);
         grid.addComponent(UiUtil.label(null, _i18n.getMessage("Hakuaika") + ": "), 0, 6);
         grid.addComponent(UiUtil.label(null, _i18n.getMessage("Hakulomake") + ": "), 0, 7);
-
+        
 
         LOG.info("building content labels");
         grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHakutyyppi()) + " "), 1, 0);
@@ -114,7 +114,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHakutapa()) + " "), 1, 4);
         grid.addComponent(UiUtil.label(null, hakuPresenter.getHakuModel().getHaunTunniste() + " "), 1, 5);
         grid.addComponent(UiUtil.label(null, hakuPresenter.getHakuaika() + " "), 1, 6);
-        String hakulomakeStr = hakuPresenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()
+        String hakulomakeStr = hakuPresenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta() 
                                 ? _i18n.getMessage("KaytetaanJarjestelmanHakulomaketta")
                                         : hakuPresenter.getHakuModel().getHakuLomakeUrl();
         grid.addComponent(UiUtil.label(null, hakulomakeStr + " "), 1, 7);
@@ -174,7 +174,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         }
         return headerLayout;
     }
-
+    
     private HorizontalLayout buildBottomHeaderLayout(String title, String btnCaption) {
         HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         Label titleLabel = UiUtil.label(headerLayout, title);
@@ -194,27 +194,27 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         }
         return headerLayout;
     }
-
+    
     private Container createHakuaikaTreeDataSource(
             List<HakuaikaViewModel> sisaisetHautSource) {
         HierarchicalContainer hc = new HierarchicalContainer();
         return hc;
     }
-
+    
     private Container createHakukohteetTreeDataSource(
             List<HakukohdeViewModel> hakukohteet) {
         HierarchicalContainer hc = new HierarchicalContainer();
         return hc;
     }
-
+    
     private void backFired() {
         fireEvent(new BackEvent(this));
     }
-
+    
     private void editFired() {
         fireEvent(new EditEvent(this));
     }
-
+    
     /**
      * Fired when Back is pressed.
      */
@@ -222,10 +222,10 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
 
         public BackEvent(Component source) {
             super(source);
-
+            
         }
     }
-
+    
     /**
      * Fired when Edit is pressed.
      */
@@ -233,7 +233,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
 
         public EditEvent(Component source) {
             super(source);
-
+            
         }
     }
 
