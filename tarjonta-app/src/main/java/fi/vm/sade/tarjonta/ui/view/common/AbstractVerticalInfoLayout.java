@@ -31,19 +31,9 @@ public abstract class AbstractVerticalInfoLayout extends OphAbstractInfoLayout<V
 
     protected transient I18NHelper _i18n;
 
-    @Autowired(required = true)
-    protected TarjontaPresenter _presenter;
-
-    @Autowired(required = true)
-    protected HakuPresenter hakuPresenter;
-
     public AbstractVerticalInfoLayout(Class<VerticalLayout> layoutClass,
             String pageTitle, String message, PageNavigationDTO dto) {
         super(layoutClass, pageTitle, message, dto);
-    }
-
-    public TarjontaPresenter getPresenter() {
-        return _presenter;
     }
 
     protected String T(String key) {

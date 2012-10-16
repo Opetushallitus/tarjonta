@@ -35,6 +35,7 @@ import fi.vm.sade.generic.common.I18NHelper;
 
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.vaadin.Oph;
@@ -42,6 +43,7 @@ import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import fi.vm.sade.vaadin.util.UiUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Component for viewing Haku objects.
@@ -54,6 +56,9 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
 
     private static final Logger LOG = LoggerFactory.getLogger(ShowHakuViewImpl.class);
 
+    @Autowired(required=true)
+    private HakuPresenter hakuPresenter;
+    
     public ShowHakuViewImpl(String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
         _i18n = new I18NHelper(this);

@@ -22,12 +22,14 @@ import java.util.List;
  * @author mlyly
  */
 public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedotViewModel {
-    
-    
+
+
     private String koulutusohjelma;
     private String koulutuksenTyyppi;
 
     public KoulutusToisenAsteenPerustiedotViewModel() {
+        super();
+
         setKoulutusala("Tekniikan ja liikenteen ala");
         setTutkinto("Autoalan perustutkinto");
         setTutkintonimike("Automaalari");
@@ -64,6 +66,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     public void setKoulutuksenTyyppi(String koulutuksenTyyppi) {
         this.koulutuksenTyyppi = koulutuksenTyyppi;
     }
-    
-    
+
+
 }
