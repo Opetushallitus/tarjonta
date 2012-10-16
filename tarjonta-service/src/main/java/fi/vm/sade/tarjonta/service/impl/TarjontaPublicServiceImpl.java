@@ -65,11 +65,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     public TarjontaPublicServiceImpl() {
     	super();
     }
-    
-    @PostConstruct
-    public void initializeDB() {
-    	
-    }
 
     @Override
     public ListHakuVastausTyyppi listHaku(ListaaHakuTyyppi parameters) {
@@ -161,9 +156,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             haku.setNimi(hakuModel.getNimiFi());
             haku.setHakutapa(hakuModel.getHakutapaUri());
             haku.setOid(hakuModel.getOid());
-
-            KoulutusmoduuliToteutus toteutus = CollectionUtils.singleItem(hakukohdeModel.getKoulutusmoduuliToteutuses());
-            koulutus.setTarjoaja(toteutus.getTarjoaja());
+            if (hakukohdeModel.getKoulutusmoduuliToteutuses().size() ==1) {
+            	KoulutusmoduuliToteutus toteutus = CollectionUtils.singleItem(hakukohdeModel.getKoulutusmoduuliToteutuses());
+            	koulutus.setTarjoaja(toteutus.getTarjoaja());
+            }
 
             tulos.setHakukohde(hakukohde);
             tulos.setHaku(haku);

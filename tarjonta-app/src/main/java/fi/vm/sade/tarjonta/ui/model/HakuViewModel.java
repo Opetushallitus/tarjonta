@@ -199,10 +199,10 @@ public class HakuViewModel extends BaseUIViewModel {
     }
 
     /**
+     * Gets the earlieast start date for the Haku object.
      * @return the alkamisPvm
      */
     public Date getAlkamisPvm() {
-        //alkamisPvm = hakuDto.getHaunAlkamisPvm();
     	for (HakuaikaViewModel curHA :getSisaisetHakuajat()) {
     		if (curHA.getAlkamisPvm() == null) {
     			continue;
@@ -223,6 +223,7 @@ public class HakuViewModel extends BaseUIViewModel {
     }
 
     /**
+     * Gets the latest end date for the Haku object.
      * @return the paattymisPvm
      */
     public Date getPaattymisPvm() {

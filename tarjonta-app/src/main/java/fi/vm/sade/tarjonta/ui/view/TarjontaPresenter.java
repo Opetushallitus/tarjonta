@@ -28,6 +28,7 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,8 +58,11 @@ public class TarjontaPresenter {
     private TarjontaRootView _rootView;
 
     private ListHakukohdeView _hakukohdeListView;
+    
+    private ListKoulutusView koulutusListView;
 
-    @Autowired(required=true)
+
+	@Autowired(required=true)
     private TarjontaAdminService tarjontaAdminService;
 
     @Autowired(required=true)
@@ -207,4 +211,32 @@ public class TarjontaPresenter {
     public String getIdentifier() {
         return getModel().getIdentifier();
     }
+    
+
+    public ListKoulutusView getKoulutusListView() {
+		return koulutusListView;
+	}
+
+	public void setKoulutusListView(ListKoulutusView listKoulutusView) {
+		this.koulutusListView = listKoulutusView;
+	}
+
+	//TODO tähän kutsu koulutusten listaukseen kunhan palvelu on toteutettu
+	public Map<String, List<HakukohdeTulos>> getKoulutusDataSource() {
+		Map<String, List<HakukohdeTulos>> map = new HashMap<String, List<HakukohdeTulos>>();
+        getModel().setHakukohteet(tarjontaPublicService.haeHakukohteet(new HaeHakukohteetKyselyTyyppi()).getHakukohdeTulos());
+        for (HakukohdeTulos curHk : getModel().getHakukohteet()) {
+            String hkKey = curHk.getKoulutus().getTarjoaja();
+            if (!map.containsKey(hkKey)) {
+                LOG.info("Adding a new key to the map: " + hkKey);
+                List<HakukohdeTulos> hakukohteetM = new ArrayList<HakukohdeTulos>();
+                hakukohteetM.add(curHk);
+                map.put(hkKey, hakukohteetM);
+            } else {
+                map.get(hkKey).add(curHk);
+            }
+        }
+
+        return map;
+	}
 }
