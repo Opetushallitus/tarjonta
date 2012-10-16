@@ -38,11 +38,8 @@ public class KoodistoURIHelper {
     public static String KOODISTO_OPPILAITOSTYYPPI_URI;
     public static String KOODISTO_KOULUTUS_URI;
     public static String KOODISTO_KOULUTUSOHJELMA_URI;
-
-    // TODO where is this koodisto?
-    public static String KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI = "";
-    // TODO where is this koodisto?
-    public static String KOODISTO_HAKUKOHDENIMI_URI = "";
+    public static String KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI;
+    public static String KOODISTO_HAKUKOHDE_URI;
 
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
@@ -83,4 +80,20 @@ public class KoodistoURIHelper {
     public void setKoodistoOppilaitosTyyppiUri(String uri) {
         KOODISTO_OPPILAITOSTYYPPI_URI = uri;
     }
+
+    @Value("${koodisto-uris.hakukelpoisuusVaatimukset:NOT_SET}")
+    public void setKoodistoHakukelpoisuusVaatimuksetUri(String uri) {
+        KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI = uri;
+    }
+
+    @Value("${koodisto-uris.hakukohde:NOT_SET}")
+    public void setKoodistoHakukohdeUri(String uri) {
+        KOODISTO_HAKUKOHDE_URI = uri;
+    }
+
+    @Value("${koodisto-uris.hakukausi:NOT_SET}")
+    public void setKoodistoHakukausiUri(String uri) {
+        KOODISTO_HAKUKAUSI_URI = uri;
+    }
+
 }
