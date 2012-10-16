@@ -241,7 +241,7 @@
     
     <xs:complexType name="AjankohtaTyyppi">
         <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="kuvaus" type="xs:String">
+            <xs:element minOccurs="1" maxOccurs="1" name="kuvaus" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Ajankohdan kuvaus tai nimi</xs:documentation>
                 </xs:annotation>
