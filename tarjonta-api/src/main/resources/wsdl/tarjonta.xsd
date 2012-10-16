@@ -50,6 +50,31 @@
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1" />
+            
+            <xs:element name="hakukohteenHaku"
+                        type="tns:HakuTyyppi"
+                        maxOccurs="1"
+                        minOccurs="1" />
+            
+            <xs:element name="aloituspaikat" 
+                        type="xs:int"
+                        maxOccurs="1"
+                        minOccurs="1"/>
+            
+            <xs:element name="hakukelpoisuusVaatimukset"
+                        type="xs:string"
+                        maxOccurs="1"
+                        minOccurs="1"/>
+            
+            <xs:element name="lisatiedot"
+                        type="tns:MonikielinenTekstiTyyppi"
+                        minOccurs="0"
+                        maxOccurs="unbounded"/>
+            
+            <xs:element name="valintaPerusteidenKuvaukset"
+                        type="tns:MonikielinenTekstiTyyppi"
+                        minOccurs="0"
+                        maxOccurs="unbounded"/>
 
         </xs:sequence>
     </xs:complexType>
@@ -174,6 +199,61 @@
             <xs:element minOccurs="1" maxOccurs="1" name="nimi" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Haun nimi</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="MonikielinenTekstiTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="tekstinKielikoodi" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Tekstin kielikoodi</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="teksti" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Teksti</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="ValintakoeTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="ajankohdat" type="tns:AjankohtaTyyppi">
+                <xs:annotation>
+                    <xs:documentation>
+                        Valintakokeen ajankohdat
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="kuvaukset" type="tns:MonikielinenTekstiTyyppi">
+                <xs:annotation>
+                    <xs:documentation>
+                        Valintakokeen kuvaukset annetuilla kielillä
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        
+    </xs:complexType>
+    
+    <xs:complexType name="AjankohtaTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="kuvaus" type="xs:String">
+                <xs:annotation>
+                    <xs:documentation>Ajankohdan kuvaus tai nimi</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="alkamisAika" type="xs:dateTime">
+                <xs:annotation>
+                    <xs:documentation>Alkamisaika</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="paattymisAika" type="xs:dateTime">
+                <xs:annotation>
+                    <xs:documentation>Päättymisaika</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
