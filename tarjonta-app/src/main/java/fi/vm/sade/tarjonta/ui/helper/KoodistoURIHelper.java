@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
  *
@@ -14,52 +13,74 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-
 package fi.vm.sade.tarjonta.ui.helper;
 
-
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
+ * Common helper access for Koodisto URIs. These should be configured from Spring.
  *
  * @author Tuomas Katva
- * 
+ * @author mlyly
  */
-
-@Configurable
+@Component
+@Configurable(preConstruction = false)
 public class KoodistoURIHelper {
 
-    public static String KOODISTO_KIELI_URI = "KIELI";
-    
+    public static String KOODISTO_HAKUTYYPPI_URI;
+    public static String KOODISTO_HAKUTAPA_URI;
+    public static String KOODISTO_KIELI_URI;
+    public static String KOODISTO_HAKUKAUSI_URI;
+    public static String KOODISTO_HAUN_KOHDEJOUKKO_URI;
+    public static String KOODISTO_KOULUTUKSEN_ALKAMISKAUSI_URI;
+    public static String KOODISTO_OPPILAITOSTYYPPI_URI;
+    public static String KOODISTO_KOULUTUS_URI;
+    public static String KOODISTO_KOULUTUSOHJELMA_URI;
+
+    // TODO where is this koodisto?
     public static String KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI = "";
-    
+    // TODO where is this koodisto?
     public static String KOODISTO_HAKUKOHDENIMI_URI = "";
-    
-    public KoodistoURIHelper() {
-        
-    } 
-    
-    public KoodistoURIHelper(String kieliUri, String hakukelpoisuusVaatimusUri) {
-        setKieliUri(kieliUri);
-        setKoodistoHakukelpoisuusVaatimuksetUri(hakukelpoisuusVaatimusUri);
+
+    @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
+    public void setKoodistoHakutyyppiUri(String uri) {
+        KOODISTO_HAKUTYYPPI_URI = uri;
     }
-    
-    public void setKieliUri(String kieliUri) {
-        if (kieliUri != null && kieliUri.length() > 0) {
-            KOODISTO_KIELI_URI = kieliUri;
-        }
+
+    @Value("${koodisto-uris.kieli:NOT_SET}")
+    public void setKoodistoKieliUri(String uri) {
+        KOODISTO_KIELI_URI = uri;
     }
-    
-    public void setKoodistoHakukelpoisuusVaatimuksetUri(String koodistoHakukelpoisuusVaatimuksetUri) {
-        if (koodistoHakukelpoisuusVaatimuksetUri != null && koodistoHakukelpoisuusVaatimuksetUri.length() > 0) {
-        KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI = koodistoHakukelpoisuusVaatimuksetUri;
-        }
+
+    @Value("${koodisto-uris.hakutapa:NOT_SET}")
+    public void setKoodistoHakutapaUri(String uri) {
+        KOODISTO_HAKUTAPA_URI = uri;
     }
-    
-    public void setKoodistoHakukohdeNimiUri(String koodistoHakukohdeNimi) {
-        if (koodistoHakukohdeNimi != null && koodistoHakukohdeNimi.length() > 0) {
-            KOODISTO_HAKUKOHDENIMI_URI = koodistoHakukohdeNimi;
-        }
+
+    @Value("${koodisto-uris.haunKohdejoukko:NOT_SET}")
+    public void setKoodistoHaunKohdejoukkoUri(String uri) {
+        KOODISTO_HAUN_KOHDEJOUKKO_URI = uri;
     }
-    
+
+    @Value("${koodisto-uris.koulutuksenAlkamiskausi:NOT_SET}")
+    public void setKoodistoKoulutuksenAlkamiskausiUri(String uri) {
+        KOODISTO_KOULUTUKSEN_ALKAMISKAUSI_URI = uri;
+    }
+
+    @Value("${koodisto-uris.koulutusohjelma:NOT_SET}")
+    public void setKoodistoKoulutusohjelmaUri(String uri) {
+        KOODISTO_KOULUTUSOHJELMA_URI = uri;
+    }
+
+    @Value("${koodisto-uris.koulutus:NOT_SET}")
+    public void setKoodistoKoulutusUri(String uri) {
+        KOODISTO_KOULUTUS_URI = uri;
+    }
+
+    @Value("${koodisto-uris.oppilaitostyyppi:NOT_SET}")
+    public void setKoodistoOppilaitosTyyppiUri(String uri) {
+        KOODISTO_OPPILAITOSTYYPPI_URI = uri;
+    }
 }
