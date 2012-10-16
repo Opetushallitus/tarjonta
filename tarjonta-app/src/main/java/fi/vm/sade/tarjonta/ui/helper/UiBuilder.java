@@ -7,6 +7,7 @@ import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
@@ -33,6 +34,7 @@ import java.util.Locale;
 public class UiBuilder extends UiUtil {
 
     private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
+
 
     /**
      * Create new KoodistoComponent with ComboBox. Possible bind to a property.

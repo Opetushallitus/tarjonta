@@ -23,7 +23,7 @@ package fi.vm.sade.tarjonta.ui.enums;
 public interface CommonTranslationKeys {
 
     /*
-     * NOTE: keys starting with "/" are kind of global keys. I18NHelper will not append the prefix to those keys.
+     * NOTE: keys starting with "_" are kind of global keys. I18NHelper will not append the prefix to those keys.
      */
     public static String JATKA = "_jatka";
     public static String PERUUTA = "_peruuta";
@@ -33,6 +33,6 @@ public interface CommonTranslationKeys {
     public static String SEURAAVA = "_seuraava";
     public static String POISTA = "_poista";
     public static String KOPIOI = "_kopioi";
-    public static String KOPIOI_UUDEKSI = "_/kopioiUudeksi";
+    public static String KOPIOI_UUDEKSI = "_kopioiUudeksi";
 
 }

@@ -25,6 +25,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
@@ -56,8 +57,8 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
-        LOG.info("buildLayout()");
-
+        LOG.info("buildLayout(): hakutyyppi uri={}", KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI);
+        
         layout.removeAllComponents();
         addNavigationButtons(layout);
         addLayoutSplit();
@@ -222,4 +223,6 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         });
 
     }
+
+
 }

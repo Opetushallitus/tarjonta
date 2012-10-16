@@ -65,15 +65,15 @@ import org.vaadin.addon.formbinder.PropertyId;
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable
 public class PerustiedotViewImpl extends CustomComponent implements PerustiedotView{
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(PerustiedotViewImpl.class);
-    
+
     private TarjontaPresenter presenter;
-    
+
     //MainLayout element
     VerticalLayout mainLayout;
     GridLayout itemContainer;
-    
+
     //Fields
     @PropertyId("haku")
     KoodistoComponent hakukohteenNimiCombo;
@@ -88,31 +88,31 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
 //    LanguageTabSheet valintaPerusteidenKuvausTabs;
     LanguageTabSheet lisatiedotTabs;
     Label serverMessage = new Label("");
-    
+
     //Info buttons
     Button upRightInfoButton;
     Button downRightInfoButton;
-    
+
     private Form form;
     private BeanItem<HakukohdeViewModel> hakukohdeBean;
-    
+
     public PerustiedotViewImpl(TarjontaPresenter presenter) {
         super();
         buildMainLayout();
         this.presenter = presenter;
-        
+
         this.presenter.initHakukohdeForm(null,this);
-        
+
     }
-    
+
     public PerustiedotViewImpl(TarjontaPresenter presenter, HakukohdeViewModel model) {
         super();
         buildMainLayout();
         this.presenter = presenter;
-        
+
         this.presenter.initHakukohdeForm(model,this);
     }
-    
+
     @Override
     public void commitForm() {
         form.commit();
@@ -120,63 +120,63 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
             presenter.saveHakuKohde();
         }
     }
-    
+
     @Override
     public void initForm(HakukohdeViewModel model) {
         hakukohdeBean = new BeanItem<HakukohdeViewModel>(model);
         form = new ValidatingViewBoundForm(this);
         form.setItemDataSource(hakukohdeBean);
         form.getFooter().addComponent(serverMessage);
-        
+
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
         this.form.setValidationVisible(false);
         this.form.setValidationVisibleOnCommit(false);
     }
-    
+
     private void buildMainLayout() {
         mainLayout = new VerticalLayout();
         //Add top info button layout
-        mainLayout.addComponent(buildInfoButtonLayout());        
-        
+        mainLayout.addComponent(buildInfoButtonLayout());
+
         //Build main item container
         mainLayout.addComponent(buildGrid());
-        
+
         //Add bottom addtional info text areas and info button
         mainLayout.addComponent(buildBottomAreaLanguageTab());
-      
+
         setCompositionRoot(mainLayout);
     }
-    
+
     private GridLayout buildGrid() {
         itemContainer = new GridLayout(2, 1);
         itemContainer.setWidth(UiConstant.PCT100);
         itemContainer.setSpacing(true);
         itemContainer.setMargin(false, true, true, true);
-        
+
         addItemToGrid("PerustiedotView.hakukohteenNimi", buildHakukode());
         addItemToGrid("PerustiedotView.hakuValinta", buildHakuCombo());
         //TODO, lisää pistemäärä informaatio.
-        
+
         addItemToGrid("PerustiedotView.aloitusPaikat", buildAloitusPaikat());
         addItemToGrid("PerustiedotView.hakukelpoisuusVaatimukset", buildHakukelpoisuusVaatimukset());
 //        addItemToGrid("PerustiedotView.valintaperusteidenKuvaus", buildValintaPerusteet());
-        
+
         itemContainer.setColumnExpandRatio(0, 0f);
         itemContainer.setColumnExpandRatio(1, 1f);
-        
+
         return itemContainer;
     }
-    
+
     private void addItemToGrid(String captionKey, AbstractComponent component) {
-        
+
         if (itemContainer != null) {
             itemContainer.addComponent(UiUtil.label(null, T(captionKey)));
             itemContainer.addComponent(component);
             itemContainer.newLine();
         }
-        
+
     }
-    
+
     private KoodistoComponent buildHakukelpoisuusVaatimukset() {
         hakuKelpoisuusVaatimuksetCombo = WidgetFactory.create(KoodistoURIHelper.KOODISTO_KIELI_URI);
         ComboBox hakuKelpoisuusCombo = new ComboBox();
@@ -184,13 +184,13 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         hakuKelpoisuusVaatimuksetCombo.setField(hakuKelpoisuusCombo);
         return hakuKelpoisuusVaatimuksetCombo;
     }
-    
+
     private TextField buildAloitusPaikat() {
         aloitusPaikatText = UiUtil.textField(null);
-        
+
         return aloitusPaikatText;
     }
-    
+
     private String tryGetHaunNimi(List<HaunNimi> nimet ) {
         if (nimet != null) {
         String haunNimi = null;
@@ -204,79 +204,79 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
             return "";
         }
     }
-    
+
     @Override
     public void addItemsToHakuCombobox(List<HakuTyyppi> haut) {
         BeanItemContainer<HakuTyyppi> hakuContainer = new BeanItemContainer<HakuTyyppi>(HakuTyyppi.class);
         hakuContainer.addAll(haut);
         hakuCombo.setContainerDataSource(hakuContainer);
         for (HakuTyyppi haku:hakuContainer.getItemIds()) {
-            
+
             hakuCombo.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_EXPLICIT);
             String haunNimi = null;
             haunNimi = tryGetHaunNimi(haku.getHaunKielistetytNimet());
             hakuCombo.setItemCaption(haku, haunNimi);
-            
+
         }
-        
-        
+
+
         hakuCombo.setFilteringMode(Filtering.FILTERINGMODE_CONTAINS);
     }
-    
+
     private ComboBox buildHakuCombo() {
         hakuCombo = new ComboBox();
-        
-        
-        
+
+
+
         return hakuCombo;
     }
-    
+
     private KoodistoComponent buildHaku() {
-        
-        hakukohteenNimiCombo = WidgetFactory.create(KoodistoURIHelper.KOODISTO_HAKUKOHDENIMI_URI);
+
+        hakukohteenNimiCombo = WidgetFactory.create(KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI);
         ComboBox hknCombo = new ComboBox();
         hknCombo.setFilteringMode(Filtering.FILTERINGMODE_CONTAINS);
         hakukohteenNimiCombo.setField(hknCombo);
-        
+
         return hakukohteenNimiCombo;
     }
-    
+
 //    private LanguageTabSheet buildValintaPerusteet() {
-//        
+//
 //        valintaPerusteidenKuvausTabs = buildLanguageTab();
-//        
+//
 //        return valintaPerusteidenKuvausTabs;
 //    }
-    
-  
-    
+
+
+
     private HorizontalLayout buildHakukode() {
-        
+
         //TODO: Tunnistekoodit koodistosta, mistä tulee hakukohteen nimi
         HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         hakukohteenNimiCombo = buildHaku();
-        
+
         hl.addComponent(hakukohteenNimiCombo);
         tunnisteKoodiText = UiUtil.textField(hl, "",  T("tunnistekoodi"), true);
         tunnisteKoodiText.setEnabled(false);
-        
+
         hl.setComponentAlignment(hakukohteenNimiCombo, Alignment.TOP_RIGHT);
 //        hl.setExpandRatio(tunnisteKoodiText, 5l);
         hl.setComponentAlignment(tunnisteKoodiText, Alignment.TOP_LEFT);
         return hl;
     }
-    
+
     private HorizontalLayout buildInfoButtonLayout() {
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.TOP_RIGHT_LEFT);
         upRightInfoButton = UiUtil.buttonSmallInfo(layout);
         layout.setComponentAlignment(upRightInfoButton, Alignment.TOP_RIGHT);
         return layout;
     }
-    
+
     public List<KielikaannosViewModel> getLisatiedot() {
         return this.lisatiedotTabs.getKieliKaannokset();
     }
-    
+
     private VerticalLayout buildBottomAreaLanguageTab() {
         VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
         HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
@@ -291,17 +291,17 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         vl.addComponent(lisatiedotTabs);
         return vl;
     }
-    
+
     private LanguageTabSheet buildLanguageTab(List<KielikaannosViewModel> arvot) {
         return new LanguageTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, arvot);
     }
-    
+
     private LanguageTabSheet buildLanguageTab() {
         return new LanguageTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI);
     }
-     
-     
-     
+
+
+
      private String T(String key) {
          return I18N.getMessage(key);
      }
