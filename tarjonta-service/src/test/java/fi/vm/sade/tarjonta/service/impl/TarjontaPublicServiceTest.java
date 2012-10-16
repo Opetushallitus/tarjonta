@@ -100,6 +100,14 @@ public class TarjontaPublicServiceTest {
         haku.setNimiFi("yhteishaku 1");
         haku.setHakutapaUri(YHTEISHAKU);
         hakuDAO.insert(haku);
+        
+        // 0. koulutusmoduuli+toteutus lisätään testaamaan hakukohteiden haun oikeellisuutta.
+        koulutusmoduuli = fixtures.createTutkintoOhjelma();
+        koulutusmoduuliDAO.insert(koulutusmoduuli);
+        koulutusmoduuliToteutus = fixtures.createTutkintoOhjelmaToteutus();
+        koulutusmoduuliToteutus.setTarjoaja(ORGANISAATIO_A);
+        koulutusmoduuliToteutus.setKoulutusmoduuli(koulutusmoduuli);
+        koulutusmoduuliToteutusDAO.insert(koulutusmoduuliToteutus);
 
         // 1. hakukohde
         Hakukohde hakukohde = fixtures.createHakukohde();
@@ -159,11 +167,9 @@ public class TarjontaPublicServiceTest {
         // vastaus pitäisi olla:
         //
         // haku1, hakukohde1, koulutusmoduuli1, organisaatioA
-        // haku1, hakukohde1, koulutusmoduuli2, organisaatioB
-        // haku1, hakukohde2, koulutusmoduuli1, organisaatioA
         // haku1, hakukohde2, koulutusmoduuli2, organisaatioB
 
-        assertEquals(4, rivit.size());
+        assertEquals(2, rivit.size());
 
         rivi = rivit.get(0);
 
@@ -177,22 +183,6 @@ public class TarjontaPublicServiceTest {
         assertEquals(ORGANISAATIO_A, koulutus.getTarjoaja());
 
         rivi = rivit.get(1);
-        haku = rivi.getHaku();
-        hakukohde = rivi.getHakukohde();
-
-        assertEquals(YHTEISHAKU, haku.getHakutapa());
-        assertEquals("Peltikorjaajan perustutkinto", hakukohde.getNimi());
-        assertEquals(KoodistoContract.TarjontaTilat.JULKAISTU, hakukohde.getTila());
-
-        rivi = rivit.get(2);
-        haku = rivi.getHaku();
-        hakukohde = rivi.getHakukohde();
-
-        assertEquals(YHTEISHAKU, haku.getHakutapa());
-        assertEquals("Taidemaalarin erikoistutkinto", hakukohde.getNimi());
-        assertEquals(KoodistoContract.TarjontaTilat.VALMIS, hakukohde.getTila());
-
-        rivi = rivit.get(3);
         haku = rivi.getHaku();
         hakukohde = rivi.getHakukohde();
 

@@ -156,10 +156,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             haku.setNimi(hakuModel.getNimiFi());
             haku.setHakutapa(hakuModel.getHakutapaUri());
             haku.setOid(hakuModel.getOid());
-            if (hakukohdeModel.getKoulutusmoduuliToteutuses().size() ==1) {
-            	KoulutusmoduuliToteutus toteutus = CollectionUtils.singleItem(hakukohdeModel.getKoulutusmoduuliToteutuses());
-            	koulutus.setTarjoaja(toteutus.getTarjoaja());
-            }
+           
+            KoulutusmoduuliToteutus toteutus = CollectionUtils.singleItem(hakukohdeModel.getKoulutusmoduuliToteutuses());
+            koulutus.setTarjoaja(toteutus.getTarjoaja());
+            
 
             tulos.setHakukohde(hakukohde);
             tulos.setHaku(haku);
