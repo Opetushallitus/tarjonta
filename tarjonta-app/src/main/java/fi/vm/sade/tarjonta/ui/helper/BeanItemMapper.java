@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.ui.helper;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.AbstractLayout;
@@ -29,6 +28,7 @@ import com.vaadin.ui.DateField;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.StyleEnum;
@@ -131,7 +131,7 @@ public class BeanItemMapper<T, E> {
 
         return c;
     }
-    
+
      /**
      * Create a button.
      *

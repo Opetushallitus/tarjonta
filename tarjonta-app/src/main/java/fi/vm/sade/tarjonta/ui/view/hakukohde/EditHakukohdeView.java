@@ -18,45 +18,20 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotViewImpl;
 import fi.vm.sade.vaadin.constants.StyleEnum;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 /**
  *
- * @author Tuomas Katva
+ * @author mlyly
+ * Tuomas Katva
  */
-@Configurable
 public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
 
-    @Autowired
-    private TarjontaPresenter _presenter;
-    private TabSheet tabs;
-    boolean attached = false;
-    
     public EditHakukohdeView() {
         super(EditHakukohdeView.class);
-        setHeight(-1, UNITS_PIXELS);
-    }
-    
-     @Override
-    public void attach() {
-        if (attached) {
-            return;
-        }
-
-        attached = true;
-        super.attach();
-
-        tabs = new TabSheet();
-        tabs.setHeight(-1, UNITS_PIXELS);
-        addComponent(tabs);
         
-        tabs.addTab(new PerustiedotViewImpl(_presenter),T("PerustiedotView.tabNimi"));
-        createButtons();
-     }
+    }
     
     @Override
     protected void buildLayout(VerticalLayout t) {
@@ -74,7 +49,7 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
         addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                _presenter.saveHakuKohde();
+                throw new UnsupportedOperationException("Not supported yet.");
             }
         });
         

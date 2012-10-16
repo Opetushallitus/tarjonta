@@ -20,10 +20,6 @@ import com.vaadin.ui.VerticalLayout;
 //import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.vaadin.ui.OphAbstractNavigationLayout;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  *

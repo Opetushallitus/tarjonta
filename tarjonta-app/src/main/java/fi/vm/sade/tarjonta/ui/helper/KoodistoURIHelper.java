@@ -31,9 +31,7 @@ public class KoodistoURIHelper {
 
     public static String KOODISTO_KIELI_URI = "KIELI";
     
-    public static String KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI = "KOULUTUSRYHMÄ";
-    
-    public static String KOODISTO_HAKUKOHDENIMI_URI = "KOULUTUSRYHMÄ";
+    public static String KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI = "";
     
     public KoodistoURIHelper() {
         
@@ -53,12 +51,6 @@ public class KoodistoURIHelper {
     public void setKoodistoHakukelpoisuusVaatimuksetUri(String koodistoHakukelpoisuusVaatimuksetUri) {
         if (koodistoHakukelpoisuusVaatimuksetUri != null && koodistoHakukelpoisuusVaatimuksetUri.length() > 0) {
         KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI = koodistoHakukelpoisuusVaatimuksetUri;
-        }
-    }
-    
-    public void setKoodistoHakukohdeNimiUri(String hakukohdeNimiUri) {
-        if (hakukohdeNimiUri != null && hakukohdeNimiUri.length() > 0) {
-           KOODISTO_HAKUKOHDENIMI_URI = hakukohdeNimiUri;
         }
     }
     

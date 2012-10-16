@@ -81,7 +81,7 @@ public class TarjontaRootView extends Window {
         if (_presenter == null) {
             _presenter = new TarjontaPresenter();
         }
-        
+
         //
         // Create root layout
         //
@@ -97,18 +97,19 @@ public class TarjontaRootView extends Window {
         _breadcrumbsView = new BreadcrumbsView();
         _searchSpesificationView = new SearchSpesificationView();
         _searchResultsView = new SearchResultsView();
+
+        // Add listener for search events
         _searchSpesificationView.addListener(new Listener() {
             @Override
             public void componentEvent(Event event) {
                 if (event instanceof SearchSpesificationView.SearchEvent) {
-                    throw new UnsupportedOperationException("Not supported yet. GET THE SEARCH SPEC FROM THE EVENT!!!");
-                } /*else {
-                    throw new RuntimeException("illegal event from SearchSpesificationView");
-                }*/
+                    SearchSpesificationView.SearchEvent searchEvent = (SearchSpesificationView.SearchEvent) event;
+                    LOG.error("SEARCH NOT IMPLEMENTED: searchEvent={}", searchEvent);
+                }
             }
         });
-        
-        _presenter.setTarjontaWindow(this);
+
+        _presenter.setRootView(this);
 
         // Show application identifier if needed
         if (_presenter != null && _presenter.isShowIdentifier()) {

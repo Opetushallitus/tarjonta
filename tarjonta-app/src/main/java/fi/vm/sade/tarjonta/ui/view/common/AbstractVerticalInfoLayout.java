@@ -15,37 +15,33 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.ui.VerticalLayout;
-
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.helper.I18NHelper;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import fi.vm.sade.vaadin.ui.OphAbstractInfoLayout;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * 
- * @author markus
  *
+ * @author markus
  */
 public abstract class AbstractVerticalInfoLayout extends OphAbstractInfoLayout<VerticalLayout> {
 
-    protected I18NHelper _i18n;
+    protected transient I18NHelper _i18n;
+
     @Autowired(required = true)
     protected TarjontaPresenter _presenter;
+
     @Autowired(required = true)
     protected HakuPresenter hakuPresenter;
-    
+
     public AbstractVerticalInfoLayout(Class<VerticalLayout> layoutClass,
             String pageTitle, String message, PageNavigationDTO dto) {
         super(layoutClass, pageTitle, message, dto);
     }
-    
-    /**
-     * @return the _presenter
-     */
+
     public TarjontaPresenter getPresenter() {
         return _presenter;
     }
@@ -54,10 +50,14 @@ public abstract class AbstractVerticalInfoLayout extends OphAbstractInfoLayout<V
         return getI18n().getMessage(key);
     }
 
-    /**
-     * @return the I18N instance.
-     */
+    protected String T(String key, Object... args) {
+        return getI18n().getMessage(key, args);
+    }
+
     protected I18NHelper getI18n() {
+        if (_i18n == null) {
+            _i18n = new I18NHelper(this);
+        }
         return _i18n;
     }
 

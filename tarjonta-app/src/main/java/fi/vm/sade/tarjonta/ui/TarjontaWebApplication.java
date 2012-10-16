@@ -22,6 +22,11 @@ import com.vaadin.ui.Window;
 import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
+import fi.vm.sade.vaadin.dto.ButtonDTO;
+import fi.vm.sade.vaadin.dto.PageNavigationDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -34,6 +39,8 @@ import org.springframework.beans.factory.annotation.Value;
  */
 @Configurable(preConstruction = true)
 public class TarjontaWebApplication extends AbstractSadeApplication {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TarjontaWebApplication.class);
 
     private Window window;
     @Value("${tarjonta-app.dev.redirect:}")
@@ -65,6 +72,15 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
             }
         });
         window.addComponent(hakuButton);
+
+        Button xxxButton = new Button("Show Koulutus View", new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                toKoulutusView();
+            }
+        });
+        window.addComponent(xxxButton);
+
     }
 
     public void toTarjonta() {
@@ -78,7 +94,35 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         window = new HakuRootView(this);
         setMainWindow(window);
     }
-    
+
+    public void toKoulutusView() {
+        this.removeWindow(window);
+
+        window = new Window();
+        setMainWindow(window);
+
+        ButtonDTO prev = new ButtonDTO("< EDELLINEN (XXX)", new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                LOG.info("PREV!");
+            }
+        });
+        ButtonDTO next = new ButtonDTO("(XXX) SEURAAVA >", new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                LOG.info("NEXT!");
+            }
+        });
+
+        PageNavigationDTO pageNavigationDTO = new PageNavigationDTO(prev, next, "42/43");
+        ShowKoulutusView view  = new ShowKoulutusView("PAGE TITLE", pageNavigationDTO);
+
+        window.addComponent(view);
+    }
+
+
     /*
      * Development configurations, no real use in production environment.
      */
@@ -89,7 +133,7 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         }
 
         if (developmentRedirect != null && developmentRedirect.length() > 0) {
-            //This code block is only for making UI development little bit faster  
+            //This code block is only for making UI development little bit faster
             //Add the property to tarjonta-app.properties:
             //
             //tarjonta-app.dev.redirect=KOULUTUS
@@ -102,6 +146,6 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
                 toTarjonta();
             }
         }
-    
+
     }
 }
