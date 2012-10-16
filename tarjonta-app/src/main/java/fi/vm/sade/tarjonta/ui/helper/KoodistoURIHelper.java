@@ -33,6 +33,8 @@ public class KoodistoURIHelper {
     
     public static String KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI = "";
     
+    public static String KOODISTO_HAKUKOHDENIMI_URI = "";
+    
     public KoodistoURIHelper() {
         
     } 
@@ -51,6 +53,12 @@ public class KoodistoURIHelper {
     public void setKoodistoHakukelpoisuusVaatimuksetUri(String koodistoHakukelpoisuusVaatimuksetUri) {
         if (koodistoHakukelpoisuusVaatimuksetUri != null && koodistoHakukelpoisuusVaatimuksetUri.length() > 0) {
         KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI = koodistoHakukelpoisuusVaatimuksetUri;
+        }
+    }
+    
+    public void setKoodistoHakukohdeNimiUri(String koodistoHakukohdeNimi) {
+        if (koodistoHakukohdeNimi != null && koodistoHakukohdeNimi.length() > 0) {
+            KOODISTO_HAKUKOHDENIMI_URI = koodistoHakukohdeNimi;
         }
     }
     

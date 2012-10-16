@@ -18,6 +18,8 @@ package fi.vm.sade.tarjonta.ui.view;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.tarjonta.ui.view.haku.EditHakuViewImpl;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
@@ -61,7 +63,7 @@ public class SearchResultsView extends VerticalLayout {
         tabs.addTab(new EditKoulutusPerustiedotToinenAsteView(), T("koulutukset"));
         tabs.addTab(new ListHakukohdeViewImpl(), T("hakuryhmat"));
         //For testing
-        tabs.addTab(new PerustiedotView(),"Lisää hakukohde");
+        tabs.addTab(new EditHakukohdeView(),"Lisää hakukohde");
     }
 
     private String T(String key) {

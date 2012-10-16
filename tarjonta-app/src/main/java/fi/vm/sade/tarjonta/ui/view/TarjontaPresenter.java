@@ -23,11 +23,15 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeKoosteTyyppi;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.ArrayList;
@@ -67,6 +71,11 @@ public class TarjontaPresenter {
 
     @Autowired(required=true)
     private TarjontaPublicService tarjontaPublicService;
+    
+    private List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
+    private List<HakukohdeViewModel> selectedhakukohteet = new ArrayList<HakukohdeViewModel>();
+    private PerustiedotView hakuKohdePerustiedotView;
+    private HakukohdeViewModel hakuKohde;
 
     @PostConstruct
     public void initialize() {
@@ -76,6 +85,32 @@ public class TarjontaPresenter {
         if (getModel().getHakukohteet().isEmpty()) {
             createInitialTemporaryDemoDataDForTestingPurposes();
         }
+    }
+    
+     public void saveHakuKohde() {
+        saveHakuKohdePerustiedot();
+    }
+    
+    public void saveHakuKohdePerustiedot() {
+       LOG.info("Form saved");
+       hakuKohde.getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
+       for (KielikaannosViewModel kieli : hakuKohde.getLisatiedot()) {
+           LOG.info("KIELI : " + kieli.getKielikoodi() + " TEKSTI : " + kieli.getNimi());
+       }
+       
+    }
+    
+    public void initHakukohdeForm(HakukohdeViewModel model, PerustiedotView hakuKohdePerustiedotView) {
+        this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
+        if (model == null) {
+            hakuKohde = new HakukohdeViewModel();
+        } else {
+            hakuKohde = model;
+        }
+        ListHakuVastausTyyppi haut = tarjontaPublicService.listHaku(new ListaaHakuTyyppi());
+       
+        this.hakuKohdePerustiedotView.initForm(hakuKohde);
+        this.hakuKohdePerustiedotView.addItemsToHakuCombobox(haut.getResponse());
     }
 
     private void createInitialTemporaryDemoDataDForTestingPurposes() {
