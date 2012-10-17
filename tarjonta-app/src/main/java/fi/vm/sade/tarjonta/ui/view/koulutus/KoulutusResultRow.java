@@ -30,7 +30,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -48,7 +48,7 @@ public class KoulutusResultRow  extends HorizontalLayout {
     /**
      * The koulutus to display on the row.
      */
-    private HakukohdeTulos hakukohde;
+    private KoulutusTulos koulutus;
 
     /**
      * Checkbox to indicate if this row is selected.
@@ -62,11 +62,11 @@ public class KoulutusResultRow  extends HorizontalLayout {
     private TarjontaPresenter tarjontaPresenter;
 
     public KoulutusResultRow() {
-        this.hakukohde = new HakukohdeTulos();
+        this.koulutus = new KoulutusTulos();
     }
 
-    public KoulutusResultRow(HakukohdeTulos hakukohde) {
-        this.hakukohde = hakukohde;
+    public KoulutusResultRow(KoulutusTulos koulutus) {
+        this.koulutus = koulutus;
     }
 
     /**
@@ -99,11 +99,11 @@ public class KoulutusResultRow  extends HorizontalLayout {
      */
     private void menuItemClicked(String selection) {
         if (selection.equals(i18n.getMessage("tarkastele"))) {
-            fireEvent(new KoulutusRowMenuEvent(this, hakukohde, KoulutusRowMenuEvent.VIEW));
+            fireEvent(new KoulutusRowMenuEvent(this, koulutus, KoulutusRowMenuEvent.VIEW));
         } else if (selection.equals(i18n.getMessage("muokkaa"))) {
-            fireEvent(new KoulutusRowMenuEvent(this, hakukohde, KoulutusRowMenuEvent.EDIT));
+            fireEvent(new KoulutusRowMenuEvent(this, koulutus, KoulutusRowMenuEvent.EDIT));
         } else if (selection.equals(i18n.getMessage("poista"))) {
-            fireEvent(new KoulutusRowMenuEvent(this, hakukohde, KoulutusRowMenuEvent.REMOVE));
+            fireEvent(new KoulutusRowMenuEvent(this, koulutus, KoulutusRowMenuEvent.REMOVE));
         }
     }
 
@@ -118,11 +118,11 @@ public class KoulutusResultRow  extends HorizontalLayout {
         isSelected.addListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(ValueChangeEvent event) {
-                if (hakukohde != null
+                if (koulutus != null
                         && isSelected.booleanValue()) {
-                    tarjontaPresenter.getSelectedhakukohteet().add(hakukohde);
-                } else if (hakukohde != null) {
-                    tarjontaPresenter.getSelectedhakukohteet().remove(hakukohde);
+                    tarjontaPresenter.getSelectedKoulutukset().add(koulutus);
+                } else if (koulutus != null) {
+                    tarjontaPresenter.getSelectedKoulutukset().remove(koulutus);
                 }
             }
         });
@@ -161,13 +161,13 @@ public class KoulutusResultRow  extends HorizontalLayout {
         public static final String EDIT = "edit";
         public static final String VIEW = "view";
 
-        private HakukohdeTulos hakukohde;
+        private KoulutusTulos koulutus;
         private String type;
 
 
-        public KoulutusRowMenuEvent(Component source, HakukohdeTulos hakukohde, String type) {
+        public KoulutusRowMenuEvent(Component source, KoulutusTulos koulutus, String type) {
             super(source);
-            this.hakukohde = hakukohde;
+            this.koulutus = koulutus;
             this.type = type;
         }
 
@@ -176,8 +176,8 @@ public class KoulutusResultRow  extends HorizontalLayout {
         }
 
 
-        public HakukohdeTulos getHaku() {
-            return hakukohde;
+        public KoulutusTulos getKoulutus() {
+            return koulutus;
         }
 
 

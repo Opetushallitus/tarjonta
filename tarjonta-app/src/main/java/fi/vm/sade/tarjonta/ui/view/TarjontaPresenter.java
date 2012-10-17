@@ -23,6 +23,8 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
@@ -185,6 +187,28 @@ public class TarjontaPresenter {
         getHakukohdeListView().reload();
     }
     
+    /**
+     * Gets the currently selected koulutus objects.
+     *
+     * @return
+     */
+    public List<KoulutusTulos> getSelectedKoulutukset() {
+        return getModel().getSelectedKoulutukset();
+    }
+
+    /**
+     * Removes the selected koulutus objects from the database.
+     */
+    public void removeSelectedKoulutukset() {
+        for (KoulutusTulos curHakukohde : getModel().getSelectedKoulutukset()) {
+            //this.tarjontaService.poistaHakukohde(curHakukohde);
+        }
+        getModel().getSelectedKoulutukset().clear();
+
+        // Force UI update.
+        getKoulutusListView().reload();
+    }
+    
     public void saveKoulutusLuonnoksenaModel() {
         LOG.info("Koulutus tallennettu luonnoksena");
         LOG.info(getModel().getKoulutusPerustiedotModel().toString());
@@ -260,26 +284,22 @@ public class TarjontaPresenter {
     }
 
     //TODO tähän kutsu koulutusten listaukseen kunhan palvelu on toteutettu
-    public Map<String, List<HakukohdeTulos>> getKoulutusDataSource() {
-        Map<String, List<HakukohdeTulos>> map = new HashMap<String, List<HakukohdeTulos>>();
-        getModel().setHakukohteet(tarjontaPublicService.haeHakukohteet(new HaeHakukohteetKyselyTyyppi()).getHakukohdeTulos());
-        for (HakukohdeTulos curHk : getModel().getHakukohteet()) {
-            String hkKey = curHk.getKoulutus().getTarjoaja();
-            if (!map.containsKey(hkKey)) {
-                LOG.info("Adding a new key to the map: " + hkKey);
-                List<HakukohdeTulos> hakukohteetM = new ArrayList<HakukohdeTulos>();
-                hakukohteetM.add(curHk);
-                map.put(hkKey, hakukohteetM);
+    public Map<String, List<KoulutusTulos>> getKoulutusDataSource() {
+        Map<String, List<KoulutusTulos>> map = new HashMap<String, List<KoulutusTulos>>();
+        getModel().setKoulutukset(tarjontaPublicService.haeKoulutukset(new HaeKoulutuksetKyselyTyyppi()).getKoulutusTulos());
+        for (KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
+            String koulutusKey = curKoulutus.getKoulutus().getTarjoaja();
+            if (!map.containsKey(koulutusKey)) {
+                LOG.info("Adding a new key to the map: " + koulutusKey);
+                List<KoulutusTulos> koulutuksetM = new ArrayList<KoulutusTulos>();
+                koulutuksetM.add(curKoulutus);
+                map.put(koulutusKey, koulutuksetM);
             } else {
-                map.get(hkKey).add(curHk);
+                map.get(koulutusKey).add(curKoulutus);
             }
         }
         
         return map;
     }
 
-	public void removeSelectedKoulutukset() {
-		// TODO Auto-generated method stub
-		
-	}
 }

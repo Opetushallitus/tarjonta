@@ -43,6 +43,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl;
@@ -157,14 +158,14 @@ public class ListKoulutusView extends VerticalLayout {
      * @param map the data map provided by the presenter.
      * @return the hierarchical container for Koulutus listing.
      */
-    private Container createDataSource(Map<String, List<HakukohdeTulos>> map) {
-        Set<Map.Entry<String, List<HakukohdeTulos>>> set = map.entrySet();
+    private Container createDataSource(Map<String, List<KoulutusTulos>> map) {
+        Set<Map.Entry<String, List<KoulutusTulos>>> set = map.entrySet();
 
         HierarchicalContainer hc = new HierarchicalContainer();
         KoulutusResultRow rowStyleDef = new KoulutusResultRow();
         hc.addContainerProperty(COLUMN_A, KoulutusResultRow.class, rowStyleDef.format("", false));
 
-        for (Map.Entry<String, List<HakukohdeTulos>> e : set) {
+        for (Map.Entry<String, List<KoulutusTulos>> e : set) {
             LOG.info("getTreeDataSource()" + e.getKey());
             KoulutusResultRow rowStyle = new KoulutusResultRow();
 
@@ -172,12 +173,12 @@ public class ListKoulutusView extends VerticalLayout {
 
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey(), false));
 
-            for (HakukohdeTulos curHakukohde : e.getValue()) {
-                KoulutusResultRow rowStyleInner = new KoulutusResultRow(curHakukohde);
-                hc.addItem(curHakukohde);
-                hc.setParent(curHakukohde, rootItem);
-                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(curHakukohde.getHakukohde().getNimi(), true));
-                hc.setChildrenAllowed(curHakukohde, false);
+            for (KoulutusTulos curKoulutus : e.getValue()) {
+                KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus);
+                hc.addItem(curKoulutus);
+                hc.setParent(curKoulutus, rootItem);
+                hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(curKoulutus.getKoulutus().getNimi(), true));
+                hc.setChildrenAllowed(curKoulutus, false);
 
                 rowStyleInner.addListener(new Listener() {
 

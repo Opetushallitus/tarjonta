@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 
 /**
  *
@@ -42,6 +43,9 @@ public class TarjontaModel extends BaseUIViewModel {
 
     private List<HakukohdeTulos> _hakukohteet;
     private List<HakukohdeTulos> _selectedhakukohteet;
+    
+    private List<KoulutusTulos> _koulutukset;
+    private List<KoulutusTulos> _selectedKoulutukset;
 
     public String getIdentifier() {
         return _identifier;
@@ -87,5 +91,35 @@ public class TarjontaModel extends BaseUIViewModel {
         }
         return _koulutusPerustiedotModel;
     }
+
+    /**
+     * Gets the currently selected (in ListKoulutusView) koulutus objects.
+     * @return the selected koulutukset
+     */
+	public List<KoulutusTulos> getSelectedKoulutukset() {
+		if (_selectedKoulutukset == null) {
+			_selectedKoulutukset = new ArrayList<KoulutusTulos>();
+		}
+		return _selectedKoulutukset;
+	}
+
+	/**
+	 * Sets the koulutus objects that is the koulutus list used in ListKoulutusView.
+	 * @param koulutusTulos the koulutus objects to set
+	 */
+	public void setKoulutukset(List<KoulutusTulos> koulutusTulos) {
+		_koulutukset = koulutusTulos;
+	}
+
+	/**
+	 * Gets the koulutus objects that is the koulutus list used in ListKoulutusView.
+	 * @return
+	 */
+	public List<KoulutusTulos> getKoulutukset() {
+		if (_koulutukset == null) {
+			_koulutukset = new ArrayList<KoulutusTulos>();
+		}
+		return _koulutukset;
+	}
 
 }
