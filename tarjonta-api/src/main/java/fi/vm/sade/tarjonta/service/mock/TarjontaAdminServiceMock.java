@@ -4,6 +4,7 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +17,23 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
     public TarjontaAdminServiceMock() {
         initDefValues();
     }
+
+    @Override
+    public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public HakukohdeTyyppi paivitaHakukohde(HakukohdeTyyppi hakukohdePaivitys) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    
 
     @Override
     public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {

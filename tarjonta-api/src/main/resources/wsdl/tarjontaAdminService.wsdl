@@ -44,6 +44,30 @@
     <wsdl:message name="lisaaKoulutusVastaus">
         <wsdl:part element="ns1:lisaaKoulutusVastaus" name="parameters"/>
     </wsdl:message>
+    
+    <wsdl:message name="lisaaHakukohde">
+        <wsdl:part element="ns1:lisaaHakukohde" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="lisaaHakukohdeVastaus">
+        <wsdl:part element="ns1:lisaaHakukohdeVastaus" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="paivitaHakukohde">
+        <wsdl:part element="ns1:paivitaHakukohde" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="paivitaHakukohdeVastaus">
+        <wsdl:part element="ns1:paivitaHakukohdeVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="poistaHakukohde">
+        <wsdl:part element="ns1:poistaHakukohde" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="poistaHakukohdeVastaus">
+        <wsdl:part element="ns1:poistaHakukohdeVastaus" name="parameters"/>
+    </wsdl:message>
 
     <wsdl:message name="initSample">
         <!-- no args -->
@@ -54,6 +78,36 @@
         <wsdl:documentation>
             Palvelu hakujen yllapitoon.
         </wsdl:documentation>
+        
+        <wsdl:operation name="lisaaHakukohde">
+            <wsdl:documentation>
+                Lisaa hakukohde
+            </wsdl:documentation>
+             <wsdl:input message="tns:lisaaHakukohde" name="lisaaHakukohde">
+            </wsdl:input>
+            <wsdl:output message="tns:lisaaHakukohdeVastaus" name="lisaaHakukohdeVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="paivitaHakukohde">
+            <wsdl:documentation>
+                Paivita hakukohde
+            </wsdl:documentation>
+             <wsdl:input message="tns:paivitaHakukohde" name="paivitaHakukohde">
+            </wsdl:input>
+            <wsdl:output message="tns:paivitaHakukohdeVastaus" name="paivitaHakukohdeVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="poistaHakukohde">
+            <wsdl:documentation>
+                Poista hakukohde
+            </wsdl:documentation>
+             <wsdl:input message="tns:poistaHakukohde" name="poistaHakukohde">
+            </wsdl:input>
+            <wsdl:output message="tns:poistaHakukohdeVastaus" name="poistaHakukohdeVastaus">
+            </wsdl:output>
+        </wsdl:operation>
 
         <wsdl:operation name="lisaaHaku">
             <wsdl:documentation>
@@ -112,6 +166,36 @@
 
         <wsdl:operation name="lisaaHaku">
             <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/lisaaHaku"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="lisaaHakukohde">
+            <soap:operation soapAction="" type="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+         <wsdl:operation name="paivitaHakukohde">
+            <soap:operation soapAction="" type="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="poistaHakukohde">
+            <soap:operation soapAction="" type="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>

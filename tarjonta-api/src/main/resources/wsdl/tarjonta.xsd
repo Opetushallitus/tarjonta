@@ -51,8 +51,13 @@
                         maxOccurs="1"
                         minOccurs="1" />
 
-            <xs:element name="hakukohteenHaku"
-                        type="tns:HakuTyyppi"
+            <xs:element name="hakukohteenHakuOid"
+                        type="xs:string"
+                        maxOccurs="1"
+                        minOccurs="1" />
+            
+            <xs:element name="hakukohteenTila"
+                        type="xs:string"
                         maxOccurs="1"
                         minOccurs="1" />
 
