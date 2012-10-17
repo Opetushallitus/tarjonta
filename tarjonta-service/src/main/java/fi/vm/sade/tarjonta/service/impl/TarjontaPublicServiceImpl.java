@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.service.impl;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
@@ -28,14 +29,22 @@ import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
 import fi.vm.sade.tarjonta.service.types.tarjonta.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebResult;
+import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.ParameterStyle;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -58,6 +67,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
+    
+    @Autowired
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     @Autowired
     private ConversionService conversionService;
@@ -134,7 +146,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public HaeHakukohteetVastausTyyppi haeHakukohteet(HaeHakukohteetKyselyTyyppi kysely) {
-
         List<Hakukohde> hakukohteet = hakukohdeDAO.haeHakukohteetJaKoulutukset(kysely);
         HaeHakukohteetVastausTyyppi vastaus = new HaeHakukohteetVastausTyyppi();
 
@@ -171,38 +182,31 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         return vastaus;
 
     }
+    
 
-    private void mergeHaku(Haku source, Haku target) {
-        target.setNimi(source.getNimi());
-        target.setOid(source.getOid());
-        target.setHakukausiUri(source.getHakukausiUri());
-        target.setHakukausiVuosi(source.getHakukausiVuosi());
-        target.setHakulomakeUrl(source.getHakulomakeUrl());
-        target.setHakutapaUri(source.getHakutapaUri());
-        target.setHakutyyppiUri(source.getHakutyyppiUri());
-        target.setKohdejoukkoUri(source.getKohdejoukkoUri());
-        target.setKoulutuksenAlkamiskausiUri(source.getKoulutuksenAlkamiskausiUri());
-        target.setKoulutuksenAlkamisVuosi(source.getKoulutuksenAlkamisVuosi());
-        target.setSijoittelu(source.isSijoittelu());
-        target.setTila(source.getTila());
-        target.setHaunTunniste(source.getHaunTunniste());
-        mergeSisaisetHaunAlkamisAjat(source, target);
-    }
+	@Override
+	public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
+		//Creating the answer type
+		HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
+		
+		//Retrieving all komotos this will be extended search only for komotos matching the criteria
+		List<KoulutusmoduuliToteutus> komotos = this.koulutusmoduuliToteutusDAO.findAll();
+		//Populating the answer with required data
+		for (KoulutusmoduuliToteutus komoto : komotos) {
+			KoulutusTulos tulos = new KoulutusTulos();
+			
+			KoulutusKoosteTyyppi koulutusKooste = new KoulutusKoosteTyyppi();
+			koulutusKooste.setTarjoaja(komoto.getTarjoaja());
+			koulutusKooste.setNimi(komoto.getNimi());
+			koulutusKooste.setTila(komoto.getTila());
+			koulutusKooste.setKoulutusmoduuli(komoto.getKoulutusmoduuli().getOid());
+			koulutusKooste.setKoulutusmoduuliToteutus(komoto.getOid());	
+			tulos.setKoulutus(koulutusKooste);
+			vastaus.getKoulutusTulos().add(tulos);
+		}
+		return vastaus;
+	}
 
-    private void mergeSisaisetHaunAlkamisAjat(Haku source, Haku target) {
-        List<Hakuaika> hakuajat = new ArrayList<Hakuaika>();
-        for (Hakuaika curAika : target.getHakuaikas()) {
-            hakuajat.add(curAika);
-        }
-
-        for (Hakuaika curHak : hakuajat) {
-            target.removeHakuaika(curHak);
-        }
-
-        for (Hakuaika curHakuaika : source.getHakuaikas()) {
-            target.addHakuaika(curHakuaika);
-        }
-    }
 
 }
 

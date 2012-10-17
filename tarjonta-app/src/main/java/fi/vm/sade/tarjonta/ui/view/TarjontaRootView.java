@@ -140,10 +140,16 @@ public class TarjontaRootView extends Window {
         _presenter.showMainDefaultView();
     }
 
+    /**
+     * Opening the koulutus edit form.
+     * @param hakuViewModel
+     */
     protected void showKoulutusEdit(HakuViewModel hakuViewModel) {
     	LOG.info("showMainDefaultView()");
-
+    	//Clearing the layout from previos content
     	getAppRootLayout().removeAllComponents();
+    	
+    	//Adding the form
         VerticalLayout vl = UiUtil.verticalLayout();
         vl.setHeight(-1, VerticalLayout.UNITS_PIXELS);
         vl.addComponent(getBreadcrumbsView());

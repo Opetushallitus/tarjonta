@@ -43,6 +43,9 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusKoosteTyyppi;
@@ -189,6 +192,39 @@ public class TarjontaPublicServiceTest {
         assertEquals(YHTEISHAKU, haku.getHakutapa());
         assertEquals("Taidemaalarin erikoistutkinto", hakukohde.getNimi());
         assertEquals(KoodistoContract.TarjontaTilat.VALMIS, hakukohde.getTila());
+
+    }
+    
+    @Test
+    public void testEtsiKoulutukset() {
+
+        KoulutusTulos rivi;
+        KoulutusKoosteTyyppi koulutus;
+
+        HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
+        HaeKoulutuksetVastausTyyppi vastaus = service.haeKoulutukset(kysely);
+
+        assertNotNull(vastaus);
+
+        List<KoulutusTulos> rivit = vastaus.getKoulutusTulos();
+
+        // vastauksessa pitäisi olla kolme riviä, yksi kullekin koulutukselle
+
+        assertEquals(3, rivit.size());
+
+        rivi = rivit.get(0);
+
+        koulutus = rivi.getKoulutus();
+
+        assertEquals(ORGANISAATIO_A, koulutus.getTarjoaja());
+
+        rivi = rivit.get(1);
+        koulutus = rivi.getKoulutus();
+        assertEquals(ORGANISAATIO_A, koulutus.getTarjoaja());
+        
+        rivi = rivit.get(2);
+        koulutus = rivi.getKoulutus();
+        assertEquals(ORGANISAATIO_B, koulutus.getTarjoaja());
 
     }
 

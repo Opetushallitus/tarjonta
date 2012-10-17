@@ -17,6 +17,9 @@
 
     <xs:element name="haeHakukohteetKysely" type="tns:HaeHakukohteetKyselyTyyppi" />
     <xs:element name="haeHakukohteetVastaus" type="tns:HaeHakukohteetVastausTyyppi" />
+    
+    <xs:element name="haeKoulutuksetKysely" type="tns:HaeKoulutuksetKyselyTyyppi" />
+    <xs:element name="haeKoulutuksetVastaus" type="tns:HaeKoulutuksetVastausTyyppi" />
 
 
 
@@ -75,6 +78,33 @@
                     <xs:sequence>
                         <xs:element name="Hakukohde" type="tarjonta:HakukohdeKoosteTyyppi"/>
                         <xs:element name="Haku" type="tarjonta:HakuKoosteTyyppi"/>
+                        <xs:element name="Koulutus" type="tarjonta:KoulutusKoosteTyyppi"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+        <xs:complexType name="HaeKoulutuksetKyselyTyyppi">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Haku objekti jolla valitetaan haku kriteerit.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HaeKoulutuksetVastausTyyppi">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="KoulutusTulos"
+                        minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
                         <xs:element name="Koulutus" type="tarjonta:KoulutusKoosteTyyppi"/>
                     </xs:sequence>
                 </xs:complexType>

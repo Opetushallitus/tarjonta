@@ -8,6 +8,8 @@ import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
@@ -86,6 +88,14 @@ public class TarjontaPublicServiceMock implements TarjontaPublicService {
         // TODO add something
 
         return result;
+    }
+    
+    @Override
+    public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
+        LOG.info("haeKoulutukset(): kysely=" + kysely);
+
+        //TODO implement if necessary
+        return null;
     }
 
 }
