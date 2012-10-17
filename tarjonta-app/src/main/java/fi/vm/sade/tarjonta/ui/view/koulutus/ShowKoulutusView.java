@@ -75,7 +75,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     private void buildKoulutuksenPerustiedot(VerticalLayout layout) {
         layout.addComponent(buildHeaderLayout(T("perustiedot"), T(CommonTranslationKeys.MUOKKAA), null));
 
-        KoulutusToisenAsteenPerustiedotViewModel model = presenter.getModel().getKoulutusYhteistietoModel();
+        KoulutusToisenAsteenPerustiedotViewModel model = presenter.getModel().getKoulutusPerustiedotModel();
 
         GridLayout grid = new GridLayout(2, 1);
         grid.setHeight("100%");
@@ -122,7 +122,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     private void buildKoulutuksenKuvailevatTiedot(VerticalLayout layout) {
         layout.addComponent(buildHeaderLayout(T("kuvailevatTiedot"), T(CommonTranslationKeys.MUOKKAA), null));
 
-        KoulutusToisenAsteenPerustiedotViewModel model = presenter.getModel().getKoulutusYhteistietoModel();
+        KoulutusToisenAsteenPerustiedotViewModel model = presenter.getModel().getKoulutusPerustiedotModel();
 
         TabSheet tab = new TabSheet();
         tab.setSizeUndefined();

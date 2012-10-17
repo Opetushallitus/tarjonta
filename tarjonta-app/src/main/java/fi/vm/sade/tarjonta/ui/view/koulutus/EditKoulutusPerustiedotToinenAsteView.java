@@ -20,6 +20,7 @@ import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -35,6 +36,7 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.DialogDataTable;
 import fi.vm.sade.vaadin.constants.StyleEnum;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.ui.OphAbstractNavigationLayout;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.List;
@@ -53,10 +55,8 @@ import org.springframework.beans.factory.annotation.Value;
 public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigationLayout<VerticalLayout> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotToinenAsteView.class);
-
     @Autowired(required = true)
     private TarjontaPresenter presenter;
-
     //
     // Used koodisto's in this component
     //
@@ -74,13 +74,11 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
     private String koodistoUriOpetusmuoto;
     @Value("${koodisto-uris.koulutuslaji:http://koulutuslaji}")
     private String koodistoUriKoulutuslaji;
-
     private BeanItemMapper<KoulutusPerustiedotViewModel, EditKoulutusPerustiedotToinenAsteView> bim;
-
     private transient I18NHelper i18n;
 
     public EditKoulutusPerustiedotToinenAsteView() {
-        super(VerticalLayout.class, null);
+        super(VerticalLayout.class);
         setMargin(true);
         setSpacing(true);
         setHeight(-1, UNITS_PIXELS);
@@ -92,7 +90,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
     @Override
     public void attach() {
         super.attach();
-        initialize(getLayout()); //add layout to navigation container
+
 
         addNavigationButton("", new Button.ClickListener() {
             @Override
@@ -100,21 +98,21 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 
-        addNavigationButton(i18n.getMessage("tallennaLuonnoksena"), new Button.ClickListener() {
+        addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 presenter.saveKoulutusLuonnoksenaModel();
             }
         });
 
-        addNavigationButton(i18n.getMessage("tallennaValmiina"), new Button.ClickListener() {
+        addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 presenter.saveKoulutusValmiina();
             }
         });
 
-        addNavigationButton(i18n.getMessage("jatka"), new Button.ClickListener() {
+        addNavigationButton(T("jatka"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
             }
@@ -125,55 +123,78 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
     // Define data fields
     //
     private void initialize(AbstractLayout layout) {
-        LOG.info("initialize()");
+        LOG.info("initialize() {}", presenter);
+
         bim = new BeanItemMapper<KoulutusPerustiedotViewModel, EditKoulutusPerustiedotToinenAsteView>(presenter.getKoulutusToisenAsteenPerustiedotViewModel(),
                 getI18n(), this);
         bim.label(layout, "KoulutuksenPerustiedot", LabelStyleEnum.H2);
 
         UiUtil.hr(layout);
 
-        GridLayout grid = new GridLayout(3, 1);
+        GridLayout grid = new GridLayout(2, 1);
         grid.setSizeFull();
-        grid.setColumnExpandRatio(0, 0l);
-        grid.setColumnExpandRatio(1, 1l);
-        grid.setColumnExpandRatio(2, 20l);
+        grid.setColumnExpandRatio(0, 10l);
+        grid.setColumnExpandRatio(1, 20l);
 
         layout.addComponent(grid);
-        buildKoulutus(grid, "KoulutusTaiTutkinto");
-        buildKoulutusohjelma(grid, "Koulutusohjelma");
-        buildKoulutuksenTyyppi(grid, "KoulutuksenTyyppi");
-        buildStaticLabelSection(grid);
-        buildLanguage(grid, "Opetuskieli");
-        buildDates(grid, "KoulutuksenAlkamisPvm");
-        buildKesto(grid, "SuunniteltuKesto");
+        buildGridKoulutusRow(grid, "KoulutusTaiTutkinto");
+        buildGridKoulutusohjelmaRow(grid, "Koulutusohjelma");
 
+        //Build a label section, the data for labes are 
+        //received from koodisto (KOMO).
+        gridLabelRow(grid, "koulutusTyyppi");
+        gridLabelRow(grid, "koulutusala");
+        gridLabelRow(grid, "tutkinto");
+        gridLabelRow(grid, "tutkintonimike");
+        gridLabelRow(grid, "opintojenLaajuusyksikko");
+        gridLabelRow(grid, "opintojenLaajuus");
+        gridLabelRow(grid, "opintoala");
+
+        buildGridLanguageRow(grid, "Opetuskieli");
+        buildGridDatesRow(grid, "KoulutuksenAlkamisPvm");
+        buildGridKestoRow(grid, "SuunniteltuKesto");
         //Added later
         // buildPainotus(grid, "AdditionalInformation");
 
-        buildOpetusmuoto(grid, "Opetusmuoto");
-        buildKoulutuslaji(grid, "Koulutuslaji");
-
-        buildTeema(grid, "Avainsanat");
-
-        //Not needed in 2.aste
-        //buildMaksullistaCheckBox(grid, "KoulutusOnMaksullista");
-        //buildStipendiCheckBox(grid, "StipendiMahdollisuus");
+        buildGridOpetusmuotoRow(grid, "Opetusmuoto");
+        buildGridKoulutuslajiRow(grid, "Koulutuslaji");
+        buildGridAvainsanatTeemaRow(grid, "Avainsanat");
+//        Not needed in 2.aste
+//        buildMaksullistaCheckBox(grid, "KoulutusOnMaksullista");
+//        buildStipendiCheckBox(grid, "StipendiMahdollisuus");
 
         UiUtil.hr(layout);
         addYhteyshenkiloSelectorAndEditor(layout);
         UiUtil.hr(layout);
         addLinkkiSelectorAndEditor(layout);
     }
-    
-    private void label(GridLayout grid, String propertyKey) {
-        Label label = bim.label(null, propertyKey);
-        grid.addComponent(label);
-        grid.setComponentAlignment(label, Alignment.TOP_RIGHT);
-        grid.addComponent(new Label(""));
+
+    private void gridLabel(GridLayout grid, final String propertyKey) {
+        if (propertyKey == null) {
+            throw new RuntimeException("Application error - label caption cannot be null!");
+        }
+        HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.RIGHT);
+        layout.setSizeFull();
+        Label label = new Label(T(propertyKey));
+        label.setSizeUndefined();
+        layout.addComponent(label);
+        layout.setComponentAlignment(label, Alignment.TOP_RIGHT);
+        grid.addComponent(layout);
     }
 
-    private void buildKoulutus(GridLayout grid, String propertyKey) {
-        label(grid, propertyKey);
+    private void gridLabelRow(GridLayout grid, final String propertyKey) {
+        if (propertyKey == null) {
+            throw new RuntimeException("Application error - label caption cannot be null!");
+        }
+
+        gridLabel(grid, propertyKey);
+        grid.addComponent(bim.addLabel(null, propertyKey));
+        grid.newLine();
+        buildSpacingGridRow(grid);
+    }
+
+    private void buildGridKoulutusRow(GridLayout grid, final String propertyKey) {
+        gridLabel(grid, propertyKey);
 
         HorizontalLayout hl = UiUtil.horizontalLayout();
         KoodistoComponent kc = bim.addKoodistoComboBox(hl, koodistoUriKoulutus, "koulutus", "koulutusTaiTutkinto.prompt");
@@ -183,48 +204,20 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
 
         grid.addComponent(hl);
         grid.newLine();
+
+        buildSpacingGridRow(grid);
     }
 
-    private void buildKoulutuksenTyyppi(GridLayout grid, String propertyKey) {
-        label(grid, propertyKey);
-        grid.addComponent(bim.addLabel(null, "koulutuksenTyyppi"));
-        grid.newLine();
-    }
-
-    private void buildKoulutusohjelma(GridLayout grid, String propertyKey) {
-        label(grid, propertyKey);
+    private void buildGridKoulutusohjelmaRow(GridLayout grid, final String propertyKey) {
+        gridLabel(grid, propertyKey);
         grid.addComponent(bim.addKoodistoComboBox(null, koodistoUriKoulutusohjelma, "koulutusohjelma", "koulutusohjelma.prompt"));
         grid.newLine();
+
+        buildSpacingGridRow(grid);
     }
 
-    private void buildStaticLabelSection(GridLayout grid) {
-        label(grid, "Koulutusala");
-        grid.addComponent(bim.addLabel(null, "koulutusala"));
-        grid.newLine();
-
-        label(grid, "Tutkinto");
-        grid.addComponent(bim.addLabel(null, "tutkinto"));
-        grid.newLine();
-
-        label(grid, "Tutkintonimike");
-        grid.addComponent(bim.addLabel(null, "tutkintonimike"));
-        grid.newLine();
-
-        label(grid, "OpintojenLaajuusyksikko");
-        grid.addComponent(bim.addLabel(null, "opintojenlaajuusyksikko"));
-        grid.newLine();
-
-        label(grid, "OpintojenLaajuus");
-        grid.addComponent(bim.addLabel(null, "opintojenlaajuus"));
-        grid.newLine();
-
-        label(grid, "Opintoala");
-        grid.addComponent(bim.addLabel(null, "opintoala"));
-        grid.newLine();
-    }
-
-    private void buildLanguage(GridLayout grid, String propertyKey) {
-        label(grid, propertyKey);
+    private void buildGridLanguageRow(GridLayout grid, final String propertyKey) {
+        gridLabel(grid, propertyKey);
         KoodistoComponent kc = bim.addKoodistoTwinColSelect(null, koodistoUriKieli, "opetuskielet");
         kc.addListener(bim.getValueChangeListener("doOpetuskieletChanged"));
 
@@ -232,16 +225,18 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
         grid.addComponent(kc);
 
         grid.newLine();
+        buildSpacingGridRow(grid);
     }
 
-    private void buildDates(GridLayout grid, String propertyKey) {
-        label(grid, propertyKey);
+    private void buildGridDatesRow(GridLayout grid, final String propertyKey) {
+        gridLabel(grid, propertyKey);
         grid.addComponent(bim.addDate(null, "koulutuksenAlkamisPvm"));
         grid.newLine();
+        buildSpacingGridRow(grid);
     }
 
-    private void buildPainotus(GridLayout grid, String propertyKey) {
-        label(grid, propertyKey);
+    private void buildGridPainotus(GridLayout grid, final String propertyKey) {
+        gridLabel(grid, propertyKey);
         Button painotus = UiUtil.buttonLink(
                 null,
                 "Painotus",
@@ -253,53 +248,60 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
                 });
         grid.addComponent(painotus);
         grid.newLine();
+        buildSpacingGridRow(grid);
     }
 
-    private void buildKesto(GridLayout grid, String propertyKey) {
-        label(grid, propertyKey);
+    private void buildGridKestoRow(GridLayout grid, final String propertyKey) {
+        gridLabel(grid, propertyKey);
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
         hl.addComponent(bim.addTextField(null, "suunniteltuKesto", "SuunniteltuKesto.prompt", null));
         KoodistoComponent kc = bim.addKoodistoComboBox(hl, koodistoUriSuunniteltuKesto, "suunniteltuKestoTyyppi", "SuunniteltuKesto.tyyppi.prompt");
         grid.addComponent(hl);
         grid.newLine();
+        buildSpacingGridRow(grid);
 
     }
 
-    private void buildTeema(GridLayout grid, String propertyKey) {
-        label(grid, propertyKey);
+    private void buildGridAvainsanatTeemaRow(GridLayout grid, final String propertyKey) {
+        gridLabel(grid, propertyKey);
 
         KoodistoComponent kc = bim.addKoodistoTwinColSelect(null, koodistoUriTeema, "teemat");
         grid.addComponent(kc);
 
         grid.newLine();
+        buildSpacingGridRow(grid);
     }
 
-    private void buildOpetusmuoto(GridLayout grid, String propertyKey) {
-        label(grid, propertyKey);
+    private void buildGridOpetusmuotoRow(GridLayout grid, final String propertyKey) {
+        gridLabel(grid, propertyKey);
 
         grid.addComponent(bim.addKoodistoComboBox(null, koodistoUriOpetusmuoto, "opetusmuoto", "Opetusmuoto.prompt"));
         grid.newLine();
+        buildSpacingGridRow(grid);
 
     }
 
-    private void buildKoulutuslaji(GridLayout grid, String propertyKey) {
-        label(grid, propertyKey);
+    private void buildGridKoulutuslajiRow(GridLayout grid, final String propertyKey) {
+        gridLabel(grid, propertyKey);
         KoodistoComponent kc = bim.addKoodistoTwinColSelect(null, koodistoUriKoulutuslaji, "koulutuslaji");
         grid.addComponent(kc);
         grid.newLine();
+        buildSpacingGridRow(grid);
     }
 
-    private void buildMaksullistaCheckBox(GridLayout grid, String propertyKey) {
-        label(grid, propertyKey);
+    private void buildGridMaksullistaCheckBox(GridLayout grid, final String propertyKey) {
+        gridLabel(grid, propertyKey);
         grid.addComponent(bim.addCheckBox(this, "KoulutusOnMaksullista.checkbox", "koulutusOnMaksullista", null));
         grid.newLine();
+        buildSpacingGridRow(grid);
     }
 
-    private void buildStipendiCheckBox(GridLayout grid, String propertyKey) {
-        label(grid, propertyKey);
+    private void buildGridStipendiCheckBox(GridLayout grid, final String propertyKey) {
+        gridLabel(grid, propertyKey);
         grid.addComponent(bim.addCheckBox(this, "StipendiMahdollisuus.checkbox", "koulutusStipendimahdollisuus", null));
         grid.newLine();
+        buildSpacingGridRow(grid);
     }
 
     /**
@@ -308,7 +310,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
      * @param layout
      */
     private void addYhteyshenkiloSelectorAndEditor(AbstractLayout layout) {
-        layout.addComponent(bim.label(null, "Yhteyshenkilo"));
+        headerLayout(layout, "Yhteyshenkilo");
 
         //Attach data model to Vaadin bean container.
         final BeanItemContainer<KoulutusYhteyshenkiloViewModel> yhteyshenkiloContainer =
@@ -339,6 +341,8 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
      * @param layout
      */
     private void addLinkkiSelectorAndEditor(AbstractLayout layout) {
+        headerLayout(layout, "Linkit");
+
         final Class modelClass = KoulutusLinkkiViewModel.class;
         List<KoulutusLinkkiViewModel> koulutusLinkit =
                 presenter.getKoulutusToisenAsteenPerustiedotViewModel().getKoulutusLinkit();
@@ -348,7 +352,6 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
 
         linkkiContainer.addAll(koulutusLinkit);
 
-        layout.addComponent(bim.label(null, "Linkit"));
         DialogDataTable<KoulutusPerustiedotViewModel> ddt =
                 new DialogDataTable<KoulutusPerustiedotViewModel>(modelClass, linkkiContainer, bim);
         ddt.setButtonProperties("DialogDataTable.LisaaUusi.Linkkityyppi");
@@ -442,6 +445,19 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
         LOG.info("onAddNewYhteyshenkilo()");
     }
 
+    private void buildSpacingGridRow(GridLayout grid) {
+        CssLayout cssLayout = new CssLayout();
+        cssLayout.setHeight(4, UNITS_PIXELS);
+        grid.addComponent(cssLayout);
+        grid.newLine();
+    }
+
+    private void headerLayout(final AbstractLayout layout, final String i18nProperty) {
+        CssLayout cssLayout = new CssLayout();
+        cssLayout.setHeight(20, UNITS_PIXELS);
+        cssLayout.addComponent(bim.label(null, i18nProperty));
+        layout.addComponent(cssLayout);
+    }
 
     private String T(String key) {
         return getI18n().getMessage(key);
@@ -455,12 +471,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
     }
 
     @Override
-    protected void initialization(Object obj) {
-       //Currently not needed.
-    }
-
-    @Override
     protected void buildLayout(VerticalLayout layout) {
-         //Currently not needed.
+        initialize(getLayout()); //add layout to navigation container
     }
 }

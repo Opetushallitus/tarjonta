@@ -19,26 +19,23 @@ package fi.vm.sade.tarjonta.ui.view.common;
 import com.vaadin.ui.VerticalLayout;
 //import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.vaadin.ui.OphAbstractNavigationLayout;
 
 /**
  *
  * @author Tuomas Katva
  */
-public abstract class AbstractVerticalNavigationLayout extends OphAbstractNavigationLayout<VerticalLayout>  {
+public abstract class AbstractVerticalNavigationLayout extends OphAbstractNavigationLayout<VerticalLayout> {
+
+    private static I18NHelper i18n;
 
     public AbstractVerticalNavigationLayout(Class clazz) {
-        super(VerticalLayout.class, clazz);
-    }
-    
-    @Override
-    protected void initialization(Object o) {
-       
+        super(VerticalLayout.class);
+        i18n = new I18NHelper(clazz);
     }
 
-    
     protected String T(String key) {
-        return I18N.getMessage(key);
+        return i18n.getMessage(key);
     }
-    
 }

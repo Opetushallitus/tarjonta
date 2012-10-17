@@ -25,9 +25,9 @@ import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
-import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.helper.BeanItemMapper;
 import fi.vm.sade.tarjonta.ui.view.koulutus.DialogKoulutusView;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,13 +39,40 @@ import org.slf4j.LoggerFactory;
 public class DialogDataTable<T> extends Table {
 
     private static final Logger LOG = LoggerFactory.getLogger(DialogDataTable.class);
-    private I18NHelper i18n;
     private BeanItemContainer container;
     private BeanItemMapper bim;
     private AbstractDataTableDialog dialog;
     private Class objectItem;
     private Listener listener;
-    private String[] i18nButtonProperties = {"DialogDataTable.LisaaUusi", "DialogDataTable.muokkaa", "DialogDataTable.poista"};
+
+    private enum DialogButtonEnum {
+
+        BUTTON_ADD(0, "DialogDataTable.LisaaUusi"), 
+        BUTTON_EDIT(1, "DialogDataTable.muokkaa"), 
+        BUTTON_REMOVE(2, "DialogDataTable.poista");
+        
+        private int index;
+        private String property;
+
+        private DialogButtonEnum(int index, String property) {
+            this.index = index;
+            this.property = property;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public String getI18nProperty() {
+            return property;
+        }
+    }
+    //Initialize default button properties, the properties can be overridden.  
+    private static String[] i18nButtonProperties = {
+        DialogButtonEnum.BUTTON_ADD.getI18nProperty(),
+        DialogButtonEnum.BUTTON_EDIT.getI18nProperty(),
+        DialogButtonEnum.BUTTON_REMOVE.getI18nProperty()
+    };
 
     public DialogDataTable(final Class objectItem, final BeanItemContainer container, final BeanItemMapper bim) {
         super(null, container);
@@ -85,11 +112,11 @@ public class DialogDataTable<T> extends Table {
         if (i18nProperties != null && i18nProperties.length > 0) {
             int index = 0;
             for (String p : i18nProperties) {
-                if (this.i18nButtonProperties.length <= index) {
+                if (i18nButtonProperties.length <= index) {
                     break;
                 }
 
-                this.i18nButtonProperties[index] = p;
+                i18nButtonProperties[index] = p;
             }
         }
     }
@@ -141,10 +168,10 @@ public class DialogDataTable<T> extends Table {
     }
 
     private void buildButtonLayout(AbstractLayout layout) {
-        HorizontalLayout hl = UiUtil.horizontalLayout();
+        HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.TOP);     
         layout.addComponent(hl);
 
-        bim.addButtonPlus(hl, this.i18nButtonProperties[0], new Button.ClickListener() {
+        bim.addButtonPlus(hl, getButtonCaptionProperty(DialogButtonEnum.BUTTON_ADD), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
 
@@ -162,7 +189,7 @@ public class DialogDataTable<T> extends Table {
             }
         });
 
-        final Button btnEdit = bim.addButtonPrimary(hl, this.i18nButtonProperties[1], new Button.ClickListener() {
+        final Button btnEdit = bim.addButtonPrimary(hl, getButtonCaptionProperty(DialogButtonEnum.BUTTON_EDIT), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 getWindow().addWindow(dialog);
@@ -170,7 +197,7 @@ public class DialogDataTable<T> extends Table {
         });
         btnEdit.setEnabled(false);
 
-        final Button btnDelete = bim.addButtonPrimary(hl, this.i18nButtonProperties[2], new Button.ClickListener() {
+        final Button btnDelete = bim.addButtonPrimary(hl, getButtonCaptionProperty(DialogButtonEnum.BUTTON_REMOVE), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 deleteTableItem(container, dialog.getForm());
@@ -210,6 +237,14 @@ public class DialogDataTable<T> extends Table {
         if (container.firstItemId() != null) {
             setValue(container.firstItemId());
         }
+    }
+
+    private static String getButtonCaptionProperty(DialogButtonEnum e) {
+        if (e == null) {
+            throw new RuntimeException("Application error - DialogButtonEnum cannot be null.");
+        }
+
+        return i18nButtonProperties[e.getIndex()];
     }
 
     private void notNullButtonLayout(AbstractLayout buttonLayout) {

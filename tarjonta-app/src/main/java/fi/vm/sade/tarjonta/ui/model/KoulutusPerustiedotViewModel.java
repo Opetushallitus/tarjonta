@@ -33,12 +33,12 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
 
     private String _koulutus;
     // TODO Mistä nämä tulevat?
-    private String _koulutusTyyppi;
+    private String _koulutusTyyppi = "";
     private String _koulutusala = "";
     private String _tutkinto = "";
     private String _tutkintonimike = "";
-    private String _opintojenlaajuusyksikko = "";
-    private String _opintojenlaajuus = "";
+    private String _opintojenLaajuusyksikko = "";
+    private String _opintojenLaajuus = "";
     private String _opintoala = "";
     // Koodisto: kieli
     private Set<String> _opetuskielet = new HashSet<String>();
@@ -98,20 +98,20 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
         this._tutkintonimike = tutkintonimike;
     }
 
-    public String getOpintojenlaajuusyksikko() {
-        return _opintojenlaajuusyksikko;
+    public String getOpintojenLaajuusyksikko() {
+        return _opintojenLaajuusyksikko;
     }
 
-    public void setOpintojenlaajuusyksikko(String opintojenlaajuusyksikko) {
-        this._opintojenlaajuusyksikko = opintojenlaajuusyksikko;
+    public void setOpintojenLaajuusyksikko(String opintojenLaajuusyksikko) {
+        this._opintojenLaajuusyksikko = opintojenLaajuusyksikko;
     }
 
-    public String getOpintojenlaajuus() {
-        return _opintojenlaajuus;
+    public String getOpintojenLaajuus() {
+        return _opintojenLaajuus;
     }
 
-    public void setOpintojenlaajuus(String opintojenlaajuus) {
-        this._opintojenlaajuus = opintojenlaajuus;
+    public void setOpintojenLaajuus(String opintojenLaajuus) {
+        this._opintojenLaajuus = opintojenLaajuus;
     }
 
     public String getOpintoala() {

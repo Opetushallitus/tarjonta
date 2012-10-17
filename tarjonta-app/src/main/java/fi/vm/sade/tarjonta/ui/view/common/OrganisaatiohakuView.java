@@ -62,13 +62,10 @@ import fi.vm.sade.vaadin.util.UiUtil;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = false)
-public class OrganisaatiohakuView extends
-        OphAbstractCollapsibleLeft<VerticalLayout> {
+public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLayout> {
 
     private static final Logger LOG = LoggerFactory.getLogger(OrganisaatiohakuView.class);
-
     public static final String COLUMN_KEY = "COLUMN";
-
     private static I18NHelper i18n = new I18NHelper(OrganisaatiohakuView.class);
     private static final int PANEL_WIDTH = 250;
     private TextField search;
@@ -80,13 +77,11 @@ public class OrganisaatiohakuView extends
     private Button tyhjennaB;
     private Tree tree;
     private HierarchicalContainer hc;
-
     @Autowired
     private OrganisaatioService organisaatioService;
     private List<OrganisaatioDTO> organisaatios;
     private OrganisaatioSearchCriteriaDTO criteria;
     List<String> rootOrganisaatioOids;
-
     @Value("${koodisto-uris.oppilaitostyyppi:Oppilaitostyyppi}")
     private String oppilaitostyyppiUri;
 
@@ -105,6 +100,12 @@ public class OrganisaatiohakuView extends
     }
 
     @Override
+    public void attach() {
+        super.attach();
+        initializeData();
+    }
+
+    @Override
     protected void buildLayout(VerticalLayout layout) {
         layout.setHeight(-1, UNITS_PERCENTAGE);
         layout.setWidth(-1, UNITS_PIXELS);
@@ -113,15 +114,15 @@ public class OrganisaatiohakuView extends
         search = UiUtil.textFieldSmallSearch(panelTop);
 
         organisaatioTyyppi = UiUtil.comboBox(panelTop, null, new String[]{OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(),
-                                                                            OrganisaatioTyyppi.OPPILAITOS.value(),
-                                                                            OrganisaatioTyyppi.OPETUSPISTE.value(),
-                                                                            OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(),
-                                                                            OrganisaatioTyyppi.MUU_ORGANISAATIO.value()});
+                    OrganisaatioTyyppi.OPPILAITOS.value(),
+                    OrganisaatioTyyppi.OPETUSPISTE.value(),
+                    OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(),
+                    OrganisaatioTyyppi.MUU_ORGANISAATIO.value()});
         setOrgTyyppiItemCaptions();
         organisaatioTyyppi.setSizeUndefined();
 
 
-        oppilaitosTyyppi =  UiBuilder.koodistoComboBox(null, i18n.getMessage("koodisto-uris.oppilaitostyyppi"), null, null, i18n.getMessage("oppilaitostyyppi.prompt"));
+        oppilaitosTyyppi = UiBuilder.koodistoComboBox(null, i18n.getMessage("koodisto-uris.oppilaitostyyppi"), null, null, i18n.getMessage("oppilaitostyyppi.prompt"));
         oppilaitosTyyppi.setWidth("210px");
 
         panelTop.addComponent(oppilaitosTyyppi);
@@ -137,7 +138,7 @@ public class OrganisaatiohakuView extends
             }
         });
 
-        tyhjennaB = UiUtil.buttonSmallPrimary(buttonsL, i18n.getMessage("tyhjenna"),  new Button.ClickListener() {
+        tyhjennaB = UiUtil.buttonSmallPrimary(buttonsL, i18n.getMessage("tyhjenna"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 criteria = new OrganisaatioSearchCriteriaDTO();
@@ -155,8 +156,6 @@ public class OrganisaatiohakuView extends
         layout.addComponent(panelTop);
         layout.addComponent(panelBottom);
     }
-
-
 
     private Panel buildPanel(AbstractLayout layout) {
         Panel panel = new Panel(layout);
@@ -180,12 +179,10 @@ public class OrganisaatiohakuView extends
         tree.setItemCaptionMode(Tree.ITEM_CAPTION_MODE_PROPERTY);
 
         tree.addListener(new ItemClickEvent.ItemClickListener() {
-
             @Override
             public void itemClick(ItemClickEvent event) {
-               organisaatioSelected((OrganisaatioDTO)(event.getItemId()));
+                organisaatioSelected((OrganisaatioDTO) (event.getItemId()));
             }
-
         });
 
         hl.addComponent(tree);
@@ -198,14 +195,13 @@ public class OrganisaatiohakuView extends
         return hl;
     }
 
-    @PostConstruct
     private void initializeData() {
         bind();
         this.organisaatios = (rootOrganisaatioOids != null)
                 ? this.organisaatioService.listOrganisaatioByParentOids(rootOrganisaatioOids)
-                        : this.organisaatioService.searchOrganisaatios(new OrganisaatioSearchCriteriaDTO());
+                : this.organisaatioService.searchOrganisaatios(new OrganisaatioSearchCriteriaDTO());
 
-         tree.setContainerDataSource(createDatasource());
+        tree.setContainerDataSource(createDatasource());
     }
 
     private void searchOrganisaatios() {
@@ -283,7 +279,7 @@ public class OrganisaatiohakuView extends
 
     /**
      * Event to signal that the user wants to create a new Haku.
-    */
+     */
     public class OrganisaatioSelectedEvent extends Component.Event {
 
         private String organisaatioOid;
@@ -305,6 +301,5 @@ public class OrganisaatiohakuView extends
         public void setOrganisaatioOid(String organisaatioOid) {
             this.organisaatioOid = organisaatioOid;
         }
-
     }
 }

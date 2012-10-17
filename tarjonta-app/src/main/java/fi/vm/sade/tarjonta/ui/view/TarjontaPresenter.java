@@ -23,6 +23,7 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeKoosteTyyppi;
@@ -39,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
+import javax.xml.ws.soap.SOAPFaultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,23 +55,16 @@ import org.springframework.stereotype.Component;
 @Component
 @Configurable(preConstruction = false)
 public class TarjontaPresenter {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
-
     @Autowired(required = true)
     private TarjontaModel _model;
-
     private TarjontaRootView _rootView;
-
     private ListHakukohdeView _hakukohdeListView;
-    
     private ListKoulutusView koulutusListView;
-
-
-	@Autowired(required=true)
+    @Autowired(required = true)
     private TarjontaAdminService tarjontaAdminService;
-
-    @Autowired(required=true)
+    @Autowired(required = true)
     private TarjontaPublicService tarjontaPublicService;
     
     private List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
@@ -115,6 +110,8 @@ public class TarjontaPresenter {
 
     private void createInitialTemporaryDemoDataDForTestingPurposes() {
         LOG.error("createInitalData() - DEMO DATA CREATED TO UI! I so hope we are not in production :)");
+        /*getModel().getHakukohteet().add(new HakukohdeViewModel("Testi1", "Organisaatio1"));
+         geModel().getHakukohteet().add(new HakukohdeViewModel("Testi2", "Organisaatio2"));*/
     }
 
     /**
@@ -124,30 +121,30 @@ public class TarjontaPresenter {
      */
     public void showMainDefaultView() {
         LOG.info("showMainDefaultView()");
-
+        
         OrganisaatiohakuView organisaatiohakuView = new OrganisaatiohakuView(null);
         _rootView.getAppRootLayout().addComponent(organisaatiohakuView);
-        VerticalLayout vl = UiUtil.verticalLayout();
-        vl.setHeight(-1, VerticalLayout.UNITS_PIXELS);
-        vl.addComponent(_rootView.getBreadcrumbsView());
-        vl.addComponent(_rootView.getSearchSpesificationView());
-        vl.addComponent(_rootView.getSearchResultsView());
-        organisaatiohakuView.addComponent(vl);
-        organisaatiohakuView.setExpandRatio(vl, 1f);
+        VerticalLayout vrightLayout = UiUtil.verticalLayout();
+        vrightLayout.setHeight(-1, VerticalLayout.UNITS_PIXELS);
+        vrightLayout.addComponent(_rootView.getBreadcrumbsView());
+        vrightLayout.addComponent(_rootView.getSearchSpesificationView());
+        vrightLayout.addComponent(_rootView.getSearchResultsView());
+        organisaatiohakuView.addComponent(vrightLayout);
+        organisaatiohakuView.setExpandRatio(vrightLayout, 1f);
     }
-
+    
     public void doSearch() {
         LOG.info("doSearch(): searchSpec={}", getModel().getSearchSpec());
     }
-
+    
     public ListHakukohdeView getHakukohdeListView() {
         return _hakukohdeListView;
     }
-
+    
     public void setHakukohdeListView(ListHakukohdeView hakukohdeListView) {
         this._hakukohdeListView = hakukohdeListView;
     }
-
+    
     public Map<String, List<HakukohdeTulos>> getHakukohdeDataSource() {
         Map<String, List<HakukohdeTulos>> map = new HashMap<String, List<HakukohdeTulos>>();
         getModel().setHakukohteet(tarjontaPublicService.haeHakukohteet(new HaeHakukohteetKyselyTyyppi()).getHakukohdeTulos());
@@ -162,11 +159,11 @@ public class TarjontaPresenter {
                 map.get(hkKey).add(curHk);
             }
         }
-
+        
         return map;
     }
 
-	/**
+    /**
      * Gets the currently selected hakukohde objects.
      *
      * @return
@@ -187,10 +184,10 @@ public class TarjontaPresenter {
         // Force UI update.
         getHakukohdeListView().reload();
     }
-
+    
     public void saveKoulutusLuonnoksenaModel() {
         LOG.info("Koulutus tallennettu luonnoksena");
-        LOG.info( getModel().getKoulutusYhteistietoModel().toString());
+        LOG.info(getModel().getKoulutusPerustiedotModel().toString());
     }
 
     /**
@@ -198,19 +195,27 @@ public class TarjontaPresenter {
      */
     public void saveKoulutusValmiina() {
         LOG.info("Koulutus tallennettu valmiina");
-        LOG.info( getModel().getKoulutusYhteistietoModel().toString());
+        LOG.info(getModel().getKoulutusPerustiedotModel().toString());
+        LisaaKoulutusTyyppi lisaaKoulutusTyyppi = new LisaaKoulutusTyyppi();
+        lisaaKoulutusTyyppi.setKoulutusKoodi("321101");
+        lisaaKoulutusTyyppi.setKoulutusohjelmaKoodi("1603");
+        lisaaKoulutusTyyppi.setOpetusmuoto("opetusmuoto");
+        try {
+            tarjontaAdminService.lisaaKoulutus(lisaaKoulutusTyyppi);
+        } catch (SOAPFaultException e) {
+            LOG.error("Application error - koulutus data persist failed {}", lisaaKoulutusTyyppi, e);
+        }
     }
 
     /**
      * @return the koulutusYhteistietoModel
      */
     public KoulutusToisenAsteenPerustiedotViewModel getKoulutusToisenAsteenPerustiedotViewModel() {
-        return getModel().getKoulutusYhteistietoModel();
+        return getModel().getKoulutusPerustiedotModel();
     }
 
     /**
-     * Get UI model.
-     * TarjontaModel is initialized and injected by Spring.
+     * Get UI model. TarjontaModel is initialized and injected by Spring.
      *
      * @return
      */
@@ -221,18 +226,19 @@ public class TarjontaPresenter {
         }
         return _model;
     }
-
+    
     public void setRootView(TarjontaRootView rootView) {
         _rootView = rootView;
     }
-
+    
     public TarjontaRootView getRootView() {
         return _rootView;
     }
 
     /**
-     * If true (read from model, value set from application property "common.showAppIdentifier")
-     * UI should show app identifier so that testers know what version was deployed.
+     * If true (read from model, value set from application property
+     * "common.showAppIdentifier") UI should show app identifier so that testers
+     * know what version was deployed.
      */
     public boolean isShowIdentifier() {
         return getModel().isShowIdentifier();
@@ -245,18 +251,17 @@ public class TarjontaPresenter {
         return getModel().getIdentifier();
     }
     
-
     public ListKoulutusView getKoulutusListView() {
-		return koulutusListView;
-	}
+        return koulutusListView;
+    }
+    
+    public void setKoulutusListView(ListKoulutusView listKoulutusView) {
+        this.koulutusListView = listKoulutusView;
+    }
 
-	public void setKoulutusListView(ListKoulutusView listKoulutusView) {
-		this.koulutusListView = listKoulutusView;
-	}
-
-	//TODO tähän kutsu koulutusten listaukseen kunhan palvelu on toteutettu
-	public Map<String, List<HakukohdeTulos>> getKoulutusDataSource() {
-		Map<String, List<HakukohdeTulos>> map = new HashMap<String, List<HakukohdeTulos>>();
+    //TODO tähän kutsu koulutusten listaukseen kunhan palvelu on toteutettu
+    public Map<String, List<HakukohdeTulos>> getKoulutusDataSource() {
+        Map<String, List<HakukohdeTulos>> map = new HashMap<String, List<HakukohdeTulos>>();
         getModel().setHakukohteet(tarjontaPublicService.haeHakukohteet(new HaeHakukohteetKyselyTyyppi()).getHakukohdeTulos());
         for (HakukohdeTulos curHk : getModel().getHakukohteet()) {
             String hkKey = curHk.getKoulutus().getTarjoaja();
@@ -269,9 +274,9 @@ public class TarjontaPresenter {
                 map.get(hkKey).add(curHk);
             }
         }
-
+        
         return map;
-	}
+    }
 
 	public void removeSelectedKoulutukset() {
 		// TODO Auto-generated method stub

@@ -33,8 +33,8 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setKoulutusala("Tekniikan ja liikenteen ala");
         setTutkinto("Autoalan perustutkinto");
         setTutkintonimike("Automaalari");
-        setOpintojenlaajuusyksikko("Opintoviikot");
-        setOpintojenlaajuus("120 ov");
+        setOpintojenLaajuusyksikko("Opintoviikot");
+        setOpintojenLaajuus("120 ov");
         setOpintoala("Opintoala ei tiedossa");
         setKoulutuksenTyyppi("Ei valintaa");
     }

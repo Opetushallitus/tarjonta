@@ -81,7 +81,7 @@ public class TarjontaModel extends BaseUIViewModel {
         return _selectedhakukohteet;
     }
 
-    public KoulutusToisenAsteenPerustiedotViewModel getKoulutusYhteistietoModel() {
+    public KoulutusToisenAsteenPerustiedotViewModel getKoulutusPerustiedotModel() {
         if (_koulutusPerustiedotModel == null) {
             _koulutusPerustiedotModel = new KoulutusToisenAsteenPerustiedotViewModel();
         }
