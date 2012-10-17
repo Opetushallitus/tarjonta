@@ -33,6 +33,7 @@ import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -61,11 +62,13 @@ public class TarjontaRootView extends Window {
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaRootView.class);
     @Autowired(required = true)
     private TarjontaPresenter _presenter;
+
     private VerticalLayout _appRootLayout;
     private OrganisaatiohakuView _organisationSearchView;
     private BreadcrumbsView _breadcrumbsView;
     private SearchSpesificationView _searchSpesificationView;
     private SearchResultsView _searchResultsView;
+
     //Huom tämä on vain kehityksen ajaksi tehty kenttä, mahdollistaa vaihtamisen
     //Haku- ja Tarjontasovellusten välillä.
     private TarjontaWebApplication tWebApp;
@@ -116,7 +119,7 @@ public class TarjontaRootView extends Window {
                 }
             }
         });
-        
+
         //Handles navigation to different child views (edit haku, view haku)
         _searchResultsView.addListener(new Listener() {
 
@@ -148,7 +151,7 @@ public class TarjontaRootView extends Window {
     	LOG.info("showMainDefaultView()");
     	//Clearing the layout from previos content
     	getAppRootLayout().removeAllComponents();
-    	
+
     	//Adding the form
         VerticalLayout vl = UiUtil.verticalLayout();
         vl.setHeight(-1, VerticalLayout.UNITS_PIXELS);

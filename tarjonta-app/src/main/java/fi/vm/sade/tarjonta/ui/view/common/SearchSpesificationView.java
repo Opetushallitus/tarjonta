@@ -89,14 +89,13 @@ public class SearchSpesificationView extends HorizontalLayout {
 
     @Override
     public void attach() {
-        LOG.info("attach(): already attached = {}", _attached);
+        super.attach();
 
         if (_attached) {
             return;
         }
         _attached = true;
 
-        super.attach();
 
         //
         // Create fields

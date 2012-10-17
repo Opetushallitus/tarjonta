@@ -37,6 +37,7 @@ import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,7 +134,10 @@ public class TarjontaPresenter {
         LOG.info("showMainDefaultView()");
 
         OrganisaatiohakuView organisaatiohakuView = new OrganisaatiohakuView(null);
+
+        _rootView.getAppRootLayout().removeAllComponents();
         _rootView.getAppRootLayout().addComponent(organisaatiohakuView);
+
         VerticalLayout vrightLayout = UiUtil.verticalLayout();
         vrightLayout.setHeight(-1, VerticalLayout.UNITS_PIXELS);
         vrightLayout.addComponent(_rootView.getBreadcrumbsView());
@@ -141,6 +145,16 @@ public class TarjontaPresenter {
         vrightLayout.addComponent(_rootView.getSearchResultsView());
         organisaatiohakuView.addComponent(vrightLayout);
         organisaatiohakuView.setExpandRatio(vrightLayout, 1f);
+    }
+
+    /**
+     * Show koulutus overview view.
+     */
+    public void showShowKoulutusView() {
+        LOG.info("showShowKoulutusView()");
+        ShowKoulutusView view = new ShowKoulutusView("", null);
+        _rootView.getAppRootLayout().removeAllComponents();
+        _rootView.getAppRootLayout().addComponent(view);
     }
 
     public void doSearch() {
@@ -321,6 +335,7 @@ public class TarjontaPresenter {
 
         return map;
     }
+
 
 }
 

@@ -76,6 +76,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         addNavigationButton("", new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
+                presenter.showMainDefaultView();
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 
@@ -96,6 +97,8 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         addNavigationButton(T("jatka"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
+                // TODO if changes, ask if really wants to navigate away
+                presenter.showShowKoulutusView();
             }
         });
 
