@@ -30,7 +30,7 @@ public class EditKoulutusView extends AbstractVerticalNavigationLayout {
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusView.class);
 
     public EditKoulutusView() {
-        super(EditKoulutusView.class);
+        super();
     }
 
     @Override

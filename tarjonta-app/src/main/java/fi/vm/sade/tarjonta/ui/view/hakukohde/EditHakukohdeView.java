@@ -34,33 +34,20 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
     @Autowired
     private TarjontaPresenter _presenter;
     private TabSheet tabs;
-    boolean attached = false;
-    
+
     public EditHakukohdeView() {
-        super(EditHakukohdeView.class);
+        super();
         setHeight(-1, UNITS_PIXELS);
     }
-    
-     @Override
-    public void attach() {
-        if (attached) {
-            return;
-        }
 
-        attached = true;
-        super.attach();
-
+    @Override
+    protected void buildLayout(VerticalLayout t) {
         tabs = new TabSheet();
         tabs.setHeight(-1, UNITS_PIXELS);
         addComponent(tabs);
-        
+
         tabs.addTab(new PerustiedotViewImpl(_presenter),T("tabNimi"));
         createButtons();
-     }
-    
-    @Override
-    protected void buildLayout(VerticalLayout t) {
-        
     }
 
     private void createButtons() {
@@ -70,27 +57,27 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
 //                getPresenter().showMainKoulutusView();
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
-        
+
         addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 _presenter.saveHakuKohde();
             }
         });
-        
+
         addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         });
-        
+
         addNavigationButton(T("jatka"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-//                getPresenter().showShowHakukohdeView();               
+//                getPresenter().showShowHakukohdeView();
             }
         });
     }
-    
+
 }

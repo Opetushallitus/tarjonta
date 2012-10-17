@@ -35,6 +35,7 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusPerustiedotViewModel;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
 import fi.vm.sade.tarjonta.ui.view.common.DialogDataTable;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -53,7 +54,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @author Jani Wilén
  */
 @Configurable(preConstruction = true)
-public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigationLayout<VerticalLayout> {
+public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavigationLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotToinenAsteView.class);
 
@@ -61,22 +62,16 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
     private TarjontaPresenter presenter;
 
     private BeanItemMapper<KoulutusPerustiedotViewModel, EditKoulutusPerustiedotToinenAsteView> bim;
-    private transient I18NHelper i18n;
 
     public EditKoulutusPerustiedotToinenAsteView() {
-        super(VerticalLayout.class);
+        super();
         setMargin(true);
         setSpacing(true);
         setHeight(-1, UNITS_PIXELS);
     }
 
-    /*
-     * Lazy initialization
-     */
     @Override
-    public void attach() {
-        super.attach();
-
+    protected void buildLayout(VerticalLayout layout) {
 
         addNavigationButton("", new Button.ClickListener() {
             @Override
@@ -103,6 +98,8 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
             public void buttonClick(Button.ClickEvent event) {
             }
         });
+
+        initialize(getLayout()); //add layout to navigation container
     }
 
     //
@@ -445,19 +442,4 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
         layout.addComponent(cssLayout);
     }
 
-    private String T(String key) {
-        return getI18n().getMessage(key);
-    }
-
-    private I18NHelper getI18n() {
-        if (i18n == null) {
-            i18n = new I18NHelper(this);
-        }
-        return i18n;
-    }
-
-    @Override
-    protected void buildLayout(VerticalLayout layout) {
-        initialize(getLayout()); //add layout to navigation container
-    }
 }

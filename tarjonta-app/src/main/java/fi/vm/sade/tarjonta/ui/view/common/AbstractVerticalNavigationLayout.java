@@ -28,14 +28,25 @@ import fi.vm.sade.vaadin.ui.OphAbstractNavigationLayout;
  */
 public abstract class AbstractVerticalNavigationLayout extends OphAbstractNavigationLayout<VerticalLayout> {
 
-    private static I18NHelper i18n;
+    private transient I18NHelper _i18n;
 
-    public AbstractVerticalNavigationLayout(Class clazz) {
+    public AbstractVerticalNavigationLayout() {
         super(VerticalLayout.class);
-        i18n = new I18NHelper(clazz);
     }
 
     protected String T(String key) {
-        return i18n.getMessage(key);
+        return getI18n().getMessage(key);
     }
+
+    protected String T(String key, Object... args) {
+        return getI18n().getMessage(key, args);
+    }
+
+    protected I18NHelper getI18n() {
+        if (_i18n == null) {
+            _i18n = new I18NHelper(this);
+        }
+        return _i18n;
+    }
+
 }
