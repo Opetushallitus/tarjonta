@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -77,8 +78,8 @@ public class TarjontaAdminServiceTest {
 
         LisaaKoulutusTyyppi lisaaKoulutus = new LisaaKoulutusTyyppi();
 
-        lisaaKoulutus.setKoulutusKoodi("321101");
-        lisaaKoulutus.setKoulutusohjelmaKoodi("1603");
+        lisaaKoulutus.setKoulutusKoodi(createKoodi("321101"));
+        lisaaKoulutus.setKoulutusohjelmaKoodi(createKoodi("1603"));
 
         adminService.lisaaKoulutus(lisaaKoulutus);
 
@@ -93,11 +94,11 @@ public class TarjontaAdminServiceTest {
         koulutusmoduuliDAO.insert(moduuli);
 
         LisaaKoulutusTyyppi lisaaKoulutus = new LisaaKoulutusTyyppi();
-        lisaaKoulutus.setKoulutusKoodi("321101");
-        lisaaKoulutus.setKoulutusohjelmaKoodi("1603");
-        lisaaKoulutus.setOpetusmuoto("opetusmuoto/aikuisopetus");
-        lisaaKoulutus.getOpetuskieli().add("opetuskieli/fi");
-        lisaaKoulutus.getKoulutuslaji().add("koulutuslaji/lahiopetus");
+        lisaaKoulutus.setKoulutusKoodi(createKoodi("321101"));
+        lisaaKoulutus.setKoulutusohjelmaKoodi(createKoodi("1603"));
+        lisaaKoulutus.setOpetusmuoto(createKoodi("opetusmuoto/aikuisopetus"));
+        lisaaKoulutus.getOpetuskieli().add(createKoodi("opetuskieli/fi"));
+        lisaaKoulutus.getKoulutuslaji().add(createKoodi("koulutuslaji/lahiopetus"));
         lisaaKoulutus.setOid("1.2.3.4.5");
         lisaaKoulutus.setKoulutuksenAlkamisPaiva(toXmlDateTime(new Date()));
         lisaaKoulutus.setKesto(kesto3Vuotta);
@@ -106,7 +107,16 @@ public class TarjontaAdminServiceTest {
 
     }
 
-    private XMLGregorianCalendar toXmlDateTime(Date date) {
+
+    private static KoodistoKoodiTyyppi createKoodi(String uri) {
+        KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
+        koodi.setUri(uri);
+        return koodi;
+    }
+
+
+
+    private static XMLGregorianCalendar toXmlDateTime(Date date) {
         try {
             GregorianCalendar cal = new GregorianCalendar();
             cal.setTimeInMillis(date.getTime());

@@ -329,13 +329,13 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="KoulutusKoodi" type="xs:string"/>
-            <xs:element name="KoulutusohjelmaKoodi" type="xs:string"/>
-            <xs:element name="Opetusmuoto" type="xs:string"/>
-            <xs:element name="Opetuskieli" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="KoulutusKoodi" type="tns:KoodistoKoodiTyyppi"/>
+            <xs:element name="KoulutusohjelmaKoodi" type="tns:KoodistoKoodiTyyppi"/>
+            <xs:element name="Opetusmuoto" type="tns:KoodistoKoodiTyyppi"/>
+            <xs:element name="Opetuskieli" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
             <xs:element name="KoulutuksenAlkamisPaiva" type="xs:dateTime"/>
             <xs:element name="Kesto" type="tns:KoulutuksenKestoTyyppi"/>
-            <xs:element name="Koulutuslaji" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="Koulutuslaji" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:group>
 
@@ -360,6 +360,53 @@
     </xs:complexType>
 
 
+    <xs:complexType name="KoodistoKoodiTyyppi">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Yhden Koodisto koodin tietojen kuvaus. Rakenteella
+                voidaan joko ainoastaan viitata koodiin uri:lla tai siirtaa
+                tietoja kopioituina arvoina (by value).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Uri" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>
+                        Koodin versioimaton uri.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Versio" type="xs:int" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Koodin versio.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Nimi" minOccurs="0" maxOccurs="99">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Koodin kielistetty nimi.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="kieli" type="tns:KieliKoodiTyyppi" use="required">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        Nimen kieli koodi.
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+
     <xs:simpleType name="KoulutusmoduuliTyyppi">
         <xs:restriction base="xs:string">
             <xs:enumeration value="TUTKINNON_OSA"/>
@@ -367,5 +414,11 @@
         </xs:restriction>
     </xs:simpleType>
 
+
+    <xs:simpleType name="KieliKoodiTyyppi">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-z]{2}"/>
+        </xs:restriction>
+    </xs:simpleType>
 
 </xs:schema>

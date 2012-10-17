@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 
 /**
  *
@@ -84,7 +85,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
 
-        Koulutusmoduuli moduuli = koulutusBusinessService.findTutkintoOhjelma(koulutus.getKoulutusKoodi(), koulutus.getKoulutusohjelmaKoodi());
+        Koulutusmoduuli moduuli = koulutusBusinessService.findTutkintoOhjelma(
+            koulutus.getKoulutusKoodi().getUri(),
+            koulutus.getKoulutusohjelmaKoodi().getUri());
+
         if (moduuli == null) {
             // todo: error reporting
             throw new IllegalArgumentException("no such Koulutusmoduuli: " + koulutus.getKoulutusKoodi()
@@ -110,18 +114,18 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         KoulutusmoduuliToteutus toteutus = new KoulutusmoduuliToteutus();
 
-        toteutus.addOpetusmuoto(new KoodistoUri(koulutus.getOpetusmuoto()));
+        toteutus.addOpetusmuoto(new KoodistoUri(koulutus.getOpetusmuoto().getUri()));
         toteutus.setOid(koulutus.getOid());
         toteutus.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime());
 
         toteutus.setSuunniteltuKestoArvo(koulutus.getKesto().getArvo());
         toteutus.setSuunniteltuKestoYksikko(koulutus.getKesto().getYksikko());
 
-        for (String opetusKieli : koulutus.getOpetuskieli()) {
-            toteutus.addOpetuskieli(new KoodistoUri(opetusKieli));
+        for (KoodistoKoodiTyyppi opetusKieli : koulutus.getOpetuskieli()) {
+            toteutus.addOpetuskieli(new KoodistoUri(opetusKieli.getUri()));
         }
 
-        for (String koulutuslaji : koulutus.getKoulutuslaji()) {
+        for (KoodistoKoodiTyyppi koulutuslaji : koulutus.getKoulutuslaji()) {
             // fix: toteutus should have multiple koulutuslahji
         }
 
