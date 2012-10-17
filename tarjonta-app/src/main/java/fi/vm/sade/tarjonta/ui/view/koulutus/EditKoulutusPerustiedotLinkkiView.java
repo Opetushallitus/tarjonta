@@ -23,6 +23,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.view.common.DataTableEvent;
@@ -58,9 +59,6 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
     @PropertyId("kielet")
     private KoodistoComponent _kcKielet;
 
-    @Value("${koodisto-uris.kieli:http://kieli}")
-    private String _koodistoUriKieli;
-
     private transient I18NHelper _i18n;
 
     public EditKoulutusPerustiedotLinkkiView() {
@@ -76,7 +74,7 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
         _tfUrl.setWidth("100%");
         this.addComponent(_tfUrl);
 
-        _kcKielet = UiBuilder.koodistoTwinColSelect(this, _koodistoUriKieli, null, null, null);
+        _kcKielet = UiBuilder.koodistoTwinColSelect(this, KoodistoURIHelper.KOODISTO_KIELI_URI, null, null, null);
 
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
