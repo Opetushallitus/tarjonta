@@ -107,14 +107,16 @@ public class TarjontaAdminServiceTest {
 
     }
 
+    @Test
+    public void testInitSample() {
+        adminService.initSample();
+    }
 
     private static KoodistoKoodiTyyppi createKoodi(String uri) {
         KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
         koodi.setUri(uri);
         return koodi;
     }
-
-
 
     private static XMLGregorianCalendar toXmlDateTime(Date date) {
         try {

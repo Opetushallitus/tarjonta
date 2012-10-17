@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -45,11 +45,12 @@ import static org.junit.Assert.*;
 @Transactional
 @Ignore
 public class HakueraDAOTest {
-    
+
     private static final Logger log = LoggerFactory.getLogger(HakueraDAOTest.class);
 
     @Autowired
     private HakuDAOImpl dao;
+
     @Autowired
     private HakueraTstHelper helper;
 
@@ -57,9 +58,9 @@ public class HakueraDAOTest {
     public void findAll_dateSearchWorks() {
         long now = new Date().getTime();
         int dif = 10000;
-        Haku meneillaan = helper.create(now-dif, now+dif);
-        Haku tuleva = helper.create(now+dif, now+2*dif);
-        Haku paattynyt = helper.create(now-2*dif, now-dif);
+        Haku meneillaan = helper.create(now - dif, now + dif);
+        Haku tuleva = helper.create(now + dif, now + 2 * dif);
+        Haku paattynyt = helper.create(now - 2 * dif, now - dif);
         List<Haku> l;
 
         // kaikki
@@ -109,12 +110,12 @@ public class HakueraDAOTest {
     // criteria api (if any).
     public void findAll_sortingByABC() {
         long now = new Date().getTime();
-        Haku h1 = helper.create(now, now, "bbb", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku",2013,2014);
-       
-        Haku h2 = helper.create(now, now, "aaa", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku",2013,2014);
+        Haku h1 = helper.create(now, now, "bbb", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku", 2013, 2014);
 
-        Haku h3 = helper.create(now, now, "ccc", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku",2013,2014);
-     
+        Haku h2 = helper.create(now, now, "aaa", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku", 2013, 2014);
+
+        Haku h3 = helper.create(now, now, "ccc", "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku", 2013, 2014);
+
 
         // fi
 
@@ -142,13 +143,13 @@ public class HakueraDAOTest {
         assertEquals("xxx", l.get(2).getNimiEn());
 
     }
-    
+
     @Test
     public void testSimpleSaveAndRead() {
         long now = new Date().getTime();
         int dif = 10000;
         String oid = "1.2.34566.3";
-        Haku hakuera =  helper.create(now, now+dif, oid, "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku",2013,2014);
+        Haku hakuera = helper.create(now, now + dif, oid, "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku", 2013, 2014);
 
         assertNotNull(hakuera.getId());
 
@@ -156,14 +157,14 @@ public class HakueraDAOTest {
         assertNotNull(hakuera2);
         assertEquals(oid, hakuera2.getOid());
     }
-    
+
     @Test
     public void testSimpleUpdateAndRead() {
         long now = new Date().getTime();
         int dif = 10000;
         String oid = "1.2.34566.4";
         String hakutyyppi = "Ammattikorkeakoulut";
-        Haku hakuera =  helper.create(now, now+dif, oid, "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku",2013,2014);
+        Haku hakuera = helper.create(now, now + dif, oid, "Varsinainen haku", "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku", 2013, 2014);
 
         assertNotNull(hakuera.getId());
 
@@ -171,24 +172,24 @@ public class HakueraDAOTest {
         hakuera2.setHakutyyppiUri(hakutyyppi);
         dao.update(hakuera2);
         Haku hakuera3 = read(hakuera.getId());
-        assertEquals(hakutyyppi, hakuera3.getHakutyyppiUri());        
+        assertEquals(hakutyyppi, hakuera3.getHakutyyppiUri());
     }
-    
+
     @Test
     public void testFindByOid() {
         long now = new Date().getTime();
         int dif = 10000;
         String oid = "1.2.34566.5";
         String hakutyyppi = "Varsinainen haku";
-        
-        Haku hakuera = helper.create(now, now+dif, oid, hakutyyppi, "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku",2013,2014);
-        
+
+        Haku hakuera = helper.create(now, now + dif, oid, hakutyyppi, "Syksy", "Syksy 2013", "Korkeakoulutus", "Yhteishaku", 2013, 2014);
+
         assertNotNull(hakuera.getId());
-        
+
         Haku hakuera2 = dao.findByOid(oid);
-        
+
         assertEquals(hakutyyppi, hakuera2.getHakutyyppiUri());
-        
+
     }
 
     @Test
@@ -228,14 +229,13 @@ public class HakueraDAOTest {
             assertTrue(e.getMessage().contains("unique constraint or index violation"));
         }
     }
-    
-    
+
     @Test
     public void testNimis() {
-        
+
         Haku h = helper.createValidHaku();
         h.setNimiFi("Suomi");
-        
+
     }
 
     private void assertConstraintViolationException(ConstraintViolationException e, String propertyPath, String messageTemplate) {

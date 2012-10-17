@@ -45,6 +45,10 @@
         <wsdl:part element="ns1:lisaaKoulutusVastaus" name="parameters"/>
     </wsdl:message>
 
+    <wsdl:message name="initSample">
+        <!-- no args -->
+    </wsdl:message>
+
     <wsdl:portType name="TarjontaAdminService">
 
         <wsdl:documentation>
@@ -89,6 +93,14 @@
             </wsdl:input>
             <wsdl:output message="tns:lisaaKoulutusVastaus" name="lisaaKoulutusVastaus">
             </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="initSample">
+            <wsdl:documentation>
+                Alustaa tarjonnan esimerkki datalla. Poistetaan kunnes koodisto tarjoaa
+                riittavan maaran dataa.
+            </wsdl:documentation>
+            <wsdl:input message="tns:initSample"/>
         </wsdl:operation>
 
     </wsdl:portType>

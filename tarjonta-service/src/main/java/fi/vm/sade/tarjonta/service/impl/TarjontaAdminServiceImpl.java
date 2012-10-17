@@ -33,6 +33,9 @@ import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
+import org.eclipse.core.internal.runtime.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -41,6 +44,8 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 @Transactional
 @Service("tarjontaAdminService")
 public class TarjontaAdminServiceImpl implements TarjontaAdminService {
+
+    private static final Logger log = LoggerFactory.getLogger(TarjontaAdminServiceImpl.class);
 
     @Autowired
     private HakuBusinessService hakuBusinessService;
@@ -53,6 +58,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Autowired
     private ConversionService conversionService;
+
+    /**
+     * Väliaikainne kunnes Koodisto on alustettu.
+     */
+    @Autowired
+    private TarjontaSampleData sampleData;
 
     @Override
     public fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi paivitaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
@@ -100,6 +111,18 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
         return vastaus;
 
+    }
+
+    /**
+     * Remove once koodisto has proper data.
+     */
+    @Override
+    public void initSample() {
+        try {
+            sampleData.init();
+        } catch (Exception e) {
+            log.warn("initializing tarjonta data threw exception", e);
+        }
     }
 
     private List<HakuTyyppi> convert(List<Haku> haut) {

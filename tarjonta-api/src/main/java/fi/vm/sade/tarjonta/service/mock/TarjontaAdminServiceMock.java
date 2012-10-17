@@ -40,6 +40,11 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public void initSample() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     private void initDefValues() {
         HakuTyyppi haku = new HakuTyyppi();
         HaunNimi nimi = new HaunNimi();
