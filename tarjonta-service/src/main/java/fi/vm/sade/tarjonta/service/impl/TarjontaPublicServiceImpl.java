@@ -193,7 +193,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 		HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
 		
 		//Retrieving all komotos this will be extended search only for komotos matching the criteria
-		List<KoulutusmoduuliToteutus> komotos = this.koulutusmoduuliToteutusDAO.findAll();
+		
 		//Populating the answer with required data
 		for (KoulutusmoduuliToteutus komoto : komotos) {
 			KoulutusTulos tulos = new KoulutusTulos();

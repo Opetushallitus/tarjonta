@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
@@ -33,6 +34,7 @@ import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import org.eclipse.core.internal.runtime.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +57,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Autowired
     private HakuDAO hakuDAO;
+    
+    @Autowired
+    private HakukohdeDAO hakukohdeDAO;
 
     @Autowired
     private ConversionService conversionService;
@@ -77,6 +82,29 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             throw new BusinessException("tarjonta.haku.update.no.oid");
         }
     }
+
+    @Override
+    public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) {
+        Hakukohde hakuk = conversionService.convert(hakukohde, Hakukohde.class);
+        hakuk = hakukohdeDAO.insert(hakuk);
+        return conversionService.convert(hakuk, HakukohdeTyyppi.class);
+    }
+
+    @Override
+    public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) {
+        Hakukohde hakuk = conversionService.convert(hakukohdePoisto, Hakukohde.class);
+        hakukohdeDAO.remove(hakuk);
+        return hakukohdePoisto;
+    }
+
+    @Override
+    public HakukohdeTyyppi paivitaHakukohde(HakukohdeTyyppi hakukohdePaivitys) {
+        Hakukohde hakukohde = conversionService.convert(hakukohdePaivitys, Hakukohde.class);
+        hakukohdeDAO.update(hakukohde);
+        return hakukohdePaivitys;
+    }
+    
+    
 
     @Override
     public fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi lisaaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
@@ -228,6 +256,20 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         for (Hakuaika curHakuaika : source.getHakuaikas()) {
             target.addHakuaika(curHakuaika);
         }
+    }
+
+    /**
+     * @return the hakukohdeDAO
+     */
+    public HakukohdeDAO getHakukohdeDAO() {
+        return hakukohdeDAO;
+    }
+
+    /**
+     * @param hakukohdeDAO the hakukohdeDAO to set
+     */
+    public void setHakukohdeDAO(HakukohdeDAO hakukohdeDAO) {
+        this.hakukohdeDAO = hakukohdeDAO;
     }
 
 }

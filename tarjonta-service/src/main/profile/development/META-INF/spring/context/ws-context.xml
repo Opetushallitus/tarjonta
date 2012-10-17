@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:beans="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+
+
+        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+     
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+    
+    <!--<bean id="hakuService" class="fi.vm.sade.tarjonta.service.impl.HakuServiceImpl"/>-->
+    <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl"/>
+    <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicServiceImpl"/>
+
+    
+      <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="tarjontaAdminEndpoint"
+                    address="/tarjontaAdmin" implementor="#tarjontaAdminService"/>
+      
+      <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="tarjontaPublicEndpoint"
+                    address="/tarjontaPublic" implementor="#tarjontaPublicService"/>
+    
+<!--     <bean id="jmsConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory"
+          destroy-method="stop">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL">
+                    <value>${activeMq.brokerUrl}</value>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="jmsConfigAdmin" class="org.apache.cxf.transport.jms.JMSConfiguration">
+        <property name="connectionFactory" ref="jmsConnectionFactory" />
+        <property name="targetDestination" value="${activeMq.targetDestinationAdmin}" />
+        <property name="reconnectOnException" value="true"/>
+    </bean>    
+    <bean id="jmsConfigPublic" class="org.apache.cxf.transport.jms.JMSConfiguration">
+        <property name="connectionFactory" ref="jmsConnectionFactory" />
+        <property name="targetDestination" value="${activeMq.targetDestinationPublic}" />
+        <property name="reconnectOnException" value="true"/>
+    </bean>   
+    
+    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="tarjontaAdminEndpoint"
+                    address="jms://" implementor="#tarjontaAdminService">
+        <jaxws:features>
+            <beans:bean class="org.apache.cxf.transport.jms.JMSConfigFeature">
+                <beans:property name="jmsConfig" ref="jmsConfigAdmin" />
+            </beans:bean>
+        </jaxws:features>
+    </jaxws:endpoint>
+    
+        <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="tarjontaPublicEndpoint"
+                    address="jms://" implementor="#tarjontaPublicService">
+        <jaxws:features>
+            <beans:bean class="org.apache.cxf.transport.jms.JMSConfigFeature">
+                <beans:property name="jmsConfig" ref="jmsConfigPublic" />
+            </beans:bean>
+        </jaxws:features>
+    </jaxws:endpoint>-->
+    
+</beans>
