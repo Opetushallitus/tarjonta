@@ -67,7 +67,6 @@
         </xs:sequence>
     </xs:complexType>
 
->>>>>>> .r3496
     <xs:complexType name="LisaaHakuType">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="hakuDto" type="tarjonta:HakuTyyppi" />
