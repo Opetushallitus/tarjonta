@@ -28,6 +28,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.helper.BeanItemMapper;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.OhjePopupComponent;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusPerustiedotViewModel;
@@ -55,25 +56,10 @@ import org.springframework.beans.factory.annotation.Value;
 public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigationLayout<VerticalLayout> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotToinenAsteView.class);
+
     @Autowired(required = true)
     private TarjontaPresenter presenter;
-    //
-    // Used koodisto's in this component
-    //
-    @Value("${koodisto-uris.kieli:http://kieli}")
-    private String koodistoUriKieli;
-    @Value("${koodisto-uris.kieli:http://teema}")
-    private String koodistoUriTeema;
-    @Value("${koodisto-uris.koulutus:http://koulutus}")
-    private String koodistoUriKoulutus;
-    @Value("${koodisto-uris.koulutusohjelma:http://koulutusohjelma}")
-    private String koodistoUriKoulutusohjelma;
-    @Value("${koodisto-uris.suunniteltuKesto:http://suunniteltuKesto}")
-    private String koodistoUriSuunniteltuKesto;
-    @Value("${koodisto-uris.opetusmuoto:http://opetusmuoto}")
-    private String koodistoUriOpetusmuoto;
-    @Value("${koodisto-uris.koulutuslaji:http://koulutuslaji}")
-    private String koodistoUriKoulutuslaji;
+
     private BeanItemMapper<KoulutusPerustiedotViewModel, EditKoulutusPerustiedotToinenAsteView> bim;
     private transient I18NHelper i18n;
 
@@ -140,7 +126,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
         buildGridKoulutusRow(grid, "KoulutusTaiTutkinto");
         buildGridKoulutusohjelmaRow(grid, "Koulutusohjelma");
 
-        //Build a label section, the data for labes are 
+        //Build a label section, the data for labes are
         //received from koodisto (KOMO).
         gridLabelRow(grid, "koulutusTyyppi");
         gridLabelRow(grid, "koulutusala");
@@ -197,7 +183,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
         gridLabel(grid, propertyKey);
 
         HorizontalLayout hl = UiUtil.horizontalLayout();
-        KoodistoComponent kc = bim.addKoodistoComboBox(hl, koodistoUriKoulutus, "koulutus", "koulutusTaiTutkinto.prompt");
+        KoodistoComponent kc = bim.addKoodistoComboBox(hl, KoodistoURIHelper.KOODISTO_KOULUTUS_URI, "koulutus", "koulutusTaiTutkinto.prompt");
         OhjePopupComponent ohjePopupComponent = new OhjePopupComponent(T("LOREMIPSUM"), "500px", "300px");
         hl.addComponent(ohjePopupComponent);
         hl.setExpandRatio(kc, 1l);
@@ -210,7 +196,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
 
     private void buildGridKoulutusohjelmaRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
-        grid.addComponent(bim.addKoodistoComboBox(null, koodistoUriKoulutusohjelma, "koulutusohjelma", "koulutusohjelma.prompt"));
+        grid.addComponent(bim.addKoodistoComboBox(null, KoodistoURIHelper.KOODISTO_KOULUTUSOHJELMA_URI, "koulutusohjelma", "koulutusohjelma.prompt"));
         grid.newLine();
 
         buildSpacingGridRow(grid);
@@ -218,7 +204,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
 
     private void buildGridLanguageRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
-        KoodistoComponent kc = bim.addKoodistoTwinColSelect(null, koodistoUriKieli, "opetuskielet");
+        KoodistoComponent kc = bim.addKoodistoTwinColSelect(null, KoodistoURIHelper.KOODISTO_KIELI_URI, "opetuskielet");
         kc.addListener(bim.getValueChangeListener("doOpetuskieletChanged"));
 
 //        vl.addComponent(bim.addCheckBox(null, "Opetuskieli.ValitseKaikki", "opetuskieletKaikki", "doOpetuskieletSelectAll"));
@@ -256,7 +242,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
         hl.addComponent(bim.addTextField(null, "suunniteltuKesto", "SuunniteltuKesto.prompt", null));
-        KoodistoComponent kc = bim.addKoodistoComboBox(hl, koodistoUriSuunniteltuKesto, "suunniteltuKestoTyyppi", "SuunniteltuKesto.tyyppi.prompt");
+        KoodistoComponent kc = bim.addKoodistoComboBox(hl, KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, "suunniteltuKestoTyyppi", "SuunniteltuKesto.tyyppi.prompt");
         grid.addComponent(hl);
         grid.newLine();
         buildSpacingGridRow(grid);
@@ -266,7 +252,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
     private void buildGridAvainsanatTeemaRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
 
-        KoodistoComponent kc = bim.addKoodistoTwinColSelect(null, koodistoUriTeema, "teemat");
+        KoodistoComponent kc = bim.addKoodistoTwinColSelect(null, KoodistoURIHelper.KOODISTO_TEEMA_URI, "teemat");
         grid.addComponent(kc);
 
         grid.newLine();
@@ -276,7 +262,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
     private void buildGridOpetusmuotoRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
 
-        grid.addComponent(bim.addKoodistoComboBox(null, koodistoUriOpetusmuoto, "opetusmuoto", "Opetusmuoto.prompt"));
+        grid.addComponent(bim.addKoodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI, "opetusmuoto", "Opetusmuoto.prompt"));
         grid.newLine();
         buildSpacingGridRow(grid);
 
@@ -284,7 +270,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends OphAbstractNavigation
 
     private void buildGridKoulutuslajiRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
-        KoodistoComponent kc = bim.addKoodistoTwinColSelect(null, koodistoUriKoulutuslaji, "koulutuslaji");
+        KoodistoComponent kc = bim.addKoodistoTwinColSelect(null, KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI, "koulutuslaji");
         grid.addComponent(kc);
         grid.newLine();
         buildSpacingGridRow(grid);

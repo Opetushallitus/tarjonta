@@ -40,6 +40,10 @@ public class KoodistoURIHelper {
     public static String KOODISTO_KOULUTUSOHJELMA_URI;
     public static String KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI;
     public static String KOODISTO_HAKUKOHDE_URI;
+    public static String KOODISTO_SUUNNITELTU_KESTO_URI;
+    public static String KOODISTO_TEEMA_URI;
+    public static String KOODISTO_OPETUSMUOTO_URI;
+    public static String KOODISTO_KOULUTUSLAJI_URI;
 
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
@@ -96,4 +100,23 @@ public class KoodistoURIHelper {
         KOODISTO_HAKUKAUSI_URI = uri;
     }
 
+    @Value("${koodisto-uris.suunniteltuKesto:NOT_SET}")
+    public void setKoodistoSuunniteltuKestoUri(String uri) {
+        KOODISTO_SUUNNITELTU_KESTO_URI = uri;
+    }
+
+    @Value("${koodisto-uris.teema:NOT_SET}")
+    public void setKoodistoTeemaUri(String uri) {
+        KOODISTO_TEEMA_URI = uri;
+    }
+
+    @Value("${koodisto-uris.opetusmuoto:NOT_SET}")
+    public void setKoodistoOpetusmuotoUri(String uri) {
+        KOODISTO_OPETUSMUOTO_URI = uri;
+    }
+
+    @Value("${koodisto-uris.koulutuslaji:NOT_SET}")
+    public void setKoodistoKoulutuslajiUri(String uri) {
+        KOODISTO_KOULUTUSLAJI_URI = uri;
+    }
 }
