@@ -75,7 +75,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     GridLayout itemContainer;
 
     //Fields
-    @PropertyId("haku")
+    @PropertyId("hakukohdeNimi")
     KoodistoComponent hakukohteenNimiCombo;
     @PropertyId("tunnisteKoodi")
     TextField tunnisteKoodiText;
@@ -178,7 +178,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     }
 
     private KoodistoComponent buildHakukelpoisuusVaatimukset() {
-        hakuKelpoisuusVaatimuksetCombo = WidgetFactory.create(KoodistoURIHelper.KOODISTO_KIELI_URI);
+        hakuKelpoisuusVaatimuksetCombo = WidgetFactory.create(KoodistoURIHelper.KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI);
         ComboBox hakuKelpoisuusCombo = new ComboBox();
         hakuKelpoisuusCombo.setFilteringMode(Filtering.FILTERINGMODE_CONTAINS);
         hakuKelpoisuusVaatimuksetCombo.setField(hakuKelpoisuusCombo);

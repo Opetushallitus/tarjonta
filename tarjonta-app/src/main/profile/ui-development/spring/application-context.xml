@@ -39,6 +39,8 @@
     <bean class="fi.vm.sade.tarjonta.widget.factory.TarjontaWidgetFactory"/>
     -->
 
+    <bean id="hakukohdeToDTOConverter" class="fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter"/>
+
     <import resource="application-context-service.xml"/>
     <import resource="application-context-ws.xml"/>
 

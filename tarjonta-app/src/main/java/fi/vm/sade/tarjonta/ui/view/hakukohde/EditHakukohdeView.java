@@ -42,6 +42,7 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
 
     @Override
     protected void buildLayout(VerticalLayout t) {
+        
         tabs = new TabSheet();
         tabs.setHeight(-1, UNITS_PIXELS);
         addComponent(tabs);

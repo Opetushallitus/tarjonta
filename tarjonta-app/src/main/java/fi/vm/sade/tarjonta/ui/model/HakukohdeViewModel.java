@@ -1,20 +1,25 @@
 package fi.vm.sade.tarjonta.ui.model;
 
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import java.util.List;
 import java.util.ArrayList;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 
 public class HakukohdeViewModel extends BaseUIViewModel {
 	
+    private String oid;
+    
 	private String organisaatioOid;
 
     private String hakukohdeNimi;
     
     private String tunnisteKoodi;
     
-    private String hakuOid;
+    private HakuTyyppi haku;
     
     private int aloitusPaikat;
+    
+    private String hakukohdeTila;
     
     private String hakukelpoisuusVaatimus;
     
@@ -63,15 +68,15 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     /**
      * @return the hakuOid
      */
-    public String getHakuOid() {
-        return hakuOid;
+    public HakuTyyppi getHakuOid() {
+        return haku;
     }
 
     /**
      * @param hakuOid the hakuOid to set
      */
-    public void setHakuOid(String hakuOid) {
-        this.hakuOid = hakuOid;
+    public void setHakuOid(HakuTyyppi hakuOid) {
+        this.haku = hakuOid;
     }
 
     /**
@@ -128,5 +133,33 @@ public class HakukohdeViewModel extends BaseUIViewModel {
 	public void setOrganisaatioOid(String organisaatioOid) {
 		this.organisaatioOid = organisaatioOid;
 	}
+
+    /**
+     * @return the hakukohdeTila
+     */
+    public String getHakukohdeTila() {
+        return hakukohdeTila;
+    }
+
+    /**
+     * @param hakukohdeTila the hakukohdeTila to set
+     */
+    public void setHakukohdeTila(String hakukohdeTila) {
+        this.hakukohdeTila = hakukohdeTila;
+    }
+
+    /**
+     * @return the oid
+     */
+    public String getOid() {
+        return oid;
+    }
+
+    /**
+     * @param oid the oid to set
+     */
+    public void setOid(String oid) {
+        this.oid = oid;
+    }
 
 }

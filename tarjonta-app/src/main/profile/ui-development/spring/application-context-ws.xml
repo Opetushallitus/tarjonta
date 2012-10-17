@@ -32,7 +32,9 @@
 
     <bean class="fi.vm.sade.koodisto.widget.factory.WidgetFactory" />
 
-    <bean id="oidService" class="fi.vm.sade.oid.service.mock.OIDServiceMock" />
+    <jaxws:client id="oidService"
+                      serviceClass="fi.vm.sade.oid.service.OIDService"
+                      address="${oid.webservice.url:http://NO_OID_WEBSERVICE_URL_CONFIGURED}"/>
 
     <jaxws:client id="tarjontaAdminService"
                      serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService"

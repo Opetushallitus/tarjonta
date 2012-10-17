@@ -50,6 +50,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter;
 
 /**
  * This class is used to control the "tarjonta" UI.
@@ -68,10 +70,12 @@ public class TarjontaPresenter {
 
     @Autowired(required = true)
     private TarjontaPublicService tarjontaPublicService;
-
-    // UI model
+    
     @Autowired(required = true)
     private TarjontaModel _model;
+    
+    @Autowired(required=true)
+    HakukohdeViewModelToDTOConverter hakukohdeToDTOConverter;
 
     // Views this presenter can control
     private TarjontaRootView _rootView;
@@ -79,9 +83,8 @@ public class TarjontaPresenter {
     private ListKoulutusView koulutusListView;
     private PerustiedotView hakuKohdePerustiedotView;
 
-    private HakukohdeViewModel hakuKohde;
-    private List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
-    private List<HakukohdeViewModel> selectedhakukohteet = new ArrayList<HakukohdeViewModel>();
+    
+    
 
     @PostConstruct
     public void initialize() {
@@ -99,23 +102,21 @@ public class TarjontaPresenter {
 
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
-        hakuKohde.getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
-        for (KielikaannosViewModel kieli : hakuKohde.getLisatiedot()) {
-            LOG.info("KIELI : " + kieli.getKielikoodi() + " TEKSTI : " + kieli.getNimi());
-        }
+        getModel().getHakukohde().getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
+        tarjontaAdminService.lisaaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
 
     }
 
     public void initHakukohdeForm(HakukohdeViewModel model, PerustiedotView hakuKohdePerustiedotView) {
         this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
         if (model == null) {
-            hakuKohde = new HakukohdeViewModel();
+           getModel().getHakukohde();
         } else {
-            hakuKohde = model;
+            getModel().setHakukohde(model);
         }
         ListHakuVastausTyyppi haut = tarjontaPublicService.listHaku(new ListaaHakuTyyppi());
 
-        this.hakuKohdePerustiedotView.initForm(hakuKohde);
+        this.hakuKohdePerustiedotView.initForm(getModel().getHakukohde());
         this.hakuKohdePerustiedotView.addItemsToHakuCombobox(haut.getResponse());
     }
 

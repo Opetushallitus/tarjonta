@@ -46,6 +46,8 @@ public class TarjontaModel extends BaseUIViewModel {
 
     private List<KoulutusTulos> _koulutukset;
     private List<KoulutusTulos> _selectedKoulutukset;
+    
+    private HakukohdeViewModel hakukohde;
 
 //    private HakukohdeViewModel hakuKohde;
 //    private List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
@@ -125,6 +127,23 @@ public class TarjontaModel extends BaseUIViewModel {
 		}
 		return _koulutukset;
 	}
+
+    /**
+     * @return the hakukohde
+     */
+    public HakukohdeViewModel getHakukohde() {
+        if (hakukohde == null) {
+            hakukohde = new HakukohdeViewModel();
+        }
+        return hakukohde;
+    }
+
+    /**
+     * @param hakukohde the hakukohde to set
+     */
+    public void setHakukohde(HakukohdeViewModel hakukohde) {
+        this.hakukohde = hakukohde;
+    }
 
 
 
