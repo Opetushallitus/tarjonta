@@ -38,8 +38,6 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Component.Event;
-import com.vaadin.ui.Component.Listener;
 import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.common.I18N;
@@ -47,9 +45,7 @@ import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.HakukohdeResultRow;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl.NewHakukohdeEvent;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -69,14 +65,24 @@ public class ListKoulutusView extends VerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(ListHakukohdeViewImpl.class);
     /**
-     * Button for adding selected Hakukohde objects to a Haku.
+     * Button for editing koulutus objects.
      */
-    private Button lisaaHakuunB;
+    private Button muokkaaB;
 
     /**
-     * Button for removing selected Hakukohde objects.
+     * Button for removing selected koulutus objects.
      */
     private Button poistaB;
+    
+    /**
+    * Button for creating a hakukohde object.
+    */
+   private Button luoHakukohdeB;
+
+   /**
+    * Button for creating a koulutus object.
+    */
+   private Button luoKoulutusB;
 
     /**
      * Component for selecting desired sorting/grouping criteria for listed Hakukohde objects.
@@ -136,7 +142,7 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     /**
-     * Sets the datasource for the hierarchical listing of Hakukohde objects.
+     * Sets the datasource for the hierarchical listing of Koulutus objects.
      */
     @PostConstruct
     public void setDataSource() {
@@ -146,28 +152,28 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     /**
-     * Creates the vaadin HierarchicalContainer datasource for the Hakukohde listing
+     * Creates the vaadin HierarchicalContainer datasource for the Koulutus listing
      * based on data provided by the presenter.
      * @param map the data map provided by the presenter.
-     * @return the hierarchical container for Hakukokhde listing.
+     * @return the hierarchical container for Koulutus listing.
      */
     private Container createDataSource(Map<String, List<HakukohdeTulos>> map) {
         Set<Map.Entry<String, List<HakukohdeTulos>>> set = map.entrySet();
 
         HierarchicalContainer hc = new HierarchicalContainer();
-        HakukohdeResultRow rowStyleDef = new HakukohdeResultRow();
-        hc.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, rowStyleDef.format("", false));
+        KoulutusResultRow rowStyleDef = new KoulutusResultRow();
+        hc.addContainerProperty(COLUMN_A, KoulutusResultRow.class, rowStyleDef.format("", false));
 
         for (Map.Entry<String, List<HakukohdeTulos>> e : set) {
             LOG.info("getTreeDataSource()" + e.getKey());
-            HakukohdeResultRow rowStyle = new HakukohdeResultRow();
+            KoulutusResultRow rowStyle = new KoulutusResultRow();
 
             Object rootItem = hc.addItem();
 
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey(), false));
 
             for (HakukohdeTulos curHakukohde : e.getValue()) {
-                HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde);
+                KoulutusResultRow rowStyleInner = new KoulutusResultRow(curHakukohde);
                 hc.addItem(curHakukohde);
                 hc.setParent(curHakukohde, rootItem);
                 hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(curHakukohde.getHakukohde().getNimi(), true));
@@ -177,7 +183,7 @@ public class ListKoulutusView extends VerticalLayout {
 
                     @Override
                     public void componentEvent(Event event) {
-                        if (event instanceof HakukohdeResultRow.HakukohdeRowMenuEvent) {
+                        if (event instanceof KoulutusResultRow.KoulutusRowMenuEvent) {
                             fireEvent(event);
                         }
                     }
@@ -195,7 +201,7 @@ public class ListKoulutusView extends VerticalLayout {
         presenter.getSelectedhakukohteet().clear();
         HierarchicalContainer hc = (HierarchicalContainer)(this.categoryTree.getContainerDataSource());
         for (Object item : hc.getItemIds()) {
-            HakukohdeResultRow curRow = (HakukohdeResultRow)(categoryTree.getContainerProperty(item, COLUMN_A).getValue());
+            KoulutusResultRow curRow = (KoulutusResultRow)(categoryTree.getContainerProperty(item, COLUMN_A).getValue());
             curRow.getIsSelected().setValue(selected);
         }
     }
@@ -209,14 +215,13 @@ public class ListKoulutusView extends VerticalLayout {
 
 
 
-        lisaaHakuunB = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("LisaaHakuun"));
-        lisaaHakuunB.addStyleName(Oph.BUTTON_SMALL);
+        muokkaaB = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("LisaaHakuun"));
+        muokkaaB.addStyleName(Oph.BUTTON_SMALL);
 
-        lisaaHakuunB.addListener(new Button.ClickListener() {
+        muokkaaB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 navigateToKoulutusEditForm();
-
             }
         });
 
@@ -226,11 +231,28 @@ public class ListKoulutusView extends VerticalLayout {
         poistaB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                presenter.removeSelectedHakukohteet();
-
+                presenter.removeSelectedKoulutukset();
             }
         });
-
+        
+        luoHakukohdeB = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("LuoHakukohde"));
+        luoHakukohdeB.addStyleName(Oph.BUTTON_SMALL);
+        luoHakukohdeB.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                navigateToHakukohdeEditForm();
+            }
+        });
+        
+        luoKoulutusB = UiUtil.button(layout, i18n.getMessage("LuoKoulutus"));
+        luoKoulutusB.addStyleName(Oph.BUTTON_SMALL);
+        //btnPoista.setEnabled(false);
+        luoKoulutusB.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+            	navigateToKoulutusEditForm();
+            }
+        });
 
         cbJarjestys = UiUtil.comboBox(layout, null, ORDER_BY);
         cbJarjestys.setWidth("300px");
@@ -245,29 +267,29 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     /**
-     * @param btnListenerMuokkaa( the btnLuoUusiKoulutus to set
-     */
-    public void setBtnListenerMuokkaa(Button.ClickListener btnKopioiUudelleKaudelle) {
-        this.lisaaHakuunB.addListener(btnKopioiUudelleKaudelle);
-    }
-
-    /**
      * Reloads the data to the Hakukohde list.
      */
     public void reload() {
         categoryTree.removeAllItems();
-        categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
+        categoryTree.setContainerDataSource(createDataSource(presenter.getKoulutusDataSource()));
     }
 
     /**
-     * fires event to signal navigation to Hakukohde edit form.
+     * fires event to signal navigation to Koulutus edit form.
      */
     private void navigateToKoulutusEditForm() {
         fireEvent(new NewKoulutusEvent(this));
     }
+    
+    /**
+     * fires event to signal mavigation tu Hakukohde edit form.
+     */
+	private void navigateToHakukohdeEditForm() {
+		fireEvent(new NewHakukohdeEvent(this));
+	}
 
     /**
-     * Event to signal that the user wants to create a new Hakukohde.
+     * Event to signal that the user wants to create a new Koulutus.
     */
     public class NewKoulutusEvent extends Component.Event {
 
@@ -277,5 +299,18 @@ public class ListKoulutusView extends VerticalLayout {
         }
 
     }
+    
+    /**
+     * Event to signal that the user wants to create a new Hakukohde.
+    */
+    public class NewHakukohdeEvent extends Component.Event {
+
+        public NewHakukohdeEvent(Component source) {
+            super(source);
+
+        }
+
+    }
+    
 
 }

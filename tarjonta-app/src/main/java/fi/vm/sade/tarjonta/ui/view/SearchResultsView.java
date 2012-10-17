@@ -17,10 +17,16 @@ package fi.vm.sade.tarjonta.ui.view;
 
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Component.Event;
+import com.vaadin.ui.Component.Listener;
+
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
+import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
+import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
 
@@ -57,10 +63,19 @@ public class SearchResultsView extends VerticalLayout {
         tabs = new TabSheet();
         tabs.setHeight(-1, UNITS_PIXELS);
         addComponent(tabs);
+        
+        ListKoulutusView koulutusList = new ListKoulutusView();
+        koulutusList.addListener(new Listener() {
 
-        //TODO: replace the KoulutusToisenAsteenPerustiedotViewModel with koulutus search list view!
+            @Override
+            public void componentEvent(Event event) {
+            	fireEvent(event);
 
-        tabs.addTab(new EditKoulutusPerustiedotToinenAsteView(), T("koulutukset"));
+            }
+
+        });
+
+        tabs.addTab(koulutusList, T("koulutukset"));//new EditKoulutusPerustiedotToinenAsteView(), T("koulutukset"));
         tabs.addTab(new ListHakukohdeViewImpl(), T("hakuryhmat"));
         //For testing
         tabs.addTab(new EditHakukohdeView(),"Lisää hakukohde");

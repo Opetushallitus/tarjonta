@@ -115,8 +115,6 @@ public class TarjontaPresenter {
 
     private void createInitialTemporaryDemoDataDForTestingPurposes() {
         LOG.error("createInitalData() - DEMO DATA CREATED TO UI! I so hope we are not in production :)");
-        /*getModel().getHakukohteet().add(new HakukohdeViewModel("Testi1", "Organisaatio1"));
-        geModel().getHakukohteet().add(new HakukohdeViewModel("Testi2", "Organisaatio2"));*/
     }
 
     /**
@@ -273,5 +271,10 @@ public class TarjontaPresenter {
         }
 
         return map;
+	}
+
+	public void removeSelectedKoulutukset() {
+		// TODO Auto-generated method stub
+		
 	}
 }

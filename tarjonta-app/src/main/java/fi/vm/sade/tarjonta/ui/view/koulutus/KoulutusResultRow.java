@@ -13,7 +13,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.view.hakukohde;
+package fi.vm.sade.tarjonta.ui.view.koulutus;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -23,30 +28,25 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 
 /**
- * The component and functionality for showing a hakukohde object in hakukohde search result list.
- *
- * @author markus
- *
+ * 
+ * @author Markus
  */
 @Configurable(preConstruction = false)
-public class HakukohdeResultRow extends HorizontalLayout {
+public class KoulutusResultRow  extends HorizontalLayout {
 
-	private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResultRow.class);
+	private static final Logger LOG = LoggerFactory.getLogger(KoulutusResultRow.class);
 
     private I18NHelper i18n = new I18NHelper(this);
     /**
-     * The hakukohde to display on the row.
+     * The koulutus to display on the row.
      */
     private HakukohdeTulos hakukohde;
 
@@ -61,11 +61,11 @@ public class HakukohdeResultRow extends HorizontalLayout {
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
 
-    public HakukohdeResultRow() {
+    public KoulutusResultRow() {
         this.hakukohde = new HakukohdeTulos();
     }
 
-    public HakukohdeResultRow(HakukohdeTulos hakukohde) {
+    public KoulutusResultRow(HakukohdeTulos hakukohde) {
         this.hakukohde = hakukohde;
     }
 
@@ -99,11 +99,11 @@ public class HakukohdeResultRow extends HorizontalLayout {
      */
     private void menuItemClicked(String selection) {
         if (selection.equals(i18n.getMessage("tarkastele"))) {
-            fireEvent(new HakukohdeRowMenuEvent(this, hakukohde, HakukohdeRowMenuEvent.VIEW));
+            fireEvent(new KoulutusRowMenuEvent(this, hakukohde, KoulutusRowMenuEvent.VIEW));
         } else if (selection.equals(i18n.getMessage("muokkaa"))) {
-            fireEvent(new HakukohdeRowMenuEvent(this, hakukohde, HakukohdeRowMenuEvent.EDIT));
+            fireEvent(new KoulutusRowMenuEvent(this, hakukohde, KoulutusRowMenuEvent.EDIT));
         } else if (selection.equals(i18n.getMessage("poista"))) {
-            fireEvent(new HakukohdeRowMenuEvent(this, hakukohde, HakukohdeRowMenuEvent.REMOVE));
+            fireEvent(new KoulutusRowMenuEvent(this, hakukohde, KoulutusRowMenuEvent.REMOVE));
         }
     }
 
@@ -112,7 +112,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
      * @param text - the text to be shown on the row.
      * @return
      */
-    public HakukohdeResultRow format(String text, boolean withMenuBar) {
+    public KoulutusResultRow format(String text, boolean withMenuBar) {
         isSelected = UiUtil.checkbox(null, null);
         isSelected.setImmediate(true);
         isSelected.addListener(new Property.ValueChangeListener() {
@@ -151,11 +151,11 @@ public class HakukohdeResultRow extends HorizontalLayout {
     }
 
     /**
-     * Event to be fired by HakukohdeResultRow object when the user
+     * Event to be fired by KoulutusResultRow object when the user
      * makes a selection in the row's menubar.
      * @author Markus
      */
-    public class HakukohdeRowMenuEvent extends Component.Event {
+    public class KoulutusRowMenuEvent extends Component.Event {
 
         public static final String REMOVE = "remove";
         public static final String EDIT = "edit";
@@ -165,13 +165,13 @@ public class HakukohdeResultRow extends HorizontalLayout {
         private String type;
 
 
-        public HakukohdeRowMenuEvent(Component source, HakukohdeTulos hakukohde, String type) {
+        public KoulutusRowMenuEvent(Component source, HakukohdeTulos hakukohde, String type) {
             super(source);
             this.hakukohde = hakukohde;
             this.type = type;
         }
 
-        public HakukohdeRowMenuEvent(Component source) {
+        public KoulutusRowMenuEvent(Component source) {
             super(source);
         }
 
@@ -185,5 +185,5 @@ public class HakukohdeResultRow extends HorizontalLayout {
             return type;
         }
     }
-
+	
 }

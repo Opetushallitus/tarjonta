@@ -19,12 +19,20 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Component.Event;
+import com.vaadin.ui.Component.Listener;
 
 import fi.vm.sade.tarjonta.ui.TarjontaWebApplication;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.common.BreadcrumbsView;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
+import fi.vm.sade.tarjonta.ui.view.haku.EditHakuViewImpl;
+import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
+import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
+import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -108,6 +116,18 @@ public class TarjontaRootView extends Window {
                 }
             }
         });
+        
+        //Handles navigation to different child views (edit haku, view haku)
+        _searchResultsView.addListener(new Listener() {
+
+            @Override
+            public void componentEvent(Event event) {
+            	if (event instanceof ListKoulutusView.NewKoulutusEvent) {
+                    showKoulutusEdit(new HakuViewModel());
+                }
+            }
+
+        });
 
         _presenter.setRootView(this);
 
@@ -120,7 +140,20 @@ public class TarjontaRootView extends Window {
         _presenter.showMainDefaultView();
     }
 
-    public VerticalLayout getAppRootLayout() {
+    protected void showKoulutusEdit(HakuViewModel hakuViewModel) {
+    	LOG.info("showMainDefaultView()");
+
+        OrganisaatiohakuView organisaatiohakuView = new OrganisaatiohakuView(null);
+        getAppRootLayout().addComponent(organisaatiohakuView);
+        VerticalLayout vl = UiUtil.verticalLayout();
+        vl.setHeight(-1, VerticalLayout.UNITS_PIXELS);
+        vl.addComponent(getBreadcrumbsView());
+        vl.addComponent(new EditKoulutusPerustiedotToinenAsteView());
+        organisaatiohakuView.addComponent(vl);
+        organisaatiohakuView.setExpandRatio(vl, 1f);
+	}
+
+	public VerticalLayout getAppRootLayout() {
         return _appRootLayout;
     }
 
