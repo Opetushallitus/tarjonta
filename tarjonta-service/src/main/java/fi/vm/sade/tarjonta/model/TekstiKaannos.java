@@ -29,7 +29,7 @@ public class TekstiKaannos extends BaseEntity {
 
     private static final long serialVersionUID = 8949181662473812771L;
 
-    @Column(name = "kieli_koodi", length = 2)
+    @Column(name = "kieli_koodi")
     private String kieliKoodi;
 
     @Column(name = "teksti")

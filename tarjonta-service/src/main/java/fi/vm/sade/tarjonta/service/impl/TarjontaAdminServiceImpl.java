@@ -86,8 +86,18 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) {
         Hakukohde hakuk = conversionService.convert(hakukohde, Hakukohde.class);
-        hakuk = hakukohdeDAO.insert(hakuk);
-        return conversionService.convert(hakuk, HakukohdeTyyppi.class);
+        logTekstiKaannokset(hakuk);
+        Haku haku = hakuDAO.findByOid(hakukohde.getHakukohteenHakuOid());
+        log.info("FOUND HAKU : " + haku.getNimiFi());
+        hakuk.setHaku(haku);
+        hakukohdeDAO.insert(hakuk);
+        return hakukohde;
+    }
+    
+    private void logTekstiKaannokset(Hakukohde hakukohde) {
+        for (TekstiKaannos teksti : hakukohde.getLisatiedot().getTekstis()) {
+            log.info("TEKSTI : " + teksti.getId() + " " + teksti.getKieliKoodi() + " " + teksti.getTeksti());
+        }
     }
 
     @Override
