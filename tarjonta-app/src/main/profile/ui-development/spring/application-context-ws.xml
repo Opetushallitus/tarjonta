@@ -34,9 +34,22 @@
 
     <bean id="oidService" class="fi.vm.sade.oid.service.mock.OIDServiceMock" />
 
-    <bean id="hakuService" class="fi.vm.sade.tarjonta.service.mock.HakueraServiceMock" />
+    <jaxws:client id="tarjontaAdminService"
+                     serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService"
+                     address="${tarjonta.admin.webservice.url:http://NO_HAKU_WEBSERVICE_URL_CONFIGURED}"/>
+
+    <jaxws:client id="tarjontaPublicService"
+                     serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService"
+                     address="${tarjonta.public.webservice.url:http://NO_HAKU_WEBSERVICE_URL_CONFIGURED}"/>
+
+    <jaxws:client id="organisaatioService"
+                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
+                   address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
+
+    <!--
     <bean id="organisaatioService" class="fi.vm.sade.organisaatio.api.OrganisaatioServiceMock" />
     <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.mock.TarjontaAdminServiceMock"/>
     <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.mock.TarjontaPublicServiceMock" />
+    -->
 
 </beans>
