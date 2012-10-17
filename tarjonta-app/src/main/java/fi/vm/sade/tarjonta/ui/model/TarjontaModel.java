@@ -43,9 +43,13 @@ public class TarjontaModel extends BaseUIViewModel {
 
     private List<HakukohdeTulos> _hakukohteet;
     private List<HakukohdeTulos> _selectedhakukohteet;
-    
+
     private List<KoulutusTulos> _koulutukset;
     private List<KoulutusTulos> _selectedKoulutukset;
+
+//    private HakukohdeViewModel hakuKohde;
+//    private List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
+//    private List<HakukohdeViewModel> selectedhakukohteet = new ArrayList<HakukohdeViewModel>();
 
     public String getIdentifier() {
         return _identifier;
@@ -73,7 +77,7 @@ public class TarjontaModel extends BaseUIViewModel {
         }
         return _hakukohteet;
     }
-    
+
     public void setHakukohteet(List<HakukohdeTulos> hakukohteet) {
         this._hakukohteet = hakukohteet;
     }
@@ -121,5 +125,10 @@ public class TarjontaModel extends BaseUIViewModel {
 		}
 		return _koulutukset;
 	}
+
+
+
+
+
 
 }

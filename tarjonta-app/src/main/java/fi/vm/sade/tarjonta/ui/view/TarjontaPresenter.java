@@ -61,28 +61,26 @@ public class TarjontaPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
 
-    @Autowired(required = true)
-    private TarjontaModel _model;
-
-    private TarjontaRootView _rootView;
-
-    private ListHakukohdeView _hakukohdeListView;
-
-    private ListKoulutusView koulutusListView;
-
+    // Services used
     @Autowired(required = true)
     private TarjontaAdminService tarjontaAdminService;
 
     @Autowired(required = true)
     private TarjontaPublicService tarjontaPublicService;
 
-    private List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
+    // UI model
+    @Autowired(required = true)
+    private TarjontaModel _model;
 
-    private List<HakukohdeViewModel> selectedhakukohteet = new ArrayList<HakukohdeViewModel>();
-
+    // Views this presenter can control
+    private TarjontaRootView _rootView;
+    private ListHakukohdeView _hakukohdeListView;
+    private ListKoulutusView koulutusListView;
     private PerustiedotView hakuKohdePerustiedotView;
 
     private HakukohdeViewModel hakuKohde;
+    private List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
+    private List<HakukohdeViewModel> selectedhakukohteet = new ArrayList<HakukohdeViewModel>();
 
     @PostConstruct
     public void initialize() {

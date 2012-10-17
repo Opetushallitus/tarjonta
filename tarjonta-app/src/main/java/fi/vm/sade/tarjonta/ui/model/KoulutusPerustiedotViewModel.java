@@ -29,9 +29,10 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  * @author mlyly
  */
 public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
-    // Koodisto: koulutus
 
+    // Koodisto: koulutus
     private String _koulutus;
+
     // TODO Mistä nämä tulevat?
     private String _koulutusTyyppi = "";
     private String _koulutusala = "";
@@ -40,6 +41,7 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     private String _opintojenLaajuusyksikko = "";
     private String _opintojenLaajuus = "";
     private String _opintoala = "";
+
     // Koodisto: kieli
     private Set<String> _opetuskielet = new HashSet<String>();
     private boolean _opetuskieletKaikki;
@@ -222,10 +224,5 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
 
     public void setYhteyshenkilot(List<KoulutusYhteyshenkiloViewModel> _yhteyshenkilot) {
         this._yhteyshenkilot = _yhteyshenkilot;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
     }
 }

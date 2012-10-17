@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.model;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
  * Currently used to pretty-print the models contents.
@@ -27,38 +28,7 @@ public class BaseUIViewModel implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append("[");
-
-        Field[] fields = this.getClass().getDeclaredFields();
-
-        boolean isFirstField = true;
-
-        for (Field field : fields) {
-            if (!isFirstField) {
-                sb.append(", ");
-            }
-
-            sb.append(field.getName());
-            sb.append("=");
-
-            try {
-                Object v = field.get(this);
-                if (v == null) {
-                    sb.append("NULL");
-                } else {
-                    sb.append(v.toString());
-                }
-            } catch (Throwable ex) {
-                sb.append("FAILED TO GET VALUE");
-            }
-
-            isFirstField = false;
-        }
-
-        sb.append("]");
-        return sb.toString();
+        return ReflectionToStringBuilder.toString(this);
     }
 
 }

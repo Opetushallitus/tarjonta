@@ -15,14 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
-import java.util.List;
-
 /**
  *
  * @author mlyly
  */
 public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedotViewModel {
-
 
     private String koulutusohjelma;
     private String koulutuksenTyyppi;
@@ -30,6 +27,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     public KoulutusToisenAsteenPerustiedotViewModel() {
         super();
 
+        // TODO demo data?
         setKoulutusala("Tekniikan ja liikenteen ala");
         setTutkinto("Autoalan perustutkinto");
         setTutkintonimike("Automaalari");
@@ -39,33 +37,19 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setKoulutuksenTyyppi("Ei valintaa");
     }
 
-    /**
-     * @return the koulutusohjelma
-     */
     public String getKoulutusohjelma() {
         return koulutusohjelma;
     }
 
-    /**
-     * @param koulutusohjelma the koulutusohjelma to set
-     */
     public void setKoulutusohjelma(String koulutusohjelma) {
         this.koulutusohjelma = koulutusohjelma;
     }
 
-    /**
-     * @return the koulutuksenTyyppi
-     */
     public String getKoulutuksenTyyppi() {
         return koulutuksenTyyppi;
     }
 
-    /**
-     * @param koulutuksenTyyppi the koulutuksenTyyppi to set
-     */
     public void setKoulutuksenTyyppi(String koulutuksenTyyppi) {
         this.koulutuksenTyyppi = koulutuksenTyyppi;
     }
-
-
 }

@@ -15,29 +15,22 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This class defines links to outside of this system.
+ * This class defines categories of links to outside of this system.
  *
- * Link contains the language(s) the given URL link is used for.
+ * Link contains the category, language(s) the given URL link is used for.
  *
  * @author mlyly
  */
 public class KoulutusLinkkiViewModel extends BaseUIViewModel {
 
-    // TODO enum
-
     /**
-     * TODO enumiksi?
-     *
-     * Defines
-     *
+     * Defines possible types for links.
      */
-    public static final String[] LINKKI_TYYPIT = new String[] {
+    public static final String[] LINKKI_TYYPIT = new String[]{
         "OPPILAITOS",
         "KOULUTUSOHJELMA",
         "SOSIAALINENMEDIA",
@@ -94,7 +87,4 @@ public class KoulutusLinkkiViewModel extends BaseUIViewModel {
             this._linkkityyppi = linkkityyppi;
         }
     }
-
-
-
 }

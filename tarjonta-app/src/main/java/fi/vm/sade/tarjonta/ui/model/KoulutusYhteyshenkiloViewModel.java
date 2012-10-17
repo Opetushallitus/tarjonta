@@ -15,13 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
+ * This class represents one "contact person" for a given set of languages.
  *
  * @author mlyly
  */
@@ -73,10 +71,5 @@ public class KoulutusYhteyshenkiloViewModel extends BaseUIViewModel {
 
     public void setKielet(Set<String> kielet) {
         this._kielet = kielet;
-    }
-    
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
     }
 }
