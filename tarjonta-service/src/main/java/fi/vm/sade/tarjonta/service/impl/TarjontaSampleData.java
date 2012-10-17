@@ -58,8 +58,8 @@ public class TarjontaSampleData {
         // Ympäristön suunnittelun ja rakentamisen koulutusohjelma (onko tämä oikea ko ??)
         //
         moduuli = createKoulutusmoduuli();
-        moduuli.setKoulutusKoodi("http://koodisto.oph.fi/koulutus/321101");
-        moduuli.setKoulutusohjelmaKoodi("http://koodisto.oph.fi/koulutusohjelma/1603");
+        moduuli.setKoulutusKoodi("Artesaani, käsi- ja taideteollisuusalan perustutkinto 19369");
+        moduuli.setKoulutusohjelmaKoodi("koulutusohjelma/1603");
         koulutusmoduuliDAO.insert(moduuli);
 
         //
@@ -125,11 +125,11 @@ public class TarjontaSampleData {
 
         Koulutusmoduuli m = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         m.setOid(randomOid("koulutusmoduuli"));
-        m.setKoulutusKoodi("Artesaani, käsi- ja taideteollisuusalan perustutkinto 19369");
+        m.setKoulutusKoodi(randomKoodiUri("koulutus"));
         m.setEqfLuokitus(randomKoodiUri("eqf"));
         m.setKoulutusAste(randomKoodiUri("koulutusaste"));
         m.setKoulutusala(randomKoodiUri("koulutusala"));
-        m.setKoulutusohjelmaKoodi("koulutusohjelma/1603");
+        m.setKoulutusohjelmaKoodi(randomKoodiUri("koulutusohjelma"));
         m.setNqfLuokitus(randomKoodiUri("ngf"));
         m.setOmistajaOrganisaatioOid(randomOid("organisaatio"));
         m.setTila(KoodistoContract.TarjontaTilat.JULKAISTU);
