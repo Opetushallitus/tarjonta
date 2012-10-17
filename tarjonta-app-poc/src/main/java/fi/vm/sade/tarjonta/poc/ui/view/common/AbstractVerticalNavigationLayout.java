@@ -37,12 +37,8 @@ public abstract class AbstractVerticalNavigationLayout extends OphAbstractNaviga
     private TarjontaPresenter _presenter;
 
     public AbstractVerticalNavigationLayout(Class clazz) {
-        super(VerticalLayout.class, clazz);
-    }
-
-    @Override
-    protected void initialization(Object obj) {
-         _i18n = new I18NHelper((Class) obj);  //set property namespace
+        super(VerticalLayout.class);
+        _i18n = new I18NHelper(clazz);
     }
 
     protected String T(String key) {
@@ -62,6 +58,4 @@ public abstract class AbstractVerticalNavigationLayout extends OphAbstractNaviga
     protected I18NHelper getI18n() {
         return _i18n;
     }
-
-
 }
