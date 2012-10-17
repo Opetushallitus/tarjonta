@@ -23,6 +23,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.common.DataTableEvent;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -37,8 +38,12 @@ import org.vaadin.addon.formbinder.PropertyId;
 /**
  * An editor to edit KoulutusYhteyshenkiloDTO.
  *
- * Fires events: <ul> <li>SaveEvent</li> <li>CancelEvent</li>
- * <li>DeleteEvent</li> </ul>
+ * Fires events:
+ * <ul>
+ *   <li>DataTableEvent.SaveEvent</li>
+ *   <li>DataTableEvent.CancelEvent</li>
+ *   <li>DataTableEvent.DeleteEvent</li>
+ * </ul>
  *
  * Use "addListener" to catch these.
  *
@@ -60,9 +65,8 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
     private TextField _tfPuhelin;
     @PropertyId("kielet")
     KoodistoComponent _kcKielet;
+
     private I18NHelper i18n = new I18NHelper(this);
-    @Value("${koodisto-uris.kieli:http://kieli}")
-    private String _koodistoUriKieli;
 
     public EditKoulutusPerustiedotYhteystietoView() {
         this.setSpacing(true);
@@ -88,7 +92,7 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
 
         this.addComponent(UiUtil.label(null, i18n.getMessage("YhteyshenkiloKielissa")));
 
-        _kcKielet = UiBuilder.koodistoTwinColSelect(this, _koodistoUriKieli, null, null, null);
+        _kcKielet = UiBuilder.koodistoTwinColSelect(this, KoodistoURIHelper.KOODISTO_KIELI_URI, null, null, null);
 
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
