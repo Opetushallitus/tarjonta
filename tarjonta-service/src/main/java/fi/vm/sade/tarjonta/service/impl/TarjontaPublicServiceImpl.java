@@ -186,6 +186,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
 	@Override
 	public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
+		//Retrieving all komotos this will be extended search only for komotos matching the criteria
+	    List<KoulutusmoduuliToteutus> komotos = this.koulutusmoduuliToteutusDAO.findAll();
+		
 		//Creating the answer type
 		HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
 		
@@ -199,7 +202,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 			koulutusKooste.setTarjoaja(komoto.getTarjoaja());
 			koulutusKooste.setNimi(komoto.getNimi());
 			koulutusKooste.setTila(komoto.getTila());
-			koulutusKooste.setKoulutusmoduuli(komoto.getKoulutusmoduuli().getOid());
+			koulutusKooste.setKoulutusmoduuli((komoto.getKoulutusmoduuli() != null) ? komoto.getKoulutusmoduuli().getOid() : null);
 			koulutusKooste.setKoulutusmoduuliToteutus(komoto.getOid());	
 			tulos.setKoulutus(koulutusKooste);
 			vastaus.getKoulutusTulos().add(tulos);
