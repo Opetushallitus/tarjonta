@@ -143,14 +143,13 @@ public class TarjontaRootView extends Window {
     protected void showKoulutusEdit(HakuViewModel hakuViewModel) {
     	LOG.info("showMainDefaultView()");
 
-        OrganisaatiohakuView organisaatiohakuView = new OrganisaatiohakuView(null);
-        getAppRootLayout().addComponent(organisaatiohakuView);
+    	getAppRootLayout().removeAllComponents();
         VerticalLayout vl = UiUtil.verticalLayout();
         vl.setHeight(-1, VerticalLayout.UNITS_PIXELS);
         vl.addComponent(getBreadcrumbsView());
         vl.addComponent(new EditKoulutusPerustiedotToinenAsteView());
-        organisaatiohakuView.addComponent(vl);
-        organisaatiohakuView.setExpandRatio(vl, 1f);
+        getAppRootLayout().addComponent(vl);
+        getAppRootLayout().setExpandRatio(vl, 1f);
 	}
 
 	public VerticalLayout getAppRootLayout() {
