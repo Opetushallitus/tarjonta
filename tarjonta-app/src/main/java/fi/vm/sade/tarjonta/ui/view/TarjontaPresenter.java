@@ -29,6 +29,7 @@ import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
@@ -57,21 +58,30 @@ import org.springframework.stereotype.Component;
 @Component
 @Configurable(preConstruction = false)
 public class TarjontaPresenter {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
+
     @Autowired(required = true)
     private TarjontaModel _model;
+
     private TarjontaRootView _rootView;
+
     private ListHakukohdeView _hakukohdeListView;
+
     private ListKoulutusView koulutusListView;
+
     @Autowired(required = true)
     private TarjontaAdminService tarjontaAdminService;
+
     @Autowired(required = true)
     private TarjontaPublicService tarjontaPublicService;
-    
+
     private List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
+
     private List<HakukohdeViewModel> selectedhakukohteet = new ArrayList<HakukohdeViewModel>();
+
     private PerustiedotView hakuKohdePerustiedotView;
+
     private HakukohdeViewModel hakuKohde;
 
     @PostConstruct
@@ -83,20 +93,20 @@ public class TarjontaPresenter {
             createInitialTemporaryDemoDataDForTestingPurposes();
         }
     }
-    
-     public void saveHakuKohde() {
+
+    public void saveHakuKohde() {
         saveHakuKohdePerustiedot();
     }
-    
+
     public void saveHakuKohdePerustiedot() {
-       LOG.info("Form saved");
-       hakuKohde.getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
-       for (KielikaannosViewModel kieli : hakuKohde.getLisatiedot()) {
-           LOG.info("KIELI : " + kieli.getKielikoodi() + " TEKSTI : " + kieli.getNimi());
-       }
-       
+        LOG.info("Form saved");
+        hakuKohde.getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
+        for (KielikaannosViewModel kieli : hakuKohde.getLisatiedot()) {
+            LOG.info("KIELI : " + kieli.getKielikoodi() + " TEKSTI : " + kieli.getNimi());
+        }
+
     }
-    
+
     public void initHakukohdeForm(HakukohdeViewModel model, PerustiedotView hakuKohdePerustiedotView) {
         this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
         if (model == null) {
@@ -105,7 +115,7 @@ public class TarjontaPresenter {
             hakuKohde = model;
         }
         ListHakuVastausTyyppi haut = tarjontaPublicService.listHaku(new ListaaHakuTyyppi());
-       
+
         this.hakuKohdePerustiedotView.initForm(hakuKohde);
         this.hakuKohdePerustiedotView.addItemsToHakuCombobox(haut.getResponse());
     }
@@ -123,7 +133,7 @@ public class TarjontaPresenter {
      */
     public void showMainDefaultView() {
         LOG.info("showMainDefaultView()");
-        
+
         OrganisaatiohakuView organisaatiohakuView = new OrganisaatiohakuView(null);
         _rootView.getAppRootLayout().addComponent(organisaatiohakuView);
         VerticalLayout vrightLayout = UiUtil.verticalLayout();
@@ -134,19 +144,19 @@ public class TarjontaPresenter {
         organisaatiohakuView.addComponent(vrightLayout);
         organisaatiohakuView.setExpandRatio(vrightLayout, 1f);
     }
-    
+
     public void doSearch() {
         LOG.info("doSearch(): searchSpec={}", getModel().getSearchSpec());
     }
-    
+
     public ListHakukohdeView getHakukohdeListView() {
         return _hakukohdeListView;
     }
-    
+
     public void setHakukohdeListView(ListHakukohdeView hakukohdeListView) {
         this._hakukohdeListView = hakukohdeListView;
     }
-    
+
     public Map<String, List<HakukohdeTulos>> getHakukohdeDataSource() {
         Map<String, List<HakukohdeTulos>> map = new HashMap<String, List<HakukohdeTulos>>();
         getModel().setHakukohteet(tarjontaPublicService.haeHakukohteet(new HaeHakukohteetKyselyTyyppi()).getHakukohdeTulos());
@@ -161,7 +171,7 @@ public class TarjontaPresenter {
                 map.get(hkKey).add(curHk);
             }
         }
-        
+
         return map;
     }
 
@@ -186,7 +196,7 @@ public class TarjontaPresenter {
         // Force UI update.
         getHakukohdeListView().reload();
     }
-    
+
     /**
      * Gets the currently selected koulutus objects.
      *
@@ -208,7 +218,7 @@ public class TarjontaPresenter {
         // Force UI update.
         getKoulutusListView().reload();
     }
-    
+
     public void saveKoulutusLuonnoksenaModel() {
         LOG.info("Koulutus tallennettu luonnoksena");
         LOG.info(getModel().getKoulutusPerustiedotModel().toString());
@@ -221,9 +231,9 @@ public class TarjontaPresenter {
         LOG.info("Koulutus tallennettu valmiina");
         LOG.info(getModel().getKoulutusPerustiedotModel().toString());
         LisaaKoulutusTyyppi lisaaKoulutusTyyppi = new LisaaKoulutusTyyppi();
-        lisaaKoulutusTyyppi.setKoulutusKoodi("321101");
-        lisaaKoulutusTyyppi.setKoulutusohjelmaKoodi("1603");
-        lisaaKoulutusTyyppi.setOpetusmuoto("opetusmuoto");
+        lisaaKoulutusTyyppi.setKoulutusKoodi(createKoodi("321101"));
+        lisaaKoulutusTyyppi.setKoulutusohjelmaKoodi(createKoodi("1603"));
+        lisaaKoulutusTyyppi.setOpetusmuoto(createKoodi("opetusmuoto"));
         try {
             tarjontaAdminService.lisaaKoulutus(lisaaKoulutusTyyppi);
         } catch (SOAPFaultException e) {
@@ -250,11 +260,11 @@ public class TarjontaPresenter {
         }
         return _model;
     }
-    
+
     public void setRootView(TarjontaRootView rootView) {
         _rootView = rootView;
     }
-    
+
     public TarjontaRootView getRootView() {
         return _rootView;
     }
@@ -274,13 +284,25 @@ public class TarjontaPresenter {
     public String getIdentifier() {
         return getModel().getIdentifier();
     }
-    
+
     public ListKoulutusView getKoulutusListView() {
         return koulutusListView;
     }
-    
+
     public void setKoulutusListView(ListKoulutusView listKoulutusView) {
         this.koulutusListView = listKoulutusView;
+    }
+
+    /**
+     * Helper method that wraps uri string into KoodistoKoodiTyypi. No other attribute populated.
+     *
+     * @param uri
+     * @return
+     */
+    private static KoodistoKoodiTyyppi createKoodi(String uri) {
+        final KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
+        koodi.setUri(uri);
+        return koodi;
     }
 
     //TODO tähän kutsu koulutusten listaukseen kunhan palvelu on toteutettu
@@ -298,8 +320,9 @@ public class TarjontaPresenter {
                 map.get(koulutusKey).add(curKoulutus);
             }
         }
-        
+
         return map;
     }
 
 }
+
