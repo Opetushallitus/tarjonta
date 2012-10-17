@@ -30,29 +30,34 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable(preConstruction = true)
 public abstract class AbstractVerticalInfoLayout extends OphAbstractInfoLayout<VerticalLayout> {
 
-    private I18NHelper _i18n;
-    @Autowired(required = true)
-    private TarjontaPresenter _presenter;
+    @Autowired
+    TarjontaPresenter _presenter;
+
+    private transient I18NHelper _i18n;
 
     public AbstractVerticalInfoLayout(Class<VerticalLayout> clazz, String pageTitle, String message, PageNavigationDTO dto) {
         super(clazz, pageTitle, message, dto);
-    }
-
-    /**
-     * @return the _presenter
-     */
-    public TarjontaPresenter getPresenter() {
-        return _presenter;
     }
 
     protected String T(String key) {
         return getI18n().getMessage(key);
     }
 
+    protected String T(String key, Object... args) {
+        return getI18n().getMessage(key, args);
+    }
+
     /**
      * @return the I18N instance.
      */
     protected I18NHelper getI18n() {
+        if (_i18n == null) {
+            _i18n = new I18NHelper(this);
+        }
         return _i18n;
+    }
+
+    public TarjontaPresenter getPresenter() {
+        return _presenter;
     }
 }

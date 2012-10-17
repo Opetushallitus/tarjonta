@@ -30,12 +30,14 @@ import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.tarjonta.poc.demodata.DataSource;
 import fi.vm.sade.tarjonta.poc.demodata.row.MultiActionTableStyleNoCBox;
 import fi.vm.sade.tarjonta.poc.demodata.row.LabelTableStyle;
+import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.tarjonta.poc.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
@@ -62,7 +64,6 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             public void buttonClick(ClickEvent event) {
                 getPresenter().showMainKoulutusView();
                 getPresenter().demoInformation(Notification.DELETE);
-
             }
         });
 
