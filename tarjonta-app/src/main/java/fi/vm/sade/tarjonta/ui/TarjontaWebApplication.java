@@ -20,6 +20,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
+import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
@@ -27,6 +28,7 @@ import fi.vm.sade.vaadin.dto.ButtonDTO;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -47,6 +49,9 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
     private String developmentRedirect;
     @Value("${tarjonta-app.dev.theme:}")
     private String developmentTheme;
+    
+    @Autowired
+    private TarjontaAdminService tarjontaAdminService;
 
     @Override
     public synchronized void init() {
@@ -79,8 +84,19 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
                 toKoulutusView();
             }
         });
+        
         window.addComponent(xxxButton);
 
+        Button initData = new Button("Luo testidata", new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                tarjontaAdminService.initSample(new String());
+            }
+        });
+        
+        window.addComponent(initData);
+        
     }
 
     public void toTarjonta() {
@@ -147,5 +163,19 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
             }
         }
 
+    }
+
+    /**
+     * @return the tarjontaAdminService
+     */
+    public TarjontaAdminService getTarjontaAdminService() {
+        return tarjontaAdminService;
+    }
+
+    /**
+     * @param tarjontaAdminService the tarjontaAdminService to set
+     */
+    public void setTarjontaAdminService(TarjontaAdminService tarjontaAdminService) {
+        this.tarjontaAdminService = tarjontaAdminService;
     }
 }
