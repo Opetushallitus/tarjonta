@@ -131,12 +131,7 @@ public class TarjontaAdminServiceTest {
 
         assertEquals("new-value", toteutus.getSuunniteltuKestoArvo());
         assertEquals("new-units", toteutus.getSuunniteltuKestoYksikko());
-        
-    }
 
-    @Test
-    public void testInitSample() {
-        adminService.initSample();
     }
 
     private void insertSampleKoulutus() {
@@ -165,8 +160,8 @@ public class TarjontaAdminServiceTest {
         lisaaKoulutus.setKesto(kesto3Vuotta);
 
         return lisaaKoulutus;
+    }
 
-    
     @Test
     public void testInitSample() {
         adminService.initSample(new String());
