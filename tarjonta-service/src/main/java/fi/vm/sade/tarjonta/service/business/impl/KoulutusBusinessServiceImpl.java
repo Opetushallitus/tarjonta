@@ -74,6 +74,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     @Override
     public KoulutusmoduuliToteutus createKoulutus(LisaaKoulutusTyyppi koulutus) {
 
+        
         Koulutusmoduuli moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(
             koulutus.getKoulutusKoodi().getUri(),
             koulutus.getKoulutusohjelmaKoodi().getUri());

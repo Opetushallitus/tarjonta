@@ -59,7 +59,7 @@ public class TarjontaSampleData {
         // Ympäristön suunnittelun ja rakentamisen koulutusohjelma (onko tämä oikea ko ??)
         //
         moduuli = createKoulutusmoduuli();
-        moduuli.setKoulutusKoodi("Artesaani, käsi- ja taideteollisuusalan perustutkinto 19369");
+        moduuli.setKoulutusKoodi("uri: Artesaani, käsi- ja taideteollisuusalan perustutkinto 19369");
         moduuli.setKoulutusohjelmaKoodi("koulutusohjelma/1603");
         koulutusmoduuliDAO.insert(moduuli);
 

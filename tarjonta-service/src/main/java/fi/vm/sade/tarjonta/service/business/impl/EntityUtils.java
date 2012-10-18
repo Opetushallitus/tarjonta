@@ -41,7 +41,7 @@ public final class EntityUtils {
 
     public static void copyFields(PaivitaKoulutusTyyppi from, KoulutusmoduuliToteutus to) {
 
-        to.setKoulutuksenAlkamisPvm(from.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime());
+        to.setKoulutuksenAlkamisPvm(from.getKoulutuksenAlkamisPaiva());
         to.setKoulutuslajiList(toUriSet(from.getKoulutuslaji()));
 
         final KoulutuksenKestoTyyppi kesto =from.getKesto();
@@ -60,7 +60,7 @@ public final class EntityUtils {
         }
 
         to.setOid(koulutus.getOid());
-        to.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime());
+        to.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
 
         to.setSuunniteltuKestoArvo(koulutus.getKesto().getArvo());
         to.setSuunniteltuKestoYksikko(koulutus.getKesto().getYksikko());

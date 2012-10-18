@@ -122,7 +122,7 @@ public class TarjontaAdminServiceTest {
         kesto.setYksikko("new-units");
         paivitaKoulutus.setKesto(kesto);
 
-        paivitaKoulutus.setKoulutuksenAlkamisPaiva(toXmlDateTime(new Date()));
+        paivitaKoulutus.setKoulutuksenAlkamisPaiva(new Date());
         paivitaKoulutus.setKoulutusKoodi(createKoodi("do-not-update-this"));
         paivitaKoulutus.setKoulutusohjelmaKoodi(createKoodi("do-not-update-this"));
         paivitaKoulutus.setOpetusmuoto(createKoodi("new-opetusmuoto"));
@@ -172,7 +172,7 @@ public class TarjontaAdminServiceTest {
         lisaaKoulutus.getOpetuskieli().add(createKoodi("opetuskieli/fi"));
         lisaaKoulutus.getKoulutuslaji().add(createKoodi("koulutuslaji/lahiopetus"));
         lisaaKoulutus.setOid(SAMPLE_KOULUTUS_OID);
-        lisaaKoulutus.setKoulutuksenAlkamisPaiva(toXmlDateTime(new Date()));
+        lisaaKoulutus.setKoulutuksenAlkamisPaiva(new Date());
         lisaaKoulutus.setKesto(kesto3Vuotta);
 
         return lisaaKoulutus;
