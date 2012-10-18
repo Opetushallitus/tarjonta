@@ -49,9 +49,6 @@ public class TarjontaModel extends BaseUIViewModel {
     
     private HakukohdeViewModel hakukohde;
 
-//    private HakukohdeViewModel hakuKohde;
-//    private List<HakukohdeViewModel> hakukohteet = new ArrayList<HakukohdeViewModel>();
-//    private List<HakukohdeViewModel> selectedhakukohteet = new ArrayList<HakukohdeViewModel>();
 
     public String getIdentifier() {
         return _identifier;

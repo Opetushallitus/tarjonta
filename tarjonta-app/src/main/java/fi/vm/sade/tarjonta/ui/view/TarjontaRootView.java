@@ -15,27 +15,16 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Component.Event;
-import com.vaadin.ui.Component.Listener;
 
 import fi.vm.sade.tarjonta.ui.TarjontaWebApplication;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.common.BreadcrumbsView;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
-import fi.vm.sade.tarjonta.ui.view.haku.EditHakuViewImpl;
-import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
-import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
-import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.Oph;
-import fi.vm.sade.vaadin.util.UiUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,18 +109,6 @@ public class TarjontaRootView extends Window {
             }
         });
 
-        //Handles navigation to different child views (edit haku, view haku)
-        _searchResultsView.addListener(new Listener() {
-
-            @Override
-            public void componentEvent(Event event) {
-            	if (event instanceof ListKoulutusView.NewKoulutusEvent) {
-                    showKoulutusEdit(new HakuViewModel());
-                }
-            }
-
-        });
-
         _presenter.setRootView(this);
 
         // Show application identifier if needed
@@ -142,24 +119,6 @@ public class TarjontaRootView extends Window {
         // The default view to show is main default view (called here since "main" app cannot access presenter)
         _presenter.showMainDefaultView();
     }
-
-    /**
-     * Opening the koulutus edit form.
-     * @param hakuViewModel
-     */
-    protected void showKoulutusEdit(HakuViewModel hakuViewModel) {
-    	LOG.info("showMainDefaultView()");
-    	//Clearing the layout from previos content
-    	getAppRootLayout().removeAllComponents();
-
-    	//Adding the form
-        VerticalLayout vl = UiUtil.verticalLayout();
-        vl.setHeight(-1, VerticalLayout.UNITS_PIXELS);
-        vl.addComponent(getBreadcrumbsView());
-        vl.addComponent(new EditKoulutusPerustiedotToinenAsteView());
-        getAppRootLayout().addComponent(vl);
-        getAppRootLayout().setExpandRatio(vl, 1f);
-	}
 
 	public VerticalLayout getAppRootLayout() {
         return _appRootLayout;
@@ -180,5 +139,6 @@ public class TarjontaRootView extends Window {
     public OrganisaatiohakuView getOrganisaatiohakuView() {
         return _organisationSearchView;
     }
+
 
 }

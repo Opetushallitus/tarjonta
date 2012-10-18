@@ -42,7 +42,6 @@ import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
@@ -179,16 +178,6 @@ public class ListKoulutusView extends VerticalLayout {
                 hc.setParent(curKoulutus, rootItem);
                 hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(curKoulutus.getKoulutus().getNimi(), true));
                 hc.setChildrenAllowed(curKoulutus, false);
-
-                rowStyleInner.addListener(new Listener() {
-
-                    @Override
-                    public void componentEvent(Event event) {
-                        if (event instanceof KoulutusResultRow.KoulutusRowMenuEvent) {
-                            fireEvent(event);
-                        }
-                    }
-                });
             }
         }
         return hc;
@@ -222,12 +211,12 @@ public class ListKoulutusView extends VerticalLayout {
         muokkaaB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                navigateToKoulutusEditForm();
+                presenter.showShowKoulutusView();
             }
         });
 
         //Creating the remove button
-        poistaB = UiUtil.button(layout, i18n.getMessage("Poista"));
+        poistaB = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("Poista"));
         poistaB.addStyleName(Oph.BUTTON_SMALL);
         poistaB.addListener(new Button.ClickListener() {
             @Override
@@ -242,17 +231,17 @@ public class ListKoulutusView extends VerticalLayout {
         luoHakukohdeB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                navigateToHakukohdeEditForm();
+                presenter.showHakukohdeEditView();
             }
         });
         
         //Creating the create koulutus button
-        luoKoulutusB = UiUtil.button(layout, i18n.getMessage("LuoKoulutus"));
+        luoKoulutusB = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("LuoKoulutus"));
         luoKoulutusB.addStyleName(Oph.BUTTON_SMALL);
         luoKoulutusB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-            	navigateToKoulutusEditForm();
+            	presenter.showKoulutusEditView();
             }
         });
 
@@ -275,44 +264,6 @@ public class ListKoulutusView extends VerticalLayout {
     public void reload() {
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getKoulutusDataSource()));
-    }
-
-    /**
-     * fires event to signal navigation to Koulutus edit form.
-     */
-    private void navigateToKoulutusEditForm() {
-        fireEvent(new NewKoulutusEvent(this));
-    }
-    
-    /**
-     * fires event to signal mavigation tu Hakukohde edit form.
-     */
-	private void navigateToHakukohdeEditForm() {
-		fireEvent(new NewHakukohdeEvent(this));
-	}
-
-    /**
-     * Event to signal that the user wants to create a new Koulutus.
-    */
-    public class NewKoulutusEvent extends Component.Event {
-
-        public NewKoulutusEvent(Component source) {
-            super(source);
-
-        }
-
-    }
-    
-    /**
-     * Event to signal that the user wants to create a new Hakukohde.
-    */
-    public class NewHakukohdeEvent extends Component.Event {
-
-        public NewHakukohdeEvent(Component source) {
-            super(source);
-
-        }
-
     }
     
 

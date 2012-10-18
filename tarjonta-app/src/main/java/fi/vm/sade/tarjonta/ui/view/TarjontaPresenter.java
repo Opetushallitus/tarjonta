@@ -21,21 +21,20 @@ import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -43,14 +42,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter;
 
 /**
@@ -83,18 +80,6 @@ public class TarjontaPresenter {
     private ListKoulutusView koulutusListView;
     private PerustiedotView hakuKohdePerustiedotView;
 
-    
-    
-
-    @PostConstruct
-    public void initialize() {
-        LOG.info("initialize(): model={}", getModel());
-
-        // TODO remove me pretty soon please
-        if (getModel().getHakukohteet().isEmpty()) {
-            createInitialTemporaryDemoDataDForTestingPurposes();
-        }
-    }
 
     public void saveHakuKohde() {
         saveHakuKohdePerustiedot();
@@ -118,12 +103,6 @@ public class TarjontaPresenter {
 
         this.hakuKohdePerustiedotView.initForm(getModel().getHakukohde());
         this.hakuKohdePerustiedotView.addItemsToHakuCombobox(haut.getResponse());
-    }
-
-    private void createInitialTemporaryDemoDataDForTestingPurposes() {
-        LOG.error("createInitalData() - DEMO DATA CREATED TO UI! I so hope we are not in production :)");
-        /*getModel().getHakukohteet().add(new HakukohdeViewModel("Testi1", "Organisaatio1"));
-         geModel().getHakukohteet().add(new HakukohdeViewModel("Testi2", "Organisaatio2"));*/
     }
 
     /**
@@ -157,6 +136,44 @@ public class TarjontaPresenter {
         _rootView.getAppRootLayout().removeAllComponents();
         _rootView.getAppRootLayout().addComponent(view);
     }
+    
+    /**
+     * Show koulutus edit view.
+     */
+	public void showKoulutusEditView() {
+		
+		LOG.info("showKoulutusEditView()");
+    	
+    	//Clearing the layout from previos content
+    	this._rootView.getAppRootLayout().removeAllComponents();
+
+    	//Adding the form
+        VerticalLayout vl = UiUtil.verticalLayout();
+        vl.setHeight(-1, VerticalLayout.UNITS_PIXELS);
+        vl.addComponent(_rootView.getBreadcrumbsView());
+        vl.addComponent(new EditKoulutusPerustiedotToinenAsteView());
+        _rootView.getAppRootLayout().addComponent(vl);
+        _rootView.getAppRootLayout().setExpandRatio(vl, 1f);
+	}
+
+    /**
+     * Show hakukohde edit view.
+     */
+	public void showHakukohdeEditView() {
+		LOG.info("showHakukohdeEditView()");
+    	
+    	//Clearing the layout from previos content
+    	this._rootView.getAppRootLayout().removeAllComponents();
+
+    	//Adding the form
+        VerticalLayout vl = UiUtil.verticalLayout();
+        vl.setHeight(-1, VerticalLayout.UNITS_PIXELS);
+        vl.addComponent(_rootView.getBreadcrumbsView());
+        vl.addComponent(new EditHakukohdeView());
+        _rootView.getAppRootLayout().addComponent(vl);
+        _rootView.getAppRootLayout().setExpandRatio(vl, 1f);
+		
+	}
 
     public void doSearch() {
         LOG.info("doSearch(): searchSpec={}", getModel().getSearchSpec());
@@ -318,7 +335,10 @@ public class TarjontaPresenter {
         return koodi;
     }
 
-    //TODO tähän kutsu koulutusten listaukseen kunhan palvelu on toteutettu
+    /**
+     * Retrieves the koulutus objects for ListKoulutusView.
+     * @return the koulutus objects
+     */
     public Map<String, List<KoulutusTulos>> getKoulutusDataSource() {
         Map<String, List<KoulutusTulos>> map = new HashMap<String, List<KoulutusTulos>>();
         getModel().setKoulutukset(tarjontaPublicService.haeKoulutukset(new HaeKoulutuksetKyselyTyyppi()).getKoulutusTulos());
@@ -336,7 +356,15 @@ public class TarjontaPresenter {
 
         return map;
     }
-
+    
+    /**
+     * Removal of a komoto object.
+     * @param koulutus
+     */
+	public void removeKoulutus(KoulutusTulos koulutus) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
 

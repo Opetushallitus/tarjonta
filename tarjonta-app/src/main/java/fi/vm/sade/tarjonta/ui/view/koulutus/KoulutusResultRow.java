@@ -99,11 +99,11 @@ public class KoulutusResultRow  extends HorizontalLayout {
      */
     private void menuItemClicked(String selection) {
         if (selection.equals(i18n.getMessage("tarkastele"))) {
-            fireEvent(new KoulutusRowMenuEvent(this, koulutus, KoulutusRowMenuEvent.VIEW));
+            tarjontaPresenter.showShowKoulutusView();
         } else if (selection.equals(i18n.getMessage("muokkaa"))) {
-            fireEvent(new KoulutusRowMenuEvent(this, koulutus, KoulutusRowMenuEvent.EDIT));
+            tarjontaPresenter.showKoulutusEditView();
         } else if (selection.equals(i18n.getMessage("poista"))) {
-            fireEvent(new KoulutusRowMenuEvent(this, koulutus, KoulutusRowMenuEvent.REMOVE));
+            tarjontaPresenter.removeKoulutus(koulutus);
         }
     }
 
@@ -148,42 +148,6 @@ public class KoulutusResultRow  extends HorizontalLayout {
      */
     public CheckBox getIsSelected() {
         return isSelected;
-    }
-
-    /**
-     * Event to be fired by KoulutusResultRow object when the user
-     * makes a selection in the row's menubar.
-     * @author Markus
-     */
-    public class KoulutusRowMenuEvent extends Component.Event {
-
-        public static final String REMOVE = "remove";
-        public static final String EDIT = "edit";
-        public static final String VIEW = "view";
-
-        private KoulutusTulos koulutus;
-        private String type;
-
-
-        public KoulutusRowMenuEvent(Component source, KoulutusTulos koulutus, String type) {
-            super(source);
-            this.koulutus = koulutus;
-            this.type = type;
-        }
-
-        public KoulutusRowMenuEvent(Component source) {
-            super(source);
-        }
-
-
-        public KoulutusTulos getKoulutus() {
-            return koulutus;
-        }
-
-
-        public String getType() {
-            return type;
-        }
     }
 	
 }
