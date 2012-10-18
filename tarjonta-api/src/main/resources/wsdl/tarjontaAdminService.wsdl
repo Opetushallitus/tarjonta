@@ -80,6 +80,14 @@
     <wsdl:message name="poistaHakukohdeVastaus">
         <wsdl:part element="ns1:poistaHakukohdeVastaus" name="parameters"/>
     </wsdl:message>
+    
+    <wsdl:message name="poistaKoulutus">
+        <wsdl:part element="ns1:poistaKoulutus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="poistaKoulutusVastaus">
+        <wsdl:part element="ns1:poistaKoulutusVastaus" name="parameters"/>
+    </wsdl:message>
 
     <wsdl:message name="initSample">
         <!-- no args -->
@@ -119,6 +127,16 @@
              <wsdl:input message="tns:poistaHakukohde" name="poistaHakukohde">
             </wsdl:input>
             <wsdl:output message="tns:poistaHakukohdeVastaus" name="poistaHakukohdeVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="poistaKoulutus">
+            <wsdl:documentation>
+                Poista koulutus
+            </wsdl:documentation>
+             <wsdl:input message="tns:poistaKoulutus" name="poistaKoulutus">
+            </wsdl:input>
+            <wsdl:output message="tns:poistaKoulutusVastaus" name="poistaKoulutusVastaus">
             </wsdl:output>
         </wsdl:operation>
 

@@ -14,6 +14,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.xml.ws.RequestWrapper;
+import javax.xml.ws.ResponseWrapper;
+
 public class TarjontaAdminServiceMock implements TarjontaAdminService {
 
     private HashMap<String, HakuTyyppi> haut = new HashMap<String, HakuTyyppi>();
@@ -111,6 +116,12 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
 
         haut.put(haku2.getOid(), haku2);
     }
+
+	@Override
+	public void poistaKoulutus(String koulutusOid) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
 

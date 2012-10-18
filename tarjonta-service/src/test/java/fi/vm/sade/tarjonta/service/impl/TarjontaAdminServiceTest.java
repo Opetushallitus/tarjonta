@@ -44,6 +44,8 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
+
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -132,6 +134,20 @@ public class TarjontaAdminServiceTest {
         assertEquals("new-value", toteutus.getSuunniteltuKestoArvo());
         assertEquals("new-units", toteutus.getSuunniteltuKestoYksikko());
 
+    }
+    
+    @Test
+    public void testPoistaKoulutusHappyPath() throws Exception {
+    	
+    	adminService.initSample(new String());
+    	List<KoulutusmoduuliToteutus> komotos = this.koulutusmoduuliToteutusDAO.findAll();
+    	assertFalse(komotos.isEmpty());
+    	int komotosOriginalSize = komotos.size();
+    	String komotoOid = komotos.get(0).getOid();
+    	
+    	this.adminService.poistaKoulutus(komotoOid);
+    	komotos = this.koulutusmoduuliToteutusDAO.findAll();
+    	assertEquals(komotosOriginalSize - 1, komotos.size());
     }
 
     private void insertSampleKoulutus() {

@@ -69,6 +69,13 @@ public class TarjontaSampleData {
         toteutus = createKoulutusmoduuliToteutus();
         toteutus.setKoulutusmoduuli(moduuli);
         toteutus = koulutusmoduuliToteutusDAO.insert(toteutus);
+        
+        //
+        // Toteutus KM#2
+        //
+        toteutus = createKoulutusmoduuliToteutus();
+        toteutus.setKoulutusmoduuli(moduuli);
+        toteutus = koulutusmoduuliToteutusDAO.insert(toteutus);
 
 
         //
@@ -155,6 +162,7 @@ public class TarjontaSampleData {
         t.setTila(KoodistoContract.TarjontaTilat.JULKAISTU);
         t.addOpetuskieli(new KoodistoUri(randomKoodiUri("kieli")));
         t.addOpetusmuoto(new KoodistoUri(randomKoodiUri("opetusmuoto")));
+        t.setNimi("Demonimi " + System.currentTimeMillis());
 
         return t;
 

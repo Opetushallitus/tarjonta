@@ -41,6 +41,12 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.xml.ws.RequestWrapper;
+import javax.xml.ws.ResponseWrapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,7 +169,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     }
 
-    
+	@Override
+	public void poistaKoulutus(String koulutusOid) {
+		KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
+		this.koulutusmoduuliToteutusDAO.remove(komoto);
+	}
 
 
     /**
@@ -178,6 +188,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             log.warn("initializing tarjonta data threw exception", e);
         }
     }
+    
+
 
     private List<HakuTyyppi> convert(List<Haku> haut) {
         List<HakuTyyppi> tyypit = new ArrayList<HakuTyyppi>();
@@ -289,6 +301,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public void setKoulutusmoduuliToteutusDAO(KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO) {
         this.koulutusmoduuliToteutusDAO = koulutusmoduuliToteutusDAO;
     }
+
+
 
 }
 
