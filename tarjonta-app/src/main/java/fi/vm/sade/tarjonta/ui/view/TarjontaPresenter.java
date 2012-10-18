@@ -143,6 +143,10 @@ public class TarjontaPresenter {
         _rootView.getAppRootLayout().addComponent(view);
     }
 
+    public void setKomotoOids(List<String> komotoOids) {
+        _model.getHakukohde().setKomotoOids(komotoOids);
+    }
+    
     /**
      * Show koulutus edit view.
      */

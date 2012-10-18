@@ -6,37 +6,29 @@ import java.util.ArrayList;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 
 public class HakukohdeViewModel extends BaseUIViewModel {
-	
-    private String oid;
-    
-	private String organisaatioOid;
 
+    private String oid;
+    private String organisaatioOid;
     private String hakukohdeNimi;
-    
     private String tunnisteKoodi;
-    
     private HakuTyyppi haku;
-    
     private int aloitusPaikat;
-    
     private String hakukohdeTila;
-    
     private String hakukelpoisuusVaatimus;
-    
     private List<KielikaannosViewModel> valintaPerusteidenKuvaus;
-    
     private List<KielikaannosViewModel> lisatiedot;
+    private List<String> komotoOids;
 
     public HakukohdeViewModel() {
-		super();
-	}
-	
-	public HakukohdeViewModel(String hakukohdeNimi, String organisaatioOid) {
-		super();
-		this.hakukohdeNimi = hakukohdeNimi;
-		this.organisaatioOid = organisaatioOid;
-	}
-    
+        super();
+    }
+
+    public HakukohdeViewModel(String hakukohdeNimi, String organisaatioOid) {
+        super();
+        this.hakukohdeNimi = hakukohdeNimi;
+        this.organisaatioOid = organisaatioOid;
+    }
+
     /**
      * @return the hakukohdeNimi
      */
@@ -126,13 +118,14 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         }
         return lisatiedot;
     }
-    
+
     public String getOrganisaatioOid() {
-		return organisaatioOid;
-	}
-	public void setOrganisaatioOid(String organisaatioOid) {
-		this.organisaatioOid = organisaatioOid;
-	}
+        return organisaatioOid;
+    }
+
+    public void setOrganisaatioOid(String organisaatioOid) {
+        this.organisaatioOid = organisaatioOid;
+    }
 
     /**
      * @return the hakukohdeTila
@@ -162,4 +155,20 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         this.oid = oid;
     }
 
+    /**
+     * @return the komotoOids
+     */
+    public List<String> getKomotoOids() {
+        if (komotoOids == null) {
+            komotoOids = new ArrayList<String>();
+        }
+        return komotoOids;
+    }
+
+    /**
+     * @param komotoOids the komotoOids to set
+     */
+    public void setKomotoOids(List<String> komotoOids) {
+        this.komotoOids = komotoOids;
+    }
 }

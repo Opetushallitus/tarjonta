@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotViewImpl;
 import fi.vm.sade.vaadin.constants.StyleEnum;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 /**
@@ -34,10 +35,17 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
     @Autowired
     private TarjontaPresenter _presenter;
     private TabSheet tabs;
+    
 
     public EditHakukohdeView() {
         super();
         setHeight(-1, UNITS_PIXELS);
+    }
+    
+    public EditHakukohdeView(List<String> komotoOids) {
+        super();
+        setHeight(-1, UNITS_PIXELS);
+        _presenter.setKomotoOids(komotoOids);
     }
 
     @Override
