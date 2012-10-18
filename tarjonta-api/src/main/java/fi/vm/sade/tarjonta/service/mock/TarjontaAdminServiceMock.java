@@ -66,9 +66,11 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
     }
 
     @Override
-    public void initSample() {
+    public void initSample(String parameters) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    
 
     private void initDefValues() {
         HakuTyyppi haku = new HakuTyyppi();

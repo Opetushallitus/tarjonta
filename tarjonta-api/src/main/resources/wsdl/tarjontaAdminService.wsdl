@@ -83,6 +83,7 @@
 
     <wsdl:message name="initSample">
         <!-- no args -->
+        <wsdl:part element="ns1:emptyString" name="parameters"/>
     </wsdl:message>
 
     <wsdl:portType name="TarjontaAdminService">

@@ -34,6 +34,8 @@
 
     <xs:element name="poistaHakukohde" type="tns:PoistaHakukohdeType"/>
     <xs:element name="poistaHakukohdeVastaus" type="tns:PoistaHakukohdeVastausType"/>
+    
+    <xs:element name="emptyString" type="xs:string"/>
 
     <xs:complexType name="PoistaHakukohdeType">
         <xs:sequence>
