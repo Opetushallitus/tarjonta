@@ -72,15 +72,15 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
-    
+
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     @Autowired
     private ConversionService conversionService;
-    
+
     public TarjontaPublicServiceImpl() {
-    	super();
+        super();
     }
 
     @Override
@@ -172,10 +172,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             haku.setNimi(hakuModel.getNimiFi());
             haku.setHakutapa(hakuModel.getHakutapaUri());
             haku.setOid(hakuModel.getOid());
-           
+
             KoulutusmoduuliToteutus toteutus = CollectionUtils.singleItem(hakukohdeModel.getKoulutusmoduuliToteutuses());
             koulutus.setTarjoaja(toteutus.getTarjoaja());
-            
+
 
             tulos.setHakukohde(hakukohde);
             tulos.setHaku(haku);
@@ -187,41 +187,41 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         return vastaus;
 
     }
-    
 
-	@Override
-	public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
-		//Retrieving all komotos this will be extended search only for komotos matching the criteria
-	    List<KoulutusmoduuliToteutus> komotos = this.koulutusmoduuliToteutusDAO.findAll();
-		
-		//Creating the answer type
-		HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
-		
-		//Retrieving all komotos this will be extended search only for komotos matching the criteria
-		
-		//Populating the answer with required data
-		for (KoulutusmoduuliToteutus komoto : komotos) {
-			KoulutusTulos tulos = new KoulutusTulos();
-			
-			KoulutusKoosteTyyppi koulutusKooste = new KoulutusKoosteTyyppi();
-			koulutusKooste.setTarjoaja(komoto.getTarjoaja());
-			koulutusKooste.setNimi(komoto.getNimi());
-			koulutusKooste.setTila(komoto.getTila());
-			koulutusKooste.setKoulutusmoduuli((komoto.getKoulutusmoduuli() != null) ? komoto.getKoulutusmoduuli().getOid() : null);
-			koulutusKooste.setKoulutusmoduuliToteutus(komoto.getOid());	
-			tulos.setKoulutus(koulutusKooste);
-			vastaus.getKoulutusTulos().add(tulos);
-		}
-		return vastaus;
-	}
+    @Override
+    public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
+        //Retrieving all komotos this will be extended search only for komotos matching the criteria
+        List<KoulutusmoduuliToteutus> komotos = this.koulutusmoduuliToteutusDAO.findAll();
 
-	public LueKoulutusVastausTyyppi lueKoulutus(
-			LueKoulutusKyselyTyyppi kysely) {
-		KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findBy("oid", kysely.getOid()).isEmpty() ? null : this.koulutusmoduuliToteutusDAO.findBy("oid", kysely.getOid()).get(0);
-		return convert(komoto);
-	}
-	
-	private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus toteutus) {
+        //Creating the answer type
+        HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
+
+        //Retrieving all komotos this will be extended search only for komotos matching the criteria
+
+        //Populating the answer with required data
+        for (KoulutusmoduuliToteutus komoto : komotos) {
+            KoulutusTulos tulos = new KoulutusTulos();
+
+            KoulutusKoosteTyyppi koulutusKooste = new KoulutusKoosteTyyppi();
+            koulutusKooste.setTarjoaja(komoto.getTarjoaja());
+            koulutusKooste.setNimi(komoto.getNimi());
+            koulutusKooste.setTila(komoto.getTila());
+            koulutusKooste.setKoulutusmoduuli((komoto.getKoulutusmoduuli() != null) ? komoto.getKoulutusmoduuli().getOid() : null);
+            koulutusKooste.setKoulutusmoduuliToteutus(komoto.getOid());
+            tulos.setKoulutus(koulutusKooste);
+            vastaus.getKoulutusTulos().add(tulos);
+        }
+        return vastaus;
+    }
+
+    public LueKoulutusVastausTyyppi lueKoulutus(
+        LueKoulutusKyselyTyyppi kysely) {
+        KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findBy("oid", kysely.getOid()).isEmpty() ? null : this.koulutusmoduuliToteutusDAO.
+            findBy("oid", kysely.getOid()).get(0);
+        return convert(komoto);
+    }
+
+    private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus toteutus) {
 
         LueKoulutusVastausTyyppi koulutus = new LueKoulutusVastausTyyppi();
         KoodistoKoodiTyyppi opetusmuotoKoodi = new KoodistoKoodiTyyppi();
@@ -231,9 +231,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         GregorianCalendar greg = new GregorianCalendar();
         greg.setTime(toteutus.getKoulutuksenAlkamisPvm());
         try {
-        	koulutus.setKoulutuksenAlkamisPaiva(DatatypeFactory.newInstance().newXMLGregorianCalendar(greg));
+            koulutus.setKoulutuksenAlkamisPaiva(DatatypeFactory.newInstance().newXMLGregorianCalendar(greg));
         } catch (Exception ex) {
-        	 koulutus.setKoulutuksenAlkamisPaiva(null);
+            koulutus.setKoulutuksenAlkamisPaiva(null);
         }
         KoulutuksenKestoTyyppi kestoT = new KoulutuksenKestoTyyppi();
         kestoT.setArvo(toteutus.getSuunniteltuKestoArvo());
@@ -241,21 +241,23 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         koulutus.setKesto(kestoT);
 
         if (toteutus.getOpetuskielis() != null) {
-        	for (KoodistoUri opetusKieli :toteutus.getOpetuskielis()) {
-        		KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
-        		koodi.setUri(opetusKieli.getKoodiUri());
-        		koulutus.getOpetuskieli().add(koodi);
-        	}
+            for (KoodistoUri opetusKieli : toteutus.getOpetuskielis()) {
+                KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
+                koodi.setUri(opetusKieli.getKoodiUri());
+                koulutus.getOpetuskieli().add(koodi);
+            }
         }
-        
-        KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
-		koodi.setUri(toteutus.getKoulutusLaji());
-        koulutus.getKoulutuslaji().add(koodi);
+
+
+        for (KoodistoUri uri : toteutus.getKoulutuslajiList()) {
+            KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
+            koodi.setUri(uri.getKoodiUri());
+            koulutus.getKoulutuslaji().add(koodi);
+        }
 
         return koulutus;
 
     }
-
 
 }
 

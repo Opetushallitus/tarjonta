@@ -51,7 +51,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_koulutuslaji", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
-    private Set<KoodistoUri> koulutuslajiList;
+    private Set<KoodistoUri> koulutuslajiList = new HashSet<KoodistoUri>();
 
     /**
      * todo: can we set this attribute to "required"?

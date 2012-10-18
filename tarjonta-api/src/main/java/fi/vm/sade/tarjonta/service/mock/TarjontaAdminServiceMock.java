@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.service.mock;
 
+import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
@@ -8,6 +9,7 @@ import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
@@ -34,8 +36,6 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
     public HakukohdeTyyppi paivitaHakukohde(HakukohdeTyyppi hakukohdePaivitys) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    
 
     @Override
     public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
@@ -56,12 +56,12 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
     }
 
     @Override
-    public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi parameters) {
+    public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) throws GenericFault {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
+    public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) throws GenericFault {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

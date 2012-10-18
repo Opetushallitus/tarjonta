@@ -37,6 +37,7 @@ import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,6 +152,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         return vastaus;
 
     }
+
+    
+
 
     /**
      * Remove once koodisto has proper data.

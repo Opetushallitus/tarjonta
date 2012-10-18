@@ -55,7 +55,7 @@
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1" />
-            
+
             <xs:element name="hakukohteenTila"
                         type="xs:string"
                         maxOccurs="1"
@@ -318,6 +318,10 @@
             <xs:element name="Tarjoaja" type="xs:string"></xs:element>
             <xs:element name="Tila" type="xs:string"></xs:element>
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="KoulutusTyyppi">
+        <xs:group ref="tns:KoulutusGroup"/>
     </xs:complexType>
 
     <xs:group name="KoulutusGroup">

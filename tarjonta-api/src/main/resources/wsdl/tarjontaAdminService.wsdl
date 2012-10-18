@@ -170,6 +170,7 @@
             </wsdl:input>
             <wsdl:output message="tns:paivitaKoulutusVastaus" name="paivitaKoulutusVastaus">
             </wsdl:output>
+            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
         </wsdl:operation>
 
         <wsdl:operation name="initSample">

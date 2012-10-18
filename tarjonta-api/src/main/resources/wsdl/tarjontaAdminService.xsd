@@ -2,7 +2,6 @@
 <xs:schema elementFormDefault="unqualified"
            targetNamespace="http://service.tarjonta.sade.vm.fi/types" version="1.0"
            xmlns:tns="http://service.tarjonta.sade.vm.fi/types"
-           xmlns:tnsh="http://service.tarjonta.sade.vm.fi/types/dto"
            xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types/tarjonta"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
@@ -107,18 +106,19 @@
     </xs:complexType>
 
     <xs:complexType name="LisaaKoulutusTyyppi">
-        <xs:sequence>
-            <xs:group ref="tarjonta:KoulutusGroup"/>
-        </xs:sequence>
+        <xs:complexContent>
+            <xs:extension base="tarjonta:KoulutusTyyppi"/>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="LisaaKoulutusVastausTyyppi">
+        <xs:sequence></xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="PaivitaKoulutusTyyppi">
-        <xs:sequence>
-            <xs:group ref="tarjonta:KoulutusGroup"/>
-        </xs:sequence>
+        <xs:complexContent>
+            <xs:extension base="tarjonta:KoulutusTyyppi"/>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="PaivitaKoulutusVastausTyyppi">
