@@ -86,20 +86,20 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         grid.setHeight("100%");
         grid.setWidth("800px");
 
-        grid.addComponent(new Label(T("organisaatio")));
-        grid.addComponent(new Label("XXXXXXXXXXXXXXXXXXXXXX"));
+        grid.addComponent(UiUtil.label(T("organisaatio")));
+        grid.addComponent(UiUtil.label("XXXXXXXXXXXXXXXXXXXXXX"));
         grid.newLine();
-        grid.addComponent(new Label(T("koulutuslaji")));
-        grid.addComponent(new Label(_tarjontaUIHelper.getKoodiNimi(model.getKoulutuslaji(), null)));
+        grid.addComponent(UiUtil.label(T("koulutuslaji")));
+        grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getKoulutuslaji())));
         grid.newLine();
-        grid.addComponent(new Label(T("opetusmuoto")));
-        grid.addComponent(new Label(_tarjontaUIHelper.getKoodiNimi(model.getOpetusmuoto(), null)));
+        grid.addComponent(UiUtil.label(T("opetusmuoto")));
+        grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getOpetusmuoto())));
         grid.newLine();
-        grid.addComponent(new Label(T("teemat")));
-        grid.addComponent(new Label(_tarjontaUIHelper.getKoodiNimi(model.getTeemat(), null)));
+        grid.addComponent(UiUtil.label(T("teemat")));
+        grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getTeemat(), null)));
         grid.newLine();
-        grid.addComponent(new Label(T("koulutuksenAlkamisPvm")));
-        grid.addComponent(new Label(_tarjontaUIHelper.formatDate(model.getKoulutuksenAlkamisPvm())));
+        grid.addComponent(UiUtil.label(T("koulutuksenAlkamisPvm")));
+        grid.addComponent(UiUtil.label(_tarjontaUIHelper.formatDate(model.getKoulutuksenAlkamisPvm())));
         grid.newLine();
         {
             // Build suunniteltu kesto and kesto tyyppi as string
@@ -110,18 +110,18 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
                 tmp += _tarjontaUIHelper.getKoodiNimi(model.getSuunniteltuKestoTyyppi(), null);
             }
 
-            grid.addComponent(new Label(T("suunniteltuKesto")));
-            grid.addComponent(new Label(tmp));
+            grid.addComponent(UiUtil.label(T("suunniteltuKesto")));
+            grid.addComponent(UiUtil.label(tmp));
             grid.newLine();
         }
-        grid.addComponent(new Label(T("opetuskieli")));
-        grid.addComponent(new Label(_tarjontaUIHelper.getKoodiNimi(model.getOpetuskielet(), null)));
+        grid.addComponent(UiUtil.label(T("opetuskieli")));
+        grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getOpetuskielet(), null)));
         grid.newLine();
-        grid.addComponent(new Label(T("opetuksenMaksullisuus")));
-        grid.addComponent(new Label(T(model.isKoulutusOnMaksullista() ? CommonTranslationKeys.KYLLA : CommonTranslationKeys.EI)));
+        grid.addComponent(UiUtil.label(T("opetuksenMaksullisuus")));
+        grid.addComponent(UiUtil.label(T(model.isKoulutusOnMaksullista() ? CommonTranslationKeys.KYLLA : CommonTranslationKeys.EI)));
         grid.newLine();
-        grid.addComponent(new Label(T("stipendiMahdollisuus")));
-        grid.addComponent(new Label(T(model.isKoulutusStipendiMahdollisuus()? CommonTranslationKeys.KYLLA : CommonTranslationKeys.EI)));
+        grid.addComponent(UiUtil.label(T("stipendiMahdollisuus")));
+        grid.addComponent(UiUtil.label(T(model.isKoulutusStipendiMahdollisuus()? CommonTranslationKeys.KYLLA : CommonTranslationKeys.EI)));
         grid.newLine();
 
         grid.setColumnExpandRatio(0, 1);
@@ -149,11 +149,11 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         grid.setHeight("100%");
         grid.setWidth("800px");
 
-        grid.addComponent(new Label(T("tutkinnonRakenne")));
+        grid.addComponent(UiUtil.label(T("tutkinnonRakenne")));
         grid.newLine();
-        grid.addComponent(new Label(T("tavoitteet")));
+        grid.addComponent(UiUtil.label(T("tavoitteet")));
         grid.newLine();
-        grid.addComponent(new Label(T("jatkoOpintoMahdollisuudet")));
+        grid.addComponent(UiUtil.label(T("jatkoOpintoMahdollisuudet")));
         grid.newLine();
 
         grid.setColumnExpandRatio(0, 1);
