@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.*;
 import fi.vm.sade.tarjonta.model.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 /**
  *
  * @author Tuomas Katva
@@ -40,8 +41,18 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         
         hakukohde.getLisatiedot().addAll(convertMonikielinenTeksti(s.getLisatiedot()));
         hakukohde.getValintaPerusteidenKuvaukset().addAll(convertMonikielinenTeksti(s.getValintaperusteKuvaus()));
-        
+        hakukohde.getHakukohteenKoulutusOidit().addAll(convertKoulutukses(s.getKoulutusmoduuliToteutuses()));
         return hakukohde;
+    }
+    
+    private List<String> convertKoulutukses(Set<KoulutusmoduuliToteutus> komotos) {
+        List<String> komotoOids = new ArrayList<String>();
+        
+        for (KoulutusmoduuliToteutus komoto : komotos) {
+            komotoOids.add(komoto.getOid());
+        }
+        
+        return komotoOids;
     }
 
     private List<MonikielinenTekstiTyyppi> convertMonikielinenTeksti(MonikielinenTeksti moniteksti) {

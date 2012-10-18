@@ -101,17 +101,20 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) {
         Hakukohde hakuk = conversionService.convert(hakukohde, Hakukohde.class);
         Haku haku = hakuDAO.findByOid(hakukohde.getHakukohteenHakuOid());
-        hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit()));
+        
         hakuk.setHaku(haku);
-        hakukohdeDAO.insert(hakuk);
+        hakuk = hakukohdeDAO.insert(hakuk);
+        hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(),hakuk));
+        hakukohdeDAO.update(hakuk);
         return hakukohde;
     }
 
-    private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids) {
+    private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids, Hakukohde hakukohde) {
         Set<KoulutusmoduuliToteutus> komotos = new HashSet<KoulutusmoduuliToteutus>();
         
         for (String komotoOid : komotoOids) {
             KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
+            komoto.addHakukohde(hakukohde);
             komotos.add(komoto);
         }
         
