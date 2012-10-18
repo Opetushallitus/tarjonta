@@ -99,9 +99,9 @@ public class KoulutusResultRow  extends HorizontalLayout {
      */
     private void menuItemClicked(String selection) {
         if (selection.equals(i18n.getMessage("tarkastele"))) {
-            tarjontaPresenter.showShowKoulutusView();
+            tarjontaPresenter.showShowKoulutusView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
         } else if (selection.equals(i18n.getMessage("muokkaa"))) {
-            tarjontaPresenter.showKoulutusEditView();
+            tarjontaPresenter.showKoulutusEditView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
         } else if (selection.equals(i18n.getMessage("poista"))) {
             tarjontaPresenter.removeKoulutus(koulutus);
         }

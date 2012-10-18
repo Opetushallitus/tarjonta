@@ -211,7 +211,7 @@ public class ListKoulutusView extends VerticalLayout {
         muokkaaB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                presenter.showShowKoulutusView();
+                presenter.showKoulutusEditView(null);
             }
         });
 
@@ -231,7 +231,7 @@ public class ListKoulutusView extends VerticalLayout {
         luoHakukohdeB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                presenter.showHakukohdeEditView();
+                presenter.showHakukohdeEditView(presenter.getSelectedKoulutusOids());
             }
         });
         
@@ -241,7 +241,7 @@ public class ListKoulutusView extends VerticalLayout {
         luoKoulutusB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-            	presenter.showKoulutusEditView();
+            	presenter.showKoulutusEditView(null);
             }
         });
 

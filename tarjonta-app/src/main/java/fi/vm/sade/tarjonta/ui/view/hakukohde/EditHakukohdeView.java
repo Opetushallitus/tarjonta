@@ -41,12 +41,6 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
         super();
         setHeight(-1, UNITS_PIXELS);
     }
-    
-    public EditHakukohdeView(List<String> komotoOids) {
-        super();
-        setHeight(-1, UNITS_PIXELS);
-        _presenter.setKomotoOids(komotoOids);
-    }
 
     @Override
     protected void buildLayout(VerticalLayout t) {

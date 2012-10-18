@@ -16,11 +16,6 @@
 package fi.vm.sade.tarjonta.ui.view;
 
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
-import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -136,8 +131,11 @@ public class TarjontaPresenter {
     /**
      * Show koulutus overview view.
      */
-    public void showShowKoulutusView() {
+    public void showShowKoulutusView(String koulutusOid) {
         LOG.info("showShowKoulutusView()");
+        if (koulutusOid != null) {
+        	//TODO lueKoulutus kutsu palveluun
+        }
         ShowKoulutusView view = new ShowKoulutusView("", null);
         _rootView.getAppRootLayout().removeAllComponents();
         _rootView.getAppRootLayout().addComponent(view);
@@ -150,8 +148,7 @@ public class TarjontaPresenter {
     /**
      * Show koulutus edit view.
      */
-	public void showKoulutusEditView() {
-
+	public void showKoulutusEditView(String koulutusOid) {
 		LOG.info("showKoulutusEditView()");
 
     	//Clearing the layout from previos content
@@ -169,8 +166,11 @@ public class TarjontaPresenter {
     /**
      * Show hakukohde edit view.
      */
-	public void showHakukohdeEditView() {
+	public void showHakukohdeEditView(List<String> koulutusOids) {
 		LOG.info("showHakukohdeEditView()");
+		
+		setKomotoOids(koulutusOids);
+		EditHakukohdeView editHakukohdeView = new EditHakukohdeView();
 
     	//Clearing the layout from previos content
     	this._rootView.getAppRootLayout().removeAllComponents();
@@ -179,7 +179,7 @@ public class TarjontaPresenter {
         VerticalLayout vl = UiUtil.verticalLayout();
         vl.setHeight(-1, VerticalLayout.UNITS_PIXELS);
         vl.addComponent(_rootView.getBreadcrumbsView());
-        vl.addComponent(new EditHakukohdeView());
+        vl.addComponent(editHakukohdeView);
         _rootView.getAppRootLayout().addComponent(vl);
         _rootView.getAppRootLayout().setExpandRatio(vl, 1f);
 
@@ -366,6 +366,18 @@ public class TarjontaPresenter {
 
         return map;
     }
+    
+    /**
+     * Gets the oids of the selectd koulutuses.
+     * @return the oids
+     */
+    public List<String> getSelectedKoulutusOids() {
+		List<String> kOids = new ArrayList<String>();
+		for (KoulutusTulos curKoul : this._model.getSelectedKoulutukset()) {
+			kOids.add(curKoul.getKoulutus().getKoulutusmoduuliToteutus());
+		}
+		return kOids;
+	}  
 
     /**
      * Removal of a komoto object.
