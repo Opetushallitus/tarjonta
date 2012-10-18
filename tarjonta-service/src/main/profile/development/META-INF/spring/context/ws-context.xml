@@ -16,14 +16,14 @@
     <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl"/>
     <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicServiceImpl"/>
 
-    
+<!--    
       <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="tarjontaAdminEndpoint"
                     address="/tarjontaAdmin" implementor="#tarjontaAdminService"/>
       
       <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="tarjontaPublicEndpoint"
-                    address="/tarjontaPublic" implementor="#tarjontaPublicService"/>
+                    address="/tarjontaPublic" implementor="#tarjontaPublicService"/>-->
     
-<!--     <bean id="jmsConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory"
+     <bean id="jmsConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory"
           destroy-method="stop">
         <property name="connectionFactory">
             <bean class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -61,6 +61,6 @@
                 <beans:property name="jmsConfig" ref="jmsConfigPublic" />
             </beans:bean>
         </jaxws:features>
-    </jaxws:endpoint>-->
+    </jaxws:endpoint>
     
 </beans>

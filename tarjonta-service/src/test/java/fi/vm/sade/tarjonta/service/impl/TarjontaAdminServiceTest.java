@@ -166,6 +166,10 @@ public class TarjontaAdminServiceTest {
 
         return lisaaKoulutus;
 
+    
+    @Test
+    public void testInitSample() {
+        adminService.initSample(new String());
     }
 
     private static KoodistoKoodiTyyppi createKoodi(String uri) {

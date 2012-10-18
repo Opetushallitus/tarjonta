@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
@@ -38,6 +39,8 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +59,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Autowired
     private KoulutusBusinessService koulutusBusinessService;
+    
+    @Autowired
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     @Autowired
     private HakuDAO hakuDAO;
@@ -88,18 +94,22 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) {
         Hakukohde hakuk = conversionService.convert(hakukohde, Hakukohde.class);
-        logTekstiKaannokset(hakuk);
         Haku haku = hakuDAO.findByOid(hakukohde.getHakukohteenHakuOid());
-        log.info("FOUND HAKU : " + haku.getNimiFi());
+        hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit()));
         hakuk.setHaku(haku);
         hakukohdeDAO.insert(hakuk);
         return hakukohde;
     }
 
-    private void logTekstiKaannokset(Hakukohde hakukohde) {
-        for (TekstiKaannos teksti : hakukohde.getLisatiedot().getTekstis()) {
-            log.info("TEKSTI : " + teksti.getId() + " " + teksti.getKieliKoodi() + " " + teksti.getTeksti());
+    private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids) {
+        Set<KoulutusmoduuliToteutus> komotos = new HashSet<KoulutusmoduuliToteutus>();
+        
+        for (String komotoOid : komotoOids) {
+            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
+            komotos.add(komoto);
         }
+        
+        return komotos;
     }
 
     @Override
@@ -160,8 +170,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
      * Remove once koodisto has proper data.
      */
     @Override
-    public void initSample() {
+    public void initSample(String parameters) {
         try {
+            log.warn("SAMPLE DATA CREATED");
             sampleData.init();
         } catch (Exception e) {
             log.warn("initializing tarjonta data threw exception", e);
@@ -263,6 +274,20 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
      */
     public void setHakukohdeDAO(HakukohdeDAO hakukohdeDAO) {
         this.hakukohdeDAO = hakukohdeDAO;
+    }
+
+    /**
+     * @return the koulutusmoduuliToteutusDAO
+     */
+    public KoulutusmoduuliToteutusDAO getKoulutusmoduuliToteutusDAO() {
+        return koulutusmoduuliToteutusDAO;
+    }
+
+    /**
+     * @param koulutusmoduuliToteutusDAO the koulutusmoduuliToteutusDAO to set
+     */
+    public void setKoulutusmoduuliToteutusDAO(KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO) {
+        this.koulutusmoduuliToteutusDAO = koulutusmoduuliToteutusDAO;
     }
 
 }

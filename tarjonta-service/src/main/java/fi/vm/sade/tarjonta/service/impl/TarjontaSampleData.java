@@ -20,6 +20,7 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HaunTila;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
@@ -67,7 +68,7 @@ public class TarjontaSampleData {
         //
         toteutus = createKoulutusmoduuliToteutus();
         toteutus.setKoulutusmoduuli(moduuli);
-        koulutusmoduuliToteutusDAO.insert(toteutus);
+        toteutus = koulutusmoduuliToteutusDAO.insert(toteutus);
 
 
         //
@@ -82,7 +83,12 @@ public class TarjontaSampleData {
         //
         Hakukohde hakukohde = createHakukohde("Artesaani, käsi- ja taideteollisuusalan perustutkinto");
         hakukohde.setHaku(haku);
-        hakukohdeDAO.insert(hakukohde);
+        
+        hakukohde.addKoulutusmoduuliToteutus(toteutus);
+        hakukohde = hakukohdeDAO.insert(hakukohde);
+        
+        toteutus.addHakukohde(hakukohde);
+        koulutusmoduuliToteutusDAO.update(toteutus);
 
     }
 
@@ -101,7 +107,7 @@ public class TarjontaSampleData {
         h.setNimiFi(nimi);
         h.setOid(randomOid("haku"));
         h.setSijoittelu(true);
-        h.setTila(KoodistoContract.TarjontaTilat.VALMIS);
+        h.setTila(HaunTila.VALMIS.name());
 
         return h;
 
