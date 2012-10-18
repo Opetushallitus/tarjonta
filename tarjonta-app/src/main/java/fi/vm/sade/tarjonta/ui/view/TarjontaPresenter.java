@@ -134,6 +134,8 @@ public class TarjontaPresenter {
      */
     public void showShowKoulutusView(String koulutusOid) {
         LOG.info("showShowKoulutusView()");
+        
+        //If oid of koulutus is provided the koulutus is read from database before opening the ShowKoulutusView
         if (koulutusOid != null) {
         	LueKoulutusKyselyTyyppi koulutusKysely = new LueKoulutusKyselyTyyppi();
         	koulutusKysely.setOid(koulutusOid);
@@ -153,6 +155,13 @@ public class TarjontaPresenter {
      */
 	public void showKoulutusEditView(String koulutusOid) {
 		LOG.info("showKoulutusEditView()");
+		
+		//If oid of koulutus is provided the koulutus is read from database before opening the KoulutusEditView
+		if (koulutusOid != null) {
+			LueKoulutusKyselyTyyppi koulutusKysely = new LueKoulutusKyselyTyyppi();
+        	koulutusKysely.setOid(koulutusOid);
+        	getModel().setKoulutusPerustiedotModel(new KoulutusToisenAsteenPerustiedotViewModel(this.tarjontaPublicService.lueKoulutus(koulutusKysely)));
+		}
 
     	//Clearing the layout from previos content
     	this._rootView.getAppRootLayout().removeAllComponents();
