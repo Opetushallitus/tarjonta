@@ -47,6 +47,13 @@ public class KoodistoUIHelper {
 
     private I18NHelper _i18n = new I18NHelper(KoodistoUIHelper.class);
 
+    /**
+     * Get koodi's name in given locale.
+     *
+     * @param koodiUri
+     * @param locale if null, then I18N.getLocale() used
+     * @return empty string or koodi metadatas localized name, in error cases also error text is given
+     */
     public String getKoodiNimi(String koodiUri, Locale locale) {
         String result = "";
 
@@ -93,5 +100,5 @@ public class KoodistoUIHelper {
         // Strip first comma
         return result.length() == 0 ? result : result.substring(2);
     }
-    
+
 }
