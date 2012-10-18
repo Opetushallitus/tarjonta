@@ -46,6 +46,8 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTu
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusKoosteTyyppi;
@@ -68,6 +70,8 @@ public class TarjontaPublicServiceTest {
     private static final String ORGANISAATIO_A = "1.2.3.4.5";
 
     private static final String ORGANISAATIO_B = "1.2.3.4.6";
+    
+    private static final String KOMOTO_OID = "11.12.23.34.56";
 
     @Autowired
     private TarjontaPublicService service;
@@ -104,10 +108,10 @@ public class TarjontaPublicServiceTest {
         haku.setHakutapaUri(YHTEISHAKU);
         hakuDAO.insert(haku);
         
-        // 0. koulutusmoduuli+toteutus lisätään testaamaan hakukohteiden haun oikeellisuutta.
+        // 0. koulutusmoduuli+toteutus lisätään testaamaan hakukohteiden haun oikeellisuutta sekä yhden koulutusmoduulin lukua.
         koulutusmoduuli = fixtures.createTutkintoOhjelma();
         koulutusmoduuliDAO.insert(koulutusmoduuli);
-        koulutusmoduuliToteutus = fixtures.createTutkintoOhjelmaToteutus();
+        koulutusmoduuliToteutus = fixtures.createTutkintoOhjelmaToteutus(KOMOTO_OID);
         koulutusmoduuliToteutus.setTarjoaja(ORGANISAATIO_A);
         koulutusmoduuliToteutus.setKoulutusmoduuli(koulutusmoduuli);
         koulutusmoduuliToteutusDAO.insert(koulutusmoduuliToteutus);
@@ -225,6 +229,20 @@ public class TarjontaPublicServiceTest {
         rivi = rivit.get(2);
         koulutus = rivi.getKoulutus();
         assertEquals(ORGANISAATIO_B, koulutus.getTarjoaja());
+
+    }
+    
+    @Test
+    public void testLueKoulutus() {
+
+    	LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
+    	kysely.setOid(KOMOTO_OID);
+    	
+    	LueKoulutusVastausTyyppi vastaus = service.lueKoulutus(kysely);
+
+        assertNotNull(vastaus);
+       
+        assertTrue(vastaus.getOpetuskieli().get(0).getUri().equals("http://kielet/fi"));
 
     }
 

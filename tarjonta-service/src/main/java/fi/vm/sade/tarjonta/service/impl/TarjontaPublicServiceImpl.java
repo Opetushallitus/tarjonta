@@ -20,8 +20,8 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
@@ -31,20 +31,25 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
 import fi.vm.sade.tarjonta.service.types.tarjonta.*;
+
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
+import javax.xml.datatype.DatatypeFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -209,6 +214,47 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 		}
 		return vastaus;
 	}
+
+	public LueKoulutusVastausTyyppi lueKoulutus(
+			LueKoulutusKyselyTyyppi kysely) {
+		KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findBy("oid", kysely.getOid()).isEmpty() ? null : this.koulutusmoduuliToteutusDAO.findBy("oid", kysely.getOid()).get(0);
+		return convert(komoto);
+	}
+	
+	private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus toteutus) {
+
+        LueKoulutusVastausTyyppi koulutus = new LueKoulutusVastausTyyppi();
+        KoodistoKoodiTyyppi opetusmuotoKoodi = new KoodistoKoodiTyyppi();
+        opetusmuotoKoodi.setUri(toteutus.getOpetusmuotos().isEmpty() ? null : toteutus.getOpetusmuotos().iterator().next().getKoodiUri());
+        koulutus.setOpetusmuoto(opetusmuotoKoodi);
+        koulutus.setOid(toteutus.getOid());
+        GregorianCalendar greg = new GregorianCalendar();
+        greg.setTime(toteutus.getKoulutuksenAlkamisPvm());
+        try {
+        	koulutus.setKoulutuksenAlkamisPaiva(DatatypeFactory.newInstance().newXMLGregorianCalendar(greg));
+        } catch (Exception ex) {
+        	 koulutus.setKoulutuksenAlkamisPaiva(null);
+        }
+        KoulutuksenKestoTyyppi kestoT = new KoulutuksenKestoTyyppi();
+        kestoT.setArvo(toteutus.getSuunniteltuKestoArvo());
+        kestoT.setYksikko(toteutus.getSuunniteltuKestoYksikko());
+        koulutus.setKesto(kestoT);
+
+        if (toteutus.getOpetuskielis() != null) {
+        	for (KoodistoUri opetusKieli :toteutus.getOpetuskielis()) {
+        		KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
+        		koodi.setUri(opetusKieli.getKoodiUri());
+        		koulutus.getOpetuskieli().add(koodi);
+        	}
+        }
+        
+        KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
+		koodi.setUri(toteutus.getKoulutusLaji());
+        koulutus.getKoulutuslaji().add(koodi);
+
+        return koulutus;
+
+    }
 
 
 }

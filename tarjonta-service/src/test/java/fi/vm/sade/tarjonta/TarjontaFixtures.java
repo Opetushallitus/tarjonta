@@ -99,6 +99,23 @@ public class TarjontaFixtures {
         return t;
 
     }
+    
+    public KoulutusmoduuliToteutus createTutkintoOhjelmaToteutus(String komotoOid) {
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, 1);
+
+        KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus(null);
+        t.setNimi("Simple Tutkinto-Ohjelma toteutus");
+        t.setOid(komotoOid);
+        t.setKoulutuksenAlkamisPvm(cal.getTime());
+        t.setMaksullisuus(null);
+        t.addOpetuskieli(new KoodistoUri("http://kielet/fi"));
+        t.addOpetusmuoto(new KoodistoUri("http://opetusmuodot/lahiopetus"));
+
+        return t;
+
+    }
 
     public Koulutusmoduuli createTutkinnonOsa() {
 

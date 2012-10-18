@@ -20,6 +20,9 @@
     
     <xs:element name="haeKoulutuksetKysely" type="tns:HaeKoulutuksetKyselyTyyppi" />
     <xs:element name="haeKoulutuksetVastaus" type="tns:HaeKoulutuksetVastausTyyppi" />
+    
+    <xs:element name="lueKoulutusKysely" type="tns:LueKoulutusKyselyTyyppi" />
+    <xs:element name="lueKoulutusVastaus" type="tns:LueKoulutusVastausTyyppi" />
 
 
 
@@ -85,7 +88,7 @@
         </xs:sequence>
     </xs:complexType>
     
-        <xs:complexType name="HaeKoulutuksetKyselyTyyppi">
+   <xs:complexType name="HaeKoulutuksetKyselyTyyppi">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
                 Haku objekti jolla valitetaan haku kriteerit.
@@ -109,6 +112,23 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="LueKoulutusKyselyTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="oid" type="xs:string" >
+                <xs:annotation>
+                    <xs:documentation>Yksilollinen tunniste koulutukselle.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+
+    <xs:complexType name="LueKoulutusVastausTyyppi">
+       <xs:sequence>
+            <xs:group ref="tarjonta:KoulutusGroup"/>
         </xs:sequence>
     </xs:complexType>
 

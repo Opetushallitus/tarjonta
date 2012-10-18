@@ -45,6 +45,14 @@
     <wsdl:message name="haeKoulutuksetVastaus">
         <wsdl:part element="ns1:haeKoulutuksetVastaus" name="parameters"/>
     </wsdl:message>
+    
+   <wsdl:message name="lueKoulutusKysely">
+        <wsdl:part element="ns1:lueKoulutusKysely" name="kysely"/>
+    </wsdl:message>
+
+    <wsdl:message name="lueKoulutusVastaus">
+        <wsdl:part element="ns1:lueKoulutusVastaus" name="parameters"/>
+    </wsdl:message>
 
 
     <wsdl:portType name="TarjontaPublicService">
@@ -92,6 +100,16 @@
             <wsdl:output message="tns:haeKoulutuksetVastaus" name="haeKoulutuksetVastaus">
             </wsdl:output>
         </wsdl:operation>
+        
+        <wsdl:operation name="lueKoulutus">
+            <wsdl:documentation>
+                Hakee yhden koulutuksen tiedot oidin perusteella.
+            </wsdl:documentation>
+            <wsdl:input message="tns:lueKoulutusKysely" name="lueKoulutusKysely">
+            </wsdl:input>
+            <wsdl:output message="tns:lueKoulutusVastaus" name="lueKoulutusVastaus">
+            </wsdl:output>
+        </wsdl:operation>
 
 
     </wsdl:portType>
@@ -132,6 +150,16 @@
         
         <wsdl:operation name="haeKoulutukset">
             <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/haeKoulutukset"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="lueKoulutus">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/lueKoulutus"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>

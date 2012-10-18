@@ -5,6 +5,8 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaTyyppi;
@@ -14,6 +16,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Logger;
+
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebResult;
+import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.ParameterStyle;
 
 public class TarjontaPublicServiceMock implements TarjontaPublicService {
 
@@ -97,6 +105,16 @@ public class TarjontaPublicServiceMock implements TarjontaPublicService {
         //TODO implement if necessary
         return null;
     }
+
+	@Override
+	@SOAPBinding(parameterStyle = ParameterStyle.BARE)
+	@WebResult(name = "lueKoulutusVastaus", targetNamespace = "http://service.tarjonta.sade.vm.fi/types", partName = "parameters")
+	@WebMethod(action = "http://service.tarjonta.sade.vm.fi/lueKoulutus")
+	public LueKoulutusVastausTyyppi lueKoulutus(
+			@WebParam(partName = "kysely", name = "lueKoulutusKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueKoulutusKyselyTyyppi kysely) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
 
