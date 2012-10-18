@@ -100,6 +100,12 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
 
     private Form form;
     private BeanItem<HakukohdeViewModel> hakukohdeBean;
+    
+    /*
+     * 
+     * Init view with new model
+     * 
+     */
 
     public PerustiedotViewImpl(TarjontaPresenter presenter) {
         super();
@@ -115,7 +121,10 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         tunnisteKoodiText.setValue(tunnistekoodi);
     }
     
-    
+    /*
+     * Constructor for creating view with existing model
+     * 
+     */
 
     public PerustiedotViewImpl(TarjontaPresenter presenter, HakukohdeViewModel model) {
         super();
@@ -157,6 +166,11 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         });
     }
 
+    /*
+     * Main layout building method.
+     * 
+     */
+    
     private void buildMainLayout() {
         mainLayout = new VerticalLayout();
         //Add top info button layout
@@ -228,6 +242,12 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
             return "";
         }
     }
+    
+    /*
+     * 
+     * This method is called from presenter, it sets HakuTyyppis for the Haku-ComboBox 
+     * 
+     */
 
     @Override
     public void addItemsToHakuCombobox(List<HakuTyyppi> haut) {
@@ -291,19 +311,20 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
 
         return hakukohteenNimiCombo;
     }
-
-//    private LanguageTabSheet buildValintaPerusteet() {
-//
-//        valintaPerusteidenKuvausTabs = buildLanguageTab();
-//
-//        return valintaPerusteidenKuvausTabs;
-//    }
+    
+    
 
 
 
+    /*
+     * 
+     * Build hakukohteen nimi ComboBox and tunnistekoodi textfield
+     * 
+     */
+    
+    
     private HorizontalLayout buildHakukode() {
 
-        //TODO: Tunnistekoodit koodistosta, mistä tulee hakukohteen nimi
         HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         hakukohteenNimiCombo = buildHaku();
 

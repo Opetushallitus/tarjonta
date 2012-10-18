@@ -118,7 +118,8 @@ public class TarjontaPresenter {
     public void initHakukohdeForm(HakukohdeViewModel model, PerustiedotView hakuKohdePerustiedotView) {
         this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
         if (model == null) {
-           getModel().getHakukohde();
+            getModel().setHakukohde(new HakukohdeViewModel());
+           
         } else {
             getModel().setHakukohde(model);
             setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
