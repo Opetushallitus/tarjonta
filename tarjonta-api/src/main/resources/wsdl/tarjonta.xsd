@@ -60,6 +60,11 @@
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1" />
+            
+            <xs:element name="hakukohteenKoulutusOidit"
+                        type="xs:string"
+                        maxOccurs="unbounded"
+                        minOccurs="1"/>
 
             <xs:element name="aloituspaikat"
                         type="xs:int"
