@@ -61,5 +61,12 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         return new JPAQuery(getEntityManager()).from(o);
     }
 
+	@Override
+	public List<Hakukohde> findOrphanHakukohteet() {
+		QHakukohde hakukohde  = QHakukohde.hakukohde;
+		BooleanExpression toteutusesEmpty = hakukohde.koulutusmoduuliToteutuseList.isEmpty();
+		return from(hakukohde).where(toteutusesEmpty).list(hakukohde);
+	}
+
 }
 

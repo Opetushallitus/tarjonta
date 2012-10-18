@@ -262,8 +262,8 @@ public class TarjontaPresenter {
      * Removes the selected koulutus objects from the database.
      */
     public void removeSelectedKoulutukset() {
-        for (KoulutusTulos curHakukohde : getModel().getSelectedKoulutukset()) {
-            //this.tarjontaService.poistaHakukohde(curHakukohde);
+        for (KoulutusTulos curKoulutus : getModel().getSelectedKoulutukset()) {
+            removeKoulutus(curKoulutus);
         }
         getModel().getSelectedKoulutukset().clear();
 
@@ -396,11 +396,8 @@ public class TarjontaPresenter {
      * @param koulutus
      */
 	public void removeKoulutus(KoulutusTulos koulutus) {
-		// TODO Auto-generated method stub
-
+		tarjontaAdminService.poistaKoulutus(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
 	}
-
-
 
 }
 

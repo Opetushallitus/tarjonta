@@ -176,6 +176,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 	public void poistaKoulutus(String koulutusOid) {
 		KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
 		this.koulutusmoduuliToteutusDAO.remove(komoto);
+		removeOrphanHakukohteet();
+	}
+	
+	private void removeOrphanHakukohteet() {
+		for (Hakukohde curHakukohde : this.hakukohdeDAO.findOrphanHakukohteet()) {
+			this.hakukohdeDAO.remove(curHakukohde);
+		}
 	}
 
 

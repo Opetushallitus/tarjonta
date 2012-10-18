@@ -27,6 +27,8 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     public List<Hakukohde> findByKoulutusOid(String koulutusmoduuliToteutusOid);
 
     public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely);
+    
+    public List<Hakukohde> findOrphanHakukohteet();
 
 }
 

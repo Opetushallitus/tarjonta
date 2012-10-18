@@ -204,6 +204,20 @@ public class HakukohdeDAOTest {
         assertEquals(3, hakukohdes.size());
 
     }
+    
+    @Test
+    public void testFindOrphanHakukohteet() {
+    	Hakukohde nonOrphan = fixtures.createPersistedHakukohdeWithKoulutus();
+    	Hakukohde orphan = fixtures.createPersistedHakukohde();
+    	
+    	List<Hakukohde> hakukohdes = this.hakukohdeDAO.findAll();
+    	
+    	List<Hakukohde> orphanHakukohdes = this.hakukohdeDAO.findOrphanHakukohteet();
+    	
+    	assertTrue(orphanHakukohdes.size() > 0);
+    	assertTrue(hakukohdes.size() > orphanHakukohdes.size());
+    }
+    
 
     /**
      *

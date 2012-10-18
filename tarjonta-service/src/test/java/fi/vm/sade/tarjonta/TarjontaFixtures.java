@@ -167,7 +167,7 @@ public class TarjontaFixtures {
 
     public Hakukohde createPersistedHakukohdeWithKoulutus() {
 
-        Hakukohde h = createHakukohde();
+        Hakukohde h = createPersistedHakukohde();//createHakukohde();
 
         KoulutusmoduuliToteutus t1 = createTutkintoOhjelmaToteutus();
         KoulutusmoduuliToteutus t2 = createTutkintoOhjelmaToteutus();
@@ -176,10 +176,19 @@ public class TarjontaFixtures {
         koulutusmoduuliToteutusDAO.insert(t1);
         koulutusmoduuliToteutusDAO.insert(t2);
         koulutusmoduuliToteutusDAO.insert(t3);
-
+        
+        flush();
         h.addKoulutusmoduuliToteutus(t1);
         h.addKoulutusmoduuliToteutus(t2);
         h.addKoulutusmoduuliToteutus(t3);
+        
+        t1.addHakukohde(h);
+        t2.addHakukohde(h);
+        t3.addHakukohde(h);
+        
+        hakukohdeDAO.update(h);
+        flush();
+
 
         hakukohdeDAO.update(h);
 
