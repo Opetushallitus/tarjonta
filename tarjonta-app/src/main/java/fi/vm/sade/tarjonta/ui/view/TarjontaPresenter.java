@@ -16,8 +16,11 @@
 package fi.vm.sade.tarjonta.ui.view;
 
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.koodisto.service.KoodiService;
+import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
-
+import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
@@ -75,6 +78,9 @@ public class TarjontaPresenter {
 
     @Autowired(required=true)
     HakukohdeViewModelToDTOConverter hakukohdeToDTOConverter;
+    
+    @Autowired
+    KoodiService koodiService;
 
     // Views this presenter can control
     private TarjontaRootView _rootView;
@@ -93,6 +99,21 @@ public class TarjontaPresenter {
         tarjontaAdminService.lisaaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
 
     }
+    
+    public void setTunnisteKoodi(String hakukohdeNimiUri) {
+        //TODO add search from koodisto
+        
+        
+        List<KoodiType> koodit =  koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(hakukohdeNimiUri));
+        KoodiType foundKoodi = null;
+        for (KoodiType koodi: koodit) {
+            foundKoodi = koodi;
+        }
+        if (foundKoodi != null) {
+        String koodi = foundKoodi.getMetadata().get(0).getNimi();
+        hakuKohdePerustiedotView.setTunnisteKoodi(koodi);
+        }
+    }
 
     public void initHakukohdeForm(HakukohdeViewModel model, PerustiedotView hakuKohdePerustiedotView) {
         this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
@@ -100,13 +121,16 @@ public class TarjontaPresenter {
            getModel().getHakukohde();
         } else {
             getModel().setHakukohde(model);
+            setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
+            
         }
         ListHakuVastausTyyppi haut = tarjontaPublicService.listHaku(new ListaaHakuTyyppi());
 
         this.hakuKohdePerustiedotView.initForm(getModel().getHakukohde());
         this.hakuKohdePerustiedotView.addItemsToHakuCombobox(haut.getResponse());
+        
     }
-
+   
     /**
      * Show main default view
      *

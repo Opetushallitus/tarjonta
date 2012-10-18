@@ -17,6 +17,8 @@
 
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.AbstractSelect.Filtering;
@@ -40,6 +42,8 @@ import com.vaadin.ui.Form;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.ui.component.CaptionFormatter;
+import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import org.springframework.beans.factory.annotation.Configurable;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
@@ -51,6 +55,7 @@ import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
 import java.util.ArrayList;
@@ -105,6 +110,13 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
 
     }
 
+    @Override
+    public void setTunnisteKoodi(String tunnistekoodi) {
+        tunnisteKoodiText.setValue(tunnistekoodi);
+    }
+    
+    
+
     public PerustiedotViewImpl(TarjontaPresenter presenter, HakukohdeViewModel model) {
         super();
         buildMainLayout();
@@ -131,6 +143,18 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
         this.form.setValidationVisible(false);
         this.form.setValidationVisibleOnCommit(false);
+        hakukohteenNimiCombo.setImmediate(true);
+        hakukohteenNimiCombo.addListener(new Property.ValueChangeListener() {
+
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                 if (event.getProperty().getValue() instanceof String) {
+                     presenter.setTunnisteKoodi(event.getProperty().getValue().toString());
+                 } else {
+                     LOG.debug("class" + event.getProperty().getValue().getClass().getName());
+                 }
+            }
+        });
     }
 
     private void buildMainLayout() {
@@ -237,6 +261,33 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         ComboBox hknCombo = new ComboBox();
         hknCombo.setFilteringMode(Filtering.FILTERINGMODE_CONTAINS);
         hakukohteenNimiCombo.setField(hknCombo);
+        
+        hakukohteenNimiCombo.setFieldValueFormatter(new FieldValueFormatter() {
+
+            @Override
+            public Object formatFieldValue(Object dto) {
+                if (dto instanceof KoodiType) {
+                    KoodiType koodi = (KoodiType)dto;
+                    return koodi.getKoodiUri();
+                } else {
+                    return dto;
+                }
+                
+            }
+        });
+        
+        hakukohteenNimiCombo.setCaptionFormatter(new CaptionFormatter() {
+
+            @Override
+            public String formatCaption(Object dto) {
+                if (dto instanceof KoodiType) {
+                    KoodiType koodi = (KoodiType)dto;
+                    return koodi.getKoodiArvo();
+                } else {
+                    return dto.toString();
+                }
+            }
+        });
 
         return hakukohteenNimiCombo;
     }
@@ -273,6 +324,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         return layout;
     }
 
+    @Override
     public List<KielikaannosViewModel> getLisatiedot() {
         return this.lisatiedotTabs.getKieliKaannokset();
     }

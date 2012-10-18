@@ -35,4 +35,6 @@ public interface PerustiedotView {
     
     void addItemsToHakuCombobox(List<HakuTyyppi> haut);
     
+    void setTunnisteKoodi(String tunnistekoodi);
+   
 }

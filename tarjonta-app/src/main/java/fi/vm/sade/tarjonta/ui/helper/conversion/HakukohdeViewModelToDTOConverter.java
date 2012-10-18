@@ -49,7 +49,12 @@ public class HakukohdeViewModelToDTOConverter {
         
         hakukohde.setAloituspaikat(hakukohdevm.getAloitusPaikat());
         hakukohde.setHakukelpoisuusVaatimukset(hakukohdevm.getHakukelpoisuusVaatimus());
+        if (hakukohdevm.getHakukohdeNimi() != null) {
         hakukohde.setHakukohdeNimi(hakukohdevm.getHakukohdeNimi());
+        } else {
+            //TODO remove just for testing because koodisto dont work
+            hakukohde.setHakukohdeNimi("");
+        }
         hakukohde.setHakukohteenHakuOid(hakukohdevm.getHakuOid().getOid());
         hakukohde.setHakukohteenTila(hakukohdevm.getHakukohdeTila());
         if (hakukohdevm.getOid() == null) {
@@ -61,6 +66,8 @@ public class HakukohdeViewModelToDTOConverter {
         } else {
         hakukohde.setOid(hakukohdevm.getOid());
         }
+        
+        hakukohde.getHakukohteenKoulutusOidit().addAll(hakukohdevm.getKomotoOids());
         hakukohde.getLisatiedot().addAll(convertTekstis(hakukohdevm.getLisatiedot()));
         hakukohde.getValintaPerusteidenKuvaukset().addAll(convertTekstis(hakukohdevm.getValintaPerusteidenKuvaus()));
         return hakukohde;
