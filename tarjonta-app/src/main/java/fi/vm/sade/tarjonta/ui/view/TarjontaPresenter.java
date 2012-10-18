@@ -16,6 +16,11 @@
 package fi.vm.sade.tarjonta.ui.view;
 
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
+import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -49,6 +54,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter;
+import java.util.Locale;
 
 /**
  * This class is used to control the "tarjonta" UI.
@@ -67,10 +73,10 @@ public class TarjontaPresenter {
 
     @Autowired(required = true)
     private TarjontaPublicService tarjontaPublicService;
-    
+
     @Autowired(required = true)
     private TarjontaModel _model;
-    
+
     @Autowired(required=true)
     HakukohdeViewModelToDTOConverter hakukohdeToDTOConverter;
 
@@ -136,14 +142,14 @@ public class TarjontaPresenter {
         _rootView.getAppRootLayout().removeAllComponents();
         _rootView.getAppRootLayout().addComponent(view);
     }
-    
+
     /**
      * Show koulutus edit view.
      */
 	public void showKoulutusEditView() {
-		
+
 		LOG.info("showKoulutusEditView()");
-    	
+
     	//Clearing the layout from previos content
     	this._rootView.getAppRootLayout().removeAllComponents();
 
@@ -161,7 +167,7 @@ public class TarjontaPresenter {
      */
 	public void showHakukohdeEditView() {
 		LOG.info("showHakukohdeEditView()");
-    	
+
     	//Clearing the layout from previos content
     	this._rootView.getAppRootLayout().removeAllComponents();
 
@@ -172,7 +178,7 @@ public class TarjontaPresenter {
         vl.addComponent(new EditHakukohdeView());
         _rootView.getAppRootLayout().addComponent(vl);
         _rootView.getAppRootLayout().setExpandRatio(vl, 1f);
-		
+
 	}
 
     public void doSearch() {
@@ -356,15 +362,17 @@ public class TarjontaPresenter {
 
         return map;
     }
-    
+
     /**
      * Removal of a komoto object.
      * @param koulutus
      */
 	public void removeKoulutus(KoulutusTulos koulutus) {
 		// TODO Auto-generated method stub
-		
+
 	}
+
+
 
 }
 

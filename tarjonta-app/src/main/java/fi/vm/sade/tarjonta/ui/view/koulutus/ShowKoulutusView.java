@@ -25,6 +25,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
@@ -34,6 +35,8 @@ import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import fi.vm.sade.vaadin.util.UiUtil;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +51,12 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShowKoulutusView.class);
+
     @Autowired(required = true)
     private TarjontaPresenter presenter;
+
+    @Autowired(required = true)
+    private KoodistoUIHelper _koodistoUIHelper;
 
     public ShowKoulutusView(String pageTitle, PageNavigationDTO pageNavigationDTO) {
         super(VerticalLayout.class, pageTitle, null, pageNavigationDTO);
@@ -58,7 +65,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     @Override
     protected void buildLayout(VerticalLayout layout) {
         LOG.info("buildLayout(): hakutyyppi uri={}", KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI);
-        
+
         layout.removeAllComponents();
         addNavigationButtons(layout);
         addLayoutSplit();
@@ -82,28 +89,41 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         grid.setWidth("800px");
 
         grid.addComponent(new Label(T("organisaatio")));
-        grid.addComponent(new Label("XXX"));
+        grid.addComponent(new Label("XXXXXXXXXXXXXXXXXXXXXX"));
         grid.newLine();
         grid.addComponent(new Label(T("koulutuslaji")));
-        grid.addComponent(new Label("" + model.getKoulutuslaji()));
+        grid.addComponent(new Label(_koodistoUIHelper.getKoodiNimi(model.getKoulutuslaji(), null)));
         grid.newLine();
         grid.addComponent(new Label(T("opetusmuoto")));
-        grid.addComponent(new Label("" + model.getOpetusmuoto()));
+        grid.addComponent(new Label(_koodistoUIHelper.getKoodiNimi(model.getOpetusmuoto(), null)));
         grid.newLine();
         grid.addComponent(new Label(T("teemat")));
-        grid.addComponent(new Label("" + model.getTeemat()));
+        grid.addComponent(new Label(_koodistoUIHelper.getKoodiNimi(model.getTeemat(), null)));
         grid.newLine();
         grid.addComponent(new Label(T("koulutuksenAlkamisPvm")));
-        grid.addComponent(new Label("" + model.getKoulutuksenAlkamisPvm()));
+        grid.addComponent(new Label(formatDate(model.getKoulutuksenAlkamisPvm())));
         grid.newLine();
-        grid.addComponent(new Label(T("suunniteltuKesto")));
-        grid.addComponent(new Label("" + model.getSuunniteltuKesto() + " " + model.getSuunniteltuKestoTyyppi()));
-        grid.newLine();
+        {
+            // Build suunniteltu kesto and kesto tyyppi as string
+            String tmp = "";
+            if (model.getSuunniteltuKesto() != null) {
+                tmp = model.getSuunniteltuKesto();
+                tmp += " ";
+                tmp += _koodistoUIHelper.getKoodiNimi(model.getSuunniteltuKestoTyyppi(), null);
+            }
+
+            grid.addComponent(new Label(T("suunniteltuKesto")));
+            grid.addComponent(new Label(tmp));
+            grid.newLine();
+        }
         grid.addComponent(new Label(T("opetuskieli")));
-        grid.addComponent(new Label("" + model.getOpetuskielet()));
+        grid.addComponent(new Label(_koodistoUIHelper.getKoodiNimi(model.getOpetuskielet(), null)));
         grid.newLine();
         grid.addComponent(new Label(T("opetuksenMaksullisuus")));
-        grid.addComponent(new Label("" + model.isKoulutusOnMaksullista()));
+        grid.addComponent(new Label(T(model.isKoulutusOnMaksullista() ? CommonTranslationKeys.KYLLA : CommonTranslationKeys.EI)));
+        grid.newLine();
+        grid.addComponent(new Label(T("stipendiMahdollisuus")));
+        grid.addComponent(new Label(T(model.isKoulutusStipendiMahdollisuus()? CommonTranslationKeys.KYLLA : CommonTranslationKeys.EI)));
         grid.newLine();
 
         grid.setColumnExpandRatio(0, 1);
@@ -147,7 +167,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             grid.setComponentAlignment(c, Alignment.TOP_RIGHT);
         }
 
-        tab.addTab(grid, "KIELI");
+        tab.addTab(grid, "TABI KAIKILLE KIELILLE?");
 
         layout.addComponent(tab);
         layout.setExpandRatio(tab, 1f);
@@ -225,4 +245,17 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     }
 
 
+
+    private String formatDate(Date date) {
+        return formatDate(date, "dd.MM.yyyy");
+    }
+
+    private String formatDate(Date date, String format) {
+        if (date == null) {
+            return "";
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.format(date);
+    }
 }

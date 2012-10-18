@@ -34,5 +34,6 @@ public interface CommonTranslationKeys {
     public static String POISTA = "_poista";
     public static String KOPIOI = "_kopioi";
     public static String KOPIOI_UUDEKSI = "_kopioiUudeksi";
-
+    public static String KYLLA = "_kylla";
+    public static String EI = "_ei";
 }
