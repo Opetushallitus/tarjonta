@@ -13,6 +13,10 @@
         </xsd:schema>
     </wsdl:types>
 
+    <wsdl:message name="genericFault">
+        <wsdl:part name="fault" element="ns1:genericFaultInfo"></wsdl:part>
+    </wsdl:message>
+
     <wsdl:message name="lisaaHaku">
         <wsdl:part element="ns1:lisaaHaku" name="parameters"/>
     </wsdl:message>
@@ -44,17 +48,25 @@
     <wsdl:message name="lisaaKoulutusVastaus">
         <wsdl:part element="ns1:lisaaKoulutusVastaus" name="parameters"/>
     </wsdl:message>
-    
+
     <wsdl:message name="lisaaHakukohde">
         <wsdl:part element="ns1:lisaaHakukohde" name="parameters"/>
     </wsdl:message>
-    
+
     <wsdl:message name="lisaaHakukohdeVastaus">
         <wsdl:part element="ns1:lisaaHakukohdeVastaus" name="parameters"/>
     </wsdl:message>
-    
+
     <wsdl:message name="paivitaHakukohde">
         <wsdl:part element="ns1:paivitaHakukohde" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="paivitaKoulutus">
+        <wsdl:part element="ns1:paivitaKoulutus" name="koulutus"/>
+    </wsdl:message>
+
+    <wsdl:message name="paivitaKoulutusVastaus">
+        <wsdl:part element="ns1:paivitaKoulutusVastaus" name="parameters"/>
     </wsdl:message>
 
     <wsdl:message name="paivitaHakukohdeVastaus">
@@ -78,7 +90,7 @@
         <wsdl:documentation>
             Palvelu hakujen yllapitoon.
         </wsdl:documentation>
-        
+
         <wsdl:operation name="lisaaHakukohde">
             <wsdl:documentation>
                 Lisaa hakukohde
@@ -88,7 +100,7 @@
             <wsdl:output message="tns:lisaaHakukohdeVastaus" name="lisaaHakukohdeVastaus">
             </wsdl:output>
         </wsdl:operation>
-        
+
         <wsdl:operation name="paivitaHakukohde">
             <wsdl:documentation>
                 Paivita hakukohde
@@ -98,7 +110,7 @@
             <wsdl:output message="tns:paivitaHakukohdeVastaus" name="paivitaHakukohdeVastaus">
             </wsdl:output>
         </wsdl:operation>
-        
+
         <wsdl:operation name="poistaHakukohde">
             <wsdl:documentation>
                 Poista hakukohde
@@ -147,6 +159,17 @@
             </wsdl:input>
             <wsdl:output message="tns:lisaaKoulutusVastaus" name="lisaaKoulutusVastaus">
             </wsdl:output>
+            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="paivitaKoulutus">
+            <wsdl:documentation>
+                Paivittaa olemassa olevan koulutuksen tiedot.
+            </wsdl:documentation>
+            <wsdl:input message="tns:paivitaKoulutus" name="paivitaKoulutus">
+            </wsdl:input>
+            <wsdl:output message="tns:paivitaKoulutusVastaus" name="paivitaKoulutusVastaus">
+            </wsdl:output>
         </wsdl:operation>
 
         <wsdl:operation name="initSample">
@@ -173,7 +196,7 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        
+
         <wsdl:operation name="lisaaHakukohde">
             <soap:operation soapAction="" type="document"/>
             <wsdl:input>
@@ -183,7 +206,7 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        
+
          <wsdl:operation name="paivitaHakukohde">
             <soap:operation soapAction="" type="document"/>
             <wsdl:input>
@@ -193,7 +216,7 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        
+
         <wsdl:operation name="poistaHakukohde">
             <soap:operation soapAction="" type="document"/>
             <wsdl:input>

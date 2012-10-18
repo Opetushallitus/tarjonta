@@ -19,6 +19,7 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliTyyppi;
 
 /**
@@ -28,47 +29,12 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliTyyppi;
 public interface KoulutusBusinessService {
 
     /**
-     * Create new Koulutusmoduuli as a child of Koulutusmoduuli matching given <code>parentOid</code>.
-     *
-     * @param parentOid oid of the parent LOO the new Kulutusmoduuli will be child of
-     * @param optional flag indicating optionality from parent to child
-     * @param koulutus data for the new Koulutusmoduuli
-     * @return
-     */
-    public Koulutusmoduuli create(Koulutusmoduuli koulutus, String parentOid, boolean optional);
-
-    /**
      * Creates a new top level Koulutusmoduuli.
      *
      * @param moduuli
      * @return
      */
     public Koulutusmoduuli create(Koulutusmoduuli moduuli);
-
-    /**
-     *
-     * @param moduuli
-     * @return
-     */
-    public Koulutusmoduuli update(Koulutusmoduuli moduuli);
-
-
-    
-    /**
-     *
-     * @param toteutus
-     * @return
-     */
-    public KoulutusmoduuliToteutus update(KoulutusmoduuliToteutus toteutus);
-
-    /**
-     * Creates new KoulutusmoduuliToteutus from passed data.
-     *
-     * @param koulutus KoulutusmoduuliToteutus to create
-     * @param koulutusmoduuliOid reference to Koulutusmoduuli that this KoulutusmoduuliToteutus specifies.
-     * @return
-     */
-    public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus, String koulutusmoduuliOid);
 
     /**
      * Creates new KoulutusmoduuliToteutus from passed data. Before storing, reference to given Koulutusmoduuli is assigned.
@@ -81,23 +47,6 @@ public interface KoulutusBusinessService {
     public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus, Koulutusmoduuli moduuli);
 
     /**
-     * Returns LearningOpportunityObject with given oid if any.
-     *
-     * @param oid
-     * @return
-     */
-    public BaseKoulutusmoduuli findByOid(String oid);
-
-    /**
-     * Deletes LearningOpportunityObject if a) it is Koulutusmoduuli and it has no KoulutusmoduuliToteutus and its
-     * state is "non published" or b) it is KoulutusmoduuliToteutus and it is not reference by any Hakukohde and it it's
-     * state is "non published".
-     *
-     * @param oid
-     */
-    public void deleteKoulutusmoduuliByOid(String oid);
-
-    /**
      * Palauttaa {@link KoulutusmoduuliTyyppi#TUTKINTO_OHJELMA} -tyyppisen Koulutusmoduulin jonka koulutusLuokitus sekä koulutusOhjelma
      * vastaavat annettuja arvoja.
      *
@@ -106,6 +55,23 @@ public interface KoulutusBusinessService {
      * @return
      */
     public Koulutusmoduuli findTutkintoOhjelma(String koulutusLuokitusUri, String koulutusOhjelmaUri);
+
+
+    /**
+     * Lisaa ja palauttaaa uuden koulutuksen (toteutus) annettujen arvojen perusteella.
+     *
+     * @param koulutus
+     * @return
+     */
+    public KoulutusmoduuliToteutus createKoulutus(LisaaKoulutusTyyppi koulutus);
+
+    /**
+     * Päivittaa koulutuksen (toteutus) tiedot ja palauttaa päivitetyn toteutuksen.
+     *
+     * @param koulutus
+     * @return
+     */
+    public KoulutusmoduuliToteutus updateKoulutus(PaivitaKoulutusTyyppi koulutus);
 
     /**
      * Once search criteria tyyppi is declared in WSDL expose this method. The implementation is in place in DAO.

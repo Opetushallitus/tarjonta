@@ -21,7 +21,10 @@ import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
-import java.util.List;
+import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaVirheKoodi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,31 +46,9 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
 
     @Override
-    public Koulutusmoduuli create(Koulutusmoduuli koulutusmoduuli, String parentOid, boolean optional) {
-
-        final Koulutusmoduuli newModuuli = create(koulutusmoduuli);
-
-        Koulutusmoduuli ylamoduuli = koulutusmoduuliDAO.findByOid(parentOid);
-
-        sisaltyvyysDAO.insert(new KoulutusSisaltyvyys(ylamoduuli, newModuuli, optional
-            ? KoulutusSisaltyvyys.ValintaTyyppi.SOME_OFF
-            : KoulutusSisaltyvyys.ValintaTyyppi.ONE_OFF));
-
-        return newModuuli;
-
-    }
-
-    @Override
     public Koulutusmoduuli create(Koulutusmoduuli moduuli) {
 
         return koulutusmoduuliDAO.insert(moduuli);
-
-    }
-
-    @Override
-    public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus, String koulutusmoduuliOid) {
-
-        return create(toteutus, koulutusmoduuliDAO.findByOid(koulutusmoduuliOid));
 
     }
 
@@ -81,30 +62,6 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
     }
 
-
-    @Override
-    public Koulutusmoduuli findByOid(String oid) {
-
-        return koulutusmoduuliDAO.findByOid(oid);
-
-    }
-
-    @Override
-    public Koulutusmoduuli update(Koulutusmoduuli moduuli) {
-
-        koulutusmoduuliDAO.update(moduuli);
-        return moduuli;
-
-    }
-
-    @Override
-    public KoulutusmoduuliToteutus update(KoulutusmoduuliToteutus toteutus) {
-
-        koulutusmoduuliToteutusDAO.update(toteutus);
-        return toteutus;
-
-    }
-
     @Override
     public Koulutusmoduuli findTutkintoOhjelma(String koulutusLuokitusUri, String koulutusOhjelmaUri) {
 
@@ -115,32 +72,37 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     }
 
     @Override
-    public void deleteKoulutusmoduuliByOid(String oid) {
+    public KoulutusmoduuliToteutus createKoulutus(LisaaKoulutusTyyppi koulutus) {
 
-        List<Koulutusmoduuli> list = koulutusmoduuliDAO.findBy(BaseKoulutusmoduuli.OID_COLUMN_NAME, oid);
+        Koulutusmoduuli moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(
+            koulutus.getKoulutusKoodi().getUri(),
+            koulutus.getKoulutusohjelmaKoodi().getUri());
 
-        if (list.isEmpty()) {
-            // nothing to delete
-            return;
-        } else if (list.size() > 1) {
-            // todo: versioning issue needs to be resolved - oid should always be unique
-            throw new IllegalStateException("multiple matches for oid: " + oid + ", refusing to delete");
+        if (moduuli == null) {
+            throw new TarjontaBusinessException(TarjontaVirheKoodi.KOULUTUSTA_EI_OLEMASSA.value());
         }
 
-        final Koulutusmoduuli moduuli = list.get(0);
-        final String tila = moduuli.getTila();
+        KoulutusmoduuliToteutus model = new KoulutusmoduuliToteutus();
+        EntityUtils.copyFields(koulutus, model);
 
-        // validate that state is non-published or ready
-        if (!KoodistoContract.TarjontaTilat.SUUNNITTELUSSA.equals(tila)) {
-            throw new IllegalStateException("refusing to delete Koulutusmoduuli in state: " + tila);
+        return koulutusmoduuliToteutusDAO.insert(model);
+
+
+    }
+
+    @Override
+    public KoulutusmoduuliToteutus updateKoulutus(PaivitaKoulutusTyyppi koulutus) {
+
+        KoulutusmoduuliToteutus model = koulutusmoduuliToteutusDAO.findByOid(koulutus.getOid());
+
+        if (model == null) {
+            throw new TarjontaBusinessException(TarjontaVirheKoodi.OID_EI_OLEMASSA.value());
         }
 
-        // validate that we have no children
-        if (!moduuli.getSisaltyvyysList().isEmpty()) {
-            throw new IllegalStateException("refusing to delete Koulutusmoduuli with children");
-        }
+        EntityUtils.copyFields(koulutus, model);
 
-        koulutusmoduuliDAO.remove(moduuli);
+        koulutusmoduuliToteutusDAO.update(model);
+        return model;
 
     }
 

@@ -18,11 +18,27 @@ package fi.vm.sade.tarjonta.dao.impl;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import java.util.List;
 import org.springframework.stereotype.Repository;
 
 /**
  */
 @Repository
 public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<KoulutusmoduuliToteutus, Long> implements KoulutusmoduuliToteutusDAO {
+
+    @Override
+    public KoulutusmoduuliToteutus findByOid(String oid) {
+
+        List<KoulutusmoduuliToteutus> list = findBy(KoulutusmoduuliToteutus.OID_COLUMN_NAME, oid);
+        if (list.isEmpty()) {
+            return null;
+        } else if (list.size() == 1) {
+            return list.get(0);
+        } else {
+            throw new IllegalStateException("multiple results for oid: " + oid);
+        }
+
+    }
+
 }
 

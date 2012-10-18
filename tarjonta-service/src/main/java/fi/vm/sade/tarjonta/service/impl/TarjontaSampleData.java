@@ -94,7 +94,7 @@ public class TarjontaSampleData {
         h.setHakukausiVuosi(2013);
         h.setHakutapaUri(randomKoodiUri("hakutapa"));
         h.setHakutyyppiUri(randomKoodiUri("hakutyyppi"));
-        h.setHaunTunniste("123");
+        h.setHaunTunniste(tunniste);
         h.setKohdejoukkoUri(randomKoodiUri("haunkohdejoukko"));
         h.setKoulutuksenAlkamisVuosi(2014);
         h.setKoulutuksenAlkamiskausiUri(randomKoodiUri("koulutuskausi"));
@@ -143,7 +143,7 @@ public class TarjontaSampleData {
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus();
 
         t.setKoulutuksenAlkamisPvm(date(30 * 6));
-        t.setKoulutusLaji(randomKoodiUri("koulutuslaji"));
+        t.addKoulutuslaji(randomKoodiUri("koulutuslaji"));
         t.setOid(randomOid("koulutusmoduulitoteutus"));
         t.setTarjoaja(randomOid("organisaatio"));
         t.setTila(KoodistoContract.TarjontaTilat.JULKAISTU);

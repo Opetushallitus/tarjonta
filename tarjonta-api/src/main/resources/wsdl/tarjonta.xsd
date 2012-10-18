@@ -433,4 +433,20 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:complexType name="GenericFaultInfo">
+        <xs:sequence>
+            <xs:element name="errorCode" type="xs:string"></xs:element>
+            <xs:element name="explanation" type="xs:string"
+                        maxOccurs="1" minOccurs="0">
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="TarjontaVirheKoodi">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="KOULUTUSTA_EI_OLEMASSA"/>
+            <xs:enumeration value="OID_EI_OLEMASSA"/>
+        </xs:restriction>
+    </xs:simpleType>
+
 </xs:schema>

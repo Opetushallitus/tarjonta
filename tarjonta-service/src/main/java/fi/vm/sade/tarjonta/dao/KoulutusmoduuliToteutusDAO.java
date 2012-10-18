@@ -22,6 +22,8 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
  *
  */
 public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteutus, Long> {
-    
+
+    public KoulutusmoduuliToteutus findByOid(String oid);
+
 }
 

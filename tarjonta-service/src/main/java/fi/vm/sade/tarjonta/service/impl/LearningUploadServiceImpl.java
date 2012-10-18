@@ -133,7 +133,6 @@ public class LearningUploadServiceImpl implements LearningUploadService {
         String organizationOidRef = loi.getOrganizationRef().getOidRef();
 
         komoto.setKoulutuksenAlkamisPvm(new Date());
-        komoto.setKoulutusLaji("KOULUTUSLAJI");
         komoto.setMaksullisuus("MAKSULLISUUS");
         komoto.setMaksullisuusUrl(null);
         komoto.setNimi("NIMI");

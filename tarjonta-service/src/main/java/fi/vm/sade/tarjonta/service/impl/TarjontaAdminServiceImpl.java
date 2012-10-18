@@ -32,10 +32,11 @@ import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
-import org.eclipse.core.internal.runtime.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Autowired
     private HakuDAO hakuDAO;
-    
+
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
 
@@ -93,7 +94,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakukohdeDAO.insert(hakuk);
         return hakukohde;
     }
-    
+
     private void logTekstiKaannokset(Hakukohde hakukohde) {
         for (TekstiKaannos teksti : hakukohde.getLisatiedot().getTekstis()) {
             log.info("TEKSTI : " + teksti.getId() + " " + teksti.getKieliKoodi() + " " + teksti.getTeksti());
@@ -113,8 +114,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakukohdeDAO.update(hakukohde);
         return hakukohdePaivitys;
     }
-    
-    
+
+
 
     @Override
     public fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi lisaaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
@@ -134,19 +135,19 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
 
-        Koulutusmoduuli moduuli = koulutusBusinessService.findTutkintoOhjelma(
-            koulutus.getKoulutusKoodi().getUri(),
-            koulutus.getKoulutusohjelmaKoodi().getUri());
-
-        if (moduuli == null) {
-            // todo: error reporting
-            throw new IllegalArgumentException("no such Koulutusmoduuli: " + koulutus.getKoulutusKoodi()
-                + ", " + koulutus.getKoulutusohjelmaKoodi());
-        }
-
-        koulutusBusinessService.create(convert(koulutus), moduuli);
+        KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
 
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
+        return vastaus;
+
+    }
+
+    @Override
+    public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
+
+        KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
+
+        PaivitaKoulutusVastausTyyppi vastaus = new PaivitaKoulutusVastausTyyppi();
         return vastaus;
 
     }
@@ -171,28 +172,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         return tyypit;
     }
 
-    private KoulutusmoduuliToteutus convert(LisaaKoulutusTyyppi koulutus) {
-
-        KoulutusmoduuliToteutus toteutus = new KoulutusmoduuliToteutus();
-
-        toteutus.addOpetusmuoto(new KoodistoUri(koulutus.getOpetusmuoto().getUri()));
-        toteutus.setOid(koulutus.getOid());
-        toteutus.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime());
-
-        toteutus.setSuunniteltuKestoArvo(koulutus.getKesto().getArvo());
-        toteutus.setSuunniteltuKestoYksikko(koulutus.getKesto().getYksikko());
-
-        for (KoodistoKoodiTyyppi opetusKieli : koulutus.getOpetuskieli()) {
-            toteutus.addOpetuskieli(new KoodistoUri(opetusKieli.getUri()));
-        }
-
-        for (KoodistoKoodiTyyppi koulutuslaji : koulutus.getKoulutuslaji()) {
-            // fix: toteutus should have multiple koulutuslahji
-        }
-
-        return toteutus;
-
-    }
 
     /**
      * @return the businessService

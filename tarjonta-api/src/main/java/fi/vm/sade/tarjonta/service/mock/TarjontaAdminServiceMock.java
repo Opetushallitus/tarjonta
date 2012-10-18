@@ -3,6 +3,8 @@ package fi.vm.sade.tarjonta.service.mock;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
@@ -55,6 +57,11 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
 
     @Override
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi parameters) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

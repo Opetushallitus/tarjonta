@@ -10,6 +10,8 @@
     <xs:import namespace="http://service.tarjonta.sade.vm.fi/types/tarjonta" schemaLocation="tarjonta.xsd" />
 
 
+    <xs:element name="genericFaultInfo" type="tarjonta:GenericFaultInfo"></xs:element>
+
     <xs:element name="lisaaHaku" type="tns:LisaaHakuType"/>
     <xs:element name="lisaaHakuVastaus" type="tns:LisaaHakuVastausType"/>
 
@@ -21,6 +23,9 @@
 
     <xs:element name="lisaaKoulutus" type="tns:LisaaKoulutusTyyppi"/>
     <xs:element name="lisaaKoulutusVastaus" type="tns:LisaaKoulutusVastausTyyppi"/>
+
+    <xs:element name="paivitaKoulutus" type="tns:PaivitaKoulutusTyyppi"/>
+    <xs:element name="paivitaKoulutusVastaus" type="tns:PaivitaKoulutusVastausTyyppi"/>
 
     <xs:element name="lisaaHakukohde" type="tns:LisaaHakukohdeType"/>
     <xs:element name="lisaaHakukohdeVastaus" type="tns:LisaaHakukohdeVastausType"/>
@@ -107,8 +112,16 @@
         </xs:sequence>
     </xs:complexType>
 
-
     <xs:complexType name="LisaaKoulutusVastausTyyppi">
+    </xs:complexType>
+
+    <xs:complexType name="PaivitaKoulutusTyyppi">
+        <xs:sequence>
+            <xs:group ref="tarjonta:KoulutusGroup"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PaivitaKoulutusVastausTyyppi">
     </xs:complexType>
 
 </xs:schema>

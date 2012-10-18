@@ -31,6 +31,7 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
@@ -73,7 +74,7 @@ public class TarjontaAdminServiceTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = TarjontaBusinessException.class)
     public void testCannotCreateKoulutusWithoutKoulutusmoduuli() {
 
         LisaaKoulutusTyyppi lisaaKoulutus = new LisaaKoulutusTyyppi();

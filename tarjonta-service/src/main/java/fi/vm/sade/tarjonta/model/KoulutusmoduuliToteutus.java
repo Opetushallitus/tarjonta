@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -45,10 +46,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private String tarjoaja;
 
     /**
-     * Koodisto Uri. Example display values 'Nuorten koulutus, Aikuisten koulutus'.
+     * Example display values 'Nuorten koulutus, Aikuisten koulutus'.
      */
-    @Column(name = "koulutus_laji")
-    private String koulutusLaji;
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_koulutuslaji", joinColumns =
+    @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<KoodistoUri> koulutuslajiList;
 
     /**
      * todo: can we set this attribute to "required"?
@@ -169,15 +172,26 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return the koulutusLajiUri
      */
-    public String getKoulutusLaji() {
-        return koulutusLaji;
+    public Set<KoodistoUri> getKoulutuslajiList() {
+        return Collections.unmodifiableSet(koulutuslajiList);
     }
 
     /**
-     * @param koulutusLajiUri the koulutusLajiUri to set
+     * @param koulutuslajiUri the koulutusLajiUri to set
      */
-    public void setKoulutusLaji(String koulutusLajiUri) {
-        this.koulutusLaji = koulutusLajiUri;
+    public void addKoulutuslaji(String koulutuslajiUri) {
+        koulutuslajiList.add(new KoodistoUri(koulutuslajiUri));
+    }
+
+    public void removeKoulutuslaji(String koulutuslajiUri) {
+        koulutuslajiList.remove(new KoodistoUri(koulutuslajiUri));
+    }
+
+    public void setKoulutuslajiList(Collection<String> uris) {
+        koulutuslajiList.clear();
+        for (String uri : uris) {
+            koulutuslajiList.add(new KoodistoUri(uri));
+        }
     }
 
     /**

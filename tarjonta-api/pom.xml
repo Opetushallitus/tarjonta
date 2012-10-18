@@ -131,6 +131,7 @@
                             <wsdlOptions>
                                 <wsdlOption>
                                     <wsdl>src/main/resources/wsdl/tarjontaAdminService.wsdl</wsdl>
+                                    <exceptionSuper>java.lang.RuntimeException</exceptionSuper>
                                     <bindingFiles>
                                         <bindingFile>src/main/resources/wsdl/binding.xjb</bindingFile>
                                     </bindingFiles>
