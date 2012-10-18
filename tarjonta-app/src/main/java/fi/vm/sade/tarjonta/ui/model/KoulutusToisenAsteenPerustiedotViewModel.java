@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,53 +28,51 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
  */
 public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedotViewModel {
 
-    private String koulutusohjelma;
-    private String koulutuksenTyyppi;
-    
+    private Set<String> koodistoKoulutusohjelma;
+    private static final String NO_DATA_AVAILABLE = "Tietoa ei saatavilla";
+
     public KoulutusToisenAsteenPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus) {
-    	super();
-    	setKoulutusohjelma(koulutus.getKoulutusKoodi() != null ? koulutus.getKoulutusohjelmaKoodi().getUri() : null);
-    	setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva() != null ?  koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
-    	setOpetuskielet(convertOpetuskielet(koulutus.getOpetuskieli()));
-    	setKoulutus((koulutus.getKoulutusKoodi() != null) ? koulutus.getKoulutusKoodi().getUri() : null);
-    	setKoulutuslaji(koulutus.getKoulutuslaji().isEmpty() ? null : koulutus.getKoulutuslaji().get(0).getUri());
-    	setOpetusmuoto(koulutus.getOpetusmuoto() != null ? koulutus.getOpetusmuoto().getUri() : null);
+        super();
+        setKoulutusKoodi((koulutus.getKoulutusKoodi() != null) ? koulutus.getKoulutusKoodi().getUri() : null);
+        setKoulutusohjelmaKoodi(koulutus.getKoulutusKoodi() != null ? koulutus.getKoulutusohjelmaKoodi().getUri() : null);
+
+        setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
+        setOpetuskielet(convertOpetuskielet(koulutus.getOpetuskieli()));
+        setKoulutuslaji(koulutus.getKoulutuslaji().isEmpty() ? null : koulutus.getKoulutuslaji().get(0).getUri());
+        setOpetusmuoto(koulutus.getOpetusmuoto() != null ? koulutus.getOpetusmuoto().getUri() : null);
     }
 
-	public KoulutusToisenAsteenPerustiedotViewModel() {
+    public KoulutusToisenAsteenPerustiedotViewModel() {
         super();
 
-        // TODO demo data?
-        setKoulutusala("Tekniikan ja liikenteen ala");
-        setTutkinto("Autoalan perustutkinto");
-        setTutkintonimike("Automaalari");
-        setOpintojenLaajuusyksikko("Opintoviikot");
-        setOpintojenLaajuus("120 ov");
-        setOpintoala("Opintoala ei tiedossa");
-        setKoulutuksenTyyppi("Ei valintaa");
+        setKoulutusala(NO_DATA_AVAILABLE); //Tekniikan ja liikenteen ala
+        setTutkinto(NO_DATA_AVAILABLE); //Autoalan perustutkinto
+        setTutkintonimike(NO_DATA_AVAILABLE); //Automaalari
+        setOpintojenLaajuusyksikko(NO_DATA_AVAILABLE); //Opintoviikot
+        setOpintojenLaajuus(NO_DATA_AVAILABLE); //120 ov
+        setOpintoala(NO_DATA_AVAILABLE); //Opintoala ei tiedossa
+        setKoulutuksenTyyppi(NO_DATA_AVAILABLE); //Ei valintaa
     }
 
-    public String getKoulutusohjelma() {
-        return koulutusohjelma;
-    }
-
-    public void setKoulutusohjelma(String koulutusohjelma) {
-        this.koulutusohjelma = koulutusohjelma;
-    }
-
-    public String getKoulutuksenTyyppi() {
-        return koulutuksenTyyppi;
-    }
-
-    public void setKoulutuksenTyyppi(String koulutuksenTyyppi) {
-        this.koulutuksenTyyppi = koulutuksenTyyppi;
-    }
-    
     private Set<String> convertOpetuskielet(List<KoodistoKoodiTyyppi> opetuskieliKoodit) {
-    	Set<String> opetuskielet = new HashSet<String>();
-    	for (KoodistoKoodiTyyppi curKoodi : opetuskieliKoodit) {
-    		opetuskielet.add(curKoodi.getUri());
-    	}
-    	return opetuskielet;
+        Set<String> opetuskielet = new HashSet<String>();
+        for (KoodistoKoodiTyyppi curKoodi : opetuskieliKoodit) {
+            opetuskielet.add(curKoodi.getUri());
+        }
+        return opetuskielet;
+    }
+
+    /**
+     * @return the koodistoKoulutusohjelma
+     */
+    public Set<String> getKoodistoKoulutusohjelma() {
+        return koodistoKoulutusohjelma;
+    }
+
+    /**
+     * @param koodistoKoulutusohjelma the koodistoKoulutusohjelma to set
+     */
+    public void setKoodistoKoulutusohjelma(Set<String> koodistoKoulutusohjelma) {
+        this.koodistoKoulutusohjelma = koodistoKoulutusohjelma;
     }
 }

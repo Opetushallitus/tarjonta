@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.helper;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.AbstractLayout;
@@ -24,6 +25,7 @@ import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Label;
@@ -32,6 +34,7 @@ import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.StyleEnum;
+import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.lang.reflect.Method;
 import org.slf4j.Logger;
@@ -132,7 +135,7 @@ public class BeanItemMapper<T, E> {
         return c;
     }
 
-     /**
+    /**
      * Create a button.
      *
      * @param layout
@@ -246,8 +249,12 @@ public class BeanItemMapper<T, E> {
      */
     public KoodistoComponent addKoodistoComboBox(AbstractLayout layout, final String koodistoUri, String expression, String promptKey) {
         LOG.debug("addKoodistoComboBox({}, ...)", koodistoUri);
-        return UiBuilder.koodistoComboBox(layout, koodistoUri, psi, expression, i18n.getMessage(promptKey));
+        KoodistoComponent koodistoComboBox = UiBuilder.koodistoComboBox(layout, koodistoUri, psi, expression, i18n.getMessage(promptKey));
+        koodistoComboBox.setImmediate(true);
+        return koodistoComboBox;
     }
+
+  
 
     /**
      * Create KoodistoComponent with TwinColSelect as widget and bind to model.

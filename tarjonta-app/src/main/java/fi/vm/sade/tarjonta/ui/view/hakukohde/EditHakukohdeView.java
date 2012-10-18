@@ -47,7 +47,7 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
         
         tabs = new TabSheet();
         tabs.setHeight(-1, UNITS_PIXELS);
-        addComponent(tabs);
+        t.addComponent(tabs);
 
         tabs.addTab(new PerustiedotViewImpl(_presenter),T("tabNimi"));
         createButtons();

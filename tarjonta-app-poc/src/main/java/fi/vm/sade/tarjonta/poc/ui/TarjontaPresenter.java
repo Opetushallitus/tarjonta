@@ -21,6 +21,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.poc.ui.enums.Notification;
+
 import fi.vm.sade.tarjonta.poc.ui.view.haku.AddHakuDokumenttiView;
 import fi.vm.sade.tarjonta.poc.ui.view.koulutus.EditKoulutusView;
 import fi.vm.sade.tarjonta.poc.ui.view.hakukohde.CreateHakukohdeView;

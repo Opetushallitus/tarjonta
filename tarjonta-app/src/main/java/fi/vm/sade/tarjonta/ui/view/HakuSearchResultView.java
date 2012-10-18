@@ -9,7 +9,6 @@ import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
 public class HakuSearchResultView extends VerticalLayout {
 
     boolean attached = false;
-
     private I18NHelper _i18n = new I18NHelper(this);
 
     public HakuSearchResultView() {
@@ -18,17 +17,19 @@ public class HakuSearchResultView extends VerticalLayout {
 
     @Override
     public void attach() {
-        if (attached) return;
+         super.attach();
+        if (attached) {
+            return;
+        }
 
         attached = true;
-        super.attach();
+       
 
         TabSheet tabs = new TabSheet();
         addComponent(tabs);
 
         ListHakuViewImpl hakuList = new ListHakuViewImpl();
         hakuList.addListener(new Listener() {
-
             @Override
             public void componentEvent(Event event) {
                 if (event instanceof HakuResultRow.HakuRowMenuEvent) {
@@ -38,7 +39,6 @@ public class HakuSearchResultView extends VerticalLayout {
                 }
 
             }
-
         });
         tabs.addTab(hakuList, T("haut"));
     }
@@ -46,5 +46,4 @@ public class HakuSearchResultView extends VerticalLayout {
     private String T(String key) {
         return _i18n.getMessage(key);
     }
-
 }

@@ -68,19 +68,21 @@ public class SearchResultsView extends VerticalLayout {
 
         ListKoulutusView koulutusList = new ListKoulutusView();
         koulutusList.addListener(new Listener() {
-
             @Override
             public void componentEvent(Event event) {
-            	fireEvent(event);
+                fireEvent(event);
 
             }
-
         });
 
         tabs.addTab(koulutusList, T("koulutukset"));//new EditKoulutusPerustiedotToinenAsteView(), T("koulutukset"));
         tabs.addTab(new ListHakukohdeViewImpl(), T("hakuryhmat"));
+
         //For testing
-        tabs.addTab(new EditHakukohdeView(),"Lisää hakukohde");
+        EditHakukohdeView editHakukohdeView = new EditHakukohdeView();
+
+        tabs.addTab(editHakukohdeView, "Lisää hakukohde");
+        addComponent(tabs);
     }
 
     private String T(String key) {

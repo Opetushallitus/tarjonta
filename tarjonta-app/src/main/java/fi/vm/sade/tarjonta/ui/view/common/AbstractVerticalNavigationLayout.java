@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.ui.view.common;
 
 import com.vaadin.ui.VerticalLayout;
 //import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
-import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.vaadin.ui.OphAbstractNavigationLayout;
 

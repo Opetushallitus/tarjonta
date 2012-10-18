@@ -20,6 +20,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
+import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiBaseUtil;
@@ -35,6 +36,13 @@ public class UiBuilder extends UiUtil {
 
     private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
 
+    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri) {
+        return koodistoComboBox(layout, koodistoUri, null, null, null);
+    }
+
+    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt) {
+        return koodistoComboBox(layout, koodistoUri, null, null, prompt);
+    }
 
     /**
      * Create new KoodistoComponent with ComboBox. Possible bind to a property.

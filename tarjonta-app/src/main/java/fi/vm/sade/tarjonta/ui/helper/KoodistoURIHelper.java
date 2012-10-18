@@ -20,7 +20,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * Common helper access for Koodisto URIs. These should be configured from Spring.
+ * Common helper access for Koodisto URIs. These should be configured from
+ * Spring.
  *
  * @author Tuomas Katva
  * @author mlyly
@@ -41,9 +42,10 @@ public class KoodistoURIHelper {
     public static String KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI;
     public static String KOODISTO_HAKUKOHDE_URI;
     public static String KOODISTO_SUUNNITELTU_KESTO_URI;
-    public static String KOODISTO_TEEMA_URI;
     public static String KOODISTO_OPETUSMUOTO_URI;
     public static String KOODISTO_KOULUTUSLAJI_URI;
+    public static String KOODISTO_AVAINSANAT_URI;
+    public static String KOODISTO_KIELIVALIKOIMA_URI;
 
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
@@ -105,11 +107,6 @@ public class KoodistoURIHelper {
         KOODISTO_SUUNNITELTU_KESTO_URI = uri;
     }
 
-    @Value("${koodisto-uris.teema:NOT_SET}")
-    public void setKoodistoTeemaUri(String uri) {
-        KOODISTO_TEEMA_URI = uri;
-    }
-
     @Value("${koodisto-uris.opetusmuoto:NOT_SET}")
     public void setKoodistoOpetusmuotoUri(String uri) {
         KOODISTO_OPETUSMUOTO_URI = uri;
@@ -118,5 +115,15 @@ public class KoodistoURIHelper {
     @Value("${koodisto-uris.koulutuslaji:NOT_SET}")
     public void setKoodistoKoulutuslajiUri(String uri) {
         KOODISTO_KOULUTUSLAJI_URI = uri;
+    }
+
+    @Value("${koodisto-uris.avainsanat:NOT_SET}")
+    public void setKoodistoAvainsanatUri(String uri) {
+        KOODISTO_AVAINSANAT_URI = uri;
+    }
+    
+    @Value("${koodisto-uris.kielivalikoima:NOT_SET}")
+    public void setKoodistoKielivalikoimaUri(String uri) {
+        KOODISTO_KIELIVALIKOIMA_URI = uri;
     }
 }

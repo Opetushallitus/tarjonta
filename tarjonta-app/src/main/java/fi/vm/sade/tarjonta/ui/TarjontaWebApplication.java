@@ -131,6 +131,7 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
                 LOG.info("NEXT!");
             }
         });
+        
 
         PageNavigationDTO pageNavigationDTO = new PageNavigationDTO(prev, next, "42/43");
         ShowKoulutusView view  = new ShowKoulutusView("PAGE TITLE", pageNavigationDTO);
@@ -158,7 +159,7 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
                 toHaku();
             }
 
-            if (developmentRedirect.equalsIgnoreCase("KOULUTUS")) {
+            if (developmentRedirect.equalsIgnoreCase("KOULUTUS") || developmentRedirect.equalsIgnoreCase("TARJONTA")) {
                 toTarjonta();
             }
         }

@@ -30,199 +30,235 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  */
 public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
 
-    // Koodisto: koulutus
-    private String _koulutus;
-
-    // TODO Mistä nämä tulevat?
-    private String _koulutusTyyppi = "";
-    private String _koulutusala = "";
-    private String _tutkinto = "";
-    private String _tutkintonimike = "";
-    private String _opintojenLaajuusyksikko = "";
-    private String _opintojenLaajuus = "";
-    private String _opintoala = "";
-
+    /*
+     * Koodisto data
+     */
+    private String koulutusKoodi;
+    private String koulutusohjelmaKoodi;
+    /*
+     * KOMO data 
+     */
+    private String koulutuksenTyyppi = "";
+    private String koulutusala = "";
+    private String tutkinto = "";
+    private String tutkintonimike = "";
+    private String opintojenLaajuusyksikko = "";
+    private String opintojenLaajuus = "";
+    private String opintoala = "";
     // Koodisto: kieli
-    private Set<String> _opetuskielet = new HashSet<String>();
-    private boolean _opetuskieletKaikki;
-    private Date _koulutuksenAlkamisPvm = new Date();
-    private String _suunniteltuKesto;
+    private Set<String> opetuskielet = new HashSet<String>();
+    private boolean opetuskieletKaikki;
+    private Date koulutuksenAlkamisPvm = new Date();
+    private String suunniteltuKesto;
     // Koodisto: suunniteltuKesto
-    private String _suunniteltuKestoTyyppi;
+    private String suunniteltuKestoTyyppi;
     // Koodisto: teema
-    private Set<String> _teemat = new HashSet<String>();
+    private Set<String> avainsanat = new HashSet<String>();
     // Koodisto: opetusmuoto
-    private String _opetusmuoto;
+    private String opetusmuoto;
     // Koodisto: koulutuslaji
-    private String _koulutuslaji;
-    private List<KoulutusYhteyshenkiloViewModel> _yhteyshenkilot;
-    private boolean _koulutusOnMaksullista;
-    private boolean _koulutusStipendiMahdollisuus;
-    private List<KoulutusLinkkiViewModel> _koulutusLinkit;
-
-    public String getKoulutus() {
-        return _koulutus;
-    }
-
-    public void setKoulutus(String koulutus) {
-        this._koulutus = koulutus;
-    }
-
-    public String getKoulutusTyyppi() {
-        return _koulutusTyyppi;
-    }
-
-    public void setKoulutusTyyppi(String _koulutusTyyppi) {
-        this._koulutusTyyppi = _koulutusTyyppi;
-    }
+    private String koulutuslaji;
+    private List<KoulutusYhteyshenkiloViewModel> yhteyshenkilot = new ArrayList<KoulutusYhteyshenkiloViewModel>(0);
+    private boolean koulutusOnMaksullista;
+    private boolean koulutusStipendiMahdollisuus;
+    private List<KoulutusLinkkiViewModel> koulutusLinkit = new ArrayList<KoulutusLinkkiViewModel>(0);
 
     public String getKoulutusala() {
-        return _koulutusala;
+        return koulutusala;
     }
 
     public void setKoulutusala(String koulutusala) {
-        this._koulutusala = koulutusala;
+        this.koulutusala = koulutusala;
     }
 
     public String getTutkinto() {
-        return _tutkinto;
+        return tutkinto;
     }
 
     public void setTutkinto(String tutkinto) {
-        this._tutkinto = tutkinto;
+        this.tutkinto = tutkinto;
     }
 
     public String getTutkintonimike() {
-        return _tutkintonimike;
+        return tutkintonimike;
     }
 
     public void setTutkintonimike(String tutkintonimike) {
-        this._tutkintonimike = tutkintonimike;
+        this.tutkintonimike = tutkintonimike;
     }
 
     public String getOpintojenLaajuusyksikko() {
-        return _opintojenLaajuusyksikko;
+        return opintojenLaajuusyksikko;
     }
 
     public void setOpintojenLaajuusyksikko(String opintojenLaajuusyksikko) {
-        this._opintojenLaajuusyksikko = opintojenLaajuusyksikko;
+        this.opintojenLaajuusyksikko = opintojenLaajuusyksikko;
     }
 
     public String getOpintojenLaajuus() {
-        return _opintojenLaajuus;
+        return opintojenLaajuus;
     }
 
     public void setOpintojenLaajuus(String opintojenLaajuus) {
-        this._opintojenLaajuus = opintojenLaajuus;
+        this.opintojenLaajuus = opintojenLaajuus;
     }
 
     public String getOpintoala() {
-        return _opintoala;
+        return opintoala;
     }
 
     public void setOpintoala(String opintoala) {
-        this._opintoala = opintoala;
+        this.opintoala = opintoala;
     }
 
     public Set<String> getOpetuskielet() {
-        return _opetuskielet;
+        return opetuskielet;
     }
 
     public void setOpetuskielet(Set<String> opetuskielet) {
-        this._opetuskielet = opetuskielet;
+        this.opetuskielet = opetuskielet;
     }
 
     public boolean isOpetuskieletKaikki() {
-        return _opetuskieletKaikki;
+        return opetuskieletKaikki;
     }
 
     public void setOpetuskieletKaikki(boolean opetuskieletKaikki) {
-        this._opetuskieletKaikki = opetuskieletKaikki;
+        this.opetuskieletKaikki = opetuskieletKaikki;
     }
 
     public Date getKoulutuksenAlkamisPvm() {
-        return _koulutuksenAlkamisPvm;
+        return koulutuksenAlkamisPvm;
     }
 
     public void setKoulutuksenAlkamisPvm(Date koulutuksenAlkamisPvm) {
-        this._koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
+        this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
     }
 
     public String getSuunniteltuKesto() {
-        return _suunniteltuKesto;
+        return suunniteltuKesto;
     }
 
     public void setSuunniteltuKesto(String suunniteltuKesto) {
-        this._suunniteltuKesto = suunniteltuKesto;
+        this.suunniteltuKesto = suunniteltuKesto;
     }
 
     public String getSuunniteltuKestoTyyppi() {
-        return _suunniteltuKestoTyyppi;
+        return suunniteltuKestoTyyppi;
     }
 
     public void setSuunniteltuKestoTyyppi(String suunniteltuKestoTyyppi) {
-        this._suunniteltuKestoTyyppi = suunniteltuKestoTyyppi;
+        this.suunniteltuKestoTyyppi = suunniteltuKestoTyyppi;
     }
 
-    public Set<String> getTeemat() {
-        return _teemat;
-    }
-
-    public void setTeemat(Set<String> teemat) {
-        this._teemat = teemat;
-    }
 
     public String getOpetusmuoto() {
-        return _opetusmuoto;
+        return opetusmuoto;
     }
 
     public void setOpetusmuoto(String opetusmuoto) {
-        this._opetusmuoto = opetusmuoto;
+        this.opetusmuoto = opetusmuoto;
     }
 
     public String getKoulutuslaji() {
-        return _koulutuslaji;
+        return koulutuslaji;
     }
 
     public void setKoulutuslaji(String koulutuslaji) {
-        this._koulutuslaji = koulutuslaji;
+        this.koulutuslaji = koulutuslaji;
     }
 
     public boolean isKoulutusOnMaksullista() {
-        return _koulutusOnMaksullista;
+        return koulutusOnMaksullista;
     }
 
     public void setKoulutusOnMaksullista(boolean koulutusOnMaksullista) {
-        this._koulutusOnMaksullista = koulutusOnMaksullista;
+        this.koulutusOnMaksullista = koulutusOnMaksullista;
     }
 
     public boolean isKoulutusStipendiMahdollisuus() {
-        return _koulutusStipendiMahdollisuus;
+        return koulutusStipendiMahdollisuus;
     }
 
     public void setKoulutusStipendiMahdollisuus(boolean koulutusStipendiMahdollisuus) {
-        this._koulutusStipendiMahdollisuus = koulutusStipendiMahdollisuus;
+        this.koulutusStipendiMahdollisuus = koulutusStipendiMahdollisuus;
     }
 
     public List<KoulutusLinkkiViewModel> getKoulutusLinkit() {
-        if (_koulutusLinkit == null) {
-            _koulutusLinkit = new ArrayList<KoulutusLinkkiViewModel>();
+        if (koulutusLinkit == null) {
+            koulutusLinkit = new ArrayList<KoulutusLinkkiViewModel>();
         }
-        return _koulutusLinkit;
+        return koulutusLinkit;
     }
 
     public void setKoulutusLinkit(List<KoulutusLinkkiViewModel> linkit) {
-        this._koulutusLinkit = linkit;
+        this.koulutusLinkit = linkit;
     }
 
     public List<KoulutusYhteyshenkiloViewModel> getYhteyshenkilot() {
-        if (_yhteyshenkilot == null) {
-            _yhteyshenkilot = new ArrayList<KoulutusYhteyshenkiloViewModel>();
+        if (yhteyshenkilot == null) {
+            yhteyshenkilot = new ArrayList<KoulutusYhteyshenkiloViewModel>();
         }
-        return _yhteyshenkilot;
+        return yhteyshenkilot;
     }
 
     public void setYhteyshenkilot(List<KoulutusYhteyshenkiloViewModel> _yhteyshenkilot) {
-        this._yhteyshenkilot = _yhteyshenkilot;
+        this.yhteyshenkilot = _yhteyshenkilot;
+    }
+
+    /**
+     * @return the koulutuksenTyyppi
+     */
+    public String getKoulutuksenTyyppi() {
+        return koulutuksenTyyppi;
+    }
+
+    /**
+     * @param koulutuksenTyyppi the koulutuksenTyyppi to set
+     */
+    public void setKoulutuksenTyyppi(String koulutuksenTyyppi) {
+        this.koulutuksenTyyppi = koulutuksenTyyppi;
+    }
+
+    /**
+     * @return the koulutusKoodi
+     */
+    public String getKoulutusKoodi() {
+        return koulutusKoodi;
+    }
+
+    /**
+     * @param koulutusKoodi the koulutusKoodi to set
+     */
+    public void setKoulutusKoodi(String koulutusKoodi) {
+        this.koulutusKoodi = koulutusKoodi;
+    }
+
+    /**
+     * @return the koulutusohjelmaKoodi
+     */
+    public String getKoulutusohjelmaKoodi() {
+        return koulutusohjelmaKoodi;
+    }
+
+    /**
+     * @param koulutusohjelmaKoodi the koulutusohjelmaKoodi to set
+     */
+    public void setKoulutusohjelmaKoodi(String koulutusohjelmaKoodi) {
+        this.koulutusohjelmaKoodi = koulutusohjelmaKoodi;
+    }
+
+    /**
+     * @return the avainsanat
+     */
+    public Set<String> getAvainsanat() {
+        return avainsanat;
+    }
+
+    /**
+     * @param avainsanat the avainsanat to set
+     */
+    public void setAvainsanat(Set<String> avainsanat) {
+        this.avainsanat = avainsanat;
     }
 }

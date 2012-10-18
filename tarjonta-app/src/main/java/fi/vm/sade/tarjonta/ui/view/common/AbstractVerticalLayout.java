@@ -17,20 +17,19 @@ package fi.vm.sade.tarjonta.ui.view.common;
 
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.vaadin.dto.PageNavigationDTO;
-import fi.vm.sade.vaadin.ui.OphAbstractInfoLayout;
+import org.slf4j.Logger;
 
 /**
  *
- * @author markus
+ * @author Jani Wilén
  */
-public abstract class AbstractVerticalInfoLayout extends OphAbstractInfoLayout<VerticalLayout> {
+public class AbstractVerticalLayout extends VerticalLayout {
 
-    protected transient I18NHelper _i18n;
+    protected static Logger LOG;
+    private transient I18NHelper _i18n;
 
-    public AbstractVerticalInfoLayout(Class<VerticalLayout> layoutClass,
-            String pageTitle, String message, PageNavigationDTO dto) {
-        super(layoutClass, pageTitle, message, dto);
+    public AbstractVerticalLayout() {
+        super();
     }
 
     protected String T(String key) {
@@ -47,5 +46,5 @@ public abstract class AbstractVerticalInfoLayout extends OphAbstractInfoLayout<V
         }
         return _i18n;
     }
-
 }
+

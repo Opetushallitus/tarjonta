@@ -16,8 +16,6 @@
 
 package fi.vm.sade.tarjonta.ui.view.common;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Form;
 import fi.vm.sade.vaadin.ui.OphAbstractDialogWindow;
 
 /**

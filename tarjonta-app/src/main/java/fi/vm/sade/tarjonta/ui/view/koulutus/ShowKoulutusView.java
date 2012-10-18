@@ -96,7 +96,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getOpetusmuoto())));
         grid.newLine();
         grid.addComponent(UiUtil.label(T("teemat")));
-        grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getTeemat(), null)));
+        grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getAvainsanat(), null)));
         grid.newLine();
         grid.addComponent(UiUtil.label(T("koulutuksenAlkamisPvm")));
         grid.addComponent(UiUtil.label(_tarjontaUIHelper.formatDate(model.getKoulutuksenAlkamisPvm())));
