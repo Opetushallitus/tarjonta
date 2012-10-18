@@ -27,6 +27,7 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTul
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
@@ -134,7 +135,9 @@ public class TarjontaPresenter {
     public void showShowKoulutusView(String koulutusOid) {
         LOG.info("showShowKoulutusView()");
         if (koulutusOid != null) {
-        	//TODO lueKoulutus kutsu palveluun
+        	LueKoulutusKyselyTyyppi koulutusKysely = new LueKoulutusKyselyTyyppi();
+        	koulutusKysely.setOid(koulutusOid);
+        	getModel().setKoulutusPerustiedotModel(new KoulutusToisenAsteenPerustiedotViewModel(this.tarjontaPublicService.lueKoulutus(koulutusKysely)));//new  this.tarjontaPublicService.lueKoulutus(koulutusKysely));
         }
         ShowKoulutusView view = new ShowKoulutusView("", null);
         _rootView.getAppRootLayout().removeAllComponents();

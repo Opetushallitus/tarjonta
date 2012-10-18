@@ -15,6 +15,14 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
+
 /**
  *
  * @author mlyly
@@ -23,8 +31,18 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
 
     private String koulutusohjelma;
     private String koulutuksenTyyppi;
+    
+    public KoulutusToisenAsteenPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus) {
+    	super();
+    	setKoulutusohjelma(koulutus.getKoulutusKoodi() != null ? koulutus.getKoulutusohjelmaKoodi().getUri() : null);
+    	setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva() != null ?  koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
+    	setOpetuskielet(convertOpetuskielet(koulutus.getOpetuskieli()));
+    	setKoulutus((koulutus.getKoulutusKoodi() != null) ? koulutus.getKoulutusKoodi().getUri() : null);
+    	setKoulutuslaji(koulutus.getKoulutuslaji().isEmpty() ? null : koulutus.getKoulutuslaji().get(0).getUri());
+    	setOpetusmuoto(koulutus.getOpetusmuoto() != null ? koulutus.getOpetusmuoto().getUri() : null);
+    }
 
-    public KoulutusToisenAsteenPerustiedotViewModel() {
+	public KoulutusToisenAsteenPerustiedotViewModel() {
         super();
 
         // TODO demo data?
@@ -51,5 +69,13 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
 
     public void setKoulutuksenTyyppi(String koulutuksenTyyppi) {
         this.koulutuksenTyyppi = koulutuksenTyyppi;
+    }
+    
+    private Set<String> convertOpetuskielet(List<KoodistoKoodiTyyppi> opetuskieliKoodit) {
+    	Set<String> opetuskielet = new HashSet<String>();
+    	for (KoodistoKoodiTyyppi curKoodi : opetuskieliKoodit) {
+    		opetuskielet.add(curKoodi.getUri());
+    	}
+    	return opetuskielet;
     }
 }

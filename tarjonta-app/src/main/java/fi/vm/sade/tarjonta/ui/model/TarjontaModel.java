@@ -94,6 +94,11 @@ public class TarjontaModel extends BaseUIViewModel {
         }
         return _koulutusPerustiedotModel;
     }
+    
+
+	public void setKoulutusPerustiedotModel(KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel) {
+		_koulutusPerustiedotModel = koulutusPerustiedotModel;
+	}
 
     /**
      * Gets the currently selected (in ListKoulutusView) koulutus objects.
@@ -141,6 +146,7 @@ public class TarjontaModel extends BaseUIViewModel {
     public void setHakukohde(HakukohdeViewModel hakukohde) {
         this.hakukohde = hakukohde;
     }
+
 
 
 
