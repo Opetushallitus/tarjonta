@@ -25,8 +25,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
@@ -35,8 +35,6 @@ import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import fi.vm.sade.vaadin.util.UiUtil;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +54,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     private TarjontaPresenter presenter;
 
     @Autowired(required = true)
-    private KoodistoUIHelper _koodistoUIHelper;
+    private TarjontaUIHelper _tarjontaUIHelper;
 
     public ShowKoulutusView(String pageTitle, PageNavigationDTO pageNavigationDTO) {
         super(VerticalLayout.class, pageTitle, null, pageNavigationDTO);
@@ -92,16 +90,16 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         grid.addComponent(new Label("XXXXXXXXXXXXXXXXXXXXXX"));
         grid.newLine();
         grid.addComponent(new Label(T("koulutuslaji")));
-        grid.addComponent(new Label(_koodistoUIHelper.getKoodiNimi(model.getKoulutuslaji(), null)));
+        grid.addComponent(new Label(_tarjontaUIHelper.getKoodiNimi(model.getKoulutuslaji(), null)));
         grid.newLine();
         grid.addComponent(new Label(T("opetusmuoto")));
-        grid.addComponent(new Label(_koodistoUIHelper.getKoodiNimi(model.getOpetusmuoto(), null)));
+        grid.addComponent(new Label(_tarjontaUIHelper.getKoodiNimi(model.getOpetusmuoto(), null)));
         grid.newLine();
         grid.addComponent(new Label(T("teemat")));
-        grid.addComponent(new Label(_koodistoUIHelper.getKoodiNimi(model.getTeemat(), null)));
+        grid.addComponent(new Label(_tarjontaUIHelper.getKoodiNimi(model.getTeemat(), null)));
         grid.newLine();
         grid.addComponent(new Label(T("koulutuksenAlkamisPvm")));
-        grid.addComponent(new Label(formatDate(model.getKoulutuksenAlkamisPvm())));
+        grid.addComponent(new Label(_tarjontaUIHelper.formatDate(model.getKoulutuksenAlkamisPvm())));
         grid.newLine();
         {
             // Build suunniteltu kesto and kesto tyyppi as string
@@ -109,7 +107,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             if (model.getSuunniteltuKesto() != null) {
                 tmp = model.getSuunniteltuKesto();
                 tmp += " ";
-                tmp += _koodistoUIHelper.getKoodiNimi(model.getSuunniteltuKestoTyyppi(), null);
+                tmp += _tarjontaUIHelper.getKoodiNimi(model.getSuunniteltuKestoTyyppi(), null);
             }
 
             grid.addComponent(new Label(T("suunniteltuKesto")));
@@ -117,7 +115,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             grid.newLine();
         }
         grid.addComponent(new Label(T("opetuskieli")));
-        grid.addComponent(new Label(_koodistoUIHelper.getKoodiNimi(model.getOpetuskielet(), null)));
+        grid.addComponent(new Label(_tarjontaUIHelper.getKoodiNimi(model.getOpetuskielet(), null)));
         grid.newLine();
         grid.addComponent(new Label(T("opetuksenMaksullisuus")));
         grid.addComponent(new Label(T(model.isKoulutusOnMaksullista() ? CommonTranslationKeys.KYLLA : CommonTranslationKeys.EI)));
@@ -242,20 +240,5 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             }
         });
 
-    }
-
-
-
-    private String formatDate(Date date) {
-        return formatDate(date, "dd.MM.yyyy");
-    }
-
-    private String formatDate(Date date, String format) {
-        if (date == null) {
-            return "";
-        }
-
-        SimpleDateFormat sdf = new SimpleDateFormat(format);
-        return sdf.format(date);
     }
 }

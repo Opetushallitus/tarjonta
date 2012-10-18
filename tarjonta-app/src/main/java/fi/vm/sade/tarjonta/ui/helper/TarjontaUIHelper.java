@@ -22,6 +22,8 @@ import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -32,20 +34,22 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
 /**
- * Koodisto related helper to access koodisto data.
+ * Common UI helpers, formatters and so forth.
+ *
+ * Koodisto related helpers to access koodisto data.
  *
  * @author mlyly
  */
 @Component
-@Configurable
-public class KoodistoUIHelper {
+@Configurable(preConstruction=false)
+public class TarjontaUIHelper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KoodistoUIHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TarjontaUIHelper.class);
 
     @Autowired
     private KoodiService _koodiService;
 
-    private I18NHelper _i18n = new I18NHelper(KoodistoUIHelper.class);
+    private I18NHelper _i18n = new I18NHelper(TarjontaUIHelper.class);
 
     /**
      * Get koodi's name in given locale.
@@ -100,5 +104,53 @@ public class KoodistoUIHelper {
         // Strip first comma
         return result.length() == 0 ? result : result.substring(2);
     }
+
+
+    /**
+     * Format date to string with default "dd.MM.yyyy" formatting.
+     *
+     * @param date
+     * @return
+     */
+    public String formatDate(Date date) {
+        return formatDate(date, "dd.MM.yyyy");
+    }
+
+    /**
+     * Format date to string with default "dd.MM.yyyy HH:mm" formatting.
+     *
+     * @param date
+     * @return
+     */
+    public String formatDateTime(Date date) {
+        return formatDate(date, "dd.MM.yyyy HH:mm");
+    }
+
+    /**
+     * Format date to string with default "HH:mm" formatting.
+     *
+     * @param date
+     * @return
+     */
+    public String formatTime(Date date) {
+        return formatDate(date, "HH:mm");
+    }
+
+    /**
+     * Format date to given format.
+     *
+     * @param date if null, returns empty string
+     * @param format
+     * @return date formatted as string
+     */
+    public String formatDate(Date date, String format) {
+        if (date == null) {
+            return "";
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.format(date);
+    }
+
 
 }
