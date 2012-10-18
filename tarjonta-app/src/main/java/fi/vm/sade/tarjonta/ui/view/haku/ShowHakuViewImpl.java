@@ -32,6 +32,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
@@ -43,6 +45,7 @@ import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import fi.vm.sade.vaadin.util.UiUtil;
+import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -58,6 +61,9 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
 
     @Autowired(required=true)
     private HakuPresenter hakuPresenter;
+
+    @Autowired(required=true)
+    private TarjontaUIHelper _tarjontaUIHelper;
 
     public ShowHakuViewImpl(String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
@@ -95,6 +101,8 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
     private void buildLayoutMiddleTop(VerticalLayout layout) {
         layout.addComponent(buildHeaderLayout(T("HaunTiedot"), T("Muokkaa")));
 
+        HakuViewModel model = hakuPresenter.getHakuModel();
+
         GridLayout grid = new GridLayout(2, 9);
         grid.setHeight("100%");
         grid.setWidth("800px");
@@ -111,17 +119,21 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
 
 
         LOG.info("building content labels");
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHakutyyppi()) + " "), 1, 0);
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHakukausi()) + " " + hakuPresenter.getHakuModel().getHakuvuosi() + " "), 1, 1);
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getKoulutuksenAlkamisKausi()) + " " + hakuPresenter.getHakuModel().getKoulutuksenAlkamisvuosi() + " "), 1, 2);
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHaunKohdejoukko()) + " "), 1, 3);
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getKoodiNimi(hakuPresenter.getHakuModel().getHakutapa()) + " "), 1, 4);
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getHakuModel().getHaunTunniste() + " "), 1, 5);
-        grid.addComponent(UiUtil.label(null, hakuPresenter.getHakuaika() + " "), 1, 6);
+        grid.addComponent(UiUtil.label(null, _tarjontaUIHelper.getKoodiNimi(model.getHakutyyppi())), 1, 0);
+
+
+        grid.addComponent(UiUtil.label(null, _tarjontaUIHelper.getKoodiNimi(model.getHakukausi()) + " " + model.getHakuvuosi()), 1, 1);
+        grid.addComponent(UiUtil.label(null, _tarjontaUIHelper.getKoodiNimi(model.getKoulutuksenAlkamisKausi()) + " " + model.getKoulutuksenAlkamisvuosi()), 1, 2);
+        grid.addComponent(UiUtil.label(null, _tarjontaUIHelper.getKoodiNimi(model.getHaunKohdejoukko())), 1, 3);
+        grid.addComponent(UiUtil.label(null, _tarjontaUIHelper.getKoodiNimi(model.getHakutapa())), 1, 4);
+        grid.addComponent(UiUtil.label(null, model.getHaunTunniste()), 1, 5);
+        grid.addComponent(UiUtil.label(null,
+                _tarjontaUIHelper.formatDate(model.getAlkamisPvm()) + " - " + _tarjontaUIHelper.formatDate(model.getPaattymisPvm())),
+                1, 6);
         String hakulomakeStr = hakuPresenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()
                 ? T("KaytetaanJarjestelmanHakulomaketta")
                 : hakuPresenter.getHakuModel().getHakuLomakeUrl();
-        grid.addComponent(UiUtil.label(null, hakulomakeStr + " "), 1, 7);
+        grid.addComponent(UiUtil.label(null, hakulomakeStr), 1, 7);
 
         grid.setColumnExpandRatio(0, 1);
         grid.setColumnExpandRatio(1, 2);

@@ -249,33 +249,6 @@ public class HakuPresenter {
     }
 
     /**
-     * Gets the koodiArvo for a given koodiUri.
-     * @param koodiUri the uri of the koodi to return
-     * @return the returned koodiArvo
-     */
-    public String getKoodiNimi(String koodiUri) {
-        SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.latestValidAcceptedKoodiByUri(koodiUri);
-        List<KoodiType> result = this.koodiService.searchKoodis(searchCriteria);
-
-        String nimi = koodiUri;
-        if (result.size() == 1) {
-            nimi = KoodistoHelper.getKoodiMetadataForLanguage(result.get(0), KoodistoHelper.getKieliForLocale(I18N.getLocale())).getNimi();
-        }
-
-        return nimi;
-    }
-
-    /**
-     * @return the string representation of a hakuaika range for a haku.
-     */
-    public String getHakuaika() {
-        DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        String startDateStr = (hakuModel.getAlkamisPvm() != null) ? formatter.format(hakuModel.getAlkamisPvm()) : "";
-        String endDateStr = (hakuModel.getPaattymisPvm() != null) ? formatter.format(hakuModel.getPaattymisPvm()) : "";
-        return startDateStr + " - " + endDateStr;
-    }
-
-    /**
      *
      * @return the inner hakuajat for a haku.
      */

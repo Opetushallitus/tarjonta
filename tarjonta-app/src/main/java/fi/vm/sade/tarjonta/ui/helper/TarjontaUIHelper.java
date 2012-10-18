@@ -52,6 +52,16 @@ public class TarjontaUIHelper {
     private I18NHelper _i18n = new I18NHelper(TarjontaUIHelper.class);
 
     /**
+     * Get koodi's localized name with current UI locale.
+     *
+     * @param koodiUri
+     * @return
+     */
+    public String getKoodiNimi(String koodiUri) {
+        return getKoodiNimi(koodiUri, null);
+    }
+
+    /**
      * Get koodi's name in given locale.
      *
      * @param koodiUri
