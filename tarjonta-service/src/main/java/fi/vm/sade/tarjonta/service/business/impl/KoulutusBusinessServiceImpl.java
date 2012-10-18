@@ -93,15 +93,16 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     @Override
     public KoulutusmoduuliToteutus updateKoulutus(PaivitaKoulutusTyyppi koulutus) {
 
-        KoulutusmoduuliToteutus model = koulutusmoduuliToteutusDAO.findByOid(koulutus.getOid());
+        final String oid = koulutus.getOid();
+        KoulutusmoduuliToteutus model = koulutusmoduuliToteutusDAO.findByOid(oid);
 
         if (model == null) {
-            throw new TarjontaBusinessException(TarjontaVirheKoodi.OID_EI_OLEMASSA.value());
+            throw new TarjontaBusinessException(TarjontaVirheKoodi.OID_EI_OLEMASSA.value(), oid);
         }
 
         EntityUtils.copyFields(koulutus, model);
-
         koulutusmoduuliToteutusDAO.update(model);
+
         return model;
 
     }

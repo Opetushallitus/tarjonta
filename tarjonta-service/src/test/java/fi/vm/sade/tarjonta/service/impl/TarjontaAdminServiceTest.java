@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.service.impl;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,18 +31,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
+
 import java.util.Date;
 import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.junit.Test;
 
 /**
  *
@@ -64,7 +69,13 @@ public class TarjontaAdminServiceTest {
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
+    @Autowired
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
     private KoulutuksenKestoTyyppi kesto3Vuotta;
+
+    /* Known koulutus that is inserted for each test. */
+    private static final String SAMPLE_KOULUTUS_OID = "1.2.3.4.5";
 
     @Before
     public void setUp() {
@@ -73,15 +84,17 @@ public class TarjontaAdminServiceTest {
         kesto3Vuotta.setArvo("3");
         kesto3Vuotta.setYksikko("kesto/vuosi");
 
+        insertSampleKoulutus();
+
     }
 
     @Test(expected = TarjontaBusinessException.class)
     public void testCannotCreateKoulutusWithoutKoulutusmoduuli() {
 
-        LisaaKoulutusTyyppi lisaaKoulutus = new LisaaKoulutusTyyppi();
+        LisaaKoulutusTyyppi lisaaKoulutus = createSampleKoulutus();
 
-        lisaaKoulutus.setKoulutusKoodi(createKoodi("321101"));
-        lisaaKoulutus.setKoulutusohjelmaKoodi(createKoodi("1603"));
+        lisaaKoulutus.setKoulutusKoodi(createKoodi("unknown-uri"));
+        lisaaKoulutus.setKoulutusohjelmaKoodi(createKoodi("unknown-uri"));
 
         adminService.lisaaKoulutus(lisaaKoulutus);
 
@@ -90,10 +103,56 @@ public class TarjontaAdminServiceTest {
     @Test
     public void testCreateKoulutusHappyPath() throws Exception {
 
+        // sample koulutus has been inserted before this test, check that data is correct
+        KoulutusmoduuliToteutus toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
+        assertNotNull(toteutus);
+
+    }
+
+    @Test
+    public void testUpdateKoulutusHappyPath() {
+
+        PaivitaKoulutusTyyppi paivitaKoulutus = new PaivitaKoulutusTyyppi();
+        paivitaKoulutus.setOid(SAMPLE_KOULUTUS_OID);
+
+        KoulutuksenKestoTyyppi kesto = new KoulutuksenKestoTyyppi();
+        kesto.setArvo("new-value");
+        kesto.setYksikko("new-units");
+        paivitaKoulutus.setKesto(kesto);
+
+        paivitaKoulutus.setKoulutuksenAlkamisPaiva(toXmlDateTime(new Date()));
+        paivitaKoulutus.setKoulutusKoodi(createKoodi("do-not-update-this"));
+        paivitaKoulutus.setKoulutusohjelmaKoodi(createKoodi("do-not-update-this"));
+        paivitaKoulutus.setOpetusmuoto(createKoodi("new-opetusmuoto"));
+
+        adminService.paivitaKoulutus(paivitaKoulutus);
+
+        KoulutusmoduuliToteutus toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
+
+        assertEquals("new-value", toteutus.getSuunniteltuKestoArvo());
+        assertEquals("new-units", toteutus.getSuunniteltuKestoYksikko());
+        
+    }
+
+    @Test
+    public void testInitSample() {
+        adminService.initSample();
+    }
+
+    private void insertSampleKoulutus() {
+
         Koulutusmoduuli moduuli = fixtures.createTutkintoOhjelma();
         moduuli.setKoulutusKoodi("321101");
         moduuli.setKoulutusohjelmaKoodi("1603");
         koulutusmoduuliDAO.insert(moduuli);
+
+        adminService.lisaaKoulutus(createSampleKoulutus());
+
+        flush();
+
+    }
+
+    private LisaaKoulutusTyyppi createSampleKoulutus() {
 
         LisaaKoulutusTyyppi lisaaKoulutus = new LisaaKoulutusTyyppi();
         lisaaKoulutus.setKoulutusKoodi(createKoodi("321101"));
@@ -101,24 +160,22 @@ public class TarjontaAdminServiceTest {
         lisaaKoulutus.setOpetusmuoto(createKoodi("opetusmuoto/aikuisopetus"));
         lisaaKoulutus.getOpetuskieli().add(createKoodi("opetuskieli/fi"));
         lisaaKoulutus.getKoulutuslaji().add(createKoodi("koulutuslaji/lahiopetus"));
-        lisaaKoulutus.setOid("1.2.3.4.5");
+        lisaaKoulutus.setOid(SAMPLE_KOULUTUS_OID);
         lisaaKoulutus.setKoulutuksenAlkamisPaiva(toXmlDateTime(new Date()));
         lisaaKoulutus.setKesto(kesto3Vuotta);
 
-        adminService.lisaaKoulutus(lisaaKoulutus);
+        return lisaaKoulutus;
 
-    }
-
-    
-    @Test
-    public void testInitSample() {
-        adminService.initSample();
     }
 
     private static KoodistoKoodiTyyppi createKoodi(String uri) {
         KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
         koodi.setUri(uri);
         return koodi;
+    }
+
+    private void flush() {
+        ((KoulutusmoduuliToteutusDAOImpl) koulutusmoduuliToteutusDAO).getEntityManager().flush();
     }
 
     private static XMLGregorianCalendar toXmlDateTime(Date date) {

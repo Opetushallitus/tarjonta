@@ -20,6 +20,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,12 +44,21 @@ public final class EntityUtils {
         to.setKoulutuksenAlkamisPvm(from.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime());
         to.setKoulutuslajiList(toUriSet(from.getKoulutuslaji()));
 
+        final KoulutuksenKestoTyyppi kesto =from.getKesto();
+        to.setSuunniteltuKestoArvo(kesto.getArvo());
+        to.setSuunniteltuKestoYksikko(kesto.getYksikko());
+        
+
         // todo: other fields
     }
 
     public static void copyFields(LisaaKoulutusTyyppi koulutus, KoulutusmoduuliToteutus to) {
 
-        to.addOpetusmuoto(new KoodistoUri(koulutus.getOpetusmuoto().getUri()));
+        // todo: koulutus should have multiple opetusmuotos
+        if (koulutus.getOpetusmuoto() != null) {
+            to.addOpetusmuoto(new KoodistoUri(koulutus.getOpetusmuoto().getUri()));
+        }
+
         to.setOid(koulutus.getOid());
         to.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime());
 
@@ -64,8 +74,6 @@ public final class EntityUtils {
         }
 
     }
-
-
 
     public static Set<String> toUriSet(Collection<KoodistoKoodiTyyppi> koodit) {
         Set<String> set = new HashSet<String>();
