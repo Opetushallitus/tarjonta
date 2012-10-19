@@ -211,9 +211,12 @@ public class ListKoulutusView extends VerticalLayout {
         muokkaaB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                presenter.showKoulutusEditView(null);
+            	getWindow().showNotification("Toiminnallisuutta ei ole toteutettu");
             }
         });
+        
+        //Enabloidaan sitten kun toiminnallisuus on toteutettu
+        muokkaaB.setEnabled(false);
 
         //Creating the remove button
         poistaB = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("Poista"));
@@ -224,6 +227,7 @@ public class ListKoulutusView extends VerticalLayout {
                 presenter.removeSelectedKoulutukset();
             }
         });
+        poistaB.setEnabled(false);
         
         //Creating the create hakukohde button
         luoHakukohdeB = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("LuoHakukohde"));

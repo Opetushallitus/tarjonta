@@ -99,7 +99,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
      */
     private void menuItemClicked(String selection) {
         if (selection.equals(i18n.getMessage("tarkastele"))) {
-            fireEvent(new HakukohdeRowMenuEvent(this, hakukohde, HakukohdeRowMenuEvent.VIEW));
+            tarjontaPresenter.showShowHakukohdeView(hakukohde.getHakukohde().getOid());
+            //TODO poistetaan kun tarkastelu on toteutettu
+            getWindow().showNotification("Tarkastelua ei ole toteutettu");
         } else if (selection.equals(i18n.getMessage("muokkaa"))) {
         	tarjontaPresenter.showHakukohdeEditView(null, hakukohde.getHakukohde().getOid());
         } else if (selection.equals(i18n.getMessage("poista"))) {
@@ -148,42 +150,6 @@ public class HakukohdeResultRow extends HorizontalLayout {
      */
     public CheckBox getIsSelected() {
         return isSelected;
-    }
-
-    /**
-     * Event to be fired by HakukohdeResultRow object when the user
-     * makes a selection in the row's menubar.
-     * @author Markus
-     */
-    public class HakukohdeRowMenuEvent extends Component.Event {
-
-        public static final String REMOVE = "remove";
-        public static final String EDIT = "edit";
-        public static final String VIEW = "view";
-
-        private HakukohdeTulos hakukohde;
-        private String type;
-
-
-        public HakukohdeRowMenuEvent(Component source, HakukohdeTulos hakukohde, String type) {
-            super(source);
-            this.hakukohde = hakukohde;
-            this.type = type;
-        }
-
-        public HakukohdeRowMenuEvent(Component source) {
-            super(source);
-        }
-
-
-        public HakukohdeTulos getHaku() {
-            return hakukohde;
-        }
-
-
-        public String getType() {
-            return type;
-        }
     }
 
 }

@@ -314,41 +314,6 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             VerticalLayout vl = UiUtil.verticalLayout();
             vl.setSizeUndefined();
 
-            /*sisHakuajat = new OptionGroup();
-            sisHakuajat.addItem(ONE_APPLICATION_SYSTEM);
-            sisHakuajat.setItemCaption(ONE_APPLICATION_SYSTEM, T(ONE_APPLICATION_SYSTEM));
-            sisHakuajat.addItem(MULTIPLE_APPLICATION_SYSTEMS);
-            sisHakuajat.setItemCaption(MULTIPLE_APPLICATION_SYSTEMS, T(MULTIPLE_APPLICATION_SYSTEMS));
-            sisHakuajat.setMultiSelect(false);
-            sisHakuajat.setImmediate(true);
-            sisHakuajat.addListener(new Property.ValueChangeListener() {
-
-                @Override
-                public void valueChange(ValueChangeEvent event) {
-                    // Enable multiple application times table when multiple application systems selected
-                    sisaisetHakuajatTable.setEnabled(sisHakuajat.getValue().equals(MULTIPLE_APPLICATION_SYSTEMS));
-                    lisaaHakuaika.setEnabled(sisHakuajat.getValue().equals(MULTIPLE_APPLICATION_SYSTEMS));
-
-                    // If only one application system then enable the time fields for one application system time
-                    hakuAlkaa.setEnabled(sisHakuajat.getValue().equals(ONE_APPLICATION_SYSTEM));
-                    hakuLoppuu.setEnabled(sisHakuajat.getValue().equals(ONE_APPLICATION_SYSTEM));
-                }
-            });
-
-            vl.addComponent(sisHakuajat);*/
-
-            /*HorizontalLayout hl = UiUtil.horizontalLayout();
-            hl.setSizeUndefined();
-            vl.addComponent(hl);
-
-            hakuAlkaa = UiUtil.dateField();
-
-            hl.addComponent(hakuAlkaa);
-            hl.addComponent(UiUtil.label(null, "-"));
-
-            this.hakuLoppuu = UiUtil.dateField();
-            hl.addComponent(hakuLoppuu);*/
-
             this.sisaisetHakuajatTable = new Table();
             this.sisaisetHakuajatTable.setEditable(true);
 

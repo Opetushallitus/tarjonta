@@ -551,4 +551,9 @@ public class TarjontaPresenter {
         LOG.info("Show user notification - type {}, value {}", msg, msg.getInfo());
         _rootView.showNotification(msg.getInfo());
     }
+
+	public void showShowHakukohdeView(String oid) {
+		// TODO Auto-generated method stub
+		
+	}
 }

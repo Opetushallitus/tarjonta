@@ -35,7 +35,6 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
@@ -167,16 +166,6 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 hc.setParent(curHakukohde, rootItem);
                 hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(curHakukohde.getHakukohde().getNimi(), true));
                 hc.setChildrenAllowed(curHakukohde, false);
-
-                rowStyleInner.addListener(new Listener() {
-
-                    @Override
-                    public void componentEvent(Event event) {
-                        if (event instanceof HakukohdeResultRow.HakukohdeRowMenuEvent) {
-                            fireEvent(event);
-                        }
-                    }
-                });
             }
         }
         return hc;
@@ -210,7 +199,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         lisaaHakuunB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                navigateToHakukohdeEditForm();
+            	getWindow().showNotification("Toiminnallisuutta ei ole toteutettu");
 
             }
         });
@@ -253,25 +242,6 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     public void reload() {
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
-    }
-
-    /**
-     * fires event to signal navigation to Hakukohde edit form.
-     */
-    private void navigateToHakukohdeEditForm() {
-        fireEvent(new NewHakukohdeEvent(this));
-    }
-
-    /**
-     * Event to signal that the user wants to create a new Hakukohde.
-    */
-    public class NewHakukohdeEvent extends Component.Event {
-
-        public NewHakukohdeEvent(Component source) {
-            super(source);
-
-        }
-
     }
 
 }
