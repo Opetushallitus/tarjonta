@@ -25,6 +25,9 @@
         <class>fi.vm.sade.tarjonta.model.TekstiKaannos</class>
         <class>fi.vm.sade.tarjonta.model.Yhteyshenkilo</class>
 
+        <!-- experimental -->
+        <class>fi.vm.sade.tarjonta.koodisto.model.Koodi</class>
+
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update" />
             <property name="hibernate.show_sql" value="false" />

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:cxf="http://cxf.apache.org/core"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+       http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+
+   <!--
+    TODO: move attributes to properties
+   -->
+    <bean id="authInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
+        <constructor-arg>
+            <map>
+                <entry key="action" value="UsernameToken Timestamp" />
+                <entry key="user" value="1.2.246.562.24.00000000002" />
+                <entry key="passwordType" value="PasswordText" />
+                <entry key="passwordCallbackRef">
+                    <bean id="passwdHandler" class="fi.vm.sade.tarjonta.koodisto.service.impl.AuthCallbackHandler">
+                        <property name="password" value="1.2.246.562.24.00000000002"/>
+                    </bean>
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+
+
+
+    <!-- Configure CXF bus to contain ticketInterceptor -->
+    <cxf:bus>
+        <cxf:outInterceptors>
+            <ref bean="authInterceptor" />
+        </cxf:outInterceptors>
+    </cxf:bus>
+
+
+    <!--
+        TODO: move addresses to properties
+
+        koodi.webservice.url=http://luokka.hard.ware.fi:8181/cxf/koodiService
+        koodisto.webservice.url=http://luokka.hard.ware.fi:8181/cxf/koodistoService
+    -->
+
+    <jaxws:client id="koodiPublicService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodiService"
+                  address="http://luokka.hard.ware.fi:8181/cxf/koodiService"/>
+
+    <jaxws:client id="koodistoPublicService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
+                  address="http://luokka.hard.ware.fi:8181/cxf/koodistoService"/>
+
+
+    <!--
+        Scheduler that runs koodisto syncronization process. May be taken on more global level if needed elsewhere.
+    -->
+    <task:scheduler id="syncScheduler" pool-size="1"/>
+
+    <!--
+        Schedule tasks to perform the synchronization
+    -->
+    <task:scheduled-tasks scheduler="syncScheduler">
+        <task:scheduled ref="syncKoodistoTask" method="execute" cron="*/5 * * * * ?"/>
+    </task:scheduled-tasks>
+
+
+    <!--
+    Listener that updates koodisto values into local storage.
+    -->
+    <bean id="syncKoodistoHandler" class="fi.vm.sade.tarjonta.koodisto.sync.KoodistoSyncHandler">
+    </bean>
+
+    <!--
+    Task that pulls koodisto koodi's from KoodistoService and invokes listeners with results
+    -->
+    <bean id="syncKoodistoTask" class="fi.vm.sade.tarjonta.koodisto.sync.KoodistoSyncTask">
+        <property name="koodistoSyncSpecs">
+            <set value-type="java.lang.String">
+                <value>HAKUTAPA#2</value>
+            </set>
+        </property>
+        <property name="listeners">
+            <ref bean="syncKoodistoHandler"/>
+        </property>
+    </bean>
+
+</beans>
