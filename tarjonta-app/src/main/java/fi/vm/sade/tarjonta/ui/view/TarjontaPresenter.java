@@ -17,21 +17,16 @@ package fi.vm.sade.tarjonta.ui.view;
 
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.KoodistoService;
-import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
-import fi.vm.sade.koodisto.service.types.SearchKoodistosCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
-import fi.vm.sade.koodisto.service.types.common.KoodistoType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
-import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
-import fi.vm.sade.koodisto.util.KoodistoServiceSearchCriteriaBuilder;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
+import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
@@ -47,7 +42,6 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
@@ -64,7 +58,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.PostConstruct;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +65,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter;
-import java.util.Locale;
 import java.util.logging.Level;
 
 /**
@@ -345,7 +337,7 @@ public class TarjontaPresenter {
     /**
      * Saves koulutus as ready.
      */
-    public void saveKoulutusValmiina() {
+    public void saveKoulutusValmiina() throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
         LOG.debug("Try to persist KoulutusTyyppi - "
                 + "koulutuskoodi : '{}', "
@@ -354,37 +346,29 @@ public class TarjontaPresenter {
                 model.getKoulutusohjelmaKoodi());
 
         LisaaKoulutusTyyppi lisaaKoulutusTyyppi = new LisaaKoulutusTyyppi();
+        
+        //Requested new id form Oid Service.
+        final String newOid = oidService.newOid(NodeClassCode.TEKN_5);
+        lisaaKoulutusTyyppi.setOid(newOid);
+        LOG.debug("Requested new OID : {}", newOid);
+        
+        //URI data example : "uri: Artesaani, käsi- ja taideteollisuusalan perustutkinto 19369"
+        lisaaKoulutusTyyppi.setKoulutusKoodi(createKoodi(model.getKoulutusKoodi()));
 
-        try {
-            lisaaKoulutusTyyppi.setOid(oidService.newOid(NodeClassCode.TEKN_5));
+        //URI data example : "koulutusohjelma/1603"
+        lisaaKoulutusTyyppi.setKoulutusohjelmaKoodi(createKoodi(model.getKoulutusohjelmaKoodi()));
+        lisaaKoulutusTyyppi.setKoulutuksenAlkamisPaiva(model.getKoulutuksenAlkamisPvm());
+        KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
+        koulutuksenKestoTyyppi.setArvo(model.getSuunniteltuKesto());
+        koulutuksenKestoTyyppi.setYksikko(model.getSuunniteltuKestoTyyppi());
+        lisaaKoulutusTyyppi.setKesto(koulutuksenKestoTyyppi);
+        lisaaKoulutusTyyppi.setOpetusmuoto(createKoodi(model.getOpetusmuoto()));
 
-            //URI data example : "uri: Artesaani, käsi- ja taideteollisuusalan perustutkinto 19369"
-            lisaaKoulutusTyyppi.setKoulutusKoodi(createKoodi(model.getKoulutusKoodi()));
-
-            //URI data example : "koulutusohjelma/1603"
-            lisaaKoulutusTyyppi.setKoulutusohjelmaKoodi(createKoodi(model.getKoulutusohjelmaKoodi()));
-            lisaaKoulutusTyyppi.setKoulutuksenAlkamisPaiva(model.getKoulutuksenAlkamisPvm());
-            KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
-            koulutuksenKestoTyyppi.setArvo(model.getSuunniteltuKesto());
-            koulutuksenKestoTyyppi.setYksikko(model.getSuunniteltuKestoTyyppi());
-            lisaaKoulutusTyyppi.setKesto(koulutuksenKestoTyyppi);
-            lisaaKoulutusTyyppi.setOpetusmuoto(createKoodi(model.getOpetusmuoto()));
-
-
-            for (String koodi : model.getOpetuskielet()) {
-                lisaaKoulutusTyyppi.getOpetuskieli().add(createKoodi(koodi));
-            }
-
-            try {
-                tarjontaAdminService.lisaaKoulutus(lisaaKoulutusTyyppi);
-                showNotification(UserNotification.SAVE_SUCCESS);
-            } catch (SOAPFaultException e) {
-                showNotification(UserNotification.SAVE_FAILED);
-                LOG.error("Application error - KOMOTO entity persist failed, message :  " + e.getMessage() + ", fault : " + e.getFault().getFaultCode(), e);
-            }
-        } catch (ExceptionMessage ex) {
-            java.util.logging.Logger.getLogger(TarjontaPresenter.class.getName()).log(Level.SEVERE, null, ex);
+        for (String koodi : model.getOpetuskielet()) {
+            lisaaKoulutusTyyppi.getOpetuskieli().add(createKoodi(koodi));
         }
+
+        tarjontaAdminService.lisaaKoulutus(lisaaKoulutusTyyppi);
     }
 
     /**
@@ -549,7 +533,11 @@ public class TarjontaPresenter {
      */
     public void showNotification(final UserNotification msg) {
         LOG.info("Show user notification - type {}, value {}", msg, msg.getInfo());
-        _rootView.showNotification(msg.getInfo());
+        if (msg != null && _rootView != null) {
+            _rootView.showNotification(msg.getInfo());
+        } else {
+            LOG.error("Application error - an unknown problem with UI notification. Value : {}", msg);
+        }
     }
 
 	public void showShowHakukohdeView(String oid) {
