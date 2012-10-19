@@ -46,6 +46,8 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTu
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuKoosteTyyppi;
@@ -72,6 +74,8 @@ public class TarjontaPublicServiceTest {
     private static final String ORGANISAATIO_B = "1.2.3.4.6";
     
     private static final String KOMOTO_OID = "11.12.23.34.56";
+    
+    private static final String HAKUKOHDE_OID = "12.13.24.35.57";
 
     @Autowired
     private TarjontaPublicService service;
@@ -116,8 +120,8 @@ public class TarjontaPublicServiceTest {
         koulutusmoduuliToteutus.setKoulutusmoduuli(koulutusmoduuli);
         koulutusmoduuliToteutusDAO.insert(koulutusmoduuliToteutus);
 
-        // 1. hakukohde
-        Hakukohde hakukohde = fixtures.createHakukohde();
+        // 1. hakukohde oid is given to be able to test lueHakukohde method.
+        Hakukohde hakukohde = fixtures.createHakukohdeWithGivenOid(HAKUKOHDE_OID);//fixtures.createHakukohde();
         hakukohde.setHaku(haku);
         hakukohde.setHakukohdeNimi("Peltikorjaajan perustutkinto");
         hakukohde.setTila(KoodistoContract.TarjontaTilat.JULKAISTU);
@@ -244,6 +248,18 @@ public class TarjontaPublicServiceTest {
        
         assertTrue(vastaus.getOpetuskieli().get(0).getUri().equals("http://kielet/fi"));
 
+    }
+    
+    @Test
+    public void testLueHakukohde() {
+
+    	LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
+    	kysely.setOid(HAKUKOHDE_OID);
+    	
+    	LueHakukohdeVastausTyyppi vastaus = service.lueHakukohde(kysely);
+
+        assertNotNull(vastaus);
+        assertTrue(vastaus.getHakukohde().getHakukohdeNimi().equals("Peltikorjaajan perustutkinto"));
     }
 
 }

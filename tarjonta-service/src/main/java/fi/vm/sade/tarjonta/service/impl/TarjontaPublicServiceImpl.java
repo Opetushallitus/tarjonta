@@ -35,6 +35,8 @@ import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
@@ -258,6 +260,15 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         return koulutus;
 
     }
+
+	@Override
+	public LueHakukohdeVastausTyyppi lueHakukohde(LueHakukohdeKyselyTyyppi kysely) {
+		Hakukohde hakukohde = hakukohdeDAO.findBy("oid", kysely.getOid()).get(0);
+		HakukohdeTyyppi hakukohdeTyyppi = conversionService.convert(hakukohde, HakukohdeTyyppi.class);
+		LueHakukohdeVastausTyyppi vastaus = new LueHakukohdeVastausTyyppi();
+		vastaus.setHakukohde(hakukohdeTyyppi);
+		return vastaus;
+	}
 
 }
 

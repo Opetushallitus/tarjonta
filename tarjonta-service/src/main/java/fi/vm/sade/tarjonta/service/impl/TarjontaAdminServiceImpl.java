@@ -123,9 +123,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) {
-        Hakukohde hakuk = conversionService.convert(hakukohdePoisto, Hakukohde.class);
-        hakukohdeDAO.remove(hakuk);
-        return hakukohdePoisto;
+    	Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
+    	hakukohdeDAO.remove(hakukohde);
+    	return new HakukohdeTyyppi();
     }
 
     @Override

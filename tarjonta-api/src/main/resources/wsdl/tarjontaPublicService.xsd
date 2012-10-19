@@ -23,6 +23,9 @@
     
     <xs:element name="lueKoulutusKysely" type="tns:LueKoulutusKyselyTyyppi" />
     <xs:element name="lueKoulutusVastaus" type="tns:LueKoulutusVastausTyyppi" />
+    
+    <xs:element name="lueHakukohdeKysely" type="tns:LueHakukohdeKyselyTyyppi" />
+    <xs:element name="lueHakukohdeVastaus" type="tns:LueHakukohdeVastausTyyppi" />
 
 
 
@@ -131,7 +134,22 @@
             <xs:group ref="tarjonta:KoulutusGroup"/>
         </xs:sequence>
     </xs:complexType>
+    
+    <xs:complexType name="LueHakukohdeKyselyTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="oid" type="xs:string" >
+                <xs:annotation>
+                    <xs:documentation>Yksilollinen tunniste koulutukselle.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
 
-
+    <xs:complexType name="LueHakukohdeVastausTyyppi">
+       <xs:sequence>
+            <xs:element name="hakukohde" type="tarjonta:HakukohdeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
 
 </xs:schema>

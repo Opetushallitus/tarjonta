@@ -137,6 +137,20 @@ public class TarjontaFixtures {
         return hakukohde;
 
     }
+    
+    /**
+     * Creates a minimal non-persisted Hakukohde with given oid.
+     *
+     * @return
+     */
+    public Hakukohde createHakukohdeWithGivenOid(String hakukohdeOid) {
+
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setHakukohdeNimi(randomOid("hakukohde"));
+        hakukohde.setOid(hakukohdeOid);
+        return hakukohde;
+
+    }
 
     public Hakukohde createPersistedHakukohde() {
 

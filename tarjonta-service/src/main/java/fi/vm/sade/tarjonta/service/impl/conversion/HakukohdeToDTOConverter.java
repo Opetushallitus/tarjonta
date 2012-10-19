@@ -57,10 +57,12 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
 
     private List<MonikielinenTekstiTyyppi> convertMonikielinenTeksti(MonikielinenTeksti moniteksti) {
         List<MonikielinenTekstiTyyppi> tekstit = new ArrayList<MonikielinenTekstiTyyppi>();
-        for (TekstiKaannos kaannos:moniteksti.getTekstis()) {
-            MonikielinenTekstiTyyppi teksti = new MonikielinenTekstiTyyppi();
-            teksti.setTeksti(kaannos.getTeksti());
-            teksti.setTekstinKielikoodi(kaannos.getKieliKoodi());
+        if (moniteksti != null) {
+        	for (TekstiKaannos kaannos:moniteksti.getTekstis()) {
+        		MonikielinenTekstiTyyppi teksti = new MonikielinenTekstiTyyppi();
+        		teksti.setTeksti(kaannos.getTeksti());
+        		teksti.setTekstinKielikoodi(kaannos.getKieliKoodi());
+        	}
         }
         
         return tekstit;
