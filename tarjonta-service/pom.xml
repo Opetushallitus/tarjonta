@@ -12,6 +12,10 @@
     <name>Tarjonta :: Service</name>
     <packaging>war</packaging>
 
+    <properties>
+        <deploy.to.server>tomcat</deploy.to.server>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
