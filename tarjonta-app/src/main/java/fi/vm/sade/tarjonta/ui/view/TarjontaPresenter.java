@@ -41,7 +41,9 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTul
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
@@ -215,11 +217,28 @@ public class TarjontaPresenter {
 
     /**
      * Show hakukohde edit view.
+     * 
+     * @param koulutusOids
+     * @param hakukohdeOid
      */
-    public void showHakukohdeEditView(List<String> koulutusOids) {
+    public void showHakukohdeEditView(List<String> koulutusOids, String hakukohdeOid) {
         LOG.info("showHakukohdeEditView()");
-
-        setKomotoOids(koulutusOids);
+        
+        //If a list of koulutusOids is provided they are set in the model
+        //These koulutus objects will be published in the created hakukohde
+        if (koulutusOids != null) {
+        	setKomotoOids(koulutusOids);
+        	
+        }
+        //if a hakukohdeOid is provided the hakukohde is read from the database
+        else if (hakukohdeOid != null) {
+        	LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
+        	kysely.setOid(hakukohdeOid);
+        	_model.setHakukohde(this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(tarjontaPublicService.lueHakukohde(kysely).getHakukohde()));
+        	setKomotoOids(_model.getHakukohde().getKomotoOids());
+        }
+        
+        //After the data has been initialized the form is created
         EditHakukohdeView editHakukohdeView = new EditHakukohdeView();
 
         //Clearing the layout from previos content
@@ -279,7 +298,9 @@ public class TarjontaPresenter {
      */
     public void removeSelectedHakukohteet() {
         for (HakukohdeTulos curHakukohde : getModel().getSelectedhakukohteet()) {
-            //this.tarjontaService.poistaHakukohde(curHakukohde);
+        	HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
+        	hakukohde.setOid(curHakukohde.getHakukohde().getOid());
+    		tarjontaAdminService.poistaHakukohde(hakukohde);
         }
         getModel().getSelectedhakukohteet().clear();
 
@@ -287,7 +308,14 @@ public class TarjontaPresenter {
         getHakukohdeListView().reload();
     }
 
-    /**
+    public void removeHakukohde(HakukohdeTulos curHakukohde) {
+    	HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
+    	hakukohde.setOid(curHakukohde.getHakukohde().getOid());
+		tarjontaAdminService.poistaHakukohde(hakukohde);
+		getHakukohdeListView().reload();
+	}
+
+	/**
      * Gets the currently selected koulutus objects.
      *
      * @return
@@ -301,7 +329,7 @@ public class TarjontaPresenter {
      */
     public void removeSelectedKoulutukset() {
         for (KoulutusTulos curKoulutus : getModel().getSelectedKoulutukset()) {
-            removeKoulutus(curKoulutus);
+        	tarjontaAdminService.poistaKoulutus(curKoulutus.getKoulutus().getKoulutusmoduuliToteutus());
         }
         getModel().getSelectedKoulutukset().clear();
 
@@ -467,6 +495,7 @@ public class TarjontaPresenter {
      */
     public void removeKoulutus(KoulutusTulos koulutus) {
         tarjontaAdminService.poistaKoulutus(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
+        this.koulutusListView.reload();
     }
 
     public void searchKoulutusOhjelmakoodit(final String koodistoUri) {

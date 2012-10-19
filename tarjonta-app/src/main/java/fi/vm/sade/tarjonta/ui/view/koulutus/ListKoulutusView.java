@@ -231,7 +231,7 @@ public class ListKoulutusView extends VerticalLayout {
         luoHakukohdeB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                presenter.showHakukohdeEditView(presenter.getSelectedKoulutusOids());
+                presenter.showHakukohdeEditView(presenter.getSelectedKoulutusOids(), null);
             }
         });
         

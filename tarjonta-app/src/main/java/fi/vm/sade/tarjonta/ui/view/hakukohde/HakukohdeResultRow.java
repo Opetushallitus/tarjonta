@@ -101,9 +101,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
         if (selection.equals(i18n.getMessage("tarkastele"))) {
             fireEvent(new HakukohdeRowMenuEvent(this, hakukohde, HakukohdeRowMenuEvent.VIEW));
         } else if (selection.equals(i18n.getMessage("muokkaa"))) {
-            fireEvent(new HakukohdeRowMenuEvent(this, hakukohde, HakukohdeRowMenuEvent.EDIT));
+        	tarjontaPresenter.showHakukohdeEditView(null, hakukohde.getHakukohde().getOid());
         } else if (selection.equals(i18n.getMessage("poista"))) {
-            fireEvent(new HakukohdeRowMenuEvent(this, hakukohde, HakukohdeRowMenuEvent.REMOVE));
+        	tarjontaPresenter.removeHakukohde(hakukohde);
         }
     }
 

@@ -143,7 +143,7 @@ public class HakuRootView extends Window {
             showHakuView(event.getHaku());
         } else if (event.getType().equals(HakuResultRow.HakuRowMenuEvent.EDIT)) {
             showHakuEdit(event.getHaku());
-        } else if (event.getType().equals(HakuResultRow.HakuRowMenuEvent.EDIT)) {
+        } else if (event.getType().equals(HakuResultRow.HakuRowMenuEvent.REMOVE)) {
             hakuPresenter.removeHaku(event.getHaku());
         }
     }
