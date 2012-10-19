@@ -23,6 +23,7 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
@@ -52,6 +53,8 @@ import javax.jws.WebResult;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.datatype.DatatypeFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -80,6 +83,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Autowired
     private ConversionService conversionService;
+    
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public TarjontaPublicServiceImpl() {
         super();
@@ -260,11 +265,16 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         return koulutus;
 
     }
+        
+        
+        
 
 	@Override
 	public LueHakukohdeVastausTyyppi lueHakukohde(LueHakukohdeKyselyTyyppi kysely) {
-		Hakukohde hakukohde = hakukohdeDAO.findBy("oid", kysely.getOid()).get(0);
-		HakukohdeTyyppi hakukohdeTyyppi = conversionService.convert(hakukohde, HakukohdeTyyppi.class);
+//		Hakukohde hakukohde = hakukohdeDAO.findBy("oid", kysely.getOid()).get(0);
+                List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(kysely.getOid());
+                Hakukohde hakukohde = hakukohdes.get(0);
+                HakukohdeTyyppi hakukohdeTyyppi = conversionService.convert(hakukohde, HakukohdeTyyppi.class);
 		LueHakukohdeVastausTyyppi vastaus = new LueHakukohdeVastausTyyppi();
 		vastaus.setHakukohde(hakukohdeTyyppi);
 		return vastaus;

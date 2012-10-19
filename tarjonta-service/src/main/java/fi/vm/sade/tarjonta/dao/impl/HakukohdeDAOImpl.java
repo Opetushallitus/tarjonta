@@ -23,6 +23,9 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.QHakukohde;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.QTekstiKaannos;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import java.util.List;
 
@@ -48,6 +51,22 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
             list(hakukohde);
 
     }
+
+    @Override
+    public List<Hakukohde> findHakukohdeWithDepenciesByOid(String oid) {
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+        QMonikielinenTeksti qMoniteksti = QMonikielinenTeksti.monikielinenTeksti;
+        QTekstiKaannos qTeksti = QTekstiKaannos.tekstiKaannos;
+
+       List<Hakukohde> hakukohdes = from(qHakukohde)
+                .leftJoin(qHakukohde.lisatiedot,qMoniteksti)
+                .leftJoin(qMoniteksti.tekstis,qTeksti)
+                .where(qHakukohde.oid.eq(oid.trim()))
+               .list(qHakukohde);
+        return hakukohdes;
+    }
+    
+    
 
     @Override
     public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely) {
