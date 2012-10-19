@@ -145,27 +145,30 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         TabSheet tab = new TabSheet();
         tab.setSizeUndefined();
 
-        GridLayout grid = new GridLayout(2, 1);
-        grid.setHeight("100%");
-        grid.setWidth("800px");
+        // Loop all opetuskielet
+        for (String opetuskieli : model.getOpetuskielet()) {
+            GridLayout grid = new GridLayout(2, 1);
+            grid.setHeight("100%");
+            grid.setWidth("800px");
 
-        grid.addComponent(UiUtil.label(T("tutkinnonRakenne")));
-        grid.newLine();
-        grid.addComponent(UiUtil.label(T("tavoitteet")));
-        grid.newLine();
-        grid.addComponent(UiUtil.label(T("jatkoOpintoMahdollisuudet")));
-        grid.newLine();
+            grid.addComponent(UiUtil.label(T("tutkinnonRakenne")));
+            grid.newLine();
+            grid.addComponent(UiUtil.label(T("tavoitteet")));
+            grid.newLine();
+            grid.addComponent(UiUtil.label(T("jatkoOpintoMahdollisuudet")));
+            grid.newLine();
 
-        grid.setColumnExpandRatio(0, 1);
-        grid.setColumnExpandRatio(1, 2);
+            grid.setColumnExpandRatio(0, 1);
+            grid.setColumnExpandRatio(1, 2);
 
-        for (int row = 0; row < grid.getRows(); row++) {
-            //alignment code not working?
-            Component c = grid.getComponent(0, row);
-            grid.setComponentAlignment(c, Alignment.TOP_RIGHT);
+            for (int row = 0; row < grid.getRows(); row++) {
+                //alignment code not working?
+                Component c = grid.getComponent(0, row);
+                grid.setComponentAlignment(c, Alignment.TOP_RIGHT);
+            }
+
+            tab.addTab(grid, _tarjontaUIHelper.getKoodiNimi(opetuskieli));
         }
-
-        tab.addTab(grid, "TABI KAIKILLE KIELILLE?");
 
         layout.addComponent(tab);
         layout.setExpandRatio(tab, 1f);
