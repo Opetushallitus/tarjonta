@@ -470,7 +470,15 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             }
             errorView.resetErrors();
             try {
+            	boolean hakuajatEmpty = _presenter.getHakuModel().getSisaisetHakuajat().isEmpty();
+                if (hakuajatEmpty) {
+                	errorView.addError(_i18n.getMessage("hakuajatEmpty"));
+                }
                 form.commit();
+                if (hakuajatEmpty) {
+                	throw new Validator.InvalidValueException("");
+                }
+
 
                 if (complete) {
                     _presenter.saveHakuValmiina();
