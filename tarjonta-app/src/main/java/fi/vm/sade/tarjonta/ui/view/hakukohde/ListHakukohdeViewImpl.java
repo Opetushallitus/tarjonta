@@ -247,14 +247,12 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
 	@Override
 	public void appendKoulutuksetToList(HakukohdeViewModel hakukohde) {
-		LOG.info("appendKoulutuksetToList: " + hakukohde);
+		LOG.info("appendKoulutuksetToList");
 		HierarchicalContainer hc = (HierarchicalContainer)(this.categoryTree.getContainerDataSource());
         for (Object item : hc.getItemIds()) {
             HakukohdeResultRow curRow = (HakukohdeResultRow)(categoryTree.getContainerProperty(item, COLUMN_A).getValue());
-            System.out.println("CurRow: " + curRow);
             if (curRow != null && curRow.getHakukohde() != null &&  curRow.getHakukohde().getHakukohde().getOid().equals(hakukohde.getOid())) {
-            	LOG.error("Doing things!!!");
-            	System.out.println("Kaikki ok!");
+            	
             }
         }
 	}
