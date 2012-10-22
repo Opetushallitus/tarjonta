@@ -122,7 +122,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     }
 
     /**
-     * @param businessService the businessService to set
+     * @param businessService the businessService to setv
      */
     public void setBusinessService(HakuBusinessService businessService) {
         this.businessService = businessService;
@@ -275,7 +275,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
                 List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(kysely.getOid());
                 Hakukohde hakukohde = hakukohdes.get(0);
                 HakukohdeTyyppi hakukohdeTyyppi = conversionService.convert(hakukohde, HakukohdeTyyppi.class);
-		LueHakukohdeVastausTyyppi vastaus = new LueHakukohdeVastausTyyppi();
+                LueHakukohdeVastausTyyppi vastaus = new LueHakukohdeVastausTyyppi();
 		vastaus.setHakukohde(hakukohdeTyyppi);
 		return vastaus;
 	}
