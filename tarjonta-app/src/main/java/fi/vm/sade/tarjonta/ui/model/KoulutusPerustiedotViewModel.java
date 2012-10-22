@@ -15,14 +15,12 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
+import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
  *
@@ -31,12 +29,22 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
 
     /*
-     * Koodisto data
+     * Status of active form.
+     */
+    private DocumentStatus documentStatus;
+    private String userFrienlyDocumentStatus;
+    /*
+     * Organisaatio data:
+     */
+    private String organisaatioName;
+    private String organisaatioOid;
+    /*
+     * Koodisto data:
      */
     private String koulutusKoodi;
-    private String koulutusohjelmaKoodi;
+    private KoulutusohjelmaModel koulutusohjema;
     /*
-     * KOMO data 
+     * KOMO data (static labels):
      */
     private String koulutuksenTyyppi = "";
     private String koulutusala = "";
@@ -45,23 +53,26 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     private String opintojenLaajuusyksikko = "";
     private String opintojenLaajuus = "";
     private String opintoala = "";
-    // Koodisto: kieli
-    private Set<String> opetuskielet = new HashSet<String>();
-    private boolean opetuskieletKaikki;
+    /*
+     * Form fields:
+     */
     private Date koulutuksenAlkamisPvm = new Date();
     private String suunniteltuKesto;
-    // Koodisto: suunniteltuKesto
     private String suunniteltuKestoTyyppi;
-    // Koodisto: teema
-    private Set<String> avainsanat = new HashSet<String>();
-    // Koodisto: opetusmuoto
     private String opetusmuoto;
-    // Koodisto: koulutuslaji
     private String koulutuslaji;
+    private Set<String> opetuskielet = new HashSet<String>(0);
+    private Set<String> avainsanat = new HashSet<String>(0);
     private List<KoulutusYhteyshenkiloViewModel> yhteyshenkilot = new ArrayList<KoulutusYhteyshenkiloViewModel>(0);
-    private boolean koulutusOnMaksullista;
-    private boolean koulutusStipendiMahdollisuus;
     private List<KoulutusLinkkiViewModel> koulutusLinkit = new ArrayList<KoulutusLinkkiViewModel>(0);
+
+    public KoulutusPerustiedotViewModel() {
+        this.documentStatus = DocumentStatus.NEW;
+    }
+
+    public KoulutusPerustiedotViewModel(DocumentStatus status) {
+        this.documentStatus = status;
+    }
 
     public String getKoulutusala() {
         return koulutusala;
@@ -119,14 +130,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
         this.opetuskielet = opetuskielet;
     }
 
-    public boolean isOpetuskieletKaikki() {
-        return opetuskieletKaikki;
-    }
-
-    public void setOpetuskieletKaikki(boolean opetuskieletKaikki) {
-        this.opetuskieletKaikki = opetuskieletKaikki;
-    }
-
     public Date getKoulutuksenAlkamisPvm() {
         return koulutuksenAlkamisPvm;
     }
@@ -151,7 +154,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
         this.suunniteltuKestoTyyppi = suunniteltuKestoTyyppi;
     }
 
-
     public String getOpetusmuoto() {
         return opetusmuoto;
     }
@@ -166,22 +168,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
 
     public void setKoulutuslaji(String koulutuslaji) {
         this.koulutuslaji = koulutuslaji;
-    }
-
-    public boolean isKoulutusOnMaksullista() {
-        return koulutusOnMaksullista;
-    }
-
-    public void setKoulutusOnMaksullista(boolean koulutusOnMaksullista) {
-        this.koulutusOnMaksullista = koulutusOnMaksullista;
-    }
-
-    public boolean isKoulutusStipendiMahdollisuus() {
-        return koulutusStipendiMahdollisuus;
-    }
-
-    public void setKoulutusStipendiMahdollisuus(boolean koulutusStipendiMahdollisuus) {
-        this.koulutusStipendiMahdollisuus = koulutusStipendiMahdollisuus;
     }
 
     public List<KoulutusLinkkiViewModel> getKoulutusLinkit() {
@@ -235,20 +221,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     }
 
     /**
-     * @return the koulutusohjelmaKoodi
-     */
-    public String getKoulutusohjelmaKoodi() {
-        return koulutusohjelmaKoodi;
-    }
-
-    /**
-     * @param koulutusohjelmaKoodi the koulutusohjelmaKoodi to set
-     */
-    public void setKoulutusohjelmaKoodi(String koulutusohjelmaKoodi) {
-        this.koulutusohjelmaKoodi = koulutusohjelmaKoodi;
-    }
-
-    /**
      * @return the avainsanat
      */
     public Set<String> getAvainsanat() {
@@ -260,5 +232,76 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      */
     public void setAvainsanat(Set<String> avainsanat) {
         this.avainsanat = avainsanat;
+    }
+
+    /**
+     * @return the koulutusohjema
+     */
+    public KoulutusohjelmaModel getKoulutusohjema() {
+        return koulutusohjema;
+    }
+
+    /**
+     * @param koulutusohjema the koulutusohjema to set
+     */
+    public void setKoulutusohjema(KoulutusohjelmaModel koulutusohjema) {
+        this.koulutusohjema = koulutusohjema;
+    }
+
+    /**
+     * @return the document status enum
+     */
+    public DocumentStatus getDocumentStatus() {
+        return documentStatus;
+    }
+
+    /**
+     * @param status the document status enum to set
+     */
+    public void setDocumentStatus(DocumentStatus status) {
+        this.documentStatus = status;
+        this.setUserFrienlyDocumentStatus(status.getStatus());
+    }
+
+    /**
+     * @return the organisaatioName
+     */
+    public String getOrganisaatioName() {
+        return organisaatioName;
+    }
+
+    /**
+     * @param organisaatioName the organisaatioName to set
+     */
+    public void setOrganisaatioName(String organisaatioName) {
+        this.organisaatioName = organisaatioName;
+    }
+
+    /**
+     * @return the organisaatioOid
+     */
+    public String getOrganisaatioOid() {
+        return organisaatioOid;
+    }
+
+    /**
+     * @param organisaatioOid the organisaatioOid to set
+     */
+    public void setOrganisaatioOid(String organisaatioOid) {
+        this.organisaatioOid = organisaatioOid;
+    }
+
+    /**
+     * @return the userFrienlyDocumentStatus
+     */
+    public String getUserFrienlyDocumentStatus() {
+        return userFrienlyDocumentStatus;
+    }
+
+    /**
+     * @param userFrienlyDocumentStatus the userFrienlyDocumentStatus to set
+     */
+    public void setUserFrienlyDocumentStatus(String userFrienlyDocumentStatus) {
+        this.userFrienlyDocumentStatus = userFrienlyDocumentStatus;
     }
 }

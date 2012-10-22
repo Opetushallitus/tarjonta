@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.model;
 
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Configurable;

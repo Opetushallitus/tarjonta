@@ -19,10 +19,12 @@ import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
@@ -41,11 +43,11 @@ import fi.vm.sade.tarjonta.ui.view.common.DialogDataTable;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.List;
-import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.vaadin.addon.formbinder.PropertyId;
 
 /**
  *
@@ -56,11 +58,12 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavigationLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotToinenAsteView.class);
+    private BeanItemMapper<KoulutusPerustiedotViewModel, EditKoulutusPerustiedotToinenAsteView> bim;
+    private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
+    private ErrorMessage errorView;
     @Autowired(required = true)
     private TarjontaPresenter presenter;
-    private BeanItemMapper<KoulutusPerustiedotViewModel, EditKoulutusPerustiedotToinenAsteView> bim;
-    private ErrorMessage errorView;
-    private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
+    private Label documentStatus;
 
     public EditKoulutusPerustiedotToinenAsteView() {
         super();
@@ -91,12 +94,20 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
 
         bim = new BeanItemMapper<KoulutusPerustiedotViewModel, EditKoulutusPerustiedotToinenAsteView>(koulutusPerustiedotModel,
                 getI18n(), this);
-        bim.label(layout, "KoulutuksenPerustiedot", LabelStyleEnum.H2);
 
+        /*
+         *  PAGE HEADLINE
+         */
+        HorizontalLayout header = UiUtil.horizontalLayout();
+        header.setSizeFull();
+        Label pageLabel = bim.label(header, "KoulutuksenPerustiedot", LabelStyleEnum.H2);
+        pageLabel.setSizeUndefined();
+        documentStatus = UiUtil.label(header, new BeanItem(koulutusPerustiedotModel), "userFrienlyDocumentStatus"); //show document status 
+        documentStatus.setSizeUndefined();
+        header.setExpandRatio(documentStatus, 1l);
+        header.setComponentAlignment(documentStatus, Alignment.TOP_RIGHT);
+        layout.addComponent(header);
         UiUtil.hr(layout);
-
-        EditKoulutusPerustiedotFormView editKoulutusPerustiedotFormView = new EditKoulutusPerustiedotFormView(presenter, koulutusPerustiedotModel, bim);
-        final Form form = new ValidatingViewBoundForm(editKoulutusPerustiedotFormView);
 
         /*
          * TOP ERROR LAYOUT
@@ -104,9 +115,10 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         layout.addComponent(buildErrorLayout());
 
         /*
-         * TOP LAYOUT (form components under navigation buttons)
+         *  FORM LAYOUT (form components under navigation buttons)
          */
-        //final Form form = new ValidatingViewBoundForm(this);
+        EditKoulutusPerustiedotFormView editKoulutusPerustiedotFormView = new EditKoulutusPerustiedotFormView(presenter, koulutusPerustiedotModel);
+        final Form form = new ValidatingViewBoundForm(editKoulutusPerustiedotFormView);
         form.setItemDataSource(hakuBean);
         form.setValidationVisible(false);
         form.setValidationVisibleOnCommit(false);

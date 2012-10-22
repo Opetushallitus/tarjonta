@@ -87,7 +87,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         grid.setWidth("800px");
 
         grid.addComponent(UiUtil.label(T("organisaatio")));
-        grid.addComponent(UiUtil.label("XXXXXXXXXXXXXXXXXXXXXX"));
+        grid.addComponent(UiUtil.label(model.getOrganisaatioName()));
         grid.newLine();
         grid.addComponent(UiUtil.label(T("koulutuslaji")));
         grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getKoulutuslaji())));
@@ -117,13 +117,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         grid.addComponent(UiUtil.label(T("opetuskieli")));
         grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getOpetuskielet(), null)));
         grid.newLine();
-        grid.addComponent(UiUtil.label(T("opetuksenMaksullisuus")));
-        grid.addComponent(UiUtil.label(T(model.isKoulutusOnMaksullista() ? CommonTranslationKeys.KYLLA : CommonTranslationKeys.EI)));
-        grid.newLine();
-        grid.addComponent(UiUtil.label(T("stipendiMahdollisuus")));
-        grid.addComponent(UiUtil.label(T(model.isKoulutusStipendiMahdollisuus()? CommonTranslationKeys.KYLLA : CommonTranslationKeys.EI)));
-        grid.newLine();
-
+ 
         grid.setColumnExpandRatio(0, 1);
         grid.setColumnExpandRatio(1, 2);
 

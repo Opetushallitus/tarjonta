@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.ui.model;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
