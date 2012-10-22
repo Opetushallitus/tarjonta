@@ -37,6 +37,7 @@ import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
@@ -393,10 +394,18 @@ public class TarjontaPresenter {
         return getModel().getIdentifier();
     }
 
+    /**
+     * Gets the list view of koulutus objects.
+     * @return the koulutus list view
+     */
     public ListKoulutusView getKoulutusListView() {
         return koulutusListView;
     }
 
+    /**
+     * Sets the list view of koulutus objects
+     * @param listKoulutusView - the list view of koulutus objects to set
+     */
     public void setKoulutusListView(ListKoulutusView listKoulutusView) {
         this.koulutusListView = listKoulutusView;
     }
@@ -527,11 +536,34 @@ public class TarjontaPresenter {
 		
 	}
 	
+	/**
+	 * Selects the organisaatio in tarjonta, by setting the organisaatio name in breadcrumb
+	 * and setting the organisaatioOid and organisaatioNimi in tarjonta model.
+	 * Enables the create koulutus button in koulutus list view.
+	 * 
+	 * @param organisaatioOid - the organisaatio oid to select
+	 * @param organisaatioName - the organisaatio name to select
+	 */
 	public void selectOrganisaatio(String organisaatioOid, String organisaatioName) {
 		_rootView.getBreadcrumbsView().removeAllComponents();
 		_rootView.getBreadcrumbsView().addComponent(new Label(organisaatioName));
 		_model.setOrganisaatioOid(organisaatioOid);
 		_model.setOrganisaatioName(organisaatioName);
 		this.getKoulutusListView().toggleCreateKoulutusB(true);
+	}
+
+
+	/**
+	 * Gets the name of koulutus by its oid.
+	 * @param komotoOid - the koulutus oid for which the name is returned
+	 * @return the name of the koulutus
+	 */
+	public String getKoulutusNimiByOid(String komotoOid) {
+		for(KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
+			if (curKoulutus.getKoulutus().getKoulutusmoduuliToteutus().equals(komotoOid)) {
+				return curKoulutus.getKoulutus().getNimi();
+			}
+		}
+		return komotoOid;
 	}
 }

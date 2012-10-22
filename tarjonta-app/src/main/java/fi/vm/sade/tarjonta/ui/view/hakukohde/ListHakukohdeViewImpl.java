@@ -42,6 +42,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
@@ -95,6 +96,9 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      */
     @Autowired(required = true)
     private TarjontaPresenter presenter;
+    
+    @Autowired(required=true)
+    private TarjontaUIHelper _tarjontaUIHelper;
 
     public ListHakukohdeViewImpl() {
     	//Initialization of the view layout
@@ -165,11 +169,24 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde);
                 hc.addItem(curHakukohde);
                 hc.setParent(curHakukohde, rootItem);
-                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(curHakukohde.getHakukohde().getNimi(), true));
+                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getHakukohdeNimi(curHakukohde.getHakukohde().getNimi()), true));
                 hc.setChildrenAllowed(curHakukohde, false);
             }
         }
         return hc;
+    }
+    
+    /**
+     * Returns the name of the hakukohde based on koodisto uri given.
+     * @param hakukohdeUri the koodisto uri given.
+     * @return
+     */
+    private String getHakukohdeNimi(String hakukohdeUri) {
+    	String nimi = _tarjontaUIHelper.getKoodiNimi(hakukohdeUri, I18N.getLocale());
+    	if ("".equals(nimi)) {
+    		nimi = hakukohdeUri;
+    	}
+    	return nimi; 
     }
 
     /**
@@ -247,14 +264,30 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
 	@Override
 	public void appendKoulutuksetToList(HakukohdeViewModel hakukohde) {
-		LOG.info("appendKoulutuksetToList");
+		LOG.info("appendKoulutuksetToList: ");
 		HierarchicalContainer hc = (HierarchicalContainer)(this.categoryTree.getContainerDataSource());
         for (Object item : hc.getItemIds()) {
+        	if (!(categoryTree.getContainerProperty(item, COLUMN_A).getValue() instanceof HakukohdeResultRow)) {
+        		continue;
+        	}
             HakukohdeResultRow curRow = (HakukohdeResultRow)(categoryTree.getContainerProperty(item, COLUMN_A).getValue());
-            if (curRow != null && curRow.getHakukohde() != null &&  curRow.getHakukohde().getHakukohde().getOid().equals(hakukohde.getOid())) {
-            	
+            if (curRow.getHakukohde().getHakukohde() != null && curRow.getHakukohde().getHakukohde().getOid().equals(hakukohde.getOid())) {
+            	addKoulutuksetToTree(item, hakukohde, hc);
+            	return;
             }
         }
+	}
+	
+	private void addKoulutuksetToTree(Object item, HakukohdeViewModel hakukohde, HierarchicalContainer hc) {
+		hc.setChildrenAllowed(item, true);
+		for (String komotoOid : hakukohde.getKomotoOids()) { 
+			HakukohdeResultRow rowStyle = new HakukohdeResultRow();
+			hc.addItem(komotoOid);
+			hc.setParent(komotoOid, item);
+			hc.getContainerProperty(komotoOid, COLUMN_A).setValue(rowStyle.format(this.presenter.getKoulutusNimiByOid(komotoOid), false));
+			hc.setChildrenAllowed(komotoOid, false);
+		}
+		this.categoryTree.setCollapsed(item, false);
 	}
 
 }

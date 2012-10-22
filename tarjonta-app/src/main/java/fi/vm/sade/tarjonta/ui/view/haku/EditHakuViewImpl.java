@@ -462,15 +462,8 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         public SaveEvent(Component source, boolean complete) {
             super(source);
             sisaisetHakuajatContainer.bindHakuajat();
+            
 
-            // Reset multiple times if only one application system is wanted
-            /*if (sisHakuajat.getValue().equals(ONE_APPLICATION_SYSTEM)) {
-                _presenter.getHakuModel().setSisaisetHakuajat(new ArrayList<HakuaikaViewModel>());
-            } else {
-                // Othewise clear single application stystem data
-            	_presenter.getHakuModel().setAlkamisPvm(null);
-            	_presenter.getHakuModel().setPaattymisPvm(null);
-            }*/
             _complete = complete;
             if (_presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
                 _presenter.getHakuModel().setHakuLomakeUrl(null);
