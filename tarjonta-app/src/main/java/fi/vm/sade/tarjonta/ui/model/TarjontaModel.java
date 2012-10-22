@@ -49,6 +49,12 @@ public class TarjontaModel extends BaseUIViewModel {
     private List<KoulutusTulos> _selectedKoulutukset;
     
     private HakukohdeViewModel hakukohde;
+    
+    /*
+     * Selected organisaatio data:
+     */
+    private String organisaatioName;
+	private String organisaatioOid;
 
 
     public String getIdentifier() {
@@ -149,9 +155,35 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
 
+    /**
+     * Gets the name of the selected organisaatio
+     * @return the organisaatio name
+     */
+    public String getOrganisaatioName() {
+		return organisaatioName;
+	}
 
+    /**
+     * Sets the name of the selected organisaatio
+     * @param organisaatioName - the organisaatio name to set
+     */
+	public void setOrganisaatioName(String organisaatioName) {
+		this.organisaatioName = organisaatioName;
+	}
 
+	/**
+	 * Gets the oid of the selected organisaatio
+	 * @return the organisaatio oid
+	 */
+	public String getOrganisaatioOid() {
+		return organisaatioOid;
+	}
 
-
-
+	/**
+	 * Sets the oid of the selected organisaatio
+	 * @param organisaatioOid - the organisaatio oid to set
+	 */
+	public void setOrganisaatioOid(String organisaatioOid) {
+		this.organisaatioOid = organisaatioOid;
+	}
 }

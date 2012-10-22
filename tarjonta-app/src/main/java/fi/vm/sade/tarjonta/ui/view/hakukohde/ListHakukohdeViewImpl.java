@@ -42,6 +42,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.vaadin.Oph;
@@ -243,5 +244,17 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
     }
+
+	@Override
+	public void appendKoulutuksetToList(HakukohdeViewModel hakukohde) {
+		
+		HierarchicalContainer hc = (HierarchicalContainer)(this.categoryTree.getContainerDataSource());
+        for (Object item : hc.getItemIds()) {
+            HakukohdeResultRow curRow = (HakukohdeResultRow)(categoryTree.getContainerProperty(item, COLUMN_A).getValue());
+            if (curRow.getHakukohde().getHakukohde().getOid().equals(hakukohde.getOid())) {
+            	//TODO adding the koulutukset to the container.
+            }
+        }
+	}
 
 }

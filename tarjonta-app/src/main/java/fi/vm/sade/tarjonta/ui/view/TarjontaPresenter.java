@@ -505,7 +505,24 @@ public class TarjontaPresenter {
         }
     }
 
-    public void showShowHakukohdeView(String oid) {
-        // TODO Auto-generated method stub
-    }
+    /**
+     * Navigate to the ShowHakukohdeView for the hakukohde with oid given as parameter.
+     * @param oid the oid given
+     */
+	public void showShowHakukohdeView(String oid) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * Shows the koulutus objects for a hakukohde in the ListHakukohdeView.
+	 * @param oid
+	 */
+	public void showKoulutuksetForHakukohde(String oid) {
+		LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
+		kysely.setOid(oid);
+		HakukohdeViewModel hakukohde = this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(this.tarjontaPublicService.lueHakukohde(kysely).getHakukohde());
+		this._hakukohdeListView.appendKoulutuksetToList(hakukohde);
+		
+	}
 }

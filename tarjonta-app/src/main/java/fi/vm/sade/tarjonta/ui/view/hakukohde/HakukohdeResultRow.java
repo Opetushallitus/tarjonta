@@ -50,7 +50,8 @@ public class HakukohdeResultRow extends HorizontalLayout {
      */
     private HakukohdeTulos hakukohde;
 
-    /**
+
+	/**
      * Checkbox to indicate if this row is selected.
      */
     private CheckBox isSelected;
@@ -106,6 +107,8 @@ public class HakukohdeResultRow extends HorizontalLayout {
         	tarjontaPresenter.showHakukohdeEditView(null, hakukohde.getHakukohde().getOid());
         } else if (selection.equals(i18n.getMessage("poista"))) {
         	tarjontaPresenter.removeHakukohde(hakukohde);
+        } else if (selection.equals(i18n.getMessage("naytaKoulutukset"))) {
+        	tarjontaPresenter.showKoulutuksetForHakukohde(hakukohde.getHakukohde().getOid());
         }
     }
 
@@ -151,5 +154,14 @@ public class HakukohdeResultRow extends HorizontalLayout {
     public CheckBox getIsSelected() {
         return isSelected;
     }
+    
+
+    /**
+     * The hakukohde the data of which is showed on this row.
+     * @return
+     */
+    public HakukohdeTulos getHakukohde() {
+		return hakukohde;
+	}
 
 }

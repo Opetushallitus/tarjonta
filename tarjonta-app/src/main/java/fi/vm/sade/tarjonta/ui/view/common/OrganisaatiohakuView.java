@@ -50,6 +50,7 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchCriteriaDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.ui.OphAbstractCollapsibleLeft;
@@ -79,6 +80,10 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     private HierarchicalContainer hc;
     @Autowired
     private OrganisaatioService organisaatioService;
+    
+    @Autowired
+    private TarjontaPresenter presenter;
+    
     private List<OrganisaatioDTO> organisaatios;
     private OrganisaatioSearchCriteriaDTO criteria;
     List<String> rootOrganisaatioOids;
@@ -209,27 +214,42 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         tree.setContainerDataSource(createDatasource());
     }
 
+    /**
+     * Creates the data source for the organisaatio tree.
+     * @return
+     */
     private HierarchicalContainer createDatasource() {
         tree.removeAllItems();
         hc = new HierarchicalContainer();
         hc.addContainerProperty(COLUMN_KEY, String.class, "");
+        //Setting the items to the tree.
         for (OrganisaatioDTO curOrg : organisaatios) {
             LOG.debug("Organisaatio: " + curOrg);
             hc.addItem(curOrg);
             hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(curOrg.getNimiFi());
         }
+        //Creating the hierarchical structure of the organisaatio tree.
         createHierarchy();
         return hc;
     }
 
+    /**
+     * Creates the parent child hieararchy to the organisaatio tree.
+     */
     private void createHierarchy() {
         for (OrganisaatioDTO curOrg : organisaatios) {
+        	//If the current organisaatio is root, it's child tree is created.
             if (!hasParentInCurrentResults(curOrg)) {
                 setChildrenTo(curOrg);
             }
         }
     }
 
+    /**
+     * Is the current organisaatio a root organisaatio
+     * @param org
+     * @return
+     */
     private boolean hasParentInCurrentResults(OrganisaatioDTO org) {
         if (org.getParentOid() == null) {
             return false;
@@ -242,20 +262,30 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         return false;
     }
 
+    /**
+     * Setting the children of the organisaatio given as parameter.
+     * @param parentOrg
+     */
     private void setChildrenTo(OrganisaatioDTO parentOrg) {
         boolean wasChildren = false;
         for (OrganisaatioDTO curOrg : organisaatios) {
+        	//if the curOrg is the child of parentOrg the parent-child relation is 
+        	//created in the container
             if (parentOrg.getOid().equals(curOrg.getParentOid())) {
                 hc.setParent(curOrg, parentOrg);
                 setChildrenTo(curOrg);
                 wasChildren = true;
             }
         }
+        //If the parentOrg has no children we set childreAllowed to false.
         if (!wasChildren) {
             hc.setChildrenAllowed(parentOrg, false);
         }
     }
 
+    /**
+     * Binds the search criteria according to criteria data.
+     */
     private void bind() {
         search.setPropertyDataSource(new NestedMethodProperty(criteria, "searchStr"));
         organisaatioTyyppi.setPropertyDataSource(new NestedMethodProperty(criteria, "organisaatioTyyppi"));
@@ -264,11 +294,21 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         suunnitellut.setPropertyDataSource(new NestedMethodProperty(criteria, "suunnitellut"));
     }
 
+    /**
+     * Sets the selected organisaatio oid and name in TarjontaModel and fires an OrganisaatioSelectedEvent.
+     * The selected organisaatio information is used when koulutus is created.
+     * @param item the organisaatio selected.
+     */
     private void organisaatioSelected(OrganisaatioDTO item) {
         LOG.info("Event fired: " + item.getOid());
+        presenter.getModel().setOrganisaatioOid(item.getOid());
+        presenter.getModel().setOrganisaatioName(item.getNimiFi());
         fireEvent(new OrganisaatioSelectedEvent(this, item.getOid()));
     }
 
+    /**
+     * Gets the item captions of organisaatiotyyppi selections in search criteria combobox.
+     */
     private void setOrgTyyppiItemCaptions() {
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(), i18n.getMessage(OrganisaatioTyyppi.KOULUTUSTOIMIJA.name()));
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.MUU_ORGANISAATIO.value(), i18n.getMessage(OrganisaatioTyyppi.MUU_ORGANISAATIO.name()));
