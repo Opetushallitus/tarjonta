@@ -121,7 +121,12 @@ public class KoulutusmoduuliToteutusDAOTest {
     public void testDeleteYhteyshenkilo() {
 
         KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
-        t.addYhteyshenkilo(new Yhteyshenkilo("12345", "fi"));
+
+        Yhteyshenkilo henkilo = new Yhteyshenkilo("12345", "fi");
+        henkilo.setEtunimis("John");
+        henkilo.setSukunimi("Doe");
+
+        t.addYhteyshenkilo(henkilo);
 
         koulutusmoduuliToteutusDAO.insert(t);
 
@@ -139,7 +144,7 @@ public class KoulutusmoduuliToteutusDAOTest {
     public void testAddYhteyshenkilo() {
 
         KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
-        t.addYhteyshenkilo(new Yhteyshenkilo("12345", "fi"));
+        t.addYhteyshenkilo(fixtures.createYhteyshenkilo("12345"));
 
         koulutusmoduuliToteutusDAO.insert(t);
 
@@ -147,6 +152,9 @@ public class KoulutusmoduuliToteutusDAOTest {
         assertEquals(1, loaded.getYhteyshenkilos().size());
 
     }
+
+
+
 
     private KoulutusmoduuliToteutus updateAndRead(KoulutusmoduuliToteutus toteutus) {
 

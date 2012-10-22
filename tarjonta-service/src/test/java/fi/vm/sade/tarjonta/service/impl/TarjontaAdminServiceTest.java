@@ -35,19 +35,19 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.Set;
 
 /**
  *
@@ -109,6 +109,14 @@ public class TarjontaAdminServiceTest {
         KoulutusmoduuliToteutus toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertNotNull(toteutus);
 
+        Set<Yhteyshenkilo> yhteyshenkilos = toteutus.getYhteyshenkilos();
+        assertEquals(1, yhteyshenkilos.size());
+
+        Yhteyshenkilo actualHenkilo = yhteyshenkilos.iterator().next();
+        YhteyshenkiloTyyppi expectedHenkilo = createYhteyshenkilo();
+
+        assertMatch(expectedHenkilo, actualHenkilo);
+
     }
 
     @Test
@@ -135,19 +143,31 @@ public class TarjontaAdminServiceTest {
         assertEquals("new-units", toteutus.getSuunniteltuKestoYksikko());
 
     }
-    
+
     @Test
     public void testPoistaKoulutusHappyPath() throws Exception {
-    	
-    	adminService.initSample(new String());
-    	List<KoulutusmoduuliToteutus> komotos = this.koulutusmoduuliToteutusDAO.findAll();
-    	assertFalse(komotos.isEmpty());
-    	int komotosOriginalSize = komotos.size();
-    	String komotoOid = komotos.get(0).getOid();
-    	
-    	this.adminService.poistaKoulutus(komotoOid);
-    	komotos = this.koulutusmoduuliToteutusDAO.findAll();
-    	assertEquals(komotosOriginalSize - 1, komotos.size());
+
+        adminService.initSample(new String());
+        List<KoulutusmoduuliToteutus> komotos = this.koulutusmoduuliToteutusDAO.findAll();
+        assertFalse(komotos.isEmpty());
+        int komotosOriginalSize = komotos.size();
+        String komotoOid = komotos.get(0).getOid();
+
+        this.adminService.poistaKoulutus(komotoOid);
+        komotos = this.koulutusmoduuliToteutusDAO.findAll();
+        assertEquals(komotosOriginalSize - 1, komotos.size());
+    }
+
+
+    private void assertMatch(YhteyshenkiloTyyppi expected, Yhteyshenkilo actual) {
+
+        assertEquals(expected.getEtunimet(), actual.getEtunimis());
+        assertEquals(expected.getSukunimi(), actual.getSukunimi());
+        assertEquals(expected.getHenkiloOid(), actual.getHenkioOid());
+        assertEquals(expected.getPuhelin(), actual.getPuhelin());
+        assertEquals(expected.getSahkoposti(), actual.getSahkoposti());
+        assertEquals(expected.getTitteli(), actual.getTitteli());
+
     }
 
     private void insertSampleKoulutus() {
@@ -174,8 +194,25 @@ public class TarjontaAdminServiceTest {
         lisaaKoulutus.setOid(SAMPLE_KOULUTUS_OID);
         lisaaKoulutus.setKoulutuksenAlkamisPaiva(new Date());
         lisaaKoulutus.setKesto(kesto3Vuotta);
+        lisaaKoulutus.getYhteyshenkilo().add(createYhteyshenkilo());
+
 
         return lisaaKoulutus;
+    }
+
+    private YhteyshenkiloTyyppi createYhteyshenkilo() {
+
+        YhteyshenkiloTyyppi h = new YhteyshenkiloTyyppi();
+        h.setEtunimet("Kalle Matti"); // required
+        h.setSukunimi("Kettu-Orava"); // required
+        h.setHenkiloOid(null); // not recognized via HenkiloService
+        h.setPuhelin("+358 123 123 123"); // optional
+        h.setSahkoposti(null); // optional
+        h.setTitteli(null); // optional
+        h.getKielet().add("fi"); // min 1 required (for now)
+
+        return h;
+
     }
 
     @Test
@@ -191,16 +228,6 @@ public class TarjontaAdminServiceTest {
 
     private void flush() {
         ((KoulutusmoduuliToteutusDAOImpl) koulutusmoduuliToteutusDAO).getEntityManager().flush();
-    }
-
-    private static XMLGregorianCalendar toXmlDateTime(Date date) {
-        try {
-            GregorianCalendar cal = new GregorianCalendar();
-            cal.setTimeInMillis(date.getTime());
-            return DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
-        } catch (Exception e) {
-            throw new RuntimeException("converting date failed: " + date, e);
-        }
     }
 
 }

@@ -60,7 +60,7 @@
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1" />
-            
+
             <xs:element name="hakukohteenKoulutusOidit"
                         type="xs:string"
                         maxOccurs="unbounded"
@@ -326,7 +326,9 @@
     </xs:complexType>
 
     <xs:complexType name="KoulutusTyyppi">
-        <xs:group ref="tns:KoulutusGroup"/>
+        <xs:sequence>
+            <xs:group ref="tns:KoulutusGroup"/>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:group name="KoulutusGroup">
@@ -423,6 +425,36 @@
                         </xs:extension>
                     </xs:simpleContent>
                 </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="YhteyshenkiloTyyppi">
+        <xs:sequence>
+            <xs:element name="henkiloOid" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Henkilon Oid henkilo palvelussa. Mikali henkilo ei ole tunnistettu
+                        hekilo palvelussa, tama kentta voi olla tyhja (null).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Etunimet" type="xs:string">
+            </xs:element>
+            <xs:element name="Sukunimi" type="xs:string">
+            </xs:element>
+            <xs:element name="Titteli" type="xs:string" minOccurs="0" maxOccurs="1">
+            </xs:element>
+            <xs:element name="Sahkoposti" type="xs:string" minOccurs="0" maxOccurs="1">
+            </xs:element>
+            <xs:element name="Puhelin" type="xs:string" minOccurs="0" maxOccurs="1">
+            </xs:element>
+            <xs:element name="Kielet" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Lista kielikoodeja joita tama yhteyshenkilo vastaa.
+                    </xs:documentation>
+                </xs:annotation>
             </xs:element>
         </xs:sequence>
     </xs:complexType>

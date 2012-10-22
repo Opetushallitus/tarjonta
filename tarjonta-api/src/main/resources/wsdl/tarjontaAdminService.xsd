@@ -34,10 +34,10 @@
 
     <xs:element name="poistaHakukohde" type="tns:PoistaHakukohdeType"/>
     <xs:element name="poistaHakukohdeVastaus" type="tns:PoistaHakukohdeVastausType"/>
-    
+
     <xs:element name="poistaKoulutus" type="tns:PoistaKoulutusTyyppi"/>
     <xs:element name="poistaKoulutusVastaus" type="tns:PoistaKoulutusVastausTyyppi"/>
-    
+
     <xs:element name="emptyString" type="xs:string"/>
 
     <xs:complexType name="PoistaHakukohdeType">
@@ -51,7 +51,7 @@
             <xs:element minOccurs="1" maxOccurs="1" name="hakukohdePoistoVastaus" type="tarjonta:HakukohdeTyyppi"/>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="PoistaKoulutusTyyppi">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="koulutusOid" type="xs:string" />
@@ -122,7 +122,11 @@
 
     <xs:complexType name="LisaaKoulutusTyyppi">
         <xs:complexContent>
-            <xs:extension base="tarjonta:KoulutusTyyppi"/>
+            <xs:extension base="tarjonta:KoulutusTyyppi">
+                <xs:sequence>
+                    <xs:element name="Yhteyshenkilo" type="tarjonta:YhteyshenkiloTyyppi" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 

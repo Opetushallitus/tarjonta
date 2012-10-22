@@ -72,6 +72,21 @@ public class TarjontaFixtures {
 
     }
 
+
+    public Yhteyshenkilo createYhteyshenkilo(String oid) {
+
+        Yhteyshenkilo h = new Yhteyshenkilo();
+        h.setHenkioOid(oid);
+        h.setEtunimis("Pekka");
+        h.setSukunimi("Yhteyttaja");
+        h.setKielis("fi", "en");
+        h.setPuhelin("+358 123 123 123");
+        h.setSahkoposti("pekka.yhteyttaja@no.such.domain.fi");
+
+        return h;
+
+    }
+
     public Koulutusmoduuli createTutkintoOhjelma() {
 
         Koulutusmoduuli m = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
@@ -99,7 +114,7 @@ public class TarjontaFixtures {
         return t;
 
     }
-    
+
     public KoulutusmoduuliToteutus createTutkintoOhjelmaToteutus(String komotoOid) {
 
         Calendar cal = Calendar.getInstance();
@@ -137,7 +152,7 @@ public class TarjontaFixtures {
         return hakukohde;
 
     }
-    
+
     /**
      * Creates a minimal non-persisted Hakukohde with given oid.
      *
@@ -190,16 +205,16 @@ public class TarjontaFixtures {
         koulutusmoduuliToteutusDAO.insert(t1);
         koulutusmoduuliToteutusDAO.insert(t2);
         koulutusmoduuliToteutusDAO.insert(t3);
-        
+
         flush();
         h.addKoulutusmoduuliToteutus(t1);
         h.addKoulutusmoduuliToteutus(t2);
         h.addKoulutusmoduuliToteutus(t3);
-        
+
         t1.addHakukohde(h);
         t2.addHakukohde(h);
         t3.addHakukohde(h);
-        
+
         hakukohdeDAO.update(h);
         flush();
 

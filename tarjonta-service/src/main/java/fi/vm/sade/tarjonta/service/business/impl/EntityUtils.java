@@ -17,10 +17,12 @@ package fi.vm.sade.tarjonta.service.business.impl;
 
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,7 +49,7 @@ public final class EntityUtils {
         final KoulutuksenKestoTyyppi kesto =from.getKesto();
         to.setSuunniteltuKestoArvo(kesto.getArvo());
         to.setSuunniteltuKestoYksikko(kesto.getYksikko());
-        
+
 
         // todo: other fields
     }
@@ -72,6 +74,26 @@ public final class EntityUtils {
         for (KoodistoKoodiTyyppi koulutuslaji : koulutus.getKoulutuslaji()) {
             // fix: toteutus should have multiple koulutuslahji
         }
+
+        for (YhteyshenkiloTyyppi henkiloFrom : koulutus.getYhteyshenkilo()) {
+
+            Yhteyshenkilo henkiloTo = new Yhteyshenkilo();
+            copyFields(henkiloFrom, henkiloTo);
+            to.addYhteyshenkilo(henkiloTo);
+
+        }
+
+    }
+
+    public static void copyFields(YhteyshenkiloTyyppi from, Yhteyshenkilo to) {
+
+        to.setHenkioOid(from.getHenkiloOid());
+        to.setEtunimis(from.getEtunimet());
+        to.setSukunimi(from.getSukunimi());
+        to.setPuhelin(from.getPuhelin());
+        to.setSahkoposti(from.getSahkoposti());
+        to.setKielis(from.getKielet());
+        to.setTitteli(from.getTitteli());
 
     }
 
