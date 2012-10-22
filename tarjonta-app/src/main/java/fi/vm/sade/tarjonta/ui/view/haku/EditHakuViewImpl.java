@@ -182,13 +182,6 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         this.sisaisetHakuajatTable.setVisibleColumns(HAKUAJAT_COLUMNS);
         this.sisaisetHakuajatTable.setPageLength((this.sisaisetHakuajatContainer.size() > 5) ? this.sisaisetHakuajatContainer.size() : 5);
         this.sisaisetHakuajatTable.setColumnHeaders(new String[]{T("Kuvaus"), T("Alkupvm"), T("Loppupvm"), T("Poista")});
-
-        // If we have many application times then we enable multiple times for this application systame
-        /*if (_presenter.getHakuModel().getSisaisetHakuajat().size() > 0) {
-            this.sisHakuajat.setValue(MULTIPLE_APPLICATION_SYSTEMS);
-        } else {
-            this.sisHakuajat.setValue(ONE_APPLICATION_SYSTEM);
-        }*/
     }
 
     @Override

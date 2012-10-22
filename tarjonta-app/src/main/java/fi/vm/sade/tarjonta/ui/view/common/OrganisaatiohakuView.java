@@ -178,8 +178,6 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         tree = new Tree();
         tree.setSizeUndefined();
 
-        //TODO: REAL DATA
-
         tree.setItemCaptionPropertyId(COLUMN_KEY);
         tree.setItemCaptionMode(Tree.ITEM_CAPTION_MODE_PROPERTY);
 
@@ -200,8 +198,13 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         return hl;
     }
 
+    /**
+     * Initializes organisaatio tree.
+     */
     private void initializeData() {
         bind();
+        //If an oid list is provided lists the child tree of each organisaatio
+        //Otherwise searches with empty search criteria.
         this.organisaatios = (rootOrganisaatioOids != null)
                 ? this.organisaatioService.listOrganisaatioByParentOids(rootOrganisaatioOids)
                 : this.organisaatioService.searchOrganisaatios(new OrganisaatioSearchCriteriaDTO());
@@ -209,6 +212,10 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         tree.setContainerDataSource(createDatasource());
     }
 
+    /**
+     * Searches the organisaatios according to criteria, and updates
+     * the data in the tree.
+     */
     private void searchOrganisaatios() {
         organisaatios = organisaatioService.searchOrganisaatios(criteria);
         tree.setContainerDataSource(createDatasource());
@@ -301,9 +308,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
      */
     private void organisaatioSelected(OrganisaatioDTO item) {
         LOG.info("Event fired: " + item.getOid());
-        presenter.getModel().setOrganisaatioOid(item.getOid());
-        presenter.getModel().setOrganisaatioName(item.getNimiFi());
-        fireEvent(new OrganisaatioSelectedEvent(this, item.getOid()));
+        presenter.selectOrganisaatio(item.getOid(), item.getNimiFi());
     }
 
     /**
@@ -315,31 +320,5 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPETUSPISTE.value(), i18n.getMessage(OrganisaatioTyyppi.OPETUSPISTE.name()));
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPILAITOS.value(), i18n.getMessage(OrganisaatioTyyppi.OPPILAITOS.name()));
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(), i18n.getMessage(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.name()));
-    }
-
-    /**
-     * Event to signal that the user wants to create a new Haku.
-     */
-    public class OrganisaatioSelectedEvent extends Component.Event {
-
-        private String organisaatioOid;
-
-        public OrganisaatioSelectedEvent(Component source) {
-            super(source);
-
-        }
-
-        public OrganisaatioSelectedEvent(Component source, String organisaatioOid) {
-            super(source);
-            this.organisaatioOid = organisaatioOid;
-        }
-
-        public String getOrganisaatioOid() {
-            return organisaatioOid;
-        }
-
-        public void setOrganisaatioOid(String organisaatioOid) {
-            this.organisaatioOid = organisaatioOid;
-        }
     }
 }

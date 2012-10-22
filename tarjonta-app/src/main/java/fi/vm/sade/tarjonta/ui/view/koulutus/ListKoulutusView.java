@@ -149,6 +149,7 @@ public class ListKoulutusView extends VerticalLayout {
         presenter.setKoulutusListView(this);
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getKoulutusDataSource()));
+        luoKoulutusB.setEnabled(presenter.getModel().getOrganisaatioOid() != null);
     }
 
     /**
@@ -248,6 +249,7 @@ public class ListKoulutusView extends VerticalLayout {
             	presenter.showKoulutusEditView(null);
             }
         });
+        
 
         //Creating the sorting options combobox
         cbJarjestys = UiUtil.comboBox(layout, null, ORDER_BY);
@@ -269,6 +271,10 @@ public class ListKoulutusView extends VerticalLayout {
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getKoulutusDataSource()));
     }
+
+	public void toggleCreateKoulutusB(boolean b) {
+		luoKoulutusB.setEnabled(b);
+	}
     
 
 }

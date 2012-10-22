@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
@@ -524,5 +525,13 @@ public class TarjontaPresenter {
 		HakukohdeViewModel hakukohde = this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(this.tarjontaPublicService.lueHakukohde(kysely).getHakukohde());
 		this._hakukohdeListView.appendKoulutuksetToList(hakukohde);
 		
+	}
+	
+	public void selectOrganisaatio(String organisaatioOid, String organisaatioName) {
+		_rootView.getBreadcrumbsView().removeAllComponents();
+		_rootView.getBreadcrumbsView().addComponent(new Label(organisaatioName));
+		_model.setOrganisaatioOid(organisaatioOid);
+		_model.setOrganisaatioName(organisaatioName);
+		this.getKoulutusListView().toggleCreateKoulutusB(true);
 	}
 }
