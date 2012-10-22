@@ -317,6 +317,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 					sisaisetHakuajatContainer.addRowToHakuajat();
 				}
 			});
+            lisaaHakuaika.setEnabled(false);
             vl.addComponent(sisaisetHakuajatTable);
 
             grid.addComponent(vl);
@@ -542,7 +543,9 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     	public void bindHakuajat() {
     		List<HakuaikaViewModel> hakuajat = new ArrayList<HakuaikaViewModel>();
     		for (HakuajatView curRow : this.getItemIds()) {
-    			hakuajat.add(curRow.getModel());
+    			if (curRow.getLoppuPvm().getValue() != null && curRow.getAlkuPvm().getValue() != null) {
+    				hakuajat.add(curRow.getModel());
+    			}
     		}
     		_presenter.getHakuModel().setSisaisetHakuajat(hakuajat);
     	}
