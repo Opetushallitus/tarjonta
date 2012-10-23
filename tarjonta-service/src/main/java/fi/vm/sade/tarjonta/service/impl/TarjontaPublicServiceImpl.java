@@ -18,10 +18,12 @@ package fi.vm.sade.tarjonta.service.impl;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.util.CollectionUtils;
@@ -71,19 +73,16 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Autowired
     private HakuBusinessService businessService;
-
     @Autowired
     private HakuDAO hakuDao;
-
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
-
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
+    @Autowired
+    private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
     private ConversionService conversionService;
-    
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public TarjontaPublicServiceImpl() {
@@ -221,16 +220,28 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         return vastaus;
     }
 
-    public LueKoulutusVastausTyyppi lueKoulutus(
-        LueKoulutusKyselyTyyppi kysely) {
-        KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findBy("oid", kysely.getOid()).isEmpty() ? null : this.koulutusmoduuliToteutusDAO.
-            findBy("oid", kysely.getOid()).get(0);
-        return convert(komoto);
+    public LueKoulutusVastausTyyppi lueKoulutus(LueKoulutusKyselyTyyppi kysely) {
+        KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(kysely.getOid());
+
+        LueKoulutusVastausTyyppi convert = convert(komoto);
+        
+        //
+        KoodistoKoodiTyyppi koulutusKoodi = new KoodistoKoodiTyyppi();
+        koulutusKoodi.setArvo(komoto.getKoulutusmoduuli().getKoulutusNimi());
+        koulutusKoodi.setUri(komoto.getKoulutusmoduuli().getKoulutusKoodi());
+        convert.setKoulutusKoodi(koulutusKoodi);
+
+        KoodistoKoodiTyyppi koulutusOhjelmaKoodi = new KoodistoKoodiTyyppi();
+        koulutusOhjelmaKoodi.setArvo(komoto.getKoulutusmoduuli().getKoulutusNimi());
+        koulutusOhjelmaKoodi.setUri(komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi());
+        convert.setKoulutusohjelmaKoodi(koulutusOhjelmaKoodi);
+
+        return convert;
     }
 
     private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus toteutus) {
-
         LueKoulutusVastausTyyppi koulutus = new LueKoulutusVastausTyyppi();
+
         KoodistoKoodiTyyppi opetusmuotoKoodi = new KoodistoKoodiTyyppi();
         opetusmuotoKoodi.setUri(toteutus.getOpetusmuotos().isEmpty() ? null : toteutus.getOpetusmuotos().iterator().next().getKoodiUri());
         koulutus.setOpetusmuoto(opetusmuotoKoodi);
@@ -265,20 +276,15 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         return koulutus;
 
     }
-        
-        
-        
 
-	@Override
-	public LueHakukohdeVastausTyyppi lueHakukohde(LueHakukohdeKyselyTyyppi kysely) {
+    @Override
+    public LueHakukohdeVastausTyyppi lueHakukohde(LueHakukohdeKyselyTyyppi kysely) {
 //		Hakukohde hakukohde = hakukohdeDAO.findBy("oid", kysely.getOid()).get(0);
-                List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(kysely.getOid());
-                Hakukohde hakukohde = hakukohdes.get(0);
-                HakukohdeTyyppi hakukohdeTyyppi = conversionService.convert(hakukohde, HakukohdeTyyppi.class);
-                LueHakukohdeVastausTyyppi vastaus = new LueHakukohdeVastausTyyppi();
-		vastaus.setHakukohde(hakukohdeTyyppi);
-		return vastaus;
-	}
-
+        List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(kysely.getOid());
+        Hakukohde hakukohde = hakukohdes.get(0);
+        HakukohdeTyyppi hakukohdeTyyppi = conversionService.convert(hakukohde, HakukohdeTyyppi.class);
+        LueHakukohdeVastausTyyppi vastaus = new LueHakukohdeVastausTyyppi();
+        vastaus.setHakukohde(hakukohdeTyyppi);
+        return vastaus;
+    }
 }
-

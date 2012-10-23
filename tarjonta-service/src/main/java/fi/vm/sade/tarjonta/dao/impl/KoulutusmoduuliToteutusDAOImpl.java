@@ -15,10 +15,19 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.QHakukohde;
+import fi.vm.sade.tarjonta.model.QKoulutusSisaltyvyys;
+import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
+import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
 import java.util.List;
+import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -37,8 +46,18 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         } else {
             throw new IllegalStateException("multiple results for oid: " + oid);
         }
+    }
+
+    @Override
+    public KoulutusmoduuliToteutus findKomotoByOid(String oid) {
+        Query query = getEntityManager().createQuery("SELECT k FROM KoulutusmoduuliToteutus k LEFT JOIN FETCH k.koulutusmoduuli where k.oid=:oid");
+        query.setParameter("oid", oid);
+        return (KoulutusmoduuliToteutus) query.getSingleResult();
+
 
     }
 
+    protected JPAQuery from(EntityPath<?>... o) {
+        return new JPAQuery(getEntityManager()).from(o);
+    }
 }
-
