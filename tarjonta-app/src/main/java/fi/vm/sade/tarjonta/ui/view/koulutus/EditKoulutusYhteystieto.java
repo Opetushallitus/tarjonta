@@ -75,6 +75,8 @@ public class EditKoulutusYhteystieto extends VerticalLayout {
         ddt.setVisibleColumns(new Object[]{"etunimet", "sukunimi", "titteli", "email", "puhelin", "kielet"});
         layout.addComponent(ddt);
         
+        yhteyshenkiloContainer.addAll(koulutusPerustiedotModel.getYhteyshenkilot());
+        
         ddt.addListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {

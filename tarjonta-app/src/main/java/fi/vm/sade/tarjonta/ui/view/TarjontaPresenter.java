@@ -405,6 +405,7 @@ public class TarjontaPresenter {
 
             web.setTyyppi(linkit.getLinkkityyppi());
             web.setUri(linkit.getUrl());
+            koulutus.getLinkki().add(web);
         }
 
         tarjontaAdminService.lisaaKoulutus(koulutus);

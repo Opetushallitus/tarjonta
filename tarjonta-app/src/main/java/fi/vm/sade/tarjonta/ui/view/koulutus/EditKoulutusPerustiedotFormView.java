@@ -135,8 +135,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
      * Ammatillinen:
      * A list of key words.
      */
-    @PropertyId("avainsanat")
-    private KoodistoComponent kcAvainsanat;
+//    @PropertyId("avainsanat")
+//    private KoodistoComponent kcAvainsanat;
     /*
      * Language selection, only for lukio.
      */
@@ -186,7 +186,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         buildGridKoulutuslajiRow(this, "Koulutuslaji");
 
         //only for 'Ammatillinen perustutkintoon johtava koulutus' -section
-        buildGridAvainsanatRow(this, "Avainsanat");
+       // buildGridAvainsanatRow(this, "Avainsanat");
 
 //        //only for 'lukio' -section
 //        buildGridKielivalikoimaRow(this, "Kielivalikoima");
@@ -378,17 +378,17 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         buildSpacingGridRow(grid);
     }
 
-    private void buildGridAvainsanatRow(GridLayout grid, final String propertyKey) {
-        final KoulutusFormType type = KoulutusFormType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
-        gridLabel(grid, propertyKey, type);
-        kcAvainsanat = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_AVAINSANAT_URI);
-        kcAvainsanat.setImmediate(true);
-        grid.addComponent(kcAvainsanat);
-
-        grid.newLine();
-        buildSpacingGridRow(grid);
-        addSelectedFormComponents(type, kcAvainsanat);
-    }
+//    private void buildGridAvainsanatRow(GridLayout grid, final String propertyKey) {
+//        final KoulutusFormType type = KoulutusFormType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
+//        gridLabel(grid, propertyKey, type);
+//        kcAvainsanat = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_AVAINSANAT_URI);
+//        kcAvainsanat.setImmediate(true);
+//        grid.addComponent(kcAvainsanat);
+//
+//        grid.newLine();
+//        buildSpacingGridRow(grid);
+//        addSelectedFormComponents(type, kcAvainsanat);
+//    }
 
 //    private void buildGridKielivalikoimaRow(GridLayout grid, final String propertyKey) {
 //        final KoulutusFormType type = KoulutusFormType.TOINEN_ASTE_LUKIO;

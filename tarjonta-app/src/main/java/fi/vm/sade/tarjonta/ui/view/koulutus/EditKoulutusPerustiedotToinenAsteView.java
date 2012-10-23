@@ -288,6 +288,9 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         ddt.setVisibleColumns(new Object[]{"linkkityyppi", "url", "kielet"});
         layout.addComponent(ddt);
 
+
+        linkkiContainer.addAll(presenter.getModel().getKoulutusPerustiedotModel().getKoulutusLinkit());
+
         ddt.addListener(new ValueChangeListener() {
             @Override
             public void valueChange(ValueChangeEvent event) {
@@ -305,5 +308,4 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         cssLayout.addComponent(UiUtil.label(null, i18nProperty));
         layout.addComponent(cssLayout);
     }
-
 }
