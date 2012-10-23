@@ -42,6 +42,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
@@ -163,13 +164,13 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
             Object rootItem = hc.addItem();
 
-            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey(), false));
+            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(presenter.getOrganisaatioNimiByOid(e.getKey()), false));
 
             for (HakukohdeTulos curHakukohde : e.getValue()) {
                 HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde);
                 hc.addItem(curHakukohde);
                 hc.setParent(curHakukohde, rootItem);
-                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getHakukohdeNimi(curHakukohde.getHakukohde().getNimi()), true));
+                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getKoodiNimi(curHakukohde.getHakukohde().getNimi()), true));
                 hc.setChildrenAllowed(curHakukohde, false);
             }
         }
@@ -178,13 +179,13 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     
     /**
      * Returns the name of the hakukohde based on koodisto uri given.
-     * @param hakukohdeUri the koodisto uri given.
+     * @param koodiUri the koodisto uri given.
      * @return
      */
-    private String getHakukohdeNimi(String hakukohdeUri) {
-    	String nimi = _tarjontaUIHelper.getKoodiNimi(hakukohdeUri, I18N.getLocale());
+    private String getKoodiNimi(String koodiUri) {
+    	String nimi = _tarjontaUIHelper.getKoodiNimi(koodiUri, I18N.getLocale());
     	if ("".equals(nimi)) {
-    		nimi = hakukohdeUri;
+    		nimi = koodiUri;
     	}
     	return nimi; 
     }
@@ -284,7 +285,13 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 			HakukohdeResultRow rowStyle = new HakukohdeResultRow();
 			hc.addItem(komotoOid);
 			hc.setParent(komotoOid, item);
-			hc.getContainerProperty(komotoOid, COLUMN_A).setValue(rowStyle.format(this.presenter.getKoulutusNimiByOid(komotoOid), false));
+			KoulutusKoosteTyyppi koulutus = presenter.getKoulutusByOid(komotoOid);
+			String koulutusNimi = "";
+			if (koulutus != null) {
+				koulutusNimi = getKoodiNimi(koulutus.getKoulutuskoodi()) + ", " 
+					 + getKoodiNimi(koulutus.getKoulutusohjelmakoodi());
+			} 
+			hc.getContainerProperty(komotoOid, COLUMN_A).setValue(rowStyle.format(koulutusNimi, false));
 			hc.setChildrenAllowed(komotoOid, false);
 		}
 		this.categoryTree.setCollapsed(item, false);

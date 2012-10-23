@@ -175,7 +175,7 @@ public class ListKoulutusView extends VerticalLayout {
 
             Object rootItem = hc.addItem();
 
-            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey(), false));
+            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(presenter.getOrganisaatioNimiByOid(e.getKey()), false));
 
             for (KoulutusTulos curKoulutus : e.getValue()) {
                 KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus);

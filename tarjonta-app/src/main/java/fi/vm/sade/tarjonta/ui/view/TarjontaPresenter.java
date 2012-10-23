@@ -25,6 +25,7 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -40,6 +41,7 @@ import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
@@ -87,6 +89,8 @@ public class TarjontaPresenter {
     private TarjontaAdminService tarjontaAdminService;
     @Autowired(required = true)
     private TarjontaPublicService tarjontaPublicService;
+    @Autowired(required = true)
+    private OrganisaatioService organisaatioService;
     @Autowired(required = true)
     private TarjontaModel _model;
     @Autowired(required = true)
@@ -469,6 +473,16 @@ public class TarjontaPresenter {
 
         return map;
     }
+    
+    public String getOrganisaatioNimiByOid(String organisaatioOid) {
+    	String vastaus = organisaatioOid;
+    	try {
+    		vastaus = this.organisaatioService.findByOid(organisaatioOid).getNimiFi();
+    	} catch (Exception ex) {
+    		LOG.error(ex.getMessage());
+    	}
+    	return vastaus;
+    }
 
     /**
      * Gets the oids of the selectd koulutuses.
@@ -606,12 +620,12 @@ public class TarjontaPresenter {
      * @param komotoOid - the koulutus oid for which the name is returned
      * @return the name of the koulutus
      */
-    public String getKoulutusNimiByOid(String komotoOid) {
+    public KoulutusKoosteTyyppi getKoulutusByOid(String komotoOid) {
         for (KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
             if (curKoulutus.getKoulutus().getKoulutusmoduuliToteutus().equals(komotoOid)) {
-                return curKoulutus.getKoulutus().getNimi();
+                return curKoulutus.getKoulutus();
             }
         }
-        return komotoOid;
+        return null;
     }
 }
