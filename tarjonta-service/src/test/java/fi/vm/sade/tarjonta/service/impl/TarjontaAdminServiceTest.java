@@ -49,6 +49,7 @@ import java.util.Date;
 import java.util.List;
 
 import java.util.Set;
+import junit.framework.Assert;
 
 /**
  *
@@ -177,9 +178,22 @@ public class TarjontaAdminServiceTest {
         moduuli.setKoulutusohjelmaKoodi("1603");
         koulutusmoduuliDAO.insert(moduuli);
 
-        adminService.lisaaKoulutus(createSampleKoulutus());
+        LisaaKoulutusTyyppi lisaaKoulutus = createSampleKoulutus();
+        adminService.lisaaKoulutus(lisaaKoulutus);
 
         flush();
+
+        KoulutusmoduuliToteutus loaded = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
+        assertNotNull("koulutus was not inserted by lisaaKoulutus", loaded);
+
+        assertKoulutusEquals(lisaaKoulutus, loaded);
+
+
+    }
+
+    private void assertKoulutusEquals(LisaaKoulutusTyyppi expected, KoulutusmoduuliToteutus actual) {
+
+        assertEquals(expected.getYhteyshenkilo().size(), actual.getYhteyshenkilos().size());
 
     }
 

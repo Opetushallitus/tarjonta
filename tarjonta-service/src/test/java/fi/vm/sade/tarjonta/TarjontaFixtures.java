@@ -127,9 +127,23 @@ public class TarjontaFixtures {
         t.setMaksullisuus(null);
         t.addOpetuskieli(new KoodistoUri("http://kielet/fi"));
         t.addOpetusmuoto(new KoodistoUri("http://opetusmuodot/lahiopetus"));
+        t.addYhteyshenkilo(createSimpleYhteyshenkilo(null));
 
         return t;
 
+    }
+
+
+    public Yhteyshenkilo createSimpleYhteyshenkilo(String oid) {
+        Yhteyshenkilo h = new Yhteyshenkilo();
+        h.setEtunimis("Irma");
+        h.setHenkioOid(oid);
+        h.setKielis("sv", "en");
+        h.setPuhelin("+358123123123");
+        h.setSahkoposti("irma@oph.fi");
+        h.setSukunimi("Birgerdahl");
+        h.setTitteli("Spesialisti");
+        return h;
     }
 
     public Koulutusmoduuli createTutkinnonOsa() {

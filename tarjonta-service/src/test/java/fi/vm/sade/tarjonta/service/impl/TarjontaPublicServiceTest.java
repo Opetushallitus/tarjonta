@@ -72,9 +72,9 @@ public class TarjontaPublicServiceTest {
     private static final String ORGANISAATIO_A = "1.2.3.4.5";
 
     private static final String ORGANISAATIO_B = "1.2.3.4.6";
-    
+
     private static final String KOMOTO_OID = "11.12.23.34.56";
-    
+
     private static final String HAKUKOHDE_OID = "12.13.24.35.57";
 
     @Autowired
@@ -111,7 +111,7 @@ public class TarjontaPublicServiceTest {
         haku.setNimiFi("yhteishaku 1");
         haku.setHakutapaUri(YHTEISHAKU);
         hakuDAO.insert(haku);
-        
+
         // 0. koulutusmoduuli+toteutus lisätään testaamaan hakukohteiden haun oikeellisuutta sekä yhden koulutusmoduulin lukua.
         koulutusmoduuli = fixtures.createTutkintoOhjelma();
         koulutusmoduuliDAO.insert(koulutusmoduuli);
@@ -202,7 +202,7 @@ public class TarjontaPublicServiceTest {
         assertEquals(KoodistoContract.TarjontaTilat.VALMIS, hakukohde.getTila());
 
     }
-    
+
     @Test
     public void testEtsiKoulutukset() {
 
@@ -229,33 +229,34 @@ public class TarjontaPublicServiceTest {
         rivi = rivit.get(1);
         koulutus = rivi.getKoulutus();
         assertEquals(ORGANISAATIO_A, koulutus.getTarjoaja());
-        
+
         rivi = rivit.get(2);
         koulutus = rivi.getKoulutus();
         assertEquals(ORGANISAATIO_B, koulutus.getTarjoaja());
 
     }
-    
+
     @Test
     public void testLueKoulutus() {
 
     	LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
     	kysely.setOid(KOMOTO_OID);
-    	
+
     	LueKoulutusVastausTyyppi vastaus = service.lueKoulutus(kysely);
 
         assertNotNull(vastaus);
-       
+
         assertTrue(vastaus.getOpetuskieli().get(0).getUri().equals("http://kielet/fi"));
+        assertEquals(1, vastaus.getYhteyshenkilo().size());
 
     }
-    
+
     @Test
     public void testLueHakukohde() {
 
     	LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
     	kysely.setOid(HAKUKOHDE_OID);
-    	
+
     	LueHakukohdeVastausTyyppi vastaus = service.lueHakukohde(kysely);
 
         assertNotNull(vastaus);
