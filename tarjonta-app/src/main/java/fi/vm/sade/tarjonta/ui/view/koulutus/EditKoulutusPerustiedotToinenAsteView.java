@@ -270,7 +270,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
 
         DialogDataTable<KoulutusPerustiedotViewModel> ddt =
                 new DialogDataTable<KoulutusPerustiedotViewModel>(modelClass, linkkiContainer);
-        ddt.setButtonProperties("DialogDataTable.LisaaUusi.Linkkityyppi");
+        ddt.setButtonProperties("LisaaUusi.Linkkityyppi");
         ddt.buildByFormLayout(layout, "Luo uusi linkkityyppi", 400, 360, new EditKoulutusPerustiedotLinkkiView());
         ddt.setColumnHeader("linkkityyppi", T("Linkkityyppi"));
         ddt.setColumnHeader("url", T("LinkkiURL"));

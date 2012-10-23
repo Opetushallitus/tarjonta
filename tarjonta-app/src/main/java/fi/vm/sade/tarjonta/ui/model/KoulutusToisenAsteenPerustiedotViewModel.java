@@ -43,6 +43,8 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         super();
         clearModel(status);
 
+        setOid(koulutus.getOid());
+        
         setKoulutusKoodi((koulutus.getKoulutusKoodi() != null) ? koulutus.getKoulutusKoodi().getUri() : null);
         final String koodiUri = koulutus.getKoulutusohjelmaKoodi() != null ? koulutus.getKoulutusohjelmaKoodi().getUri() : null;
         setKoulutusohjema(new KoulutusohjelmaModel(koodiUri, null, null));
@@ -57,10 +59,8 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
             setSuunniteltuKesto(koulutus.getKesto().getArvo());
             setSuunniteltuKestoTyyppi(koulutus.getKesto().getYksikko());
         }
-        //TODO: fix this
-        List<KoodistoKoodiTyyppi> list = new ArrayList<KoodistoKoodiTyyppi>();
-        list.add(createKoodi(koulutus.getOpetusmuoto().getUri()));
-        addOpetusmuoto(list);
+  
+        addOpetusmuoto(koulutus.getOpetusmuoto());
     }
 
     public LisaaKoulutusTyyppi mapToLisaaKoulutusTyyppi(String oid) {
@@ -82,13 +82,12 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         koulutuksenKestoTyyppi.setYksikko(this.getSuunniteltuKestoTyyppi());
         lisaaKoulutusTyyppi.setKesto(koulutuksenKestoTyyppi);
 
-        //TODO: fix this
-        if (this.getOpetusmuoto() != null && !this.getOpetusmuoto().isEmpty()) {
-            lisaaKoulutusTyyppi.setOpetusmuoto(createKoodi(this.getOpetusmuoto().iterator().next()));
+        for (String opetusmuoto : this.getOpetusmuoto()) {
+            lisaaKoulutusTyyppi.getOpetusmuoto().add(createKoodi(opetusmuoto));
         }
 
-        for (String koodi : this.getOpetuskielet()) {
-            lisaaKoulutusTyyppi.getOpetuskieli().add(createKoodi(koodi));
+        for (String opetuskielet : this.getOpetuskielet()) {
+            lisaaKoulutusTyyppi.getOpetuskieli().add(createKoodi(opetuskielet));
         }
 
         return lisaaKoulutusTyyppi;

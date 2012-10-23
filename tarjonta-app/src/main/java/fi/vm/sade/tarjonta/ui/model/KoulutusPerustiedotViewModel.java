@@ -29,6 +29,12 @@ import java.util.Set;
 public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
 
     /*
+     * OID of the loaded enity.
+     * Update database
+     */
+    private String oid;
+    
+    /*
      * Status of active form.
      */
     private DocumentStatus documentStatus;
@@ -317,5 +323,19 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      */
     public void setOpetusmuoto(Set<String> opetusmuoto) {
         this.opetusmuoto = opetusmuoto;
+    }
+
+    /**
+     * @return the oid
+     */
+    public String getOid() {
+        return oid;
+    }
+
+    /**
+     * @param oid the oid to set
+     */
+    public void setOid(String oid) {
+        this.oid = oid;
     }
 }

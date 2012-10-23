@@ -135,9 +135,9 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     /*
      * Language selection, only for lukio.
      */
-    @NotNull(message = "{validation.Koulutus.kielivalikoima.notNull}")
-    @PropertyId("kielivalikoima")
-    private KoodistoComponent kcKielivalikoima;
+//    @NotNull(message = "{validation.Koulutus.kielivalikoima.notNull}")
+//    @PropertyId("kielivalikoima")
+//    private KoodistoComponent kcKielivalikoima;
 
     public EditKoulutusPerustiedotFormView(TarjontaPresenter presenter, KoulutusToisenAsteenPerustiedotViewModel model) {
         super(2, 1);
@@ -183,8 +183,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         //only for 'Ammatillinen perustutkintoon johtava koulutus' -section
         buildGridAvainsanatRow(this, "Avainsanat");
 
-        //only for 'lukio' -section
-        buildGridKielivalikoimaRow(this, "Kielivalikoima");
+//        //only for 'lukio' -section
+//        buildGridKielivalikoimaRow(this, "Kielivalikoima");
 
         //set components to visible or hide them by selected form type. 
         //An example 'lukio', 'ammatillinen koulutus' ...
@@ -382,18 +382,18 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         addSelectedFormComponents(type, kcAvainsanat);
     }
 
-    private void buildGridKielivalikoimaRow(GridLayout grid, final String propertyKey) {
-        final KoulutusFormType type = KoulutusFormType.TOINEN_ASTE_LUKIO;
-        gridLabel(grid, propertyKey, type);
-
-        kcKielivalikoima = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KIELIVALIKOIMA_URI);
-        kcKielivalikoima.setImmediate(true);
-        grid.addComponent(kcKielivalikoima);
-
-        grid.newLine();
-        buildSpacingGridRow(grid);
-        addSelectedFormComponents(type, kcKielivalikoima);
-    }
+//    private void buildGridKielivalikoimaRow(GridLayout grid, final String propertyKey) {
+//        final KoulutusFormType type = KoulutusFormType.TOINEN_ASTE_LUKIO;
+//        gridLabel(grid, propertyKey, type);
+//
+//        kcKielivalikoima = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KIELIVALIKOIMA_URI);
+//        kcKielivalikoima.setImmediate(true);
+//        grid.addComponent(kcKielivalikoima);
+//
+//        grid.newLine();
+//        buildSpacingGridRow(grid);
+//        addSelectedFormComponents(type, kcKielivalikoima);
+//    }
 
     private void buildGridOpetusmuotoRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);

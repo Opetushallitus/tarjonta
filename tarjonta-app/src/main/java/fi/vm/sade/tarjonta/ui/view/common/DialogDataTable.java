@@ -192,7 +192,7 @@ public class DialogDataTable<T> extends Table {
                 if (selected != null) {
                     dialog.getForm().setItemDataSource(new BeanItem(selected));
                     btnEdit.setEnabled(true);
-                    btnDelete.setEnabled(true);
+                    btnDelete.setEnabled(true); 
                 }
             }
         });

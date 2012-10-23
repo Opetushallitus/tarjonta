@@ -368,10 +368,11 @@ public class TarjontaPresenter {
         final String newOid = oidService.newOid(NodeClassCode.TEKN_5);
         LOG.debug("Requested new OID : {}", newOid);
         LOG.debug("Output data model : {}", model);
+        LOG.debug("Output KoulutusYhteyshenkiloViewModel : {}", model.getYhteyshenkilot());
         LisaaKoulutusTyyppi koulutus = model.mapToLisaaKoulutusTyyppi(newOid);
 
         for (KoulutusYhteyshenkiloViewModel yhteyshenkilo : model.getYhteyshenkilot()) {
-            LOG.debug("Output KoulutusYhteyshenkiloViewModel : {}", yhteyshenkilo);
+            LOG.debug("Output KoulutusYhteyshenkiloViewModel object : {}", yhteyshenkilo);
             YhteyshenkiloTyyppi yhteyshenkiloTyyppi = new YhteyshenkiloTyyppi();
             yhteyshenkiloTyyppi.setHenkiloOid(oidService.newOid(NodeClassCode.TEKN_5));
             yhteyshenkiloTyyppi.setEtunimet(yhteyshenkilo.getEtunimet());
@@ -430,6 +431,7 @@ public class TarjontaPresenter {
 
     /**
      * Gets the list view of koulutus objects.
+     *
      * @return the koulutus list view
      */
     public ListKoulutusView getKoulutusListView() {
@@ -438,6 +440,7 @@ public class TarjontaPresenter {
 
     /**
      * Sets the list view of koulutus objects
+     *
      * @param listKoulutusView - the list view of koulutus objects to set
      */
     public void setKoulutusListView(ListKoulutusView listKoulutusView) {
@@ -568,46 +571,47 @@ public class TarjontaPresenter {
         // TODO Auto-generated method stub
     }
 
-	/**
-	 * Shows the koulutus objects for a hakukohde in the ListHakukohdeView.
-	 * @param oid
-	 */
-	public void showKoulutuksetForHakukohde(String oid) {
-		LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
-		kysely.setOid(oid);
-		HakukohdeViewModel hakukohde = this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(this.tarjontaPublicService.lueHakukohde(kysely).getHakukohde());
-		this._hakukohdeListView.appendKoulutuksetToList(hakukohde);
-		
-	}
-	
-	/**
-	 * Selects the organisaatio in tarjonta, by setting the organisaatio name in breadcrumb
-	 * and setting the organisaatioOid and organisaatioNimi in tarjonta model.
-	 * Enables the create koulutus button in koulutus list view.
-	 * 
-	 * @param organisaatioOid - the organisaatio oid to select
-	 * @param organisaatioName - the organisaatio name to select
-	 */
-	public void selectOrganisaatio(String organisaatioOid, String organisaatioName) {
-		_rootView.getBreadcrumbsView().removeAllComponents();
-		_rootView.getBreadcrumbsView().addComponent(new Label(organisaatioName));
-		_model.setOrganisaatioOid(organisaatioOid);
-		_model.setOrganisaatioName(organisaatioName);
-		this.getKoulutusListView().toggleCreateKoulutusB(true);
-	}
+    /**
+     * Shows the koulutus objects for a hakukohde in the ListHakukohdeView.
+     *
+     * @param oid
+     */
+    public void showKoulutuksetForHakukohde(String oid) {
+        LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
+        kysely.setOid(oid);
+        HakukohdeViewModel hakukohde = this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(this.tarjontaPublicService.lueHakukohde(kysely).getHakukohde());
+        this._hakukohdeListView.appendKoulutuksetToList(hakukohde);
 
+    }
 
-	/**
-	 * Gets the name of koulutus by its oid.
-	 * @param komotoOid - the koulutus oid for which the name is returned
-	 * @return the name of the koulutus
-	 */
-	public String getKoulutusNimiByOid(String komotoOid) {
-		for(KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
-			if (curKoulutus.getKoulutus().getKoulutusmoduuliToteutus().equals(komotoOid)) {
-				return curKoulutus.getKoulutus().getNimi();
-			}
-		}
-		return komotoOid;
-	}
+    /**
+     * Selects the organisaatio in tarjonta, by setting the organisaatio name in
+     * breadcrumb and setting the organisaatioOid and organisaatioNimi in
+     * tarjonta model. Enables the create koulutus button in koulutus list view.
+     *
+     * @param organisaatioOid - the organisaatio oid to select
+     * @param organisaatioName - the organisaatio name to select
+     */
+    public void selectOrganisaatio(String organisaatioOid, String organisaatioName) {
+        _rootView.getBreadcrumbsView().removeAllComponents();
+        _rootView.getBreadcrumbsView().addComponent(new Label(organisaatioName));
+        _model.setOrganisaatioOid(organisaatioOid);
+        _model.setOrganisaatioName(organisaatioName);
+        this.getKoulutusListView().toggleCreateKoulutusB(true);
+    }
+
+    /**
+     * Gets the name of koulutus by its oid.
+     *
+     * @param komotoOid - the koulutus oid for which the name is returned
+     * @return the name of the koulutus
+     */
+    public String getKoulutusNimiByOid(String komotoOid) {
+        for (KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
+            if (curKoulutus.getKoulutus().getKoulutusmoduuliToteutus().equals(komotoOid)) {
+                return curKoulutus.getKoulutus().getNimi();
+            }
+        }
+        return komotoOid;
+    }
 }

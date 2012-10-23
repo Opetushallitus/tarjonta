@@ -37,7 +37,7 @@ public class EditKoulutusYhteystieto extends VerticalLayout {
 
     private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
     @PropertyId("yhteyshenkilot")
-    DialogDataTable<KoulutusPerustiedotViewModel> ddt;
+    DialogDataTable<KoulutusYhteyshenkiloViewModel> ddt;
 
     public EditKoulutusYhteystieto(KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel) {
         this.koulutusPerustiedotModel = koulutusPerustiedotModel;
@@ -51,17 +51,17 @@ public class EditKoulutusYhteystieto extends VerticalLayout {
      */
     private void addYhteyshenkiloSelectorAndEditor(AbstractLayout layout) {
         // headerLayout(layout, "Yhteyshenkilo");
-
+final Class classYhteshenkilo = KoulutusYhteyshenkiloViewModel.class;
+        
         //Attach data model to Vaadin bean container.
         final BeanItemContainer<KoulutusYhteyshenkiloViewModel> yhteyshenkiloContainer =
-                new BeanItemContainer<KoulutusYhteyshenkiloViewModel>(KoulutusYhteyshenkiloViewModel.class);
-        yhteyshenkiloContainer.addAll(koulutusPerustiedotModel.getYhteyshenkilot());
-
+                new BeanItemContainer<KoulutusYhteyshenkiloViewModel>(classYhteshenkilo,koulutusPerustiedotModel.getYhteyshenkilot());
+     
         //Initialize dialog table with control buttons.
-        ddt = new DialogDataTable<KoulutusPerustiedotViewModel>(KoulutusYhteyshenkiloViewModel.class, yhteyshenkiloContainer);
+        ddt = new DialogDataTable<KoulutusYhteyshenkiloViewModel>(classYhteshenkilo, yhteyshenkiloContainer);
 
         //Overide default button property
-        ddt.setButtonProperties("DialogDataTable.LisaaUusi.Yhteyshenkilo");
+        ddt.setButtonProperties("LisaaUusi.Yhteyshenkilo");
 
         //Add form for dialog.
         ddt.buildByFormLayout(layout, "Luo uusi yhteystieto", 350, 500, new EditKoulutusPerustiedotYhteystietoView());
