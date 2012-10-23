@@ -15,17 +15,16 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
-import org.slf4j.Logger;
 
 /**
- * Build layout lazy way.
+ * Build layout the lazy way.
  *
  * @author Jani Wilén
  * @author mlyly
  */
-public abstract class AbstractVerticalLayout extends VerticalLayout {
+public abstract class AbstractHorizontalLayout extends HorizontalLayout {
 
     private transient I18NHelper _i18n;
 
@@ -64,6 +63,4 @@ public abstract class AbstractVerticalLayout extends VerticalLayout {
      * Implement this is subclasses.
      */
     protected abstract void buildLayout();
-
 }
-

@@ -21,16 +21,15 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Form;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
@@ -43,68 +42,45 @@ import org.vaadin.addon.formbinder.ViewBoundForm;
  */
 @Configurable
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
-public class SearchSpesificationView extends HorizontalLayout {
+public class SearchSpesificationView extends AbstractHorizontalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(SearchSpesificationView.class);
     private Button _btnTyhjenna;
     private Button _btnHae;
 
-    /*@PropertyId("hanKohdejoukko")
-    private KoodistoComponent _cbHaunKohdejoukko;
-    @PropertyId("hakutyyppi")
-    private KoodistoComponent _cbHakutyyppi;
-    @PropertyId("hakutapa")
-    private KoodistoComponent _cbHakutapa;*/
+    //    TODO these were removed at the last spesification change... They'll be back.
+    //
+    //    @PropertyId("haunKohdejoukko")
+    //    private KoodistoComponent _cbHaunKohdejoukko;
+    //    @PropertyId("hakutyyppi")
+    //    private KoodistoComponent _cbHakutyyppi;
+    //    @PropertyId("hakutapa")
+    //    private KoodistoComponent _cbHakutapa;
+
     @PropertyId("koulutuksenAlkamiskausi")
     private KoodistoComponent _cbKoulutuksenAlkamiskausi;
     @PropertyId("hakukausi")
     private KoodistoComponent _cbHakukausi;
     @PropertyId("searchSpec")
     private TextField _tfSearch;
-
-    @Value("${koodisto-uris.hakukausi:http://hakukausi}")
-    private String _koodistoUriHakukausi;
-    @Value("${koodisto-uris.hakutapa:http://hakutapa}")
-    private String _koodistoUriHakutapa;
-    @Value("${koodisto-uris.hakutyyppi:http://hakutyyppi}")
-    private String _koodistoUriHakutyyppi;
-    @Value("${koodisto-uris.haunKohdejoukko:http://haunkohdejoukko}")
-    private String _koodistoUriHaunKohdejoukko;
-    @Value("${koodisto-uris.koulutuksenAlkamiskausi:http://alkamiskausi}")
-    private String _koodistoUriKoulutuksenAlkamiskausi;
-
     private I18NHelper _i18nHelper = new I18NHelper(this);
 
     /* Model for search spesifications */
-    private KoulutusSearchSpesificationViewModel _model  = new KoulutusSearchSpesificationViewModel();
+    private KoulutusSearchSpesificationViewModel _model = new KoulutusSearchSpesificationViewModel();
 
     /* View bound form for search specs. This for is bound to presenter.getSearchSpec model. */
     private Form _form;
 
-    private boolean _attached = false;
-
-    public SearchSpesificationView() {
-        super();
-    }
-
     @Override
-    public void attach() {
-        super.attach();
-
-        if (_attached) {
-            return;
-        }
-        _attached = true;
-
-
+    protected void buildLayout() {
         //
         // Create fields
         //
-        _cbHakukausi = UiBuilder.koodistoComboBox(null,_koodistoUriHakukausi, null, null, T("hakukausi.prompt"));
-        /*_cbHakutapa = UiBuilder.koodistoComboBox(null,_koodistoUriHakutapa, null, null, T("hakutapa.prompt"));
-        _cbHakutyyppi = UiBuilder.koodistoComboBox(null,_koodistoUriHakutyyppi, null, null, T("hakutyyppi.prompt"));
-        _cbHaunKohdejoukko = UiBuilder.koodistoComboBox(null,_koodistoUriHaunKohdejoukko, null, null, T("haunkohdejoukko.prompt"));*/
-        _cbKoulutuksenAlkamiskausi = UiBuilder.koodistoComboBox(null,_koodistoUriKoulutuksenAlkamiskausi, null, null, T("koulutuksenalkamiskausi.prompt"));
+        _cbHakukausi = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUKAUSI_URI, null, null, T("hakukausi.prompt"));
+//        _cbHakutapa = UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_HAKUTAPA_URI, null, null, T("hakutapa.prompt"));
+//        _cbHakutyyppi = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI, null, null, T("hakutyyppi.prompt"));
+//        _cbHaunKohdejoukko = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T("haunkohdejoukko.prompt"));
+        _cbKoulutuksenAlkamiskausi = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KOULUTUKSEN_ALKAMISKAUSI_URI, null, null, T("koulutuksenalkamiskausi.prompt"));
         _tfSearch = UiBuilder.textField(null, "", T("hakuehto.prompt"), false);
         _btnHae = UiBuilder.buttonSmallPrimary(null, T("hae"));
         _btnTyhjenna = UiBuilder.buttonSmallPrimary(null, T("tyhjenna"));
@@ -114,16 +90,15 @@ public class SearchSpesificationView extends HorizontalLayout {
             public void buttonClick(ClickEvent event) {
                 doSearch();
             }
-
         });
 
         addComponent(_tfSearch);
         addComponent(_btnHae);
 
         addComponent(_cbHakukausi);
-        /*addComponent(_cbHakutapa);
-        addComponent(_cbHakutyyppi);
-        addComponent(_cbHaunKohdejoukko);*/
+//        addComponent(_cbHakutapa);
+//        addComponent(_cbHakutyyppi);
+//        addComponent(_cbHaunKohdejoukko);
         addComponent(_cbKoulutuksenAlkamiskausi);
 
         addComponent(_btnTyhjenna);
@@ -138,16 +113,11 @@ public class SearchSpesificationView extends HorizontalLayout {
         //
         _tfSearch.setImmediate(true);
         _tfSearch.addListener(new Property.ValueChangeListener() {
-
             @Override
             public void valueChange(ValueChangeEvent event) {
                 doSearch();
             }
         });
-    }
-
-    private String T(String key) {
-        return _i18nHelper.getMessage(key);
     }
 
     /**
@@ -159,8 +129,11 @@ public class SearchSpesificationView extends HorizontalLayout {
         fireEvent(new SearchEvent(_model));
     }
 
-
+    /**
+     * This event is sent when search is triggered.
+     */
     public class SearchEvent extends Event {
+
         private KoulutusSearchSpesificationViewModel _searchModel;
 
         public SearchEvent(KoulutusSearchSpesificationViewModel model) {
@@ -172,5 +145,4 @@ public class SearchSpesificationView extends HorizontalLayout {
             return _searchModel;
         }
     }
-
 }

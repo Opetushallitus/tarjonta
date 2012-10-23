@@ -16,28 +16,31 @@
 package fi.vm.sade.tarjonta.ui.view.common;
 
 import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
+ * Simple "breadcrumbs" view.
+ *
+ * TODO push, pop, clear, and click functionality
  *
  * @author mlyly
  */
 @Configurable
-public class BreadcrumbsView extends VerticalLayout {
+public class BreadcrumbsView extends AbstractVerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(BreadcrumbsView.class);
 
-    @Autowired
-    private TarjontaPresenter _presenter;
+//    @Autowired
+//    private TarjontaPresenter _presenter;
 
     public BreadcrumbsView() {
         super();
+    }
+
+    @Override
+    protected void buildLayout() {
         addComponent(new Label("-"));
     }
-    
 }
