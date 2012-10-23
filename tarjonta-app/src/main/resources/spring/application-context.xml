@@ -35,11 +35,14 @@
     <bean id="i18n" class="fi.vm.sade.generic.common.I18N"/>
 
     <bean class="fi.vm.sade.koodisto.widget.factory.WidgetFactory" />
-    
+
     <bean id="hakukohdeToDTOConverter" class="fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter"/>
 
     <import resource="application-context-service.xml"/>
     <import resource="application-context-ws.xml"/>
+
+    <import resource="cache-context.xml"/>
+
     <!--<import resource="file:///${user.home:''}/oph-configuration/cache-context.xml"/>-->
 
 </beans>
