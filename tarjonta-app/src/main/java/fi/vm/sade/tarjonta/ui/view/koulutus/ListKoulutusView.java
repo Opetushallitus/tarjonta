@@ -43,6 +43,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl;
@@ -106,6 +107,9 @@ public class ListKoulutusView extends VerticalLayout {
      */
     @Autowired(required = true)
     private TarjontaPresenter presenter;
+    
+    @Autowired(required=true)
+    private TarjontaUIHelper _tarjontaUIHelper;
 
     public ListKoulutusView() {
     	//Initialization of the view layout
@@ -177,7 +181,8 @@ public class ListKoulutusView extends VerticalLayout {
                 KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus);
                 hc.addItem(curKoulutus);
                 hc.setParent(curKoulutus, rootItem);
-                hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(curKoulutus.getKoulutus().getNimi(), true));
+                hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi()) + ", " 
+                																			 + getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi()), true));
                 hc.setChildrenAllowed(curKoulutus, false);
             }
         }
@@ -275,6 +280,19 @@ public class ListKoulutusView extends VerticalLayout {
 	public void toggleCreateKoulutusB(boolean b) {
 		luoKoulutusB.setEnabled(b);
 	}
+	
+    /**
+     * Returns the name of the hakukohde based on koodisto uri given.
+     * @param hakukohdeUri the koodisto uri given.
+     * @return
+     */
+    private String getKoodiNimi(String hakukohdeUri) {
+    	String nimi = _tarjontaUIHelper.getKoodiNimi(hakukohdeUri, I18N.getLocale());
+    	if ("".equals(nimi)) {
+    		nimi = hakukohdeUri;
+    	}
+    	return nimi; 
+    }
     
 
 }
