@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.ui.model;
 
 import java.io.Serializable;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  *
@@ -108,5 +110,17 @@ public class KoulutusohjelmaModel implements Serializable {
         }
 
         return this.getKoodiUri().equals(m.getKoodiUri());
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).
+                append(koodiUri).
+                toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }
