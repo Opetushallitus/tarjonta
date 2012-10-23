@@ -74,7 +74,7 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
         _tfUrl.setWidth("100%");
         this.addComponent(_tfUrl);
 
-        _kcKielet = UiBuilder.koodistoTwinColSelect(this, KoodistoURIHelper.KOODISTO_KIELI_URI, null, null, null);
+        _kcKielet = UiBuilder.koodistoTwinColSelectUri(this, KoodistoURIHelper.KOODISTO_KIELI_URI);
 
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);

@@ -49,7 +49,7 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
     private String developmentRedirect;
     @Value("${tarjonta-app.dev.theme:}")
     private String developmentTheme;
-    
+
     @Autowired
     private TarjontaAdminService tarjontaAdminService;
 
@@ -84,7 +84,7 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
                 toKoulutusView();
             }
         });
-        
+
         window.addComponent(xxxButton);
 
         Button initData = new Button("Luo testidata", new Button.ClickListener() {
@@ -94,9 +94,8 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
                 tarjontaAdminService.initSample(new String());
             }
         });
-        
+
         window.addComponent(initData);
-        
     }
 
     public void toTarjonta() {
@@ -131,7 +130,7 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
                 LOG.info("NEXT!");
             }
         });
-        
+
 
         PageNavigationDTO pageNavigationDTO = new PageNavigationDTO(prev, next, "42/43");
         ShowKoulutusView view  = new ShowKoulutusView("PAGE TITLE", pageNavigationDTO);

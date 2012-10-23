@@ -94,8 +94,8 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
 
         this.addComponent(UiUtil.label(null, i18n.getMessage("YhteyshenkiloKielissa")));
 
-        _kcKielet = UiBuilder.koodistoTwinColSelect(this, KoodistoURIHelper.KOODISTO_KIELI_URI, null, null, null);
-
+        _kcKielet = UiBuilder.koodistoTwinColSelectUri(this, KoodistoURIHelper.KOODISTO_KIELI_URI);
+        
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
         this.addComponent(hl);
@@ -104,7 +104,7 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 LOG.info("fire : SaveEvent");
-                
+
                 fireEvent(new DataTableEvent.SaveEvent(EditKoulutusPerustiedotYhteystietoView.this));
             }
         });

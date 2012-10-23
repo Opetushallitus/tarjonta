@@ -20,6 +20,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -147,60 +148,60 @@ public class UiBuilder extends UiUtil {
         return kc;
     }
 
-    public static KoodistoComponent koodistoTwinColSelect(AbstractOrderedLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
-        return koodistoTwinColSelect(layout, koodistoUri, psi, expression, null);
-    }
+//    public static KoodistoComponent koodistoTwinColSelect(AbstractOrderedLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
+//        return koodistoTwinColSelect(layout, koodistoUri, psi, expression, null);
+//    }
 
-    public static KoodistoComponent koodistoTwinColSelect(AbstractOrderedLayout layout, final String koodistoUri, PropertysetItem psi, String expression, Property.ValueChangeListener listener) {
-        // Koodisto displayed in TwinColSelect
-        TwinColSelect c = twinColSelect(null, null, listener);
-
-        // Only multiple (Set<String>) values allowed!
-        c.setMultiSelect(true);
-
-        final KoodistoComponent kc = WidgetFactory.create(koodistoUri);
-
-        // Wire koodisto to combobox
-        kc.setField(c);
-
-        // Set to be immediate
-        // kc.setImmediate(true);
-
-        // DISPLAYED text
-        kc.setCaptionFormatter(new CaptionFormatter() {
-            @Override
-            public String formatCaption(Object dto) {
-                if (dto instanceof KoodiType) {
-                    KoodiType kdto = (KoodiType) dto;
-                    return KoodistoHelper.getKoodiMetadataForLanguage(kdto, KieliType.FI).getNimi();
-                } else {
-                    return "!KoodiType?: " + dto;
-                }
-            }
-        });
-
-        // BOUND value
-        kc.setFieldValueFormatter(new FieldValueFormatter() {
-            @Override
-            public Object formatFieldValue(Object dto) {
-                if (dto instanceof KoodiType) {
-                    KoodiType kdto = (KoodiType) dto;
-                    return kdto.getKoodiArvo();
-                } else {
-                    return "" + dto;
-                }
-            }
-        });
-
-        // Selected data bound there
-        if (psi != null && expression != null) {
-            kc.setPropertyDataSource(psi.getItemProperty(expression));
-        }
-
-        UiBaseUtil.handleAddComponent(layout, kc);
-
-        return kc;
-    }
+//    public static KoodistoComponent koodistoTwinColSelect(AbstractOrderedLayout layout, final String koodistoUri, PropertysetItem psi, String expression, Property.ValueChangeListener listener) {
+//        // Koodisto displayed in TwinColSelect
+//        TwinColSelect c = twinColSelect(null, null, listener);
+//
+//        // Only multiple (Set<String>) values allowed!
+//        c.setMultiSelect(true);
+//
+//        final KoodistoComponent kc = WidgetFactory.create(koodistoUri);
+//
+//        // Wire koodisto to combobox
+//        kc.setField(c);
+//
+//        // Set to be immediate
+//        // kc.setImmediate(true);
+//
+//        // DISPLAYED text
+//        kc.setCaptionFormatter(new CaptionFormatter() {
+//            @Override
+//            public String formatCaption(Object dto) {
+//                if (dto instanceof KoodiType) {
+//                    KoodiType kdto = (KoodiType) dto;
+//                    return KoodistoHelper.getKoodiMetadataForLanguage(kdto, KieliType.FI).getNimi();
+//                } else {
+//                    return "!KoodiType?: " + dto;
+//                }
+//            }
+//        });
+//
+//        // BOUND value
+//        kc.setFieldValueFormatter(new FieldValueFormatter() {
+//            @Override
+//            public Object formatFieldValue(Object dto) {
+//                if (dto instanceof KoodiType) {
+//                    KoodiType kdto = (KoodiType) dto;
+//                    return kdto.getKoodiArvo();
+//                } else {
+//                    return "" + dto;
+//                }
+//            }
+//        });
+//
+//        // Selected data bound there
+//        if (psi != null && expression != null) {
+//            kc.setPropertyDataSource(psi.getItemProperty(expression));
+//        }
+//
+//        UiBaseUtil.handleAddComponent(layout, kc);
+//
+//        return kc;
+//    }
 
     public static TabSheet koodistoLanguageTabSheets(List<KoodiType> koodisto) {
         TabSheet tab = new TabSheet();
@@ -223,15 +224,18 @@ public class UiBuilder extends UiUtil {
 
     public static TabSheet koodistoLanguageTabSheets(String koodistoUri, Property.ValueChangeListener valueChangeListener) {
         VerticalLayout vl = verticalLayout(true, UiMarginEnum.NONE);
-        koodistoTwinColSelect(vl, koodistoUri, null, null, valueChangeListener);
+        KoodistoComponent kc = koodistoTwinColSelectUri(vl, koodistoUri);
+        if (valueChangeListener != null) {
+            kc.addListener(valueChangeListener);
+        }
 
         TabSheet tab = new TabSheet();
         tab.addTab(vl, "", TAB_ICON_PLUS);
 
         return tab;
     }
-    
-    
+
+
     public static KoodistoComponent koodistoTwinColSelectUri(AbstractLayout layout, final String koodistoUri) {
 
         // Koodisto displayed in TwinColSelect
@@ -262,5 +266,5 @@ public class UiBuilder extends UiUtil {
 
         return kc;
     }
-   
+
 }
