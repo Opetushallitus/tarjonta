@@ -26,7 +26,6 @@ import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.tarjonta.ui.helper.BeanItemMapper;
 import fi.vm.sade.tarjonta.ui.view.koulutus.DialogKoulutusView;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
