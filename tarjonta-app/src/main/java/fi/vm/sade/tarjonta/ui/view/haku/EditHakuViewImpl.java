@@ -20,6 +20,7 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -290,7 +291,8 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             grid.addComponent(UiUtil.label(null, T("Hakuaika")));
 
             VerticalLayout vl = UiUtil.verticalLayout();
-            vl.setSizeUndefined();
+            vl.setWidth(500, Sizeable.UNITS_PIXELS);
+            
 
             this.sisaisetHakuajatTable = new Table();
             this.sisaisetHakuajatTable.setEditable(true);
