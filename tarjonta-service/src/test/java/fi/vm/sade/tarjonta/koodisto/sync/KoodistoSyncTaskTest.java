@@ -51,7 +51,7 @@ public class KoodistoSyncTaskTest extends KoodistoTestSupport {
         syncTask.execute();
         syncTask.removeListener(listener);
 
-        assertEquals(2, listener.getCountOnFailedCalled());
+        assertTrue(listener.getCountOnFailedCalled() >= 2);
 
     }
 
