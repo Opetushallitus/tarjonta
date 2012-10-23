@@ -43,6 +43,7 @@ import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
@@ -67,6 +68,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter;
+import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
 
@@ -362,21 +364,12 @@ public class TarjontaPresenter {
      */
     public void saveKoulutusValmiina() throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
-        //DEBUGSAWAY:LOG.debug("Try to persist KoulutusTyyppi - "
-               // + "koulutuskoodi : '{}', "
-                //+ "koulutusohjelmakoodi : '{}'",
-                //model.getKoulutusKoodi(),
-                //model.getKoulutusohjema().getKoodiUri());
-
         //Requested new id form Oid Service.
         final String newOid = oidService.newOid(NodeClassCode.TEKN_5);
-        //DEBUGSAWAY:LOG.debug("Requested new OID : {}", newOid);
-        //DEBUGSAWAY:LOG.debug("Output data model : {}", model);
-        //DEBUGSAWAY:LOG.debug("Output KoulutusYhteyshenkiloViewModel : {}", model.getYhteyshenkilot());
         LisaaKoulutusTyyppi koulutus = model.mapToLisaaKoulutusTyyppi(newOid);
 
+        //TODO: move - yhteyshenkilo data mapping.. 
         for (KoulutusYhteyshenkiloViewModel yhteyshenkilo : model.getYhteyshenkilot()) {
-            //DEBUGSAWAY:LOG.debug("Output KoulutusYhteyshenkiloViewModel object : {}", yhteyshenkilo);
             YhteyshenkiloTyyppi yhteyshenkiloTyyppi = new YhteyshenkiloTyyppi();
             yhteyshenkiloTyyppi.setHenkiloOid(oidService.newOid(NodeClassCode.TEKN_5));
             yhteyshenkiloTyyppi.setEtunimet(yhteyshenkilo.getEtunimet());
@@ -384,6 +377,19 @@ public class TarjontaPresenter {
             yhteyshenkiloTyyppi.setSahkoposti(yhteyshenkilo.getEmail());
             yhteyshenkiloTyyppi.setTitteli(yhteyshenkilo.getTitteli());
             koulutus.getYhteyshenkilo().add(yhteyshenkiloTyyppi);
+        }
+
+          //TODO: move - Link data mapping..
+        for (KoulutusLinkkiViewModel linkit : model.getKoulutusLinkit()) {
+            WebLinkkiTyyppi web = new WebLinkkiTyyppi();
+
+            if (linkit.getKielet() != null && linkit.getKielet().isEmpty()) {
+                //TODO: Fix this: only one allowed
+                web.setKieli(linkit.getKielet().iterator().next());
+            }
+
+            web.setTyyppi(linkit.getLinkkityyppi());
+            web.setUri(linkit.getUrl());
         }
 
         tarjontaAdminService.lisaaKoulutus(koulutus);
@@ -473,15 +479,15 @@ public class TarjontaPresenter {
 
         return map;
     }
-    
+
     public String getOrganisaatioNimiByOid(String organisaatioOid) {
-    	String vastaus = organisaatioOid;
-    	try {
-    		vastaus = this.organisaatioService.findByOid(organisaatioOid).getNimiFi();
-    	} catch (Exception ex) {
-    		LOG.error(ex.getMessage());
-    	}
-    	return vastaus;
+        String vastaus = organisaatioOid;
+        try {
+            vastaus = this.organisaatioService.findByOid(organisaatioOid).getNimiFi();
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage());
+        }
+        return vastaus;
     }
 
     /**

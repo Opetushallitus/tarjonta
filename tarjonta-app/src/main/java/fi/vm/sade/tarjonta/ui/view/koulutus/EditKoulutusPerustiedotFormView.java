@@ -19,6 +19,7 @@ import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -32,8 +33,11 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusFormType;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.OhjePopupComponent;
@@ -42,6 +46,7 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
+import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -200,7 +205,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         if (propertyKey == null) {
             throw new RuntimeException("Application error - label caption cannot be null!");
         }
-       
+
         if (!koulutusPerustiedotModel.getKoulutusFormType().equals(KoulutusFormType.SHOW_ALL)) {
             gridLabel(grid, propertyKey);
             cbSelectForm = new ComboBox();
@@ -246,12 +251,11 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         gridLabel(grid, propertyKey);
 
         HorizontalLayout hl = UiUtil.horizontalLayout();
-        kcKoulutusKoodi = UiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_KOULUTUS_URI, T(propertyKey + PROPERTY_PROMPT_SUFFIX));
+        kcKoulutusKoodi = getComboBox(hl, KoodistoURIHelper.KOODISTO_KOULUTUS_URI, T(propertyKey + PROPERTY_PROMPT_SUFFIX), koulutusPerustiedotModel.getOid() != null);
         kcKoulutusKoodi.setImmediate(true);
         OhjePopupComponent ohjePopupComponent = new OhjePopupComponent(T("LOREMIPSUM"), "500px", "300px");
         hl.addComponent(ohjePopupComponent);
         hl.setExpandRatio(kcKoulutusKoodi, 1l);
-
         grid.addComponent(hl);
         grid.newLine();
 
@@ -304,11 +308,15 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         cbKoulutusohjelma.setImmediate(true);
         //cbKoulutusohjelma.setTextInputAllowed(false);
 
+        //if loaded data
+        if (koulutusPerustiedotModel.getOid() != null) {
+            cbKoulutusohjelma.setReadOnly(true);
+        }
+
         //listener
         cbKoulutusohjelma.addListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
-
                 //DEBUGSAWAY:LOG.debug("" + event.getProperty());
                 //DEBUGSAWAY:LOG.debug("koulutussohjelma obj : {}", koulutusPerustiedotModel.getKoulutusohjema());
             }
@@ -394,12 +402,11 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 //        buildSpacingGridRow(grid);
 //        addSelectedFormComponents(type, kcKielivalikoima);
 //    }
-
     private void buildGridOpetusmuotoRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
-        
+
         //UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI, T(propertyKey + PROPERTY_PROMPT_SUFFIX));
-        
+
         kcOpetusmuoto = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI);
         kcOpetusmuoto.setImmediate(true);
         grid.addComponent(kcOpetusmuoto);
@@ -486,5 +493,36 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             _i18n = new I18NHelper(this);
         }
         return _i18n;
+    }
+
+    private KoodistoComponent getComboBox(AbstractLayout layout, String koodistoUri, String prompt, boolean readonly) {
+        ComboBox combo = UiUtil.comboBox(null, null, null);
+        combo.setReadOnly(readonly);
+        combo.setFilteringMode(AbstractSelect.Filtering.FILTERINGMODE_CONTAINS);
+        if (prompt != null) {
+            combo.setInputPrompt(prompt);
+        }
+
+        final KoodistoComponent kc = WidgetFactory.create(koodistoUri);
+
+        // Wire koodisto to combobox
+        kc.setField(combo);
+
+        // BOUND value
+        kc.setFieldValueFormatter(new FieldValueFormatter() {
+            @Override
+            public Object formatFieldValue(Object dto) {
+                if (dto instanceof KoodiType) {
+                    KoodiType kdto = (KoodiType) dto;
+                    return kdto.getKoodiUri();
+                } else {
+                    return "" + dto;
+                }
+            }
+        });
+
+        UiBaseUtil.handleAddComponent(layout, kc);
+
+        return kc;
     }
 }

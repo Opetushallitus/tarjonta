@@ -124,13 +124,13 @@ public class DialogDataTable<T> extends Table {
                 if (event instanceof DataTableEvent.CancelEvent) {
                     //DEBUGSAWAY:LOG.debug("Cancel event received.");
                     dialog.getForm().discard();
-                }
-                if (event instanceof DataTableEvent.SaveEvent) {
+                } else if (event instanceof DataTableEvent.SaveEvent) {
                     dialog.getForm().commit();
                     //DEBUGSAWAY:LOG.debug("Save event received.");
                     refreshRowCache();
-                }
-                if (event instanceof DataTableEvent.DeleteEvent) {
+                     LOG.debug("in valueChange, properties." +   container.getItemIds());
+
+                } else if (event instanceof DataTableEvent.DeleteEvent) {
                     //DEBUGSAWAY:LOG.debug("delete event received.");
                     deleteTableItem(container, dialog.getForm());
                 }
@@ -172,6 +172,8 @@ public class DialogDataTable<T> extends Table {
         final Button btnDelete = UiUtil.buttonSmallPrimary(hl, T(getButtonCaptionProperty(DialogButtonEnum.BUTTON_REMOVE)), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
+                // LOG.debug("",)
+
                 deleteTableItem(container, dialog.getForm());
             }
         });
@@ -189,9 +191,16 @@ public class DialogDataTable<T> extends Table {
                 T selected = (T) event.getProperty().getValue();
                 dialog.getForm().setEnabled(selected != null);
                 if (selected != null) {
-                    dialog.getForm().setItemDataSource(new BeanItem(selected));
+                    LOG.debug("in valueChange, selected." + selected);
+                    BeanItem beanItem = new BeanItem(selected);
+                    dialog.getForm().setItemDataSource(beanItem);
                     btnEdit.setEnabled(true);
-                    btnDelete.setEnabled(true); 
+                    btnDelete.setEnabled(true);
+                    
+                    container.addBean(beanItem);
+                    
+                    LOG.debug("in valueChange, properties." +   container.getItemIds());
+                 
                 }
             }
         });
@@ -199,6 +208,7 @@ public class DialogDataTable<T> extends Table {
 
     private void deleteTableItem(BeanItemContainer container, Form form) {
         T dto = (T) getValue();
+
         if (dto != null) {
             container.removeItem(dto);
             form.setItemDataSource(null);

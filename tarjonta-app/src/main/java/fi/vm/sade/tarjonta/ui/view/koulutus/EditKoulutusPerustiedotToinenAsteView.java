@@ -23,8 +23,10 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.DefaultFieldFactory;
@@ -34,8 +36,12 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
@@ -46,9 +52,12 @@ import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
+import fi.vm.sade.tarjonta.ui.view.common.DataTableEvent;
 import fi.vm.sade.tarjonta.ui.view.common.DialogDataTable;
 import fi.vm.sade.vaadin.constants.StyleEnum;
+import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
+import java.util.Collection;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,7 +164,6 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
             public void buttonClick(Button.ClickEvent event) {
 
                 try {
-                    //form.validate();
                     errorView.resetErrors();
                     form.commit();
 
@@ -163,6 +171,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                     try {
                         presenter.saveKoulutusValmiina();
                         presenter.showNotification(UserNotification.SAVE_SUCCESS);
+                        presenter.getKoulutusListView().reload();
                     } catch (GenericFault e) {
                         LOG.error("Application error - KOMOTO persist failed, message :  " + e.getMessage(), e);
                         presenter.showNotification(UserNotification.SAVE_FAILED);
@@ -268,8 +277,9 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         final BeanItemContainer<KoulutusLinkkiViewModel> linkkiContainer =
                 new BeanItemContainer<KoulutusLinkkiViewModel>(modelClass, presenter.getModel().getKoulutusPerustiedotModel().getKoulutusLinkit());
 
-        DialogDataTable<KoulutusLinkkiViewModel> ddt =
+        final DialogDataTable<KoulutusLinkkiViewModel> ddt =
                 new DialogDataTable<KoulutusLinkkiViewModel>(modelClass, linkkiContainer);
+
         ddt.setButtonProperties("LisaaUusi.Linkkityyppi");
         ddt.buildByFormLayout(layout, "Luo uusi linkkityyppi", 400, 360, new EditKoulutusPerustiedotLinkkiView());
         ddt.setColumnHeader("linkkityyppi", T("Linkkityyppi"));
@@ -277,6 +287,16 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         ddt.setColumnHeader("kielet", T("LinkkiKielet"));
         ddt.setVisibleColumns(new Object[]{"linkkityyppi", "url", "kielet"});
         layout.addComponent(ddt);
+
+        ddt.addListener(new ValueChangeListener() {
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                Collection<?> itemIds = ddt.getContainerDataSource().getItemIds();
+                for (Object o : itemIds) {
+                    presenter.getModel().getKoulutusPerustiedotModel().getKoulutusLinkit().add((KoulutusLinkkiViewModel) o);
+                }
+            }
+        });
     }
 
     private void headerLayout(final AbstractLayout layout, final String i18nProperty) {
@@ -285,4 +305,5 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         cssLayout.addComponent(UiUtil.label(null, i18nProperty));
         layout.addComponent(cssLayout);
     }
+
 }

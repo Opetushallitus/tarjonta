@@ -15,15 +15,15 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
+import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.AbstractLayout;
-import com.vaadin.ui.Form;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.tarjonta.ui.model.KoulutusPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
 import fi.vm.sade.tarjonta.ui.view.common.DialogDataTable;
+import java.util.Collection;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
@@ -34,11 +34,11 @@ import org.vaadin.addon.formbinder.PropertyId;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 public class EditKoulutusYhteystieto extends VerticalLayout {
-
+    
     private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
     @PropertyId("yhteyshenkilot")
     DialogDataTable<KoulutusYhteyshenkiloViewModel> ddt;
-
+    
     public EditKoulutusYhteystieto(KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel) {
         this.koulutusPerustiedotModel = koulutusPerustiedotModel;
         addYhteyshenkiloSelectorAndEditor(this);
@@ -51,14 +51,14 @@ public class EditKoulutusYhteystieto extends VerticalLayout {
      */
     private void addYhteyshenkiloSelectorAndEditor(AbstractLayout layout) {
         // headerLayout(layout, "Yhteyshenkilo");
-final Class classYhteshenkilo = KoulutusYhteyshenkiloViewModel.class;
-        
+        final Class classYhteyshenkilo = KoulutusYhteyshenkiloViewModel.class;
+
         //Attach data model to Vaadin bean container.
         final BeanItemContainer<KoulutusYhteyshenkiloViewModel> yhteyshenkiloContainer =
-                new BeanItemContainer<KoulutusYhteyshenkiloViewModel>(classYhteshenkilo,koulutusPerustiedotModel.getYhteyshenkilot());
-     
+                new BeanItemContainer<KoulutusYhteyshenkiloViewModel>(classYhteyshenkilo, koulutusPerustiedotModel.getYhteyshenkilot());
+
         //Initialize dialog table with control buttons.
-        ddt = new DialogDataTable<KoulutusYhteyshenkiloViewModel>(classYhteshenkilo, yhteyshenkiloContainer);
+        ddt = new DialogDataTable<KoulutusYhteyshenkiloViewModel>(classYhteyshenkilo, yhteyshenkiloContainer);
 
         //Overide default button property
         ddt.setButtonProperties("LisaaUusi.Yhteyshenkilo");
@@ -74,5 +74,15 @@ final Class classYhteshenkilo = KoulutusYhteyshenkiloViewModel.class;
         ddt.setColumnHeader("kielet", "Pätee kielille");
         ddt.setVisibleColumns(new Object[]{"etunimet", "sukunimi", "titteli", "email", "puhelin", "kielet"});
         layout.addComponent(ddt);
+        
+        ddt.addListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                Collection<?> itemIds = ddt.getContainerDataSource().getItemIds();
+                for (Object o : itemIds) {
+                    koulutusPerustiedotModel.getYhteyshenkilot().add((KoulutusYhteyshenkiloViewModel) o);
+                }
+            }
+        });
     }
 }
