@@ -98,6 +98,27 @@ public final class EntityUtils {
 
     }
 
+    public static void copyFields(Yhteyshenkilo from, YhteyshenkiloTyyppi to) {
+
+        to.setEtunimet(from.getEtunimis());
+        to.setHenkiloOid(from.getHenkioOid());
+        to.setPuhelin(from.getPuhelin());
+        to.setSahkoposti(from.getSahkoposti());
+        to.setSukunimi(from.getSukunimi());
+        to.setTitteli(from.getTitteli());
+
+    }
+
+    public static void copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList, Collection<YhteyshenkiloTyyppi> toList) {
+
+        for (Yhteyshenkilo fromHenkilo : fromList) {
+            YhteyshenkiloTyyppi toHenkilo = new YhteyshenkiloTyyppi();
+            copyFields(fromHenkilo, toHenkilo);
+            toList.add(toHenkilo);
+        }
+
+    }
+
     public static Set<String> toStringUriSet(Collection<KoodistoKoodiTyyppi> koodit) {
         Set<String> set = new HashSet<String>();
         for (KoodistoKoodiTyyppi koodi : koodit) {

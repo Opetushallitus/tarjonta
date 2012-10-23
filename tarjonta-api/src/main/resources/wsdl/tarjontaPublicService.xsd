@@ -17,13 +17,13 @@
 
     <xs:element name="haeHakukohteetKysely" type="tns:HaeHakukohteetKyselyTyyppi" />
     <xs:element name="haeHakukohteetVastaus" type="tns:HaeHakukohteetVastausTyyppi" />
-    
+
     <xs:element name="haeKoulutuksetKysely" type="tns:HaeKoulutuksetKyselyTyyppi" />
     <xs:element name="haeKoulutuksetVastaus" type="tns:HaeKoulutuksetVastausTyyppi" />
-    
+
     <xs:element name="lueKoulutusKysely" type="tns:LueKoulutusKyselyTyyppi" />
     <xs:element name="lueKoulutusVastaus" type="tns:LueKoulutusVastausTyyppi" />
-    
+
     <xs:element name="lueHakukohdeKysely" type="tns:LueHakukohdeKyselyTyyppi" />
     <xs:element name="lueHakukohdeVastaus" type="tns:LueHakukohdeVastausTyyppi" />
 
@@ -90,8 +90,8 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
-   <xs:complexType name="HaeKoulutuksetKyselyTyyppi">
+
+    <xs:complexType name="HaeKoulutuksetKyselyTyyppi">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
                 Haku objekti jolla valitetaan haku kriteerit.
@@ -117,7 +117,7 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="LueKoulutusKyselyTyyppi">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="oid" type="xs:string" >
@@ -127,14 +127,15 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
+
 
     <xs:complexType name="LueKoulutusVastausTyyppi">
-       <xs:sequence>
+        <xs:sequence>
             <xs:group ref="tarjonta:KoulutusGroup"/>
+            <xs:element name="Yhteyshenkilo" type="tarjonta:YhteyshenkiloTyyppi" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="LueHakukohdeKyselyTyyppi">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="oid" type="xs:string" >
@@ -144,10 +145,10 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
+
 
     <xs:complexType name="LueHakukohdeVastausTyyppi">
-       <xs:sequence>
+        <xs:sequence>
             <xs:element name="hakukohde" type="tarjonta:HakukohdeTyyppi"/>
         </xs:sequence>
     </xs:complexType>

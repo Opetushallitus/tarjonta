@@ -260,6 +260,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         EntityUtils.copyKoodistoUris(fromKoulutus.getOpetuskielis(), toKoulutus.getOpetuskieli());
         EntityUtils.copyKoodistoUris(fromKoulutus.getKoulutuslajiList(), toKoulutus.getKoulutuslaji());
         EntityUtils.copyWebLinkkis(fromKoulutus.getLinkkis(), toKoulutus.getLinkki());
+        EntityUtils.copyYhteyshenkilos(fromKoulutus.getYhteyshenkilos(), toKoulutus.getYhteyshenkilo());
 
         return toKoulutus;
 
