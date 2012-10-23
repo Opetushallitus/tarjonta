@@ -376,10 +376,13 @@ public class TarjontaPresenter {
             yhteyshenkiloTyyppi.setSukunimi(yhteyshenkilo.getSukunimi());
             yhteyshenkiloTyyppi.setSahkoposti(yhteyshenkilo.getEmail());
             yhteyshenkiloTyyppi.setTitteli(yhteyshenkilo.getTitteli());
+            for (String kieliUri : yhteyshenkilo.getKielet()) {
+                yhteyshenkiloTyyppi.getKielet().add(kieliUri);
+            }
             koulutus.getYhteyshenkilo().add(yhteyshenkiloTyyppi);
         }
 
-          //TODO: move - Link data mapping..
+        //TODO: move - Link data mapping..
         for (KoulutusLinkkiViewModel linkit : model.getKoulutusLinkit()) {
             WebLinkkiTyyppi web = new WebLinkkiTyyppi();
 
