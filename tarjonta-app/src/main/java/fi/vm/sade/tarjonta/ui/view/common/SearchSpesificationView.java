@@ -49,12 +49,12 @@ public class SearchSpesificationView extends HorizontalLayout {
     private Button _btnTyhjenna;
     private Button _btnHae;
 
-    @PropertyId("hanKohdejoukko")
+    /*@PropertyId("hanKohdejoukko")
     private KoodistoComponent _cbHaunKohdejoukko;
     @PropertyId("hakutyyppi")
     private KoodistoComponent _cbHakutyyppi;
     @PropertyId("hakutapa")
-    private KoodistoComponent _cbHakutapa;
+    private KoodistoComponent _cbHakutapa;*/
     @PropertyId("koulutuksenAlkamiskausi")
     private KoodistoComponent _cbKoulutuksenAlkamiskausi;
     @PropertyId("hakukausi")
@@ -101,9 +101,9 @@ public class SearchSpesificationView extends HorizontalLayout {
         // Create fields
         //
         _cbHakukausi = UiBuilder.koodistoComboBox(null,_koodistoUriHakukausi, null, null, T("hakukausi.prompt"));
-        _cbHakutapa = UiBuilder.koodistoComboBox(null,_koodistoUriHakutapa, null, null, T("hakutapa.prompt"));
+        /*_cbHakutapa = UiBuilder.koodistoComboBox(null,_koodistoUriHakutapa, null, null, T("hakutapa.prompt"));
         _cbHakutyyppi = UiBuilder.koodistoComboBox(null,_koodistoUriHakutyyppi, null, null, T("hakutyyppi.prompt"));
-        _cbHaunKohdejoukko = UiBuilder.koodistoComboBox(null,_koodistoUriHaunKohdejoukko, null, null, T("haunkohdejoukko.prompt"));
+        _cbHaunKohdejoukko = UiBuilder.koodistoComboBox(null,_koodistoUriHaunKohdejoukko, null, null, T("haunkohdejoukko.prompt"));*/
         _cbKoulutuksenAlkamiskausi = UiBuilder.koodistoComboBox(null,_koodistoUriKoulutuksenAlkamiskausi, null, null, T("koulutuksenalkamiskausi.prompt"));
         _tfSearch = UiBuilder.textField(null, "", T("hakuehto.prompt"), false);
         _btnHae = UiBuilder.buttonSmallPrimary(null, T("hae"));
@@ -121,9 +121,9 @@ public class SearchSpesificationView extends HorizontalLayout {
         addComponent(_btnHae);
 
         addComponent(_cbHakukausi);
-        addComponent(_cbHakutapa);
+        /*addComponent(_cbHakutapa);
         addComponent(_cbHakutyyppi);
-        addComponent(_cbHaunKohdejoukko);
+        addComponent(_cbHaunKohdejoukko);*/
         addComponent(_cbKoulutuksenAlkamiskausi);
 
         addComponent(_btnTyhjenna);
