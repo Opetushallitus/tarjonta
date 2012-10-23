@@ -23,8 +23,11 @@ import java.util.Set;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusFormType;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -34,31 +37,41 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
 
     private static final String NO_DATA_AVAILABLE = "Tietoa ei saatavilla";
     private Set<KoulutusohjelmaModel> koodistoKoulutusohjelma;
-    private KoulutusFormType koulutusFormType = KoulutusFormType.TOINEN_ASTE_LUKIO; //default value
+    private KoulutusFormType koulutusFormType = KoulutusFormType.SHOW_ALL; //default value
 
     public KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus status, LueKoulutusVastausTyyppi koulutus) {
-        super(status);
+        super();
+        clearModel(status);
 
         setKoulutusKoodi((koulutus.getKoulutusKoodi() != null) ? koulutus.getKoulutusKoodi().getUri() : null);
-
-        String koodiUri = koulutus.getKoulutusohjelmaKoodi() != null ? koulutus.getKoulutusohjelmaKoodi().getUri() : null;
-        KoulutusohjelmaModel koulutusohjelmaModel = new KoulutusohjelmaModel(koodiUri, null, null);
-        setKoulutusohjema(koulutusohjelmaModel);
+        final String koodiUri = koulutus.getKoulutusohjelmaKoodi() != null ? koulutus.getKoulutusohjelmaKoodi().getUri() : null;
+        setKoulutusohjema(new KoulutusohjelmaModel(koodiUri, null, null));
 
         setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
         setOpetuskielet(convertOpetuskielet(koulutus.getOpetuskieli()));
-        setKoulutuslaji(koulutus.getKoulutuslaji().isEmpty() ? null : koulutus.getKoulutuslaji().get(0).getUri());
-        setOpetusmuoto(koulutus.getOpetusmuoto() != null ? koulutus.getOpetusmuoto().getUri() : null);
+
+        //addAvainsanat(); TODO
+        addKoulutuslajit(koulutus.getKoulutuslaji());
+
+        if (koulutus.getKesto() != null) {
+            setSuunniteltuKesto(koulutus.getKesto().getArvo());
+            setSuunniteltuKestoTyyppi(koulutus.getKesto().getYksikko());
+        }
+        //TODO: fix this
+        List<KoodistoKoodiTyyppi> list = new ArrayList<KoodistoKoodiTyyppi>();
+        list.add(createKoodi(koulutus.getOpetusmuoto().getUri()));
+        addOpetusmuoto(list);
     }
 
     public LisaaKoulutusTyyppi mapToLisaaKoulutusTyyppi(String oid) {
-       
+
         this.getDocumentStatus();  //TODO: status
         this.getOrganisaatioName(); //TODO: organisaatio
-        
+
         LisaaKoulutusTyyppi lisaaKoulutusTyyppi = new LisaaKoulutusTyyppi();
         lisaaKoulutusTyyppi.setOid(oid);
 
+        //TODO: fix the test data
         lisaaKoulutusTyyppi.setKoulutusKoodi(createKoodi(this.getKoulutusKoodi()));
         KoulutusohjelmaModel ko = getKoulutusohjema();
         //URI data example : "koulutusohjelma/1603"
@@ -68,7 +81,11 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         koulutuksenKestoTyyppi.setArvo(this.getSuunniteltuKesto());
         koulutuksenKestoTyyppi.setYksikko(this.getSuunniteltuKestoTyyppi());
         lisaaKoulutusTyyppi.setKesto(koulutuksenKestoTyyppi);
-        lisaaKoulutusTyyppi.setOpetusmuoto(createKoodi(this.getOpetusmuoto()));
+
+        //TODO: fix this
+        if (this.getOpetusmuoto() != null && !this.getOpetusmuoto().isEmpty()) {
+            lisaaKoulutusTyyppi.setOpetusmuoto(createKoodi(this.getOpetusmuoto().iterator().next()));
+        }
 
         for (String koodi : this.getOpetuskielet()) {
             lisaaKoulutusTyyppi.getOpetuskieli().add(createKoodi(koodi));
@@ -77,8 +94,9 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         return lisaaKoulutusTyyppi;
     }
 
-    public KoulutusToisenAsteenPerustiedotViewModel() {
+    public KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus status) {
         super();
+        clearModel(status);
         setKoulutusala(NO_DATA_AVAILABLE); //Tekniikan ja liikenteen ala
         setTutkinto(NO_DATA_AVAILABLE); //Autoalan perustutkinto
         setTutkintonimike(NO_DATA_AVAILABLE); //Automaalari
@@ -94,6 +112,30 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
             opetuskielet.add(curKoodi.getUri());
         }
         return opetuskielet;
+    }
+
+    private void addKoulutuslajit(final List<KoodistoKoodiTyyppi> koulutuslaji) {
+        if (koulutuslaji != null && !koulutuslaji.isEmpty()) {
+            for (KoodistoKoodiTyyppi type : koulutuslaji) {
+                getKoulutuslaji().add(type.getUri());
+            }
+        }
+    }
+
+    private void addAvainsanat(final List<KoodistoKoodiTyyppi> avainsanat) {
+        if (avainsanat != null && !avainsanat.isEmpty()) {
+            for (KoodistoKoodiTyyppi type : avainsanat) {
+                getAvainsanat().add(type.getUri());
+            }
+        }
+    }
+
+    private void addOpetusmuoto(final List<KoodistoKoodiTyyppi> opetusmuoto) {
+        if (opetusmuoto != null && !opetusmuoto.isEmpty()) {
+            for (KoodistoKoodiTyyppi type : opetusmuoto) {
+                getOpetusmuoto().add(type.getUri());
+            }
+        }
     }
 
     /**
@@ -142,5 +184,37 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         koodi.setUri(uri);
         koodi.setArvo(name);
         return koodi;
+    }
+
+    /**
+     * Initialize model with all default values.
+     *
+     * @param status of koulutus document
+     */
+    private void clearModel(final DocumentStatus status) {
+        setKoulutusKoodi(null);
+        setKoulutusohjema(null);
+        setKoulutusala(null);
+        setTutkinto(null);
+        setTutkintonimike(null);
+        setOpintojenLaajuusyksikko(null);
+        setOpintojenLaajuus(null);
+        setOpintoala(null);
+        setKoulutuksenAlkamisPvm(new Date());
+        setSuunniteltuKesto(null);
+        setSuunniteltuKestoTyyppi(null);
+        setOpetusmuoto(null);
+        setKoulutuksenTyyppi(null);
+        setDocumentStatus(status);
+        setOrganisaatioName(null);
+        setOrganisaatioOid(null);
+        setUserFrienlyDocumentStatus(null);
+
+        setOpetuskielet(new HashSet<String>(1)); //one required
+        setKoulutuslaji(new HashSet<String>(1));//one required
+        setOpetusmuoto(new HashSet<String>(1));//one required
+        setAvainsanat(new HashSet<String>(0));//optional
+        setKoulutusLinkit(new ArrayList<KoulutusLinkkiViewModel>(0)); //optional
+        setYhteyshenkilot(new ArrayList<KoulutusYhteyshenkiloViewModel>(0)); //optional
     }
 }

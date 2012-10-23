@@ -24,22 +24,14 @@ import java.util.Set;
  * @author mlyly
  */
 public class KoulutusYhteyshenkiloViewModel extends BaseUIViewModel {
-
-    private String _nimi;
     private String _titteli;
     private String _email;
     private String _puhelin;
+    private String etunimet;
+    private String sukunimi;
 
     // Koodisto: kieli
     private Set<String> _kielet = new HashSet<String>();
-
-    public String getNimi() {
-        return _nimi;
-    }
-
-    public void setNimi(String nimi) {
-        this._nimi = nimi;
-    }
 
     public String getTitteli() {
         return _titteli;
@@ -71,5 +63,33 @@ public class KoulutusYhteyshenkiloViewModel extends BaseUIViewModel {
 
     public void setKielet(Set<String> kielet) {
         this._kielet = kielet;
+    }
+
+    /**
+     * @return the etunimet
+     */
+    public String getEtunimet() {
+        return etunimet;
+    }
+
+    /**
+     * @param etunimet the etunimet to set
+     */
+    public void setEtunimet(String etunimet) {
+        this.etunimet = etunimet;
+    }
+
+    /**
+     * @return the sukunimi
+     */
+    public String getSukunimi() {
+        return sukunimi;
+    }
+
+    /**
+     * @param sukunimi the sukunimi to set
+     */
+    public void setSukunimi(String sukunimi) {
+        this.sukunimi = sukunimi;
     }
 }

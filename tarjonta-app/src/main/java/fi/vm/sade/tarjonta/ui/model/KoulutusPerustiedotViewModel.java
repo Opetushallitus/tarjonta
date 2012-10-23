@@ -59,8 +59,8 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     private Date koulutuksenAlkamisPvm = new Date();
     private String suunniteltuKesto;
     private String suunniteltuKestoTyyppi;
-    private String opetusmuoto;
-    private String koulutuslaji;
+    private Set<String> opetusmuoto;
+    private Set<String> koulutuslaji  = new HashSet<String>(0);
     private Set<String> opetuskielet = new HashSet<String>(0);
     private Set<String> avainsanat = new HashSet<String>(0);
     private List<KoulutusYhteyshenkiloViewModel> yhteyshenkilot = new ArrayList<KoulutusYhteyshenkiloViewModel>(0);
@@ -154,22 +154,8 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
         this.suunniteltuKestoTyyppi = suunniteltuKestoTyyppi;
     }
 
-    public String getOpetusmuoto() {
-        return opetusmuoto;
-    }
-
-    public void setOpetusmuoto(String opetusmuoto) {
-        this.opetusmuoto = opetusmuoto;
-    }
-
-    public String getKoulutuslaji() {
-        return koulutuslaji;
-    }
-
-    public void setKoulutuslaji(String koulutuslaji) {
-        this.koulutuslaji = koulutuslaji;
-    }
-
+   
+   
     public List<KoulutusLinkkiViewModel> getKoulutusLinkit() {
         if (koulutusLinkit == null) {
             koulutusLinkit = new ArrayList<KoulutusLinkkiViewModel>();
@@ -303,5 +289,33 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      */
     public void setUserFrienlyDocumentStatus(String userFrienlyDocumentStatus) {
         this.userFrienlyDocumentStatus = userFrienlyDocumentStatus;
+    }
+
+    /**
+     * @return the koulutuslaji
+     */
+    public Set<String> getKoulutuslaji() {
+        return koulutuslaji;
+    }
+
+    /**
+     * @param koulutuslaji the koulutuslaji to set
+     */
+    public void setKoulutuslaji(Set<String> koulutuslaji) {
+        this.koulutuslaji = koulutuslaji;
+    }
+
+    /**
+     * @return the opetusmuoto
+     */
+    public Set<String> getOpetusmuoto() {
+        return opetusmuoto;
+    }
+
+    /**
+     * @param opetusmuoto the opetusmuoto to set
+     */
+    public void setOpetusmuoto(Set<String> opetusmuoto) {
+        this.opetusmuoto = opetusmuoto;
     }
 }

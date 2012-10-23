@@ -230,4 +230,37 @@ public class UiBuilder extends UiUtil {
 
         return tab;
     }
+    
+    
+    public static KoodistoComponent koodistoTwinColSelectUri(AbstractLayout layout, final String koodistoUri) {
+
+        // Koodisto displayed in TwinColSelect
+        TwinColSelect c = twinColSelect();
+
+        // Only multiple (Set<String>) values allowed!
+        c.setMultiSelect(true);
+
+        final KoodistoComponent kc = WidgetFactory.create(koodistoUri);
+
+        // Wire koodisto to combobox
+        kc.setField(c);
+
+        // BOUND value
+        kc.setFieldValueFormatter(new FieldValueFormatter() {
+            @Override
+            public Object formatFieldValue(Object dto) {
+                if (dto instanceof KoodiType) {
+                    KoodiType kdto = (KoodiType) dto;
+                    return kdto.getKoodiUri();
+                } else {
+                    return "" + dto;
+                }
+            }
+        });
+
+        UiBaseUtil.handleAddComponent(layout, kc);
+
+        return kc;
+    }
+   
 }

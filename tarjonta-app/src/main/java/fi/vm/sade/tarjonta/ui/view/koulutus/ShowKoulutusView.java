@@ -49,10 +49,8 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShowKoulutusView.class);
-
     @Autowired(required = true)
     private TarjontaPresenter presenter;
-
     @Autowired(required = true)
     private TarjontaUIHelper _tarjontaUIHelper;
 
@@ -90,10 +88,12 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         grid.addComponent(UiUtil.label(model.getOrganisaatioName()));
         grid.newLine();
         grid.addComponent(UiUtil.label(T("koulutuslaji")));
-        grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getKoulutuslaji())));
+        for (String uri : model.getKoulutuslaji()) {
+            grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(uri)));
+        }
         grid.newLine();
         grid.addComponent(UiUtil.label(T("opetusmuoto")));
-        grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getOpetusmuoto())));
+        grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getOpetusmuoto() != null ? model.getOpetusmuoto().iterator().next() : null)));
         grid.newLine();
         grid.addComponent(UiUtil.label(T("teemat")));
         grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getAvainsanat(), null)));
@@ -117,7 +117,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         grid.addComponent(UiUtil.label(T("opetuskieli")));
         grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getOpetuskielet(), null)));
         grid.newLine();
- 
+
         grid.setColumnExpandRatio(0, 1);
         grid.setColumnExpandRatio(1, 2);
 

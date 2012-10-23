@@ -34,7 +34,6 @@ import com.vaadin.ui.TextField;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusFormType;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.OhjePopupComponent;
@@ -61,7 +60,7 @@ import org.vaadin.addon.formbinder.PropertyId;
  * @author Jani Wilén
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
-public class EditKoulutusPerustiedotFormView extends GridLayout implements Listener {
+public class EditKoulutusPerustiedotFormView extends GridLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotFormView.class);
     private static final String PROPERTY_PROMPT_SUFFIX = ".prompt";
@@ -146,7 +145,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout implements Liste
         this.presenter = presenter;
         this.koulutusPerustiedotModel = model;
         initializeLayout();
-        kcKoulutuslaji.getValue();
     }
 
     private void initializeLayout() {
@@ -202,35 +200,35 @@ public class EditKoulutusPerustiedotFormView extends GridLayout implements Liste
         if (propertyKey == null) {
             throw new RuntimeException("Application error - label caption cannot be null!");
         }
+       
+        if (!koulutusPerustiedotModel.getKoulutusFormType().equals(KoulutusFormType.SHOW_ALL)) {
+            gridLabel(grid, propertyKey);
+            cbSelectForm = new ComboBox();
+            cbSelectForm.setPropertyDataSource(new NestedMethodProperty(koulutusPerustiedotModel, "koulutusFormType"));
+            cbSelectForm.setNullSelectionAllowed(false);
+            cbSelectForm.setImmediate(true);
 
-        gridLabel(grid, propertyKey);
-        cbSelectForm = new ComboBox();
-        cbSelectForm.setPropertyDataSource(new NestedMethodProperty(koulutusPerustiedotModel, "koulutusFormType"));
-        cbSelectForm.setNullSelectionAllowed(false);
-        cbSelectForm.setImmediate(true);
-
-        for (KoulutusFormType t : KoulutusFormType.values()) {
-            cbSelectForm.addItem(t);
-            cbSelectForm.setItemCaption(t, t.getPropertyKey());
-        }
-
-        cbSelectForm.addListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-                final Property property = event.getProperty();
-                LOG.debug("ValueChangeEvent - selected form type property : {}", property);
-                if (property != null && property.getValue() != null) {
-                    LOG.debug("Selected form, value : {}", property.getValue());
-                    showOnlySelectedFormComponents();
-                }
+            for (KoulutusFormType t : KoulutusFormType.values()) {
+                cbSelectForm.addItem(t);
+                cbSelectForm.setItemCaption(t, t.getPropertyKey());
             }
-        });
 
-        grid.addComponent(cbSelectForm);
-        addFormEditListener(cbSelectForm);
-        grid.newLine();
+            cbSelectForm.addListener(new Property.ValueChangeListener() {
+                @Override
+                public void valueChange(Property.ValueChangeEvent event) {
+                    final Property property = event.getProperty();
+                    LOG.debug("ValueChangeEvent - selected form type property : {}", property);
+                    if (property != null && property.getValue() != null) {
+                        LOG.debug("Selected form, value : {}", property.getValue());
+                        showOnlySelectedFormComponents();
+                    }
+                }
+            });
 
-        buildSpacingGridRow(grid);
+            grid.addComponent(cbSelectForm);
+            grid.newLine();
+            buildSpacingGridRow(grid);
+        }
     }
 
     private void gridLabelRow(GridLayout grid, final String propertyKey) {
@@ -260,15 +258,15 @@ public class EditKoulutusPerustiedotFormView extends GridLayout implements Liste
         kcKoulutusKoodi.addListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
-                setFormStatusToEdited();
+
                 if (!cbKoulutusohjelma.getVisibleItemIds().isEmpty()) {
                     //clear result data.
                     cbKoulutusohjelma.removeAllItems();
                 }
                 LOG.debug("ValueChangeEvent - Koodisto : {}, value : {}", KoodistoURIHelper.KOODISTO_KOULUTUS_URI, event);
                 final Property property = event.getProperty();
-                
-                if (property!= null && property.getValue() != null) {
+
+                if (property != null && property.getValue() != null) {
                     final String koodiUri = (String) property.getValue();
                     presenter.searchKoulutusOhjelmakoodit(koodiUri);
                     Set<KoulutusohjelmaModel> koodistoKoulutusohjelma = koulutusPerustiedotModel.getKoodistoKoulutusohjelma();
@@ -304,13 +302,13 @@ public class EditKoulutusPerustiedotFormView extends GridLayout implements Liste
         cbKoulutusohjelma.setWidth(300, UNITS_PIXELS);
         cbKoulutusohjelma.setNullSelectionAllowed(false);
         cbKoulutusohjelma.setImmediate(true);
-        cbKoulutusohjelma.setTextInputAllowed(false);
+        //cbKoulutusohjelma.setTextInputAllowed(false);
 
         //listener
         cbKoulutusohjelma.addListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
-                setFormStatusToEdited();
+
                 LOG.debug("" + event.getProperty());
                 LOG.debug("koulutussohjelma obj : {}", koulutusPerustiedotModel.getKoulutusohjema());
             }
@@ -323,13 +321,11 @@ public class EditKoulutusPerustiedotFormView extends GridLayout implements Liste
 
     private void buildGridOpetuskieliRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
-        kcOpetuskieli = UiBuilder.koodistoTwinColSelect(null, KoodistoURIHelper.KOODISTO_KIELI_URI, null, null);
+        kcOpetuskieli = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KIELI_URI);
         kcOpetuskieli.setImmediate(true);
         grid.addComponent(kcOpetuskieli);
         grid.newLine();
         buildSpacingGridRow(grid);
-
-        addFormEditListener(kcOpetuskieli);
     }
 
     private void buildGridDatesRow(GridLayout grid, final String propertyKey) {
@@ -338,8 +334,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout implements Liste
         grid.addComponent(dfKoulutuksenAlkamisPvm);
         grid.newLine();
         buildSpacingGridRow(grid);
-
-        addFormEditListener(dfKoulutuksenAlkamisPvm);
     }
 
 //    private void buildGridPainotus(GridLayout grid, final String propertyKey) {
@@ -374,59 +368,54 @@ public class EditKoulutusPerustiedotFormView extends GridLayout implements Liste
         grid.addComponent(hl);
         grid.newLine();
         buildSpacingGridRow(grid);
-
-        addFormEditListener(tfSuunniteltuKesto);
-        addFormEditListener(kcSuunniteltuKestoTyyppi);
     }
 
     private void buildGridAvainsanatRow(GridLayout grid, final String propertyKey) {
         final KoulutusFormType type = KoulutusFormType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey, type);
-        kcAvainsanat = UiBuilder.koodistoTwinColSelect(null, KoodistoURIHelper.KOODISTO_AVAINSANAT_URI, null, null);
+        kcAvainsanat = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_AVAINSANAT_URI);
         kcAvainsanat.setImmediate(true);
         grid.addComponent(kcAvainsanat);
 
         grid.newLine();
         buildSpacingGridRow(grid);
         addSelectedFormComponents(type, kcAvainsanat);
-        addFormEditListener(kcAvainsanat);
     }
 
     private void buildGridKielivalikoimaRow(GridLayout grid, final String propertyKey) {
         final KoulutusFormType type = KoulutusFormType.TOINEN_ASTE_LUKIO;
         gridLabel(grid, propertyKey, type);
 
-        kcKielivalikoima = UiBuilder.koodistoTwinColSelect(null, KoodistoURIHelper.KOODISTO_KIELIVALIKOIMA_URI, null, null);
+        kcKielivalikoima = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KIELIVALIKOIMA_URI);
         kcKielivalikoima.setImmediate(true);
         grid.addComponent(kcKielivalikoima);
 
         grid.newLine();
         buildSpacingGridRow(grid);
         addSelectedFormComponents(type, kcKielivalikoima);
-        addFormEditListener(kcKielivalikoima);
     }
 
     private void buildGridOpetusmuotoRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
-        kcOpetusmuoto = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI, T(propertyKey + PROPERTY_PROMPT_SUFFIX));
+        
+        //UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI, T(propertyKey + PROPERTY_PROMPT_SUFFIX));
+        
+        kcOpetusmuoto = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI);
         kcOpetusmuoto.setImmediate(true);
         grid.addComponent(kcOpetusmuoto);
         grid.newLine();
         buildSpacingGridRow(grid);
-        addFormEditListener(kcOpetusmuoto);
     }
 
     private void buildGridKoulutuslajiRow(GridLayout grid, final String propertyKey) {
         final KoulutusFormType type = KoulutusFormType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey, type);
-        kcKoulutuslaji = UiBuilder.koodistoTwinColSelect(null, KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI, null, null);
+        kcKoulutuslaji = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI);
         kcKoulutuslaji.setImmediate(true);
-
         grid.addComponent(kcKoulutuslaji);
         grid.newLine();
         buildSpacingGridRow(grid);
         addSelectedFormComponents(type, kcKoulutuslaji);
-        addFormEditListener(kcKoulutuslaji);
     }
 
     /*
@@ -437,16 +426,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout implements Liste
         cssLayout.setHeight(4, UNITS_PIXELS);
         grid.addComponent(cssLayout);
         grid.newLine();
-    }
-
-    @Override
-    public void componentEvent(Event event) {
-        if (event.getClass() == Button.ClickEvent.class) {
-            LOG.debug("BUTTON EVENT: " + event.getComponent().getCaption());
-        } else {
-            LOG.debug("FORM WAS EDITED : " + event.getComponent().getCaption());
-            setFormStatusToEdited();
-        }
     }
 
     private void gridLabel(GridLayout grid, final String propertyKey, KoulutusFormType type) {
@@ -477,6 +456,10 @@ public class EditKoulutusPerustiedotFormView extends GridLayout implements Liste
     }
 
     private void showOnlySelectedFormComponents() {
+        if (koulutusPerustiedotModel.getKoulutusFormType().equals(KoulutusFormType.SHOW_ALL)) {
+            //show all form components in single form, only for development/test/demo purpose.
+            return;
+        }
         //Show or hide form components.
         for (Map.Entry<KoulutusFormType, Set<Component>> entry : selectedComponents.entrySet()) {
 
@@ -503,13 +486,5 @@ public class EditKoulutusPerustiedotFormView extends GridLayout implements Liste
             _i18n = new I18NHelper(this);
         }
         return _i18n;
-    }
-
-    private void setFormStatusToEdited() {
-        koulutusPerustiedotModel.setDocumentStatus(DocumentStatus.EDITED);
-    }
-
-    private void addFormEditListener(Component component) {
-        component.addListener(this);
     }
 }

@@ -38,12 +38,8 @@ import org.vaadin.addon.formbinder.PropertyId;
 /**
  * An editor to edit KoulutusYhteyshenkiloDTO.
  *
- * Fires events:
- * <ul>
- *   <li>DataTableEvent.SaveEvent</li>
- *   <li>DataTableEvent.CancelEvent</li>
- *   <li>DataTableEvent.DeleteEvent</li>
- * </ul>
+ * Fires events: <ul> <li>DataTableEvent.SaveEvent</li>
+ * <li>DataTableEvent.CancelEvent</li> <li>DataTableEvent.DeleteEvent</li> </ul>
  *
  * Use "addListener" to catch these.
  *
@@ -55,8 +51,10 @@ import org.vaadin.addon.formbinder.PropertyId;
 public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout implements Component {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotYhteystietoView.class);
-    @PropertyId("nimi")
-    private TextField _tfNimi;
+    @PropertyId("etunimet")
+    private TextField _tfEtunimet;
+    @PropertyId("sukunimi")
+    private TextField _tfSukunimi;
     @PropertyId("titteli")
     private TextField _tfTitteli;
     @PropertyId("email")
@@ -65,16 +63,20 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
     private TextField _tfPuhelin;
     @PropertyId("kielet")
     KoodistoComponent _kcKielet;
-
     private I18NHelper i18n = new I18NHelper(this);
 
     public EditKoulutusPerustiedotYhteystietoView() {
         this.setSpacing(true);
 
-        _tfNimi = UiUtil.textField(null, "", i18n.getMessage("Nimi.prompt"), true);
-        _tfNimi.setRequired(true);
-        _tfNimi.setRequiredError(i18n.getMessage("Nimi.tyhja"));
-        this.addComponent(_tfNimi);
+        _tfEtunimet = UiUtil.textField(null, "", i18n.getMessage("Etunimet.prompt"), true);
+        _tfEtunimet.setRequired(true);
+        _tfEtunimet.setRequiredError(i18n.getMessage("Etunimet.tyhja"));
+        this.addComponent(_tfEtunimet);
+
+        _tfSukunimi = UiUtil.textField(null, "", i18n.getMessage("Sukunimi.prompt"), true);
+        _tfSukunimi.setRequired(true);
+        _tfSukunimi.setRequiredError(i18n.getMessage("Sukunimi.tyhja"));
+        this.addComponent(_tfSukunimi);
 
         _tfTitteli = UiUtil.textField(null, "", i18n.getMessage("Titteli.prompt"), true);
         this.addComponent(_tfTitteli);
@@ -102,7 +104,7 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 LOG.info("fire : SaveEvent");
-
+                
                 fireEvent(new DataTableEvent.SaveEvent(EditKoulutusPerustiedotYhteystietoView.this));
             }
         });

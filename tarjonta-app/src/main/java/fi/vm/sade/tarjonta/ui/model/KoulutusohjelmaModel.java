@@ -22,16 +22,20 @@ import java.io.Serializable;
  * @author Jani Wilén
  */
 public class KoulutusohjelmaModel implements Serializable {
-    private String koodiUri;
-    private String id;
-    private String name;
-    private String fullName;
 
-    public KoulutusohjelmaModel(String koodiUri, String id, String name) {
+    private String koodiUri; //used as ID
+    private String code; //koodi code
+    private String name;
+    private String fullName; //combination of id and name fields
+
+    public KoulutusohjelmaModel() {
+    }
+
+    public KoulutusohjelmaModel(String koodiUri, String code, String name) {
         this.koodiUri = koodiUri;
-        this.id = id;
+        this.code = code;
         this.name = name;
-        this.fullName = name + " " + id;
+        this.fullName = name + " " + code;
     }
 
     /**
@@ -51,15 +55,15 @@ public class KoulutusohjelmaModel implements Serializable {
     /**
      * @return the koodi
      */
-    public String getId() {
-        return id;
+    public String getCode() {
+        return code;
     }
 
     /**
      * @param koodi the koodi to set
      */
-    public void setId(String koodi) {
-        this.id = koodi;
+    public void setCode(String koodi) {
+        this.code = koodi;
     }
 
     /**
@@ -88,5 +92,21 @@ public class KoulutusohjelmaModel implements Serializable {
      */
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if ((obj == null) || (obj.getClass() != this.getClass())) {
+            return false;
+        }
+
+        //Check only uri value as it's the ID of the class.
+        final KoulutusohjelmaModel m = (KoulutusohjelmaModel) obj;
+
+        if (this.getKoodiUri() == null || m.getKoodiUri() == null) {
+            return false;
+        }
+
+        return this.getKoodiUri().equals(m.getKoodiUri());
     }
 }

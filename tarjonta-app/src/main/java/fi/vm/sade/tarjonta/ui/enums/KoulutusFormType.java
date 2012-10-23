@@ -21,7 +21,9 @@ package fi.vm.sade.tarjonta.ui.enums;
  */
 public enum KoulutusFormType {
 
-    TOINEN_ASTE_LUKIO("Lukio"), TOINEN_ASTE_AMMATILLINEN_KOULUTUS("Ammatillinen");
+    SHOW_ALL(""), //show all components in single form
+    TOINEN_ASTE_LUKIO("Lukio"), //show only lukio spesific components
+    TOINEN_ASTE_AMMATILLINEN_KOULUTUS("Ammatillinen");//show only ammattikoulu spesific components
     private String property;
 
     KoulutusFormType(String property) {

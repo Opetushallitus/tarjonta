@@ -25,8 +25,8 @@ public enum DocumentStatus {
     NEW("documentStatus.new"),
     LOADED("documentStatus.loaded"), 
     EDITED("documentStatus.edited"), 
-    SAVED_FOR_RELEASE("documentStatus.savedForRelease"), 
-    SAVED_FOR_DRAFT("documentStatus.savedForDraft");
+    SAVED_AS_RELEASED("documentStatus.savedAsRelease"), 
+    SAVED_AS_DRAFT("documentStatus.savedAsDraft");
     
     private String property;
     

@@ -38,24 +38,18 @@ public class TarjontaModel extends BaseUIViewModel {
     private Boolean _showIdentifier;
     @Value("${tarjonta-app.identifier:APPLICATION IDENTIFIER NOT AVAILABLE}")
     private String _identifier;
-
     private KoulutusSearchSpesificationViewModel _searchSpec = new KoulutusSearchSpesificationViewModel();
     private KoulutusToisenAsteenPerustiedotViewModel _koulutusPerustiedotModel;
-
     private List<HakukohdeTulos> _hakukohteet;
     private List<HakukohdeTulos> _selectedhakukohteet;
-
     private List<KoulutusTulos> _koulutukset;
     private List<KoulutusTulos> _selectedKoulutukset;
-    
     private HakukohdeViewModel hakukohde;
-    
     /*
      * Selected organisaatio data:
      */
     private String organisaatioName;
-	private String organisaatioOid;
-
+    private String organisaatioOid;
 
     public String getIdentifier() {
         return _identifier;
@@ -79,7 +73,7 @@ public class TarjontaModel extends BaseUIViewModel {
 
     public List<HakukohdeTulos> getHakukohteet() {
         if (_hakukohteet == null) {
-            _hakukohteet =  new ArrayList<HakukohdeTulos>();
+            _hakukohteet = new ArrayList<HakukohdeTulos>();
         }
         return _hakukohteet;
     }
@@ -97,45 +91,49 @@ public class TarjontaModel extends BaseUIViewModel {
 
     public KoulutusToisenAsteenPerustiedotViewModel getKoulutusPerustiedotModel() {
         if (_koulutusPerustiedotModel == null) {
-            _koulutusPerustiedotModel = new KoulutusToisenAsteenPerustiedotViewModel();
+            _koulutusPerustiedotModel = new KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus.NEW);
         }
         return _koulutusPerustiedotModel;
     }
-    
 
-	public void setKoulutusPerustiedotModel(KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel) {
-		_koulutusPerustiedotModel = koulutusPerustiedotModel;
-	}
+    public void setKoulutusPerustiedotModel(KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel) {
+        _koulutusPerustiedotModel = koulutusPerustiedotModel;
+    }
 
     /**
      * Gets the currently selected (in ListKoulutusView) koulutus objects.
+     *
      * @return the selected koulutukset
      */
-	public List<KoulutusTulos> getSelectedKoulutukset() {
-		if (_selectedKoulutukset == null) {
-			_selectedKoulutukset = new ArrayList<KoulutusTulos>();
-		}
-		return _selectedKoulutukset;
-	}
+    public List<KoulutusTulos> getSelectedKoulutukset() {
+        if (_selectedKoulutukset == null) {
+            _selectedKoulutukset = new ArrayList<KoulutusTulos>();
+        }
+        return _selectedKoulutukset;
+    }
 
-	/**
-	 * Sets the koulutus objects that is the koulutus list used in ListKoulutusView.
-	 * @param koulutusTulos the koulutus objects to set
-	 */
-	public void setKoulutukset(List<KoulutusTulos> koulutusTulos) {
-		_koulutukset = koulutusTulos;
-	}
+    /**
+     * Sets the koulutus objects that is the koulutus list used in
+     * ListKoulutusView.
+     *
+     * @param koulutusTulos the koulutus objects to set
+     */
+    public void setKoulutukset(List<KoulutusTulos> koulutusTulos) {
+        _koulutukset = koulutusTulos;
+    }
 
-	/**
-	 * Gets the koulutus objects that is the koulutus list used in ListKoulutusView.
-	 * @return
-	 */
-	public List<KoulutusTulos> getKoulutukset() {
-		if (_koulutukset == null) {
-			_koulutukset = new ArrayList<KoulutusTulos>();
-		}
-		return _koulutukset;
-	}
+    /**
+     * Gets the koulutus objects that is the koulutus list used in
+     * ListKoulutusView.
+     *
+     * @return
+     */
+    public List<KoulutusTulos> getKoulutukset() {
+        if (_koulutukset == null) {
+            _koulutukset = new ArrayList<KoulutusTulos>();
+        }
+        return _koulutukset;
+    }
 
     /**
      * @return the hakukohde
@@ -154,36 +152,39 @@ public class TarjontaModel extends BaseUIViewModel {
         this.hakukohde = hakukohde;
     }
 
-
     /**
      * Gets the name of the selected organisaatio
+     *
      * @return the organisaatio name
      */
     public String getOrganisaatioName() {
-		return organisaatioName;
-	}
+        return organisaatioName;
+    }
 
     /**
      * Sets the name of the selected organisaatio
+     *
      * @param organisaatioName - the organisaatio name to set
      */
-	public void setOrganisaatioName(String organisaatioName) {
-		this.organisaatioName = organisaatioName;
-	}
+    public void setOrganisaatioName(String organisaatioName) {
+        this.organisaatioName = organisaatioName;
+    }
 
-	/**
-	 * Gets the oid of the selected organisaatio
-	 * @return the organisaatio oid
-	 */
-	public String getOrganisaatioOid() {
-		return organisaatioOid;
-	}
+    /**
+     * Gets the oid of the selected organisaatio
+     *
+     * @return the organisaatio oid
+     */
+    public String getOrganisaatioOid() {
+        return organisaatioOid;
+    }
 
-	/**
-	 * Sets the oid of the selected organisaatio
-	 * @param organisaatioOid - the organisaatio oid to set
-	 */
-	public void setOrganisaatioOid(String organisaatioOid) {
-		this.organisaatioOid = organisaatioOid;
-	}
+    /**
+     * Sets the oid of the selected organisaatio
+     *
+     * @param organisaatioOid - the organisaatio oid to set
+     */
+    public void setOrganisaatioOid(String organisaatioOid) {
+        this.organisaatioOid = organisaatioOid;
+    }
 }

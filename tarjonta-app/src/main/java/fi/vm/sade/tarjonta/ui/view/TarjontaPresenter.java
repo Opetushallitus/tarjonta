@@ -33,12 +33,14 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
@@ -63,6 +65,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter;
+import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
 
 /**
@@ -169,7 +172,7 @@ public class TarjontaPresenter {
         if (koulutusOid != null) {
             LueKoulutusKyselyTyyppi koulutusKysely = new LueKoulutusKyselyTyyppi();
             koulutusKysely.setOid(koulutusOid);
-            getModel().setKoulutusPerustiedotModel(new KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus.LOADED,this.tarjontaPublicService.lueKoulutus(koulutusKysely)));//new  this.tarjontaPublicService.lueKoulutus(koulutusKysely));
+            getModel().setKoulutusPerustiedotModel(new KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus.LOADED, this.tarjontaPublicService.lueKoulutus(koulutusKysely)));//new  this.tarjontaPublicService.lueKoulutus(koulutusKysely));
         }
         ShowKoulutusView view = new ShowKoulutusView("", null);
         _rootView.getAppRootLayout().removeAllComponents();
@@ -184,13 +187,32 @@ public class TarjontaPresenter {
      * Show koulutus edit view.
      */
     public void showKoulutusEditView(String koulutusOid) {
-        LOG.info("showKoulutusEditView()");
+        LOG.debug("showKoulutusEditView()");
 
         //If oid of koulutus is provided the koulutus is read from database before opening the KoulutusEditView
         if (koulutusOid != null) {
             LueKoulutusKyselyTyyppi koulutusKysely = new LueKoulutusKyselyTyyppi();
             koulutusKysely.setOid(koulutusOid);
-            getModel().setKoulutusPerustiedotModel(new KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus.LOADED,this.tarjontaPublicService.lueKoulutus(koulutusKysely)));
+            LueKoulutusVastausTyyppi lueKoulutus = this.tarjontaPublicService.lueKoulutus(koulutusKysely);
+
+            LOG.debug("KoulutusKoodi: " + lueKoulutus.getKoulutusKoodi());
+            LOG.debug("KoulutusohjelmaKoodi: " + lueKoulutus.getKoulutusohjelmaKoodi());
+            if (lueKoulutus.getKoulutusKoodi() != null) {
+                LOG.debug("1 getKoulutusKoodi.getUri: " + lueKoulutus.getKoulutusKoodi().getUri());
+                LOG.debug("2 getKoulutusKoodi.getArvo: " + lueKoulutus.getKoulutusKoodi().getArvo());
+            }
+
+            if (lueKoulutus.getKoulutusohjelmaKoodi() != null) {
+                LOG.debug("1 KoulutusohjelmaKoodi.getUri: " + lueKoulutus.getKoulutusohjelmaKoodi().getUri());
+                LOG.debug("2 KoulutusohjelmaKoodi.getArvo: " + lueKoulutus.getKoulutusohjelmaKoodi().getArvo());
+            }
+
+            KoulutusToisenAsteenPerustiedotViewModel koulutus = new KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus.LOADED, lueKoulutus);
+
+            LOG.debug("Data model loaded : {}", koulutus);
+            getModel().setKoulutusPerustiedotModel(koulutus);
+        } else {
+            getModel().setKoulutusPerustiedotModel(new KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus.NEW));
         }
 
         //Clearing the layout from previos content
@@ -341,13 +363,25 @@ public class TarjontaPresenter {
                 + "koulutusohjelmakoodi : '{}'",
                 model.getKoulutusKoodi(),
                 model.getKoulutusohjema().getKoodiUri());
-        
+
         //Requested new id form Oid Service.
         final String newOid = oidService.newOid(NodeClassCode.TEKN_5);
         LOG.debug("Requested new OID : {}", newOid);
-        LOG.debug("Output of data model : {}", model);
-        
-        tarjontaAdminService.lisaaKoulutus(model.mapToLisaaKoulutusTyyppi(newOid));
+        LOG.debug("Output data model : {}", model);
+        LisaaKoulutusTyyppi koulutus = model.mapToLisaaKoulutusTyyppi(newOid);
+
+        for (KoulutusYhteyshenkiloViewModel yhteyshenkilo : model.getYhteyshenkilot()) {
+            LOG.debug("Output KoulutusYhteyshenkiloViewModel : {}", yhteyshenkilo);
+            YhteyshenkiloTyyppi yhteyshenkiloTyyppi = new YhteyshenkiloTyyppi();
+            yhteyshenkiloTyyppi.setHenkiloOid(oidService.newOid(NodeClassCode.TEKN_5));
+            yhteyshenkiloTyyppi.setEtunimet(yhteyshenkilo.getEtunimet());
+            yhteyshenkiloTyyppi.setSukunimi(yhteyshenkilo.getSukunimi());
+            yhteyshenkiloTyyppi.setSahkoposti(yhteyshenkilo.getEmail());
+            yhteyshenkiloTyyppi.setTitteli(yhteyshenkilo.getTitteli());
+            koulutus.getYhteyshenkilo().add(yhteyshenkiloTyyppi);
+        }
+
+        tarjontaAdminService.lisaaKoulutus(koulutus);
     }
 
     /**
@@ -456,9 +490,20 @@ public class TarjontaPresenter {
         this.koulutusListView.reload();
     }
 
+    /**
+     * Search koodisto KOMO data by koulutus koodi uri.
+     *
+     * @param koodistoUri
+     */
     public void searchKoulutusOhjelmakoodit(final String koodistoUri) {
+        LOG.debug("Try to search koodisto meta data by uri : '{}'", koodistoUri);
+
         if (koodistoUri == null) {
             throw new RuntimeException("Application error - koulutus/tutkinto Koodisto URI cannot be null.");
+        }
+
+        if (koodiService == null) {
+            throw new RuntimeException("Application error - Koodisto service not initialized.");
         }
 
         final List<KoodiType> searchKoodis = koodiService.listKoodiByRelation(koodistoUri, true, SuhteenTyyppiType.SISALTYY);
@@ -497,8 +542,6 @@ public class TarjontaPresenter {
             }
 
             LOG.debug("Result : {}", koulutusohjemaResultSet);
-
-
             getModel().getKoulutusPerustiedotModel().setKoodistoKoulutusohjelma(koulutusohjemaResultSet);
         }
     }
@@ -516,13 +559,14 @@ public class TarjontaPresenter {
     }
 
     /**
-     * Navigate to the ShowHakukohdeView for the hakukohde with oid given as parameter.
+     * Navigate to the ShowHakukohdeView for the hakukohde with oid given as
+     * parameter.
+     *
      * @param oid the oid given
      */
-	public void showShowHakukohdeView(String oid) {
-		// TODO Auto-generated method stub
-		
-	}
+    public void showShowHakukohdeView(String oid) {
+        // TODO Auto-generated method stub
+    }
 
 	/**
 	 * Shows the koulutus objects for a hakukohde in the ListHakukohdeView.
