@@ -50,6 +50,8 @@ import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -292,7 +294,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
             VerticalLayout vl = UiUtil.verticalLayout();
             vl.setSizeUndefined();
-            vl.setWidth(500, Sizeable.UNITS_PIXELS);
+            vl.setWidth(800, Sizeable.UNITS_PIXELS);
             
 
             this.sisaisetHakuajatTable = new Table();
@@ -331,6 +333,10 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         grid.setColumnExpandRatio(1, 1);
         grid.setColumnExpandRatio(2, 5);
 
+        if (hakuViewModel.getHakuOid() == null) {
+        	hakuViewModel.setHakuvuosi(Calendar.getInstance().get(Calendar.YEAR));
+        	hakuViewModel.setKoulutuksenAlkamisvuosi(Calendar.getInstance().get(Calendar.YEAR));
+        }
         BeanItem<HakuViewModel> hakuBean = new BeanItem<HakuViewModel>(hakuViewModel);
         form = new ValidatingViewBoundForm(this);
         form.setItemDataSource(hakuBean);
