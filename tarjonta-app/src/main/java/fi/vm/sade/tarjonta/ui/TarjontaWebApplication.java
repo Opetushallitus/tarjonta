@@ -33,6 +33,9 @@ import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.dto.ButtonDTO;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,72 +111,8 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         });
 
         window.addComponent(initData);
-
-        // KOODISTO CACHE TESTAUSTA
-
-        final VerticalLayout koodistoVl = new VerticalLayout();
-
-        final ComboBox selectKoodistoCb = UiBuilder.comboBox(window, "VALITSE KOODISTO", new String[] {
-            KoodistoURIHelper.KOODISTO_AVAINSANAT_URI,
-            KoodistoURIHelper.KOODISTO_HAKUKAUSI_URI,
-            KoodistoURIHelper.KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI,
-            KoodistoURIHelper.KOODISTO_HAKUTAPA_URI,
-            KoodistoURIHelper.KOODISTO_KIELI_URI,
-            KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI,
-            KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI,
-            KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI,
-            KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI,
-            KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI,
-            KoodistoURIHelper.KOODISTO_KOULUTUS_URI,
-            KoodistoURIHelper.KOODISTO_KOULUTUKSEN_ALKAMISKAUSI_URI,
-        });
-
-        Button addNewKoodistoComponentBtn = new Button("Lisää uusi koodisto härdelli", new Button.ClickListener() {
-
-            @Override
-            public void buttonClick(ClickEvent event) {
-                LOG.info("adding...");
-                for (String cacheName : _cacheManager.getCacheNames()) {
-                    Cache cache = _cacheManager.getCache(cacheName);
-                    LOG.info("Cache: {}", cacheName);
-                    LOG.info("  native cahce = {}", cache.getNativeCache());
-                }
-
-                final KoodistoComponent kc = UiBuilder.koodistoComboBox(null, "" + selectKoodistoCb.getValue());
-                // UiBuilder.koodistoTwinColSelectUri(null, "" + selectKoodistoCb.getValue());
-                koodistoVl.addComponent(kc, 0);
-
-                kc.setImmediate(true);
-                kc.addListener(new Property.ValueChangeListener() {
-
-                    @Override
-                    public void valueChange(ValueChangeEvent event) {
-                        LOG.info(kc.getCaption() + ", values: {}", event.getProperty().getValue());
-                    }
-                });
-            }
-        });
-
-        window.addComponent(addNewKoodistoComponentBtn);
-
-        Button evictCachesBtn = new Button("Evict cache", new Button.ClickListener() {
-
-            @Override
-            public void buttonClick(ClickEvent event) {
-                LOG.info("evict cacges...");
-                for (String cacheName : _cacheManager.getCacheNames()) {
-                    LOG.info("  Cache: {}", cacheName);
-                    Cache cache = _cacheManager.getCache(cacheName);
-                    cache.clear();
-
-                    koodistoVl.removeAllComponents();
-                }
-            }
-        });
-        window.addComponent(evictCachesBtn);
-
-        window.addComponent(koodistoVl);
-
+        
+                
     }
 
     public void toTarjonta() {

@@ -103,9 +103,14 @@ public class TarjontaPresenter {
     private ListKoulutusView koulutusListView;
     private PerustiedotView hakuKohdePerustiedotView;
 
-    public void saveHakuKohde() {
+    public void saveHakuKohde(String tila) {
+        _model.getHakukohde().setHakukohdeTila(tila);
         saveHakuKohdePerustiedot();
     }
+    
+    public void commitHakukohdeForm(String tila) {
+        hakuKohdePerustiedotView.commitForm(tila);
+    } 
 
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
@@ -129,18 +134,18 @@ public class TarjontaPresenter {
         }
     }
 
-    public void initHakukohdeForm(HakukohdeViewModel model, PerustiedotView hakuKohdePerustiedotView) {
+    public void initHakukohdeForm(boolean isNew, PerustiedotView hakuKohdePerustiedotView) {
         this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
-        if (model == null) {
+        if (isNew) {
             getModel().setHakukohde(new HakukohdeViewModel());
 
         } else {
-            getModel().setHakukohde(model);
+            
             setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
 
         }
         ListHakuVastausTyyppi haut = tarjontaPublicService.listHaku(new ListaaHakuTyyppi());
-
+        
         this.hakuKohdePerustiedotView.initForm(getModel().getHakukohde());
         this.hakuKohdePerustiedotView.addItemsToHakuCombobox(haut.getResponse());
 
@@ -254,9 +259,16 @@ public class TarjontaPresenter {
             _model.setHakukohde(this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(tarjontaPublicService.lueHakukohde(kysely).getHakukohde()));
             setKomotoOids(_model.getHakukohde().getKomotoOids());
         }
+        
+        
 
         //After the data has been initialized the form is created
-        EditHakukohdeView editHakukohdeView = new EditHakukohdeView();
+        EditHakukohdeView editHakukohdeView;
+        if (hakukohdeOid == null) {
+        editHakukohdeView = new EditHakukohdeView(true);
+        } else {
+         editHakukohdeView = new EditHakukohdeView(false);   
+        }
 
         //Clearing the layout from previos content
         this._rootView.getAppRootLayout().removeAllComponents();

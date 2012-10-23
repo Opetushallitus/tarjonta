@@ -79,7 +79,7 @@ public class SearchResultsView extends VerticalLayout {
         tabs.addTab(new ListHakukohdeViewImpl(), T("hakuryhmat"));
 
         //For testing
-        EditHakukohdeView editHakukohdeView = new EditHakukohdeView();
+        EditHakukohdeView editHakukohdeView = new EditHakukohdeView(true);
 
         tabs.addTab(editHakukohdeView, "Lisää hakukohde");
         addComponent(tabs);

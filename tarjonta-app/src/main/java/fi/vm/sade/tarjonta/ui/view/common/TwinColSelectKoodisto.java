@@ -29,50 +29,50 @@ import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.vaadin.util.UiUtil;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Configurable;
 /**
  *
  * @author Tuomas Katva
  */
+@Configurable
 public class TwinColSelectKoodisto extends CssLayout  {
 
     private static final Logger LOG = LoggerFactory.getLogger(TwinColSelectKoodisto.class);
     private KoodistoComponent kc;
-    private TwinColSelect tcs;
+   
     private Set<String> languages = new HashSet<String>();
     
 
-    public TwinColSelectKoodisto(String koodistoUri) {
-        tcs = UiUtil.twinColSelect();
-        initKoodisto(koodistoUri);
+    public TwinColSelectKoodisto() {
+        
+        initKoodisto();
 
     }
 
     public void addListener(Property.ValueChangeListener listener) {
-        tcs.addListener(listener);
+        kc.addListener(listener);
     }
 
-    public void dataSource(PropertysetItem psi, String expression) {
-        // Selected data bound there
-       
-        if (psi != null && expression != null) {
-            kc.setPropertyDataSource(psi.getItemProperty(expression));
-        }
-        
-    }
+   public void removeListener(Property.ValueChangeListener listener) {
+       kc.removeListener(listener);
+   }
 
-    private void initKoodisto(String koodistoUri) {
-        kc = WidgetFactory.create(koodistoUri);
+    private void initKoodisto() {
+        kc = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KIELI_URI);
         
-        // Wire koodisto to selectable component
-        kc.setField(tcs);
-        
+//        kc.setImmediate(true);
+
+//        
         // DISPLAYED text
         kc.setCaptionFormatter(new CaptionFormatter() {
             @Override
@@ -88,9 +88,9 @@ public class TwinColSelectKoodisto extends CssLayout  {
                 }
             }
         });
-        
-
-        // BOUND value
+//        
+//
+//        // BOUND value
         kc.setFieldValueFormatter(new FieldValueFormatter() {
             @Override
             public Object formatFieldValue(Object dto) {
@@ -132,7 +132,7 @@ public class TwinColSelectKoodisto extends CssLayout  {
     }
     
     public void setValue(Set<String> uris) {
-        kc.setValue(uris);
+        kc.setValue(Collections.unmodifiableSet(uris));
     }
     //Try to get localised name for uri
     public String getCaptionFor(String uri) {

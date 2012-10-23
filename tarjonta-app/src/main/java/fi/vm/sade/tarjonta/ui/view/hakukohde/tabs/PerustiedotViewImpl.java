@@ -58,6 +58,7 @@ import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -84,7 +85,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     KoodistoComponent hakukohteenNimiCombo;
     @PropertyId("tunnisteKoodi")
     TextField tunnisteKoodiText;
-    @PropertyId("hakuOid")
+    @PropertyId("haku")
     ComboBox hakuCombo;
     @PropertyId("aloitusPaikat")
     TextField aloitusPaikatText;
@@ -112,7 +113,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         buildMainLayout();
         this.presenter = presenter;
 
-        this.presenter.initHakukohdeForm(null,this);
+        this.presenter.initHakukohdeForm(true,this);
 
     }
 
@@ -126,22 +127,23 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
      * 
      */
 
-    public PerustiedotViewImpl(TarjontaPresenter presenter, HakukohdeViewModel model) {
+    public PerustiedotViewImpl(TarjontaPresenter presenter, boolean isNew) {
         super();
         buildMainLayout();
         this.presenter = presenter;
 
-        this.presenter.initHakukohdeForm(model,this);
+        this.presenter.initHakukohdeForm(isNew,this);
     }
 
     @Override
-    public void commitForm() {
+    public void commitForm(String tila) {
         form.commit();
         if (form.isValid()) {
-            presenter.saveHakuKohde();
+            presenter.saveHakuKohde(tila);
         }
     }
-
+    
+    
     @Override
     public void initForm(HakukohdeViewModel model) {
         hakukohdeBean = new BeanItem<HakukohdeViewModel>(model);
@@ -216,10 +218,9 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     }
 
     private KoodistoComponent buildHakukelpoisuusVaatimukset() {
-        hakuKelpoisuusVaatimuksetCombo = WidgetFactory.create(KoodistoURIHelper.KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI);
-        ComboBox hakuKelpoisuusCombo = new ComboBox();
-        hakuKelpoisuusCombo.setFilteringMode(Filtering.FILTERINGMODE_CONTAINS);
-        hakuKelpoisuusVaatimuksetCombo.setField(hakuKelpoisuusCombo);
+        hakuKelpoisuusVaatimuksetCombo = UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI);
+               
+        
         return hakuKelpoisuusVaatimuksetCombo;
     }
 
@@ -277,37 +278,8 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
 
     private KoodistoComponent buildHaku() {
 
-        hakukohteenNimiCombo = WidgetFactory.create(KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI);
-        ComboBox hknCombo = new ComboBox();
-        hknCombo.setFilteringMode(Filtering.FILTERINGMODE_CONTAINS);
-        hakukohteenNimiCombo.setField(hknCombo);
+        hakukohteenNimiCombo = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI);
         
-        hakukohteenNimiCombo.setFieldValueFormatter(new FieldValueFormatter() {
-
-            @Override
-            public Object formatFieldValue(Object dto) {
-                if (dto instanceof KoodiType) {
-                    KoodiType koodi = (KoodiType)dto;
-                    return koodi.getKoodiUri();
-                } else {
-                    return dto;
-                }
-                
-            }
-        });
-        
-        hakukohteenNimiCombo.setCaptionFormatter(new CaptionFormatter() {
-
-            @Override
-            public String formatCaption(Object dto) {
-                if (dto instanceof KoodiType) {
-                    KoodiType koodi = (KoodiType)dto;
-                    return koodi.getKoodiArvo();
-                } else {
-                    return dto.toString();
-                }
-            }
-        });
 
         return hakukohteenNimiCombo;
     }
@@ -366,11 +338,11 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     }
 
     private LanguageTabSheet buildLanguageTab(List<KielikaannosViewModel> arvot) {
-        return new LanguageTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, arvot);
+        return new LanguageTabSheet();
     }
 
     private LanguageTabSheet buildLanguageTab() {
-        return new LanguageTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI);
+        return new LanguageTabSheet();
     }
 
 

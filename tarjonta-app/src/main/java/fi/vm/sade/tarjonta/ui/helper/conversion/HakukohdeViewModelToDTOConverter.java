@@ -95,6 +95,7 @@ public class HakukohdeViewModelToDTOConverter {
     	List<KielikaannosViewModel> vastaus = new ArrayList<KielikaannosViewModel>();
 		for (MonikielinenTekstiTyyppi curLisatieto : lisatiedot) {
 			KielikaannosViewModel convertedLisatieto = new KielikaannosViewModel(curLisatieto.getTekstinKielikoodi(), curLisatieto.getTeksti());
+                        
 			vastaus.add(convertedLisatieto);
 		}
 		return vastaus;

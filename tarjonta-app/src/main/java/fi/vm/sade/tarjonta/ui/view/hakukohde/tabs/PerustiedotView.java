@@ -29,12 +29,12 @@ public interface PerustiedotView {
     
     void initForm(HakukohdeViewModel model);
     
-    void commitForm();
-    
     List<KielikaannosViewModel> getLisatiedot();
     
     void addItemsToHakuCombobox(List<HakuTyyppi> haut);
     
     void setTunnisteKoodi(String tunnistekoodi);
+    
+    void commitForm(String tila);
    
 }

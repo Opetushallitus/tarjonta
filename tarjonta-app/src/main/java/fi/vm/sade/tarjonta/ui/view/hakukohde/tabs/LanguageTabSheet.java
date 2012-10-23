@@ -24,10 +24,14 @@ import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
+import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.common.TwinColSelectKoodisto;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.util.UiUtil;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,6 +42,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 /**
  *
@@ -51,46 +56,41 @@ public class LanguageTabSheet extends TabSheet implements Property.ValueChangeLi
     private Map<String, TabSheet.Tab> selectedLanguages = new HashMap<String, TabSheet.Tab>();
     private TwinColSelectKoodisto twinColSelect;
     private List<KielikaannosViewModel> languageValues = null;
+    private boolean attached = false;
+    @Autowired(required = true)
+    private TarjontaModel _model;
+
+    public LanguageTabSheet() {
+        
+    }
+
+    
+    @Override
+    public void attach() {
+        super.attach();
+        if (!attached) {
+        initialize();
+        attached = true;
+        }
+    }
+    
     
 
-    public LanguageTabSheet(String koodistoUri) {
-        initialize(koodistoUri, null, null);
-    }
 
-    public LanguageTabSheet(String koodistoUri, PropertysetItem psi, String expression) {
-        initialize(koodistoUri, psi, expression);
-    }
-    
-    public LanguageTabSheet(String koodistoUri, List<KielikaannosViewModel> values) {
-        initialize(koodistoUri, values);
-    }
-
-    private void initialize(String koodistoUri, PropertysetItem psi, String expression) {
-        twinColSelect = new TwinColSelectKoodisto(koodistoUri);
+    private void initialize() {
+        twinColSelect = new TwinColSelectKoodisto();
+//        twinColSelect.setImmediate(true);
         twinColSelect.addListener(this);
         
         addTab(twinColSelect, "", TAB_ICON_PLUS);
 
-        if (psi != null && expression != null) {
-            twinColSelect.dataSource(psi, expression);
+        if (_model.getHakukohde() != null && _model.getHakukohde().getLisatiedot() != null) {
+            this.setInitialValues(_model.getHakukohde().getLisatiedot());
         }
-    }
-    @PostConstruct
-    private void initializeTabs() {
-        if (languageValues != null) {
-            setInitialValues(languageValues);
-        }
-        languageValues = null;
-        twinColSelect.addListener(this);
+        
     }
     
-    private void initialize(String koodistoUri, List<KielikaannosViewModel> values) {
-        twinColSelect = new TwinColSelectKoodisto(koodistoUri);
-        addTab(twinColSelect, "", TAB_ICON_PLUS);
-        languageValues = values;
-        
-     
-    }
+   
     
     public List<KielikaannosViewModel> getKieliKaannokset() {
         languageValues = new ArrayList<KielikaannosViewModel>();
@@ -112,12 +112,14 @@ public class LanguageTabSheet extends TabSheet implements Property.ValueChangeLi
     
     private void setInitialValues(List<KielikaannosViewModel> values) {
         if (values != null) {
+           twinColSelect.removeListener(this);
             Set<String> kielet = new HashSet<String>();
             for (KielikaannosViewModel kieliKaannos : values) {
-                kielet.add(kieliKaannos.getKielikoodi());
+                kielet.add(kieliKaannos.getKielikoodi().trim());
                 addKieliKaannosTab(kieliKaannos);
             }
              twinColSelect.setValue(kielet);
+             twinColSelect.addListener(this);
         }
     }
     
@@ -164,7 +166,6 @@ public class LanguageTabSheet extends TabSheet implements Property.ValueChangeLi
         textField.setHeight("100px");
         textField.setWidth(UiConstant.PCT100);
         String caption = twinColSelect.getCaptionFor(uri);
-        
         selectedLanguages.put(uri, addTab(textField,caption));
     }
 
