@@ -363,10 +363,10 @@ public class TarjontaPresenter {
     public void saveKoulutusValmiina() throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
         //DEBUGSAWAY:LOG.debug("Try to persist KoulutusTyyppi - "
-                + "koulutuskoodi : '{}', "
-                + "koulutusohjelmakoodi : '{}'",
-                model.getKoulutusKoodi(),
-                model.getKoulutusohjema().getKoodiUri());
+               // + "koulutuskoodi : '{}', "
+                //+ "koulutusohjelmakoodi : '{}'",
+                //model.getKoulutusKoodi(),
+                //model.getKoulutusohjema().getKoodiUri());
 
         //Requested new id form Oid Service.
         final String newOid = oidService.newOid(NodeClassCode.TEKN_5);
