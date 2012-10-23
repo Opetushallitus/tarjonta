@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -42,13 +44,19 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.ui.component.CaptionFormatter;
+import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.util.KoodistoHelper;
 
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchCriteriaDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.Oph;
@@ -80,15 +88,16 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     private HierarchicalContainer hc;
     @Autowired
     private OrganisaatioService organisaatioService;
-    
+
     @Autowired
     private TarjontaPresenter presenter;
-    
+
     private List<OrganisaatioDTO> organisaatios;
     private OrganisaatioSearchCriteriaDTO criteria;
     List<String> rootOrganisaatioOids;
-    @Value("${koodisto-uris.oppilaitostyyppi:Oppilaitostyyppi}")
-    private String oppilaitostyyppiUri;
+
+//    @Value("${koodisto-uris.oppilaitostyyppi:Oppilaitostyyppi}")
+//    private String oppilaitostyyppiUri;
 
     public OrganisaatiohakuView() {
         super(VerticalLayout.class);
@@ -118,6 +127,16 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
 
         search = UiUtil.textFieldSmallSearch(panelTop);
 
+        // Bind enter to do the search
+        search.setImmediate(true);
+        search.addListener(new Property.ValueChangeListener() {
+
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                searchOrganisaatios();
+            }
+        });
+
         organisaatioTyyppi = UiUtil.comboBox(panelTop, null, new String[]{OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(),
                     OrganisaatioTyyppi.OPPILAITOS.value(),
                     OrganisaatioTyyppi.OPETUSPISTE.value(),
@@ -126,10 +145,28 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         setOrgTyyppiItemCaptions();
         organisaatioTyyppi.setSizeUndefined();
 
-
-        oppilaitosTyyppi = UiBuilder.koodistoComboBox(null, i18n.getMessage("koodisto-uris.oppilaitostyyppi"), null, null, i18n.getMessage("oppilaitostyyppi.prompt"));
+        // TODO missä tämä koodisto on? Eikös orgnanisaation puolella se ole olemassa?
+        oppilaitosTyyppi = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI, null, null, i18n.getMessage("oppilaitostyyppi.prompt"));
+        oppilaitosTyyppi.getField().setNullSelectionAllowed(true);
         oppilaitosTyyppi.setWidth("210px");
+        oppilaitosTyyppi.setCaptionFormatter(new CaptionFormatter() {
 
+            @Override
+            public String formatCaption(Object dto) {
+                if (dto instanceof KoodiType) {
+                    KoodiType kdto = (KoodiType) dto;
+
+                    KieliType kieli = KoodistoHelper.getKieliForLocale(I18N.getLocale());
+                    if (kieli == null) {
+                        kieli = KieliType.FI;
+                    }
+
+                    return KoodistoHelper.getKoodiMetadataForLanguage(kdto, kieli).getNimi();
+                } else {
+                    return "!KoodiType?: " + dto;
+                }
+            }
+        });
         panelTop.addComponent(oppilaitosTyyppi);
 
 
@@ -276,7 +313,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     private void setChildrenTo(OrganisaatioDTO parentOrg) {
         boolean wasChildren = false;
         for (OrganisaatioDTO curOrg : organisaatios) {
-        	//if the curOrg is the child of parentOrg the parent-child relation is 
+        	//if the curOrg is the child of parentOrg the parent-child relation is
         	//created in the container
             if (parentOrg.getOid().equals(curOrg.getParentOid())) {
                 hc.setParent(curOrg, parentOrg);

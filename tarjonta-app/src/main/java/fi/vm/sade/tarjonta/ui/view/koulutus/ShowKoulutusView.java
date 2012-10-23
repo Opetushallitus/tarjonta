@@ -50,7 +50,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShowKoulutusView.class);
     @Autowired(required = true)
-    private TarjontaPresenter presenter;
+    private TarjontaPresenter _presenter;
     @Autowired(required = true)
     private TarjontaUIHelper _tarjontaUIHelper;
 
@@ -78,7 +78,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     private void buildKoulutuksenPerustiedot(VerticalLayout layout) {
         layout.addComponent(buildHeaderLayout(T("perustiedot"), T(CommonTranslationKeys.MUOKKAA), null));
 
-        KoulutusToisenAsteenPerustiedotViewModel model = presenter.getModel().getKoulutusPerustiedotModel();
+        KoulutusToisenAsteenPerustiedotViewModel model = _presenter.getModel().getKoulutusPerustiedotModel();
 
         GridLayout grid = new GridLayout(2, 1);
         grid.setHeight("100%");
@@ -93,7 +93,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         }
         grid.newLine();
         grid.addComponent(UiUtil.label(T("opetusmuoto")));
-        grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getOpetusmuoto() != null ? model.getOpetusmuoto().iterator().next() : null)));
+//        grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getOpetusmuoto() != null ? model.getOpetusmuoto().iterator().next() : null)));
         grid.newLine();
         grid.addComponent(UiUtil.label(T("teemat")));
         grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getAvainsanat(), null)));
@@ -134,7 +134,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     private void buildKoulutuksenKuvailevatTiedot(VerticalLayout layout) {
         layout.addComponent(buildHeaderLayout(T("kuvailevatTiedot"), T(CommonTranslationKeys.MUOKKAA), null));
 
-        KoulutusToisenAsteenPerustiedotViewModel model = presenter.getModel().getKoulutusPerustiedotModel();
+        KoulutusToisenAsteenPerustiedotViewModel model = _presenter.getModel().getKoulutusPerustiedotModel();
 
         TabSheet tab = new TabSheet();
         tab.setSizeUndefined();
@@ -211,7 +211,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         addNavigationButton("", new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                presenter.showMainDefaultView();
+                _presenter.showMainDefaultView();
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 

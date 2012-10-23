@@ -32,10 +32,14 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
+import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusFormType;
@@ -191,7 +195,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 //        //only for 'lukio' -section
 //        buildGridKielivalikoimaRow(this, "Kielivalikoima");
 
-        //set components to visible or hide them by selected form type. 
+        //set components to visible or hide them by selected form type.
         //An example 'lukio', 'ammatillinen koulutus' ...
 
         //activate all property annotation validations
@@ -373,6 +377,25 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         kcSuunniteltuKestoTyyppi = UiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, T(propertyKey + "Tyyppi" + PROPERTY_PROMPT_SUFFIX));
         kcSuunniteltuKestoTyyppi.setImmediate(true);
 
+        kcSuunniteltuKestoTyyppi.setCaptionFormatter(new CaptionFormatter() {
+
+            @Override
+            public String formatCaption(Object dto) {
+                if (dto instanceof KoodiType) {
+                    KoodiType kdto = (KoodiType) dto;
+
+                    KieliType kieli = KoodistoHelper.getKieliForLocale(I18N.getLocale());
+                    if (kieli == null) {
+                        kieli = KieliType.FI;
+                    }
+
+                    return KoodistoHelper.getKoodiMetadataForLanguage(kdto, kieli).getNimi();
+                } else {
+                    return "!KoodiType?: " + dto;
+                }
+            }
+        });
+
         grid.addComponent(hl);
         grid.newLine();
         buildSpacingGridRow(grid);
@@ -426,7 +449,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     }
 
     /*
-     * PRIVATE HELPER METHODS: 
+     * PRIVATE HELPER METHODS:
      */
     private void buildSpacingGridRow(GridLayout grid) {
         CssLayout cssLayout = new CssLayout();
