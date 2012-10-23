@@ -159,7 +159,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                     errorView.resetErrors();
                     form.commit();
 
-                    LOG.debug("Form validated successfully.");
+                    //DEBUGSAWAY:LOG.debug("Form validated successfully.");
                     try {
                         presenter.saveKoulutusValmiina();
                         presenter.showNotification(UserNotification.SAVE_SUCCESS);
@@ -171,7 +171,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                         presenter.showNotification(UserNotification.SAVE_FAILED);
                     }
                 } catch (Validator.InvalidValueException e) {
-                    LOG.debug("Form is missing data - message : {}, causes : {}", e.getMessage(), e.getCauses());
+                    //DEBUGSAWAY:LOG.debug("Form is missing data - message : {}, causes : {}", e.getMessage(), e.getCauses());
                     errorView.addError(e);
                     presenter.showNotification(UserNotification.GENERIC_VALIDATION_FAILED);
                 }

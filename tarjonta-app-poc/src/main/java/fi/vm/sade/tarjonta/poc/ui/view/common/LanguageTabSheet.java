@@ -61,7 +61,7 @@ public class LanguageTabSheet extends TabSheet implements Property.ValueChangeLi
 
     @Override
     public void valueChange(ValueChangeEvent event) {
-        LOG.debug("ValueChangeEvent : " + event);
+        //DEBUGSAWAY:LOG.debug("ValueChangeEvent : " + event);
 
 
         Object value = event.getProperty().getValue();
@@ -69,10 +69,10 @@ public class LanguageTabSheet extends TabSheet implements Property.ValueChangeLi
             for (String lang : twinColSelect.getLanguages()) {
                 Collection<String> selected = (Collection<String>) value;
                 if (!selected.contains(lang) && selectedLanguages.containsKey(lang)) {
-                    LOG.debug("Remove " + lang);
+                    //DEBUGSAWAY:LOG.debug("Remove " + lang);
                     removeTab(selectedLanguages.remove(lang));
                 } else if (selected.contains(lang) && !selectedLanguages.containsKey(lang)) {
-                    LOG.debug("Add " + lang);
+                    //DEBUGSAWAY:LOG.debug("Add " + lang);
                     addTextFieldTab(lang);
                 }
 

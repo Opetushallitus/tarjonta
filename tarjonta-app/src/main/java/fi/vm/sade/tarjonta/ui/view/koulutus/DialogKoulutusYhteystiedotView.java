@@ -66,7 +66,7 @@ public class DialogKoulutusYhteystiedotView extends AbstractDataTableDialog {
      */
     @Override
     public void windowClose(CloseEvent e) {
-        LOG.debug("In windowClose - close event");
+        //DEBUGSAWAY:LOG.debug("In windowClose - close event");
         removeDialogButtons();
     }
 

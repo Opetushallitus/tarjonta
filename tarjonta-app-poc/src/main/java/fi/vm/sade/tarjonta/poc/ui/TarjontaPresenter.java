@@ -158,7 +158,7 @@ public class TarjontaPresenter implements Serializable {
     }
 
     public void showEditKolutusView() {
-        LOG.debug("In showEditKolutusView");
+        //DEBUGSAWAY:LOG.debug("In showEditKolutusView");
         getRightLayout().removeAllComponents();
         getRightLayout().addComponent(new EditKoulutusView());
     }
@@ -168,7 +168,7 @@ public class TarjontaPresenter implements Serializable {
     }
 
     public void showAddHakuDokumenttiView() {
-        LOG.debug("In showAddHakuDokumenttiView");
+        //DEBUGSAWAY:LOG.debug("In showAddHakuDokumenttiView");
         getRightLayout().removeAllComponents();
         getRightLayout().addComponent(new AddHakuDokumenttiView());
     }
@@ -206,7 +206,7 @@ public class TarjontaPresenter implements Serializable {
     }
 
     public void showEditSiirraHakukohteitaView() {
-        LOG.debug("In showEditSiirraHakukohteitaView");
+        //DEBUGSAWAY:LOG.debug("In showEditSiirraHakukohteitaView");
 
         final EditSiirraHakukohteitaView modal = new EditSiirraHakukohteitaView("Siirrä hakukohteita täydennyshakuun");
         _tarjontaWindow.getWindow().addWindow(modal);
@@ -234,7 +234,7 @@ public class TarjontaPresenter implements Serializable {
     }
 
     public void showKoulutusAdditionalInfoView() {
-        LOG.debug("In showKoulutusAdditionalInfoView");
+        //DEBUGSAWAY:LOG.debug("In showKoulutusAdditionalInfoView");
 
         final KoulutusAdditionalInfoView modal = new KoulutusAdditionalInfoView("Lisää suuntautumisvaihtoehto/opintosuunta");
         _tarjontaWindow.getWindow().addWindow(modal);

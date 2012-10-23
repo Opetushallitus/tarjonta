@@ -107,7 +107,7 @@ public class MainTabKoulutusView extends AutoSizeVerticalLayout {
                 modal.addNavigationButton("Peruuta", new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
-                        LOG.debug("buttonClick() - peruuta click...");
+                        //DEBUGSAWAY:LOG.debug("buttonClick() - peruuta click...");
                         // Stay in same view
                         getWindow().removeWindow(modal);
                         modal.removeDialogButtons();
@@ -117,11 +117,11 @@ public class MainTabKoulutusView extends AutoSizeVerticalLayout {
                 modal.addNavigationButton("Jatka", new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
-                        LOG.debug("buttonClick() - luo uusi koulutus click...");
+                        //DEBUGSAWAY:LOG.debug("buttonClick() - luo uusi koulutus click...");
 
                         getWindow().removeWindow(modal);
                         modal.removeDialogButtons();
-                        LOG.debug("presenter : " + _presenter);
+                        //DEBUGSAWAY:LOG.debug("presenter : " + _presenter);
                         _presenter.showEditKolutusView();
                     }
                 }, StyleEnum.STYLE_BUTTON_PRIMARY);

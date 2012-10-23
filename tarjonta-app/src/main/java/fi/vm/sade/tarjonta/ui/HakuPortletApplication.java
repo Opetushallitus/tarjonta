@@ -37,12 +37,12 @@ public class HakuPortletApplication extends AbstractSadePortletApplication {
 
     @Override
     protected void registerListeners(Blackboard blackboard) {
-        LOG.debug("registerListeners()");
+        //DEBUGSAWAY:LOG.debug("registerListeners()");
     }
 
     @Override
     public synchronized void init() {
-        LOG.debug("init()");
+        //DEBUGSAWAY:LOG.debug("init()");
 
         super.init();
 

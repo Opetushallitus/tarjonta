@@ -31,7 +31,7 @@ public class MapItem extends PropertysetItem {
         _map = map;
 
         for (Object object : _map.keySet()) {
-            LOG.debug("  adding property: {}", object);
+            //DEBUGSAWAY:LOG.debug("  adding property: {}", object);
             addItemProperty(object, new MapProperty(_map, object));
         }
     }
@@ -41,7 +41,7 @@ public class MapItem extends PropertysetItem {
         LOG.info("getItemProperty({})", id);
         
         if (!_map.containsKey(id)) {
-            LOG.debug("  add nonexisting property: {}", id);
+            //DEBUGSAWAY:LOG.debug("  add nonexisting property: {}", id);
             super.addItemProperty(id, new MapProperty(_map, id));
         }
         return super.getItemProperty(id);

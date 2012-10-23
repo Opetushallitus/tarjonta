@@ -381,7 +381,7 @@ public class EditKoulutusPerustiedotView extends AutoSizeVerticalLayout {
      * @return
      */
     private KoodistoComponent addKoodistoComboBox(final String koodistoUri, PropertysetItem psi, String expression, String promptKey, AbstractOrderedLayout layout) {
-        LOG.debug("addKoodistoComboBox({}, ...)", koodistoUri);
+        //DEBUGSAWAY:LOG.debug("addKoodistoComboBox({}, ...)", koodistoUri);
         return UiBuilder.koodistoComboBox(layout, koodistoUri, psi, expression, i18n.getMessage(promptKey));
     }
 
@@ -395,7 +395,7 @@ public class EditKoulutusPerustiedotView extends AutoSizeVerticalLayout {
      * @return
      */
     private KoodistoComponent addKoodistoTwinColSelect(final String koodistoUri, PropertysetItem psi, String expression, AbstractOrderedLayout layout) {
-        LOG.debug("addKoodistoTwinColSelect({}, ...)", koodistoUri);
+        //DEBUGSAWAY:LOG.debug("addKoodistoTwinColSelect({}, ...)", koodistoUri);
         return UiBuilder.koodistoTwinColSelect(layout, koodistoUri, psi, expression, null);
     }
 

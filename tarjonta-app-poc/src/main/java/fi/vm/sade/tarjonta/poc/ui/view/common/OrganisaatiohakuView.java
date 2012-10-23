@@ -51,7 +51,7 @@ public class OrganisaatiohakuView extends AbstractCollapsibleLeft<VerticalLayout
     public OrganisaatiohakuView() {
         super(VerticalLayout.class);
 
-        LOG.debug("In build organisaatio layout");
+        //DEBUGSAWAY:LOG.debug("In build organisaatio layout");
         Panel panelTop = buildPanel(buildPanelLayout());
 
         search = UiUtil.textFieldSmallSearch(panelTop);

@@ -191,7 +191,7 @@ public class TarjontaPresenter {
      * Show koulutus edit view.
      */
     public void showKoulutusEditView(String koulutusOid) {
-        LOG.debug("showKoulutusEditView()");
+        //DEBUGSAWAY:LOG.debug("showKoulutusEditView()");
 
         //If oid of koulutus is provided the koulutus is read from database before opening the KoulutusEditView
         if (koulutusOid != null) {
@@ -199,21 +199,21 @@ public class TarjontaPresenter {
             koulutusKysely.setOid(koulutusOid);
             LueKoulutusVastausTyyppi lueKoulutus = this.tarjontaPublicService.lueKoulutus(koulutusKysely);
 
-            LOG.debug("KoulutusKoodi: " + lueKoulutus.getKoulutusKoodi());
-            LOG.debug("KoulutusohjelmaKoodi: " + lueKoulutus.getKoulutusohjelmaKoodi());
+            //DEBUGSAWAY:LOG.debug("KoulutusKoodi: " + lueKoulutus.getKoulutusKoodi());
+            //DEBUGSAWAY:LOG.debug("KoulutusohjelmaKoodi: " + lueKoulutus.getKoulutusohjelmaKoodi());
             if (lueKoulutus.getKoulutusKoodi() != null) {
-                LOG.debug("1 getKoulutusKoodi.getUri: " + lueKoulutus.getKoulutusKoodi().getUri());
-                LOG.debug("2 getKoulutusKoodi.getArvo: " + lueKoulutus.getKoulutusKoodi().getArvo());
+                //DEBUGSAWAY:LOG.debug("1 getKoulutusKoodi.getUri: " + lueKoulutus.getKoulutusKoodi().getUri());
+                //DEBUGSAWAY:LOG.debug("2 getKoulutusKoodi.getArvo: " + lueKoulutus.getKoulutusKoodi().getArvo());
             }
 
             if (lueKoulutus.getKoulutusohjelmaKoodi() != null) {
-                LOG.debug("1 KoulutusohjelmaKoodi.getUri: " + lueKoulutus.getKoulutusohjelmaKoodi().getUri());
-                LOG.debug("2 KoulutusohjelmaKoodi.getArvo: " + lueKoulutus.getKoulutusohjelmaKoodi().getArvo());
+                //DEBUGSAWAY:LOG.debug("1 KoulutusohjelmaKoodi.getUri: " + lueKoulutus.getKoulutusohjelmaKoodi().getUri());
+                //DEBUGSAWAY:LOG.debug("2 KoulutusohjelmaKoodi.getArvo: " + lueKoulutus.getKoulutusohjelmaKoodi().getArvo());
             }
 
             KoulutusToisenAsteenPerustiedotViewModel koulutus = new KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus.LOADED, lueKoulutus);
 
-            LOG.debug("Data model loaded : {}", koulutus);
+            //DEBUGSAWAY:LOG.debug("Data model loaded : {}", koulutus);
             getModel().setKoulutusPerustiedotModel(koulutus);
         } else {
             getModel().setKoulutusPerustiedotModel(new KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus.NEW));
@@ -362,7 +362,7 @@ public class TarjontaPresenter {
      */
     public void saveKoulutusValmiina() throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
-        LOG.debug("Try to persist KoulutusTyyppi - "
+        //DEBUGSAWAY:LOG.debug("Try to persist KoulutusTyyppi - "
                 + "koulutuskoodi : '{}', "
                 + "koulutusohjelmakoodi : '{}'",
                 model.getKoulutusKoodi(),
@@ -370,13 +370,13 @@ public class TarjontaPresenter {
 
         //Requested new id form Oid Service.
         final String newOid = oidService.newOid(NodeClassCode.TEKN_5);
-        LOG.debug("Requested new OID : {}", newOid);
-        LOG.debug("Output data model : {}", model);
-        LOG.debug("Output KoulutusYhteyshenkiloViewModel : {}", model.getYhteyshenkilot());
+        //DEBUGSAWAY:LOG.debug("Requested new OID : {}", newOid);
+        //DEBUGSAWAY:LOG.debug("Output data model : {}", model);
+        //DEBUGSAWAY:LOG.debug("Output KoulutusYhteyshenkiloViewModel : {}", model.getYhteyshenkilot());
         LisaaKoulutusTyyppi koulutus = model.mapToLisaaKoulutusTyyppi(newOid);
 
         for (KoulutusYhteyshenkiloViewModel yhteyshenkilo : model.getYhteyshenkilot()) {
-            LOG.debug("Output KoulutusYhteyshenkiloViewModel object : {}", yhteyshenkilo);
+            //DEBUGSAWAY:LOG.debug("Output KoulutusYhteyshenkiloViewModel object : {}", yhteyshenkilo);
             YhteyshenkiloTyyppi yhteyshenkiloTyyppi = new YhteyshenkiloTyyppi();
             yhteyshenkiloTyyppi.setHenkiloOid(oidService.newOid(NodeClassCode.TEKN_5));
             yhteyshenkiloTyyppi.setEtunimet(yhteyshenkilo.getEtunimet());
@@ -513,7 +513,7 @@ public class TarjontaPresenter {
      * @param koodistoUri
      */
     public void searchKoulutusOhjelmakoodit(final String koodistoUri) {
-        LOG.debug("Try to search koodisto meta data by uri : '{}'", koodistoUri);
+        //DEBUGSAWAY:LOG.debug("Try to search koodisto meta data by uri : '{}'", koodistoUri);
 
         if (koodistoUri == null) {
             throw new RuntimeException("Application error - koulutus/tutkinto Koodisto URI cannot be null.");
@@ -526,7 +526,7 @@ public class TarjontaPresenter {
         final List<KoodiType> searchKoodis = koodiService.listKoodiByRelation(koodistoUri, true, SuhteenTyyppiType.SISALTYY);
 
         if (searchKoodis.size() == 0) {
-            LOG.debug("koodi with URL " + koodistoUri + " was not found.");
+            //DEBUGSAWAY:LOG.debug("koodi with URL " + koodistoUri + " was not found.");
         }
 
         Set<KoulutusohjelmaModel> koulutusohjemaResultSet = new HashSet<KoulutusohjelmaModel>();
@@ -535,18 +535,18 @@ public class TarjontaPresenter {
             String name = null;
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("List basic data : {}, {}", type.getKoodiArvo(), type.getKoodiUri());
+                //DEBUGSAWAY:LOG.debug("List basic data : {}, {}", type.getKoodiArvo(), type.getKoodiUri());
             }
 
             if (LOG.isDebugEnabled()) {
                 for (KoodistoItemType t : type.getKoodistos()) {
-                    LOG.debug("List included koodistos : {}, {}", t.getKoodistoUri(), t.getKoodistoVersio());
+                    //DEBUGSAWAY:LOG.debug("List included koodistos : {}, {}", t.getKoodistoUri(), t.getKoodistoVersio());
                 }
             }
 
             for (KoodiMetadataType m : type.getMetadata()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("List included metadata : " + m.getKuvaus() + " ," + m.getLyhytNimi() + " ," + m.getKasite() + " ," + m.getSisaltaaKoodiston() + " ," + m.getSisaltaaMerkityksen() + " ," + m.getNimi() + " ," + m.getHuomioitavaKoodi());
+                    //DEBUGSAWAY:LOG.debug("List included metadata : " + m.getKuvaus() + " ," + m.getLyhytNimi() + " ," + m.getKasite() + " ," + m.getSisaltaaKoodiston() + " ," + m.getSisaltaaMerkityksen() + " ," + m.getNimi() + " ," + m.getHuomioitavaKoodi());
                 }
                 if (m.getNimi() != null) {
                     name = m.getNimi();
@@ -558,7 +558,7 @@ public class TarjontaPresenter {
                 koulutusohjemaResultSet.add(new KoulutusohjelmaModel(type.getKoodiUri(), type.getKoodiArvo(), name));
             }
 
-            LOG.debug("Result : {}", koulutusohjemaResultSet);
+            //DEBUGSAWAY:LOG.debug("Result : {}", koulutusohjemaResultSet);
             getModel().getKoulutusPerustiedotModel().setKoodistoKoulutusohjelma(koulutusohjemaResultSet);
         }
     }

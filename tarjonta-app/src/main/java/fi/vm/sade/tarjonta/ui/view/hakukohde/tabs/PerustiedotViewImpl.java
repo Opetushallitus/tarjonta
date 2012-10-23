@@ -160,7 +160,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
                  if (event.getProperty().getValue() instanceof String) {
                      presenter.setTunnisteKoodi(event.getProperty().getValue().toString());
                  } else {
-                     LOG.debug("class" + event.getProperty().getValue().getClass().getName());
+                     //DEBUGSAWAY:LOG.debug("class" + event.getProperty().getValue().getClass().getName());
                  }
             }
         });

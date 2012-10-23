@@ -197,7 +197,7 @@ public class BeanItemMapper<T, E> {
      * @return
      */
     public KoodistoComponent addKoodistoComboBox(AbstractLayout layout, final String koodistoUri, String expression, String promptKey) {
-        LOG.debug("addKoodistoComboBox({}, ...)", koodistoUri);
+        //DEBUGSAWAY:LOG.debug("addKoodistoComboBox({}, ...)", koodistoUri);
         return UiBuilder.koodistoComboBox(layout, koodistoUri, psi, expression, i18n.getMessage(promptKey));
     }
 
@@ -211,7 +211,7 @@ public class BeanItemMapper<T, E> {
      * @return
      */
     public KoodistoComponent addKoodistoTwinColSelect(AbstractOrderedLayout layout, final String koodistoUri,  String expression) {
-        LOG.debug("addKoodistoTwinColSelect({}, ...)", koodistoUri);
+        //DEBUGSAWAY:LOG.debug("addKoodistoTwinColSelect({}, ...)", koodistoUri);
         return UiBuilder.koodistoTwinColSelect(layout, koodistoUri, psi, expression, null);
     }
 

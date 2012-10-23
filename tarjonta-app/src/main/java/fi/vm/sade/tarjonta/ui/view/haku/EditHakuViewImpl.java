@@ -219,7 +219,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         _kayteaanJarjestelmanHakulomaketta.addListener(new Property.ValueChangeListener() {
                 @Override
                 public void valueChange(ValueChangeEvent event) {
-                    LOG.debug("Value change for kaytetaan jarjestelman hakulomaketta.");
+                    //DEBUGSAWAY:LOG.debug("Value change for kaytetaan jarjestelman hakulomaketta.");
                     _muuHakulomakeUrl.setEnabled(!_kayteaanJarjestelmanHakulomaketta.booleanValue());
                 }
             });

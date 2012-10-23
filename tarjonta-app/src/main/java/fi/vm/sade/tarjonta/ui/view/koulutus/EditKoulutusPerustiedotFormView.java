@@ -217,9 +217,9 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                 @Override
                 public void valueChange(Property.ValueChangeEvent event) {
                     final Property property = event.getProperty();
-                    LOG.debug("ValueChangeEvent - selected form type property : {}", property);
+                    //DEBUGSAWAY:LOG.debug("ValueChangeEvent - selected form type property : {}", property);
                     if (property != null && property.getValue() != null) {
-                        LOG.debug("Selected form, value : {}", property.getValue());
+                        //DEBUGSAWAY:LOG.debug("Selected form, value : {}", property.getValue());
                         showOnlySelectedFormComponents();
                     }
                 }
@@ -263,7 +263,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                     //clear result data.
                     cbKoulutusohjelma.removeAllItems();
                 }
-                LOG.debug("ValueChangeEvent - Koodisto : {}, value : {}", KoodistoURIHelper.KOODISTO_KOULUTUS_URI, event);
+                //DEBUGSAWAY:LOG.debug("ValueChangeEvent - Koodisto : {}, value : {}", KoodistoURIHelper.KOODISTO_KOULUTUS_URI, event);
                 final Property property = event.getProperty();
 
                 if (property != null && property.getValue() != null) {
@@ -309,8 +309,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
 
-                LOG.debug("" + event.getProperty());
-                LOG.debug("koulutussohjelma obj : {}", koulutusPerustiedotModel.getKoulutusohjema());
+                //DEBUGSAWAY:LOG.debug("" + event.getProperty());
+                //DEBUGSAWAY:LOG.debug("koulutussohjelma obj : {}", koulutusPerustiedotModel.getKoulutusohjema());
             }
         });
         grid.addComponent(cbKoulutusohjelma);

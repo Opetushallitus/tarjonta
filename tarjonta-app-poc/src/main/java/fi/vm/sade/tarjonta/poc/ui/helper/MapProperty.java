@@ -35,13 +35,13 @@ public class MapProperty implements Property {
     
     @Override
     public Object getValue() {
-        LOG.debug("getValue(): key={}, value={}", _key, _map.get(_key));
+        //DEBUGSAWAY:LOG.debug("getValue(): key={}, value={}", _key, _map.get(_key));
         return _map.get(_key);
     }
 
     @Override
     public void setValue(Object newValue) throws Property.ReadOnlyException, Property.ConversionException {
-        LOG.debug("setValue(): key={}, newValue={}", _key, newValue);
+        //DEBUGSAWAY:LOG.debug("setValue(): key={}, newValue={}", _key, newValue);
         _map.put(_key, newValue);
     }
 
@@ -56,7 +56,7 @@ public class MapProperty implements Property {
             result = String.class;
         }
 
-        LOG.debug("getType() --> {}", result);
+        //DEBUGSAWAY:LOG.debug("getType() --> {}", result);
         return result;
     }
 

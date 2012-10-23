@@ -231,7 +231,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         hc.addContainerProperty(COLUMN_KEY, String.class, "");
         //Setting the items to the tree.
         for (OrganisaatioDTO curOrg : organisaatios) {
-            LOG.debug("Organisaatio: " + curOrg);
+            //DEBUGSAWAY:LOG.debug("Organisaatio: " + curOrg);
             hc.addItem(curOrg);
             hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(curOrg.getNimiFi());
         }

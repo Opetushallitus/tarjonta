@@ -40,7 +40,7 @@ public abstract class AbstractVerticalLayout extends AutoSizeVerticalLayout {
     private String _koodistoUriKieli;
 
     public AbstractVerticalLayout(Class clazz) {
-        LOG.debug("In AbstractBaseView constructor.");
+        //DEBUGSAWAY:LOG.debug("In AbstractBaseView constructor.");
         setWidth(UiConstant.PCT100);
         _i18n = new I18NHelper(clazz);
     }

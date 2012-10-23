@@ -122,16 +122,16 @@ public class DialogDataTable<T> extends Table {
             @Override
             public void componentEvent(Component.Event event) {
                 if (event instanceof DataTableEvent.CancelEvent) {
-                    LOG.debug("Cancel event received.");
+                    //DEBUGSAWAY:LOG.debug("Cancel event received.");
                     dialog.getForm().discard();
                 }
                 if (event instanceof DataTableEvent.SaveEvent) {
                     dialog.getForm().commit();
-                    LOG.debug("Save event received.");
+                    //DEBUGSAWAY:LOG.debug("Save event received.");
                     refreshRowCache();
                 }
                 if (event instanceof DataTableEvent.DeleteEvent) {
-                    LOG.debug("delete event received.");
+                    //DEBUGSAWAY:LOG.debug("delete event received.");
                     deleteTableItem(container, dialog.getForm());
                 }
                 getWindow().removeWindow(dialog);

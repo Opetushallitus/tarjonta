@@ -77,7 +77,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
     private MenuBar.Command menuCommand = new MenuBar.Command() {
         @Override
         public void menuSelected(MenuBar.MenuItem selectedItem) {
-            LOG.debug(selectedItem.getText());
+            //DEBUGSAWAY:LOG.debug(selectedItem.getText());
             menuItemClicked(selectedItem.getText());
 
         }
