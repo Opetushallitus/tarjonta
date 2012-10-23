@@ -19,6 +19,7 @@ import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.tarjonta.ui.enums.DialogDataTableButton;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
@@ -33,13 +34,13 @@ import org.vaadin.addon.formbinder.PropertyId;
  * @author Jani Wilén
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
-public class EditKoulutusYhteystieto extends VerticalLayout {
+public class EditKoulutusYhteystietoFormView extends VerticalLayout {
     
     private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
     @PropertyId("yhteyshenkilot")
     DialogDataTable<KoulutusYhteyshenkiloViewModel> ddt;
     
-    public EditKoulutusYhteystieto(KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel) {
+    public EditKoulutusYhteystietoFormView(KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel) {
         this.koulutusPerustiedotModel = koulutusPerustiedotModel;
         addYhteyshenkiloSelectorAndEditor(this);
     }
@@ -74,6 +75,13 @@ public class EditKoulutusYhteystieto extends VerticalLayout {
         ddt.setColumnHeader("kielet", "Pätee kielille");
         ddt.setVisibleColumns(new Object[]{"etunimet", "sukunimi", "titteli", "email", "puhelin", "kielet"});
         layout.addComponent(ddt);
+        
+         if(koulutusPerustiedotModel.isLoaded()){
+            //disable all buttons as edit mode is not fully implemented
+            ddt.getButtonByType(DialogDataTableButton.BUTTON_ADD).setEnabled(false);
+            ddt.getButtonByType(DialogDataTableButton.BUTTON_EDIT).setEnabled(false);
+            ddt.getButtonByType(DialogDataTableButton.BUTTON_REMOVE).setEnabled(false);
+        }
         
         yhteyshenkiloContainer.addAll(koulutusPerustiedotModel.getYhteyshenkilot());
         

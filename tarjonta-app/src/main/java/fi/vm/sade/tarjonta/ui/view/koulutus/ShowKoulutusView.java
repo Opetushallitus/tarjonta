@@ -93,7 +93,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         }
         grid.newLine();
         grid.addComponent(UiUtil.label(T("opetusmuoto")));
-//        grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getOpetusmuoto() != null ? model.getOpetusmuoto().iterator().next() : null)));
+        grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getOpetusmuoto(), null )));
         grid.newLine();
         grid.addComponent(UiUtil.label(T("teemat")));
         grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getAvainsanat(), null)));

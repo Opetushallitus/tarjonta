@@ -103,11 +103,34 @@ public class UiBuilder extends UiUtil {
     private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
 
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri) {
-        return koodistoComboBox(layout, koodistoUri, null, null, null);
+        return koodistoComboBox(layout, koodistoUri, null, null, null, null);
     }
 
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt) {
-        return koodistoComboBox(layout, koodistoUri, null, null, prompt);
+        return koodistoComboBox(layout, koodistoUri, null, null, prompt, null);
+    }
+    
+     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb) {
+        return koodistoComboBox(layout, koodistoUri, null, null, prompt, cb);
+    }
+    
+    /**
+     * Create new KoodistoComponent with ComboBox. Sets compobox's foltering mode to "CONTAINS".
+     *
+     * Note: not in immediate mode by default.
+     * Note: null selection not allowed.
+     *
+     * Possible bind to a property.
+     * 
+     * @param layout
+     * @param koodistoUri
+     * @param psi
+     * @param expression
+     * @param prompt
+     * @return 
+     */
+    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt) {
+        return koodistoComboBox(layout, koodistoUri, psi, expression, prompt, null);
     }
 
     /**
@@ -117,19 +140,21 @@ public class UiBuilder extends UiUtil {
      * Note: null selection not allowed.
      *
      * Possible bind to a property.
-     *
+     * 
+     * @param layout
      * @param koodistoUri
      * @param psi
      * @param expression
      * @param prompt
-     * @param layout
-     * @return
+     * @param cb optional
+     * @return 
      */
-    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt) {
-
+    
+    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, ComboBox cb) {
         // Koodisto displayed in ComboBox
-        ComboBox combo = comboBox(null, null, null);
 
+        ComboBox combo =  (cb == null) ? comboBox(null, null, null) : cb;
+        
         combo.setFilteringMode(AbstractSelect.Filtering.FILTERINGMODE_CONTAINS);
         if (prompt != null) {
             combo.setInputPrompt(prompt);

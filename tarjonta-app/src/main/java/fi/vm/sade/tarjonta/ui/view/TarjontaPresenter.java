@@ -397,12 +397,7 @@ public class TarjontaPresenter {
         //TODO: move - Link data mapping..
         for (KoulutusLinkkiViewModel linkit : model.getKoulutusLinkit()) {
             WebLinkkiTyyppi web = new WebLinkkiTyyppi();
-
-            if (linkit.getKielet() != null && linkit.getKielet().isEmpty()) {
-                //TODO: Fix this: only one allowed
-                web.setKieli(linkit.getKielet().iterator().next());
-            }
-
+            web.setKieli(linkit.getKieli());
             web.setTyyppi(linkit.getLinkkityyppi());
             web.setUri(linkit.getUrl());
             koulutus.getLinkki().add(web);

@@ -39,35 +39,24 @@ public class KoulutusLinkkiViewModel extends BaseUIViewModel {
         "STIPENDIMAHDOLLISUUS",
     };
 
-    String _linkkityyppi;
+    private String linkkityyppi;
     // Koodisto: kieli
-    Set<String> _kielet;
-    String _url;
-
-    public Set<String> getKielet() {
-        if (_kielet == null) {
-            _kielet = new HashSet<String>();
-        }
-        return _kielet;
-    }
-
-    public void setKielet(Set<String> _kielet) {
-        this._kielet = _kielet;
-    }
+    private String kieli;
+    private String url;
 
     public String getUrl() {
-        return _url;
+        return url;
     }
 
-    public void setUrl(String _url) {
-        this._url = _url;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getLinkkityyppi() {
-        if (_linkkityyppi == null) {
-            _linkkityyppi = LINKKI_TYYPIT[0];
+        if (linkkityyppi == null) {
+            linkkityyppi = LINKKI_TYYPIT[0];
         }
-        return _linkkityyppi;
+        return linkkityyppi;
     }
 
     public void setLinkkityyppi(String linkkityyppi) {
@@ -82,9 +71,23 @@ public class KoulutusLinkkiViewModel extends BaseUIViewModel {
 
         if (!valid) {
             // Default type is "OPPILAITOS" if invalid value given
-            this._linkkityyppi = LINKKI_TYYPIT[0];
+            this.linkkityyppi = LINKKI_TYYPIT[0];
         } else {
-            this._linkkityyppi = linkkityyppi;
+            this.linkkityyppi = linkkityyppi;
         }
+    }
+
+    /**
+     * @return the kieli
+     */
+    public String getKieli() {
+        return kieli;
+    }
+
+    /**
+     * @param kieli the kieli to set
+     */
+    public void setKieli(String kieli) {
+        this.kieli = kieli;
     }
 }

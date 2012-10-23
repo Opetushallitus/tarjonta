@@ -24,45 +24,45 @@ import java.util.Set;
  * @author mlyly
  */
 public class KoulutusYhteyshenkiloViewModel extends BaseUIViewModel {
-    private String _titteli;
-    private String _email;
-    private String _puhelin;
+    private String titteli;
+    private String email;
+    private String puhelin;
     private String etunimet;
     private String sukunimi;
 
     // Koodisto: kieli
-    private Set<String> _kielet = new HashSet<String>();
+    private Set<String> kielet = new HashSet<String>();
 
     public String getTitteli() {
-        return _titteli;
+        return titteli;
     }
 
     public void setTitteli(String titteli) {
-        this._titteli = titteli;
+        this.titteli = titteli;
     }
 
     public String getEmail() {
-        return _email;
+        return email;
     }
 
     public void setEmail(String email) {
-        this._email = email;
+        this.email = email;
     }
 
     public String getPuhelin() {
-        return _puhelin;
+        return puhelin;
     }
 
     public void setPuhelin(String puhelin) {
-        this._puhelin = puhelin;
+        this.puhelin = puhelin;
     }
 
     public Set<String> getKielet() {
-        return _kielet;
+        return kielet;
     }
 
     public void setKielet(Set<String> kielet) {
-        this._kielet = kielet;
+        this.kielet = kielet;
     }
 
     /**

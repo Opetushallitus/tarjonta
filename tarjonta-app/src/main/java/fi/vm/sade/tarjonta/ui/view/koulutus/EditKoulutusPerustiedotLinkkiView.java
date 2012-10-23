@@ -56,10 +56,10 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
     private Select _sLinkkityyppi;
     @PropertyId("url")
     private TextField _tfUrl;
-    @PropertyId("kielet")
-    private KoodistoComponent _kcKielet;
+    @PropertyId("kieli")
+    private KoodistoComponent kcKieli;
 
-    private transient I18NHelper _i18n;
+    private transient I18NHelper i18n;
 
     public EditKoulutusPerustiedotLinkkiView() {
         this.setSpacing(true);
@@ -74,7 +74,7 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
         _tfUrl.setWidth("100%");
         this.addComponent(_tfUrl);
 
-        _kcKielet = UiBuilder.koodistoTwinColSelectUri(this, KoodistoURIHelper.KOODISTO_KIELI_URI);
+        kcKieli = UiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_KIELI_URI);
 
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
@@ -111,9 +111,9 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
      * @return
      */
     private String T(String key) {
-        if (_i18n == null) {
-            _i18n = new I18NHelper(this);
+        if (i18n == null) {
+            i18n = new I18NHelper(this);
         }
-        return _i18n.getMessage(key);
+        return i18n.getMessage(key);
     }
 }

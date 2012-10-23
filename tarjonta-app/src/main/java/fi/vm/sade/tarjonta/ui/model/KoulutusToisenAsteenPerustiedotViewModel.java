@@ -70,9 +70,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     }
 
     public LisaaKoulutusTyyppi mapToLisaaKoulutusTyyppi(String oid) {
-
         this.getDocumentStatus();  //TODO: status
-        this.getOrganisaatioName(); //TODO: organisaatio
 
         LisaaKoulutusTyyppi lisaaKoulutusTyyppi = new LisaaKoulutusTyyppi();
         lisaaKoulutusTyyppi.setOid(oid);
@@ -151,7 +149,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         if (linkki != null && !linkki.isEmpty()) {
             for (WebLinkkiTyyppi t : linkki) {
                 KoulutusLinkkiViewModel koulutusLinkkiViewModel = new KoulutusLinkkiViewModel();
-                koulutusLinkkiViewModel.getKielet().add(t.getKieli());
+                koulutusLinkkiViewModel.setKieli(t.getKieli());
                 koulutusLinkkiViewModel.setLinkkityyppi(t.getTyyppi());
                 koulutusLinkkiViewModel.setUrl(t.getUri());
                 getKoulutusLinkit().add(koulutusLinkkiViewModel);
@@ -174,8 +172,8 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
                         model.getKielet().add(kieliUri);
                     }
                 }
-                
-               getYhteyshenkilot().add(model);
+
+                getYhteyshenkilot().add(model);
             }
         }
     }
@@ -258,5 +256,14 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setAvainsanat(new HashSet<String>(0));//optional
         setKoulutusLinkit(new ArrayList<KoulutusLinkkiViewModel>(0)); //optional
         setYhteyshenkilot(new ArrayList<KoulutusYhteyshenkiloViewModel>(0)); //optional
+    }
+    
+    /**
+     * True if data was loaded from database. 
+     * 
+     * @return Boolean  
+     */
+    public boolean isLoaded(){
+        return getOid() != null;
     }
 }

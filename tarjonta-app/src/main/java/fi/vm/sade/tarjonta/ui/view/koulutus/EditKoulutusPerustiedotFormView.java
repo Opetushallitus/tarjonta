@@ -56,6 +56,7 @@ import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
@@ -76,9 +77,7 @@ import org.vaadin.addon.formbinder.PropertyId;
 public class EditKoulutusPerustiedotFormView extends GridLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotFormView.class);
-
     private static final String PROPERTY_PROMPT_SUFFIX = ".prompt";
-
     private transient I18NHelper _i18n;
     private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
     private TarjontaPresenter presenter;
@@ -197,7 +196,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         buildGridKoulutuslajiRow(this, "Koulutuslaji");
 
         //only for 'Ammatillinen perustutkintoon johtava koulutus' -section
-       // buildGridAvainsanatRow(this, "Avainsanat");
+        // buildGridAvainsanatRow(this, "Avainsanat");
 
 //        //only for 'lukio' -section
 //        buildGridKielivalikoimaRow(this, "Kielivalikoima");
@@ -263,11 +262,15 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
         HorizontalLayout hl = UiUtil.horizontalLayout();
 
-        kcKoulutusKoodi = UiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_KOULUTUS_URI, null, null, T(propertyKey + PROPERTY_PROMPT_SUFFIX));
+
+        setLocale(new Locale("fi"));
+        ComboBox comboBox = new ComboBox();
+        comboBox.setReadOnly(koulutusPerustiedotModel.isLoaded());
+        kcKoulutusKoodi = UiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_KOULUTUS_URI, null, null, T(propertyKey + PROPERTY_PROMPT_SUFFIX), comboBox);
 
         // TODO localizations in Koodisto available?? Using URI to show something.
         kcKoulutusKoodi.setCaptionFormatter(UiBuilder.DEFAULT_URI_CAPTION_FORMATTER);
-        kcKoulutusKoodi.setEnabled(koulutusPerustiedotModel.getOid() == null);
+
         kcKoulutusKoodi.setImmediate(true);
 
         // kcKoulutusKoodi = getComboBox(hl, KoodistoURIHelper.KOODISTO_KOULUTUS_URI, T(propertyKey + PROPERTY_PROMPT_SUFFIX), koulutusPerustiedotModel.getOid() != null);
@@ -329,9 +332,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         //cbKoulutusohjelma.setTextInputAllowed(false);
 
         //if loaded data
-        if (koulutusPerustiedotModel.getOid() != null) {
-            cbKoulutusohjelma.setReadOnly(true);
-        }
+        cbKoulutusohjelma.setReadOnly(koulutusPerustiedotModel.isLoaded());
 
         //listener
         cbKoulutusohjelma.addListener(new Property.ValueChangeListener() {
@@ -390,11 +391,14 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         tfSuunniteltuKesto = UiUtil.textField(hl, null, null, null, T(propertyKey + PROPERTY_PROMPT_SUFFIX));
         tfSuunniteltuKesto.setRequired(true);
         tfSuunniteltuKesto.setImmediate(true);
-        kcSuunniteltuKestoTyyppi = UiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, T(propertyKey + "Tyyppi" + PROPERTY_PROMPT_SUFFIX));
+        ComboBox comboBox = new ComboBox();
+        comboBox.setNullSelectionAllowed(false);
+
+        kcSuunniteltuKestoTyyppi = UiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, T(propertyKey + "Tyyppi" + PROPERTY_PROMPT_SUFFIX), comboBox);
         kcSuunniteltuKestoTyyppi.setImmediate(true);
 
         // TODO check koodisto metadata / localized names for suunnitelti kesto... now using Arvo as caption
-        kcSuunniteltuKestoTyyppi.setCaptionFormatter(UiBuilder.DEFAULT_ARVO_CAPTION_FORMATTER);
+        kcSuunniteltuKestoTyyppi.setCaptionFormatter(UiBuilder.DEFAULT_URI_CAPTION_FORMATTER);
 
         grid.addComponent(hl);
         grid.newLine();
@@ -412,7 +416,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 //        buildSpacingGridRow(grid);
 //        addSelectedFormComponents(type, kcAvainsanat);
 //    }
-
 //    private void buildGridKielivalikoimaRow(GridLayout grid, final String propertyKey) {
 //        final KoulutusFormType type = KoulutusFormType.TOINEN_ASTE_LUKIO;
 //        gridLabel(grid, propertyKey, type);
@@ -441,7 +444,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         final KoulutusFormType type = KoulutusFormType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey, type);
         kcKoulutuslaji = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI);
-        kcKoulutuslaji.setCaptionFormatter(UiBuilder.DEFAULT_ARVO_CAPTION_FORMATTER);
+        kcKoulutuslaji.setCaptionFormatter(UiBuilder.DEFAULT_URI_CAPTION_FORMATTER);
 
         kcKoulutuslaji.setImmediate(true);
         grid.addComponent(kcKoulutuslaji);
@@ -510,7 +513,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     }
 
     // Generic translatio helpers
-
     private String T(String key) {
         return getI18n().getMessage(key);
     }

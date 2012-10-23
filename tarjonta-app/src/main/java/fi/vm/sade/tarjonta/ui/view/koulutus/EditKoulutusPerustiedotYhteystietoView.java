@@ -52,49 +52,49 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotYhteystietoView.class);
     @PropertyId("etunimet")
-    private TextField _tfEtunimet;
+    private TextField tfEtunimet;
     @PropertyId("sukunimi")
-    private TextField _tfSukunimi;
+    private TextField tfSukunimi;
     @PropertyId("titteli")
-    private TextField _tfTitteli;
+    private TextField tfTitteli;
     @PropertyId("email")
-    private TextField _tfEmail;
+    private TextField tfEmail;
     @PropertyId("puhelin")
-    private TextField _tfPuhelin;
+    private TextField tfPuhelin;
     @PropertyId("kielet")
-    KoodistoComponent _kcKielet;
+    private KoodistoComponent kcKielet;
     private I18NHelper i18n = new I18NHelper(this);
 
     public EditKoulutusPerustiedotYhteystietoView() {
         this.setSpacing(true);
 
-        _tfEtunimet = UiUtil.textField(null, "", i18n.getMessage("Etunimet.prompt"), true);
-        _tfEtunimet.setRequired(true);
-        _tfEtunimet.setRequiredError(i18n.getMessage("Etunimet.tyhja"));
-        this.addComponent(_tfEtunimet);
+        tfEtunimet = UiUtil.textField(null, "", i18n.getMessage("Etunimet.prompt"), true);
+        tfEtunimet.setRequired(true);
+        tfEtunimet.setRequiredError(i18n.getMessage("Etunimet.tyhja"));
+        this.addComponent(tfEtunimet);
 
-        _tfSukunimi = UiUtil.textField(null, "", i18n.getMessage("Sukunimi.prompt"), true);
-        _tfSukunimi.setRequired(true);
-        _tfSukunimi.setRequiredError(i18n.getMessage("Sukunimi.tyhja"));
-        this.addComponent(_tfSukunimi);
+        tfSukunimi = UiUtil.textField(null, "", i18n.getMessage("Sukunimi.prompt"), true);
+        tfSukunimi.setRequired(true);
+        tfSukunimi.setRequiredError(i18n.getMessage("Sukunimi.tyhja"));
+        this.addComponent(tfSukunimi);
 
-        _tfTitteli = UiUtil.textField(null, "", i18n.getMessage("Titteli.prompt"), true);
-        this.addComponent(_tfTitteli);
+        tfTitteli = UiUtil.textField(null, "", i18n.getMessage("Titteli.prompt"), true);
+        this.addComponent(tfTitteli);
 
-        _tfEmail = UiUtil.textField(null, "", i18n.getMessage("Email.prompt"), true);
-        _tfEmail.setRequired(true);
-        _tfEmail.setRequiredError(i18n.getMessage("Email.tyhja"));
-        this.addComponent(_tfEmail);
+        tfEmail = UiUtil.textField(null, "", i18n.getMessage("Email.prompt"), true);
+        tfEmail.setRequired(true);
+        tfEmail.setRequiredError(i18n.getMessage("Email.tyhja"));
+        this.addComponent(tfEmail);
 
-        _tfPuhelin = UiUtil.textField(null, "", i18n.getMessage("Puhelin.prompt"), true);
-        _tfPuhelin.setRequired(true);
-        _tfPuhelin.setRequiredError(i18n.getMessage("Puhelin.tyhja"));
-        _tfPuhelin.addValidator(new RegexpValidator("^(\\s+|\\d+)*", i18n.getMessage("Puhelin.muoto")));
-        this.addComponent(_tfPuhelin);
+        tfPuhelin = UiUtil.textField(null, "", i18n.getMessage("Puhelin.prompt"), true);
+        tfPuhelin.setRequired(true);
+        tfPuhelin.setRequiredError(i18n.getMessage("Puhelin.tyhja"));
+        tfPuhelin.addValidator(new RegexpValidator("^(\\s+|\\d+)*", i18n.getMessage("Puhelin.muoto")));
+        this.addComponent(tfPuhelin);
 
         this.addComponent(UiUtil.label(null, i18n.getMessage("YhteyshenkiloKielissa")));
 
-        _kcKielet = UiBuilder.koodistoTwinColSelectUri(this, KoodistoURIHelper.KOODISTO_KIELI_URI);
+        kcKielet = UiBuilder.koodistoTwinColSelectUri(this, KoodistoURIHelper.KOODISTO_KIELI_URI);
         
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
@@ -104,7 +104,6 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 LOG.info("fire : SaveEvent");
-
                 fireEvent(new DataTableEvent.SaveEvent(EditKoulutusPerustiedotYhteystietoView.this));
             }
         });

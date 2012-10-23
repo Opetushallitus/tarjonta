@@ -15,33 +15,23 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
-import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
-import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.dto.ButtonDTO;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.Cache;
 import org.springframework.cache.support.SimpleCacheManager;
 
 /**
@@ -55,27 +45,24 @@ import org.springframework.cache.support.SimpleCacheManager;
 public class TarjontaWebApplication extends AbstractSadeApplication {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaWebApplication.class);
-
     private Window window;
     @Value("${tarjonta-app.dev.redirect:}")
     private String developmentRedirect;
     @Value("${tarjonta-app.dev.theme:}")
     private String developmentTheme;
-
     @Autowired
     private TarjontaAdminService tarjontaAdminService;
-
     @Autowired
     SimpleCacheManager _cacheManager;
 
     @Override
     public synchronized void init() {
         super.init();
-
+  
         window = new Window("Valitse");
         setMainWindow(window);
 
-       developmentConfiguration();
+        developmentConfiguration();
 
         Button tarjontaButton = new Button("Tarjontaan", new Button.ClickListener() {
             @Override
@@ -103,7 +90,6 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         window.addComponent(xxxButton);
 
         Button initData = new Button("Luo testidata", new Button.ClickListener() {
-
             @Override
             public void buttonClick(ClickEvent event) {
                 tarjontaAdminService.initSample(new String());
@@ -111,8 +97,8 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         });
 
         window.addComponent(initData);
-        
-                
+
+
     }
 
     public void toTarjonta() {
@@ -134,14 +120,12 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         setMainWindow(window);
 
         ButtonDTO prev = new ButtonDTO("< EDELLINEN (XXX)", new Button.ClickListener() {
-
             @Override
             public void buttonClick(ClickEvent event) {
                 LOG.info("PREV!");
             }
         });
         ButtonDTO next = new ButtonDTO("(XXX) SEURAAVA >", new Button.ClickListener() {
-
             @Override
             public void buttonClick(ClickEvent event) {
                 LOG.info("NEXT!");
@@ -150,7 +134,7 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
 
 
         PageNavigationDTO pageNavigationDTO = new PageNavigationDTO(prev, next, "42/43");
-        ShowKoulutusView view  = new ShowKoulutusView("PAGE TITLE", pageNavigationDTO);
+        ShowKoulutusView view = new ShowKoulutusView("PAGE TITLE", pageNavigationDTO);
 
         window.addComponent(view);
     }
@@ -159,8 +143,8 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
     /*
      * Development configurations, no real use in production environment.
      */
-    private void developmentConfiguration(){
-         if (developmentTheme != null && developmentTheme.length() > 0) {
+    private void developmentConfiguration() {
+        if (developmentTheme != null && developmentTheme.length() > 0) {
             //set a development theme.
             setTheme(developmentTheme);
         }
