@@ -48,6 +48,7 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 
@@ -57,6 +58,7 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchCriteriaDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.Oph;
@@ -149,24 +151,8 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         oppilaitosTyyppi = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI, null, null, i18n.getMessage("oppilaitostyyppi.prompt"));
         oppilaitosTyyppi.getField().setNullSelectionAllowed(true);
         oppilaitosTyyppi.setWidth("210px");
-        oppilaitosTyyppi.setCaptionFormatter(new CaptionFormatter() {
+        // oppilaitosTyyppi.setCaptionFormatter(TarjontaUIHelper.getKoodiTypeAsLocalizedNameCaptionFormatter());
 
-            @Override
-            public String formatCaption(Object dto) {
-                if (dto instanceof KoodiType) {
-                    KoodiType kdto = (KoodiType) dto;
-
-                    KieliType kieli = KoodistoHelper.getKieliForLocale(I18N.getLocale());
-                    if (kieli == null) {
-                        kieli = KieliType.FI;
-                    }
-
-                    return KoodistoHelper.getKoodiMetadataForLanguage(kdto, kieli).getNimi();
-                } else {
-                    return "!KoodiType?: " + dto;
-                }
-            }
-        });
         panelTop.addComponent(oppilaitosTyyppi);
 
 

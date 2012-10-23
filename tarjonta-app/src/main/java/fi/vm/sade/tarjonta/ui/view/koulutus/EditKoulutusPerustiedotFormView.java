@@ -38,6 +38,7 @@ import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
@@ -45,6 +46,7 @@ import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusFormType;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.OhjePopupComponent;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
@@ -65,14 +67,18 @@ import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
 /**
+ * Koulutus edit form for second degree studies.
  *
  * @author Jani Wilén
+ * @author mlyly
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 public class EditKoulutusPerustiedotFormView extends GridLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotFormView.class);
+
     private static final String PROPERTY_PROMPT_SUFFIX = ".prompt";
+
     private transient I18NHelper _i18n;
     private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
     private TarjontaPresenter presenter;
@@ -157,6 +163,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     }
 
     private void initializeLayout() {
+        LOG.info("initilizeLayout()");
 
         this.setSizeFull();
         this.setColumnExpandRatio(0, 10l);
@@ -255,8 +262,17 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         gridLabel(grid, propertyKey);
 
         HorizontalLayout hl = UiUtil.horizontalLayout();
-        kcKoulutusKoodi = getComboBox(hl, KoodistoURIHelper.KOODISTO_KOULUTUS_URI, T(propertyKey + PROPERTY_PROMPT_SUFFIX), koulutusPerustiedotModel.getOid() != null);
+
+        kcKoulutusKoodi = UiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_KOULUTUS_URI, null, null, T(propertyKey + PROPERTY_PROMPT_SUFFIX));
+
+        // TODO localizations in Koodisto available?? Using URI to show something.
+        kcKoulutusKoodi.setCaptionFormatter(UiBuilder.DEFAULT_URI_CAPTION_FORMATTER);
+        kcKoulutusKoodi.setEnabled(koulutusPerustiedotModel.getOid() == null);
         kcKoulutusKoodi.setImmediate(true);
+
+        // kcKoulutusKoodi = getComboBox(hl, KoodistoURIHelper.KOODISTO_KOULUTUS_URI, T(propertyKey + PROPERTY_PROMPT_SUFFIX), koulutusPerustiedotModel.getOid() != null);
+
+
         OhjePopupComponent ohjePopupComponent = new OhjePopupComponent(T("LOREMIPSUM"), "500px", "300px");
         hl.addComponent(ohjePopupComponent);
         hl.setExpandRatio(kcKoulutusKoodi, 1l);
@@ -377,24 +393,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         kcSuunniteltuKestoTyyppi = UiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, T(propertyKey + "Tyyppi" + PROPERTY_PROMPT_SUFFIX));
         kcSuunniteltuKestoTyyppi.setImmediate(true);
 
-        kcSuunniteltuKestoTyyppi.setCaptionFormatter(new CaptionFormatter() {
-
-            @Override
-            public String formatCaption(Object dto) {
-                if (dto instanceof KoodiType) {
-                    KoodiType kdto = (KoodiType) dto;
-
-                    KieliType kieli = KoodistoHelper.getKieliForLocale(I18N.getLocale());
-                    if (kieli == null) {
-                        kieli = KieliType.FI;
-                    }
-
-                    return KoodistoHelper.getKoodiMetadataForLanguage(kdto, kieli).getNimi();
-                } else {
-                    return "!KoodiType?: " + dto;
-                }
-            }
-        });
+        // TODO check koodisto metadata / localized names for suunnitelti kesto... now using Arvo as caption
+        kcSuunniteltuKestoTyyppi.setCaptionFormatter(UiBuilder.DEFAULT_ARVO_CAPTION_FORMATTER);
 
         grid.addComponent(hl);
         grid.newLine();
@@ -441,6 +441,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         final KoulutusFormType type = KoulutusFormType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey, type);
         kcKoulutuslaji = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI);
+        kcKoulutuslaji.setCaptionFormatter(UiBuilder.DEFAULT_ARVO_CAPTION_FORMATTER);
+
         kcKoulutuslaji.setImmediate(true);
         grid.addComponent(kcKoulutuslaji);
         grid.newLine();
@@ -507,45 +509,16 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         }
     }
 
-    protected String T(String key) {
+    // Generic translatio helpers
+
+    private String T(String key) {
         return getI18n().getMessage(key);
     }
 
-    protected I18NHelper getI18n() {
+    private I18NHelper getI18n() {
         if (_i18n == null) {
             _i18n = new I18NHelper(this);
         }
         return _i18n;
-    }
-
-    private KoodistoComponent getComboBox(AbstractLayout layout, String koodistoUri, String prompt, boolean readonly) {
-        ComboBox combo = UiUtil.comboBox(null, null, null);
-        combo.setReadOnly(readonly);
-        combo.setFilteringMode(AbstractSelect.Filtering.FILTERINGMODE_CONTAINS);
-        if (prompt != null) {
-            combo.setInputPrompt(prompt);
-        }
-
-        final KoodistoComponent kc = WidgetFactory.create(koodistoUri);
-
-        // Wire koodisto to combobox
-        kc.setField(combo);
-
-        // BOUND value
-        kc.setFieldValueFormatter(new FieldValueFormatter() {
-            @Override
-            public Object formatFieldValue(Object dto) {
-                if (dto instanceof KoodiType) {
-                    KoodiType kdto = (KoodiType) dto;
-                    return kdto.getKoodiUri();
-                } else {
-                    return "" + dto;
-                }
-            }
-        });
-
-        UiBaseUtil.handleAddComponent(layout, kc);
-
-        return kc;
     }
 }

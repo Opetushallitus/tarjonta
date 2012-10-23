@@ -25,11 +25,15 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
+import fi.vm.sade.koodisto.widget.DefaultKoodiCaptionFormatter;
+import fi.vm.sade.koodisto.widget.DefaultKoodiFieldValueFormatter;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.vaadin.constants.UiConstant;
@@ -45,6 +49,56 @@ import java.util.List;
  * @author mlyly
  */
 public class UiBuilder extends UiUtil {
+
+    /**
+     * Default field value as uri formatter for koodisto components - since we store uri's in Tarjonta.
+     */
+    public static final FieldValueFormatter DEFAULT_URI_FIELD_VALUE_FORMATTER = new FieldValueFormatter() {
+
+        @Override
+        public Object formatFieldValue(Object dto) {
+            if (dto == null) {
+                return null;
+            }
+
+            if (dto instanceof KoodiType) {
+                KoodiType kdto = (KoodiType) dto;
+                return kdto.getKoodiUri();
+            } else {
+                return "" + dto;
+            }
+        }
+    };
+
+    /**
+     * Default caption formatter that shows the koodi value (arvo).
+     */
+    public static final CaptionFormatter DEFAULT_ARVO_CAPTION_FORMATTER = new CaptionFormatter<KoodiType>() {
+
+        @Override
+        public String formatCaption(KoodiType dto) {
+            if (dto == null) {
+                return "";
+            }
+
+            return dto.getKoodiArvo();
+        }
+    };
+
+    /**
+     * Default caption formatter that shows the koodi value (arvo).
+     */
+    public static final CaptionFormatter DEFAULT_URI_CAPTION_FORMATTER = new CaptionFormatter<KoodiType>() {
+
+        @Override
+        public String formatCaption(KoodiType dto) {
+            if (dto == null) {
+                return "";
+            }
+
+            return dto.getKoodiUri();
+        }
+    };
 
     private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
 
@@ -86,18 +140,8 @@ public class UiBuilder extends UiUtil {
         // Wire koodisto to combobox
         c.setField(combo);
 
-        // BOUND value
-        c.setFieldValueFormatter(new FieldValueFormatter() {
-            @Override
-            public Object formatFieldValue(Object dto) {
-                if (dto instanceof KoodiType) {
-                    KoodiType kdto = (KoodiType) dto;
-                    return kdto.getKoodiUri();
-                } else {
-                    return "" + dto;
-                }
-            }
-        });
+        // BOUND value as uri
+        c.setFieldValueFormatter(DEFAULT_URI_FIELD_VALUE_FORMATTER);
 
         // Selected data bound there
         if (psi != null && expression != null) {
@@ -108,9 +152,9 @@ public class UiBuilder extends UiUtil {
 
         return c;
     }
-    
-    
-    
+
+
+
 
     /**
      * Creates a koodisto-bound TwinColSelect component with given koodistoUri.
@@ -141,18 +185,8 @@ public class UiBuilder extends UiUtil {
         // Wire koodisto to combobox
         kc.setField(c);
 
-        // BOUND value
-        kc.setFieldValueFormatter(new FieldValueFormatter() {
-            @Override
-            public Object formatFieldValue(Object dto) {
-                if (dto instanceof KoodiType) {
-                    KoodiType kdto = (KoodiType) dto;
-                    return kdto.getKoodiUri();
-                } else {
-                    return "" + dto;
-                }
-            }
-        });
+        // BOUND value as uri
+        kc.setFieldValueFormatter(DEFAULT_URI_FIELD_VALUE_FORMATTER);
 
         UiBaseUtil.handleAddComponent(layout, kc);
 
@@ -161,8 +195,7 @@ public class UiBuilder extends UiUtil {
 
 
     /**
-     * Similar to koodistoTwinColSelectUri() but  also by default formats the displayed data with finnish metadata.getNimi for the koodis.
-     * Also possible to bind the component to given property.
+     * Similar to koodistoTwinColSelectUri() but  also possible to bind to a property.
      *
      * @param layout
      * @param koodistoUri
@@ -174,19 +207,6 @@ public class UiBuilder extends UiUtil {
 
         final KoodistoComponent kc = koodistoTwinColSelectUri(layout, koodistoUri);
 
-        // Set the displayed text formatting
-        kc.setCaptionFormatter(new CaptionFormatter() {
-            @Override
-            public String formatCaption(Object dto) {
-                if (dto instanceof KoodiType) {
-                    KoodiType kdto = (KoodiType) dto;
-                    return KoodistoHelper.getKoodiMetadataForLanguage(kdto, KieliType.FI).getNimi();
-                } else {
-                    return "!KoodiType?: " + dto;
-                }
-            }
-        });
-
         // Selected data bound here if wanted
         if (psi != null && expression != null) {
             kc.setPropertyDataSource(psi.getItemProperty(expression));
@@ -194,9 +214,6 @@ public class UiBuilder extends UiUtil {
 
         return kc;
     }
-
-
-
 
 
 

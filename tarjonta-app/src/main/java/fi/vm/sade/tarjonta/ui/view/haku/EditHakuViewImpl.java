@@ -40,6 +40,7 @@ import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
@@ -67,6 +68,7 @@ import org.vaadin.addon.formbinder.PropertyId;
  * And editor for "Haku" object.
  *
  * @author mlyly
+ * @author mholi
  * @see HakuViewModel the model that is bound this edit form, see the PropertyId annotations.
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
@@ -74,9 +76,6 @@ import org.vaadin.addon.formbinder.PropertyId;
 public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditHakuViewImpl.class);
-
-    private static final String ONE_APPLICATION_SYSTEM = "yksiHakuaika";
-    private static final String MULTIPLE_APPLICATION_SYSTEMS = "sisHakuajat";
 
     public static final Object[] HAKUAJAT_COLUMNS = new Object[]{"kuvaus", "alkuPvm", "loppuPvm", "poistaB"};
 
@@ -131,25 +130,15 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     private Table sisaisetHakuajatTable;
     private HakuajatContainer sisaisetHakuajatContainer;
 
-    private Button lisaaHakuaika;
-
-
     @PropertyId("haussaKaytetaanSijoittelua")
     private CheckBox _kaytetaanSijoittelua;
     @PropertyId("kaytetaanJarjestelmanHakulomaketta")
     private CheckBox _kayteaanJarjestelmanHakulomaketta;
     @PropertyId("hakuLomakeUrl")
     private TextField _muuHakulomakeUrl;
-    @Value("${koodisto-uris.hakutyyppi:HAKUTYYPPI}")
-    private String _koodistoUriHakutyyppi;
-    @Value("${koodisto-uris.hakukausi:KAUSI}")
-    private String _koodistoUriHakukausi;
-    @Value("${koodisto-uris.koulutuksenAlkamiskausi:KAUSI}")
-    private String _koodistoUriAlkamiskausi;
-    @Value("${koodisto-uris.haunKohdejoukko:KOULUTUSRYHMÄ}")
-    private String _koodistoUriKohdejoukko;
-    @Value("${koodisto-uris.hakutapa:HAKUTAPA}")
-    private String _koodistoUriHakutapa;
+
+    private Button lisaaHakuaika;
+
     private Form form;
 
     private transient I18NHelper _i18n;
@@ -191,19 +180,19 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         // Init fields
         //
 
-        _hakutyyppi = UiBuilder.koodistoComboBox(null,_koodistoUriHakutyyppi, null, null, T("Hakutyyppi.prompt"));
+        _hakutyyppi = UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI, null, null, T("Hakutyyppi.prompt"));
         _hakutyyppi.setSizeUndefined();
-        _hakukausi = UiBuilder.koodistoComboBox(null,_koodistoUriHakukausi, null, null, T("Hakukausi.prompt"));
+        _hakukausi = UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_HAKUKAUSI_URI, null, null, T("Hakukausi.prompt"));
         _hakukausi.setSizeUndefined();
         _hakuvuosi = UiUtil.textField(null, "", T("Hakuvuosi.prompt"), false);
         _hakuvuosi.setSizeUndefined();
-        _koulutusAlkamiskausi =UiBuilder.koodistoComboBox(null,_koodistoUriAlkamiskausi, null, null, T("KoulutuksenAlkamiskausi.prompt"));
+        _koulutusAlkamiskausi =UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_KOULUTUKSEN_ALKAMISKAUSI_URI, null, null, T("KoulutuksenAlkamiskausi.prompt"));
         _koulutusAlkamiskausi.setSizeUndefined();
          koulutuksenAlkamisvuosi = UiUtil.textField(null, "", T("KoulutuksenAlkamisvuosi.prompt"), false);
          koulutuksenAlkamisvuosi.setSizeUndefined();
-        _hakuKohdejoukko = UiBuilder.koodistoComboBox(null,_koodistoUriKohdejoukko, null, null, T("HakuKohdejoukko.prompt"));
+        _hakuKohdejoukko = UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T("HakuKohdejoukko.prompt"));
         _hakuKohdejoukko.setSizeUndefined();
-        _hakutapa = UiBuilder.koodistoComboBox(null,_koodistoUriHakutapa, null, null, T("Hakutapa.prompt"));
+        _hakutapa = UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_HAKUTAPA_URI, null, null, T("Hakutapa.prompt"));
         _hakutapa.setSizeUndefined();
         _haunNimiFI = UiUtil.textField(null, "", T("HaunNimiFI.prompt"), false);
         _haunNimiFI.setSizeUndefined();
@@ -295,19 +284,19 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             VerticalLayout vl = UiUtil.verticalLayout();
             vl.setSizeUndefined();
             vl.setWidth(800, Sizeable.UNITS_PIXELS);
-            
+
 
             this.sisaisetHakuajatTable = new Table();
             this.sisaisetHakuajatTable.setEditable(true);
 
             lisaaHakuaika = UiUtil.buttonSmallPlus(vl, T("LisaaHakuaika"), new Button.ClickListener() {
 
-				@Override
-				public void buttonClick(ClickEvent event) {
-					sisaisetHakuajatContainer.addRowToHakuajat();
-				}
-			});
-            //lisaaHakuaika.setEnabled(false);
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    sisaisetHakuajatContainer.addRowToHakuajat();
+                }
+            });
+            lisaaHakuaika.setEnabled(true);
             vl.addComponent(sisaisetHakuajatTable);
 
             grid.addComponent(vl);
@@ -345,7 +334,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
         this.form.setValidationVisible(false);
         this.form.setValidationVisibleOnCommit(false);
-        
+
         this.sisaisetHakuajatContainer = new HakuajatContainer(_presenter.getHakuModel().getSisaisetHakuajat());
         this.sisaisetHakuajatTable.setContainerDataSource(this.sisaisetHakuajatContainer);
         this.sisaisetHakuajatTable.setVisibleColumns(HAKUAJAT_COLUMNS);
@@ -355,7 +344,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         this.sisaisetHakuajatTable.setColumnWidth("alkuPvm", 190);
         this.sisaisetHakuajatTable.setColumnWidth("loppuPvm", 190);
         this.sisaisetHakuajatTable.setColumnWidth("poistaB", 190);
-        
+
     }
 
      /**
@@ -469,13 +458,13 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             super(source);
             errorView.resetErrors();
             boolean hakuajatValid = sisaisetHakuajatContainer.bindHakuajat();
-            
+
 
             _complete = complete;
             if (_presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
                 _presenter.getHakuModel().setHakuLomakeUrl(null);
             }
-            
+
             try {
                 form.commit();
                 if (!hakuajatValid) {
@@ -544,7 +533,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     			isValid = false;
     		}
     		_presenter.getHakuModel().setSisaisetHakuajat(hakuajat);
-    		
+
     		return isValid;
 		}
 
