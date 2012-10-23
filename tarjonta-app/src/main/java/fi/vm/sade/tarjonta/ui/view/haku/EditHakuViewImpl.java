@@ -170,21 +170,6 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     }
 
     @Override
-    public void attach() {
-        LOG.debug("attach()");
-        super.attach();
-        if (attached) {
-        	return;
-        }
-        attached = true;
-        this.sisaisetHakuajatContainer = new HakuajatContainer(_presenter.getHakuModel().getSisaisetHakuajat());
-        this.sisaisetHakuajatTable.setContainerDataSource(this.sisaisetHakuajatContainer);
-        this.sisaisetHakuajatTable.setVisibleColumns(HAKUAJAT_COLUMNS);
-        this.sisaisetHakuajatTable.setPageLength((this.sisaisetHakuajatContainer.size() > 5) ? this.sisaisetHakuajatContainer.size() : 5);
-        this.sisaisetHakuajatTable.setColumnHeaders(new String[]{T("Kuvaus"), T("Alkupvm"), T("Loppupvm"), T("Poista")});
-    }
-
-    @Override
     public void initialize(HakuViewModel hakuViewModel) {
         LOG.info("inititialize()");
 
@@ -317,7 +302,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 					sisaisetHakuajatContainer.addRowToHakuajat();
 				}
 			});
-            lisaaHakuaika.setEnabled(false);
+            //lisaaHakuaika.setEnabled(false);
             vl.addComponent(sisaisetHakuajatTable);
 
             grid.addComponent(vl);
@@ -351,6 +336,12 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
         this.form.setValidationVisible(false);
         this.form.setValidationVisibleOnCommit(false);
+        
+        this.sisaisetHakuajatContainer = new HakuajatContainer(_presenter.getHakuModel().getSisaisetHakuajat());
+        this.sisaisetHakuajatTable.setContainerDataSource(this.sisaisetHakuajatContainer);
+        this.sisaisetHakuajatTable.setVisibleColumns(HAKUAJAT_COLUMNS);
+        this.sisaisetHakuajatTable.setPageLength((this.sisaisetHakuajatContainer.size() > 5) ? this.sisaisetHakuajatContainer.size() : 5);
+        this.sisaisetHakuajatTable.setColumnHeaders(new String[]{T("Kuvaus"), T("Alkupvm"), T("Loppupvm"), T("Poista")});
     }
 
      /**
@@ -462,24 +453,20 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
         public SaveEvent(Component source, boolean complete) {
             super(source);
-            sisaisetHakuajatContainer.bindHakuajat();
+            errorView.resetErrors();
+            boolean hakuajatValid = sisaisetHakuajatContainer.bindHakuajat();
             
 
             _complete = complete;
             if (_presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
                 _presenter.getHakuModel().setHakuLomakeUrl(null);
             }
-            errorView.resetErrors();
+            
             try {
-            	boolean hakuajatEmpty = _presenter.getHakuModel().getSisaisetHakuajat().isEmpty();
-                if (hakuajatEmpty) {
-                	errorView.addError(_i18n.getMessage("hakuajatEmpty"));
-                }
                 form.commit();
-                if (hakuajatEmpty) {
+                if (!hakuajatValid) {
                 	throw new Validator.InvalidValueException("");
                 }
-
 
                 if (complete) {
                     _presenter.saveHakuValmiina();
@@ -491,7 +478,6 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             } catch (Validator.InvalidValueException e) {
                 errorView.addError(e);
             }
-
         }
 
         public boolean isComplete() {
@@ -528,7 +514,27 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     		initHakuaikaContainer(hakuajat);
     	}
 
-    	public void addRowToHakuajat() {
+    	public boolean bindHakuajat() {
+    		boolean isValid = true;
+    		List<HakuaikaViewModel> hakuajat = new ArrayList<HakuaikaViewModel>();
+    		for (HakuajatView curRow : this.getItemIds()) {
+    			if (curRow.getLoppuPvm().getValue() != null && curRow.getAlkuPvm().getValue() != null) {
+    				hakuajat.add(curRow.getModel());
+    			} else {
+    				errorView.addError(_i18n.getMessage("HakuaikaVirhe"));
+    				isValid = false;
+    			}
+    		}
+    		if (isValid && hakuajat.isEmpty()) {
+    			errorView.addError(_i18n.getMessage("hakuajatEmpty"));
+    			isValid = false;
+    		}
+    		_presenter.getHakuModel().setSisaisetHakuajat(hakuajat);
+    		
+    		return isValid;
+		}
+
+		public void addRowToHakuajat() {
     		final HakuajatView hakuaikaRow = new HakuajatView(new HakuaikaViewModel());
 			hakuaikaRow.getPoistaB().addListener(new Button.ClickListener() {
 
@@ -538,16 +544,6 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 				}
 			});
 			addItem(hakuaikaRow);
-    	}
-
-    	public void bindHakuajat() {
-    		List<HakuaikaViewModel> hakuajat = new ArrayList<HakuaikaViewModel>();
-    		for (HakuajatView curRow : this.getItemIds()) {
-    			if (curRow.getLoppuPvm().getValue() != null && curRow.getAlkuPvm().getValue() != null) {
-    				hakuajat.add(curRow.getModel());
-    			}
-    		}
-    		_presenter.getHakuModel().setSisaisetHakuajat(hakuajat);
     	}
 
     	private void initHakuaikaContainer(List<HakuaikaViewModel> hakuajat) {

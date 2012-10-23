@@ -65,7 +65,7 @@ public class HakuajatView {
 		loppuPvm.setImmediate(true);
 
 		poistaB = UiUtil.buttonSmallPrimary(null, i18n.getMessage("minus"));
-		poistaB.setEnabled(false);
+		//poistaB.setEnabled(false);
 	}
 
 	public DateField getAlkuPvm() {
