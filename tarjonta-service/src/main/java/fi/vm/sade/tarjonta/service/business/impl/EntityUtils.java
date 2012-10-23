@@ -17,11 +17,13 @@ package fi.vm.sade.tarjonta.service.business.impl;
 
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
 import java.util.Collection;
 import java.util.HashSet;
@@ -73,6 +75,15 @@ public final class EntityUtils {
 
         }
 
+        Set<WebLinkki> toLinkkis = new HashSet<WebLinkki>();
+        if (fromKoulutus.getLinkki() != null) {
+            for (WebLinkkiTyyppi fromLinkki : fromKoulutus.getLinkki()) {
+                WebLinkki toLinkki = new WebLinkki(fromLinkki.getTyyppi(), fromLinkki.getKieli(), fromLinkki.getUri());
+                toLinkkis.add(toLinkki);
+            }
+        } // else, set is empty which will clear all previous links
+        toKoulutus.setLinkkis(toLinkkis);
+
     }
 
     public static void copyFields(YhteyshenkiloTyyppi from, Yhteyshenkilo to) {
@@ -104,7 +115,7 @@ public final class EntityUtils {
         return set;
     }
 
-    public static void copyFields(Collection<KoodistoUri> from, Collection<KoodistoKoodiTyyppi> to) {
+    public static void copyKoodistoUris(Collection<KoodistoUri> from, Collection<KoodistoKoodiTyyppi> to) {
 
         if (from != null) {
             for (KoodistoUri fromUri : from) {
@@ -112,6 +123,18 @@ public final class EntityUtils {
                 toKoodi.setUri(fromUri.getKoodiUri());
                 to.add(toKoodi);
             }
+        }
+
+    }
+
+    public static void copyWebLinkkis(Collection<WebLinkki> from, Collection<WebLinkkiTyyppi> to) {
+
+        for (WebLinkki fromLinkki : from) {
+            WebLinkkiTyyppi toLinkki = new WebLinkkiTyyppi();
+            toLinkki.setKieli(fromLinkki.getKieli());
+            toLinkki.setTyyppi(fromLinkki.getTyyppi());
+            toLinkki.setUri(fromLinkki.getUrl());
+            to.add(toLinkki);
         }
 
     }

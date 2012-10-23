@@ -29,7 +29,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
- * @author Jukka Raanamo
  */
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)

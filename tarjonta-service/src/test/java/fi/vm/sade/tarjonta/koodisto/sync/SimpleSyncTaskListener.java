@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.koodisto.sync;
 
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.tarjonta.koodisto.sync.KoodistoSyncTask;
 import java.util.List;
 
 /**

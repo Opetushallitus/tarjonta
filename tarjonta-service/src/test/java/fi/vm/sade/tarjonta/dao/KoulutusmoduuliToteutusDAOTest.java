@@ -18,6 +18,8 @@ package fi.vm.sade.tarjonta.dao;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -153,8 +155,54 @@ public class KoulutusmoduuliToteutusDAOTest {
 
     }
 
+    @Test
+    public void testAddLinkkis() {
 
+        KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
 
+        // no language
+        t.addLinkki(new WebLinkki(WebLinkki.LinkkiTyyppi.MULTIMEDIA, null, "http://link1"));
+        // identical, first will get lost
+        t.addLinkki(new WebLinkki(WebLinkki.LinkkiTyyppi.MULTIMEDIA, null, "http://link1"));
+
+        // two links of same type and url but different language
+        t.addLinkki(new WebLinkki("customtype1", "en", "http://link2"));
+        t.addLinkki(new WebLinkki("customtype1", "fi", "http://link2"));
+
+        assertEquals(3, t.getLinkkis().size());
+
+        koulutusmoduuliToteutusDAO.insert(t);
+
+        KoulutusmoduuliToteutus loaded = (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.read(t.getId());
+        assertEquals(3, loaded.getLinkkis().size());
+
+    }
+
+    @Test
+    public void testSetLinkkis() {
+
+        KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
+
+        t.addLinkki(new WebLinkki(WebLinkki.LinkkiTyyppi.MULTIMEDIA, null, "http://link1"));
+
+        koulutusmoduuliToteutusDAO.insert(t);
+
+        KoulutusmoduuliToteutus loaded = (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.read(t.getId());
+        assertEquals(1, loaded.getLinkkis().size());
+
+        Set<WebLinkki> newSet = new HashSet<WebLinkki>();
+        newSet.add(new WebLinkki("type2", null, "http://link2"));
+        newSet.add(new WebLinkki("type3", null, "http://link3"));
+        loaded.setLinkkis(newSet);
+
+        koulutusmoduuliToteutusDAO.update(loaded);
+
+        loaded = (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.read(t.getId());
+        assertEquals(2, loaded.getLinkkis().size());
+
+        // todo: check orphans are deleted (link1)
+
+    }
 
     private KoulutusmoduuliToteutus updateAndRead(KoulutusmoduuliToteutus toteutus) {
 

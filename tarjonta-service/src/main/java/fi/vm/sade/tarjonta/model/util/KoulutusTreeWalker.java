@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.model.util;
 
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
-import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import java.util.Set;
 

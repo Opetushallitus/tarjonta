@@ -103,25 +103,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Yhteyshenkilo> yhteyshenkilos = new HashSet<Yhteyshenkilo>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "opetussuunnitelma_teskti_id")
-    private MonikielinenTeksti opetussuunnitelmaUrl;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "oppilaitos_teksti_id")
-    private MonikielinenTeksti oppilaitosUrl;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "sosiaalinenmedia_teksti_id")
-    private MonikielinenTeksti sosiaalinenMediaUrl;
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_linkki", joinColumns =
+    @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<WebLinkki> linkkis = new HashSet<WebLinkki>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "maksullisuus_teksti_id")
     private MonikielinenTeksti maksullisuusUrl;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "stipendimahdollisuus_teksti_id")
-    private MonikielinenTeksti stipendimahdollisuusUrl;
 
     public KoulutusmoduuliToteutus() {
         super();
@@ -336,6 +325,26 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         this.opetusmuotos = uris;
     }
 
+    public void addLinkki(WebLinkki linkki) {
+        linkkis.add(linkki);;
+    }
+
+    public void removeLinkki(WebLinkki linkki) {
+        linkkis.remove(linkki);
+    }
+
+    public Set<WebLinkki> getLinkkis() {
+        return Collections.unmodifiableSet(linkkis);
+    }
+
+    /**
+     * Replace all linkkis from given values.
+     *
+     * @param linkkis
+     */
+    public void setLinkkis(Set<WebLinkki> linkkis) {
+        this.linkkis = new HashSet<WebLinkki>(linkkis);
+    }
 
     public Set<Yhteyshenkilo> getYhteyshenkilos() {
         return Collections.unmodifiableSet(yhteyshenkilos);
@@ -347,50 +356,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void removeYhteyshenkilo(Yhteyshenkilo henkilo) {
         yhteyshenkilos.remove(henkilo);
-    }
-
-    public MonikielinenTeksti getOppilaitosUrl() {
-        return oppilaitosUrl;
-    }
-
-    public void setOppilaitosUrl(MonikielinenTeksti oppilaitosUrl) {
-        this.oppilaitosUrl = oppilaitosUrl;
-    }
-
-    public MonikielinenTeksti getOpetussuunnitelmaUrl() {
-        return opetussuunnitelmaUrl;
-    }
-
-    public void setOpetussuunnitelmaUrl(MonikielinenTeksti opetussuunnitelmaUrl) {
-        this.opetussuunnitelmaUrl = opetussuunnitelmaUrl;
-    }
-
-    /**
-     * @return the sosiaalinenMediaUrl
-     */
-    public MonikielinenTeksti getSosiaalinenMediaUrl() {
-        return sosiaalinenMediaUrl;
-    }
-
-    /**
-     * @param sosiaalinenMediaUrl the sosiaalinenMediaUrl to set
-     */
-    public void setSosiaalinenMediaUrl(MonikielinenTeksti sosiaalinenMediaUrl) {
-        this.sosiaalinenMediaUrl = sosiaalinenMediaUrl;
-    }
-
-    /**
-     * @return the stipendimahdollisuusUrl
-     */
-    public MonikielinenTeksti getStipendimahdollisuusUrl() {
-        return stipendimahdollisuusUrl;
-    }
-
-    /**
-     * @param stipendimahdollisuusUrl the stipendimahdollisuusUrl to set
-     */
-    public void setStipendimahdollisuusUrl(MonikielinenTeksti stipendimahdollisuusUrl) {
-        this.stipendimahdollisuusUrl = stipendimahdollisuusUrl;
     }
 
     /**

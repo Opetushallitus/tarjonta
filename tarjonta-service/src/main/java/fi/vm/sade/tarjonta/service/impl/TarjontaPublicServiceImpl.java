@@ -22,8 +22,6 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.KoodistoUri;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
@@ -242,11 +240,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     }
 
     private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus fromKoulutus) {
-        LueKoulutusVastausTyyppi koulutus = new LueKoulutusVastausTyyppi();
 
         LueKoulutusVastausTyyppi toKoulutus = new LueKoulutusVastausTyyppi();
-
-        EntityUtils.copyFields(fromKoulutus.getOpetusmuotos(), toKoulutus.getOpetusmuoto());
 
         toKoulutus.setOid(fromKoulutus.getOid());
         GregorianCalendar greg = new GregorianCalendar();
@@ -261,8 +256,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         kestoT.setYksikko(fromKoulutus.getSuunniteltuKestoYksikko());
         toKoulutus.setKesto(kestoT);
 
-        EntityUtils.copyFields(fromKoulutus.getOpetuskielis(), toKoulutus.getOpetuskieli());
-        EntityUtils.copyFields(fromKoulutus.getKoulutuslajiList(), toKoulutus.getKoulutuslaji());
+        EntityUtils.copyKoodistoUris(fromKoulutus.getOpetusmuotos(), toKoulutus.getOpetusmuoto());
+        EntityUtils.copyKoodistoUris(fromKoulutus.getOpetuskielis(), toKoulutus.getOpetuskieli());
+        EntityUtils.copyKoodistoUris(fromKoulutus.getKoulutuslajiList(), toKoulutus.getKoulutuslaji());
+        EntityUtils.copyWebLinkkis(fromKoulutus.getLinkkis(), toKoulutus.getLinkki());
 
         return toKoulutus;
 

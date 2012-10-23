@@ -42,6 +42,7 @@ import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
 
 import java.util.Date;
@@ -158,7 +159,6 @@ public class TarjontaAdminServiceTest {
         assertEquals(komotosOriginalSize - 1, komotos.size());
     }
 
-
     private void assertMatch(YhteyshenkiloTyyppi expected, Yhteyshenkilo actual) {
 
         assertEquals(expected.getEtunimet(), actual.getEtunimis());
@@ -195,6 +195,7 @@ public class TarjontaAdminServiceTest {
         lisaaKoulutus.setKoulutuksenAlkamisPaiva(new Date());
         lisaaKoulutus.setKesto(kesto3Vuotta);
         lisaaKoulutus.getYhteyshenkilo().add(createYhteyshenkilo());
+        lisaaKoulutus.getLinkki().add(createLinkki("google", null, "http://google.com"));
 
 
         return lisaaKoulutus;
@@ -224,6 +225,14 @@ public class TarjontaAdminServiceTest {
         KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
         koodi.setUri(uri);
         return koodi;
+    }
+
+    private static WebLinkkiTyyppi createLinkki(String tyyppi, String kieli, String uri) {
+        WebLinkkiTyyppi linkki = new WebLinkkiTyyppi();
+        linkki.setTyyppi(tyyppi);
+        linkki.setKieli(kieli);
+        linkki.setUri(uri);
+        return linkki;
     }
 
     private void flush() {

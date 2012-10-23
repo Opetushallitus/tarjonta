@@ -354,6 +354,7 @@
             <xs:element name="KoulutuksenAlkamisPaiva" type="xs:dateTime"/>
             <xs:element name="Kesto" type="tns:KoulutuksenKestoTyyppi"/>
             <xs:element name="Koulutuslaji" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="Linkki" type="tns:WebLinkkiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:group>
 
@@ -371,6 +372,39 @@
                 <xs:annotation>
                     <xs:documentation>
                         Yksikko on koodisto viittaus.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="WebLinkkiTyyppi">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Web linkki jolle annetaan tyyppi seka optionaalinen kieli. Linkin kieli ja tyyppi yhdessa yksiloivat linkin.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Tyyppi" type="xs:token">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Linkin tyyppi. Arvona
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Kieli" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Jos linkki patee vain yhdelle kielelle voidaan
+                        sen antaa tassa. Esimerkki likki: http://somedomain/guide-en.pdf
+                        jossa sisalta on kielistettya. Arvona on kielen koodisto uri (?).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Uri" type="xs:anyURI">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Linkin uri.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
