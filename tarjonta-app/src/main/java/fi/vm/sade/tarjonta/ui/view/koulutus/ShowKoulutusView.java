@@ -85,7 +85,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         grid.setWidth("800px");
 
         grid.addComponent(UiUtil.label(T("organisaatio")));
-        grid.addComponent(UiUtil.label("%s", model.getOrganisaatioName()));
+        grid.addComponent(new Label(model.getOrganisaatioName()));
         grid.newLine();
         grid.addComponent(UiUtil.label(T("koulutuslaji")));
         for (String uri : model.getKoulutuslaji()) {
