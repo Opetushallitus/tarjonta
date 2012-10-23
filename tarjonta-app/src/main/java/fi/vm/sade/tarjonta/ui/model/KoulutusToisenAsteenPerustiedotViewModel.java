@@ -174,6 +174,8 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
                         model.getKielet().add(kieliUri);
                     }
                 }
+                
+               getYhteyshenkilot().add(model);
             }
         }
     }
