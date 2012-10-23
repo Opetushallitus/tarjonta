@@ -85,7 +85,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     KoodistoComponent hakukohteenNimiCombo;
     @PropertyId("tunnisteKoodi")
     TextField tunnisteKoodiText;
-    @PropertyId("haku")
+    @PropertyId("hakuOid")
     ComboBox hakuCombo;
     @PropertyId("aloitusPaikat")
     TextField aloitusPaikatText;
