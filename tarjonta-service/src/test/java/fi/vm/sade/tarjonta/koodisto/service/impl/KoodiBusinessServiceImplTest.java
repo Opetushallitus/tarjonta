@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.koodisto.service.impl;
 
+import fi.vm.sade.dbunit.annotation.DataSetLocation;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -32,9 +33,9 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import fi.vm.sade.tarjonta.koodisto.model.Koodi;
 import fi.vm.sade.tarjonta.koodisto.service.KoodiBusinessService;
+import fi.vm.sade.tarjonta.koodisto.util.JtaCleanInsertTestExecutionListener;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.cxf.ws.addressing.MetadataType;
 
 /**
  * TODO: use DBUnit
@@ -45,9 +46,11 @@ import org.apache.cxf.ws.addressing.MetadataType;
 @TestExecutionListeners(listeners = {
     DependencyInjectionTestExecutionListener.class,
     DirtiesContextTestExecutionListener.class,
-    TransactionalTestExecutionListener.class
+    TransactionalTestExecutionListener.class,
+    JtaCleanInsertTestExecutionListener.class
 })
 @RunWith(SpringJUnit4ClassRunner.class)
+@DataSetLocation("classpath:test-data.xml")
 @Transactional
 public class KoodiBusinessServiceImplTest {
 
@@ -76,10 +79,18 @@ public class KoodiBusinessServiceImplTest {
     @Test
     public void testFindByUri() {
 
-        Koodi koodi = businessService.findByKoodiUri("koodi1");
+        Koodi koodi = businessService.findByKoodiUri("maa/1/fi");
 
         assertNotNull(koodi);
-        assertEquals(koodi1, koodi);
+        assertEquals("fi", koodi.getKoodiArvo());
+
+    }
+
+    @Test
+    public void testFindByKoodistoUri() {
+
+        List<Koodi> koodis = businessService.findKoodisByKoodistoUri("maat");
+        assertEquals(2, koodis.size());
 
     }
 

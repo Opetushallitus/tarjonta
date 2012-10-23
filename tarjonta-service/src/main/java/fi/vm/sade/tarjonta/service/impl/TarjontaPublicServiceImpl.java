@@ -25,16 +25,15 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
@@ -49,11 +48,6 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.datatype.DatatypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,16 +67,22 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Autowired
     private HakuBusinessService businessService;
+
     @Autowired
     private HakuDAO hakuDao;
+
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
+
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
+
     @Autowired
     private ConversionService conversionService;
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public TarjontaPublicServiceImpl() {
@@ -224,7 +224,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(kysely.getOid());
 
         LueKoulutusVastausTyyppi convert = convert(komoto);
-        
+
         //
         KoodistoKoodiTyyppi koulutusKoodi = new KoodistoKoodiTyyppi();
         koulutusKoodi.setArvo(komoto.getKoulutusmoduuli().getKoulutusNimi());
@@ -239,41 +239,30 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         return convert;
     }
 
-    private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus toteutus) {
+    private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus fromKoulutus) {
         LueKoulutusVastausTyyppi koulutus = new LueKoulutusVastausTyyppi();
 
-        KoodistoKoodiTyyppi opetusmuotoKoodi = new KoodistoKoodiTyyppi();
-        opetusmuotoKoodi.setUri(toteutus.getOpetusmuotos().isEmpty() ? null : toteutus.getOpetusmuotos().iterator().next().getKoodiUri());
-        koulutus.setOpetusmuoto(opetusmuotoKoodi);
-        koulutus.setOid(toteutus.getOid());
+        LueKoulutusVastausTyyppi toKoulutus = new LueKoulutusVastausTyyppi();
+
+        EntityUtils.copyFields(fromKoulutus.getOpetusmuotos(), toKoulutus.getOpetusmuoto());
+
+        toKoulutus.setOid(fromKoulutus.getOid());
         GregorianCalendar greg = new GregorianCalendar();
-        greg.setTime(toteutus.getKoulutuksenAlkamisPvm());
+        greg.setTime(fromKoulutus.getKoulutuksenAlkamisPvm());
         try {
-            koulutus.setKoulutuksenAlkamisPaiva(DatatypeFactory.newInstance().newXMLGregorianCalendar(greg));
+            toKoulutus.setKoulutuksenAlkamisPaiva(DatatypeFactory.newInstance().newXMLGregorianCalendar(greg));
         } catch (Exception ex) {
-            koulutus.setKoulutuksenAlkamisPaiva(null);
+            toKoulutus.setKoulutuksenAlkamisPaiva(null);
         }
         KoulutuksenKestoTyyppi kestoT = new KoulutuksenKestoTyyppi();
-        kestoT.setArvo(toteutus.getSuunniteltuKestoArvo());
-        kestoT.setYksikko(toteutus.getSuunniteltuKestoYksikko());
-        koulutus.setKesto(kestoT);
+        kestoT.setArvo(fromKoulutus.getSuunniteltuKestoArvo());
+        kestoT.setYksikko(fromKoulutus.getSuunniteltuKestoYksikko());
+        toKoulutus.setKesto(kestoT);
 
-        if (toteutus.getOpetuskielis() != null) {
-            for (KoodistoUri opetusKieli : toteutus.getOpetuskielis()) {
-                KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
-                koodi.setUri(opetusKieli.getKoodiUri());
-                koulutus.getOpetuskieli().add(koodi);
-            }
-        }
+        EntityUtils.copyFields(fromKoulutus.getOpetuskielis(), toKoulutus.getOpetuskieli());
+        EntityUtils.copyFields(fromKoulutus.getKoulutuslajiList(), toKoulutus.getKoulutuslaji());
 
-
-        for (KoodistoUri uri : toteutus.getKoulutuslajiList()) {
-            KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
-            koodi.setUri(uri.getKoodiUri());
-            koulutus.getKoulutuslaji().add(koodi);
-        }
-
-        return koulutus;
+        return toKoulutus;
 
     }
 
@@ -287,4 +276,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         vastaus.setHakukohde(hakukohdeTyyppi);
         return vastaus;
     }
+
 }
+

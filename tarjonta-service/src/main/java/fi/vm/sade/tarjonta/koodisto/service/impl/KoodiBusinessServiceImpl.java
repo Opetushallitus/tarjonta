@@ -27,12 +27,16 @@ import com.mysema.query.jpa.impl.JPASubQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.SubQueryExpression;
 import com.mysema.query.types.expr.BooleanExpression;
+import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 
 import fi.vm.sade.tarjonta.koodisto.model.Koodi;
 import fi.vm.sade.tarjonta.koodisto.model.QKoodi;
 import fi.vm.sade.tarjonta.koodisto.service.KoodiBusinessService;
+import fi.vm.sade.tarjonta.koodisto.sync.KoodistoSyncTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -46,16 +50,25 @@ public class KoodiBusinessServiceImpl implements KoodiBusinessService {
     @PersistenceContext
     private EntityManager em;
 
-    private static final SubQueryExpression sMaxKoodiVersionSubQuery;
+    private static final Logger log = LoggerFactory.getLogger(KoodiBusinessService.class);
 
-    private static final BooleanExpression sEqMaxKoodiVersion;
+    private static final SubQueryExpression sMaxKoodiVersioSubQuery;
+
+    private static final SubQueryExpression sMaxKoodistoVersioSubQuery;
+
+    private static final BooleanExpression sEqMaxKoodiVersio;
+
+    private static final BooleanExpression sEqMaxKoodistoVersio;
 
     static {
 
-        sMaxKoodiVersionSubQuery = new JPASubQuery().from(QKoodi.koodi).
+        sMaxKoodiVersioSubQuery = new JPASubQuery().from(QKoodi.koodi).
             unique(QKoodi.koodi.koodiVersio.max());
+        sMaxKoodistoVersioSubQuery = new JPASubQuery().from(QKoodi.koodi).
+            unique(QKoodi.koodi.koodistoVersio.max());
 
-        sEqMaxKoodiVersion = QKoodi.koodi.koodiVersio.eq(sMaxKoodiVersionSubQuery);
+        sEqMaxKoodiVersio = QKoodi.koodi.koodiVersio.eq(sMaxKoodiVersioSubQuery);
+        sEqMaxKoodistoVersio = QKoodi.koodi.koodistoVersio.eq(sMaxKoodistoVersioSubQuery);
 
     }
 
@@ -66,8 +79,19 @@ public class KoodiBusinessServiceImpl implements KoodiBusinessService {
         BooleanExpression koodiUriEq = koodi.koodiUri.eq(koodiUri);
 
         return from(koodi).
-            where(koodiUriEq, sEqMaxKoodiVersion).
+            where(koodiUriEq, sEqMaxKoodiVersio).
             singleResult(koodi);
+
+    }
+
+    @Override
+    public List<Koodi> findKoodisByKoodistoUri(String koodistoUri) {
+
+        QKoodi koodi = QKoodi.koodi;
+        BooleanExpression koodistoUriEq = koodi.koodistoUri.eq(koodistoUri);
+
+        return from(koodi).where(koodistoUriEq, sEqMaxKoodistoVersio).
+            list(koodi);
 
     }
 
@@ -96,8 +120,19 @@ public class KoodiBusinessServiceImpl implements KoodiBusinessService {
     }
 
     @Override
+    public List<Koodi> searchKoodis(SearchKoodisCriteriaType criteria) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public void batchImportKoodis(String koodistoUri, Integer koodistoVersion,
         List<KoodiType> koodis) {
+
+        if (log.isInfoEnabled()) {
+            log.info("importing koodis, koodistoUri: " + koodistoUri + ", koodistoVersion: " + koodistoVersion
+                + ", num koodis: " + koodis.size());
+        }
+
 
         for (KoodiType koodi : koodis) {
             Koodi model = new Koodi(koodistoUri, koodistoVersion, koodi);

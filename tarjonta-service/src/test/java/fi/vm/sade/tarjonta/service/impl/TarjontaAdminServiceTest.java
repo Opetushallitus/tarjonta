@@ -133,7 +133,7 @@ public class TarjontaAdminServiceTest {
         paivitaKoulutus.setKoulutuksenAlkamisPaiva(new Date());
         paivitaKoulutus.setKoulutusKoodi(createKoodi("do-not-update-this"));
         paivitaKoulutus.setKoulutusohjelmaKoodi(createKoodi("do-not-update-this"));
-        paivitaKoulutus.setOpetusmuoto(createKoodi("new-opetusmuoto"));
+        paivitaKoulutus.getOpetusmuoto().add(createKoodi("new-opetusmuoto"));
 
         adminService.paivitaKoulutus(paivitaKoulutus);
 
@@ -188,7 +188,7 @@ public class TarjontaAdminServiceTest {
         LisaaKoulutusTyyppi lisaaKoulutus = new LisaaKoulutusTyyppi();
         lisaaKoulutus.setKoulutusKoodi(createKoodi("321101"));
         lisaaKoulutus.setKoulutusohjelmaKoodi(createKoodi("1603"));
-        lisaaKoulutus.setOpetusmuoto(createKoodi("opetusmuoto/aikuisopetus"));
+        lisaaKoulutus.getOpetusmuoto().add(createKoodi("opetusmuoto/aikuisopetus"));
         lisaaKoulutus.getOpetuskieli().add(createKoodi("opetuskieli/fi"));
         lisaaKoulutus.getKoulutuslaji().add(createKoodi("koulutuslaji/lahiopetus"));
         lisaaKoulutus.setOid(SAMPLE_KOULUTUS_OID);

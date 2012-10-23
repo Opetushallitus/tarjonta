@@ -25,6 +25,7 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,9 +45,9 @@ public final class EntityUtils {
     public static void copyFields(PaivitaKoulutusTyyppi from, KoulutusmoduuliToteutus to) {
 
         to.setKoulutuksenAlkamisPvm(from.getKoulutuksenAlkamisPaiva());
-        to.setKoulutuslajiList(toUriSet(from.getKoulutuslaji()));
+        to.setKoulutuslajis(toStringUriSet(from.getKoulutuslaji()));
 
-        final KoulutuksenKestoTyyppi kesto =from.getKesto();
+        final KoulutuksenKestoTyyppi kesto = from.getKesto();
         to.setSuunniteltuKestoArvo(kesto.getArvo());
         to.setSuunniteltuKestoYksikko(kesto.getYksikko());
 
@@ -54,32 +55,21 @@ public final class EntityUtils {
         // todo: other fields
     }
 
-    public static void copyFields(LisaaKoulutusTyyppi koulutus, KoulutusmoduuliToteutus to) {
+    public static void copyFields(LisaaKoulutusTyyppi fromKoulutus, KoulutusmoduuliToteutus toKoulutus) {
 
-        // todo: koulutus should have multiple opetusmuotos
-        if (koulutus.getOpetusmuoto() != null) {
-            to.addOpetusmuoto(new KoodistoUri(koulutus.getOpetusmuoto().getUri()));
-        }
+        toKoulutus.setOpetusmuoto(toKoodistoUriSet(fromKoulutus.getOpetusmuoto()));
+        toKoulutus.setOid(fromKoulutus.getOid());
+        toKoulutus.setKoulutuksenAlkamisPvm(fromKoulutus.getKoulutuksenAlkamisPaiva());
+        toKoulutus.setSuunniteltuKestoArvo(fromKoulutus.getKesto().getArvo());
+        toKoulutus.setSuunniteltuKestoYksikko(fromKoulutus.getKesto().getYksikko());
+        toKoulutus.setOpetuskieli(toKoodistoUriSet(fromKoulutus.getOpetuskieli()));
+        toKoulutus.setKoulutuslajis(toKoodistoUriSet(fromKoulutus.getKoulutuslaji()));
 
-        to.setOid(koulutus.getOid());
-        to.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
-
-        to.setSuunniteltuKestoArvo(koulutus.getKesto().getArvo());
-        to.setSuunniteltuKestoYksikko(koulutus.getKesto().getYksikko());
-
-        for (KoodistoKoodiTyyppi opetusKieli : koulutus.getOpetuskieli()) {
-            to.addOpetuskieli(new KoodistoUri(opetusKieli.getUri()));
-        }
-
-        for (KoodistoKoodiTyyppi koulutuslaji : koulutus.getKoulutuslaji()) {
-            // fix: toteutus should have multiple koulutuslahji
-        }
-
-        for (YhteyshenkiloTyyppi henkiloFrom : koulutus.getYhteyshenkilo()) {
+        for (YhteyshenkiloTyyppi henkiloFrom : fromKoulutus.getYhteyshenkilo()) {
 
             Yhteyshenkilo henkiloTo = new Yhteyshenkilo();
             copyFields(henkiloFrom, henkiloTo);
-            to.addYhteyshenkilo(henkiloTo);
+            toKoulutus.addYhteyshenkilo(henkiloTo);
 
         }
 
@@ -97,12 +87,33 @@ public final class EntityUtils {
 
     }
 
-    public static Set<String> toUriSet(Collection<KoodistoKoodiTyyppi> koodit) {
+    public static Set<String> toStringUriSet(Collection<KoodistoKoodiTyyppi> koodit) {
         Set<String> set = new HashSet<String>();
         for (KoodistoKoodiTyyppi koodi : koodit) {
             set.add(koodi.getUri());
         }
         return set;
+    }
+
+    public static Set<KoodistoUri> toKoodistoUriSet(Collection<KoodistoKoodiTyyppi> koodit) {
+        Set<KoodistoUri> set = new HashSet<KoodistoUri>();
+        for (KoodistoKoodiTyyppi koodi : koodit) {
+            KoodistoUri uri = new KoodistoUri(koodi.getUri());
+            set.add(uri);
+        }
+        return set;
+    }
+
+    public static void copyFields(Collection<KoodistoUri> from, Collection<KoodistoKoodiTyyppi> to) {
+
+        if (from != null) {
+            for (KoodistoUri fromUri : from) {
+                KoodistoKoodiTyyppi toKoodi = new KoodistoKoodiTyyppi();
+                toKoodi.setUri(fromUri.getKoodiUri());
+                to.add(toKoodi);
+            }
+        }
+
     }
 
 }

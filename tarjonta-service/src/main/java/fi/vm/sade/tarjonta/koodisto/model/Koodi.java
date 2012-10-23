@@ -57,7 +57,7 @@ public class Koodi implements Serializable {
     @Column(name = "koodisto_uri")
     private String koodistoUri;
 
-    @Column(name = "koodisti_versio")
+    @Column(name = "koodisto_versio")
     private int koodistoVersio;
 
     @Column(name = "koodi_arvo")

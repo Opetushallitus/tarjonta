@@ -11,48 +11,11 @@
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
 
-   <!--
-    TODO: move attributes to properties
-   -->
-    <bean id="authInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
-        <constructor-arg>
-            <map>
-                <entry key="action" value="UsernameToken Timestamp" />
-                <entry key="user" value="1.2.246.562.24.00000000002" />
-                <entry key="passwordType" value="PasswordText" />
-                <entry key="passwordCallbackRef">
-                    <bean id="passwdHandler" class="fi.vm.sade.tarjonta.koodisto.service.impl.AuthCallbackHandler">
-                        <property name="password" value="1.2.246.562.24.00000000002"/>
-                    </bean>
-                </entry>
-            </map>
-        </constructor-arg>
-    </bean>
+    <bean id="koodiPublicService"
+          class="fi.vm.sade.koodisto.service.mock.KoodiServiceMock"/>
 
-
-
-    <!-- Configure CXF bus to contain ticketInterceptor -->
-    <cxf:bus>
-        <cxf:outInterceptors>
-            <ref bean="authInterceptor" />
-        </cxf:outInterceptors>
-    </cxf:bus>
-
-
-    <!--
-        TODO: move addresses to properties
-
-        koodi.webservice.url=http://luokka.hard.ware.fi:8181/cxf/koodiService
-        koodisto.webservice.url=http://luokka.hard.ware.fi:8181/cxf/koodistoService
-    -->
-
-    <jaxws:client id="koodiPublicService"
-                  serviceClass="fi.vm.sade.koodisto.service.KoodiService"
-                  address="http://luokka.hard.ware.fi:8181/cxf/koodiService"/>
-
-    <jaxws:client id="koodistoPublicService"
-                  serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
-                  address="http://luokka.hard.ware.fi:8181/cxf/koodistoService"/>
+    <bean id="koodistoPublicService"
+          class="fi.vm.sade.koodisto.service.mock.KoodistoServiceMock"/>
 
 
     <bean id="syncKoodistoJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -64,7 +27,7 @@
     <bean id="syncKoodistoByScheduleTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="syncKoodistoJobDetail"/>
         <property name="cronExpression" value="0 0 22 * * ?"/>
-        <property name="startDelay" value="120000"/>
+        <property name="startDelay" value="5000"/>
     </bean>
 
 
@@ -72,12 +35,11 @@
         <property name="jobDetail" ref="syncKoodistoJobDetail"/>
         <property name="repeatCount" value="0"/>
         <property name="repeatInterval" value="1"/>
-        <property name="startDelay" value="60000"/>
+        <property name="startDelay" value="1"/>
     </bean>
 
 
-    <bean id="syncKoodistoHandler" class="fi.vm.sade.tarjonta.koodisto.sync.KoodistoSyncHandler">
-        <!-- business service is autowired -->
+    <bean id="syncKoodistoHandler" class="fi.vm.sade.tarjonta.koodisto.sync.SimpleSyncTaskListener">
     </bean>
 
     <bean id="syncKoodistoTask" class="fi.vm.sade.tarjonta.koodisto.sync.KoodistoSyncTask">

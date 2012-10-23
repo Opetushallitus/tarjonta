@@ -36,38 +36,27 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 @TestExecutionListeners(listeners = {
     DependencyInjectionTestExecutionListener.class})
 @RunWith(SpringJUnit4ClassRunner.class)
-public class KoodistoSyncTaskTest extends KoodistoTestSupport {
+public class KoodistoSyncTaskAtStartUpTest extends KoodistoTestSupport {
 
     @Autowired
-    private KoodistoSyncTask syncTask;
+    private SimpleSyncTaskListener listener;
 
     @Test
-    public void testListenerIsCalledOnError() {
+    public void testTaskRunsAtStartUp() {
 
-        SimpleSyncTaskListener listener = new SimpleSyncTaskListener();
+        // give it some time
+        sleep(1000);
 
-        syncTask.setKoodistoSyncSpecs(set("no-such-koodisto-1", "no-such-koodisto-2"));
-        syncTask.addListener(listener);
-        syncTask.execute();
-        syncTask.removeListener(listener);
-
-        assertEquals(2, listener.getCountOnFailedCalled());
+        // either success or failure should be called
+        assertEquals("sync task was not called at just once startup", 1, listener.getCountOnFailedCalled());
 
     }
 
-    @Test
-    public void testListenerIsCalledOnSuccess() {
-
-        SimpleSyncTaskListener listener = new SimpleSyncTaskListener();
-
-        syncTask.setKoodistoSyncSpecs(set(MockDataHandler.MAA_KOODISTO_NIMI));
-        syncTask.addListener(listener);
-        syncTask.execute();
-        syncTask.removeListener(listener);
-
-        // todo: no koodisto for Maa, check data
-        // assertEquals(1, listener.getCountOnSynCalled());
-
+    private void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (Exception e) {
+        }
     }
 
 }

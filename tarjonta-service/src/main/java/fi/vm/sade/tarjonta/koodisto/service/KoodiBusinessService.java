@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.koodisto.service;
 
+import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.koodisto.model.Koodi;
 import java.util.List;
@@ -38,6 +39,14 @@ public interface KoodiBusinessService {
     public Koodi findByKoodiUri(String koodiUri);
 
     /**
+     * Returns latest koodi's from given koodisto.
+     *
+     * @param koodistoUri
+     * @return
+     */
+    public List<Koodi> findKoodisByKoodistoUri(String koodistoUri);
+
+    /**
      * Inserts or update a single Koodi
      *
      * @param template values to import
@@ -52,6 +61,14 @@ public interface KoodiBusinessService {
      * @param koodis
      */
     public void batchImportKoodis(String koodistoUri, Integer koodistoVersion, List<KoodiType> koodis);
+
+    /**
+     * Search koodis using criteria from Koodisto api. Note that not all search parameters are supported.
+     *
+     * @param criteria
+     * @return
+     */
+    public List<Koodi> searchKoodis(SearchKoodisCriteriaType criteria);
 
 }
 

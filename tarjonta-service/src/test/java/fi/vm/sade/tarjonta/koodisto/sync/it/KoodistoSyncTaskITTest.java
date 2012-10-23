@@ -15,9 +15,9 @@
  */
 package fi.vm.sade.tarjonta.koodisto.sync.it;
 
+import fi.vm.sade.tarjonta.koodisto.service.KoodiBusinessService;
 import fi.vm.sade.tarjonta.koodisto.sync.KoodistoSyncTask;
-import fi.vm.sade.tarjonta.koodisto.service.SimpleSyncTaskListener;
-import fi.vm.sade.tarjonta.koodisto.service.impl.*;
+import fi.vm.sade.tarjonta.koodisto.sync.SimpleSyncTaskListener;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -48,10 +48,16 @@ public class KoodistoSyncTaskITTest extends KoodistoTestSupport {
     @Autowired
     private KoodistoSyncTask syncTask;
 
+    @Autowired
+    private KoodiBusinessService koodiService;
+
     private static final String KNOWN_SMALL_KOODISTO_URI = "HAKUTAPA";
 
     @Test
     public void testValidKoodistoReturnsResults() {
+
+        // precondition
+        assertEquals(0, koodiService.findKoodisByKoodistoUri(KNOWN_SMALL_KOODISTO_URI).size());
 
         SimpleSyncTaskListener listener = new SimpleSyncTaskListener();
 
@@ -61,6 +67,9 @@ public class KoodistoSyncTaskITTest extends KoodistoTestSupport {
         syncTask.removeListener(listener);
 
         assertFalse(listener.getKoodis().isEmpty());
+
+        // listener is invoked and data is inserted
+        assertFalse(koodiService.findKoodisByKoodistoUri(KNOWN_SMALL_KOODISTO_URI).isEmpty());
 
     }
 

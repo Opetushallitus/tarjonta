@@ -347,7 +347,7 @@
             </xs:element>
             <xs:element name="KoulutusKoodi" type="tns:KoodistoKoodiTyyppi"/>
             <xs:element name="KoulutusohjelmaKoodi" type="tns:KoodistoKoodiTyyppi"/>
-            <xs:element name="Opetusmuoto" type="tns:KoodistoKoodiTyyppi"/>
+            <xs:element name="Opetusmuoto" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
             <xs:element name="Opetuskieli" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
             <xs:element name="KoulutuksenAlkamisPaiva" type="xs:dateTime"/>
             <xs:element name="Kesto" type="tns:KoulutuksenKestoTyyppi"/>

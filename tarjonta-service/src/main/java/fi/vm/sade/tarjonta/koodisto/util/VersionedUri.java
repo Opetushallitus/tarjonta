@@ -49,7 +49,7 @@ public class VersionedUri {
         int sepIndex = spec.lastIndexOf(SEPARATOR_TOKEN);
         if (sepIndex != -1) {
             uri = spec.substring(0, sepIndex);
-            versio = Integer.parseInt(spec.substring(sepIndex));
+            versio = Integer.parseInt(spec.substring(sepIndex + 1));
         } else {
             uri = spec;
         }

@@ -29,14 +29,18 @@ import fi.vm.sade.tarjonta.koodisto.util.VersionedUri;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * Task that loads koodis from Koodisto and invokes listeners with results.
  *
  * @author Jukka Raanamo
  */
-public class KoodistoSyncTask {
+public class KoodistoSyncTask implements InitializingBean {
 
     private Set<String> koodistoSyncSpecs;
 
@@ -50,11 +54,30 @@ public class KoodistoSyncTask {
 
     private static final Logger log = LoggerFactory.getLogger(KoodistoSyncTask.class);
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+
+        if (koodistoSyncSpecs == null || koodistoSyncSpecs.isEmpty()) {
+            throw new IllegalStateException("no koodisto uri's to synchronized");
+        }
+
+        if (koodiService == null) {
+            throw new IllegalStateException("koodiService not set");
+        }
+
+        if (koodistoService == null) {
+            throw new IllegalStateException("koodistoService not set");
+        }
+
+    }
+
     /**
      * Performs the actual work. By now listeners, services and sync specs must
      * have been assigned.
      */
     public void execute() {
+
+        log.info("executing koodisto sync on: " + koodistoSyncSpecs);
 
         for (String spec : koodistoSyncSpecs) {
             try {
@@ -205,11 +228,11 @@ public class KoodistoSyncTask {
 
     }
 
-    private void fireSyncLoaded(String spec, KoodistoSyncResult result) {
+    protected void fireSyncLoaded(String spec, KoodistoSyncResult result) {
 
         if (log.isInfoEnabled()) {
             log.info("synchronized koodisto from spec: " + spec
-                + ", num koodis: " + result);
+                + ", result: " + result);
         }
 
         if (listeners != null && !listeners.isEmpty()) {
@@ -226,7 +249,7 @@ public class KoodistoSyncTask {
 
     }
 
-    private void fireSyncFailed(String spec, Exception syncException) {
+    protected void fireSyncFailed(String spec, Exception syncException) {
 
         log.error("synchronizing failed, spec: " + spec, syncException);
 
@@ -262,6 +285,15 @@ public class KoodistoSyncTask {
 
         public List<KoodiType> getKoodis() {
             return koodis;
+        }
+
+        @Override
+        public String toString() {
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("criteria: ").append(criteria).append(", num koodis: ").append(koodis.size());
+            return sb.toString();
+
         }
 
     }

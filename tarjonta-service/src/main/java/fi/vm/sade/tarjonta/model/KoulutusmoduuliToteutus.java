@@ -187,11 +187,20 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         koulutuslajiList.remove(new KoodistoUri(koulutuslajiUri));
     }
 
-    public void setKoulutuslajiList(Collection<String> uris) {
+    public void setKoulutuslajis(Collection<String> uris) {
         koulutuslajiList.clear();
         for (String uri : uris) {
             koulutuslajiList.add(new KoodistoUri(uri));
         }
+    }
+
+    /**
+     * Replace all koulutuslahis from given values.
+     *
+     * @param uris
+     */
+    public void setKoulutuslajis(Set<KoodistoUri> uris) {
+        this.koulutuslajiList = uris;
     }
 
     /**
@@ -275,6 +284,15 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
+     * Replaces all opetuskielis from given values.
+     *
+     * @param uris
+     */
+    public void setOpetuskieli(Set<KoodistoUri> uris) {
+        this.opetuskielis = uris;
+    }
+
+    /**
      * @param opetuskielis the opetuskielis to set
      */
     public void addOpetuskieli(KoodistoUri opetuskieli) {
@@ -308,6 +326,16 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void removeOpetusmuoto(KoodistoUri opetusmuoto) {
         opetusmuotos.remove(opetusmuoto);
     }
+
+    /**
+     * Replaces all opetusmuotos with given values..
+     *
+     * @param uris
+     */
+    public void setOpetusmuoto(Set<KoodistoUri> uris) {
+        this.opetusmuotos = uris;
+    }
+
 
     public Set<Yhteyshenkilo> getYhteyshenkilos() {
         return Collections.unmodifiableSet(yhteyshenkilos);
