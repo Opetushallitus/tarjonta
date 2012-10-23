@@ -41,7 +41,7 @@
     <import resource="application-context-service.xml"/>
     <import resource="application-context-ws.xml"/>
 
-    <import resource="cache-context.xml"/>
+    <!--<import resource="cache-context.xml"/>-->
 
     <!--<import resource="file:///${user.home:''}/oph-configuration/cache-context.xml"/>-->
 
