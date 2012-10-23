@@ -27,15 +27,19 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusFormType;
+import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotFormView;
 import java.util.ArrayList;
 import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author mlyly
  */
 public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedotViewModel {
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotFormView.class);
     private static final String NO_DATA_AVAILABLE = "Tietoa ei saatavilla";
     private Set<KoulutusohjelmaModel> koodistoKoulutusohjelma;
     private KoulutusFormType koulutusFormType = KoulutusFormType.SHOW_ALL; //default value
@@ -43,32 +47,30 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     public KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus status, LueKoulutusVastausTyyppi koulutus) {
         super();
         clearModel(status);
-        
+
         setOid(koulutus.getOid());
-        
+
         setKoulutusKoodi((koulutus.getKoulutusKoodi() != null) ? koulutus.getKoulutusKoodi().getUri() : null);
         final String koodiUri = koulutus.getKoulutusohjelmaKoodi() != null ? koulutus.getKoulutusohjelmaKoodi().getUri() : null;
         setKoulutusohjema(new KoulutusohjelmaModel(koodiUri, null, null));
-        
+
         setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
         setOpetuskielet(convertOpetuskielet(koulutus.getOpetuskieli()));
 
-        //addAvainsanat(); TODO
         addKoulutuslajit(koulutus.getKoulutuslaji());
-        
+
         if (koulutus.getKesto() != null) {
             setSuunniteltuKesto(koulutus.getKesto().getArvo());
             setSuunniteltuKestoTyyppi(koulutus.getKesto().getYksikko());
         }
-        
         setLinkit(koulutus.getLinkki());
         setYhteystiedot(koulutus.getYhteyshenkilo());
-        
+
         addOpetusmuoto(koulutus.getOpetusmuoto());
     }
-    
+
     public LisaaKoulutusTyyppi mapToLisaaKoulutusTyyppi(String oid) {
-        
+
         this.getDocumentStatus();  //TODO: status
         this.getOrganisaatioName(); //TODO: organisaatio
 
@@ -85,18 +87,22 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         koulutuksenKestoTyyppi.setArvo(this.getSuunniteltuKesto());
         koulutuksenKestoTyyppi.setYksikko(this.getSuunniteltuKestoTyyppi());
         lisaaKoulutusTyyppi.setKesto(koulutuksenKestoTyyppi);
-        
+
         for (String opetusmuoto : this.getOpetusmuoto()) {
             lisaaKoulutusTyyppi.getOpetusmuoto().add(createKoodi(opetusmuoto));
         }
-        
+
         for (String opetuskielet : this.getOpetuskielet()) {
             lisaaKoulutusTyyppi.getOpetuskieli().add(createKoodi(opetuskielet));
         }
-        
+
+        for (String koulutuslaji : this.getKoulutuslaji()) {
+            lisaaKoulutusTyyppi.getKoulutuslaji().add(createKoodi(koulutuslaji));
+        }
+
         return lisaaKoulutusTyyppi;
     }
-    
+
     public KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus status) {
         super();
         clearModel(status);
@@ -108,7 +114,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setOpintoala(NO_DATA_AVAILABLE); //Opintoala ei tiedossa
         setKoulutuksenTyyppi(NO_DATA_AVAILABLE); //Ei valintaa
     }
-    
+
     private Set<String> convertOpetuskielet(List<KoodistoKoodiTyyppi> opetuskieliKoodit) {
         Set<String> opetuskielet = new HashSet<String>();
         for (KoodistoKoodiTyyppi curKoodi : opetuskieliKoodit) {
@@ -116,7 +122,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         }
         return opetuskielet;
     }
-    
+
     private void addKoulutuslajit(final List<KoodistoKoodiTyyppi> koulutuslaji) {
         if (koulutuslaji != null && !koulutuslaji.isEmpty()) {
             for (KoodistoKoodiTyyppi type : koulutuslaji) {
@@ -124,7 +130,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
             }
         }
     }
-    
+
     private void addAvainsanat(final List<KoodistoKoodiTyyppi> avainsanat) {
         if (avainsanat != null && !avainsanat.isEmpty()) {
             for (KoodistoKoodiTyyppi type : avainsanat) {
@@ -132,7 +138,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
             }
         }
     }
-    
+
     private void addOpetusmuoto(final List<KoodistoKoodiTyyppi> opetusmuoto) {
         if (opetusmuoto != null && !opetusmuoto.isEmpty()) {
             for (KoodistoKoodiTyyppi type : opetusmuoto) {
@@ -140,7 +146,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
             }
         }
     }
-    
+
     private void setLinkit(List<WebLinkkiTyyppi> linkki) {
         if (linkki != null && !linkki.isEmpty()) {
             for (WebLinkkiTyyppi t : linkki) {
@@ -152,7 +158,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
             }
         }
     }
-    
+
     private void setYhteystiedot(List<YhteyshenkiloTyyppi> yhteyshenkilo) {
         if (yhteyshenkilo != null && !yhteyshenkilo.isEmpty()) {
             for (YhteyshenkiloTyyppi t : yhteyshenkilo) {
@@ -162,7 +168,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
                 model.setPuhelin(t.getPuhelin());
                 model.setSukunimi(t.getSukunimi());
                 model.setTitteli(t.getTitteli());
-                
+
                 if (t.getKielet() != null && !t.getKielet().isEmpty()) {
                     for (String kieliUri : t.getKielet()) {
                         model.getKielet().add(kieliUri);
@@ -212,7 +218,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         koodi.setUri(uri);
         return koodi;
     }
-    
+
     private static KoodistoKoodiTyyppi createKoodi(String uri, String name) {
         final KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
         koodi.setUri(uri);
@@ -243,7 +249,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setOrganisaatioName(null);
         setOrganisaatioOid(null);
         setUserFrienlyDocumentStatus(null);
-        
+
         setOpetuskielet(new HashSet<String>(1)); //one required
         setKoulutuslaji(new HashSet<String>(1));//one required
         setOpetusmuoto(new HashSet<String>(1));//one required
