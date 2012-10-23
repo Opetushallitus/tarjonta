@@ -291,6 +291,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             grid.addComponent(UiUtil.label(null, T("Hakuaika")));
 
             VerticalLayout vl = UiUtil.verticalLayout();
+            vl.setSizeUndefined();
             vl.setWidth(500, Sizeable.UNITS_PIXELS);
             
 
