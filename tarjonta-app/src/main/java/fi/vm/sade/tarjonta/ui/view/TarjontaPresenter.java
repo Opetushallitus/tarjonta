@@ -107,10 +107,10 @@ public class TarjontaPresenter {
         _model.getHakukohde().setHakukohdeTila(tila);
         saveHakuKohdePerustiedot();
     }
-    
+
     public void commitHakukohdeForm(String tila) {
         hakuKohdePerustiedotView.commitForm(tila);
-    } 
+    }
 
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
@@ -140,12 +140,12 @@ public class TarjontaPresenter {
             getModel().setHakukohde(new HakukohdeViewModel());
 
         } else {
-            
+
             setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
 
         }
         ListHakuVastausTyyppi haut = tarjontaPublicService.listHaku(new ListaaHakuTyyppi());
-        
+
         this.hakuKohdePerustiedotView.initForm(getModel().getHakukohde());
         this.hakuKohdePerustiedotView.addItemsToHakuCombobox(haut.getResponse());
 
@@ -259,15 +259,15 @@ public class TarjontaPresenter {
             _model.setHakukohde(this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(tarjontaPublicService.lueHakukohde(kysely).getHakukohde()));
             setKomotoOids(_model.getHakukohde().getKomotoOids());
         }
-        
-        
+
+
 
         //After the data has been initialized the form is created
         EditHakukohdeView editHakukohdeView;
         if (hakukohdeOid == null) {
-        editHakukohdeView = new EditHakukohdeView(true);
+            editHakukohdeView = new EditHakukohdeView(true);
         } else {
-         editHakukohdeView = new EditHakukohdeView(false);   
+            editHakukohdeView = new EditHakukohdeView(false);
         }
 
         //Clearing the layout from previos content
@@ -393,6 +393,7 @@ public class TarjontaPresenter {
             yhteyshenkiloTyyppi.setSukunimi(yhteyshenkilo.getSukunimi());
             yhteyshenkiloTyyppi.setSahkoposti(yhteyshenkilo.getEmail());
             yhteyshenkiloTyyppi.setTitteli(yhteyshenkilo.getTitteli());
+            yhteyshenkiloTyyppi.setPuhelin(yhteyshenkilo.getPuhelin());
             for (String kieliUri : yhteyshenkilo.getKielet()) {
                 yhteyshenkiloTyyppi.getKielet().add(kieliUri);
             }
