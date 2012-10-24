@@ -35,12 +35,12 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
     @Autowired
     private TarjontaPresenter _presenter;
     private TabSheet tabs;
-    private boolean isNew = true;
+   
 
-    public EditHakukohdeView(boolean isNew) {
+    public EditHakukohdeView() {
         super();
         setHeight(-1, UNITS_PIXELS);
-        this.isNew = isNew;
+        
     }
 
     @Override
@@ -50,7 +50,7 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
         tabs.setHeight(-1, UNITS_PIXELS);
         t.addComponent(tabs);
 
-        tabs.addTab(new PerustiedotViewImpl(_presenter,isNew),T("tabNimi"));
+        tabs.addTab(new PerustiedotViewImpl(_presenter),T("tabNimi"));
         createButtons();
     }
 

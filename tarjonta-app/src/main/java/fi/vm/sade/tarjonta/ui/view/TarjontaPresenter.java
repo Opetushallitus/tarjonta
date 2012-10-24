@@ -134,16 +134,12 @@ public class TarjontaPresenter {
         }
     }
 
-    public void initHakukohdeForm(boolean isNew, PerustiedotView hakuKohdePerustiedotView) {
+    public void initHakukohdeForm(PerustiedotView hakuKohdePerustiedotView) {
         this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
-        if (isNew) {
-            getModel().setHakukohde(new HakukohdeViewModel());
-
-        } else {
-
-            setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
-
+        if(getModel().getHakukohde().getHakukohdeNimi() != null) {    
+        setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
         }
+        
         ListHakuVastausTyyppi haut = tarjontaPublicService.listHaku(new ListaaHakuTyyppi());
 
         this.hakuKohdePerustiedotView.initForm(getModel().getHakukohde());
@@ -246,14 +242,20 @@ public class TarjontaPresenter {
      */
     public void showHakukohdeEditView(List<String> koulutusOids, String hakukohdeOid) {
         LOG.info("showHakukohdeEditView()");
-
-        //If a list of koulutusOids is provided they are set in the model
+         //After the data has been initialized the form is created
+        EditHakukohdeView editHakukohdeView = new EditHakukohdeView();
+        if (hakukohdeOid == null) {
+        getModel().setHakukohde(new HakukohdeViewModel());
+        } 
+        
+          //If a list of koulutusOids is provided they are set in the model
         //These koulutus objects will be published in the created hakukohde
         if (koulutusOids != null) {
             setKomotoOids(koulutusOids);
 
-        } //if a hakukohdeOid is provided the hakukohde is read from the database
-        else if (hakukohdeOid != null) {
+        }
+         //if a hakukohdeOid is provided the hakukohde is read from the database
+        if (hakukohdeOid != null) {
             LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
             kysely.setOid(hakukohdeOid);
             _model.setHakukohde(this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(tarjontaPublicService.lueHakukohde(kysely).getHakukohde()));
@@ -262,13 +264,8 @@ public class TarjontaPresenter {
 
 
 
-        //After the data has been initialized the form is created
-        EditHakukohdeView editHakukohdeView;
-        if (hakukohdeOid == null) {
-            editHakukohdeView = new EditHakukohdeView(true);
-        } else {
-            editHakukohdeView = new EditHakukohdeView(false);
-        }
+       
+      
 
         //Clearing the layout from previos content
         this._rootView.getAppRootLayout().removeAllComponents();

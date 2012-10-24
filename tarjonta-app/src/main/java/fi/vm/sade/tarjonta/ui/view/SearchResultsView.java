@@ -78,11 +78,6 @@ public class SearchResultsView extends VerticalLayout {
         tabs.addTab(koulutusList, T("koulutukset"));//new EditKoulutusPerustiedotToinenAsteView(), T("koulutukset"));
         tabs.addTab(new ListHakukohdeViewImpl(), T("hakuryhmat"));
 
-        //For testing
-        EditHakukohdeView editHakukohdeView = new EditHakukohdeView(true);
-
-        tabs.addTab(editHakukohdeView, "Lisää hakukohde");
-        addComponent(tabs);
     }
 
     private String T(String key) {

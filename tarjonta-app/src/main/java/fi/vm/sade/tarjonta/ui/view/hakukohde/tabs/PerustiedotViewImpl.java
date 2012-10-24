@@ -113,7 +113,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         buildMainLayout();
         this.presenter = presenter;
 
-        this.presenter.initHakukohdeForm(true,this);
+        this.presenter.initHakukohdeForm(this);
 
     }
 
@@ -122,18 +122,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         tunnisteKoodiText.setValue(tunnistekoodi);
     }
     
-    /*
-     * Constructor for creating view with existing model
-     * 
-     */
-
-    public PerustiedotViewImpl(TarjontaPresenter presenter, boolean isNew) {
-        super();
-        buildMainLayout();
-        this.presenter = presenter;
-
-        this.presenter.initHakukohdeForm(isNew,this);
-    }
+   
 
     @Override
     public void commitForm(String tila) {
