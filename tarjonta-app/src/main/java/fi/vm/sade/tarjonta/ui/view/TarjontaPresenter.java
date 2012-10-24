@@ -297,7 +297,12 @@ public class TarjontaPresenter {
 
     public Map<String, List<HakukohdeTulos>> getHakukohdeDataSource() {
         Map<String, List<HakukohdeTulos>> map = new HashMap<String, List<HakukohdeTulos>>();
-        getModel().setHakukohteet(tarjontaPublicService.haeHakukohteet(new HaeHakukohteetKyselyTyyppi()).getHakukohdeTulos());
+        try {
+        	getModel().setHakukohteet(tarjontaPublicService.haeHakukohteet(new HaeHakukohteetKyselyTyyppi()).getHakukohdeTulos());
+        } catch (Exception ex) {
+        	LOG.error("Error in finding hakukokohteet: {}", ex.getMessage());
+        	getModel().setHakukohteet(new ArrayList<HakukohdeTulos>());
+        }
         for (HakukohdeTulos curHk : getModel().getHakukohteet()) {
             String hkKey = curHk.getKoulutus().getTarjoaja();
             if (!map.containsKey(hkKey)) {
@@ -475,7 +480,12 @@ public class TarjontaPresenter {
      */
     public Map<String, List<KoulutusTulos>> getKoulutusDataSource() {
         Map<String, List<KoulutusTulos>> map = new HashMap<String, List<KoulutusTulos>>();
-        getModel().setKoulutukset(tarjontaPublicService.haeKoulutukset(new HaeKoulutuksetKyselyTyyppi()).getKoulutusTulos());
+        try {
+        	getModel().setKoulutukset(tarjontaPublicService.haeKoulutukset(new HaeKoulutuksetKyselyTyyppi()).getKoulutusTulos());
+        } catch (Exception ex) {
+        	LOG.error("Error in finding koulutukset: {}", ex.getMessage());
+        	getModel().setKoulutukset(new ArrayList<KoulutusTulos>());
+        }
         for (KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
             String koulutusKey = curKoulutus.getKoulutus().getTarjoaja();
             if (!map.containsKey(koulutusKey)) {

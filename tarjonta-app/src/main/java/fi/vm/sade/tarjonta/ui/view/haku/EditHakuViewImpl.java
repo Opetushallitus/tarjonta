@@ -283,7 +283,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
             VerticalLayout vl = UiUtil.verticalLayout();
             vl.setSizeUndefined();
-            vl.setWidth(800, Sizeable.UNITS_PIXELS);
+            vl.setWidth(850, Sizeable.UNITS_PIXELS);
 
 
             this.sisaisetHakuajatTable = new Table();
@@ -340,10 +340,10 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         this.sisaisetHakuajatTable.setVisibleColumns(HAKUAJAT_COLUMNS);
         this.sisaisetHakuajatTable.setPageLength((this.sisaisetHakuajatContainer.size() > 5) ? this.sisaisetHakuajatContainer.size() : 5);
         this.sisaisetHakuajatTable.setColumnHeaders(new String[]{T("Kuvaus"), T("Alkupvm"), T("Loppupvm"), T("Poista")});
-        this.sisaisetHakuajatTable.setColumnWidth("kuvaus", 190);
-        this.sisaisetHakuajatTable.setColumnWidth("alkuPvm", 190);
-        this.sisaisetHakuajatTable.setColumnWidth("loppuPvm", 190);
-        this.sisaisetHakuajatTable.setColumnWidth("poistaB", 190);
+        this.sisaisetHakuajatTable.setColumnWidth("kuvaus", 180);
+        this.sisaisetHakuajatTable.setColumnWidth("alkuPvm", 250);
+        this.sisaisetHakuajatTable.setColumnWidth("loppuPvm", 250);
+        this.sisaisetHakuajatTable.setColumnWidth("poistaB", 160);
 
     }
 
