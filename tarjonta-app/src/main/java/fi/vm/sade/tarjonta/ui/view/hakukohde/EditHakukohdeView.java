@@ -61,6 +61,7 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 _presenter.showMainDefaultView();
+                _presenter.getHakukohdeListView().reload();
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 
