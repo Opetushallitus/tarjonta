@@ -39,6 +39,7 @@ import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
@@ -66,6 +67,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusViewModelToDTOConverter;
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
 
 /**
@@ -132,16 +134,44 @@ public class TarjontaPresenter {
         }
     }
 
-    public void initHakukohdeForm(PerustiedotView hakuKohdePerustiedotView) {
+  public void initHakukohdeForm(PerustiedotView hakuKohdePerustiedotView) {
         this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
-        if (getModel().getHakukohde().getHakukohdeNimi() != null) {
-            setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
-
+        if(getModel().getHakukohde().getHakukohdeNimi() != null) {    
+        setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
         }
+        
         ListHakuVastausTyyppi haut = tarjontaPublicService.listHaku(new ListaaHakuTyyppi());
 
         this.hakuKohdePerustiedotView.initForm(getModel().getHakukohde());
-        this.hakuKohdePerustiedotView.addItemsToHakuCombobox(haut.getResponse());
+        HakuViewModel hakuView = null;
+        if (_model.getHakukohde() != null && _model.getHakukohde().getHakuOid() != null) {
+            hakuView = _model.getHakukohde().getHakuOid();
+        }
+        List<HakuViewModel> foundHaut = new ArrayList<HakuViewModel>();
+        for (HakuTyyppi foundHaku: haut.getResponse()) {
+            HakuViewModel haku = new HakuViewModel(foundHaku);
+            haku.getHakuOid();
+            haku.getNimiFi();
+            
+            foundHaut.add(haku);
+        }
+        
+       
+        
+        this.hakuKohdePerustiedotView.addItemsToHakuCombobox(foundHaut);
+        
+        if (hakuView != null) {
+            _model.getHakukohde().setHakuOid(hakuView);
+            ListaaHakuTyyppi hakuKysely = new ListaaHakuTyyppi();
+            hakuKysely.setHakuOid(_model.getHakukohde().getHakuOid().getHakuOid());
+            ListHakuVastausTyyppi hakuVastaus = tarjontaPublicService.listHaku(hakuKysely);
+            HakuViewModel hakuModel = new HakuViewModel(hakuVastaus.getResponse().get(0));
+            hakuModel.getHakuOid();
+            hakuModel.getNimiFi();
+            _model.getHakukohde().setHakuOid(hakuModel);    
+            setSelectedHaku();
+        } 
+       
 
     }
 
@@ -248,26 +278,26 @@ public class TarjontaPresenter {
      */
     public void showHakukohdeEditView(List<String> koulutusOids, String hakukohdeOid) {
         LOG.info("showHakukohdeEditView()");
-        //After the data has been initialized the form is created
+         //After the data has been initialized the form is created
         EditHakukohdeView editHakukohdeView = new EditHakukohdeView();
         if (hakukohdeOid == null) {
-            getModel().setHakukohde(new HakukohdeViewModel());
-        }
-
-        //If a list of koulutusOids is provided they are set in the model
+        getModel().setHakukohde(new HakukohdeViewModel());
+        } 
+        
+          //If a list of koulutusOids is provided they are set in the model
         //These koulutus objects will be published in the created hakukohde
         if (koulutusOids != null) {
             setKomotoOids(koulutusOids);
 
         }
-        //if a hakukohdeOid is provided the hakukohde is read from the database
+         //if a hakukohdeOid is provided the hakukohde is read from the database
         if (hakukohdeOid != null) {
             LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
             kysely.setOid(hakukohdeOid);
             _model.setHakukohde(this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(tarjontaPublicService.lueHakukohde(kysely).getHakukohde()));
             setKomotoOids(_model.getHakukohde().getKomotoOids());
         }
-
+        
         //Clearing the layout from previos content
         this._rootView.getAppRootLayout().removeAllComponents();
 
@@ -278,8 +308,17 @@ public class TarjontaPresenter {
         vl.addComponent(editHakukohdeView);
         _rootView.getAppRootLayout().addComponent(vl);
         _rootView.getAppRootLayout().setExpandRatio(vl, 1f);
-
+        
+         
+        
     }
+    
+    public void setSelectedHaku() {
+        if (_model.getHakukohde() != null && _model.getHakukohde().getHakuOid() != null) {
+        hakuKohdePerustiedotView.setSelectedHaku(_model.getHakukohde().getHakuOid());
+        }
+    }
+
 
     public void doSearch() {
         LOG.info("doSearch(): searchSpec={}", getModel().getSearchSpec());

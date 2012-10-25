@@ -28,6 +28,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -56,7 +57,7 @@ public class HakukohdeViewModelToDTOConverter {
             //TODO remove just for testing because koodisto dont work
             hakukohde.setHakukohdeNimi("");
         }
-        hakukohde.setHakukohteenHakuOid(hakukohdevm.getHakuOid().getOid());
+        hakukohde.setHakukohteenHakuOid(hakukohdevm.getHakuOid().getHakuOid());
         hakukohde.setHakukohteenTila(hakukohdevm.getHakukohdeTila());
         if (hakukohdevm.getOid() == null) {
             try {
@@ -80,8 +81,8 @@ public class HakukohdeViewModelToDTOConverter {
     	hakukohdeVM.setHakukelpoisuusVaatimus(hakukohdeTyyppi.getHakukelpoisuusVaatimukset());
     	hakukohdeVM.setHakukohdeNimi(hakukohdeTyyppi.getHakukohdeNimi());
     	hakukohdeVM.setHakukohdeTila(hakukohdeTyyppi.getHakukohteenTila());
-    	HakuTyyppi haku = new HakuTyyppi(); 
-    	haku.setOid(hakukohdeTyyppi.getHakukohteenHakuOid());
+    	HakuViewModel haku = new HakuViewModel(); 
+        haku.setHakuOid(hakukohdeTyyppi.getHakukohteenHakuOid());
     	hakukohdeVM.setHakuOid(haku);
     	hakukohdeVM.setOid(hakukohdeTyyppi.getOid());
     	hakukohdeVM.setKomotoOids(hakukohdeTyyppi.getHakukohteenKoulutusOidit());

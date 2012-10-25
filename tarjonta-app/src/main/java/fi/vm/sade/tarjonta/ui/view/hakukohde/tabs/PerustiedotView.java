@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
 
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import java.util.List;
@@ -31,7 +32,9 @@ public interface PerustiedotView {
     
     List<KielikaannosViewModel> getLisatiedot();
     
-    void addItemsToHakuCombobox(List<HakuTyyppi> haut);
+    void addItemsToHakuCombobox(List<HakuViewModel> haut);
+    
+    void setSelectedHaku(HakuViewModel haku);
     
     void setTunnisteKoodi(String tunnistekoodi);
     

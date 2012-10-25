@@ -11,7 +11,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private String organisaatioOid;
     private String hakukohdeNimi;
     private String tunnisteKoodi;
-    private HakuTyyppi haku;
+    private HakuViewModel haku;
     private int aloitusPaikat;
     private String hakukohdeTila;
     private String hakukelpoisuusVaatimus;
@@ -60,14 +60,14 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     /**
      * @return the hakuOid
      */
-    public HakuTyyppi getHakuOid() {
+    public HakuViewModel getHakuOid() {
         return haku;
     }
 
     /**
      * @param hakuOid the hakuOid to set
      */
-    public void setHakuOid(HakuTyyppi hakuOid) {
+    public void setHakuOid(HakuViewModel hakuOid) {
         this.haku = hakuOid;
     }
 

@@ -17,6 +17,7 @@
 
 package fi.vm.sade.tarjonta.ui.model;
 
+import fi.vm.sade.generic.common.I18N;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -90,9 +91,11 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the hakuOid
      */
     public String getHakuOid() {
+        
         this.hakuOid = hakuDto.getOid();
         return hakuOid;
     }
+        
 
     /**
      * @param hakuOid the hakuOid to set
@@ -123,7 +126,7 @@ public class HakuViewModel extends BaseUIViewModel {
      */
     public String getHakukausi() {
         hakukausi = hakuDto.getHakukausiUri();
-        return hakukausi;
+        return hakukausi; 
     }
 
     /**
@@ -406,6 +409,41 @@ public class HakuViewModel extends BaseUIViewModel {
         hakuDto.setHaunTila(hakuValmis ? HaunTila.VALMIS : HaunTila.LUONNOS);
         this.hakuValmis = hakuValmis;
     }
+   
+    @Override
+    public String toString() {
+        if (I18N.getLocale() != null) {
+            return getKielistettyNimiFromDto(I18N.getLocale().getLanguage());
+        } else {
+            return getKielistettyNimiFromDto("fi");
+        }
+    }
+
+  
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof HakuViewModel) {
+            HakuViewModel haku = (HakuViewModel)obj;
+            if (haku.getHakuOid() != null && haku.getHakuOid().equals(this.getHakuOid().trim())) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        
+        hash = 97 * hash + (this.getHakuOid() != null ? this.getHakuOid().hashCode() : 0);
+        
+        return hash;
+    }
+    
     
     
     /**

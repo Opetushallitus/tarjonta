@@ -59,6 +59,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import java.util.ArrayList;
 import java.util.List;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -219,18 +220,16 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         return aloitusPaikatText;
     }
 
-    private String tryGetHaunNimi(List<HaunNimi> nimet ) {
-        if (nimet != null) {
-        String haunNimi = null;
-        for (HaunNimi nimi : nimet) {
-            if (nimi.getKielikoodi().trim().equalsIgnoreCase(I18N.getLocale().getLanguage().trim())) {
-                haunNimi = nimi.getNimi();
-            }
-        }
-        return haunNimi;
-        } else {
-            return "";
-        }
+    private String tryGetHaunNimi(HakuViewModel haku) {
+       if (I18N.getLocale().getLanguage().trim().equals("fi")) {
+           return haku.getNimiFi();
+       } else if (I18N.getLocale().getLanguage().trim().equals("se")) {
+           return haku.getNimiSe();
+       } else if (I18N.getLocale().getLanguage().trim().equals("en")) {
+           return haku.getNimiEn();
+       } else {
+           return haku.getNimiFi();
+       }
     }
     
     /*
@@ -240,22 +239,19 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
      */
 
     @Override
-    public void addItemsToHakuCombobox(List<HakuTyyppi> haut) {
-        BeanItemContainer<HakuTyyppi> hakuContainer = new BeanItemContainer<HakuTyyppi>(HakuTyyppi.class);
+    public void addItemsToHakuCombobox(List<HakuViewModel> haut) {
+        BeanItemContainer<HakuViewModel> hakuContainer = new BeanItemContainer<HakuViewModel>(HakuViewModel.class);
         hakuContainer.addAll(haut);
         hakuCombo.setContainerDataSource(hakuContainer);
-        for (HakuTyyppi haku:hakuContainer.getItemIds()) {
-
-            hakuCombo.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_EXPLICIT);
-            String haunNimi = null;
-            haunNimi = tryGetHaunNimi(haku.getHaunKielistetytNimet());
-            hakuCombo.setItemCaption(haku, haunNimi);
-
-        }
-
-
         hakuCombo.setFilteringMode(Filtering.FILTERINGMODE_CONTAINS);
     }
+
+    @Override
+    public void setSelectedHaku(HakuViewModel haku) {
+        hakuCombo.setValue(haku);
+    }
+    
+    
 
     private ComboBox buildHakuCombo() {
         hakuCombo = new ComboBox();
