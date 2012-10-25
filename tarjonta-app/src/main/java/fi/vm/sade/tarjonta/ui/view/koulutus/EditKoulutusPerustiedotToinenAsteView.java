@@ -80,21 +80,14 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
+        LOG.info("buildLayout()");
         initialize(layout); //add layout to navigation container
     }
 
     //
     // Define data fields
     //
-    private void initialize(AbstractLayout layout) {  
-         //TODO: remove this after demo 23.10.2012.
-        LOG.info("initialize() {}", presenter);
-
-        if (presenter == null) {
-            //jrebel fix...
-            presenter = new TarjontaPresenter();
-        }
-
+    private void initialize(AbstractLayout layout) {
         koulutusPerustiedotModel = presenter.getModel().getKoulutusPerustiedotModel();
         BeanItem<KoulutusPerustiedotViewModel> hakuBean = new BeanItem<KoulutusPerustiedotViewModel>(koulutusPerustiedotModel);
         /*

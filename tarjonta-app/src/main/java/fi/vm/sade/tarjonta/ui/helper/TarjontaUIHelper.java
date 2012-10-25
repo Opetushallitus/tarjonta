@@ -19,6 +19,8 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
+import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
@@ -80,13 +82,24 @@ public class TarjontaUIHelper {
                 SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.latestValidAcceptedKoodiByUri(koodiUri);
                 List<KoodiType> queryResult = _koodiService.searchKoodis(searchCriteria);
 
-                if (queryResult.size() == 1) {
-                    result = KoodistoHelper.getKoodiMetadataForLanguage(queryResult.get(0), KoodistoHelper.getKieliForLocale(locale)).getNimi();
+                if (queryResult.size() >= 1) {
+                    // Get metadata
+                    KoodiMetadataType kmdt = KoodistoHelper.getKoodiMetadataForLanguage(queryResult.get(0), KoodistoHelper.getKieliForLocale(locale));
+                    if (kmdt == null) {
+                        // Try finnish if current locale is not found
+                        kmdt = KoodistoHelper.getKoodiMetadataForLanguage(queryResult.get(0), KieliType.FI);
+                    }
+
+                    if (kmdt != null) {
+                        result = kmdt.getNimi();
+                    } else {
+                        result = _i18n.getMessage("_koodiMetadataError", koodiUri, locale);
+                    }
                 }
             }
         } catch (Throwable ex) {
             LOG.error("Failed to read koodi from koodisto: koodi uri == " + koodiUri, ex);
-            result = _i18n.getMessage("/koodiError", koodiUri);
+            result = _i18n.getMessage("_koodiError", koodiUri);
         }
 
         LOG.info("getKoodiNimi({}, {}) --> {}", new Object[] {koodiUri, locale, result});

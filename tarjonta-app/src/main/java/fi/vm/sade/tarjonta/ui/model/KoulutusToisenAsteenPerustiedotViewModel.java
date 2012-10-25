@@ -27,19 +27,22 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusFormType;
-import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotFormView;
 import java.util.ArrayList;
 import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Model holding basic information data for Koulutus.
  *
  * @author mlyly
+ * @author mholi
+ * @author Jani Wilén
  */
 public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedotViewModel {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotFormView.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KoulutusToisenAsteenPerustiedotViewModel.class);
+
     private static final String NO_DATA_AVAILABLE = "Tietoa ei saatavilla";
     private Set<KoulutusohjelmaModel> koodistoKoulutusohjelma;
     private KoulutusFormType koulutusFormType = KoulutusFormType.SHOW_ALL; //default value
@@ -257,11 +260,11 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setKoulutusLinkit(new ArrayList<KoulutusLinkkiViewModel>(0)); //optional
         setYhteyshenkilot(new ArrayList<KoulutusYhteyshenkiloViewModel>(0)); //optional
     }
-    
+
     /**
-     * True if data was loaded from database. 
-     * 
-     * @return Boolean  
+     * True if data was loaded from database.
+     *
+     * @return Boolean
      */
     public boolean isLoaded(){
         return getOid() != null;
