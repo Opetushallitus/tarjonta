@@ -187,25 +187,6 @@
                         </goals>
                     </execution>
 
-                    <execution>
-                        <id>generate-tarjonta-upload-wsdl2java</id>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <encoding>UTF-8</encoding>
-                            <sourceRoot>target/generated-sources/java</sourceRoot>
-                            <wsdlOptions>
-                                <wsdlOption>
-                                    <wsdl>src/main/resources/wsdl/learningUploadService.wsdl</wsdl>
-                                    <extraargs>
-                                    </extraargs>
-                                </wsdlOption>
-                            </wsdlOptions>
-                        </configuration>
-                        <goals>
-                            <goal>wsdl2java</goal>
-                        </goals>
-                    </execution>
-
                 </executions>
 
             </plugin>

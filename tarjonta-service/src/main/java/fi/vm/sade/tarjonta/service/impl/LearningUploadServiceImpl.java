@@ -21,7 +21,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.LearningUploadService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
-import fi.vm.sade.tarjonta.service.types2.*;
+import fi.vm.sade.tarjonta.service.types.*;
 import java.util.Date;
 import java.util.HashSet;
 import org.slf4j.Logger;

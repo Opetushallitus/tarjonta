@@ -17,11 +17,18 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-api</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>fi.vm.sade.tarjonta</groupId>
+            <artifactId>tarjonta-publication-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

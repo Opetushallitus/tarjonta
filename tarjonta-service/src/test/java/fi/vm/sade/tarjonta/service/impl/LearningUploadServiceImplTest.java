@@ -16,8 +16,8 @@
 package fi.vm.sade.tarjonta.service.impl;
 
 import fi.vm.sade.tarjonta.service.LearningUploadService;
-import fi.vm.sade.tarjonta.service.types2.LearningOpportunityUploadDataType;
-import fi.vm.sade.tarjonta.service.types2.LearningUploadRequestType;
+import fi.vm.sade.tarjonta.service.types.LearningOpportunityUploadDataType;
+import fi.vm.sade.tarjonta.service.types.LearningUploadRequestType;
 import java.io.File;
 import java.io.FileInputStream;
 import javax.xml.bind.JAXBContext;

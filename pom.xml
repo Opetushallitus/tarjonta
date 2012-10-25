@@ -15,12 +15,14 @@
     </parent>
 
     <modules>
-        <module>tarjonta-api</module>
-        <module>tarjonta-ui-widgets</module>
-        <module>tarjonta-service</module>
-        <module>tarjonta-app</module>
-        <module>tarjonta-app-poc</module>
-    <module>tarjonta-esb</module>
-  </modules>
+      <module>tarjonta-api</module>
+      <module>tarjonta-publication-api</module>
+      <module>tarjonta-ui-widgets</module>
+      <module>tarjonta-service</module>
+      <module>tarjonta-app</module>
+      <module>tarjonta-app-poc</module>
+      <module>tarjonta-esb</module>
+      <module>tarjonta-init</module>
+    </modules>
 
 </project>
