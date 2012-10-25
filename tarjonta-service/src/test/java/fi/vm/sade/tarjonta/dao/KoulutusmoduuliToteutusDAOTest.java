@@ -17,8 +17,11 @@ package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.*;
+
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -202,6 +205,45 @@ public class KoulutusmoduuliToteutusDAOTest {
 
         // todo: check orphans are deleted (link1)
 
+    }
+    
+    @Test
+    public void testFindByCriteria() {
+    	String tarjoaja1 = "0.0.0.0.01";
+    	String nimi1 = "eka toteutus";
+    	
+    	String tarjoaja2 = "0.0.0.0.02";
+    	String nimi2 = "toka toteutus";
+    	
+    	String tarjoaja3 = "0.0.0.0.03";
+    	
+    	//KOMOTO1
+    	KoulutusmoduuliToteutus t1 = fixtures.createTutkintoOhjelmaToteutus();
+    	t1.setNimi(nimi1);
+    	t1.setTarjoaja(tarjoaja1);
+    	koulutusmoduuliToteutusDAO.insert(t1);
+    	
+    	//KOMOTO2
+    	KoulutusmoduuliToteutus t2 = fixtures.createTutkintoOhjelmaToteutus();
+    	t2.setNimi(nimi2);
+    	t2.setTarjoaja(tarjoaja2);
+    	koulutusmoduuliToteutusDAO.insert(t2);
+    	
+    	//Searching with list containing tarjoaja1 but not tarjoaja2
+    	
+    	List<String> criteriaList = Arrays.asList(new String[]{tarjoaja1, tarjoaja3});
+    	List<KoulutusmoduuliToteutus> result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList);
+    	
+    	assertEquals(1, result.size());
+    	assertEquals(nimi1, result.get(0).getNimi());
+    	
+    	//Searching with list containing tarjoaja2 but not tarjoaja1
+    	
+    	criteriaList = Arrays.asList(new String[]{tarjoaja2, tarjoaja3});
+    	result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList);
+    	
+    	assertEquals(1, result.size());
+    	assertEquals(nimi2, result.get(0).getNimi());
     }
 
     private KoulutusmoduuliToteutus updateAndRead(KoulutusmoduuliToteutus toteutus) {

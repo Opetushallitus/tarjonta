@@ -17,9 +17,14 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.expr.BooleanExpression;
+
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.QHakukohde;
+import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
+
 import java.util.List;
 import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
@@ -54,4 +59,12 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }
+
+	@Override
+	public List<KoulutusmoduuliToteutus> findByCriteria(
+			List<String> tarjoajaOids) {
+		QKoulutusmoduuliToteutus komoto  = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+		BooleanExpression inTarjoajat = komoto.tarjoaja.in(tarjoajaOids);
+		return from(komoto).where(inTarjoajat).list(komoto);
+	}
 }

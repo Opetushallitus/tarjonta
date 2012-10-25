@@ -25,6 +25,7 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -443,7 +444,7 @@ public class TarjontaPresenter {
     public void setKoulutusListView(ListKoulutusView listKoulutusView) {
         this.koulutusListView = listKoulutusView;
     }
-
+    
     /**
      * Retrieves the koulutus objects for ListKoulutusView.
      *
@@ -452,10 +453,14 @@ public class TarjontaPresenter {
     public Map<String, List<KoulutusTulos>> getKoulutusDataSource() {
         Map<String, List<KoulutusTulos>> map = new HashMap<String, List<KoulutusTulos>>();
         try {
-            getModel().setKoulutukset(tarjontaPublicService.haeKoulutukset(new HaeKoulutuksetKyselyTyyppi()).getKoulutusTulos());
+        	//Fetching komotos matching currently selected organisaatio
+        	//or if no organisaatio selected retrieving all komotos
+        	HaeKoulutuksetKyselyTyyppi kysely = generateKomotoSearchCriteria();
+            //TODO asetetaan tähän kyselyyn kriteeriksi organisaatio
+            _model.setKoulutukset(this.tarjontaPublicService.haeKoulutukset(kysely).getKoulutusTulos()); 
         } catch (Exception ex) {
-            LOG.error("Error in finding koulutukset: {}", ex.getMessage());
-            getModel().setKoulutukset(new ArrayList<KoulutusTulos>());
+        	LOG.error("Error in finding koulutukset: {}", ex.getMessage());
+        	getModel().setKoulutukset(new ArrayList<KoulutusTulos>());
         }
         for (KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
             String koulutusKey = curKoulutus.getKoulutus().getTarjoaja();
@@ -471,6 +476,26 @@ public class TarjontaPresenter {
 
         return map;
     }
+    
+    /**
+     * Creating komoto search criteria according to currently selected organisaatio
+     * If no organisaatio selected, criteria is empty
+     * @return
+     */
+    private HaeKoulutuksetKyselyTyyppi generateKomotoSearchCriteria() {
+    	HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
+    	if (_model.getOrganisaatioOid() != null) {
+    		List<OrganisaatioDTO> childOrgs = this.organisaatioService.findAllChildrenWithOid(_model.getOrganisaatioOid());
+    		LOG.debug("childOrgs: " + childOrgs.size());
+    		for(OrganisaatioDTO org : childOrgs) {
+    			LOG.debug("Current organisaatio: " + org.getNimiFi() + ", " + org.getOid() );
+    			kysely.getTarjoajaOids().add(org.getOid());
+    		}
+    		kysely.getTarjoajaOids().add(_model.getOrganisaatioOid());
+    	}
+        return kysely;
+    }
+    
 
     public String getOrganisaatioNimiByOid(String organisaatioOid) {
         String vastaus = organisaatioOid;
@@ -609,6 +634,8 @@ public class TarjontaPresenter {
         _rootView.getBreadcrumbsView().addComponent(new Label(organisaatioName));
         _model.setOrganisaatioOid(organisaatioOid);
         _model.setOrganisaatioName(organisaatioName);
+        //Updating koulutuslista to show only komotos with tarjoaja matching the selected org or one of its descendants
+        getKoulutusListView().reload();
         this.getKoulutusListView().toggleCreateKoulutusB(true);
     }
 

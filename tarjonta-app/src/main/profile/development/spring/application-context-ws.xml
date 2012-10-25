@@ -54,8 +54,11 @@
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService"
                   address="${tarjonta.public.webservice.url:http://NO_HAKU_WEBSERVICE_URL_CONFIGURED}"/> 
      
+        <jaxws:client id="organisaatioService"
+                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
+                   address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
     
     <bean id="hakuService" class="fi.vm.sade.tarjonta.service.mock.HakueraServiceMock" />
-    <bean id="organisaatioService" class="fi.vm.sade.organisaatio.api.OrganisaatioServiceMock" />
+    
     
 </beans>

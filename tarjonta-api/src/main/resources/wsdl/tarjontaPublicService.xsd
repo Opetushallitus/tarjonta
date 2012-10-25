@@ -98,6 +98,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
+            <xs:element name="tarjoajaOids" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
 

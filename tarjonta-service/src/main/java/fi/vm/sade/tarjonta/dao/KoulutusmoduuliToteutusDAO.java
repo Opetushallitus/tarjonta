@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
+import java.util.List;
+
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 
@@ -25,6 +27,8 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
 
     public KoulutusmoduuliToteutus findByOid(String oid);
     public KoulutusmoduuliToteutus findKomotoByOid(String oid);
+	public List<KoulutusmoduuliToteutus> findByCriteria(
+			List<String> tarjoajaOids);
 
 }
 

@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 
@@ -37,20 +36,13 @@ import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
-import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.generic.ui.component.CaptionFormatter;
-import fi.vm.sade.koodisto.service.types.common.KieliType;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.util.KoodistoHelper;
 
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
@@ -58,7 +50,6 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchCriteriaDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
-import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.Oph;
@@ -97,9 +88,6 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     private List<OrganisaatioDTO> organisaatios;
     private OrganisaatioSearchCriteriaDTO criteria;
     List<String> rootOrganisaatioOids;
-
-//    @Value("${koodisto-uris.oppilaitostyyppi:Oppilaitostyyppi}")
-//    private String oppilaitostyyppiUri;
 
     public OrganisaatiohakuView() {
         super(VerticalLayout.class);

@@ -68,6 +68,7 @@ public class TarjontaSampleData {
         //
         toteutus = createKoulutusmoduuliToteutus();
         toteutus.setKoulutusmoduuli(moduuli);
+        toteutus.setTarjoaja("1.2.246.562.5.73962414165"); //Kontulan peruskoulu luokalla
         toteutus = koulutusmoduuliToteutusDAO.insert(toteutus);
         
         //
@@ -75,6 +76,7 @@ public class TarjontaSampleData {
         //
         toteutus = createKoulutusmoduuliToteutus();
         toteutus.setKoulutusmoduuli(moduuli);
+        toteutus.setTarjoaja("1.2.246.562.5.58521633737");//Markuksen koulu luokalla
         toteutus = koulutusmoduuliToteutusDAO.insert(toteutus);
 
 
