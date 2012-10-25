@@ -90,12 +90,22 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     @Override
     public ListHakuVastausTyyppi listHaku(ListaaHakuTyyppi parameters) {
         ListHakuVastausTyyppi hakuVastaus = new ListHakuVastausTyyppi();
+        if (parameters.getHakuOid() != null) {
+         List<Haku> haut = new ArrayList<Haku>();
+         haut.add(findHakuWithOid(parameters.getHakuOid().trim()));
+         hakuVastaus.getResponse().addAll(convert(haut));
+        } else {
         SearchCriteriaDTO allCriteria = new SearchCriteriaDTO();
         allCriteria.setMeneillaan(true);
         allCriteria.setPaattyneet(true);
         allCriteria.setTulevat(true);
         hakuVastaus.getResponse().addAll(convert(businessService.findAll(allCriteria)));
+        }
         return hakuVastaus;
+    }
+    
+    private Haku findHakuWithOid(String oid) {
+        return hakuDao.findByOid(oid);
     }
 
     @Override
