@@ -169,7 +169,7 @@ public class TarjontaPresenter {
             hakuModel.getHakuOid();
             hakuModel.getNimiFi();
             _model.getHakukohde().setHakuOid(hakuModel);    
-            setSelectedHaku();
+
         } 
        
 
@@ -312,13 +312,6 @@ public class TarjontaPresenter {
          
         
     }
-    
-    public void setSelectedHaku() {
-        if (_model.getHakukohde() != null && _model.getHakukohde().getHakuOid() != null) {
-        hakuKohdePerustiedotView.setSelectedHaku(_model.getHakukohde().getHakuOid());
-        }
-    }
-
 
     public void doSearch() {
         LOG.info("doSearch(): searchSpec={}", getModel().getSearchSpec());
