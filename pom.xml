@@ -22,7 +22,6 @@
       <module>tarjonta-app</module>
       <module>tarjonta-app-poc</module>
       <module>tarjonta-esb</module>
-      <module>tarjonta-init</module>
     </modules>
 
 </project>
