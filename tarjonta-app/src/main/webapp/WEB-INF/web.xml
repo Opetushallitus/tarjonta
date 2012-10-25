@@ -28,6 +28,10 @@
             <param-name>application</param-name>
             <param-value>fi.vm.sade.tarjonta.ui.TarjontaWebApplication</param-value>
         </init-param>
+        <init-param>
+            <param-name>widgetset</param-name>
+            <param-value>fi.vm.sade.widgetset.GoogleMapComponent</param-value>
+        </init-param>
     </servlet>
 
     <servlet-mapping>

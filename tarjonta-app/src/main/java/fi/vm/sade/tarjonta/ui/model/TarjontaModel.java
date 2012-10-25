@@ -40,6 +40,7 @@ public class TarjontaModel extends BaseUIViewModel {
     private String _identifier;
     private KoulutusSearchSpesificationViewModel _searchSpec = new KoulutusSearchSpesificationViewModel();
     private KoulutusToisenAsteenPerustiedotViewModel _koulutusPerustiedotModel;
+    private KoulutusLisatiedotModel _koulutusLisatiedotModel;
     private List<HakukohdeTulos> _hakukohteet;
     private List<HakukohdeTulos> _selectedhakukohteet;
     private List<KoulutusTulos> _koulutukset;
@@ -186,5 +187,13 @@ public class TarjontaModel extends BaseUIViewModel {
      */
     public void setOrganisaatioOid(String organisaatioOid) {
         this.organisaatioOid = organisaatioOid;
+    }
+
+
+    public KoulutusLisatiedotModel getKoulutusLisatiedotModel() {
+        if (_koulutusLisatiedotModel == null) {
+            _koulutusLisatiedotModel = new KoulutusLisatiedotModel();
+        }
+        return _koulutusLisatiedotModel;
     }
 }

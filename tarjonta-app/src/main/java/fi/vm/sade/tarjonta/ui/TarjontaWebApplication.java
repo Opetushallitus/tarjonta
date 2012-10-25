@@ -21,8 +21,10 @@ import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusLisatiedotForm;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.dto.ButtonDTO;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
@@ -50,6 +52,10 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
     private String developmentRedirect;
     @Value("${tarjonta-app.dev.theme:}")
     private String developmentTheme;
+
+    @Autowired
+    private TarjontaModel tarjontaModel;
+
     @Autowired
     private TarjontaAdminService tarjontaAdminService;
     @Autowired
@@ -58,7 +64,7 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
     @Override
     public synchronized void init() {
         super.init();
-  
+
         window = new Window("Valitse");
         setMainWindow(window);
 
@@ -80,7 +86,7 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         });
         window.addComponent(hakuButton);
 
-        Button xxxButton = new Button("Show Koulutus View", new Button.ClickListener() {
+        Button xxxButton = new Button("Koulutuksen kuvailevat tiedot muokkaaminen", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 toKoulutusView();
@@ -119,23 +125,11 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         window = new Window();
         setMainWindow(window);
 
-        ButtonDTO prev = new ButtonDTO("< EDELLINEN (XXX)", new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                LOG.info("PREV!");
-            }
-        });
-        ButtonDTO next = new ButtonDTO("(XXX) SEURAAVA >", new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                LOG.info("NEXT!");
-            }
-        });
+        // Set default languages
+        tarjontaModel.getKoulutusPerustiedotModel().getOpetuskielet().add("uri: Englanti 5935");
+        tarjontaModel.getKoulutusPerustiedotModel().getOpetuskielet().add("uri: Ruotsi 5934");
 
-
-        PageNavigationDTO pageNavigationDTO = new PageNavigationDTO(prev, next, "42/43");
-        ShowKoulutusView view = new ShowKoulutusView("PAGE TITLE", pageNavigationDTO);
-
+        EditKoulutusLisatiedotForm view = new EditKoulutusLisatiedotForm();
         window.addComponent(view);
     }
 
