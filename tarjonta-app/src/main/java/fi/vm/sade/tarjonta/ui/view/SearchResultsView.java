@@ -15,21 +15,13 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Component.Event;
 import com.vaadin.ui.Component.Listener;
-
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.tarjonta.ui.view.haku.EditHakuViewImpl;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
-import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
-import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
-
+import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 

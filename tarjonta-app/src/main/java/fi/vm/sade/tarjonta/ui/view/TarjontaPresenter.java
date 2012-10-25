@@ -69,10 +69,10 @@ import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.util.UiUtil;
+import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
 
 /**
  * This class is used to control the "tarjonta" UI.
@@ -138,10 +138,10 @@ public class TarjontaPresenter {
 
     public void initHakukohdeForm(PerustiedotView hakuKohdePerustiedotView) {
         this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
-        if(getModel().getHakukohde().getHakukohdeNimi() != null) {    
+        if(getModel().getHakukohde().getHakukohdeNimi() != null) {
         setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
         }
-        
+
         ListHakuVastausTyyppi haut = tarjontaPublicService.listHaku(new ListaaHakuTyyppi());
 
         this.hakuKohdePerustiedotView.initForm(getModel().getHakukohde());
@@ -231,7 +231,8 @@ public class TarjontaPresenter {
         VerticalLayout vl = UiUtil.verticalLayout();
         vl.setHeight(-1, VerticalLayout.UNITS_PIXELS);
         vl.addComponent(_rootView.getBreadcrumbsView());
-        vl.addComponent(new EditKoulutusPerustiedotToinenAsteView());
+        // vl.addComponent(new EditKoulutusPerustiedotToinenAsteView());
+        vl.addComponent(new EditKoulutusView());
         _rootView.getAppRootLayout().addComponent(vl);
         _rootView.getAppRootLayout().setExpandRatio(vl, 1f);
     }
@@ -248,8 +249,8 @@ public class TarjontaPresenter {
         EditHakukohdeView editHakukohdeView = new EditHakukohdeView();
         if (hakukohdeOid == null) {
         getModel().setHakukohde(new HakukohdeViewModel());
-        } 
-        
+        }
+
           //If a list of koulutusOids is provided they are set in the model
         //These koulutus objects will be published in the created hakukohde
         if (koulutusOids != null) {
@@ -266,8 +267,8 @@ public class TarjontaPresenter {
 
 
 
-       
-      
+
+
 
         //Clearing the layout from previos content
         this._rootView.getAppRootLayout().removeAllComponents();
@@ -384,7 +385,7 @@ public class TarjontaPresenter {
         final String newOid = oidService.newOid(NodeClassCode.TEKN_5);
         LisaaKoulutusTyyppi koulutus = model.mapToLisaaKoulutusTyyppi(newOid);
 
-        //TODO: move - yhteyshenkilo data mapping.. 
+        //TODO: move - yhteyshenkilo data mapping..
         for (KoulutusYhteyshenkiloViewModel yhteyshenkilo : model.getYhteyshenkilot()) {
             YhteyshenkiloTyyppi yhteyshenkiloTyyppi = new YhteyshenkiloTyyppi();
             yhteyshenkiloTyyppi.setHenkiloOid(oidService.newOid(NodeClassCode.TEKN_5));

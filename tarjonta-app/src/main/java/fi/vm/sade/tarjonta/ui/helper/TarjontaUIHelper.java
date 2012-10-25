@@ -65,6 +65,7 @@ public class TarjontaUIHelper {
 
     /**
      * Get koodi's name in given locale.
+     * If nimi for given <code>locale</locale> is not found, we try to return it with locale "FI".
      *
      * @param koodiUri
      * @param locale if null, then I18N.getLocale() used
