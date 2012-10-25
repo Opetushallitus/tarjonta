@@ -176,7 +176,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 // TODO if changes, ask if really wants to navigate away
-                presenter.showShowKoulutusView(null);
+                presenter.showShowKoulutusView();
             }
         };
 
