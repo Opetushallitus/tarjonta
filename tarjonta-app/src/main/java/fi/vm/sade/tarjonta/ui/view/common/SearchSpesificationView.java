@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.view.common;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Form;
@@ -57,11 +58,11 @@ public class SearchSpesificationView extends AbstractHorizontalLayout {
     //    @PropertyId("hakutapa")
     //    private KoodistoComponent _cbHakutapa;
 
-    @PropertyId("koulutuksenAlkamiskausi")
+    
     private KoodistoComponent _cbKoulutuksenAlkamiskausi;
-    @PropertyId("hakukausi")
+    
     private KoodistoComponent _cbHakukausi;
-    @PropertyId("searchStr")
+   
     private TextField _tfSearch;
     private I18NHelper _i18nHelper = new I18NHelper(this);
 
@@ -91,8 +92,16 @@ public class SearchSpesificationView extends AbstractHorizontalLayout {
 //        _cbHaunKohdejoukko = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T("haunkohdejoukko.prompt"));
         _cbKoulutuksenAlkamiskausi = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KOULUTUKSEN_ALKAMISKAUSI_URI, null, null, T("koulutuksenalkamiskausi.prompt"));
         _tfSearch = UiBuilder.textField(null, "", T("hakuehto.prompt"), false);
+        _tfSearch.setPropertyDataSource(new NestedMethodProperty(_model, "searchStr"));
         _btnHae = UiBuilder.buttonSmallPrimary(null, T("hae"));
         _btnTyhjenna = UiBuilder.buttonSmallPrimary(null, T("tyhjenna"));
+        
+        _btnTyhjenna.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                _tfSearch.setValue("");
+            }
+        });
 
         _btnHae.addListener(new Button.ClickListener() {
             @Override
@@ -112,11 +121,6 @@ public class SearchSpesificationView extends AbstractHorizontalLayout {
 
         addComponent(_btnTyhjenna);
 
-        // Bind fields above to search spesifications
-        BeanItem<KoulutusSearchSpesificationViewModel> beanItem = new BeanItem<KoulutusSearchSpesificationViewModel>(_model);
-        _form = new ViewBoundForm();
-        _form.setItemDataSource(beanItem);
-
         //
         // Hook enter to do the search
         //
@@ -134,8 +138,6 @@ public class SearchSpesificationView extends AbstractHorizontalLayout {
      */
     private void doSearch() {
         LOG.info("doSearch()");
-        _form.commit();
-        
         fireEvent(new SearchEvent(_model));
     }
 

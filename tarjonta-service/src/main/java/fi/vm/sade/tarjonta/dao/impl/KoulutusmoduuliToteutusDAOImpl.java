@@ -65,7 +65,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
 			List<String> tarjoajaOids, String nimi) {
 		nimi = (nimi != null) ? nimi : "";
 		QKoulutusmoduuliToteutus komoto  = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-		BooleanExpression criteria = komoto.nimi.contains(nimi);
+		BooleanExpression criteria = komoto.nimi.toLowerCase().contains(nimi.toLowerCase());
 		if (!tarjoajaOids.isEmpty()) {
 			criteria = criteria.and(komoto.tarjoaja.in(tarjoajaOids));
 		}

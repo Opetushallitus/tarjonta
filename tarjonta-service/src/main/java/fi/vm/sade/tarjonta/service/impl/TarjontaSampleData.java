@@ -68,14 +68,26 @@ public class TarjontaSampleData {
         //
         toteutus = createKoulutusmoduuliToteutus();
         toteutus.setKoulutusmoduuli(moduuli);
+        toteutus.setNimi("Muu koulutus, Tohtorintutkinto");
         toteutus.setTarjoaja("1.2.246.562.5.73962414165"); //Kontulan peruskoulu luokalla
         toteutus = koulutusmoduuliToteutusDAO.insert(toteutus);
+        
+        
+        //
+        // Moduuli KM#2
+        //
+        //
+        moduuli = createKoulutusmoduuli();
+        moduuli.setKoulutusKoodi("uri: Kulttuuriala 20902");
+        moduuli.setKoulutusohjelmaKoodi("uri: Ylempi korkeakoulututkinto 20973");
+        koulutusmoduuliDAO.insert(moduuli);
         
         //
         // Toteutus KM#2
         //
         toteutus = createKoulutusmoduuliToteutus();
         toteutus.setKoulutusmoduuli(moduuli);
+        toteutus.setNimi("Kulttuuriala, Ylempi korkeakoulututkinto");
         toteutus.setTarjoaja("1.2.246.562.5.58521633737");//Markuksen koulu luokalla
         toteutus = koulutusmoduuliToteutusDAO.insert(toteutus);
 

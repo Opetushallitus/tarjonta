@@ -492,12 +492,13 @@ public class TarjontaPresenter {
         	HaeKoulutuksetKyselyTyyppi kysely = this.koulutusSearchSpecToDTOConverter.convertViewModelToDTO(_model.getSearchSpec());
         	
             _model.setKoulutukset(this.tarjontaPublicService.haeKoulutukset(kysely
-            		).getKoulutusTulos()); 
+            		).getKoulutusTulos());
             
         } catch (Exception ex) {
         	LOG.error("Error in finding koulutukset: {}", ex.getMessage());
         	getModel().setKoulutukset(new ArrayList<KoulutusTulos>());
         }
+        //Creating the datasource model
         for (KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
             String koulutusKey = curKoulutus.getKoulutus().getTarjoaja();
             if (!map.containsKey(koulutusKey)) {
