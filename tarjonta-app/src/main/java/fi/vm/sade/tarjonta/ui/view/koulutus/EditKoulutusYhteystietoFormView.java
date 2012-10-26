@@ -35,11 +35,11 @@ import org.vaadin.addon.formbinder.PropertyId;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 public class EditKoulutusYhteystietoFormView extends VerticalLayout {
-    
+
     private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
     @PropertyId("yhteyshenkilot")
     DialogDataTable<KoulutusYhteyshenkiloViewModel> ddt;
-    
+
     public EditKoulutusYhteystietoFormView(KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel) {
         this.koulutusPerustiedotModel = koulutusPerustiedotModel;
         addYhteyshenkiloSelectorAndEditor(this);
@@ -54,12 +54,8 @@ public class EditKoulutusYhteystietoFormView extends VerticalLayout {
         // headerLayout(layout, "Yhteyshenkilo");
         final Class classYhteyshenkilo = KoulutusYhteyshenkiloViewModel.class;
 
-        //Attach data model to Vaadin bean container.
-        final BeanItemContainer<KoulutusYhteyshenkiloViewModel> yhteyshenkiloContainer =
-                new BeanItemContainer<KoulutusYhteyshenkiloViewModel>(classYhteyshenkilo, koulutusPerustiedotModel.getYhteyshenkilot());
-
         //Initialize dialog table with control buttons.
-        ddt = new DialogDataTable<KoulutusYhteyshenkiloViewModel>(classYhteyshenkilo, yhteyshenkiloContainer);
+        ddt = new DialogDataTable<KoulutusYhteyshenkiloViewModel>(classYhteyshenkilo, koulutusPerustiedotModel.getYhteyshenkilot());
 
         //Overide default button property
         ddt.setButtonProperties("LisaaUusi.Yhteyshenkilo");
@@ -75,24 +71,6 @@ public class EditKoulutusYhteystietoFormView extends VerticalLayout {
         ddt.setColumnHeader("kielet", "Pätee kielille");
         ddt.setVisibleColumns(new Object[]{"etunimet", "sukunimi", "titteli", "email", "puhelin", "kielet"});
         layout.addComponent(ddt);
-        
-         if(koulutusPerustiedotModel.isLoaded()){
-            //disable all buttons as edit mode is not fully implemented
-            ddt.getButtonByType(DialogDataTableButton.BUTTON_ADD).setEnabled(false);
-            ddt.getButtonByType(DialogDataTableButton.BUTTON_EDIT).setEnabled(false);
-            ddt.getButtonByType(DialogDataTableButton.BUTTON_REMOVE).setEnabled(false);
-        }
-        
-        yhteyshenkiloContainer.addAll(koulutusPerustiedotModel.getYhteyshenkilot());
-        
-        ddt.addListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-                Collection<?> itemIds = ddt.getContainerDataSource().getItemIds();
-                for (Object o : itemIds) {
-                    koulutusPerustiedotModel.getYhteyshenkilot().add((KoulutusYhteyshenkiloViewModel) o);
-                }
-            }
-        });
+
     }
 }

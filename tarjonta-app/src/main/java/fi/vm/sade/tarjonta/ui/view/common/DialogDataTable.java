@@ -22,33 +22,34 @@ import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.ComponentContainer;
-import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.Window.CloseEvent;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.enums.DialogDataTableButton;
 import fi.vm.sade.tarjonta.ui.view.koulutus.DialogKoulutusView;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
+import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Jani Wilén
  */
-public class DialogDataTable<T> extends Table {
+public class DialogDataTable<MODEL> extends Table {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DialogDataTable.class);
-    private BeanItemContainer container;
+    private BeanItemContainer<MODEL> container; //Table data container
+    private Collection<MODEL> data; //the data model
     private AbstractDataTableDialog dialog;
     private Class objectItem;
     private Listener listener;
     private Map<DialogDataTableButton, Button> buttons;
     private transient I18NHelper _i18n;
+    private Button btnAdd;
+    private BeanItem beanItem; //bean item container for dialog form
     //Initialize default button properties, the properties can be overridden.  
     private static String[] i18nButtonProperties = {
         DialogDataTableButton.BUTTON_ADD.getI18nProperty(),
@@ -56,9 +57,20 @@ public class DialogDataTable<T> extends Table {
         DialogDataTableButton.BUTTON_REMOVE.getI18nProperty()
     };
 
-    public DialogDataTable(final Class objectItem, final BeanItemContainer container) {
-        super(null, container);
-        initialize(objectItem, container);
+    public DialogDataTable(final Class objectItem, final Collection<MODEL> data) {
+        super(null);
+
+        if (data == null) {
+            throw new RuntimeException("Application error - Collection object for data cannot be null.");
+        }
+
+        this.data = data;
+        container = new BeanItemContainer<MODEL>(objectItem, data);
+        container.removeAllItems();
+        container.addAll(data);
+        setContainerDataSource(container);
+
+        initialize(objectItem);
     }
 
     /**
@@ -111,7 +123,7 @@ public class DialogDataTable<T> extends Table {
         }
     }
 
-    private void initialize(final Class objectItem, final BeanItemContainer container) {
+    private void initialize(final Class objectItem) {
         buttons = new EnumMap<DialogDataTableButton, Button>(DialogDataTableButton.class);
         setPageLength(6);
         setSizeFull();
@@ -127,7 +139,6 @@ public class DialogDataTable<T> extends Table {
         }
 
         this.objectItem = objectItem;
-        this.container = container;
 
         //
         // Editor actions, commit form and refresh tabel data
@@ -136,17 +147,22 @@ public class DialogDataTable<T> extends Table {
             @Override
             public void componentEvent(Component.Event event) {
                 if (event instanceof DataTableEvent.CancelEvent) {
-                    //DEBUGSAWAY:LOG.debug("Cancel event received.");
-                    dialog.getForm().discard();
+                    cancelOrClose();
                 } else if (event instanceof DataTableEvent.SaveEvent) {
+                    //validated form
                     dialog.getForm().commit();
-                    //DEBUGSAWAY:LOG.debug("Save event received.");
-                    refreshRowCache();
-                    LOG.debug("in valueChange, properties." + container.getItemIds());
 
-                } else if (event instanceof DataTableEvent.DeleteEvent) {
-                    //DEBUGSAWAY:LOG.debug("delete event received.");
-                    deleteTableItem(container, dialog.getForm());
+                    //add new valid data to table data container
+                    MODEL bean = (MODEL) beanItem.getBean();
+                    container.addBean(bean);
+
+                    //refresh row data in table
+                    refreshRowCache();
+
+                    //Do not add duplicate objects to model data container.
+                    if (!data.contains(bean)) {
+                        data.add(bean);
+                    }
                 }
                 getWindow().removeWindow(dialog);
             }
@@ -156,19 +172,22 @@ public class DialogDataTable<T> extends Table {
     private void buildButtonLayout(AbstractLayout layout) {
         HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.TOP);
         layout.addComponent(hl);
-        final Button btnAdd = UiUtil.buttonSmallPrimary(hl, T(getButtonCaptionProperty(DialogDataTableButton.BUTTON_ADD)), new Button.ClickListener() {
+
+        btnAdd = UiUtil.buttonSmallPrimary(hl, T(getButtonCaptionProperty(DialogDataTableButton.BUTTON_ADD)), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-
-                T newTableItem = null;
+                event.getButton().setEnabled(false);
                 try {
-                    newTableItem = (T) objectItem.newInstance();
+                    //create new instance of data model
+                    final MODEL newTableItem = (MODEL) objectItem.newInstance();
+                    beanItem = new BeanItem(newTableItem);
+
+                    //initialize dialog form fields
+                    dialog.getForm().setItemDataSource(beanItem);
                 } catch (Exception ex) {
+                    event.getButton().setEnabled(true);
                     throw new RuntimeException("Application error - failed to create an item for a table row.", ex);
                 }
-
-                container.addItem(newTableItem);
-                select(newTableItem);
 
                 getWindow().addWindow(dialog);
             }
@@ -178,6 +197,15 @@ public class DialogDataTable<T> extends Table {
         final Button btnEdit = UiUtil.buttonSmallPrimary(hl, T(getButtonCaptionProperty(DialogDataTableButton.BUTTON_EDIT)), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
+                if (getValue() == null) {
+                    throw new RuntimeException("Application error - no item(s) selected.");
+                }
+
+                //get editable model object
+                beanItem = new BeanItem((MODEL) getValue());
+
+                //bind data to dialog form fields
+                dialog.getForm().setItemDataSource(beanItem);
                 getWindow().addWindow(dialog);
             }
         });
@@ -187,53 +215,48 @@ public class DialogDataTable<T> extends Table {
         final Button btnDelete = UiUtil.buttonSmallPrimary(hl, T(getButtonCaptionProperty(DialogDataTableButton.BUTTON_REMOVE)), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                // LOG.debug("",)
+                final MODEL rowObject = (MODEL) getValue();
+                boolean remove = data.remove(rowObject);
 
-                deleteTableItem(container, dialog.getForm());
+                if (!remove) {
+                    throw new RuntimeException("Application error - model is missing item for remove.");
+                }
+
+                remove = container.removeItem(rowObject);
+
+                if (!remove) {
+                    throw new RuntimeException("Application error - bean container is missing item for remove.");
+                }
+            }
+        });
+
+        addListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                //handle row select event
+                final MODEL selected = (MODEL) event.getProperty().getValue();
+                dialog.getForm().setEnabled(selected != null);
+                btnEdit.setEnabled(selected != null);
+                btnDelete.setEnabled(selected != null);
+            }
+        });
+
+        dialog.addListener(new Window.CloseListener() {
+            @Override
+            public void windowClose(CloseEvent e) {
+                cancelOrClose();
             }
         });
 
         hl.setExpandRatio(btnDelete, 1l);
         btnDelete.setEnabled(false);
         buttons.put(DialogDataTableButton.BUTTON_REMOVE, btnDelete);
-
-        //
-        // Table selection, update form to edit correct item
-        //
-        addListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-                T selected = (T) event.getProperty().getValue();
-                dialog.getForm().setEnabled(selected != null);
-                if (selected != null) {
-                    LOG.debug("in valueChange, selected." + selected);
-                    BeanItem beanItem = new BeanItem(selected);
-                    dialog.getForm().setItemDataSource(beanItem);
-                    btnEdit.setEnabled(true);
-                    btnDelete.setEnabled(true);
-
-                    container.addBean(beanItem);
-
-                    LOG.debug("in valueChange, properties." + container.getItemIds());
-
-                }
-            }
-        });
     }
 
-    private void deleteTableItem(BeanItemContainer container, Form form) {
-        T dto = (T) getValue();
-
-        if (dto != null) {
-            container.removeItem(dto);
-            form.setItemDataSource(null);
-            form.setEnabled(false);
-        }
-
-        // Autoselect in table
-        if (container.firstItemId() != null) {
-            setValue(container.firstItemId());
-        }
+    private void cancelOrClose() {
+        refreshRowCache();
+        beanItem = null;
+        btnAdd.setEnabled(true);
     }
 
     private static String getButtonCaptionProperty(DialogDataTableButton e) {

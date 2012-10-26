@@ -50,6 +50,7 @@ import fi.vm.sade.tarjonta.ui.view.common.DialogDataTable;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -225,12 +226,11 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
      */
     private void addLinkkiSelectorAndEditor(AbstractLayout layout) {
         final Class modelClass = KoulutusLinkkiViewModel.class;
-
-        final BeanItemContainer<KoulutusLinkkiViewModel> linkkiContainer =
-                new BeanItemContainer<KoulutusLinkkiViewModel>(modelClass, presenter.getModel().getKoulutusPerustiedotModel().getKoulutusLinkit());
-
+        List<KoulutusLinkkiViewModel> koulutusLinkit = 
+                presenter.getModel().getKoulutusPerustiedotModel().getKoulutusLinkit();
+        
         final DialogDataTable<KoulutusLinkkiViewModel> ddt =
-                new DialogDataTable<KoulutusLinkkiViewModel>(modelClass, linkkiContainer);
+                new DialogDataTable<KoulutusLinkkiViewModel>(modelClass, koulutusLinkit);
 
         ddt.setButtonProperties("LisaaUusi.Linkkityyppi");
         ddt.buildByFormLayout(layout, "Luo uusi linkkityyppi", 400, 360, new EditKoulutusPerustiedotLinkkiView());
@@ -239,25 +239,6 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         ddt.setColumnHeader("kieli", T("LinkkiKielet"));
         ddt.setVisibleColumns(new Object[]{"linkkityyppi", "url", "kieli"});
         layout.addComponent(ddt);
-
-        if (presenter.getModel().getKoulutusPerustiedotModel().isLoaded()) {
-            //disable all buttons as edit mode is not fully implemented
-            ddt.getButtonByType(DialogDataTableButton.BUTTON_ADD).setEnabled(false);
-            ddt.getButtonByType(DialogDataTableButton.BUTTON_EDIT).setEnabled(false);
-            ddt.getButtonByType(DialogDataTableButton.BUTTON_REMOVE).setEnabled(false);
-        }
-
-        linkkiContainer.addAll(presenter.getModel().getKoulutusPerustiedotModel().getKoulutusLinkit());
-
-        ddt.addListener(new ValueChangeListener() {
-            @Override
-            public void valueChange(ValueChangeEvent event) {
-                Collection<?> itemIds = ddt.getContainerDataSource().getItemIds();
-                for (Object o : itemIds) {
-                    presenter.getModel().getKoulutusPerustiedotModel().getKoulutusLinkit().add((KoulutusLinkkiViewModel) o);
-                }
-            }
-        });
     }
 
     private void headerLayout(final AbstractLayout layout, final String i18nProperty) {
