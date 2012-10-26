@@ -14,7 +14,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
 import com.vaadin.data.Property;
@@ -22,16 +21,23 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TabSheet.Tab;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.AbstractField;
+import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.common.TwinColSelectKoodisto;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.util.UiUtil;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import fi.vm.sade.tarjonta.ui.view.common.KoodistoSelectionTabSheet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,129 +50,92 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+
 /**
  *
  * @author Tuomas Katva
  */
 @Configurable
-public class LanguageTabSheet extends TabSheet implements Property.ValueChangeListener {
-    
+public class LanguageTabSheet extends CustomComponent {
+
     private static final Logger LOG = LoggerFactory.getLogger(LanguageTabSheet.class);
     private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
-    private Map<String, TabSheet.Tab> selectedLanguages = new HashMap<String, TabSheet.Tab>();
-    private TwinColSelectKoodisto twinColSelect;
-    private List<KielikaannosViewModel> languageValues = null;
     private boolean attached = false;
     @Autowired(required = true)
     private TarjontaModel _model;
+    @Autowired
+    private TarjontaUIHelper _uiHelper;
+    private KoodistoSelectionTabSheet _languageTabsheet;
+    private VerticalLayout rootLayout = new VerticalLayout();
 
     public LanguageTabSheet() {
-        
+        setCompositionRoot(rootLayout);
     }
 
-    
     @Override
     public void attach() {
         super.attach();
         if (!attached) {
-        initialize();
-        attached = true;
+            initialize();
+            attached = true;
         }
     }
-    
-    
-
 
     private void initialize() {
-        twinColSelect = new TwinColSelectKoodisto();
-//        twinColSelect.setImmediate(true);
-        twinColSelect.addListener(this);
-        
-        addTab(twinColSelect, "", TAB_ICON_PLUS);
-
-        if (_model.getHakukohde() != null && _model.getHakukohde().getLisatiedot() != null) {
-            this.setInitialValues(_model.getHakukohde().getLisatiedot());
-        }
-        
-    }
-    
-   
-    
-    public List<KielikaannosViewModel> getKieliKaannokset() {
-        languageValues = new ArrayList<KielikaannosViewModel>();
-        for (String key : selectedLanguages.keySet()) {
-            Tab selectedTab = selectedLanguages.get(key);
-            Component component = selectedTab.getComponent();
-            if (component instanceof TextField) {
-                TextField txtField = (TextField)component;
-                KielikaannosViewModel kieli = new KielikaannosViewModel(key, txtField.getValue().toString());
-                languageValues.add(kieli);
-            } else {
-                LOG.warn("Tab component not a TextField");
+        _languageTabsheet = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI) {
+            @Override
+            public void doAddTab(String uri) {
+                addTab(uri, createRichText(""), _uiHelper.getKoodiNimi(uri));
             }
-            
+        };
+
+        rootLayout.addComponent(_languageTabsheet);
+        if (_model.getHakukohde() != null && _model.getHakukohde().getLisatiedot() != null) {
+            setInitialValues(_model.getHakukohde().getLisatiedot());
         }
+    }
+
+    private String retrieveTabText(Tab tab) {
+        Component component = tab.getComponent();
         
+        if (component instanceof AbstractField) {
+            AbstractField richArea = (AbstractField) component;
+            return (String) richArea.getValue();
+        } else {
+            LOG.warn("Tab component not OphRichTextArea");
+            return "";
+        }
+    }
+
+    public List<KielikaannosViewModel> getKieliKaannokset() {
+        List<KielikaannosViewModel> languageValues = new ArrayList<KielikaannosViewModel>();
+
+        for (String key : _languageTabsheet.getTabs().keySet()) {
+
+            KielikaannosViewModel kieli = new KielikaannosViewModel(key, retrieveTabText(_languageTabsheet.getTab(key)));
+            languageValues.add(kieli);
+
+        }
+
         return languageValues;
     }
-    
+
     private void setInitialValues(List<KielikaannosViewModel> values) {
         if (values != null) {
-           twinColSelect.removeListener(this);
-            Set<String> kielet = new HashSet<String>();
+            Set<String> valitutKielet = new HashSet<String>();
             for (KielikaannosViewModel kieliKaannos : values) {
-                kielet.add(kieliKaannos.getKielikoodi().trim());
-                addKieliKaannosTab(kieliKaannos);
+                valitutKielet.add(kieliKaannos.getKielikoodi());
+                _languageTabsheet.addTab(kieliKaannos.getKielikoodi(), createRichText(kieliKaannos.getNimi()), _uiHelper.getKoodiNimi(kieliKaannos.getKielikoodi()));
             }
-             twinColSelect.setValue(kielet);
-             twinColSelect.addListener(this);
+            _languageTabsheet.getKcSelection().setValue(valitutKielet);
         }
     }
-    
-    private void addKieliKaannosTab(KielikaannosViewModel kaannos) {
-        addTextFieldTab(kaannos.getKielikoodi(), kaannos.getNimi());
-        
-    }
 
-    @Override
-    public void valueChange(ValueChangeEvent event) {
-        //DEBUGSAWAY:LOG.debug("ValueChangeEvent : " + event);
-
-
-        Object value = event.getProperty().getValue();
-        if (value instanceof Collection) {
-            for (String lang : twinColSelect.getLanguages()) {
-                Collection<String> selected = (Collection<String>) value;
-                if (!selected.contains(lang) && selectedLanguages.containsKey(lang)) {
-                    //DEBUGSAWAY:LOG.debug("Remove " + lang);
-                    removeTab(selectedLanguages.remove(lang));
-                } else if (selected.contains(lang) && !selectedLanguages.containsKey(lang)) {
-                    //DEBUGSAWAY:LOG.debug("Add " + lang);
-                    addTextFieldTab(lang);
-                }
-
-            }
-        } else {
-            LOG.error("An unknown event object : " + event);
-        }
-    }
-    
-    private void addTextFieldTab(String uri, String teksti) {
-        TextField textField = UiUtil.textField(null);
-        textField.setValue(teksti);
-        textField.setHeight("100px");
-        textField.setWidth(UiConstant.PCT100);
-        String caption = twinColSelect.getCaptionFor(uri);
-        selectedLanguages.put(uri, addTab(textField, caption));
-    }
-            
-
-    private void addTextFieldTab(String uri) {
+    private AbstractField createRichText(String value) {
         TextField textField = UiUtil.textField(null);
         textField.setHeight("100px");
         textField.setWidth(UiConstant.PCT100);
-        String caption = twinColSelect.getCaptionFor(uri);
-        selectedLanguages.put(uri, addTab(textField,caption));
+        textField.setValue(value);
+        return textField;
     }
-
 }

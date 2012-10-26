@@ -185,11 +185,10 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
 
         addItemToGrid("PerustiedotView.hakukohteenNimi", buildHakukode());
         addItemToGrid("PerustiedotView.hakuValinta", buildHakuCombo());
-        //TODO, lisää pistemäärä informaatio.
 
         addItemToGrid("PerustiedotView.aloitusPaikat", buildAloitusPaikat());
         addItemToGrid("PerustiedotView.hakukelpoisuusVaatimukset", buildHakukelpoisuusVaatimukset());
-//        addItemToGrid("PerustiedotView.valintaperusteidenKuvaus", buildValintaPerusteet());
+
 
         itemContainer.setColumnExpandRatio(0, 0f);
         itemContainer.setColumnExpandRatio(1, 1f);
