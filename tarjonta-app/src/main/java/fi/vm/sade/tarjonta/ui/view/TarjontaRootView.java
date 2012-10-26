@@ -95,7 +95,7 @@ public class TarjontaRootView extends Window {
         //
         _organisationSearchView = new OrganisaatiohakuView();
         _breadcrumbsView = new BreadcrumbsView();
-        _searchSpesificationView = new SearchSpesificationView();
+        _searchSpesificationView = new SearchSpesificationView(_presenter.getModel().getSearchSpec());
         _searchResultsView = new SearchResultsView();
 
         // Add listener for search events
@@ -103,8 +103,7 @@ public class TarjontaRootView extends Window {
             @Override
             public void componentEvent(Event event) {
                 if (event instanceof SearchSpesificationView.SearchEvent) {
-                    SearchSpesificationView.SearchEvent searchEvent = (SearchSpesificationView.SearchEvent) event;
-                    LOG.error("SEARCH NOT IMPLEMENTED: searchEvent={}", searchEvent);
+                	_presenter.getKoulutusListView().reload();
                 }
             }
         });

@@ -61,7 +61,7 @@ public class SearchSpesificationView extends AbstractHorizontalLayout {
     private KoodistoComponent _cbKoulutuksenAlkamiskausi;
     @PropertyId("hakukausi")
     private KoodistoComponent _cbHakukausi;
-    @PropertyId("searchSpec")
+    @PropertyId("searchStr")
     private TextField _tfSearch;
     private I18NHelper _i18nHelper = new I18NHelper(this);
 
@@ -70,6 +70,15 @@ public class SearchSpesificationView extends AbstractHorizontalLayout {
 
     /* View bound form for search specs. This for is bound to presenter.getSearchSpec model. */
     private Form _form;
+    
+    public SearchSpesificationView() {
+    	super();
+    }
+    
+    public SearchSpesificationView(KoulutusSearchSpesificationViewModel model) {
+    	super();
+    	_model = model;
+    }
 
     @Override
     protected void buildLayout() {
@@ -126,6 +135,7 @@ public class SearchSpesificationView extends AbstractHorizontalLayout {
     private void doSearch() {
         LOG.info("doSearch()");
         _form.commit();
+        
         fireEvent(new SearchEvent(_model));
     }
 

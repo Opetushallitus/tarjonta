@@ -66,6 +66,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter;
+import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusSearchSpecificationViewModelToDTOConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusViewModelToDTOConverter;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
@@ -97,6 +98,8 @@ public class TarjontaPresenter {
     private HakukohdeViewModelToDTOConverter hakukohdeToDTOConverter;
     @Autowired(required = true)
     private KoulutusViewModelToDTOConverter koulutusToDTOConverter;
+    @Autowired(required = true)
+    private KoulutusSearchSpecificationViewModelToDTOConverter koulutusSearchSpecToDTOConverter;
     // Views this presenter can control
     private TarjontaRootView _rootView;
     private ListHakukohdeView _hakukohdeListView;
@@ -485,11 +488,12 @@ public class TarjontaPresenter {
     public Map<String, List<KoulutusTulos>> getKoulutusDataSource() {
         Map<String, List<KoulutusTulos>> map = new HashMap<String, List<KoulutusTulos>>();
         try {
-        	//Fetching komotos matching currently selected organisaatio
-        	//or if no organisaatio selected retrieving all komotos
-        	HaeKoulutuksetKyselyTyyppi kysely = generateKomotoSearchCriteria();
-            //TODO asetetaan tähän kyselyyn kriteeriksi organisaatio
-            _model.setKoulutukset(this.tarjontaPublicService.haeKoulutukset(kysely).getKoulutusTulos()); 
+        	//Fetching komotos matching currently specified criteria (currently selected organisaatio and written text in search box)
+        	HaeKoulutuksetKyselyTyyppi kysely = this.koulutusSearchSpecToDTOConverter.convertViewModelToDTO(_model.getSearchSpec());
+        	
+            _model.setKoulutukset(this.tarjontaPublicService.haeKoulutukset(kysely
+            		).getKoulutusTulos()); 
+            
         } catch (Exception ex) {
         	LOG.error("Error in finding koulutukset: {}", ex.getMessage());
         	getModel().setKoulutukset(new ArrayList<KoulutusTulos>());
@@ -507,25 +511,6 @@ public class TarjontaPresenter {
         }
 
         return map;
-    }
-    
-    /**
-     * Creating komoto search criteria according to currently selected organisaatio
-     * If no organisaatio selected, criteria is empty
-     * @return
-     */
-    private HaeKoulutuksetKyselyTyyppi generateKomotoSearchCriteria() {
-    	HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
-    	if (_model.getOrganisaatioOid() != null) {
-    		List<OrganisaatioDTO> childOrgs = this.organisaatioService.findAllChildrenWithOid(_model.getOrganisaatioOid());
-    		LOG.debug("childOrgs: " + childOrgs.size());
-    		for(OrganisaatioDTO org : childOrgs) {
-    			LOG.debug("Current organisaatio: " + org.getNimiFi() + ", " + org.getOid() );
-    			kysely.getTarjoajaOids().add(org.getOid());
-    		}
-    		kysely.getTarjoajaOids().add(_model.getOrganisaatioOid());
-    	}
-        return kysely;
     }
     
 
@@ -666,6 +651,16 @@ public class TarjontaPresenter {
         _rootView.getBreadcrumbsView().addComponent(new Label(organisaatioName));
         _model.setOrganisaatioOid(organisaatioOid);
         _model.setOrganisaatioName(organisaatioName);
+        List<OrganisaatioDTO> childOrgs = this.organisaatioService.findAllChildrenWithOid(organisaatioOid);
+		
+		List<String> orgOids = new ArrayList<String>();
+		orgOids.add(organisaatioOid);
+		for(OrganisaatioDTO org : childOrgs) {
+			
+			orgOids.add(org.getOid());
+		}
+		_model.getSearchSpec().setOrganisaatioOids(orgOids);
+		
         //Updating koulutuslista to show only komotos with tarjoaja matching the selected org or one of its descendants
         getKoulutusListView().reload();
         this.getKoulutusListView().toggleCreateKoulutusB(true);

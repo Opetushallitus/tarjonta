@@ -204,10 +204,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
-        //Retrieving komotos, if no tarjoajaOids provided everything is retrieved, otherwise 
-    	//only komotos with tarjoaja matching given tarjoajaOids.
-        List<KoulutusmoduuliToteutus> komotos = kysely.getTarjoajaOids().isEmpty() 
-        		? koulutusmoduuliToteutusDAO.findAll() : koulutusmoduuliToteutusDAO.findByCriteria(kysely.getTarjoajaOids());        
+    	
+    	//Retrieving komotos according to criteria provided in kysely, currently list of tarjoajaOids and a name
+        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findByCriteria(kysely.getTarjoajaOids(), kysely.getNimi());        
 
         //Creating the answer type
         HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();

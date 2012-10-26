@@ -62,9 +62,13 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
 
 	@Override
 	public List<KoulutusmoduuliToteutus> findByCriteria(
-			List<String> tarjoajaOids) {
+			List<String> tarjoajaOids, String nimi) {
+		nimi = (nimi != null) ? nimi : "";
 		QKoulutusmoduuliToteutus komoto  = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-		BooleanExpression inTarjoajat = komoto.tarjoaja.in(tarjoajaOids);
-		return from(komoto).where(inTarjoajat).list(komoto);
+		BooleanExpression criteria = komoto.nimi.contains(nimi);
+		if (!tarjoajaOids.isEmpty()) {
+			criteria = criteria.and(komoto.tarjoaja.in(tarjoajaOids));
+		}
+		return from(komoto).where(criteria).list(komoto);
 	}
 }

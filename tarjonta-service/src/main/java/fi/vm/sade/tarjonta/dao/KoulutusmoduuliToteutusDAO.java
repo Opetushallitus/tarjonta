@@ -28,7 +28,7 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
     public KoulutusmoduuliToteutus findByOid(String oid);
     public KoulutusmoduuliToteutus findKomotoByOid(String oid);
 	public List<KoulutusmoduuliToteutus> findByCriteria(
-			List<String> tarjoajaOids);
+			List<String> tarjoajaOids, String nimi);
 
 }
 

@@ -46,6 +46,7 @@ public class TarjontaModel extends BaseUIViewModel {
     private List<KoulutusTulos> _koulutukset;
     private List<KoulutusTulos> _selectedKoulutukset;
     private HakukohdeViewModel hakukohde;
+    
     /*
      * Selected organisaatio data:
      */
