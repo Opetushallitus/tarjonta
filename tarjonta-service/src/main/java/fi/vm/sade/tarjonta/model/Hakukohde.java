@@ -62,7 +62,8 @@ public class Hakukohde extends BaseEntity {
 
     /* todo: double check if this is koodisto uri. */
     @Column(name = "tila")
-    private String tila;
+    @Enumerated(EnumType.STRING)
+    private TarjontaTila tila;
 
     @ManyToOne
     @NotNull
@@ -177,11 +178,11 @@ public class Hakukohde extends BaseEntity {
         this.hakukelpoisuusvaatumus = hakukelpoisuusvaatimus;
     }
 
-    public String getTila() {
+    public TarjontaTila getTila() {
         return tila;
     }
 
-    public void setTila(String tila) {
+    public void setTila(TarjontaTila tila) {
         this.tila = tila;
     }
 

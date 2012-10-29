@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <xs:schema elementFormDefault="qualified"
-           targetNamespace="http://service.tarjonta.sade.vm.fi/types" version="1.0"
+           targetNamespace="http://publication.tarjonta.sade.vm.fi/types" version="1.0"
            xmlns:xml="http://www.w3.org/XML/1998/namespace"
-           xmlns:tns="http://service.tarjonta.sade.vm.fi/types"
+           xmlns:tns="http://publication.tarjonta.sade.vm.fi/types"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
     <xs:import namespace="http://www.w3.org/XML/1998/namespace"
@@ -39,6 +39,7 @@
             <xs:group ref="tns:PostalAddressGroup"/>
         </xs:complexType>
     </xs:element>
+
 
 
     <!-- ============================================================================================ -->
@@ -516,33 +517,34 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="Location"
+                                    type="tns:ExaminationLocationType"
                                     minOccurs="1"
-                                    maxOccurs="unbounded">
-                            <xs:annotation>
-                                <xs:documentation xml:lang="fi">
-                                </xs:documentation>
-                            </xs:annotation>
-                            <xs:complexType>
-                                <xs:sequence>
-                                    <xs:element name="Name"
-                                                type="xs:string"
-                                                minOccurs="0"
-                                                maxOccurs="1">
-                                        <xs:annotation>
-                                            <xs:documentation xml:lang="fi">
-                                                Sijaintia kuvaava nimi.
-                                            </xs:documentation>
-                                        </xs:annotation>
-                                    </xs:element>
-                                    <xs:group ref="tns:PostalAddressGroup"/>
-                                </xs:sequence>
-                            </xs:complexType>
-                        </xs:element>
+                                    maxOccurs="unbounded"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
     </xs:complexType>
+
+    <xs:complexType name="ExaminationLocationType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Name" type="tns:ShortName"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Sijaintia kuvaava nimi.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:group ref="tns:PostalAddressGroup"/>
+        </xs:sequence>
+    </xs:complexType>
+
 
     <xs:complexType name="EntranceExaminationTypeType">
         <xs:annotation>
@@ -777,7 +779,17 @@
                         type="tns:ExtendedStringType"
                         minOccurs="1"
                         maxOccurs="unbounded"/>
+
         </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="fi">
+                    Tyypin identifioiva koodi.
+                    TODO: mika koodisto? erillinen attribuutti koodistolle?
+                    TODO: generalisoi tyyppi
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
 
@@ -1546,7 +1558,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="Name"
+            <xs:element name="RecipientName"
                         type="xs:string"
                         minOccurs="0"
                         maxOccurs="1">
@@ -1831,6 +1843,17 @@
         </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:pattern value="[A-Z]{3}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ShortName">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="2"/>
+            <xs:maxLength value="30"/>
         </xs:restriction>
     </xs:simpleType>
 

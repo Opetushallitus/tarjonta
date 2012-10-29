@@ -13,26 +13,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.dao;
-
-import java.util.List;
-
-import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.TarjontaTila;
-import java.util.List;
+package fi.vm.sade.tarjonta.model;
 
 /**
  *
+ * @author Jukka Raanamo
  */
-public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteutus, Long> {
+public enum TarjontaTila {
 
-    public KoulutusmoduuliToteutus findByOid(String oid);
-
-    public KoulutusmoduuliToteutus findKomotoByOid(String oid);
-	public List<KoulutusmoduuliToteutus> findByCriteria(
-			List<String> tarjoajaOids, String nimi);
-
-    
+    LUONNOS,
+    VALMIS;
 }
 

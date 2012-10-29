@@ -36,7 +36,7 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.setHakukelpoisuusVaatimukset(s.getHakukelpoisuusvaatimus());
         hakukohde.setHakukohdeNimi(s.getHakukohdeNimi());
         hakukohde.setHakukohteenHakuOid(s.getHaku().getOid());
-        hakukohde.setHakukohteenTila(s.getTila());
+        hakukohde.setHakukohteenTila(s.getTila().name());
         hakukohde.setOid(s.getOid());
         hakukohde.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
         hakukohde.getLisatiedot().addAll(convertMonikielinenTeksti(s.getLisatiedot()));
@@ -44,14 +44,14 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.getHakukohteenKoulutusOidit().addAll(convertKoulutukses(s.getKoulutusmoduuliToteutuses()));
         return hakukohde;
     }
-    
+
     private List<String> convertKoulutukses(Set<KoulutusmoduuliToteutus> komotos) {
         List<String> komotoOids = new ArrayList<String>();
-        
+
         for (KoulutusmoduuliToteutus komoto : komotos) {
             komotoOids.add(komoto.getOid());
         }
-        
+
         return komotoOids;
     }
 
@@ -65,8 +65,8 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
                         tekstit.add(teksti);
         	}
         }
-        
+
         return tekstit;
     }
-    
+
 }

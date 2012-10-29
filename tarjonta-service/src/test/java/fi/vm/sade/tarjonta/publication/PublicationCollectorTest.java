@@ -1,0 +1,184 @@
+/*
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ */
+package fi.vm.sade.tarjonta.publication;
+
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+import static org.mockito.Mockito.*;
+
+import fi.vm.sade.tarjonta.publication.PublicationCollector.EventHandler;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import java.util.ArrayList;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ *
+ * @author Jukka Raanamo
+ */
+public class PublicationCollectorTest {
+
+    private EventHandlerMock handler;
+
+    private PublicationCollector collector;
+
+    protected final Logger log = LoggerFactory.getLogger("TEST");
+
+    @Before
+    public void setUp() {
+
+        handler = new EventHandlerMock();
+
+        PublicationDataService dataService = mock(PublicationDataService.class);
+
+        collector = new PublicationCollector();
+        collector.setDataService(dataService);
+        collector.setHandler(handler);
+
+    }
+
+    @Test
+    public void testStartAndCompletedEventsAreInvokedOnEmptyData() throws Exception {
+
+        collector.start();
+
+        assertEquals(1, handler.startEvents);
+        assertEquals(1, handler.completedEvents);
+
+    }
+
+    @Test
+    public void testOnlyOneCallPerUniqueHaku() throws Exception {
+
+        // the same logic applies to all other callbacks
+
+        List<Haku> list = new ArrayList<Haku>();
+        list.add(createHaku("haku/123"));
+        list.add(createHaku("haku/123"));
+
+        PublicationDataService dataService = mock(PublicationDataService.class);
+        when(dataService.listHaku()).thenReturn(list);
+        collector.setDataService(dataService);
+
+        collector.start();
+
+        assertEquals(1, handler.hakuEvents);
+
+    }
+
+    @Test
+    public void testMissingKoulutusmoduuliEndsWithFailure() throws Exception {
+
+        List<KoulutusmoduuliToteutus> list = new ArrayList<KoulutusmoduuliToteutus>();
+        list.add(new KoulutusmoduuliToteutus());
+
+        PublicationDataService dataService = mock(PublicationDataService.class);
+        when(dataService.listKoulutusmoduuliToteutus()).thenReturn(list);
+
+        collector.setDataService(dataService);
+        try {
+            collector.start();
+        } catch (Exception e) {
+            // expected
+        }
+
+        assertEquals(1, handler.startEvents);
+        assertEquals(0, handler.completedEvents);
+        assertEquals(1, handler.failedEvents);
+        assertEquals(0, handler.koulutusmoduuliEvents);
+        assertEquals(0, handler.koulutsmoduuliToteutusEvents);
+
+    }
+
+    public class EventHandlerMock implements EventHandler {
+
+        private int startEvents;
+
+        private int failedEvents;
+
+        private int completedEvents;
+
+        private int warningEvents;
+
+        private int hakuEvents;
+
+        private int hakukohdeEvents;
+
+        private int koulutusmoduuliEvents;
+
+        private int koulutsmoduuliToteutusEvents;
+
+        @Override
+        public void onCollectStart() {
+            startEvents++;
+        }
+
+        @Override
+        public void onCollectFailed(Exception e) {
+            failedEvents++;
+        }
+
+        @Override
+        public void onCollectWarning(String msg) {
+            log.info("onCollectWarning: " + msg);
+            warningEvents++;
+        }
+
+        @Override
+        public void onCollectEnd() {
+            completedEvents++;
+        }
+
+        @Override
+        public void onCollect(Haku haku) {
+            hakuEvents++;
+        }
+
+        @Override
+        public void onCollect(Hakukohde hakukohde) {
+            hakukohdeEvents++;
+        }
+
+        @Override
+        public void onCollect(Koulutusmoduuli moduuli) {
+            koulutusmoduuliEvents++;
+        }
+
+        @Override
+        public void onCollect(KoulutusmoduuliToteutus toteutus) {
+            koulutsmoduuliToteutusEvents++;
+        }
+
+    }
+
+
+    private Haku createHaku(String oid) {
+
+        Haku h = new Haku();
+        h.setOid(oid);
+
+        return h;
+
+    }
+
+}
+

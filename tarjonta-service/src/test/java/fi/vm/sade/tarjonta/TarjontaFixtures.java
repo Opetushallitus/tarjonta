@@ -162,7 +162,14 @@ public class TarjontaFixtures {
     public Hakukohde createHakukohde() {
 
         Hakukohde hakukohde = new Hakukohde();
-        hakukohde.setHakukohdeNimi(randomOid("hakukohde"));
+        hakukohde.setOid(randomOid("hakukohde"));
+        hakukohde.setHakukohdeNimi(randomUri("hakukohde"));
+        hakukohde.setAlinValintaPistemaara(10);
+        hakukohde.setAloituspaikatLkm(100);
+        hakukohde.setHakukelpoisuusvaatimus(randomUri("koulutustaso"));
+        hakukohde.setTila(TarjontaTila.VALMIS);
+        hakukohde.setYlinValintaPistemaara(200);
+        
         return hakukohde;
 
     }

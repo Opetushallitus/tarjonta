@@ -72,6 +72,9 @@
                             <wsdlOptions>
                                 <wsdlOption>
                                     <wsdl>src/main/resources/wsdl/learningUploadService.wsdl</wsdl>
+                                    <bindingFiles>
+                                        <bindingFile>src/main/resources/wsdl/binding.xjb</bindingFile>
+                                    </bindingFiles>
                                     <extraargs>
                                     </extraargs>
                                 </wsdlOption>

@@ -124,8 +124,7 @@ public class TarjontaPublicServiceTest {
         Hakukohde hakukohde = fixtures.createHakukohdeWithGivenOid(HAKUKOHDE_OID);//fixtures.createHakukohde();
         hakukohde.setHaku(haku);
         hakukohde.setHakukohdeNimi("Peltikorjaajan perustutkinto");
-        hakukohde.setHakukohdeKoodistoNimi("Peltikorjaajan perustutkinto");
-        hakukohde.setTila(KoodistoContract.TarjontaTilat.JULKAISTU);
+        hakukohde.setTila(TarjontaTila.VALMIS);
         hakukohdeDAO.insert(hakukohde);
 
         // 1. koulutusmoduuli+toteutus
@@ -145,7 +144,7 @@ public class TarjontaPublicServiceTest {
         hakukohde.setHakukohdeNimi("Taidemaalarin erikoistutkinto");
         hakukohde.setHakukohdeKoodistoNimi("Taidemaalarin erikoistutkinto");
         hakukohde.setHaku(haku);
-        hakukohde.setTila(KoodistoContract.TarjontaTilat.VALMIS);
+        hakukohde.setTila(TarjontaTila.VALMIS);
         hakukohdeDAO.insert(hakukohde);
 
         // 2. koulutusmoduuli+toteutus, eri toteuttaja organisaatio
@@ -192,7 +191,7 @@ public class TarjontaPublicServiceTest {
 
         assertEquals(YHTEISHAKU, haku.getHakutapa());
         assertEquals("Peltikorjaajan perustutkinto", hakukohde.getNimi());
-        assertEquals(KoodistoContract.TarjontaTilat.JULKAISTU, hakukohde.getTila());
+        assertEquals(TarjontaTila.VALMIS.name(), hakukohde.getTila());
         assertEquals(ORGANISAATIO_A, koulutus.getTarjoaja());
 
         rivi = rivit.get(1);
@@ -201,7 +200,7 @@ public class TarjontaPublicServiceTest {
 
         assertEquals(YHTEISHAKU, haku.getHakutapa());
         assertEquals("Taidemaalarin erikoistutkinto", hakukohde.getNimi());
-        assertEquals(KoodistoContract.TarjontaTilat.VALMIS, hakukohde.getTila());
+        assertEquals(TarjontaTila.VALMIS.name(), hakukohde.getTila());
 
     }
 

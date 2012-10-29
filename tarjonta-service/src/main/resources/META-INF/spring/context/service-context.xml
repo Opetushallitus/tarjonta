@@ -24,7 +24,7 @@
 
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraToDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakueraFromDTOConverter"/>
-                
+
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeFromDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeToDTOConverter"/>
 
@@ -38,6 +38,5 @@
         </property>
     </bean>
 
-    <bean id="learningUploadService" class="fi.vm.sade.tarjonta.service.impl.LearningUploadServiceImpl" />
 
 </beans>

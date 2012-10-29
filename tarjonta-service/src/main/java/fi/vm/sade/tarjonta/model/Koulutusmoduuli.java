@@ -107,6 +107,18 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @Column(name = "tutkintoohjelmanimi")
     private String tutkintoOhjelmanNimi;
 
+    @Column(name = "laajuusarvo")
+    private String laajuusArvo;
+
+    @Column(name = "laajuusyksikko")
+    private String laajuusYksikko;
+
+    @Column(name = "tutkintonimike")
+    private String tutkintonimike;
+
+    @Column(name = "ulkoinentunniste")
+    private String ulkoinenTunniste;
+
     /**
      * JPA konstruktori
      */
@@ -399,6 +411,52 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     public void setKoulutusohjelmaKoodi(String koulutusohjelmaKoodi) {
         this.koulutusohjelmaKoodi = koulutusohjelmaKoodi;
+    }
+
+    /**
+     * Laajuuden arvo. Esim. 30.
+     *
+     * @return
+     */
+    public String getLaajuusArvo() {
+        return laajuusArvo;
+    }
+
+    /**
+     * Laajuuden yksikko. Sisalto ilmeisesti koodisto uri mutta esitetty tieto esim. "opintoviikko"
+     *
+     * @return
+     */
+    public String getLaajuusYksikko() {
+        return laajuusYksikko;
+    }
+
+    /**
+     * Tutkintonimike, esim. "filosofian maisteri". Arvo koodisto uri?
+     *
+     * @return
+     */
+    public String getTutkintonimike() {
+        return tutkintonimike;
+    }
+
+    /**
+     * Ulkoinen tunniste on koulutusmoduulin yksiloiva tunniste toisessa jarjestelmassa. Esim. jos
+     * tama koulutusmoduuli on tuoto era-ajona toisesta jarjestelmasta. Sisallon muotoon ei oteta
+     * kantaa.
+     *
+     * @return
+     */
+    public String getUlkoinenTunniste() {
+        return ulkoinenTunniste;
+    }
+
+    /**
+     * @see #getUlkoinenTunniste() 
+     * @param ulkoinenTunniste
+     */
+    public void setUlkoinenTunniste(String ulkoinenTunniste) {
+        this.ulkoinenTunniste = ulkoinenTunniste;
     }
 
 }

@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <xs:schema elementFormDefault="qualified"
-           targetNamespace="http://service.tarjonta.sade.vm.fi/types" version="1.0"
+           targetNamespace="http://publication.tarjonta.sade.vm.fi/types" version="1.0"
            xmlns:xml="http://www.w3.org/XML/1998/namespace"
-           xmlns:tns="http://service.tarjonta.sade.vm.fi/types"
+           xmlns:tns="http://publication.tarjonta.sade.vm.fi/types"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 

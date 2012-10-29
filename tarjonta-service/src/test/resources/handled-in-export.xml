@@ -11,26 +11,35 @@
     <!-- Koulutusmoduuli, ensihoidon ko, 1508                                                      -->
     <!-- ========================================================================================= -->
 
+    <!--
+    id = oid
+    type = only DegreeProgramme supported
+    -->
     <LearningOpportunitySpecification id="S1508" type="DegreeProgramme">
 
-        <!-- tutkinto-ohjelman nimi / degreeProgrammeTitle -->
+        <!--
+        TODO: koodisto arvo - miten muotoiltu??
+        -->
         <Name xml:lang="fi">Ensihoidon koulutusohjelma</Name>
 
-        <!-- tutkinto-ohjelman tunniste -->
+        <!-- OK, Koulutusmoduuli#ulkoinenTunniste -->
         <Identifier>1508</Identifier>
 
+        <!-- OK -->
         <OrganizationRef>
             <OidRef>1.2.3.4.5</OidRef>
         </OrganizationRef>
 
-
+        <!--
+        TODO: onko tämä oikeastaan LOS:n tieto?
+        -->
         <OfferedBy ref="P1"/>
 
-        <!-- laajuus sekä laajuusyksikkö -->
+        <!-- OK: unit on koodisto uri -->
         <Credits unit="CreditUnits">120</Credits>
 
-        <!-- tutkintonimike -->
-        <Qualification>
+        <!-- OK -->
+        <Qualification code="koodistoUri">
             <Title>lähihoitaja</Title>
         </Qualification>
 
@@ -39,31 +48,31 @@
 
         <Classification>
 
-            <!-- koulutusluokituksen koodi -->
+            <!-- OK -->
             <ClassificationCode scheme="http://stat.fi" version="2010">
                 <Value>371101</Value>
                 <Label xml:lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
             </ClassificationCode>
 
-            <!-- koulutusala -->
+            <!-- OK -->
             <ClassificationCode category="EducationDomain" scheme="http://oph.fi" version="2002">
                 <Value>7</Value>
                 <Label>sosiaali- terveys- ja liikunta-ala</Label>
             </ClassificationCode>
 
-            <!-- koulutusaste -->
+            <!-- OK -->
             <ClassificationCode category="EducationDegree" scheme="http://oph.fi" version="2002">
                 <Value>32</Value>
                 <Label>Ammatillinen koulutus</Label>
             </ClassificationCode>
 
-            <!-- opintoala -->
+            <!-- OK -->
             <ClassificationCode category="StydyDomain" scheme="http://oph.fi" version="2002">
                 <Value>703</Value>
                 <Label>sosiaali- ja terveysala</Label>
             </ClassificationCode>
 
-            <!-- EQF -->
+            <!-- EQF OF WHAT - TÄMÄ EI TOIMI, KOKO CLASSIFICATION EHKÄ PURETTAVA TARKKOIHIN KENTTIIN -->
             <ClassificationCode scheme="EQF">
                 <Value>4</Value>
             </ClassificationCode>

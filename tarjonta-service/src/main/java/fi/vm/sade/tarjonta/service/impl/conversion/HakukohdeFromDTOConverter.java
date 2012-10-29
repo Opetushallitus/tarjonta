@@ -36,13 +36,13 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
         hakukohde.setHakukohdeNimi(s.getHakukohdeNimi());
         hakukohde.setOid(s.getOid());
         hakukohde.setLisatiedot(convertMonikielinenTeksti(s.getLisatiedot()));
-        hakukohde.setTila(s.getHakukohteenTila()); 
+        hakukohde.setTila(TarjontaTila.valueOf(s.getHakukohteenTila()));
         hakukohde.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
         hakukohde.setValintaperusteKuvaus(convertMonikielinenTeksti(s.getValintaPerusteidenKuvaukset()));
         return hakukohde;
     }
-    
-    
+
+
 
     private MonikielinenTeksti convertMonikielinenTeksti(List<MonikielinenTekstiTyyppi> monitekstis) {
         MonikielinenTeksti tekstit = null;
