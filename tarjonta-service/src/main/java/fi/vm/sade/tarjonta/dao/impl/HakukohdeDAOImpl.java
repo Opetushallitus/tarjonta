@@ -91,7 +91,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
     @Override
     public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely) {
-    	String searchStr = (kysely.getNimi() != null) ? kysely.getNimi().toUpperCase() : "";
+    	String searchStr = (kysely.getNimi() != null) ? kysely.getNimi().toLowerCase() : "";
     	QHakukohde qHakukohde = QHakukohde.hakukohde;
     	QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
     	BooleanExpression criteriaExpr = qHakukohde.hakukohdeNimi.toLowerCase().contains(searchStr);
@@ -101,6 +101,8 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
                 list(qHakukohde);
     	
     	List<Hakukohde> vastaus = new ArrayList<Hakukohde>(); 
+    	//If a list of organisaatio oids is provided only hakukohdes that match
+    	//the list are returned
     	if (!kysely.getTarjoajaOids().isEmpty()) {
     		for (Hakukohde curHk : hakukohdes) {
     			if (kysely.getTarjoajaOids().contains(CollectionUtils.singleItem(curHk.getKoulutusmoduuliToteutuses()).getTarjoaja())) {
