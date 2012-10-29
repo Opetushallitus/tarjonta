@@ -50,6 +50,11 @@
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1" />
+            
+            <xs:element name="hakukohdeKoodistoNimi"
+                        type="xs:string"
+                        maxOccurs="1"
+                        minOccurs="1" />
 
             <xs:element name="hakukohteenHakuOid"
                         type="xs:string"
