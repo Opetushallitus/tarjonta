@@ -21,6 +21,7 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.TextField;
 import fi.vm.sade.generic.common.I18NHelper;
@@ -28,6 +29,10 @@ import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
+import fi.vm.sade.vaadin.Oph;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
+import fi.vm.sade.vaadin.ui.OphHorizontalLayout;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -43,7 +48,7 @@ import org.vaadin.addon.formbinder.ViewBoundForm;
  */
 @Configurable
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
-public class SearchSpesificationView extends AbstractHorizontalLayout {
+public class SearchSpesificationView extends OphHorizontalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(SearchSpesificationView.class);
     private Button _btnTyhjenna;
@@ -73,54 +78,28 @@ public class SearchSpesificationView extends AbstractHorizontalLayout {
     private Form _form;
     
     public SearchSpesificationView() {
-    	super();
+    	 super(true, UiMarginEnum.RIGHT_BOTTOM_LEFT);
+    	 setSizeUndefined();
+    	 buildLayout();
     }
     
     public SearchSpesificationView(KoulutusSearchSpesificationViewModel model) {
-    	super();
+    	super(true, UiMarginEnum.RIGHT_BOTTOM_LEFT);
+    	setSizeUndefined();
     	_model = model;
+    	buildLayout();
     }
 
-    @Override
     protected void buildLayout() {
         //
         // Create fields
         //
-        _cbHakukausi = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUKAUSI_URI, null, null, T("hakukausi.prompt"));
-//        _cbHakutapa = UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_HAKUTAPA_URI, null, null, T("hakutapa.prompt"));
-//        _cbHakutyyppi = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI, null, null, T("hakutyyppi.prompt"));
-//        _cbHaunKohdejoukko = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T("haunkohdejoukko.prompt"));
-        _cbKoulutuksenAlkamiskausi = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KOULUTUKSEN_ALKAMISKAUSI_URI, null, null, T("koulutuksenalkamiskausi.prompt"));
-        _tfSearch = UiBuilder.textField(null, "", T("hakuehto.prompt"), false);
+    	_tfSearch = new TextField("");
+        _tfSearch.addStyleName(Oph.TEXTFIELD_SEARCH);
+        _tfSearch.setNullRepresentation("");
         _tfSearch.setPropertyDataSource(new NestedMethodProperty(_model, "searchStr"));
-        _btnHae = UiBuilder.buttonSmallPrimary(null, T("hae"));
-        _btnTyhjenna = UiBuilder.buttonSmallPrimary(null, T("tyhjenna"));
-        
-        _btnTyhjenna.addListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                _tfSearch.setValue("");
-            }
-        });
-
-        _btnHae.addListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                doSearch();
-            }
-        });
-
         addComponent(_tfSearch);
-        addComponent(_btnHae);
-
-        addComponent(_cbHakukausi);
-//        addComponent(_cbHakutapa);
-//        addComponent(_cbHakutyyppi);
-//        addComponent(_cbHaunKohdejoukko);
-        addComponent(_cbKoulutuksenAlkamiskausi);
-
-        addComponent(_btnTyhjenna);
-
+        
         //
         // Hook enter to do the search
         //
@@ -131,9 +110,46 @@ public class SearchSpesificationView extends AbstractHorizontalLayout {
                 doSearch();
             }
         });
+        
+        _btnHae = UiBuilder.buttonSmallPrimary(this, T("hae"));
+        _btnHae.addStyleName(Oph.BUTTON_SMALL);
+        _btnHae.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                doSearch();
+            }
+        });
+        
+    	
+        _cbHakukausi = UiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_HAKUKAUSI_URI, null, null, T("hakukausi.prompt"));
+
+        _cbKoulutuksenAlkamiskausi = UiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_KOULUTUKSEN_ALKAMISKAUSI_URI, null, null, T("koulutuksenalkamiskausi.prompt"));
+        
+        _btnTyhjenna = UiBuilder.buttonSmallPrimary(this, T("tyhjenna"));
+        
+        _btnTyhjenna.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                _tfSearch.setValue("");
+            }
+        });
+
+        
+        this.setComponentAlignment(_btnHae, Alignment.BOTTOM_LEFT);
+        this.setComponentAlignment( _cbHakukausi, Alignment.BOTTOM_RIGHT);
+        this.setComponentAlignment( _cbKoulutuksenAlkamiskausi, Alignment.BOTTOM_RIGHT);
+
+        this.setComponentAlignment(_btnTyhjenna, Alignment.BOTTOM_RIGHT);
+        this.setExpandRatio(_cbHakukausi, 1f); 
+
+        
     }
 
-    /**
+    private String T(String key) {
+		return _i18nHelper.getMessage(key);
+	}
+
+	/**
      * Search has been triggered.
      */
     private void doSearch() {
