@@ -44,6 +44,9 @@ public class Hakukohde extends BaseEntity {
     @NotNull
     @Column(name = "hakukohde_nimi", nullable = false)
     private String hakukohdeNimi;
+    
+    @Column(name= "hakukohde_koodisto_nimi")
+    private String hakukohdeKoodistoNimi;
 
     @Column(name = "alin_valinta_pistamaara")
     private int alinValintaPistemaara;
@@ -252,6 +255,20 @@ public class Hakukohde extends BaseEntity {
 
     public void setOid(String oid) {
         this.oid = oid;
+    }
+
+    /**
+     * @return the hakukohdeKoodistoNimi
+     */
+    public String getHakukohdeKoodistoNimi() {
+        return hakukohdeKoodistoNimi;
+    }
+
+    /**
+     * @param hakukohdeKoodistoNimi the hakukohdeKoodistoNimi to set
+     */
+    public void setHakukohdeKoodistoNimi(String hakukohdeKoodistoNimi) {
+        this.hakukohdeKoodistoNimi = hakukohdeKoodistoNimi;
     }
 
 }

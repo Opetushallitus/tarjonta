@@ -37,6 +37,7 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
         hakukohde.setOid(s.getOid());
         hakukohde.setLisatiedot(convertMonikielinenTeksti(s.getLisatiedot()));
         hakukohde.setTila(s.getHakukohteenTila()); 
+        hakukohde.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
         hakukohde.setValintaperusteKuvaus(convertMonikielinenTeksti(s.getValintaPerusteidenKuvaukset()));
         return hakukohde;
     }
