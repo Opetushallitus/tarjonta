@@ -104,6 +104,7 @@ public class TarjontaRootView extends Window {
             public void componentEvent(Event event) {
                 if (event instanceof SearchSpesificationView.SearchEvent) {
                 	_presenter.getKoulutusListView().reload();
+                	_presenter.getHakukohdeListView().reload();
                 }
             }
         });

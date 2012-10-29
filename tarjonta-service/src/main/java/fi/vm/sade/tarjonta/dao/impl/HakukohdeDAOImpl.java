@@ -21,13 +21,17 @@ import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QHakukohde;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QTekstiKaannos;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
+import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -84,14 +88,29 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
                 .singleResult(qTekstis);
         return  tekstis;
     }
-    
 
     @Override
     public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely) {
+    	String searchStr = (kysely.getNimi() != null) ? kysely.getNimi().toUpperCase() : "";
+    	QHakukohde qHakukohde = QHakukohde.hakukohde;
+    	QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+    	BooleanExpression criteriaExpr = qHakukohde.hakukohdeNimi.toLowerCase().contains(searchStr);
     	
-    	Query query = getEntityManager().createQuery("SELECT h FROM Hakukohde h LEFT JOIN FETCH h.koulutusmoduuliToteutuseList");
-    	return query.getResultList();
-
+    	List<Hakukohde> hakukohdes = from(qHakukohde).
+                leftJoin(qHakukohde.koulutusmoduuliToteutuseList, qKomoto).fetch().where(criteriaExpr).
+                list(qHakukohde);
+    	
+    	List<Hakukohde> vastaus = new ArrayList<Hakukohde>(); 
+    	if (!kysely.getTarjoajaOids().isEmpty()) {
+    		for (Hakukohde curHk : hakukohdes) {
+    			if (kysely.getTarjoajaOids().contains(CollectionUtils.singleItem(curHk.getKoulutusmoduuliToteutuses()).getTarjoaja())) {
+    				vastaus.add(curHk);
+    			}
+        	}
+    	} else {
+    		vastaus = hakukohdes;
+    	}
+        return vastaus;
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

@@ -42,6 +42,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
@@ -285,11 +286,11 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 			HakukohdeResultRow rowStyle = new HakukohdeResultRow();
 			hc.addItem(komotoOid);
 			hc.setParent(komotoOid, item);
-			KoulutusKoosteTyyppi koulutus = presenter.getKoulutusByOid(komotoOid);
+			LueKoulutusVastausTyyppi koulutus = presenter.getKoulutusByOid(komotoOid);
 			String koulutusNimi = "";
 			if (koulutus != null) {
-				koulutusNimi = getKoodiNimi(koulutus.getKoulutuskoodi()) + ", " 
-					 + getKoodiNimi(koulutus.getKoulutusohjelmakoodi());
+				koulutusNimi = getKoodiNimi(koulutus.getKoulutusKoodi().getUri()) + ", " 
+					 + getKoodiNimi(koulutus.getKoulutusohjelmaKoodi().getUri());
 			} 
 			hc.getContainerProperty(komotoOid, COLUMN_A).setValue(rowStyle.format(koulutusNimi, false));
 			hc.setChildrenAllowed(komotoOid, false);

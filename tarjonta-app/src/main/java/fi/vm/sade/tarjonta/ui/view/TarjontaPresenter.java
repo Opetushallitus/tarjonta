@@ -41,7 +41,6 @@ import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
@@ -331,7 +330,9 @@ public class TarjontaPresenter {
     public Map<String, List<HakukohdeTulos>> getHakukohdeDataSource() {
         Map<String, List<HakukohdeTulos>> map = new HashMap<String, List<HakukohdeTulos>>();
         try {
-            getModel().setHakukohteet(tarjontaPublicService.haeHakukohteet(new HaeHakukohteetKyselyTyyppi()).getHakukohdeTulos());
+        	//Fetching komotos matching currently specified criteria (currently selected organisaatio and written text in search box)
+        	HaeHakukohteetKyselyTyyppi kysely = this.koulutusSearchSpecToDTOConverter.convertViewModelToHakukohdeDTO(_model.getSearchSpec());
+            getModel().setHakukohteet(tarjontaPublicService.haeHakukohteet(kysely).getHakukohdeTulos());
         } catch (Exception ex) {
             LOG.error("Error in finding hakukokohteet: {}", ex.getMessage());
             getModel().setHakukohteet(new ArrayList<HakukohdeTulos>());
@@ -489,7 +490,7 @@ public class TarjontaPresenter {
         Map<String, List<KoulutusTulos>> map = new HashMap<String, List<KoulutusTulos>>();
         try {
         	//Fetching komotos matching currently specified criteria (currently selected organisaatio and written text in search box)
-        	HaeKoulutuksetKyselyTyyppi kysely = this.koulutusSearchSpecToDTOConverter.convertViewModelToDTO(_model.getSearchSpec());
+        	HaeKoulutuksetKyselyTyyppi kysely = this.koulutusSearchSpecToDTOConverter.convertViewModelToKoulutusDTO(_model.getSearchSpec());
         	
             _model.setKoulutukset(this.tarjontaPublicService.haeKoulutukset(kysely
             		).getKoulutusTulos());
@@ -664,21 +665,20 @@ public class TarjontaPresenter {
 		
         //Updating koulutuslista to show only komotos with tarjoaja matching the selected org or one of its descendants
         getKoulutusListView().reload();
+        this.getHakukohdeListView().reload();
         this.getKoulutusListView().toggleCreateKoulutusB(true);
     }
 
     /**
-     * Gets the name of koulutus by its oid.
+     * Gets koulutus by its oid.
      *
      * @param komotoOid - the koulutus oid for which the name is returned
-     * @return the name of the koulutus
+     * @return the koulutus
      */
-    public KoulutusKoosteTyyppi getKoulutusByOid(String komotoOid) {
-        for (KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
-            if (curKoulutus.getKoulutus().getKoulutusmoduuliToteutus().equals(komotoOid)) {
-                return curKoulutus.getKoulutus();
-            }
-        }
-        return null;
+    public LueKoulutusVastausTyyppi getKoulutusByOid(String komotoOid) {
+    	LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
+    	kysely.setOid(komotoOid);
+    	LueKoulutusVastausTyyppi vastaus = this.tarjontaPublicService.lueKoulutus(kysely);
+    	return vastaus;
     }
 }
