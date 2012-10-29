@@ -15,32 +15,26 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.PropertysetItem;
+import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.ui.component.OphRichTextArea;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
 import fi.vm.sade.tarjonta.ui.view.common.KoodistoSelectionTabSheet;
+import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.StyleEnum;
-import fi.vm.sade.vaadin.constants.UiConstant;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
- * For editing the lisätiedot.
+ * For editing the studies (koulutus) additional information.
  *
  * @author mlyly
  */
@@ -64,17 +58,30 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
     @Autowired
     private TarjontaUIHelper _uiHelper;
 
-    private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
-
     @Override
     protected void buildLayout(VerticalLayout layout) {
         LOG.info("buildLayout()");
 
-        KoulutusLisatiedotModel model = _tarjontaModel.getKoulutusLisatiedotModel();
+        setSpacing(true);
+        setMargin(true);
 
         addNavigationButtons();
 
+        //
+        // Ammattinimikkeet
+        //
+        addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet"), LabelStyleEnum.H2));
+
+        PropertysetItem psi = new BeanItem(_tarjontaModel.getKoulutusLisatiedotModel());
+        KoodistoComponent kcAmmattinimikkeet = UiBuilder.koodistoTwinColSelect(null, KoodistoURIHelper.KOODISTO_AVAINSANAT_URI, psi, "ammattinimikkeet");
+        addComponent(kcAmmattinimikkeet);
+
+        //
+        // Language dependant information
+        //
+
         // What languages should we have as preselection when initializing the form?
+        // Current hypothesis is that we should use the opetuskielet + any possible additional languages added to additional information
         Set<String> languageUris = new HashSet<String>();
         languageUris.addAll(_tarjontaModel.getKoulutusPerustiedotModel().getOpetuskielet());
         languageUris.addAll(_tarjontaModel.getKoulutusLisatiedotModel().getKielet());
@@ -94,12 +101,13 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
             }
         };
 
+        // TODO Autoselect first content tab?
+
         // Initialize with all preselected languages
         tabs.getKcSelection().setValue(_tarjontaModel.getKoulutusLisatiedotModel().getKielet());
 
+        addComponent(UiBuilder.label((AbstractLayout) null, T("kieliriippuvatTiedot"), LabelStyleEnum.H2));
         addComponent(tabs);
-
-        addComponent(new Label("EditKoulutusLisatiedotForm"));
     }
 
     private void addNavigationButtons() {
@@ -136,11 +144,41 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
     private Component createLanguageEditor(String uri) {
         VerticalLayout vl = UiBuilder.verticalLayout();
 
-        vl.addComponent(new OphRichTextArea());
-        vl.addComponent(new OphRichTextArea());
-        vl.addComponent(new OphRichTextArea());
-        vl.addComponent(new OphRichTextArea());
-        vl.addComponent(new OphRichTextArea());
+        vl.setSpacing(true);
+        vl.setMargin(true);
+
+        KoulutusLisatietoModel model = _tarjontaModel.getKoulutusLisatiedotModel().getLisatiedot(uri);
+        PropertysetItem psi = new BeanItem(model);
+
+        {
+            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "kuvailevatTiedot");
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kuvailevatTiedot"), LabelStyleEnum.H2));
+            vl.addComponent(rta);
+        }
+
+        {
+            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "sisalto");
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto"), LabelStyleEnum.H2));
+            vl.addComponent(rta);
+        }
+
+        {
+            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "sijoittuminenTyoelamaan");
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("sijoittuminenTyoelamaan"), LabelStyleEnum.H2));
+            vl.addComponent(rta);
+        }
+
+        {
+            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "kansainvalistyminen");
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kansainvalistyminen"), LabelStyleEnum.H2));
+            vl.addComponent(rta);
+        }
+
+        {
+            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "yhteistyoMuidenToimijoidenKanssa");
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa"), LabelStyleEnum.H2));
+            vl.addComponent(rta);
+        }
 
         return vl;
     }
