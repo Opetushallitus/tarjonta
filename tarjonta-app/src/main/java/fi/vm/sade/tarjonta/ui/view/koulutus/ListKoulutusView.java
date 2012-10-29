@@ -181,8 +181,7 @@ public class ListKoulutusView extends VerticalLayout {
                 KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus);
                 hc.addItem(curKoulutus);
                 hc.setParent(curKoulutus, rootItem);
-                hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi()) + ", " 
-                																			 + getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi()), true));
+                hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(curKoulutus.getKoulutus().getNimi(), true));
                 hc.setChildrenAllowed(curKoulutus, false);
             }
         }
