@@ -94,7 +94,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     	String searchStr = (kysely.getNimi() != null) ? kysely.getNimi().toLowerCase() : "";
     	QHakukohde qHakukohde = QHakukohde.hakukohde;
     	QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-    	BooleanExpression criteriaExpr = qHakukohde.hakukohdeNimi.toLowerCase().contains(searchStr);
+    	BooleanExpression criteriaExpr = qHakukohde.hakukohdeKoodistoNimi.toLowerCase().contains(searchStr);
     	
     	List<Hakukohde> hakukohdes = from(qHakukohde).
                 leftJoin(qHakukohde.koulutusmoduuliToteutuseList, qKomoto).fetch().where(criteriaExpr).

@@ -124,6 +124,7 @@ public class TarjontaPublicServiceTest {
         Hakukohde hakukohde = fixtures.createHakukohdeWithGivenOid(HAKUKOHDE_OID);//fixtures.createHakukohde();
         hakukohde.setHaku(haku);
         hakukohde.setHakukohdeNimi("Peltikorjaajan perustutkinto");
+        hakukohde.setHakukohdeKoodistoNimi("Peltikorjaajan perustutkinto");
         hakukohde.setTila(KoodistoContract.TarjontaTilat.JULKAISTU);
         hakukohdeDAO.insert(hakukohde);
 
@@ -142,6 +143,7 @@ public class TarjontaPublicServiceTest {
         // 2. hakukohde
         hakukohde = fixtures.createHakukohde();
         hakukohde.setHakukohdeNimi("Taidemaalarin erikoistutkinto");
+        hakukohde.setHakukohdeKoodistoNimi("Taidemaalarin erikoistutkinto");
         hakukohde.setHaku(haku);
         hakukohde.setTila(KoodistoContract.TarjontaTilat.VALMIS);
         hakukohdeDAO.insert(hakukohde);

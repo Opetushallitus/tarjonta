@@ -103,6 +103,7 @@ public class TarjontaSampleData {
         // Hakukohde jossa yksi koulutus
         //
         Hakukohde hakukohde = createHakukohde("Artesaani, käsi- ja taideteollisuusalan perustutkinto");
+        hakukohde.setHakukohdeKoodistoNimi("Artesaani, käsi- ja taideteollisuusalan perustutkinto");
         hakukohde.setHaku(haku);
         
         hakukohde.addKoulutusmoduuliToteutus(toteutus);

@@ -171,7 +171,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde);
                 hc.addItem(curHakukohde);
                 hc.setParent(curHakukohde, rootItem);
-                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getKoodiNimi(curHakukohde.getHakukohde().getNimi()), true));
+                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(curHakukohde.getHakukohde().getNimi(), true));
                 hc.setChildrenAllowed(curHakukohde, false);
             }
         }
