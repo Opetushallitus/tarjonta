@@ -107,11 +107,21 @@ public class TarjontaPresenter {
 
     public void saveHakuKohde(String tila) {
         _model.getHakukohde().setHakukohdeTila(tila);
+        _model.getHakukohde().setHakukohdeKoodistoNimi(tryGetHakukohdeNimi(_model.getHakukohde().getHakukohdeNimi()));
         saveHakuKohdePerustiedot();
     }
 
     public void commitHakukohdeForm(String tila) {
         hakuKohdePerustiedotView.commitForm(tila);
+    }
+    
+    private String tryGetHakukohdeNimi(String hakukohdeNimiUri) {
+        List<KoodiType> koodit = koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(hakukohdeNimiUri));
+        if (koodit != null && koodit.size() > 0){
+            return koodit.get(0).getMetadata().get(0).getNimi();
+        } else {
+            return "";
+        }
     }
 
     public void saveHakuKohdePerustiedot() {

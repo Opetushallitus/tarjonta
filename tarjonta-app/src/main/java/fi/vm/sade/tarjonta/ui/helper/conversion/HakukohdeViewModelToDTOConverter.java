@@ -68,7 +68,7 @@ public class HakukohdeViewModelToDTOConverter {
         } else {
         hakukohde.setOid(hakukohdevm.getOid());
         }
-        
+        hakukohde.setHakukohdeKoodistoNimi(hakukohdevm.getHakukohdeKoodistoNimi());
         hakukohde.getHakukohteenKoulutusOidit().addAll(hakukohdevm.getKomotoOids());
         hakukohde.getLisatiedot().addAll(convertTekstis(hakukohdevm.getLisatiedot()));
         hakukohde.getValintaPerusteidenKuvaukset().addAll(convertTekstis(hakukohdevm.getValintaPerusteidenKuvaus()));
@@ -84,6 +84,7 @@ public class HakukohdeViewModelToDTOConverter {
     	HakuViewModel haku = new HakuViewModel(); 
         haku.setHakuOid(hakukohdeTyyppi.getHakukohteenHakuOid());
     	hakukohdeVM.setHakuOid(haku);
+        hakukohdeVM.setHakukohdeKoodistoNimi(hakukohdeTyyppi.getHakukohdeKoodistoNimi());
     	hakukohdeVM.setOid(hakukohdeTyyppi.getOid());
     	hakukohdeVM.setKomotoOids(hakukohdeTyyppi.getHakukohteenKoulutusOidit());
     	hakukohdeVM.getLisatiedot().addAll(convertTekstiToVM(hakukohdeTyyppi.getLisatiedot()));
