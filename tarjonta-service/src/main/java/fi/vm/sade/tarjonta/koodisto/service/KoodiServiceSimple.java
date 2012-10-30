@@ -15,19 +15,21 @@
  */
 package fi.vm.sade.tarjonta.koodisto.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.koodisto.model.Koodi;
 import fi.vm.sade.tarjonta.koodisto.util.ConversionUtils;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- *
+ * 
  * @author Jukka Raanamo
  */
 public class KoodiServiceSimple implements KoodiService {
@@ -35,7 +37,8 @@ public class KoodiServiceSimple implements KoodiService {
     private KoodiBusinessService koodiService;
 
     @Override
-    public List<KoodiType> listKoodiByRelation(String koodi, boolean onAlaKoodi, SuhteenTyyppiType suhdeTyyppi) throws GenericFault {
+    public List<KoodiType> listKoodiByRelation(KoodiUriAndVersioType koodi, boolean onAlaKoodi,
+            SuhteenTyyppiType suhdeTyyppi) throws GenericFault {
         throw new UnsupportedOperationException("listKoodiByRelation is not supported");
     }
 
@@ -56,7 +59,8 @@ public class KoodiServiceSimple implements KoodiService {
     }
 
     @Override
-    public List<KoodiType> searchKoodisByKoodisto(SearchKoodisByKoodistoCriteriaType searchCriteria) throws GenericFault {
+    public List<KoodiType> searchKoodisByKoodisto(SearchKoodisByKoodistoCriteriaType searchCriteria)
+            throws GenericFault {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -71,6 +75,4 @@ public class KoodiServiceSimple implements KoodiService {
     private void throwNotSupported(String attribute) throws GenericFault {
         throw new GenericFault("search criteria not supported: " + attribute);
     }
-
 }
-

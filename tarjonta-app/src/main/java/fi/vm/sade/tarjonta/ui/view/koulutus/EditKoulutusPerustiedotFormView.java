@@ -31,6 +31,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
+import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusFormType;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
@@ -250,6 +251,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         ComboBox comboBox = new ComboBox();
         comboBox.setReadOnly(koulutusPerustiedotModel.isLoaded());
         kcKoulutusKoodi = UiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_KOULUTUS_URI, null, null, T(propertyKey + PROPERTY_PROMPT_SUFFIX), comboBox);
+        kcKoulutusKoodi.setFieldValueFormatter(UiBuilder.DEFAULT_URI_AND_VERSIO_FIELD_VALUE_FORMATTER);
 
         // TODO localizations in Koodisto available?? Using URI to show something.
         kcKoulutusKoodi.setCaptionFormatter(UiBuilder.DEFAULT_URI_CAPTION_FORMATTER);
@@ -274,8 +276,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                 final Property property = event.getProperty();
 
                 if (property != null && property.getValue() != null) {
-                    final String koodiUri = (String) property.getValue();
-                    presenter.searchKoulutusOhjelmakoodit(koodiUri);
+                    final KoodiUriAndVersioType koodi = (KoodiUriAndVersioType) property.getValue();
+                    presenter.searchKoulutusOhjelmakoodit(koodi);
                     Set<KoulutusohjelmaModel> koodistoKoulutusohjelma = koulutusPerustiedotModel.getKoodistoKoulutusohjelma();
 
                     for (KoulutusohjelmaModel m : koodistoKoulutusohjelma) {

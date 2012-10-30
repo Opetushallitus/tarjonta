@@ -20,6 +20,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
@@ -72,7 +73,7 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
 
 /**
  * This class is used to control the "tarjonta" UI.
- *
+ * 
  * @author mlyly
  */
 @Component
@@ -114,10 +115,11 @@ public class TarjontaPresenter {
     public void commitHakukohdeForm(String tila) {
         hakuKohdePerustiedotView.commitForm(tila);
     }
-    
+
     private String tryGetHakukohdeNimi(String hakukohdeNimiUri) {
-        List<KoodiType> koodit = koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(hakukohdeNimiUri));
-        if (koodit != null && koodit.size() > 0){
+        List<KoodiType> koodit = koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder
+                .latestAcceptedKoodiByUri(hakukohdeNimiUri));
+        if (koodit != null && koodit.size() > 0) {
             return koodit.get(0).getMetadata().get(0).getNimi();
         } else {
             return "";
@@ -127,15 +129,16 @@ public class TarjontaPresenter {
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
         getModel().getHakukohde().getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
-        tarjontaAdminService.lisaaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
+        tarjontaAdminService.lisaaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel()
+                .getHakukohde()));
 
     }
 
     public void setTunnisteKoodi(String hakukohdeNimiUri) {
-        //TODO add search from koodisto
+        // TODO add search from koodisto
 
-
-        List<KoodiType> koodit = koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(hakukohdeNimiUri));
+        List<KoodiType> koodit = koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder
+                .latestAcceptedKoodiByUri(hakukohdeNimiUri));
         KoodiType foundKoodi = null;
         for (KoodiType koodi : koodit) {
             foundKoodi = koodi;
@@ -146,12 +149,12 @@ public class TarjontaPresenter {
         }
     }
 
-  public void initHakukohdeForm(PerustiedotView hakuKohdePerustiedotView) {
+    public void initHakukohdeForm(PerustiedotView hakuKohdePerustiedotView) {
         this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
-        if(getModel().getHakukohde().getHakukohdeNimi() != null) {    
-        setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
+        if (getModel().getHakukohde().getHakukohdeNimi() != null) {
+            setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
         }
-        
+
         ListHakuVastausTyyppi haut = tarjontaPublicService.listHaku(new ListaaHakuTyyppi());
 
         this.hakuKohdePerustiedotView.initForm(getModel().getHakukohde());
@@ -160,18 +163,16 @@ public class TarjontaPresenter {
             hakuView = _model.getHakukohde().getHakuOid();
         }
         List<HakuViewModel> foundHaut = new ArrayList<HakuViewModel>();
-        for (HakuTyyppi foundHaku: haut.getResponse()) {
+        for (HakuTyyppi foundHaku : haut.getResponse()) {
             HakuViewModel haku = new HakuViewModel(foundHaku);
             haku.getHakuOid();
             haku.getNimiFi();
-            
+
             foundHaut.add(haku);
         }
-        
-       
-        
+
         this.hakuKohdePerustiedotView.addItemsToHakuCombobox(foundHaut);
-        
+
         if (hakuView != null) {
             _model.getHakukohde().setHakuOid(hakuView);
             ListaaHakuTyyppi hakuKysely = new ListaaHakuTyyppi();
@@ -180,16 +181,15 @@ public class TarjontaPresenter {
             HakuViewModel hakuModel = new HakuViewModel(hakuVastaus.getResponse().get(0));
             hakuModel.getHakuOid();
             hakuModel.getNimiFi();
-            _model.getHakukohde().setHakuOid(hakuModel);    
+            _model.getHakukohde().setHakuOid(hakuModel);
 
-        } 
-       
+        }
 
     }
 
     /**
      * Show main default view
-     *
+     * 
      * TODO REMOVE UI CODE FROM PRESENTER!
      */
     public void showMainDefaultView() {
@@ -220,13 +220,15 @@ public class TarjontaPresenter {
     public void showShowKoulutusView(String koulutusOid) {
         LOG.info("showShowKoulutusView()");
 
-        //If oid of koulutus is provided the koulutus is read from database before opening the ShowKoulutusView
+        // If oid of koulutus is provided the koulutus is read from database
+        // before opening the ShowKoulutusView
         if (koulutusOid != null) {
             try {
                 LueKoulutusKyselyTyyppi koulutusKysely = new LueKoulutusKyselyTyyppi();
                 koulutusKysely.setOid(koulutusOid);
                 LueKoulutusVastausTyyppi tyyppi = this.tarjontaPublicService.lueKoulutus(koulutusKysely);
-                KoulutusToisenAsteenPerustiedotViewModel model = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(tyyppi, DocumentStatus.LOADED);
+                KoulutusToisenAsteenPerustiedotViewModel model = koulutusToDTOConverter
+                        .createKoulutusPerustiedotViewModel(tyyppi, DocumentStatus.LOADED);
                 getModel().setKoulutusPerustiedotModel(model);
             } catch (ExceptionMessage ex) {
                 LOG.error("Service call failed.", ex);
@@ -252,7 +254,8 @@ public class TarjontaPresenter {
      * Show koulutus edit view.
      */
     public void showKoulutusEditView(String koulutusOid) {
-        //If oid of koulutus is provided the koulutus is read from database before opening the KoulutusEditView
+        // If oid of koulutus is provided the koulutus is read from database
+        // before opening the KoulutusEditView
         if (koulutusOid != null) {
             LueKoulutusKyselyTyyppi koulutusKysely = new LueKoulutusKyselyTyyppi();
             koulutusKysely.setOid(koulutusOid);
@@ -260,7 +263,8 @@ public class TarjontaPresenter {
 
             try {
                 KoulutusToisenAsteenPerustiedotViewModel koulutus = null;
-                koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(lueKoulutus, DocumentStatus.LOADED);
+                koulutus = koulutusToDTOConverter
+                        .createKoulutusPerustiedotViewModel(lueKoulutus, DocumentStatus.LOADED);
                 getModel().setKoulutusPerustiedotModel(koulutus);
             } catch (ExceptionMessage ex) {
                 LOG.error("Service call failed.", ex);
@@ -270,10 +274,10 @@ public class TarjontaPresenter {
             throw new RuntimeException("Application error - missing OID, cannot open KoulutusEditView.");
         }
 
-        //Clearing the layout from previos content
+        // Clearing the layout from previos content
         this._rootView.getAppRootLayout().removeAllComponents();
 
-        //Adding the form
+        // Adding the form
         VerticalLayout vl = UiUtil.verticalLayout();
         vl.setHeight(-1, VerticalLayout.UNITS_PIXELS);
         vl.addComponent(_rootView.getBreadcrumbsView());
@@ -284,45 +288,44 @@ public class TarjontaPresenter {
 
     /**
      * Show hakukohde edit view.
-     *
+     * 
      * @param koulutusOids
      * @param hakukohdeOid
      */
     public void showHakukohdeEditView(List<String> koulutusOids, String hakukohdeOid) {
         LOG.info("showHakukohdeEditView()");
-         //After the data has been initialized the form is created
+        // After the data has been initialized the form is created
         EditHakukohdeView editHakukohdeView = new EditHakukohdeView();
         if (hakukohdeOid == null) {
-        getModel().setHakukohde(new HakukohdeViewModel());
-        } 
-        
-          //If a list of koulutusOids is provided they are set in the model
-        //These koulutus objects will be published in the created hakukohde
+            getModel().setHakukohde(new HakukohdeViewModel());
+        }
+
+        // If a list of koulutusOids is provided they are set in the model
+        // These koulutus objects will be published in the created hakukohde
         if (koulutusOids != null) {
             setKomotoOids(koulutusOids);
 
         }
-         //if a hakukohdeOid is provided the hakukohde is read from the database
+        // if a hakukohdeOid is provided the hakukohde is read from the database
         if (hakukohdeOid != null) {
             LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
             kysely.setOid(hakukohdeOid);
-            _model.setHakukohde(this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(tarjontaPublicService.lueHakukohde(kysely).getHakukohde()));
+            _model.setHakukohde(this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(tarjontaPublicService
+                    .lueHakukohde(kysely).getHakukohde()));
             setKomotoOids(_model.getHakukohde().getKomotoOids());
         }
-        
-        //Clearing the layout from previos content
+
+        // Clearing the layout from previos content
         this._rootView.getAppRootLayout().removeAllComponents();
 
-        //Adding the form
+        // Adding the form
         VerticalLayout vl = UiUtil.verticalLayout();
         vl.setHeight(-1, VerticalLayout.UNITS_PIXELS);
         vl.addComponent(_rootView.getBreadcrumbsView());
         vl.addComponent(editHakukohdeView);
         _rootView.getAppRootLayout().addComponent(vl);
         _rootView.getAppRootLayout().setExpandRatio(vl, 1f);
-        
-         
-        
+
     }
 
     public void doSearch() {
@@ -340,8 +343,10 @@ public class TarjontaPresenter {
     public Map<String, List<HakukohdeTulos>> getHakukohdeDataSource() {
         Map<String, List<HakukohdeTulos>> map = new HashMap<String, List<HakukohdeTulos>>();
         try {
-        	//Fetching komotos matching currently specified criteria (currently selected organisaatio and written text in search box)
-        	HaeHakukohteetKyselyTyyppi kysely = this.koulutusSearchSpecToDTOConverter.convertViewModelToHakukohdeDTO(_model.getSearchSpec());
+            // Fetching komotos matching currently specified criteria (currently
+            // selected organisaatio and written text in search box)
+            HaeHakukohteetKyselyTyyppi kysely = this.koulutusSearchSpecToDTOConverter
+                    .convertViewModelToHakukohdeDTO(_model.getSearchSpec());
             getModel().setHakukohteet(tarjontaPublicService.haeHakukohteet(kysely).getHakukohdeTulos());
         } catch (Exception ex) {
             LOG.error("Error in finding hakukokohteet: {}", ex.getMessage());
@@ -364,7 +369,7 @@ public class TarjontaPresenter {
 
     /**
      * Gets the currently selected hakukohde objects.
-     *
+     * 
      * @return
      */
     public List<HakukohdeTulos> getSelectedhakukohteet() {
@@ -395,7 +400,7 @@ public class TarjontaPresenter {
 
     /**
      * Gets the currently selected koulutus objects.
-     *
+     * 
      * @return
      */
     public List<KoulutusTulos> getSelectedKoulutukset() {
@@ -438,7 +443,7 @@ public class TarjontaPresenter {
 
     /**
      * Get UI model. TarjontaModel is initialized and injected by Spring.
-     *
+     * 
      * @return
      */
     public TarjontaModel getModel() {
@@ -475,7 +480,7 @@ public class TarjontaPresenter {
 
     /**
      * Gets the list view of koulutus objects.
-     *
+     * 
      * @return the koulutus list view
      */
     public ListKoulutusView getKoulutusListView() {
@@ -484,32 +489,34 @@ public class TarjontaPresenter {
 
     /**
      * Sets the list view of koulutus objects
-     *
-     * @param listKoulutusView - the list view of koulutus objects to set
+     * 
+     * @param listKoulutusView
+     *            - the list view of koulutus objects to set
      */
     public void setKoulutusListView(ListKoulutusView listKoulutusView) {
         this.koulutusListView = listKoulutusView;
     }
-    
+
     /**
      * Retrieves the koulutus objects for ListKoulutusView.
-     *
+     * 
      * @return the koulutus objects
      */
     public Map<String, List<KoulutusTulos>> getKoulutusDataSource() {
         Map<String, List<KoulutusTulos>> map = new HashMap<String, List<KoulutusTulos>>();
         try {
-        	//Fetching komotos matching currently specified criteria (currently selected organisaatio and written text in search box)
-        	HaeKoulutuksetKyselyTyyppi kysely = this.koulutusSearchSpecToDTOConverter.convertViewModelToKoulutusDTO(_model.getSearchSpec());
-        	
-            _model.setKoulutukset(this.tarjontaPublicService.haeKoulutukset(kysely
-            		).getKoulutusTulos());
-            
+            // Fetching komotos matching currently specified criteria (currently
+            // selected organisaatio and written text in search box)
+            HaeKoulutuksetKyselyTyyppi kysely = this.koulutusSearchSpecToDTOConverter
+                    .convertViewModelToKoulutusDTO(_model.getSearchSpec());
+
+            _model.setKoulutukset(this.tarjontaPublicService.haeKoulutukset(kysely).getKoulutusTulos());
+
         } catch (Exception ex) {
-        	LOG.error("Error in finding koulutukset: {}", ex.getMessage());
-        	getModel().setKoulutukset(new ArrayList<KoulutusTulos>());
+            LOG.error("Error in finding koulutukset: {}", ex.getMessage());
+            getModel().setKoulutukset(new ArrayList<KoulutusTulos>());
         }
-        //Creating the datasource model
+        // Creating the datasource model
         for (KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
             String koulutusKey = curKoulutus.getKoulutus().getTarjoaja();
             if (!map.containsKey(koulutusKey)) {
@@ -524,7 +531,6 @@ public class TarjontaPresenter {
 
         return map;
     }
-    
 
     public String getOrganisaatioNimiByOid(String organisaatioOid) {
         String vastaus = organisaatioOid;
@@ -538,7 +544,7 @@ public class TarjontaPresenter {
 
     /**
      * Gets the oids of the selectd koulutuses.
-     *
+     * 
      * @return the oids
      */
     public List<String> getSelectedKoulutusOids() {
@@ -551,7 +557,7 @@ public class TarjontaPresenter {
 
     /**
      * Removal of a komoto object.
-     *
+     * 
      * @param koulutus
      */
     public void removeKoulutus(KoulutusTulos koulutus) {
@@ -561,13 +567,14 @@ public class TarjontaPresenter {
 
     /**
      * Search koodisto KOMO data by koulutus koodi uri.
-     *
-     * @param koodistoUri
+     * 
+     * @param koodi
      */
-    public void searchKoulutusOhjelmakoodit(final String koodistoUri) {
-        //DEBUGSAWAY:LOG.debug("Try to search koodisto meta data by uri : '{}'", koodistoUri);
+    public void searchKoulutusOhjelmakoodit(final KoodiUriAndVersioType koodi) {
+        // DEBUGSAWAY:LOG.debug("Try to search koodisto meta data by uri : '{}'",
+        // koodistoUri);
 
-        if (koodistoUri == null) {
+        if (koodi == null) {
             throw new RuntimeException("Application error - koulutus/tutkinto Koodisto URI cannot be null.");
         }
 
@@ -575,10 +582,11 @@ public class TarjontaPresenter {
             throw new RuntimeException("Application error - Koodisto service not initialized.");
         }
 
-        final List<KoodiType> searchKoodis = koodiService.listKoodiByRelation(koodistoUri, true, SuhteenTyyppiType.SISALTYY);
+        final List<KoodiType> searchKoodis = koodiService.listKoodiByRelation(koodi, true, SuhteenTyyppiType.SISALTYY);
 
         if (searchKoodis.size() == 0) {
-            //DEBUGSAWAY:LOG.debug("koodi with URL " + koodistoUri + " was not found.");
+            // DEBUGSAWAY:LOG.debug("koodi with URL " + koodistoUri +
+            // " was not found.");
         }
 
         Set<KoulutusohjelmaModel> koulutusohjemaResultSet = new HashSet<KoulutusohjelmaModel>();
@@ -586,31 +594,37 @@ public class TarjontaPresenter {
         for (KoodiType type : searchKoodis) {
             String name = null;
 
-//            if (LOG.isDebugEnabled()) {
-//                //DEBUGSAWAY:LOG.debug("List basic data : {}, {}", type.getKoodiArvo(), type.getKoodiUri());
-//            }
+            // if (LOG.isDebugEnabled()) {
+            // //DEBUGSAWAY:LOG.debug("List basic data : {}, {}",
+            // type.getKoodiArvo(), type.getKoodiUri());
+            // }
 
-//            if (LOG.isDebugEnabled()) {
-//                for (KoodistoItemType t : type.getKoodisto()) {
-//                    LOG.debug("List included koodistos : {}, {}", t.getKoodistoUri(), t.getKoodistoVersio());
-//                }
-//            }
+            // if (LOG.isDebugEnabled()) {
+            // for (KoodistoItemType t : type.getKoodisto()) {
+            // LOG.debug("List included koodistos : {}, {}", t.getKoodistoUri(),
+            // t.getKoodistoVersio());
+            // }
+            // }
 
             for (KoodiMetadataType m : type.getMetadata()) {
                 if (LOG.isDebugEnabled()) {
-                    //DEBUGSAWAY:LOG.debug("List included metadata : " + m.getKuvaus() + " ," + m.getLyhytNimi() + " ," + m.getKasite() + " ," + m.getSisaltaaKoodiston() + " ," + m.getSisaltaaMerkityksen() + " ," + m.getNimi() + " ," + m.getHuomioitavaKoodi());
+                    // DEBUGSAWAY:LOG.debug("List included metadata : " +
+                    // m.getKuvaus() + " ," + m.getLyhytNimi() + " ," +
+                    // m.getKasite() + " ," + m.getSisaltaaKoodiston() + " ," +
+                    // m.getSisaltaaMerkityksen() + " ," + m.getNimi() + " ," +
+                    // m.getHuomioitavaKoodi());
                 }
                 if (m.getNimi() != null) {
                     name = m.getNimi();
                 }
             }
 
-            //filter all invalid koodisto items
+            // filter all invalid koodisto items
             if (type.getKoodiUri() != null && name != null && type.getKoodiArvo() != null) {
                 koulutusohjemaResultSet.add(new KoulutusohjelmaModel(type.getKoodiUri(), type.getKoodiArvo(), name));
             }
 
-            //DEBUGSAWAY:LOG.debug("Result : {}", koulutusohjemaResultSet);
+            // DEBUGSAWAY:LOG.debug("Result : {}", koulutusohjemaResultSet);
             getModel().getKoulutusPerustiedotModel().setKoodistoKoulutusohjelma(koulutusohjemaResultSet);
         }
     }
@@ -630,8 +644,9 @@ public class TarjontaPresenter {
     /**
      * Navigate to the ShowHakukohdeView for the hakukohde with oid given as
      * parameter.
-     *
-     * @param oid the oid given
+     * 
+     * @param oid
+     *            the oid given
      */
     public void showShowHakukohdeView(String oid) {
         // TODO Auto-generated method stub
@@ -639,13 +654,14 @@ public class TarjontaPresenter {
 
     /**
      * Shows the koulutus objects for a hakukohde in the ListHakukohdeView.
-     *
+     * 
      * @param oid
      */
     public void showKoulutuksetForHakukohde(String oid) {
         LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
         kysely.setOid(oid);
-        HakukohdeViewModel hakukohde = this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(this.tarjontaPublicService.lueHakukohde(kysely).getHakukohde());
+        HakukohdeViewModel hakukohde = this.hakukohdeToDTOConverter
+                .convertDTOToHakukohdeViewMode(this.tarjontaPublicService.lueHakukohde(kysely).getHakukohde());
         this._hakukohdeListView.appendKoulutuksetToList(hakukohde);
 
     }
@@ -654,9 +670,11 @@ public class TarjontaPresenter {
      * Selects the organisaatio in tarjonta, by setting the organisaatio name in
      * breadcrumb and setting the organisaatioOid and organisaatioNimi in
      * tarjonta model. Enables the create koulutus button in koulutus list view.
-     *
-     * @param organisaatioOid - the organisaatio oid to select
-     * @param organisaatioName - the organisaatio name to select
+     * 
+     * @param organisaatioOid
+     *            - the organisaatio oid to select
+     * @param organisaatioName
+     *            - the organisaatio name to select
      */
     public void selectOrganisaatio(String organisaatioOid, String organisaatioName) {
         _rootView.getBreadcrumbsView().removeAllComponents();
@@ -664,16 +682,17 @@ public class TarjontaPresenter {
         _model.setOrganisaatioOid(organisaatioOid);
         _model.setOrganisaatioName(organisaatioName);
         List<OrganisaatioDTO> childOrgs = this.organisaatioService.findAllChildrenWithOid(organisaatioOid);
-		
-		List<String> orgOids = new ArrayList<String>();
-		orgOids.add(organisaatioOid);
-		for(OrganisaatioDTO org : childOrgs) {
-			
-			orgOids.add(org.getOid());
-		}
-		_model.getSearchSpec().setOrganisaatioOids(orgOids);
-		
-        //Updating koulutuslista to show only komotos with tarjoaja matching the selected org or one of its descendants
+
+        List<String> orgOids = new ArrayList<String>();
+        orgOids.add(organisaatioOid);
+        for (OrganisaatioDTO org : childOrgs) {
+
+            orgOids.add(org.getOid());
+        }
+        _model.getSearchSpec().setOrganisaatioOids(orgOids);
+
+        // Updating koulutuslista to show only komotos with tarjoaja matching
+        // the selected org or one of its descendants
         getKoulutusListView().reload();
         this.getHakukohdeListView().reload();
         this.getKoulutusListView().toggleCreateKoulutusB(true);
@@ -681,14 +700,15 @@ public class TarjontaPresenter {
 
     /**
      * Gets koulutus by its oid.
-     *
-     * @param komotoOid - the koulutus oid for which the name is returned
+     * 
+     * @param komotoOid
+     *            - the koulutus oid for which the name is returned
      * @return the koulutus
      */
     public LueKoulutusVastausTyyppi getKoulutusByOid(String komotoOid) {
-    	LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
-    	kysely.setOid(komotoOid);
-    	LueKoulutusVastausTyyppi vastaus = this.tarjontaPublicService.lueKoulutus(kysely);
-    	return vastaus;
+        LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
+        kysely.setOid(komotoOid);
+        LueKoulutusVastausTyyppi vastaus = this.tarjontaPublicService.lueKoulutus(kysely);
+        return vastaus;
     }
 }

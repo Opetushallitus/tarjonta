@@ -31,6 +31,7 @@ import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.koodisto.widget.DefaultKoodiCaptionFormatter;
 import fi.vm.sade.koodisto.widget.DefaultKoodiFieldValueFormatter;
@@ -64,6 +65,29 @@ public class UiBuilder extends UiUtil {
             if (dto instanceof KoodiType) {
                 KoodiType kdto = (KoodiType) dto;
                 return kdto.getKoodiUri();
+            } else {
+                return "" + dto;
+            }
+        }
+    };
+    
+    /**
+     * Default field value as uri and versio formatter for koodisto components
+     */
+    public static final FieldValueFormatter DEFAULT_URI_AND_VERSIO_FIELD_VALUE_FORMATTER = new FieldValueFormatter() {
+
+        @Override
+        public Object formatFieldValue(Object dto) {
+            if (dto == null) {
+                return null;
+            }
+
+            if (dto instanceof KoodiType) {
+                KoodiType kdto = (KoodiType) dto;
+                KoodiUriAndVersioType kvt = new KoodiUriAndVersioType();
+                kvt.setKoodiUri(kdto.getKoodiUri());
+                kvt.setVersio(kvt.getVersio());
+                return kvt;
             } else {
                 return "" + dto;
             }
