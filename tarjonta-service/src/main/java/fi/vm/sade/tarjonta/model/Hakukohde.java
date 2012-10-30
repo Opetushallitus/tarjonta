@@ -41,10 +41,19 @@ public class Hakukohde extends BaseEntity {
     @JoinColumn(name = "hakukohde_id")
     private Set<Valintakoe> valintakoes = new HashSet<Valintakoe>();
 
+    /**
+     * The koodisto uri of the name of this hakukohde object.
+     */
     @NotNull
     @Column(name = "hakukohde_nimi", nullable = false)
     private String hakukohdeNimi;
     
+    /**
+     * The string containing the human readable name of this
+     * hakukohde object. Names in different languages are
+     * concatenated to this field. This field is created
+     * to enable search.
+     */
     @Column(name= "hakukohde_koodisto_nimi")
     private String hakukohdeKoodistoNimi;
 

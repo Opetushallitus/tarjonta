@@ -144,6 +144,7 @@ public class TarjontaSampleData {
         h.setHakukohdeNimi(nimi);
         h.setOid(randomOid("hakukohde"));
         h.setYlinValintaPistemaara(90);
+        h.setTila(TarjontaTila.VALMIS);
 
         return h;
 
