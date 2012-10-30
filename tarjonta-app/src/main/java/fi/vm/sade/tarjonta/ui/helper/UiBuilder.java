@@ -71,6 +71,27 @@ public class UiBuilder extends UiUtil {
     };
 
     /**
+     * Field value formatter that always stores also the koodi version to the value.
+     */
+    public static final FieldValueFormatter DEFAULT_URI_AND_VERSION_FIELD_VALUE_FORMATTER = new FieldValueFormatter() {
+
+        @Override
+        public Object formatFieldValue(Object dto) {
+            if (dto == null) {
+                return null;
+            }
+
+            if (dto instanceof KoodiType) {
+                KoodiType kdto = (KoodiType) dto;
+                return kdto.getKoodiUri() + "#" + kdto.getVersio();
+            } else {
+                return "" + dto;
+            }
+        }
+    };
+
+
+    /**
      * Default caption formatter that shows the koodi value (arvo).
      */
     public static final CaptionFormatter DEFAULT_ARVO_CAPTION_FORMATTER = new CaptionFormatter<KoodiType>() {
@@ -109,11 +130,11 @@ public class UiBuilder extends UiUtil {
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt) {
         return koodistoComboBox(layout, koodistoUri, null, null, prompt, null);
     }
-    
+
      public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb) {
         return koodistoComboBox(layout, koodistoUri, null, null, prompt, cb);
     }
-    
+
     /**
      * Create new KoodistoComponent with ComboBox. Sets compobox's foltering mode to "CONTAINS".
      *
@@ -121,13 +142,13 @@ public class UiBuilder extends UiUtil {
      * Note: null selection not allowed.
      *
      * Possible bind to a property.
-     * 
+     *
      * @param layout
      * @param koodistoUri
      * @param psi
      * @param expression
      * @param prompt
-     * @return 
+     * @return
      */
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt) {
         return koodistoComboBox(layout, koodistoUri, psi, expression, prompt, null);
@@ -140,21 +161,21 @@ public class UiBuilder extends UiUtil {
      * Note: null selection not allowed.
      *
      * Possible bind to a property.
-     * 
+     *
      * @param layout
      * @param koodistoUri
      * @param psi
      * @param expression
      * @param prompt
      * @param cb optional
-     * @return 
+     * @return
      */
-    
+
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, ComboBox cb) {
         // Koodisto displayed in ComboBox
 
         ComboBox combo =  (cb == null) ? comboBox(null, null, null) : cb;
-        
+
         combo.setFilteringMode(AbstractSelect.Filtering.FILTERINGMODE_CONTAINS);
         if (prompt != null) {
             combo.setInputPrompt(prompt);
@@ -166,7 +187,7 @@ public class UiBuilder extends UiUtil {
         c.setField(combo);
 
         // BOUND value as uri
-        c.setFieldValueFormatter(DEFAULT_URI_FIELD_VALUE_FORMATTER);
+        c.setFieldValueFormatter(DEFAULT_URI_AND_VERSION_FIELD_VALUE_FORMATTER);
 
         // Selected data bound there
         if (psi != null && expression != null) {
@@ -211,7 +232,7 @@ public class UiBuilder extends UiUtil {
         kc.setField(c);
 
         // BOUND value as uri
-        kc.setFieldValueFormatter(DEFAULT_URI_FIELD_VALUE_FORMATTER);
+        kc.setFieldValueFormatter(DEFAULT_URI_AND_VERSION_FIELD_VALUE_FORMATTER);
 
         UiBaseUtil.handleAddComponent(layout, kc);
 
