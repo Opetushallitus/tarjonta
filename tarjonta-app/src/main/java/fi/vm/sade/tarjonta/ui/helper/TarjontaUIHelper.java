@@ -48,39 +48,95 @@ public class TarjontaUIHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaUIHelper.class);
 
+    public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";
+
     @Autowired
     private KoodiService _koodiService;
 
     private I18NHelper _i18n = new I18NHelper(TarjontaUIHelper.class);
 
     /**
-     * Get koodi's localized name with current UI locale.
+     * Default version for those uris without version information is "-1".
      *
-     * @param koodiUri
+     * @param koodiUriWithVersion
+     * @return String array with [koodiUri, koodiVersion]
+     */
+    private String[] splitKoodiURIWithVersion(String koodiUriWithVersion) {
+        String[] result = new String[2];
+
+        int index = koodiUriWithVersion.lastIndexOf(KOODI_URI_AND_VERSION_SEPARATOR);
+        if (index > 0) {
+            result[0] = koodiUriWithVersion.substring(0, index);
+            result[1] = koodiUriWithVersion.substring(index + KOODI_URI_AND_VERSION_SEPARATOR.length());
+        } else {
+            result[0] = koodiUriWithVersion;
+            result[1] = "-1";
+        }
+
+        return result;
+    }
+
+    /**
+     * Extract version number from uri.
+     *
+     * @param koodiUriWithVersion
+     * @return version number, -1 means no version available
+     */
+    public int getKoodiVersion(String koodiUriWithVersion) {
+        return Integer.parseInt(splitKoodiURIWithVersion(koodiUriWithVersion)[1]);
+    }
+
+    /**
+     * Split uri from "#" and extract uri without version number.
+     *
+     * @param koodiUriWithVersion
+     * @return koodiUri without version information
+     */
+    public String getKoodiURI(String koodiUriWithVersion) {
+        return splitKoodiURIWithVersion(koodiUriWithVersion)[0];
+    }
+
+    /**
+     * Get koodi's localized name with current UI locale.
+     * Uses versioned koodi data if given.
+     *
+     * @param koodiUriWithPossibleVersionInformation
      * @return
      */
-    public String getKoodiNimi(String koodiUri) {
-        return getKoodiNimi(koodiUri, null);
+    public String getKoodiNimi(String koodiUriWithPossibleVersionInformation) {
+        return getKoodiNimi(koodiUriWithPossibleVersionInformation, null);
     }
 
     /**
      * Get koodi's name in given locale.
      * If nimi for given <code>locale</locale> is not found, we try to return it with locale "FI".
+     * Uses versioned koodi data if given.
      *
-     * @param koodiUri
+     * @param koodiUriWithPossibleVersionInformation
      * @param locale if null, then I18N.getLocale() used
      * @return empty string or koodi metadatas localized name, in error cases also error text is given
      */
-    public String getKoodiNimi(String koodiUri, Locale locale) {
+    public String getKoodiNimi(String koodiUriWithPossibleVersionInformation, Locale locale) {
         String result = "";
 
         try {
-            if (koodiUri != null) {
+            if (koodiUriWithPossibleVersionInformation != null) {
                 if (locale == null) {
                     locale = I18N.getLocale();
                 }
 
-                SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.latestValidAcceptedKoodiByUri(koodiUri);
+                String uri = getKoodiURI(koodiUriWithPossibleVersionInformation);
+                int version = getKoodiVersion(koodiUriWithPossibleVersionInformation);
+
+                // Search for the give koodi (and version)
+                SearchKoodisCriteriaType searchCriteria;
+
+                if (version < 0) {
+                    searchCriteria = KoodiServiceSearchCriteriaBuilder.latestValidAcceptedKoodiByUri(uri);
+                } else {
+                    searchCriteria = KoodiServiceSearchCriteriaBuilder.koodiByUriAndVersion(uri, version);
+                }
+
                 List<KoodiType> queryResult = _koodiService.searchKoodis(searchCriteria);
 
                 if (queryResult.size() >= 1) {
@@ -94,16 +150,16 @@ public class TarjontaUIHelper {
                     if (kmdt != null) {
                         result = kmdt.getNimi();
                     } else {
-                        result = _i18n.getMessage("_koodiMetadataError", koodiUri, locale);
+                        result = _i18n.getMessage("_koodiMetadataError", koodiUriWithPossibleVersionInformation, locale);
                     }
                 }
             }
         } catch (Throwable ex) {
-            LOG.error("Failed to read koodi from koodisto: koodi uri == " + koodiUri, ex);
-            result = _i18n.getMessage("_koodiError", koodiUri);
+            LOG.error("Failed to read koodi from koodisto: koodi uri == " + koodiUriWithPossibleVersionInformation, ex);
+            result = _i18n.getMessage("_koodiError", koodiUriWithPossibleVersionInformation);
         }
 
-        LOG.info("getKoodiNimi({}, {}) --> {}", new Object[] {koodiUri, locale, result});
+        LOG.debug("getKoodiNimi({}, {}) --> {}", new Object[] {koodiUriWithPossibleVersionInformation, locale, result});
 
         return result;
     }

@@ -83,7 +83,7 @@ public class UiBuilder extends UiUtil {
 
             if (dto instanceof KoodiType) {
                 KoodiType kdto = (KoodiType) dto;
-                return kdto.getKoodiUri() + "#" + kdto.getVersio();
+                return kdto.getKoodiUri() + TarjontaUIHelper.KOODI_URI_AND_VERSION_SEPARATOR + kdto.getVersio();
             } else {
                 return "" + dto;
             }
