@@ -124,6 +124,7 @@ public class TarjontaPublicServiceTest {
         Hakukohde hakukohde = fixtures.createHakukohdeWithGivenOid(HAKUKOHDE_OID);//fixtures.createHakukohde();
         hakukohde.setHaku(haku);
         hakukohde.setHakukohdeNimi("Peltikorjaajan perustutkinto");
+        hakukohde.setHakukohdeKoodistoNimi("Peltikorjaajan perustutkinto");
         hakukohde.setTila(TarjontaTila.VALMIS);
         hakukohdeDAO.insert(hakukohde);
 

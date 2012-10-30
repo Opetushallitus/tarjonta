@@ -178,7 +178,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             HakuKoosteTyyppi haku = new HakuKoosteTyyppi();
             KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
 
-            hakukohde.setNimi(hakukohdeModel.getHakukohdeKoodistoNimi());
+            hakukohde.setNimi(hakukohdeModel.getHakukohdeNimi());
             hakukohde.setTila(hakukohdeModel.getTila().name());
             hakukohde.setOid(hakukohdeModel.getOid());
 
