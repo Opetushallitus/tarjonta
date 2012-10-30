@@ -19,9 +19,11 @@ package fi.vm.sade.tarjonta.service.impl;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
@@ -32,6 +34,9 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi.KoulutusmoduuliTulos;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
@@ -46,6 +51,11 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebResult;
+import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.datatype.DatatypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -287,6 +297,24 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         vastaus.setHakukohde(hakukohdeTyyppi);
         return vastaus;
     }
+
+	@Override
+	public HaeKoulutusmoduulitVastausTyyppi haeKoulutusmoduulit(HaeKoulutusmoduulitKyselyTyyppi kysely) {
+		SearchCriteria criteria = new SearchCriteria();
+		criteria.setKoulutusKoodi(kysely.getKoulutuskoodiUri());
+		criteria.setKoulutusohjelmaKoodi(kysely.getKoulutusohjelmakoodiUri());
+		HaeKoulutusmoduulitVastausTyyppi vastaus = new HaeKoulutusmoduulitVastausTyyppi();
+		for (Koulutusmoduuli curKomo : this.koulutusmoduuliDAO.search(criteria)) {
+			KoulutusmoduuliTulos tulos = new KoulutusmoduuliTulos();
+			KoulutusmoduuliKoosteTyyppi kooste = new KoulutusmoduuliKoosteTyyppi();
+			kooste.setOid(curKomo.getOid());
+			kooste.setKoulutuskoodiUri(curKomo.getKoulutusKoodi());
+			kooste.setKoulutusohjelmakoodiUri(curKomo.getKoulutusohjelmaKoodi());
+			tulos.setKoulutusmoduuli(kooste);
+			vastaus.getKoulutusmoduuliTulos().add(tulos);
+		}
+		return vastaus;
+	}
 
 }
 

@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
@@ -42,6 +43,8 @@ import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
 
@@ -158,6 +161,26 @@ public class TarjontaAdminServiceTest {
         this.adminService.poistaKoulutus(komotoOid);
         komotos = this.koulutusmoduuliToteutusDAO.findAll();
         assertEquals(komotosOriginalSize - 1, komotos.size());
+    }
+    
+    @Test
+    public void testLisaaKoulutusmoduuliHappyPath() {
+    	String oid = "oid:" + System.currentTimeMillis();
+    	String koulutuskoodi = "uri:koodi1";
+    	String koKoodi = "uri:kokoodi1";
+    	KoulutusmoduuliKoosteTyyppi koulutusmoduuliT = new KoulutusmoduuliKoosteTyyppi();
+    	koulutusmoduuliT.setOid(oid);
+    	koulutusmoduuliT.setKoulutuskoodiUri(koulutuskoodi);
+    	koulutusmoduuliT.setKoulutusohjelmakoodiUri(koKoodi);
+    	koulutusmoduuliT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+    	adminService.lisaaKoulutusmoduuli(koulutusmoduuliT);
+    	
+    	SearchCriteria sc = new SearchCriteria();
+    	sc.setKoulutusKoodi(koulutuskoodi);
+    	sc.setKoulutusohjelmaKoodi(koKoodi);
+    	Koulutusmoduuli komo = this.koulutusmoduuliDAO.search(sc).get(0);
+    	assertEquals(koulutuskoodi, komo.getKoulutusKoodi());
+    	
     }
 
     private void assertMatch(YhteyshenkiloTyyppi expected, Yhteyshenkilo actual) {

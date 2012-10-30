@@ -26,8 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
@@ -39,11 +41,14 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliKoosteTyyppi;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
@@ -68,6 +73,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+    
+    @Autowired
+    private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
     @Autowired
     private HakuDAO hakuDAO;
@@ -202,6 +210,17 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
     }
     
+	@Override
+	public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli)
+			throws GenericFault {
+		Koulutusmoduuli komo = new Koulutusmoduuli(KoulutusmoduuliTyyppi.valueOf(koulutusmoduuli.getKoulutusmoduuliTyyppi().value()));
+		komo.setOid(koulutusmoduuli.getOid());
+		komo.setKoulutusKoodi(koulutusmoduuli.getKoulutuskoodiUri());
+		komo.setKoulutusohjelmaKoodi(koulutusmoduuli.getKoulutusohjelmakoodiUri());
+		koulutusmoduuliDAO.insert(komo);
+		return koulutusmoduuli;
+	}
+    
 
 
     private List<HakuTyyppi> convert(List<Haku> haut) {
@@ -314,6 +333,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public void setKoulutusmoduuliToteutusDAO(KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO) {
         this.koulutusmoduuliToteutusDAO = koulutusmoduuliToteutusDAO;
     }
+
+
 
 
 

@@ -10,12 +10,17 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliKoosteTyyppi;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
+import javax.jws.WebParam.Mode;
+import javax.jws.WebResult;
+import javax.xml.ws.Holder;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
@@ -121,6 +126,13 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
 	public void poistaKoulutus(String koulutusOid) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli)
+			throws GenericFault {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

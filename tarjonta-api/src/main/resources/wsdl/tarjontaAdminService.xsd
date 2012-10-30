@@ -25,6 +25,9 @@
 
     <xs:element name="paivitaKoulutus" type="tns:PaivitaKoulutusTyyppi"/>
     <xs:element name="paivitaKoulutusVastaus" type="tns:PaivitaKoulutusVastausTyyppi"/>
+    
+    <xs:element name="lisaaKoulutusmoduuli" type="tns:LisaaKoulutusmoduuliTyyppi"/>
+    <xs:element name="lisaaKoulutusmoduuliVastaus" type="tns:LisaaKoulutusmoduuliVastausTyyppi"/>
 
     <xs:element name="lisaaHakukohde" type="tns:LisaaHakukohdeType"/>
     <xs:element name="lisaaHakukohdeVastaus" type="tns:LisaaHakukohdeVastausType"/>
@@ -141,6 +144,18 @@
     </xs:complexType>
 
     <xs:complexType name="PaivitaKoulutusVastausTyyppi">
+    </xs:complexType>
+    
+    <xs:complexType name="LisaaKoulutusmoduuliTyyppi">
+        <xs:sequence>
+            <xs:element name="koulutusmoduuli" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LisaaKoulutusmoduuliVastausTyyppi">
+        <xs:sequence>
+            <xs:element name="koulutusmoduuliVastaus" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
     </xs:complexType>
 
 </xs:schema>

@@ -22,6 +22,8 @@ import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
+
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,16 +79,20 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
         // todo: are we searching for LOI or LOS - that group by e.g. per organisaatio is
         // take from different attribute
-        Expression groupBy = groupBy(criteria);
+        //Expression groupBy = groupBy(criteria);
 
         if (criteria.getNimiQuery() != null) {
             // todo: limit if too expensive - make case insensitive
             whereExpr = and(whereExpr, moduuli.nimi.like("%" + criteria.getNimiQuery() + "%"));
         }
-
-//        if (criteria.getType() != null) {
-//            whereExpr = and(whereExpr, loo.instanceOf(criteria.getType()));
-//        }
+        
+        if (criteria.getKoulutusKoodi() != null) {
+        	whereExpr = and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+        }
+        
+        if (criteria.getKoulutusohjelmaKoodi() != null) {
+        	whereExpr = and(whereExpr, moduuli.koulutusohjelmaKoodi.eq(criteria.getKoulutusohjelmaKoodi()));
+        }
 
 
         return from(moduuli).

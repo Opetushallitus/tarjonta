@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.tarjonta.TarjontaDatabasePrinter;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
 import java.util.Date;
@@ -182,6 +183,48 @@ public class KoulutusmoduuliDAOTest {
         //assertEquals(originalOid, loaded.getOid());
 
 
+    }
+    
+    @Test
+    public void testSearchKoulutusmoduulit() {
+    	String KOULUTUSKOODI = "uri:koulutuskoodi";
+    	String KOULUTUSOHJELMAKOODI1 = "uri:koulutusohjelmakoodi1";
+    	String KOULUTUSOHJELMAKOODI2 = "uri:koulutusohjelmakoodi2";
+    	
+    	//KOMO1
+    	Koulutusmoduuli koulutus = fixtures.createTutkintoOhjelma();
+    	koulutus.setKoulutusKoodi(KOULUTUSKOODI);
+    	koulutus.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI1);
+        koulutusmoduuliDAO.insert(koulutus);
+        
+        //KOMO2
+        koulutus = fixtures.createTutkintoOhjelma();
+        koulutus.setKoulutusKoodi(KOULUTUSKOODI);
+    	koulutus.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI2);
+        koulutusmoduuliDAO.insert(koulutus);
+        
+    	//KOMO3
+    	koulutus = fixtures.createTutkintoOhjelma();
+        koulutusmoduuliDAO.insert(koulutus);
+        
+        
+        SearchCriteria criteria = new SearchCriteria();
+        criteria.setKoulutusKoodi(KOULUTUSKOODI);
+        List<Koulutusmoduuli> komos = this.koulutusmoduuliDAO.search(criteria);
+        
+        assertEquals(2, komos.size());
+        
+        criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI1);
+        komos = this.koulutusmoduuliDAO.search(criteria);
+        
+        assertEquals(1, komos.size());
+        assertEquals(KOULUTUSOHJELMAKOODI1, komos.get(0).getKoulutusohjelmaKoodi());
+        
+        criteria = new SearchCriteria();
+        komos = this.koulutusmoduuliDAO.search(criteria);
+        
+        assertTrue(komos.size() > 2);
+        
     }
 
     private void flush() {

@@ -18,6 +18,8 @@ package fi.vm.sade.tarjonta.dao;
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
+
 import java.util.List;
 
 /**
@@ -78,7 +80,11 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
      */
     public static class SearchCriteria {
 
-        private String nimiQuery;
+
+
+		private String nimiQuery;
+        private String koulutusKoodiUri;
+        private String koulutusohjelmaKoodiUri;
 
         private Class<? extends BaseKoulutusmoduuli> type;
 
@@ -107,11 +113,29 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         public Class<? extends BaseKoulutusmoduuli> getType() {
             return type;
         }
+        
+        public String getKoulutusKoodi() {
+			return koulutusKoodiUri;
+		}
+
+		public void setKoulutusKoodi(String koulutusKoodi) {
+			this.koulutusKoodiUri = koulutusKoodi;
+		}
+
+		public String getKoulutusohjelmaKoodi() {
+			return koulutusohjelmaKoodiUri;
+		}
+
+		public void setKoulutusohjelmaKoodi(String koulutusohjelmaKoodi) {
+			this.koulutusohjelmaKoodiUri = koulutusohjelmaKoodi;
+		}
 
         public enum GroupBy {
 
             ORGANISAATIORAKENNE;
         }
+        
+        
 
 
     }

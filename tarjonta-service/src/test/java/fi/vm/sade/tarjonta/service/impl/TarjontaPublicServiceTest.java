@@ -46,6 +46,8 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTu
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
@@ -76,6 +78,10 @@ public class TarjontaPublicServiceTest {
     private static final String KOMOTO_OID = "11.12.23.34.56";
 
     private static final String HAKUKOHDE_OID = "12.13.24.35.57";
+    
+    private static final String KOULUTUSKOODI = "uri:koulutuskoodi";
+	private static final String KOULUTUSOHJELMAKOODI1 = "uri:koulutusohjelmakoodi1";
+	private static final String KOULUTUSOHJELMAKOODI2 = "uri:koulutusohjelmakoodi2";
 
     @Autowired
     private TarjontaPublicService service;
@@ -114,6 +120,8 @@ public class TarjontaPublicServiceTest {
 
         // 0. koulutusmoduuli+toteutus lisätään testaamaan hakukohteiden haun oikeellisuutta sekä yhden koulutusmoduulin lukua.
         koulutusmoduuli = fixtures.createTutkintoOhjelma();
+        koulutusmoduuli.setKoulutusKoodi(KOULUTUSKOODI);
+        koulutusmoduuli.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI1);
         koulutusmoduuliDAO.insert(koulutusmoduuli);
         koulutusmoduuliToteutus = fixtures.createTutkintoOhjelmaToteutus(KOMOTO_OID);
         koulutusmoduuliToteutus.setTarjoaja(ORGANISAATIO_A);
@@ -130,6 +138,8 @@ public class TarjontaPublicServiceTest {
 
         // 1. koulutusmoduuli+toteutus
         koulutusmoduuli = fixtures.createTutkintoOhjelma();
+        koulutusmoduuli.setKoulutusKoodi(KOULUTUSKOODI);
+        koulutusmoduuli.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI2);
         koulutusmoduuliDAO.insert(koulutusmoduuli);
         koulutusmoduuliToteutus = fixtures.createTutkintoOhjelmaToteutus();
         koulutusmoduuliToteutus.setTarjoaja(ORGANISAATIO_A);
@@ -235,6 +245,28 @@ public class TarjontaPublicServiceTest {
         rivi = rivit.get(2);
         koulutus = rivi.getKoulutus();
         assertEquals(ORGANISAATIO_B, koulutus.getTarjoaja());
+
+    }
+    
+    @Test
+    public void testEtsiKoulutusmoduulit() {
+
+        HaeKoulutusmoduulitKyselyTyyppi kysely = new HaeKoulutusmoduulitKyselyTyyppi();
+        kysely.setKoulutuskoodiUri(KOULUTUSKOODI);
+        HaeKoulutusmoduulitVastausTyyppi vastaus = service.haeKoulutusmoduulit(kysely);
+        
+        assertEquals(2, vastaus.getKoulutusmoduuliTulos().size());
+        
+        kysely.setKoulutusohjelmakoodiUri(KOULUTUSOHJELMAKOODI1);
+        vastaus = service.haeKoulutusmoduulit(kysely);
+        
+        assertEquals(1, vastaus.getKoulutusmoduuliTulos().size());
+        assertEquals(KOULUTUSOHJELMAKOODI1, vastaus.getKoulutusmoduuliTulos().get(0).getKoulutusmoduuli().getKoulutusohjelmakoodiUri());
+        
+        kysely = new HaeKoulutusmoduulitKyselyTyyppi();
+        vastaus = service.haeKoulutusmoduulit(kysely);
+        
+        assertTrue(vastaus.getKoulutusmoduuliTulos().size() > 2);
 
     }
 

@@ -56,6 +56,14 @@
     <wsdl:message name="lisaaHakukohdeVastaus">
         <wsdl:part element="ns1:lisaaHakukohdeVastaus" name="parameters"/>
     </wsdl:message>
+    
+    <wsdl:message name="lisaaKoulutusmoduuli">
+        <wsdl:part element="ns1:lisaaKoulutusmoduuli" name="koulutusmoduuli"/>
+    </wsdl:message>
+
+    <wsdl:message name="lisaaKoulutusmoduuliVastaus">
+        <wsdl:part element="ns1:lisaaKoulutusmoduuliVastaus" name="parameters"/>
+    </wsdl:message>
 
     <wsdl:message name="paivitaHakukohde">
         <wsdl:part element="ns1:paivitaHakukohde" name="parameters"/>
@@ -180,6 +188,17 @@
             </wsdl:output>
             <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
         </wsdl:operation>
+        
+        <wsdl:operation name="lisaaKoulutusmoduuli">
+            <wsdl:documentation>
+                Lisaa uusi koulutusmoduuli
+            </wsdl:documentation>
+            <wsdl:input message="tns:lisaaKoulutusmoduuli" name="lisaaKoulutusmoduuli">
+            </wsdl:input>
+            <wsdl:output message="tns:lisaaKoulutusmoduuliVastaus" name="lisaaKoulutusmoduuliVastaus">
+            </wsdl:output>
+            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
+        </wsdl:operation>
 
         <wsdl:operation name="paivitaKoulutus">
             <wsdl:documentation>
@@ -238,6 +257,16 @@
         </wsdl:operation>
 
         <wsdl:operation name="poistaHakukohde">
+            <soap:operation soapAction="" type="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="lisaaKoulutusmoduuli">
             <soap:operation soapAction="" type="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>

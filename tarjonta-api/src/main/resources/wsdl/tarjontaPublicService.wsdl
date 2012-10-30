@@ -46,6 +46,14 @@
         <wsdl:part element="ns1:haeKoulutuksetVastaus" name="parameters"/>
     </wsdl:message>
     
+    <wsdl:message name="haeKoulutusmoduulitKysely">
+        <wsdl:part element="ns1:haeKoulutusmoduulitKysely" name="kysely"/>
+    </wsdl:message>
+
+    <wsdl:message name="haeKoulutusmoduulitVastaus">
+        <wsdl:part element="ns1:haeKoulutusmoduulitVastaus" name="parameters"/>
+    </wsdl:message>
+    
    <wsdl:message name="lueKoulutusKysely">
         <wsdl:part element="ns1:lueKoulutusKysely" name="kysely"/>
     </wsdl:message>
@@ -109,6 +117,16 @@
             </wsdl:output>
         </wsdl:operation>
         
+        <wsdl:operation name="haeKoulutusmoduulit">
+            <wsdl:documentation>
+                Hakee joukon koulutusmoduuleja ja niiden tarkeimmat tunnusmerkit.
+            </wsdl:documentation>
+            <wsdl:input message="tns:haeKoulutusmoduulitKysely" name="haeKoulutusmoduulitKysely">
+            </wsdl:input>
+            <wsdl:output message="tns:haeKoulutusmoduulitVastaus" name="haeKoulutusmoduulitVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
         <wsdl:operation name="lueKoulutus">
             <wsdl:documentation>
                 Hakee yhden koulutuksen tiedot oidin perusteella.
@@ -169,6 +187,16 @@
         
         <wsdl:operation name="haeKoulutukset">
             <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/haeKoulutukset"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="haeKoulutusmoduulit">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/haeKoulutusmoduulit"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
