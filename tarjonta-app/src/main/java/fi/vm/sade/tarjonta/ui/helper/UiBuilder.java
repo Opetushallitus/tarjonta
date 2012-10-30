@@ -15,33 +15,19 @@
  */
 package fi.vm.sade.tarjonta.ui.helper;
 
-import com.vaadin.data.Property;
 import com.vaadin.data.util.PropertysetItem;
-import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
-import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
-import fi.vm.sade.koodisto.service.types.common.KieliType;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
-import fi.vm.sade.koodisto.util.KoodistoHelper;
-import fi.vm.sade.koodisto.widget.DefaultKoodiCaptionFormatter;
-import fi.vm.sade.koodisto.widget.DefaultKoodiFieldValueFormatter;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
-import fi.vm.sade.vaadin.constants.UiConstant;
-import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
-import java.util.List;
 
 /**
  * Helper class to make creating of styled components easier.
@@ -70,11 +56,12 @@ public class UiBuilder extends UiUtil {
             }
         }
     };
-    
+
     /**
      * Default field value as uri and versio formatter for koodisto components
+     * NOTE: Value is object of type "KoodiUriAndVersioType".
      */
-    public static final FieldValueFormatter DEFAULT_URI_AND_VERSIO_FIELD_VALUE_FORMATTER = new FieldValueFormatter() {
+    public static final FieldValueFormatter DEFAULT_KOODISTO_URI_AND_VERSION_OBJECT_FIELD_VALUE_FORMATTER = new FieldValueFormatter() {
 
         @Override
         public Object formatFieldValue(Object dto) {
@@ -86,7 +73,7 @@ public class UiBuilder extends UiUtil {
                 KoodiType kdto = (KoodiType) dto;
                 KoodiUriAndVersioType kvt = new KoodiUriAndVersioType();
                 kvt.setKoodiUri(kdto.getKoodiUri());
-                kvt.setVersio(kvt.getVersio());
+                kvt.setVersio(kdto.getVersio());
                 return kvt;
             } else {
                 return "" + dto;
@@ -95,7 +82,7 @@ public class UiBuilder extends UiUtil {
     };
 
     /**
-     * Field value formatter that always stores also the koodi version to the value.
+     * Field value formatter that always stores also the koodi version to the value, separated with "#".
      */
     public static final FieldValueFormatter DEFAULT_URI_AND_VERSION_FIELD_VALUE_FORMATTER = new FieldValueFormatter() {
 
@@ -131,7 +118,7 @@ public class UiBuilder extends UiUtil {
     };
 
     /**
-     * Default caption formatter that shows the koodi value (arvo).
+     * Default caption formatter that shows the koodi URI as caption.
      */
     public static final CaptionFormatter DEFAULT_URI_CAPTION_FORMATTER = new CaptionFormatter<KoodiType>() {
 
@@ -145,22 +132,31 @@ public class UiBuilder extends UiUtil {
         }
     };
 
-    private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
+//    private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
 
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri) {
-        return koodistoComboBox(layout, koodistoUri, null, null, null, null);
+        return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, null, (ComboBox) null, true);
+    }
+    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, boolean uriWithVersion) {
+        return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, null, (ComboBox) null, uriWithVersion);
     }
 
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt) {
-        return koodistoComboBox(layout, koodistoUri, null, null, prompt, null);
+        return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, (ComboBox) null, true);
+    }
+    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, boolean uriWithVersion) {
+        return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, (ComboBox) null, uriWithVersion);
     }
 
-     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb) {
-        return koodistoComboBox(layout, koodistoUri, null, null, prompt, cb);
+    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb) {
+        return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, cb, true);
+    }
+    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb, boolean uriWithVersion) {
+        return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, cb, uriWithVersion);
     }
 
     /**
-     * Create new KoodistoComponent with ComboBox. Sets compobox's foltering mode to "CONTAINS".
+     * Create new KoodistoComponent with ComboBox. Sets combobox's filtering mode to "CONTAINS".
      *
      * Note: not in immediate mode by default.
      * Note: null selection not allowed.
@@ -172,14 +168,44 @@ public class UiBuilder extends UiUtil {
      * @param psi
      * @param expression
      * @param prompt
+     * @param uriWithVersion
      * @return
      */
-    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt) {
-        return koodistoComboBox(layout, koodistoUri, psi, expression, prompt, null);
+    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, boolean uriWithVersion) {
+        return koodistoComboBox(layout, koodistoUri, psi, expression, prompt, (ComboBox) null, uriWithVersion);
     }
 
     /**
-     * Create new KoodistoComponent with ComboBox. Sets compobox's foltering mode to "CONTAINS".
+     * Default storage mode uri with version.
+     *
+     * @param layout
+     * @param koodistoUri
+     * @param psi
+     * @param expression
+     * @param prompt
+     * @return
+     */
+    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt) {
+        return koodistoComboBox(layout, koodistoUri, psi, expression, prompt, (ComboBox) null, true);
+    }
+
+    /**
+     * Default storage mode uri with version.
+     *
+     * @param layout
+     * @param koodistoUri
+     * @param psi
+     * @param expression
+     * @param prompt
+     * @param cb
+     * @return
+     */
+    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, ComboBox cb) {
+        return koodistoComboBox(layout, koodistoUri, psi, expression, prompt, cb, true);
+    }
+
+    /**
+     * Create new KoodistoComponent with ComboBox. Sets compobox's filtering mode to "CONTAINS".
      *
      * Note: not in immediate mode by default.
      * Note: null selection not allowed.
@@ -192,10 +218,10 @@ public class UiBuilder extends UiUtil {
      * @param expression
      * @param prompt
      * @param cb optional
+     * @param uriWithVersion
      * @return
      */
-
-    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, ComboBox cb) {
+    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, ComboBox cb, boolean uriWithVersion) {
         // Koodisto displayed in ComboBox
 
         ComboBox combo =  (cb == null) ? comboBox(null, null, null) : cb;
@@ -210,8 +236,12 @@ public class UiBuilder extends UiUtil {
         // Wire koodisto to combobox
         c.setField(combo);
 
-        // BOUND value as uri
-        c.setFieldValueFormatter(DEFAULT_URI_AND_VERSION_FIELD_VALUE_FORMATTER);
+        // BOUND value as uri, with or without version information
+        if (uriWithVersion) {
+            c.setFieldValueFormatter(DEFAULT_URI_AND_VERSION_FIELD_VALUE_FORMATTER);
+        } else {
+            c.setFieldValueFormatter(DEFAULT_URI_FIELD_VALUE_FORMATTER);
+        }
 
         // Selected data bound there
         if (psi != null && expression != null) {
@@ -240,9 +270,10 @@ public class UiBuilder extends UiUtil {
      *
      * @param layout if given created component will be added there
      * @param koodistoUri koodisto uri to bind component to
+     * @param uriWithVersion if true also version information stored to the value
      * @return created component
      */
-    public static KoodistoComponent koodistoTwinColSelectUri(AbstractLayout layout, final String koodistoUri) {
+    public static KoodistoComponent koodistoTwinColSelectUri(AbstractLayout layout, final String koodistoUri, boolean uriWithVersion) {
 
         // Koodisto displayed in TwinColSelect
         TwinColSelect c = twinColSelect();
@@ -256,12 +287,28 @@ public class UiBuilder extends UiUtil {
         kc.setField(c);
 
         // BOUND value as uri
-        kc.setFieldValueFormatter(DEFAULT_URI_AND_VERSION_FIELD_VALUE_FORMATTER);
+        if (uriWithVersion) {
+            kc.setFieldValueFormatter(DEFAULT_URI_AND_VERSION_FIELD_VALUE_FORMATTER);
+        } else {
+            kc.setFieldValueFormatter(DEFAULT_URI_FIELD_VALUE_FORMATTER);
+        }
 
         UiBaseUtil.handleAddComponent(layout, kc);
 
         return kc;
     }
+
+    /**
+     * Default storage mode uri with version.
+     *
+     * @param layout
+     * @param koodistoUri
+     * @return
+     */
+    public static KoodistoComponent koodistoTwinColSelectUri(AbstractLayout layout, final String koodistoUri) {
+        return koodistoTwinColSelectUri(layout, koodistoUri, true);
+    }
+
 
 
     /**
@@ -271,11 +318,12 @@ public class UiBuilder extends UiUtil {
      * @param koodistoUri
      * @param psi
      * @param expression
+     * @param uriWithVersion if true also version information stored to the value
      * @return
      */
-    public static KoodistoComponent koodistoTwinColSelect(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
+    public static KoodistoComponent koodistoTwinColSelect(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, boolean uriWithVersion) {
 
-        final KoodistoComponent kc = koodistoTwinColSelectUri(layout, koodistoUri);
+        final KoodistoComponent kc = koodistoTwinColSelectUri(layout, koodistoUri, uriWithVersion);
 
         // Selected data bound here if wanted
         if (psi != null && expression != null) {
@@ -285,37 +333,50 @@ public class UiBuilder extends UiUtil {
         return kc;
     }
 
-
-
-    public static TabSheet koodistoLanguageTabSheets(List<KoodiType> koodisto) {
-        TabSheet tab = new TabSheet();
-
-        if (koodisto != null) {
-            for (KoodiType k : koodisto) {
-                TextField textField = UiUtil.textField(null);
-                textField.setHeight("100px");
-                textField.setWidth(UiConstant.PCT100);
-
-                tab.addTab(textField, k.getKoodiArvo(), null);
-            }
-        }
-        VerticalLayout l3 = new VerticalLayout();
-        l3.setMargin(true);
-        tab.addTab(l3, "", TAB_ICON_PLUS);
-
-        return tab;
+    /**
+     * Default storage mode is uri with version.
+     *
+     * @param layout
+     * @param koodistoUri
+     * @param psi
+     * @param expression
+     * @return
+     */
+    public static KoodistoComponent koodistoTwinColSelect(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
+        return koodistoTwinColSelect(layout, koodistoUri, psi, expression, true);
     }
 
-    public static TabSheet koodistoLanguageTabSheets(String koodistoUri, Property.ValueChangeListener valueChangeListener) {
-        VerticalLayout vl = verticalLayout(true, UiMarginEnum.NONE);
-        KoodistoComponent kc = koodistoTwinColSelectUri(vl, koodistoUri);
-        if (valueChangeListener != null) {
-            kc.addListener(valueChangeListener);
-        }
 
-        TabSheet tab = new TabSheet();
-        tab.addTab(vl, "", TAB_ICON_PLUS);
 
-        return tab;
-    }
+//    public static TabSheet koodistoLanguageTabSheets(List<KoodiType> koodisto) {
+//        TabSheet tab = new TabSheet();
+//
+//        if (koodisto != null) {
+//            for (KoodiType k : koodisto) {
+//                TextField textField = UiUtil.textField(null);
+//                textField.setHeight("100px");
+//                textField.setWidth(UiConstant.PCT100);
+//
+//                tab.addTab(textField, k.getKoodiArvo(), null);
+//            }
+//        }
+//        VerticalLayout l3 = new VerticalLayout();
+//        l3.setMargin(true);
+//        tab.addTab(l3, "", TAB_ICON_PLUS);
+//
+//        return tab;
+//    }
+
+//    public static TabSheet koodistoLanguageTabSheets(String koodistoUri, Property.ValueChangeListener valueChangeListener) {
+//        VerticalLayout vl = verticalLayout(true, UiMarginEnum.NONE);
+//        KoodistoComponent kc = koodistoTwinColSelectUri(vl, koodistoUri, false); // no version for uris
+//        if (valueChangeListener != null) {
+//            kc.addListener(valueChangeListener);
+//        }
+//
+//        TabSheet tab = new TabSheet();
+//        tab.addTab(vl, "", TAB_ICON_PLUS);
+//
+//        return tab;
+//    }
 }

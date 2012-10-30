@@ -251,7 +251,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         ComboBox comboBox = new ComboBox();
         comboBox.setReadOnly(koulutusPerustiedotModel.isLoaded());
         kcKoulutusKoodi = UiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_KOULUTUS_URI, null, null, T(propertyKey + PROPERTY_PROMPT_SUFFIX), comboBox);
-        kcKoulutusKoodi.setFieldValueFormatter(UiBuilder.DEFAULT_URI_AND_VERSIO_FIELD_VALUE_FORMATTER);
+        kcKoulutusKoodi.setFieldValueFormatter(UiBuilder.DEFAULT_KOODISTO_URI_AND_VERSION_OBJECT_FIELD_VALUE_FORMATTER);
 
         // TODO localizations in Koodisto available?? Using URI to show something.
         kcKoulutusKoodi.setCaptionFormatter(UiBuilder.DEFAULT_URI_CAPTION_FORMATTER);
@@ -272,7 +272,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                     //clear result data.
                     cbKoulutusohjelma.removeAllItems();
                 }
-                //DEBUGSAWAY:LOG.debug("ValueChangeEvent - Koodisto : {}, value : {}", KoodistoURIHelper.KOODISTO_KOULUTUS_URI, event);
+                LOG.debug("ValueChangeEvent - Koodisto : {}, value : {}", KoodistoURIHelper.KOODISTO_KOULUTUS_URI, event);
                 final Property property = event.getProperty();
 
                 if (property != null && property.getValue() != null) {
