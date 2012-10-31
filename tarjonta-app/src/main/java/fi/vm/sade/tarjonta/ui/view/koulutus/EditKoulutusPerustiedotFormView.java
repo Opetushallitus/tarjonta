@@ -36,6 +36,7 @@ import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusFormType;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.OhjePopupComponent;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
@@ -251,7 +252,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         ComboBox comboBox = new ComboBox();
         comboBox.setReadOnly(koulutusPerustiedotModel.isLoaded());
         kcKoulutusKoodi = UiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_KOULUTUS_URI, null, null, T(propertyKey + PROPERTY_PROMPT_SUFFIX), comboBox);
-        kcKoulutusKoodi.setFieldValueFormatter(UiBuilder.DEFAULT_KOODISTO_URI_AND_VERSION_OBJECT_FIELD_VALUE_FORMATTER);
+        //kcKoulutusKoodi.setFieldValueFormatter(UiBuilder.DEFAULT_KOODISTO_URI_AND_VERSION_OBJECT_FIELD_VALUE_FORMATTER);
 
         // TODO localizations in Koodisto available?? Using URI to show something.
         kcKoulutusKoodi.setCaptionFormatter(UiBuilder.DEFAULT_URI_CAPTION_FORMATTER);
@@ -276,9 +277,19 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                 final Property property = event.getProperty();
 
                 if (property != null && property.getValue() != null) {
-                    final KoodiUriAndVersioType koodi = (KoodiUriAndVersioType) property.getValue();
+                	
+                    final KoodiUriAndVersioType koodi = new KoodiUriAndVersioType();
+                    String uriAndVersioStr = (String)property.getValue();
+                    int index = uriAndVersioStr.lastIndexOf(TarjontaUIHelper.KOODI_URI_AND_VERSION_SEPARATOR);//(KoodiUriAndVersioType) property.getValue();
+                    String uri = uriAndVersioStr.substring(0, index);
+                    String versio = uriAndVersioStr.substring(index + 1);
+                    koodi.setKoodiUri(uri);
+                    koodi.setVersio(Integer.parseInt(versio));
                     presenter.searchKoulutusOhjelmakoodit(koodi);
                     Set<KoulutusohjelmaModel> koodistoKoulutusohjelma = koulutusPerustiedotModel.getKoodistoKoulutusohjelma();
+                    if (koodistoKoulutusohjelma == null) {
+                    	koodistoKoulutusohjelma = new HashSet<KoulutusohjelmaModel>();
+                    }
 
                     for (KoulutusohjelmaModel m : koodistoKoulutusohjelma) {
                         //add Objects to combo
@@ -293,6 +304,13 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                         //no items - disable
                         cbKoulutusohjelma.setEnabled(false);
                     }
+                    //If the are no koulutusohjelma choices to select from or if the form type lukio is selected, 
+                    //the komo is checked
+                    if (koodistoKoulutusohjelma.isEmpty() 
+                    		|| T("lukio").equals(cbSelectForm.getValue())) {
+                    	presenter.checkKoulutusmoduuli(koulutusPerustiedotModel);
+                    }
+                    
                 }
             }
         });
@@ -322,6 +340,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             public void valueChange(Property.ValueChangeEvent event) {
                 //DEBUGSAWAY:LOG.debug("" + event.getProperty());
                 //DEBUGSAWAY:LOG.debug("koulutussohjelma obj : {}", koulutusPerustiedotModel.getKoulutusohjema());
+            	presenter.checkKoulutusmoduuli(koulutusPerustiedotModel);
             }
         });
         grid.addComponent(cbKoulutusohjelma);

@@ -166,7 +166,9 @@ public class KoulutusViewModelToDTOConverter {
         tyyppi.setKoulutusKoodi(createKoodi(tyyppiModel.getKoulutusKoodi()));
         KoulutusohjelmaModel ko = tyyppiModel.getKoulutusohjema();
         //URI data example : "koulutusohjelma/1603"
-        tyyppi.setKoulutusohjelmaKoodi(createKoodi(ko.getKoodiUri(), ko.getFullName()));
+        if (ko != null) {
+        	tyyppi.setKoulutusohjelmaKoodi(createKoodi(ko.getKoodiUri(), ko.getFullName()));
+        }
         tyyppi.setKoulutuksenAlkamisPaiva(tyyppiModel.getKoulutuksenAlkamisPvm());
         KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
         koulutuksenKestoTyyppi.setArvo(tyyppiModel.getSuunniteltuKesto());

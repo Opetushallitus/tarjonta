@@ -49,6 +49,11 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      */
     private String koulutusKoodi;
     private KoulutusohjelmaModel koulutusohjema;
+    
+    /*
+     * Koulutusmoduuli oid 
+     */
+    private String koulutusmoduuliOid;
     /*
      * KOMO data (static labels):
      */
@@ -338,4 +343,12 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     public void setOid(String oid) {
         this.oid = oid;
     }
+
+	public String getKoulutusmoduuliOid() {
+		return koulutusmoduuliOid;
+	}
+
+	public void setKoulutusmoduuliOid(String koulutusmoduuliOid) {
+		this.koulutusmoduuliOid = koulutusmoduuliOid;
+	}
 }

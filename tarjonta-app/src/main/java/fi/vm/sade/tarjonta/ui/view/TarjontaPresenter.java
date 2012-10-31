@@ -25,6 +25,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
+import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
@@ -35,6 +36,8 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
@@ -42,6 +45,8 @@ import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
@@ -271,7 +276,7 @@ public class TarjontaPresenter {
                 showMainDefaultView();
             }
         } else {
-            throw new RuntimeException("Application error - missing OID, cannot open KoulutusEditView.");
+            //throw new RuntimeException("Application error - missing OID, cannot open KoulutusEditView.");
         }
 
         // Clearing the layout from previos content
@@ -711,4 +716,34 @@ public class TarjontaPresenter {
         LueKoulutusVastausTyyppi vastaus = this.tarjontaPublicService.lueKoulutus(kysely);
         return vastaus;
     }
+
+    /**
+     * 
+     * @param koulutusPerustiedotModel
+     */
+	public void checkKoulutusmoduuli(
+			KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel) {
+		HaeKoulutusmoduulitKyselyTyyppi kysely = new HaeKoulutusmoduulitKyselyTyyppi();
+		kysely.setKoulutuskoodiUri(koulutusPerustiedotModel.getKoulutusKoodi());
+		kysely.setKoulutusohjelmakoodiUri((koulutusPerustiedotModel.getKoulutusohjema() != null) ? koulutusPerustiedotModel.getKoulutusohjema().getKoodiUri() : null);
+		HaeKoulutusmoduulitVastausTyyppi vastaus = this.tarjontaPublicService.haeKoulutusmoduulit(kysely);
+		if (vastaus.getKoulutusmoduuliTulos().isEmpty()) {
+			try {
+				KoulutusmoduuliKoosteTyyppi komo = new KoulutusmoduuliKoosteTyyppi();
+				String oid = this.oidService.newOid(NodeClassCode.TEKN_5);
+				komo.setOid(oid);
+				komo.setKoulutuskoodiUri(koulutusPerustiedotModel.getKoulutusKoodi());
+				komo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+				if (koulutusPerustiedotModel.getKoodistoKoulutusohjelma() != null) {
+					komo.setKoulutusohjelmakoodiUri(koulutusPerustiedotModel.getKoulutusohjema().getKoodiUri());
+				} 
+				komo = this.tarjontaAdminService.lisaaKoulutusmoduuli(komo);
+				koulutusPerustiedotModel.setKoulutusmoduuliOid(komo.getOid());
+			} catch (Exception ex) {
+				LOG.error("Error creating koulutusmoduuli: {}", ex.getMessage());
+			}
+		} else {
+			koulutusPerustiedotModel.setKoulutusmoduuliOid(vastaus.getKoulutusmoduuliTulos().get(0).getKoulutusmoduuli().getOid());
+		}
+	}
 }
