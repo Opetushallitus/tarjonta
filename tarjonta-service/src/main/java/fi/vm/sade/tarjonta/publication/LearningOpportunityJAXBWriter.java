@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.xml.bind.*;
+import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import javax.xml.namespace.NamespaceContext;
@@ -49,7 +50,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jukka Raanamo
  */
-public class LearningOpportunityDataWriter extends PublicationCollector.EventHandlerSuppport {
+public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHandlerSuppport {
 
     public static final String DEFAULT_ROOT_ELEMENT_NAME = "LearningOpportunityDownloadData";
 
@@ -67,15 +68,20 @@ public class LearningOpportunityDataWriter extends PublicationCollector.EventHan
 
     private String rootElementName = DEFAULT_ROOT_ELEMENT_NAME;
 
-    private static final Logger log = LoggerFactory.getLogger(LearningOpportunityDataWriter.class);
+    private static final Logger log = LoggerFactory.getLogger(LearningOpportunityJAXBWriter.class);
 
-    public LearningOpportunityDataWriter() throws Exception {
+    public LearningOpportunityJAXBWriter() throws JAXBException {
 
         final String packageName = LearningOpportunityDownloadDataType.class.getPackage().getName();
         final JAXBContext context = JAXBContext.newInstance(packageName, LearningOpportunityDownloadDataType.class.getClassLoader());
 
         objectFactory = new ObjectFactory();
-        datatypeFactory = DatatypeFactory.newInstance();
+        try {
+            datatypeFactory = DatatypeFactory.newInstance();
+        } catch (DatatypeConfigurationException e) {
+            // there's nothing that can be done
+            throw new IllegalStateException("configuring DatatypeFactory failed", e);
+        }
 
         marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
@@ -489,26 +495,9 @@ public class LearningOpportunityDataWriter extends PublicationCollector.EventHan
 
     }
 
-    private static class NoNamespaceContext implements NamespaceContext {
-
-        @Override
-        public String getNamespaceURI(String string) {
-            return "";
-        }
-
-        @Override
-        public String getPrefix(String string) {
-            return "";
-        }
-
-        @Override
-        public Iterator getPrefixes(String string) {
-            return null;
-        }
-
-    }
-
-
+    /**
+     * Currently not used, may be needed to tidy up output xml namespaces.
+     */
     private static class PublicationNamespaceContext implements NamespaceContext {
 
         @Override

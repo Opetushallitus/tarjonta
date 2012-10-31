@@ -41,7 +41,7 @@ import org.junit.*;
  */
 public class LearningOpportunityDataWriterTest {
 
-    private LearningOpportunityDataWriter writer;
+    private LearningOpportunityJAXBWriter writer;
 
     private StringWriter out;
 
@@ -55,7 +55,7 @@ public class LearningOpportunityDataWriterTest {
     @Before
     public void setUp() throws Exception {
 
-        writer = new LearningOpportunityDataWriter();
+        writer = new LearningOpportunityJAXBWriter();
         out = new StringWriter();
         writer.setOutput(out);
         writer.setPartialDocument(false);

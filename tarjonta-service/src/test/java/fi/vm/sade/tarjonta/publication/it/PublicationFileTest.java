@@ -34,9 +34,10 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 
-import fi.vm.sade.tarjonta.publication.LearningOpportunityDataWriter;
+import fi.vm.sade.tarjonta.publication.LearningOpportunityJAXBWriter;
 import fi.vm.sade.tarjonta.publication.PublicationCollector;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import java.text.DecimalFormat;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +71,7 @@ public class PublicationFileTest {
 
         log.info("writing test data to: " + outputFile);
 
-        LearningOpportunityDataWriter jaxbWriter = new LearningOpportunityDataWriter();
+        LearningOpportunityJAXBWriter jaxbWriter = new LearningOpportunityJAXBWriter();
         jaxbWriter.setOutput(outputStream);
 
         collector.setHandler(jaxbWriter);
@@ -98,15 +99,15 @@ public class PublicationFileTest {
 
         long bytes = outputFile.length();
 
-        System.out.print("publication file size with " + numKoulutus + " koulutus"
+        log.info("publication file size with " + numKoulutus + " koulutus"
             + ", " + numHaku + " haku"
             + ", " + numHakukohde + " hakukohde"
-            + ", file size: " + bytes + " bytes (" + megs(bytes) + " MB)");
+            + ", file size: " + bytes + " bytes (" + formatMegs(bytes) + " MB)");
 
     }
 
-    private double megs(long bytes) {
-        return (bytes / (double) (1024 * 1024));
+    private String formatMegs(long bytes) {
+        return new DecimalFormat("#.##").format(bytes / (double) (1024 * 1024));
     }
 
     private PublicationDataService setUpDataService(int numKoulutus, int numHaku, int numHakukohde) {

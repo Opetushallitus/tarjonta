@@ -9,6 +9,7 @@
     <context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.tarjonta" />
 
+    <import resource="classpath:META-INF/spring/context/publication-context.xml"/>
     <import resource="classpath:META-INF/spring/context/service-context.xml"/>
     <import resource="test-dao-context.xml" />
 
