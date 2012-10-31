@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions name="tarjontaKoodistoService"
+                  targetNamespace="http://service.tarjonta.sade.vm.fi/"
+                  xmlns:ns1="http://service.tarjonta.sade.vm.fi/types/koodisto"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:tns="http://service.tarjonta.sade.vm.fi/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://service.tarjonta.sade.vm.fi/">
+            <xsd:import namespace="http://service.tarjonta.sade.vm.fi/types/koodisto" schemaLocation="tarjontaKoodistoService.xsd" />
+        </xsd:schema>
+    </wsdl:types>
+
+    <wsdl:message name="listaaKoulutuskooditHaku">
+        <wsdl:part element="ns1:listaaKoulutuskooditHaku" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="listaaKoulutuskooditVastaus">
+        <wsdl:part element="ns1:listaaKoulutuskooditVastaus" name="parameters"/>
+    </wsdl:message>
+    
+     <wsdl:message name="listaaKoulutuskoodiHaku">
+        <wsdl:part element="ns1:listaaKoulutuskoodiHaku" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="listaaKoulutuskoodiVastaus">
+        <wsdl:part element="ns1:listaaKoulutuskoodiVastaus" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="listaaKoulutusasteetHaku">
+        <wsdl:part element="ns1:listaaKoulutusasteetHaku" name="parameters"/>
+    </wsdl:message> 
+    <wsdl:message name="listaaKoulutusasteetVastaus">
+        <wsdl:part element="ns1:listaaKoulutusasteetVastaus" name="parameters"/>
+    </wsdl:message>
+      
+    <wsdl:message name="listaaKoulutusohjelmatHaku">
+        <wsdl:part element="ns1:listaaKoulutusohjelmatHaku" name="parameters"/>
+    </wsdl:message> 
+    <wsdl:message name="listaaKoulutusohjelmatVastaus">
+        <wsdl:part element="ns1:listaaKoulutusohjelmatVastaus" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="listaaKoulutusohjelmaHaku">
+        <wsdl:part element="ns1:listaaKoulutusohjelmaHaku" name="parameters"/>
+    </wsdl:message> 
+    <wsdl:message name="listaaKoulutusohjelmaVastaus">
+        <wsdl:part element="ns1:listaaKoulutusohjelmaVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:portType name="TarjontaKoodistoService">
+
+        <wsdl:documentation>
+            Palvelu tarjontatiedon koulutuskoodien hakemiseen.
+        </wsdl:documentation>
+
+        <wsdl:operation name="listaaKoulutuskoodit">
+            <wsdl:documentation>
+                Listaa Tilastokeskuksen (TK) koulutuskoodit.
+            </wsdl:documentation>
+            <wsdl:input message="tns:listaaKoulutuskooditHaku" name="listaaKoulutuskooditHaku" />
+            <wsdl:output message="tns:listaaKoulutuskooditVastaus" name="listaaKoulutuskooditVastaus" />
+        </wsdl:operation>
+        
+         <wsdl:operation name="listaaKoulutuskoodi">
+            <wsdl:documentation>
+                Listaa Tilastokeskuksen (TK) koulutuskoodit.
+            </wsdl:documentation>
+            <wsdl:input message="tns:listaaKoulutuskoodiHaku" name="listaaKoulutuskoodiHaku" />
+            <wsdl:output message="tns:listaaKoulutuskoodiVastaus" name="listaaKoulutuskoodiVastaus" />
+        </wsdl:operation>
+        
+        <wsdl:operation name="listaaKoulutusasteet">
+            <wsdl:input message="tns:listaaKoulutusasteetHaku" name="listaaKoulutusasteetHaku" />
+            <wsdl:output message="tns:listaaKoulutusasteetVastaus" name="listaaKoulutusasteetVastaus" />
+        </wsdl:operation>
+    
+        <wsdl:operation name="listaaKoulutusohjelmat">
+            <wsdl:input message="tns:listaaKoulutusohjelmatHaku" name="listaaKoulutusohjelmatHaku" />
+            <wsdl:output message="tns:listaaKoulutusohjelmatVastaus" name="listaaKoulutusohjelmatVastaus" />
+        </wsdl:operation>
+        
+        <wsdl:operation name="listaaKoulutusohjelma">
+            <wsdl:input message="tns:listaaKoulutusohjelmaHaku" name="listaaKoulutusohjelmaHaku" />
+            <wsdl:output message="tns:listaaKoulutusohjelmaVastaus" name="listaaKoulutusohjelmaVastaus" />
+        </wsdl:operation>
+
+    </wsdl:portType>
+
+    <wsdl:binding name="tarjontaKoodistoServiceSoapBinding" type="tns:TarjontaKoodistoService">
+        <soap:binding style="document"  transport="http://schemas.xmlsoap.org/soap/http" />
+
+        <wsdl:operation name="listaaKoulutuskoodit">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input message="tns:listaaKoulutuskooditHaku" name="listaaKoulutuskooditHaku">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output message="tns:listaaKoulutuskooditVastaus"  name="listaaKoulutuskooditVastaus">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        
+          <wsdl:operation name="listaaKoulutuskoodi">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input message="tns:listaaKoulutuskoodiHaku" name="listaaKoulutuskoodiHaku">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output message="tns:listaaKoulutuskoodiVastaus"  name="listaaKoulutuskoodiVastaus">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="listaaKoulutusasteet">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input message="tns:listaaKoulutusasteetHaku"  name="listaaKoulutusasteetHaku">
+                <soap:body use="literal" />
+            </wsdl:input>      
+            <wsdl:output message="tns:listaaKoulutusasteetVastaus"  name="listaaKoulutusasteetVastaus">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+             
+        <wsdl:operation name="listaaKoulutusohjelmat">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input message="tns:listaaKoulutusohjelmatHaku"  name="listaaKoulutusohjelmatHaku">
+                <soap:body use="literal" />
+            </wsdl:input>      
+            <wsdl:output message="tns:listaaKoulutusohjelmatVastaus"  name="listaaKoulutusohjelmatVastaus">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="listaaKoulutusohjelma">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input message="tns:listaaKoulutusohjelmaHaku"  name="listaaKoulutusohjelmaHaku">
+                <soap:body use="literal" />
+            </wsdl:input>      
+            <wsdl:output message="tns:listaaKoulutusohjelmaVastaus"  name="listaaKoulutusohjelmaVastaus">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="TarjontaKoodistoService">
+        <wsdl:port name="tarjontaKoodistoServicePort" binding="tns:tarjontaKoodistoServiceSoapBinding">
+            <soap:address location="http://localhost:8181/cxf/tarjontaKoodistoService" />
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>

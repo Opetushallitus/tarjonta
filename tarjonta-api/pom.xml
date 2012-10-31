@@ -11,11 +11,11 @@
     <artifactId>tarjonta-api</artifactId>
     <name>Tarjonta :: API</name>
     <packaging>bundle</packaging>
-<!--    <packaging>jar</packaging>-->
+    <!--    <packaging>jar</packaging>-->
 
     <properties>
         <felix.Import-Package>
-           javax.jws,
+            javax.jws,
             javax.jws.soap,
             javax.xml.ws,
             javax.xml.bind,
@@ -37,12 +37,12 @@
             <artifactId>cxf-api</artifactId>
             <scope>provided</scope>
         </dependency>
-<!--        <dependency>
+        <!--        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <scope>provided</scope>
         </dependency>-->
-       <dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
@@ -72,13 +72,13 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>
+        <!--        <dependency>
             <groupId>org.jvnet.jaxb2_commons</groupId>
             <artifactId>jaxb2-basics-runtime</artifactId>
             <version>0.6.3</version>
             <scope>provided</scope>
         </dependency>-->
-<!--        <dependency>
+        <!--        <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-common</artifactId>
             <version>${project.version}</version>
@@ -88,34 +88,31 @@
     </dependencies>
 
     <build>
-
-
-
         <plugins>
-
-
+            
+           
             <!-- make felix osgi bundle -->
 
-         			<plugin>
-                				<groupId>org.apache.felix</groupId>
-                				<artifactId>maven-bundle-plugin</artifactId>
-                				<extensions>true</extensions>
-                				<configuration>
-                       					<instructions>
-                              						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                              						<Bundle-Description>${project.description}</Bundle-Description>
-                              						<Export-Package>
-                                     							fi.vm.sade.tarjonta.service.types,
-                                     							fi.vm.sade.tarjonta.service.types.tarjonta,
-                                                                                        fi.vm.sade.tarjonta.service
-                                     					</Export-Package>
-                              						<Import-Package>
-                                     							${felix.Import-Package}
-                              						</Import-Package>
-                              						<Include-Resource>META-INF=target/classes/META-INF</Include-Resource>
-                       					</instructions>
-                				</configuration>
-         			</plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Description>${project.description}</Bundle-Description>
+                        <Export-Package>
+                            fi.vm.sade.tarjonta.service.types,
+                            fi.vm.sade.tarjonta.service.types.tarjonta,
+                            fi.vm.sade.tarjonta.service
+                        </Export-Package>
+                        <Import-Package>
+                            ${felix.Import-Package}
+                        </Import-Package>
+                        <Include-Resource>META-INF=target/classes/META-INF</Include-Resource>
+                    </instructions>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.cxf</groupId>
@@ -165,7 +162,7 @@
                             <goal>wsdl2java</goal>
                         </goals>
                     </execution>
-
+                    
                     <execution>
                         <id>generate-wsdl2java</id>
                         <phase>generate-sources</phase>
