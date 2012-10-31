@@ -29,9 +29,17 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.namespace.QName;
 
 import fi.vm.sade.tarjonta.publication.types.*;
+import fi.vm.sade.tarjonta.publication.types.CodeValueType.Code;
 import fi.vm.sade.tarjonta.publication.types.LearningOpportunitySpecificationType.Classification;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunitySpecificationType.Description;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
-import javax.xml.bind.JAXBException;
+import java.util.List;
+import java.util.Set;
+import javax.xml.bind.*;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.Duration;
 import javax.xml.namespace.NamespaceContext;
 
 import org.slf4j.Logger;
@@ -55,6 +63,8 @@ public class LearningOpportunityDataWriter extends PublicationCollector.EventHan
 
     private final ObjectFactory objectFactory;
 
+    private static DatatypeFactory datatypeFactory;
+
     private String rootElementName = DEFAULT_ROOT_ELEMENT_NAME;
 
     private static final Logger log = LoggerFactory.getLogger(LearningOpportunityDataWriter.class);
@@ -63,7 +73,9 @@ public class LearningOpportunityDataWriter extends PublicationCollector.EventHan
 
         final String packageName = LearningOpportunityDownloadDataType.class.getPackage().getName();
         final JAXBContext context = JAXBContext.newInstance(packageName, LearningOpportunityDownloadDataType.class.getClassLoader());
+
         objectFactory = new ObjectFactory();
+        datatypeFactory = DatatypeFactory.newInstance();
 
         marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
@@ -188,32 +200,25 @@ public class LearningOpportunityDataWriter extends PublicationCollector.EventHan
         }
 
         // LearningOpportunitySpecification/DegreeTitle
-        specification.setDegreeTitle(createExtendedString(moduuli.getNimi()));
+        specification.setDegreeTitle(createExtendedString(moduuli.getTutkintonimike()));
 
         // LearningOpportunitySpecification/Classification
         Classification classification = new Classification();
         specification.setClassification(classification);
 
-        // LearningOpportunitySpecification/Classification (koulutuskoodi)
-        classification.getClassificationCode().add(createClassification(
-            LearningClassificationCodeSchemeType.HTTP_OPH_FI,
-            null,
-            moduuli.getKoulutusKoodi()));
-
-        // LearningOpportunitySpecification/Classification (koulutusala)
-        classification.getClassificationCode().add(createClassification(
-            LearningClassificationCodeSchemeType.HTTP_OPH_FI,
-            LearningClassificationCategoryType.EDUCATION_DOMAIN,
-            moduuli.getKoulutusala()));
-
-        // LearningOpportunitySpecification/Classification (koulutusaste)
+        addKoulutusluokitus(moduuli, classification);
+        addKoulutusala(moduuli, classification);
         addKoulutusaste(moduuli, classification);
-
-        // LearningOpportunitySpecification/Classification (opintoala)
         addOpintoala(moduuli, classification);
-
-        // LearningOpportunitySpecification/Classification (eqf)
         addEqf(moduuli, classification);
+        addNqf(moduuli, classification);
+
+
+        // LearningOpportunitySpecification/Description
+        Description description = new Description();
+        specification.setDescription(description);
+
+        // LearningOpportunitySpecification/Description/StructureDiagram
 
         marshal(LearningOpportunitySpecificationType.class, specification);
 
@@ -224,14 +229,64 @@ public class LearningOpportunityDataWriter extends PublicationCollector.EventHan
 
         LearningOpportunityInstanceType instance = new LearningOpportunityInstanceType();
 
+        // LearningOpportunityInstance#id
+        instance.setId(toteutus.getOid());
+
+        // LearningOpportunityInstance/Identifier
+        if (toteutus.getUlkoinenTunniste() != null) {
+            instance.setIdentifier(toteutus.getUlkoinenTunniste());
+        }
+
+        // LearningOpportunityInstance/SpecificationRef
+        LearningOpportunitySpecificationRefType losRef = new LearningOpportunitySpecificationRefType();
+        losRef.setRef(toteutus.getKoulutusmoduuli().getOid());
+        instance.setSpecificationRef(losRef);
+
+        // LearningOpportunityInstance/OrganizationRef
+        OrganizationRefType orgRef = new OrganizationRefType();
+        orgRef.setOidRef(toteutus.getTarjoaja());
+        instance.setOrganizationRef(orgRef);
+
+        // LearningOpportunityInstance/ProfessionLabels
+        addAmmattinimikkeet(toteutus, instance);
+
+        // LearningOpportunityInstance/Keywords
+        addAvainsanat(toteutus, instance);
+
+        // LearningOpportunityInstance/LanguagesOfInsruction
+        addOpetuskielet(toteutus, instance);
+
+        // LearningOpportunityInstance/FormOfEducation
+        addKoulutuslajit(toteutus, instance);
+
+        // LearningOpportunityInstance/FormOfTeaching
+        addOpetusmuodot(toteutus, instance);
+
+        // LearningOpportunityInstance/StartDate
+        instance.setStartDate((toteutus.getKoulutuksenAlkamisPvm()));
+
+        // LearningOpportunityInstance/AcademicYear
+        instance.setAcademicYear(formatAcademicYear(toteutus.getKoulutuksenAlkamisPvm()));
+
+        // LearningOpportunityInstance/Duration
+        instance.setDuration(formatDuration(toteutus.getSuunniteltuKestoYksikko(), toteutus.getSuunniteltuKestoArvo()));
+
         marshal(LearningOpportunityInstanceType.class, instance);
 
     }
 
+    /**
+     * Marshals data fragment into underlying stream.
+     * @param <T> type of element to write
+     * @param elementClass
+     * @param data fragment to write
+     * @throws JAXBException
+     * @throws XMLStreamException
+     */
     private <T> void marshal(Class<T> elementClass, T data) throws JAXBException, XMLStreamException {
 
-        String name = elementClass.getSimpleName();
         // class name with out the Type postfix
+        String name = elementClass.getSimpleName();
         name = name.substring(0, name.length() - 4);
 
         marshal(name, elementClass, data);
@@ -257,26 +312,102 @@ public class LearningOpportunityDataWriter extends PublicationCollector.EventHan
 
     }
 
+    private void addOpetusmuodot(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
+
+        CodeValueCollectionType collection = toCodeValueCollection(toteutus.getOpetusmuotos());
+        target.setFormsOfTeaching(collection);
+
+    }
+
+    private void addKoulutuslajit(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
+
+        CodeValueCollectionType collection = toCodeValueCollection(toteutus.getKoulutuslajiList());
+        target.setFormOfEducation(collection);
+
+    }
+
+    private void addOpetuskielet(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
+
+        CodeValueCollectionType collection = toCodeValueCollection(toteutus.getOpetuskielis());
+        target.setLanguagesOfInstruction(collection);
+
+    }
+
     /**
-     * Helper method to create classification code.
+     * Helper method that converts Koodisto uri's to codes. If input set is null or empty, null is returned.
      *
-     * @param scheme
-     * @param category
-     * @param value
+     * @param uris
      * @return
      */
-    private static LearningClassificationCodeType createClassification(LearningClassificationCodeSchemeType scheme,
-        LearningClassificationCategoryType category,
-        String value) {
+    private static CodeValueCollectionType toCodeValueCollection(Set<KoodistoUri> uris) {
 
-        LearningClassificationCodeType classification = new LearningClassificationCodeType();
-        classification.setScheme(scheme);
-        if (category != null) {
-            classification.setCategory(category);
+        if (uris == null || uris.isEmpty()) {
+            return null;
         }
-        classification.setValue(value);
 
-        return classification;
+        CodeValueCollectionType collection = new CodeValueCollectionType();
+        collection.setScheme(CodeSchemeType.KOODISTO);
+        List<CodeValueCollectionType.Code> codes = collection.getCode();
+        for (KoodistoUri uri : uris) {
+            CodeValueCollectionType.Code code = new CodeValueCollectionType.Code();
+            code.setValue(uri.getKoodiUri());
+            codes.add(code);
+        }
+        return collection;
+
+    }
+
+    private void addAmmattinimikkeet(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
+
+        final Set<KoodistoUri> uris = toteutus.getAmmattinimikes();
+        if (uris != null && !uris.isEmpty()) {
+
+            ProfessionCollectionType professions = new ProfessionCollectionType();
+            List<CodeValueType> list = professions.getProfession();
+
+            for (KoodistoUri uri : uris) {
+                list.add(createCodeValue(CodeSchemeType.KOODISTO, uri.getKoodiUri()));
+            }
+
+            target.setProfessionLabels(professions);
+
+        }
+
+    }
+
+    private void addAvainsanat(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
+
+        final Set<KoodistoUri> uris = toteutus.getAvainsanas();
+        if (uris != null && !uris.isEmpty()) {
+
+            LearningOpportunityInstanceType.Keywords keywords = new LearningOpportunityInstanceType.Keywords();
+            List<CodeValueType> list = keywords.getKeyword();
+
+            for (KoodistoUri uri : uris) {
+                list.add(createCodeValue(CodeSchemeType.KOODISTO, uri.getKoodiUri()));
+            }
+
+            target.setKeywords(keywords);
+
+        }
+
+    }
+
+    private void addKoulutusala(Koulutusmoduuli koulutusmoduuli, Classification target) {
+
+        final String uri = koulutusmoduuli.getKoulutusala();
+        if (uri != null) {
+            target.setEducationDomain(createCodeValue(CodeSchemeType.KOODISTO, uri));
+        }
+
+    }
+
+    private void addKoulutusluokitus(Koulutusmoduuli koulutusmoduuli, Classification target) {
+
+        final String uri = koulutusmoduuli.getKoulutusKoodi();
+        if (uri != null) {
+            target.setEducationClassification(createCodeValue(CodeSchemeType.KOODISTO, uri));
+        }
 
     }
 
@@ -284,10 +415,7 @@ public class LearningOpportunityDataWriter extends PublicationCollector.EventHan
 
         final String uri = koulutusmoduuli.getKoulutusAste();
         if (uri != null) {
-            target.getClassificationCode().add(createClassification(
-                LearningClassificationCodeSchemeType.HTTP_OPH_FI,
-                LearningClassificationCategoryType.EDUCATION_DEGREE,
-                uri));
+            target.setEducationDegree(createCodeValue(CodeSchemeType.KOODISTO, uri));
         }
 
     }
@@ -296,25 +424,68 @@ public class LearningOpportunityDataWriter extends PublicationCollector.EventHan
 
         final String uri = koulutusmoduuli.getKoulutusala();
         if (uri != null) {
-            target.getClassificationCode().add(createClassification(
-                LearningClassificationCodeSchemeType.HTTP_OPH_FI,
-                LearningClassificationCategoryType.STYDY_DOMAIN,
-                uri));
+            target.setStudyDomain(createCodeValue(CodeSchemeType.KOODISTO, uri));
         }
 
     }
 
     private void addEqf(Koulutusmoduuli koulutusmoduuli, Classification target) {
 
-        // TODO: jatka tasta
-
         final String uri = koulutusmoduuli.getEqfLuokitus();
         if (uri != null) {
-            target.getClassificationCode().add(createClassification(
-                LearningClassificationCodeSchemeType.HTTP_OPH_FI,
-                null,
-                uri));
+            target.setEqfClassification(createCodeValue(CodeSchemeType.KOODISTO, uri));
         }
+
+    }
+
+    private void addNqf(Koulutusmoduuli koulutusmoduuli, Classification target) {
+
+        final String uri = koulutusmoduuli.getNqfLuokitus();
+        if (uri != null) {
+            target.setNqfClassification(createCodeValue(CodeSchemeType.KOODISTO, uri));
+        }
+
+    }
+
+    private static String formatAcademicYear(Date date) {
+
+        return new SimpleDateFormat("yyyy").format(date);
+
+    }
+
+    /**
+     * Converts "tarjonta duration" into XML Duration. This logic assumes that we
+     * are only dealing with whole years. Use of koodisto uris makes of no sense.
+     *
+     * @param unitsUri not handled
+     * @param value years as number expected
+     * @return
+     */
+    private static Duration formatDuration(String unitsUri, String value) {
+
+        // fix me: disabled for now since values are any text
+        if (1 < 2) {
+            return null;
+        }
+
+        // likely to throw exception if values are something like "3-4"
+        int numYears = Integer.parseInt(value);
+        int numMonths = 0;
+
+        return datatypeFactory.newDurationYearMonth(true, numYears, numMonths);
+
+    }
+
+    private static CodeValueType createCodeValue(CodeSchemeType scheme, String codeValue) {
+
+        Code code = new Code();
+        code.setScheme(scheme);
+        code.setValue(codeValue);
+
+        CodeValueType codeValueType = new CodeValueType();
+        codeValueType.setCode(code);
+
+        return codeValueType;
 
     }
 

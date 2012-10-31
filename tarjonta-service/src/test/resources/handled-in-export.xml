@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Tarjonnan tunti/vienti rajapinnan esimerkki sanoma (download).
+    
 -->
 <LearningOpportunityDownloadData
     xmlns="http://publication.tarjonta.sade.vm.fi/types"
@@ -48,6 +48,8 @@
 
         <Classification>
 
+            <!-- kaikki seuraavat luokittelut ovat toteutettu päivitetyn scheman mukaisesti -->
+
             <!-- OK -->
             <ClassificationCode scheme="http://stat.fi" version="2010">
                 <Value>371101</Value>
@@ -72,12 +74,12 @@
                 <Label>sosiaali- ja terveysala</Label>
             </ClassificationCode>
 
-            <!-- EQF OF WHAT - TÄMÄ EI TOIMI, KOKO CLASSIFICATION EHKÄ PURETTAVA TARKKOIHIN KENTTIIN -->
+            <!-- OK -->
             <ClassificationCode scheme="EQF">
                 <Value>4</Value>
             </ClassificationCode>
 
-            <!-- NQF -->
+            <!-- OK -->
             <ClassificationCode scheme="NQF">
                 <Value>4</Value>
             </ClassificationCode>
@@ -110,211 +112,36 @@
 
 
     <!-- ========================================================================================= -->
-    <!-- Koulutusmoduuli, kuntoutuksen ko, 1598                                                    -->
-    <!-- ========================================================================================= -->
-
-    <LearningOpportunitySpecification id="S1598" type="DegreeProgramme">
-
-        <!-- tutkinto-ohjelman nimi / degreeProgrammeTitle -->
-        <Name xml:lang="fi">Kuntoutuksen koulutusohjelma</Name>
-
-        <!-- tutkinto-ohjelman tunniste -->
-        <Identifier>1598</Identifier>
-
-        <!-- omistaja organisaatio -->
-        <OrganizationRef>
-            <OidRef>1.2.3.4.5</OidRef>
-        </OrganizationRef>
-
-        <!-- laajuus sekä laajuusyksikkö -->
-        <Credits unit="CreditUnits">120</Credits>
-
-        <!-- tutkintonimike -->
-        <Qualification>
-            <Title>lähihoitaja</Title>
-        </Qualification>
-
-        <!-- tutkinnon nimi -->
-        <DegreeTitle>sosiaali- ja terveysalan pt</DegreeTitle>
-
-        <Classification>
-
-            <!-- koulutusluokituksen koodi -->
-            <ClassificationCode scheme="http://stat.fi" version="2010">
-                <Value>371101</Value>
-                <Label xml:lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
-            </ClassificationCode>
-
-            <!-- koulutusala -->
-            <ClassificationCode category="EducationDomain" scheme="http://oph.fi" version="2002">
-                <Value>7</Value>
-                <Label>sosiaali- terveys- ja liikunta-ala</Label>
-            </ClassificationCode>
-
-            <!-- koulutusaste -->
-            <ClassificationCode category="EducationDegree" scheme="http://oph.fi" version="2002">
-                <Value>32</Value>
-                <Label>Ammatillinen koulutus</Label>
-            </ClassificationCode>
-
-            <!-- opintoala -->
-            <ClassificationCode category="StydyDomain" scheme="http://oph.fi" version="2002">
-                <Value>703</Value>
-                <Label>sosiaali- ja terveysala</Label>
-            </ClassificationCode>
-
-            <!-- EQF -->
-            <ClassificationCode scheme="EQF">
-                <Value>4</Value>
-            </ClassificationCode>
-
-            <!-- NQF -->
-            <ClassificationCode scheme="NQF">
-                <Value>4</Value>
-            </ClassificationCode>
-
-        </Classification>
-
-        <Description>
-
-            <!-- koulutusrakenteen kuvaus -->
-            <StructureDiagram>
-                Tutkinnon kaikille pakolliset tutkinnon osat ovat kasvun tukeminen ja ohjaus (15 ov),
-                hoito ja huolenpito (20 ov) ja kuntoutumisen tukeminen (15 ov).  Lisäksi suoritetaan
-                valitun koulutusohjelman/osaamisalan pakolliset tutkinnon osat. Ensihoidon
-                koulutusohjelman/osaamisalan pakollinen tutkinnon osa on ensihoitopalvelussa toimiminen
-                (20 ov) ja lisäksi valinnainen joko päivystyspolikliininen hoitotyö (10 ov) tai
-                perioperatiivinen hoitotyö (10 ov).
-            </StructureDiagram>
-
-            <!-- jatko-opintoväylät -->
-            <AccessToFurtherStudies>
-                Ammatillinen perustutkinto antaa yleisen korkeakoulukelpoisuuden.
-            </AccessToFurtherStudies>
-
-        </Description>
-
-    </LearningOpportunitySpecification>
-
-
-    <!-- ========================================================================================= -->
-    <!-- Koulutusmoduuli, vanhustyön ko, 1514                                                      -->
-    <!-- ========================================================================================= -->
-
-    <LearningOpportunitySpecification id="S1514" type="DegreeProgramme">
-
-        <!-- tutkinto-ohjelman nimi / degreeProgrammeTitle -->
-        <Name xml:lang="fi">Vanhustyön koulutusohjelma</Name>
-
-        <!-- tutkinto-ohjelman tunniste -->
-        <Identifier>1514</Identifier>
-
-        <!-- omistaja organisaatio -->
-        <OrganizationRef>
-            <OidRef>1.2.3.4.5</OidRef>
-        </OrganizationRef>
-
-        <!-- laajuus sekä laajuusyksikkö -->
-        <Credits unit="CreditUnits">120</Credits>
-
-        <!-- tutkintonimike -->
-        <Qualification>
-            <Title>lähihoitaja</Title>
-        </Qualification>
-
-        <!-- tutkinnon nimi -->
-        <DegreeTitle>sosiaali- ja terveysalan pt</DegreeTitle>
-
-        <Classification>
-
-            <!-- koulutusluokituksen koodi -->
-            <ClassificationCode scheme="http://stat.fi" version="2010">
-                <Value>371101</Value>
-                <Label xml:lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
-            </ClassificationCode>
-
-            <!-- koulutusala -->
-            <ClassificationCode category="EducationDomain" scheme="http://oph.fi" version="2002">
-                <Value>7</Value>
-                <Label>sosiaali- terveys- ja liikunta-ala</Label>
-            </ClassificationCode>
-
-            <!-- koulutusaste -->
-            <ClassificationCode category="EducationDegree" scheme="http://oph.fi" version="2002">
-                <Value>32</Value>
-                <Label>Ammatillinen koulutus</Label>
-            </ClassificationCode>
-
-            <!-- opintoala -->
-            <ClassificationCode category="StydyDomain" scheme="http://oph.fi" version="2002">
-                <Value>703</Value>
-                <Label>sosiaali- ja terveysala</Label>
-            </ClassificationCode>
-
-            <!-- EQF -->
-            <ClassificationCode scheme="EQF">
-                <Value>4</Value>
-            </ClassificationCode>
-
-            <!-- NQF -->
-            <ClassificationCode scheme="NQF">
-                <Value>4</Value>
-            </ClassificationCode>
-
-        </Classification>
-
-        <Description>
-
-            <!-- koulutusrakenteen kuvaus -->
-            <StructureDiagram>
-                Tutkinnon kaikille pakolliset tutkinnon osat ovat kasvun tukeminen ja ohjaus (15 ov),
-                hoito ja huolenpito (20 ov) ja kuntoutumisen tukeminen (15 ov).  Lisäksi suoritetaan
-                valitun koulutusohjelman/osaamisalan pakolliset tutkinnon osat. Ensihoidon
-                koulutusohjelman/osaamisalan pakollinen tutkinnon osa on ensihoitopalvelussa toimiminen
-                (20 ov) ja lisäksi valinnainen joko päivystyspolikliininen hoitotyö (10 ov) tai
-                perioperatiivinen hoitotyö (10 ov).
-            </StructureDiagram>
-
-            <!-- jatko-opintoväylät -->
-            <AccessToFurtherStudies>
-                Ammatillinen perustutkinto antaa yleisen korkeakoulukelpoisuuden.
-            </AccessToFurtherStudies>
-
-        </Description>
-
-    </LearningOpportunitySpecification>
-
-    <!-- ========================================================================================= -->
     <!-- Koulutusmoduulin toteutus, YO, 1508                                                       -->
     <!-- ========================================================================================= -->
 
+    <!-- OK -->
     <LearningOpportunityInstance id="I1508YO">
 
-        <!-- Koulutusmoduulin toteutuksen tunniste, koulutuksen tarjoajan jarjestelmassa. -->
+        <!-- OK -->
         <Identifier>T1508</Identifier>
 
-        <!-- koulutusmoduuli jota tämä toteutus täydentää -->
+        <!-- OK: oid -->
         <SpecificationRef ref="S1508"/>
 
-        <!-- organisaatio joka tarjoaa tätä koulutusta -->
+        <!-- OK: oid -->
         <OrganizationRef>
             <OidRef>1.2.3.4.5</OidRef>
         </OrganizationRef>
 
-        <!-- Pohjakoulutus vaatimus -->
-        <!-- todo: mallissa tämä on koodisto joten arbitraaria dataa ei voida ottaa vastaan. -->
+        <!-- ei vielä olemassa -->
         <Prerequisite>
             Ylioppilas tai lukion suorittanut
         </Prerequisite>
 
-        <!-- ammattinimikkeet -->
+        <!-- OK: uuden scheman mukaisesti -->
         <Profession>
             <Title>Lähihoitaja</Title>
             <Title>Perushoitaja</Title>
             <Title>Ensihoitaja</Title>
         </Profession>
 
-        <!-- asiasanat -->
+        <!-- OK: uuden schema mukaisesti -->
         <Keywords>
             <Keyword>Lähihoitaja</Keyword>
             <Keyword>Hoiva-ala</Keyword>
@@ -323,7 +150,7 @@
             <Keyword>Ambulanssi</Keyword>
         </Keywords>
 
-        <!-- opetuskielet -->
+        <!-- OK: uuden scheman mukaisesti -->
         <LanguagesOfInstruction scheme="ISO-639-1">
 
             <!-- opetusta suomeksi -->
@@ -331,13 +158,13 @@
 
         </LanguagesOfInstruction>
 
-        <!--koulutuslaji -->
+        <!--OK: uuden scheman mukaisesti -->
         <FormOfEducation scheme="http://oph.fi">
             <Value>http://koodistopalvelu.opintopolku.fi/koulutusLaj/1</Value>
             <Label>nuorten koulutus</Label>
         </FormOfEducation>
 
-        <!-- joukko opetusmuotoja -->
+        <!-- OK: uuden scheman mukaisesti -->
         <FormsOfTeaching>
 
             <!-- lähiopetus -->
@@ -345,13 +172,13 @@
 
         </FormsOfTeaching>
 
-        <!-- koulutuksen alkamispäivämäärä, ISO-8601 muodossa -->
+        <!-- OK -->
         <StartDate>2014-09-14</StartDate>
 
-        <!-- lukuvuosi -->
+        <!-- OK  -->
         <AcademicYear>2014</AcademicYear>
 
-        <!-- koulutuksen kesto, ISO-8601 extended format -->
+        <!-- OK - pitääkö tätä löyhentää ja muuttaa se string -tyypiksi jos halutaan antaa 3-4 vuotta arvoja? -->
         <Duration>P2Y</Duration>
 
         <!-- arviointi kriteerit -->

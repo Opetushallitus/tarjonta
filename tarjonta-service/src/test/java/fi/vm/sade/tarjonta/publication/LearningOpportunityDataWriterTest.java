@@ -33,8 +33,7 @@ import java.io.StringReader;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
-import org.junit.After;
-import org.junit.Ignore;
+import org.junit.*;
 
 /**
  *
@@ -45,6 +44,13 @@ public class LearningOpportunityDataWriterTest {
     private LearningOpportunityDataWriter writer;
 
     private StringWriter out;
+
+    private static JAXBContext sJaxbContext;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        sJaxbContext = JAXBContext.newInstance(LearningOpportunityDownloadDataType.class.getPackage().getName());
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -128,8 +134,7 @@ public class LearningOpportunityDataWriterTest {
 
     private JAXBElement<LearningOpportunityDownloadDataType> unmarshal(Reader reader) throws Exception {
 
-        JAXBContext context = JAXBContext.newInstance(LearningOpportunityDownloadDataType.class.getPackage().getName());
-        Unmarshaller um = context.createUnmarshaller();
+        Unmarshaller um = sJaxbContext.createUnmarshaller();
         return (JAXBElement<LearningOpportunityDownloadDataType>) um.unmarshal(reader);
 
     }

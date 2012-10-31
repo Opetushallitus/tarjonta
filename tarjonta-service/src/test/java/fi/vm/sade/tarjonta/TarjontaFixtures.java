@@ -19,7 +19,7 @@ import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -59,6 +59,8 @@ public class TarjontaFixtures {
     @Autowired
     private KoulutusSisaltyvyysDAO rakenneDAO;
 
+    private static final Random random = new Random(System.currentTimeMillis());
+
     public void recreate() {
 
         simpleTutkintoOhjelma = createTutkintoOhjelma();
@@ -92,7 +94,12 @@ public class TarjontaFixtures {
         Koulutusmoduuli m = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         m.setOid(randomOid("koulutusmoduuli"));
         m.setTutkintoOhjelmanNimi("Simple Tutkinto-Ohjelma");
-        m.setKoulutusKoodi("500001");
+        m.setEqfLuokitus(randomUri("eqf"));
+        m.setNqfLuokitus(randomUri("nqf"));
+        m.setKoulutusAste(randomUri("koulutusaste"));
+        m.setKoulutusala(randomUri("koulutusala"));
+        m.setKoulutusohjelmaKoodi(randomUri("koulutusohjelma"));
+        m.setKoulutusKoodi(randomUri("koulutusluokitus"));
 
         return m;
 
@@ -169,7 +176,7 @@ public class TarjontaFixtures {
         hakukohde.setHakukelpoisuusvaatimus(randomUri("koulutustaso"));
         hakukohde.setTila(TarjontaTila.VALMIS);
         hakukohde.setYlinValintaPistemaara(200);
-        
+
         return hakukohde;
 
     }
@@ -339,11 +346,11 @@ public class TarjontaFixtures {
     }
 
     private String randomOid(String type) {
-        return "http://" + type + "/" + System.currentTimeMillis();
+        return "http://" + type + "/" + System.currentTimeMillis() + "-" + Math.abs(random.nextInt());
     }
 
     private String randomUri(String context) {
-        return "http://" + context + "/" + System.currentTimeMillis();
+        return "http://" + context + "/" + System.currentTimeMillis() + "-" + Math.abs(random.nextInt());
     }
 
 }

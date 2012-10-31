@@ -39,39 +39,40 @@
 
         <Classification>
 
-            <!-- koulutusluokituksen koodi -->
-            <ClassificationCode scheme="http://stat.fi" version="2010">
-                <Value>371101</Value>
+            <!-- koulutusluokitus -->
+            <EducationClassification>
+                <Code scheme="OPH" version="2010">371101</Code>
                 <Label xml:lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
-            </ClassificationCode>
+            </EducationClassification>
 
             <!-- koulutusala -->
-            <ClassificationCode category="EducationDomain" scheme="http://oph.fi" version="2002">
-                <Value>7</Value>
+            <EducationDomain>
+                <Code scheme="OPH" version="2002">7</Code>
                 <Label>sosiaali- terveys- ja liikunta-ala</Label>
-            </ClassificationCode>
+            </EducationDomain>
 
             <!-- koulutusaste -->
-            <ClassificationCode category="EducationDegree" scheme="http://oph.fi" version="2002">
-                <Value>32</Value>
+            <EducationDegree>
+                <Code scheme="OPH" version="2002">32</Code>
                 <Label>Ammatillinen koulutus</Label>
-            </ClassificationCode>
+            </EducationDegree>
 
             <!-- opintoala -->
-            <ClassificationCode category="StydyDomain" scheme="http://oph.fi" version="2002">
-                <Value>703</Value>
+            <StudyDomain>
+                <Code scheme="OPH" version="2002">703</Code>
                 <Label>sosiaali- ja terveysala</Label>
-            </ClassificationCode>
+            </StudyDomain>
 
             <!-- EQF -->
-            <ClassificationCode scheme="EQF">
-                <Value>4</Value>
-            </ClassificationCode>
+            <EqfClassification>
+                <Code scheme="EQF">4</Code>
+            </EqfClassification>
 
             <!-- NQF -->
-            <ClassificationCode scheme="NQF">
-                <Value>4</Value>
-            </ClassificationCode>
+            <NqfClassification>
+                <Code scheme="NQF">4</Code>
+            </NqfClassification>
+
 
         </Classification>
 
@@ -130,39 +131,39 @@
 
         <Classification>
 
-            <!-- koulutusluokituksen koodi -->
-            <ClassificationCode scheme="http://stat.fi" version="2010">
-                <Value>371101</Value>
+            <!-- koulutusluokitus -->
+            <EducationClassification>
+                <Code scheme="OPH" version="2010">371101</Code>
                 <Label xml:lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
-            </ClassificationCode>
+            </EducationClassification>
 
             <!-- koulutusala -->
-            <ClassificationCode category="EducationDomain" scheme="http://oph.fi" version="2002">
-                <Value>7</Value>
+            <EducationDomain>
+                <Code scheme="OPH" version="2002">7</Code>
                 <Label>sosiaali- terveys- ja liikunta-ala</Label>
-            </ClassificationCode>
+            </EducationDomain>
 
             <!-- koulutusaste -->
-            <ClassificationCode category="EducationDegree" scheme="http://oph.fi" version="2002">
-                <Value>32</Value>
+            <EducationDegree>
+                <Code scheme="OPH" version="2002">32</Code>
                 <Label>Ammatillinen koulutus</Label>
-            </ClassificationCode>
+            </EducationDegree>
 
             <!-- opintoala -->
-            <ClassificationCode category="StydyDomain" scheme="http://oph.fi" version="2002">
-                <Value>703</Value>
+            <StudyDomain>
+                <Code scheme="OPH" version="2002">703</Code>
                 <Label>sosiaali- ja terveysala</Label>
-            </ClassificationCode>
+            </StudyDomain>
 
             <!-- EQF -->
-            <ClassificationCode scheme="EQF">
-                <Value>4</Value>
-            </ClassificationCode>
+            <EqfClassification>
+                <Code scheme="EQF">4</Code>
+            </EqfClassification>
 
             <!-- NQF -->
-            <ClassificationCode scheme="NQF">
-                <Value>4</Value>
-            </ClassificationCode>
+            <NqfClassification>
+                <Code scheme="NQF">4</Code>
+            </NqfClassification>
 
         </Classification>
 
@@ -218,39 +219,40 @@
 
         <Classification>
 
-            <!-- koulutusluokituksen koodi -->
-            <ClassificationCode scheme="http://stat.fi" version="2010">
-                <Value>371101</Value>
+
+                        <!-- koulutusluokitus -->
+            <EducationClassification>
+                <Code scheme="OPH" version="2010">371101</Code>
                 <Label xml:lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
-            </ClassificationCode>
+            </EducationClassification>
 
             <!-- koulutusala -->
-            <ClassificationCode category="EducationDomain" scheme="http://oph.fi" version="2002">
-                <Value>7</Value>
+            <EducationDomain>
+                <Code scheme="OPH" version="2002">7</Code>
                 <Label>sosiaali- terveys- ja liikunta-ala</Label>
-            </ClassificationCode>
+            </EducationDomain>
 
             <!-- koulutusaste -->
-            <ClassificationCode category="EducationDegree" scheme="http://oph.fi" version="2002">
-                <Value>32</Value>
+            <EducationDegree>
+                <Code scheme="OPH" version="2002">32</Code>
                 <Label>Ammatillinen koulutus</Label>
-            </ClassificationCode>
+            </EducationDegree>
 
             <!-- opintoala -->
-            <ClassificationCode category="StydyDomain" scheme="http://oph.fi" version="2002">
-                <Value>703</Value>
+            <StudyDomain>
+                <Code scheme="OPH" version="2002">703</Code>
                 <Label>sosiaali- ja terveysala</Label>
-            </ClassificationCode>
+            </StudyDomain>
 
             <!-- EQF -->
-            <ClassificationCode scheme="EQF">
-                <Value>4</Value>
-            </ClassificationCode>
+            <EqfClassification>
+                <Code scheme="EQF">4</Code>
+            </EqfClassification>
 
             <!-- NQF -->
-            <ClassificationCode scheme="NQF">
-                <Value>4</Value>
-            </ClassificationCode>
+            <NqfClassification>
+                <Code scheme="NQF">4</Code>
+            </NqfClassification>
 
         </Classification>
 
@@ -299,40 +301,63 @@
         </Prerequisite>
 
         <!-- ammattinimikkeet -->
-        <Profession>
-            <Title>Lähihoitaja</Title>
-            <Title>Perushoitaja</Title>
-            <Title>Ensihoitaja</Title>
-        </Profession>
+        <ProfessionLabels>
+            <Profession>
+                <Code scheme="Koodisto">uri:ammattinimike/lahihoitaja</Code>
+                <Label>Lähihoitaja</Label>
+            </Profession>
+            <Profession>
+                <Code scheme="Koodisto">uri:ammattinimike/perushoitaja</Code>
+                <Label>Perushoitaja</Label>
+            </Profession>
+            <Profession>
+                <Code scheme="Koodisto">uri:ammattinimike/ensihoitaja</Code>
+                <Label>Ensihoitaja</Label>
+            </Profession>
+        </ProfessionLabels>
 
         <!-- asiasanat -->
         <Keywords>
-            <Keyword>Lähihoitaja</Keyword>
-            <Keyword>Hoiva-ala</Keyword>
-            <Keyword>Sosiaali- ja terveys</Keyword>
-            <Keyword>Ensihoito</Keyword>
-            <Keyword>Ambulanssi</Keyword>
+            <Keyword>
+                <Label>Lähihoitaja</Label>
+            </Keyword>
+            <Keyword>
+                <Label>Hoiva-ala</Label>
+            </Keyword>
+            <Keyword>
+                <Label>Sosiaali- ja terveys</Label>
+            </Keyword>
+            <Keyword>
+                <Label>Ensihoito</Label>
+            </Keyword>
+            <Keyword>
+                <Label>Ambulanssi</Label>
+            </Keyword>
         </Keywords>
 
         <!-- opetuskielet -->
         <LanguagesOfInstruction scheme="ISO-639-1">
 
             <!-- opetusta suomeksi -->
-            <Language code="fi"/>
+            <Code value="fi">
+                <Label xml:lang="fi">suomi</Label>
+            </Code>
 
         </LanguagesOfInstruction>
 
         <!--koulutuslaji -->
-        <FormOfEducation scheme="http://oph.fi">
-            <Value>http://koodistopalvelu.opintopolku.fi/koulutusLaj/1</Value>
-            <Label>nuorten koulutus</Label>
+        <FormOfEducation scheme="Koodisto">
+            <Code value="http://koodistopalvelu.opintopolku.fi/koulutusLaj/1">
+                <Label>nuorten koulutus</Label>
+            </Code>
         </FormOfEducation>
 
         <!-- joukko opetusmuotoja -->
-        <FormsOfTeaching>
+        <FormsOfTeaching scheme="Koodisto">
 
-            <!-- lähiopetus -->
-            <FormOfTeaching type="Classroom"/>
+            <Code value="http://koodistopalvelu.opintopolku.fi/opetusmuoto/1">
+                <Label>lähiopetus</Label>
+            </Code>
 
         </FormsOfTeaching>
 
@@ -426,40 +451,61 @@
         </Prerequisite>
 
         <!-- ammattinimikkeet -->
-        <Profession>
-            <Title>Lähihoitaja</Title>
-            <Title>Perushoitaja</Title>
-            <Title>Ensihoitaja</Title>
-        </Profession>
+        <ProfessionLabels>
+            <Profession>
+                <Code scheme="Koodisto">uri:ammattinimike/lahihoitaja</Code>
+                <Label>Lähihoitaja</Label>
+            </Profession>
+            <Profession>
+                <Code scheme="Koodisto">uri:ammattinimike/perushoitaja</Code>
+                <Label>Perushoitaja</Label>
+            </Profession>
+            <Profession>
+                <Code scheme="Koodisto">uri:ammattinimike/ensihoitaja</Code>
+                <Label>Ensihoitaja</Label>
+            </Profession>
+        </ProfessionLabels>
 
         <!-- asiasanat -->
         <Keywords>
-            <Keyword>Lähihoitaja</Keyword>
-            <Keyword>Hoiva-ala</Keyword>
-            <Keyword>Sosiaali- ja terveys</Keyword>
-            <Keyword>Ensihoito</Keyword>
-            <Keyword>Ambulanssi</Keyword>
+            <Keyword>
+                <Label>Lähihoitaja</Label>
+            </Keyword>
+            <Keyword>
+                <Label>Hoiva-ala</Label>
+            </Keyword>
+            <Keyword>
+                <Label>Sosiaali- ja terveys</Label>
+            </Keyword>
+            <Keyword>
+                <Label>Ensihoito</Label>
+            </Keyword>
+            <Keyword>
+                <Label>Ambulanssi</Label>
+            </Keyword>
         </Keywords>
 
         <!-- opetuskielet -->
         <LanguagesOfInstruction scheme="ISO-639-1">
 
             <!-- opetusta suomeksi -->
-            <Language code="fi"/>
+            <Code value="fi"/>
 
         </LanguagesOfInstruction>
 
         <!--koulutuslaji -->
-        <FormOfEducation scheme="http://oph.fi">
-            <Value>http://koodistopalvelu.opintopolku.fi/koulutusLaj/1</Value>
-            <Label>nuorten koulutus</Label>
+        <FormOfEducation scheme="Koodisto">
+            <Code value="http://koodistopalvelu.opintopolku.fi/koulutusLaj/1">
+                <Label>nuorten koulutus</Label>
+            </Code>
         </FormOfEducation>
 
         <!-- joukko opetusmuotoja -->
-        <FormsOfTeaching>
+        <FormsOfTeaching scheme="Koodisto">
 
-            <!-- lähiopetus -->
-            <FormOfTeaching type="Classroom"/>
+            <Code value="http://koodistopalvelu.opintopolku.fi/opetusmuoto/1">
+                <Label>lähiopetus</Label>
+            </Code>
 
         </FormsOfTeaching>
 
@@ -553,39 +599,57 @@
         </Prerequisite>
 
         <!-- ammattinimikkeet -->
-        <Profession>
-            <Title>Lähihoitaja</Title>
-            <Title>Perushoitaja</Title>
-        </Profession>
+        <ProfessionLabels>
+            <Profession>
+                <Code scheme="Koodisto">uri:ammattinimike/lahihoitaja</Code>
+                <Label>Lähihoitaja</Label>
+            </Profession>
+            <Profession>
+                <Code scheme="Koodisto">uri:ammattinimike/perushoitaja</Code>
+                <Label>Perushoitaja</Label>
+            </Profession>
+        </ProfessionLabels>
 
         <!-- asiasanat -->
         <Keywords>
-            <Keyword>Lähihoitaja</Keyword>
-            <Keyword>Hoiva-ala</Keyword>
-            <Keyword>Sosiaali- ja terveys</Keyword>
-            <Keyword>Vanhustyö</Keyword>
-            <Keyword>geriatria</Keyword>
+            <Keyword>
+                <Label>Lähihoitaja</Label>
+            </Keyword>
+            <Keyword>
+                <Label>Hoiva-ala</Label>
+            </Keyword>
+            <Keyword>
+                <Label>Sosiaali- ja terveys</Label>
+            </Keyword>
+            <Keyword>
+                <Label>Vanhustyö</Label>
+            </Keyword>
+            <Keyword>
+                <Label>geriatria</Label>
+            </Keyword>
         </Keywords>
 
         <!-- opetuskielet -->
         <LanguagesOfInstruction scheme="ISO-639-1">
 
             <!-- opetusta suomeksi -->
-            <Language code="fi"/>
+            <Code value="fi"/>
 
         </LanguagesOfInstruction>
 
         <!--koulutuslaji -->
-        <FormOfEducation scheme="http://oph.fi">
-            <Value>http://koodistopalvelu.opintopolku.fi/koulutusLaj/1</Value>
-            <Label>nuorten koulutus</Label>
+        <FormOfEducation scheme="Koodisto">
+            <Code value="http://koodistopalvelu.opintopolku.fi/koulutusLaj/1">
+                <Label>nuorten koulutus</Label>
+            </Code>
         </FormOfEducation>
 
         <!-- joukko opetusmuotoja -->
-        <FormsOfTeaching>
+        <FormsOfTeaching scheme="Koodisto">
 
-            <!-- lähiopetus -->
-            <FormOfTeaching type="Classroom"/>
+            <Code value="http://koodistopalvelu.opintopolku.fi/opetusmuoto/1">
+                <Label>lähiopetus</Label>
+            </Code>
 
         </FormsOfTeaching>
 
@@ -679,39 +743,59 @@
         </Prerequisite>
 
         <!-- ammattinimikkeet -->
-        <Profession>
-            <Title>Lähihoitaja</Title>
-            <Title>Perushoitaja</Title>
-        </Profession>
+        <ProfessionLabels>
+            <Profession>
+                <Code scheme="Koodisto">uri:ammattinimike/lahihoitaja</Code>
+                <Label>Lähihoitaja</Label>
+            </Profession>
+            <Profession>
+                <Code scheme="Koodisto">uri:ammattinimike/perushoitaja</Code>
+                <Label>Perushoitaja</Label>
+            </Profession>
+        </ProfessionLabels>
 
         <!-- asiasanat -->
         <Keywords>
-            <Keyword>Lähihoitaja</Keyword>
-            <Keyword>Hoiva-ala</Keyword>
-            <Keyword>Sosiaali- ja terveys</Keyword>
-            <Keyword>Kuntoutus</Keyword>
-            <Keyword>fysioterapia</Keyword>
+            <Keyword>
+                <Label>Lähihoitaja</Label>
+            </Keyword>
+            <Keyword>
+                <Label>Hoiva-ala</Label>
+            </Keyword>
+            <Keyword>
+                <Label>Sosiaali- ja terveys</Label>
+            </Keyword>
+            <Keyword>
+                <Label>Kuntoutus</Label>
+            </Keyword>
+            <Keyword>
+                <Label>fysioterapia</Label>
+            </Keyword>
         </Keywords>
 
         <!-- opetuskielet -->
         <LanguagesOfInstruction scheme="ISO-639-1">
 
             <!-- opetusta suomeksi -->
-            <Language code="fi"/>
+            <Code value="fi">
+                <Label xml:lang="fi">Suomi</Label>
+            </Code>
 
         </LanguagesOfInstruction>
 
         <!--koulutuslaji -->
-        <FormOfEducation scheme="http://oph.fi">
-            <Value>http://koodistopalvelu.opintopolku.fi/koulutusLaj/1</Value>
-            <Label>nuorten koulutus</Label>
+        <FormOfEducation scheme="Koodisto">
+            <Code value="http://koodistopalvelu.opintopolku.fi/koulutusLaj/1">
+                <Label>nuorten koulutus</Label>
+            </Code>
         </FormOfEducation>
 
         <!-- joukko opetusmuotoja -->
-        <FormsOfTeaching>
+        <FormsOfTeaching scheme="Koodisto">
 
-            <!-- lähiopetus -->
-            <FormOfTeaching type="Classroom"/>
+            <Code value="http://koodistopalvelu.opintopolku.fi/opetusmuoto/1">
+                <Label>lähiopetus</Label>
+            </Code>
 
         </FormsOfTeaching>
 

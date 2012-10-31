@@ -71,6 +71,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> teemas = new HashSet<KoodistoUri>();
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_avainsana", joinColumns =
+    @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<KoodistoUri> avainsanas = new HashSet<KoodistoUri>();
+
     @Size(min = 1)
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_opetuskieli", joinColumns =
@@ -111,6 +116,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "maksullisuus_teksti_id")
     private MonikielinenTeksti maksullisuusUrl;
+
+    @Column(name = "ulkoinentunniste")
+    private String ulkoinenTunniste;
 
     public KoulutusmoduuliToteutus() {
         super();
@@ -229,7 +237,23 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * @param teemaUris the teemaUris to set
      */
     public void setTeemas(Set<KoodistoUri> teemaUris) {
-        this.teemas = teemaUris;
+        this.teemas = new HashSet<KoodistoUri>(teemaUris);
+    }
+
+    public Set<KoodistoUri> getAvainsanas() {
+        return Collections.unmodifiableSet(avainsanas);
+    }
+
+    public void removeAvainsana(KoodistoUri avainsana) {
+        avainsanas.remove(avainsana);
+    }
+
+    public void addAvainsana(KoodistoUri avainsana) {
+        avainsanas.add(avainsana);
+    }
+
+    public void setAvainsanas(Set<KoodistoUri> avainsanas) {
+        this.avainsanas = new HashSet<KoodistoUri>(avainsanas);
     }
 
     /**
@@ -402,6 +426,23 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      */
     public void setSuunniteltuKestoYksikko(String suunniteltuKestoYksikko) {
         this.suunniteltuKestoYksikko = suunniteltuKestoYksikko;
+    }
+
+    /**
+     * Tunniste jolla koulutuksen tarjoaja yksiloi kyseisen koulutuksen.
+     *
+     * @return
+     */
+    public String getUlkoinenTunniste() {
+        return ulkoinenTunniste;
+    }
+
+    /**
+     * @see #getUlkoinenTunniste()
+     * @param ulkoinenTunniste
+     */
+    public void setUlkoinenTunniste(String ulkoinenTunniste) {
+        this.ulkoinenTunniste = ulkoinenTunniste;
     }
 
 }

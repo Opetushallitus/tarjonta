@@ -23,10 +23,12 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Gathers learning opportunity material (tarjonta) that is ready for publication. Invokes
- * handler to do something on the collected data, e.g. write to stream.
+ * handler to do something on the collected data, e.g. write to stream. Note: this class is not thread safe.
  *
  * @author Jukka Raanamo
  */
@@ -40,6 +42,8 @@ public class PublicationCollector {
      * Map used to avoid triggering events on re-occurring items.
      */
     private Map<String, String> notifiedMap = new HashMap<String, String>();
+
+    private static final Logger log = LoggerFactory.getLogger(PublicationCollector.class);
 
     public void setHandler(EventHandler handler) {
         this.handler = handler;
@@ -67,6 +71,8 @@ public class PublicationCollector {
             fireCollectCompleted();
 
         } catch (Exception e) {
+
+            log.error("error while processing data", e);
 
             fireCollectFailed(e);
             throw e;
@@ -140,8 +146,8 @@ public class PublicationCollector {
             // todo: this should not be possible by the db
             validateThat("koulutusmoduuliToteutus.koulutusmoduuli is null", m != null);
 
-            fireCollect(t);
             fireCollect(m);
+            fireCollect(t);
 
         }
 
@@ -156,7 +162,6 @@ public class PublicationCollector {
         }
 
     }
-
 
     private void validateThat(String msg, boolean condition) {
 

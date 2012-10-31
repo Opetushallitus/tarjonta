@@ -665,18 +665,75 @@
                     <xs:element name="Classification" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation xml:lang="fi">
-                                Koulutuksen luokittelutiedot. Jos kaikki luokittelutiedot voidaan kuvata yhdella koodilla josta
-                                erilliset tiedot voidaan johtaa, voidaan kayttaa UnifiedCode elementtia - muuten luokittelu kuvataan
-                                ClassificationCode elementeilla.
+                                Koulutuksen luokittelutiedot.
                             </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
                             <xs:sequence>
 
-                                <xs:element name="ClassificationCode"
-                                            type="tns:LearningClassificationCodeType"
-                                            minOccurs="1"
-                                            maxOccurs="unbounded"/>
+                                <xs:element name="EducationClassification"
+                                            type="tns:CodeValueType"
+                                            minOccurs="0"
+                                            maxOccurs="1">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="fi">
+                                            Koulutusluokitus. Tyypillisesti Tilastokeskuksen hallinnoima koodisto.
+                                            Katso: http://www.stat.fi/meta/luokitukset/koulutus/001-2010/index.html.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+
+                                <xs:element name="EducationDomain"
+                                            type="tns:CodeValueType"
+                                            minOccurs="0"
+                                            maxOccurs="1">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="fi">
+                                            Koulutusala. Tunnettuja koodistoja mm. Opetushallinnon koulutusalaluokitus (2010):
+                                            http://www.tilastokeskus.fi/meta/luokitukset/koulutus_oh/001-2002-09-27/index.html.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+
+                                <xs:element name="EducationDegree"
+                                            type="tns:CodeValueType"
+                                            minOccurs="0"
+                                            maxOccurs="1">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="fi">
+                                            Koulutusaste. Tunnettuja koodistoja mm. Opetushallinnon koulutusasteluokitus:
+                                            http://www.minedu.fi/export/sites/default/OPM/Koulutus/koulutusjaerjestelmae/liitteet/koulutusluokitukset.pdf
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+
+                                <xs:element name="StudyDomain"
+                                            type="tns:CodeValueType"
+                                            minOccurs="0"
+                                            maxOccurs="1">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="fi">
+                                            Opintoala. Tunnettuja koodistoja mm. Opetushallinnon opintoalaluokitus:
+                                            http://www.minedu.fi/export/sites/default/OPM/Koulutus/koulutusjaerjestelmae/liitteet/koulutusluokitukset.pdf
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+
+                                <xs:element name="EqfClassification"
+                                            type="tns:CodeValueType"
+                                            minOccurs="0"
+                                            maxOccurs="1">
+                                    <xs:annotation>
+                                        <xs:documentation>
+
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+
+                                <xs:element name="NqfClassification"
+                                            type="tns:CodeValueType"
+                                            minOccurs="0"
+                                            maxOccurs="1"/>
 
                             </xs:sequence>
                         </xs:complexType>
@@ -816,18 +873,18 @@
                         minOccurs="0"
                         maxOccurs="1"/>
 
-            <xs:element name="Profession"
+            <xs:element name="ProfessionLabels"
                         type="tns:ProfessionCollectionType"
                         minOccurs="0"
                         maxOccurs="1"/>
 
             <xs:element name="Keywords"
                         minOccurs="0"
-                        maxOccurs="unbounded">
+                        maxOccurs="1">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="Keyword"
-                                    type="tns:KeywordType"
+                                    type="tns:CodeValueType"
                                     minOccurs="1"
                                     maxOccurs="unbounded"/>
                     </xs:sequence>
@@ -835,17 +892,17 @@
             </xs:element>
 
             <xs:element name="LanguagesOfInstruction"
-                        type="tns:LanguageCodeCollectionType"
+                        type="tns:CodeValueCollectionType"
                         minOccurs="0"
                         maxOccurs="1"/>
 
             <xs:element name="FormOfEducation"
-                        type="tns:FormOfEducationType"
+                        type="tns:CodeValueCollectionType"
                         minOccurs="1"
                         maxOccurs="1"/>
 
             <xs:element name="FormsOfTeaching"
-                        type="tns:FormOfTeachingCollectionType"
+                        type="tns:CodeValueCollectionType"
                         minOccurs="0"
                         maxOccurs="1"/>
 
@@ -975,17 +1032,6 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="FormOfEducationType">
-        <xs:annotation>
-            <xs:documentation>
-                Koulutuslaji
-            </xs:documentation>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="tns:ExtendedCodeLabelType"/>
-        </xs:complexContent>
-    </xs:complexType>
-
     <xs:complexType name="ProfessionCollectionType">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
@@ -993,14 +1039,10 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="Title"
+            <xs:element name="Profession"
                         minOccurs="1"
-                        maxOccurs="unbounded">
-                <xs:complexType>
-                    <xs:simpleContent>
-                        <xs:extension base="tns:ExtendedStringType"/>
-                    </xs:simpleContent>
-                </xs:complexType>
+                        maxOccurs="unbounded"
+                        type="tns:CodeValueType">
             </xs:element>
         </xs:sequence>
     </xs:complexType>
@@ -1071,27 +1113,7 @@
         <xs:attribute name="scheme" type="tns:LanguageSchemeType" use="required"/>
     </xs:complexType>
 
-    <xs:complexType name="FormOfTeachingCollectionType">
-        <xs:annotation>
-            <xs:documentation>
-                Joukko opetusmuotoja
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="FormOfTeaching"
-                        minOccurs="1"
-                        maxOccurs="unbounded">
-                <xs:complexType>
-                    <xs:simpleContent>
-                        <xs:extension base="xs:string">
-                            <xs:attribute name="type" type="tns:FormOfTeachingType"/>
-                        </xs:extension>
-                    </xs:simpleContent>
-                </xs:complexType>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
-
+    
     <xs:complexType name="KeywordType">
         <xs:simpleContent>
             <xs:extension base="xs:string"></xs:extension>
@@ -1139,21 +1161,86 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- not in use currently, clean if redundant -->
-    <xs:complexType name="UnifiedCodeType">
-        <xs:complexContent>
-            <xs:extension base="tns:CodeLabelType">
-                <xs:attribute name="scheme" type="tns:LearningClassificationCodeSchemeType"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
+    <!-- deprecated this in favor of -->
     <xs:complexType name="LearningClassificationCodeType">
         <xs:complexContent>
             <xs:extension base="tns:ExtendedCodeLabelType">
                 <xs:attribute name="category" type="tns:LearningClassificationCategoryType"/>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="CodeValueCollectionType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Joukko koodeja joilla kaikilla yhteinen koodaus -jarjestelma.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Code" minOccurs="1" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Label"
+                                    minOccurs="0"
+                                    maxOccurs="unbounded"
+                                    type="tns:ExtendedStringType">
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="value" type="xs:string" use="required"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="scheme"
+                      type="tns:CodeSchemeType"
+                      use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="CodeValueType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Koodien arvojen ja kielistettyjen nimien esittamiseen tarkoitettu rakenne.
+                Jokainen koodi itsessaan maarittelee kaytettavan koodaus-jarjestelman.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Code" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Koodin arvo.
+                                </xs:documentation>
+                            </xs:annotation>
+                            <xs:attribute name="scheme" type="tns:CodeSchemeType" use="required">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="fi">
+                                        Kaytetty koodisto. Esim. ISO-639
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
+                            <xs:attribute name="version" type="xs:string" use="optional">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="fi">
+                                        Kaytetyn koodiston versio.
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Label"
+                        type="tns:ExtendedStringType"
+                        minOccurs="0"
+                        maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Koodin kielistetty 'nimi'.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="StructureType">
@@ -1767,6 +1854,7 @@
     </xs:simpleType>
 
 
+    <!-- to be deprecated and replace by CodeSchemeType -->
     <xs:simpleType name="LearningClassificationCodeSchemeType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="http://oph.fi">
@@ -1800,6 +1888,67 @@
             <xs:enumeration value="EQF">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="CodeSchemeType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Kaytettyja koodistoja/koodiston haltijoita.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="OPH">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Opetushallitus. http://www.oph.fi.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="Tilastokeskus">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Tilastokeskuksen hallitsema koodisto. http://www.stat.fi
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="Koodisto">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        OPH:n keskitetty koodisto pavelu. Koodin arvo on talloin Koodisto Uri.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ISCED">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        UNESCO:n hallinnoima koodisto. Perustettu 1970-luvulla.
+                        Kts. http://www.uis.unesco.org/Library/Documents/isced97-en.pdf
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="NQF">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Kts: http://en.wikipedia.org/wiki/National_Qualifications_Framework
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="EQF">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Kts. http://en.wikipedia.org/wiki/European_Qualifications_Framework.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ISO-639-1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        2-merkkinen ISO koodisto kielien esittamiseen.
+                        Kts. http://en.wikipedia.org/wiki/ISO_639-1
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>

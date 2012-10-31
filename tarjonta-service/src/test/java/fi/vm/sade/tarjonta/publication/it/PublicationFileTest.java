@@ -38,6 +38,8 @@ import fi.vm.sade.tarjonta.publication.LearningOpportunityDataWriter;
 import fi.vm.sade.tarjonta.publication.PublicationCollector;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import java.util.Random;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -55,6 +57,7 @@ public class PublicationFileTest {
 
     private Random random = new Random(System.currentTimeMillis());
 
+    private static final Logger log = LoggerFactory.getLogger("TEST");
 
     @Before
     public void setUp() throws Exception {
@@ -64,6 +67,8 @@ public class PublicationFileTest {
 
         outputFile = File.createTempFile("learning_publication", ".xml");
         outputStream = new FileOutputStream(outputFile);
+
+        log.info("writing test data to: " + outputFile);
 
         LearningOpportunityDataWriter jaxbWriter = new LearningOpportunityDataWriter();
         jaxbWriter.setOutput(outputStream);
@@ -106,10 +111,6 @@ public class PublicationFileTest {
 
     private PublicationDataService setUpDataService(int numKoulutus, int numHaku, int numHakukohde) {
 
-
-
-        PublicationDataService service = mock(PublicationDataService.class);
-
         List<KoulutusmoduuliToteutus> toteutusList = new ArrayList<KoulutusmoduuliToteutus>(numKoulutus);
         for (int i = 0; i < numKoulutus; i++) {
             Koulutusmoduuli m = fixtures.createTutkintoOhjelma();
@@ -130,6 +131,8 @@ public class PublicationFileTest {
             h.setHaku(hakuList.get(random.nextInt(numHaku)));
             hakukohdeList.add(h);
         }
+
+        PublicationDataService service = mock(PublicationDataService.class);
 
         when(service.listKoulutusmoduuliToteutus()).thenReturn(toteutusList);
         when(service.listHaku()).thenReturn(hakuList);
