@@ -1,0 +1,79 @@
+package fi.vm.sade.tarjonta.service.mock;
+
+import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaTyyppi;
+
+import javax.jws.WebParam;
+
+/**
+ * @author Eetu Blomqvist
+ */
+public class SijoitteluTarjontaPublicServiceMock implements TarjontaPublicService {
+
+    @Override
+    public HaeKoulutuksetVastausTyyppi haeKoulutukset(@WebParam(partName = "kysely", name = "haeKoulutuksetKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") HaeKoulutuksetKyselyTyyppi kysely) {
+        return null;
+    }
+
+    @Override
+    public LueHakukohdeVastausTyyppi lueHakukohde(@WebParam(partName = "kysely", name = "lueHakukohdeKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohdeKyselyTyyppi kysely) {
+        return null;
+    }
+
+    @Override
+    public HaeHakukohteetVastausTyyppi haeHakukohteet(@WebParam(partName = "kysely", name = "haeHakukohteetKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") HaeHakukohteetKyselyTyyppi kysely) {
+        return null;
+    }
+
+    @Override
+    public ListHakuVastausTyyppi listHaku(@WebParam(partName = "parameters", name = "listaaHaku", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") ListaaHakuTyyppi parameters) {
+        return null;
+    }
+
+    @Override
+    public TarjontaTyyppi haeTarjonta(@WebParam(name = "oid", targetNamespace = "") String oid) {
+
+        System.out.println("Returning mocked tarjonta");
+        TarjontaTyyppi tt = new TarjontaTyyppi();
+
+        HakuTyyppi haku = new HakuTyyppi();
+        haku.setOid("HakuOid");
+        haku.setSijoittelu(true);
+        haku.setHaunTunniste("Foobar");
+        tt.setHaku(haku);
+        addHakukohdeList(tt);
+        return tt;
+    }
+
+    private void addHakukohdeList(TarjontaTyyppi tt) {
+        for (int i = 0; i < 10; i++) {
+            tt.getHakukohde().add(createHakuKohde(i, 10));
+        }
+    }
+
+    private HakukohdeTyyppi createHakuKohde(int seq, int aloituspaikat) {
+        HakukohdeTyyppi hkt = new HakukohdeTyyppi();
+        hkt.setAloituspaikat(aloituspaikat);
+        hkt.setHakukelpoisuusVaatimukset("Hakukelpoisuusvaatimukset " + seq);
+        hkt.setHakukohdeNimi("Hakukohde " + seq);
+        hkt.setHakukohteenHakuOid("hakukohteenHakuOid" + seq);
+        hkt.setHakukohteenTila("Tila " + seq);
+        hkt.setOid("Oid" + seq);
+
+        return hkt;
+    }
+
+    @Override
+    public LueKoulutusVastausTyyppi lueKoulutus(@WebParam(partName = "kysely", name = "lueKoulutusKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueKoulutusKyselyTyyppi kysely) {
+        return null;
+    }
+
+    @Override
+    public HaeKoulutusmoduulitVastausTyyppi haeKoulutusmoduulit(@WebParam(partName = "kysely", name = "haeKoulutusmoduulitKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") HaeKoulutusmoduulitKyselyTyyppi kysely) {
+        // TODO: implement this method.
+        return null;
+    }
+}
