@@ -15,12 +15,12 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.koodisto.KoulutuskoodiTyyppi;
 import java.util.HashSet;
 import java.util.Set;
 
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
-import fi.vm.sade.tarjonta.ui.enums.KoulutusFormType;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -32,9 +32,13 @@ import java.util.Date;
  * @author Jani Wilén
  */
 public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedotViewModel {
+
     private static final String NO_DATA_AVAILABLE = "Tietoa ei saatavilla";
+    private Set<KoulutusasteTyyppi> koulutusasteet;
+    private Set<KoulutuskoodiTyyppi> koulutuskoodit;
     private Set<KoulutusohjelmaModel> koodistoKoulutusohjelma;
-    private KoulutusFormType koulutusFormType = KoulutusFormType.SHOW_ALL; //default value
+    private KoulutusasteTyyppi koulutusasteTyyppi;
+    private KoulutuskoodiTyyppi koulutuskoodiTyyppi;
 
     public KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus status) {
         super();
@@ -63,29 +67,19 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     }
 
     /**
-     * @return the koulutusFormType
-     */
-    public KoulutusFormType getKoulutusFormType() {
-        return koulutusFormType;
-    }
-
-    /**
-     * @param koulutusFormType the koulutusFormType to set
-     */
-    public void setKoulutusFormType(KoulutusFormType koulutusFormType) {
-        this.koulutusFormType = koulutusFormType;
-    }
-
-   
-
-    /**
      * Initialize model with all default values.
      *
      * @param status of koulutus document
      */
-    private void clearModel(final DocumentStatus status) {
-        setKoulutusKoodi(null);
+    public void clearModel(final DocumentStatus status) {
+        //used in control logic 
+        setDocumentStatus(status);
+        setUserFrienlyDocumentStatus(null);
+        setKoulutusasteTyyppi(null);
+        setKoulutuskoodiTyyppi(null);
         setKoulutusohjema(null);
+
+        //koodisto data
         setKoulutusala(null);
         setTutkinto(null);
         setTutkintonimike(null);
@@ -97,15 +91,16 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setSuunniteltuKestoTyyppi(null);
         setOpetusmuoto(null);
         setKoulutuksenTyyppi(null);
-        setDocumentStatus(status);
         setOrganisaatioName(null);
         setOrganisaatioOid(null);
-        setUserFrienlyDocumentStatus(null);
-
+        setKoulutuslaji(null);//one required
+        setKoulutusasteet(new HashSet<KoulutusasteTyyppi>());
+        setKoulutuskoodit(new HashSet<KoulutuskoodiTyyppi>());
         setOpetuskielet(new HashSet<String>(1)); //one required
-        setKoulutuslaji(new HashSet<String>(1));//one required
         setOpetusmuoto(new HashSet<String>(1));//one required
         setAvainsanat(new HashSet<String>(0));//optional
+
+        //Table data
         setKoulutusLinkit(new ArrayList<KoulutusLinkkiViewModel>(0)); //optional
         setYhteyshenkilot(new ArrayList<KoulutusYhteyshenkiloViewModel>(0)); //optional
     }
@@ -115,7 +110,70 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
      *
      * @return Boolean
      */
-    public boolean isLoaded(){
+    public boolean isLoaded() {
         return getOid() != null;
+    }
+
+    /**
+     * @return the koulutusasteTyyppi
+     */
+    public KoulutusasteTyyppi getKoulutusasteTyyppi() {
+        return koulutusasteTyyppi;
+    }
+
+    /**
+     * @param koulutusasteTyyppi the koulutusasteTyyppi to set
+     */
+    public void setKoulutusasteTyyppi(KoulutusasteTyyppi koulutusasteTyyppi) {
+        this.koulutusasteTyyppi = koulutusasteTyyppi;
+    }
+
+    public String getSelectedKoulutusasteKoodi() {
+        if (getKoulutusasteTyyppi() != null && getKoulutusasteTyyppi().getKoulutusasteKoodi() != null) {
+            return getKoulutusasteTyyppi().getKoulutusasteKoodi();
+        }
+        return null;
+    }
+
+    /**
+     * @return the koulutuskoodiTyyppi
+     */
+    public KoulutuskoodiTyyppi getKoulutuskoodiTyyppi() {
+        return koulutuskoodiTyyppi;
+    }
+
+    /**
+     * @param koulutuskoodiTyyppi the koulutuskoodiTyyppi to set
+     */
+    public void setKoulutuskoodiTyyppi(KoulutuskoodiTyyppi koulutuskoodiTyyppi) {
+        this.koulutuskoodiTyyppi = koulutuskoodiTyyppi;
+    }
+
+    /**
+     * @return the koulutusasteet
+     */
+    public Set<KoulutusasteTyyppi> getKoulutusasteet() {
+        return koulutusasteet;
+    }
+
+    /**
+     * @param koulutusasteet the koulutusasteet to set
+     */
+    public void setKoulutusasteet(Set<KoulutusasteTyyppi> koulutusasteet) {
+        this.koulutusasteet = koulutusasteet;
+    }
+
+    /**
+     * @return the koulutuskoodit
+     */
+    public Set<KoulutuskoodiTyyppi> getKoulutuskoodit() {
+        return koulutuskoodit;
+    }
+
+    /**
+     * @param koulutuskoodit the koulutuskoodit to set
+     */
+    public void setKoulutuskoodit(Set<KoulutuskoodiTyyppi> koulutuskoodit) {
+        this.koulutuskoodit = koulutuskoodit;
     }
 }

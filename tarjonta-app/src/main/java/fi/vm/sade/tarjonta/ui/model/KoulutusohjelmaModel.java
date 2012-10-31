@@ -25,6 +25,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public class KoulutusohjelmaModel implements Serializable {
 
+    private int koodiVersio; //used as ID
     private String koodiUri; //used as ID
     private String code; //koodi code
     private String name;
@@ -33,8 +34,9 @@ public class KoulutusohjelmaModel implements Serializable {
     public KoulutusohjelmaModel() {
     }
 
-    public KoulutusohjelmaModel(String koodiUri, String code, String name) {
+    public KoulutusohjelmaModel(String koodiUri, int koodiVersio ,String code, String name) {
         this.koodiUri = koodiUri;
+        this.koodiVersio = koodiVersio;
         this.code = code;
         this.name = name;
         this.fullName = name + " " + code;
@@ -122,5 +124,19 @@ public class KoulutusohjelmaModel implements Serializable {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    /**
+     * @return the koodiVersio
+     */
+    public int getKoodiVersio() {
+        return koodiVersio;
+    }
+
+    /**
+     * @param koodiVersio the koodiVersio to set
+     */
+    public void setKoodiVersio(int koodiVersio) {
+        this.koodiVersio = koodiVersio;
     }
 }

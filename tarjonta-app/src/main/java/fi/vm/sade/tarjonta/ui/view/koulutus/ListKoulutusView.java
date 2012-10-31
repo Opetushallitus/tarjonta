@@ -212,8 +212,6 @@ public class ListKoulutusView extends VerticalLayout {
 
         //Creating the edit button
         muokkaaB = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("Muokkaa"));
-        muokkaaB.addStyleName(Oph.BUTTON_SMALL);
-
         muokkaaB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -226,7 +224,6 @@ public class ListKoulutusView extends VerticalLayout {
 
         //Creating the remove button
         poistaB = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("Poista"));
-        poistaB.addStyleName(Oph.BUTTON_SMALL);
         poistaB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -237,7 +234,6 @@ public class ListKoulutusView extends VerticalLayout {
         
         //Creating the create hakukohde button
         luoHakukohdeB = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("LuoHakukohde"));
-        luoHakukohdeB.addStyleName(Oph.BUTTON_SMALL);
         luoHakukohdeB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -247,11 +243,10 @@ public class ListKoulutusView extends VerticalLayout {
         
         //Creating the create koulutus button
         luoKoulutusB = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("LuoKoulutus"));
-        luoKoulutusB.addStyleName(Oph.BUTTON_SMALL);
         luoKoulutusB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-            	presenter.showKoulutusEditView(null);
+            	presenter.showKoulutusEditView();
             }
         });
         

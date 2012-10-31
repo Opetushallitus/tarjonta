@@ -21,6 +21,8 @@ import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.koodisto.KoodiHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.koodisto.KoulutuskoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
@@ -45,6 +47,9 @@ public class KoulutusViewModelToDTOConverter {
 
     @Autowired(required = true)
     private OIDService oidService;
+    @Autowired(required = true)
+    private KoulutusKoodistoConverter koulutusKoodisto;
+
     public KoulutusViewModelToDTOConverter() {
     }
 
@@ -153,39 +158,42 @@ public class KoulutusViewModelToDTOConverter {
         return yhteyshenkiloTyyppi;
     }
 
-    public static LisaaKoulutusTyyppi mapToLisaaKoulutusTyyppi(final KoulutusToisenAsteenPerustiedotViewModel tyyppiModel, final String oid) {
-        if (tyyppiModel == null) {
+    public static LisaaKoulutusTyyppi mapToLisaaKoulutusTyyppi(final KoulutusToisenAsteenPerustiedotViewModel model, final String oid) {
+        if (model == null) {
             throw new RuntimeException("Application error - LisaaKoulutusTyyppi object cannot be null.");
         }
 
         LisaaKoulutusTyyppi tyyppi = new LisaaKoulutusTyyppi();
         // this.getDocumentStatus();  //TODO: status
         tyyppi.setOid(oid);
-
         //TODO: fix the test data
-        tyyppi.setKoulutusKoodi(createKoodi(tyyppiModel.getKoulutusKoodi()));
-        KoulutusohjelmaModel ko = tyyppiModel.getKoulutusohjema();
-        //URI data example : "koulutusohjelma/1603"
-        if (ko != null) {
-        	tyyppi.setKoulutusohjelmaKoodi(createKoodi(ko.getKoodiUri(), ko.getFullName()));
+        final KoulutuskoodiTyyppi koulutuskoodi = model.getKoulutuskoodiTyyppi();
+        if (koulutuskoodi != null) {
+            KoulutuskoodiTyyppi koodi = model.getKoulutuskoodiTyyppi();
+            tyyppi.setKoulutusKoodi(createKoodi(model.getKoulutuskoodiTyyppi().getKoodistoUri(), koodi.getKoulutuskoodi()));
         }
-        tyyppi.setKoulutuksenAlkamisPaiva(tyyppiModel.getKoulutuksenAlkamisPvm());
+
+        final KoulutusohjelmaModel koulutusohjelma = model.getKoulutusohjema();
+        //URI data example : "koulutusohjelma/1603"
+        if (koulutusohjelma != null) {
+            tyyppi.setKoulutusohjelmaKoodi(createKoodi(koulutusohjelma.getKoodiUri(), koulutusohjelma.getCode()));
+        }
+        tyyppi.setKoulutuksenAlkamisPaiva(model.getKoulutuksenAlkamisPvm());
         KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
-        koulutuksenKestoTyyppi.setArvo(tyyppiModel.getSuunniteltuKesto());
-        koulutuksenKestoTyyppi.setYksikko(tyyppiModel.getSuunniteltuKestoTyyppi());
+        koulutuksenKestoTyyppi.setArvo(model.getSuunniteltuKesto());
+        koulutuksenKestoTyyppi.setYksikko(model.getSuunniteltuKestoTyyppi());
         tyyppi.setKesto(koulutuksenKestoTyyppi);
 
-        for (String opetusmuoto : tyyppiModel.getOpetusmuoto()) {
+        for (String opetusmuoto : model.getOpetusmuoto()) {
             tyyppi.getOpetusmuoto().add(createKoodi(opetusmuoto));
         }
 
-        for (String opetuskielet : tyyppiModel.getOpetuskielet()) {
+        for (String opetuskielet : model.getOpetuskielet()) {
             tyyppi.getOpetuskieli().add(createKoodi(opetuskielet));
         }
 
-        for (String koulutuslaji : tyyppiModel.getKoulutuslaji()) {
-            tyyppi.getKoulutuslaji().add(createKoodi(koulutuslaji));
-        }
+        //TODO: change API... minor priority 
+        tyyppi.getKoulutuslaji().add(createKoodi(model.getKoulutuslaji()));
 
         return tyyppi;
     }
@@ -223,13 +231,27 @@ public class KoulutusViewModelToDTOConverter {
         }
     }
 
-    public static KoulutusToisenAsteenPerustiedotViewModel mapToKoulutusToisenAsteenPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus, DocumentStatus status) {
+    private KoulutusToisenAsteenPerustiedotViewModel mapToKoulutusToisenAsteenPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus, DocumentStatus status) {
         KoulutusToisenAsteenPerustiedotViewModel model2Aste = new KoulutusToisenAsteenPerustiedotViewModel(status);
         model2Aste.setOid(koulutus.getOid());
-
-        model2Aste.setKoulutusKoodi((koulutus.getKoulutusKoodi() != null) ? koulutus.getKoulutusKoodi().getUri() : null);
-        final String koodiUri = koulutus.getKoulutusohjelmaKoodi() != null ? koulutus.getKoulutusohjelmaKoodi().getUri() : null;
-        model2Aste.setKoulutusohjema(new KoulutusohjelmaModel(koodiUri, null, null));
+       
+        //TODO: fix this
+        final KoodistoKoodiTyyppi koulutusKoodi = koulutus.getKoulutusKoodi();
+        if (koulutusKoodi != null && koulutusKoodi.getUri() != null) {
+            KoodiHakuTyyppi koodiHakuTyyppi = new KoodiHakuTyyppi();
+            koodiHakuTyyppi.setKieliKoodi("FI");
+            koodiHakuTyyppi.setKoodistoUri(koulutusKoodi.getUri());
+            //koodiHakuTyyppi.setKoodistoVersio(koulutusKoodi.getVersio());
+            model2Aste.setKoulutuskoodiTyyppi(koulutusKoodisto.listaaKoulutuskoodi(koodiHakuTyyppi));
+        }
+        
+        final KoodistoKoodiTyyppi koulutusohjelmaKoodi = koulutus.getKoulutusohjelmaKoodi();
+        if (koulutusohjelmaKoodi != null) {
+            final String koodiUri = koulutusohjelmaKoodi.getUri();
+            final int koodiVersio = koulutusohjelmaKoodi.getVersio();
+            final String arvo = koulutusohjelmaKoodi.getArvo();
+            model2Aste.setKoulutusohjema(new KoulutusohjelmaModel(koodiUri, koodiVersio, arvo, null));
+        }
 
         model2Aste.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
         model2Aste.setOpetuskielet(convertOpetuskielet(koulutus.getOpetuskieli()));
@@ -247,8 +269,9 @@ public class KoulutusViewModelToDTOConverter {
             model2Aste.getOpetuskielet().add(getUri(typeOpetuskielet));
         }
 
-        for (KoodistoKoodiTyyppi typeKoulutuslaji : koulutus.getKoulutuslaji()) {
-            model2Aste.getKoulutuslaji().add(getUri(typeKoulutuslaji));
+        //UI allow only one value 
+        if (koulutus.getKoulutuslaji() != null && !koulutus.getKoulutuslaji().isEmpty()) {
+            model2Aste.setKoulutuslaji(getUri(koulutus.getKoulutuslaji().get(0)));
         }
 
         return model2Aste;

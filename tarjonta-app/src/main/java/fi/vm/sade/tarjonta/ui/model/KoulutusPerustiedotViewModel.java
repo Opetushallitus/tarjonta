@@ -33,7 +33,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      * Update database
      */
     private String oid;
-    
     /*
      * Status of active form.
      */
@@ -47,7 +46,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     /*
      * Koodisto data:
      */
-    private String koulutusKoodi;
     private KoulutusohjelmaModel koulutusohjema;
     
     /*
@@ -71,7 +69,7 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     private String suunniteltuKesto;
     private String suunniteltuKestoTyyppi;
     private Set<String> opetusmuoto;
-    private Set<String> koulutuslaji  = new HashSet<String>(0);
+    private String koulutuslaji = new String();
     private Set<String> opetuskielet = new HashSet<String>(0);
     private Set<String> avainsanat = new HashSet<String>(0);
     private List<KoulutusYhteyshenkiloViewModel> yhteyshenkilot = new ArrayList<KoulutusYhteyshenkiloViewModel>(0);
@@ -165,8 +163,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
         this.suunniteltuKestoTyyppi = suunniteltuKestoTyyppi;
     }
 
-   
-   
     public List<KoulutusLinkkiViewModel> getKoulutusLinkit() {
         if (koulutusLinkit == null) {
             koulutusLinkit = new ArrayList<KoulutusLinkkiViewModel>();
@@ -201,20 +197,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      */
     public void setKoulutuksenTyyppi(String koulutuksenTyyppi) {
         this.koulutuksenTyyppi = koulutuksenTyyppi;
-    }
-
-    /**
-     * @return the koulutusKoodi
-     */
-    public String getKoulutusKoodi() {
-        return koulutusKoodi;
-    }
-
-    /**
-     * @param koulutusKoodi the koulutusKoodi to set
-     */
-    public void setKoulutusKoodi(String koulutusKoodi) {
-        this.koulutusKoodi = koulutusKoodi;
     }
 
     /**
@@ -305,14 +287,14 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     /**
      * @return the koulutuslaji
      */
-    public Set<String> getKoulutuslaji() {
+    public String getKoulutuslaji() {
         return koulutuslaji;
     }
 
     /**
      * @param koulutuslaji the koulutuslaji to set
      */
-    public void setKoulutuslaji(Set<String> koulutuslaji) {
+    public void setKoulutuslaji(String koulutuslaji) {
         this.koulutuslaji = koulutuslaji;
     }
 
