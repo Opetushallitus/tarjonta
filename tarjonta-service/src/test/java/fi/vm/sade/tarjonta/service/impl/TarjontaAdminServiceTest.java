@@ -139,6 +139,7 @@ public class TarjontaAdminServiceTest {
         paivitaKoulutus.setKoulutusKoodi(createKoodi("do-not-update-this"));
         paivitaKoulutus.setKoulutusohjelmaKoodi(createKoodi("do-not-update-this"));
         paivitaKoulutus.getOpetusmuoto().add(createKoodi("new-opetusmuoto"));
+        paivitaKoulutus.getOpetuskieli().add(createKoodi("updated-kieli"));
 
         adminService.paivitaKoulutus(paivitaKoulutus);
 

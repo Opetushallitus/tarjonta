@@ -289,6 +289,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         	koulutusasteKoodi.setUri(fromKoulutus.getKoulutusaste());
         	toKoulutus.setKoulutusaste(koulutusasteKoodi);
         }
+        toKoulutus.setTarjoaja(fromKoulutus.getTarjoaja());
 
         EntityUtils.copyKoodistoUris(fromKoulutus.getOpetusmuotos(), toKoulutus.getOpetusmuoto());
         EntityUtils.copyKoodistoUris(fromKoulutus.getOpetuskielis(), toKoulutus.getOpetuskieli());

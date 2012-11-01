@@ -386,6 +386,7 @@
             <xs:element name="Koulutuslaji" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
             <xs:element name="Linkki" type="tns:WebLinkkiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="Koulutusaste" type="tns:KoodistoKoodiTyyppi"/>
+             <xs:element name="Tarjoaja" type="xs:string"/>
         </xs:sequence>
     </xs:group>
 
