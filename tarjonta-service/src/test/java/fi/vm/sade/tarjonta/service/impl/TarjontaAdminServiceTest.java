@@ -121,7 +121,7 @@ public class TarjontaAdminServiceTest {
         YhteyshenkiloTyyppi expectedHenkilo = createYhteyshenkilo();
 
         assertMatch(expectedHenkilo, actualHenkilo);
-
+        assertTrue(toteutus.getKoulutusaste().contains("koulutusaste/lukio"));
     }
 
     @Test
@@ -228,6 +228,7 @@ public class TarjontaAdminServiceTest {
         lisaaKoulutus.getOpetusmuoto().add(createKoodi("opetusmuoto/aikuisopetus"));
         lisaaKoulutus.getOpetuskieli().add(createKoodi("opetuskieli/fi"));
         lisaaKoulutus.getKoulutuslaji().add(createKoodi("koulutuslaji/lahiopetus"));
+        lisaaKoulutus.setKoulutusaste(createKoodi("koulutusaste/lukio"));
         lisaaKoulutus.setOid(SAMPLE_KOULUTUS_OID);
         lisaaKoulutus.setKoulutuksenAlkamisPaiva(new Date());
         lisaaKoulutus.setKesto(kesto3Vuotta);

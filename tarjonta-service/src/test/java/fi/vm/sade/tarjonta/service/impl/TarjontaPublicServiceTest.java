@@ -82,6 +82,7 @@ public class TarjontaPublicServiceTest {
     private static final String KOULUTUSKOODI = "uri:koulutuskoodi";
 	private static final String KOULUTUSOHJELMAKOODI1 = "uri:koulutusohjelmakoodi1";
 	private static final String KOULUTUSOHJELMAKOODI2 = "uri:koulutusohjelmakoodi2";
+	private static final String KOULUTUSASTEKOODI = "uri:koulutuasteLukio";
 
     @Autowired
     private TarjontaPublicService service;
@@ -126,6 +127,7 @@ public class TarjontaPublicServiceTest {
         koulutusmoduuliToteutus = fixtures.createTutkintoOhjelmaToteutus(KOMOTO_OID);
         koulutusmoduuliToteutus.setTarjoaja(ORGANISAATIO_A);
         koulutusmoduuliToteutus.setKoulutusmoduuli(koulutusmoduuli);
+        koulutusmoduuliToteutus.setKoulutusaste(KOULUTUSASTEKOODI);
         koulutusmoduuliToteutusDAO.insert(koulutusmoduuliToteutus);
 
         // 1. hakukohde oid is given to be able to test lueHakukohde method.
@@ -282,7 +284,7 @@ public class TarjontaPublicServiceTest {
 
         assertTrue(vastaus.getOpetuskieli().get(0).getUri().equals("http://kielet/fi"));
         assertEquals(1, vastaus.getYhteyshenkilo().size());
-
+        assertTrue(vastaus.getKoulutusaste().getUri().equals(KOULUTUSASTEKOODI));
     }
 
     @Test

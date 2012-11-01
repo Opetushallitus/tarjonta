@@ -119,8 +119,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     @Column(name = "ulkoinentunniste")
     private String ulkoinenTunniste;
+    
+    @Column(name = "koulutusaste")
+    private String koulutusaste;
 
-    public KoulutusmoduuliToteutus() {
+	public KoulutusmoduuliToteutus() {
         super();
     }
 
@@ -444,6 +447,22 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setUlkoinenTunniste(String ulkoinenTunniste) {
         this.ulkoinenTunniste = ulkoinenTunniste;
     }
+    
 
+    /**
+     * Gets the koulutusaste koodisto uri
+     * @return the koulutusaste
+     */
+    public String getKoulutusaste() {
+		return koulutusaste;
+	}
+
+    /**
+     * Sets the koulutusaste koodisto uri
+     * @param koulutusaste the koulutusaste to set
+     */
+	public void setKoulutusaste(String koulutusaste) {
+		this.koulutusaste = koulutusaste;
+	}
+	
 }
-

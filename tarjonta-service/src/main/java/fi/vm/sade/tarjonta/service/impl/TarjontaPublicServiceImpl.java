@@ -276,6 +276,12 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         kestoT.setArvo(fromKoulutus.getSuunniteltuKestoArvo());
         kestoT.setYksikko(fromKoulutus.getSuunniteltuKestoYksikko());
         toKoulutus.setKesto(kestoT);
+        
+        if (fromKoulutus.getKoulutusaste() != null) { 
+        	KoodistoKoodiTyyppi koulutusasteKoodi = new KoodistoKoodiTyyppi();
+        	koulutusasteKoodi.setUri(fromKoulutus.getKoulutusaste());
+        	toKoulutus.setKoulutusaste(koulutusasteKoodi);
+        }
 
         EntityUtils.copyKoodistoUris(fromKoulutus.getOpetusmuotos(), toKoulutus.getOpetusmuoto());
         EntityUtils.copyKoodistoUris(fromKoulutus.getOpetuskielis(), toKoulutus.getOpetuskieli());

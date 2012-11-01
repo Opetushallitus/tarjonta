@@ -66,6 +66,9 @@ public final class EntityUtils {
         toKoulutus.setSuunniteltuKestoYksikko(fromKoulutus.getKesto().getYksikko());
         toKoulutus.setOpetuskieli(toKoodistoUriSet(fromKoulutus.getOpetuskieli()));
         toKoulutus.setKoulutuslajis(toKoodistoUriSet(fromKoulutus.getKoulutuslaji()));
+        if (fromKoulutus.getKoulutusaste() != null) {
+        	toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
+        }
 
         for (YhteyshenkiloTyyppi henkiloFrom : fromKoulutus.getYhteyshenkilo()) {
 
