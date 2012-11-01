@@ -55,6 +55,7 @@ import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaTyyppi;
 
 /**
  *
@@ -78,6 +79,8 @@ public class TarjontaPublicServiceTest {
     private static final String KOMOTO_OID = "11.12.23.34.56";
 
     private static final String HAKUKOHDE_OID = "12.13.24.35.57";
+    
+    private static final String HAKU_OID = "0.1.2.3.4.5.67";
     
     private static final String KOULUTUSKOODI = "uri:koulutuskoodi";
 	private static final String KOULUTUSOHJELMAKOODI1 = "uri:koulutusohjelmakoodi1";
@@ -115,6 +118,7 @@ public class TarjontaPublicServiceTest {
 
         // jaettu haku
         Haku haku = fixtures.createHaku();
+        haku.setOid(HAKU_OID);
         haku.setNimiFi("yhteishaku 1");
         haku.setHakutapaUri(YHTEISHAKU);
         hakuDAO.insert(haku);
@@ -171,6 +175,12 @@ public class TarjontaPublicServiceTest {
         koulutusmoduuliToteutusDAO.insert(koulutusmoduuliToteutus);
         hakukohde.addKoulutusmoduuliToteutus(koulutusmoduuliToteutus);
         hakukohdeDAO.update(hakukohde);
+        
+        //Liitetään hakukohteet hakuun
+        haku.addHakukohde(hakukohde);
+        Hakukohde hakukohde1 = hakukohdeDAO.findBy("oid", HAKUKOHDE_OID).get(0);
+        haku.addHakukohde(hakukohde1);
+        hakuDAO.update(haku);
 
     }
 
@@ -297,6 +307,14 @@ public class TarjontaPublicServiceTest {
 
         assertNotNull(vastaus);
         assertTrue(vastaus.getHakukohde().getHakukohdeNimi().equals("Peltikorjaajan perustutkinto"));
+    }
+    
+    @Test
+    public void testHaeTarjonta() {
+    	TarjontaTyyppi vastaus = service.haeTarjonta(HAKU_OID);
+    	assertEquals(2, vastaus.getHakukohde().size());
+    	assertTrue(vastaus.getHakukohde().get(0).getHakukohdeNimi().equals("Peltikorjaajan perustutkinto") 
+    			|| vastaus.getHakukohde().get(1).getHakukohdeNimi().equals("Peltikorjaajan perustutkinto"));
     }
 
 }

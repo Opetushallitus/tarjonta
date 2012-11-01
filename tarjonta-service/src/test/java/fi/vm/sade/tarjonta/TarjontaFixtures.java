@@ -214,7 +214,7 @@ public class TarjontaFixtures {
         haku.setKohdejoukkoUri(randomUri("haunkohdejoukko"));
         haku.setHakutapaUri(randomUri("hakutapa"));
         haku.setHakutyyppiUri(randomUri("hakutyyppi"));
-        haku.setTila(KoodistoContract.TarjontaTilat.SUUNNITTELUSSA);
+        haku.setTila(TarjontaTila.LUONNOS.name()); //KoodistoContract.TarjontaTilat.SUUNNITTELUSSA);
         return haku;
     }
 

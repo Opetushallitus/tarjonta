@@ -120,7 +120,14 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public TarjontaTyyppi haeTarjonta(String oid) {
-        return new TarjontaTyyppi();
+    	TarjontaTyyppi vastaus = new TarjontaTyyppi();
+    	Haku haku = hakuDao.findByOid(oid);
+    	vastaus.setHaku(conversionService.convert(haku, HakuTyyppi.class));
+    	for (Hakukohde hk : haku.getHakukohdes()) {
+    		vastaus.getHakukohde().add(conversionService.convert(hk, HakukohdeTyyppi.class));
+    		
+    	}
+        return vastaus;
     }
 
     private List<HakuTyyppi> convert(List<Haku> haut) {
