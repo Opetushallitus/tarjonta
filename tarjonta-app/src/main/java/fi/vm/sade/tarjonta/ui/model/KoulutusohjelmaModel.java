@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import java.io.Serializable;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -34,7 +35,7 @@ public class KoulutusohjelmaModel implements Serializable {
     public KoulutusohjelmaModel() {
     }
 
-    public KoulutusohjelmaModel(String koodiUri, int koodiVersio ,String code, String name) {
+    public KoulutusohjelmaModel(String koodiUri, int koodiVersio, String code, String name) {
         this.koodiUri = koodiUri;
         this.koodiVersio = koodiVersio;
         this.code = code;
@@ -138,5 +139,9 @@ public class KoulutusohjelmaModel implements Serializable {
      */
     public void setKoodiVersio(int koodiVersio) {
         this.koodiVersio = koodiVersio;
+    }
+
+    public String getVersionUri() {
+        return TarjontaUIHelper.createVersionUri(koodiUri, koodiVersio);
     }
 }

@@ -43,16 +43,13 @@ import org.springframework.stereotype.Component;
  * @author mlyly
  */
 @Component
-@Configurable(preConstruction=false)
+@Configurable(preConstruction = false)
 public class TarjontaUIHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaUIHelper.class);
-
     public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";
-
     @Autowired
     private KoodiService _koodiService;
-
     private I18NHelper _i18n = new I18NHelper(TarjontaUIHelper.class);
 
     /**
@@ -62,18 +59,7 @@ public class TarjontaUIHelper {
      * @return String array with [koodiUri, koodiVersion]
      */
     private String[] splitKoodiURIWithVersion(String koodiUriWithVersion) {
-        String[] result = new String[2];
-
-        int index = koodiUriWithVersion.lastIndexOf(KOODI_URI_AND_VERSION_SEPARATOR);
-        if (index > 0) {
-            result[0] = koodiUriWithVersion.substring(0, index);
-            result[1] = koodiUriWithVersion.substring(index + KOODI_URI_AND_VERSION_SEPARATOR.length());
-        } else {
-            result[0] = koodiUriWithVersion;
-            result[1] = "-1";
-        }
-
-        return result;
+        return splitKoodiURI(koodiUriWithVersion);
     }
 
     /**
@@ -97,8 +83,8 @@ public class TarjontaUIHelper {
     }
 
     /**
-     * Get koodi's localized name with current UI locale.
-     * Uses versioned koodi data if given.
+     * Get koodi's localized name with current UI locale. Uses versioned koodi
+     * data if given.
      *
      * @param koodiUriWithPossibleVersionInformation
      * @return
@@ -108,13 +94,14 @@ public class TarjontaUIHelper {
     }
 
     /**
-     * Get koodi's name in given locale.
-     * If nimi for given <code>locale</locale> is not found, we try to return it with locale "FI".
+     * Get koodi's name in given locale. If nimi for given
+     * <code>locale</locale> is not found, we try to return it with locale "FI".
      * Uses versioned koodi data if given.
      *
      * @param koodiUriWithPossibleVersionInformation
      * @param locale if null, then I18N.getLocale() used
-     * @return empty string or koodi metadatas localized name, in error cases also error text is given
+     * @return empty string or koodi metadatas localized name, in error cases
+     * also error text is given
      */
     public String getKoodiNimi(String koodiUriWithPossibleVersionInformation, Locale locale) {
         String result = "";
@@ -159,11 +146,10 @@ public class TarjontaUIHelper {
             result = _i18n.getMessage("_koodiError", koodiUriWithPossibleVersionInformation);
         }
 
-        LOG.debug("getKoodiNimi({}, {}) --> {}", new Object[] {koodiUriWithPossibleVersionInformation, locale, result});
+        LOG.debug("getKoodiNimi({}, {}) --> {}", new Object[]{koodiUriWithPossibleVersionInformation, locale, result});
 
         return result;
     }
-
 
     /**
      * Get koodis localized nimi for set of uris.
@@ -184,7 +170,6 @@ public class TarjontaUIHelper {
         // Strip first comma
         return result.length() == 0 ? result : result.substring(2);
     }
-
 
     /**
      * Format date to string with default "dd.MM.yyyy" formatting.
@@ -232,5 +217,25 @@ public class TarjontaUIHelper {
         return sdf.format(date);
     }
 
+    public static String createVersionUri(String uri, int version) {
+        return new StringBuilder(uri)
+                .append(KOODI_URI_AND_VERSION_SEPARATOR)
+                .append(version).toString();
 
+    }
+
+    public static String[] splitKoodiURI(final String koodiUriWithVersion) {
+        String[] result = new String[2];
+
+        int index = koodiUriWithVersion.lastIndexOf(KOODI_URI_AND_VERSION_SEPARATOR);
+        if (index > 0) {
+            result[0] = koodiUriWithVersion.substring(0, index);
+            result[1] = koodiUriWithVersion.substring(index + KOODI_URI_AND_VERSION_SEPARATOR.length());
+        } else {
+            result[0] = koodiUriWithVersion;
+            result[1] = "-1";
+        }
+
+        return result;
+    }
 }

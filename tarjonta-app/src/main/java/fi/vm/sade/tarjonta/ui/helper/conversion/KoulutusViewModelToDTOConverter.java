@@ -19,15 +19,19 @@ import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoodiHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutuskoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusohjelmaTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
@@ -164,19 +168,25 @@ public class KoulutusViewModelToDTOConverter {
         }
 
         LisaaKoulutusTyyppi tyyppi = new LisaaKoulutusTyyppi();
+
         // this.getDocumentStatus();  //TODO: status
         tyyppi.setOid(oid);
+        final KoodistoKoodiTyyppi ktKoulutusaste = mapToKoulutuskoodiTyyppi(model.getKoulutusasteTyyppi());
+        tyyppi.setKoulutusaste(ktKoulutusaste);
+
         //TODO: fix the test data
         final KoulutuskoodiTyyppi koulutuskoodi = model.getKoulutuskoodiTyyppi();
         if (koulutuskoodi != null) {
-            KoulutuskoodiTyyppi koodi = model.getKoulutuskoodiTyyppi();
-            tyyppi.setKoulutusKoodi(createKoodi(model.getKoulutuskoodiTyyppi().getKoodistoUri(), koodi.getKoulutuskoodi()));
+            tyyppi.setKoulutusKoodi(createKoodiVersionUri(
+                    koulutuskoodi.getKoodistoUri(),
+                    koulutuskoodi.getKoodistoVersio(),
+                    koulutuskoodi.getKoulutuskoodi()));
         }
 
         final KoulutusohjelmaModel koulutusohjelma = model.getKoulutusohjema();
         //URI data example : "koulutusohjelma/1603"
         if (koulutusohjelma != null) {
-            tyyppi.setKoulutusohjelmaKoodi(createKoodi(koulutusohjelma.getKoodiUri(), koulutusohjelma.getCode()));
+            tyyppi.setKoulutusohjelmaKoodi(createKoodi(koulutusohjelma.getVersionUri(), koulutusohjelma.getCode()));
         }
         tyyppi.setKoulutuksenAlkamisPaiva(model.getKoulutuksenAlkamisPvm());
         KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
@@ -234,24 +244,15 @@ public class KoulutusViewModelToDTOConverter {
     private KoulutusToisenAsteenPerustiedotViewModel mapToKoulutusToisenAsteenPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus, DocumentStatus status) {
         KoulutusToisenAsteenPerustiedotViewModel model2Aste = new KoulutusToisenAsteenPerustiedotViewModel(status);
         model2Aste.setOid(koulutus.getOid());
-       
-        //TODO: fix this
-        final KoodistoKoodiTyyppi koulutusKoodi = koulutus.getKoulutusKoodi();
-        if (koulutusKoodi != null && koulutusKoodi.getUri() != null) {
-            KoodiHakuTyyppi koodiHakuTyyppi = new KoodiHakuTyyppi();
-            koodiHakuTyyppi.setKieliKoodi("FI");
-            koodiHakuTyyppi.setKoodistoUri(koulutusKoodi.getUri());
-            //koodiHakuTyyppi.setKoodistoVersio(koulutusKoodi.getVersio());
-            model2Aste.setKoulutuskoodiTyyppi(koulutusKoodisto.listaaKoulutuskoodi(koodiHakuTyyppi));
-        }
-        
-        final KoodistoKoodiTyyppi koulutusohjelmaKoodi = koulutus.getKoulutusohjelmaKoodi();
-        if (koulutusohjelmaKoodi != null) {
-            final String koodiUri = koulutusohjelmaKoodi.getUri();
-            final int koodiVersio = koulutusohjelmaKoodi.getVersio();
-            final String arvo = koulutusohjelmaKoodi.getArvo();
-            model2Aste.setKoulutusohjema(new KoulutusohjelmaModel(koodiUri, koodiVersio, arvo, null));
-        }
+
+        final KoodistoKoodiTyyppi ktKoulutusaste = koulutus.getKoulutusKoodi();
+        model2Aste.setKoulutusasteTyyppi(mapToKoulutusasteTyyppi(ktKoulutusaste));
+
+        final KoodistoKoodiTyyppi ktKoulutuskoodi = koulutus.getKoulutusKoodi();
+        model2Aste.setKoulutuskoodiTyyppi(mapToKoulutuskoodiTyyppi(ktKoulutuskoodi));
+
+        final KoodistoKoodiTyyppi ktKoulutusohjelma = koulutus.getKoulutusohjelmaKoodi();
+        model2Aste.setKoulutusohjema(mapToKoulutusohjelmaTyyppi(ktKoulutusohjelma));
 
         model2Aste.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
         model2Aste.setOpetuskielet(convertOpetuskielet(koulutus.getOpetuskieli()));
@@ -277,6 +278,75 @@ public class KoulutusViewModelToDTOConverter {
         return model2Aste;
     }
 
+    public KoulutusohjelmaModel mapToKoulutusohjelmaTyyppi(final KoodistoKoodiTyyppi koulutusohjelmaKoodi) {
+        if (koulutusohjelmaKoodi != null && koulutusohjelmaKoodi.getUri() != null) {
+            KoodiHakuTyyppi koodiHakuTyyppi = mapToKoodiHakuTyyppi(koulutusohjelmaKoodi);
+            KoulutusohjelmaTyyppi kt = koulutusKoodisto.listaaKoulutusohjelma(koodiHakuTyyppi);
+            return new KoulutusohjelmaModel(
+                    kt.getKoodistoUri(),
+                    kt.getKoodistoVersio(),
+                    kt.getKoulutusohjelmaNimi(),
+                    kt.getKoulutusohjelmaKoodi());
+        }
+
+        return null;
+    }
+
+    public KoulutuskoodiTyyppi mapToKoulutuskoodiTyyppi(final KoodistoKoodiTyyppi koulutusKoodi) {
+        if (koulutusKoodi != null && koulutusKoodi.getUri() != null) {
+            return koulutusKoodisto.listaaKoulutuskoodi(mapToKoodiHakuTyyppi(koulutusKoodi));
+        }
+
+        return null;
+    }
+
+    /**
+     * Return koulutusaste search data in KoodistoKoodiTyyppi object.
+     *
+     * @param koulutusasteTyyppi
+     * @return
+     */
+    public static KoodistoKoodiTyyppi mapToKoulutuskoodiTyyppi(final KoulutusasteTyyppi koulutusasteTyyppi) {
+        if (koulutusasteTyyppi != null && koulutusasteTyyppi.getKoodistoUri() != null) {
+            return createKoodiVersionUri(
+                    koulutusasteTyyppi.getKoodistoUri(),
+                    koulutusasteTyyppi.getKoodistoVersio(),
+                    koulutusasteTyyppi.getKoulutusasteKoodi());
+        }
+        return null;
+    }
+
+    public KoulutusasteTyyppi mapToKoulutusasteTyyppi(final KoodistoKoodiTyyppi kktKoulutusaste) {
+        if (kktKoulutusaste != null && kktKoulutusaste.getUri() != null) {
+            return koulutusKoodisto.listaaKoulutusaste(mapToKoodiHakuTyyppi(kktKoulutusaste));
+        }
+
+        return null;
+    }
+
+    public static HaeKoulutusmoduulitKyselyTyyppi mapToHaeKoulutusmoduulitKyselyTyyppi(final KoulutusToisenAsteenPerustiedotViewModel model) {
+        HaeKoulutusmoduulitKyselyTyyppi kysely = new HaeKoulutusmoduulitKyselyTyyppi();
+        KoulutuskoodiTyyppi koulutuskoodi = model.getKoulutuskoodiTyyppi();
+
+        kysely.setKoulutuskoodiUri(mapToVersionUri(koulutuskoodi.getKoodistoUri(), koulutuskoodi.getKoodistoVersio()));
+
+        final KoulutusohjelmaModel koulutusohjema = model.getKoulutusohjema();
+        if (koulutusohjema != null && koulutusohjema.getKoodiUri() != null) {
+            final String mapToVersionUri = mapToVersionUri(koulutusohjema.getKoodiUri(), koulutusohjema.getKoodiVersio());
+            kysely.setKoulutusohjelmakoodiUri(mapToVersionUri);
+        }
+
+        return kysely;
+    }
+
+    public static String mapToVersionUri(String uri, int version) {
+        if (uri != null) {
+            return TarjontaUIHelper.createVersionUri(uri, version);
+        }
+
+        throw new RuntimeException("Exception: Invalid Data - URI cannot be null.");
+    }
+
     /**
      * Helper method that wraps uri string into KoodistoKoodiTyypi. No other
      * attribute populated.
@@ -290,11 +360,44 @@ public class KoulutusViewModelToDTOConverter {
         return koodi;
     }
 
-    private static KoodistoKoodiTyyppi createKoodi(final String uri, final String name) {
+    private static KoodistoKoodiTyyppi createKoodi(final String uri, final String arvo) {
         final KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
         koodi.setUri(uri);
-        koodi.setArvo(name);
+        koodi.setArvo(arvo);
         return koodi;
+    }
+
+    private static KoodistoKoodiTyyppi createKoodiVersionUri(final String uri, final int version, final String arvo) {
+        final KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
+        final String uriVersion = mapToVersionUri(uri, version);
+        koodi.setUri(uriVersion);
+        koodi.setArvo(arvo);
+        return koodi;
+    }
+
+    private static KoodistoKoodiTyyppi createKoodiVersionUri(final KoodistoKoodiTyyppi type) {
+        final KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
+        final String uriVersion = mapToVersionUri(type.getUri(), type.getVersio());
+        koodi.setUri(uriVersion);
+        koodi.setArvo(type.getArvo());
+        return koodi;
+    }
+
+    private KoodiHakuTyyppi mapToKoodiHakuTyyppi(KoodistoKoodiTyyppi kkt) {
+        if (kkt.getUri() == null) {
+            throw new RuntimeException("Exception: invalid data - URI cannot be null.");
+        }
+
+        final String[] splitKoodiURI = TarjontaUIHelper.splitKoodiURI(kkt.getUri());
+        if (splitKoodiURI == null || splitKoodiURI.length < 2) {
+            throw new RuntimeException("Exception: invalid data - URI must include version.");
+        }
+
+        KoodiHakuTyyppi koodiHakuTyyppi = new KoodiHakuTyyppi();
+        koodiHakuTyyppi.setKieliKoodi("FI");
+        koodiHakuTyyppi.setKoodistoUri(splitKoodiURI[0]);
+        koodiHakuTyyppi.setKoodistoVersio(Integer.parseInt(splitKoodiURI[1]));
+        return koodiHakuTyyppi;
     }
 
     private static String getUri(final KoodistoKoodiTyyppi type) {

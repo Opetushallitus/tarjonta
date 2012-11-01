@@ -59,8 +59,29 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
     public KoulutusasteVastausTyyppi listaaKoulutusasteet(KoulutusHakuTyyppi parameters) {
         KoulutusasteVastausTyyppi response = new KoulutusasteVastausTyyppi();
         List<KoodiType> koodistoData = getKoodistoData("opm02_koulutusaste");
-        response.getKoulutusaste().addAll(mapKoulutusaste(parameters, koodistoData));
+        response.getKoulutusaste().addAll(mapKoulutusaste(parameters.getKieliKoodi(), koodistoData));
         return response;
+    }
+
+    public KoulutusasteTyyppi listaaKoulutusaste(KoodiHakuTyyppi parameters) {
+        List<KoodiType> koodistoData = null;
+        final int version = parameters.getKoodistoVersio();
+
+        if (parameters.getKoodistoUri() != null) {
+            koodistoData = getKoodistoData(parameters.getKoodistoUri(), version);
+        } else if (parameters.getKoodistoArvo() != null) {
+            koodistoData = getKoodistoData(URI_KOULUTUSKOODI, parameters.getKoodistoArvo(), version);
+        }
+
+        if (koodistoData != null && !koodistoData.isEmpty()) {
+            List<KoulutusasteTyyppi> list = mapKoulutusaste(parameters.getKieliKoodi(), koodistoData);
+
+            if (!list.isEmpty() && list.size() > 0) {
+                return list.get(0);
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -190,10 +211,8 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
         return null;
     }
 
-    private List<KoulutusasteTyyppi> mapKoulutusaste(final KoulutusHakuTyyppi parameters, final List<KoodiType> koodit) {
-        final String kieliKoodi = parameters.getKieliKoodi();
+    private List<KoulutusasteTyyppi> mapKoulutusaste(final String kieliKoodi, final List<KoodiType> koodit) {
         List<KoulutusasteTyyppi> outKoulutusaste = new ArrayList<KoulutusasteTyyppi>();
-
 
         KoulutusType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutusaste();
         for (KoodiType koodiType : koodit) {

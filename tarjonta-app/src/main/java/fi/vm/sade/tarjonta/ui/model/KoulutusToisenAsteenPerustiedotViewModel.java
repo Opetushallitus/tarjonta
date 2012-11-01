@@ -93,7 +93,8 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setKoulutuksenTyyppi(null);
         setOrganisaatioName(null);
         setOrganisaatioOid(null);
-        setKoulutuslaji(null);//one required
+        setKoulutuslaji(null);
+        
         setKoulutusasteet(new HashSet<KoulutusasteTyyppi>());
         setKoulutuskoodit(new HashSet<KoulutuskoodiTyyppi>());
         setOpetuskielet(new HashSet<String>(1)); //one required

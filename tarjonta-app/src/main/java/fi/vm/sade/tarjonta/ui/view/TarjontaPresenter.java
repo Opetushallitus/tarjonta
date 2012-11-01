@@ -54,6 +54,7 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusType;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
@@ -226,8 +227,9 @@ public class TarjontaPresenter {
      * Show koulutus overview view.
      */
     public void showShowKoulutusView() {
-        getModel().getKoulutusPerustiedotModel().clearModel(DocumentStatus.NEW);
-        buildShowKoulutusView();
+        ShowKoulutusView view = new ShowKoulutusView("", null);
+        _rootView.getAppRootLayout().removeAllComponents();
+        _rootView.getAppRootLayout().addComponent(view);
     }
 
     public void showShowKoulutusView(String koulutusOid) {
@@ -255,9 +257,6 @@ public class TarjontaPresenter {
         _rootView.getAppRootLayout().addComponent(view);
     }
 
-    private void buildShowKoulutusView() {
-    }
-
     public void setKomotoOids(List<String> komotoOids) {
         _model.getHakukohde().setKomotoOids(komotoOids);
     }
@@ -283,13 +282,14 @@ public class TarjontaPresenter {
             //throw new RuntimeException("Application error - missing OID, cannot open KoulutusEditView.");
         }
 
-        showKoulutusEditView();
+        showKoulutusPerustiedotEditView();
     }
 
-    public void showKoulutusEditView() {
+    public void showKoulutusPerustiedotEditView() {
         //Clearing the layout from previos content
         this._rootView.getAppRootLayout().removeAllComponents();
         // Adding the form
+        getModel().getKoulutusPerustiedotModel().clearModel(DocumentStatus.NEW);
         _rootView.getAppRootLayout().addComponent(new EditKoulutusPerustiedotToinenAsteView());
     }
 
@@ -454,17 +454,12 @@ public class TarjontaPresenter {
         } else if (koulutus.equals(KoulutusType.TOINEN_ASTE_LUKIO)) {
             //Lukio tutkinto do not have koulutusohjema data.
             lisaa.setKoulutusohjelmaKoodi(new KoodistoKoodiTyyppi());
+            //just to make sure that Lukio do not send 'koulutuslaji' data to back-end.
+            lisaa.getKoulutuslaji().clear();
         }
 
         checkKoulutusmoduuli();
         tarjontaAdminService.lisaaKoulutus(lisaa);
-    }
-
-    /**
-     * @return the koulutusYhteistietoModel
-     */
-    public KoulutusToisenAsteenPerustiedotViewModel getKoulutusToisenAsteenPerustiedotViewModel() {
-        return getModel().getKoulutusPerustiedotModel();
     }
 
     /**
@@ -696,24 +691,22 @@ public class TarjontaPresenter {
     public void checkKoulutusmoduuli() {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
 
-        HaeKoulutusmoduulitKyselyTyyppi kysely = new HaeKoulutusmoduulitKyselyTyyppi();
-        kysely.setKoulutuskoodiUri(model.getKoulutuskoodiTyyppi().getKoodistoUri());
-        kysely.setKoulutusohjelmakoodiUri((model.getKoulutusohjema() != null) ? model.getKoulutusohjema().getKoodiUri() : null);
+        HaeKoulutusmoduulitKyselyTyyppi kysely =
+                KoulutusViewModelToDTOConverter.mapToHaeKoulutusmoduulitKyselyTyyppi(model);
+
         HaeKoulutusmoduulitVastausTyyppi vastaus = this.tarjontaPublicService.haeKoulutusmoduulit(kysely);
 
         if (vastaus.getKoulutusmoduuliTulos().isEmpty()) {
             //No KOMO, insert new KOMO
             try {
-                LOG.debug("insert KOMO!");
                 KoulutusmoduuliKoosteTyyppi komo = new KoulutusmoduuliKoosteTyyppi();
                 String oid = this.oidService.newOid(NodeClassCode.TEKN_5);
                 komo.setOid(oid);
                 komo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-                komo.setKoulutuskoodiUri(model.getKoulutuskoodiTyyppi().getKoodistoUri());
-               
-                final KoulutusohjelmaModel koulutusohjema = model.getKoulutusohjema();
-                if (koulutusohjema != null && koulutusohjema.getKoodiUri() != null) {
-                    komo.setKoulutusohjelmakoodiUri(koulutusohjema.getKoodiUri());
+                komo.setKoulutuskoodiUri(kysely.getKoulutuskoodiUri());
+
+                if (kysely.getKoulutusohjelmakoodiUri() != null) {
+                    komo.setKoulutusohjelmakoodiUri(kysely.getKoulutusohjelmakoodiUri());
                 }
                 komo = this.tarjontaAdminService.lisaaKoulutusmoduuli(komo);
                 model.setKoulutusmoduuliOid(komo.getOid());
@@ -722,7 +715,6 @@ public class TarjontaPresenter {
             }
         } else {
             //KOMO found
-            LOG.debug("get KOMO!");
             model.setKoulutusmoduuliOid(vastaus.getKoulutusmoduuliTulos().get(0).getKoulutusmoduuli().getOid());
         }
     }
