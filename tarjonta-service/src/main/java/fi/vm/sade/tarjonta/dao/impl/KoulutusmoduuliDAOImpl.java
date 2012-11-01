@@ -64,10 +64,10 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         BooleanExpression oidEq = ylamoduuli.oid.eq(oid);
 
         return (List<Koulutusmoduuli>) from(moduuli).
-            join(moduuli.sisaltyvyysList, sisaltyvyys).
-            join(sisaltyvyys.ylamoduuli, ylamoduuli).
-            where(oidEq).
-            list(moduuli);
+                join(moduuli.sisaltyvyysList, sisaltyvyys).
+                join(sisaltyvyys.ylamoduuli, ylamoduuli).
+                where(oidEq).
+                list(moduuli);
 
     }
 
@@ -85,33 +85,42 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
             // todo: limit if too expensive - make case insensitive
             whereExpr = and(whereExpr, moduuli.nimi.like("%" + criteria.getNimiQuery() + "%"));
         }
-        
+
         if (criteria.getKoulutusKoodi() != null) {
-        	whereExpr = and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+            whereExpr = and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
         }
-        
+
         if (criteria.getKoulutusohjelmaKoodi() != null) {
-        	whereExpr = and(whereExpr, moduuli.koulutusohjelmaKoodi.eq(criteria.getKoulutusohjelmaKoodi()));
+            whereExpr = and(whereExpr, moduuli.koulutusohjelmaKoodi.eq(criteria.getKoulutusohjelmaKoodi()));
         }
 
 
         return from(moduuli).
-            where(whereExpr).
-            list(moduuli);
+                where(whereExpr).
+                list(moduuli);
 
     }
 
     @Override
     public Koulutusmoduuli findTutkintoOhjelma(String koulutusLuokitusUri, String koulutusOhjelmaUri) {
-
         QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+        BooleanExpression whereExpr = null;
 
-        BooleanExpression koulutusEq = moduuli.koulutusKoodi.eq(koulutusLuokitusUri);
-        BooleanExpression ohjelmaEq = moduuli.koulutusohjelmaKoodi.eq(koulutusOhjelmaUri);
+        SearchCriteria criteria = new SearchCriteria();
+        criteria.setKoulutusKoodi(koulutusLuokitusUri);
+        criteria.setKoulutusohjelmaKoodi(koulutusOhjelmaUri);
+
+        if (criteria.getKoulutusKoodi() != null) {
+            whereExpr = and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+        }
+
+        if (criteria.getKoulutusohjelmaKoodi() != null) {
+            whereExpr = and(whereExpr, moduuli.koulutusohjelmaKoodi.eq(criteria.getKoulutusohjelmaKoodi()));
+        }
 
         return from(moduuli).
-            where(koulutusEq.and(ohjelmaEq)).
-            singleResult(moduuli);
+                where(whereExpr).
+                singleResult(moduuli);
 
     }
 
@@ -127,6 +136,4 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         final SearchCriteria.GroupBy groupBy = criteria.getGroupBy();
         return null;
     }
-
 }
-
