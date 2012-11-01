@@ -770,4 +770,10 @@ public class TarjontaPresenter {
 
         return koulutusohjelmaTyypit;
     }
+
+    public void showKoulutusPreview() {
+        if (_rootView != null) {
+            _rootView.showNotification("NOT IMPLEMNTED");
+        }
+    }
 }
