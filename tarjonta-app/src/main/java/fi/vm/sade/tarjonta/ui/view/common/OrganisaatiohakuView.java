@@ -17,23 +17,13 @@ package fi.vm.sade.tarjonta.ui.view.common;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.vaadin.addon.formbinder.FormFieldMatch;
-import org.vaadin.addon.formbinder.FormView;
-
 import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
@@ -41,9 +31,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
 import fi.vm.sade.generic.common.I18NHelper;
-
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
@@ -56,6 +44,13 @@ import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.ui.OphAbstractCollapsibleLeft;
 import fi.vm.sade.vaadin.util.UiUtil;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.vaadin.addon.formbinder.FormFieldMatch;
+import org.vaadin.addon.formbinder.FormView;
 
 /**
  * Component for searching and selecting organisaatios.
@@ -67,9 +62,12 @@ import fi.vm.sade.vaadin.util.UiUtil;
 public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLayout> {
 
     private static final Logger LOG = LoggerFactory.getLogger(OrganisaatiohakuView.class);
+
     public static final String COLUMN_KEY = "COLUMN";
+
     private static I18NHelper i18n = new I18NHelper(OrganisaatiohakuView.class);
     private static final int PANEL_WIDTH = 250;
+
     private TextField search;
     private ComboBox organisaatioTyyppi;
     private KoodistoComponent oppilaitosTyyppi;
@@ -79,6 +77,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     private Button tyhjennaB;
     private Tree tree;
     private HierarchicalContainer hc;
+
     @Autowired
     private OrganisaatioService organisaatioService;
 
@@ -116,6 +115,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         Panel panelTop = buildPanel(buildPanelLayout());
 
         search = UiUtil.textFieldSmallSearch(panelTop);
+        search.setInputPrompt(T("search.prompt"));
 
         // Bind enter to do the search
         search.setImmediate(true);
@@ -127,34 +127,39 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             }
         });
 
-        organisaatioTyyppi = UiUtil.comboBox(panelTop, null, new String[]{OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(),
+        organisaatioTyyppi = UiUtil.comboBox(panelTop, null,
+                new String[]{
+                    OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(),
                     OrganisaatioTyyppi.OPPILAITOS.value(),
                     OrganisaatioTyyppi.OPETUSPISTE.value(),
                     OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(),
-                    OrganisaatioTyyppi.MUU_ORGANISAATIO.value()});
+                    OrganisaatioTyyppi.MUU_ORGANISAATIO.value()
+                });
         setOrgTyyppiItemCaptions();
         organisaatioTyyppi.setSizeUndefined();
+        organisaatioTyyppi.setInputPrompt(T("organisaatioTyyppi.prompt"));
 
         // TODO missä tämä koodisto on? Eikös orgnanisaation puolella se ole olemassa?
-        oppilaitosTyyppi = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI, null, null, i18n.getMessage("oppilaitostyyppi.prompt"));
+        oppilaitosTyyppi = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI, null, null, T("oppilaitostyyppi.prompt"));
         oppilaitosTyyppi.getField().setNullSelectionAllowed(true);
         oppilaitosTyyppi.setWidth("210px");
-        // oppilaitosTyyppi.setCaptionFormatter(TarjontaUIHelper.getKoodiTypeAsLocalizedNameCaptionFormatter());
+        oppilaitosTyyppi.setCaptionFormatter(UiBuilder.DEFAULT_URI_CAPTION_FORMATTER);
+        // TarjontaUIHelper.getKoodiTypeAsLocalizedNameCaptionFormatter());
 
         panelTop.addComponent(oppilaitosTyyppi);
 
 
-        lakkautetut = UiUtil.checkbox(panelTop, i18n.getMessage("naytaMyosLakkautetut"));
-        suunnitellut = UiUtil.checkbox(panelTop, i18n.getMessage("naytaMyosSuunnitellut"));
+        lakkautetut = UiUtil.checkbox(panelTop, T("naytaMyosLakkautetut"));
+        suunnitellut = UiUtil.checkbox(panelTop, T("naytaMyosSuunnitellut"));
         HorizontalLayout buttonsL = UiUtil.horizontalLayout();
-        searchB = UiUtil.buttonSmallPrimary(buttonsL, i18n.getMessage("hae"), new Button.ClickListener() {
+        searchB = UiUtil.buttonSmallPrimary(buttonsL, T("hae"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 searchOrganisaatios();
             }
         });
 
-        tyhjennaB = UiUtil.buttonSmallPrimary(buttonsL, i18n.getMessage("tyhjenna"), new Button.ClickListener() {
+        tyhjennaB = UiUtil.buttonSmallPrimary(buttonsL, T("tyhjenna"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 criteria = new OrganisaatioSearchCriteriaDTO();
@@ -326,10 +331,16 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
      * Gets the item captions of organisaatiotyyppi selections in search criteria combobox.
      */
     private void setOrgTyyppiItemCaptions() {
-        organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(), i18n.getMessage(OrganisaatioTyyppi.KOULUTUSTOIMIJA.name()));
-        organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.MUU_ORGANISAATIO.value(), i18n.getMessage(OrganisaatioTyyppi.MUU_ORGANISAATIO.name()));
-        organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPETUSPISTE.value(), i18n.getMessage(OrganisaatioTyyppi.OPETUSPISTE.name()));
-        organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPILAITOS.value(), i18n.getMessage(OrganisaatioTyyppi.OPPILAITOS.name()));
-        organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(), i18n.getMessage(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.name()));
+        organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(), T(OrganisaatioTyyppi.KOULUTUSTOIMIJA.name()));
+        organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.MUU_ORGANISAATIO.value(), T(OrganisaatioTyyppi.MUU_ORGANISAATIO.name()));
+        organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPETUSPISTE.value(), T(OrganisaatioTyyppi.OPETUSPISTE.name()));
+        organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPILAITOS.value(), T(OrganisaatioTyyppi.OPPILAITOS.name()));
+        organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(), T(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.name()));
     }
+
+
+    private String T(String key, Object... args) {
+        return i18n.getMessage(key, args);
+    }
+
 }
