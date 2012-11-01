@@ -25,10 +25,6 @@ import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusLisatiedotForm;
-import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
-import fi.vm.sade.vaadin.dto.ButtonDTO;
-import fi.vm.sade.vaadin.dto.PageNavigationDTO;
-import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,9 +99,8 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         });
 
         window.addComponent(initData);
-
-
     }
+
 
     public void toTarjonta() {
         this.removeWindow(window);
@@ -126,8 +121,10 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         setMainWindow(window);
 
         // Set default languages
-        tarjontaModel.getKoulutusPerustiedotModel().getOpetuskielet().add("uri: Englanti 5935");
-        tarjontaModel.getKoulutusPerustiedotModel().getOpetuskielet().add("uri: Ruotsi 5934");
+        tarjontaModel.getKoulutusPerustiedotModel().getOpetuskielet().add("uri: Englanti 5935#1");
+        tarjontaModel.getKoulutusPerustiedotModel().getOpetuskielet().add("uri: Ruotsi 5934#1");
+
+        tarjontaModel.getKoulutusLisatiedotModel().getAmmattinimikkeet().add("uri: Ruotsi 5934#1");
 
         EditKoulutusLisatiedotForm view = new EditKoulutusLisatiedotForm();
         window.addComponent(view);

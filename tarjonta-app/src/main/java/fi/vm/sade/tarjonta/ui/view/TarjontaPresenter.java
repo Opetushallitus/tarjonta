@@ -252,9 +252,7 @@ public class TarjontaPresenter {
             throw new RuntimeException("Application error - missing OID, cannot open ShowKoulutusView.");
         }
 
-        ShowKoulutusView view = new ShowKoulutusView("", null);
-        _rootView.getAppRootLayout().removeAllComponents();
-        _rootView.getAppRootLayout().addComponent(view);
+        showShowKoulutusView();
     }
 
     public void setKomotoOids(List<String> komotoOids) {

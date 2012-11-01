@@ -21,9 +21,13 @@ import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.ui.component.OphRichTextArea;
+import fi.vm.sade.generic.ui.component.OphTokenField;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -36,6 +40,7 @@ import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,11 +75,22 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         //
         // Ammattinimikkeet
         //
-        addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet"), LabelStyleEnum.H2));
 
-        PropertysetItem psi = new BeanItem(_tarjontaModel.getKoulutusLisatiedotModel());
-        KoodistoComponent kcAmmattinimikkeet = UiBuilder.koodistoTwinColSelect(null, KoodistoURIHelper.KOODISTO_AVAINSANAT_URI, psi, "ammattinimikkeet");
-        addComponent(kcAmmattinimikkeet);
+        {
+            addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet"), LabelStyleEnum.H2));
+
+            PropertysetItem psi = new BeanItem(_tarjontaModel.getKoulutusLisatiedotModel());
+            OphTokenField f = UiBuilder.koodistoTokenField(null, KoodistoURIHelper.KOODISTO_KIELI_URI, psi, "ammattinimikkeet");
+            f.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
+
+                @Override
+                public String formatToken(Object selectedToken) {
+                    return _uiHelper.getKoodiNimi((String) selectedToken);
+                }
+            });
+
+            addComponent(f);
+        }
 
         //
         // Language dependant information
@@ -86,7 +102,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         languageUris.addAll(_tarjontaModel.getKoulutusPerustiedotModel().getOpetuskielet());
         languageUris.addAll(_tarjontaModel.getKoulutusLisatiedotModel().getKielet());
 
-        // Update language selections
+        // Update language selections to contain opetuskielet AND lisätiedot languages
         _tarjontaModel.getKoulutusLisatiedotModel().setKielet(languageUris);
 
         //
@@ -121,21 +137,30 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
+                _presenter.saveKoulutusLuonnoksenaModel();
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
         addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
+                try {
+                    _presenter.saveKoulutusValmiina();
+                } catch (ExceptionMessage ex) {
+                    LOG.error("Failed to save.", ex);
+                    getWindow().showNotification("FAILED: " + ex);
+                }
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
         addNavigationButton(T("esikatsele"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
+                _presenter.showKoulutusPreview();
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
         addNavigationButton(T("jatka"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
+                _presenter.showShowKoulutusView();
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
     }

@@ -15,19 +15,24 @@
  */
 package fi.vm.sade.tarjonta.ui.helper;
 
+import com.vaadin.data.Property;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Field;
 import com.vaadin.ui.TwinColSelect;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
+import fi.vm.sade.generic.ui.component.OphTokenField;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class to make creating of styled components easier.
@@ -36,6 +41,8 @@ import fi.vm.sade.vaadin.util.UiUtil;
  * @author mlyly
  */
 public class UiBuilder extends UiUtil {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UiBuilder.class);
 
     /**
      * Default field value as uri formatter for koodisto components - since we store uri's in Tarjonta.
@@ -131,8 +138,6 @@ public class UiBuilder extends UiUtil {
             return dto.getKoodiUri();
         }
     };
-
-//    private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
 
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, null, (ComboBox) null, true);
@@ -243,10 +248,8 @@ public class UiBuilder extends UiUtil {
             c.setFieldValueFormatter(DEFAULT_URI_FIELD_VALUE_FORMATTER);
         }
 
-        // Selected data bound there
-        if (psi != null && expression != null) {
-            c.setPropertyDataSource(psi.getItemProperty(expression));
-        }
+        // Selected data bound here if wanted
+        bindFieldToAProperty(psi, expression, c);
 
         UiBaseUtil.handleAddComponent(layout, c);
 
@@ -326,9 +329,7 @@ public class UiBuilder extends UiUtil {
         final KoodistoComponent kc = koodistoTwinColSelectUri(layout, koodistoUri, uriWithVersion);
 
         // Selected data bound here if wanted
-        if (psi != null && expression != null) {
-            kc.setPropertyDataSource(psi.getItemProperty(expression));
-        }
+        bindFieldToAProperty(psi, expression, kc);
 
         return kc;
     }
@@ -347,36 +348,47 @@ public class UiBuilder extends UiUtil {
     }
 
 
+    /**
+     * Create token field selector with koodisto linked combobox.
+     *
+     * @param layout
+     * @param koodistoUri
+     * @param psi
+     * @param expression
+     * @return
+     */
+    public static OphTokenField koodistoTokenField(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
 
-//    public static TabSheet koodistoLanguageTabSheets(List<KoodiType> koodisto) {
-//        TabSheet tab = new TabSheet();
-//
-//        if (koodisto != null) {
-//            for (KoodiType k : koodisto) {
-//                TextField textField = UiUtil.textField(null);
-//                textField.setHeight("100px");
-//                textField.setWidth(UiConstant.PCT100);
-//
-//                tab.addTab(textField, k.getKoodiArvo(), null);
-//            }
-//        }
-//        VerticalLayout l3 = new VerticalLayout();
-//        l3.setMargin(true);
-//        tab.addTab(l3, "", TAB_ICON_PLUS);
-//
-//        return tab;
-//    }
+        KoodistoComponent kc = koodistoComboBox(null, koodistoUri);
+        kc.setImmediate(true);
 
-//    public static TabSheet koodistoLanguageTabSheets(String koodistoUri, Property.ValueChangeListener valueChangeListener) {
-//        VerticalLayout vl = verticalLayout(true, UiMarginEnum.NONE);
-//        KoodistoComponent kc = koodistoTwinColSelectUri(vl, koodistoUri, false); // no version for uris
-//        if (valueChangeListener != null) {
-//            kc.addListener(valueChangeListener);
-//        }
-//
-//        TabSheet tab = new TabSheet();
-//        tab.addTab(vl, "", TAB_ICON_PLUS);
-//
-//        return tab;
-//    }
+        OphTokenField f = new OphTokenField();
+        f.setSelectionComponent(kc);
+
+        // Selected data bound here if wanted
+        bindFieldToAProperty(psi, expression, f);
+
+        UiBaseUtil.handleAddComponent(layout, f);
+
+        return f;
+    }
+
+
+    /**
+     * Bind  field "f" to a data source.
+     *
+     * @param psi
+     * @param expression
+     * @param f
+     */
+    private static void bindFieldToAProperty(PropertysetItem psi, String expression, Field f) {
+        if (psi != null && expression != null) {
+            Property p = psi.getItemProperty(expression);
+            if (p == null) {
+                throw new RuntimeException("Cannot bind to null property: expression = '" + expression + "', available: " + psi.getItemPropertyIds());
+            }
+            f.setPropertyDataSource(p);
+        }
+    }
+
 }

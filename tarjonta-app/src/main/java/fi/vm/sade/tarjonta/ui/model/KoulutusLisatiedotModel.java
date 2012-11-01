@@ -15,20 +15,25 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Contains all the additional information for all given languages for a stydy.
+ * Contains all the additional information for all given languages for a study.
+ *
+ * Note that this class contains references to "KoulutusLisatietoMmodel" (note missing -t  :)
+ * that contains language specific textual data.
  *
  * @author mlyly
  */
 public class KoulutusLisatiedotModel extends BaseUIViewModel {
 
     private Set<String> _kielet;
-    private Set<String> _ammattinimikeet;
+    private Collection<String> _ammattinimikkeet;
 
     /**
      * Language specific information for a study.
@@ -93,15 +98,15 @@ public class KoulutusLisatiedotModel extends BaseUIViewModel {
      *
      * @return
      */
-    public Set<String> getAmmattinimikeet() {
-        if (_ammattinimikeet == null) {
-            _ammattinimikeet = new HashSet<String>();
+    public Collection<String> getAmmattinimikkeet() {
+        if (_ammattinimikkeet == null) {
+            _ammattinimikkeet = new ArrayList<String>();
         }
-        return _ammattinimikeet;
+        return _ammattinimikkeet;
     }
 
-    public void setAmmattinimikeet(Set<String> set) {
-        _ammattinimikeet = set;
+    public void setAmmattinimikkeet(Collection<String> set) {
+        _ammattinimikkeet = set;
     }
 
 }
