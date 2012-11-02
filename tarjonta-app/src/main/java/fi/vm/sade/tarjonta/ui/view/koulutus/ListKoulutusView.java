@@ -182,11 +182,17 @@ public class ListKoulutusView extends VerticalLayout {
                 hc.addItem(curKoulutus);
                 hc.setParent(curKoulutus, rootItem);
                 hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi()) + ", " 
-						 																	+ getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi()), true));
+						 																	+ getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi())
+						 																	+ ", " + getTilaStr(curKoulutus.getKoulutus().getTila()), true));
                 hc.setChildrenAllowed(curKoulutus, false);
             }
         }
         return hc;
+    }
+    
+    private String getTilaStr(String tilaUri) {
+    	String[] parts = tilaUri.split("\\/"); 
+    	return i18n.getMessage(parts[parts.length-1]);
     }
 
     /**

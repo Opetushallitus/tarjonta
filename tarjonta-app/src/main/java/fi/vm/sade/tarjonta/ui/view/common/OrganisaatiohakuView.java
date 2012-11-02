@@ -31,6 +31,8 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
+
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
@@ -45,10 +47,13 @@ import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.ui.OphAbstractCollapsibleLeft;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.List;
+import java.util.Locale;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 
@@ -87,6 +92,10 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     private List<OrganisaatioDTO> organisaatios;
     private OrganisaatioSearchCriteriaDTO criteria;
     List<String> rootOrganisaatioOids;
+    
+    @Value("${root.organisaatio.oid:NOT_SET}")
+    private String ophOid;
+    
 
     public OrganisaatiohakuView() {
         super(VerticalLayout.class);
@@ -249,7 +258,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         for (OrganisaatioDTO curOrg : organisaatios) {
             //DEBUGSAWAY:LOG.debug("Organisaatio: " + curOrg);
             hc.addItem(curOrg);
-            hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(curOrg.getNimiFi());
+            hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(getClosestNimi(I18N.getLocale(), curOrg));//curOrg.getNimiFi());
         }
         //Creating the hierarchical structure of the organisaatio tree.
         createHierarchy();
@@ -267,6 +276,21 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             }
         }
     }
+    
+    private void openTree(OrganisaatioDTO organisaatio, OrganisaatioDTO parentOrg) {
+    	if (criteria.getSearchStr() != null && !criteria.getSearchStr().isEmpty()
+    			&& getClosestNimi(I18N.getLocale(), organisaatio).toLowerCase().contains(criteria.getSearchStr().toLowerCase())) {
+    		expandPath(parentOrg); //this.setCollapsed(parentOrg, false);
+    	}
+    }
+    
+    private void expandPath(OrganisaatioDTO org) {
+    	tree.expandItem(org);
+    	OrganisaatioDTO parent = (OrganisaatioDTO)(hc.getParent(org));
+    	if (parent != null) {
+    		expandPath(parent);
+    	}
+    }
 
     /**
      * Is the current organisaatio a root organisaatio
@@ -274,7 +298,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
      * @return
      */
     private boolean hasParentInCurrentResults(OrganisaatioDTO org) {
-        if (org.getParentOid() == null) {
+        if (org.getParentOid() == null || org.getParentOid().equals(this.ophOid)) {
             return false;
         }
         for (OrganisaatioDTO curOrg : organisaatios) {
@@ -298,6 +322,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
                 hc.setParent(curOrg, parentOrg);
                 setChildrenTo(curOrg);
                 wasChildren = true;
+                openTree(curOrg, parentOrg);
             }
         }
         //If the parentOrg has no children we set childreAllowed to false.
@@ -336,6 +361,38 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPETUSPISTE.value(), T(OrganisaatioTyyppi.OPETUSPISTE.name()));
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPILAITOS.value(), T(OrganisaatioTyyppi.OPPILAITOS.name()));
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(), T(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.name()));
+    }
+    
+    private String getClosestNimi(Locale locale, OrganisaatioDTO org) {
+    	 String lang = (locale != null) ?  locale.getLanguage().toLowerCase() : "";
+         if (lang.equals("fi") && org.getNimiFi() != null) {
+         	
+             return org.getNimiFi();
+         } 
+         if (lang.equals("sv") && org.getNimiSv() != null) {
+         	
+             return org.getNimiSv();
+         } 
+         if (lang.equals("en") && org.getNimiEn() != null) {	
+             return org.getNimiEn();
+         }
+         return getAvailableNimi(org);
+    }
+    
+    private String getAvailableNimi(OrganisaatioDTO org) {
+    	if (org.getNimiFi() != null) {
+         	
+         	return org.getNimiFi();
+         } 
+         if (org.getNimiSv() != null) {
+         	
+         	return org.getNimiSv();
+         }
+         if (org.getNimiEn() != null) {
+         	
+         	return org.getNimiEn();
+         }
+         return "";
     }
 
 
