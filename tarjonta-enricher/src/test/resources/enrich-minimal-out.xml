@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LearningOpportunityDownloadData>
+    <LearningOpportunitySpecification id="S1508" type="DegreeProgramme">
+        <Classification>
+            <EducationClassification>
+                <Code scheme="OPH" version="2010">371101</Code>
+                <Label xml:lang="fi">Label 371101 FI</Label>
+            </EducationClassification>
+        </Classification>
+    </LearningOpportunitySpecification>
+</LearningOpportunityDownloadData>
