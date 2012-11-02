@@ -60,7 +60,10 @@ public class TarjontaPublicationRESTService {
     }
 
     /**
-     * Exports current tarjonta content into response stream.
+     * Exports current tarjonta content (non-enriched) into response stream.
+     *
+     * todo: concurrent calls to this method are not prevented - we either need to do that or
+     * use method-local data collector.
      *
      * @return
      * @throws JAXBException
@@ -79,13 +82,9 @@ public class TarjontaPublicationRESTService {
 
                 try {
 
-                    log.info("exporting tarjonta");
-
                     writer.setOutput(out);
                     dataCollector.setHandler(writer);
                     dataCollector.start();
-
-                    log.info("exporting completed");
 
                 } catch (XMLStreamException e) {
 

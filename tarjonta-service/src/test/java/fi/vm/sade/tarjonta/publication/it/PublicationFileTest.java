@@ -83,14 +83,20 @@ public class PublicationFileTest {
 
         close(outputStream);
 
+        if (System.getProperty("keepTestFile") == null) {
+            outputFile.delete();
+        }
+
     }
 
     @Test
     public void testHowBigIsExportFileWithLargeDataSet() throws Exception {
 
-        int numKoulutus = 2000;
-        int numHaku = 20;
-        int numHakukohde = 1900;
+        // sample number from Kata
+
+        int numKoulutus = 4700;
+        int numHaku = 1;
+        int numHakukohde = 2600;
 
         collector.setDataService(setUpDataService(numKoulutus, numHaku, numHakukohde));
         collector.start();
@@ -107,7 +113,9 @@ public class PublicationFileTest {
     }
 
     private String formatMegs(long bytes) {
+
         return new DecimalFormat("#.##").format(bytes / (double) (1024 * 1024));
+        
     }
 
     private PublicationDataService setUpDataService(int numKoulutus, int numHaku, int numHakukohde) {
@@ -140,7 +148,6 @@ public class PublicationFileTest {
         when(service.listHakukohde()).thenReturn(hakukohdeList);
 
         return service;
-
 
     }
 
