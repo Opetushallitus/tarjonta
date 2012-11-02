@@ -52,9 +52,13 @@
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1"/>
-            
             <xs:element name="KoodistoVersio"
                         type="xs:int"
+                        maxOccurs="1"
+                        minOccurs="1"/>
+            
+            <xs:element name="KoodistoUriVersio"
+                        type="xs:string"
                         maxOccurs="1"
                         minOccurs="1"/>
             <xs:element name="Nimi" type="tns:Nimi"  minOccurs="0" maxOccurs="99"/>
@@ -133,6 +137,11 @@
                         maxOccurs="1"
                         minOccurs="1"/>
             
+            <xs:element name="KoodistoUriVersio"
+                        type="xs:string"
+                        maxOccurs="1"
+                        minOccurs="1"/>
+            
             <xs:element name="KoulutusasteKoodi"
                         type="xs:string"
                         maxOccurs="1"
@@ -143,6 +152,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            
             
             <xs:element name="KoulutusohjelmaKoodi"
                         type="xs:string"
@@ -200,6 +210,11 @@
                         type="xs:int"
                         maxOccurs="1"
                         minOccurs="1"/>
+            
+            <xs:element name="KoodistoUriVersio"
+                          type="xs:string"
+                          maxOccurs="1"
+                          minOccurs="1"/>
             
             <xs:element name="Nimi" type="tns:Nimi"  minOccurs="0" maxOccurs="99"/>
                
