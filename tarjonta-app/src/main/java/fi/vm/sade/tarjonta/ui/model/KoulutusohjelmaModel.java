@@ -25,9 +25,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Jani Wilén
  */
 public class KoulutusohjelmaModel implements Serializable {
-
-    private int koodiVersio; //used as ID
+    private int koodiVersion; // version used as ID
     private String koodiUri; //used as ID
+    private String koodiUriVersion; //used as ID
     private String code; //koodi code
     private String name;
     private String fullName; //combination of id and name fields
@@ -35,9 +35,10 @@ public class KoulutusohjelmaModel implements Serializable {
     public KoulutusohjelmaModel() {
     }
 
-    public KoulutusohjelmaModel(String koodiUri, int koodiVersio, String code, String name) {
+    public KoulutusohjelmaModel(String koodiUri, int koodiVersion, String code, String name) {
         this.koodiUri = koodiUri;
-        this.koodiVersio = koodiVersio;
+        this.koodiVersion = koodiVersion;
+        this.koodiUriVersion = TarjontaUIHelper.createVersionUri(koodiUri, koodiVersion);
         this.code = code;
         this.name = name;
         this.fullName = name + " " + code;
@@ -127,21 +128,32 @@ public class KoulutusohjelmaModel implements Serializable {
         return ToStringBuilder.reflectionToString(this);
     }
 
+
     /**
-     * @return the koodiVersio
+     * @return the koodiVersion
      */
-    public int getKoodiVersio() {
-        return koodiVersio;
+    public int getKoodiVersion() {
+        return koodiVersion;
     }
 
     /**
-     * @param koodiVersio the koodiVersio to set
+     * @param koodiVersion the koodiVersion to set
      */
-    public void setKoodiVersio(int koodiVersio) {
-        this.koodiVersio = koodiVersio;
+    public void setKoodiVersion(int koodiVersion) {
+        this.koodiVersion = koodiVersion;
     }
 
-    public String getVersionUri() {
-        return TarjontaUIHelper.createVersionUri(koodiUri, koodiVersio);
+    /**
+     * @return the koodiUriVersion
+     */
+    public String getKoodiUriVersion() {
+        return koodiUriVersion;
+    }
+
+    /**
+     * @param koodiUriVersion the koodiUriVersion to set
+     */
+    public void setKoodiUriVersion(String koodiUriVersion) {
+        this.koodiUriVersion = koodiUriVersion;
     }
 }

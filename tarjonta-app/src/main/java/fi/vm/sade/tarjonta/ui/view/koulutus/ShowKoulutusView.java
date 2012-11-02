@@ -62,6 +62,13 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     protected void buildLayout(VerticalLayout layout) {
         LOG.info("buildLayout(): hakutyyppi uri={}", KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI);
 
+        if (_presenter == null) {
+            _presenter = new TarjontaPresenter();
+        }
+        
+        if(_tarjontaUIHelper == null)
+            _tarjontaUIHelper = new TarjontaUIHelper();
+
         layout.removeAllComponents();
         addNavigationButtons(layout);
         addLayoutSplit();
@@ -87,18 +94,28 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         grid.addComponent(UiUtil.label(T("organisaatio")));
         grid.addComponent(new Label(model.getOrganisaatioName()));
         grid.newLine();
+        grid.setComponentAlignment(grid.getComponent(0, grid.getCursorY()), Alignment.TOP_RIGHT );
+       
         grid.addComponent(UiUtil.label(T("koulutuslaji")));
         grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getKoulutuslaji())));
         grid.newLine();
+        grid.setComponentAlignment(grid.getComponent(0, grid.getCursorY()), Alignment.TOP_RIGHT );
+        
         grid.addComponent(UiUtil.label(T("opetusmuoto")));
         grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getOpetusmuoto(), null)));
         grid.newLine();
+        grid.setComponentAlignment(grid.getComponent(0, grid.getCursorY()), Alignment.TOP_RIGHT );
+        
         grid.addComponent(UiUtil.label(T("teemat")));
         grid.addComponent(UiUtil.label(_tarjontaUIHelper.getKoodiNimi(model.getAvainsanat(), null)));
         grid.newLine();
+        
+        grid.setComponentAlignment(grid.getComponent(grid.getCursorX(), grid.getCursorY()), Alignment.TOP_RIGHT );
         grid.addComponent(UiUtil.label(T("koulutuksenAlkamisPvm")));
         grid.addComponent(UiUtil.label(_tarjontaUIHelper.formatDate(model.getKoulutuksenAlkamisPvm())));
+        
         grid.newLine();
+        grid.setComponentAlignment(grid.getComponent(grid.getCursorX(), grid.getCursorY()), Alignment.TOP_RIGHT );
         {
             // Build suunniteltu kesto and kesto tyyppi as string
             String tmp = "";
@@ -118,6 +135,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
         grid.setColumnExpandRatio(0, 1);
         grid.setColumnExpandRatio(1, 2);
+        
 
         for (int row = 0; row < grid.getRows(); row++) {
             //alignment code not working?

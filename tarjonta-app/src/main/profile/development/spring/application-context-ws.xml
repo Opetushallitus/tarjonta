@@ -27,14 +27,14 @@
         <property name="mockDataHandler" ref="mockDataHandler"/>
     </bean>
     
-    <bean id="koodistoPublicService" class="fi.vm.sade.koodisto.service.mock.KoodistoServiceMock">
-        <property name="mockDataHandler" ref="mockDataHandler"/>
-    </bean> 
--->     	
+        <bean id="koodistoPublicService" class="fi.vm.sade.koodisto.service.mock.KoodistoServiceMock">
+            <property name="mockDataHandler" ref="mockDataHandler"/>
+        </bean> 
+    -->     	
     
     <jaxws:client id="koodiPublicService"
-                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
-                   address="${koodi.webservice.url:http://NO_KOODI_WEBSERVICE_URL_CONFIGURED}"/>
+                  serviceClass="fi.vm.sade.koodisto.service.KoodiService"
+                  address="${koodi.webservice.url:http://NO_KOODI_WEBSERVICE_URL_CONFIGURED}"/>
 
     <jaxws:client id="koodistoPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
@@ -54,10 +54,10 @@
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService"
                   address="${tarjonta.public.webservice.url:http://NO_HAKU_WEBSERVICE_URL_CONFIGURED}"/> 
      
-        <jaxws:client id="organisaatioService"
-                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
-                   address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
-    
+    <jaxws:client id="organisaatioService"
+                  serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
+                  address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
+       
     <bean id="hakuService" class="fi.vm.sade.tarjonta.service.mock.HakueraServiceMock" />
     
     

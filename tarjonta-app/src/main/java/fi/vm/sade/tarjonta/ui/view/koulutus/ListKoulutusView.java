@@ -252,7 +252,7 @@ public class ListKoulutusView extends VerticalLayout {
         luoKoulutusB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-            	presenter.showKoulutusPerustiedotEditView();
+            	presenter.showKoulutusPerustiedotEditView(null);
             }
         });
         

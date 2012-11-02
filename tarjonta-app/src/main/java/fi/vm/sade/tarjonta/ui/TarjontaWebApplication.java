@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
@@ -25,6 +26,7 @@ import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusLisatiedotForm;
+import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,95 +43,101 @@ import org.springframework.cache.support.SimpleCacheManager;
  */
 @Configurable(preConstruction = true)
 public class TarjontaWebApplication extends AbstractSadeApplication {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaWebApplication.class);
     private Window window;
     @Value("${tarjonta-app.dev.redirect:}")
     private String developmentRedirect;
     @Value("${tarjonta-app.dev.theme:}")
     private String developmentTheme;
-
     @Autowired
     private TarjontaModel tarjontaModel;
-
     @Autowired
     private TarjontaAdminService tarjontaAdminService;
     @Autowired
     SimpleCacheManager _cacheManager;
-
+    
     @Override
     public synchronized void init() {
         super.init();
-
+        
         window = new Window("Valitse");
         setMainWindow(window);
-
+        
         developmentConfiguration();
-
+        HorizontalLayout hl = new HorizontalLayout();
+        window.addComponent(hl);
+        
+        Button yhteenvetoButton = new Button("Yhteenveto", new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                window.addComponent(new ShowKoulutusView(null, null));
+            }
+        });
+        hl.addComponent(yhteenvetoButton);
+        
         Button tarjontaButton = new Button("Tarjontaan", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 toTarjonta();
             }
         });
-        window.addComponent(tarjontaButton);
-
+        hl.addComponent(tarjontaButton);
+        
         Button hakuButton = new Button("Hakuihin", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 toHaku();
             }
         });
-        window.addComponent(hakuButton);
-
+        hl.addComponent(hakuButton);
+        
         Button xxxButton = new Button("Koulutuksen kuvailevat tiedot muokkaaminen", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 toKoulutusView();
             }
         });
-
-        window.addComponent(xxxButton);
-
+        
+        hl.addComponent(xxxButton);
+        
         Button initData = new Button("Luo testidata", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 tarjontaAdminService.initSample(new String());
             }
         });
-
-        window.addComponent(initData);
+        
+        hl.addComponent(initData);
     }
-
-
+    
     public void toTarjonta() {
         this.removeWindow(window);
         window = new TarjontaRootView();
         setMainWindow(window);
     }
-
+    
     public void toHaku() {
         this.removeWindow(window);
         window = new HakuRootView(this);
         setMainWindow(window);
     }
-
+    
     public void toKoulutusView() {
         this.removeWindow(window);
-
+        
         window = new Window();
         setMainWindow(window);
 
         // Set default languages
         tarjontaModel.getKoulutusPerustiedotModel().getOpetuskielet().add("uri: Englanti 5935#1");
         tarjontaModel.getKoulutusPerustiedotModel().getOpetuskielet().add("uri: Ruotsi 5934#1");
-
+        
         tarjontaModel.getKoulutusLisatiedotModel().getAmmattinimikkeet().add("uri: Ruotsi 5934#1");
-
+        
         EditKoulutusLisatiedotForm view = new EditKoulutusLisatiedotForm();
         window.addComponent(view);
     }
-
 
     /*
      * Development configurations, no real use in production environment.
@@ -139,22 +147,21 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
             //set a development theme.
             setTheme(developmentTheme);
         }
-
+        
         if (developmentRedirect != null && developmentRedirect.length() > 0) {
             //This code block is only for making UI development little bit faster
             //Add the property to tarjonta-app.properties:
             //
             //tarjonta-app.dev.redirect=KOULUTUS
-
             if (developmentRedirect.equalsIgnoreCase("HAKU")) {
                 toHaku();
             }
-
+            
             if (developmentRedirect.equalsIgnoreCase("KOULUTUS") || developmentRedirect.equalsIgnoreCase("TARJONTA")) {
                 toTarjonta();
             }
         }
-
+        
     }
 
     /**

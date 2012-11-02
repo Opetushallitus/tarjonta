@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import com.vaadin.data.util.BeanItemContainer;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutuskoodiTyyppi;
 import java.util.HashSet;
@@ -36,9 +37,10 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     private static final String NO_DATA_AVAILABLE = "Tietoa ei saatavilla";
     private Set<KoulutusasteTyyppi> koulutusasteet;
     private Set<KoulutuskoodiTyyppi> koulutuskoodit;
-    private Set<KoulutusohjelmaModel> koodistoKoulutusohjelma;
+    private Set<KoulutusohjelmaModel> koulutusohjelmat;
     private KoulutusasteTyyppi koulutusasteTyyppi;
     private KoulutuskoodiTyyppi koulutuskoodiTyyppi;
+    private String organisaatioOid; //updated when loaded
 
     public KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus status) {
         super();
@@ -53,31 +55,21 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     }
 
     /**
-     * @return the koodistoKoulutusohjelma
-     */
-    public Set<KoulutusohjelmaModel> getKoodistoKoulutusohjelma() {
-        return koodistoKoulutusohjelma;
-    }
-
-    /**
-     * @param koodistoKoulutusohjelma the koodistoKoulutusohjelma to set
-     */
-    public void setKoodistoKoulutusohjelma(Set<KoulutusohjelmaModel> koodistoKoulutusohjelma) {
-        this.koodistoKoulutusohjelma = koodistoKoulutusohjelma;
-    }
-
-    /**
      * Initialize model with all default values.
      *
      * @param status of koulutus document
      */
     public void clearModel(final DocumentStatus status) {
+        //OIDs
+        setOrganisaatioOid(null);
+        setOid(null);
+
         //used in control logic 
         setDocumentStatus(status);
         setUserFrienlyDocumentStatus(null);
         setKoulutusasteTyyppi(null);
         setKoulutuskoodiTyyppi(null);
-        setKoulutusohjema(null);
+        setKoulutusohjelma(null);
 
         //koodisto data
         setKoulutusala(null);
@@ -94,9 +86,10 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setOrganisaatioName(null);
         setOrganisaatioOid(null);
         setKoulutuslaji(null);
-        
+
         setKoulutusasteet(new HashSet<KoulutusasteTyyppi>());
         setKoulutuskoodit(new HashSet<KoulutuskoodiTyyppi>());
+        setKoulutusohjelmat(new HashSet<KoulutusohjelmaModel>());
         setOpetuskielet(new HashSet<String>(1)); //one required
         setOpetusmuoto(new HashSet<String>(1));//one required
         setAvainsanat(new HashSet<String>(0));//optional
@@ -112,7 +105,11 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
      * @return Boolean
      */
     public boolean isLoaded() {
-        return getOid() != null;
+        return getOid() != null && getDocumentStatus().equals(DocumentStatus.LOADED);
+    }
+
+    public boolean isEdited() {
+        return getOid() != null && getDocumentStatus().equals(DocumentStatus.EDITED);
     }
 
     /**
@@ -176,5 +173,33 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
      */
     public void setKoulutuskoodit(Set<KoulutuskoodiTyyppi> koulutuskoodit) {
         this.koulutuskoodit = koulutuskoodit;
+    }
+
+    /**
+     * @return the koulutusohjelmat
+     */
+    public Set<KoulutusohjelmaModel> getKoulutusohjelmat() {
+        return koulutusohjelmat;
+    }
+
+    /**
+     * @param koulutusohjelmat the koulutusohjelmat to set
+     */
+    public void setKoulutusohjelmat(Set<KoulutusohjelmaModel> koulutusohjelmat) {
+        this.koulutusohjelmat = koulutusohjelmat;
+    }
+
+    /**
+     * @return the organisaatioOid
+     */
+    public String getOrganisaatioOid() {
+        return organisaatioOid;
+    }
+
+    /**
+     * @param organisaatioOid the organisaatioOid to set
+     */
+    public void setOrganisaatioOid(String organisaatioOid) {
+        this.organisaatioOid = organisaatioOid;
     }
 }

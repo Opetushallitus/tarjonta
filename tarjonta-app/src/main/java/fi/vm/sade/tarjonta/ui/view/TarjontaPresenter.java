@@ -27,7 +27,6 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
-import fi.vm.sade.tarjonta.service.TarjontaKoodistoService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
@@ -41,6 +40,7 @@ import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutuskoodiTyyppi;
@@ -54,7 +54,6 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusType;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
-import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
@@ -259,35 +258,54 @@ public class TarjontaPresenter {
         _model.getHakukohde().setKomotoOids(komotoOids);
     }
 
-    public void showKoulutusEditView(String koulutusOid) {
+    @SuppressWarnings("empty-statement")
+    public void showKoulutusPerustiedotEditView(final String koulutusOid) {
         // If oid of koulutus is provided the koulutus is read from database
         // before opening the KoulutusEditView
+        if (getModel().getOrganisaatioOid() == null) {
+            throw new RuntimeException("Application error - missing organisation OID.");
+        }
+
         if (koulutusOid != null) {
             LueKoulutusKyselyTyyppi koulutusKysely = new LueKoulutusKyselyTyyppi();
             koulutusKysely.setOid(koulutusOid);
             LueKoulutusVastausTyyppi lueKoulutus = this.tarjontaPublicService.lueKoulutus(koulutusKysely);
-
             try {
                 KoulutusToisenAsteenPerustiedotViewModel koulutus = null;
                 koulutus = koulutusToDTOConverter
                         .createKoulutusPerustiedotViewModel(lueKoulutus, DocumentStatus.LOADED);
                 getModel().setKoulutusPerustiedotModel(koulutus);
+
+                koulutus.getKoulutusohjelmat().clear();
+                koulutus.getKoulutuskoodit().clear();
+                koulutus.getKoulutusasteet().clear();
+
+                //a quick fix for updating text data to combobox...
+                if (koulutus.getKoulutusohjelma() != null && koulutus.getKoulutusohjelma().getKoodiUri() != null) {
+                    koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelma());
+                }
+
+                koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiTyyppi());
+                koulutus.getKoulutusasteet().add(koulutus.getKoulutusasteTyyppi());
+                
+                LOG.debug("1 koulutus.getKoulutuskoodiTyyppi() : " + koulutus.getKoulutuskoodiTyyppi());
+                for (KoulutuskoodiTyyppi t : koulutus.getKoulutuskoodit()) {
+                    LOG.debug("2 koulutus.getKoulutuskoodiTyyppi() : " + t.equals(koulutus.getKoulutuskoodiTyyppi()) + " " + koulutus.getKoulutuskoodiTyyppi().getKoodistoUriVersio() + koulutus.getKoulutuskoodiTyyppi().getKoodistoUri() + " " + koulutus.getKoulutuskoodiTyyppi().getKoodistoVersio());
+                }
+                
+
+
+
             } catch (ExceptionMessage ex) {
                 LOG.error("Service call failed.", ex);
                 showMainDefaultView();
             }
         } else {
-            //throw new RuntimeException("Application error - missing OID, cannot open KoulutusEditView.");
+            getModel().getKoulutusPerustiedotModel().clearModel(DocumentStatus.NEW);
         }
 
-        showKoulutusPerustiedotEditView();
-    }
-
-    public void showKoulutusPerustiedotEditView() {
-        //Clearing the layout from previos content
         this._rootView.getAppRootLayout().removeAllComponents();
         // Adding the form
-        getModel().getKoulutusPerustiedotModel().clearModel(DocumentStatus.NEW);
         _rootView.getAppRootLayout().addComponent(new EditKoulutusPerustiedotToinenAsteView());
     }
 
@@ -435,29 +453,55 @@ public class TarjontaPresenter {
      */
     public void saveKoulutusValmiina() throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
-        final LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(model);
+        LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(model, getModel().getOrganisaatioOid());
         final String koulutusasteKoodi = model.getKoulutusasteTyyppi().getKoulutusasteKoodi();
 
         if (koulutusasteKoodi == null) {
-            throw new RuntimeException("Save failed - koulutusaste code cannot be null!");
+            throw new RuntimeException("Persist failed - koulutusaste numeric code is required!");
         }
 
         if (lisaa.getKoulutusKoodi() == null || lisaa.getKoulutusKoodi().getUri() == null) {
-            throw new RuntimeException("Save failed - Koulutuskoodi uri is required!");
+            throw new RuntimeException("Persist failed - koulutuskoodi URI is required!");
         }
 
         final KoulutusType koulutus = KoulutusType.getByKoulutusaste(koulutusasteKoodi);
-        if (koulutus.equals(KoulutusType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS) && lisaa.getKoulutusohjelmaKoodi().getUri() == null) {
-            throw new RuntimeException("Save failed - koulutusohjelma uri is required!");
+        if (koulutus == null) {
+            throw new RuntimeException("Persist failed - koulutusaste numeric code do not match to koodisto data. Value : " + koulutusasteKoodi);
+        }
+
+        KoodistoKoodiTyyppi koulutusohjelmaKoodi = lisaa.getKoulutusohjelmaKoodi();
+
+        if (koulutus.equals(KoulutusType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS) && koulutusohjelmaKoodi == null && koulutusohjelmaKoodi.getUri() == null) {
+            throw new RuntimeException("Persist failed - koulutusohjelma URI is required!");
         } else if (koulutus.equals(KoulutusType.TOINEN_ASTE_LUKIO)) {
             //Lukio tutkinto do not have koulutusohjema data.
             lisaa.setKoulutusohjelmaKoodi(new KoodistoKoodiTyyppi());
             //just to make sure that Lukio do not send 'koulutuslaji' data to back-end.
             lisaa.getKoulutuslaji().clear();
+            LOG.debug("Koulutuskoodi URI : '" + lisaa.getKoulutusKoodi().getUri() + "'");
+        } else {
+            LOG.debug("Koulutuskoodi URI : '" + lisaa.getKoulutusKoodi().getUri() + "', koulutusohjelma URI : '" + koulutusohjelmaKoodi.getUri() + "' ");
         }
-
         checkKoulutusmoduuli();
-        tarjontaAdminService.lisaaKoulutus(lisaa);
+
+        if (model.isLoaded() || model.isEdited()) {
+            //update KOMOTO
+            PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi = koulutusToDTOConverter.createPaivitaKoulutusTyyppi(model, model.getOid());
+
+            if (createPaivitaKoulutusTyyppi.getTarjoaja() == null) {
+                throw new RuntimeException("Persist failed - organisaatio OID is required!");
+            }
+
+            createPaivitaKoulutusTyyppi.setTarjoaja(getModel().getOrganisaatioOid());
+            tarjontaAdminService.paivitaKoulutus(createPaivitaKoulutusTyyppi);
+        } else {
+            //new KOMOTO
+            if (lisaa.getTarjoaja() == null) {
+                throw new RuntimeException("Persist failed - organisaatio OID is required!");
+            }
+
+            tarjontaAdminService.lisaaKoulutus(lisaa);
+        }
     }
 
     /**
@@ -534,6 +578,7 @@ public class TarjontaPresenter {
             LOG.error("Error in finding koulutukset: {}", ex.getMessage());
             getModel().setKoulutukset(new ArrayList<KoulutusTulos>());
         }
+
         // Creating the datasource model
         for (KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
             String koulutusKey = curKoulutus.getKoulutus().getTarjoaja();
@@ -706,6 +751,7 @@ public class TarjontaPresenter {
                 if (kysely.getKoulutusohjelmakoodiUri() != null) {
                     komo.setKoulutusohjelmakoodiUri(kysely.getKoulutusohjelmakoodiUri());
                 }
+
                 komo = this.tarjontaAdminService.lisaaKoulutusmoduuli(komo);
                 model.setKoulutusmoduuliOid(komo.getOid());
             } catch (Exception ex) {
@@ -730,10 +776,10 @@ public class TarjontaPresenter {
     /*
      * More detailed information of selected 'koulutusluokitus'.
      */
-    public List<KoulutuskoodiTyyppi> loadKoulutuskoodit(Locale locale) {
-        List<KoulutuskoodiTyyppi> koulutuskoodiTyypit = new ArrayList<KoulutuskoodiTyyppi>(0);
+    public void loadKoulutuskoodit(Locale locale) {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
 
+        //koulutusaste must be selected before an user can select koulutuskoodi.
         if (model.getKoulutusasteTyyppi() != null && model.getKoulutusasteTyyppi().getKoulutusasteKoodi() != null) {
             //filters
             KoulutusHakuTyyppi koulutusHakuTyyppi = new KoulutusHakuTyyppi();
@@ -741,22 +787,24 @@ public class TarjontaPresenter {
             final String koulutusasteKoodi = model.getKoulutusasteTyyppi().getKoulutusasteKoodi();
             koulutusHakuTyyppi.setKoulutusasteKoodi(koulutusasteKoodi);
 
-            //koodisto search result
+            //koodisto search result    
+            model.getKoulutuskoodit().clear();
             KoulutuskoodiVastausTyyppi result = kolutusKoodistoConverter.listaaKoulutuskoodit(koulutusHakuTyyppi);
-            koulutuskoodiTyypit = result.getKoulutuskoodi();
+            model.getKoulutuskoodit().addAll(result.getKoulutuskoodi());
         }
-
-        return koulutuskoodiTyypit;
     }
 
-    public List<KoulutusohjelmaModel> loadKoulutusohjelmat(Locale locale) {
+    public void loadKoulutusohjelmat(Locale locale) {
         List<KoulutusohjelmaModel> koulutusohjelmaTyypit = new ArrayList<KoulutusohjelmaModel>(0);
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
+
+        //Koulutuskoodi filters koulutusohjema data. 
         if (model.getKoulutuskoodiTyyppi() != null && model.getKoulutuskoodiTyyppi().getKoulutuskoodi() != null) {
             KoulutusHakuTyyppi koulutusHakuTyyppi = new KoulutusHakuTyyppi();
             koulutusHakuTyyppi.setKieliKoodi("fi");
             koulutusHakuTyyppi.setKoulutusohjelmaKoodi(model.getKoulutuskoodiTyyppi().getKoulutuskoodi());
 
+            model.getKoulutusohjelmat().clear();
             List<KoulutusohjelmaTyyppi> koulutusohjelma = kolutusKoodistoConverter.listaaKoulutusohjelmat(koulutusHakuTyyppi).getKoulutusohjelma();
             for (KoulutusohjelmaTyyppi t : koulutusohjelma) {
                 KoulutusohjelmaModel koulutusOhjelmaModel = new KoulutusohjelmaModel(
@@ -766,9 +814,8 @@ public class TarjontaPresenter {
                         t.getKoulutusohjelmaNimi());
                 koulutusohjelmaTyypit.add(koulutusOhjelmaModel);
             }
+            model.getKoulutusohjelmat().addAll(koulutusohjelmaTyypit);
         }
-
-        return koulutusohjelmaTyypit;
     }
 
     public void showKoulutusPreview() {

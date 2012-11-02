@@ -47,6 +47,7 @@ public class KoodistoURIHelper {
     public static String KOODISTO_AVAINSANAT_URI;
     public static String KOODISTO_KIELIVALIKOIMA_URI;
 
+    
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
         KOODISTO_HAKUTYYPPI_URI = uri;

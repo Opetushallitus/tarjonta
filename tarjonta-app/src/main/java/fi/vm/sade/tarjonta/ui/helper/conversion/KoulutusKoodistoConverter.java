@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.helper.conversion;
 
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
+import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -32,8 +33,12 @@ import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusohjelmaTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusohjelmaVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.Nimi;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusType;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,10 +49,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(KoulutusKoodistoConverter.class);
     private final String LUKIO = KoulutusType.TOINEN_ASTE_LUKIO.getKoulutusaste();
     private final String AMMATILLINEN = KoulutusType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutusaste();
-    private static final String URI_KOULUTUSKOODI = "Koulutusluokitus";
-    private static final String URI_KOULUTUSOHJELMA = "YO-koulutusohjelma";
     @Autowired(required = true)
     private KoodiService koodiPublicService;
 
@@ -69,8 +73,6 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
 
         if (parameters.getKoodistoUri() != null) {
             koodistoData = getKoodistoData(parameters.getKoodistoUri(), version);
-        } else if (parameters.getKoodistoArvo() != null) {
-            koodistoData = getKoodistoData(URI_KOULUTUSKOODI, parameters.getKoodistoArvo(), version);
         }
 
         if (koodistoData != null && !koodistoData.isEmpty()) {
@@ -91,8 +93,6 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
 
         if (parameters.getKoodistoUri() != null) {
             koodistoData = getKoodistoData(parameters.getKoodistoUri(), version);
-        } else if (parameters.getKoodistoArvo() != null) {
-            koodistoData = getKoodistoData(URI_KOULUTUSKOODI, parameters.getKoodistoArvo(), version);
         }
 
         if (koodistoData != null && !koodistoData.isEmpty()) {
@@ -125,7 +125,10 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
             }
         }
 
-        List<KoodiType> koodistoData = getKoodistoData(URI_KOULUTUSKOODI);
+        List<KoodiType> koodistoData = getKoodistoData(KoodistoURIHelper.KOODISTO_KOULUTUS_URI);
+
+        LOG.debug("Total count of koulutuskoodit : {}", koodistoData.size());
+
         KoulutuskoodiVastausTyyppi response = new KoulutuskoodiVastausTyyppi();
         final String kieliKoodi = parameters.getKieliKoodi();
         response.getKoulutuskoodi().addAll(mapKoulutuskoodi(kieliKoodi, type, koodistoData));
@@ -136,12 +139,11 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
     @Override
     public KoulutusohjelmaTyyppi listaaKoulutusohjelma(KoodiHakuTyyppi parameters) {
         List<KoodiType> koodistoData = null;
-        int version = parameters.getKoodistoVersio();
+        final int version = parameters.getKoodistoVersio();
+        final String koodistoUri = parameters.getKoodistoUri();
 
-        if (parameters.getKoodistoUri() != null) {
-            koodistoData = getKoodistoData(parameters.getKoodistoUri(), version);
-        } else if (parameters.getKoodistoArvo() != null) {
-            koodistoData = getKoodistoData(URI_KOULUTUSOHJELMA, parameters.getKoodistoArvo(), version);
+        if (koodistoUri != null) {
+            koodistoData = getKoodistoData(koodistoUri, version);
         }
 
         if (koodistoData != null && !koodistoData.isEmpty()) {
@@ -157,7 +159,7 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
 
     @Override
     public KoulutusohjelmaVastausTyyppi listaaKoulutusohjelmat(KoulutusHakuTyyppi parameters) {
-        List<KoodiType> koodistoData = getKoodistoData(URI_KOULUTUSOHJELMA);
+        List<KoodiType> koodistoData = getKoodistoData(KoodistoURIHelper.KOODISTO_KOULUTUSOHJELMA_URI);
         KoulutusohjelmaVastausTyyppi response = new KoulutusohjelmaVastausTyyppi();
         response.getKoulutusohjelma().addAll(mapKoulutusohjelma(parameters.getKieliKoodi(), koodistoData));
         return response;
@@ -168,14 +170,9 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
      * HELPER METHODS:
      * 
      */
-    private List<KoodiType> getKoodistoData(String uri, String arvo, int version) {
-        SearchKoodisByKoodistoCriteriaType criteria = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUriAndKoodistoVersio(arvo, uri, version);
-        return koodiPublicService.searchKoodisByKoodisto(criteria);
-    }
-
     private List<KoodiType> getKoodistoData(String uri, int version) {
-        SearchKoodisByKoodistoCriteriaType criteria = KoodiServiceSearchCriteriaBuilder.koodisByKoodistoUriAndKoodistoVersio(uri, version);
-        return koodiPublicService.searchKoodisByKoodisto(criteria);
+        SearchKoodisCriteriaType criteria = KoodiServiceSearchCriteriaBuilder.koodiByUriAndVersion(uri, version);
+        return koodiPublicService.searchKoodis(criteria);
     }
 
     private List<KoodiType> getKoodistoData(String uri) {
@@ -225,13 +222,13 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
                 outKoulutus.setKoulutusasteKoodi(koodiType.getKoodiArvo());
                 outKoulutus.setKoodistoUri(koodiType.getKoodiUri());
                 outKoulutus.setKoodistoVersio(koodiType.getVersio());
-                outKoulutusaste.add(outKoulutus);
-
+                final String uriWithVersio = KoulutusViewModelToDTOConverter.mapToVersionUri(koodiType.getKoodiUri(), koodiType.getVersio());
+                outKoulutus.setKoodistoUriVersio(uriWithVersio);
                 if (kieliKoodi != null) {
                     outKoulutus.setKoulutusasteNimi(kieli(koodiType.getMetadata(), kieliKoodi));
-                } else {
-                    outKoulutus.getNimi().addAll(kieli(koodiType.getMetadata()));
                 }
+                outKoulutus.getNimi().addAll(kieli(koodiType.getMetadata()));
+                outKoulutusaste.add(outKoulutus);
             }
         }
 
@@ -246,20 +243,21 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
             outKoulutus.setKoulutusohjelmaKoodi(koodiType.getKoodiArvo());
             outKoulutus.setKoodistoUri(koodiType.getKoodiUri());
             outKoulutus.setKoodistoVersio(koodiType.getVersio());
-            outKoulutusohjelma.add(outKoulutus);
+            final String uriWithVersio = KoulutusViewModelToDTOConverter.mapToVersionUri(koodiType.getKoodiUri(), koodiType.getVersio());
+            outKoulutus.setKoodistoUriVersio(uriWithVersio);
 
             if (kieliKoodi != null) {
                 outKoulutus.setKoulutusohjelmaNimi(kieli(koodiType.getMetadata(), kieliKoodi));
-            } else {
-                outKoulutus.getNimi().addAll(kieli(koodiType.getMetadata()));
             }
+            outKoulutus.getNimi().addAll(kieli(koodiType.getMetadata()));
+            outKoulutusohjelma.add(outKoulutus);
         }
 
         return outKoulutusohjelma;
     }
 
     private List<KoulutuskoodiTyyppi> mapKoulutuskoodi(final String kieliKoodi, final KoulutusType type, final List<KoodiType> koodit) {
-        List<KoulutuskoodiTyyppi> outKoulutusaste = new ArrayList<KoulutuskoodiTyyppi>();
+        List<KoulutuskoodiTyyppi> outKoulutuskoodi = new ArrayList<KoulutuskoodiTyyppi>();
 
         for (KoodiType koodiType : koodit) {
             if (type == null) {
@@ -267,13 +265,14 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
                 outKoulutus.setKoulutuskoodi(koodiType.getKoodiArvo());
                 outKoulutus.setKoodistoUri(koodiType.getKoodiUri());
                 outKoulutus.setKoodistoVersio(koodiType.getVersio());
-                outKoulutusaste.add(outKoulutus);
+                final String uriWithVersio = KoulutusViewModelToDTOConverter.mapToVersionUri(koodiType.getKoodiUri(), koodiType.getVersio());
+                outKoulutus.setKoodistoUriVersio(uriWithVersio);
 
                 if (kieliKoodi != null) {
                     outKoulutus.setKoulutuskoodiNimi(kieli(koodiType.getMetadata(), kieliKoodi));
-                } else {
-                    outKoulutus.getNimi().addAll(kieli(koodiType.getMetadata()));
                 }
+                outKoulutus.getNimi().addAll(kieli(koodiType.getMetadata()));
+                outKoulutuskoodi.add(outKoulutus);
             } else if (koodiType.getKoodiArvo().startsWith(type.getKoulutuskoodiFilter())) {
                 //TODO: fix this after koodisto references are finalised. 
                 //A bad way to filter koodisto data. 
@@ -281,16 +280,18 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
                 outKoulutus.setKoulutuskoodi(koodiType.getKoodiArvo());
                 outKoulutus.setKoodistoUri(koodiType.getKoodiUri());
                 outKoulutus.setKoodistoVersio(koodiType.getVersio());
-                outKoulutusaste.add(outKoulutus);
+                final String uriWithVersio = KoulutusViewModelToDTOConverter.mapToVersionUri(koodiType.getKoodiUri(), koodiType.getVersio());
+                outKoulutus.setKoodistoUriVersio(uriWithVersio);
 
                 if (kieliKoodi != null) {
                     outKoulutus.setKoulutuskoodiNimi(kieli(koodiType.getMetadata(), kieliKoodi));
-                } else {
-                    outKoulutus.getNimi().addAll(kieli(koodiType.getMetadata()));
                 }
+                outKoulutus.getNimi().addAll(kieli(koodiType.getMetadata()));
+                outKoulutuskoodi.add(outKoulutus);
             }
         }
 
-        return outKoulutusaste;
+        LOG.debug("Mapped count of koulutuskoodit : {}", outKoulutuskoodi.size());
+        return outKoulutuskoodi;
     }
 }

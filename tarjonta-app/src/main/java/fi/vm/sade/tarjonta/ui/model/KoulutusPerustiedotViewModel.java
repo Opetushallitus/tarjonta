@@ -46,7 +46,7 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     /*
      * Koodisto data:
      */
-    private KoulutusohjelmaModel koulutusohjema;
+    private KoulutusohjelmaModel koulutusohjelma;
     
     /*
      * Koulutusmoduuli oid 
@@ -213,19 +213,7 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
         this.avainsanat = avainsanat;
     }
 
-    /**
-     * @return the koulutusohjema
-     */
-    public KoulutusohjelmaModel getKoulutusohjema() {
-        return koulutusohjema;
-    }
 
-    /**
-     * @param koulutusohjema the koulutusohjema to set
-     */
-    public void setKoulutusohjema(KoulutusohjelmaModel koulutusohjema) {
-        this.koulutusohjema = koulutusohjema;
-    }
 
     /**
      * @return the document status enum
@@ -333,4 +321,18 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
 	public void setKoulutusmoduuliOid(String koulutusmoduuliOid) {
 		this.koulutusmoduuliOid = koulutusmoduuliOid;
 	}
+
+    /**
+     * @return the koulutusohjelma
+     */
+    public KoulutusohjelmaModel getKoulutusohjelma() {
+        return koulutusohjelma;
+    }
+
+    /**
+     * @param koulutusohjelma the koulutusohjelma to set
+     */
+    public void setKoulutusohjelma(KoulutusohjelmaModel koulutusohjelma) {
+        this.koulutusohjelma = koulutusohjelma;
+    }
 }

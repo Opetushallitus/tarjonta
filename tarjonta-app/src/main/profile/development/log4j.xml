@@ -47,6 +47,16 @@
      <logger name="fi.vm.sade.generic.ui.portlet.security">
         <level value="INFO" />
     </logger>
+    
+     <logger name="fi.vm.sade.koodisto.widget">
+        <level value="INFO" />
+    </logger>
+    
+   
+    <logger name="org.apache">
+        <level value="INFO" />
+    </logger>
+    
    
 
 </log4j:configuration>

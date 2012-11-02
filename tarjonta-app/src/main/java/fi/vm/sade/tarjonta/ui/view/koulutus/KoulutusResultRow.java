@@ -101,7 +101,7 @@ public class KoulutusResultRow  extends HorizontalLayout {
         if (selection.equals(i18n.getMessage("tarkastele"))) {
             tarjontaPresenter.showShowKoulutusView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
         } else if (selection.equals(i18n.getMessage("muokkaa"))) {
-            tarjontaPresenter.showKoulutusEditView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
+            tarjontaPresenter.showKoulutusPerustiedotEditView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
         } else if (selection.equals(i18n.getMessage("poista"))) {
             tarjontaPresenter.removeKoulutus(koulutus);
             tarjontaPresenter.getHakukohdeListView().reload();

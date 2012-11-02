@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.NestedMethodProperty;
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
@@ -31,11 +31,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
-import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusType;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
-import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
@@ -56,8 +54,6 @@ import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutuskoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusohjelmaTyyppi;
-import java.util.List;
 
 /**
  * Koulutus edit form for second degree studies.
@@ -74,12 +70,14 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private KoulutusToisenAsteenPerustiedotViewModel koulutusModel;
     private TarjontaPresenter presenter;
     private Map<KoulutusType, Set<Component>> selectedComponents;
-
+    private BeanItemContainer<KoulutusasteTyyppi> bicKoulutusaste;
+    private BeanItemContainer<KoulutusohjelmaModel> bicKoulutusohjelma;
+    private BeanItemContainer<KoulutuskoodiTyyppi> bicKoulutuskoodi;
     /*
      * Forms can have different set of layout components.
      */
     @PropertyId( "koulutusasteTyyppi")
-    private ComboBox cbSelectForm;
+    private ComboBox cbKoulutusaste;
     /*
      * Koodisto code (url).
      */
@@ -155,12 +153,67 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         this.presenter = presenter;
         this.koulutusModel = model;
         initializeLayout();
-        disableOrEnableComponents(false);
+        disableOrEnableComponents(koulutusModel.isLoaded());
+        initializeDataContainers();
+    }
+
+    private void initializeDataContainers() {
+        LOG.info("initializeDataContainers()");
+
+        bicKoulutusaste = new BeanItemContainer<KoulutusasteTyyppi>(KoulutusasteTyyppi.class, koulutusModel.getKoulutusasteet());
+        cbKoulutusaste.setContainerDataSource(bicKoulutusaste);
+
+        bicKoulutuskoodi = new BeanItemContainer<KoulutuskoodiTyyppi>(KoulutuskoodiTyyppi.class, koulutusModel.getKoulutuskoodit());
+        cbKoulutusTaiTutkinto.setContainerDataSource(bicKoulutuskoodi);
+
+        bicKoulutusohjelma = new BeanItemContainer<KoulutusohjelmaModel>(KoulutusohjelmaModel.class, koulutusModel.getKoulutusohjelmat());
+        cbKoulutusohjelma.setContainerDataSource(bicKoulutusohjelma);
+
+        //load data
+        presenter.loadKoulutusasteKoodit(getLocale());
+        bicKoulutusaste.addAll(koulutusModel.getKoulutusasteet());
+
+        if (!koulutusModel.isLoaded()) {
+            //select first item
+            koulutusModel.setKoulutusasteTyyppi(!koulutusModel.getKoulutusasteet().isEmpty()
+                    ? koulutusModel.getKoulutusasteet().iterator().next()
+                    : null);
+            
+            //when data is loaded, it do not need listeners.
+            cbKoulutusaste.addListener(new Property.ValueChangeListener() {
+                @Override
+                public void valueChange(Property.ValueChangeEvent event) {
+
+                    LOG.debug("Koulutusaste event.");
+                    if (!cbKoulutusTaiTutkinto.getVisibleItemIds().isEmpty()) {
+                        //clear result data.
+                        cbKoulutusTaiTutkinto.removeAllItems();
+                    }
+                    presenter.loadKoulutuskoodit(getLocale());
+                    bicKoulutuskoodi.addAll(koulutusModel.getKoulutuskoodit());
+                    showOnlySelectedFormComponents();
+                    disableOrEnableComponents(true);
+                }
+            });
+
+            cbKoulutusTaiTutkinto.addListener(new Property.ValueChangeListener() {
+                @Override
+                public void valueChange(Property.ValueChangeEvent event) {
+                    LOG.debug("Koulutukoodi event.");
+                    if (cbKoulutusohjelma.getVisibleItemIds() != null && !cbKoulutusohjelma.getVisibleItemIds().isEmpty()) {
+                        //clear result data.
+                        cbKoulutusohjelma.removeAllItems();
+                    }
+                    presenter.loadKoulutusohjelmat(getLocale());
+                    bicKoulutusohjelma.addAll(koulutusModel.getKoulutusohjelmat());
+                    cbKoulutusohjelma.setEnabled(true);
+                }
+            });
+        }
     }
 
     private void initializeLayout() {
         LOG.info("initilizeLayout()");
-
         this.setSizeFull();
         this.setColumnExpandRatio(0, 10l);
         this.setColumnExpandRatio(1, 20l);
@@ -212,49 +265,14 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         if (propertyKey == null) {
             throw new RuntimeException("Application error - label caption cannot be null!");
         }
-
         gridLabel(grid, propertyKey);
-        cbSelectForm = new ComboBox();
-        cbSelectForm.setPropertyDataSource(new NestedMethodProperty(koulutusModel, "koulutusasteet"));
-        cbSelectForm.setNullSelectionAllowed(false);
-        cbSelectForm.setImmediate(true);
-
-        Locale locale = getLocale();
-        presenter.loadKoulutusasteKoodit(locale);
-
-        for (KoulutusasteTyyppi koulutusasteTyyppi : koulutusModel.getKoulutusasteet()) {
-            cbSelectForm.addItem(koulutusasteTyyppi);
-            cbSelectForm.setItemCaption(koulutusasteTyyppi, koulutusasteTyyppi.getKoulutusasteNimi());
-
-            if (koulutusModel.getKoulutusasteTyyppi() == null) {
-                //pre-select the first item. 
-                koulutusModel.setKoulutusasteTyyppi(koulutusasteTyyppi);
-            }
-        }
-
-        cbSelectForm.addListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-
-                if (!cbKoulutusTaiTutkinto.getVisibleItemIds().isEmpty()) {
-                    //clear result data.
-                    cbKoulutusTaiTutkinto.removeAllItems();
-                }
-                final List<KoulutuskoodiTyyppi> koulutuskoodit = presenter.loadKoulutuskoodit(getLocale());
-
-                for (KoulutuskoodiTyyppi koulutuskoodiTyyppi : koulutuskoodit) {
-                    cbKoulutusTaiTutkinto.addItem(koulutuskoodiTyyppi);
-
-                    LOG.debug("koulutuskoodi : " + koulutuskoodiTyyppi.getKoulutuskoodiNimi() + " " + koulutuskoodiTyyppi.getKoulutuskoodi());
-                    cbKoulutusTaiTutkinto.setItemCaption(koulutuskoodiTyyppi, koulutuskoodiTyyppi.getKoulutuskoodiNimi());
-                }
-
-                showOnlySelectedFormComponents();
-                disableOrEnableComponents(true);
-            }
-        });
-
-        grid.addComponent(cbSelectForm);
+        cbKoulutusaste = new ComboBox();
+        cbKoulutusaste.setNullSelectionAllowed(false);
+        cbKoulutusaste.setImmediate(true);
+        cbKoulutusaste.setReadOnly(koulutusModel.isLoaded());
+        cbKoulutusaste.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
+        cbKoulutusaste.setItemCaptionPropertyId("koulutusasteNimi");
+        grid.addComponent(cbKoulutusaste);
         grid.newLine();
         buildSpacingGridRow(grid);
 
@@ -273,28 +291,14 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
     private void buildGridKoulutusRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
-
         cbKoulutusTaiTutkinto = new ComboBox();
         cbKoulutusTaiTutkinto.setNullSelectionAllowed(false);
         cbKoulutusTaiTutkinto.setImmediate(true);
         cbKoulutusTaiTutkinto.setEnabled(false);
         cbKoulutusTaiTutkinto.setWidth(350, UNITS_PIXELS);
-        cbKoulutusTaiTutkinto.addListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-                if (cbKoulutusohjelma.getVisibleItemIds() != null && !cbKoulutusohjelma.getVisibleItemIds().isEmpty()) {
-                    //clear result data.
-                    cbKoulutusohjelma.removeAllItems();
-                }
-                final List<KoulutusohjelmaModel> listKoulutusohjelma = presenter.loadKoulutusohjelmat(getLocale());
-
-                for (KoulutusohjelmaModel koulutusohjelma : listKoulutusohjelma) {
-                    cbKoulutusohjelma.addItem(koulutusohjelma);
-                    cbKoulutusohjelma.setItemCaption(koulutusohjelma, koulutusohjelma.getFullName());
-                }
-            }
-        });
-
+        cbKoulutusTaiTutkinto.setReadOnly(koulutusModel.isLoaded());
+        cbKoulutusTaiTutkinto.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
+        cbKoulutusTaiTutkinto.setItemCaptionPropertyId("koulutuskoodiNimi");
         grid.addComponent(cbKoulutusTaiTutkinto);
         grid.newLine();
         buildSpacingGridRow(grid);
@@ -303,30 +307,27 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private void buildGridKoulutusohjelmaRow(GridLayout grid, final String propertyKey) {
         final KoulutusType type = KoulutusType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey, type);
-
-        //create new combo box
+        
         cbKoulutusohjelma = new ComboBox();
-        cbKoulutusohjelma.setPropertyDataSource(new NestedMethodProperty(koulutusModel, "koulutusohjema"));
         cbKoulutusohjelma.setInputPrompt(T(propertyKey + PROPERTY_PROMPT_SUFFIX));
         cbKoulutusohjelma.setEnabled(false);
         cbKoulutusohjelma.setWidth(300, UNITS_PIXELS);
         cbKoulutusohjelma.setNullSelectionAllowed(false);
         cbKoulutusohjelma.setImmediate(true);
-        //cbKoulutusohjelma.setTextInputAllowed(false);
-
-        //if loaded data
+        cbKoulutusohjelma.setReadOnly(koulutusModel.isLoaded());
+        cbKoulutusohjelma.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
+        cbKoulutusohjelma.setItemCaptionPropertyId("fullName");
         cbKoulutusohjelma.setReadOnly(koulutusModel.isLoaded());
         grid.addComponent(cbKoulutusohjelma);
         grid.newLine();
 
         buildSpacingGridRow(grid);
-
         addSelectedFormComponents(type, cbKoulutusohjelma);
     }
 
     private void buildGridOpetuskieliRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
-        kcOpetuskieli = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KIELI_URI);
+        kcOpetuskieli = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
         kcOpetuskieli.setImmediate(true);
         grid.addComponent(kcOpetuskieli);
         grid.newLine();
@@ -409,7 +410,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
         //UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI, T(propertyKey + PROPERTY_PROMPT_SUFFIX));
 
-        kcOpetusmuoto = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI);
+        kcOpetusmuoto = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI, true);
         kcOpetusmuoto.setImmediate(true);
         grid.addComponent(kcOpetusmuoto);
         grid.newLine();
