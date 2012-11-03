@@ -31,6 +31,7 @@ import com.vaadin.ui.Field;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
@@ -45,6 +46,7 @@ import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
 import fi.vm.sade.tarjonta.ui.view.common.DialogDataTable;
 import fi.vm.sade.vaadin.constants.StyleEnum;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.List;
 import org.slf4j.Logger;
@@ -66,6 +68,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
     @Autowired(required = true)
     private TarjontaPresenter presenter;
     private Label documentStatus;
+    private int unmodifiedHashcode; //if document is modified after save or load.
 
     public EditKoulutusPerustiedotToinenAsteView() {
         super();
@@ -77,7 +80,15 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
     @Override
     protected void buildLayout(VerticalLayout layout) {
         LOG.info("buildLayout()");
-        initialize(layout); //add layout to navigation container
+
+        VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
+        Panel panel = new Panel();
+
+        panel.setContent(vl);
+        layout.addComponent(panel);
+
+        initialize(vl); //add layout to navigation container
+        unmodifiedHashcode = koulutusPerustiedotModel.hashCode();
     }
 
     //
@@ -118,13 +129,12 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         layout.addComponent(form);
 
         /*
-         * BOTTOM LAYOUT (TABLES)
+         * BOTTOM LAYOUTS
          */
         UiUtil.hr(layout);
-
         final Form yhteisTieto = new ValidatingViewBoundForm(new EditKoulutusYhteystietoFormView(koulutusPerustiedotModel));
-        addComponent(yhteisTieto);
-        UiUtil.hr(layout);
+        layout.addComponent(yhteisTieto);
+
         addLinkkiSelectorAndEditor(layout);
 
         addNavigationButton("", new Button.ClickListener() {
@@ -148,10 +158,9 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                 try {
                     errorView.resetErrors();
                     form.commit();
-
-                    //DEBUGSAWAY:LOG.debug("Form validated successfully.");
                     try {
                         presenter.saveKoulutusValmiina();
+                        makeUnmodified();
                         presenter.showNotification(UserNotification.SAVE_SUCCESS);
                         presenter.getKoulutusListView().reload();
                     } catch (GenericFault e) {
@@ -162,43 +171,60 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                         presenter.showNotification(UserNotification.SAVE_FAILED);
                     }
                 } catch (Validator.InvalidValueException e) {
-                    //DEBUGSAWAY:LOG.debug("Form is missing data - message : {}, causes : {}", e.getMessage(), e.getCauses());
                     errorView.addError(e);
                     presenter.showNotification(UserNotification.GENERIC_VALIDATION_FAILED);
                 }
             }
-        });
+        }, StyleEnum.STYLE_BUTTON_PRIMARY);
         final Button.ClickListener clickListener = new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                // TODO if changes, ask if really wants to navigate away
-                presenter.showShowKoulutusView();
+                final DocumentStatus status = koulutusPerustiedotModel.getDocumentStatus();
+                LOG.debug("HASHCODE"
+                        + koulutusPerustiedotModel.hashCode()
+                        + ", " + unmodifiedHashcode
+                        + ", status : " + status);
+
+                if (!status.equals(DocumentStatus.NEW) && isModified()) {
+                    presenter.showNotification(UserNotification.UNSAVED);
+                    return;
+                }
+                try {
+                    errorView.resetErrors();
+                    form.commit();
+                    presenter.showShowKoulutusView();
+                } catch (Validator.InvalidValueException e) {
+                    errorView.addError(e);
+                    presenter.showNotification(UserNotification.GENERIC_VALIDATION_FAILED);
+                }
             }
         };
 
-        addNavigationButton(T("jatka"), clickListener);
+        addNavigationButton(T("jatka"), clickListener, StyleEnum.STYLE_BUTTON_PRIMARY);
 
         // Make modification to enable/disable the Save button
-        form.setFormFieldFactory(new DefaultFieldFactory() {
-            @Override
-            public Field createField(Item item, Object propertyId, Component uiContext) {
-                final AbstractField field = (AbstractField) super.createField(item, propertyId, uiContext);
-                field.addListener(new ValueChangeListener() {
+        form.setFormFieldFactory(
+                new DefaultFieldFactory() {
                     @Override
-                    public void valueChange(ValueChangeEvent event) {
-                        if (form.isModified()) {
-                            koulutusPerustiedotModel.setDocumentStatus(DocumentStatus.EDITED);
-                            for (Button b : getButtonByName(clickListener)) {
-                                b.setEnabled(false);
+                    public Field createField(Item item, Object propertyId, Component uiContext) {
+                        final AbstractField field = (AbstractField) super.createField(item, propertyId, uiContext);
+                        field.addListener(new ValueChangeListener() {
+                            @Override
+                            public void valueChange(ValueChangeEvent event) {
+                                LOG.debug("ValueChangeEvent for button jatka - isModified :" + form.isModified());
+                                if (form.isModified()) {
+                                    koulutusPerustiedotModel.setDocumentStatus(DocumentStatus.EDITED);
+                                    for (Button b : getButtonByName(clickListener)) {
+                                        b.setEnabled(false);
+                                    }
+                                }
                             }
-                        }
+                        });
+                        field.setImmediate(true);
+
+                        return field;
                     }
                 });
-                field.setImmediate(true);
-
-                return field;
-            }
-        });
     }
 
     private HorizontalLayout buildErrorLayout() {
@@ -221,9 +247,9 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
      */
     private void addLinkkiSelectorAndEditor(AbstractLayout layout) {
         final Class modelClass = KoulutusLinkkiViewModel.class;
-        List<KoulutusLinkkiViewModel> koulutusLinkit = 
+        List<KoulutusLinkkiViewModel> koulutusLinkit =
                 presenter.getModel().getKoulutusPerustiedotModel().getKoulutusLinkit();
-        
+
         final DialogDataTable<KoulutusLinkkiViewModel> ddt =
                 new DialogDataTable<KoulutusLinkkiViewModel>(modelClass, koulutusLinkit);
 
@@ -241,5 +267,21 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         cssLayout.setHeight(20, UNITS_PIXELS);
         cssLayout.addComponent(UiUtil.label(null, i18nProperty));
         layout.addComponent(cssLayout);
+    }
+
+    /*
+     * Take a snapshot of model hashcode.
+     * Used to check data model modifications.
+     */
+    private int makeUnmodified() {
+        unmodifiedHashcode = koulutusPerustiedotModel.hashCode();
+        return unmodifiedHashcode;
+    }
+
+    /*
+     * Return true, if data in model has changed.
+     */
+    private boolean isModified() {
+        return koulutusPerustiedotModel.hashCode() != unmodifiedHashcode;
     }
 }

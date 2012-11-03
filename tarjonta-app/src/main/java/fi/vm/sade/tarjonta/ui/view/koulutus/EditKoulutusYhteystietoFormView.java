@@ -41,6 +41,7 @@ public class EditKoulutusYhteystietoFormView extends VerticalLayout {
     DialogDataTable<KoulutusYhteyshenkiloViewModel> ddt;
 
     public EditKoulutusYhteystietoFormView(KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel) {
+        this.setSpacing(true);
         this.koulutusPerustiedotModel = koulutusPerustiedotModel;
         addYhteyshenkiloSelectorAndEditor(this);
     }

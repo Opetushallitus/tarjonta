@@ -19,14 +19,14 @@ package fi.vm.sade.tarjonta.ui.enums;
  *
  * @author jani
  */
-public enum KoulutusType {
+public enum KoulutusasteType {
 
     TOINEN_ASTE_LUKIO("31", "30"), //show only lukio spesific components
     TOINEN_ASTE_AMMATILLINEN_KOULUTUS("32", "32");//show only ammattikoulu spesific components
     private String koulutusaste; //TK code
     private String koulutuskoodi; //TODO: a quick hack for koodisto data filtering
 
-    KoulutusType(String aste, String koodi) {
+    KoulutusasteType(String aste, String koodi) {
         this.koulutusaste = aste;
         this.koulutuskoodi = koodi;
     }
@@ -39,8 +39,8 @@ public enum KoulutusType {
         return this.koulutuskoodi;
     }
 
-    public static KoulutusType getByKoulutusaste(String koulutusasteKoodi) {
-        for (KoulutusType t : KoulutusType.values()) {
+    public static KoulutusasteType getByKoulutusaste(String koulutusasteKoodi) {
+        for (KoulutusasteType t : KoulutusasteType.values()) {
             if (t.getKoulutusaste().equals(koulutusasteKoodi)) {
                 return t;
             }

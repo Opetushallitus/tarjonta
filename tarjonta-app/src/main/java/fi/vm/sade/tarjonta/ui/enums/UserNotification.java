@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.enums;
 
+import com.vaadin.ui.Window;
 import fi.vm.sade.generic.common.I18N;
 
 /**
@@ -22,28 +23,37 @@ import fi.vm.sade.generic.common.I18N;
  * @author jani
  */
 public enum UserNotification {
-    GENERIC_VALIDATION_FAILED("notification.invalidData"),
-    
-    //failures
-    GENERIC_ERROR("notification.error"),
-    EDIT_FAILED("notification.error.editFailed"),
-    ADD_FAILED("notification.error.addFailed"),
-    SAVE_FAILED("notification.error.saveFailed"),
-    
-    //Success
-    GENERIC_SUCCESS("notification.success"),
-    SAVE_SUCCESS("notification.success.save"),
-    COPY_SUCCESS("notification.success.copy"),
-    SAVE_DRAFT_SUCCESS("notification.success.saveDraft"),
-    SAVE_EDITED_SUCCESS("notification.success.saveEdited"),
-    DELETE_SUCCESS("notification.success.delete");
-    private String info;
 
-    UserNotification(String info) {
+    GENERIC_VALIDATION_FAILED("notification.invalidData", Window.Notification.TYPE_WARNING_MESSAGE),
+    UNSAVED("notification.error.unsaved", Window.Notification.TYPE_WARNING_MESSAGE),
+    //failures
+    GENERIC_ERROR("notification.error", Window.Notification.TYPE_WARNING_MESSAGE),
+    EDIT_FAILED("notification.error.editFailed", Window.Notification.TYPE_WARNING_MESSAGE),
+    ADD_FAILED("notification.error.addFailed", Window.Notification.TYPE_ERROR_MESSAGE),
+    SAVE_FAILED("notification.error.saveFailed", Window.Notification.TYPE_ERROR_MESSAGE),
+    //Success
+    GENERIC_SUCCESS("notification.success", Window.Notification.TYPE_HUMANIZED_MESSAGE),
+    COPY_SUCCESS("notification.success.copy", Window.Notification.TYPE_HUMANIZED_MESSAGE),
+    SAVE_SUCCESS("notification.success.save", Window.Notification.TYPE_HUMANIZED_MESSAGE),
+    SAVE_DRAFT_SUCCESS("notification.success.saveDraft", Window.Notification.TYPE_HUMANIZED_MESSAGE),
+    SAVE_EDITED_SUCCESS("notification.success.saveEdited", Window.Notification.TYPE_HUMANIZED_MESSAGE),
+    DELETE_SUCCESS("notification.success.delete", Window.Notification.TYPE_HUMANIZED_MESSAGE);
+    private String info;
+    private int notifiaction;
+
+    UserNotification(String info, int notifiaction) {
         this.info = info;
+        this.notifiaction = notifiaction;
     }
 
     public String getInfo() {
         return I18N.getMessage(info);
+    }
+
+    /**
+     * @return the notifiaction
+     */
+    public int getNotifiaction() {
+        return notifiaction;
     }
 };

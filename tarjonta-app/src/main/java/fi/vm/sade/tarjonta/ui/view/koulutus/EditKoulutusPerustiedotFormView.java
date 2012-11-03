@@ -32,7 +32,7 @@ import com.vaadin.ui.TextField;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.enums.KoulutusType;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
@@ -69,7 +69,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private transient I18NHelper _i18n;
     private KoulutusToisenAsteenPerustiedotViewModel koulutusModel;
     private TarjontaPresenter presenter;
-    private Map<KoulutusType, Set<Component>> selectedComponents;
+    private Map<KoulutusasteType, Set<Component>> selectedComponents;
     private BeanItemContainer<KoulutusasteTyyppi> bicKoulutusaste;
     private BeanItemContainer<KoulutusohjelmaModel> bicKoulutusohjelma;
     private BeanItemContainer<KoulutuskoodiTyyppi> bicKoulutuskoodi;
@@ -149,7 +149,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
     public EditKoulutusPerustiedotFormView(TarjontaPresenter presenter, KoulutusToisenAsteenPerustiedotViewModel model) {
         super(2, 1);
-        selectedComponents = new EnumMap<KoulutusType, Set<Component>>(KoulutusType.class);
+        selectedComponents = new EnumMap<KoulutusasteType, Set<Component>>(KoulutusasteType.class);
         this.presenter = presenter;
         this.koulutusModel = model;
         initializeLayout();
@@ -305,7 +305,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     }
 
     private void buildGridKoulutusohjelmaRow(GridLayout grid, final String propertyKey) {
-        final KoulutusType type = KoulutusType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
+        final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey, type);
         
         cbKoulutusohjelma = new ComboBox();
@@ -418,7 +418,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     }
 
     private void buildGridKoulutuslajiRow(GridLayout grid, final String propertyKey) {
-        final KoulutusType type = KoulutusType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
+        final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey, type);
         kcKoulutuslaji = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI);
         kcKoulutuslaji.setCaptionFormatter(UiBuilder.DEFAULT_URI_CAPTION_FORMATTER);
@@ -440,11 +440,11 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         grid.newLine();
     }
 
-    private void gridLabel(GridLayout grid, final String propertyKey, KoulutusType type) {
+    private void gridLabel(GridLayout grid, final String propertyKey, KoulutusasteType type) {
         addSelectedFormComponents(type, gridLabel(grid, propertyKey));
     }
 
-    private void addSelectedFormComponents(KoulutusType type, Component component) {
+    private void addSelectedFormComponents(KoulutusasteType type, Component component) {
         if (!selectedComponents.containsKey(type)) {
             selectedComponents.put(type, new HashSet<Component>());
         }
@@ -471,7 +471,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         //Show or hide form components.
         final KoulutusasteTyyppi koulutusaste = koulutusModel.getKoulutusasteTyyppi();
         if (koulutusaste != null) {
-            for (Map.Entry<KoulutusType, Set<Component>> entry : selectedComponents.entrySet()) {
+            for (Map.Entry<KoulutusasteType, Set<Component>> entry : selectedComponents.entrySet()) {
                 for (Component c : entry.getValue()) {
                     //if the map key value matches to TK code 'koulutusaste' 
                     final boolean active = entry.getKey().getKoulutusaste().equals(

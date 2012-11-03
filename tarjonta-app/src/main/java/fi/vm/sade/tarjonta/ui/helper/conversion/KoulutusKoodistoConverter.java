@@ -32,7 +32,7 @@ import fi.vm.sade.tarjonta.service.types.koodisto.KoulutuskoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusohjelmaTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusohjelmaVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.Nimi;
-import fi.vm.sade.tarjonta.ui.enums.KoulutusType;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import java.util.ArrayList;
@@ -50,8 +50,8 @@ import org.springframework.stereotype.Component;
 public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusKoodistoConverter.class);
-    private final String LUKIO = KoulutusType.TOINEN_ASTE_LUKIO.getKoulutusaste();
-    private final String AMMATILLINEN = KoulutusType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutusaste();
+    private final String LUKIO = KoulutusasteType.TOINEN_ASTE_LUKIO.getKoulutusaste();
+    private final String AMMATILLINEN = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutusaste();
     @Autowired(required = true)
     private KoodiService koodiPublicService;
 
@@ -109,11 +109,11 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
     @Override
     public KoulutuskoodiVastausTyyppi listaaKoulutuskoodit(KoulutusHakuTyyppi parameters) {
         final String koulutusasteKoodi = parameters.getKoulutusasteKoodi();
-        KoulutusType type = null;
+        KoulutusasteType type = null;
         if (koulutusasteKoodi != null) {
             //TODO: better koodisto data filter.
             //A simple and ugly filter, fix it after koodisto has better data.
-            for (KoulutusType t : KoulutusType.values()) {
+            for (KoulutusasteType t : KoulutusasteType.values()) {
                 if (t.getKoulutusaste().equals(koulutusasteKoodi)) {
                     type = t;
                     break;
@@ -211,7 +211,7 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
     private List<KoulutusasteTyyppi> mapKoulutusaste(final String kieliKoodi, final List<KoodiType> koodit) {
         List<KoulutusasteTyyppi> outKoulutusaste = new ArrayList<KoulutusasteTyyppi>();
 
-        KoulutusType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutusaste();
+        KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutusaste();
         for (KoodiType koodiType : koodit) {
 
             //A very simple way to filter 'koulutusasteet'.
@@ -256,7 +256,7 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
         return outKoulutusohjelma;
     }
 
-    private List<KoulutuskoodiTyyppi> mapKoulutuskoodi(final String kieliKoodi, final KoulutusType type, final List<KoodiType> koodit) {
+    private List<KoulutuskoodiTyyppi> mapKoulutuskoodi(final String kieliKoodi, final KoulutusasteType type, final List<KoodiType> koodit) {
         List<KoulutuskoodiTyyppi> outKoulutuskoodi = new ArrayList<KoulutuskoodiTyyppi>();
 
         for (KoodiType koodiType : koodit) {

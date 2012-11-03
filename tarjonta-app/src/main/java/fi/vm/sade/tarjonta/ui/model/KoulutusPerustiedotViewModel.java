@@ -32,48 +32,44 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      * OID of the loaded enity.
      * Update database
      */
-    private String oid;
+    protected String oid;
+    protected String koulutusmoduuliOid;
     /*
      * Status of active form.
      */
-    private DocumentStatus documentStatus;
-    private String userFrienlyDocumentStatus;
+    protected DocumentStatus documentStatus;
+    protected String userFrienlyDocumentStatus;
     /*
      * Organisaatio data:
      */
-    private String organisaatioName;
-    private String organisaatioOid;
+    protected String organisaatioName;
+    protected String organisaatioOid;
     /*
      * Koodisto data:
      */
-    private KoulutusohjelmaModel koulutusohjelma;
-    
-    /*
-     * Koulutusmoduuli oid 
-     */
-    private String koulutusmoduuliOid;
+    protected KoulutusohjelmaModel koulutusohjelma;
     /*
      * KOMO data (static labels):
      */
-    private String koulutuksenTyyppi = "";
-    private String koulutusala = "";
-    private String tutkinto = "";
-    private String tutkintonimike = "";
-    private String opintojenLaajuusyksikko = "";
-    private String opintojenLaajuus = "";
-    private String opintoala = "";
+    protected String koulutuksenTyyppi = "";
+    protected String koulutusala = "";
+    protected String tutkinto = "";
+    protected String tutkintonimike = "";
+    protected String opintojenLaajuusyksikko = "";
+    protected String opintojenLaajuus = "";
+    protected String opintoala = "";
     /*
      * Form fields:
      */
-    private Date koulutuksenAlkamisPvm = new Date();
-    private String suunniteltuKesto;
-    private String suunniteltuKestoTyyppi;
-    private Set<String> opetusmuoto;
-    private String koulutuslaji = new String();
-    private Set<String> opetuskielet = new HashSet<String>(0);
-    private Set<String> avainsanat = new HashSet<String>(0);
-    private List<KoulutusYhteyshenkiloViewModel> yhteyshenkilot = new ArrayList<KoulutusYhteyshenkiloViewModel>(0);
-    private List<KoulutusLinkkiViewModel> koulutusLinkit = new ArrayList<KoulutusLinkkiViewModel>(0);
+    protected Date koulutuksenAlkamisPvm = new Date();
+    protected String suunniteltuKesto;
+    protected String suunniteltuKestoTyyppi;
+    protected Set<String> opetusmuoto;
+    protected String koulutuslaji = new String();
+    protected Set<String> opetuskielet = new HashSet<String>(0);
+    protected Set<String> avainsanat = new HashSet<String>(0);
+    protected List<KoulutusYhteyshenkiloViewModel> yhteyshenkilot = new ArrayList<KoulutusYhteyshenkiloViewModel>(0);
+    protected List<KoulutusLinkkiViewModel> koulutusLinkit = new ArrayList<KoulutusLinkkiViewModel>(0);
 
     public KoulutusPerustiedotViewModel() {
         this.documentStatus = DocumentStatus.NEW;
@@ -213,8 +209,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
         this.avainsanat = avainsanat;
     }
 
-
-
     /**
      * @return the document status enum
      */
@@ -301,6 +295,8 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     }
 
     /**
+     * KOMOTO OID
+     *
      * @return the oid
      */
     public String getOid() {
@@ -314,14 +310,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
         this.oid = oid;
     }
 
-	public String getKoulutusmoduuliOid() {
-		return koulutusmoduuliOid;
-	}
-
-	public void setKoulutusmoduuliOid(String koulutusmoduuliOid) {
-		this.koulutusmoduuliOid = koulutusmoduuliOid;
-	}
-
     /**
      * @return the koulutusohjelma
      */
@@ -334,5 +322,19 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      */
     public void setKoulutusohjelma(KoulutusohjelmaModel koulutusohjelma) {
         this.koulutusohjelma = koulutusohjelma;
+    }
+
+    /**
+     * @return the koulutusmoduuliOid
+     */
+    public String getKoulutusmoduuliOid() {
+        return koulutusmoduuliOid;
+    }
+
+    /**
+     * @param koulutusmoduuliOid the koulutusmoduuliOid to set
+     */
+    public void setKoulutusmoduuliOid(String koulutusmoduuliOid) {
+        this.koulutusmoduuliOid = koulutusmoduuliOid;
     }
 }

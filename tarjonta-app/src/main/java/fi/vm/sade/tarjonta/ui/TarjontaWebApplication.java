@@ -71,7 +71,8 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
         Button yhteenvetoButton = new Button("Yhteenveto", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                window.addComponent(new ShowKoulutusView(null, null));
+                setTheme(developmentTheme);
+                window.addComponent(new ShowKoulutusView("Title ASDADADADADS", null));
             }
         });
         hl.addComponent(yhteenvetoButton);

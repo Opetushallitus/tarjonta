@@ -15,15 +15,18 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
-import com.vaadin.data.util.BeanItemContainer;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutuskoodiTyyppi;
 import java.util.HashSet;
 import java.util.Set;
 
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import java.util.ArrayList;
 import java.util.Date;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Model holding basic information data for Koulutus.
@@ -40,7 +43,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     private Set<KoulutusohjelmaModel> koulutusohjelmat;
     private KoulutusasteTyyppi koulutusasteTyyppi;
     private KoulutuskoodiTyyppi koulutuskoodiTyyppi;
-    private String organisaatioOid; //updated when loaded
 
     public KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus status) {
         super();
@@ -62,7 +64,8 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     public void clearModel(final DocumentStatus status) {
         //OIDs
         setOrganisaatioOid(null);
-        setOid(null);
+        setOid(null); //KOMOTO OID
+        setKoulutusmoduuliOid(null); //KOMO OID
 
         //used in control logic 
         setDocumentStatus(status);
@@ -105,11 +108,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
      * @return Boolean
      */
     public boolean isLoaded() {
-        return getOid() != null && getDocumentStatus().equals(DocumentStatus.LOADED);
-    }
-
-    public boolean isEdited() {
-        return getOid() != null && getDocumentStatus().equals(DocumentStatus.EDITED);
+        return getOid() != null;
     }
 
     /**
@@ -189,17 +188,99 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         this.koulutusohjelmat = koulutusohjelmat;
     }
 
-    /**
-     * @return the organisaatioOid
-     */
-    public String getOrganisaatioOid() {
-        return organisaatioOid;
+    public KoulutusasteType getSelectedKoulutusasteType() {
+        if (getKoulutusasteTyyppi() == null) {
+            throw new RuntimeException("Exception : invalid data - No koulutusaste selected!");
+        }
+
+        if (getKoulutusasteTyyppi().getKoulutusasteKoodi() == null) {
+            throw new RuntimeException("Exception : invalid data - koulutusaste selected, but no numeric code!");
+        }
+
+        final KoulutusasteType koulutus = KoulutusasteType.getByKoulutusaste(getKoulutusasteTyyppi().getKoulutusasteKoodi());
+        if (koulutus == null) {
+            throw new RuntimeException("Selectable koulutusaste numeric code do not match to koodisto data. Value : " + getKoulutusasteTyyppi().getKoulutusasteKoodi());
+        }
+
+        return koulutus;
     }
 
-    /**
-     * @param organisaatioOid the organisaatioOid to set
-     */
-    public void setOrganisaatioOid(String organisaatioOid) {
-        this.organisaatioOid = organisaatioOid;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+        KoulutusToisenAsteenPerustiedotViewModel other = (KoulutusToisenAsteenPerustiedotViewModel) obj;
+
+        EqualsBuilder builder = new EqualsBuilder();
+        builder.append(oid, other.oid);
+        builder.append(koulutusmoduuliOid, other.koulutusmoduuliOid);
+        builder.append(koulutusasteet, other.koulutusasteet);
+        builder.append(koulutuskoodit, other.koulutuskoodit);
+        builder.append(koulutusohjelmat, other.koulutusohjelmat);
+        builder.append(koulutusasteTyyppi, other.koulutusasteTyyppi);
+        builder.append(koulutuskoodiTyyppi, other.koulutuskoodiTyyppi);
+        builder.append(documentStatus, other.documentStatus);
+        builder.append(userFrienlyDocumentStatus, other.userFrienlyDocumentStatus);
+        builder.append(organisaatioName, other.organisaatioName);
+        builder.append(organisaatioOid, other.organisaatioOid);
+        builder.append(koulutusohjelma, other.koulutusohjelma);
+        builder.append(koulutuksenTyyppi, other.koulutuksenTyyppi);
+        builder.append(koulutusala, other.koulutusala);
+        builder.append(tutkinto, other.tutkinto);
+        builder.append(tutkintonimike, other.tutkintonimike);
+        builder.append(opintojenLaajuusyksikko, other.opintojenLaajuusyksikko);
+        builder.append(opintojenLaajuus, other.opintojenLaajuus);
+        builder.append(opintoala, other.opintoala);
+        builder.append(koulutuksenAlkamisPvm, other.koulutuksenAlkamisPvm);
+        builder.append(suunniteltuKesto, other.suunniteltuKesto);
+        builder.append(suunniteltuKestoTyyppi, other.suunniteltuKestoTyyppi);
+        builder.append(opetusmuoto, other.opetusmuoto);
+        builder.append(koulutuslaji, other.koulutuslaji);
+        builder.append(opetuskielet, other.opetuskielet);
+        builder.append(avainsanat, other.avainsanat);
+        builder.append(yhteyshenkilot, other.yhteyshenkilot);
+        builder.append(koulutusLinkit, other.koulutusLinkit);
+        return builder.isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(oid)
+                .append(koulutusmoduuliOid)
+                .append(koulutusasteet)
+                .append(koulutuskoodit)
+                .append(koulutusohjelmat)
+                .append(koulutusasteTyyppi)
+                .append(koulutuskoodiTyyppi)
+                .append(documentStatus)
+                .append(userFrienlyDocumentStatus)
+                .append(organisaatioName)
+                .append(organisaatioOid)
+                .append(koulutusohjelma)
+                .append(koulutuksenTyyppi)
+                .append(koulutusala)
+                .append(tutkinto)
+                .append(tutkintonimike)
+                .append(opintojenLaajuusyksikko)
+                .append(opintojenLaajuus)
+                .append(opintoala)
+                .append(koulutuksenAlkamisPvm)
+                .append(suunniteltuKesto)
+                .append(suunniteltuKestoTyyppi)
+                .append(opetusmuoto)
+                .append(koulutuslaji)
+                .append(opetuskielet)
+                .append(avainsanat)
+                .append(yhteyshenkilot)
+                .append(koulutusLinkit).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

@@ -52,7 +52,7 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
-import fi.vm.sade.tarjonta.ui.enums.KoulutusType;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
@@ -226,7 +226,21 @@ public class TarjontaPresenter {
      * Show koulutus overview view.
      */
     public void showShowKoulutusView() {
-        ShowKoulutusView view = new ShowKoulutusView("", null);
+        KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
+        String title = "";
+        final KoulutusasteType koulutusaste = model.getSelectedKoulutusasteType();
+        switch (koulutusaste) {
+            case TOINEN_ASTE_AMMATILLINEN_KOULUTUS:
+                title = model.getKoulutuskoodiTyyppi().getKoulutuskoodiNimi()
+                        + ", "
+                        + model.getKoulutusohjelma().getName();
+                break;
+            case TOINEN_ASTE_LUKIO:
+                title = model.getKoulutuskoodiTyyppi().getKoulutuskoodiNimi();
+                break;
+        }
+
+        ShowKoulutusView view = new ShowKoulutusView(title, null);
         _rootView.getAppRootLayout().removeAllComponents();
         _rootView.getAppRootLayout().addComponent(view);
     }
@@ -262,10 +276,6 @@ public class TarjontaPresenter {
     public void showKoulutusPerustiedotEditView(final String koulutusOid) {
         // If oid of koulutus is provided the koulutus is read from database
         // before opening the KoulutusEditView
-        if (getModel().getOrganisaatioOid() == null) {
-            throw new RuntimeException("Application error - missing organisation OID.");
-        }
-
         if (koulutusOid != null) {
             LueKoulutusKyselyTyyppi koulutusKysely = new LueKoulutusKyselyTyyppi();
             koulutusKysely.setOid(koulutusOid);
@@ -276,31 +286,27 @@ public class TarjontaPresenter {
                         .createKoulutusPerustiedotViewModel(lueKoulutus, DocumentStatus.LOADED);
                 getModel().setKoulutusPerustiedotModel(koulutus);
 
+                //Empty previous Koodisto data from the comboboxes.
                 koulutus.getKoulutusohjelmat().clear();
                 koulutus.getKoulutuskoodit().clear();
                 koulutus.getKoulutusasteet().clear();
 
-                //a quick fix for updating text data to combobox...
+                //Add selected data to  the comboboxes.
                 if (koulutus.getKoulutusohjelma() != null && koulutus.getKoulutusohjelma().getKoodiUri() != null) {
                     koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelma());
                 }
-
                 koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiTyyppi());
                 koulutus.getKoulutusasteet().add(koulutus.getKoulutusasteTyyppi());
-                
-                LOG.debug("1 koulutus.getKoulutuskoodiTyyppi() : " + koulutus.getKoulutuskoodiTyyppi());
-                for (KoulutuskoodiTyyppi t : koulutus.getKoulutuskoodit()) {
-                    LOG.debug("2 koulutus.getKoulutuskoodiTyyppi() : " + t.equals(koulutus.getKoulutuskoodiTyyppi()) + " " + koulutus.getKoulutuskoodiTyyppi().getKoodistoUriVersio() + koulutus.getKoulutuskoodiTyyppi().getKoodistoUri() + " " + koulutus.getKoulutuskoodiTyyppi().getKoodistoVersio());
-                }
-                
-
-
 
             } catch (ExceptionMessage ex) {
                 LOG.error("Service call failed.", ex);
                 showMainDefaultView();
             }
         } else {
+            if (getModel().getOrganisaatioOid() == null) {
+                throw new RuntimeException("Application error - missing organisation OID.");
+            }
+
             getModel().getKoulutusPerustiedotModel().clearModel(DocumentStatus.NEW);
         }
 
@@ -453,55 +459,20 @@ public class TarjontaPresenter {
      */
     public void saveKoulutusValmiina() throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
-        LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(model, getModel().getOrganisaatioOid());
-        final String koulutusasteKoodi = model.getKoulutusasteTyyppi().getKoulutusasteKoodi();
 
-        if (koulutusasteKoodi == null) {
-            throw new RuntimeException("Persist failed - koulutusaste numeric code is required!");
-        }
-
-        if (lisaa.getKoulutusKoodi() == null || lisaa.getKoulutusKoodi().getUri() == null) {
-            throw new RuntimeException("Persist failed - koulutuskoodi URI is required!");
-        }
-
-        final KoulutusType koulutus = KoulutusType.getByKoulutusaste(koulutusasteKoodi);
-        if (koulutus == null) {
-            throw new RuntimeException("Persist failed - koulutusaste numeric code do not match to koodisto data. Value : " + koulutusasteKoodi);
-        }
-
-        KoodistoKoodiTyyppi koulutusohjelmaKoodi = lisaa.getKoulutusohjelmaKoodi();
-
-        if (koulutus.equals(KoulutusType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS) && koulutusohjelmaKoodi == null && koulutusohjelmaKoodi.getUri() == null) {
-            throw new RuntimeException("Persist failed - koulutusohjelma URI is required!");
-        } else if (koulutus.equals(KoulutusType.TOINEN_ASTE_LUKIO)) {
-            //Lukio tutkinto do not have koulutusohjema data.
-            lisaa.setKoulutusohjelmaKoodi(new KoodistoKoodiTyyppi());
-            //just to make sure that Lukio do not send 'koulutuslaji' data to back-end.
-            lisaa.getKoulutuslaji().clear();
-            LOG.debug("Koulutuskoodi URI : '" + lisaa.getKoulutusKoodi().getUri() + "'");
-        } else {
-            LOG.debug("Koulutuskoodi URI : '" + lisaa.getKoulutusKoodi().getUri() + "', koulutusohjelma URI : '" + koulutusohjelmaKoodi.getUri() + "' ");
-        }
-        checkKoulutusmoduuli();
-
-        if (model.isLoaded() || model.isEdited()) {
+        if (model.isLoaded()) {
             //update KOMOTO
-            PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi = koulutusToDTOConverter.createPaivitaKoulutusTyyppi(model, model.getOid());
-
-            if (createPaivitaKoulutusTyyppi.getTarjoaja() == null) {
-                throw new RuntimeException("Persist failed - organisaatio OID is required!");
-            }
-
-            createPaivitaKoulutusTyyppi.setTarjoaja(getModel().getOrganisaatioOid());
-            tarjontaAdminService.paivitaKoulutus(createPaivitaKoulutusTyyppi);
+            PaivitaKoulutusTyyppi paivita = koulutusToDTOConverter.createPaivitaKoulutusTyyppi(model, model.getOid());
+            koulutusToDTOConverter.validateSaveData(paivita, model);
+            tarjontaAdminService.paivitaKoulutus(paivita);
         } else {
-            //new KOMOTO
-            if (lisaa.getTarjoaja() == null) {
-                throw new RuntimeException("Persist failed - organisaatio OID is required!");
-            }
-
+            //add new KOMO and KOMOTO
+            LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(model, getModel().getOrganisaatioOid());
+            koulutusToDTOConverter.validateSaveData(lisaa, model);
+            checkKoulutusmoduuli();
             tarjontaAdminService.lisaaKoulutus(lisaa);
         }
+        model.setDocumentStatus(DocumentStatus.SAVED_AS_RELEASED);
     }
 
     /**
@@ -654,7 +625,7 @@ public class TarjontaPresenter {
     public void showNotification(final UserNotification msg) {
         LOG.info("Show user notification - type {}, value {}", msg, msg.getInfo());
         if (msg != null && _rootView != null) {
-            _rootView.showNotification(msg.getInfo());
+            _rootView.showNotification(msg.getInfo(), msg.getNotifiaction());
         } else {
             LOG.error("Application error - an unknown problem with UI notification. Value : {}", msg);
         }
