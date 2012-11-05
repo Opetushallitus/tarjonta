@@ -77,7 +77,7 @@ public class WebLinkki implements Serializable {
     }
 
     private void setKieliInternal(String kieliKoodi) {
-        kieli = (StringUtils.isEmpty(kieliKoodi) ? NULL_KIELI : kieliKoodi.trim().toLowerCase());
+        kieli = (StringUtils.isEmpty(kieliKoodi) ? NULL_KIELI : kieliKoodi.trim());
     }
 
     public String getTyyppi() {

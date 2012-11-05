@@ -275,16 +275,18 @@ public class KoulutusViewModelToDTOConverter {
         return web;
     }
 
-    public static KoulutusYhteyshenkiloViewModel mapToKoulutusYhteyshenkiloViewModel(YhteyshenkiloTyyppi tyyppi) {
+    public static KoulutusYhteyshenkiloViewModel mapToKoulutusYhteyshenkiloViewModel(final YhteyshenkiloTyyppi tyyppi) {
         KoulutusYhteyshenkiloViewModel yhteyshenkiloModel = new KoulutusYhteyshenkiloViewModel();
         yhteyshenkiloModel.setEmail(tyyppi.getSahkoposti());
         yhteyshenkiloModel.setEtunimet(tyyppi.getEtunimet());
         yhteyshenkiloModel.setPuhelin(tyyppi.getPuhelin());
         yhteyshenkiloModel.setSukunimi(tyyppi.getSukunimi());
         yhteyshenkiloModel.setTitteli(tyyppi.getTitteli());
+        final List<String> kielet = tyyppi.getKielet();
+        if (kielet != null && !kielet.isEmpty()) {
 
-        if (tyyppi.getKielet() != null && !tyyppi.getKielet().isEmpty()) {
-            for (String kieliUri : tyyppi.getKielet()) {
+            for (String kieliUri : kielet) {
+                LOG.debug("!!! kieliUri : " + kieliUri);
                 yhteyshenkiloModel.getKielet().add(kieliUri);
             }
         }
@@ -536,8 +538,8 @@ public class KoulutusViewModelToDTOConverter {
         if (lisaa.getTarjoaja() == null) {
             throw new RuntimeException("Data validation failed - organisation OID is required!");
         }
-        
-        if (lisaa.getTarjoaja().length() == 0 ) {
+
+        if (lisaa.getTarjoaja().length() == 0) {
             throw new RuntimeException("Data validation failed - organisation OID value is empty!");
         }
 

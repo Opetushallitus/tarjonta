@@ -15,16 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.util.BeanItemContainer;
+import fi.vm.sade.tarjonta.ui.view.common.DialogKoodistoDataTable;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.tarjonta.ui.enums.DialogDataTableButton;
-import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
-import fi.vm.sade.tarjonta.ui.view.common.DialogDataTable;
-import java.util.Collection;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
@@ -38,7 +33,7 @@ public class EditKoulutusYhteystietoFormView extends VerticalLayout {
 
     private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
     @PropertyId("yhteyshenkilot")
-    DialogDataTable<KoulutusYhteyshenkiloViewModel> ddt;
+    private DialogKoodistoDataTable<KoulutusYhteyshenkiloViewModel> ddt;
 
     public EditKoulutusYhteystietoFormView(KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel) {
         this.setSpacing(true);
@@ -56,7 +51,7 @@ public class EditKoulutusYhteystietoFormView extends VerticalLayout {
         final Class classYhteyshenkilo = KoulutusYhteyshenkiloViewModel.class;
 
         //Initialize dialog table with control buttons.
-        ddt = new DialogDataTable<KoulutusYhteyshenkiloViewModel>(classYhteyshenkilo, koulutusPerustiedotModel.getYhteyshenkilot());
+        ddt = new DialogKoodistoDataTable<KoulutusYhteyshenkiloViewModel>(classYhteyshenkilo, koulutusPerustiedotModel.getYhteyshenkilot());
 
         //Overide default button property
         ddt.setButtonProperties("LisaaUusi.Yhteyshenkilo");
@@ -71,6 +66,8 @@ public class EditKoulutusYhteystietoFormView extends VerticalLayout {
         ddt.setColumnHeader("puhelin", "Puhelin");
         ddt.setColumnHeader("kielet", "Pätee kielille");
         ddt.setVisibleColumns(new Object[]{"etunimet", "sukunimi", "titteli", "email", "puhelin", "kielet"});
+        ddt.setKoodistoColumns(new String[]{"kielet"});
+
         layout.addComponent(ddt);
 
     }

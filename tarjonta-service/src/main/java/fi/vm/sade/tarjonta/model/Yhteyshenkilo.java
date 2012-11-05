@@ -146,7 +146,7 @@ public class Yhteyshenkilo extends BaseEntity {
         String[] formatted = new String[kielis.length];
 
         for (int i = 0; i < kielis.length; i++) {
-            final String kieli = kielis[i].trim().toLowerCase();
+            final String kieli = kielis[i].trim();
             formatted[i] = kieli;
         }
 

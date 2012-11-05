@@ -472,7 +472,7 @@ public class TarjontaPresenter {
             LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(model, getModel().getOrganisaatioOid());
             koulutusToDTOConverter.validateSaveData(lisaa, model);
             checkKoulutusmoduuli();
-            LisaaKoulutusVastausTyyppi lisaaKoulutus = tarjontaAdminService.lisaaKoulutus(lisaa);
+            tarjontaAdminService.lisaaKoulutus(lisaa);
             model.setOid( lisaa.getOid());
         }
         model.setDocumentStatus(DocumentStatus.SAVED_AS_RELEASED);

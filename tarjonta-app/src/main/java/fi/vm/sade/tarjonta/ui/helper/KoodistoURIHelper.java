@@ -46,8 +46,8 @@ public class KoodistoURIHelper {
     public static String KOODISTO_KOULUTUSLAJI_URI;
     public static String KOODISTO_AVAINSANAT_URI;
     public static String KOODISTO_KIELIVALIKOIMA_URI;
+    public static String KOODISTO_KOULUTUSASTE_URI;
 
-    
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
         KOODISTO_HAKUTYYPPI_URI = uri;
@@ -122,9 +122,14 @@ public class KoodistoURIHelper {
     public void setKoodistoAvainsanatUri(String uri) {
         KOODISTO_AVAINSANAT_URI = uri;
     }
-    
+
     @Value("${koodisto-uris.kielivalikoima:NOT_SET}")
     public void setKoodistoKielivalikoimaUri(String uri) {
         KOODISTO_KIELIVALIKOIMA_URI = uri;
+    }
+
+    @Value("${koodisto-uris.koulutusaste:NOT_SET}")
+    public void setKoodistoasteUri(String uri) {
+        KOODISTO_KOULUTUSASTE_URI = uri;
     }
 }

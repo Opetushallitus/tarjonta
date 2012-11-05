@@ -62,7 +62,7 @@ public class KoulutusKoodistoConverter implements TarjontaKoodistoService {
     @Override
     public KoulutusasteVastausTyyppi listaaKoulutusasteet(KoulutusHakuTyyppi parameters) {
         KoulutusasteVastausTyyppi response = new KoulutusasteVastausTyyppi();
-        List<KoodiType> koodistoData = getKoodistoData("opm02_koulutusaste");
+        List<KoodiType> koodistoData = getKoodistoData(KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI);
         response.getKoulutusaste().addAll(mapKoulutusaste(parameters.getKieliKoodi(), koodistoData));
         return response;
     }

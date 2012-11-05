@@ -46,21 +46,21 @@ public final class EntityUtils {
 
     public static void copyFields(PaivitaKoulutusTyyppi from, KoulutusmoduuliToteutus to) {
 
-    	to.setOpetusmuoto(toKoodistoUriSet(from.getOpetusmuoto()));
+        to.setOpetusmuoto(toKoodistoUriSet(from.getOpetusmuoto()));
         to.setKoulutuksenAlkamisPvm(from.getKoulutuksenAlkamisPaiva());
         to.setKoulutuslajis(toStringUriSet(from.getKoulutuslaji()));
 
         final KoulutuksenKestoTyyppi kesto = from.getKesto();
         to.setSuunniteltuKestoArvo(kesto.getArvo());
         to.setSuunniteltuKestoYksikko(kesto.getYksikko());
-        
+
         to.setOpetuskieli(toKoodistoUriSet(from.getOpetuskieli()));
         to.setKoulutuslajis(toKoodistoUriSet(from.getKoulutuslaji()));
         if (from.getKoulutusaste() != null) {
-        	to.setKoulutusaste(from.getKoulutusaste().getUri());
+            to.setKoulutusaste(from.getKoulutusaste().getUri());
         }
         to.setTarjoaja(from.getTarjoaja());
-       
+
         Set<WebLinkki> toLinkkis = new HashSet<WebLinkki>();
         if (from.getLinkki() != null) {
             for (WebLinkkiTyyppi fromLinkki : from.getLinkki()) {
@@ -81,7 +81,7 @@ public final class EntityUtils {
         toKoulutus.setOpetuskieli(toKoodistoUriSet(fromKoulutus.getOpetuskieli()));
         toKoulutus.setKoulutuslajis(toKoodistoUriSet(fromKoulutus.getKoulutuslaji()));
         if (fromKoulutus.getKoulutusaste() != null) {
-        	toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
+            toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
         }
         toKoulutus.setTarjoaja(fromKoulutus.getTarjoaja());
 
@@ -125,6 +125,9 @@ public final class EntityUtils {
         to.setSukunimi(from.getSukunimi());
         to.setTitteli(from.getTitteli());
 
+        for (String kieliUri : from.getKielis()) {
+            to.getKielet().add(kieliUri);
+        }
     }
 
     public static void copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList, Collection<YhteyshenkiloTyyppi> toList) {
@@ -177,6 +180,4 @@ public final class EntityUtils {
         }
 
     }
-
 }
-

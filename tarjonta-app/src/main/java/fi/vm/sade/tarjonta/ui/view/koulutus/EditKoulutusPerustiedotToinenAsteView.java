@@ -44,7 +44,7 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
-import fi.vm.sade.tarjonta.ui.view.common.DialogDataTable;
+import fi.vm.sade.tarjonta.ui.view.common.DialogKoodistoDataTable;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -61,7 +61,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable(preConstruction = true)
 public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavigationLayout {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotToinenAsteView.class);
     private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
     private ErrorMessage errorView;
@@ -76,17 +76,17 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         setSpacing(true);
         setHeight(-1, UNITS_PIXELS);
     }
-
+    
     @Override
     protected void buildLayout(VerticalLayout layout) {
         LOG.info("buildLayout()");
-
+        
         VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
         Panel panel = new Panel();
-
+        
         panel.setContent(vl);
         layout.addComponent(panel);
-
+        
         initialize(vl); //add layout to navigation container
         unmodifiedHashcode = koulutusPerustiedotModel.hashCode();
     }
@@ -125,7 +125,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         form.setValidationVisible(false);
         form.setValidationVisibleOnCommit(false);
         form.setSizeFull();
-
+        
         layout.addComponent(form);
 
         /*
@@ -134,9 +134,9 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         UiUtil.hr(layout);
         final Form yhteisTieto = new ValidatingViewBoundForm(new EditKoulutusYhteystietoFormView(koulutusPerustiedotModel));
         layout.addComponent(yhteisTieto);
-
+        
         addLinkkiSelectorAndEditor(layout);
-
+        
         addNavigationButton("", new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -154,7 +154,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-
+                
                 try {
                     errorView.resetErrors();
                     form.commit();
@@ -184,7 +184,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                         + koulutusPerustiedotModel.hashCode()
                         + ", " + unmodifiedHashcode
                         + ", status : " + status);
-
+                
                 if (!status.equals(DocumentStatus.NEW) && isModified()) {
                     presenter.showNotification(UserNotification.UNSAVED);
                     return;
@@ -199,7 +199,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                 }
             }
         };
-
+        
         addNavigationButton(T("jatka"), clickListener, StyleEnum.STYLE_BUTTON_PRIMARY);
 
         // Make modification to enable/disable the Save button
@@ -221,22 +221,22 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                             }
                         });
                         field.setImmediate(true);
-
+                        
                         return field;
                     }
                 });
     }
-
+    
     private HorizontalLayout buildErrorLayout() {
         HorizontalLayout topErrorArea = UiUtil.horizontalLayout();
         HorizontalLayout padding = UiUtil.horizontalLayout();
         padding.setWidth(30, UNITS_PERCENTAGE);
         errorView = new ErrorMessage();
         errorView.setSizeUndefined();
-
+        
         topErrorArea.addComponent(padding);
         topErrorArea.addComponent(errorView);
-
+        
         return topErrorArea;
     }
 
@@ -249,19 +249,20 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         final Class modelClass = KoulutusLinkkiViewModel.class;
         List<KoulutusLinkkiViewModel> koulutusLinkit =
                 presenter.getModel().getKoulutusPerustiedotModel().getKoulutusLinkit();
-
-        final DialogDataTable<KoulutusLinkkiViewModel> ddt =
-                new DialogDataTable<KoulutusLinkkiViewModel>(modelClass, koulutusLinkit);
-
+        
+        final DialogKoodistoDataTable<KoulutusLinkkiViewModel> ddt =
+                new DialogKoodistoDataTable<KoulutusLinkkiViewModel>(modelClass, koulutusLinkit);
+        
         ddt.setButtonProperties("LisaaUusi.Linkkityyppi");
         ddt.buildByFormLayout(layout, "Luo uusi linkkityyppi", 400, 360, new EditKoulutusPerustiedotLinkkiView());
         ddt.setColumnHeader("linkkityyppi", T("Linkkityyppi"));
         ddt.setColumnHeader("url", T("LinkkiURL"));
         ddt.setColumnHeader("kieli", T("LinkkiKielet"));
+        ddt.setKoodistoColumns(new String[]{"kieli"});
         ddt.setVisibleColumns(new Object[]{"linkkityyppi", "url", "kieli"});
         layout.addComponent(ddt);
     }
-
+    
     private void headerLayout(final AbstractLayout layout, final String i18nProperty) {
         CssLayout cssLayout = new CssLayout();
         cssLayout.setHeight(20, UNITS_PIXELS);

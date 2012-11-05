@@ -21,8 +21,6 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window.CloseEvent;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractDataTableDialog;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -37,7 +35,6 @@ import org.vaadin.addon.formbinder.ViewBoundForm;
 @Configurable(preConstruction = true)
 public class DialogKoulutusYhteystiedotView extends AbstractDataTableDialog {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DialogKoulutusYhteystiedotView.class);
     @Autowired(required = true)
     private TarjontaPresenter _presenter;
     private Form form;
@@ -66,7 +63,6 @@ public class DialogKoulutusYhteystiedotView extends AbstractDataTableDialog {
      */
     @Override
     public void windowClose(CloseEvent e) {
-        //DEBUGSAWAY:LOG.debug("In windowClose - close event");
         removeDialogButtons();
     }
 
