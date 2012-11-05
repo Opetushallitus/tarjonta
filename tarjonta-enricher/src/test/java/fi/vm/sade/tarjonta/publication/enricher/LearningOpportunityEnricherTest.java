@@ -45,7 +45,7 @@ public class LearningOpportunityEnricherTest {
         LearningOpportunityDataEnricherFactory factory = new LearningOpportunityDataEnricherFactory();
         factory.setKoodistoService(koodistoService);
 
-        processor = factory.bean();
+        processor = factory.getObject();
         processor.setInput(new FileInputStream("src/test/resources/simple-enrich-in.xml"));
         processor.setOutput(out = new ByteArrayOutputStream());
 

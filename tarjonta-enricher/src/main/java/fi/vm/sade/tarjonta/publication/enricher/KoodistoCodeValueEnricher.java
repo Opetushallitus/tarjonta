@@ -113,14 +113,16 @@ public class KoodistoCodeValueEnricher extends ElementEnricher {
 
     private void maybeWriteLabels() throws SAXException {
 
-        if (koodiUri == null || koodiVersion == null) {
+        if (koodiUri == null) {
             if (log.isDebugEnabled()) {
-                log.debug("element " + currentTag + " missing uri or version, skipping");
+                log.debug("element missing uri, skipping");
             }
             return;
         }
 
-        KoodiValue value = koodistoService.lookupKoodi(koodiUri, koodiVersion);
+        // todo: version may be null - latest looked up or make mandatory?
+
+        KoodiValue value = koodistoService.lookupKoodi(koodiUri, (koodiVersion != null ? koodiVersion.intValue() : 0));
 
         if (value != null) {
             writeLabel(value);

@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.publication.enricher.factory;
 import fi.vm.sade.tarjonta.publication.enricher.KoodistoCodeValueEnricher;
 import fi.vm.sade.tarjonta.publication.enricher.KoodistoLookupService;
 import fi.vm.sade.tarjonta.publication.enricher.XMLStreamEnricher;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -27,9 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Jukka Raanamo
  */
-public class LearningOpportunityDataEnricherFactory {
+public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLStreamEnricher> {
 
-    @Autowired(required = false)
+    @Autowired(required = true)
     private KoodistoLookupService koodistoService;
 
     /**
@@ -44,13 +45,23 @@ public class LearningOpportunityDataEnricherFactory {
         "NqfClassification"
     };
 
+    @Override
+    public boolean isSingleton() {
+        return false;
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return XMLStreamEnricher.class;
+    }
+
     /**
      * Returns new XMLStreamEnricher prepared with enrichers that know how to handle
      * LearningOpportunityData based XML documents.
      *
      * @return
      */
-    public XMLStreamEnricher bean() {
+    public XMLStreamEnricher getObject() {
 
         XMLStreamEnricher processor = new XMLStreamEnricher();
 
