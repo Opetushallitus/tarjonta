@@ -166,6 +166,12 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
     }
 
 
+    /**
+     * Create rich text editors for content editing.
+     *
+     * @param uri
+     * @return
+     */
     private Component createLanguageEditor(String uri) {
         VerticalLayout vl = UiBuilder.verticalLayout();
 

@@ -80,6 +80,7 @@ import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusViewModelToDTOConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
+import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
 import java.util.Locale;
 
 /**
@@ -313,7 +314,7 @@ public class TarjontaPresenter {
 
         this._rootView.getAppRootLayout().removeAllComponents();
         // Adding the form
-        _rootView.getAppRootLayout().addComponent(new EditKoulutusPerustiedotToinenAsteView());
+        _rootView.getAppRootLayout().addComponent(new EditKoulutusView());
     }
 
     /**
@@ -760,7 +761,7 @@ public class TarjontaPresenter {
             final String koulutusasteKoodi = model.getKoulutusasteTyyppi().getKoulutusasteKoodi();
             koulutusHakuTyyppi.setKoulutusasteKoodi(koulutusasteKoodi);
 
-            //koodisto search result    
+            //koodisto search result
             model.getKoulutuskoodit().clear();
             KoulutuskoodiVastausTyyppi result = kolutusKoodistoConverter.listaaKoulutuskoodit(koulutusHakuTyyppi);
             model.getKoulutuskoodit().addAll(result.getKoulutuskoodi());
@@ -771,7 +772,7 @@ public class TarjontaPresenter {
         List<KoulutusohjelmaModel> koulutusohjelmaTyypit = new ArrayList<KoulutusohjelmaModel>(0);
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
 
-        //Koulutuskoodi filters koulutusohjema data. 
+        //Koulutuskoodi filters koulutusohjema data.
         if (model.getKoulutuskoodiTyyppi() != null && model.getKoulutuskoodiTyyppi().getKoulutuskoodi() != null) {
             KoulutusHakuTyyppi koulutusHakuTyyppi = new KoulutusHakuTyyppi();
             koulutusHakuTyyppi.setKieliKoodi("fi");
