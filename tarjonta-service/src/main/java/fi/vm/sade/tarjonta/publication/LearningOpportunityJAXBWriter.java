@@ -15,10 +15,14 @@
  */
 package fi.vm.sade.tarjonta.publication;
 
-import fi.vm.sade.tarjonta.model.*;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBContext;
@@ -27,26 +31,24 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.namespace.QName;
-
-import fi.vm.sade.tarjonta.publication.types.*;
-import fi.vm.sade.tarjonta.publication.types.CodeValueType.Code;
-import fi.vm.sade.tarjonta.publication.types.LearningOpportunitySpecificationType.Classification;
-import fi.vm.sade.tarjonta.publication.types.LearningOpportunitySpecificationType.Description;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import javax.xml.bind.*;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import javax.xml.namespace.NamespaceContext;
 
+import fi.vm.sade.tarjonta.publication.types.*;
+import fi.vm.sade.tarjonta.publication.types.CodeValueType.Code;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunitySpecificationType.Classification;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunitySpecificationType.Description;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.vm.sade.tarjonta.model.*;
+
 /**
+ * Stream based writer. Writes data using JAXB classes generated from Tarjonta "publication" schema.
  *
  * @author Jukka Raanamo
  */
@@ -89,8 +91,10 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
     }
 
     /**
-     * Setting this value to true allows other elements to be written before and after
-     * content written here, else this writer will produce a complete XML document.
+     * By passing a true value, this writer will not write start and end of
+     * document to stream.
+     *
+     * todo: it seems this does not work with XMLStreamWriter
      *
      * @param partial
      */
@@ -100,12 +104,24 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     }
 
+    /**
+     * XML output.
+     *
+     * @param out
+     * @throws XMLStreamException
+     */
     public void setOutput(Writer out) throws XMLStreamException {
 
         xmlWriter = XMLOutputFactory.newFactory().createXMLStreamWriter(out);
 
     }
 
+    /**
+     * XML output.
+     *
+     * @param out
+     * @throws XMLStreamException
+     */
     public void setOutput(OutputStream out) throws XMLStreamException {
 
         setOutput(new OutputStreamWriter(out));
@@ -162,6 +178,8 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     @Override
     public void onCollect(Koulutusmoduuli moduuli) throws Exception {
+
+        log.debug("marshalling Koulutusmoduuli by oid: " + moduuli.getOid());
 
         LearningOpportunitySpecificationType specification = objectFactory.createLearningOpportunitySpecificationType();
 
@@ -232,6 +250,8 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     @Override
     public void onCollect(KoulutusmoduuliToteutus toteutus) throws Exception {
+
+        log.debug("marshalling KoulutusmoduuliToteutus by oid: " + toteutus.getOid());
 
         LearningOpportunityInstanceType instance = new LearningOpportunityInstanceType();
 
@@ -327,7 +347,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     private void addKoulutuslajit(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
 
-        CodeValueCollectionType collection = toCodeValueCollection(toteutus.getKoulutuslajiList());
+        CodeValueCollectionType collection = toCodeValueCollection(toteutus.getKoulutuslajis());
         target.setFormOfEducation(collection);
 
     }
@@ -494,32 +514,6 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         return codeValueType;
 
     }
-
-    /**
-     * Currently not used, may be needed to tidy up output xml namespaces.
-     */
-    private static class PublicationNamespaceContext implements NamespaceContext {
-
-        @Override
-        public String getNamespaceURI(String string) {
-            System.out.println("getNamespaceURI: " + string);
-            return "";
-        }
-
-        @Override
-        public String getPrefix(String string) {
-            System.out.println("getPrefix: " + string);
-            return "";
-        }
-
-        @Override
-        public Iterator getPrefixes(String string) {
-            System.out.println("getPrefixes: " + string);
-            return null;
-        }
-
-    }
-
 
 }
 

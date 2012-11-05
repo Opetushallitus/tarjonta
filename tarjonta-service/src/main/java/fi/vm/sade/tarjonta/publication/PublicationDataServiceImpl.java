@@ -39,9 +39,18 @@ public class PublicationDataServiceImpl implements PublicationDataService {
     public List<KoulutusmoduuliToteutus> listKoulutusmoduuliToteutus() {
 
         QKoulutusmoduuliToteutus toteutus = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        // selects all
-        return from(toteutus).list(toteutus);
+        QKoulutusmoduuli m = QKoulutusmoduuli.koulutusmoduuli;
 
+        // todo: filter only published
+
+        return from(toteutus).
+            leftJoin(toteutus.ammattinimikes).fetch().
+            leftJoin(toteutus.avainsanas).fetch().
+            leftJoin(toteutus.opetuskielis).fetch().
+            leftJoin(toteutus.opetusmuotos).fetch().
+            leftJoin(toteutus.koulutuslajis).fetch().
+            leftJoin(toteutus.koulutusmoduuli, m).fetch().
+            list(toteutus);
     }
 
     @Override

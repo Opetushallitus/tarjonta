@@ -32,6 +32,12 @@
         </dependency>
 
         <dependency>
+            <groupId>fi.vm.sade.tarjonta</groupId>
+            <artifactId>tarjonta-enricher</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-test-support</artifactId>
             <scope>test</scope>

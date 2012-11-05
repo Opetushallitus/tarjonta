@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+    Remove this file when ESB is in place for the tarjonta enriching process.
+    -->
+
+    <bean id="koodistoLookupService" class="fi.vm.sade.tarjonta.publication.enricher.mock.KoodistoLookupServiceMock"/>
+
+    <!-- factory that knows how to create enricher for publication data -->
+    <bean id="xmlEnricher" class="fi.vm.sade.tarjonta.publication.enricher.factory.LearningOpportunityDataEnricherFactory"/>
+
+    <!-- servlet fileter that enriches the xml -->
+    <bean id="tarjontaEnrichingFilter" class="fi.vm.sade.tarjonta.servlet.PublicationEnrichingFilter">
+    </bean>
+
+
+
+
+</beans>

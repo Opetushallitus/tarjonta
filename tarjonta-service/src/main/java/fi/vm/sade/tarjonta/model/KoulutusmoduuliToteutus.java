@@ -51,7 +51,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_koulutuslaji", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
-    private Set<KoodistoUri> koulutuslajiList = new HashSet<KoodistoUri>();
+    private Set<KoodistoUri> koulutuslajis = new HashSet<KoodistoUri>();
 
     /**
      * todo: can we set this attribute to "required"?
@@ -119,7 +119,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     @Column(name = "ulkoinentunniste")
     private String ulkoinenTunniste;
-    
+
     @Column(name = "koulutusaste")
     private String koulutusaste;
 
@@ -172,25 +172,25 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return the koulutusLajiUri
      */
-    public Set<KoodistoUri> getKoulutuslajiList() {
-        return Collections.unmodifiableSet(koulutuslajiList);
+    public Set<KoodistoUri> getKoulutuslajis() {
+        return Collections.unmodifiableSet(koulutuslajis);
     }
 
     /**
      * @param koulutuslajiUri the koulutusLajiUri to set
      */
     public void addKoulutuslaji(String koulutuslajiUri) {
-        koulutuslajiList.add(new KoodistoUri(koulutuslajiUri));
+        koulutuslajis.add(new KoodistoUri(koulutuslajiUri));
     }
 
     public void removeKoulutuslaji(String koulutuslajiUri) {
-        koulutuslajiList.remove(new KoodistoUri(koulutuslajiUri));
+        koulutuslajis.remove(new KoodistoUri(koulutuslajiUri));
     }
 
     public void setKoulutuslajis(Collection<String> uris) {
-        koulutuslajiList.clear();
+        koulutuslajis.clear();
         for (String uri : uris) {
-            koulutuslajiList.add(new KoodistoUri(uri));
+            koulutuslajis.add(new KoodistoUri(uri));
         }
     }
 
@@ -200,7 +200,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * @param uris
      */
     public void setKoulutuslajis(Set<KoodistoUri> uris) {
-        this.koulutuslajiList = uris;
+        this.koulutuslajis = uris;
     }
 
     /**
@@ -447,7 +447,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setUlkoinenTunniste(String ulkoinenTunniste) {
         this.ulkoinenTunniste = ulkoinenTunniste;
     }
-    
+
 
     /**
      * Gets the koulutusaste koodisto uri
@@ -464,5 +464,5 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 	public void setKoulutusaste(String koulutusaste) {
 		this.koulutusaste = koulutusaste;
 	}
-	
+
 }

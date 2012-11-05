@@ -63,6 +63,7 @@ public class PublicationCollector {
      */
     public void start() throws ConfigurationException, Exception {
 
+        reset();
         validateConfig();
 
         try {
@@ -161,6 +162,16 @@ public class PublicationCollector {
         for (Haku h : hakuList) {
             fireCollect(h);
         }
+
+    }
+
+    /**
+     * Resets internal processing state so that multiple calls to start should produce
+     * identical results.
+     */
+    private void reset() {
+
+        notifiedMap.clear();
 
     }
 

@@ -113,7 +113,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         }
         return hakuVastaus;
     }
-    
+
     private Haku findHakuWithOid(String oid) {
         return hakuDao.findByOid(oid);
     }
@@ -125,7 +125,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     	vastaus.setHaku(conversionService.convert(haku, HakuTyyppi.class));
     	for (Hakukohde hk : haku.getHakukohdes()) {
     		vastaus.getHakukohde().add(conversionService.convert(hk, HakukohdeTyyppi.class));
-    		
+
     	}
         return vastaus;
     }
@@ -221,9 +221,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
-    	
+
     	//Retrieving komotos according to criteria provided in kysely, currently list of tarjoajaOids and a name
-        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findByCriteria(kysely.getTarjoajaOids(), kysely.getNimi());        
+        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findByCriteria(kysely.getTarjoajaOids(), kysely.getNimi());
 
         //Creating the answer type
         HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
@@ -283,8 +283,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         kestoT.setArvo(fromKoulutus.getSuunniteltuKestoArvo());
         kestoT.setYksikko(fromKoulutus.getSuunniteltuKestoYksikko());
         toKoulutus.setKesto(kestoT);
-        
-        if (fromKoulutus.getKoulutusaste() != null) { 
+
+        if (fromKoulutus.getKoulutusaste() != null) {
         	KoodistoKoodiTyyppi koulutusasteKoodi = new KoodistoKoodiTyyppi();
         	koulutusasteKoodi.setUri(fromKoulutus.getKoulutusaste());
         	toKoulutus.setKoulutusaste(koulutusasteKoodi);
@@ -293,7 +293,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
         EntityUtils.copyKoodistoUris(fromKoulutus.getOpetusmuotos(), toKoulutus.getOpetusmuoto());
         EntityUtils.copyKoodistoUris(fromKoulutus.getOpetuskielis(), toKoulutus.getOpetuskieli());
-        EntityUtils.copyKoodistoUris(fromKoulutus.getKoulutuslajiList(), toKoulutus.getKoulutuslaji());
+        EntityUtils.copyKoodistoUris(fromKoulutus.getKoulutuslajis(), toKoulutus.getKoulutuslaji());
         EntityUtils.copyWebLinkkis(fromKoulutus.getLinkkis(), toKoulutus.getLinkki());
         EntityUtils.copyYhteyshenkilos(fromKoulutus.getYhteyshenkilos(), toKoulutus.getYhteyshenkilo());
 

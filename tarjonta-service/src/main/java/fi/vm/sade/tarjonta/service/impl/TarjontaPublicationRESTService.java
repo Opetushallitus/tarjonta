@@ -31,6 +31,7 @@ import javax.xml.stream.XMLStreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * REST service for publication.
@@ -44,6 +45,12 @@ public class TarjontaPublicationRESTService {
 
     @Autowired
     private PublicationCollector dataCollector;
+
+    /**
+     * TODO: remove me
+     */
+    @Autowired
+    private TarjontaSampleData sampleData;
 
     /**
      * Dummy method that can be used to test connection. Always returns "hello" -string.
@@ -60,6 +67,31 @@ public class TarjontaPublicationRESTService {
     }
 
     /**
+     * Inserts some example tarjonta data - remove me!
+     *
+     * @return
+     */
+    @GET
+    @Path("/sample-data")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Transactional(readOnly = false)
+    public String sampleData() {
+        sampleData.init();
+        return "OK";
+    }
+
+
+    @GET
+    @Path("/export-rich")
+    public StreamingOutput exportRich() throws JAXBException {
+
+        // enrichment is done is separate servlet filter, this method is just an endpoint to separate
+        // the raw and enriched content. remove this when ESB is in place.
+        return export();
+
+    }
+
+    /**
      * Exports current tarjonta content (non-enriched) into response stream.
      *
      * todo: concurrent calls to this method are not prevented - we either need to do that or
@@ -71,6 +103,7 @@ public class TarjontaPublicationRESTService {
     @GET
     @Path("/export")
     @Produces(MediaType.APPLICATION_XML)
+    @Transactional(readOnly = true)
     public StreamingOutput export() throws JAXBException {
 
         final LearningOpportunityJAXBWriter writer = new LearningOpportunityJAXBWriter();
@@ -83,6 +116,7 @@ public class TarjontaPublicationRESTService {
                 try {
 
                     writer.setOutput(out);
+
                     dataCollector.setHandler(writer);
                     dataCollector.start();
 

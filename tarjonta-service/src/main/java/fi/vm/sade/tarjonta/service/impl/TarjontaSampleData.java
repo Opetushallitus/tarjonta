@@ -71,8 +71,8 @@ public class TarjontaSampleData {
         toteutus.setNimi("Muu koulutus, Tohtorintutkinto");
         toteutus.setTarjoaja("1.2.246.562.5.73962414165"); //Kontulan peruskoulu luokalla
         toteutus = koulutusmoduuliToteutusDAO.insert(toteutus);
-        
-        
+
+
         //
         // Moduuli KM#2
         //
@@ -81,7 +81,7 @@ public class TarjontaSampleData {
         moduuli.setKoulutusKoodi("uri: Kulttuuriala 20902");
         moduuli.setKoulutusohjelmaKoodi("uri: Ylempi korkeakoulututkinto 20973");
         koulutusmoduuliDAO.insert(moduuli);
-        
+
         //
         // Toteutus KM#2
         //
@@ -105,10 +105,10 @@ public class TarjontaSampleData {
         Hakukohde hakukohde = createHakukohde("Artesaani, käsi- ja taideteollisuusalan perustutkinto");
         hakukohde.setHakukohdeKoodistoNimi("Artesaani, käsi- ja taideteollisuusalan perustutkinto");
         hakukohde.setHaku(haku);
-        
+
         hakukohde.addKoulutusmoduuliToteutus(toteutus);
         hakukohde = hakukohdeDAO.insert(hakukohde);
-        
+
         toteutus.addHakukohde(hakukohde);
         koulutusmoduuliToteutusDAO.update(toteutus);
 
@@ -191,11 +191,11 @@ public class TarjontaSampleData {
     }
 
     private String randomKoodiUri(String namespace) {
-        return "http://koodisto.oph.fi/" + namespace + "/" + random.nextLong();
+        return "http://koodisto.oph.fi/" + namespace + "/" + Math.abs(random.nextLong());
     }
 
     private String randomOid(String namespace) {
-        return "http://oid.oph.fi/" + namespace + "/" + random.nextLong();
+        return "http://oid.oph.fi/" + namespace + "/" + Math.abs(random.nextLong());
     }
 
 }
