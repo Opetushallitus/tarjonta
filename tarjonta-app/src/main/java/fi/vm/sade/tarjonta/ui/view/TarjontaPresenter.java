@@ -35,6 +35,7 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTul
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
@@ -470,7 +471,8 @@ public class TarjontaPresenter {
             LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(model, getModel().getOrganisaatioOid());
             koulutusToDTOConverter.validateSaveData(lisaa, model);
             checkKoulutusmoduuli();
-            tarjontaAdminService.lisaaKoulutus(lisaa);
+            LisaaKoulutusVastausTyyppi lisaaKoulutus = tarjontaAdminService.lisaaKoulutus(lisaa);
+            model.setOid( lisaa.getOid());
         }
         model.setDocumentStatus(DocumentStatus.SAVED_AS_RELEASED);
     }
