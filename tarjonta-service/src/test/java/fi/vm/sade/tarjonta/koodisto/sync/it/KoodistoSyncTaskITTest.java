@@ -18,6 +18,8 @@ package fi.vm.sade.tarjonta.koodisto.sync.it;
 import fi.vm.sade.tarjonta.koodisto.service.KoodiBusinessService;
 import fi.vm.sade.tarjonta.koodisto.sync.KoodistoSyncTask;
 import fi.vm.sade.tarjonta.koodisto.sync.SimpleSyncTaskListener;
+
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -53,6 +55,7 @@ public class KoodistoSyncTaskITTest extends KoodistoTestSupport {
 
     private static final String KNOWN_SMALL_KOODISTO_URI = "HAKUTAPA";
 
+    @Ignore
     @Test
     public void testValidKoodistoReturnsResults() {
 
