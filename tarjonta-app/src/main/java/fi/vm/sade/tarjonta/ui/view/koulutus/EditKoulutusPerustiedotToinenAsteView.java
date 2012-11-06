@@ -75,7 +75,6 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
     public EditKoulutusPerustiedotToinenAsteView() {
         super();
         setMargin(true);
-        setSpacing(true);
         setHeight(-1, UNITS_PIXELS);
     }
 

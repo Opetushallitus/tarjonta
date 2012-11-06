@@ -163,7 +163,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
     public EditKoulutusPerustiedotFormView(TarjontaPresenter presenter, KoulutusToisenAsteenPerustiedotViewModel model) {
         super(2, 1);
-        setSpacing(true);
         selectedComponents = new EnumMap<KoulutusasteType, Set<Component>>(KoulutusasteType.class);
         this.presenter = presenter;
         this.koulutusModel = model;
@@ -416,9 +415,9 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         tfSuunniteltuKesto = UiUtil.textField(hl, null, null, null, T(propertyKey + PROPERTY_PROMPT_SUFFIX));
         tfSuunniteltuKesto.setRequired(true);
         tfSuunniteltuKesto.setImmediate(true);
+        
         ComboBox comboBox = new ComboBox();
         comboBox.setNullSelectionAllowed(false);
-
         kcSuunniteltuKestoTyyppi = UiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, T(propertyKey + "Tyyppi" + PROPERTY_PROMPT_SUFFIX), comboBox);
         kcSuunniteltuKestoTyyppi.setImmediate(true);
 
@@ -482,10 +481,11 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
      * PRIVATE HELPER METHODS:
      */
     private void buildSpacingGridRow(GridLayout grid) {
-//        CssLayout cssLayout = new CssLayout();
-//        cssLayout.setHeight(4, UNITS_PIXELS);
-//        grid.addComponent(cssLayout);
-//        grid.newLine();
+        gridLabel(grid, "");
+        CssLayout cssLayout = new CssLayout();
+        cssLayout.setHeight(4, UNITS_PIXELS);
+        grid.addComponent(cssLayout);
+        grid.newLine();
     }
 
     private void gridLabel(GridLayout grid, final String propertyKey, KoulutusasteType type) {
