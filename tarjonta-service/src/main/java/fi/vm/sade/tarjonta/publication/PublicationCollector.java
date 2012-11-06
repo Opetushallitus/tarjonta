@@ -56,12 +56,12 @@ public class PublicationCollector {
 
     /**
      * Starts the data collecting process. Invokes handler with data ready to be published.
-     * @throws fi.vm.sade.tarjonta.publication.PublicationCollector.ConfigurationException if
-     * collector has is not properly configured.
-     * @throws Exception  if data processing fails. Handler's onCollectFailed will be als called
-     * with the same exception.
+     * @throws fi.vm.sade.tarjonta.publication.PublicationCollector.ConfigurationException if collector has is not properly configured.
+     * @throws Exception  if data processing fails. Handler's onCollectFailed will be als called  with the same exception.
      */
     public void start() throws ConfigurationException, Exception {
+
+        log.debug("starting to collect data");
 
         reset();
         validateConfig();
@@ -103,13 +103,17 @@ public class PublicationCollector {
 
     protected void fireCollect(KoulutusmoduuliToteutus t) throws Exception {
 
-        if (isNotifiedBefore(t.getOid())) {
+        log.debug("found KoulutusmoduuliToteutus: " + t);
+
+        if (!isNotifiedBefore(t.getOid())) {
             handler.onCollect(t);
         }
 
     }
 
     protected void fireCollect(Koulutusmoduuli m) throws Exception {
+
+        log.debug("found Koulutusmoduuli: " + m);
 
         if (!isNotifiedBefore(m.getOid())) {
             handler.onCollect(m);
@@ -119,6 +123,8 @@ public class PublicationCollector {
 
     protected void fireCollect(Hakukohde h) throws Exception {
 
+        log.debug("found Hakukohde: " + h);
+
         if (!isNotifiedBefore(h.getOid())) {
             handler.onCollect(h);
         }
@@ -126,6 +132,8 @@ public class PublicationCollector {
     }
 
     protected void fireCollect(Haku h) throws Exception {
+
+        log.debug("found Haku: " + h);
 
         if (!isNotifiedBefore(h.getOid())) {
             handler.onCollect(h);
@@ -144,9 +152,6 @@ public class PublicationCollector {
         for (KoulutusmoduuliToteutus t : koulutusList) {
 
             Koulutusmoduuli m = t.getKoulutusmoduuli();
-
-            // todo: this should not be possible by the db
-            validateThat("koulutusmoduuliToteutus.koulutusmoduuli is null", m != null);
 
             fireCollect(m);
             fireCollect(t);
@@ -175,14 +180,6 @@ public class PublicationCollector {
 
     }
 
-    private void validateThat(String msg, boolean condition) {
-
-        if (!condition) {
-            throw new CollectorException(msg);
-        }
-
-    }
-
     private void validateConfig() {
 
         if (handler == null) {
@@ -207,10 +204,15 @@ public class PublicationCollector {
             return false;
         }
 
+        log.debug("already notified, not notifying again, key: " + key);
+
         return true;
 
     }
 
+    /**
+     * Implement this interface to process tarjonta data.
+     */
     public interface EventHandler {
 
         public void onCollectStart() throws Exception;
@@ -288,6 +290,8 @@ public class PublicationCollector {
      * Thrown when error occurs during data collection.
      */
     public static class CollectorException extends RuntimeException {
+
+        private static final long serialVersionUID = 3794244904677393564L;
 
         public CollectorException(String string) {
             super(string);

@@ -49,6 +49,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             leftJoin(toteutus.opetuskielis).fetch().
             leftJoin(toteutus.opetusmuotos).fetch().
             leftJoin(toteutus.koulutuslajis).fetch().
+            leftJoin(toteutus.linkkis).fetch().
             leftJoin(toteutus.koulutusmoduuli, m).fetch().
             list(toteutus);
     }
@@ -56,14 +57,21 @@ public class PublicationDataServiceImpl implements PublicationDataService {
     @Override
     public List<Hakukohde> listHakukohde() {
 
+        // todo filter only published
+
         QHakukohde hakukohde = QHakukohde.hakukohde;
-        // selects all
-        return from(hakukohde).list(hakukohde);
+        return from(hakukohde).
+            leftJoin(hakukohde.valintakoes).fetch().
+            leftJoin(hakukohde.liites).fetch().
+            leftJoin(hakukohde.koulutusmoduuliToteutuses).fetch().
+            list(hakukohde);
 
     }
 
     @Override
     public List<Haku> listHaku() {
+
+        // todo: filter only published
 
         QHaku haku = QHaku.haku;
         return from(haku).list(haku);

@@ -230,6 +230,12 @@ public class TarjontaFixtures {
         KoulutusmoduuliToteutus t2 = createTutkintoOhjelmaToteutus();
         KoulutusmoduuliToteutus t3 = createTutkintoOhjelmaToteutus();
 
+        Koulutusmoduuli m1 = koulutusmoduuliDAO.insert(createTutkintoOhjelma());
+
+        t1.setKoulutusmoduuli(m1);
+        t2.setKoulutusmoduuli(m1);
+        t3.setKoulutusmoduuli(m1);
+
         koulutusmoduuliToteutusDAO.insert(t1);
         koulutusmoduuliToteutusDAO.insert(t2);
         koulutusmoduuliToteutusDAO.insert(t3);
@@ -263,11 +269,15 @@ public class TarjontaFixtures {
         hakukohdeDAO.insert(h2);
         hakukohdeDAO.insert(h3);
 
+        Koulutusmoduuli m1 = createTutkintoOhjelma();
         KoulutusmoduuliToteutus t1 = createTutkintoOhjelmaToteutus();
 
         t1.addHakukohde(h1);
         t1.addHakukohde(h2);
         t1.addHakukohde(h3);
+
+        koulutusmoduuliDAO.insert(m1);
+        t1.setKoulutusmoduuli(m1);
 
         return (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.insert(t1);
     }

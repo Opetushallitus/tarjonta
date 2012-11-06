@@ -38,8 +38,8 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     private static final long serialVersionUID = -1278564574746813425L;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinTable(name = TABLE_NAME + "_koulutusmoduuli")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "koulutusmoduuli_id", nullable=false)
     private Koulutusmoduuli koulutusmoduuli;
 
     @Column(name = "tarjoaja")
@@ -123,7 +123,15 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "koulutusaste")
     private String koulutusaste;
 
-	public KoulutusmoduuliToteutus() {
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "arviointikriteerit")
+    private MonikielinenTeksti arviointikriteerit;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "loppukoevaatimukset")
+    private MonikielinenTeksti loppukoeVaatimukset;
+
+    public KoulutusmoduuliToteutus() {
         super();
     }
 
@@ -448,21 +456,46 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         this.ulkoinenTunniste = ulkoinenTunniste;
     }
 
-
     /**
      * Gets the koulutusaste koodisto uri
      * @return the koulutusaste
      */
     public String getKoulutusaste() {
-		return koulutusaste;
-	}
+        return koulutusaste;
+    }
 
     /**
      * Sets the koulutusaste koodisto uri
      * @param koulutusaste the koulutusaste to set
      */
-	public void setKoulutusaste(String koulutusaste) {
-		this.koulutusaste = koulutusaste;
-	}
+    public void setKoulutusaste(String koulutusaste) {
+        this.koulutusaste = koulutusaste;
+    }
+
+    /**
+     * Sanallinen kuvaus arviointikriteereistä.
+     *
+     * @return
+     */
+    public MonikielinenTeksti getArviointikriteerit() {
+        return arviointikriteerit;
+    }
+
+    public void setArviointikriteerit(MonikielinenTeksti arviointikriteerit) {
+        this.arviointikriteerit = arviointikriteerit;
+    }
+
+    /**
+     * Sanallinen kuvaus koulutuksen loppukokeoista/opinnäytteistä.
+     *
+     * @return
+     */
+    public MonikielinenTeksti getLoppukoeVaatimukset() {
+        return loppukoeVaatimukset;
+    }
+
+    public void setLoppukoeVaatimukset(MonikielinenTeksti loppukoeVaatimukset) {
+        this.loppukoeVaatimukset = loppukoeVaatimukset;
+    }
 
 }

@@ -46,7 +46,7 @@ import org.springframework.stereotype.Repository;
 public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implements HakukohdeDAO {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    
+
     @Override
     public List<Hakukohde> findByKoulutusOid(String koulutusmoduuliToteutusOid) {
 
@@ -55,7 +55,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         BooleanExpression oidEq = toteutus.oid.eq(koulutusmoduuliToteutusOid);
 
         return from(hakukohde).
-            join(hakukohde.koulutusmoduuliToteutuseList, toteutus).
+            join(hakukohde.koulutusmoduuliToteutuses, toteutus).
             where(oidEq).
             list(hakukohde);
 
@@ -64,23 +64,23 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     @Override
     public List<Hakukohde> findHakukohdeWithDepenciesByOid(String oid) {
         QHakukohde qHakukohde = QHakukohde.hakukohde;
-        
+
         List<Hakukohde> hakukohdes = from(qHakukohde)
                 .where(qHakukohde.oid.eq(oid.trim()))
                .list(qHakukohde);
-       
+
        for (Hakukohde hakukohde:hakukohdes) {
            hakukohde.setLisatiedot(findLisatiedotToHakuKohde(hakukohde));
        }
-       
+
         return hakukohdes;
     }
-    
+
     private MonikielinenTeksti findLisatiedotToHakuKohde(Hakukohde hakukohde) {
         QMonikielinenTeksti qTekstis = QMonikielinenTeksti.monikielinenTeksti;
         QTekstiKaannos qKaannos = QTekstiKaannos.tekstiKaannos;
         QHakukohde qHakukohde = QHakukohde.hakukohde;
-        
+
         MonikielinenTeksti tekstis = from(qTekstis,qHakukohde)
                 .join(qHakukohde.lisatiedot,qTekstis)
                 .join(qTekstis.tekstis,qKaannos).fetch()
@@ -95,12 +95,12 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     	QHakukohde qHakukohde = QHakukohde.hakukohde;
     	QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
     	BooleanExpression criteriaExpr = qHakukohde.hakukohdeKoodistoNimi.toLowerCase().contains(searchStr);
-    	
+
     	List<Hakukohde> hakukohdes = from(qHakukohde).
-                leftJoin(qHakukohde.koulutusmoduuliToteutuseList, qKomoto).fetch().where(criteriaExpr).
+                leftJoin(qHakukohde.koulutusmoduuliToteutuses, qKomoto).fetch().where(criteriaExpr).
                 list(qHakukohde);
-    	
-    	List<Hakukohde> vastaus = new ArrayList<Hakukohde>(); 
+
+    	List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
     	//If a list of organisaatio oids is provided only hakukohdes that match
     	//the list are returned
     	if (!kysely.getTarjoajaOids().isEmpty()) {
@@ -122,7 +122,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 	@Override
 	public List<Hakukohde> findOrphanHakukohteet() {
 		QHakukohde hakukohde  = QHakukohde.hakukohde;
-		BooleanExpression toteutusesEmpty = hakukohde.koulutusmoduuliToteutuseList.isEmpty();
+		BooleanExpression toteutusesEmpty = hakukohde.koulutusmoduuliToteutuses.isEmpty();
 		return from(hakukohde).where(toteutusesEmpty).list(hakukohde);
 	}
 

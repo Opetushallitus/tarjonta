@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
+import javax.persistence.*;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -118,6 +119,14 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     @Column(name = "ulkoinentunniste")
     private String ulkoinenTunniste;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "koulutuksenrakenne")
+    private MonikielinenTeksti koulutuksenRakenne;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "jatkoopintomahdollisuudet")
+    private MonikielinenTeksti jatkoOpintoMahdollisuudet;
 
     /**
      * JPA konstruktori
@@ -452,11 +461,32 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     * @see #getUlkoinenTunniste() 
+     * @see #getUlkoinenTunniste()
      * @param ulkoinenTunniste
      */
     public void setUlkoinenTunniste(String ulkoinenTunniste) {
         this.ulkoinenTunniste = ulkoinenTunniste;
+    }
+
+    /**
+     * Koulutuksen rakenteen kuvaus tekstina mikali rakenteellista tieto ei ole.
+     *
+     * @return
+     */
+    public MonikielinenTeksti getKoulutuksenRakenne() {
+        return koulutuksenRakenne;
+    }
+
+    public void setKoulutuksenRakenne(MonikielinenTeksti koulutuksenRakenne) {
+        this.koulutuksenRakenne = koulutuksenRakenne;
+    }
+
+    public MonikielinenTeksti getJatkoOpintoMahdollisuudet() {
+        return jatkoOpintoMahdollisuudet;
+    }
+
+    public void setJatkoOpintoMahdollisuudet(MonikielinenTeksti jatkoOpintoMahdollisuudet) {
+        this.jatkoOpintoMahdollisuudet = jatkoOpintoMahdollisuudet;
     }
 
 }

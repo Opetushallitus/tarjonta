@@ -127,6 +127,9 @@ public class KoulutusmoduuliToteutusDAOTest {
     public void testDeleteYhteyshenkilo() {
 
         KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
+        Koulutusmoduuli m = koulutusmoduuliDAO.insert(fixtures.createTutkintoOhjelma());
+
+        t.setKoulutusmoduuli(m);
 
         Yhteyshenkilo henkilo = new Yhteyshenkilo("12345", "fi");
         henkilo.setEtunimis("John");
@@ -150,6 +153,8 @@ public class KoulutusmoduuliToteutusDAOTest {
     public void testAddYhteyshenkilo() {
 
         KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
+        Koulutusmoduuli m = koulutusmoduuliDAO.insert(fixtures.createTutkintoOhjelma());
+        t.setKoulutusmoduuli(m);
         t.addYhteyshenkilo(fixtures.createYhteyshenkilo("12345"));
 
         koulutusmoduuliToteutusDAO.insert(t);
@@ -163,6 +168,8 @@ public class KoulutusmoduuliToteutusDAOTest {
     public void testAddLinkkis() {
 
         KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
+        Koulutusmoduuli m = koulutusmoduuliDAO.insert(fixtures.createTutkintoOhjelma());
+        t.setKoulutusmoduuli(m);
 
         // no language
         t.addLinkki(new WebLinkki(WebLinkki.LinkkiTyyppi.MULTIMEDIA, null, "http://link1"));
@@ -186,6 +193,8 @@ public class KoulutusmoduuliToteutusDAOTest {
     public void testSetLinkkis() {
 
         KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
+        Koulutusmoduuli m = koulutusmoduuliDAO.insert(fixtures.createTutkintoOhjelma());
+        t.setKoulutusmoduuli(m);
 
         t.addLinkki(new WebLinkki(WebLinkki.LinkkiTyyppi.MULTIMEDIA, null, "http://link1"));
 
@@ -207,72 +216,77 @@ public class KoulutusmoduuliToteutusDAOTest {
         // todo: check orphans are deleted (link1)
 
     }
-    
+
     @Test
     public void testFindByCriteria() {
+
+        Koulutusmoduuli m = koulutusmoduuliDAO.insert(fixtures.createTutkintoOhjelma());
+
     	String tarjoaja1 = "0.0.0.0.01";
     	String nimi1 = "eka toteutus";
-    	
+
     	String tarjoaja2 = "0.0.0.0.02";
     	String nimi2 = "toka toteutus";
-    	
+
     	String tarjoaja3 = "0.0.0.0.03";
-    	
+
     	//KOMOTO1
     	KoulutusmoduuliToteutus t1 = fixtures.createTutkintoOhjelmaToteutus();
     	t1.setNimi(nimi1);
     	t1.setTarjoaja(tarjoaja1);
+        t1.setKoulutusmoduuli(m);
     	koulutusmoduuliToteutusDAO.insert(t1);
-    	
+
     	//KOMOTO2
     	KoulutusmoduuliToteutus t2 = fixtures.createTutkintoOhjelmaToteutus();
     	t2.setNimi(nimi2);
     	t2.setTarjoaja(tarjoaja2);
+        t2.setKoulutusmoduuli(m);
     	koulutusmoduuliToteutusDAO.insert(t2);
-    	
+
     	//Searching with list containing tarjoaja1 but not tarjoaja2 and nimi1
-    	
+
     	List<String> criteriaList = Arrays.asList(new String[]{tarjoaja1, tarjoaja3});
     	List<KoulutusmoduuliToteutus> result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1);
-    	
+
     	assertEquals(1, result.size());
     	assertEquals(nimi1, result.get(0).getNimi());
-    	
+
     	//Searching with list containing tarjoaja2 but not tarjoaja1 and nimi2
-    	
+
     	criteriaList = Arrays.asList(new String[]{tarjoaja2, tarjoaja3});
     	result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi2);
-    	
+
     	assertEquals(1, result.size());
     	assertEquals(nimi2, result.get(0).getNimi());
-    	
+
     	//Searching with list not containing any matching tarjoaja and nimi1
-    	
+
     	criteriaList = Arrays.asList(new String[]{tarjoaja3});
     	result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1);
-    	
+
     	assertEquals(0, result.size());
-    	
+
     	//Searching with list containing tarjoaja1 but not tarjoaja2 and nimi2
-    	
+
     	criteriaList = Arrays.asList(new String[]{tarjoaja1, tarjoaja3});
     	result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi2);
-    	
+
     	assertEquals(0, result.size());
-    	
+
     	//Searching with an empty list and nimi1
-    	
+
     	criteriaList = new ArrayList<String>();
     	result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1);
-    	
+
     	assertEquals(1, result.size());
     	assertEquals(nimi1, result.get(0).getNimi());
-    	
+
     	//Searching with an empty list and null in nimi
-    	
+
     	criteriaList = new ArrayList<String>();
     	result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null);
-    	
+
     	//returns all komotos, at least the 2 created in the beginning of this test method.
     	assertTrue(result.size()>=2);
     }

@@ -35,7 +35,7 @@ public class Hakukohde extends BaseEntity {
     private String oid;
 
     @ManyToMany(mappedBy = "hakukohdes")
-    private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuseList = new HashSet<KoulutusmoduuliToteutus>();
+    private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "hakukohde_id")
@@ -47,24 +47,27 @@ public class Hakukohde extends BaseEntity {
     @NotNull
     @Column(name = "hakukohde_nimi", nullable = false)
     private String hakukohdeNimi;
-    
+
     /**
      * The string containing the human readable name of this
      * hakukohde object. Names in different languages are
      * concatenated to this field. This field is created
      * to enable search.
      */
-    @Column(name= "hakukohde_koodisto_nimi")
+    @Column(name = "hakukohde_koodisto_nimi")
     private String hakukohdeKoodistoNimi;
 
     @Column(name = "alin_valinta_pistamaara")
-    private int alinValintaPistemaara;
+    private Integer alinValintaPistemaara;
 
     @Column(name = "ylin_valinta_pistemaara")
-    private int ylinValintaPistemaara;
+    private Integer ylinValintaPistemaara;
 
     @Column(name = "aloituspaikat_lkm")
-    private int aloituspaikatLkm;
+    private Integer aloituspaikatLkm;
+
+    @Column(name = "edellisenvuodenhakijat")
+    private Integer edellisenVuodenHakijat;
 
     @Column(name = "hakukelpoisuusvaatimus")
     private String hakukelpoisuusvaatumus;
@@ -87,24 +90,24 @@ public class Hakukohde extends BaseEntity {
     private MonikielinenTeksti lisatiedot;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hakukohde")
-    private Set<HakukohdeLiite> liites;
+    private Set<HakukohdeLiite> liites = new HashSet<HakukohdeLiite>();
 
     /**
      * @return the koulutuses
      */
     public Set<KoulutusmoduuliToteutus> getKoulutusmoduuliToteutuses() {
-        return Collections.unmodifiableSet(koulutusmoduuliToteutuseList);
+        return Collections.unmodifiableSet(koulutusmoduuliToteutuses);
     }
 
     /**
      * @param toteutuses the koulutuses to set
      */
     public void setKoulutusmoduuliToteutuses(Set<KoulutusmoduuliToteutus> toteutuses) {
-        this.koulutusmoduuliToteutuseList = toteutuses;
+        this.koulutusmoduuliToteutuses = toteutuses;
     }
 
     public void addKoulutusmoduuliToteutus(KoulutusmoduuliToteutus toteutus) {
-        koulutusmoduuliToteutuseList.add(toteutus);
+        koulutusmoduuliToteutuses.add(toteutus);
     }
 
     /**
@@ -131,28 +134,28 @@ public class Hakukohde extends BaseEntity {
      *
      * @return the alinPistemaara
      */
-    public int getAlinValintaPistemaara() {
+    public Integer getAlinValintaPistemaara() {
         return alinValintaPistemaara;
     }
 
     /**
      * @param alinPistemaara the alinPistemaara to set
      */
-    public void setAlinValintaPistemaara(int pistemaara) {
+    public void setAlinValintaPistemaara(Integer pistemaara) {
         this.alinValintaPistemaara = pistemaara;
     }
 
     /**
      * @return the aloituspaikatLkm
      */
-    public int getAloituspaikatLkm() {
+    public Integer getAloituspaikatLkm() {
         return aloituspaikatLkm;
     }
 
     /**
      * @param aloituspaikatLkm the aloituspaikatLkm to set
      */
-    public void setAloituspaikatLkm(int aloituspaikatLkm) {
+    public void setAloituspaikatLkm(Integer aloituspaikatLkm) {
         this.aloituspaikatLkm = aloituspaikatLkm;
     }
 
@@ -206,14 +209,14 @@ public class Hakukohde extends BaseEntity {
     /**
      * @return the ylinValintaPistemaara
      */
-    public int getYlinValintaPistemaara() {
+    public Integer getYlinValintaPistemaara() {
         return ylinValintaPistemaara;
     }
 
     /**
      * @param ylinValintaPistemaara the ylinValintaPistemaara to set
      */
-    public void setYlinValintaPistemaara(int ylinValintaPistemaara) {
+    public void setYlinValintaPistemaara(Integer ylinValintaPistemaara) {
         this.ylinValintaPistemaara = ylinValintaPistemaara;
     }
 
@@ -279,6 +282,19 @@ public class Hakukohde extends BaseEntity {
      */
     public void setHakukohdeKoodistoNimi(String hakukohdeKoodistoNimi) {
         this.hakukohdeKoodistoNimi = hakukohdeKoodistoNimi;
+    }
+
+    /**
+     * Palauttaa edellisen vuoden hakijoiden lukumäärän tai null jos ei arvoa.
+     *
+     * @return
+     */
+    public Integer getEdellisenVuodenHakijat() {
+        return edellisenVuodenHakijat;
+    }
+
+    public void setEdellisenVuodenHakijat(Integer edellisenVuodenHakijat) {
+        this.edellisenVuodenHakijat = edellisenVuodenHakijat;
     }
 
 }

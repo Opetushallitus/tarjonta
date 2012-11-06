@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    
+
 -->
 <LearningOpportunityDownloadData
     xmlns="http://publication.tarjonta.sade.vm.fi/types"
@@ -88,7 +88,7 @@
 
         <Description>
 
-            <!-- koulutusrakenteen kuvaus -->
+            <!-- OK -->
             <StructureDiagram>
                 Jos opintotarjontaa ei ole kannassa tekstuaalinen kuvaus:
                 Tutkinnon kaikille pakolliset tutkinnon osat ovat kasvun
@@ -101,7 +101,7 @@
                 (10 ov) tai perioperatiivinen hoitotyö (10 ov).
             </StructureDiagram>
 
-            <!-- jatko-opintoväylät -->
+            <!-- OK -->
             <AccessToFurtherStudies>
                 Ammatillinen perustutkinto antaa yleisen korkeakoulukelpoisuuden.
             </AccessToFurtherStudies>
@@ -184,14 +184,14 @@
         <!-- arviointi kriteerit -->
         <Assessments>
 
-            <!-- yleiset arviointi kriteerit suomeksi -->
+            <!-- OK -->
             <Assessment xml:lang="fi">
                 Lorem Lipsum
             </Assessment>
 
         </Assessments>
 
-        <!-- sanallinen kuvaus koulutuksen loppukokeista -->
+        <!-- OK  -->
         <FinalExamination>
 
             <Description xml:lang="fi">
@@ -200,7 +200,7 @@
 
         </FinalExamination>
 
-        <!-- tieto opiskelun maksullisuudesta -->
+        <!-- maksullisuus on koodistoUri?? tähän ei tule dataa export:ssa. -->
         <CostOfEducation>
 
             <!-- opiskelu on maksutonta -->
@@ -213,7 +213,7 @@
 
         </CostOfEducation>
 
-        <!-- stipendeihin liittyä tieto -->
+        <!-- stipendit deprekoitu google docs:sta, ei renderöitä -->
         <Scholarship>
 
             <!-- yleinen kuvaus stipendimahdollisuuksista -->
@@ -227,134 +227,11 @@
         <!-- joukko linkkejä jotka liittyvät toteutukseen -->
         <WebLinks>
 
-            <!-- linkki oppilaitoksen sivuille sekä optinaalinen label elementti -->
-            <Link type="HOME">
-                <Label xml:lang="fi">Oppilaitoksen sivut</Label>
-                <Uri>http://www.hel.fi/hki/Hesote/fi/Etusivu</Uri>
-            </Link>
-
-        </WebLinks>
-
-    </LearningOpportunityInstance>
-
-
-    <!-- ========================================================================================= -->
-    <!-- Koulutusmoduulin toteutus, PK, 1508                                                       -->
-    <!-- ========================================================================================= -->
-
-    <LearningOpportunityInstance id="I1508PK">
-
-        <!-- Koulutusmoduulin toteutuksen tunniste, koulutuksen tarjoajan jarjestelmassa. -->
-        <Identifier>T1508</Identifier>
-
-        <!-- koulutusmoduuli jota tämä toteutus täydentää (sama kuin PK-linjalla) -->
-        <SpecificationRef ref="S1508"/>
-
-        <!-- organisaatio joka tarjoaa tätä koulutusta -->
-        <OrganizationRef>
-            <OidRef>1.2.3.4.5</OidRef>
-        </OrganizationRef>
-
-        <!-- Pohjakoulutus vaatimus -->
-        <!-- todo: mallissa tämä on koodisto joten arbitraaria dataa ei voida ottaa vastaan. -->
-        <Prerequisite>
-            Perusopetuksen oppimäärä. Ylioppilaat ja lukion suorittaneet eivät hakukelpoisia.
-        </Prerequisite>
-
-        <!-- ammattinimikkeet -->
-        <Profession>
-            <Title>Lähihoitaja</Title>
-            <Title>Perushoitaja</Title>
-            <Title>Ensihoitaja</Title>
-        </Profession>
-
-        <!-- asiasanat -->
-        <Keywords>
-            <Keyword>Lähihoitaja</Keyword>
-            <Keyword>Hoiva-ala</Keyword>
-            <Keyword>Sosiaali- ja terveys</Keyword>
-            <Keyword>Ensihoito</Keyword>
-            <Keyword>Ambulanssi</Keyword>
-        </Keywords>
-
-        <!-- opetuskielet -->
-        <LanguagesOfInstruction scheme="ISO-639-1">
-
-            <!-- opetusta suomeksi -->
-            <Language code="fi"/>
-
-        </LanguagesOfInstruction>
-
-        <!--koulutuslaji -->
-        <FormOfEducation scheme="http://oph.fi">
-            <Value>http://koodistopalvelu.opintopolku.fi/koulutusLaj/1</Value>
-            <Label>nuorten koulutus</Label>
-        </FormOfEducation>
-
-        <!-- joukko opetusmuotoja -->
-        <FormsOfTeaching>
-
-            <!-- lähiopetus -->
-            <FormOfTeaching type="Classroom"/>
-
-        </FormsOfTeaching>
-
-        <!-- koulutuksen alkamispäivämäärä, ISO-8601 muodossa -->
-        <StartDate>2014-09-14</StartDate>
-
-        <!-- lukuvuosi -->
-        <AcademicYear>2014</AcademicYear>
-
-        <!-- koulutuksen kesto, tässä PK toteutus eroaa YO toteutuksesta. -->
-        <Duration>P3Y</Duration>
-
-        <!-- arviointi kriteerit -->
-        <Assessments>
-
-            <!-- yleiset arviointi kriteerit suomeksi -->
-            <Assessment xml:lang="fi">
-                Lorem Lipsum
-            </Assessment>
-
-        </Assessments>
-
-        <!-- sanallinen kuvaus koulutuksen loppukokeista -->
-        <FinalExamination>
-
-            <Description xml:lang="fi">
-                Lorem Lipsum
-            </Description>
-
-        </FinalExamination>
-
-        <!-- tieto opiskelun maksullisuudesta -->
-        <CostOfEducation>
-
-            <!-- opiskelu on maksutonta -->
-            <NoCost />
-
             <!--
-            tai 1 tai useampi maksukuvaus
-            <Fee amount="200" currency="EUR" repeat="once"/>
+            type on koodisto uri, ei voida mäpätä schema:n konstantteihin
+            kielikoodi on koodisto uri, pitäisi ylikirjoittaa koodistosta
+            model:ssa ei ole nimeä (label)
             -->
-
-        </CostOfEducation>
-
-        <!-- stipendeihin liittyä tieto -->
-        <Scholarship>
-
-            <!-- yleinen kuvaus stipendimahdollisuuksista -->
-            <Description xml:lang="fi">
-                Lorem Lipsum
-            </Description>
-
-        </Scholarship>
-
-
-        <!-- joukko linkkejä jotka liittyvät toteutukseen -->
-        <WebLinks>
-
-            <!-- linkki oppilaitoksen sivuille sekä optinaalinen label elementti -->
             <Link type="HOME">
                 <Label xml:lang="fi">Oppilaitoksen sivut</Label>
                 <Uri>http://www.hel.fi/hki/Hesote/fi/Etusivu</Uri>
@@ -366,260 +243,9 @@
 
 
 
-    <!-- ========================================================================================= -->
-    <!-- Koulutusmoduulin toteutus, vanhustyön ko, 1514                                            -->
-    <!-- ========================================================================================= -->
 
-    <LearningOpportunityInstance id="I1514PK">
 
-        <!-- Koulutusmoduulin toteutuksen tunniste, koulutuksen tarjoajan jarjestelmassa. -->
-        <Identifier>T1514PK</Identifier>
-
-        <!-- koulutusmoduuli jota tämä toteutus täydentää -->
-        <SpecificationRef ref="S1514"/>
-
-        <!-- organisaatio joka tarjoaa tätä koulutusta -->
-        <OrganizationRef>
-            <OidRef>1.2.3.4.5</OidRef>
-        </OrganizationRef>
-
-        <!-- Pohjakoulutus vaatimus -->
-        <Prerequisite>
-            Perusopetuksen oppimäärä. Ylioppilaat ja lukion suorittaneet eivät hakukelpoisia.
-        </Prerequisite>
-
-        <!-- ammattinimikkeet -->
-        <Profession>
-            <Title>Lähihoitaja</Title>
-            <Title>Perushoitaja</Title>
-        </Profession>
-
-        <!-- asiasanat -->
-        <Keywords>
-            <Keyword>Lähihoitaja</Keyword>
-            <Keyword>Hoiva-ala</Keyword>
-            <Keyword>Sosiaali- ja terveys</Keyword>
-            <Keyword>Vanhustyö</Keyword>
-            <Keyword>geriatria</Keyword>
-        </Keywords>
-
-        <!-- opetuskielet -->
-        <LanguagesOfInstruction scheme="ISO-639-1">
-
-            <!-- opetusta suomeksi -->
-            <Language code="fi"/>
-
-        </LanguagesOfInstruction>
-
-        <!--koulutuslaji -->
-        <FormOfEducation scheme="http://oph.fi">
-            <Value>http://koodistopalvelu.opintopolku.fi/koulutusLaj/1</Value>
-            <Label>nuorten koulutus</Label>
-        </FormOfEducation>
-
-        <!-- joukko opetusmuotoja -->
-        <FormsOfTeaching>
-
-            <!-- lähiopetus -->
-            <FormOfTeaching type="Classroom"/>
-
-        </FormsOfTeaching>
-
-        <!-- koulutuksen alkamispäivämäärä, ISO-8601 muodossa -->
-        <StartDate>2014-09-14</StartDate>
-
-        <!-- lukuvuosi -->
-        <AcademicYear>2014</AcademicYear>
-
-        <!-- koulutuksen kesto -->
-        <Duration>P3Y</Duration>
-
-        <!-- arviointi kriteerit -->
-        <Assessments>
-
-            <!-- yleiset arviointi kriteerit suomeksi -->
-            <Assessment xml:lang="fi">
-                Lorem Lipsum
-            </Assessment>
-
-        </Assessments>
-
-        <!-- sanallinen kuvaus koulutuksen loppukokeista -->
-        <FinalExamination>
-
-            <Description xml:lang="fi">
-                Lorem Lipsum
-            </Description>
-
-        </FinalExamination>
-
-        <!-- tieto opiskelun maksullisuudesta -->
-        <CostOfEducation>
-
-            <!-- opiskelu on maksutonta -->
-            <NoCost />
-
-            <!--
-            tai 1 tai useampi maksukuvaus
-            <Fee amount="200" currency="EUR" repeat="once"/>
-            -->
-
-        </CostOfEducation>
-
-        <!-- stipendeihin liittyä tieto -->
-        <Scholarship>
-
-            <!-- yleinen kuvaus stipendimahdollisuuksista -->
-            <Description xml:lang="fi">
-                Lorem Lipsum
-            </Description>
-
-        </Scholarship>
-
-
-        <!-- joukko linkkejä jotka liittyvät toteutukseen -->
-        <WebLinks>
-
-            <!-- linkki oppilaitoksen sivuille sekä optinaalinen label elementti -->
-            <Link type="HOME">
-                <Label xml:lang="fi">Oppilaitoksen sivut</Label>
-                <Uri>http://www.hel.fi/hki/Hesote/fi/Etusivu</Uri>
-            </Link>
-
-        </WebLinks>
-
-    </LearningOpportunityInstance>
-
-
-
-    <!-- ========================================================================================= -->
-    <!-- Koulutusmoduulin toteutus, kuntoutuksen ko, 1598                                          -->
-    <!-- ========================================================================================= -->
-
-    <LearningOpportunityInstance id="I1598PK">
-
-        <!-- Koulutusmoduulin toteutuksen tunniste, koulutuksen tarjoajan jarjestelmassa. -->
-        <Identifier>T1598PK</Identifier>
-
-        <!-- koulutusmoduuli jota tämä toteutus täydentää -->
-        <SpecificationRef ref="S1598"/>
-
-        <!-- organisaatio joka tarjoaa tätä koulutusta -->
-        <OrganizationRef>
-            <OidRef>1.2.3.4.5</OidRef>
-        </OrganizationRef>
-
-        <!-- Pohjakoulutus vaatimus -->
-        <Prerequisite>
-            Perusopetuksen oppimäärä. Ylioppilaat ja lukion suorittaneet eivät hakukelpoisia.
-        </Prerequisite>
-
-        <!-- ammattinimikkeet -->
-        <Profession>
-            <Title>Lähihoitaja</Title>
-            <Title>Perushoitaja</Title>
-        </Profession>
-
-        <!-- asiasanat -->
-        <Keywords>
-            <Keyword>Lähihoitaja</Keyword>
-            <Keyword>Hoiva-ala</Keyword>
-            <Keyword>Sosiaali- ja terveys</Keyword>
-            <Keyword>Kuntoutus</Keyword>
-            <Keyword>fysioterapia</Keyword>
-        </Keywords>
-
-        <!-- opetuskielet -->
-        <LanguagesOfInstruction scheme="ISO-639-1">
-
-            <!-- opetusta suomeksi -->
-            <Language code="fi"/>
-
-        </LanguagesOfInstruction>
-
-        <!--koulutuslaji -->
-        <FormOfEducation scheme="http://oph.fi">
-            <Value>http://koodistopalvelu.opintopolku.fi/koulutusLaj/1</Value>
-            <Label>nuorten koulutus</Label>
-        </FormOfEducation>
-
-        <!-- joukko opetusmuotoja -->
-        <FormsOfTeaching>
-
-            <!-- lähiopetus -->
-            <FormOfTeaching type="Classroom"/>
-
-        </FormsOfTeaching>
-
-        <!-- koulutuksen alkamispäivämäärä, ISO-8601 muodossa -->
-        <StartDate>2014-09-14</StartDate>
-
-        <!-- lukuvuosi -->
-        <AcademicYear>2014</AcademicYear>
-
-        <!-- koulutuksen kesto -->
-        <Duration>P3Y</Duration>
-
-        <!-- arviointi kriteerit -->
-        <Assessments>
-
-            <!-- yleiset arviointi kriteerit suomeksi -->
-            <Assessment xml:lang="fi">
-                Lorem Lipsum
-            </Assessment>
-
-        </Assessments>
-
-        <!-- sanallinen kuvaus koulutuksen loppukokeista -->
-        <FinalExamination>
-
-            <Description xml:lang="fi">
-                Lorem Lipsum
-            </Description>
-
-        </FinalExamination>
-
-        <!-- tieto opiskelun maksullisuudesta -->
-        <CostOfEducation>
-
-            <!-- opiskelu on maksutonta -->
-            <NoCost />
-
-            <!--
-            tai 1 tai useampi maksukuvaus
-            <Fee amount="200" currency="EUR" repeat="once"/>
-            -->
-
-        </CostOfEducation>
-
-        <!-- stipendeihin liittyä tieto -->
-        <Scholarship>
-
-            <!-- yleinen kuvaus stipendimahdollisuuksista -->
-            <Description xml:lang="fi">
-                Lorem Lipsum
-            </Description>
-
-        </Scholarship>
-
-
-        <!-- joukko linkkejä jotka liittyvät toteutukseen -->
-        <WebLinks>
-
-            <!-- linkki oppilaitoksen sivuille sekä optinaalinen label elementti -->
-            <Link type="HOME">
-                <Label xml:lang="fi">Oppilaitoksen sivut</Label>
-                <Uri>http://www.hel.fi/hki/Hesote/fi/Etusivu</Uri>
-            </Link>
-
-        </WebLinks>
-
-    </LearningOpportunityInstance>
-
-
-    <!-- ========================================================================================= -->
-    <!-- Koulutuksen tarjoaja                                                                      -->
-    <!-- ========================================================================================= -->
+    <!-- LOP tietoja ei vielä ole mallissa -->
 
     <LearningOpportunityProvider id="P1">
 
@@ -657,11 +283,9 @@
 
     </LearningOpportunityProvider>
 
-    <!-- ========================================================================================= -->
-    <!-- Haku:                                                                                     -->
-    <!-- ========================================================================================= -->
 
     <ApplicationSystem>
+        <!-- OK, vaihdettu LocalizedStringType -> ExtendedStringType -->
         <Name>
             <Text xml:lang="fi">Yhteishaku</Text>
         </Name>
@@ -675,16 +299,15 @@
 
     <ApplicationOption>
 
-        <!-- hakukohteen yksilöivä tunniste (missä scopessa?) -->
+        <!-- OK: oid -->
         <Identifier>776</Identifier>
 
-        <!-- hakukohteen nimi -->
+        <!-- OK, titlel:n  arvo on koodisto uri -->
         <Title xml:lang="fi">Ensihoidon koulutusohjelma, yo</Title>
 
-        <!-- viittaus hakuun johon tämä hakukohde kuuluu -->
         <ApplicationSystemRef>
 
-            <!-- viittaus haun julkisella ja yksilöivällä OID:lla  -->
+            <!-- OK, oid ref -->
             <OidRef>1.2.3.4.5</OidRef>
 
         </ApplicationSystemRef>
@@ -692,37 +315,37 @@
         <!-- hakukelpoisuus vaatimukset -->
         <EligibilityRequirements>
 
-            <!-- vapaasti kuvattu vaatimus suomeksi -->
+            <!-- OK, desc on uri...kait -->
             <Description xml:lang="fi">
                 peruskoulu/yo-pohjaisiin kohteisiin lukio
             </Description>
 
         </EligibilityRequirements>
 
-        <!-- valintaperusteet -->
+        <!-- OK -->
         <SelectionCriterions>
 
-            <!-- aloituspaikkojen määrä -->
+            <!-- OK -->
             <StartingQuota>20</StartingQuota>
 
-            <!-- edellisen vuoden alin hyväksytty pistemäärä -->
+            <!-- OK -->
             <LastYearMinScore>20</LastYearMinScore>
 
-            <!-- edellisen vuoden ylin hyväksytty pistemäärä -->
+            <!-- OK -->
             <LastYearMaxScore>30</LastYearMaxScore>
 
-            <!-- edellisen vuoden hakijoiden määrä -->
+            <!-- OK -->
             <LastYearTotalApplicants>300</LastYearTotalApplicants>
 
-            <!-- vapaa kuvaus -->
+            <!-- OK -->
             <Description xml:lang="fi">
                 Lorem Lipsum
             </Description>
 
-            <!-- valintakokeet -->
+            <!-- OK -->
             <EntranceExaminations>
 
-                <!-- yleinen kuvaus -->
+                <!-- OK -->
                 <Description xml:lang="fi">
                     Vapaamuotoinen kuvaus kaikista valintakokeista.
                 </Description>
@@ -730,12 +353,12 @@
                 <!-- valintakoe -->
                 <Examination>
 
-                    <!-- valintakoe tyyppi -->
+                    <!-- OK, muutettu CodeValueType:ksi -->
                     <ExaminationType>
                         <Title xml:lang="fi">Pääsy- ja soveltuvuuskoe</Title>
                     </ExaminationType>
 
-                    <!-- yhden valintakokeen kuvaus -->
+                    <!-- OK -->
                     <Description xml:lang="fi">
                         Lorem Lipsum
                     </Description>
@@ -743,20 +366,23 @@
                     <!-- valintakoe tapahtuma -->
                     <ExaminationEvent>
 
-                        <!-- aloitusaika -->
+                        <!-- OK -->
                         <Start>2013-09-20T10:00:00</Start>
 
-                        <!-- päättymisaika -->
+                        <!-- OK -->
                         <End>2013-09-20T14:00:00</End>
 
                         <!-- sijainnit jossa tapahtuma järjestetään -->
                         <Locations>
 
-                            <!-- nimetty sijainti -->
                             <Location>
+                                <!-- EI -->
                                 <Name>Aalto Auditorio</Name>
+                                <!-- OK -->
                                 <AddressLine>Mannerheimintie 3</AddressLine>
+                                <!-- OK -->
                                 <PostalCode>00100</PostalCode>
+                                <!-- OK -->
                                 <City>Helsinki</City>
                             </Location>
 
@@ -773,13 +399,13 @@
 
                 <Attachment>
 
-                    <!-- liitteen tyyppi -->
+                    <!-- OK. muutettu CodeValueType -->
                     <Type>
                         <Value>LT1</Value>
                         <Label>Ennakkotehtävä</Label>
                     </Type>
 
-                    <!-- vapaa kuvaus -->
+                    <!-- OK -->
                     <Description>
                         <Text xml:lang="fi">
                             Liitteen sanallinen kuvaus hakijalle.
@@ -794,7 +420,10 @@
 
                         <!-- palautusosoite -->
                         <To>
+                            <!-- OK -->
                             <EmailAddress>palauta.liite@koulu.edu.fi</EmailAddress>
+
+
                             <PostalAddress>
                                 <Company>Helsingin sosiaali- ja terveysalan oppilaitos, Laakson koulutusyksikkö</Company>
                                 <AddressLine>Mannerheimintie 3</AddressLine>
@@ -812,176 +441,17 @@
 
         </SelectionCriterions>
 
-        <!-- hakukohteeseen kuuluvat koulutusmoduulin toteutukset -->
+        <!-- OK: oid -->
         <LearningOpportunities>
             <InstanceRef ref="I1508YO"/>
         </LearningOpportunities>
 
-        <!-- hakukohteen vapaamuotoinen kuvaus -->
+        <!-- OK -->
         <Description xml:lang="fi">
             Lorem Lipsum
         </Description>
 
     </ApplicationOption>
 
-
-    <!-- ========================================================================================= -->
-    <!-- Hakukohde: Sosiaali- ja terveysalan perustutkinto, pk                                     -->
-    <!-- ========================================================================================= -->
-
-    <ApplicationOption>
-
-        <!-- hakukohteen yksilöivä tunniste (missä scopessa?) -->
-        <Identifier>873</Identifier>
-
-        <!-- hakukohteen nimi -->
-        <Title xml:lang="fi">Sosiaali- ja terveysalan perustutkinto, pk</Title>
-
-        <!-- viittaus hakuun johon tämä hakukohde kuuluu -->
-        <ApplicationSystemRef>
-            <!--
-            Haun nimi: toisen asteen yhteishaku, kevät 2014
-            -->
-            <!-- viittaus haun julkisella ja yksilöivällä OID:lla  -->
-            <OidRef>1.2.3.4.5</OidRef>
-
-        </ApplicationSystemRef>
-
-        <!-- hakukelpoisuus vaatimukset -->
-        <EligibilityRequirements>
-
-            <!-- vapaasti kuvattu vaatimus suomeksi -->
-            <Description xml:lang="fi">
-                peruskoulu/yo-pohjaisiin kohteisiin lukio
-            </Description>
-
-        </EligibilityRequirements>
-
-        <!-- valintaperusteet -->
-        <SelectionCriterions>
-
-            <!-- aloituspaikkojen määrä -->
-            <StartingQuota>100</StartingQuota>
-
-            <!-- edellisen vuoden alin hyväksytty pistemäärä -->
-            <LastYearMinScore>20</LastYearMinScore>
-
-            <!-- edellisen vuoden ylin hyväksytty pistemäärä -->
-            <LastYearMaxScore>30</LastYearMaxScore>
-
-            <!-- edellisen vuoden hakijoiden määrä -->
-            <LastYearTotalApplicants>300</LastYearTotalApplicants>
-
-            <!-- vapaa kuvaus -->
-            <Description xml:lang="fi">
-                Lorem Lipsum
-            </Description>
-
-            <!-- valintakokeet -->
-            <EntranceExaminations>
-
-                <!-- yleinen kuvaus -->
-                <Description xml:lang="fi">
-                    Vapaamuotoinen kuvaus kaikista valintakokeista.
-                </Description>
-
-                <!-- valintakoe -->
-                <Examination>
-
-                    <!-- valintakoe tyyppi -->
-                    <ExaminationType>
-                        <Title xml:lang="fi">Pääsy- ja soveltuvuuskoe</Title>
-                    </ExaminationType>
-
-                    <!-- yhden valintakokeen kuvaus -->
-                    <Description xml:lang="fi">
-                        Lorem Lipsum
-                    </Description>
-
-                    <!-- valintakoe tapahtuma -->
-                    <ExaminationEvent>
-
-                        <!-- aloitusaika -->
-                        <Start>2013-09-20T10:00:00</Start>
-
-                        <!-- päättymisaika -->
-                        <End>2013-09-20T14:00:00</End>
-
-                        <!-- sijainnit jossa tapahtuma järjestetään -->
-                        <Locations>
-
-                            <!-- nimetty sijainti -->
-                            <Location>
-                                <Name>Aalto Auditorio</Name>
-                                <AddressLine>Mannerheimintie 3</AddressLine>
-                                <PostalCode>00100</PostalCode>
-                                <City>Helsinki</City>
-                            </Location>
-
-                        </Locations>
-
-                    </ExaminationEvent>
-
-                </Examination>
-
-            </EntranceExaminations>
-
-            <!-- vaaditut liitteet -->
-            <Attachments>
-
-                <Attachment>
-
-                    <!-- liitteen tyyppi -->
-                    <Type>
-                        <Value>LT1</Value>
-                        <Label>Ennakkotehtävä</Label>
-                    </Type>
-
-                    <!-- vapaa kuvaus -->
-                    <Description>
-                        <Text xml:lang="fi">
-                            Liitteen sanallinen kuvaus hakijalle.
-                        </Text>
-                    </Description>
-
-                    <!-- liitteen palautus -->
-                    <Return>
-
-                        <!-- viimeinen palautuspäivä -->
-                        <DueDate>2013-04-05T00:00:00</DueDate>
-
-                        <!-- palautusosoite -->
-                        <To>
-                            <EmailAddress>palauta.liite@koulu.edu.fi</EmailAddress>
-                            <PostalAddress>
-                                <Company>Helsingin sosiaali- ja terveysalan oppilaitos, Laakson koulutusyksikkö</Company>
-                                <AddressLine>Mannerheimintie 3</AddressLine>
-                                <PostalCode>00100</PostalCode>
-                                <City>Helsinki</City>
-                            </PostalAddress>
-                        </To>
-
-                    </Return>
-
-                </Attachment>
-
-            </Attachments>
-
-
-        </SelectionCriterions>
-
-        <!-- hakukohteeseen kuuluvat koulutusmoduulien toteutukset -->
-        <LearningOpportunities>
-            <InstanceRef ref="I1508PK"/>
-            <InstanceRef ref="I1514PK"/>
-            <InstanceRef ref="I1598PK"/>
-        </LearningOpportunities>
-
-        <!-- hakukohteen vapaamuotoinen kuvaus -->
-        <Description xml:lang="fi">
-            Lorem Lipsum
-        </Description>
-
-    </ApplicationOption>
 
 </LearningOpportunityDownloadData>
