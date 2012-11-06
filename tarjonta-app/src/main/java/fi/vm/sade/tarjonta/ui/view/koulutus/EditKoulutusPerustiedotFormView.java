@@ -504,15 +504,14 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         if (propertyKey == null) {
             throw new RuntimeException("Application error - label caption cannot be null!");
         }
-        HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.RIGHT);
-        layout.setSizeFull();
-        Label label = new Label(T(propertyKey));
-        label.setSizeUndefined();
-        layout.addComponent(label);
-        layout.setComponentAlignment(label, Alignment.TOP_RIGHT);
-        grid.addComponent(layout);
-
-        return layout;
+        HorizontalLayout hl = UiUtil.horizontalLayout(false, UiMarginEnum.RIGHT);
+        hl.setSizeFull();
+        Label labelValue = UiUtil.label(hl, T(propertyKey));
+        labelValue.setSizeFull();
+        grid.addComponent(hl);
+        grid.setComponentAlignment(hl, Alignment.TOP_RIGHT);
+        grid.setComponentAlignment(labelValue, Alignment.TOP_LEFT);;
+        return hl;
     }
 
     private void showOnlySelectedFormComponents() {
