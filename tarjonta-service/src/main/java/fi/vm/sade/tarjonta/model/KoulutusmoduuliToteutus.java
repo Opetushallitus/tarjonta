@@ -39,7 +39,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private static final long serialVersionUID = -1278564574746813425L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "koulutusmoduuli_id", nullable=false)
+    @JoinColumn(name = "koulutusmoduuli_id", nullable = false)
     private Koulutusmoduuli koulutusmoduuli;
 
     @Column(name = "tarjoaja")
@@ -126,11 +126,16 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinColumn(name = "loppukoevaatimukset")
     private MonikielinenTeksti loppukoeVaatimukset;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "pohjakoulutusvaatimus")
+    private MonikielinenTeksti pohjakoulutusvaatimus;
+
     /*
      * Koulutuksen Lisatiedot  (additional information)
      */
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = TABLE_NAME + "_ammattinimike", joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
+    @CollectionTable(name = TABLE_NAME + "_ammattinimike", joinColumns =
+    @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> ammattinimikes = new HashSet<KoodistoUri>();
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -152,7 +157,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "yhteistyomuidentoimijoidenkanssa")
     private MonikielinenTeksti yhteistyoMuidenToimijoidenKanssa;
-
 
     public KoulutusmoduuliToteutus() {
         super();
@@ -523,6 +527,26 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void setLoppukoeVaatimukset(MonikielinenTeksti loppukoeVaatimukset) {
         this.loppukoeVaatimukset = loppukoeVaatimukset;
+    }
+
+    /**
+     * Koulutukselle määritelty vaatimus, jonka mukaan hakijalla (1) on oltava tietty pohjakoulutus
+     * voidakseen tulla valituksi kyseiseen koulutukseen. Pohjakoulutusvaatimuksen täyttäminen on
+     * yksi hakukelpoisuuden edellytyksistä. Koulutuksen järjestäjät ja korkeakoulut voivat valita
+     * hakijoita (1) opiskelijoiksi myös ilman pohjakoulutusvaatimusta, ks. joustava valinta.
+     *
+     * @return
+     */
+    public MonikielinenTeksti getPohjakoulutusvaatimus() {
+        return pohjakoulutusvaatimus;
+    }
+
+    /**
+     * @see #getPohjakoulutusvaatimus()
+     * @param pohjakoulutusvaatimus
+     */
+    public void setPohjakoulutusvaatimus(MonikielinenTeksti pohjakoulutusvaatimus) {
+        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
     }
 
     /**

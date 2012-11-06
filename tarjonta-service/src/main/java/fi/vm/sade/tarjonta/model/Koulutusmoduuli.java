@@ -439,24 +439,20 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     public String getLaajuusYksikko() {
         return laajuusYksikko;
     }
-    
+
+
     /**
-     * Asettaa laajuuden arvon.
+     * Koulutuksen laajuus. yksikkoUri on Koodisto uri joka kertoo laajuuden yksikon kuten "vuosi", "kuukausi" "opintojakso".
+     * Arvo on arvo edellämainitussa yksikössä.
      *
-     * @return
+     * @param yksikkoUri
+     * @param arvo
      */
-    public void setLaajuusArvo(String arvo) {
+    public void setLaajuus(String yksikkoUri, String arvo) {
+        laajuusYksikko = yksikkoUri;
         laajuusArvo = arvo;
     }
 
-    /**
-     * Asettaa laajusyksikon arvon.
-     *
-     * @return
-     */
-    public void setLaajuusYksikko(String yksikko) {
-        laajuusYksikko = yksikko;
-    }
 
     /**
      * Tutkintonimike, esim. "filosofian maisteri". Arvo koodisto uri?
@@ -466,14 +462,16 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     public String getTutkintonimike() {
         return tutkintonimike;
     }
-    
+
+
     /**
-     * Asettaa tutkintonimikkeen.
+     * Tutkintonimike Koodisto uri:na.
      *
-     * @return
+     * @see #getTutkintonimike()
+     * @param koodistoUri
      */
-    public void setTutkintonimike(String nimike) {
-        tutkintonimike = nimike;
+    public void setTutkintonimike(String koodistoUri) {
+        this.tutkintonimike = koodistoUri;
     }
 
     /**

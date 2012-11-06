@@ -71,10 +71,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Autowired
     private KoulutusBusinessService koulutusBusinessService;
-    
+
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-    
+
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
@@ -86,7 +86,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Autowired
     private ConversionService conversionService;
-    
+
      @Autowired
     private YhteyshenkiloDAO yhteyshenkiloDAO;
 
@@ -113,7 +113,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) {
         Hakukohde hakuk = conversionService.convert(hakukohde, Hakukohde.class);
         Haku haku = hakuDAO.findByOid(hakukohde.getHakukohteenHakuOid());
-        
+
         hakuk.setHaku(haku);
         hakuk = hakukohdeDAO.insert(hakuk);
         hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(),hakuk));
@@ -123,13 +123,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids, Hakukohde hakukohde) {
         Set<KoulutusmoduuliToteutus> komotos = new HashSet<KoulutusmoduuliToteutus>();
-        
+
         for (String komotoOid : komotoOids) {
             KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
             komoto.addHakukohde(hakukohde);
             komotos.add(komoto);
         }
-        
+
         return komotos;
     }
 
@@ -193,13 +193,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 		this.koulutusmoduuliToteutusDAO.remove(komoto);
 		removeOrphanHakukohteet();
 	}
-	
+
 	private void removeOrphanHakukohteet() {
 		for (Hakukohde curHakukohde : this.hakukohdeDAO.findOrphanHakukohteet()) {
 			this.hakukohdeDAO.remove(curHakukohde);
 		}
 	}
-       
+
 
     /**
      * Remove once koodisto has proper data.
@@ -213,7 +213,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             log.warn("initializing tarjonta data threw exception", e);
         }
     }
-    
+
 	@Override
 	public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli)
 			throws GenericFault {
@@ -221,15 +221,14 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 		komo.setOid(koulutusmoduuli.getOid());
 		komo.setKoulutusKoodi(koulutusmoduuli.getKoulutuskoodiUri());
 		komo.setKoulutusohjelmaKoodi(koulutusmoduuli.getKoulutusohjelmakoodiUri());
-		komo.setLaajuusYksikko(koulutusmoduuli.getLaajuusyksikkoUri());
-		komo.setLaajuusArvo(koulutusmoduuli.getLaajuusarvo());
+        komo.setLaajuus(koulutusmoduuli.getLaajuusyksikkoUri(), koulutusmoduuli.getLaajuusarvo());
 		komo.setTutkintoOhjelmanNimi(koulutusmoduuli.getTutkintoOhjelmaUri());
 		komo.setTutkintonimike(koulutusmoduuli.getTutkintonimikeUri());
 		komo.setUlkoinenTunniste(koulutusmoduuli.getUlkoinenTunniste());
 		koulutusmoduuliDAO.insert(komo);
 		return koulutusmoduuli;
 	}
-    
+
 
 
     private List<HakuTyyppi> convert(List<Haku> haut) {

@@ -187,6 +187,11 @@ public class TarjontaSampleData {
         m.setNqfLuokitus(randomKoodiUri("ngf"));
         m.setOmistajaOrganisaatioOid(randomOid("organisaatio"));
         m.setTila(TarjontaTila.VALMIS);
+        m.setLaajuus(randomKoodiUri("opintojenlaajuus"), "20");
+        m.setTutkintonimike(randomKoodiUri("tutkintonimike"));
+        m.setKoulutuksenRakenne(createMonikielinenTeksti("Koulutuksen rakenne...", null, "Structure of education..."));
+        m.setJatkoOpintoMahdollisuudet(createMonikielinenTeksti("Jatko-opintomahdollisuudet", null, "Access to further studies..."));
+        m.setUlkoinenTunniste("KM5024623.4");
 
         return m;
 
@@ -204,6 +209,8 @@ public class TarjontaSampleData {
         t.addOpetuskieli(new KoodistoUri(randomKoodiUri("kieli")));
         t.addOpetusmuoto(new KoodistoUri(randomKoodiUri("opetusmuoto")));
         t.setNimi("Demonimi " + System.currentTimeMillis());
+        t.setUlkoinenTunniste("KMT637832.3");
+        t.setPohjakoulutusvaatimus(createMonikielinenTeksti("Pohjakoulutusvaatimus...", null, "Prerequisite..."));
 
         return t;
 

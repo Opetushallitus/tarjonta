@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.publication;
 
-import com.sun.xml.bind.IDResolver;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -23,6 +22,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBContext;
@@ -36,6 +39,9 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 
+import org.xml.sax.SAXException;
+import com.sun.xml.bind.IDResolver;
+
 import fi.vm.sade.tarjonta.publication.types.*;
 import fi.vm.sade.tarjonta.publication.types.CodeValueType.Code;
 import fi.vm.sade.tarjonta.publication.types.LearningOpportunitySpecificationType.Classification;
@@ -48,14 +54,10 @@ import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.types.AttachmentCollectionType.Attachment;
 import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType.EntranceExaminations.Examination;
 import fi.vm.sade.tarjonta.publication.types.WebLinkCollectionType.Link;
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import org.xml.sax.SAXException;
 
 /**
- * Stream based writer. Writes data using JAXB classes generated from Tarjonta "publication" schema.
+ * Implements {@link PublicationCollector.EventHandler} by writing all encountered
+ * published entities as "Pubication XML". Data is written to stream as the events occur.
  *
  * @author Jukka Raanamo
  */
@@ -75,12 +77,27 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     private static DatatypeFactory datatypeFactory;
 
+    /**
+     * Root element gets written manually.
+     */
     private String rootElementName = DEFAULT_ROOT_ELEMENT_NAME;
 
+    /**
+     * When using ID and IDREF -types with JAXB, the actual object being referenced needs to be put into
+     * the "ref" field. This is problematic since we need to obtain instance to an element that we'd
+     * otherwise had forgotten already. This makes this writer statefull which is no good. Custom IDResolver
+     * was attempted to work around this issue but Marshaller does not seem to accept one. One way is to
+     * stop using ID and IDREF types, another is to use more low level writing.
+     */
     private Map<String, Object> idRefMap = new HashMap<String, Object>();
 
     private static final Logger log = LoggerFactory.getLogger(LearningOpportunityJAXBWriter.class);
 
+    /**
+     * Constructs new writer and initializes JAXBContext. Cannot be reused.
+     *
+     * @throws JAXBException
+     */
     public LearningOpportunityJAXBWriter() throws JAXBException {
 
         final String packageName = LearningOpportunityDownloadDataType.class.getPackage().getName();
@@ -97,7 +114,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 
-        // not supported
+        // hmm... not supported
         //marshaller.setProperty("com.sun.xml.bind.IDResolver", new CustomIDResolver());
 
 
@@ -169,7 +186,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         final ApplicationSystemType applicationSystem = objectFactory.createApplicationSystemType();
 
         // ApplicationSystem/Name
-        copyFields(haku.getNimi(), applicationSystem.getName());
+        copyTexts(haku.getNimi(), applicationSystem.getName());
 
         marshal(ApplicationSystemType.class, applicationSystem);
 
@@ -207,11 +224,162 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         // ApplicationOption/LearningOpportunities
         addKoulutukset(hakukohde, applicationOption);
 
-        copyFields(hakukohde.getLisatiedot(), applicationOption.getDescription());
+        copyTexts(hakukohde.getLisatiedot(), applicationOption.getDescription());
 
         marshal(ApplicationOptionType.class, applicationOption);
 
         log.debug("marshalled Hakukohde, oid: " + hakukohde.getOid());
+
+    }
+
+    @Override
+    public void onCollect(Koulutusmoduuli moduuli) throws Exception {
+
+        LearningOpportunitySpecificationType specification = objectFactory.createLearningOpportunitySpecificationType();
+
+        if (moduuli.getModuuliTyyppi() != KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA) {
+            throw new Exception("KoulutusmoduuliTyyppi not supported: " + moduuli.getModuuliTyyppi());
+        }
+
+        // LearningOpportunitySpecification/type
+        specification.setType(LearningOpportunityTypeType.DEGREE_PROGRAMME);
+
+        // LearningOpportunitySpecification/id
+        specification.setId(putID(moduuli.getOid(), specification));
+
+        // LearningOpportunitySpecification/Name
+        // todo: how is the name formulated?
+
+        if (moduuli.getUlkoinenTunniste() != null) {
+            specification.setIdentifier(moduuli.getUlkoinenTunniste());
+        }
+
+        // LearningOpportunitySpecification/OrganizationRef
+        OrganizationRefType organizationRef = new OrganizationRefType();
+        organizationRef.setOidRef(moduuli.getOmistajaOrganisaatioOid());
+        specification.setOrganizationRef(organizationRef);
+
+        // LearningOpportunitySpecification/OfferedBy
+        specification.setOfferedBy(null);
+
+        // LearningOpportunitySpecification/Credits
+        if (moduuli.getLaajuusArvo() != null) {
+            CreditsType credits = new CreditsType();
+            credits.setUnit(moduuli.getLaajuusYksikko());
+            credits.setValue(moduuli.getLaajuusArvo());
+            specification.setCredits(credits);
+        }
+
+        // LearningOpportunitySpecification/Qualification
+        if (moduuli.getTutkintonimike() != null) {
+            QualificationType qualification = new QualificationType();
+            qualification.setCode(moduuli.getTutkintonimike());
+            specification.setQualification(qualification);
+        }
+
+        // LearningOpportunitySpecification/DegreeTitle
+        specification.setDegreeTitle(createExtendedString(moduuli.getTutkintoOhjelmanNimi()));
+
+        // LearningOpportunitySpecification/Classification
+        Classification classification = new Classification();
+        specification.setClassification(classification);
+
+        addKoulutusluokitus(moduuli, classification);
+        addKoulutusala(moduuli, classification);
+        addKoulutusaste(moduuli, classification);
+        addOpintoala(moduuli, classification);
+        addEqf(moduuli, classification);
+        addNqf(moduuli, classification);
+
+        // LearningOpportunitySpecification/Description
+        Description description = new Description();
+        specification.setDescription(description);
+
+        // LearningOpportunitySpecification/Description/StructureDiagram
+        addKoulutuksenRakenne(moduuli, description);
+
+        // LearningOpportunitySpecification/Description/AccessToFurtherStudies
+        addJatkoOpintoMahdollisuudet(moduuli, description);
+
+        marshal(LearningOpportunitySpecificationType.class, specification);
+
+        log.debug("marshalledKoulutusmoduuli, oid: " + moduuli.getOid());
+
+    }
+
+    @Override
+    public void onCollect(KoulutusmoduuliToteutus toteutus) throws Exception {
+
+        log.debug("processing KoulutusmoduuliToteutus, oid: " + toteutus.getOid());
+
+        LearningOpportunityInstanceType instance = new LearningOpportunityInstanceType();
+
+        // LearningOpportunityInstance#id
+        instance.setId(putID(toteutus.getOid(), instance));
+
+        // LearningOpportunityInstance/Identifier
+        if (toteutus.getUlkoinenTunniste() != null) {
+            instance.setIdentifier(toteutus.getUlkoinenTunniste());
+        }
+
+        // LearningOpportunityInstance/SpecificationRef
+        LearningOpportunitySpecificationRefType losRef = new LearningOpportunitySpecificationRefType();
+        losRef.setRef(getIDREF(toteutus.getKoulutusmoduuli().getOid()));
+        instance.setSpecificationRef(losRef);
+
+        // LearningOpportunityInstance/OrganizationRef
+        OrganizationRefType orgRef = new OrganizationRefType();
+        orgRef.setOidRef(toteutus.getTarjoaja());
+        instance.setOrganizationRef(orgRef);
+
+        // LearningOpportunityInstance/Prerequisite
+        addPohjakoulutusvaatimus(toteutus, instance);
+
+        // LearningOpportunityInstance/ProfessionLabels
+        addAmmattinimikkeet(toteutus, instance);
+
+        // LearningOpportunityInstance/Keywords
+        addAvainsanat(toteutus, instance);
+
+        // LearningOpportunityInstance/LanguagesOfInsruction
+        addOpetuskielet(toteutus, instance);
+
+        // LearningOpportunityInstance/FormOfEducation
+        addKoulutuslajit(toteutus, instance);
+
+        // LearningOpportunityInstance/FormOfTeaching
+        addOpetusmuodot(toteutus, instance);
+
+        // LearningOpportunityInstance/StartDate
+        instance.setStartDate((toteutus.getKoulutuksenAlkamisPvm()));
+
+        // LearningOpportunityInstance/AcademicYear
+        instance.setAcademicYear(formatAcademicYear(toteutus.getKoulutuksenAlkamisPvm()));
+
+        // LearningOpportunityInstance/Duration
+        instance.setDuration(formatDuration(toteutus.getSuunniteltuKestoYksikko(), toteutus.getSuunniteltuKestoArvo()));
+
+        // LearningOpportunityInstance/Assessments
+        addAssessments(toteutus, instance);
+
+        // LearningOpportunityInstance/FinalExamination
+        addLoppukoeVaatimukset(toteutus, instance);
+
+        // LearningOpportunityInstance/CostOfEducation
+        addMaksullisuus(toteutus, instance);
+
+        // LearningOpportunityInstance/WebLinks
+        addLinkit(toteutus, instance);
+
+        marshal(LearningOpportunityInstanceType.class, instance);
+
+        log.debug("marshalled KoulutusmoduuliToteutus, oid: " + toteutus.getOid());
+
+    }
+
+    private void addPohjakoulutusvaatimus(KoulutusmoduuliToteutus source, LearningOpportunityInstanceType target) {
+
+        copyTexts(source.getPohjakoulutusvaatimus(), target.getPrerequisite());
 
     }
 
@@ -251,7 +419,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             criterions.setLastYearTotalApplicants(BigInteger.valueOf(source.getEdellisenVuodenHakijat()));
         }
 
-        copyFields(source.getValintaperusteKuvaus(), criterions.getDescription());
+        copyTexts(source.getValintaperusteKuvaus(), criterions.getDescription());
 
         addValintakokeet(source, criterions);
         addLiitteet(source, criterions);
@@ -267,7 +435,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
         SelectionCriterionsType.EntranceExaminations exams = new SelectionCriterionsType.EntranceExaminations();
 
-        copyFields(source.getValintaperusteKuvaus(), exams.getDescription());
+        copyTexts(source.getValintaperusteKuvaus(), exams.getDescription());
 
         for (Valintakoe sourceExamination : valintakoes) {
 
@@ -298,7 +466,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             attachment.setType(createCodeValue(CodeSchemeType.KOODISTO, liite.getLiitetyyppi()));
 
             LocalizedTextType description = new LocalizedTextType();
-            copyFields(liite.getKuvaus(), description.getText());
+            copyTexts(liite.getKuvaus(), description.getText());
             attachment.setDescription(description);
 
             Attachment.Return returnSpec = new Attachment.Return();
@@ -330,7 +498,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         target.setExaminationType(createCodeValue(CodeSchemeType.KOODISTO, source.getTyyppiUri()));
 
         // ApplicationOption/.../Examination/Description
-        copyFields(source.getKuvaus(), target.getDescription());
+        copyTexts(source.getKuvaus(), target.getDescription());
 
         Set<ValintakoeAjankohta> ajankohtas = source.getAjankohtas();
         if (ajankohtas != null && !ajankohtas.isEmpty()) {
@@ -392,152 +560,6 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             eligibilityRequirements.getDescription().add(targetString);
 
         }
-
-    }
-
-    @Override
-    public void onCollect(Koulutusmoduuli moduuli) throws Exception {
-
-        LearningOpportunitySpecificationType specification = objectFactory.createLearningOpportunitySpecificationType();
-
-        if (moduuli.getModuuliTyyppi() != KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA) {
-            throw new Exception("KoulutusmoduuliTyyppi not supported: " + moduuli.getModuuliTyyppi());
-        }
-
-        // LearningOpportunitySpecification/type
-        specification.setType(LearningOpportunityTypeType.DEGREE_PROGRAMME);
-
-        // LearningOpportunitySpecification/id
-        specification.setId(putID(moduuli.getOid(), specification));
-
-        // LearningOpportunitySpecification/Name
-        // todo: how is the name formulated?
-
-        if (moduuli.getUlkoinenTunniste() != null) {
-            specification.setIdentifier(moduuli.getUlkoinenTunniste());
-        }
-
-        // LearningOpportunitySpecification/OrganizationRef
-        OrganizationRefType organizationRef = new OrganizationRefType();
-        organizationRef.setOidRef(moduuli.getOmistajaOrganisaatioOid());
-        specification.setOrganizationRef(organizationRef);
-
-        // LearningOpportunitySpecification/OfferedBy
-        specification.setOfferedBy(null);
-
-        // LearningOpportunitySpecification/Credits
-        if (moduuli.getLaajuusArvo() != null) {
-            CreditsType credits = new CreditsType();
-            credits.setUnit(moduuli.getLaajuusYksikko());
-            credits.setValue(moduuli.getLaajuusArvo());
-            specification.setCredits(credits);
-        }
-
-        // LearningOpportunitySpecification/Qualification
-        if (moduuli.getTutkintonimike() != null) {
-            QualificationType qualification = new QualificationType();
-            qualification.setCode(moduuli.getTutkintonimike());
-            specification.setQualification(qualification);
-        }
-
-        // LearningOpportunitySpecification/DegreeTitle
-        specification.setDegreeTitle(createExtendedString(moduuli.getTutkintonimike()));
-
-        // LearningOpportunitySpecification/Classification
-        Classification classification = new Classification();
-        specification.setClassification(classification);
-
-        addKoulutusluokitus(moduuli, classification);
-        addKoulutusala(moduuli, classification);
-        addKoulutusaste(moduuli, classification);
-        addOpintoala(moduuli, classification);
-        addEqf(moduuli, classification);
-        addNqf(moduuli, classification);
-
-
-        // LearningOpportunitySpecification/Description
-        Description description = new Description();
-        specification.setDescription(description);
-
-        // LearningOpportunitySpecification/Description/StructureDiagram
-        addKoulutuksenRakenne(moduuli, description);
-
-        // LearningOpportunitySpecification/Description/AccessToFurtherStudies
-        addJatkoOpintoMahdollisuudet(moduuli, description);
-
-
-        marshal(LearningOpportunitySpecificationType.class, specification);
-
-        log.debug("marshalledKoulutusmoduuli, oid: " + moduuli.getOid());
-
-
-
-    }
-
-    @Override
-    public void onCollect(KoulutusmoduuliToteutus toteutus) throws Exception {
-
-        log.debug("processing KoulutusmoduuliToteutus, oid: " + toteutus.getOid());
-
-        LearningOpportunityInstanceType instance = new LearningOpportunityInstanceType();
-
-        // LearningOpportunityInstance#id
-        instance.setId(putID(toteutus.getOid(), instance));
-
-        // LearningOpportunityInstance/Identifier
-        if (toteutus.getUlkoinenTunniste() != null) {
-            instance.setIdentifier(toteutus.getUlkoinenTunniste());
-        }
-
-        // LearningOpportunityInstance/SpecificationRef
-        LearningOpportunitySpecificationRefType losRef = new LearningOpportunitySpecificationRefType();
-        losRef.setRef(getIDREF(toteutus.getKoulutusmoduuli().getOid()));
-        instance.setSpecificationRef(losRef);
-
-        // LearningOpportunityInstance/OrganizationRef
-        OrganizationRefType orgRef = new OrganizationRefType();
-        orgRef.setOidRef(toteutus.getTarjoaja());
-        instance.setOrganizationRef(orgRef);
-
-        // LearningOpportunityInstance/ProfessionLabels
-        addAmmattinimikkeet(toteutus, instance);
-
-        // LearningOpportunityInstance/Keywords
-        addAvainsanat(toteutus, instance);
-
-        // LearningOpportunityInstance/LanguagesOfInsruction
-        addOpetuskielet(toteutus, instance);
-
-        // LearningOpportunityInstance/FormOfEducation
-        addKoulutuslajit(toteutus, instance);
-
-        // LearningOpportunityInstance/FormOfTeaching
-        addOpetusmuodot(toteutus, instance);
-
-        // LearningOpportunityInstance/StartDate
-        instance.setStartDate((toteutus.getKoulutuksenAlkamisPvm()));
-
-        // LearningOpportunityInstance/AcademicYear
-        instance.setAcademicYear(formatAcademicYear(toteutus.getKoulutuksenAlkamisPvm()));
-
-        // LearningOpportunityInstance/Duration
-        instance.setDuration(formatDuration(toteutus.getSuunniteltuKestoYksikko(), toteutus.getSuunniteltuKestoArvo()));
-
-        // LearningOpportunityInstance/Assessments
-        addAssessments(toteutus, instance);
-
-        // LearningOpportunityInstance/FinalExamination
-        addLoppukoeVaatimukset(toteutus, instance);
-
-        // LearningOpportunityInstance/CostOfEducation
-        addMaksullisuus(toteutus, instance);
-
-        // LearningOpportunityInstance/WebLinks
-        addLinkit(toteutus, instance);
-
-        marshal(LearningOpportunityInstanceType.class, instance);
-
-        log.debug("marshalled KoulutusmoduuliToteutus, oid: " + toteutus.getOid());
 
     }
 
@@ -610,7 +632,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             FinalExaminationCollectionType examinations = new FinalExaminationCollectionType();
             target.setFinalExamination(examinations);
 
-            copyFields(teksti, examinations.getDescription());
+            copyTexts(teksti, examinations.getDescription());
         }
 
     }
@@ -621,7 +643,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
         if (tekstis != null && !tekstis.getTekstis().isEmpty()) {
             AssessmentCollectionType assessments = new AssessmentCollectionType();
-            copyFields(tekstis, assessments.getAssessment());
+            copyTexts(tekstis, assessments.getAssessment());
         }
 
     }
@@ -649,17 +671,24 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     private void addKoulutuksenRakenne(Koulutusmoduuli moduuli, Description target) {
 
-        copyFields(moduuli.getKoulutuksenRakenne(), target.getStructureDiagram());
+        copyTexts(moduuli.getKoulutuksenRakenne(), target.getStructureDiagram());
 
     }
 
     private void addJatkoOpintoMahdollisuudet(Koulutusmoduuli moduuli, Description target) {
 
-        copyFields(moduuli.getJatkoOpintoMahdollisuudet(), target.getAccessToFurtherStudies());
+        copyTexts(moduuli.getJatkoOpintoMahdollisuudet(), target.getAccessToFurtherStudies());
 
     }
 
-    private void copyFields(MonikielinenTeksti source, List<ExtendedStringType> target) {
+    /**
+     * Helper method that copies all translated texts from the source format to target format.
+     * Null source object is silently ignored.
+     *
+     * @param source
+     * @param target
+     */
+    private void copyTexts(MonikielinenTeksti source, List<ExtendedStringType> target) {
 
         if (source != null) {
             for (TekstiKaannos teksti : source.getTekstis()) {
@@ -786,6 +815,12 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     }
 
+    /**
+     * Formats year with four digits.
+     *
+     * @param date
+     * @return
+     */
     private static String formatAcademicYear(Date date) {
 
         return new SimpleDateFormat("yyyy").format(date);
@@ -858,7 +893,9 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         return value;
     }
 
-
+    /**
+     * Unable to register this with Marshaller. Don't know if this is supported.
+     */
     private static class CustomIDResolver extends IDResolver {
 
         @Override
@@ -871,9 +908,8 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-
-
     }
+
 
 }
 
