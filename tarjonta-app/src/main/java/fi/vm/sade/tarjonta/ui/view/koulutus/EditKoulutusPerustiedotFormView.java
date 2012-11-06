@@ -143,11 +143,27 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 //    @PropertyId("kielivalikoima")
 //    private KoodistoComponent kcKielivalikoima;
 
+    /*
+     * 
+     * TODO: fix this
+     * KOMO HACK
+     * 
+     * 
+     * 
+     */
+    @PropertyId("tutkintonimike")
+    private KoodistoComponent kcTutkintonimike;
+    @PropertyId("opintojenLaajuusyksikko")
+    private KoodistoComponent kcOpintojenLaajuusyksikko;
+    @PropertyId("opintojenLaajuus")
+    private KoodistoComponent kcOpintojenLaajuus;
+
     public EditKoulutusPerustiedotFormView() {
     }
 
     public EditKoulutusPerustiedotFormView(TarjontaPresenter presenter, KoulutusToisenAsteenPerustiedotViewModel model) {
         super(2, 1);
+        setSpacing(true);
         selectedComponents = new EnumMap<KoulutusasteType, Set<Component>>(KoulutusasteType.class);
         this.presenter = presenter;
         this.koulutusModel = model;
@@ -213,24 +229,22 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
     private void initializeLayout() {
         LOG.info("initilizeLayout()");
-        this.setSizeFull();
         this.setColumnExpandRatio(0, 10l);
         this.setColumnExpandRatio(1, 20l);
 
         buildGridDemoSelectRow(this, "ValitseLomakepohja");
-
         buildGridKoulutusRow(this, "KoulutusTaiTutkinto");
         buildGridKoulutusohjelmaRow(this, "Koulutusohjelma");
 
         //Build a label section, the data for labels are
         //received from koodisto (KOMO).
+        gridLabelRow(this, "opintoala");
         gridLabelRow(this, "koulutuksenTyyppi");
         gridLabelRow(this, "koulutusala");
-        gridLabelRow(this, "tutkinto");
-        gridLabelRow(this, "tutkintonimike");
-        gridLabelRow(this, "opintojenLaajuusyksikko");
-        gridLabelRow(this, "opintojenLaajuus");
-        gridLabelRow(this, "opintoala");
+        
+        buildTutkintonimike(this, "tutkinto");
+        buildOpintojenLaajuusyksikko(this, "opintojenLaajuusyksikko");
+        buildOpintojenLaajuus(this, "opintojenLaajuus");
 
         buildGridOpetuskieliRow(this, "Opetuskieli");
         buildGridDatesRow(this, "KoulutuksenAlkamisPvm");
@@ -274,7 +288,42 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         grid.addComponent(cbKoulutusaste);
         grid.newLine();
         buildSpacingGridRow(grid);
+    }
 
+    private void buildOpintojenLaajuusyksikko(GridLayout grid, final String propertyKey) {
+        if (propertyKey == null) {
+            throw new RuntimeException("Application error - label caption cannot be null!");
+        }
+        gridLabel(grid, propertyKey);
+        kcOpintojenLaajuusyksikko = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
+        kcOpintojenLaajuusyksikko.setReadOnly(koulutusModel.isLoaded());
+        grid.addComponent(kcOpintojenLaajuusyksikko);
+        grid.newLine();
+        buildSpacingGridRow(grid);
+    }
+
+    private void buildTutkintonimike(GridLayout grid, final String propertyKey) {
+        if (propertyKey == null) {
+            throw new RuntimeException("Application error - label caption cannot be null!");
+        }
+        gridLabel(grid, propertyKey);
+        kcTutkintonimike = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
+        kcTutkintonimike.setReadOnly(koulutusModel.isLoaded());
+        grid.addComponent(kcTutkintonimike);
+        grid.newLine();
+        buildSpacingGridRow(grid);
+    }
+
+    private void buildOpintojenLaajuus(GridLayout grid, final String propertyKey) {
+        if (propertyKey == null) {
+            throw new RuntimeException("Application error - label caption cannot be null!");
+        }
+        gridLabel(grid, propertyKey);
+        kcOpintojenLaajuus = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
+        kcOpintojenLaajuus.setReadOnly(koulutusModel.isLoaded());
+        grid.addComponent(kcOpintojenLaajuus);
+        grid.newLine();
+        buildSpacingGridRow(grid);
     }
 
     private void gridLabelRow(GridLayout grid, final String propertyKey) {
@@ -433,10 +482,10 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
      * PRIVATE HELPER METHODS:
      */
     private void buildSpacingGridRow(GridLayout grid) {
-        CssLayout cssLayout = new CssLayout();
-        cssLayout.setHeight(4, UNITS_PIXELS);
-        grid.addComponent(cssLayout);
-        grid.newLine();
+//        CssLayout cssLayout = new CssLayout();
+//        cssLayout.setHeight(4, UNITS_PIXELS);
+//        grid.addComponent(cssLayout);
+//        grid.newLine();
     }
 
     private void gridLabel(GridLayout grid, final String propertyKey, KoulutusasteType type) {

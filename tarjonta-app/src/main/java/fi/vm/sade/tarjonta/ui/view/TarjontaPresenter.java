@@ -200,10 +200,7 @@ public class TarjontaPresenter {
             hakuModel.getHakuOid();
             hakuModel.getNimiFi();
             _model.getHakukohde().setHakuOid(hakuModel);
-
         }
-
-
     }
 
     /**
@@ -473,7 +470,7 @@ public class TarjontaPresenter {
             koulutusToDTOConverter.validateSaveData(lisaa, model);
             checkKoulutusmoduuli();
             tarjontaAdminService.lisaaKoulutus(lisaa);
-            model.setOid( lisaa.getOid());
+            model.setOid(lisaa.getOid());
         }
         model.setDocumentStatus(DocumentStatus.SAVED);
     }
@@ -721,6 +718,10 @@ public class TarjontaPresenter {
                 komo.setOid(oid);
                 komo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
                 komo.setKoulutuskoodiUri(kysely.getKoulutuskoodiUri());
+                komo.setTutkintoOhjelmaUri(model.getTutkinto()); //Autoalan perustutkinto
+                komo.setTutkintonimikeUri(model.getTutkintonimike()); //Automaalari
+                komo.setLaajuusyksikkoUri(model.getOpintojenLaajuusyksikko()); //Opintoviikot
+                komo.setLaajuusarvo(model.getOpintojenLaajuus()); //120 ov
 
                 if (kysely.getKoulutusohjelmakoodiUri() != null) {
                     komo.setKoulutusohjelmakoodiUri(kysely.getKoulutusohjelmakoodiUri());

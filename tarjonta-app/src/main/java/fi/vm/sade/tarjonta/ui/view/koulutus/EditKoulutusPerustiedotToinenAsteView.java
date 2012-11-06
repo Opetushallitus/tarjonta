@@ -20,6 +20,7 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
@@ -105,8 +106,16 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         header.setSizeFull();
         Label pageLabel = UiUtil.label(header, T("KoulutuksenPerustiedot"), LabelStyleEnum.H2);
         pageLabel.setSizeUndefined();
-        documentStatus = UiUtil.label(header, new BeanItem(koulutusPerustiedotModel), "userFrienlyDocumentStatus"); //show document status
+
+//        if (koulutusPerustiedotModel.getTila() != null) {
+//            documentStatus = UiUtil.label(header, T("tila." + koulutusPerustiedotModel.getTila().name())); //show document status
+//        } else {
+//           
+//        }
+        documentStatus = UiUtil.label(layout, ""); //show document status
         documentStatus.setSizeUndefined();
+        documentStatus.setImmediate(true);
+        documentStatus.setPropertyDataSource(new NestedMethodProperty(koulutusPerustiedotModel, "tila"));
         header.setExpandRatio(documentStatus, 1l);
         header.setComponentAlignment(documentStatus, Alignment.TOP_RIGHT);
         layout.addComponent(header);
@@ -162,7 +171,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 final DocumentStatus status = koulutusPerustiedotModel.getDocumentStatus();
-           
+
                 if (!status.equals(DocumentStatus.NEW) && isModified()) {
                     presenter.showNotification(UserNotification.UNSAVED);
                     return;

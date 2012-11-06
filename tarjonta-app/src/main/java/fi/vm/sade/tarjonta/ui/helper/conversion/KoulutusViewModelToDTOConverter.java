@@ -33,6 +33,7 @@ import fi.vm.sade.tarjonta.service.types.koodisto.Nimi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
@@ -324,6 +325,7 @@ public class KoulutusViewModelToDTOConverter {
         }
 
         KoulutusToisenAsteenPerustiedotViewModel model2Aste = new KoulutusToisenAsteenPerustiedotViewModel(status);
+        model2Aste.setTila(koulutus.getKoulutuksenTila());
         model2Aste.setOid(koulutus.getOid());
         model2Aste.setOrganisaatioOid(organisatio.getOid());
         model2Aste.setOrganisaatioName(organisatio.getNimiFi());
@@ -356,6 +358,17 @@ public class KoulutusViewModelToDTOConverter {
         //UI allow only one value
         if (koulutus.getKoulutuslaji() != null && !koulutus.getKoulutuslaji().isEmpty()) {
             model2Aste.setKoulutuslaji(getUri(koulutus.getKoulutuslaji().get(0)));
+        }
+        /*
+         * KOMO
+         */
+        final KoulutusmoduuliKoosteTyyppi koulutusmoduuli = koulutus.getKoulutusmoduuli();
+       
+        if (koulutusmoduuli != null) {
+            model2Aste.setTutkinto(koulutusmoduuli.getTutkintoOhjelmaUri()); //Autoalan perustutkinto
+            model2Aste.setTutkintonimike(koulutusmoduuli.getTutkintonimikeUri()); //Automaalari
+            model2Aste.setOpintojenLaajuusyksikko(koulutusmoduuli.getLaajuusyksikkoUri()); //Opintoviikot
+            model2Aste.setOpintojenLaajuus(koulutusmoduuli.getLaajuusyksikkoUri()); //120 ov
         }
 
         return model2Aste;
