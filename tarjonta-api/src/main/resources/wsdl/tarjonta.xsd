@@ -50,7 +50,7 @@
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1" />
-            
+
             <xs:element name="hakukohdeKoodistoNimi"
                         type="xs:string"
                         maxOccurs="1"
@@ -74,7 +74,7 @@
             <xs:element name="aloituspaikat"
                         type="xs:int"
                         maxOccurs="1"
-                        minOccurs="1"/>
+                        minOccurs="0"/>
 
             <xs:element name="hakukelpoisuusVaatimukset"
                         type="xs:string"
@@ -273,7 +273,7 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="KoulutusmoduuliKoosteTyyppi">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="oid" type="xs:string">
