@@ -82,11 +82,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetuskielis = new HashSet<KoodistoUri>();
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = TABLE_NAME + "_ammattinimike", joinColumns =
-    @JoinColumn(name = TABLE_NAME + "_id"))
-    private Set<KoodistoUri> ammattinimikes = new HashSet<KoodistoUri>();
-
     @Size(min = 1)
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_opetusmuoto", joinColumns =
@@ -130,6 +125,34 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "loppukoevaatimukset")
     private MonikielinenTeksti loppukoeVaatimukset;
+
+    /*
+     * Koulutuksen Lisatiedot  (additional information)
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_ammattinimike", joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<KoodistoUri> ammattinimikes = new HashSet<KoodistoUri>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "kuvailevattiedot")
+    private MonikielinenTeksti kuvailevatTiedot;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "sisalto")
+    private MonikielinenTeksti sisalto;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "sijoittuminentyoelamaan")
+    private MonikielinenTeksti sijoittuminenTyoelamaan;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "kansainvalistyminen")
+    private MonikielinenTeksti kansainvalistyminen;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "yhteistyomuidentoimijoidenkanssa")
+    private MonikielinenTeksti yhteistyoMuidenToimijoidenKanssa;
+
 
     public KoulutusmoduuliToteutus() {
         super();
@@ -327,6 +350,10 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         opetuskielis.remove(opetuskieli);
     }
 
+    public void setAmmattinimikes(Set<KoodistoUri> ammattinimikes) {
+        this.ammattinimikes = ammattinimikes;
+    }
+
     public Set<KoodistoUri> getAmmattinimikes() {
         return Collections.unmodifiableSet(ammattinimikes);
     }
@@ -496,6 +523,71 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void setLoppukoeVaatimukset(MonikielinenTeksti loppukoeVaatimukset) {
         this.loppukoeVaatimukset = loppukoeVaatimukset;
+    }
+
+    /**
+     * Sanallinen kuvaus koulutuksesta.
+     *
+     * @return
+     */
+    public MonikielinenTeksti getKuvailevatTiedot() {
+        return kuvailevatTiedot;
+    }
+
+    public void setKuvailevatTiedot(MonikielinenTeksti kuvailevatTiedot) {
+        this.kuvailevatTiedot = kuvailevatTiedot;
+    }
+
+    /**
+     * Sanallinen kuvaus koulutuksen sisöllöstä.
+     *
+     * @return
+     */
+    public MonikielinenTeksti getSisalto() {
+        return sisalto;
+    }
+
+    public void setSisalto(MonikielinenTeksti sisalto) {
+        this.sisalto = sisalto;
+    }
+
+    /**
+     * Sanallinen kuvaus sijoittumisesta työelämään.
+     *
+     * @return
+     */
+    public MonikielinenTeksti getSijoittuminenTyoelamaan() {
+        return sijoittuminenTyoelamaan;
+    }
+
+    public void setSijoittuminenTyoelamaan(MonikielinenTeksti sijoittuminenTyoelamaan) {
+        this.sijoittuminenTyoelamaan = sijoittuminenTyoelamaan;
+    }
+
+    /**
+     * Sanallinen kuvaus kansainvälistymisestä.
+     *
+     * @return
+     */
+    public MonikielinenTeksti getKansainvalistyminen() {
+        return kansainvalistyminen;
+    }
+
+    public void setKansainvalistyminen(MonikielinenTeksti kansainvalistyminen) {
+        this.kansainvalistyminen = kansainvalistyminen;
+    }
+
+    /**
+     * Sanallinen kuvaus yhteistyöstä muiden toimijoiden kanssa.
+     *
+     * @return
+     */
+    public MonikielinenTeksti getYhteistyoMuidenToimijoidenKanssa() {
+        return yhteistyoMuidenToimijoidenKanssa;
+    }
+
+    public void setYhteistyoMuidenToimijoidenKanssa(MonikielinenTeksti yhteistyoMuidenToimijoidenKanssa) {
+        this.yhteistyoMuidenToimijoidenKanssa = yhteistyoMuidenToimijoidenKanssa;
     }
 
 }

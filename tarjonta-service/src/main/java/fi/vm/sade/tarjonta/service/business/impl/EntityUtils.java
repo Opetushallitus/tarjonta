@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.business.impl;
 
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
@@ -26,6 +27,7 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenTila;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
 import java.util.Collection;
@@ -72,6 +74,8 @@ public final class EntityUtils {
             }
         } // else, set is empty which will clear all previous links
         to.setLinkkis(toLinkkis);
+
+        copyLisatiedotFields(from, to);
     }
 
     public static void copyFields(LisaaKoulutusTyyppi fromKoulutus, KoulutusmoduuliToteutus toKoulutus) {
@@ -106,6 +110,55 @@ public final class EntityUtils {
         } // else, set is empty which will clear all previous links
         toKoulutus.setLinkkis(toLinkkis);
 
+        copyLisatiedotFields(fromKoulutus, toKoulutus);
+    }
+
+
+    /**
+     * For copying the textual descriptive language texts and ammattinimike list.
+     *
+     * @param fromKoulutus
+     * @param toKoulutus
+     */
+    private static void copyLisatiedotFields(KoulutusTyyppi fromKoulutus, KoulutusmoduuliToteutus toKoulutus) {
+
+        //
+        // Additional information for Koulutus (koulutuksen lisätiedot)
+        //
+        Set<KoodistoUri> ammattinimikes = new HashSet<KoodistoUri>();
+        if (fromKoulutus.getAmmattinimikkeet() != null) {
+            for (KoodistoKoodiTyyppi koodistoKoodiTyyppi : fromKoulutus.getAmmattinimikkeet()) {
+                KoodistoUri uri = new KoodistoUri(koodistoKoodiTyyppi.getUri());
+                ammattinimikes.add(uri);
+            }
+        }
+        toKoulutus.setAmmattinimikes(ammattinimikes);
+
+        toKoulutus.setKuvailevatTiedot(toMonikielinenTeksti(fromKoulutus.getKuvailevatTiedot(), new MonikielinenTeksti()));
+        toKoulutus.setKansainvalistyminen(toMonikielinenTeksti(fromKoulutus.getKansainvalistyminen(), new MonikielinenTeksti()));
+        toKoulutus.setSijoittuminenTyoelamaan(toMonikielinenTeksti(fromKoulutus.getSijoittuminenTyoelamaan(), new MonikielinenTeksti()));
+        toKoulutus.setSisalto(toMonikielinenTeksti(fromKoulutus.getSisalto(), new MonikielinenTeksti()));
+        toKoulutus.setYhteistyoMuidenToimijoidenKanssa(toMonikielinenTeksti(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa(), new MonikielinenTeksti()));
+    }
+
+
+
+    public static MonikielinenTeksti toMonikielinenTeksti(List<MonikielinenTekstiTyyppi> from, MonikielinenTeksti to) {
+        if (to == null || from == null) {
+            return null;
+        }
+        for (MonikielinenTekstiTyyppi monikielinenTekstiTyyppi : from) {
+            toMonikielinenTeksti(monikielinenTekstiTyyppi, to);
+        }
+        return to;
+    }
+
+    public static MonikielinenTeksti toMonikielinenTeksti(MonikielinenTekstiTyyppi from, MonikielinenTeksti to) {
+        if (to == null || from == null) {
+            return null;
+        }
+        to.addTekstiKaannos(from.getTekstinKielikoodi(), from.getTeksti());
+        return to;
     }
 
     public static void copyFields(YhteyshenkiloTyyppi from, Yhteyshenkilo to) {
