@@ -112,7 +112,8 @@ public class HakuPresenter {
             LOG.info("getTreeDataSource() curHaku: " + curHaku.getHakuOid() + ", hakutyyppi: " + curHaku.getHakutapa());
             String hakuKey = "";
             try {
-                SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.latestValidAcceptedKoodiByUri(curHaku.getHakutapa());
+            	String hakutapaUri = parseKoodiUri(curHaku.getHakutapa());
+                SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.latestValidAcceptedKoodiByUri(hakutapaUri);
                 List<KoodiType> result = this.koodiService.searchKoodis(searchCriteria);
                 if (result.size() != 1) {
                     throw new RuntimeException("No valid accepted koodi found for URI " + curHaku.getHakutapa());
@@ -134,6 +135,14 @@ public class HakuPresenter {
             }
         }
         return map;
+    }
+    
+    private String parseKoodiUri(String koodiUriAndVersion) {
+    	int index = koodiUriAndVersion.lastIndexOf('#');
+    	if (index > -1) {
+    		return koodiUriAndVersion.substring(0, index);
+    	}
+    	return koodiUriAndVersion;
     }
 
     /**
