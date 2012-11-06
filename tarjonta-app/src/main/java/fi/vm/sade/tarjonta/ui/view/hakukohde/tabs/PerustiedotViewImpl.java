@@ -135,7 +135,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     public void commitForm(String tila) {
         form.commit();
         if (form.isValid()) {
-        	presenter.getModel().getHakukohde().setHakukohdeKoodistoNimi(resolveHakukohdeKoodistoNimi());
+        	presenter.getModel().getHakukohde().setHakukohdeKoodistoNimi(resolveHakukohdeKoodistoNimi() + " " + tila);
             presenter.saveHakuKohde(tila);
         }
     }
@@ -166,10 +166,8 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     }
     
     private String resolveHakukohdeKoodistoNimi() {
-    	String nimi = _tarjontaUIHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi(), I18N.getLocale());
-    	if ("".equals(nimi)) {
-    		nimi = presenter.getModel().getHakukohde().getHakukohdeNimi();
-    	}
+
+        String nimi = presenter.resolveHakukohdeKoodistonimiFields();
     	return nimi;
     }
 

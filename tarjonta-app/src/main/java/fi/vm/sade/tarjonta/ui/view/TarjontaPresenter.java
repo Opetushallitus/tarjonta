@@ -17,7 +17,9 @@ package fi.vm.sade.tarjonta.ui.view;
 
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
@@ -56,6 +58,7 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
@@ -95,6 +98,8 @@ import java.util.Locale;
 public class TarjontaPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
+    @Autowired(required=true) 
+    private TarjontaUIHelper uiHelper;
     // Services used
     @Autowired(required = true)
     protected OIDService oidService;
@@ -795,5 +800,19 @@ public class TarjontaPresenter {
         if (getRootView() != null) {
             getRootView().showNotification("NOT IMPLEMNTED");
         }
+    }
+
+    /**
+     * @return the uiHelper
+     */
+    public TarjontaUIHelper getUiHelper() {
+        return uiHelper;
+    }
+
+    /**
+     * @param uiHelper the uiHelper to set
+     */
+    public void setUiHelper(TarjontaUIHelper uiHelper) {
+        this.uiHelper = uiHelper;
     }
 }

@@ -24,6 +24,10 @@ import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
+import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +54,8 @@ public class TarjontaUIHelper {
     public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";
     @Autowired
     private KoodiService _koodiService;
+    @Autowired(required = true)
+    private TarjontaPublicService _tarjontaPublicService;
     private I18NHelper _i18n = new I18NHelper(TarjontaUIHelper.class);
 
     /**
@@ -61,6 +67,8 @@ public class TarjontaUIHelper {
     private String[] splitKoodiURIWithVersion(String koodiUriWithVersion) {
         return splitKoodiURI(koodiUriWithVersion);
     }
+    
+    
 
     /**
      * Extract version number from uri.
@@ -92,6 +100,43 @@ public class TarjontaUIHelper {
     public String getKoodiNimi(String koodiUriWithPossibleVersionInformation) {
         return getKoodiNimi(koodiUriWithPossibleVersionInformation, null);
     }
+    
+    public String getHakukohdeHakukentta(String hakuOid,Locale locale,String hakuKohdeNimi) {
+        StringBuilder result = new StringBuilder();
+        result.append(getAllHakukohdeNimet(hakuKohdeNimi));
+        result.append(" ");
+        result.append(getHakuKausiJaVuosi(hakuOid, locale));
+        return result.toString();
+    }
+    
+    private String getHakuKausiJaVuosi(String hakuOid, Locale locale) {
+        StringBuilder hakuTiedot = new StringBuilder();
+        ListaaHakuTyyppi hakuCriteria = new ListaaHakuTyyppi();
+        hakuCriteria.setHakuOid(hakuOid);
+        ListHakuVastausTyyppi vastaus = _tarjontaPublicService.listHaku(hakuCriteria);
+        for (HakuTyyppi haku:vastaus.getResponse()) {
+           hakuTiedot.append(getKoodiNimi(haku.getHakukausiUri(),locale));
+           hakuTiedot.append(" ");
+           hakuTiedot.append(haku.getHakuVuosi());
+        }
+        
+        return hakuTiedot.toString();
+    }
+    
+    private String getAllHakukohdeNimet(String hakuKohdeNimi) {
+        StringBuilder nimet = new StringBuilder();
+        List<KoodiType> koodit = _koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder.latestKoodisByUris(getKoodiURI(hakuKohdeNimi)));
+        for (KoodiType koodi: koodit) {
+            List<KoodiMetadataType> metas = koodi.getMetadata();
+            for (KoodiMetadataType meta : metas ) {
+               nimet.append(meta.getNimi());
+               nimet.append(" ");
+            }
+        }
+        
+        return nimet.toString();
+    }
+    
 
     /**
      * Get koodi's name in given locale. If nimi for given
