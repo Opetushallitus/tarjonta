@@ -362,7 +362,7 @@
                                     <xs:sequence>
 
                                         <xs:element name="ExaminationType"
-                                                    type="tns:EntranceExaminationTypeType"
+                                                    type="tns:CodeValueType"
                                                     minOccurs="1"
                                                     maxOccurs="1">
                                             <xs:annotation>
@@ -431,7 +431,7 @@
                     <xs:sequence>
 
                         <xs:element name="Type"
-                                    type="tns:AttachmentTypeType"
+                                    type="tns:CodeValueType"
                                     minOccurs="1"
                                     maxOccurs="1">
                             <xs:annotation>
@@ -497,16 +497,10 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="AttachmentTypeType">
-        <xs:complexContent>
-            <xs:extension base="tns:CodeLabelType"/>
-        </xs:complexContent>
-    </xs:complexType>
-
 
     <xs:complexType name="ExaminationEventType">
         <xs:annotation>
-            <xs:documentation>
+            <xs:documentation xml:lang="fi">
                 Valintakoetapahtuma, sijoittaa valintakokeen aikaan ja paikkaan.
             </xs:documentation>
         </xs:annotation>
@@ -545,22 +539,6 @@
         </xs:sequence>
     </xs:complexType>
 
-
-    <xs:complexType name="EntranceExaminationTypeType">
-        <xs:annotation>
-            <xs:documentation xml:lang="fi">
-                Valintakokeen tyyppi.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <!-- todo koodi? -->
-            <!-- todo: monikielinen? -->
-            <xs:element name="Title"
-                        type="tns:ExtendedStringType"
-                        minOccurs="1"
-                        maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:complexType>
 
 
     <xs:complexType name="EligibilityRequirementsType">
@@ -760,9 +738,9 @@
                                 </xs:element>
 
                                 <xs:element name="StructureDiagram"
-                                            type="xs:string"
+                                            type="tns:ExtendedStringType"
                                             minOccurs="0"
-                                            maxOccurs="1">
+                                            maxOccurs="unbounded">
                                     <xs:annotation>
                                         <xs:documentation xml:lang="fi">
                                             Koulutuksen rakenne tekstikuvauksena. Tarpeellinen?
@@ -771,9 +749,9 @@
                                 </xs:element>
 
                                 <xs:element name="EducationAndProfessionalGoals"
-                                            type="xs:string"
+                                            type="tns:ExtendedStringType"
                                             minOccurs="0"
-                                            maxOccurs="1">
+                                            maxOccurs="unbounded">
                                     <xs:annotation>
                                         <xs:documentation xml:lang="fi">
                                             Koulutukselliset ja ammatilliset tavoitteet.
@@ -782,9 +760,9 @@
                                 </xs:element>
 
                                 <xs:element name="AccessToFurtherStudies"
-                                            type="xs:string"
+                                            type="tns:ExtendedStringType"
                                             minOccurs="0"
-                                            maxOccurs="1">
+                                            maxOccurs="unbounded">
                                     <xs:annotation>
                                         <xs:documentation xml:lang="fi">
                                             Jatko-opintomahdollisuudet.
@@ -1113,7 +1091,7 @@
         <xs:attribute name="scheme" type="tns:LanguageSchemeType" use="required"/>
     </xs:complexType>
 
-    
+
     <xs:complexType name="KeywordType">
         <xs:simpleContent>
             <xs:extension base="xs:string"></xs:extension>
@@ -1625,7 +1603,7 @@
         <xs:sequence>
 
             <xs:element name="Name"
-                        type="tns:LocalizedTextType"
+                        type="tns:ExtendedStringType"
                         minOccurs="1"
                         maxOccurs="unbounded">
             </xs:element>
