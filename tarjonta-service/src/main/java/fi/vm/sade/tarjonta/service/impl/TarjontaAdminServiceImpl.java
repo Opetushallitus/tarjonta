@@ -28,6 +28,7 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -85,6 +86,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Autowired
     private ConversionService conversionService;
+    
+     @Autowired
+    private YhteyshenkiloDAO yhteyshenkiloDAO;
 
     /**
      * Väliaikainne kunnes Koodisto on alustettu.
@@ -195,7 +199,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 			this.hakukohdeDAO.remove(curHakukohde);
 		}
 	}
-
+       
 
     /**
      * Remove once koodisto has proper data.

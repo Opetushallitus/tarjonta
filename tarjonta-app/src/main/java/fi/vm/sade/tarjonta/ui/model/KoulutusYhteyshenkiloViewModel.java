@@ -24,6 +24,7 @@ import java.util.Set;
  * @author mlyly
  */
 public class KoulutusYhteyshenkiloViewModel extends BaseUIViewModel {
+    private String henkiloOid;
     private String titteli;
     private String email;
     private String puhelin;
@@ -91,5 +92,19 @@ public class KoulutusYhteyshenkiloViewModel extends BaseUIViewModel {
      */
     public void setSukunimi(String sukunimi) {
         this.sukunimi = sukunimi;
+    }
+
+    /**
+     * @return the henkiloOid
+     */
+    public String getHenkiloOid() {
+        return henkiloOid;
+    }
+
+    /**
+     * @param henkiloOid the henkiloOid to set
+     */
+    public void setHenkiloOid(String henkiloOid) {
+        this.henkiloOid = henkiloOid;
     }
 }

@@ -87,9 +87,7 @@ public class KoulutusViewModelToDTOConverter {
         mapToKoulutusTyyppi(paivita, model, komotoOid, organisaatio);
 
         //convert yhteyshenkilo model objects to yhteyshenkilo type objects.
-
-        //TODO: update yhteyshenkilot
-        //addToYhteyshenkiloTyyppiList(model.getYhteyshenkilot(), paivita.);
+        addToYhteyshenkiloTyyppiList(model.getYhteyshenkilot(), paivita.getYhteyshenkiloTyyppi());
 
         //convert linkki model objects to linkki type objects.
         addToWebLinkkiTyyppiList(model.getKoulutusLinkit(), paivita.getLinkki());
@@ -142,14 +140,20 @@ public class KoulutusViewModelToDTOConverter {
         return dto;
     }
 
-    private void addToYhteyshenkiloTyyppiList(final Collection<KoulutusYhteyshenkiloViewModel> model, List<YhteyshenkiloTyyppi> listTyyppi) throws ExceptionMessage {
-        if (listTyyppi == null) {
+    private void addToYhteyshenkiloTyyppiList(final Collection<KoulutusYhteyshenkiloViewModel> fromModel, List<YhteyshenkiloTyyppi> toTyyppi) throws ExceptionMessage {
+        if (toTyyppi == null) {
             throw new RuntimeException(INVALID_DATA + "list of YhteyshenkiloTyyppi objects cannot be null.");
         }
 
-        if (model != null && !model.isEmpty()) {
-            for (KoulutusYhteyshenkiloViewModel yhteyshenkiloModel : model) {
-                listTyyppi.add(mapToYhteyshenkiloTyyppiDto(yhteyshenkiloModel, oidService.newOid(NodeClassCode.TEKN_5)));
+        if (fromModel != null && !fromModel.isEmpty()) {
+            for (KoulutusYhteyshenkiloViewModel yhteyshenkiloModel : fromModel) {
+                if (yhteyshenkiloModel.getHenkiloOid() == null) {
+                    //generate OID to new yhteyshenkilo.
+                    //back-end not not accept null OIDs. 
+                    yhteyshenkiloModel.setHenkiloOid(oidService.newOid(NodeClassCode.TEKN_5));
+                }
+
+                toTyyppi.add(mapToYhteyshenkiloTyyppiDto(yhteyshenkiloModel));
             }
         }
     }
@@ -194,9 +198,10 @@ public class KoulutusViewModelToDTOConverter {
         }
     }
 
-    public static YhteyshenkiloTyyppi mapToYhteyshenkiloTyyppiDto(final KoulutusYhteyshenkiloViewModel model, final String oid) throws ExceptionMessage {
+    public static YhteyshenkiloTyyppi mapToYhteyshenkiloTyyppiDto(final KoulutusYhteyshenkiloViewModel model) throws ExceptionMessage {
         YhteyshenkiloTyyppi yhteyshenkiloTyyppi = new YhteyshenkiloTyyppi();
-        yhteyshenkiloTyyppi.setHenkiloOid(oid);
+
+        yhteyshenkiloTyyppi.setHenkiloOid(model.getHenkiloOid());
         yhteyshenkiloTyyppi.setEtunimet(model.getEtunimet());
         yhteyshenkiloTyyppi.setSukunimi(model.getSukunimi());
         yhteyshenkiloTyyppi.setSahkoposti(model.getEmail());
@@ -244,7 +249,7 @@ public class KoulutusViewModelToDTOConverter {
         final KoulutusohjelmaModel koulutusohjelma = model.getKoulutusohjelma();
         //URI data example : "koulutusohjelma/1603#1"
         if (koulutusohjelma != null) {
-            tyyppi.setKoulutusohjelmaKoodi(createKoodi(koulutusohjelma.getKoodiUriVersion(), koulutusohjelma.getCode()));
+            tyyppi.setKoulutusohjelmaKoodi(mapToKoodistoKoodiTyyppi(koulutusohjelma));
         }
         tyyppi.setKoulutuksenAlkamisPaiva(model.getKoulutuksenAlkamisPvm());
         KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
@@ -277,6 +282,7 @@ public class KoulutusViewModelToDTOConverter {
 
     public static KoulutusYhteyshenkiloViewModel mapToKoulutusYhteyshenkiloViewModel(final YhteyshenkiloTyyppi tyyppi) {
         KoulutusYhteyshenkiloViewModel yhteyshenkiloModel = new KoulutusYhteyshenkiloViewModel();
+        yhteyshenkiloModel.setHenkiloOid(tyyppi.getHenkiloOid());
         yhteyshenkiloModel.setEmail(tyyppi.getSahkoposti());
         yhteyshenkiloModel.setEtunimet(tyyppi.getEtunimet());
         yhteyshenkiloModel.setPuhelin(tyyppi.getPuhelin());
@@ -284,9 +290,7 @@ public class KoulutusViewModelToDTOConverter {
         yhteyshenkiloModel.setTitteli(tyyppi.getTitteli());
         final List<String> kielet = tyyppi.getKielet();
         if (kielet != null && !kielet.isEmpty()) {
-
             for (String kieliUri : kielet) {
-                LOG.debug("!!! kieliUri : " + kieliUri);
                 yhteyshenkiloModel.getKielet().add(kieliUri);
             }
         }
@@ -323,10 +327,10 @@ public class KoulutusViewModelToDTOConverter {
         model2Aste.setKoulutusasteTyyppi(mapToKoulutusasteTyyppi(ktKoulutusaste));
 
         final KoodistoKoodiTyyppi ktKoulutuskoodi = koulutus.getKoulutusKoodi();
-        model2Aste.setKoulutuskoodiTyyppi(mapToKoulutuskoodiTyyppi(ktKoulutuskoodi));
+        model2Aste.setKoulutuskoodiTyyppi(mapToKoulutuskoodiModel(ktKoulutuskoodi));
 
         final KoodistoKoodiTyyppi ktKoulutusohjelma = koulutus.getKoulutusohjelmaKoodi();
-        model2Aste.setKoulutusohjelma(mapToKoulutusohjelmaTyyppi(ktKoulutusohjelma));
+        model2Aste.setKoulutusohjelma(mapToKoulutusohjelmaModel(ktKoulutusohjelma));
 
         model2Aste.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
         model2Aste.setOpetuskielet(convertOpetuskielet(koulutus.getOpetuskieli()));
@@ -352,7 +356,7 @@ public class KoulutusViewModelToDTOConverter {
         return model2Aste;
     }
 
-    public KoulutusohjelmaModel mapToKoulutusohjelmaTyyppi(final KoodistoKoodiTyyppi koulutusohjelmaKoodi) {
+    public KoulutusohjelmaModel mapToKoulutusohjelmaModel(final KoodistoKoodiTyyppi koulutusohjelmaKoodi) {
         if (koulutusohjelmaKoodi != null && koulutusohjelmaKoodi.getUri() != null) {
             final KoodiHakuTyyppi koodiHakuTyyppi = mapToKoodiHakuTyyppi(koulutusohjelmaKoodi);
             final KoulutusohjelmaTyyppi kt = koulutusKoodisto.listaaKoulutusohjelma(koodiHakuTyyppi);
@@ -371,7 +375,7 @@ public class KoulutusViewModelToDTOConverter {
         return null;
     }
 
-    public KoulutuskoodiTyyppi mapToKoulutuskoodiTyyppi(final KoodistoKoodiTyyppi koulutusKoodi) {
+    public KoulutuskoodiTyyppi mapToKoulutuskoodiModel(final KoodistoKoodiTyyppi koulutusKoodi) {
         if (koulutusKoodi != null && koulutusKoodi.getUri() != null) {
             return koulutusKoodisto.listaaKoulutuskoodi(mapToKoodiHakuTyyppi(koulutusKoodi));
         }
@@ -427,6 +431,21 @@ public class KoulutusViewModelToDTOConverter {
             return koodit;
         }
         return null;
+    }
+
+    public static KoodistoKoodiTyyppi mapToKoodistoKoodiTyyppi(final KoulutusohjelmaModel koulutusohjelmaModel) {
+        KoodistoKoodiTyyppi tyyppi = new KoodistoKoodiTyyppi();
+        tyyppi.setUri(koulutusohjelmaModel.getKoodiUriVersion());
+        tyyppi.setArvo(koulutusohjelmaModel.getFullName());
+
+        //TODO: KoulutusohjelmaModel objet is missing language data
+//            for (Nimi koulutusAstenNimi : koulutusasteTyyppi.getNimi()) {
+//                KoodistoKoodiTyyppi.Nimi nimi1 = new KoodistoKoodiTyyppi.Nimi();
+//                nimi1.setKieli(koulutusAstenNimi.getKieli());
+//                nimi1.setValue(koulutusAstenNimi.getValue());
+//                tyyppi.getNimi().add(nimi1);
+//            }
+        return tyyppi;
     }
 
     public KoulutusasteTyyppi mapToKoulutusasteTyyppi(final KoodistoKoodiTyyppi kktKoulutusaste) {

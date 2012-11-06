@@ -161,7 +161,7 @@ public class TarjontaSampleData {
         m.setKoulutusohjelmaKoodi(randomKoodiUri("koulutusohjelma"));
         m.setNqfLuokitus(randomKoodiUri("ngf"));
         m.setOmistajaOrganisaatioOid(randomOid("organisaatio"));
-        m.setTila(KoodistoContract.TarjontaTilat.JULKAISTU);
+        m.setTila(TarjontaTila.VALMIS);
 
         return m;
 
@@ -175,7 +175,7 @@ public class TarjontaSampleData {
         t.addKoulutuslaji(randomKoodiUri("koulutuslaji"));
         t.setOid(randomOid("koulutusmoduulitoteutus"));
         t.setTarjoaja(randomOid("organisaatio"));
-        t.setTila(KoodistoContract.TarjontaTilat.JULKAISTU);
+        t.setTila(TarjontaTila.VALMIS);
         t.addOpetuskieli(new KoodistoUri(randomKoodiUri("kieli")));
         t.addOpetusmuoto(new KoodistoUri(randomKoodiUri("opetusmuoto")));
         t.setNimi("Demonimi " + System.currentTimeMillis());

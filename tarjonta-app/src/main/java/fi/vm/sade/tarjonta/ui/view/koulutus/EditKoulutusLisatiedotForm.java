@@ -28,6 +28,7 @@ import fi.vm.sade.generic.ui.component.OphRichTextArea;
 import fi.vm.sade.generic.ui.component.OphTokenField;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.oid.service.ExceptionMessage;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenTila;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -55,7 +56,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusLisatiedotForm.class);
-
     @Autowired
     private TarjontaPresenter _presenter;
     @Autowired
@@ -82,7 +82,6 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
             PropertysetItem psi = new BeanItem(_tarjontaModel.getKoulutusLisatiedotModel());
             OphTokenField f = UiBuilder.koodistoTokenField(null, KoodistoURIHelper.KOODISTO_KIELI_URI, psi, "ammattinimikkeet");
             f.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
-
                 @Override
                 public String formatToken(Object selectedToken) {
                     return _uiHelper.getKoodiNimi((String) selectedToken);
@@ -109,7 +108,6 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         // Build tabsheet for languages with koodisto select languages
         //
         final KoodistoSelectionTabSheet tabs = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI) {
-
             @Override
             public void doAddTab(String uri) {
                 Component c = createLanguageEditor(uri);
@@ -137,14 +135,19 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                _presenter.saveKoulutusLuonnoksenaModel();
+                try {
+                    _presenter.saveKoulutus(KoulutuksenTila.LUONNOS);
+                } catch (ExceptionMessage ex) {
+                    LOG.error("Failed to save.", ex);
+                    getWindow().showNotification("FAILED: " + ex);
+                }
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
         addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 try {
-                    _presenter.saveKoulutusValmiina();
+                    _presenter.saveKoulutus(KoulutuksenTila.VALMIS);
                 } catch (ExceptionMessage ex) {
                     LOG.error("Failed to save.", ex);
                     getWindow().showNotification("FAILED: " + ex);
@@ -164,7 +167,6 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
     }
-
 
     /**
      * Create rich text editors for content editing.
@@ -213,5 +215,4 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
 
         return vl;
     }
-
 }

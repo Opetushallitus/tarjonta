@@ -28,7 +28,7 @@ public class KoulutusmoduuliTest {
     @Test
     public void testGetTilaAfterCreate() {
         Koulutusmoduuli moduuli = newModuuli();
-        assertEquals(KoodistoContract.TarjontaTilat.SUUNNITTELUSSA, moduuli.getTila());
+        assertEquals(TarjontaTila.LUONNOS, moduuli.getTila());
     }
 
     @Test

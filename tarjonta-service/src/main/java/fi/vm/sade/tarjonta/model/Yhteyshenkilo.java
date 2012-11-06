@@ -55,6 +55,8 @@ public class Yhteyshenkilo extends BaseEntity {
 
     @Column(name = "titteli")
     private String titteli;
+    
+    private transient boolean persisted;
 
     /**
      *
@@ -175,6 +177,22 @@ public class Yhteyshenkilo extends BaseEntity {
         hash = 37 * hash + (this.henkioOid != null ? this.henkioOid.hashCode() : 0);
         return hash;
     }
+
+    /**
+     * @return the persisted
+     */
+    public boolean isPersisted() {
+        return persisted;
+    }
+
+    /**
+     * @param persisted the persisted to set
+     */
+    public void setPersisted(boolean persisted) {
+        this.persisted = persisted;
+    }
+
+   
 
 }
 

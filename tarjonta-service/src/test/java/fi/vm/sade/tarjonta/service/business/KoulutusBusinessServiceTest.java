@@ -66,7 +66,7 @@ public class KoulutusBusinessServiceTest {
     public void testNewKoulutusmoduuliIsInSuunnitteluState() {
 
         Koulutusmoduuli k = service.create(tutkintoOhjelma);
-        assertEquals(KoodistoContract.TarjontaTilat.SUUNNITTELUSSA, k.getTila());
+        assertEquals(TarjontaTila.LUONNOS, k.getTila());
 
     }
 

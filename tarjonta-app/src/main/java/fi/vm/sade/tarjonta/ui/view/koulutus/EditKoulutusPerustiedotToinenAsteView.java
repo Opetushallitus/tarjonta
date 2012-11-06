@@ -36,6 +36,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.tarjonta.service.GenericFault;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenTila;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
@@ -61,7 +62,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable(preConstruction = true)
 public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavigationLayout {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotToinenAsteView.class);
     private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
     private ErrorMessage errorView;
@@ -76,17 +77,17 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         setSpacing(true);
         setHeight(-1, UNITS_PIXELS);
     }
-    
+
     @Override
     protected void buildLayout(VerticalLayout layout) {
         LOG.info("buildLayout()");
-        
+
         VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
         Panel panel = new Panel();
-        
+
         panel.setContent(vl);
         layout.addComponent(panel);
-        
+
         initialize(vl); //add layout to navigation container
         unmodifiedHashcode = koulutusPerustiedotModel.hashCode();
     }
@@ -125,7 +126,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         form.setValidationVisible(false);
         form.setValidationVisibleOnCommit(false);
         form.setSizeFull();
-        
+
         layout.addComponent(form);
 
         /*
@@ -134,9 +135,9 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         UiUtil.hr(layout);
         final Form yhteisTieto = new ValidatingViewBoundForm(new EditKoulutusYhteystietoFormView(koulutusPerustiedotModel));
         layout.addComponent(yhteisTieto);
-        
+
         addLinkkiSelectorAndEditor(layout);
-        
+
         addNavigationButton("", new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -144,47 +145,24 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 
-//        addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
-//            @Override
-//            public void buttonClick(Button.ClickEvent event) {
-//                presenter.saveKoulutusLuonnoksenaModel();
-//            }
-//        });
+        addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                save(form, KoulutuksenTila.LUONNOS);
+            }
+        }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
         addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                
-                try {
-                    errorView.resetErrors();
-                    form.commit();
-                    try {
-                        presenter.saveKoulutusValmiina();
-                        makeUnmodified();
-                        presenter.showNotification(UserNotification.SAVE_SUCCESS);
-                        presenter.getKoulutusListView().reload();
-                    } catch (GenericFault e) {
-                        LOG.error("Application error - KOMOTO persist failed, message :  " + e.getMessage(), e);
-                        presenter.showNotification(UserNotification.SAVE_FAILED);
-                    } catch (Exception ex) {
-                        LOG.error("An unknown application error - KOMOTO persist failed, message :  " + ex.getMessage(), ex);
-                        presenter.showNotification(UserNotification.SAVE_FAILED);
-                    }
-                } catch (Validator.InvalidValueException e) {
-                    errorView.addError(e);
-                    presenter.showNotification(UserNotification.GENERIC_VALIDATION_FAILED);
-                }
+                save(form, KoulutuksenTila.VALMIS);
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
         final Button.ClickListener clickListener = new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 final DocumentStatus status = koulutusPerustiedotModel.getDocumentStatus();
-                LOG.debug("HASHCODE"
-                        + koulutusPerustiedotModel.hashCode()
-                        + ", " + unmodifiedHashcode
-                        + ", status : " + status);
-                
+           
                 if (!status.equals(DocumentStatus.NEW) && isModified()) {
                     presenter.showNotification(UserNotification.UNSAVED);
                     return;
@@ -199,7 +177,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                 }
             }
         };
-        
+
         addNavigationButton(T("jatka"), clickListener, StyleEnum.STYLE_BUTTON_PRIMARY);
 
         // Make modification to enable/disable the Save button
@@ -221,22 +199,22 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                             }
                         });
                         field.setImmediate(true);
-                        
+
                         return field;
                     }
                 });
     }
-    
+
     private HorizontalLayout buildErrorLayout() {
         HorizontalLayout topErrorArea = UiUtil.horizontalLayout();
         HorizontalLayout padding = UiUtil.horizontalLayout();
         padding.setWidth(30, UNITS_PERCENTAGE);
         errorView = new ErrorMessage();
         errorView.setSizeUndefined();
-        
+
         topErrorArea.addComponent(padding);
         topErrorArea.addComponent(errorView);
-        
+
         return topErrorArea;
     }
 
@@ -249,10 +227,10 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         final Class modelClass = KoulutusLinkkiViewModel.class;
         List<KoulutusLinkkiViewModel> koulutusLinkit =
                 presenter.getModel().getKoulutusPerustiedotModel().getKoulutusLinkit();
-        
+
         final DialogKoodistoDataTable<KoulutusLinkkiViewModel> ddt =
                 new DialogKoodistoDataTable<KoulutusLinkkiViewModel>(modelClass, koulutusLinkit);
-        
+
         ddt.setButtonProperties("LisaaUusi.Linkkityyppi");
         ddt.buildByFormLayout(layout, "Luo uusi linkkityyppi", 400, 360, new EditKoulutusPerustiedotLinkkiView());
         ddt.setColumnHeader("linkkityyppi", T("Linkkityyppi"));
@@ -262,7 +240,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         ddt.setVisibleColumns(new Object[]{"linkkityyppi", "url", "kieli"});
         layout.addComponent(ddt);
     }
-    
+
     private void headerLayout(final AbstractLayout layout, final String i18nProperty) {
         CssLayout cssLayout = new CssLayout();
         cssLayout.setHeight(20, UNITS_PIXELS);
@@ -284,5 +262,27 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
      */
     private boolean isModified() {
         return koulutusPerustiedotModel.hashCode() != unmodifiedHashcode;
+    }
+
+    private void save(Form form, KoulutuksenTila tila) {
+        try {
+            errorView.resetErrors();
+            form.commit();
+            try {
+                presenter.saveKoulutus(tila);
+                makeUnmodified();
+                presenter.showNotification(UserNotification.SAVE_SUCCESS);
+                presenter.getKoulutusListView().reload();
+            } catch (GenericFault e) {
+                LOG.error("Application error - KOMOTO persist failed, message :  " + e.getMessage(), e);
+                presenter.showNotification(UserNotification.SAVE_FAILED);
+            } catch (Exception ex) {
+                LOG.error("An unknown application error - KOMOTO persist failed, message :  " + ex.getMessage(), ex);
+                presenter.showNotification(UserNotification.SAVE_FAILED);
+            }
+        } catch (Validator.InvalidValueException e) {
+            errorView.addError(e);
+            presenter.showNotification(UserNotification.GENERIC_VALIDATION_FAILED);
+        }
     }
 }

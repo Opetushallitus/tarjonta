@@ -46,7 +46,7 @@ public class KoulutusViewModelToDTOConverterTest {
     public void testMapToKoulutuskoodiTyyppi_KoodistoKoodiTyyppi() {
         System.out.println("mapToKoulutuskoodiTyyppi");
         KoulutusViewModelToDTOConverter instance = new KoulutusViewModelToDTOConverter();
-        KoulutuskoodiTyyppi result = instance.mapToKoulutuskoodiTyyppi(koodistoTyyppi1);
+        KoulutuskoodiTyyppi result = instance.mapToKoulutuskoodiModel(koodistoTyyppi1);
         assertEquals(URI, result.getKoodistoUri());
         assertEquals(URI_VERSION, result.getKoodistoUriVersio());
         assertEquals(VERSION + "", result.getKoodistoVersio());

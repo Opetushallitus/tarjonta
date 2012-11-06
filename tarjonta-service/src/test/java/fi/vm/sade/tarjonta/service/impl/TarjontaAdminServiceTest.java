@@ -36,13 +36,16 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenTila;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
@@ -69,16 +72,12 @@ public class TarjontaAdminServiceTest {
 
     @Autowired
     private TarjontaAdminService adminService;
-
     @Autowired
     private TarjontaFixtures fixtures;
-
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
     private KoulutuksenKestoTyyppi kesto3Vuotta;
 
     /* Known koulutus that is inserted for each test. */
@@ -126,28 +125,29 @@ public class TarjontaAdminServiceTest {
 
     @Test
     public void testUpdateKoulutusHappyPath() {
-
-        PaivitaKoulutusTyyppi paivitaKoulutus = new PaivitaKoulutusTyyppi();
-        paivitaKoulutus.setOid(SAMPLE_KOULUTUS_OID);
-
-        KoulutuksenKestoTyyppi kesto = new KoulutuksenKestoTyyppi();
-        kesto.setArvo("new-value");
-        kesto.setYksikko("new-units");
-        paivitaKoulutus.setKesto(kesto);
-
-        paivitaKoulutus.setKoulutuksenAlkamisPaiva(new Date());
-        paivitaKoulutus.setKoulutusKoodi(createKoodi("do-not-update-this"));
-        paivitaKoulutus.setKoulutusohjelmaKoodi(createKoodi("do-not-update-this"));
-        paivitaKoulutus.getOpetusmuoto().add(createKoodi("new-opetusmuoto"));
-        paivitaKoulutus.getOpetuskieli().add(createKoodi("updated-kieli"));
-
-        adminService.paivitaKoulutus(paivitaKoulutus);
-
         KoulutusmoduuliToteutus toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
-
+        assertEquals(1, toteutus.getYhteyshenkilos().size());
+        adminService.paivitaKoulutus(createPaivitaKoulutusTyyppi());
+        toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertEquals("new-value", toteutus.getSuunniteltuKestoArvo());
         assertEquals("new-units", toteutus.getSuunniteltuKestoYksikko());
+        assertEquals( TarjontaTila.VALMIS, toteutus.getTila());
+    }
 
+    @Test
+    public void testUpdateKoulutusYhteyshenkilo() {
+        KoulutusmoduuliToteutus toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
+        assertEquals(1, toteutus.getYhteyshenkilos().size());
+        assertEquals("Kalle Matti", toteutus.getYhteyshenkilos().iterator().next().getEtunimis());
+
+        PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi = createPaivitaKoulutusTyyppi();
+        createPaivitaKoulutusTyyppi.getYhteyshenkiloTyyppi().add(createAnotherYhteyshenkilo());
+        EntityUtils.copyFields(createPaivitaKoulutusTyyppi, toteutus);
+        assertEquals(1, toteutus.getYhteyshenkilos().size());
+
+        koulutusmoduuliToteutusDAO.update(toteutus);
+        toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
+        assertEquals(1, toteutus.getYhteyshenkilos().size());
     }
 
     @Test
@@ -163,25 +163,25 @@ public class TarjontaAdminServiceTest {
         komotos = this.koulutusmoduuliToteutusDAO.findAll();
         assertEquals(komotosOriginalSize - 1, komotos.size());
     }
-    
+
     @Test
     public void testLisaaKoulutusmoduuliHappyPath() {
-    	String oid = "oid:" + System.currentTimeMillis();
-    	String koulutuskoodi = "uri:koodi1";
-    	String koKoodi = "uri:kokoodi1";
-    	KoulutusmoduuliKoosteTyyppi koulutusmoduuliT = new KoulutusmoduuliKoosteTyyppi();
-    	koulutusmoduuliT.setOid(oid);
-    	koulutusmoduuliT.setKoulutuskoodiUri(koulutuskoodi);
-    	koulutusmoduuliT.setKoulutusohjelmakoodiUri(koKoodi);
-    	koulutusmoduuliT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-    	adminService.lisaaKoulutusmoduuli(koulutusmoduuliT);
-    	
-    	SearchCriteria sc = new SearchCriteria();
-    	sc.setKoulutusKoodi(koulutuskoodi);
-    	sc.setKoulutusohjelmaKoodi(koKoodi);
-    	Koulutusmoduuli komo = this.koulutusmoduuliDAO.search(sc).get(0);
-    	assertEquals(koulutuskoodi, komo.getKoulutusKoodi());
-    	
+        String oid = "oid:" + System.currentTimeMillis();
+        String koulutuskoodi = "uri:koodi1";
+        String koKoodi = "uri:kokoodi1";
+        KoulutusmoduuliKoosteTyyppi koulutusmoduuliT = new KoulutusmoduuliKoosteTyyppi();
+        koulutusmoduuliT.setOid(oid);
+        koulutusmoduuliT.setKoulutuskoodiUri(koulutuskoodi);
+        koulutusmoduuliT.setKoulutusohjelmakoodiUri(koKoodi);
+        koulutusmoduuliT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        adminService.lisaaKoulutusmoduuli(koulutusmoduuliT);
+
+        SearchCriteria sc = new SearchCriteria();
+        sc.setKoulutusKoodi(koulutuskoodi);
+        sc.setKoulutusohjelmaKoodi(koKoodi);
+        Koulutusmoduuli komo = this.koulutusmoduuliDAO.search(sc).get(0);
+        assertEquals(koulutuskoodi, komo.getKoulutusKoodi());
+
     }
 
     private void assertMatch(YhteyshenkiloTyyppi expected, Yhteyshenkilo actual) {
@@ -224,6 +224,7 @@ public class TarjontaAdminServiceTest {
     private LisaaKoulutusTyyppi createSampleKoulutus() {
 
         LisaaKoulutusTyyppi lisaaKoulutus = new LisaaKoulutusTyyppi();
+        lisaaKoulutus.setKoulutuksenTila(KoulutuksenTila.VALMIS);
         lisaaKoulutus.setKoulutusKoodi(createKoodi("321101"));
         lisaaKoulutus.setKoulutusohjelmaKoodi(createKoodi("1603"));
         lisaaKoulutus.getOpetusmuoto().add(createKoodi("opetusmuoto/aikuisopetus"));
@@ -241,18 +242,27 @@ public class TarjontaAdminServiceTest {
     }
 
     private YhteyshenkiloTyyppi createYhteyshenkilo() {
-
         YhteyshenkiloTyyppi h = new YhteyshenkiloTyyppi();
         h.setEtunimet("Kalle Matti"); // required
         h.setSukunimi("Kettu-Orava"); // required
-        h.setHenkiloOid(null); // not recognized via HenkiloService
+        h.setHenkiloOid("fake-oid1"); // not recognized via HenkiloService
         h.setPuhelin("+358 123 123 123"); // optional
         h.setSahkoposti(null); // optional
         h.setTitteli(null); // optional
         h.getKielet().add("fi"); // min 1 required (for now)
-
         return h;
+    }
 
+    private YhteyshenkiloTyyppi createAnotherYhteyshenkilo() {
+        YhteyshenkiloTyyppi h = new YhteyshenkiloTyyppi();
+        h.setEtunimet("John"); // required
+        h.setSukunimi("Doe"); // required
+        h.setHenkiloOid("fake-oid2"); // not recognized via HenkiloService
+        h.setPuhelin("+358 123 456 789"); // optional
+        h.setSahkoposti(null); // optional
+        h.setTitteli(null); // optional
+        h.getKielet().add("en"); // min 1 required (for now)
+        return h;
     }
 
     @Test
@@ -278,5 +288,22 @@ public class TarjontaAdminServiceTest {
         ((KoulutusmoduuliToteutusDAOImpl) koulutusmoduuliToteutusDAO).getEntityManager().flush();
     }
 
-}
+    private PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi() {
+        PaivitaKoulutusTyyppi paivitaKoulutus = new PaivitaKoulutusTyyppi();
+        paivitaKoulutus.setKoulutuksenTila(KoulutuksenTila.VALMIS);
+        paivitaKoulutus.setOid(SAMPLE_KOULUTUS_OID);
 
+        KoulutuksenKestoTyyppi kesto = new KoulutuksenKestoTyyppi();
+        kesto.setArvo("new-value");
+        kesto.setYksikko("new-units");
+        paivitaKoulutus.setKesto(kesto);
+
+        paivitaKoulutus.setKoulutuksenAlkamisPaiva(new Date());
+        paivitaKoulutus.setKoulutusKoodi(createKoodi("do-not-update-this"));
+        paivitaKoulutus.setKoulutusohjelmaKoodi(createKoodi("do-not-update-this"));
+        paivitaKoulutus.getOpetusmuoto().add(createKoodi("new-opetusmuoto"));
+        paivitaKoulutus.getOpetuskieli().add(createKoodi("updated-kieli"));
+
+        return paivitaKoulutus;
+    }
+}

@@ -50,6 +50,7 @@ import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusohjelmaTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenTila;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
@@ -453,31 +454,28 @@ public class TarjontaPresenter {
         getKoulutusListView().reload();
     }
 
-    public void saveKoulutusLuonnoksenaModel() {
-        LOG.info("Koulutus tallennettu luonnoksena");
-        LOG.info(getModel().getKoulutusPerustiedotModel().toString());
-    }
-
     /**
-     * Saves koulutus as ready.
+     * Saves koulutus.
      */
-    public void saveKoulutusValmiina() throws ExceptionMessage {
+    public void saveKoulutus(KoulutuksenTila tila) throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
 
         if (model.isLoaded()) {
             //update KOMOTO
             PaivitaKoulutusTyyppi paivita = koulutusToDTOConverter.createPaivitaKoulutusTyyppi(model, model.getOid());
+            paivita.setKoulutuksenTila(tila);
             koulutusToDTOConverter.validateSaveData(paivita, model);
             tarjontaAdminService.paivitaKoulutus(paivita);
         } else {
-            //add new KOMO and KOMOTO
+            //persist new KOMO and KOMOTO
             LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(model, getModel().getOrganisaatioOid());
+            lisaa.setKoulutuksenTila(tila);
             koulutusToDTOConverter.validateSaveData(lisaa, model);
             checkKoulutusmoduuli();
             tarjontaAdminService.lisaaKoulutus(lisaa);
             model.setOid( lisaa.getOid());
         }
-        model.setDocumentStatus(DocumentStatus.SAVED_AS_RELEASED);
+        model.setDocumentStatus(DocumentStatus.SAVED);
     }
 
     /**

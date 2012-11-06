@@ -327,6 +327,13 @@
         </xs:restriction>
 
     </xs:simpleType>
+    
+    <xs:simpleType name="KoulutuksenTila">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LUONNOS"/>
+            <xs:enumeration value="VALMIS"/>
+        </xs:restriction>
+    </xs:simpleType>
 
 
     <xs:complexType name="HakukohdeKoosteTyyppi">
@@ -353,7 +360,7 @@
             <xs:element name="Koulutusmoduuli" type="xs:string"></xs:element>
             <xs:element name="KoulutusmoduuliToteutus" type="xs:string"></xs:element>
             <xs:element name="Tarjoaja" type="xs:string"></xs:element>
-            <xs:element name="Tila" type="xs:string"></xs:element>
+            <xs:element name="Tila" type="tns:KoulutuksenTila"></xs:element>
             <xs:element name="Koulutuskoodi" type="xs:string"></xs:element>
             <xs:element name="Koulutusohjelmakoodi" type="xs:string"></xs:element>
             <xs:element name="ajankohta" type="xs:string"></xs:element>
@@ -380,6 +387,8 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            
+            <xs:element name="KoulutuksenTila" type="tns:KoulutuksenTila"/>
             <xs:element name="KoulutusKoodi" type="tns:KoodistoKoodiTyyppi"/>
             <xs:element name="KoulutusohjelmaKoodi" type="tns:KoodistoKoodiTyyppi"/>
             <xs:element name="Opetusmuoto" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
@@ -388,8 +397,9 @@
             <xs:element name="Kesto" type="tns:KoulutuksenKestoTyyppi"/>
             <xs:element name="Koulutuslaji" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
             <xs:element name="Linkki" type="tns:WebLinkkiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="YhteyshenkiloTyyppi" type="tns:YhteyshenkiloTyyppi" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="Koulutusaste" type="tns:KoodistoKoodiTyyppi"/>
-             <xs:element name="Tarjoaja" type="xs:string"/>
+            <xs:element name="Tarjoaja" type="xs:string"/>
         </xs:sequence>
     </xs:group>
 

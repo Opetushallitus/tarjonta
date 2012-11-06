@@ -38,7 +38,8 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Comparab
     private String oid;
 
     @Column(name = TILA_COLUMN_NAME)
-    private String tila;
+    @Enumerated(EnumType.STRING)
+    private TarjontaTila tila = TarjontaTila.LUONNOS;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
@@ -50,8 +51,7 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Comparab
      * Make sure you call super when overriding constructor.
      */
     public BaseKoulutusmoduuli() {
-        // can we even assign this value if it comes from koodisto??
-        this.tila = KoodistoContract.TarjontaTilat.SUUNNITTELUSSA;
+
     }
 
     @PreUpdate
@@ -96,7 +96,7 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Comparab
      *
      * @return
      */
-    public String getTila() {
+    public TarjontaTila getTila() {
         return tila;
     }
 
@@ -105,7 +105,7 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Comparab
      *
      * @param tila
      */
-    public void setTila(String tila) {
+    public void setTila(TarjontaTila tila) {
         // todo: since states come from koodisto, can we do any state lifecycle validation??
         this.tila = tila;
     }

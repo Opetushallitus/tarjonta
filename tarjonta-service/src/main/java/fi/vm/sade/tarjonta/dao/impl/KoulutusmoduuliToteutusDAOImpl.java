@@ -49,11 +49,23 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
 
     @Override
     public KoulutusmoduuliToteutus findKomotoByOid(String oid) {
-        Query query = getEntityManager().createQuery("SELECT k FROM KoulutusmoduuliToteutus k LEFT JOIN FETCH k.koulutusmoduuli where k.oid=:oid");
+        Query query = getEntityManager().createQuery(""
+                + "SELECT k FROM KoulutusmoduuliToteutus k "
+                + "LEFT JOIN FETCH k.koulutusmoduuli "
+                + "where k.oid=:oid");
         query.setParameter("oid", oid);
         return (KoulutusmoduuliToteutus) query.getSingleResult();
 
-
+    }
+    
+     @Override
+    public KoulutusmoduuliToteutus findKomotoWithYhteyshenkilosByOid(String oid) {
+        Query query = getEntityManager().createQuery(""
+                + "SELECT k FROM KoulutusmoduuliToteutus k "
+                + "LEFT JOIN FETCH k.yhteyshenkilos "
+                + "where k.oid=:oid");
+        query.setParameter("oid", oid);
+        return (KoulutusmoduuliToteutus) query.getSingleResult();
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

@@ -15,22 +15,14 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
-
 import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import java.util.List;
 
 /**
  *
  */
-public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteutus, Long> {
+public interface YhteyshenkiloDAO extends JpaDAO<Yhteyshenkilo, Long> {
 
-    public KoulutusmoduuliToteutus findByOid(String oid);
-
-    public KoulutusmoduuliToteutus findKomotoByOid(String oid);
-	public List<KoulutusmoduuliToteutus> findByCriteria(
-			List<String> tarjoajaOids, String nimi);
-
-    public KoulutusmoduuliToteutus findKomotoWithYhteyshenkilosByOid(String oid);
+    public Yhteyshenkilo findByOid(String oid);
 }
-
