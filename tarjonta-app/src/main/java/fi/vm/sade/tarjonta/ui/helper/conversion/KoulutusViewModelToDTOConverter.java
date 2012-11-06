@@ -146,7 +146,6 @@ public class KoulutusViewModelToDTOConverter {
         return model2Aste;
     }
 
-
     private OrganisaatioDTO searchOrganisatioByOid(final String organisaatioOid) {
         if (organisaatioOid == null) {
             throw new RuntimeException(INVALID_DATA + "organisation OID cannot be null.");
@@ -338,6 +337,10 @@ public class KoulutusViewModelToDTOConverter {
             throw new RuntimeException(INVALID_DATA + "Organisatio DTO cannot be null.");
         }
 
+        if (organisatio.getOid() == null) {
+            throw new RuntimeException(INVALID_DATA + "Organisatio OID cannot be null.");
+        }
+
         KoulutusToisenAsteenPerustiedotViewModel model2Aste = new KoulutusToisenAsteenPerustiedotViewModel(status);
         model2Aste.setTila(koulutus.getKoulutuksenTila());
         model2Aste.setOid(koulutus.getOid());
@@ -411,9 +414,6 @@ public class KoulutusViewModelToDTOConverter {
 
         return result;
     }
-
-
-
 
     public KoulutusohjelmaModel mapToKoulutusohjelmaModel(final KoodistoKoodiTyyppi koulutusohjelmaKoodi) {
         if (koulutusohjelmaKoodi != null && koulutusohjelmaKoodi.getUri() != null) {

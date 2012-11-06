@@ -140,7 +140,6 @@ public class TarjontaPresenter {
 //            return "";
 //        }
 //    }
-
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
         getModel().getHakukohde().getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
@@ -450,24 +449,28 @@ public class TarjontaPresenter {
      * Saves koulutus.
      */
     public void saveKoulutus(KoulutuksenTila tila) throws ExceptionMessage {
-        KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
+        KoulutusToisenAsteenPerustiedotViewModel koulutusModel = getModel().getKoulutusPerustiedotModel();
 
-        if (model.isLoaded()) {
+        if (koulutusModel.isLoaded()) {
             //update KOMOTO
-            PaivitaKoulutusTyyppi paivita = koulutusToDTOConverter.createPaivitaKoulutusTyyppi(getModel(), model.getOid());
+            PaivitaKoulutusTyyppi paivita = koulutusToDTOConverter.createPaivitaKoulutusTyyppi(getModel(), koulutusModel.getOid());
             paivita.setKoulutuksenTila(tila);
-            koulutusToDTOConverter.validateSaveData(paivita, model);
+            koulutusToDTOConverter.validateSaveData(paivita, koulutusModel);
             tarjontaAdminService.paivitaKoulutus(paivita);
         } else {
             //persist new KOMO and KOMOTO
+            koulutusModel.setOrganisaatioOid(getModel().getOrganisaatioOid());
+            koulutusModel.setOrganisaatioName(getModel().getOrganisaatioName());
+
             LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(getModel(), getModel().getOrganisaatioOid());
             lisaa.setKoulutuksenTila(tila);
-            koulutusToDTOConverter.validateSaveData(lisaa, model);
+            koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
             checkKoulutusmoduuli();
             tarjontaAdminService.lisaaKoulutus(lisaa);
-            model.setOid(lisaa.getOid());
+            koulutusModel.setOid(lisaa.getOid());
+
         }
-        model.setDocumentStatus(DocumentStatus.SAVED);
+        koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
     }
 
     /**
