@@ -80,7 +80,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
             addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet"), LabelStyleEnum.H2));
 
             PropertysetItem psi = new BeanItem(_tarjontaModel.getKoulutusLisatiedotModel());
-            OphTokenField f = UiBuilder.koodistoTokenField(null, KoodistoURIHelper.KOODISTO_KIELI_URI, psi, "ammattinimikkeet");
+            OphTokenField f = UiBuilder.koodistoTokenField(null, KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
             f.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
                 @Override
                 public String formatToken(Object selectedToken) {
