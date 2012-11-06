@@ -19,6 +19,7 @@ import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
@@ -39,6 +40,19 @@ import java.util.Set;
  *
  */
 public final class EntityUtils {
+
+    public static void copyMonikielinenTeksti(MonikielinenTeksti from, List<MonikielinenTekstiTyyppi> to) {
+        if (from == null || to == null) {
+            return;
+        }
+
+        for (TekstiKaannos tekstiKaannos : from.getTekstis()) {
+            MonikielinenTekstiTyyppi t = new MonikielinenTekstiTyyppi();
+            t.setTeksti(tekstiKaannos.getTeksti());
+            t.setTekstinKielikoodi(tekstiKaannos.getKieliKoodi());
+            to.add(t);
+        }
+    }
 
     private EntityUtils() {
     }

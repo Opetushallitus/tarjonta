@@ -53,11 +53,6 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.datatype.DatatypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -256,19 +251,19 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     public LueKoulutusVastausTyyppi lueKoulutus(LueKoulutusKyselyTyyppi kysely) {
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(kysely.getOid());
 
-        LueKoulutusVastausTyyppi convert = convert(komoto);
+        LueKoulutusVastausTyyppi result = convert(komoto);
 
         //
         KoodistoKoodiTyyppi koulutusKoodi = new KoodistoKoodiTyyppi();
         koulutusKoodi.setArvo(komoto.getKoulutusmoduuli().getKoulutusNimi());
         koulutusKoodi.setUri(komoto.getKoulutusmoduuli().getKoulutusKoodi());
-        convert.setKoulutusKoodi(koulutusKoodi);
+        result.setKoulutusKoodi(koulutusKoodi);
 
         KoodistoKoodiTyyppi koulutusOhjelmaKoodi = new KoodistoKoodiTyyppi();
         koulutusOhjelmaKoodi.setArvo(komoto.getKoulutusmoduuli().getKoulutusNimi());
         koulutusOhjelmaKoodi.setUri(komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi());
-        convert.setKoulutusohjelmaKoodi(koulutusOhjelmaKoodi);
-        
+        result.setKoulutusohjelmaKoodi(koulutusOhjelmaKoodi);
+
         //Asetetaan koulutusmoduuli
         KoulutusmoduuliKoosteTyyppi komoTyyppi = new KoulutusmoduuliKoosteTyyppi();
         Koulutusmoduuli komo =komoto.getKoulutusmoduuli();
@@ -280,9 +275,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         komoTyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
         komoTyyppi.setTutkintoOhjelmaUri(komo.getTutkintoOhjelmanNimi());
         komoTyyppi.setUlkoinenTunniste(komo.getUlkoinenTunniste());
-        convert.setKoulutusmoduuli(komoTyyppi);
+        result.setKoulutusmoduuli(komoTyyppi);
 
-        return convert;
+        return result;
     }
 
     private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus fromKoulutus) {
@@ -315,8 +310,17 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         EntityUtils.copyWebLinkkis(fromKoulutus.getLinkkis(), toKoulutus.getLinkki());
         EntityUtils.copyYhteyshenkilos(fromKoulutus.getYhteyshenkilos(), toKoulutus.getYhteyshenkilo());
 
-        return toKoulutus;
+        //
+        // Koulutus lisätiedot / additional information for Koulutus
+        //
+        EntityUtils.copyKoodistoUris(fromKoulutus.getAmmattinimikes(), toKoulutus.getAmmattinimikkeet());
+        EntityUtils.copyMonikielinenTeksti(fromKoulutus.getKuvailevatTiedot(), toKoulutus.getKuvailevatTiedot());
+        EntityUtils.copyMonikielinenTeksti(fromKoulutus.getSisalto(), toKoulutus.getSisalto());
+        EntityUtils.copyMonikielinenTeksti(fromKoulutus.getSijoittuminenTyoelamaan(), toKoulutus.getSijoittuminenTyoelamaan());
+        EntityUtils.copyMonikielinenTeksti(fromKoulutus.getKansainvalistyminen(), toKoulutus.getKansainvalistyminen());
+        EntityUtils.copyMonikielinenTeksti(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa(), toKoulutus.getYhteistyoMuidenToimijoidenKanssa());
 
+        return toKoulutus;
     }
 
     @Override
