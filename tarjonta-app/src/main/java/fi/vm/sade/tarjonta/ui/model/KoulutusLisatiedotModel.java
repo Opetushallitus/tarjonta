@@ -68,6 +68,7 @@ public class KoulutusLisatiedotModel extends BaseUIViewModel {
         KoulutusLisatietoModel result = getLisatiedot().get(uri);
         if (result == null) {
             result = new KoulutusLisatietoModel();
+            result.setLanguageUri(uri);
             getLisatiedot().put(uri, result);
 
             // Update language settings too
