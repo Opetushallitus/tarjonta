@@ -847,9 +847,9 @@
                         maxOccurs="1"/>
 
             <xs:element name="Prerequisite"
-                        type="tns:PrerequisiteType"
+                        type="tns:ExtendedStringType"
                         minOccurs="0"
-                        maxOccurs="1"/>
+                        maxOccurs="unbounded"/>
 
             <xs:element name="ProfessionLabels"
                         type="tns:ProfessionCollectionType"
