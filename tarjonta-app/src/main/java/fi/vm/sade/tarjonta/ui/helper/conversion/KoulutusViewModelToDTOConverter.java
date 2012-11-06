@@ -42,6 +42,7 @@ import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
@@ -99,6 +100,9 @@ public class KoulutusViewModelToDTOConverter {
         //convert linkki model objects to linkki type objects.
         addToWebLinkkiTyyppiList(model.getKoulutusLinkit(), paivita.getLinkki());
 
+        // Lisätiedot
+        mapToKoulutusLisatiedotModel(paivita, tarjontaModel.getKoulutusLisatiedotModel());
+
         return paivita;
     }
 
@@ -116,6 +120,9 @@ public class KoulutusViewModelToDTOConverter {
 
         //convert linkki model objects to linkki type objects.
         addToWebLinkkiTyyppiList(model.getKoulutusLinkit(), lisaa.getLinkki());
+
+        // Lisätiedot
+        mapToKoulutusLisatiedotModel(lisaa, tarjontaModel.getKoulutusLisatiedotModel());
 
         return lisaa;
     }
@@ -649,4 +656,43 @@ public class KoulutusViewModelToDTOConverter {
 
         return result;
     }
+
+    private void mapToKoulutusLisatiedotModel(KoulutusTyyppi koulutus, KoulutusLisatiedotModel koulutusLisatiedotModel) {
+
+        koulutus.getAmmattinimikkeet().clear();
+        for (String uri : koulutusLisatiedotModel.getAmmattinimikkeet()) {
+            koulutus.getAmmattinimikkeet().add(createKoodi(uri));
+        }
+
+        koulutus.getKuvailevatTiedot().clear();
+        koulutus.getSisalto().clear();
+        koulutus.getSijoittuminenTyoelamaan().clear();
+        koulutus.getKansainvalistyminen().clear();
+        koulutus.getYhteistyoMuidenToimijoidenKanssa().clear();
+
+        for (String kieliUri : koulutusLisatiedotModel.getLisatiedot().keySet()) {
+            KoulutusLisatietoModel lisatieto = koulutusLisatiedotModel.getLisatiedot(kieliUri);
+
+            koulutus.getKuvailevatTiedot().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getKuvailevatTiedot()));
+            koulutus.getSisalto().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getSisalto()));
+            koulutus.getSijoittuminenTyoelamaan().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getSijoittuminenTyoelamaan()));
+            koulutus.getKansainvalistyminen().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getKansainvalistyminen()));
+            koulutus.getYhteistyoMuidenToimijoidenKanssa().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getYhteistyoMuidenToimijoidenKanssa()));
+        }
+    }
+
+    /**
+     * Convert language uri and value to MonikielinenTekstiTyyppi.
+     *
+     * @param languageUri
+     * @param teksti
+     * @return
+     */
+    private MonikielinenTekstiTyyppi convertToMonikielinenTekstiTyyppi(String languageUri, String teksti) {
+        MonikielinenTekstiTyyppi mktt = new MonikielinenTekstiTyyppi();
+        mktt.setTeksti(teksti);
+        mktt.setTekstinKielikoodi(languageUri);
+        return mktt;
+    }
+
 }
