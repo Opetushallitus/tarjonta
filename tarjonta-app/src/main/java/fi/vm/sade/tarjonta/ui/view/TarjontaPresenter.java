@@ -123,8 +123,8 @@ public class TarjontaPresenter {
     private PerustiedotView hakuKohdePerustiedotView;
 
     public void saveHakuKohde(String tila) {
-        _model.getHakukohde().setHakukohdeTila(tila);
-        //_model.getHakukohde().setHakukohdeKoodistoNimi(tryGetHakukohdeNimi(_model.getHakukohde().getHakukohdeNimi()));
+        getModel().getHakukohde().setHakukohdeTila(tila);
+        //getModel().getHakukohde().setHakukohdeKoodistoNimi(tryGetHakukohdeNimi(getModel().getHakukohde().getHakukohdeNimi()));
         saveHakuKohdePerustiedot();
     }
 
@@ -132,24 +132,19 @@ public class TarjontaPresenter {
         hakuKohdePerustiedotView.commitForm(tila);
     }
 
-    private String tryGetHakukohdeNimi(String hakukohdeNimiUri) {
-        List<KoodiType> koodit = koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder
-                .latestAcceptedKoodiByUri(hakukohdeNimiUri));
-        if (koodit != null && koodit.size() > 0) {
-            return koodit.get(0).getMetadata().get(0).getNimi();
-        } else {
-            return "";
-        }
-    }
+//    private String tryGetHakukohdeNimi(String hakukohdeNimiUri) {
+//        List<KoodiType> koodit = koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(hakukohdeNimiUri));
+//        if (koodit != null && koodit.size() > 0) {
+//            return koodit.get(0).getMetadata().get(0).getNimi();
+//        } else {
+//            return "";
+//        }
+//    }
 
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
         getModel().getHakukohde().getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
-
-        tarjontaAdminService.lisaaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel()
-                .getHakukohde()));
-
-
+        tarjontaAdminService.lisaaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
     }
 
     public void setTunnisteKoodi(String hakukohdeNimiUri) {
@@ -177,8 +172,8 @@ public class TarjontaPresenter {
 
         this.hakuKohdePerustiedotView.initForm(getModel().getHakukohde());
         HakuViewModel hakuView = null;
-        if (_model.getHakukohde() != null && _model.getHakukohde().getHakuOid() != null) {
-            hakuView = _model.getHakukohde().getHakuOid();
+        if (getModel().getHakukohde() != null && getModel().getHakukohde().getHakuOid() != null) {
+            hakuView = getModel().getHakukohde().getHakuOid();
         }
         List<HakuViewModel> foundHaut = new ArrayList<HakuViewModel>();
         for (HakuTyyppi foundHaku : haut.getResponse()) {
@@ -192,14 +187,14 @@ public class TarjontaPresenter {
         this.hakuKohdePerustiedotView.addItemsToHakuCombobox(foundHaut);
 
         if (hakuView != null) {
-            _model.getHakukohde().setHakuOid(hakuView);
+            getModel().getHakukohde().setHakuOid(hakuView);
             ListaaHakuTyyppi hakuKysely = new ListaaHakuTyyppi();
-            hakuKysely.setHakuOid(_model.getHakukohde().getHakuOid().getHakuOid());
+            hakuKysely.setHakuOid(getModel().getHakukohde().getHakuOid().getHakuOid());
             ListHakuVastausTyyppi hakuVastaus = tarjontaPublicService.listHaku(hakuKysely);
             HakuViewModel hakuModel = new HakuViewModel(hakuVastaus.getResponse().get(0));
             hakuModel.getHakuOid();
             hakuModel.getNimiFi();
-            _model.getHakukohde().setHakuOid(hakuModel);
+            getModel().getHakukohde().setHakuOid(hakuModel);
         }
     }
 
@@ -273,7 +268,7 @@ public class TarjontaPresenter {
     }
 
     public void setKomotoOids(List<String> komotoOids) {
-        _model.getHakukohde().setKomotoOids(komotoOids);
+        getModel().getHakukohde().setKomotoOids(komotoOids);
     }
 
     @SuppressWarnings("empty-statement")
@@ -341,9 +336,9 @@ public class TarjontaPresenter {
         if (hakukohdeOid != null) {
             LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
             kysely.setOid(hakukohdeOid);
-            _model.setHakukohde(this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(tarjontaPublicService
+            getModel().setHakukohde(this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(tarjontaPublicService
                     .lueHakukohde(kysely).getHakukohde()));
-            setKomotoOids(_model.getHakukohde().getKomotoOids());
+            setKomotoOids(getModel().getHakukohde().getKomotoOids());
         }
 
         //Clearing the layout from previos content
@@ -377,7 +372,7 @@ public class TarjontaPresenter {
             // Fetching komotos matching currently specified criteria (currently
             // selected organisaatio and written text in search box)
             HaeHakukohteetKyselyTyyppi kysely = this.koulutusSearchSpecToDTOConverter
-                    .convertViewModelToHakukohdeDTO(_model.getSearchSpec());
+                    .convertViewModelToHakukohdeDTO(getModel().getSearchSpec());
             getModel().setHakukohteet(tarjontaPublicService.haeHakukohteet(kysely).getHakukohdeTulos());
         } catch (Exception ex) {
             LOG.error("Error in finding hakukokohteet: {}", ex.getMessage());
@@ -541,9 +536,9 @@ public class TarjontaPresenter {
             // Fetching komotos matching currently specified criteria (currently
             // selected organisaatio and written text in search box)
             HaeKoulutuksetKyselyTyyppi kysely = this.koulutusSearchSpecToDTOConverter
-                    .convertViewModelToKoulutusDTO(_model.getSearchSpec());
+                    .convertViewModelToKoulutusDTO(getModel().getSearchSpec());
 
-            _model.setKoulutukset(this.tarjontaPublicService.haeKoulutukset(kysely).getKoulutusTulos());
+            getModel().setKoulutukset(this.tarjontaPublicService.haeKoulutukset(kysely).getKoulutusTulos());
 
         } catch (Exception ex) {
             LOG.error("Error in finding koulutukset: {}", ex.getMessage());
@@ -574,14 +569,14 @@ public class TarjontaPresenter {
      */
     private HaeKoulutuksetKyselyTyyppi generateKomotoSearchCriteria() {
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
-        if (_model.getOrganisaatioOid() != null) {
-            List<OrganisaatioDTO> childOrgs = this.organisaatioService.findAllChildrenWithOid(_model.getOrganisaatioOid());
+        if (getModel().getOrganisaatioOid() != null) {
+            List<OrganisaatioDTO> childOrgs = this.organisaatioService.findAllChildrenWithOid(getModel().getOrganisaatioOid());
             LOG.debug("childOrgs: " + childOrgs.size());
             for (OrganisaatioDTO org : childOrgs) {
                 LOG.debug("Current organisaatio: " + org.getNimiFi() + ", " + org.getOid());
                 kysely.getTarjoajaOids().add(org.getOid());
             }
-            kysely.getTarjoajaOids().add(_model.getOrganisaatioOid());
+            kysely.getTarjoajaOids().add(getModel().getOrganisaatioOid());
         }
         return kysely;
     }
@@ -603,7 +598,7 @@ public class TarjontaPresenter {
      */
     public List<String> getSelectedKoulutusOids() {
         List<String> kOids = new ArrayList<String>();
-        for (KoulutusTulos curKoul : this._model.getSelectedKoulutukset()) {
+        for (KoulutusTulos curKoul : getModel().getSelectedKoulutukset()) {
             kOids.add(curKoul.getKoulutus().getKoulutusmoduuliToteutus());
         }
         return kOids;
@@ -624,8 +619,8 @@ public class TarjontaPresenter {
      */
     public void showNotification(final UserNotification msg) {
         LOG.info("Show user notification - type {}, value {}", msg, msg.getInfo());
-        if (msg != null && _rootView != null) {
-            _rootView.showNotification(msg.getInfo(), msg.getNotifiaction());
+        if (msg != null && getRootView() != null) {
+            getRootView().showNotification(msg.getInfo(), msg.getNotifiaction());
         } else {
             LOG.error("Application error - an unknown problem with UI notification. Value : {}", msg);
         }
@@ -664,10 +659,10 @@ public class TarjontaPresenter {
      * @param organisaatioName - the organisaatio name to select
      */
     public void selectOrganisaatio(String organisaatioOid, String organisaatioName) {
-        _rootView.getBreadcrumbsView().removeAllComponents();
-        _rootView.getBreadcrumbsView().addComponent(new Label(organisaatioName));
-        _model.setOrganisaatioOid(organisaatioOid);
-        _model.setOrganisaatioName(organisaatioName);
+        getRootView().getBreadcrumbsView().removeAllComponents();
+        getRootView().getBreadcrumbsView().addComponent(new Label(organisaatioName));
+        getModel().setOrganisaatioOid(organisaatioOid);
+        getModel().setOrganisaatioName(organisaatioName);
         List<OrganisaatioDTO> childOrgs = this.organisaatioService.findAllChildrenWithOid(organisaatioOid);
 
         List<String> orgOids = new ArrayList<String>();
@@ -676,7 +671,7 @@ public class TarjontaPresenter {
 
             orgOids.add(org.getOid());
         }
-        _model.getSearchSpec().setOrganisaatioOids(orgOids);
+        getModel().getSearchSpec().setOrganisaatioOids(orgOids);
 
         // Updating koulutuslista to show only komotos with tarjoaja matching
         // the selected org or one of its descendants
@@ -794,8 +789,8 @@ public class TarjontaPresenter {
     }
 
     public void showKoulutusPreview() {
-        if (_rootView != null) {
-            _rootView.showNotification("NOT IMPLEMNTED");
+        if (getRootView() != null) {
+            getRootView().showNotification("NOT IMPLEMNTED");
         }
     }
 }
