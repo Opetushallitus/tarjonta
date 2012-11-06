@@ -459,13 +459,13 @@ public class TarjontaPresenter {
 
         if (model.isLoaded()) {
             //update KOMOTO
-            PaivitaKoulutusTyyppi paivita = koulutusToDTOConverter.createPaivitaKoulutusTyyppi(model, model.getOid());
+            PaivitaKoulutusTyyppi paivita = koulutusToDTOConverter.createPaivitaKoulutusTyyppi(getModel(), model.getOid());
             paivita.setKoulutuksenTila(tila);
             koulutusToDTOConverter.validateSaveData(paivita, model);
             tarjontaAdminService.paivitaKoulutus(paivita);
         } else {
             //persist new KOMO and KOMOTO
-            LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(model, getModel().getOrganisaatioOid());
+            LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(getModel(), getModel().getOrganisaatioOid());
             lisaa.setKoulutuksenTila(tila);
             koulutusToDTOConverter.validateSaveData(lisaa, model);
             checkKoulutusmoduuli();

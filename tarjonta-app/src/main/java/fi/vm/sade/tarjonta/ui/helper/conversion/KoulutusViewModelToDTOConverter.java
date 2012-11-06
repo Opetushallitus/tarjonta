@@ -44,6 +44,7 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
+import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import java.util.Collection;
 import java.util.HashSet;
@@ -80,7 +81,10 @@ public class KoulutusViewModelToDTOConverter {
      * @return
      * @throws ExceptionMessage
      */
-    public PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi(final KoulutusToisenAsteenPerustiedotViewModel model, final String komotoOid) throws ExceptionMessage {
+    public PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi(final TarjontaModel tarjontaModel, final String komotoOid) throws ExceptionMessage {
+
+        KoulutusToisenAsteenPerustiedotViewModel model = tarjontaModel.getKoulutusPerustiedotModel();
+
         if (komotoOid == null) {
             throw new RuntimeException(INVALID_DATA + "KOMOTO OID cannot be null.");
         }
@@ -98,7 +102,10 @@ public class KoulutusViewModelToDTOConverter {
         return paivita;
     }
 
-    public LisaaKoulutusTyyppi createLisaaKoulutusTyyppi(KoulutusToisenAsteenPerustiedotViewModel model, final String organisaatioOid) throws ExceptionMessage {
+    public LisaaKoulutusTyyppi createLisaaKoulutusTyyppi(TarjontaModel tarjontaModel, final String organisaatioOid) throws ExceptionMessage {
+
+        KoulutusToisenAsteenPerustiedotViewModel model = tarjontaModel.getKoulutusPerustiedotModel();
+
         final OrganisaatioDTO organisaatio = searchOrganisatioByOid(organisaatioOid);
 
         LisaaKoulutusTyyppi lisaa = new LisaaKoulutusTyyppi();
@@ -363,7 +370,7 @@ public class KoulutusViewModelToDTOConverter {
          * KOMO
          */
         final KoulutusmoduuliKoosteTyyppi koulutusmoduuli = koulutus.getKoulutusmoduuli();
-       
+
         if (koulutusmoduuli != null) {
             model2Aste.setTutkinto(koulutusmoduuli.getTutkintoOhjelmaUri()); //Autoalan perustutkinto
             model2Aste.setTutkintonimike(koulutusmoduuli.getTutkintonimikeUri()); //Automaalari
