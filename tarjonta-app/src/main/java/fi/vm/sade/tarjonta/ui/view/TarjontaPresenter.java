@@ -122,7 +122,7 @@ public class TarjontaPresenter {
 
     public void saveHakuKohde(String tila) {
         _model.getHakukohde().setHakukohdeTila(tila);
-        _model.getHakukohde().setHakukohdeKoodistoNimi(tryGetHakukohdeNimi(_model.getHakukohde().getHakukohdeNimi()));
+        //_model.getHakukohde().setHakukohdeKoodistoNimi(tryGetHakukohdeNimi(_model.getHakukohde().getHakukohdeNimi()));
         saveHakuKohdePerustiedot();
     }
 
@@ -143,8 +143,10 @@ public class TarjontaPresenter {
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
         getModel().getHakukohde().getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
+        
         tarjontaAdminService.lisaaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel()
                 .getHakukohde()));
+        
 
     }
 

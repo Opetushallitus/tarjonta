@@ -45,12 +45,15 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
@@ -103,6 +106,9 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     private Form form;
     private BeanItem<HakukohdeViewModel> hakukohdeBean;
     
+    @Autowired(required=true)
+    private TarjontaUIHelper _tarjontaUIHelper;
+    
     /*
      * 
      * Init view with new model
@@ -129,6 +135,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     public void commitForm(String tila) {
         form.commit();
         if (form.isValid()) {
+        	presenter.getModel().getHakukohde().setHakukohdeKoodistoNimi(resolveHakukohdeKoodistoNimi());
             presenter.saveHakuKohde(tila);
         }
     }
@@ -156,6 +163,14 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
                  }
             }
         });
+    }
+    
+    private String resolveHakukohdeKoodistoNimi() {
+    	String nimi = _tarjontaUIHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi(), I18N.getLocale());
+    	if ("".equals(nimi)) {
+    		nimi = presenter.getModel().getHakukohde().getHakukohdeNimi();
+    	}
+    	return nimi;
     }
 
     /*
