@@ -42,7 +42,6 @@ import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
@@ -178,7 +177,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             koulutusModel.setKoulutusasteTyyppi(!koulutusModel.getKoulutusasteet().isEmpty()
                     ? koulutusModel.getKoulutusasteet().iterator().next()
                     : null);
-            
+
             //when data is loaded, it do not need listeners.
             cbKoulutusaste.addListener(new Property.ValueChangeListener() {
                 @Override
@@ -307,7 +306,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private void buildGridKoulutusohjelmaRow(GridLayout grid, final String propertyKey) {
         final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey, type);
-        
+
         cbKoulutusohjelma = new ComboBox();
         cbKoulutusohjelma.setInputPrompt(T(propertyKey + PROPERTY_PROMPT_SUFFIX));
         cbKoulutusohjelma.setEnabled(false);
@@ -473,7 +472,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         if (koulutusaste != null) {
             for (Map.Entry<KoulutusasteType, Set<Component>> entry : selectedComponents.entrySet()) {
                 for (Component c : entry.getValue()) {
-                    //if the map key value matches to TK code 'koulutusaste' 
+                    //if the map key value matches to TK code 'koulutusaste'
                     final boolean active = entry.getKey().getKoulutusaste().equals(
                             koulutusaste.getKoulutusasteKoodi());
                     c.setVisible(active);

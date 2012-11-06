@@ -33,12 +33,14 @@ import fi.vm.sade.tarjonta.service.types.koodisto.Nimi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.tarjonta.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
@@ -91,6 +93,7 @@ public class KoulutusViewModelToDTOConverter {
 
         //convert linkki model objects to linkki type objects.
         addToWebLinkkiTyyppiList(model.getKoulutusLinkit(), paivita.getLinkki());
+
         return paivita;
     }
 
@@ -105,6 +108,7 @@ public class KoulutusViewModelToDTOConverter {
 
         //convert linkki model objects to linkki type objects.
         addToWebLinkkiTyyppiList(model.getKoulutusLinkit(), lisaa.getLinkki());
+
         return lisaa;
     }
 
@@ -126,6 +130,7 @@ public class KoulutusViewModelToDTOConverter {
 
         return model2Aste;
     }
+
 
     private OrganisaatioDTO searchOrganisatioByOid(final String organisaatioOid) {
         if (organisaatioOid == null) {
@@ -149,7 +154,7 @@ public class KoulutusViewModelToDTOConverter {
             for (KoulutusYhteyshenkiloViewModel yhteyshenkiloModel : fromModel) {
                 if (yhteyshenkiloModel.getHenkiloOid() == null) {
                     //generate OID to new yhteyshenkilo.
-                    //back-end not not accept null OIDs. 
+                    //back-end not not accept null OIDs.
                     yhteyshenkiloModel.setHenkiloOid(oidService.newOid(NodeClassCode.TEKN_5));
                 }
 
@@ -159,11 +164,11 @@ public class KoulutusViewModelToDTOConverter {
     }
 
     /*
-     * 
-     * 
+     *
+     *
      * Static helper methods:
-     * 
-     * 
+     *
+     *
      */
     private static void addToWebLinkkiTyyppiList(final Collection<KoulutusLinkkiViewModel> model, List<WebLinkkiTyyppi> listTyyppi) throws ExceptionMessage {
         if (listTyyppi == null) {
@@ -265,7 +270,7 @@ public class KoulutusViewModelToDTOConverter {
             tyyppi.getOpetuskieli().add(createKoodi(opetuskielet));
         }
 
-        //TODO: change API... minor priority 
+        //TODO: change API... minor priority
         tyyppi.getKoulutuslaji().add(createKoodi(model.getKoulutuslaji()));
 
         return tyyppi;
@@ -348,13 +353,40 @@ public class KoulutusViewModelToDTOConverter {
             model2Aste.getOpetuskielet().add(getUri(typeOpetuskielet));
         }
 
-        //UI allow only one value 
+        //UI allow only one value
         if (koulutus.getKoulutuslaji() != null && !koulutus.getKoulutuslaji().isEmpty()) {
             model2Aste.setKoulutuslaji(getUri(koulutus.getKoulutuslaji().get(0)));
         }
 
         return model2Aste;
     }
+
+    public KoulutusLisatiedotModel createKoulutusLisatiedotViewModel(LueKoulutusVastausTyyppi lueKoulutus) {
+        KoulutusLisatiedotModel result = new KoulutusLisatiedotModel();
+
+        result.setAmmattinimikkeet(mapToKoodistoKoodis(lueKoulutus.getAmmattinimikkeet()));
+
+        for (MonikielinenTekstiTyyppi mkt : lueKoulutus.getKuvailevatTiedot()) {
+            result.getLisatiedot(mkt.getTekstinKielikoodi()).setKuvailevatTiedot(mkt.getTeksti());
+        }
+        for (MonikielinenTekstiTyyppi mkt : lueKoulutus.getKansainvalistyminen()) {
+            result.getLisatiedot(mkt.getTekstinKielikoodi()).setKansainvalistyminen(mkt.getTeksti());
+        }
+        for (MonikielinenTekstiTyyppi mkt : lueKoulutus.getSijoittuminenTyoelamaan()) {
+            result.getLisatiedot(mkt.getTekstinKielikoodi()).setSijoittuminenTyoelamaan(mkt.getTeksti());
+        }
+        for (MonikielinenTekstiTyyppi mkt : lueKoulutus.getSisalto()) {
+            result.getLisatiedot(mkt.getTekstinKielikoodi()).setSisalto(mkt.getTeksti());
+        }
+        for (MonikielinenTekstiTyyppi mkt : lueKoulutus.getYhteistyoMuidenToimijoidenKanssa()) {
+            result.getLisatiedot(mkt.getTekstinKielikoodi()).setYhteistyoMuidenToimijoidenKanssa(mkt.getTeksti());
+        }
+
+        return result;
+    }
+
+
+
 
     public KoulutusohjelmaModel mapToKoulutusohjelmaModel(final KoodistoKoodiTyyppi koulutusohjelmaKoodi) {
         if (koulutusohjelmaKoodi != null && koulutusohjelmaKoodi.getUri() != null) {
@@ -459,7 +491,7 @@ public class KoulutusViewModelToDTOConverter {
     public static HaeKoulutusmoduulitKyselyTyyppi mapToHaeKoulutusmoduulitKyselyTyyppi(final KoulutusToisenAsteenPerustiedotViewModel model) {
         HaeKoulutusmoduulitKyselyTyyppi kysely = new HaeKoulutusmoduulitKyselyTyyppi();
         final KoulutuskoodiTyyppi koulutuskoodi = model.getKoulutuskoodiTyyppi();
-        //Combine URI's with version number if you need to make DB search. 
+        //Combine URI's with version number if you need to make DB search.
 
         kysely.setKoulutuskoodiUri(koulutuskoodi.getKoodistoUriVersio());
 
@@ -549,7 +581,7 @@ public class KoulutusViewModelToDTOConverter {
     }
 
     /*
-     *  Sanity check for the data. 
+     *  Sanity check for the data.
      */
     public void validateSaveData(KoulutusTyyppi lisaa, KoulutusToisenAsteenPerustiedotViewModel model) {
         final String koulutusasteKoodi = model.getKoulutusasteTyyppi().getKoulutusasteKoodi();
@@ -584,5 +616,17 @@ public class KoulutusViewModelToDTOConverter {
         } else {
             LOG.debug("Koulutuskoodi URI : '" + lisaa.getKoulutusKoodi().getUri() + "', koulutusohjelma URI : '" + koulutusohjelmaKoodi.getUri() + "' ");
         }
+    }
+
+    private static Set<String> mapToKoodistoKoodis(List<KoodistoKoodiTyyppi> ammattinimikkeet) {
+        Set<String> result = new HashSet<String>();
+
+        if (ammattinimikkeet != null) {
+            for (KoodistoKoodiTyyppi koodistoKoodiTyyppi : ammattinimikkeet) {
+                result.add(koodistoKoodiTyyppi.getUri());
+            }
+        }
+
+        return result;
     }
 }

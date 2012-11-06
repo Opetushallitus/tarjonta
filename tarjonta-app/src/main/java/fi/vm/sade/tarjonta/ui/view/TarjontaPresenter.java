@@ -80,6 +80,7 @@ import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusSearchSpecificationViewM
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusViewModelToDTOConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
 import java.util.Locale;
@@ -144,10 +145,10 @@ public class TarjontaPresenter {
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
         getModel().getHakukohde().getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
-        
+
         tarjontaAdminService.lisaaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel()
                 .getHakukohde()));
-        
+
 
     }
 
@@ -263,6 +264,7 @@ public class TarjontaPresenter {
                 KoulutusToisenAsteenPerustiedotViewModel model = koulutusToDTOConverter
                         .createKoulutusPerustiedotViewModel(tyyppi, DocumentStatus.LOADED);
                 getModel().setKoulutusPerustiedotModel(model);
+                getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(tyyppi));
             } catch (ExceptionMessage ex) {
                 LOG.error("Service call failed.", ex);
             }
@@ -282,14 +284,12 @@ public class TarjontaPresenter {
         // If oid of koulutus is provided the koulutus is read from database
         // before opening the KoulutusEditView
         if (koulutusOid != null) {
-            LueKoulutusKyselyTyyppi koulutusKysely = new LueKoulutusKyselyTyyppi();
-            koulutusKysely.setOid(koulutusOid);
-            LueKoulutusVastausTyyppi lueKoulutus = this.tarjontaPublicService.lueKoulutus(koulutusKysely);
+            LueKoulutusVastausTyyppi lueKoulutus = this.getKoulutusByOid(koulutusOid);
             try {
-                KoulutusToisenAsteenPerustiedotViewModel koulutus = null;
-                koulutus = koulutusToDTOConverter
-                        .createKoulutusPerustiedotViewModel(lueKoulutus, DocumentStatus.LOADED);
+                KoulutusToisenAsteenPerustiedotViewModel koulutus;
+                koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(lueKoulutus, DocumentStatus.LOADED);
                 getModel().setKoulutusPerustiedotModel(koulutus);
+                getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(lueKoulutus));
 
                 //Empty previous Koodisto data from the comboboxes.
                 koulutus.getKoulutusohjelmat().clear();
