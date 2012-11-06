@@ -296,6 +296,31 @@
                     <xs:documentation>Koulutusmoduulin tyyppi</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element minOccurs="0" maxOccurs="1" name="tutkintoOhjelmaUri" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Tutkinto ohjelma</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" maxOccurs="1" name="laajuusyksikkoUri" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Laajuusyksikko</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" maxOccurs="1" name="laajuusarvo" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Laajuusarvo</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" maxOccurs="1" name="tutkintonimikeUri" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Tutkintonimike</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" maxOccurs="1" name="ulkoinenTunniste" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Ulkoinen tunniste</xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 

@@ -165,11 +165,11 @@
         </xs:sequence>
     </xs:complexType>
 
-
     <xs:complexType name="LueKoulutusVastausTyyppi">
         <xs:sequence>
             <xs:group ref="tarjonta:KoulutusGroup"/>
             <xs:element name="Yhteyshenkilo" type="tarjonta:YhteyshenkiloTyyppi" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Koulutusmoduuli" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 

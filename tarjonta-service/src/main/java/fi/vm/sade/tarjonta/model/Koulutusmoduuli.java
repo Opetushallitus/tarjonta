@@ -439,6 +439,24 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     public String getLaajuusYksikko() {
         return laajuusYksikko;
     }
+    
+    /**
+     * Asettaa laajuuden arvon.
+     *
+     * @return
+     */
+    public void setLaajuusArvo(String arvo) {
+        laajuusArvo = arvo;
+    }
+
+    /**
+     * Asettaa laajusyksikon arvon.
+     *
+     * @return
+     */
+    public void setLaajuusYksikko(String yksikko) {
+        laajuusYksikko = yksikko;
+    }
 
     /**
      * Tutkintonimike, esim. "filosofian maisteri". Arvo koodisto uri?
@@ -447,6 +465,15 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      */
     public String getTutkintonimike() {
         return tutkintonimike;
+    }
+    
+    /**
+     * Asettaa tutkintonimikkeen.
+     *
+     * @return
+     */
+    public void setTutkintonimike(String nimike) {
+        tutkintonimike = nimike;
     }
 
     /**

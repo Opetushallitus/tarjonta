@@ -221,6 +221,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 		komo.setOid(koulutusmoduuli.getOid());
 		komo.setKoulutusKoodi(koulutusmoduuli.getKoulutuskoodiUri());
 		komo.setKoulutusohjelmaKoodi(koulutusmoduuli.getKoulutusohjelmakoodiUri());
+		komo.setLaajuusYksikko(koulutusmoduuli.getLaajuusyksikkoUri());
+		komo.setLaajuusArvo(koulutusmoduuli.getLaajuusarvo());
+		komo.setTutkintoOhjelmanNimi(koulutusmoduuli.getTutkintoOhjelmaUri());
+		komo.setTutkintonimike(koulutusmoduuli.getTutkintonimikeUri());
+		komo.setUlkoinenTunniste(koulutusmoduuli.getUlkoinenTunniste());
 		koulutusmoduuliDAO.insert(komo);
 		return koulutusmoduuli;
 	}
