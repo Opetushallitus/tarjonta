@@ -54,6 +54,7 @@ import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.types.AttachmentCollectionType.Attachment;
 import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType.EntranceExaminations.Examination;
 import fi.vm.sade.tarjonta.publication.types.WebLinkCollectionType.Link;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Implements {@link PublicationCollector.EventHandler} by writing all encountered
@@ -62,6 +63,8 @@ import fi.vm.sade.tarjonta.publication.types.WebLinkCollectionType.Link;
  * @author Jukka Raanamo
  */
 public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHandlerSuppport {
+
+    public static final String UTF_8 = "UTF-8";
 
     public static final String DEFAULT_ROOT_ELEMENT_NAME = "LearningOpportunityDownloadData";
 
@@ -154,7 +157,11 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      */
     public void setOutput(OutputStream out) throws XMLStreamException {
 
-        setOutput(new OutputStreamWriter(out));
+        try {
+            setOutput(new OutputStreamWriter(out, UTF_8));
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(UTF_8 + " must be supported");
+        }
 
     }
 
@@ -162,7 +169,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
     public void onCollectStart() throws Exception {
 
         if (!partialDocument) {
-            xmlWriter.writeStartDocument();
+            xmlWriter.writeStartDocument(UTF_8, "1.0");
         }
 
         xmlWriter.writeStartElement("", rootElementName);
@@ -184,6 +191,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
     public void onCollect(Haku haku) throws Exception {
 
         final ApplicationSystemType applicationSystem = objectFactory.createApplicationSystemType();
+        applicationSystem.setId(haku.getOid());
 
         // ApplicationSystem/Name
         copyTexts(haku.getNimi(), applicationSystem.getName());
@@ -357,10 +365,10 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         instance.setAcademicYear(formatAcademicYear(toteutus.getKoulutuksenAlkamisPvm()));
 
         // LearningOpportunityInstance/Duration
-        instance.setDuration(formatDuration(toteutus.getSuunniteltuKestoYksikko(), toteutus.getSuunniteltuKestoArvo()));
+        addKesto(toteutus, instance);
 
         // LearningOpportunityInstance/Assessments
-        addAssessments(toteutus, instance);
+        addArviointikriteerit(toteutus, instance);
 
         // LearningOpportunityInstance/FinalExamination
         addLoppukoeVaatimukset(toteutus, instance);
@@ -374,6 +382,25 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         marshal(LearningOpportunityInstanceType.class, instance);
 
         log.debug("marshalled KoulutusmoduuliToteutus, oid: " + toteutus.getOid());
+
+    }
+
+
+    private void addKesto(KoulutusmoduuliToteutus source, LearningOpportunityInstanceType target) {
+
+        final String units = source.getSuunniteltuKestoYksikko();
+        final String value = source.getSuunniteltuKestoArvo();
+
+        if (units != null && value != null) {
+
+            EducationDurationType duration = new EducationDurationType();
+
+            duration.setUnits(createCodeValue(CodeSchemeType.KOODISTO, units));
+            duration.setValue(value);
+
+            target.setDuration(duration);
+
+        }
 
     }
 
@@ -637,7 +664,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     }
 
-    private void addAssessments(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
+    private void addArviointikriteerit(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
 
         MonikielinenTeksti tekstis = toteutus.getArviointikriteerit();
 

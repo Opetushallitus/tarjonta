@@ -70,8 +70,7 @@ public final class EntityUtils {
         to.setKoulutuslajis(toStringUriSet(from.getKoulutuslaji()));
 
         final KoulutuksenKestoTyyppi kesto = from.getKesto();
-        to.setSuunniteltuKestoArvo(kesto.getArvo());
-        to.setSuunniteltuKestoYksikko(kesto.getYksikko());
+        to.setSuunniteltuKesto(kesto.getYksikko(), kesto.getArvo());
 
         to.setOpetuskieli(toKoodistoUriSet(from.getOpetuskieli()));
         to.setKoulutuslajis(toKoodistoUriSet(from.getKoulutuslaji()));
@@ -98,8 +97,7 @@ public final class EntityUtils {
         toKoulutus.setOpetusmuoto(toKoodistoUriSet(fromKoulutus.getOpetusmuoto()));
         toKoulutus.setOid(fromKoulutus.getOid());
         toKoulutus.setKoulutuksenAlkamisPvm(fromKoulutus.getKoulutuksenAlkamisPaiva());
-        toKoulutus.setSuunniteltuKestoArvo(fromKoulutus.getKesto().getArvo());
-        toKoulutus.setSuunniteltuKestoYksikko(fromKoulutus.getKesto().getYksikko());
+        toKoulutus.setSuunniteltuKesto(fromKoulutus.getKesto().getYksikko(), fromKoulutus.getKesto().getYksikko());
         toKoulutus.setOpetuskieli(toKoodistoUriSet(fromKoulutus.getOpetuskieli()));
         toKoulutus.setKoulutuslajis(toKoodistoUriSet(fromKoulutus.getKoulutuslaji()));
         if (fromKoulutus.getKoulutusaste() != null) {

@@ -895,7 +895,7 @@
                         maxOccurs="1"/>
 
             <xs:element name="Duration"
-                        type="xs:duration"
+                        type="tns:EducationDurationType"
                         minOccurs="1"
                         maxOccurs="1"/>
 
@@ -1007,6 +1007,20 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="EducationDurationType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Koulutuksen kesto. Kuvataan yksikolla ja varsinaisella arvolla.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Units"
+                        type="tns:CodeValueType"/>
+            <xs:element name="Value"
+                        type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -1609,6 +1623,15 @@
             </xs:element>
 
         </xs:sequence>
+
+        <xs:attribute name="id" type="xs:ID" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="fi">
+                    Haun yksiloiva tunniste taman dokumentin laajuudessa.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
     </xs:complexType>
 
 

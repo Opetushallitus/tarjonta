@@ -139,6 +139,7 @@ public class TarjontaSampleData {
         Hakukohde h = new Hakukohde();
         h.setAlinValintaPistemaara(30);
         h.setAloituspaikatLkm(100);
+        h.setEdellisenVuodenHakijat(1200);
         h.setHakukelpoisuusvaatimus(randomKoodiUri("koulutustaso"));
         h.setHakukohdeNimi(nimi);
         h.setOid(randomOid("hakukohde"));
@@ -149,7 +150,7 @@ public class TarjontaSampleData {
 
         Valintakoe v1 = new Valintakoe();
         v1.setTyyppiUri(randomKoodiUri("valintakoe"));
-        v1.setKuvaus(createMonikielinenTeksti("Haastattelu", null, "Interview"));
+        v1.setKuvaus(createTeksti("Haastattelu", null, "Interview"));
 
         // Valintakokeella 1 ajankohta
 
@@ -189,8 +190,8 @@ public class TarjontaSampleData {
         m.setTila(TarjontaTila.VALMIS);
         m.setLaajuus(randomKoodiUri("opintojenlaajuus"), "20");
         m.setTutkintonimike(randomKoodiUri("tutkintonimike"));
-        m.setKoulutuksenRakenne(createMonikielinenTeksti("Koulutuksen rakenne...", null, "Structure of education..."));
-        m.setJatkoOpintoMahdollisuudet(createMonikielinenTeksti("Jatko-opintomahdollisuudet", null, "Access to further studies..."));
+        m.setKoulutuksenRakenne(createTeksti("Koulutuksen rakenne...", null, "Structure of education..."));
+        m.setJatkoOpintoMahdollisuudet(createTeksti("Jatko-opintomahdollisuudet", null, "Access to further studies..."));
         m.setUlkoinenTunniste("KM5024623.4");
 
         return m;
@@ -208,11 +209,28 @@ public class TarjontaSampleData {
         t.setTila(TarjontaTila.VALMIS);
         t.addOpetuskieli(new KoodistoUri(randomKoodiUri("kieli")));
         t.addOpetusmuoto(new KoodistoUri(randomKoodiUri("opetusmuoto")));
+        t.addAmmattinimike(new KoodistoUri(randomKoodiUri("ammattinimike")));
+        t.addAmmattinimike(new KoodistoUri(randomKoodiUri("ammattinimike")));
+        t.addAvainsana(new KoodistoUri(randomKoodiUri("avainsana")));
+        t.addAvainsana(new KoodistoUri(randomKoodiUri("avainsana")));
+        t.addAvainsana(new KoodistoUri(randomKoodiUri("avainsana")));
         t.setNimi("Demonimi " + System.currentTimeMillis());
         t.setUlkoinenTunniste("KMT637832.3");
-        t.setPohjakoulutusvaatimus(createMonikielinenTeksti("Pohjakoulutusvaatimus...", null, "Prerequisite..."));
+        t.setPohjakoulutusvaatimus(createTeksti("Pohjakoulutusvaatimus...", null, "Prerequisite..."));
+        t.setSuunniteltuKesto(randomKoodiUri("koulutuskesto"), "6+2");
+        t.setArviointikriteerit(createTeksti("Arviointikriteerit...", null, "Assessments..."));
+        t.setLoppukoeVaatimukset(createTeksti("Loppukoevaatimukset", null, "Final Examination..."));
+        t.addLinkki(createWebLinkki("kotisivut", null, "http://www.oppilaitosX.fi"));
+        t.addLinkki(createWebLinkki("facebook", null, "http://www.facebook.com"));
+        t.addLinkki(createWebLinkki("multimedia", "fi", "http://www.youtube.com?id=12345"));
 
         return t;
+
+    }
+
+    private static WebLinkki createWebLinkki(String tyyppi, String kieli, String url) {
+
+        return new WebLinkki(tyyppi, kieli, url);
 
     }
 
@@ -230,7 +248,7 @@ public class TarjontaSampleData {
         return "http://oid.oph.fi/" + namespace + "/" + Math.abs(random.nextLong());
     }
 
-    private static MonikielinenTeksti createMonikielinenTeksti(String fiTeksti, String svTeskti, String enTeksti) {
+    private static MonikielinenTeksti createTeksti(String fiTeksti, String svTeskti, String enTeksti) {
 
         MonikielinenTeksti t = new MonikielinenTeksti();
         if (fiTeksti != null) {

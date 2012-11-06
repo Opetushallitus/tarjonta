@@ -42,6 +42,9 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QKoulutusmoduuli m = QKoulutusmoduuli.koulutusmoduuli;
         QMonikielinenTeksti kr = new QMonikielinenTeksti("koulutuksenrakenne");
         QMonikielinenTeksti jom = new QMonikielinenTeksti("jatkoopintomahdollisuudet");
+        QMonikielinenTeksti pkm = new QMonikielinenTeksti("pohjakoulutusvaatimus");
+        QMonikielinenTeksti ak = new QMonikielinenTeksti("arviointikriteerit");
+        QMonikielinenTeksti lkv = new QMonikielinenTeksti("loppukoevaatimukset");
 
         // todo: filter only published
 
@@ -51,6 +54,9 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             leftJoin(toteutus.opetuskielis).fetch().
             leftJoin(toteutus.opetusmuotos).fetch().
             leftJoin(toteutus.koulutuslajis).fetch().
+            leftJoin(toteutus.loppukoeVaatimukset, lkv).fetch().leftJoin(lkv.tekstis).fetch().
+            leftJoin(toteutus.arviointikriteerit, ak).fetch().leftJoin(ak.tekstis).fetch().
+            leftJoin(toteutus.pohjakoulutusvaatimus, pkm).fetch().leftJoin(pkm.tekstis).fetch().
             leftJoin(toteutus.linkkis).fetch().
             leftJoin(toteutus.koulutusmoduuli, m).fetch().
             leftJoin(m.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().

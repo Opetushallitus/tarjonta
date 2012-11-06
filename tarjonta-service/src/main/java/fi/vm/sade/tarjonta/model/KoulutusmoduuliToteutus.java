@@ -450,7 +450,8 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      * @param suunniteltuKestoArvo the suunniteltuKestoArvo to set
      */
-    public void setSuunniteltuKestoArvo(String suunniteltuKestoArvo) {
+    public void setSuunniteltuKesto(String kestoYksikkoUri, String suunniteltuKestoArvo) {
+        this.suunniteltuKestoYksikko = kestoYksikkoUri;
         this.suunniteltuKestoArvo = suunniteltuKestoArvo;
     }
 
@@ -461,13 +462,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      */
     public String getSuunniteltuKestoYksikko() {
         return suunniteltuKestoYksikko;
-    }
-
-    /**
-     * @param suunniteltuKestoYksikko the suunniteltuKestoYksikko to set
-     */
-    public void setSuunniteltuKestoYksikko(String suunniteltuKestoYksikko) {
-        this.suunniteltuKestoYksikko = suunniteltuKestoYksikko;
     }
 
     /**

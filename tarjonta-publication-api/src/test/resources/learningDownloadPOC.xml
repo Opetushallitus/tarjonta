@@ -367,8 +367,14 @@
         <!-- lukuvuosi -->
         <AcademicYear>2014</AcademicYear>
 
-        <!-- koulutuksen kesto, ISO-8601 extended format -->
-        <Duration>P2Y</Duration>
+        <!-- koulutuksen kesto -->
+        <Duration>
+            <Units>
+                <Code scheme="Koodisto">uri://kestoyksikko/123</Code>
+                <Label>Opintoviikkoa</Label>
+            </Units>
+            <Value>50</Value>
+        </Duration>
 
         <!-- arviointi kriteerit -->
         <Assessments>
@@ -516,7 +522,12 @@
         <AcademicYear>2014</AcademicYear>
 
         <!-- koulutuksen kesto, tässä PK toteutus eroaa YO toteutuksesta. -->
-        <Duration>P3Y</Duration>
+        <Duration>
+            <Units>
+                <Code scheme="Koodisto">uri://kestot/12345</Code>
+            </Units>
+            <Value>40</Value>
+        </Duration>
 
         <!-- arviointi kriteerit -->
         <Assessments>
@@ -660,7 +671,12 @@
         <AcademicYear>2014</AcademicYear>
 
         <!-- koulutuksen kesto -->
-        <Duration>P3Y</Duration>
+        <Duration>
+            <Units>
+                <Code scheme="Koodisto">uri://kestot/12345</Code>
+            </Units>
+            <Value>40</Value>
+        </Duration>
 
         <!-- arviointi kriteerit -->
         <Assessments>
@@ -806,7 +822,10 @@
         <AcademicYear>2014</AcademicYear>
 
         <!-- koulutuksen kesto -->
-        <Duration>P3Y</Duration>
+        <Duration>
+            <Units></Units>
+            <Value>123</Value>
+        </Duration>
 
         <!-- arviointi kriteerit -->
         <Assessments>
@@ -909,10 +928,8 @@
     <!-- Haku:                                                                                     -->
     <!-- ========================================================================================= -->
 
-    <ApplicationSystem>
-        <Name>
-            <Text xml:lang="fi">Yhteishaku</Text>
-        </Name>
+    <ApplicationSystem id="AS12345">
+        <Name xml:lang="fi">Yhteishaku</Name>
     </ApplicationSystem>
 
 
@@ -980,7 +997,8 @@
 
                     <!-- valintakoe tyyppi -->
                     <ExaminationType>
-                        <Title xml:lang="fi">Pääsy- ja soveltuvuuskoe</Title>
+                        <Code scheme="Koodisto">1234</Code>
+                        <Label xml:lang="fi">Pääsy- ja soveltuvuuskoe</Label>
                     </ExaminationType>
 
                     <!-- yhden valintakokeen kuvaus -->
@@ -1023,8 +1041,8 @@
 
                     <!-- liitteen tyyppi -->
                     <Type>
-                        <Value>LT1</Value>
-                        <Label>Ennakkotehtävä</Label>
+                        <Code scheme="Koodisto">uri://liite/12345</Code>
+                        <Label xml:lang="fi">Ennakkotehtävä</Label>
                     </Type>
 
                     <!-- vapaa kuvaus -->
@@ -1138,7 +1156,8 @@
 
                     <!-- valintakoe tyyppi -->
                     <ExaminationType>
-                        <Title xml:lang="fi">Pääsy- ja soveltuvuuskoe</Title>
+                        <Code scheme="Koodisto">uri://koetyyppi/12345</Code>
+                        <Label xml:lang="fi">Pääsy- ja soveltuvuuskoe</Label>
                     </ExaminationType>
 
                     <!-- yhden valintakokeen kuvaus -->
@@ -1181,7 +1200,7 @@
 
                     <!-- liitteen tyyppi -->
                     <Type>
-                        <Value>LT1</Value>
+                        <Code scheme="Koodisto">uri://liitetyyppi/12345</Code>
                         <Label>Ennakkotehtävä</Label>
                     </Type>
 
