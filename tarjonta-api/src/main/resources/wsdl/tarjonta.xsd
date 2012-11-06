@@ -342,6 +342,8 @@
             <xs:element name="Oid" type="xs:string"></xs:element>
             <xs:element name="Nimi" type="xs:string"></xs:element>
             <xs:element name="Hakutapa" type="xs:string"></xs:element>
+            <xs:element name="hakukausiUri" type="xs:string"></xs:element>
+            <xs:element name="hakuvuosi" type="xs:string"></xs:element>
         </xs:sequence>
     </xs:complexType>
 
@@ -354,6 +356,7 @@
             <xs:element name="Tila" type="xs:string"></xs:element>
             <xs:element name="Koulutuskoodi" type="xs:string"></xs:element>
             <xs:element name="Koulutusohjelmakoodi" type="xs:string"></xs:element>
+            <xs:element name="ajankohta" type="xs:string"></xs:element>
         </xs:sequence>
     </xs:complexType>
 

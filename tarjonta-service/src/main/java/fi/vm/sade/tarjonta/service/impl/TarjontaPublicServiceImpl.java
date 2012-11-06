@@ -47,6 +47,7 @@ import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
 import fi.vm.sade.tarjonta.service.types.tarjonta.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -203,6 +204,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             haku.setNimi(hakuModel.getNimiFi());
             haku.setHakutapa(hakuModel.getHakutapaUri());
             haku.setOid(hakuModel.getOid());
+            haku.setHakukausiUri(hakuModel.getHakukausiUri());
+            haku.setHakuvuosi(hakuModel.getHakukausiVuosi().toString());
 
             KoulutusmoduuliToteutus toteutus = CollectionUtils.singleItem(hakukohdeModel.getKoulutusmoduuliToteutuses());
             koulutus.setTarjoaja(toteutus.getTarjoaja());
@@ -242,6 +245,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             koulutusKooste.setKoulutusmoduuliToteutus(komoto.getOid());
             koulutusKooste.setKoulutuskoodi((komoto.getKoulutusmoduuli() != null) ? komoto.getKoulutusmoduuli().getKoulutusKoodi() : null);
             koulutusKooste.setKoulutusohjelmakoodi((komoto.getKoulutusmoduuli() != null) ? komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi() : null);
+            koulutusKooste.setAjankohta(new SimpleDateFormat("dd.MM.yyyy").format(komoto.getKoulutuksenAlkamisPvm()));
             tulos.setKoulutus(koulutusKooste);
             vastaus.getKoulutusTulos().add(tulos);
         }

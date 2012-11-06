@@ -181,13 +181,21 @@ public class ListKoulutusView extends VerticalLayout {
                 KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus);
                 hc.addItem(curKoulutus);
                 hc.setParent(curKoulutus, rootItem);
-                hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi()) + ", " 
-						 																	+ getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi())
-						 																	+ ", " + getTilaStr(curKoulutus.getKoulutus().getTila()), true));
+                hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(buildKoulutusCaption(curKoulutus), true));
                 hc.setChildrenAllowed(curKoulutus, false);
             }
         }
         return hc;
+    }
+    
+    private String buildKoulutusCaption(KoulutusTulos curKoulutus) {
+    	String caption = getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi());
+    	if (curKoulutus.getKoulutus().getKoulutusohjelmakoodi() != null) {
+    		caption +=  ", " + getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi());
+    	}
+    	caption += ", " + curKoulutus.getKoulutus().getAjankohta();
+		caption += ", " + getTilaStr(curKoulutus.getKoulutus().getTila());		
+		return caption;
     }
     
     private String getTilaStr(String tilaUri) {

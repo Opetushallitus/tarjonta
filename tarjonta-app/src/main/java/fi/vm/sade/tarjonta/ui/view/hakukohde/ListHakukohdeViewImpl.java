@@ -171,11 +171,17 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde);
                 hc.addItem(curHakukohde);
                 hc.setParent(curHakukohde, rootItem);
-                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getKoodiNimi(curHakukohde.getHakukohde().getNimi()) + ", " + curHakukohde.getHakukohde().getTila(), true));
+                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getHakukohdeCaption(curHakukohde), true));
                 hc.setChildrenAllowed(curHakukohde, false);
             }
         }
         return hc;
+    }
+    
+    private String getHakukohdeCaption(HakukohdeTulos curHakukohde) {
+    	return getKoodiNimi(curHakukohde.getHakukohde().getNimi()) 
+    			+ ", " + getKoodiNimi(curHakukohde.getHaku().getHakukausiUri()) + " " + curHakukohde.getHaku().getHakuvuosi() 
+    			+  ", " + i18n.getMessage(curHakukohde.getHakukohde().getTila());
     }
     
     /**
