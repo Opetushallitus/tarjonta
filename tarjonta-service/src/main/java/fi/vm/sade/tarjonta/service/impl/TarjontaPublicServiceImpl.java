@@ -268,6 +268,19 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         koulutusOhjelmaKoodi.setArvo(komoto.getKoulutusmoduuli().getKoulutusNimi());
         koulutusOhjelmaKoodi.setUri(komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi());
         convert.setKoulutusohjelmaKoodi(koulutusOhjelmaKoodi);
+        
+        //Asetetaan koulutusmoduuli
+        KoulutusmoduuliKoosteTyyppi komoTyyppi = new KoulutusmoduuliKoosteTyyppi();
+        Koulutusmoduuli komo =komoto.getKoulutusmoduuli();
+        komoTyyppi.setKoulutuskoodiUri(komo.getKoulutusKoodi());
+        komoTyyppi.setKoulutusohjelmakoodiUri(komo.getKoulutusohjelmaKoodi());
+        komoTyyppi.setLaajuusarvo(komo.getLaajuusArvo());
+        komoTyyppi.setLaajuusyksikkoUri(komo.getLaajuusYksikko());
+        komoTyyppi.setOid(komo.getOid());
+        komoTyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
+        komoTyyppi.setTutkintoOhjelmaUri(komo.getTutkintoOhjelmanNimi());
+        komoTyyppi.setUlkoinenTunniste(komo.getUlkoinenTunniste());
+        convert.setKoulutusmoduuli(komoTyyppi);
 
         return convert;
     }
