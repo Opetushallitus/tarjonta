@@ -241,7 +241,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         gridLabelRow(this, "opintoala");
         gridLabelRow(this, "koulutuksenTyyppi");
         gridLabelRow(this, "koulutusala");
-        
+
         buildTutkintonimike(this, "tutkinto");
         buildOpintojenLaajuusyksikko(this, "opintojenLaajuusyksikko");
         buildOpintojenLaajuus(this, "opintojenLaajuus");
@@ -321,6 +321,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         gridLabel(grid, propertyKey);
         kcOpintojenLaajuus = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
         kcOpintojenLaajuus.setReadOnly(koulutusModel.isLoaded());
+
         grid.addComponent(kcOpintojenLaajuus);
         grid.newLine();
         buildSpacingGridRow(grid);
@@ -362,7 +363,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         cbKoulutusohjelma.setWidth(300, UNITS_PIXELS);
         cbKoulutusohjelma.setNullSelectionAllowed(false);
         cbKoulutusohjelma.setImmediate(true);
-        cbKoulutusohjelma.setReadOnly(koulutusModel.isLoaded());
         cbKoulutusohjelma.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
         cbKoulutusohjelma.setItemCaptionPropertyId("fullName");
         cbKoulutusohjelma.setReadOnly(koulutusModel.isLoaded());

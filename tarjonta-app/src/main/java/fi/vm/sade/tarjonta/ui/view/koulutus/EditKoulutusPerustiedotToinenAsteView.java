@@ -116,6 +116,8 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         documentStatus.setSizeUndefined();
         documentStatus.setImmediate(true);
         documentStatus.setPropertyDataSource(new NestedMethodProperty(koulutusPerustiedotModel, "tila"));
+        header.addComponent(documentStatus);
+
         header.setExpandRatio(documentStatus, 1l);
         header.setComponentAlignment(documentStatus, Alignment.TOP_RIGHT);
         layout.addComponent(header);
