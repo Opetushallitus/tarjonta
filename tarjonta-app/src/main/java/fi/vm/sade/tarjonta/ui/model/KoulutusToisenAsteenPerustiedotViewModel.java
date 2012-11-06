@@ -49,13 +49,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     public KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus status) {
         super();
         clearModel(status);
-        setKoulutusala(NO_DATA_AVAILABLE); //Tekniikan ja liikenteen ala
-        setTutkinto(NO_DATA_AVAILABLE); //Autoalan perustutkinto
-        setTutkintonimike(NO_DATA_AVAILABLE); //Automaalari
-        setOpintojenLaajuusyksikko(NO_DATA_AVAILABLE); //Opintoviikot
-        setOpintojenLaajuus(NO_DATA_AVAILABLE); //120 ov
-        setOpintoala(NO_DATA_AVAILABLE); //Opintoala ei tiedossa
-        setKoulutuksenTyyppi(NO_DATA_AVAILABLE); //Ei valintaa
     }
 
     /**
@@ -102,6 +95,11 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         //Table data
         setKoulutusLinkit(new ArrayList<KoulutusLinkkiViewModel>(0)); //optional
         setYhteyshenkilot(new ArrayList<KoulutusYhteyshenkiloViewModel>(0)); //optional
+
+        setOpintoala(NO_DATA_AVAILABLE); //Opintoala ei tiedossa
+        setKoulutuksenTyyppi(NO_DATA_AVAILABLE); //Ei valintaa
+        setTutkintonimike(NO_DATA_AVAILABLE); //Automaalari
+        setKoulutusala(NO_DATA_AVAILABLE); //Tekniikan ja liikenteen ala
     }
 
     /**
