@@ -47,7 +47,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jukka Raanamo
  */
-@Ignore // to commit and not break build, will continue to fix
 public class PublicationFileTest {
 
     private PublicationCollector collector;

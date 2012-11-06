@@ -36,7 +36,6 @@ import org.junit.*;
  *
  * @author Jukka Raanamo
  */
-@Ignore // ignored to commit and not brake build
 public class LearningOpportunityDataWriterTest {
 
     private LearningOpportunityJAXBWriter writer;
@@ -62,7 +61,6 @@ public class LearningOpportunityDataWriterTest {
 
     @After
     public void cleanUp() throws Exception {
-
     }
 
     @Test
@@ -119,7 +117,7 @@ public class LearningOpportunityDataWriterTest {
     }
 
     @Test
-    public void testWriteKoulutusmoduuliToteutusRefKoulutusmoduuli() throws Exception {
+    public void testWriteKoulutusmoduuliToteutusReferencesKoulutusmoduuli() throws Exception {
 
         Koulutusmoduuli m = createKoulutusmoduuli();
         KoulutusmoduuliToteutus t = createKoulutusmoduuliToteutus();
@@ -135,6 +133,28 @@ public class LearningOpportunityDataWriterTest {
 
     }
 
+    @Test
+    public void testWriteHakukohdeReferencesKoulutusmoduuliToteutus() throws Exception {
+
+        // references created:
+        //
+        // hakukohde -> komoto -> komo
+        //
+
+        Koulutusmoduuli m = createKoulutusmoduuli();
+        KoulutusmoduuliToteutus t = createKoulutusmoduuliToteutus();
+        Hakukohde h  = createHakukohde();
+        h.addKoulutusmoduuliToteutus(t);
+
+        t.setKoulutusmoduuli(m);
+
+        writer.onCollectStart();
+        writer.onCollect(m);
+        writer.onCollect(t);
+        writer.onCollect(h);
+        writer.onCollectEnd();
+
+    }
 
     /**
      * Unmarshals current content from output fixture.
@@ -161,7 +181,6 @@ public class LearningOpportunityDataWriterTest {
         unmarshal(new FileReader("src/test/resources/learning-data-simple.xml"));
 
     }
-
 
     private Koulutusmoduuli createKoulutusmoduuli() {
 

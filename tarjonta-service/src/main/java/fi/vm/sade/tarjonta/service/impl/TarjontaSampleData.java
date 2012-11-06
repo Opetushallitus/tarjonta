@@ -114,7 +114,6 @@ public class TarjontaSampleData {
 
     }
 
-
     private Haku createHaku(String tunniste, String nimi) {
 
         Haku h = new Haku();
@@ -145,6 +144,32 @@ public class TarjontaSampleData {
         h.setOid(randomOid("hakukohde"));
         h.setYlinValintaPistemaara(90);
         h.setTila(TarjontaTila.VALMIS);
+
+        // Hakukohteella Valintakoe
+
+        Valintakoe v1 = new Valintakoe();
+        v1.setTyyppiUri(randomKoodiUri("valintakoe"));
+        v1.setKuvaus(createMonikielinenTeksti("Haastattelu", null, "Interview"));
+
+        // Valintakokeella 1 ajankohta
+
+        ValintakoeAjankohta a1 = new ValintakoeAjankohta();
+        a1.setAlkamisaika(date(30));
+        a1.setPaattymisaika(date(31));
+
+        // Ajankohdalla 1 osoite
+
+        ValintakoeOsoite vo1 = new ValintakoeOsoite();
+        Osoite o1 = new Osoite();
+        o1.setOsoiterivi1("Mannerheimintie 33");
+        o1.setPostinumero("00100");
+        o1.setPostitoimipaikka("HELSINKI");
+        vo1.setOsoite(o1);
+
+        a1.addOsoite(vo1);
+        v1.addAjankohta(a1);
+
+        h.addValintakoe(v1);
 
         return h;
 
@@ -196,6 +221,22 @@ public class TarjontaSampleData {
 
     private String randomOid(String namespace) {
         return "http://oid.oph.fi/" + namespace + "/" + Math.abs(random.nextLong());
+    }
+
+    private static MonikielinenTeksti createMonikielinenTeksti(String fiTeksti, String svTeskti, String enTeksti) {
+
+        MonikielinenTeksti t = new MonikielinenTeksti();
+        if (fiTeksti != null) {
+            t.addTekstiKaannos("fi", fiTeksti);
+        }
+        if (enTeksti != null) {
+            t.addTekstiKaannos("en", enTeksti);
+        }
+        if (svTeskti != null) {
+            t.addTekstiKaannos("sv", svTeskti);
+        }
+        return t;
+
     }
 
 }

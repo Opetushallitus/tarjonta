@@ -97,6 +97,9 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 
+        // not supported
+        //marshaller.setProperty("com.sun.xml.bind.IDResolver", new CustomIDResolver());
+
 
     }
 
@@ -221,7 +224,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         for (KoulutusmoduuliToteutus koulutus : koulutukset) {
 
             LearningOpportunityInstanceRefType ref = new LearningOpportunityInstanceRefType();
-            ref.setRef(koulutus.getOid());
+            ref.setRef(getIDREF(koulutus.getOid()));
             refList.add(ref);
 
         }
@@ -405,7 +408,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         specification.setType(LearningOpportunityTypeType.DEGREE_PROGRAMME);
 
         // LearningOpportunitySpecification/id
-        specification.setId(registerID(moduuli.getOid()));
+        specification.setId(putID(moduuli.getOid(), specification));
 
         // LearningOpportunitySpecification/Name
         // todo: how is the name formulated?
@@ -479,7 +482,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         LearningOpportunityInstanceType instance = new LearningOpportunityInstanceType();
 
         // LearningOpportunityInstance#id
-        instance.setId(registerID(toteutus.getOid()));
+        instance.setId(putID(toteutus.getOid(), instance));
 
         // LearningOpportunityInstance/Identifier
         if (toteutus.getUlkoinenTunniste() != null) {
@@ -825,13 +828,27 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     }
 
-    private String registerID(String value) {
+    /**
+     * Stores element that is used as a target of IDREF later. Returns the input id for method chaining.
+     *
+     * @param idTarget
+     * @param id
+     * @return
+     */
+    private String putID(String id, Object idTarget) {
 
-        idRefMap.put(value, value);
-        return value;
+        idRefMap.put(id, idTarget);
+        return id;
 
     }
 
+    /**
+     * Returns element that has been stored before using {@link #putID(java.lang.Object, java.lang.String) }.
+     *
+     * @exception IllegalArgumentException if not such id is found
+     * @param key
+     * @return
+     */
     private Object getIDREF(String key) {
 
         Object value = idRefMap.get(key);
@@ -841,6 +858,22 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         return value;
     }
 
+
+    private static class CustomIDResolver extends IDResolver {
+
+        @Override
+        public Callable<?> resolve(String string, Class type) throws SAXException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void bind(String string, Object o) throws SAXException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+
+
+    }
 
 }
 

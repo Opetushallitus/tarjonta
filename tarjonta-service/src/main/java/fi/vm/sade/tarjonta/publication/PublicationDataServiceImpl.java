@@ -60,8 +60,13 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         // todo filter only published
 
         QHakukohde hakukohde = QHakukohde.hakukohde;
+        QValintakoe valintakoe = QValintakoe.valintakoe;
+        QMonikielinenTeksti kuvaus = QMonikielinenTeksti.monikielinenTeksti;
+
         return from(hakukohde).
-            leftJoin(hakukohde.valintakoes).fetch().
+            leftJoin(hakukohde.valintakoes, valintakoe).fetch().
+            leftJoin(valintakoe.kuvaus, kuvaus).fetch().
+            leftJoin(kuvaus.tekstis).fetch().
             leftJoin(hakukohde.liites).fetch().
             leftJoin(hakukohde.koulutusmoduuliToteutuses).fetch().
             list(hakukohde);
@@ -74,7 +79,12 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         // todo: filter only published
 
         QHaku haku = QHaku.haku;
-        return from(haku).list(haku);
+        QMonikielinenTeksti nimi = QMonikielinenTeksti.monikielinenTeksti;
+
+        return from(haku).
+            leftJoin(haku.nimi, nimi).fetch().
+            leftJoin(nimi.tekstis).fetch().
+            list(haku);
 
     }
 
