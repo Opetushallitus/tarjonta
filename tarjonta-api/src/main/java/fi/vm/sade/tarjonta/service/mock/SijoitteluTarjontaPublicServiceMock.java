@@ -40,9 +40,9 @@ public class SijoitteluTarjontaPublicServiceMock implements TarjontaPublicServic
         TarjontaTyyppi tt = new TarjontaTyyppi();
 
         HakuTyyppi haku = new HakuTyyppi();
-        haku.setOid("HakuOid");
+        haku.setOid(oid);
         haku.setSijoittelu(true);
-        haku.setHaunTunniste("Foobar");
+        haku.setHaunTunniste("Tunniste " + oid);
         tt.setHaku(haku);
         addHakukohdeList(tt);
         return tt;
