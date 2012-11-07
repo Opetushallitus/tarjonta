@@ -105,14 +105,14 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
 
     private Form form;
     private BeanItem<HakukohdeViewModel> hakukohdeBean;
-    
+
     @Autowired(required=true)
     private TarjontaUIHelper _tarjontaUIHelper;
-    
+
     /*
-     * 
+     *
      * Init view with new model
-     * 
+     *
      */
 
     public PerustiedotViewImpl(TarjontaPresenter presenter) {
@@ -128,8 +128,8 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     public void setTunnisteKoodi(String tunnistekoodi) {
         tunnisteKoodiText.setValue(tunnistekoodi);
     }
-    
-   
+
+
 
     @Override
     public void commitForm(String tila) {
@@ -139,8 +139,8 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
             presenter.saveHakuKohde(tila);
         }
     }
-    
-    
+
+
     @Override
     public void initForm(HakukohdeViewModel model) {
         hakukohdeBean = new BeanItem<HakukohdeViewModel>(model);
@@ -164,18 +164,19 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
             }
         });
     }
-    
-    private String resolveHakukohdeKoodistoNimi() {
 
-        String nimi = presenter.resolveHakukohdeKoodistonimiFields();
+    private String resolveHakukohdeKoodistoNimi() {
+        // TODO tuomas korjaa :)
+
+        String nimi = "???"; // presenter.resolveHakukohdeKoodistonimiFields();
     	return nimi;
     }
 
     /*
      * Main layout building method.
-     * 
+     *
      */
-    
+
     private void buildMainLayout() {
         mainLayout = new VerticalLayout();
         //Add top info button layout
@@ -221,8 +222,8 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
 
     private KoodistoComponent buildHakukelpoisuusVaatimukset() {
         hakuKelpoisuusVaatimuksetCombo = UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI);
-               
-        
+
+
         return hakuKelpoisuusVaatimuksetCombo;
     }
 
@@ -243,11 +244,11 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
            return haku.getNimiFi();
        }
     }
-    
+
     /*
-     * 
-     * This method is called from presenter, it sets HakuTyyppis for the Haku-ComboBox 
-     * 
+     *
+     * This method is called from presenter, it sets HakuTyyppis for the Haku-ComboBox
+     *
      */
 
     @Override
@@ -262,8 +263,8 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     public void setSelectedHaku(HakuViewModel haku) {
         hakuCombo.setValue(haku);
     }
-    
-    
+
+
 
     private ComboBox buildHakuCombo() {
         hakuCombo = new ComboBox();
@@ -276,22 +277,22 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     private KoodistoComponent buildHaku() {
 
         hakukohteenNimiCombo = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI);
-        
+
 
         return hakukohteenNimiCombo;
     }
-    
-    
+
+
 
 
 
     /*
-     * 
+     *
      * Build hakukohteen nimi ComboBox and tunnistekoodi textfield
-     * 
+     *
      */
-    
-    
+
+
     private HorizontalLayout buildHakukode() {
 
         HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
