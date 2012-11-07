@@ -118,6 +118,8 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         addItemToGrid(grid, "suunniteltuKesto", suunniteltuKesto(model));
         addItemToGrid(grid, "opetuskieli", _tarjontaUIHelper.getKoodiNimi(model.getOpetuskielet(), null));
 
+        addItemToGrid(grid, "ammattinimikkeet", _tarjontaUIHelper.getKoodiNimi(_presenter.getModel().getKoulutusLisatiedotModel().getAmmattinimikkeet(), null));
+
         grid.setColumnExpandRatio(0, 1f);
         grid.setColumnExpandRatio(1, 2f);
 
