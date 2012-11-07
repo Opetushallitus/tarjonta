@@ -30,6 +30,8 @@ import com.vaadin.ui.VerticalSplitPanel;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
@@ -134,40 +136,69 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         return tmp;
     }
 
+    /**
+     * Add line with label + textual label value to the grid.
+     *
+     * @param grid
+     * @param labelCaptionKey
+     * @param labelCaptionValue
+     */
     private void addItemToGrid(GridLayout grid, String labelCaptionKey, String labelCaptionValue) {
-        if (grid != null) {
+        addItemToGrid(grid, labelCaptionKey, new Label(labelCaptionValue));
+    }
 
+    /**
+     * Add label + component to grid layout.
+     *
+     * @param grid
+     * @param labelCaptionKey
+     * @param component
+     */
+    private void addItemToGrid(GridLayout grid, String labelCaptionKey, Component component) {
+        if (grid != null) {
             HorizontalLayout hl = UiUtil.horizontalLayout(false, UiMarginEnum.RIGHT);
             hl.setSizeFull();
             UiUtil.label(hl, T(labelCaptionKey));
-            Label labelValue = UiUtil.label(null, labelCaptionValue);
             grid.addComponent(hl);
-            grid.addComponent(labelValue);
+            grid.addComponent(component);
             grid.setComponentAlignment(hl, Alignment.TOP_RIGHT);
-            grid.setComponentAlignment(labelValue, Alignment.TOP_LEFT);
+            grid.setComponentAlignment(component, Alignment.TOP_LEFT);
             grid.newLine();
         }
     }
 
+    /**
+     * Localized descriptive data about the koulutus.
+     *
+     * @param layout
+     */
     private void buildKoulutuksenKuvailevatTiedot(VerticalLayout layout) {
         layout.addComponent(buildHeaderLayout(T("kuvailevatTiedot"), T(CommonTranslationKeys.MUOKKAA), null, false));
 
-        KoulutusToisenAsteenPerustiedotViewModel model = _presenter.getModel().getKoulutusPerustiedotModel();
+        KoulutusToisenAsteenPerustiedotViewModel perustiedotModel = _presenter.getModel().getKoulutusPerustiedotModel();
+        KoulutusLisatiedotModel lisatiedotModel = _presenter.getModel().getKoulutusLisatiedotModel();
+
         TabSheet tab = new TabSheet();
         tab.setSizeFull();
 
-        // Loop all opetuskielet
-        for (String opetuskieli : model.getOpetuskielet()) {
+        // Loop over all languages
+        for (String languageUri : lisatiedotModel.getLisatiedot().keySet()) {
+            KoulutusLisatietoModel tiedotModel = lisatiedotModel.getLisatiedot(languageUri);
+
             GridLayout grid = new GridLayout(2, 1);
             grid.setMargin(true);
             grid.setHeight("100%");
-            addItemToGrid(grid, "tutkinnonRakenne", "Tietoa ei ole vielä saatavilla");
-            addItemToGrid(grid, "tavoitteet", "Tietoa ei ole vielä saatavilla");
-            addItemToGrid(grid, "jatkoOpintoMahdollisuudet", "Tietoa ei ole vielä saatavilla");
+            addItemToGrid(grid, "tutkinnonSisalto", new Label(tiedotModel.getSisalto(), Label.CONTENT_XHTML));
+            addItemToGrid(grid, "tutkinnonKuvailevatTiedot", new Label(tiedotModel.getKuvailevatTiedot(), Label.CONTENT_XHTML));
+            addItemToGrid(grid, "tutkinnonSijoittuminenTyoelamaan", new Label(tiedotModel.getSijoittuminenTyoelamaan(), Label.CONTENT_XHTML));
+            addItemToGrid(grid, "tutkinnonKansainvalistyminen", new Label(tiedotModel.getKansainvalistyminen(), Label.CONTENT_XHTML));
+            addItemToGrid(grid, "tutkinnonYhteistyoMuidenToimijoidenKanssa", new Label(tiedotModel.getYhteistyoMuidenToimijoidenKanssa(), Label.CONTENT_XHTML));
+
             grid.setColumnExpandRatio(0, 1);
             grid.setColumnExpandRatio(1, 2);
 
-            tab.addTab(grid, _tarjontaUIHelper.getKoodiNimi(opetuskieli));
+            tab.addTab(grid, _tarjontaUIHelper.getKoodiNimi(languageUri));
+
         }
 
         layout.addComponent(tab);
