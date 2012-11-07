@@ -106,9 +106,6 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     private Form form;
     private BeanItem<HakukohdeViewModel> hakukohdeBean;
 
-    @Autowired(required=true)
-    private TarjontaUIHelper _tarjontaUIHelper;
-
     /*
      *
      * Init view with new model
@@ -168,7 +165,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     private String resolveHakukohdeKoodistoNimi() {
         // TODO tuomas korjaa :)
 
-        String nimi = "???"; // presenter.resolveHakukohdeKoodistonimiFields();
+        String nimi = presenter.resolveHakukohdeKoodistonimiFields();
     	return nimi;
     }
 

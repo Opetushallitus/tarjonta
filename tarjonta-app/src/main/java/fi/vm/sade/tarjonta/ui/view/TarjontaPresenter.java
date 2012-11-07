@@ -357,6 +357,10 @@ public class TarjontaPresenter {
         _rootView.getAppRootLayout().setExpandRatio(vl, 1f);
 
     }
+    
+    public String resolveHakukohdeKoodistonimiFields() {
+        return uiHelper.getHakukohdeHakukentta(getModel().getHakukohde().getHakuOid().getHakuOid(), I18N.getLocale(), getModel().getHakukohde().getHakukohdeNimi());
+    }
 
     public void doSearch() {
         LOG.info("doSearch(): searchSpec={}", getModel().getSearchSpec());
