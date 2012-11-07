@@ -133,7 +133,14 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         if (model.getSuunniteltuKesto() != null) {
             tmp = model.getSuunniteltuKesto();
             tmp += " ";
-            tmp += _tarjontaUIHelper.getKoodiNimi(model.getSuunniteltuKestoTyyppi(), null);
+
+            String kestotyyppi = _tarjontaUIHelper.getKoodiNimi(model.getSuunniteltuKestoTyyppi(), null);
+            if (kestotyyppi != null) {
+                tmp += kestotyyppi;
+            } else {
+                // Add uri if no translation ... just to show something.
+                tmp += model.getSuunniteltuKestoTyyppi();
+            }
         }
         return tmp;
     }
