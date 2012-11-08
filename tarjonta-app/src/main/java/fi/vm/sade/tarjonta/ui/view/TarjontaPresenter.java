@@ -98,7 +98,7 @@ import java.util.Locale;
 public class TarjontaPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
-    @Autowired(required=true) 
+    @Autowired(required = true)
     private TarjontaUIHelper uiHelper;
     // Services used
     @Autowired(required = true)
@@ -148,7 +148,11 @@ public class TarjontaPresenter {
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
         getModel().getHakukohde().getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
-        tarjontaAdminService.lisaaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
+        if (getModel().getHakukohde().getOid() == null) {
+            tarjontaAdminService.lisaaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
+        } else {
+            tarjontaAdminService.paivitaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
+        }
     }
 
     public void setTunnisteKoodi(String hakukohdeNimiUri) {
@@ -357,7 +361,7 @@ public class TarjontaPresenter {
         _rootView.getAppRootLayout().setExpandRatio(vl, 1f);
 
     }
-    
+
     public String resolveHakukohdeKoodistonimiFields() {
         return uiHelper.getHakukohdeHakukentta(getModel().getHakukohde().getHakuOid().getHakuOid(), I18N.getLocale(), getModel().getHakukohde().getHakukohdeNimi());
     }
