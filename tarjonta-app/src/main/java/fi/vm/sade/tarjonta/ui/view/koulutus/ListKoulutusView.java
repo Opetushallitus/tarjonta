@@ -166,7 +166,7 @@ public class ListKoulutusView extends VerticalLayout {
 
             Object rootItem = hc.addItem();
 
-            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(presenter.getOrganisaatioNimiByOid(e.getKey()), false));
+            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(buildOrganisaatioCaption(e), false));
 
             for (KoulutusTulos curKoulutus : e.getValue()) {
                 KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus);
@@ -177,6 +177,10 @@ public class ListKoulutusView extends VerticalLayout {
             }
         }
         return hc;
+    }
+    
+    private String buildOrganisaatioCaption(Map.Entry<String, List<KoulutusTulos>> e) {
+    	return presenter.getOrganisaatioNimiByOid(e.getKey()) + " (" + e.getValue().size() + ")";
     }
 
     private String buildKoulutusCaption(KoulutusTulos curKoulutus) {

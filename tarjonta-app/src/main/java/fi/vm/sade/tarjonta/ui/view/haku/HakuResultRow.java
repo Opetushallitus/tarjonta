@@ -18,11 +18,15 @@ package fi.vm.sade.tarjonta.ui.view.haku;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.terminal.Sizeable;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Button.ClickEvent;
+
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
@@ -108,18 +112,36 @@ public class HakuResultRow  extends HorizontalLayout {
                 }
             }
         });
-        Label label = new Label(text);
-        label.setSizeUndefined(); // -1,-1
         setWidth(-1, Sizeable.UNITS_PIXELS);
         setHeight(-1, Sizeable.UNITS_PIXELS); //Tämä toimii!!!
 
         addComponent(isSelected);
         if (withMenuBar) {
-            addComponent(newMenuBar());
-        }
-        addComponent(label);
+        	Button nimiB = UiUtil.buttonLink(null, text); 
+            nimiB.addListener(new Button.ClickListener() {
+                
+                @Override
+                public void buttonClick(ClickEvent event) { 
+                	menuItemClicked(i18n.getMessage("tarkastele"));
+                }
 
-        setExpandRatio(label, 1f); //default == 0
+            });
+            nimiB.setSizeUndefined();
+            nimiB.setHeight(7, Sizeable.UNITS_PIXELS);
+            
+            OphRowMenuBar menubar = newMenuBar();
+            addComponent(menubar);
+            addComponent(nimiB);
+            setExpandRatio(nimiB, 1f); //default == 0
+            setComponentAlignment(isSelected, Alignment.MIDDLE_LEFT);
+            setComponentAlignment(rowMenuBar, Alignment.MIDDLE_LEFT);
+            setComponentAlignment(nimiB, Alignment.TOP_LEFT);    
+        } else {
+        	Label label = new Label(text);
+            label.setSizeUndefined(); // -1,-1
+            addComponent(label);
+            setExpandRatio(label, 1f); 
+        }
 
         return this;
     }

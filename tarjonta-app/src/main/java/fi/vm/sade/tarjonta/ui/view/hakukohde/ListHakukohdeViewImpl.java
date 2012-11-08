@@ -43,7 +43,6 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
@@ -165,20 +164,24 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
             Object rootItem = hc.addItem();
 
-            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(presenter.getOrganisaatioNimiByOid(e.getKey()), false));
+            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(buildOrganisaatioCaption(e), false));
 
             for (HakukohdeTulos curHakukohde : e.getValue()) {
                 HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde);
                 hc.addItem(curHakukohde);
                 hc.setParent(curHakukohde, rootItem);
-                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getHakukohdeCaption(curHakukohde), true));
+                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(buildHakukohdeCaption(curHakukohde), true));
                 hc.setChildrenAllowed(curHakukohde, false);
             }
         }
         return hc;
     }
     
-    private String getHakukohdeCaption(HakukohdeTulos curHakukohde) {
+    private String buildOrganisaatioCaption(Map.Entry<String, List<HakukohdeTulos>> e) {
+    	return presenter.getOrganisaatioNimiByOid(e.getKey()) + " (" + e.getValue().size() + ")";
+    }
+    
+    private String buildHakukohdeCaption(HakukohdeTulos curHakukohde) {
     	return getKoodiNimi(curHakukohde.getHakukohde().getNimi()) 
     			+ ", " + getKoodiNimi(curHakukohde.getHaku().getHakukausiUri()) + " " + curHakukohde.getHaku().getHakuvuosi() 
     			+  ", " + i18n.getMessage(curHakukohde.getHakukohde().getTila());

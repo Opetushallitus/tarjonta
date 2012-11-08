@@ -23,13 +23,19 @@ import org.springframework.beans.factory.annotation.Configurable;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.terminal.Sizeable;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.themes.BaseTheme;
 
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.ui.StyleNames;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;
@@ -90,6 +96,7 @@ public class KoulutusResultRow  extends HorizontalLayout {
         rowMenuBar.addMenuCommand(i18n.getMessage("muokkaa"), menuCommand);
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaHakukohteet"), menuCommand);
         rowMenuBar.addMenuCommand(i18n.getMessage("poista"), menuCommand);
+        
         return rowMenuBar;
     }
 
@@ -127,19 +134,43 @@ public class KoulutusResultRow  extends HorizontalLayout {
                 }
             }
         });
-        Label label = new Label(text);
-        label.setSizeUndefined(); // -1,-1
+       
+        
+        
+        //newAddressBtn.addStyleName(StyleNames.B_PRIMARY_LARGE_PLUS);
+        
         setWidth(-1, Sizeable.UNITS_PIXELS);
         setHeight(-1, Sizeable.UNITS_PIXELS); //Tämä toimii!!!
 
         addComponent(isSelected);
         if (withMenuBar) {
-            addComponent(newMenuBar());
+        	 Button nimiB = UiUtil.buttonLink(null, text);
+             
+             nimiB.addListener(new Button.ClickListener() {
+                 
+                 @Override
+                 public void buttonClick(ClickEvent event) { 
+                 	tarjontaPresenter.showShowKoulutusView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
+                 }
+
+             });
+             nimiB.setSizeUndefined();
+             nimiB.setHeight(7, Sizeable.UNITS_PIXELS);
+             
+             OphRowMenuBar menubar = newMenuBar();
+            addComponent(menubar);
+            addComponent(nimiB);
+            setExpandRatio(nimiB, 1f); //default == 0
+            setComponentAlignment(isSelected, Alignment.MIDDLE_LEFT);
+            setComponentAlignment(rowMenuBar, Alignment.MIDDLE_LEFT);
+            setComponentAlignment(nimiB, Alignment.TOP_LEFT);
+        } else {
+        	Label label = new Label(text);
+            label.setSizeUndefined(); // -1,-1
+            addComponent(label);
+            setExpandRatio(label, 1f); 
         }
-        addComponent(label);
-
-        setExpandRatio(label, 1f); //default == 0
-
+        
         return this;
     }
 
