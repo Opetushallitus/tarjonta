@@ -80,7 +80,7 @@ public class KoulutusViewModelToDTOConverterTest {
 
     @Test
     public void mapToKoodistoKoodiTyyppi() {
-        KoodistoKoodiTyyppi result = KoulutusViewModelToDTOConverter.mapToValidKoodistoKoodiTyyppi(koulutuasteModel1);
+        KoodistoKoodiTyyppi result = KoulutusViewModelToDTOConverter.mapToValidKoodistoKoodiTyyppi(false, koulutuasteModel1);
         assertNotNull("KoodistoKoodiTyyppi obj cannot be null", result);
         assertEquals(NIMI, result.getArvo());
         assertEquals(0, result.getNimi().size());
