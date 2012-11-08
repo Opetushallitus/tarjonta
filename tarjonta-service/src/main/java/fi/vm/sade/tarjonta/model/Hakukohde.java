@@ -77,7 +77,7 @@ public class Hakukohde extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TarjontaTila tila;
 
-    @ManyToOne
+    @ManyToOne 
     @NotNull
     private Haku haku;
 

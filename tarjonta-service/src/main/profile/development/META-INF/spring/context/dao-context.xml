@@ -7,7 +7,7 @@
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
-    <!-- Add EntityManagerFactory (required by jta) support -->
+   <!-- Add EntityManagerFactory (required by jta) support -->
     <bean id="emf"
         class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="loadTimeWeaver">
@@ -21,10 +21,11 @@
             </map>
         </property>
     </bean>
-    <!-- autodetect jta transaction manager -->
-    <tx:jta-transaction-manager />
+    <!-- transaction manager -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="emf" />
+    </bean>
     <!-- enable spring annotation driven transactions -->
-    <tx:annotation-driven />
-    <!--<bean id="genericDAO" class="fi.vm.sade.generic.dao.GenericDAOImpl" />-->
-
+    <tx:annotation-driven transaction-manager="transactionManager" />
+    
 </beans>

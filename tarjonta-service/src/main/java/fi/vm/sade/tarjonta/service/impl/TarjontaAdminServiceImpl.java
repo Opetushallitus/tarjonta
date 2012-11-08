@@ -138,12 +138,21 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public HakukohdeTyyppi paivitaHakukohde(HakukohdeTyyppi hakukohdePaivitys) {
         Hakukohde hakukohde = conversionService.convert(hakukohdePaivitys, Hakukohde.class);
+        List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findBy("oid", hakukohdePaivitys.getOid());
+        hakukohde.setId(hakukohdeTemp.get(0).getId());
+        hakukohde.setVersion(hakukohdeTemp.get(0).getVersion());
+        Haku haku  = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
+        
+        hakukohde.setHaku(haku);
+        hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdePaivitys.getHakukohteenKoulutusOidit(), hakukohde));
+        
         hakukohdeDAO.update(hakukohde);
+        
+        
         return hakukohdePaivitys;
     }
 
-
-
+  
     @Override
     public fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi lisaaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
         Haku haku = conversionService.convert(hakuDto, Haku.class);

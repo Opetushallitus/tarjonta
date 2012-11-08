@@ -5,7 +5,7 @@
  http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
     
     <!-- Tässä on postgresql data source -->
-    <!-- 
+     
     <persistence-unit name="tarjonta" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <non-jta-data-source>java:comp/env/jdbc/tarjonta</non-jta-data-source>
@@ -14,9 +14,12 @@
             <property name="hibernate.jdbc.batch_size" value="20" />
         </properties>
     </persistence-unit>
-    -->
+    
      
-    <persistence-unit name="tarjonta" transaction-type="RESOURCE_LOCAL">
+     
+     <!-- HSQL datasource -->
+     
+<!--    <persistence-unit name="tarjonta" transaction-type="RESOURCE_LOCAL">
 
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
 
@@ -36,7 +39,7 @@
         <class>fi.vm.sade.tarjonta.model.TekstiKaannos</class>
         <class>fi.vm.sade.tarjonta.model.Yhteyshenkilo</class>  
         
-        <!-- experimental -->
+         experimental 
         <class>fi.vm.sade.tarjonta.koodisto.model.Koodi</class>
 
         
@@ -56,7 +59,7 @@
             <property name="hibernate.c3p0.idle_test_period" value="3000" />
         </properties>
 
-    </persistence-unit>
+    </persistence-unit>-->
 
 </persistence>
 
