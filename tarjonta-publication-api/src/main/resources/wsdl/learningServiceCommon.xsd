@@ -1578,30 +1578,20 @@
     </xs:complexType>
 
     <xs:complexType name="CreditsType">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="unit" use="required">
-                    <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                            <xs:enumeration value="CreditUnits">
-                                <xs:annotation>
-                                    <xs:documentation xml:lang="fi">
-                                        Opintoviikot
-                                    </xs:documentation>
-                                </xs:annotation>
-                            </xs:enumeration>
-                            <xs:enumeration value="ECTS">
-                                <xs:annotation>
-                                    <xs:documentation xml:lang="fi">
-                                        Opintopisteet. Kts. http://ec.europa.eu/education/lifelong-learning-policy/ects_en.htm
-                                    </xs:documentation>
-                                </xs:annotation>
-                            </xs:enumeration>
-                        </xs:restriction>
-                    </xs:simpleType>
-                </xs:attribute>
+        <xs:complexContent>
+            <xs:extension base="tns:CodeValueType">
+                <xs:sequence>
+                    <xs:element name="Value"
+                                type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="fi">
+                                Data:n arvo.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
             </xs:extension>
-        </xs:simpleContent>
+        </xs:complexContent>
     </xs:complexType>
 
 

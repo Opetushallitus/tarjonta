@@ -55,6 +55,7 @@ import fi.vm.sade.tarjonta.publication.types.AttachmentCollectionType.Attachment
 import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType.EntranceExaminations.Examination;
 import fi.vm.sade.tarjonta.publication.types.WebLinkCollectionType.Link;
 import java.io.UnsupportedEncodingException;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Implements {@link PublicationCollector.EventHandler} by writing all encountered
@@ -271,12 +272,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         specification.setOfferedBy(null);
 
         // LearningOpportunitySpecification/Credits
-        if (moduuli.getLaajuusArvo() != null) {
-            CreditsType credits = new CreditsType();
-            credits.setUnit(moduuli.getLaajuusYksikko());
-            credits.setValue(moduuli.getLaajuusArvo());
-            specification.setCredits(credits);
-        }
+        addLaajuus(moduuli, specification);
 
         // LearningOpportunitySpecification/Qualification
         if (moduuli.getTutkintonimike() != null) {
@@ -385,7 +381,6 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     }
 
-
     private void addKesto(KoulutusmoduuliToteutus source, LearningOpportunityInstanceType target) {
 
         final String units = source.getSuunniteltuKestoYksikko();
@@ -428,6 +423,25 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     }
 
+    private void addLaajuus(Koulutusmoduuli source, LearningOpportunitySpecificationType target) {
+
+        if (source.getLaajuusArvo() != null) {
+
+            CreditsType credits = new CreditsType();
+
+            Code code = new Code();
+            code.setScheme(CodeSchemeType.KOODISTO);
+            code.setValue(source.getLaajuusYksikko());
+            credits.setCode(code);
+
+            credits.setValue(source.getLaajuusArvo());
+            target.setCredits(credits);
+
+        }
+
+
+    }
+
     private void addValintaperusteet(Hakukohde source, ApplicationOptionType target) {
 
         SelectionCriterionsType criterions = new SelectionCriterionsType();
@@ -449,6 +463,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         copyTexts(source.getValintaperusteKuvaus(), criterions.getDescription());
 
         addValintakokeet(source, criterions);
+
         addLiitteet(source, criterions);
 
     }
@@ -553,7 +568,9 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                         // ApplicationOption/.../Examination/ExaminationEvent/Locations/Location
                         ExaminationLocationType location = new ExaminationLocationType();
                         location.getAddressLine().add(osoite.getOsoiterivi1());
-                        location.getAddressLine().add(osoite.getOsoiterivi2());
+                        if (!StringUtils.isEmpty(osoite.getOsoiterivi2())) {
+                            location.getAddressLine().add(osoite.getOsoiterivi2());
+                        }
                         location.setCity(osoite.getPostitoimipaikka());
                         location.setPostalCode(osoite.getPostinumero());
                         locations.getLocation().add(location);

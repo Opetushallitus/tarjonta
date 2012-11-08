@@ -27,7 +27,11 @@
         <OfferedBy ref="P1"/>
 
         <!-- laajuus sekä laajuusyksikkö -->
-        <Credits unit="CreditUnits">120</Credits>
+        <Credits>
+            <Code scheme="Koodisto">http://koodisto.oph.fi/laajuusyksikko/1234</Code>
+            <Label>opintopisteet</Label>
+            <Value>120</Value>
+        </Credits>
 
         <!-- tutkintonimike -->
         <Qualification>
@@ -119,7 +123,10 @@
         </OrganizationRef>
 
         <!-- laajuus sekä laajuusyksikkö -->
-        <Credits unit="CreditUnits">120</Credits>
+        <Credits>
+            <Code scheme="Koodisto">http://someuri</Code>
+            <Value>45</Value>
+        </Credits>
 
         <!-- tutkintonimike -->
         <Qualification>
@@ -207,7 +214,11 @@
         </OrganizationRef>
 
         <!-- laajuus sekä laajuusyksikkö -->
-        <Credits unit="CreditUnits">120</Credits>
+        <Credits>
+            <Code scheme="Koodisto">http://someuri</Code>
+            <Label xml:lang="fi">opintopiste</Label>
+            <Value>120</Value>
+        </Credits>
 
         <!-- tutkintonimike -->
         <Qualification>

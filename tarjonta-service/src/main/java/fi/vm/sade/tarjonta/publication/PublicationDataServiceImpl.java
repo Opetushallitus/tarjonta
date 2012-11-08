@@ -71,12 +71,13 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
         QHakukohde hakukohde = QHakukohde.hakukohde;
         QValintakoe valintakoe = QValintakoe.valintakoe;
-        QMonikielinenTeksti kuvaus = QMonikielinenTeksti.monikielinenTeksti;
+        QMonikielinenTeksti kuvaus = new QMonikielinenTeksti("kuvaus");
+        QMonikielinenTeksti valintaperuste = new QMonikielinenTeksti("valintaperuste");
 
         return from(hakukohde).
             leftJoin(hakukohde.valintakoes, valintakoe).fetch().
-            leftJoin(valintakoe.kuvaus, kuvaus).fetch().
-            leftJoin(kuvaus.tekstis).fetch().
+            leftJoin(valintakoe.kuvaus, kuvaus).fetch().leftJoin(kuvaus.tekstis).fetch().
+            leftJoin(hakukohde.valintaperusteKuvaus, valintaperuste).fetch().leftJoin(valintaperuste.tekstis).fetch().
             leftJoin(hakukohde.liites).fetch().
             leftJoin(hakukohde.koulutusmoduuliToteutuses).fetch().
             list(hakukohde);
