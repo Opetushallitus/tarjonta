@@ -32,11 +32,10 @@ import com.vaadin.ui.TextField;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
-import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -51,8 +50,9 @@ import org.slf4j.LoggerFactory;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
-import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.koodisto.KoulutuskoodiTyyppi;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusasteModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 
 /**
  * Koulutus edit form for second degree studies.
@@ -64,30 +64,31 @@ import fi.vm.sade.tarjonta.service.types.koodisto.KoulutuskoodiTyyppi;
 public class EditKoulutusPerustiedotFormView extends GridLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotFormView.class);
+    private static final String MODEL_NAME_PROPERY = "nimi";
     private static final String PROPERTY_PROMPT_SUFFIX = ".prompt";
     private transient I18NHelper _i18n;
     private KoulutusToisenAsteenPerustiedotViewModel koulutusModel;
     private TarjontaPresenter presenter;
     private Map<KoulutusasteType, Set<Component>> selectedComponents;
-    private BeanItemContainer<KoulutusasteTyyppi> bicKoulutusaste;
+    private BeanItemContainer<KoulutusasteModel> bicKoulutusaste;
     private BeanItemContainer<KoulutusohjelmaModel> bicKoulutusohjelma;
-    private BeanItemContainer<KoulutuskoodiTyyppi> bicKoulutuskoodi;
+    private BeanItemContainer<KoulutuskoodiModel> bicKoulutuskoodi;
     /*
      * Forms can have different set of layout components.
      */
-    @PropertyId( "koulutusasteTyyppi")
+    @PropertyId( "koulutusasteModel")
     private ComboBox cbKoulutusaste;
     /*
      * Koodisto code (url).
      */
     @NotNull(message = "{validation.Koulutus.koulutus.notNull}")
-    @PropertyId( "koulutuskoodiTyyppi")
+    @PropertyId( "koulutuskoodiModel")
     private ComboBox cbKoulutusTaiTutkinto;
     /*
      * Koodisto code (url).
      */
     @NotNull(message = "{validation.Koulutus.koulutusohjelma.notNull}")
-    @PropertyId("koulutusohjelma")
+    @PropertyId("koulutusohjelmaModel")
     private ComboBox cbKoulutusohjelma;
     /*
      * Language, multiple languages are accepted, only single in lukio.
@@ -174,10 +175,10 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private void initializeDataContainers() {
         LOG.info("initializeDataContainers()");
 
-        bicKoulutusaste = new BeanItemContainer<KoulutusasteTyyppi>(KoulutusasteTyyppi.class, koulutusModel.getKoulutusasteet());
+        bicKoulutusaste = new BeanItemContainer<KoulutusasteModel>(KoulutusasteModel.class, koulutusModel.getKoulutusasteet());
         cbKoulutusaste.setContainerDataSource(bicKoulutusaste);
 
-        bicKoulutuskoodi = new BeanItemContainer<KoulutuskoodiTyyppi>(KoulutuskoodiTyyppi.class, koulutusModel.getKoulutuskoodit());
+        bicKoulutuskoodi = new BeanItemContainer<KoulutuskoodiModel>(KoulutuskoodiModel.class, koulutusModel.getKoulutuskoodit());
         cbKoulutusTaiTutkinto.setContainerDataSource(bicKoulutuskoodi);
 
         bicKoulutusohjelma = new BeanItemContainer<KoulutusohjelmaModel>(KoulutusohjelmaModel.class, koulutusModel.getKoulutusohjelmat());
@@ -189,7 +190,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
         if (!koulutusModel.isLoaded()) {
             //select first item
-            koulutusModel.setKoulutusasteTyyppi(!koulutusModel.getKoulutusasteet().isEmpty()
+            koulutusModel.setKoulutusasteModel(!koulutusModel.getKoulutusasteet().isEmpty()
                     ? koulutusModel.getKoulutusasteet().iterator().next()
                     : null);
 
@@ -283,7 +284,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         cbKoulutusaste.setImmediate(true);
         cbKoulutusaste.setReadOnly(koulutusModel.isLoaded());
         cbKoulutusaste.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
-        cbKoulutusaste.setItemCaptionPropertyId("koulutusasteNimi");
+        cbKoulutusaste.setItemCaptionPropertyId(MODEL_NAME_PROPERY);
         grid.addComponent(cbKoulutusaste);
         grid.newLine();
         buildSpacingGridRow(grid);
@@ -346,7 +347,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         cbKoulutusTaiTutkinto.setWidth(350, UNITS_PIXELS);
         cbKoulutusTaiTutkinto.setReadOnly(koulutusModel.isLoaded());
         cbKoulutusTaiTutkinto.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
-        cbKoulutusTaiTutkinto.setItemCaptionPropertyId("koulutuskoodiNimi");
+        cbKoulutusTaiTutkinto.setItemCaptionPropertyId(MODEL_NAME_PROPERY);
         grid.addComponent(cbKoulutusTaiTutkinto);
         grid.newLine();
         buildSpacingGridRow(grid);
@@ -363,7 +364,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         cbKoulutusohjelma.setNullSelectionAllowed(false);
         cbKoulutusohjelma.setImmediate(true);
         cbKoulutusohjelma.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
-        cbKoulutusohjelma.setItemCaptionPropertyId("fullName");
+        cbKoulutusohjelma.setItemCaptionPropertyId(MODEL_NAME_PROPERY);
         cbKoulutusohjelma.setReadOnly(koulutusModel.isLoaded());
         grid.addComponent(cbKoulutusohjelma);
         grid.newLine();
@@ -415,7 +416,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         tfSuunniteltuKesto = UiUtil.textField(hl, null, null, null, T(propertyKey + PROPERTY_PROMPT_SUFFIX));
         tfSuunniteltuKesto.setRequired(true);
         tfSuunniteltuKesto.setImmediate(true);
-        
+
         ComboBox comboBox = new ComboBox();
         comboBox.setNullSelectionAllowed(false);
         kcSuunniteltuKestoTyyppi = UiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, T(propertyKey + "Tyyppi" + PROPERTY_PROMPT_SUFFIX), comboBox);
@@ -516,13 +517,13 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
     private void showOnlySelectedFormComponents() {
         //Show or hide form components.
-        final KoulutusasteTyyppi koulutusaste = koulutusModel.getKoulutusasteTyyppi();
+        final KoulutusasteModel koulutusaste = koulutusModel.getKoulutusasteModel();
         if (koulutusaste != null) {
             for (Map.Entry<KoulutusasteType, Set<Component>> entry : selectedComponents.entrySet()) {
                 for (Component c : entry.getValue()) {
                     //if the map key value matches to TK code 'koulutusaste'
                     final boolean active = entry.getKey().getKoulutusaste().equals(
-                            koulutusaste.getKoulutusasteKoodi());
+                            koulutusaste.getKoodi());
                     c.setVisible(active);
                     c.setEnabled(active);
 

@@ -15,7 +15,10 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusasteModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -45,9 +48,11 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     protected String organisaatioName;
     protected String organisaatioOid;
     /*
-     * Koodisto data:
+     * Koodisto logic data:
      */
-    protected KoulutusohjelmaModel koulutusohjelma;
+    protected KoulutusohjelmaModel koulutusohjelmaModel;
+    protected KoulutusasteModel koulutusasteModel;
+    protected KoulutuskoodiModel koulutuskoodiModel;
     /*
      * KOMO data (static labels):
      */
@@ -313,15 +318,15 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     /**
      * @return the koulutusohjelma
      */
-    public KoulutusohjelmaModel getKoulutusohjelma() {
-        return koulutusohjelma;
+    public KoulutusohjelmaModel getKoulutusohjelmaModel() {
+        return koulutusohjelmaModel;
     }
 
     /**
-     * @param koulutusohjelma the koulutusohjelma to set
+     * @param koulutusohjelmaModel the koulutusohjelma to set
      */
-    public void setKoulutusohjelma(KoulutusohjelmaModel koulutusohjelma) {
-        this.koulutusohjelma = koulutusohjelma;
+    public void setKoulutusohjelmaModel(KoulutusohjelmaModel koulutusohjelmaModel) {
+        this.koulutusohjelmaModel = koulutusohjelmaModel;
     }
 
     /**
@@ -336,5 +341,33 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      */
     public void setKoulutusmoduuliOid(String koulutusmoduuliOid) {
         this.koulutusmoduuliOid = koulutusmoduuliOid;
+    }
+
+    /**
+     * @return the koulutusasteModel
+     */
+    public KoulutusasteModel getKoulutusasteModel() {
+        return koulutusasteModel;
+    }
+
+    /**
+     * @param koulutusasteModel the koulutusasteModel to set
+     */
+    public void setKoulutusasteModel(KoulutusasteModel koulutusasteModel) {
+        this.koulutusasteModel = koulutusasteModel;
+    }
+
+    /**
+     * @return the koulutuskoodiModel
+     */
+    public KoulutuskoodiModel getKoulutuskoodiModel() {
+        return koulutuskoodiModel;
+    }
+
+    /**
+     * @param koulutuskoodiModel the koulutuskoodiModel to set
+     */
+    public void setKoulutuskoodiModel(KoulutuskoodiModel koulutuskoodiModel) {
+        this.koulutuskoodiModel = koulutuskoodiModel;
     }
 }

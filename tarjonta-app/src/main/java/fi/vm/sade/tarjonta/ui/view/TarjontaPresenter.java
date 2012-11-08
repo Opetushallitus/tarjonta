@@ -19,7 +19,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
@@ -37,21 +36,14 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTul
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusHakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.koodisto.KoulutuskoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.koodisto.KoulutuskoodiVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusohjelmaTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenTila;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliTyyppi;
@@ -65,7 +57,6 @@ import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPerustiedotToinenAsteView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -83,8 +74,9 @@ import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusSearchSpecificationViewM
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusViewModelToDTOConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
-import fi.vm.sade.tarjonta.ui.model.KoulutusohjelmaModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusasteModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
 import java.util.Locale;
 
@@ -237,12 +229,12 @@ public class TarjontaPresenter {
         final KoulutusasteType koulutusaste = model.getSelectedKoulutusasteType();
         switch (koulutusaste) {
             case TOINEN_ASTE_AMMATILLINEN_KOULUTUS:
-                title = model.getKoulutuskoodiTyyppi().getKoulutuskoodiNimi()
+                title = model.getKoulutuskoodiModel().getNimi()
                         + ", "
-                        + model.getKoulutusohjelma().getName();
+                        + model.getKoulutusohjelmaModel().getNimi();
                 break;
             case TOINEN_ASTE_LUKIO:
-                title = model.getKoulutuskoodiTyyppi().getKoulutuskoodiNimi();
+                title = model.getKoulutuskoodiModel().getNimi();
                 break;
         }
 
@@ -262,7 +254,7 @@ public class TarjontaPresenter {
                 koulutusKysely.setOid(koulutusOid);
                 LueKoulutusVastausTyyppi tyyppi = this.tarjontaPublicService.lueKoulutus(koulutusKysely);
                 KoulutusToisenAsteenPerustiedotViewModel model = koulutusToDTOConverter
-                        .createKoulutusPerustiedotViewModel(tyyppi, DocumentStatus.LOADED);
+                        .createKoulutusPerustiedotViewModel(tyyppi, DocumentStatus.LOADED, I18N.getLocale());
                 getModel().setKoulutusPerustiedotModel(model);
                 getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(tyyppi));
             } catch (ExceptionMessage ex) {
@@ -287,7 +279,7 @@ public class TarjontaPresenter {
             LueKoulutusVastausTyyppi lueKoulutus = this.getKoulutusByOid(koulutusOid);
             try {
                 KoulutusToisenAsteenPerustiedotViewModel koulutus;
-                koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(lueKoulutus, DocumentStatus.LOADED);
+                koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(lueKoulutus, DocumentStatus.LOADED, I18N.getLocale());
                 getModel().setKoulutusPerustiedotModel(koulutus);
                 getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(lueKoulutus));
 
@@ -297,12 +289,17 @@ public class TarjontaPresenter {
                 koulutus.getKoulutusasteet().clear();
 
                 //Add selected data to  the comboboxes.
-                if (koulutus.getKoulutusohjelma() != null && koulutus.getKoulutusohjelma().getKoodiUri() != null) {
-                    koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelma());
+                if (koulutus.getKoulutusohjelmaModel() != null && koulutus.getKoulutusohjelmaModel().getKoodistoUri() != null) {
+                    koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
                 }
-                koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiTyyppi());
-                koulutus.getKoulutusasteet().add(koulutus.getKoulutusasteTyyppi());
+                koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());
+                koulutus.getKoulutusasteet().add(koulutus.getKoulutusasteModel());
 
+                LOG.debug("getKoulutusasteModel : " + koulutus.getKoulutusasteModel());
+                LOG.debug("getKoulutuskoodiModel : " + koulutus.getKoulutuskoodiModel());
+                LOG.debug("getKoulutusohjelma : " + koulutus.getKoulutusohjelmaModel());
+                
+                
             } catch (ExceptionMessage ex) {
                 LOG.error("Service call failed.", ex);
                 showMainDefaultView();
@@ -753,9 +750,7 @@ public class TarjontaPresenter {
      * 2. aste data. Lukio- or ammatillinen tutkinto.
      */
     public void loadKoulutusasteKoodit(Locale locale) {
-        KoulutusHakuTyyppi koulutusHakuTyyppi = new KoulutusHakuTyyppi();
-        koulutusHakuTyyppi.setKieliKoodi("fi");
-        List<KoulutusasteTyyppi> list = kolutusKoodistoConverter.listaaKoulutusasteet(koulutusHakuTyyppi).getKoulutusaste();
+        List<KoulutusasteModel> list = kolutusKoodistoConverter.listaaKoulutusasteet(I18N.getLocale());
         getModel().getKoulutusPerustiedotModel().getKoulutusasteet().addAll(list);
     }
 
@@ -766,41 +761,23 @@ public class TarjontaPresenter {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
 
         //koulutusaste must be selected before an user can select koulutuskoodi.
-        if (model.getKoulutusasteTyyppi() != null && model.getKoulutusasteTyyppi().getKoulutusasteKoodi() != null) {
-            //filters
-            KoulutusHakuTyyppi koulutusHakuTyyppi = new KoulutusHakuTyyppi();
-            koulutusHakuTyyppi.setKieliKoodi("fi");
-            final String koulutusasteKoodi = model.getKoulutusasteTyyppi().getKoulutusasteKoodi();
-            koulutusHakuTyyppi.setKoulutusasteKoodi(koulutusasteKoodi);
-
+        if (model.getKoulutusasteModel() != null && model.getKoulutusasteModel().getKoodi() != null) {
+ 
             //koodisto search result
             model.getKoulutuskoodit().clear();
-            KoulutuskoodiVastausTyyppi result = kolutusKoodistoConverter.listaaKoulutuskoodit(koulutusHakuTyyppi);
-            model.getKoulutuskoodit().addAll(result.getKoulutuskoodi());
+            List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutuskoodit( model.getKoulutusasteModel(), I18N.getLocale());
+            model.getKoulutuskoodit().addAll(listaaKoulutuskoodit);
         }
     }
 
     public void loadKoulutusohjelmat(Locale locale) {
-        List<KoulutusohjelmaModel> koulutusohjelmaTyypit = new ArrayList<KoulutusohjelmaModel>(0);
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
 
         //Koulutuskoodi filters koulutusohjema data.
-        if (model.getKoulutuskoodiTyyppi() != null && model.getKoulutuskoodiTyyppi().getKoulutuskoodi() != null) {
-            KoulutusHakuTyyppi koulutusHakuTyyppi = new KoulutusHakuTyyppi();
-            koulutusHakuTyyppi.setKieliKoodi("fi");
-            koulutusHakuTyyppi.setKoulutusohjelmaKoodi(model.getKoulutuskoodiTyyppi().getKoulutuskoodi());
-
+        if (model.getKoulutuskoodiModel() != null && model.getKoulutuskoodiModel().getKoodi() != null) {
             model.getKoulutusohjelmat().clear();
-            List<KoulutusohjelmaTyyppi> koulutusohjelma = kolutusKoodistoConverter.listaaKoulutusohjelmat(koulutusHakuTyyppi).getKoulutusohjelma();
-            for (KoulutusohjelmaTyyppi t : koulutusohjelma) {
-                KoulutusohjelmaModel koulutusOhjelmaModel = new KoulutusohjelmaModel(
-                        t.getKoodistoUri(),
-                        t.getKoodistoVersio(),
-                        t.getKoulutusohjelmaKoodi(),
-                        t.getKoulutusohjelmaNimi());
-                koulutusohjelmaTyypit.add(koulutusOhjelmaModel);
-            }
-            model.getKoulutusohjelmat().addAll(koulutusohjelmaTyypit);
+            List<KoulutusohjelmaModel> koulutusohjelma = kolutusKoodistoConverter.listaaKoulutusohjelmat(I18N.getLocale());
+            model.getKoulutusohjelmat().addAll(koulutusohjelma);
         }
     }
 

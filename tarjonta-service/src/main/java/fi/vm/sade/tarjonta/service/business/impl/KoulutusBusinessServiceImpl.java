@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.util.SearchWordUtil;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
@@ -93,12 +94,10 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         komotoModel.setKoulutusmoduuli(moduuli);
         moduuli.addKoulutusmoduuliToteutus(komotoModel);
 
-        //add all multilanguage strings as search keywords
-        komotoModel.setNimi(createSearchKeywords(koulutus));
+       //add all multilanguage strings to search keywords
+        komotoModel.setNimi(SearchWordUtil.createSearchKeywords(koulutus));
 
         return koulutusmoduuliToteutusDAO.insert(komotoModel);
-
-
     }
 
     @Override
@@ -113,8 +112,8 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         EntityUtils.copyFields(koulutus, model);
 
-        //add all multilanguage strings as search keywords
-        model.setNimi(createSearchKeywords(koulutus));
+        //add all multilanguage strings to search keywords
+        model.setNimi(SearchWordUtil.createSearchKeywords(koulutus));
 
         koulutusmoduuliToteutusDAO.update(model);
 
@@ -172,34 +171,5 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         }
     }
 
-    private String createSearchKeywords(final KoulutusTyyppi koulutus) {
-        //add all multilanguage strings as search keywords
-        StringBuilder keywords = new StringBuilder();
-  
-        if (koulutus.getKoulutusKoodi() != null) {
-            keywords.append(koulutus.getKoulutusKoodi().getArvo()).append(", ");
-            
-            for (KoodistoKoodiTyyppi.Nimi nimi : koulutus.getKoulutusKoodi().getNimi()) {
-                keywords.append(nimi.getValue()).append(", ");
-            }
-        }
-        
-        if (koulutus.getKoulutusohjelmaKoodi() != null) {    
-            keywords.append(koulutus.getKoulutusohjelmaKoodi().getArvo()).append(", ");
-            
-            for (KoodistoKoodiTyyppi.Nimi nimi : koulutus.getKoulutusohjelmaKoodi().getNimi()) {
-                keywords.append(nimi.getValue()).append(", ");
-            }
-        }
-
-        if (koulutus.getKoulutusaste() != null) {
-            keywords.append(koulutus.getKoulutusaste().getArvo()).append(", ");
-            
-            for (KoodistoKoodiTyyppi.Nimi nimi : koulutus.getKoulutusaste().getNimi()) {
-                keywords.append(nimi.getValue()).append(", ");
-            }
-        }
-
-        return keywords.toString();
-    }
+   
 }

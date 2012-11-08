@@ -18,6 +18,8 @@ package fi.vm.sade.tarjonta.ui.helper;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.KoodiService;
+import fi.vm.sade.koodisto.service.types.GetKoodistoByUriAndVersionType;
+import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
@@ -69,8 +71,6 @@ public class TarjontaUIHelper {
         return splitKoodiURI(koodiUriWithVersion);
     }
 
-
-
     /**
      * Extract version number from uri.
      *
@@ -102,7 +102,7 @@ public class TarjontaUIHelper {
         return getKoodiNimi(koodiUriWithPossibleVersionInformation, null);
     }
 
-    public String getHakukohdeHakukentta(String hakuOid,Locale locale,String hakuKohdeNimi) {
+    public String getHakukohdeHakukentta(String hakuOid, Locale locale, String hakuKohdeNimi) {
         StringBuilder result = new StringBuilder();
         result.append(getAllHakukohdeNimet(hakuKohdeNimi));
         result.append(" ");
@@ -115,10 +115,10 @@ public class TarjontaUIHelper {
         ListaaHakuTyyppi hakuCriteria = new ListaaHakuTyyppi();
         hakuCriteria.setHakuOid(hakuOid);
         ListHakuVastausTyyppi vastaus = _tarjontaPublicService.listHaku(hakuCriteria);
-        for (HakuTyyppi haku:vastaus.getResponse()) {
-           hakuTiedot.append(getKoodiNimi(haku.getHakukausiUri(),locale));
-           hakuTiedot.append(" ");
-           hakuTiedot.append(haku.getHakuVuosi());
+        for (HakuTyyppi haku : vastaus.getResponse()) {
+            hakuTiedot.append(getKoodiNimi(haku.getHakukausiUri(), locale));
+            hakuTiedot.append(" ");
+            hakuTiedot.append(haku.getHakuVuosi());
         }
 
         return hakuTiedot.toString();
@@ -127,17 +127,59 @@ public class TarjontaUIHelper {
     private String getAllHakukohdeNimet(String hakuKohdeNimi) {
         StringBuilder nimet = new StringBuilder();
         List<KoodiType> koodit = _koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder.latestKoodisByUris(getKoodiURI(hakuKohdeNimi)));
-        for (KoodiType koodi: koodit) {
+        for (KoodiType koodi : koodit) {
             List<KoodiMetadataType> metas = koodi.getMetadata();
-            for (KoodiMetadataType meta : metas ) {
-               nimet.append(meta.getNimi());
-               nimet.append(" ");
+            for (KoodiMetadataType meta : metas) {
+                nimet.append(meta.getNimi());
+                nimet.append(" ");
             }
         }
 
         return nimet.toString();
     }
 
+    /**
+     * Search koodis by koodisto uri, the uri can be with or without koodisto
+     * version information.
+     *
+     * @param uri
+     * @return
+     */
+    public List<KoodiType> getKoodisByKoodisto(String uri) {
+        SearchKoodisByKoodistoCriteriaType criteriUri = KoodiServiceSearchCriteriaBuilder.koodisByKoodistoUri(getKoodiURI(uri));
+        return _koodiService.searchKoodisByKoodisto(criteriUri);
+    }
+
+    /**
+     * Search koodis by koodi uri, the uri can be with or without koodi version
+     * information.
+     *
+     * @param uri
+     * @return
+     */
+    public List<KoodiType> gethKoodis(String uri) {
+        final String[] spitByUriAndVersion = splitKoodiURIAllowNull(uri);
+        final String version = spitByUriAndVersion[1];
+        return gethKoodis(spitByUriAndVersion[0], version == null ? null : Integer.valueOf(version));
+    }
+
+    /**
+     * Search koodis by koodi uri and version information.
+     *
+     * @param uri
+     * @return
+     */
+    public List<KoodiType> gethKoodis(String uri, Integer version) {
+        SearchKoodisCriteriaType criteria;
+
+        if (version == null) {
+            criteria = KoodiServiceSearchCriteriaBuilder.koodiVersiosByUri(uri);
+        } else {
+            criteria = KoodiServiceSearchCriteriaBuilder.koodiByUriAndVersion(uri, version);
+        }
+
+        return _koodiService.searchKoodis(criteria);
+    }
 
     /**
      * Get koodi's name in given locale. If nimi for given
@@ -174,11 +216,7 @@ public class TarjontaUIHelper {
 
                 if (queryResult.size() >= 1) {
                     // Get metadata
-                    KoodiMetadataType kmdt = KoodistoHelper.getKoodiMetadataForLanguage(queryResult.get(0), KoodistoHelper.getKieliForLocale(locale));
-                    if (kmdt == null) {
-                        // Try finnish if current locale is not found
-                        kmdt = KoodistoHelper.getKoodiMetadataForLanguage(queryResult.get(0), KieliType.FI);
-                    }
+                    KoodiMetadataType kmdt = getKoodiMetadataForLanguage(queryResult.get(0), locale);
 
                     if (kmdt != null) {
                         result = kmdt.getNimi();
@@ -283,5 +321,28 @@ public class TarjontaUIHelper {
         }
 
         return result;
+    }
+
+    public static String[] splitKoodiURIAllowNull(final String koodiUriWithVersion) {
+        String[] result = new String[2];
+        int index = koodiUriWithVersion.lastIndexOf(KOODI_URI_AND_VERSION_SEPARATOR);
+        if (index > 0) {
+            result[0] = koodiUriWithVersion.substring(0, index);
+            result[1] = koodiUriWithVersion.substring(index + KOODI_URI_AND_VERSION_SEPARATOR.length());
+        } else {
+            result[0] = koodiUriWithVersion;
+            result[1] = null;
+        }
+
+        return result;
+    }
+
+    public static KoodiMetadataType getKoodiMetadataForLanguage(KoodiType koodiType, Locale locale) {
+        KoodiMetadataType kmdt = KoodistoHelper.getKoodiMetadataForLanguage(koodiType, KoodistoHelper.getKieliForLocale(locale));
+        if (kmdt == null) {
+            // Try finnish if current locale is not found
+            kmdt = KoodistoHelper.getKoodiMetadataForLanguage(koodiType, KieliType.FI);
+        }
+        return kmdt;
     }
 }

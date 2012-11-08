@@ -171,9 +171,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         final Button.ClickListener clickListener = new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                final DocumentStatus status = koulutusPerustiedotModel.getDocumentStatus();
-
-                if (!status.equals(DocumentStatus.NEW) && isModified()) {
+                if (isSaved()) {
                     presenter.showNotification(UserNotification.UNSAVED);
                     return;
                 }
@@ -272,6 +270,10 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
      */
     private boolean isModified() {
         return koulutusPerustiedotModel.hashCode() != unmodifiedHashcode;
+    }
+
+    private boolean isSaved() {
+        return koulutusPerustiedotModel.isLoaded() && isModified();
     }
 
     private void save(Form form, KoulutuksenTila tila) {

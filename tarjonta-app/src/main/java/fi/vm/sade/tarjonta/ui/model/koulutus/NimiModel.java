@@ -13,38 +13,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
+package fi.vm.sade.tarjonta.ui.model.koulutus;
 
-package fi.vm.sade.tarjonta.ui.model;
+import fi.vm.sade.koodisto.service.types.common.KieliType;
 
 /**
  *
  * @author Jani Wilén
  */
-public class KoulutusTyyppiModel {
-    private String koulutusaste;
-    
+public class NimiModel {
+
+    private KieliType type;
     private String nimi;
 
-    public KoulutusTyyppiModel() {
-    }
-
-    public KoulutusTyyppiModel(String koulutusaste, String nimi) {
-        this.koulutusaste = koulutusaste;
-        this.nimi = nimi;
+    /**
+     * @return the type
+     */
+    public KieliType getType() {
+        return type;
     }
 
     /**
-     * @return the koulutusaste
+     * @param type the type to set
      */
-    public String getKoulutusaste() {
-        return koulutusaste;
-    }
-
-    /**
-     * @param koulutusaste the koulutusaste to set
-     */
-    public void setKoulutusaste(String koulutusaste) {
-        this.koulutusaste = koulutusaste;
+    public void setType(KieliType type) {
+        this.type = type;
     }
 
     /**
@@ -60,6 +53,4 @@ public class KoulutusTyyppiModel {
     public void setNimi(String nimi) {
         this.nimi = nimi;
     }
-    
-    
 }
