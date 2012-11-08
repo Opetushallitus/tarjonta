@@ -3,8 +3,19 @@
              xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
  http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-
-
+    
+    <!-- Tässä on postgresql data source -->
+    <!-- 
+    <persistence-unit name="tarjonta" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <non-jta-data-source>java:comp/env/jdbc/tarjonta</non-jta-data-source>
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect"/>
+            <property name="hibernate.jdbc.batch_size" value="20" />
+        </properties>
+    </persistence-unit>
+    -->
+     
     <persistence-unit name="tarjonta" transaction-type="RESOURCE_LOCAL">
 
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
@@ -23,11 +34,12 @@
         <class>fi.vm.sade.tarjonta.model.ValintakoeOsoite</class>
         <class>fi.vm.sade.tarjonta.model.MonikielinenTeksti</class>
         <class>fi.vm.sade.tarjonta.model.TekstiKaannos</class>
-        <class>fi.vm.sade.tarjonta.model.Yhteyshenkilo</class>
-
+        <class>fi.vm.sade.tarjonta.model.Yhteyshenkilo</class>  
+        
         <!-- experimental -->
         <class>fi.vm.sade.tarjonta.koodisto.model.Koodi</class>
 
+        
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update" />
             <property name="hibernate.show_sql" value="false" />
