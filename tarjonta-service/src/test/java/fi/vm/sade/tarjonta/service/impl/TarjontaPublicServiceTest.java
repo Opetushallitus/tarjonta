@@ -157,29 +157,33 @@ public class TarjontaPublicServiceTest {
         hakukohdeDAO.update(hakukohde);
 
         // 2. hakukohde
-        hakukohde = fixtures.createHakukohde();
-        hakukohde.setHakukohdeNimi("Taidemaalarin erikoistutkinto");
-        hakukohde.setHakukohdeKoodistoNimi("Taidemaalarin erikoistutkinto");
-        hakukohde.setHaku(haku);
-        hakukohde.setTila(TarjontaTila.VALMIS);
-        hakukohdeDAO.insert(hakukohde);
+        Hakukohde hakukohde2 = fixtures.createHakukohde();
+        hakukohde2.setHakukohdeNimi("Taidemaalarin erikoistutkinto");
+        hakukohde2.setHakukohdeKoodistoNimi("Taidemaalarin erikoistutkinto");
+        hakukohde2.setHaku(haku);
+        hakukohde2.setTila(TarjontaTila.VALMIS);
+        hakukohdeDAO.insert(hakukohde2);
 
         // 2. koulutusmoduuli+toteutus, eri toteuttaja organisaatio
         koulutusmoduuli = fixtures.createTutkintoOhjelma();
         koulutusmoduuliDAO.insert(koulutusmoduuli);
-        koulutusmoduuliToteutus = fixtures.createTutkintoOhjelmaToteutus();
-        koulutusmoduuliToteutus.setTarjoaja(ORGANISAATIO_B);
-        koulutusmoduuliToteutus.setKoulutusmoduuli(koulutusmoduuli);
+        KoulutusmoduuliToteutus koulutusmoduuliToteutus2 = fixtures.createTutkintoOhjelmaToteutus();
+        koulutusmoduuliToteutus2.setTarjoaja(ORGANISAATIO_B);
+        koulutusmoduuliToteutus2.setKoulutusmoduuli(koulutusmoduuli);
 
         // liitä koulutus 2:een hakukohteeseen
-        koulutusmoduuliToteutusDAO.insert(koulutusmoduuliToteutus);
-        hakukohde.addKoulutusmoduuliToteutus(koulutusmoduuliToteutus);
+        koulutusmoduuliToteutusDAO.insert(koulutusmoduuliToteutus2);
+        hakukohde2.addKoulutusmoduuliToteutus(koulutusmoduuliToteutus2);
+        hakukohdeDAO.update(hakukohde2);
+        
+        //Liita koulutus 1:een hakukohteeseen
+        hakukohde.addKoulutusmoduuliToteutus(koulutusmoduuliToteutus2);
         hakukohdeDAO.update(hakukohde);
         
         //Liitetään hakukohteet hakuun
+        haku.addHakukohde(hakukohde2);
+        //Hakukohde hakukohde1 = hakukohdeDAO.findBy("oid", HAKUKOHDE_OID).get(0);
         haku.addHakukohde(hakukohde);
-        Hakukohde hakukohde1 = hakukohdeDAO.findBy("oid", HAKUKOHDE_OID).get(0);
-        haku.addHakukohde(hakukohde1);
         hakuDAO.update(haku);
 
     }
@@ -203,8 +207,9 @@ public class TarjontaPublicServiceTest {
         //
         // haku1, hakukohde1, koulutusmoduuli1, organisaatioA
         // haku1, hakukohde2, koulutusmoduuli2, organisaatioB
+        // haku1, hakukohde1, koulutusmoduuli2, organisaatioB
 
-        assertEquals(2, rivit.size());
+        assertEquals(3, rivit.size());
 
         rivi = rivit.get(0);
 
@@ -217,7 +222,7 @@ public class TarjontaPublicServiceTest {
         assertEquals(TarjontaTila.VALMIS.name(), hakukohde.getTila());
         assertEquals(ORGANISAATIO_A, koulutus.getTarjoaja());
 
-        rivi = rivit.get(1);
+        rivi = rivit.get(2);
         haku = rivi.getHaku();
         hakukohde = rivi.getHakukohde();
 

@@ -93,12 +93,14 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely) {
     	String searchStr = (kysely.getNimi() != null) ? kysely.getNimi().toLowerCase() : "";
     	QHakukohde qHakukohde = QHakukohde.hakukohde;
-    	QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
     	BooleanExpression criteriaExpr = qHakukohde.hakukohdeKoodistoNimi.toLowerCase().contains(searchStr);
 
-    	List<Hakukohde> hakukohdes = from(qHakukohde).
-                leftJoin(qHakukohde.koulutusmoduuliToteutuses, qKomoto).fetch().where(criteriaExpr).
+    	List<Hakukohde> hakukohdes = from(qHakukohde)
+    			.where(criteriaExpr).
                 list(qHakukohde);
+    	
+    	//Creating grouping such that there is a hakukohde object for each koulutusmoduulitoteutus
+    	hakukohdes = createGrouping(hakukohdes);
 
     	List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
     	//If a list of organisaatio oids is provided only hakukohdes that match
@@ -114,6 +116,36 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     	}
         return vastaus;
     }
+    
+    /*
+     * Creating grouping such that there is a hakukohde object for each koulutusmoduulitoteutus
+     */
+    private List<Hakukohde> createGrouping (List<Hakukohde> hakukohdes) {
+    	List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
+    	for (Hakukohde curHakukohde : hakukohdes) {
+    		if (curHakukohde.getKoulutusmoduuliToteutuses().size() > 1) {
+    			vastaus.addAll(handleKomotos(curHakukohde));
+    		} else {
+    			vastaus.add(curHakukohde);
+    		}
+    	}
+    	return vastaus;
+    }
+    
+    private List<Hakukohde> handleKomotos(Hakukohde hakukohde) {
+    	List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
+    	for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
+    		Hakukohde newHakukohde = new Hakukohde();
+    		newHakukohde.setHakukohdeNimi(hakukohde.getHakukohdeNimi());
+            newHakukohde.setTila(hakukohde.getTila());
+            newHakukohde.setOid(hakukohde.getOid());
+            newHakukohde.addKoulutusmoduuliToteutus(komoto);
+            newHakukohde.setHaku(hakukohde.getHaku());
+            vastaus.add(newHakukohde);
+    	}
+    	return vastaus;
+    }
+
 
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
