@@ -220,15 +220,16 @@ public class TarjontaPublicServiceTest {
         assertEquals(YHTEISHAKU, haku.getHakutapa());
         assertEquals("Peltikorjaajan perustutkinto", hakukohde.getNimi());
         assertEquals(TarjontaTila.VALMIS.name(), hakukohde.getTila());
-        assertEquals(ORGANISAATIO_A, koulutus.getTarjoaja());
 
         rivi = rivit.get(2);
         haku = rivi.getHaku();
         hakukohde = rivi.getHakukohde();
+        koulutus = rivi.getKoulutus();
 
         assertEquals(YHTEISHAKU, haku.getHakutapa());
         assertEquals("Taidemaalarin erikoistutkinto", hakukohde.getNimi());
         assertEquals(TarjontaTila.VALMIS.name(), hakukohde.getTila());
+        assertEquals(ORGANISAATIO_B, koulutus.getTarjoaja());
 
     }
 
