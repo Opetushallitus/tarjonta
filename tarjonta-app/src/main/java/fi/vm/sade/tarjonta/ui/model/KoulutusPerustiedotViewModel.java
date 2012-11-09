@@ -75,7 +75,7 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     protected String suunniteltuKestoTyyppi;
     protected String koulutuslaji;
    
-    protected String opetuskieli; //only one language accepted
+    //protected String opetuskieli; //only one language accepted
     
     protected Set<String> opetusmuoto;
     protected Set<String> opetuskielet; //allow one or many
@@ -420,17 +420,4 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
         this.jakoopintomahdollisuudet = jakoopintomahdollisuudet;
     }
 
-    /**
-     * @return the opetuskieli
-     */
-    public String getOpetuskieli() {
-        return opetuskieli;
-    }
-
-    /**
-     * @param opetuskieli the opetuskieli to set
-     */
-    public void setOpetuskieli(String opetuskieli) {
-        this.opetuskieli = opetuskieli;
-    }
 }

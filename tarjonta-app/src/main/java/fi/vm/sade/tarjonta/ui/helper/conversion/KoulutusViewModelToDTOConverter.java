@@ -274,8 +274,6 @@ public class KoulutusViewModelToDTOConverter {
             tyyppi.getOpetusmuoto().add(createKoodi(opetusmuoto));
         }
 
-        tyyppi.getOpetuskieli().add(createKoodi(model.getOpetuskieli()));
-
         for (String opetuskielet : model.getOpetuskielet()) {
             tyyppi.getOpetuskieli().add(createKoodi(opetuskielet));
         }
@@ -360,8 +358,6 @@ public class KoulutusViewModelToDTOConverter {
             model2Aste.getOpetusmuoto().add(getUri(typeOpetusmuoto));
         }
 
-        model2Aste.setOpetuskieli(getUri(koulutus.getOpetuskieli().get(0)));
-        
         for (KoodistoKoodiTyyppi typeOpetuskielet : koulutus.getOpetuskieli()) {
             model2Aste.getOpetuskielet().add(getUri(typeOpetuskielet));
         }

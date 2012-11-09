@@ -379,8 +379,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     }
 
     private void buildGridOpetuskieletRow(GridLayout grid, final String propertyKey) {
-        final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
-        gridLabel(grid, propertyKey, type);
+       // final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
+        gridLabel(grid, propertyKey);
         kcOpetuskieliMany = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
         kcOpetuskieliMany.setImmediate(true);
 
@@ -388,7 +388,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         grid.addComponent(kcOpetuskieliMany);
         grid.newLine();
         buildSpacingGridRow(grid);
-        addSelectedFormComponents(type, kcOpetuskieliMany);
     }
 
 //    /* ammatillinen */
