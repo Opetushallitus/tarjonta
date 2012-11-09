@@ -266,11 +266,15 @@ public class KoulutusViewModelToDTOConverter {
         KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
         koulutuksenKestoTyyppi.setArvo(model.getSuunniteltuKesto());
         koulutuksenKestoTyyppi.setYksikko(model.getSuunniteltuKestoTyyppi());
+
+
         tyyppi.setKesto(koulutuksenKestoTyyppi);
 
         for (String opetusmuoto : model.getOpetusmuoto()) {
             tyyppi.getOpetusmuoto().add(createKoodi(opetusmuoto));
         }
+
+        tyyppi.getOpetuskieli().add(createKoodi(model.getOpetuskieli()));
 
         for (String opetuskielet : model.getOpetuskielet()) {
             tyyppi.getOpetuskieli().add(createKoodi(opetuskielet));
@@ -356,6 +360,8 @@ public class KoulutusViewModelToDTOConverter {
             model2Aste.getOpetusmuoto().add(getUri(typeOpetusmuoto));
         }
 
+        model2Aste.setOpetuskieli(getUri(koulutus.getOpetuskieli().get(0)));
+        
         for (KoodistoKoodiTyyppi typeOpetuskielet : koulutus.getOpetuskieli()) {
             model2Aste.getOpetuskielet().add(getUri(typeOpetuskielet));
         }
@@ -374,6 +380,9 @@ public class KoulutusViewModelToDTOConverter {
             model2Aste.setTutkintonimike(koulutusmoduuli.getTutkintonimikeUri()); //Automaalari
             model2Aste.setOpintojenLaajuusyksikko(koulutusmoduuli.getLaajuusyksikkoUri()); //Opintoviikot
             model2Aste.setOpintojenLaajuus(koulutusmoduuli.getLaajuusyksikkoUri()); //120 ov
+            model2Aste.setKoulutuksenRakenne(koulutusmoduuli.getKoulutuksenRakenneUri());
+            model2Aste.setTavoitteet(koulutusmoduuli.getTavoiteetUri());
+            model2Aste.setJakoopintomahdollisuudet(koulutusmoduuli.getJatkoopintomahdollisuudetUri());
         }
 
         return model2Aste;
@@ -456,31 +465,6 @@ public class KoulutusViewModelToDTOConverter {
             }
         }
         return koodit;
-    }
-
-    /**
-     * Return koulutuskoodi search data object in KoodistoKoodiTyyppi object.
-     *
-     * @param koulutusasteTyyppi
-     * @return
-     */
-    private static KoodistoKoodiTyyppi mapToKoodistoKoodiModel(final KoulutuskoodiTyyppi koulutuskoodiTyyppi) {
-        if (koulutuskoodiTyyppi != null && koulutuskoodiTyyppi.getKoodistoUri() != null) {
-            KoodistoKoodiTyyppi koodit = createKoodiVersionUri(
-                    koulutuskoodiTyyppi.getKoodistoUri(),
-                    koulutuskoodiTyyppi.getKoodistoVersio(),
-                    koulutuskoodiTyyppi.getKoulutusasteKoodi());
-
-            for (Nimi koulutusAstenNimi : koulutuskoodiTyyppi.getNimi()) {
-                KoodistoKoodiTyyppi.Nimi nimi1 = new KoodistoKoodiTyyppi.Nimi();
-                nimi1.setKieli(koulutusAstenNimi.getKieli());
-                nimi1.setValue(koulutusAstenNimi.getValue());
-                koodit.getNimi().add(nimi1);
-            }
-
-            return koodit;
-        }
-        return null;
     }
 
     public KoulutusasteModel mapToKoulutusasteModel(final KoodistoKoodiTyyppi kktKoulutusaste, Locale locale) {

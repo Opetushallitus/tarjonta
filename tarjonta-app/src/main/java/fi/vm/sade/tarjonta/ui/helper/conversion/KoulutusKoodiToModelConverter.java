@@ -31,9 +31,9 @@ import java.util.Set;
  *
  * @author Jani Wilén
  */
-public class KoulutusConverter<MODEL extends KoulutusKoodistoModel> {
+public class KoulutusKoodiToModelConverter<MODEL extends KoulutusKoodistoModel> {
 
-    public KoulutusConverter() {
+    public KoulutusKoodiToModelConverter() {
     }
 
     public List<MODEL> mapKoodistoToModel(Class modelClass, final Locale locale, final List<KoodiType> koodit) {

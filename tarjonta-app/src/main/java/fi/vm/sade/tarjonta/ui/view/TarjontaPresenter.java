@@ -79,13 +79,15 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusasteModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
 import java.util.Locale;
+import org.springframework.context.annotation.Scope;
 
 /**
  * This class is used to control the "tarjonta" UI.
  *
  * @author mlyly
  */
-@Component
+@Component(value = "tarjontaPresenter")
+@Scope(value = "session")
 @Configurable(preConstruction = false)
 public class TarjontaPresenter {
 
@@ -118,6 +120,9 @@ public class TarjontaPresenter {
     private ListHakukohdeView _hakukohdeListView;
     private ListKoulutusView koulutusListView;
     private PerustiedotView hakuKohdePerustiedotView;
+
+    public TarjontaPresenter() {
+    }
 
     public void saveHakuKohde(String tila) {
         getModel().getHakukohde().setHakukohdeTila(tila);
@@ -298,8 +303,8 @@ public class TarjontaPresenter {
                 LOG.debug("getKoulutusasteModel : " + koulutus.getKoulutusasteModel());
                 LOG.debug("getKoulutuskoodiModel : " + koulutus.getKoulutuskoodiModel());
                 LOG.debug("getKoulutusohjelma : " + koulutus.getKoulutusohjelmaModel());
-                
-                
+
+
             } catch (ExceptionMessage ex) {
                 LOG.error("Service call failed.", ex);
                 showMainDefaultView();
@@ -730,6 +735,9 @@ public class TarjontaPresenter {
                 komo.setTutkintonimikeUri(model.getTutkintonimike()); //Automaalari
                 komo.setLaajuusyksikkoUri(model.getOpintojenLaajuusyksikko()); //Opintoviikot
                 komo.setLaajuusarvo(model.getOpintojenLaajuus()); //120 ov
+                komo.setKoulutuksenRakenneUri(model.getKoulutuksenRakenne());
+                komo.setTavoiteetUri(model.getTavoitteet());
+                komo.setJatkoopintomahdollisuudetUri(model.getJakoopintomahdollisuudet());
 
                 if (kysely.getKoulutusohjelmakoodiUri() != null) {
                     komo.setKoulutusohjelmakoodiUri(kysely.getKoulutusohjelmakoodiUri());
@@ -762,10 +770,10 @@ public class TarjontaPresenter {
 
         //koulutusaste must be selected before an user can select koulutuskoodi.
         if (model.getKoulutusasteModel() != null && model.getKoulutusasteModel().getKoodi() != null) {
- 
+
             //koodisto search result
             model.getKoulutuskoodit().clear();
-            List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutuskoodit( model.getKoulutusasteModel(), I18N.getLocale());
+            List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutuskoodit(model.getKoulutusasteModel(), I18N.getLocale());
             model.getKoulutuskoodit().addAll(listaaKoulutuskoodit);
         }
     }

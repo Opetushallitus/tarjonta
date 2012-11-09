@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+  
     <!-- Turn on AspectJ @Configurable support -->
     <context:spring-configured />
     <context:annotation-config />
@@ -22,6 +24,10 @@
         location="classpath:tarjonta-app.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-app.properties"
         ignore-resource-not-found="true"/>
 
+    
+    <bean id="tarjontaPresenter" class="fi.vm.sade.tarjonta.ui.view.TarjontaPresenter" scope="session">
+        <aop:scoped-proxy/>
+    </bean>
 
     <!--
       Localization
@@ -42,6 +48,7 @@
     <import resource="application-context-ws.xml"/>
 
     <import resource="cache-context.xml"/>
+    
 
     <!--<import resource="file:///${user.home:''}/oph-configuration/cache-context.xml"/>-->
 

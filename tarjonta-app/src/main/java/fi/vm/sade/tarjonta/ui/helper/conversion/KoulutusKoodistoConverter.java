@@ -56,7 +56,7 @@ public class KoulutusKoodistoConverter {
 
     public KoulutusasteModel listaaKoulutusaste(final KoodistoKoodiTyyppi tyyppi, final Locale locale) {
         final List<KoodiType> koodistoData = tarjontaUiHelper.gethKoodis(tyyppi.getUri());
-        final KoulutusConverter<KoulutusasteModel> kc = new KoulutusConverter<KoulutusasteModel>();
+        final KoulutusKoodiToModelConverter<KoulutusasteModel> kc = new KoulutusKoodiToModelConverter<KoulutusasteModel>();
         if (koodistoData != null && !koodistoData.isEmpty()) {
             List<KoulutusasteModel> list = kc.mapKoodistoToModel(KoulutusasteModel.class, handleLocale(locale), koodistoData);
 
@@ -77,7 +77,7 @@ public class KoulutusKoodistoConverter {
      */
     public KoulutusohjelmaModel listaaKoulutusohjelma(final KoodistoKoodiTyyppi tyyppi, final Locale locale) {
         final List<KoodiType> koodistoData = tarjontaUiHelper.gethKoodis(tyyppi.getUri());
-        final KoulutusConverter<KoulutusohjelmaModel> kc = new KoulutusConverter<KoulutusohjelmaModel>();
+        final KoulutusKoodiToModelConverter<KoulutusohjelmaModel> kc = new KoulutusKoodiToModelConverter<KoulutusohjelmaModel>();
         if (koodistoData != null && !koodistoData.isEmpty()) {
             List<KoulutusohjelmaModel> list = kc.mapKoodistoToModel(KoulutusohjelmaModel.class, handleLocale(locale), koodistoData);
 
@@ -98,7 +98,7 @@ public class KoulutusKoodistoConverter {
      */
     public List<KoulutusohjelmaModel> listaaKoulutusohjelmat( final Locale locale) {
         final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodisByKoodisto(KoodistoURIHelper.KOODISTO_KOULUTUSOHJELMA_URI);
-        final KoulutusConverter<KoulutusohjelmaModel> kc = new KoulutusConverter<KoulutusohjelmaModel>();
+        final KoulutusKoodiToModelConverter<KoulutusohjelmaModel> kc = new KoulutusKoodiToModelConverter<KoulutusohjelmaModel>();
 
         List<KoulutusohjelmaModel> models = new ArrayList<KoulutusohjelmaModel>();
         models.addAll(kc.mapKoodistoToModel(KoulutusohjelmaModel.class, handleLocale(locale), koodistoData));
@@ -116,7 +116,7 @@ public class KoulutusKoodistoConverter {
         final List<KoodiType> koodistoData = tarjontaUiHelper.gethKoodis(tyyppi.getUri());
 
         if (koodistoData != null && !koodistoData.isEmpty()) {
-            final KoulutusConverter<KoulutuskoodiModel> kc = new KoulutusConverter<KoulutuskoodiModel>();
+            final KoulutusKoodiToModelConverter<KoulutuskoodiModel> kc = new KoulutusKoodiToModelConverter<KoulutuskoodiModel>();
             final List<KoulutuskoodiModel> list = kc.mapKoodistoToModel(KoulutuskoodiModel.class, handleLocale(locale), koodistoData);
 
             if (!list.isEmpty() && list.size() > 0) {
@@ -158,7 +158,7 @@ public class KoulutusKoodistoConverter {
 
     private List<KoulutusasteModel> mapKoulutusaste(final List<KoodiType> koodit, final Locale locale) {
         List<KoulutusasteModel> model = new ArrayList<KoulutusasteModel>();
-        final KoulutusConverter<KoulutusasteModel> kc = new KoulutusConverter<KoulutusasteModel>();
+        final KoulutusKoodiToModelConverter<KoulutusasteModel> kc = new KoulutusKoodiToModelConverter<KoulutusasteModel>();
         for (KoodiType koodiType : koodit) {
 
             //A very simple way to filter 'koulutusasteet'.
@@ -174,7 +174,7 @@ public class KoulutusKoodistoConverter {
 
     private List<KoulutuskoodiModel> mapKoulutuskoodi(final KoulutusasteType type, final List<KoodiType> koodit, final Locale locale) {
         List<KoulutuskoodiModel> model = new ArrayList<KoulutuskoodiModel>();
-        final KoulutusConverter<KoulutuskoodiModel> kc = new KoulutusConverter<KoulutuskoodiModel>();
+        final KoulutusKoodiToModelConverter<KoulutuskoodiModel> kc = new KoulutusKoodiToModelConverter<KoulutuskoodiModel>();
 
         for (KoodiType koodiType : koodit) {
             if (type == null) {

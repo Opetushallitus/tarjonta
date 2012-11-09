@@ -95,7 +95,13 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
      */
     @NotNull(message = "{validation.Koulutus.opetuskielet.notNull}")
     @PropertyId("opetuskielet")
-    private KoodistoComponent kcOpetuskieli;
+    private KoodistoComponent kcOpetuskieliMany;
+    /*
+     * Language, only one selected language is accepted.
+//     */
+//    @NotNull(message = "{validation.Koulutus.opetuskielet.notNull}")
+//    @PropertyId("opetuskieli")
+//    private KoodistoComponent kcOpetuskieliOne;
     /*
      * Start date.
      */
@@ -229,8 +235,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
     private void initializeLayout() {
         LOG.info("initilizeLayout()");
-        this.setColumnExpandRatio(0, 10l);
-        this.setColumnExpandRatio(1, 20l);
 
         buildGridDemoSelectRow(this, "ValitseLomakepohja");
         buildGridKoulutusRow(this, "KoulutusTaiTutkinto");
@@ -246,7 +250,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         buildOpintojenLaajuusyksikko(this, "opintojenLaajuusyksikko");
         buildOpintojenLaajuus(this, "opintojenLaajuus");
 
-        buildGridOpetuskieliRow(this, "Opetuskieli");
+        buildGridOpetuskieletRow(this, "Opetuskieli"); //select one or many
+       // buildGridOpetuskieliRow(this, "Opetuskieli"); //select one
         buildGridDatesRow(this, "KoulutuksenAlkamisPvm");
         buildGridKestoRow(this, "SuunniteltuKesto");
         //Added later
@@ -373,14 +378,30 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         addSelectedFormComponents(type, cbKoulutusohjelma);
     }
 
-    private void buildGridOpetuskieliRow(GridLayout grid, final String propertyKey) {
-        gridLabel(grid, propertyKey);
-        kcOpetuskieli = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
-        kcOpetuskieli.setImmediate(true);
-        grid.addComponent(kcOpetuskieli);
+    private void buildGridOpetuskieletRow(GridLayout grid, final String propertyKey) {
+        final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
+        gridLabel(grid, propertyKey, type);
+        kcOpetuskieliMany = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
+        kcOpetuskieliMany.setImmediate(true);
+
+        //kcOpetuskieliMany.getField().setMultiSelect(false);
+        grid.addComponent(kcOpetuskieliMany);
         grid.newLine();
         buildSpacingGridRow(grid);
+        addSelectedFormComponents(type, kcOpetuskieliMany);
     }
+
+//    /* ammatillinen */
+//    private void buildGridOpetuskieliRow(GridLayout grid, final String propertyKey) {
+//        final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_LUKIO;
+//        gridLabel(grid, propertyKey);
+//        kcOpetuskieliOne = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
+//        kcOpetuskieliOne.setImmediate(true);
+//        grid.addComponent(kcOpetuskieliOne);
+//        grid.newLine();
+//        buildSpacingGridRow(grid);
+//        addSelectedFormComponents(type, kcOpetuskieliOne);
+//    }
 
     private void buildGridDatesRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
@@ -468,7 +489,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private void buildGridKoulutuslajiRow(GridLayout grid, final String propertyKey) {
         final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey, type);
-        kcKoulutuslaji = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI);
+        kcKoulutuslaji = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI, true);
         kcKoulutuslaji.setCaptionFormatter(UiBuilder.DEFAULT_URI_CAPTION_FORMATTER);
 
         kcKoulutuslaji.setImmediate(true);
@@ -511,7 +532,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         labelValue.setSizeFull();
         grid.addComponent(hl);
         grid.setComponentAlignment(hl, Alignment.TOP_RIGHT);
-        grid.setComponentAlignment(labelValue, Alignment.TOP_LEFT);;
+        grid.setComponentAlignment(labelValue, Alignment.TOP_LEFT);
         return hl;
     }
 
@@ -551,7 +572,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
     private void disableOrEnableComponents(boolean active) {
         cbKoulutusTaiTutkinto.setEnabled(active);
-        kcOpetuskieli.setEnabled(active);
+        kcOpetuskieliMany.setEnabled(active);
         dfKoulutuksenAlkamisPvm.setEnabled(active);
         tfSuunniteltuKesto.setEnabled(active);
         kcSuunniteltuKestoTyyppi.setEnabled(active);

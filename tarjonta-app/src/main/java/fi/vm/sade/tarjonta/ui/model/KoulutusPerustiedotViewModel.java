@@ -56,25 +56,32 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     /*
      * KOMO data (static labels):
      */
-    protected String koulutuksenTyyppi = "";
-    protected String koulutusala = "";
-    protected String tutkinto = "";
-    protected String tutkintonimike = "";
-    protected String opintojenLaajuusyksikko = "";
-    protected String opintojenLaajuus = "";
-    protected String opintoala = "";
+    protected String koulutuksenTyyppi;
+    protected String koulutusala;
+    protected String tutkinto;
+    protected String tutkintonimike;
+    protected String opintojenLaajuusyksikko;
+    protected String opintojenLaajuus;
+    protected String opintoala;
+    //8.11.2012
+    protected String koulutuksenRakenne;
+    protected String tavoitteet;
+    protected String jakoopintomahdollisuudet;
     /*
      * Form fields:
      */
-    protected Date koulutuksenAlkamisPvm = new Date();
+    protected Date koulutuksenAlkamisPvm;
     protected String suunniteltuKesto;
     protected String suunniteltuKestoTyyppi;
+    protected String koulutuslaji;
+   
+    protected String opetuskieli; //only one language accepted
+    
     protected Set<String> opetusmuoto;
-    protected String koulutuslaji = new String();
-    protected Set<String> opetuskielet = new HashSet<String>(0);
-    protected Set<String> avainsanat = new HashSet<String>(0);
-    protected List<KoulutusYhteyshenkiloViewModel> yhteyshenkilot = new ArrayList<KoulutusYhteyshenkiloViewModel>(0);
-    protected List<KoulutusLinkkiViewModel> koulutusLinkit = new ArrayList<KoulutusLinkkiViewModel>(0);
+    protected Set<String> opetuskielet; //allow one or many
+    protected Set<String> avainsanat;
+    protected List<KoulutusYhteyshenkiloViewModel> yhteyshenkilot;
+    protected List<KoulutusLinkkiViewModel> koulutusLinkit;
 
     public KoulutusPerustiedotViewModel() {
         this.documentStatus = DocumentStatus.NEW;
@@ -369,5 +376,61 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      */
     public void setKoulutuskoodiModel(KoulutuskoodiModel koulutuskoodiModel) {
         this.koulutuskoodiModel = koulutuskoodiModel;
+    }
+
+    /**
+     * @return the koulutuksenRakenne
+     */
+    public String getKoulutuksenRakenne() {
+        return koulutuksenRakenne;
+    }
+
+    /**
+     * @param koulutuksenRakenne the koulutuksenRakenne to set
+     */
+    public void setKoulutuksenRakenne(String koulutuksenRakenne) {
+        this.koulutuksenRakenne = koulutuksenRakenne;
+    }
+
+    /**
+     * @return the tavoitteet
+     */
+    public String getTavoitteet() {
+        return tavoitteet;
+    }
+
+    /**
+     * @param tavoitteet the tavoitteet to set
+     */
+    public void setTavoitteet(String tavoitteet) {
+        this.tavoitteet = tavoitteet;
+    }
+
+    /**
+     * @return the jakoopintomahdollisuudet
+     */
+    public String getJakoopintomahdollisuudet() {
+        return jakoopintomahdollisuudet;
+    }
+
+    /**
+     * @param jakoopintomahdollisuudet the jakoopintomahdollisuudet to set
+     */
+    public void setJakoopintomahdollisuudet(String jakoopintomahdollisuudet) {
+        this.jakoopintomahdollisuudet = jakoopintomahdollisuudet;
+    }
+
+    /**
+     * @return the opetuskieli
+     */
+    public String getOpetuskieli() {
+        return opetuskieli;
+    }
+
+    /**
+     * @param opetuskieli the opetuskieli to set
+     */
+    public void setOpetuskieli(String opetuskieli) {
+        this.opetuskieli = opetuskieli;
     }
 }

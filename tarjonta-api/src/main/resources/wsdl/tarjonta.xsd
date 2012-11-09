@@ -316,6 +316,25 @@
                     <xs:documentation>Tutkintonimike</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            
+             <xs:element minOccurs="0" maxOccurs="1" name="koulutuksenRakenneUri" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>KoulutuksenRakenne</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            
+             <xs:element minOccurs="0" maxOccurs="1" name="tavoiteetUri" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Koulutukselliset ja ammatilliset tavoitteet</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            
+             <xs:element minOccurs="0" maxOccurs="1" name="jatkoopintomahdollisuudetUri" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Jatko-opintomahdollisuudet</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            
             <xs:element minOccurs="0" maxOccurs="1" name="ulkoinenTunniste" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Ulkoinen tunniste</xs:documentation>
@@ -418,9 +437,11 @@
             <xs:element name="KoulutusohjelmaKoodi" type="tns:KoodistoKoodiTyyppi"/>
             <xs:element name="Opetusmuoto" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
             <xs:element name="Opetuskieli" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="Painotus" type="tns:PainotusTyyppi" minOccurs="0" maxOccurs="unbounded"/>           
             <xs:element name="KoulutuksenAlkamisPaiva" type="xs:dateTime"/>
             <xs:element name="Kesto" type="tns:KoulutuksenKestoTyyppi"/>
             <xs:element name="Koulutuslaji" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="Pohjakoulutusvaatimus" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
             <xs:element name="Linkki" type="tns:WebLinkkiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="YhteyshenkiloTyyppi" type="tns:YhteyshenkiloTyyppi" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="Koulutusaste" type="tns:KoodistoKoodiTyyppi"/>
@@ -567,6 +588,18 @@
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
                         Lista kielikoodeja joita tama yhteyshenkilo vastaa.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="PainotusTyyppi">
+        <xs:sequence>
+            <xs:element name="Arvo" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>
+                        Arvo siten kun kayttaja on sen syottanyt.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>

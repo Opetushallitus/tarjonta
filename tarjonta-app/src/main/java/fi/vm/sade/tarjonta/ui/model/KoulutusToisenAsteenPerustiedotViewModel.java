@@ -43,8 +43,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     private Set<KoulutusasteModel> koulutusasteet;
     private Set<KoulutuskoodiModel> koulutuskoodit;
     private Set<KoulutusohjelmaModel> koulutusohjelmat;
-    
-   
     private KoulutuksenTila tila;
 
     public KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus status) {
@@ -84,6 +82,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setKoulutuksenTyyppi(null);
         setOrganisaatioName(null);
         setKoulutuslaji(null);
+        setOpetuskieli(null);
 
         setKoulutusasteet(new HashSet<KoulutusasteModel>());
         setKoulutuskoodit(new HashSet<KoulutuskoodiModel>());
@@ -111,7 +110,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         return getOid() != null;
     }
 
- 
     public String getSelectedKoulutusasteKoodi() {
         if (getKoulutusasteModel() != null && getKoulutusasteModel().getKoodi() != null) {
             return getKoulutusasteModel().getKoodi();
