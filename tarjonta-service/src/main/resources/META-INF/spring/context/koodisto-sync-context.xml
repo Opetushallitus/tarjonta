@@ -38,21 +38,13 @@
         </cxf:outInterceptors>
     </cxf:bus>
 
-
-    <!--
-        TODO: move addresses to properties
-
-        koodi.webservice.url=http://luokka.hard.ware.fi:8181/cxf/koodiService
-        koodisto.webservice.url=http://luokka.hard.ware.fi:8181/cxf/koodistoService
-    -->
-
     <jaxws:client id="koodiPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
-                  address="http://luokka.hard.ware.fi:8181/cxf/koodiService"/>
+                  address="${koodi.webservice.url}"/>
 
     <jaxws:client id="koodistoPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
-                  address="http://luokka.hard.ware.fi:8181/cxf/koodistoService"/>
+                  address="${koodisto.webservice.url}"/>
 
 
     <bean id="syncKoodistoJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">

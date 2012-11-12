@@ -27,7 +27,7 @@
     -->
 
      <context:property-placeholder
-        location="classpath:META-INF/tarjonta-esb.properties, file:///${user.home:''}/oph-configuration/tarjonta-esb.properties"
+        location="classpath:META-INF/tarjonta-esb.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-esb.properties"
         ignore-resource-not-found="true"/>
      
       <!-- Define activemq component with activemq url -->
@@ -63,7 +63,7 @@
     
      <!-- Define "to" endpoint, which is activemq queue -->
     <!--<cxf:cxfEndpoint id="hakuService"
-                     address="camel://activemq:queue:${activeMq.queueName}?useMessageIDAsCorrelationID=true"
+                     address="camel://activemq:queue:${activeMq.queueName.tarjonta}?useMessageIDAsCorrelationID=true"
                      serviceClass="fi.vm.sade.tarjonta.service.HakuService">
         <cxf:properties>
             <entry key="dataFormat" value="PAYLOAD" />

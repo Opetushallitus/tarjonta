@@ -36,12 +36,12 @@
     
     <bean id="jmsConfigAdmin" class="org.apache.cxf.transport.jms.JMSConfiguration">
         <property name="connectionFactory" ref="jmsConnectionFactory" />
-        <property name="targetDestination" value="${activeMq.targetDestinationAdmin}" />
+        <property name="targetDestination" value="${activeMq.targetDestinationAdmin.tarjonta}" />
         <property name="reconnectOnException" value="true"/>
     </bean>    
     <bean id="jmsConfigPublic" class="org.apache.cxf.transport.jms.JMSConfiguration">
         <property name="connectionFactory" ref="jmsConnectionFactory" />
-        <property name="targetDestination" value="${activeMq.targetDestinationPublic}" />
+        <property name="targetDestination" value="${activeMq.targetDestinationPublic.tarjonta}" />
         <property name="reconnectOnException" value="true"/>
     </bean>   
     
