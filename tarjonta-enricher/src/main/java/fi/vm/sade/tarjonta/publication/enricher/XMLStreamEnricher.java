@@ -194,6 +194,7 @@ public class XMLStreamEnricher {
 
             ElementEnricher enricher = handlerMap.get(tagName);
             if (enricher != null) {
+                enricher.reset();
                 enricher.mappedElementName = tagName;
                 enricher.parent = this;
             }

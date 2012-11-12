@@ -19,12 +19,15 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import fi.vm.sade.tarjonta.publication.enricher.KoodistoLookupService.KoodiValue;
+import fi.vm.sade.tarjonta.publication.utils.StringUtils;
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Handles elements that are of type: {http://publication.tarjonta.sade.vm.fi/types}/CodeValueType
- * by injecting any missing labels by koodi value - if any.
+ * by injecting any missing labels by koodi value - if any. Any existing labels are left intact.
  *
  * @author Jukka Raanamo
  */
@@ -40,6 +43,8 @@ public class KoodistoCodeValueEnricher extends ElementEnricher {
 
     private static final String TAG_LABEL = "Label";
 
+    private static final String TAG_LANG = "lang";
+
     private static final String SCHEME_KOODISTO = "Koodisto";
 
     private KoodistoLookupService koodistoService;
@@ -50,8 +55,18 @@ public class KoodistoCodeValueEnricher extends ElementEnricher {
 
     private String currentTag;
 
+    private Set<String> existingLabels = new HashSet<String>();
+
     public void setKoodistoService(KoodistoLookupService koodistoService) {
         this.koodistoService = koodistoService;
+    }
+
+    @Override
+    public void reset() {
+        currentTag = null;
+        koodiUri = null;
+        koodiVersion = null;
+        existingLabels.clear();
     }
 
     @Override
@@ -78,6 +93,14 @@ public class KoodistoCodeValueEnricher extends ElementEnricher {
                 } catch (NumberFormatException e) {
                     // uri could contain version?
                 }
+            }
+
+        } else if (TAG_LABEL.equals(localName)) {
+
+            // label already exist, remember
+            final String lang = attributes.getValue(TAG_LANG);
+            if (StringUtils.notEmpty(lang)) {
+                existingLabels.add(lang);
             }
 
         }
@@ -144,11 +167,11 @@ public class KoodistoCodeValueEnricher extends ElementEnricher {
 
     private void writeLabel(String lang, String value) throws SAXException {
 
-        if (value != null) {
-            parent.writeStartElement(TAG_LABEL, "xml:lang", lang);
+        if (value != null && !existingLabels.contains(lang)) {
+            parent.writeStartElement(TAG_LABEL, TAG_LANG, lang);
             parent.writeCharacters(value);
             parent.writeEndElement(TAG_LABEL);
-        }
+        } 
 
     }
 

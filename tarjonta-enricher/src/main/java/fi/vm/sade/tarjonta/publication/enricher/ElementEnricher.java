@@ -98,5 +98,10 @@ public abstract class ElementEnricher {
 
     public abstract int characters(char[] characters, int start, int length) throws SAXException;
 
+    /**
+     * Invoked to reset internal state so that instances can be recycled.
+     */
+    public abstract void reset();
+
 }
 

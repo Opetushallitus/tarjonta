@@ -82,6 +82,13 @@ public class XMLStreamEnricherTest {
         }
 
         @Override
+        public void reset() {
+            // N/A
+        }
+
+
+
+        @Override
         public int startElement(String localName, Attributes attributes) throws SAXException {
             // keep calling us
             return WRITE_AND_CONTINUE;

@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher;
 
+import fi.vm.sade.tarjonta.publication.enricher.KoodistoLookupService.KoodiValue;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 
@@ -30,6 +31,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.junit.After;
+import org.junit.BeforeClass;
 import org.xml.sax.InputSource;
 
 /**
@@ -46,15 +48,17 @@ public class LearningOpportunityEnricherTest {
 
     private InputSource input;
 
+    private static boolean sPrintXML;
+
+    @BeforeClass
+    public static void setUpClass() {
+        sPrintXML = Boolean.parseBoolean(System.getProperty("printXML", "false"));
+    }
+
     @Before
     public void setUp() throws Exception {
 
-        KoodistoLookupService koodistoService = mock(KoodistoLookupService.class);
-
-        when(koodistoService.lookupKoodi("371101", 2010)).
-            thenReturn(new SimpleKoodiValue("371101", "2010", "Nimi", "Name", "Namn"));
-        when(koodistoService.lookupKoodi("laajuus1", 0)).
-            thenReturn(new SimpleKoodiValue("laajuus1", "123", "Opintopiste", "CreditUnit", "laajuusSV"));
+        KoodistoLookupService koodistoService = prepareKoodistoLookupMockService();
 
         LearningOpportunityDataEnricherFactory factory = new LearningOpportunityDataEnricherFactory();
         factory.setKoodistoService(koodistoService);
@@ -62,6 +66,7 @@ public class LearningOpportunityEnricherTest {
         processor = factory.getObject();
         processor.setInput(new FileInputStream("src/test/resources/simple-enrich-in.xml"));
         processor.setOutput(out = new ByteArrayOutputStream());
+        processor.process();
 
         xpath = XPathFactory.newInstance().newXPath();
         xpath.setNamespaceContext(new PublicationNamespaceContext());
@@ -71,33 +76,93 @@ public class LearningOpportunityEnricherTest {
     @After
     public void tearDown() {
         input = null;
+
+        if (sPrintXML) {
+            System.out.println("output:\n" + out.toString());
+        }
+
     }
 
     @Test
-    public void testProcess() throws Exception {
+    public void testEnrichCredits() throws Exception {
 
-        processor.process();
+        final String basePath = "//LearningOpportunityDownloadData/LearningOpportunitySpecification[1]/Credits";
+        assertCodeValue(basePath, "laajuus1", "laajuus");
 
-        // todo: add e.g. xpath expression to validate that processing has taken place
-        // and also we need to validate that XML is still valid
-        //
-        System.out.println("output:\n" + out.toString());
+    }
 
-        // check that the original value is present
-        assertXPathEvals("20", "//LearningOpportunityDownloadData/LearningOpportunitySpecification[1]/Credits/Value/text()");
+    @Test
+    public void testEnrichQualification() throws Exception {
+
+        final String basePath = "//LearningOpportunityDownloadData/LearningOpportunitySpecification[1]/Qualification";
+        assertCodeValue(basePath, "lahihoitaja", "tutkintonimike");
+
+    }
+
+    @Test
+    public void testEnrichEducationClassification() throws Exception {
+
+        final String basePath = "//LearningOpportunityDownloadData/LearningOpportunitySpecification[1]/Classification/EducationClassification";
+        assertCodeValue(basePath, "371101", "koulutusluokitus");
 
 
     }
 
-    private void assertXPathEvals(String expected, String expression) throws XPathExpressionException {
+    @Test
+    public void testEnrichEducationDomain() throws Exception {
 
-        assertEquals(expected, evalXPath(expression));
+        final String basePath = "//LearningOpportunityDownloadData/LearningOpportunitySpecification[1]/Classification/EducationDomain";
+        assertCodeValue(basePath, "uri:koulutusala", "koulutusala");
 
     }
 
-    private void ensureXPathSource() {
+    @Test
+    public void testEnrichEducationDegree() throws Exception {
 
-        input = new InputSource(new StringReader(new String(out.toByteArray())));
+        final String basePath = "//LearningOpportunityDownloadData/LearningOpportunitySpecification[1]/Classification/EducationDegree";
+        assertCodeValue(basePath, "uri:koulutusaste", "koulutusaste");
+
+    }
+
+    @Test
+    public void testEnrichOpintoala() throws Exception {
+
+        final String basePath = "//LearningOpportunityDownloadData/LearningOpportunitySpecification[1]/Classification/StudyDomain";
+        assertCodeValue(basePath, "uri:opintoala", "opintoala");
+
+    }
+
+    @Test
+    public void testEnrichEqf() throws Exception {
+
+        final String basePath = "//LearningOpportunityDownloadData/LearningOpportunitySpecification[1]/Classification/EqfClassification";
+        assertCodeValue(basePath, "uri:eqf", "eqf");
+
+    }
+
+    @Test
+    public void testEnrichNqf() throws Exception {
+
+        final String basePath = "//LearningOpportunityDownloadData/LearningOpportunitySpecification[1]/Classification/NqfClassification";
+        assertCodeValue(basePath, "uri:nqf", "nqf");
+
+    }
+
+    /**
+     * Asserts codes value and labels in three languages.
+     *
+     * @param baseXPath
+     * @param expectedValue
+     * @param expectedBaseLabel
+     * @throws Exception
+     */
+    private void assertCodeValue(String baseXPath, String expectedValue, String expectedBaseLabel) throws Exception {
+
+        assertXPathEvals(expectedValue, baseXPath + "/Code/text()");
+        assertXPathEvals(expectedBaseLabel + "-fi", baseXPath + "/Label[@lang='fi']/text()");
+        assertXPathEvals(expectedBaseLabel + "-en", baseXPath + "/Label[@lang='en']/text()");
+        assertXPathEvals(expectedBaseLabel + "-sv", baseXPath + "/Label[@lang='sv']/text()");
+
     }
 
     /**
@@ -119,8 +184,7 @@ public class LearningOpportunityEnricherTest {
         };
 
         String[] inputFiles = {
-            "src/test/resources/enrich-minimal-in.xml", //"src/test/resources/enrich-minimal-in-with-ns.xml"
-        };
+            "src/test/resources/enrich-minimal-in.xml",};
 
         XPath path = XPathFactory.newInstance().newXPath();
 
@@ -132,18 +196,24 @@ public class LearningOpportunityEnricherTest {
 
                 String expression = tmp[0];
                 String expected = tmp[1];
-                System.out.println("xpath: " + expression);
 
                 assertEquals("bad result for xpath: " + expression, expected, path.evaluate(expression, is));
 
-                System.out.println("OK: " + expression);
-
             }
-
-
 
         }
 
+    }
+
+    private void assertXPathEvals(String expected, String expression) throws XPathExpressionException {
+
+        assertEquals(expected, evalXPath(expression));
+
+    }
+
+    private void ensureXPathSource() {
+
+        input = new InputSource(new StringReader(new String(out.toByteArray())));
     }
 
     private String evalXPath(String xPathExpression) throws XPathExpressionException {
@@ -151,6 +221,31 @@ public class LearningOpportunityEnricherTest {
         ensureXPathSource();
         return xpath.evaluate(xPathExpression, input);
 
+    }
+
+    /**
+     * Creates KoodistoLookupService that's been prepared to return values for uri's found in the test file.
+     */
+    private KoodistoLookupService prepareKoodistoLookupMockService() {
+
+        KoodistoLookupService service = mock(KoodistoLookupService.class);
+
+        when(service.lookupKoodi("371101", 2010)).thenReturn(createSimpleKoodiValue("koulutusluokitus"));
+        when(service.lookupKoodi("uri:koulutusala", 2002)).thenReturn(createSimpleKoodiValue("koulutusala"));
+        when(service.lookupKoodi("laajuus1", 0)).thenReturn(createSimpleKoodiValue("laajuus"));
+        when(service.lookupKoodi("lahihoitaja", 0)).thenReturn(createSimpleKoodiValue("tutkintonimike"));
+        when(service.lookupKoodi("uri:koulutusaste", 2002)).thenReturn(createSimpleKoodiValue("koulutusaste"));
+        when(service.lookupKoodi("uri:opintoala", 2002)).thenReturn(createSimpleKoodiValue("opintoala"));
+        when(service.lookupKoodi("uri:eqf", 0)).thenReturn(createSimpleKoodiValue("eqf"));
+        when(service.lookupKoodi("uri:nqf", 0)).thenReturn(createSimpleKoodiValue("nqf"));
+
+        return service;
+
+    }
+
+    private KoodiValue createSimpleKoodiValue(String baseName) {
+
+        return new SimpleKoodiValue(baseName + "-uri", baseName + "-value", baseName + "-fi", baseName + "-en", baseName + "-sv");
 
     }
 

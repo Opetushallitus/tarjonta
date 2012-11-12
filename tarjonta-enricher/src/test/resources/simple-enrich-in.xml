@@ -11,7 +11,7 @@
     <LearningOpportunitySpecification id="S1508" type="DegreeProgramme">
 
         <!-- tutkinto-ohjelman nimi / degreeProgrammeTitle -->
-        <Name xml:lang="fi">Ensihoidon koulutusohjelma</Name>
+        <Name lang="fi">Ensihoidon koulutusohjelma</Name>
 
         <!-- tutkinto-ohjelman tunniste -->
         <Identifier>1508</Identifier>
@@ -31,7 +31,7 @@
 
         <!-- tutkintonimike -->
         <Qualification>
-            <Title>lähihoitaja</Title>
+            <Code scheme="Koodisto">lahihoitaja</Code>
         </Qualification>
 
         <!-- tutkinnon nimi -->
@@ -42,35 +42,34 @@
             <!-- koulutusluokitus -->
             <EducationClassification>
                 <Code scheme="Koodisto" version="2010">371101</Code>
-                <Label xml:lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
+                <Label lang="fi">koulutusluokitus-fi</Label>
             </EducationClassification>
 
             <!-- koulutusala -->
             <EducationDomain>
-                <Code scheme="OPH" version="2002">7</Code>
-                <Label>sosiaali- terveys- ja liikunta-ala</Label>
+                <Code scheme="Koodisto" version="2002">uri:koulutusala</Code>
+                <Label lang="fi">koulutusala-fi</Label>
             </EducationDomain>
 
             <!-- koulutusaste -->
             <EducationDegree>
-                <Code scheme="Koodisto" version="2002">32</Code>
-                <Label>Ammatillinen koulutus</Label>
+                <Code scheme="Koodisto" version="2002">uri:koulutusaste</Code>
+                <Label>non-localized-value</Label>
             </EducationDegree>
 
             <!-- opintoala -->
             <StudyDomain>
-                <Code scheme="OPH" version="2002">703</Code>
-                <Label>sosiaali- ja terveysala</Label>
+                <Code scheme="Koodisto" version="2002">uri:opintoala</Code>
             </StudyDomain>
 
             <!-- EQF -->
             <EqfClassification>
-                <Code scheme="EQF">4</Code>
+                <Code scheme="Koodisto">uri:eqf</Code>
             </EqfClassification>
 
             <!-- NQF -->
             <NqfClassification>
-                <Code scheme="NQF">4</Code>
+                <Code scheme="Koodisto">uri:nqf</Code>
             </NqfClassification>
 
 
@@ -165,7 +164,7 @@
 
             <!-- opetusta suomeksi -->
             <Code value="fi">
-                <Label xml:lang="fi">suomi</Label>
+                <Label lang="fi">suomi</Label>
             </Code>
 
         </LanguagesOfInstruction>
@@ -199,7 +198,7 @@
         <Assessments>
 
             <!-- yleiset arviointi kriteerit suomeksi -->
-            <Assessment xml:lang="fi">
+            <Assessment lang="fi">
                 Lorem Lipsum
             </Assessment>
 
@@ -208,7 +207,7 @@
         <!-- sanallinen kuvaus koulutuksen loppukokeista -->
         <FinalExamination>
 
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 Lorem Lipsum
             </Description>
 
@@ -231,7 +230,7 @@
         <Scholarship>
 
             <!-- yleinen kuvaus stipendimahdollisuuksista -->
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 Lorem Lipsum
             </Description>
 
@@ -243,7 +242,7 @@
 
             <!-- linkki oppilaitoksen sivuille sekä optinaalinen label elementti -->
             <Link type="HOME">
-                <Label xml:lang="fi">Oppilaitoksen sivut</Label>
+                <Label lang="fi">Oppilaitoksen sivut</Label>
                 <Uri>http://www.hel.fi/hki/Hesote/fi/Etusivu</Uri>
             </Link>
 
@@ -300,7 +299,7 @@
 
     <ApplicationSystem>
         <Name>
-            <Text xml:lang="fi">Yhteishaku</Text>
+            <Text lang="fi">Yhteishaku</Text>
         </Name>
     </ApplicationSystem>
 
@@ -316,7 +315,7 @@
         <Identifier>776</Identifier>
 
         <!-- hakukohteen nimi -->
-        <Title xml:lang="fi">Ensihoidon koulutusohjelma, yo</Title>
+        <Title lang="fi">Ensihoidon koulutusohjelma, yo</Title>
 
         <!-- viittaus hakuun johon tämä hakukohde kuuluu -->
         <ApplicationSystemRef>
@@ -330,7 +329,7 @@
         <EligibilityRequirements>
 
             <!-- vapaasti kuvattu vaatimus suomeksi -->
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 peruskoulu/yo-pohjaisiin kohteisiin lukio
             </Description>
 
@@ -352,7 +351,7 @@
             <LastYearTotalApplicants>300</LastYearTotalApplicants>
 
             <!-- vapaa kuvaus -->
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 Lorem Lipsum
             </Description>
 
@@ -360,7 +359,7 @@
             <EntranceExaminations>
 
                 <!-- yleinen kuvaus -->
-                <Description xml:lang="fi">
+                <Description lang="fi">
                     Vapaamuotoinen kuvaus kaikista valintakokeista.
                 </Description>
 
@@ -369,11 +368,11 @@
 
                     <!-- valintakoe tyyppi -->
                     <ExaminationType>
-                        <Title xml:lang="fi">Pääsy- ja soveltuvuuskoe</Title>
+                        <Title lang="fi">Pääsy- ja soveltuvuuskoe</Title>
                     </ExaminationType>
 
                     <!-- yhden valintakokeen kuvaus -->
-                    <Description xml:lang="fi">
+                    <Description lang="fi">
                         Lorem Lipsum
                     </Description>
 
@@ -418,7 +417,7 @@
 
                     <!-- vapaa kuvaus -->
                     <Description>
-                        <Text xml:lang="fi">
+                        <Text lang="fi">
                             Liitteen sanallinen kuvaus hakijalle.
                         </Text>
                     </Description>
@@ -455,7 +454,7 @@
         </LearningOpportunities>
 
         <!-- hakukohteen vapaamuotoinen kuvaus -->
-        <Description xml:lang="fi">
+        <Description lang="fi">
             Lorem Lipsum
         </Description>
 
