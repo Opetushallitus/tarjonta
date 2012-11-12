@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Scope;
 
 /**
  * Simple root view for Tarjonta.
@@ -45,6 +46,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  *
  * @author mlyly
  */
+@Scope(value = "session")
 @Configurable(preConstruction = true)
 public class TarjontaRootView extends Window {
 

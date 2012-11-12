@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Component;
  * @author mlyly
  */
 @Component
+@Scope(value = "session")
 @Configurable
 public class TarjontaModel extends BaseUIViewModel {
 
