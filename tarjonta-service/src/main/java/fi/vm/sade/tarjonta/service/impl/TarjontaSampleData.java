@@ -217,7 +217,7 @@ public class TarjontaSampleData {
         t.addAvainsana(new KoodistoUri(randomKoodiUri("avainsana")));
         t.setNimi("Demonimi " + System.currentTimeMillis());
         t.setUlkoinenTunniste("KMT637832.3");
-        t.setPohjakoulutusvaatimus(createTeksti("Pohjakoulutusvaatimus...", null, "Prerequisite..."));
+        t.setPohjakoulutusvaatimus(randomKoodiUri("pohjakoulutusvaatimus"));
         t.setSuunniteltuKesto(randomKoodiUri("koulutuskesto"), "6+2");
         t.setArviointikriteerit(createTeksti("Arviointikriteerit...", null, "Assessments..."));
         t.setLoppukoeVaatimukset(createTeksti("Loppukoevaatimukset", null, "Final Examination..."));

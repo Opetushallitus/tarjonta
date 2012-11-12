@@ -28,8 +28,8 @@ import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadDataType
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Date;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import org.junit.*;
 
@@ -45,9 +45,12 @@ public class LearningOpportunityDataWriterTest {
 
     private static JAXBContext sJaxbContext;
 
+    private static boolean sPrintXML;
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         sJaxbContext = JAXBContext.newInstance(LearningOpportunityDownloadDataType.class.getPackage().getName());
+        sPrintXML = Boolean.parseBoolean(System.getProperty("printXML", "false"));
     }
 
     @Before
@@ -62,6 +65,11 @@ public class LearningOpportunityDataWriterTest {
 
     @After
     public void cleanUp() throws Exception {
+
+        if (sPrintXML) {
+            System.out.println("output: " + out.toString());
+        }
+
     }
 
     @Test
@@ -165,7 +173,7 @@ public class LearningOpportunityDataWriterTest {
         //System.out.println("unmarshal: " + out.toString());
 
         return (LearningOpportunityDownloadData) unmarshal(new StringReader(out.toString()));
-        
+
 
     }
 
@@ -206,6 +214,13 @@ public class LearningOpportunityDataWriterTest {
         hakukohde.setHakukohdeNimi("HN1");
         hakukohde.setTila(TarjontaTila.VALMIS);
         hakukohde.setYlinValintaPistemaara(200);
+
+        Valintakoe valintakoe = new Valintakoe();
+        ValintakoeAjankohta ajankohta = new ValintakoeAjankohta();
+        ajankohta.setAlkamisaika(new Date());
+        ajankohta.setPaattymisaika(new Date());
+        valintakoe.addAjankohta(ajankohta);
+        hakukohde.addValintakoe(valintakoe);
 
         Haku haku = new Haku();
         haku.setOid("haku/1.2.3.4.5");

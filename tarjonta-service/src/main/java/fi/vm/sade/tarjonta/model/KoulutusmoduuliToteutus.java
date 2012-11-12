@@ -126,9 +126,8 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinColumn(name = "loppukoevaatimukset")
     private MonikielinenTeksti loppukoeVaatimukset;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "pohjakoulutusvaatimus")
-    private MonikielinenTeksti pohjakoulutusvaatimus;
+    @Column(name="pohjakoulutusvaatimus")
+    private String pohjakoulutusvaatimus;
 
     /*
      * Koulutuksen Lisatiedot  (additional information)
@@ -529,9 +528,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * yksi hakukelpoisuuden edellytyksistä. Koulutuksen järjestäjät ja korkeakoulut voivat valita
      * hakijoita (1) opiskelijoiksi myös ilman pohjakoulutusvaatimusta, ks. joustava valinta.
      *
+     * Arvo on koodisto uri.
+     *
      * @return
      */
-    public MonikielinenTeksti getPohjakoulutusvaatimus() {
+    public String getPohjakoulutusvaatimus() {
         return pohjakoulutusvaatimus;
     }
 
@@ -539,7 +540,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * @see #getPohjakoulutusvaatimus()
      * @param pohjakoulutusvaatimus
      */
-    public void setPohjakoulutusvaatimus(MonikielinenTeksti pohjakoulutusvaatimus) {
+    public void setPohjakoulutusvaatimus(String pohjakoulutusvaatimus) {
         this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
     }
 

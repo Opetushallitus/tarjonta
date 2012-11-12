@@ -276,11 +276,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         addLaajuus(moduuli, specification);
 
         // LearningOpportunitySpecification/Qualification
-        if (moduuli.getTutkintonimike() != null) {
-            QualificationType qualification = new QualificationType();
-            qualification.setCode(moduuli.getTutkintonimike());
-            specification.setQualification(qualification);
-        }
+        addTutkintonimike(moduuli, specification);
 
         // LearningOpportunitySpecification/DegreeTitle
         specification.setDegreeTitle(createExtendedString(moduuli.getTutkintoOhjelmanNimi()));
@@ -382,6 +378,15 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     }
 
+    private void addTutkintonimike(Koulutusmoduuli source, LearningOpportunitySpecificationType target) {
+
+        final String nimike = source.getTutkintonimike();
+        if (nimike != null) {
+            target.setQualification(createCodeValue(CodeSchemeType.KOODISTO, nimike));
+        }
+
+    }
+
     private void addKesto(KoulutusmoduuliToteutus source, LearningOpportunityInstanceType target) {
 
         final String units = source.getSuunniteltuKestoYksikko();
@@ -402,7 +407,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     private void addPohjakoulutusvaatimus(KoulutusmoduuliToteutus source, LearningOpportunityInstanceType target) {
 
-        copyTexts(source.getPohjakoulutusvaatimus(), target.getPrerequisite());
+        target.setPrerequisite(createCodeValue(CodeSchemeType.KOODISTO, source.getPohjakoulutusvaatimus()));
 
     }
 
