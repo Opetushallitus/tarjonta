@@ -61,8 +61,6 @@ public class PublicationCollector {
      */
     public void start() throws ConfigurationException, Exception {
 
-        log.debug("starting to collect data");
-
         reset();
         validateConfig();
 
@@ -103,8 +101,6 @@ public class PublicationCollector {
 
     protected void fireCollect(KoulutusmoduuliToteutus t) throws Exception {
 
-        log.debug("found KoulutusmoduuliToteutus: " + t);
-
         if (!isNotifiedBefore(t.getOid())) {
             handler.onCollect(t);
         }
@@ -112,8 +108,6 @@ public class PublicationCollector {
     }
 
     protected void fireCollect(Koulutusmoduuli m) throws Exception {
-
-        log.debug("found Koulutusmoduuli: " + m);
 
         if (!isNotifiedBefore(m.getOid())) {
             handler.onCollect(m);
@@ -123,8 +117,6 @@ public class PublicationCollector {
 
     protected void fireCollect(Hakukohde h) throws Exception {
 
-        log.debug("found Hakukohde: " + h);
-
         if (!isNotifiedBefore(h.getOid())) {
             handler.onCollect(h);
         }
@@ -132,8 +124,6 @@ public class PublicationCollector {
     }
 
     protected void fireCollect(Haku h) throws Exception {
-
-        log.debug("found Haku: " + h);
 
         if (!isNotifiedBefore(h.getOid())) {
             handler.onCollect(h);

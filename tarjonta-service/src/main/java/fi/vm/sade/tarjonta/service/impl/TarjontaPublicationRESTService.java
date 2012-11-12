@@ -80,10 +80,9 @@ public class TarjontaPublicationRESTService {
         return "OK";
     }
 
-
     @GET
     @Path("/export-rich")
-    public StreamingOutput exportRich() throws JAXBException {
+    public Response exportRich() throws JAXBException {
 
         // enrichment is done is separate servlet filter, this method is just an endpoint to separate
         // the raw and enriched content. remove this when ESB is in place.
@@ -104,11 +103,11 @@ public class TarjontaPublicationRESTService {
     @Path("/export")
     @Produces(MediaType.APPLICATION_XML)
     @Transactional(readOnly = true)
-    public StreamingOutput export() throws JAXBException {
+    public Response export() throws JAXBException {
 
         final LearningOpportunityJAXBWriter writer = new LearningOpportunityJAXBWriter();
 
-        return new StreamingOutput() {
+        final StreamingOutput output = new StreamingOutput() {
 
             @Override
             public void write(OutputStream out) throws IOException, WebApplicationException {
@@ -137,6 +136,10 @@ public class TarjontaPublicationRESTService {
             }
 
         };
+
+        return Response.ok().
+            type(MediaType.APPLICATION_XML).
+            entity(output).build();
 
     }
 

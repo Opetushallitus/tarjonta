@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.publication;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadData;
 import java.io.StringWriter;
 
 import org.junit.Test;
@@ -163,15 +164,15 @@ public class LearningOpportunityDataWriterTest {
 
         //System.out.println("unmarshal: " + out.toString());
 
-        JAXBElement<LearningOpportunityDownloadDataType> e = unmarshal(new StringReader(out.toString()));
-        return e.getValue();
+        return (LearningOpportunityDownloadData) unmarshal(new StringReader(out.toString()));
+        
 
     }
 
-    private JAXBElement<LearningOpportunityDownloadDataType> unmarshal(Reader reader) throws Exception {
+    private LearningOpportunityDownloadData unmarshal(Reader reader) throws Exception {
 
         Unmarshaller um = sJaxbContext.createUnmarshaller();
-        return (JAXBElement<LearningOpportunityDownloadDataType>) um.unmarshal(reader);
+        return (LearningOpportunityDownloadData) um.unmarshal(reader);
 
     }
 

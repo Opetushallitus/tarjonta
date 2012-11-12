@@ -55,6 +55,7 @@ import fi.vm.sade.tarjonta.publication.types.AttachmentCollectionType.Attachment
 import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType.EntranceExaminations.Examination;
 import fi.vm.sade.tarjonta.publication.types.WebLinkCollectionType.Link;
 import java.io.UnsupportedEncodingException;
+import java.util.*;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -355,7 +356,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         addOpetusmuodot(toteutus, instance);
 
         // LearningOpportunityInstance/StartDate
-        instance.setStartDate((toteutus.getKoulutuksenAlkamisPvm()));
+        instance.setStartDate(toteutus.getKoulutuksenAlkamisPvm());
 
         // LearningOpportunityInstance/AcademicYear
         instance.setAcademicYear(formatAcademicYear(toteutus.getKoulutuksenAlkamisPvm()));
@@ -638,7 +639,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
     private static ExtendedStringType createExtendedString(String valueFI) {
 
         ExtendedStringType s = new ExtendedStringType();
-        s.setLang("FI");
+        s.setLang("fi");
         s.setValue(valueFI);
         return s;
 
@@ -935,6 +936,13 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             throw new IllegalStateException("no such ID " + key);
         }
         return value;
+    }
+
+
+    private static Calendar toCalendar(Date dateTime) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dateTime);
+        return cal;
     }
 
     /**
