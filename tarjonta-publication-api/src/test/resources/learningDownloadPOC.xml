@@ -35,7 +35,7 @@
 
         <!-- tutkintonimike -->
         <Qualification>
-            <Title>lähihoitaja</Title>
+            <Label>lähihoitaja</Label>
         </Qualification>
 
         <!-- tutkinnon nimi -->
@@ -130,7 +130,7 @@
 
         <!-- tutkintonimike -->
         <Qualification>
-            <Title>lähihoitaja</Title>
+            <Label>lähihoitaja</Label>
         </Qualification>
 
         <!-- tutkinnon nimi -->
@@ -222,7 +222,7 @@
 
         <!-- tutkintonimike -->
         <Qualification>
-            <Title>lähihoitaja</Title>
+            <Label>lähihoitaja</Label>
         </Qualification>
 
         <!-- tutkinnon nimi -->
@@ -308,7 +308,7 @@
         <!-- Pohjakoulutus vaatimus -->
         <!-- todo: mallissa tämä on koodisto joten arbitraaria dataa ei voida ottaa vastaan. -->
         <Prerequisite>
-            Ylioppilas tai lukion suorittanut
+            <Label lang="fi">Ylioppilas tai lukion suorittanut</Label>
         </Prerequisite>
 
         <!-- ammattinimikkeet -->
@@ -462,9 +462,8 @@
         </OrganizationRef>
 
         <!-- Pohjakoulutus vaatimus -->
-        <!-- todo: mallissa tämä on koodisto joten arbitraaria dataa ei voida ottaa vastaan. -->
         <Prerequisite>
-            Perusopetuksen oppimäärä. Ylioppilaat ja lukion suorittaneet eivät hakukelpoisia.
+            <Label lang="fi">Perusopetuksen oppimäärä. Ylioppilaat ja lukion suorittaneet eivät hakukelpoisia.</Label>
         </Prerequisite>
 
         <!-- ammattinimikkeet -->
@@ -617,7 +616,9 @@
 
         <!-- Pohjakoulutus vaatimus -->
         <Prerequisite>
-            Perusopetuksen oppimäärä. Ylioppilaat ja lukion suorittaneet eivät hakukelpoisia.
+            <Label lang="fi">
+                Perusopetuksen oppimäärä. Ylioppilaat ja lukion suorittaneet eivät hakukelpoisia.
+            </Label>
         </Prerequisite>
 
         <!-- ammattinimikkeet -->
@@ -766,7 +767,9 @@
 
         <!-- Pohjakoulutus vaatimus -->
         <Prerequisite>
-            Perusopetuksen oppimäärä. Ylioppilaat ja lukion suorittaneet eivät hakukelpoisia.
+            <Label lang="fi">
+                Perusopetuksen oppimäärä. Ylioppilaat ja lukion suorittaneet eivät hakukelpoisia.
+            </Label>
         </Prerequisite>
 
         <!-- ammattinimikkeet -->

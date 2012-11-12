@@ -22,6 +22,8 @@
                   parseMethod="fi.vm.sade.tarjonta.publication.util.ConverterUtils.parseDateTime"
                   printMethod="fi.vm.sade.tarjonta.publication.util.ConverterUtils.printDateTime" />
 
+
+
     </globalBindings>
 
 

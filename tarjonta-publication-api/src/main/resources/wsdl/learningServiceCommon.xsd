@@ -5,16 +5,6 @@
            xmlns:tns="http://publication.tarjonta.sade.vm.fi/types"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-<!--
-    <xs:import namespace="http://www.w3.org/XML/1998/namespace"
-               schemaLocation="http://www.w3.org/2001/03/xml.xsd">
-        <xs:annotation>
-            <xs:documentation xml:lang="fi">
-                XML-nimiavaruus xml:lang -attribuutin vuoksi.
-            </xs:documentation>
-        </xs:annotation>
-    </xs:import>
--->
     <xs:element name="LearningOpportunityDownloadData">
         <xs:complexType>
             <xs:complexContent>
@@ -635,7 +625,7 @@
 
                     <!-- Classification:n alle? -->
                     <xs:element name="Qualification"
-                                type="tns:QualificationType"
+                                type="tns:CodeValueType"
                                 minOccurs="0"
                                 maxOccurs="1"/>
 
@@ -813,30 +803,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="QualificationType">
-        <xs:annotation>
-            <xs:documentation xml:lang="fi">
-                Koulutuksen suorituksesta myonnettava nimike. Esim. lahihoitaja.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="Title"
-                        type="tns:ExtendedStringType"
-                        minOccurs="1"
-                        maxOccurs="unbounded"/>
-
-        </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="optional">
-            <xs:annotation>
-                <xs:documentation xml:lang="fi">
-                    Tyypin identifioiva koodi.
-                    TODO: mika koodisto? erillinen attribuutti koodistolle?
-                    TODO: generalisoi tyyppi
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-    </xs:complexType>
-
 
     <!-- ============================================================================================ -->
     <!-- LearningOpportunityInstance                                                                  -->
@@ -857,9 +823,15 @@
                         maxOccurs="1"/>
 
             <xs:element name="Prerequisite"
-                        type="tns:ExtendedStringType"
+                        type="tns:CodeValueType"
                         minOccurs="0"
-                        maxOccurs="unbounded"/>
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Luokiteltu pohjakoulutusvaatimus.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
 
             <xs:element name="ProfessionLabels"
                         type="tns:ProfessionCollectionType"
