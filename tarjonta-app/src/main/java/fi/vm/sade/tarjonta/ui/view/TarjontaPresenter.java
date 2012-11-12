@@ -80,14 +80,15 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
 import java.util.Locale;
 import org.springframework.context.annotation.Scope;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * This class is used to control the "tarjonta" UI.
  *
  * @author mlyly
  */
-@Component(value = "tarjontaPresenter")
-@Scope(value = "session")
+@Component
+@Scope(WebApplicationContext.SCOPE_SESSION)
 @Configurable(preConstruction = false)
 public class TarjontaPresenter {
 

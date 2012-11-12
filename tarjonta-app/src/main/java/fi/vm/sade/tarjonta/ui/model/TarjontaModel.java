@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * Contains the data and state of the Tarjonta UI.
@@ -31,7 +32,7 @@ import org.springframework.stereotype.Component;
  * @author mlyly
  */
 @Component
-@Scope(value = "session")
+@Scope(WebApplicationContext.SCOPE_SESSION)
 @Configurable
 public class TarjontaModel extends BaseUIViewModel {
 

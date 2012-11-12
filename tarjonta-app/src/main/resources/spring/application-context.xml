@@ -24,11 +24,6 @@
         location="classpath:tarjonta-app.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-app.properties"
         ignore-resource-not-found="true"/>
 
-    
-    <bean id="tarjontaPresenter" class="fi.vm.sade.tarjonta.ui.view.TarjontaPresenter" scope="session">
-        <aop:scoped-proxy/>
-    </bean>
-
     <!--
       Localization
     -->
