@@ -33,7 +33,7 @@
       <!-- Define activemq component with activemq url -->
     <!-- smxremoved:
     <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="brokerURL" value="${activeMq.brokerUrl}" />
+        <property name="brokerURL" value="${activemq.brokerurl}" />
     </bean>
     -->
     
