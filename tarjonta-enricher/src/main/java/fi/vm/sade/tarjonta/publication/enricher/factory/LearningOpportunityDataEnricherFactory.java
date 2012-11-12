@@ -42,7 +42,8 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
         "EducationDegree",
         "StudyDomain",
         "EqfClassification",
-        "NqfClassification"
+        "NqfClassification",
+        "Credits"
     };
 
     @Override

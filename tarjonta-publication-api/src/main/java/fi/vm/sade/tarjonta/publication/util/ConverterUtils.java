@@ -21,7 +21,6 @@ public class ConverterUtils {
     }
 
     public static String printDateTime(Date date) {
-
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return DatatypeConverter.printDateTime(calendar);

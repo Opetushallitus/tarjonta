@@ -5,6 +5,7 @@
            xmlns:tns="http://publication.tarjonta.sade.vm.fi/types"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
+<!--
     <xs:import namespace="http://www.w3.org/XML/1998/namespace"
                schemaLocation="http://www.w3.org/2001/03/xml.xsd">
         <xs:annotation>
@@ -13,18 +14,27 @@
             </xs:documentation>
         </xs:annotation>
     </xs:import>
+-->
+    <xs:element name="LearningOpportunityDownloadData">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:LearningOpportunityDownloadDataType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
 
-    <xs:element name="LearningOpportunityDownloadData" type="tns:LearningOpportunityDownloadDataType" />
-    <xs:element name="LearningOpportunityUploadData" type="tns:LearningOpportunityUploadDataType" />
-
-
-
-    <!-- referenced -->
+    <xs:element name="LearningOpportunityUploadData">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:LearningOpportunityUploadDataType"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
 
     <xs:element name="EmailAddress">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
-                Rakenne yhden sahkopostiosoittee esittamiseksi
+                Rakenne yhden sahkopostiosoitten esittamiseksi
             </xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -1552,13 +1562,13 @@
 
 
     <xs:complexType name="TextType" mixed="true">
-        <xs:attribute ref="xml:lang"/>
+        <xs:attribute name="lang" type="xs:string" use="optional"/>
     </xs:complexType>
 
     <xs:complexType name="ExtendedStringType">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute ref="xml:lang" use="optional"/>
+                <xs:attribute name="lang" type="xs:string" use="optional"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>

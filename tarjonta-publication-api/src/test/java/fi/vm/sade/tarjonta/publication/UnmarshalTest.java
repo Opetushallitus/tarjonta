@@ -15,17 +15,20 @@
  */
 package fi.vm.sade.tarjonta.publication;
 
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadData;
 import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadDataType;
 import fi.vm.sade.tarjonta.publication.types.LearningOpportunityUploadDataType;
 import java.io.File;
+import java.io.StringWriter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Simple test that validates that POC xml files can be unmarshalled with JAXB.
+ * Simple smoke test that validates that POC xml files can be unmarshalled with JAXB.
  *
  * @author Jukka Raanamo
  */
@@ -42,7 +45,8 @@ public class UnmarshalTest {
 
     @Test
     public void testUnmarshalDownloadPOC() throws Exception {
-        unmarshalDownload("src/test/resources/learningDownloadPOC.xml");
+        LearningOpportunityDownloadDataType download = unmarshalDownload("src/test/resources/learningDownloadPOC.xml");
+        marshal(download);
     }
 
     @Test
@@ -50,18 +54,26 @@ public class UnmarshalTest {
         unmarshalUpload("src/test/resources/learningUploadPOC.xml");
     }
 
+
     private LearningOpportunityUploadDataType unmarshalUpload(String filepath) throws Exception {
         return (LearningOpportunityUploadDataType) unmarshal(filepath);
     }
 
-    private LearningOpportunityDownloadDataType unmarshalDownload(String filepath) throws Exception {
-        return (LearningOpportunityDownloadDataType) unmarshal(filepath);
+    private LearningOpportunityDownloadData unmarshalDownload(String filepath) throws Exception {
+        return (LearningOpportunityDownloadData) unmarshal(filepath);
+    }
+
+    private void marshal(LearningOpportunityDownloadDataType download) throws Exception {
+        StringWriter out = new StringWriter();
+        Marshaller m = sJaxbContext.createMarshaller();
+        m.marshal(download, out);
+
+        //System.out.println("Wrote: " + out);
     }
 
     private Object unmarshal(String filepath) throws Exception {
         Unmarshaller um = sJaxbContext.createUnmarshaller();
-        JAXBElement e = (JAXBElement) um.unmarshal(new File(filepath));
-        return e.getValue();
+        return um.unmarshal(new File(filepath));
     }
 
 }

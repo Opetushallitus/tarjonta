@@ -14,7 +14,7 @@
     <LearningOpportunitySpecification id="S1508" type="DegreeProgramme">
 
         <!-- tutkinto-ohjelman nimi / degreeProgrammeTitle -->
-        <Name xml:lang="fi">Ensihoidon koulutusohjelma</Name>
+        <Name lang="fi">Ensihoidon koulutusohjelma</Name>
 
         <!-- tutkinto-ohjelman tunniste -->
         <Identifier>1508</Identifier>
@@ -46,7 +46,7 @@
             <!-- koulutusluokitus -->
             <EducationClassification>
                 <Code scheme="OPH" version="2010">371101</Code>
-                <Label xml:lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
+                <Label lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
             </EducationClassification>
 
             <!-- koulutusala -->
@@ -112,7 +112,7 @@
     <LearningOpportunitySpecification id="S1598" type="DegreeProgramme">
 
         <!-- tutkinto-ohjelman nimi / degreeProgrammeTitle -->
-        <Name xml:lang="fi">Kuntoutuksen koulutusohjelma</Name>
+        <Name lang="fi">Kuntoutuksen koulutusohjelma</Name>
 
         <!-- tutkinto-ohjelman tunniste -->
         <Identifier>1598</Identifier>
@@ -141,7 +141,7 @@
             <!-- koulutusluokitus -->
             <EducationClassification>
                 <Code scheme="OPH" version="2010">371101</Code>
-                <Label xml:lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
+                <Label lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
             </EducationClassification>
 
             <!-- koulutusala -->
@@ -203,7 +203,7 @@
     <LearningOpportunitySpecification id="S1514" type="DegreeProgramme">
 
         <!-- tutkinto-ohjelman nimi / degreeProgrammeTitle -->
-        <Name xml:lang="fi">Vanhustyön koulutusohjelma</Name>
+        <Name lang="fi">Vanhustyön koulutusohjelma</Name>
 
         <!-- tutkinto-ohjelman tunniste -->
         <Identifier>1514</Identifier>
@@ -216,7 +216,7 @@
         <!-- laajuus sekä laajuusyksikkö -->
         <Credits>
             <Code scheme="Koodisto">http://someuri</Code>
-            <Label xml:lang="fi">opintopiste</Label>
+            <Label lang="fi">opintopiste</Label>
             <Value>120</Value>
         </Credits>
 
@@ -234,7 +234,7 @@
                         <!-- koulutusluokitus -->
             <EducationClassification>
                 <Code scheme="OPH" version="2010">371101</Code>
-                <Label xml:lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
+                <Label lang="fi">Lähihoitaja, sosiaali- ja terveysalan perustutkinto</Label>
             </EducationClassification>
 
             <!-- koulutusala -->
@@ -351,7 +351,7 @@
 
             <!-- opetusta suomeksi -->
             <Code value="fi">
-                <Label xml:lang="fi">suomi</Label>
+                <Label lang="fi">suomi</Label>
             </Code>
 
         </LanguagesOfInstruction>
@@ -391,7 +391,7 @@
         <Assessments>
 
             <!-- yleiset arviointi kriteerit suomeksi -->
-            <Assessment xml:lang="fi">
+            <Assessment lang="fi">
                 Lorem Lipsum
             </Assessment>
 
@@ -400,7 +400,7 @@
         <!-- sanallinen kuvaus koulutuksen loppukokeista -->
         <FinalExamination>
 
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 Lorem Lipsum
             </Description>
 
@@ -423,7 +423,7 @@
         <Scholarship>
 
             <!-- yleinen kuvaus stipendimahdollisuuksista -->
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 Lorem Lipsum
             </Description>
 
@@ -435,7 +435,7 @@
 
             <!-- linkki oppilaitoksen sivuille sekä optinaalinen label elementti -->
             <Link type="HOME">
-                <Label xml:lang="fi">Oppilaitoksen sivut</Label>
+                <Label lang="fi">Oppilaitoksen sivut</Label>
                 <Uri>http://www.hel.fi/hki/Hesote/fi/Etusivu</Uri>
             </Link>
 
@@ -544,7 +544,7 @@
         <Assessments>
 
             <!-- yleiset arviointi kriteerit suomeksi -->
-            <Assessment xml:lang="fi">
+            <Assessment lang="fi">
                 Lorem Lipsum
             </Assessment>
 
@@ -553,7 +553,7 @@
         <!-- sanallinen kuvaus koulutuksen loppukokeista -->
         <FinalExamination>
 
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 Lorem Lipsum
             </Description>
 
@@ -576,7 +576,7 @@
         <Scholarship>
 
             <!-- yleinen kuvaus stipendimahdollisuuksista -->
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 Lorem Lipsum
             </Description>
 
@@ -588,7 +588,7 @@
 
             <!-- linkki oppilaitoksen sivuille sekä optinaalinen label elementti -->
             <Link type="HOME">
-                <Label xml:lang="fi">Oppilaitoksen sivut</Label>
+                <Label lang="fi">Oppilaitoksen sivut</Label>
                 <Uri>http://www.hel.fi/hki/Hesote/fi/Etusivu</Uri>
             </Link>
 
@@ -693,7 +693,7 @@
         <Assessments>
 
             <!-- yleiset arviointi kriteerit suomeksi -->
-            <Assessment xml:lang="fi">
+            <Assessment lang="fi">
                 Lorem Lipsum
             </Assessment>
 
@@ -702,7 +702,7 @@
         <!-- sanallinen kuvaus koulutuksen loppukokeista -->
         <FinalExamination>
 
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 Lorem Lipsum
             </Description>
 
@@ -725,7 +725,7 @@
         <Scholarship>
 
             <!-- yleinen kuvaus stipendimahdollisuuksista -->
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 Lorem Lipsum
             </Description>
 
@@ -737,7 +737,7 @@
 
             <!-- linkki oppilaitoksen sivuille sekä optinaalinen label elementti -->
             <Link type="HOME">
-                <Label xml:lang="fi">Oppilaitoksen sivut</Label>
+                <Label lang="fi">Oppilaitoksen sivut</Label>
                 <Uri>http://www.hel.fi/hki/Hesote/fi/Etusivu</Uri>
             </Link>
 
@@ -805,7 +805,7 @@
 
             <!-- opetusta suomeksi -->
             <Code value="fi">
-                <Label xml:lang="fi">Suomi</Label>
+                <Label lang="fi">Suomi</Label>
             </Code>
 
         </LanguagesOfInstruction>
@@ -842,7 +842,7 @@
         <Assessments>
 
             <!-- yleiset arviointi kriteerit suomeksi -->
-            <Assessment xml:lang="fi">
+            <Assessment lang="fi">
                 Lorem Lipsum
             </Assessment>
 
@@ -851,7 +851,7 @@
         <!-- sanallinen kuvaus koulutuksen loppukokeista -->
         <FinalExamination>
 
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 Lorem Lipsum
             </Description>
 
@@ -874,7 +874,7 @@
         <Scholarship>
 
             <!-- yleinen kuvaus stipendimahdollisuuksista -->
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 Lorem Lipsum
             </Description>
 
@@ -886,7 +886,7 @@
 
             <!-- linkki oppilaitoksen sivuille sekä optinaalinen label elementti -->
             <Link type="HOME">
-                <Label xml:lang="fi">Oppilaitoksen sivut</Label>
+                <Label lang="fi">Oppilaitoksen sivut</Label>
                 <Uri>http://www.hel.fi/hki/Hesote/fi/Etusivu</Uri>
             </Link>
 
@@ -940,7 +940,7 @@
     <!-- ========================================================================================= -->
 
     <ApplicationSystem id="AS12345">
-        <Name xml:lang="fi">Yhteishaku</Name>
+        <Name lang="fi">Yhteishaku</Name>
     </ApplicationSystem>
 
 
@@ -955,7 +955,7 @@
         <Identifier>776</Identifier>
 
         <!-- hakukohteen nimi -->
-        <Title xml:lang="fi">Ensihoidon koulutusohjelma, yo</Title>
+        <Title lang="fi">Ensihoidon koulutusohjelma, yo</Title>
 
         <!-- viittaus hakuun johon tämä hakukohde kuuluu -->
         <ApplicationSystemRef>
@@ -969,7 +969,7 @@
         <EligibilityRequirements>
 
             <!-- vapaasti kuvattu vaatimus suomeksi -->
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 peruskoulu/yo-pohjaisiin kohteisiin lukio
             </Description>
 
@@ -991,7 +991,7 @@
             <LastYearTotalApplicants>300</LastYearTotalApplicants>
 
             <!-- vapaa kuvaus -->
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 Lorem Lipsum
             </Description>
 
@@ -999,7 +999,7 @@
             <EntranceExaminations>
 
                 <!-- yleinen kuvaus -->
-                <Description xml:lang="fi">
+                <Description lang="fi">
                     Vapaamuotoinen kuvaus kaikista valintakokeista.
                 </Description>
 
@@ -1009,11 +1009,11 @@
                     <!-- valintakoe tyyppi -->
                     <ExaminationType>
                         <Code scheme="Koodisto">1234</Code>
-                        <Label xml:lang="fi">Pääsy- ja soveltuvuuskoe</Label>
+                        <Label lang="fi">Pääsy- ja soveltuvuuskoe</Label>
                     </ExaminationType>
 
                     <!-- yhden valintakokeen kuvaus -->
-                    <Description xml:lang="fi">
+                    <Description lang="fi">
                         Lorem Lipsum
                     </Description>
 
@@ -1021,10 +1021,10 @@
                     <ExaminationEvent>
 
                         <!-- aloitusaika -->
-                        <Start>2013-09-20T10:00:00</Start>
+                        <Start>2011-09-20T10:00:00</Start>
 
                         <!-- päättymisaika -->
-                        <End>2013-09-20T14:00:00</End>
+                        <End>2011-09-20T14:00:00</End>
 
                         <!-- sijainnit jossa tapahtuma järjestetään -->
                         <Locations>
@@ -1053,12 +1053,12 @@
                     <!-- liitteen tyyppi -->
                     <Type>
                         <Code scheme="Koodisto">uri://liite/12345</Code>
-                        <Label xml:lang="fi">Ennakkotehtävä</Label>
+                        <Label lang="fi">Ennakkotehtävä</Label>
                     </Type>
 
                     <!-- vapaa kuvaus -->
                     <Description>
-                        <Text xml:lang="fi">
+                        <Text lang="fi">
                             Liitteen sanallinen kuvaus hakijalle.
                         </Text>
                     </Description>
@@ -1067,7 +1067,7 @@
                     <Return>
 
                         <!-- viimeinen palautuspäivä -->
-                        <DueDate>2013-04-05T00:00:00</DueDate>
+                        <DueDate>2011-04-05T00:00:00</DueDate>
 
                         <!-- palautusosoite -->
                         <To>
@@ -1095,7 +1095,7 @@
         </LearningOpportunities>
 
         <!-- hakukohteen vapaamuotoinen kuvaus -->
-        <Description xml:lang="fi">
+        <Description lang="fi">
             Lorem Lipsum
         </Description>
 
@@ -1112,7 +1112,7 @@
         <Identifier>873</Identifier>
 
         <!-- hakukohteen nimi -->
-        <Title xml:lang="fi">Sosiaali- ja terveysalan perustutkinto, pk</Title>
+        <Title lang="fi">Sosiaali- ja terveysalan perustutkinto, pk</Title>
 
         <!-- viittaus hakuun johon tämä hakukohde kuuluu -->
         <ApplicationSystemRef>
@@ -1128,7 +1128,7 @@
         <EligibilityRequirements>
 
             <!-- vapaasti kuvattu vaatimus suomeksi -->
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 peruskoulu/yo-pohjaisiin kohteisiin lukio
             </Description>
 
@@ -1150,7 +1150,7 @@
             <LastYearTotalApplicants>300</LastYearTotalApplicants>
 
             <!-- vapaa kuvaus -->
-            <Description xml:lang="fi">
+            <Description lang="fi">
                 Lorem Lipsum
             </Description>
 
@@ -1158,7 +1158,7 @@
             <EntranceExaminations>
 
                 <!-- yleinen kuvaus -->
-                <Description xml:lang="fi">
+                <Description lang="fi">
                     Vapaamuotoinen kuvaus kaikista valintakokeista.
                 </Description>
 
@@ -1168,11 +1168,11 @@
                     <!-- valintakoe tyyppi -->
                     <ExaminationType>
                         <Code scheme="Koodisto">uri://koetyyppi/12345</Code>
-                        <Label xml:lang="fi">Pääsy- ja soveltuvuuskoe</Label>
+                        <Label lang="fi">Pääsy- ja soveltuvuuskoe</Label>
                     </ExaminationType>
 
                     <!-- yhden valintakokeen kuvaus -->
-                    <Description xml:lang="fi">
+                    <Description lang="fi">
                         Lorem Lipsum
                     </Description>
 
@@ -1180,10 +1180,10 @@
                     <ExaminationEvent>
 
                         <!-- aloitusaika -->
-                        <Start>2013-09-20T10:00:00</Start>
+                        <Start>2011-09-20T10:00:00</Start>
 
                         <!-- päättymisaika -->
-                        <End>2013-09-20T14:00:00</End>
+                        <End>2011-09-20T14:00:00</End>
 
                         <!-- sijainnit jossa tapahtuma järjestetään -->
                         <Locations>
@@ -1217,7 +1217,7 @@
 
                     <!-- vapaa kuvaus -->
                     <Description>
-                        <Text xml:lang="fi">
+                        <Text lang="fi">
                             Liitteen sanallinen kuvaus hakijalle.
                         </Text>
                     </Description>
@@ -1226,7 +1226,7 @@
                     <Return>
 
                         <!-- viimeinen palautuspäivä -->
-                        <DueDate>2013-04-05T00:00:00</DueDate>
+                        <DueDate>2011-04-05T00:00:00</DueDate>
 
                         <!-- palautusosoite -->
                         <To>
@@ -1256,7 +1256,7 @@
         </LearningOpportunities>
 
         <!-- hakukohteen vapaamuotoinen kuvaus -->
-        <Description xml:lang="fi">
+        <Description lang="fi">
             Lorem Lipsum
         </Description>
 

@@ -6,12 +6,24 @@
           version="2.1">
 
     <globalBindings>
+
+<!--
+        <javaType name="java.util.Calendar" xmlType="xs:date" parseMethod="javax.xml.bind.DatatypeConverter.parseDate"
+                  printMethod="javax.xml.bind.DatatypeConverter.printDate" />
+        <javaType name="java.util.Calendar" xmlType="xs:dateTime" parseMethod="javax.xml.bind.DatatypeConverter.parseDateTime"
+                  printMethod="javax.xml.bind.DatatypeConverter.printDateTime" />
+        <javaType name="java.util.Calendar" xmlType="xs:time" parseMethod="javax.xml.bind.DatatypeConverter.parseTime"
+                  printMethod="javax.xml.bind.DatatypeConverter.printTime" />
+-->
         <javaType name="java.util.Date" xmlType="xs:date"
                   parseMethod="fi.vm.sade.tarjonta.publication.util.ConverterUtils.parseDate"
                   printMethod="fi.vm.sade.tarjonta.publication.util.ConverterUtils.printDate" />
         <javaType name="java.util.Date" xmlType="xs:dateTime"
                   parseMethod="fi.vm.sade.tarjonta.publication.util.ConverterUtils.parseDateTime"
                   printMethod="fi.vm.sade.tarjonta.publication.util.ConverterUtils.printDateTime" />
+
     </globalBindings>
+
+
 
 </bindings>

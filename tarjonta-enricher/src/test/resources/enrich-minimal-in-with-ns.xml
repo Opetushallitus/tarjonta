@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LearningOpportunityDownloadData>
+<LearningOpportunityDownloadData
+    xmlns="http://publication.tarjonta.sade.vm.fi/types"
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xsi:schemaLocation='http://publication.tarjonta.sade.vm.fi/types  ../../main/resources/wsdl/learningServiceCommon.xsd'>
     <LearningOpportunitySpecification id="S1508" type="DegreeProgramme">
         <Classification>
             <EducationClassification>
                 <Code scheme="OPH" version="2010">371101</Code>
                 <Label lang="fi">label_fi</Label>
-                <Label lang="en">label_en</Label>
             </EducationClassification>
         </Classification>
     </LearningOpportunitySpecification>
