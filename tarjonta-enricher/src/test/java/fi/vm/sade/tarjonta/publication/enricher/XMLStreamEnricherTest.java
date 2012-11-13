@@ -16,9 +16,11 @@
 package fi.vm.sade.tarjonta.publication.enricher;
 
 import java.io.*;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 import org.junit.Before;
+import static org.junit.Assert.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -40,7 +42,7 @@ public class XMLStreamEnricherTest {
     public void testProcessSimple() throws Exception {
 
         enricher.clearHandlers();
-        enricher.registerHandler("EducationClassification", new MockKoodistoHandler("Label 371101 FI", "fi"));
+        enricher.registerTagNameHandler("EducationClassification", new MockKoodistoHandler("Label 371101 FI", "fi"));
 
         String output = enrich("src/test/resources/enrich-minimal-in.xml");
 
@@ -52,6 +54,71 @@ public class XMLStreamEnricherTest {
         //    new FileReader("src/test/resources/enrich-minimal-out.xml"),
         //    new StringReader(output));
 
+
+    }
+
+
+    @Test
+    public void testMatchByTagName() throws Exception {
+
+        InvocationCounter counter = new InvocationCounter();
+        enricher.registerTagNameHandler("foo", counter);
+
+        String xml = "<bar><foo><foobar/></foo></bar>";
+
+        enricher.setInput(new ByteArrayInputStream(xml.getBytes()));
+        enricher.setOutput(new ByteArrayOutputStream());
+
+        enricher.process();
+
+        // start and end should be called for foo and foobar
+        assertEquals(2, counter.numEndCalled);
+        assertEquals(2, counter.numStartCalled);
+
+    }
+
+    @Test
+    public void testMatchByExpFullPath() throws Exception {
+
+        // precondition: this is how regex should be compared
+        assertTrue(Pattern.matches("/bar/foo/foobar", "/bar/foo/foobar"));
+
+        InvocationCounter counter = new InvocationCounter();
+        enricher.registerRegexHandler("/bar/foo/foobar", counter);
+
+        String xml = "<bar><foo><foobar/></foo></bar>";
+
+        enricher.setInput(new ByteArrayInputStream(xml.getBytes()));
+        enricher.setOutput(new ByteArrayOutputStream());
+
+        enricher.process();
+
+        // start and end should be called foobar only
+        assertEquals(1, counter.numEndCalled);
+        assertEquals(1, counter.numStartCalled);
+
+
+    }
+
+    @Test
+    public void testMatchByExpPathEnds() throws Exception {
+
+        // this is how regex should be compared
+        assertTrue(Pattern.matches(".+/foo/foobar", "/bar/foo/foobar"));
+
+        InvocationCounter byRegexHandler = new InvocationCounter();
+        enricher.registerRegexHandler(".+/foo/foobar", byRegexHandler);
+
+        String xml = "<bar><foo><foobar/></foo></bar>";
+
+        enricher.setInput(new ByteArrayInputStream(xml.getBytes()));
+        enricher.setOutput(new ByteArrayOutputStream());
+
+        enricher.process();
+
+        // start and end should be called foobar only
+        assertEquals(1, byRegexHandler.numEndCalled);
+        assertEquals(1, byRegexHandler.numStartCalled);
 
     }
 
@@ -67,6 +134,43 @@ public class XMLStreamEnricherTest {
         output.close();
 
         return output.toString();
+
+    }
+
+    private class InvocationCounter extends ElementEnricher {
+
+        private int numEndCalled;
+
+        private int numCharsCalled;
+
+        private int numStartCalled;
+
+        @Override
+        public int endElement(String localName) throws SAXException {
+            numEndCalled++;
+            if (mappedElementName.equals(localName)) {
+                return WRITE_AND_EXIT;
+            } else {
+                return WRITE_AND_CONTINUE;
+            }
+        }
+
+        @Override
+        public int characters(char[] characters, int start, int length) throws SAXException {
+            numCharsCalled++;
+            return WRITE_AND_CONTINUE;
+        }
+
+        @Override
+        public void reset() {
+        }
+
+        @Override
+        public int startElement(String localName, Attributes attributes) throws SAXException {
+            numStartCalled++;
+            return WRITE_AND_CONTINUE;
+        }
+
 
     }
 

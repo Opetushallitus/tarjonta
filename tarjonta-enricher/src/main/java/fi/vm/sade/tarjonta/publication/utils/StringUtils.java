@@ -15,6 +15,9 @@
  */
 package fi.vm.sade.tarjonta.publication.utils;
 
+import java.util.Deque;
+import java.util.Iterator;
+
 /**
  *
  * @author Jukka Raanamo
@@ -34,10 +37,23 @@ public class StringUtils {
     }
 
     /**
-     * @see #isEmpty(java.lang.String) 
+     * @see #isEmpty(java.lang.String)
      */
     public static boolean notEmpty(String value) {
         return !isEmpty(value);
+    }
+
+
+    public static String join(Deque deque, String delimiter) {
+
+        StringBuilder sb = new StringBuilder();
+        Iterator i = deque.descendingIterator();
+        while (i.hasNext()) {
+            sb.append(delimiter);
+            sb.append(i.next().toString());
+        }
+        return sb.toString();
+
     }
 
 }

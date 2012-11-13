@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher.factory;
 
+import fi.vm.sade.tarjonta.publication.enricher.KoodistoCodeValueCollectionEnricher;
 import fi.vm.sade.tarjonta.publication.enricher.KoodistoCodeValueEnricher;
 import fi.vm.sade.tarjonta.publication.enricher.KoodistoLookupService;
 import fi.vm.sade.tarjonta.publication.enricher.XMLStreamEnricher;
@@ -34,7 +35,8 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
     private KoodistoLookupService koodistoService;
 
     /**
-     * Element names that should be handled by KoodistoCodeValueEnricher.
+     * Element names that should be handled by KoodistoCodeValueEnricher. Note that these elements should have
+     * a unique name.
      */
     private static final String[] KOODISTO_CODE_VALUE_TAGS = {
         "EducationClassification",
@@ -44,7 +46,30 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
         "EqfClassification",
         "NqfClassification",
         "Credits",
-        "Qualification"
+        "Qualification",
+        "Prerequisite",
+        "Profession",
+        "Keyword",
+        "Units",
+        "ExaminationType"
+    };
+
+    /**
+     * Path expressions that should be handled by KoodistoCodeValueEnricher.
+     */
+    private static final String[] KOODISTO_CODE_VALUE_REGEX = {
+        ".*/ApplicationOption/Title",
+        ".*/Attachment/Type"
+    };
+
+    /**
+     * Element names that should be handled byt KoodistoCodeValueCollectionEnricher. Note that
+     * these elements should have a unique name.
+     */
+    private static final String[] KOODISTO_CODE_VALUE_COLLECTION_TAGS = {
+        "LanguagesOfInstruction",
+        "FormOfEducation",
+        "FormsOfTeaching"
     };
 
     @Override
@@ -71,7 +96,18 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
         codeValueEnricher.setKoodistoService(koodistoService);
 
         for (String tag : KOODISTO_CODE_VALUE_TAGS) {
-            processor.registerHandler(tag, codeValueEnricher);
+            processor.registerTagNameHandler(tag, codeValueEnricher);
+        }
+
+        for (String regex : KOODISTO_CODE_VALUE_REGEX) {
+            processor.registerRegexHandler(regex, codeValueEnricher);
+        }
+
+        KoodistoCodeValueCollectionEnricher codeValueCollectionEnricher = new KoodistoCodeValueCollectionEnricher();
+        codeValueCollectionEnricher.setKoodistoService(koodistoService);
+
+        for (String tag : KOODISTO_CODE_VALUE_COLLECTION_TAGS) {
+            processor.registerTagNameHandler(tag, codeValueCollectionEnricher);
         }
 
         return processor;

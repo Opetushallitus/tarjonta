@@ -121,68 +121,54 @@
         <!-- Pohjakoulutus vaatimus -->
         <!-- todo: mallissa tämä on koodisto joten arbitraaria dataa ei voida ottaa vastaan. -->
         <Prerequisite>
-            Ylioppilas tai lukion suorittanut
+            <Code scheme="Koodisto">uri:pohjakoulutusvaatimus</Code>
         </Prerequisite>
 
         <!-- ammattinimikkeet -->
         <ProfessionLabels>
             <Profession>
                 <Code scheme="Koodisto">uri:ammattinimike/lahihoitaja</Code>
-                <Label>Lähihoitaja</Label>
             </Profession>
             <Profession>
                 <Code scheme="Koodisto">uri:ammattinimike/perushoitaja</Code>
-                <Label>Perushoitaja</Label>
             </Profession>
             <Profession>
                 <Code scheme="Koodisto">uri:ammattinimike/ensihoitaja</Code>
-                <Label>Ensihoitaja</Label>
             </Profession>
         </ProfessionLabels>
 
         <!-- asiasanat -->
         <Keywords>
             <Keyword>
-                <Label>Lähihoitaja</Label>
+                <Code scheme="Koodisto">uri:asiasana/lahihoitaja</Code>
             </Keyword>
             <Keyword>
-                <Label>Hoiva-ala</Label>
-            </Keyword>
-            <Keyword>
-                <Label>Sosiaali- ja terveys</Label>
-            </Keyword>
-            <Keyword>
-                <Label>Ensihoito</Label>
-            </Keyword>
-            <Keyword>
-                <Label>Ambulanssi</Label>
+                <Code scheme="Koodisto">uri:asiasana/hoivaala</Code>
             </Keyword>
         </Keywords>
 
         <!-- opetuskielet -->
-        <LanguagesOfInstruction scheme="ISO-639-1">
+        <LanguagesOfInstruction scheme="Koodisto">
 
-            <!-- opetusta suomeksi -->
-            <Code value="fi">
-                <Label lang="fi">suomi</Label>
+            <Code value="uri:kieli/fi">
+                <Label lang="fi">kieli-fi</Label>
+            </Code>
+            <Code value="uri:kieli/en">
+                <Label lang="en">kieli-en</Label>
             </Code>
 
         </LanguagesOfInstruction>
 
         <!--koulutuslaji -->
         <FormOfEducation scheme="Koodisto">
-            <Code value="http://koodistopalvelu.opintopolku.fi/koulutusLaj/1">
-                <Label>nuorten koulutus</Label>
+            <Code value="uri:koulutuslaji/nuorten">
+                <Label lang="fi">koulutuslaji-fi</Label>
             </Code>
         </FormOfEducation>
 
         <!-- joukko opetusmuotoja -->
         <FormsOfTeaching scheme="Koodisto">
-
-            <Code value="http://koodistopalvelu.opintopolku.fi/opetusmuoto/1">
-                <Label>lähiopetus</Label>
-            </Code>
-
+            <Code value="uri:opetusmuoto/lahiopetus"/>
         </FormsOfTeaching>
 
         <!-- koulutuksen alkamispäivämäärä, ISO-8601 muodossa -->
@@ -191,8 +177,12 @@
         <!-- lukuvuosi -->
         <AcademicYear>2014</AcademicYear>
 
-        <!-- koulutuksen kesto, ISO-8601 extended format -->
-        <Duration>P2Y</Duration>
+        <Duration>
+            <Units>
+                <Code scheme="Koodisto">uri:kesto/vuotta</Code>
+            </Units>
+            <Value>40</Value>
+        </Duration>
 
         <!-- arviointi kriteerit -->
         <Assessments>
@@ -315,7 +305,9 @@
         <Identifier>776</Identifier>
 
         <!-- hakukohteen nimi -->
-        <Title lang="fi">Ensihoidon koulutusohjelma, yo</Title>
+        <Title>
+            <Code scheme="Koodisto">uri:hakukohde/876</Code>
+        </Title>
 
         <!-- viittaus hakuun johon tämä hakukohde kuuluu -->
         <ApplicationSystemRef>
@@ -368,7 +360,8 @@
 
                     <!-- valintakoe tyyppi -->
                     <ExaminationType>
-                        <Title lang="fi">Pääsy- ja soveltuvuuskoe</Title>
+                        <Code scheme="Koodisto">uri:valintakoetyyppi/123</Code>
+                        <Label lang="fi">valintakoe-fi</Label>
                     </ExaminationType>
 
                     <!-- yhden valintakokeen kuvaus -->
@@ -411,8 +404,8 @@
 
                     <!-- liitteen tyyppi -->
                     <Type>
-                        <Value>LT1</Value>
-                        <Label>Ennakkotehtävä</Label>
+                        <Code scheme="Koodisto">uri:liitetyyppi/12345</Code>
+                        <Label lang="en">liitetyyppi-en</Label>
                     </Type>
 
                     <!-- vapaa kuvaus -->

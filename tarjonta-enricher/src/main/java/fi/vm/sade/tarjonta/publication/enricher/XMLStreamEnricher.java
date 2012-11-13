@@ -33,6 +33,11 @@ import org.apache.commons.io.output.NullWriter;
 import com.meggison.sax.XMLWriter;
 
 import static fi.vm.sade.tarjonta.publication.enricher.ElementEnricher.*;
+import fi.vm.sade.tarjonta.publication.utils.StringUtils;
+import java.util.*;
+import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
@@ -47,12 +52,16 @@ public class XMLStreamEnricher {
 
     private OutputStream out;
 
-    private Map<String, ElementEnricher> handlerMap;
+    private Map<String, ElementEnricher> byTagNameHandlers;
+
+    private Map<Pattern, ElementEnricher> byRegexHandlers;
+
+    private Deque<String> tagStack = new LinkedList<String>();
+
+    private static final Logger log = LoggerFactory.getLogger(XMLStreamEnricher.class);
 
     public XMLStreamEnricher() {
-
-        handlerMap = new HashMap<String, ElementEnricher>();
-
+        byTagNameHandlers = new HashMap<String, ElementEnricher>();
     }
 
     public void setOutput(OutputStream out) {
@@ -64,20 +73,42 @@ public class XMLStreamEnricher {
     }
 
     /**
-     * Register non-built-in handler to handle elements by given name.
+     * Register handler to handle elements by tag name.
      *
      * @param elementName
      * @param handler
      */
-    public void registerHandler(String elementName, ElementEnricher handler) {
-        handlerMap.put(elementName, handler);
+    public void registerTagNameHandler(String elementName, ElementEnricher handler) {
+        if (byTagNameHandlers == null) {
+            byTagNameHandlers = new HashMap<String, ElementEnricher>();
+        }
+        byTagNameHandlers.put(elementName, handler);
+    }
+
+    /**
+     * Register handler to handle elements by path regular expression. Path is the current
+     * element stack e.g /root/child1/child2
+     *
+     * @param regex
+     * @param handler
+     */
+    public void registerRegexHandler(String regex, ElementEnricher handler) {
+        if (byRegexHandlers == null) {
+            byRegexHandlers = new HashMap<Pattern, ElementEnricher>();
+        }
+        byRegexHandlers.put(Pattern.compile(regex), handler);
     }
 
     /**
      * Remove all handler, including built-in.
      */
     public void clearHandlers() {
-        handlerMap.clear();
+        if (byRegexHandlers != null) {
+            byTagNameHandlers.clear();
+        }
+        if (byRegexHandlers != null) {
+            byRegexHandlers.clear();
+        }
     }
 
     /**
@@ -95,6 +126,25 @@ public class XMLStreamEnricher {
 
         processor.setContentHandler(new XMLWriter(new OutputStreamWriter(out)));
         processor.parse(new InputSource(in));
+
+    }
+
+    private void pushTag(String tagName) {
+        tagStack.addFirst(tagName);
+    }
+
+    private void popTag(String tagName) {
+        tagStack.removeFirst();
+    }
+
+    /**
+     * Returns current path from current element name stack.
+     *
+     * @return
+     */
+    private String makePath() {
+
+        return StringUtils.join(tagStack, "/");
 
     }
 
@@ -120,8 +170,10 @@ public class XMLStreamEnricher {
         @Override
         public void startElement(String uri, String localName, String qname, Attributes attrs) throws SAXException {
 
+            pushTag(localName);
+
             if (handler == null) {
-                handler = getHandlerByTag(localName);
+                handler = getHandler(localName);
             }
 
             if (handler != null) {
@@ -170,6 +222,7 @@ public class XMLStreamEnricher {
 
             }
 
+            popTag(localName);
 
         }
 
@@ -190,15 +243,55 @@ public class XMLStreamEnricher {
 
         }
 
-        private ElementEnricher getHandlerByTag(String tagName) {
+        /**
+         * Returns initialized ElementHandler if one is configured for current tagName.
+         */
+        private ElementEnricher getHandler(String tagName) {
 
-            ElementEnricher enricher = handlerMap.get(tagName);
+            ElementEnricher enricher = getHandlerByTagName(tagName);
+            if (enricher == null) {
+                enricher = getHandlerByPathRegex();
+            }
+
             if (enricher != null) {
                 enricher.reset();
                 enricher.mappedElementName = tagName;
                 enricher.parent = this;
             }
+
             return enricher;
+        }
+
+        /**
+         * Returns ElementEnricher that's been mapped by tag name if any.
+         */
+        private ElementEnricher getHandlerByTagName(String tagName) {
+
+            return (byTagNameHandlers != null ? byTagNameHandlers.get(tagName) : null);
+
+        }
+
+        /**
+         * Returns the first ElementEnricher that's been mapped by a regular expression if any.
+         */
+        private ElementEnricher getHandlerByPathRegex() {
+
+            if (byRegexHandlers == null) {
+                return null;
+            }
+
+            // try by path expression
+            final String tagPath = makePath();
+
+            for (Map.Entry<Pattern, ElementEnricher> e : byRegexHandlers.entrySet()) {
+
+                if ((e.getKey().matcher(tagPath).matches())) {
+                    return e.getValue();
+                }
+
+            }
+
+            return null;
 
         }
 
