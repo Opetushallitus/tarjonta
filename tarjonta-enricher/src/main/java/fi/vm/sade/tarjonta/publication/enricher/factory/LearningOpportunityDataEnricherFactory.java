@@ -15,9 +15,9 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher.factory;
 
-import fi.vm.sade.tarjonta.publication.enricher.KoodistoCodeValueCollectionEnricher;
-import fi.vm.sade.tarjonta.publication.enricher.KoodistoCodeValueEnricher;
-import fi.vm.sade.tarjonta.publication.enricher.KoodistoLookupService;
+import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoCodeValueCollectionEnricher;
+import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoCodeValueEnricher;
+import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupService;
 import fi.vm.sade.tarjonta.publication.enricher.XMLStreamEnricher;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +33,8 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
 
     @Autowired(required = true)
     private KoodistoLookupService koodistoService;
+
+    private boolean failOnKoodistoError = false;
 
     /**
      * Element names that should be handled by KoodistoCodeValueEnricher. Note that these elements should have
@@ -88,12 +90,14 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
      *
      * @return
      */
+    @Override
     public XMLStreamEnricher getObject() {
 
-        XMLStreamEnricher processor = new XMLStreamEnricher();
+        final XMLStreamEnricher processor = new XMLStreamEnricher();
 
-        KoodistoCodeValueEnricher codeValueEnricher = new KoodistoCodeValueEnricher();
+        final KoodistoCodeValueEnricher codeValueEnricher = new KoodistoCodeValueEnricher();
         codeValueEnricher.setKoodistoService(koodistoService);
+        codeValueEnricher.setFailOnKoodiError(failOnKoodistoError);
 
         for (String tag : KOODISTO_CODE_VALUE_TAGS) {
             processor.registerTagNameHandler(tag, codeValueEnricher);
@@ -103,8 +107,9 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
             processor.registerRegexHandler(regex, codeValueEnricher);
         }
 
-        KoodistoCodeValueCollectionEnricher codeValueCollectionEnricher = new KoodistoCodeValueCollectionEnricher();
+        final KoodistoCodeValueCollectionEnricher codeValueCollectionEnricher = new KoodistoCodeValueCollectionEnricher();
         codeValueCollectionEnricher.setKoodistoService(koodistoService);
+        codeValueCollectionEnricher.setFailOnKoodiError(failOnKoodistoError);
 
         for (String tag : KOODISTO_CODE_VALUE_COLLECTION_TAGS) {
             processor.registerTagNameHandler(tag, codeValueCollectionEnricher);
@@ -121,6 +126,18 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
      */
     public void setKoodistoService(KoodistoLookupService koodistoService) {
         this.koodistoService = koodistoService;
+    }
+
+    /**
+     * This flag is passed on to koodisto enrichers.
+     *
+     * @param failOnKoodistoError
+     *
+     * @see KoodistoCodeValueEnricher#setFailOnKoodiError(boolean)
+     * @see KoodistoCodeValueCollectionEnricher#setFailOnKoodiError(boolean)
+     */
+    public void setFailOnKoodistoError(boolean failOnKoodistoError) {
+        this.failOnKoodistoError = failOnKoodistoError;
     }
 
 }

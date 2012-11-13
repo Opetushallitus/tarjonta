@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.publication.enricher;
+package fi.vm.sade.tarjonta.publication.enricher.koodisto;
 
 /**
  * Simplified data contract used by content enrichment handlers to lookup Koodisto data to
@@ -31,7 +31,7 @@ public interface KoodistoLookupService {
      * @param version
      * @return
      */
-    public KoodiValue lookupKoodi(String uri, int version);
+    public KoodiValue lookupKoodi(String uri, Integer version);
 
     /**
      *

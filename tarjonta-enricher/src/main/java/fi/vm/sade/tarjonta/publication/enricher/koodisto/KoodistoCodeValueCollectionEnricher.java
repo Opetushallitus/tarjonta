@@ -13,12 +13,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.publication.enricher;
+package fi.vm.sade.tarjonta.publication.enricher.koodisto;
 
+import fi.vm.sade.tarjonta.publication.enricher.ElementEnricher;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import fi.vm.sade.tarjonta.publication.enricher.KoodistoLookupService.KoodiValue;
+import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupService.KoodiValue;
 import fi.vm.sade.tarjonta.publication.utils.StringUtils;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,14 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Handles elements that are of type: {http://publication.tarjonta.sade.vm.fi/types}/CodeValueType
- * by injecting any missing labels by koodi value - if any. Any existing labels are left intact.
+ * Handles collections of Koodisto code -elements that all share the same scheme.
  *
  * @author Jukka Raanamo
  */
-public class KoodistoCodeValueEnricher extends ElementEnricher {
+public class KoodistoCodeValueCollectionEnricher extends AbstractKoodistoEnricher {
 
-    private static final Logger log = LoggerFactory.getLogger(KoodistoCodeValueEnricher.class);
+    private static final Logger log = LoggerFactory.getLogger(KoodistoCodeValueCollectionEnricher.class);
 
     private static final String TAG_CODE = "Code";
 
@@ -45,25 +45,18 @@ public class KoodistoCodeValueEnricher extends ElementEnricher {
 
     private static final String TAG_LANG = "lang";
 
-    private static final String SCHEME_KOODISTO = "Koodisto";
+    private static final String TAG_VALUE = "value";
 
-    private KoodistoLookupService koodistoService;
+    private static final String SCHEME_KOODISTO = "Koodisto";
 
     private String koodiUri;
 
     private Integer koodiVersion;
 
-    private String currentTag;
-
     private Set<String> existingLabels = new HashSet<String>();
-
-    public void setKoodistoService(KoodistoLookupService koodistoService) {
-        this.koodistoService = koodistoService;
-    }
 
     @Override
     public void reset() {
-        currentTag = null;
         koodiUri = null;
         koodiVersion = null;
         existingLabels.clear();
@@ -73,31 +66,27 @@ public class KoodistoCodeValueEnricher extends ElementEnricher {
     public int startElement(String localName, Attributes attributes)
         throws SAXException {
 
-        currentTag = localName;
 
-        if (TAG_CODE.equals(localName)) {
+        if (super.mappedElementName.equals(localName)) {
 
             final String scheme = attributes.getValue(EMPTY_STRING, TAG_SCHEME);
             if (!SCHEME_KOODISTO.equals(scheme)) {
-                // this is not Koodisto based, nothing we can do about it
-                if (log.isDebugEnabled()) {
-                    log.debug("not Koodisto based, skipping scheme: " + scheme);
-                }
+                log.debug("not Koodisto based, skipping scheme: " + scheme);
                 return WRITE_AND_EXIT;
             }
 
-            final String version = attributes.getValue(EMPTY_STRING, TAG_VERSION);
-            if (version != null) {
-                try {
-                    koodiVersion = new Integer(version);
-                } catch (NumberFormatException e) {
-                    // uri could contain version?
-                }
+        } else if (TAG_CODE.equals(localName)) {
+
+            koodiUri = attributes.getValue(EMPTY_STRING, TAG_VALUE);
+            if (StringUtils.isEmpty(koodiUri)) {
+                log.debug("empty koodiUri, nothing to enrich with");
+                // continue because there could be other valid code elements
+                return WRITE_AND_CONTINUE;
             }
 
         } else if (TAG_LABEL.equals(localName)) {
 
-            // label already exist, remember
+            // existing label, remember
             final String lang = attributes.getValue(TAG_LANG);
             if (StringUtils.notEmpty(lang)) {
                 existingLabels.add(lang);
@@ -110,24 +99,18 @@ public class KoodistoCodeValueEnricher extends ElementEnricher {
     }
 
     @Override
-    public int endElement(String localName) throws SAXException {
-
-        currentTag = null;
-
-        if (mappedElementName.equals(localName)) {
-            maybeWriteLabels();
-            return WRITE_AND_EXIT;
-        } else {
-            return WRITE_AND_CONTINUE;
-        }
-
+    public int characters(char[] characters, int start, int length) throws SAXException {
+        return WRITE_AND_CONTINUE;
     }
 
     @Override
-    public int characters(char[] characters, int start, int length) throws SAXException {
+    public int endElement(String localName) throws SAXException {
 
-        if (TAG_CODE.equals(currentTag)) {
-            koodiUri = text(characters, start, length);
+        if (TAG_CODE.equals(localName)) {
+            maybeWriteLabels();
+            reset();
+        } else if (mappedElementName.equals(localName)) {
+            return WRITE_AND_EXIT;
         }
 
         return WRITE_AND_CONTINUE;
@@ -136,16 +119,7 @@ public class KoodistoCodeValueEnricher extends ElementEnricher {
 
     private void maybeWriteLabels() throws SAXException {
 
-        if (koodiUri == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("element missing uri, skipping");
-            }
-            return;
-        }
-
-        // todo: version may be null - latest looked up or make mandatory?
-
-        KoodiValue value = koodistoService.lookupKoodi(koodiUri, (koodiVersion != null ? koodiVersion.intValue() : 0));
+        KoodiValue value = lookupKoodi(koodiUri, koodiVersion);
 
         if (value != null) {
             writeLabel(value);
@@ -171,7 +145,7 @@ public class KoodistoCodeValueEnricher extends ElementEnricher {
             parent.writeStartElement(TAG_LABEL, TAG_LANG, lang);
             parent.writeCharacters(value);
             parent.writeEndElement(TAG_LABEL);
-        } 
+        }
 
     }
 

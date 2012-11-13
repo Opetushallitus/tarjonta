@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:cxf="http://cxf.apache.org/core"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+       http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+       ">
+
+    <!--
+        NOTE: remove this file when the architech team comes up with a solution for the production (Camel route maybe).
+    -->
+
+    <bean id="authInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
+        <constructor-arg>
+            <map>
+                <entry key="action" value="UsernameToken Timestamp" />
+                <entry key="user" value="1.2.246.562.24.00000000002" />
+                <entry key="passwordType" value="PasswordText" />
+                <entry key="passwordCallbackRef">
+                    <bean id="passwdHandler" class="fi.vm.sade.tarjonta.util.AuthCallbackHandler">
+                        <property name="password" value="1.2.246.562.24.00000000002"/>
+                    </bean>
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <cxf:bus>
+        <cxf:outInterceptors>
+            <ref bean="authInterceptor" />
+        </cxf:outInterceptors>
+    </cxf:bus>
+
+
+    <!-- todo: address to properties -->
+    <jaxws:client id="koodiPublicService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodiService"
+                  address="http://luokka.hard.ware.fi:8181/cxf/koodiService"/>
+
+
+    <!-- koodisto wrapper service that uses koodisto webservice for content -->
+    <bean id="koodistoLookupService" class="fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupWebServiceImpl"/>
+
+    <!-- factory that knows how to create enricher for publication data -->
+    <bean id="xmlEnricher" class="fi.vm.sade.tarjonta.publication.enricher.factory.LearningOpportunityDataEnricherFactory">
+        <property name="failOnKoodistoError" value="false"/>
+    </bean>
+
+    
+
+
+
+</beans>

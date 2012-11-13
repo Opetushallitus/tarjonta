@@ -13,26 +13,30 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.publication.enricher;
+package fi.vm.sade.tarjonta.publication.enricher.koodisto;
 
-import fi.vm.sade.tarjonta.publication.enricher.KoodistoLookupService.KoodiValue;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.StringReader;
 
+import org.xml.sax.InputSource;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import fi.vm.sade.tarjonta.publication.enricher.KoodistoLookupService.SimpleKoodiValue;
+import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupService.SimpleKoodiValue;
 import fi.vm.sade.tarjonta.publication.enricher.factory.LearningOpportunityDataEnricherFactory;
-import java.io.StringReader;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.xml.sax.InputSource;
+import fi.vm.sade.tarjonta.publication.enricher.PublicationNamespaceContext;
+import fi.vm.sade.tarjonta.publication.enricher.XMLStreamEnricher;
+import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupService.KoodiValue;
+import fi.vm.sade.tarjonta.util.SystemUtils;
 
 /**
  *
@@ -58,13 +62,6 @@ public class LearningOpportunityEnricherTest {
 
     private InputSource input;
 
-    private static boolean sPrintXML;
-
-    @BeforeClass
-    public static void setUpClass() {
-        sPrintXML = Boolean.parseBoolean(System.getProperty("printXML", "false"));
-    }
-
     @Before
     public void setUp() throws Exception {
 
@@ -86,11 +83,7 @@ public class LearningOpportunityEnricherTest {
     @After
     public void tearDown() {
         input = null;
-
-        if (sPrintXML) {
-            System.out.println("output:\n" + out.toString());
-        }
-
+        SystemUtils.printOutIf(out.toString(), "printXML");
     }
 
     @Test
@@ -344,26 +337,26 @@ public class LearningOpportunityEnricherTest {
 
         when(service.lookupKoodi("371101", 2010)).thenReturn(createSimpleKoodiValue("koulutusluokitus"));
         when(service.lookupKoodi("uri:koulutusala", 2002)).thenReturn(createSimpleKoodiValue("koulutusala"));
-        when(service.lookupKoodi("laajuus1", 0)).thenReturn(createSimpleKoodiValue("laajuus"));
-        when(service.lookupKoodi("lahihoitaja", 0)).thenReturn(createSimpleKoodiValue("tutkintonimike"));
+        when(service.lookupKoodi("laajuus1", null)).thenReturn(createSimpleKoodiValue("laajuus"));
+        when(service.lookupKoodi("lahihoitaja", null)).thenReturn(createSimpleKoodiValue("tutkintonimike"));
         when(service.lookupKoodi("uri:koulutusaste", 2002)).thenReturn(createSimpleKoodiValue("koulutusaste"));
         when(service.lookupKoodi("uri:opintoala", 2002)).thenReturn(createSimpleKoodiValue("opintoala"));
-        when(service.lookupKoodi("uri:eqf", 0)).thenReturn(createSimpleKoodiValue("eqf"));
-        when(service.lookupKoodi("uri:nqf", 0)).thenReturn(createSimpleKoodiValue("nqf"));
-        when(service.lookupKoodi("uri:pohjakoulutusvaatimus", 0)).thenReturn(createSimpleKoodiValue("pohjakoulutusvaatimus"));
-        when(service.lookupKoodi("uri:ammattinimike/lahihoitaja", 0)).thenReturn(createSimpleKoodiValue("ammattinimike"));
-        when(service.lookupKoodi("uri:ammattinimike/perushoitaja", 0)).thenReturn(createSimpleKoodiValue("ammattinimike"));
-        when(service.lookupKoodi("uri:ammattinimike/ensihoitaja", 0)).thenReturn(createSimpleKoodiValue("ammattinimike"));
-        when(service.lookupKoodi("uri:asiasana/lahihoitaja", 0)).thenReturn(createSimpleKoodiValue("asiasana"));
-        when(service.lookupKoodi("uri:asiasana/hoivaala", 0)).thenReturn(createSimpleKoodiValue("asiasana"));
-        when(service.lookupKoodi("uri:kieli/fi", 0)).thenReturn(createSimpleKoodiValue("kieli"));
-        when(service.lookupKoodi("uri:kieli/en", 0)).thenReturn(createSimpleKoodiValue("kieli"));
-        when(service.lookupKoodi("uri:koulutuslaji/nuorten", 0)).thenReturn(createSimpleKoodiValue("koulutuslaji"));
-        when(service.lookupKoodi("uri:opetusmuoto/lahiopetus", 0)).thenReturn(createSimpleKoodiValue("opetusmuoto"));
-        when(service.lookupKoodi("uri:kesto/vuotta", 0)).thenReturn(createSimpleKoodiValue("kesto"));
-        when(service.lookupKoodi("uri:hakukohde/876", 0)).thenReturn(createSimpleKoodiValue("hakukohde"));
-        when(service.lookupKoodi("uri:valintakoetyyppi/123", 0)).thenReturn(createSimpleKoodiValue("valintakoe"));
-        when(service.lookupKoodi("uri:liitetyyppi/12345", 0)).thenReturn(createSimpleKoodiValue("liitetyyppi"));
+        when(service.lookupKoodi("uri:eqf", null)).thenReturn(createSimpleKoodiValue("eqf"));
+        when(service.lookupKoodi("uri:nqf", null)).thenReturn(createSimpleKoodiValue("nqf"));
+        when(service.lookupKoodi("uri:pohjakoulutusvaatimus", null)).thenReturn(createSimpleKoodiValue("pohjakoulutusvaatimus"));
+        when(service.lookupKoodi("uri:ammattinimike/lahihoitaja", null)).thenReturn(createSimpleKoodiValue("ammattinimike"));
+        when(service.lookupKoodi("uri:ammattinimike/perushoitaja", null)).thenReturn(createSimpleKoodiValue("ammattinimike"));
+        when(service.lookupKoodi("uri:ammattinimike/ensihoitaja", null)).thenReturn(createSimpleKoodiValue("ammattinimike"));
+        when(service.lookupKoodi("uri:asiasana/lahihoitaja", null)).thenReturn(createSimpleKoodiValue("asiasana"));
+        when(service.lookupKoodi("uri:asiasana/hoivaala", null)).thenReturn(createSimpleKoodiValue("asiasana"));
+        when(service.lookupKoodi("uri:kieli/fi", null)).thenReturn(createSimpleKoodiValue("kieli"));
+        when(service.lookupKoodi("uri:kieli/en", null)).thenReturn(createSimpleKoodiValue("kieli"));
+        when(service.lookupKoodi("uri:koulutuslaji/nuorten", null)).thenReturn(createSimpleKoodiValue("koulutuslaji"));
+        when(service.lookupKoodi("uri:opetusmuoto/lahiopetus", null)).thenReturn(createSimpleKoodiValue("opetusmuoto"));
+        when(service.lookupKoodi("uri:kesto/vuotta", null)).thenReturn(createSimpleKoodiValue("kesto"));
+        when(service.lookupKoodi("uri:hakukohde/876", null)).thenReturn(createSimpleKoodiValue("hakukohde"));
+        when(service.lookupKoodi("uri:valintakoetyyppi/123", null)).thenReturn(createSimpleKoodiValue("valintakoe"));
+        when(service.lookupKoodi("uri:liitetyyppi/12345", null)).thenReturn(createSimpleKoodiValue("liitetyyppi"));
 
         return service;
 

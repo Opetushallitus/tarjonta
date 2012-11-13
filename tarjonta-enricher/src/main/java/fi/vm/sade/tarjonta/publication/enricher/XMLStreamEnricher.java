@@ -313,7 +313,7 @@ public class XMLStreamEnricher {
          * @param keyValuePairs an even number of attributes: key, value, ... key, value
          * @throws SAXException
          */
-        protected void writeStartElement(String name, String... keyValuePairs) throws SAXException {
+        public void writeStartElement(String name, String... keyValuePairs) throws SAXException {
 
             AttributesImpl attributes = new AttributesImpl();
             for (int i = 0; i < keyValuePairs.length; i += 2) {
@@ -329,7 +329,7 @@ public class XMLStreamEnricher {
          * @param name
          * @throws SAXException
          */
-        protected void writeEndElement(String name) throws SAXException {
+        public void writeEndElement(String name) throws SAXException {
             super.endElement("", name, null);
         }
 
@@ -339,7 +339,7 @@ public class XMLStreamEnricher {
          * @param chars
          * @throws SAXException
          */
-        protected void writeCharacters(String chars) throws SAXException {
+        public void writeCharacters(String chars) throws SAXException {
             super.characters(chars.toCharArray(), 0, chars.length());
         }
 

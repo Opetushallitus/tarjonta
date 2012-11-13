@@ -10,6 +10,9 @@
     </parent>
     <artifactId>tarjonta-enricher</artifactId>
     <name>Tarjonta :: XML Enricher</name>
+    <properties>
+        <koodisto.api.version>${project.version}</koodisto.api.version>
+    </properties>
 
     <dependencies>
 
@@ -73,13 +76,38 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>fi.vm.sade.koodisto</groupId>
+            <artifactId>koodisto-api</artifactId>
+            <version>${koodisto.api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-security</artifactId>
+            <version>${cxf.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
-
-    <build>
-
-
-    </build>
-
 
 
 </project>

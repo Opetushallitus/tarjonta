@@ -61,12 +61,12 @@ public abstract class ElementEnricher {
     /**
      * Parent processor, exposes methods to write custom content directly to stream.
      */
-    XMLStreamEnricher.XMLProcessor parent;
+    protected XMLStreamEnricher.XMLProcessor parent;
 
     /**
      * Name of the XML element that this handled was mapped with.
      */
-    String mappedElementName;
+    protected String mappedElementName;
 
     private StringBuilder sb = new StringBuilder();
 

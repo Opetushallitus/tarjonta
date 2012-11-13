@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher.it;
 
-import fi.vm.sade.tarjonta.publication.enricher.KoodistoCodeValueEnricher;
+import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoCodeValueEnricher;
 import fi.vm.sade.tarjonta.publication.enricher.XMLStreamEnricher;
 import java.io.*;
 import javax.xml.stream.XMLOutputFactory;

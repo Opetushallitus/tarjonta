@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher.mock;
 
-import fi.vm.sade.tarjonta.publication.enricher.KoodistoLookupService;
+import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupService;
 
 /**
  *
@@ -24,7 +24,7 @@ import fi.vm.sade.tarjonta.publication.enricher.KoodistoLookupService;
 public class KoodistoLookupServiceMock implements KoodistoLookupService {
 
     @Override
-    public KoodiValue lookupKoodi(String uri, int version) {
+    public KoodiValue lookupKoodi(String uri, Integer version) {
         return new SimpleKoodiValue(uri, "123", "Nimi", "Name", "Namn");
     }
 
