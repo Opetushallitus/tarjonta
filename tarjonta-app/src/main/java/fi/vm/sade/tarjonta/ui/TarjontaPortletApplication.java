@@ -28,24 +28,19 @@ import org.slf4j.LoggerFactory;
  *
  * @author mlyly
  */
-public class TarjontaPortletApplication extends AbstractSadePortletApplication {
+public class TarjontaPortletApplication extends TarjontaApplication {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPortletApplication.class);
     private Window window;
 
     @Override
     protected void registerListeners(Blackboard blackboard) {
-       LOG.debug("registerListeners()");
+        LOG.debug("registerListeners()");
     }
 
     @Override
     public synchronized void init() {
-        LOG.debug("init()");
-
         super.init();
-      
-        window = new TarjontaRootView();
-        setMainWindow(window);
-        setTheme("oph-app-tarjonta"); //include Vaadin Tree Table fix for Liferay
+        LOG.debug("init()");
     }
 }
