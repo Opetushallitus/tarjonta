@@ -284,7 +284,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                 presenter.saveKoulutus(tila);
                 makeUnmodified();
                 presenter.showNotification(UserNotification.SAVE_SUCCESS);
-                presenter.getKoulutusListView().reload();
+                presenter.getReloadKoulutusListData();
             } catch (GenericFault e) {
                 LOG.error("Application error - KOMOTO persist failed, message :  " + e.getMessage(), e);
                 presenter.showNotification(UserNotification.SAVE_FAILED);

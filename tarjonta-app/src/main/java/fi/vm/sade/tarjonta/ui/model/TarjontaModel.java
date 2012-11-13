@@ -20,26 +20,15 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTul
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.WebApplicationContext;
 
 /**
  * Contains the data and state of the Tarjonta UI.
  *
  * @author mlyly
  */
-@Component
-@Scope(WebApplicationContext.SCOPE_SESSION)
-@Configurable
 public class TarjontaModel extends BaseUIViewModel {
-
     // Show label that shows last modification
-    @Value("${common.showAppIdentifier:true}")
     private Boolean _showIdentifier;
-    @Value("${tarjonta-app.identifier:APPLICATION IDENTIFIER NOT AVAILABLE}")
     private String _identifier;
     private KoulutusSearchSpesificationViewModel _searchSpec = new KoulutusSearchSpesificationViewModel();
     private KoulutusToisenAsteenPerustiedotViewModel _koulutusPerustiedotModel;

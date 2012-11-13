@@ -16,36 +16,25 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.Tab;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
-import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.view.common.TwinColSelectKoodisto;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.util.UiUtil;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.KoodistoSelectionTabSheet;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,8 +50,9 @@ public class LanguageTabSheet extends CustomComponent {
     private static final Logger LOG = LoggerFactory.getLogger(LanguageTabSheet.class);
     private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
     private boolean attached = false;
-    @Autowired(required = true)
     private TarjontaModel _model;
+    @Autowired
+    private TarjontaPresenter presenter;
     @Autowired
     private TarjontaUIHelper _uiHelper;
     private KoodistoSelectionTabSheet _languageTabsheet;
@@ -82,6 +72,7 @@ public class LanguageTabSheet extends CustomComponent {
     }
 
     private void initialize() {
+        _model = presenter.getModel();
         _languageTabsheet = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI) {
             @Override
             public void doAddTab(String uri) {
@@ -97,7 +88,7 @@ public class LanguageTabSheet extends CustomComponent {
 
     private String retrieveTabText(Tab tab) {
         Component component = tab.getComponent();
-        
+
         if (component instanceof AbstractField) {
             AbstractField richArea = (AbstractField) component;
             return (String) richArea.getValue();

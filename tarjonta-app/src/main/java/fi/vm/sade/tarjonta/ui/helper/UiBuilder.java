@@ -19,6 +19,7 @@ import com.vaadin.data.Property;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractSelect;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.TwinColSelect;
@@ -29,6 +30,8 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
+import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
+import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
 import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
@@ -43,12 +46,11 @@ import org.slf4j.LoggerFactory;
 public class UiBuilder extends UiUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(UiBuilder.class);
-
     /**
-     * Default field value as uri formatter for koodisto components - since we store uri's in Tarjonta.
+     * Default field value as uri formatter for koodisto components - since we
+     * store uri's in Tarjonta.
      */
     public static final FieldValueFormatter DEFAULT_URI_FIELD_VALUE_FORMATTER = new FieldValueFormatter() {
-
         @Override
         public Object formatFieldValue(Object dto) {
             if (dto == null) {
@@ -63,13 +65,11 @@ public class UiBuilder extends UiUtil {
             }
         }
     };
-
     /**
      * Default field value as uri and versio formatter for koodisto components
      * NOTE: Value is object of type "KoodiUriAndVersioType".
      */
     public static final FieldValueFormatter DEFAULT_KOODISTO_URI_AND_VERSION_OBJECT_FIELD_VALUE_FORMATTER = new FieldValueFormatter() {
-
         @Override
         public Object formatFieldValue(Object dto) {
             if (dto == null) {
@@ -87,12 +87,11 @@ public class UiBuilder extends UiUtil {
             }
         }
     };
-
     /**
-     * Field value formatter that always stores also the koodi version to the value, separated with "#".
+     * Field value formatter that always stores also the koodi version to the
+     * value, separated with "#".
      */
     public static final FieldValueFormatter DEFAULT_URI_AND_VERSION_FIELD_VALUE_FORMATTER = new FieldValueFormatter() {
-
         @Override
         public Object formatFieldValue(Object dto) {
             if (dto == null) {
@@ -107,13 +106,10 @@ public class UiBuilder extends UiUtil {
             }
         }
     };
-
-
     /**
      * Default caption formatter that shows the koodi value (arvo).
      */
     public static final CaptionFormatter DEFAULT_ARVO_CAPTION_FORMATTER = new CaptionFormatter<KoodiType>() {
-
         @Override
         public String formatCaption(KoodiType dto) {
             if (dto == null) {
@@ -123,12 +119,10 @@ public class UiBuilder extends UiUtil {
             return dto.getKoodiArvo();
         }
     };
-
     /**
      * Default caption formatter that shows the koodi URI as caption.
      */
     public static final CaptionFormatter DEFAULT_URI_CAPTION_FORMATTER = new CaptionFormatter<KoodiType>() {
-
         @Override
         public String formatCaption(KoodiType dto) {
             if (dto == null) {
@@ -142,6 +136,7 @@ public class UiBuilder extends UiUtil {
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, null, (ComboBox) null, true);
     }
+
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, boolean uriWithVersion) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, null, (ComboBox) null, uriWithVersion);
     }
@@ -149,6 +144,7 @@ public class UiBuilder extends UiUtil {
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, (ComboBox) null, true);
     }
+
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, boolean uriWithVersion) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, (ComboBox) null, uriWithVersion);
     }
@@ -156,15 +152,16 @@ public class UiBuilder extends UiUtil {
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, cb, true);
     }
+
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb, boolean uriWithVersion) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, cb, uriWithVersion);
     }
 
     /**
-     * Create new KoodistoComponent with ComboBox. Sets combobox's filtering mode to "CONTAINS".
+     * Create new KoodistoComponent with ComboBox. Sets combobox's filtering
+     * mode to "CONTAINS".
      *
-     * Note: not in immediate mode by default.
-     * Note: null selection not allowed.
+     * Note: not in immediate mode by default. Note: null selection not allowed.
      *
      * Possible bind to a property.
      *
@@ -210,10 +207,10 @@ public class UiBuilder extends UiUtil {
     }
 
     /**
-     * Create new KoodistoComponent with ComboBox. Sets compobox's filtering mode to "CONTAINS".
+     * Create new KoodistoComponent with ComboBox. Sets compobox's filtering
+     * mode to "CONTAINS".
      *
-     * Note: not in immediate mode by default.
-     * Note: null selection not allowed.
+     * Note: not in immediate mode by default. Note: null selection not allowed.
      *
      * Possible bind to a property.
      *
@@ -229,7 +226,7 @@ public class UiBuilder extends UiUtil {
     public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, ComboBox cb, boolean uriWithVersion) {
         // Koodisto displayed in ComboBox
 
-        ComboBox combo =  (cb == null) ? comboBox(null, null, null) : cb;
+        ComboBox combo = (cb == null) ? comboBox(null, null, null) : cb;
 
         combo.setFilteringMode(AbstractSelect.Filtering.FILTERINGMODE_CONTAINS);
         if (prompt != null) {
@@ -256,24 +253,25 @@ public class UiBuilder extends UiUtil {
         return c;
     }
 
-
-
-
     /**
      * Creates a koodisto-bound TwinColSelect component with given koodistoUri.
-     * Created component is in "multiselect"-mode.
-     * Created component is in immediate mode.
+     * Created component is in "multiselect"-mode. Created component is in
+     * immediate mode.
      *
-     * Note: a Vaadin bug requires that twincol selects "value" has to be a <code>Set</code>. ie. if you want to bind
-     * the component to bean item the item has to be of type "Set".
+     * Note: a Vaadin bug requires that twincol selects "value" has to be a
+     * <code>Set</code>. ie. if you want to bind the component to bean item the
+     * item has to be of type "Set".
      *
-     * Note: to change how the data is shown in the compoent you must set the <code>CaptionFormatter</code> for the component.
-     * Similarily if you want to change the actual values returned bt the component (by default koodi uri's) you can
-     * set the <code>FieldValueFormatter</code> for the component.
+     * Note: to change how the data is shown in the compoent you must set the
+     * <code>CaptionFormatter</code> for the component. Similarily if you want
+     * to change the actual values returned bt the component (by default koodi
+     * uri's) you can set the
+     * <code>FieldValueFormatter</code> for the component.
      *
      * @param layout if given created component will be added there
      * @param koodistoUri koodisto uri to bind component to
-     * @param uriWithVersion if true also version information stored to the value
+     * @param uriWithVersion if true also version information stored to the
+     * value
      * @return created component
      */
     public static KoodistoComponent koodistoTwinColSelectUri(AbstractLayout layout, final String koodistoUri, boolean uriWithVersion) {
@@ -312,16 +310,16 @@ public class UiBuilder extends UiUtil {
         return koodistoTwinColSelectUri(layout, koodistoUri, true);
     }
 
-
-
     /**
-     * Similar to koodistoTwinColSelectUri() but  also possible to bind to a property.
+     * Similar to koodistoTwinColSelectUri() but also possible to bind to a
+     * property.
      *
      * @param layout
      * @param koodistoUri
      * @param psi
      * @param expression
-     * @param uriWithVersion if true also version information stored to the value
+     * @param uriWithVersion if true also version information stored to the
+     * value
      * @return
      */
     public static KoodistoComponent koodistoTwinColSelect(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, boolean uriWithVersion) {
@@ -346,7 +344,6 @@ public class UiBuilder extends UiUtil {
     public static KoodistoComponent koodistoTwinColSelect(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
         return koodistoTwinColSelect(layout, koodistoUri, psi, expression, true);
     }
-
 
     /**
      * Create token field selector with koodisto linked combobox.
@@ -373,9 +370,8 @@ public class UiBuilder extends UiUtil {
         return f;
     }
 
-
     /**
-     * Bind  field "f" to a data source.
+     * Bind field "f" to a data source.
      *
      * @param psi
      * @param expression
@@ -391,4 +387,27 @@ public class UiBuilder extends UiUtil {
         }
     }
 
+    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, final RequiredRole role, TarjontaPermissionService tps) {
+        Button button = UiUtil.buttonSmallPrimary(layout, caption);
+        if (role == null) {
+            return button;
+        }
+
+        switch (role) {
+            case CRUD:
+                button.setReadOnly(tps.userCanCreateReadUpdateAndDelete());
+                break;
+            case UPDATE:
+                button.setReadOnly(tps.userCanReadAndUpdate());
+                break;
+            default:
+                break;
+        }
+
+        if (button.isReadOnly()) {
+            LOG.info("Insufficient user role - button with a caption '" + caption + "' was disabled. Required role " + role);
+        }
+
+        return button;
+    }
 }

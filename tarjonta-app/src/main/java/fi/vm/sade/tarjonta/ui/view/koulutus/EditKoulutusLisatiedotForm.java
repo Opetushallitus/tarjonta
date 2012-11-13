@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenTila;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
@@ -59,9 +60,8 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
     @Autowired
     private TarjontaPresenter _presenter;
     @Autowired
-    private TarjontaModel _tarjontaModel;
-    @Autowired
     private TarjontaUIHelper _uiHelper;
+    private KoulutusLisatiedotModel koulutusLisatiedotModel;
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
@@ -69,7 +69,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
 
         setSpacing(true);
         setMargin(true);
-
+        koulutusLisatiedotModel = _presenter.getModel().getKoulutusLisatiedotModel();
         addNavigationButtons();
 
         //
@@ -79,7 +79,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         {
             addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet"), LabelStyleEnum.H2));
 
-            PropertysetItem psi = new BeanItem(_tarjontaModel.getKoulutusLisatiedotModel());
+            PropertysetItem psi = new BeanItem(koulutusLisatiedotModel);
             OphTokenField f = UiBuilder.koodistoTokenField(null, KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
             f.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
                 @Override
@@ -98,11 +98,11 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         // What languages should we have as preselection when initializing the form?
         // Current hypothesis is that we should use the opetuskielet + any possible additional languages added to additional information
         Set<String> languageUris = new HashSet<String>();
-        languageUris.addAll(_tarjontaModel.getKoulutusPerustiedotModel().getOpetuskielet());
-        languageUris.addAll(_tarjontaModel.getKoulutusLisatiedotModel().getKielet());
+        languageUris.addAll(_presenter.getModel().getKoulutusPerustiedotModel().getOpetuskielet());
+        languageUris.addAll(koulutusLisatiedotModel.getKielet());
 
         // Update language selections to contain opetuskielet AND lisätiedot languages
-        _tarjontaModel.getKoulutusLisatiedotModel().setKielet(languageUris);
+        koulutusLisatiedotModel.setKielet(languageUris);
 
         //
         // Build tabsheet for languages with koodisto select languages
@@ -118,7 +118,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         // TODO Autoselect first content tab?
 
         // Initialize with all preselected languages
-        tabs.getKcSelection().setValue(_tarjontaModel.getKoulutusLisatiedotModel().getKielet());
+        tabs.getKcSelection().setValue(koulutusLisatiedotModel.getKielet());
 
         addComponent(UiBuilder.label((AbstractLayout) null, T("kieliriippuvatTiedot"), LabelStyleEnum.H2));
         addComponent(tabs);
@@ -180,7 +180,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         vl.setSpacing(true);
         vl.setMargin(true);
 
-        KoulutusLisatietoModel model = _tarjontaModel.getKoulutusLisatiedotModel().getLisatiedot(uri);
+        KoulutusLisatietoModel model = koulutusLisatiedotModel.getLisatiedot(uri);
         PropertysetItem psi = new BeanItem(model);
 
         {

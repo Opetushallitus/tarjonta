@@ -21,9 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
@@ -34,17 +32,13 @@ import fi.vm.sade.tarjonta.ui.TarjontaWebApplication;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.common.BreadcrumbsView;
-import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuViewImpl;
 import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
 import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuViewImpl;
 import fi.vm.sade.vaadin.Oph;
-import fi.vm.sade.vaadin.dto.ButtonDTO;
-import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import fi.vm.sade.vaadin.util.UiUtil;
-import java.util.Locale;
 
 /**
  * Root view for Haku management.
@@ -63,13 +57,6 @@ public class HakuRootView extends Window {
     //hakuPresenter ja kaikki hakutoiminnallisuudet tullaan varmaankin siirtämään pois tarjonnasta.
     @Autowired(required = true)
     private HakuPresenter hakuPresenter;
-    private TarjontaWebApplication tWebApp;
-
-    public HakuRootView(TarjontaWebApplication webApp) {
-        super();
-        tWebApp = webApp;
-        init();
-    }
 
     public HakuRootView() {
         super();
@@ -232,24 +219,8 @@ public class HakuRootView extends Window {
         vl.addComponent(getBreadcrumbsView());
         vl.addComponent(getSearchSpesificationView());
         vl.addComponent(getSearchResultsView());
-        if (this.tWebApp != null) {
-            Button b = new Button("Tarjontaan");
-            b.addListener(new Button.ClickListener() {
-                @Override
-                public void buttonClick(ClickEvent event) {
-                    // TODO Auto-generated method stub
-                    toTarjonta();
-                }
-            });
-            vl.addComponent(b);
-        }
+       
         getAppRightLayout().addComponent(vl);
         getAppRightLayout().setExpandRatio(vl, 1f);
-    }
-
-    private void toTarjonta() {
-        if (tWebApp != null) {
-            this.tWebApp.toTarjonta();
-        }
     }
 }

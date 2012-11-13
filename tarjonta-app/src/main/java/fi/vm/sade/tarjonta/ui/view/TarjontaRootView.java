@@ -15,23 +15,24 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
+import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-import fi.vm.sade.tarjonta.ui.TarjontaWebApplication;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.common.BreadcrumbsView;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import fi.vm.sade.vaadin.Oph;
+import fi.vm.sade.vaadin.util.UiUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.annotation.Scope;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Simple root view for Tarjonta.
@@ -47,30 +48,24 @@ import org.springframework.web.context.WebApplicationContext;
  *
  * @author mlyly
  */
-@Scope(WebApplicationContext.SCOPE_SESSION)
 @Configurable(preConstruction = true)
 public class TarjontaRootView extends Window {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaRootView.class);
     @Autowired(required = true)
     private TarjontaPresenter _presenter;
-
+    // Show label that shows last modification
+    @Value("${common.showAppIdentifier:true}")
+    private Boolean _showIdentifier;
+    @Value("${tarjonta-app.identifier:APPLICATION IDENTIFIER NOT AVAILABLE}")
+    private String _identifier;
     private VerticalLayout _appRootLayout;
     private OrganisaatiohakuView _organisationSearchView;
     private BreadcrumbsView _breadcrumbsView;
     private SearchSpesificationView _searchSpesificationView;
     private SearchResultsView _searchResultsView;
-
-    //Huom tämä on vain kehityksen ajaksi tehty kenttä, mahdollistaa vaihtamisen
-    //Haku- ja Tarjontasovellusten välillä.
-    private TarjontaWebApplication tWebApp;
-
-    //Tämä on vain kehitystä helpottamaan tehty konstruktori.
-    public TarjontaRootView(TarjontaWebApplication tWebApp) {
-        super();
-        init();
-        this.tWebApp = tWebApp;
-    }
+    private VerticalLayout vrightLayout;
+    private boolean isAttached = false;
 
     public TarjontaRootView() {
         super();
@@ -84,46 +79,85 @@ public class TarjontaRootView extends Window {
         if (_presenter == null) {
             _presenter = new TarjontaPresenter();
         }
+        _presenter.setRootView(this);
+        initLayoutComponents();
+    }
 
-        //
+    private void initLayoutComponents() {
         // Create root layout
-        //
         _appRootLayout = UiBuilder.verticalLayout();
         _appRootLayout.setHeight(-1, UNITS_PIXELS);
         _appRootLayout.addStyleName(Oph.CONTAINER_MAIN);
         setContent(_appRootLayout); // root layout
 
-        //
         // Create components
-        //
         _organisationSearchView = new OrganisaatiohakuView();
         _breadcrumbsView = new BreadcrumbsView();
-        _searchSpesificationView = new SearchSpesificationView(_presenter.getModel().getSearchSpec());
         _searchResultsView = new SearchResultsView();
+        _searchSpesificationView = new SearchSpesificationView(_presenter.getModel().getSearchSpec());
 
         // Add listener for search events
         _searchSpesificationView.addListener(new Listener() {
             @Override
             public void componentEvent(Event event) {
                 if (event instanceof SearchSpesificationView.SearchEvent) {
-                	_presenter.getKoulutusListView().reload();
-                	_presenter.getHakukohdeListView().reload();
+                    _presenter.getReloadKoulutusListData();
+                    _presenter.getHakukohdeListView().reload();
                 }
             }
         });
 
-        _presenter.setRootView(this);
+        //bind the components together
+        vrightLayout = UiUtil.verticalLayout();
+        vrightLayout.setHeight(-1, VerticalLayout.UNITS_PIXELS);
+        vrightLayout.addComponent(this.getBreadcrumbsView());
+        vrightLayout.addComponent(this.getSearchSpesificationView());
+        vrightLayout.addComponent(this.getSearchResultsView());
+        this.getOrganisaatiohakuView().addComponent(vrightLayout);
+        this.getOrganisaatiohakuView().setExpandRatio(vrightLayout, 1f);
 
         // Show application identifier if needed
-        if (_presenter != null && _presenter.isShowIdentifier()) {
+        _presenter.getModel().setShowIdentifier(_showIdentifier);
+        _presenter.getModel().setIdentifier(_identifier);
+        if (_presenter.isShowIdentifier()) {
             _appRootLayout.addComponent(new Label("ID=" + _presenter.getIdentifier()));
         }
 
         // The default view to show is main default view (called here since "main" app cannot access presenter)
-        _presenter.showMainDefaultView();
     }
 
-	public VerticalLayout getAppRootLayout() {
+    @Override
+    public void attach() {
+        super.attach();
+        if (isAttached) {
+            return;
+        }
+        isAttached = true;
+        showMainView();
+    }
+
+    public void showMainView() {
+        LOG.debug("showMainView()");
+        changeView(this.getOrganisaatiohakuView());
+    }
+
+    public ListKoulutusView getListKoulutusView() {
+        return this.getSearchResultsView().getKoulutusList();
+    }
+
+    public void changeView(AbstractLayout layout) {
+        changeView(layout, true);
+    }
+
+    public void changeView(AbstractLayout layout, boolean clear) {
+        if (clear) {
+            this.removeAllComponents();
+        }
+
+        this.addComponent(layout);
+    }
+
+    public VerticalLayout getAppRootLayout() {
         return _appRootLayout;
     }
 
@@ -142,6 +176,4 @@ public class TarjontaRootView extends Window {
     public OrganisaatiohakuView getOrganisaatiohakuView() {
         return _organisationSearchView;
     }
-
-
 }

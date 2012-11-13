@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -26,41 +25,34 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.themes.BaseTheme;
-
-import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.generic.ui.StyleNames;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
- * 
+ *
  * @author Markus
  */
-@Configurable(preConstruction = false)
-public class KoulutusResultRow  extends HorizontalLayout {
+@Configurable(preConstruction = true)
+public class KoulutusResultRow extends HorizontalLayout {
 
-	private static final Logger LOG = LoggerFactory.getLogger(KoulutusResultRow.class);
-
+    private static final Logger LOG = LoggerFactory.getLogger(KoulutusResultRow.class);
     private I18NHelper i18n = new I18NHelper(this);
     /**
      * The koulutus to display on the row.
      */
     private KoulutusTulos koulutus;
-
     /**
      * Checkbox to indicate if this row is selected.
      */
     private CheckBox isSelected;
-
     /**
      * The presenter object for the component.
      */
@@ -74,10 +66,9 @@ public class KoulutusResultRow  extends HorizontalLayout {
     public KoulutusResultRow(KoulutusTulos koulutus) {
         this.koulutus = koulutus;
     }
-
     /**
-     * Command object for the row menubar. Starts operations
-     * based on user's selection in the menu.
+     * Command object for the row menubar. Starts operations based on user's
+     * selection in the menu.
      */
     private MenuBar.Command menuCommand = new MenuBar.Command() {
         @Override
@@ -86,7 +77,6 @@ public class KoulutusResultRow  extends HorizontalLayout {
             menuItemClicked(selectedItem.getText());
 
         }
-
     };
     OphRowMenuBar rowMenuBar;
 
@@ -96,12 +86,13 @@ public class KoulutusResultRow  extends HorizontalLayout {
         rowMenuBar.addMenuCommand(i18n.getMessage("muokkaa"), menuCommand);
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaHakukohteet"), menuCommand);
         rowMenuBar.addMenuCommand(i18n.getMessage("poista"), menuCommand);
-        
+
         return rowMenuBar;
     }
 
     /**
      * Fires an event based on user's selection in the row's menubar.
+     *
      * @param selection the selection in the menu.
      */
     private void menuItemClicked(String selection) {
@@ -117,6 +108,7 @@ public class KoulutusResultRow  extends HorizontalLayout {
 
     /**
      * Creation of the row component's layout.
+     *
      * @param text - the text to be shown on the row.
      * @return
      */
@@ -134,30 +126,28 @@ public class KoulutusResultRow  extends HorizontalLayout {
                 }
             }
         });
-       
-        
-        
+
+
+
         //newAddressBtn.addStyleName(StyleNames.B_PRIMARY_LARGE_PLUS);
-        
+
         setWidth(-1, Sizeable.UNITS_PIXELS);
         setHeight(-1, Sizeable.UNITS_PIXELS); //Tämä toimii!!!
 
         addComponent(isSelected);
         if (withMenuBar) {
-        	 Button nimiB = UiUtil.buttonLink(null, text);
-             
-             nimiB.addListener(new Button.ClickListener() {
-                 
-                 @Override
-                 public void buttonClick(ClickEvent event) { 
-                 	tarjontaPresenter.showShowKoulutusView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
-                 }
+            Button nimiB = UiUtil.buttonLink(null, text);
 
-             });
-             nimiB.setSizeUndefined();
-             nimiB.setHeight(7, Sizeable.UNITS_PIXELS);
-             
-             OphRowMenuBar menubar = newMenuBar();
+            nimiB.addListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    tarjontaPresenter.showShowKoulutusView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
+                }
+            });
+            nimiB.setSizeUndefined();
+            nimiB.setHeight(7, Sizeable.UNITS_PIXELS);
+
+            OphRowMenuBar menubar = newMenuBar();
             addComponent(menubar);
             addComponent(nimiB);
             setExpandRatio(nimiB, 1f); //default == 0
@@ -165,21 +155,21 @@ public class KoulutusResultRow  extends HorizontalLayout {
             setComponentAlignment(rowMenuBar, Alignment.MIDDLE_LEFT);
             setComponentAlignment(nimiB, Alignment.TOP_LEFT);
         } else {
-        	Label label = new Label(text);
+            Label label = new Label(text);
             label.setSizeUndefined(); // -1,-1
             addComponent(label);
-            setExpandRatio(label, 1f); 
+            setExpandRatio(label, 1f);
         }
-        
+
         return this;
     }
 
     /**
      * Gets the isSelected checkbox component.
+     *
      * @return
      */
     public CheckBox getIsSelected() {
         return isSelected;
     }
-	
 }

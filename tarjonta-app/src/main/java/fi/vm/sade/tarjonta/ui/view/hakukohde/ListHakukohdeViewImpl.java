@@ -60,49 +60,42 @@ import fi.vm.sade.vaadin.util.UiUtil;
 @Configurable(preConstruction = false)
 public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukohdeView {
 
-	public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListHakukohdeViewImpl.jarjestys.Organisaatio")};
-
-	public static final String COLUMN_A = "Kategoriat";
-
+    public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListHakukohdeViewImpl.jarjestys.Organisaatio")};
+    public static final String COLUMN_A = "Kategoriat";
     private static final Logger LOG = LoggerFactory.getLogger(ListHakukohdeViewImpl.class);
     /**
      * Button for adding selected Hakukohde objects to a Haku.
      */
     private Button lisaaHakuunB;
-
     /**
      * Button for removing selected Hakukohde objects.
      */
     private Button poistaB;
-
     /**
-     * Component for selecting desired sorting/grouping criteria for listed Hakukohde objects.
+     * Component for selecting desired sorting/grouping criteria for listed
+     * Hakukohde objects.
      */
     private ComboBox cbJarjestys;
-
     /**
-     * TreeTable component to display the Hakukohde objects in a grouped/hierarchical manner.
+     * TreeTable component to display the Hakukohde objects in a
+     * grouped/hierarchical manner.
      */
     private CategoryTreeView categoryTree;
-
     /**
      * Checkbox for selecting all the Hakukohde objects in the list.
      */
     private CheckBox valKaikki;
-
     private I18NHelper i18n = new I18NHelper(this);
-
     /**
      * Presenter object for the Hakukohde listing.
      */
     @Autowired(required = true)
     private TarjontaPresenter presenter;
-    
-    @Autowired(required=true)
+    @Autowired(required = true)
     private TarjontaUIHelper _tarjontaUIHelper;
 
     public ListHakukohdeViewImpl() {
-    	//Initialization of the view layout
+        //Initialization of the view layout
         setWidth(UiConstant.PCT100);
         //Creation of the button bar above the Hakukohde hierarchical/grouped list.
         HorizontalLayout buildMiddleResultLayout = buildMiddleResultLayout();
@@ -116,7 +109,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             @Override
             public void valueChange(ValueChangeEvent event) {
 
-                    toggleHakuSelections(valKaikki.booleanValue());
+                toggleHakuSelections(valKaikki.booleanValue());
 
             }
         });
@@ -146,8 +139,9 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     }
 
     /**
-     * Creates the vaadin HierarchicalContainer datasource for the Hakukohde listing
-     * based on data provided by the presenter.
+     * Creates the vaadin HierarchicalContainer datasource for the Hakukohde
+     * listing based on data provided by the presenter.
+     *
      * @param map the data map provided by the presenter.
      * @return the hierarchical container for Hakukokhde listing.
      */
@@ -176,45 +170,48 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         }
         return hc;
     }
-    
+
     private String buildOrganisaatioCaption(Map.Entry<String, List<HakukohdeTulos>> e) {
-    	return presenter.getOrganisaatioNimiByOid(e.getKey()) + " (" + e.getValue().size() + ")";
+        return presenter.getOrganisaatioNimiByOid(e.getKey()) + " (" + e.getValue().size() + ")";
     }
-    
+
     private String buildHakukohdeCaption(HakukohdeTulos curHakukohde) {
-    	return getKoodiNimi(curHakukohde.getHakukohde().getNimi()) 
-    			+ ", " + getKoodiNimi(curHakukohde.getHaku().getHakukausiUri()) + " " + curHakukohde.getHaku().getHakuvuosi() 
-    			+  ", " + i18n.getMessage(curHakukohde.getHakukohde().getTila());
+        return getKoodiNimi(curHakukohde.getHakukohde().getNimi())
+                + ", " + getKoodiNimi(curHakukohde.getHaku().getHakukausiUri()) + " " + curHakukohde.getHaku().getHakuvuosi()
+                + ", " + i18n.getMessage(curHakukohde.getHakukohde().getTila());
     }
-    
+
     /**
      * Returns the name of the hakukohde based on koodisto uri given.
+     *
      * @param koodiUri the koodisto uri given.
      * @return
      */
     private String getKoodiNimi(String koodiUri) {
-    	String nimi = _tarjontaUIHelper.getKoodiNimi(koodiUri, I18N.getLocale());
-    	if ("".equals(nimi)) {
-    		nimi = koodiUri;
-    	}
-    	return nimi; 
+        String nimi = _tarjontaUIHelper.getKoodiNimi(koodiUri, I18N.getLocale());
+        if ("".equals(nimi)) {
+            nimi = koodiUri;
+        }
+        return nimi;
     }
 
     /**
      * Selects or unselects all the objects in the Hakukohde listing.
+     *
      * @param selected
      */
     private void toggleHakuSelections(boolean selected) {
         presenter.getSelectedhakukohteet().clear();
-        HierarchicalContainer hc = (HierarchicalContainer)(this.categoryTree.getContainerDataSource());
+        HierarchicalContainer hc = (HierarchicalContainer) (this.categoryTree.getContainerDataSource());
         for (Object item : hc.getItemIds()) {
-            HakukohdeResultRow curRow = (HakukohdeResultRow)(categoryTree.getContainerProperty(item, COLUMN_A).getValue());
+            HakukohdeResultRow curRow = (HakukohdeResultRow) (categoryTree.getContainerProperty(item, COLUMN_A).getValue());
             curRow.getIsSelected().setValue(selected);
         }
     }
 
     /**
      * Creation of the button bar part above the Hakukohde-listing.
+     *
      * @return
      */
     private HorizontalLayout buildMiddleResultLayout() {
@@ -228,7 +225,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         lisaaHakuunB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-            	getWindow().showNotification("Toiminnallisuutta ei ole toteutettu");
+                getWindow().showNotification("Toiminnallisuutta ei ole toteutettu");
 
             }
         });
@@ -273,38 +270,37 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
     }
 
-	@Override
-	public void appendKoulutuksetToList(HakukohdeViewModel hakukohde) {
-		LOG.info("appendKoulutuksetToList: ");
-		HierarchicalContainer hc = (HierarchicalContainer)(this.categoryTree.getContainerDataSource());
+    @Override
+    public void appendKoulutuksetToList(HakukohdeViewModel hakukohde) {
+        LOG.info("appendKoulutuksetToList: ");
+        HierarchicalContainer hc = (HierarchicalContainer) (this.categoryTree.getContainerDataSource());
         for (Object item : hc.getItemIds()) {
-        	if (!(categoryTree.getContainerProperty(item, COLUMN_A).getValue() instanceof HakukohdeResultRow)) {
-        		continue;
-        	}
-            HakukohdeResultRow curRow = (HakukohdeResultRow)(categoryTree.getContainerProperty(item, COLUMN_A).getValue());
+            if (!(categoryTree.getContainerProperty(item, COLUMN_A).getValue() instanceof HakukohdeResultRow)) {
+                continue;
+            }
+            HakukohdeResultRow curRow = (HakukohdeResultRow) (categoryTree.getContainerProperty(item, COLUMN_A).getValue());
             if (curRow.getHakukohde().getHakukohde() != null && curRow.getHakukohde().getHakukohde().getOid().equals(hakukohde.getOid())) {
-            	addKoulutuksetToTree(item, hakukohde, hc);
-            	return;
+                addKoulutuksetToTree(item, hakukohde, hc);
+                return;
             }
         }
-	}
-	
-	private void addKoulutuksetToTree(Object item, HakukohdeViewModel hakukohde, HierarchicalContainer hc) {
-		hc.setChildrenAllowed(item, true);
-		for (String komotoOid : hakukohde.getKomotoOids()) { 
-			HakukohdeResultRow rowStyle = new HakukohdeResultRow();
-			hc.addItem(komotoOid);
-			hc.setParent(komotoOid, item);
-			LueKoulutusVastausTyyppi koulutus = presenter.getKoulutusByOid(komotoOid);
-			String koulutusNimi = "";
-			if (koulutus != null) {
-				koulutusNimi = getKoodiNimi(koulutus.getKoulutusKoodi().getUri()) + ", " 
-					 + getKoodiNimi(koulutus.getKoulutusohjelmaKoodi().getUri());
-			} 
-			hc.getContainerProperty(komotoOid, COLUMN_A).setValue(rowStyle.format(koulutusNimi, false));
-			hc.setChildrenAllowed(komotoOid, false);
-		}
-		this.categoryTree.setCollapsed(item, false);
-	}
+    }
 
+    private void addKoulutuksetToTree(Object item, HakukohdeViewModel hakukohde, HierarchicalContainer hc) {
+        hc.setChildrenAllowed(item, true);
+        for (String komotoOid : hakukohde.getKomotoOids()) {
+            HakukohdeResultRow rowStyle = new HakukohdeResultRow();
+            hc.addItem(komotoOid);
+            hc.setParent(komotoOid, item);
+            LueKoulutusVastausTyyppi koulutus = presenter.getKoulutusByOid(komotoOid);
+            String koulutusNimi = "";
+            if (koulutus != null) {
+                koulutusNimi = getKoodiNimi(koulutus.getKoulutusKoodi().getUri()) + ", "
+                        + getKoodiNimi(koulutus.getKoulutusohjelmaKoodi().getUri());
+            }
+            hc.getContainerProperty(komotoOid, COLUMN_A).setValue(rowStyle.format(koulutusNimi, false));
+            hc.setChildrenAllowed(komotoOid, false);
+        }
+        this.categoryTree.setCollapsed(item, false);
+    }
 }

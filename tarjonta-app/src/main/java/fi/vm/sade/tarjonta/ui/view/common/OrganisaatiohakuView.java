@@ -67,12 +67,9 @@ import org.vaadin.addon.formbinder.FormView;
 public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLayout> {
 
     private static final Logger LOG = LoggerFactory.getLogger(OrganisaatiohakuView.class);
-
     public static final String COLUMN_KEY = "COLUMN";
-
     private static I18NHelper i18n = new I18NHelper(OrganisaatiohakuView.class);
     private static final int PANEL_WIDTH = 250;
-
     private TextField search;
     private ComboBox organisaatioTyyppi;
     private KoodistoComponent oppilaitosTyyppi;
@@ -82,20 +79,16 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     private Button tyhjennaB;
     private Tree tree;
     private HierarchicalContainer hc;
-
     @Autowired
     private OrganisaatioService organisaatioService;
-
     @Autowired
     private TarjontaPresenter presenter;
-
     private List<OrganisaatioDTO> organisaatios;
     private OrganisaatioSearchCriteriaDTO criteria;
     List<String> rootOrganisaatioOids;
-    
     @Value("${root.organisaatio.oid:NOT_SET}")
     private String ophOid;
-    
+    private boolean isAttached = false;
 
     public OrganisaatiohakuView() {
         super(VerticalLayout.class);
@@ -114,6 +107,10 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     @Override
     public void attach() {
         super.attach();
+        if (isAttached) {
+            return;
+        }
+        isAttached = true;
         initializeData();
     }
 
@@ -129,7 +126,6 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         // Bind enter to do the search
         search.setImmediate(true);
         search.addListener(new Property.ValueChangeListener() {
-
             @Override
             public void valueChange(ValueChangeEvent event) {
                 searchOrganisaatios();
@@ -238,8 +234,8 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     }
 
     /**
-     * Searches the organisaatios according to criteria, and updates
-     * the data in the tree.
+     * Searches the organisaatios according to criteria, and updates the data in
+     * the tree.
      */
     private void searchOrganisaatios() {
         organisaatios = organisaatioService.searchOrganisaatios(criteria);
@@ -248,6 +244,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
 
     /**
      * Creates the data source for the organisaatio tree.
+     *
      * @return
      */
     private HierarchicalContainer createDatasource() {
@@ -270,30 +267,31 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
      */
     private void createHierarchy() {
         for (OrganisaatioDTO curOrg : organisaatios) {
-        	//If the current organisaatio is root, it's child tree is created.
+            //If the current organisaatio is root, it's child tree is created.
             if (!hasParentInCurrentResults(curOrg)) {
                 setChildrenTo(curOrg);
             }
         }
     }
-    
+
     private void openTree(OrganisaatioDTO organisaatio, OrganisaatioDTO parentOrg) {
-    	if (criteria.getSearchStr() != null && !criteria.getSearchStr().isEmpty()
-    			&& getClosestNimi(I18N.getLocale(), organisaatio).toLowerCase().contains(criteria.getSearchStr().toLowerCase())) {
-    		expandPath(parentOrg); //this.setCollapsed(parentOrg, false);
-    	}
+        if (criteria.getSearchStr() != null && !criteria.getSearchStr().isEmpty()
+                && getClosestNimi(I18N.getLocale(), organisaatio).toLowerCase().contains(criteria.getSearchStr().toLowerCase())) {
+            expandPath(parentOrg); //this.setCollapsed(parentOrg, false);
+        }
     }
-    
+
     private void expandPath(OrganisaatioDTO org) {
-    	tree.expandItem(org);
-    	OrganisaatioDTO parent = (OrganisaatioDTO)(hc.getParent(org));
-    	if (parent != null) {
-    		expandPath(parent);
-    	}
+        tree.expandItem(org);
+        OrganisaatioDTO parent = (OrganisaatioDTO) (hc.getParent(org));
+        if (parent != null) {
+            expandPath(parent);
+        }
     }
 
     /**
      * Is the current organisaatio a root organisaatio
+     *
      * @param org
      * @return
      */
@@ -311,13 +309,14 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
 
     /**
      * Setting the children of the organisaatio given as parameter.
+     *
      * @param parentOrg
      */
     private void setChildrenTo(OrganisaatioDTO parentOrg) {
         boolean wasChildren = false;
         for (OrganisaatioDTO curOrg : organisaatios) {
-        	//if the curOrg is the child of parentOrg the parent-child relation is
-        	//created in the container
+            //if the curOrg is the child of parentOrg the parent-child relation is
+            //created in the container
             if (parentOrg.getOid().equals(curOrg.getParentOid())) {
                 hc.setParent(curOrg, parentOrg);
                 setChildrenTo(curOrg);
@@ -343,8 +342,10 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     }
 
     /**
-     * Sets the selected organisaatio oid and name in TarjontaModel and fires an OrganisaatioSelectedEvent.
-     * The selected organisaatio information is used when koulutus is created.
+     * Sets the selected organisaatio oid and name in TarjontaModel and fires an
+     * OrganisaatioSelectedEvent. The selected organisaatio information is used
+     * when koulutus is created.
+     *
      * @param item the organisaatio selected.
      */
     private void organisaatioSelected(OrganisaatioDTO item) {
@@ -353,7 +354,8 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     }
 
     /**
-     * Gets the item captions of organisaatiotyyppi selections in search criteria combobox.
+     * Gets the item captions of organisaatiotyyppi selections in search
+     * criteria combobox.
      */
     private void setOrgTyyppiItemCaptions() {
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(), T(OrganisaatioTyyppi.KOULUTUSTOIMIJA.name()));
@@ -362,42 +364,40 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPILAITOS.value(), T(OrganisaatioTyyppi.OPPILAITOS.name()));
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(), T(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.name()));
     }
-    
+
     private String getClosestNimi(Locale locale, OrganisaatioDTO org) {
-    	 String lang = (locale != null) ?  locale.getLanguage().toLowerCase() : "";
-         if (lang.equals("fi") && org.getNimiFi() != null) {
-         	
-             return org.getNimiFi();
-         } 
-         if (lang.equals("sv") && org.getNimiSv() != null) {
-         	
-             return org.getNimiSv();
-         } 
-         if (lang.equals("en") && org.getNimiEn() != null) {	
-             return org.getNimiEn();
-         }
-         return getAvailableNimi(org);
-    }
-    
-    private String getAvailableNimi(OrganisaatioDTO org) {
-    	if (org.getNimiFi() != null) {
-         	
-         	return org.getNimiFi();
-         } 
-         if (org.getNimiSv() != null) {
-         	
-         	return org.getNimiSv();
-         }
-         if (org.getNimiEn() != null) {
-         	
-         	return org.getNimiEn();
-         }
-         return "";
+        String lang = (locale != null) ? locale.getLanguage().toLowerCase() : "";
+        if (lang.equals("fi") && org.getNimiFi() != null) {
+
+            return org.getNimiFi();
+        }
+        if (lang.equals("sv") && org.getNimiSv() != null) {
+
+            return org.getNimiSv();
+        }
+        if (lang.equals("en") && org.getNimiEn() != null) {
+            return org.getNimiEn();
+        }
+        return getAvailableNimi(org);
     }
 
+    private String getAvailableNimi(OrganisaatioDTO org) {
+        if (org.getNimiFi() != null) {
+
+            return org.getNimiFi();
+        }
+        if (org.getNimiSv() != null) {
+
+            return org.getNimiSv();
+        }
+        if (org.getNimiEn() != null) {
+
+            return org.getNimiEn();
+        }
+        return "";
+    }
 
     private String T(String key, Object... args) {
         return i18n.getMessage(key, args);
     }
-
 }

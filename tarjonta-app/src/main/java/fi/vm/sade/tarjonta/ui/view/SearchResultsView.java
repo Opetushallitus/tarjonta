@@ -31,14 +31,10 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable
 public class SearchResultsView extends VerticalLayout {
-
-    @Autowired
-    private TarjontaPresenter _presenter;
-
     boolean attached = false;
     private I18NHelper _i18n = new I18NHelper(this);
-
     private TabSheet tabs;
+    private ListKoulutusView koulutusList;
 
     public SearchResultsView() {
         super();
@@ -58,8 +54,8 @@ public class SearchResultsView extends VerticalLayout {
         tabs.setHeight(-1, UNITS_PIXELS);
         addComponent(tabs);
 
-        ListKoulutusView koulutusList = new ListKoulutusView();
-        koulutusList.addListener(new Listener() {
+        setKoulutusList(new ListKoulutusView());
+        getKoulutusList().addListener(new Listener() {
             @Override
             public void componentEvent(Event event) {
                 fireEvent(event);
@@ -67,7 +63,7 @@ public class SearchResultsView extends VerticalLayout {
             }
         });
 
-        tabs.addTab(koulutusList, T("koulutukset"));//new EditKoulutusPerustiedotToinenAsteView(), T("koulutukset"));
+        tabs.addTab(getKoulutusList(), T("koulutukset"));//new EditKoulutusPerustiedotToinenAsteView(), T("koulutukset"));
         tabs.addTab(new ListHakukohdeViewImpl(), T("hakuryhmat"));
 
     }
@@ -75,4 +71,19 @@ public class SearchResultsView extends VerticalLayout {
     private String T(String key) {
         return _i18n.getMessage(key);
     }
+
+    /**
+     * @return the koulutusList
+     */
+    public ListKoulutusView getKoulutusList() {
+        return koulutusList;
+    }
+
+    /**
+     * @param koulutusList the koulutusList to set
+     */
+    public void setKoulutusList(ListKoulutusView koulutusList) {
+        this.koulutusList = koulutusList;
+    }
+ 
 }

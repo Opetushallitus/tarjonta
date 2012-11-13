@@ -12,4 +12,17 @@
         <instanceable>false</instanceable>
         <ajaxable>false</ajaxable>
     </portlet>
+    
+    <role-mapper>
+        <role-name>APP_TARJONTA_CRUD</role-name>
+        <role-link>APP_TARJONTA_CRUD</role-link>
+    </role-mapper>
+    <role-mapper>
+        <role-name>APP_TARJONTA_READ_UPDATE</role-name>
+        <role-link>APP_TARJONTA_READ_UPDATE</role-link>
+    </role-mapper>
+    <role-mapper>
+        <role-name>APP_TARJONTA_READ</role-name>
+        <role-link>APP_TARJONTA_READ</role-link>
+    </role-mapper>
 </liferay-portlet-app>

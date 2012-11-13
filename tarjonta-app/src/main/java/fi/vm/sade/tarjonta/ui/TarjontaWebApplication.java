@@ -42,8 +42,8 @@ import org.springframework.cache.support.SimpleCacheManager;
  * @author mlyly
  */
 @Configurable(preConstruction = true)
-public class TarjontaWebApplication extends AbstractSadeApplication {
-    
+public class TarjontaWebApplication extends TarjontaApplication {
+
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaWebApplication.class);
     private Window window;
     @Value("${tarjonta-app.dev.redirect:}")
@@ -51,32 +51,19 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
     @Value("${tarjonta-app.dev.theme:}")
     private String developmentTheme;
     @Autowired
-    private TarjontaModel tarjontaModel;
-    @Autowired
     private TarjontaAdminService tarjontaAdminService;
     @Autowired
     SimpleCacheManager _cacheManager;
-    
+
     @Override
-    public synchronized void init() {
-        super.init();
-        
+    protected void initApplication() {
         window = new Window("Valitse");
         setMainWindow(window);
-        
+
         developmentConfiguration();
         HorizontalLayout hl = new HorizontalLayout();
         window.addComponent(hl);
-        
-        Button yhteenvetoButton = new Button("Yhteenveto", new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                setTheme(developmentTheme);
-                window.addComponent(new ShowKoulutusView("Title ASDADADADADS", null));
-            }
-        });
-        hl.addComponent(yhteenvetoButton);
-        
+
         Button tarjontaButton = new Button("Tarjontaan", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -84,7 +71,7 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
             }
         });
         hl.addComponent(tarjontaButton);
-        
+
         Button hakuButton = new Button("Hakuihin", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -92,50 +79,34 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
             }
         });
         hl.addComponent(hakuButton);
-        
+
         Button xxxButton = new Button("Koulutuksen kuvailevat tiedot muokkaaminen", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 toKoulutusView();
             }
         });
-        
+
         hl.addComponent(xxxButton);
-        
-        Button initData = new Button("Luo testidata", new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                tarjontaAdminService.initSample(new String());
-            }
-        });
-        
-        hl.addComponent(initData);
     }
-    
+
     public void toTarjonta() {
         this.removeWindow(window);
         window = new TarjontaRootView();
         setMainWindow(window);
     }
-    
+
     public void toHaku() {
         this.removeWindow(window);
-        window = new HakuRootView(this);
+        window = new HakuRootView();
         setMainWindow(window);
     }
-    
+
     public void toKoulutusView() {
         this.removeWindow(window);
-        
+
         window = new Window();
         setMainWindow(window);
-
-        // Set default languages
-        tarjontaModel.getKoulutusPerustiedotModel().getOpetuskielet().add("uri: Englanti 5935#1");
-        tarjontaModel.getKoulutusPerustiedotModel().getOpetuskielet().add("uri: Ruotsi 5934#1");
-        
-        tarjontaModel.getKoulutusLisatiedotModel().getAmmattinimikkeet().add("uri: Ruotsi 5934#1");
-        
         EditKoulutusLisatiedotForm view = new EditKoulutusLisatiedotForm();
         window.addComponent(view);
     }
@@ -148,7 +119,7 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
             //set a development theme.
             setTheme(developmentTheme);
         }
-        
+
         if (developmentRedirect != null && developmentRedirect.length() > 0) {
             //This code block is only for making UI development little bit faster
             //Add the property to tarjonta-app.properties:
@@ -157,12 +128,12 @@ public class TarjontaWebApplication extends AbstractSadeApplication {
             if (developmentRedirect.equalsIgnoreCase("HAKU")) {
                 toHaku();
             }
-            
+
             if (developmentRedirect.equalsIgnoreCase("KOULUTUS") || developmentRedirect.equalsIgnoreCase("TARJONTA")) {
                 toTarjonta();
             }
         }
-        
+
     }
 
     /**

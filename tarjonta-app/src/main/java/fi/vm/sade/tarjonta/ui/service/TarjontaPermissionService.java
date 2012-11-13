@@ -13,27 +13,18 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui;
+package fi.vm.sade.tarjonta.ui.service;
 
-import com.vaadin.ui.Window;
-
-import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
-import fi.vm.sade.tarjonta.ui.view.HakuRootView;
+import fi.vm.sade.generic.service.PermissionService;
 
 /**
- * Main portlet application class for Haku management.
  *
- * @author markus
+ * @author Jani Wilén
  */
-public class HakuPortletApplication extends AbstractSadePortletApplication {
-    private Window window;
+public interface TarjontaPermissionService extends PermissionService {
 
-    @Override
-    public synchronized void init() {
-        super.init();
-
-        window = new HakuRootView();
-        setMainWindow(window);
-        setTheme("oph-app-tarjonta"); //include Vaadin Tree Table fix for Liferay
-    }
+    public static final String SERVICE = "APP_TARJONTA";
+    public static final String ROLE_CRUD = SERVICE + "_CRUD";
+    public static final String ROLE_RU = SERVICE + "_READ_UPDATE";
+    public static final String ROLE_R = SERVICE + "_READ";
 }
