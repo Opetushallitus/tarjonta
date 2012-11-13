@@ -215,10 +215,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         applicationOption.setIdentifier(identifier);
 
         // ApplicationOption/Title - insert koodisto uri only
-        List<ExtendedStringType> titles = applicationOption.getTitle();
-        ExtendedStringType title = new ExtendedStringType();
-        title.setValue(hakukohde.getHakukohdeNimi());
-        titles.add(title);
+        addHakukohdeNimi(hakukohde, applicationOption);
 
         // ApplicationOption/ApplicationSystemRef
         ApplicationSystemRefType applicationSystemRef = new ApplicationSystemRefType();
@@ -375,6 +372,13 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         marshal(LearningOpportunityInstanceType.class, instance);
 
         log.debug("marshalled KoulutusmoduuliToteutus, oid: " + toteutus.getOid());
+
+    }
+
+
+    private void addHakukohdeNimi(Hakukohde source, ApplicationOptionType target) {
+
+        target.setTitle(createCodeValue(CodeSchemeType.KOODISTO, source.getHakukohdeNimi()));
 
     }
 

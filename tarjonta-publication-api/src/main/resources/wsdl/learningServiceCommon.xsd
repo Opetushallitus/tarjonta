@@ -194,12 +194,13 @@
             </xs:element>
 
             <xs:element name="Title"
-                        type="tns:ExtendedStringType"
+                        type="tns:CodeValueType"
                         minOccurs="1"
-                        maxOccurs="unbounded">
+                        maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>
-                        Hakukohteen nimi, esim. Ensihoidon koulutusohjelma, yo
+                        Hakukohteen nimi, esim. Ensihoidon koulutusohjelma, yo. Nimet ovat
+                        koodistossa maariteltyja.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>

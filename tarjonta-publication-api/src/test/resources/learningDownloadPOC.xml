@@ -958,7 +958,10 @@
         <Identifier>776</Identifier>
 
         <!-- hakukohteen nimi -->
-        <Title lang="fi">Ensihoidon koulutusohjelma, yo</Title>
+        <Title>
+            <Code scheme="Koodisto">uri:hakukohde/776</Code>
+            <Label lang="fi">Ensihoidon koulutusohjelma, yo</Label>
+        </Title>
 
         <!-- viittaus hakuun johon tämä hakukohde kuuluu -->
         <ApplicationSystemRef>
@@ -1115,7 +1118,10 @@
         <Identifier>873</Identifier>
 
         <!-- hakukohteen nimi -->
-        <Title lang="fi">Sosiaali- ja terveysalan perustutkinto, pk</Title>
+        <Title>
+            <Code scheme="Koodisto">uri:hakukohde/876</Code>
+            <Label lang="fi">Sosiaali- ja terveysalan perustutkinto, pk</Label>
+        </Title>
 
         <!-- viittaus hakuun johon tämä hakukohde kuuluu -->
         <ApplicationSystemRef>
