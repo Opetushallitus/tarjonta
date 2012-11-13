@@ -35,12 +35,12 @@ public class TarjontaPortletApplication extends AbstractSadePortletApplication {
 
     @Override
     protected void registerListeners(Blackboard blackboard) {
-        //DEBUGSAWAY:LOG.debug("registerListeners()");
+       LOG.debug("registerListeners()");
     }
 
     @Override
     public synchronized void init() {
-        //DEBUGSAWAY:LOG.debug("init()");
+        LOG.debug("init()");
 
         super.init();
       

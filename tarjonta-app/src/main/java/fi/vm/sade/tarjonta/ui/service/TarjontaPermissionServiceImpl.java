@@ -18,6 +18,9 @@ package fi.vm.sade.tarjonta.ui.service;
 import fi.vm.sade.generic.service.AbstractPermissionService;
 import fi.vm.sade.generic.ui.portlet.security.User;
 import fi.vm.sade.tarjonta.ui.TarjontaApplication;
+import fi.vm.sade.tarjonta.ui.TarjontaWebApplication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,9 +30,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class TarjontaPermissionServiceImpl extends AbstractPermissionService implements TarjontaPermissionService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(TarjontaWebApplication.class);
+
     @Override
     protected User getUser() {
+        LOG.info("GET USER");
         if (TarjontaApplication.getInstance() != null) {
+
+            if (TarjontaApplication.getInstance().getUser() != null) {
+                LOG.info("USER OID : " + TarjontaApplication.getInstance().getUser().getOid());
+            }
             return TarjontaApplication.getInstance().getUser();
         }
 
