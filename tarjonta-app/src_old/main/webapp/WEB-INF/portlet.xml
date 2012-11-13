@@ -7,14 +7,14 @@
 
     <portlet>
         <description></description>
-        <portlet-name>TarjontaPortletApplication</portlet-name>
-        <display-name>TarjontaPortletApplication</display-name>
+        <portlet-name>TarjontaApplication</portlet-name>
+        <display-name>TarjontaApplication</display-name>
 
         <portlet-class>com.vaadin.terminal.gwt.server.ApplicationPortlet2</portlet-class>
 
         <init-param>
             <name>application</name>
-            <value>fi.vm.sade.tarjonta.ui.TarjontaPortletApplication</value>
+            <value>fi.vm.sade.tarjonta.ui.TarjontaApplication</value>
         </init-param>
 
         <supports>
@@ -25,8 +25,8 @@
         </supports>
 
         <portlet-info>
-            <title>TarjontaPortletApplication</title>
-            <short-title>TarjontaPortletApplication</short-title>
+            <title>TarjontaApplication</title>
+            <short-title>TarjontaApplication</short-title>
             <keywords></keywords>
         </portlet-info>
     </portlet>

@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
+import com.github.wolfie.blackboard.Blackboard;
 import com.vaadin.Application;
 import com.vaadin.ui.Window;
 import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
@@ -35,6 +36,12 @@ public class TarjontaApplication extends AbstractSadePortletApplication {
 
     public TarjontaApplication() {
         super();
+        LOG.info("TarjontaApplication()");
+    }
+
+    @Override
+    protected void registerListeners(Blackboard blackboard) {
+        LOG.info("registerListeners()");
     }
 
     @Override
