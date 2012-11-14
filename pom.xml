@@ -18,13 +18,11 @@
       <module>tarjonta-api</module>
       <module>tarjonta-publication-api</module>
       <module>tarjonta-enricher</module>
-      <!--
-      This module is outdated and not in use?? delete
-      <module>tarjonta-ui-widgets</module>
-      -->
       <module>tarjonta-service</module>
       <module>tarjonta-app</module>
+<!--
       <module>tarjonta-app-poc</module>
+-->
       <module>tarjonta-esb</module>
     </modules>
 
