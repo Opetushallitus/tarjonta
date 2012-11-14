@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
+ * See {@link PublicationDataService} for documentation.
  *
  * @author Jukka Raanamo
  */
@@ -44,6 +45,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QMonikielinenTeksti jom = new QMonikielinenTeksti("jatkoopintomahdollisuudet");
         QMonikielinenTeksti ak = new QMonikielinenTeksti("arviointikriteerit");
         QMonikielinenTeksti lkv = new QMonikielinenTeksti("loppukoevaatimukset");
+        QMonikielinenTeksti nimi = new QMonikielinenTeksti("nimi");
 
         // todo: filter only published
 
@@ -59,6 +61,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             leftJoin(toteutus.koulutusmoduuli, m).fetch().
             leftJoin(m.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
             leftJoin(m.jatkoOpintoMahdollisuudet, jom).fetch().leftJoin(jom.tekstis).fetch().
+            leftJoin(m.nimi, nimi).fetch().leftJoin(nimi.tekstis).fetch().
             list(toteutus);
     }
 

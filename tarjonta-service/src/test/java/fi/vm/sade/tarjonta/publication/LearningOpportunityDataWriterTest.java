@@ -170,10 +170,7 @@ public class LearningOpportunityDataWriterTest {
      */
     private LearningOpportunityDownloadDataType unmarshal() throws Exception {
 
-        //System.out.println("unmarshal: " + out.toString());
-
         return (LearningOpportunityDownloadData) unmarshal(new StringReader(out.toString()));
-
 
     }
 

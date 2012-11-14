@@ -184,6 +184,7 @@ public class TarjontaSampleData {
 
         Koulutusmoduuli m = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         m.setOid(randomOid("koulutusmoduuli"));
+        m.setNimi(createTeksti("Nimi (fi)", "Nimi (sv)", "Nimi (en)"));
         m.setKoulutusKoodi(randomKoodiUri("koulutus"));
         m.setEqfLuokitus(randomKoodiUri("eqf"));
         m.setKoulutusAste(randomKoodiUri("koulutusaste"));

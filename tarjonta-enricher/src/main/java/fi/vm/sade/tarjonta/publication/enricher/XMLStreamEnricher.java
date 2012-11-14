@@ -41,8 +41,17 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
- * Component that takes an XML stream as input and writes the
- * same stream to output enriching the content with registered handlers.
+ * <p>Since it has been chosen that several data values, used by Tarjonta
+ * Service, are actually centrally hosted in Koodisto Service, and only
+ * referenced from Tarjonta Service - the Tarjonta Service is unable to
+ * render complete XML of its own data but a secondary process is required
+ * to enrich this data with values from Koodisto. This class takes care of
+ * that process by reading the stream and invoking registered handlers to
+ * perform the actual enriching work.</p>
+ *
+ * <p>
+ * For usage examples, see unit tests e.g. XMLStreamEnricherTest
+ * </p>
  *
  * @author Jukka Raanamo
  */

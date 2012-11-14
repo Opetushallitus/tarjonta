@@ -248,23 +248,20 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             throw new Exception("KoulutusmoduuliTyyppi not supported: " + moduuli.getModuuliTyyppi());
         }
 
+        // LearningOpportunitySpecification/Name
+        addNimi(moduuli, specification);
+
         // LearningOpportunitySpecification/type
         specification.setType(LearningOpportunityTypeType.DEGREE_PROGRAMME);
 
         // LearningOpportunitySpecification/id
         specification.setId(putID(moduuli.getOid(), specification));
 
-        // LearningOpportunitySpecification/Name
-        // todo: how is the name formulated?
-
-        if (moduuli.getUlkoinenTunniste() != null) {
-            specification.setIdentifier(moduuli.getUlkoinenTunniste());
-        }
+        // LearningOpportunitySpecification/Identifier
+        addUlkoinenTunniste(moduuli, specification);
 
         // LearningOpportunitySpecification/OrganizationRef
-        OrganizationRefType organizationRef = new OrganizationRefType();
-        organizationRef.setOidRef(moduuli.getOmistajaOrganisaatioOid());
-        specification.setOrganizationRef(organizationRef);
+        addOrganisaatioRef(moduuli, specification);
 
         // LearningOpportunitySpecification/OfferedBy
         specification.setOfferedBy(null);
@@ -316,19 +313,13 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         instance.setId(putID(toteutus.getOid(), instance));
 
         // LearningOpportunityInstance/Identifier
-        if (toteutus.getUlkoinenTunniste() != null) {
-            instance.setIdentifier(toteutus.getUlkoinenTunniste());
-        }
+        addUlkoinenTunniste(toteutus, instance);
 
         // LearningOpportunityInstance/SpecificationRef
-        LearningOpportunitySpecificationRefType losRef = new LearningOpportunitySpecificationRefType();
-        losRef.setRef(getIDREF(toteutus.getKoulutusmoduuli().getOid()));
-        instance.setSpecificationRef(losRef);
+        addSpecificationRef(toteutus, instance);
 
         // LearningOpportunityInstance/OrganizationRef
-        OrganizationRefType orgRef = new OrganizationRefType();
-        orgRef.setOidRef(toteutus.getTarjoaja());
-        instance.setOrganizationRef(orgRef);
+        addOrganisaatioRef(toteutus, instance);
 
         // LearningOpportunityInstance/Prerequisite
         addPohjakoulutusvaatimus(toteutus, instance);
@@ -375,6 +366,51 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     }
 
+    private void addNimi(Koulutusmoduuli from, LearningOpportunitySpecificationType to) {
+
+        copyTexts(from.getNimi(), to.getName());
+
+    }
+
+    private void addUlkoinenTunniste(Koulutusmoduuli from, LearningOpportunitySpecificationType to) {
+
+        if (from.getUlkoinenTunniste() != null) {
+            to.setIdentifier(from.getUlkoinenTunniste());
+        }
+
+    }
+
+    private void addUlkoinenTunniste(KoulutusmoduuliToteutus from, LearningOpportunityInstanceType to) {
+
+        if (from.getUlkoinenTunniste() != null) {
+            to.setIdentifier(from.getUlkoinenTunniste());
+        }
+
+    }
+
+    private void addSpecificationRef(KoulutusmoduuliToteutus from, LearningOpportunityInstanceType to) {
+
+        LearningOpportunitySpecificationRefType losRef = new LearningOpportunitySpecificationRefType();
+        losRef.setRef(getIDREF(from.getKoulutusmoduuli().getOid()));
+        to.setSpecificationRef(losRef);
+
+    }
+
+    private void addOrganisaatioRef(Koulutusmoduuli from, LearningOpportunitySpecificationType to) {
+
+        OrganizationRefType organizationRef = new OrganizationRefType();
+        organizationRef.setOidRef(from.getOmistajaOrganisaatioOid());
+        to.setOrganizationRef(organizationRef);
+
+    }
+
+    private void addOrganisaatioRef(KoulutusmoduuliToteutus from, LearningOpportunityInstanceType to) {
+
+        OrganizationRefType orgRef = new OrganizationRefType();
+        orgRef.setOidRef(from.getTarjoaja());
+        to.setOrganizationRef(orgRef);
+
+    }
 
     private void addHakukohdeNimi(Hakukohde source, ApplicationOptionType target) {
 
@@ -946,31 +982,6 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         }
         return value;
     }
-
-
-    private static Calendar toCalendar(Date dateTime) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(dateTime);
-        return cal;
-    }
-
-    /**
-     * Unable to register this with Marshaller. Don't know if this is supported.
-     */
-    private static class CustomIDResolver extends IDResolver {
-
-        @Override
-        public Callable<?> resolve(String string, Class type) throws SAXException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public void bind(String string, Object o) throws SAXException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-    }
-
 
 }
 

@@ -99,6 +99,7 @@ public class TarjontaFixtures {
         m.setKoulutusala(randomUri("koulutusala"));
         m.setKoulutusohjelmaKoodi(randomUri("koulutusohjelma"));
         m.setKoulutusKoodi(randomUri("koulutusluokitus"));
+        m.setNimi(createText("Koulutusmoduulinimi (fi)", "Koulutusmoduulinimi (sv)", "Koulutusmoduulinimi (en)"));
 
         return m;
 
