@@ -506,6 +506,7 @@
             <xs:element name="YhteyshenkiloTyyppi" type="tns:YhteyshenkiloTyyppi" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="Koulutusaste" type="tns:KoodistoKoodiTyyppi"/>
             <xs:element name="Tarjoaja" type="xs:string"/>
+            <xs:element name="Nimi" type="tns:MonikielinenTekstiTyyppi" minOccurs="1" maxOccurs="1"/>
 
             <!-- Koulutuksen lisätiedot (additional information) -->
             <xs:element name="Ammattinimikkeet" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded" />

@@ -92,6 +92,7 @@ public final class EntityUtils {
         to.setOpetusmuoto(toKoodistoUriSet(from.getOpetusmuoto()));
         to.setKoulutuksenAlkamisPvm(from.getKoulutuksenAlkamisPaiva());
         to.setKoulutuslajis(toStringUriSet(from.getKoulutuslaji()));
+        to.setNimi(copyFields(from.getNimi(), new MonikielinenTeksti()));
 
         final KoulutuksenKestoTyyppi kesto = from.getKesto();
         to.setSuunniteltuKesto(kesto.getYksikko(), kesto.getArvo());
@@ -124,17 +125,19 @@ public final class EntityUtils {
         toKoulutus.setSuunniteltuKesto(fromKoulutus.getKesto().getYksikko(), fromKoulutus.getKesto().getYksikko());
         toKoulutus.setOpetuskieli(toKoodistoUriSet(fromKoulutus.getOpetuskieli()));
         toKoulutus.setKoulutuslajis(toKoodistoUriSet(fromKoulutus.getKoulutuslaji()));
+        toKoulutus.setTarjoaja(fromKoulutus.getTarjoaja());
+        toKoulutus.setNimi(copyFields(fromKoulutus.getNimi(), new MonikielinenTeksti()));
+
+        copyLisatiedotFields(fromKoulutus, toKoulutus);
+
         if (fromKoulutus.getKoulutusaste() != null) {
             toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
         }
-        toKoulutus.setTarjoaja(fromKoulutus.getTarjoaja());
 
         for (YhteyshenkiloTyyppi henkiloFrom : fromKoulutus.getYhteyshenkilo()) {
-
             Yhteyshenkilo henkiloTo = new Yhteyshenkilo();
             copyFields(henkiloFrom, henkiloTo);
             toKoulutus.addYhteyshenkilo(henkiloTo);
-
         }
 
         Set<WebLinkki> toLinkkis = new HashSet<WebLinkki>();
@@ -146,7 +149,6 @@ public final class EntityUtils {
         } // else, set is empty which will clear all previous links
         toKoulutus.setLinkkis(toLinkkis);
 
-        copyLisatiedotFields(fromKoulutus, toKoulutus);
     }
 
     /**
