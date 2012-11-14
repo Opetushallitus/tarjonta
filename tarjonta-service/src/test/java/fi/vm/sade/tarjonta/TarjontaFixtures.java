@@ -74,7 +74,6 @@ public class TarjontaFixtures {
 
     }
 
-
     public Yhteyshenkilo createYhteyshenkilo(String oid) {
 
         Yhteyshenkilo h = new Yhteyshenkilo();
@@ -111,7 +110,7 @@ public class TarjontaFixtures {
         cal.add(Calendar.YEAR, 1);
 
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus(null);
-        t.setNimi("Simple Tutkinto-Ohjelma toteutus");
+        t.setNimi(createText("Simple Tutkinto-Ohjelma toteutus", null, null));
         t.setOid(randomOid("koulutusmoduulitotetutus"));
         t.setKoulutuksenAlkamisPvm(cal.getTime());
         t.setMaksullisuus(null);
@@ -128,7 +127,7 @@ public class TarjontaFixtures {
         cal.add(Calendar.YEAR, 1);
 
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus(null);
-        t.setNimi("Simple Tutkinto-Ohjelma toteutus");
+        t.setNimi(createText("Simple Tutkinto-Ohjelma toteutus", null, null));
         t.setOid(komotoOid);
         t.setKoulutuksenAlkamisPvm(cal.getTime());
         t.setMaksullisuus(null);
@@ -139,7 +138,6 @@ public class TarjontaFixtures {
         return t;
 
     }
-
 
     public Yhteyshenkilo createSimpleYhteyshenkilo(String oid) {
         Yhteyshenkilo h = new Yhteyshenkilo();
@@ -214,7 +212,7 @@ public class TarjontaFixtures {
         haku.setKohdejoukkoUri(randomUri("haunkohdejoukko"));
         haku.setHakutapaUri(randomUri("hakutapa"));
         haku.setHakutyyppiUri(randomUri("hakutyyppi"));
-        haku.setTila(TarjontaTila.LUONNOS.name()); //KoodistoContract.TarjontaTilat.SUUNNITTELUSSA);
+        haku.setTila(TarjontaTila.LUONNOS);
         return haku;
     }
 
@@ -361,6 +359,24 @@ public class TarjontaFixtures {
 
     private String randomUri(String context) {
         return "http://" + context + "/" + System.currentTimeMillis() + "-" + Math.abs(random.nextInt());
+    }
+
+    public static MonikielinenTeksti createText(String textFi, String textSv, String textEn) {
+
+        MonikielinenTeksti teksti = new MonikielinenTeksti();
+
+        if (textFi != null) {
+            teksti.addTekstiKaannos("fi", textFi);
+        }
+        if (textSv != null) {
+            teksti.addTekstiKaannos("sv", textSv);
+        }
+        if (textEn != null) {
+            teksti.addTekstiKaannos("en", textEn);
+        }
+
+        return teksti;
+
     }
 
 }

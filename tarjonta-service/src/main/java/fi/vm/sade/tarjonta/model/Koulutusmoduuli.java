@@ -359,23 +359,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     *
-     * @return
-     */
-    public String getKoulutusNimi() {
-        return getNimi();
-    }
-
-    /**
-     * If the value comes from Tilastokeskus - should we group setting the code and name?
-     *
-     * @param koulutusNimi
-     */
-    public void setKoulutusNimi(String koulutusNimi) {
-        setNimi(koulutusNimi);
-    }
-
-    /**
      * <p>
      * Pääaineen koulutusohjelman tai vastaavan nimi. Tämä attribuutti on pätevä silloin kun {@link Koulutusmoduuli#moduuliTyyppi}
      * on {@link KoulutusmoduuliTyyppi#TUTKINTO_OHJELMA}.
@@ -440,7 +423,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         return laajuusYksikko;
     }
 
-
     /**
      * Koulutuksen laajuus. yksikkoUri on Koodisto uri joka kertoo laajuuden yksikon kuten "vuosi", "kuukausi" "opintojakso".
      * Arvo on arvo edellämainitussa yksikössä.
@@ -453,7 +435,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         laajuusArvo = arvo;
     }
 
-
     /**
      * Tutkintonimike, esim. "filosofian maisteri". Arvo koodisto uri?
      *
@@ -462,7 +443,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     public String getTutkintonimike() {
         return tutkintonimike;
     }
-
 
     /**
      * Tutkintonimike Koodisto uri:na.

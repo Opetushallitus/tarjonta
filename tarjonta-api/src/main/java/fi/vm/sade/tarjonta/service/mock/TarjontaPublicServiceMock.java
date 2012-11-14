@@ -1,31 +1,12 @@
 package fi.vm.sade.tarjonta.service.mock;
 
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
 
 public class TarjontaPublicServiceMock implements TarjontaPublicService {
 
@@ -101,7 +82,7 @@ public class TarjontaPublicServiceMock implements TarjontaPublicService {
 
         return result;
     }
-    
+
     @Override
     public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
         LOG.info("haeKoulutukset(): kysely=" + kysely);

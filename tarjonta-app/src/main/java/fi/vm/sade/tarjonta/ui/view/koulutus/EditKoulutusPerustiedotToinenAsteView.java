@@ -37,7 +37,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.tarjonta.service.GenericFault;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenTila;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
@@ -109,7 +109,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
 //        if (koulutusPerustiedotModel.getTila() != null) {
 //            documentStatus = UiUtil.label(header, T("tila." + koulutusPerustiedotModel.getTila().name())); //show document status
 //        } else {
-//           
+//
 //        }
         documentStatus = UiUtil.label(layout, ""); //show document status
         documentStatus.setSizeUndefined();
@@ -158,14 +158,14 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                save(form, KoulutuksenTila.LUONNOS);
+                save(form, TarjontaTila.LUONNOS);
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
         addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                save(form, KoulutuksenTila.VALMIS);
+                save(form, TarjontaTila.VALMIS);
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
         final Button.ClickListener clickListener = new Button.ClickListener() {
@@ -276,7 +276,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         return koulutusPerustiedotModel.isLoaded() && isModified();
     }
 
-    private void save(Form form, KoulutuksenTila tila) {
+    private void save(Form form, TarjontaTila tila) {
         try {
             errorView.resetErrors();
             form.commit();

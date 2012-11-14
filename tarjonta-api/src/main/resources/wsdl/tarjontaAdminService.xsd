@@ -2,11 +2,11 @@
 <xs:schema elementFormDefault="unqualified"
            targetNamespace="http://service.tarjonta.sade.vm.fi/types" version="1.0"
            xmlns:tns="http://service.tarjonta.sade.vm.fi/types"
-           xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types/tarjonta"
+           xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
-    <xs:import namespace="http://service.tarjonta.sade.vm.fi/types/tarjonta" schemaLocation="tarjonta.xsd" />
+    <xs:import namespace="http://service.tarjonta.sade.vm.fi/types" schemaLocation="tarjonta.xsd" />
 
 
     <xs:element name="genericFaultInfo" type="tarjonta:GenericFaultInfo"></xs:element>
@@ -25,7 +25,7 @@
 
     <xs:element name="paivitaKoulutus" type="tns:PaivitaKoulutusTyyppi"/>
     <xs:element name="paivitaKoulutusVastaus" type="tns:PaivitaKoulutusVastausTyyppi"/>poistaKoulutusVasta
-    
+
     <xs:element name="lisaaKoulutusmoduuli" type="tns:LisaaKoulutusmoduuliTyyppi"/>
     <xs:element name="lisaaKoulutusmoduuliVastaus" type="tns:LisaaKoulutusmoduuliVastausTyyppi"/>
 
@@ -145,7 +145,7 @@
 
     <xs:complexType name="PaivitaKoulutusVastausTyyppi">
     </xs:complexType>
-    
+
     <xs:complexType name="LisaaKoulutusmoduuliTyyppi">
         <xs:sequence>
             <xs:element name="koulutusmoduuli" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1" maxOccurs="1"/>

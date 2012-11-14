@@ -2,28 +2,28 @@
 <xs:schema elementFormDefault="unqualified"
            targetNamespace="http://service.tarjonta.sade.vm.fi/types/koodisto" version="1.0"
            xmlns:tns="http://service.tarjonta.sade.vm.fi/types/koodisto"
-           xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types/tarjonta"
+           xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
     <xs:import namespace="http://service.tarjonta.sade.vm.fi/types/koodisto" schemaLocation="tarjontaKoodisto.xsd" />
-    <xs:import namespace="http://service.tarjonta.sade.vm.fi/types/tarjonta" schemaLocation="tarjonta.xsd" />
+    <xs:import namespace="http://service.tarjonta.sade.vm.fi/types" schemaLocation="tarjonta.xsd" />
 
 
     <xs:element name="listaaKoulutuskooditHaku" type="tns:KoulutusHakuTyyppi" />
     <xs:element name="listaaKoulutuskooditVastaus" type="tns:KoulutuskoodiVastausTyyppi" />
-    
+
     <xs:element name="listaaKoulutuskoodiHaku" type="tns:KoodiHakuTyyppi" />
     <xs:element name="listaaKoulutuskoodiVastaus" type="tns:KoulutuskoodiTyyppi" />
-    
+
     <xs:element name="listaaKoulutusasteetHaku" type="tns:KoulutusHakuTyyppi" />
     <xs:element name="listaaKoulutusasteetVastaus" type="tns:KoulutusasteVastausTyyppi" />
-   
+
     <xs:element name="listaaKoulutusohjelmatHaku" type="tns:KoulutusHakuTyyppi" />
     <xs:element name="listaaKoulutusohjelmatVastaus" type="tns:KoulutusohjelmaVastausTyyppi" />
-    
+
     <xs:element name="listaaKoulutusohjelmaHaku" type="tns:KoodiHakuTyyppi" />
     <xs:element name="listaaKoulutusohjelmaVastaus" type="tns:KoulutusohjelmaTyyppi" />
-   
+
     <xs:complexType name="KoulutusHakuTyyppi">
         <xs:sequence>
             <xs:element name="Koulutuskoodi"
@@ -46,7 +46,7 @@
                          type="tns:KoodiTyyppi"
                          maxOccurs="1"
                          minOccurs="0" />
-            
+
         </xs:sequence>
     </xs:complexType>
 
@@ -54,7 +54,7 @@
         <xs:sequence>
             <xs:element name="Koulutuskoodi" type="tns:KoulutuskoodiTyyppi"
                         minOccurs="0" maxOccurs="unbounded"/>
-  
+
         </xs:sequence>
     </xs:complexType>
 
@@ -62,7 +62,7 @@
         <xs:sequence>
             <xs:element name="Koulutusaste" type="tns:KoulutusasteTyyppi"
                         minOccurs="0" maxOccurs="unbounded"/>
-  
+
         </xs:sequence>
     </xs:complexType>
 
@@ -70,11 +70,11 @@
         <xs:sequence>
             <xs:element name="Koulutusohjelma" type="tns:KoulutusohjelmaTyyppi"
                         minOccurs="0" maxOccurs="unbounded"/>
-  
+
         </xs:sequence>
     </xs:complexType>
-    
-    
+
+
     <xs:complexType name="KoodiTyyppi">
         <xs:sequence>
             <xs:element name="KoodistoUri"
@@ -85,10 +85,10 @@
                         type="xs:int"
                         maxOccurs="1"
                         minOccurs="1" />
-  
+
         </xs:sequence>
     </xs:complexType>
-      
+
     <xs:complexType name="KoodiHakuTyyppi">
         <xs:sequence>
              <xs:element name="KieliKoodi"
@@ -107,7 +107,7 @@
                         type="xs:int"
                         maxOccurs="1"
                         minOccurs="1" />
-  
+
         </xs:sequence>
     </xs:complexType>
 </xs:schema>

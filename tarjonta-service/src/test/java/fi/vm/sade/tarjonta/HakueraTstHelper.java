@@ -2,9 +2,8 @@ package fi.vm.sade.tarjonta;
 
 import fi.vm.sade.tarjonta.dao.impl.HakuDAOImpl;
 import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.KoodistoContract;
-import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
-import fi.vm.sade.tarjonta.service.types.dto.SearchCriteriaDTO;
+import fi.vm.sade.tarjonta.service.types.HakueraSimpleTyyppi;
+import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,12 +39,12 @@ public class HakueraTstHelper {
         h.setKoulutuksenAlkamiskausiUri(alkamisKausi);
         h.setKohdejoukkoUri(kohdejoukko);
         h.setHakutapaUri(hakutapa);
-        h.setTila(KoodistoContract.TarjontaTilat.SUUNNITTELUSSA);
+        h.setTila(fi.vm.sade.tarjonta.model.TarjontaTila.LUONNOS);
         return dao.insert(h);
     }
 
-    public SearchCriteriaDTO criteria(boolean paattyneet, boolean meneillaan, boolean tuleva, String lang) {
-        SearchCriteriaDTO criteria = new SearchCriteriaDTO();
+    public SearchCriteriaType criteria(boolean paattyneet, boolean meneillaan, boolean tuleva, String lang) {
+        SearchCriteriaType criteria = new SearchCriteriaType();
         criteria.setPaattyneet(paattyneet);
         criteria.setMeneillaan(meneillaan);
         criteria.setTulevat(tuleva);
@@ -53,7 +52,7 @@ public class HakueraTstHelper {
         return criteria;
     }
 
-    public void assertHakueraSimpleDTO(Haku h, HakueraSimpleDTO dto) {
+    public void assertHakueraSimpleTyyppi(Haku h, HakueraSimpleTyyppi dto) {
         assertEquals(h.getOid(), dto.getOid());
         assertEquals(h.getNimiFi(), dto.getNimiFi());
         assertEquals(h.getNimiSv(), dto.getNimiSv());

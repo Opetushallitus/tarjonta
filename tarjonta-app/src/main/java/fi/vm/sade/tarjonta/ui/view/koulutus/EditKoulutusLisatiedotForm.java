@@ -28,7 +28,7 @@ import fi.vm.sade.generic.ui.component.OphRichTextArea;
 import fi.vm.sade.generic.ui.component.OphTokenField;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenTila;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -136,7 +136,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
             @Override
             public void buttonClick(ClickEvent event) {
                 try {
-                    _presenter.saveKoulutus(KoulutuksenTila.LUONNOS);
+                    _presenter.saveKoulutus(TarjontaTila.LUONNOS);
                 } catch (ExceptionMessage ex) {
                     LOG.error("Failed to save.", ex);
                     getWindow().showNotification("FAILED: " + ex);
@@ -147,7 +147,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
             @Override
             public void buttonClick(ClickEvent event) {
                 try {
-                    _presenter.saveKoulutus(KoulutuksenTila.VALMIS);
+                    _presenter.saveKoulutus(TarjontaTila.VALMIS);
                 } catch (ExceptionMessage ex) {
                     LOG.error("Failed to save.", ex);
                     getWindow().showNotification("FAILED: " + ex);

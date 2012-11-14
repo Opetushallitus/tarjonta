@@ -20,7 +20,6 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HaunTila;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
@@ -68,7 +67,9 @@ public class TarjontaSampleData {
         //
         toteutus = createKoulutusmoduuliToteutus();
         toteutus.setKoulutusmoduuli(moduuli);
-        toteutus.setNimi("Muu koulutus, Tohtorintutkinto");
+        toteutus.setNimi(createTeksti("Muu koulutus, Tohtorintutkinto (fi)",
+            "Muu koulutus, Tohtorintutkinto (sv)",
+            "Muu koulutus, Tohtorintutkinto (en)"));
         toteutus.setTarjoaja("1.2.246.562.5.73962414165"); //Kontulan peruskoulu luokalla
         toteutus = koulutusmoduuliToteutusDAO.insert(toteutus);
 
@@ -87,7 +88,9 @@ public class TarjontaSampleData {
         //
         toteutus = createKoulutusmoduuliToteutus();
         toteutus.setKoulutusmoduuli(moduuli);
-        toteutus.setNimi("Kulttuuriala, Ylempi korkeakoulututkinto");
+        toteutus.setNimi(createTeksti("Kulttuuriala, Ylempi korkeakoulututkinto",
+            "Kulttuuriala, Ylempi korkeakoulututkinto (sv)",
+            "Kulttuuriala, Ylempi korkeakoulututkinto (en)"));
         toteutus.setTarjoaja("1.2.246.562.5.58521633737");//Markuksen koulu luokalla
         toteutus = koulutusmoduuliToteutusDAO.insert(toteutus);
 
@@ -128,7 +131,7 @@ public class TarjontaSampleData {
         h.setNimiFi(nimi);
         h.setOid(randomOid("haku"));
         h.setSijoittelu(true);
-        h.setTila(HaunTila.VALMIS.name());
+        h.setTila(TarjontaTila.VALMIS);
 
         return h;
 
@@ -215,7 +218,7 @@ public class TarjontaSampleData {
         t.addAvainsana(new KoodistoUri(randomKoodiUri("avainsana")));
         t.addAvainsana(new KoodistoUri(randomKoodiUri("avainsana")));
         t.addAvainsana(new KoodistoUri(randomKoodiUri("avainsana")));
-        t.setNimi("Demonimi " + System.currentTimeMillis());
+        t.setNimi(createTeksti("Koulutus (fi)", "Koulutus (sv)", "Koulutus (en)"));
         t.setUlkoinenTunniste("KMT637832.3");
         t.setPohjakoulutusvaatimus(randomKoodiUri("pohjakoulutusvaatimus"));
         t.setSuunniteltuKesto(randomKoodiUri("koulutuskesto"), "6+2");

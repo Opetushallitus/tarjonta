@@ -2,27 +2,12 @@ package fi.vm.sade.tarjonta.service.mock;
 
 import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.*;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebParam.Mode;
-import javax.jws.WebResult;
-import javax.xml.ws.Holder;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
 
 public class TarjontaAdminServiceMock implements TarjontaAdminService {
 
@@ -80,7 +65,7 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    
+
 
     private void initDefValues() {
         HakuTyyppi haku = new HakuTyyppi();
@@ -125,7 +110,7 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
 	@Override
 	public void poistaKoulutus(String koulutusOid) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

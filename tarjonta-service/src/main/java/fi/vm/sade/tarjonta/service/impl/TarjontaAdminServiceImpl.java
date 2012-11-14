@@ -30,17 +30,12 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -89,7 +84,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private TarjontaSampleData sampleData;
 
     @Override
-    public fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi paivitaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
+    public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
 
         Haku foundHaku = hakuBusinessService.findByOid(hakuDto.getOid());
         if (foundHaku != null) {
@@ -142,26 +137,26 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakukohde.setId(hakukohdeTemp.get(0).getId());
         hakukohde.setVersion(hakukohdeTemp.get(0).getVersion());
         Haku haku  = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
-        
+
         hakukohde.setHaku(haku);
         hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdePaivitys.getHakukohteenKoulutusOidit(), hakukohde));
-        
+
         hakukohdeDAO.update(hakukohde);
-        
-        
+
+
         return hakukohdePaivitys;
     }
 
-  
+
     @Override
-    public fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi lisaaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
+    public HakuTyyppi lisaaHaku(HakuTyyppi hakuDto) {
         Haku haku = conversionService.convert(hakuDto, Haku.class);
         haku = hakuBusinessService.save(haku);
         return conversionService.convert(haku, HakuTyyppi.class);
     }
 
     @Override
-    public void poistaHaku(fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi hakuDto) {
+    public void poistaHaku(HakuTyyppi hakuDto) {
 
         Haku haku = hakuBusinessService.findByOid(hakuDto.getOid());
 

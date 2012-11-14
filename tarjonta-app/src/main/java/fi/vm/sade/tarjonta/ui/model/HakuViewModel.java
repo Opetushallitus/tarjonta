@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HaunNimi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.SisaisetHakuAjat;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HaunTila;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaunNimi;
+import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 
 /**
@@ -45,7 +45,7 @@ public class HakuViewModel extends BaseUIViewModel {
     private int hakuvuosi;
 
     private String koulutuksenAlkamisKausi;
-    
+
     private int koulutuksenAlkamisvuosi;
 
     private String haunKohdejoukko;
@@ -73,14 +73,14 @@ public class HakuViewModel extends BaseUIViewModel {
     private String nimiEn;
 
     private boolean hakuValmis;
-    
+
     private HakuTyyppi hakuDto;
-    
+
     public HakuViewModel() {
         super();
         hakuDto = new HakuTyyppi();
     }
-    
+
     public HakuViewModel(HakuTyyppi hakuDto) {
         super();
         this.hakuDto = hakuDto;
@@ -91,11 +91,11 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the hakuOid
      */
     public String getHakuOid() {
-        
+
         this.hakuOid = hakuDto.getOid();
         return hakuOid;
     }
-        
+
 
     /**
      * @param hakuOid the hakuOid to set
@@ -126,7 +126,7 @@ public class HakuViewModel extends BaseUIViewModel {
      */
     public String getHakukausi() {
         hakukausi = hakuDto.getHakukausiUri();
-        return hakukausi; 
+        return hakukausi;
     }
 
     /**
@@ -209,7 +209,7 @@ public class HakuViewModel extends BaseUIViewModel {
     	for (HakuaikaViewModel curHA :getSisaisetHakuajat()) {
     		if (curHA.getAlkamisPvm() == null) {
     			continue;
-    		} 
+    		}
     		if (alkamisPvm == null || curHA.getAlkamisPvm().before(alkamisPvm)) {
     			alkamisPvm = curHA.getAlkamisPvm();
     		}
@@ -233,7 +233,7 @@ public class HakuViewModel extends BaseUIViewModel {
     	for (HakuaikaViewModel curHA :getSisaisetHakuajat()) {
     		if (curHA.getPaattymisPvm() == null) {
     			continue;
-    		} 
+    		}
     		if (paattymisPvm == null || curHA.getPaattymisPvm().after(paattymisPvm)) {
     			paattymisPvm = curHA.getPaattymisPvm();
     		}
@@ -290,12 +290,12 @@ public class HakuViewModel extends BaseUIViewModel {
         }
         sisaisetHakuajat.clear();
         for (SisaisetHakuAjat curHakuaika : hakuDto.getSisaisetHakuajat()) {
-            sisaisetHakuajat.add(new HakuaikaViewModel(curHakuaika));    
+            sisaisetHakuajat.add(new HakuaikaViewModel(curHakuaika));
         }
 
         return sisaisetHakuajat;
     }
-    
+
 
     /**
      * @param sisaisetHakuajat the sisaisethakuajat to set
@@ -393,8 +393,8 @@ public class HakuViewModel extends BaseUIViewModel {
      */
     public boolean isHakuValmis() {
         if (hakuDto.getHaunTila() != null
-                && (hakuDto.getHaunTila().value().equals(HaunTila.VALMIS.value())
-                        || hakuDto.getHaunTila().value().equals(HaunTila.JULKAISTU.value()))) {
+                && (hakuDto.getHaunTila().value().equals(TarjontaTila.VALMIS.value())
+                        || hakuDto.getHaunTila().value().equals(TarjontaTila.JULKAISTU.value()))) {
             hakuValmis = true;
         } else {
             hakuValmis = false;
@@ -406,10 +406,10 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param hakuValmis the hakuValmis to set
      */
     public void setHakuValmis(boolean hakuValmis) {
-        hakuDto.setHaunTila(hakuValmis ? HaunTila.VALMIS : HaunTila.LUONNOS);
+        hakuDto.setHaunTila(hakuValmis ? TarjontaTila.VALMIS : TarjontaTila.LUONNOS);
         this.hakuValmis = hakuValmis;
     }
-   
+
     @Override
     public String toString() {
         if (I18N.getLocale() != null) {
@@ -419,7 +419,7 @@ public class HakuViewModel extends BaseUIViewModel {
         }
     }
 
-  
+
 
     @Override
     public boolean equals(Object obj) {
@@ -438,14 +438,14 @@ public class HakuViewModel extends BaseUIViewModel {
     @Override
     public int hashCode() {
         int hash = 5;
-        
+
         hash = 97 * hash + (this.getHakuOid() != null ? this.getHakuOid().hashCode() : 0);
-        
+
         return hash;
     }
-    
-    
-    
+
+
+
     /**
      * @return the koulutuksenAlkamisvuosi
      */
@@ -492,7 +492,7 @@ public class HakuViewModel extends BaseUIViewModel {
             hNimi.setNimi(nimi);
             hakuDto.getHaunKielistetytNimet().add(hNimi);
         }
-        
+
     }
 
 

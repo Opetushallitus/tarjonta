@@ -29,7 +29,7 @@ import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;

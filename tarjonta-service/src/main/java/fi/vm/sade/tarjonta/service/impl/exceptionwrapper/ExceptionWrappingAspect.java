@@ -8,7 +8,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import fi.vm.sade.generic.service.exception.AbstractFaultWrapper;
 import fi.vm.sade.generic.service.exception.SadeBusinessException;
 import fi.vm.sade.tarjonta.service.GenericFault;
-import fi.vm.sade.tarjonta.service.types.tarjonta.GenericFaultInfo;
+import fi.vm.sade.tarjonta.service.types.GenericFaultInfo;
 
 @Aspect
 public class ExceptionWrappingAspect extends AbstractFaultWrapper<GenericFault> {

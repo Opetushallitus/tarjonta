@@ -2,10 +2,10 @@
 <xs:schema elementFormDefault="unqualified"
            targetNamespace="http://service.tarjonta.sade.vm.fi/types" version="1.0"
            xmlns:tns="http://service.tarjonta.sade.vm.fi/types"
-           xmlns:tnsh="http://service.tarjonta.sade.vm.fi/types/dto"
+           xmlns:tnsh="http://service.tarjonta.sade.vm.fi/types"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <xs:import namespace="http://service.tarjonta.sade.vm.fi/types/dto" schemaLocation="dto.xsd" />
+    <xs:import namespace="http://service.tarjonta.sade.vm.fi/types" schemaLocation="tarjonta.xsd" />
 
     <xs:element name="findAll" type="tns:FindAll" />
     <xs:element name="findAllResponse" type="tns:FindAllResponse" />
@@ -18,49 +18,49 @@
 
     <xs:complexType name="FindAll">
         <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="searchCriteria" type="tnsh:searchCriteriaDTO" />
+            <xs:element minOccurs="1" maxOccurs="1" name="searchCriteria" type="tnsh:SearchCriteriaType" />
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="FindAllResponse">
         <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="response" type="tnsh:hakueraSimpleDTO" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="response" type="tnsh:HakueraSimpleTyyppi" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="CreateHakuera">
         <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="hakuera" type="tnsh:hakueraDTO" />
+            <xs:element minOccurs="1" maxOccurs="1" name="hakuera" type="tnsh:HakueraTyyppi" />
         </xs:sequence>
     </xs:complexType>
-	
-	<xs:complexType name="CreateHakueraResponse">
+
+    <xs:complexType name="CreateHakueraResponse">
         <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="hakueraResponse" type="tnsh:hakueraDTO" />
+            <xs:element minOccurs="1" maxOccurs="1" name="hakueraResponse" type="tnsh:HakueraTyyppi" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="UpdateHakuera">
         <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="hakuera" type="tnsh:hakueraDTO" />
+            <xs:element minOccurs="1" maxOccurs="1" name="hakuera" type="tnsh:HakueraTyyppi" />
         </xs:sequence>
     </xs:complexType>
-	
-	<xs:complexType name="UpdateHakueraResponse">
+
+    <xs:complexType name="UpdateHakueraResponse">
         <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="hakueraResponse" type="tnsh:hakueraDTO" />
+            <xs:element minOccurs="1" maxOccurs="1" name="hakueraResponse" type="tnsh:HakueraTyyppi" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="FindByOid">
         <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="oidString" type="tnsh:oidString" />
+            <xs:element minOccurs="1" maxOccurs="1" name="oidString" type="tnsh:OidTyyppi" />
         </xs:sequence>
     </xs:complexType>
-	
-	<xs:complexType name="FindByOidResponse">
+
+    <xs:complexType name="FindByOidResponse">
         <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="findByOidResponse" type="tnsh:hakueraDTO" />
+            <xs:element minOccurs="1" maxOccurs="1" name="findByOidResponse" type="tnsh:HakueraTyyppi" />
         </xs:sequence>
     </xs:complexType>
 

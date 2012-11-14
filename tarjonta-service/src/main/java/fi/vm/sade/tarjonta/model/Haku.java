@@ -72,15 +72,15 @@ public class Haku extends BaseEntity {
     @NotNull
     @Column(name = "hakukausi_vuosi")
     private Integer hakukausiVuosi;
-    
+
     @NotNull
     @Column(name = "koulutuksen_alkamiskausi")
     private String koulutuksenAlkamiskausiUri;
-    
+
     @NotNull
     @Column(name = "koulutuksen_alkamisvuosi")
     private Integer koulutuksenAlkamisVuosi;
-    
+
     @Column(name = "haun_tunniste")
     private String haunTunniste;
 
@@ -107,7 +107,8 @@ public class Haku extends BaseEntity {
     private String hakulomakeUrl;
 
     @NotNull
-    private String tila;
+    @Enumerated(EnumType.STRING)
+    private TarjontaTila tila;
 
     @OneToMany
     private Set<Hakukohde> hakukohdes = new HashSet<Hakukohde>();
@@ -281,19 +282,19 @@ public class Haku extends BaseEntity {
 
     /**
      * Returns current state. Value is a Koodisto uri.
-     * 
+     *
      * @return the tila
      */
-    public String getTila() {
+    public TarjontaTila getTila() {
         return tila;
     }
 
     /**
      * Set state of this Haku. Value is a Koodisto uri.
-     * 
+     *
      * @param tila the tila to set
      */
-    public void setTila(String tila) {
+    public void setTila(TarjontaTila tila) {
         this.tila = tila;
     }
 

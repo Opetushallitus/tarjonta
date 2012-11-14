@@ -22,6 +22,7 @@ package fi.vm.sade.tarjonta.model;
 public enum TarjontaTila {
 
     LUONNOS,
-    VALMIS;
+    VALMIS,
+    JULKAISTU
 }
 

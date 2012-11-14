@@ -17,8 +17,11 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
-import fi.vm.sade.tarjonta.service.types.tarjonta.*;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaunNimi;
+import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 import java.util.List;
 
 /**
@@ -41,7 +44,7 @@ public class HakuFromDTOConverter extends AbstractToDomainConverter<HakuTyyppi, 
         m.setKoulutuksenAlkamiskausiUri(s.getKoulutuksenAlkamisKausiUri());
         m.setKoulutuksenAlkamisVuosi(s.getKoulutuksenAlkamisVuosi());
         m.setSijoittelu(s.isSijoittelu());
-        m.setTila(s.getHaunTila().value());
+        m.setTila(EntityUtils.convertTila(s.getHaunTila()));
         m.setHaunTunniste(s.getHaunTunniste());
         convertSisaisetHaunAlkamisAjat(m, s.getSisaisetHakuajat());
         return m;
@@ -56,7 +59,7 @@ public class HakuFromDTOConverter extends AbstractToDomainConverter<HakuTyyppi, 
         }
         return mt;
     }
-    
+
     private void convertSisaisetHaunAlkamisAjat(Haku mm, List<SisaisetHakuAjat> sisAjat) {
         if (sisAjat != null) {
         	for (SisaisetHakuAjat curHA : sisAjat) {
@@ -67,5 +70,5 @@ public class HakuFromDTOConverter extends AbstractToDomainConverter<HakuTyyppi, 
         		mm.addHakuaika(aika);
         	}
         }
-    } 
+    }
 }

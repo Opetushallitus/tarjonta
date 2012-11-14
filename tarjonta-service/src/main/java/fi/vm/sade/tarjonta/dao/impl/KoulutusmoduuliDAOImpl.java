@@ -21,6 +21,7 @@ import com.mysema.query.types.Expression;
 import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 
@@ -64,10 +65,10 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         BooleanExpression oidEq = ylamoduuli.oid.eq(oid);
 
         return (List<Koulutusmoduuli>) from(moduuli).
-                join(moduuli.sisaltyvyysList, sisaltyvyys).
-                join(sisaltyvyys.ylamoduuli, ylamoduuli).
-                where(oidEq).
-                list(moduuli);
+            join(moduuli.sisaltyvyysList, sisaltyvyys).
+            join(sisaltyvyys.ylamoduuli, ylamoduuli).
+            where(oidEq).
+            list(moduuli);
 
     }
 
@@ -76,28 +77,30 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
         QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
         BooleanExpression whereExpr = null;
+        QMonikielinenTeksti nimi = QMonikielinenTeksti.monikielinenTeksti;
 
         // todo: are we searching for LOI or LOS - that group by e.g. per organisaatio is
         // take from different attribute
         //Expression groupBy = groupBy(criteria);
 
         if (criteria.getNimiQuery() != null) {
-            // todo: limit if too expensive - make case insensitive
-            whereExpr = and(whereExpr, moduuli.nimi.like("%" + criteria.getNimiQuery() + "%"));
+            // todo: FIX THIS
+            //whereExpr = and(whereExpr, moduuli.nimi.tekstis.like("%" + criteria.getNimiQuery() + "%"));
         }
 
         if (criteria.getKoulutusKoodi() != null) {
-            whereExpr = and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
         }
 
         if (criteria.getKoulutusohjelmaKoodi() != null) {
-            whereExpr = and(whereExpr, moduuli.koulutusohjelmaKoodi.eq(criteria.getKoulutusohjelmaKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaKoodi.eq(criteria.getKoulutusohjelmaKoodi()));
         }
 
 
         return from(moduuli).
-                where(whereExpr).
-                list(moduuli);
+            where(whereExpr).
+            leftJoin(moduuli.nimi, nimi).fetch().
+            list(moduuli);
 
     }
 
@@ -111,29 +114,24 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         criteria.setKoulutusohjelmaKoodi(koulutusOhjelmaUri);
 
         if (criteria.getKoulutusKoodi() != null) {
-            whereExpr = and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
         }
 
         if (criteria.getKoulutusohjelmaKoodi() != null) {
-            whereExpr = and(whereExpr, moduuli.koulutusohjelmaKoodi.eq(criteria.getKoulutusohjelmaKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaKoodi.eq(criteria.getKoulutusohjelmaKoodi()));
         }
 
         return from(moduuli).
-                where(whereExpr).
-                singleResult(moduuli);
+            where(whereExpr).
+            singleResult(moduuli);
 
     }
 
-    private BooleanExpression and(BooleanExpression existing, BooleanExpression what) {
-        return (existing == null ? what : existing.and(what));
-    }
 
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }
 
-    private Expression groupBy(SearchCriteria criteria) {
-        final SearchCriteria.GroupBy groupBy = criteria.getGroupBy();
-        return null;
-    }
+
 }
+

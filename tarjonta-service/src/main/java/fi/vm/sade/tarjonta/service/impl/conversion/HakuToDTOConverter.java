@@ -18,11 +18,12 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 
-import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
-import fi.vm.sade.tarjonta.service.types.tarjonta.*;
 import fi.vm.sade.tarjonta.model.*;
-import java.util.List;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaunNimi;
+import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 
 /**
  *
@@ -31,23 +32,23 @@ import java.util.List;
 public class HakuToDTOConverter extends AbstractFromDomainConverter<Haku, HakuTyyppi> {
 
     @Override
-    public HakuTyyppi convert(Haku s) {
+    public HakuTyyppi convert(Haku from) {
         HakuTyyppi h = new HakuTyyppi();
-        h.setHakuVuosi(s.getHakukausiVuosi());
-        h.setHakukausiUri(s.getHakukausiUri());
-        h.setHakulomakeUrl(s.getHakulomakeUrl());
-        h.setHakutapaUri(s.getHakutapaUri());
-        h.setHakutyyppiUri(s.getHakutyyppiUri());
-        h.setHaunTila(HaunTila.fromValue(s.getTila()));
-        h.setHaunTunniste(s.getHaunTunniste());
-        h.setKohdejoukkoUri(s.getKohdejoukkoUri());
-        h.setKoulutuksenAlkamisKausiUri(s.getKoulutuksenAlkamiskausiUri());
-        h.setKoulutuksenAlkamisVuosi(s.getKoulutuksenAlkamisVuosi());
-        h.setOid(s.getOid());
-        h.setSijoittelu(s.isSijoittelu());
-        h.setHaunTunniste(s.getHaunTunniste());
-        ConvertHaunNimet(h, s);
-        ConvertHaunAjat(h, s);
+        h.setHakuVuosi(from.getHakukausiVuosi());
+        h.setHakukausiUri(from.getHakukausiUri());
+        h.setHakulomakeUrl(from.getHakulomakeUrl());
+        h.setHakutapaUri(from.getHakutapaUri());
+        h.setHakutyyppiUri(from.getHakutyyppiUri());
+        h.setHaunTila(EntityUtils.convertTila(from.getTila()));
+        h.setHaunTunniste(from.getHaunTunniste());
+        h.setKohdejoukkoUri(from.getKohdejoukkoUri());
+        h.setKoulutuksenAlkamisKausiUri(from.getKoulutuksenAlkamiskausiUri());
+        h.setKoulutuksenAlkamisVuosi(from.getKoulutuksenAlkamisVuosi());
+        h.setOid(from.getOid());
+        h.setSijoittelu(from.isSijoittelu());
+        h.setHaunTunniste(from.getHaunTunniste());
+        ConvertHaunNimet(h, from);
+        ConvertHaunAjat(h, from);
         return h;
     }
 
@@ -62,7 +63,7 @@ public class HakuToDTOConverter extends AbstractFromDomainConverter<Haku, HakuTy
             }
         }
     }
-    
+
     private void ConvertHaunNimet(HakuTyyppi h, Haku s) {
         if (s.getNimi() != null && s.getNimi().getTekstis() != null) {
         for (TekstiKaannos tk: s.getNimi().getTekstis()) {

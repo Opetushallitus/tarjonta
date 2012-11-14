@@ -15,8 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenTila;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,7 +43,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     private Set<KoulutusasteModel> koulutusasteet;
     private Set<KoulutuskoodiModel> koulutuskoodit;
     private Set<KoulutusohjelmaModel> koulutusohjelmat;
-    private KoulutuksenTila tila;
+    private TarjontaTila tila;
 
     public KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus status) {
         super();
@@ -61,7 +61,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setOid(null); //KOMOTO OID
         setKoulutusmoduuliOid(null); //KOMO OID
 
-        //used in control logic 
+        //used in control logic
         setDocumentStatus(status);
         setUserFrienlyDocumentStatus(null);
         setKoulutusasteModel(null);
@@ -258,14 +258,14 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     /**
      * @return the tila
      */
-    public KoulutuksenTila getTila() {
+    public TarjontaTila getTila() {
         return tila;
     }
 
     /**
      * @param tila the tila to set
      */
-    public void setTila(KoulutuksenTila tila) {
+    public void setTila(TarjontaTila tila) {
         this.tila = tila;
     }
 }

@@ -233,7 +233,7 @@ public class LearningOpportunityDataWriterTest {
     private Haku createHaku() {
 
         Haku haku = new Haku();
-        haku.setTila(TarjontaTila.LUONNOS.name());
+        haku.setTila(TarjontaTila.JULKAISTU);
         return haku;
 
     }

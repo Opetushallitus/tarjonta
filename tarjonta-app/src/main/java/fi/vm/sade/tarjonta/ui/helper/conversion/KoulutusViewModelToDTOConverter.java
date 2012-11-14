@@ -27,13 +27,13 @@ import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutuskoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.Nimi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
+import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -66,11 +66,15 @@ import org.springframework.stereotype.Component;
 public class KoulutusViewModelToDTOConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
+
     private static final String INVALID_DATA = "Invalid data exception - ";
+
     @Autowired(required = true)
     private OIDService oidService;
+
     @Autowired(required = true)
     private KoulutusKoodistoConverter koulutusKoodisto;
+
     @Autowired(required = true)
     private OrganisaatioService organisaatioService;
 
@@ -138,7 +142,8 @@ public class KoulutusViewModelToDTOConverter {
      * @return
      * @throws ExceptionMessage
      */
-    public KoulutusToisenAsteenPerustiedotViewModel createKoulutusPerustiedotViewModel(final LueKoulutusVastausTyyppi tyyppi, final DocumentStatus status, Locale locale) throws ExceptionMessage {
+    public KoulutusToisenAsteenPerustiedotViewModel createKoulutusPerustiedotViewModel(final LueKoulutusVastausTyyppi tyyppi, final DocumentStatus status,
+        Locale locale) throws ExceptionMessage {
         final OrganisaatioDTO organisaatio = searchOrganisatioByOid(tyyppi.getTarjoaja());
 
         KoulutusToisenAsteenPerustiedotViewModel model2Aste = mapToKoulutusToisenAsteenPerustiedotViewModel(tyyppi, status, organisaatio, locale);
@@ -161,7 +166,8 @@ public class KoulutusViewModelToDTOConverter {
         return dto;
     }
 
-    private void addToYhteyshenkiloTyyppiList(final Collection<KoulutusYhteyshenkiloViewModel> fromModel, List<YhteyshenkiloTyyppi> toTyyppi) throws ExceptionMessage {
+    private void addToYhteyshenkiloTyyppiList(final Collection<KoulutusYhteyshenkiloViewModel> fromModel, List<YhteyshenkiloTyyppi> toTyyppi) throws
+        ExceptionMessage {
         if (toTyyppi == null) {
             throw new RuntimeException(INVALID_DATA + "list of YhteyshenkiloTyyppi objects cannot be null.");
         }
@@ -238,7 +244,8 @@ public class KoulutusViewModelToDTOConverter {
         return yhteyshenkiloTyyppi;
     }
 
-    public static KoulutusTyyppi mapToKoulutusTyyppi(KoulutusTyyppi tyyppi, final KoulutusToisenAsteenPerustiedotViewModel model, final String komotoOid, OrganisaatioDTO organisatio) {
+    public static KoulutusTyyppi mapToKoulutusTyyppi(KoulutusTyyppi tyyppi, final KoulutusToisenAsteenPerustiedotViewModel model, final String komotoOid,
+        OrganisaatioDTO organisatio) {
         if (tyyppi == null) {
             throw new RuntimeException(INVALID_DATA + "KoulutusTyyppi object cannot be null.");
         }
@@ -318,7 +325,8 @@ public class KoulutusViewModelToDTOConverter {
         }
     }
 
-    private KoulutusToisenAsteenPerustiedotViewModel mapToKoulutusToisenAsteenPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus, DocumentStatus status, OrganisaatioDTO organisatio, Locale locale) {
+    private KoulutusToisenAsteenPerustiedotViewModel mapToKoulutusToisenAsteenPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus, DocumentStatus status,
+        OrganisaatioDTO organisatio, Locale locale) {
         if (koulutus == null) {
             throw new RuntimeException(INVALID_DATA + "LueKoulutusVastausTyyppi object cannot be null.");
         }
@@ -336,7 +344,7 @@ public class KoulutusViewModelToDTOConverter {
         }
 
         KoulutusToisenAsteenPerustiedotViewModel model2Aste = new KoulutusToisenAsteenPerustiedotViewModel(status);
-        model2Aste.setTila(koulutus.getKoulutuksenTila());
+        model2Aste.setTila(koulutus.getTila());
         model2Aste.setOid(koulutus.getOid());
         model2Aste.setOrganisaatioOid(organisatio.getOid());
         model2Aste.setOrganisaatioName(organisatio.getNimiFi());
@@ -346,7 +354,8 @@ public class KoulutusViewModelToDTOConverter {
         model2Aste.setKoulutuskoodiModel(mapToKoulutuskoodiModel(koulutus.getKoulutusKoodi(), locale));
         model2Aste.setKoulutusohjelmaModel(mapToKoulutusohjelmaModel(koulutus.getKoulutusohjelmaKoodi(), locale));
 
-        model2Aste.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
+        model2Aste.setKoulutuksenAlkamisPvm(
+            koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
         model2Aste.setOpetuskielet(convertOpetuskielet(koulutus.getOpetuskieli()));
 
         if (koulutus.getKesto() != null) {
@@ -389,20 +398,20 @@ public class KoulutusViewModelToDTOConverter {
 
         result.setAmmattinimikkeet(mapToKoodistoKoodis(lueKoulutus.getAmmattinimikkeet()));
 
-        for (MonikielinenTekstiTyyppi mkt : lueKoulutus.getKuvailevatTiedot()) {
-            result.getLisatiedot(mkt.getTekstinKielikoodi()).setKuvailevatTiedot(mkt.getTeksti());
+        for (MonikielinenTekstiTyyppi.Teksti mkt : lueKoulutus.getKuvailevatTiedot().getTeksti()) {
+            result.getLisatiedot(mkt.getKieliKoodi()).setKuvailevatTiedot(mkt.getValue());
         }
-        for (MonikielinenTekstiTyyppi mkt : lueKoulutus.getKansainvalistyminen()) {
-            result.getLisatiedot(mkt.getTekstinKielikoodi()).setKansainvalistyminen(mkt.getTeksti());
+        for (MonikielinenTekstiTyyppi.Teksti mkt : lueKoulutus.getKansainvalistyminen().getTeksti()) {
+            result.getLisatiedot(mkt.getKieliKoodi()).setKansainvalistyminen(mkt.getValue());
         }
-        for (MonikielinenTekstiTyyppi mkt : lueKoulutus.getSijoittuminenTyoelamaan()) {
-            result.getLisatiedot(mkt.getTekstinKielikoodi()).setSijoittuminenTyoelamaan(mkt.getTeksti());
+        for (MonikielinenTekstiTyyppi.Teksti mkt : lueKoulutus.getSijoittuminenTyoelamaan().getTeksti()) {
+            result.getLisatiedot(mkt.getKieliKoodi()).setSijoittuminenTyoelamaan(mkt.getValue());
         }
-        for (MonikielinenTekstiTyyppi mkt : lueKoulutus.getSisalto()) {
-            result.getLisatiedot(mkt.getTekstinKielikoodi()).setSisalto(mkt.getTeksti());
+        for (MonikielinenTekstiTyyppi.Teksti mkt : lueKoulutus.getSisalto().getTeksti()) {
+            result.getLisatiedot(mkt.getKieliKoodi()).setSisalto(mkt.getValue());
         }
-        for (MonikielinenTekstiTyyppi mkt : lueKoulutus.getYhteistyoMuidenToimijoidenKanssa()) {
-            result.getLisatiedot(mkt.getTekstinKielikoodi()).setYhteistyoMuidenToimijoidenKanssa(mkt.getTeksti());
+        for (MonikielinenTekstiTyyppi.Teksti mkt : lueKoulutus.getYhteistyoMuidenToimijoidenKanssa().getTeksti()) {
+            result.getLisatiedot(mkt.getKieliKoodi()).setYhteistyoMuidenToimijoidenKanssa(mkt.getValue());
         }
 
         return result;
@@ -448,9 +457,9 @@ public class KoulutusViewModelToDTOConverter {
 
     private static KoodistoKoodiTyyppi mapToKoodistoKoodiTyyppi(KoulutusKoodistoModel model) {
         KoodistoKoodiTyyppi koodit = createKoodiVersionUri(
-                model.getKoodistoUri(),
-                model.getKoodistoVersio(),
-                model.getNimi());
+            model.getKoodistoUri(),
+            model.getKoodistoVersio(),
+            model.getNimi());
 
         if (model.getKielet() != null && !model.getKielet().isEmpty()) {
             for (NimiModel nimiModel : model.getKielet()) {
@@ -596,20 +605,27 @@ public class KoulutusViewModelToDTOConverter {
             koulutus.getAmmattinimikkeet().add(createKoodi(uri));
         }
 
-        koulutus.getKuvailevatTiedot().clear();
-        koulutus.getSisalto().clear();
-        koulutus.getSijoittuminenTyoelamaan().clear();
-        koulutus.getKansainvalistyminen().clear();
-        koulutus.getYhteistyoMuidenToimijoidenKanssa().clear();
+        clear(koulutus.getKuvailevatTiedot());
+        clear(koulutus.getSisalto());
+        clear(koulutus.getSijoittuminenTyoelamaan());
+        clear(koulutus.getKansainvalistyminen());
+        clear(koulutus.getYhteistyoMuidenToimijoidenKanssa());
 
         for (String kieliUri : koulutusLisatiedotModel.getLisatiedot().keySet()) {
             KoulutusLisatietoModel lisatieto = koulutusLisatiedotModel.getLisatiedot(kieliUri);
 
-            koulutus.getKuvailevatTiedot().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getKuvailevatTiedot()));
-            koulutus.getSisalto().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getSisalto()));
-            koulutus.getSijoittuminenTyoelamaan().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getSijoittuminenTyoelamaan()));
-            koulutus.getKansainvalistyminen().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getKansainvalistyminen()));
-            koulutus.getYhteistyoMuidenToimijoidenKanssa().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getYhteistyoMuidenToimijoidenKanssa()));
+            koulutus.getKuvailevatTiedot().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getKuvailevatTiedot()));
+            koulutus.getSisalto().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getSisalto()));
+            koulutus.getSijoittuminenTyoelamaan().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getSijoittuminenTyoelamaan()));
+            koulutus.getKansainvalistyminen().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getKansainvalistyminen()));
+            koulutus.getYhteistyoMuidenToimijoidenKanssa().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.
+                getYhteistyoMuidenToimijoidenKanssa()));
+        }
+    }
+
+    private void clear(MonikielinenTekstiTyyppi tekstis) {
+        if (tekstis != null) {
+            tekstis.getTeksti().clear();
         }
     }
 
@@ -620,10 +636,12 @@ public class KoulutusViewModelToDTOConverter {
      * @param teksti
      * @return
      */
-    private MonikielinenTekstiTyyppi convertToMonikielinenTekstiTyyppi(String languageUri, String teksti) {
-        MonikielinenTekstiTyyppi mktt = new MonikielinenTekstiTyyppi();
-        mktt.setTeksti(teksti);
-        mktt.setTekstinKielikoodi(languageUri);
+    private MonikielinenTekstiTyyppi.Teksti convertToMonikielinenTekstiTyyppi(String languageUri, String teksti) {
+        MonikielinenTekstiTyyppi.Teksti mktt = new MonikielinenTekstiTyyppi.Teksti();
+        mktt.setValue(teksti);
+        mktt.setKieliKoodi(languageUri);
         return mktt;
     }
+
 }
+

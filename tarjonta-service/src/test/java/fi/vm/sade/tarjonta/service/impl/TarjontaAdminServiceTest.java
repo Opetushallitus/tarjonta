@@ -41,21 +41,15 @@ import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenTila;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
+
 
 import java.util.Date;
 import java.util.List;
 
 import java.util.Set;
-import junit.framework.Assert;
 
 /**
  *
@@ -224,7 +218,7 @@ public class TarjontaAdminServiceTest {
     private LisaaKoulutusTyyppi createSampleKoulutus() {
 
         LisaaKoulutusTyyppi lisaaKoulutus = new LisaaKoulutusTyyppi();
-        lisaaKoulutus.setKoulutuksenTila(KoulutuksenTila.VALMIS);
+        lisaaKoulutus.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.LUONNOS);
         lisaaKoulutus.setKoulutusKoodi(createKoodi("321101"));
         lisaaKoulutus.setKoulutusohjelmaKoodi(createKoodi("1603"));
         lisaaKoulutus.getOpetusmuoto().add(createKoodi("opetusmuoto/aikuisopetus"));
@@ -290,7 +284,7 @@ public class TarjontaAdminServiceTest {
 
     private PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi() {
         PaivitaKoulutusTyyppi paivitaKoulutus = new PaivitaKoulutusTyyppi();
-        paivitaKoulutus.setKoulutuksenTila(KoulutuksenTila.VALMIS);
+        paivitaKoulutus.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.VALMIS);
         paivitaKoulutus.setOid(SAMPLE_KOULUTUS_OID);
 
         KoulutuksenKestoTyyppi kesto = new KoulutuksenKestoTyyppi();

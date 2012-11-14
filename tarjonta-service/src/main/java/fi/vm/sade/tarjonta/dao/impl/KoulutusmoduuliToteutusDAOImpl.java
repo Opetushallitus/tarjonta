@@ -21,9 +21,8 @@ import com.mysema.query.types.expr.BooleanExpression;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.QHakukohde;
-import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
+import fi.vm.sade.tarjonta.model.*;
 
 import java.util.List;
 import javax.persistence.Query;
@@ -50,20 +49,20 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     @Override
     public KoulutusmoduuliToteutus findKomotoByOid(String oid) {
         Query query = getEntityManager().createQuery(""
-                + "SELECT k FROM KoulutusmoduuliToteutus k "
-                + "LEFT JOIN FETCH k.koulutusmoduuli "
-                + "where k.oid=:oid");
+            + "SELECT k FROM KoulutusmoduuliToteutus k "
+            + "LEFT JOIN FETCH k.koulutusmoduuli "
+            + "where k.oid=:oid");
         query.setParameter("oid", oid);
         return (KoulutusmoduuliToteutus) query.getSingleResult();
 
     }
-    
-     @Override
+
+    @Override
     public KoulutusmoduuliToteutus findKomotoWithYhteyshenkilosByOid(String oid) {
         Query query = getEntityManager().createQuery(""
-                + "SELECT k FROM KoulutusmoduuliToteutus k "
-                + "LEFT JOIN FETCH k.yhteyshenkilos "
-                + "where k.oid=:oid");
+            + "SELECT k FROM KoulutusmoduuliToteutus k "
+            + "LEFT JOIN FETCH k.yhteyshenkilos "
+            + "where k.oid=:oid");
         query.setParameter("oid", oid);
         return (KoulutusmoduuliToteutus) query.getSingleResult();
     }
@@ -72,15 +71,30 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         return new JPAQuery(getEntityManager()).from(o);
     }
 
-	@Override
-	public List<KoulutusmoduuliToteutus> findByCriteria(
-			List<String> tarjoajaOids, String nimi) {
-		nimi = (nimi != null) ? nimi : "";
-		QKoulutusmoduuliToteutus komoto  = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-		BooleanExpression criteria = komoto.nimi.toLowerCase().contains(nimi.toLowerCase());
-		if (!tarjoajaOids.isEmpty()) {
-			criteria = criteria.and(komoto.tarjoaja.in(tarjoajaOids));
-		}
-		return from(komoto).where(criteria).list(komoto);
-	}
+    @Override
+    public List<KoulutusmoduuliToteutus> findByCriteria(List<String> tarjoajaOids, String matchNimi) {
+
+        QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        QMonikielinenTeksti nimi = QMonikielinenTeksti.monikielinenTeksti;
+        QTekstiKaannos nimiTeksti = QTekstiKaannos.tekstiKaannos;
+
+        BooleanExpression criteria = null;
+
+        if (matchNimi != null) {
+            criteria = QuerydslUtils.and(criteria, nimiTeksti.teksti.toLowerCase().contains(matchNimi.toLowerCase()));
+        }
+
+        if (!tarjoajaOids.isEmpty()) {
+            criteria = QuerydslUtils.and(criteria, komoto.tarjoaja.in(tarjoajaOids));
+        }
+
+        return from(komoto).
+            leftJoin(komoto.nimi, nimi).fetch().
+            leftJoin(nimi.tekstis, nimiTeksti).fetch().
+            where(criteria).
+            list(komoto);
+
+    }
+
 }
+

@@ -19,7 +19,7 @@ package fi.vm.sade.tarjonta.ui.model;
 
 import java.util.Date;
 
-import fi.vm.sade.tarjonta.service.types.tarjonta.SisaisetHakuAjat;
+import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 
 /**
  *
@@ -30,15 +30,15 @@ public class HakuaikaViewModel {
     private String hakuajanKuvaus;
 
     private Date alkamisPvm;
-    
+
     private Date paattymisPvm;
-    
+
     SisaisetHakuAjat hakuaikaDto;
 
     public HakuaikaViewModel(SisaisetHakuAjat hakuaikaDto) {
         this.hakuaikaDto = hakuaikaDto;
     }
-    
+
     public HakuaikaViewModel() {
         hakuaikaDto = new SisaisetHakuAjat();
     }
@@ -67,8 +67,8 @@ public class HakuaikaViewModel {
         paattymisPvm = hakuaikaDto.getSisaisenHaunPaattymisPvm();
         return paattymisPvm;
     }
-    
-    
+
+
     /**
      * @return the hakuajanKuvaus
      */
@@ -92,7 +92,7 @@ public class HakuaikaViewModel {
         hakuaikaDto.setSisaisenHaunPaattymisPvm(paattymisPvm);
         this.paattymisPvm = paattymisPvm;
     }
-    
+
 
     /**
      * @return the hakuaikaDto
@@ -101,5 +101,5 @@ public class HakuaikaViewModel {
         return hakuaikaDto;
     }
 
-    
+
 }

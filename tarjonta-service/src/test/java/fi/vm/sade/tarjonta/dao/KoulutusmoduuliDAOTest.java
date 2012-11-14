@@ -98,10 +98,10 @@ public class KoulutusmoduuliDAOTest {
         Koulutusmoduuli m = fixtures.createTutkintoOhjelma();
         koulutusmoduuliDAO.insert(m);
 
-        m.setNimi("after update");
+        m.setNimi(TarjontaFixtures.createText("after update", null, null));
         koulutusmoduuliDAO.update(m);
 
-        assertEquals("after update", koulutusmoduuliDAO.read(m.getId()).getNimi());
+        assertEquals("after update", koulutusmoduuliDAO.read(m.getId()).getNimi().getTekstiForKieliKoodi("fi"));
 
     }
 
@@ -184,47 +184,47 @@ public class KoulutusmoduuliDAOTest {
 
 
     }
-    
+
     @Test
     public void testSearchKoulutusmoduulit() {
     	String KOULUTUSKOODI = "uri:koulutuskoodi";
     	String KOULUTUSOHJELMAKOODI1 = "uri:koulutusohjelmakoodi1";
     	String KOULUTUSOHJELMAKOODI2 = "uri:koulutusohjelmakoodi2";
-    	
+
     	//KOMO1
     	Koulutusmoduuli koulutus = fixtures.createTutkintoOhjelma();
     	koulutus.setKoulutusKoodi(KOULUTUSKOODI);
     	koulutus.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI1);
         koulutusmoduuliDAO.insert(koulutus);
-        
+
         //KOMO2
         koulutus = fixtures.createTutkintoOhjelma();
         koulutus.setKoulutusKoodi(KOULUTUSKOODI);
     	koulutus.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI2);
         koulutusmoduuliDAO.insert(koulutus);
-        
+
     	//KOMO3
     	koulutus = fixtures.createTutkintoOhjelma();
         koulutusmoduuliDAO.insert(koulutus);
-        
-        
+
+
         SearchCriteria criteria = new SearchCriteria();
         criteria.setKoulutusKoodi(KOULUTUSKOODI);
         List<Koulutusmoduuli> komos = this.koulutusmoduuliDAO.search(criteria);
-        
+
         assertEquals(2, komos.size());
-        
+
         criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI1);
         komos = this.koulutusmoduuliDAO.search(criteria);
-        
+
         assertEquals(1, komos.size());
         assertEquals(KOULUTUSOHJELMAKOODI1, komos.get(0).getKoulutusohjelmaKoodi());
-        
+
         criteria = new SearchCriteria();
         komos = this.koulutusmoduuliDAO.search(criteria);
-        
+
         assertTrue(komos.size() > 2);
-        
+
     }
 
     private void flush() {
@@ -264,14 +264,14 @@ public class KoulutusmoduuliDAOTest {
         for (int i = 0; i < NUM_TUTKINTO_TOP_LEVEL_MODUULI; i++) {
 
             t = fixtures.createTutkintoOhjelma();
-            t.setNimi("Tutkinto-ohjelma " + i);
+            t.setNimi(TarjontaFixtures.createText("Tutkinto-ohjelma " + i, null, null));
             t.setOid(String.valueOf(i));
             koulutusmoduuliDAO.insert(t);
 
             for (int j = 0; j < NUM_TUTKINTO_SECOND_LEVEL_MODUULI; j++) {
 
                 o = fixtures.createTutkinnonOsa();
-                o.setNimi("Tutkinnon osa: " + i + "." + j);
+                o.setNimi(TarjontaFixtures.createText("Tutkinnon osa: " + i + "." + j, null, null));
                 o.setOid(i + "." + j);
                 koulutusmoduuliDAO.insert(o);
                 sisaltyvyysDAO.insert(new KoulutusSisaltyvyys(t, o, KoulutusSisaltyvyys.ValintaTyyppi.SOME_OFF));

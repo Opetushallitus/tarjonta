@@ -14,23 +14,24 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import java.util.Collections;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import static fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils.convertTekstiToVM;
 
 /**
  *
@@ -39,26 +40,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Component
 public class HakukohdeViewModelToDTOConverter {
 
-    @Autowired(required=true)
+    @Autowired(required = true)
     private OIDService oidService;
-    
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(HakukohdeViewModelToDTOConverter.class);
-    
 
-    
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(HakukohdeViewModelToDTOConverter.class);
+
     public HakukohdeTyyppi convertHakukohdeViewModelToDTO(HakukohdeViewModel hakukohdevm) {
         HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
-        
+
         hakukohde.setAloituspaikat(hakukohdevm.getAloitusPaikat());
         hakukohde.setHakukelpoisuusVaatimukset(hakukohdevm.getHakukelpoisuusVaatimus());
         if (hakukohdevm.getHakukohdeNimi() != null) {
-        hakukohde.setHakukohdeNimi(hakukohdevm.getHakukohdeNimi());
+            hakukohde.setHakukohdeNimi(hakukohdevm.getHakukohdeNimi());
         } else {
             //TODO remove just for testing because koodisto dont work
             hakukohde.setHakukohdeNimi("");
         }
         hakukohde.setHakukohteenHakuOid(hakukohdevm.getHakuOid().getHakuOid());
-        hakukohde.setHakukohteenTila(hakukohdevm.getHakukohdeTila());
+        hakukohde.setHakukohteenTila(TarjontaTila.valueOf(hakukohdevm.getHakukohdeTila()));
         if (hakukohdevm.getOid() == null) {
             try {
                 hakukohde.setOid(oidService.newOid(NodeClassCode.PALVELUT));
@@ -66,59 +65,42 @@ public class HakukohdeViewModelToDTOConverter {
                 LOG.warn("UNABLE TO GET OID : " + ex.toString());
             }
         } else {
-        hakukohde.setOid(hakukohdevm.getOid());
+            hakukohde.setOid(hakukohdevm.getOid());
         }
         hakukohde.setHakukohdeKoodistoNimi(hakukohdevm.getHakukohdeKoodistoNimi());
         hakukohde.getHakukohteenKoulutusOidit().addAll(hakukohdevm.getKomotoOids());
-        hakukohde.getLisatiedot().addAll(convertTekstis(hakukohdevm.getLisatiedot()));
-        hakukohde.getValintaPerusteidenKuvaukset().addAll(convertTekstis(hakukohdevm.getValintaPerusteidenKuvaus()));
+        hakukohde.setLisatiedot(convertTekstis(hakukohdevm.getLisatiedot()));
+        hakukohde.setValintaPerusteidenKuvaukset(convertTekstis(hakukohdevm.getValintaPerusteidenKuvaus()));
         return hakukohde;
     }
-    
+
     public HakukohdeViewModel convertDTOToHakukohdeViewMode(HakukohdeTyyppi hakukohdeTyyppi) {
-    	HakukohdeViewModel hakukohdeVM = new HakukohdeViewModel();
-    	hakukohdeVM.setAloitusPaikat(hakukohdeTyyppi.getAloituspaikat());
-    	hakukohdeVM.setHakukelpoisuusVaatimus(hakukohdeTyyppi.getHakukelpoisuusVaatimukset());
-    	hakukohdeVM.setHakukohdeNimi(hakukohdeTyyppi.getHakukohdeNimi());
-    	hakukohdeVM.setHakukohdeTila(hakukohdeTyyppi.getHakukohteenTila());
-    	HakuViewModel haku = new HakuViewModel(); 
+        HakukohdeViewModel hakukohdeVM = new HakukohdeViewModel();
+        hakukohdeVM.setAloitusPaikat(hakukohdeTyyppi.getAloituspaikat());
+        hakukohdeVM.setHakukelpoisuusVaatimus(hakukohdeTyyppi.getHakukelpoisuusVaatimukset());
+        hakukohdeVM.setHakukohdeNimi(hakukohdeTyyppi.getHakukohdeNimi());
+        hakukohdeVM.setHakukohdeTila(hakukohdeTyyppi.getHakukohteenTila().name());
+        HakuViewModel haku = new HakuViewModel();
         haku.setHakuOid(hakukohdeTyyppi.getHakukohteenHakuOid());
-    	hakukohdeVM.setHakuOid(haku);
+        hakukohdeVM.setHakuOid(haku);
         hakukohdeVM.setHakukohdeKoodistoNimi(hakukohdeTyyppi.getHakukohdeKoodistoNimi());
-    	hakukohdeVM.setOid(hakukohdeTyyppi.getOid());
-    	hakukohdeVM.setKomotoOids(hakukohdeTyyppi.getHakukohteenKoulutusOidit());
-    	hakukohdeVM.getLisatiedot().addAll(convertTekstiToVM(hakukohdeTyyppi.getLisatiedot()));
-    	hakukohdeVM.getValintaPerusteidenKuvaus().addAll(convertTekstiToVM(hakukohdeTyyppi.getValintaPerusteidenKuvaukset()));    	
-    	return hakukohdeVM;    	
+        hakukohdeVM.setOid(hakukohdeTyyppi.getOid());
+        hakukohdeVM.setKomotoOids(hakukohdeTyyppi.getHakukohteenKoulutusOidit());
+        hakukohdeVM.setLisatiedot(convertTekstiToVM(hakukohdeTyyppi.getLisatiedot()));
+        hakukohdeVM.getValintaPerusteidenKuvaus().addAll(convertTekstiToVM(hakukohdeTyyppi.getValintaPerusteidenKuvaukset()));
+        return hakukohdeVM;
     }
-    
-    private List<KielikaannosViewModel> convertTekstiToVM(
-			List<MonikielinenTekstiTyyppi> lisatiedot) {
-    	List<KielikaannosViewModel> vastaus = new ArrayList<KielikaannosViewModel>();
-		for (MonikielinenTekstiTyyppi curLisatieto : lisatiedot) {
-			KielikaannosViewModel convertedLisatieto = new KielikaannosViewModel(curLisatieto.getTekstinKielikoodi(), curLisatieto.getTeksti());
-                        
-			vastaus.add(convertedLisatieto);
-		}
-		return vastaus;
-	}
 
+    private MonikielinenTekstiTyyppi convertTekstis(List<KielikaannosViewModel> kaannokset) {
+        MonikielinenTekstiTyyppi tekstis = new MonikielinenTekstiTyyppi();
 
-
-
-
-
-
-	private List<MonikielinenTekstiTyyppi> convertTekstis(List<KielikaannosViewModel> kaannokset ) {
-        List<MonikielinenTekstiTyyppi> tekstis = new ArrayList<MonikielinenTekstiTyyppi>();
-        
-        for (KielikaannosViewModel kieli:kaannokset) {
-            MonikielinenTekstiTyyppi teksti = new MonikielinenTekstiTyyppi();
-            teksti.setTekstinKielikoodi(kieli.getKielikoodi());
-            teksti.setTeksti(kieli.getNimi());
-            tekstis.add(teksti);
+        for (KielikaannosViewModel kieli : kaannokset) {
+            MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
+            teksti.setKieliKoodi(kieli.getKielikoodi());
+            teksti.setValue(kieli.getNimi());
+            tekstis.getTeksti().add(teksti);
         }
-        
+
         return tekstis;
     }
 
@@ -135,4 +117,6 @@ public class HakukohdeViewModelToDTOConverter {
     public void setOidService(OIDService oidService) {
         this.oidService = oidService;
     }
+
 }
+

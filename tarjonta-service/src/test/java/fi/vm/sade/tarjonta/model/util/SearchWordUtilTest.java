@@ -15,9 +15,9 @@
  */
 package fi.vm.sade.tarjonta.model.util;
 
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi.Nimi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
+import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -66,7 +66,7 @@ public class SearchWordUtilTest {
         koodistoKoodiTyyppi2.getNimi().add(nimi2);
         tyyppi1.setKoulutusaste(koodistoKoodiTyyppi2);
 
-        //TYYPPI3   
+        //TYYPPI3
         tyyppi2 = new KoulutusTyyppi();
         KoodistoKoodiTyyppi koodistoKoodiTyyppi3 = new KoodistoKoodiTyyppi();
         koodistoKoodiTyyppi3.setArvo(NIMI_TOO_LONG);

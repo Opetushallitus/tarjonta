@@ -3,11 +3,11 @@
            targetNamespace="http://service.tarjonta.sade.vm.fi/types" version="1.0"
            xmlns:tns="http://service.tarjonta.sade.vm.fi/types"
            xmlns:tnsh="http://service.tarjonta.sade.vm.fi/types/dto"
-           xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types/tarjonta"
+           xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
-    <xs:import namespace="http://service.tarjonta.sade.vm.fi/types/tarjonta" schemaLocation="tarjonta.xsd" />
+    <xs:import namespace="http://service.tarjonta.sade.vm.fi/types" schemaLocation="tarjonta.xsd" />
 
 
     <xs:element name="listaaHaku" type="tns:ListaaHakuTyyppi" />
@@ -20,7 +20,7 @@
 
     <xs:element name="haeKoulutuksetKysely" type="tns:HaeKoulutuksetKyselyTyyppi" />
     <xs:element name="haeKoulutuksetVastaus" type="tns:HaeKoulutuksetVastausTyyppi" />
-    
+
     <xs:element name="haeKoulutusmoduulitKysely" type="tns:HaeKoulutusmoduulitKyselyTyyppi" />
     <xs:element name="haeKoulutusmoduulitVastaus" type="tns:HaeKoulutusmoduulitVastausTyyppi" />
 
@@ -37,7 +37,7 @@
             <xs:element minOccurs="0" maxOccurs="1" name="vainSijoittelu" type="xs:boolean" />
             <xs:element minOccurs="0" maxOccurs="1" name="alkaen" type="xs:date" />
             <xs:element minOccurs="0" maxOccurs="1" name="loppuen" type="xs:date" />
-            <xs:element minOccurs="0" maxOccurs="1" name="hakuOid" type="xs:string"/> 
+            <xs:element minOccurs="0" maxOccurs="1" name="hakuOid" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -125,7 +125,7 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="HaeKoulutusmoduulitKyselyTyyppi">
         <xs:annotation>
             <xs:documentation xml:lang="fi">

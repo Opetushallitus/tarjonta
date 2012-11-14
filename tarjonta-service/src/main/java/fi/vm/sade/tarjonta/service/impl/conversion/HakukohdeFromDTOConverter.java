@@ -17,9 +17,9 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
-import fi.vm.sade.tarjonta.service.types.tarjonta.*;
 import fi.vm.sade.tarjonta.model.*;
-import java.util.List;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 
 /**
  *
@@ -28,31 +28,19 @@ import java.util.List;
 public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<HakukohdeTyyppi, Hakukohde> {
 
     @Override
-    public Hakukohde convert(HakukohdeTyyppi s) {
+    public Hakukohde convert(HakukohdeTyyppi from) {
         Hakukohde hakukohde = new Hakukohde();
 
-        hakukohde.setAloituspaikatLkm(s.getAloituspaikat());
-        hakukohde.setHakukelpoisuusvaatimus(s.getHakukelpoisuusVaatimukset());
-        hakukohde.setHakukohdeNimi(s.getHakukohdeNimi());
-        hakukohde.setOid(s.getOid());
-        hakukohde.setLisatiedot(convertMonikielinenTeksti(s.getLisatiedot()));
-        hakukohde.setTila(TarjontaTila.valueOf(s.getHakukohteenTila()));
-        hakukohde.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
-        hakukohde.setValintaperusteKuvaus(convertMonikielinenTeksti(s.getValintaPerusteidenKuvaukset()));
+        hakukohde.setAloituspaikatLkm(from.getAloituspaikat());
+        hakukohde.setHakukelpoisuusvaatimus(from.getHakukelpoisuusVaatimukset());
+        hakukohde.setHakukohdeNimi(from.getHakukohdeNimi());
+        hakukohde.setOid(from.getOid());
+        hakukohde.setLisatiedot(EntityUtils.copyFields(from.getLisatiedot(), new MonikielinenTeksti()));
+        hakukohde.setTila(EntityUtils.convertTila(from.getHakukohteenTila()));
+        hakukohde.setHakukohdeKoodistoNimi(from.getHakukohdeKoodistoNimi());
+        hakukohde.setValintaperusteKuvaus(EntityUtils.copyFields(from.getValintaPerusteidenKuvaukset(), new MonikielinenTeksti()));
         return hakukohde;
     }
 
-
-
-    private MonikielinenTeksti convertMonikielinenTeksti(List<MonikielinenTekstiTyyppi> monitekstis) {
-        MonikielinenTeksti tekstit = null;
-        if (monitekstis != null) {
-            tekstit = new MonikielinenTeksti();
-            for (MonikielinenTekstiTyyppi moniteksti : monitekstis) {
-                tekstit.addTekstiKaannos(moniteksti.getTekstinKielikoodi(), moniteksti.getTeksti());
-            }
-        }
-
-        return tekstit;
-    }
 }
+

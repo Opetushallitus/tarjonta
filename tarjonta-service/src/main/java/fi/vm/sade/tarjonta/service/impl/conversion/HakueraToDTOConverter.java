@@ -1,21 +1,22 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.service.types.dto.HakueraDTO;
-
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class HakueraToDTOConverter extends
-        AbstractFromDomainConverter<Haku, HakueraDTO> {
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.types.HakueraTyyppi;
+
+public class HakueraToDTOConverter extends AbstractFromDomainConverter<Haku, HakueraTyyppi> {
 
     @Override
-    public HakueraDTO convert(
-            Haku entity) {
-        HakueraDTO hakueraDTO = new HakueraDTO();
+    public HakueraTyyppi convert(
+        Haku entity) {
+        HakueraTyyppi hakueraDTO = new HakueraTyyppi();
         hakueraDTO.setNimiFi(entity.getNimiFi());
         hakueraDTO.setNimiSv(entity.getNimiSv());
         hakueraDTO.setNimiEn(entity.getNimiEn());
@@ -26,10 +27,10 @@ public class HakueraToDTOConverter extends
         hakueraDTO.setKohdejoukko(entity.getKohdejoukkoUri());
         hakueraDTO.setKoulutuksenAlkaminen(entity.getKoulutuksenAlkamiskausiUri());
         hakueraDTO.setHakulomakeUrl(entity.getHakulomakeUrl());
-        hakueraDTO.setTila(entity.getTila());
+        hakueraDTO.setTila(EntityUtils.convertTila(entity.getTila()));
         return hakueraDTO;
     }
-    
+
     private XMLGregorianCalendar convertDate(Date origDate) {
         XMLGregorianCalendar xmlDate = null;
         if (origDate != null) {
@@ -38,10 +39,10 @@ public class HakueraToDTOConverter extends
                 c.setTime(origDate);
                 xmlDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
             } catch (Exception ex) {
-                
             }
         }
         return xmlDate;
     }
 
 }
+

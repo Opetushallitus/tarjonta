@@ -2,10 +2,10 @@
 <xs:schema elementFormDefault="unqualified"
            targetNamespace="http://service.tarjonta.sade.vm.fi/types/koodisto" version="1.0"
            xmlns:tns="http://service.tarjonta.sade.vm.fi/types/koodisto"
-           xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types/tarjonta"
+           xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <xs:import namespace="http://service.tarjonta.sade.vm.fi/types/tarjonta" schemaLocation="tarjonta.xsd" />
+    <xs:import namespace="http://service.tarjonta.sade.vm.fi/types" schemaLocation="tarjonta.xsd" />
 
     <xs:element name="koodistoTyyppi">
         <xs:annotation>
@@ -13,24 +13,24 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-            
+
                 <xs:element name="Nimi" type="tns:Nimi"  minOccurs="0" maxOccurs="99"/>
-                            
+
                 <xs:element name="Koulutuskoodi" type="tns:KoulutuskoodiTyyppi"
                             minOccurs="0" maxOccurs="unbounded">
                 </xs:element>
-                
+
                 <xs:element name="Koulutusaste" type="tns:KoulutusasteTyyppi"
                             minOccurs="0" maxOccurs="unbounded">
                 </xs:element>
-                
+
                 <xs:element name="Koulutusohjelma" type="tns:KoulutusohjelmaTyyppi"
                             minOccurs="0" maxOccurs="unbounded">
                 </xs:element>
             </xs:sequence>
-        </xs:complexType>         
+        </xs:complexType>
     </xs:element>
-    
+
     <xs:complexType name="KoulutusasteTyyppi">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
@@ -42,12 +42,12 @@
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="0"/>
-             
+
             <xs:element name="KoulutusasteKoodi"
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1"/>
-            
+
             <xs:element name="KoodistoUri"
                         type="xs:string"
                         maxOccurs="1"
@@ -56,7 +56,7 @@
                         type="xs:int"
                         maxOccurs="1"
                         minOccurs="1"/>
-            
+
             <xs:element name="KoodistoUriVersio"
                         type="xs:string"
                         maxOccurs="1"
@@ -64,7 +64,7 @@
             <xs:element name="Nimi" type="tns:Nimi"  minOccurs="0" maxOccurs="99"/>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="KoulutusLisatiedotTyyppi">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
@@ -96,10 +96,10 @@
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="0"/>
-    
+
         </xs:sequence>
     </xs:complexType>
-       
+
     <xs:complexType name="KoulutuskoodiTyyppi">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
@@ -111,37 +111,37 @@
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="0"/>
-             
-           
+
+
             <xs:element name="Nimi" type="tns:Nimi"  minOccurs="0" maxOccurs="99"/>
-            
+
             <xs:element name="Koulutuskoodi"
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1">
-                
+
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
                         Numeraalinen Tilastokeskuksen (TK) koulutuskoodin arvo.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            
+
             <xs:element name="KoodistoUri"
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1"/>
-            
+
             <xs:element name="KoodistoVersio"
                         type="xs:int"
                         maxOccurs="1"
                         minOccurs="1"/>
-            
+
             <xs:element name="KoodistoUriVersio"
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1"/>
-            
+
             <xs:element name="KoulutusasteKoodi"
                         type="xs:string"
                         maxOccurs="1"
@@ -152,8 +152,8 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            
-            
+
+
             <xs:element name="KoulutusohjelmaKoodi"
                         type="xs:string"
                         maxOccurs="1"
@@ -164,7 +164,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-              
+
             <xs:element name="TutkintonimikeKoodi"
                         type="xs:string"
                         maxOccurs="1"
@@ -174,16 +174,16 @@
                         Tutkintonimikeen koodiarvo.
                     </xs:documentation>
                 </xs:annotation>
-               
+
             </xs:element>
-            
+
             <xs:element name="KoulutusLisatiedot"
                         type="tns:KoulutusLisatiedotTyyppi"
                         maxOccurs="1"
-                        minOccurs="1"/>            
+                        minOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="KoulutusohjelmaTyyppi">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
@@ -195,32 +195,32 @@
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="0"/>
-             
+
             <xs:element name="KoulutusohjelmaKoodi"
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1"/>
-            
+
             <xs:element name="KoodistoUri"
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1"/>
-            
+
             <xs:element name="KoodistoVersio"
                         type="xs:int"
                         maxOccurs="1"
                         minOccurs="1"/>
-            
+
             <xs:element name="KoodistoUriVersio"
                           type="xs:string"
                           maxOccurs="1"
                           minOccurs="1"/>
-            
+
             <xs:element name="Nimi" type="tns:Nimi"  minOccurs="0" maxOccurs="99"/>
-               
+
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="Nimi">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
@@ -239,5 +239,5 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
-  
+
 </xs:schema>

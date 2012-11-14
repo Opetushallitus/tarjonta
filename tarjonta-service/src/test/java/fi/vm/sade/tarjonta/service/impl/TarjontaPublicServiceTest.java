@@ -37,25 +37,12 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.dao.impl.HakuDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaTyyppi;
 
 /**
  *
@@ -79,9 +66,9 @@ public class TarjontaPublicServiceTest {
     private static final String KOMOTO_OID = "11.12.23.34.56";
 
     private static final String HAKUKOHDE_OID = "12.13.24.35.57";
-    
+
     private static final String HAKU_OID = "0.1.2.3.4.5.67";
-    
+
     private static final String KOULUTUSKOODI = "uri:koulutuskoodi";
 	private static final String KOULUTUSOHJELMAKOODI1 = "uri:koulutusohjelmakoodi1";
 	private static final String KOULUTUSOHJELMAKOODI2 = "uri:koulutusohjelmakoodi2";
@@ -175,11 +162,11 @@ public class TarjontaPublicServiceTest {
         koulutusmoduuliToteutusDAO.insert(koulutusmoduuliToteutus2);
         hakukohde2.addKoulutusmoduuliToteutus(koulutusmoduuliToteutus2);
         hakukohdeDAO.update(hakukohde2);
-        
+
         //Liita koulutus 1:een hakukohteeseen
         hakukohde.addKoulutusmoduuliToteutus(koulutusmoduuliToteutus2);
         hakukohdeDAO.update(hakukohde);
-        
+
         //Liitetään hakukohteet hakuun
         haku.addHakukohde(hakukohde2);
         //Hakukohde hakukohde1 = hakukohdeDAO.findBy("oid", HAKUKOHDE_OID).get(0);
@@ -219,7 +206,7 @@ public class TarjontaPublicServiceTest {
 
         assertEquals(YHTEISHAKU, haku.getHakutapa());
         assertEquals("Peltikorjaajan perustutkinto", hakukohde.getNimi());
-        assertEquals(TarjontaTila.VALMIS.name(), hakukohde.getTila());
+        assertEquals(fi.vm.sade.tarjonta.service.types.TarjontaTila.VALMIS, hakukohde.getTila());
 
         rivi = rivit.get(2);
         haku = rivi.getHaku();
@@ -228,7 +215,7 @@ public class TarjontaPublicServiceTest {
 
         assertEquals(YHTEISHAKU, haku.getHakutapa());
         assertEquals("Taidemaalarin erikoistutkinto", hakukohde.getNimi());
-        assertEquals(TarjontaTila.VALMIS.name(), hakukohde.getTila());
+        assertEquals(fi.vm.sade.tarjonta.service.types.TarjontaTila.VALMIS, hakukohde.getTila());
         assertEquals(ORGANISAATIO_B, koulutus.getTarjoaja());
 
     }
@@ -265,25 +252,25 @@ public class TarjontaPublicServiceTest {
         assertEquals(ORGANISAATIO_B, koulutus.getTarjoaja());
 
     }
-    
+
     @Test
     public void testEtsiKoulutusmoduulit() {
 
         HaeKoulutusmoduulitKyselyTyyppi kysely = new HaeKoulutusmoduulitKyselyTyyppi();
         kysely.setKoulutuskoodiUri(KOULUTUSKOODI);
         HaeKoulutusmoduulitVastausTyyppi vastaus = service.haeKoulutusmoduulit(kysely);
-        
+
         assertEquals(2, vastaus.getKoulutusmoduuliTulos().size());
-        
+
         kysely.setKoulutusohjelmakoodiUri(KOULUTUSOHJELMAKOODI1);
         vastaus = service.haeKoulutusmoduulit(kysely);
-        
+
         assertEquals(1, vastaus.getKoulutusmoduuliTulos().size());
         assertEquals(KOULUTUSOHJELMAKOODI1, vastaus.getKoulutusmoduuliTulos().get(0).getKoulutusmoduuli().getKoulutusohjelmakoodiUri());
-        
+
         kysely = new HaeKoulutusmoduulitKyselyTyyppi();
         vastaus = service.haeKoulutusmoduulit(kysely);
-        
+
         assertTrue(vastaus.getKoulutusmoduuliTulos().size() > 2);
 
     }
@@ -314,12 +301,12 @@ public class TarjontaPublicServiceTest {
         assertNotNull(vastaus);
         assertTrue(vastaus.getHakukohde().getHakukohdeNimi().equals("Peltikorjaajan perustutkinto"));
     }
-    
+
     @Test
     public void testHaeTarjonta() {
     	TarjontaTyyppi vastaus = service.haeTarjonta(HAKU_OID);
     	assertEquals(2, vastaus.getHakukohde().size());
-    	assertTrue(vastaus.getHakukohde().get(0).getHakukohdeNimi().equals("Peltikorjaajan perustutkinto") 
+    	assertTrue(vastaus.getHakukohde().get(0).getHakukohdeNimi().equals("Peltikorjaajan perustutkinto")
     			|| vastaus.getHakukohde().get(1).getHakukohdeNimi().equals("Peltikorjaajan perustutkinto"));
     }
 

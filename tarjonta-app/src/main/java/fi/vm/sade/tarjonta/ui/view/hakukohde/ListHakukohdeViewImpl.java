@@ -178,7 +178,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     private String buildHakukohdeCaption(HakukohdeTulos curHakukohde) {
         return getKoodiNimi(curHakukohde.getHakukohde().getNimi())
                 + ", " + getKoodiNimi(curHakukohde.getHaku().getHakukausiUri()) + " " + curHakukohde.getHaku().getHakuvuosi()
-                + ", " + i18n.getMessage(curHakukohde.getHakukohde().getTila());
+                + ", " + i18n.getMessage(curHakukohde.getHakukohde().getTila().name());
     }
 
     /**

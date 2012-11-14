@@ -18,22 +18,13 @@ package fi.vm.sade.tarjonta.service.business.impl;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenKestoTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutuksenTila;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.WebLinkkiTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
+import fi.vm.sade.tarjonta.service.types.*;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -41,17 +32,50 @@ import java.util.Set;
  */
 public final class EntityUtils {
 
-    public static void copyMonikielinenTeksti(MonikielinenTeksti from, List<MonikielinenTekstiTyyppi> to) {
+    /**
+     * Copies all text translations from domain model type into web service type. If either of the parameters
+     * is null, returns null. Otherwise <code>to</code> is returned to allow method chaining.
+     *
+     * @param from source of the copying
+     * @param to target of the copying
+     * @return
+     */
+    public static MonikielinenTekstiTyyppi copyFields(MonikielinenTeksti from, MonikielinenTekstiTyyppi to) {
+
         if (from == null || to == null) {
-            return;
+            return null;
         }
 
         for (TekstiKaannos tekstiKaannos : from.getTekstis()) {
-            MonikielinenTekstiTyyppi t = new MonikielinenTekstiTyyppi();
-            t.setTeksti(tekstiKaannos.getTeksti());
-            t.setTekstinKielikoodi(tekstiKaannos.getKieliKoodi());
-            to.add(t);
+            Teksti teksti = new Teksti();
+            teksti.setValue(tekstiKaannos.getTeksti());
+            teksti.setKieliKoodi(tekstiKaannos.getKieliKoodi());
+            to.getTeksti().add(teksti);
         }
+
+        return to;
+    }
+
+    /**
+     * Copies all text translations from web service model into domain model type. If either of the parameters is
+     * null, null is returned. Otherwise <code>to</code> is returned to allow method chaining.
+     *
+     * @param from source of the copying
+     * @param to target of the copying
+     * @return
+     */
+    public static MonikielinenTeksti copyFields(MonikielinenTekstiTyyppi from, MonikielinenTeksti to) {
+
+        if (from == null || to == null) {
+            return null;
+        }
+
+        for (Teksti teksti : from.getTeksti()) {
+            to.addTekstiKaannos(teksti.getKieliKoodi(), teksti.getValue());
+        }
+
+        return to;
+
     }
 
     private EntityUtils() {
@@ -64,7 +88,7 @@ public final class EntityUtils {
     }
 
     public static void copyFields(PaivitaKoulutusTyyppi from, KoulutusmoduuliToteutus to) {
-        mapKomotoTila(from, to);
+        to.setTila(convertTila(from.getTila()));
         to.setOpetusmuoto(toKoodistoUriSet(from.getOpetusmuoto()));
         to.setKoulutuksenAlkamisPvm(from.getKoulutuksenAlkamisPaiva());
         to.setKoulutuslajis(toStringUriSet(from.getKoulutuslaji()));
@@ -92,8 +116,8 @@ public final class EntityUtils {
     }
 
     public static void copyFields(LisaaKoulutusTyyppi fromKoulutus, KoulutusmoduuliToteutus toKoulutus) {
-        mapKomotoTila(fromKoulutus, toKoulutus);
 
+        toKoulutus.setTila(convertTila(fromKoulutus.getTila()));
         toKoulutus.setOpetusmuoto(toKoodistoUriSet(fromKoulutus.getOpetusmuoto()));
         toKoulutus.setOid(fromKoulutus.getOid());
         toKoulutus.setKoulutuksenAlkamisPvm(fromKoulutus.getKoulutuksenAlkamisPaiva());
@@ -125,7 +149,6 @@ public final class EntityUtils {
         copyLisatiedotFields(fromKoulutus, toKoulutus);
     }
 
-
     /**
      * For copying the textual descriptive language texts and ammattinimike list.
      *
@@ -146,31 +169,11 @@ public final class EntityUtils {
         }
         toKoulutus.setAmmattinimikes(ammattinimikes);
 
-        toKoulutus.setKuvailevatTiedot(toMonikielinenTeksti(fromKoulutus.getKuvailevatTiedot(), new MonikielinenTeksti()));
-        toKoulutus.setKansainvalistyminen(toMonikielinenTeksti(fromKoulutus.getKansainvalistyminen(), new MonikielinenTeksti()));
-        toKoulutus.setSijoittuminenTyoelamaan(toMonikielinenTeksti(fromKoulutus.getSijoittuminenTyoelamaan(), new MonikielinenTeksti()));
-        toKoulutus.setSisalto(toMonikielinenTeksti(fromKoulutus.getSisalto(), new MonikielinenTeksti()));
-        toKoulutus.setYhteistyoMuidenToimijoidenKanssa(toMonikielinenTeksti(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa(), new MonikielinenTeksti()));
-    }
-
-
-
-    public static MonikielinenTeksti toMonikielinenTeksti(List<MonikielinenTekstiTyyppi> from, MonikielinenTeksti to) {
-        if (to == null || from == null) {
-            return null;
-        }
-        for (MonikielinenTekstiTyyppi monikielinenTekstiTyyppi : from) {
-            toMonikielinenTeksti(monikielinenTekstiTyyppi, to);
-        }
-        return to;
-    }
-
-    public static MonikielinenTeksti toMonikielinenTeksti(MonikielinenTekstiTyyppi from, MonikielinenTeksti to) {
-        if (to == null || from == null) {
-            return null;
-        }
-        to.addTekstiKaannos(from.getTekstinKielikoodi(), from.getTeksti());
-        return to;
+        toKoulutus.setKuvailevatTiedot(copyFields(fromKoulutus.getKuvailevatTiedot(), new MonikielinenTeksti()));
+        toKoulutus.setKansainvalistyminen(copyFields(fromKoulutus.getKansainvalistyminen(), new MonikielinenTeksti()));
+        toKoulutus.setSijoittuminenTyoelamaan(copyFields(fromKoulutus.getSijoittuminenTyoelamaan(), new MonikielinenTeksti()));
+        toKoulutus.setSisalto(copyFields(fromKoulutus.getSisalto(), new MonikielinenTeksti()));
+        toKoulutus.setYhteistyoMuidenToimijoidenKanssa(copyFields(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa(), new MonikielinenTeksti()));
     }
 
     public static void copyFields(YhteyshenkiloTyyppi from, Yhteyshenkilo to) {
@@ -251,10 +254,32 @@ public final class EntityUtils {
     }
 
     private static void mapKomotoTila(KoulutusTyyppi from, KoulutusmoduuliToteutus to) {
-        if (from.getKoulutuksenTila().equals(KoulutuksenTila.VALMIS)) {
-            to.setTila(TarjontaTila.VALMIS);
-        } else {
-            to.setTila(TarjontaTila.LUONNOS);
-        }
+        to.setTila(convertTila(from.getTila()));
     }
+
+    /**
+     * Converts TarjontaTila from web service type to domain model type.
+     *
+     * @param tila
+     * @return
+     */
+    public static fi.vm.sade.tarjonta.model.TarjontaTila convertTila(fi.vm.sade.tarjonta.service.types.TarjontaTila tila) {
+
+        return fi.vm.sade.tarjonta.model.TarjontaTila.valueOf(tila.name());
+
+    }
+
+    /**
+     * Converts TarjontaTila from domain model type to web service type.
+     *
+     * @param tila
+     * @return
+     */
+    public static fi.vm.sade.tarjonta.service.types.TarjontaTila convertTila(fi.vm.sade.tarjonta.model.TarjontaTila tila) {
+
+        return fi.vm.sade.tarjonta.service.types.TarjontaTila.valueOf(tila.name());
+
+    }
+
 }
+

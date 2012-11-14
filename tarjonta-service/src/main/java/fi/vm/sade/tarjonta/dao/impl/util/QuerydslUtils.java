@@ -1,45 +1,39 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.model;
+package fi.vm.sade.tarjonta.dao.impl.util;
+
+import com.mysema.query.types.expr.BooleanExpression;
 
 /**
- * Known Koodisto constants used by tarjonta. As these values appear in koodisto, replace dummy values here.
+ *
+ * @author Jukka Raanamo
  */
-public interface KoodistoContract {
+public class QuerydslUtils {
 
     /**
-     * A.k.a LearningOpportunityType.
+     * Returns expression that is created by concatenating given expression with AND operator. If
+     * the left expression is null just right is returned.
+     *
+     * @param left
+     * @param right
+     * @return
      */
-    public interface ModuuliTyypit {
-
-        String TUTKINTO_OHJELMA = "1001";
-
-        String TUTKINNON_OSA = "1002";
+    public static BooleanExpression and(BooleanExpression left, BooleanExpression right) {
+        return (left == null ? right : left.and(right));
     }
-
-
-    public interface TarjontaTilat {
-
-        String SUUNNITTELUSSA = "http://tarjontatila/suunnittelussa";
-
-        String VALMIS = "http://tarjontatila/valmis";
-
-        String JULKAISTU = "http://tarjontatila/julkaistu";
-    }
-
 
 }
 

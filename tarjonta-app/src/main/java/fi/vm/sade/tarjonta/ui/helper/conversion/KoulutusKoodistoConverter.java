@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.ui.helper.conversion;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -181,8 +181,8 @@ public class KoulutusKoodistoConverter {
                 //do not filter anything
                 model.add(kc.mapKoodiTypeToModel(KoulutuskoodiModel.class, koodiType, locale));
             } else if (koodiType.getKoodiArvo().startsWith(type.getKoulutuskoodiFilter())) {
-                //TODO: fix this after koodisto references are finalised. 
-                //A bad way to filter koodisto data. 
+                //TODO: fix this after koodisto references are finalised.
+                //A bad way to filter koodisto data.
                 model.add(kc.mapKoodiTypeToModel(KoulutuskoodiModel.class, koodiType, locale));
             }
         }

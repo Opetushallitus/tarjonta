@@ -2,9 +2,6 @@ package fi.vm.sade.tarjonta.service.mock;
 
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.*;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaTyyppi;
 
 import javax.jws.WebParam;
 
@@ -60,7 +57,7 @@ public class SijoitteluTarjontaPublicServiceMock implements TarjontaPublicServic
         hkt.setHakukelpoisuusVaatimukset("Hakukelpoisuusvaatimukset " + seq);
         hkt.setHakukohdeNimi("Hakukohde " + seq);
         hkt.setHakukohteenHakuOid("hakukohteenHakuOid" + seq);
-        hkt.setHakukohteenTila("Tila " + seq);
+        hkt.setHakukohteenTila(TarjontaTila.LUONNOS);
         hkt.setOid("Oid" + seq);
 
         return hkt;

@@ -45,7 +45,7 @@ import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 
 /**
  * Presenter for searching, creating, editing, and viewing Haku objects.
@@ -136,7 +136,7 @@ public class HakuPresenter {
         }
         return map;
     }
-    
+
     private String parseKoodiUri(String koodiUriAndVersion) {
     	int index = koodiUriAndVersion.lastIndexOf('#');
     	if (index > -1) {

@@ -20,7 +20,6 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusmoduuliTyyppi;
 
 /**
  * Business logic for manipulating classes inherited from LearningOpportunityObject.

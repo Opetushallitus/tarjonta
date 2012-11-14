@@ -2,7 +2,7 @@ package fi.vm.sade.tarjonta.ui.helper.conversion;
 
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.koodisto.KoulutuskoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusasteModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import java.util.Locale;

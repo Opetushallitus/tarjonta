@@ -14,15 +14,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
-import fi.vm.sade.tarjonta.service.types.tarjonta.*;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 /**
  *
  * @author Tuomas Katva
@@ -36,11 +38,11 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.setHakukelpoisuusVaatimukset(s.getHakukelpoisuusvaatimus());
         hakukohde.setHakukohdeNimi(s.getHakukohdeNimi());
         hakukohde.setHakukohteenHakuOid(s.getHaku().getOid());
-        hakukohde.setHakukohteenTila(s.getTila().name());
+        hakukohde.setHakukohteenTila(EntityUtils.convertTila(s.getTila()));
         hakukohde.setOid(s.getOid());
         hakukohde.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
-        hakukohde.getLisatiedot().addAll(convertMonikielinenTeksti(s.getLisatiedot()));
-        hakukohde.getValintaPerusteidenKuvaukset().addAll(convertMonikielinenTeksti(s.getValintaperusteKuvaus()));
+        hakukohde.setLisatiedot(EntityUtils.copyFields(s.getLisatiedot(), new MonikielinenTekstiTyyppi()));
+        hakukohde.setValintaPerusteidenKuvaukset(EntityUtils.copyFields(s.getValintaperusteKuvaus(), new MonikielinenTekstiTyyppi()));
         hakukohde.getHakukohteenKoulutusOidit().addAll(convertKoulutukses(s.getKoulutusmoduuliToteutuses()));
         return hakukohde;
     }
@@ -55,18 +57,5 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         return komotoOids;
     }
 
-    private List<MonikielinenTekstiTyyppi> convertMonikielinenTeksti(MonikielinenTeksti moniteksti) {
-        List<MonikielinenTekstiTyyppi> tekstit = new ArrayList<MonikielinenTekstiTyyppi>();
-        if (moniteksti != null) {
-        	for (TekstiKaannos kaannos:moniteksti.getTekstis()) {
-        		MonikielinenTekstiTyyppi teksti = new MonikielinenTekstiTyyppi();
-        		teksti.setTeksti(kaannos.getTeksti());
-        		teksti.setTekstinKielikoodi(kaannos.getKieliKoodi());
-                        tekstit.add(teksti);
-        	}
-        }
-
-        return tekstit;
-    }
-
 }
+

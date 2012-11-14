@@ -15,8 +15,9 @@
  */
 package fi.vm.sade.tarjonta.model.util;
 
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
+
 
 /**
  *

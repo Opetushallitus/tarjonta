@@ -2,16 +2,16 @@ package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.service.types.dto.HakueraSimpleDTO;
+import fi.vm.sade.tarjonta.service.types.HakueraSimpleTyyppi;
 
 /**
  * @author Antti Salonen
  */
-public class HakueraToSimpleDTOConverter extends AbstractFromDomainConverter<Haku, HakueraSimpleDTO> {
+public class HakueraToSimpleDTOConverter extends AbstractFromDomainConverter<Haku, HakueraSimpleTyyppi> {
 
     @Override
-    public HakueraSimpleDTO convert(Haku hakuera) {
-        HakueraSimpleDTO dto = new HakueraSimpleDTO();
+    public HakueraSimpleTyyppi convert(Haku hakuera) {
+        HakueraSimpleTyyppi dto = new HakueraSimpleTyyppi();
         dto.setOid(hakuera.getOid());
         dto.setNimiFi(hakuera.getNimiFi());
         dto.setNimiSv(hakuera.getNimiSv());

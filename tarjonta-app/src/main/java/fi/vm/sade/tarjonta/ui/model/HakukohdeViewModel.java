@@ -1,9 +1,7 @@
 package fi.vm.sade.tarjonta.ui.model;
 
-import fi.vm.sade.tarjonta.service.types.tarjonta.HakuTyyppi;
 import java.util.List;
 import java.util.ArrayList;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 
 public class HakukohdeViewModel extends BaseUIViewModel {
 

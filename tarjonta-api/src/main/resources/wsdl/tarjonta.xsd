@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<xs:schema elementFormDefault="unqualified"
-           targetNamespace="http://service.tarjonta.sade.vm.fi/types/tarjonta"
-           version="1.0" xmlns:tns="http://service.tarjonta.sade.vm.fi/types/tarjonta"
+<xs:schema version="1.0"
+           elementFormDefault="unqualified"
+           targetNamespace="http://service.tarjonta.sade.vm.fi/types"
+           xmlns:tns="http://service.tarjonta.sade.vm.fi/types"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
     <xs:annotation>
@@ -11,6 +12,68 @@
             muiden palveluiden tarpeiden mukaan.
         </xs:documentation>
     </xs:annotation>
+
+
+        <!-- moved from dto: start -->
+
+    <xs:simpleType name="LongString">
+        <xs:restriction base="xs:string">
+            <xs:length value="255" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="HakueraSimpleTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="oid" type="tns:OidTyyppi" />
+            <xs:element minOccurs="1" maxOccurs="1" name="nimiFi" type="tns:LongString" />
+            <xs:element minOccurs="1" maxOccurs="1" name="nimiSv" type="tns:LongString" />
+            <xs:element minOccurs="1" maxOccurs="1" name="nimiEn" type="tns:LongString" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SearchCriteriaType">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="paattyneet" type="xs:boolean" />
+            <xs:element minOccurs="1" maxOccurs="1" name="meneillaan" type="xs:boolean" />
+            <xs:element minOccurs="1" maxOccurs="1" name="tulevat" type="xs:boolean" />
+            <xs:element minOccurs="1" maxOccurs="1" name="lang" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HakueraTyyppi">
+        <xs:complexContent>
+            <xs:extension base="tns:HakueraSimpleTyyppi">
+                <xs:sequence>
+                    <xs:element minOccurs="1" maxOccurs="1"
+                                name="hakutyyppi" type="tns:LongString" />
+                    <xs:element minOccurs="1" maxOccurs="1"
+                                name="hakukausi" type="tns:LongString" />
+                    <xs:element minOccurs="1" maxOccurs="1"
+                                name="koulutuksenAlkaminen" type="tns:LongString" />
+                    <xs:element minOccurs="1" maxOccurs="1"
+                                name="kohdejoukko" type="tns:LongString" />
+                    <xs:element minOccurs="1" maxOccurs="1"
+                                name="hakutapa" type="tns:LongString" />
+                    <xs:element minOccurs="1" maxOccurs="1"
+                                name="sijoittelu" type="xs:boolean" />
+                    <xs:element minOccurs="0" maxOccurs="1"
+                                name="hakulomakeUrl" type="xs:anyURI" />
+                    <xs:element minOccurs="0" maxOccurs="1"
+                                name="tila" type="tns:TarjontaTila" />
+                    <xs:element minOccurs="1" maxOccurs="1" name="haunAlkamisPvm"
+                                type="xs:date">
+                    </xs:element>
+                    <xs:element minOccurs="1" maxOccurs="1" name="haunLoppumisPvm"
+                                type="xs:date">
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+        <!-- moved from dto: end -->
+
 
     <xs:complexType name="TarjontaTyyppi">
         <xs:sequence>
@@ -62,7 +125,7 @@
                         minOccurs="1" />
 
             <xs:element name="hakukohteenTila"
-                        type="xs:string"
+                        type="tns:TarjontaTila"
                         maxOccurs="1"
                         minOccurs="1" />
 
@@ -84,12 +147,12 @@
             <xs:element name="lisatiedot"
                         type="tns:MonikielinenTekstiTyyppi"
                         minOccurs="0"
-                        maxOccurs="unbounded"/>
+                        maxOccurs="1"/>
 
             <xs:element name="valintaPerusteidenKuvaukset"
                         type="tns:MonikielinenTekstiTyyppi"
                         minOccurs="0"
-                        maxOccurs="unbounded"/>
+                        maxOccurs="1"/>
 
         </xs:sequence>
     </xs:complexType>
@@ -116,7 +179,7 @@
                     <xs:documentation>Haun sisaiset hakuajat</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element minOccurs="1" maxOccurs="1" name="haunTila" type="tns:HaunTila">
+            <xs:element minOccurs="1" maxOccurs="1" name="haunTila" type="tns:TarjontaTila">
                 <xs:annotation>
                     <xs:documentation>Haun tila</xs:documentation>
                 </xs:annotation>
@@ -221,16 +284,20 @@
 
     <xs:complexType name="MonikielinenTekstiTyyppi">
         <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="tekstinKielikoodi" type="xs:string">
+
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="Teksti">
                 <xs:annotation>
-                    <xs:documentation>Tekstin kielikoodi</xs:documentation>
+                    <xs:documentation xml:lang="fi">Joukko kielistettyja teksteja.</xs:documentation>
                 </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="kieliKoodi" type="xs:string" use="required"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
             </xs:element>
-            <xs:element minOccurs="1" maxOccurs="1" name="teksti" type="xs:string">
-                <xs:annotation>
-                    <xs:documentation>Teksti</xs:documentation>
-                </xs:annotation>
-            </xs:element>
+
         </xs:sequence>
     </xs:complexType>
 
@@ -243,7 +310,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element minOccurs="1" maxOccurs="unbounded" name="kuvaukset" type="tns:MonikielinenTekstiTyyppi">
+            <xs:element minOccurs="1" maxOccurs="1" name="kuvaukset" type="tns:MonikielinenTekstiTyyppi">
                 <xs:annotation>
                     <xs:documentation>
                         Valintakokeen kuvaukset annetuilla kielillä
@@ -316,25 +383,25 @@
                     <xs:documentation>Tutkintonimike</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            
-             <xs:element minOccurs="0" maxOccurs="1" name="koulutuksenRakenneUri" type="xs:string">
+
+            <xs:element minOccurs="0" maxOccurs="1" name="koulutuksenRakenneUri" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>KoulutuksenRakenne</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            
-             <xs:element minOccurs="0" maxOccurs="1" name="tavoiteetUri" type="xs:string">
+
+            <xs:element minOccurs="0" maxOccurs="1" name="tavoiteetUri" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Koulutukselliset ja ammatilliset tavoitteet</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            
-             <xs:element minOccurs="0" maxOccurs="1" name="jatkoopintomahdollisuudetUri" type="xs:string">
+
+            <xs:element minOccurs="0" maxOccurs="1" name="jatkoopintomahdollisuudetUri" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Jatko-opintomahdollisuudet</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            
+
             <xs:element minOccurs="0" maxOccurs="1" name="ulkoinenTunniste" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Ulkoinen tunniste</xs:documentation>
@@ -363,19 +430,12 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:simpleType name="HaunTila">
+
+    <xs:simpleType name="TarjontaTila">
         <xs:restriction base="xs:string">
             <xs:enumeration value="LUONNOS"/>
             <xs:enumeration value="VALMIS"/>
             <xs:enumeration value="JULKAISTU"/>
-        </xs:restriction>
-
-    </xs:simpleType>
-
-    <xs:simpleType name="KoulutuksenTila">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="LUONNOS"/>
-            <xs:enumeration value="VALMIS"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -384,7 +444,7 @@
         <xs:sequence>
             <xs:element name="Oid" type="xs:string"></xs:element>
             <xs:element name="Nimi" type="xs:string"></xs:element>
-            <xs:element name="Tila" type="xs:string"></xs:element>
+            <xs:element name="Tila" type="tns:TarjontaTila"></xs:element>
         </xs:sequence>
     </xs:complexType>
 
@@ -400,11 +460,11 @@
 
     <xs:complexType name="KoulutusKoosteTyyppi">
         <xs:sequence>
-            <xs:element name="Nimi" type="xs:string"></xs:element>
+            <xs:element name="Nimi" type="tns:MonikielinenTekstiTyyppi" minOccurs="1" maxOccurs="1"></xs:element>
             <xs:element name="Koulutusmoduuli" type="xs:string"></xs:element>
             <xs:element name="KoulutusmoduuliToteutus" type="xs:string"></xs:element>
             <xs:element name="Tarjoaja" type="xs:string"></xs:element>
-            <xs:element name="Tila" type="tns:KoulutuksenTila"></xs:element>
+            <xs:element name="Tila" type="tns:TarjontaTila"></xs:element>
             <xs:element name="Koulutuskoodi" type="xs:string"></xs:element>
             <xs:element name="Koulutusohjelmakoodi" type="xs:string"></xs:element>
             <xs:element name="ajankohta" type="xs:string"></xs:element>
@@ -432,12 +492,12 @@
                 </xs:annotation>
             </xs:element>
 
-            <xs:element name="KoulutuksenTila" type="tns:KoulutuksenTila"/>
+            <xs:element name="Tila" type="tns:TarjontaTila"/>
             <xs:element name="KoulutusKoodi" type="tns:KoodistoKoodiTyyppi"/>
             <xs:element name="KoulutusohjelmaKoodi" type="tns:KoodistoKoodiTyyppi"/>
             <xs:element name="Opetusmuoto" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
             <xs:element name="Opetuskieli" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
-            <xs:element name="Painotus" type="tns:PainotusTyyppi" minOccurs="0" maxOccurs="unbounded"/>           
+            <xs:element name="Painotus" type="tns:PainotusTyyppi" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="KoulutuksenAlkamisPaiva" type="xs:dateTime"/>
             <xs:element name="Kesto" type="tns:KoulutuksenKestoTyyppi"/>
             <xs:element name="Koulutuslaji" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
@@ -449,11 +509,11 @@
 
             <!-- Koulutuksen lisätiedot (additional information) -->
             <xs:element name="Ammattinimikkeet" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded" />
-            <xs:element name="KuvailevatTiedot" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="Sisalto" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="SijoittuminenTyoelamaan" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="Kansainvalistyminen" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="YhteistyoMuidenToimijoidenKanssa" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="KuvailevatTiedot" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Sisalto" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1" />
+            <xs:element name="SijoittuminenTyoelamaan" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Kansainvalistyminen" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1" />
+            <xs:element name="YhteistyoMuidenToimijoidenKanssa" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
     </xs:group>
 
@@ -593,7 +653,7 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="PainotusTyyppi">
         <xs:sequence>
             <xs:element name="Arvo" type="xs:string">
@@ -636,5 +696,14 @@
             <xs:enumeration value="OID_EI_OLEMASSA"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:simpleType name="OidTyyppi">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9\.]*" />
+            <xs:minLength value="14" />
+            <xs:maxLength value="30" />
+        </xs:restriction>
+    </xs:simpleType>
+
 
 </xs:schema>

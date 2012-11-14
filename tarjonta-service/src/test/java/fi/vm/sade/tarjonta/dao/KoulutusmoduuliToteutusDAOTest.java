@@ -80,7 +80,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         koulutusmoduuliDAO.insert(defaultModuuli);
 
         defaultToteutus = new KoulutusmoduuliToteutus(defaultModuuli);
-        defaultToteutus.setNimi(TOTEUTUS_1_NIMI);
+        defaultToteutus.setNimi(TarjontaFixtures.createText(TOTEUTUS_1_NIMI, null, null));
         defaultToteutus.setOid(TOTEUTUS_1_OID);
         defaultToteutus.setKoulutuksenAlkamisPvm(ALKAMIS_PVM);
         defaultToteutus.setMaksullisuus(MAKSULLISUUS);
@@ -95,7 +95,7 @@ public class KoulutusmoduuliToteutusDAOTest {
 
         KoulutusmoduuliToteutus loaded = koulutusmoduuliToteutusDAO.read(defaultToteutus.getId());
         assertNotNull(loaded);
-        assertEquals(TOTEUTUS_1_NIMI, loaded.getNimi());
+        assertEquals(TOTEUTUS_1_NIMI, loaded.getNimi().getTekstiForKieliKoodi("fi"));
         assertEquals(TOTEUTUS_1_OID, loaded.getOid());
         assertEquals(ALKAMIS_PVM, loaded.getKoulutuksenAlkamisPvm());
         assertEquals(MAKSULLISUUS, loaded.getMaksullisuus());
@@ -232,14 +232,14 @@ public class KoulutusmoduuliToteutusDAOTest {
 
     	//KOMOTO1
     	KoulutusmoduuliToteutus t1 = fixtures.createTutkintoOhjelmaToteutus();
-    	t1.setNimi(nimi1);
+    	t1.setNimi(TarjontaFixtures.createText(nimi1, null, null));
     	t1.setTarjoaja(tarjoaja1);
         t1.setKoulutusmoduuli(m);
     	koulutusmoduuliToteutusDAO.insert(t1);
 
     	//KOMOTO2
     	KoulutusmoduuliToteutus t2 = fixtures.createTutkintoOhjelmaToteutus();
-    	t2.setNimi(nimi2);
+    	t2.setNimi(TarjontaFixtures.createText(nimi2, null, null));
     	t2.setTarjoaja(tarjoaja2);
         t2.setKoulutusmoduuli(m);
     	koulutusmoduuliToteutusDAO.insert(t2);
@@ -250,7 +250,7 @@ public class KoulutusmoduuliToteutusDAOTest {
     	List<KoulutusmoduuliToteutus> result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1);
 
     	assertEquals(1, result.size());
-    	assertEquals(nimi1, result.get(0).getNimi());
+    	assertEquals(nimi1, result.get(0).getNimi().getTekstiForKieliKoodi("fi"));
 
     	//Searching with list containing tarjoaja2 but not tarjoaja1 and nimi2
 
@@ -258,7 +258,7 @@ public class KoulutusmoduuliToteutusDAOTest {
     	result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi2);
 
     	assertEquals(1, result.size());
-    	assertEquals(nimi2, result.get(0).getNimi());
+    	assertEquals(nimi2, result.get(0).getNimi().getTekstiForKieliKoodi("fi"));
 
     	//Searching with list not containing any matching tarjoaja and nimi1
 
@@ -280,7 +280,7 @@ public class KoulutusmoduuliToteutusDAOTest {
     	result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1);
 
     	assertEquals(1, result.size());
-    	assertEquals(nimi1, result.get(0).getNimi());
+    	assertEquals(nimi1, result.get(0).getNimi().getTekstiForKieliKoodi("fi"));
 
     	//Searching with an empty list and null in nimi
 

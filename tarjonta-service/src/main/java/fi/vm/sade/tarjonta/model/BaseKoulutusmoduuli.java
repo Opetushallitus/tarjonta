@@ -26,7 +26,7 @@ import java.io.Serializable;
  * Yhteinen abstrakti perusluokka (ei entiteetti) Koulutusmoduuli:lle seka Koulutusmoduulintoteutukselle.
  */
 @MappedSuperclass
-public abstract class BaseKoulutusmoduuli extends BaseEntity implements Comparable<BaseKoulutusmoduuli>, Serializable {
+public abstract class BaseKoulutusmoduuli extends BaseEntity implements Serializable {
 
     public static final String OID_COLUMN_NAME = "oid";
 
@@ -44,14 +44,14 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Comparab
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
-    @Column(name = "nimi")
-    private String nimi;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "nimi")
+    private MonikielinenTeksti nimi;
 
     /**
      * Make sure you call super when overriding constructor.
      */
     public BaseKoulutusmoduuli() {
-
     }
 
     @PreUpdate
@@ -112,11 +112,9 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Comparab
 
     /**
      * Returns "static" name for this Koulutus. The actual content may be calculated dynamically based on other
-     * properties. This
-     *
-     * @return the nimi
+     * properties.
      */
-    public String getNimi() {
+    public MonikielinenTeksti getNimi() {
         return nimi;
     }
 
@@ -124,25 +122,9 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Comparab
      * Set the display name to be used with this Koulutus. Note that in some cases this value may be recalculated
      * dynamically based on other properties.
      *
-     * @param nimi the nimi to set
      */
-    public void setNimi(String nimi) {
+    public void setNimi(MonikielinenTeksti nimi) {
         this.nimi = nimi;
-    }
-
-    /**
-     * Yksinkertainen vertailu nimen perusteella.
-     *
-     * @param koulutus
-     * @return
-     */
-    @Override
-    public int compareTo(BaseKoulutusmoduuli loo) {
-        if (nimi == null) {
-            return (loo.getNimi() == null ? 0 : 1);
-        } else {
-            return nimi.compareTo(loo.getNimi());
-        }
     }
 
 }

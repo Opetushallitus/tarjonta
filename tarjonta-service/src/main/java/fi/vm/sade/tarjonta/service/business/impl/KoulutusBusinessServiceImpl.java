@@ -15,27 +15,26 @@
  */
 package fi.vm.sade.tarjonta.service.business.impl;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.model.util.SearchWordUtil;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.KoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.TarjontaVirheKoodi;
-import fi.vm.sade.tarjonta.service.types.tarjonta.YhteyshenkiloTyyppi;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import fi.vm.sade.tarjonta.service.types.TarjontaVirheKoodi;
+import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 
 /**
  *
@@ -46,10 +45,13 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
+
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
     @Autowired
     private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
+
     @Autowired
     private YhteyshenkiloDAO yhteyshenkiloDAO;
 
@@ -81,9 +83,10 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
     @Override
     public KoulutusmoduuliToteutus createKoulutus(LisaaKoulutusTyyppi koulutus) {
+
         Koulutusmoduuli moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(
-                koulutus.getKoulutusKoodi().getUri(),
-                koulutus.getKoulutusohjelmaKoodi().getUri());
+            koulutus.getKoulutusKoodi().getUri(),
+            koulutus.getKoulutusohjelmaKoodi().getUri());
 
         if (moduuli == null) {
             throw new TarjontaBusinessException(TarjontaVirheKoodi.KOULUTUSTA_EI_OLEMASSA.value());
@@ -94,8 +97,9 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         komotoModel.setKoulutusmoduuli(moduuli);
         moduuli.addKoulutusmoduuliToteutus(komotoModel);
 
-       //add all multilanguage strings to search keywords
-        komotoModel.setNimi(SearchWordUtil.createSearchKeywords(koulutus));
+        //add all multilanguage strings to search keywords
+        // TODO FIX
+        //komotoModel.setNimi(SearchWordUtil.createSearchKeywords(koulutus));
 
         return koulutusmoduuliToteutusDAO.insert(komotoModel);
     }
@@ -112,8 +116,9 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         EntityUtils.copyFields(koulutus, model);
 
-        //add all multilanguage strings to search keywords
-        model.setNimi(SearchWordUtil.createSearchKeywords(koulutus));
+        // add all multilanguage strings to search keywords
+        // TODO FIX
+        //model.setNimi(SearchWordUtil.createSearchKeywords(koulutus));
 
         koulutusmoduuliToteutusDAO.update(model);
 
@@ -140,7 +145,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
                 boolean updated = false;
                 for (Yhteyshenkilo yhteyshenkilo : yhteyshenkilos) {
                     if (henkiloFrom.getHenkiloOid().equals(yhteyshenkilo.getHenkioOid())) {
-                        //update existing object 
+                        //update existing object
                         EntityUtils.copyFields(henkiloFrom, yhteyshenkilo);
                         yhteyshenkiloDAO.update(yhteyshenkilo);
                         yhteyshenkilo.setPersisted(true);
@@ -171,5 +176,5 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         }
     }
 
-   
 }
+
