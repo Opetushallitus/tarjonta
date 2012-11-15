@@ -44,9 +44,6 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Serializ
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "nimi")
-    private MonikielinenTeksti nimi;
 
     /**
      * Make sure you call super when overriding constructor.
@@ -110,22 +107,6 @@ public abstract class BaseKoulutusmoduuli extends BaseEntity implements Serializ
         this.tila = tila;
     }
 
-    /**
-     * Returns "static" name for this Koulutus. The actual content may be calculated dynamically based on other
-     * properties.
-     */
-    public MonikielinenTeksti getNimi() {
-        return nimi;
-    }
-
-    /**
-     * Set the display name to be used with this Koulutus. Note that in some cases this value may be recalculated
-     * dynamically based on other properties.
-     *
-     */
-    public void setNimi(MonikielinenTeksti nimi) {
-        this.nimi = nimi;
-    }
 
 }
 

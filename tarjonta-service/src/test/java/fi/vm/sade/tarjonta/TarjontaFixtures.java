@@ -111,7 +111,6 @@ public class TarjontaFixtures {
         cal.add(Calendar.YEAR, 1);
 
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus(null);
-        t.setNimi(createText("Simple Tutkinto-Ohjelma toteutus", null, null));
         t.setOid(randomOid("koulutusmoduulitotetutus"));
         t.setKoulutuksenAlkamisPvm(cal.getTime());
         t.setMaksullisuus(null);
@@ -128,7 +127,6 @@ public class TarjontaFixtures {
         cal.add(Calendar.YEAR, 1);
 
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus(null);
-        t.setNimi(createText("Simple Tutkinto-Ohjelma toteutus", null, null));
         t.setOid(komotoOid);
         t.setKoulutuksenAlkamisPvm(cal.getTime());
         t.setMaksullisuus(null);

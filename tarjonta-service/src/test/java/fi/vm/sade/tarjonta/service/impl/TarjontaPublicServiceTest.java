@@ -43,6 +43,7 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import org.junit.Ignore;
 
 /**
  *
@@ -225,6 +226,9 @@ public class TarjontaPublicServiceTest {
 
         KoulutusTulos rivi;
         KoulutusKoosteTyyppi koulutus;
+
+        // precondition for the query
+        assertEquals(3, koulutusmoduuliToteutusDAO.findAll().size());
 
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         HaeKoulutuksetVastausTyyppi vastaus = service.haeKoulutukset(kysely);

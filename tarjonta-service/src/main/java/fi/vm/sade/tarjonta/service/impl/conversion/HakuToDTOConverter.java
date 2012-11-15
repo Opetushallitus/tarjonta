@@ -69,7 +69,7 @@ public class HakuToDTOConverter extends AbstractFromDomainConverter<Haku, HakuTy
         for (TekstiKaannos tk: s.getNimi().getTekstis()) {
             HaunNimi hn = new HaunNimi();
             hn.setKielikoodi(tk.getKieliKoodi());
-            hn.setNimi(tk.getTeksti());
+            hn.setNimi(tk.getArvo());
             h.getHaunKielistetytNimet().add(hn);
         }
        }

@@ -48,7 +48,7 @@ public final class EntityUtils {
 
         for (TekstiKaannos tekstiKaannos : from.getTekstis()) {
             Teksti teksti = new Teksti();
-            teksti.setValue(tekstiKaannos.getTeksti());
+            teksti.setValue(tekstiKaannos.getArvo());
             teksti.setKieliKoodi(tekstiKaannos.getKieliKoodi());
             to.getTeksti().add(teksti);
         }
@@ -81,18 +81,13 @@ public final class EntityUtils {
     private EntityUtils() {
     }
 
-    public static void copyFields(KoulutusmoduuliToteutus from, KoulutusmoduuliToteutus to) {
-        to.setNimi(from.getNimi());
-        to.setTila(from.getTila());
-        to.setMaksullisuus(from.getMaksullisuus());
-    }
 
     public static void copyFields(PaivitaKoulutusTyyppi from, KoulutusmoduuliToteutus to) {
+
         to.setTila(convertTila(from.getTila()));
         to.setOpetusmuoto(toKoodistoUriSet(from.getOpetusmuoto()));
         to.setKoulutuksenAlkamisPvm(from.getKoulutuksenAlkamisPaiva());
         to.setKoulutuslajis(toStringUriSet(from.getKoulutuslaji()));
-        to.setNimi(copyFields(from.getNimi(), new MonikielinenTeksti()));
 
         final KoulutuksenKestoTyyppi kesto = from.getKesto();
         to.setSuunniteltuKesto(kesto.getYksikko(), kesto.getArvo());
@@ -126,7 +121,6 @@ public final class EntityUtils {
         toKoulutus.setOpetuskieli(toKoodistoUriSet(fromKoulutus.getOpetuskieli()));
         toKoulutus.setKoulutuslajis(toKoodistoUriSet(fromKoulutus.getKoulutuslaji()));
         toKoulutus.setTarjoaja(fromKoulutus.getTarjoaja());
-        toKoulutus.setNimi(copyFields(fromKoulutus.getNimi(), new MonikielinenTeksti()));
 
         copyLisatiedotFields(fromKoulutus, toKoulutus);
 

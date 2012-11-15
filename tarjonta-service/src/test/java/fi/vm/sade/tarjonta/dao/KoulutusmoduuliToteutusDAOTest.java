@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
+import fi.vm.sade.tarjonta.TarjontaDatabasePrinter;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.*;
 
@@ -27,6 +28,7 @@ import java.util.Set;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +60,9 @@ public class KoulutusmoduuliToteutusDAOTest {
 
     private KoulutusmoduuliToteutus defaultToteutus;
 
+    @Autowired
+    private TarjontaDatabasePrinter dbPrinter;
+
     private static final Date ALKAMIS_PVM = new Date();
 
     private static final String TARJOAJA_1_OID = "http://organisaatio1";
@@ -77,10 +82,11 @@ public class KoulutusmoduuliToteutusDAOTest {
         defaultModuuli.setOid("http://someoid");
         defaultModuuli.setTutkintoOhjelmanNimi("Junit Tutkinto");
         defaultModuuli.setKoulutusKoodi("123456");
+        defaultModuuli.setNimi(TarjontaFixtures.createText(TOTEUTUS_1_NIMI, null, null));
+
         koulutusmoduuliDAO.insert(defaultModuuli);
 
         defaultToteutus = new KoulutusmoduuliToteutus(defaultModuuli);
-        defaultToteutus.setNimi(TarjontaFixtures.createText(TOTEUTUS_1_NIMI, null, null));
         defaultToteutus.setOid(TOTEUTUS_1_OID);
         defaultToteutus.setKoulutuksenAlkamisPvm(ALKAMIS_PVM);
         defaultToteutus.setMaksullisuus(MAKSULLISUUS);
@@ -95,7 +101,6 @@ public class KoulutusmoduuliToteutusDAOTest {
 
         KoulutusmoduuliToteutus loaded = koulutusmoduuliToteutusDAO.read(defaultToteutus.getId());
         assertNotNull(loaded);
-        assertEquals(TOTEUTUS_1_NIMI, loaded.getNimi().getTekstiForKieliKoodi("fi"));
         assertEquals(TOTEUTUS_1_OID, loaded.getOid());
         assertEquals(ALKAMIS_PVM, loaded.getKoulutuksenAlkamisPvm());
         assertEquals(MAKSULLISUUS, loaded.getMaksullisuus());
@@ -220,82 +225,78 @@ public class KoulutusmoduuliToteutusDAOTest {
     @Test
     public void testFindByCriteria() {
 
-        Koulutusmoduuli m = koulutusmoduuliDAO.insert(fixtures.createTutkintoOhjelma());
+        String tarjoaja1 = "0.0.0.0.01";
+        String nimi1 = "eka toteutus";
 
-    	String tarjoaja1 = "0.0.0.0.01";
-    	String nimi1 = "eka toteutus";
+        String tarjoaja2 = "0.0.0.0.02";
+        String nimi2 = "toka toteutus";
 
-    	String tarjoaja2 = "0.0.0.0.02";
-    	String nimi2 = "toka toteutus";
+        String tarjoaja3 = "0.0.0.0.03";
 
-    	String tarjoaja3 = "0.0.0.0.03";
+        Koulutusmoduuli m1 = fixtures.createTutkintoOhjelma();
+        m1.setNimi(TarjontaFixtures.createText(nimi1, null, null));
+        m1 = koulutusmoduuliDAO.insert(m1);
 
-    	//KOMOTO1
-    	KoulutusmoduuliToteutus t1 = fixtures.createTutkintoOhjelmaToteutus();
-    	t1.setNimi(TarjontaFixtures.createText(nimi1, null, null));
-    	t1.setTarjoaja(tarjoaja1);
-        t1.setKoulutusmoduuli(m);
-    	koulutusmoduuliToteutusDAO.insert(t1);
+        Koulutusmoduuli m2 = fixtures.createTutkintoOhjelma();
+        m2.setNimi(TarjontaFixtures.createText(nimi2, null, null));
+        m2 = koulutusmoduuliDAO.insert(m2);
 
-    	//KOMOTO2
-    	KoulutusmoduuliToteutus t2 = fixtures.createTutkintoOhjelmaToteutus();
-    	t2.setNimi(TarjontaFixtures.createText(nimi2, null, null));
-    	t2.setTarjoaja(tarjoaja2);
-        t2.setKoulutusmoduuli(m);
-    	koulutusmoduuliToteutusDAO.insert(t2);
 
-    	//Searching with list containing tarjoaja1 but not tarjoaja2 and nimi1
+        //KOMOTO1
+        KoulutusmoduuliToteutus t1 = fixtures.createTutkintoOhjelmaToteutus();
+        t1.setTarjoaja(tarjoaja1);
+        t1.setKoulutusmoduuli(m1);
+        koulutusmoduuliToteutusDAO.insert(t1);
 
-    	List<String> criteriaList = Arrays.asList(new String[]{tarjoaja1, tarjoaja3});
-    	List<KoulutusmoduuliToteutus> result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1);
+        //KOMOTO2
+        KoulutusmoduuliToteutus t2 = fixtures.createTutkintoOhjelmaToteutus();
+        t2.setTarjoaja(tarjoaja2);
+        t2.setKoulutusmoduuli(m2);
+        koulutusmoduuliToteutusDAO.insert(t2);
 
-    	assertEquals(1, result.size());
-    	assertEquals(nimi1, result.get(0).getNimi().getTekstiForKieliKoodi("fi"));
+        //Searching with list containing tarjoaja1 but not tarjoaja2 and nimi1
 
-    	//Searching with list containing tarjoaja2 but not tarjoaja1 and nimi2
+        List<String> criteriaList = Arrays.asList(new String[] {tarjoaja1, tarjoaja3});
+        List<KoulutusmoduuliToteutus> result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1);
 
-    	criteriaList = Arrays.asList(new String[]{tarjoaja2, tarjoaja3});
-    	result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi2);
+        assertEquals(1, result.size());
 
-    	assertEquals(1, result.size());
-    	assertEquals(nimi2, result.get(0).getNimi().getTekstiForKieliKoodi("fi"));
+        //Searching with list containing tarjoaja2 but not tarjoaja1 and nimi2
 
-    	//Searching with list not containing any matching tarjoaja and nimi1
+        criteriaList = Arrays.asList(new String[] {tarjoaja2, tarjoaja3});
+        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi2);
 
-    	criteriaList = Arrays.asList(new String[]{tarjoaja3});
-    	result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1);
+        assertEquals(1, result.size());
 
-    	assertEquals(0, result.size());
+        //Searching with list not containing any matching tarjoaja and nimi1
 
-    	//Searching with list containing tarjoaja1 but not tarjoaja2 and nimi2
+        criteriaList = Arrays.asList(new String[] {tarjoaja3});
+        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1);
 
-    	criteriaList = Arrays.asList(new String[]{tarjoaja1, tarjoaja3});
-    	result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi2);
+        assertEquals(0, result.size());
 
-    	assertEquals(0, result.size());
+        //Searching with list containing tarjoaja1 but not tarjoaja2 and nimi2
 
-    	//Searching with an empty list and nimi1
+        criteriaList = Arrays.asList(new String[] {tarjoaja1, tarjoaja3});
+        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi2);
 
-    	criteriaList = new ArrayList<String>();
-    	result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1);
+        assertEquals(0, result.size());
 
-    	assertEquals(1, result.size());
-    	assertEquals(nimi1, result.get(0).getNimi().getTekstiForKieliKoodi("fi"));
+        //Searching with an empty list and nimi1
 
-    	//Searching with an empty list and null in nimi
+        criteriaList = new ArrayList<String>();
+        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1);
 
-    	criteriaList = new ArrayList<String>();
-    	result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null);
+        assertEquals(1, result.size());
+        assertEquals(nimi1, result.get(0).getKoulutusmoduuli().getNimi().getTekstiForKieliKoodi("fi"));
 
-    	//returns all komotos, at least the 2 created in the beginning of this test method.
-    	assertTrue(result.size()>=2);
-    }
+        //Searching with an empty list and null in nimi
 
-    private KoulutusmoduuliToteutus updateAndRead(KoulutusmoduuliToteutus toteutus) {
+        criteriaList = new ArrayList<String>();
+        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null);
 
-        koulutusmoduuliToteutusDAO.update(toteutus);
-        return (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.read(toteutus.getId());
-
+        //returns all komotos, at least the 2 created in the beginning of this test method.
+        assertTrue(result.size() >= 2);
     }
 
 }

@@ -18,9 +18,11 @@ package fi.vm.sade.tarjonta;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import java.io.PrintWriter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,9 @@ public class TarjontaDatabasePrinter {
 
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
+
+    @Autowired
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     @Autowired
     private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
@@ -50,7 +55,8 @@ public class TarjontaDatabasePrinter {
     public void printAll(PrintWriter out) {
         out.println("---- Tarjonta database dump:");
         printHakukohde(out);
-        printKoulutus(out);
+        printKoulutusmoduuli(out);
+        printKoulutusmoduuliToteutus(out);
         printRakenne(out);
     }
 
@@ -67,7 +73,7 @@ public class TarjontaDatabasePrinter {
 
     }
 
-    public void printKoulutus(PrintWriter out) {
+    public void printKoulutusmoduuli(PrintWriter out) {
 
         out.println("-- List of koulutus objects:");
 
@@ -78,9 +84,25 @@ public class TarjontaDatabasePrinter {
                 + "\n\t type: " + k.getClass().getSimpleName()
                 + "\n\t id: " + k.getId()
                 + "\n\t oid: " + k.getOid()
-                + "\n\t nimi: " + k.getNimi()
+                + "\n\t nimi(s): " + k.getNimi().getTekstis()
                 + "\n\t sisaltyvyysList: " + k.getSisaltyvyysList());
 
+        }
+
+    }
+
+    public void printKoulutusmoduuliToteutus(PrintWriter out) {
+
+        out.println("-- List of KoulutusmoduuliToteutus objects:");
+
+        List<KoulutusmoduuliToteutus> list = koulutusmoduuliToteutusDAO.findAll();
+        for (int i = 0; i < list.size(); i++) {
+            KoulutusmoduuliToteutus t = list.get(i);
+            out.println((i + 1)
+                + "\n\t type: " + t.getClass().getSimpleName()
+                + "\n\t id: " + t.getId()
+                + "\n\t oid: " + t.getOid()
+                + "\n\t tarjoaja: " + t.getTarjoaja());
         }
 
     }

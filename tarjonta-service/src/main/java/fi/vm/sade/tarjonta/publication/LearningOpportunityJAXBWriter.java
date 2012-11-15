@@ -784,7 +784,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             for (TekstiKaannos teksti : source.getTekstis()) {
                 ExtendedStringType targetText = new ExtendedStringType();
                 targetText.setLang(teksti.getKieliKoodi());
-                targetText.setValue(teksti.getTeksti());
+                targetText.setValue(teksti.getArvo());
                 target.add(targetText);
             }
         }

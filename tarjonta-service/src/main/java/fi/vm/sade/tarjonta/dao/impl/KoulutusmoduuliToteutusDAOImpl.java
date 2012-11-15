@@ -16,12 +16,13 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.jpa.impl.JPASubQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
+import static fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils.and;
 import fi.vm.sade.tarjonta.model.*;
 
 import java.util.List;
@@ -75,24 +76,28 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     public List<KoulutusmoduuliToteutus> findByCriteria(List<String> tarjoajaOids, String matchNimi) {
 
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        QMonikielinenTeksti nimi = QMonikielinenTeksti.monikielinenTeksti;
-        QTekstiKaannos nimiTeksti = QTekstiKaannos.tekstiKaannos;
-
         BooleanExpression criteria = null;
 
         if (matchNimi != null) {
-            criteria = QuerydslUtils.and(criteria, nimiTeksti.teksti.toLowerCase().contains(matchNimi.toLowerCase()));
+
+            QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
+            QTekstiKaannos nimiTeksti = QTekstiKaannos.tekstiKaannos;
+
+            JPASubQuery subQuery = new JPASubQuery().from(komo).
+                join(komo.nimi.tekstis, nimiTeksti).
+                where(nimiTeksti.arvo.toLowerCase().contains(matchNimi.toLowerCase()));
+
+            criteria = komoto.koulutusmoduuli.in(subQuery.list(komo));
         }
 
         if (!tarjoajaOids.isEmpty()) {
-            criteria = QuerydslUtils.and(criteria, komoto.tarjoaja.in(tarjoajaOids));
+            criteria = and(criteria, komoto.tarjoaja.in(tarjoajaOids));
         }
 
         return from(komoto).
-            leftJoin(komoto.nimi, nimi).fetch().
-            leftJoin(nimi.tekstis, nimiTeksti).fetch().
             where(criteria).
             list(komoto);
+
 
     }
 

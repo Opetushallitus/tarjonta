@@ -60,6 +60,10 @@ public class TarjontaSampleData {
         moduuli = createKoulutusmoduuli();
         moduuli.setKoulutusKoodi("uri: Muu koulutus 20898");
         moduuli.setKoulutusohjelmaKoodi("uri: Tohtorintutkinto 20969");
+        moduuli.setNimi(createTeksti("Muu koulutus, Tohtorintutkinto (fi)",
+            "Muu koulutus, Tohtorintutkinto (sv)",
+            "Muu koulutus, Tohtorintutkinto (en)"));
+
         koulutusmoduuliDAO.insert(moduuli);
 
         //
@@ -67,9 +71,6 @@ public class TarjontaSampleData {
         //
         toteutus = createKoulutusmoduuliToteutus();
         toteutus.setKoulutusmoduuli(moduuli);
-        toteutus.setNimi(createTeksti("Muu koulutus, Tohtorintutkinto (fi)",
-            "Muu koulutus, Tohtorintutkinto (sv)",
-            "Muu koulutus, Tohtorintutkinto (en)"));
         toteutus.setTarjoaja("1.2.246.562.5.73962414165"); //Kontulan peruskoulu luokalla
         toteutus = koulutusmoduuliToteutusDAO.insert(toteutus);
 
@@ -81,6 +82,10 @@ public class TarjontaSampleData {
         moduuli = createKoulutusmoduuli();
         moduuli.setKoulutusKoodi("uri: Kulttuuriala 20902");
         moduuli.setKoulutusohjelmaKoodi("uri: Ylempi korkeakoulututkinto 20973");
+        moduuli.setNimi(createTeksti("Kulttuuriala, Ylempi korkeakoulututkinto",
+            "Kulttuuriala, Ylempi korkeakoulututkinto (sv)",
+            "Kulttuuriala, Ylempi korkeakoulututkinto (en)"));
+
         koulutusmoduuliDAO.insert(moduuli);
 
         //
@@ -88,9 +93,6 @@ public class TarjontaSampleData {
         //
         toteutus = createKoulutusmoduuliToteutus();
         toteutus.setKoulutusmoduuli(moduuli);
-        toteutus.setNimi(createTeksti("Kulttuuriala, Ylempi korkeakoulututkinto",
-            "Kulttuuriala, Ylempi korkeakoulututkinto (sv)",
-            "Kulttuuriala, Ylempi korkeakoulututkinto (en)"));
         toteutus.setTarjoaja("1.2.246.562.5.58521633737");//Markuksen koulu luokalla
         toteutus = koulutusmoduuliToteutusDAO.insert(toteutus);
 
@@ -193,6 +195,7 @@ public class TarjontaSampleData {
         m.setNqfLuokitus(randomKoodiUri("ngf"));
         m.setOmistajaOrganisaatioOid(randomOid("organisaatio"));
         m.setTila(TarjontaTila.VALMIS);
+        m.setNimi(createTeksti("Koulutus (fi)", "Koulutus (sv)", "Koulutus (en)"));
         m.setLaajuus(randomKoodiUri("opintojenlaajuus"), "20");
         m.setTutkintonimike(randomKoodiUri("tutkintonimike"));
         m.setKoulutuksenRakenne(createTeksti("Koulutuksen rakenne...", null, "Structure of education..."));
@@ -219,7 +222,6 @@ public class TarjontaSampleData {
         t.addAvainsana(new KoodistoUri(randomKoodiUri("avainsana")));
         t.addAvainsana(new KoodistoUri(randomKoodiUri("avainsana")));
         t.addAvainsana(new KoodistoUri(randomKoodiUri("avainsana")));
-        t.setNimi(createTeksti("Koulutus (fi)", "Koulutus (sv)", "Koulutus (en)"));
         t.setUlkoinenTunniste("KMT637832.3");
         t.setPohjakoulutusvaatimus(randomKoodiUri("pohjakoulutusvaatimus"));
         t.setSuunniteltuKesto(randomKoodiUri("koulutuskesto"), "6+2");

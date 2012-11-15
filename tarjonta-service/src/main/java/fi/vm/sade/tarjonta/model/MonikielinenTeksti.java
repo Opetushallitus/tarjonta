@@ -30,7 +30,7 @@ public class MonikielinenTeksti extends BaseEntity {
 
     private static final long serialVersionUID = -8996615595354088586L;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="teksti")
     private Set<TekstiKaannos> tekstis = new HashSet<TekstiKaannos>();
 
     public Set<TekstiKaannos> getTekstis() {
@@ -38,14 +38,14 @@ public class MonikielinenTeksti extends BaseEntity {
     }
 
     public void addTekstiKaannos(String kieliKoodi, String teksti) {
-        tekstis.add(new TekstiKaannos(kieliKoodi, teksti));
+        tekstis.add(new TekstiKaannos(this, kieliKoodi, teksti));
     }
 
     public void setTekstiKaannos(String kieliKoodi, String teksti) {
 
-        final TekstiKaannos kaannos = new TekstiKaannos(kieliKoodi, teksti);
+        final TekstiKaannos kaannos = new TekstiKaannos(this, kieliKoodi, teksti);
         tekstis.remove(kaannos);
-        tekstis.add(new TekstiKaannos(kieliKoodi, teksti));
+        tekstis.add(new TekstiKaannos(this, kieliKoodi, teksti));
 
     }
 
@@ -58,7 +58,7 @@ public class MonikielinenTeksti extends BaseEntity {
      */
     public String getTekstiForKieliKoodi(String kieliKoodi) {
         final TekstiKaannos kaannos = findKaannos(kieliKoodi);
-        return (kaannos != null ? kaannos.getTeksti() : null);
+        return (kaannos != null ? kaannos.getArvo() : null);
     }
 
     private TekstiKaannos findKaannos(String kieliKoodi) {
@@ -72,7 +72,7 @@ public class MonikielinenTeksti extends BaseEntity {
     }
 
     public boolean removeKaannos(String kieliKoodi) {
-        return tekstis.remove(new TekstiKaannos(kieliKoodi, kieliKoodi));
+        return tekstis.remove(new TekstiKaannos(this, kieliKoodi, kieliKoodi));
     }
 
 }

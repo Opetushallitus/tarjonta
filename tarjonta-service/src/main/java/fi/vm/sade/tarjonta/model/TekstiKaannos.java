@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.model;
 import fi.vm.sade.generic.model.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -32,27 +33,39 @@ public class TekstiKaannos extends BaseEntity {
     @Column(name = "kieli_koodi")
     private String kieliKoodi;
 
-    @Column(name = "teksti")
-    private String teksti;
+    @Column(name = "arvo")
+    private String arvo;
 
+    @ManyToOne(optional = false)
+    private MonikielinenTeksti teksti;
+
+    /**
+     * Constructor for JPA.
+     */
     protected TekstiKaannos() {
     }
 
-    public TekstiKaannos(String kieliKoodi, String teksti) {
-        this.kieliKoodi = formatKieliKoodi(kieliKoodi);
+    public TekstiKaannos(MonikielinenTeksti teksti, String kieliKoodi, String arvo) {
         this.teksti = teksti;
+        this.kieliKoodi = formatKieliKoodi(kieliKoodi);
+        this.arvo = arvo;
     }
 
     public String getKieliKoodi() {
         return kieliKoodi;
     }
 
-    public String getTeksti() {
-        return teksti;
+    public String getArvo() {
+        return arvo;
     }
 
     static String formatKieliKoodi(String value) {
         return value.trim();
+    }
+
+    @Override
+    public String toString() {
+        return kieliKoodi + ": " + arvo;
     }
 
     @Override

@@ -217,16 +217,18 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
         //Populating the answer with required data
         for (KoulutusmoduuliToteutus komoto : komotos) {
+
             KoulutusTulos tulos = new KoulutusTulos();
+            Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
 
             KoulutusKoosteTyyppi koulutusKooste = new KoulutusKoosteTyyppi();
             koulutusKooste.setTarjoaja(komoto.getTarjoaja());
-            koulutusKooste.setNimi(EntityUtils.copyFields(komoto.getNimi(), new MonikielinenTekstiTyyppi()));
+            koulutusKooste.setNimi(EntityUtils.copyFields(komo.getNimi(), new MonikielinenTekstiTyyppi()));
             koulutusKooste.setTila(EntityUtils.convertTila(komoto.getTila()));
-            koulutusKooste.setKoulutusmoduuli((komoto.getKoulutusmoduuli() != null) ? komoto.getKoulutusmoduuli().getOid() : null);
+            koulutusKooste.setKoulutusmoduuli((komo != null) ? komo.getOid() : null);
             koulutusKooste.setKoulutusmoduuliToteutus(komoto.getOid());
-            koulutusKooste.setKoulutuskoodi((komoto.getKoulutusmoduuli() != null) ? komoto.getKoulutusmoduuli().getKoulutusKoodi() : null);
-            koulutusKooste.setKoulutusohjelmakoodi((komoto.getKoulutusmoduuli() != null) ? komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi() : null);
+            koulutusKooste.setKoulutuskoodi((komo != null) ? komo.getKoulutusKoodi() : null);
+            koulutusKooste.setKoulutusohjelmakoodi((komo != null) ? komo.getKoulutusohjelmaKoodi() : null);
             koulutusKooste.setAjankohta(new SimpleDateFormat("dd.MM.yyyy").format(komoto.getKoulutuksenAlkamisPvm()));
             tulos.setKoulutus(koulutusKooste);
             vastaus.getKoulutusTulos().add(tulos);

@@ -128,6 +128,10 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @JoinColumn(name = "jatkoopintomahdollisuudet")
     private MonikielinenTeksti jatkoOpintoMahdollisuudet;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "nimi")
+    private MonikielinenTeksti nimi;
+
     /**
      * JPA konstruktori
      */
@@ -492,6 +496,23 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     public void setJatkoOpintoMahdollisuudet(MonikielinenTeksti jatkoOpintoMahdollisuudet) {
         this.jatkoOpintoMahdollisuudet = jatkoOpintoMahdollisuudet;
+    }
+
+    /**
+     * Kielistetty koulutuksen nimi. Joillain opintoasteilla kuten 2.aste, nimi generoituu joukosta
+     * attribuutteja joten sen manuaalinen asettaminen saattaa myöhemmi ylikirjoittautua.
+     *
+     * @return kielistetyt nimet tai null
+     */
+    public MonikielinenTeksti getNimi() {
+        return nimi;
+    }
+
+    /**
+     * @see #getNimi()
+     */
+    public void setNimi(MonikielinenTeksti nimi) {
+        this.nimi = nimi;
     }
 
 }
