@@ -238,8 +238,12 @@ public class Haku extends BaseEntity {
         return nimi;
     }
 
-    public void setNimi(MonikielinenTeksti nimi) {
-        this.nimi = nimi;
+    public void setNimi(MonikielinenTeksti newNimi) {
+        if (this.nimi != null && newNimi != null) {
+            this.nimi.updateFrom(newNimi);
+        } else {
+            this.nimi = newNimi;
+        }
     }
 
     private String getNimi(String kieliKoodi) {

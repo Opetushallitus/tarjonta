@@ -45,6 +45,10 @@ public class TekstiKaannos extends BaseEntity {
     protected TekstiKaannos() {
     }
 
+    public TekstiKaannos(MonikielinenTeksti teksti, TekstiKaannos copyFrom) {
+        this(teksti, copyFrom.getKieliKoodi(), copyFrom.getArvo());
+    }
+
     public TekstiKaannos(MonikielinenTeksti teksti, String kieliKoodi, String arvo) {
         this.teksti = teksti;
         this.kieliKoodi = formatKieliKoodi(kieliKoodi);
@@ -60,7 +64,7 @@ public class TekstiKaannos extends BaseEntity {
     }
 
     static String formatKieliKoodi(String value) {
-        return value.trim();
+        return value.trim().toLowerCase();
     }
 
     @Override

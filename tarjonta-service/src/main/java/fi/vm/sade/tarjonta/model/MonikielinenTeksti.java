@@ -30,7 +30,7 @@ public class MonikielinenTeksti extends BaseEntity {
 
     private static final long serialVersionUID = -8996615595354088586L;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="teksti")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "teksti", orphanRemoval = true)
     private Set<TekstiKaannos> tekstis = new HashSet<TekstiKaannos>();
 
     public Set<TekstiKaannos> getTekstis() {
@@ -59,6 +59,21 @@ public class MonikielinenTeksti extends BaseEntity {
     public String getTekstiForKieliKoodi(String kieliKoodi) {
         final TekstiKaannos kaannos = findKaannos(kieliKoodi);
         return (kaannos != null ? kaannos.getArvo() : null);
+    }
+
+    /**
+     * Clears all existing translations and inserts new values from given object.
+     *
+     * @param otherTeksti
+     */
+    public void updateFrom(MonikielinenTeksti otherTeksti) {
+
+        tekstis.clear();
+
+        for (TekstiKaannos t : otherTeksti.getTekstis()) {
+            tekstis.add(new TekstiKaannos(this, t));
+        }
+
     }
 
     private TekstiKaannos findKaannos(String kieliKoodi) {
