@@ -1589,10 +1589,101 @@
         </xs:annotation>
         <xs:sequence>
 
+            <xs:element name="Identifier"
+                        type="xs:string"
+                        minOccurs="1"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Haun tunniste. OPH hallinnoima OID.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
             <xs:element name="Name"
                         type="tns:ExtendedStringType"
                         minOccurs="1"
                         maxOccurs="unbounded">
+            </xs:element>
+
+            <xs:element name="ApplicationType"
+                        type="tns:CodeValueType"
+                        minOccurs="1"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Koulutukseen hakeutumisen tyypin kuvaava tieto. Esimerkkeja: varsinainen-, taydennys-, lisahaku.
+                        Viittaus koodistoon.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="ApplicationSeason"
+                        type="tns:CodeValueType"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Hakukausi. Esim. kevat, syksy. Viittaus koodisoton.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="ApplicationYear"
+                        type="tns:YearType"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Hakuvuosi. Esim. 2012.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="EducationStartSeason"
+                        type="tns:CodeValueType"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Koulutuksen alkamiskausi. Esim. kevat, syksy. Viittaus koodistoon.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="EducationStartYear"
+                        type="tns:YearType"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Koulutuksen alkamisvuosi. Esim. 2013.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="TargetGroup"
+                        type="tns:CodeValueType"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Haun kohdejoukko. Esim. yliopistot, ammattikorkeat, peruskoulut.
+                        Koodisto viittaus.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="ApplicationMethod"
+                        type="tns:CodeValueType"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Hakeutumistavan kuvaava tieto.. Esim. yhteishaku, suorahaku, lisahaku.
+                        Viittaus koodistoon.
+                    </xs:documentation>
+                </xs:annotation>
             </xs:element>
 
         </xs:sequence>
@@ -1604,6 +1695,8 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+
+
 
     </xs:complexType>
 
