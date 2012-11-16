@@ -41,7 +41,7 @@
         <!-- tutkinnon nimi -->
         <DegreeTitle>sosiaali- ja terveysalan pt</DegreeTitle>
 
-        
+
         <Classification>
 
             <!-- koulutusluokitus -->
@@ -944,7 +944,49 @@
     <!-- ========================================================================================= -->
 
     <ApplicationSystem id="AS12345">
-        <Name lang="fi">Yhteishaku</Name>
+
+        <!-- Haun tunniste: OID -->
+        <Identifier>1.5.7.3.77.3322.3</Identifier>
+
+        <!-- Kielistetty nimi -->
+        <Name lang="fi">Yhteishaku 2013</Name>
+
+        <!-- hakutyyppi -->
+        <ApplicationType>
+            <Code scheme="Koodisto">uri:/hakutyyppi/varsinaishaku</Code>
+            <Label lang="fi">varsinaishaku</Label>
+        </ApplicationType>
+
+        <!-- hakutapa -->
+        <ApplicationMethod>
+            <Code scheme="Koodisto">uri:/hakutapa/yhteishaku</Code>
+            <Label lang="fi">yhteishaku</Label>
+        </ApplicationMethod>
+
+        <!-- hakukausi -->
+        <ApplicationSeason>
+            <Code scheme="Koodisto">uri:/kausi/kevat</Code>
+            <Label lang="fi">kevat</Label>
+        </ApplicationSeason>
+
+        <!-- hakuvuosi -->
+        <ApplicationYear>2013</ApplicationYear>
+
+        <!-- koulutuksen alkamiskausi -->
+        <EducationStartSeason>
+            <Code scheme="Koodisto">uri/kausi/syksy</Code>
+            <Label lang="fi">syksy</Label>
+        </EducationStartSeason>
+
+        <!-- koulutuksen alkamisvuosi -->
+        <EducationStartYear>2014</EducationStartYear>
+
+        <!-- haun kohdejoukko -->
+        <TargetGroup>
+            <Code scheme="Koodisto">uri:/kohdejoukko/peruskoulut</Code>
+            <Label lang="fi">peruskoulut</Label>
+        </TargetGroup>
+
     </ApplicationSystem>
 
 

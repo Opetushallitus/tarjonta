@@ -22,12 +22,10 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.Date;
 
 import static fi.vm.sade.generic.common.validation.ValidationConstants.*;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -55,9 +53,6 @@ public class Haku extends BaseEntity {
     @JoinColumn(name = "nimi_teksti_id")
     private MonikielinenTeksti nimi;
 
-    /**
-     * Varsinainen haku tai taydennyshaku
-     */
     @NotNull
     @Column(name = "hakutyyppi")
     private String hakutyyppiUri;
@@ -81,6 +76,9 @@ public class Haku extends BaseEntity {
     @Column(name = "koulutuksen_alkamisvuosi")
     private Integer koulutuksenAlkamisVuosi;
 
+    /**
+     * Haulla on jo OID. Mihin tunnistetta käytetään ja mikä on sen formaatti?
+     */
     @Column(name = "haun_tunniste")
     private String haunTunniste;
 
@@ -149,7 +147,8 @@ public class Haku extends BaseEntity {
     }
 
     /**
-     * Returns uri to Koodisto.
+     * Koulutukseen hakeutumisen tyypin tieto. Esim. varsinainen haku, täydennys- tai lisähaku.
+     * Arvo on viittaus koodistoon.
      *
      * @return
      */

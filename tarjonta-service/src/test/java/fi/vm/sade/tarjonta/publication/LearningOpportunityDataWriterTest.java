@@ -34,6 +34,9 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.*;
 
 /**
+ * Smoke tests writing Tarjonta data as "Publication XML". The output still needs to be verified
+ * using XPath. Most of this is validated with enrichment tests but the parts (at least) that are not
+ * enriched and hence not tested, need to be validated here.
  *
  * @author Jukka Raanamo
  */
@@ -152,7 +155,7 @@ public class LearningOpportunityDataWriterTest {
 
         Koulutusmoduuli m = createKoulutusmoduuli();
         KoulutusmoduuliToteutus t = createKoulutusmoduuliToteutus();
-        Hakukohde h  = createHakukohde();
+        Hakukohde h = createHakukohde();
         h.addKoulutusmoduuliToteutus(t);
 
         t.setKoulutusmoduuli(m);

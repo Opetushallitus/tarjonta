@@ -39,6 +39,7 @@ import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupService.K
 import fi.vm.sade.tarjonta.util.SystemUtils;
 
 /**
+ * Test to verify that "raw" Tarjonta XML is correctly enriched.
  *
  * @author Jukka Raanamo
  */
@@ -53,6 +54,8 @@ public class LearningOpportunityEnricherTest {
     private static final String INSTANCE_PATH = DOWNLOAD_DATA_PATH + "/LearningOpportunityInstance[1]";
 
     private static final String APPLICATION_OPTION_PATH = DOWNLOAD_DATA_PATH + "/ApplicationOption[1]";
+
+    private static final String APPLICATION_SYSTEM_PATH = DOWNLOAD_DATA_PATH + "/ApplicationSystem[1]";
 
     private XMLStreamEnricher processor;
 
@@ -238,6 +241,46 @@ public class LearningOpportunityEnricherTest {
 
     }
 
+    @Test
+    public void testEnrichApplicationType() throws Exception {
+
+        final String basePath = APPLICATION_SYSTEM_PATH + "/ApplicationType";
+        assertCodeValue(basePath, "uri:hakutyyppi/varsinaishaku", "hakutyyppi");
+
+    }
+
+    @Test
+    public void testEnrichApplicationMethod() throws Exception {
+
+        final String basePath = APPLICATION_SYSTEM_PATH + "/ApplicationMethod";
+        assertCodeValue(basePath, "uri:hakutapa/yhteishaku", "hakutapa");
+
+    }
+
+    @Test
+    public void testEnrichApplicationSeason() throws Exception {
+
+        final String basePath = APPLICATION_SYSTEM_PATH + "/ApplicationSeason";
+        assertCodeValue(basePath, "uri:kausi/kevat", "kausi");
+
+    }
+
+    @Test
+    public void testEnrichEducationStartSeason() throws Exception {
+
+        final String basePath = APPLICATION_SYSTEM_PATH + "/EducationStartSeason";
+        assertCodeValue(basePath, "uri:kausi/syksy", "kausi");
+
+    }
+
+    @Test
+    public void testEnrichTargetGroup() throws Exception {
+
+        final String basePath = APPLICATION_SYSTEM_PATH + "/TargetGroup";
+        assertCodeValue(basePath, "uri:kohdejoukko/peruskoulut", "kohdejoukko");
+
+    }
+
     /**
      * Asserts codes value and labels in three languages (base element type CodeValueCollectionType)
      *
@@ -357,6 +400,11 @@ public class LearningOpportunityEnricherTest {
         when(service.lookupKoodi("uri:hakukohde/876", null)).thenReturn(createSimpleKoodiValue("hakukohde"));
         when(service.lookupKoodi("uri:valintakoetyyppi/123", null)).thenReturn(createSimpleKoodiValue("valintakoe"));
         when(service.lookupKoodi("uri:liitetyyppi/12345", null)).thenReturn(createSimpleKoodiValue("liitetyyppi"));
+        when(service.lookupKoodi("uri:hakutyyppi/varsinaishaku", null)).thenReturn(createSimpleKoodiValue("hakutyyppi"));
+        when(service.lookupKoodi("uri:hakutapa/yhteishaku", null)).thenReturn(createSimpleKoodiValue("hakutapa"));
+        when(service.lookupKoodi("uri:kausi/kevat", null)).thenReturn(createSimpleKoodiValue("kausi"));
+        when(service.lookupKoodi("uri:kausi/syksy", null)).thenReturn(createSimpleKoodiValue("kausi"));
+        when(service.lookupKoodi("uri:kohdejoukko/peruskoulut", null)).thenReturn(createSimpleKoodiValue("kohdejoukko"));
 
         return service;
 

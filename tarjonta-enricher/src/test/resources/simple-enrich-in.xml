@@ -288,9 +288,38 @@
     <!-- ========================================================================================= -->
 
     <ApplicationSystem>
+
+        <!-- Haun tunniste: OID -->
+        <Identifier>1.5.7.3.77.3322.3</Identifier>
+
         <Name>
             <Text lang="fi">Yhteishaku</Text>
         </Name>
+
+        <ApplicationType>
+            <Code scheme="Koodisto">uri:hakutyyppi/varsinaishaku</Code>
+        </ApplicationType>
+
+        <ApplicationMethod>
+            <Code scheme="Koodisto">uri:hakutapa/yhteishaku</Code>
+        </ApplicationMethod>
+
+        <ApplicationSeason>
+            <Code scheme="Koodisto">uri:kausi/kevat</Code>
+        </ApplicationSeason>
+
+        <ApplicationYear>2013</ApplicationYear>
+
+        <EducationStartSeason>
+            <Code scheme="Koodisto">uri:kausi/syksy</Code>
+        </EducationStartSeason>
+
+        <EducationStartYear>2014</EducationStartYear>
+
+        <TargetGroup>
+            <Code scheme="Koodisto">uri:kohdejoukko/peruskoulut</Code>
+        </TargetGroup>
+
     </ApplicationSystem>
 
 

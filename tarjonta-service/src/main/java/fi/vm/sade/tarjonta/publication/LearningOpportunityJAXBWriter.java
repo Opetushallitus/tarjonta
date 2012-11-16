@@ -25,7 +25,6 @@ import java.util.Set;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBContext;
@@ -37,10 +36,6 @@ import javax.xml.namespace.QName;
 import javax.xml.bind.*;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.Duration;
-
-import org.xml.sax.SAXException;
-import com.sun.xml.bind.IDResolver;
 
 import fi.vm.sade.tarjonta.publication.types.*;
 import fi.vm.sade.tarjonta.publication.types.CodeValueType.Code;
@@ -55,7 +50,6 @@ import fi.vm.sade.tarjonta.publication.types.AttachmentCollectionType.Attachment
 import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType.EntranceExaminations.Examination;
 import fi.vm.sade.tarjonta.publication.types.WebLinkCollectionType.Link;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -197,6 +191,30 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
         // ApplicationSystem/Name
         copyTexts(haku.getNimi(), applicationSystem.getName());
+
+        // ApplicationSystem/ApplicationSeason
+        addHakukausi(haku, applicationSystem);
+
+        // ApplicationSystem/ApplicationMethod
+        addHakutapa(haku, applicationSystem);
+
+        // ApplicationSystem/Type
+        addHakutyyppi(haku, applicationSystem);
+
+        // ApplicationSystem/ApplicationYear
+        addHakuvuosi(haku, applicationSystem);
+
+        // ApplicationSystem/Identifier
+        addHaunTunniste(haku, applicationSystem);
+
+        // ApplicationSystem/EducationStartSeason
+        addKoulutuksenAlkamiskausi(haku, applicationSystem);
+
+        // ApplicationSystem/EducationStartYear
+        addKoulutuksenAlkamisvuosi(haku, applicationSystem);
+
+        // ApplicationSystem/TargetGroup
+        addKohdejoukko(haku, applicationSystem);
 
         marshal(ApplicationSystemType.class, applicationSystem);
 
@@ -363,6 +381,54 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         marshal(LearningOpportunityInstanceType.class, instance);
 
         log.debug("marshalled KoulutusmoduuliToteutus, oid: " + toteutus.getOid());
+
+    }
+
+    private void addHakutapa(Haku source, ApplicationSystemType target) {
+
+        target.setApplicationMethod(createCodeValue(CodeSchemeType.KOODISTO, source.getHakutapaUri()));
+
+    }
+
+    private void addHakukausi(Haku source, ApplicationSystemType target) {
+
+        target.setApplicationSeason(createCodeValue(CodeSchemeType.KOODISTO, source.getHakukausiUri()));
+
+    }
+
+    private void addHakutyyppi(Haku source, ApplicationSystemType target) {
+
+        target.setApplicationType(createCodeValue(CodeSchemeType.KOODISTO, source.getHakutyyppiUri()));
+
+    }
+
+    private void addHakuvuosi(Haku source, ApplicationSystemType target) {
+
+        target.setApplicationYear(formatYear(source.getHakukausiVuosi()));
+
+    }
+
+    private void addKoulutuksenAlkamiskausi(Haku source, ApplicationSystemType target) {
+
+        target.setEducationStartSeason(createCodeValue(CodeSchemeType.KOODISTO, source.getKoulutuksenAlkamiskausiUri()));
+
+    }
+
+    private void addKoulutuksenAlkamisvuosi(Haku source, ApplicationSystemType target) {
+
+        target.setEducationStartYear(formatYear(source.getKoulutuksenAlkamisVuosi()));
+
+    }
+
+    private void addHaunTunniste(Haku source, ApplicationSystemType target) {
+
+        target.setIdentifier(source.getHaunTunniste());
+
+    }
+
+    private void addKohdejoukko(Haku source, ApplicationSystemType target) {
+
+        target.setTargetGroup(createCodeValue(CodeSchemeType.KOODISTO, source.getKohdejoukkoUri()));
 
     }
 
@@ -905,6 +971,15 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     }
 
+    private static String formatYear(Integer year) {
+
+        if (year == null) {
+            return null;
+        }
+
+        return year.toString();
+    }
+
     /**
      * Formats year with four digits.
      *
@@ -918,29 +993,17 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
     }
 
     /**
-     * Converts "tarjonta duration" into XML Duration. This logic assumes that we
-     * are only dealing with whole years. Use of koodisto uris makes of no sense.
+     * Creates CodeValueType by setting it's scheme and code's value. If value is null, null is returned.
      *
-     * @param unitsUri not handled
-     * @param value years as number expected
+     * @param scheme
+     * @param codeValue
      * @return
      */
-    private static Duration formatDuration(String unitsUri, String value) {
+    private static CodeValueType createCodeValue(CodeSchemeType scheme, String codeValue) {
 
-        // fix me: disabled for now since values are any text
-        if (1 < 2) {
+        if (codeValue == null) {
             return null;
         }
-
-        // likely to throw exception if values are something like "3-4"
-        int numYears = Integer.parseInt(value);
-        int numMonths = 0;
-
-        return datatypeFactory.newDurationYearMonth(true, numYears, numMonths);
-
-    }
-
-    private static CodeValueType createCodeValue(CodeSchemeType scheme, String codeValue) {
 
         Code code = new Code();
         code.setScheme(scheme);

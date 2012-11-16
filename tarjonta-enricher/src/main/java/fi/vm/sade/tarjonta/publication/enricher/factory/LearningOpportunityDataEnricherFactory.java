@@ -53,7 +53,12 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
         "Profession",
         "Keyword",
         "Units",
-        "ExaminationType"
+        "ExaminationType",
+        "ApplicationType",
+        "ApplicationMethod",
+        "ApplicationSeason",
+        "EducationStartSeason",
+        "TargetGroup"
     };
 
     /**

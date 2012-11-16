@@ -1618,6 +1618,18 @@
                 </xs:annotation>
             </xs:element>
 
+            <xs:element name="ApplicationMethod"
+                        type="tns:CodeValueType"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Hakeutumistavan kuvaava tieto.. Esim. yhteishaku, suorahaku, lisahaku.
+                        Viittaus koodistoon.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
             <xs:element name="ApplicationSeason"
                         type="tns:CodeValueType"
                         minOccurs="0"
@@ -1674,17 +1686,7 @@
                 </xs:annotation>
             </xs:element>
 
-            <xs:element name="ApplicationMethod"
-                        type="tns:CodeValueType"
-                        minOccurs="0"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="fi">
-                        Hakeutumistavan kuvaava tieto.. Esim. yhteishaku, suorahaku, lisahaku.
-                        Viittaus koodistoon.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
+
 
         </xs:sequence>
 
