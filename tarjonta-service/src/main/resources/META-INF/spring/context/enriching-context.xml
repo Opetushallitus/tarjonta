@@ -31,7 +31,7 @@
 
     <jaxws:client id="koodiPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
-                  address="http://luokka.hard.ware.fi:8181/cxf/koodiService">
+                  address="http://itest-virkailija.oph.ware.fi/cxf/koodiService">
         <jaxws:outInterceptors>
             <ref bean="authInterceptor"/>
         </jaxws:outInterceptors>
