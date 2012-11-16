@@ -32,7 +32,12 @@ import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.model.Haku;
-
+import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.expr.BooleanExpression;
+import fi.vm.sade.tarjonta.model.QHaku;
+import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.QTekstiKaannos;
 /**
  * @author Antti Salonen
  */
@@ -40,6 +45,23 @@ import fi.vm.sade.tarjonta.model.Haku;
 public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuDAO {
 
     private static final Logger log = LoggerFactory.getLogger(HakuDAOImpl.class);
+    
+    public List<Haku> findBySearchString(String searchString,String kieliKoodi) {
+        QMonikielinenTeksti qTekstis = QMonikielinenTeksti.monikielinenTeksti;
+        QTekstiKaannos qKaannos = QTekstiKaannos.tekstiKaannos;
+        QHaku qHaku = QHaku.haku;
+        
+        List<Haku> haut = from(qTekstis,qHaku,qKaannos)
+                .join(qHaku.nimi,qTekstis)
+                .join(qTekstis.tekstis,qKaannos)
+                .where(qKaannos.kieliKoodi.eq(kieliKoodi).and(qKaannos.arvo.like(searchString)))
+                .list(qHaku);
+        return haut;
+    }
+    
+    protected JPAQuery from(EntityPath<?>... o) {
+        return new JPAQuery(getEntityManager()).from(o);
+    }
 
     @Override
     public List<Haku> findAll(SearchCriteriaType searchCriteria) {

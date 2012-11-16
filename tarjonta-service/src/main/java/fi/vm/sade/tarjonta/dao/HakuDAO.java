@@ -15,6 +15,7 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
 
     Haku findByOid(String oidString);
 
+    List<Haku> findBySearchString(String searchString,String kieliKoodi);
 
 }
 
