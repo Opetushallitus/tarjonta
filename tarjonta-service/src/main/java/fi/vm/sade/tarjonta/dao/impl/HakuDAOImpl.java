@@ -46,6 +46,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
 
     private static final Logger log = LoggerFactory.getLogger(HakuDAOImpl.class);
     
+    @Override
     public List<Haku> findBySearchString(String searchString,String kieliKoodi) {
         QMonikielinenTeksti qTekstis = QMonikielinenTeksti.monikielinenTeksti;
         QTekstiKaannos qKaannos = QTekstiKaannos.tekstiKaannos;
@@ -54,7 +55,8 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         List<Haku> haut = from(qTekstis,qHaku,qKaannos)
                 .join(qHaku.nimi,qTekstis)
                 .join(qTekstis.tekstis,qKaannos)
-                .where(qKaannos.kieliKoodi.eq(kieliKoodi).and(qKaannos.arvo.like(searchString)))
+                .where(qKaannos.kieliKoodi.eq(kieliKoodi).and(qKaannos.arvo.like("%"+ searchString+"%")))
+                .distinct()
                 .list(qHaku);
         return haut;
     }

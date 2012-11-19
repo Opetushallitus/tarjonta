@@ -87,7 +87,15 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             List<Haku> haut = new ArrayList<Haku>();
             haut.add(findHakuWithOid(parameters.getHakuOid().trim()));
             hakuVastaus.getResponse().addAll(convert(haut));
-        } else {
+        } else if (parameters.getHakuSana() != null) {
+            
+            List<Haku> haut = new ArrayList<Haku>();
+            haut.addAll(hakuDao.findBySearchString(parameters.getHakuSana(), parameters.getHakuSanaKielikoodi()));
+            hakuVastaus.getResponse().addAll(convert(haut));
+            
+        } 
+        
+        else {
             SearchCriteriaType allCriteria = new SearchCriteriaType();
             allCriteria.setMeneillaan(true);
             allCriteria.setPaattyneet(true);
