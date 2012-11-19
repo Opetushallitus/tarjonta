@@ -47,7 +47,7 @@ public class TarjontaPublicationRESTService {
     private PublicationCollector dataCollector;
 
     /**
-     * TODO: remove me
+     * TODO: remove me. TarjontaSampleData provides some test data while development.
      */
     @Autowired
     private TarjontaSampleData sampleData;

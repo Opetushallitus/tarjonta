@@ -10,7 +10,7 @@
     <bean id="tarjontaPublicationCollector" class="fi.vm.sade.tarjonta.publication.PublicationCollector">
 
         <property name="dataService">
-            <bean class="fi.vm.sade.tarjonta.publication.PublicationDataServiceImpl"/>
+            <bean class="fi.vm.sade.tarjonta.publication.impl.PublicationDataServiceImpl"/>
         </property>
 
     </bean>

@@ -203,7 +203,9 @@ public class TarjontaFixtures {
     public Haku createHaku() {
         Haku haku = new Haku();
         haku.setOid(randomOid("haku"));
-        haku.setNimiFi("SimpleHaku");
+        haku.setNimiFi("haku (fi)");
+        haku.setNimiEn("haku (en)");
+        haku.setNimiSv("haku (sv)");
         haku.setHakukausiVuosi(2013);
         haku.setKoulutuksenAlkamisVuosi(2014);
         haku.setHakukausiUri(randomUri("hakukausi"));

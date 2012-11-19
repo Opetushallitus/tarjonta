@@ -33,24 +33,28 @@ public interface PublicationDataService {
      * Returns a list of KoulutusmoduuliToteutus where:
      * <ul>
      *  <li>{@link KoulutusmoduuliToteutus#getTila() } equal to {@link TarjontaTila#VALMIS}</li>
-     *  <li>{@link KoulutusmoduuliToteutus#getKoulutuksenAlkamisPvm() }</li>
      * </ul>
-     *
-     *
      *
      * @return
      */
     public List<KoulutusmoduuliToteutus> listKoulutusmoduuliToteutus();
 
     /**
-     * Returns a list of Hakukohde objects ready to be published.
+     * Returns a list of Hakukohde where:
+     * <ul>
+     *  <li>{@link Hakukohde#getTila() } equal to {@link TarjontaTila#VALMIS}</li>
+     * </ul>
      *
      * @return
      */
     public List<Hakukohde> listHakukohde();
 
     /**
-     * Return a list of Haku objects ready to be published.
+     * Return a list of Haku objects ready to be published, i.e:
+     * <ul>
+     *  <li>{@link Haku#getTila() } equal to {@link TarjontaTila#VALMIS}</li>
+     * </ul>
+     *
      *
      * @return
      */

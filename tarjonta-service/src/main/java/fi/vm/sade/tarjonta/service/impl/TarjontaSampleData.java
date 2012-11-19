@@ -110,7 +110,7 @@ public class TarjontaSampleData {
         Hakukohde hakukohde = createHakukohde("Artesaani, käsi- ja taideteollisuusalan perustutkinto");
         hakukohde.setHakukohdeKoodistoNimi("Artesaani, käsi- ja taideteollisuusalan perustutkinto");
         hakukohde.setHaku(haku);
-
+        
         hakukohde.addKoulutusmoduuliToteutus(toteutus);
         hakukohde = hakukohdeDAO.insert(hakukohde);
 
@@ -133,7 +133,7 @@ public class TarjontaSampleData {
         h.setNimiFi(nimi);
         h.setOid(randomOid("haku"));
         h.setSijoittelu(true);
-        h.setTila(TarjontaTila.VALMIS);
+        h.setTila(TarjontaTila.JULKAISTU);
 
         return h;
 
@@ -150,7 +150,7 @@ public class TarjontaSampleData {
         h.setHakukohdeNimi(nimi);
         h.setOid(randomOid("hakukohde"));
         h.setYlinValintaPistemaara(90);
-        h.setTila(TarjontaTila.VALMIS);
+        h.setTila(TarjontaTila.JULKAISTU);
 
         // Hakukohteella Valintakoe
 
@@ -194,7 +194,7 @@ public class TarjontaSampleData {
         m.setKoulutusohjelmaKoodi(randomKoodiUri("koulutusohjelma"));
         m.setNqfLuokitus(randomKoodiUri("ngf"));
         m.setOmistajaOrganisaatioOid(randomOid("organisaatio"));
-        m.setTila(TarjontaTila.VALMIS);
+        m.setTila(TarjontaTila.JULKAISTU);
         m.setNimi(createTeksti("Koulutus (fi)", "Koulutus (sv)", "Koulutus (en)"));
         m.setLaajuus(randomKoodiUri("opintojenlaajuus"), "20");
         m.setTutkintonimike(randomKoodiUri("tutkintonimike"));
@@ -214,7 +214,7 @@ public class TarjontaSampleData {
         t.addKoulutuslaji(randomKoodiUri("koulutuslaji"));
         t.setOid(randomOid("koulutusmoduulitoteutus"));
         t.setTarjoaja(randomOid("organisaatio"));
-        t.setTila(TarjontaTila.VALMIS);
+        t.setTila(TarjontaTila.JULKAISTU);
         t.addOpetuskieli(new KoodistoUri(randomKoodiUri("kieli")));
         t.addOpetusmuoto(new KoodistoUri(randomKoodiUri("opetusmuoto")));
         t.addAmmattinimike(new KoodistoUri(randomKoodiUri("ammattinimike")));

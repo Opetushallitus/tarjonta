@@ -13,14 +13,21 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.publication;
+package fi.vm.sade.tarjonta.publication.impl;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.expr.BooleanExpression;
+
+
 import fi.vm.sade.tarjonta.model.*;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import java.util.Calendar;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +54,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QMonikielinenTeksti lkv = new QMonikielinenTeksti("loppukoevaatimukset");
         QMonikielinenTeksti nimi = new QMonikielinenTeksti("nimi");
 
-        // todo: filter only published
+        BooleanExpression criteria = toteutus.tila.eq(TarjontaTila.JULKAISTU);
 
         return from(toteutus).
             leftJoin(toteutus.ammattinimikes).fetch().
@@ -62,7 +69,8 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             leftJoin(m.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
             leftJoin(m.jatkoOpintoMahdollisuudet, jom).fetch().leftJoin(jom.tekstis).fetch().
             leftJoin(m.nimi, nimi).fetch().leftJoin(nimi.tekstis).fetch().
-            list(toteutus);
+            where(criteria).
+            distinct().list(toteutus);
     }
 
     @Override
@@ -75,28 +83,32 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QMonikielinenTeksti kuvaus = new QMonikielinenTeksti("kuvaus");
         QMonikielinenTeksti valintaperuste = new QMonikielinenTeksti("valintaperuste");
 
+        BooleanExpression criteria = hakukohde.tila.eq(TarjontaTila.JULKAISTU);
+
         return from(hakukohde).
             leftJoin(hakukohde.valintakoes, valintakoe).fetch().
             leftJoin(valintakoe.kuvaus, kuvaus).fetch().leftJoin(kuvaus.tekstis).fetch().
             leftJoin(hakukohde.valintaperusteKuvaus, valintaperuste).fetch().leftJoin(valintaperuste.tekstis).fetch().
             leftJoin(hakukohde.liites).fetch().
             leftJoin(hakukohde.koulutusmoduuliToteutuses).fetch().
-            list(hakukohde);
+            where(criteria).
+            distinct().list(hakukohde);
 
     }
 
     @Override
     public List<Haku> listHaku() {
 
-        // todo: filter only published
-
         QHaku haku = QHaku.haku;
         QMonikielinenTeksti nimi = QMonikielinenTeksti.monikielinenTeksti;
+
+        BooleanExpression criteria = haku.tila.eq(TarjontaTila.JULKAISTU);
 
         return from(haku).
             leftJoin(haku.nimi, nimi).fetch().
             leftJoin(nimi.tekstis).fetch().
-            list(haku);
+            where(criteria).
+            distinct().list(haku);
 
     }
 
