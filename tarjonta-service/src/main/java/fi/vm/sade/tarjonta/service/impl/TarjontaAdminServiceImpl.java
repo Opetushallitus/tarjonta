@@ -52,31 +52,22 @@ import org.slf4j.LoggerFactory;
 public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     private static final Logger log = LoggerFactory.getLogger(TarjontaAdminServiceImpl.class);
-
     @Autowired
     private HakuBusinessService hakuBusinessService;
-
     @Autowired
     private KoulutusBusinessService koulutusBusinessService;
-
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
     @Autowired
     private HakuDAO hakuDAO;
-
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
-
     @Autowired
     private ConversionService conversionService;
-
-     @Autowired
+    @Autowired
     private YhteyshenkiloDAO yhteyshenkiloDAO;
-
     /**
      * Väliaikainne kunnes Koodisto on alustettu.
      */
@@ -103,7 +94,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         hakuk.setHaku(haku);
         hakuk = hakukohdeDAO.insert(hakuk);
-        hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(),hakuk));
+        hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(), hakuk));
         hakukohdeDAO.update(hakuk);
         return hakukohde;
     }
@@ -122,12 +113,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) {
-    	Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
-    	for (KoulutusmoduuliToteutus curKoul:  hakukohde.getKoulutusmoduuliToteutuses()) {
-    		curKoul.removeHakukohde(hakukohde);
-    	}
-    	hakukohdeDAO.remove(hakukohde);
-    	return new HakukohdeTyyppi();
+        Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
+        for (KoulutusmoduuliToteutus curKoul : hakukohde.getKoulutusmoduuliToteutuses()) {
+            curKoul.removeHakukohde(hakukohde);
+        }
+        hakukohdeDAO.remove(hakukohde);
+        return new HakukohdeTyyppi();
     }
 
     @Override
@@ -136,7 +127,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findBy("oid", hakukohdePaivitys.getOid());
         hakukohde.setId(hakukohdeTemp.get(0).getId());
         hakukohde.setVersion(hakukohdeTemp.get(0).getVersion());
-        Haku haku  = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
+        Haku haku = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
 
         hakukohde.setHaku(haku);
         hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdePaivitys.getHakukohteenKoulutusOidit(), hakukohde));
@@ -146,7 +137,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         return hakukohdePaivitys;
     }
-
 
     @Override
     public HakuTyyppi lisaaHaku(HakuTyyppi hakuDto) {
@@ -183,19 +173,18 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     }
 
-	@Override
-	public void poistaKoulutus(String koulutusOid) {
-		KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
-		this.koulutusmoduuliToteutusDAO.remove(komoto);
-		removeOrphanHakukohteet();
-	}
+    @Override
+    public void poistaKoulutus(String koulutusOid) {
+        KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
+        this.koulutusmoduuliToteutusDAO.remove(komoto);
+        removeOrphanHakukohteet();
+    }
 
-	private void removeOrphanHakukohteet() {
-		for (Hakukohde curHakukohde : this.hakukohdeDAO.findOrphanHakukohteet()) {
-			this.hakukohdeDAO.remove(curHakukohde);
-		}
-	}
-
+    private void removeOrphanHakukohteet() {
+        for (Hakukohde curHakukohde : this.hakukohdeDAO.findOrphanHakukohteet()) {
+            this.hakukohdeDAO.remove(curHakukohde);
+        }
+    }
 
     /**
      * Remove once koodisto has proper data.
@@ -210,22 +199,20 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
     }
 
-	@Override
-	public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli)
-			throws GenericFault {
-		Koulutusmoduuli komo = new Koulutusmoduuli(KoulutusmoduuliTyyppi.valueOf(koulutusmoduuli.getKoulutusmoduuliTyyppi().value()));
-		komo.setOid(koulutusmoduuli.getOid());
-		komo.setKoulutusKoodi(koulutusmoduuli.getKoulutuskoodiUri());
-		komo.setKoulutusohjelmaKoodi(koulutusmoduuli.getKoulutusohjelmakoodiUri());
-        komo.setLaajuus(koulutusmoduuli.getLaajuusyksikkoUri(), koulutusmoduuli.getLaajuusarvo());
-		komo.setTutkintoOhjelmanNimi(koulutusmoduuli.getTutkintoOhjelmaUri());
-		komo.setTutkintonimike(koulutusmoduuli.getTutkintonimikeUri());
-		komo.setUlkoinenTunniste(koulutusmoduuli.getUlkoinenTunniste());
-		koulutusmoduuliDAO.insert(komo);
-		return koulutusmoduuli;
-	}
-
-
+    @Override
+    public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli)
+            throws GenericFault {
+        Koulutusmoduuli komo = new Koulutusmoduuli(KoulutusmoduuliTyyppi.valueOf(koulutusmoduuli.getKoulutusmoduuliTyyppi().value()));
+        komo.setOid(koulutusmoduuli.getOid());
+        komo.setKoulutusKoodi(koulutusmoduuli.getKoulutuskoodiUri());
+        komo.setKoulutusohjelmaKoodi(koulutusmoduuli.getKoulutusohjelmakoodiUri());
+        komo.setLaajuus(koulutusmoduuli.getLaajuusyksikkoUri(), koulutusmoduuli.getLaajuusarvoUri());
+        komo.setTutkintoOhjelmanNimi(koulutusmoduuli.getTutkintoOhjelmaUri());
+        komo.setTutkintonimike(koulutusmoduuli.getTutkintonimikeUri());
+        komo.setUlkoinenTunniste(koulutusmoduuli.getUlkoinenTunniste());
+        koulutusmoduuliDAO.insert(komo);
+        return koulutusmoduuli;
+    }
 
     private List<HakuTyyppi> convert(List<Haku> haut) {
         List<HakuTyyppi> tyypit = new ArrayList<HakuTyyppi>();
@@ -234,7 +221,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
         return tyypit;
     }
-
 
     /**
      * @return the businessService
@@ -337,10 +323,4 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public void setKoulutusmoduuliToteutusDAO(KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO) {
         this.koulutusmoduuliToteutusDAO = koulutusmoduuliToteutusDAO;
     }
-
-
-
-
-
 }
-

@@ -20,13 +20,20 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Window;
 
-import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
-import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
+import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusLisatiedotForm;
-import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPainotusFormView;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +50,7 @@ import org.springframework.cache.support.SimpleCacheManager;
  */
 @Configurable(preConstruction = true)
 public class TarjontaWebApplication extends TarjontaApplication {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaWebApplication.class);
     private Window window;
     @Value("${tarjonta-app.dev.redirect:}")
@@ -54,16 +61,18 @@ public class TarjontaWebApplication extends TarjontaApplication {
     private TarjontaAdminService tarjontaAdminService;
     @Autowired
     SimpleCacheManager _cacheManager;
-
+    @Autowired
+    private KoulutusKoodistoConverter converter;
+    
     @Override
     protected void initApplication() {
         window = new Window("Valitse");
         setMainWindow(window);
-
+        
         developmentConfiguration();
         HorizontalLayout hl = new HorizontalLayout();
         window.addComponent(hl);
-
+        
         Button tarjontaButton = new Button("Tarjontaan", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -71,7 +80,7 @@ public class TarjontaWebApplication extends TarjontaApplication {
             }
         });
         hl.addComponent(tarjontaButton);
-
+        
         Button hakuButton = new Button("Hakuihin", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -79,32 +88,34 @@ public class TarjontaWebApplication extends TarjontaApplication {
             }
         });
         hl.addComponent(hakuButton);
-
+        
         Button xxxButton = new Button("Koulutuksen kuvailevat tiedot muokkaaminen", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 toKoulutusView();
             }
         });
-
+        
         hl.addComponent(xxxButton);
+        
+//        window.addComponent(test());
     }
-
+    
     public void toTarjonta() {
         this.removeWindow(window);
         window = new TarjontaRootView();
         setMainWindow(window);
     }
-
+    
     public void toHaku() {
         this.removeWindow(window);
         window = new HakuRootView();
         setMainWindow(window);
     }
-
+    
     public void toKoulutusView() {
         this.removeWindow(window);
-
+        
         window = new Window();
         setMainWindow(window);
         EditKoulutusLisatiedotForm view = new EditKoulutusLisatiedotForm();
@@ -119,7 +130,7 @@ public class TarjontaWebApplication extends TarjontaApplication {
             //set a development theme.
             setTheme(developmentTheme);
         }
-
+        
         if (developmentRedirect != null && developmentRedirect.length() > 0) {
             //This code block is only for making UI development little bit faster
             //Add the property to tarjonta-app.properties:
@@ -128,12 +139,12 @@ public class TarjontaWebApplication extends TarjontaApplication {
             if (developmentRedirect.equalsIgnoreCase("HAKU")) {
                 toHaku();
             }
-
+            
             if (developmentRedirect.equalsIgnoreCase("KOULUTUS") || developmentRedirect.equalsIgnoreCase("TARJONTA")) {
                 toTarjonta();
             }
         }
-
+        
     }
 
     /**
@@ -149,4 +160,21 @@ public class TarjontaWebApplication extends TarjontaApplication {
     public void setTarjontaAdminService(TarjontaAdminService tarjontaAdminService) {
         this.tarjontaAdminService = tarjontaAdminService;
     }
+    
+//    private EditKoulutusPainotusFormView test() {
+////        KoulutusToisenAsteenPerustiedotViewModel koulutusToisenAsteenPerustiedotViewModel = new KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus.NEW);
+////        koulutusToisenAsteenPerustiedotViewModel.setPainotus(new ArrayList<KielikaannosViewModel>());
+////        return new EditKoulutusPainotusFormView(koulutusToisenAsteenPerustiedotViewModel);
+//
+//        
+////        LOG.debug("SEARCH KOODISTO");
+////        List<KoulutuskoodiModel> listaaKoulutus = converter.listaaKoulutukset(new Locale("fi"));
+////
+////        for (KoulutuskoodiModel m : listaaKoulutus) {
+////            LOG.debug("Koodisto URI : " + m.getKoodistoUri());
+////            LOG.debug("Koodisto uri versio : " + m.getKoodistoUriVersio());
+////            LOG.debug("Koodisto koodi : " + m.getKoodi());
+////            LOG.debug("Koodisto : " + m);
+////        }
+//    }
 }

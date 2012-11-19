@@ -30,6 +30,9 @@ public class KielikaannosViewModel extends BaseUIViewModel {
 
     private String nimi;
 
+    public KielikaannosViewModel() {
+    }
+
     public KielikaannosViewModel(String kielikoodiParam, String nimiParam) {
         this.kielikoodi = kielikoodiParam;
         this.nimi = nimiParam;

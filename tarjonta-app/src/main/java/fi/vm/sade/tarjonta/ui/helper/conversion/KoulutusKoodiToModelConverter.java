@@ -20,6 +20,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.NimiModel;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -55,6 +56,7 @@ public class KoulutusKoodiToModelConverter<MODEL extends KoulutusKoodistoModel> 
         }
         final KoodiMetadataType koodiMetadata = TarjontaUIHelper.getKoodiMetadataForLanguage(koodiType, locale);
         model.setNimi(koodiMetadata.getNimi());
+        model.setKuvaus(koodiMetadata.getKuvaus());
 
         model.setKoodi(koodiType.getKoodiArvo());
         model.setKoodistoUri(koodiType.getKoodiUri());

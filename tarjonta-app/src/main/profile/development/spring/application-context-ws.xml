@@ -57,8 +57,5 @@
     <jaxws:client id="organisaatioService"
                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
                   address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
-       
-    <bean id="hakuService" class="fi.vm.sade.tarjonta.service.mock.HakueraServiceMock" />
-    
     
 </beans>

@@ -30,6 +30,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 public abstract class KoulutusKoodistoModel extends BaseUIViewModel {
 
     protected String nimi;
+    protected String kuvaus;
     protected String kielikoodi;
     protected String koodi;
     protected String koodistoUri;
@@ -164,6 +165,7 @@ public abstract class KoulutusKoodistoModel extends BaseUIViewModel {
         builder.append(koodistoUri, other.koodistoUri);
         builder.append(koodistoVersio, other.koodistoVersio);
         builder.append(koodistoUriVersio, other.koodistoUriVersio);
+        builder.append(kuvaus, other.kuvaus);
         builder.append(kielet, other.kielet);
         return builder.isEquals();
     }
@@ -177,6 +179,21 @@ public abstract class KoulutusKoodistoModel extends BaseUIViewModel {
                 append(koodistoUri).
                 append(koodistoVersio).
                 append(koodistoUriVersio).
+                append(kuvaus).
                 append(kielet).toHashCode();
+    }
+
+    /**
+     * @return the kuvaus
+     */
+    public String getKuvaus() {
+        return kuvaus;
+    }
+
+    /**
+     * @param kuvaus the kuvaus to set
+     */
+    public void setKuvaus(String kuvaus) {
+        this.kuvaus = kuvaus;
     }
 }

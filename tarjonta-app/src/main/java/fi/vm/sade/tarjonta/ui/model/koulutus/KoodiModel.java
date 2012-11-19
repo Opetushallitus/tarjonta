@@ -15,25 +15,10 @@
  */
 package fi.vm.sade.tarjonta.ui.model.koulutus;
 
-import java.util.Set;
-
 /**
  *
  * @author Jani Wilén
  */
-public class KoulutusasteModel extends KoulutusKoodistoModel {
+public class KoodiModel extends KoulutusKoodistoModel {
 
-    public KoulutusasteModel() {
-    }
-
-    public KoulutusasteModel(
-            String nimi,
-            String kielikoodi,
-            String koodi,
-            String koodistoUri,
-            int koodistoVersio,
-            Set<NimiModel> kieli) {
-
-        super(nimi, kielikoodi, koodi, koodistoUri, koodistoVersio, kieli);
-    }
 }

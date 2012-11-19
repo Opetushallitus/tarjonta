@@ -339,10 +339,13 @@ public class TarjontaUIHelper {
 
     public static KoodiMetadataType getKoodiMetadataForLanguage(KoodiType koodiType, Locale locale) {
         KoodiMetadataType kmdt = KoodistoHelper.getKoodiMetadataForLanguage(koodiType, KoodistoHelper.getKieliForLocale(locale));
-        if (kmdt == null) {
+        if (kmdt == null || (kmdt.getNimi() == null || kmdt.getNimi().length() == 0) ) {
             // Try finnish if current locale is not found
             kmdt = KoodistoHelper.getKoodiMetadataForLanguage(koodiType, KieliType.FI);
         }
+        
+        LOG.debug("Kieliteksti : " + kmdt.getKieli().value());
+        
         return kmdt;
     }
 }

@@ -16,12 +16,13 @@
 package fi.vm.sade.tarjonta.ui.model.koulutus;
 
 import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 
 /**
  *
  * @author Jani Wilén
  */
-public class NimiModel {
+public class NimiModel extends BaseUIViewModel {
 
     private KieliType type;
     private String nimi;

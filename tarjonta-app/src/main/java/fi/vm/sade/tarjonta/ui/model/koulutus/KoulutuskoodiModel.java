@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.model.koulutus;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -23,33 +24,161 @@ import java.util.Set;
  */
 public class KoulutuskoodiModel extends KoulutusKoodistoModel {
 
-    private String koulutusasteKoodi;
-    
+    private Set<KoulutusohjelmaModel> koulutusohjelmaModels;
+    private KoodiModel koulutusaste;
+    private KoodiModel koulutusala;
+    private KoodiModel opintojenLaajuusyksikko;
+    private KoodiModel opintojenLaajuus;
+    private KoodiModel opintoala;
+    private KoodiModel koulutuksenRakenne;
+    private KoodiModel tavoitteet;
+    private KoodiModel koulutuksellisetJaAmmatillisetTavoitteet;
+    private KoodiModel jatkoopintomahdollisuudet;
+
     public KoulutuskoodiModel() {
     }
 
-    public KoulutuskoodiModel(
-            String nimi,
-            String kielikoodi,
-            String koodi,
-            String koodistoUri,
-            int koodistoVersio,
-            Set<NimiModel> kieli) {
-
-        super(nimi, kielikoodi, koodi, koodistoUri, koodistoVersio, kieli);
+    /**
+     * @return the koulutusaste
+     */
+    public KoodiModel getKoulutusaste() {
+        return koulutusaste;
     }
 
     /**
-     * @return the koulutusasteKoodi
+     * @param koulutusaste the koulutusaste to set
      */
-    public String getKoulutusasteKoodi() {
-        return koulutusasteKoodi;
+    public void setKoulutusaste(KoodiModel koulutusaste) {
+        this.koulutusaste = koulutusaste;
     }
 
     /**
-     * @param koulutusasteKoodi the koulutusasteKoodi to set
+     * @return the koulutusala
      */
-    public void setKoulutusasteKoodi(String koulutusasteKoodi) {
-        this.koulutusasteKoodi = koulutusasteKoodi;
+    public KoodiModel getKoulutusala() {
+        return koulutusala;
+    }
+
+    /**
+     * @param koulutusala the koulutusala to set
+     */
+    public void setKoulutusala(KoodiModel koulutusala) {
+        this.koulutusala = koulutusala;
+    }
+
+    /**
+     * @return the opintojenLaajuusyksikko
+     */
+    public KoodiModel getOpintojenLaajuusyksikko() {
+        return opintojenLaajuusyksikko;
+    }
+
+    /**
+     * @param opintojenLaajuusyksikko the opintojenLaajuusyksikko to set
+     */
+    public void setOpintojenLaajuusyksikko(KoodiModel opintojenLaajuusyksikko) {
+        this.opintojenLaajuusyksikko = opintojenLaajuusyksikko;
+    }
+
+    /**
+     * @return the opintojenLaajuus
+     */
+    public KoodiModel getOpintojenLaajuus() {
+        return opintojenLaajuus;
+    }
+
+    /**
+     * @param opintojenLaajuus the opintojenLaajuus to set
+     */
+    public void setOpintojenLaajuus(KoodiModel opintojenLaajuus) {
+        this.opintojenLaajuus = opintojenLaajuus;
+    }
+
+    /**
+     * @return the opintoala
+     */
+    public KoodiModel getOpintoala() {
+        return opintoala;
+    }
+
+    /**
+     * @param opintoala the opintoala to set
+     */
+    public void setOpintoala(KoodiModel opintoala) {
+        this.opintoala = opintoala;
+    }
+
+    /**
+     * @return the koulutuksenRakenne
+     */
+    public KoodiModel getKoulutuksenRakenne() {
+        return koulutuksenRakenne;
+    }
+
+    /**
+     * @param koulutuksenRakenne the koulutuksenRakenne to set
+     */
+    public void setKoulutuksenRakenne(KoodiModel koulutuksenRakenne) {
+        this.koulutuksenRakenne = koulutuksenRakenne;
+    }
+
+    /**
+     * @return the koulutuksellisetJaAmmatillisetTavoitteet
+     */
+    public KoodiModel getKoulutuksellisetJaAmmatillisetTavoitteet() {
+        return koulutuksellisetJaAmmatillisetTavoitteet;
+    }
+
+    /**
+     * @param koulutuksellisetJaAmmatillisetTavoitteet the
+     * koulutuksellisetJaAmmatillisetTavoitteet to set
+     */
+    public void setKoulutuksellisetJaAmmatillisetTavoitteet(KoodiModel koulutuksellisetJaAmmatillisetTavoitteet) {
+        this.koulutuksellisetJaAmmatillisetTavoitteet = koulutuksellisetJaAmmatillisetTavoitteet;
+    }
+
+    /**
+     * @return the koulutusohjelmaModels
+     */
+    public Set<KoulutusohjelmaModel> getKoulutusohjelmaModels() {
+        if (koulutusohjelmaModels == null) {
+            koulutusohjelmaModels = new HashSet<KoulutusohjelmaModel>();
+        }
+        return koulutusohjelmaModels;
+    }
+
+    /**
+     * @param koulutusohjelmaModels the koulutusohjelmaModels to set
+     */
+    public void setKoulutusohjelmaModels(Set<KoulutusohjelmaModel> koulutusohjelmaModels) {
+        this.koulutusohjelmaModels = koulutusohjelmaModels;
+    }
+
+    /**
+     * @return the tavoitteet
+     */
+    public KoodiModel getTavoitteet() {
+        return tavoitteet;
+    }
+
+    /**
+     * @param tavoitteet the tavoitteet to set
+     */
+    public void setTavoitteet(KoodiModel tavoitteet) {
+        this.tavoitteet = tavoitteet;
+    }
+
+    /**
+     * @return the jatkoopintomahdollisuudet
+     */
+    public KoodiModel getJatkoopintomahdollisuudet() {
+        return jatkoopintomahdollisuudet;
+    }
+
+    /**
+     * @param jatkoopintomahdollisuudet the jatkoopintomahdollisuudet to set
+     */
+    public void setJatkoopintomahdollisuudet(KoodiModel jatkoopintomahdollisuudet) {
+        this.jatkoopintomahdollisuudet = jatkoopintomahdollisuudet;
     }
 }

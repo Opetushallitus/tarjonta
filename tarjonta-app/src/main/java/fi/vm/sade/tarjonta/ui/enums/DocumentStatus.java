@@ -34,6 +34,6 @@ public enum DocumentStatus {
     }
     
     public String getStatus() {
-        return I18N.getMessage(property);
+        return property;
     }
 }

@@ -47,10 +47,13 @@ import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
@@ -70,12 +73,10 @@ import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusSearchSpecificationViewM
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusViewModelToDTOConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusasteModel;
+
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
-import java.util.Locale;
 
 /**
  * This class is used to control the "tarjonta" UI.
@@ -269,20 +270,14 @@ public class TarjontaPresenter {
                 //Empty previous Koodisto data from the comboboxes.
                 koulutus.getKoulutusohjelmat().clear();
                 koulutus.getKoulutuskoodit().clear();
-                koulutus.getKoulutusasteet().clear();
 
                 //Add selected data to  the comboboxes.
                 if (koulutus.getKoulutusohjelmaModel() != null && koulutus.getKoulutusohjelmaModel().getKoodistoUri() != null) {
                     koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
                 }
                 koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());
-                koulutus.getKoulutusasteet().add(koulutus.getKoulutusasteModel());
-
-                LOG.debug("getKoulutusasteModel : " + koulutus.getKoulutusasteModel());
                 LOG.debug("getKoulutuskoodiModel : " + koulutus.getKoulutuskoodiModel());
                 LOG.debug("getKoulutusohjelma : " + koulutus.getKoulutusohjelmaModel());
-
-
             } catch (ExceptionMessage ex) {
                 LOG.error("Service call failed.", ex);
                 showMainDefaultView();
@@ -685,6 +680,8 @@ public class TarjontaPresenter {
 
         HaeKoulutusmoduulitVastausTyyppi vastaus = this.tarjontaPublicService.haeKoulutusmoduulit(kysely);
 
+
+        LOG.error("KOMO not created" + kysely.getKoulutuskoodiUri() + "," + kysely.getKoulutusohjelmakoodiUri());
         if (vastaus.getKoulutusmoduuliTulos().isEmpty()) {
             //No KOMO, insert new KOMO
             try {
@@ -693,13 +690,21 @@ public class TarjontaPresenter {
                 komo.setOid(oid);
                 komo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
                 komo.setKoulutuskoodiUri(kysely.getKoulutuskoodiUri());
-                komo.setTutkintoOhjelmaUri(model.getTutkinto()); //Autoalan perustutkinto
-                komo.setTutkintonimikeUri(model.getTutkintonimike()); //Automaalari
-                komo.setLaajuusyksikkoUri(model.getOpintojenLaajuusyksikko()); //Opintoviikot
-                komo.setLaajuusarvo(model.getOpintojenLaajuus()); //120 ov
-                komo.setKoulutuksenRakenneUri(model.getKoulutuksenRakenne());
-                komo.setTavoiteetUri(model.getTavoitteet());
-                komo.setJatkoopintomahdollisuudetUri(model.getJakoopintomahdollisuudet());
+                komo.setTutkintonimikeUri(model.getTutkintonimike().getKoodistoUriVersio()); //Automaalari
+                if (model.getOpintojenLaajuusyksikko() != null) {
+                    //fix the  koodisto relation asap
+                    komo.setLaajuusyksikkoUri(model.getOpintojenLaajuusyksikko().getKoodistoUriVersio()); //Opintoviikot
+                }
+                komo.setLaajuusarvoUri(model.getOpintojenLaajuus().getKoodistoUriVersio()); //120 ov
+                MonikielinenTekstiTyyppi monikielinenTekstiTyyppi = new MonikielinenTekstiTyyppi();
+                Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
+                teksti.setKieliKoodi("FI");
+                teksti.setValue(UiBuilder.LOREM_IPSUM);
+                monikielinenTekstiTyyppi.getTeksti().add(teksti);
+
+                komo.setKoulutuksenRakenne(monikielinenTekstiTyyppi);
+                komo.setTavoiteet(monikielinenTekstiTyyppi);
+                komo.setJatkoopintomahdollisuudet(monikielinenTekstiTyyppi);
 
                 if (kysely.getKoulutusohjelmakoodiUri() != null) {
                     komo.setKoulutusohjelmakoodiUri(kysely.getKoulutusohjelmakoodiUri());
@@ -708,7 +713,7 @@ public class TarjontaPresenter {
                 komo = this.tarjontaAdminService.lisaaKoulutusmoduuli(komo);
                 model.setKoulutusmoduuliOid(komo.getOid());
             } catch (Exception ex) {
-                LOG.error("Error creating koulutusmoduuli: {}", ex.getMessage());
+                throw new RuntimeException("Error creating koulutusmoduuli.", ex);
             }
         } else {
             //KOMO found
@@ -717,37 +722,22 @@ public class TarjontaPresenter {
     }
 
     /*
-     * 2. aste data. Lukio- or ammatillinen tutkinto.
-     */
-    public void loadKoulutusasteKoodit(Locale locale) {
-        List<KoulutusasteModel> list = kolutusKoodistoConverter.listaaKoulutusasteet(I18N.getLocale());
-        getModel().getKoulutusPerustiedotModel().getKoulutusasteet().addAll(list);
-    }
-
-    /*
      * More detailed information of selected 'koulutusluokitus'.
      */
-    public void loadKoulutuskoodit(Locale locale) {
+    public void loadKoulutuskoodit() {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
-
-        //koulutusaste must be selected before an user can select koulutuskoodi.
-        if (model.getKoulutusasteModel() != null && model.getKoulutusasteModel().getKoodi() != null) {
-
-            //koodisto search result
-            model.getKoulutuskoodit().clear();
-            List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutuskoodit(model.getKoulutusasteModel(), I18N.getLocale());
-            model.getKoulutuskoodit().addAll(listaaKoulutuskoodit);
-        }
+        model.getKoulutuskoodit().clear();
+        //koodisto service search result remapped to UI model objects.
+        List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukset(I18N.getLocale());
+        model.getKoulutuskoodit().addAll(listaaKoulutuskoodit);
     }
 
-    public void loadKoulutusohjelmat(Locale locale) {
+    public void loadKoulutusohjelmat() {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
-
-        //Koulutuskoodi filters koulutusohjema data.
+        //Select 'koulutusohjelma' from pre-filtered koodisto data.   
         if (model.getKoulutuskoodiModel() != null && model.getKoulutuskoodiModel().getKoodi() != null) {
             model.getKoulutusohjelmat().clear();
-            List<KoulutusohjelmaModel> koulutusohjelma = kolutusKoodistoConverter.listaaKoulutusohjelmat(I18N.getLocale());
-            model.getKoulutusohjelmat().addAll(koulutusohjelma);
+            model.getKoulutusohjelmat().addAll(model.getKoulutuskoodiModel().getKoulutusohjelmaModels());
         }
     }
 

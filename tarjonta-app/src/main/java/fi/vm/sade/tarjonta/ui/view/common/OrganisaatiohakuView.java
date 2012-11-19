@@ -222,7 +222,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         tree.addListener(new ItemClickEvent.ItemClickListener() {
             @Override
             public void itemClick(ItemClickEvent event) {
-                organisaatioSelected((OrganisaatioDTO) (event.getItemId()));
+                organisaatioSelected((OrganisaatioPerustietoType) event.getItemId());
             }
         });
 
@@ -363,7 +363,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
      *
      * @param item the organisaatio selected.
      */
-    private void organisaatioSelected(OrganisaatioDTO item) {
+    private void organisaatioSelected(OrganisaatioPerustietoType item) {
         LOG.info("Event fired: " + item.getOid());
         presenter.selectOrganisaatio(item.getOid(), item.getNimiFi());
     }

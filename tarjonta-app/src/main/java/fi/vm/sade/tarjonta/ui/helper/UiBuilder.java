@@ -45,6 +45,17 @@ import org.slf4j.LoggerFactory;
  */
 public class UiBuilder extends UiUtil {
 
+    public static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+            + "Donec molestie neque non enim lobortis sed scelerisque ante lacinia. Donec ut "
+            + "justo non lectus ultricies porttitor. Praesent ultrices eros eget nulla "
+            + "scelerisque sodales. Donec aliquet libero vel risus posuere porta. "
+            + "Donec sit amet fermentum tellus. Aenean eget commodo sem. Sed enim mauris, "
+            + "rutrum eget dignissim eu, vehicula sit amet purus. Nulla tincidunt volutpat "
+            + "urna, sit amet lobortis metus dictum vel. Pellentesque semper felis a lacus "
+            + "dictum commodo. Donec vitae feugiat mi. Aliquam facilisis nisl ut magna "
+            + "suscipit faucibus. Sed consequat neque non augue tincidunt sed venenatis"
+            + " turpis tincidunt. Quisque interdum pharetra mauris nec tincidunt.";
+    
     private static final Logger LOG = LoggerFactory.getLogger(UiBuilder.class);
     /**
      * Default field value as uri formatter for koodisto components - since we

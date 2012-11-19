@@ -17,11 +17,11 @@ package fi.vm.sade.tarjonta.ui.model;
 
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusasteModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -51,35 +51,36 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      * Koodisto logic data:
      */
     protected KoulutusohjelmaModel koulutusohjelmaModel;
-    protected KoulutusasteModel koulutusasteModel;
     protected KoulutuskoodiModel koulutuskoodiModel;
     /*
-     * KOMO data (static labels):
+     * KOMO koodisto URIs (static labels):
      */
-    protected String koulutuksenTyyppi;
-    protected String koulutusala;
-    protected String tutkinto;
-    protected String tutkintonimike;
-    protected String opintojenLaajuusyksikko;
-    protected String opintojenLaajuus;
-    protected String opintoala;
-    //8.11.2012
-    protected String koulutuksenRakenne;
-    protected String tavoitteet;
-    protected String jakoopintomahdollisuudet;
+    protected KoodiModel koulutusaste;
+    protected KoodiModel koulutuksenTyyppi;
+    protected KoodiModel koulutusala;
+    protected KoodiModel tutkinto;
+    protected KoodiModel tutkintonimike;
+    protected KoodiModel opintojenLaajuusyksikko;
+    protected KoodiModel opintojenLaajuus;
+    protected KoodiModel opintoala;
+    /*
+     * KOMO text data (static labels):
+     * TODO:change to KielikaannosViewModel
+     */
+    protected KoodiModel koulutuksenRakenne;
+    protected KoodiModel tavoitteet;
+    protected KoodiModel jakoopintomahdollisuudet;
     /*
      * Form fields:
      */
+    protected String pohjakoulutusvaatimus;
     protected Date koulutuksenAlkamisPvm;
     protected String suunniteltuKesto;
     protected String suunniteltuKestoTyyppi;
     protected String koulutuslaji;
-   
-    //protected String opetuskieli; //only one language accepted
-    
-    protected Set<String> opetusmuoto;
+    protected String opetusmuoto;
     protected Set<String> opetuskielet; //allow one or many
-    protected Set<String> avainsanat;
+    private List<KielikaannosViewModel> painotus;
     protected List<KoulutusYhteyshenkiloViewModel> yhteyshenkilot;
     protected List<KoulutusLinkkiViewModel> koulutusLinkit;
 
@@ -89,54 +90,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
 
     public KoulutusPerustiedotViewModel(DocumentStatus status) {
         this.documentStatus = status;
-    }
-
-    public String getKoulutusala() {
-        return koulutusala;
-    }
-
-    public void setKoulutusala(String koulutusala) {
-        this.koulutusala = koulutusala;
-    }
-
-    public String getTutkinto() {
-        return tutkinto;
-    }
-
-    public void setTutkinto(String tutkinto) {
-        this.tutkinto = tutkinto;
-    }
-
-    public String getTutkintonimike() {
-        return tutkintonimike;
-    }
-
-    public void setTutkintonimike(String tutkintonimike) {
-        this.tutkintonimike = tutkintonimike;
-    }
-
-    public String getOpintojenLaajuusyksikko() {
-        return opintojenLaajuusyksikko;
-    }
-
-    public void setOpintojenLaajuusyksikko(String opintojenLaajuusyksikko) {
-        this.opintojenLaajuusyksikko = opintojenLaajuusyksikko;
-    }
-
-    public String getOpintojenLaajuus() {
-        return opintojenLaajuus;
-    }
-
-    public void setOpintojenLaajuus(String opintojenLaajuus) {
-        this.opintojenLaajuus = opintojenLaajuus;
-    }
-
-    public String getOpintoala() {
-        return opintoala;
-    }
-
-    public void setOpintoala(String opintoala) {
-        this.opintoala = opintoala;
     }
 
     public Set<String> getOpetuskielet() {
@@ -196,29 +149,15 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     /**
      * @return the koulutuksenTyyppi
      */
-    public String getKoulutuksenTyyppi() {
+    public KoodiModel getKoulutuksenTyyppi() {
         return koulutuksenTyyppi;
     }
 
     /**
      * @param koulutuksenTyyppi the koulutuksenTyyppi to set
      */
-    public void setKoulutuksenTyyppi(String koulutuksenTyyppi) {
+    public void setKoulutuksenTyyppi(KoodiModel koulutuksenTyyppi) {
         this.koulutuksenTyyppi = koulutuksenTyyppi;
-    }
-
-    /**
-     * @return the avainsanat
-     */
-    public Set<String> getAvainsanat() {
-        return avainsanat;
-    }
-
-    /**
-     * @param avainsanat the avainsanat to set
-     */
-    public void setAvainsanat(Set<String> avainsanat) {
-        this.avainsanat = avainsanat;
     }
 
     /**
@@ -295,14 +234,14 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     /**
      * @return the opetusmuoto
      */
-    public Set<String> getOpetusmuoto() {
+    public String getOpetusmuoto() {
         return opetusmuoto;
     }
 
     /**
      * @param opetusmuoto the opetusmuoto to set
      */
-    public void setOpetusmuoto(Set<String> opetusmuoto) {
+    public void setOpetusmuoto(String opetusmuoto) {
         this.opetusmuoto = opetusmuoto;
     }
 
@@ -351,20 +290,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     }
 
     /**
-     * @return the koulutusasteModel
-     */
-    public KoulutusasteModel getKoulutusasteModel() {
-        return koulutusasteModel;
-    }
-
-    /**
-     * @param koulutusasteModel the koulutusasteModel to set
-     */
-    public void setKoulutusasteModel(KoulutusasteModel koulutusasteModel) {
-        this.koulutusasteModel = koulutusasteModel;
-    }
-
-    /**
      * @return the koulutuskoodiModel
      */
     public KoulutuskoodiModel getKoulutuskoodiModel() {
@@ -381,43 +306,168 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     /**
      * @return the koulutuksenRakenne
      */
-    public String getKoulutuksenRakenne() {
+    public KoodiModel getKoulutuksenRakenne() {
         return koulutuksenRakenne;
     }
 
     /**
      * @param koulutuksenRakenne the koulutuksenRakenne to set
      */
-    public void setKoulutuksenRakenne(String koulutuksenRakenne) {
+    public void setKoulutuksenRakenne(KoodiModel koulutuksenRakenne) {
         this.koulutuksenRakenne = koulutuksenRakenne;
     }
 
     /**
      * @return the tavoitteet
      */
-    public String getTavoitteet() {
+    public KoodiModel getTavoitteet() {
         return tavoitteet;
     }
 
     /**
      * @param tavoitteet the tavoitteet to set
      */
-    public void setTavoitteet(String tavoitteet) {
-        this.tavoitteet = tavoitteet;
+    public void setTavoitteet(KoodiModel tavoitteet) {
+        this.setTavoitteet(tavoitteet);
     }
 
     /**
      * @return the jakoopintomahdollisuudet
      */
-    public String getJakoopintomahdollisuudet() {
+    public KoodiModel getJakoopintomahdollisuudet() {
         return jakoopintomahdollisuudet;
     }
 
     /**
      * @param jakoopintomahdollisuudet the jakoopintomahdollisuudet to set
      */
-    public void setJakoopintomahdollisuudet(String jakoopintomahdollisuudet) {
-        this.jakoopintomahdollisuudet = jakoopintomahdollisuudet;
+    public void setJakoopintomahdollisuudet(KoodiModel jakoopintomahdollisuudet) {
+        this.setJakoopintomahdollisuudet(jakoopintomahdollisuudet);
     }
 
+    /**
+     * @return the pohjakoulutusvaatimus
+     */
+    public String getPohjakoulutusvaatimus() {
+        return pohjakoulutusvaatimus;
+    }
+
+    /**
+     * @param pohjakoulutusvaatimus the pohjakoulutusvaatimus to set
+     */
+    public void setPohjakoulutusvaatimus(String pohjakoulutusvaatimus) {
+        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
+    }
+
+    /**
+     * @return the koulutusala
+     */
+    public KoodiModel getKoulutusala() {
+        return koulutusala;
+    }
+
+    /**
+     * @param koulutusala the koulutusala to set
+     */
+    public void setKoulutusala(KoodiModel koulutusala) {
+        this.koulutusala = koulutusala;
+    }
+
+    /**
+     * @return the tutkinto
+     */
+    public KoodiModel getTutkinto() {
+        return tutkinto;
+    }
+
+    /**
+     * @param tutkinto the tutkinto to set
+     */
+    public void setTutkinto(KoodiModel tutkinto) {
+        this.tutkinto = tutkinto;
+    }
+
+    /**
+     * @return the tutkintonimike
+     */
+    public KoodiModel getTutkintonimike() {
+        return tutkintonimike;
+    }
+
+    /**
+     * @param tutkintonimike the tutkintonimike to set
+     */
+    public void setTutkintonimike(KoodiModel tutkintonimike) {
+        this.tutkintonimike = tutkintonimike;
+    }
+
+    /**
+     * @return the opintojenLaajuusyksikko
+     */
+    public KoodiModel getOpintojenLaajuusyksikko() {
+        return opintojenLaajuusyksikko;
+    }
+
+    /**
+     * @param opintojenLaajuusyksikko the opintojenLaajuusyksikko to set
+     */
+    public void setOpintojenLaajuusyksikko(KoodiModel opintojenLaajuusyksikko) {
+        this.opintojenLaajuusyksikko = opintojenLaajuusyksikko;
+    }
+
+    /**
+     * @return the opintojenLaajuus
+     */
+    public KoodiModel getOpintojenLaajuus() {
+        return opintojenLaajuus;
+    }
+
+    /**
+     * @param opintojenLaajuus the opintojenLaajuus to set
+     */
+    public void setOpintojenLaajuus(KoodiModel opintojenLaajuus) {
+        this.opintojenLaajuus = opintojenLaajuus;
+    }
+
+    /**
+     * @return the opintoala
+     */
+    public KoodiModel getOpintoala() {
+        return opintoala;
+    }
+
+    /**
+     * @param opintoala the opintoala to set
+     */
+    public void setOpintoala(KoodiModel opintoala) {
+        this.opintoala = opintoala;
+    }
+
+    /**
+     * @return the koulutusaste
+     */
+    public KoodiModel getKoulutusaste() {
+        return koulutusaste;
+    }
+
+    /**
+     * @param koulutusaste the koulutusaste to set
+     */
+    public void setKoulutusaste(KoodiModel koulutusaste) {
+        this.koulutusaste = koulutusaste;
+    }
+
+    /**
+     * @return the painotus
+     */
+    public List<KielikaannosViewModel> getPainotus() {
+        return painotus;
+    }
+
+    /**
+     * @param painotus the painotus to set
+     */
+    public void setPainotus(List<KielikaannosViewModel> painotus) {
+        this.painotus = painotus;
+    }
 }

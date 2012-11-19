@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
  *
  * @author Tuomas Katva
  * @author mlyly
+ * @author Jani Wilen
  */
 @Component
 @Configurable(preConstruction = false)
@@ -37,8 +38,6 @@ public class KoodistoURIHelper {
     public static String KOODISTO_HAUN_KOHDEJOUKKO_URI;
     public static String KOODISTO_KOULUTUKSEN_ALKAMISKAUSI_URI;
     public static String KOODISTO_OPPILAITOSTYYPPI_URI;
-    public static String KOODISTO_KOULUTUS_URI;
-    public static String KOODISTO_KOULUTUSOHJELMA_URI;
     public static String KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI;
     public static String KOODISTO_HAKUKOHDE_URI;
     public static String KOODISTO_SUUNNITELTU_KESTO_URI;
@@ -46,8 +45,21 @@ public class KoodistoURIHelper {
     public static String KOODISTO_KOULUTUSLAJI_URI;
     public static String KOODISTO_AVAINSANAT_URI;
     public static String KOODISTO_KIELIVALIKOIMA_URI;
-    public static String KOODISTO_KOULUTUSASTE_URI;
     public static String KOODISTO_AMMATTINIMIKKEET_URI;
+    /*
+     * KOMO URIs
+     */
+    public static String KOODISTO_TUTKINTO_URI;
+    public static String KOODISTO_KOULUTUSOHJELMA_URI;
+    public static String KOODISTO_KOULUTUSASTE_URI;
+    public static String KOODISTO_KOULUTUSALA_URI;
+    public static String KOODISTO_TUTKINTONIMIKE_URI;
+    public static String KOODISTO_KOULUTUKSEN_RAKENNE_URI;
+    public static String KOODISTO_OPINTOALA_URI;
+    public static String KOODISTO_OPINTOJEN_LAAJUUS_URI;
+    public static String KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI;
+    public static String KOODISTO_TAVOITTEET_URI;
+    public static String KOODISTO_JATKOOPINTOMAHDOLLISUUDET_URI;
 
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
@@ -72,16 +84,6 @@ public class KoodistoURIHelper {
     @Value("${koodisto-uris.koulutuksenAlkamiskausi:NOT_SET}")
     public void setKoodistoKoulutuksenAlkamiskausiUri(String uri) {
         KOODISTO_KOULUTUKSEN_ALKAMISKAUSI_URI = uri;
-    }
-
-    @Value("${koodisto-uris.koulutusohjelma:NOT_SET}")
-    public void setKoodistoKoulutusohjelmaUri(String uri) {
-        KOODISTO_KOULUTUSOHJELMA_URI = uri;
-    }
-
-    @Value("${koodisto-uris.koulutus:NOT_SET}")
-    public void setKoodistoKoulutusUri(String uri) {
-        KOODISTO_KOULUTUS_URI = uri;
     }
 
     @Value("${koodisto-uris.oppilaitostyyppi:NOT_SET}")
@@ -129,14 +131,68 @@ public class KoodistoURIHelper {
         KOODISTO_KIELIVALIKOIMA_URI = uri;
     }
 
-    @Value("${koodisto-uris.koulutusaste:NOT_SET}")
-    public void setKoodistoasteUri(String uri) {
-        KOODISTO_KOULUTUSASTE_URI = uri;
-    }
-
     @Value("${koodisto-uris.ammattinimikkeet:NOT_SET}")
     public void setAmmattinimikkeetUri(String uri) {
         KOODISTO_AMMATTINIMIKKEET_URI = uri;
     }
 
+    /*
+     * 
+     * KOMO URIs
+     * 
+     */
+    @Value("${koodisto-uris.tutkinto:NOT_SET}")
+    public void setKoodistoTutkintoUri(String uri) {
+        KOODISTO_TUTKINTO_URI = uri;
+    }
+
+    @Value("${koodisto-uris.koulutusohjelma:NOT_SET}")
+    public void setKoodistoKoulutusohjelmaUri(String uri) {
+        KOODISTO_KOULUTUSOHJELMA_URI = uri;
+    }
+
+    @Value("${koodisto-uris.koulutusaste:NOT_SET}")
+    public void setKoodistoasteUri(String uri) {
+        KOODISTO_KOULUTUSASTE_URI = uri;
+    }
+
+    @Value("${koodisto-uris.koulutusala:NOT_SET}")
+    public void setKoulutusalaUri(String uri) {
+        KOODISTO_KOULUTUSALA_URI = uri;
+    }
+
+    @Value("${koodisto-uris.tutkintonimike:NOT_SET}")
+    public void setTutkintonimikeUri(String uri) {
+        KOODISTO_TUTKINTONIMIKE_URI = uri;
+    }
+
+    @Value("${koodisto-uris.koulutuksenRakenne:NOT_SET}")
+    public void setKoulutuksenRakenneUri(String uri) {
+        KOODISTO_KOULUTUKSEN_RAKENNE_URI = uri;
+    }
+
+    @Value("${koodisto-uris.opintoala:NOT_SET}")
+    public void setOpintoalaUri(String uri) {
+        KOODISTO_OPINTOALA_URI = uri;
+    }
+
+    @Value("${koodisto-uris.opintojenLaajuus:NOT_SET}")
+    public void setOpintojenLaajuusUri(String uri) {
+        KOODISTO_OPINTOJEN_LAAJUUS_URI = uri;
+    }
+
+    @Value("${koodisto-uris.opintojenLaajuusyksikko:NOT_SET}")
+    public void setOpintojenLaajuusyksikkoUri(String uri) {
+        KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI = uri;
+    }
+
+    @Value("${koodisto-uris.tavoitteet:NOT_SET}")
+    public void setOpintojenTavoitteetUri(String uri) {
+        KOODISTO_TAVOITTEET_URI = uri;
+    }
+
+    @Value("${koodisto-uris.jatkoopintomahdollisuudet:NOT_SET}")
+    public void setOpintojenJatkoopintomahdollisuudetUri(String uri) {
+        KOODISTO_JATKOOPINTOMAHDOLLISUUDET_URI = uri;
+    }
 }

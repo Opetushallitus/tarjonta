@@ -23,6 +23,8 @@ import java.util.Set;
  */
 public class KoulutusohjelmaModel extends KoulutusKoodistoModel {
 
+    private KoodiModel tutkintonimike;
+    
     public KoulutusohjelmaModel() {
     }
 
@@ -35,5 +37,19 @@ public class KoulutusohjelmaModel extends KoulutusKoodistoModel {
             Set<NimiModel> kieli) {
 
         super(nimi, kielikoodi, koodi, koodistoUri, koodistoVersio, kieli);
+    }
+
+    /**
+     * @return the tutkintonimike
+     */
+    public KoodiModel getTutkintonimike() {
+        return tutkintonimike;
+    }
+
+    /**
+     * @param tutkintonimike the tutkintonimike to set
+     */
+    public void setTutkintonimike(KoodiModel tutkintonimike) {
+        this.tutkintonimike = tutkintonimike;
     }
 }
