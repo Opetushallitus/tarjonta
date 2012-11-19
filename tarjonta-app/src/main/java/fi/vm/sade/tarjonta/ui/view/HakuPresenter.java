@@ -46,6 +46,7 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 
 /**
  * Presenter for searching, creating, editing, and viewing Haku objects.
@@ -58,61 +59,42 @@ import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 public class HakuPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuPresenter.class);
-
     private KoulutusSearchSpesificationViewModel searchSpec = new KoulutusSearchSpesificationViewModel();
-
     private List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
-
     private List<HakuViewModel> selectedhaut = new ArrayList<HakuViewModel>();
-
     private ListHakuView hakuList;
-
     private EditHakuView editHaku;
-
     private HakuViewModel hakuModel;
-
     @Autowired
     private OIDService oidService;
-
     @Autowired
     private KoodiService koodiService;
-
     @Autowired
     private TarjontaPublicService tarjontaPublicService;
-
     @Autowired
     private TarjontaAdminService tarjontaAdminService;
-
     public static final String COLUMN_A = "Kategoriat";
 
     public HakuPresenter() {
     }
 
     /**
-     * Performs the search according to searchSpec
-     * and reloads the hakuList view.
+     * Performs the search according to searchSpec and reloads the hakuList
+     * view.
      */
     public void doSearch() {
         hakuList.reload();
     }
 
-    /**
-     *
-     * Gets the datasource for hakuList.
-     * @return
-     */
-    public Map<String, List<HakuViewModel>> getTreeDataSource() {
-
+    private Map<String, List<HakuViewModel>> groupHakus(List<HakuViewModel> hakus) {
         Map<String, List<HakuViewModel>> map = new HashMap<String, List<HakuViewModel>>();
 
-        haut = retrieveHaut();
-
         //Grouping the HakuViewModel objects based on hakutapa
-        for (HakuViewModel curHaku : haut) {
+        for (HakuViewModel curHaku : hakus) {
             LOG.info("getTreeDataSource() curHaku: " + curHaku.getHakuOid() + ", hakutyyppi: " + curHaku.getHakutapa());
             String hakuKey = "";
             try {
-            	String hakutapaUri = parseKoodiUri(curHaku.getHakutapa());
+                String hakutapaUri = parseKoodiUri(curHaku.getHakutapa());
                 SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.latestValidAcceptedKoodiByUri(hakutapaUri);
                 List<KoodiType> result = this.koodiService.searchKoodis(searchCriteria);
                 if (result.size() != 1) {
@@ -134,19 +116,53 @@ public class HakuPresenter {
                 map.get(hakuKey).add(curHaku);
             }
         }
+
         return map;
     }
 
+    /**
+     *
+     * Gets the datasource for hakuList.
+     *
+     * @return
+     */
+    public Map<String, List<HakuViewModel>> getTreeDataSource() {
+
+
+
+        haut = retrieveHaut();
+
+        return groupHakus(haut);
+
+    }
+    
+    public void loadListDataWithSearchCriteria(KoulutusSearchSpesificationViewModel searchVm) {
+        hakuList.setDataSource(getTreeDataSourceWithSearchCriteria(searchVm));
+    }
+
+    private Map<String, List<HakuViewModel>> getTreeDataSourceWithSearchCriteria(KoulutusSearchSpesificationViewModel searchVm) {
+        Map<String, List<HakuViewModel>> returnVal = new HashMap<String, List<HakuViewModel>>();
+        if (searchVm.getSearchStr() != null) {
+            ListaaHakuTyyppi req = new ListaaHakuTyyppi();
+            req.setHakuSana(searchVm.getSearchStr());
+            req.setHakuSanaKielikoodi(I18N.getLocale().getLanguage());
+            List<HakuViewModel> hakuses = retrieveHaut(req);
+            returnVal = groupHakus(hakuses);
+        }
+        return returnVal;
+    }
+
     private String parseKoodiUri(String koodiUriAndVersion) {
-    	int index = koodiUriAndVersion.lastIndexOf('#');
-    	if (index > -1) {
-    		return koodiUriAndVersion.substring(0, index);
-    	}
-    	return koodiUriAndVersion;
+        int index = koodiUriAndVersion.lastIndexOf('#');
+        if (index > -1) {
+            return koodiUriAndVersion.substring(0, index);
+        }
+        return koodiUriAndVersion;
     }
 
     /**
      * Gets the searchSpec object.
+     *
      * @return
      */
     public KoulutusSearchSpesificationViewModel getSearchSpec() {
@@ -155,6 +171,7 @@ public class HakuPresenter {
 
     /**
      * Sets the hakuList view.
+     *
      * @param hakuList the hakuList to set
      */
     public void setHakuList(ListHakuView hakuList) {
@@ -163,6 +180,7 @@ public class HakuPresenter {
 
     /**
      * Sets the hakuModel, used in the edit form of haku.
+     *
      * @param hakuModelParam the hakuModel to set.
      */
     public void setHakuViewModel(HakuViewModel hakuModelParam) {
@@ -210,6 +228,7 @@ public class HakuPresenter {
 
     /**
      * Removes the haku given as parameter
+     *
      * @param haku the haku to remove.
      */
     public void removeHaku(HakuViewModel haku) {
@@ -219,6 +238,7 @@ public class HakuPresenter {
 
     /**
      * Returns the haut.
+     *
      * @return
      */
     public List<HakuViewModel> getHaut() {
@@ -234,6 +254,7 @@ public class HakuPresenter {
 
     /**
      * returns the editHaku
+     *
      * @return
      */
     public EditHakuView getEditHaku() {
@@ -249,6 +270,7 @@ public class HakuPresenter {
 
     /**
      * Gets the hakuModel.
+     *
      * @return the hakuModel to return
      */
     public HakuViewModel getHakuModel() {
@@ -275,6 +297,7 @@ public class HakuPresenter {
 
     /**
      * Gets the currently selectedHaut.
+     *
      * @return
      */
     public List<HakuViewModel> getSelectedhaut() {
@@ -292,13 +315,25 @@ public class HakuPresenter {
         hakuList.reload();
     }
 
+    private List<HakuViewModel> retrieveHaut(ListaaHakuTyyppi req) {
+        List<HakuViewModel> hakus = new ArrayList<HakuViewModel>();
+        ListHakuVastausTyyppi vastaus = tarjontaPublicService.listHaku(req);
+        if (vastaus != null && vastaus.getResponse() != null) {
+            for (HakuTyyppi curHaku : vastaus.getResponse()) {
+                hakus.add(new HakuViewModel(curHaku));
+            }
+        }
+        return hakus;
+    }
+
     private List<HakuViewModel> retrieveHaut() {
         List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
-        for (HakuTyyppi curHaku : tarjontaPublicService.listHaku(new ListaaHakuTyyppi()).getResponse()) {
-            haut.add(new HakuViewModel(curHaku));
+        ListHakuVastausTyyppi vastaus = tarjontaPublicService.listHaku(new ListaaHakuTyyppi());
+        if (vastaus != null && vastaus.getResponse() != null) {
+            for (HakuTyyppi curHaku : vastaus.getResponse()) {
+                haut.add(new HakuViewModel(curHaku));
+            }
         }
         return haut;
     }
-
 }
-

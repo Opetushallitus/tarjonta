@@ -108,7 +108,14 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getTreeDataSource()));
     }
-
+    
+    @Override
+    public void setDataSource(Map<String, List<HakuViewModel>> haut) {
+        categoryTree.removeAllItems();
+        categoryTree.setContainerDataSource(createDataSource(haut));
+        requestRepaint();
+    }
+   
     private Container createDataSource(Map<String, List<HakuViewModel>> map) {
         Set<Map.Entry<String, List<HakuViewModel>>> set = map.entrySet();
 

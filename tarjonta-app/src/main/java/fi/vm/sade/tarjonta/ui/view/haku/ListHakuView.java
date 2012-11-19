@@ -15,6 +15,10 @@
  */
 package fi.vm.sade.tarjonta.ui.view.haku;
 
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import java.util.List;
+import java.util.Map;
+
 /**
  * HakuListView interface.
  * 
@@ -27,5 +31,7 @@ public interface ListHakuView {
      * Reloads the haku search result list.
      */
     public void reload();
+    
+    void setDataSource(Map<String, List<HakuViewModel>> haut);
 
 }
