@@ -39,6 +39,7 @@
             <xs:element minOccurs="0" maxOccurs="1" name="loppuen" type="xs:date" />
             <xs:element minOccurs="0" maxOccurs="1" name="hakuOid" type="xs:string"/>
             <xs:element minOccurs="0" maxOccurs="1" name="hakuSana" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="hakuSanaKielikoodi" type="xs:string" />
         </xs:sequence>
     </xs:complexType>
 
