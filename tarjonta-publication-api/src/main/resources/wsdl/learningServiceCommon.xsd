@@ -727,17 +727,6 @@
                         <xs:complexType>
                             <xs:sequence>
 
-                                <xs:element name="GeneralDescription"
-                                            type="tns:ExtendedStringType"
-                                            minOccurs="0"
-                                            maxOccurs="unbounded">
-                                    <xs:annotation>
-                                        <xs:documentation xml:lang="fi">
-                                            Koulutuksen kuvaus yleisella tasolla.
-                                        </xs:documentation>
-                                    </xs:annotation>
-                                </xs:element>
-
                                 <xs:element name="StructureDiagram"
                                             type="tns:ExtendedStringType"
                                             minOccurs="0"
@@ -805,6 +794,8 @@
     </xs:complexType>
 
 
+    <!-- -"- lecturer joko kuvaus tai henkilo ref  -->
+
     <!-- ============================================================================================ -->
     <!-- LearningOpportunityInstance                                                                  -->
     <!-- ============================================================================================ -->
@@ -823,6 +814,40 @@
                         minOccurs="1"
                         maxOccurs="1"/>
 
+            <xs:element name="Description"
+                        type="tns:ExtendedStringType"
+                        minOccurs="0"
+                        maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Koulutuksen yleinen kuvaus.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="Objective"
+                        type="tns:ExtendedStringType"
+                        minOccurs="0"
+                        maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Opintotavoitteet.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="RecommendedReading"
+                        type="tns:ExtendedStringType"
+                        minOccurs="0"
+                        maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Suositeltu opintomateriaali.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+                        <!-- todo: lisää vapaa kuvaus tai muuta kokonaan tekstiksi -->
             <xs:element name="Prerequisite"
                         type="tns:CodeValueType"
                         minOccurs="0"
@@ -856,6 +881,11 @@
                         type="tns:CodeValueCollectionType"
                         minOccurs="0"
                         maxOccurs="1"/>
+
+            <xs:element name="Contributor"
+                        type="tns:ContributorType"
+                        minOccurs="0"
+                        maxOccurs="unbounded"/>
 
             <xs:element name="FormOfEducation"
                         type="tns:CodeValueCollectionType"
@@ -1578,6 +1608,69 @@
     </xs:complexType>
 
 
+    <xs:complexType name="ContributorType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Elementti jolla kuvaataan henkiloa jossain tietyssa roolissa. Henkilo tuottaa
+                jotain tiettya arvoa kohdistettuun kasitteeseen. Esim. kurssin opettaja.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice>
+
+                <xs:element name="Person"
+                            type="tns:PersonType"
+                            minOccurs="1"
+                            maxOccurs="1">
+                </xs:element>
+
+                <xs:element name="PersonRef"
+                            type="tns:OidRefType"
+                            minOccurs="1"
+                            maxOccurs="1">
+                </xs:element>
+
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="role">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Lecturer">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="fi">
+                                Opettaja roolissa toimiva henkilo.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:enumeration>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+
+    <xs:complexType name="PersonType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Henkilotietojen kuvausrakenne.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+
+            <xs:element name="Name"
+                        type="xs:string"
+                        minOccurs="1"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Henkilon nimi yhtena tietona.
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+
     <!-- ============================================================================================ -->
     <!-- ApplicationSystem                                                                            -->
     <!-- ============================================================================================ -->
@@ -1686,8 +1779,6 @@
                 </xs:annotation>
             </xs:element>
 
-
-
         </xs:sequence>
 
         <xs:attribute name="id" type="xs:ID" use="required">
@@ -1697,8 +1788,6 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-
-
 
     </xs:complexType>
 
@@ -1867,6 +1956,7 @@
 
     <xs:simpleType name="LearningOpportunityTypeType">
         <xs:restriction base="xs:normalizedString">
+
             <xs:enumeration value="DegreeProgramme">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
@@ -1874,6 +1964,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
+
             <xs:enumeration value="CourseUnit">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
@@ -1881,6 +1972,23 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
+
+            <xs:enumeration value="SpecializationOption">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Suuntautumisvaihtoehto / erikoistumisaine.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+
+            <xs:enumeration value="StudyModule">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Opintokokonaisuus.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+
         </xs:restriction>
     </xs:simpleType>
 
@@ -2018,6 +2126,13 @@
                     <xs:documentation xml:lang="fi">
                         2-merkkinen ISO koodisto kielien esittamiseen.
                         Kts. http://en.wikipedia.org/wiki/ISO_639-1
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ECTS">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Opintopisteet. Kts. http://en.wikipedia.org/wiki/European_Credit_Transfer_and_Accumulation_System
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>

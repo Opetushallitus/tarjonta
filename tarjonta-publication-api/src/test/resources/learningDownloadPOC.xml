@@ -306,6 +306,14 @@
             <OidRef>1.2.3.4.5</OidRef>
         </OrganizationRef>
 
+        <Objective lang="fi">
+            Opintotavoitteet...
+        </Objective>
+
+        <RecommendedReading lang="fi">
+            Suositeltua opintomateriaalia...
+        </RecommendedReading>
+
         <!-- Pohjakoulutus vaatimus -->
         <!-- todo: mallissa tämä on koodisto joten arbitraaria dataa ei voida ottaa vastaan. -->
         <Prerequisite>
@@ -356,6 +364,14 @@
             </Code>
 
         </LanguagesOfInstruction>
+
+
+        <!-- kurssin opettaja -->
+        <Contributor role="Lecturer">
+            <Person>
+                <Name>John Deer</Name>
+            </Person>
+        </Contributor>
 
         <!--koulutuslaji -->
         <FormOfEducation scheme="Koodisto">
@@ -765,6 +781,12 @@
         <OrganizationRef>
             <OidRef>1.2.3.4.5</OidRef>
         </OrganizationRef>
+
+        <!-- koulutuksen yleinen kuvaus -->
+        <Description lang="fi">
+            Koulutusohjelma sisältää hoitotyön (sairaanhoito), kätilötyön ja terveydenhoitotyön suuntautumisvaihtoehdot.
+            Sairaanhoitajaopinnot ovat perustana kätilö- ja terveydenhoitajaopinnoille. Sairaanhoitaja vastaa potilaiden/asiakkaiden...
+        </Description>
 
         <!-- Pohjakoulutus vaatimus -->
         <Prerequisite>
