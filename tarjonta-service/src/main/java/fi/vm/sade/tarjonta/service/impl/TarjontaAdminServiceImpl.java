@@ -35,6 +35,7 @@ import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
+import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
 import fi.vm.sade.tarjonta.service.types.*;
 
 import java.util.HashSet;
@@ -146,11 +147,23 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    public void poistaHaku(HakuTyyppi hakuDto) {
+    public void poistaHaku(HakuTyyppi hakuDto) throws GenericFault {
 
         Haku haku = hakuBusinessService.findByOid(hakuDto.getOid());
+        if (checkHakuDepencies(haku)) {
+            throw new HakuUsedException();
+        } else {
+            hakuDAO.remove(haku);
+        }
+    }
 
-        hakuDAO.remove(haku);
+    private boolean checkHakuDepencies(Haku haku) {
+        List<Haku> haut = hakuDAO.findHakukohdeHakus(haku);
+        if (haut.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

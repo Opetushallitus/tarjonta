@@ -38,6 +38,7 @@ import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QTekstiKaannos;
+import fi.vm.sade.tarjonta.model.QHakukohde;
 /**
  * @author Antti Salonen
  */
@@ -45,6 +46,18 @@ import fi.vm.sade.tarjonta.model.QTekstiKaannos;
 public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuDAO {
 
     private static final Logger log = LoggerFactory.getLogger(HakuDAOImpl.class);
+    
+    public List<Haku> findHakukohdeHakus(Haku haku) {
+        QHaku qHaku = QHaku.haku;
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+        
+        List<Haku> haut = from(qHaku, qHakukohde)
+                .join(qHakukohde.haku,qHaku)
+                .where(qHaku.oid.eq(haku.getOid()))
+                .list(qHaku);
+        
+        return haut;
+    }
     
     @Override
     public List<Haku> findBySearchString(String searchString,String kieliKoodi) {
