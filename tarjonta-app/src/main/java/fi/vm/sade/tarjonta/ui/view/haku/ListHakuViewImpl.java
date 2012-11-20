@@ -39,6 +39,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
@@ -201,6 +202,11 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         return layout;
     }
 
+    @Override
+    public void showErrorMessage(String msg) {
+        getWindow().showNotification(msg, Window.Notification.TYPE_ERROR_MESSAGE);
+    }
+    
     /**
      * @param btnListenerMuokkaa( the btnLuoUusiKoulutus to set
      */

@@ -42,6 +42,7 @@ import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
+import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
@@ -135,7 +136,7 @@ public class HakuPresenter {
         return groupHakus(haut);
 
     }
-    
+
     public void loadListDataWithSearchCriteria(KoulutusSearchSpesificationViewModel searchVm) {
         hakuList.setDataSource(getTreeDataSourceWithSearchCriteria(searchVm));
     }
@@ -309,7 +310,15 @@ public class HakuPresenter {
      */
     public void removeSelectedHaut() {
         for (HakuViewModel curHaku : selectedhaut) {
-            tarjontaAdminService.poistaHaku(curHaku.getHakuDto());
+            try {
+                tarjontaAdminService.poistaHaku(curHaku.getHakuDto());
+            } catch (Throwable e) {
+                if (e.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakuUsedException")) {
+                    hakuList.showErrorMessage(I18N.getMessage("notification.error.haku.used"));
+                } else {
+                    hakuList.showErrorMessage("ODOTTAMATON VIRHE TAPAHTUI : " + e.getMessage());
+                }
+            }
         }
         selectedhaut.clear();
         hakuList.reload();

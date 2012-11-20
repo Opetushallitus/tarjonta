@@ -33,5 +33,7 @@ public interface ListHakuView {
     public void reload();
     
     void setDataSource(Map<String, List<HakuViewModel>> haut);
+    
+    void showErrorMessage(String msg);
 
 }
