@@ -38,6 +38,8 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.Window.Notification;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
@@ -236,8 +238,9 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         poistaB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
+                
                 presenter.removeSelectedHakukohteet();
-
+               
             }
         });
 
@@ -261,6 +264,10 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         this.lisaaHakuunB.addListener(btnKopioiUudelleKaudelle);
     }
 
+    
+    public void showErrorMessage(String msg) {
+        getWindow().showNotification(msg,Notification.TYPE_ERROR_MESSAGE);
+    }
     /**
      * Reloads the data to the Hakukohde list.
      */

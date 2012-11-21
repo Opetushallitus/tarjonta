@@ -22,17 +22,19 @@ import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
  * @author mlyly
  */
 public interface ListHakukohdeView {
-	
-	  /**
+
+    /**
      * Reloads the haku search result list.
      */
     public void reload();
 
     /**
-     * Appends the koulutukset that are related to the hakukohde given as a paremeter.
+     * Appends the koulutukset that are related to the hakukohde given as a
+     * paremeter.
+     *
      * @param hakukohde
      */
-	public void appendKoulutuksetToList(HakukohdeViewModel hakukohde);
+    public void appendKoulutuksetToList(HakukohdeViewModel hakukohde);
 
-
+    void showErrorMessage(String msg);
 }

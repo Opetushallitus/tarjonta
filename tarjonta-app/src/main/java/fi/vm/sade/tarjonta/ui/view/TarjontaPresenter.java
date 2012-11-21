@@ -393,6 +393,7 @@ public class TarjontaPresenter {
      * Removes the selected hakukohde objects from the database.
      */
     public void removeSelectedHakukohteet() {
+        try {
         for (HakukohdeTulos curHakukohde : getModel().getSelectedhakukohteet()) {
             HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
             hakukohde.setOid(curHakukohde.getHakukohde().getOid());
@@ -402,13 +403,28 @@ public class TarjontaPresenter {
 
         // Force UI update.
         getHakukohdeListView().reload();
+        } catch (Exception exp) {
+            if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException")) {
+                getHakukohdeListView().showErrorMessage(I18N.getMessage("notification.error.hakukohde.used"));
+            } else {
+                showNotification(UserNotification.SAVE_FAILED);
+            }
+        }
     }
 
     public void removeHakukohde(HakukohdeTulos curHakukohde) {
         HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
         hakukohde.setOid(curHakukohde.getHakukohde().getOid());
+        try {
         tarjontaAdminService.poistaHakukohde(hakukohde);
         getHakukohdeListView().reload();
+        } catch (Exception exp) {
+            if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException")) {
+                getHakukohdeListView().showErrorMessage(I18N.getMessage("notification.error.hakukohde.used"));
+            } else {
+                showNotification(UserNotification.SAVE_FAILED);
+            }
+        }
     }
 
     /**
