@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
@@ -22,6 +23,7 @@ import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
@@ -348,7 +350,7 @@ public class KoulutusViewModelToDTOConverter {
         model2Aste.setTila(koulutus.getTila());
         model2Aste.setOid(koulutus.getOid());
         model2Aste.setOrganisaatioOid(organisatio.getOid());
-        model2Aste.setOrganisaatioName(organisatio.getNimiFi());
+        model2Aste.setOrganisaatioName(OrganisaatioDisplayHelper.getClosest(I18N.getLocale(), organisatio));
 
         /* Select KOMO by koulutusaste, koulutuskoodi and koulutusohjelma */
         model2Aste.setKoulutuskoodiModel(mapToKoulutuskoodiModel(koulutus.getKoulutusKoodi(), locale));

@@ -25,6 +25,7 @@ import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -548,7 +549,7 @@ public class TarjontaPresenter {
             List<OrganisaatioDTO> childOrgs = this.organisaatioService.findAllChildrenWithOid(getModel().getOrganisaatioOid());
             LOG.debug("childOrgs: " + childOrgs.size());
             for (OrganisaatioDTO org : childOrgs) {
-                LOG.debug("Current organisaatio: " + org.getNimiFi() + ", " + org.getOid());
+                LOG.debug("Current organisaatio: " + OrganisaatioDisplayHelper.getClosest(I18N.getLocale(), org) + ", " + org.getOid());
                 kysely.getTarjoajaOids().add(org.getOid());
             }
             kysely.getTarjoajaOids().add(getModel().getOrganisaatioOid());
@@ -559,7 +560,7 @@ public class TarjontaPresenter {
     public String getOrganisaatioNimiByOid(String organisaatioOid) {
         String vastaus = organisaatioOid;
         try {
-            vastaus = this.organisaatioService.findByOid(organisaatioOid).getNimiFi();
+            vastaus = OrganisaatioDisplayHelper.getClosest(I18N.getLocale(), this.organisaatioService.findByOid(organisaatioOid));
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
         }
