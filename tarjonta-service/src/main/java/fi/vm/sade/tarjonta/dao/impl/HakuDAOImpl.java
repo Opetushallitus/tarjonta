@@ -47,6 +47,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
 
     private static final Logger log = LoggerFactory.getLogger(HakuDAOImpl.class);
     
+    @Override
     public List<Haku> findHakukohdeHakus(Haku haku) {
         QHaku qHaku = QHaku.haku;
         QHakukohde qHakukohde = QHakukohde.hakukohde;

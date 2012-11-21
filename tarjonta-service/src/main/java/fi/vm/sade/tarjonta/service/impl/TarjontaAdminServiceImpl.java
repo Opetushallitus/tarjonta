@@ -36,6 +36,7 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
+import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
 import fi.vm.sade.tarjonta.service.types.*;
 
 import java.util.HashSet;
@@ -113,12 +114,16 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) {
+    public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) throws GenericFault {
         Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
+        if (checkHakukohdeDepencies(hakukohde)) {
+            throw new HakukohdeUsedException();
+        } else {
         for (KoulutusmoduuliToteutus curKoul : hakukohde.getKoulutusmoduuliToteutuses()) {
             curKoul.removeHakukohde(hakukohde);
         }
         hakukohdeDAO.remove(hakukohde);
+        }
         return new HakukohdeTyyppi();
     }
 
@@ -159,7 +164,16 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     private boolean checkHakuDepencies(Haku haku) {
         List<Haku> haut = hakuDAO.findHakukohdeHakus(haku);
-        if (haut.size() > 0) {
+        if (haut != null && haut.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    private boolean checkHakukohdeDepencies(Hakukohde hakukohde) {
+        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliDAO.findKomotoByHakukohde(hakukohde);
+        if (komotos != null && komotos.size() > 0) {
             return true;
         } else {
             return false;

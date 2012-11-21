@@ -17,7 +17,9 @@ package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 
 import java.util.List;
@@ -34,6 +36,15 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
      * @return
      */
     public List<Koulutusmoduuli> find(String tila, int startIndex, int pageSize);
+    
+    /*
+     * Returns all koulutusmoduulitoteutukses for given hakukohde
+     * 
+     * @param hakukohde
+     * @return List<KoulutusmoduuliToteutus>
+     */
+    
+    List<KoulutusmoduuliToteutus> findKomotoByHakukohde(Hakukohde hakukohde);
 
     /**
      * Returns a list of Koulutusmoduulis that are direct children of given <code>oid</code>
