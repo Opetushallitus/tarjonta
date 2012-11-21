@@ -19,6 +19,8 @@ import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoCodeValueCollec
 import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoCodeValueEnricher;
 import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupService;
 import fi.vm.sade.tarjonta.publication.enricher.XMLStreamEnricher;
+import fi.vm.sade.tarjonta.publication.enricher.organisaatio.KoulutustarjoajaEnricher;
+import fi.vm.sade.tarjonta.publication.enricher.organisaatio.KoulutustarjoajaLookupService;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,6 +35,9 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
 
     @Autowired(required = true)
     private KoodistoLookupService koodistoService;
+
+    @Autowired
+    private KoulutustarjoajaLookupService tarjoajaService;
 
     private boolean failOnKoodistoError = false;
 
@@ -70,13 +75,20 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
     };
 
     /**
-     * Element names that should be handled byt KoodistoCodeValueCollectionEnricher. Note that
+     * Element names that should be handled by KoodistoCodeValueCollectionEnricher. Note that
      * these elements should have a unique name.
      */
     private static final String[] KOODISTO_CODE_VALUE_COLLECTION_TAGS = {
         "LanguagesOfInstruction",
         "FormOfEducation",
         "FormsOfTeaching"
+    };
+
+    /**
+     * Element names that should be handled by KoulutustarjoajaEnricher.
+     */
+    private static final String[] KOULUTUSTARJOAJA_TAGS = {
+        "LearningOpportunityProvider"
     };
 
     @Override
@@ -120,6 +132,12 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
             processor.registerTagNameHandler(tag, codeValueCollectionEnricher);
         }
 
+        final KoulutustarjoajaEnricher tarjoajaEnricher = new KoulutustarjoajaEnricher();
+        tarjoajaEnricher.setTarjoajaService(tarjoajaService);
+        for (String tag : KOULUTUSTARJOAJA_TAGS) {
+            processor.registerTagNameHandler(tag, tarjoajaEnricher);
+        }
+
         return processor;
 
     }
@@ -131,6 +149,15 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
      */
     public void setKoodistoService(KoodistoLookupService koodistoService) {
         this.koodistoService = koodistoService;
+    }
+
+    /**
+     * Set Tarjoaja service that will be passed to enrichers using Koulutustarjoaja data.
+     *
+     * @param tarjoajaService
+     */
+    public void setTarjoajaService(KoulutustarjoajaLookupService tarjoajaService) {
+        this.tarjoajaService = tarjoajaService;
     }
 
     /**

@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.publication.enricher.koodisto;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.StringReader;
+import java.util.List;
 
 import org.xml.sax.InputSource;
 
@@ -31,11 +32,19 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import fi.vm.sade.tarjoaja.service.types.KoulutustarjoajaTyyppi;
+import fi.vm.sade.tarjoaja.service.types.MetatietoArvoTyyppi;
+import fi.vm.sade.tarjoaja.service.types.MetatietoAvainTyyppi;
+import fi.vm.sade.tarjoaja.service.types.MetatietoTyyppi;
+
 import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupService.SimpleKoodiValue;
 import fi.vm.sade.tarjonta.publication.enricher.factory.LearningOpportunityDataEnricherFactory;
 import fi.vm.sade.tarjonta.publication.enricher.PublicationNamespaceContext;
 import fi.vm.sade.tarjonta.publication.enricher.XMLStreamEnricher;
 import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupService.KoodiValue;
+import fi.vm.sade.tarjonta.publication.enricher.organisaatio.KoulutustarjoajaLookupService;
+import fi.vm.sade.tarjonta.publication.types.DescriptionType;
+
 import fi.vm.sade.tarjonta.util.SystemUtils;
 
 /**
@@ -57,6 +66,8 @@ public class LearningOpportunityEnricherTest {
 
     private static final String APPLICATION_SYSTEM_PATH = DOWNLOAD_DATA_PATH + "/ApplicationSystem[1]";
 
+    private static final String LEARNING_OPPORTUNITY_PROVIDER_PATH = DOWNLOAD_DATA_PATH + "/LearningOpportunityProvider[1]";
+
     private XMLStreamEnricher processor;
 
     private ByteArrayOutputStream out;
@@ -69,9 +80,11 @@ public class LearningOpportunityEnricherTest {
     public void setUp() throws Exception {
 
         KoodistoLookupService koodistoService = prepareKoodistoLookupMockService();
+        KoulutustarjoajaLookupService tarjoajaService = prepareTarjoajaLookupMockService();
 
         LearningOpportunityDataEnricherFactory factory = new LearningOpportunityDataEnricherFactory();
         factory.setKoodistoService(koodistoService);
+        factory.setTarjoajaService(tarjoajaService);
 
         processor = factory.getObject();
         processor.setInput(new FileInputStream("src/test/resources/simple-enrich-in.xml"));
@@ -281,6 +294,33 @@ public class LearningOpportunityEnricherTest {
 
     }
 
+    @Test
+    public void testEnrichLearningOpportunityProvider() throws Exception {
+
+        final String basePath = LEARNING_OPPORTUNITY_PROVIDER_PATH;
+        assertLearningOpportunityProviderDescription(basePath, DescriptionType.FACILITIES_FOR_STUDENTS_WITH_SPECIAL_NEEDS);
+        assertLearningOpportunityProviderDescription(basePath, DescriptionType.COST_OF_LIVING);
+        assertLearningOpportunityProviderDescription(basePath, DescriptionType.STUDY_FACILITIES);
+        assertLearningOpportunityProviderDescription(basePath, DescriptionType.MEALS);
+        assertLearningOpportunityProviderDescription(basePath, DescriptionType.MEDICAL_FACILITIES);
+
+    }
+
+    private void assertLearningOpportunityProviderDescription(String basePath, DescriptionType type) throws Exception {
+
+        assertLearningOpportunityProviderDescription(basePath, type, "fi");
+        assertLearningOpportunityProviderDescription(basePath, type, "sv");
+        assertLearningOpportunityProviderDescription(basePath, type, "en");
+
+    }
+
+    private void assertLearningOpportunityProviderDescription(String basePath, DescriptionType type, String lang) throws Exception {
+
+        assertXPathEvals("bad value fi", "arvo-" + lang,
+            basePath + "/Description[@type='" + type.value() + "']/Text[@lang='" + lang + "']/text()");
+
+    }
+
     /**
      * Asserts codes value and labels in three languages (base element type CodeValueCollectionType)
      *
@@ -407,6 +447,51 @@ public class LearningOpportunityEnricherTest {
         when(service.lookupKoodi("uri:kohdejoukko/peruskoulut", null)).thenReturn(createSimpleKoodiValue("kohdejoukko"));
 
         return service;
+
+    }
+
+    private KoulutustarjoajaLookupService prepareTarjoajaLookupMockService() throws Exception {
+
+        KoulutustarjoajaLookupService service = mock(KoulutustarjoajaLookupService.class);
+
+        when(service.lookupKoulutustarjoajaByOrganisaatioOid("1.2.3.4.5")).thenReturn(createTarjoaja());
+
+        return service;
+
+    }
+
+    private KoulutustarjoajaTyyppi createTarjoaja() {
+
+        KoulutustarjoajaTyyppi tarjoaja = new KoulutustarjoajaTyyppi();
+
+        List<MetatietoTyyppi> metaMap = tarjoaja.getMetatieto();
+        metaMap.add(createMetatieto(MetatietoAvainTyyppi.ESTEETTOMYYS_PALVELUT));
+        metaMap.add(createMetatieto(MetatietoAvainTyyppi.KUSTANNUKSET));
+        metaMap.add(createMetatieto(MetatietoAvainTyyppi.OPPIMISYMPARISTOT));
+        metaMap.add(createMetatieto(MetatietoAvainTyyppi.RUOKAILU));
+        metaMap.add(createMetatieto(MetatietoAvainTyyppi.TERVEYDENHUOLTO));
+
+        return tarjoaja;
+
+    }
+
+    private MetatietoTyyppi createMetatieto(MetatietoAvainTyyppi tyyppi) {
+
+        MetatietoTyyppi metaField = new MetatietoTyyppi();
+        metaField.setAvain(tyyppi);
+        metaField.getArvos().add(createMetaArvo("fi", "arvo-fi"));
+        metaField.getArvos().add(createMetaArvo("sv", "arvo-sv"));
+        metaField.getArvos().add(createMetaArvo("en", "arvo-en"));
+        return metaField;
+
+    }
+
+    private MetatietoArvoTyyppi createMetaArvo(String lang, String value) {
+
+        MetatietoArvoTyyppi metaFieldValue = new MetatietoArvoTyyppi();
+        metaFieldValue.setKieliKoodi(lang);
+        metaFieldValue.setArvo(value);
+        return metaFieldValue;
 
     }
 

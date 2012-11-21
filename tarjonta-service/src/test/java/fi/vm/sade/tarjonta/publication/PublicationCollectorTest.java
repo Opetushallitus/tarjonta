@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.publication.model.Koulutustarjoaja;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -105,7 +106,7 @@ public class PublicationCollectorTest {
         assertEquals(0, handler.completedEvents);
         assertEquals(1, handler.failedEvents);
         assertEquals(0, handler.koulutusmoduuliEvents);
-        assertEquals(0, handler.koulutsmoduuliToteutusEvents);
+        assertEquals(0, handler.koulutusmoduuliToteutusEvents);
 
     }
 
@@ -125,7 +126,9 @@ public class PublicationCollectorTest {
 
         private int koulutusmoduuliEvents;
 
-        private int koulutsmoduuliToteutusEvents;
+        private int koulutusmoduuliToteutusEvents;
+
+        private int koulutustarjoajaEvents;
 
         @Override
         public void onCollectStart() {
@@ -165,7 +168,12 @@ public class PublicationCollectorTest {
 
         @Override
         public void onCollect(KoulutusmoduuliToteutus toteutus) {
-            koulutsmoduuliToteutusEvents++;
+            koulutusmoduuliToteutusEvents++;
+        }
+
+        @Override
+        public void onCollect(Koulutustarjoaja tarjoaja) throws Exception {
+            koulutustarjoajaEvents++;
         }
 
     }

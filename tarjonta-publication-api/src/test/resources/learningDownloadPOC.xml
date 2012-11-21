@@ -933,30 +933,133 @@
         </OrganizationRef>
 
         <InstitutionInfo>
+
             <Name>Helsingin sosiaali- ja terveysalan oppilaitos, Laakson koulutusyksikkö</Name>
-            <AcademicCalendar>Lorem Lipsum</AcademicCalendar>
-            <AcademicAuthorities>Lorem Lipsum</AcademicAuthorities>
-            <AdmissionProcedures>Lorem Lipsum</AdmissionProcedures>
-            <GeneralDescription>Lorem Lipsum</GeneralDescription>
-            <MainUniversityRequlations>Lorem Lipsum</MainUniversityRequlations>
+
+            <Description type="General">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="AcademicCalendar">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="AcademicAuthorities">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="AdmissionProcedures">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="MainUniversityRequlations">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
         </InstitutionInfo>
 
         <GeneralInformation>
-            <CostOfLiving>Lorem Lipsum</CostOfLiving>
-            <Meals>Lorem Lipsum</Meals>
-            <MedicalFacilities>Lorem Lipsum</MedicalFacilities>
-            <FacilitiesForStudentsWithSpecialNeeds>Lorem Lipsum</FacilitiesForStudentsWithSpecialNeeds>
-            <Insurance>Lorem Lipsum</Insurance>
-            <FinancialSupport>Lorem Lipsum</FinancialSupport>
-            <StudentAffairsOffice>Lorem Lipsum</StudentAffairsOffice>
-            <StudyFacilities>Lorem Lipsum</StudyFacilities>
-            <InternationalProgrammes>Lorem Lipsum</InternationalProgrammes>
-            <MobileStudents>Lorem Lipsum</MobileStudents>
-            <LanguageCourses>Lorem Lipsum</LanguageCourses>
-            <Internships>Lorem Lipsum</Internships>
-            <SportsFacilities>Lorem Lipsum</SportsFacilities>
-            <ExtraMuralAndLeisureFacilities>Lorem Lipsum</ExtraMuralAndLeisureFacilities>
-            <StudentAssociations>Lorem Lipsum</StudentAssociations>
+
+            <Description type="CostOfLiving">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="Meals">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="MedicalFacilities">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="FacilitiesForStudentsWithSpecialNeeds">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="Insurance">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="FinancialSupport">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="StudentAffairsOffice">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="StudyFacilities">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="InternationalProgrammes">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="MobileStudents">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="LanguageCourses">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="Internships">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="SportsFacilities">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="ExtraMuralAndLeisureFacilities">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
+            <Description type="StudentAssociations">
+                <Text lang="fi">
+                    Lorem Lipsum
+                </Text>
+            </Description>
+
         </GeneralInformation>
 
     </LearningOpportunityProvider>

@@ -21,6 +21,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -28,17 +30,15 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 import org.xml.sax.helpers.XMLReaderFactory;
+import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.commons.io.output.NullWriter;
 import com.meggison.sax.XMLWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static fi.vm.sade.tarjonta.publication.enricher.ElementEnricher.*;
 import fi.vm.sade.tarjonta.publication.utils.StringUtils;
-import java.util.*;
-import java.util.regex.Pattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * <p>Since it has been chosen that several data values, used by Tarjonta
@@ -147,7 +147,7 @@ public class XMLStreamEnricher {
     }
 
     /**
-     * Returns current path from current element name stack.
+     * Returns path of element names from current element to root element.
      *
      * @return
      */
@@ -172,9 +172,6 @@ public class XMLStreamEnricher {
         /**
          * Looks up handler for the element by it's name. If handler has been registered, delegates call to handler
          * allowing it to inject custom data.
-         *
-         * todo: need to add mechanism where handler indicates if it has already written the content or if
-         * default writing should take place or be skipped.
          */
         @Override
         public void startElement(String uri, String localName, String qname, Attributes attrs) throws SAXException {
@@ -339,7 +336,7 @@ public class XMLStreamEnricher {
          * @throws SAXException
          */
         public void writeEndElement(String name) throws SAXException {
-            super.endElement("", name, null);
+            super.endElement(EMPTY_STRING, name, null);
         }
 
         /**

@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.publication.model.Koulutustarjoaja;
 
 /**
  * Gathers learning opportunity material (tarjonta) that is ready for publication. Invokes
@@ -99,6 +100,14 @@ public class PublicationCollector {
 
     }
 
+    protected void fireCollect(Koulutustarjoaja t) throws Exception {
+
+        if (!isNotifiedBefore(t.getOrganisaatioOid())) {
+            handler.onCollect(t);
+        }
+        
+    }
+
     protected void fireCollect(KoulutusmoduuliToteutus t) throws Exception {
 
         if (!isNotifiedBefore(t.getOid())) {
@@ -145,6 +154,8 @@ public class PublicationCollector {
 
             fireCollect(m);
             fireCollect(t);
+            fireCollect(new Koulutustarjoaja(m.getOmistajaOrganisaatioOid()));
+            fireCollect(new Koulutustarjoaja(t.getTarjoaja()));
 
         }
 
@@ -221,6 +232,8 @@ public class PublicationCollector {
 
         public void onCollect(Haku haku) throws Exception;
 
+        public void onCollect(Koulutustarjoaja tarjoaja) throws Exception;
+
     }
 
 
@@ -246,6 +259,10 @@ public class PublicationCollector {
         }
 
         @Override
+        public void onCollect(Koulutustarjoaja tarjoaja) throws Exception {
+        }
+
+        @Override
         public void onCollectEnd() throws Exception {
         }
 
@@ -268,6 +285,8 @@ public class PublicationCollector {
      * Thrown when collector has not been properly configured.
      */
     public static class ConfigurationException extends IllegalStateException {
+
+        private static final long serialVersionUID = -2625814993656414626L;
 
         public ConfigurationException(String string) {
             super(string);

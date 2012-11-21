@@ -123,7 +123,7 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
     public int characters(char[] characters, int start, int length) throws SAXException {
 
         if (TAG_CODE.equals(currentTag)) {
-            koodiUri = text(characters, start, length);
+            koodiUri = charsToString(characters, start, length);
         }
 
         return WRITE_AND_CONTINUE;

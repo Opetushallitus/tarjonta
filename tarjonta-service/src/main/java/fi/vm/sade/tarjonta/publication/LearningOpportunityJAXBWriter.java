@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.publication.model.Koulutustarjoaja;
 import fi.vm.sade.tarjonta.publication.types.AttachmentCollectionType.Attachment;
 import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType.EntranceExaminations.Examination;
 import fi.vm.sade.tarjonta.publication.types.WebLinkCollectionType.Link;
@@ -381,6 +382,19 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         marshal(LearningOpportunityInstanceType.class, instance);
 
         log.debug("marshalled KoulutusmoduuliToteutus, oid: " + toteutus.getOid());
+
+    }
+
+    @Override
+    public void onCollect(Koulutustarjoaja tarjoaja) throws Exception {
+
+        LearningOpportunityProviderType provider = new LearningOpportunityProviderType();
+
+        OrganizationRefType organizationRef = new OrganizationRefType();
+        organizationRef.setOidRef(tarjoaja.getOrganisaatioOid());
+        provider.setOrganizationRef(organizationRef);
+
+        marshal(LearningOpportunityProviderType.class, provider);
 
     }
 

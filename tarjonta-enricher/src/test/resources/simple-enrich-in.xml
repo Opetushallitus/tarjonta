@@ -254,33 +254,7 @@
             <OidRef>1.2.3.4.5</OidRef>
         </OrganizationRef>
 
-        <InstitutionInfo>
-            <Name>Helsingin sosiaali- ja terveysalan oppilaitos, Laakson koulutusyksikkö</Name>
-            <AcademicCalendar>Lorem Lipsum</AcademicCalendar>
-            <AcademicAuthorities>Lorem Lipsum</AcademicAuthorities>
-            <AdmissionProcedures>Lorem Lipsum</AdmissionProcedures>
-            <GeneralDescription>Lorem Lipsum</GeneralDescription>
-            <MainUniversityRequlations>Lorem Lipsum</MainUniversityRequlations>
-        </InstitutionInfo>
-
-        <GeneralInformation>
-            <CostOfLiving>Lorem Lipsum</CostOfLiving>
-            <Meals>Lorem Lipsum</Meals>
-            <MedicalFacilities>Lorem Lipsum</MedicalFacilities>
-            <FacilitiesForStudentsWithSpecialNeeds>Lorem Lipsum</FacilitiesForStudentsWithSpecialNeeds>
-            <Insurance>Lorem Lipsum</Insurance>
-            <FinancialSupport>Lorem Lipsum</FinancialSupport>
-            <StudentAffairsOffice>Lorem Lipsum</StudentAffairsOffice>
-            <StudyFacilities>Lorem Lipsum</StudyFacilities>
-            <InternationalProgrammes>Lorem Lipsum</InternationalProgrammes>
-            <MobileStudents>Lorem Lipsum</MobileStudents>
-            <LanguageCourses>Lorem Lipsum</LanguageCourses>
-            <Internships>Lorem Lipsum</Internships>
-            <SportsFacilities>Lorem Lipsum</SportsFacilities>
-            <ExtraMuralAndLeisureFacilities>Lorem Lipsum</ExtraMuralAndLeisureFacilities>
-            <StudentAssociations>Lorem Lipsum</StudentAssociations>
-        </GeneralInformation>
-
+        
     </LearningOpportunityProvider>
 
     <!-- ========================================================================================= -->

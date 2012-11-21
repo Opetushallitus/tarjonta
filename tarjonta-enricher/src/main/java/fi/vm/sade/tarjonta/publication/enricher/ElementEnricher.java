@@ -78,7 +78,7 @@ public abstract class ElementEnricher {
      * @param length
      * @return
      */
-    protected String text(char[] characters, int start, int length) {
+    protected String charsToString(char[] characters, int start, int length) {
 
         sb.setLength(0);
         return sb.append(characters, start, length).toString();
@@ -86,17 +86,54 @@ public abstract class ElementEnricher {
     }
 
     /**
+     * Overwrite to handle start of element. Default implementation just returns {@link #WRITE_AND_CONTINUE}
+     *
+     * @param localName name of the parsed element
+     * @param attributes element's attributes if any
+     * @return flag indicating how to process current element and how to continue processing
+     * @throws SAXException
+     */
+    public int startElement(String localName, Attributes attributes) throws SAXException {
+        return WRITE_AND_CONTINUE;
+    }
+
+    /**
+     * Overwrite to handle end of element. Default implementation returns flag that will write current end element
+     * as-is to stream but will stop calling this handler if current element has the same name as the one that started
+     * this handler.
+     *
+     * TODO: compare depth and not element name.
      *
      * @param localName
-     * @param attributes
      * @return
      * @throws SAXException
      */
-    public abstract int startElement(String localName, Attributes attributes) throws SAXException;
+    public int endElement(String localName) throws SAXException {
 
-    public abstract int endElement(String localName) throws SAXException;
+        if (mappedElementName.equals(localName)) {
+            return WRITE_AND_EXIT;
+        } else {
+            return WRITE_AND_CONTINUE;
+        }
 
-    public abstract int characters(char[] characters, int start, int length) throws SAXException;
+    }
+
+    /**
+     * Overwrite to handle text characters from XML. Default implementation returns flag that
+     * will cause characters to be written to underlying stream as-is and this handler will
+     * keep on receiving events.
+     *
+     * @param characters
+     * @param start
+     * @param length
+     * @return
+     * @throws SAXException
+     */
+    public int characters(char[] characters, int start, int length) throws SAXException {
+
+        return WRITE_AND_CONTINUE;
+
+    }
 
     /**
      * Invoked to reset internal state so that instances can be recycled.

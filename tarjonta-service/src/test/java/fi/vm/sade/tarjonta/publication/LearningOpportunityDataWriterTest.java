@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.publication;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.publication.model.Koulutustarjoaja;
 import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadData;
 import java.io.StringWriter;
 
@@ -111,6 +112,17 @@ public class LearningOpportunityDataWriterTest {
 
         writer.onCollectStart();
         writer.onCollect(createHakukohde());
+        writer.onCollectEnd();
+
+        unmarshal();
+
+    }
+
+    @Test
+    public void testWriteSingleTarjoaja() throws Exception {
+
+        writer.onCollectStart();
+        writer.onCollect(new Koulutustarjoaja("1.2.3.4.5"));
         writer.onCollectEnd();
 
         unmarshal();

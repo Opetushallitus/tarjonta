@@ -11,7 +11,9 @@
     <artifactId>tarjonta-enricher</artifactId>
     <name>Tarjonta :: XML Enricher</name>
     <properties>
+        <publication.api.version>${project.version}</publication.api.version>
         <koodisto.api.version>${project.version}</koodisto.api.version>
+        <organisaatio.api.version>${project.version}</organisaatio.api.version>
     </properties>
 
     <dependencies>
@@ -80,6 +82,19 @@
             <groupId>fi.vm.sade.koodisto</groupId>
             <artifactId>koodisto-api</artifactId>
             <version>${koodisto.api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fi.vm.sade.organisaatio</groupId>
+            <artifactId>organisaatio-api</artifactId>
+            <version>${organisaatio.api.version}</version>
+        </dependency>
+
+        <!-- used for constant names -->
+        <dependency>
+            <groupId>fi.vm.sade.tarjonta</groupId>
+            <artifactId>tarjonta-publication-api</artifactId>
+            <version>${publication.api.version}</version>
         </dependency>
 
         <dependency>

@@ -101,7 +101,11 @@ public class PublicationDataServiceTest {
 
         // search should match only haku's in JULKAISTU state
         assertEquals(1, hakus.size());
-        assertEquals("1.1", hakus.get(0).getOid());
+
+        Haku haku = hakus.get(0);
+        assertEquals("1.1", haku.getOid());
+        // lazy loaded attributes are properly loaded
+        assertEquals(3, haku.getNimi().getTekstis().size());
 
     }
 

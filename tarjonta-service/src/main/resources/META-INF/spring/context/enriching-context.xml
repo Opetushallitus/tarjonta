@@ -37,9 +37,18 @@
         </jaxws:outInterceptors>
     </jaxws:client>
 
+    <jaxws:client id="tarjojaPublicService"
+                  serviceClass="fi.vm.sade.tarjoaja.service.KoulutustarjoajaPublicService"
+                  address="http://itest-virkailija.oph.ware.fi/cxf/koulutustarjoajaPublicService">
+    </jaxws:client>
 
-    <!-- koodisto wrapper service that uses koodisto webservice for content -->
+
+    <!-- wrapper service that uses koodisto webservice for content -->
     <bean id="koodistoLookupService" class="fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupWebServiceImpl"/>
+
+    <!-- wrapper service that uses tarjoaja webservice for content -->
+    <bean id="tarjoajaLookupService" class="fi.vm.sade.tarjonta.publication.enricher.organisaatio.KoulutustarjoajaLookupWebServiceImpl"/>
+
 
     <!-- factory that knows how to create enricher for publication data -->
     <bean id="xmlEnricher" class="fi.vm.sade.tarjonta.publication.enricher.factory.LearningOpportunityDataEnricherFactory">
