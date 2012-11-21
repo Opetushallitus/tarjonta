@@ -19,9 +19,9 @@ import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.NimiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -62,28 +62,30 @@ public class KoulutusKoodiToModelConverter<MODEL extends KoulutusKoodistoModel> 
         model.setKoodistoUri(koodiType.getKoodiUri());
         model.setKoodistoVersio(koodiType.getVersio());
 
-        final String uriWithVersio = KoulutusViewModelToDTOConverter.mapToVersionUri(koodiType.getKoodiUri(), koodiType.getVersio());
+        final String uriWithVersio = KoulutusConverter.mapToVersionUri(koodiType.getKoodiUri(), koodiType.getVersio());
         model.setKoodistoUriVersio(uriWithVersio);
 
-        model.getKielet().addAll(kieli(koodiType.getMetadata()));
+        if (model instanceof MonikielinenTekstiModel) {
+            //add all languages to the UI object
+            MonikielinenTekstiModel o = (MonikielinenTekstiModel) model;
+            o.setKielikaannos(map(koodiType.getMetadata()));
+        }
 
         return model;
     }
 
-    private Set<NimiModel> kieli(final List<KoodiMetadataType> languageMetaData) {
-        Set<NimiModel> nimet = new HashSet<NimiModel>();
+    private Set<KielikaannosViewModel> map(final List<KoodiMetadataType> languageMetaData) {
+        Set<KielikaannosViewModel> teksti = new HashSet<KielikaannosViewModel>();
 
         for (KoodiMetadataType meta : languageMetaData) {
             final KieliType kieli = meta.getKieli();
-            NimiModel nimi = new NimiModel();
 
-            if (kieli != null) {
-                nimi.setType(kieli);
-                nimi.setNimi(meta.getNimi());
-                nimet.add(nimi);
+            if (kieli != null && meta.getNimi() != null && !meta.getNimi().isEmpty()) {
+                teksti.add(new KielikaannosViewModel(kieli.name(), meta.getNimi()));
             }
         }
 
-        return nimet;
+
+        return teksti;
     }
 }

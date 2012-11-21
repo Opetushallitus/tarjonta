@@ -58,22 +58,16 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Autowired
     private HakuBusinessService businessService;
-
     @Autowired
     private HakuDAO hakuDao;
-
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
-
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
     @Autowired
     private ConversionService conversionService;
-
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public TarjontaPublicServiceImpl() {
@@ -250,7 +244,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
         LueKoulutusVastausTyyppi result = convert(komoto);
 
-        //
         KoodistoKoodiTyyppi koulutusKoodi = new KoodistoKoodiTyyppi();
         koulutusKoodi.setUri(komoto.getKoulutusmoduuli().getKoulutusKoodi());
         result.setKoulutusKoodi(koulutusKoodi);
@@ -260,17 +253,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         result.setKoulutusohjelmaKoodi(koulutusOhjelmaKoodi);
 
         //Asetetaan koulutusmoduuli
-        KoulutusmoduuliKoosteTyyppi komoTyyppi = new KoulutusmoduuliKoosteTyyppi();
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
-        komoTyyppi.setKoulutuskoodiUri(komo.getKoulutusKoodi());
-        komoTyyppi.setKoulutusohjelmakoodiUri(komo.getKoulutusohjelmaKoodi());
-        komoTyyppi.setLaajuusarvoUri(komo.getLaajuusArvo());
-        komoTyyppi.setLaajuusyksikkoUri(komo.getLaajuusYksikko());
-        komoTyyppi.setOid(komo.getOid());
-        komoTyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
-        komoTyyppi.setTutkintoOhjelmaUri(komo.getTutkintoOhjelmanNimi());
-        komoTyyppi.setUlkoinenTunniste(komo.getUlkoinenTunniste());
-        result.setKoulutusmoduuli(komoTyyppi);
+        result.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo));
 
         return result;
     }
@@ -293,9 +277,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         toKoulutus.setKesto(kestoT);
 
         if (fromKoulutus.getKoulutusaste() != null) {
-            KoodistoKoodiTyyppi koulutusasteKoodi = new KoodistoKoodiTyyppi();
-            koulutusasteKoodi.setUri(fromKoulutus.getKoulutusaste());
-            toKoulutus.setKoulutusaste(koulutusasteKoodi);
+            KoodistoKoodiTyyppi koulutusaste = new KoodistoKoodiTyyppi();
+            koulutusaste.setUri(fromKoulutus.getKoulutusaste());
+            toKoulutus.setKoulutusaste(koulutusaste);
         }
         toKoulutus.setTarjoaja(fromKoulutus.getTarjoaja());
 
@@ -304,6 +288,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         EntityUtils.copyKoodistoUris(fromKoulutus.getKoulutuslajis(), toKoulutus.getKoulutuslaji());
         EntityUtils.copyWebLinkkis(fromKoulutus.getLinkkis(), toKoulutus.getLinkki());
         EntityUtils.copyYhteyshenkilos(fromKoulutus.getYhteyshenkilos(), toKoulutus.getYhteyshenkilo());
+        EntityUtils.copyFields(fromKoulutus.getPainotus(), toKoulutus.getPainotus());
 
         //
         // Koulutus lisätiedot / additional information for Koulutus
@@ -346,6 +331,4 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         }
         return vastaus;
     }
-
 }
-

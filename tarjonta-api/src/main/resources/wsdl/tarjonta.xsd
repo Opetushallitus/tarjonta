@@ -14,7 +14,7 @@
     </xs:annotation>
 
 
-        <!-- moved from dto: start -->
+    <!-- moved from dto: start -->
 
     <xs:simpleType name="LongString">
         <xs:restriction base="xs:string">
@@ -72,7 +72,7 @@
     </xs:complexType>
 
 
-        <!-- moved from dto: end -->
+    <!-- moved from dto: end -->
 
 
     <xs:complexType name="TarjontaTyyppi">
@@ -348,12 +348,12 @@
                     <xs:documentation>Koulutusmoduulin oid</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element minOccurs="0" maxOccurs="1" name="koulutuskoodiUri" type="xs:string">
+            <xs:element minOccurs="1" maxOccurs="1" name="koulutuskoodiUri" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Koulutuskoodi</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element minOccurs="0" maxOccurs="1" name="koulutusohjelmakoodiUri" type="xs:string">
+            <xs:element minOccurs="1" maxOccurs="1" name="koulutusohjelmakoodiUri" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Koulutusohjelmakoodi</xs:documentation>
                 </xs:annotation>
@@ -363,45 +363,54 @@
                     <xs:documentation>Koulutusmoduulin tyyppi</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element minOccurs="0" maxOccurs="1" name="koulutusasteUri" type="xs:string">
+            <xs:element minOccurs="1" maxOccurs="1" name="koulutusasteUri" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Koulutusaste</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element minOccurs="0" maxOccurs="1" name="tutkintoOhjelmaUri" type="xs:string">
+            
+            <xs:element minOccurs="1" maxOccurs="1" name="koulutusalaUri" type="xs:string">
                 <xs:annotation>
-                    <xs:documentation>Tutkinto ohjelma</xs:documentation>
+                    <xs:documentation>Koulutusala</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element minOccurs="0" maxOccurs="1" name="laajuusyksikkoUri" type="xs:string">
+    
+            <xs:element minOccurs="1" maxOccurs="1" name="laajuusyksikkoUri" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Laajuusyksikko</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element minOccurs="0" maxOccurs="1" name="laajuusarvoUri" type="xs:string">
+            <xs:element minOccurs="1" maxOccurs="1" name="laajuusarvoUri" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Laajuusarvo</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element minOccurs="0" maxOccurs="1" name="tutkintonimikeUri" type="xs:string">
+            <xs:element minOccurs="1" maxOccurs="1" name="tutkintonimikeUri" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Tutkintonimike</xs:documentation>
                 </xs:annotation>
             </xs:element>
 
-            <xs:element minOccurs="0" maxOccurs="1" name="koulutuksenRakenne" type="tns:MonikielinenTekstiTyyppi">
+            <xs:element minOccurs="1" maxOccurs="1" name="opintoalaUri" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Opintoala</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+
+            <xs:element minOccurs="1" maxOccurs="1" name="koulutuksenRakenne" type="tns:MonikielinenTekstiTyyppi">
                 <xs:annotation>
                     <xs:documentation>KoulutuksenRakenne</xs:documentation>
                 </xs:annotation>
             </xs:element>
 
-            <xs:element minOccurs="0" maxOccurs="1" name="tavoiteet" type="tns:MonikielinenTekstiTyyppi">
+            <xs:element minOccurs="1" maxOccurs="1" name="tavoitteet" type="tns:MonikielinenTekstiTyyppi">
                 <xs:annotation>
                     <xs:documentation>Koulutukselliset ja ammatilliset tavoitteet</xs:documentation>
                 </xs:annotation>
             </xs:element>
 
-            <xs:element minOccurs="0" maxOccurs="1" name="jatkoopintomahdollisuudet" type="tns:MonikielinenTekstiTyyppi">
+            <xs:element minOccurs="1" maxOccurs="1" name="jatkoOpintoMahdollisuudet" type="tns:MonikielinenTekstiTyyppi">
                 <xs:annotation>
                     <xs:documentation>Jatko-opintomahdollisuudet</xs:documentation>
                 </xs:annotation>
@@ -502,7 +511,7 @@
             <xs:element name="KoulutusohjelmaKoodi" type="tns:KoodistoKoodiTyyppi"/>
             <xs:element name="Opetusmuoto" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
             <xs:element name="Opetuskieli" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
-            <xs:element name="Painotus" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Painotus" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
             <xs:element name="KoulutuksenAlkamisPaiva" type="xs:dateTime"/>
             <xs:element name="Kesto" type="tns:KoulutuksenKestoTyyppi"/>
             <xs:element name="Koulutuslaji" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
@@ -673,7 +682,7 @@
             <xs:pattern value="[a-z]{2}"/>
         </xs:restriction>
     </xs:simpleType>
-
+    
     <xs:complexType name="GenericFaultInfo">
         <xs:sequence>
             <xs:element name="errorCode" type="xs:string"></xs:element>

@@ -16,11 +16,13 @@
 package fi.vm.sade.tarjonta.service.business.impl;
 
 import fi.vm.sade.tarjonta.model.KoodistoUri;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
+import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.*;
 import java.util.Collection;
@@ -33,8 +35,9 @@ import java.util.Set;
 public final class EntityUtils {
 
     /**
-     * Copies all text translations from domain model type into web service type. If either of the parameters
-     * is null, returns null. Otherwise <code>to</code> is returned to allow method chaining.
+     * Copies all text translations from domain model type into web service
+     * type. If either of the parameters is null, returns null. Otherwise
+     * <code>to</code> is returned to allow method chaining.
      *
      * @param from source of the copying
      * @param to target of the copying
@@ -57,8 +60,9 @@ public final class EntityUtils {
     }
 
     /**
-     * Copies all text translations from web service model into domain model type. If either of the parameters is
-     * null, null is returned. Otherwise <code>to</code> is returned to allow method chaining.
+     * Copies all text translations from web service model into domain model
+     * type. If either of the parameters is null, null is returned. Otherwise
+     * <code>to</code> is returned to allow method chaining.
      *
      * @param from source of the copying
      * @param to target of the copying
@@ -81,7 +85,6 @@ public final class EntityUtils {
     private EntityUtils() {
     }
 
-
     public static void copyFields(PaivitaKoulutusTyyppi from, KoulutusmoduuliToteutus to) {
 
         to.setTila(convertTila(from.getTila()));
@@ -94,6 +97,8 @@ public final class EntityUtils {
 
         to.setOpetuskieli(toKoodistoUriSet(from.getOpetuskieli()));
         to.setKoulutuslajis(toKoodistoUriSet(from.getKoulutuslaji()));
+        to.setPainotus(copyFields(from.getPainotus(), new MonikielinenTeksti()));
+
         if (from.getKoulutusaste() != null) {
             to.setKoulutusaste(from.getKoulutusaste().getUri());
         }
@@ -121,6 +126,7 @@ public final class EntityUtils {
         toKoulutus.setOpetuskieli(toKoodistoUriSet(fromKoulutus.getOpetuskieli()));
         toKoulutus.setKoulutuslajis(toKoodistoUriSet(fromKoulutus.getKoulutuslaji()));
         toKoulutus.setTarjoaja(fromKoulutus.getTarjoaja());
+        toKoulutus.setPainotus(copyFields(fromKoulutus.getPainotus(), new MonikielinenTeksti()));
 
         copyLisatiedotFields(fromKoulutus, toKoulutus);
 
@@ -146,7 +152,8 @@ public final class EntityUtils {
     }
 
     /**
-     * For copying the textual descriptive language texts and ammattinimike list.
+     * For copying the textual descriptive language texts and ammattinimike
+     * list.
      *
      * @param fromKoulutus
      * @param toKoulutus
@@ -196,6 +203,49 @@ public final class EntityUtils {
         for (String kieliUri : from.getKielis()) {
             to.getKielet().add(kieliUri);
         }
+    }
+
+    public static KoulutusmoduuliKoosteTyyppi copyFieldsToKoulutusmoduuliKoosteTyyppi(Koulutusmoduuli komo) {
+        KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
+        tyyppi.setOid(komo.getOid());
+        tyyppi.setKoulutuskoodiUri(komo.getKoulutusKoodi());
+        tyyppi.setKoulutusohjelmakoodiUri(komo.getKoulutusohjelmaKoodi());
+        tyyppi.setLaajuusarvoUri(komo.getLaajuusArvo());
+        tyyppi.setLaajuusyksikkoUri(komo.getLaajuusYksikko());
+        tyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
+        //tyyppi.setTutkintoOhjelmaUri(komo.getTutkintoOhjelmanNimi());
+        tyyppi.setUlkoinenTunniste(komo.getUlkoinenTunniste());
+        tyyppi.setKoulutusasteUri(komo.getKoulutusAste());
+        tyyppi.setKoulutusalaUri(komo.getKoulutusala());
+        tyyppi.setOpintoalaUri(komo.getOpintoala());
+
+        tyyppi.setKoulutuksenRakenne(copyFields(komo.getKoulutuksenRakenne(), new MonikielinenTekstiTyyppi()));
+        tyyppi.setTavoitteet(copyFields(komo.getTavoitteet(), new MonikielinenTekstiTyyppi()));
+        tyyppi.setJatkoOpintoMahdollisuudet(copyFields(komo.getJatkoOpintoMahdollisuudet(), new MonikielinenTekstiTyyppi()));
+
+        return tyyppi;
+    }
+
+    public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi tyyppi) {
+        Koulutusmoduuli komo = new Koulutusmoduuli(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(tyyppi.getKoulutusmoduuliTyyppi().value()));
+        komo.setOid(tyyppi.getOid());
+
+        //URIs
+        komo.setKoulutusKoodi(tyyppi.getKoulutuskoodiUri());
+        komo.setKoulutusohjelmaKoodi(tyyppi.getKoulutusohjelmakoodiUri());
+        komo.setLaajuus(tyyppi.getLaajuusyksikkoUri(), tyyppi.getLaajuusarvoUri());
+        komo.setTutkintonimike(tyyppi.getTutkintonimikeUri());
+        // komo.setTutkintoOhjelmanNimi(tyyppi.getTutkintoOhjelmaUri()); maybe for future use..
+        komo.setUlkoinenTunniste(tyyppi.getUlkoinenTunniste());
+        komo.setKoulutusAste(tyyppi.getKoulutusasteUri());
+        komo.setKoulutusala(tyyppi.getKoulutusalaUri());
+        komo.setOpintoala(tyyppi.getOpintoalaUri());
+
+        //multilanguage objects
+        komo.setKoulutuksenRakenne(copyFields(tyyppi.getKoulutuksenRakenne(), new MonikielinenTeksti()));
+        komo.setTavoitteet(copyFields(tyyppi.getTavoitteet(), new MonikielinenTeksti()));
+        komo.setJatkoOpintoMahdollisuudet(copyFields(tyyppi.getJatkoOpintoMahdollisuudet(), new MonikielinenTeksti()));
+        return komo;
     }
 
     public static void copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList, Collection<YhteyshenkiloTyyppi> toList) {
@@ -249,10 +299,6 @@ public final class EntityUtils {
 
     }
 
-    private static void mapKomotoTila(KoulutusTyyppi from, KoulutusmoduuliToteutus to) {
-        to.setTila(convertTila(from.getTila()));
-    }
-
     /**
      * Converts TarjontaTila from web service type to domain model type.
      *
@@ -276,6 +322,4 @@ public final class EntityUtils {
         return fi.vm.sade.tarjonta.service.types.TarjontaTila.valueOf(tila.name());
 
     }
-
 }
-

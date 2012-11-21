@@ -17,9 +17,9 @@ package fi.vm.sade.tarjonta.ui.model;
 
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,9 +67,9 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      * KOMO text data (static labels):
      * TODO:change to KielikaannosViewModel
      */
-    protected KoodiModel koulutuksenRakenne;
-    protected KoodiModel tavoitteet;
-    protected KoodiModel jakoopintomahdollisuudet;
+    protected MonikielinenTekstiModel koulutuksenRakenne;
+    protected MonikielinenTekstiModel tavoitteet;
+    private MonikielinenTekstiModel jatkoopintomahdollisuudet;
     /*
      * Form fields:
      */
@@ -306,43 +306,29 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     /**
      * @return the koulutuksenRakenne
      */
-    public KoodiModel getKoulutuksenRakenne() {
+    public MonikielinenTekstiModel getKoulutuksenRakenne() {
         return koulutuksenRakenne;
     }
 
     /**
      * @param koulutuksenRakenne the koulutuksenRakenne to set
      */
-    public void setKoulutuksenRakenne(KoodiModel koulutuksenRakenne) {
+    public void setKoulutuksenRakenne(MonikielinenTekstiModel koulutuksenRakenne) {
         this.koulutuksenRakenne = koulutuksenRakenne;
     }
 
     /**
      * @return the tavoitteet
      */
-    public KoodiModel getTavoitteet() {
+    public MonikielinenTekstiModel getTavoitteet() {
         return tavoitteet;
     }
 
     /**
      * @param tavoitteet the tavoitteet to set
      */
-    public void setTavoitteet(KoodiModel tavoitteet) {
-        this.setTavoitteet(tavoitteet);
-    }
-
-    /**
-     * @return the jakoopintomahdollisuudet
-     */
-    public KoodiModel getJakoopintomahdollisuudet() {
-        return jakoopintomahdollisuudet;
-    }
-
-    /**
-     * @param jakoopintomahdollisuudet the jakoopintomahdollisuudet to set
-     */
-    public void setJakoopintomahdollisuudet(KoodiModel jakoopintomahdollisuudet) {
-        this.setJakoopintomahdollisuudet(jakoopintomahdollisuudet);
+    public void setTavoitteet(MonikielinenTekstiModel tavoitteet) {
+        this.tavoitteet = tavoitteet;
     }
 
     /**
@@ -469,5 +455,19 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      */
     public void setPainotus(List<KielikaannosViewModel> painotus) {
         this.painotus = painotus;
+    }
+
+    /**
+     * @return the jatkoopintomahdollisuudet
+     */
+    public MonikielinenTekstiModel getJatkoopintomahdollisuudet() {
+        return jatkoopintomahdollisuudet;
+    }
+
+    /**
+     * @param jatkoopintomahdollisuudet the jatkoopintomahdollisuudet to set
+     */
+    public void setJatkoopintomahdollisuudet(MonikielinenTekstiModel jatkoopintomahdollisuudet) {
+        this.jatkoopintomahdollisuudet = jatkoopintomahdollisuudet;
     }
 }

@@ -23,17 +23,11 @@ import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusLisatiedotForm;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPainotusFormView;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,8 +55,7 @@ public class TarjontaWebApplication extends TarjontaApplication {
     private TarjontaAdminService tarjontaAdminService;
     @Autowired
     SimpleCacheManager _cacheManager;
-    @Autowired
-    private KoulutusKoodistoConverter converter;
+
     
     @Override
     protected void initApplication() {
@@ -97,8 +90,6 @@ public class TarjontaWebApplication extends TarjontaApplication {
         });
         
         hl.addComponent(xxxButton);
-        
-//        window.addComponent(test());
     }
     
     public void toTarjonta() {
@@ -160,21 +151,5 @@ public class TarjontaWebApplication extends TarjontaApplication {
     public void setTarjontaAdminService(TarjontaAdminService tarjontaAdminService) {
         this.tarjontaAdminService = tarjontaAdminService;
     }
-    
-//    private EditKoulutusPainotusFormView test() {
-////        KoulutusToisenAsteenPerustiedotViewModel koulutusToisenAsteenPerustiedotViewModel = new KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus.NEW);
-////        koulutusToisenAsteenPerustiedotViewModel.setPainotus(new ArrayList<KielikaannosViewModel>());
-////        return new EditKoulutusPainotusFormView(koulutusToisenAsteenPerustiedotViewModel);
-//
-//        
-////        LOG.debug("SEARCH KOODISTO");
-////        List<KoulutuskoodiModel> listaaKoulutus = converter.listaaKoulutukset(new Locale("fi"));
-////
-////        for (KoulutuskoodiModel m : listaaKoulutus) {
-////            LOG.debug("Koodisto URI : " + m.getKoodistoUri());
-////            LOG.debug("Koodisto uri versio : " + m.getKoodistoUriVersio());
-////            LOG.debug("Koodisto koodi : " + m.getKoodi());
-////            LOG.debug("Koodisto : " + m);
-////        }
-//    }
+
 }

@@ -97,10 +97,6 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         komotoModel.setKoulutusmoduuli(moduuli);
         moduuli.addKoulutusmoduuliToteutus(komotoModel);
 
-        //add all multilanguage strings to search keywords
-        // TODO FIX
-        //komotoModel.setNimi(SearchWordUtil.createSearchKeywords(koulutus));
-
         return koulutusmoduuliToteutusDAO.insert(komotoModel);
     }
 
@@ -116,15 +112,9 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         EntityUtils.copyFields(koulutus, model);
 
-        // add all multilanguage strings to search keywords
-        // TODO FIX
-        //model.setNimi(SearchWordUtil.createSearchKeywords(koulutus));
-
         koulutusmoduuliToteutusDAO.update(model);
 
         updateYhteyshenkilot(oid, koulutus.getYhteyshenkiloTyyppi());
-
-
 
         return model;
 

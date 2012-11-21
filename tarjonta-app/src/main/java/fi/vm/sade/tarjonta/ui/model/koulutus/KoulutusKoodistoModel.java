@@ -36,19 +36,8 @@ public abstract class KoulutusKoodistoModel extends BaseUIViewModel {
     protected String koodistoUri;
     protected int koodistoVersio;
     protected String koodistoUriVersio;
-    protected Set<NimiModel> kielet = new HashSet<NimiModel>(3);
 
     public KoulutusKoodistoModel() {
-    }
-
-    public KoulutusKoodistoModel(String nimi, String kielikoodi, String koodi, String koodistoUri, int koodistoVersio, Set<NimiModel> kielet) {
-        this.nimi = nimi;
-        this.kielikoodi = kielikoodi;
-        this.koodi = koodi;
-        this.koodistoUri = koodistoUri;
-        this.koodistoVersio = koodistoVersio;
-        this.koodistoUriVersio = TarjontaUIHelper.createVersionUri(nimi, koodistoVersio);
-        this.kielet = kielet;
     }
 
     /**
@@ -135,20 +124,6 @@ public abstract class KoulutusKoodistoModel extends BaseUIViewModel {
         this.koodistoUriVersio = koodistoUriVersio;
     }
 
-    /**
-     * @return the kielet
-     */
-    public Set<NimiModel> getKielet() {
-        return kielet;
-    }
-
-    /**
-     * @param kielet the kielet to set
-     */
-    public void setKielet(Set<NimiModel> kielet) {
-        this.kielet = kielet;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -166,7 +141,6 @@ public abstract class KoulutusKoodistoModel extends BaseUIViewModel {
         builder.append(koodistoVersio, other.koodistoVersio);
         builder.append(koodistoUriVersio, other.koodistoUriVersio);
         builder.append(kuvaus, other.kuvaus);
-        builder.append(kielet, other.kielet);
         return builder.isEquals();
     }
 
@@ -179,8 +153,7 @@ public abstract class KoulutusKoodistoModel extends BaseUIViewModel {
                 append(koodistoUri).
                 append(koodistoVersio).
                 append(koodistoUriVersio).
-                append(kuvaus).
-                append(kielet).toHashCode();
+                append(kuvaus).toHashCode();
     }
 
     /**

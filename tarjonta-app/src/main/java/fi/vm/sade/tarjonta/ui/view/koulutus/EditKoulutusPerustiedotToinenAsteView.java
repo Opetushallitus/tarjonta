@@ -36,7 +36,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
-import fi.vm.sade.tarjonta.service.GenericFault;
+import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
@@ -285,6 +285,9 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                 makeUnmodified();
                 presenter.showNotification(UserNotification.SAVE_SUCCESS);
                 presenter.getReloadKoulutusListData();
+            } catch (javax.xml.ws.WebServiceException e) {
+                LOG.error("Unknown backend service error - KOMOTO persist failed, message :  " + e.getMessage(), e);
+                presenter.showNotification(UserNotification.SERVICE_UNAVAILABLE);
             } catch (GenericFault e) {
                 LOG.error("Application error - KOMOTO persist failed, message :  " + e.getMessage(), e);
                 presenter.showNotification(UserNotification.SAVE_FAILED);

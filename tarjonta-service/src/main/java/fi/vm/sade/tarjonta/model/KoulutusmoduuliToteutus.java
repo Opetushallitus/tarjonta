@@ -128,6 +128,10 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     @Column(name="pohjakoulutusvaatimus")
     private String pohjakoulutusvaatimus;
+   
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "painotus")
+    private MonikielinenTeksti painotus;
 
     /*
      * Koulutuksen Lisatiedot  (additional information)
@@ -157,6 +161,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinColumn(name = "yhteistyomuidentoimijoidenkanssa")
     private MonikielinenTeksti yhteistyoMuidenToimijoidenKanssa;
 
+
+
+    
     public KoulutusmoduuliToteutus() {
         super();
     }
@@ -608,5 +615,20 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setYhteistyoMuidenToimijoidenKanssa(MonikielinenTeksti yhteistyoMuidenToimijoidenKanssa) {
         this.yhteistyoMuidenToimijoidenKanssa = yhteistyoMuidenToimijoidenKanssa;
     }
+
+    /**
+     * @return the painotus
+     */
+    public MonikielinenTeksti getPainotus() {
+        return painotus;
+    }
+
+    /**
+     * @param painotus the painotus to set
+     */
+    public void setPainotus(MonikielinenTeksti painotus) {
+        this.painotus = painotus;
+    }
+
 
 }

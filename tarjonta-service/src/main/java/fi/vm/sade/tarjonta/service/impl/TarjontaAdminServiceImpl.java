@@ -30,7 +30,6 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
@@ -38,6 +37,7 @@ import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
 import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -229,15 +229,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli)
             throws GenericFault {
-        Koulutusmoduuli komo = new Koulutusmoduuli(KoulutusmoduuliTyyppi.valueOf(koulutusmoduuli.getKoulutusmoduuliTyyppi().value()));
-        komo.setOid(koulutusmoduuli.getOid());
-        komo.setKoulutusKoodi(koulutusmoduuli.getKoulutuskoodiUri());
-        komo.setKoulutusohjelmaKoodi(koulutusmoduuli.getKoulutusohjelmakoodiUri());
-        komo.setLaajuus(koulutusmoduuli.getLaajuusyksikkoUri(), koulutusmoduuli.getLaajuusarvoUri());
-        komo.setTutkintoOhjelmanNimi(koulutusmoduuli.getTutkintoOhjelmaUri());
-        komo.setTutkintonimike(koulutusmoduuli.getTutkintonimikeUri());
-        komo.setUlkoinenTunniste(koulutusmoduuli.getUlkoinenTunniste());
-        koulutusmoduuliDAO.insert(komo);
+        koulutusmoduuliDAO.insert(EntityUtils.copyFieldsToKoulutusmoduuli(koulutusmoduuli));
         return koulutusmoduuli;
     }
 

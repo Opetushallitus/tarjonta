@@ -22,7 +22,7 @@ import java.util.Set;
  *
  * @author Jani Wilén
  */
-public class KoulutuskoodiModel extends KoulutusKoodistoModel {
+public class KoulutuskoodiModel extends MonikielinenTekstiModel {
 
     private Set<KoulutusohjelmaModel> koulutusohjelmaModels;
     private KoodiModel koulutusaste;
@@ -30,10 +30,9 @@ public class KoulutuskoodiModel extends KoulutusKoodistoModel {
     private KoodiModel opintojenLaajuusyksikko;
     private KoodiModel opintojenLaajuus;
     private KoodiModel opintoala;
-    private KoodiModel koulutuksenRakenne;
-    private KoodiModel tavoitteet;
-    private KoodiModel koulutuksellisetJaAmmatillisetTavoitteet;
-    private KoodiModel jatkoopintomahdollisuudet;
+    private MonikielinenTekstiModel koulutuksenRakenne;
+    private MonikielinenTekstiModel tavoitteet;
+    private MonikielinenTekstiModel jatkoopintomahdollisuudet;
 
     public KoulutuskoodiModel() {
     }
@@ -111,31 +110,17 @@ public class KoulutuskoodiModel extends KoulutusKoodistoModel {
     /**
      * @return the koulutuksenRakenne
      */
-    public KoodiModel getKoulutuksenRakenne() {
+    public MonikielinenTekstiModel getKoulutuksenRakenne() {
         return koulutuksenRakenne;
     }
 
     /**
      * @param koulutuksenRakenne the koulutuksenRakenne to set
      */
-    public void setKoulutuksenRakenne(KoodiModel koulutuksenRakenne) {
+    public void setKoulutuksenRakenne(MonikielinenTekstiModel koulutuksenRakenne) {
         this.koulutuksenRakenne = koulutuksenRakenne;
     }
 
-    /**
-     * @return the koulutuksellisetJaAmmatillisetTavoitteet
-     */
-    public KoodiModel getKoulutuksellisetJaAmmatillisetTavoitteet() {
-        return koulutuksellisetJaAmmatillisetTavoitteet;
-    }
-
-    /**
-     * @param koulutuksellisetJaAmmatillisetTavoitteet the
-     * koulutuksellisetJaAmmatillisetTavoitteet to set
-     */
-    public void setKoulutuksellisetJaAmmatillisetTavoitteet(KoodiModel koulutuksellisetJaAmmatillisetTavoitteet) {
-        this.koulutuksellisetJaAmmatillisetTavoitteet = koulutuksellisetJaAmmatillisetTavoitteet;
-    }
 
     /**
      * @return the koulutusohjelmaModels
@@ -157,28 +142,28 @@ public class KoulutuskoodiModel extends KoulutusKoodistoModel {
     /**
      * @return the tavoitteet
      */
-    public KoodiModel getTavoitteet() {
+    public MonikielinenTekstiModel getTavoitteet() {
         return tavoitteet;
     }
 
     /**
      * @param tavoitteet the tavoitteet to set
      */
-    public void setTavoitteet(KoodiModel tavoitteet) {
+    public void setTavoitteet(MonikielinenTekstiModel tavoitteet) {
         this.tavoitteet = tavoitteet;
     }
 
     /**
      * @return the jatkoopintomahdollisuudet
      */
-    public KoodiModel getJatkoopintomahdollisuudet() {
+    public MonikielinenTekstiModel getJatkoopintomahdollisuudet() {
         return jatkoopintomahdollisuudet;
     }
 
     /**
      * @param jatkoopintomahdollisuudet the jatkoopintomahdollisuudet to set
      */
-    public void setJatkoopintomahdollisuudet(KoodiModel jatkoopintomahdollisuudet) {
+    public void setJatkoopintomahdollisuudet(MonikielinenTekstiModel jatkoopintomahdollisuudet) {
         this.jatkoopintomahdollisuudet = jatkoopintomahdollisuudet;
     }
 }

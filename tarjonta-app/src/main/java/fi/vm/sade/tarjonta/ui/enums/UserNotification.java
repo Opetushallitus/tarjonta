@@ -24,6 +24,7 @@ import fi.vm.sade.generic.common.I18N;
  */
 public enum UserNotification {
 
+    SERVICE_UNAVAILABLE("notification.error.serviceUnavailable", Window.Notification.TYPE_ERROR_MESSAGE),
     GENERIC_VALIDATION_FAILED("notification.invalidData", Window.Notification.TYPE_WARNING_MESSAGE),
     UNSAVED("notification.error.unsaved", Window.Notification.TYPE_WARNING_MESSAGE),
     //failures

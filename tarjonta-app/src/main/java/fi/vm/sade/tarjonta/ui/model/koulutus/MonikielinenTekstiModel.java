@@ -15,43 +15,29 @@
  */
 package fi.vm.sade.tarjonta.ui.model.koulutus;
 
-import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import java.util.Set;
 
 /**
  *
  * @author Jani Wilén
  */
-public class NimiModel extends BaseUIViewModel {
+public class MonikielinenTekstiModel extends KoulutusKoodistoModel {
 
-    private KieliType type;
-    private String nimi;
+    private Set<KielikaannosViewModel> kielikaannos;
 
     /**
-     * @return the type
+     * @return the kielikaannos
      */
-    public KieliType getType() {
-        return type;
+    public Set<KielikaannosViewModel> getKielikaannos() {
+        return kielikaannos;
     }
 
     /**
-     * @param type the type to set
+     * @param kielikaannos the kielikaannos to set
      */
-    public void setType(KieliType type) {
-        this.type = type;
-    }
-
-    /**
-     * @return the nimi
-     */
-    public String getNimi() {
-        return nimi;
-    }
-
-    /**
-     * @param nimi the nimi to set
-     */
-    public void setNimi(String nimi) {
-        this.nimi = nimi;
+    public void setKielikaannos(Set<KielikaannosViewModel> kielikaannos) {
+        this.kielikaannos = kielikaannos;
     }
 }

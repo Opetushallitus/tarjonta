@@ -119,6 +119,9 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     @Column(name = "ulkoinentunniste")
     private String ulkoinenTunniste;
+    
+    @Column(name = "opintoala")
+    private String opintoala;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "koulutuksenrakenne")
@@ -131,6 +134,10 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "nimi")
     private MonikielinenTeksti nimi;
+    
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "tavoitteet")
+    private MonikielinenTeksti tavoitteet;
 
     /**
      * JPA konstruktori
@@ -513,6 +520,34 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      */
     public void setNimi(MonikielinenTeksti nimi) {
         this.nimi = nimi;
+    }
+
+    /**
+     * @return the tavoitteet
+     */
+    public MonikielinenTeksti getTavoitteet() {
+        return tavoitteet;
+    }
+
+    /**
+     * @param tavoitteet the tavoitteet to set
+     */
+    public void setTavoitteet(MonikielinenTeksti tavoitteet) {
+        this.tavoitteet = tavoitteet;
+    }
+
+    /**
+     * @return the opintoala
+     */
+    public String getOpintoala() {
+        return opintoala;
+    }
+
+    /**
+     * @param opintoala the opintoala to set
+     */
+    public void setOpintoala(String opintoala) {
+        this.opintoala = opintoala;
     }
 
 }

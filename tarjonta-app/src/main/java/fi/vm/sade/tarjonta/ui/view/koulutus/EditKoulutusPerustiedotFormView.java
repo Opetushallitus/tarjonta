@@ -155,7 +155,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private Label koulutusala;
     private Label tavoitteet;
     private Label jatkoopintomahdollisuudet;
-    
 
     public EditKoulutusPerustiedotFormView() {
     }
@@ -226,8 +225,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                     }
 
                     if (koulutuskoodi.getJatkoopintomahdollisuudet() != null) {
-                        koulutusModel.setJakoopintomahdollisuudet(koulutuskoodi.getJatkoopintomahdollisuudet());
-                        jatkoopintomahdollisuudet.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getJakoopintomahdollisuudet(), MODEL_DESC_PROPERY));
+                        koulutusModel.setJatkoopintomahdollisuudet(koulutuskoodi.getJatkoopintomahdollisuudet());
+                        jatkoopintomahdollisuudet.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getJatkoopintomahdollisuudet(), MODEL_DESC_PROPERY));
                     }
 
                     presenter.loadKoulutusohjelmat();
@@ -267,8 +266,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         koulutusala = buildLabel(this, "koulutusala");
         opintojenLaajuusyksikko = buildLabel(this, "opintojenLaajuusyksikko");
         opintojenLaajuus = buildLabel(this, "opintojenLaajuus");
-        koulutuksenRakenne = buildLabel(this, "koulutuksenRakenne");
         tutkintonimike = buildLabel(this, "tutkintonimike");
+        koulutuksenRakenne = buildLabel(this, "koulutuksenRakenne");
         tavoitteet = buildLabel(this, "tavoitteet");
         jatkoopintomahdollisuudet = buildLabel(this, "jatkoopintomahdollisuudet");
 

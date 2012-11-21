@@ -21,22 +21,11 @@ import java.util.Set;
  *
  * @author Jani Wilén
  */
-public class KoulutusohjelmaModel extends KoulutusKoodistoModel {
+public class KoulutusohjelmaModel extends MonikielinenTekstiModel {
 
     private KoodiModel tutkintonimike;
     
     public KoulutusohjelmaModel() {
-    }
-
-    public KoulutusohjelmaModel(
-            String nimi,
-            String kielikoodi,
-            String koodi,
-            String koodistoUri,
-            int koodistoVersio,
-            Set<NimiModel> kieli) {
-
-        super(nimi, kielikoodi, koodi, koodistoUri, koodistoVersio, kieli);
     }
 
     /**
