@@ -17,6 +17,7 @@
 package fi.vm.sade.tarjonta.service.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
+import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 
@@ -116,7 +118,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) throws GenericFault {
         Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
-        if (checkHakukohdeDepencies(hakukohde)) {
+        if (hakuAlkanut(hakukohde)) {
             throw new HakukohdeUsedException();
         } else {
         for (KoulutusmoduuliToteutus curKoul : hakukohde.getKoulutusmoduuliToteutuses()) {
@@ -194,23 +196,29 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
 
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
-
+        
         PaivitaKoulutusVastausTyyppi vastaus = new PaivitaKoulutusVastausTyyppi();
         return vastaus;
 
     }
 
     @Override
-    public void poistaKoulutus(String koulutusOid) {
+    public void poistaKoulutus(String koulutusOid) throws GenericFault {
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
-        this.koulutusmoduuliToteutusDAO.remove(komoto);
-        removeOrphanHakukohteet();
-    }
-
-    private void removeOrphanHakukohteet() {
-        for (Hakukohde curHakukohde : this.hakukohdeDAO.findOrphanHakukohteet()) {
-            this.hakukohdeDAO.remove(curHakukohde);
+        if (komoto.getHakukohdes().isEmpty()) {
+        	this.koulutusmoduuliToteutusDAO.remove(komoto);
+        } else {
+        	throw new KoulutusUsedException();
         }
+    }
+    
+    private boolean hakuAlkanut(Hakukohde hakukohde) {
+    	for (Hakuaika curHakuaika : hakukohde.getHaku().getHakuaikas()) {
+    		if (!curHakuaika.getAlkamisPvm().after(Calendar.getInstance().getTime())) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
 
     /**

@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
+import org.eclipse.jetty.util.log.Log;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
@@ -30,10 +31,15 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
@@ -42,10 +48,9 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.*;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -70,6 +75,10 @@ public class TarjontaAdminServiceTest {
     private TarjontaFixtures fixtures;
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
+    @Autowired
+    private HakukohdeDAO hakukohdeDAO;
+    @Autowired
+    private HakuDAO hakuDAO;
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     private KoulutuksenKestoTyyppi kesto3Vuotta;
@@ -147,15 +156,120 @@ public class TarjontaAdminServiceTest {
     @Test
     public void testPoistaKoulutusHappyPath() throws Exception {
 
-        adminService.initSample(new String());
-        List<KoulutusmoduuliToteutus> komotos = this.koulutusmoduuliToteutusDAO.findAll();
-        assertFalse(komotos.isEmpty());
-        int komotosOriginalSize = komotos.size();
-        String komotoOid = komotos.get(0).getOid();
-
-        this.adminService.poistaKoulutus(komotoOid);
-        komotos = this.koulutusmoduuliToteutusDAO.findAll();
-        assertEquals(komotosOriginalSize - 1, komotos.size());
+    	//Oid to be used in the test to identify a komoto
+    	String oid = "54.54.54.54.54.54";
+    	
+    	
+    	//Testing removal of the sample komoto. It does not have a hakukohde so removal should succeed
+    	int komotosOriginalSize = this.koulutusmoduuliToteutusDAO.findAll().size();
+    	
+    	try {
+    		this.adminService.poistaKoulutus(SAMPLE_KOULUTUS_OID);
+    		assertTrue(komotosOriginalSize == (this.koulutusmoduuliToteutusDAO.findAll().size() + 1));
+    	} catch (Exception ex) {
+    		fail();
+    	}
+        
+    	
+    	//Creating a komoto with hakukohde (this can not be removed so removal should fail)
+    	LisaaKoulutusTyyppi lisaaKoulutus = createSampleKoulutus();
+        lisaaKoulutus.setOid(oid);
+        LisaaKoulutusVastausTyyppi koulutusV = adminService.lisaaKoulutus(lisaaKoulutus);
+        
+        Hakukohde hakukohde = fixtures.createHakukohde();
+        KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(oid);
+        hakukohde.addKoulutusmoduuliToteutus(komoto);
+        
+        Haku haku = fixtures.createHaku();
+        
+        Hakuaika hakuaika = new Hakuaika();
+        Calendar alkuPvm = Calendar.getInstance();//.getTime();
+        hakuaika.setAlkamisPvm(alkuPvm.getTime());
+        Calendar loppuPvm = Calendar.getInstance();
+        loppuPvm.set(Calendar.YEAR, loppuPvm.get(Calendar.YEAR) + 1);
+        hakuaika.setPaattymisPvm(loppuPvm.getTime());
+        haku.addHakuaika(hakuaika);
+        this.hakuDAO.insert(haku);
+        hakukohde.setHaku(haku);
+        hakukohde = this.hakukohdeDAO.insert(hakukohde);
+        komoto.addHakukohde(hakukohde);
+        this.koulutusmoduuliToteutusDAO.update(komoto);
+        
+        komotosOriginalSize = this.koulutusmoduuliToteutusDAO.findAll().size();
+        try {
+        	this.adminService.poistaKoulutus(oid);
+        	fail();
+        } catch (Exception ex) {
+        	Log.debug("Exception thrown: " + ex.getMessage());
+        }
+        assertTrue(this.koulutusmoduuliToteutusDAO.findAll().size() == komotosOriginalSize);
+    }
+    
+    @Test
+    public void testPoistaHakukohde() {
+    	
+    	String oid = "56.56.56.57.57.57";
+    	String oid2 = "56.56.56.57.57.58";
+    	//Creating a hakukohde with an ongoing hakuaika. Removal should fail
+    	Hakukohde hakukohde = fixtures.createHakukohde();
+    	hakukohde.setOid(oid);
+        KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
+        hakukohde.addKoulutusmoduuliToteutus(komoto);
+        Haku haku = fixtures.createHaku();
+        Hakuaika hakuaika = new Hakuaika();
+        Calendar alkuPvm = Calendar.getInstance();//.getTime();
+        alkuPvm.set(Calendar.YEAR, alkuPvm.get(Calendar.YEAR) - 1);
+        hakuaika.setAlkamisPvm(alkuPvm.getTime());
+        Calendar loppuPvm = Calendar.getInstance();
+        loppuPvm.set(Calendar.YEAR, loppuPvm.get(Calendar.YEAR) + 1);
+        hakuaika.setPaattymisPvm(loppuPvm.getTime());
+        haku.addHakuaika(hakuaika);
+        haku = this.hakuDAO.insert(haku);
+        hakukohde.setHaku(haku);
+        this.hakukohdeDAO.insert(hakukohde);
+        
+        int originalSize = this.hakukohdeDAO.findAll().size();
+        
+        try {
+        	HakukohdeTyyppi hakukohdeT = new HakukohdeTyyppi();
+        	hakukohdeT.setOid(oid);
+        	this.adminService.poistaHakukohde(hakukohdeT);
+        	fail();
+        } catch (Exception ex) {
+        	Log.debug("Exception thrown");
+        	//assertTrue(ex.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException"));
+        }
+        assertTrue(this.hakukohdeDAO.findAll().size() == originalSize);
+        
+        
+        //Creating a hakukohde with a hakuaika in the future. Removal should succeed
+        hakukohde = fixtures.createHakukohde();
+        hakukohde.setOid(oid2);
+        hakukohde.addKoulutusmoduuliToteutus(komoto);
+        haku = fixtures.createHaku();
+        hakuaika = new Hakuaika();
+        alkuPvm = Calendar.getInstance();//.getTime();
+        alkuPvm.set(Calendar.YEAR, alkuPvm.get(Calendar.YEAR) + 1);
+        hakuaika.setAlkamisPvm(alkuPvm.getTime());
+        loppuPvm = Calendar.getInstance();
+        loppuPvm.set(Calendar.YEAR, loppuPvm.get(Calendar.YEAR) + 2);
+        hakuaika.setPaattymisPvm(loppuPvm.getTime());
+        haku.addHakuaika(hakuaika);
+        haku = this.hakuDAO.insert(haku);
+        hakukohde.setHaku(haku);
+        this.hakukohdeDAO.insert(hakukohde);
+        
+        originalSize = this.hakukohdeDAO.findAll().size();
+        
+        try {
+        	HakukohdeTyyppi hakukohdeT = new HakukohdeTyyppi();
+        	hakukohdeT.setOid(oid2);
+        	this.adminService.poistaHakukohde(hakukohdeT);
+        	assertTrue(this.hakukohdeDAO.findAll().size() == (originalSize - 1));
+        } catch (Exception ex) {
+        	fail();
+        }
+        
     }
 
     @Test
