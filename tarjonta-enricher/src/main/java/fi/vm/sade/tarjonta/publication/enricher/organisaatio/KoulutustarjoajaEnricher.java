@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher.organisaatio;
 
-import com.sun.istack.internal.SAXException2;
 import fi.vm.sade.tarjoaja.service.types.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
