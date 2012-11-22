@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher.koodisto;
 
+import fi.vm.sade.tarjoaja.service.types.KielistettyTekstiTyyppi;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.StringReader;
@@ -298,11 +299,28 @@ public class LearningOpportunityEnricherTest {
     public void testEnrichLearningOpportunityProvider() throws Exception {
 
         final String basePath = LEARNING_OPPORTUNITY_PROVIDER_PATH;
+        assertLearningOpportunityProviderName(basePath);
         assertLearningOpportunityProviderDescription(basePath, DescriptionType.FACILITIES_FOR_STUDENTS_WITH_SPECIAL_NEEDS);
         assertLearningOpportunityProviderDescription(basePath, DescriptionType.COST_OF_LIVING);
         assertLearningOpportunityProviderDescription(basePath, DescriptionType.STUDY_FACILITIES);
         assertLearningOpportunityProviderDescription(basePath, DescriptionType.MEALS);
         assertLearningOpportunityProviderDescription(basePath, DescriptionType.MEDICAL_FACILITIES);
+
+    }
+
+    private void assertLearningOpportunityProviderName(String basePath) throws Exception {
+
+        assertLearningOpportunityProviderName(basePath, "fi");
+        assertLearningOpportunityProviderName(basePath, "en");
+        assertLearningOpportunityProviderName(basePath, "sv");
+
+    }
+
+    private void assertLearningOpportunityProviderName(String basePath, String lang) throws Exception {
+
+        assertXPathEvals("bad provider name", "nimi-" + lang,
+            basePath + "/Name[@lang='" + lang + "']/text()");
+
 
     }
 
@@ -316,7 +334,8 @@ public class LearningOpportunityEnricherTest {
 
     private void assertLearningOpportunityProviderDescription(String basePath, DescriptionType type, String lang) throws Exception {
 
-        assertXPathEvals("bad value fi", "arvo-" + lang,
+        assertXPathEvals("bad description value for lang: " + lang,
+            "arvo-" + lang,
             basePath + "/Description[@type='" + type.value() + "']/Text[@lang='" + lang + "']/text()");
 
     }
@@ -464,6 +483,10 @@ public class LearningOpportunityEnricherTest {
 
         KoulutustarjoajaTyyppi tarjoaja = new KoulutustarjoajaTyyppi();
 
+        tarjoaja.getNimi().add(createTarjoajaNimi("fi", "nimi-fi"));
+        tarjoaja.getNimi().add(createTarjoajaNimi("en", "nimi-en"));
+        tarjoaja.getNimi().add(createTarjoajaNimi("sv", "nimi-sv"));
+
         List<MetatietoTyyppi> metaMap = tarjoaja.getMetatieto();
         metaMap.add(createMetatieto(MetatietoAvainTyyppi.ESTEETTOMYYS_PALVELUT));
         metaMap.add(createMetatieto(MetatietoAvainTyyppi.KUSTANNUKSET));
@@ -472,6 +495,16 @@ public class LearningOpportunityEnricherTest {
         metaMap.add(createMetatieto(MetatietoAvainTyyppi.TERVEYDENHUOLTO));
 
         return tarjoaja;
+
+    }
+
+    private KielistettyTekstiTyyppi createTarjoajaNimi(String lang, String value) {
+
+        KielistettyTekstiTyyppi nimi = new KielistettyTekstiTyyppi();
+        nimi.setLang(lang);
+        nimi.setValue(value);
+
+        return nimi;
 
     }
 

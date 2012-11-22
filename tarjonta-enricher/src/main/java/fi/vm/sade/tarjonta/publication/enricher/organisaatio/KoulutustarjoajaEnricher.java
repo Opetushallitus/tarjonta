@@ -15,16 +15,14 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher.organisaatio;
 
+import com.sun.istack.internal.SAXException2;
+import fi.vm.sade.tarjoaja.service.types.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.vm.sade.tarjoaja.service.types.KoulutustarjoajaTyyppi;
-import fi.vm.sade.tarjoaja.service.types.MetatietoArvoTyyppi;
-import fi.vm.sade.tarjoaja.service.types.MetatietoAvainTyyppi;
-import fi.vm.sade.tarjoaja.service.types.MetatietoTyyppi;
 
 import fi.vm.sade.tarjonta.publication.enricher.ElementEnricher;
 import fi.vm.sade.tarjonta.publication.types.DescriptionType;
@@ -97,11 +95,29 @@ public class KoulutustarjoajaEnricher extends ElementEnricher {
             if (tarjoaja == null) {
                 log.error("no provider found, skipping element, oid: " + currentOid);
             } else {
+                writeName(tarjoaja);
                 writeDescriptions(tarjoaja);
             }
         } catch (Exception e) {
             log.error("error while looking up provider, skipping element, oid: " + currentOid, e);
         }
+
+    }
+
+
+    private void writeName(KoulutustarjoajaTyyppi tarjoaja) throws SAXException {
+
+        for (KielistettyTekstiTyyppi nimi : tarjoaja.getNimi()) {
+            writeName(nimi.getLang(), nimi.getValue());
+        }
+
+    }
+
+    private void writeName(String lang, String value) throws SAXException {
+
+        parent.writeStartElement(Tags.NAME, Tags.LANG, lang);
+        parent.writeCharacters(value);
+        parent.writeEndElement(Tags.NAME);
 
     }
 
@@ -162,6 +178,8 @@ public class KoulutustarjoajaEnricher extends ElementEnricher {
         String TEXT = "Text";
 
         String LANG = "lang";
+
+        String NAME = "Name";
     }
 
 
