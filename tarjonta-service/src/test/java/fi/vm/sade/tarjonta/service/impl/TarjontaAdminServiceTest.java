@@ -237,7 +237,6 @@ public class TarjontaAdminServiceTest {
         	fail();
         } catch (Exception ex) {
         	Log.debug("Exception thrown");
-        	//assertTrue(ex.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException"));
         }
         assertTrue(this.hakukohdeDAO.findAll().size() == originalSize);
         
@@ -267,7 +266,7 @@ public class TarjontaAdminServiceTest {
         	this.adminService.poistaHakukohde(hakukohdeT);
         	assertTrue(this.hakukohdeDAO.findAll().size() == (originalSize - 1));
         } catch (Exception ex) {
-        	fail();
+            fail();
         }
         
     }

@@ -604,8 +604,16 @@ public class TarjontaPresenter {
      * @param koulutus
      */
     public void removeKoulutus(KoulutusTulos koulutus) {
-        tarjontaAdminService.poistaKoulutus(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
-        getRootView().getListKoulutusView().reload();
+    	try {
+    		tarjontaAdminService.poistaKoulutus(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
+    		getRootView().getListKoulutusView().reload();
+    	} catch (Exception ex) {
+    		if (ex.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException")) {
+    			showNotification(UserNotification.KOULUTUS_REMOVAL_FAILED);
+            } else {
+            	showNotification(UserNotification.SAVE_FAILED);
+            }
+    	}
     }
 
     /*
