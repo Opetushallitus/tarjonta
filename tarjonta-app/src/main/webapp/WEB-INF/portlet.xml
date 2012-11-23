@@ -1,8 +1,8 @@
 <portlet-app
-        xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd"
-        version="1.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd
+    xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd"
+    version="1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd
                         http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd">
 
     <portlet>
@@ -33,6 +33,16 @@
             <short-title>TarjontaPortletApplication</short-title>
             <keywords></keywords>
         </portlet-info>
+        
+        <security-role-ref>
+            <role-name>APP_TARJONTA_CRUD</role-name>
+        </security-role-ref>
+        <security-role-ref>
+            <role-name>APP_TARJONTA_READ_UPDATE</role-name>
+        </security-role-ref>
+        <security-role-ref>
+            <role-name>APP_TARJONTA_READ</role-name>
+        </security-role-ref>
     </portlet>
 
     <portlet>
@@ -63,6 +73,16 @@
             <short-title>HakuPortletApplication</short-title>
             <keywords></keywords>
         </portlet-info>
+        
+        <security-role-ref>
+            <role-name>APP_TARJONTA_CRUD</role-name>
+        </security-role-ref>
+        <security-role-ref>
+            <role-name>APP_TARJONTA_READ_UPDATE</role-name>
+        </security-role-ref>
+        <security-role-ref>
+            <role-name>APP_TARJONTA_READ</role-name>
+        </security-role-ref>
     </portlet>
 
 </portlet-app>
