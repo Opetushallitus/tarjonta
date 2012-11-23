@@ -37,7 +37,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * REST service for publication.
+ * REST service for tarjonta publication. This is not intended for production use. Awaits for proper architecture choice
+ * for data publication at OPH Sade -project.
  *
  * @author Jukka Raanamo
  */
@@ -49,16 +50,9 @@ public class TarjontaPublicationRESTService {
     @Autowired
     private PublicationCollector dataCollector;
 
-    /**
-     * TODO: remove me. TarjontaSampleData provides some test data while development.
-     */
     @Autowired
     private TarjontaSampleData sampleData;
 
-    /**
-     * TODO: remove me. Since there is no process that really publishes any data from "VALMIS" -state to "JULKAISTU" -state,
-     * we'll do it here for testing purposes.
-     */
     @PersistenceContext
     private EntityManager em;
 
@@ -77,7 +71,7 @@ public class TarjontaPublicationRESTService {
     }
 
     /**
-     * Inserts some example tarjonta data - remove me!
+     * Inserts some example tarjonta data.
      *
      * @return
      */
@@ -151,9 +145,6 @@ public class TarjontaPublicationRESTService {
 
     /**
      * Exports current tarjonta content (non-enriched) into response stream.
-     *
-     * todo: concurrent calls to this method are not prevented - we either need to do that or
-     * use method-local data collector.
      *
      * @return
      * @throws JAXBException
