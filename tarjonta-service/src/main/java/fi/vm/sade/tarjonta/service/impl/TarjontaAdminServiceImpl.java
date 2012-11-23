@@ -227,8 +227,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public void initSample(String parameters) {
         try {
-            log.warn("SAMPLE DATA CREATED");
             sampleData.init();
+            log.info("SAMPLE DATA CREATED");
         } catch (Exception e) {
             log.warn("initializing tarjonta data threw exception", e);
         }

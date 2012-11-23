@@ -15,10 +15,13 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
+import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.publication.LearningOpportunityJAXBWriter;
 import fi.vm.sade.tarjonta.publication.PublicationCollector;
 import java.io.IOException;
 import java.io.OutputStream;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -53,6 +56,13 @@ public class TarjontaPublicationRESTService {
     private TarjontaSampleData sampleData;
 
     /**
+     * TODO: remove me. Since there is no process that really publishes any data from "VALMIS" -state to "JULKAISTU" -state,
+     * we'll do it here for testing purposes.
+     */
+    @PersistenceContext
+    private EntityManager em;
+
+    /**
      * Dummy method that can be used to test connection. Always returns "hello" -string.
      *
      * @return
@@ -78,6 +88,50 @@ public class TarjontaPublicationRESTService {
     public String sampleData() {
         sampleData.init();
         return "OK";
+    }
+
+    /**
+     * For demostration/testing purposes only. Toggles all data to JULKAISTU state from VALMIS state.
+     *
+     * @return
+     */
+    @GET
+    @Path("/publish")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Transactional(readOnly = false)
+    public String publish() {
+
+        return toggleChangePublishedState(TarjontaTila.VALMIS, TarjontaTila.JULKAISTU);
+
+    }
+
+    @GET
+    @Path("/unpublish")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Transactional(readOnly = false)
+    public String unpublish() {
+
+        return toggleChangePublishedState(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
+
+    }
+
+    private String toggleChangePublishedState(TarjontaTila fromState, TarjontaTila toState) {
+
+        String resultMsg = "toggling state from: " + fromState + ", to: " + toState;
+        String fromStateName = fromState.name();
+        String toStateName = toState.name();
+
+        String[] entityNames = {"Haku", "Hakukohde", "Koulutusmoduuli", "KoulutusmoduuliToteutus"};
+
+        for (String entityName : entityNames) {
+            resultMsg += "\nupdated "
+                + em.createQuery("UPDATE " + entityName + " set tila = '" + toStateName + "' where tila = '" + fromStateName + "'").executeUpdate()
+                + " " + entityName + " -objects";
+
+        }
+
+        return resultMsg;
+
     }
 
     @GET

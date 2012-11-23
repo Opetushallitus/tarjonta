@@ -22,6 +22,8 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +64,9 @@ public class PublicationEnrichingFilter implements Filter {
             throw new ServletException("only http requests accepted");
         }
 
-        BufferedHttpResponseWrapper responseWrapper = new BufferedHttpResponseWrapper((HttpServletResponse) response);
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+        BufferedHttpResponseWrapper responseWrapper = new BufferedHttpResponseWrapper(httpResponse);
         chain.doFilter(request, responseWrapper);
 
         byte[] responseData = responseWrapper.getBuffer();
@@ -71,6 +75,9 @@ public class PublicationEnrichingFilter implements Filter {
             chain.doFilter(request, response);
             return;
         }
+
+        // add Base64 encoded MD5 checksum of the content for additional cache control support
+        httpResponse.setHeader("Content-MD5", Base64.encodeBase64String(DigestUtils.md5(responseData)));
 
         OutputStream out = response.getOutputStream();
         ByteArrayInputStream in = new ByteArrayInputStream(responseData);

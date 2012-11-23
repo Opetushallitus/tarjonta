@@ -53,7 +53,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QMonikielinenTeksti lkv = new QMonikielinenTeksti("loppukoevaatimukset");
         QMonikielinenTeksti nimi = new QMonikielinenTeksti("nimi");
 
-        BooleanExpression criteria = toteutus.tila.eq(TarjontaTila.JULKAISTU);
+        BooleanExpression criteria = toteutus.tila.eq(TarjontaTila.JULKAISTU).and(m.tila.eq(TarjontaTila.JULKAISTU));
 
         return from(toteutus).
             leftJoin(toteutus.ammattinimikes).fetch().
