@@ -105,6 +105,11 @@ public class TarjontaPublicationRESTService {
 
     }
 
+    /**
+     * For demostration/testing purposes only. Toggles all data to VALMIS state from JULKAISTU state.
+     *
+     * @return
+     */
     @GET
     @Path("/unpublish")
     @Produces(MediaType.TEXT_PLAIN)
