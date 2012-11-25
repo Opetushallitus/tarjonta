@@ -188,50 +188,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                         cbKoulutusohjelma.removeAllItems();
                     }
 
-                    final KoulutuskoodiModel koulutuskoodi = koulutusModel.getKoulutuskoodiModel();
-                    if (koulutuskoodi.getOpintoala() != null) {
-                        koulutusModel.setOpintoala(koulutuskoodi.getOpintoala());
-                        opintoala.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getOpintoala(), MODEL_NAME_PROPERY));
-                    }
-
-                    if (koulutuskoodi.getKoulutusaste() != null) {
-                        koulutusModel.setKoulutusaste(koulutuskoodi.getKoulutusaste());
-                        koulutusaste.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getKoulutusaste(), MODEL_NAME_PROPERY));
-                    }
-
-                    if (koulutuskoodi.getKoulutusala() != null) {
-                        koulutusModel.setKoulutusala(koulutuskoodi.getKoulutusala());
-                        koulutusala.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getKoulutusala(), MODEL_NAME_PROPERY));
-                    }
-
-                    if (koulutuskoodi.getOpintojenLaajuusyksikko() != null) {
-                        koulutusModel.setOpintojenLaajuusyksikko(koulutuskoodi.getOpintojenLaajuusyksikko());
-                        opintojenLaajuusyksikko.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getOpintojenLaajuusyksikko(), MODEL_NAME_PROPERY));
-                    }
-
-                    if (koulutuskoodi.getOpintojenLaajuus() != null) {
-                        koulutusModel.setOpintojenLaajuus(koulutuskoodi.getOpintojenLaajuus());
-                        opintojenLaajuus.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getOpintojenLaajuus(), MODEL_NAME_PROPERY));
-                    }
-
-                    if (koulutuskoodi.getKoulutuksenRakenne() != null) {
-                        koulutusModel.setKoulutuksenRakenne(koulutuskoodi.getKoulutuksenRakenne());
-                        koulutuksenRakenne.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getKoulutuksenRakenne(), MODEL_DESC_PROPERY));
-                    }
-
-                    if (koulutuskoodi.getTavoitteet() != null) {
-                        koulutusModel.setTavoitteet(koulutuskoodi.getTavoitteet());
-                        tavoitteet.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getTavoitteet(), MODEL_DESC_PROPERY));
-                    }
-
-                    if (koulutuskoodi.getJatkoopintomahdollisuudet() != null) {
-                        koulutusModel.setJatkoopintomahdollisuudet(koulutuskoodi.getJatkoopintomahdollisuudet());
-                        jatkoopintomahdollisuudet.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getJatkoopintomahdollisuudet(), MODEL_DESC_PROPERY));
-                    }
-
-                    presenter.loadKoulutusohjelmat();
-                    bicKoulutusohjelma.addAll(koulutusModel.getKoulutusohjelmat());
-                    disableOrEnableComponents(true);
+                    reload();
                 }
             });
 
@@ -249,6 +206,11 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
         presenter.loadKoulutuskoodit();
         bicKoulutuskoodi.addAll(koulutusModel.getKoulutuskoodit());
+
+        if (koulutusModel.isLoaded()) {
+            //reload component data from UI model
+            reload();
+        }
     }
 
     private void initializeLayout() {
@@ -270,7 +232,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         koulutuksenRakenne = buildLabel(this, "koulutuksenRakenne");
         tavoitteet = buildLabel(this, "tavoitteet");
         jatkoopintomahdollisuudet = buildLabel(this, "jatkoopintomahdollisuudet");
-
 
         buildGridOpetuskieletRow(this, "Opetuskieli"); //select one or many
         // buildGridOpetuskieliRow(this, "Opetuskieli"); //select one
@@ -436,9 +397,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private void buildGridPohjakoulutusvaatimusRow(GridLayout grid, final String propertyKey) {
         final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey, type);
-        kcPohjakoulutusvaatimus = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI, true);
+        kcPohjakoulutusvaatimus = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI, true);
         kcPohjakoulutusvaatimus.setCaptionFormatter(koodiNimiFormatter);
-
         kcPohjakoulutusvaatimus.setImmediate(true);
         grid.addComponent(kcPohjakoulutusvaatimus);
         grid.newLine();
@@ -485,12 +445,14 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
     private void showOnlySelectedFormComponents() {
         //Show or hide form components.
-        final KoodiModel koulutusaste = koulutusModel.getKoulutusaste();
-        if (koulutusaste != null) {
+        final KoodiModel koulutusasteModel = koulutusModel.getKoulutusaste();
+
+        if (koulutusasteModel != null) {
             for (Map.Entry<KoulutusasteType, Set<Component>> entry : selectedComponents.entrySet()) {
                 for (Component c : entry.getValue()) {
                     //if the map key value matches to TK code 'koulutusaste'
-                    final boolean active = entry.getKey().getKoulutusaste().equals(koulutusaste.getKoodi());
+                    final boolean active = entry.getKey().getKoulutusaste().equals(koulutusasteModel.getKoodi());
+  
                     c.setVisible(active);
                     c.setEnabled(active);
 
@@ -535,4 +497,59 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             return TarjontaUIHelper.getKoodiMetadataForLanguage(dto, I18N.getLocale()).getNimi();
         }
     };
+
+    /*
+     * Reload data from UI model
+     */
+    public void reload() {
+        final KoulutuskoodiModel koulutuskoodi = koulutusModel.getKoulutuskoodiModel();
+        if (koulutuskoodi.getOpintoala() != null) {
+            koulutusModel.setOpintoala(koulutuskoodi.getOpintoala());
+            opintoala.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getOpintoala(), MODEL_NAME_PROPERY));
+        }
+
+        if (koulutuskoodi.getKoulutusaste() != null) {
+            koulutusModel.setKoulutusaste(koulutuskoodi.getKoulutusaste());
+            koulutusaste.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getKoulutusaste(), MODEL_NAME_PROPERY));
+        }
+
+        if (koulutuskoodi.getKoulutusala() != null) {
+            koulutusModel.setKoulutusala(koulutuskoodi.getKoulutusala());
+            koulutusala.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getKoulutusala(), MODEL_NAME_PROPERY));
+        }
+
+        if (koulutuskoodi.getOpintojenLaajuusyksikko() != null) {
+            koulutusModel.setOpintojenLaajuusyksikko(koulutuskoodi.getOpintojenLaajuusyksikko());
+            opintojenLaajuusyksikko.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getOpintojenLaajuusyksikko(), MODEL_NAME_PROPERY));
+        }
+
+        if (koulutuskoodi.getOpintojenLaajuus() != null) {
+            koulutusModel.setOpintojenLaajuus(koulutuskoodi.getOpintojenLaajuus());
+            opintojenLaajuus.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getOpintojenLaajuus(), MODEL_NAME_PROPERY));
+        }
+
+        if (koulutuskoodi.getKoulutuksenRakenne() != null) {
+            koulutusModel.setKoulutuksenRakenne(koulutuskoodi.getKoulutuksenRakenne());
+            koulutuksenRakenne.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getKoulutuksenRakenne(), MODEL_DESC_PROPERY));
+        }
+
+        if (koulutuskoodi.getTavoitteet() != null) {
+            koulutusModel.setTavoitteet(koulutuskoodi.getTavoitteet());
+            tavoitteet.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getTavoitteet(), MODEL_DESC_PROPERY));
+        }
+
+        if (koulutuskoodi.getJatkoopintomahdollisuudet() != null) {
+            koulutusModel.setJatkoopintomahdollisuudet(koulutuskoodi.getJatkoopintomahdollisuudet());
+            jatkoopintomahdollisuudet.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getJatkoopintomahdollisuudet(), MODEL_DESC_PROPERY));
+        }
+
+        if (koulutusModel.getKoulutusohjelmaModel() != null && koulutusModel.getKoulutusohjelmaModel().getTutkintonimike() != null) {
+            koulutusModel.setTutkintonimike(koulutusModel.getTutkintonimike());
+            tutkintonimike.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getTutkintonimike(), "nimi"));
+        }
+
+        presenter.loadKoulutusohjelmat();
+        bicKoulutusohjelma.addAll(koulutusModel.getKoulutusohjelmat());
+        disableOrEnableComponents(true);
+    }
 }

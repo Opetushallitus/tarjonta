@@ -32,13 +32,14 @@ import org.vaadin.addon.formbinder.PropertyId;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 public class EditKoulutusPainotusFormView extends VerticalLayout {
-
+    
     private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
     @PropertyId("painotus")
     private DialogKoodistoDataTable<KielikaannosViewModel> ddt;
-
+    
     public EditKoulutusPainotusFormView(KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel) {
         this.setSpacing(true);
+        this.setSizeFull();
         this.koulutusPerustiedotModel = koulutusPerustiedotModel;
         addYhteyshenkiloSelectorAndEditor(this);
     }
@@ -50,6 +51,9 @@ public class EditKoulutusPainotusFormView extends VerticalLayout {
      */
     private void addYhteyshenkiloSelectorAndEditor(AbstractLayout layout) {
         final Class classYhteyshenkilo = KielikaannosViewModel.class;
+        
+        
+        
         ddt = new DialogKoodistoDataTable<KielikaannosViewModel>(classYhteyshenkilo, koulutusPerustiedotModel.getPainotus());
 
         //Overide default button property
@@ -58,7 +62,6 @@ public class EditKoulutusPainotusFormView extends VerticalLayout {
         //Add form for dialog.
         ddt.buildByFormLayout(layout, "Lisää painotus", 450, -1, new EditKoulutusPainotusView());
         ddt.setSizeUndefined();
-        ddt.setWidth(500, UNITS_PIXELS);
         ddt.setPageLength(0);
         //Add visible table columns.
         ddt.setColumnHeader("nimi", "Painotus");

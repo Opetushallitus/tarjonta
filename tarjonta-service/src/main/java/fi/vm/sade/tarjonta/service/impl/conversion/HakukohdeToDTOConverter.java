@@ -41,8 +41,8 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.setHakukohteenTila(EntityUtils.convertTila(s.getTila()));
         hakukohde.setOid(s.getOid());
         hakukohde.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
-        hakukohde.setLisatiedot(EntityUtils.copyFields(s.getLisatiedot(), new MonikielinenTekstiTyyppi()));
-        hakukohde.setValintaPerusteidenKuvaukset(EntityUtils.copyFields(s.getValintaperusteKuvaus(), new MonikielinenTekstiTyyppi()));
+        hakukohde.setLisatiedot(EntityUtils.copyFields(s.getLisatiedot()));
+        hakukohde.setValintaPerusteidenKuvaukset(EntityUtils.copyFields(s.getValintaperusteKuvaus()));
         hakukohde.getHakukohteenKoulutusOidit().addAll(convertKoulutukses(s.getKoulutusmoduuliToteutuses()));
         return hakukohde;
     }

@@ -43,11 +43,12 @@ public final class EntityUtils {
      * @param to target of the copying
      * @return
      */
-    public static MonikielinenTekstiTyyppi copyFields(MonikielinenTeksti from, MonikielinenTekstiTyyppi to) {
-
-        if (from == null || to == null) {
+    public static MonikielinenTekstiTyyppi copyFields(MonikielinenTeksti from) {
+        if (from == null) {
             return null;
         }
+
+        MonikielinenTekstiTyyppi to = new MonikielinenTekstiTyyppi();
 
         for (TekstiKaannos tekstiKaannos : from.getTekstis()) {
             Teksti teksti = new Teksti();
@@ -68,11 +69,13 @@ public final class EntityUtils {
      * @param to target of the copying
      * @return
      */
-    public static MonikielinenTeksti copyFields(MonikielinenTekstiTyyppi from, MonikielinenTeksti to) {
+    public static MonikielinenTeksti copyFields(MonikielinenTekstiTyyppi from ){
 
-        if (from == null || to == null) {
+        if (from == null) {
             return null;
         }
+
+        MonikielinenTeksti to = new MonikielinenTeksti();
 
         for (Teksti teksti : from.getTeksti()) {
             to.addTekstiKaannos(teksti.getKieliKoodi(), teksti.getValue());
@@ -97,11 +100,16 @@ public final class EntityUtils {
 
         to.setOpetuskieli(toKoodistoUriSet(from.getOpetuskieli()));
         to.setKoulutuslajis(toKoodistoUriSet(from.getKoulutuslaji()));
-        to.setPainotus(copyFields(from.getPainotus(), new MonikielinenTeksti()));
+        to.setPainotus(copyFields(from.getPainotus()));
 
         if (from.getKoulutusaste() != null) {
             to.setKoulutusaste(from.getKoulutusaste().getUri());
         }
+
+        if (from.getPohjakoulutusvaatimus() != null) {
+            to.setPohjakoulutusvaatimus(from.getPohjakoulutusvaatimus().getUri());
+        }
+
         to.setTarjoaja(from.getTarjoaja());
 
         Set<WebLinkki> toLinkkis = new HashSet<WebLinkki>();
@@ -122,16 +130,20 @@ public final class EntityUtils {
         toKoulutus.setOpetusmuoto(toKoodistoUriSet(fromKoulutus.getOpetusmuoto()));
         toKoulutus.setOid(fromKoulutus.getOid());
         toKoulutus.setKoulutuksenAlkamisPvm(fromKoulutus.getKoulutuksenAlkamisPaiva());
-        toKoulutus.setSuunniteltuKesto(fromKoulutus.getKesto().getYksikko(), fromKoulutus.getKesto().getYksikko());
+        toKoulutus.setSuunniteltuKesto(fromKoulutus.getKesto().getYksikko(), fromKoulutus.getKesto().getArvo());
         toKoulutus.setOpetuskieli(toKoodistoUriSet(fromKoulutus.getOpetuskieli()));
         toKoulutus.setKoulutuslajis(toKoodistoUriSet(fromKoulutus.getKoulutuslaji()));
         toKoulutus.setTarjoaja(fromKoulutus.getTarjoaja());
-        toKoulutus.setPainotus(copyFields(fromKoulutus.getPainotus(), new MonikielinenTeksti()));
+        toKoulutus.setPainotus(copyFields(fromKoulutus.getPainotus()));
 
         copyLisatiedotFields(fromKoulutus, toKoulutus);
 
         if (fromKoulutus.getKoulutusaste() != null) {
             toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
+        }
+
+        if (fromKoulutus.getPohjakoulutusvaatimus() != null) {
+            toKoulutus.setPohjakoulutusvaatimus(fromKoulutus.getPohjakoulutusvaatimus().getUri());
         }
 
         for (YhteyshenkiloTyyppi henkiloFrom : fromKoulutus.getYhteyshenkilo()) {
@@ -172,11 +184,11 @@ public final class EntityUtils {
         }
         toKoulutus.setAmmattinimikes(ammattinimikes);
 
-        toKoulutus.setKuvailevatTiedot(copyFields(fromKoulutus.getKuvailevatTiedot(), new MonikielinenTeksti()));
-        toKoulutus.setKansainvalistyminen(copyFields(fromKoulutus.getKansainvalistyminen(), new MonikielinenTeksti()));
-        toKoulutus.setSijoittuminenTyoelamaan(copyFields(fromKoulutus.getSijoittuminenTyoelamaan(), new MonikielinenTeksti()));
-        toKoulutus.setSisalto(copyFields(fromKoulutus.getSisalto(), new MonikielinenTeksti()));
-        toKoulutus.setYhteistyoMuidenToimijoidenKanssa(copyFields(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa(), new MonikielinenTeksti()));
+        toKoulutus.setKuvailevatTiedot(copyFields(fromKoulutus.getKuvailevatTiedot()));
+        toKoulutus.setKansainvalistyminen(copyFields(fromKoulutus.getKansainvalistyminen()));
+        toKoulutus.setSijoittuminenTyoelamaan(copyFields(fromKoulutus.getSijoittuminenTyoelamaan()));
+        toKoulutus.setSisalto(copyFields(fromKoulutus.getSisalto()));
+        toKoulutus.setYhteistyoMuidenToimijoidenKanssa(copyFields(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa()));
     }
 
     public static void copyFields(YhteyshenkiloTyyppi from, Yhteyshenkilo to) {
@@ -213,15 +225,14 @@ public final class EntityUtils {
         tyyppi.setLaajuusarvoUri(komo.getLaajuusArvo());
         tyyppi.setLaajuusyksikkoUri(komo.getLaajuusYksikko());
         tyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
-        //tyyppi.setTutkintoOhjelmaUri(komo.getTutkintoOhjelmanNimi());
         tyyppi.setUlkoinenTunniste(komo.getUlkoinenTunniste());
         tyyppi.setKoulutusasteUri(komo.getKoulutusAste());
         tyyppi.setKoulutusalaUri(komo.getKoulutusala());
         tyyppi.setOpintoalaUri(komo.getOpintoala());
 
-        tyyppi.setKoulutuksenRakenne(copyFields(komo.getKoulutuksenRakenne(), new MonikielinenTekstiTyyppi()));
-        tyyppi.setTavoitteet(copyFields(komo.getTavoitteet(), new MonikielinenTekstiTyyppi()));
-        tyyppi.setJatkoOpintoMahdollisuudet(copyFields(komo.getJatkoOpintoMahdollisuudet(), new MonikielinenTekstiTyyppi()));
+        tyyppi.setKoulutuksenRakenne(copyFields(komo.getKoulutuksenRakenne()));
+        tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
+        tyyppi.setJatkoOpintoMahdollisuudet(copyFields(komo.getJatkoOpintoMahdollisuudet()));
 
         return tyyppi;
     }
@@ -235,16 +246,15 @@ public final class EntityUtils {
         komo.setKoulutusohjelmaKoodi(tyyppi.getKoulutusohjelmakoodiUri());
         komo.setLaajuus(tyyppi.getLaajuusyksikkoUri(), tyyppi.getLaajuusarvoUri());
         komo.setTutkintonimike(tyyppi.getTutkintonimikeUri());
-        // komo.setTutkintoOhjelmanNimi(tyyppi.getTutkintoOhjelmaUri()); maybe for future use..
         komo.setUlkoinenTunniste(tyyppi.getUlkoinenTunniste());
         komo.setKoulutusAste(tyyppi.getKoulutusasteUri());
         komo.setKoulutusala(tyyppi.getKoulutusalaUri());
         komo.setOpintoala(tyyppi.getOpintoalaUri());
 
         //multilanguage objects
-        komo.setKoulutuksenRakenne(copyFields(tyyppi.getKoulutuksenRakenne(), new MonikielinenTeksti()));
-        komo.setTavoitteet(copyFields(tyyppi.getTavoitteet(), new MonikielinenTeksti()));
-        komo.setJatkoOpintoMahdollisuudet(copyFields(tyyppi.getJatkoOpintoMahdollisuudet(), new MonikielinenTeksti()));
+        komo.setKoulutuksenRakenne(copyFields(tyyppi.getKoulutuksenRakenne()));
+        komo.setTavoitteet(copyFields(tyyppi.getTavoitteet()));
+        komo.setJatkoOpintoMahdollisuudet(copyFields(tyyppi.getJatkoOpintoMahdollisuudet()));
         return komo;
     }
 

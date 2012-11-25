@@ -74,7 +74,7 @@ public class KoulutusKoodistoConverter {
         List<KoulutuskoodiModel> list = new ArrayList<KoulutuskoodiModel>();
 
         for (KoodiType type : koodistoData) {
-            list.add(serachKoodistoRelations(type, locale, kc, kcOhjelma, kcKoodi, kcKieli));
+            list.add(searchKoodistoRelations(type, locale, kc, kcOhjelma, kcKoodi, kcKieli));
         }
 
         return list;
@@ -97,7 +97,7 @@ public class KoulutusKoodistoConverter {
             final KoulutusKoodiToModelConverter<KoodiModel> kcKoodi = new KoulutusKoodiToModelConverter<KoodiModel>();
             final KoulutusKoodiToModelConverter<MonikielinenTekstiModel> kcKieli = new KoulutusKoodiToModelConverter<MonikielinenTekstiModel>();
             for (KoodiType type : koodistoData) {
-                list.add(serachKoodistoRelations(type, locale, kc, kcOhjelma, kcKoodi, kcKieli));
+                list.add(searchKoodistoRelations(type, locale, kc, kcOhjelma, kcKoodi, kcKieli));
             }
 
             if (!list.isEmpty() && list.size() > 0) {
@@ -169,7 +169,7 @@ public class KoulutusKoodistoConverter {
         return uri1.equals(uri2);
     }
 
-    private KoulutuskoodiModel serachKoodistoRelations(final KoodiType type, final Locale locale,
+    private KoulutuskoodiModel searchKoodistoRelations(final KoodiType type, final Locale locale,
             final KoulutusKoodiToModelConverter<KoulutuskoodiModel> kc,
             final KoulutusKoodiToModelConverter<KoulutusohjelmaModel> kcOhjelma,
             final KoulutusKoodiToModelConverter<KoodiModel> kcKoodi,

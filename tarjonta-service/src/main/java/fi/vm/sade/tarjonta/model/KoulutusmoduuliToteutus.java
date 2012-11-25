@@ -26,8 +26,8 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa Koulutusmoduuli:n tietoja ja antaa
- * moduulille aika seka paikka ulottuvuuden.
+ * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
+ * Koulutusmoduuli:n tietoja ja antaa moduulille aika seka paikka ulottuvuuden.
  *
  */
 @Entity
@@ -35,16 +35,12 @@ import org.apache.commons.lang.StringUtils;
 public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public static final String TABLE_NAME = "koulutusmoduuli_toteutus";
-
     private static final long serialVersionUID = -1278564574746813425L;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "koulutusmoduuli_id", nullable = false)
     private Koulutusmoduuli koulutusmoduuli;
-
     @Column(name = "tarjoaja")
     private String tarjoaja;
-
     /**
      * Example display values 'Nuorten koulutus, Aikuisten koulutus'.
      */
@@ -52,83 +48,66 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @CollectionTable(name = TABLE_NAME + "_koulutuslaji", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> koulutuslajis = new HashSet<KoodistoUri>();
-
     /**
      * todo: can we set this attribute to "required"?
      */
     @Temporal(TemporalType.DATE)
     @Column(name = "koulutuksen_alkamis_pvm")
     private Date koulutuksenAlkamisPvm;
-
     @Column(name = "suunniteltu_kesto_arvo")
     private String suunniteltuKestoArvo;
-
     @Column(name = "suunniteltu_kesto_yksikko")
     private String suunniteltuKestoYksikko;
-
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_teema", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> teemas = new HashSet<KoodistoUri>();
-
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_avainsana", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> avainsanas = new HashSet<KoodistoUri>();
-
     @Size(min = 1)
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_opetuskieli", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetuskielis = new HashSet<KoodistoUri>();
-
     @Size(min = 1)
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_opetusmuoto", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetusmuotos = new HashSet<KoodistoUri>();
-
     /**
-     * If non-null, this "koulutus" comes with a charge. This field defines the amount of the charge.
-     * The actual content of this field is yet to be defined.
+     * If non-null, this "koulutus" comes with a charge. This field defines the
+     * amount of the charge. The actual content of this field is yet to be
+     * defined.
      */
     private String maksullisuus;
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "koulutus_hakukohde", joinColumns =
     @JoinColumn(name = "koulutus_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME), inverseJoinColumns =
     @JoinColumn(name = "hakukohde_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME))
     private Set<Hakukohde> hakukohdes = new HashSet<Hakukohde>();
-
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Yhteyshenkilo> yhteyshenkilos = new HashSet<Yhteyshenkilo>();
-
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_linkki", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<WebLinkki> linkkis = new HashSet<WebLinkki>();
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "maksullisuus_teksti_id")
     private MonikielinenTeksti maksullisuusUrl;
-
     @Column(name = "ulkoinentunniste")
     private String ulkoinenTunniste;
-
     @Column(name = "koulutusaste")
     private String koulutusaste;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "arviointikriteerit")
     private MonikielinenTeksti arviointikriteerit;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "loppukoevaatimukset")
     private MonikielinenTeksti loppukoeVaatimukset;
-
-    @Column(name="pohjakoulutusvaatimus")
+    @Column(name = "pohjakoulutusvaatimus")
     private String pohjakoulutusvaatimus;
-   
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "painotus")
     private MonikielinenTeksti painotus;
@@ -140,30 +119,22 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @CollectionTable(name = TABLE_NAME + "_ammattinimike", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> ammattinimikes = new HashSet<KoodistoUri>();
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "kuvailevattiedot")
     private MonikielinenTeksti kuvailevatTiedot;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "sisalto")
     private MonikielinenTeksti sisalto;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "sijoittuminentyoelamaan")
     private MonikielinenTeksti sijoittuminenTyoelamaan;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "kansainvalistyminen")
     private MonikielinenTeksti kansainvalistyminen;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "yhteistyomuidentoimijoidenkanssa")
     private MonikielinenTeksti yhteistyoMuidenToimijoidenKanssa;
 
-
-
-    
     public KoulutusmoduuliToteutus() {
         super();
     }
@@ -183,7 +154,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public final void setKoulutusmoduuli(Koulutusmoduuli moduuli) {
         if (this.koulutusmoduuli != null && !this.koulutusmoduuli.equals(moduuli)) {
             throw new IllegalStateException("trying to change koulutusmoduuli from: "
-                + this.koulutusmoduuli + " to " + moduuli);
+                    + this.koulutusmoduuli + " to " + moduuli);
         }
         this.koulutusmoduuli = moduuli;
     }
@@ -301,7 +272,8 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
-     * Returns non-null value if this KoulutusmoduuliToteutus comes with a charge or null if it is free-of-charge.
+     * Returns non-null value if this KoulutusmoduuliToteutus comes with a
+     * charge or null if it is free-of-charge.
      *
      * @return the maksullisuus
      */
@@ -310,7 +282,8 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
-     * Set amount of charge or null to make free-of-charge. Empty string will be converted to null.
+     * Set amount of charge or null to make free-of-charge. Empty string will be
+     * converted to null.
      *
      * @param maksullisuus the maksullisuus to set
      */
@@ -445,7 +418,8 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
-     * Koulutuksen keston arvo. Yksikkö on eri kentässä: {@link #getSuunniteltuKestoYksikko() }
+     * Koulutuksen keston arvo. Yksikkö on eri kentässä: {@link #getSuunniteltuKestoYksikko()
+     * }
      *
      * @return the suunniteltuKestoArvo
      */
@@ -489,6 +463,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     /**
      * Gets the koulutusaste koodisto uri
+     *
      * @return the koulutusaste
      */
     public String getKoulutusaste() {
@@ -497,6 +472,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     /**
      * Sets the koulutusaste koodisto uri
+     *
      * @param koulutusaste the koulutusaste to set
      */
     public void setKoulutusaste(String koulutusaste) {
@@ -530,10 +506,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
-     * Koulutukselle määritelty vaatimus, jonka mukaan hakijalla (1) on oltava tietty pohjakoulutus
-     * voidakseen tulla valituksi kyseiseen koulutukseen. Pohjakoulutusvaatimuksen täyttäminen on
-     * yksi hakukelpoisuuden edellytyksistä. Koulutuksen järjestäjät ja korkeakoulut voivat valita
-     * hakijoita (1) opiskelijoiksi myös ilman pohjakoulutusvaatimusta, ks. joustava valinta.
+     * Koulutukselle määritelty vaatimus, jonka mukaan hakijalla (1) on oltava
+     * tietty pohjakoulutus voidakseen tulla valituksi kyseiseen koulutukseen.
+     * Pohjakoulutusvaatimuksen täyttäminen on yksi hakukelpoisuuden
+     * edellytyksistä. Koulutuksen järjestäjät ja korkeakoulut voivat valita
+     * hakijoita (1) opiskelijoiksi myös ilman pohjakoulutusvaatimusta, ks.
+     * joustava valinta.
      *
      * Arvo on koodisto uri.
      *
@@ -627,8 +605,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * @param painotus the painotus to set
      */
     public void setPainotus(MonikielinenTeksti painotus) {
+        if (this.painotus != null && this.painotus.getTekstis() == null) {
+            this.painotus.getTekstis().clear();
+        }
         this.painotus = painotus;
     }
-
-
 }

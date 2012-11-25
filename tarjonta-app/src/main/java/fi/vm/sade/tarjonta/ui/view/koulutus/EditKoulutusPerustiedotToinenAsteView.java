@@ -71,6 +71,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
     private TarjontaPresenter presenter;
     private Label documentStatus;
     private int unmodifiedHashcode; //if document is modified after save or load.
+    private EditKoulutusPerustiedotFormView editKoulutusPerustiedotFormView;
 
     public EditKoulutusPerustiedotToinenAsteView() {
         super();
@@ -130,7 +131,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         /*
          *  FORM LAYOUT (form components under navigation buttons)
          */
-        EditKoulutusPerustiedotFormView editKoulutusPerustiedotFormView = new EditKoulutusPerustiedotFormView(presenter, koulutusPerustiedotModel);
+        editKoulutusPerustiedotFormView = new EditKoulutusPerustiedotFormView(presenter, koulutusPerustiedotModel);
         final Form form = new ValidatingViewBoundForm(editKoulutusPerustiedotFormView);
         form.setItemDataSource(hakuBean);
         form.setValidationVisible(false);

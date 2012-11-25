@@ -214,7 +214,7 @@ public class TarjontaUIHelper {
 
                 List<KoodiType> queryResult = _koodiService.searchKoodis(searchCriteria);
 
-                if (queryResult.size() >= 1) {
+                if (queryResult != null && queryResult.size() >= 1) {
                     // Get metadata
                     KoodiMetadataType kmdt = getKoodiMetadataForLanguage(queryResult.get(0), locale);
 
@@ -343,8 +343,6 @@ public class TarjontaUIHelper {
             // Try finnish if current locale is not found
             kmdt = KoodistoHelper.getKoodiMetadataForLanguage(koodiType, KieliType.FI);
         }
-        
-        LOG.debug("Kieliteksti : " + kmdt.getKieli().value());
         
         return kmdt;
     }

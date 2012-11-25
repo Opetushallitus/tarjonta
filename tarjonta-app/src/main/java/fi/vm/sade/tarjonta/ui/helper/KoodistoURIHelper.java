@@ -60,6 +60,7 @@ public class KoodistoURIHelper {
     public static String KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI;
     public static String KOODISTO_TAVOITTEET_URI;
     public static String KOODISTO_JATKOOPINTOMAHDOLLISUUDET_URI;
+    public static String KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI;
 
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
@@ -195,4 +196,10 @@ public class KoodistoURIHelper {
     public void setOpintojenJatkoopintomahdollisuudetUri(String uri) {
         KOODISTO_JATKOOPINTOMAHDOLLISUUDET_URI = uri;
     }
+    
+    @Value("${koodisto-uris.pohjakoulutusvaatimus:NOT_SET}")
+    public void setPohjakoulutusvaatimuksetUri(String uri) {
+         KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI = uri;
+    }
+
 }

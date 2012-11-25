@@ -274,8 +274,9 @@ public class TarjontaPresenter {
                 koulutus.getKoulutusohjelmat().clear();
                 koulutus.getKoulutuskoodit().clear();
 
-                //Add selected data to  the comboboxes.
+                //Add selected data to the comboboxes.
                 if (koulutus.getKoulutusohjelmaModel() != null && koulutus.getKoulutusohjelmaModel().getKoodistoUri() != null) {
+                    LOG.debug("Koulutusohjelma selected : " + koulutus.getKoulutusohjelmaModel().getKoodistoUri());
                     koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
                 }
                 koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());

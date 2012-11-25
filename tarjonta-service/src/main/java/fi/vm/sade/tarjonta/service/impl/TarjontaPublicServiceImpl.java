@@ -25,6 +25,7 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
@@ -82,14 +83,12 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             haut.add(findHakuWithOid(parameters.getHakuOid().trim()));
             hakuVastaus.getResponse().addAll(convert(haut));
         } else if (parameters.getHakuSana() != null) {
-            
+
             List<Haku> haut = new ArrayList<Haku>();
             haut.addAll(hakuDao.findBySearchString(parameters.getHakuSana(), parameters.getHakuSanaKielikoodi()));
             hakuVastaus.getResponse().addAll(convert(haut));
-            
-        } 
-        
-        else {
+
+        } else {
             SearchCriteriaType allCriteria = new SearchCriteriaType();
             allCriteria.setMeneillaan(true);
             allCriteria.setPaattyneet(true);
@@ -225,7 +224,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
             KoulutusKoosteTyyppi koulutusKooste = new KoulutusKoosteTyyppi();
             koulutusKooste.setTarjoaja(komoto.getTarjoaja());
-            koulutusKooste.setNimi(EntityUtils.copyFields(komo.getNimi(), new MonikielinenTekstiTyyppi()));
+            koulutusKooste.setNimi(EntityUtils.copyFields(komo.getNimi()));
             koulutusKooste.setTila(EntityUtils.convertTila(komoto.getTila()));
             koulutusKooste.setKoulutusmoduuli((komo != null) ? komo.getOid() : null);
             koulutusKooste.setKoulutusmoduuliToteutus(komoto.getOid());
@@ -239,7 +238,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     }
 
     public LueKoulutusVastausTyyppi lueKoulutus(LueKoulutusKyselyTyyppi kysely) {
-
+        log.info("in LueKoulutusVastausTyyppi");
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(kysely.getOid());
 
         LueKoulutusVastausTyyppi result = convert(komoto);
@@ -260,7 +259,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     }
 
     private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus fromKoulutus) {
-
+        log.info("in convert ");
         LueKoulutusVastausTyyppi toKoulutus = new LueKoulutusVastausTyyppi();
 
         toKoulutus.setOid(fromKoulutus.getOid());
@@ -281,6 +280,13 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             koulutusaste.setUri(fromKoulutus.getKoulutusaste());
             toKoulutus.setKoulutusaste(koulutusaste);
         }
+
+        if (fromKoulutus.getPohjakoulutusvaatimus() != null) {
+            KoodistoKoodiTyyppi pohjakoulutusvaatimus = new KoodistoKoodiTyyppi();
+            pohjakoulutusvaatimus.setUri(fromKoulutus.getPohjakoulutusvaatimus());
+            toKoulutus.setPohjakoulutusvaatimus(pohjakoulutusvaatimus);
+        }
+
         toKoulutus.setTarjoaja(fromKoulutus.getTarjoaja());
 
         EntityUtils.copyKoodistoUris(fromKoulutus.getOpetusmuotos(), toKoulutus.getOpetusmuoto());
@@ -288,17 +294,16 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         EntityUtils.copyKoodistoUris(fromKoulutus.getKoulutuslajis(), toKoulutus.getKoulutuslaji());
         EntityUtils.copyWebLinkkis(fromKoulutus.getLinkkis(), toKoulutus.getLinkki());
         EntityUtils.copyYhteyshenkilos(fromKoulutus.getYhteyshenkilos(), toKoulutus.getYhteyshenkilo());
-        EntityUtils.copyFields(fromKoulutus.getPainotus(), toKoulutus.getPainotus());
-
+        toKoulutus.setPainotus(EntityUtils.copyFields(fromKoulutus.getPainotus()));
         //
         // Koulutus lisätiedot / additional information for Koulutus
         //
         EntityUtils.copyKoodistoUris(fromKoulutus.getAmmattinimikes(), toKoulutus.getAmmattinimikkeet());
-        EntityUtils.copyFields(fromKoulutus.getKuvailevatTiedot(), toKoulutus.getKuvailevatTiedot());
-        EntityUtils.copyFields(fromKoulutus.getSisalto(), toKoulutus.getSisalto());
-        EntityUtils.copyFields(fromKoulutus.getSijoittuminenTyoelamaan(), toKoulutus.getSijoittuminenTyoelamaan());
-        EntityUtils.copyFields(fromKoulutus.getKansainvalistyminen(), toKoulutus.getKansainvalistyminen());
-        EntityUtils.copyFields(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa(), toKoulutus.getYhteistyoMuidenToimijoidenKanssa());
+        toKoulutus.setKuvailevatTiedot(EntityUtils.copyFields(fromKoulutus.getKuvailevatTiedot()));
+        toKoulutus.setSisalto(EntityUtils.copyFields(fromKoulutus.getSisalto()));
+        toKoulutus.setSijoittuminenTyoelamaan(EntityUtils.copyFields(fromKoulutus.getSijoittuminenTyoelamaan()));
+        toKoulutus.setKansainvalistyminen(EntityUtils.copyFields(fromKoulutus.getKansainvalistyminen()));
+        toKoulutus.setYhteistyoMuidenToimijoidenKanssa(EntityUtils.copyFields(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa()));
 
         return toKoulutus;
     }

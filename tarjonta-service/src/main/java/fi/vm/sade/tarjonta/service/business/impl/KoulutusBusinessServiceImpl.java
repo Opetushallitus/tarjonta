@@ -45,13 +45,10 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
     @Autowired
     private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
-
     @Autowired
     private YhteyshenkiloDAO yhteyshenkiloDAO;
 
@@ -85,8 +82,8 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     public KoulutusmoduuliToteutus createKoulutus(LisaaKoulutusTyyppi koulutus) {
 
         Koulutusmoduuli moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(
-            koulutus.getKoulutusKoodi().getUri(),
-            koulutus.getKoulutusohjelmaKoodi().getUri());
+                koulutus.getKoulutusKoodi().getUri(),
+                koulutus.getKoulutusohjelmaKoodi().getUri());
 
         if (moduuli == null) {
             throw new TarjontaBusinessException(TarjontaVirheKoodi.KOULUTUSTA_EI_OLEMASSA.value());
@@ -165,6 +162,4 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             yhteyshenkiloDAO.remove(y);
         }
     }
-
 }
-

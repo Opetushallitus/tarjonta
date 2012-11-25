@@ -82,8 +82,8 @@ public class KoulutusConverter {
 
     public KoulutusConverter() {
     }
-    
-     /**
+
+    /**
      * Full KOMO data copy from UI model to tyyppi.
      *
      * @param model
@@ -95,15 +95,15 @@ public class KoulutusConverter {
             throw new RuntimeException(INVALID_DATA + "koulutuskoodi URI cannot be null!");
         }
 
-        if (model.getOpintojenLaajuusyksikko() == null || model.getOpintojenLaajuusyksikko().getKoodistoUriVersio() == null) {        
+        if (model.getOpintojenLaajuusyksikko() == null || model.getOpintojenLaajuusyksikko().getKoodistoUriVersio() == null) {
             throw new RuntimeException(INVALID_DATA + "Data validation failed - opintojen laajuusyksikko URI cannot be null! Model : " + model.getOpintojenLaajuusyksikko());
         }
 
-        if (model.getOpintojenLaajuus() == null || model.getOpintojenLaajuus().getKoodistoUriVersio() == null) {      
+        if (model.getOpintojenLaajuus() == null || model.getOpintojenLaajuus().getKoodistoUriVersio() == null) {
             throw new RuntimeException(INVALID_DATA + " opintojen laajuus arvo URI cannot be null! Model : " + model.getOpintojenLaajuus());
         }
 
-        if (model.getOpintoala() == null || model.getOpintoala().getKoodistoUriVersio() == null) { 
+        if (model.getOpintoala() == null || model.getOpintoala().getKoodistoUriVersio() == null) {
             throw new RuntimeException("Data validation failed - opintoala URI cannot be null! Model : " + model.getOpintoala());
         }
 
@@ -112,7 +112,7 @@ public class KoulutusConverter {
         }
 
         if (model.getKoulutusala() == null || model.getKoulutusala().getKoodistoUriVersio() == null) {
-            throw new RuntimeException("Data validation failed - koulutusala URI cannot be null! Model : " + model.getKoulutusala() );
+            throw new RuntimeException("Data validation failed - koulutusala URI cannot be null! Model : " + model.getKoulutusala());
         }
 
         KoulutusmoduuliKoosteTyyppi komo = new KoulutusmoduuliKoosteTyyppi();
@@ -351,8 +351,7 @@ public class KoulutusConverter {
 
         //TODO: change List type to String... minor priority
         tyyppi.getKoulutuslaji().add(createKoodi(model.getKoulutuslaji()));
-        //TODO: change List type to String...  minor priority
-        tyyppi.getPohjakoulutusvaatimus().add(createKoodi(model.getPohjakoulutusvaatimus()));
+        tyyppi.setPohjakoulutusvaatimus(createKoodi(model.getPohjakoulutusvaatimus()));
 
         return tyyppi;
     }
@@ -419,6 +418,8 @@ public class KoulutusConverter {
         model2Aste.setKoulutuskoodiModel(mapToKoulutuskoodiModel(koulutus.getKoulutusKoodi(), locale));
         model2Aste.setKoulutusohjelmaModel(mapToKoulutusohjelmaModel(koulutus.getKoulutusohjelmaKoodi(), locale));
 
+        LOG.debug("koulutus.getPainotus() " + koulutus.getPainotus());
+        LOG.debug("koulutus.getPainotus() " + koulutus.getPainotus().getTeksti().size());
         model2Aste.setPainotus(mapToKielikaannosViewModel(koulutus.getPainotus()));
 
         model2Aste.setKoulutuksenAlkamisPvm(
@@ -443,8 +444,8 @@ public class KoulutusConverter {
             model2Aste.setKoulutuslaji(getUri(koulutus.getKoulutuslaji().get(0)));
         }
 
-        if (koulutus.getPohjakoulutusvaatimus() != null && !koulutus.getPohjakoulutusvaatimus().isEmpty()) {
-            model2Aste.setPohjakoulutusvaatimus(getUri(koulutus.getPohjakoulutusvaatimus().get(0)));
+        if (koulutus.getPohjakoulutusvaatimus() != null) {
+            model2Aste.setPohjakoulutusvaatimus(getUri(koulutus.getPohjakoulutusvaatimus()));
         }
         /*
          * KOMO
@@ -702,10 +703,34 @@ public class KoulutusConverter {
         for (String kieliUri : koulutusLisatiedotModel.getLisatiedot().keySet()) {
             KoulutusLisatietoModel lisatieto = koulutusLisatiedotModel.getLisatiedot(kieliUri);
 
+            if (koulutus.getKuvailevatTiedot() == null) {
+                koulutus.setKuvailevatTiedot(new MonikielinenTekstiTyyppi());
+            }
+
             koulutus.getKuvailevatTiedot().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getKuvailevatTiedot()));
+
+            if (koulutus.getSisalto() == null) {
+                koulutus.setSisalto(new MonikielinenTekstiTyyppi());
+            }
+
             koulutus.getSisalto().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getSisalto()));
+
+            if (koulutus.getSijoittuminenTyoelamaan() == null) {
+                koulutus.setSijoittuminenTyoelamaan(new MonikielinenTekstiTyyppi());
+            }
+
             koulutus.getSijoittuminenTyoelamaan().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getSijoittuminenTyoelamaan()));
+
+            if (koulutus.getKansainvalistyminen() == null) {
+                koulutus.setKansainvalistyminen(new MonikielinenTekstiTyyppi());
+            }
+
             koulutus.getKansainvalistyminen().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getKansainvalistyminen()));
+
+            if (koulutus.getYhteistyoMuidenToimijoidenKanssa() == null) {
+                koulutus.setYhteistyoMuidenToimijoidenKanssa(new MonikielinenTekstiTyyppi());
+            }
+
             koulutus.getYhteistyoMuidenToimijoidenKanssa().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.
                     getYhteistyoMuidenToimijoidenKanssa()));
         }
@@ -838,6 +863,4 @@ public class KoulutusConverter {
 
         return null;
     }
-
-    
 }
