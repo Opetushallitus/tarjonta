@@ -65,8 +65,6 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
-        LOG.info("buildLayout()");
-
         setSpacing(true);
         setMargin(true);
         koulutusLisatiedotModel = _presenter.getModel().getKoulutusLisatiedotModel();

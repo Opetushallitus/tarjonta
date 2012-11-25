@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.ui.TarjontaApplication;
 import fi.vm.sade.tarjonta.ui.TarjontaWebApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -31,14 +32,19 @@ import org.springframework.stereotype.Service;
 public class TarjontaPermissionServiceImpl extends AbstractPermissionService implements TarjontaPermissionService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaWebApplication.class);
+    @Value("${debug.enable:}")
+    private Boolean debugEnabled;
+    @Value("${debug.role.crud:}")
+    private Boolean debugCRUD;
+    @Value("${debug.role.ru:}")
+    private Boolean debugRU;
 
     @Override
     protected User getUser() {
-        LOG.info("GET USER");
         if (TarjontaApplication.getInstance() != null) {
 
             if (TarjontaApplication.getInstance().getUser() != null) {
-                LOG.info("USER OID : " + TarjontaApplication.getInstance().getUser().getOid());
+                LOG.debug("USER OID : " + TarjontaApplication.getInstance().getUser().getOid());
             }
             return TarjontaApplication.getInstance().getUser();
         }
@@ -63,5 +69,40 @@ public class TarjontaPermissionServiceImpl extends AbstractPermissionService imp
     @Override
     protected String getCreateReadUpdateDeleteRole() {
         return ROLE_CRUD;
+    }
+
+    @Override
+    public boolean userCanRead() {
+        return getUser().isUserInRole(getReadRole()) || userCanReadAndUpdate() || userCanCreateReadUpdateAndDelete();
+    }
+
+    @Override
+    public boolean userCanReadAndUpdate() {
+        
+        if (isOverideModeEnabled(debugRU)) {
+            return overideRoleByProperty(debugRU, "CRUD");
+        }
+
+        return super.userCanReadAndUpdate();
+    }
+
+    @Override
+    public boolean userCanCreateReadUpdateAndDelete() {
+
+        if (isOverideModeEnabled(debugRU)) {
+            return overideRoleByProperty(debugCRUD, "CRUD");
+        }
+
+        return super.userCanCreateReadUpdateAndDelete();
+    }
+
+    private boolean isOverideModeEnabled(final Boolean role) {
+        return debugEnabled != null && debugEnabled && role != null;
+    }
+
+    private boolean overideRoleByProperty(final Boolean role, String roleName) {
+        LOG.warn("DEBUG MODE ENABLED - APPLICATION DO NOT USE PORTAL USER ROLES!");
+        LOG.debug(roleName + " : " + role);
+        return role;
     }
 }

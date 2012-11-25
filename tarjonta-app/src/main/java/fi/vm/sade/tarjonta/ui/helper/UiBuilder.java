@@ -55,7 +55,6 @@ public class UiBuilder extends UiUtil {
             + "dictum commodo. Donec vitae feugiat mi. Aliquam facilisis nisl ut magna "
             + "suscipit faucibus. Sed consequat neque non augue tincidunt sed venenatis"
             + " turpis tincidunt. Quisque interdum pharetra mauris nec tincidunt.";
-    
     private static final Logger LOG = LoggerFactory.getLogger(UiBuilder.class);
     /**
      * Default field value as uri formatter for koodisto components - since we
@@ -399,23 +398,33 @@ public class UiBuilder extends UiUtil {
     }
 
     public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, final RequiredRole role, TarjontaPermissionService tps) {
-        Button button = UiUtil.buttonSmallPrimary(layout, caption);
+        return buttonSmallPrimary(layout, caption, null, role, tps);
+    }
+
+    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, Button.ClickListener listener, final RequiredRole role, TarjontaPermissionService tps) {
+        Button button = null;
+        if (listener != null) {
+            button = UiUtil.buttonSmallPrimary(layout, caption, listener);
+        } else {
+            button = UiUtil.buttonSmallPrimary(layout, caption);
+        }
+        
         if (role == null) {
             return button;
         }
-
+        
         switch (role) {
             case CRUD:
-                button.setReadOnly(tps.userCanCreateReadUpdateAndDelete());
+                button.setVisible(tps.userCanCreateReadUpdateAndDelete());
                 break;
             case UPDATE:
-                button.setReadOnly(tps.userCanReadAndUpdate());
+                button.setVisible(tps.userCanReadAndUpdate());
                 break;
             default:
                 break;
         }
 
-        if (button.isReadOnly()) {
+        if (!button.isVisible()) {
             LOG.info("Insufficient user role - button with a caption '" + caption + "' was disabled. Required role " + role);
         }
 

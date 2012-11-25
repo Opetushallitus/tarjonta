@@ -103,7 +103,7 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
         UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Tallenna"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                LOG.info("fire : SaveEvent");
+                LOG.debug("fire : SaveEvent");
                 fireEvent(new DataTableEvent.SaveEvent(EditKoulutusPerustiedotYhteystietoView.this));
             }
         });

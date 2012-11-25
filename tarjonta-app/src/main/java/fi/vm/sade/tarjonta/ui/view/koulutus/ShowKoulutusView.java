@@ -28,8 +28,10 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
+import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
@@ -65,7 +67,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
-        LOG.info("buildLayout(): hakutyyppi uri={}", KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI);
+        LOG.debug("buildLayout(): hakutyyppi uri={}", KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI);
 
         if (_presenter == null) {
             _presenter = new TarjontaPresenter();
@@ -183,8 +185,6 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
      */
     private void buildKoulutuksenKuvailevatTiedot(VerticalLayout layout) {
         layout.addComponent(buildHeaderLayout(T("kuvailevatTiedot"), T(CommonTranslationKeys.MUOKKAA), null, false));
-
-        KoulutusToisenAsteenPerustiedotViewModel perustiedotModel = _presenter.getModel().getKoulutusPerustiedotModel();
         KoulutusLisatiedotModel lisatiedotModel = _presenter.getModel().getKoulutusLisatiedotModel();
 
         TabSheet tab = new TabSheet();
@@ -235,8 +235,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);
-            Button btn = UiUtil.buttonSmallSecodary(headerLayout, btnCaption, listener);
-            btn.setEnabled(enable);
+            Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener, RequiredRole.UPDATE, _presenter.getPermission());
 
             // Add default click listener so that we can show that action has not been implemented as of yet
             if (listener == null) {

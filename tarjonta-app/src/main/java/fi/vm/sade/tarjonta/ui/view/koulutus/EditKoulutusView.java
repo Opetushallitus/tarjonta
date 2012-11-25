@@ -33,8 +33,6 @@ public class EditKoulutusView extends AbstractVerticalLayout {
 
     @Override
     protected void buildLayout() {
-        LOG.info("buildLayout()");
-
         TabSheet tabs = UiBuilder.tabSheet(null);
         addComponent(tabs);
 

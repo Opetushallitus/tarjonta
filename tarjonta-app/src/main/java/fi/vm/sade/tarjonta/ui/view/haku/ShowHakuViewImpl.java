@@ -71,8 +71,6 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
 
     @Override
     public void buildLayout(VerticalLayout layout) {
-        LOG.info("Building layout");
-
         addNavigationButton("", new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {

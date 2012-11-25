@@ -276,12 +276,9 @@ public class TarjontaPresenter {
 
                 //Add selected data to the comboboxes.
                 if (koulutus.getKoulutusohjelmaModel() != null && koulutus.getKoulutusohjelmaModel().getKoodistoUri() != null) {
-                    LOG.debug("Koulutusohjelma selected : " + koulutus.getKoulutusohjelmaModel().getKoodistoUri());
                     koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
                 }
                 koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());
-                LOG.debug("getKoulutuskoodiModel : " + koulutus.getKoulutuskoodiModel());
-                LOG.debug("getKoulutusohjelma : " + koulutus.getKoulutusohjelmaModel());
             } catch (ExceptionMessage ex) {
                 LOG.error("Service call failed.", ex);
                 showMainDefaultView();

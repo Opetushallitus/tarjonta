@@ -21,13 +21,9 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Window;
 
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
-import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
-import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
-import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusLisatiedotForm;
-import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusPainotusFormView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

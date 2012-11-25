@@ -214,8 +214,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     }
 
     private void initializeLayout() {
-        LOG.info("initilizeLayout()");
-
         buildGridKoulutusRow(this, "KoulutusTaiTutkinto");
         buildGridKoulutusohjelmaRow(this, "Koulutusohjelma");
 

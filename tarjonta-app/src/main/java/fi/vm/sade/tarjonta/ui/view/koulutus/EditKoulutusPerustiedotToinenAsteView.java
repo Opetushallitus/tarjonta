@@ -25,6 +25,7 @@ import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.DefaultFieldFactory;
@@ -51,6 +52,7 @@ import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.List;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,8 +83,6 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
-        LOG.info("buildLayout()");
-
         VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
         Panel panel = new Panel();
 
@@ -156,19 +156,32 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 
-        addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
+        ClickListener btnListenerTallennaLuonnoksena = new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 save(form, TarjontaTila.LUONNOS);
             }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
+        };
 
-        addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
+        addNavigationButton(T("tallennaLuonnoksena"), btnListenerTallennaLuonnoksena, StyleEnum.STYLE_BUTTON_PRIMARY);
+        Set<Button> buttonByListener = getButtonByListener(btnListenerTallennaLuonnoksena);
+        for (Button btn : buttonByListener) {
+            btn.setVisible(presenter.getPermission().userCanReadAndUpdate());
+        }
+
+        ClickListener btnListenerTallennaValmiina = new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 save(form, TarjontaTila.VALMIS);
             }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
+        };
+
+        addNavigationButton(T("tallennaValmiina"), btnListenerTallennaValmiina, StyleEnum.STYLE_BUTTON_PRIMARY);
+        buttonByListener = getButtonByListener(btnListenerTallennaValmiina);
+        for (Button btn : buttonByListener) {
+            btn.setVisible(presenter.getPermission().userCanReadAndUpdate());
+        }
+
         final Button.ClickListener clickListener = new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -189,29 +202,11 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
 
         addNavigationButton(T("jatka"), clickListener, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        // Make modification to enable/disable the Save button
-        form.setFormFieldFactory(
-                new DefaultFieldFactory() {
-                    @Override
-                    public Field createField(Item item, Object propertyId, Component uiContext) {
-                        final AbstractField field = (AbstractField) super.createField(item, propertyId, uiContext);
-                        field.addListener(new ValueChangeListener() {
-                            @Override
-                            public void valueChange(ValueChangeEvent event) {
-                                LOG.debug("ValueChangeEvent for button jatka - isModified :" + form.isModified());
-                                if (form.isModified()) {
-                                    koulutusPerustiedotModel.setDocumentStatus(DocumentStatus.EDITED);
-                                    for (Button b : getButtonByName(clickListener)) {
-                                        b.setEnabled(false);
-                                    }
-                                }
-                            }
-                        });
-                        field.setImmediate(true);
-
-                        return field;
-                    }
-                });
+        if (!koulutusPerustiedotModel.isLoaded()) {
+            for (Button b : getButtonByListener(clickListener)) {
+                b.setEnabled(false);
+            }
+        }
     }
 
     private HorizontalLayout buildErrorLayout() {

@@ -45,7 +45,9 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
@@ -95,10 +97,21 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     private TarjontaPresenter presenter;
     @Autowired(required = true)
     private TarjontaUIHelper _tarjontaUIHelper;
+    private boolean attached = false;
 
     public ListHakukohdeViewImpl() {
         //Initialization of the view layout
         setWidth(UiConstant.PCT100);
+
+    }
+
+    @Override
+    public void attach() {
+        if (attached) {
+            return;
+        }
+        attached = true;
+        
         //Creation of the button bar above the Hakukohde hierarchical/grouped list.
         HorizontalLayout buildMiddleResultLayout = buildMiddleResultLayout();
         addComponent(buildMiddleResultLayout);
@@ -127,13 +140,14 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         setExpandRatio(wrapper, 0.07f);
         setExpandRatio(categoryTree, 0.93f);
         setMargin(true);
-
+        
+        setDataSource();
     }
 
     /**
      * Sets the datasource for the hierarchical listing of Hakukohde objects.
      */
-    @PostConstruct
+
     public void setDataSource() {
         presenter.setHakukohdeListView(this);
         categoryTree.removeAllItems();
@@ -155,7 +169,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         hc.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, rowStyleDef.format("", false));
 
         for (Map.Entry<String, List<HakukohdeTulos>> e : set) {
-            LOG.info("getTreeDataSource()" + e.getKey());
+            LOG.debug("getTreeDataSource()" + e.getKey());
             HakukohdeResultRow rowStyle = new HakukohdeResultRow();
 
             Object rootItem = hc.addItem();
@@ -219,11 +233,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     private HorizontalLayout buildMiddleResultLayout() {
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
 
-
-
-        lisaaHakuunB = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("LisaaHakuun"));
-        lisaaHakuunB.addStyleName(Oph.BUTTON_SMALL);
-
+        lisaaHakuunB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LisaaHakuun"), RequiredRole.CRUD, presenter.getPermission());
         lisaaHakuunB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -232,18 +242,13 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             }
         });
 
-        poistaB = UiUtil.button(layout, i18n.getMessage("Poista"));
-        poistaB.addStyleName(Oph.BUTTON_SMALL);
-        //btnPoista.setEnabled(false);
+        poistaB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("Poista"), RequiredRole.CRUD, presenter.getPermission());
         poistaB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                
                 presenter.removeSelectedHakukohteet();
-               
             }
         });
-
 
         cbJarjestys = UiUtil.comboBox(layout, null, ORDER_BY);
         cbJarjestys.setWidth("300px");
@@ -264,10 +269,10 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         this.lisaaHakuunB.addListener(btnKopioiUudelleKaudelle);
     }
 
-    
     public void showErrorMessage(String msg) {
-        getWindow().showNotification(msg,Notification.TYPE_ERROR_MESSAGE);
+        getWindow().showNotification(msg, Notification.TYPE_ERROR_MESSAGE);
     }
+
     /**
      * Reloads the data to the Hakukohde list.
      */
@@ -279,7 +284,6 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
     @Override
     public void appendKoulutuksetToList(HakukohdeViewModel hakukohde) {
-        LOG.info("appendKoulutuksetToList: ");
         HierarchicalContainer hc = (HierarchicalContainer) (this.categoryTree.getContainerDataSource());
         for (Object item : hc.getItemIds()) {
             if (!(categoryTree.getContainerProperty(item, COLUMN_A).getValue() instanceof HakukohdeResultRow)) {

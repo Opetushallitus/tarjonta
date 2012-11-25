@@ -33,14 +33,13 @@ public class TarjontaPortletApplication extends AbstractSadePortletApplication {
 
     @Override
     public synchronized void init() {
-        log.info("init() - portlet");
         super.init();
         createMainWindow();
     }
 
     @Override
     protected void registerListeners(Blackboard blackboard) {
-        log.info("registerListeners() - for blackboard.");
+        log.debug("registerListeners() - for blackboard.");
         blackboard.register(KoulutusmoduuliChangedEventListener.class, KoulutusmoduuliChangedEvent.class);
         blackboard.register(HakueraSavedEventListener.class, HakueraSavedEvent.class);
         blackboard.enableLogging();

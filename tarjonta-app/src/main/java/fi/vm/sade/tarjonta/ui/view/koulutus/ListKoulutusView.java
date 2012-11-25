@@ -104,7 +104,7 @@ public class ListKoulutusView extends VerticalLayout {
     @Override
     public void attach() {
         super.attach();
-        
+
         if (isAttached) {
             LOG.debug("already attached : ListKoulutusView()");
             return;
@@ -166,7 +166,7 @@ public class ListKoulutusView extends VerticalLayout {
         hc.addContainerProperty(COLUMN_A, KoulutusResultRow.class, rowStyleDef.format("", false));
 
         for (Map.Entry<String, List<KoulutusTulos>> e : set) {
-            LOG.info("getTreeDataSource()" + e.getKey());
+            LOG.debug("getTreeDataSource()" + e.getKey());
             KoulutusResultRow rowStyle = new KoulutusResultRow();
 
             Object rootItem = hc.addItem();
@@ -228,7 +228,7 @@ public class ListKoulutusView extends VerticalLayout {
 
 
         //Creating the edit button
-        muokkaaB = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("Muokkaa"));
+        muokkaaB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("Muokkaa"),RequiredRole.UPDATE, presenter.getPermission() );
         muokkaaB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -240,7 +240,7 @@ public class ListKoulutusView extends VerticalLayout {
         muokkaaB.setEnabled(false);
 
         //Creating the remove button
-        poistaB = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("Poista"));
+        poistaB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("Poista"),  RequiredRole.CRUD, presenter.getPermission());
         poistaB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -290,7 +290,9 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     public void toggleCreateKoulutusB(boolean b) {
-        luoKoulutusB.setEnabled(b);
+        if (presenter.getPermission().userCanReadAndUpdate()) {
+            luoKoulutusB.setEnabled(b);
+        }
     }
 
     /**

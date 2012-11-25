@@ -75,7 +75,6 @@ public class TarjontaApplication extends AbstractSadePortletApplication {
     }
 
     public static TarjontaApplication getInstance() {
-        LOG.debug("get thread local instance of {}", tl.get());
         return tl.get();
     }
 }

@@ -83,9 +83,14 @@ public class KoulutusResultRow extends HorizontalLayout {
     private OphRowMenuBar newMenuBar() {
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
         rowMenuBar.addMenuCommand(i18n.getMessage("tarkastele"), menuCommand);
-        rowMenuBar.addMenuCommand(i18n.getMessage("muokkaa"), menuCommand);
+        if (tarjontaPresenter.getPermission().userCanCreateReadUpdateAndDelete()
+                || tarjontaPresenter.getPermission().userCanReadAndUpdate()) {
+            rowMenuBar.addMenuCommand(i18n.getMessage("muokkaa"), menuCommand);
+        }
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaHakukohteet"), menuCommand);
-        rowMenuBar.addMenuCommand(i18n.getMessage("poista"), menuCommand);
+        if (tarjontaPresenter.getPermission().userCanCreateReadUpdateAndDelete()) {
+            rowMenuBar.addMenuCommand(i18n.getMessage("poista"), menuCommand);
+        }
 
         return rowMenuBar;
     }
