@@ -47,6 +47,9 @@ import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.ui.OphAbstractCollapsibleLeft;
 import fi.vm.sade.vaadin.util.UiUtil;
+
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -244,6 +247,8 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         //If an oid list is provided lists the child tree of each organisaatio
         //Otherwise searches with empty search criteria.
         this.organisaatios = this.organisaatioService.searchBasicOrganisaatios(criteria);//searchOrganisaatios(new OrganisaatioSearchCriteriaDTO());
+        
+        sortAlphabetically();
 
         tree.setContainerDataSource(createDatasource());
     }
@@ -410,6 +415,14 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             return org.getNimiEn();
         }
         return "";
+    }
+    
+    private void sortAlphabetically() {
+        Collections.sort(organisaatios, new Comparator<OrganisaatioPerustietoType>() {
+            public int compare(OrganisaatioPerustietoType f1, OrganisaatioPerustietoType f2) {
+                return getClosestNimi(I18N.getLocale(), f1).compareTo(getClosestNimi(I18N.getLocale(), f2));
+            }
+        });
     }
 
     private String T(String key, Object... args) {
