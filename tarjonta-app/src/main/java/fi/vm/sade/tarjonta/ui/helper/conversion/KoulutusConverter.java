@@ -124,7 +124,8 @@ public class KoulutusConverter {
         komo.setLaajuusyksikkoUri(model.getOpintojenLaajuusyksikko().getKoodistoUriVersio()); //OV,OP
         komo.setOpintoalaUri(model.getOpintoala().getKoodistoUriVersio());
         komo.setKoulutusalaUri(model.getKoulutusala().getKoodistoUriVersio());
-        komo.setKoulutusasteUri(model.getKoulutusaste().getKoodistoUriVersio());
+        komo.setKoulutusasteUri(model.getKoulutusaste().getKoodistoUriVersio());     
+        komo.setKoulutusmoduulinNimi(SearchWordUtil.createSearchKeywords(model));
 
         if (model.getKoulutuksenRakenne() != null && model.getKoulutuksenRakenne().getKielikaannos() != null) {
             komo.setKoulutuksenRakenne(KoulutusConverter.mapToMonikielinenTekstiTyyppi(model.getKoulutuksenRakenne().getKielikaannos()));
@@ -762,7 +763,6 @@ public class KoulutusConverter {
         if (model.getKoulutuskoodiModel() == null) {
             throw new RuntimeException("KoulutuskoodiModel object cannot be null");
         }
-
 
         for (KielikaannosViewModel kieliModel : model.getKoulutuskoodiModel().getKielikaannos()) {
             if (type.containsKey(kieliModel.getKielikoodi())) {

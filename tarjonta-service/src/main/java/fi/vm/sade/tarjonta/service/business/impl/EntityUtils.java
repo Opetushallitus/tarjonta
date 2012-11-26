@@ -160,7 +160,7 @@ public final class EntityUtils {
             }
         } // else, set is empty which will clear all previous links
         toKoulutus.setLinkkis(toLinkkis);
-
+        
     }
 
     /**
@@ -255,6 +255,10 @@ public final class EntityUtils {
         komo.setKoulutuksenRakenne(copyFields(tyyppi.getKoulutuksenRakenne()));
         komo.setTavoitteet(copyFields(tyyppi.getTavoitteet()));
         komo.setJatkoOpintoMahdollisuudet(copyFields(tyyppi.getJatkoOpintoMahdollisuudet()));
+        
+        //names for KOMOTO search 
+        komo.setNimi(copyFields(tyyppi.getKoulutusmoduulinNimi()));
+             
         return komo;
     }
 

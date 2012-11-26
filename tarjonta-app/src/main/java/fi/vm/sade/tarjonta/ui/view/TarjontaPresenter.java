@@ -659,8 +659,7 @@ public class TarjontaPresenter {
      * @param organisaatioName - the organisaatio name to select
      */
     public void selectOrganisaatio(String organisaatioOid, String organisaatioName) {
-        getRootView().getBreadcrumbsView().removeAllComponents();
-        getRootView().getBreadcrumbsView().addComponent(new Label(organisaatioName));
+        getRootView().getBreadcrumbsView().setOrganisaatio(organisaatioName);
         getModel().setOrganisaatioOid(organisaatioOid);
         getModel().setOrganisaatioName(organisaatioName);
         List<OrganisaatioDTO> childOrgs = this.organisaatioService.findAllChildrenWithOid(organisaatioOid);

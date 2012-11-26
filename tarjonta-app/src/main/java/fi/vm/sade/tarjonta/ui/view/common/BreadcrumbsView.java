@@ -16,9 +16,8 @@
 package fi.vm.sade.tarjonta.ui.view.common;
 
 import com.vaadin.ui.Label;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Configurable;
+import fi.vm.sade.vaadin.constants.LabelStyleEnum;
+import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
  * Simple "breadcrumbs" view.
@@ -27,13 +26,9 @@ import org.springframework.beans.factory.annotation.Configurable;
  *
  * @author mlyly
  */
-@Configurable
 public class BreadcrumbsView extends AbstractVerticalLayout {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BreadcrumbsView.class);
-
-//    @Autowired
-//    private TarjontaPresenter _presenter;
+    private Label organisaatio;
 
     public BreadcrumbsView() {
         super();
@@ -41,6 +36,15 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
 
     @Override
     protected void buildLayout() {
-        addComponent(new Label("-"));
+        this.setMargin(false,false,false,true);
+        organisaatio = UiUtil.label(this, "-", LabelStyleEnum.H2);
     }
+    /**
+     * @param organisaatio the organisaatio to set
+     */
+    public void setOrganisaatio(String organisaatio) {
+        this.organisaatio.setValue(organisaatio);
+    }
+    
+    
 }

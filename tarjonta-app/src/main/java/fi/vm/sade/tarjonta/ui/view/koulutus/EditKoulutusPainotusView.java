@@ -27,6 +27,7 @@ import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.common.DataTableEvent;
 import fi.vm.sade.vaadin.util.UiUtil;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -53,6 +54,8 @@ public class EditKoulutusPainotusView extends VerticalLayout implements Componen
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPainotusView.class);
     @PropertyId("nimi")
     private TextField tfNimi;
+    
+    @NotNull(message = "{validation.Koulutus.painotus.notNull}")
     @PropertyId("kielikoodi")
     private KoodistoComponent kcKielet;
     private I18NHelper i18n = new I18NHelper(this);

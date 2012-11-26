@@ -107,11 +107,13 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
     @Override
     public void attach() {
+        super.attach();
+
         if (attached) {
             return;
         }
         attached = true;
-        
+
         //Creation of the button bar above the Hakukohde hierarchical/grouped list.
         HorizontalLayout buildMiddleResultLayout = buildMiddleResultLayout();
         addComponent(buildMiddleResultLayout);
@@ -140,14 +142,13 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         setExpandRatio(wrapper, 0.07f);
         setExpandRatio(categoryTree, 0.93f);
         setMargin(true);
-        
+
         setDataSource();
     }
 
     /**
      * Sets the datasource for the hierarchical listing of Hakukohde objects.
      */
-
     public void setDataSource() {
         presenter.setHakukohdeListView(this);
         categoryTree.removeAllItems();
@@ -232,16 +233,16 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      */
     private HorizontalLayout buildMiddleResultLayout() {
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
+        /*
+         lisaaHakuunB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LisaaHakuun"), RequiredRole.CRUD, presenter.getPermission());
+         lisaaHakuunB.addListener(new Button.ClickListener() {
+         @Override
+         public void buttonClick(Button.ClickEvent event) {
+         getWindow().showNotification("Toiminnallisuutta ei ole toteutettu");
 
-        lisaaHakuunB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LisaaHakuun"), RequiredRole.CRUD, presenter.getPermission());
-        lisaaHakuunB.addListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Toiminnallisuutta ei ole toteutettu");
-
-            }
-        });
-
+         }
+         });
+         */
         poistaB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("Poista"), RequiredRole.CRUD, presenter.getPermission());
         poistaB.addListener(new Button.ClickListener() {
             @Override

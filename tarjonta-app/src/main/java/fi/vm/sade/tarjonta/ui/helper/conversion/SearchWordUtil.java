@@ -13,10 +13,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.model.util;
+package fi.vm.sade.tarjonta.ui.helper.conversion;
 
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,18 +33,17 @@ public class SearchWordUtil {
     private static final int MAX_SIZE_CHARACTERS = 255;
     private static final String SUFFIX = ", ";
 
-    public static Map<String, String> createSearchKeywords(final KoulutusTyyppi koulutus) {
+    public static MonikielinenTekstiTyyppi createSearchKeywords(final KoulutusToisenAsteenPerustiedotViewModel koulutus) {
         //add all multilanguage strings as search keywords
         if (koulutus == null) {
-            throw new RuntimeException("KoulutusTyyppi cannot be null.");
+            throw new RuntimeException("KoulutusToisenAsteenPerustiedotViewModel cannot be null.");
         }
 
         Map<String, StringBuilder> langKeywords = new HashMap<String, StringBuilder>();
-        appendTyyppi(langKeywords, koulutus.getKoulutusKoodi());
-        appendTyyppi(langKeywords, koulutus.getKoulutusohjelmaKoodi());
-        appendTyyppi(langKeywords, koulutus.getKoulutusaste());
+        appendTyyppi(langKeywords, koulutus.getKoulutuskoodiModel());
+        appendTyyppi(langKeywords, koulutus.getKoulutusohjelmaModel());
 
-        Map<String, String> outputLangKeywords = new HashMap<String, String>();
+        MonikielinenTekstiTyyppi monikielinenTekstiTyyppi = new MonikielinenTekstiTyyppi();
 
         for (Entry<String, StringBuilder> e : langKeywords.entrySet()) {
             String str = e.getValue().toString();
@@ -49,26 +51,27 @@ public class SearchWordUtil {
                 //max size of the database column field
                 str = str.substring(0, MAX_SIZE_CHARACTERS);
             }
-            outputLangKeywords.put(e.getKey(), str);
+
+            Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
+            teksti.setKieliKoodi(e.getKey());
+            teksti.setValue(str);
+            monikielinenTekstiTyyppi.getTeksti().add(teksti);
         }
 
-        return outputLangKeywords;
+        return monikielinenTekstiTyyppi;
     }
 
     /**
      * Append all name fields to StringBuilder object.
      *
      * @param keywords
-     * @param tyyppi
+     * @param model
      */
-    public static void appendTyyppi(Map<String, StringBuilder> map, final KoodistoKoodiTyyppi tyyppi) {
-        if (tyyppi != null && tyyppi.getNimi() != null) {
-            for (KoodistoKoodiTyyppi.Nimi nimi : tyyppi.getNimi()) {
-                appendLangStringBuffer(map, nimi.getKieli(), nimi.getValue());
-
-                if (tyyppi.getArvo() != null && tyyppi.getNimi() != null && tyyppi.getNimi().isEmpty()) {
-                    appendLangStringBuffer(map, nimi.getKieli(), tyyppi.getArvo());
-                }
+    private static void appendTyyppi(Map<String, StringBuilder> map, final MonikielinenTekstiModel model) {
+        if (model != null && model.getNimi() != null) {
+            for (KielikaannosViewModel nimi : model.getKielikaannos()) {
+                MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
+                appendLangStringBuffer(map, nimi.getKielikoodi(), nimi.getNimi());
             }
         }
     }

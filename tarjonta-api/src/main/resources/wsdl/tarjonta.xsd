@@ -348,6 +348,12 @@
                     <xs:documentation>Koulutusmoduulin oid</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            
+            <xs:element minOccurs="1" maxOccurs="1" name="koulutusmoduulinNimi" type="tns:MonikielinenTekstiTyyppi"  >
+                <xs:annotation>
+                    <xs:documentation>Etukateen formatoitu monikielinen nimi jota käytetään tutkinnon haussa.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element minOccurs="1" maxOccurs="1" name="koulutuskoodiUri" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Koulutuskoodi</xs:documentation>
