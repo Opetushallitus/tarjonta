@@ -52,10 +52,10 @@ import org.vaadin.addon.formbinder.PropertyId;
 public class EditKoulutusPainotusView extends VerticalLayout implements Component {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPainotusView.class);
+    @NotNull(message = "{validation.Koulutus.painotus.nimi.notNull}")
     @PropertyId("nimi")
     private TextField tfNimi;
-    
-    @NotNull(message = "{validation.Koulutus.painotus.notNull}")
+    @NotNull(message = "{validation.Koulutus.painotus.kieli.notNull}")
     @PropertyId("kielikoodi")
     private KoodistoComponent kcKielet;
     private I18NHelper i18n = new I18NHelper(this);

@@ -69,7 +69,7 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 _presenter.commitHakukohdeForm("LUONNOS");
-                getWindow().showNotification(T("EditHakukohdeView.tallennettuLuonnoksena"));
+                getWindow().showNotification(T("tallennettuLuonnoksena"));
             }
         });
 
@@ -77,16 +77,17 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 _presenter.commitHakukohdeForm("VALMIS");
-                getWindow().showNotification(T("EditHakukohdeView.tallennettuValmiina"));
+                getWindow().showNotification(T("tallennettuValmiina"));
             }
         });
-
+        /*  for future use
         addNavigationButton(T("jatka"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
 //                getPresenter().showShowHakukohdeView();
             }
         });
+        */ 
     }
 
 }

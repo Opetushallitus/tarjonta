@@ -228,6 +228,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         ddt.setColumnHeader("kieli", T("LinkkiKielet"));
         ddt.setKoodistoColumns(new String[]{"kieli"});
         ddt.setVisibleColumns(new Object[]{"linkkityyppi", "url", "kieli"});
+        ddt.setPageLength(4); //four rows
         layout.addComponent(ddt);
     }
 

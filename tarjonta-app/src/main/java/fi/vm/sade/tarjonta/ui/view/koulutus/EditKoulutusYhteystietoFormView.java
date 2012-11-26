@@ -67,6 +67,7 @@ public class EditKoulutusYhteystietoFormView extends VerticalLayout {
         ddt.setColumnHeader("kielet", "Pätee kielille");
         ddt.setVisibleColumns(new Object[]{"etunimet", "sukunimi", "titteli", "email", "puhelin", "kielet"});
         ddt.setKoodistoColumns(new String[]{"kielet"});
+        ddt.setPageLength(4);
 
         layout.addComponent(ddt);
 

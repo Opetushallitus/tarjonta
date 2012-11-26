@@ -34,6 +34,8 @@ import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -41,6 +43,7 @@ import java.util.Map;
  */
 public class DialogDataTable<MODEL> extends Table {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DialogDataTable.class);
     private BeanItemContainer<MODEL> container; //Table data container
     private Collection<MODEL> data; //the data model
     private AbstractDataTableDialog dialog;
@@ -149,6 +152,7 @@ public class DialogDataTable<MODEL> extends Table {
                 if (event instanceof DataTableEvent.CancelEvent) {
                     cancelOrClose();
                 } else if (event instanceof DataTableEvent.SaveEvent) {
+                    LOG.debug("Form save event received.");
                     //validated form
                     dialog.getForm().commit();
 

@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.ui.view.common;
 
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Component.Event;
 
 /**
  *

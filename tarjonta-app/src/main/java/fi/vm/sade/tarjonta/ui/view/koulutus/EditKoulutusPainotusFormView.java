@@ -51,9 +51,7 @@ public class EditKoulutusPainotusFormView extends VerticalLayout {
      */
     private void addYhteyshenkiloSelectorAndEditor(AbstractLayout layout) {
         final Class classYhteyshenkilo = KielikaannosViewModel.class;
-        
-        
-        
+           
         ddt = new DialogKoodistoDataTable<KielikaannosViewModel>(classYhteyshenkilo, koulutusPerustiedotModel.getPainotus());
 
         //Overide default button property

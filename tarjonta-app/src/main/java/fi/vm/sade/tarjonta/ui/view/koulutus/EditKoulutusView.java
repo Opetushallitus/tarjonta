@@ -15,11 +15,16 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
+import com.vaadin.ui.AbsoluteLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import fi.vm.sade.vaadin.constants.LabelStyleEnum;
+import fi.vm.sade.vaadin.util.UiUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
@@ -29,10 +34,33 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable
 public class EditKoulutusView extends AbstractVerticalLayout {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusView.class);
+    @Autowired(required = true)
+    private TarjontaPresenter presenter;
+    private static final String LABEL_FORMAT_NEW = "title.new";
+    private static final String LABEL_FORMAT_EDIT = "title.edit";
+    private static final String DEMO_DATA = "tutkintoon johtavaa koulutusta";
+    private Label title;  //formated title label
 
     @Override
     protected void buildLayout() {
+        
+        if (presenter.getModel().getKoulutusPerustiedotModel().isLoaded()) {
+            title = UiUtil.label((AbsoluteLayout) null, T(LABEL_FORMAT_EDIT),
+                    LabelStyleEnum.H2,
+                    DEMO_DATA,
+                    presenter.getModel().getKoulutusPerustiedotModel().getOrganisaatioName());
+
+        } else {
+            title = UiUtil.label((AbsoluteLayout) null,
+                    T(LABEL_FORMAT_NEW),
+                    LabelStyleEnum.H2,
+                    DEMO_DATA,
+                    presenter.getModel().getOrganisaatioName());
+        }
+        HorizontalLayout hlLabelWrapper = new HorizontalLayout();
+        hlLabelWrapper.setMargin(false,false,true,true);
+        hlLabelWrapper.addComponent(title);
+        addComponent(hlLabelWrapper);
         TabSheet tabs = UiBuilder.tabSheet(null);
         addComponent(tabs);
 
