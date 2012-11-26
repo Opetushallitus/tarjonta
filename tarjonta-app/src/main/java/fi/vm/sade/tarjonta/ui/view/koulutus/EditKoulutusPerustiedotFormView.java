@@ -113,7 +113,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
      * Used for add text like 5 + 2.
      */
     @Size(min = 1, message = "{validation.Koulutus.suunniteltuKesto.notNull}")
-    @NotNull(message = "{validation.Koulutus.suunniteltuKesto.size}")
     @PropertyId("suunniteltuKesto")
     private TextField tfSuunniteltuKesto;
     /*
@@ -351,6 +350,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         tfSuunniteltuKesto = UiUtil.textField(hl, null, null, null, T(propertyKey + PROPERTY_PROMPT_SUFFIX));
         tfSuunniteltuKesto.setRequired(true);
         tfSuunniteltuKesto.setImmediate(true);
+        tfSuunniteltuKesto.setValidationVisible(true);
 
         ComboBox comboBox = new ComboBox();
         comboBox.setNullSelectionAllowed(false);

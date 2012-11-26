@@ -53,29 +53,27 @@ import org.vaadin.addon.formbinder.PropertyId;
 public class EditKoulutusPainotusView extends VerticalLayout implements Component {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPainotusView.class);
-    @NotNull(message = "{validation.Koulutus.painotus.nimi.notNull}")
     @PropertyId("nimi")
     private TextField tfNimi;
-    @NotNull(message = "{validation.Koulutus.painotus.kieli.notNull}")
     @PropertyId("kielikoodi")
-    private KoodistoComponent kcKielet;
+    private KoodistoComponent kcKieli;
     private I18NHelper i18n = new I18NHelper(this);
 
     public EditKoulutusPainotusView() {
         this.setSpacing(true);
         this.addComponent(UiUtil.label(null, i18n.getMessage("Painotus")));
 
-        tfNimi = UiUtil.textField(null, "", i18n.getMessage("painotus.prompt"), true);
+        tfNimi = UiUtil.textField(this, "", i18n.getMessage("painotus.prompt"), true);
         tfNimi.setWidth(400, UNITS_PIXELS);
         tfNimi.setRequired(true);
-        tfNimi.setImmediate(true);
         tfNimi.setRequiredError(i18n.getMessage("painotus.tyhja"));
-        this.addComponent(tfNimi);
 
-        this.addComponent(UiUtil.label(null, i18n.getMessage("Kielelle")));
-        kcKielet = UiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
-        kcKielet.getField().setImmediate(true);
-        kcKielet.getField().setRequired(true);
+        UiUtil.label(this, i18n.getMessage("Kielelle"));
+        kcKieli = UiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
+        kcKieli.getField().setRequired(true);
+        kcKieli.getField().setNullSelectionAllowed(false);
+        kcKieli.getField().setRequiredError(i18n.getMessage("kieli.tyhja"));
+        
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
         this.addComponent(hl);

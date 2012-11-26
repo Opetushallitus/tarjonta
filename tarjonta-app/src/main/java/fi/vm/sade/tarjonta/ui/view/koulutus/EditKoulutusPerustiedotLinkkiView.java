@@ -93,13 +93,6 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
                 fireEvent(new DataTableEvent.CancelEvent(EditKoulutusPerustiedotLinkkiView.this));
             }
         });
-
-//        UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Poista"), new Button.ClickListener() {
-//            @Override
-//            public void buttonClick(Button.ClickEvent event) {
-//                fireEvent(new DataTableEvent.DeleteEvent(EditKoulutusPerustiedotLinkkiView.this));
-//            }
-//        });
     }
 
 

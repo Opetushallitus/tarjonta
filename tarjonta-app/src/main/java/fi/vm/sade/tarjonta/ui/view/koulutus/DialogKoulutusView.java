@@ -44,6 +44,9 @@ public class DialogKoulutusView extends AbstractDataTableDialog {
         form.setSizeFull();
         form.setWriteThrough(false);
         form.setEnabled(true);
+        form.setValidationVisible(false);
+        form.setValidationVisibleOnCommit(true);
+        form.setImmediate(true);
         addLayoutComponent(form);
     }
 

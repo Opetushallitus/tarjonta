@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.vaadin.addon.formbinder.ViewBoundForm;
 
 /**
  *
@@ -124,7 +125,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
          *  FORM LAYOUT (form components under navigation buttons)
          */
         editKoulutusPerustiedotFormView = new EditKoulutusPerustiedotFormView(presenter, koulutusPerustiedotModel);
-        final Form form = new ValidatingViewBoundForm(editKoulutusPerustiedotFormView);
+        final Form form = new ViewBoundForm(editKoulutusPerustiedotFormView);
         form.setItemDataSource(hakuBean);
         form.setValidationVisible(false);
         form.setValidationVisibleOnCommit(false);
@@ -183,6 +184,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                 }
                 try {
                     errorView.resetErrors();
+                    form.validate();
                     form.commit();
                     presenter.showShowKoulutusView();
                 } catch (Validator.InvalidValueException e) {
@@ -222,7 +224,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                 new DialogKoodistoDataTable<KoulutusLinkkiViewModel>(modelClass, koulutusLinkit);
 
         ddt.setButtonProperties("LisaaUusi.Linkkityyppi");
-        ddt.buildByFormLayout(layout, "Luo uusi linkkityyppi", 400, 360, new EditKoulutusPerustiedotLinkkiView());
+        ddt.buildByFormLayout(layout, "Luo uusi linkkityyppi", 400, 250, new EditKoulutusPerustiedotLinkkiView());
         ddt.setColumnHeader("linkkityyppi", T("Linkkityyppi"));
         ddt.setColumnHeader("url", T("LinkkiURL"));
         ddt.setColumnHeader("kieli", T("LinkkiKielet"));

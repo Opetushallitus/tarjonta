@@ -68,34 +68,29 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
     public EditKoulutusPerustiedotYhteystietoView() {
         this.setSpacing(true);
 
-        tfEtunimet = UiUtil.textField(null, "", i18n.getMessage("Etunimet.prompt"), true);
+        tfEtunimet = UiUtil.textField(this, "", i18n.getMessage("Etunimet.prompt"), true);
         tfEtunimet.setRequired(true);
         tfEtunimet.setRequiredError(i18n.getMessage("Etunimet.tyhja"));
-        this.addComponent(tfEtunimet);
 
-        tfSukunimi = UiUtil.textField(null, "", i18n.getMessage("Sukunimi.prompt"), true);
+        tfSukunimi = UiUtil.textField(this, "", i18n.getMessage("Sukunimi.prompt"), true);
         tfSukunimi.setRequired(true);
         tfSukunimi.setRequiredError(i18n.getMessage("Sukunimi.tyhja"));
-        this.addComponent(tfSukunimi);
 
-        tfTitteli = UiUtil.textField(null, "", i18n.getMessage("Titteli.prompt"), true);
-        this.addComponent(tfTitteli);
+        tfTitteli = UiUtil.textField(this, "", i18n.getMessage("Titteli.prompt"), true);
 
-        tfEmail = UiUtil.textField(null, "", i18n.getMessage("Email.prompt"), true);
+        tfEmail = UiUtil.textField(this, "", i18n.getMessage("Email.prompt"), true);
         tfEmail.setRequired(true);
         tfEmail.setRequiredError(i18n.getMessage("Email.tyhja"));
-        this.addComponent(tfEmail);
 
-        tfPuhelin = UiUtil.textField(null, "", i18n.getMessage("Puhelin.prompt"), true);
+        tfPuhelin = UiUtil.textField(this, "", i18n.getMessage("Puhelin.prompt"), true);
         tfPuhelin.setRequired(true);
         tfPuhelin.setRequiredError(i18n.getMessage("Puhelin.tyhja"));
         tfPuhelin.addValidator(new RegexpValidator("^(\\s+|\\d+)*", i18n.getMessage("Puhelin.muoto")));
-        this.addComponent(tfPuhelin);
 
-        this.addComponent(UiUtil.label(null, i18n.getMessage("YhteyshenkiloKielissa")));
+        UiUtil.label(this, i18n.getMessage("YhteyshenkiloKielissa"));
 
         kcKielet = UiBuilder.koodistoTwinColSelectUri(this, KoodistoURIHelper.KOODISTO_KIELI_URI);
-        
+
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
         this.addComponent(hl);

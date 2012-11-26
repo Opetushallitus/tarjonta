@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.ui.view.common;
 
 import com.vaadin.data.Property;
+import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.AbstractLayout;
@@ -27,6 +28,7 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.tarjonta.ui.enums.DialogDataTableButton;
 import fi.vm.sade.tarjonta.ui.view.koulutus.DialogKoulutusView;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -85,17 +87,14 @@ public class DialogDataTable<MODEL> extends Table {
      * @param component Layout with form components and data binding.
      */
     public void buildByFormLayout(final AbstractLayout buttonLayout, final String label, final ComponentContainer component) {
-        notNullButtonLayout(buttonLayout);
-        notNullComponentLayout(component);
-
-        dialog = new DialogKoulutusView(label, -1, -1, component);
-        component.addListener(listener);
-        buildButtonLayout(buttonLayout);
+       buildByFormLayout(buttonLayout, label, -1, -1, component);
     }
 
     public void buildByFormLayout(final AbstractLayout buttonLayout, final String label, final int width, final int height, final ComponentContainer component) {
         notNullButtonLayout(buttonLayout);
         notNullComponentLayout(component);
+
+        JSR303FieldValidator.addValidatorsBasedOnAnnotations(component);
 
         dialog = new DialogKoulutusView(label, width, height, component);
         component.addListener(listener);
@@ -149,26 +148,32 @@ public class DialogDataTable<MODEL> extends Table {
         this.listener = new Component.Listener() {
             @Override
             public void componentEvent(Component.Event event) {
-                if (event instanceof DataTableEvent.CancelEvent) {
-                    cancelOrClose();
-                } else if (event instanceof DataTableEvent.SaveEvent) {
-                    LOG.debug("Form save event received.");
-                    //validated form
-                    dialog.getForm().commit();
+                try {
+                    if (event instanceof DataTableEvent.CancelEvent) {
+                        cancelOrClose();
+                    } else if (event instanceof DataTableEvent.SaveEvent) {
+                        LOG.debug("Form save event received.");
+                        //validated form
 
-                    //add new valid data to table data container
-                    MODEL bean = (MODEL) beanItem.getBean();
-                    container.addBean(bean);
+                        dialog.getForm().commit();
 
-                    //refresh row data in table
-                    refreshRowCache();
+                        //add new valid data to table data container
+                        MODEL bean = (MODEL) beanItem.getBean();
+                        container.addBean(bean);
 
-                    //Do not add duplicate objects to model data container.
-                    if (!data.contains(bean)) {
-                        data.add(bean);
+                        //refresh row data in table
+                        refreshRowCache();
+
+                        //Do not add duplicate objects to model data container.
+                        if (!data.contains(bean)) {
+                            data.add(bean);
+                        }
                     }
+                    getWindow().removeWindow(dialog);
+
+                } catch (Validator.InvalidValueException e) {
+                    LOG.warn(e.getMessage());
                 }
-                getWindow().removeWindow(dialog);
             }
         };
     }
