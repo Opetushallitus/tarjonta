@@ -28,6 +28,7 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.common.DataTableEvent;
 import fi.vm.sade.vaadin.util.UiUtil;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -67,11 +68,14 @@ public class EditKoulutusPainotusView extends VerticalLayout implements Componen
         tfNimi = UiUtil.textField(null, "", i18n.getMessage("painotus.prompt"), true);
         tfNimi.setWidth(400, UNITS_PIXELS);
         tfNimi.setRequired(true);
+        tfNimi.setImmediate(true);
         tfNimi.setRequiredError(i18n.getMessage("painotus.tyhja"));
         this.addComponent(tfNimi);
 
         this.addComponent(UiUtil.label(null, i18n.getMessage("Kielelle")));
         kcKielet = UiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
+        kcKielet.getField().setImmediate(true);
+        kcKielet.getField().setRequired(true);
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
         this.addComponent(hl);

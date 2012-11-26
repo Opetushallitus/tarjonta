@@ -115,11 +115,5 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
             }
         });
 
-//        UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Poista"), new Button.ClickListener() {
-//            @Override
-//            public void buttonClick(Button.ClickEvent event) {
-//                fireEvent(new DataTableEvent.DeleteEvent(EditKoulutusPerustiedotYhteystietoView.this));
-//            }
-//        });
     }
 }
