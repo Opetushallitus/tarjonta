@@ -370,7 +370,11 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
      */
     private void organisaatioSelected(OrganisaatioPerustietoType item) {
         LOG.info("Event fired: " + item.getOid());
-        presenter.selectOrganisaatio(item.getOid(), item.getNimiFi());
+        if (!item.getOid().equals(presenter.getModel().getOrganisaatioOid())) {
+        	presenter.selectOrganisaatio(item.getOid(), item.getNimiFi());
+        } else {
+        	presenter.unSelectOrganisaatio();
+        }
     }
 
     /**

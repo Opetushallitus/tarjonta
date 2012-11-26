@@ -149,6 +149,7 @@ public class ListKoulutusView extends VerticalLayout {
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getKoulutusDataSource()));
         luoKoulutusB.setEnabled(presenter.getModel().getOrganisaatioOid() != null);
+        luoHakukohdeB.setEnabled(!presenter.getModel().getSelectedKoulutukset().isEmpty());
     }
 
     /**
@@ -294,6 +295,13 @@ public class ListKoulutusView extends VerticalLayout {
             luoKoulutusB.setEnabled(b);
         }
     }
+    
+	public void toggleCreateHakukohdeB(boolean b) {
+		if (presenter.getPermission().userCanReadAndUpdate()) {
+			this.luoHakukohdeB.setEnabled(b);
+		}
+		
+	}
 
     /**
      * Returns the name of the hakukohde based on koodisto uri given.
@@ -308,4 +316,6 @@ public class ListKoulutusView extends VerticalLayout {
         }
         return nimi;
     }
+
+
 }

@@ -678,6 +678,18 @@ public class TarjontaPresenter {
         this.getHakukohdeListView().reload();
         this.getRootView().getListKoulutusView().toggleCreateKoulutusB(true);
     }
+    
+    public void unSelectOrganisaatio() {
+    	getRootView().getBreadcrumbsView().setOrganisaatio("-");
+    	getModel().setOrganisaatioOid(null);
+    	getModel().setOrganisaatioName(null);
+    	
+    	getModel().getSearchSpec().setOrganisaatioOids(new ArrayList<String>());
+    	getReloadKoulutusListData();
+    	this.getHakukohdeListView().reload();
+        this.getRootView().getListKoulutusView().toggleCreateKoulutusB(false);
+        this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(false);
+    }
 
     /**
      * Gets koulutus by its oid.
@@ -770,4 +782,11 @@ public class TarjontaPresenter {
         
         return tarjontaPermissionService;
     }
+
+    /**
+     * Enables or disables hakukohde button based on whether there are selected koulutus objects in the list.
+     */
+	public void toggleCreateHakukohde() {
+		this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(!this._model.getSelectedKoulutukset().isEmpty());
+	}
 }

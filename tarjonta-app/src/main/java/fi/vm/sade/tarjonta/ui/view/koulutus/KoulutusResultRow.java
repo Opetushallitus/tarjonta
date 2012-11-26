@@ -126,9 +126,12 @@ public class KoulutusResultRow extends HorizontalLayout {
                 if (koulutus != null
                         && isSelected.booleanValue()) {
                     tarjontaPresenter.getSelectedKoulutukset().add(koulutus);
+                    
                 } else if (koulutus != null) {
                     tarjontaPresenter.getSelectedKoulutukset().remove(koulutus);
                 }
+                
+                tarjontaPresenter.toggleCreateHakukohde();
             }
         });
 
