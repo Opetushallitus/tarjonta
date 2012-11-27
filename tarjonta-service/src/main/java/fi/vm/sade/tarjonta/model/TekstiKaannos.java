@@ -64,7 +64,7 @@ public class TekstiKaannos extends BaseEntity {
     }
 
     static String formatKieliKoodi(String value) {
-        return value.trim().toLowerCase();
+        return value.trim();
     }
 
     @Override

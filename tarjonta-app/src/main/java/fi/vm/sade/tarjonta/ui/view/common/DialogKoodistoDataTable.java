@@ -52,20 +52,23 @@ public class DialogKoodistoDataTable<MODEL> extends DialogDataTable<MODEL> {
             for (String koodistoColumnId : koodistoColumns) {
                 final String columnId = (String) colId;
                 final Object uriValues = property.getValue();
-                
-                if (columnId.equals(koodistoColumnId)) {
 
+                if (columnId.equals(koodistoColumnId)) {
+                    LOG.debug("found object : " + uriValues);
                     if (uriValues instanceof Collection) {
                         final Collection<String> values = (Collection<String>) uriValues;
                         Set nameValues = new HashSet(values.size());
 
-                        for (String v : values) {
-                            nameValues.add(getKoodistoData(v));//uri
+                        for (String uri : values) {
+                            String strData = validateOutputData(uri, getKoodistoData(uri));
+                            nameValues.add(strData);
                         }
 
                         return nameValues.toString();
                     } else if (uriValues instanceof String) {
-                        return getKoodistoData((String) uriValues);
+                        return validateOutputData((String) uriValues, getKoodistoData((String) uriValues));
+                    } else {
+                        LOG.warn("An unhandled data type was encountered : " + uriValues);
                     }
                 }
             }
@@ -78,5 +81,13 @@ public class DialogKoodistoDataTable<MODEL> extends DialogDataTable<MODEL> {
         final String koodiNimi = tarjontaUiHelper.getKoodiNimi(uriWithVersion);
         LOG.debug("koodiNimi : " + koodiNimi);
         return koodiNimi;
+    }
+
+    private String validateOutputData(String uri, String strData) {
+        if (strData != null && strData.isEmpty()) {
+            // Fallback to uri value when no koodi result.
+            return uri;
+        }
+        return strData;
     }
 }
