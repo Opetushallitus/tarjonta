@@ -61,18 +61,18 @@ public class SpringIntegrationTest {
         }
     }
 
-    @Test
-    public void testEnrichSingleCode() throws Exception {
-
-        xmlEnricher.setInput(new FileInputStream("src/test/resources/test-enrich-with-koodisto.xml"));
-        xmlEnricher.process();
-
-        String basePath = "//LearningOpportunityDownloadData/LearningOpportunityInstance/Duration/Units";
-
-        AssertXPath.assertEvals("bad fi value", "kuukautta", basePath + "/Label[@lang='fi']/text()", out);
-        AssertXPath.assertEvals("bad sv value", "months", basePath + "/Label[@lang='sv']/text()", out);
-
-    }
+//    @Test
+//    public void testEnrichSingleCode() throws Exception {
+//
+//        xmlEnricher.setInput(new FileInputStream("src/test/resources/test-enrich-with-koodisto.xml"));
+//        xmlEnricher.process();
+//
+//        String basePath = "//LearningOpportunityDownloadData/LearningOpportunityInstance/Duration/Units";
+//
+//        AssertXPath.assertEvals("bad fi value", "kuukautta", basePath + "/Label[@lang='fi']/text()", out);
+//        AssertXPath.assertEvals("bad sv value", "months", basePath + "/Label[@lang='sv']/text()", out);
+//
+//    }
 
 }
 
