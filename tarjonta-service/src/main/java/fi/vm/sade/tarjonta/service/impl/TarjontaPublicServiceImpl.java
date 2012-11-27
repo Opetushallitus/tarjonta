@@ -208,6 +208,15 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     @Override
     public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
 
+        if (kysely.getKoulutusOids() != null && kysely.getKoulutusOids().size() > 0) {
+            HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
+            List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(kysely.getKoulutusOids());
+            for (KoulutusmoduuliToteutus komoto: komotos) {
+                KoulutusTulos tulos = getKoulutusTulosFromKoulutusmoduuliToteutus(komoto);
+                vastaus.getKoulutusTulos().add(tulos);
+            }
+            return vastaus;
+        }  else {
         //Retrieving komotos according to criteria provided in kysely, currently list of tarjoajaOids and a name
         List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findByCriteria(kysely.getTarjoajaOids(), kysely.getNimi());
 
@@ -219,22 +228,28 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         //Populating the answer with required data
         for (KoulutusmoduuliToteutus komoto : komotos) {
 
-            KoulutusTulos tulos = new KoulutusTulos();
-            Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
-
-            KoulutusKoosteTyyppi koulutusKooste = new KoulutusKoosteTyyppi();
-            koulutusKooste.setTarjoaja(komoto.getTarjoaja());
-            koulutusKooste.setNimi(EntityUtils.copyFields(komo.getNimi()));
-            koulutusKooste.setTila(EntityUtils.convertTila(komoto.getTila()));
-            koulutusKooste.setKoulutusmoduuli((komo != null) ? komo.getOid() : null);
-            koulutusKooste.setKoulutusmoduuliToteutus(komoto.getOid());
-            koulutusKooste.setKoulutuskoodi((komo != null) ? komo.getKoulutusKoodi() : null);
-            koulutusKooste.setKoulutusohjelmakoodi((komo != null) ? komo.getKoulutusohjelmaKoodi() : null);
-            koulutusKooste.setAjankohta(new SimpleDateFormat("dd.MM.yyyy").format(komoto.getKoulutuksenAlkamisPvm()));
-            tulos.setKoulutus(koulutusKooste);
+            KoulutusTulos tulos = getKoulutusTulosFromKoulutusmoduuliToteutus(komoto);
             vastaus.getKoulutusTulos().add(tulos);
         }
         return vastaus;
+        }
+    }
+
+    private KoulutusTulos getKoulutusTulosFromKoulutusmoduuliToteutus(KoulutusmoduuliToteutus komoto) {
+        KoulutusTulos tulos = new KoulutusTulos();
+        Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
+
+        KoulutusKoosteTyyppi koulutusKooste = new KoulutusKoosteTyyppi();
+        koulutusKooste.setTarjoaja(komoto.getTarjoaja());
+        koulutusKooste.setNimi(EntityUtils.copyFields(komo.getNimi()));
+        koulutusKooste.setTila(EntityUtils.convertTila(komoto.getTila()));
+        koulutusKooste.setKoulutusmoduuli((komo != null) ? komo.getOid() : null);
+        koulutusKooste.setKoulutusmoduuliToteutus(komoto.getOid());
+        koulutusKooste.setKoulutuskoodi((komo != null) ? komo.getKoulutusKoodi() : null);
+        koulutusKooste.setKoulutusohjelmakoodi((komo != null) ? komo.getKoulutusohjelmaKoodi() : null);
+        koulutusKooste.setAjankohta(new SimpleDateFormat("dd.MM.yyyy").format(komoto.getKoulutuksenAlkamisPvm()));
+        tulos.setKoulutus(koulutusKooste);
+        return tulos;
     }
 
     public LueKoulutusVastausTyyppi lueKoulutus(LueKoulutusKyselyTyyppi kysely) {

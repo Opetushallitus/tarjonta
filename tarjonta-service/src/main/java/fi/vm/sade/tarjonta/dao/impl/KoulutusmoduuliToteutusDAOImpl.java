@@ -59,6 +59,15 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     }
 
     @Override
+    public List<KoulutusmoduuliToteutus> findKoulutusModuuliToteutusesByOids(List<String> oids) {
+         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+         return from(komoto)
+                 .where(komoto.oid.in(oids))
+                 .list(komoto);
+
+    }
+
+    @Override
     public KoulutusmoduuliToteutus findKomotoWithYhteyshenkilosByOid(String oid) {
         Query query = getEntityManager().createQuery(""
             + "SELECT k FROM KoulutusmoduuliToteutus k "
