@@ -44,7 +44,7 @@ public class TarjontaPermissionServiceImpl extends AbstractPermissionService imp
         if (TarjontaApplication.getInstance() != null) {
 
             if (TarjontaApplication.getInstance().getUser() != null) {
-                LOG.debug("USER OID : " + TarjontaApplication.getInstance().getUser().getOid());
+                LOG.info("USER OID : " + TarjontaApplication.getInstance().getUser().getOid());
             }
             return TarjontaApplication.getInstance().getUser();
         }
@@ -78,10 +78,12 @@ public class TarjontaPermissionServiceImpl extends AbstractPermissionService imp
 
     @Override
     public boolean userCanReadAndUpdate() {
-        
+
         if (isOverideModeEnabled(debugRU)) {
-            return overideRoleByProperty(debugRU, "CRUD");
+            return overideRoleByProperty(debugRU, "RU");
         }
+
+        LOG.info("RU : " + super.userCanReadAndUpdate());
 
         return super.userCanReadAndUpdate();
     }
@@ -92,6 +94,8 @@ public class TarjontaPermissionServiceImpl extends AbstractPermissionService imp
         if (isOverideModeEnabled(debugRU)) {
             return overideRoleByProperty(debugCRUD, "CRUD");
         }
+
+        LOG.info("CRUD : " + super.userCanCreateReadUpdateAndDelete());
 
         return super.userCanCreateReadUpdateAndDelete();
     }
