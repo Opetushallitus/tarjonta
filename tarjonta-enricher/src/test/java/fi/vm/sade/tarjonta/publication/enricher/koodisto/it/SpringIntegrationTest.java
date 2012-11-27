@@ -25,13 +25,16 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import static org.junit.Assert.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * Tests configuration loaded from Spring context and KoodistoLookupService wired to real webservice.
- * The tests are only run if -DskipKooodistoIT=false is set.
+ * Tests configuration loaded from Spring context and KoodistoLookupService
+ * wired to real webservice. The tests are only run if -DskipKooodistoIT=false
+ * is set.
  *
  * @author Jukka Raanamo
  */
@@ -41,7 +44,6 @@ public class SpringIntegrationTest {
 
     @Autowired
     private XMLStreamEnricher xmlEnricher;
-
     private ByteArrayOutputStream out;
 
     @Before
@@ -61,6 +63,10 @@ public class SpringIntegrationTest {
         }
     }
 
+    @Test
+    public void testEnrichSingleCode() throws Exception {
+        assertTrue(true);
+    }
 //    @Test
 //    public void testEnrichSingleCode() throws Exception {
 //
@@ -73,6 +79,4 @@ public class SpringIntegrationTest {
 //        AssertXPath.assertEvals("bad sv value", "months", basePath + "/Label[@lang='sv']/text()", out);
 //
 //    }
-
 }
-
