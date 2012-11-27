@@ -65,14 +65,7 @@ public class ListKoulutusView extends VerticalLayout {
      */
     @Autowired(required = true)
     private TarjontaPresenter presenter;
-    /**
-     * toggleCreateKoulutusB Button for editing koulutus objects.
-     */
-    private Button muokkaaB;
-    /**
-     * Button for removing selected koulutus objects.
-     */
-    private Button poistaB;
+
     /**
      * Button for creating a hakukohde object.
      */
@@ -226,29 +219,6 @@ public class ListKoulutusView extends VerticalLayout {
     private HorizontalLayout buildMiddleResultLayout() {
         LOG.debug("buildMiddleResultLayout()");
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
-
-
-        //Creating the edit button
-        muokkaaB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("Muokkaa"),RequiredRole.UPDATE, presenter.getPermission() );
-        muokkaaB.addListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Toiminnallisuutta ei ole toteutettu");
-            }
-        });
-
-        //Enabloidaan sitten kun toiminnallisuus on toteutettu
-        muokkaaB.setEnabled(false);
-
-        //Creating the remove button
-        poistaB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("Poista"),  RequiredRole.CRUD, presenter.getPermission());
-        poistaB.addListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                presenter.removeSelectedKoulutukset();
-            }
-        });
-        poistaB.setEnabled(false);
 
         //Creating the create hakukohde button
         LOG.debug("layout :" + layout + ", i18n : " + i18n + ", " + presenter);
