@@ -233,7 +233,13 @@ public class HakuPresenter {
      * @param haku the haku to remove.
      */
     public void removeHaku(HakuViewModel haku) {
+        try {
         tarjontaAdminService.poistaHaku(haku.getHakuDto());
+        } catch (Exception exp) {
+            if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakuUsedException"))  {
+                hakuList.showErrorMessage(I18N.getMessage("notification.error.haku.used"));
+            }
+        }
         hakuList.reload();
     }
 
