@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 
+import fi.vm.sade.tarjonta.ui.view.hakukohde.HakukohdeCreationDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
@@ -66,6 +68,8 @@ public class ListKoulutusView extends VerticalLayout {
     @Autowired(required = true)
     private TarjontaPresenter presenter;
 
+
+    private Window createHakukohdeDialog;
     /**
      * Button for creating a hakukohde object.
      */
@@ -226,7 +230,8 @@ public class ListKoulutusView extends VerticalLayout {
         luoHakukohdeB.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                presenter.showHakukohdeEditView(presenter.getSelectedKoulutusOids(), null);
+                //presenter.showHakukohdeEditView(presenter.getSelectedKoulutusOids(), null);
+                showCreateHakukohdeDialog(presenter.getSelectedKoulutusOids());
             }
         });
 
@@ -250,6 +255,22 @@ public class ListKoulutusView extends VerticalLayout {
         layout.addComponent(btnInfo);
 
         return layout;
+    }
+
+    private void showCreateHakukohdeDialog(List<String>  oids) {
+        HakukohdeCreationDialog createDialog = new HakukohdeCreationDialog(oids);
+        createDialog.setWidth("500px");
+        createHakukohdeDialog = new Window();
+        createHakukohdeDialog.setContent(createDialog);
+        createHakukohdeDialog.setModal(true);
+        createHakukohdeDialog.center();
+        getWindow().addWindow(createHakukohdeDialog);
+    }
+
+    public void closeHakukohdeCreationDialog() {
+        if (createHakukohdeDialog != null) {
+            getWindow().removeWindow(createHakukohdeDialog);
+        }
     }
 
     /**

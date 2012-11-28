@@ -15,36 +15,44 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.ui.*;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.vaadin.ui.CustomLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.OptionGroup;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.Button;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+
 /*
 * Author: Tuomas Katva
 */
+
+//TKatva, TODO try to make this generic so that it can be used from other windows
 @Configurable
 public class HakukohdeCreationDialog extends CustomComponent {
 
 
     private VerticalLayout rootLayout;
+    private HorizontalLayout titleLayout;
     private HorizontalLayout middleLayout;
     private HorizontalLayout buttonLayout;
+    private OptionGroup optionGroup;
     private boolean attached = false;
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
     private List<String> selectedOids;
-
+    //TODO Use UiBuilder instead of UiUtil ???
+    private Button peruutaBtn;
+    private Button jatkaBtn;
 
     public HakukohdeCreationDialog(List<String> selectedOidsParam) {
         selectedOids = selectedOidsParam;
@@ -57,9 +65,9 @@ public class HakukohdeCreationDialog extends CustomComponent {
     @Override
     public void attach() {
         super.attach();
-
+        tarjontaPresenter.setHakukohdeCreationDialog(this);
         if(tarjontaPresenter != null) {
-            //tarjontaPresenter.setHakukohdeCreationDialog(this);
+            tarjontaPresenter.loadKoulutusToteutusDialogWithOids(selectedOids);
         }
 
         if (attached) {
@@ -71,7 +79,92 @@ public class HakukohdeCreationDialog extends CustomComponent {
 
     public void buildLayout(List<KoulutusOidNameViewModel> koulutusModel) {
 
+
+
+        rootLayout.addComponent(createTitleLayout());
+        rootLayout.addComponent(createOptionGroupLayout(koulutusModel));
+        rootLayout.addComponent(createButtonLayout());
+
     }
 
+    /*
+    * Create top horizontal layout containing Dialog title
+    */
+    private HorizontalLayout createTitleLayout() {
+        titleLayout = UiUtil.horizontalLayout();
+        Label titleLabel = UiUtil.label(null, I18N.getMessage("HakukohdeCreationDialog.title"));
+        titleLayout.addComponent(titleLabel);
+        return titleLayout;
+    }
+
+    private HorizontalLayout createOptionGroupLayout(List<KoulutusOidNameViewModel> values) {
+        middleLayout = UiUtil.horizontalLayout();
+
+        BeanItemContainer<KoulutusOidNameViewModel> koulutukses = new BeanItemContainer<KoulutusOidNameViewModel>(KoulutusOidNameViewModel.class,values);
+
+        optionGroup = new OptionGroup(I18N.getMessage("HakukohdeCreationDialog.valitutKoulutuksetOptionGroup"),koulutukses);
+        optionGroup.setMultiSelect(true);
+        //Set all selected as default
+        for (Object obj: optionGroup.getItemIds()) {
+            optionGroup.select(obj);
+        }
+
+        middleLayout.addComponent(optionGroup);
+
+        return middleLayout;
+    }
+
+    private HorizontalLayout createButtonLayout() {
+        buttonLayout = UiUtil.horizontalLayout();
+
+        peruutaBtn = UiUtil.button(null,I18N.getMessage("HakukohdeCreationDialog.peruutaBtn"));
+        jatkaBtn = UiUtil.button(null,I18N.getMessage("HakukohdeCreationDialog.jatkaBtn"));
+
+        buttonLayout.addComponent(peruutaBtn);
+        buttonLayout.addComponent(jatkaBtn);
+        buttonLayout.setComponentAlignment(peruutaBtn, Alignment.MIDDLE_LEFT);
+        buttonLayout.setComponentAlignment(jatkaBtn,Alignment.MIDDLE_RIGHT);
+        createButtonListeners();
+        return buttonLayout;
+    }
+
+    private void createButtonListeners() {
+        if (peruutaBtn != null) {
+            peruutaBtn.addListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    tarjontaPresenter.cancelHakukohdeCreationDialog();
+                }
+            });
+        }
+
+        if(jatkaBtn != null) {
+            jatkaBtn.addListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    Object values = optionGroup.getValue();
+                    Collection<KoulutusOidNameViewModel> selectedKoulutukses = null;
+                        if (values instanceof  Collection) {
+                        selectedKoulutukses = (Collection<KoulutusOidNameViewModel>)values;
+                        }
+                        /*else if (values instanceof KoulutusOidNameViewModel)  {
+                        selectedKoulutukses = new ArrayList<KoulutusOidNameViewModel>();
+                        selectedKoulutukses.add(((KoulutusOidNameViewModel)values));
+                        } */
+                        tarjontaPresenter.cancelHakukohdeCreationDialog();
+                        tarjontaPresenter.showHakukohdeEditView(koulutusNameViewModelToOidList(selectedKoulutukses),null);
+
+                }
+            });
+        }
+    }
+
+    private List<String> koulutusNameViewModelToOidList(Collection<KoulutusOidNameViewModel> models) {
+        List<String> oids = new ArrayList<String>();
+        for (KoulutusOidNameViewModel model : models) {
+            oids.add(model.getKoulutusOid());
+        }
+        return oids;
+    }
 
 }

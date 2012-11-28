@@ -26,41 +26,24 @@ import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
+import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.ui.model.*;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchOidType;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
-import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.HakukohdeCreationDialog;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
@@ -76,8 +59,6 @@ import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusSearchSpecificationViewModelToDTOConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
-import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
@@ -120,6 +101,7 @@ public class TarjontaPresenter {
     private TarjontaRootView _rootView;
     private ListHakukohdeView _hakukohdeListView;
     private PerustiedotView hakuKohdePerustiedotView;
+    private HakukohdeCreationDialog hakukohdeCreationDialog;
 
     public TarjontaPresenter() {
     }
@@ -209,6 +191,45 @@ public class TarjontaPresenter {
     public void showMainDefaultView() {
         LOG.info("showMainDefaultView()");
         getRootView().showMainView();
+    }
+
+
+    public void loadKoulutusToteutusDialogWithOids(List<String> komotoOids) {
+        HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
+        kysely.getKoulutusOids().addAll(komotoOids);
+        HaeKoulutuksetVastausTyyppi vastaus =  tarjontaPublicService.haeKoulutukset(kysely);
+        List<KoulutusOidNameViewModel> koulutusModel = convertKoulutusToNameOidViewModel(vastaus.getKoulutusTulos());
+        hakukohdeCreationDialog.buildLayout(koulutusModel);
+
+    }
+
+    private List<KoulutusOidNameViewModel> convertKoulutusToNameOidViewModel(List<KoulutusTulos> tulokset) {
+          List<KoulutusOidNameViewModel> result = new ArrayList<KoulutusOidNameViewModel>();
+
+          for (KoulutusTulos tulos:tulokset) {
+
+              KoulutusOidNameViewModel nimiOid = new KoulutusOidNameViewModel();
+
+              nimiOid.setKoulutusOid(tulos.getKoulutus().getKoulutusmoduuli());
+              LOG.info("convertKoulutusToNameOidViewModel tulos size : " + tulokset.size());
+              String nimi = "";
+              if (tulos.getKoulutus().getNimi() != null) {
+              for (Teksti teksti : tulos.getKoulutus().getNimi().getTeksti())  {
+                  if (teksti.getKieliKoodi().trim().equalsIgnoreCase(I18N.getLocale().getLanguage())) {
+                      nimi = teksti.getValue();
+                  }
+              }
+              }
+              nimiOid.setKoulutusNimi(nimi);
+              result.add(nimiOid);
+
+          }
+
+          return result;
+    }
+
+    public void cancelHakukohdeCreationDialog() {
+        getRootView().getListKoulutusView().closeHakukohdeCreationDialog();
     }
 
     /**
@@ -735,7 +756,7 @@ public class TarjontaPresenter {
 
     /**
      *
-     * @param koulutusPerustiedotModel
+     *
      */
     public void checkKoulutusmoduuli() {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
@@ -818,4 +839,12 @@ public class TarjontaPresenter {
 	public void toggleCreateHakukohde() {
 		this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(!this._model.getSelectedKoulutukset().isEmpty());
 	}
+
+    public HakukohdeCreationDialog getHakukohdeCreationDialog() {
+        return hakukohdeCreationDialog;
+    }
+
+    public void setHakukohdeCreationDialog(HakukohdeCreationDialog hakukohdeCreationDialog) {
+        this.hakukohdeCreationDialog = hakukohdeCreationDialog;
+    }
 }

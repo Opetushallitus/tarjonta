@@ -40,4 +40,9 @@ public class KoulutusOidNameViewModel {
     public void setKoulutusNimi(String koulutusNimi) {
         this.koulutusNimi = koulutusNimi;
     }
+
+    @Override
+    public String toString() {
+        return koulutusNimi;
+    }
 }
