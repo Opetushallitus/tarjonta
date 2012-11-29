@@ -92,6 +92,8 @@ public class HakukohdeCreationDialog extends CustomComponent {
     */
     private HorizontalLayout createTitleLayout() {
         titleLayout = UiUtil.horizontalLayout();
+        titleLayout.setMargin(true,false,false,true);
+
         Label titleLabel = UiUtil.label(null, I18N.getMessage("HakukohdeCreationDialog.title"));
         titleLayout.addComponent(titleLabel);
         return titleLayout;
@@ -99,16 +101,17 @@ public class HakukohdeCreationDialog extends CustomComponent {
 
     private HorizontalLayout createOptionGroupLayout(List<KoulutusOidNameViewModel> values) {
         middleLayout = UiUtil.horizontalLayout();
-
+        middleLayout.setMargin(true,false,false,false);
         BeanItemContainer<KoulutusOidNameViewModel> koulutukses = new BeanItemContainer<KoulutusOidNameViewModel>(KoulutusOidNameViewModel.class,values);
 
-        optionGroup = new OptionGroup(I18N.getMessage("HakukohdeCreationDialog.valitutKoulutuksetOptionGroup"),koulutukses);
+        optionGroup = new OptionGroup(null,koulutukses);
         optionGroup.setMultiSelect(true);
         //Set all selected as default
         for (Object obj: optionGroup.getItemIds()) {
             optionGroup.select(obj);
         }
-
+        Label lbl = new Label(I18N.getMessage("HakukohdeCreationDialog.valitutKoulutuksetOptionGroup"));
+        middleLayout.addComponent(lbl);
         middleLayout.addComponent(optionGroup);
 
         return middleLayout;
@@ -117,8 +120,8 @@ public class HakukohdeCreationDialog extends CustomComponent {
     private HorizontalLayout createButtonLayout() {
         buttonLayout = UiUtil.horizontalLayout();
 
-        peruutaBtn = UiUtil.button(null,I18N.getMessage("HakukohdeCreationDialog.peruutaBtn"));
-        jatkaBtn = UiUtil.button(null,I18N.getMessage("HakukohdeCreationDialog.jatkaBtn"));
+        peruutaBtn = UiUtil.buttonSmallPrimary(null,I18N.getMessage("HakukohdeCreationDialog.peruutaBtn"));
+        jatkaBtn = UiUtil.buttonSmallPrimary(null,I18N.getMessage("HakukohdeCreationDialog.jatkaBtn"));
 
         buttonLayout.addComponent(peruutaBtn);
         buttonLayout.addComponent(jatkaBtn);
