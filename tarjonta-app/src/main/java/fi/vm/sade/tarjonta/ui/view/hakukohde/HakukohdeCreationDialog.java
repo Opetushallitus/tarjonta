@@ -150,10 +150,7 @@ public class HakukohdeCreationDialog extends CustomComponent {
                         if (values instanceof  Collection) {
                         selectedKoulutukses = (Collection<KoulutusOidNameViewModel>)values;
                         }
-                        /*else if (values instanceof KoulutusOidNameViewModel)  {
-                        selectedKoulutukses = new ArrayList<KoulutusOidNameViewModel>();
-                        selectedKoulutukses.add(((KoulutusOidNameViewModel)values));
-                        } */
+
                         tarjontaPresenter.cancelHakukohdeCreationDialog();
                         tarjontaPresenter.showHakukohdeEditView(koulutusNameViewModelToOidList(selectedKoulutukses),null);
 

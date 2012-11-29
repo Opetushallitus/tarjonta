@@ -326,7 +326,10 @@ public class TarjontaPresenter {
      * @param hakukohdeOid
      */
     public void showHakukohdeEditView(List<String> koulutusOids, String hakukohdeOid) {
-        LOG.info("showHakukohdeEditView()");
+        LOG.info("showHakukohdeEditView()" );
+        for (String oid : koulutusOids) {
+            LOG.info("OID : {} " , oid);
+        }
         //After the data has been initialized the form is created
         EditHakukohdeView editHakukohdeView = new EditHakukohdeView();
         if (hakukohdeOid == null) {
