@@ -246,6 +246,9 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         bind();
         //If an oid list is provided lists the child tree of each organisaatio
         //Otherwise searches with empty search criteria.
+        criteria.getOidResctrictionList().clear();
+        //TODO uncommenting the population of oid restriction below 
+        //criteria.getOidResctrictionList().addAll(this.presenter.getPermission().getUserOrganisationOids());
         this.organisaatios = this.organisaatioService.searchBasicOrganisaatios(criteria);//searchOrganisaatios(new OrganisaatioSearchCriteriaDTO());
         
         sortAlphabetically();

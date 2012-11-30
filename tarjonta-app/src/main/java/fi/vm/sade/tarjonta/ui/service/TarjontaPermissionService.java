@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.service;
 
+import java.util.List;
+
 import fi.vm.sade.generic.service.PermissionService;
 
 /**
@@ -27,4 +29,6 @@ public interface TarjontaPermissionService extends PermissionService {
     public static final String ROLE_CRUD = SERVICE + "_CRUD";
     public static final String ROLE_RU = SERVICE + "_READ_UPDATE";
     public static final String ROLE_R = SERVICE + "_READ";
+    
+    public List<String> getUserOrganisationOids(); 
 }

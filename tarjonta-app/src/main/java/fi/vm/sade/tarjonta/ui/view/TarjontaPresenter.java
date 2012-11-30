@@ -724,9 +724,14 @@ public class TarjontaPresenter {
 //            orgOids.add(org.getOid());
 //        }
 //        getModel().getSearchSpec().setOrganisaatioOids(orgOids);
+        
+        //Clearing the selected hakukohde and koulutus objects
+        getModel().getSelectedhakukohteet().clear();
+        getModel().getSelectedKoulutukset().clear();
 
         // Updating koulutuslista to show only komotos with tarjoaja matching
         // the selected org or one of its descendants
+        
         getReloadKoulutusListData();
         this.getHakukohdeListView().reload();
         this.getRootView().getListKoulutusView().toggleCreateKoulutusB(true);
@@ -737,6 +742,10 @@ public class TarjontaPresenter {
     	getModel().setOrganisaatioOid(null);
     	getModel().setOrganisaatioName(null);
 
+    	//Clearing the selected hakukohde and koulutus objects
+    	getModel().getSelectedhakukohteet().clear();
+        getModel().getSelectedKoulutukset().clear();
+    	
     	getModel().getSearchSpec().setOrganisaatioOids(new ArrayList<String>());
     	getReloadKoulutusListData();
     	this.getHakukohdeListView().reload();

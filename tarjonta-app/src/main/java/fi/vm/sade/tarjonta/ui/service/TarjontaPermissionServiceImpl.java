@@ -15,6 +15,9 @@
  */
 package fi.vm.sade.tarjonta.ui.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fi.vm.sade.generic.service.AbstractPermissionService;
 import fi.vm.sade.generic.ui.portlet.security.User;
 import fi.vm.sade.tarjonta.ui.TarjontaApplication;
@@ -40,7 +43,7 @@ public class TarjontaPermissionServiceImpl extends AbstractPermissionService imp
     private Boolean debugRU;
 
     @Override
-    protected User getUser() {
+    public User getUser() {
         if (TarjontaApplication.getInstance() != null) {
 
             if (TarjontaApplication.getInstance().getUser() != null) {
@@ -98,6 +101,13 @@ public class TarjontaPermissionServiceImpl extends AbstractPermissionService imp
         LOG.debug("CRUD : " + super.userCanCreateReadUpdateAndDelete());
 
         return super.userCanCreateReadUpdateAndDelete();
+    }
+    
+    //Gets user organisation oids
+    public List<String> getUserOrganisationOids() {
+    	List<String> organisations = new ArrayList<String>();
+    	organisations.addAll(this.getUser().getOrganisations());
+    	return organisations;
     }
 
     private boolean isOverideModeEnabled(final Boolean role) {
