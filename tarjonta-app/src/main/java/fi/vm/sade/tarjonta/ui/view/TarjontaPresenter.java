@@ -210,7 +210,7 @@ public class TarjontaPresenter {
 
               KoulutusOidNameViewModel nimiOid = new KoulutusOidNameViewModel();
 
-              nimiOid.setKoulutusOid(tulos.getKoulutus().getKoulutusmoduuli());
+              nimiOid.setKoulutusOid(tulos.getKoulutus().getKomotoOid());
               LOG.info("convertKoulutusToNameOidViewModel tulos size : " + tulokset.size());
               String nimi = "";
               if (tulos.getKoulutus().getNimi() != null) {
