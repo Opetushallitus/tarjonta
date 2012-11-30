@@ -248,6 +248,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         koulutusKooste.setKoulutuskoodi((komo != null) ? komo.getKoulutusKoodi() : null);
         koulutusKooste.setKoulutusohjelmakoodi((komo != null) ? komo.getKoulutusohjelmaKoodi() : null);
         koulutusKooste.setAjankohta(new SimpleDateFormat("dd.MM.yyyy").format(komoto.getKoulutuksenAlkamisPvm()));
+        koulutusKooste.setKomotoOid(komoto.getOid());
         tulos.setKoulutus(koulutusKooste);
         return tulos;
     }
