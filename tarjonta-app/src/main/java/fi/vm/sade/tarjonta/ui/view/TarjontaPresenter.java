@@ -451,6 +451,7 @@ public class TarjontaPresenter {
         try {
         tarjontaAdminService.poistaHakukohde(hakukohde);
         getHakukohdeListView().reload();
+        showNotification(UserNotification.DELETE_SUCCESS);
         } catch (Exception exp) {
             if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException")) {
                 getHakukohdeListView().showErrorMessage(I18N.getMessage("notification.error.hakukohde.used"));

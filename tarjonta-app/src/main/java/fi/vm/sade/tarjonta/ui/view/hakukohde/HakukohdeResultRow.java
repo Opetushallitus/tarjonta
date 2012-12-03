@@ -25,11 +25,15 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
+import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
@@ -53,12 +57,16 @@ public class HakukohdeResultRow extends HorizontalLayout {
      * The hakukohde to display on the row.
      */
     private HakukohdeTulos hakukohde;
+    
+    private String hakukohdeNimi;
 
 
 	/**
      * Checkbox to indicate if this row is selected.
      */
     private CheckBox isSelected;
+    
+    private Window removeHakukohdeDialog;
 
     /**
      * The presenter object for the component.
@@ -70,8 +78,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
         this.hakukohde = new HakukohdeTulos();
     }
 
-    public HakukohdeResultRow(HakukohdeTulos hakukohde) {
+    public HakukohdeResultRow(HakukohdeTulos hakukohde, String hakukohdeNimi) {
         this.hakukohde = hakukohde;
+        this.hakukohdeNimi = hakukohdeNimi;
     }
 
     /**
@@ -110,9 +119,36 @@ public class HakukohdeResultRow extends HorizontalLayout {
         } else if (selection.equals(i18n.getMessage("muokkaa"))) {
         	tarjontaPresenter.showHakukohdeEditView(null, hakukohde.getHakukohde().getOid());
         } else if (selection.equals(i18n.getMessage("poista"))) {
-        	tarjontaPresenter.removeHakukohde(hakukohde);
+        	//tarjontaPresenter.removeHakukohde(hakukohde);
+        	showRemoveDialog();
         } else if (selection.equals(i18n.getMessage("naytaKoulutukset"))) {
         	tarjontaPresenter.showKoulutuksetForHakukohde(hakukohde.getHakukohde().getOid());
+        }
+    }
+    
+    private void showRemoveDialog() {                
+    	RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), hakukohdeNimi, T("removeYes"), T("removeNo"), 
+    	                                                            new Button.ClickListener() {	
+			                                                                @Override
+			                                                                public void buttonClick(ClickEvent event) {
+			                                                                    closeHakukohdeCreationDialog();
+			                                                                    tarjontaPresenter.removeHakukohde(hakukohde);
+			                                                                }
+    	                                                            },
+    	                                                            new Button.ClickListener() {
+			
+    	                                                                       @Override
+    	                                                                       public void buttonClick(ClickEvent event) {
+    	                                                                           closeHakukohdeCreationDialog();
+				
+    	                                                                       }});
+        removeHakukohdeDialog = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
+        getWindow().addWindow(removeHakukohdeDialog);
+    }
+    
+    public void closeHakukohdeCreationDialog() {
+        if (removeHakukohdeDialog != null) {
+            getWindow().removeWindow(removeHakukohdeDialog);
         }
     }
 
@@ -188,5 +224,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
     public HakukohdeTulos getHakukohde() {
 		return hakukohde;
 	}
+    
+    private String T(String key, Object... args) {
+        return i18n.getMessage(key, args);
+    }
 
 }

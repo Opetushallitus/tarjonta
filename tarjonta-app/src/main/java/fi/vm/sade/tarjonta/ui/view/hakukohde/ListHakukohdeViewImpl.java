@@ -178,7 +178,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(buildOrganisaatioCaption(e), false));
 
             for (HakukohdeTulos curHakukohde : e.getValue()) {
-                HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde);
+                HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde, getHakukohdeNimi(curHakukohde));
                 hc.addItem(curHakukohde);
                 hc.setParent(curHakukohde, rootItem);
                 hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(buildHakukohdeCaption(curHakukohde), true));
@@ -193,9 +193,13 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     }
 
     private String buildHakukohdeCaption(HakukohdeTulos curHakukohde) {
-        return getKoodiNimi(curHakukohde.getHakukohde().getNimi())
-                + ", " + getKoodiNimi(curHakukohde.getHaku().getHakukausiUri()) + " " + curHakukohde.getHaku().getHakuvuosi()
+        return getHakukohdeNimi(curHakukohde)
                 + ", " + i18n.getMessage(curHakukohde.getHakukohde().getTila().name());
+    }
+    
+    private String getHakukohdeNimi(HakukohdeTulos curHakukohde) {
+        return getKoodiNimi(curHakukohde.getHakukohde().getNimi())
+                + ", " + getKoodiNimi(curHakukohde.getHaku().getHakukausiUri()) + " " + curHakukohde.getHaku().getHakuvuosi();
     }
 
     /**
