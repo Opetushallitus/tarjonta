@@ -31,6 +31,7 @@ import fi.vm.sade.tarjonta.ui.model.*;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidType;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchOidType;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
@@ -49,9 +50,13 @@ import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -393,7 +398,7 @@ public class TarjontaPresenter {
             getModel().setHakukohteet(new ArrayList<HakukohdeTulos>());
         }
         for (HakukohdeTulos curHk : getModel().getHakukohteet()) {
-            String hkKey = curHk.getKoulutus().getTarjoaja();
+            String hkKey = this.getOrganisaatioNimiByOid(curHk.getKoulutus().getTarjoaja());
             if (!map.containsKey(hkKey)) {
                 LOG.info("Adding a new key to the map: " + hkKey);
                 List<HakukohdeTulos> hakukohteetM = new ArrayList<HakukohdeTulos>();
@@ -403,10 +408,11 @@ public class TarjontaPresenter {
                 map.get(hkKey).add(curHk);
             }
         }
+        TreeMap<String, List<HakukohdeTulos>> sortedMap = new TreeMap<String, List<HakukohdeTulos>>(map);
 
-        return map;
+        return sortedMap;
     }
-
+    
     /**
      * Gets the currently selected hakukohde objects.
      *
@@ -566,7 +572,7 @@ public class TarjontaPresenter {
 
         // Creating the datasource model
         for (KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
-            String koulutusKey = curKoulutus.getKoulutus().getTarjoaja();
+            String koulutusKey = this.getOrganisaatioNimiByOid(curKoulutus.getKoulutus().getTarjoaja());
             if (!map.containsKey(koulutusKey)) {
                 LOG.info("Adding a new key to the map: " + koulutusKey);
                 List<KoulutusTulos> koulutuksetM = new ArrayList<KoulutusTulos>();
@@ -576,8 +582,10 @@ public class TarjontaPresenter {
                 map.get(koulutusKey).add(curKoulutus);
             }
         }
+        
+        TreeMap<String, List<KoulutusTulos>> sortedMap = new TreeMap<String, List<KoulutusTulos>>(map);
 
-        return map;
+        return sortedMap;
     }
 
     /**

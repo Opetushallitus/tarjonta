@@ -183,7 +183,7 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     private String buildOrganisaatioCaption(Map.Entry<String, List<KoulutusTulos>> e) {
-        return presenter.getOrganisaatioNimiByOid(e.getKey()) + " (" + e.getValue().size() + ")";
+        return e.getKey() + " (" + e.getValue().size() + ")";
     }
 
     private String buildKoulutusCaption(KoulutusTulos curKoulutus) {

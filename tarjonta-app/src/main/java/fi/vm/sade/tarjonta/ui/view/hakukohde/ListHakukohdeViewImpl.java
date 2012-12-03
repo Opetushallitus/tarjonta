@@ -189,7 +189,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     }
 
     private String buildOrganisaatioCaption(Map.Entry<String, List<HakukohdeTulos>> e) {
-        return presenter.getOrganisaatioNimiByOid(e.getKey()) + " (" + e.getValue().size() + ")";
+        return e.getKey() + " (" + e.getValue().size() + ")";
     }
 
     private String buildHakukohdeCaption(HakukohdeTulos curHakukohde) {
