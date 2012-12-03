@@ -172,7 +172,7 @@ public class ListKoulutusView extends VerticalLayout {
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(buildOrganisaatioCaption(e), false));
 
             for (KoulutusTulos curKoulutus : e.getValue()) {
-                KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus);
+                KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus, getKoulutusNimi(curKoulutus));
                 hc.addItem(curKoulutus);
                 hc.setParent(curKoulutus, rootItem);
                 hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(buildKoulutusCaption(curKoulutus), true));
@@ -187,13 +187,18 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     private String buildKoulutusCaption(KoulutusTulos curKoulutus) {
-        String caption = getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi());
-        if (curKoulutus.getKoulutus().getKoulutusohjelmakoodi() != null) {
-            caption += ", " + getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi());
-        }
-        caption += ", " + curKoulutus.getKoulutus().getAjankohta();
+        String caption = getKoulutusNimi(curKoulutus);
         caption += ", " + getTilaStr(curKoulutus.getKoulutus().getTila().name());
         return caption;
+    }
+    
+    private String getKoulutusNimi(KoulutusTulos curKoulutus) {
+        String nimi = getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi());
+        if (curKoulutus.getKoulutus().getKoulutusohjelmakoodi() != null) {
+            nimi += ", " + getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi());
+        }
+        nimi += ", " + curKoulutus.getKoulutus().getAjankohta();
+        return nimi;
     }
 
     private String getTilaStr(String tilaUri) {

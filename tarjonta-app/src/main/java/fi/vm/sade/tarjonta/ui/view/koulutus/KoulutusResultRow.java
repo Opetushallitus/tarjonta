@@ -29,9 +29,13 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Window;
+
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
+import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -53,6 +57,14 @@ public class KoulutusResultRow extends HorizontalLayout {
      * Checkbox to indicate if this row is selected.
      */
     private CheckBox isSelected;
+    
+    /**
+     * The name of the koulutus, displayed in removal confirmation dialog.
+     */
+    private String koulutusNimi;
+    
+    private Window removeKoulutusDialog;
+    
     /**
      * The presenter object for the component.
      */
@@ -63,8 +75,9 @@ public class KoulutusResultRow extends HorizontalLayout {
         this.koulutus = new KoulutusTulos();
     }
 
-    public KoulutusResultRow(KoulutusTulos koulutus) {
+    public KoulutusResultRow(KoulutusTulos koulutus, String koulutusNimi) {
         this.koulutus = koulutus;
+        this.koulutusNimi = koulutusNimi;
     }
     /**
      * Command object for the row menubar. Starts operations based on user's
@@ -106,8 +119,35 @@ public class KoulutusResultRow extends HorizontalLayout {
         } else if (selection.equals(i18n.getMessage("muokkaa"))) {
             tarjontaPresenter.showKoulutusPerustiedotEditView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
         } else if (selection.equals(i18n.getMessage("poista"))) {
-            tarjontaPresenter.removeKoulutus(koulutus);
-            tarjontaPresenter.getHakukohdeListView().reload();
+            
+            showRemoveDialog();
+        }
+    }
+    
+    private void showRemoveDialog() {
+        RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), koulutusNimi, T("removeYes"), T("removeNo"), 
+                new Button.ClickListener() {    
+                        @Override
+                        public void buttonClick(ClickEvent event) {
+                            closeKoulutusCreationDialog();
+                            tarjontaPresenter.removeKoulutus(koulutus);
+                            tarjontaPresenter.getHakukohdeListView().reload();
+                        }
+                },
+                new Button.ClickListener() {
+
+                           @Override
+                           public void buttonClick(ClickEvent event) {
+                               closeKoulutusCreationDialog();
+
+                           }});
+        removeKoulutusDialog = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
+        getWindow().addWindow(removeKoulutusDialog);
+    }
+
+    public void closeKoulutusCreationDialog() {
+        if (removeKoulutusDialog != null) {
+            getWindow().removeWindow(removeKoulutusDialog);
         }
     }
 
@@ -179,5 +219,9 @@ public class KoulutusResultRow extends HorizontalLayout {
      */
     public CheckBox getIsSelected() {
         return isSelected;
+    }
+    
+    private String T(String key, Object... args) {
+        return i18n.getMessage(key, args);
     }
 }

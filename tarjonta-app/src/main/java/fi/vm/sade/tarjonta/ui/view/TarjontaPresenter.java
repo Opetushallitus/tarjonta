@@ -661,6 +661,7 @@ public class TarjontaPresenter {
     	try {
     		tarjontaAdminService.poistaKoulutus(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
     		getRootView().getListKoulutusView().reload();
+    		showNotification(UserNotification.DELETE_SUCCESS);
     	} catch (Exception ex) {
     		if (ex.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException")) {
     			showNotification(UserNotification.KOULUTUS_REMOVAL_FAILED);
