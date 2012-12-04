@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TarjontaApplication extends AbstractSadePortletApplication {
 
+    private static final long serialVersionUID = 4058508673680251653L;
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaApplication.class);
     private static ThreadLocal<TarjontaApplication> tl = new ThreadLocal<TarjontaApplication>();
     private Window window;

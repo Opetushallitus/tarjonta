@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TarjontaPortletApplication extends TarjontaApplication {
 
+    private static final long serialVersionUID = 4593403338621758659L;
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPortletApplication.class);
     private Window window;
 

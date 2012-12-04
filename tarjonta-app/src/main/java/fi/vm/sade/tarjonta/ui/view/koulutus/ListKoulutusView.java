@@ -60,6 +60,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
 public class ListKoulutusView extends VerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(ListKoulutusView.class);
+    private static final long serialVersionUID = 2571418094927644189L;
     public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListKoulutusView.jarjestys.Organisaatio")};
     public static final String COLUMN_A = "Kategoriat";
     /**
@@ -67,8 +68,6 @@ public class ListKoulutusView extends VerticalLayout {
      */
     @Autowired(required = true)
     private TarjontaPresenter presenter;
-
-
     private Window createHakukohdeDialog;
     /**
      * Button for creating a hakukohde object.
@@ -92,10 +91,20 @@ public class ListKoulutusView extends VerticalLayout {
      * Checkbox for selecting all the Hakukohde objects in the list.
      */
     private CheckBox valKaikki;
+    private Button btnPoista;
+    private Button btnMuokkaa;
+    private Button btnSiirraJaKopioi;
     private I18NHelper i18n = new I18NHelper(this);
     private boolean isAttached = false;
 
     public ListKoulutusView() {
+        setWidth(100, UNITS_PERCENTAGE);
+        setHeight(-1, UNITS_PIXELS);
+        setMargin(true);
+
+        if (presenter == null) {
+            presenter = new TarjontaPresenter();
+        }
     }
 
     @Override
@@ -110,7 +119,7 @@ public class ListKoulutusView extends VerticalLayout {
         isAttached = true;
 
         //Initialization of the view layout
-        setWidth(UiConstant.PCT100);
+
         //Creation of the button bar above the Hakukohde hierarchical/grouped list.
         HorizontalLayout buildMiddleResultLayout = buildMiddleResultLayout();
         addComponent(buildMiddleResultLayout);
@@ -120,25 +129,20 @@ public class ListKoulutusView extends VerticalLayout {
         valKaikki = new CheckBox(i18n.getMessage("ValitseKaikki"));
         valKaikki.setImmediate(true);
         valKaikki.addListener(new Property.ValueChangeListener() {
+            private static final long serialVersionUID = -382717228031608542L;
+
             @Override
             public void valueChange(ValueChangeEvent event) {
-
                 toggleHakuSelections(valKaikki.booleanValue());
-
             }
         });
         wrapper.addComponent(valKaikki);
-
         addComponent(wrapper);
 
         //Adding the actual Hakukohde-listing component.
         categoryTree = new CategoryTreeView();
         addComponent(categoryTree);
-        setHeight(Sizeable.SIZE_UNDEFINED, 0);
-
-        setExpandRatio(wrapper, 0.07f);
-        setExpandRatio(categoryTree, 0.93f);
-        setMargin(true);
+        setExpandRatio(categoryTree, 1f);
 
         /**
          * Sets the datasource for the hierarchical listing of Koulutus objects.
@@ -228,11 +232,20 @@ public class ListKoulutusView extends VerticalLayout {
     private HorizontalLayout buildMiddleResultLayout() {
         LOG.debug("buildMiddleResultLayout()");
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
+        layout.setSizeFull();
 
         //Creating the create hakukohde button
-        LOG.debug("layout :" + layout + ", i18n : " + i18n + ", " + presenter);
+        btnMuokkaa = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("muokkaa"), RequiredRole.UPDATE, presenter.getPermission());
+        btnMuokkaa.setEnabled(false);
+        btnPoista = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("poista"), RequiredRole.CRUD, presenter.getPermission());
+        btnPoista.setEnabled(false);
+        btnSiirraJaKopioi = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("siirraTaiKopioi"), RequiredRole.CRUD, presenter.getPermission());
+        btnSiirraJaKopioi.setEnabled(false);
+        
         luoHakukohdeB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LuoHakukohde"), RequiredRole.CRUD, presenter.getPermission());
         luoHakukohdeB.addListener(new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 //presenter.showHakukohdeEditView(presenter.getSelectedKoulutusOids(), null);
@@ -243,6 +256,8 @@ public class ListKoulutusView extends VerticalLayout {
         //Creating the create koulutus button
         luoKoulutusB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LuoKoulutus"), RequiredRole.CRUD, presenter.getPermission());
         luoKoulutusB.addListener(new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 presenter.showKoulutusPerustiedotEditView(null);
@@ -252,7 +267,8 @@ public class ListKoulutusView extends VerticalLayout {
         //Creating the sorting options combobox
         cbJarjestys = UiUtil.comboBox(layout, null, ORDER_BY);
         cbJarjestys.setWidth("300px");
-        layout.setExpandRatio(cbJarjestys, 1f);
+        layout.setExpandRatio(luoKoulutusB, 1f);
+        layout.setComponentAlignment(luoKoulutusB, Alignment.TOP_RIGHT);
         layout.setComponentAlignment(cbJarjestys, Alignment.TOP_RIGHT);
 
         Button btnInfo = new Button();
@@ -262,9 +278,8 @@ public class ListKoulutusView extends VerticalLayout {
         return layout;
     }
 
-    private void showCreateHakukohdeDialog(List<String>  oids) {
+    private void showCreateHakukohdeDialog(List<String> oids) {
         HakukohdeCreationDialog createDialog = new HakukohdeCreationDialog(oids);
-        createDialog.setWidth("600px");
         createHakukohdeDialog = new Window();
         createHakukohdeDialog.setContent(createDialog);
         createHakukohdeDialog.setModal(true);
@@ -292,13 +307,12 @@ public class ListKoulutusView extends VerticalLayout {
             luoKoulutusB.setEnabled(b);
         }
     }
-    
-	public void toggleCreateHakukohdeB(boolean b) {
-		if (presenter.getPermission().userCanReadAndUpdate()) {
-			this.luoHakukohdeB.setEnabled(b);
-		}
-		
-	}
+
+    public void toggleCreateHakukohdeB(boolean b) {
+        if (presenter.getPermission().userCanReadAndUpdate()) {
+            this.luoHakukohdeB.setEnabled(b);
+        }
+    }
 
     /**
      * Returns the name of the hakukohde based on koodisto uri given.
@@ -313,6 +327,4 @@ public class ListKoulutusView extends VerticalLayout {
         }
         return nimi;
     }
-
-
 }

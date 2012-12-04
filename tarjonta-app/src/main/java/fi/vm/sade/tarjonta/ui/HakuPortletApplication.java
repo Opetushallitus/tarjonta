@@ -26,6 +26,8 @@ import fi.vm.sade.tarjonta.ui.view.HakuRootView;
  * @author markus
  */
 public class HakuPortletApplication extends AbstractSadePortletApplication {
+    
+    
     private Window window;
 
     @Override

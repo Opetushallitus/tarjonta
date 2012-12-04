@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.ui.view;
 
 import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -52,19 +54,20 @@ import org.springframework.beans.factory.annotation.Value;
 public class TarjontaRootView extends Window {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaRootView.class);
+    private static final long serialVersionUID = -1669758858870001028L;
     @Autowired(required = true)
     private TarjontaPresenter _presenter;
     // Show label that shows last modification
     @Value("${common.showAppIdentifier:true}")
-    private Boolean _showIdentifier;
+    private Boolean _showIdentifier = false;
     @Value("${tarjonta-app.identifier:APPLICATION IDENTIFIER NOT AVAILABLE}")
     private String _identifier;
     private VerticalLayout _appRootLayout;
-    private OrganisaatiohakuView _organisationSearchView;
-    private BreadcrumbsView _breadcrumbsView;
-    private SearchSpesificationView _searchSpesificationView;
-    private SearchResultsView _searchResultsView;
-    private VerticalLayout vrightLayout;
+    private OrganisaatiohakuView organisationSearchView;
+    private BreadcrumbsView breadcrumbsView;
+    private SearchSpesificationView searchSpesificationView;
+    private SearchResultsView searchResultsView;
+    private VerticalLayout vlRight;
     private boolean isAttached = false;
 
     public TarjontaRootView() {
@@ -80,41 +83,17 @@ public class TarjontaRootView extends Window {
             _presenter = new TarjontaPresenter();
         }
         _presenter.setRootView(this);
-        initLayoutComponents();
-    }
 
-    private void initLayoutComponents() {
         // Create root layout
         _appRootLayout = UiBuilder.verticalLayout();
+        _appRootLayout.setSizeFull();
         _appRootLayout.setHeight(-1, UNITS_PIXELS);
+
         _appRootLayout.addStyleName(Oph.CONTAINER_MAIN);
         setContent(_appRootLayout); // root layout
 
-        // Create components
-        _organisationSearchView = new OrganisaatiohakuView();
-        _breadcrumbsView = new BreadcrumbsView();
-        _searchResultsView = new SearchResultsView();
-        _searchSpesificationView = new SearchSpesificationView(_presenter.getModel().getSearchSpec());
-
-        // Add listener for search events
-        _searchSpesificationView.addListener(new Listener() {
-            @Override
-            public void componentEvent(Event event) {
-                if (event instanceof SearchSpesificationView.SearchEvent) {
-                    _presenter.getReloadKoulutusListData();
-                    _presenter.getHakukohdeListView().reload();
-                }
-            }
-        });
-
-        //bind the components together
-        vrightLayout = UiUtil.verticalLayout();
-        vrightLayout.setHeight(-1, VerticalLayout.UNITS_PIXELS);
-        vrightLayout.addComponent(this.getBreadcrumbsView());
-        vrightLayout.addComponent(this.getSearchSpesificationView());
-        vrightLayout.addComponent(this.getSearchResultsView());
-        this.getOrganisaatiohakuView().addComponent(vrightLayout);
-        this.getOrganisaatiohakuView().setExpandRatio(vrightLayout, 1f);
+        // create app layout with organization navigation
+        buildMainLayout();
 
         // Show application identifier if needed
         _presenter.getModel().setShowIdentifier(_showIdentifier);
@@ -145,10 +124,22 @@ public class TarjontaRootView extends Window {
         return this.getSearchResultsView().getKoulutusList();
     }
 
+    /**
+     * Change view by given AbstractLayout.
+     *
+     * @param layout
+     */
     public void changeView(AbstractLayout layout) {
         changeView(layout, true);
     }
 
+    /**
+     * Change view by given AbstractLayout. If a clear parameter is given, then
+     * all components are cleared from window.
+     *
+     * @param layout
+     * @param clear
+     */
     public void changeView(AbstractLayout layout, boolean clear) {
         if (clear) {
             this.removeAllComponents();
@@ -162,18 +153,51 @@ public class TarjontaRootView extends Window {
     }
 
     public SearchSpesificationView getSearchSpesificationView() {
-        return _searchSpesificationView;
+        return searchSpesificationView;
     }
 
     public BreadcrumbsView getBreadcrumbsView() {
-        return _breadcrumbsView;
+        return breadcrumbsView;
     }
 
     public SearchResultsView getSearchResultsView() {
-        return _searchResultsView;
+        return searchResultsView;
     }
 
     public OrganisaatiohakuView getOrganisaatiohakuView() {
-        return _organisationSearchView;
+        return organisationSearchView;
+    }
+
+    private void buildMainLayout() {
+        // Create components
+
+        organisationSearchView = new OrganisaatiohakuView();
+        breadcrumbsView = new BreadcrumbsView();
+        searchResultsView = new SearchResultsView();
+        searchSpesificationView = new SearchSpesificationView(_presenter.getModel().getSearchSpec());
+
+        // Add listener for search events
+        searchSpesificationView.addListener(new Listener() {
+            private static final long serialVersionUID = -8696709317724642137L;
+
+            @Override
+            public void componentEvent(Event event) {
+                if (event instanceof SearchSpesificationView.SearchEvent) {
+                    _presenter.getReloadKoulutusListData();
+                    _presenter.getHakukohdeListView().reload();
+                }
+            }
+        });
+
+        //bind the components together
+        vlRight = new VerticalLayout();
+        vlRight.setSizeFull();
+        vlRight.addComponent(breadcrumbsView);
+        vlRight.addComponent(searchSpesificationView);
+        vlRight.addComponent(searchResultsView);
+        vlRight.setExpandRatio(searchResultsView, 1f);
+
+        organisationSearchView.addComponent(vlRight);
+        organisationSearchView.setExpandRatio(vlRight, 1f);
     }
 }

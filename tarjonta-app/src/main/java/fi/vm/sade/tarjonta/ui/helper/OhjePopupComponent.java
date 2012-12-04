@@ -28,6 +28,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
  * @author Tuomas Katva
  */
 public class OhjePopupComponent extends HorizontalLayout {
+    private static final long serialVersionUID = 5088511817532703892L;
     
     private OhjePopup popup;
     private PopupView popupView;

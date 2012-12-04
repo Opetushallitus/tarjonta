@@ -26,6 +26,7 @@ import com.vaadin.ui.PopupView;
  * @author Tuomas Katva
  */
 public class OhjePopup implements PopupView.Content {
+    private static final long serialVersionUID = 4790238612585300279L;
 
     private String ohjeContent;
     private Label ohjeLabel;

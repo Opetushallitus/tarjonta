@@ -67,6 +67,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListHakukohdeViewImpl.jarjestys.Organisaatio")};
     public static final String COLUMN_A = "Kategoriat";
     private static final Logger LOG = LoggerFactory.getLogger(ListHakukohdeViewImpl.class);
+    private static final long serialVersionUID = 60562140590088029L;
     /**
      * Button for adding selected Hakukohde objects to a Haku.
      */
@@ -123,6 +124,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         valKaikki = new CheckBox(i18n.getMessage("ValitseKaikki"));
         valKaikki.setImmediate(true);
         valKaikki.addListener(new Property.ValueChangeListener() {
+            private static final long serialVersionUID = -382717228031608542L;
             @Override
             public void valueChange(ValueChangeEvent event) {
 

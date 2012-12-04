@@ -55,12 +55,14 @@ public class TarjontaUIHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaUIHelper.class);
     public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";
+    private static final String LANGUAGE_SEPARATOR = ", ";
+   
     @Autowired
     private KoodiService _koodiService;
     @Autowired(required = true)
     private TarjontaPublicService _tarjontaPublicService;
     private I18NHelper _i18n = new I18NHelper(TarjontaUIHelper.class);
-
+    
     /**
      * Default version for those uris without version information is "-1".
      *
@@ -243,16 +245,17 @@ public class TarjontaUIHelper {
      * @return comma separated string of names
      */
     public String getKoodiNimi(Collection<String> koodiUris, Locale locale) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         if (koodiUris != null) {
             for (String koodiUri : koodiUris) {
-                result += ", " + getKoodiNimi(koodiUri, locale);
+                result.append(LANGUAGE_SEPARATOR).append(getKoodiNimi(koodiUri, locale));
             }
         }
 
         // Strip first comma
-        return result.length() == 0 ? result : result.substring(2);
+        final String str = result.toString();
+        return str.length() == 0 ? str : str.substring(2);
     }
 
     /**

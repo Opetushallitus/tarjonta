@@ -20,7 +20,6 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -52,14 +51,12 @@ import fi.vm.sade.vaadin.util.UiUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
@@ -78,6 +75,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     private static final Logger LOG = LoggerFactory.getLogger(EditHakuViewImpl.class);
 
     public static final Object[] HAKUAJAT_COLUMNS = new Object[]{"kuvaus", "alkuPvm", "loppuPvm", "poistaB"};
+    private static final long serialVersionUID = -8149045959215514422L;
 
     @Autowired(required = true)
     private HakuPresenter _presenter;
@@ -182,11 +180,11 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
         _hakutyyppi = UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI, null, null, T("Hakutyyppi.prompt"));
         _hakutyyppi.setSizeUndefined();
-        _hakukausi = UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_HAKUKAUSI_URI, null, null, T("Hakukausi.prompt"));
+        _hakukausi = UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T("Hakukausi.prompt"));
         _hakukausi.setSizeUndefined();
         _hakuvuosi = UiUtil.textField(null, "", T("Hakuvuosi.prompt"), false);
         _hakuvuosi.setSizeUndefined();
-        _koulutusAlkamiskausi =UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_KOULUTUKSEN_ALKAMISKAUSI_URI, null, null, T("KoulutuksenAlkamiskausi.prompt"));
+        _koulutusAlkamiskausi =UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_KAUDEN_TARKENNE_URI, null, null, T("KoulutuksenAlkamiskausi.prompt"));
         _koulutusAlkamiskausi.setSizeUndefined();
          koulutuksenAlkamisvuosi = UiUtil.textField(null, "", T("KoulutuksenAlkamisvuosi.prompt"), false);
          koulutuksenAlkamisvuosi.setSizeUndefined();

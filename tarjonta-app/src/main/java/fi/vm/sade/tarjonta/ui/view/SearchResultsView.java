@@ -22,7 +22,6 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
@@ -31,6 +30,8 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable
 public class SearchResultsView extends VerticalLayout {
+
+    private static final long serialVersionUID = -6602022577510112620L;
     boolean attached = false;
     private I18NHelper _i18n = new I18NHelper(this);
     private TabSheet tabs;
@@ -38,7 +39,7 @@ public class SearchResultsView extends VerticalLayout {
 
     public SearchResultsView() {
         super();
-        setHeight(-1, UNITS_PIXELS);
+        setSizeFull();
     }
 
     @Override
@@ -56,6 +57,8 @@ public class SearchResultsView extends VerticalLayout {
 
         setKoulutusList(new ListKoulutusView());
         getKoulutusList().addListener(new Listener() {
+            private static final long serialVersionUID = -8696709317724642137L;
+
             @Override
             public void componentEvent(Event event) {
                 fireEvent(event);
@@ -85,5 +88,4 @@ public class SearchResultsView extends VerticalLayout {
     public void setKoulutusList(ListKoulutusView koulutusList) {
         this.koulutusList = koulutusList;
     }
- 
 }

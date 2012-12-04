@@ -20,15 +20,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component.Event;
 import com.vaadin.ui.Component.Listener;
 
-import fi.vm.sade.tarjonta.ui.TarjontaWebApplication;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.common.BreadcrumbsView;
@@ -49,6 +46,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
 public class HakuRootView extends Window {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaRootView.class);
+    private static final long serialVersionUID = -942466086095854495L;
     private HorizontalLayout appRootLayout;
     private HorizontalLayout appRightLayout;
     private BreadcrumbsView breadcrumbsView;
@@ -72,6 +70,8 @@ public class HakuRootView extends Window {
         searchResultsView = new HakuSearchResultView();
 
         searchSpesificationView.addListener(new Listener() {
+            private static final long serialVersionUID = -8696709317724642137L;
+
             @Override
             public void componentEvent(Event event) {
                 if (event instanceof SearchSpesificationView.SearchEvent) {
@@ -84,6 +84,8 @@ public class HakuRootView extends Window {
 
         //Handles navigation to different child views (edit haku, view haku)
         searchResultsView.addListener(new Listener() {
+            private static final long serialVersionUID = -8696709317724642137L;
+
             @Override
             public void componentEvent(Event event) {
                 if (event instanceof HakuResultRow.HakuRowMenuEvent) {
@@ -94,10 +96,10 @@ public class HakuRootView extends Window {
             }
         });
 
-
         // Create root layout
         VerticalLayout layout = UiBuilder.verticalLayout();
         layout.setHeight(-1, UNITS_PIXELS);
+        layout.setWidth(-1, UNITS_PIXELS);
         layout.addStyleName(Oph.CONTAINER_MAIN);
         setContent(layout); // root layout
 
@@ -109,9 +111,7 @@ public class HakuRootView extends Window {
         appRightLayout = UiBuilder.horizontalLayout();//verticalLayout();
         appRootLayout.addComponent(appRightLayout);
 
-
         showMainDefaultView();
-
     }
 
     private void handleHakuRowMenuEvent(HakuResultRow.HakuRowMenuEvent event) {
@@ -157,11 +157,13 @@ public class HakuRootView extends Window {
         vl.addComponent(getBreadcrumbsView());
 
         this.hakuPresenter.setHakuViewModel(haku);
-        String messageStr = (haku.getNimiFi() != null) ? haku.getNimiFi() : "-";
+
         ShowHakuViewImpl showHaku = new ShowHakuViewImpl(this.hakuPresenter.getHakuModel().getNimiFi(),
                 this.hakuPresenter.getHakuModel().getNimiFi(),
                 null);
         showHaku.addListener(new Listener() {
+            private static final long serialVersionUID = -8696709317724642137L;
+
             @Override
             public void componentEvent(Event event) {
                 if (event instanceof ShowHakuViewImpl.BackEvent) {
@@ -185,13 +187,13 @@ public class HakuRootView extends Window {
     public void showHakuEdit(final HakuViewModel haku) {
         LOG.info("showHakuEdit()");
         getAppRightLayout().removeAllComponents();
-
-
         VerticalLayout vl = UiUtil.verticalLayout();
 
         vl.addComponent(getBreadcrumbsView());
         EditHakuViewImpl editHakuView = new EditHakuViewImpl(haku);
         editHakuView.addListener(new Listener() {
+            private static final long serialVersionUID = -8696709317724642137L;
+
             @Override
             public void componentEvent(Event event) {
                 if (event instanceof EditHakuViewImpl.CancelEvent) {
@@ -217,10 +219,11 @@ public class HakuRootView extends Window {
 
         getAppRightLayout().removeAllComponents();
         VerticalLayout vl = UiUtil.verticalLayout();
+        vl.setSizeUndefined();
         vl.addComponent(getBreadcrumbsView());
         vl.addComponent(getSearchSpesificationView());
         vl.addComponent(getSearchResultsView());
-       
+
         getAppRightLayout().addComponent(vl);
         getAppRightLayout().setExpandRatio(vl, 1f);
     }

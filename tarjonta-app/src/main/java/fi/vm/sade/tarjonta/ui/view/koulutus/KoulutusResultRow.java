@@ -48,6 +48,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class KoulutusResultRow extends HorizontalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusResultRow.class);
+    private static final long serialVersionUID = -1498887965250483214L;
     private I18NHelper i18n = new I18NHelper(this);
     /**
      * The koulutus to display on the row.
@@ -72,6 +73,7 @@ public class KoulutusResultRow extends HorizontalLayout {
     private TarjontaPresenter tarjontaPresenter;
 
     public KoulutusResultRow() {
+        
         this.koulutus = new KoulutusTulos();
     }
 
@@ -84,6 +86,7 @@ public class KoulutusResultRow extends HorizontalLayout {
      * selection in the menu.
      */
     private MenuBar.Command menuCommand = new MenuBar.Command() {
+        private static final long serialVersionUID = 7160936162824727503L;
         @Override
         public void menuSelected(MenuBar.MenuItem selectedItem) {
             //DEBUGSAWAY:LOG.debug(selectedItem.getText());
@@ -161,6 +164,7 @@ public class KoulutusResultRow extends HorizontalLayout {
         isSelected = UiUtil.checkbox(null, null);
         isSelected.setImmediate(true);
         isSelected.addListener(new Property.ValueChangeListener() {
+            private static final long serialVersionUID = -382717228031608542L;
             @Override
             public void valueChange(ValueChangeEvent event) {
                 if (koulutus != null
@@ -175,23 +179,20 @@ public class KoulutusResultRow extends HorizontalLayout {
             }
         });
 
-
-
         //newAddressBtn.addStyleName(StyleNames.B_PRIMARY_LARGE_PLUS);
-
         setWidth(-1, Sizeable.UNITS_PIXELS);
         setHeight(-1, Sizeable.UNITS_PIXELS); //Tämä toimii!!!
 
         addComponent(isSelected);
         if (withMenuBar) {
-            Button nimiB = UiUtil.buttonLink(null, text);
-
-            nimiB.addListener(new Button.ClickListener() {
+            Button nimiB = UiUtil.buttonLink(null, text, new Button.ClickListener() {
+                private static final long serialVersionUID = 5019806363620874205L;
                 @Override
                 public void buttonClick(ClickEvent event) {
                     tarjontaPresenter.showShowKoulutusView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
                 }
             });
+            nimiB.setStyleName("link-row");
             nimiB.setSizeUndefined();
             nimiB.setHeight(7, Sizeable.UNITS_PIXELS);
 

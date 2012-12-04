@@ -56,6 +56,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShowKoulutusView.class);
+    private static final long serialVersionUID = -4381256372874208231L;
     @Autowired(required = true)
     private TarjontaPresenter _presenter;
     @Autowired(required = true)
@@ -103,6 +104,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         final String komotoOid = model.getOid();
 
         layout.addComponent(buildHeaderLayout(T("perustiedot"), T(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
                 _presenter.showKoulutusPerustiedotEditView(komotoOid);
@@ -240,6 +242,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             // Add default click listener so that we can show that action has not been implemented as of yet
             if (listener == null) {
                 btn.addListener(new Button.ClickListener() {
+                    private static final long serialVersionUID = 5019806363620874205L;
                     @Override
                     public void buttonClick(ClickEvent event) {
                         getWindow().showNotification("Toiminnallisuutta ei vielä toteutettu");
@@ -255,6 +258,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     private void addNavigationButtons(VerticalLayout layout) {
         addNavigationButton("", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 _presenter.showMainDefaultView();
@@ -262,6 +266,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         }, StyleEnum.STYLE_BUTTON_BACK);
 
         addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 // TODO ask confirmation
@@ -270,6 +275,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
         addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 getWindow().showNotification("Ei toteutettu");
@@ -277,6 +283,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
         addNavigationButton(T("siirraOsaksiToistaKoulutusta"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 getWindow().showNotification("Ei toteutettu");
@@ -284,6 +291,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
         addNavigationButton(T("lisaaToteutus"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 getWindow().showNotification("Ei toteutettu");
@@ -291,6 +299,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
         addNavigationButton(T("esikatsele"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 getWindow().showNotification("Ei toteutettu");

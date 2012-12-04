@@ -40,8 +40,9 @@ import org.springframework.cache.support.SimpleCacheManager;
  */
 @Configurable(preConstruction = true)
 public class TarjontaWebApplication extends TarjontaApplication {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaWebApplication.class);
+    private static final long serialVersionUID = 7402559260126333807L;
     private Window window;
     @Value("${tarjonta-app.dev.redirect:}")
     private String developmentRedirect;
@@ -49,60 +50,60 @@ public class TarjontaWebApplication extends TarjontaApplication {
     private String developmentTheme;
     @Autowired
     private TarjontaAdminService tarjontaAdminService;
-    @Autowired
-    SimpleCacheManager _cacheManager;
 
-    
     @Override
     protected void initApplication() {
         window = new Window("Valitse");
         setMainWindow(window);
-        
+
         developmentConfiguration();
         HorizontalLayout hl = new HorizontalLayout();
         window.addComponent(hl);
-        
+
         Button tarjontaButton = new Button("Tarjontaan", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
                 toTarjonta();
             }
         });
         hl.addComponent(tarjontaButton);
-        
+
         Button hakuButton = new Button("Hakuihin", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
                 toHaku();
             }
         });
         hl.addComponent(hakuButton);
-        
+
         Button xxxButton = new Button("Koulutuksen kuvailevat tiedot muokkaaminen", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
                 toKoulutusView();
             }
         });
-        
+
         hl.addComponent(xxxButton);
     }
-    
+
     public void toTarjonta() {
         this.removeWindow(window);
         window = new TarjontaRootView();
         setMainWindow(window);
     }
-    
+
     public void toHaku() {
         this.removeWindow(window);
         window = new HakuRootView();
         setMainWindow(window);
     }
-    
+
     public void toKoulutusView() {
         this.removeWindow(window);
-        
+
         window = new Window();
         setMainWindow(window);
         EditKoulutusLisatiedotForm view = new EditKoulutusLisatiedotForm();
@@ -117,7 +118,7 @@ public class TarjontaWebApplication extends TarjontaApplication {
             //set a development theme.
             setTheme(developmentTheme);
         }
-        
+
         if (developmentRedirect != null && developmentRedirect.length() > 0) {
             //This code block is only for making UI development little bit faster
             //Add the property to tarjonta-app.properties:
@@ -126,12 +127,12 @@ public class TarjontaWebApplication extends TarjontaApplication {
             if (developmentRedirect.equalsIgnoreCase("HAKU")) {
                 toHaku();
             }
-            
+
             if (developmentRedirect.equalsIgnoreCase("KOULUTUS") || developmentRedirect.equalsIgnoreCase("TARJONTA")) {
                 toTarjonta();
             }
         }
-        
+
     }
 
     /**
@@ -147,5 +148,4 @@ public class TarjontaWebApplication extends TarjontaApplication {
     public void setTarjontaAdminService(TarjontaAdminService tarjontaAdminService) {
         this.tarjontaAdminService = tarjontaAdminService;
     }
-
 }

@@ -8,6 +8,7 @@ import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
 
 public class HakuSearchResultView extends VerticalLayout {
 
+    private static final long serialVersionUID = 3524699826568713447L;
     boolean attached = false;
     private I18NHelper _i18n = new I18NHelper(this);
 
@@ -17,19 +18,21 @@ public class HakuSearchResultView extends VerticalLayout {
 
     @Override
     public void attach() {
-         super.attach();
+        super.attach();
         if (attached) {
             return;
         }
 
         attached = true;
-       
+
 
         TabSheet tabs = new TabSheet();
         addComponent(tabs);
 
         ListHakuViewImpl hakuList = new ListHakuViewImpl();
         hakuList.addListener(new Listener() {
+            private static final long serialVersionUID = -8696709317724642137L;
+
             @Override
             public void componentEvent(Event event) {
                 if (event instanceof HakuResultRow.HakuRowMenuEvent) {

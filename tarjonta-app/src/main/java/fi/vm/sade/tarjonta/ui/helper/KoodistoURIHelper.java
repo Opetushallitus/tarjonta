@@ -31,21 +31,29 @@ import org.springframework.stereotype.Component;
 @Configurable(preConstruction = false)
 public class KoodistoURIHelper {
 
-    public static String KOODISTO_HAKUTYYPPI_URI;
     public static String KOODISTO_HAKUTAPA_URI;
     public static String KOODISTO_KIELI_URI;
-    public static String KOODISTO_HAKUKAUSI_URI;
-    public static String KOODISTO_HAUN_KOHDEJOUKKO_URI;
-    public static String KOODISTO_KOULUTUKSEN_ALKAMISKAUSI_URI;
-    public static String KOODISTO_OPPILAITOSTYYPPI_URI;
     public static String KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI;
     public static String KOODISTO_HAKUKOHDE_URI;
     public static String KOODISTO_SUUNNITELTU_KESTO_URI;
-    public static String KOODISTO_OPETUSMUOTO_URI;
     public static String KOODISTO_KOULUTUSLAJI_URI;
     public static String KOODISTO_AVAINSANAT_URI;
     public static String KOODISTO_KIELIVALIKOIMA_URI;
-    public static String KOODISTO_AMMATTINIMIKKEET_URI;
+    /*
+     * Haku URIs
+     */
+    public static String KOODISTO_HAKUKAUSI_URI;
+    /*
+     * Organization navi URIs
+     */
+    public static String KOODISTO_OPPILAITOSTYYPPI_URI;
+    /*
+     * Top search area URIs
+     */
+    public static String KOODISTO_KAUDEN_TARKENNE_URI; //koulutuksen alkamiskaus etc.
+    public static String KOODISTO_ALKAMISKAUSI_URI; // kevät, syksy etc.
+    public static String KOODISTO_HAKUTYYPPI_URI;
+    public static String KOODISTO_HAUN_KOHDEJOUKKO_URI;
     /*
      * KOMO URIs
      */
@@ -61,6 +69,11 @@ public class KoodistoURIHelper {
     public static String KOODISTO_TAVOITTEET_URI;
     public static String KOODISTO_JATKOOPINTOMAHDOLLISUUDET_URI;
     public static String KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI;
+    /*
+     * KOMOTO URIs
+     */
+    public static String KOODISTO_AMMATTINIMIKKEET_URI;
+    public static String KOODISTO_OPETUSMUOTO_URI;
 
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
@@ -84,7 +97,12 @@ public class KoodistoURIHelper {
 
     @Value("${koodisto-uris.koulutuksenAlkamiskausi:NOT_SET}")
     public void setKoodistoKoulutuksenAlkamiskausiUri(String uri) {
-        KOODISTO_KOULUTUKSEN_ALKAMISKAUSI_URI = uri;
+        KOODISTO_KAUDEN_TARKENNE_URI = uri;
+    }
+
+    @Value("${koodisto-uris.alkamiskausi:NOT_SET}")
+    public void setKoodistoAlkamiskausiUri(String uri) {
+        KOODISTO_ALKAMISKAUSI_URI = uri;
     }
 
     @Value("${koodisto-uris.oppilaitostyyppi:NOT_SET}")
@@ -100,11 +118,6 @@ public class KoodistoURIHelper {
     @Value("${koodisto-uris.hakukohde:NOT_SET}")
     public void setKoodistoHakukohdeUri(String uri) {
         KOODISTO_HAKUKOHDE_URI = uri;
-    }
-
-    @Value("${koodisto-uris.hakukausi:NOT_SET}")
-    public void setKoodistoHakukausiUri(String uri) {
-        KOODISTO_HAKUKAUSI_URI = uri;
     }
 
     @Value("${koodisto-uris.suunniteltuKesto:NOT_SET}")
@@ -196,10 +209,9 @@ public class KoodistoURIHelper {
     public void setOpintojenJatkoopintomahdollisuudetUri(String uri) {
         KOODISTO_JATKOOPINTOMAHDOLLISUUDET_URI = uri;
     }
-    
+
     @Value("${koodisto-uris.pohjakoulutusvaatimus:NOT_SET}")
     public void setPohjakoulutusvaatimuksetUri(String uri) {
-         KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI = uri;
+        KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI = uri;
     }
-
 }

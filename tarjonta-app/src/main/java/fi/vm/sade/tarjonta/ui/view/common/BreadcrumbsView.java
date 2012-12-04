@@ -28,23 +28,25 @@ import fi.vm.sade.vaadin.util.UiUtil;
  */
 public class BreadcrumbsView extends AbstractVerticalLayout {
 
+    private static final long serialVersionUID = 2254224099223350768L;
     private Label organisaatio;
 
     public BreadcrumbsView() {
         super();
+        this.setMargin(false, false, false, true);
+        this.setSizeUndefined();
     }
 
     @Override
     protected void buildLayout() {
-        this.setMargin(false,false,false,true);
         organisaatio = UiUtil.label(this, "-", LabelStyleEnum.H2);
+        organisaatio.setSizeUndefined();
     }
+
     /**
      * @param organisaatio the organisaatio to set
      */
     public void setOrganisaatio(String organisaatio) {
         this.organisaatio.setValue(organisaatio);
     }
-    
-    
 }

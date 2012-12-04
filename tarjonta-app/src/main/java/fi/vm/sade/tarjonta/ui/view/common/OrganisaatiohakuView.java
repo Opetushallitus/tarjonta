@@ -74,6 +74,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     public static final String COLUMN_KEY = "COLUMN";
     private static I18NHelper i18n = new I18NHelper(OrganisaatiohakuView.class);
     private static final int PANEL_WIDTH = 250;
+    private static final long serialVersionUID = -7700929639425223853L;
     private TextField search;
     private ComboBox organisaatioTyyppi;
     private KoodistoComponent oppilaitosTyyppi;
@@ -98,9 +99,9 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         super(VerticalLayout.class);
         criteria = new OrganisaatioSearchCriteriaDTO();
         try {
-        	criteria.setMaxResults(Integer.parseInt(T("maxResults")));
+            criteria.setMaxResults(Integer.parseInt(T("maxResults")));
         } catch (Exception ex) {
-        	LOG.warn("max results not set: " + ex.getMessage());
+            LOG.warn("max results not set: " + ex.getMessage());
         }
     }
 
@@ -112,9 +113,9 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             criteria.getOidResctrictionList().addAll(rootOrganisaatioOids);
         }
         try {
-        	criteria.setMaxResults(Integer.parseInt(T("maxResults")));
+            criteria.setMaxResults(Integer.parseInt(T("maxResults")));
         } catch (Exception ex) {
-        	LOG.warn("max results not set: " + ex.getMessage());
+            LOG.warn("max results not set: " + ex.getMessage());
         }
 
     }
@@ -141,6 +142,8 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         // Bind enter to do the search
         search.setImmediate(true);
         search.addListener(new Property.ValueChangeListener() {
+            private static final long serialVersionUID = -382717228031608542L;
+
             @Override
             public void valueChange(ValueChangeEvent event) {
                 searchOrganisaatios();
@@ -173,6 +176,8 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         suunnitellut = UiUtil.checkbox(panelTop, T("naytaMyosSuunnitellut"));
         HorizontalLayout buttonsL = UiUtil.horizontalLayout();
         searchB = UiUtil.buttonSmallPrimary(buttonsL, T("hae"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(ClickEvent event) {
                 searchOrganisaatios();
@@ -180,6 +185,8 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         });
 
         tyhjennaB = UiUtil.buttonSmallPrimary(buttonsL, T("tyhjenna"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(ClickEvent event) {
                 criteria = new OrganisaatioSearchCriteriaDTO();
@@ -187,9 +194,9 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
                     criteria.getOidResctrictionList().addAll(rootOrganisaatioOids);
                 }
                 try {
-                	criteria.setMaxResults(Integer.parseInt(T("maxResults")));
+                    criteria.setMaxResults(Integer.parseInt(T("maxResults")));
                 } catch (Exception ex) {
-                	LOG.warn("Max results not set: " + ex.getMessage());
+                    LOG.warn("Max results not set: " + ex.getMessage());
                 }
                 initializeData();
             }
@@ -223,6 +230,8 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         tree.setItemCaptionMode(Tree.ITEM_CAPTION_MODE_PROPERTY);
 
         tree.addListener(new ItemClickEvent.ItemClickListener() {
+            private static final long serialVersionUID = -2318797984292753676L;
+
             @Override
             public void itemClick(ItemClickEvent event) {
                 organisaatioSelected((OrganisaatioPerustietoType) event.getItemId());
@@ -250,7 +259,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         //TODO uncommenting the population of oid restriction below 
         //criteria.getOidResctrictionList().addAll(this.presenter.getPermission().getUserOrganisationOids());
         this.organisaatios = this.organisaatioService.searchBasicOrganisaatios(criteria);//searchOrganisaatios(new OrganisaatioSearchCriteriaDTO());
-        
+
         sortAlphabetically();
 
         tree.setContainerDataSource(createDatasource());
@@ -374,9 +383,9 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     private void organisaatioSelected(OrganisaatioPerustietoType item) {
         LOG.info("Event fired: " + item.getOid());
         if (!item.getOid().equals(presenter.getModel().getOrganisaatioOid())) {
-        	presenter.selectOrganisaatio(item.getOid(), item.getNimiFi());
+            presenter.selectOrganisaatio(item.getOid(), item.getNimiFi());
         } else {
-        	presenter.unSelectOrganisaatio();
+            presenter.unSelectOrganisaatio();
         }
     }
 
@@ -423,9 +432,10 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         }
         return "";
     }
-    
+
     private void sortAlphabetically() {
         Collections.sort(organisaatios, new Comparator<OrganisaatioPerustietoType>() {
+            @Override
             public int compare(OrganisaatioPerustietoType f1, OrganisaatioPerustietoType f2) {
                 return getClosestNimi(I18N.getLocale(), f1).compareTo(getClosestNimi(I18N.getLocale(), f2));
             }
