@@ -35,5 +35,11 @@ public interface ListHakuView {
     void setDataSource(Map<String, List<HakuViewModel>> haut);
     
     void showErrorMessage(String msg);
+    
+    void closeHakuRemovalDialog();
+
+    public void showNotification(String title, String content, int type);
+
+    public void toggleRemoveButton(boolean enable);
 
 }

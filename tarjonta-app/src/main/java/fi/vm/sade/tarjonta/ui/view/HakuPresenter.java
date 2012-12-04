@@ -26,6 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
+import com.vaadin.ui.Window;
+
+import fi.vm.sade.tarjonta.ui.enums.UserNotification;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
@@ -310,24 +314,37 @@ public class HakuPresenter {
     public List<HakuViewModel> getSelectedhaut() {
         return selectedhaut;
     }
+    
+    public void setSelectedHaut(List<HakuViewModel> selectedHaut) {
+        this.selectedhaut = selectedHaut;
+    }
 
     /**
      * Removes the selected haku objects from the database.
      */
     public void removeSelectedHaut() {
+        int removalLaskuri = 0;
+        String errorNotes = "";
         for (HakuViewModel curHaku : selectedhaut) {
             try {
                 tarjontaAdminService.poistaHaku(curHaku.getHakuDto());
+                ++removalLaskuri;
             } catch (Throwable e) {
                 if (e.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakuUsedException")) {
-                    hakuList.showErrorMessage(I18N.getMessage("notification.error.haku.used"));
+                    errorNotes += I18N.getMessage("notification.deleted.haku.used.multiple", TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), curHaku)) + "<br/>";
                 } else {
-                    hakuList.showErrorMessage("ODOTTAMATON VIRHE TAPAHTUI : " + e.getMessage());
+                    LOG.error(e.getMessage());
                 }
             }
         }
+       
+        String notificationMessage = "<br />" + I18N.getMessage("notification.deleted.haut", removalLaskuri) + "<br />" + errorNotes;
+        
         selectedhaut.clear();
         hakuList.reload();
+        this.hakuList.showNotification(I18N.getMessage("notification.deleted.haut.title"),
+                                        notificationMessage, 
+                                        Window.Notification.TYPE_HUMANIZED_MESSAGE);         
     }
 
     private List<HakuViewModel> retrieveHaut(ListaaHakuTyyppi req) {
@@ -351,4 +368,21 @@ public class HakuPresenter {
         }
         return haut;
     }
+
+    public void closeHakuRemovalDialog() {
+        this.hakuList.closeHakuRemovalDialog();
+        
+    }
+
+    public void selectHaku(HakuViewModel haku) {
+        selectedhaut.add(haku);
+        this.hakuList.toggleRemoveButton(true);
+    }
+
+    public void unSelectHaku(HakuViewModel haku) {
+        selectedhaut.remove(haku);
+        this.hakuList.toggleRemoveButton(!selectedhaut.isEmpty());
+    }
+    
+
 }

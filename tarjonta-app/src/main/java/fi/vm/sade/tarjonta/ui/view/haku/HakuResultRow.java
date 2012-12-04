@@ -26,10 +26,13 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
+import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
@@ -51,6 +54,8 @@ public class HakuResultRow  extends HorizontalLayout {
     private I18NHelper i18n = new I18NHelper(this);
     private HakuViewModel haku;
     private CheckBox isSelected;
+    private String hakuNimi;
+    private Window removeDialogWindow;
 
     @Autowired(required = true)
     private HakuPresenter hakuPresenter;
@@ -59,8 +64,9 @@ public class HakuResultRow  extends HorizontalLayout {
         this.haku = new HakuViewModel();
     }
 
-    public HakuResultRow(HakuViewModel haku) {
+    public HakuResultRow(HakuViewModel haku, String hakuNimi) {
         this.haku = haku;
+        this.hakuNimi = hakuNimi;
     }
 
     private MenuBar.Command menuCommand = new MenuBar.Command() {
@@ -89,8 +95,38 @@ public class HakuResultRow  extends HorizontalLayout {
         } else if (selection.equals(i18n.getMessage("muokkaa"))) {
             fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.EDIT));
         } else if (selection.equals(i18n.getMessage("poista"))) {
-            fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.REMOVE));
+            showRemoveDialog();
         }
+    }
+    
+    private void showRemoveDialog() {
+        RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), hakuNimi, T("removeYes"), T("removeNo"), 
+                new Button.ClickListener() {    
+                        @Override
+                        public void buttonClick(ClickEvent event) {
+                            closeHakuRemovalDialog();
+                            startHakuRemoval();
+                        }
+                },
+                new Button.ClickListener() {
+
+                           @Override
+                           public void buttonClick(ClickEvent event) {
+                               closeHakuRemovalDialog();
+
+                           }});
+        removeDialogWindow = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
+        getWindow().addWindow(removeDialogWindow);
+    }
+
+    public void closeHakuRemovalDialog() {
+        if (removeDialogWindow != null) {
+            getWindow().removeWindow(removeDialogWindow);
+        }
+    }
+    
+    private void startHakuRemoval() {
+        fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.REMOVE));
     }
 
     /**
@@ -106,9 +142,10 @@ public class HakuResultRow  extends HorizontalLayout {
             public void valueChange(ValueChangeEvent event) {
                 if (haku != null
                         && isSelected.booleanValue()) {
-                    hakuPresenter.getSelectedhaut().add(haku);
+                    hakuPresenter.selectHaku(haku);
                 } else if (haku != null) {
-                    hakuPresenter.getSelectedhaut().remove(haku);
+                    hakuPresenter.unSelectHaku(haku);
+                    //hakuPresenter.getSelectedhaut().remove(haku);
                 }
             }
         });
@@ -179,6 +216,10 @@ public class HakuResultRow  extends HorizontalLayout {
         public String getType() {
             return type;
         }
+    }
+    
+    private String T(String key, Object... args) {
+        return i18n.getMessage(key, args);
     }
 
 }

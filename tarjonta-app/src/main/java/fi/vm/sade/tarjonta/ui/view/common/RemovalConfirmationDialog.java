@@ -30,12 +30,12 @@ import fi.vm.sade.vaadin.util.UiUtil;
  */
 public class RemovalConfirmationDialog extends AbstractVerticalLayout {
 
-	private String questionStr;
-	private String kohdenimi;
-	private ClickListener removeListener;
-	private ClickListener noRemoveListener;
-	String removeStr;
-	String noRemoveStr;
+	protected String questionStr;
+	protected String kohdenimi;
+	protected ClickListener removeListener;
+	protected ClickListener noRemoveListener;
+	protected String removeStr;
+	protected String noRemoveStr;
 	
 	public RemovalConfirmationDialog(String questionStr, String kohdenimi, String removeStr, String noRemoveStr, ClickListener removeListener, ClickListener noRemoveListener) {
 		this.questionStr = questionStr;

@@ -15,7 +15,9 @@
  */
 package fi.vm.sade.tarjonta.ui.view.haku;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,12 +42,20 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
+import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
+import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
+import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow.HakuRowMenuEvent;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -67,6 +77,7 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     private ComboBox cbJarjestys;
     private CategoryTreeView categoryTree;
     private CheckBox valKaikki;
+    Window removeDialogWindow;
 
     private I18NHelper i18n = new I18NHelper(this);
 
@@ -133,10 +144,10 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
             hc.getContainerProperty(rootItem, presenter.COLUMN_A).setValue(rowStyle.format(e.getKey() + " (" + e.getValue().size() + ")", false));
 
             for (HakuViewModel curHaku : e.getValue()) {
-                HakuResultRow rowStyleInner = new HakuResultRow(curHaku);
+                HakuResultRow rowStyleInner = new HakuResultRow(curHaku, TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), curHaku));
                 hc.addItem(curHaku);
                 hc.setParent(curHaku, rootItem);
-                hc.getContainerProperty(curHaku, presenter.COLUMN_A).setValue(rowStyleInner.format(curHaku.getNimiFi(), true));
+                hc.getContainerProperty(curHaku, presenter.COLUMN_A).setValue(rowStyleInner.format(TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), curHaku), true));
                 hc.setChildrenAllowed(curHaku, false);
 
                 rowStyleInner.addListener(new Listener() {
@@ -178,16 +189,18 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
             }
         });
 
-        btnPoista = UiUtil.button(layout, i18n.getMessage("Poista"));
+        btnPoista = UiUtil.buttonSmallPrimary(layout, i18n.getMessage("Poista"));
         btnPoista.addStyleName(Oph.BUTTON_SMALL);
         //btnPoista.setEnabled(false);
         btnPoista.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                presenter.removeSelectedHaut();
+                //presenter.removeSelectedHaut();
+                removeSelectedHaut();
 
             }
         });
+        btnPoista.setEnabled(false);
 
 
         cbJarjestys = UiUtil.comboBox(layout, null, ORDER_BY);
@@ -218,11 +231,68 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     public void reload() {
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getTreeDataSource()));
+        presenter.getSelectedhaut().clear();
+        btnPoista.setEnabled(false);
     }
 
     private void navigateToHakuEditForm() {
         fireEvent(new NewHakuEvent(this));
     }
+    
+    private void removeSelectedHaut() {
+        
+        //for (HakuViewModel curHaku : presenter.getSelectedhaut()) {
+        if (!presenter.getSelectedhaut().isEmpty()) {
+            try {        
+                //tarjontaAdminService.poistaHaku(curHaku.getHakuDto());
+                showRemoveDialog(presenter.getSelectedhaut().get(0));
+            } catch (Exception e) {
+                showErrorMessage("ODOTTAMATON VIRHE TAPAHTUI : " + e.getMessage());
+            }
+        } else {
+            reload();
+        }
+    }
+    
+    /**
+     * Showing the confirmation dialog for removing multiple haku objects.
+     * @param haku
+     */
+    private void showRemoveDialog(final HakuViewModel haku) {
+        MultipleHakuRemovalDialog removeDialog = new  MultipleHakuRemovalDialog(T("removeQ"), presenter.getSelectedhaut(), T("removeYes"), T("removeNo"));
+        removeDialogWindow = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
+        getWindow().addWindow(removeDialogWindow);
+    }
+
+    
+    /**
+     * Closing of the confirmation for removing multiple haku objects.
+     */
+    public void closeHakuRemovalDialog() {
+        if (removeDialogWindow != null) {
+            getWindow().removeWindow(removeDialogWindow);
+        } else {
+            showErrorMessage("removeDialogWindow was null");
+        }
+    }
+    
+
+
+    @Override
+    public void showNotification(String title, String content, int type) {
+        getWindow().showNotification(title, content, type, true);   
+    }
+
+    @Override
+    public void toggleRemoveButton(boolean enable) {
+        this.btnPoista.setEnabled(enable);
+    }
+    
+    private String T(String key, Object... args) {
+        return i18n.getMessage(key, args);
+    }
+    
+    
 
     /**
      * Event to signal that the user wants to create a new Haku.
@@ -235,5 +305,8 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         }
 
     }
+
+
+
 
 }

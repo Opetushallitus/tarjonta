@@ -30,6 +30,8 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -348,5 +350,38 @@ public class TarjontaUIHelper {
         }
         
         return kmdt;
+    }
+    
+    public static String getClosestHakuName(Locale locale,  HakuViewModel haku) {
+        String lang = locale != null && locale.getLanguage() != null ? locale.getLanguage().toLowerCase() : "";
+        
+        if ("fi".equals(lang) && haku.getNimiFi() != null) {
+            return haku.getNimiFi();
+        }
+        
+        if ("sv".equals(lang) && haku.getNimiSe() != null) {
+            return haku.getNimiSe();
+        }
+        
+        if ("en".equals(lang) && haku.getNimiEn() != null) {
+            return haku.getNimiEn();
+        }
+        
+        return getAvailableHakuName(haku);
+    }
+    
+    public static String getAvailableHakuName(HakuViewModel haku) {
+        if (haku.getNimiFi() != null) {
+            return haku.getNimiFi();
+        }
+        if (haku.getNimiSe() != null) {
+            return haku.getNimiSe();
+        }
+        
+        if (haku.getNimiEn() != null) {
+            return haku.getNimiEn();
+        }
+
+         return "";
     }
 }
