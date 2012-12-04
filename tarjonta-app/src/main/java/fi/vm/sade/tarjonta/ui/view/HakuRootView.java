@@ -219,7 +219,7 @@ public class HakuRootView extends Window {
 
         getAppRightLayout().removeAllComponents();
         VerticalLayout vl = UiUtil.verticalLayout();
-        vl.setSizeUndefined();
+        vl.setSizeFull();
         vl.addComponent(getBreadcrumbsView());
         vl.addComponent(getSearchSpesificationView());
         vl.addComponent(getSearchResultsView());

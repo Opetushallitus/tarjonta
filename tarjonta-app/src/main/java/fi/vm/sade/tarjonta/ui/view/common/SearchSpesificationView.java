@@ -60,7 +60,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     private I18NHelper i18nHelper = new I18NHelper(this);
     private TextField tfSearch;
     private Button btnHae;
-    private KoodistoComponent kcKaudenTarkenne;
+    private ComboBox cbKaudenTarkenne;
     private ComboBox cbVuosi;
     private KoodistoComponent kcKausi;
     // private KoodistoComponent kcHakutyyppi;
@@ -125,21 +125,17 @@ public class SearchSpesificationView extends OphHorizontalLayout {
             }
         });
         
-        kcKaudenTarkenne = UiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_KAUDEN_TARKENNE_URI, null, null, T(I18N_KAUDEN_TARKENNE + I18N_PROMPT));
-        kcKaudenTarkenne.setCaption(T(I18N_KAUDEN_TARKENNE));
-        kcKaudenTarkenne.setSizeUndefined();
-        kcKaudenTarkenne.getField().setReadOnly(true);
-        kcKaudenTarkenne.getField().setNullSelectionAllowed(false);
+         //TODO: no application logic, only for Christmas demo
+        cbKaudenTarkenne = UiUtil.comboBox(this, T(I18N_VUOSI), new String[]{"Koulutuksen alkamiskausi"});
+        cbKaudenTarkenne.setSizeUndefined();
 
         //TODO: no application logic, only for Christmas demo
         cbVuosi = UiUtil.comboBox(this, T(I18N_VUOSI), new String[]{"2012"});
-        cbVuosi.setReadOnly(true);
         cbVuosi.setSizeUndefined();
 
         //TODO: no application logic, only for Christmas demo
         kcKausi = UiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T(I18N_KAUSI + I18N_PROMPT));
         kcKausi.setCaption(I18N_KAUSI);
-        kcKausi.getField().setReadOnly(true);
         kcKausi.setSizeUndefined();
         kcKausi.getField().setNullSelectionAllowed(false);
 
@@ -167,11 +163,11 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         
         this.setComponentAlignment(tfSearch, Alignment.BOTTOM_LEFT);
         this.setComponentAlignment(btnHae, Alignment.BOTTOM_LEFT);
-        this.setComponentAlignment(kcKaudenTarkenne, Alignment.BOTTOM_RIGHT);
+        this.setComponentAlignment(cbKaudenTarkenne, Alignment.BOTTOM_RIGHT);
         this.setComponentAlignment(cbVuosi, Alignment.BOTTOM_RIGHT);
         this.setComponentAlignment(kcKausi, Alignment.BOTTOM_RIGHT);
         this.setComponentAlignment(btnTyhjenna, Alignment.BOTTOM_RIGHT);
-        this.setExpandRatio(kcKaudenTarkenne, 1f);
+        this.setExpandRatio(cbKaudenTarkenne, 1f);
     }
     
     private String T(String key) {
