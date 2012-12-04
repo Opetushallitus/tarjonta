@@ -98,8 +98,8 @@ public class HakuRootView extends Window {
 
         // Create root layout
         VerticalLayout layout = UiBuilder.verticalLayout();
+        layout.setSizeFull();
         layout.setHeight(-1, UNITS_PIXELS);
-        layout.setWidth(-1, UNITS_PIXELS);
         layout.addStyleName(Oph.CONTAINER_MAIN);
         setContent(layout); // root layout
 

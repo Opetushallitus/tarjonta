@@ -52,9 +52,10 @@ public class HakuajatView {
 	public HakuajatView(HakuaikaViewModel model) {
 		this.model = model;
 
-		kuvaus = UiUtil.textField(null);
+		kuvaus = UiUtil.textField(null, "", i18n.getMessage("hakuajanKuvaus"), false);
 		kuvaus.setPropertyDataSource(new NestedMethodProperty(model, "hakuajanKuvaus"));
 		kuvaus.setImmediate(true);
+                kuvaus.setHeight("20px");
 
 		alkuPvm = UiUtil.dateField();
 		alkuPvm.setPropertyDataSource(new NestedMethodProperty(model, "alkamisPvm"));
