@@ -2,6 +2,8 @@ package fi.vm.sade.tarjonta.service.mock;
 
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.*;
+
+import javax.jws.WebParam;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
@@ -30,6 +32,11 @@ public class TarjontaPublicServiceMock implements TarjontaPublicService {
         TarjontaTyyppi tt = new TarjontaTyyppi();
         tt.setHaku(haut.get(oid));
         return tt;
+    }
+
+    @Override
+    public LueHakukohdeKoulutuksineenVastausTyyppi lueHakukohdeKoulutuksineen(@WebParam(partName = "hakukohdeKysely", name = "LueHakukohdeKoulutuksineenKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohdeKoulutuksineenKyselyTyyppi hakukohdeKysely) {
+        return new LueHakukohdeKoulutuksineenVastausTyyppi();
     }
 
     private void initDefValues() {

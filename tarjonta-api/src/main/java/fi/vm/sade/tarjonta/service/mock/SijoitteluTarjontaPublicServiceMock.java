@@ -45,6 +45,11 @@ public class SijoitteluTarjontaPublicServiceMock implements TarjontaPublicServic
         return tt;
     }
 
+    @Override
+    public LueHakukohdeKoulutuksineenVastausTyyppi lueHakukohdeKoulutuksineen(@WebParam(partName = "hakukohdeKysely", name = "LueHakukohdeKoulutuksineenKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohdeKoulutuksineenKyselyTyyppi hakukohdeKysely) {
+        return new LueHakukohdeKoulutuksineenVastausTyyppi();
+    }
+
     private void addHakukohdeList(TarjontaTyyppi tt) {
         for (int i = 0; i < 10; i++) {
             tt.getHakukohde().add(createHakuKohde(i, 10));

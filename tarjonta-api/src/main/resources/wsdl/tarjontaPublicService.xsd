@@ -29,6 +29,10 @@
 
     <xs:element name="lueHakukohdeKysely" type="tns:LueHakukohdeKyselyTyyppi" />
     <xs:element name="lueHakukohdeVastaus" type="tns:LueHakukohdeVastausTyyppi" />
+    
+    <xs:element name="LueHakukohdeKoulutuksineenKysely" type="tns:LueHakukohdeKoulutuksineenKyselyTyyppi"/>'
+    <xs:element name="LueHakukohdeKoulutuksineenVastaus" type="tns:LueHakukohdeKoulutuksineenVastausTyyppi"/>
+
 
 
 
@@ -192,5 +196,26 @@
             <xs:element name="hakukohde" type="tarjonta:HakukohdeTyyppi"/>
         </xs:sequence>
     </xs:complexType>
+
+    <xs:complexType name="LueHakukohdeKoulutuksineenKyselyTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeOid" type="xs:string">
+               <xs:annotation>
+                   <xs:documentation>Hakukohteen yksilöllinen oid</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LueHakukohdeKoulutuksineenVastausTyyppi">
+        <xs:sequence>
+           <xs:element minOccurs="1" maxOccurs="1" name="hakukohde" type="tarjonta:HakukohdeTyyppi">
+               <xs:annotation>
+                   <xs:documentation>Hakukohde joka sisältää mahdolliset siihen liitetyt koulutukset</xs:documentation>
+               </xs:annotation>
+           </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
 
 </xs:schema>
