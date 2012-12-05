@@ -347,17 +347,8 @@ public class TarjontaPresenter {
                     .lueHakukohde(kysely).getHakukohde()));
             setKomotoOids(getModel().getHakukohde().getKomotoOids());
         }
-
-        //Clearing the layout from previos content
-        this._rootView.getAppRootLayout().removeAllComponents();
-
-        // Adding the form
-        VerticalLayout vl = UiUtil.verticalLayout();
-        vl.setHeight(-1, VerticalLayout.UNITS_PIXELS);
-        vl.addComponent(_rootView.getBreadcrumbsView());
-        vl.addComponent(editHakukohdeView);
-        _rootView.getAppRootLayout().addComponent(vl);
-        _rootView.getAppRootLayout().setExpandRatio(vl, 1f);
+        
+        getRootView().changeView(editHakukohdeView);
 
     }
 

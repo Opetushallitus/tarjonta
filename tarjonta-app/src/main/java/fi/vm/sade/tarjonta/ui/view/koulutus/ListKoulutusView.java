@@ -147,8 +147,6 @@ public class ListKoulutusView extends VerticalLayout {
         /**
          * Sets the datasource for the hierarchical listing of Koulutus objects.
          */
-        categoryTree.removeAllItems();
-        categoryTree.setContainerDataSource(createDataSource(presenter.getKoulutusDataSource()));
         luoKoulutusB.setEnabled(presenter.getModel().getOrganisaatioOid() != null);
         luoHakukohdeB.setEnabled(!presenter.getModel().getSelectedKoulutukset().isEmpty());
     }

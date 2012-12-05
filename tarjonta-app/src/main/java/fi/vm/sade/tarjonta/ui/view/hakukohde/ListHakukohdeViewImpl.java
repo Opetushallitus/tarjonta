@@ -145,7 +145,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         setExpandRatio(categoryTree, 0.93f);
         setMargin(true);
 
-        setDataSource();
+        presenter.setHakukohdeListView(this);
     }
 
     /**
