@@ -56,20 +56,20 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         BooleanExpression criteria = toteutus.tila.eq(TarjontaTila.JULKAISTU).and(m.tila.eq(TarjontaTila.JULKAISTU));
 
         return from(toteutus).
-            leftJoin(toteutus.ammattinimikes).fetch().
-            leftJoin(toteutus.avainsanas).fetch().
-            leftJoin(toteutus.opetuskielis).fetch().
-            leftJoin(toteutus.opetusmuotos).fetch().
-            leftJoin(toteutus.koulutuslajis).fetch().
-            leftJoin(toteutus.loppukoeVaatimukset, lkv).fetch().leftJoin(lkv.tekstis).fetch().
-            leftJoin(toteutus.arviointikriteerit, ak).fetch().leftJoin(ak.tekstis).fetch().
-            leftJoin(toteutus.linkkis).fetch().
-            leftJoin(toteutus.koulutusmoduuli, m).fetch().
-            leftJoin(m.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
-            leftJoin(m.jatkoOpintoMahdollisuudet, jom).fetch().leftJoin(jom.tekstis).fetch().
-            leftJoin(m.nimi, nimi).fetch().leftJoin(nimi.tekstis).fetch().
-            where(criteria).
-            distinct().list(toteutus);
+                leftJoin(toteutus.ammattinimikes).fetch().
+                leftJoin(toteutus.avainsanas).fetch().
+                leftJoin(toteutus.opetuskielis).fetch().
+                leftJoin(toteutus.opetusmuotos).fetch().
+                leftJoin(toteutus.koulutuslajis).fetch().
+                leftJoin(toteutus.loppukoeVaatimukset, lkv).fetch().leftJoin(lkv.tekstis).fetch().
+                leftJoin(toteutus.arviointikriteerit, ak).fetch().leftJoin(ak.tekstis).fetch().
+                leftJoin(toteutus.linkkis).fetch().
+                leftJoin(toteutus.koulutusmoduuli, m).fetch().
+                leftJoin(m.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
+                leftJoin(m.jatkoOpintoMahdollisuudet, jom).fetch().leftJoin(jom.tekstis).fetch().
+                leftJoin(m.nimi, nimi).fetch().leftJoin(nimi.tekstis).fetch().
+                where(criteria).
+                distinct().list(toteutus);
     }
 
     @Override
@@ -85,13 +85,14 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         BooleanExpression criteria = hakukohde.tila.eq(TarjontaTila.JULKAISTU);
 
         return from(hakukohde).
-            leftJoin(hakukohde.valintakoes, valintakoe).fetch().
-            leftJoin(valintakoe.kuvaus, kuvaus).fetch().leftJoin(kuvaus.tekstis).fetch().
-            leftJoin(hakukohde.valintaperusteKuvaus, valintaperuste).fetch().leftJoin(valintaperuste.tekstis).fetch().
-            leftJoin(hakukohde.liites).fetch().
-            leftJoin(hakukohde.koulutusmoduuliToteutuses).fetch().
-            where(criteria).
-            distinct().list(hakukohde);
+                leftJoin(hakukohde.valintakoes, valintakoe).fetch().
+                leftJoin(valintakoe.kuvaus, kuvaus).fetch().leftJoin(kuvaus.tekstis).fetch().
+                leftJoin(hakukohde.valintaperusteKuvaus, valintaperuste).fetch().leftJoin(valintaperuste.tekstis).fetch().
+                leftJoin(hakukohde.liites).fetch().
+                leftJoin(hakukohde.koulutusmoduuliToteutuses).fetch().
+                leftJoin(hakukohde.lisatiedot).fetch().
+                where(criteria).
+                distinct().list(hakukohde);
 
     }
 
@@ -104,16 +105,14 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         BooleanExpression criteria = haku.tila.eq(TarjontaTila.JULKAISTU);
 
         return from(haku).
-            leftJoin(haku.nimi, nimi).fetch().
-            leftJoin(nimi.tekstis).fetch().
-            where(criteria).
-            distinct().list(haku);
+                leftJoin(haku.nimi, nimi).fetch().
+                leftJoin(nimi.tekstis).fetch().
+                where(criteria).
+                distinct().list(haku);
 
     }
 
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(em).from(o);
     }
-
 }
-
