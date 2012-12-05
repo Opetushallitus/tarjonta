@@ -708,9 +708,10 @@ public class TarjontaPresenter {
      * @param organisaatioName - the organisaatio name to select
      */
     public void selectOrganisaatio(String organisaatioOid, String organisaatioName) {
-        getRootView().getBreadcrumbsView().setOrganisaatio(organisaatioName);
         getModel().setOrganisaatioOid(organisaatioOid);
         getModel().setOrganisaatioName(organisaatioName);
+        
+        getRootView().getBreadcrumbsView().setOrganisaatio(organisaatioName);
 
         // Descendant organisation oids to limit the search
         getModel().getSearchSpec().getOrganisaatioOids().clear();
@@ -740,9 +741,12 @@ public class TarjontaPresenter {
     }
 
     public void unSelectOrganisaatio() {
-    	getRootView().getBreadcrumbsView().setOrganisaatio("-");
     	getModel().setOrganisaatioOid(null);
     	getModel().setOrganisaatioName(null);
+    	
+    	getRootView().getBreadcrumbsView().setOrganisaatio("OPH");
+    
+    	getRootView().getOrganisaatiohakuView().clearTreeSelection();
 
     	//Clearing the selected hakukohde and koulutus objects
     	getModel().getSelectedhakukohteet().clear();

@@ -49,7 +49,7 @@ public class HakuRootView extends Window {
     private static final long serialVersionUID = -942466086095854495L;
     private HorizontalLayout appRootLayout;
     private HorizontalLayout appRightLayout;
-    private BreadcrumbsView breadcrumbsView;
+    //private BreadcrumbsView breadcrumbsView;
     private SearchSpesificationView searchSpesificationView;
     private HakuSearchResultView searchResultsView;
     //hakuPresenter ja kaikki hakutoiminnallisuudet tullaan varmaankin siirtämään pois tarjonnasta.
@@ -65,7 +65,8 @@ public class HakuRootView extends Window {
         //
         // Create components
         //
-        breadcrumbsView = new BreadcrumbsView();
+        //BreadcrumbsView otettu pois
+        //breadcrumbsView = new BreadcrumbsView();
         searchSpesificationView = new SearchSpesificationView();
         searchResultsView = new HakuSearchResultView();
 
@@ -136,9 +137,9 @@ public class HakuRootView extends Window {
         return searchSpesificationView;
     }
 
-    public BreadcrumbsView getBreadcrumbsView() {
+    /*public BreadcrumbsView getBreadcrumbsView() {
         return breadcrumbsView;
-    }
+    }*/
 
     public HakuSearchResultView getSearchResultsView() {
         return searchResultsView;
@@ -154,7 +155,7 @@ public class HakuRootView extends Window {
         getAppRightLayout().removeAllComponents();
 
         VerticalLayout vl = UiUtil.verticalLayout();
-        vl.addComponent(getBreadcrumbsView());
+        //vl.addComponent(getBreadcrumbsView());
 
         this.hakuPresenter.setHakuViewModel(haku);
 
@@ -189,7 +190,7 @@ public class HakuRootView extends Window {
         getAppRightLayout().removeAllComponents();
         VerticalLayout vl = UiUtil.verticalLayout();
 
-        vl.addComponent(getBreadcrumbsView());
+        //vl.addComponent(getBreadcrumbsView());
         EditHakuViewImpl editHakuView = new EditHakuViewImpl(haku);
         editHakuView.addListener(new Listener() {
             private static final long serialVersionUID = -8696709317724642137L;
@@ -220,7 +221,7 @@ public class HakuRootView extends Window {
         getAppRightLayout().removeAllComponents();
         VerticalLayout vl = UiUtil.verticalLayout();
         vl.setSizeFull();
-        vl.addComponent(getBreadcrumbsView());
+        //vl.addComponent(getBreadcrumbsView());
         vl.addComponent(getSearchSpesificationView());
         vl.addComponent(getSearchResultsView());
 

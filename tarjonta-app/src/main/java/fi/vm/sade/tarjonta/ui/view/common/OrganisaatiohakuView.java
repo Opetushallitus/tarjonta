@@ -441,8 +441,15 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             }
         });
     }
+    
+    public void clearTreeSelection() {
+        
+        this.tree.setValue(null);
+    }
 
     private String T(String key, Object... args) {
         return i18n.getMessage(key, args);
     }
+
+
 }

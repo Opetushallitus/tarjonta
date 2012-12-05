@@ -15,7 +15,13 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Button.ClickEvent;
+
+import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -29,24 +35,43 @@ import fi.vm.sade.vaadin.util.UiUtil;
 public class BreadcrumbsView extends AbstractVerticalLayout {
 
     private static final long serialVersionUID = 2254224099223350768L;
-    private Label organisaatio;
+    private Label organisaatioNimi;
+    private Button poistaValintaB;
+   
+    TarjontaPresenter presenter;
 
-    public BreadcrumbsView() {
+    public BreadcrumbsView(TarjontaPresenter presenter) {
         super();
         this.setMargin(false, false, false, true);
         this.setSizeUndefined();
+        this.presenter = presenter;
     }
 
     @Override
     protected void buildLayout() {
-        organisaatio = UiUtil.label(this, "-", LabelStyleEnum.H2);
-        organisaatio.setSizeUndefined();
+        HorizontalLayout hl = UiUtil.horizontalLayout();
+        hl.setSpacing(true);
+        organisaatioNimi = UiUtil.label(hl, "OPH", LabelStyleEnum.H2);
+        organisaatioNimi.setSizeUndefined();
+        poistaValintaB = UiUtil.buttonLink(hl, T("poistaOrganisaatioValinta"));
+        poistaValintaB.addListener(new Button.ClickListener() {
+            
+            @Override
+            public void buttonClick(ClickEvent event) {
+                presenter.unSelectOrganisaatio();
+            }
+        });
+        hl.setComponentAlignment(organisaatioNimi, Alignment.MIDDLE_LEFT);
+        hl.setComponentAlignment(poistaValintaB, Alignment.TOP_RIGHT);
+        poistaValintaB.setVisible(presenter.getModel().getOrganisaatioOid() != null);
+        addComponent(hl);
     }
 
     /**
-     * @param organisaatio the organisaatio to set
+     * @param organisaatioNimi the organisaatio to set
      */
-    public void setOrganisaatio(String organisaatio) {
-        this.organisaatio.setValue(organisaatio);
+    public void setOrganisaatio(String organisaatioNimi) {
+        this.organisaatioNimi.setValue(organisaatioNimi);
+        poistaValintaB.setVisible(presenter.getModel().getOrganisaatioOid() != null);
     }
 }

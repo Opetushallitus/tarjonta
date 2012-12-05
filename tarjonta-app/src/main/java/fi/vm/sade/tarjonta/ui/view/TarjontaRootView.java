@@ -172,7 +172,7 @@ public class TarjontaRootView extends Window {
         // Create components
 
         organisationSearchView = new OrganisaatiohakuView();
-        breadcrumbsView = new BreadcrumbsView();
+        breadcrumbsView = new BreadcrumbsView(_presenter);
         searchResultsView = new SearchResultsView();
         searchSpesificationView = new SearchSpesificationView(_presenter.getModel().getSearchSpec());
 
