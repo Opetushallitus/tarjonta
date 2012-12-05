@@ -256,6 +256,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 presenter.removeSelectedHakukohteet();
             }
         });
+        poistaB.setEnabled(false);
 
         cbJarjestys = UiUtil.comboBox(layout, null, ORDER_BY);
         cbJarjestys.setWidth("300px");
