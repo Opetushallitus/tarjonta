@@ -91,7 +91,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 leftJoin(hakukohde.valintaperusteKuvaus, valintaperuste).fetch().leftJoin(valintaperuste.tekstis).fetch().
                 leftJoin(hakukohde.liites).fetch().
                 leftJoin(hakukohde.koulutusmoduuliToteutuses).fetch().
-                leftJoin(hakukohde.lisatiedot, lisatiedot).fetch().
+                leftJoin(hakukohde.lisatiedot, lisatiedot).fetch().leftJoin(lisatiedot.tekstis).fetch().
                 where(criteria).
                 distinct().list(hakukohde);
 
