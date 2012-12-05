@@ -81,6 +81,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QValintakoe valintakoe = QValintakoe.valintakoe;
         QMonikielinenTeksti kuvaus = new QMonikielinenTeksti("kuvaus");
         QMonikielinenTeksti valintaperuste = new QMonikielinenTeksti("valintaperuste");
+        QMonikielinenTeksti lisatiedot = new QMonikielinenTeksti("lisatiedot");
 
         BooleanExpression criteria = hakukohde.tila.eq(TarjontaTila.JULKAISTU);
 
@@ -90,7 +91,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 leftJoin(hakukohde.valintaperusteKuvaus, valintaperuste).fetch().leftJoin(valintaperuste.tekstis).fetch().
                 leftJoin(hakukohde.liites).fetch().
                 leftJoin(hakukohde.koulutusmoduuliToteutuses).fetch().
-                leftJoin(hakukohde.lisatiedot).fetch().
+                leftJoin(hakukohde.lisatiedot, lisatiedot).fetch().
                 where(criteria).
                 distinct().list(hakukohde);
 
