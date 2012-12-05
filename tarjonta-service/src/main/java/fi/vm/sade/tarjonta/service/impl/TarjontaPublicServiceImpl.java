@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.jws.WebParam;
 import javax.xml.datatype.DatatypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +113,11 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
         }
         return vastaus;
+    }
+
+    @Override
+    public LueHakukohdeKoulutuksineenVastausTyyppi lueHakukohdeKoulutuksineen(@WebParam(partName = "hakukohdeKysely", name = "LueHakukohdeKoulutuksineenKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohdeKoulutuksineenKyselyTyyppi hakukohdeKysely) {
+        return new LueHakukohdeKoulutuksineenVastausTyyppi();
     }
 
     private List<HakuTyyppi> convert(List<Haku> haut) {
