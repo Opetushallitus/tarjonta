@@ -115,11 +115,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         return vastaus;
     }
 
-    @Override
-    public LueHakukohdeKoulutuksineenVastausTyyppi lueHakukohdeKoulutuksineen(@WebParam(partName = "hakukohdeKysely", name = "LueHakukohdeKoulutuksineenKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohdeKoulutuksineenKyselyTyyppi hakukohdeKysely) {
-        return new LueHakukohdeKoulutuksineenVastausTyyppi();
-    }
-
     private List<HakuTyyppi> convert(List<Haku> haut) {
         List<HakuTyyppi> tyypit = new ArrayList<HakuTyyppi>();
         for (Haku haku : haut) {
@@ -212,15 +207,50 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     }
 
     @Override
+    public LueHakukohdeKoulutuksineenVastausTyyppi lueHakukohdeKoulutuksineen(@WebParam(partName = "hakukohdeKysely", name = "LueHakukohdeKoulutuksineenKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohdeKoulutuksineenKyselyTyyppi hakukohdeKysely) {
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(hakukohdeKysely.getHakukohdeOid());
+        List<KoulutusmoduuliToteutus> komotos = new ArrayList<KoulutusmoduuliToteutus>();
+        if (hakukohde.getKoulutusmoduuliToteutuses() != null) {
+            komotos.addAll(hakukohde.getKoulutusmoduuliToteutuses());
+        }
+        HakukohdeTyyppi hakukohdeTyyppi = conversionService.convert(hakukohde, HakukohdeTyyppi.class);
+
+        hakukohdeTyyppi.getHakukohdeKoulutukses().addAll(mapKomotoListToKoulutusKoosteTyyppiList(komotos));
+
+        LueHakukohdeKoulutuksineenVastausTyyppi vastaus = new LueHakukohdeKoulutuksineenVastausTyyppi();
+
+        vastaus.setHakukohde(hakukohdeTyyppi);
+
+        return vastaus;
+
+    }
+
+    private List<KoulutusKoosteTyyppi> mapKomotoListToKoulutusKoosteTyyppiList(List<KoulutusmoduuliToteutus> komotos) {
+        List<KoulutusKoosteTyyppi> koulutusKoostees = new ArrayList<KoulutusKoosteTyyppi>();
+        for (KoulutusmoduuliToteutus komoto:komotos) {
+            KoulutusTulos koulutusTulos = getKoulutusTulosFromKoulutusmoduuliToteutus(komoto);
+            koulutusKoostees.add(koulutusTulos.getKoulutus());
+        }
+        return koulutusKoostees;
+    }
+
+    private List<KoulutusTulos> mapKomotoListToKoulutusTulosList(List<KoulutusmoduuliToteutus> komotos) {
+        List<KoulutusTulos> koulutusTuloses = new ArrayList<KoulutusTulos>();
+        for (KoulutusmoduuliToteutus komoto: komotos) {
+            KoulutusTulos tulos = getKoulutusTulosFromKoulutusmoduuliToteutus(komoto);
+            koulutusTuloses.add(tulos);
+        }
+        return koulutusTuloses;
+    }
+
+    @Override
     public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
 
         if (kysely.getKoulutusOids() != null && kysely.getKoulutusOids().size() > 0) {
             HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
+
             List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(kysely.getKoulutusOids());
-            for (KoulutusmoduuliToteutus komoto: komotos) {
-                KoulutusTulos tulos = getKoulutusTulosFromKoulutusmoduuliToteutus(komoto);
-                vastaus.getKoulutusTulos().add(tulos);
-            }
+            vastaus.getKoulutusTulos().addAll(mapKomotoListToKoulutusTulosList(komotos));
             return vastaus;
         }  else {
         //Retrieving komotos according to criteria provided in kysely, currently list of tarjoajaOids and a name

@@ -32,5 +32,7 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     
     List<Hakukohde> findHakukohdeWithDepenciesByOid(String oid);
 
+    Hakukohde findHakukohdeWithKomotosByOid(String oid);
+
 }
 
