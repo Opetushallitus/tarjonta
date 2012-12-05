@@ -153,6 +153,10 @@
                         type="tns:MonikielinenTekstiTyyppi"
                         minOccurs="0"
                         maxOccurs="1"/>
+            <xs:element name="hakukohdeKoulutukses"
+                        type="tns:KoulutusKoosteTyyppi"
+                        minOccurs="0"
+                        maxOccurs="unbounded"/>
 
         </xs:sequence>
     </xs:complexType>
