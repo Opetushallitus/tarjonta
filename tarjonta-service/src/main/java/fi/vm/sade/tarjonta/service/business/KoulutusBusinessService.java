@@ -20,12 +20,21 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import java.util.List;
 
 /**
- * Business logic for manipulating classes inherited from LearningOpportunityObject.
+ * Business logic for manipulating classes inherited from
+ * LearningOpportunityObject.
  *
  */
 public interface KoulutusBusinessService {
+
+    /**
+     * List all KOMO objects.
+     *
+     * @return
+     */
+    public List<Koulutusmoduuli> findTutkintoOhjelmat();
 
     /**
      * Creates a new top level Koulutusmoduuli.
@@ -36,8 +45,9 @@ public interface KoulutusBusinessService {
     public Koulutusmoduuli create(Koulutusmoduuli moduuli);
 
     /**
-     * Creates new KoulutusmoduuliToteutus from passed data. Before storing, reference to given Koulutusmoduuli is assigned.
-     * If given Koulutusmoduuli is also new, it is also created.
+     * Creates new KoulutusmoduuliToteutus from passed data. Before storing,
+     * reference to given Koulutusmoduuli is assigned. If given Koulutusmoduuli
+     * is also new, it is also created.
      *
      * @param toteutus
      * @param moduuli
@@ -46,8 +56,9 @@ public interface KoulutusBusinessService {
     public KoulutusmoduuliToteutus create(KoulutusmoduuliToteutus toteutus, Koulutusmoduuli moduuli);
 
     /**
-     * Palauttaa {@link KoulutusmoduuliTyyppi#TUTKINTO_OHJELMA} -tyyppisen Koulutusmoduulin jonka koulutusLuokitus sekä koulutusOhjelma
-     * vastaavat annettuja arvoja.
+     * Palauttaa {@link KoulutusmoduuliTyyppi#TUTKINTO_OHJELMA} -tyyppisen
+     * Koulutusmoduulin jonka koulutusLuokitus sekä koulutusOhjelma vastaavat
+     * annettuja arvoja.
      *
      * @param tutkintoUri
      * @param koulutusUri
@@ -55,9 +66,9 @@ public interface KoulutusBusinessService {
      */
     public Koulutusmoduuli findTutkintoOhjelma(String koulutusLuokitusUri, String koulutusOhjelmaUri);
 
-
     /**
-     * Lisaa ja palauttaaa uuden koulutuksen (toteutus) annettujen arvojen perusteella.
+     * Lisaa ja palauttaaa uuden koulutuksen (toteutus) annettujen arvojen
+     * perusteella.
      *
      * @param koulutus
      * @return
@@ -65,15 +76,16 @@ public interface KoulutusBusinessService {
     public KoulutusmoduuliToteutus createKoulutus(LisaaKoulutusTyyppi koulutus);
 
     /**
-     * Päivittaa koulutuksen (toteutus) tiedot ja palauttaa päivitetyn toteutuksen.
+     * Päivittaa koulutuksen (toteutus) tiedot ja palauttaa päivitetyn
+     * toteutuksen.
      *
      * @param koulutus
      * @return
      */
     public KoulutusmoduuliToteutus updateKoulutus(PaivitaKoulutusTyyppi koulutus);
-
     /**
-     * Once search criteria tyyppi is declared in WSDL expose this method. The implementation is in place in DAO.
+     * Once search criteria tyyppi is declared in WSDL expose this method. The
+     * implementation is in place in DAO.
      *
      * @param oid
      * @param criteria
@@ -81,4 +93,3 @@ public interface KoulutusBusinessService {
      */
     //public List<? extends LearningOpportunityObject> search(KoulutusSearchTyyppi criteria);
 }
-

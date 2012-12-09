@@ -19,11 +19,15 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Window;
+import fi.vm.sade.oid.service.ExceptionMessage;
 
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusLisatiedotForm;
+import java.io.IOException;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +54,8 @@ public class TarjontaWebApplication extends TarjontaApplication {
     private String developmentTheme;
     @Autowired
     private TarjontaAdminService tarjontaAdminService;
+    @Autowired
+    private TarjontaKomoData tarjontaKomoData;
 
     @Override
     protected void initApplication() {
@@ -62,6 +68,7 @@ public class TarjontaWebApplication extends TarjontaApplication {
 
         Button tarjontaButton = new Button("Tarjontaan", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(ClickEvent event) {
                 toTarjonta();
@@ -71,6 +78,7 @@ public class TarjontaWebApplication extends TarjontaApplication {
 
         Button hakuButton = new Button("Hakuihin", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(ClickEvent event) {
                 toHaku();
@@ -80,13 +88,46 @@ public class TarjontaWebApplication extends TarjontaApplication {
 
         Button xxxButton = new Button("Koulutuksen kuvailevat tiedot muokkaaminen", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(ClickEvent event) {
                 toKoulutusView();
             }
         });
-
         hl.addComponent(xxxButton);
+
+        Button btnKomo = new Button("Luo kaikki komot", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                try {
+                    LOG.debug("Luo komot event");
+                    tarjontaKomoData.loadKoodistot();
+                    tarjontaKomoData.createData(true);
+                } catch (Exception ex) {
+                    LOG.error("Failed to create KOMOs", ex);
+                }
+            }
+        });    
+        hl.addComponent(btnKomo);
+        
+        Button btnKomoTest = new Button("Testaa komon luonti", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                try {
+                    LOG.debug("Luo komot event");
+                    tarjontaKomoData.loadKoodistot();
+                    tarjontaKomoData.createData(false);
+                } catch (Exception ex) {
+                    LOG.error("Failed to create KOMOs", ex);
+                }
+            }
+        });
+
+        hl.addComponent(btnKomoTest);
     }
 
     public void toTarjonta() {

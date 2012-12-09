@@ -69,7 +69,7 @@ public final class EntityUtils {
      * @param to target of the copying
      * @return
      */
-    public static MonikielinenTeksti copyFields(MonikielinenTekstiTyyppi from ){
+    public static MonikielinenTeksti copyFields(MonikielinenTekstiTyyppi from) {
 
         if (from == null) {
             return null;
@@ -160,7 +160,7 @@ public final class EntityUtils {
             }
         } // else, set is empty which will clear all previous links
         toKoulutus.setLinkkis(toLinkkis);
-        
+
     }
 
     /**
@@ -191,7 +191,7 @@ public final class EntityUtils {
         toKoulutus.setYhteistyoMuidenToimijoidenKanssa(copyFields(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa()));
     }
 
-    public static void copyFields(YhteyshenkiloTyyppi from, Yhteyshenkilo to) {
+    public static void copyFields(final YhteyshenkiloTyyppi from, Yhteyshenkilo to) {
 
         to.setHenkioOid(from.getHenkiloOid());
         to.setEtunimis(from.getEtunimet());
@@ -203,7 +203,7 @@ public final class EntityUtils {
 
     }
 
-    public static void copyFields(Yhteyshenkilo from, YhteyshenkiloTyyppi to) {
+    public static void copyFields(final Yhteyshenkilo from, YhteyshenkiloTyyppi to) {
 
         to.setEtunimet(from.getEtunimis());
         to.setHenkiloOid(from.getHenkioOid());
@@ -217,7 +217,7 @@ public final class EntityUtils {
         }
     }
 
-    public static KoulutusmoduuliKoosteTyyppi copyFieldsToKoulutusmoduuliKoosteTyyppi(Koulutusmoduuli komo) {
+    public static KoulutusmoduuliKoosteTyyppi copyFieldsToKoulutusmoduuliKoosteTyyppi(final Koulutusmoduuli komo) {
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
         tyyppi.setOid(komo.getOid());
         tyyppi.setKoulutuskoodiUri(komo.getKoulutusKoodi());
@@ -237,7 +237,7 @@ public final class EntityUtils {
         return tyyppi;
     }
 
-    public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi tyyppi) {
+    public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(final KoulutusmoduuliKoosteTyyppi tyyppi) {
         Koulutusmoduuli komo = new Koulutusmoduuli(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(tyyppi.getKoulutusmoduuliTyyppi().value()));
         komo.setOid(tyyppi.getOid());
 
@@ -255,10 +255,10 @@ public final class EntityUtils {
         komo.setKoulutuksenRakenne(copyFields(tyyppi.getKoulutuksenRakenne()));
         komo.setTavoitteet(copyFields(tyyppi.getTavoitteet()));
         komo.setJatkoOpintoMahdollisuudet(copyFields(tyyppi.getJatkoOpintoMahdollisuudet()));
-        
+
         //names for KOMOTO search 
         komo.setNimi(copyFields(tyyppi.getKoulutusmoduulinNimi()));
-             
+
         return komo;
     }
 

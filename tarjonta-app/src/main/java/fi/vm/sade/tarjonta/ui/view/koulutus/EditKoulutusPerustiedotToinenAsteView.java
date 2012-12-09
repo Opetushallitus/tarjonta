@@ -60,6 +60,7 @@ import org.vaadin.addon.formbinder.ViewBoundForm;
 public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavigationLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotToinenAsteView.class);
+    private static final long serialVersionUID = -2238485065851932687L;
     private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
     private ErrorMessage errorView;
     @Autowired(required = true)
@@ -143,6 +144,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         addLinkkiSelectorAndEditor(layout);
 
         addNavigationButton("", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 presenter.showMainDefaultView();
@@ -150,6 +152,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         }, StyleEnum.STYLE_BUTTON_BACK);
 
         ClickListener btnListenerTallennaLuonnoksena = new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 save(form, TarjontaTila.LUONNOS);
@@ -163,6 +166,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         }
 
         ClickListener btnListenerTallennaValmiina = new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 save(form, TarjontaTila.VALMIS);
@@ -176,9 +180,10 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         }
 
         final Button.ClickListener clickListener = new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                if (isSaved()) {
+                if (!isSaved()) {
                     presenter.showNotification(UserNotification.UNSAVED);
                     return;
                 }
@@ -258,7 +263,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
     }
 
     private boolean isSaved() {
-        return koulutusPerustiedotModel.isLoaded() && isModified();
+        return koulutusPerustiedotModel.isLoaded() && !isModified();
     }
 
     private void save(Form form, TarjontaTila tila) {

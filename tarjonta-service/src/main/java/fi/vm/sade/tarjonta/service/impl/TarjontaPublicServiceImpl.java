@@ -75,7 +75,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     public TarjontaPublicServiceImpl() {
         super();
     }
-
+    
     @Override
     public ListHakuVastausTyyppi listHaku(ListaaHakuTyyppi parameters) {
         ListHakuVastausTyyppi hakuVastaus = new ListHakuVastausTyyppi();
@@ -373,6 +373,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public HaeKoulutusmoduulitVastausTyyppi haeKoulutusmoduulit(HaeKoulutusmoduulitKyselyTyyppi kysely) {
+        
         SearchCriteria criteria = new SearchCriteria();
         criteria.setKoulutusKoodi(kysely.getKoulutuskoodiUri());
         criteria.setKoulutusohjelmaKoodi(kysely.getKoulutusohjelmakoodiUri());
@@ -385,6 +386,19 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             kooste.setKoulutusohjelmakoodiUri(curKomo.getKoulutusohjelmaKoodi());
             tulos.setKoulutusmoduuli(kooste);
             vastaus.getKoulutusmoduuliTulos().add(tulos);
+        }
+ 
+        return vastaus;
+    }
+    
+    @Override
+    public HaeKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit(HaeKoulutusmoduulitKyselyTyyppi kysely) {
+        HaeKoulutusmoduulitVastausTyyppi vastaus = new HaeKoulutusmoduulitVastausTyyppi();
+        for (Koulutusmoduuli curKomo : this.koulutusmoduuliDAO.findAllKomos()) {
+            KoulutusmoduuliKoosteTyyppi komo = EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(curKomo);
+            KoulutusmoduuliTulos koulutusmoduuliTulos = new KoulutusmoduuliTulos();
+            koulutusmoduuliTulos.setKoulutusmoduuli(komo);
+            vastaus.getKoulutusmoduuliTulos().add(koulutusmoduuliTulos);
         }
         return vastaus;
     }

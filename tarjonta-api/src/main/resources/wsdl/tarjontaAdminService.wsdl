@@ -101,6 +101,11 @@
         <!-- no args -->
         <wsdl:part element="ns1:emptyString" name="parameters"/>
     </wsdl:message>
+    
+    <wsdl:message name="initKomo">
+        <!-- no args -->
+        <wsdl:part element="ns1:emptyString" name="parameters"/>
+    </wsdl:message>
 
     <wsdl:portType name="TarjontaAdminService">
 
@@ -112,7 +117,7 @@
             <wsdl:documentation>
                 Lisaa hakukohde
             </wsdl:documentation>
-             <wsdl:input message="tns:lisaaHakukohde" name="lisaaHakukohde">
+            <wsdl:input message="tns:lisaaHakukohde" name="lisaaHakukohde">
             </wsdl:input>
             <wsdl:output message="tns:lisaaHakukohdeVastaus" name="lisaaHakukohdeVastaus">
             </wsdl:output>
@@ -122,7 +127,7 @@
             <wsdl:documentation>
                 Paivita hakukohde
             </wsdl:documentation>
-             <wsdl:input message="tns:paivitaHakukohde" name="paivitaHakukohde">
+            <wsdl:input message="tns:paivitaHakukohde" name="paivitaHakukohde">
             </wsdl:input>
             <wsdl:output message="tns:paivitaHakukohdeVastaus" name="paivitaHakukohdeVastaus">
             </wsdl:output>
@@ -132,7 +137,7 @@
             <wsdl:documentation>
                 Poista hakukohde
             </wsdl:documentation>
-             <wsdl:input message="tns:poistaHakukohde" name="poistaHakukohde">
+            <wsdl:input message="tns:poistaHakukohde" name="poistaHakukohde">
             </wsdl:input>
             <wsdl:output message="tns:poistaHakukohdeVastaus" name="poistaHakukohdeVastaus">
             </wsdl:output>
@@ -142,7 +147,7 @@
             <wsdl:documentation>
                 Poista koulutus
             </wsdl:documentation>
-             <wsdl:input message="tns:poistaKoulutus" name="poistaKoulutus">
+            <wsdl:input message="tns:poistaKoulutus" name="poistaKoulutus">
             </wsdl:input>
             <wsdl:output message="tns:poistaKoulutusVastaus" name="poistaKoulutusVastaus">
             </wsdl:output>
@@ -218,6 +223,13 @@
             </wsdl:documentation>
             <wsdl:input message="tns:initSample"/>
         </wsdl:operation>
+        
+        <wsdl:operation name="initKomo">
+            <wsdl:documentation>
+                Alustaa tarjonnan koulutusmoduulin datalla.
+            </wsdl:documentation>
+            <wsdl:input message="tns:initKomo"/>
+        </wsdl:operation>
 
     </wsdl:portType>
 
@@ -246,7 +258,7 @@
             </wsdl:output>
         </wsdl:operation>
 
-         <wsdl:operation name="paivitaHakukohde">
+        <wsdl:operation name="paivitaHakukohde">
             <soap:operation soapAction="" type="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>

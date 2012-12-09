@@ -131,11 +131,21 @@
                 Hakee joukon koulutusmoduuleja ja niiden tarkeimmat tunnusmerkit.
             </wsdl:documentation>
             <wsdl:input message="tns:haeKoulutusmoduulitKysely" name="haeKoulutusmoduulitKysely">
-            </wsdl:input>
+            </wsdl:input>haeKoulutusmoduulitKysely
             <wsdl:output message="tns:haeKoulutusmoduulitVastaus" name="haeKoulutusmoduulitVastaus">
             </wsdl:output>
         </wsdl:operation>
         
+        <wsdl:operation name="haeKaikkiKoulutusmoduulit">
+            <wsdl:documentation>
+                Hakee joukon koulutusmoduuleja.
+            </wsdl:documentation>
+            <wsdl:input message="tns:haeKoulutusmoduulitKysely" name="haeKoulutusmoduulitKysely">
+            </wsdl:input>haeKoulutusmoduulitKysely
+            <wsdl:output message="tns:haeKoulutusmoduulitVastaus" name="haeKoulutusmoduulitVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+              
         <wsdl:operation name="lueKoulutus">
             <wsdl:documentation>
                 Hakee yhden koulutuksen tiedot oidin perusteella.

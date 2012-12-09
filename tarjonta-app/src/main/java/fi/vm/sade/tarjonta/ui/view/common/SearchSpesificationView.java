@@ -48,7 +48,7 @@ import org.vaadin.addon.formbinder.FormView;
 @Configurable
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 public class SearchSpesificationView extends OphHorizontalLayout {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(SearchSpesificationView.class);
     private static final String I18N_PROMPT = ".prompt";
     private static final String I18N_KAUDEN_TARKENNE = "kaudenTarkenne";
@@ -69,30 +69,30 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     private boolean attached = false;
     /* Model for search spesifications */
     private KoulutusSearchSpesificationViewModel model = new KoulutusSearchSpesificationViewModel();
-    
+
     public SearchSpesificationView() {
         super(true, UiMarginEnum.RIGHT_BOTTOM_LEFT);
     }
-    
+
     public SearchSpesificationView(KoulutusSearchSpesificationViewModel model) {
-        super(true, UiMarginEnum.RIGHT_BOTTOM_LEFT);     
+        super(true, UiMarginEnum.RIGHT_BOTTOM_LEFT);
         this.model = model;
     }
-    
+
     @Override
     public void attach() {
         super.attach();
         if (attached) {
             return;
         }
-        
+
         attached = true;
         buildLayout();
     }
-    
+
     protected void buildLayout() {
         setSizeFull();
-         //without the height parameter result area would be hidden.
+        //without the height parameter result area would be hidden.
         setHeight(80, UNITS_PIXELS);
         //
         // Create fields
@@ -109,29 +109,31 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         //
         tfSearch.addListener(new Property.ValueChangeListener() {
             private static final long serialVersionUID = -382717228031608542L;
-            
+
             @Override
             public void valueChange(ValueChangeEvent event) {
                 doSearch();
             }
         });
-        
+
         btnHae = UiBuilder.buttonSmallPrimary(this, T("hae"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-            
+
             @Override
             public void buttonClick(ClickEvent event) {
                 doSearch();
             }
         });
-        
-         //TODO: no application logic, only for Christmas demo
-        cbKaudenTarkenne = UiUtil.comboBox(this, T(I18N_VUOSI), new String[]{"Koulutuksen alkamiskausi"});
+
+        //TODO: no application logic, only for Christmas demo
+        cbKaudenTarkenne = UiUtil.comboBox(this, T(I18N_KAUDEN_TARKENNE), new String[]{"Koulutuksen alkamiskausi"});
         cbKaudenTarkenne.setSizeUndefined();
+        cbKaudenTarkenne.setWidth("200px");
 
         //TODO: no application logic, only for Christmas demo
         cbVuosi = UiUtil.comboBox(this, T(I18N_VUOSI), new String[]{"2012"});
         cbVuosi.setSizeUndefined();
+        cbVuosi.setWidth("100px");
 
         //TODO: no application logic, only for Christmas demo
         kcKausi = UiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T(I18N_KAUSI + I18N_PROMPT));
@@ -153,14 +155,14 @@ public class SearchSpesificationView extends OphHorizontalLayout {
 
         btnTyhjenna = UiBuilder.buttonSmallPrimary(this, T("tyhjenna"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-            
+
             @Override
             public void buttonClick(ClickEvent event) {
                 tfSearch.setValue("");
             }
         });
-        
-        
+
+
         this.setComponentAlignment(tfSearch, Alignment.BOTTOM_LEFT);
         this.setComponentAlignment(btnHae, Alignment.BOTTOM_LEFT);
         this.setComponentAlignment(cbKaudenTarkenne, Alignment.BOTTOM_RIGHT);
@@ -169,7 +171,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         this.setComponentAlignment(btnTyhjenna, Alignment.BOTTOM_RIGHT);
         this.setExpandRatio(cbKaudenTarkenne, 1f);
     }
-    
+
     private String T(String key) {
         return i18nHelper.getMessage(key);
     }
@@ -186,15 +188,15 @@ public class SearchSpesificationView extends OphHorizontalLayout {
      * This event is sent when search is triggered.
      */
     public class SearchEvent extends Event {
-        
+
         private static final long serialVersionUID = 6351667953499686108L;
         private KoulutusSearchSpesificationViewModel _searchModel;
-        
+
         public SearchEvent(KoulutusSearchSpesificationViewModel model) {
             super(SearchSpesificationView.this);
             _searchModel = model;
         }
-        
+
         public KoulutusSearchSpesificationViewModel getModel() {
             return _searchModel;
         }

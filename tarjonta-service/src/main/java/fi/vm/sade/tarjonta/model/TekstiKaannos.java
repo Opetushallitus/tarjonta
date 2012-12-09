@@ -32,8 +32,8 @@ public class TekstiKaannos extends BaseEntity {
 
     @Column(name = "kieli_koodi")
     private String kieliKoodi;
-
-    @Column(name = "arvo")
+ 
+    @Column(name = "arvo", length=4096)
     private String arvo;
 
     @ManyToOne(optional = false)

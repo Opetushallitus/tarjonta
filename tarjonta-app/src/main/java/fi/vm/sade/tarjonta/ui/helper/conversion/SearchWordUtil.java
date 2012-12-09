@@ -15,14 +15,18 @@
  */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
+import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
+import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -30,22 +34,27 @@ import java.util.Map.Entry;
  */
 public class SearchWordUtil {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SearchWordUtil.class);
     private static final int MAX_SIZE_CHARACTERS = 255;
     private static final String SUFFIX = ", ";
 
-    public static MonikielinenTekstiTyyppi createSearchKeywords(final KoulutusToisenAsteenPerustiedotViewModel koulutus) {
+    public static MonikielinenTekstiTyyppi createSearchKeywords(final List<KoodiMetadataType> koulutuskoodi, List<KoodiMetadataType> koulutusohjelma) {
         //add all multilanguage strings as search keywords
-        if (koulutus == null) {
-            throw new RuntimeException("KoulutusToisenAsteenPerustiedotViewModel cannot be null.");
+        if (koulutuskoodi == null) {
+            throw new RuntimeException("koulutuskoodi list object cannot be null.");
         }
 
-        Map<String, StringBuilder> langKeywords = new HashMap<String, StringBuilder>();
-        appendTyyppi(langKeywords, koulutus.getKoulutuskoodiModel());
-        appendTyyppi(langKeywords, koulutus.getKoulutusohjelmaModel());
+        if (koulutusohjelma == null) {
+            throw new RuntimeException("koulutusohjelma list object cannot be null.");
+        }
+
+        Map<KieliType, StringBuilder> langKeywords = new EnumMap<KieliType, StringBuilder>(KieliType.class);
+        appendTyyppi(langKeywords, koulutuskoodi);
+        appendTyyppi(langKeywords, koulutusohjelma);
 
         MonikielinenTekstiTyyppi monikielinenTekstiTyyppi = new MonikielinenTekstiTyyppi();
 
-        for (Entry<String, StringBuilder> e : langKeywords.entrySet()) {
+        for (Entry<KieliType, StringBuilder> e : langKeywords.entrySet()) {
             String str = e.getValue().toString();
             if (str.length() > MAX_SIZE_CHARACTERS) {
                 //max size of the database column field
@@ -53,9 +62,13 @@ public class SearchWordUtil {
             }
 
             Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
-            teksti.setKieliKoodi(e.getKey());
+            teksti.setKieliKoodi(e.getKey().value().toLowerCase());
             teksti.setValue(str);
             monikielinenTekstiTyyppi.getTeksti().add(teksti);
+        }
+
+        if (monikielinenTekstiTyyppi.getTeksti().isEmpty()) {
+            LOG.warn("No name text created.");
         }
 
         return monikielinenTekstiTyyppi;
@@ -65,18 +78,20 @@ public class SearchWordUtil {
      * Append all name fields to StringBuilder object.
      *
      * @param keywords
-     * @param model
+     * @param tyyppit
      */
-    private static void appendTyyppi(Map<String, StringBuilder> map, final MonikielinenTekstiModel model) {
-        if (model != null && model.getNimi() != null) {
-            for (KielikaannosViewModel nimi : model.getKielikaannos()) {
-                MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
-                appendLangStringBuffer(map, nimi.getKielikoodi(), nimi.getNimi());
+    private static void appendTyyppi(Map<KieliType, StringBuilder> map, final List<KoodiMetadataType> tyyppit) {
+        if (tyyppit != null) {
+
+            for (KoodiMetadataType type : tyyppit) {
+                if (type != null && type.getNimi() != null) {
+                    appendLangStringBuffer(map, type.getKieli(), type.getNimi());
+                }
             }
         }
     }
 
-    private static void appendLangStringBuffer(Map<String, StringBuilder> langKeywords, final String key, final String value) {
+    private static void appendLangStringBuffer(Map<KieliType, StringBuilder> langKeywords, final KieliType key, final String value) {
         if (langKeywords.containsKey(key)) {
             langKeywords.get(key).append(SUFFIX).append(value);
         } else {

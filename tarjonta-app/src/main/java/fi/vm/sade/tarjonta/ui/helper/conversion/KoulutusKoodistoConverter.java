@@ -23,6 +23,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
@@ -32,6 +33,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,60 +50,103 @@ public class KoulutusKoodistoConverter {
     @Autowired(required = true)
     private TarjontaUIHelper tarjontaUiHelper;
     @Autowired
-    private KoodiService _koodiService;
+    private KoodiService koodiService;
 
     public KoulutusKoodistoConverter() {
         super();
     }
 
-    /**
-     * Full KOMO data search from Koodisto service.
-     *
-     * @param locale
-     * @return
-     */
-    public List<KoulutuskoodiModel> listaaKoulutukset(final Locale locale) {
+    public List<KoulutuskoodiModel> listaaKoulutukset(final Set<String> koodiUris, final Locale locale) {
         LOG.debug(KoodistoURIHelper.KOODISTO_TUTKINTO_URI);
-        SearchKoodisByKoodistoCriteriaType criteriUri = KoodiServiceSearchCriteriaBuilder.koodisByKoodistoUri(KoodistoURIHelper.KOODISTO_TUTKINTO_URI);
-        List<KoodiType> koodistoData = _koodiService.searchKoodisByKoodisto(criteriUri);
+
+        List<String> listKoodiUris = new ArrayList<String>();
+        for (String uri : koodiUris) {
+            listKoodiUris.add(TarjontaUIHelper.splitKoodiURI(uri)[0]);
+        }
+        SearchKoodisByKoodistoCriteriaType koodisByKoodistoUri = KoodiServiceSearchCriteriaBuilder.koodisByKoodistoUri(listKoodiUris, KoodistoURIHelper.KOODISTO_TUTKINTO_URI);
+
+        List<KoodiType> koodistoData = koodiService.searchKoodisByKoodisto(koodisByKoodistoUri);
         LOG.debug("listaaKoulutukset data size : " + koodistoData.size());
 
         final KoulutusKoodiToModelConverter<KoulutuskoodiModel> kc = new KoulutusKoodiToModelConverter<KoulutuskoodiModel>();
-        final KoulutusKoodiToModelConverter<KoulutusohjelmaModel> kcOhjelma = new KoulutusKoodiToModelConverter<KoulutusohjelmaModel>();
-        final KoulutusKoodiToModelConverter<KoodiModel> kcKoodi = new KoulutusKoodiToModelConverter<KoodiModel>();
-        final KoulutusKoodiToModelConverter<MonikielinenTekstiModel> kcKieli = new KoulutusKoodiToModelConverter<MonikielinenTekstiModel>();
         List<KoulutuskoodiModel> list = new ArrayList<KoulutuskoodiModel>();
 
         for (KoodiType type : koodistoData) {
-            list.add(searchKoodistoRelations(type, locale, kc, kcOhjelma, kcKoodi, kcKieli));
+            list.add(searchKoulutuskoodiData(type, locale, kc));
         }
 
         return list;
     }
 
+    public List<KoulutusohjelmaModel> listaaKoulutusohjelmat(final List<KoulutusmoduuliKoosteTyyppi> komos, final Locale locale) {
+        LOG.debug(KoodistoURIHelper.KOODISTO_KOULUTUSOHJELMA_URI);
+
+        List<String> listKoodiUris = new ArrayList<String>();
+        for (KoulutusmoduuliKoosteTyyppi t : komos) {
+            listKoodiUris.add(TarjontaUIHelper.splitKoodiURI(t.getKoulutusohjelmakoodiUri())[0]);
+        }
+        SearchKoodisByKoodistoCriteriaType koodisByKoodistoUri = KoodiServiceSearchCriteriaBuilder.koodisByKoodistoUri(listKoodiUris, KoodistoURIHelper.KOODISTO_KOULUTUSOHJELMA_URI);
+        List<KoodiType> koodistoData = koodiService.searchKoodisByKoodisto(koodisByKoodistoUri);
+        LOG.debug("listaaKoulutusohjelmat data size : " + koodistoData.size());
+
+        final KoulutusKoodiToModelConverter<KoulutusohjelmaModel> kc = new KoulutusKoodiToModelConverter<KoulutusohjelmaModel>();
+        List<KoulutusohjelmaModel> list = new ArrayList<KoulutusohjelmaModel>();
+
+        for (KoodiType type : koodistoData) {
+            list.add(searchKoulutusmodelData(type, locale, kc));
+        }
+
+        return list;
+    }
+
+    public void listaaSisalto(final KoulutuskoodiModel tutkinto, final KoulutusohjelmaModel ohjelma, final KoulutusmoduuliKoosteTyyppi tyyppi, final Locale locale) {
+        final KoulutusKoodiToModelConverter<KoodiModel> kc = new KoulutusKoodiToModelConverter<KoodiModel>();
+
+        if (tyyppi == null) {
+            LOG.error("An invalid data error - KoulutusmoduuliKoosteTyyppi object was null?");
+            return;
+        }
+
+        //text data models
+        tutkinto.setTavoitteet(KoulutusConverter.mapToMonikielinenTekstiModel(tyyppi.getTavoitteet(), locale));
+        tutkinto.setJatkoopintomahdollisuudet(KoulutusConverter.mapToMonikielinenTekstiModel(tyyppi.getJatkoOpintoMahdollisuudet(), locale));
+        tutkinto.setKoulutuksenRakenne(KoulutusConverter.mapToMonikielinenTekstiModel(tyyppi.getKoulutuksenRakenne(), locale));
+
+        //koodisto koodi data models 
+        tutkinto.setOpintojenLaajuus(listaaKoodi(tyyppi.getLaajuusarvoUri(), kc, locale));
+        tutkinto.setOpintojenLaajuusyksikko(listaaKoodi(tyyppi.getLaajuusyksikkoUri(), kc, locale));
+        tutkinto.setOpintoala(listaaKoodi(tyyppi.getOpintoalaUri(), kc, locale));
+        tutkinto.setKoulutusaste(listaaKoodi(tyyppi.getKoulutusasteUri(), kc, locale));
+        tutkinto.setKoulutusala(listaaKoodi(tyyppi.getKoulutusalaUri(), kc, locale));
+
+        if (ohjelma != null) {
+            ohjelma.setTutkintonimike(listaaKoodi(tyyppi.getKoulutusohjelmakoodiUri(), kc, locale));
+        }
+    }
+
     /**
-     * Search single koulutuskoodi object from Koodisto service.
+     * Search single generic koodi object from Koodisto service. Accepts koodi
+     * with URI version information.
      *
      * @param model
      * @param locale
      * @return
      */
-    public KoulutuskoodiModel listaaKoulutuskoodi(final KoodistoKoodiTyyppi tyyppi, final Locale locale) {
-        final List<KoodiType> koodistoData = tarjontaUiHelper.gethKoodis(tyyppi.getUri());
-        List<KoulutuskoodiModel> list = new ArrayList<KoulutuskoodiModel>();
+    public KoodiModel listaaKoodi(final String uri, final Locale locale) {
+        if (uri == null) {
+            LOG.warn("Koodisto URI was null - an unknown URI data cannot be loaded.");
+            return null;
+        }
 
+        final List<KoodiType> koodistoData = tarjontaUiHelper.gethKoodis(uri);
+        final KoulutusKoodiToModelConverter<KoodiModel> kc = new KoulutusKoodiToModelConverter<KoodiModel>();
         if (koodistoData != null && !koodistoData.isEmpty()) {
-            final KoulutusKoodiToModelConverter<KoulutuskoodiModel> kc = new KoulutusKoodiToModelConverter<KoulutuskoodiModel>();
-            final KoulutusKoodiToModelConverter<KoulutusohjelmaModel> kcOhjelma = new KoulutusKoodiToModelConverter<KoulutusohjelmaModel>();
-            final KoulutusKoodiToModelConverter<KoodiModel> kcKoodi = new KoulutusKoodiToModelConverter<KoodiModel>();
-            final KoulutusKoodiToModelConverter<MonikielinenTekstiModel> kcKieli = new KoulutusKoodiToModelConverter<MonikielinenTekstiModel>();
-            for (KoodiType type : koodistoData) {
-                list.add(searchKoodistoRelations(type, locale, kc, kcOhjelma, kcKoodi, kcKieli));
-            }
+            List<KoodiModel> list = kc.mapKoodistoToModel(KoodiModel.class, handleLocale(locale), koodistoData);
 
             if (!list.isEmpty() && list.size() > 0) {
                 return list.get(0);
             }
+        } else {
         }
 
         return null;
@@ -130,27 +175,41 @@ public class KoulutusKoodistoConverter {
     }
 
     /**
-     * Search single generic koodi object from Koodisto service. Accepts koodi
-     * with URI version information.
+     * Search single koulutuskoodi object from Koodisto service.
      *
      * @param model
      * @param locale
      * @return
      */
-    public KoodiModel listaaKoodi(final String uri, final Locale locale) {
-        if(uri == null){
+    public KoulutuskoodiModel listaaKoulutuskoodi(final KoodistoKoodiTyyppi tyyppi, final Locale locale) {
+        final List<KoodiType> koodistoData = tarjontaUiHelper.gethKoodis(tyyppi.getUri());
+        final KoulutusKoodiToModelConverter<KoulutuskoodiModel> kc = new KoulutusKoodiToModelConverter<KoulutuskoodiModel>();
+        if (koodistoData != null && !koodistoData.isEmpty()) {
+            List<KoulutuskoodiModel> list = kc.mapKoodistoToModel(KoulutuskoodiModel.class, handleLocale(locale), koodistoData);
+
+            if (!list.isEmpty() && list.size() > 0) {
+                return list.get(0);
+            }
+        }
+
+        return null;
+    }
+
+    public KoodiModel listaaKoodi(final String uri, final KoulutusKoodiToModelConverter<KoodiModel> kc, final Locale locale) {
+        if (uri == null) {
             LOG.warn("Koodisto URI was null - an unknown URI data cannot be loaded.");
             return null;
         }
-        
+
         final List<KoodiType> koodistoData = tarjontaUiHelper.gethKoodis(uri);
-        final KoulutusKoodiToModelConverter<KoodiModel> kc = new KoulutusKoodiToModelConverter<KoodiModel>();
         if (koodistoData != null && !koodistoData.isEmpty()) {
             List<KoodiModel> list = kc.mapKoodistoToModel(KoodiModel.class, handleLocale(locale), koodistoData);
 
             if (!list.isEmpty() && list.size() > 0) {
                 return list.get(0);
             }
+        } else {
+            LOG.warn("Koodisto koodi not found by URI : '" + uri + "'");
         }
 
         return null;
@@ -168,60 +227,13 @@ public class KoulutusKoodistoConverter {
         return uri1.equals(uri2);
     }
 
-    private KoulutuskoodiModel searchKoodistoRelations(final KoodiType type, final Locale locale,
-            final KoulutusKoodiToModelConverter<KoulutuskoodiModel> kc,
-            final KoulutusKoodiToModelConverter<KoulutusohjelmaModel> kcOhjelma,
-            final KoulutusKoodiToModelConverter<KoodiModel> kcKoodi,
-            final KoulutusKoodiToModelConverter<MonikielinenTekstiModel> kcKieli) {
-
-        KoodiUriAndVersioType koodiUriAndVersioType = new KoodiUriAndVersioType();
-        koodiUriAndVersioType.setKoodiUri(type.getKoodiUri());
-        koodiUriAndVersioType.setVersio(type.getVersio());
-        List<KoodiType> listKoodiByRelation = _koodiService.listKoodiByRelation(koodiUriAndVersioType, false, SuhteenTyyppiType.SISALTYY);
+    private KoulutuskoodiModel searchKoulutuskoodiData(final KoodiType type, final Locale locale, final KoulutusKoodiToModelConverter<KoulutuskoodiModel> kc) {
         KoulutuskoodiModel koulutuskoodiModel = kc.mapKoodiTypeToModel(KoulutuskoodiModel.class, type, locale);
-
-        for (KoodiType relation : listKoodiByRelation) {
-            final String koodistoUri = relation.getKoodisto().getKoodistoUri();
-
-            if (matchUris(KoodistoURIHelper.KOODISTO_KOULUTUSOHJELMA_URI, koodistoUri)) {
-                //add objects to koulutusohjelma
-                koulutuskoodiModel.getKoulutusohjelmaModels().add(populateTutkintonimike(relation, locale, kcOhjelma, kcKoodi));
-            } else if (matchUris(KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI, koodistoUri)) {
-                koulutuskoodiModel.setKoulutusaste(kcKoodi.mapKoodiTypeToModel(KoodiModel.class, relation, locale));
-            } else if (matchUris(KoodistoURIHelper.KOODISTO_KOULUTUSALA_URI, koodistoUri)) {
-                koulutuskoodiModel.setKoulutusala(kcKoodi.mapKoodiTypeToModel(KoodiModel.class, relation, locale));
-            } else if (matchUris(KoodistoURIHelper.KOODISTO_KOULUTUKSEN_RAKENNE_URI, koodistoUri)) {
-                koulutuskoodiModel.setKoulutuksenRakenne(kcKieli.mapKoodiTypeToModel(MonikielinenTekstiModel.class, relation, locale));
-            } else if (matchUris(KoodistoURIHelper.KOODISTO_OPINTOALA_URI, koodistoUri)) {
-                koulutuskoodiModel.setOpintoala(kcKoodi.mapKoodiTypeToModel(KoodiModel.class, relation, locale));
-            } else if (matchUris(KoodistoURIHelper.KOODISTO_OPINTOJEN_LAAJUUS_URI, koodistoUri)) {
-                koulutuskoodiModel.setOpintojenLaajuus(kcKoodi.mapKoodiTypeToModel(KoodiModel.class, relation, locale));
-            } else if (matchUris(KoodistoURIHelper.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI, koodistoUri)) {
-                koulutuskoodiModel.setOpintojenLaajuusyksikko(kcKoodi.mapKoodiTypeToModel(KoodiModel.class, relation, locale));
-            } else if (matchUris(KoodistoURIHelper.KOODISTO_TAVOITTEET_URI, koodistoUri)) {
-                koulutuskoodiModel.setTavoitteet(kcKieli.mapKoodiTypeToModel(MonikielinenTekstiModel.class, relation, locale));
-            } else if (matchUris(KoodistoURIHelper.KOODISTO_JATKOOPINTOMAHDOLLISUUDET_URI, koodistoUri)) {
-                koulutuskoodiModel.setJatkoopintomahdollisuudet(kcKieli.mapKoodiTypeToModel(MonikielinenTekstiModel.class, relation, locale));
-            }
-        }
-
         return koulutuskoodiModel;
     }
 
-    public KoulutusohjelmaModel populateTutkintonimike(final KoodiType type, final Locale locale, final KoulutusKoodiToModelConverter<KoulutusohjelmaModel> kc, final KoulutusKoodiToModelConverter<KoodiModel> kc2) {
-        KoodiUriAndVersioType koodiUriAndVersioType = new KoodiUriAndVersioType();
-        koodiUriAndVersioType.setKoodiUri(type.getKoodiUri());
-        koodiUriAndVersioType.setVersio(type.getVersio());
-        List<KoodiType> listKoodiByRelation = _koodiService.listKoodiByRelation(koodiUriAndVersioType, false, SuhteenTyyppiType.SISALTYY);
-        KoulutusohjelmaModel koulutuohjelmaModel = kc.mapKoodiTypeToModel(KoulutusohjelmaModel.class, type, locale);
-
-        for (KoodiType relation : listKoodiByRelation) {
-            final String koodistoUri = relation.getKoodisto().getKoodistoUri();
-            if (matchUris(KoodistoURIHelper.KOODISTO_TUTKINTONIMIKE_URI, koodistoUri)) {
-                koulutuohjelmaModel.setTutkintonimike(kc2.mapKoodiTypeToModel(KoodiModel.class, relation, locale));
-            }
-        }
-
-        return koulutuohjelmaModel;
+    private KoulutusohjelmaModel searchKoulutusmodelData(final KoodiType type, final Locale locale, final KoulutusKoodiToModelConverter<KoulutusohjelmaModel> kc) {
+        KoulutusohjelmaModel model = kc.mapKoodiTypeToModel(KoulutusohjelmaModel.class, type, locale);
+        return model;
     }
 }

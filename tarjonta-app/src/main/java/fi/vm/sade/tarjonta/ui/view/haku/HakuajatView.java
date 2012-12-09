@@ -55,7 +55,7 @@ public class HakuajatView {
 		kuvaus = UiUtil.textField(null, "", i18n.getMessage("hakuajanKuvaus"), false);
 		kuvaus.setPropertyDataSource(new NestedMethodProperty(model, "hakuajanKuvaus"));
 		kuvaus.setImmediate(true);
-                kuvaus.setHeight("20px");
+                kuvaus.setHeight("25px");
 
 		alkuPvm = UiUtil.dateField();
 		alkuPvm.setPropertyDataSource(new NestedMethodProperty(model, "alkamisPvm"));

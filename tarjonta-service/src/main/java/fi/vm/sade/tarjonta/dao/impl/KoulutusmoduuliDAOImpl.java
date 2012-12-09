@@ -55,13 +55,13 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         return findBy(Koulutusmoduuli.TILA_COLUMN_NAME, tila, startIndex, pageSize);
 
     }
-    
+
     public List<KoulutusmoduuliToteutus> findKomotoByHakukohde(Hakukohde hakukohde) {
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        
-      return from(qHakukohde,qKomoto)
-                .join(qKomoto.hakukohdes,qHakukohde)
+
+        return from(qHakukohde, qKomoto)
+                .join(qKomoto.hakukohdes, qHakukohde)
                 .where(qHakukohde.oid.eq(hakukohde.getOid()))
                 .list(qKomoto);
     }
@@ -75,10 +75,10 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         BooleanExpression oidEq = ylamoduuli.oid.eq(oid);
 
         return (List<Koulutusmoduuli>) from(moduuli).
-            join(moduuli.sisaltyvyysList, sisaltyvyys).
-            join(sisaltyvyys.ylamoduuli, ylamoduuli).
-            where(oidEq).
-            list(moduuli);
+                join(moduuli.sisaltyvyysList, sisaltyvyys).
+                join(sisaltyvyys.ylamoduuli, ylamoduuli).
+                where(oidEq).
+                list(moduuli);
 
     }
 
@@ -108,9 +108,9 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
 
         return from(moduuli).
-            where(whereExpr).
-            leftJoin(moduuli.nimi, nimi).fetch().
-            list(moduuli);
+                where(whereExpr).
+                leftJoin(moduuli.nimi, nimi).fetch().
+                list(moduuli);
 
     }
 
@@ -132,16 +132,25 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         }
 
         return from(moduuli).
-            where(whereExpr).
-            singleResult(moduuli);
+                where(whereExpr).
+                singleResult(moduuli);
 
     }
 
+    @Override
+    public List<Koulutusmoduuli> findAllKomos() {
+        QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+        QMonikielinenTeksti kr = new QMonikielinenTeksti("koulutuksenrakenne");
+        QMonikielinenTeksti jatko = new QMonikielinenTeksti("jatkoopintomahdollisuudet");
+        QMonikielinenTeksti t = new QMonikielinenTeksti("tavoitteet");
+        return from(moduuli).
+                leftJoin(moduuli.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
+                leftJoin(moduuli.jatkoOpintoMahdollisuudet, jatko).fetch().leftJoin(jatko.tekstis).fetch().
+                leftJoin(moduuli.tavoitteet, t).fetch().leftJoin(t.tekstis).fetch().
+                list(moduuli);
+    }
 
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }
-
-
 }
-

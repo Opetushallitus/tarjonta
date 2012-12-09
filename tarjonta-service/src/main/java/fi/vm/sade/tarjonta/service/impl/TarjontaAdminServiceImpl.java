@@ -121,10 +121,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         if (hakuAlkanut(hakukohde)) {
             throw new HakukohdeUsedException();
         } else {
-        for (KoulutusmoduuliToteutus curKoul : hakukohde.getKoulutusmoduuliToteutuses()) {
-            curKoul.removeHakukohde(hakukohde);
-        }
-        hakukohdeDAO.remove(hakukohde);
+            for (KoulutusmoduuliToteutus curKoul : hakukohde.getKoulutusmoduuliToteutuses()) {
+                curKoul.removeHakukohde(hakukohde);
+            }
+            hakukohdeDAO.remove(hakukohde);
         }
         return new HakukohdeTyyppi();
     }
@@ -172,7 +172,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             return false;
         }
     }
-    
+
     private boolean checkHakukohdeDepencies(Hakukohde hakukohde) {
         List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliDAO.findKomotoByHakukohde(hakukohde);
         if (komotos != null && komotos.size() > 0) {
@@ -196,7 +196,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
 
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
-        
+
         PaivitaKoulutusVastausTyyppi vastaus = new PaivitaKoulutusVastausTyyppi();
         return vastaus;
 
@@ -206,19 +206,19 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public void poistaKoulutus(String koulutusOid) throws GenericFault {
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
         if (komoto.getHakukohdes().isEmpty()) {
-        	this.koulutusmoduuliToteutusDAO.remove(komoto);
+            this.koulutusmoduuliToteutusDAO.remove(komoto);
         } else {
-        	throw new KoulutusUsedException();
+            throw new KoulutusUsedException();
         }
     }
-    
+
     private boolean hakuAlkanut(Hakukohde hakukohde) {
-    	for (Hakuaika curHakuaika : hakukohde.getHaku().getHakuaikas()) {
-    		if (!curHakuaika.getAlkamisPvm().after(Calendar.getInstance().getTime())) {
-    			return true;
-    		}
-    	}
-    	return false;
+        for (Hakuaika curHakuaika : hakukohde.getHaku().getHakuaikas()) {
+            if (!curHakuaika.getAlkamisPvm().after(Calendar.getInstance().getTime())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -232,6 +232,16 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         } catch (Exception e) {
             log.warn("initializing tarjonta data threw exception", e);
         }
+    }
+
+    /**
+     * Remove once koodisto has proper data.
+     */
+    @Override
+    public void initKomo(String parameters) {
+
+        log.warn("Implementation is still missing!");
+
     }
 
     @Override

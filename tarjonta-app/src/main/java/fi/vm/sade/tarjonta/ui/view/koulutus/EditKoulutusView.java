@@ -60,7 +60,7 @@ public class EditKoulutusView extends AbstractVerticalLayout {
         HorizontalLayout hlLabelWrapper = new HorizontalLayout();
         hlLabelWrapper.setMargin(false,false,true,true);
         hlLabelWrapper.addComponent(title);
-        addComponent(hlLabelWrapper);
+        
         TabSheet tabs = UiBuilder.tabSheet(null);
         addComponent(tabs);
 

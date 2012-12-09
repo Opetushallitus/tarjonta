@@ -548,7 +548,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      */
     public void setOpintoala(String opintoala) {
         this.opintoala = opintoala;
-    }
+    } 
 
 }
 

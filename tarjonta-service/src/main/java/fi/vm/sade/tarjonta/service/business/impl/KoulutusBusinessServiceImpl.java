@@ -77,6 +77,15 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         return koulutusmoduuliDAO.findTutkintoOhjelma(koulutusLuokitusUri, koulutusOhjelmaUri);
 
     }
+    
+    @Override
+    public List<Koulutusmoduuli> findTutkintoOhjelmat() {
+
+        // todo: dao kerroksen voisi poistaa, ainoastaan vaikeammat haut voisi sijoittaa helper:n taakse
+
+        return koulutusmoduuliDAO.findAll();
+
+    }
 
     @Override
     public KoulutusmoduuliToteutus createKoulutus(LisaaKoulutusTyyppi koulutus) {

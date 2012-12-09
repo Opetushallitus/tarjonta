@@ -86,6 +86,13 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
     public Koulutusmoduuli findTutkintoOhjelma(String koulutusLuokitusUri, String koulutusOhjelmaUri);
 
     /**
+     * Get full KOMO objects with language text data.
+     * 
+     * @return 
+     */
+    public List<Koulutusmoduuli> findAllKomos();
+    
+    /**
      * Contract and model for passing search criterias to DAO. Another option would be to use an object declared in WSDL but this would
      * imply that any and all changes in WSDL are immediately visible on DAO layer and in worst case might require code changes.
      */

@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
@@ -23,11 +24,16 @@ import java.util.Set;
 
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
+import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConverter;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
+import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -41,10 +47,18 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedotViewModel {
 
+    private static final long serialVersionUID = 4511930754933045032L;
+    private List<KoulutusmoduuliKoosteTyyppi> komos;
     private Set<KoulutuskoodiModel> koulutuskoodit;
     private Set<KoulutusohjelmaModel> koulutusohjelmat;
     private TarjontaTila tila;
     private List<MonikielinenTekstiTyyppi.Teksti> toteutuksenNimet;
+    
+    /*
+     * cache maps
+     */
+    private Map<String, List<KoulutusmoduuliKoosteTyyppi>> cacheKomoTutkinto;
+    private Map<Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo;
 
     public KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus status) {
         super();
@@ -90,7 +104,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setKoulutuskoodit(new HashSet<KoulutuskoodiModel>());
         setKoulutusohjelmat(new HashSet<KoulutusohjelmaModel>());
         setOpetuskielet(new HashSet<String>(1)); //one required
-        
+
 
         //Table data
         setPainotus(new ArrayList<KielikaannosViewModel>(0)); //optional
@@ -262,5 +276,57 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
      */
     public void setToteutuksenNimet(List<MonikielinenTekstiTyyppi.Teksti> toteutuksenNimet) {
         this.toteutuksenNimet = toteutuksenNimet;
+    }
+
+    /**
+     * @return the komos
+     */
+    public List<KoulutusmoduuliKoosteTyyppi> getKomos() {
+        return komos;
+    }
+
+    /**
+     * @param komos the komos to set
+     */
+    public void setKomos(List<KoulutusmoduuliKoosteTyyppi> komos) {
+        this.komos = komos;
+    }
+
+    public void createCacheKomos() {
+        setCacheKomoTutkinto(KoulutusConverter.komoCacheMapByKoulutuskoodi(komos));
+        setCacheKomo(KoulutusConverter.fullKomoCacheMap(komos));
+    }
+
+    /**
+     * @return the cacheKomoTutkinto
+     */
+    public KoulutusmoduuliKoosteTyyppi getQuickKomo(final String koulutuskoodiUri, final String koulutusohjelmaUri) {
+        Entry<String, String> e = new AbstractMap.SimpleEntry<String, String>(koulutuskoodiUri, koulutusohjelmaUri);
+        return cacheKomo.get(e);
+    }
+
+    public List<KoulutusmoduuliKoosteTyyppi> getQuickKomosByKoulutuskoodiUri(final String koulutuskoodiUri) {
+        return cacheKomoTutkinto.get(koulutuskoodiUri);
+    }
+
+    /**
+     * @param cacheKomoTutkinto the cacheKomoTutkinto to set
+     */
+    public void setCacheKomoTutkinto(Map<String, List<KoulutusmoduuliKoosteTyyppi>> cacheKomoTutkinto) {
+        this.cacheKomoTutkinto = cacheKomoTutkinto;
+    }
+
+    /**
+     * @return the cacheKomo
+     */
+    public Map<Entry, KoulutusmoduuliKoosteTyyppi> getCacheKomo() {
+        return cacheKomo;
+    }
+
+    /**
+     * @param cacheKomo the cacheKomo to set
+     */
+    public void setCacheKomo(Map<Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo) {
+        this.cacheKomo = cacheKomo;
     }
 }

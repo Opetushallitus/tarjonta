@@ -58,13 +58,12 @@ public class TarjontaUIHelper {
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaUIHelper.class);
     public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";
     private static final String LANGUAGE_SEPARATOR = ", ";
-   
     @Autowired
     private KoodiService _koodiService;
     @Autowired(required = true)
     private TarjontaPublicService _tarjontaPublicService;
     private I18NHelper _i18n = new I18NHelper(TarjontaUIHelper.class);
-    
+
     /**
      * Default version for those uris without version information is "-1".
      *
@@ -184,6 +183,8 @@ public class TarjontaUIHelper {
 
         return _koodiService.searchKoodis(criteria);
     }
+    
+    
 
     /**
      * Get koodi's name in given locale. If nimi for given
@@ -344,32 +345,32 @@ public class TarjontaUIHelper {
 
     public static KoodiMetadataType getKoodiMetadataForLanguage(KoodiType koodiType, Locale locale) {
         KoodiMetadataType kmdt = KoodistoHelper.getKoodiMetadataForLanguage(koodiType, KoodistoHelper.getKieliForLocale(locale));
-        if (kmdt == null || (kmdt.getNimi() == null || kmdt.getNimi().length() == 0) ) {
+        if (kmdt == null || (kmdt.getNimi() == null || kmdt.getNimi().length() == 0)) {
             // Try finnish if current locale is not found
             kmdt = KoodistoHelper.getKoodiMetadataForLanguage(koodiType, KieliType.FI);
         }
-        
+
         return kmdt;
     }
-    
-    public static String getClosestHakuName(Locale locale,  HakuViewModel haku) {
+
+    public static String getClosestHakuName(Locale locale, HakuViewModel haku) {
         String lang = locale != null && locale.getLanguage() != null ? locale.getLanguage().toLowerCase() : "";
-        
+
         if ("fi".equals(lang) && haku.getNimiFi() != null) {
             return haku.getNimiFi();
         }
-        
+
         if ("sv".equals(lang) && haku.getNimiSe() != null) {
             return haku.getNimiSe();
         }
-        
+
         if ("en".equals(lang) && haku.getNimiEn() != null) {
             return haku.getNimiEn();
         }
-        
+
         return getAvailableHakuName(haku);
     }
-    
+
     public static String getAvailableHakuName(HakuViewModel haku) {
         if (haku.getNimiFi() != null) {
             return haku.getNimiFi();
@@ -377,11 +378,11 @@ public class TarjontaUIHelper {
         if (haku.getNimiSe() != null) {
             return haku.getNimiSe();
         }
-        
+
         if (haku.getNimiEn() != null) {
             return haku.getNimiEn();
         }
 
-         return "";
+        return "";
     }
 }

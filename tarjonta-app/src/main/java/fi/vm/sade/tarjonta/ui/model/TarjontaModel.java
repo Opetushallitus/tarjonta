@@ -27,6 +27,7 @@ import java.util.List;
  * @author mlyly
  */
 public class TarjontaModel extends BaseUIViewModel {
+    private static final long serialVersionUID = 6216606779350260527L;
     // Show label that shows last modification
     private Boolean _showIdentifier;
     private String _identifier;
