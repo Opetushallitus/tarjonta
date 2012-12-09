@@ -114,6 +114,16 @@
             <short-title>TarjontaAdminPortletApplication</short-title>
             <keywords></keywords>
         </portlet-info>
+        
+         <security-role-ref>
+            <role-name>APP_TARJONTA_CRUD</role-name>
+        </security-role-ref>
+        <security-role-ref>
+            <role-name>APP_TARJONTA_READ_UPDATE</role-name>
+        </security-role-ref>
+        <security-role-ref>
+            <role-name>APP_TARJONTA_READ</role-name>
+        </security-role-ref>
 
     </portlet>
 

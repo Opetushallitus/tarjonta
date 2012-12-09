@@ -42,6 +42,7 @@ public class TarjontaAdminPortletApplication extends TarjontaApplication {
     public void initApplication() {
         window = new Window("Admin window");
         setMainWindow(window);
+        setTheme("oph-app-tarjonta"); //include Vaadin Tree Table fix for Liferay
 
         HorizontalLayout hl = new HorizontalLayout();
         window.addComponent(hl);
