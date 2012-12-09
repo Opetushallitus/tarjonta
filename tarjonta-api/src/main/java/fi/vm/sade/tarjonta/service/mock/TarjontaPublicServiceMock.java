@@ -115,6 +115,12 @@ public class TarjontaPublicServiceMock implements TarjontaPublicService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+        
+        @Override
+	public HaeKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit(HaeKoulutusmoduulitKyselyTyyppi kysely) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
 

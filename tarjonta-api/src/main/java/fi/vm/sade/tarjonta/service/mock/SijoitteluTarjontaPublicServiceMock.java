@@ -78,4 +78,10 @@ public class SijoitteluTarjontaPublicServiceMock implements TarjontaPublicServic
         // TODO: implement this method.
         return null;
     }
+
+    @Override
+    public HaeKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit(@WebParam(partName = "kysely", name = "haeKoulutusmoduulitKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") HaeKoulutusmoduulitKyselyTyyppi kysely) {
+        // TODO: implement this method.
+        return null;
+    }
 }

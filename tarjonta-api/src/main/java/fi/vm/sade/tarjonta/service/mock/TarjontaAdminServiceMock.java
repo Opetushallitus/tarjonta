@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
-
 public class TarjontaAdminServiceMock implements TarjontaAdminService {
 
     private HashMap<String, HakuTyyppi> haut = new HashMap<String, HakuTyyppi>();
@@ -65,7 +64,10 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
+    @Override
+    public void initKomo(String parameters) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     private void initDefValues() {
         HakuTyyppi haku = new HakuTyyppi();
@@ -107,18 +109,15 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
         haut.put(haku2.getOid(), haku2);
     }
 
-	@Override
-	public void poistaKoulutus(String koulutusOid) {
-		// TODO Auto-generated method stub
+    @Override
+    public void poistaKoulutus(String koulutusOid) {
+        // TODO Auto-generated method stub
+    }
 
-	}
-
-	@Override
-	public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli)
-			throws GenericFault {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+    @Override
+    public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli)
+            throws GenericFault {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
-
