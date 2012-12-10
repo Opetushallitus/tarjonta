@@ -82,7 +82,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     }
 
     @Override
-    public List<KoulutusmoduuliToteutus> findByCriteria(List<String> tarjoajaOids, String matchNimi) {
+    public List<KoulutusmoduuliToteutus> findByCriteria(List<String> tarjoajaOids, String matchNimi, int koulutusAlkuVuosi, List<Integer> koulutusAlkuKuukaudet) {
 
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         BooleanExpression criteria = null;
@@ -91,6 +91,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
 
             QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
             QTekstiKaannos nimiTeksti = QTekstiKaannos.tekstiKaannos;
+
 
             JPASubQuery subQuery = new JPASubQuery().from(komo).
                 join(komo.nimi.tekstis, nimiTeksti).
@@ -102,12 +103,18 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         if (!tarjoajaOids.isEmpty()) {
             criteria = and(criteria, komoto.tarjoaja.in(tarjoajaOids));
         }
+        
+        if (koulutusAlkuVuosi > 0) {           
+            criteria = and(criteria, komoto.koulutuksenAlkamisPvm.isNotNull()).and(komoto.koulutuksenAlkamisPvm.year().isNotNull()).and(komoto.koulutuksenAlkamisPvm.year().eq(koulutusAlkuVuosi));
+        }
+        
+        if (!koulutusAlkuKuukaudet.isEmpty()) {
+            criteria = and(criteria, komoto.koulutuksenAlkamisPvm.isNotNull()).and(komoto.koulutuksenAlkamisPvm.month().isNotNull()).and(komoto.koulutuksenAlkamisPvm.month().in(koulutusAlkuKuukaudet));
+        }
 
         return from(komoto).
             where(criteria).
             list(komoto);
-
-
     }
 
 }

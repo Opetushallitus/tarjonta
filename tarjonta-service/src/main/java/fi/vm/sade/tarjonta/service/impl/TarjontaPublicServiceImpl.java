@@ -253,8 +253,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             vastaus.getKoulutusTulos().addAll(mapKomotoListToKoulutusTulosList(komotos));
             return vastaus;
         }  else {
-        //Retrieving komotos according to criteria provided in kysely, currently list of tarjoajaOids and a name
-        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findByCriteria(kysely.getTarjoajaOids(), kysely.getNimi());
+            //Retrieving komotos according to criteria provided in kysely, currently list of tarjoajaOids and a name
+            int koulutusAlkuvuosi = kysely.getKoulutuksenAlkamisvuosi() != null ? kysely.getKoulutuksenAlkamisvuosi().intValue() : -1; 
+            
+        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findByCriteria(kysely.getTarjoajaOids(), kysely.getNimi(), koulutusAlkuvuosi, getAlkuKuukaudet(kysely.getKoulutuksenAlkamiskausi()));
 
         //Creating the answer type
         HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
@@ -269,6 +271,27 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         }
         return vastaus;
         }
+    }
+    
+    private List<Integer> getAlkuKuukaudet(String kausi) {
+        List<Integer> kuukaudet = new ArrayList<Integer>();
+        if (kausi != null &&  "Syksy".equals(kausi)) {
+            kuukaudet.add(7);
+            kuukaudet.add(8);
+            kuukaudet.add(9);
+            kuukaudet.add(10);
+            kuukaudet.add(11);
+            kuukaudet.add(12);
+        } else if (kausi != null) {
+            kuukaudet.add(1);
+            kuukaudet.add(2);
+            kuukaudet.add(3);
+            kuukaudet.add(4);
+            kuukaudet.add(5);
+            kuukaudet.add(6);
+        }
+        
+        return kuukaudet;
     }
 
     private KoulutusTulos getKoulutusTulosFromKoulutusmoduuliToteutus(KoulutusmoduuliToteutus komoto) {

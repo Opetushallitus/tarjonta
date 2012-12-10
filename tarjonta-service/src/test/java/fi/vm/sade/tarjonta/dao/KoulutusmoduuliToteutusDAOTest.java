@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.model.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -244,12 +245,20 @@ public class KoulutusmoduuliToteutusDAOTest {
 
         //KOMOTO1
         KoulutusmoduuliToteutus t1 = fixtures.createTutkintoOhjelmaToteutus();
+        Calendar cal1 = Calendar.getInstance();
+        cal1.set(Calendar.YEAR, 2015);
+        cal1.set(Calendar.MONTH, 4);
+        t1.setKoulutuksenAlkamisPvm(cal1.getTime());
         t1.setTarjoaja(tarjoaja1);
         t1.setKoulutusmoduuli(m1);
         koulutusmoduuliToteutusDAO.insert(t1);
 
         //KOMOTO2
         KoulutusmoduuliToteutus t2 = fixtures.createTutkintoOhjelmaToteutus();
+        Calendar cal2 = Calendar.getInstance();
+        cal2.set(Calendar.YEAR, 2016);
+        cal2.set(Calendar.MONTH, 5);
+        t2.setKoulutuksenAlkamisPvm(cal2.getTime());
         t2.setTarjoaja(tarjoaja2);
         t2.setKoulutusmoduuli(m2);
         koulutusmoduuliToteutusDAO.insert(t2);
@@ -257,35 +266,35 @@ public class KoulutusmoduuliToteutusDAOTest {
         //Searching with list containing tarjoaja1 but not tarjoaja2 and nimi1
 
         List<String> criteriaList = Arrays.asList(new String[] {tarjoaja1, tarjoaja3});
-        List<KoulutusmoduuliToteutus> result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1);
+        List<KoulutusmoduuliToteutus> result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1, -1, new ArrayList<Integer>());
 
         assertEquals(1, result.size());
 
         //Searching with list containing tarjoaja2 but not tarjoaja1 and nimi2
 
         criteriaList = Arrays.asList(new String[] {tarjoaja2, tarjoaja3});
-        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi2);
+        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi2, -1, new ArrayList<Integer>());
 
         assertEquals(1, result.size());
 
         //Searching with list not containing any matching tarjoaja and nimi1
 
         criteriaList = Arrays.asList(new String[] {tarjoaja3});
-        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1);
+        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1, -1, new ArrayList<Integer>());
 
         assertEquals(0, result.size());
 
         //Searching with list containing tarjoaja1 but not tarjoaja2 and nimi2
 
         criteriaList = Arrays.asList(new String[] {tarjoaja1, tarjoaja3});
-        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi2);
+        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi2, -1, new ArrayList<Integer>());
 
         assertEquals(0, result.size());
 
         //Searching with an empty list and nimi1
 
         criteriaList = new ArrayList<String>();
-        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1);
+        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1, -1, new ArrayList<Integer>());
 
         assertEquals(1, result.size());
         assertEquals(nimi1, result.get(0).getKoulutusmoduuli().getNimi().getTekstiForKieliKoodi("fi"));
@@ -293,10 +302,34 @@ public class KoulutusmoduuliToteutusDAOTest {
         //Searching with an empty list and null in nimi
 
         criteriaList = new ArrayList<String>();
-        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null);
+        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, -1, new ArrayList<Integer>());
+        
+        //Searching with start year 2015
 
-        //returns all komotos, at least the 2 created in the beginning of this test method.
-        assertTrue(result.size() >= 2);
+        criteriaList = new ArrayList<String>();
+        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, 2015, new ArrayList<Integer>());
+        
+        assertEquals(1, result.size());
+        
+        //Searching with months 1 - 6    
+        criteriaList = new ArrayList<String>();
+        List<Integer> months = new ArrayList<Integer>();
+        months.add(1);
+        months.add(2);
+        months.add(3);
+        months.add(4);
+        months.add(5);
+        months.add(6);
+        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, -1, months);
+        
+        assertEquals(2, result.size());
+        
+        //Searching with months 1 - 6  and year 2016  
+        criteriaList = new ArrayList<String>();
+        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, 2016, months);
+        
+        assertEquals(1, result.size());
+        
     }
 
 }
