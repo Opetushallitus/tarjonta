@@ -124,6 +124,11 @@
                         maxOccurs="1"
                         minOccurs="1" />
 
+            <xs:element name="hakukohteenHaunNimi"
+                        type="tns:MonikielinenTekstiTyyppi"
+                        maxOccurs="1"
+                        minOccurs="0"/>
+
             <xs:element name="hakukohteenTila"
                         type="tns:TarjontaTila"
                         maxOccurs="1"
