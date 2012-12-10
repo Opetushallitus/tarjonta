@@ -65,7 +65,7 @@ public class KoulutusLisatiedotModel extends BaseUIViewModel {
     public KoulutusLisatietoModel getLisatiedot(String uri) {
 
         if (uri == null) {
-            throw new RuntimeException("An invalid language URI - the URI value cannot be null.");
+            throw new IllegalArgumentException("An invalid language URI - the URI value cannot be null.");
         }
 
         KoulutusLisatietoModel result = getLisatiedot().get(uri);

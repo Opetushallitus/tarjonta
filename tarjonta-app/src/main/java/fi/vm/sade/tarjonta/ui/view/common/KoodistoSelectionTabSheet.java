@@ -113,14 +113,14 @@ public class KoodistoSelectionTabSheet extends TabSheet {
 
                 // Check for tab removals
                 for (String uri : _tabs.keySet()) {
-                    if (!values.contains(uri)) {
+                    if (!values.contains(uri) && uri != null) {
                         tabsToBeRemoved.add(uri);
                     }
                 }
 
                 // Check for additions
                 for (String uri : values) {
-                    if (!_tabs.containsKey(uri)) {
+                    if (!_tabs.containsKey(uri) && uri != null) {
                         doAddTab(uri);
                     }
                 }
