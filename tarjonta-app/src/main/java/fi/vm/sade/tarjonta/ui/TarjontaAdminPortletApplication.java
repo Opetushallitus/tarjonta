@@ -20,6 +20,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
+import fi.vm.sade.vaadin.Oph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class TarjontaAdminPortletApplication extends TarjontaApplication {
     public void initApplication() {
         window = new Window("Admin window");
         setMainWindow(window);
-        setTheme("oph-app-tarjonta"); //include Vaadin Tree Table fix for Liferay
+        setTheme(Oph.THEME_NAME);
 
         HorizontalLayout hl = new HorizontalLayout();
         window.addComponent(hl);

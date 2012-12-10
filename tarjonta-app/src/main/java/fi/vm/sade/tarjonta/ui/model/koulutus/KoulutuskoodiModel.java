@@ -24,6 +24,7 @@ import java.util.Set;
  */
 public class KoulutuskoodiModel extends MonikielinenTekstiModel {
 
+    private static final long serialVersionUID = -7111768236565522022L;
     private Set<KoulutusohjelmaModel> koulutusohjelmaModels;
     private KoodiModel koulutusaste;
     private KoodiModel koulutusala;
@@ -121,7 +122,6 @@ public class KoulutuskoodiModel extends MonikielinenTekstiModel {
         this.koulutuksenRakenne = koulutuksenRakenne;
     }
 
-
     /**
      * @return the koulutusohjelmaModels
      */
@@ -166,4 +166,32 @@ public class KoulutuskoodiModel extends MonikielinenTekstiModel {
     public void setJatkoopintomahdollisuudet(MonikielinenTekstiModel jatkoopintomahdollisuudet) {
         this.jatkoopintomahdollisuudet = jatkoopintomahdollisuudet;
     }
+
+//    public void clearLabels() {
+//        if (koulutusaste != null) {
+//            koulutusaste.clear();
+//        }
+//        if (koulutusala != null) {
+//            koulutusala.clear();
+//        }
+//        if (opintojenLaajuusyksikko != null) {
+//            opintojenLaajuusyksikko.clear();
+//        }
+//        if (opintojenLaajuus != null) {
+//            opintojenLaajuus.clear();
+//        }
+//        if (opintoala != null) {
+//            opintoala.clear();
+//        }
+//        if (koulutuksenRakenne != null) {
+//            koulutuksenRakenne.clear();
+//        }
+//        if (tavoitteet != null) {
+//            tavoitteet.clear();
+//        }
+//
+//        if (jatkoopintomahdollisuudet != null) {
+//            jatkoopintomahdollisuudet.clear();
+//        }
+//    }
 }

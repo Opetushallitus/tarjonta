@@ -19,15 +19,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
-import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -57,6 +53,7 @@ public class HakukohdeCreationDialog extends CustomComponent {
     public HakukohdeCreationDialog(List<String> selectedOidsParam) {
         selectedOids = selectedOidsParam;
         rootLayout = new VerticalLayout();
+        rootLayout.setMargin(true);
 
         setCompositionRoot(rootLayout);
 

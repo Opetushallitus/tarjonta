@@ -51,6 +51,7 @@ import org.vaadin.addon.formbinder.PropertyId;
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
 public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements Component  {
+    private static final long serialVersionUID = -7283666973111838791L;
 
     @PropertyId("linkkityyppi")
     private Select _sLinkkityyppi;
@@ -81,6 +82,7 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
         this.addComponent(hl);
 
         UiUtil.buttonSmallSecodary(hl, T("Tallenna"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new DataTableEvent.SaveEvent(EditKoulutusPerustiedotLinkkiView.this));
@@ -88,14 +90,13 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
         });
 
         UiUtil.buttonSmallSecodary(hl, T("Peruuta"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new DataTableEvent.CancelEvent(EditKoulutusPerustiedotLinkkiView.this));
             }
         });
     }
-
-
 
     /**
      * Translator helper.

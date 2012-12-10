@@ -15,10 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.model.koulutus;
 
-import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
-import java.util.HashSet;
-import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -28,6 +25,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @author Jani Wilén
  */
 public abstract class KoulutusKoodistoModel extends BaseUIViewModel {
+    private static final long serialVersionUID = 8200934283387389504L;
 
     protected String nimi;
     protected String kuvaus;

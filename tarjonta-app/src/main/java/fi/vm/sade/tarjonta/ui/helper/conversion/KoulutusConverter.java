@@ -85,7 +85,6 @@ public class KoulutusConverter {
     public KoulutusConverter() {
     }
 
- 
     /**
      * Full data copy from UI model to tyyppi.
      *
@@ -280,17 +279,14 @@ public class KoulutusConverter {
         koulutuksenKestoTyyppi.setYksikko(model.getSuunniteltuKestoTyyppi());
         tyyppi.setPainotus(mapToMonikielinenTekstiTyyppi(model.getPainotus()));
         tyyppi.setKesto(koulutuksenKestoTyyppi);
+        tyyppi.setPohjakoulutusvaatimus(createKoodi(model.getPohjakoulutusvaatimus(), true, "pohjakoulutusvaatimus"));
 
-        //TODO: change List type to String... minor priority
-        tyyppi.getOpetusmuoto().add(createKoodi(model.getOpetusmuoto()));
-
-        for (String opetuskielet : model.getOpetuskielet()) {
-            tyyppi.getOpetuskieli().add(createKoodi(opetuskielet));
-        }
-
-        //TODO: change List type to String... minor priority
-        tyyppi.getKoulutuslaji().add(createKoodi(model.getKoulutuslaji()));
-        tyyppi.setPohjakoulutusvaatimus(createKoodi(model.getPohjakoulutusvaatimus()));
+        //TODO: create a different form model for every level of education: 
+        //The datatypes on bottom must be list types as in future we need to have 
+        //an option to select multiple languages etc. (lukio, AMK etc...)
+        tyyppi.getOpetusmuoto().add(createKoodi(model.getOpetusmuoto(), true, "opetusmuoto"));
+        tyyppi.getOpetuskieli().add(createKoodi(model.getOpetuskieli(), true, "opetuskieli"));
+        tyyppi.getKoulutuslaji().add(createKoodi(model.getKoulutuslaji(), true, "koulutuslaji"));
 
         return tyyppi;
     }
@@ -356,36 +352,34 @@ public class KoulutusConverter {
         /* Select KOMO by koulutusaste, koulutuskoodi and koulutusohjelma */
         model2Aste.setKoulutuskoodiModel(mapToKoulutuskoodiModel(koulutus.getKoulutusKoodi(), locale));
         model2Aste.setKoulutusohjelmaModel(mapToKoulutusohjelmaModel(koulutus.getKoulutusohjelmaKoodi(), locale));
-
-        LOG.debug("koulutus.getPainotus() " + koulutus.getPainotus());
-        LOG.debug("koulutus.getPainotus() " + koulutus.getPainotus().getTeksti().size());
         model2Aste.setPainotus(mapToKielikaannosViewModel(koulutus.getPainotus()));
 
         model2Aste.setKoulutuksenAlkamisPvm(
                 koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
-        model2Aste.setOpetuskielet(convertOpetuskielet(koulutus.getOpetuskieli()));
+
 
         if (koulutus.getKesto() != null) {
             model2Aste.setSuunniteltuKesto(koulutus.getKesto().getArvo());
             model2Aste.setSuunniteltuKestoTyyppi(koulutus.getKesto().getYksikko());
         }
 
-        for (KoodistoKoodiTyyppi typeOpetusmuoto : koulutus.getOpetusmuoto()) {
-            model2Aste.setOpetusmuoto(getUri(typeOpetusmuoto));
-        }
-
-        for (KoodistoKoodiTyyppi typeOpetuskielet : koulutus.getOpetuskieli()) {
-            model2Aste.getOpetuskielet().add(getUri(typeOpetuskielet));
-        }
-
-        //UI allow only one value
-        if (koulutus.getKoulutuslaji() != null && !koulutus.getKoulutuslaji().isEmpty()) {
-            model2Aste.setKoulutuslaji(getUri(koulutus.getKoulutuslaji().get(0)));
-        }
 
         if (koulutus.getPohjakoulutusvaatimus() != null) {
             model2Aste.setPohjakoulutusvaatimus(getUri(koulutus.getPohjakoulutusvaatimus()));
         }
+
+        if (koulutus.getOpetusmuoto() != null && !koulutus.getOpetusmuoto().isEmpty()) {
+            model2Aste.setOpetusmuoto(getUri(koulutus.getOpetusmuoto().get(0)));
+        }
+
+        if (koulutus.getOpetuskieli() != null && !koulutus.getOpetuskieli().isEmpty()) {
+            model2Aste.setOpetuskieli(getUri(koulutus.getOpetuskieli().get(0)));
+        }
+
+        if (koulutus.getKoulutuslaji() != null && !koulutus.getKoulutuslaji().isEmpty()) {
+            model2Aste.setKoulutuslaji(getUri(koulutus.getKoulutuslaji().get(0)));
+        }
+
         /*
          * KOMO
          */
@@ -408,6 +402,9 @@ public class KoulutusConverter {
 
         if (lueKoulutus.getKuvailevatTiedot() != null) {
             for (MonikielinenTekstiTyyppi.Teksti mkt : lueKoulutus.getKuvailevatTiedot().getTeksti()) {
+
+                LOG.debug("mkt.getKieliKoodi()" + mkt.getKieliKoodi());
+
                 result.getLisatiedot(mkt.getKieliKoodi()).setKuvailevatTiedot(mkt.getValue());
             }
         }
@@ -528,6 +525,14 @@ public class KoulutusConverter {
      * @return
      */
     private static KoodistoKoodiTyyppi createKoodi(final String uri) {
+        return createKoodi(uri, false, null);
+    }
+
+    private static KoodistoKoodiTyyppi createKoodi(final String uri, final boolean noNullValues, final String errorInField) {
+        if (noNullValues && uri == null) {
+            throw new RuntimeException("URI cannot be null in field name " + errorInField);
+        }
+
         final KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
         koodi.setUri(uri);
         return koodi;
@@ -620,8 +625,13 @@ public class KoulutusConverter {
         clear(koulutus.getSijoittuminenTyoelamaan());
         clear(koulutus.getKansainvalistyminen());
         clear(koulutus.getYhteistyoMuidenToimijoidenKanssa());
+        
 
         for (String kieliUri : koulutusLisatiedotModel.getLisatiedot().keySet()) {
+
+            LOG.debug("koulutusLisatiedotModel.getLisatiedot().keySet() '" + kieliUri + "', " + koulutusLisatiedotModel.getLisatiedot().keySet());
+
+
             KoulutusLisatietoModel lisatieto = koulutusLisatiedotModel.getLisatiedot(kieliUri);
 
             if (koulutus.getKuvailevatTiedot() == null) {
@@ -670,9 +680,13 @@ public class KoulutusConverter {
      * @param teksti
      * @return
      */
-    private MonikielinenTekstiTyyppi.Teksti convertToMonikielinenTekstiTyyppi(String languageUri, String teksti) {
+    private MonikielinenTekstiTyyppi.Teksti convertToMonikielinenTekstiTyyppi(final String languageUri, final String teksti) {
         MonikielinenTekstiTyyppi.Teksti mktt = new MonikielinenTekstiTyyppi.Teksti();
         mktt.setValue(teksti);
+
+        if (languageUri == null) {
+            throw new RuntimeException("Language URI cannot be null.");
+        }
         mktt.setKieliKoodi(languageUri);
         return mktt;
     }

@@ -58,6 +58,8 @@ public class MultipleHakuRemovalDialog extends RemovalConfirmationDialog {
         super(questionStr, null, removeStr, noRemoveStr, null,
                 null);
         this.removeListener = new Button.ClickListener() {
+                    private static final long serialVersionUID = 5019806363620874205L;
+            
             
             @Override
             public void buttonClick(ClickEvent event) {
@@ -67,6 +69,7 @@ public class MultipleHakuRemovalDialog extends RemovalConfirmationDialog {
             }
         };
         this.noRemoveListener = new Button.ClickListener() {
+                    private static final long serialVersionUID = 5019806363620874205L;
             
             @Override
             public void buttonClick(ClickEvent event) {

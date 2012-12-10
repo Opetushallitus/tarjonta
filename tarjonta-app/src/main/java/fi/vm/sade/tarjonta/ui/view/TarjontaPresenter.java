@@ -635,15 +635,11 @@ public class TarjontaPresenter {
     public List<String> getSelectedKoulutusOids() {
         List<String> kOids = new ArrayList<String>();
         
-        if (getModel().getSelectedKoulutukset() == null || getModel().getSelectedKoulutukset().isEmpty()) {
-            showNotification(UserNotification.ADD_FAILED);
-        } else {
+        if (getModel().getSelectedKoulutukset() != null || !getModel().getSelectedKoulutukset().isEmpty()) {
             for (KoulutusTulos curKoul : getModel().getSelectedKoulutukset()) {
                 if (curKoul != null && curKoul.getKoulutus() != null) {
                     kOids.add(curKoul.getKoulutus().getKoulutusmoduuliToteutus());
-                } else {
-                    showNotification(UserNotification.ADD_FAILED);
-                }
+                } 
             }
         }
         return kOids;

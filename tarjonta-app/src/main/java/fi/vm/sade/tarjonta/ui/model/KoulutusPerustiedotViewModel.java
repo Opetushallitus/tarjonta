@@ -30,6 +30,7 @@ import java.util.Set;
  * @author mlyly
  */
 public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
+    private static final long serialVersionUID = 8039462177057261652L;
 
     /*
      * OID of the loaded enity.
@@ -79,7 +80,7 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     protected String suunniteltuKestoTyyppi;
     protected String koulutuslaji;
     protected String opetusmuoto;
-    protected Set<String> opetuskielet; //allow one or many
+    protected String opetuskieli;
     private List<KielikaannosViewModel> painotus;
     protected List<KoulutusYhteyshenkiloViewModel> yhteyshenkilot;
     protected List<KoulutusLinkkiViewModel> koulutusLinkit;
@@ -90,14 +91,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
 
     public KoulutusPerustiedotViewModel(DocumentStatus status) {
         this.documentStatus = status;
-    }
-
-    public Set<String> getOpetuskielet() {
-        return opetuskielet;
-    }
-
-    public void setOpetuskielet(Set<String> opetuskielet) {
-        this.opetuskielet = opetuskielet;
     }
 
     public Date getKoulutuksenAlkamisPvm() {
@@ -469,5 +462,19 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      */
     public void setJatkoopintomahdollisuudet(MonikielinenTekstiModel jatkoopintomahdollisuudet) {
         this.jatkoopintomahdollisuudet = jatkoopintomahdollisuudet;
+    }
+
+    /**
+     * @return the opetuskieli
+     */
+    public String getOpetuskieli() {
+        return opetuskieli;
+    }
+
+    /**
+     * @param opetuskieli the opetuskieli to set
+     */
+    public void setOpetuskieli(String opetuskieli) {
+        this.opetuskieli = opetuskieli;
     }
 }

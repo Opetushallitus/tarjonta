@@ -66,7 +66,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
     @Autowired(required = true)
     private TarjontaPresenter presenter;
     private Label documentStatus;
-    private int unmodifiedHashcode; //if document is modified after save or load.
+    private int unmodifiedHashcode; //for validation check.
     private EditKoulutusPerustiedotFormView editKoulutusPerustiedotFormView;
 
     public EditKoulutusPerustiedotToinenAsteView() {
@@ -126,7 +126,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
          *  FORM LAYOUT (form components under navigation buttons)
          */
         editKoulutusPerustiedotFormView = new EditKoulutusPerustiedotFormView(presenter, koulutusPerustiedotModel);
-        final Form form = new ViewBoundForm(editKoulutusPerustiedotFormView);
+        final Form form = new ValidatingViewBoundForm(editKoulutusPerustiedotFormView);
         form.setItemDataSource(hakuBean);
         form.setValidationVisible(false);
         form.setValidationVisibleOnCommit(false);
@@ -189,7 +189,6 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                 }
                 try {
                     errorView.resetErrors();
-                    form.validate();
                     form.commit();
                     presenter.showShowKoulutusView();
                 } catch (Validator.InvalidValueException e) {
@@ -237,13 +236,6 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         ddt.setVisibleColumns(new Object[]{"linkkityyppi", "url", "kieli"});
         ddt.setPageLength(4); //four rows
         layout.addComponent(ddt);
-    }
-
-    private void headerLayout(final AbstractLayout layout, final String i18nProperty) {
-        CssLayout cssLayout = new CssLayout();
-        cssLayout.setHeight(20, UNITS_PIXELS);
-        cssLayout.addComponent(UiUtil.label(null, i18nProperty));
-        layout.addComponent(cssLayout);
     }
 
     /*

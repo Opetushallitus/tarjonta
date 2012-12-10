@@ -20,6 +20,7 @@ import com.vaadin.Application;
 import com.vaadin.ui.Window;
 import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
+import fi.vm.sade.vaadin.Oph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +57,7 @@ public class TarjontaApplication extends AbstractSadePortletApplication {
     protected void initApplication() {
         window = new TarjontaRootView();
         setMainWindow(window);
-        setTheme("oph-app-tarjonta"); //include Vaadin Tree Table fix for Liferay
+        setTheme(Oph.THEME_NAME);
     }
 
     @Override

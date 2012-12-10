@@ -60,7 +60,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     private I18NHelper i18nHelper = new I18NHelper(this);
     private TextField tfSearch;
     private Button btnHae;
-    private ComboBox cbKaudenTarkenne;
+    //private ComboBox cbKaudenTarkenne;
     private ComboBox cbVuosi;
     private KoodistoComponent kcKausi;
     // private KoodistoComponent kcHakutyyppi;
@@ -126,9 +126,9 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         });
 
         //TODO: no application logic, only for Christmas demo
-        cbKaudenTarkenne = UiUtil.comboBox(this, T(I18N_KAUDEN_TARKENNE), new String[]{"Koulutuksen alkamiskausi"});
-        cbKaudenTarkenne.setSizeUndefined();
-        cbKaudenTarkenne.setWidth("200px");
+//        cbKaudenTarkenne = UiUtil.comboBox(this, T(I18N_KAUDEN_TARKENNE), new String[]{"Koulutuksen alkamiskausi"});
+//        cbKaudenTarkenne.setSizeUndefined();
+//        cbKaudenTarkenne.setWidth("200px");
 
         //TODO: no application logic, only for Christmas demo
         cbVuosi = UiUtil.comboBox(this, T(I18N_VUOSI), new String[]{"2012"});
@@ -165,11 +165,11 @@ public class SearchSpesificationView extends OphHorizontalLayout {
 
         this.setComponentAlignment(tfSearch, Alignment.BOTTOM_LEFT);
         this.setComponentAlignment(btnHae, Alignment.BOTTOM_LEFT);
-        this.setComponentAlignment(cbKaudenTarkenne, Alignment.BOTTOM_RIGHT);
+       // this.setComponentAlignment(cbKaudenTarkenne, Alignment.BOTTOM_RIGHT);
         this.setComponentAlignment(cbVuosi, Alignment.BOTTOM_RIGHT);
         this.setComponentAlignment(kcKausi, Alignment.BOTTOM_RIGHT);
         this.setComponentAlignment(btnTyhjenna, Alignment.BOTTOM_RIGHT);
-        this.setExpandRatio(cbKaudenTarkenne, 1f);
+        this.setExpandRatio(cbVuosi, 1f);
     }
 
     private String T(String key) {

@@ -51,6 +51,7 @@ import org.vaadin.addon.formbinder.PropertyId;
 public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout implements Component {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotYhteystietoView.class);
+    private static final long serialVersionUID = 765235947511196071L;
     @PropertyId("etunimet")
     private TextField tfEtunimet;
     @PropertyId("sukunimi")
@@ -68,6 +69,10 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
     public EditKoulutusPerustiedotYhteystietoView() {
         this.setSpacing(true);
 
+        buildLayout();
+    }
+
+    private void buildLayout() {
         tfEtunimet = UiUtil.textField(this, "", i18n.getMessage("Etunimet.prompt"), true);
         tfEtunimet.setRequired(true);
         tfEtunimet.setRequiredError(i18n.getMessage("Etunimet.tyhja"));
@@ -90,12 +95,12 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
         UiUtil.label(this, i18n.getMessage("YhteyshenkiloKielissa"));
 
         kcKielet = UiBuilder.koodistoTwinColSelectUri(this, KoodistoURIHelper.KOODISTO_KIELI_URI);
-
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
         this.addComponent(hl);
 
         UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Tallenna"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 LOG.debug("fire : SaveEvent");
@@ -104,11 +109,13 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
         });
 
         UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Peruuta"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new DataTableEvent.CancelEvent(EditKoulutusPerustiedotYhteystietoView.this));
             }
         });
+
 
     }
 }

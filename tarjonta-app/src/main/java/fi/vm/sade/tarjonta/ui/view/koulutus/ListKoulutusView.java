@@ -193,7 +193,7 @@ public class ListKoulutusView extends VerticalLayout {
         caption += ", " + getTilaStr(curKoulutus.getKoulutus().getTila().name());
         return caption;
     }
-    
+
     private String getKoulutusNimi(KoulutusTulos curKoulutus) {
         String nimi = getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi());
         if (curKoulutus.getKoulutus().getKoulutusohjelmakoodi() != null) {
@@ -239,15 +239,17 @@ public class ListKoulutusView extends VerticalLayout {
         btnPoista.setEnabled(false);
         btnSiirraJaKopioi = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("siirraTaiKopioi"), RequiredRole.CRUD, presenter.getPermission());
         btnSiirraJaKopioi.setEnabled(false);
-        
+
         luoHakukohdeB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LuoHakukohde"), RequiredRole.CRUD, presenter.getPermission());
         luoHakukohdeB.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                //presenter.showHakukohdeEditView(presenter.getSelectedKoulutusOids(), null);
-                showCreateHakukohdeDialog(presenter.getSelectedKoulutusOids());
+                List<String> selectedKoulutusOids = presenter.getSelectedKoulutusOids();
+                if (!selectedKoulutusOids.isEmpty()) {
+                    showCreateHakukohdeDialog(selectedKoulutusOids);
+                }
             }
         });
 

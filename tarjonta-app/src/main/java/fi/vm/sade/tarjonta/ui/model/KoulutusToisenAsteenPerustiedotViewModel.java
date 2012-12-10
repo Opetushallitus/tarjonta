@@ -99,13 +99,10 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setKoulutuslaji(null);
         setPohjakoulutusvaatimus(null);
         setOpetusmuoto(null);
-        //setOpetuskieli(null);
-
+        setOpetuskieli(null);
         setKoulutuskoodit(new HashSet<KoulutuskoodiModel>());
         setKoulutusohjelmat(new HashSet<KoulutusohjelmaModel>());
-        setOpetuskielet(new HashSet<String>(1)); //one required
-
-
+       
         //Table data
         setPainotus(new ArrayList<KielikaannosViewModel>(0)); //optional
         setKoulutusLinkit(new ArrayList<KoulutusLinkkiViewModel>(0)); //optional
@@ -207,8 +204,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         builder.append(opetusmuoto, other.opetusmuoto);
         builder.append(koulutuslaji, other.koulutuslaji);
         builder.append(pohjakoulutusvaatimus, other.pohjakoulutusvaatimus);
-        builder.append(opetuskielet, other.opetuskielet);
-
+        builder.append(opetuskieli, other.opetuskieli);
         builder.append(yhteyshenkilot, other.yhteyshenkilot);
         builder.append(koulutusLinkit, other.koulutusLinkit);
         return builder.isEquals();
@@ -240,7 +236,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
                 .append(opetusmuoto)
                 .append(koulutuslaji)
                 .append(pohjakoulutusvaatimus)
-                .append(opetuskielet)
+                .append(opetuskieli)
                 .append(yhteyshenkilot)
                 .append(koulutusLinkit).toHashCode();
     }

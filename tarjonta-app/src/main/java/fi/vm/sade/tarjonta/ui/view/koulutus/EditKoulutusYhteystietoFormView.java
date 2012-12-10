@@ -30,6 +30,7 @@ import org.vaadin.addon.formbinder.PropertyId;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 public class EditKoulutusYhteystietoFormView extends VerticalLayout {
+    private static final long serialVersionUID = 2295231023926721479L;
 
     private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
     @PropertyId("yhteyshenkilot")

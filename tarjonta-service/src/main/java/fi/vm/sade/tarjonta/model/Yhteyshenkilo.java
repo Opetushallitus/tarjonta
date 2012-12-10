@@ -47,7 +47,7 @@ public class Yhteyshenkilo extends BaseEntity {
     @Column(name = "puhelin")
     private String puhelin;
 
-    @Column(name = "kielis", nullable = false)
+    @Column(name = "kielis")
     private String kielis;
 
     @Column(name = "henkilo_oid")
@@ -84,7 +84,7 @@ public class Yhteyshenkilo extends BaseEntity {
     public final void setKielis(String... kieli) {
 
         if (kieli == null || kieli.length == 0) {
-            throw new IllegalArgumentException("atleast one kieli must be set");
+           kielis = null;
         }
 
         kielis = StringUtils.join(formatKielis(kieli), KIELI_SEPARATOR);

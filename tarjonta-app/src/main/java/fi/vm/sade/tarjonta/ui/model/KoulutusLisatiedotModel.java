@@ -25,8 +25,8 @@ import java.util.Set;
 /**
  * Contains all the additional information for all given languages for a study.
  *
- * Note that this class contains references to "KoulutusLisatietoMmodel" (note missing -t  :)
- * that contains language specific textual data.
+ * Note that this class contains references to "KoulutusLisatietoMmodel" (note
+ * missing -t :) that contains language specific textual data.
  *
  * @author mlyly
  */
@@ -34,7 +34,6 @@ public class KoulutusLisatiedotModel extends BaseUIViewModel {
 
     private Set<String> _kielet;
     private Collection<String> _ammattinimikkeet;
-
     /**
      * Language specific information for a study.
      */
@@ -56,15 +55,19 @@ public class KoulutusLisatiedotModel extends BaseUIViewModel {
         _kielet = kielet;
     }
 
-
     /**
-     * Get additional info with given language.
-     * If it's not found, create empty KoulutusLisatietoModel.
+     * Get additional info with given language. If it's not found, create empty
+     * KoulutusLisatietoModel.
      *
      * @param uri
      * @return
      */
     public KoulutusLisatietoModel getLisatiedot(String uri) {
+
+        if (uri == null) {
+            throw new RuntimeException("An invalid language URI - the URI value cannot be null.");
+        }
+
         KoulutusLisatietoModel result = getLisatiedot().get(uri);
         if (result == null) {
             result = new KoulutusLisatietoModel();
@@ -109,5 +112,4 @@ public class KoulutusLisatiedotModel extends BaseUIViewModel {
     public void setAmmattinimikkeet(Collection<String> set) {
         _ammattinimikkeet = set;
     }
-
 }

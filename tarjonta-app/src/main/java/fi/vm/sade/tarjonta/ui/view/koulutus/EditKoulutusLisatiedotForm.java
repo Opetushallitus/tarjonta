@@ -52,6 +52,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusLisatiedotForm.class);
+    private static final long serialVersionUID = -4054591599209251060L;
     @Autowired
     private TarjontaPresenter _presenter;
     @Autowired
@@ -91,7 +92,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         // What languages should we have as preselection when initializing the form?
         // Current hypothesis is that we should use the opetuskielet + any possible additional languages added to additional information
         Set<String> languageUris = new HashSet<String>();
-        languageUris.addAll(_presenter.getModel().getKoulutusPerustiedotModel().getOpetuskielet());
+        languageUris.add(_presenter.getModel().getKoulutusPerustiedotModel().getOpetuskieli()); //only single language in 2aste
         languageUris.addAll(koulutusLisatiedotModel.getKielet());
 
         // Update language selections to contain opetuskielet AND lisätiedot languages
@@ -101,6 +102,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         // Build tabsheet for languages with koodisto select languages
         //
         final KoodistoSelectionTabSheet tabs = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI) {
+            private static final long serialVersionUID = -7916177514458213528L;
             @Override
             public void doAddTab(String uri) {
                 Component c = createLanguageEditor(uri);
@@ -120,12 +122,14 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
     private void addNavigationButtons() {
 
         addNavigationButton("", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
                 _presenter.showMainDefaultView();
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
         addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
                 try {
@@ -137,6 +141,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
         addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
                 try {
@@ -148,12 +153,14 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
         addNavigationButton(T("esikatsele"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
                 _presenter.showKoulutusPreview();
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
         addNavigationButton(T("jatka"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
                 _presenter.showShowKoulutusView();
