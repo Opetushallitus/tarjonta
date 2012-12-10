@@ -113,9 +113,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
      */
     private void menuItemClicked(String selection) {
         if (selection.equals(i18n.getMessage("tarkastele"))) {
-            tarjontaPresenter.showShowHakukohdeView(hakukohde.getHakukohde().getOid());
-            //TODO poistetaan kun tarkastelu on toteutettu
-            getWindow().showNotification("Tarkastelua ei ole toteutettu");
+            tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getHakukohde().getOid());
         } else if (selection.equals(i18n.getMessage("muokkaa"))) {
         	tarjontaPresenter.showHakukohdeEditView(null, hakukohde.getHakukohde().getOid());
         } else if (selection.equals(i18n.getMessage("poista"))) {

@@ -74,14 +74,34 @@ public class HakukohdeViewModelToDTOConverter {
         return hakukohde;
     }
 
+    private HakuViewModel mapHakuNimi(MonikielinenTekstiTyyppi monikielinenTekstiTyyppi) {
+        HakuViewModel haku = new HakuViewModel();
+
+        if (monikielinenTekstiTyyppi != null) {
+
+        for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
+            if (teksti.getKieliKoodi().trim().equalsIgnoreCase("fi")) {
+                haku.setNimiFi(teksti.getValue());
+            } else if (teksti.getKieliKoodi().trim().equalsIgnoreCase("en")) {
+                haku.setNimiEn(teksti.getValue());
+            } else if (teksti.getKieliKoodi().trim().equalsIgnoreCase("se")) {
+                haku.setNimiSe(teksti.getValue());
+            }
+        }
+        }
+
+        return haku;
+    }
+
     public HakukohdeViewModel convertDTOToHakukohdeViewMode(HakukohdeTyyppi hakukohdeTyyppi) {
         HakukohdeViewModel hakukohdeVM = new HakukohdeViewModel();
         hakukohdeVM.setAloitusPaikat(hakukohdeTyyppi.getAloituspaikat());
         hakukohdeVM.setHakukelpoisuusVaatimus(hakukohdeTyyppi.getHakukelpoisuusVaatimukset());
         hakukohdeVM.setHakukohdeNimi(hakukohdeTyyppi.getHakukohdeNimi());
         hakukohdeVM.setHakukohdeTila(hakukohdeTyyppi.getHakukohteenTila().name());
-        HakuViewModel haku = new HakuViewModel();
+        HakuViewModel haku = mapHakuNimi(hakukohdeTyyppi.getHakukohteenHaunNimi());
         haku.setHakuOid(hakukohdeTyyppi.getHakukohteenHakuOid());
+
         hakukohdeVM.setHakuOid(haku);
         hakukohdeVM.setHakukohdeKoodistoNimi(hakukohdeTyyppi.getHakukohdeKoodistoNimi());
         hakukohdeVM.setOid(hakukohdeTyyppi.getOid());

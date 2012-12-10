@@ -42,6 +42,7 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.HakukohdeCreationDialog;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.ShowHakukohdeViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -234,6 +235,24 @@ public class TarjontaPresenter {
     
     public void cancelHakukohdeCreationDialog() {
         getRootView().getListKoulutusView().closeHakukohdeCreationDialog();
+    }
+
+    /*
+     * Show hakukohde overview view
+     */
+
+    public void showHakukohdeViewImpl(String hakukohdeOid) {
+        if (hakukohdeOid != null) {
+            LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
+            kysely.setOid(hakukohdeOid);
+             LueHakukohdeVastausTyyppi vastaus = tarjontaPublicService.lueHakukohde(kysely);
+            if (vastaus.getHakukohde() != null) {
+                getModel().setHakukohde(hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(vastaus.getHakukohde()));
+                ShowHakukohdeViewImpl view = new ShowHakukohdeViewImpl(getModel().getHakukohde().getHakukohdeNimi(),null,null);
+                getRootView().changeView(view);
+
+            }
+        }
     }
 
     /**
