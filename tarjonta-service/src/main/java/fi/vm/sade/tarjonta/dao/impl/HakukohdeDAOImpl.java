@@ -20,14 +20,7 @@ import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.QHakukohde;
-import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.QTekstiKaannos;
-import fi.vm.sade.tarjonta.model.TekstiKaannos;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 
@@ -79,14 +72,24 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     @Override
     public List<Hakukohde> findHakukohdeWithDepenciesByOid(String oid) {
         QHakukohde qHakukohde = QHakukohde.hakukohde;
+        QHaku qHaku = QHaku.haku;
 
-        List<Hakukohde> hakukohdes = from(qHakukohde)
+        List<Hakukohde> hakukohdes = from(qHakukohde,qHaku)
+                .join(qHakukohde.haku,qHaku)
                 .where(qHakukohde.oid.eq(oid.trim()))
                .list(qHakukohde);
 
        for (Hakukohde hakukohde:hakukohdes) {
            hakukohde.setLisatiedot(findLisatiedotToHakuKohde(hakukohde));
+           try {
+           hakukohde.getHaku().getOid();
+           } catch (NullPointerException nullPointer) {
+                   log.info("HAKUKOHDE HAKU WAS NULL");
+           }
+
        }
+
+
 
         return hakukohdes;
     }

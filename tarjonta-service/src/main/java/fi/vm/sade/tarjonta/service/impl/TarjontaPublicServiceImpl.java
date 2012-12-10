@@ -21,11 +21,7 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
@@ -389,9 +385,26 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(kysely.getOid());
         Hakukohde hakukohde = hakukohdes.get(0);
         HakukohdeTyyppi hakukohdeTyyppi = conversionService.convert(hakukohde, HakukohdeTyyppi.class);
+        if (hakukohde.getHaku() != null) {
+
+            hakukohdeTyyppi.setHakukohteenHaunNimi(mapMonikielinenTekstiToTyyppi(hakukohde.getHaku().getNimi()));
+        }
         LueHakukohdeVastausTyyppi vastaus = new LueHakukohdeVastausTyyppi();
         vastaus.setHakukohde(hakukohdeTyyppi);
         return vastaus;
+    }
+
+    private MonikielinenTekstiTyyppi mapMonikielinenTekstiToTyyppi(MonikielinenTeksti monikielinenTeksti) {
+        MonikielinenTekstiTyyppi monikielinenTekstiTyyppi = new MonikielinenTekstiTyyppi();
+        for (TekstiKaannos tekstiKaannos:monikielinenTeksti.getTekstis()) {
+
+            MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
+            teksti.setKieliKoodi(tekstiKaannos.getKieliKoodi());
+            teksti.setValue(tekstiKaannos.getArvo());
+            monikielinenTekstiTyyppi.getTeksti().add(teksti);
+        }
+
+        return monikielinenTekstiTyyppi;
     }
 
     @Override
