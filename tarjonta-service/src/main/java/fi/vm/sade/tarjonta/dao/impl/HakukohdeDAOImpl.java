@@ -25,6 +25,7 @@ import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -118,7 +119,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
                 list(qHakukohde);
     	
     	//Creating grouping such that there is a hakukohde object for each koulutusmoduulitoteutus
-    	hakukohdes = createGrouping(hakukohdes);
+    	hakukohdes = createGrouping(hakukohdes, kysely);
 
     	List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
     	//If a list of organisaatio oids is provided only hakukohdes that match
@@ -138,30 +139,63 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     /*
      * Creating grouping such that there is a hakukohde object for each koulutusmoduulitoteutus
      */
-    private List<Hakukohde> createGrouping (List<Hakukohde> hakukohdes) {
+    private List<Hakukohde> createGrouping (List<Hakukohde> hakukohdes, HaeHakukohteetKyselyTyyppi kysely) {
     	List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
     	for (Hakukohde curHakukohde : hakukohdes) {
     		if (curHakukohde.getKoulutusmoduuliToteutuses().size() > 1) {
-    			vastaus.addAll(handleKomotos(curHakukohde));
-    		} else {
+    			vastaus.addAll(handleKomotos(curHakukohde, kysely));
+    		} else if (isHakukohdeMatch(curHakukohde, kysely)) {
     			vastaus.add(curHakukohde);
     		}
     	}
     	return vastaus;
     }
     
-    private List<Hakukohde> handleKomotos(Hakukohde hakukohde) {
+    private List<Hakukohde> handleKomotos(Hakukohde hakukohde, HaeHakukohteetKyselyTyyppi kysely) {
     	List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
     	for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
-    		Hakukohde newHakukohde = new Hakukohde();
-    		newHakukohde.setHakukohdeNimi(hakukohde.getHakukohdeNimi());
-            newHakukohde.setTila(hakukohde.getTila());
-            newHakukohde.setOid(hakukohde.getOid());
-            newHakukohde.addKoulutusmoduuliToteutus(komoto);
-            newHakukohde.setHaku(hakukohde.getHaku());
-            vastaus.add(newHakukohde);
+    	    if (isKomotoMatch(komoto, kysely)) {
+    	        Hakukohde newHakukohde = new Hakukohde();
+    	        newHakukohde.setHakukohdeNimi(hakukohde.getHakukohdeNimi());
+    	        newHakukohde.setTila(hakukohde.getTila());
+    	        newHakukohde.setOid(hakukohde.getOid());
+    	        newHakukohde.addKoulutusmoduuliToteutus(komoto);
+    	        newHakukohde.setHaku(hakukohde.getHaku());
+    	        vastaus.add(newHakukohde);
+    	    }
     	}
     	return vastaus;
+    }
+    
+    private boolean isHakukohdeMatch(Hakukohde hakukohde, HaeHakukohteetKyselyTyyppi kysely) {
+        KoulutusmoduuliToteutus komoto = !hakukohde.getKoulutusmoduuliToteutuses().isEmpty() ? hakukohde.getKoulutusmoduuliToteutuses().iterator().next() : null;
+        return isKomotoMatch(komoto, kysely);
+    }
+
+    private boolean isKomotoMatch(KoulutusmoduuliToteutus komoto, HaeHakukohteetKyselyTyyppi kysely) {  
+        if (komoto == null) {
+            return false;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(komoto.getKoulutuksenAlkamisPvm());
+        return  isYearMatch(cal, kysely) && isKausiMatch(cal, kysely);
+    }
+    
+    private boolean isYearMatch(Calendar cal, HaeHakukohteetKyselyTyyppi kysely) {
+        if (kysely.getKoulutuksenAlkamisvuosi() == null) {
+            return true;
+        }
+        return cal.get(Calendar.YEAR) == kysely.getKoulutuksenAlkamisvuosi().intValue();
+    }
+    
+    private boolean isKausiMatch(Calendar cal, HaeHakukohteetKyselyTyyppi kysely) {
+        if (kysely.getKoulutuksenAlkamiskausi() == null) {
+            return true;
+        }
+        if (kysely.getKoulutuksenAlkamiskausi().equalsIgnoreCase("syksy")) {
+            return cal.get(Calendar.MONTH) >= 6;
+        }
+        return cal.get(Calendar.MONTH) < 6;
     }
 
 

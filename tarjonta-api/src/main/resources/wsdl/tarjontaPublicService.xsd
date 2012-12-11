@@ -30,7 +30,7 @@
     <xs:element name="lueHakukohdeKysely" type="tns:LueHakukohdeKyselyTyyppi" />
     <xs:element name="lueHakukohdeVastaus" type="tns:LueHakukohdeVastausTyyppi" />
     
-    <xs:element name="LueHakukohdeKoulutuksineenKysely" type="tns:LueHakukohdeKoulutuksineenKyselyTyyppi"/>'
+    <xs:element name="LueHakukohdeKoulutuksineenKysely" type="tns:LueHakukohdeKoulutuksineenKyselyTyyppi"/>
     <xs:element name="LueHakukohdeKoulutuksineenVastaus" type="tns:LueHakukohdeKoulutuksineenVastausTyyppi"/>
 
 
@@ -81,8 +81,8 @@
         <xs:sequence>
             <xs:element name="nimi" minOccurs="0" maxOccurs="1" type="xs:string"/>
             <xs:element name="tarjoajaOids" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
-            <xs:element name="koulutuksenAlkamisvuosi" minOccurs="0" maxOccurs="unbounded" type="xs:integer"/>
-            <xs:element name="koulutuksenAlkamiskausi" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+            <xs:element name="koulutuksenAlkamisvuosi" minOccurs="0" maxOccurs="1" type="xs:integer"/>
+            <xs:element name="koulutuksenAlkamiskausi" minOccurs="0" maxOccurs="1" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
 
