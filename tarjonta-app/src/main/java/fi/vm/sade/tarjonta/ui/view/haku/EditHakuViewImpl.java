@@ -184,7 +184,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         _hakukausi.setSizeUndefined();
         _hakuvuosi = UiUtil.textField(null, "", T("Hakuvuosi.prompt"), false);
         _hakuvuosi.setSizeUndefined();
-        _koulutusAlkamiskausi =UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_KAUDEN_TARKENNE_URI, null, null, T("KoulutuksenAlkamiskausi.prompt"));
+        _koulutusAlkamiskausi =UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T("KoulutuksenAlkamiskausi.prompt"));
         _koulutusAlkamiskausi.setSizeUndefined();
          koulutuksenAlkamisvuosi = UiUtil.textField(null, "", T("KoulutuksenAlkamisvuosi.prompt"), false);
          koulutuksenAlkamisvuosi.setSizeUndefined();
