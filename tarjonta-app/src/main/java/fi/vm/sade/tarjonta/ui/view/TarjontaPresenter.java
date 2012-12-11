@@ -123,14 +123,6 @@ public class TarjontaPresenter {
         hakuKohdePerustiedotView.commitForm(tila);
     }
 
-//    private String tryGetHakukohdeNimi(String hakukohdeNimiUri) {
-//        List<KoodiType> koodit = koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(hakukohdeNimiUri));
-//        if (koodit != null && koodit.size() > 0) {
-//            return koodit.get(0).getMetadata().get(0).getNimi();
-//        } else {
-//            return "";
-//        }
-//    }
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
         getModel().getHakukohde().getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
@@ -600,30 +592,7 @@ public class TarjontaPresenter {
         
         return sortedMap;
     }
-
-    /**
-     * Creating komoto search criteria according to currently selected
-     * organisaatio If no organisaatio selected, criteria is empty
-     *
-     * @return
-     */
-    private HaeKoulutuksetKyselyTyyppi generateKomotoSearchCriteria() {
-        HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
-        if (getModel().getOrganisaatioOid() != null) {
-            // Find all descendant organisation oids
-            kysely.getTarjoajaOids().addAll(findAllChilrenOidsByParentOid(getModel().getOrganisaatioOid()));
-            kysely.getTarjoajaOids().add(getModel().getOrganisaatioOid());
-
-//            List<OrganisaatioDTO> childOrgs = this.organisaatioService.findAllChildrenWithOid(getModel().getOrganisaatioOid());
-//            LOG.debug("childOrgs: " + childOrgs.size());
-//            for (OrganisaatioDTO org : childOrgs) {
-//                LOG.debug("Current organisaatio: " + OrganisaatioDisplayHelper.getClosest(I18N.getLocale(), org) + ", " + org.getOid());
-//                kysely.getTarjoajaOids().add(org.getOid());
-//            }
-        }
-        return kysely;
-    }
-    
+   
     private List<String> findAllChilrenOidsByParentOid(String parentOid) {
         List<String> oids = new ArrayList<String>();
 
@@ -769,12 +738,8 @@ public class TarjontaPresenter {
     public void unSelectOrganisaatio() {
         getModel().setOrganisaatioOid(null);
         getModel().setOrganisaatioName(null);
-        
-        getRootView().getBreadcrumbsView().setOrganisaatio("-");
-        getModel().setOrganisaatioOid(null);
-        getModel().setOrganisaatioName(null);
         getRootView().getBreadcrumbsView().setOrganisaatio("OPH");
-        
+     
         getRootView().getOrganisaatiohakuView().clearTreeSelection();
 
         //Clearing the selected hakukohde and koulutus objects
