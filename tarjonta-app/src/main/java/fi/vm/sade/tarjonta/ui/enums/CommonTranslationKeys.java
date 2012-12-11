@@ -29,6 +29,8 @@ public interface CommonTranslationKeys {
     public static String PERUUTA = "_peruuta";
     public static String MUOKKAA = "_muokkaa";
     public static String TALLENNA = "_tallenna";
+    public static String TALLENNA_VALMIINA = "_tallennaValmiina";
+    public static String TALLENNA_LUONNOKSENA = "_tallennaLuonnoksena";
     public static String EDELLINEN = "_edellinen";
     public static String SEURAAVA = "_seuraava";
     public static String POISTA = "_poista";

@@ -26,6 +26,7 @@ import fi.vm.sade.generic.ui.component.OphRichTextArea;
 import fi.vm.sade.generic.ui.component.OphTokenField;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -73,7 +74,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         {
             addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet"), LabelStyleEnum.H2));
             addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet.help"), LabelStyleEnum.TEXT));
-            
+
             PropertysetItem psi = new BeanItem(koulutusLisatiedotModel);
             OphTokenField f = UiBuilder.koodistoTokenField(null, KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
             f.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
@@ -129,7 +130,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
                 _presenter.showMainDefaultView();
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
-        addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
+        addNavigationButton(T(CommonTranslationKeys.TALLENNA_LUONNOKSENA), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
@@ -141,7 +142,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
                 }
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
-        addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
+        addNavigationButton(T(CommonTranslationKeys.TALLENNA_VALMIINA), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
@@ -160,7 +161,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
                 _presenter.showKoulutusPreview();
             }
         }, StyleEnum.STYLE_BUTTON_SECONDARY, false);
-        addNavigationButton(T("jatka"), new Button.ClickListener() {
+        addNavigationButton(T(CommonTranslationKeys.JATKA), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
