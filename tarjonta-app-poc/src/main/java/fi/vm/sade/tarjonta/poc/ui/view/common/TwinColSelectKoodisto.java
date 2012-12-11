@@ -23,7 +23,7 @@ import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
+import fi.vm.sade.koodisto.widget.WidgetFactory;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.HashSet;
 import java.util.Set;
