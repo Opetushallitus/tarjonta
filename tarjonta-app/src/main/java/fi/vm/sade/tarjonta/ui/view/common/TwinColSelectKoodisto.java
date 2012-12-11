@@ -24,6 +24,7 @@ import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.koodisto.service.mock.KoodiServiceMock;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 /**
  *
@@ -45,12 +47,14 @@ public class TwinColSelectKoodisto extends CssLayout  {
 
     private static final Logger LOG = LoggerFactory.getLogger(TwinColSelectKoodisto.class);
     private KoodistoComponent kc;
-   
+
     private Set<String> languages = new HashSet<String>();
-    
+
+    @Autowired
+    private KoodiService koodiService;
 
     public TwinColSelectKoodisto() {
-        
+
         initKoodisto();
 
     }
@@ -65,10 +69,10 @@ public class TwinColSelectKoodisto extends CssLayout  {
 
     private void initKoodisto() {
         kc = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KIELI_URI);
-        
+
 //        kc.setImmediate(true);
 
-//        
+//
         // DISPLAYED text
         kc.setCaptionFormatter(new CaptionFormatter() {
             @Override
@@ -76,7 +80,7 @@ public class TwinColSelectKoodisto extends CssLayout  {
                 if (dto instanceof KoodiType) {
                     KoodiType kdto = (KoodiType) dto;
                     String arvo = tryToGetLocalisedValue(kdto);
-                    
+
                     return arvo;
                 } else {
                     LOG.warn("An unknown DTO : " + dto);
@@ -84,7 +88,7 @@ public class TwinColSelectKoodisto extends CssLayout  {
                 }
             }
         });
-//        
+//
 //
 //        // BOUND value
         kc.setFieldValueFormatter(new FieldValueFormatter() {
@@ -101,46 +105,45 @@ public class TwinColSelectKoodisto extends CssLayout  {
         });
         addComponent(kc);
     }
-    
+
     private String tryToGetLocalisedValue(KoodiType kdto) {
         if (I18N.getLocale() != null) {
                     String kieliArvo = null;
-                    
+
                     for (KoodiMetadataType kmt : kdto.getMetadata()) {
                         if (kmt.getKieli().value().equalsIgnoreCase(I18N.getLocale().getLanguage())) {
                             kieliArvo = kmt.getNimi();
-                            
+
                         }
                     }
-                    
+
                     if (kieliArvo != null ) {
                         languages.add(kdto.getKoodiUri());
-                        
+
                         return kieliArvo;
                     } else {
                         languages.add(kdto.getKoodiArvo());
                     }
-                    
+
                     } else {
                    languages.add(kdto.getKoodiArvo());
                     }
                     return kdto.getKoodiArvo();
     }
-    
+
     public void setValue(Set<String> uris) {
         kc.setValue(Collections.unmodifiableSet(uris));
     }
     //Try to get localised name for uri
     public String getCaptionFor(String uri) {
-         
-        List<KoodiType> koodit = kc.getKoodiService().searchKoodis(KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(uri));
+
+        // List<KoodiType> koodit = kc.getKoodiService().searchKoodis(KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(uri));
+        List<KoodiType> koodit = koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(uri));
         if (koodit != null && koodit.size() > 0) {
             return tryToGetLocalisedValue(koodit.get(0));
         }  else {
             return null;
         }
-        
-        
     }
 
     /**
@@ -149,5 +152,5 @@ public class TwinColSelectKoodisto extends CssLayout  {
     public Set<String> getLanguages() {
         return languages;
     }
-    
+
 }
