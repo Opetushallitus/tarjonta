@@ -36,7 +36,7 @@
 
     <bean id="i18n" class="fi.vm.sade.generic.common.I18N"/>
 
-    <bean class="fi.vm.sade.koodisto.widget.factory.WidgetFactory" />
+    <bean class="fi.vm.sade.koodisto.widget.WidgetFactory" />
 
     <bean id="hakukohdeToDTOConverter" class="fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter"/>
 
