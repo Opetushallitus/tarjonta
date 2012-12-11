@@ -17,6 +17,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private List<KielikaannosViewModel> valintaPerusteidenKuvaus;
     private List<KielikaannosViewModel> lisatiedot;
     private List<String> komotoOids;
+    private List<KoulutusOidNameViewModel> koulukses;
 
     public HakukohdeViewModel() {
         super();
@@ -183,5 +184,13 @@ public class HakukohdeViewModel extends BaseUIViewModel {
      */
     public void setHakukohdeKoodistoNimi(String hakukohdeKoodistoNimi) {
         this.hakukohdeKoodistoNimi = hakukohdeKoodistoNimi;
+    }
+
+    public List<KoulutusOidNameViewModel> getKoulukses() {
+        return koulukses;
+    }
+
+    public void setKoulukses(List<KoulutusOidNameViewModel> koulukses) {
+        this.koulukses = koulukses;
     }
 }

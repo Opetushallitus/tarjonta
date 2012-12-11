@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.view;
 
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
@@ -109,6 +110,7 @@ public class TarjontaPresenter {
     private PerustiedotView hakuKohdePerustiedotView;
     private HakukohdeCreationDialog hakukohdeCreationDialog;
     private SearchResultsView searchResultsView;
+    private I18NHelper i18n = new I18NHelper(this);
     
     public TarjontaPresenter() {
     }
@@ -241,11 +243,62 @@ public class TarjontaPresenter {
              LueHakukohdeVastausTyyppi vastaus = tarjontaPublicService.lueHakukohde(kysely);
             if (vastaus.getHakukohde() != null) {
                 getModel().setHakukohde(hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(vastaus.getHakukohde()));
-                ShowHakukohdeViewImpl view = new ShowHakukohdeViewImpl(getModel().getHakukohde().getHakukohdeNimi(),null,null);
+                getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
+                ShowHakukohdeViewImpl view = new ShowHakukohdeViewImpl(getModel().getHakukohde().getHakukohdeKoodistoNimi(),null,null);
+
                 getRootView().changeView(view);
 
             }
         }
+    }
+
+    private List<KoulutusOidNameViewModel> getHakukohdeKoulutukses(HakukohdeViewModel hakukohdeViewModel) {
+        List<KoulutusOidNameViewModel> koulutukses = new ArrayList<KoulutusOidNameViewModel>();
+
+        LueHakukohdeKoulutuksineenKyselyTyyppi kysely = new LueHakukohdeKoulutuksineenKyselyTyyppi();
+        kysely.setHakukohdeOid(hakukohdeViewModel.getOid());
+        LueHakukohdeKoulutuksineenVastausTyyppi vastaus = tarjontaPublicService.lueHakukohdeKoulutuksineen(kysely);
+        if (vastaus.getHakukohde() != null && vastaus.getHakukohde().getHakukohdeKoulutukses() != null) {
+
+        List<KoulutusKoosteTyyppi> koulutusKoostes = vastaus.getHakukohde().getHakukohdeKoulutukses();
+        for (KoulutusKoosteTyyppi koulutusKooste:koulutusKoostes) {
+             KoulutusOidNameViewModel koulutus = new KoulutusOidNameViewModel();
+            koulutus.setKoulutusNimi(buildKoulutusCaption(koulutusKooste));
+            koulutus.setKoulutusOid(koulutusKooste.getKomotoOid());
+            koulutukses.add(koulutus);
+        }
+        }
+
+        return koulutukses;
+    }
+
+
+    private String buildKoulutusCaption(KoulutusKoosteTyyppi curKoulutus) {
+        String caption = getKoulutusNimi(curKoulutus);
+        caption += ", " + curKoulutus.getTila();
+        return caption;
+    }
+
+    private String getKoulutusNimi(KoulutusKoosteTyyppi curKoulutus) {
+        String nimi = getKoodiNimi(curKoulutus.getKoulutuskoodi());
+        if (curKoulutus.getKoulutusohjelmakoodi() != null) {
+            nimi += ", " + getKoodiNimi(curKoulutus.getKoulutusohjelmakoodi());
+        }
+        nimi += ", " + curKoulutus.getAjankohta();
+        return nimi;
+    }
+
+    private String getTilaStr(String tilaUri) {
+        String[] parts = tilaUri.split("\\/");
+        return i18n.getMessage(parts[parts.length - 1]);
+    }
+
+    private String getKoodiNimi(String hakukohdeUri) {
+        String nimi = this.getUiHelper().getKoodiNimi(hakukohdeUri, I18N.getLocale());
+        if ("".equals(nimi)) {
+            nimi = hakukohdeUri;
+        }
+        return nimi;
     }
 
     /**

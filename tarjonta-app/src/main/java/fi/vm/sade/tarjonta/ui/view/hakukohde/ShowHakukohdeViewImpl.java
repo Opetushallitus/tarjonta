@@ -15,6 +15,9 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
@@ -23,6 +26,7 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.Oph;
@@ -35,7 +39,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Autowired;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
+import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -66,8 +72,43 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
 
         //Build the layout
         addNavigationButtons(vl);
+        addLayoutSplit(vl);
         buildMiddleContentLayout(vl);
+        addLayoutSplit(vl);
+        buildKoulutuksesLayout(vl);
 
+    }
+
+    private void buildKoulutuksesLayout(VerticalLayout layout) {
+
+        layout.addComponent(buildHeaderLayout(T("sisaltyvatKoulutukset"),null,null,true));
+
+        CategoryTreeView categoryTree = new CategoryTreeView();
+        categoryTree.setHeight("100px");
+        categoryTree.setContainerDataSource(createHakukohdeKoulutusDatasource(tarjontaPresenterPresenter.getModel().getHakukohde().getKoulukses()));
+        String[] visibleColumns = {"nimiBtn","poistaBtn"};
+        categoryTree.setVisibleColumns(visibleColumns);
+        for (Object item:categoryTree.getItemIds()) {
+            categoryTree.setChildrenAllowed(item,false);
+        }
+        layout.addComponent(categoryTree);
+    }
+
+    private Container createHakukohdeKoulutusDatasource(List<KoulutusOidNameViewModel> koulutukses) {
+        BeanItemContainer<ShowHakukohdeKoulutusRow> container = new BeanItemContainer<ShowHakukohdeKoulutusRow>(ShowHakukohdeKoulutusRow.class);
+
+        container.addAll(getRows(koulutukses));
+
+        return container;
+    }
+
+    private List<ShowHakukohdeKoulutusRow> getRows(List<KoulutusOidNameViewModel> koulutukses) {
+        List<ShowHakukohdeKoulutusRow> rows = new ArrayList<ShowHakukohdeKoulutusRow>();
+        for (KoulutusOidNameViewModel koulutus:koulutukses) {
+            ShowHakukohdeKoulutusRow row = new ShowHakukohdeKoulutusRow(koulutus);
+            rows.add(row);
+        }
+        return rows;
     }
 
     private void buildMiddleContentLayout(VerticalLayout layout) {
@@ -178,30 +219,6 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        addNavigationButton(T("siirraOsaksiToistaKoulutusta"), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Ei toteutettu");
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
-
-        addNavigationButton(T("lisaaToteutus"), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Ei toteutettu");
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
-
-        addNavigationButton(T("esikatsele"), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Ei toteutettu");
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
-
     }
 
     /**
@@ -235,6 +252,15 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
         }
     }
 
+    public void addLayoutSplit(VerticalLayout layout) {
+        VerticalSplitPanel split = new VerticalSplitPanel();
+        split.setImmediate(false);
+        split.setWidth("100%");
+        split.setHeight("2px");
+        split.setLocked(true);
+
+        layout.addComponent(split);
+    }
 
     private void backFired() {
         fireEvent(new BackEvent(this));
