@@ -45,9 +45,13 @@
                      serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService"
                      address="${tarjonta.public.webservice.url:http://NO_TARJONTA_PUBLIC_WEBSERVICE_URL_CONFIGURED}"/>
 
-    
+
     <jaxws:client id="organisaatioService"
                    serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
                    address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
+
+    <jaxws:client id="learningOpportunityProviderPublicService"
+                  serviceClass="fi.vm.sade.learningopportunityprovider.api.model.LearningOpportunityProviderPublicService"
+                  address="${learningopportunityprovider.public.webservice.url:http://NO_LOP_PUBLIC_WEBSERVICE_URL_CONFIGURED}"/>
 
  </beans>
