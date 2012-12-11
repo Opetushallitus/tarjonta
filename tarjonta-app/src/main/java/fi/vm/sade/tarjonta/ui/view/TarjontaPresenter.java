@@ -672,11 +672,13 @@ public class TarjontaPresenter {
      *
      * @param koulutus
      */
-    public void removeKoulutus(KoulutusTulos koulutus) {
+    public boolean removeKoulutus(KoulutusTulos koulutus) {
+        boolean removeSuccess = false;
         try {
             tarjontaAdminService.poistaKoulutus(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
             getRootView().getListKoulutusView().reload();
             showNotification(UserNotification.DELETE_SUCCESS);
+            removeSuccess = true;
         } catch (Exception ex) {
             if (ex.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException")) {
                 showNotification(UserNotification.KOULUTUS_REMOVAL_FAILED);
@@ -684,6 +686,7 @@ public class TarjontaPresenter {
                 showNotification(UserNotification.SAVE_FAILED);
             }
         }
+        return removeSuccess;
     }
 
     /*

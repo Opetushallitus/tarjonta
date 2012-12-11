@@ -27,6 +27,9 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
+
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
@@ -37,6 +40,8 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
+import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
+import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -61,6 +66,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     private TarjontaPresenter _presenter;
     @Autowired(required = true)
     private TarjontaUIHelper _tarjontaUIHelper;
+    private TarjontaDialogWindow tarjontaDialog;
 
     public ShowKoulutusView(String pageTitle, PageNavigationDTO pageNavigationDTO) {
         super(VerticalLayout.class, pageTitle, null, pageNavigationDTO);
@@ -267,8 +273,8 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                // TODO ask confirmation
-                getWindow().showNotification("Ei toteutettu");
+                showRemoveDialog();
+                
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
@@ -314,5 +320,39 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         split.setLocked(true);
 
         layout.addComponent(split);
+    }
+    
+    private void showRemoveDialog() {
+        RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), "", T("removeYes"), T("removeNo"), 
+                new Button.ClickListener() {    
+                        @Override
+                        public void buttonClick(ClickEvent event) {
+                            closeKoulutusCreationDialog();
+                            KoulutusTulos koulutus = new KoulutusTulos();
+                            KoulutusKoosteTyyppi koulutusKooste = new KoulutusKoosteTyyppi();
+                            koulutusKooste.setKoulutusmoduuliToteutus(_presenter.getModel().getKoulutusPerustiedotModel().getOid());
+                            koulutus.setKoulutus(koulutusKooste);
+                            boolean removeSuccess = _presenter.removeKoulutus(koulutus);
+                            _presenter.getHakukohdeListView().reload();
+                            if (removeSuccess) {
+                                _presenter.showMainDefaultView();
+                            } 
+                        }
+                },
+                new Button.ClickListener() {
+
+                           @Override
+                           public void buttonClick(ClickEvent event) {
+                               closeKoulutusCreationDialog();
+
+                           }});
+        tarjontaDialog = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
+        getWindow().addWindow(tarjontaDialog);
+    }
+
+    public void closeKoulutusCreationDialog() {
+        if (tarjontaDialog != null) {
+            getWindow().removeWindow(tarjontaDialog);
+        }
     }
 }
