@@ -43,17 +43,16 @@ public class EditKoulutusView extends AbstractVerticalLayout {
 
     @Override
     protected void buildLayout() {
-        
+
         if (presenter.getModel().getKoulutusPerustiedotModel().isLoaded()) {
             title = UiUtil.label((AbsoluteLayout) null, T(LABEL_FORMAT_EDIT),
-                    LabelStyleEnum.H2,
+                    LabelStyleEnum.TEXT_RAW,
                     DEMO_DATA,
                     presenter.getModel().getKoulutusPerustiedotModel().getOrganisaatioName());
-
         } else {
             title = UiUtil.label((AbsoluteLayout) null,
                     T(LABEL_FORMAT_NEW),
-                    LabelStyleEnum.H2,
+                    LabelStyleEnum.TEXT_RAW,
                     DEMO_DATA,
                     presenter.getModel().getOrganisaatioName());
         }
@@ -61,7 +60,7 @@ public class EditKoulutusView extends AbstractVerticalLayout {
         hlLabelWrapper.setMargin(false,false,true,true);
         hlLabelWrapper.addComponent(title);
         addComponent(hlLabelWrapper);
-        
+
         TabSheet tabs = UiBuilder.tabSheet(null);
         addComponent(tabs);
 
