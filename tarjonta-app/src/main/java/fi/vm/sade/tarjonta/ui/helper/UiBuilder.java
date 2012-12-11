@@ -29,7 +29,7 @@ import fi.vm.sade.generic.ui.component.OphTokenField;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
+import fi.vm.sade.koodisto.widget.WidgetFactory;
 import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
 import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
 import fi.vm.sade.vaadin.util.UiBaseUtil;

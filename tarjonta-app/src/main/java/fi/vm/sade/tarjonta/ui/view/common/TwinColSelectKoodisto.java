@@ -18,22 +18,18 @@
 package fi.vm.sade.tarjonta.ui.view.common;
 
 import com.vaadin.data.Property;
-import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.TwinColSelect;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.vaadin.util.UiUtil;
+
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

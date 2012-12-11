@@ -49,7 +49,7 @@ import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.koodisto.widget.factory.WidgetFactory;
+import fi.vm.sade.koodisto.widget.WidgetFactory;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
