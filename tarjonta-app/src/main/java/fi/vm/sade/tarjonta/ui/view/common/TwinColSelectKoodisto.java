@@ -24,6 +24,7 @@ import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.mock.KoodiServiceMock;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
