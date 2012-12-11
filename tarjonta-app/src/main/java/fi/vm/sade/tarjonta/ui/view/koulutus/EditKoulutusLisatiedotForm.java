@@ -72,7 +72,8 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
 
         {
             addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet"), LabelStyleEnum.H2));
-
+            addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet.help"), LabelStyleEnum.TEXT));
+            
             PropertysetItem psi = new BeanItem(koulutusLisatiedotModel);
             OphTokenField f = UiBuilder.koodistoTokenField(null, KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
             f.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
@@ -151,21 +152,21 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
                     getWindow().showNotification("FAILED: " + ex);
                 }
             }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
+        }, StyleEnum.STYLE_BUTTON_SECONDARY);
         addNavigationButton(T("esikatsele"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
                 _presenter.showKoulutusPreview();
             }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
+        }, StyleEnum.STYLE_BUTTON_SECONDARY, false);
         addNavigationButton(T("jatka"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
                 _presenter.showShowKoulutusView();
             }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
+        }, StyleEnum.STYLE_BUTTON_SECONDARY);
     }
 
     /**
@@ -180,36 +181,47 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         vl.setSpacing(true);
         vl.setMargin(true);
 
+        vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kuvailevatTiedot.title"), LabelStyleEnum.H2));
+        vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kuvailevatTiedot.help"), LabelStyleEnum.TEXT));
+
         KoulutusLisatietoModel model = koulutusLisatiedotModel.getLisatiedot(uri);
         PropertysetItem psi = new BeanItem(model);
 
-        {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "kuvailevatTiedot");
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kuvailevatTiedot"), LabelStyleEnum.H2));
-            vl.addComponent(rta);
-        }
+//        {
+//            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "kuvailevatTiedot");
+//            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kuvailevatTiedot"), LabelStyleEnum.H2));
+//            vl.addComponent(rta);
+//        }
 
         {
             OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "sisalto");
+            rta.setWidth("460px");
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto"), LabelStyleEnum.H2));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto.help"), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
 
         {
             OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "sijoittuminenTyoelamaan");
+            rta.setWidth("460px");
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("sijoittuminenTyoelamaan"), LabelStyleEnum.H2));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("sijoittuminenTyoelamaan.help"), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
 
         {
             OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "kansainvalistyminen");
+            rta.setWidth("460px");
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kansainvalistyminen"), LabelStyleEnum.H2));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kansainvalistyminen.help"), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
 
         {
             OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "yhteistyoMuidenToimijoidenKanssa");
+            rta.setWidth("460px");
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa"), LabelStyleEnum.H2));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa.help"), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
 
