@@ -20,6 +20,7 @@ import com.vaadin.ui.Component.Listener;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeViewImpl;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -36,6 +37,7 @@ public class SearchResultsView extends VerticalLayout {
     private I18NHelper _i18n = new I18NHelper(this);
     private TabSheet tabs;
     private ListKoulutusView koulutusList;
+    private ListHakukohdeViewImpl hakukohdeList;
 
     public SearchResultsView() {
         super();
@@ -67,8 +69,18 @@ public class SearchResultsView extends VerticalLayout {
         });
 
         tabs.addTab(getKoulutusList(), T("koulutukset"));//new EditKoulutusPerustiedotToinenAsteView(), T("koulutukset"));
-        tabs.addTab(new ListHakukohdeViewImpl(), T("hakuryhmat"));
+        hakukohdeList = new ListHakukohdeViewImpl();
+        tabs.addTab(hakukohdeList, T("hakuryhmat"));
 
+    }
+    
+    public void setResultSizeForKoulutusTab(int size) {
+        tabs.getTab(koulutusList).setCaption(T("koulutukset") + " (" + size + ")");
+        
+    }
+    
+    public void setResultSizeForHakukohdeTab(int size) {
+        tabs.getTab(hakukohdeList).setCaption(T("hakuryhmat")+ " (" + size + ")");
     }
 
     private String T(String key) {

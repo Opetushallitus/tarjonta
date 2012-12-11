@@ -108,6 +108,7 @@ public class TarjontaPresenter {
     private ListHakukohdeView _hakukohdeListView;
     private PerustiedotView hakuKohdePerustiedotView;
     private HakukohdeCreationDialog hakukohdeCreationDialog;
+    private SearchResultsView searchResultsView;
     
     public TarjontaPresenter() {
     }
@@ -406,6 +407,7 @@ public class TarjontaPresenter {
             LOG.error("Error in finding hakukokohteet: {}", ex.getMessage());
             getModel().setHakukohteet(new ArrayList<HakukohdeTulos>());
         }
+        this.searchResultsView.setResultSizeForHakukohdeTab(getModel().getHakukohteet().size());
         for (HakukohdeTulos curHk : getModel().getHakukohteet()) {
             String hkKey = this.getOrganisaatioNimiByOid(curHk.getKoulutus().getTarjoaja());
             if (!map.containsKey(hkKey)) {
@@ -580,6 +582,7 @@ public class TarjontaPresenter {
             getModel().setKoulutukset(new ArrayList<KoulutusTulos>());
         }
 
+        this.searchResultsView.setResultSizeForKoulutusTab(getModel().getKoulutukset().size());
         // Creating the datasource model
         for (KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
             String koulutusKey = this.getOrganisaatioNimiByOid(curKoulutus.getKoulutus().getTarjoaja());
@@ -915,5 +918,9 @@ public class TarjontaPresenter {
     
     public void setHakukohdeCreationDialog(HakukohdeCreationDialog hakukohdeCreationDialog) {
         this.hakukohdeCreationDialog = hakukohdeCreationDialog;
+    }
+
+    public void setSearchResultsView(SearchResultsView searchResultsView) {
+        this.searchResultsView = searchResultsView;
     }
 }

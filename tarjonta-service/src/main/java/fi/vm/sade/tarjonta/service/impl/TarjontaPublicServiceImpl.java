@@ -271,7 +271,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     
     private List<Integer> getAlkuKuukaudet(String kausi) {
         List<Integer> kuukaudet = new ArrayList<Integer>();
-        if (kausi != null &&  "syksy".equalsIgnoreCase(kausi)) {
+        if (kausi != null &&  kausi.contains("uri: Syksy")) {
             kuukaudet.add(7);
             kuukaudet.add(8);
             kuukaudet.add(9);

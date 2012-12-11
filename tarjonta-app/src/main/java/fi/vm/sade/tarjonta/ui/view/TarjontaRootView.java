@@ -171,6 +171,7 @@ public class TarjontaRootView extends Window {
         organisationSearchView = new OrganisaatiohakuView();
         breadcrumbsView = new BreadcrumbsView(_presenter);
         searchResultsView = new SearchResultsView();
+        _presenter.setSearchResultsView(searchResultsView);
         searchSpesificationView = new SearchSpesificationView(_presenter.getModel().getSearchSpec());
 
         // Add listener for search events

@@ -182,17 +182,17 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
     
     private boolean isYearMatch(Calendar cal, HaeHakukohteetKyselyTyyppi kysely) {
-        if (kysely.getKoulutuksenAlkamisvuosi() == null) {
+        if (kysely.getKoulutuksenAlkamisvuosi() == null || kysely.getKoulutuksenAlkamisvuosi() <= 0) {
             return true;
         }
         return cal.get(Calendar.YEAR) == kysely.getKoulutuksenAlkamisvuosi().intValue();
     }
     
     private boolean isKausiMatch(Calendar cal, HaeHakukohteetKyselyTyyppi kysely) {
-        if (kysely.getKoulutuksenAlkamiskausi() == null) {
+        if (kysely.getKoulutuksenAlkamiskausi() == null || kysely.getKoulutuksenAlkamiskausi().isEmpty()) {
             return true;
         }
-        if (kysely.getKoulutuksenAlkamiskausi().equalsIgnoreCase("syksy")) {
+        if (kysely.getKoulutuksenAlkamiskausi().contains("uri: Syksy")) {
             return cal.get(Calendar.MONTH) >= 6;
         }
         return cal.get(Calendar.MONTH) < 6;

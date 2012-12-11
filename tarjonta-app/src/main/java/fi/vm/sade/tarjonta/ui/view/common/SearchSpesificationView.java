@@ -131,7 +131,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
 //        cbKaudenTarkenne.setWidth("200px");
 
         //TODO: no application logic, only for Christmas demo
-        cbVuosi = UiUtil.comboBox(this, T(I18N_VUOSI), new String[]{"2012"});
+        cbVuosi = UiUtil.comboBox(this, T(I18N_VUOSI), new String[]{"2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022"});
         cbVuosi.setSizeUndefined();
         cbVuosi.setWidth("100px");
 
@@ -159,6 +159,8 @@ public class SearchSpesificationView extends OphHorizontalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 tfSearch.setValue("");
+                cbVuosi.select(cbVuosi.getNullSelectionItemId());
+                kcKausi.setValue(null);
             }
         });
 
@@ -181,6 +183,8 @@ public class SearchSpesificationView extends OphHorizontalLayout {
      */
     private void doSearch() {
         LOG.info("doSearch()");
+        model.setKoulutuksenAlkamiskausi(kcKausi.getValue() != null ?  (String)kcKausi.getValue() : null);
+        model.setKoulutuksenAlkamisvuosi(cbVuosi.getValue() != null ?  Integer.parseInt((String)cbVuosi.getValue()) : -1);
         fireEvent(new SearchEvent(model));
     }
 
