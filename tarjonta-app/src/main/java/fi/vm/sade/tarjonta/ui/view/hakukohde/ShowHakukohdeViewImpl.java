@@ -29,6 +29,7 @@ import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -42,6 +43,7 @@ import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /*
@@ -54,6 +56,8 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
 
     @Autowired(required=true)
     private TarjontaPresenter tarjontaPresenterPresenter;
+
+    private Window confirmationWindow;
 
     public ShowHakukohdeViewImpl (String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
@@ -76,6 +80,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
         buildMiddleContentLayout(vl);
         addLayoutSplit(vl);
         buildKoulutuksesLayout(vl);
+        buildLiitaUusiKoulutusButton(vl);
 
     }
 
@@ -92,6 +97,12 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
             categoryTree.setChildrenAllowed(item,false);
         }
         layout.addComponent(categoryTree);
+    }
+
+    private void buildLiitaUusiKoulutusButton(VerticalLayout verticalLayout) {
+        Button liitaUusiKoulutusBtn = UiBuilder.buttonSmallPrimary(null,T("liitaUusiKoulutusPainike"),null,null);
+
+       verticalLayout.addComponent(liitaUusiKoulutusBtn);
     }
 
     private Container createHakukohdeKoulutusDatasource(List<KoulutusOidNameViewModel> koulutukses) {
@@ -206,8 +217,12 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                // TODO ask confirmation
-                getWindow().showNotification("Ei toteutettu");
+                    if(checkHaunAlkaminen()) {
+                           showConfirmationDialog();
+                    }  else {
+                        getWindow().showNotification(T("hakukohdePoistoEpaonnistui"), Window.Notification.TYPE_ERROR_MESSAGE);
+                    }
+
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
@@ -219,6 +234,46 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
+    }
+
+    private void showConfirmationDialog() {
+        RemovalConfirmationDialog confirmationDialog = new RemovalConfirmationDialog(T("poistoVarmistus"),
+                tarjontaPresenterPresenter.getModel().getHakukohde().getHakukohdeKoodistoNimi(),T("poistaPainike"),T("peruutaPainike"),
+                new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent clickEvent) {
+                        getWindow().removeWindow(confirmationWindow);
+                        tarjontaPresenterPresenter.removeSelectedHakukohde();
+
+                    }
+                },
+                new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent clickEvent) {
+                       if(confirmationWindow != null) {
+                           getWindow().removeWindow(confirmationWindow);
+                       }
+                    }
+                });
+        confirmationWindow = new Window();
+        confirmationWindow.setContent(confirmationDialog);
+        confirmationWindow.setModal(true);
+        confirmationWindow.center();
+        getWindow().addWindow(confirmationWindow);
+
+
+    }
+
+    private boolean checkHaunAlkaminen() {
+        tarjontaPresenterPresenter.loadHakukohdeHakuPvm();
+        Date haunPaattymisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuOid().getPaattymisPvm();
+        Date haunAlkamisPvm =  tarjontaPresenterPresenter.getModel().getHakukohde().getHakuOid().getAlkamisPvm();
+        Date tanaan = new Date();
+        if (tanaan.after(haunAlkamisPvm) && tanaan.before(haunPaattymisPvm)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**

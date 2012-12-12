@@ -478,6 +478,30 @@ public class TarjontaPresenter {
         return getModel().getSelectedhakukohteet();
     }
 
+    public void loadHakukohdeHakuPvm() {
+        ListaaHakuTyyppi haku = new ListaaHakuTyyppi();
+        haku.setHakuOid(getModel().getHakukohde().getHakuOid().getHakuOid());
+        ListHakuVastausTyyppi vastaus = tarjontaPublicService.listHaku(haku);
+        if (vastaus != null && vastaus.getResponse() != null) {
+            HakuTyyppi hakuTyyppi = vastaus.getResponse().get(0);
+            SisaisetHakuAjat hakuaika = hakuTyyppi.getSisaisetHakuajat().get(0);
+            getModel().getHakukohde().getHakuOid().setAlkamisPvm(hakuaika.getSisaisenHaunAlkamisPvm());
+            getModel().getHakukohde().getHakuOid().setPaattymisPvm(hakuaika.getSisaisenHaunPaattymisPvm());
+        }
+    }
+
+    public void removeSelectedHakukohde() {
+        getModel().getSelectedhakukohteet().clear();
+        HakukohdeTulos tmp = new HakukohdeTulos();
+        HakukohdeKoosteTyyppi wtf = new HakukohdeKoosteTyyppi();
+        wtf.setOid(getModel().getHakukohde().getOid());
+        tmp.setHakukohde(wtf);
+        getModel().getSelectedhakukohteet().add(tmp);
+        removeSelectedHakukohteet();
+        getRootView().showMainView();
+
+    }
+
     /**
      * Removes the selected hakukohde objects from the database.
      */

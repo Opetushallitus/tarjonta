@@ -47,8 +47,8 @@ public class HakukohdeCreationDialog extends CustomComponent {
     private TarjontaPresenter tarjontaPresenter;
     private List<String> selectedOids;
     //TODO Use UiBuilder instead of UiUtil ???
-    private Button peruutaBtn;
-    private Button jatkaBtn;
+    protected Button peruutaBtn;
+    protected Button jatkaBtn;
 
     public HakukohdeCreationDialog(List<String> selectedOidsParam) {
         selectedOids = selectedOidsParam;
