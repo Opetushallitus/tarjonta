@@ -31,33 +31,35 @@ import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
- * Simple tabsheet with "+" tab containing koodisto twincol select so that addition caused some action.
+ * Simple tabsheet with "+" tab containing koodisto twincol select so that
+ * addition caused some action.
  *
  * @author mlyly
  */
 public class KoodistoSelectionTabSheet extends TabSheet {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoodistoSelectionTabSheet.class);
-
     private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
-
+    private static final long serialVersionUID = 2357490409207157859L;
     private String _koodistoUri;
-
     private VerticalLayout _rootSelectionTabLayout = new VerticalLayout();
     private KoodistoComponent _kcSelection;
-
     // Map of tabs, key is the koodisto koodi uri
     private Map<String, Tab> _tabs = new HashMap<String, Tab>();
+    private UiBuilder uiBuilder;
 
     /**
      * Createt tabsheet with given koodisto used for tabs "keys".
      *
      * @param koodistoUri
      */
-    public KoodistoSelectionTabSheet(String koodistoUri) {
+    public KoodistoSelectionTabSheet(String koodistoUri, UiBuilder uiBuilder) {
         super();
+        this.uiBuilder = uiBuilder;
         _koodistoUri = koodistoUri;
         _kcSelection = createKoodistoComponent();
         buildSelectionTabAndAddMonitoring();
@@ -96,12 +98,15 @@ public class KoodistoSelectionTabSheet extends TabSheet {
     }
 
     /**
-     * Create selection tab with the selection component and add listener to monitor changes.
+     * Create selection tab with the selection component and add listener to
+     * monitor changes.
      */
     private void buildSelectionTabAndAddMonitoring() {
 
         // Manage tab additions and deletions
         _kcSelection.addListener(new Property.ValueChangeListener() {
+            private static final long serialVersionUID = -382717228031608542L;
+
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
                 LOG.info("new values: {}", event.getProperty().getValue());
@@ -153,6 +158,6 @@ public class KoodistoSelectionTabSheet extends TabSheet {
      */
     public KoodistoComponent createKoodistoComponent() {
         // Create koodisto component
-        return UiBuilder.koodistoTwinColSelect(_rootSelectionTabLayout, _koodistoUri, null, null);
+        return uiBuilder.koodistoTwinColSelect(_rootSelectionTabLayout, _koodistoUri, null, null);
     }
 }

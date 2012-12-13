@@ -31,6 +31,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -58,6 +59,8 @@ public class EditKoulutusPainotusView extends VerticalLayout implements Componen
     @PropertyId("kielikoodi")
     private KoodistoComponent kcKieli;
     private I18NHelper i18n = new I18NHelper(this);
+    @Autowired(required = true)
+    private UiBuilder uiBuilder;
 
     public EditKoulutusPainotusView() {
         this.setSpacing(true);
@@ -69,7 +72,7 @@ public class EditKoulutusPainotusView extends VerticalLayout implements Componen
         tfNimi.setRequiredError(i18n.getMessage("painotus.tyhja"));
 
         UiUtil.label(this, i18n.getMessage("Kielelle"));
-        kcKieli = UiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
+        kcKieli = uiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
         kcKieli.getField().setRequired(true);
         kcKieli.getField().setNullSelectionAllowed(false);
         kcKieli.getField().setRequiredError(i18n.getMessage("kieli.tyhja"));

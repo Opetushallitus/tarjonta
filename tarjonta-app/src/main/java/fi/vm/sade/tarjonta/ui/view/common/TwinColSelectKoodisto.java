@@ -53,6 +53,9 @@ public class TwinColSelectKoodisto extends CssLayout  {
 
     @Autowired
     private KoodiService koodiService;
+    
+       @Autowired(required = true)
+    private UiBuilder uiBuilder;
 
     public TwinColSelectKoodisto() {
 
@@ -69,7 +72,7 @@ public class TwinColSelectKoodisto extends CssLayout  {
    }
 
     private void initKoodisto() {
-        kc = UiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KIELI_URI);
+        kc = uiBuilder.koodistoTwinColSelectUri(null, KoodistoURIHelper.KOODISTO_KIELI_URI);
 
 //        kc.setImmediate(true);
 

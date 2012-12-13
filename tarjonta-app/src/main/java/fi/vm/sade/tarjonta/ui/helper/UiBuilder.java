@@ -36,6 +36,8 @@ import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  * Helper class to make creating of styled components easier.
@@ -43,7 +45,12 @@ import org.slf4j.LoggerFactory;
  * @author jani
  * @author mlyly
  */
+
+@Configurable
 public class UiBuilder extends UiUtil {
+    
+    @Autowired
+    WidgetFactory bean;
 
     public static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
             + "Donec molestie neque non enim lobortis sed scelerisque ante lacinia. Donec ut "
@@ -143,27 +150,27 @@ public class UiBuilder extends UiUtil {
         }
     };
 
-    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri) {
+    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, null, (ComboBox) null, true);
     }
 
-    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, boolean uriWithVersion) {
+    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, boolean uriWithVersion) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, null, (ComboBox) null, uriWithVersion);
     }
 
-    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt) {
+    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, (ComboBox) null, true);
     }
 
-    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, boolean uriWithVersion) {
+    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, boolean uriWithVersion) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, (ComboBox) null, uriWithVersion);
     }
 
-    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb) {
+    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, cb, true);
     }
 
-    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb, boolean uriWithVersion) {
+    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, String prompt, ComboBox cb, boolean uriWithVersion) {
         return koodistoComboBox(layout, koodistoUri, (PropertysetItem) null, null, prompt, cb, uriWithVersion);
     }
 
@@ -183,7 +190,7 @@ public class UiBuilder extends UiUtil {
      * @param uriWithVersion
      * @return
      */
-    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, boolean uriWithVersion) {
+    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, boolean uriWithVersion) {
         return koodistoComboBox(layout, koodistoUri, psi, expression, prompt, (ComboBox) null, uriWithVersion);
     }
 
@@ -197,7 +204,7 @@ public class UiBuilder extends UiUtil {
      * @param prompt
      * @return
      */
-    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt) {
+    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt) {
         return koodistoComboBox(layout, koodistoUri, psi, expression, prompt, (ComboBox) null, true);
     }
 
@@ -212,7 +219,7 @@ public class UiBuilder extends UiUtil {
      * @param cb
      * @return
      */
-    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, ComboBox cb) {
+    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, ComboBox cb) {
         return koodistoComboBox(layout, koodistoUri, psi, expression, prompt, cb, true);
     }
 
@@ -233,7 +240,7 @@ public class UiBuilder extends UiUtil {
      * @param uriWithVersion
      * @return
      */
-    public static KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, ComboBox cb, boolean uriWithVersion) {
+    public  KoodistoComponent koodistoComboBox(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, String prompt, ComboBox cb, boolean uriWithVersion) {
         // Koodisto displayed in ComboBox
 
         ComboBox combo = (cb == null) ? comboBox(null, null, null) : cb;
@@ -242,8 +249,7 @@ public class UiBuilder extends UiUtil {
         if (prompt != null) {
             combo.setInputPrompt(prompt);
         }
-
-        final KoodistoComponent c = WidgetFactory.create(koodistoUri);
+        KoodistoComponent c = bean.createComponent(koodistoUri);
 
         // Wire koodisto to combobox
         c.setField(combo);
@@ -284,7 +290,7 @@ public class UiBuilder extends UiUtil {
      * value
      * @return created component
      */
-    public static KoodistoComponent koodistoTwinColSelectUri(AbstractLayout layout, final String koodistoUri, boolean uriWithVersion) {
+    public  KoodistoComponent koodistoTwinColSelectUri(AbstractLayout layout, final String koodistoUri, boolean uriWithVersion) {
 
         // Koodisto displayed in TwinColSelect
         TwinColSelect c = twinColSelect();
@@ -292,7 +298,7 @@ public class UiBuilder extends UiUtil {
         // Only multiple (Set<String>) values allowed!
         c.setMultiSelect(true);
 
-        final KoodistoComponent kc = WidgetFactory.create(koodistoUri);
+        final KoodistoComponent kc =bean.createComponent(koodistoUri);
 
         // Wire koodisto to combobox
         kc.setField(c);
@@ -316,7 +322,7 @@ public class UiBuilder extends UiUtil {
      * @param koodistoUri
      * @return
      */
-    public static KoodistoComponent koodistoTwinColSelectUri(AbstractLayout layout, final String koodistoUri) {
+    public  KoodistoComponent koodistoTwinColSelectUri(AbstractLayout layout, final String koodistoUri) {
         return koodistoTwinColSelectUri(layout, koodistoUri, true);
     }
 
@@ -332,7 +338,7 @@ public class UiBuilder extends UiUtil {
      * value
      * @return
      */
-    public static KoodistoComponent koodistoTwinColSelect(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, boolean uriWithVersion) {
+    public  KoodistoComponent koodistoTwinColSelect(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression, boolean uriWithVersion) {
 
         final KoodistoComponent kc = koodistoTwinColSelectUri(layout, koodistoUri, uriWithVersion);
 
@@ -351,7 +357,7 @@ public class UiBuilder extends UiUtil {
      * @param expression
      * @return
      */
-    public static KoodistoComponent koodistoTwinColSelect(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
+    public  KoodistoComponent koodistoTwinColSelect(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
         return koodistoTwinColSelect(layout, koodistoUri, psi, expression, true);
     }
 
@@ -364,7 +370,7 @@ public class UiBuilder extends UiUtil {
      * @param expression
      * @return
      */
-    public static OphTokenField koodistoTokenField(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
+    public  OphTokenField koodistoTokenField(AbstractLayout layout, final String koodistoUri, PropertysetItem psi, String expression) {
 
         KoodistoComponent kc = koodistoComboBox(null, koodistoUri);
         kc.setImmediate(true);

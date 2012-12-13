@@ -11,6 +11,7 @@
     </bean>
 
     <bean id="callback" class="fi.vm.sade.generic.ui.portlet.security.mock.MockTicketCallback">
+
     </bean>
 
     <!-- Configure CXF bus to contain ticketInterceptor -->
@@ -19,15 +20,8 @@
             <ref bean="ticketInterceptor" />
         </cxf:outInterceptors>
     </cxf:bus>
-<!--
-    <bean id="koodiPublicService" class="fi.vm.sade.tarjonta.ui.mock.KoodiServiceMock" />
 
-    <bean id="koodistoPublicService" class="fi.vm.sade.tarjonta.ui.mock.KoodistosServiceMock" />
-          
-    <bean id="oidService" class="fi.vm.sade.oid.service.mock.OIDServiceMock" />
-  -->
-  
-  <jaxws:client id="koodiPublicService"
+    <jaxws:client id="koodiPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
                   address="${koodi.webservice.url:http://NO_KOODI_WEBSERVICE_URL_CONFIGURED}"/>
 
@@ -35,21 +29,23 @@
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
                   address="${koodisto.webservice.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}"/>
 
-    <!--<bean class="fi.vm.sade.koodisto.widget.WidgetFactory" />-->
-
+    <bean class="fi.vm.sade.koodisto.widget.WidgetFactory" />
+    
+    <bean class="fi.vm.sade.tarjonta.ui.helper.UiBuilder" />
+    
     <jaxws:client id="oidService"
-                      serviceClass="fi.vm.sade.oid.service.OIDService"
-                      address="${oid.webservice.url:http://NO_OID_WEBSERVICE_URL_CONFIGURED}"/>
- 
+                  serviceClass="fi.vm.sade.oid.service.OIDService"
+                  address="${oid.webservice.url:http://NO_OID_WEBSERVICE_URL_CONFIGURED}"/>
+
     <jaxws:client id="tarjontaAdminService"
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService"
-                  address="${tarjonta.admin.webservice.url:http://NO_HAKU_WEBSERVICE_URL_CONFIGURED}"/> 
-                     
+                  address="${tarjonta.admin.webservice.url:http://NO_TARJONTA_ADMIN_WEBSERVICE_URL_CONFIGURED}"/>
+
     <jaxws:client id="tarjontaPublicService"
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService"
-                  address="${tarjonta.public.webservice.url:http://NO_HAKU_WEBSERVICE_URL_CONFIGURED}"/> 
-    
-   <jaxws:client id="organisaatioService"
-                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
-                   address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
+                  address="${tarjonta.public.webservice.url:http://NO_TARJONTA_PUBLIC_WEBSERVICE_URL_CONFIGURED}"/>
+
+    <jaxws:client id="organisaatioService"
+                  serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
+                  address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
 </beans>

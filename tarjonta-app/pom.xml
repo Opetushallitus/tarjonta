@@ -42,13 +42,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Koodisto integration -->
-        <dependency>
-            <groupId>fi.vm.sade.koodisto</groupId>
-            <artifactId>koodisto-widget</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>fi.vm.sade.vaadin</groupId>
             <artifactId>vaadin-common</artifactId>
@@ -168,7 +161,7 @@
 
     <profiles>
         <profile>
-            <id>ui-development</id>
+            <id>development</id>
             <activation>
                 <property>
                     <name>netbeans.deploy</name>

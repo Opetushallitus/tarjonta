@@ -25,6 +25,7 @@ import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.util.UiUtil;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
@@ -49,6 +50,7 @@ public class LanguageTabSheet extends CustomComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(LanguageTabSheet.class);
     private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
+    private static final long serialVersionUID = -185022467161014683L;
     private boolean attached = false;
     private TarjontaModel _model;
     @Autowired
@@ -57,6 +59,8 @@ public class LanguageTabSheet extends CustomComponent {
     private TarjontaUIHelper _uiHelper;
     private KoodistoSelectionTabSheet _languageTabsheet;
     private VerticalLayout rootLayout = new VerticalLayout();
+    @Autowired(required = true)
+    private UiBuilder uiBuilder;
 
     public LanguageTabSheet() {
         setCompositionRoot(rootLayout);
@@ -73,7 +77,7 @@ public class LanguageTabSheet extends CustomComponent {
 
     private void initialize() {
         _model = presenter.getModel();
-        _languageTabsheet = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI) {
+        _languageTabsheet = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, uiBuilder) {
             @Override
             public void doAddTab(String uri) {
                 addTab(uri, createRichText(""), _uiHelper.getKoodiNimi(uri));

@@ -33,6 +33,7 @@ import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
@@ -68,6 +69,8 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
     private Label documentStatus;
     private int unmodifiedHashcode; //for validation check.
     private EditKoulutusPerustiedotFormView editKoulutusPerustiedotFormView;
+    @Autowired(required = true)
+    private UiBuilder uiBuilder;
 
     public EditKoulutusPerustiedotToinenAsteView() {
         super();
@@ -125,7 +128,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         /*
          *  FORM LAYOUT (form components under navigation buttons)
          */
-        editKoulutusPerustiedotFormView = new EditKoulutusPerustiedotFormView(presenter, koulutusPerustiedotModel);
+        editKoulutusPerustiedotFormView = new EditKoulutusPerustiedotFormView(presenter, uiBuilder, koulutusPerustiedotModel);
         final Form form = new ValidatingViewBoundForm(editKoulutusPerustiedotFormView);
         form.setItemDataSource(hakuBean);
         form.setValidationVisible(false);
@@ -145,6 +148,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
 
         addNavigationButton("", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 presenter.showMainDefaultView();
@@ -153,6 +157,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
 
         ClickListener btnListenerTallennaLuonnoksena = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 save(form, TarjontaTila.LUONNOS);
@@ -167,6 +172,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
 
         ClickListener btnListenerTallennaValmiina = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 save(form, TarjontaTila.VALMIS);
@@ -181,6 +187,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
 
         final Button.ClickListener clickListener = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 if (!isSaved()) {

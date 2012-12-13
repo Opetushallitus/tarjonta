@@ -14,25 +14,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.AbstractSelect.Filtering;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.ObjectProperty;
-import com.vaadin.data.util.PropertysetItem;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
@@ -42,48 +37,38 @@ import com.vaadin.ui.Form;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.generic.ui.component.CaptionFormatter;
-import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.koodisto.widget.WidgetFactory;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
-import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaunNimi;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import java.util.ArrayList;
 import java.util.List;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
+
 /**
  *
  * @author Tuomas Katva
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable
-public class PerustiedotViewImpl extends CustomComponent implements PerustiedotView{
+public class PerustiedotViewImpl extends CustomComponent implements PerustiedotView {
 
     private static final Logger LOG = LoggerFactory.getLogger(PerustiedotViewImpl.class);
-
     private TarjontaPresenter presenter;
-
     //MainLayout element
     VerticalLayout mainLayout;
     GridLayout itemContainer;
-
     //Fields
     @PropertyId("hakukohdeNimi")
     KoodistoComponent hakukohteenNimiCombo;
@@ -98,27 +83,25 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
 //    LanguageTabSheet valintaPerusteidenKuvausTabs;
     LanguageTabSheet lisatiedotTabs;
     Label serverMessage = new Label("");
-
     //Info buttons
     Button upRightInfoButton;
     Button downRightInfoButton;
-
     private Form form;
     private BeanItem<HakukohdeViewModel> hakukohdeBean;
+    private UiBuilder uiBuilder;
 
     /*
      *
      * Init view with new model
      *
      */
-
-    public PerustiedotViewImpl(TarjontaPresenter presenter) {
+    public PerustiedotViewImpl(TarjontaPresenter presenter, UiBuilder uiBuilder) {
         super();
-        buildMainLayout();
+
         this.presenter = presenter;
-
+        this.uiBuilder = uiBuilder;
+        buildMainLayout();
         this.presenter.initHakukohdeForm(this);
-
     }
 
     @Override
@@ -126,17 +109,14 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         tunnisteKoodiText.setValue(tunnistekoodi);
     }
 
-
-
     @Override
     public void commitForm(String tila) {
         form.commit();
         if (form.isValid()) {
-        	presenter.getModel().getHakukohde().setHakukohdeKoodistoNimi(resolveHakukohdeKoodistoNimi() + " " + tila);
+            presenter.getModel().getHakukohde().setHakukohdeKoodistoNimi(resolveHakukohdeKoodistoNimi() + " " + tila);
             presenter.saveHakuKohde(tila);
         }
     }
-
 
     @Override
     public void initForm(HakukohdeViewModel model) {
@@ -150,14 +130,13 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         this.form.setValidationVisibleOnCommit(false);
         hakukohteenNimiCombo.setImmediate(true);
         hakukohteenNimiCombo.addListener(new Property.ValueChangeListener() {
-
             @Override
             public void valueChange(ValueChangeEvent event) {
-                 if (event.getProperty().getValue() instanceof String) {
-                     presenter.setTunnisteKoodi(event.getProperty().getValue().toString());
-                 } else {
-                     //DEBUGSAWAY:LOG.debug("class" + event.getProperty().getValue().getClass().getName());
-                 }
+                if (event.getProperty().getValue() instanceof String) {
+                    presenter.setTunnisteKoodi(event.getProperty().getValue().toString());
+                } else {
+                    //DEBUGSAWAY:LOG.debug("class" + event.getProperty().getValue().getClass().getName());
+                }
             }
         });
     }
@@ -166,14 +145,13 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         // TODO tuomas korjaa :)
 
         String nimi = presenter.resolveHakukohdeKoodistonimiFields();
-    	return nimi;
+        return nimi;
     }
 
     /*
      * Main layout building method.
      *
      */
-
     private void buildMainLayout() {
         mainLayout = new VerticalLayout();
         //Add top info button layout
@@ -218,7 +196,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     }
 
     private KoodistoComponent buildHakukelpoisuusVaatimukset() {
-        hakuKelpoisuusVaatimuksetCombo = UiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI);
+        hakuKelpoisuusVaatimuksetCombo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI);
 
 
         return hakuKelpoisuusVaatimuksetCombo;
@@ -231,15 +209,15 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     }
 
     private String tryGetHaunNimi(HakuViewModel haku) {
-       if (I18N.getLocale().getLanguage().trim().equals("fi")) {
-           return haku.getNimiFi();
-       } else if (I18N.getLocale().getLanguage().trim().equals("se")) {
-           return haku.getNimiSe();
-       } else if (I18N.getLocale().getLanguage().trim().equals("en")) {
-           return haku.getNimiEn();
-       } else {
-           return haku.getNimiFi();
-       }
+        if (I18N.getLocale().getLanguage().trim().equals("fi")) {
+            return haku.getNimiFi();
+        } else if (I18N.getLocale().getLanguage().trim().equals("se")) {
+            return haku.getNimiSe();
+        } else if (I18N.getLocale().getLanguage().trim().equals("en")) {
+            return haku.getNimiEn();
+        } else {
+            return haku.getNimiFi();
+        }
     }
 
     /*
@@ -247,7 +225,6 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
      * This method is called from presenter, it sets HakuTyyppis for the Haku-ComboBox
      *
      */
-
     @Override
     public void addItemsToHakuCombobox(List<HakuViewModel> haut) {
         BeanItemContainer<HakuViewModel> hakuContainer = new BeanItemContainer<HakuViewModel>(HakuViewModel.class);
@@ -261,8 +238,6 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         hakuCombo.setValue(haku);
     }
 
-
-
     private ComboBox buildHakuCombo() {
         hakuCombo = new ComboBox();
 
@@ -273,30 +248,24 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
 
     private KoodistoComponent buildHaku() {
 
-        hakukohteenNimiCombo = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI);
+        hakukohteenNimiCombo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI);
 
 
         return hakukohteenNimiCombo;
     }
-
-
-
-
 
     /*
      *
      * Build hakukohteen nimi ComboBox and tunnistekoodi textfield
      *
      */
-
-
     private HorizontalLayout buildHakukode() {
 
         HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         hakukohteenNimiCombo = buildHaku();
 
         hl.addComponent(hakukohteenNimiCombo);
-        tunnisteKoodiText = UiUtil.textField(hl, "",  T("tunnistekoodi"), true);
+        tunnisteKoodiText = UiUtil.textField(hl, "", T("tunnistekoodi"), true);
         tunnisteKoodiText.setEnabled(false);
 
         hl.setComponentAlignment(hakukohteenNimiCombo, Alignment.TOP_RIGHT);
@@ -340,10 +309,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         return new LanguageTabSheet();
     }
 
-
-
-     private String T(String key) {
-         return I18N.getMessage(key);
-     }
-
+    private String T(String key) {
+        return I18N.getMessage(key);
+    }
 }

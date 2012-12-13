@@ -28,6 +28,7 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.view.common.DataTableEvent;
 import fi.vm.sade.vaadin.util.UiUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -59,6 +60,8 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
     private TextField _tfUrl;
     @PropertyId("kieli")
     private KoodistoComponent kcKieli;
+    @Autowired(required = true)
+    private UiBuilder uiBuilder;
 
     private transient I18NHelper i18n;
 
@@ -75,7 +78,7 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
         _tfUrl.setWidth("100%");
         this.addComponent(_tfUrl);
 
-        kcKieli = UiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_KIELI_URI);
+        kcKieli = uiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_KIELI_URI);
 
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);

@@ -54,11 +54,13 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusLisatiedotForm.class);
     private static final long serialVersionUID = -4054591599209251060L;
-    @Autowired
+    @Autowired(required = true)
     private TarjontaPresenter _presenter;
-    @Autowired
+    @Autowired(required = true)
     private TarjontaUIHelper _uiHelper;
     private KoulutusLisatiedotModel koulutusLisatiedotModel;
+    @Autowired(required = true)
+    private UiBuilder uiBuilder;
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
@@ -76,7 +78,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
             addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet.help"), LabelStyleEnum.TEXT));
 
             PropertysetItem psi = new BeanItem(koulutusLisatiedotModel);
-            OphTokenField f = UiBuilder.koodistoTokenField(null, KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
+            OphTokenField f = uiBuilder.koodistoTokenField(null, KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
             f.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
                 @Override
                 public String formatToken(Object selectedToken) {
@@ -103,7 +105,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         //
         // Build tabsheet for languages with koodisto select languages
         //
-        final KoodistoSelectionTabSheet tabs = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI) {
+        final KoodistoSelectionTabSheet tabs = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, uiBuilder) {
             private static final long serialVersionUID = -7916177514458213528L;
             @Override
             public void doAddTab(String uri) {

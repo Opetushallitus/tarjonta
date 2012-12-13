@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotViewImpl;
@@ -25,34 +26,36 @@ import fi.vm.sade.vaadin.constants.StyleEnum;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+
 /**
  *
  * @author Tuomas Katva
  */
 @Configurable
 public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
+    private static final long serialVersionUID = 8806220426371090907L;
 
     @Autowired
     private TarjontaPresenter _presenter;
+    @Autowired(required = true)
+    private UiBuilder uiBuilder;
     private TabSheet tabs;
-   
 
     public EditHakukohdeView() {
         super();
         setHeight(-1, UNITS_PIXELS);
-        
+
     }
 
     @Override
     protected void buildLayout(VerticalLayout t) {
-        
         tabs = new TabSheet();
         tabs.setHeight(-1, UNITS_PIXELS);
         t.addComponent(tabs);
-        PerustiedotViewImpl perustiedot = new PerustiedotViewImpl(_presenter);
-        
-        tabs.addTab(perustiedot,T("tabNimi"));
-        
+        PerustiedotViewImpl perustiedot = new PerustiedotViewImpl(_presenter, uiBuilder);
+
+        tabs.addTab(perustiedot, T("tabNimi"));
+
         createButtons();
     }
 
@@ -81,13 +84,12 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
             }
         });
         /*  for future use
-        addNavigationButton(T("jatka"), new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-//                getPresenter().showShowHakukohdeView();
-            }
-        });
-        */ 
+         addNavigationButton(T("jatka"), new Button.ClickListener() {
+         @Override
+         public void buttonClick(Button.ClickEvent event) {
+         //                getPresenter().showShowHakukohdeView();
+         }
+         });
+         */
     }
-
 }

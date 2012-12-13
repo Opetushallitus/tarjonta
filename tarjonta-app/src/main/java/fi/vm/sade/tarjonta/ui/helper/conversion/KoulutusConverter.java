@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.helper.conversion;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
 import fi.vm.sade.oid.service.OIDService;
@@ -821,7 +822,7 @@ public class KoulutusConverter {
 
         return null;
     }
-
+ 
     public static Map<Entry, KoulutusmoduuliKoosteTyyppi> fullKomoCacheMap(Collection<KoulutusmoduuliKoosteTyyppi> komos) {
         Map<Entry, KoulutusmoduuliKoosteTyyppi> hashMap = new HashMap<Entry, KoulutusmoduuliKoosteTyyppi>();
 

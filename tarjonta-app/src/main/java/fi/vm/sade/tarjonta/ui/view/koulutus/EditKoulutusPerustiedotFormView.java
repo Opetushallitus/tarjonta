@@ -144,13 +144,16 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private Label koulutusala;
     private Label tavoitteet;
     private Label jatkoopintomahdollisuudet;
+    
+    private UiBuilder uiBuilder;
 
     public EditKoulutusPerustiedotFormView() {
     }
 
-    public EditKoulutusPerustiedotFormView(TarjontaPresenter presenter, KoulutusToisenAsteenPerustiedotViewModel model) {
+    public EditKoulutusPerustiedotFormView(final TarjontaPresenter presenter, final UiBuilder uiBuilder, final KoulutusToisenAsteenPerustiedotViewModel model) {
         super(2, 1);
         setSizeFull();
+        this.uiBuilder = uiBuilder;
         selectedComponents = new EnumMap<KoulutusasteType, Set<Component>>(KoulutusasteType.class);
         this.presenter = presenter;
         this.koulutusModel = model;
@@ -290,7 +293,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private void buildGridOpetuskieliRow(GridLayout grid, final String propertyKey) {
         // final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey);
-        kcOpetuskieli = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
+        kcOpetuskieli =uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
         kcOpetuskieli.setCaptionFormatter(koodiNimiFormatter);
         kcOpetuskieli.setImmediate(true);
         grid.addComponent(kcOpetuskieli);
@@ -330,7 +333,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
         ComboBox comboBox = new ComboBox();
         comboBox.setNullSelectionAllowed(false);
-        kcSuunniteltuKestoTyyppi = UiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, T(propertyKey + "Tyyppi" + PROPERTY_PROMPT_SUFFIX), comboBox, true);
+        kcSuunniteltuKestoTyyppi =uiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, T(propertyKey + "Tyyppi" + PROPERTY_PROMPT_SUFFIX), comboBox, true);
         kcSuunniteltuKestoTyyppi.setImmediate(true);
         kcSuunniteltuKestoTyyppi.setCaptionFormatter(koodiNimiFormatter);
         grid.addComponent(hl);
@@ -341,7 +344,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private void buildGridOpetusmuotoRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
 
-        kcOpetusmuoto = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI, true);
+        kcOpetusmuoto =uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI, true);
         kcOpetusmuoto.setCaptionFormatter(koodiNimiFormatter);
         kcOpetusmuoto.setImmediate(true);
         grid.addComponent(kcOpetusmuoto);
@@ -352,7 +355,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private void buildGridKoulutuslajiRow(GridLayout grid, final String propertyKey) {
         final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey, type);
-        kcKoulutuslaji = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI, true);
+        kcKoulutuslaji = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI, true);
         kcKoulutuslaji.setCaptionFormatter(koodiNimiFormatter);
         kcKoulutuslaji.setImmediate(true);
         grid.addComponent(kcKoulutuslaji);
@@ -364,7 +367,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private void buildGridPohjakoulutusvaatimusRow(GridLayout grid, final String propertyKey) {
         final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey, type);
-        kcPohjakoulutusvaatimus = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI, true);
+        kcPohjakoulutusvaatimus = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI, true);
         kcPohjakoulutusvaatimus.setCaptionFormatter(koodiNimiFormatter);
         kcPohjakoulutusvaatimus.setImmediate(true);
         grid.addComponent(kcPohjakoulutusvaatimus);

@@ -29,6 +29,7 @@ import fi.vm.sade.tarjonta.ui.view.common.DataTableEvent;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -65,6 +66,8 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
     @PropertyId("kielet")
     private KoodistoComponent kcKielet;
     private I18NHelper i18n = new I18NHelper(this);
+    @Autowired(required = true)
+    private UiBuilder uiBuilder;
 
     public EditKoulutusPerustiedotYhteystietoView() {
         this.setSpacing(true);
@@ -94,13 +97,14 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
 
         UiUtil.label(this, i18n.getMessage("YhteyshenkiloKielissa"));
 
-        kcKielet = UiBuilder.koodistoTwinColSelectUri(this, KoodistoURIHelper.KOODISTO_KIELI_URI);
+        kcKielet = uiBuilder.koodistoTwinColSelectUri(this, KoodistoURIHelper.KOODISTO_KIELI_URI);
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
         this.addComponent(hl);
 
         UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Tallenna"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 LOG.debug("fire : SaveEvent");
@@ -110,6 +114,7 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
 
         UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Peruuta"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 fireEvent(new DataTableEvent.CancelEvent(EditKoulutusPerustiedotYhteystietoView.this));

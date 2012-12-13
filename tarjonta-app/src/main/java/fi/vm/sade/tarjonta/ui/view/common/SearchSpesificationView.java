@@ -35,6 +35,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
@@ -69,6 +70,8 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     private boolean attached = false;
     /* Model for search spesifications */
     private KoulutusSearchSpesificationViewModel model = new KoulutusSearchSpesificationViewModel();
+    @Autowired(required = true)
+    private UiBuilder uiBuilder;
 
     public SearchSpesificationView() {
         super(true, UiMarginEnum.RIGHT_BOTTOM_LEFT);
@@ -136,19 +139,19 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         cbVuosi.setWidth("100px");
 
         //TODO: no application logic, only for Christmas demo
-        kcKausi = UiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T(I18N_KAUSI + I18N_PROMPT));
+        kcKausi = uiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T(I18N_KAUSI + I18N_PROMPT));
         kcKausi.setCaption(I18N_KAUSI);
         kcKausi.setSizeUndefined();
         kcKausi.getField().setNullSelectionAllowed(false);
 
 //        //TODO: no application logic, only for Christmas demo
-//        kcHakutyyppi = UiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI, null, null, T(I18N_HAKUTYYPPI + I18N_PROMPT));
+//        kcHakutyyppi = uiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI, null, null, T(I18N_HAKUTYYPPI + I18N_PROMPT));
 //        kcHakutyyppi.setCaption(T(I18N_HAKUTYYPPI));
 //        kcHakutyyppi.setReadOnly(true);
 //        kcHakutyyppi.setSizeUndefined();
 //
 //        //TODO: no application logic, only for Christmas demo
-//        kcKohdejoukko = UiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T(I18N_KOHDEJOUKKO + I18N_PROMPT));
+//        kcKohdejoukko = uiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T(I18N_KOHDEJOUKKO + I18N_PROMPT));
 //        kcKohdejoukko.setCaption(T(I18N_KOHDEJOUKKO));
 //        kcKohdejoukko.setReadOnly(true);
 //        kcKohdejoukko.setSizeUndefined();
@@ -167,7 +170,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
 
         this.setComponentAlignment(tfSearch, Alignment.BOTTOM_LEFT);
         this.setComponentAlignment(btnHae, Alignment.BOTTOM_LEFT);
-       // this.setComponentAlignment(cbKaudenTarkenne, Alignment.BOTTOM_RIGHT);
+        // this.setComponentAlignment(cbKaudenTarkenne, Alignment.BOTTOM_RIGHT);
         this.setComponentAlignment(cbVuosi, Alignment.BOTTOM_RIGHT);
         this.setComponentAlignment(kcKausi, Alignment.BOTTOM_RIGHT);
         this.setComponentAlignment(btnTyhjenna, Alignment.BOTTOM_RIGHT);
@@ -183,8 +186,8 @@ public class SearchSpesificationView extends OphHorizontalLayout {
      */
     private void doSearch() {
         LOG.info("doSearch()");
-        model.setKoulutuksenAlkamiskausi(kcKausi.getValue() != null ?  (String)kcKausi.getValue() : null);
-        model.setKoulutuksenAlkamisvuosi(cbVuosi.getValue() != null ?  Integer.parseInt((String)cbVuosi.getValue()) : -1);
+        model.setKoulutuksenAlkamiskausi(kcKausi.getValue() != null ? (String) kcKausi.getValue() : null);
+        model.setKoulutuksenAlkamisvuosi(cbVuosi.getValue() != null ? Integer.parseInt((String) cbVuosi.getValue()) : -1);
         fireEvent(new SearchEvent(model));
     }
 

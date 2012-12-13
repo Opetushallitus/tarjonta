@@ -94,6 +94,8 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     @Value("${root.organisaatio.oid:NOT_SET}")
     private String ophOid;
     private boolean isAttached = false;
+    @Autowired(required = true)
+    private UiBuilder uiBuilder;
 
     public OrganisaatiohakuView() {
         super(VerticalLayout.class);
@@ -163,7 +165,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         organisaatioTyyppi.setInputPrompt(T("organisaatioTyyppi.prompt"));
 
         // TODO missä tämä koodisto on? Eikös orgnanisaation puolella se ole olemassa?
-        oppilaitosTyyppi = UiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI, null, null, T("oppilaitostyyppi.prompt"), false);
+        oppilaitosTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI, null, null, T("oppilaitostyyppi.prompt"), false);
         oppilaitosTyyppi.getField().setNullSelectionAllowed(true);
         oppilaitosTyyppi.setWidth("210px");
         oppilaitosTyyppi.setCaptionFormatter(UiBuilder.DEFAULT_URI_CAPTION_FORMATTER);
@@ -441,15 +443,13 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             }
         });
     }
-    
+
     public void clearTreeSelection() {
-        
+
         this.tree.setValue(null);
     }
 
     private String T(String key, Object... args) {
         return i18n.getMessage(key, args);
     }
-
-
 }
