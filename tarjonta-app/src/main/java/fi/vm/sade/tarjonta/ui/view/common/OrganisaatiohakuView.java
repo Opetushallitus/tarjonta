@@ -24,6 +24,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Window.Notification;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
@@ -48,6 +49,7 @@ import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.ui.OphAbstractCollapsibleLeft;
 import fi.vm.sade.vaadin.util.UiUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -108,7 +110,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     }
 
     public OrganisaatiohakuView(List<String> rootOrgOids) {
-        super(VerticalLayout.class);
+        super(VerticalLayout.class);        
         this.rootOrganisaatioOids = rootOrgOids;
         criteria = new OrganisaatioSearchCriteriaDTO();
         if (rootOrganisaatioOids != null) {
@@ -134,7 +136,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
-        layout.setHeight(-1, UNITS_PERCENTAGE);
+        layout.setHeight(-1, UNITS_PIXELS);
         layout.setWidth(-1, UNITS_PIXELS);
         Panel panelTop = buildPanel(buildPanelLayout());
 
@@ -206,6 +208,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
 
         panelTop.addComponent(buttonsL);
         Panel panelBottom = buildPanel(buildTreePanelLayout());
+        panelBottom.setHeight(400, UNITS_PIXELS);
         panelBottom.addStyleName(Oph.CONTAINER_SECONDARY);
 
         layout.addComponent(panelTop);
@@ -260,7 +263,15 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         criteria.getOidResctrictionList().clear();
         //TODO uncommenting the population of oid restriction below 
         //criteria.getOidResctrictionList().addAll(this.presenter.getPermission().getUserOrganisationOids());
-        this.organisaatios = this.organisaatioService.searchBasicOrganisaatios(criteria);//searchOrganisaatios(new OrganisaatioSearchCriteriaDTO());
+        try {
+            this.organisaatios = this.organisaatioService.searchBasicOrganisaatios(criteria);//searchOrganisaatios(new OrganisaatioSearchCriteriaDTO());
+        } catch (Exception ex) {
+            /*if (ex.getMessage().contains("organisaatioSearch.tooManyResults")) {
+                this.getWindow().showNotification(T("tooManyOrganisaatioResults"), Notification.TYPE_WARNING_MESSAGE);
+                
+            }*/
+            this.organisaatios = new ArrayList<OrganisaatioPerustietoType>();
+        }
 
         sortAlphabetically();
 
@@ -272,7 +283,14 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
      * the tree.
      */
     private void searchOrganisaatios() {
-        organisaatios = organisaatioService.searchBasicOrganisaatios(criteria);
+        try {
+            organisaatios = organisaatioService.searchBasicOrganisaatios(criteria);
+        } catch (Exception ex) {
+            if (ex.getMessage().contains("organisaatioSearch.tooManyResults")) {
+                this.getWindow().showNotification(T("tooManyOrganisaatioResults"), Notification.TYPE_WARNING_MESSAGE);
+            } 
+            this.organisaatios = new ArrayList<OrganisaatioPerustietoType>();
+        }
         tree.setContainerDataSource(createDatasource());
     }
 
