@@ -47,6 +47,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jws.WebParam;
+
 /**
  *
  * @author Tuomas Katva
@@ -113,6 +115,18 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
 
         return komotos;
+    }
+
+    @Override
+    public void lisaaKoulutuksiaHakukohteelle(@WebParam(partName = "parameters", name = "lisaaKoulutusHakukohteelle", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LisaaKoulutusHakukohteelleTyyppi parameters) {
+        List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
+        Hakukohde hakukohde = hakukohdes.get(0);
+
+        for (String komotoOid : parameters.getKoulutusOids()) {
+            hakukohde.getKoulutusmoduuliToteutuses().add(koulutusmoduuliToteutusDAO.findByOid(komotoOid));
+        }
+
+        hakukohdeDAO.update(hakukohde);
     }
 
     @Override

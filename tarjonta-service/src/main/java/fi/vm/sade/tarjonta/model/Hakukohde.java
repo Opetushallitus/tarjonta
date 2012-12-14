@@ -34,7 +34,7 @@ public class Hakukohde extends BaseEntity {
     @Column(name = "oid")
     private String oid;
 
-    @ManyToMany(mappedBy = "hakukohdes")
+    @ManyToMany(mappedBy = "hakukohdes",cascade = CascadeType.MERGE)
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -123,7 +123,7 @@ public class Hakukohde extends BaseEntity {
      * Set uri to koodisto that points to hakukohde's name. Example of a name is: "Autoalan Tutkinto, YO" (where Hakukohde could be for one
      * KoulutusmoduuliToteutus that is "Autoalan Tutkinto").
      *
-     * @param uri the nimi to set
+     *
      */
     public void setHakukohdeNimi(String hakukohde) {
         this.hakukohdeNimi = hakukohde;
@@ -139,7 +139,7 @@ public class Hakukohde extends BaseEntity {
     }
 
     /**
-     * @param alinPistemaara the alinPistemaara to set
+     *
      */
     public void setAlinValintaPistemaara(Integer pistemaara) {
         this.alinValintaPistemaara = pistemaara;
@@ -167,7 +167,7 @@ public class Hakukohde extends BaseEntity {
     }
 
     /**
-     * @param valintakoes the valintakoes to set
+     *
      */
     public void addValintakoe(Valintakoe valintakoe) {
         valintakoes.add(valintakoe);
