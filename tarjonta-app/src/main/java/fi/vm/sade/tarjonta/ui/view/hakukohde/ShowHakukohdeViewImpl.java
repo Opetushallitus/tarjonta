@@ -43,6 +43,7 @@ import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -130,6 +131,19 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
                     if (addlKoulutusDialogWindow != null) {
                         getWindow().removeWindow(addlKoulutusDialogWindow);
                     }
+                }
+            });
+
+            addlKoulutusDialog.getJatkaBtn().addListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    Object values = addlKoulutusDialog.getOptionGroup().getValue();
+                    Collection<KoulutusOidNameViewModel> selectedKoulutukses = null;
+                    if (values instanceof Collection) {
+                        selectedKoulutukses = (Collection<KoulutusOidNameViewModel>) values;
+                    }
+                    getWindow().removeWindow(addlKoulutusDialogWindow);
+                    tarjontaPresenterPresenter.addKoulutuksesToHakukohde(selectedKoulutukses);
                 }
             });
         }

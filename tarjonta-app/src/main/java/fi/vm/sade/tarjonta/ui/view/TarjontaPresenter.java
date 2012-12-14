@@ -47,11 +47,7 @@ import fi.vm.sade.tarjonta.ui.view.hakukohde.ShowHakukohdeViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,9 +61,6 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.commons.beanutils.BeanComparator;
 
@@ -254,6 +247,20 @@ public class TarjontaPresenter {
         }
 
         return result;
+    }
+
+    public void addKoulutuksesToHakukohde(Collection<KoulutusOidNameViewModel> koulutukses) {
+
+        List<String> koulutusOids = new ArrayList<String>();
+        for (KoulutusOidNameViewModel koulutus:koulutukses) {
+            koulutusOids.add(koulutus.getKoulutusOid());
+        }
+        koulutusOids.addAll(getModel().getHakukohde().getKomotoOids());
+        LisaaKoulutusHakukohteelleTyyppi req = new LisaaKoulutusHakukohteelleTyyppi();
+        req.setHakukohdeOid(getModel().getHakukohde().getOid());
+        req.getKoulutusOids().addAll(koulutusOids);
+        tarjontaAdminService.lisaaKoulutuksiaHakukohteelle(req);
+        showHakukohdeViewImpl(getModel().getHakukohde().getOid());
     }
 
     /*
