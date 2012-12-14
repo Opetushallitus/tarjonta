@@ -15,12 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
-import fi.vm.sade.tarjonta.ui.view.hakukohde.HakukohdeCreationDialog;
+import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,6 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.HierarchicalContainer;
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
@@ -48,7 +46,6 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.vaadin.Oph;
-import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -91,6 +88,8 @@ public class ListKoulutusView extends VerticalLayout {
      * Checkbox for selecting all the Hakukohde objects in the list.
      */
     private CheckBox valKaikki;
+
+    private CreationDialog<KoulutusOidNameViewModel> createDialog;
     private Button btnPoista;
     private Button btnMuokkaa;
     private Button btnSiirraJaKopioi;
@@ -279,14 +278,52 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     private void showCreateHakukohdeDialog(List<String> oids) {
-        HakukohdeCreationDialog createDialog = new HakukohdeCreationDialog(oids);
-        createDialog.setWidth("600px");
+        createDialog = presenter.createHakukohdeCreationDialogWithKomotoOids(oids);
+        createButtonListeners();
+        createDialog.setWidth("700px");
         createHakukohdeDialog = new Window();
         createHakukohdeDialog.setContent(createDialog);
         createHakukohdeDialog.setModal(true);
         createHakukohdeDialog.center();
         createHakukohdeDialog.setCaption(I18N.getMessage("HakukohdeCreationDialog.windowTitle"));
         getWindow().addWindow(createHakukohdeDialog);
+    }
+
+    private void createButtonListeners() {
+
+            createDialog.getPeruutaBtn().addListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    if (createHakukohdeDialog != null) {
+                        getWindow().removeWindow(createHakukohdeDialog);
+                    }
+                }
+            });
+
+
+            createDialog.getJatkaBtn().addListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    Object values = createDialog.getOptionGroup().getValue();
+                    Collection<KoulutusOidNameViewModel> selectedKoulutukses = null;
+                    if (values instanceof Collection) {
+                        selectedKoulutukses = (Collection<KoulutusOidNameViewModel>) values;
+                    }
+
+                    getWindow().removeWindow(createHakukohdeDialog);
+                    presenter.showHakukohdeEditView(koulutusNameViewModelToOidList(selectedKoulutukses), null);
+
+                }
+            });
+
+    }
+
+    private List<String> koulutusNameViewModelToOidList(Collection<KoulutusOidNameViewModel> models) {
+        List<String> oids = new ArrayList<String>();
+        for (KoulutusOidNameViewModel model : models) {
+            oids.add(model.getKoulutusOid());
+        }
+        return oids;
     }
 
     public void closeHakukohdeCreationDialog() {

@@ -59,6 +59,9 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
 
     private Window confirmationWindow;
 
+    private CreationDialog<KoulutusOidNameViewModel> addlKoulutusDialog;
+    private Window addlKoulutusDialogWindow;
+
     public ShowHakukohdeViewImpl (String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
     }
@@ -101,8 +104,35 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
 
     private void buildLiitaUusiKoulutusButton(VerticalLayout verticalLayout) {
         Button liitaUusiKoulutusBtn = UiBuilder.buttonSmallPrimary(null,T("liitaUusiKoulutusPainike"),null,null);
+        liitaUusiKoulutusBtn.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+               addlKoulutusDialog = tarjontaPresenterPresenter.createHakukohdeCreationDialogWithSelectedTarjoaja();
+               createButtonListenersForDialog();
+               addlKoulutusDialog.setWidth("700px");
+               addlKoulutusDialogWindow = new Window();
+               addlKoulutusDialogWindow.setContent(addlKoulutusDialog);
+               addlKoulutusDialogWindow.setModal(true);
+               addlKoulutusDialogWindow.center();
+               addlKoulutusDialogWindow.setCaption(T("liitaUusiKoulutusDialogTitle"));
+               getWindow().addWindow(addlKoulutusDialogWindow);
+            }
+        });
 
        verticalLayout.addComponent(liitaUusiKoulutusBtn);
+    }
+
+    private void createButtonListenersForDialog() {
+        if (addlKoulutusDialog != null) {
+            addlKoulutusDialog.getPeruutaBtn().addListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    if (addlKoulutusDialogWindow != null) {
+                        getWindow().removeWindow(addlKoulutusDialogWindow);
+                    }
+                }
+            });
+        }
     }
 
     private Container createHakukohdeKoulutusDatasource(List<KoulutusOidNameViewModel> koulutukses) {

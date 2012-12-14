@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
-import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.KoodiService;
@@ -41,14 +40,13 @@ import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
-import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.HakukohdeCreationDialog;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ShowHakukohdeViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
-import fi.vm.sade.vaadin.util.UiUtil;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,9 +67,8 @@ import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
-import org.apache.commons.collections.comparators.ComparableComparator;
+
 import org.apache.commons.beanutils.BeanComparator;
 
 /**
@@ -110,7 +107,7 @@ public class TarjontaPresenter {
     private TarjontaRootView _rootView;
     private ListHakukohdeView _hakukohdeListView;
     private PerustiedotView hakuKohdePerustiedotView;
-    private HakukohdeCreationDialog hakukohdeCreationDialog;
+
     private SearchResultsView searchResultsView;
     private I18NHelper i18n = new I18NHelper(this);
     @Autowired(required = true)
@@ -198,13 +195,40 @@ public class TarjontaPresenter {
         getRootView().showMainView();
     }
 
-    public void loadKoulutusToteutusDialogWithOids(List<String> komotoOids) {
+    //Tuomas Katva : two following methods break the presenter pattern consider moving everything except service call to view
+  public CreationDialog<KoulutusOidNameViewModel> createHakukohdeCreationDialogWithKomotoOids(List<String> komotoOids) {
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         kysely.getKoulutusOids().addAll(komotoOids);
         HaeKoulutuksetVastausTyyppi vastaus = tarjontaPublicService.haeKoulutukset(kysely);
         List<KoulutusOidNameViewModel> koulutusModel = convertKoulutusToNameOidViewModel(vastaus.getKoulutusTulos());
-        hakukohdeCreationDialog.buildLayout(koulutusModel);
+        CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(koulutusModel,KoulutusOidNameViewModel.class,"HakukohdeCreationDialog.title","HakukohdeCreationDialog.valitutKoulutuksetOptionGroup");
+        return dialog;
+    }
+    
+    public CreationDialog<KoulutusOidNameViewModel> createHakukohdeCreationDialogWithSelectedTarjoaja() {
+        HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
+        kysely.getTarjoajaOids().add(getModel().getOrganisaatioOid());
+        HaeKoulutuksetVastausTyyppi vastaus = tarjontaPublicService.haeKoulutukset(kysely);
+        List<KoulutusOidNameViewModel> filtedredKoulutukses = removeSelectedKoulutukses(convertKoulutusToNameOidViewModel(vastaus.getKoulutusTulos()));
+        CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(filtedredKoulutukses,KoulutusOidNameViewModel.class,"ShowHakukohdeViewImpl.liitaUusiKoulutusDialogSecondaryTitle","HakukohdeCreationDialog.valitutKoulutuksetOptionGroup");
+        return dialog;
 
+    }
+
+    private List<KoulutusOidNameViewModel> removeSelectedKoulutukses(List<KoulutusOidNameViewModel> koulutukses) {
+        List<KoulutusOidNameViewModel> filteredKoulutukses = new ArrayList<KoulutusOidNameViewModel>();
+        for( KoulutusOidNameViewModel koulutus:koulutukses) {
+            boolean koulutusFound = false;
+            for (String oid:getModel().getHakukohde().getKomotoOids()) {
+                 if (koulutus.getKoulutusOid().trim().equalsIgnoreCase(oid)) {
+                     koulutusFound = true;
+                 }
+            }
+            if (!koulutusFound) {
+                filteredKoulutukses.add(koulutus);
+            }
+        }
+        return filteredKoulutukses;
     }
 
     private List<KoulutusOidNameViewModel> convertKoulutusToNameOidViewModel(List<KoulutusTulos> tulokset) {
@@ -230,10 +254,6 @@ public class TarjontaPresenter {
         }
 
         return result;
-    }
-
-    public void cancelHakukohdeCreationDialog() {
-        getRootView().getListKoulutusView().closeHakukohdeCreationDialog();
     }
 
     /*
@@ -954,14 +974,6 @@ public class TarjontaPresenter {
      */
     public void toggleCreateHakukohde() {
         this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(!this._model.getSelectedKoulutukset().isEmpty());
-    }
-
-    public HakukohdeCreationDialog getHakukohdeCreationDialog() {
-        return hakukohdeCreationDialog;
-    }
-
-    public void setHakukohdeCreationDialog(HakukohdeCreationDialog hakukohdeCreationDialog) {
-        this.hakukohdeCreationDialog = hakukohdeCreationDialog;
     }
 
     public void setSearchResultsView(SearchResultsView searchResultsView) {
