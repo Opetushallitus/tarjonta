@@ -122,10 +122,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
         Hakukohde hakukohde = hakukohdes.get(0);
 
-        for (String komotoOid : parameters.getKoulutusOids()) {
-            hakukohde.getKoulutusmoduuliToteutuses().add(koulutusmoduuliToteutusDAO.findByOid(komotoOid));
-        }
 
+        hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(parameters.getKoulutusOids(),hakukohde));
+        log.info("Adding {} koulutukses to hakukohde: {}",hakukohde.getKoulutusmoduuliToteutuses().size(),hakukohde.getOid());
         hakukohdeDAO.update(hakukohde);
     }
 

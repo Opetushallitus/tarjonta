@@ -82,7 +82,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * defined.
      */
     private String maksullisuus;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "koulutus_hakukohde", joinColumns =
     @JoinColumn(name = "koulutus_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME), inverseJoinColumns =
     @JoinColumn(name = "hakukohde_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME))
@@ -323,7 +323,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
-     * @param opetuskielis the opetuskielis to set
+     * @param opetuskieli the opetuskielis to set
      */
     public void addOpetuskieli(KoodistoUri opetuskieli) {
         opetuskielis.add(opetuskieli);
