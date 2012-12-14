@@ -89,6 +89,14 @@
         <wsdl:part element="ns1:poistaHakukohdeVastaus" name="parameters"/>
     </wsdl:message>
     
+    <wsdl:message name="lisaaKoulutusHakukohteelle">
+        <wsdl:part element="ns1:lisaaKoulutusHakukohteelle" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="lisaaKoulutusHakukohteelleVastaus">
+        <wsdl:part element="ns1:lisaaKoulutusHakukohteelleVastaus" name="parameters"/>
+    </wsdl:message>
+    
     <wsdl:message name="poistaKoulutus">
         <wsdl:part element="ns1:poistaKoulutus" name="parameters"/>
     </wsdl:message>
@@ -215,6 +223,16 @@
             </wsdl:output>
             <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
         </wsdl:operation>
+        
+        <wsdl:operation name="lisaaKoulutuksiaHakukohteelle">
+            <wsdl:documentation>
+                Lisaa annetulle hakukohteelle annetut koulutukset
+            </wsdl:documentation>
+            <wsdl:input message="tns:lisaaKoulutusHakukohteelle" name="lisaaKoulutusHakukohteelle">
+            </wsdl:input>
+            <wsdl:output message="lisaaKoulutusHakukohteelleVastaus" name="lisaaKoulutusHakukohteelleVastaus">
+            </wsdl:output>
+        </wsdl:operation>
 
         <wsdl:operation name="initSample">
             <wsdl:documentation>
@@ -279,6 +297,16 @@
         </wsdl:operation>
         
         <wsdl:operation name="lisaaKoulutusmoduuli">
+            <soap:operation soapAction="" type="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="lisaaKoulutuksiaHakukohteelle">
             <soap:operation soapAction="" type="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>

@@ -4,6 +4,7 @@ import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.types.*;
 
+import javax.jws.WebParam;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
@@ -29,6 +30,11 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
     @Override
     public HakukohdeTyyppi paivitaHakukohde(HakukohdeTyyppi hakukohdePaivitys) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void lisaaKoulutuksiaHakukohteelle(@WebParam(partName = "parameters", name = "lisaaKoulutusHakukohteelle", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LisaaKoulutusHakukohteelleTyyppi parameters) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
