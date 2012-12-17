@@ -68,6 +68,7 @@
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeOid" type="xs:string"/>
             <xs:element minOccurs="1" maxOccurs="unbounded" name="koulutusOids" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="lisaa" type="xs:boolean"/>
         </xs:sequence>
     </xs:complexType>
     

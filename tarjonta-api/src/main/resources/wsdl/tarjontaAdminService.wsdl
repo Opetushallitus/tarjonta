@@ -224,7 +224,7 @@
             <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
         </wsdl:operation>
         
-        <wsdl:operation name="lisaaKoulutuksiaHakukohteelle">
+        <wsdl:operation name="lisaaTaiPoistaKoulutuksiaHakukohteelle">
             <wsdl:documentation>
                 Lisaa annetulle hakukohteelle annetut koulutukset
             </wsdl:documentation>
@@ -306,7 +306,7 @@
             </wsdl:output>
         </wsdl:operation>
 
-        <wsdl:operation name="lisaaKoulutuksiaHakukohteelle">
+        <wsdl:operation name="lisaaTaiPoistaKoulutuksiaHakukohteelle">
             <soap:operation soapAction="" type="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
