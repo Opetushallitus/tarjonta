@@ -100,7 +100,7 @@ public class TarjontaPresenter {
     private TarjontaRootView _rootView;
     private ListHakukohdeView _hakukohdeListView;
     private PerustiedotView hakuKohdePerustiedotView;
-
+    private ShowHakukohdeViewImpl hakukohdeView;
     private SearchResultsView searchResultsView;
     private I18NHelper i18n = new I18NHelper(this);
     @Autowired(required = true)
@@ -286,9 +286,9 @@ public class TarjontaPresenter {
             if (vastaus.getHakukohde() != null) {
                 getModel().setHakukohde(hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(vastaus.getHakukohde()));
                 getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
-                ShowHakukohdeViewImpl view = new ShowHakukohdeViewImpl(getModel().getHakukohde().getHakukohdeKoodistoNimi(), null, null);
+                hakukohdeView = new ShowHakukohdeViewImpl(getModel().getHakukohde().getHakukohdeKoodistoNimi(), null, null);
 
-                getRootView().changeView(view);
+                getRootView().changeView(hakukohdeView);
 
             }
         }
@@ -577,6 +577,11 @@ public class TarjontaPresenter {
                 showNotification(UserNotification.SAVE_FAILED);
             }
         }
+    }
+
+    public void showRemoveKoulutusFromHakukohdeDialog(KoulutusOidNameViewModel koulutusOidNameViewModel) {
+
+        hakukohdeView.showKoulutusRemovalDialog(koulutusOidNameViewModel);
     }
 
     /**

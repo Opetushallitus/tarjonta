@@ -66,7 +66,7 @@ public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                tarjontaPresenter.removeKoulutusFromHakukohde(koulutusOidNameViewModel);
+                  tarjontaPresenter.showRemoveKoulutusFromHakukohdeDialog(koulutusOidNameViewModel);
             }
         });
     }

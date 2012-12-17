@@ -172,7 +172,8 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Toiminnallisuutta ei vielä toteutettu");
+                tarjontaPresenterPresenter.showHakukohdeEditView(tarjontaPresenterPresenter.getModel().getHakukohde().getKomotoOids(),
+                        tarjontaPresenterPresenter.getModel().getHakukohde().getOid());
             }
         }, true));
         GridLayout grid = new GridLayout(2, 1);
@@ -306,6 +307,29 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
         getWindow().addWindow(confirmationWindow);
 
 
+    }
+
+    public void showKoulutusRemovalDialog(final KoulutusOidNameViewModel koulutus) {
+        final Window koulutusRemovalDialog = new Window();
+        RemovalConfirmationDialog confirmationDialog = new RemovalConfirmationDialog(T("removeKoulutusFromHakukohde"),koulutus.getKoulutusNimi(),T("poistaRemoveKoulutusFromHakukohde"),
+                T("peruutaRemoveKoulutusFromHakukohde"),
+                new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent clickEvent) {
+                        getWindow().removeWindow(koulutusRemovalDialog);
+                        tarjontaPresenterPresenter.removeKoulutusFromHakukohde(koulutus);
+                    }
+                },
+                new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent clickEvent) {
+                        getWindow().removeWindow(koulutusRemovalDialog);
+                    }
+                });
+        koulutusRemovalDialog.setContent(confirmationDialog);
+        koulutusRemovalDialog.setModal(true);
+        koulutusRemovalDialog.center();
+        getWindow().addWindow(koulutusRemovalDialog);
     }
 
     private boolean checkHaunAlkaminen() {
