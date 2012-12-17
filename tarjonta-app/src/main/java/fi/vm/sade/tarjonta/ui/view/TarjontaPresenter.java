@@ -249,6 +249,17 @@ public class TarjontaPresenter {
         return result;
     }
 
+    public void removeKoulutusFromHakukohde(KoulutusOidNameViewModel koulutus) {
+        List<String> poistettavatKoulutukses = new ArrayList<String>();
+        poistettavatKoulutukses.add(koulutus.getKoulutusOid());
+        LisaaKoulutusHakukohteelleTyyppi req = new LisaaKoulutusHakukohteelleTyyppi();
+        req.setHakukohdeOid(getModel().getHakukohde().getOid());
+        req.getKoulutusOids().addAll(poistettavatKoulutukses);
+        req.setLisaa(false);
+        tarjontaAdminService.lisaaTaiPoistaKoulutuksiaHakukohteelle(req);
+        showHakukohdeViewImpl(getModel().getHakukohde().getOid());
+    }
+
     public void addKoulutuksesToHakukohde(Collection<KoulutusOidNameViewModel> koulutukses) {
 
         List<String> koulutusOids = new ArrayList<String>();
@@ -259,7 +270,8 @@ public class TarjontaPresenter {
         LisaaKoulutusHakukohteelleTyyppi req = new LisaaKoulutusHakukohteelleTyyppi();
         req.setHakukohdeOid(getModel().getHakukohde().getOid());
         req.getKoulutusOids().addAll(koulutusOids);
-        tarjontaAdminService.lisaaKoulutuksiaHakukohteelle(req);
+        req.setLisaa(true);
+        tarjontaAdminService.lisaaTaiPoistaKoulutuksiaHakukohteelle(req);
         showHakukohdeViewImpl(getModel().getHakukohde().getOid());
     }
 

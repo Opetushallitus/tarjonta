@@ -20,12 +20,17 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
+import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
 /*
 * Author: Tuomas Katva
 */
+@Configurable
 public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
 
      private KoulutusOidNameViewModel koulutusOidNameViewModel;
@@ -35,6 +40,9 @@ public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
      private Button poistaBtn;
 
      private I18NHelper i18n = new I18NHelper(this);
+
+     @Autowired(required = true)
+     private TarjontaPresenter tarjontaPresenter;
 
      private static final Logger LOG = LoggerFactory.getLogger(ShowHakukohdeKoulutusRow.class);
 
@@ -58,7 +66,7 @@ public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-
+                tarjontaPresenter.removeKoulutusFromHakukohde(koulutusOidNameViewModel);
             }
         });
     }
@@ -67,9 +75,9 @@ public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
         if (nimiBtn != null) {
            nimiBtn.setEnabled(false);
         }
-        if (poistaBtn != null) {
+       /* if (poistaBtn != null) {
             poistaBtn.setEnabled(false);
-        }
+        }*/
     }
 
     public Button getNimiBtn() {
