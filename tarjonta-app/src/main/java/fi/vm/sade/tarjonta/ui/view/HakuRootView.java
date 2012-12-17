@@ -77,7 +77,7 @@ public class HakuRootView extends Window {
             public void componentEvent(Event event) {
                 if (event instanceof SearchSpesificationView.SearchEvent) {
                     SearchSpesificationView.SearchEvent searchEvent = (SearchSpesificationView.SearchEvent) event;
-                    getWindow().showNotification("SEARCH WITH =" + searchEvent.getModel().getSearchStr());
+                    LOG.info("search hakukohde with search spesification: {}", searchEvent.getModel().getSearchStr());
                     hakuPresenter.loadListDataWithSearchCriteria(searchEvent.getModel());
                 }
             }
