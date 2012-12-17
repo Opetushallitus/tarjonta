@@ -74,9 +74,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     public List<Hakukohde> findHakukohdeWithDepenciesByOid(String oid) {
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QHaku qHaku = QHaku.haku;
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
 
-        List<Hakukohde> hakukohdes = from(qHakukohde,qHaku)
+        List<Hakukohde> hakukohdes = from(qHakukohde,qHaku,qKomoto)
                 .join(qHakukohde.haku,qHaku)
+                .leftJoin(qHakukohde.koulutusmoduuliToteutuses,qKomoto)
                 .where(qHakukohde.oid.eq(oid.trim()))
                .list(qHakukohde);
 

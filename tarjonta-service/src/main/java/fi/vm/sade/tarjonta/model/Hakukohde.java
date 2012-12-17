@@ -34,7 +34,7 @@ public class Hakukohde extends BaseEntity {
     @Column(name = "oid")
     private String oid;
 
-    @ManyToMany(mappedBy = "hakukohdes",cascade = CascadeType.MERGE)
+    @ManyToMany(mappedBy = "hakukohdes",cascade = {CascadeType.MERGE,CascadeType.REFRESH})
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -59,6 +59,7 @@ public class Hakukohde extends BaseEntity {
 
     @Column(name = "alin_valinta_pistamaara")
     private Integer alinValintaPistemaara;
+
 
     @Column(name = "ylin_valinta_pistemaara")
     private Integer ylinValintaPistemaara;
@@ -108,6 +109,10 @@ public class Hakukohde extends BaseEntity {
 
     public void addKoulutusmoduuliToteutus(KoulutusmoduuliToteutus toteutus) {
         koulutusmoduuliToteutuses.add(toteutus);
+    }
+
+    public void removeKoulutusmoduuliToteutus(KoulutusmoduuliToteutus toteutus) {
+        koulutusmoduuliToteutuses.remove(toteutus);
     }
 
     /**

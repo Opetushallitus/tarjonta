@@ -35,5 +35,13 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
 
     public List<KoulutusmoduuliToteutus> findKoulutusModuuliToteutusesByOids(List<String> oids);
 
+    /**
+     * Return all koulutumoduulitoteutuses in oid list with Hakukohde depencies
+     *
+     * @param komotoOids
+     * @return List<KoulutusmoduuliToteutus>
+     */
+    public List<KoulutusmoduuliToteutus> findKoulutusModuulisWithHakukohdesByOids(List<String> komotoOids);
+
 }
 

@@ -48,6 +48,17 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     }
 
     @Override
+    public List<KoulutusmoduuliToteutus> findKoulutusModuulisWithHakukohdesByOids(List<String> komotoOids) {
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+
+        return from(qHakukohde,qKomoto)
+                .join(qKomoto.hakukohdes,qHakukohde)
+                .where(qKomoto.oid.in(komotoOids))
+                .list(qKomoto);
+    }
+
+    @Override
     public KoulutusmoduuliToteutus findKomotoByOid(String oid) {
         Query query = getEntityManager().createQuery(""
             + "SELECT k FROM KoulutusmoduuliToteutus k "

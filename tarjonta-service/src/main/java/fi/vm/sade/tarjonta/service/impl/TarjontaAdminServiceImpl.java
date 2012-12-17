@@ -118,14 +118,26 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    public void lisaaKoulutuksiaHakukohteelle(@WebParam(partName = "parameters", name = "lisaaKoulutusHakukohteelle", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LisaaKoulutusHakukohteelleTyyppi parameters) {
+    public void lisaaTaiPoistaKoulutuksiaHakukohteelle(@WebParam(partName = "parameters", name = "lisaaKoulutusHakukohteelle", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LisaaKoulutusHakukohteelleTyyppi parameters) {
         List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
         Hakukohde hakukohde = hakukohdes.get(0);
 
-
+        if (parameters.isLisaa()) {
         hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(parameters.getKoulutusOids(),hakukohde));
         log.info("Adding {} koulutukses to hakukohde: {}",hakukohde.getKoulutusmoduuliToteutuses().size(),hakukohde.getOid());
         hakukohdeDAO.update(hakukohde);
+        } else {
+            List<KoulutusmoduuliToteutus> poistettavatModuuliLinkit = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(parameters.getKoulutusOids());
+            for(KoulutusmoduuliToteutus komoto:poistettavatModuuliLinkit) {
+                log.info("REMOVING KOULUTUS : {} FROM HAKUKOHDE {}",komoto.getOid(),hakukohde.getOid());
+
+                komoto.removeHakukohde(hakukohde);
+
+                hakukohde.removeKoulutusmoduuliToteutus(komoto);
+                koulutusmoduuliToteutusDAO.update(komoto);
+            }
+            hakukohdeDAO.update(hakukohde);
+        }
     }
 
     @Override
