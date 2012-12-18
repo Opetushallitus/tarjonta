@@ -57,7 +57,7 @@ public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-
+                    tarjontaPresenter.showShowKoulutusView(koulutusOidNameViewModel.getKoulutusOid());
             }
         });
 

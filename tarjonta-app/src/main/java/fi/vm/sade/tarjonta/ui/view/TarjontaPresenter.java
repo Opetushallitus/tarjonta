@@ -370,17 +370,9 @@ public class TarjontaPresenter {
         // If oid of koulutus is provided the koulutus is read from database
         // before opening the ShowKoulutusView
         if (koulutusOid != null) {
-            try {
-                LueKoulutusKyselyTyyppi koulutusKysely = new LueKoulutusKyselyTyyppi();
-                koulutusKysely.setOid(koulutusOid);
-                LueKoulutusVastausTyyppi tyyppi = this.tarjontaPublicService.lueKoulutus(koulutusKysely);
-                KoulutusToisenAsteenPerustiedotViewModel model = koulutusToDTOConverter
-                        .createKoulutusPerustiedotViewModel(tyyppi, DocumentStatus.LOADED, I18N.getLocale());
-                getModel().setKoulutusPerustiedotModel(model);
-                getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(tyyppi));
-            } catch (ExceptionMessage ex) {
-                LOG.error("Service call failed.", ex);
-            }
+
+              readKoulutusToModel(koulutusOid);
+
         } else {
             throw new RuntimeException("Application error - missing OID, cannot open ShowKoulutusView.");
         }
@@ -397,26 +389,7 @@ public class TarjontaPresenter {
         // If oid of koulutus is provided the koulutus is read from database
         // before opening the KoulutusEditView
         if (koulutusOid != null) {
-            LueKoulutusVastausTyyppi lueKoulutus = this.getKoulutusByOid(koulutusOid);
-            try {
-                KoulutusToisenAsteenPerustiedotViewModel koulutus;
-                koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(lueKoulutus, DocumentStatus.LOADED, I18N.getLocale());
-                getModel().setKoulutusPerustiedotModel(koulutus);
-                getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(lueKoulutus));
-
-                //Empty previous Koodisto data from the comboboxes.
-                koulutus.getKoulutusohjelmat().clear();
-                koulutus.getKoulutuskoodit().clear();
-
-                //Add selected data to the comboboxes.
-                if (koulutus.getKoulutusohjelmaModel() != null && koulutus.getKoulutusohjelmaModel().getKoodistoUri() != null) {
-                    koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
-                }
-                koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());
-            } catch (ExceptionMessage ex) {
-                LOG.error("Service call failed.", ex);
-                showMainDefaultView();
-            }
+            readKoulutusToModel(koulutusOid);
         } else {
             if (getModel().getOrganisaatioOid() == null) {
                 throw new RuntimeException("Application error - missing organisation OID.");
@@ -427,6 +400,29 @@ public class TarjontaPresenter {
 
         getRootView().changeView(new EditKoulutusView());
 
+    }
+
+    private void readKoulutusToModel(final String koulutusOid) {
+        LueKoulutusVastausTyyppi lueKoulutus = this.getKoulutusByOid(koulutusOid);
+        try {
+            KoulutusToisenAsteenPerustiedotViewModel koulutus;
+            koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(lueKoulutus, DocumentStatus.LOADED, I18N.getLocale());
+            getModel().setKoulutusPerustiedotModel(koulutus);
+            getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(lueKoulutus));
+
+            //Empty previous Koodisto data from the comboboxes.
+            koulutus.getKoulutusohjelmat().clear();
+            koulutus.getKoulutuskoodit().clear();
+
+            //Add selected data to the comboboxes.
+            if (koulutus.getKoulutusohjelmaModel() != null && koulutus.getKoulutusohjelmaModel().getKoodistoUri() != null) {
+                koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
+            }
+            koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());
+        } catch (ExceptionMessage ex) {
+            LOG.error("Service call failed.", ex);
+            showMainDefaultView();
+        }
     }
 
     /**
