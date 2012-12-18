@@ -144,6 +144,11 @@
                         maxOccurs="1"
                         minOccurs="0"/>
 
+            <xs:element name="valinnanAloituspaikat"
+                        type="xs:int"
+                        maxOccurs="1"
+                        minOccurs="0"/>
+
             <xs:element name="hakukelpoisuusVaatimukset"
                         type="xs:string"
                         maxOccurs="1"
@@ -154,15 +159,56 @@
                         minOccurs="0"
                         maxOccurs="1"/>
 
+            <xs:element name="liitteidenToimitusOsoite"
+                        type="tns:OsoiteTyyppi"
+                        minOccurs="1"
+                        maxOccurs="1"/>
+
+            <xs:element name="sahkoinenToimitusOsoite"
+                        type="xs:string"
+                        maxOccurs="1"
+                        minOccurs="0"/>
+
+            <xs:element name="liitteidenToimitusPvm"
+                        type="xs:date"
+                        maxOccurs="1"
+                        minOccurs="0"/>
+
             <xs:element name="valintaPerusteidenKuvaukset"
                         type="tns:MonikielinenTekstiTyyppi"
                         minOccurs="0"
                         maxOccurs="1"/>
+
             <xs:element name="hakukohdeKoulutukses"
                         type="tns:KoulutusKoosteTyyppi"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
 
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="OsoiteTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="osoiteRivi" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Osoiterivi</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" maxOccurs="1" name="lisaOsoiteRivi" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Mahdollinen lisä osoiterivi</xs:documentation>
+            </xs:annotation>
+        </xs:element>
+         <xs:element minOccurs="1" maxOccurs="1" name="postinumero" type="xs:string">
+             <xs:annotation>
+                 <xs:documentation>Postinumero</xs:documentation>
+             </xs:annotation>
+         </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="postitoimipaikka" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Postitoimipaikka</xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 
