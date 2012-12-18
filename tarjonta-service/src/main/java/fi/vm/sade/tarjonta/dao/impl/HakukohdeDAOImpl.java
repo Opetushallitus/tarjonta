@@ -144,19 +144,21 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     private List<Hakukohde> createGrouping (List<Hakukohde> hakukohdes, HaeHakukohteetKyselyTyyppi kysely) {
     	List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
     	for (Hakukohde curHakukohde : hakukohdes) {
+    	    List<String> tarjoajat = new ArrayList<String>();
     		if (curHakukohde.getKoulutusmoduuliToteutuses().size() > 1) {
-    			vastaus.addAll(handleKomotos(curHakukohde, kysely));
-    		} else if (isHakukohdeMatch(curHakukohde, kysely)) {
+    			vastaus.addAll(handleKomotos(curHakukohde, kysely, tarjoajat));
+    		} else if (isHakukohdeMatch(curHakukohde, kysely, tarjoajat)) {
     			vastaus.add(curHakukohde);
+    			tarjoajat.add(curHakukohde.getKoulutusmoduuliToteutuses().iterator().next().getTarjoaja());
     		}
     	}
     	return vastaus;
     }
     
-    private List<Hakukohde> handleKomotos(Hakukohde hakukohde, HaeHakukohteetKyselyTyyppi kysely) {
+    private List<Hakukohde> handleKomotos(Hakukohde hakukohde, HaeHakukohteetKyselyTyyppi kysely, List<String> tarjoajat) {
     	List<Hakukohde> vastaus = new ArrayList<Hakukohde>();
     	for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
-    	    if (isKomotoMatch(komoto, kysely)) {
+    	    if (isKomotoMatch(komoto, kysely) && !tarjoajat.contains(komoto.getTarjoaja())) {
     	        Hakukohde newHakukohde = new Hakukohde();
     	        newHakukohde.setHakukohdeNimi(hakukohde.getHakukohdeNimi());
     	        newHakukohde.setTila(hakukohde.getTila());
@@ -164,14 +166,15 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     	        newHakukohde.addKoulutusmoduuliToteutus(komoto);
     	        newHakukohde.setHaku(hakukohde.getHaku());
     	        vastaus.add(newHakukohde);
+    	        tarjoajat.add(komoto.getTarjoaja());
     	    }
     	}
     	return vastaus;
     }
     
-    private boolean isHakukohdeMatch(Hakukohde hakukohde, HaeHakukohteetKyselyTyyppi kysely) {
+    private boolean isHakukohdeMatch(Hakukohde hakukohde, HaeHakukohteetKyselyTyyppi kysely, List<String> tarjoajat) {
         KoulutusmoduuliToteutus komoto = !hakukohde.getKoulutusmoduuliToteutuses().isEmpty() ? hakukohde.getKoulutusmoduuliToteutuses().iterator().next() : null;
-        return isKomotoMatch(komoto, kysely);
+        return isKomotoMatch(komoto, kysely) && !tarjoajat.contains(komoto.getTarjoaja());
     }
 
     private boolean isKomotoMatch(KoulutusmoduuliToteutus komoto, HaeHakukohteetKyselyTyyppi kysely) {  
