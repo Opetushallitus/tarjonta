@@ -141,9 +141,11 @@ public class HakuResultRow  extends HorizontalLayout {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 if (haku != null
+                        && haku.getHakuOid() != null
                         && isSelected.booleanValue()) {
                     hakuPresenter.selectHaku(haku);
-                } else if (haku != null) {
+                } else if (haku != null
+                        && haku.getHakuOid() != null) {
                     hakuPresenter.unSelectHaku(haku);
                     //hakuPresenter.getSelectedhaut().remove(haku);
                 }
