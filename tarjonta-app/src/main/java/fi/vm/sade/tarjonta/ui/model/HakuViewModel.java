@@ -423,9 +423,16 @@ public class HakuViewModel extends BaseUIViewModel {
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+
         if (obj instanceof HakuViewModel) {
             HakuViewModel haku = (HakuViewModel)obj;
-            if (haku.getHakuOid() != null && haku.getHakuOid().equals(this.getHakuOid().trim())) {
+            if (haku.getHakuOid() != null && haku.getHakuOid().equals(this.getHakuOid())) {
                 return true;
             } else {
                 return false;
