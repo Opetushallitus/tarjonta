@@ -17,6 +17,7 @@
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
 import fi.vm.sade.oid.service.ExceptionMessage;
+import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
@@ -71,6 +72,19 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohde.getHakukohteenKoulutusOidit().addAll(hakukohdevm.getKomotoOids());
         hakukohde.setLisatiedot(convertTekstis(hakukohdevm.getLisatiedot()));
         hakukohde.setValintaPerusteidenKuvaukset(convertTekstis(hakukohdevm.getValintaPerusteidenKuvaus()));
+        hakukohde.setLiitteidenToimitusPvm(hakukohdevm.getLiitteidenToimitusPvm());
+        hakukohde.setValinnanAloituspaikat(hakukohdevm.getValinnoissaKaytettavatPaikat());
+        hakukohde.setSahkoinenToimitusOsoite(hakukohdevm.getLiitteidenSahkoinenToimitusOsoite());
+        if(hakukohdevm.getOsoiteRivi1() != null) {
+            OsoiteTyyppi osoite = new OsoiteTyyppi();
+            osoite.setOsoiteRivi(hakukohdevm.getOsoiteRivi1());
+            osoite.setLisaOsoiteRivi(hakukohdevm.getOsoiteRivi2());
+            osoite.setPostinumero(hakukohdevm.getPostinumero());
+            osoite.setPostitoimipaikka(hakukohdevm.getPostitoimipaikka());
+            hakukohde.setLiitteidenToimitusOsoite(osoite);
+        }
+
+
         return hakukohde;
     }
 
@@ -108,6 +122,16 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohdeVM.setKomotoOids(hakukohdeTyyppi.getHakukohteenKoulutusOidit());
         hakukohdeVM.getLisatiedot().addAll(convertTekstiToVM(hakukohdeTyyppi.getLisatiedot()));
         hakukohdeVM.getValintaPerusteidenKuvaus().addAll(convertTekstiToVM(hakukohdeTyyppi.getValintaPerusteidenKuvaukset()));
+        hakukohdeVM.setValinnoissaKaytettavatPaikat(hakukohdeTyyppi.getValinnanAloituspaikat());
+        hakukohdeVM.setLiitteidenSahkoinenToimitusOsoite(hakukohdeTyyppi.getSahkoinenToimitusOsoite());
+        hakukohdeVM.setLiitteidenToimitusPvm(hakukohdeTyyppi.getLiitteidenToimitusPvm());
+        if(hakukohdeTyyppi.getLiitteidenToimitusOsoite() != null) {
+            hakukohdeVM.setOsoiteRivi1(hakukohdeTyyppi.getLiitteidenToimitusOsoite().getOsoiteRivi());
+            hakukohdeVM.setOsoiteRivi2(hakukohdeTyyppi.getLiitteidenToimitusOsoite().getLisaOsoiteRivi());
+            hakukohdeVM.setPostinumero(hakukohdeTyyppi.getLiitteidenToimitusOsoite().getPostinumero());
+            hakukohdeVM.setPostitoimipaikka(hakukohdeTyyppi.getLiitteidenToimitusOsoite().getPostitoimipaikka());
+        }
+
         return hakukohdeVM;
     }
 

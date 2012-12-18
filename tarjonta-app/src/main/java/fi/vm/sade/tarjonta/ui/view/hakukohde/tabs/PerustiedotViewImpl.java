@@ -18,28 +18,17 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.*;
 import com.vaadin.ui.AbstractSelect.Filtering;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.Form;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
@@ -78,8 +67,27 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     ComboBox hakuCombo;
     @PropertyId("aloitusPaikat")
     TextField aloitusPaikatText;
+    @PropertyId("valinnoissaKaytettavatPaikat")
+    TextField valinnoissaKaytettavatPaikatText;
     @PropertyId("hakukelpoisuusVaatimus")
-    KoodistoComponent hakuKelpoisuusVaatimuksetCombo;
+    Label hakuKelpoisuusVaatimuksetLabel;
+
+    @PropertyId("osoiteRivi1")
+    private TextField liitteidenOsoiteRivi1Text;
+    @PropertyId("osoiteRivi2")
+    private TextField liitteidenOsoiteRivi2Text;
+    @PropertyId("postinumero")
+    private TextField liitteidenPostinumeroText;
+    @PropertyId("postitoimipaikka")
+    private TextField liitteidenPostitoimipaikkaText;
+
+    private CheckBox myosSahkoinenToimitusSallittuCb;
+    @PropertyId("liitteidenSahkoinenToimitusOsoite")
+    private TextField sahkoinenToimitusOsoiteText;
+
+    private CheckBox kaytaHaunPaattymisAikaa;
+    @PropertyId("liitteidenToimitusPvm")
+    private DateField liitteidenToimitusPvm;
 //    LanguageTabSheet valintaPerusteidenKuvausTabs;
     LanguageTabSheet lisatiedotTabs;
     Label serverMessage = new Label("");
@@ -176,6 +184,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         addItemToGrid("PerustiedotView.hakuValinta", buildHakuCombo());
 
         addItemToGrid("PerustiedotView.aloitusPaikat", buildAloitusPaikat());
+        addItemToGrid("PerustiedotView.valinnoissaKaytettavatPaikatText",buildValinnoissaKaytettavatAloitusPaikat());
         addItemToGrid("PerustiedotView.hakukelpoisuusVaatimukset", buildHakukelpoisuusVaatimukset());
 
 
@@ -195,17 +204,24 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
 
     }
 
-    private KoodistoComponent buildHakukelpoisuusVaatimukset() {
-        hakuKelpoisuusVaatimuksetCombo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI);
+    private Label buildHakukelpoisuusVaatimukset() {
+
+        hakuKelpoisuusVaatimuksetLabel = UiUtil.label(null, "");
 
 
-        return hakuKelpoisuusVaatimuksetCombo;
+        return hakuKelpoisuusVaatimuksetLabel;
     }
 
     private TextField buildAloitusPaikat() {
         aloitusPaikatText = UiUtil.textField(null);
-
+        aloitusPaikatText.setRequired(true);
         return aloitusPaikatText;
+    }
+
+    private TextField buildValinnoissaKaytettavatAloitusPaikat() {
+        valinnoissaKaytettavatPaikatText = UiUtil.textField(null);
+        valinnoissaKaytettavatPaikatText.setRequired(true);
+        return valinnoissaKaytettavatPaikatText;
     }
 
     private String tryGetHaunNimi(HakuViewModel haku) {
@@ -230,6 +246,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         BeanItemContainer<HakuViewModel> hakuContainer = new BeanItemContainer<HakuViewModel>(HakuViewModel.class);
         hakuContainer.addAll(haut);
         hakuCombo.setContainerDataSource(hakuContainer);
+        hakuCombo.setRequired(true);
         hakuCombo.setFilteringMode(Filtering.FILTERINGMODE_CONTAINS);
     }
 
@@ -263,7 +280,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
 
         HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         hakukohteenNimiCombo = buildHaku();
-
+        hakukohteenNimiCombo.setRequired(true);
         hl.addComponent(hakukohteenNimiCombo);
         tunnisteKoodiText = UiUtil.textField(hl, "", T("tunnistekoodi"), true);
         tunnisteKoodiText.setEnabled(false);

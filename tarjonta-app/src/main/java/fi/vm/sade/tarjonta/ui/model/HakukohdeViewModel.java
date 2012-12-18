@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.ui.model;
 
+import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -12,8 +13,15 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private String tunnisteKoodi;
     private HakuViewModel haku;
     private int aloitusPaikat;
+    private int valinnoissaKaytettavatPaikat;
     private String hakukohdeTila;
     private String hakukelpoisuusVaatimus;
+    private String liitteidenSahkoinenToimitusOsoite;
+    private Date liitteidenToimitusPvm;
+    private String osoiteRivi1;
+    private String osoiteRivi2;
+    private String postinumero;
+    private String postitoimipaikka;
     private List<KielikaannosViewModel> valintaPerusteidenKuvaus;
     private List<KielikaannosViewModel> lisatiedot;
     private List<String> komotoOids;
@@ -192,5 +200,61 @@ public class HakukohdeViewModel extends BaseUIViewModel {
 
     public void setKoulukses(List<KoulutusOidNameViewModel> koulukses) {
         this.koulukses = koulukses;
+    }
+
+    public int getValinnoissaKaytettavatPaikat() {
+        return valinnoissaKaytettavatPaikat;
+    }
+
+    public void setValinnoissaKaytettavatPaikat(int valinnoissaKaytettavatPaikat) {
+        this.valinnoissaKaytettavatPaikat = valinnoissaKaytettavatPaikat;
+    }
+
+    public String getLiitteidenSahkoinenToimitusOsoite() {
+        return liitteidenSahkoinenToimitusOsoite;
+    }
+
+    public void setLiitteidenSahkoinenToimitusOsoite(String liitteidenSahkoinenToimitusOsoite) {
+        this.liitteidenSahkoinenToimitusOsoite = liitteidenSahkoinenToimitusOsoite;
+    }
+
+    public Date getLiitteidenToimitusPvm() {
+        return liitteidenToimitusPvm;
+    }
+
+    public void setLiitteidenToimitusPvm(Date liitteidenToimitusPvm) {
+        this.liitteidenToimitusPvm = liitteidenToimitusPvm;
+    }
+
+    public String getOsoiteRivi1() {
+        return osoiteRivi1;
+    }
+
+    public void setOsoiteRivi1(String osoiteRivi1) {
+        this.osoiteRivi1 = osoiteRivi1;
+    }
+
+    public String getOsoiteRivi2() {
+        return osoiteRivi2;
+    }
+
+    public void setOsoiteRivi2(String osoiteRivi2) {
+        this.osoiteRivi2 = osoiteRivi2;
+    }
+
+    public String getPostinumero() {
+        return postinumero;
+    }
+
+    public void setPostinumero(String postinumero) {
+        this.postinumero = postinumero;
+    }
+
+    public String getPostitoimipaikka() {
+        return postitoimipaikka;
+    }
+
+    public void setPostitoimipaikka(String postitoimipaikka) {
+        this.postitoimipaikka = postitoimipaikka;
     }
 }
