@@ -21,6 +21,8 @@ import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +46,14 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.setLisatiedot(EntityUtils.copyFields(s.getLisatiedot()));
         hakukohde.setValintaPerusteidenKuvaukset(EntityUtils.copyFields(s.getValintaperusteKuvaus()));
         hakukohde.getHakukohteenKoulutusOidit().addAll(convertKoulutukses(s.getKoulutusmoduuliToteutuses()));
+
+        hakukohde.setValinnanAloituspaikat(s.getValintojenAloituspaikatLkm());
+        hakukohde.setSahkoinenToimitusOsoite(s.getSahkoinenToimitusOsoite());
+        hakukohde.setLiitteidenToimitusPvm(s.getLiitteidenToimitusPvm());
+        if (s.getLiitteidenToimitusOsoite() != null) {
+            hakukohde.setLiitteidenToimitusOsoite(osoiteTyyppiFromOsoite(s.getLiitteidenToimitusOsoite()));
+        }
+
         return hakukohde;
     }
 
@@ -55,6 +65,17 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         }
 
         return komotoOids;
+    }
+
+    private OsoiteTyyppi osoiteTyyppiFromOsoite(Osoite osoite) {
+        OsoiteTyyppi osoiteTyyppi = new OsoiteTyyppi();
+
+        osoiteTyyppi.setOsoiteRivi(osoite.getOsoiterivi1());
+        osoiteTyyppi.setLisaOsoiteRivi(osoite.getOsoiterivi2());
+        osoiteTyyppi.setPostinumero(osoite.getPostinumero());
+        osoiteTyyppi.setPostitoimipaikka(osoite.getPostitoimipaikka());
+
+        return osoiteTyyppi;
     }
 
 }

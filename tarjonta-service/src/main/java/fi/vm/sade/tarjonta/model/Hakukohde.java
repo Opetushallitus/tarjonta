@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.model;
 import fi.vm.sade.generic.model.BaseEntity;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Date;
 import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -67,6 +68,8 @@ public class Hakukohde extends BaseEntity {
     @Column(name = "aloituspaikat_lkm")
     private Integer aloituspaikatLkm;
 
+    private Integer valintojenAloituspaikatLkm;
+
     @Column(name = "edellisenvuodenhakijat")
     private Integer edellisenVuodenHakijat;
 
@@ -77,6 +80,13 @@ public class Hakukohde extends BaseEntity {
     @Column(name = "tila")
     @Enumerated(EnumType.STRING)
     private TarjontaTila tila;
+
+    @Embedded
+    private Osoite liitteidenToimitusOsoite;
+
+    private String sahkoinenToimitusOsoite;
+
+    private Date liitteidenToimitusPvm;
 
     @ManyToOne 
     @NotNull
@@ -302,5 +312,36 @@ public class Hakukohde extends BaseEntity {
         this.edellisenVuodenHakijat = edellisenVuodenHakijat;
     }
 
+    public Osoite getLiitteidenToimitusOsoite() {
+        return liitteidenToimitusOsoite;
+    }
+
+    public void setLiitteidenToimitusOsoite(Osoite liitteidenToimitusOsoite) {
+        this.liitteidenToimitusOsoite = liitteidenToimitusOsoite;
+    }
+
+    public String getSahkoinenToimitusOsoite() {
+        return sahkoinenToimitusOsoite;
+    }
+
+    public void setSahkoinenToimitusOsoite(String sahkoinenToimitusOsoite) {
+        this.sahkoinenToimitusOsoite = sahkoinenToimitusOsoite;
+    }
+
+    public Date getLiitteidenToimitusPvm() {
+        return liitteidenToimitusPvm;
+    }
+
+    public void setLiitteidenToimitusPvm(Date liitteidenToimitusPvm) {
+        this.liitteidenToimitusPvm = liitteidenToimitusPvm;
+    }
+
+    public Integer getValintojenAloituspaikatLkm() {
+        return valintojenAloituspaikatLkm;
+    }
+
+    public void setValintojenAloituspaikatLkm(Integer valintojenAloituspaikatLkm) {
+        this.valintojenAloituspaikatLkm = valintojenAloituspaikatLkm;
+    }
 }
 

@@ -20,6 +20,7 @@ import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 
 /**
  *
@@ -39,7 +40,25 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
         hakukohde.setTila(EntityUtils.convertTila(from.getHakukohteenTila()));
         hakukohde.setHakukohdeKoodistoNimi(from.getHakukohdeKoodistoNimi());
         hakukohde.setValintaperusteKuvaus(EntityUtils.copyFields(from.getValintaPerusteidenKuvaukset()));
+        hakukohde.setValintojenAloituspaikatLkm(from.getValinnanAloituspaikat());
+        hakukohde.setLiitteidenToimitusPvm(from.getLiitteidenToimitusPvm());
+        hakukohde.setSahkoinenToimitusOsoite(from.getSahkoinenToimitusOsoite());
+        if (from.getLiitteidenToimitusOsoite() != null) {
+            hakukohde.setLiitteidenToimitusOsoite(convertOsoite(from.getLiitteidenToimitusOsoite()));
+        }
+
         return hakukohde;
+    }
+
+    private Osoite convertOsoite(OsoiteTyyppi osoiteTyyppi) {
+        Osoite osoite = new Osoite();
+
+        osoite.setOsoiterivi1(osoiteTyyppi.getOsoiteRivi());
+        osoite.setOsoiterivi2(osoiteTyyppi.getLisaOsoiteRivi());
+        osoite.setPostinumero(osoiteTyyppi.getPostinumero());
+        osoite.setPostitoimipaikka(osoiteTyyppi.getPostitoimipaikka());
+
+        return osoite;
     }
 
 }
