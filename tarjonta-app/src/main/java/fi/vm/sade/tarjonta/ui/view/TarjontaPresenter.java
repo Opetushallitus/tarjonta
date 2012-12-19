@@ -121,12 +121,25 @@ public class TarjontaPresenter {
 
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
+        checkHakuLiitetoimitusPvm();
         getModel().getHakukohde().getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
         if (getModel().getHakukohde().getOid() == null) {
             tarjontaAdminService.lisaaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
         } else {
             tarjontaAdminService.paivitaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
         }
+    }
+
+    private void checkHakuLiitetoimitusPvm() {
+        if (getModel().getHakukohde().isKaytaHaunPaattymisenAikaa()) {
+            if(getModel().getHakukohde().getHakuOid() != null && getModel().getHakukohde().getHakuOid().getPaattymisPvm() != null) {
+                getModel().getHakukohde().setLiitteidenToimitusPvm(getModel().getHakukohde().getHakuOid().getPaattymisPvm());
+            }
+        }
+        if(!getModel().getHakukohde().isSahkoinenToimitusSallittu()) {
+            getModel().getHakukohde().setLiitteidenSahkoinenToimitusOsoite(null);
+        }
+
     }
 
     public void setTunnisteKoodi(String hakukohdeNimiUri) {

@@ -16,6 +16,8 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private int valinnoissaKaytettavatPaikat;
     private String hakukohdeTila;
     private String hakukelpoisuusVaatimus;
+    private boolean sahkoinenToimitusSallittu;
+    private boolean kaytaHaunPaattymisenAikaa;
     private String liitteidenSahkoinenToimitusOsoite;
     private Date liitteidenToimitusPvm;
     private String osoiteRivi1;
@@ -256,5 +258,21 @@ public class HakukohdeViewModel extends BaseUIViewModel {
 
     public void setPostitoimipaikka(String postitoimipaikka) {
         this.postitoimipaikka = postitoimipaikka;
+    }
+
+    public boolean isSahkoinenToimitusSallittu() {
+        return sahkoinenToimitusSallittu;
+    }
+
+    public void setSahkoinenToimitusSallittu(boolean sahkoinenToimitusSallittu) {
+        this.sahkoinenToimitusSallittu = sahkoinenToimitusSallittu;
+    }
+
+    public boolean isKaytaHaunPaattymisenAikaa() {
+        return kaytaHaunPaattymisenAikaa;
+    }
+
+    public void setKaytaHaunPaattymisenAikaa(boolean kaytaHaunPaattymisenAikaa) {
+        this.kaytaHaunPaattymisenAikaa = kaytaHaunPaattymisenAikaa;
     }
 }

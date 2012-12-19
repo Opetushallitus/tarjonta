@@ -18,10 +18,13 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Validator;
 import com.vaadin.ui.*;
 import com.vaadin.ui.AbstractSelect.Filtering;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
+import fi.vm.sade.generic.ui.validation.ErrorMessage;
+import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
@@ -45,6 +48,8 @@ import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
+import javax.validation.constraints.NotNull;
+
 /**
  *
  * @author Tuomas Katva
@@ -59,12 +64,15 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     VerticalLayout mainLayout;
     GridLayout itemContainer;
     //Fields
+    @NotNull(message = "{validation.Hakukohde.hakukohteenNimi.notNull}")
     @PropertyId("hakukohdeNimi")
     KoodistoComponent hakukohteenNimiCombo;
     @PropertyId("tunnisteKoodi")
     TextField tunnisteKoodiText;
+    @NotNull(message = "{validation.Hakukohde.haku.notNull}")
     @PropertyId("hakuOid")
     ComboBox hakuCombo;
+    @NotNull(message = "{ShowHakukohdeViewImpl.liitaUusiKoulutusDialogTitle}")
     @PropertyId("aloitusPaikat")
     TextField aloitusPaikatText;
     @PropertyId("valinnoissaKaytettavatPaikat")
@@ -80,11 +88,11 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     private TextField liitteidenPostinumeroText;
     @PropertyId("postitoimipaikka")
     private TextField liitteidenPostitoimipaikkaText;
-
+    @PropertyId("sahkoinenToimitusSallittu")
     private CheckBox myosSahkoinenToimitusSallittuCb;
     @PropertyId("liitteidenSahkoinenToimitusOsoite")
     private TextField sahkoinenToimitusOsoiteText;
-
+    @PropertyId("kaytaHaunPaattymisenAikaa")
     private CheckBox kaytaHaunPaattymisAikaa;
     @PropertyId("liitteidenToimitusPvm")
     private DateField liitteidenToimitusPvm;
@@ -97,6 +105,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     private Form form;
     private BeanItem<HakukohdeViewModel> hakukohdeBean;
     private UiBuilder uiBuilder;
+    private ErrorMessage errorView;
 
     /*
      *
@@ -119,10 +128,23 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
 
     @Override
     public void commitForm(String tila) {
-        form.commit();
-        if (form.isValid()) {
+
+        try {
+            form.commit();
             presenter.getModel().getHakukohde().setHakukohdeKoodistoNimi(resolveHakukohdeKoodistoNimi() + " " + tila);
             presenter.saveHakuKohde(tila);
+            } catch (Validator.InvalidValueException e) {
+            errorView.addError(e);
+            presenter.showNotification(UserNotification.GENERIC_VALIDATION_FAILED);
+        }
+
+    }
+
+    private void showCommitNotification(String tila) {
+        if (tila.trim().equalsIgnoreCase("LUONNOS")) {
+            getWindow().showNotification(T("tallennettuLuonnoksena"));
+        } else if (tila.trim().equalsIgnoreCase("VALMIS")) {
+            getWindow().showNotification(T("tallennettuValmiina"));
         }
     }
 
@@ -180,18 +202,36 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         itemContainer.setSpacing(true);
         itemContainer.setMargin(false, true, true, true);
 
+        addItemToGrid("",buildErrorLayout());
         addItemToGrid("PerustiedotView.hakukohteenNimi", buildHakukode());
         addItemToGrid("PerustiedotView.hakuValinta", buildHakuCombo());
 
         addItemToGrid("PerustiedotView.aloitusPaikat", buildAloitusPaikat());
         addItemToGrid("PerustiedotView.valinnoissaKaytettavatPaikatText",buildValinnoissaKaytettavatAloitusPaikat());
-        addItemToGrid("PerustiedotView.hakukelpoisuusVaatimukset", buildHakukelpoisuusVaatimukset());
 
+        addItemToGrid("PerustiedotView.hakukelpoisuusVaatimukset", buildHakukelpoisuusVaatimukset());
+        addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite", buildLiitteidenToimitusOsoite());
+        addItemToGrid("",buildSahkoinenToimitusOsoiteCheckBox());
+        addItemToGrid("",buildSahkoinenToimitusOsoiteTextField());
+        addItemToGrid("PerustiedotView.toimitettavaMennessa", buildToimitusPvmField());
 
         itemContainer.setColumnExpandRatio(0, 0f);
         itemContainer.setColumnExpandRatio(1, 1f);
 
         return itemContainer;
+    }
+
+    private HorizontalLayout buildErrorLayout() {
+        HorizontalLayout topErrorArea = UiUtil.horizontalLayout();
+        HorizontalLayout padding = UiUtil.horizontalLayout();
+        padding.setWidth(30, UNITS_PERCENTAGE);
+        errorView = new ErrorMessage();
+        errorView.setSizeUndefined();
+
+        topErrorArea.addComponent(padding);
+        topErrorArea.addComponent(errorView);
+
+        return topErrorArea;
     }
 
     private void addItemToGrid(String captionKey, AbstractComponent component) {
@@ -202,6 +242,102 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
             itemContainer.newLine();
         }
 
+    }
+
+    private TextField buildSahkoinenToimitusOsoiteTextField() {
+        sahkoinenToimitusOsoiteText = UiUtil.textField(null);
+        sahkoinenToimitusOsoiteText.setEnabled(false);
+        return sahkoinenToimitusOsoiteText;
+    }
+
+    private VerticalLayout buildToimitusPvmField()  {
+         VerticalLayout verticalLayout = new VerticalLayout();
+
+        kaytaHaunPaattymisAikaa = UiUtil.checkbox(null,null);
+        kaytaHaunPaattymisAikaa.setImmediate(true);
+        kaytaHaunPaattymisAikaa.setCaption(I18N.getMessage("PerustiedotView.haunPaattymisenAikaCheckbox"));
+        kaytaHaunPaattymisAikaa.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                if (clickEvent.getButton().booleanValue()) {
+
+                    if (liitteidenToimitusPvm != null) {
+                        liitteidenToimitusPvm.setEnabled(false);
+                    }
+
+                }  else {
+
+                    if (liitteidenToimitusPvm != null) {
+                        liitteidenToimitusPvm.setEnabled(true);
+                    }
+
+                }
+            }
+        });
+
+        verticalLayout.addComponent(kaytaHaunPaattymisAikaa);
+
+        liitteidenToimitusPvm = UiUtil.dateField();
+
+
+        verticalLayout.addComponent(liitteidenToimitusPvm);
+
+        kaytaHaunPaattymisAikaa.setValue(true);
+        liitteidenToimitusPvm.setEnabled(false);
+
+         return verticalLayout;
+    }
+
+    private CheckBox buildSahkoinenToimitusOsoiteCheckBox() {
+            myosSahkoinenToimitusSallittuCb = UiUtil.checkbox(null,null);
+            myosSahkoinenToimitusSallittuCb.setImmediate(true);
+            myosSahkoinenToimitusSallittuCb.setCaption(I18N.getMessage("PerustiedotView.LiiteVoidaanToimittaaSahkoisestiCheckbox"));
+            myosSahkoinenToimitusSallittuCb.addListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                  if (clickEvent.getButton().booleanValue()) {
+                      if (sahkoinenToimitusOsoiteText != null) {
+                          sahkoinenToimitusOsoiteText.setEnabled(true);
+                      }
+                  } else {
+                      if (sahkoinenToimitusOsoiteText != null) {
+                          sahkoinenToimitusOsoiteText.setEnabled(false);
+                      }
+                  }
+                }
+            });
+
+            return myosSahkoinenToimitusSallittuCb;
+    }
+
+    private GridLayout buildLiitteidenToimitusOsoite() {
+        GridLayout osoiteLayout = new GridLayout(2,3);
+
+
+        liitteidenOsoiteRivi1Text =  UiUtil.textField(null);
+        liitteidenOsoiteRivi1Text.setWidth("100%");
+        liitteidenOsoiteRivi1Text.setInputPrompt(I18N.getMessage("PerustiedotView.osoiteRivi1"));
+        osoiteLayout.addComponent(liitteidenOsoiteRivi1Text,0,0,1,0);
+
+        liitteidenOsoiteRivi2Text = UiUtil.textField(null);
+        liitteidenOsoiteRivi2Text.setWidth("100%");
+        liitteidenOsoiteRivi2Text.setInputPrompt(I18N.getMessage("PerustiedotView.osoiteRivi2"));
+        osoiteLayout.addComponent(liitteidenOsoiteRivi2Text,0,1,1,1);
+
+        liitteidenPostinumeroText = UiUtil.textField(null);
+        liitteidenPostinumeroText.setInputPrompt(I18N.getMessage("PerustiedotView.postinumero"));
+        osoiteLayout.addComponent(liitteidenPostinumeroText,0,2);
+        liitteidenPostinumeroText.setSizeUndefined();
+
+        liitteidenPostitoimipaikkaText = UiUtil.textField(null);
+        liitteidenPostitoimipaikkaText.setInputPrompt(I18N.getMessage("PerustiedotView.postitoimipaikka"));
+        osoiteLayout.addComponent(liitteidenPostitoimipaikkaText,1,2);
+        liitteidenPostitoimipaikkaText.setSizeUndefined();
+
+        osoiteLayout.setColumnExpandRatio(0,2);
+        osoiteLayout.setColumnExpandRatio(1,4);
+
+        return osoiteLayout;
     }
 
     private Label buildHakukelpoisuusVaatimukset() {
