@@ -86,6 +86,7 @@ public class Hakukohde extends BaseEntity {
 
     private String sahkoinenToimitusOsoite;
 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date liitteidenToimitusPvm;
 
     @ManyToOne 
