@@ -46,7 +46,7 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.setLisatiedot(EntityUtils.copyFields(s.getLisatiedot()));
         hakukohde.setValintaPerusteidenKuvaukset(EntityUtils.copyFields(s.getValintaperusteKuvaus()));
         hakukohde.getHakukohteenKoulutusOidit().addAll(convertKoulutukses(s.getKoulutusmoduuliToteutuses()));
-
+        hakukohde.setKaytetaanHaunPaattymisenAikaa(s.isKaytetaanHaunPaattymisenAikaa());
         hakukohde.setValinnanAloituspaikat(s.getValintojenAloituspaikatLkm());
         hakukohde.setSahkoinenToimitusOsoite(s.getSahkoinenToimitusOsoite());
         hakukohde.setLiitteidenToimitusPvm(s.getLiitteidenToimitusPvm());

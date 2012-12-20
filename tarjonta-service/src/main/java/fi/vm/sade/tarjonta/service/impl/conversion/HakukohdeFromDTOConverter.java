@@ -43,6 +43,7 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
         hakukohde.setValintojenAloituspaikatLkm(from.getValinnanAloituspaikat());
         hakukohde.setLiitteidenToimitusPvm(from.getLiitteidenToimitusPvm());
         hakukohde.setSahkoinenToimitusOsoite(from.getSahkoinenToimitusOsoite());
+        hakukohde.setKaytetaanHaunPaattymisenAikaa(from.isKaytetaanHaunPaattymisenAikaa());
         if (from.getLiitteidenToimitusOsoite() != null) {
             hakukohde.setLiitteidenToimitusOsoite(convertOsoite(from.getLiitteidenToimitusOsoite()));
         }

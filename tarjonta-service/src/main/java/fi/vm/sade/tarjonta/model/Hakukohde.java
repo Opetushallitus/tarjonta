@@ -70,6 +70,8 @@ public class Hakukohde extends BaseEntity {
 
     private Integer valintojenAloituspaikatLkm;
 
+    private boolean kaytetaanHaunPaattymisenAikaa;
+
     @Column(name = "edellisenvuodenhakijat")
     private Integer edellisenVuodenHakijat;
 
@@ -343,6 +345,14 @@ public class Hakukohde extends BaseEntity {
 
     public void setValintojenAloituspaikatLkm(Integer valintojenAloituspaikatLkm) {
         this.valintojenAloituspaikatLkm = valintojenAloituspaikatLkm;
+    }
+
+    public boolean isKaytetaanHaunPaattymisenAikaa() {
+        return kaytetaanHaunPaattymisenAikaa;
+    }
+
+    public void setKaytetaanHaunPaattymisenAikaa(boolean kaytetaanHaunPaattymisenAikaa) {
+        this.kaytetaanHaunPaattymisenAikaa = kaytetaanHaunPaattymisenAikaa;
     }
 }
 
