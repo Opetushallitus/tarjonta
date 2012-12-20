@@ -121,7 +121,7 @@ public class TarjontaPresenter {
 
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
-        checkHakuLiitetoimitusPvm();
+        //checkHakuLiitetoimitusPvm();
         getModel().getHakukohde().getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
         if (getModel().getHakukohde().getOid() == null) {
             tarjontaAdminService.lisaaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
@@ -190,6 +190,7 @@ public class TarjontaPresenter {
             hakuModel.getHakuOid();
             hakuModel.getNimiFi();
             getModel().getHakukohde().setHakuOid(hakuModel);
+            this.hakuKohdePerustiedotView.setSelectedHaku(hakuView);
         }
     }
 

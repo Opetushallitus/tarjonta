@@ -75,6 +75,8 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohde.setLiitteidenToimitusPvm(hakukohdevm.getLiitteidenToimitusPvm());
         hakukohde.setValinnanAloituspaikat(hakukohdevm.getValinnoissaKaytettavatPaikat());
         hakukohde.setSahkoinenToimitusOsoite(hakukohdevm.getLiitteidenSahkoinenToimitusOsoite());
+
+        hakukohde.setKaytetaanHaunPaattymisenAikaa(hakukohdevm.isKaytaHaunPaattymisenAikaa());
         if(hakukohdevm.getOsoiteRivi1() != null) {
             OsoiteTyyppi osoite = new OsoiteTyyppi();
             osoite.setOsoiteRivi(hakukohdevm.getOsoiteRivi1());
@@ -115,7 +117,7 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohdeVM.setHakukohdeTila(hakukohdeTyyppi.getHakukohteenTila().name());
         HakuViewModel haku = mapHakuNimi(hakukohdeTyyppi.getHakukohteenHaunNimi());
         haku.setHakuOid(hakukohdeTyyppi.getHakukohteenHakuOid());
-
+        hakukohdeVM.setKaytaHaunPaattymisenAikaa(hakukohdeTyyppi.isKaytetaanHaunPaattymisenAikaa());
         hakukohdeVM.setHakuOid(haku);
         hakukohdeVM.setHakukohdeKoodistoNimi(hakukohdeTyyppi.getHakukohdeKoodistoNimi());
         hakukohdeVM.setOid(hakukohdeTyyppi.getOid());

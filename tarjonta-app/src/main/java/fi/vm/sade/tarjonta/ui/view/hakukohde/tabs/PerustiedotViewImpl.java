@@ -75,17 +75,21 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     @NotNull(message = "{ShowHakukohdeViewImpl.liitaUusiKoulutusDialogTitle}")
     @PropertyId("aloitusPaikat")
     TextField aloitusPaikatText;
+    @NotNull(message = "{validation.Hakukohde.valinnoissaKaytettavatPaikatText.notNull}")
     @PropertyId("valinnoissaKaytettavatPaikat")
     TextField valinnoissaKaytettavatPaikatText;
     @PropertyId("hakukelpoisuusVaatimus")
     Label hakuKelpoisuusVaatimuksetLabel;
 
+    @NotNull(message = "{validation.Hakukohde.osoiteRivi1.notNull}")
     @PropertyId("osoiteRivi1")
     private TextField liitteidenOsoiteRivi1Text;
     @PropertyId("osoiteRivi2")
     private TextField liitteidenOsoiteRivi2Text;
+    @NotNull(message = "{validation.Hakukohde.postinumero.notNull}")
     @PropertyId("postinumero")
     private TextField liitteidenPostinumeroText;
+    @NotNull(message = "{validation.Hakukohde.postitoimipaikka.notNull}")
     @PropertyId("postitoimipaikka")
     private TextField liitteidenPostitoimipaikkaText;
     @PropertyId("sahkoinenToimitusSallittu")
@@ -133,6 +137,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
             form.commit();
             presenter.getModel().getHakukohde().setHakukohdeKoodistoNimi(resolveHakukohdeKoodistoNimi() + " " + tila);
             presenter.saveHakuKohde(tila);
+            getWindow().showNotification(I18N.getMessage("PerustiedotView.tallennusOnnistui"));
             } catch (Validator.InvalidValueException e) {
             errorView.addError(e);
             presenter.showNotification(UserNotification.GENERIC_VALIDATION_FAILED);
@@ -218,7 +223,19 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         itemContainer.setColumnExpandRatio(0, 0f);
         itemContainer.setColumnExpandRatio(1, 1f);
 
+        checkCheckboxes();
         return itemContainer;
+    }
+
+    private void checkCheckboxes() {
+          if (this.presenter != null && this.presenter.getModel().getHakukohde() != null) {
+
+              if (presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite() != null) {
+                  myosSahkoinenToimitusSallittuCb.setValue(true);
+              } else {
+                  myosSahkoinenToimitusSallittuCb.setValue(false);
+              }
+          }
     }
 
     private HorizontalLayout buildErrorLayout() {
@@ -278,12 +295,14 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         verticalLayout.addComponent(kaytaHaunPaattymisAikaa);
 
         liitteidenToimitusPvm = UiUtil.dateField();
+        liitteidenToimitusPvm.setResolution(DateField.RESOLUTION_MIN);
+        liitteidenToimitusPvm.setDateFormat("dd.MM.yyyy hh:mm");
 
 
         verticalLayout.addComponent(liitteidenToimitusPvm);
 
         kaytaHaunPaattymisAikaa.setValue(true);
-        liitteidenToimitusPvm.setEnabled(false);
+
 
          return verticalLayout;
     }
