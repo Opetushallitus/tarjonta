@@ -48,7 +48,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
 public class UiBuilder extends UiUtil {
-    
+
     @Autowired
     WidgetFactory bean;
 
@@ -414,11 +414,11 @@ public class UiBuilder extends UiUtil {
         } else {
             button = UiUtil.buttonSmallPrimary(layout, caption);
         }
-        
+
         if (role == null) {
             return button;
         }
-        
+
         switch (role) {
             case CRUD:
                 button.setVisible(tps.userCanCreateReadUpdateAndDelete());
@@ -431,7 +431,7 @@ public class UiBuilder extends UiUtil {
         }
 
         if (!button.isVisible()) {
-            LOG.info("Insufficient user role - button with a caption '" + caption + "' was disabled. Required role " + role);
+            LOG.info("Insufficient user role - button with a caption '{}' was disabled. Required role '{}'", caption, role);
         }
 
         return button;
