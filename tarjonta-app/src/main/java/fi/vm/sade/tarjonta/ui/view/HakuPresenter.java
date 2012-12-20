@@ -314,7 +314,7 @@ public class HakuPresenter {
     public List<HakuViewModel> getSelectedhaut() {
         return selectedhaut;
     }
-    
+
     public void setSelectedHaut(List<HakuViewModel> selectedHaut) {
         this.selectedhaut = selectedHaut;
     }
@@ -337,14 +337,14 @@ public class HakuPresenter {
                 }
             }
         }
-       
+
         String notificationMessage = "<br />" + I18N.getMessage("notification.deleted.haut", removalLaskuri) + "<br />" + errorNotes;
-        
+
         selectedhaut.clear();
         hakuList.reload();
         this.hakuList.showNotification(I18N.getMessage("notification.deleted.haut.title"),
-                                        notificationMessage, 
-                                        Window.Notification.TYPE_HUMANIZED_MESSAGE);         
+                                        notificationMessage,
+                                        Window.Notification.TYPE_HUMANIZED_MESSAGE);
     }
 
     private List<HakuViewModel> retrieveHaut(ListaaHakuTyyppi req) {
@@ -371,7 +371,7 @@ public class HakuPresenter {
 
     public void closeHakuRemovalDialog() {
         this.hakuList.closeHakuRemovalDialog();
-        
+
     }
 
     public void selectHaku(HakuViewModel haku) {
@@ -380,9 +380,10 @@ public class HakuPresenter {
     }
 
     public void unSelectHaku(HakuViewModel haku) {
+        LOG.info("unSelectHaku({})", haku);
         selectedhaut.remove(haku);
         this.hakuList.toggleRemoveButton(!selectedhaut.isEmpty());
     }
-    
+
 
 }
