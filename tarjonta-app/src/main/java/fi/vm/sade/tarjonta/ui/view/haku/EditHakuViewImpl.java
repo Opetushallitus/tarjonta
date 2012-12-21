@@ -53,6 +53,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,6 +137,8 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     private CheckBox _kaytetaanSijoittelua;
     @PropertyId("kaytetaanJarjestelmanHakulomaketta")
     private CheckBox _kayteaanJarjestelmanHakulomaketta;
+    
+    @Pattern(regexp = "[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "{validation.invalid.www}")
     @PropertyId("hakuLomakeUrl")
     private TextField _muuHakulomakeUrl;
 
