@@ -39,7 +39,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * KoulutusmoduuliDAO and KoulutusmoduuliTotetusDAO were merged hence dao under test is KoulutusDAO. TOOD: merge tests too.
+ * KoulutusmoduuliDAO and KoulutusmoduuliTotetusDAO were merged hence dao under
+ * test is KoulutusDAO. TOOD: merge tests too.
  */
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -47,33 +48,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class KoulutusmoduuliToteutusDAOTest {
 
     private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliToteutusDAOTest.class);
-
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
     @Autowired
     private TarjontaFixtures fixtures;
-
     private Koulutusmoduuli defaultModuuli;
-
     private KoulutusmoduuliToteutus defaultToteutus;
-
     @Autowired
     private TarjontaDatabasePrinter dbPrinter;
-
     private static final Date ALKAMIS_PVM = new Date();
-
     private static final String TARJOAJA_1_OID = "http://organisaatio1";
-
     private static final String TARJOAJA_2_OID = "http://organisaatio2";
-
     private static final String TOTEUTUS_1_NIMI = "Toteutus 1 Nimi";
-
     private static final String TOTEUTUS_1_OID = "Toteutus 1 OID";
-
     private static final String MAKSULLISUUS = "5 EUR/month";
 
     @Before
@@ -247,7 +236,11 @@ public class KoulutusmoduuliToteutusDAOTest {
         KoulutusmoduuliToteutus t1 = fixtures.createTutkintoOhjelmaToteutus();
         Calendar cal1 = Calendar.getInstance();
         cal1.set(Calendar.YEAR, 2015);
-        cal1.set(Calendar.MONTH, 4);
+        cal1.set(Calendar.DAY_OF_MONTH, 1);
+        cal1.set(Calendar.MONTH, 4); //may -> 1.5.2015
+
+        System.out.println("cal1.getTime()" + cal1.getTime());
+
         t1.setKoulutuksenAlkamisPvm(cal1.getTime());
         t1.setTarjoaja(tarjoaja1);
         t1.setKoulutusmoduuli(m1);
@@ -257,7 +250,8 @@ public class KoulutusmoduuliToteutusDAOTest {
         KoulutusmoduuliToteutus t2 = fixtures.createTutkintoOhjelmaToteutus();
         Calendar cal2 = Calendar.getInstance();
         cal2.set(Calendar.YEAR, 2016);
-        cal2.set(Calendar.MONTH, 5);
+        cal2.set(Calendar.DAY_OF_MONTH, 1);
+        cal2.set(Calendar.MONTH, 5); //june
         t2.setKoulutuksenAlkamisPvm(cal2.getTime());
         t2.setTarjoaja(tarjoaja2);
         t2.setKoulutusmoduuli(m2);
@@ -265,28 +259,28 @@ public class KoulutusmoduuliToteutusDAOTest {
 
         //Searching with list containing tarjoaja1 but not tarjoaja2 and nimi1
 
-        List<String> criteriaList = Arrays.asList(new String[] {tarjoaja1, tarjoaja3});
+        List<String> criteriaList = Arrays.asList(new String[]{tarjoaja1, tarjoaja3});
         List<KoulutusmoduuliToteutus> result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1, -1, new ArrayList<Integer>());
 
         assertEquals(1, result.size());
 
         //Searching with list containing tarjoaja2 but not tarjoaja1 and nimi2
 
-        criteriaList = Arrays.asList(new String[] {tarjoaja2, tarjoaja3});
+        criteriaList = Arrays.asList(new String[]{tarjoaja2, tarjoaja3});
         result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi2, -1, new ArrayList<Integer>());
 
         assertEquals(1, result.size());
 
         //Searching with list not containing any matching tarjoaja and nimi1
 
-        criteriaList = Arrays.asList(new String[] {tarjoaja3});
+        criteriaList = Arrays.asList(new String[]{tarjoaja3});
         result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi1, -1, new ArrayList<Integer>());
 
         assertEquals(0, result.size());
 
         //Searching with list containing tarjoaja1 but not tarjoaja2 and nimi2
 
-        criteriaList = Arrays.asList(new String[] {tarjoaja1, tarjoaja3});
+        criteriaList = Arrays.asList(new String[]{tarjoaja1, tarjoaja3});
         result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, nimi2, -1, new ArrayList<Integer>());
 
         assertEquals(0, result.size());
@@ -303,14 +297,14 @@ public class KoulutusmoduuliToteutusDAOTest {
 
         criteriaList = new ArrayList<String>();
         result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, -1, new ArrayList<Integer>());
-        
+
         //Searching with start year 2015
 
         criteriaList = new ArrayList<String>();
         result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, 2015, new ArrayList<Integer>());
-        
+
         assertEquals(1, result.size());
-        
+
         //Searching with months 1 - 6    
         criteriaList = new ArrayList<String>();
         List<Integer> months = new ArrayList<Integer>();
@@ -320,17 +314,15 @@ public class KoulutusmoduuliToteutusDAOTest {
         months.add(4);
         months.add(5);
         months.add(6);
+
         result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, -1, months);
-        
         assertEquals(2, result.size());
-        
+
         //Searching with months 1 - 6  and year 2016  
         criteriaList = new ArrayList<String>();
         result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, 2016, months);
-        
+
         assertEquals(1, result.size());
-        
+
     }
-
 }
-
