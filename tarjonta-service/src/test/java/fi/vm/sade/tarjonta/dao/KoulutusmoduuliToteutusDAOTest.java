@@ -239,8 +239,6 @@ public class KoulutusmoduuliToteutusDAOTest {
         cal1.set(Calendar.DAY_OF_MONTH, 1);
         cal1.set(Calendar.MONTH, 4); //may -> 1.5.2015
 
-        System.out.println("cal1.getTime()" + cal1.getTime());
-
         t1.setKoulutuksenAlkamisPvm(cal1.getTime());
         t1.setTarjoaja(tarjoaja1);
         t1.setKoulutusmoduuli(m1);
