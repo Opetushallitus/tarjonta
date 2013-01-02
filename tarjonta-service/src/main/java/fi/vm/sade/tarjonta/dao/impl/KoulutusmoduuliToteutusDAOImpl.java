@@ -60,12 +60,16 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
 
     @Override
     public KoulutusmoduuliToteutus findKomotoByOid(String oid) {
-        Query query = getEntityManager().createQuery(""
-            + "SELECT k FROM KoulutusmoduuliToteutus k "
-            + "LEFT JOIN FETCH k.koulutusmoduuli "
-            + "where k.oid=:oid");
-        query.setParameter("oid", oid);
-        return (KoulutusmoduuliToteutus) query.getSingleResult();
+         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+         QHakukohde qHakukohde = QHakukohde.hakukohde;
+         QKoulutusmoduuli qKomo = QKoulutusmoduuli.koulutusmoduuli;
+
+
+        return  from(qHakukohde, qKomoto,qKomo)
+                .leftJoin(qKomoto.koulutusmoduuli,qKomo)
+                .leftJoin(qKomoto.hakukohdes,qHakukohde)
+                .where(qKomoto.oid.eq(oid.trim()))
+                .singleResult(qKomoto);
 
     }
 

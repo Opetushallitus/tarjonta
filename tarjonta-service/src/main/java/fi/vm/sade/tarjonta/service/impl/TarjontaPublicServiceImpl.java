@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
@@ -332,6 +333,17 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus fromKoulutus) {
         log.info("in convert ");
         LueKoulutusVastausTyyppi toKoulutus = new LueKoulutusVastausTyyppi();
+
+        if (fromKoulutus.getHakukohdes() != null) {
+            for (Hakukohde hakukohde:fromKoulutus.getHakukohdes()) {
+                HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi = new HakukohdeKoosteTyyppi();
+                hakukohdeKoosteTyyppi.setOid(hakukohde.getOid());
+                hakukohdeKoosteTyyppi.setKoodistoNimi(hakukohde.getHakukohdeKoodistoNimi());
+                hakukohdeKoosteTyyppi.setNimi(hakukohde.getHakukohdeNimi());
+                hakukohdeKoosteTyyppi.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.fromValue(hakukohde.getTila().name()));
+                toKoulutus.getHakukohteet().add(hakukohdeKoosteTyyppi);
+            }
+        }
 
         toKoulutus.setOid(fromKoulutus.getOid());
         GregorianCalendar greg = new GregorianCalendar();

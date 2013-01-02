@@ -314,7 +314,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         months.add(6);
 
         result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, -1, months);
-        assertEquals(2, result.size());
+        assertEquals(5, result.size());
 
         //Searching with months 1 - 6  and year 2016  
         criteriaList = new ArrayList<String>();
