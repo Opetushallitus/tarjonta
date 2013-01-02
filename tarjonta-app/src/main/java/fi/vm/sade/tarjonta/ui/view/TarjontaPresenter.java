@@ -144,15 +144,17 @@ public class TarjontaPresenter {
 
     public void setTunnisteKoodi(String hakukohdeNimiUri) {
         // TODO add search from koodisto
-
+        String koodiUri = TarjontaUIHelper.splitKoodiURI(hakukohdeNimiUri)[0];
         List<KoodiType> koodit = koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder
-                .latestAcceptedKoodiByUri(hakukohdeNimiUri));
+                .latestAcceptedKoodiByUri(koodiUri));
+
         KoodiType foundKoodi = null;
         for (KoodiType koodi : koodit) {
             foundKoodi = koodi;
         }
         if (foundKoodi != null) {
-            String koodi = foundKoodi.getMetadata().get(0).getNimi();
+            String koodi = foundKoodi.getKoodiArvo();
+
             hakuKohdePerustiedotView.setTunnisteKoodi(koodi);
         }
     }
@@ -191,6 +193,10 @@ public class TarjontaPresenter {
             hakuModel.getNimiFi();
             getModel().getHakukohde().setHakuOid(hakuModel);
             this.hakuKohdePerustiedotView.setSelectedHaku(hakuView);
+
+        }
+        if (getModel().getHakukohde() != null && getModel().getHakukohde().getHakukohdeNimi() != null) {
+            setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
         }
     }
 
