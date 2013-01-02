@@ -524,6 +524,7 @@
         <xs:sequence>
             <xs:element name="Oid" type="xs:string"></xs:element>
             <xs:element name="Nimi" type="xs:string"></xs:element>
+            <xs:element name="KoodistoNimi" type="xs:string"></xs:element>
             <xs:element name="Tila" type="tns:TarjontaTila"></xs:element>
         </xs:sequence>
     </xs:complexType>
