@@ -208,6 +208,12 @@ public class TarjontaPresenter {
         getRootView().showMainView();
     }
 
+    public void reloadAndShowMainDefaultView() {
+        this.getHakukohdeListView().reload();
+        getReloadKoulutusListData();
+        getRootView().showMainView();
+    }
+
     //Tuomas Katva : two following methods break the presenter pattern consider moving everything except service call to view
   public CreationDialog<KoulutusOidNameViewModel> createHakukohdeCreationDialogWithKomotoOids(List<String> komotoOids) {
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
@@ -269,7 +275,18 @@ public class TarjontaPresenter {
         return result;
     }
 
+    public void removeHakukohdeFromKoulutus(String hakukohdeOid) {
+
+        LisaaKoulutusHakukohteelleTyyppi req = new LisaaKoulutusHakukohteelleTyyppi();
+        req.setLisaa(false);
+        req.setHakukohdeOid(hakukohdeOid);
+        req.getKoulutusOids().add(getModel().getKoulutusPerustiedotModel().getOid());
+        tarjontaAdminService.lisaaTaiPoistaKoulutuksiaHakukohteelle(req);
+        showShowKoulutusView(getModel().getKoulutusPerustiedotModel().getOid());
+    }
+
     public void removeKoulutusFromHakukohde(KoulutusOidNameViewModel koulutus) {
+        int hakukohdeKoulutusCount = getModel().getHakukohde().getKoulukses().size();
         List<String> poistettavatKoulutukses = new ArrayList<String>();
         poistettavatKoulutukses.add(koulutus.getKoulutusOid());
         LisaaKoulutusHakukohteelleTyyppi req = new LisaaKoulutusHakukohteelleTyyppi();
@@ -277,7 +294,13 @@ public class TarjontaPresenter {
         req.getKoulutusOids().addAll(poistettavatKoulutukses);
         req.setLisaa(false);
         tarjontaAdminService.lisaaTaiPoistaKoulutuksiaHakukohteelle(req);
-        showHakukohdeViewImpl(getModel().getHakukohde().getOid());
+        //If removing last koulutus from hakukohde then hakukohde is not valid
+        //anymore, show main view instead
+        if (hakukohdeKoulutusCount > 1) {
+            showHakukohdeViewImpl(getModel().getHakukohde().getOid());
+        } else {
+            this.reloadAndShowMainDefaultView();
+        }
     }
 
     public void addKoulutuksesToHakukohde(Collection<KoulutusOidNameViewModel> koulutukses) {
@@ -433,6 +456,17 @@ public class TarjontaPresenter {
             //Empty previous Koodisto data from the comboboxes.
             koulutus.getKoulutusohjelmat().clear();
             koulutus.getKoulutuskoodit().clear();
+            if (lueKoulutus.getHakukohteet() != null) {
+               koulutus.getKoulutuksenHakukohteet().clear();
+               for (HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi: lueKoulutus.getHakukohteet()) {
+                   SimpleHakukohdeViewModel hakukohdeViewModel = new SimpleHakukohdeViewModel();
+                   hakukohdeViewModel.setHakukohdeNimi(hakukohdeKoosteTyyppi.getKoodistoNimi());
+                   hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohdeKoosteTyyppi.getNimi());
+                   hakukohdeViewModel.setHakukohdeOid(hakukohdeKoosteTyyppi.getOid());
+                   hakukohdeViewModel.setHakukohdeTila(hakukohdeKoosteTyyppi.getTila().value());
+                   koulutus.getKoulutuksenHakukohteet().add(hakukohdeViewModel);
+               }
+            }
 
             //Add selected data to the comboboxes.
             if (koulutus.getKoulutusohjelmaModel() != null && koulutus.getKoulutusohjelmaModel().getKoodistoUri() != null) {
@@ -899,6 +933,7 @@ public class TarjontaPresenter {
         LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
         kysely.setOid(komotoOid);
         LueKoulutusVastausTyyppi vastaus = this.tarjontaPublicService.lueKoulutus(kysely);
+
         return vastaus;
     }
 

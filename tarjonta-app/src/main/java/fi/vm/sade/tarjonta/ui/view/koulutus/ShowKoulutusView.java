@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -38,8 +40,10 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
+import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.Oph;
@@ -51,6 +55,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Show collected information about koulutus.
@@ -228,10 +235,45 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     }
 
     private void buildKoulutuksenHakukohteet(VerticalLayout layout) {
-        // TODO get number of application targets
-        int numberOfApplicationTargets = 0;
 
-        layout.addComponent(buildHeaderLayout(T("hakukohteet", numberOfApplicationTargets), T(CommonTranslationKeys.MUOKKAA), null, false));
+        int numberOfApplicationTargets = _presenter.getModel().getKoulutusPerustiedotModel().getKoulutuksenHakukohteet().size();
+
+        layout.addComponent(buildHeaderLayout(T("hakukohteet", numberOfApplicationTargets), T("luoUusiHakukohdeBtn"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+                @Override
+                public void buttonClick(ClickEvent event) {
+                   List<String> koulutus = new ArrayList<String>();
+                   koulutus.add(_presenter.getModel().getKoulutusPerustiedotModel().getOid());
+                   _presenter.showHakukohdeEditView(koulutus,null);
+                }
+            }
+                , false));
+
+        CategoryTreeView categoryTree = new CategoryTreeView();
+        categoryTree.setHeight("100px");
+        categoryTree.setContainerDataSource(createHakukohdelistContainer(_presenter.getModel().getKoulutusPerustiedotModel().getKoulutuksenHakukohteet()));
+        String[] visibleColumns = {"nimiBtn","poistaBtn"};
+        categoryTree.setVisibleColumns(visibleColumns);
+        for (Object item:categoryTree.getItemIds()) {
+            categoryTree.setChildrenAllowed(item,false);
+        }
+        layout.addComponent(categoryTree);
+
+    }
+
+    private Container createHakukohdelistContainer(List<SimpleHakukohdeViewModel> hakukohdes) {
+        BeanItemContainer<ShowKoulutusHakukohdeRow> hakukohdeRows = new BeanItemContainer<ShowKoulutusHakukohdeRow>(ShowKoulutusHakukohdeRow.class);
+        hakukohdeRows.addAll(getKoulutusHakukohdeRows(hakukohdes));
+        return hakukohdeRows;
+    }
+
+    private List<ShowKoulutusHakukohdeRow> getKoulutusHakukohdeRows(List<SimpleHakukohdeViewModel> hakukohdes) {
+        List<ShowKoulutusHakukohdeRow> rows = new ArrayList<ShowKoulutusHakukohdeRow>();
+        for (SimpleHakukohdeViewModel hakukohdeViewModel:hakukohdes) {
+            ShowKoulutusHakukohdeRow row = new ShowKoulutusHakukohdeRow(hakukohdeViewModel);
+            rows.add(row);
+        }
+        return rows;
     }
 
     private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, boolean enable) {
@@ -265,7 +307,8 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                _presenter.showMainDefaultView();
+
+                _presenter.reloadAndShowMainDefaultView();
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 

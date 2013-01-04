@@ -23,10 +23,7 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
+import fi.vm.sade.tarjonta.ui.model.*;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
@@ -166,6 +163,8 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
         return rows;
     }
 
+
+
     private void buildMiddleContentLayout(VerticalLayout layout) {
 
         layout.addComponent(buildHeaderLayout(T("perustiedot"), T(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
@@ -254,7 +253,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                tarjontaPresenterPresenter.showMainDefaultView();
+                tarjontaPresenterPresenter.reloadAndShowMainDefaultView();
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 
@@ -289,6 +288,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
                     public void buttonClick(Button.ClickEvent clickEvent) {
                         getWindow().removeWindow(confirmationWindow);
                         tarjontaPresenterPresenter.removeSelectedHakukohde();
+
 
                     }
                 },

@@ -53,6 +53,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     private Set<KoulutusohjelmaModel> koulutusohjelmat;
     private TarjontaTila tila;
     private List<MonikielinenTekstiTyyppi.Teksti> toteutuksenNimet;
+    private List<SimpleHakukohdeViewModel> koulutuksenHakukohteet;
     
     /*
      * cache maps
@@ -324,5 +325,12 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
      */
     public void setCacheKomo(Map<Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo) {
         this.cacheKomo = cacheKomo;
+    }
+
+    public List<SimpleHakukohdeViewModel> getKoulutuksenHakukohteet() {
+        if (koulutuksenHakukohteet == null) {
+            koulutuksenHakukohteet = new ArrayList<SimpleHakukohdeViewModel>();
+        }
+        return koulutuksenHakukohteet;
     }
 }
