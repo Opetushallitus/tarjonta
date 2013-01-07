@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
+
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.KoodiService;
@@ -101,6 +102,7 @@ public class TarjontaPresenter {
     private ListHakukohdeView _hakukohdeListView;
     private PerustiedotView hakuKohdePerustiedotView;
     private ShowHakukohdeViewImpl hakukohdeView;
+    private ShowKoulutusView showKoulutusView;
     private SearchResultsView searchResultsView;
     private I18NHelper i18n = new I18NHelper(this);
     @Autowired(required = true)
@@ -299,7 +301,7 @@ public class TarjontaPresenter {
         if (hakukohdeKoulutusCount > 1) {
             showHakukohdeViewImpl(getModel().getHakukohde().getOid());
         } else {
-            this.reloadAndShowMainDefaultView();
+            showMainDefaultView();
         }
     }
 
@@ -403,8 +405,8 @@ public class TarjontaPresenter {
                 break;
         }
 
-        ShowKoulutusView view = new ShowKoulutusView(title, null);
-        getRootView().changeView(view);
+        showKoulutusView = new ShowKoulutusView(title, null);
+        getRootView().changeView(showKoulutusView);
     }
 
     public void showShowKoulutusView(String koulutusOid) {
@@ -804,6 +806,10 @@ public class TarjontaPresenter {
             }
         }
         return kOids;
+    }
+
+    public void showRemoveHakukohdeFromKoulutusDialog(String hakukohdeOid, String hakukohdeNimi) {
+        showKoulutusView.showHakukohdeRemovalDialog(hakukohdeOid,hakukohdeNimi);
     }
 
     /**

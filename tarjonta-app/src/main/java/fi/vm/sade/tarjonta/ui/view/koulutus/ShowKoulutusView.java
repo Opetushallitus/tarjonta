@@ -15,20 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
+
 import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.VerticalSplitPanel;
 
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
@@ -258,6 +249,26 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             categoryTree.setChildrenAllowed(item,false);
         }
         layout.addComponent(categoryTree);
+
+    }
+
+    public void showHakukohdeRemovalDialog(final String hakukohdeOid, final String hakukohdeNimi) {
+        final Window hakukohdeRemovalDialog = new Window();
+        RemovalConfirmationDialog removalConfirmationDialog = new RemovalConfirmationDialog(T("removeHakukohdeFromKoulutusQ"),hakukohdeNimi,T("jatkaBtn"),T("peruutaBtn"),new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                getWindow().removeWindow(hakukohdeRemovalDialog);
+                _presenter.removeHakukohdeFromKoulutus(hakukohdeOid);
+
+            }},new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                getWindow().removeWindow(hakukohdeRemovalDialog);
+            } });
+        hakukohdeRemovalDialog.setContent(removalConfirmationDialog);
+        hakukohdeRemovalDialog.setModal(true);
+        hakukohdeRemovalDialog.center();
+        getWindow().addWindow(hakukohdeRemovalDialog);
 
     }
 

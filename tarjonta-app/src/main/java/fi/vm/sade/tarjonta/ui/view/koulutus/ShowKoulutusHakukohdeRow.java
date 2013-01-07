@@ -17,9 +17,12 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Window;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
+import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +39,16 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
     private I18NHelper i18n = new I18NHelper(this);
     private Button nimiBtn;
     private Button poistaBtn;
+    private I18NHelper i18NHelper;
 
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
 
     private static final Logger LOG = LoggerFactory.getLogger(ShowKoulutusHakukohdeRow.class);
 
-    public ShowKoulutusHakukohdeRow(SimpleHakukohdeViewModel model) {
+
+  public ShowKoulutusHakukohdeRow(SimpleHakukohdeViewModel model) {
+      super();
         hakukohdeViewModel = model;
         buildButtons();
     }
@@ -58,12 +64,18 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
         poistaBtn = UiUtil.buttonLink(null, i18n.getMessage("poistaBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                 tarjontaPresenter.removeHakukohdeFromKoulutus(hakukohdeViewModel.getHakukohdeOid());
+            tarjontaPresenter.showRemoveHakukohdeFromKoulutusDialog(hakukohdeViewModel.getHakukohdeOid(),hakukohdeViewModel.getHakukohdeNimi());
             }
         });
 
     }
 
+    protected String T(String key) {
+        if (i18NHelper == null) {
+        i18NHelper = new I18NHelper(this);
+        }
+        return i18NHelper.getMessage(key);
+    }
 
     public Button getNimiBtn() {
         return nimiBtn;
