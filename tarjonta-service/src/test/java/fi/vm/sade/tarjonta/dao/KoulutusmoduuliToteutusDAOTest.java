@@ -63,9 +63,14 @@ public class KoulutusmoduuliToteutusDAOTest {
     private static final String TOTEUTUS_1_NIMI = "Toteutus 1 Nimi";
     private static final String TOTEUTUS_1_OID = "Toteutus 1 OID";
     private static final String MAKSULLISUUS = "5 EUR/month";
-    private static final Calendar KOULUTUS_ALK_PAIVA = Calendar.getInstance(); 
+    private static final Calendar KOULUTUS_ALK_PAIVA = Calendar.getInstance();
     private static final int MAX_ROWS = 3;
-    
+    private static final String tarjoaja1 = "0.0.0.0.01";
+    private static final String nimi1 = "eka toteutus";
+    private static final String tarjoaja2 = "0.0.0.0.02";
+    private static final String nimi2 = "toka toteutus";
+    private static final String tarjoaja3 = "0.0.0.0.03";
+
     @Before
     public void setUp() {
         KOULUTUS_ALK_PAIVA.set(Calendar.YEAR, 2012);
@@ -87,6 +92,38 @@ public class KoulutusmoduuliToteutusDAOTest {
         defaultToteutus.addOpetuskieli(new KoodistoUri("http://kielet/fi"));
         defaultToteutus.addOpetusmuoto(new KoodistoUri("http://opetusmuodot/lahiopetus"));
         koulutusmoduuliToteutusDAO.insert(defaultToteutus);
+
+        Koulutusmoduuli m1 = fixtures.createTutkintoOhjelma();
+        m1.setNimi(TarjontaFixtures.createText(nimi1, null, null));
+        m1 = koulutusmoduuliDAO.insert(m1);
+
+        Koulutusmoduuli m2 = fixtures.createTutkintoOhjelma();
+        m2.setNimi(TarjontaFixtures.createText(nimi2, null, null));
+        m2 = koulutusmoduuliDAO.insert(m2);
+
+
+        //KOMOTO1
+        KoulutusmoduuliToteutus t1 = fixtures.createTutkintoOhjelmaToteutus();
+        Calendar cal1 = Calendar.getInstance();
+        cal1.set(Calendar.YEAR, 2015);
+        cal1.set(Calendar.DAY_OF_MONTH, 1);
+        cal1.set(Calendar.MONTH, 4); //may -> 1.5.2015
+
+        t1.setKoulutuksenAlkamisPvm(cal1.getTime());
+        t1.setTarjoaja(tarjoaja1);
+        t1.setKoulutusmoduuli(m1);
+        koulutusmoduuliToteutusDAO.insert(t1);
+
+        //KOMOTO2
+        KoulutusmoduuliToteutus t2 = fixtures.createTutkintoOhjelmaToteutus();
+        Calendar cal2 = Calendar.getInstance();
+        cal2.set(Calendar.YEAR, 2016);
+        cal2.set(Calendar.DAY_OF_MONTH, 1);
+        cal2.set(Calendar.MONTH, 5); //june
+        t2.setKoulutuksenAlkamisPvm(cal2.getTime());
+        t2.setTarjoaja(tarjoaja2);
+        t2.setKoulutusmoduuli(m2);
+        koulutusmoduuliToteutusDAO.insert(t2);
     }
 
     @Test
@@ -215,46 +252,6 @@ public class KoulutusmoduuliToteutusDAOTest {
     @Test
     public void testFindByCriteria() {
 
-        String tarjoaja1 = "0.0.0.0.01";
-        String nimi1 = "eka toteutus";
-
-        String tarjoaja2 = "0.0.0.0.02";
-        String nimi2 = "toka toteutus";
-
-        String tarjoaja3 = "0.0.0.0.03";
-
-        Koulutusmoduuli m1 = fixtures.createTutkintoOhjelma();
-        m1.setNimi(TarjontaFixtures.createText(nimi1, null, null));
-        m1 = koulutusmoduuliDAO.insert(m1);
-
-        Koulutusmoduuli m2 = fixtures.createTutkintoOhjelma();
-        m2.setNimi(TarjontaFixtures.createText(nimi2, null, null));
-        m2 = koulutusmoduuliDAO.insert(m2);
-
-
-        //KOMOTO1
-        KoulutusmoduuliToteutus t1 = fixtures.createTutkintoOhjelmaToteutus();
-        Calendar cal1 = Calendar.getInstance();
-        cal1.set(Calendar.YEAR, 2015);
-        cal1.set(Calendar.DAY_OF_MONTH, 1);
-        cal1.set(Calendar.MONTH, 4); //may -> 1.5.2015
-
-        t1.setKoulutuksenAlkamisPvm(cal1.getTime());
-        t1.setTarjoaja(tarjoaja1);
-        t1.setKoulutusmoduuli(m1);
-        koulutusmoduuliToteutusDAO.insert(t1);
-
-        //KOMOTO2
-        KoulutusmoduuliToteutus t2 = fixtures.createTutkintoOhjelmaToteutus();
-        Calendar cal2 = Calendar.getInstance();
-        cal2.set(Calendar.YEAR, 2016);
-        cal2.set(Calendar.DAY_OF_MONTH, 1);
-        cal2.set(Calendar.MONTH, 5); //june
-        t2.setKoulutuksenAlkamisPvm(cal2.getTime());
-        t2.setTarjoaja(tarjoaja2);
-        t2.setKoulutusmoduuli(m2);
-        koulutusmoduuliToteutusDAO.insert(t2);
-
         //Searching with list containing tarjoaja1 but not tarjoaja2 and nimi1
 
         List<String> criteriaList = Arrays.asList(new String[]{tarjoaja1, tarjoaja3});
@@ -304,15 +301,18 @@ public class KoulutusmoduuliToteutusDAOTest {
 
         assertEquals(1, result.size());
 
+    }
+
+    public void findByCriteriaMonthList() {
         //Searching with months 4 - 6 and 12    
-        criteriaList = new ArrayList<String>();
+        List<String> criteriaList = new ArrayList<String>();
         List<Integer> months = new ArrayList<Integer>();
         months.add(4);
         months.add(5);
-        months.add(6);
+        months.add(6); //no data
         months.add(12);
-        
-        result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, -1, months);
+
+        List<KoulutusmoduuliToteutus> result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, -1, months);
         assertEquals(MAX_ROWS, result.size());
 
         //Searching with months 1 - 6  and year 2016  
@@ -320,6 +320,5 @@ public class KoulutusmoduuliToteutusDAOTest {
         result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, 2016, months);
 
         assertEquals(1, result.size());
-
     }
 }
