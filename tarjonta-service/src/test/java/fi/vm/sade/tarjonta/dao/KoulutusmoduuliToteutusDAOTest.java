@@ -51,33 +51,35 @@ import org.springframework.transaction.annotation.Transactional;
 public class KoulutusmoduuliToteutusDAOTest {
 
     private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliToteutusDAOTest.class);
+    @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+    @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
+    @Autowired
     private TarjontaFixtures fixtures;
     private Koulutusmoduuli defaultModuuli;
     private KoulutusmoduuliToteutus defaultToteutus;
-   
     private static final String TARJOAJA_1_OID = "http://organisaatio1";
     private static final String TARJOAJA_2_OID = "http://organisaatio2";
     private static final String TOTEUTUS_1_NIMI = "Toteutus 1 Nimi";
     private static final String TOTEUTUS_1_OID = "Toteutus 1 OID";
     private static final String MAKSULLISUUS = "5 EUR/month";
     private static final Calendar KOULUTUS_ALK_PAIVA = Calendar.getInstance();
-    private static final int MAX_ROWS = 3;
+    private static final int MAX_INSERTED_ROWS = 4;
     private static final String tarjoaja1 = "0.0.0.0.01";
     private static final String nimi1 = "eka toteutus";
     private static final String tarjoaja2 = "0.0.0.0.02";
     private static final String nimi2 = "toka toteutus";
     private static final String tarjoaja3 = "0.0.0.0.03";
-    @Autowired
-    ApplicationContext ctx;
+    private static final String OID_T1 = "9.9.9.9.1";
+    private KoulutusmoduuliToteutus t1;
+    private static final String OID_T2 = "9.9.9.9.2";
+    private KoulutusmoduuliToteutus t2;
+    private static final String OID_T3 = "9.9.9.9.3";
+    private KoulutusmoduuliToteutus t3;
 
     @Before
     public void setUp() {
-        koulutusmoduuliToteutusDAO = ctx.getAutowireCapableBeanFactory().createBean(KoulutusmoduuliToteutusDAOImpl.class);
-        koulutusmoduuliDAO = ctx.getAutowireCapableBeanFactory().createBean(KoulutusmoduuliDAOImpl.class);
-        fixtures = ctx.getAutowireCapableBeanFactory().createBean(TarjontaFixtures.class);
-
         KOULUTUS_ALK_PAIVA.set(Calendar.YEAR, 2012);
         KOULUTUS_ALK_PAIVA.set(Calendar.DAY_OF_MONTH, 10);
         KOULUTUS_ALK_PAIVA.set(Calendar.MONTH, Calendar.DECEMBER);
@@ -108,7 +110,8 @@ public class KoulutusmoduuliToteutusDAOTest {
 
 
         //KOMOTO1
-        KoulutusmoduuliToteutus t1 = fixtures.createTutkintoOhjelmaToteutus();
+        t1 = fixtures.createTutkintoOhjelmaToteutus();
+        t1.setOid(OID_T1);
         Calendar cal1 = Calendar.getInstance();
         cal1.set(Calendar.YEAR, 2015);
         cal1.set(Calendar.DAY_OF_MONTH, 1);
@@ -120,7 +123,8 @@ public class KoulutusmoduuliToteutusDAOTest {
         koulutusmoduuliToteutusDAO.insert(t1);
 
         //KOMOTO2
-        KoulutusmoduuliToteutus t2 = fixtures.createTutkintoOhjelmaToteutus();
+        t2 = fixtures.createTutkintoOhjelmaToteutus();
+        t2.setOid(OID_T2);
         Calendar cal2 = Calendar.getInstance();
         cal2.set(Calendar.YEAR, 2016);
         cal2.set(Calendar.DAY_OF_MONTH, 1);
@@ -129,6 +133,16 @@ public class KoulutusmoduuliToteutusDAOTest {
         t2.setTarjoaja(tarjoaja2);
         t2.setKoulutusmoduuli(m2);
         koulutusmoduuliToteutusDAO.insert(t2);
+
+
+        t3 = fixtures.createTutkintoOhjelmaToteutus();
+        t3.setOid(OID_T3);
+        Koulutusmoduuli m = koulutusmoduuliDAO.insert(fixtures.createTutkintoOhjelma());
+        t3.setKoulutusmoduuli(m);
+        t3.addYhteyshenkilo(fixtures.createYhteyshenkilo("12345"));
+
+        koulutusmoduuliToteutusDAO.insert(t3);
+
     }
 
     @Test
@@ -143,15 +157,20 @@ public class KoulutusmoduuliToteutusDAOTest {
 
     @Test
     public void testDeletingToteutusDoesNotDeleteModuuli() {
+        final Long oid = 1234567l;
 
-        koulutusmoduuliToteutusDAO.remove(defaultToteutus);
-        assertNotNull(koulutusmoduuliDAO.read(defaultModuuli.getId()));
+        KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
+        t.setOid(oid.toString());
+        Koulutusmoduuli m = koulutusmoduuliDAO.insert(fixtures.createTutkintoOhjelma());
+        t.setKoulutusmoduuli(m);
+        t.addYhteyshenkilo(fixtures.createYhteyshenkilo("12345"));
 
+        koulutusmoduuliToteutusDAO.remove(t);
+        assertNull(koulutusmoduuliDAO.read(oid));
     }
 
     @Test
     public void testSameYhteyshenkiloCannotBeAddTwice() {
-
         KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
         t.addYhteyshenkilo(new Yhteyshenkilo("12345", "fi"));
         t.addYhteyshenkilo(new Yhteyshenkilo("12345", "fi"));
@@ -188,56 +207,31 @@ public class KoulutusmoduuliToteutusDAOTest {
 
     @Test
     public void testAddYhteyshenkilo() {
-
-        KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
-        Koulutusmoduuli m = koulutusmoduuliDAO.insert(fixtures.createTutkintoOhjelma());
-        t.setKoulutusmoduuli(m);
-        t.addYhteyshenkilo(fixtures.createYhteyshenkilo("12345"));
-
-        koulutusmoduuliToteutusDAO.insert(t);
-
-        KoulutusmoduuliToteutus loaded = (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.read(t.getId());
+        KoulutusmoduuliToteutus loaded = (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.read(t3.getId());
         assertEquals(1, loaded.getYhteyshenkilos().size());
-
     }
 
     @Test
     public void testAddLinkkis() {
-
-        KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
-        Koulutusmoduuli m = koulutusmoduuliDAO.insert(fixtures.createTutkintoOhjelma());
-        t.setKoulutusmoduuli(m);
-
-        // no language
-        t.addLinkki(new WebLinkki(WebLinkki.LinkkiTyyppi.MULTIMEDIA, null, "http://link1"));
+        t2.addLinkki(new WebLinkki(WebLinkki.LinkkiTyyppi.MULTIMEDIA, null, "http://link1"));
         // identical, first will get lost
-        t.addLinkki(new WebLinkki(WebLinkki.LinkkiTyyppi.MULTIMEDIA, null, "http://link1"));
+        t2.addLinkki(new WebLinkki(WebLinkki.LinkkiTyyppi.MULTIMEDIA, null, "http://link1"));
 
         // two links of same type and url but different language
-        t.addLinkki(new WebLinkki("customtype1", "en", "http://link2"));
-        t.addLinkki(new WebLinkki("customtype1", "fi", "http://link2"));
-
-        assertEquals(3, t.getLinkkis().size());
-
-        koulutusmoduuliToteutusDAO.insert(t);
-
-        KoulutusmoduuliToteutus loaded = (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.read(t.getId());
+        t2.addLinkki(new WebLinkki("customtype1", "en", "http://link2"));
+        t2.addLinkki(new WebLinkki("customtype1", "fi", "http://link2"));
+        
+        assertEquals(3, t2.getLinkkis().size());
+        koulutusmoduuliToteutusDAO.insert(t2);
+        KoulutusmoduuliToteutus loaded = (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.read(t2.getId());
         assertEquals(3, loaded.getLinkkis().size());
 
     }
 
     @Test
     public void testSetLinkkis() {
-
-        KoulutusmoduuliToteutus t = fixtures.createTutkintoOhjelmaToteutus();
-        Koulutusmoduuli m = koulutusmoduuliDAO.insert(fixtures.createTutkintoOhjelma());
-        t.setKoulutusmoduuli(m);
-
-        t.addLinkki(new WebLinkki(WebLinkki.LinkkiTyyppi.MULTIMEDIA, null, "http://link1"));
-
-        koulutusmoduuliToteutusDAO.insert(t);
-
-        KoulutusmoduuliToteutus loaded = (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.read(t.getId());
+        KoulutusmoduuliToteutus loaded = (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.read(t1.getId());
+        loaded.addLinkki(new WebLinkki(WebLinkki.LinkkiTyyppi.MULTIMEDIA, null, "http://link1"));
         assertEquals(1, loaded.getLinkkis().size());
 
         Set<WebLinkki> newSet = new HashSet<WebLinkki>();
@@ -247,7 +241,7 @@ public class KoulutusmoduuliToteutusDAOTest {
 
         koulutusmoduuliToteutusDAO.update(loaded);
 
-        loaded = (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.read(t.getId());
+        loaded = (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.read(t1.getId());
         assertEquals(2, loaded.getLinkkis().size());
 
         // todo: check orphans are deleted (link1)
@@ -298,7 +292,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         criteriaList = new ArrayList<String>();
         result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, -1, new ArrayList<Integer>());
 
-        assertEquals(MAX_ROWS, result.size());
+        assertEquals(MAX_INSERTED_ROWS, result.size());
 
         //Searching with start year 2015
         criteriaList = new ArrayList<String>();
@@ -319,7 +313,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         months.add(12);
 
         List<KoulutusmoduuliToteutus> result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, -1, months);
-        assertEquals(MAX_ROWS, result.size());
+        assertEquals(3, result.size());
 
         //Searching with months 1 - 6  and year 2016  
         criteriaList = new ArrayList<String>();
