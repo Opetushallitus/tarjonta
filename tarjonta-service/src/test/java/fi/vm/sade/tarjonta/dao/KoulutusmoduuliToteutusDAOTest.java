@@ -303,6 +303,7 @@ public class KoulutusmoduuliToteutusDAOTest {
 
     }
 
+    @Test
     public void findByCriteriaMonthList() {
         //Searching with months 4 - 6 and 12    
         List<String> criteriaList = new ArrayList<String>();
