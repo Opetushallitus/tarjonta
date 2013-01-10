@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.tarjonta.TarjontaDatabasePrinter;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
+import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
 
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,16 +51,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class KoulutusmoduuliToteutusDAOTest {
 
     private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliToteutusDAOTest.class);
-    @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-    @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
-    @Autowired
     private TarjontaFixtures fixtures;
     private Koulutusmoduuli defaultModuuli;
     private KoulutusmoduuliToteutus defaultToteutus;
-    @Autowired
-    private TarjontaDatabasePrinter dbPrinter;
+   
     private static final String TARJOAJA_1_OID = "http://organisaatio1";
     private static final String TARJOAJA_2_OID = "http://organisaatio2";
     private static final String TOTEUTUS_1_NIMI = "Toteutus 1 Nimi";
@@ -70,9 +69,15 @@ public class KoulutusmoduuliToteutusDAOTest {
     private static final String tarjoaja2 = "0.0.0.0.02";
     private static final String nimi2 = "toka toteutus";
     private static final String tarjoaja3 = "0.0.0.0.03";
+    @Autowired
+    ApplicationContext ctx;
 
     @Before
     public void setUp() {
+        koulutusmoduuliToteutusDAO = ctx.getAutowireCapableBeanFactory().createBean(KoulutusmoduuliToteutusDAOImpl.class);
+        koulutusmoduuliDAO = ctx.getAutowireCapableBeanFactory().createBean(KoulutusmoduuliDAOImpl.class);
+        fixtures = ctx.getAutowireCapableBeanFactory().createBean(TarjontaFixtures.class);
+
         KOULUTUS_ALK_PAIVA.set(Calendar.YEAR, 2012);
         KOULUTUS_ALK_PAIVA.set(Calendar.DAY_OF_MONTH, 10);
         KOULUTUS_ALK_PAIVA.set(Calendar.MONTH, Calendar.DECEMBER);
@@ -294,8 +299,8 @@ public class KoulutusmoduuliToteutusDAOTest {
         result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, -1, new ArrayList<Integer>());
 
         assertEquals(MAX_ROWS, result.size());
-        //Searching with start year 2015
 
+        //Searching with start year 2015
         criteriaList = new ArrayList<String>();
         result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, 2015, new ArrayList<Integer>());
 
