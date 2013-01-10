@@ -94,6 +94,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
+    public void tallennaLiitteitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenLiitteen", targetNamespace = "") List<HakukohdeLiiteTyyppi> hakukohteenLiitteen) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) {
         Hakukohde hakuk = conversionService.convert(hakukohde, Hakukohde.class);
         Haku haku = hakuDAO.findByOid(hakukohde.getHakukohteenHakuOid());
