@@ -4,8 +4,8 @@
 -->
 <LearningOpportunityDownloadData
     xmlns="http://publication.tarjonta.sade.vm.fi/types"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://publication.tarjonta.sade.vm.fi/types learningServiceCommon.xsd">
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xsi:schemaLocation='http://publication.tarjonta.sade.vm.fi/types  ../../main/resources/wsdl/learningServiceCommon.xsd'>
 
     <!-- ========================================================================================= -->
     <!-- Koulutusmoduuli, ensihoidon ko, 1508                                                      -->

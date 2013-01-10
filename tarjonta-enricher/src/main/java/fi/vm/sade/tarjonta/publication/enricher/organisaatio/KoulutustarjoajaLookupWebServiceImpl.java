@@ -23,16 +23,18 @@ import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoCodeValueEnrich
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Lookup service implementation using Koulutustarjoaja SOAP service as data source.
+ * Lookup service implementation using Koulutustarjoaja SOAP service as data
+ * source.
  *
  * @author Jukka Raanamo
  */
 public class KoulutustarjoajaLookupWebServiceImpl implements KoulutustarjoajaLookupService {
 
+    @Autowired(required = true)
     private KoulutustarjoajaPublicService tarjoajaService;
-
     private static final Logger log = LoggerFactory.getLogger(KoodistoCodeValueEnricher.class);
 
     @Override
@@ -40,10 +42,11 @@ public class KoulutustarjoajaLookupWebServiceImpl implements KoulutustarjoajaLoo
 
         FindByOrganizationOidRequestType request = new FindByOrganizationOidRequestType();
         request.setOid(oid);
+        
+        log.debug("tarjoajaService : " + tarjoajaService);
+        
         FindByOrganizationOidResponseType response = tarjoajaService.findByOrganizationOid(request);
         return response.getReturn();
 
     }
-
 }
-

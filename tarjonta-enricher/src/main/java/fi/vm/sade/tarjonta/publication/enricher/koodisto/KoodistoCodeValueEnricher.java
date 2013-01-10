@@ -21,41 +21,32 @@ import org.xml.sax.SAXException;
 
 import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupService.KoodiValue;
 import fi.vm.sade.tarjonta.publication.utils.StringUtils;
+import fi.vm.sade.tarjonta.publication.utils.VersionedUri;
 import java.util.HashSet;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Handles elements that are of type: {http://publication.tarjonta.sade.vm.fi/types}/CodeValueType
- * by injecting any missing labels by koodi value - if any. Any existing labels are left intact.
+ * Handles elements that are of type:
+ * {http://publication.tarjonta.sade.vm.fi/types}/CodeValueType by injecting any
+ * missing labels by koodi value - if any. Any existing labels are left intact.
  *
  * @author Jukka Raanamo
  */
 public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
 
     private static final Logger log = LoggerFactory.getLogger(KoodistoCodeValueEnricher.class);
-
     private static final String TAG_CODE = "Code";
-
     private static final String TAG_SCHEME = "scheme";
-
     private static final String TAG_VERSION = "version";
-
     private static final String TAG_LABEL = "Label";
-
     private static final String TAG_LANG = "lang";
-
     private static final String SCHEME_KOODISTO = "Koodisto";
-
     private String koodiUri;
-
     private Integer koodiVersion;
-
     private String currentTag;
-
     private Set<String> existingLabels = new HashSet<String>();
-
 
     @Override
     public void reset() {
@@ -67,7 +58,7 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
 
     @Override
     public int startElement(String localName, Attributes attributes)
-        throws SAXException {
+            throws SAXException {
 
         currentTag = localName;
 
@@ -139,13 +130,14 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
             return;
         }
 
-        KoodiValue value = lookupKoodi(koodiUri, koodiVersion);
+        final VersionedUri parse = VersionedUri.parse(koodiUri);
+        KoodiValue value = lookupKoodi(parse.getUri(), parse.getVersio());
 
         if (value != null) {
             writeLabel(value);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("no koodi value found, skipping. uri: " + koodiUri + ", version: " + koodiVersion);
+                log.debug("no koodi value found, skipping. uri: '" + parse.getUri() + "', version: " + parse.getVersio());
             }
         }
 
@@ -168,6 +160,4 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
         }
 
     }
-
 }
-

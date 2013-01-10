@@ -33,11 +33,8 @@ import fi.vm.sade.tarjonta.publication.types.DescriptionType;
 public class KoulutustarjoajaEnricher extends ElementEnricher {
 
     private KoulutustarjoajaLookupService tarjoajaService;
-
     private static final Logger log = LoggerFactory.getLogger(KoulutustarjoajaEnricher.class);
-
     private String currentTag;
-
     private String currentOid;
 
     @Override
@@ -90,7 +87,9 @@ public class KoulutustarjoajaEnricher extends ElementEnricher {
         }
 
         try {
+            log.debug("search by provider oid: '{}'", currentOid);
             KoulutustarjoajaTyyppi tarjoaja = tarjoajaService.lookupKoulutustarjoajaByOrganisaatioOid(currentOid);
+
             if (tarjoaja == null) {
                 log.error("no provider found, skipping element, oid: " + currentOid);
             } else {
@@ -98,11 +97,9 @@ public class KoulutustarjoajaEnricher extends ElementEnricher {
                 writeDescriptions(tarjoaja);
             }
         } catch (Exception e) {
-            log.error("error while looking up provider, skipping element, oid: " + currentOid, e);
+            log.error("error while looking up provider, skipping element, oid: " + currentOid, e.getMessage());
         }
-
     }
-
 
     private void writeName(KoulutustarjoajaTyyppi tarjoaja) throws SAXException {
 
@@ -113,7 +110,7 @@ public class KoulutustarjoajaEnricher extends ElementEnricher {
     }
 
     private void writeName(String lang, String value) throws SAXException {
-
+        log.debug("provider name : " + value);
         parent.writeStartElement(Tags.NAME, Tags.LANG, lang);
         parent.writeCharacters(value);
         parent.writeEndElement(Tags.NAME);
@@ -145,8 +142,9 @@ public class KoulutustarjoajaEnricher extends ElementEnricher {
     }
 
     /**
-     * Translates enumeration used in Tarjoaja -service to constants know by the Publication API. If
-     * there is no proper mapping, input parameters value as string is returned instead.
+     * Translates enumeration used in Tarjoaja -service to constants know by the
+     * Publication API. If there is no proper mapping, input parameters value as
+     * string is returned instead.
      */
     private String translateMetaname(MetatietoAvainTyyppi metaKey) {
 
@@ -169,18 +167,10 @@ public class KoulutustarjoajaEnricher extends ElementEnricher {
     private interface Tags {
 
         String OID_REF = "OidRef";
-
         String DESCRIPTION = "Description";
-
         String TYPE = "type";
-
         String TEXT = "Text";
-
         String LANG = "lang";
-
         String NAME = "Name";
     }
-
-
 }
-

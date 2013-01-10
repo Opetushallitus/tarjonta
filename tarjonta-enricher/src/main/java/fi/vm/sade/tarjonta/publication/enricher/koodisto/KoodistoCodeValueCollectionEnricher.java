@@ -21,10 +21,12 @@ import org.xml.sax.SAXException;
 
 import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupService.KoodiValue;
 import fi.vm.sade.tarjonta.publication.utils.StringUtils;
+import fi.vm.sade.tarjonta.publication.utils.VersionedUri;
 import java.util.HashSet;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * Handles collections of Koodisto code -elements that all share the same scheme.
@@ -118,8 +120,8 @@ public class KoodistoCodeValueCollectionEnricher extends AbstractKoodistoEnriche
     }
 
     private void maybeWriteLabels() throws SAXException {
-
-        KoodiValue value = lookupKoodi(koodiUri, koodiVersion);
+        final VersionedUri parse = VersionedUri.parse(koodiUri);
+        KoodiValue value = lookupKoodi(parse.getUri(), parse.getVersio());
 
         if (value != null) {
             writeLabel(value);

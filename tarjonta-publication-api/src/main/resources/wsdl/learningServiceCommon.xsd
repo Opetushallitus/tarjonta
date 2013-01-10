@@ -649,15 +649,15 @@
                         </xs:annotation>
                         <xs:complexType>
                             <xs:sequence>
-
+                              
                                 <xs:element name="EducationClassification"
                                             type="tns:CodeValueType"
                                             minOccurs="0"
                                             maxOccurs="1">
                                     <xs:annotation>
-                                        <xs:documentation xml:lang="fi">
-                                            Koulutusluokitus. Tyypillisesti Tilastokeskuksen hallinnoima koodisto.
-                                            Katso: http://www.stat.fi/meta/luokitukset/koulutus/001-2010/index.html.
+                                        <xs:documentation xml:lang="fi">                                
+                                            Koulutusluokitus (tutkintokoodi). Tilastokeskuksen koulutusluokituksen 6-numeroinen koodi.
+                                            Kts. lisatietoa sivulta www.stat.fi/meta/luokitukset/_linkki/kol2011_vuodet.xls                            
                                         </xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
@@ -668,7 +668,8 @@
                                             maxOccurs="1">
                                     <xs:annotation>
                                         <xs:documentation xml:lang="fi">
-                                            Koulutusala. Tunnettuja koodistoja mm. Opetushallinnon koulutusalaluokitus (2010):
+                                            Koulutusala. Tilastokeskuksen koulutusluokituksen 1-numeroinen koodi.
+                                            Tunnettuja koodistoja mm. Opetushallinnon koulutusalaluokitus (2010):
                                             http://www.tilastokeskus.fi/meta/luokitukset/koulutus_oh/001-2002-09-27/index.html.
                                         </xs:documentation>
                                     </xs:annotation>
@@ -680,7 +681,8 @@
                                             maxOccurs="1">
                                     <xs:annotation>
                                         <xs:documentation xml:lang="fi">
-                                            Koulutusaste. Tunnettuja koodistoja mm. Opetushallinnon koulutusasteluokitus:
+                                            Koulutusaste. Opetushallinnon koulutusluokituksen 2-numeroinen koodi.
+                                            Tunnettuja koodistoja mm. Opetushallinnon koulutusasteluokitus:
                                             http://www.minedu.fi/export/sites/default/OPM/Koulutus/koulutusjaerjestelmae/liitteet/koulutusluokitukset.pdf
                                         </xs:documentation>
                                     </xs:annotation>
@@ -692,7 +694,8 @@
                                             maxOccurs="1">
                                     <xs:annotation>
                                         <xs:documentation xml:lang="fi">
-                                            Opintoala. Tunnettuja koodistoja mm. Opetushallinnon opintoalaluokitus:
+                                            Opintoala. Opetushallinnon koulutusluokituksen 3-numeroinen koodi.
+                                            Tunnettuja koodistoja mm. Opetushallinnon opintoalaluokitus:
                                             http://www.minedu.fi/export/sites/default/OPM/Koulutus/koulutusjaerjestelmae/liitteet/koulutusluokitukset.pdf
                                         </xs:documentation>
                                     </xs:annotation>
@@ -703,8 +706,11 @@
                                             minOccurs="0"
                                             maxOccurs="1">
                                     <xs:annotation>
-                                        <xs:documentation>
-
+                                        <xs:documentation  xml:lang="fi">
+                                            European Qualifications Framework.
+                                            Lisätietoa:
+                                            http://ec.europa.eu/education/lifelong-learning-policy/eqf_en.htm
+                                            http://en.wikipedia.org/wiki/European_Qualifications_Framework                                            
                                         </xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
@@ -712,8 +718,25 @@
                                 <xs:element name="NqfClassification"
                                             type="tns:CodeValueType"
                                             minOccurs="0"
-                                            maxOccurs="1"/>
-
+                                            maxOccurs="1">
+                                    <xs:annotation>
+                                        <xs:documentation  xml:lang="fi">
+                                            National Qualifications Framework.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                
+                                <xs:element name="LearningOpportunityClassification"
+                                            type="tns:CodeValueType"
+                                            minOccurs="0"
+                                            maxOccurs="1">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="fi">
+                                            Koulutusohjelma. Opetushallinnon koulutusluokituksen 4-numeroinen koodi.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
@@ -847,7 +870,7 @@
                 </xs:annotation>
             </xs:element>
 
-                        <!-- todo: lisää vapaa kuvaus tai muuta kokonaan tekstiksi -->
+            <!-- todo: lisää vapaa kuvaus tai muuta kokonaan tekstiksi -->
             <xs:element name="Prerequisite"
                         type="tns:CodeValueType"
                         minOccurs="0"

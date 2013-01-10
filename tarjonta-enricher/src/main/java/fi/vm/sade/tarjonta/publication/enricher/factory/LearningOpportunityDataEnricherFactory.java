@@ -36,7 +36,7 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
     @Autowired(required = true)
     private KoodistoLookupService koodistoService;
 
-    @Autowired
+    @Autowired(required = true)
     private KoulutustarjoajaLookupService tarjoajaService;
 
     private boolean failOnKoodistoError = false;

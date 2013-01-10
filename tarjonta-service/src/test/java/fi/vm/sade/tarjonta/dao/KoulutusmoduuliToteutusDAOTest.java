@@ -58,15 +58,19 @@ public class KoulutusmoduuliToteutusDAOTest {
     private KoulutusmoduuliToteutus defaultToteutus;
     @Autowired
     private TarjontaDatabasePrinter dbPrinter;
-    private static final Date ALKAMIS_PVM = new Date();
     private static final String TARJOAJA_1_OID = "http://organisaatio1";
     private static final String TARJOAJA_2_OID = "http://organisaatio2";
     private static final String TOTEUTUS_1_NIMI = "Toteutus 1 Nimi";
     private static final String TOTEUTUS_1_OID = "Toteutus 1 OID";
     private static final String MAKSULLISUUS = "5 EUR/month";
-
+    private static final Calendar KOULUTUS_ALK_PAIVA = Calendar.getInstance(); 
+    private static final int MAX_ROWS = 3;
+    
     @Before
     public void setUp() {
+        KOULUTUS_ALK_PAIVA.set(Calendar.YEAR, 2012);
+        KOULUTUS_ALK_PAIVA.set(Calendar.DAY_OF_MONTH, 10);
+        KOULUTUS_ALK_PAIVA.set(Calendar.MONTH, Calendar.DECEMBER);
 
         defaultModuuli = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         defaultModuuli.setOid("http://someoid");
@@ -78,25 +82,21 @@ public class KoulutusmoduuliToteutusDAOTest {
 
         defaultToteutus = new KoulutusmoduuliToteutus(defaultModuuli);
         defaultToteutus.setOid(TOTEUTUS_1_OID);
-        defaultToteutus.setKoulutuksenAlkamisPvm(ALKAMIS_PVM);
+        defaultToteutus.setKoulutuksenAlkamisPvm(KOULUTUS_ALK_PAIVA.getTime());
         defaultToteutus.setMaksullisuus(MAKSULLISUUS);
         defaultToteutus.addOpetuskieli(new KoodistoUri("http://kielet/fi"));
         defaultToteutus.addOpetusmuoto(new KoodistoUri("http://opetusmuodot/lahiopetus"));
         koulutusmoduuliToteutusDAO.insert(defaultToteutus);
-
     }
 
     @Test
     public void testSavedTutkintoOhjelmaCanBeFoundById() {
-
         KoulutusmoduuliToteutus loaded = koulutusmoduuliToteutusDAO.read(defaultToteutus.getId());
         assertNotNull(loaded);
         assertEquals(TOTEUTUS_1_OID, loaded.getOid());
-        assertEquals(ALKAMIS_PVM, loaded.getKoulutuksenAlkamisPvm());
+        assertEquals(KOULUTUS_ALK_PAIVA.getTime(), loaded.getKoulutuksenAlkamisPvm());
         assertEquals(MAKSULLISUUS, loaded.getMaksullisuus());
         assertEquals(defaultModuuli.getOid(), loaded.getKoulutusmoduuli().getOid());
-
-
     }
 
     @Test
@@ -296,6 +296,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         criteriaList = new ArrayList<String>();
         result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, -1, new ArrayList<Integer>());
 
+        assertEquals(MAX_ROWS, result.size());
         //Searching with start year 2015
 
         criteriaList = new ArrayList<String>();
@@ -303,18 +304,16 @@ public class KoulutusmoduuliToteutusDAOTest {
 
         assertEquals(1, result.size());
 
-        //Searching with months 1 - 6    
+        //Searching with months 4 - 6 and 12    
         criteriaList = new ArrayList<String>();
         List<Integer> months = new ArrayList<Integer>();
-        months.add(1);
-        months.add(2);
-        months.add(3);
         months.add(4);
         months.add(5);
         months.add(6);
-
+        months.add(12);
+        
         result = koulutusmoduuliToteutusDAO.findByCriteria(criteriaList, null, -1, months);
-        assertEquals(5, result.size());
+        assertEquals(MAX_ROWS, result.size());
 
         //Searching with months 1 - 6  and year 2016  
         criteriaList = new ArrayList<String>();
