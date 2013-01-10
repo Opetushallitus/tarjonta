@@ -42,9 +42,7 @@ public class KoulutustarjoajaLookupWebServiceImpl implements KoulutustarjoajaLoo
 
         FindByOrganizationOidRequestType request = new FindByOrganizationOidRequestType();
         request.setOid(oid);
-        
-        log.debug("tarjoajaService : " + tarjoajaService);
-        
+
         FindByOrganizationOidResponseType response = tarjoajaService.findByOrganizationOid(request);
         return response.getReturn();
 

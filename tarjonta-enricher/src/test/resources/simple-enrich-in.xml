@@ -43,23 +43,33 @@
             <EducationClassification>
                 <Code scheme="Koodisto" version="2010">371101</Code>
                 <Label lang="fi">koulutusluokitus-fi</Label>
+                <Label lang="en">koulutusluokitus-en</Label>
+                <Label lang="sv">koulutusluokitus-sv</Label>
             </EducationClassification>
 
             <!-- koulutusala -->
             <EducationDomain>
                 <Code scheme="Koodisto" version="2002">uri:koulutusala</Code>
                 <Label lang="fi">koulutusala-fi</Label>
+                <Label lang="en">koulutusala-en</Label>
+                <Label lang="sv">koulutusala-sv</Label>
             </EducationDomain>
 
             <!-- koulutusaste -->
             <EducationDegree>
                 <Code scheme="Koodisto" version="2002">uri:koulutusaste</Code>
                 <Label>non-localized-value</Label>
+                <Label lang="fi">koulutusaste-fi</Label>
+                <Label lang="en">koulutusaste-en</Label>
+                <Label lang="sv">koulutusaste-sv</Label>
             </EducationDegree>
 
             <!-- opintoala -->
             <StudyDomain>
                 <Code scheme="Koodisto" version="2002">uri:opintoala</Code>
+                <Label lang="fi">opintoala-fi</Label>
+                <Label lang="en">opintoala-en</Label>
+                <Label lang="sv">opintoala-sv</Label>
             </StudyDomain>
 
             <!-- EQF -->
@@ -254,7 +264,33 @@
             <OidRef>1.2.3.4.5</OidRef>
         </OrganizationRef>
 
-        
+        <InstitutionInfo>
+            <Name>Helsingin sosiaali- ja terveysalan oppilaitos, Laakson koulutusyksikkö</Name>
+            <AcademicCalendar>Lorem Lipsum</AcademicCalendar>
+            <AcademicAuthorities>Lorem Lipsum</AcademicAuthorities>
+            <AdmissionProcedures>Lorem Lipsum</AdmissionProcedures>
+            <GeneralDescription>Lorem Lipsum</GeneralDescription>
+            <MainUniversityRequlations>Lorem Lipsum</MainUniversityRequlations>
+        </InstitutionInfo>
+
+        <GeneralInformation>
+            <CostOfLiving>Lorem Lipsum</CostOfLiving>
+            <Meals>Lorem Lipsum</Meals>
+            <MedicalFacilities>Lorem Lipsum</MedicalFacilities>
+            <FacilitiesForStudentsWithSpecialNeeds>Lorem Lipsum</FacilitiesForStudentsWithSpecialNeeds>
+            <Insurance>Lorem Lipsum</Insurance>
+            <FinancialSupport>Lorem Lipsum</FinancialSupport>
+            <StudentAffairsOffice>Lorem Lipsum</StudentAffairsOffice>
+            <StudyFacilities>Lorem Lipsum</StudyFacilities>
+            <InternationalProgrammes>Lorem Lipsum</InternationalProgrammes>
+            <MobileStudents>Lorem Lipsum</MobileStudents>
+            <LanguageCourses>Lorem Lipsum</LanguageCourses>
+            <Internships>Lorem Lipsum</Internships>
+            <SportsFacilities>Lorem Lipsum</SportsFacilities>
+            <ExtraMuralAndLeisureFacilities>Lorem Lipsum</ExtraMuralAndLeisureFacilities>
+            <StudentAssociations>Lorem Lipsum</StudentAssociations>
+        </GeneralInformation>
+
     </LearningOpportunityProvider>
 
     <!-- ========================================================================================= -->

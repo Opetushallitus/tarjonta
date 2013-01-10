@@ -40,20 +40,21 @@
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
                   address="http://itest-virkailija.oph.ware.fi/cxf/koodiService"/>
 
+    <bean id="tarjoajaService" class="fi.vm.sade.tarjonta.publication.enricher.mock.KoulutustarjoajaPublicServiceMock"/>
 
+    
     <!-- wrapper service that uses koodisto webservice for content -->
     <bean id="koodistoLookupService" class="fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupWebServiceImpl"/>
 
     <!-- wrapper service that uses tarjoaja webservice for content -->
-    <bean id="tarjoajaLookupService" class="fi.vm.sade.tarjonta.publication.enricher.organisaatio.KoulutustarjoajaLookupWebServiceImpl"/>
-
+    <bean id="tarjoajaLookupService" class="fi.vm.sade.tarjonta.publication.enricher.organisaatio.KoulutustarjoajaLookupWebServiceImpl">  
+    </bean>
+    
+ 
     <!-- factory that knows how to create enricher for publication data -->
     <bean id="xmlEnricher" class="fi.vm.sade.tarjonta.publication.enricher.factory.LearningOpportunityDataEnricherFactory">
         <property name="failOnKoodistoError" value="false"/>
     </bean>
 
-
-
-
-
+   
 </beans>
