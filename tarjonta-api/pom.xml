@@ -26,7 +26,7 @@
     </parent>
     <artifactId>tarjonta-api</artifactId>
     <name>Tarjonta :: API</name>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <!--    <packaging>jar</packaging>-->
 
     <properties>
@@ -109,26 +109,26 @@
            
             <!-- make felix osgi bundle -->
 
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Bundle-Description>${project.description}</Bundle-Description>
-                        <Export-Package>
-                            fi.vm.sade.tarjonta.service.types,
-                            fi.vm.sade.tarjonta.service.types.tarjonta,
-                            fi.vm.sade.tarjonta.service
-                        </Export-Package>
-                        <Import-Package>
-                            ${felix.Import-Package}
-                        </Import-Package>
-                        <Include-Resource>META-INF=target/classes/META-INF</Include-Resource>
-                    </instructions>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.felix</groupId>-->
+                <!--<artifactId>maven-bundle-plugin</artifactId>-->
+                <!--<extensions>true</extensions>-->
+                <!--<configuration>-->
+                    <!--<instructions>-->
+                        <!--<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>-->
+                        <!--<Bundle-Description>${project.description}</Bundle-Description>-->
+                        <!--<Export-Package>-->
+                            <!--fi.vm.sade.tarjonta.service.types,-->
+                            <!--fi.vm.sade.tarjonta.service.types.tarjonta,-->
+                            <!--fi.vm.sade.tarjonta.service-->
+                        <!--</Export-Package>-->
+                        <!--<Import-Package>-->
+                            <!--${felix.Import-Package}-->
+                        <!--</Import-Package>-->
+                        <!--<Include-Resource>META-INF=target/classes/META-INF</Include-Resource>-->
+                    <!--</instructions>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
 
             <plugin>
                 <groupId>org.apache.cxf</groupId>

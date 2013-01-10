@@ -11,6 +11,11 @@ import javax.jws.WebParam;
 public class SijoitteluTarjontaPublicServiceMock implements TarjontaPublicService {
 
     @Override
+    public HaeHakukohteenLiitteetVastausTyyppi lueHakukohteenLiitteet(@WebParam(partName = "parameters", name = "haeHakukohteenLiitteetKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") HaeHakukohteenLiitteetKyselyTyyppi parameters) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public HaeKoulutuksetVastausTyyppi haeKoulutukset(@WebParam(partName = "kysely", name = "haeKoulutuksetKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") HaeKoulutuksetKyselyTyyppi kysely) {
         return null;
     }

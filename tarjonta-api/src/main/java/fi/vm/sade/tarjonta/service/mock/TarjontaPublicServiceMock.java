@@ -21,6 +21,11 @@ public class TarjontaPublicServiceMock implements TarjontaPublicService {
     }
 
     @Override
+    public HaeHakukohteenLiitteetVastausTyyppi lueHakukohteenLiitteet(@WebParam(partName = "parameters", name = "haeHakukohteenLiitteetKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") HaeHakukohteenLiitteetKyselyTyyppi parameters) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public ListHakuVastausTyyppi listHaku(ListaaHakuTyyppi parameters) {
         ListHakuVastausTyyppi lvt = new ListHakuVastausTyyppi();
         lvt.getResponse().addAll(haut.values());

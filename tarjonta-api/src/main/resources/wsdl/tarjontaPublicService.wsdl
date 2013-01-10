@@ -78,7 +78,13 @@
         <wsdl:part element="ns1:LueHakukohdeKoulutuksineenVastaus" name="parameters"/>
     </wsdl:message>
 
+    <wsdl:message name="lueHakukohteenLiitteetKysely">
+        <wsdl:part element="ns1:haeHakukohteenLiitteetKysely" name="parameters"/>
+    </wsdl:message>
 
+    <wsdl:message name="lueHakukohteenLiitteetVastaus">
+        <wsdl:part element="ns1:haeHakukohteenLiitteetVastausTyyppi" name="parameters"/>
+    </wsdl:message>
 
     <wsdl:portType name="TarjontaPublicService">
 
@@ -174,6 +180,12 @@
             </wsdl:output>
         </wsdl:operation>
         
+        <wsdl:operation name="lueHakukohteenLiitteet">
+            <wsdl:documentation>Hakee hakukohteen liitteiden tiedot Hakukohdteen OID:lla</wsdl:documentation>
+            <wsdl:input message="tns:lueHakukohteenLiitteetKysely" name="lueHakukohteenLiitteetKysely"></wsdl:input>
+            <wsdl:output message="tns:lueHakukohteenLiitteetVastaus" name="lueHakukohteenLiitteetVastaus"></wsdl:output>
+        </wsdl:operation>
+        
 
 
     </wsdl:portType>
@@ -258,6 +270,16 @@
                 <soap:body use="literal"/>
             </wsdl:input>
             <wsdl:output name="lueHakukohdeKoulutuksineenVastaus">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="lueHakukohteenLiitteet">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/lueHakukohde" style="document"/>
+            <wsdl:input name="lueHakukohteenLiitteetKysely">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="lueHakukohteenLiitteetVastaus">
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>

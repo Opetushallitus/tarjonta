@@ -192,6 +192,17 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="HakukohdeLiiteTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="liitteenId" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="liitteenTyyppi" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="liitteenKuvaus" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="toimitettavaMennessa" type="xs:date"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="liitteenToimitusOsoite" type="tns:OsoiteTyyppi"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="sahkoinenToimitusOsoite" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="OsoiteTyyppi">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="osoiteRivi" type="xs:string">

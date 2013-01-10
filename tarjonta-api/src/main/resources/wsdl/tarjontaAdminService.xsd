@@ -43,6 +43,9 @@
     
     <xs:element name="lisaaKoulutusHakukohteelle" type="tns:LisaaKoulutusHakukohteelleTyyppi"/>
     <xs:element name="lisaaKoulutusHakukohteelleVastaus" type="tns:LisaaKoulutusHakukohteelleVastausTyyppi"/>
+    
+    <xs:element name="tallennaLiitteitaHakukohteelle" type="tns:TallennaLiitteitaHakukohteelleTyyppi"/>
+    <xs:element name="tallennaLiitteitaHakukohteelleVastaus" type="tns:TallennaLiitteitaHakukohteelleVastausTyyppi"/>
 
     <xs:element name="emptyString" type="xs:string"/>
 
@@ -171,6 +174,17 @@
         <xs:sequence>
             <xs:element name="koulutusmoduuliVastaus" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TallennaLiitteitaHakukohteelleTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeOid" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="hakukohteenLiitteen" type="tarjonta:HakukohdeLiiteTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="TallennaLiitteitaHakukohteelleVastausTyyppi">
+        <xs:sequence/>
     </xs:complexType>
 
 </xs:schema>
