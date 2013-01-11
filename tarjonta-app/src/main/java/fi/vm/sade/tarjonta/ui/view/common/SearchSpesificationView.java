@@ -134,7 +134,11 @@ public class SearchSpesificationView extends OphHorizontalLayout {
 //        cbKaudenTarkenne.setWidth("200px");
 
         //TODO: no application logic, only for Christmas demo
-        cbVuosi = UiUtil.comboBox(this, T(I18N_VUOSI), new String[]{"2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022"});
+        cbVuosi = UiUtil.comboBox(null, T(I18N_VUOSI), new String[]{T(I18N_VUOSI + I18N_PROMPT), "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022"});
+        cbVuosi.setNullSelectionAllowed(true);
+        cbVuosi.setNullSelectionItemId(T(I18N_VUOSI + I18N_PROMPT));
+        //cbVuosi.setInputPrompt(T(I18N_VUOSI + I18N_PROMPT));
+        addComponent(cbVuosi);
         cbVuosi.setSizeUndefined();
         cbVuosi.setWidth("200px");
 
@@ -188,7 +192,9 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     private void doSearch() {
         LOG.info("doSearch()");
         model.setKoulutuksenAlkamiskausi(kcKausi.getValue() != null ? (String) kcKausi.getValue() : null);
-        model.setKoulutuksenAlkamisvuosi(cbVuosi.getValue() != null ? Integer.parseInt((String) cbVuosi.getValue()) : -1);
+        model.setKoulutuksenAlkamisvuosi(cbVuosi.getValue() != null 
+                                        && !cbVuosi.getNullSelectionItemId().equals(cbVuosi.getValue()) 
+                                        ? Integer.parseInt((String) cbVuosi.getValue()) : -1);
         fireEvent(new SearchEvent(model));
     }
 
