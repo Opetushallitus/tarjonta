@@ -103,7 +103,7 @@ public class Hakukohde extends BaseEntity {
     @JoinColumn(name = "lisatiedot_teksti_id")
     private MonikielinenTeksti lisatiedot;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hakukohde")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,orphanRemoval = true, mappedBy = "hakukohde")
     private Set<HakukohdeLiite> liites = new HashSet<HakukohdeLiite>();
 
     /**

@@ -80,7 +80,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
                 .join(qHakukohde.haku,qHaku)
                 .leftJoin(qHakukohde.koulutusmoduuliToteutuses,qKomoto)
                 .where(qHakukohde.oid.eq(oid.trim()))
-               .list(qHakukohde);
+                .list(qHakukohde);
 
        for (Hakukohde hakukohde:hakukohdes) {
            hakukohde.setLisatiedot(findLisatiedotToHakuKohde(hakukohde));

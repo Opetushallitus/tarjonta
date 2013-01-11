@@ -135,7 +135,18 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public HaeHakukohteenLiitteetVastausTyyppi lueHakukohteenLiitteet(@WebParam(partName = "parameters", name = "haeHakukohteenLiitteetKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") HaeHakukohteenLiitteetKyselyTyyppi parameters) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        HaeHakukohteenLiitteetVastausTyyppi vastaus = new HaeHakukohteenLiitteetVastausTyyppi();
+
+        List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
+
+        ArrayList<HakukohdeLiiteTyyppi> liiteTyyppis = new ArrayList<HakukohdeLiiteTyyppi>();
+
+        for (HakukohdeLiite hakukohdeLiite : hakukohdes.get(0).getLiites()) {
+            liiteTyyppis.add(conversionService.convert(hakukohdeLiite,HakukohdeLiiteTyyppi.class));
+        }
+
+        vastaus.getHakukohteenLiitteet().addAll(liiteTyyppis);
+        return vastaus;
     }
 
     @Override
