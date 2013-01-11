@@ -80,11 +80,18 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             List<Haku> haut = new ArrayList<Haku>();
             haut.add(findHakuWithOid(parameters.getHakuOid().trim()));
             hakuVastaus.getResponse().addAll(convert(haut));
-        } else if (parameters.getHakuSana() != null) {
-
+        } else if (parameters.getHakuSana() != null && !parameters.getHakuSana().isEmpty()) {
+            //REMOVING FIND BY SEARCH STRING QUERY FOR NOW, NOT WORKING PROPERLY
+            //List<Haku> haut = new ArrayList<Haku>();
+            //haut.addAll(hakuDao.findBySearchString(parameters.getHakuSana(), parameters.getHakuSanaKielikoodi()));
+            String hakusana = parameters.getHakuSana().toLowerCase();
             List<Haku> haut = new ArrayList<Haku>();
-            haut.addAll(hakuDao.findBySearchString(parameters.getHakuSana(), parameters.getHakuSanaKielikoodi()));
-            hakuVastaus.getResponse().addAll(convert(haut));
+            SearchCriteriaType allCriteria = new SearchCriteriaType();
+            allCriteria.setMeneillaan(true);
+            allCriteria.setPaattyneet(true);
+            allCriteria.setTulevat(true);
+            haut.addAll(businessService.findAll(allCriteria));
+            hakuVastaus.getResponse().addAll(convert(filterByHakusana(hakusana, parameters.getHakuSanaKielikoodi(), haut)));
 
         } else {
             SearchCriteriaType allCriteria = new SearchCriteriaType();
@@ -94,6 +101,32 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             hakuVastaus.getResponse().addAll(convert(businessService.findAll(allCriteria)));
         }
         return hakuVastaus;
+    }
+    
+    private List<Haku> filterByHakusana(String hakusana, String kielikoodi, List<Haku> fullList) {
+        List<Haku> filteredList = new ArrayList<Haku>();
+        for (Haku curHaku : fullList) {
+            if (hakusanaMatches(curHaku, hakusana, kielikoodi)) {
+                filteredList.add(curHaku);
+            }
+        }
+        return filteredList;
+    }
+    
+    private boolean hakusanaMatches(Haku haku, String hakusana, String kielikoodi) {
+        boolean otherLanguageMatch = false;
+        for (TekstiKaannos curKaannos : haku.getNimi().getTekstis()) {
+            if (kielikoodi.equals(curKaannos.getKieliKoodi()) 
+                    && (curKaannos.getArvo() != null) 
+                    && curKaannos.getArvo().contains(hakusana)) {
+                return true;
+            } 
+            if ((curKaannos.getArvo() != null) 
+                    && curKaannos.getArvo().toLowerCase().contains(hakusana)) {
+                otherLanguageMatch = true;
+            }
+        }
+        return otherLanguageMatch;
     }
 
     private Haku findHakuWithOid(String oid) {

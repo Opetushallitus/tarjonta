@@ -136,12 +136,13 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         //TODO: no application logic, only for Christmas demo
         cbVuosi = UiUtil.comboBox(this, T(I18N_VUOSI), new String[]{"2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022"});
         cbVuosi.setSizeUndefined();
-        cbVuosi.setWidth("100px");
+        cbVuosi.setWidth("200px");
 
         //TODO: no application logic, only for Christmas demo
         kcKausi = uiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T(I18N_KAUSI + I18N_PROMPT));
-        kcKausi.setCaption(I18N_KAUSI);
+        kcKausi.setCaption(T(I18N_KAUSI));
         kcKausi.setSizeUndefined();
+        kcKausi.setWidth("200px");
         kcKausi.getField().setNullSelectionAllowed(false);
 
 //        //TODO: no application logic, only for Christmas demo

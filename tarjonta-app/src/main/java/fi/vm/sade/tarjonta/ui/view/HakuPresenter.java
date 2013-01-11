@@ -147,13 +147,11 @@ public class HakuPresenter {
 
     private Map<String, List<HakuViewModel>> getTreeDataSourceWithSearchCriteria(KoulutusSearchSpesificationViewModel searchVm) {
         Map<String, List<HakuViewModel>> returnVal = new HashMap<String, List<HakuViewModel>>();
-        if (searchVm.getSearchStr() != null) {
-            ListaaHakuTyyppi req = new ListaaHakuTyyppi();
-            req.setHakuSana(searchVm.getSearchStr());
-            req.setHakuSanaKielikoodi(I18N.getLocale().getLanguage());
-            List<HakuViewModel> hakuses = retrieveHaut(req);
-            returnVal = groupHakus(hakuses);
-        }
+        ListaaHakuTyyppi req = new ListaaHakuTyyppi();
+        req.setHakuSana(searchVm.getSearchStr());
+        req.setHakuSanaKielikoodi(I18N.getLocale().getLanguage());
+        List<HakuViewModel> hakuses = retrieveHaut(req);
+        returnVal = groupHakus(hakuses);
         return returnVal;
     }
 
