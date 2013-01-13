@@ -19,8 +19,6 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
-import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
@@ -29,7 +27,6 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -120,7 +117,7 @@ public class KoulutusKoodistoConverter {
         tutkinto.setKoulutusala(listaaKoodi(tyyppi.getKoulutusalaUri(), kc, locale));
 
         if (ohjelma != null) {
-            ohjelma.setTutkintonimike(listaaKoodi(tyyppi.getKoulutusohjelmakoodiUri(), kc, locale));
+            ohjelma.setTutkintonimike(listaaKoodi(tyyppi.getTutkintonimikeUri(), kc, locale));
         }
     }
 
