@@ -194,6 +194,8 @@ public class TarjontaRootView extends Window {
         vlRight.addComponent(searchSpesificationView);
         vlRight.addComponent(searchResultsView);
         vlRight.setExpandRatio(searchResultsView, 1f);
+        vlRight.setSizeFull();
+        
 
         organisationSearchView.addComponent(vlRight);
         organisationSearchView.setExpandRatio(vlRight, 1f);

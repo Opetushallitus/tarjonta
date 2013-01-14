@@ -8,6 +8,6 @@ public class CategoryTreeView extends OphAbstractTreeTable {
     public CategoryTreeView() {
         super();
         addStyleName(TarjontaStyles.CATEGORY_TREE.getStyleName());
-        setColumnHeaderMode(COLUMN_HEADER_MODE_HIDDEN);     
+        setColumnHeaderMode(COLUMN_HEADER_MODE_HIDDEN); 
     }
 }

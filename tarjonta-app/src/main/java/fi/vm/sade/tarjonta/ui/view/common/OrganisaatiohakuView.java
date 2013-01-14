@@ -212,7 +212,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
 
         panelTop.addComponent(buttonsL);
         Panel panelBottom = buildPanel(buildTreePanelLayout());
-        panelBottom.setHeight(400, UNITS_PIXELS);
+        panelBottom.setHeight(550, UNITS_PIXELS);
         panelBottom.addStyleName(Oph.CONTAINER_SECONDARY);
 
         layout.addComponent(panelTop);
