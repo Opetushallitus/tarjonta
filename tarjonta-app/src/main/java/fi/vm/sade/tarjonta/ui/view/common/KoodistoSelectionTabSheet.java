@@ -50,7 +50,7 @@ public class KoodistoSelectionTabSheet extends TabSheet {
     private KoodistoComponent _kcSelection;
     // Map of tabs, key is the koodisto koodi uri
     private Map<String, Tab> _tabs = new HashMap<String, Tab>();
-    private UiBuilder uiBuilder;
+    private transient UiBuilder uiBuilder;
 
     /**
      * Createt tabsheet with given koodisto used for tabs "keys".

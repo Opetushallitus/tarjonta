@@ -58,7 +58,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     // private static final String I18N_HAKUTYYPPI = "hakutyyppi";
     // private static final String I18N_KOHDEJOUKKO = "kohdejoukko";
     private static final long serialVersionUID = 425330075453507227L;
-    private I18NHelper i18nHelper = new I18NHelper(this);
+    private transient I18NHelper i18nHelper = new I18NHelper(this);
     private TextField tfSearch;
     private Button btnHae;
     //private ComboBox cbKaudenTarkenne;
@@ -71,7 +71,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     /* Model for search spesifications */
     private KoulutusSearchSpesificationViewModel model = new KoulutusSearchSpesificationViewModel();
     @Autowired(required = true)
-    private UiBuilder uiBuilder;
+    private transient UiBuilder uiBuilder;
 
     public SearchSpesificationView() {
         super(true, UiMarginEnum.RIGHT_BOTTOM_LEFT);

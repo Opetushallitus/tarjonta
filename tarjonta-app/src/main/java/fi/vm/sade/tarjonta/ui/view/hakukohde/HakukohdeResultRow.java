@@ -52,7 +52,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
 	private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResultRow.class);
 
-    private I18NHelper i18n = new I18NHelper(this);
+    private transient I18NHelper i18n = new I18NHelper(this);
     /**
      * The hakukohde to display on the row.
      */
@@ -186,6 +186,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
                  }
 
              });
+             nimiB.setStyleName("link-row");
              nimiB.setSizeUndefined();
              nimiB.setHeight(7, Sizeable.UNITS_PIXELS);
              

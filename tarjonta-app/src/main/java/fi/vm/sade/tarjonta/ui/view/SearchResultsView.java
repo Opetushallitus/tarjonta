@@ -34,7 +34,7 @@ public class SearchResultsView extends VerticalLayout {
 
     private static final long serialVersionUID = -6602022577510112620L;
     boolean attached = false;
-    private I18NHelper _i18n = new I18NHelper(this);
+    private transient I18NHelper _i18n = new I18NHelper(this);
     private TabSheet tabs;
     private ListKoulutusView koulutusList;
     private ListHakukohdeViewImpl hakukohdeList;

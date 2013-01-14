@@ -93,7 +93,7 @@ public class ListKoulutusView extends VerticalLayout {
     private Button btnPoista;
     private Button btnMuokkaa;
     private Button btnSiirraJaKopioi;
-    private I18NHelper i18n = new I18NHelper(this);
+    private transient I18NHelper i18n = new I18NHelper(this);
     private boolean isAttached = false;
 
     public ListKoulutusView() {

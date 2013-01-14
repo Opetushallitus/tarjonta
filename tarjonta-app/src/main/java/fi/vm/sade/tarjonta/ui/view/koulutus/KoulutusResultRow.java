@@ -49,7 +49,7 @@ public class KoulutusResultRow extends HorizontalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusResultRow.class);
     private static final long serialVersionUID = -1498887965250483214L;
-    private I18NHelper i18n = new I18NHelper(this);
+    private transient I18NHelper i18n = new I18NHelper(this);
     /**
      * The koulutus to display on the row.
      */

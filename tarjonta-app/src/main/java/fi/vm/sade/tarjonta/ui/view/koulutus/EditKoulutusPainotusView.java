@@ -58,9 +58,9 @@ public class EditKoulutusPainotusView extends VerticalLayout implements Componen
     private TextField tfNimi;
     @PropertyId("kielikoodi")
     private KoodistoComponent kcKieli;
-    private I18NHelper i18n = new I18NHelper(this);
+    private transient I18NHelper i18n = new I18NHelper(this);
     @Autowired(required = true)
-    private UiBuilder uiBuilder;
+    private transient UiBuilder uiBuilder;
 
     public EditKoulutusPainotusView() {
         this.setSpacing(true);

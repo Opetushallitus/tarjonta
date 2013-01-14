@@ -97,7 +97,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     private String ophOid;
     private boolean isAttached = false;
     @Autowired(required = true)
-    private UiBuilder uiBuilder;
+    private transient UiBuilder uiBuilder;
 
     public OrganisaatiohakuView() {
         super(VerticalLayout.class);

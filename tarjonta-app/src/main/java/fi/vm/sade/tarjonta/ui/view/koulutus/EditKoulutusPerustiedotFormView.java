@@ -145,7 +145,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private Label tavoitteet;
     private Label jatkoopintomahdollisuudet;
     
-    private UiBuilder uiBuilder;
+    private transient UiBuilder uiBuilder;
 
     public EditKoulutusPerustiedotFormView() {
     }

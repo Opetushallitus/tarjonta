@@ -26,10 +26,12 @@ import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
+import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 
 import java.text.SimpleDateFormat;
@@ -62,7 +64,7 @@ public class TarjontaUIHelper {
     private KoodiService _koodiService;
     @Autowired(required = true)
     private TarjontaPublicService _tarjontaPublicService;
-    private I18NHelper _i18n = new I18NHelper(TarjontaUIHelper.class);
+    private transient I18NHelper _i18n = new I18NHelper(TarjontaUIHelper.class);
 
     /**
      * Default version for those uris without version information is "-1".
@@ -183,8 +185,6 @@ public class TarjontaUIHelper {
 
         return _koodiService.searchKoodis(criteria);
     }
-    
-    
 
     /**
      * Get koodi's name in given locale. If nimi for given
@@ -235,7 +235,7 @@ public class TarjontaUIHelper {
             result = _i18n.getMessage("_koodiError", koodiUriWithPossibleVersionInformation);
         }
 
-        LOG.debug("getKoodiNimi({}, {}) --> {}", new Object[]{koodiUriWithPossibleVersionInformation, locale, result});
+        LOG.debug("getKoodiNimi('{}', {}) --> {}", new Object[]{koodiUriWithPossibleVersionInformation, locale, result});
 
         return result;
     }
@@ -353,6 +353,24 @@ public class TarjontaUIHelper {
         return kmdt;
     }
 
+    public static MonikielinenTekstiTyyppi.Teksti getClosestMonikielinenTekstiTyyppiName(Locale locale, MonikielinenTekstiTyyppi monikielinenTeksti) { 
+        MonikielinenTekstiTyyppi.Teksti teksti = null;
+        if (locale != null) {
+            teksti = searchTekstiTyyppiByLanguage(monikielinenTeksti.getTeksti(), locale);
+        }
+
+        if (teksti == null || teksti.getKieliKoodi() == null || teksti.getValue() == null) {
+            //FI default fallback
+            final Locale locale1 = new Locale("FI");
+            teksti = searchTekstiTyyppiByLanguage(monikielinenTeksti.getTeksti(), locale1);
+
+            if (teksti == null || teksti.getKieliKoodi() == null || teksti.getValue() == null) {
+                LOG.error("An invalid data error -´MonikielinenTekstiTyyppi object was missing Finnish language data.");
+            }
+        }
+        return teksti;
+    }
+
     public static String getClosestHakuName(Locale locale, HakuViewModel haku) {
         String lang = locale != null && locale.getLanguage() != null ? locale.getLanguage().toLowerCase() : "";
 
@@ -384,5 +402,24 @@ public class TarjontaUIHelper {
         }
 
         return "";
+    }
+
+    public static MonikielinenTekstiTyyppi.Teksti searchTekstiTyyppiByLanguage(List<MonikielinenTekstiTyyppi.Teksti> tekstis, final Locale locale) {
+        LOG.debug("locale : " + locale.getLanguage() + ", teksti : " + (tekstis != null ? tekstis.size() : tekstis));
+        final String langCode = locale.getLanguage().toUpperCase();
+
+        for (MonikielinenTekstiTyyppi.Teksti teksti : tekstis) {
+
+            if (teksti.getKieliKoodi() != null
+                    && teksti.getKieliKoodi().toUpperCase().equals(langCode)) {
+                return teksti;
+            } else if (teksti.getKieliKoodi() == null) {
+                LOG.error("An unknown data bug : MonikielinenTekstiTyyppi.Teksti KieliKoodi was null?");
+            }
+        }
+
+        LOG.warn("no text found by locale : " + locale.getLanguage());
+
+        return null;
     }
 }

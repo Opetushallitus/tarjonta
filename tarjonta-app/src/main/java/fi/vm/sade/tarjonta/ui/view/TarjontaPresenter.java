@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
-
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.KoodiService;
@@ -75,8 +74,6 @@ public class TarjontaPresenter {
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
     @Autowired
     private TarjontaPermissionService tarjontaPermissionService;
-    @Autowired(required = true)
-    private TarjontaUIHelper uiHelper;
     // Services used
     @Autowired(required = true)
     protected OIDService oidService;
@@ -96,6 +93,9 @@ public class TarjontaPresenter {
     private KoulutusSearchSpecificationViewModelToDTOConverter koulutusSearchSpecToDTOConverter;
     @Autowired(required = true)
     private KoulutusKoodistoConverter kolutusKoodistoConverter;
+    @Autowired(required = true)
+    private transient TarjontaUIHelper uiHelper;
+    private transient I18NHelper i18n = new I18NHelper(this);
     // Views this presenter can control
     private TarjontaModel _model;
     private TarjontaRootView _rootView;
@@ -104,9 +104,6 @@ public class TarjontaPresenter {
     private ShowHakukohdeViewImpl hakukohdeView;
     private ShowKoulutusView showKoulutusView;
     private SearchResultsView searchResultsView;
-    private I18NHelper i18n = new I18NHelper(this);
-    @Autowired(required = true)
-    private WidgetFactory koodistoWidget;
 
     public TarjontaPresenter() {
     }
@@ -134,11 +131,11 @@ public class TarjontaPresenter {
 
     private void checkHakuLiitetoimitusPvm() {
         if (getModel().getHakukohde().isKaytaHaunPaattymisenAikaa()) {
-            if(getModel().getHakukohde().getHakuOid() != null && getModel().getHakukohde().getHakuOid().getPaattymisPvm() != null) {
+            if (getModel().getHakukohde().getHakuOid() != null && getModel().getHakukohde().getHakuOid().getPaattymisPvm() != null) {
                 getModel().getHakukohde().setLiitteidenToimitusPvm(getModel().getHakukohde().getHakuOid().getPaattymisPvm());
             }
         }
-        if(!getModel().getHakukohde().isSahkoinenToimitusSallittu()) {
+        if (!getModel().getHakukohde().isSahkoinenToimitusSallittu()) {
             getModel().getHakukohde().setLiitteidenSahkoinenToimitusOsoite(null);
         }
 
@@ -217,33 +214,33 @@ public class TarjontaPresenter {
     }
 
     //Tuomas Katva : two following methods break the presenter pattern consider moving everything except service call to view
-  public CreationDialog<KoulutusOidNameViewModel> createHakukohdeCreationDialogWithKomotoOids(List<String> komotoOids) {
+    public CreationDialog<KoulutusOidNameViewModel> createHakukohdeCreationDialogWithKomotoOids(List<String> komotoOids) {
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         kysely.getKoulutusOids().addAll(komotoOids);
         HaeKoulutuksetVastausTyyppi vastaus = tarjontaPublicService.haeKoulutukset(kysely);
         List<KoulutusOidNameViewModel> koulutusModel = convertKoulutusToNameOidViewModel(vastaus.getKoulutusTulos());
-        CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(koulutusModel,KoulutusOidNameViewModel.class,"HakukohdeCreationDialog.title","HakukohdeCreationDialog.valitutKoulutuksetOptionGroup");
+        CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(koulutusModel, KoulutusOidNameViewModel.class, "HakukohdeCreationDialog.title", "HakukohdeCreationDialog.valitutKoulutuksetOptionGroup");
         return dialog;
     }
-    
+
     public CreationDialog<KoulutusOidNameViewModel> createHakukohdeCreationDialogWithSelectedTarjoaja() {
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         kysely.getTarjoajaOids().add(getModel().getOrganisaatioOid());
         HaeKoulutuksetVastausTyyppi vastaus = tarjontaPublicService.haeKoulutukset(kysely);
         List<KoulutusOidNameViewModel> filtedredKoulutukses = removeSelectedKoulutukses(convertKoulutusToNameOidViewModel(vastaus.getKoulutusTulos()));
-        CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(filtedredKoulutukses,KoulutusOidNameViewModel.class,"ShowHakukohdeViewImpl.liitaUusiKoulutusDialogSecondaryTitle","HakukohdeCreationDialog.valitutKoulutuksetOptionGroup");
+        CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(filtedredKoulutukses, KoulutusOidNameViewModel.class, "ShowHakukohdeViewImpl.liitaUusiKoulutusDialogSecondaryTitle", "HakukohdeCreationDialog.valitutKoulutuksetOptionGroup");
         return dialog;
 
     }
 
     private List<KoulutusOidNameViewModel> removeSelectedKoulutukses(List<KoulutusOidNameViewModel> koulutukses) {
         List<KoulutusOidNameViewModel> filteredKoulutukses = new ArrayList<KoulutusOidNameViewModel>();
-        for( KoulutusOidNameViewModel koulutus:koulutukses) {
+        for (KoulutusOidNameViewModel koulutus : koulutukses) {
             boolean koulutusFound = false;
-            for (String oid:getModel().getHakukohde().getKomotoOids()) {
-                 if (koulutus.getKoulutusOid().trim().equalsIgnoreCase(oid)) {
-                     koulutusFound = true;
-                 }
+            for (String oid : getModel().getHakukohde().getKomotoOids()) {
+                if (koulutus.getKoulutusOid().trim().equalsIgnoreCase(oid)) {
+                    koulutusFound = true;
+                }
             }
             if (!koulutusFound) {
                 filteredKoulutukses.add(koulutus);
@@ -260,15 +257,16 @@ public class TarjontaPresenter {
             KoulutusOidNameViewModel nimiOid = new KoulutusOidNameViewModel();
 
             nimiOid.setKoulutusOid(tulos.getKoulutus().getKomotoOid());
-            LOG.info("convertKoulutusToNameOidViewModel tulos size : " + tulokset.size());
             String nimi = "";
+
             if (tulos.getKoulutus().getNimi() != null) {
-                for (Teksti teksti : tulos.getKoulutus().getNimi().getTeksti()) {
-                    if (teksti.getKieliKoodi().trim().equalsIgnoreCase(I18N.getLocale().getLanguage())) {
-                        nimi = teksti.getValue();
-                    }
+                Teksti name = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), tulos.getKoulutus().getNimi());
+                
+                if (name != null) {
+                    nimi = name.getValue();
                 }
             }
+
             nimiOid.setKoulutusNimi(nimi);
             result.add(nimiOid);
 
@@ -308,7 +306,7 @@ public class TarjontaPresenter {
     public void addKoulutuksesToHakukohde(Collection<KoulutusOidNameViewModel> koulutukses) {
 
         List<String> koulutusOids = new ArrayList<String>();
-        for (KoulutusOidNameViewModel koulutus:koulutukses) {
+        for (KoulutusOidNameViewModel koulutus : koulutukses) {
             koulutusOids.add(koulutus.getKoulutusOid());
         }
         koulutusOids.addAll(getModel().getHakukohde().getKomotoOids());
@@ -416,7 +414,7 @@ public class TarjontaPresenter {
         // before opening the ShowKoulutusView
         if (koulutusOid != null) {
 
-              readKoulutusToModel(koulutusOid);
+            readKoulutusToModel(koulutusOid);
 
         } else {
             throw new RuntimeException("Application error - missing OID, cannot open ShowKoulutusView.");
@@ -459,15 +457,15 @@ public class TarjontaPresenter {
             koulutus.getKoulutusohjelmat().clear();
             koulutus.getKoulutuskoodit().clear();
             if (lueKoulutus.getHakukohteet() != null) {
-               koulutus.getKoulutuksenHakukohteet().clear();
-               for (HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi: lueKoulutus.getHakukohteet()) {
-                   SimpleHakukohdeViewModel hakukohdeViewModel = new SimpleHakukohdeViewModel();
-                   hakukohdeViewModel.setHakukohdeNimi(hakukohdeKoosteTyyppi.getKoodistoNimi());
-                   hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohdeKoosteTyyppi.getNimi());
-                   hakukohdeViewModel.setHakukohdeOid(hakukohdeKoosteTyyppi.getOid());
-                   hakukohdeViewModel.setHakukohdeTila(hakukohdeKoosteTyyppi.getTila().value());
-                   koulutus.getKoulutuksenHakukohteet().add(hakukohdeViewModel);
-               }
+                koulutus.getKoulutuksenHakukohteet().clear();
+                for (HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi : lueKoulutus.getHakukohteet()) {
+                    SimpleHakukohdeViewModel hakukohdeViewModel = new SimpleHakukohdeViewModel();
+                    hakukohdeViewModel.setHakukohdeNimi(hakukohdeKoosteTyyppi.getKoodistoNimi());
+                    hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohdeKoosteTyyppi.getNimi());
+                    hakukohdeViewModel.setHakukohdeOid(hakukohdeKoosteTyyppi.getOid());
+                    hakukohdeViewModel.setHakukohdeTila(hakukohdeKoosteTyyppi.getTila().value());
+                    koulutus.getKoulutuksenHakukohteet().add(hakukohdeViewModel);
+                }
             }
 
             //Add selected data to the comboboxes.
@@ -809,7 +807,7 @@ public class TarjontaPresenter {
     }
 
     public void showRemoveHakukohdeFromKoulutusDialog(String hakukohdeOid, String hakukohdeNimi) {
-        showKoulutusView.showHakukohdeRemovalDialog(hakukohdeOid,hakukohdeNimi);
+        showKoulutusView.showHakukohdeRemovalDialog(hakukohdeOid, hakukohdeNimi);
     }
 
     /**
@@ -1059,19 +1057,5 @@ public class TarjontaPresenter {
 
     public void setSearchResultsView(SearchResultsView searchResultsView) {
         this.searchResultsView = searchResultsView;
-    }
-
-    /**
-     * @return the koodistoWidget
-     */
-    public WidgetFactory getKoodistoWidget() {
-        return koodistoWidget;
-    }
-
-    /**
-     * @param koodistoWidget the koodistoWidget to set
-     */
-    public void setKoodistoWidget(WidgetFactory koodistoWidget) {
-        this.koodistoWidget = koodistoWidget;
     }
 }

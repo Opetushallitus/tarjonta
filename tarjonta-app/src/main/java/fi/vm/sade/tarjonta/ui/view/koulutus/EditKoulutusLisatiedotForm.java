@@ -60,7 +60,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
     private TarjontaUIHelper _uiHelper;
     private KoulutusLisatiedotModel koulutusLisatiedotModel;
     @Autowired(required = true)
-    private UiBuilder uiBuilder;
+    private transient UiBuilder uiBuilder;
 
     @Override
     protected void buildLayout(VerticalLayout layout) {

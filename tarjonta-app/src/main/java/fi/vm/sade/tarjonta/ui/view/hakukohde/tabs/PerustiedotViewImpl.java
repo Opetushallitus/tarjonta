@@ -108,7 +108,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     Button downRightInfoButton;
     private Form form;
     private BeanItem<HakukohdeViewModel> hakukohdeBean;
-    private UiBuilder uiBuilder;
+    private transient UiBuilder uiBuilder;
     private ErrorMessage errorView;
 
     /*

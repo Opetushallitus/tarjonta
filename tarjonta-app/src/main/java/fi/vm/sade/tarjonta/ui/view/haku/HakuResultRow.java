@@ -41,22 +41,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
- * The component and functioality for showing a haku object in haku search result list.
+ * The component and functioality for showing a haku object in haku search
+ * result list.
  *
  * @author markus
  *
  */
 @Configurable(preConstruction = false)
-public class HakuResultRow  extends HorizontalLayout {
+public class HakuResultRow extends HorizontalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResultRow.class);
-
-    private I18NHelper i18n = new I18NHelper(this);
+    private transient I18NHelper i18n = new I18NHelper(this);
     private HakuViewModel haku;
     private CheckBox isSelected;
     private String hakuNimi;
     private Window removeDialogWindow;
-
     @Autowired(required = true)
     private HakuPresenter hakuPresenter;
 
@@ -68,7 +67,6 @@ public class HakuResultRow  extends HorizontalLayout {
         this.haku = haku;
         this.hakuNimi = hakuNimi;
     }
-
     private MenuBar.Command menuCommand = new MenuBar.Command() {
         @Override
         public void menuSelected(MenuBar.MenuItem selectedItem) {
@@ -76,7 +74,6 @@ public class HakuResultRow  extends HorizontalLayout {
             menuItemClicked(selectedItem.getText());
 
         }
-
     };
     OphRowMenuBar rowMenuBar;
 
@@ -98,23 +95,23 @@ public class HakuResultRow  extends HorizontalLayout {
             showRemoveDialog();
         }
     }
-    
+
     private void showRemoveDialog() {
-        RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), hakuNimi, T("removeYes"), T("removeNo"), 
-                new Button.ClickListener() {    
-                        @Override
-                        public void buttonClick(ClickEvent event) {
-                            closeHakuRemovalDialog();
-                            startHakuRemoval();
-                        }
-                },
+        RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), hakuNimi, T("removeYes"), T("removeNo"),
                 new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeHakuRemovalDialog();
+                startHakuRemoval();
+            }
+        },
+                new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeHakuRemovalDialog();
 
-                           @Override
-                           public void buttonClick(ClickEvent event) {
-                               closeHakuRemovalDialog();
-
-                           }});
+            }
+        });
         removeDialogWindow = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
         getWindow().addWindow(removeDialogWindow);
     }
@@ -124,13 +121,14 @@ public class HakuResultRow  extends HorizontalLayout {
             getWindow().removeWindow(removeDialogWindow);
         }
     }
-    
+
     private void startHakuRemoval() {
         fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.REMOVE));
     }
 
     /**
      * Creation of the row component.
+     *
      * @param text - the text to be shown on the row.
      * @return
      */
@@ -156,30 +154,29 @@ public class HakuResultRow  extends HorizontalLayout {
 
         addComponent(isSelected);
         if (withMenuBar) {
-        	Button nimiB = UiUtil.buttonLink(null, text); 
+            Button nimiB = UiUtil.buttonLink(null, text);
             nimiB.addListener(new Button.ClickListener() {
-                
                 @Override
-                public void buttonClick(ClickEvent event) { 
-                	menuItemClicked(i18n.getMessage("tarkastele"));
+                public void buttonClick(ClickEvent event) {
+                    menuItemClicked(i18n.getMessage("tarkastele"));
                 }
-
             });
+            nimiB.setStyleName("link-row");
             nimiB.setSizeUndefined();
             nimiB.setHeight(7, Sizeable.UNITS_PIXELS);
-            
+
             OphRowMenuBar menubar = newMenuBar();
             addComponent(menubar);
             addComponent(nimiB);
             setExpandRatio(nimiB, 1f); //default == 0
             setComponentAlignment(isSelected, Alignment.MIDDLE_LEFT);
             setComponentAlignment(rowMenuBar, Alignment.MIDDLE_LEFT);
-            setComponentAlignment(nimiB, Alignment.TOP_LEFT);    
+            setComponentAlignment(nimiB, Alignment.TOP_LEFT);
         } else {
-        	Label label = new Label(text);
+            Label label = new Label(text);
             label.setSizeUndefined(); // -1,-1
             addComponent(label);
-            setExpandRatio(label, 1f); 
+            setExpandRatio(label, 1f);
         }
 
         return this;
@@ -194,10 +191,8 @@ public class HakuResultRow  extends HorizontalLayout {
         public static final String REMOVE = "remove";
         public static final String EDIT = "edit";
         public static final String VIEW = "view";
-
         private HakuViewModel haku;
         private String type;
-
 
         public HakuRowMenuEvent(Component source, HakuViewModel haku, String type) {
             super(source);
@@ -209,19 +204,16 @@ public class HakuResultRow  extends HorizontalLayout {
             super(source);
         }
 
-
         public HakuViewModel getHaku() {
             return haku;
         }
-
 
         public String getType() {
             return type;
         }
     }
-    
+
     private String T(String key, Object... args) {
         return i18n.getMessage(key, args);
     }
-
 }

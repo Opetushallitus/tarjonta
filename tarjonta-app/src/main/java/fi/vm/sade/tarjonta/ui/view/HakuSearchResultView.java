@@ -10,7 +10,7 @@ public class HakuSearchResultView extends VerticalLayout {
 
     private static final long serialVersionUID = 3524699826568713447L;
     boolean attached = false;
-    private I18NHelper _i18n = new I18NHelper(this);
+    private transient I18NHelper _i18n = new I18NHelper(this);
 
     public HakuSearchResultView() {
         super();

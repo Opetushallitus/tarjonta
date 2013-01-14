@@ -70,7 +70,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
     private int unmodifiedHashcode; //for validation check.
     private EditKoulutusPerustiedotFormView editKoulutusPerustiedotFormView;
     @Autowired(required = true)
-    private UiBuilder uiBuilder;
+    private transient UiBuilder uiBuilder;
 
     public EditKoulutusPerustiedotToinenAsteView() {
         super();

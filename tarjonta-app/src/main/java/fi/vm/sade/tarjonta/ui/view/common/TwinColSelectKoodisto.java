@@ -55,7 +55,7 @@ public class TwinColSelectKoodisto extends CssLayout  {
     private KoodiService koodiService;
     
        @Autowired(required = true)
-    private UiBuilder uiBuilder;
+    private transient UiBuilder uiBuilder;
 
     public TwinColSelectKoodisto() {
 

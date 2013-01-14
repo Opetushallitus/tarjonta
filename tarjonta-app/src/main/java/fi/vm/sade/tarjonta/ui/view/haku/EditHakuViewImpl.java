@@ -80,7 +80,7 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     private static final long serialVersionUID = -8149045959215514422L;
     
     @Autowired(required = true)
-    private UiBuilder uiBuilder;
+    private transient UiBuilder uiBuilder;
 
     @Autowired(required = true)
     private HakuPresenter presenter;

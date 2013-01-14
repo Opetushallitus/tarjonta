@@ -50,7 +50,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class UiBuilder extends UiUtil {
 
     @Autowired
-    WidgetFactory bean;
+    private WidgetFactory bean;
 
     public static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
             + "Donec molestie neque non enim lobortis sed scelerisque ante lacinia. Donec ut "

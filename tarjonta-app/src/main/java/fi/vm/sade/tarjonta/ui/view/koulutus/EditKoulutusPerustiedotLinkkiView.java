@@ -61,7 +61,7 @@ public class EditKoulutusPerustiedotLinkkiView extends VerticalLayout implements
     @PropertyId("kieli")
     private KoodistoComponent kcKieli;
     @Autowired(required = true)
-    private UiBuilder uiBuilder;
+    private transient UiBuilder uiBuilder;
 
     private transient I18NHelper i18n;
 

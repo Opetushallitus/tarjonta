@@ -22,22 +22,21 @@ import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /*
-* Author: Tuomas Katva
-*
-* Common dialog for presenting user an option group with all options preselected.
-* Dialog has two buttons "jatka" and "peruuta" you must provide listeners.
+ * Author: Tuomas Katva
+ *
+ * Common dialog for presenting user an option group with all options preselected.
+ * Dialog has two buttons "jatka" and "peruuta" you must provide listeners.
  * OptionGroup has getter method so you can get selected options from listeners
-*
-*/
-
-
+ *
+ */
 @Configurable
 public class CreationDialog<T> extends CustomComponent {
-
 
     private VerticalLayout rootLayout;
     private HorizontalLayout titleLayout;
@@ -52,11 +51,11 @@ public class CreationDialog<T> extends CustomComponent {
     private Button peruutaBtn;
     private Button jatkaBtn;
     private Class typeClazz;
-
+    private static final Logger LOG = LoggerFactory.getLogger(CreationDialog.class);
     private String dialogTitleKey = null;
     private String dialogOptionGroupTitleKey = null;
 
-    public CreationDialog(List<T> selectedThingsParam, Class clazzParam,String dialogTitle,String optionGroupTitle) {
+    public CreationDialog(List<T> selectedThingsParam, Class clazzParam, String dialogTitle, String optionGroupTitle) {
         selectedThings = selectedThingsParam;
         typeClazz = clazzParam;
         rootLayout = new VerticalLayout();
@@ -64,20 +63,20 @@ public class CreationDialog<T> extends CustomComponent {
         this.dialogTitleKey = dialogTitle;
         this.dialogOptionGroupTitleKey = optionGroupTitle;
         setCompositionRoot(rootLayout);
-
     }
 
     @Override
     public void attach() {
         super.attach();
-        if(tarjontaPresenter != null) {
-
-            buildLayout(selectedThings);
-        }
 
         if (attached) {
             return;
         }
+
+        if (tarjontaPresenter != null) {
+            buildLayout(selectedThings);
+        }
+
         attached = true;
 
     }
@@ -93,11 +92,11 @@ public class CreationDialog<T> extends CustomComponent {
     }
 
     /*
-    * Create top horizontal layout containing Dialog title
-    */
+     * Create top horizontal layout containing Dialog title
+     */
     private HorizontalLayout createTitleLayout() {
         titleLayout = UiUtil.horizontalLayout();
-        titleLayout.setMargin(true,false,false,true);
+        titleLayout.setMargin(true, false, false, true);
 
         Label titleLabel = UiUtil.label(null, I18N.getMessage(this.dialogTitleKey));
         titleLayout.addComponent(titleLabel);
@@ -106,13 +105,15 @@ public class CreationDialog<T> extends CustomComponent {
 
     private HorizontalLayout createOptionGroupLayout(List<T> values) {
         middleLayout = UiUtil.horizontalLayout();
-        middleLayout.setMargin(true,false,false,false);
-        BeanItemContainer<T> beanValues = new BeanItemContainer<T>(typeClazz,values);
+        middleLayout.setMargin(true, false, false, false);
+        BeanItemContainer<T> beanValues = new BeanItemContainer<T>(typeClazz, values);
 
-        optionGroup = new OptionGroup(null,beanValues);
+        LOG.debug("values : " + values);
+
+        optionGroup = new OptionGroup(null, beanValues);
         getOptionGroup().setMultiSelect(true);
         //Set all selected as default
-        for (Object obj: getOptionGroup().getItemIds()) {
+        for (Object obj : getOptionGroup().getItemIds()) {
             getOptionGroup().select(obj);
         }
         Label lbl = new Label(I18N.getMessage(this.dialogOptionGroupTitleKey));
@@ -128,11 +129,10 @@ public class CreationDialog<T> extends CustomComponent {
         buttonLayout.addComponent(getPeruutaBtn());
         buttonLayout.addComponent(getJatkaBtn());
         buttonLayout.setComponentAlignment(getPeruutaBtn(), Alignment.MIDDLE_LEFT);
-        buttonLayout.setComponentAlignment(getJatkaBtn(),Alignment.MIDDLE_RIGHT);
+        buttonLayout.setComponentAlignment(getJatkaBtn(), Alignment.MIDDLE_RIGHT);
 
         return buttonLayout;
     }
-
 
     public OptionGroup getOptionGroup() {
         return optionGroup;
@@ -140,14 +140,14 @@ public class CreationDialog<T> extends CustomComponent {
 
     public Button getPeruutaBtn() {
         if (peruutaBtn == null) {
-        peruutaBtn = UiUtil.buttonSmallPrimary(null,I18N.getMessage("HakukohdeCreationDialog.peruutaBtn"));
+            peruutaBtn = UiUtil.buttonSmallPrimary(null, I18N.getMessage("HakukohdeCreationDialog.peruutaBtn"));
         }
         return peruutaBtn;
     }
 
     public Button getJatkaBtn() {
         if (jatkaBtn == null) {
-        jatkaBtn = UiUtil.buttonSmallPrimary(null,I18N.getMessage("HakukohdeCreationDialog.jatkaBtn"));
+            jatkaBtn = UiUtil.buttonSmallPrimary(null, I18N.getMessage("HakukohdeCreationDialog.jatkaBtn"));
         }
         return jatkaBtn;
     }

@@ -77,9 +77,9 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     private ComboBox cbJarjestys;
     private CategoryTreeView categoryTree;
     private CheckBox valKaikki;
-    Window removeDialogWindow;
+    private Window removeDialogWindow;
 
-    private I18NHelper i18n = new I18NHelper(this);
+    private transient I18NHelper i18n = new I18NHelper(this);
 
     @Autowired(required = true)
     private HakuPresenter presenter;

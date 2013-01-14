@@ -38,7 +38,7 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
     @Autowired
     private TarjontaPresenter _presenter;
     @Autowired(required = true)
-    private UiBuilder uiBuilder;
+    private transient UiBuilder uiBuilder;
     private TabSheet tabs;
 
     public EditHakukohdeView() {

@@ -90,7 +90,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      * Checkbox for selecting all the Hakukohde objects in the list.
      */
     private CheckBox valKaikki;
-    private I18NHelper i18n = new I18NHelper(this);
+    private transient I18NHelper i18n = new I18NHelper(this);
     /**
      * Presenter object for the Hakukohde listing.
      */

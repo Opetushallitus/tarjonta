@@ -767,7 +767,7 @@ public class KoulutusConverter {
         }
 
         if (locale != null) {
-            final Teksti teksti = searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), locale);
+            final Teksti teksti = TarjontaUIHelper.searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), locale);
 
             if (teksti != null) {
                 m.setKielikoodi(teksti.getKieliKoodi());
@@ -785,7 +785,7 @@ public class KoulutusConverter {
         if (m.getNimi() == null || m.getNimi().isEmpty()) {
             //FI default fallback
             final Locale locale1 = new Locale("FI");
-            final Teksti teksti = searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), locale1);
+            final Teksti teksti = TarjontaUIHelper.searchTekstiTyyppiByLanguage(tyyppi.getTeksti(), locale1);
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Language code fallback : " + locale1.getLanguage());
@@ -804,24 +804,7 @@ public class KoulutusConverter {
         return m;
     }
 
-    private static MonikielinenTekstiTyyppi.Teksti searchTekstiTyyppiByLanguage(List<MonikielinenTekstiTyyppi.Teksti> tekstis, final Locale locale) {
-        LOG.debug("locale : " + locale.getLanguage() + ", teksti : " + (tekstis != null ? tekstis.size() : tekstis));
-        final String langCode = locale.getLanguage().toUpperCase();
 
-        for (MonikielinenTekstiTyyppi.Teksti teksti : tekstis) {
-
-            if (teksti.getKieliKoodi() != null
-                    && teksti.getKieliKoodi().toUpperCase().equals(langCode)) {
-                return teksti;
-            } else if (teksti.getKieliKoodi() == null) {
-                LOG.error("An unknown data bug : MonikielinenTekstiTyyppi.Teksti KieliKoodi was null?");
-            }
-        }
-
-        LOG.warn("no text found by locale : " + locale.getLanguage());
-
-        return null;
-    }
  
     public static Map<Entry, KoulutusmoduuliKoosteTyyppi> fullKomoCacheMap(Collection<KoulutusmoduuliKoosteTyyppi> komos) {
         Map<Entry, KoulutusmoduuliKoosteTyyppi> hashMap = new HashMap<Entry, KoulutusmoduuliKoosteTyyppi>();

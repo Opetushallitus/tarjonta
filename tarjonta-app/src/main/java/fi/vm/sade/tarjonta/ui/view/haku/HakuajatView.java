@@ -45,7 +45,7 @@ public class HakuajatView {
 	private TextField kuvaus;
 	private Button poistaB;
 
-	private I18NHelper i18n = new I18NHelper(this);
+	private transient I18NHelper i18n = new I18NHelper(this);
 
 	private HakuaikaViewModel model;
 

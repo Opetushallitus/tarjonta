@@ -60,7 +60,7 @@ public class LanguageTabSheet extends CustomComponent {
     private KoodistoSelectionTabSheet _languageTabsheet;
     private VerticalLayout rootLayout = new VerticalLayout();
     @Autowired(required = true)
-    private UiBuilder uiBuilder;
+    private transient UiBuilder uiBuilder;
 
     public LanguageTabSheet() {
         setCompositionRoot(rootLayout);

@@ -65,9 +65,9 @@ public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout imple
     private TextField tfPuhelin;
     @PropertyId("kielet")
     private KoodistoComponent kcKielet;
-    private I18NHelper i18n = new I18NHelper(this);
+    private transient I18NHelper i18n = new I18NHelper(this);
     @Autowired(required = true)
-    private UiBuilder uiBuilder;
+    private transient UiBuilder uiBuilder;
 
     public EditKoulutusPerustiedotYhteystietoView() {
         this.setSpacing(true);

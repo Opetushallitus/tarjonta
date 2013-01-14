@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
-
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
@@ -28,28 +27,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /*
-* Author: Tuomas Katva
-*/
+ * Author: Tuomas Katva
+ */
 @Configurable
 public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
 
-     private KoulutusOidNameViewModel koulutusOidNameViewModel;
+    private KoulutusOidNameViewModel koulutusOidNameViewModel;
+    private Button nimiBtn;
+    private Button poistaBtn;
+    private transient I18NHelper i18n = new I18NHelper(this);
+    @Autowired(required = true)
+    private TarjontaPresenter tarjontaPresenter;
+    private static final Logger LOG = LoggerFactory.getLogger(ShowHakukohdeKoulutusRow.class);
 
-     private Button nimiBtn;
-
-     private Button poistaBtn;
-
-     private I18NHelper i18n = new I18NHelper(this);
-
-     @Autowired(required = true)
-     private TarjontaPresenter tarjontaPresenter;
-
-     private static final Logger LOG = LoggerFactory.getLogger(ShowHakukohdeKoulutusRow.class);
-
-     public ShowHakukohdeKoulutusRow(KoulutusOidNameViewModel koulutusOidNameViewModel) {
-          this.koulutusOidNameViewModel = koulutusOidNameViewModel;
-          buildBtns();
-     }
+    public ShowHakukohdeKoulutusRow(KoulutusOidNameViewModel koulutusOidNameViewModel) {
+        this.koulutusOidNameViewModel = koulutusOidNameViewModel;
+        buildBtns();
+    }
 
     private void buildBtns() {
         nimiBtn = UiUtil.buttonLink(null, koulutusOidNameViewModel.getKoulutusNimi(), new Button.ClickListener() {
@@ -57,27 +51,30 @@ public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                    tarjontaPresenter.showShowKoulutusView(koulutusOidNameViewModel.getKoulutusOid());
+                tarjontaPresenter.showShowKoulutusView(koulutusOidNameViewModel.getKoulutusOid());
             }
         });
-
+        nimiBtn.setStyleName("link-row");
+        
         poistaBtn = UiUtil.buttonLink(null, i18n.getMessage("poistaBtn"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                  tarjontaPresenter.showRemoveKoulutusFromHakukohdeDialog(koulutusOidNameViewModel);
+                tarjontaPresenter.showRemoveKoulutusFromHakukohdeDialog(koulutusOidNameViewModel);
             }
         });
+        poistaBtn.setStyleName("link-row");
     }
     //TODO: Remove this when button logic is implemented
+
     private void disableButtons() {
         if (nimiBtn != null) {
-           nimiBtn.setEnabled(false);
+            nimiBtn.setEnabled(false);
         }
-       /* if (poistaBtn != null) {
-            poistaBtn.setEnabled(false);
-        }*/
+        /* if (poistaBtn != null) {
+         poistaBtn.setEnabled(false);
+         }*/
     }
 
     public Button getNimiBtn() {
