@@ -14,7 +14,7 @@
 
     <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
         <param name="Threshold" value="DEBUG"/>
-        <param name="File" value="target/test_organisaatio-app.log"/>
+        <param name="File" value="/tmp/tarjonta-app.log"/>
         <param name="Append" value="true"/>
         <param name="MaxFileSize" value="100MB"/>
         <param name="MaxBackupIndex" value="3"/>
