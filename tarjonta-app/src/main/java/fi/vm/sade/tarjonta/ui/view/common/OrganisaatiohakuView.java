@@ -131,7 +131,8 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             return;
         }
         isAttached = true;
-        initializeData();
+        //initializeData();
+        bind();
     }
 
     @Override
@@ -150,7 +151,9 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
 
             @Override
             public void valueChange(ValueChangeEvent event) {
-                searchOrganisaatios();
+                if (search.getValue() != null && !((String)(search.getValue())).isEmpty()) {
+                    searchOrganisaatios();
+                }
             }
         });
 
@@ -202,7 +205,8 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
                 } catch (Exception ex) {
                     LOG.warn("Max results not set: " + ex.getMessage());
                 }
-                initializeData();
+                bind();
+                //initializeData();
             }
         });
 
