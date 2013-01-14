@@ -21,6 +21,7 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenLiitteetViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotViewImpl;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import java.util.List;
@@ -53,9 +54,9 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
         tabs.setHeight(-1, UNITS_PIXELS);
         t.addComponent(tabs);
         PerustiedotViewImpl perustiedot = new PerustiedotViewImpl(_presenter, uiBuilder);
-
+        HakukohteenLiitteetViewImpl liitteet = new HakukohteenLiitteetViewImpl(_presenter,uiBuilder);
         tabs.addTab(perustiedot, T("tabNimi"));
-
+        tabs.addTab(liitteet,T("liitteetTab"));
         createButtons();
     }
 

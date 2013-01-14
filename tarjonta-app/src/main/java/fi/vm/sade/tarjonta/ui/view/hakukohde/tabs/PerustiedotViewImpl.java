@@ -177,8 +177,6 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     }
 
     private String resolveHakukohdeKoodistoNimi() {
-        // TODO tuomas korjaa :)
-
         String nimi = presenter.resolveHakukohdeKoodistonimiFields();
         return nimi;
     }

@@ -74,6 +74,7 @@ public class KoodistoURIHelper {
      */
     public static String KOODISTO_AMMATTINIMIKKEET_URI;
     public static String KOODISTO_OPETUSMUOTO_URI;
+    public static String KOODISTO_POSTINUMERO;
 
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
@@ -214,4 +215,11 @@ public class KoodistoURIHelper {
     public void setPohjakoulutusvaatimuksetUri(String uri) {
         KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI = uri;
     }
+
+    @Value("${koodisto-uris.postinumero:NOT_SET}")
+    public void setPostinumero(String postinumero) {
+        KOODISTO_POSTINUMERO = postinumero;
+    }
+
+
 }
