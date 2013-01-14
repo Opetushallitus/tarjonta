@@ -28,6 +28,7 @@ import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.component.OphTokenField;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
+import fi.vm.sade.koodisto.widget.DefaultKoodiCaptionFormatter;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.WidgetFactory;
 import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
@@ -374,9 +375,14 @@ public class UiBuilder extends UiUtil {
 
         KoodistoComponent kc = koodistoComboBox(null, koodistoUri);
         kc.setImmediate(true);
+        kc.setCaptionFormatter(new DefaultKoodiCaptionFormatter());
+
 
         OphTokenField f = new OphTokenField();
         f.setSelectionComponent(kc);
+
+        // Otherwise not rendered at all?
+        kc.setSizeUndefined();
 
         // Selected data bound here if wanted
         bindFieldToAProperty(psi, expression, f);
@@ -431,7 +437,7 @@ public class UiBuilder extends UiUtil {
         }
 
         if (!button.isVisible()) {
-            LOG.info("Insufficient user role - button with a caption '{}' was disabled. Required role '{}'", caption, role);
+            LOG.debug("Insufficient user role - button with a caption '{}' was disabled. Required role '{}'", caption, role);
         }
 
         return button;

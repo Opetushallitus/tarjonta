@@ -261,6 +261,26 @@ public class TarjontaUIHelper {
         return str.length() == 0 ? str : str.substring(2);
     }
 
+    public String getKoodiNimi(KoodiType koodiType, Locale locale) {
+        if (koodiType == null) {
+            return null;
+        }
+
+        if (locale == null) {
+            locale = I18N.getLocale();
+        }
+
+        KoodiMetadataType kmdt;
+        kmdt = KoodistoHelper.getKoodiMetadataForLanguage(koodiType, KoodistoHelper.getKieliForLocale(locale));
+
+        if (kmdt == null) {
+            kmdt = KoodistoHelper.getKoodiMetadataForLanguage(koodiType, KieliType.FI);
+        }
+
+        return  kmdt == null ? koodiType.getKoodiArvo() : kmdt.getNimi();
+    }
+
+
     /**
      * Format date to string with default "dd.MM.yyyy" formatting.
      *

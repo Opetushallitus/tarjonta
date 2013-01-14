@@ -17,13 +17,18 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.PropertysetItem;
-import com.vaadin.ui.AbstractLayout;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.generic.ui.component.CaptionFormatter;
+import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.component.OphRichTextArea;
 import fi.vm.sade.generic.ui.component.OphTokenField;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.util.KoodistoHelper;
+import fi.vm.sade.koodisto.widget.DefaultKoodiCaptionFormatter;
+import fi.vm.sade.koodisto.widget.DefaultKoodiFieldValueFormatter;
+import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
@@ -86,7 +91,23 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
                 }
             });
 
+            // Create caption formatter for koodisto component.
+            KoodistoComponent k = (KoodistoComponent) f.getSelectionComponent();
+            k.setCaptionFormatter(new CaptionFormatter() {
+                @Override
+                public String formatCaption(Object dto) {
+                    if (dto instanceof KoodiType) {
+                      KoodiType kt = (KoodiType) dto;
+                      return _uiHelper.getKoodiNimi(kt, null);
+                      // return _uiHelper.getKoodiNimi(kt.getKoodiUri());
+                    } else {
+                        return "??? " + dto;
+                    }
+                }
+            });
+
             addComponent(f);
+            f.getSelectionLayout().setWidth("600px");
         }
 
         //
