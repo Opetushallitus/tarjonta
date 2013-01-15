@@ -23,6 +23,8 @@ import java.util.Date;
  */
 public class HakukohdeLiiteViewModel {
 
+    private String hakukohdeLiiteId;
+
     private String liitteenTyyppi;
 
     private String liitteenSanallinenKuvaus;
@@ -102,5 +104,13 @@ public class HakukohdeLiiteViewModel {
 
     public void setSahkoinenToimitusOsoite(String sahkoinenToimitusOsoite) {
         this.sahkoinenToimitusOsoite = sahkoinenToimitusOsoite;
+    }
+
+    public String getHakukohdeLiiteId() {
+        return hakukohdeLiiteId;
+    }
+
+    public void setHakukohdeLiiteId(String hakukohdeLiiteId) {
+        this.hakukohdeLiiteId = hakukohdeLiiteId;
     }
 }

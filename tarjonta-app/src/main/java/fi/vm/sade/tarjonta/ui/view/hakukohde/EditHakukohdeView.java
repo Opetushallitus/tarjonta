@@ -21,6 +21,8 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohdePerustiedotViewImpl;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenLiitteetTabImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenLiitteetViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotViewImpl;
 import fi.vm.sade.vaadin.constants.StyleEnum;
@@ -53,44 +55,12 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
         tabs = new TabSheet();
         tabs.setHeight(-1, UNITS_PIXELS);
         t.addComponent(tabs);
-        PerustiedotViewImpl perustiedot = new PerustiedotViewImpl(_presenter, uiBuilder);
-        HakukohteenLiitteetViewImpl liitteet = new HakukohteenLiitteetViewImpl(_presenter,uiBuilder);
+        HakukohdePerustiedotViewImpl perustiedot = new HakukohdePerustiedotViewImpl();
+        HakukohteenLiitteetTabImpl liitteet = new HakukohteenLiitteetTabImpl();
         tabs.addTab(perustiedot, T("tabNimi"));
         tabs.addTab(liitteet,T("liitteetTab"));
-        createButtons();
+
     }
 
-    private void createButtons() {
-        addNavigationButton("", new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                _presenter.showMainDefaultView();
-                _presenter.getHakukohdeListView().reload();
-            }
-        }, StyleEnum.STYLE_BUTTON_BACK);
 
-        addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                _presenter.commitHakukohdeForm("LUONNOS");
-                //getWindow().showNotification();
-            }
-        });
-
-        addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                _presenter.commitHakukohdeForm("VALMIS");
-
-            }
-        });
-        /*  for future use
-         addNavigationButton(T("jatka"), new Button.ClickListener() {
-         @Override
-         public void buttonClick(Button.ClickEvent event) {
-         //                getPresenter().showShowHakukohdeView();
-         }
-         });
-         */
-    }
 }

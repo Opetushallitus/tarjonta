@@ -29,6 +29,7 @@ import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.ui.helper.conversion.*;
 import fi.vm.sade.tarjonta.ui.model.*;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.widget.WidgetFactory;
@@ -57,10 +58,6 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter;
-import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusSearchSpecificationViewModelToDTOConverter;
-import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConverter;
-import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
@@ -163,6 +160,19 @@ public class TarjontaPresenter {
 
             hakuKohdePerustiedotView.setTunnisteKoodi(koodi);
         }
+    }
+
+    public void saveHakukohdeLiite(HakukohdeLiiteViewModel hakukohdeLiiteViewModel) {
+        ArrayList<HakukohdeLiiteTyyppi> liitteet = new ArrayList<HakukohdeLiiteTyyppi>();
+        HakukohdeLiiteViewModelToDtoConverter converter = new HakukohdeLiiteViewModelToDtoConverter();
+        HakukohdeLiiteTyyppi hakukohdeLiite = converter.convertHakukohdeViewModelToHakukohdeLiiteTyyppi(hakukohdeLiiteViewModel);
+        liitteet.add(hakukohdeLiite);
+        for (HakukohdeLiiteViewModel hakuLiite:getModel().getHakukohde().getLiites()) {
+            HakukohdeLiiteTyyppi liite = converter.convertHakukohdeViewModelToHakukohdeLiiteTyyppi(hakuLiite);
+            liitteet.add(liite);
+        }
+
+        tarjontaAdminService.tallennaLiitteitaHakukohteelle(getModel().getHakukohde().getOid(),liitteet);
     }
 
     public void initHakukohdeForm(PerustiedotView hakuKohdePerustiedotView) {

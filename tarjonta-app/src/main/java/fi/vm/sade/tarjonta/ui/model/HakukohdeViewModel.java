@@ -28,6 +28,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private List<KielikaannosViewModel> lisatiedot;
     private List<String> komotoOids;
     private List<KoulutusOidNameViewModel> koulukses;
+    private List<HakukohdeLiiteViewModel> liites;
 
     public HakukohdeViewModel() {
         super();
@@ -274,5 +275,16 @@ public class HakukohdeViewModel extends BaseUIViewModel {
 
     public void setKaytaHaunPaattymisenAikaa(boolean kaytaHaunPaattymisenAikaa) {
         this.kaytaHaunPaattymisenAikaa = kaytaHaunPaattymisenAikaa;
+    }
+
+    public List<HakukohdeLiiteViewModel> getLiites() {
+        if (liites == null) {
+            liites = new ArrayList<HakukohdeLiiteViewModel>();
+        }
+        return liites;
+    }
+
+    public void setLiites(List<HakukohdeLiiteViewModel> liites) {
+        this.liites = liites;
     }
 }

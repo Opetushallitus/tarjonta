@@ -15,12 +15,14 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
+import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
@@ -71,9 +73,8 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     private TextField sahkoinenToimitusOsoite;
 
     private UiBuilder uiBuilder;
-    private ErrorMessage errorView;
-    private Form form;
-    private BeanItem<HakukohdeLiiteViewModel> hakukohdeLiiteBean;
+
+
 
     Button upRightInfoButton;
 
@@ -96,17 +97,6 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
          mainLayout.addComponent(buildGridLayout());
 
          setCompositionRoot(mainLayout);
-    }
-
-
-    public void initForm(HakukohdeLiiteViewModel hakukohdeLiite) {
-        hakukohdeLiiteBean = new BeanItem<HakukohdeLiiteViewModel>(hakukohdeLiite);
-        form = new ValidatingViewBoundForm(this);
-        form.setItemDataSource(hakukohdeLiiteBean);
-
-        JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
-        this.form.setValidationVisible(false);
-        this.form.setValidationVisibleOnCommit(false);
     }
 
     private HorizontalLayout buildInfoButtonLayout() {
@@ -134,6 +124,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
     private TextArea buildLiitteenSanallinenKuvaus() {
         liitteenSanallinenKuvausTxtArea = new TextArea();
+        liitteenSanallinenKuvausTxtArea.setNullRepresentation("");
         liitteenSanallinenKuvausTxtArea.setWidth("60%");
         return liitteenSanallinenKuvausTxtArea;
     }
@@ -174,27 +165,13 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         return osoiteLayout;
     }
 
-
-    private HorizontalLayout buildErrorLayout() {
-        HorizontalLayout topErrorArea = UiUtil.horizontalLayout();
-        HorizontalLayout padding = UiUtil.horizontalLayout();
-        padding.setWidth(30, UNITS_PERCENTAGE);
-        errorView = new ErrorMessage();
-        errorView.setSizeUndefined();
-
-        topErrorArea.addComponent(padding);
-        topErrorArea.addComponent(errorView);
-
-        return topErrorArea;
-    }
-
     private VerticalLayout buildSahkoinenToimitusOsoite() {
         VerticalLayout sahkoinenToimitusOsoiteLayout = new VerticalLayout();
 
         voidaanToimittaaSahkoisesti = new CheckBox();
         voidaanToimittaaSahkoisesti.setCaption(T("HakukohteenLiitteetViewImpl.voidaanToimittaaMyosSahkoisesti"));
         sahkoinenToimitusOsoiteLayout.addComponent(voidaanToimittaaSahkoisesti);
-        sahkoinenToimitusOsoite = new TextField();
+        sahkoinenToimitusOsoite = UiUtil.textField(null);
         sahkoinenToimitusOsoiteLayout.addComponent(sahkoinenToimitusOsoite);
 
         return sahkoinenToimitusOsoiteLayout;
@@ -206,7 +183,6 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         itemContainer.setSpacing(true);
         itemContainer.setMargin(false, true, true, true);
 
-        addItemToGrid("",buildErrorLayout());
         addItemToGrid("HakukohteenLiitteetViewImpl.liitteenTyyppi",buildLiitteenTyyppiCombo());
         addItemToGrid("HakukohteenLiitteetViewImpl.liitteenSanallinenKuvaus",buildLiitteenSanallinenKuvaus());
         addItemToGrid("HakukohteenLiitteetViewImpl.toimitettavaMennessa",buildToimitettavaMennessa());
