@@ -278,7 +278,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
 
     /**
-     * Builds the yhteyshenkilö part of the form.
+     * Builds the yhteyshenkilo part of the form.
      * @param grid
      * @param propertyKey
      */

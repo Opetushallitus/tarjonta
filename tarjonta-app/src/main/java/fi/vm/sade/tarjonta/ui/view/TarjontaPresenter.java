@@ -1086,7 +1086,9 @@ public class TarjontaPresenter {
         } else {
             searchType.setEtunimet(value);
         }
-        searchType.getOrganisaatioOids().add(_model.getKoulutusPerustiedotModel().getOrganisaatioOid());
+        String organisaatioOid = _model.getKoulutusPerustiedotModel().getOrganisaatioOid() != null 
+                                ? _model.getKoulutusPerustiedotModel().getOrganisaatioOid() : _model.getOrganisaatioOid(); 
+        searchType.getOrganisaatioOids().add(organisaatioOid);
         //searchType.set
         HenkiloPagingObjectType paging = new HenkiloPagingObjectType();
         
