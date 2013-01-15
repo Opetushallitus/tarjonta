@@ -186,6 +186,7 @@ public class KoulutusConverter {
         yhteyshenkilo.setPuhelin(model.getYhtHenkPuhelin());
         yhteyshenkilo.setSahkoposti(model.getYhtHenkEmail());
         yhteyshenkilo.setTitteli(model.getYhtHenkTitteli());
+        yhteyshenkilo.setHenkiloOid(model.getYhtHenkiloOid());
         return yhteyshenkilo;
     }
 
@@ -223,7 +224,7 @@ public class KoulutusConverter {
         model2Aste.setYhtHenkEmail(yhtHenk.getSahkoposti());
         model2Aste.setYhtHenkPuhelin(yhtHenk.getPuhelin());
         model2Aste.setYhtHenkTitteli(yhtHenk.getTitteli());
-        
+        model2Aste.setYhtHenkiloOid(yhtHenk.getHenkiloOid());
     }
 
     private OrganisaatioDTO searchOrganisatioByOid(final String organisaatioOid) {

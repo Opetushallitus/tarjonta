@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 import static fi.vm.sade.generic.common.validation.ValidationConstants.EMAIL_PATTERN;
 
 import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.NestedMethodProperty;
@@ -33,10 +34,12 @@ import com.vaadin.ui.Field;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
+import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
@@ -52,6 +55,7 @@ import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
@@ -159,6 +163,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     @Pattern(regexp = "[+|-| |\\(|\\)|[0-9]]{3,100}", message = "{validation.invalid.phone}")
     @PropertyId("yhtHenkPuhelin")
     private TextField yhtHenkPuhelin;
+    
+    private ListSelect suggestionList;
     
     private Label koulutusaste;
     private Label opintoala;
@@ -270,6 +276,12 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         showOnlySelectedFormComponents();
     }
 
+
+    /**
+     * Builds the yhteyshenkilö part of the form.
+     * @param grid
+     * @param propertyKey
+     */
     private void buildGridYhteyshenkiloRow(GridLayout grid, String propertyKey) {
         gridLabel(grid, propertyKey);
         VerticalLayout vl = UiUtil.verticalLayout();
@@ -279,11 +291,28 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
             @Override
             public void textChange(TextChangeEvent event) {
-                presenter.searchYhteyshenkilo(event.getText());
-                
+                populateYhtHenkiloSuggestions(presenter.searchYhteyshenkilo(event.getText()));           
             }
             
         });
+        
+        suggestionList = new ListSelect();
+        
+        suggestionList.setSizeUndefined();
+        suggestionList.setNullSelectionAllowed(false);
+        suggestionList.setImmediate(true);
+        suggestionList.setVisible(false);
+        suggestionList.addListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                //DEBUGSAWAY:log.debug("organisaatio edited");
+                populateYhtHenkiloFields((HenkiloType)(suggestionList.getValue()));
+                suggestionList.removeAllItems();
+                suggestionList.setVisible(false);
+            }
+        });
+        vl.addComponent(suggestionList);
+        
         yhtHenkTitteli = UiUtil.textField(vl, "", T("prompt.titteli"), true);
         yhtHenkEmail = UiUtil.textField(vl, "", T("prompt.email"), true);
         yhtHenkPuhelin = UiUtil.textField(vl, "", T("prompt.puhelin"), true);
@@ -291,7 +320,54 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         grid.newLine();
         buildSpacingGridRow(grid);
     }
+    
+    /**
+     * Populating the yhteyshenkilo fields based on user's selection from the autocomplete list
+     * @param henkiloType
+     */
+    private void populateYhtHenkiloFields(HenkiloType henkiloType) {
+        if (henkiloType == null) {
+            return;
+        }
+        this.yhtHenkKokoNimi.setValue(henkiloType.getEtunimet() + " " + henkiloType.getSukunimi());
+        this.koulutusModel.setYhtHenkiloOid(henkiloType.getOidHenkilo());
+        if (henkiloType.getOrganisaatioHenkilos() != null && !henkiloType.getOrganisaatioHenkilos().isEmpty()) {
+            this.yhtHenkEmail.setValue(henkiloType.getOrganisaatioHenkilos().get(0).getSahkopostiosoite());
+            this.yhtHenkPuhelin.setValue(henkiloType.getOrganisaatioHenkilos().get(0).getPuhelinnumero());
+            this.yhtHenkTitteli.setValue(henkiloType.getOrganisaatioHenkilos().get(0).getTehtavanimike());
+        } else {
+            this.yhtHenkEmail.setValue(null);
+            this.yhtHenkPuhelin.setValue(null);
+            this.yhtHenkTitteli.setValue(null);
+        }
+    }
+    
+    /**
+     * Populates the henkilo suggestions under the yhtHenkKokoNimi field in according
+     * to current search results from UserService.
+     * @param henkilos
+     */
+    private void populateYhtHenkiloSuggestions(List<HenkiloType> henkilos) {
+        if (!henkilos.isEmpty()) {
+            suggestionList.setVisible(true);
+            suggestionList.removeAllItems();
+            suggestionList.setRows(henkilos.size() + 1);
+            for (HenkiloType curHenkilo : henkilos) {
+                suggestionList.addItem(curHenkilo);
+                suggestionList.setItemCaption(curHenkilo, curHenkilo.getEtunimet() + " " + curHenkilo.getSukunimi());
+            }
+        } else {
+            suggestionList.setVisible(false);
+            suggestionList.removeAllItems();
+            this.koulutusModel.setYhtHenkiloOid(null);
+        }
+    }
 
+    /**
+     * Builds the linkki field.
+     * @param grid
+     * @param propertyKey
+     */
     private void buildGridLinkkiRow(GridLayout grid, String propertyKey) {
         gridLabel(grid, propertyKey);
         this.linkki = UiUtil.textField(null, "", T("prompt.Linkki"), true);

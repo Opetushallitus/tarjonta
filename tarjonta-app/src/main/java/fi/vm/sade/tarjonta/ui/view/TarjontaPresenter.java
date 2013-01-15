@@ -1071,9 +1071,14 @@ public class TarjontaPresenter {
      * and the organisation of the koulutus.
      * @param value - the name or part of the name of the user to search for
      */
-    public void searchYhteyshenkilo(String value) {
+    public List<HenkiloType> searchYhteyshenkilo(String value) {
+        //If given string is null or empty returning an empty list, i.e. not doing an empty search.
+        if (value == null || value.isEmpty()) {
+            return new ArrayList<HenkiloType>();
+        }
+        //Doing the search to UserService
         HenkiloSearchObjectType searchType = new HenkiloSearchObjectType();
-        searchType.setConnective(SearchConnectiveType.OR);
+        searchType.setConnective(SearchConnectiveType.AND);
         String[] nimetSplit = value.split(" ");
         if (nimetSplit.length > 1) {
             searchType.setSukunimi(nimetSplit[nimetSplit.length-1]);
@@ -1086,6 +1091,8 @@ public class TarjontaPresenter {
         HenkiloPagingObjectType paging = new HenkiloPagingObjectType();
         
         List<HenkiloType> henkilos = this.userService.listHenkilos(searchType, paging);
-        LOG.debug("Henkilos size: " + henkilos.size());
+        
+        //Returning the list of found henkilos.
+        return henkilos;
     }
 }

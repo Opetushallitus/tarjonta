@@ -61,7 +61,9 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     private String yhtHenkTitteli;
     private String yhtHenkEmail;
     private String yhtHenkPuhelin;
-    
+    private String YhtHenkiloOid;
+
+
     /*
      * cache maps
      */
@@ -117,6 +119,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setYhtHenkKokoNimi(null); //optional
         setYhtHenkPuhelin(null); //optional
         setYhtHenkTitteli(null); //optional
+        setYhtHenkiloOid(null); //optional
         
         //Table data
         setPainotus(new ArrayList<KielikaannosViewModel>(0)); //optional
@@ -386,5 +389,13 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
 
     public void setYhtHenkPuhelin(String yhtHenkPuhelin) {
         this.yhtHenkPuhelin = yhtHenkPuhelin;
+    }
+    
+    public String getYhtHenkiloOid() {
+        return YhtHenkiloOid;
+    }
+
+    public void setYhtHenkiloOid(String oidHenkilo) {
+        this.YhtHenkiloOid = oidHenkilo;
     }
 }
