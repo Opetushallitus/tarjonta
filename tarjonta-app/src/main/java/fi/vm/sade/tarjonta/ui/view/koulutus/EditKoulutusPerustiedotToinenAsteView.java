@@ -113,7 +113,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         documentStatus.setSizeUndefined();
         documentStatus.setImmediate(true);
         documentStatus.setPropertyDataSource(new NestedMethodProperty(koulutusPerustiedotModel, "tila"));
-        header.addComponent(documentStatus);
+        header.addComponent(documentStatus); 
 
         header.setExpandRatio(documentStatus, 1l);
         header.setComponentAlignment(documentStatus, Alignment.TOP_RIGHT);
@@ -141,10 +141,9 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
          * BOTTOM LAYOUTS
          */
         UiUtil.hr(layout);
-        final Form yhteisTieto = new ValidatingViewBoundForm(new EditKoulutusYhteystietoFormView(koulutusPerustiedotModel));
-        layout.addComponent(yhteisTieto);
+        
 
-        addLinkkiSelectorAndEditor(layout);
+        //addLinkkiSelectorAndEditor(layout);
 
         addNavigationButton("", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;

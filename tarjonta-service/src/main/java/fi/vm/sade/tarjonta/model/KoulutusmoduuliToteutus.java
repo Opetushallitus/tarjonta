@@ -402,6 +402,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void removeYhteyshenkilo(Yhteyshenkilo henkilo) {
         yhteyshenkilos.remove(henkilo);
     }
+    
+    public void setYhteyshenkilos(Set<Yhteyshenkilo> yhteyshenkilos) {
+        this.yhteyshenkilos.clear();
+        this.yhteyshenkilos = yhteyshenkilos;
+    }
 
     /**
      * @return the maksullisuusUrl

@@ -120,7 +120,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         koulutusmoduuliToteutusDAO.update(model);
 
-        updateYhteyshenkilot(oid, koulutus.getYhteyshenkiloTyyppi());
+        //updateYhteyshenkilot(oid, koulutus.getYhteyshenkiloTyyppi());
 
         return model;
 

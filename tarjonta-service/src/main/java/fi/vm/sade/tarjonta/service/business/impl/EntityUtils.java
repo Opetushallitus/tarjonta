@@ -120,6 +120,14 @@ public final class EntityUtils {
             }
         } // else, set is empty which will clear all previous links
         to.setLinkkis(toLinkkis);
+        
+        if (!from.getYhteyshenkiloTyyppi().isEmpty()) {
+            HashSet<Yhteyshenkilo> yhteyshenkilos = new HashSet<Yhteyshenkilo>();
+            Yhteyshenkilo newYhteyshenkilo = new Yhteyshenkilo();
+            copyFields(from.getYhteyshenkiloTyyppi().get(0), newYhteyshenkilo);
+            yhteyshenkilos.add(newYhteyshenkilo);
+            to.setYhteyshenkilos(yhteyshenkilos);
+        }
 
         copyLisatiedotFields(from, to);
     }

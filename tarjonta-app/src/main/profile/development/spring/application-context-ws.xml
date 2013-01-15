@@ -44,4 +44,9 @@
     <jaxws:client id="organisaatioService"
                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
                   address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
+    
+    <jaxws:client id="userService"
+                  serviceClass="fi.vm.sade.authentication.service.UserService"
+                  address="${user.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
+                  
 </beans>

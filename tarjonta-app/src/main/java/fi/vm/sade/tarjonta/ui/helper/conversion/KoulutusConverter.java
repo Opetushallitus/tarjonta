@@ -106,10 +106,16 @@ public class KoulutusConverter {
         mapToKoulutusTyyppi(paivita, model, komotoOid, organisaatio);
 
         //convert yhteyshenkilo model objects to yhteyshenkilo type objects.
-        addToYhteyshenkiloTyyppiList(model.getYhteyshenkilot(), paivita.getYhteyshenkiloTyyppi());
+        //addToYhteyshenkiloTyyppiList(model.getYhteyshenkilot(), paivita.getYhteyshenkiloTyyppi());
+        if (model.getYhtHenkKokoNimi() != null && !model.getYhtHenkKokoNimi().isEmpty()) {
+            paivita.getYhteyshenkiloTyyppi().add(mapYhteyshenkiloToTyyppi(model));
+        }
 
         //convert linkki model objects to linkki type objects.
-        addToWebLinkkiTyyppiList(model.getKoulutusLinkit(), paivita.getLinkki());
+        //addToWebLinkkiTyyppiList(model.getKoulutusLinkit(), paivita.getLinkki());
+        if (model.getOpsuLinkki() != null && !model.getOpsuLinkki().isEmpty()) {
+            paivita.getLinkki().add(mapOpetussuunnitelmaLinkkiToTyyppi(model.getOpsuLinkki()));
+        }
 
         // Lisätiedot
         mapToKoulutusLisatiedotModel(paivita, tarjontaModel.getKoulutusLisatiedotModel());
@@ -127,15 +133,60 @@ public class KoulutusConverter {
         mapToKoulutusTyyppi(lisaa, model, oidService.newOid(NodeClassCode.TEKN_5), organisaatio);
 
         //convert yhteyshenkilo model objects to yhteyshenkilo type objects.
-        addToYhteyshenkiloTyyppiList(model.getYhteyshenkilot(), lisaa.getYhteyshenkilo());
+        //addToYhteyshenkiloTyyppiList(model.getYhteyshenkilot(), lisaa.getYhteyshenkilo());
+        
+        if (model.getYhtHenkKokoNimi() != null && !model.getYhtHenkKokoNimi().isEmpty()) {
+            lisaa.getYhteyshenkilo().add(mapYhteyshenkiloToTyyppi(model));
+        }
 
         //convert linkki model objects to linkki type objects.
-        addToWebLinkkiTyyppiList(model.getKoulutusLinkit(), lisaa.getLinkki());
+        //addToWebLinkkiTyyppiList(model.getKoulutusLinkit(), lisaa.getLinkki());
+        
+        if (model.getOpsuLinkki() != null && !model.getOpsuLinkki().isEmpty()) {
+            lisaa.getLinkki().add(mapOpetussuunnitelmaLinkkiToTyyppi(model.getOpsuLinkki()));
+        }
 
         // Lisätiedot
         mapToKoulutusLisatiedotModel(lisaa, tarjontaModel.getKoulutusLisatiedotModel());
 
         return lisaa;
+    }
+    
+    private WebLinkkiTyyppi mapOpetussuunnitelmaLinkkiToTyyppi(String linkki) {
+        WebLinkkiTyyppi webLink = new WebLinkkiTyyppi();
+        webLink.setKieli(I18N.getLocale().getLanguage());
+        webLink.setUri(checkWwwOsoite(linkki));
+        webLink.setTyyppi(KoulutusLinkkiViewModel.LINKKI_TYYPIT[1]);
+        return webLink;
+    }
+    
+    private String checkWwwOsoite(String linkki) {
+        return (!isValidUrl(linkki)) ? "http://" + linkki : linkki;
+    }
+    
+    private boolean isValidUrl(String givenUrl) {
+        return givenUrl == null
+                || givenUrl.isEmpty()
+                || givenUrl.startsWith("http://")
+                || givenUrl.startsWith("https://")
+                || givenUrl.startsWith("ftp://")
+                || givenUrl.startsWith("file://");
+    }
+    
+    private YhteyshenkiloTyyppi mapYhteyshenkiloToTyyppi(KoulutusToisenAsteenPerustiedotViewModel model) {
+        YhteyshenkiloTyyppi yhteyshenkilo = new YhteyshenkiloTyyppi();
+        String kokoNimi = model.getYhtHenkKokoNimi();
+        String[] nimet = kokoNimi.split(" ");
+        if (nimet.length > 1) {
+            yhteyshenkilo.setEtunimet(kokoNimi.substring(0, kokoNimi.lastIndexOf(' ')));
+            yhteyshenkilo.setSukunimi(nimet[nimet.length - 1]);
+        } else {
+            yhteyshenkilo.setEtunimet(kokoNimi);
+        }
+        yhteyshenkilo.setPuhelin(model.getYhtHenkPuhelin());
+        yhteyshenkilo.setSahkoposti(model.getYhtHenkEmail());
+        yhteyshenkilo.setTitteli(model.getYhtHenkTitteli());
+        return yhteyshenkilo;
     }
 
     /**
@@ -152,10 +203,27 @@ public class KoulutusConverter {
         final OrganisaatioDTO organisaatio = searchOrganisatioByOid(tyyppi.getTarjoaja());
 
         KoulutusToisenAsteenPerustiedotViewModel model2Aste = mapToKoulutusToisenAsteenPerustiedotViewModel(tyyppi, status, organisaatio, locale);
-        addToKoulutusYhteyshenkiloViewModel(tyyppi.getYhteyshenkilo(), model2Aste.getYhteyshenkilot());
-        addToKoulutusLinkkiViewModel(tyyppi.getLinkki(), model2Aste.getKoulutusLinkit());
+        //addToKoulutusYhteyshenkiloViewModel(tyyppi.getYhteyshenkilo(), model2Aste.getYhteyshenkilot());
+        mapYhteyshenkiloToViewModel(model2Aste, tyyppi);
+        //addToKoulutusLinkkiViewModel(tyyppi.getLinkki(), model2Aste.getKoulutusLinkit());
+        if (tyyppi.getLinkki() != null && !tyyppi.getLinkki().isEmpty()) {
+            model2Aste.setOpsuLinkki(tyyppi.getLinkki().get(0).getUri());
+        }
 
         return model2Aste;
+    }
+    
+    private void mapYhteyshenkiloToViewModel(KoulutusToisenAsteenPerustiedotViewModel model2Aste, LueKoulutusVastausTyyppi tyyppi) {
+        if (tyyppi.getYhteyshenkilo().isEmpty()) {
+            return;
+        }
+        
+        YhteyshenkiloTyyppi yhtHenk = tyyppi.getYhteyshenkilo().get(0);
+        model2Aste.setYhtHenkKokoNimi(yhtHenk.getEtunimet() + " " + yhtHenk.getSukunimi());
+        model2Aste.setYhtHenkEmail(yhtHenk.getSahkoposti());
+        model2Aste.setYhtHenkPuhelin(yhtHenk.getPuhelin());
+        model2Aste.setYhtHenkTitteli(yhtHenk.getTitteli());
+        
     }
 
     private OrganisaatioDTO searchOrganisatioByOid(final String organisaatioOid) {

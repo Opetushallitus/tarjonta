@@ -15,28 +15,28 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
-import java.util.HashSet;
-import java.util.Set;
-
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConverter;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
-import java.util.AbstractMap;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 
 /**
  * Model holding basic information data for Koulutus.
@@ -55,11 +55,20 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     private List<MonikielinenTekstiTyyppi.Teksti> toteutuksenNimet;
     private List<SimpleHakukohdeViewModel> koulutuksenHakukohteet;
     
+    private String opsuLinkki;
+    
+    private String yhtHenkKokoNimi;
+    private String yhtHenkTitteli;
+    private String yhtHenkEmail;
+    private String yhtHenkPuhelin;
+    
     /*
      * cache maps
      */
     private Map<String, List<KoulutusmoduuliKoosteTyyppi>> cacheKomoTutkinto;
     private Map<Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo;
+    
+
 
     public KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus status) {
         super();
@@ -103,7 +112,12 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setOpetuskieli(null);
         setKoulutuskoodit(new HashSet<KoulutuskoodiModel>());
         setKoulutusohjelmat(new HashSet<KoulutusohjelmaModel>());
-       
+        setOpsuLinkki(null); //optional
+        setYhtHenkEmail(null); //optional
+        setYhtHenkKokoNimi(null); //optional
+        setYhtHenkPuhelin(null); //optional
+        setYhtHenkTitteli(null); //optional
+        
         //Table data
         setPainotus(new ArrayList<KielikaannosViewModel>(0)); //optional
         setKoulutusLinkit(new ArrayList<KoulutusLinkkiViewModel>(0)); //optional
@@ -332,5 +346,45 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
             koulutuksenHakukohteet = new ArrayList<SimpleHakukohdeViewModel>();
         }
         return koulutuksenHakukohteet;
+    }
+    
+    public String getOpsuLinkki() {
+        return opsuLinkki;
+    }
+
+    public void setOpsuLinkki(String linkki) {
+        this.opsuLinkki = linkki;
+    }
+
+    public String getYhtHenkKokoNimi() {
+        return yhtHenkKokoNimi;
+    }
+
+    public void setYhtHenkKokoNimi(String yhtHenkKokoNimi) {
+        this.yhtHenkKokoNimi = yhtHenkKokoNimi;
+    }
+
+    public String getYhtHenkTitteli() {
+        return yhtHenkTitteli;
+    }
+
+    public void setYhtHenkTitteli(String yhtHenkTitteli) {
+        this.yhtHenkTitteli = yhtHenkTitteli;
+    }
+
+    public String getYhtHenkEmail() {
+        return yhtHenkEmail;
+    }
+
+    public void setYhtHenkEmail(String yhtHenkEmail) {
+        this.yhtHenkEmail = yhtHenkEmail;
+    }
+
+    public String getYhtHenkPuhelin() {
+        return yhtHenkPuhelin;
+    }
+
+    public void setYhtHenkPuhelin(String yhtHenkPuhelin) {
+        this.yhtHenkPuhelin = yhtHenkPuhelin;
     }
 }

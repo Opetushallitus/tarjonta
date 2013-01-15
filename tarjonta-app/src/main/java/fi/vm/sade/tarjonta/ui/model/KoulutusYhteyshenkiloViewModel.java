@@ -28,6 +28,8 @@ public class KoulutusYhteyshenkiloViewModel extends BaseUIViewModel {
     private String titteli;
     private String email;
     private String puhelin;
+    private String kokoNimi;
+
     private String etunimet;
     private String sukunimi;
 
@@ -106,5 +108,13 @@ public class KoulutusYhteyshenkiloViewModel extends BaseUIViewModel {
      */
     public void setHenkiloOid(String henkiloOid) {
         this.henkiloOid = henkiloOid;
+    }
+    
+    public String getKokoNimi() {
+        return kokoNimi;
+    }
+
+    public void setKokoNimi(String kokoNimi) {
+        this.kokoNimi = kokoNimi;
     }
 }

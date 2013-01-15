@@ -15,6 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
+import fi.vm.sade.authentication.service.UserService;
+import fi.vm.sade.authentication.service.types.HenkiloPagingObjectType;
+import fi.vm.sade.authentication.service.types.HenkiloSearchObjectType;
+import fi.vm.sade.authentication.service.types.dto.HenkiloType;
+import fi.vm.sade.authentication.service.types.dto.SearchConnectiveType;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.KoodiService;
@@ -72,6 +77,8 @@ import org.apache.commons.beanutils.BeanComparator;
 public class TarjontaPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
+    @Autowired
+    private UserService userService;
     @Autowired
     private TarjontaPermissionService tarjontaPermissionService;
     // Services used
@@ -1057,5 +1064,28 @@ public class TarjontaPresenter {
 
     public void setSearchResultsView(SearchResultsView searchResultsView) {
         this.searchResultsView = searchResultsView;
+    }
+
+    /**
+     * Search yhteyshenkilo for a koulutus using user service based on on name of the user 
+     * and the organisation of the koulutus.
+     * @param value - the name or part of the name of the user to search for
+     */
+    public void searchYhteyshenkilo(String value) {
+        HenkiloSearchObjectType searchType = new HenkiloSearchObjectType();
+        searchType.setConnective(SearchConnectiveType.OR);
+        String[] nimetSplit = value.split(" ");
+        if (nimetSplit.length > 1) {
+            searchType.setSukunimi(nimetSplit[nimetSplit.length-1]);
+            searchType.setEtunimet(value.substring(0, value.lastIndexOf(' ')));
+        } else {
+            searchType.setEtunimet(value);
+        }
+        searchType.getOrganisaatioOids().add(_model.getKoulutusPerustiedotModel().getOrganisaatioOid());
+        //searchType.set
+        HenkiloPagingObjectType paging = new HenkiloPagingObjectType();
+        
+        List<HenkiloType> henkilos = this.userService.listHenkilos(searchType, paging);
+        LOG.debug("Henkilos size: " + henkilos.size());
     }
 }

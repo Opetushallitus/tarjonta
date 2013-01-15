@@ -15,10 +15,14 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
+import static fi.vm.sade.generic.common.validation.ValidationConstants.EMAIL_PATTERN;
+
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.NestedMethodProperty;
+import com.vaadin.event.FieldEvents.TextChangeEvent;
+import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
@@ -31,6 +35,8 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
+
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
@@ -49,6 +55,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,7 +141,25 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private KoodistoComponent kcOpetusmuoto;
     @NotNull(message = "{validation.Koulutus.pohjakoulutusvaatimus.notNull}")
     @PropertyId("pohjakoulutusvaatimus")
-    private KoodistoComponent kcPohjakoulutusvaatimus;
+    private KoodistoComponent kcPohjakoulutusvaatimus;    
+    
+    @Pattern(regexp = "[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "{validation.invalid.www}")
+    @PropertyId("opsuLinkki")
+    private TextField linkki;
+    
+    @PropertyId("yhtHenkKokoNimi")
+    private TextField yhtHenkKokoNimi;
+    @PropertyId("yhtHenkTitteli")
+    private TextField yhtHenkTitteli;
+    
+    @Pattern(regexp = EMAIL_PATTERN, message = "{validation.invalid.email}")
+    @PropertyId("yhtHenkEmail")
+    private TextField yhtHenkEmail;
+    
+    @Pattern(regexp = "[+|-| |\\(|\\)|[0-9]]{3,100}", message = "{validation.invalid.phone}")
+    @PropertyId("yhtHenkPuhelin")
+    private TextField yhtHenkPuhelin;
+    
     private Label koulutusaste;
     private Label opintoala;
     private Label opintojenLaajuusyksikko;
@@ -235,12 +260,44 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         buildGridKoulutuslajiRow(this, "Koulutuslaji");
         buildGridOpetusmuotoRow(this, "Opetusmuoto");
         buildGridPohjakoulutusvaatimusRow(this, "Pohjakoulutusvaatimus");
+        buildGridLinkkiRow(this, "Linkki");
+        buildGridYhteyshenkiloRow(this, "Yhteyshenkilo");
 
         //activate all property annotation validations
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
 
         //disable or enable reguired validations
         showOnlySelectedFormComponents();
+    }
+
+    private void buildGridYhteyshenkiloRow(GridLayout grid, String propertyKey) {
+        gridLabel(grid, propertyKey);
+        VerticalLayout vl = UiUtil.verticalLayout();
+        yhtHenkKokoNimi = UiUtil.textField(vl, "", T("prompt.kokoNimi"), true);
+        //TextChangeListener listener = ;
+        yhtHenkKokoNimi.addListener(new TextChangeListener() {
+
+            @Override
+            public void textChange(TextChangeEvent event) {
+                presenter.searchYhteyshenkilo(event.getText());
+                
+            }
+            
+        });
+        yhtHenkTitteli = UiUtil.textField(vl, "", T("prompt.titteli"), true);
+        yhtHenkEmail = UiUtil.textField(vl, "", T("prompt.email"), true);
+        yhtHenkPuhelin = UiUtil.textField(vl, "", T("prompt.puhelin"), true);
+        grid.addComponent(vl);
+        grid.newLine();
+        buildSpacingGridRow(grid);
+    }
+
+    private void buildGridLinkkiRow(GridLayout grid, String propertyKey) {
+        gridLabel(grid, propertyKey);
+        this.linkki = UiUtil.textField(null, "", T("prompt.Linkki"), true);
+        grid.addComponent(this.linkki);
+        grid.newLine();
+        buildSpacingGridRow(grid);
     }
 
     private Label buildLabel(GridLayout grid, final String propertyKey) {
