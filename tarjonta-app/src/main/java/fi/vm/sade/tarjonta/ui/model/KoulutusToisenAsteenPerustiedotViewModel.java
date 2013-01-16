@@ -55,20 +55,31 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     private List<MonikielinenTekstiTyyppi.Teksti> toteutuksenNimet;
     private List<SimpleHakukohdeViewModel> koulutuksenHakukohteet;
     
+    /*
+     * Link to opetussuunnitelma
+     */
     private String opsuLinkki;
-    
+    /*
+     * Yhteyshenkilo fields
+     */
     private String yhtHenkKokoNimi;
     private String yhtHenkTitteli;
     private String yhtHenkEmail;
     private String yhtHenkPuhelin;
     private String YhtHenkiloOid;
-
+    
+    /*
+     * the organisaatio oids of the organisaatio tree of the tarjoaja organisaatio of this koulutus.
+     * Is used when fetching potential yhteyshenkilos for the current koulutus.
+     */
+    private List<String> organisaatioOidTree;
 
     /*
      * cache maps
      */
     private Map<String, List<KoulutusmoduuliKoosteTyyppi>> cacheKomoTutkinto;
     private Map<Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo;
+    
     
 
 
@@ -397,5 +408,13 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
 
     public void setYhtHenkiloOid(String oidHenkilo) {
         this.YhtHenkiloOid = oidHenkilo;
+    }
+    
+    public List<String> getOrganisaatioOidTree() {
+        return organisaatioOidTree;
+    }
+
+    public void setOrganisaatioOidTree(List<String> organisaatioOidTree) {
+        this.organisaatioOidTree = organisaatioOidTree;
     }
 }

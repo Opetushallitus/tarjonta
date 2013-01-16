@@ -33,6 +33,8 @@ import fi.vm.sade.tarjonta.ui.helper.conversion.*;
 import fi.vm.sade.tarjonta.ui.model.*;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.widget.WidgetFactory;
+import fi.vm.sade.organisaatio.api.model.types.FindBasicParentOrganisaatioTypesParameter;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchOidType;
@@ -456,10 +458,36 @@ public class TarjontaPresenter {
             }
 
             getModel().getKoulutusPerustiedotModel().clearModel(DocumentStatus.NEW);
+            getModel().getKoulutusPerustiedotModel().setOrganisaatioOidTree( fetchOrganisaatioTree(getModel().getOrganisaatioOid()));
         }
 
         getRootView().changeView(new EditKoulutusView());
 
+    }
+    
+    /*
+     * Retrieves the oids of organisaatios that belong to the organisaatio tree of the organisaatio the oid of which is
+     * given as a parameter to this method. 
+     * The retrieved oid list is used when querying for potential yhteyshenkilos of a koulutus object.
+     */
+    private List<String> fetchOrganisaatioTree(String organisaatioOid) {
+        List<String> organisaatioOidTree = new ArrayList<String>();
+        organisaatioOidTree.add(organisaatioOid);
+        try {
+            List<OrganisaatioDTO> parentOrganisaatios = organisaatioService.findParentsTo(organisaatioOid);
+            for (OrganisaatioDTO curOrg : parentOrganisaatios) {
+                organisaatioOidTree.add(curOrg.getOid());
+            }
+            OrganisaatioSearchOidType childKysely = new OrganisaatioSearchOidType();
+            childKysely.setSearchOid(organisaatioOid);
+            OrganisaatioOidListType childVastaus =  organisaatioService.findChildrenOidsByOid(childKysely);
+            for (OrganisaatioOidType curOid : childVastaus.getOrganisaatioOidList()) {
+                organisaatioOidTree.add(curOid.getOrganisaatioOid());
+            }
+        } catch (Exception ex) {
+            LOG.error("Problem fetching organisaatio oid tree: {}", ex.getMessage());
+        }
+        return organisaatioOidTree;
     }
 
     private void readKoulutusToModel(final String koulutusOid) {
@@ -467,6 +495,7 @@ public class TarjontaPresenter {
         try {
             KoulutusToisenAsteenPerustiedotViewModel koulutus;
             koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(lueKoulutus, DocumentStatus.LOADED, I18N.getLocale());
+            koulutus.setOrganisaatioOidTree(fetchOrganisaatioTree(koulutus.getOrganisaatioOid()));
             getModel().setKoulutusPerustiedotModel(koulutus);
             getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(lueKoulutus));
 
@@ -1096,13 +1125,14 @@ public class TarjontaPresenter {
         } else {
             searchType.setEtunimet(value);
         }
-        String organisaatioOid = _model.getKoulutusPerustiedotModel().getOrganisaatioOid() != null 
-                                ? _model.getKoulutusPerustiedotModel().getOrganisaatioOid() : _model.getOrganisaatioOid(); 
-        searchType.getOrganisaatioOids().add(organisaatioOid);
-        //searchType.set
+        searchType.getOrganisaatioOids().addAll(_model.getKoulutusPerustiedotModel().getOrganisaatioOidTree());
         HenkiloPagingObjectType paging = new HenkiloPagingObjectType();
-        
-        List<HenkiloType> henkilos = this.userService.listHenkilos(searchType, paging);
+        List<HenkiloType> henkilos = new ArrayList<HenkiloType>();
+        try {
+            henkilos = this.userService.listHenkilos(searchType, paging);
+        } catch (Exception ex) {
+            LOG.error("Problem fetching henkilos: {}", ex.getMessage());
+        }
         
         //Returning the list of found henkilos.
         return henkilos;
