@@ -25,6 +25,7 @@ import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 
 import java.util.Locale;
@@ -48,16 +49,22 @@ public class HakukohdeLiiteFromDTOConverter extends AbstractToDomainConverter<Ha
 
              hakukohdeLiite.setErapaiva(hakukohdeLiiteTyyppi.getToimitettavaMennessa());
 
-             MonikielinenTeksti kuvausTeksti = new MonikielinenTeksti();
-             kuvausTeksti.setTekstiKaannos(Locale.getDefault().getLanguage(),hakukohdeLiiteTyyppi.getLiitteenKuvaus());
-
-             hakukohdeLiite.setKuvaus(kuvausTeksti);
+             hakukohdeLiite.setKuvaus(convertMonikielinenTekstiTyyppiToDomainValue(hakukohdeLiiteTyyppi.getLiitteenKuvaus()));
              hakukohdeLiite.setLiitetyyppi(hakukohdeLiiteTyyppi.getLiitteenTyyppi());
              hakukohdeLiite.setSahkoinenToimitusosoite(hakukohdeLiiteTyyppi.getSahkoinenToimitusOsoite());
              hakukohdeLiite.setToimitusosoite(convertOsoiteToOsoiteTyyppi(hakukohdeLiiteTyyppi.getLiitteenToimitusOsoite()));
 
              return hakukohdeLiite;
       }
+
+    private MonikielinenTeksti convertMonikielinenTekstiTyyppiToDomainValue(MonikielinenTekstiTyyppi monikielinenTekstiTyyppi) {
+        MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
+
+        for (MonikielinenTekstiTyyppi.Teksti teksti:monikielinenTekstiTyyppi.getTeksti()) {
+            monikielinenTeksti.addTekstiKaannos(teksti.getKieliKoodi(),teksti.getValue());
+        }
+        return monikielinenTeksti;
+    }
 
     private Osoite convertOsoiteToOsoiteTyyppi(OsoiteTyyppi osoiteTyyppi) {
          Osoite osoite = new Osoite();

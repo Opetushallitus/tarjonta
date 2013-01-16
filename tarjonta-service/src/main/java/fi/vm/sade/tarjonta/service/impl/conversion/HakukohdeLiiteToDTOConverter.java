@@ -17,10 +17,14 @@ package fi.vm.sade.tarjonta.service.impl.conversion;/*
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -36,12 +40,26 @@ public class HakukohdeLiiteToDTOConverter extends AbstractFromDomainConverter<Ha
 
         hakukohdeLiiteTyyppi.setToimitettavaMennessa(hakukohdeLiite.getErapaiva());
         hakukohdeLiiteTyyppi.setLiitteenId(hakukohdeLiite.getId().toString());
-        hakukohdeLiiteTyyppi.setLiitteenKuvaus(hakukohdeLiite.getKuvaus().getTekstiForKieliKoodi(Locale.getDefault().getLanguage()));
+        hakukohdeLiiteTyyppi.setLiitteenKuvaus(convertMonikielinenTekstiToTekstiTyyppi(hakukohdeLiite.getKuvaus()));
+
+
         hakukohdeLiiteTyyppi.setLiitteenTyyppi(hakukohdeLiite.getLiitetyyppi());
         hakukohdeLiiteTyyppi.setSahkoinenToimitusOsoite(hakukohdeLiite.getSahkoinenToimitusosoite());
         hakukohdeLiiteTyyppi.setLiitteenToimitusOsoite(convertOsoiteToOsoiteTyyppi(hakukohdeLiite.getToimitusosoite()));
 
         return hakukohdeLiiteTyyppi;
+    }
+
+    private MonikielinenTekstiTyyppi convertMonikielinenTekstiToTekstiTyyppi(MonikielinenTeksti monikielinenTeksti) {
+           MonikielinenTekstiTyyppi monikielinenTekstiTyyppi = new MonikielinenTekstiTyyppi();
+           ArrayList<MonikielinenTekstiTyyppi.Teksti> tekstis = new ArrayList<MonikielinenTekstiTyyppi.Teksti>();
+           for (TekstiKaannos kaannos: monikielinenTeksti.getTekstis()) {
+                MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
+                teksti.setKieliKoodi(kaannos.getKieliKoodi());
+                teksti.setValue(kaannos.getArvo());
+           }
+           monikielinenTekstiTyyppi.getTeksti().addAll(tekstis);
+           return monikielinenTekstiTyyppi;
     }
 
     private OsoiteTyyppi convertOsoiteToOsoiteTyyppi(Osoite osoite) {
