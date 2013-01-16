@@ -60,8 +60,9 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
     protected void buildLayout(VerticalLayout layout) {
         liitteet = new HakukohteenLiitteetViewImpl(presenter,uiBuilder);
         //TODO, after the table is inserted in this layout change this
-        presenter.getModel().getHakukohde().getLiites().add(new HakukohdeLiiteViewModel());
-        this.initForm(presenter.getModel().getHakukohde().getLiites().get(0));
+        //presenter.getModel().getHakukohde().getLiites().add(new HakukohdeLiiteViewModel());
+        presenter.getModel().setSelectedLiite(new HakukohdeLiiteViewModel());
+        this.initForm(presenter.getModel().getSelectedLiite());
         layout.addComponent(buildErrorLayout());
         layout.addComponent(form);
         form.setSizeFull();
@@ -83,6 +84,7 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
         addNavigationButton("", new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
+                presenter.getModel().setSelectedLiite(null);
                 presenter.showMainDefaultView();
                 presenter.getHakukohdeListView().reload();
             }
@@ -99,7 +101,7 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 //presenter.commitHakukohdeForm("VALMIS");
-                saveForm(null);
+                saveForm();
             }
         });
 
@@ -118,11 +120,12 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
         return topErrorArea;
     }
 
-    private void saveForm(String tila) {
+    private void saveForm() {
         try {
             errorView.resetErrors();
             form.commit();
-            presenter.saveHakukohdeLiite(presenter.getModel().getHakukohde().getLiites().get(0));
+            presenter.getModel().getSelectedLiite().getLiitteenSanallinenKuvaus().addAll(liitteet.getLiitteenSanallisetKuvaukset());
+            presenter.saveHakukohdeLiite();
         }   catch (Validator.InvalidValueException e) {
             errorView.addError(e);
             presenter.showNotification(UserNotification.GENERIC_VALIDATION_FAILED);

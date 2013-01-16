@@ -22,9 +22,12 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
+import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -37,6 +40,7 @@ import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Created by: Tuomas Katva
@@ -53,9 +57,9 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     private GridLayout itemContainer;
     @PropertyId("liitteenTyyppi")
     @NotNull(message = "validation.HakukohdeLiitteet.liitteenTyyppi.notNull")
-    private ComboBox liitteenTyyppi;
-    @PropertyId("liitteenSanallinenKuvaus")
-    private TextArea liitteenSanallinenKuvausTxtArea;
+    KoodistoComponent liitteenTyyppi;
+
+    private LiitteenSanallinenKuvausTabSheet liitteenSanallinenKuvausTxtArea;
     @PropertyId("toimitettavaMennessa")
     private DateField toimittettavaMennessa;
 
@@ -116,17 +120,21 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
     }
 
-    private ComboBox buildLiitteenTyyppiCombo() {
-        liitteenTyyppi = new ComboBox();
+    private KoodistoComponent buildLiitteenTyyppiCombo() {
+        liitteenTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_LIITTEEN_TYYPPI_URI);
 
         return liitteenTyyppi;
     }
 
-    private TextArea buildLiitteenSanallinenKuvaus() {
-        liitteenSanallinenKuvausTxtArea = new TextArea();
-        liitteenSanallinenKuvausTxtArea.setNullRepresentation("");
+    private LiitteenSanallinenKuvausTabSheet buildLiitteenSanallinenKuvaus() {
+        liitteenSanallinenKuvausTxtArea = new LiitteenSanallinenKuvausTabSheet();
+
         liitteenSanallinenKuvausTxtArea.setWidth("60%");
         return liitteenSanallinenKuvausTxtArea;
+    }
+
+    public List<KielikaannosViewModel> getLiitteenSanallisetKuvaukset() {
+       return liitteenSanallinenKuvausTxtArea.getKieliKaannokset();
     }
 
     private DateField buildToimitettavaMennessa() {

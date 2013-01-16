@@ -46,21 +46,21 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author Tuomas Katva
  */
 @Configurable
-public class LanguageTabSheet extends CustomComponent {
+public abstract class LanguageTabSheet extends CustomComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(LanguageTabSheet.class);
     private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
     private static final long serialVersionUID = -185022467161014683L;
     private boolean attached = false;
-    private TarjontaModel _model;
+    protected TarjontaModel _model;
     @Autowired
-    private TarjontaPresenter presenter;
+    protected TarjontaPresenter presenter;
     @Autowired
-    private TarjontaUIHelper _uiHelper;
-    private KoodistoSelectionTabSheet _languageTabsheet;
-    private VerticalLayout rootLayout = new VerticalLayout();
+    protected TarjontaUIHelper _uiHelper;
+    protected KoodistoSelectionTabSheet _languageTabsheet;
+    protected VerticalLayout rootLayout = new VerticalLayout();
     @Autowired(required = true)
-    private transient UiBuilder uiBuilder;
+    protected transient UiBuilder uiBuilder;
 
     public LanguageTabSheet() {
         setCompositionRoot(rootLayout);
@@ -85,10 +85,10 @@ public class LanguageTabSheet extends CustomComponent {
         };
 
         rootLayout.addComponent(_languageTabsheet);
-        if (_model.getHakukohde() != null && _model.getHakukohde().getLisatiedot() != null) {
-            setInitialValues(_model.getHakukohde().getLisatiedot());
-        }
+        initializeTabsheet();
     }
+
+    protected abstract void initializeTabsheet();
 
     private String retrieveTabText(Tab tab) {
         Component component = tab.getComponent();
@@ -115,7 +115,7 @@ public class LanguageTabSheet extends CustomComponent {
         return languageValues;
     }
 
-    private void setInitialValues(List<KielikaannosViewModel> values) {
+    protected void setInitialValues(List<KielikaannosViewModel> values) {
         if (values != null) {
             Set<String> valitutKielet = new HashSet<String>();
             for (KielikaannosViewModel kieliKaannos : values) {

@@ -39,7 +39,7 @@ public class TarjontaModel extends BaseUIViewModel {
     private List<KoulutusTulos> _koulutukset;
     private List<KoulutusTulos> _selectedKoulutukset;
     private HakukohdeViewModel hakukohde;
-
+    private HakukohdeLiiteViewModel selectedLiite;
     /*
      * Selected organisaatio data:
      */
@@ -195,4 +195,12 @@ public class TarjontaModel extends BaseUIViewModel {
         this._koulutusLisatiedotModel = _koulutusLisatiedotModel;
     }
 
+    public HakukohdeLiiteViewModel getSelectedLiite() {
+
+        return selectedLiite;
+    }
+
+    public void setSelectedLiite(HakukohdeLiiteViewModel selectedLiite) {
+        this.selectedLiite = selectedLiite;
+    }
 }

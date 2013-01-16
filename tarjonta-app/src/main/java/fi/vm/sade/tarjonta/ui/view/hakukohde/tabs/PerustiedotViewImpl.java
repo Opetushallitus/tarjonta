@@ -101,7 +101,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     @PropertyId("liitteidenToimitusPvm")
     private DateField liitteidenToimitusPvm;
 //    LanguageTabSheet valintaPerusteidenKuvausTabs;
-    LanguageTabSheet lisatiedotTabs;
+    HakukohdeLisatiedotTabSheet lisatiedotTabs;
     Label serverMessage = new Label("");
     //Info buttons
     Button upRightInfoButton;
@@ -471,12 +471,12 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         return vl;
     }
 
-    private LanguageTabSheet buildLanguageTab(List<KielikaannosViewModel> arvot) {
-        return new LanguageTabSheet();
+    private HakukohdeLisatiedotTabSheet buildLanguageTab(List<KielikaannosViewModel> arvot) {
+        return new HakukohdeLisatiedotTabSheet();
     }
 
-    private LanguageTabSheet buildLanguageTab() {
-        return new LanguageTabSheet();
+    private HakukohdeLisatiedotTabSheet buildLanguageTab() {
+        return new HakukohdeLisatiedotTabSheet();
     }
 
     private String T(String key) {

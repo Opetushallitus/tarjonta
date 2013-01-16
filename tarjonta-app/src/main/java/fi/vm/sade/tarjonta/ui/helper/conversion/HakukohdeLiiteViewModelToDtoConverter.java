@@ -16,10 +16,15 @@ package fi.vm.sade.tarjonta.ui.helper.conversion;/*
  */
 
 import fi.vm.sade.oid.service.OIDService;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
+
+import java.util.List;
+
 /**
  * Created by: Tuomas Katva
  * Date: 15.1.2013
@@ -33,7 +38,8 @@ public class HakukohdeLiiteViewModelToDtoConverter {
 
         hakukohdeLiite.setLiitteenTyyppi(hakukohdeLiiteViewModel.getLiitteenTyyppi());
         hakukohdeLiite.setLiitteenToimitusOsoite(convertLiiteToOsoiteTyyppi(hakukohdeLiiteViewModel));
-        hakukohdeLiite.setLiitteenKuvaus(hakukohdeLiiteViewModel.getLiitteenSanallinenKuvaus());
+        hakukohdeLiite.setLiitteenKuvaus(convertTekstiToMonikielinenTekstiTyyppi(hakukohdeLiiteViewModel.getLiitteenSanallinenKuvaus()));
+
         hakukohdeLiite.setLiitteenId(hakukohdeLiiteViewModel.getHakukohdeLiiteId());
         hakukohdeLiite.setSahkoinenToimitusOsoite(hakukohdeLiiteViewModel.getSahkoinenToimitusOsoite());
         hakukohdeLiite.setToimitettavaMennessa(hakukohdeLiiteViewModel.getToimitettavaMennessa());
@@ -41,6 +47,18 @@ public class HakukohdeLiiteViewModelToDtoConverter {
         return hakukohdeLiite;
     }
 
+    private MonikielinenTekstiTyyppi convertTekstiToMonikielinenTekstiTyyppi(List<KielikaannosViewModel> kuvaukses) {
+        MonikielinenTekstiTyyppi monikielinenTekstiTyyppi = new MonikielinenTekstiTyyppi();
+
+        for (KielikaannosViewModel kielikaannos:kuvaukses) {
+            MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
+            teksti.setKieliKoodi(kielikaannos.getKielikoodi());
+            teksti.setValue(kielikaannos.getNimi());
+            monikielinenTekstiTyyppi.getTeksti().add(teksti);
+        }
+
+        return monikielinenTekstiTyyppi;
+    }
 
     private OsoiteTyyppi convertLiiteToOsoiteTyyppi(HakukohdeLiiteViewModel hakukohdeLiiteViewModel) {
         OsoiteTyyppi osoite = new OsoiteTyyppi();

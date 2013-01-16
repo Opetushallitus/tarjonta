@@ -39,6 +39,7 @@ public class KoodistoURIHelper {
     public static String KOODISTO_KOULUTUSLAJI_URI;
     public static String KOODISTO_AVAINSANAT_URI;
     public static String KOODISTO_KIELIVALIKOIMA_URI;
+    public static String KOODISTO_LIITTEEN_TYYPPI_URI;
     /*
      * Haku URIs
      */
@@ -221,5 +222,8 @@ public class KoodistoURIHelper {
         KOODISTO_POSTINUMERO = postinumero;
     }
 
-
+    @Value("${koodisto-uris.liitteentyyppi:NOT_SET}")
+    public void setLiitteenTyyppi(String liitteenTyyppi) {
+        KOODISTO_LIITTEEN_TYYPPI_URI = liitteenTyyppi;
+    }
 }

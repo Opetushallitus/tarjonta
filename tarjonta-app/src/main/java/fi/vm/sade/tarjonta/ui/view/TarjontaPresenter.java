@@ -164,17 +164,18 @@ public class TarjontaPresenter {
         }
     }
 
-    public void saveHakukohdeLiite(HakukohdeLiiteViewModel hakukohdeLiiteViewModel) {
+    public void saveHakukohdeLiite() {
         ArrayList<HakukohdeLiiteTyyppi> liitteet = new ArrayList<HakukohdeLiiteTyyppi>();
         HakukohdeLiiteViewModelToDtoConverter converter = new HakukohdeLiiteViewModelToDtoConverter();
-        HakukohdeLiiteTyyppi hakukohdeLiite = converter.convertHakukohdeViewModelToHakukohdeLiiteTyyppi(hakukohdeLiiteViewModel);
+        HakukohdeLiiteTyyppi hakukohdeLiite = converter.convertHakukohdeViewModelToHakukohdeLiiteTyyppi(getModel().getSelectedLiite());
         liitteet.add(hakukohdeLiite);
-        for (HakukohdeLiiteViewModel hakuLiite:getModel().getHakukohde().getLiites()) {
-            HakukohdeLiiteTyyppi liite = converter.convertHakukohdeViewModelToHakukohdeLiiteTyyppi(hakuLiite);
-            liitteet.add(liite);
-        }
+//        for (HakukohdeLiiteViewModel hakuLiite:getModel().getHakukohde().getLiites()) {
+//            HakukohdeLiiteTyyppi liite = converter.convertHakukohdeViewModelToHakukohdeLiiteTyyppi(hakuLiite);
+//            liitteet.add(liite);
+//        }
 
         tarjontaAdminService.tallennaLiitteitaHakukohteelle(getModel().getHakukohde().getOid(),liitteet);
+        getModel().setSelectedLiite(null);
     }
 
     public void initHakukohdeForm(PerustiedotView hakuKohdePerustiedotView) {
@@ -215,6 +216,9 @@ public class TarjontaPresenter {
         }
         if (getModel().getHakukohde() != null && getModel().getHakukohde().getHakukohdeNimi() != null) {
             setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
+
+            //TODO: If hakukohde is not now initialize hakukohdeLiite form
+            getModel().setSelectedLiite(new HakukohdeLiiteViewModel());
         }
     }
 

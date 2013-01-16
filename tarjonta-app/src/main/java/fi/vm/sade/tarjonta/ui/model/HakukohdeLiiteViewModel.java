@@ -15,7 +15,9 @@ package fi.vm.sade.tarjonta.ui.model;/*
  * European Union Public Licence for more details.
  */
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by: Tuomas Katva
@@ -27,7 +29,7 @@ public class HakukohdeLiiteViewModel {
 
     private String liitteenTyyppi;
 
-    private String liitteenSanallinenKuvaus;
+    private List<KielikaannosViewModel> liitteenSanallinenKuvaus;
 
     private Date toimitettavaMennessa;
 
@@ -50,12 +52,18 @@ public class HakukohdeLiiteViewModel {
         this.liitteenTyyppi = liitteenTyyppi;
     }
 
-    public String getLiitteenSanallinenKuvaus() {
+    public List<KielikaannosViewModel>  getLiitteenSanallinenKuvaus() {
+        if (liitteenSanallinenKuvaus == null) {
+            setLiitteenSanallinenKuvaus(new ArrayList<KielikaannosViewModel>());
+        }
         return liitteenSanallinenKuvaus;
     }
 
-    public void setLiitteenSanallinenKuvaus(String liitteenSanallinenKuvaus) {
-        this.liitteenSanallinenKuvaus = liitteenSanallinenKuvaus;
+    public void addLiitteenSanallinenKuvaus(String kuvaus,String kieliKoodi) {
+        KielikaannosViewModel kielikaannosViewModel = new KielikaannosViewModel();
+        kielikaannosViewModel.setKielikoodi(kieliKoodi);
+        kielikaannosViewModel.setNimi(kuvaus);
+        liitteenSanallinenKuvaus.add(kielikaannosViewModel);
     }
 
     public Date getToimitettavaMennessa() {
@@ -112,5 +120,9 @@ public class HakukohdeLiiteViewModel {
 
     public void setHakukohdeLiiteId(String hakukohdeLiiteId) {
         this.hakukohdeLiiteId = hakukohdeLiiteId;
+    }
+
+    public void setLiitteenSanallinenKuvaus(List<KielikaannosViewModel> liitteenSanallinenKuvaus) {
+        this.liitteenSanallinenKuvaus = liitteenSanallinenKuvaus;
     }
 }
