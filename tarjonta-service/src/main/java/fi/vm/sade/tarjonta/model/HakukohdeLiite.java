@@ -55,6 +55,8 @@ public class HakukohdeLiite extends BaseEntity {
 
     private String sahkoinenToimitusosoite;
 
+    private String liitteenTyyppiKoodistoNimi;
+
     public Date getErapaiva() {
         return erapaiva;
     }
@@ -103,5 +105,12 @@ public class HakukohdeLiite extends BaseEntity {
         this.hakukohde = hakukohde;
     }
 
+    public String getLiitteenTyyppiKoodistoNimi() {
+        return liitteenTyyppiKoodistoNimi;
+    }
+
+    public void setLiitteenTyyppiKoodistoNimi(String liitteenTyyppiKoodistoNimi) {
+        this.liitteenTyyppiKoodistoNimi = liitteenTyyppiKoodistoNimi;
+    }
 }
 

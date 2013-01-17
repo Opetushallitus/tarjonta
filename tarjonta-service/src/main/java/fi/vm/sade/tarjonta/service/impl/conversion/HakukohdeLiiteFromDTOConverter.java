@@ -48,7 +48,7 @@ public class HakukohdeLiiteFromDTOConverter extends AbstractToDomainConverter<Ha
              }
 
              hakukohdeLiite.setErapaiva(hakukohdeLiiteTyyppi.getToimitettavaMennessa());
-
+             hakukohdeLiite.setLiitteenTyyppiKoodistoNimi(hakukohdeLiiteTyyppi.getLiitteenTyyppiKoodistoNimi());
              hakukohdeLiite.setKuvaus(convertMonikielinenTekstiTyyppiToDomainValue(hakukohdeLiiteTyyppi.getLiitteenKuvaus()));
              hakukohdeLiite.setLiitetyyppi(hakukohdeLiiteTyyppi.getLiitteenTyyppi());
              hakukohdeLiite.setSahkoinenToimitusosoite(hakukohdeLiiteTyyppi.getSahkoinenToimitusOsoite());
