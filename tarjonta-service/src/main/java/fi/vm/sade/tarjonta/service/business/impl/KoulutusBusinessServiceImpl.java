@@ -120,8 +120,6 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         koulutusmoduuliToteutusDAO.update(model);
 
-        //updateYhteyshenkilot(oid, koulutus.getYhteyshenkiloTyyppi());
-
         return model;
 
     }
@@ -130,45 +128,5 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         // no good
         return (e.getId() == null);
     }
-
-    private void updateYhteyshenkilot(final String oid, List<YhteyshenkiloTyyppi> yhteyshenkiloTyyppi) {
-        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findKomotoWithYhteyshenkilosByOid(oid);
-        Set<Yhteyshenkilo> yhteyshenkilos = komoto.getYhteyshenkilos();
-        Set<Yhteyshenkilo> removableObjects = new HashSet<Yhteyshenkilo>();
-
-        if (yhteyshenkiloTyyppi != null && !yhteyshenkiloTyyppi.isEmpty()) {
-            for (YhteyshenkiloTyyppi henkiloFrom : yhteyshenkiloTyyppi) {
-                boolean updated = false;
-                for (Yhteyshenkilo yhteyshenkilo : yhteyshenkilos) {
-                    if (henkiloFrom.getHenkiloOid().equals(yhteyshenkilo.getHenkioOid())) {
-                        //update existing object
-                        EntityUtils.copyFields(henkiloFrom, yhteyshenkilo);
-                        yhteyshenkiloDAO.update(yhteyshenkilo);
-                        yhteyshenkilo.setPersisted(true);
-                        updated = true;
-                    }
-                }
-
-                if (!updated) {
-                    //insert new object to database
-                    Yhteyshenkilo to = new Yhteyshenkilo();
-                    EntityUtils.copyFields(henkiloFrom, to);
-                    to.setPersisted(true);
-                    yhteyshenkiloDAO.insert(to);
-                }
-            }
-
-        }
-
-        for (Yhteyshenkilo y : yhteyshenkilos) {
-            if (!y.isPersisted()) {
-                removableObjects.add(y);
-            }
-        }
-
-        for (Yhteyshenkilo y : removableObjects) {
-            komoto.removeYhteyshenkilo(y);
-            yhteyshenkiloDAO.remove(y);
-        }
-    }
+    
 }

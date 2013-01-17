@@ -22,7 +22,6 @@ import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -34,23 +33,19 @@ import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
-import fi.vm.sade.tarjonta.ui.view.common.DialogKoodistoDataTable;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
-import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.vaadin.addon.formbinder.ViewBoundForm;
 
 /**
  *
@@ -141,9 +136,6 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
          * BOTTOM LAYOUTS
          */
         UiUtil.hr(layout);
-        
-
-        //addLinkkiSelectorAndEditor(layout);
 
         addNavigationButton("", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
@@ -218,30 +210,6 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         topErrorArea.addComponent(errorView);
 
         return topErrorArea;
-    }
-
-    /**
-     * Create linkkityyppi part of the form.
-     *
-     * @param layout
-     */
-    private void addLinkkiSelectorAndEditor(AbstractLayout layout) {
-        final Class modelClass = KoulutusLinkkiViewModel.class;
-        List<KoulutusLinkkiViewModel> koulutusLinkit =
-                presenter.getModel().getKoulutusPerustiedotModel().getKoulutusLinkit();
-
-        final DialogKoodistoDataTable<KoulutusLinkkiViewModel> ddt =
-                new DialogKoodistoDataTable<KoulutusLinkkiViewModel>(modelClass, koulutusLinkit);
-
-        ddt.setButtonProperties("LisaaUusi.Linkkityyppi");
-        ddt.buildByFormLayout(layout, "Luo uusi linkkityyppi", 400, 250, new EditKoulutusPerustiedotLinkkiView());
-        ddt.setColumnHeader("linkkityyppi", T("Linkkityyppi"));
-        ddt.setColumnHeader("url", T("LinkkiURL"));
-        ddt.setColumnHeader("kieli", T("LinkkiKielet"));
-        ddt.setKoodistoColumns(new String[]{"kieli"});
-        ddt.setVisibleColumns(new Object[]{"linkkityyppi", "url", "kieli"});
-        ddt.setPageLength(4); //four rows
-        layout.addComponent(ddt);
     }
 
     /*

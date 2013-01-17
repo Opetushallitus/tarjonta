@@ -50,12 +50,23 @@ public class AutocompleteTextField extends TextField implements Handler {
     
     private static final long serialVersionUID = 6906639431420923L;
     VerticalLayout vl;
+    
+    /* The suggestion list of users. */
     private ListSelect suggestionList;
+    
+    /* The button to clear current values in yhteyshenkilo fields.*/
     private Button clearYhtHenkiloB;
+    
     private KoulutusToisenAsteenPerustiedotViewModel koulutusModel;
     private TarjontaPresenter presenter;
+    
+    /* The current list of users in the suggestionList*/
     private List<HenkiloType> henkilos;
+    
+    /*The currently selected index in the henkilos list. */
     private int selectedIndex = -1;
+    
+    /*The text typed by the user. */
     String typedText;
     
     private Action arrowDownAction = new ShortcutAction("Arrow down", ShortcutAction.KeyCode.ARROW_DOWN, null);
@@ -80,10 +91,25 @@ public class AutocompleteTextField extends TextField implements Handler {
         
     }
     
+    /*
+     * Builds the layout of this component, i.e. the text field and the suggestion list
+     * with listeners.
+     */
     private void buildLayout() {
+        buildTextField();
+        buildSuggestionList();
+    }
+    
+    /*
+     * Builds the text field with listeners
+     */
+    private void buildTextField() {
         HorizontalLayout hl = UiUtil.horizontalLayout();
         hl.setSizeUndefined();
         hl.setSpacing(true);
+        
+        //Adding the listener for listening to the chars entered by the user.
+        //The suggestion list is updated after each char.
         addListener(new TextChangeListener() {
 
             private static final long serialVersionUID = -2079651800984069901L;
@@ -96,7 +122,9 @@ public class AutocompleteTextField extends TextField implements Handler {
             
         });
        
-        this.addListener(new BlurListener() {
+        //Adding listener for the unfocus of the text field.
+        //On unfocus the suggestion list is hidden.
+        addListener(new BlurListener() {
 
             private static final long serialVersionUID = 255329698847125307L;
 
@@ -108,6 +136,8 @@ public class AutocompleteTextField extends TextField implements Handler {
             
         });
         hl.addComponent(this);
+        
+        //The clear button. When the button is pressed the yhteyshenkilo fields are cleared.
         clearYhtHenkiloB = UiUtil.buttonLink(hl, T("tyhjenna"), new Button.ClickListener() {
             
             private static final long serialVersionUID = -6386527358361971773L;
@@ -121,7 +151,12 @@ public class AutocompleteTextField extends TextField implements Handler {
         hl.setComponentAlignment(this, Alignment.MIDDLE_LEFT);
         hl.setComponentAlignment(clearYhtHenkiloB, Alignment.MIDDLE_LEFT);
         vl.addComponent(hl);
-        
+    }
+    
+    /*
+     * Builds the suggestion list with listeners.
+     */
+    private void buildSuggestionList() {
         suggestionList = new ListSelect();
         
         suggestionList.setSizeUndefined();
@@ -129,6 +164,9 @@ public class AutocompleteTextField extends TextField implements Handler {
         suggestionList.setNullSelectionAllowed(false);
         suggestionList.setImmediate(true);
         suggestionList.setVisible(false);
+        
+        //Adding listener to value change. On value change the yhteyshenkilo 
+        //fields are updated according to the selected user.
         suggestionList.addListener(new Property.ValueChangeListener() {
 
             private static final long serialVersionUID = 3743367454230254280L;
@@ -143,6 +181,9 @@ public class AutocompleteTextField extends TextField implements Handler {
         vl.addComponent(suggestionList);
     }
     
+    
+    /*Handling of clear button click. Setting the text field to null and fireing event.
+     * Event is catched by EditKoulutusPerustiedotForm which sets other yhteyshenkilo fields to null. */
     private void handleClearButtonClick() {
         this.setValue(null);
         this.koulutusModel.setYhtHenkiloOid(null);
@@ -150,10 +191,9 @@ public class AutocompleteTextField extends TextField implements Handler {
     }
  
 
-    /**
+    /*
      * Populates the henkilo suggestions under the yhtHenkKokoNimi field in according
      * to current search results from UserService.
-     * @param henkilos
      */
     private void populateYhtHenkiloSuggestions(List<HenkiloType> henkilos) {
         this.henkilos = henkilos;
@@ -176,15 +216,23 @@ public class AutocompleteTextField extends TextField implements Handler {
             fireEvent(new HenkiloAutocompleteEvent(this, null, HenkiloAutocompleteEvent.NOT_SELECTED));
         }
     }
-    
+    /*
+     * Handling of value change event. Fires an event witch is listened by EditKoulutusPerustiedotForm which updates the yhteyshenkilo fields. 
+     */
     private void handleValueChange() {
         fireEvent(new HenkiloAutocompleteEvent(this, (HenkiloType)(suggestionList.getValue()), HenkiloAutocompleteEvent.SELECTED));
     }
     
+    /*
+     * Handling of arrow down key events. If the suggestion list is currently visible
+     * and there are suggestions in the list, the next user in the list is selected.
+     */
     private void arrowDownHandler() {
         if (!suggestionList.isVisible() || henkilos == null || henkilos.isEmpty()) {
             return;
         }
+        
+        //If last user is already selected index is not updated.
         if (selectedIndex < this.henkilos.size() - 1) {
             ++selectedIndex;
         }
@@ -192,11 +240,18 @@ public class AutocompleteTextField extends TextField implements Handler {
         suggestionList.select(selectedHenkilo);
     }
     
+    /*
+     * Handling of arrow up key events. If the list is currently visible
+     * and there are suggestions in the list, the previous user in the list is selected.
+     */
     private void arrowUpHandler() {
         if (!suggestionList.isVisible() || henkilos == null || henkilos.isEmpty()) {
             return;
         }
         --selectedIndex;
+        //If the currently selected user is not the first in the list the previous
+        //user is selected, otherwise the selection is removed and a user not selected.
+        //is fired and the string typed by the user is set as the value of the text field. 
         if (selectedIndex >= 0) {
             HenkiloType selectedHenkilo = henkilos.get(selectedIndex);
             suggestionList.select(selectedHenkilo);
@@ -207,6 +262,9 @@ public class AutocompleteTextField extends TextField implements Handler {
         }
     }
     
+    /*
+     * Handling of of enter key events. The suggestion list is hidden if it is visible.
+     */
     private void handleEnter() {
         if (!suggestionList.isVisible() || henkilos == null || henkilos.isEmpty()) {
             return;
@@ -216,6 +274,8 @@ public class AutocompleteTextField extends TextField implements Handler {
         getWindow().removeActionHandler(this);
     }
 
+    //Handler interface methods. The interface is implemented to be able to listen to keyboard events.
+    
     @Override
     public Action[] getActions(Object target, Object sender) {
         return new Action[]{arrowDownAction, arrowUpAction, enterAction};
@@ -239,16 +299,39 @@ public class AutocompleteTextField extends TextField implements Handler {
         return _i18n.getMessage(key);
     }
     
+    /**
+     * Event class to signal events in the autocomplete text field.
+     * 
+     * @author Markus
+     */
     public class HenkiloAutocompleteEvent extends Component.Event {
 
 
         
         private static final long serialVersionUID = -7164075226636500573L;
+        /**
+         * A user is selected in the suggestion list
+         */
         public static final int SELECTED = 0;
+        
+        /**
+         * User selection is removed from the suggestion list.
+         */
         public static final int NOT_SELECTED = 1;
+        
+        /**
+         * The clear button is pressed.
+         */
         public static final int CLEAR = 2;
         
+        /**
+         * Event type. One of the above.
+         */
         private int eventType;
+        
+        /**
+         * The user selected.
+         */
         private HenkiloType henkilo;
         
         public HenkiloAutocompleteEvent(Component source, HenkiloType henkilo, int eventType) {
