@@ -18,12 +18,8 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 import static fi.vm.sade.generic.common.validation.ValidationConstants.EMAIL_PATTERN;
 
 import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.NestedMethodProperty;
-import com.vaadin.event.FieldEvents.TextChangeEvent;
-import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
@@ -34,8 +30,6 @@ import com.vaadin.ui.Field;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.ListSelect;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
@@ -51,16 +45,15 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.koulutus.AutocompleteTextField.HenkiloAutocompleteEvent;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -82,7 +75,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotFormView.class);
     private static final String MODEL_NAME_PROPERY = "nimi";
-    private static final String MODEL_DESC_PROPERY = "kuvaus";
     private static final String PROPERTY_PROMPT_SUFFIX = ".prompt";
     private static final long serialVersionUID = -8964329145514588760L;
     private transient I18NHelper _i18n;
@@ -164,7 +156,9 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     @PropertyId("yhtHenkPuhelin")
     private TextField yhtHenkPuhelin;
     
-    private ListSelect suggestionList;
+    private String initialYhtHenkTitteli;
+    private String initialYhtHenkEmail;
+    private String initialYhtHenkPuhelin;
     
     private Label koulutusaste;
     private Label opintoala;
@@ -191,6 +185,17 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         initializeLayout();
         disableOrEnableComponents(koulutusModel.isLoaded());
         initializeDataContainers();
+    }
+    
+    /**
+     * Attach is used here to pick the initial values of yhteyshenkilo fields. These are restored to the fields
+     * if the user tentatively selects some users from the autocompletion list but then decides not to use any of the
+     * existing users.
+     */
+    public void attach() {
+        initialYhtHenkTitteli = koulutusModel.getYhtHenkTitteli();
+        initialYhtHenkEmail = koulutusModel.getYhtHenkEmail();
+        initialYhtHenkPuhelin = koulutusModel.getYhtHenkPuhelin();
     }
 
     private void initializeDataContainers() {
@@ -285,34 +290,26 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private void buildGridYhteyshenkiloRow(GridLayout grid, String propertyKey) {
         gridLabel(grid, propertyKey);
         VerticalLayout vl = UiUtil.verticalLayout();
-        yhtHenkKokoNimi = UiUtil.textField(vl, "", T("prompt.kokoNimi"), true);
-        //TextChangeListener listener = ;
-        yhtHenkKokoNimi.addListener(new TextChangeListener() {
+        yhtHenkKokoNimi = new AutocompleteTextField(vl, T("prompt.kokoNimi"), "", presenter, this.koulutusModel);
+        yhtHenkKokoNimi.addListener(new Listener() {
+
+            private static final long serialVersionUID = 6680073663370984689L;
 
             @Override
-            public void textChange(TextChangeEvent event) {
-                populateYhtHenkiloSuggestions(presenter.searchYhteyshenkilo(event.getText()));           
+            public void componentEvent(Event event) {
+                if (event instanceof HenkiloAutocompleteEvent 
+                        && ((HenkiloAutocompleteEvent)event).getEventType() == HenkiloAutocompleteEvent.SELECTED) {
+                    populateYhtHenkiloFields(((HenkiloAutocompleteEvent)event).getHenkilo());
+                } else if (event instanceof HenkiloAutocompleteEvent
+                        && ((HenkiloAutocompleteEvent)event).getEventType() == HenkiloAutocompleteEvent.NOT_SELECTED) {
+                    restoreInitialValuesToYhtHenkiloFields();
+                } else if (event instanceof HenkiloAutocompleteEvent
+                        && ((HenkiloAutocompleteEvent)event).getEventType() == HenkiloAutocompleteEvent.CLEAR) {
+                    clearInitialValuestoYhtHenkiloFields();
+                }
             }
             
         });
-        
-        suggestionList = new ListSelect();
-        
-        suggestionList.setSizeUndefined();
-        suggestionList.setNullSelectionAllowed(false);
-        suggestionList.setImmediate(true);
-        suggestionList.setVisible(false);
-        suggestionList.addListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(ValueChangeEvent event) {
-                //DEBUGSAWAY:log.debug("organisaatio edited");
-                populateYhtHenkiloFields((HenkiloType)(suggestionList.getValue()));
-                suggestionList.removeAllItems();
-                suggestionList.setVisible(false);
-            }
-        });
-        vl.addComponent(suggestionList);
-        
         yhtHenkTitteli = UiUtil.textField(vl, "", T("prompt.titteli"), true);
         yhtHenkEmail = UiUtil.textField(vl, "", T("prompt.email"), true);
         yhtHenkPuhelin = UiUtil.textField(vl, "", T("prompt.puhelin"), true);
@@ -321,6 +318,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         buildSpacingGridRow(grid);
     }
     
+
+
     /**
      * Populating the yhteyshenkilo fields based on user's selection from the autocomplete list
      * @param henkiloType
@@ -342,25 +341,28 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         }
     }
     
-    /**
-     * Populates the henkilo suggestions under the yhtHenkKokoNimi field in according
-     * to current search results from UserService.
-     * @param henkilos
+    /*
+     * Restoring the initial values to yhteyshenkilo fields. this functionality is to enable the user
+     * to try different yhteyshenkilos from search but then return to the old one. This is
+     * important in the cases that the current yhteyshenkilo is not in the user register but is
+     * created by the editor of this koulutus (to not loose data).
      */
-    private void populateYhtHenkiloSuggestions(List<HenkiloType> henkilos) {
-        if (!henkilos.isEmpty()) {
-            suggestionList.setVisible(true);
-            suggestionList.removeAllItems();
-            suggestionList.setRows(henkilos.size() + 1);
-            for (HenkiloType curHenkilo : henkilos) {
-                suggestionList.addItem(curHenkilo);
-                suggestionList.setItemCaption(curHenkilo, curHenkilo.getEtunimet() + " " + curHenkilo.getSukunimi());
-            }
-        } else {
-            suggestionList.setVisible(false);
-            suggestionList.removeAllItems();
-            this.koulutusModel.setYhtHenkiloOid(null);
-        }
+    private void restoreInitialValuesToYhtHenkiloFields() {
+        this.yhtHenkEmail.setValue(initialYhtHenkEmail);
+        this.yhtHenkPuhelin.setValue(initialYhtHenkPuhelin);
+        this.yhtHenkTitteli.setValue(initialYhtHenkTitteli);
+        this.koulutusModel.setYhtHenkiloOid(null);
+    }
+    
+    /*
+     * Nullifying the initial values to yhteyshenkilo fields. When the user decides to
+     * remove the existing yhteyshenkilo and possibly add a new one.
+     */
+    private void clearInitialValuestoYhtHenkiloFields() {
+        initialYhtHenkEmail = null;
+        initialYhtHenkPuhelin = null;
+        initialYhtHenkTitteli = null;
+        restoreInitialValuesToYhtHenkiloFields();
     }
 
     /**
