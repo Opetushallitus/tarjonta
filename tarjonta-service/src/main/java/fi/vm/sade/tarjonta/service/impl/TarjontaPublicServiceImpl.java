@@ -382,6 +382,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus fromKoulutus) {
         log.info("in convert ");
         LueKoulutusVastausTyyppi toKoulutus = new LueKoulutusVastausTyyppi();
+        toKoulutus.setTila(EntityUtils.convertTila(fromKoulutus.getTila()));
 
         if (fromKoulutus.getHakukohdes() != null) {
             for (Hakukohde hakukohde:fromKoulutus.getHakukohdes()) {

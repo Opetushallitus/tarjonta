@@ -32,6 +32,7 @@ import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
+import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -158,7 +159,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
             @Override
             public void buttonClick(ClickEvent event) {
                 try {
-                    _presenter.saveKoulutus(TarjontaTila.LUONNOS);
+                    _presenter.saveKoulutus(SaveButtonState.SAVE_AS_DRAFT);
                 } catch (ExceptionMessage ex) {
                     LOG.error("Failed to save.", ex);
                     getWindow().showNotification("FAILED: " + ex);
@@ -170,7 +171,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
             @Override
             public void buttonClick(ClickEvent event) {
                 try {
-                    _presenter.saveKoulutus(TarjontaTila.VALMIS);
+                    _presenter.saveKoulutus(SaveButtonState.SAVE_AS_READY);
                 } catch (ExceptionMessage ex) {
                     LOG.error("Failed to save.", ex);
                     getWindow().showNotification("FAILED: " + ex);

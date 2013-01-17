@@ -30,7 +30,9 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.koodisto.service.GenericFault;
+import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusPerustiedotViewModel;
@@ -41,7 +43,6 @@ import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +109,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         documentStatus.setSizeUndefined();
         documentStatus.setImmediate(true);
         documentStatus.setPropertyDataSource(new NestedMethodProperty(koulutusPerustiedotModel, "tila"));
-        header.addComponent(documentStatus); 
+        header.addComponent(documentStatus);
 
         header.setExpandRatio(documentStatus, 1l);
         header.setComponentAlignment(documentStatus, Alignment.TOP_RIGHT);
@@ -146,35 +147,27 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 
-        ClickListener btnListenerTallennaLuonnoksena = new Button.ClickListener() {
+        final ClickListener btnListenerTallennaLuonnoksena = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                save(form, TarjontaTila.LUONNOS);
+                save(form, SaveButtonState.SAVE_AS_DRAFT);
             }
         };
 
-        addNavigationButton(T("tallennaLuonnoksena"), btnListenerTallennaLuonnoksena, StyleEnum.STYLE_BUTTON_PRIMARY);
-        Set<Button> buttonByListener = getButtonByListener(btnListenerTallennaLuonnoksena);
-        for (Button btn : buttonByListener) {
-            btn.setVisible(presenter.getPermission().userCanReadAndUpdate());
-        }
+        addNavigationSaveButton("tallennaLuonnoksena", TarjontaTila.LUONNOS, btnListenerTallennaLuonnoksena);
 
-        ClickListener btnListenerTallennaValmiina = new Button.ClickListener() {
+        final ClickListener btnListenerTallennaValmiina = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                save(form, TarjontaTila.VALMIS);
+                save(form, SaveButtonState.SAVE_AS_READY);
             }
         };
 
-        addNavigationButton(T("tallennaValmiina"), btnListenerTallennaValmiina, StyleEnum.STYLE_BUTTON_PRIMARY);
-        buttonByListener = getButtonByListener(btnListenerTallennaValmiina);
-        for (Button btn : buttonByListener) {
-            btn.setVisible(presenter.getPermission().userCanReadAndUpdate());
-        }
+        addNavigationSaveButton("tallennaValmiina", TarjontaTila.PERUTTU, btnListenerTallennaValmiina);
 
         final Button.ClickListener clickListener = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
@@ -232,7 +225,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         return koulutusPerustiedotModel.isLoaded() && !isModified();
     }
 
-    private void save(Form form, TarjontaTila tila) {
+    private void save(Form form, SaveButtonState tila) {
         try {
             errorView.resetErrors();
             form.commit();
@@ -255,5 +248,14 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
             errorView.addError(e);
             presenter.showNotification(UserNotification.GENERIC_VALIDATION_FAILED);
         }
+    }
+
+    private void addNavigationSaveButton(String property, TarjontaTila tila, ClickListener listener) {
+        addNavigationButton(T(property), listener, StyleEnum.STYLE_BUTTON_PRIMARY);
+        enableButtonByListener(listener,
+                presenter.isSaveButtonEnabled(
+                koulutusPerustiedotModel.getOid(),
+                SisaltoTyyppi.KOMOTO, tila));
+        visibleButtonByListener(listener, presenter.getPermission().userCanReadAndUpdate());
     }
 }

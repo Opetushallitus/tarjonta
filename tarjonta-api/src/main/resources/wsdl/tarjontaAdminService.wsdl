@@ -122,7 +122,28 @@
     <wsdl:message name="tallennaLiitteitaHakukohteelleVastaus">
         <wsdl:part element="ns1:tallennaLiitteitaHakukohteelleVastaus" name="parameters"/>
     </wsdl:message>
-
+    
+    <wsdl:message name="tallennaLiitteitaHakukohteelle">
+        <wsdl:part element="ns1:tallennaLiitteitaHakukohteelle" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="paivitaTila">
+        <wsdl:part element="ns1:paivitaTila" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="paivitaTilaVastaus">
+        <wsdl:part element="ns1:paivitaTilaVastaus" name="parameters"/>
+    </wsdl:message>
+    
+     <wsdl:message name="testaaTilasiirtyma">
+        <wsdl:part element="ns1:testaaTilasiirtyma" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="testaaTilasiirtymaVastaus">
+        <wsdl:part element="ns1:testaaTilasiirtymaVastaus" name="parameters"/>
+    </wsdl:message>
+    
+  
     <wsdl:portType name="TarjontaAdminService">
 
         <wsdl:documentation>
@@ -246,6 +267,26 @@
             <wsdl:output message="lisaaKoulutusHakukohteelleVastaus" name="lisaaKoulutusHakukohteelleVastaus">
             </wsdl:output>
         </wsdl:operation>
+        
+        <wsdl:operation name="paivitaTilat">
+            <wsdl:documentation>
+                Paivita annettujen tarjontatiedon tiloja.
+            </wsdl:documentation>
+            <wsdl:input message="tns:paivitaTila" name="paivitaTila">
+            </wsdl:input>
+            <wsdl:output message="tns:paivitaTilaVastaus" name="paivitaTilaVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
+         <wsdl:operation name="testaaTilasiirtyma">
+            <wsdl:documentation>
+                Paivita annettujen tarjontatiedon tiloja.
+            </wsdl:documentation>
+            <wsdl:input message="tns:testaaTilasiirtyma" name="testaaTilasiirtyma">
+            </wsdl:input>
+            <wsdl:output message="tns:testaaTilasiirtymaVastaus" name="testaaTilasiirtymaVastaus">
+            </wsdl:output>
+        </wsdl:operation>
 
         <wsdl:operation name="initSample">
             <wsdl:documentation>
@@ -338,9 +379,30 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
+        
+         <wsdl:operation name="paivitaTilat">
+            <soap:operation soapAction="" type="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+             </wsdl:input>
+            <wsdl:output >
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+         <wsdl:operation name="testaaTilasiirtyma">
+            <soap:operation soapAction="" type="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+             </wsdl:input>
+            <wsdl:output >
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        
 
     </wsdl:binding>
-
 
     <wsdl:service name="TarjontaAdminService">
         <wsdl:port name="TarjontaAdminServicePort" binding="tns:TarjontaAdminServiceSoapBinding">

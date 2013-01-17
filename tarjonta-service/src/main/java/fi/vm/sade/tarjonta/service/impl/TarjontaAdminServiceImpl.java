@@ -31,6 +31,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
@@ -48,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jws.WebParam;
+import javax.xml.ws.Holder;
 
 /**
  *
@@ -56,7 +58,7 @@ import javax.jws.WebParam;
 @Transactional
 @Service("tarjontaAdminService")
 public class TarjontaAdminServiceImpl implements TarjontaAdminService {
-
+    
     private static final Logger log = LoggerFactory.getLogger(TarjontaAdminServiceImpl.class);
     @Autowired
     private HakuBusinessService hakuBusinessService;
@@ -74,15 +76,17 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private ConversionService conversionService;
     @Autowired
     private YhteyshenkiloDAO yhteyshenkiloDAO;
+    @Autowired
+    private PublicationDataService publication;
     /**
      * Väliaikainne kunnes Koodisto on alustettu.
      */
     @Autowired
     private TarjontaSampleData sampleData;
-
+    
     @Override
     public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
-
+        
         Haku foundHaku = hakuBusinessService.findByOid(hakuDto.getOid());
         if (foundHaku != null) {
             mergeHaku(conversionService.convert(hakuDto, Haku.class), foundHaku);
@@ -92,81 +96,81 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             throw new BusinessException("tarjonta.haku.update.no.oid");
         }
     }
-
+    
     @Override
     public void tallennaLiitteitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenLiitteen", targetNamespace = "") List<HakukohdeLiiteTyyppi> hakukohteenLiitteen) {
-            List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
-            if (hakukohdes != null && hakukohdes.size() > 0) {
-                for (HakukohdeLiite hakukohdeLiite: convertLiiteTyyppi(hakukohteenLiitteen)) {
-                    hakukohdes.get(0).addLiite(hakukohdeLiite);
-
-                    hakukohdeLiite.setHakukohde(hakukohdes.get(0));
-
-                }
-                hakukohdeDAO.update(hakukohdes.get(0));
-            }   else {
-                throw new BusinessException("tarjonta.haku.no.hakukohde.found");
+        List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
+        if (hakukohdes != null && hakukohdes.size() > 0) {
+            for (HakukohdeLiite hakukohdeLiite : convertLiiteTyyppi(hakukohteenLiitteen)) {
+                hakukohdes.get(0).addLiite(hakukohdeLiite);
+                
+                hakukohdeLiite.setHakukohde(hakukohdes.get(0));
+                
             }
+            hakukohdeDAO.update(hakukohdes.get(0));
+        } else {
+            throw new BusinessException("tarjonta.haku.no.hakukohde.found");
+        }
     }
-
+    
     private List<HakukohdeLiite> convertLiiteTyyppi(List<HakukohdeLiiteTyyppi> tyyppis) {
         ArrayList<HakukohdeLiite> hakukohdeLiites = new ArrayList<HakukohdeLiite>();
-
-        for (HakukohdeLiiteTyyppi hakukohdeLiiteTyyppi: tyyppis) {
-            HakukohdeLiite liite = conversionService.convert(hakukohdeLiiteTyyppi,HakukohdeLiite.class);
+        
+        for (HakukohdeLiiteTyyppi hakukohdeLiiteTyyppi : tyyppis) {
+            HakukohdeLiite liite = conversionService.convert(hakukohdeLiiteTyyppi, HakukohdeLiite.class);
             hakukohdeLiites.add(liite);
         }
-
+        
         return hakukohdeLiites;
     }
-
+    
     @Override
     public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) {
         Hakukohde hakuk = conversionService.convert(hakukohde, Hakukohde.class);
         Haku haku = hakuDAO.findByOid(hakukohde.getHakukohteenHakuOid());
-
+        
         hakuk.setHaku(haku);
         hakuk = hakukohdeDAO.insert(hakuk);
         hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(), hakuk));
         hakukohdeDAO.update(hakuk);
         return hakukohde;
     }
-
+    
     private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids, Hakukohde hakukohde) {
         Set<KoulutusmoduuliToteutus> komotos = new HashSet<KoulutusmoduuliToteutus>();
-
+        
         for (String komotoOid : komotoOids) {
             KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
             komoto.addHakukohde(hakukohde);
             komotos.add(komoto);
         }
-
+        
         return komotos;
     }
-
+    
     @Override
     public void lisaaTaiPoistaKoulutuksiaHakukohteelle(@WebParam(partName = "parameters", name = "lisaaKoulutusHakukohteelle", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LisaaKoulutusHakukohteelleTyyppi parameters) {
         List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
         Hakukohde hakukohde = hakukohdes.get(0);
-
+        
         if (parameters.isLisaa()) {
-        hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(parameters.getKoulutusOids(),hakukohde));
-        log.info("Adding {} koulutukses to hakukohde: {}",hakukohde.getKoulutusmoduuliToteutuses().size(),hakukohde.getOid());
-        hakukohdeDAO.update(hakukohde);
+            hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(parameters.getKoulutusOids(), hakukohde));
+            log.info("Adding {} koulutukses to hakukohde: {}", hakukohde.getKoulutusmoduuliToteutuses().size(), hakukohde.getOid());
+            hakukohdeDAO.update(hakukohde);
         } else {
             List<KoulutusmoduuliToteutus> poistettavatModuuliLinkit = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(parameters.getKoulutusOids());
-            for(KoulutusmoduuliToteutus komoto:poistettavatModuuliLinkit) {
-                log.info("REMOVING KOULUTUS : {} FROM HAKUKOHDE {}",komoto.getOid(),hakukohde.getOid());
-
+            for (KoulutusmoduuliToteutus komoto : poistettavatModuuliLinkit) {
+                log.info("REMOVING KOULUTUS : {} FROM HAKUKOHDE {}", komoto.getOid(), hakukohde.getOid());
+                
                 komoto.removeHakukohde(hakukohde);
-
+                
                 hakukohde.removeKoulutusmoduuliToteutus(komoto);
                 koulutusmoduuliToteutusDAO.update(komoto);
             }
             hakukohdeDAO.update(hakukohde);
         }
     }
-
+    
     @Override
     public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) throws GenericFault {
         Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
@@ -180,7 +184,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
         return new HakukohdeTyyppi();
     }
-
+    
     @Override
     public HakukohdeTyyppi paivitaHakukohde(HakukohdeTyyppi hakukohdePaivitys) {
         Hakukohde hakukohde = conversionService.convert(hakukohdePaivitys, Hakukohde.class);
@@ -188,26 +192,26 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakukohde.setId(hakukohdeTemp.get(0).getId());
         hakukohde.setVersion(hakukohdeTemp.get(0).getVersion());
         Haku haku = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
-
+        
         hakukohde.setHaku(haku);
         hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdePaivitys.getHakukohteenKoulutusOidit(), hakukohde));
-
+        
         hakukohdeDAO.update(hakukohde);
-
-
+        
+        
         return hakukohdePaivitys;
     }
-
+    
     @Override
     public HakuTyyppi lisaaHaku(HakuTyyppi hakuDto) {
         Haku haku = conversionService.convert(hakuDto, Haku.class);
         haku = hakuBusinessService.save(haku);
         return conversionService.convert(haku, HakuTyyppi.class);
     }
-
+    
     @Override
     public void poistaHaku(HakuTyyppi hakuDto) throws GenericFault {
-
+        
         Haku haku = hakuBusinessService.findByOid(hakuDto.getOid());
         if (checkHakuDepencies(haku)) {
             throw new HakuUsedException();
@@ -215,7 +219,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             hakuDAO.remove(haku);
         }
     }
-
+    
     private boolean checkHakuDepencies(Haku haku) {
         List<Haku> haut = hakuDAO.findHakukohdeHakus(haku);
         if (haut != null && haut.size() > 0) {
@@ -224,7 +228,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             return false;
         }
     }
-
+    
     private boolean checkHakukohdeDepencies(Hakukohde hakukohde) {
         List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliDAO.findKomotoByHakukohde(hakukohde);
         if (komotos != null && komotos.size() > 0) {
@@ -233,27 +237,27 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             return false;
         }
     }
-
+    
     @Override
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
-
+        
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
-
+        
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
         return vastaus;
-
+        
     }
-
+    
     @Override
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
-
+        
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
-
+        
         PaivitaKoulutusVastausTyyppi vastaus = new PaivitaKoulutusVastausTyyppi();
         return vastaus;
-
+        
     }
-
+    
     @Override
     public void poistaKoulutus(String koulutusOid) throws GenericFault {
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
@@ -263,7 +267,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             throw new KoulutusUsedException();
         }
     }
-
+    
     private boolean hakuAlkanut(Hakukohde hakukohde) {
         for (Hakuaika curHakuaika : hakukohde.getHaku().getHakuaikas()) {
             if (!curHakuaika.getAlkamisPvm().after(Calendar.getInstance().getTime())) {
@@ -291,18 +295,18 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
      */
     @Override
     public void initKomo(String parameters) {
-
+        
         log.warn("Implementation is still missing!");
-
+        
     }
-
+    
     @Override
     public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli)
             throws GenericFault {
         koulutusmoduuliDAO.insert(EntityUtils.copyFieldsToKoulutusmoduuli(koulutusmoduuli));
         return koulutusmoduuli;
     }
-
+    
     private List<HakuTyyppi> convert(List<Haku> haut) {
         List<HakuTyyppi> tyypit = new ArrayList<HakuTyyppi>();
         for (Haku haku : haut) {
@@ -352,7 +356,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public void setHakuDao(HakuDAO hakuDao) {
         this.hakuDAO = hakuDao;
     }
-
+    
     private void mergeHaku(Haku source, Haku target) {
         target.setNimi(source.getNimi());
         target.setOid(source.getOid());
@@ -369,17 +373,17 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         target.setHaunTunniste(source.getHaunTunniste());
         mergeSisaisetHaunAlkamisAjat(source, target);
     }
-
+    
     private void mergeSisaisetHaunAlkamisAjat(Haku source, Haku target) {
         List<Hakuaika> hakuajat = new ArrayList<Hakuaika>();
         for (Hakuaika curAika : target.getHakuaikas()) {
             hakuajat.add(curAika);
         }
-
+        
         for (Hakuaika curHak : hakuajat) {
             target.removeHakuaika(curHak);
         }
-
+        
         for (Hakuaika curHakuaika : source.getHakuaikas()) {
             target.addHakuaika(curHakuaika);
         }
@@ -411,5 +415,16 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
      */
     public void setKoulutusmoduuliToteutusDAO(KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO) {
         this.koulutusmoduuliToteutusDAO = koulutusmoduuliToteutusDAO;
+    }
+    
+    @Override
+    public PaivitaTilaVastausTyyppi paivitaTilat(PaivitaTilaTyyppi tarjontatiedonTila) {
+        publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());   
+        return new PaivitaTilaVastausTyyppi();
+    }
+
+    @Override
+    public boolean testaaTilasiirtyma(GeneerinenTilaTyyppi parameters) {
+       return  publication.isValidStateChange(parameters);
     }
 }

@@ -46,6 +46,12 @@
     
     <xs:element name="tallennaLiitteitaHakukohteelle" type="tns:TallennaLiitteitaHakukohteelleTyyppi"/>
     <xs:element name="tallennaLiitteitaHakukohteelleVastaus" type="tns:TallennaLiitteitaHakukohteelleVastausTyyppi"/>
+    
+    <xs:element name="paivitaTila" type="tns:PaivitaTilaTyyppi"/>
+    <xs:element name="paivitaTilaVastaus" type="tns:PaivitaTilaVastausTyyppi"/>
+    
+    <xs:element name="testaaTilasiirtyma" type="tns:GeneerinenTilaTyyppi"/>
+    <xs:element name="testaaTilasiirtymaVastaus" type="xs:boolean"/>
 
     <xs:element name="emptyString" type="xs:string"/>
 
@@ -185,6 +191,24 @@
     
     <xs:complexType name="TallennaLiitteitaHakukohteelleVastausTyyppi">
         <xs:sequence/>
+    </xs:complexType>
+    
+    <xs:complexType name="PaivitaTilaVastausTyyppi">
+        <xs:sequence/>
+    </xs:complexType>
+    
+    <xs:complexType name="PaivitaTilaTyyppi">
+        <xs:sequence>
+            <xs:element name="tilaOids" type="tarjonta:GeneerinenTilaTyyppi" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence> 
+    </xs:complexType>
+    
+    <xs:complexType name="GeneerinenTilaTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="Oid" type="tarjonta:OidTyyppi"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="sisalto" type="tarjonta:SisaltoTyyppi"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="tila" type="tarjonta:TarjontaTila"/>
+        </xs:sequence>
     </xs:complexType>
 
 </xs:schema>

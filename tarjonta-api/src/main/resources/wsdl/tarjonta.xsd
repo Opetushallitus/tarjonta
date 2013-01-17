@@ -212,15 +212,15 @@
                 </xs:annotation>
             </xs:element>
             <xs:element minOccurs="0" maxOccurs="1" name="lisaOsoiteRivi" type="xs:string">
-            <xs:annotation>
-                <xs:documentation>Mahdollinen lisä osoiterivi</xs:documentation>
-            </xs:annotation>
-        </xs:element>
-         <xs:element minOccurs="1" maxOccurs="1" name="postinumero" type="xs:string">
-             <xs:annotation>
-                 <xs:documentation>Postinumero</xs:documentation>
-             </xs:annotation>
-         </xs:element>
+                <xs:annotation>
+                    <xs:documentation>Mahdollinen lisä osoiterivi</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="postinumero" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Postinumero</xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element minOccurs="1" maxOccurs="1" name="postitoimipaikka" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Postitoimipaikka</xs:documentation>
@@ -528,6 +528,7 @@
             <xs:enumeration value="LUONNOS"/>
             <xs:enumeration value="VALMIS"/>
             <xs:enumeration value="JULKAISTU"/>
+            <xs:enumeration value="PERUTTU"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -787,5 +788,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="SisaltoTyyppi">
+        <xs:restriction base="xs:string">      
+            <xs:enumeration value="KOMO"/>
+            <xs:enumeration value="KOMOTO"/>
+            <xs:enumeration value="HAKU"/>
+            <xs:enumeration value="HAKUKOHDE"/>
+        </xs:restriction>
+    </xs:simpleType>
 
 </xs:schema>

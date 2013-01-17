@@ -32,8 +32,6 @@ import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.ui.helper.conversion.*;
 import fi.vm.sade.tarjonta.ui.model.*;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
-import fi.vm.sade.koodisto.widget.WidgetFactory;
-import fi.vm.sade.organisaatio.api.model.types.FindBasicParentOrganisaatioTypesParameter;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidType;
@@ -46,6 +44,7 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi.Koulut
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
+import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
@@ -190,7 +189,7 @@ public class TarjontaPresenter {
 //            liitteet.add(liite);
 //        }
 
-        tarjontaAdminService.tallennaLiitteitaHakukohteelle(getModel().getHakukohde().getOid(),liitteet);
+        tarjontaAdminService.tallennaLiitteitaHakukohteelle(getModel().getHakukohde().getOid(), liitteet);
         getModel().setSelectedLiite(null);
     }
 
@@ -310,7 +309,7 @@ public class TarjontaPresenter {
 
             if (tulos.getKoulutus().getNimi() != null) {
                 Teksti name = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), tulos.getKoulutus().getNimi());
-                
+
                 if (name != null) {
                     nimi = name.getValue();
                 }
@@ -488,13 +487,13 @@ public class TarjontaPresenter {
             }
 
             getModel().getKoulutusPerustiedotModel().clearModel(DocumentStatus.NEW);
-            getModel().getKoulutusPerustiedotModel().setOrganisaatioOidTree( fetchOrganisaatioTree(getModel().getOrganisaatioOid()));
+            getModel().getKoulutusPerustiedotModel().setOrganisaatioOidTree(fetchOrganisaatioTree(getModel().getOrganisaatioOid()));
         }
 
         getRootView().changeView(new EditKoulutusView());
 
     }
-    
+
     /*
      * Retrieves the oids of organisaatios that belong to the organisaatio tree of the organisaatio the oid of which is
      * given as a parameter to this method. 
@@ -510,7 +509,7 @@ public class TarjontaPresenter {
             }
             OrganisaatioSearchOidType childKysely = new OrganisaatioSearchOidType();
             childKysely.setSearchOid(organisaatioOid);
-            OrganisaatioOidListType childVastaus =  organisaatioService.findChildrenOidsByOid(childKysely);
+            OrganisaatioOidListType childVastaus = organisaatioService.findChildrenOidsByOid(childKysely);
             for (OrganisaatioOidType curOid : childVastaus.getOrganisaatioOidList()) {
                 organisaatioOidTree.add(curOid.getOrganisaatioOid());
             }
@@ -792,13 +791,13 @@ public class TarjontaPresenter {
     /**
      * Saves koulutus.
      */
-    public void saveKoulutus(TarjontaTila tila) throws ExceptionMessage {
+    public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel koulutusModel = getModel().getKoulutusPerustiedotModel();
 
         if (koulutusModel.isLoaded()) {
             //update KOMOTO
             PaivitaKoulutusTyyppi paivita = koulutusToDTOConverter.createPaivitaKoulutusTyyppi(getModel(), koulutusModel.getOid());
-            paivita.setTila(tila);
+            paivita.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
             koulutusToDTOConverter.validateSaveData(paivita, koulutusModel);
             tarjontaAdminService.paivitaKoulutus(paivita);
         } else {
@@ -807,12 +806,11 @@ public class TarjontaPresenter {
             koulutusModel.setOrganisaatioName(getModel().getOrganisaatioName());
 
             LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(getModel(), getModel().getOrganisaatioOid());
-            lisaa.setTila(tila);
+            lisaa.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
             koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
             checkKoulutusmoduuli();
             tarjontaAdminService.lisaaKoulutus(lisaa);
             koulutusModel.setOid(lisaa.getOid());
-
         }
         koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
     }
@@ -1193,8 +1191,9 @@ public class TarjontaPresenter {
     }
 
     /**
-     * Search yhteyshenkilo for a koulutus using user service based on on name of the user 
-     * and the organisation of the koulutus.
+     * Search yhteyshenkilo for a koulutus using user service based on on name
+     * of the user and the organisation of the koulutus.
+     *
      * @param value - the name or part of the name of the user to search for
      */
     public List<HenkiloType> searchYhteyshenkilo(String value) {
@@ -1207,7 +1206,7 @@ public class TarjontaPresenter {
         searchType.setConnective(SearchConnectiveType.AND);
         String[] nimetSplit = value.split(" ");
         if (nimetSplit.length > 1) {
-            searchType.setSukunimi(nimetSplit[nimetSplit.length-1]);
+            searchType.setSukunimi(nimetSplit[nimetSplit.length - 1]);
             searchType.setEtunimet(value.substring(0, value.lastIndexOf(' ')));
         } else {
             searchType.setEtunimet(value);
@@ -1220,8 +1219,61 @@ public class TarjontaPresenter {
         } catch (Exception ex) {
             LOG.error("Problem fetching henkilos: {}", ex.getMessage());
         }
-        
+
         //Returning the list of found henkilos.
         return henkilos;
+    }
+
+    /**
+     * Publish single tarjonta model by OID and data model type.
+     *
+     * @param oid
+     * @param sisalto
+     */
+    public void changeStatusToPublished(final String oid, final SisaltoTyyppi sisalto) {
+        GeneerinenTilaTyyppi tyyppi = new GeneerinenTilaTyyppi();
+        tyyppi.setOid(oid);
+        tyyppi.setSisalto(sisalto);
+        tyyppi.setTila(TarjontaTila.JULKAISTU);
+        if (tarjontaAdminService.testaaTilasiirtyma(tyyppi)) {
+            PaivitaTilaTyyppi tila = new PaivitaTilaTyyppi();
+            tila.getTilaOids().add(tyyppi);
+            tarjontaAdminService.paivitaTilat(tila);
+
+            showNotification(UserNotification.GENERIC_SUCCESS);
+            getReloadKoulutusListData();
+        } else {
+            showNotification(UserNotification.GENERIC_ERROR);
+        }
+    }
+
+    /**
+     * Cancel single tarjonta model by OID and data model type.
+     *
+     * @param oid
+     * @param sisalto
+     */
+    public void changeStatusToCancelled(final String oid, final SisaltoTyyppi sisalto) {
+        GeneerinenTilaTyyppi tyyppi = new GeneerinenTilaTyyppi();
+        tyyppi.setOid(oid);
+        tyyppi.setSisalto(sisalto);
+        tyyppi.setTila(TarjontaTila.PERUTTU);
+        if (tarjontaAdminService.testaaTilasiirtyma(tyyppi)) {
+            PaivitaTilaTyyppi tila = new PaivitaTilaTyyppi();
+            tila.getTilaOids().add(tyyppi);
+            tarjontaAdminService.paivitaTilat(tila);
+            showNotification(UserNotification.GENERIC_SUCCESS);
+            getReloadKoulutusListData();
+        } else {
+            showNotification(UserNotification.GENERIC_ERROR);
+        }
+    }
+
+    public boolean isSaveButtonEnabled(final String oid, final SisaltoTyyppi sisalto, TarjontaTila requiredState ) {
+        GeneerinenTilaTyyppi tyyppi = new GeneerinenTilaTyyppi();
+        tyyppi.setOid(oid);
+        tyyppi.setSisalto(sisalto);
+        tyyppi.setTila(requiredState);
+        return tarjontaAdminService.testaaTilasiirtyma(tyyppi);
     }
 }

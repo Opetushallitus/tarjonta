@@ -15,18 +15,26 @@
  */
 package fi.vm.sade.tarjonta.publication.impl;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
+import fi.vm.sade.generic.model.BaseEntity;
 
 
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
+import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -111,6 +119,138 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 where(criteria).
                 distinct().list(haku);
 
+    }
+
+    @Override
+    public void updatePublicationStatus(List<GeneerinenTilaTyyppi> tilaOids) {
+        Map<SisaltoTyyppi, Map<TarjontaTila, List<String>>> map = new EnumMap<SisaltoTyyppi, Map<TarjontaTila, List<String>>>(SisaltoTyyppi.class);
+
+        if (tilaOids == null) {
+            throw new IllegalArgumentException("List of GeneerinenTilaTyyppi objects cannot be null.");
+        }
+
+        //filter given data to map
+        for (GeneerinenTilaTyyppi tila : tilaOids) {
+            final TarjontaTila convertedTila = EntityUtils.convertTila(tila.getTila());
+            getListOfOids(getSubMapByQHakukohde(map, tila.getSisalto()), convertedTila).add(tila.getOid());
+        }
+
+        //Update selected tarjonta oids to given status.
+        for (Entry<SisaltoTyyppi, Map<TarjontaTila, List<String>>> qs : map.entrySet()) {
+            for (Entry<TarjontaTila, List<String>> tila : qs.getValue().entrySet()) {
+                JPAUpdateClause jpaUpdateClause = null;
+
+                switch (qs.getKey()) {
+                    case HAKU:
+                        jpaUpdateClause = new JPAUpdateClause(em, QHaku.haku);
+                        jpaUpdateClause.where(QHaku.haku.oid.in(tila.getValue())).set(QHaku.haku.tila, tila.getKey());
+                        break;
+                    case HAKUKOHDE:
+                        jpaUpdateClause = new JPAUpdateClause(em, QHakukohde.hakukohde);
+                        jpaUpdateClause.where(QHakukohde.hakukohde.oid.in(tila.getValue())).set(QHakukohde.hakukohde.tila, tila.getKey());
+                        break;
+                    case KOMO:
+                        jpaUpdateClause = new JPAUpdateClause(em, QKoulutusmoduuli.koulutusmoduuli);
+                        jpaUpdateClause.where(QKoulutusmoduuli.koulutusmoduuli.oid.in(tila.getValue())).set(QKoulutusmoduuli.koulutusmoduuli.tila, tila.getKey());
+                        break;
+                    case KOMOTO:
+                        jpaUpdateClause = new JPAUpdateClause(em, QKoulutusmoduuliToteutus.koulutusmoduuliToteutus);
+                        jpaUpdateClause.where(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.oid.in(tila.getValue())).set(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.tila, tila.getKey());
+                        break;
+                }
+                jpaUpdateClause.execute();
+            }
+        }
+    }
+
+    @Override
+    public boolean isValidStateChange(GeneerinenTilaTyyppi tyyppi) {
+        checkParam(tyyppi, "GeneerinenTilaTyyppi");
+        checkParam(tyyppi.getOid(), "OID");
+        checkParam(tyyppi.getTila(), "TarjontaTila");
+        checkParam(tyyppi.getSisalto(), "SisaltoTyyppi");
+
+        TarjontaTila fromStatus = null;
+        final TarjontaTila toStatus = EntityUtils.convertTila(tyyppi.getTila());
+        final String oid = tyyppi.getOid();
+
+        switch (tyyppi.getSisalto()) {
+            case HAKU:
+                fromStatus = ((Haku) isNullEntity(from(QHaku.haku).
+                        where(QHaku.haku.oid.eq(oid)).
+                        singleResult(QHaku.haku),oid)).getTila();
+                break;
+            case HAKUKOHDE:
+                fromStatus = ((Hakukohde) isNullEntity(from(QHakukohde.hakukohde).
+                        where(QHakukohde.hakukohde.oid.eq(oid)).
+                        singleResult(QHakukohde.hakukohde),oid)).getTila();
+                break;
+            case KOMO:
+                fromStatus = ((Koulutusmoduuli) isNullEntity(from(QKoulutusmoduuli.koulutusmoduuli).
+                        where(QKoulutusmoduuli.koulutusmoduuli.oid.eq(oid)).
+                        singleResult(QKoulutusmoduuli.koulutusmoduuli),oid)).getTila();
+
+                break;
+            case KOMOTO:
+                fromStatus = ((KoulutusmoduuliToteutus) isNullEntity(from(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus).
+                        where(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.oid.eq(oid)).
+                        singleResult(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus),oid)).getTila();
+                break;
+        }
+
+        //the business rules for status codes.
+        switch (toStatus) {
+            //to state
+             case LUONNOS:
+                //check if a step is allowed from A state to B state
+                return TarjontaTila.LUONNOS.equals(fromStatus) ? true : false;        
+            case VALMIS:
+                return TarjontaTila.LUONNOS.equals(fromStatus) || TarjontaTila.VALMIS.equals(fromStatus) ? true : false;
+            case PERUTTU:
+                return TarjontaTila.JULKAISTU.equals(fromStatus) ? true : false;
+            case JULKAISTU:
+                return TarjontaTila.VALMIS.equals(fromStatus) || TarjontaTila.JULKAISTU.equals(fromStatus) ? true : false;
+            default:
+                return false;
+        }
+
+
+        //An parent object check is not implemented, but now we can 
+        //manage with the simple status check.
+
+    }
+
+    private Map<TarjontaTila, List<String>> getSubMapByQHakukohde(Map<SisaltoTyyppi, Map<TarjontaTila, List<String>>> map, SisaltoTyyppi q) {
+        if (map.containsKey(q)) {
+            return map.get(q);
+        } else {
+            Map subMap = new EnumMap<TarjontaTila, List<String>>(TarjontaTila.class);
+            map.put(q, subMap);
+            return subMap;
+        }
+    }
+
+    private List getListOfOids(Map<TarjontaTila, List<String>> map, TarjontaTila tila) {
+        if (map.containsKey(tila)) {
+            return map.get(tila);
+        } else {
+            List<String> emptyList = new ArrayList<String>();
+            map.put(tila, emptyList);
+            return emptyList;
+        }
+    }
+
+    private void checkParam(final Object obj, final String message) {
+        if (obj == null) {
+            throw new IllegalArgumentException(message + " object cannot be null.");
+        }
+    }
+
+    private Object isNullEntity(final BaseEntity obj, final String oid) {
+        if (obj == null) {
+            throw new RuntimeException("No result found by OID '" + oid + "'.");
+        }
+        return obj;
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

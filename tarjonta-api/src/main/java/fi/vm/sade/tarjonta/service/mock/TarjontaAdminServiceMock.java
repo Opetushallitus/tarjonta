@@ -132,4 +132,14 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public PaivitaTilaVastausTyyppi paivitaTilat(PaivitaTilaTyyppi parameters) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean testaaTilasiirtyma(GeneerinenTilaTyyppi parameters) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

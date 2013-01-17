@@ -19,39 +19,36 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
+import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import java.util.List;
 
 /**
- * Service that provides ready-made methods that return tarjonta data
- * which is ready for publishing.
+ * Service that provides ready-made methods that return tarjonta data which is
+ * ready for publishing.
  *
  * @author Jukka Raanamo
  */
 public interface PublicationDataService {
 
     /**
-     * Returns a list of KoulutusmoduuliToteutus where:
-     * <ul>
-     *  <li>{@link KoulutusmoduuliToteutus#getTila() } equal to {@link TarjontaTila#VALMIS}</li>
-     * </ul>
+     * Returns a list of KoulutusmoduuliToteutus where: <ul>
+     *  <li>{@link KoulutusmoduuliToteutus#getTila() } equal to
+     * {@link TarjontaTila#VALMIS}</li> </ul>
      *
      * @return
      */
     public List<KoulutusmoduuliToteutus> listKoulutusmoduuliToteutus();
 
     /**
-     * Returns a list of Hakukohde where:
-     * <ul>
-     *  <li>{@link Hakukohde#getTila() } equal to {@link TarjontaTila#VALMIS}</li>
-     * </ul>
+     * Returns a list of Hakukohde where: <ul> <li>{@link Hakukohde#getTila() }
+     * equal to {@link TarjontaTila#VALMIS}</li> </ul>
      *
      * @return
      */
     public List<Hakukohde> listHakukohde();
 
     /**
-     * Return a list of Haku objects ready to be published, i.e:
-     * <ul>
+     * Return a list of Haku objects ready to be published, i.e: <ul>
      *  <li>{@link Haku#getTila() } equal to {@link TarjontaTila#VALMIS}</li>
      * </ul>
      *
@@ -60,5 +57,7 @@ public interface PublicationDataService {
      */
     public List<Haku> listHaku();
 
+    public void updatePublicationStatus(List<GeneerinenTilaTyyppi> tilaOids);
+    
+    public boolean isValidStateChange(GeneerinenTilaTyyppi tyyppi);
 }
-
