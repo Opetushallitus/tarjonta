@@ -76,9 +76,14 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     @PropertyId("sahkoinenToimitusOsoite")
     private TextField sahkoinenToimitusOsoite;
 
+    private ErrorMessage errorView;
+
+    private Button cancelButton;
+    private Button saveButton;
+
     private UiBuilder uiBuilder;
 
-
+    private Form form;
 
     Button upRightInfoButton;
 
@@ -93,18 +98,55 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         return I18N.getMessage(key);
     }
 
+    private HorizontalLayout buildErrorLayout() {
+        HorizontalLayout topErrorArea = UiUtil.horizontalLayout();
+        HorizontalLayout padding = UiUtil.horizontalLayout();
+        padding.setWidth(30, UNITS_PERCENTAGE);
+        errorView = new ErrorMessage();
+        errorView.setSizeUndefined();
+
+        topErrorArea.addComponent(padding);
+        topErrorArea.addComponent(errorView);
+
+        return topErrorArea;
+    }
+
     private void buildMainLayout() {
          mainLayout = new VerticalLayout();
+
+         mainLayout.addComponent(buildErrorLayout());
 
          mainLayout.addComponent(buildInfoButtonLayout());
 
          mainLayout.addComponent(buildGridLayout());
 
+         mainLayout.addComponent(buildSaveCancelButtonLayout());
+
          setCompositionRoot(mainLayout);
+
+
+         initForm();
+    }
+
+    private void initForm() {
+        BeanItem<HakukohdeLiiteViewModel> hakukohdeLiiteBean = new BeanItem<HakukohdeLiiteViewModel>(presenter.getSelectedHakuliite(null));
+        form = new ValidatingViewBoundForm(this);
+        form.setItemDataSource(hakukohdeLiiteBean);
+
+        JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
+        this.form.setValidationVisible(false);
+        this.form.setValidationVisibleOnCommit(false);
+    }
+
+
+
+    public void setMainLayoutSizeFull() {
+        mainLayout.setSizeFull();
     }
 
     private HorizontalLayout buildInfoButtonLayout() {
-        HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.TOP_RIGHT_LEFT);
+        HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.TOP_RIGHT);
+        layout.setWidth(UiConstant.PCT100);
         upRightInfoButton = UiUtil.buttonSmallInfo(layout);
         layout.setComponentAlignment(upRightInfoButton, Alignment.TOP_RIGHT);
         return layout;
@@ -183,6 +225,32 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         sahkoinenToimitusOsoiteLayout.addComponent(sahkoinenToimitusOsoite);
 
         return sahkoinenToimitusOsoiteLayout;
+    }
+
+    private HorizontalLayout buildSaveCancelButtonLayout() {
+
+        HorizontalLayout horizontalButtonLayout = UiUtil.horizontalLayout();
+
+        cancelButton = UiBuilder.button(null,T("HakukohteenLiitteetViewImpl.cancelBtn"),new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                presenter.closeCancelHakukohteenEditView();
+            }
+        });
+        horizontalButtonLayout.addComponent(cancelButton);
+
+        saveButton = UiBuilder.button(null,T("HakukohteenLiitteetViewImpl.saveBtn"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                presenter.saveHakukohteenEditView();
+            }
+        });
+        horizontalButtonLayout.addComponent(saveButton);
+        horizontalButtonLayout.setWidth(UiConstant.PCT100);
+        horizontalButtonLayout.setComponentAlignment(cancelButton,Alignment.BOTTOM_LEFT);
+        horizontalButtonLayout.setComponentAlignment(saveButton,Alignment.BOTTOM_RIGHT);
+
+        return horizontalButtonLayout;
     }
 
     private GridLayout buildGridLayout() {

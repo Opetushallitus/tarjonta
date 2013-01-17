@@ -29,7 +29,15 @@ public class HakukohdeLiiteViewModel {
 
     private String liitteenTyyppi;
 
+    private String liitteeTyyppiKoodistoNimi;
+
     private List<KielikaannosViewModel> liitteenSanallinenKuvaus;
+
+    private String localizedKuvaus;
+
+    private String toimitusPvmTablePresentation;
+
+    private String toimitusOsoiteConcat;
 
     private Date toimitettavaMennessa;
 
@@ -124,5 +132,37 @@ public class HakukohdeLiiteViewModel {
 
     public void setLiitteenSanallinenKuvaus(List<KielikaannosViewModel> liitteenSanallinenKuvaus) {
         this.liitteenSanallinenKuvaus = liitteenSanallinenKuvaus;
+    }
+
+    public String getLiitteeTyyppiKoodistoNimi() {
+        return liitteeTyyppiKoodistoNimi;
+    }
+
+    public void setLiitteeTyyppiKoodistoNimi(String liitteeTyyppiKoodistoNimi) {
+        this.liitteeTyyppiKoodistoNimi = liitteeTyyppiKoodistoNimi;
+    }
+
+    public String getLocalizedKuvaus() {
+        return localizedKuvaus;
+    }
+
+    public void setLocalizedKuvaus(String localizedKuvaus) {
+        this.localizedKuvaus = localizedKuvaus;
+    }
+
+    public String getToimitusPvmTablePresentation() {
+        return toimitusPvmTablePresentation;
+    }
+
+    public void setToimitusPvmTablePresentation(String toimitusPvmTablePresentation) {
+        this.toimitusPvmTablePresentation = toimitusPvmTablePresentation;
+    }
+
+    public String getToimitusOsoiteConcat() {
+        return toimitusOsoiteConcat;
+    }
+
+    public void setToimitusOsoiteConcat(String toimitusOsoiteConcat) {
+        this.toimitusOsoiteConcat = toimitusOsoiteConcat;
     }
 }

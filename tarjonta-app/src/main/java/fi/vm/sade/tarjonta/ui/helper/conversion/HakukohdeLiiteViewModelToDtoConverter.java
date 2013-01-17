@@ -39,7 +39,7 @@ public class HakukohdeLiiteViewModelToDtoConverter {
         hakukohdeLiite.setLiitteenTyyppi(hakukohdeLiiteViewModel.getLiitteenTyyppi());
         hakukohdeLiite.setLiitteenToimitusOsoite(convertLiiteToOsoiteTyyppi(hakukohdeLiiteViewModel));
         hakukohdeLiite.setLiitteenKuvaus(convertTekstiToMonikielinenTekstiTyyppi(hakukohdeLiiteViewModel.getLiitteenSanallinenKuvaus()));
-
+        hakukohdeLiite.setLiitteenTyyppiKoodistoNimi(hakukohdeLiiteViewModel.getLiitteeTyyppiKoodistoNimi());
         hakukohdeLiite.setLiitteenId(hakukohdeLiiteViewModel.getHakukohdeLiiteId());
         hakukohdeLiite.setSahkoinenToimitusOsoite(hakukohdeLiiteViewModel.getSahkoinenToimitusOsoite());
         hakukohdeLiite.setToimitettavaMennessa(hakukohdeLiiteViewModel.getToimitettavaMennessa());

@@ -55,6 +55,7 @@ import fi.vm.sade.tarjonta.ui.view.hakukohde.ShowHakukohdeViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -76,6 +77,9 @@ import org.apache.commons.beanutils.BeanComparator;
 public class TarjontaPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
+
+    private final String LIITE_DATE_PATTERNS = "dd.MM.yyyy hh:mm";
+
     @Autowired
     private UserService userService;
     @Autowired
@@ -110,6 +114,7 @@ public class TarjontaPresenter {
     private ShowHakukohdeViewImpl hakukohdeView;
     private ShowKoulutusView showKoulutusView;
     private SearchResultsView searchResultsView;
+    private EditHakukohdeView editHakukohdeView;
 
     public TarjontaPresenter() {
     }
@@ -118,6 +123,7 @@ public class TarjontaPresenter {
         getModel().getHakukohde().setHakukohdeTila(tila);
         //getModel().getHakukohde().setHakukohdeKoodistoNimi(tryGetHakukohdeNimi(getModel().getHakukohde().getHakukohdeNimi()));
         saveHakuKohdePerustiedot();
+        editHakukohdeView.enableLiitteetTab();
     }
 
     public void commitHakukohdeForm(String tila) {
@@ -129,7 +135,10 @@ public class TarjontaPresenter {
         //checkHakuLiitetoimitusPvm();
         getModel().getHakukohde().getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
         if (getModel().getHakukohde().getOid() == null) {
-            tarjontaAdminService.lisaaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
+            HakukohdeTyyppi hakukohdeTyyppi = hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde());
+            getModel().getHakukohde().setOid(hakukohdeTyyppi.getOid());
+            tarjontaAdminService.lisaaHakukohde(hakukohdeTyyppi);
+
         } else {
             tarjontaAdminService.paivitaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
         }
@@ -164,11 +173,18 @@ public class TarjontaPresenter {
         }
     }
 
+
     public void saveHakukohdeLiite() {
         ArrayList<HakukohdeLiiteTyyppi> liitteet = new ArrayList<HakukohdeLiiteTyyppi>();
         HakukohdeLiiteViewModelToDtoConverter converter = new HakukohdeLiiteViewModelToDtoConverter();
+
         HakukohdeLiiteTyyppi hakukohdeLiite = converter.convertHakukohdeViewModelToHakukohdeLiiteTyyppi(getModel().getSelectedLiite());
-        liitteet.add(hakukohdeLiite);
+
+
+
+        hakukohdeLiite.setLiitteenTyyppiKoodistoNimi(uiHelper.getKoodiNimi(hakukohdeLiite.getLiitteenTyyppi()));
+
+       liitteet.add(hakukohdeLiite);
 //        for (HakukohdeLiiteViewModel hakuLiite:getModel().getHakukohde().getLiites()) {
 //            HakukohdeLiiteTyyppi liite = converter.convertHakukohdeViewModelToHakukohdeLiiteTyyppi(hakuLiite);
 //            liitteet.add(liite);
@@ -176,6 +192,16 @@ public class TarjontaPresenter {
 
         tarjontaAdminService.tallennaLiitteitaHakukohteelle(getModel().getHakukohde().getOid(),liitteet);
         getModel().setSelectedLiite(null);
+    }
+
+    public void closeCancelHakukohteenEditView() {
+        editHakukohdeView.closeHakukohdeLiiteEditWindow();
+    }
+
+    public void saveHakukohteenEditView() {
+         saveHakukohdeLiite();
+        editHakukohdeView.loadLiiteTableWithData();
+        editHakukohdeView.closeHakukohdeLiiteEditWindow();
     }
 
     public void initHakukohdeForm(PerustiedotView hakuKohdePerustiedotView) {
@@ -529,6 +555,59 @@ public class TarjontaPresenter {
         }
     }
 
+
+    public List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet() {
+        HaeHakukohteenLiitteetKyselyTyyppi kysely = new HaeHakukohteenLiitteetKyselyTyyppi();
+        kysely.setHakukohdeOid(getModel().getHakukohde().getOid());
+        HaeHakukohteenLiitteetVastausTyyppi vastaus = tarjontaPublicService.lueHakukohteenLiitteet(kysely);
+        ArrayList<HakukohdeLiiteViewModel> liitteet = new ArrayList<HakukohdeLiiteViewModel>();
+        for (HakukohdeLiiteTyyppi liiteTyyppi:vastaus.getHakukohteenLiitteet()) {
+            HakukohdeLiiteViewModel hakukohdeLiiteViewModel = HakukohdeLiiteTyyppiToViewModelConverter.convert(liiteTyyppi);
+
+            liitteet.add(addTableFields(hakukohdeLiiteViewModel));
+        }
+        return liitteet;
+    }
+
+    private HakukohdeLiiteViewModel addTableFields(HakukohdeLiiteViewModel hakukohdeLiiteViewModel) {
+
+        for (KielikaannosViewModel teksti :hakukohdeLiiteViewModel.getLiitteenSanallinenKuvaus())  {
+            if (teksti.getKielikoodi().trim().equalsIgnoreCase(I18N.getLocale().getLanguage().trim())) {
+              hakukohdeLiiteViewModel.setLocalizedKuvaus(teksti.getNimi());
+            }
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat(LIITE_DATE_PATTERNS);
+        hakukohdeLiiteViewModel.setToimitusPvmTablePresentation(sdf.format(hakukohdeLiiteViewModel.getToimitettavaMennessa()));
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(hakukohdeLiiteViewModel.getOsoiteRivi1());
+        sb.append("\n");
+        sb.append(hakukohdeLiiteViewModel.getPostinumero());
+        sb.append(" ");
+        sb.append(hakukohdeLiiteViewModel.getPostitoimiPaikka());
+        hakukohdeLiiteViewModel.setToimitusOsoiteConcat(sb.toString());
+        return hakukohdeLiiteViewModel;
+    }
+
+    public HakukohdeLiiteViewModel getSelectedHakuliite(HakukohdeLiiteViewModel hakukohdeLiiteViewModel) {
+        if (getModel().getHakukohde() != null && hakukohdeLiiteViewModel != null) {
+                getModel().setSelectedLiite(hakukohdeLiiteViewModel);
+        }    else {
+              getModel().setSelectedLiite(new HakukohdeLiiteViewModel());
+        }
+
+        //Set default fields
+        if (getModel().getHakukohde() != null) {
+
+               getModel().getSelectedLiite().setOsoiteRivi1(getModel().getHakukohde().getOsoiteRivi1());
+               getModel().getSelectedLiite().setOsoiteRivi2(getModel().getHakukohde().getOsoiteRivi2());
+               getModel().getSelectedLiite().setPostinumero(getModel().getHakukohde().getPostinumero());
+               getModel().getSelectedLiite().setPostitoimiPaikka(getModel().getHakukohde().getPostitoimipaikka());
+
+        }
+
+        return getModel().getSelectedLiite();
+    }
     /**
      * Show hakukohde edit view.
      *
@@ -538,9 +617,13 @@ public class TarjontaPresenter {
     public void showHakukohdeEditView(List<String> koulutusOids, String hakukohdeOid) {
         LOG.info("showHakukohdeEditView()");
         //After the data has been initialized the form is created
-        EditHakukohdeView editHakukohdeView = new EditHakukohdeView();
+        editHakukohdeView = new EditHakukohdeView();
         if (hakukohdeOid == null) {
             getModel().setHakukohde(new HakukohdeViewModel());
+
+        }   else {
+
+            editHakukohdeView.loadLiiteTableWithData();
         }
 
         //If a list of koulutusOids is provided they are set in the model

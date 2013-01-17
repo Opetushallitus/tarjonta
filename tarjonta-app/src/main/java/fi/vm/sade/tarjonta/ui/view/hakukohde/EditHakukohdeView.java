@@ -19,6 +19,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohdePerustiedotViewImpl;
@@ -43,6 +44,9 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
     private TabSheet tabs;
+    private TabSheet.Tab perustiedotTab;
+    private TabSheet.Tab liitteetTab;
+    private HakukohteenLiitteetTabImpl liitteet;
 
     public EditHakukohdeView() {
         super();
@@ -50,16 +54,39 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
 
     }
 
+    public void enableLiitteetTab() {
+         liitteetTab.setEnabled(true);
+    }
+
+    public void loadLiiteTableWithData()  {
+        if (liitteet != null) {
+         liitteet.reloadTableData();
+        }
+    }
+
+    public void closeHakukohdeLiiteEditWindow() {
+        if (liitteet != null) {
+            liitteet.closeEditWindow();
+        }
+    }
+
+
     @Override
     protected void buildLayout(VerticalLayout t) {
         tabs = new TabSheet();
         tabs.setHeight(-1, UNITS_PIXELS);
         t.addComponent(tabs);
         HakukohdePerustiedotViewImpl perustiedot = new HakukohdePerustiedotViewImpl();
-        HakukohteenLiitteetTabImpl liitteet = new HakukohteenLiitteetTabImpl();
-        tabs.addTab(perustiedot, T("tabNimi"));
-        tabs.addTab(liitteet,T("liitteetTab"));
+        liitteet = new HakukohteenLiitteetTabImpl();
 
+        perustiedotTab = tabs.addTab(perustiedot, T("tabNimi"));
+        liitteetTab = tabs.addTab(liitteet,T("liitteetTab"));
+        if (_presenter.getModel().getHakukohde() != null && _presenter.getModel().getHakukohde().getOid() != null) {
+            liitteetTab.setEnabled(true);
+        }  else {
+            liitteetTab.setEnabled(false);
+        }
+        liitteet.reloadTableData();
     }
 
 

@@ -137,6 +137,8 @@ public class HakukohdeViewModelToDTOConverter {
         return hakukohdeVM;
     }
 
+
+
     private MonikielinenTekstiTyyppi convertTekstis(List<KielikaannosViewModel> kaannokset) {
         MonikielinenTekstiTyyppi tekstis = new MonikielinenTekstiTyyppi();
 

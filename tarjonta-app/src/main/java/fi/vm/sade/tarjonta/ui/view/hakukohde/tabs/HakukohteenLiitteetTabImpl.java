@@ -16,11 +16,9 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  */
 
 import com.vaadin.data.Validator;
+import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Form;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
@@ -34,6 +32,8 @@ import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import java.util.List;
+
 /**
  * Created by: Tuomas Katva
  * Date: 15.1.2013
@@ -46,10 +46,13 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
 
-    private Form form;
+    private Table hakukohteenLiitteetTable = null;
+
     private BeanItem<HakukohdeLiiteViewModel> hakukohdeLiiteBean;
-    private ErrorMessage errorView;
+
+    private Button uusiLiiteBtn;
     private HakukohteenLiitteetViewImpl liitteet;
+    private Window hakukohteenLiiteEditWindow = null;
 
     public HakukohteenLiitteetTabImpl() {
         super();
@@ -58,27 +61,97 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
-        liitteet = new HakukohteenLiitteetViewImpl(presenter,uiBuilder);
-        //TODO, after the table is inserted in this layout change this
-        //presenter.getModel().getHakukohde().getLiites().add(new HakukohdeLiiteViewModel());
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        uusiLiiteBtn = UiBuilder.button(null,T("uusiLiiteBtn"),new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                 showHakukohdeEditWindow(null);
+            }
+        });
+
+
+        horizontalLayout.addComponent(uusiLiiteBtn);
+        layout.addComponent(horizontalLayout);
+        initTable(layout);
+    }
+
+    private void loadTableWithData(List<HakukohdeLiiteViewModel> liitteet) {
+           if (hakukohteenLiitteetTable != null) {
+               hakukohteenLiitteetTable.setContainerDataSource(createTableContainer(liitteet));
+               hakukohteenLiitteetTable.setSelectable(true);
+               hakukohteenLiitteetTable.setVisibleColumns(new String[] {"liitteeTyyppiKoodistoNimi","localizedKuvaus","toimitusPvmTablePresentation",
+               "toimitusOsoiteConcat"});
+               hakukohteenLiitteetTable.setColumnHeader("liitteeTyyppiKoodistoNimi",T("tableLiitteenTyyppi"));
+               hakukohteenLiitteetTable.setColumnHeader("localizedKuvaus",T("tableKuvaus"));
+               hakukohteenLiitteetTable.setColumnHeader("toimitusPvmTablePresentation",T("tableToimMennessa"));
+               hakukohteenLiitteetTable.setColumnHeader("toimitusOsoiteConcat",T("tableToimitusOsoite"));
+
+               hakukohteenLiitteetTable.setImmediate(true);
+               hakukohteenLiitteetTable.setMultiSelect(false);
+               hakukohteenLiitteetTable.setSizeFull();
+               hakukohteenLiitteetTable.requestRepaint();
+           }
+    }
+
+    public void initTable(AbstractLayout layout) {
+
+        if (hakukohteenLiitteetTable != null) {
+            hakukohteenLiitteetTable.removeAllItems();
+        }  else {
+            hakukohteenLiitteetTable = new Table();
+            layout.addComponent(hakukohteenLiitteetTable);
+        }
+
+
+
+    }
+
+     public void reloadTableData() {
+         if (hakukohteenLiitteetTable != null) {
+        hakukohteenLiitteetTable.removeAllItems();
+        loadTableWithData(presenter.loadHakukohdeLiitteet());
+         }
+    }
+
+    private BeanContainer<String,HakukohdeLiiteViewModel> createTableContainer(List<HakukohdeLiiteViewModel> liites) {
+        BeanContainer<String,HakukohdeLiiteViewModel> liiteContainer = new BeanContainer<String, HakukohdeLiiteViewModel>(HakukohdeLiiteViewModel.class);
+        for (HakukohdeLiiteViewModel liite:liites) {
+             liiteContainer.addItem(liite.getHakukohdeLiiteId(),liite);
+        }
+        return liiteContainer;
+    }
+
+    private void showHakukohdeEditWindow(String id) {
+        if (id == null) {
         presenter.getModel().setSelectedLiite(new HakukohdeLiiteViewModel());
-        this.initForm(presenter.getModel().getSelectedLiite());
-        layout.addComponent(buildErrorLayout());
-        layout.addComponent(form);
-        form.setSizeFull();
-        createButtons();
+        } else {
+            //TODO load liite from database and show it
+        }
+
+        liitteet = new HakukohteenLiitteetViewImpl(presenter,uiBuilder);
+
+
+
+        VerticalLayout mainWindowLayout = new VerticalLayout();
+        mainWindowLayout.addComponent(liitteet);
+        hakukohteenLiiteEditWindow = new Window();
+        //hakukohteenLiiteEditWindow.addComponent(liitteet);
+        hakukohteenLiiteEditWindow.setContent(mainWindowLayout);
+        getWindow().addWindow(hakukohteenLiiteEditWindow);
+        mainWindowLayout.setSizeUndefined();
+        liitteet.setImmediate(true);
+        liitteet.setWidth("900px");
+
+
+        hakukohteenLiiteEditWindow.setModal(true);
+        hakukohteenLiiteEditWindow.center();
     }
 
-    public void initForm(HakukohdeLiiteViewModel hakukohdeLiite) {
-        hakukohdeLiiteBean = new BeanItem<HakukohdeLiiteViewModel>(hakukohdeLiite);
-        form = new ValidatingViewBoundForm(liitteet);
-        form.setItemDataSource(hakukohdeLiiteBean);
-
-        JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
-        this.form.setValidationVisible(false);
-        this.form.setValidationVisibleOnCommit(false);
+    public void closeEditWindow() {
+          if (hakukohteenLiiteEditWindow != null) {
+              getWindow().removeWindow(hakukohteenLiiteEditWindow);
+          }
     }
-
 
     private void createButtons() {
         addNavigationButton("", new Button.ClickListener() {
@@ -101,34 +174,23 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 //presenter.commitHakukohdeForm("VALMIS");
-                saveForm();
+
             }
         });
 
     }
 
-    private HorizontalLayout buildErrorLayout() {
-        HorizontalLayout topErrorArea = UiUtil.horizontalLayout();
-        HorizontalLayout padding = UiUtil.horizontalLayout();
-        padding.setWidth(30, UNITS_PERCENTAGE);
-        errorView = new ErrorMessage();
-        errorView.setSizeUndefined();
 
-        topErrorArea.addComponent(padding);
-        topErrorArea.addComponent(errorView);
 
-        return topErrorArea;
-    }
-
-    private void saveForm() {
+   /* private void saveForm() {
         try {
             errorView.resetErrors();
-            form.commit();
+
             presenter.getModel().getSelectedLiite().getLiitteenSanallinenKuvaus().addAll(liitteet.getLiitteenSanallisetKuvaukset());
             presenter.saveHakukohdeLiite();
         }   catch (Validator.InvalidValueException e) {
             errorView.addError(e);
             presenter.showNotification(UserNotification.GENERIC_VALIDATION_FAILED);
         }
-    }
+    }*/
 }
