@@ -200,6 +200,7 @@
             <xs:element minOccurs="1" maxOccurs="1" name="toimitettavaMennessa" type="xs:date"/>
             <xs:element minOccurs="1" maxOccurs="1" name="liitteenToimitusOsoite" type="tns:OsoiteTyyppi"/>
             <xs:element minOccurs="0" maxOccurs="1" name="sahkoinenToimitusOsoite" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="liitteenTyyppiKoodistoNimi" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
 
