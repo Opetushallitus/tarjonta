@@ -193,6 +193,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
      * existing users.
      */
     public void attach() {
+        super.attach();
         initialYhtHenkTitteli = koulutusModel.getYhtHenkTitteli();
         initialYhtHenkEmail = koulutusModel.getYhtHenkEmail();
         initialYhtHenkPuhelin = koulutusModel.getYhtHenkPuhelin();
