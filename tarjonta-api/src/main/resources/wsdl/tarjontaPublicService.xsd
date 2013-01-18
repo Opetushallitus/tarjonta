@@ -34,6 +34,9 @@
 
     <xs:element name="haeHakukohteenLiitteetKysely" type="tns:HaeHakukohteenLiitteetKyselyTyyppi"/>
     <xs:element name="haeHakukohteenLiitteetVastausTyyppi" type="tns:HaeHakukohteenLiitteetVastausTyyppi"/>
+    
+    <xs:element name="lueHakukohteenLiiteTunnisteellaKyselyTyyppi" type="tns:LueHakukohteenLiiteTunnisteellaKyselyTyyppi" />
+    <xs:element name="lueHakukohteenLiiteTunnisteellaVastausTyyppi" type="tns:LueHakukohteenLiiteTunnisteellaVastausTyyppi"/>
 
     <xs:complexType name="HaeHakukohteenLiitteetKyselyTyyppi">
         <xs:sequence>
@@ -233,6 +236,25 @@
         </xs:sequence>
     </xs:complexType>
     
+    <xs:complexType name="LueHakukohteenLiiteTunnisteellaKyselyTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohteenLiiteTunniste" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Hakukohteen liitteen yksilöivä tunniste</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LueHakukohteenLiiteTunnisteellaVastausTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohteenLiite" type="tarjonta:HakukohdeLiiteTyyppi">
+                <xs:annotation>
+                    <xs:documentation>Hakukohteen liite</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 
 
 
