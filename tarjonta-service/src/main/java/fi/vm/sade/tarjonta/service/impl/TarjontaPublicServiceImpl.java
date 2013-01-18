@@ -72,7 +72,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     public TarjontaPublicServiceImpl() {
         super();
     }
-    
+
+
     @Override
     public ListHakuVastausTyyppi listHaku(ListaaHakuTyyppi parameters) {
         ListHakuVastausTyyppi hakuVastaus = new ListHakuVastausTyyppi();
@@ -146,6 +147,15 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         }
 
         vastaus.getHakukohteenLiitteet().addAll(liiteTyyppis);
+        return vastaus;
+    }
+
+
+    @Override
+    public LueHakukohteenLiiteTunnisteellaVastausTyyppi lueHakukohteenLiiteTunnisteella(@WebParam(partName = "parameters", name = "lueHakukohteenLiiteTunnisteellaKyselyTyyppi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohteenLiiteTunnisteellaKyselyTyyppi parameters) {
+        HakukohdeLiite hakukohdeLiite =  hakukohdeDAO.findHakuKohdeLiiteById(parameters.getHakukohteenLiiteTunniste());
+        LueHakukohteenLiiteTunnisteellaVastausTyyppi vastaus = new LueHakukohteenLiiteTunnisteellaVastausTyyppi();
+        vastaus.setHakukohteenLiite(conversionService.convert(hakukohdeLiite,HakukohdeLiiteTyyppi.class));
         return vastaus;
     }
 
