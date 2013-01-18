@@ -30,7 +30,7 @@ public class MonikielinenTeksti extends BaseEntity {
 
     private static final long serialVersionUID = -8996615595354088586L;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "teksti", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "teksti",fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<TekstiKaannos> tekstis = new HashSet<TekstiKaannos>();
 
     public Set<TekstiKaannos> getTekstis() {

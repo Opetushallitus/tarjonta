@@ -57,6 +57,7 @@ public class HakukohdeLiiteToDTOConverter extends AbstractFromDomainConverter<Ha
                 MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
                 teksti.setKieliKoodi(kaannos.getKieliKoodi());
                 teksti.setValue(kaannos.getArvo());
+               tekstis.add(teksti);
            }
            monikielinenTekstiTyyppi.getTeksti().addAll(tekstis);
            return monikielinenTekstiTyyppi;

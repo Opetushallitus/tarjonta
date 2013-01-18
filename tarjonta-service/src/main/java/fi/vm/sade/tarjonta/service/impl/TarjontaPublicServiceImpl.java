@@ -155,7 +155,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     public LueHakukohteenLiiteTunnisteellaVastausTyyppi lueHakukohteenLiiteTunnisteella(@WebParam(partName = "parameters", name = "lueHakukohteenLiiteTunnisteellaKyselyTyyppi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohteenLiiteTunnisteellaKyselyTyyppi parameters) {
         HakukohdeLiite hakukohdeLiite =  hakukohdeDAO.findHakuKohdeLiiteById(parameters.getHakukohteenLiiteTunniste());
         LueHakukohteenLiiteTunnisteellaVastausTyyppi vastaus = new LueHakukohteenLiiteTunnisteellaVastausTyyppi();
-        vastaus.setHakukohteenLiite(conversionService.convert(hakukohdeLiite,HakukohdeLiiteTyyppi.class));
+        HakukohdeLiiteTyyppi hakukohdeLiiteTyyppi = conversionService.convert(hakukohdeLiite,HakukohdeLiiteTyyppi.class);
+        vastaus.setHakukohteenLiite(hakukohdeLiiteTyyppi);
         return vastaus;
     }
 
