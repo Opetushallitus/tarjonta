@@ -76,9 +76,7 @@ import org.apache.commons.beanutils.BeanComparator;
 public class TarjontaPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
-
     private final String LIITE_DATE_PATTERNS = "dd.MM.yyyy hh:mm";
-
     @Autowired
     private UserService userService;
     @Autowired
@@ -172,7 +170,6 @@ public class TarjontaPresenter {
         }
     }
 
-
     public void saveHakukohdeLiite() {
         ArrayList<HakukohdeLiiteTyyppi> liitteet = new ArrayList<HakukohdeLiiteTyyppi>();
         HakukohdeLiiteViewModelToDtoConverter converter = new HakukohdeLiiteViewModelToDtoConverter();
@@ -183,7 +180,7 @@ public class TarjontaPresenter {
 
         hakukohdeLiite.setLiitteenTyyppiKoodistoNimi(uiHelper.getKoodiNimi(hakukohdeLiite.getLiitteenTyyppi()));
 
-       liitteet.add(hakukohdeLiite);
+        liitteet.add(hakukohdeLiite);
 //        for (HakukohdeLiiteViewModel hakuLiite:getModel().getHakukohde().getLiites()) {
 //            HakukohdeLiiteTyyppi liite = converter.convertHakukohdeViewModelToHakukohdeLiiteTyyppi(hakuLiite);
 //            liitteet.add(liite);
@@ -198,7 +195,7 @@ public class TarjontaPresenter {
     }
 
     public void saveHakukohteenEditView() {
-         saveHakukohdeLiite();
+        saveHakukohdeLiite();
         editHakukohdeView.loadLiiteTableWithData();
         editHakukohdeView.closeHakukohdeLiiteEditWindow();
     }
@@ -554,13 +551,12 @@ public class TarjontaPresenter {
         }
     }
 
-
     public List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet() {
         HaeHakukohteenLiitteetKyselyTyyppi kysely = new HaeHakukohteenLiitteetKyselyTyyppi();
         kysely.setHakukohdeOid(getModel().getHakukohde().getOid());
         HaeHakukohteenLiitteetVastausTyyppi vastaus = tarjontaPublicService.lueHakukohteenLiitteet(kysely);
         ArrayList<HakukohdeLiiteViewModel> liitteet = new ArrayList<HakukohdeLiiteViewModel>();
-        for (HakukohdeLiiteTyyppi liiteTyyppi:vastaus.getHakukohteenLiitteet()) {
+        for (HakukohdeLiiteTyyppi liiteTyyppi : vastaus.getHakukohteenLiitteet()) {
             HakukohdeLiiteViewModel hakukohdeLiiteViewModel = HakukohdeLiiteTyyppiToViewModelConverter.convert(liiteTyyppi);
 
             liitteet.add(addTableFields(hakukohdeLiiteViewModel));
@@ -570,9 +566,9 @@ public class TarjontaPresenter {
 
     private HakukohdeLiiteViewModel addTableFields(HakukohdeLiiteViewModel hakukohdeLiiteViewModel) {
 
-        for (KielikaannosViewModel teksti :hakukohdeLiiteViewModel.getLiitteenSanallinenKuvaus())  {
+        for (KielikaannosViewModel teksti : hakukohdeLiiteViewModel.getLiitteenSanallinenKuvaus()) {
             if (teksti.getKielikoodi().trim().equalsIgnoreCase(I18N.getLocale().getLanguage().trim())) {
-              hakukohdeLiiteViewModel.setLocalizedKuvaus(teksti.getNimi());
+                hakukohdeLiiteViewModel.setLocalizedKuvaus(teksti.getNimi());
             }
         }
         SimpleDateFormat sdf = new SimpleDateFormat(LIITE_DATE_PATTERNS);
@@ -590,23 +586,24 @@ public class TarjontaPresenter {
 
     public HakukohdeLiiteViewModel getSelectedHakuliite(HakukohdeLiiteViewModel hakukohdeLiiteViewModel) {
         if (getModel().getHakukohde() != null && hakukohdeLiiteViewModel != null) {
-                getModel().setSelectedLiite(hakukohdeLiiteViewModel);
-        }    else {
-              getModel().setSelectedLiite(new HakukohdeLiiteViewModel());
+            getModel().setSelectedLiite(hakukohdeLiiteViewModel);
+        } else {
+            getModel().setSelectedLiite(new HakukohdeLiiteViewModel());
         }
 
         //Set default fields
         if (getModel().getHakukohde() != null) {
 
-               getModel().getSelectedLiite().setOsoiteRivi1(getModel().getHakukohde().getOsoiteRivi1());
-               getModel().getSelectedLiite().setOsoiteRivi2(getModel().getHakukohde().getOsoiteRivi2());
-               getModel().getSelectedLiite().setPostinumero(getModel().getHakukohde().getPostinumero());
-               getModel().getSelectedLiite().setPostitoimiPaikka(getModel().getHakukohde().getPostitoimipaikka());
+            getModel().getSelectedLiite().setOsoiteRivi1(getModel().getHakukohde().getOsoiteRivi1());
+            getModel().getSelectedLiite().setOsoiteRivi2(getModel().getHakukohde().getOsoiteRivi2());
+            getModel().getSelectedLiite().setPostinumero(getModel().getHakukohde().getPostinumero());
+            getModel().getSelectedLiite().setPostitoimiPaikka(getModel().getHakukohde().getPostitoimipaikka());
 
         }
 
         return getModel().getSelectedLiite();
     }
+
     /**
      * Show hakukohde edit view.
      *
@@ -620,7 +617,7 @@ public class TarjontaPresenter {
         if (hakukohdeOid == null) {
             getModel().setHakukohde(new HakukohdeViewModel());
 
-        }   else {
+        } else {
 
             editHakukohdeView.loadLiiteTableWithData();
         }
@@ -1258,6 +1255,7 @@ public class TarjontaPresenter {
         tyyppi.setOid(oid);
         tyyppi.setSisalto(sisalto);
         tyyppi.setTila(TarjontaTila.PERUTTU);
+
         if (tarjontaAdminService.testaaTilasiirtyma(tyyppi)) {
             PaivitaTilaTyyppi tila = new PaivitaTilaTyyppi();
             tila.getTilaOids().add(tyyppi);
@@ -1269,11 +1267,41 @@ public class TarjontaPresenter {
         }
     }
 
-    public boolean isSaveButtonEnabled(final String oid, final SisaltoTyyppi sisalto, TarjontaTila requiredState ) {
+    /**
+     * Check is button enabled.
+     *
+     * @param oid
+     * @param sisalto
+     * @param requiredState
+     * @return
+     */
+    public boolean isSaveButtonEnabled(final String oid, final SisaltoTyyppi sisalto, final TarjontaTila... requiredState) {
+        if (sisalto == null) {
+            throw new RuntimeException("SisaltoTyyppi object cannot be null.");
+        }
+
+        if (requiredState == null && requiredState.length > 0) {
+            throw new RuntimeException("TarjontaTila object cannot be null or empty.");
+        }
+
+        if (oid == null) {
+            //OID is null, when user tryes to add new data.
+            LOG.debug("Buttons enabled for {} {}", sisalto, requiredState);
+            return true;
+        }
+
         GeneerinenTilaTyyppi tyyppi = new GeneerinenTilaTyyppi();
         tyyppi.setOid(oid);
         tyyppi.setSisalto(sisalto);
-        tyyppi.setTila(requiredState);
-        return tarjontaAdminService.testaaTilasiirtyma(tyyppi);
+
+        for (TarjontaTila tila : requiredState) {
+            tyyppi.setTila(tila);
+
+            if (tarjontaAdminService.testaaTilasiirtyma(tyyppi)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

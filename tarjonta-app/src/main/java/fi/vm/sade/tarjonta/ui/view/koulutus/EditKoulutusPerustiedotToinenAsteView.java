@@ -58,6 +58,8 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotToinenAsteView.class);
     private static final long serialVersionUID = -2238485065851932687L;
+    private static final TarjontaTila TO_STATE_LUONNOS = TarjontaTila.LUONNOS;
+    private static final TarjontaTila[] TO_STATE_VALMIS = {TO_STATE_LUONNOS, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU};
     private KoulutusToisenAsteenPerustiedotViewModel koulutusPerustiedotModel;
     private ErrorMessage errorView;
     @Autowired(required = true)
@@ -67,6 +69,8 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
     private EditKoulutusPerustiedotFormView editKoulutusPerustiedotFormView;
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
+    private ClickListener btnListenerTallennaLuonnoksena;
+    private ClickListener btnListenerTallennaValmiina;
 
     public EditKoulutusPerustiedotToinenAsteView() {
         super();
@@ -147,7 +151,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 
-        final ClickListener btnListenerTallennaLuonnoksena = new Button.ClickListener() {
+        btnListenerTallennaLuonnoksena = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
@@ -156,9 +160,9 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
             }
         };
 
-        addNavigationSaveButton("tallennaLuonnoksena", TarjontaTila.LUONNOS, btnListenerTallennaLuonnoksena);
+        addNavigationSaveButton("tallennaLuonnoksena", btnListenerTallennaLuonnoksena, TO_STATE_LUONNOS);
 
-        final ClickListener btnListenerTallennaValmiina = new Button.ClickListener() {
+        btnListenerTallennaValmiina = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
@@ -167,7 +171,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
             }
         };
 
-        addNavigationSaveButton("tallennaValmiina", TarjontaTila.PERUTTU, btnListenerTallennaValmiina);
+        addNavigationSaveButton("tallennaValmiina", btnListenerTallennaValmiina, TO_STATE_VALMIS);
 
         final Button.ClickListener clickListener = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
@@ -234,6 +238,8 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
                 makeUnmodified();
                 presenter.showNotification(UserNotification.SAVE_SUCCESS);
                 presenter.getReloadKoulutusListData();
+                updateNavigationButtonStates();
+
             } catch (javax.xml.ws.WebServiceException e) {
                 LOG.error("Unknown backend service error - KOMOTO persist failed, message :  " + e.getMessage(), e);
                 presenter.showNotification(UserNotification.SERVICE_UNAVAILABLE);
@@ -250,12 +256,21 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractVerticalNavig
         }
     }
 
-    private void addNavigationSaveButton(String property, TarjontaTila tila, ClickListener listener) {
+    private void addNavigationSaveButton(final String property, final ClickListener listener, final TarjontaTila... tila) {
         addNavigationButton(T(property), listener, StyleEnum.STYLE_BUTTON_PRIMARY);
+        updateNavigationButtonStates(listener, tila);
+    }
+
+    private void updateNavigationButtonStates(final ClickListener listener, final TarjontaTila... tila) {
         enableButtonByListener(listener,
                 presenter.isSaveButtonEnabled(
                 koulutusPerustiedotModel.getOid(),
                 SisaltoTyyppi.KOMOTO, tila));
         visibleButtonByListener(listener, presenter.getPermission().userCanReadAndUpdate());
+    }
+
+    private void updateNavigationButtonStates() {
+        updateNavigationButtonStates(btnListenerTallennaLuonnoksena, TO_STATE_LUONNOS);
+        updateNavigationButtonStates(btnListenerTallennaValmiina, TO_STATE_VALMIS);
     }
 }
