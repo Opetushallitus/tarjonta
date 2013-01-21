@@ -55,7 +55,9 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
     }
 
     public void enableLiitteetTab() {
+        if (liitteetTab != null) {
          liitteetTab.setEnabled(true);
+        }
     }
 
     public void loadLiiteTableWithData()  {
@@ -67,6 +69,12 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
     public void closeHakukohdeLiiteEditWindow() {
         if (liitteet != null) {
             liitteet.closeEditWindow();
+        }
+    }
+
+    public void showHakukohdeEditWindow(String liiteId) {
+        if (liitteet != null) {
+            liitteet.showHakukohdeEditWindow(liiteId);
         }
     }
 

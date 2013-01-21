@@ -23,8 +23,8 @@ public class HakukohdeLisatiedotTabSheet extends LanguageTabSheet {
 
     @Override
     protected void initializeTabsheet() {
-        if (_model.getHakukohde() != null && _model.getHakukohde().getLisatiedot() != null) {
-            setInitialValues(_model.getHakukohde().getLisatiedot());
+        if (_model.getHakukohde() != null && _model.getSelectedLiite() != null) {
+            setInitialValues(_model.getSelectedLiite().getLiitteenSanallinenKuvaus());
       }
     }
 }

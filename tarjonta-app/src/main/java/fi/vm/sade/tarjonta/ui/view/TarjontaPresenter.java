@@ -584,12 +584,19 @@ public class TarjontaPresenter {
         return hakukohdeLiiteViewModel;
     }
 
-    public HakukohdeLiiteViewModel getSelectedHakuliite(HakukohdeLiiteViewModel hakukohdeLiiteViewModel) {
-        if (getModel().getHakukohde() != null && hakukohdeLiiteViewModel != null) {
-            getModel().setSelectedLiite(hakukohdeLiiteViewModel);
-        } else {
-            getModel().setSelectedLiite(new HakukohdeLiiteViewModel());
-        }
+    public void loadHakukohdeLiiteWithId(String liiteId) {
+        LueHakukohteenLiiteTunnisteellaKyselyTyyppi kysely = new LueHakukohteenLiiteTunnisteellaKyselyTyyppi();
+        kysely.setHakukohteenLiiteTunniste(liiteId);
+        LueHakukohteenLiiteTunnisteellaVastausTyyppi vastaus = tarjontaPublicService.lueHakukohteenLiiteTunnisteella(kysely);
+        getModel().setSelectedLiite(HakukohdeLiiteTyyppiToViewModelConverter.convert(vastaus.getHakukohteenLiite()));
+    }
+
+    public void showHakukohdeLiiteEditWindow(String liiteId) {
+        editHakukohdeView.showHakukohdeEditWindow(liiteId);
+    }
+
+    public HakukohdeLiiteViewModel getSelectedHakuliite() {
+
 
         //Set default fields
         if (getModel().getHakukohde() != null) {

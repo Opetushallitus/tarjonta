@@ -129,7 +129,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     }
 
     private void initForm() {
-        BeanItem<HakukohdeLiiteViewModel> hakukohdeLiiteBean = new BeanItem<HakukohdeLiiteViewModel>(presenter.getSelectedHakuliite(null));
+        BeanItem<HakukohdeLiiteViewModel> hakukohdeLiiteBean = new BeanItem<HakukohdeLiiteViewModel>(presenter.getSelectedHakuliite());
         form = new ValidatingViewBoundForm(this);
         form.setItemDataSource(hakukohdeLiiteBean);
 
@@ -242,6 +242,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         saveButton = UiBuilder.button(null,T("HakukohteenLiitteetViewImpl.saveBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
+                presenter.getModel().getSelectedLiite().setLiitteenSanallinenKuvaus(getLiitteenSanallisetKuvaukset());
                 presenter.saveHakukohteenEditView();
             }
         });
