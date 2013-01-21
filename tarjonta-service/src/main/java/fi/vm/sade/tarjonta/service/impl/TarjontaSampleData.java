@@ -173,7 +173,7 @@ public class TarjontaSampleData {
         o1.setPostitoimipaikka("HELSINKI");
         vo1.setOsoite(o1);
 
-        a1.addOsoite(vo1);
+
         v1.addAjankohta(a1);
 
         h.addValintakoe(v1);

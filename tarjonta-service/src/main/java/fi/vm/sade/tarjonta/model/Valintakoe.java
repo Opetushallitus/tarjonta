@@ -44,7 +44,7 @@ public class Valintakoe extends BaseEntity {
     @JoinColumn(name = "valintakoe_id")
     private Set<ValintakoeAjankohta> ajankohtas = new HashSet<ValintakoeAjankohta>();
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "kuvaus_monikielinenteksti_id")
     private MonikielinenTeksti kuvaus;
 

@@ -38,13 +38,6 @@ public class ValintakoeAjankohta extends BaseEntity {
 
     private static final long serialVersionUID = -2304365086611685405L;
 
-    /**
-     * Collection of ValintakoeOsoite (addresses) that define where Valintakoe will be held at any given time
-     * (ValintakoeAjankohta).
-     */
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "valintakoe_ajankohta_id")
-    private Set<ValintakoeOsoite> osoites = new HashSet<ValintakoeOsoite>();
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date alkamisaika;
@@ -52,7 +45,9 @@ public class ValintakoeAjankohta extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date paattymisaika;
 
-    private String nimi;
+    private String lisatietoja;
+
+    private Osoite ajankohdanOsoite;
 
     public Date getAlkamisaika() {
         return alkamisaika;
@@ -70,26 +65,20 @@ public class ValintakoeAjankohta extends BaseEntity {
         this.paattymisaika = paattymisaika;
     }
 
-    public String getNimi() {
-        return nimi;
+    public String getLisatietoja() {
+        return lisatietoja;
     }
 
-    public void setNimi(String nimi) {
-        this.nimi = nimi;
-    }
-    
-    
-    public Set<ValintakoeOsoite> getOsoites() {
-        return Collections.unmodifiableSet(osoites);
-    }
-    
-    public void addOsoite(ValintakoeOsoite osoite) {
-        osoites.add(osoite);
-    }
-    
-    public void removeOsoite(ValintakoeOsoite osoite) {
-        osoites.remove(osoite);
+    public void setLisatietoja(String lisatietoja) {
+        this.lisatietoja = lisatietoja;
     }
 
+
+    public Osoite getAjankohdanOsoite() {
+        return ajankohdanOsoite;
+    }
+
+    public void setAjankohdanOsoite(Osoite ajankohdanOsoite) {
+        this.ajankohdanOsoite = ajankohdanOsoite;
+    }
 }
-

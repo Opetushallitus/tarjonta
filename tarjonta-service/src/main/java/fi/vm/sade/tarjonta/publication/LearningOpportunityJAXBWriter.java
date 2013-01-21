@@ -681,11 +681,22 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                 event.setStart(ajankohta.getAlkamisaika());
                 event.setEnd(ajankohta.getPaattymisaika());
 
-                Set<ValintakoeOsoite> osoites = ajankohta.getOsoites();
-                if (osoites != null && !osoites.isEmpty()) {
+               /* Set<ValintakoeOsoite> osoites = ajankohta.getOsoites();*/
 
+                if (ajankohta.getAjankohdanOsoite() != null) {
                     ExaminationEventType.Locations locations = new ExaminationEventType.Locations();
                     event.setLocations(locations);
+                    ExaminationLocationType location = new ExaminationLocationType();
+                    location.getAddressLine().add(ajankohta.getAjankohdanOsoite().getOsoiterivi1());
+                    location.setCity(ajankohta.getAjankohdanOsoite().getPostitoimipaikka());
+                    location.setPostalCode(ajankohta.getAjankohdanOsoite().getPostinumero());
+                    locations.getLocation().add(location);
+                }
+                //Tuomas Katva 21.1.2013, removed because according to new specs Valintakoeajankohta and osoite
+                //has 1:1 relation
+               /* if (osoites != null && !osoites.isEmpty()) {
+
+
 
                     for (ValintakoeOsoite valintakoeOsoite : osoites) {
 
@@ -703,7 +714,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
                     }
 
-                }
+                }*/
 
                 events.add(event);
 
