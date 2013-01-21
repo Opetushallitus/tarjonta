@@ -22,14 +22,11 @@ import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import java.util.Collections;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils.convertTekstiToVM;
@@ -58,7 +55,7 @@ public class HakukohdeViewModelToDTOConverter {
             hakukohde.setHakukohdeNimi("");
         }
         hakukohde.setHakukohteenHakuOid(hakukohdevm.getHakuOid().getHakuOid());
-        hakukohde.setHakukohteenTila(TarjontaTila.valueOf(hakukohdevm.getHakukohdeTila()));
+        hakukohde.setHakukohteenTila(hakukohdevm.getTila());
         if (hakukohdevm.getOid() == null) {
             try {
                 hakukohde.setOid(oidService.newOid(NodeClassCode.PALVELUT));
@@ -114,7 +111,7 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohdeVM.setAloitusPaikat(hakukohdeTyyppi.getAloituspaikat());
         hakukohdeVM.setHakukelpoisuusVaatimus(hakukohdeTyyppi.getHakukelpoisuusVaatimukset());
         hakukohdeVM.setHakukohdeNimi(hakukohdeTyyppi.getHakukohdeNimi());
-        hakukohdeVM.setHakukohdeTila(hakukohdeTyyppi.getHakukohteenTila().name());
+        hakukohdeVM.setTila(hakukohdeTyyppi.getHakukohteenTila());
         HakuViewModel haku = mapHakuNimi(hakukohdeTyyppi.getHakukohteenHaunNimi());
         haku.setHakuOid(hakukohdeTyyppi.getHakukohteenHakuOid());
         hakukohdeVM.setKaytaHaunPaattymisenAikaa(hakukohdeTyyppi.isKaytetaanHaunPaattymisenAikaa());

@@ -86,15 +86,7 @@ public class TarjontaWebApplication extends TarjontaApplication {
         });
         hl.addComponent(hakuButton);
 
-        Button xxxButton = new Button("Koulutuksen kuvailevat tiedot muokkaaminen", new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-
-            @Override
-            public void buttonClick(ClickEvent event) {
-                toKoulutusView();
-            }
-        });
-        hl.addComponent(xxxButton);
+        
 
         Button btnKomo = new Button("Luo kaikki komot", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
@@ -142,15 +134,7 @@ public class TarjontaWebApplication extends TarjontaApplication {
         setMainWindow(window);
     }
 
-    public void toKoulutusView() {
-        this.removeWindow(window);
-
-        window = new Window();
-        setMainWindow(window);
-        EditKoulutusLisatiedotForm view = new EditKoulutusLisatiedotForm();
-        window.addComponent(view);
-    }
-
+ 
     /*
      * Development configurations, no real use in production environment.
      */

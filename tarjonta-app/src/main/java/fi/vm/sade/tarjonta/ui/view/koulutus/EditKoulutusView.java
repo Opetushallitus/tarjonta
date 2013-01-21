@@ -40,6 +40,11 @@ public class EditKoulutusView extends AbstractVerticalLayout {
     private static final String LABEL_FORMAT_EDIT = "title.edit";
     private static final String DEMO_DATA = "tutkintoon johtavaa koulutusta";
     private Label title;  //formated title label
+    private String koulutusOid;
+
+    public EditKoulutusView(String koulutusOid) {
+        this.koulutusOid = koulutusOid;
+    }
 
     @Override
     protected void buildLayout() {
@@ -57,14 +62,12 @@ public class EditKoulutusView extends AbstractVerticalLayout {
                     presenter.getModel().getOrganisaatioName());
         }
         HorizontalLayout hlLabelWrapper = new HorizontalLayout();
-        hlLabelWrapper.setMargin(false,false,true,true);
+        hlLabelWrapper.setMargin(false, false, true, true);
         hlLabelWrapper.addComponent(title);
         addComponent(hlLabelWrapper);
 
-        TabSheet tabs = UiBuilder.tabSheet(null);
-        addComponent(tabs);
-
-        tabs.addTab(new EditKoulutusPerustiedotToinenAsteView(), T("perustiedot"));
-        tabs.addTab(new EditKoulutusLisatiedotForm(), T("lisatiedot"));
+        TabSheet tabs = UiBuilder.tabSheet(this);
+        tabs.addTab(new EditKoulutusPerustiedotToinenAsteView(koulutusOid), T("perustiedot"));
+        tabs.addTab(new EditKoulutusLisatiedotToinenAsteView(koulutusOid), T("lisatiedot"));
     }
 }

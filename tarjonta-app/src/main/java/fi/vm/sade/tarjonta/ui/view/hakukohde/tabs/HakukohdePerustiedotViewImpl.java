@@ -15,69 +15,67 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
+import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
-import fi.vm.sade.vaadin.constants.StyleEnum;
+import fi.vm.sade.tarjonta.ui.view.common.EditLayoutView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
- * Created by: Tuomas Katva
- * Date: 15.1.2013
+ * Created by: Tuomas Katva Date: 15.1.2013
  */
 @Configurable
-public class HakukohdePerustiedotViewImpl extends AbstractVerticalNavigationLayout {
+public class HakukohdePerustiedotViewImpl extends EditLayoutView<HakukohdeViewModel, PerustiedotViewImpl> {
 
     @Autowired(required = true)
     private TarjontaPresenter presenter;
 
-    @Autowired(required = true)
-    private transient UiBuilder uiBuilder;
-
-    private PerustiedotViewImpl perustiedot;
-
-    public HakukohdePerustiedotViewImpl() {
-        super();
+    public HakukohdePerustiedotViewImpl(String oid) {
+        super(oid, SisaltoTyyppi.HAKUKOHDE);
         setMargin(true);
         setHeight(-1, UNITS_PIXELS);
     }
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
-        perustiedot = new PerustiedotViewImpl(presenter, uiBuilder);
-        layout.addComponent(perustiedot);
-        createButtons();
+        super.buildLayout(layout); //init base navigation here
+        PerustiedotViewImpl formView = new PerustiedotViewImpl(presenter, getUiBuilder());
+        buildFormLayout("perustiedot", presenter, layout, presenter.getModel().getHakukohde(), formView);
     }
 
-    private void createButtons() {
-        addNavigationButton("", new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                presenter.showMainDefaultView();
-                presenter.getHakukohdeListView().reload();
-            }
-        }, StyleEnum.STYLE_BUTTON_BACK);
-
-        addNavigationButton(T("tallennaLuonnoksena"), new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                presenter.commitHakukohdeForm("LUONNOS");
-
-            }
-        });
-
-        addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                presenter.commitHakukohdeForm("VALMIS");
-
-            }
-        });
-
+    @Override
+    protected void eventBack(Button.ClickEvent event) {
+        presenter.showMainDefaultView();
+        presenter.getHakukohdeListView().reload();
     }
 
+    @Override
+    public void actionNext(ClickEvent event) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isformDataLoaded() {
+        return isLoaded();
+    }
+
+    @Override
+    public String actionSave(SaveButtonState tila, ClickEvent event) throws Exception {
+        presenter.saveHakuKohde(tila);
+        return getHakukohdeOid();
+    }
+
+    private String getHakukohdeOid() {
+        return presenter.getModel().getHakukohde() != null ? presenter.getModel().getHakukohde().getOid() : null;
+    }
+
+    private boolean isLoaded() {
+        return getHakukohdeOid() != null ? true : false;
+    }
 }

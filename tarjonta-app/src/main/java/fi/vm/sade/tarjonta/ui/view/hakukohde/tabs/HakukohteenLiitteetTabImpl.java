@@ -84,6 +84,7 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
             hakukohteenLiitteetTable.removeAllItems();
         }  else {
             hakukohteenLiitteetTable = new Table();
+            hakukohteenLiitteetTable.setWidth(100, UNITS_PERCENTAGE);
             getLayout().addComponent(hakukohteenLiitteetTable);
 
         }

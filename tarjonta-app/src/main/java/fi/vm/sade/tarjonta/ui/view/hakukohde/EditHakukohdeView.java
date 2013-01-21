@@ -15,19 +15,12 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
-import com.vaadin.ui.Button;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
+import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohdePerustiedotViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenLiitteetTabImpl;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenLiitteetViewImpl;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotViewImpl;
-import fi.vm.sade.vaadin.constants.StyleEnum;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -36,9 +29,9 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author Tuomas Katva
  */
 @Configurable
-public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
+public class EditHakukohdeView extends AbstractVerticalLayout {
+    
     private static final long serialVersionUID = 8806220426371090907L;
-
     @Autowired
     private TarjontaPresenter _presenter;
     @Autowired(required = true)
@@ -47,55 +40,54 @@ public class EditHakukohdeView extends AbstractVerticalNavigationLayout {
     private TabSheet.Tab perustiedotTab;
     private TabSheet.Tab liitteetTab;
     private HakukohteenLiitteetTabImpl liitteet;
-
+    
     public EditHakukohdeView() {
         super();
         setHeight(-1, UNITS_PIXELS);
-
+        
     }
-
+    
     public void enableLiitteetTab() {
         if (liitteetTab != null) {
-         liitteetTab.setEnabled(true);
+            liitteetTab.setEnabled(true);
         }
     }
-
-    public void loadLiiteTableWithData()  {
+    
+    public void loadLiiteTableWithData() {
         if (liitteet != null) {
-         liitteet.reloadTableData();
+            liitteet.reloadTableData();
         }
     }
-
+    
     public void closeHakukohdeLiiteEditWindow() {
         if (liitteet != null) {
             liitteet.closeEditWindow();
         }
     }
-
+    
     public void showHakukohdeEditWindow(String liiteId) {
         if (liitteet != null) {
             liitteet.showHakukohdeEditWindow(liiteId);
         }
     }
-
-
+    
     @Override
-    protected void buildLayout(VerticalLayout t) {
-        tabs = new TabSheet();
-        tabs.setHeight(-1, UNITS_PIXELS);
-        t.addComponent(tabs);
-        HakukohdePerustiedotViewImpl perustiedot = new HakukohdePerustiedotViewImpl();
-        liitteet = new HakukohteenLiitteetTabImpl();
-
-        perustiedotTab = tabs.addTab(perustiedot, T("tabNimi"));
-        liitteetTab = tabs.addTab(liitteet,T("liitteetTab"));
+    protected void buildLayout() {
+        String hakukohdeOid = null;
         if (_presenter.getModel().getHakukohde() != null && _presenter.getModel().getHakukohde().getOid() != null) {
-            liitteetTab.setEnabled(true);
-        }  else {
-            liitteetTab.setEnabled(false);
+            hakukohdeOid = _presenter.getModel().getHakukohde().getOid();
         }
+        
+        tabs = UiBuilder.tabSheet(this);
+        HakukohdePerustiedotViewImpl perustiedot = new HakukohdePerustiedotViewImpl(hakukohdeOid);
+        
+        liitteet = new HakukohteenLiitteetTabImpl();
+        
+        System.out.println("!!!!!!!!!!!!!! " + hakukohdeOid != null + " " + hakukohdeOid);
+        
+        perustiedotTab = tabs.addTab(perustiedot, T("tabNimi"));
+        liitteetTab = tabs.addTab(liitteet, T("liitteetTab"));
+        liitteetTab.setEnabled(hakukohdeOid != null);
         liitteet.reloadTableData();
     }
-
-
 }

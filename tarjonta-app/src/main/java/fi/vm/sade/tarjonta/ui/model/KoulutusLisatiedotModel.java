@@ -15,12 +15,15 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Contains all the additional information for all given languages for a study.
@@ -32,6 +35,7 @@ import java.util.Set;
  */
 public class KoulutusLisatiedotModel extends BaseUIViewModel {
 
+    private TarjontaTila tila;
     private Set<String> _kielet;
     private Collection<String> _ammattinimikkeet;
     /**
@@ -111,5 +115,45 @@ public class KoulutusLisatiedotModel extends BaseUIViewModel {
 
     public void setAmmattinimikkeet(Collection<String> set) {
         _ammattinimikkeet = set;
+    }
+
+    /**
+     * @return the tila
+     */
+    public TarjontaTila getTila() {
+        return tila;
+    }
+
+    /**
+     * @param tila the tila to set
+     */
+    public void setTila(TarjontaTila tila) {
+        this.tila = tila;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+        KoulutusLisatiedotModel other = (KoulutusLisatiedotModel) obj;
+
+        EqualsBuilder builder = new EqualsBuilder();
+        builder.append(this._ammattinimikkeet, other._ammattinimikkeet);
+        builder.append(this._kielet, other._kielet);
+        builder.append(this._lisatiedot, other._lisatiedot);
+        builder.append(this.tila, other.tila);
+        return builder.isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().
+                append(_ammattinimikkeet).
+                append(_kielet).
+                append(_lisatiedot).toHashCode();
     }
 }

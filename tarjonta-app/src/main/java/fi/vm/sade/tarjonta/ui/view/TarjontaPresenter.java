@@ -73,7 +73,7 @@ import org.apache.commons.beanutils.BeanComparator;
  *
  * @author mlyly
  */
-public class TarjontaPresenter {
+public class TarjontaPresenter implements IPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
     private final String LIITE_DATE_PATTERNS = "dd.MM.yyyy hh:mm";
@@ -116,15 +116,15 @@ public class TarjontaPresenter {
     public TarjontaPresenter() {
     }
 
-    public void saveHakuKohde(String tila) {
-        getModel().getHakukohde().setHakukohdeTila(tila);
+    public void saveHakuKohde(SaveButtonState tila) {
+        LOG.debug("SaveButtonState : {}", tila);
+        
+        getModel().getHakukohde().setTila(tila.toTarjontaTila(getModel().getHakukohde().getTila()));
+        LOG.debug("Tila : {}", getModel().getHakukohde().getTila());
+        
         //getModel().getHakukohde().setHakukohdeKoodistoNimi(tryGetHakukohdeNimi(getModel().getHakukohde().getHakukohdeNimi()));
         saveHakuKohdePerustiedot();
         editHakukohdeView.enableLiitteetTab();
-    }
-
-    public void commitHakukohdeForm(String tila) {
-        hakuKohdePerustiedotView.commitForm(tila);
     }
 
     public void saveHakuKohdePerustiedot() {
@@ -134,6 +134,7 @@ public class TarjontaPresenter {
         if (getModel().getHakukohde().getOid() == null) {
             HakukohdeTyyppi hakukohdeTyyppi = hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde());
             getModel().getHakukohde().setOid(hakukohdeTyyppi.getOid());
+            LOG.info("hakukohdeTyyppi.getOid() {}" , hakukohdeTyyppi.getOid());
             tarjontaAdminService.lisaaHakukohde(hakukohdeTyyppi);
 
         } else {
@@ -186,6 +187,8 @@ public class TarjontaPresenter {
 //            liitteet.add(liite);
 //        }
 
+        LOG.debug("Hakukohde OID {} ", getModel().getHakukohde().getOid());
+        
         tarjontaAdminService.tallennaLiitteitaHakukohteelle(getModel().getHakukohde().getOid(), liitteet);
         getModel().setSelectedLiite(null);
     }
@@ -487,7 +490,7 @@ public class TarjontaPresenter {
             getModel().getKoulutusPerustiedotModel().setOrganisaatioOidTree(fetchOrganisaatioTree(getModel().getOrganisaatioOid()));
         }
 
-        getRootView().changeView(new EditKoulutusView());
+        getRootView().changeView(new EditKoulutusView(koulutusOid));
 
     }
 
@@ -556,6 +559,9 @@ public class TarjontaPresenter {
         if (getModel().getHakukohde() != null && getModel().getHakukohde().getOid() != null) {
         HaeHakukohteenLiitteetKyselyTyyppi kysely = new HaeHakukohteenLiitteetKyselyTyyppi();
         kysely.setHakukohdeOid(getModel().getHakukohde().getOid());
+        
+        LOG.debug("loadHakukohdeLiitteet {} oid : ", getModel().getHakukohde().getOid());
+        
         HaeHakukohteenLiitteetVastausTyyppi vastaus = tarjontaPublicService.lueHakukohteenLiitteet(kysely);
 
         for (HakukohdeLiiteTyyppi liiteTyyppi : vastaus.getHakukohteenLiitteet()) {
@@ -797,7 +803,10 @@ public class TarjontaPresenter {
     }
 
     /**
-     * Saves koulutus.
+     * Saves koulutus/tukinto, other synonyms: LOI, KOMOTO.
+     *
+     * @param tila (save state)
+     * @throws ExceptionMessage
      */
     public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel koulutusModel = getModel().getKoulutusPerustiedotModel();
@@ -974,8 +983,9 @@ public class TarjontaPresenter {
     /*
      * A simple notification helper method.
      */
+    @Override
     public void showNotification(final UserNotification msg) {
-        LOG.info("Show user notification - type {}, value {}", msg, msg.getInfo());
+        LOG.info("Show user notification - type {}, value {}", msg, msg != null ? msg.getInfo() : null);
         if (msg != null && getRootView() != null) {
             getRootView().showNotification(msg.getInfo(), msg.getNotifiaction());
         } else {
@@ -1286,6 +1296,7 @@ public class TarjontaPresenter {
      * @param requiredState
      * @return
      */
+    @Override
     public boolean isSaveButtonEnabled(final String oid, final SisaltoTyyppi sisalto, final TarjontaTila... requiredState) {
         if (sisalto == null) {
             throw new RuntimeException("SisaltoTyyppi object cannot be null.");

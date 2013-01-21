@@ -21,7 +21,9 @@ import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
-import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.EditLayoutView;
 import org.slf4j.Logger;
@@ -35,15 +37,20 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author Jani Wilén
  */
 @Configurable(preConstruction = true)
-public class EditKoulutusPerustiedotToinenAsteView extends EditLayoutView<KoulutusToisenAsteenPerustiedotViewModel, EditKoulutusPerustiedotFormView> {
+public class EditKoulutusLisatiedotToinenAsteView extends EditLayoutView {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotToinenAsteView.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusLisatiedotToinenAsteView.class);
     private static final long serialVersionUID = -2238485065851932687L;
-    private KoulutusToisenAsteenPerustiedotViewModel model;
+    private KoulutusLisatiedotModel koulutusLisatiedotModel;
     @Autowired(required = true)
     private TarjontaPresenter presenter;
+    private EditKoulutusLisatiedotForm editKoulutusLisatiedotForm;
+    @Autowired(required = true)
+    private transient UiBuilder uiBuilder;
+    @Autowired(required = true)
+    private transient TarjontaUIHelper uiHelper;
 
-    public EditKoulutusPerustiedotToinenAsteView(String oid) {
+    public EditKoulutusLisatiedotToinenAsteView(String oid) {
         super(oid, SisaltoTyyppi.KOMOTO);
         setMargin(true);
         setHeight(-1, UNITS_PIXELS);
@@ -56,22 +63,22 @@ public class EditKoulutusPerustiedotToinenAsteView extends EditLayoutView<Koulut
         /*
          *  FORM LAYOUT (form components under navigation buttons)
          */
-        model = presenter.getModel().getKoulutusPerustiedotModel();
-        EditKoulutusPerustiedotFormView formView = new EditKoulutusPerustiedotFormView(presenter, getUiBuilder(), model);
+        koulutusLisatiedotModel = presenter.getModel().getKoulutusLisatiedotModel();
+        editKoulutusLisatiedotForm = new EditKoulutusLisatiedotForm(presenter, uiHelper, uiBuilder, koulutusLisatiedotModel);
 
-        buildFormLayout("KoulutuksenPerustiedot", presenter, layout, model, formView, getErrorView());
+        buildFormLayout("KoulutuksenLisatiedot", presenter, layout, koulutusLisatiedotModel, editKoulutusLisatiedotForm, getErrorView());
     }
 
     @Override
     public boolean isformDataLoaded() {
-        return model.isLoaded();
+        return presenter.getModel().getKoulutusPerustiedotModel().isLoaded();
     }
 
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
         presenter.saveKoulutus(tila);
         presenter.getReloadKoulutusListData();
-        return model.getOid();
+        return presenter.getModel().getKoulutusPerustiedotModel().getOid();
     }
 
     @Override

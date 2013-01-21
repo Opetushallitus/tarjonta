@@ -18,62 +18,49 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.ui.*;
-import com.vaadin.ui.Button.ClickEvent;
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
-import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.component.OphRichTextArea;
 import fi.vm.sade.generic.ui.component.OphTokenField;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.util.KoodistoHelper;
-import fi.vm.sade.koodisto.widget.DefaultKoodiCaptionFormatter;
-import fi.vm.sade.koodisto.widget.DefaultKoodiFieldValueFormatter;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
-import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
 import fi.vm.sade.tarjonta.ui.view.common.KoodistoSelectionTabSheet;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
-import fi.vm.sade.vaadin.constants.StyleEnum;
 import java.util.HashSet;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
+import org.vaadin.addon.formbinder.FormFieldMatch;
+import org.vaadin.addon.formbinder.FormView;
 
 /**
  * For editing the studies (koulutus) additional information.
  *
  * @author mlyly
  */
-@Configurable
-public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout {
+@FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
+public class EditKoulutusLisatiedotForm extends VerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusLisatiedotForm.class);
     private static final long serialVersionUID = -4054591599209251060L;
-    @Autowired(required = true)
     private TarjontaPresenter _presenter;
-    @Autowired(required = true)
     private TarjontaUIHelper _uiHelper;
     private KoulutusLisatiedotModel koulutusLisatiedotModel;
-    @Autowired(required = true)
     private transient UiBuilder uiBuilder;
+    private transient I18NHelper _i18n;
 
-    @Override
-    protected void buildLayout(VerticalLayout layout) {
-        setSpacing(true);
-        setMargin(true);
-        koulutusLisatiedotModel = _presenter.getModel().getKoulutusLisatiedotModel();
-        addNavigationButtons();
+    public EditKoulutusLisatiedotForm(TarjontaPresenter presenter, TarjontaUIHelper uiHelper, UiBuilder uiBuilder, KoulutusLisatiedotModel koulutusLisatiedotModel) {
+        this.setWidth(100, UNITS_PERCENTAGE);
+        this._presenter = presenter;
+        this.koulutusLisatiedotModel = koulutusLisatiedotModel;
+        this.uiBuilder = uiBuilder;
+        this._uiHelper = uiHelper;
 
         //
         // Ammattinimikkeet
@@ -84,7 +71,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
             addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet.help"), LabelStyleEnum.TEXT));
 
             PropertysetItem psi = new BeanItem(koulutusLisatiedotModel);
-            OphTokenField f = uiBuilder.koodistoTokenField(null, KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
+            OphTokenField f = uiBuilder.koodistoTokenField(this, KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
             f.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
                 @Override
                 public String formatToken(Object selectedToken) {
@@ -98,17 +85,16 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
                 @Override
                 public String formatCaption(Object dto) {
                     if (dto instanceof KoodiType) {
-                      KoodiType kt = (KoodiType) dto;
-                      return _uiHelper.getKoodiNimi(kt, null);
-                      // return _uiHelper.getKoodiNimi(kt.getKoodiUri());
+                        KoodiType kt = (KoodiType) dto;
+                        return _uiHelper.getKoodiNimi(kt, null);
+                        // return _uiHelper.getKoodiNimi(kt.getKoodiUri());
                     } else {
                         return "??? " + dto;
                     }
                 }
             });
 
-            addComponent(f);
-            f.getSelectionLayout().setWidth("600px");
+            //f.getSelectionLayout().setWidth("600px");
         }
 
         //
@@ -129,6 +115,7 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         //
         final KoodistoSelectionTabSheet tabs = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, uiBuilder) {
             private static final long serialVersionUID = -7916177514458213528L;
+
             @Override
             public void doAddTab(String uri) {
                 Component c = createLanguageEditor(uri);
@@ -143,55 +130,6 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
 
         addComponent(UiBuilder.label((AbstractLayout) null, T("kieliriippuvatTiedot"), LabelStyleEnum.H2));
         addComponent(tabs);
-    }
-
-    private void addNavigationButtons() {
-
-        addNavigationButton("", new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-            @Override
-            public void buttonClick(ClickEvent event) {
-                _presenter.showMainDefaultView();
-            }
-        }, StyleEnum.STYLE_BUTTON_BACK);
-        addNavigationButton(T(CommonTranslationKeys.TALLENNA_LUONNOKSENA), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-            @Override
-            public void buttonClick(ClickEvent event) {
-                try {
-                    _presenter.saveKoulutus(SaveButtonState.SAVE_AS_DRAFT);
-                } catch (ExceptionMessage ex) {
-                    LOG.error("Failed to save.", ex);
-                    getWindow().showNotification("FAILED: " + ex);
-                }
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
-        addNavigationButton(T(CommonTranslationKeys.TALLENNA_VALMIINA), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-            @Override
-            public void buttonClick(ClickEvent event) {
-                try {
-                    _presenter.saveKoulutus(SaveButtonState.SAVE_AS_READY);
-                } catch (ExceptionMessage ex) {
-                    LOG.error("Failed to save.", ex);
-                    getWindow().showNotification("FAILED: " + ex);
-                }
-            }
-        }, StyleEnum.STYLE_BUTTON_SECONDARY);
-        addNavigationButton(T("esikatsele"), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-            @Override
-            public void buttonClick(ClickEvent event) {
-                _presenter.showKoulutusPreview();
-            }
-        }, StyleEnum.STYLE_BUTTON_SECONDARY, false);
-        addNavigationButton(T(CommonTranslationKeys.JATKA), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-            @Override
-            public void buttonClick(ClickEvent event) {
-                _presenter.showShowKoulutusView();
-            }
-        }, StyleEnum.STYLE_BUTTON_SECONDARY);
     }
 
     /**
@@ -251,5 +189,17 @@ public class EditKoulutusLisatiedotForm extends AbstractVerticalNavigationLayout
         }
 
         return vl;
+    }
+
+    // Generic translatio helpers
+    private String T(String key) {
+        return getI18n().getMessage(key);
+    }
+
+    private I18NHelper getI18n() {
+        if (_i18n == null) {
+            _i18n = new I18NHelper(this);
+        }
+        return _i18n;
     }
 }

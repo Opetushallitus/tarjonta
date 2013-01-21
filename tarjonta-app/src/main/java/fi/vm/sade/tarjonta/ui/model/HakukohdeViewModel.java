@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.ui.model;
 
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private HakuViewModel haku;
     private int aloitusPaikat;
     private int valinnoissaKaytettavatPaikat;
-    private String hakukohdeTila;
+    private TarjontaTila tila;
     private String hakukelpoisuusVaatimus;
     private boolean sahkoinenToimitusSallittu;
     private boolean kaytaHaunPaattymisenAikaa;
@@ -141,15 +142,15 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     /**
      * @return the hakukohdeTila
      */
-    public String getHakukohdeTila() {
-        return hakukohdeTila;
+    public TarjontaTila getTila() {
+        return tila;
     }
 
     /**
      * @param hakukohdeTila the hakukohdeTila to set
      */
-    public void setHakukohdeTila(String hakukohdeTila) {
-        this.hakukohdeTila = hakukohdeTila;
+    public void setTila(TarjontaTila hakukohdeTila) {
+        this.tila = hakukohdeTila;
     }
 
     /**

@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
+import com.vaadin.ui.VerticalLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,14 +29,13 @@ import org.springframework.stereotype.Component;
 
 import com.vaadin.ui.Window;
 
-import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 
 import fi.vm.sade.tarjonta.ui.model.KoulutusSearchSpesificationViewModel;
-import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
+import fi.vm.sade.tarjonta.ui.view.haku.EditHakuForm;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuView;
 
 import fi.vm.sade.generic.common.I18N;
@@ -46,12 +46,19 @@ import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
-import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.enums.UserNotification;
+import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
+import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
+import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuViewImpl;
+import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
  * Presenter for searching, creating, editing, and viewing Haku objects.
@@ -61,24 +68,29 @@ import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
  */
 @Component
 @Configurable(preConstruction = false)
-public class HakuPresenter {
+public class HakuPresenter implements IPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuPresenter.class);
     private KoulutusSearchSpesificationViewModel searchSpec = new KoulutusSearchSpesificationViewModel();
     private List<HakuViewModel> haut = new ArrayList<HakuViewModel>();
     private List<HakuViewModel> selectedhaut = new ArrayList<HakuViewModel>();
     private ListHakuView hakuList;
-    private EditHakuView editHaku;
+    private EditHakuForm editHaku;
     private HakuViewModel hakuModel;
-    @Autowired
+    private HakuRootView _rootView;
+    @Autowired(required = true)
     private OIDService oidService;
-    @Autowired
+    @Autowired(required = true)
     private KoodiService koodiService;
-    @Autowired
+    @Autowired(required = true)
     private TarjontaPublicService tarjontaPublicService;
-    @Autowired
+    @Autowired(required = true)
     private TarjontaAdminService tarjontaAdminService;
     public static final String COLUMN_A = "Kategoriat";
+    @Autowired(required = true)
+    private TarjontaPresenter tarjontaPresenter;
+    @Autowired(required = true)
+    private TarjontaPermissionService tarjontaPermissionService;
 
     public HakuPresenter() {
     }
@@ -132,9 +144,6 @@ public class HakuPresenter {
      * @return
      */
     public Map<String, List<HakuViewModel>> getTreeDataSource() {
-
-
-
         haut = retrieveHaut();
 
         return groupHakus(haut);
@@ -191,29 +200,10 @@ public class HakuPresenter {
     }
 
     /**
-     * Saves the haku as draft.
-     */
-    public void saveHakuLuonnoksenaModel() {
-        hakuModel.setHakuValmis(false);
-        if (hakuModel.getHakuOid() == null) {
-            try {
-                hakuModel.setHakuOid(oidService.newOid(NodeClassCode.TEKN_5));
-                hakuModel.setHaunTunniste((hakuModel.getHaunTunniste() == null) ? hakuModel.getHakuOid() : hakuModel.getHaunTunniste());
-            } catch (Exception ex) {
-                LOG.error(ex.getMessage());
-            }
-            tarjontaAdminService.lisaaHaku(hakuModel.getHakuDto());
-        } else {
-            tarjontaAdminService.paivitaHaku(hakuModel.getHakuDto());
-        }
-        LOG.info("Haku tallennettu luonnoksena");
-    }
-
-    /**
      * Saves haku as ready.
      */
-    public void saveHakuValmiina() {
-        hakuModel.setHakuValmis(true);
+    public void saveHaku(SaveButtonState tila) {
+        hakuModel.setHakuValmis(tila, hakuModel.getHakuDto().getHaunTila());
         LOG.info("Hakutapa: " + hakuModel.getHakutapa());
         if (hakuModel.getHakuOid() == null) {
             try {
@@ -236,9 +226,9 @@ public class HakuPresenter {
      */
     public void removeHaku(HakuViewModel haku) {
         try {
-        tarjontaAdminService.poistaHaku(haku.getHakuDto());
+            tarjontaAdminService.poistaHaku(haku.getHakuDto());
         } catch (Exception exp) {
-            if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakuUsedException"))  {
+            if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakuUsedException")) {
                 hakuList.showErrorMessage(I18N.getMessage("notification.error.haku.used"));
             }
         }
@@ -257,7 +247,7 @@ public class HakuPresenter {
     /**
      * @param editHaku the editHaku to set
      */
-    public void setEditHaku(EditHakuView editHaku) {
+    public void setEditHaku(EditHakuForm editHaku) {
         this.editHaku = editHaku;
     }
 
@@ -266,7 +256,7 @@ public class HakuPresenter {
      *
      * @return
      */
-    public EditHakuView getEditHaku() {
+    public EditHakuForm getEditHaku() {
         return editHaku;
     }
 
@@ -283,10 +273,15 @@ public class HakuPresenter {
      * @return the hakuModel to return
      */
     public HakuViewModel getHakuModel() {
+        if (hakuModel == null) {
+            hakuModel = new HakuViewModel();
+        }
+
         return hakuModel;
     }
 
     /**
+     * HakuViewModel
      *
      * @return the inner hakuajat for a haku.
      */
@@ -341,8 +336,8 @@ public class HakuPresenter {
         selectedhaut.clear();
         hakuList.reload();
         this.hakuList.showNotification(I18N.getMessage("notification.deleted.haut.title"),
-                                        notificationMessage,
-                                        Window.Notification.TYPE_HUMANIZED_MESSAGE);
+                notificationMessage,
+                Window.Notification.TYPE_HUMANIZED_MESSAGE);
     }
 
     private List<HakuViewModel> retrieveHaut(ListaaHakuTyyppi req) {
@@ -383,5 +378,102 @@ public class HakuPresenter {
         this.hakuList.toggleRemoveButton(!selectedhaut.isEmpty());
     }
 
+    /**
+     * Displays the view component of Haku
+     *
+     * @param haku
+     */
+    public void showHakuView(final HakuViewModel haku) {
+        LOG.info("loadViewForm()");
+        getRootView().getAppRightLayout().removeAllComponents();
 
+        VerticalLayout vl = UiUtil.verticalLayout();
+        //vl.addComponent(getBreadcrumbsView());
+
+        this.setHakuViewModel(haku);
+
+        ShowHakuViewImpl showHaku = new ShowHakuViewImpl(this.getHakuModel().getNimiFi(),
+                this.getHakuModel().getNimiFi(),
+                null);
+        showHaku.addListener(new com.vaadin.ui.Component.Listener() {
+            private static final long serialVersionUID = -8696709317724642137L;
+
+            @Override
+            public void componentEvent(com.vaadin.ui.Component.Event event) {
+                if (event instanceof ShowHakuViewImpl.BackEvent) {
+                    getRootView().showMainDefaultView();
+                    refreshHakulist();
+                } else if (event instanceof ShowHakuViewImpl.EditEvent) {
+                    showHakuEdit(null);
+                }
+            }
+        });
+        vl.addComponent(showHaku);
+        getRootView().getAppRightLayout().addComponent(vl);
+        getRootView().getAppRightLayout().setExpandRatio(vl, 1f);
+    }
+
+    /**
+     * @return the _rootView
+     */
+    public HakuRootView getRootView() {
+        return _rootView;
+    }
+
+    /**
+     * @param rootView the _rootView to set
+     */
+    public void setRootView(HakuRootView rootView) {
+        this._rootView = rootView;
+    }
+
+    /**
+     * Displays the edit form of Haku.
+     *
+     * @param haku
+     */
+    public void showHakuEdit(HakuViewModel model) {
+        LOG.info("showHakuEdit()");
+        if (model != null) {
+            hakuModel = model;
+        }
+
+        getRootView().getAppRightLayout().removeAllComponents();
+        VerticalLayout vl = UiUtil.verticalLayout();
+
+        //vl.addComponent(getBreadcrumbsView());
+        EditHakuView editHakuView = new EditHakuView(getHakuModel().getHakuOid());
+        vl.addComponent(editHakuView);
+        getRootView().getAppRightLayout().addComponent(vl);
+        getRootView().getAppRightLayout().setExpandRatio(vl, 1f);
+    }
+
+    @Override
+    public void showMainDefaultView() {
+        getRootView().showMainDefaultView();
+        refreshHakulist();
+    }
+
+    @Override
+    public boolean isSaveButtonEnabled(String oid, SisaltoTyyppi sisalto, TarjontaTila... requiredState) {
+        return tarjontaPresenter.isSaveButtonEnabled(oid, sisalto, requiredState);
+    }
+
+    @Override
+    public void showNotification(UserNotification msg) {
+        LOG.info("Show user notification - type {}, value {}", msg, msg != null ? msg.getInfo() : null);
+        if (msg != null && getRootView() != null) {
+            getRootView().showNotification(msg.getInfo(), msg.getNotifiaction());
+        } else {
+            LOG.error("Application error - an unknown problem with UI notification. Value : {}", msg);
+        }
+    }
+
+    /**
+     * @return the tarjontaPermissionService
+     */
+    @Override
+    public TarjontaPermissionService getPermission() {
+        return tarjontaPermissionService;
+    }
 }

@@ -97,6 +97,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         //OIDs
         setOrganisaatioOid(null);
         setOid(null); //KOMOTO OID
+        setTila(TarjontaTila.LUONNOS);
         setKoulutusmoduuliOid(null); //KOMO OID
 
         //used in control logic

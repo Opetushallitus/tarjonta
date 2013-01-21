@@ -68,51 +68,42 @@ import org.vaadin.addon.formbinder.PropertyId;
  *
  * @author mlyly
  * @author mholi
- * @see HakuViewModel the model that is bound this edit form, see the PropertyId annotations.
+ * @see HakuViewModel the model that is bound this edit form, see the PropertyId
+ * annotations.
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
-public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
+public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditHakuViewImpl.class);
-
+    private static final Logger LOG = LoggerFactory.getLogger(EditHakuFormImpl.class);
     public static final Object[] HAKUAJAT_COLUMNS = new Object[]{"kuvaus", "alkuPvm", "loppuPvm", "poistaB"};
     private static final long serialVersionUID = -8149045959215514422L;
-    
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
-
     @Autowired(required = true)
     private HakuPresenter presenter;
-
     private VerticalLayout _layout;
-    @NotNull(message="{validation.Haku.hakutyyppiNull}")
+    @NotNull(message = "{validation.Haku.hakutyyppiNull}")
     @PropertyId("hakutyyppi")
     private KoodistoComponent _hakutyyppi;
-
-    @NotNull(message="{validation.Haku.hakukausiNull}")
+    @NotNull(message = "{validation.Haku.hakukausiNull}")
     @PropertyId("hakukausi")
     private KoodistoComponent _hakukausi;
-
-    @NotNull(message="{validation.Haku.hakuvuosiNull}")
+    @NotNull(message = "{validation.Haku.hakuvuosiNull}")
     @PropertyId("hakuvuosi")
     private TextField _hakuvuosi;
-    @NotNull(message="{validation.Haku.koulutuksenAlkamisKausiNull}")
+    @NotNull(message = "{validation.Haku.koulutuksenAlkamisKausiNull}")
     @PropertyId("koulutuksenAlkamisKausi")
     private KoodistoComponent _koulutusAlkamiskausi;
-
-    @NotNull(message="{validation.Haku.koulutuksenAlkamisVuosiNull}")
+    @NotNull(message = "{validation.Haku.koulutuksenAlkamisVuosiNull}")
     @PropertyId("koulutuksenAlkamisvuosi")
     private TextField koulutuksenAlkamisvuosi;
-
-    @NotNull(message="{validation.Haku.kohdejoukkoNull}")
+    @NotNull(message = "{validation.Haku.kohdejoukkoNull}")
     @PropertyId("haunKohdejoukko")
     private KoodistoComponent _hakuKohdejoukko;
-
-    @NotNull(message="{validation.Haku.hakutapaNull}")
+    @NotNull(message = "{validation.Haku.hakutapaNull}")
     @PropertyId("hakutapa")
     private KoodistoComponent _hakutapa;
-
     @PropertyId("nimiFi")
     private TextField _haunNimiFI;
     @PropertyId("nimiSe")
@@ -121,56 +112,37 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
     private TextField _haunNimiEN;
     @PropertyId("haunTunniste")
     private Label _haunTunniste;
-
     // TODO hakuaika
     /*@PropertyId("alkamisPvm")
-    private DateField hakuAlkaa;
-    @PropertyId("paattymisPvm")
-    private DateField hakuLoppuu;
+     private DateField hakuAlkaa;
+     @PropertyId("paattymisPvm")
+     private DateField hakuLoppuu;
 
-    private OptionGroup sisHakuajat;*/
-
+     private OptionGroup sisHakuajat;*/
     private Table sisaisetHakuajatTable;
     private HakuajatContainer sisaisetHakuajatContainer;
-
     @PropertyId("haussaKaytetaanSijoittelua")
     private CheckBox _kaytetaanSijoittelua;
     @PropertyId("kaytetaanJarjestelmanHakulomaketta")
     private CheckBox _kayteaanJarjestelmanHakulomaketta;
-    
     @Pattern(regexp = "[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "{validation.invalid.www}")
     @PropertyId("hakuLomakeUrl")
     private TextField _muuHakulomakeUrl;
-
     private Button lisaaHakuaika;
-
     private Form form;
-
     private transient I18NHelper _i18n;
-
     private ErrorMessage errorView;
-
     private boolean attached = false;
 
-
-    public EditHakuViewImpl() {
+    public EditHakuFormImpl() {
         super();
-        presenter.setEditHaku(this);
         HakuViewModel haku = new HakuViewModel();
         initialize(haku);
-    }
-
-    public EditHakuViewImpl(HakuViewModel model) {
-        presenter.setEditHaku(this);
-
-        initialize(model);
     }
 
     @Override
     public void initialize(HakuViewModel hakuViewModel) {
         LOG.info("inititialize()");
-
-
 
         // Clean up old components if any
         if (_layout != null) {
@@ -179,25 +151,25 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
 
         // Create root layout for this component
         _layout = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
-        setCompositionRoot(_layout);
+        addComponent(_layout);
 
         //
         // Init fields
         //
 
-        _hakutyyppi = uiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI, null, null, T("Hakutyyppi.prompt"));
+        _hakutyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI, null, null, T("Hakutyyppi.prompt"));
         _hakutyyppi.setSizeUndefined();
-        _hakukausi = uiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T("Hakukausi.prompt"));
+        _hakukausi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T("Hakukausi.prompt"));
         _hakukausi.setSizeUndefined();
         _hakuvuosi = UiUtil.textField(null, "", T("Hakuvuosi.prompt"), false);
         _hakuvuosi.setSizeUndefined();
-        _koulutusAlkamiskausi =uiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T("KoulutuksenAlkamiskausi.prompt"));
+        _koulutusAlkamiskausi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, null, null, T("KoulutuksenAlkamiskausi.prompt"));
         _koulutusAlkamiskausi.setSizeUndefined();
-         koulutuksenAlkamisvuosi = UiUtil.textField(null, "", T("KoulutuksenAlkamisvuosi.prompt"), false);
-         koulutuksenAlkamisvuosi.setSizeUndefined();
-        _hakuKohdejoukko = uiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T("HakuKohdejoukko.prompt"));
+        koulutuksenAlkamisvuosi = UiUtil.textField(null, "", T("KoulutuksenAlkamisvuosi.prompt"), false);
+        koulutuksenAlkamisvuosi.setSizeUndefined();
+        _hakuKohdejoukko = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T("HakuKohdejoukko.prompt"));
         _hakuKohdejoukko.setSizeUndefined();
-        _hakutapa = uiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_HAKUTAPA_URI, null, null, T("Hakutapa.prompt"));
+        _hakutapa = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUTAPA_URI, null, null, T("Hakutapa.prompt"));
         _hakutapa.setSizeUndefined();
         _haunNimiFI = UiUtil.textField(null, "", T("HaunNimiFI.prompt"), false);
         _haunNimiFI.setSizeUndefined();
@@ -214,19 +186,14 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         _kayteaanJarjestelmanHakulomaketta.setSizeUndefined();
         _kayteaanJarjestelmanHakulomaketta.setImmediate(true);
         _kayteaanJarjestelmanHakulomaketta.addListener(new Property.ValueChangeListener() {
-                @Override
-                public void valueChange(ValueChangeEvent event) {
-                    //DEBUGSAWAY:LOG.debug("Value change for kaytetaan jarjestelman hakulomaketta.");
-                    _muuHakulomakeUrl.setEnabled(!_kayteaanJarjestelmanHakulomaketta.booleanValue());
-                }
-            });
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                //DEBUGSAWAY:LOG.debug("Value change for kaytetaan jarjestelman hakulomaketta.");
+                _muuHakulomakeUrl.setEnabled(!_kayteaanJarjestelmanHakulomaketta.booleanValue());
+            }
+        });
         _muuHakulomakeUrl = UiUtil.textField(null, "", T("MuuHakulomake.prompt"), false);
         _muuHakulomakeUrl.setSizeUndefined();
-
-        createButtonBar(_layout);
-
-        UiUtil.label(_layout, T("HaunTiedot"), LabelStyleEnum.H2);
-        UiUtil.hr(_layout);
 
         GridLayout grid = new GridLayout(3, 1);
         grid.setSpacing(true);
@@ -295,10 +262,9 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             this.sisaisetHakuajatTable.setEditable(true);
 
             lisaaHakuaika = UiUtil.buttonSmallPlus(vl, T("LisaaHakuaika"), new Button.ClickListener() {
-
                 @Override
                 public void buttonClick(ClickEvent event) {
-                    sisaisetHakuajatContainer.addRowToHakuajat();
+                    getSisaisetHakuajatContainer().addRowToHakuajat();
                 }
             });
             lisaaHakuaika.setEnabled(true);
@@ -323,106 +289,33 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
             grid.newLine();
         }
 
-        createButtonBar(_layout);
         grid.setColumnExpandRatio(1, 1);
         grid.setColumnExpandRatio(2, 5);
 
         if (hakuViewModel.getHakuOid() == null) {
-        	hakuViewModel.setHakuvuosi(Calendar.getInstance().get(Calendar.YEAR));
-        	hakuViewModel.setKoulutuksenAlkamisvuosi(Calendar.getInstance().get(Calendar.YEAR));
+            hakuViewModel.setHakuvuosi(Calendar.getInstance().get(Calendar.YEAR));
+            hakuViewModel.setKoulutuksenAlkamisvuosi(Calendar.getInstance().get(Calendar.YEAR));
         }
-        BeanItem<HakuViewModel> hakuBean = new BeanItem<HakuViewModel>(hakuViewModel);
-        form = new ValidatingViewBoundForm(this);
-        form.setItemDataSource(hakuBean);
-        presenter.setHakuViewModel(hakuViewModel);
-
+       
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
-        this.form.setValidationVisible(false);
-        this.form.setValidationVisibleOnCommit(false);
-
+    
         this.sisaisetHakuajatContainer = new HakuajatContainer(presenter.getHakuModel().getSisaisetHakuajat());
-        this.sisaisetHakuajatTable.setContainerDataSource(this.sisaisetHakuajatContainer);
+        this.sisaisetHakuajatTable.setContainerDataSource(this.getSisaisetHakuajatContainer());
         this.sisaisetHakuajatTable.setVisibleColumns(HAKUAJAT_COLUMNS);
-        this.sisaisetHakuajatTable.setPageLength((this.sisaisetHakuajatContainer.size() > 5) ? this.sisaisetHakuajatContainer.size() : 5);
+        this.sisaisetHakuajatTable.setPageLength((this.getSisaisetHakuajatContainer().size() > 5) ? this.getSisaisetHakuajatContainer().size() : 5);
         this.sisaisetHakuajatTable.setColumnHeaders(new String[]{T("Kuvaus"), T("Alkupvm"), T("Loppupvm"), T("Poista")});
         /*this.sisaisetHakuajatTable.setColumnWidth("kuvaus", 180);
-        this.sisaisetHakuajatTable.setColumnWidth("alkuPvm", 250);
-        this.sisaisetHakuajatTable.setColumnWidth("loppuPvm", 250);
-        this.sisaisetHakuajatTable.setColumnWidth("poistaB", 160);*/
+         this.sisaisetHakuajatTable.setColumnWidth("alkuPvm", 250);
+         this.sisaisetHakuajatTable.setColumnWidth("loppuPvm", 250);
+         this.sisaisetHakuajatTable.setColumnWidth("poistaB", 160);*/
 
-    }
-
-     /**
-     * Top and botton button bars.
-     * Buttons are bound to send events defined in this class (SaveEvent, DeleteEvent etc.)
-     *
-     * @param layout
-     * @return
-     */
-    private VerticalLayout createButtonBar(VerticalLayout layout) {
-        VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.NONE);
-        vl.setSizeUndefined();
-        if (layout != null) {
-            layout.addComponent(vl);
-        }
-        HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
-
-        Button btnCancel = UiUtil.buttonSmallSecodary(hl, T("Peruuta"));
-        btnCancel.addStyleName(Oph.CONTAINER_SECONDARY);
-        btnCancel.addListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                fireEvent(new CancelEvent(EditHakuViewImpl.this));
-            }
-        });
-
-        Button btnSaveUncomplete = UiUtil.buttonSmallPrimary(hl, T("TallennaLuonnoksena"));
-        btnSaveUncomplete.addListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                fireEvent(new SaveEvent(EditHakuViewImpl.this, false));
-
-            }
-        });
-
-        Button btnSaveComplete = UiUtil.buttonSmallPrimary(hl, T("TallennaValmiina"));
-        btnSaveComplete.addListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                fireEvent(new SaveEvent(EditHakuViewImpl.this, true));
-
-            }
-        });
-
-        Button btnContinue = UiUtil.buttonSmallPrimary(hl, T("Jatka"));
-        btnContinue.addListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                if (presenter.getHakuModel().getHakuOid() != null) {
-                    fireEvent(new ContinueEvent(EditHakuViewImpl.this));
-                } else {
-                    getWindow().showNotification(T("TallennaEnsin"));
-                }
-            }
-        });
-
-        hl.setSizeUndefined();
-        hl.setComponentAlignment(btnCancel, Alignment.TOP_LEFT);
-        hl.setComponentAlignment(btnSaveUncomplete, Alignment.TOP_LEFT);
-        hl.setComponentAlignment(btnSaveComplete, Alignment.TOP_LEFT);
-        hl.setComponentAlignment(btnContinue, Alignment.TOP_LEFT);
-        vl.addComponent(hl);
-        if (errorView == null) {
-            errorView = new ErrorMessage();
-        }
-        vl.addComponent(errorView);
-        return vl;
     }
 
     /**
      * Translator helper. Makes code so much more hip... and shorter.
      *
-     * Its using I18NHelper so the actual translation key will be deducted like this:
+     * Its using I18NHelper so the actual translation key will be deducted like
+     * this:
      *
      * T("Jatka") becomes translation value for "EditHakuViewImpl.Jatka".
      *
@@ -436,142 +329,67 @@ public class EditHakuViewImpl extends CustomComponent implements EditHakuView {
         return _i18n.getMessage(key);
     }
 
-    /*
-     * Component events emitted when buttons are pressed.
-     */
-
     /**
-     * Fired when save is pressed.
+     * @return the sisaisetHakuajatContainer
      */
-    public class CancelEvent extends Component.Event {
-
-        public CancelEvent(Component source) {
-            super(source);
-
-        }
-    }
-
-    /**
-     * Fired when save is pressed.
-     */
-    public class SaveEvent extends Component.Event {
-
-        // is this "copleted" or only "draft" save
-        boolean _complete = false;
-
-        public SaveEvent(Component source, boolean complete) {
-            super(source);
-            errorView.resetErrors();
-            boolean hakuajatValid = sisaisetHakuajatContainer.bindHakuajat();
-
-
-            _complete = complete;
-            if (presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
-                presenter.getHakuModel().setHakuLomakeUrl(null);
-            }
-
-            try {
-                form.commit();
-                if (!hakuajatValid) {
-                	throw new Validator.InvalidValueException("");
-                }
-
-                if (complete) {
-                    presenter.saveHakuValmiina();
-                    getWindow().showNotification(T("HakuTallennettuValmiina"));
-                } else {
-                    presenter.saveHakuLuonnoksenaModel();
-                 getWindow().showNotification(T("HakuTallennettuLuonnoksena"));
-                }
-            } catch (Validator.InvalidValueException e) {
-                errorView.addError(e);
-            }
-        }
-
-        public boolean isComplete() {
-            return _complete;
-        }
-    }
-
-    /**
-     * Fired when delete is pressed.
-     */
-    public class DeleteEvent extends Component.Event {
-
-        public DeleteEvent(Component source) {
-            super(source);
-
-        }
-    }
-
-    /**
-     * Fired when Continue is pressed.
-     */
-    public class ContinueEvent extends Component.Event {
-
-        public ContinueEvent(Component source) {
-            super(source);
-        }
+    public HakuajatContainer getSisaisetHakuajatContainer() {
+        return sisaisetHakuajatContainer;
     }
 
     public class HakuajatContainer extends BeanItemContainer<HakuajatView> implements Serializable {
 
-    	public HakuajatContainer(List<HakuaikaViewModel> hakuajat) {
-    		super(HakuajatView.class);
+        public HakuajatContainer(List<HakuaikaViewModel> hakuajat) {
+            super(HakuajatView.class);
 
-    		initHakuaikaContainer(hakuajat);
-    	}
+            initHakuaikaContainer(hakuajat);
+        }
 
-    	public boolean bindHakuajat() {
-    		boolean isValid = true;
-    		List<HakuaikaViewModel> hakuajat = new ArrayList<HakuaikaViewModel>();
-    		for (HakuajatView curRow : this.getItemIds()) {
-    			if (curRow.getLoppuPvm().getValue() != null && curRow.getAlkuPvm().getValue() != null) {
-    				hakuajat.add(curRow.getModel());
-    			} else {
-    				errorView.addError(_i18n.getMessage("HakuaikaVirhe"));
-    				isValid = false;
-    			}
-    		}
-    		if (isValid && hakuajat.isEmpty()) {
-    			errorView.addError(_i18n.getMessage("hakuajatEmpty"));
-    			isValid = false;
-    		}
-    		presenter.getHakuModel().setSisaisetHakuajat(hakuajat);
+        public boolean bindHakuajat() {
+            boolean isValid = true;
+            List<HakuaikaViewModel> hakuajat = new ArrayList<HakuaikaViewModel>();
+            for (HakuajatView curRow : this.getItemIds()) {
+                if (curRow.getLoppuPvm().getValue() != null && curRow.getAlkuPvm().getValue() != null) {
+                    hakuajat.add(curRow.getModel());
+                } else {
+                    errorView.addError(_i18n.getMessage("HakuaikaVirhe"));
+                    isValid = false;
+                }
+            }
+            if (isValid && hakuajat.isEmpty()) {
+                errorView.addError(_i18n.getMessage("hakuajatEmpty"));
+                isValid = false;
+            }
+            presenter.getHakuModel().setSisaisetHakuajat(hakuajat);
 
-    		return isValid;
-		}
+            return isValid;
+        }
 
-		public void addRowToHakuajat() {
-    		final HakuajatView hakuaikaRow = new HakuajatView(new HakuaikaViewModel());
-			hakuaikaRow.getPoistaB().addListener(new Button.ClickListener() {
+        public void addRowToHakuajat() {
+            final HakuajatView hakuaikaRow = new HakuajatView(new HakuaikaViewModel());
+            hakuaikaRow.getPoistaB().addListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    removeItem(hakuaikaRow);
+                }
+            });
+            addItem(hakuaikaRow);
+        }
 
-				@Override
-				public void buttonClick(ClickEvent event) {
-					removeItem(hakuaikaRow);
-				}
-			});
-			addItem(hakuaikaRow);
-    	}
+        private void initHakuaikaContainer(List<HakuaikaViewModel> hakuajat) {
+            if (hakuajat == null || hakuajat.size() == 0) {
+                addRowToHakuajat();
+            }
 
-    	private void initHakuaikaContainer(List<HakuaikaViewModel> hakuajat) {
-    		if (hakuajat == null || hakuajat.size() == 0) {
-    			addRowToHakuajat();
-    		}
-
-    		for (HakuaikaViewModel curHakuaika : hakuajat) {
-    			final HakuajatView hakuaikaRow = new HakuajatView(curHakuaika);
-    			hakuaikaRow.getPoistaB().addListener(new Button.ClickListener() {
-
-					@Override
-					public void buttonClick(ClickEvent event) {
-						removeItem(hakuaikaRow);
-					}
-				});
-    			addItem(hakuaikaRow);
-    		}
-    	}
-
+            for (HakuaikaViewModel curHakuaika : hakuajat) {
+                final HakuajatView hakuaikaRow = new HakuajatView(curHakuaika);
+                hakuaikaRow.getPoistaB().addListener(new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(ClickEvent event) {
+                        removeItem(hakuaikaRow);
+                    }
+                });
+                addItem(hakuaikaRow);
+            }
+        }
     }
-
 }

@@ -308,19 +308,15 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                         && ((HenkiloAutocompleteEvent)event).getEventType() == HenkiloAutocompleteEvent.CLEAR) {
                     clearInitialValuestoYhtHenkiloFields();
                 }
-            }
-            
+            }        
         });
         yhtHenkTitteli = UiUtil.textField(vl, "", T("prompt.titteli"), true);
         yhtHenkEmail = UiUtil.textField(vl, "", T("prompt.email"), true);
         yhtHenkPuhelin = UiUtil.textField(vl, "", T("prompt.puhelin"), true);
         grid.addComponent(vl);
         grid.newLine();
-        buildSpacingGridRow(grid);
     }
     
-
-
     /**
      * Populating the yhteyshenkilo fields based on user's selection from the autocomplete list
      * @param henkiloType

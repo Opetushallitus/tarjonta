@@ -41,6 +41,7 @@ import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
+import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import java.util.List;
@@ -56,7 +57,7 @@ import javax.validation.constraints.NotNull;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable
-public class PerustiedotViewImpl extends CustomComponent implements PerustiedotView {
+public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotView {
 
     private static final Logger LOG = LoggerFactory.getLogger(PerustiedotViewImpl.class);
     private TarjontaPresenter presenter;
@@ -107,7 +108,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     Button upRightInfoButton;
     Button downRightInfoButton;
     private Form form;
-    private BeanItem<HakukohdeViewModel> hakukohdeBean;
+   
     private transient UiBuilder uiBuilder;
     private ErrorMessage errorView;
 
@@ -131,38 +132,9 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
     }
 
     @Override
-    public void commitForm(String tila) {
-
-        try {
-            form.commit();
-            presenter.getModel().getHakukohde().setHakukohdeKoodistoNimi(resolveHakukohdeKoodistoNimi() + " " + tila);
-            presenter.saveHakuKohde(tila);
-            getWindow().showNotification(I18N.getMessage("PerustiedotView.tallennusOnnistui"));
-            } catch (Validator.InvalidValueException e) {
-            errorView.addError(e);
-            presenter.showNotification(UserNotification.GENERIC_VALIDATION_FAILED);
-        }
-
-    }
-
-    private void showCommitNotification(String tila) {
-        if (tila.trim().equalsIgnoreCase("LUONNOS")) {
-            getWindow().showNotification(T("tallennettuLuonnoksena"));
-        } else if (tila.trim().equalsIgnoreCase("VALMIS")) {
-            getWindow().showNotification(T("tallennettuValmiina"));
-        }
-    }
-
-    @Override
     public void initForm(HakukohdeViewModel model) {
-        hakukohdeBean = new BeanItem<HakukohdeViewModel>(model);
-        form = new ValidatingViewBoundForm(this);
-        form.setItemDataSource(hakukohdeBean);
-        form.getFooter().addComponent(serverMessage);
-
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
-        this.form.setValidationVisible(false);
-        this.form.setValidationVisibleOnCommit(false);
+      
         hakukohteenNimiCombo.setImmediate(true);
         hakukohteenNimiCombo.addListener(new Property.ValueChangeListener() {
             @Override
@@ -196,7 +168,7 @@ public class PerustiedotViewImpl extends CustomComponent implements PerustiedotV
         //Add bottom addtional info text areas and info button
         mainLayout.addComponent(buildBottomAreaLanguageTab());
 
-        setCompositionRoot(mainLayout);
+        addComponent(mainLayout);
     }
 
     private GridLayout buildGrid() {

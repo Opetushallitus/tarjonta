@@ -27,13 +27,9 @@ import com.vaadin.ui.Component.Event;
 import com.vaadin.ui.Component.Listener;
 
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import fi.vm.sade.tarjonta.ui.view.common.BreadcrumbsView;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
-import fi.vm.sade.tarjonta.ui.view.haku.EditHakuViewImpl;
 import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
-import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuViewImpl;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -62,6 +58,11 @@ public class HakuRootView extends Window {
     }
 
     private void init() {
+         // Fixi jrebelille...
+        if (hakuPresenter == null) {
+            hakuPresenter = new HakuPresenter();
+        }
+        
         //
         // Create components
         //
@@ -92,7 +93,7 @@ public class HakuRootView extends Window {
                 if (event instanceof HakuResultRow.HakuRowMenuEvent) {
                     handleHakuRowMenuEvent((HakuResultRow.HakuRowMenuEvent) event);
                 } else if (event instanceof ListHakuViewImpl.NewHakuEvent) {
-                    showHakuEdit(new HakuViewModel());
+                    hakuPresenter.showHakuEdit(null);
                 }
             }
         });
@@ -113,13 +114,14 @@ public class HakuRootView extends Window {
         appRootLayout.addComponent(appRightLayout);
 
         showMainDefaultView();
+        hakuPresenter.setRootView(this);
     }
 
     private void handleHakuRowMenuEvent(HakuResultRow.HakuRowMenuEvent event) {
         if (event.getType().equals(HakuResultRow.HakuRowMenuEvent.VIEW)) {
-            showHakuView(event.getHaku());
+            hakuPresenter.showHakuView(event.getHaku());
         } else if (event.getType().equals(HakuResultRow.HakuRowMenuEvent.EDIT)) {
-            showHakuEdit(event.getHaku());
+            hakuPresenter.showHakuEdit(event.getHaku());
         } else if (event.getType().equals(HakuResultRow.HakuRowMenuEvent.REMOVE)) {
             hakuPresenter.removeHaku(event.getHaku());
         }
@@ -143,73 +145,6 @@ public class HakuRootView extends Window {
 
     public HakuSearchResultView getSearchResultsView() {
         return searchResultsView;
-    }
-
-    /**
-     * Displays the view component of Haku
-     *
-     * @param haku
-     */
-    private void showHakuView(final HakuViewModel haku) {
-        LOG.info("loadViewForm()");
-        getAppRightLayout().removeAllComponents();
-
-        VerticalLayout vl = UiUtil.verticalLayout();
-        //vl.addComponent(getBreadcrumbsView());
-
-        this.hakuPresenter.setHakuViewModel(haku);
-
-        ShowHakuViewImpl showHaku = new ShowHakuViewImpl(this.hakuPresenter.getHakuModel().getNimiFi(),
-                this.hakuPresenter.getHakuModel().getNimiFi(),
-                null);
-        showHaku.addListener(new Listener() {
-            private static final long serialVersionUID = -8696709317724642137L;
-
-            @Override
-            public void componentEvent(Event event) {
-                if (event instanceof ShowHakuViewImpl.BackEvent) {
-                    showMainDefaultView();
-                    hakuPresenter.refreshHakulist();
-                } else if (event instanceof ShowHakuViewImpl.EditEvent) {
-                    showHakuEdit(haku);
-                }
-            }
-        });
-        vl.addComponent(showHaku);
-        getAppRightLayout().addComponent(vl);
-        getAppRightLayout().setExpandRatio(vl, 1f);
-    }
-
-    /**
-     * Displays the edit form of Haku.
-     *
-     * @param haku
-     */
-    public void showHakuEdit(final HakuViewModel haku) {
-        LOG.info("showHakuEdit()");
-        getAppRightLayout().removeAllComponents();
-        VerticalLayout vl = UiUtil.verticalLayout();
-
-        //vl.addComponent(getBreadcrumbsView());
-        EditHakuViewImpl editHakuView = new EditHakuViewImpl(haku);
-        editHakuView.addListener(new Listener() {
-            private static final long serialVersionUID = -8696709317724642137L;
-
-            @Override
-            public void componentEvent(Event event) {
-                if (event instanceof EditHakuViewImpl.CancelEvent) {
-                    showMainDefaultView();
-                    hakuPresenter.refreshHakulist();
-                } else if (event instanceof EditHakuViewImpl.ContinueEvent) {
-                    if (haku.getHakuOid() != null) {
-                        showHakuView(haku);
-                    }
-                }
-            }
-        });
-        vl.addComponent(editHakuView);
-        getAppRightLayout().addComponent(vl);
-        getAppRightLayout().setExpandRatio(vl, 1f);
     }
 
     /**

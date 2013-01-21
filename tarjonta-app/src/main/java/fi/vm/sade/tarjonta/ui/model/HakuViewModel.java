@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaunNimi;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 
 
 /**
@@ -71,8 +72,6 @@ public class HakuViewModel extends BaseUIViewModel {
     private String nimiSe;
 
     private String nimiEn;
-
-    private boolean hakuValmis;
 
     private HakuTyyppi hakuDto;
 
@@ -389,25 +388,10 @@ public class HakuViewModel extends BaseUIViewModel {
     }
 
     /**
-     * @return the hakuValmis
-     */
-    public boolean isHakuValmis() {
-        if (hakuDto.getHaunTila() != null
-                && (hakuDto.getHaunTila().value().equals(TarjontaTila.VALMIS.value())
-                        || hakuDto.getHaunTila().value().equals(TarjontaTila.JULKAISTU.value()))) {
-            hakuValmis = true;
-        } else {
-            hakuValmis = false;
-        }
-        return hakuValmis;
-    }
-
-    /**
      * @param hakuValmis the hakuValmis to set
      */
-    public void setHakuValmis(boolean hakuValmis) {
-        hakuDto.setHaunTila(hakuValmis ? TarjontaTila.VALMIS : TarjontaTila.LUONNOS);
-        this.hakuValmis = hakuValmis;
+    public void setHakuValmis(SaveButtonState hakuValmis, TarjontaTila tila) {
+        hakuDto.setHaunTila(hakuValmis.toTarjontaTila(tila));
     }
 
     @Override
