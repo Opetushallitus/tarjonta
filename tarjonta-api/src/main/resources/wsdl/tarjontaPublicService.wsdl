@@ -93,6 +93,14 @@
     <wsdl:message name="lueHakukohteenLiiteTunnisteellaVastaus">
         <wsdl:part element="ns1:lueHakukohteenLiiteTunnisteellaVastausTyyppi" name="parameters"/>
     </wsdl:message>
+    
+    <wsdl:message name="lueHakukohteenValintakoeTunnisteellaKysely">
+        <wsdl:part element="ns1:lueHakukohteenValintakoeTunnisteellaKyselyTyyppi" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="lueHakukohteenValintakoeTunnisteellaVastaus">
+        <wsdl:part element="ns1:lueHakukohteenValintakoeTunnisteellaVastausTyyppi" name="parameters"/>
+    </wsdl:message>
 
     <wsdl:portType name="TarjontaPublicService">
 
@@ -200,6 +208,13 @@
             <wsdl:output message="tns:lueHakukohteenLiiteTunnisteellaVastaus" name="lueHakukohteenLiiteTunnisteellaVastaus"></wsdl:output>
         </wsdl:operation>
 
+        <wsdl:operation name="lueHakukohteenValintakoeTunnisteella">
+            <wsdl:documentation>Haetaan hakukohteen liite tunnisteella</wsdl:documentation>
+            <wsdl:input message="tns:lueHakukohteenValintakoeTunnisteellaKysely" name="lueHakukohteenValintakoeTunnisteellaKysely"></wsdl:input>
+            <wsdl:output message="tns:lueHakukohteenValintakoeTunnisteellaVastaus" name="lueHakukohteenValintakoeTunnisteellaVastaus"></wsdl:output>
+        </wsdl:operation>
+
+
     </wsdl:portType>
 
     <wsdl:binding name="TarjontaPublicServiceSoapBinding" type="tns:TarjontaPublicService">
@@ -302,6 +317,16 @@
                 <soap:body use="literal"/>
             </wsdl:input>
             <wsdl:output name="lueHakukohteenLiiteTunnisteellaVastaus">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="lueHakukohteenValintakoeTunnisteella">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/lueHakukohteenValintakoeTunnisteella" style="document"/>
+            <wsdl:input name="lueHakukohteenValintakoeTunnisteellaKysely">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="lueHakukohteenValintakoeTunnisteellaVastaus">
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>

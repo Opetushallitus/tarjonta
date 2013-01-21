@@ -375,6 +375,7 @@
 
     <xs:complexType name="ValintakoeTyyppi">
         <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="valintakokeenTunniste" type="xs:string"/>
             <xs:element minOccurs="1" maxOccurs="1" name="valintakokeenTyyppi" type="xs:string"/>
             <xs:element minOccurs="1" maxOccurs="unbounded" name="ajankohdat" type="tns:AjankohtaTyyppi">
                 <xs:annotation>

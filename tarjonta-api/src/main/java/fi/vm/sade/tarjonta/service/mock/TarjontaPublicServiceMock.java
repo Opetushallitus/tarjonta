@@ -20,6 +20,12 @@ public class TarjontaPublicServiceMock implements TarjontaPublicService {
         initDefValues();
     }
 
+
+    @Override
+    public LueHakukohteenValintakoeTunnisteellaVastausTyyppi lueHakukohteenValintakoeTunnisteella(@WebParam(partName = "parameters", name = "lueHakukohteenValintakoeTunnisteellaKyselyTyyppi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohteenValintakoeTunnisteellaKyselyTyyppi parameters) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     @Override
     public LueHakukohteenLiiteTunnisteellaVastausTyyppi lueHakukohteenLiiteTunnisteella(@WebParam(partName = "parameters", name = "lueHakukohteenLiiteTunnisteellaKyselyTyyppi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohteenLiiteTunnisteellaKyselyTyyppi parameters) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.

@@ -37,6 +37,9 @@
     
     <xs:element name="lueHakukohteenLiiteTunnisteellaKyselyTyyppi" type="tns:LueHakukohteenLiiteTunnisteellaKyselyTyyppi" />
     <xs:element name="lueHakukohteenLiiteTunnisteellaVastausTyyppi" type="tns:LueHakukohteenLiiteTunnisteellaVastausTyyppi"/>
+    
+    <xs:element name="lueHakukohteenValintakoeTunnisteellaKyselyTyyppi" type="tns:LueHakukohteenValintakoeTunnisteellaKyselyTyyppi"/>
+    <xs:element name="lueHakukohteenValintakoeTunnisteellaVastausTyyppi" type="tns:LueHakukohteenValintakoeTunnisteellaVastausTyyppi"/>
 
     <xs:complexType name="HaeHakukohteenLiitteetKyselyTyyppi">
         <xs:sequence>
@@ -256,6 +259,20 @@
         </xs:sequence>
     </xs:complexType>
 
+   <xs:complexType name="LueHakukohteenValintakoeTunnisteellaKyselyTyyppi">
+       <xs:sequence>
+           <xs:element minOccurs="1" maxOccurs="1" name="hakukohteenValintakoeTunniste" type="xs:string">
+               <xs:annotation>
+                   <xs:documentation>Hakukohteen valintakokeen yksilöivä tunniste</xs:documentation>
+               </xs:annotation>
+           </xs:element>
+       </xs:sequence>
+   </xs:complexType>
 
+   <xs:complexType name="LueHakukohteenValintakoeTunnisteellaVastausTyyppi">
+       <xs:sequence>
+           <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeValintakoe" type="tarjonta:ValintakoeTyyppi"/>
+       </xs:sequence>
+   </xs:complexType>
 
 </xs:schema>

@@ -5,6 +5,7 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.types.*;
 
 import javax.jws.WebParam;
+import javax.xml.ws.Holder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,11 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
 
     public TarjontaAdminServiceMock() {
         initDefValues();
+    }
+
+    @Override
+    public List<ValintakoeTyyppi> tallennaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
