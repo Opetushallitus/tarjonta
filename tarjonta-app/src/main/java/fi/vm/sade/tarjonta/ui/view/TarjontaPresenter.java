@@ -63,6 +63,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
+import fi.vm.sade.tarjonta.ui.service.PublishingService;
 import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
 
@@ -73,7 +74,7 @@ import org.apache.commons.beanutils.BeanComparator;
  *
  * @author mlyly
  */
-public class TarjontaPresenter implements IPresenter {
+public class TarjontaPresenter implements ICommonResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
     private final String LIITE_DATE_PATTERNS = "dd.MM.yyyy hh:mm";
@@ -112,17 +113,17 @@ public class TarjontaPresenter implements IPresenter {
     private ShowKoulutusView showKoulutusView;
     private SearchResultsView searchResultsView;
     private EditHakukohdeView editHakukohdeView;
+    @Autowired(required = true)
+    private PublishingService publishingService;
 
     public TarjontaPresenter() {
     }
 
     public void saveHakuKohde(SaveButtonState tila) {
-        LOG.debug("SaveButtonState : {}", tila);
-        
-        getModel().getHakukohde().setTila(tila.toTarjontaTila(getModel().getHakukohde().getTila()));
-        LOG.debug("Tila : {}", getModel().getHakukohde().getTila());
-        
-        //getModel().getHakukohde().setHakukohdeKoodistoNimi(tryGetHakukohdeNimi(getModel().getHakukohde().getHakukohdeNimi()));
+        HakukohdeViewModel hakukohde = getModel().getHakukohde();
+        hakukohde.setTila(tila.toTarjontaTila(getModel().getHakukohde().getTila()));
+        hakukohde.setHakukohdeKoodistoNimi(resolveHakukohdeKoodistonimiFields() + " " + tila);
+
         saveHakuKohdePerustiedot();
         editHakukohdeView.enableLiitteetTab();
     }
@@ -132,9 +133,11 @@ public class TarjontaPresenter implements IPresenter {
         //checkHakuLiitetoimitusPvm();
         getModel().getHakukohde().getLisatiedot().addAll(hakuKohdePerustiedotView.getLisatiedot());
         if (getModel().getHakukohde().getOid() == null) {
+
+            LOG.debug(getModel().getHakukohde().getHakukohdeNimi() + ", " + getModel().getHakukohde().getHakukohdeKoodistoNimi());
+
             HakukohdeTyyppi hakukohdeTyyppi = hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde());
             getModel().getHakukohde().setOid(hakukohdeTyyppi.getOid());
-            LOG.info("hakukohdeTyyppi.getOid() {}" , hakukohdeTyyppi.getOid());
             tarjontaAdminService.lisaaHakukohde(hakukohdeTyyppi);
 
         } else {
@@ -186,9 +189,6 @@ public class TarjontaPresenter implements IPresenter {
 //            HakukohdeLiiteTyyppi liite = converter.convertHakukohdeViewModelToHakukohdeLiiteTyyppi(hakuLiite);
 //            liitteet.add(liite);
 //        }
-
-        LOG.debug("Hakukohde OID {} ", getModel().getHakukohde().getOid());
-        
         tarjontaAdminService.tallennaLiitteitaHakukohteelle(getModel().getHakukohde().getOid(), liitteet);
         getModel().setSelectedLiite(null);
     }
@@ -557,18 +557,15 @@ public class TarjontaPresenter implements IPresenter {
     public List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet() {
         ArrayList<HakukohdeLiiteViewModel> liitteet = new ArrayList<HakukohdeLiiteViewModel>();
         if (getModel().getHakukohde() != null && getModel().getHakukohde().getOid() != null) {
-        HaeHakukohteenLiitteetKyselyTyyppi kysely = new HaeHakukohteenLiitteetKyselyTyyppi();
-        kysely.setHakukohdeOid(getModel().getHakukohde().getOid());
-        
-        LOG.debug("loadHakukohdeLiitteet {} oid : ", getModel().getHakukohde().getOid());
-        
-        HaeHakukohteenLiitteetVastausTyyppi vastaus = tarjontaPublicService.lueHakukohteenLiitteet(kysely);
+            HaeHakukohteenLiitteetKyselyTyyppi kysely = new HaeHakukohteenLiitteetKyselyTyyppi();
+            kysely.setHakukohdeOid(getModel().getHakukohde().getOid());
+            HaeHakukohteenLiitteetVastausTyyppi vastaus = tarjontaPublicService.lueHakukohteenLiitteet(kysely);
 
-        for (HakukohdeLiiteTyyppi liiteTyyppi : vastaus.getHakukohteenLiitteet()) {
-            HakukohdeLiiteViewModel hakukohdeLiiteViewModel = HakukohdeLiiteTyyppiToViewModelConverter.convert(liiteTyyppi);
+            for (HakukohdeLiiteTyyppi liiteTyyppi : vastaus.getHakukohteenLiitteet()) {
+                HakukohdeLiiteViewModel hakukohdeLiiteViewModel = HakukohdeLiiteTyyppiToViewModelConverter.convert(liiteTyyppi);
 
-            liitteet.add(addTableFields(hakukohdeLiiteViewModel));
-        }
+                liitteet.add(addTableFields(hakukohdeLiiteViewModel));
+            }
 
         }
         return liitteet;
@@ -1242,27 +1239,9 @@ public class TarjontaPresenter implements IPresenter {
         return henkilos;
     }
 
-    /**
-     * Publish single tarjonta model by OID and data model type.
-     *
-     * @param oid
-     * @param sisalto
-     */
-    public void changeStatusToPublished(final String oid, final SisaltoTyyppi sisalto) {
-        GeneerinenTilaTyyppi tyyppi = new GeneerinenTilaTyyppi();
-        tyyppi.setOid(oid);
-        tyyppi.setSisalto(sisalto);
-        tyyppi.setTila(TarjontaTila.JULKAISTU);
-        if (tarjontaAdminService.testaaTilasiirtyma(tyyppi)) {
-            PaivitaTilaTyyppi tila = new PaivitaTilaTyyppi();
-            tila.getTilaOids().add(tyyppi);
-            tarjontaAdminService.paivitaTilat(tila);
-
-            showNotification(UserNotification.GENERIC_SUCCESS);
-            getReloadKoulutusListData();
-        } else {
-            showNotification(UserNotification.GENERIC_ERROR);
-        }
+    @Override
+    public boolean isSaveButtonEnabled(String oid, SisaltoTyyppi sisalto, TarjontaTila... requiredState) {
+        return publishingService.isStateStepAllowed(oid, sisalto, requiredState);
     }
 
     /**
@@ -1271,59 +1250,25 @@ public class TarjontaPresenter implements IPresenter {
      * @param oid
      * @param sisalto
      */
-    public void changeStatusToCancelled(final String oid, final SisaltoTyyppi sisalto) {
-        GeneerinenTilaTyyppi tyyppi = new GeneerinenTilaTyyppi();
-        tyyppi.setOid(oid);
-        tyyppi.setSisalto(sisalto);
-        tyyppi.setTila(TarjontaTila.PERUTTU);
+    @Override
+    public void changeStateToCancelled(String oid, SisaltoTyyppi sisalto) {
+        publish(oid, TarjontaTila.PERUTTU, sisalto);
+    }
 
-        if (tarjontaAdminService.testaaTilasiirtyma(tyyppi)) {
-            PaivitaTilaTyyppi tila = new PaivitaTilaTyyppi();
-            tila.getTilaOids().add(tyyppi);
-            tarjontaAdminService.paivitaTilat(tila);
+    @Override
+    public void changeStateToPublished(String oid, SisaltoTyyppi sisalto) {
+        publish(oid, TarjontaTila.JULKAISTU, sisalto);
+    }
+
+    private void publish(final String oid, final TarjontaTila toState, final SisaltoTyyppi sisalto) {
+        if (publishingService.changeState(oid, toState, sisalto)) {
             showNotification(UserNotification.GENERIC_SUCCESS);
+
+            //reload result data in tables.
+            _hakukohdeListView.reload();
             getReloadKoulutusListData();
         } else {
             showNotification(UserNotification.GENERIC_ERROR);
         }
-    }
-
-    /**
-     * Check is button enabled.
-     *
-     * @param oid
-     * @param sisalto
-     * @param requiredState
-     * @return
-     */
-    @Override
-    public boolean isSaveButtonEnabled(final String oid, final SisaltoTyyppi sisalto, final TarjontaTila... requiredState) {
-        if (sisalto == null) {
-            throw new RuntimeException("SisaltoTyyppi object cannot be null.");
-        }
-
-        if (requiredState == null && requiredState.length > 0) {
-            throw new RuntimeException("TarjontaTila object cannot be null or empty.");
-        }
-
-        if (oid == null) {
-            //OID is null, when user tryes to add new data.
-            LOG.debug("Buttons enabled for {} {}", sisalto, requiredState);
-            return true;
-        }
-
-        GeneerinenTilaTyyppi tyyppi = new GeneerinenTilaTyyppi();
-        tyyppi.setOid(oid);
-        tyyppi.setSisalto(sisalto);
-
-        for (TarjontaTila tila : requiredState) {
-            tyyppi.setTila(tila);
-
-            if (tarjontaAdminService.testaaTilasiirtyma(tyyppi)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

@@ -35,6 +35,7 @@ import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.ui.enums.MenuBarActions;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
@@ -52,6 +53,7 @@ public class KoulutusResultRow extends HorizontalLayout {
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusResultRow.class);
     private static final long serialVersionUID = -1498887965250483214L;
     private transient I18NHelper i18n = new I18NHelper(this);
+    private static final SisaltoTyyppi KOMOTO = SisaltoTyyppi.KOMOTO;
     /**
      * The koulutus to display on the row.
      */
@@ -99,23 +101,23 @@ public class KoulutusResultRow extends HorizontalLayout {
         final TarjontaTila tila = koulutus.getKoulutus().getTila();
 
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
-        rowMenuBar.addMenuCommand(i18n.getMessage("tarkastele"), menuCommand);
+        rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
         if (tarjontaPresenter.getPermission().userCanCreateReadUpdateAndDelete()
                 || tarjontaPresenter.getPermission().userCanReadAndUpdate()) {
-            rowMenuBar.addMenuCommand(i18n.getMessage("muokkaa"), menuCommand);
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaHakukohteet"), menuCommand);
 
         if (tila.equals(TarjontaTila.LUONNOS) && tarjontaPresenter.getPermission().userCanCreateReadUpdateAndDelete()) {
-            rowMenuBar.addMenuCommand(i18n.getMessage("poista"), menuCommand);
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
 
         if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanCreateReadUpdateAndDelete()) {
-            rowMenuBar.addMenuCommand(i18n.getMessage("julkaise"), menuCommand);
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
         } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCreateReadUpdateAndDelete()) {
-            rowMenuBar.addMenuCommand(i18n.getMessage("peruttu"), menuCommand);
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         }
 
         return rowMenuBar;
@@ -127,16 +129,16 @@ public class KoulutusResultRow extends HorizontalLayout {
      * @param selection the selection in the menu.
      */
     private void menuItemClicked(String selection) {
-        if (selection.equals(i18n.getMessage("tarkastele"))) {
+        if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
             tarjontaPresenter.showShowKoulutusView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
-        } else if (selection.equals(i18n.getMessage("muokkaa"))) {
+        } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
             tarjontaPresenter.showKoulutusPerustiedotEditView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
-        } else if (selection.equals(i18n.getMessage("poista"))) {
+        } else if (selection.equals(i18n.getMessage(MenuBarActions.DELETE.key))) {
             showRemoveDialog();
-        } else if (selection.equals(i18n.getMessage("julkaise"))) {
-            tarjontaPresenter.changeStatusToPublished(koulutus.getKoulutus().getKomotoOid(), SisaltoTyyppi.KOMOTO);
-        } else if (selection.equals(i18n.getMessage("peruttu"))) {
-            tarjontaPresenter.changeStatusToCancelled(koulutus.getKoulutus().getKomotoOid(), SisaltoTyyppi.KOMOTO);
+        } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
+            tarjontaPresenter.changeStateToPublished(koulutus.getKoulutus().getKomotoOid(), KOMOTO);
+        } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {
+            tarjontaPresenter.changeStateToCancelled(koulutus.getKoulutus().getKomotoOid(), KOMOTO);
         }
     }
 

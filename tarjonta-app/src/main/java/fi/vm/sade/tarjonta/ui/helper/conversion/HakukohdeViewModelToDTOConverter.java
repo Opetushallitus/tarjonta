@@ -54,6 +54,7 @@ public class HakukohdeViewModelToDTOConverter {
             //TODO remove just for testing because koodisto dont work
             hakukohde.setHakukohdeNimi("");
         }
+
         hakukohde.setHakukohteenHakuOid(hakukohdevm.getHakuOid().getHakuOid());
         hakukohde.setHakukohteenTila(hakukohdevm.getTila());
         if (hakukohdevm.getOid() == null) {

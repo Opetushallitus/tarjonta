@@ -82,9 +82,6 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
         HakukohdePerustiedotViewImpl perustiedot = new HakukohdePerustiedotViewImpl(hakukohdeOid);
         
         liitteet = new HakukohteenLiitteetTabImpl();
-        
-        System.out.println("!!!!!!!!!!!!!! " + hakukohdeOid != null + " " + hakukohdeOid);
-        
         perustiedotTab = tabs.addTab(perustiedot, T("tabNimi"));
         liitteetTab = tabs.addTab(liitteet, T("liitteetTab"));
         liitteetTab.setEnabled(hakukohdeOid != null);

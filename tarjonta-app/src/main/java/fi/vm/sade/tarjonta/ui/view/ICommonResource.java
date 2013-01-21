@@ -24,7 +24,7 @@ import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
  *
  * @author jani
  */
-public interface IPresenter {
+public interface ICommonResource {
 
     public boolean isSaveButtonEnabled(final String oid, final SisaltoTyyppi sisalto, final TarjontaTila... requiredState);
 
@@ -33,4 +33,8 @@ public interface IPresenter {
     public void showMainDefaultView();
 
     public TarjontaPermissionService getPermission();
+
+    public void changeStateToCancelled(final String oid, final SisaltoTyyppi sisalto);
+
+    public void changeStateToPublished(final String oid, final SisaltoTyyppi sisalto);
 }

@@ -55,6 +55,7 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
+import fi.vm.sade.tarjonta.ui.service.PublishingService;
 import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
 import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuViewImpl;
@@ -68,7 +69,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
  */
 @Component
 @Configurable(preConstruction = false)
-public class HakuPresenter implements IPresenter {
+public class HakuPresenter implements ICommonResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuPresenter.class);
     private KoulutusSearchSpesificationViewModel searchSpec = new KoulutusSearchSpesificationViewModel();
@@ -88,7 +89,7 @@ public class HakuPresenter implements IPresenter {
     private TarjontaAdminService tarjontaAdminService;
     public static final String COLUMN_A = "Kategoriat";
     @Autowired(required = true)
-    private TarjontaPresenter tarjontaPresenter;
+    private PublishingService publishingService;
     @Autowired(required = true)
     private TarjontaPermissionService tarjontaPermissionService;
 
@@ -455,11 +456,6 @@ public class HakuPresenter implements IPresenter {
     }
 
     @Override
-    public boolean isSaveButtonEnabled(String oid, SisaltoTyyppi sisalto, TarjontaTila... requiredState) {
-        return tarjontaPresenter.isSaveButtonEnabled(oid, sisalto, requiredState);
-    }
-
-    @Override
     public void showNotification(UserNotification msg) {
         LOG.info("Show user notification - type {}, value {}", msg, msg != null ? msg.getInfo() : null);
         if (msg != null && getRootView() != null) {
@@ -469,9 +465,31 @@ public class HakuPresenter implements IPresenter {
         }
     }
 
-    /**
-     * @return the tarjontaPermissionService
-     */
+    @Override
+    public boolean isSaveButtonEnabled(String oid, SisaltoTyyppi sisalto, TarjontaTila... requiredState) {
+        return publishingService.isStateStepAllowed(oid, sisalto, requiredState);
+    }
+
+    @Override
+    public void changeStateToCancelled(String oid, SisaltoTyyppi sisalto) {
+        publish(oid, TarjontaTila.PERUTTU, sisalto);
+    }
+
+    @Override
+    public void changeStateToPublished(String oid, SisaltoTyyppi sisalto) {
+        publish(oid, TarjontaTila.JULKAISTU, sisalto);
+    }
+
+    private void publish(final String oid, final TarjontaTila toState, final SisaltoTyyppi sisalto) {
+        if (publishingService.changeState(oid, toState, sisalto)) {
+            showNotification(UserNotification.GENERIC_SUCCESS);
+            //reload result data list.
+            refreshHakulist();
+        } else {
+            showNotification(UserNotification.GENERIC_ERROR);
+        }
+    }
+
     @Override
     public TarjontaPermissionService getPermission() {
         return tarjontaPermissionService;

@@ -39,7 +39,7 @@ import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
-import fi.vm.sade.tarjonta.ui.view.IPresenter;
+import fi.vm.sade.tarjonta.ui.view.ICommonResource;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -74,7 +74,7 @@ public abstract class EditLayoutView<MODEL extends BaseUIViewModel, VIEW extends
     private Form form;
     private MODEL model;
     private String tilaNestedProperty = "tila"; //all models should have a variable name 'tila' for TarjontaTila enum.
-    private IPresenter presenter;
+    private ICommonResource presenter;
     private Label labelDocumentStatus;
 
     public EditLayoutView(String oid, SisaltoTyyppi sisalto) {
@@ -95,11 +95,11 @@ public abstract class EditLayoutView<MODEL extends BaseUIViewModel, VIEW extends
         }
     }
 
-    public void buildFormLayout(final String titleProperty, final IPresenter presenter, final AbstractLayout layout, final MODEL model, final VIEW view) {
+    public void buildFormLayout(final String titleProperty, final ICommonResource presenter, final AbstractLayout layout, final MODEL model, final VIEW view) {
         buildFormLayout(titleProperty, presenter, layout, model, view, null);
     }
 
-    public void buildFormLayout(final String titleProperty, final IPresenter presenter, final AbstractLayout layout, final MODEL model, final VIEW view, final ErrorMessage errorMessage) {
+    public void buildFormLayout(final String titleProperty, final ICommonResource presenter, final AbstractLayout layout, final MODEL model, final VIEW view, final ErrorMessage errorMessage) {
         //init  panel layout
         if (presenter == null) {
             throw new RuntimeException("Initialization error - the presenter object has not been set correctly.");
@@ -414,7 +414,7 @@ public abstract class EditLayoutView<MODEL extends BaseUIViewModel, VIEW extends
     /**
      * @return the presenter
      */
-    public void setPresenter(IPresenter presenter) {
+    public void setPresenter(ICommonResource presenter) {
         this.presenter = presenter;
     }
 

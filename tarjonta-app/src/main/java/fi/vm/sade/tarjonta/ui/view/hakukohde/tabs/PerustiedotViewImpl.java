@@ -148,11 +148,6 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         });
     }
 
-    private String resolveHakukohdeKoodistoNimi() {
-        String nimi = presenter.resolveHakukohdeKoodistonimiFields();
-        return nimi;
-    }
-
     /*
      * Main layout building method.
      *

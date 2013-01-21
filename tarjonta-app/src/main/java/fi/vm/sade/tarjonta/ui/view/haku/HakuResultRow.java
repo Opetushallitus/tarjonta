@@ -29,6 +29,9 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.ui.enums.MenuBarActions;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
@@ -52,6 +55,7 @@ public class HakuResultRow extends HorizontalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResultRow.class);
     private transient I18NHelper i18n = new I18NHelper(this);
+    private static final SisaltoTyyppi HAKU = SisaltoTyyppi.HAKU;
     private HakuViewModel haku;
     private CheckBox isSelected;
     private String hakuNimi;
@@ -79,20 +83,43 @@ public class HakuResultRow extends HorizontalLayout {
 
     private OphRowMenuBar newMenuBar() {
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
-        rowMenuBar.addMenuCommand(i18n.getMessage("tarkastele"), menuCommand);
-        rowMenuBar.addMenuCommand(i18n.getMessage("muokkaa"), menuCommand);
+        final TarjontaTila tila = hakuPresenter.getHakuModel().getHakuDto().getHaunTila();
+
+        rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
+
+        if (hakuPresenter.getPermission().userCanCreateReadUpdateAndDelete()
+                || hakuPresenter.getPermission().userCanReadAndUpdate()) {
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
+        }
+
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaKohteet"), menuCommand);
-        rowMenuBar.addMenuCommand(i18n.getMessage("poista"), menuCommand);
+
+        if (tila.equals(TarjontaTila.LUONNOS) && hakuPresenter.getPermission().userCanCreateReadUpdateAndDelete()) {
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
+        }
+
+        if (tila.equals(TarjontaTila.VALMIS) && hakuPresenter.getPermission().userCanCreateReadUpdateAndDelete()) {
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
+        } else if (tila.equals(TarjontaTila.JULKAISTU) && hakuPresenter.getPermission().userCanCreateReadUpdateAndDelete()) {
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
+        }
+
         return rowMenuBar;
     }
 
     private void menuItemClicked(String selection) {
-        if (selection.equals(i18n.getMessage("tarkastele"))) {
+        final String hakuOid = hakuPresenter.getHakuModel().getHakuOid();
+
+        if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
             fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.VIEW));
-        } else if (selection.equals(i18n.getMessage("muokkaa"))) {
+        } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
             fireEvent(new HakuRowMenuEvent(this, haku, HakuRowMenuEvent.EDIT));
-        } else if (selection.equals(i18n.getMessage("poista"))) {
+        } else if (selection.equals(i18n.getMessage(MenuBarActions.DELETE.key))) {
             showRemoveDialog();
+        } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
+            hakuPresenter.changeStateToPublished(hakuOid, HAKU);
+        } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {
+            hakuPresenter.changeStateToCancelled(hakuOid, HAKU);
         }
     }
 

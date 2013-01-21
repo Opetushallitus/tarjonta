@@ -78,6 +78,7 @@ public class HakuViewModel extends BaseUIViewModel {
     public HakuViewModel() {
         super();
         hakuDto = new HakuTyyppi();
+        hakuDto.setHaunTila(TarjontaTila.LUONNOS);
     }
 
     public HakuViewModel(HakuTyyppi hakuDto) {
