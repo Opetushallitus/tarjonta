@@ -552,14 +552,18 @@ public class TarjontaPresenter {
     }
 
     public List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet() {
+        ArrayList<HakukohdeLiiteViewModel> liitteet = new ArrayList<HakukohdeLiiteViewModel>();
+        if (getModel().getHakukohde() != null && getModel().getHakukohde().getOid() != null) {
         HaeHakukohteenLiitteetKyselyTyyppi kysely = new HaeHakukohteenLiitteetKyselyTyyppi();
         kysely.setHakukohdeOid(getModel().getHakukohde().getOid());
         HaeHakukohteenLiitteetVastausTyyppi vastaus = tarjontaPublicService.lueHakukohteenLiitteet(kysely);
-        ArrayList<HakukohdeLiiteViewModel> liitteet = new ArrayList<HakukohdeLiiteViewModel>();
+
         for (HakukohdeLiiteTyyppi liiteTyyppi : vastaus.getHakukohteenLiitteet()) {
             HakukohdeLiiteViewModel hakukohdeLiiteViewModel = HakukohdeLiiteTyyppiToViewModelConverter.convert(liiteTyyppi);
 
             liitteet.add(addTableFields(hakukohdeLiiteViewModel));
+        }
+
         }
         return liitteet;
     }
