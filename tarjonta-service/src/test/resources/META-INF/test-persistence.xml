@@ -20,7 +20,6 @@
         <class>fi.vm.sade.tarjonta.model.HakukohdeLiite</class>
         <class>fi.vm.sade.tarjonta.model.Valintakoe</class>
         <class>fi.vm.sade.tarjonta.model.ValintakoeAjankohta</class>
-        <class>fi.vm.sade.tarjonta.model.ValintakoeOsoite</class>
         <class>fi.vm.sade.tarjonta.model.MonikielinenTeksti</class>
         <class>fi.vm.sade.tarjonta.model.TekstiKaannos</class>
         <class>fi.vm.sade.tarjonta.model.Yhteyshenkilo</class>

@@ -166,12 +166,7 @@ public class TarjontaSampleData {
 
         // Ajankohdalla 1 osoite
 
-        ValintakoeOsoite vo1 = new ValintakoeOsoite();
-        Osoite o1 = new Osoite();
-        o1.setOsoiterivi1("Mannerheimintie 33");
-        o1.setPostinumero("00100");
-        o1.setPostitoimipaikka("HELSINKI");
-        vo1.setOsoite(o1);
+
 
 
         v1.addAjankohta(a1);
