@@ -40,6 +40,9 @@
     
     <xs:element name="lueHakukohteenValintakoeTunnisteellaKyselyTyyppi" type="tns:LueHakukohteenValintakoeTunnisteellaKyselyTyyppi"/>
     <xs:element name="lueHakukohteenValintakoeTunnisteellaVastausTyyppi" type="tns:LueHakukohteenValintakoeTunnisteellaVastausTyyppi"/>
+    
+    <xs:element name="haeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi" type="tns:HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi"/>
+    <xs:element name="haeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi" type="tns:HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi"/>
 
     <xs:complexType name="HaeHakukohteenLiitteetKyselyTyyppi">
         <xs:sequence>
@@ -274,5 +277,21 @@
            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeValintakoe" type="tarjonta:ValintakoeTyyppi"/>
        </xs:sequence>
    </xs:complexType>
+
+    <xs:complexType name="HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohteenTunniste" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Hakukohteen yksilöivä tunniste (oid)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="hakukohteenValintaKokeet" type="tarjonta:ValintakoeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
 
 </xs:schema>

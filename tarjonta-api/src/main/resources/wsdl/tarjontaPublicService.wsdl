@@ -101,6 +101,14 @@
     <wsdl:message name="lueHakukohteenValintakoeTunnisteellaVastaus">
         <wsdl:part element="ns1:lueHakukohteenValintakoeTunnisteellaVastausTyyppi" name="parameters"/>
     </wsdl:message>
+    
+    <wsdl:message name="haeHakukohteenValintakokeetHakukohteenTunnisteellaKysely">
+        <wsdl:part element="ns1:haeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="haeHakukohteenValintakokeetHakukohteenTunnisteellaVastaus">
+        <wsdl:part element="ns1:haeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi" name="parameters"/>
+    </wsdl:message>
 
     <wsdl:portType name="TarjontaPublicService">
 
@@ -209,9 +217,15 @@
         </wsdl:operation>
 
         <wsdl:operation name="lueHakukohteenValintakoeTunnisteella">
-            <wsdl:documentation>Haetaan hakukohteen liite tunnisteella</wsdl:documentation>
+            <wsdl:documentation>Haetaan hakukohteen valintakoe tunnisteella</wsdl:documentation>
             <wsdl:input message="tns:lueHakukohteenValintakoeTunnisteellaKysely" name="lueHakukohteenValintakoeTunnisteellaKysely"></wsdl:input>
             <wsdl:output message="tns:lueHakukohteenValintakoeTunnisteellaVastaus" name="lueHakukohteenValintakoeTunnisteellaVastaus"></wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="haeHakukohteenValintakokeetHakukohteenTunnisteella">
+            <wsdl:documentation>Haetaan hakukohteen valintakokeet hakukohteen tunnisteella</wsdl:documentation>
+            <wsdl:input message="tns:haeHakukohteenValintakokeetHakukohteenTunnisteellaKysely" name="haeHakukohteenValintakokeetHakukohteenTunnisteellaKysely"></wsdl:input>
+            <wsdl:output message="tns:haeHakukohteenValintakokeetHakukohteenTunnisteellaVastaus" name="haeHakukohteenValintakokeetHakukohteenTunnisteellaVastaus"></wsdl:output>
         </wsdl:operation>
 
 
@@ -327,6 +341,16 @@
                 <soap:body use="literal"/>
             </wsdl:input>
             <wsdl:output name="lueHakukohteenValintakoeTunnisteellaVastaus">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="haeHakukohteenValintakokeetHakukohteenTunnisteella">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/haeHakukohteenValintakokeetHakukohteenTunnisteella" style="document"/>
+            <wsdl:input name="haeHakukohteenValintakokeetHakukohteenTunnisteellaKysely">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="haeHakukohteenValintakokeetHakukohteenTunnisteellaVastaus">
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
