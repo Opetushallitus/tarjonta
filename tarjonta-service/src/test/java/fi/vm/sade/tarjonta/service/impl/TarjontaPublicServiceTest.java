@@ -128,7 +128,13 @@ public class TarjontaPublicServiceTest {
         hakukohde.setHakukohdeNimi("Peltikorjaajan perustutkinto");
         hakukohde.setHakukohdeKoodistoNimi("Peltikorjaajan perustutkinto");
         hakukohde.setTila(TarjontaTila.VALMIS);
-        hakukohdeDAO.insert(hakukohde);
+
+        hakukohde = hakukohdeDAO.insert(hakukohde);
+
+        //1. hakukohde valintakoe
+        Valintakoe valintakoe = fixtures.createValintakoe();
+        hakukohde.addValintakoe(valintakoe);
+        hakukohdeDAO.update(hakukohde);
 
         // 1. koulutusmoduuli+toteutus
         koulutusmoduuli = fixtures.createTutkintoOhjelma();
@@ -218,6 +224,18 @@ public class TarjontaPublicServiceTest {
         assertEquals("Taidemaalarin erikoistutkinto", hakukohde.getNimi());
         assertEquals(fi.vm.sade.tarjonta.service.types.TarjontaTila.VALMIS, hakukohde.getTila());
         assertEquals(ORGANISAATIO_B, koulutus.getTarjoaja());
+
+    }
+
+    @Test
+    public void testHaeHakukohteenValintakokeet() {
+
+        HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi kyselyTyyppi = new HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi();
+        kyselyTyyppi.setHakukohteenTunniste(HAKUKOHDE_OID);
+
+        HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi vastaus = service.haeHakukohteenValintakokeetHakukohteenTunnisteella(kyselyTyyppi);
+
+        assertTrue(vastaus.getHakukohteenValintaKokeet() != null && vastaus.getHakukohteenValintaKokeet().size() > 0);
 
     }
 

@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.dao;
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import java.util.List;
 
@@ -34,6 +35,10 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     List<Hakukohde> findHakukohdeWithDepenciesByOid(String oid);
 
     HakukohdeLiite findHakuKohdeLiiteById(String id);
+
+    Valintakoe findValintaKoeById(String id);
+
+    List<Valintakoe> findValintakoeByHakukohdeOid(String oid);
 
     Hakukohde findHakukohdeWithKomotosByOid(String oid);
 

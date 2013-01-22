@@ -19,6 +19,7 @@ import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -86,6 +87,33 @@ public class TarjontaFixtures {
 
         return h;
 
+    }
+
+    public Valintakoe createValintakoe() {
+        Valintakoe valintakoe = new Valintakoe();
+
+        valintakoe.setTyyppiUri("uri:uri:ori");
+
+        ValintakoeAjankohta valintakoeAjankohta = new ValintakoeAjankohta();
+        valintakoeAjankohta.setLisatietoja("Lisa lisa");
+        valintakoeAjankohta.setAlkamisaika(new Date());
+        valintakoeAjankohta.setPaattymisaika(new Date());
+
+        Osoite osoite = new Osoite();
+        osoite.setPostitoimipaikka("HELLSINKI");
+        osoite.setPostinumero("666666");
+        osoite.setOsoiterivi1("Katu 123");
+
+        valintakoeAjankohta.setAjankohdanOsoite(osoite);
+
+        valintakoe.addAjankohta(valintakoeAjankohta);
+
+        MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
+        monikielinenTeksti.addTekstiKaannos("fi","testi");
+        valintakoe.setKuvaus(monikielinenTeksti);
+
+
+        return valintakoe;
     }
 
     public Koulutusmoduuli createTutkintoOhjelma() {
@@ -315,6 +343,8 @@ public class TarjontaFixtures {
         return (Koulutusmoduuli) koulutusmoduuliDAO.read(root.getId());
 
     }
+
+
 
     /**
      * Deletes all entities used in testing.

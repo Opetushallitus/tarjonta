@@ -56,10 +56,28 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
+    public List<Valintakoe> findValintakoeByHakukohdeOid(String oid) {
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+        QValintakoe qValintakoe = QValintakoe.valintakoe;
+        return from(qHakukohde,qValintakoe)
+                .join(qHakukohde.valintakoes,qValintakoe)
+                .where(qHakukohde.oid.eq(oid))
+                .list(qValintakoe);
+    }
+
+    @Override
     public HakukohdeLiite findHakuKohdeLiiteById(String id) {
         QHakukohdeLiite liite = QHakukohdeLiite.hakukohdeLiite;
         Long idLong = new Long(id);
         return  from(liite).where(liite.id.eq(idLong)).singleResult(liite);
+    }
+
+    @Override
+    public Valintakoe findValintaKoeById(String id) {
+        QValintakoe qValintakoe = QValintakoe.valintakoe;
+        Long idLong = new Long(id);
+        return from(qValintakoe).where(qValintakoe.id.eq(idLong)).singleResult(qValintakoe);
+
     }
 
     @Override

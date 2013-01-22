@@ -31,6 +31,9 @@
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeLiiteFromDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeLiiteToDTOConverter"/>
 
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.ValintakoeFromDTOConverter"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.ValintakoeToDTOConverter"/>
+
                 <!--
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToteutusToDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToteutusDTOToModelConverter"/>

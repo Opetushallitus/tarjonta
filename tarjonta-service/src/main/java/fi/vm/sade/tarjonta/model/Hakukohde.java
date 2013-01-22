@@ -38,7 +38,7 @@ public class Hakukohde extends BaseEntity {
     @ManyToMany(mappedBy = "hakukohdes",cascade = {CascadeType.MERGE,CascadeType.REFRESH})
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "hakukohde_id")
     private Set<Valintakoe> valintakoes = new HashSet<Valintakoe>();
 

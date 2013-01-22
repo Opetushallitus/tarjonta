@@ -40,39 +40,19 @@ public class HakukohdeLiiteToDTOConverter extends AbstractFromDomainConverter<Ha
 
         hakukohdeLiiteTyyppi.setToimitettavaMennessa(hakukohdeLiite.getErapaiva());
         hakukohdeLiiteTyyppi.setLiitteenId(hakukohdeLiite.getId().toString());
-        hakukohdeLiiteTyyppi.setLiitteenKuvaus(convertMonikielinenTekstiToTekstiTyyppi(hakukohdeLiite.getKuvaus()));
+        hakukohdeLiiteTyyppi.setLiitteenKuvaus(CommonToDTOConverter.convertMonikielinenTekstiToTekstiTyyppi(hakukohdeLiite.getKuvaus()));
         hakukohdeLiiteTyyppi.setLiitteenTyyppiKoodistoNimi(hakukohdeLiite.getLiitteenTyyppiKoodistoNimi());
 
         hakukohdeLiiteTyyppi.setLiitteenTyyppi(hakukohdeLiite.getLiitetyyppi());
         hakukohdeLiiteTyyppi.setSahkoinenToimitusOsoite(hakukohdeLiite.getSahkoinenToimitusosoite());
-        hakukohdeLiiteTyyppi.setLiitteenToimitusOsoite(convertOsoiteToOsoiteTyyppi(hakukohdeLiite.getToimitusosoite()));
+        hakukohdeLiiteTyyppi.setLiitteenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteTyyppi(hakukohdeLiite.getToimitusosoite()));
 
         return hakukohdeLiiteTyyppi;
     }
 
-    private MonikielinenTekstiTyyppi convertMonikielinenTekstiToTekstiTyyppi(MonikielinenTeksti monikielinenTeksti) {
-           MonikielinenTekstiTyyppi monikielinenTekstiTyyppi = new MonikielinenTekstiTyyppi();
-           ArrayList<MonikielinenTekstiTyyppi.Teksti> tekstis = new ArrayList<MonikielinenTekstiTyyppi.Teksti>();
-           for (TekstiKaannos kaannos: monikielinenTeksti.getTekstis()) {
-                MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
-                teksti.setKieliKoodi(kaannos.getKieliKoodi());
-                teksti.setValue(kaannos.getArvo());
-               tekstis.add(teksti);
-           }
-           monikielinenTekstiTyyppi.getTeksti().addAll(tekstis);
-           return monikielinenTekstiTyyppi;
-    }
 
-    private OsoiteTyyppi convertOsoiteToOsoiteTyyppi(Osoite osoite) {
-        OsoiteTyyppi osoiteTyyppi = new OsoiteTyyppi();
 
-        osoiteTyyppi.setOsoiteRivi(osoite.getOsoiterivi1());
-        osoiteTyyppi.setLisaOsoiteRivi(osoite.getOsoiterivi2());
-        osoiteTyyppi.setPostinumero(osoite.getPostinumero());
-        osoiteTyyppi.setPostitoimipaikka(osoite.getPostitoimipaikka());
 
-        return osoiteTyyppi;
-    }
 
 
 }

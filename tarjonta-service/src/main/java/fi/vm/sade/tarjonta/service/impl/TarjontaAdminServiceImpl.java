@@ -99,7 +99,23 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     public List<ValintakoeTyyppi> tallennaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
+        if (hakukohdes != null && hakukohdes.size() > 0) {
+            for (Valintakoe valintakoe : convertValintaKokees(hakukohteenValintakokeet)) {
+                hakukohdes.get(0).addValintakoe(valintakoe);
+
+            }
+            hakukohdeDAO.update(hakukohdes.get(0));
+
+            hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
+            if (hakukohdes != null && hakukohdes.get(0).getValintakoes() != null) {
+            return convertValintakoeTyyppis(hakukohdes.get(0).getValintakoes());
+            } else {
+                return new ArrayList<ValintakoeTyyppi>();
+            }
+        }   else {
+            throw new BusinessException("tarjonta.haku.no.hakukohde.found");
+        }
     }
 
     @Override
@@ -127,6 +143,26 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
         
         return hakukohdeLiites;
+    }
+
+    private List<ValintakoeTyyppi> convertValintakoeTyyppis(Set<Valintakoe> valintakoes) {
+        ArrayList<ValintakoeTyyppi> valintakoeTyyppis = new ArrayList<ValintakoeTyyppi>();
+
+        for (Valintakoe valintakoe : valintakoes) {
+            valintakoeTyyppis.add(conversionService.convert(valintakoe,ValintakoeTyyppi.class));
+        }
+
+        return valintakoeTyyppis;
+    }
+
+    private List<Valintakoe> convertValintaKokees(List<ValintakoeTyyppi> valintakoeTyyppis) {
+        ArrayList<Valintakoe> valintakoes = new ArrayList<Valintakoe>();
+
+        for (ValintakoeTyyppi valintakoeTyyppi : valintakoeTyyppis) {
+            valintakoes.add(conversionService.convert(valintakoeTyyppi,Valintakoe.class));
+        }
+
+        return valintakoes;
     }
     
     @Override

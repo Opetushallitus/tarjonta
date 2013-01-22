@@ -75,7 +75,24 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public LueHakukohteenValintakoeTunnisteellaVastausTyyppi lueHakukohteenValintakoeTunnisteella(@WebParam(partName = "parameters", name = "lueHakukohteenValintakoeTunnisteellaKyselyTyyppi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohteenValintakoeTunnisteellaKyselyTyyppi parameters) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        LueHakukohteenValintakoeTunnisteellaVastausTyyppi vastaus = new LueHakukohteenValintakoeTunnisteellaVastausTyyppi();
+
+        Valintakoe valintakoe = hakukohdeDAO.findValintaKoeById(parameters.getHakukohteenValintakoeTunniste());
+
+        vastaus.setHakukohdeValintakoe(conversionService.convert(valintakoe,ValintakoeTyyppi.class));
+
+        return vastaus;
+    }
+
+    @Override
+    public HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi haeHakukohteenValintakokeetHakukohteenTunnisteella(@WebParam(partName = "parameters", name = "haeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi parameters) {
+        HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi vastaus = new HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi();
+        List<Valintakoe> valintakoes = hakukohdeDAO.findValintakoeByHakukohdeOid(parameters.getHakukohteenTunniste());
+        for (Valintakoe valintakoe:valintakoes) {
+            vastaus.getHakukohteenValintaKokeet().add(conversionService.convert(valintakoe,ValintakoeTyyppi.class));
+        }
+
+        return vastaus;
     }
 
     @Override
@@ -470,7 +487,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         vastaus.setHakukohde(hakukohdeTyyppi);
         return vastaus;
     }
-
+    //TODO: these helper methods implemented in CommonFrom/To Converters
     private MonikielinenTekstiTyyppi mapMonikielinenTekstiToTyyppi(MonikielinenTeksti monikielinenTeksti) {
         MonikielinenTekstiTyyppi monikielinenTekstiTyyppi = new MonikielinenTekstiTyyppi();
         for (TekstiKaannos tekstiKaannos:monikielinenTeksti.getTekstis()) {

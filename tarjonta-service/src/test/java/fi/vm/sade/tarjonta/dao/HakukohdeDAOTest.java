@@ -205,6 +205,17 @@ public class HakukohdeDAOTest {
 
     }
 
+
+  /*  @Test
+    public void testValintakoeInsert() {
+        Hakukohde nonOrphan = fixtures.createPersistedHakukohdeWithKoulutus();
+        Valintakoe valintakoe = fixtures.createValintakoe();
+
+        nonOrphan.addValintakoe(valintakoe);
+
+        hakukohdeDAO.insert(nonOrphan);
+    }*/
+
     @Test
     public void testFindOrphanHakukohteet() {
     	Hakukohde nonOrphan = fixtures.createPersistedHakukohdeWithKoulutus();
