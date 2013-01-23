@@ -49,8 +49,6 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
 
     private Table hakukohteenLiitteetTable = null;
 
-    private BeanItem<HakukohdeLiiteViewModel> hakukohdeLiiteBean;
-
     private Button uusiLiiteBtn;
     private HakukohteenLiitteetViewImpl liitteet;
     private Window hakukohteenLiiteEditWindow = null;
@@ -92,7 +90,7 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
            if (hakukohteenLiitteetTable != null) {
                hakukohteenLiitteetTable.setContainerDataSource(createTableContainer(presenter.loadHakukohdeLiitteet()));
 
-               hakukohteenLiitteetTable.setSelectable(true);
+
                hakukohteenLiitteetTable.setVisibleColumns(new String[] {"liitteenTyyppi","liitteenSanallinenKuvaus","toimitettavaMennessa",
                        "toimitusOsoite","muokkaaBtn"});
                hakukohteenLiitteetTable.setColumnHeader("liitteenTyyppi",T("tableLiitteenTyyppi"));
@@ -101,7 +99,7 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
                hakukohteenLiitteetTable.setColumnHeader("toimitusOsoite",T("tableToimitusOsoite"));
                hakukohteenLiitteetTable.setColumnHeader("muokkaaBtn","");
                hakukohteenLiitteetTable.setImmediate(true);
-               hakukohteenLiitteetTable.setMultiSelect(false);
+
 
 
 

@@ -554,6 +554,25 @@ public class TarjontaPresenter implements ICommonResource {
         }
     }
 
+    public List<ValintakoeViewModel> loadHakukohdeValintaKokees() {
+        ArrayList<ValintakoeViewModel> valintaKokeet = new ArrayList<ValintakoeViewModel>();
+
+        if(getModel().getHakukohde() != null && getModel().getHakukohde().getOid() != null) {
+            HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi kysely = new HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi();
+            kysely.setHakukohteenTunniste(getModel().getHakukohde().getOid());
+            HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi vastaus = tarjontaPublicService.haeHakukohteenValintakokeetHakukohteenTunnisteella(kysely);
+            if (vastaus != null && vastaus.getHakukohteenValintaKokeet() != null) {
+                for (ValintakoeTyyppi valintakoeTyyppi: vastaus.getHakukohteenValintaKokeet()) {
+                    ValintakoeViewModel valintakoeViewModel =  ValintakoeConverter.mapDtoToValintakoeViewModel(valintakoeTyyppi);
+                    valintaKokeet.add(valintakoeViewModel);
+                }
+            }
+
+        }
+
+        return valintaKokeet;
+    }
+
     public List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet() {
         ArrayList<HakukohdeLiiteViewModel> liitteet = new ArrayList<HakukohdeLiiteViewModel>();
         if (getModel().getHakukohde() != null && getModel().getHakukohde().getOid() != null) {

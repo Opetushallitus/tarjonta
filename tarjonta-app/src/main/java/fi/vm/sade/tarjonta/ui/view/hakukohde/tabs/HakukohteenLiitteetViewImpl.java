@@ -57,6 +57,7 @@ import java.util.List;
 public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(PerustiedotViewImpl.class);
+    @Autowired
     private TarjontaPresenter presenter;
 
     @Autowired
@@ -251,7 +252,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
                 if (tarjontaUIHelper != null) {
                 String koodiUri = (String) valueChangeEvent.getProperty().getValue();
                 String postitoimipaikkaStr = tarjontaUIHelper.getKoodiNimi(koodiUri,I18N.getLocale());
-                postitoimipaikka.setValue(postitoimipaikkaStr);
+                 postitoimipaikka.setValue(postitoimipaikkaStr);
                 }
             }
         });

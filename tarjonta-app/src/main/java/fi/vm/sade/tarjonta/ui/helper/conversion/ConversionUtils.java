@@ -42,5 +42,20 @@ public class ConversionUtils {
         return vastaus;
     }
 
+    public static MonikielinenTekstiTyyppi convertKielikaannosToMonikielinenTeksti(List<KielikaannosViewModel> kielikaannokset) {
+        MonikielinenTekstiTyyppi monikielinenTekstiTyyppi = new MonikielinenTekstiTyyppi();
+
+        for (KielikaannosViewModel kielikaannosViewModel:kielikaannokset) {
+            MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
+
+            teksti.setKieliKoodi(kielikaannosViewModel.getKielikoodi());
+            teksti.setValue(kielikaannosViewModel.getNimi());
+
+            monikielinenTekstiTyyppi.getTeksti().add(teksti);
+        }
+
+        return monikielinenTekstiTyyppi;
+    }
+
 }
 

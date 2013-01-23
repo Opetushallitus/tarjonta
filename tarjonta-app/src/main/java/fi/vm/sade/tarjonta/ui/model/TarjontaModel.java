@@ -40,6 +40,8 @@ public class TarjontaModel extends BaseUIViewModel {
     private List<KoulutusTulos> _selectedKoulutukset;
     private HakukohdeViewModel hakukohde;
     private HakukohdeLiiteViewModel selectedLiite;
+    private ValintakoeViewModel selectedValintaKoe;
+
     /*
      * Selected organisaatio data:
      */
@@ -202,5 +204,13 @@ public class TarjontaModel extends BaseUIViewModel {
 
     public void setSelectedLiite(HakukohdeLiiteViewModel selectedLiite) {
         this.selectedLiite = selectedLiite;
+    }
+
+    public ValintakoeViewModel getSelectedValintaKoe() {
+        return selectedValintaKoe;
+    }
+
+    public void setSelectedValintaKoe(ValintakoeViewModel selectedValintaKoe) {
+        this.selectedValintaKoe = selectedValintaKoe;
     }
 }

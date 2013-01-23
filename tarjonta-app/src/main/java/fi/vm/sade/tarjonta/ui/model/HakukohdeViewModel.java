@@ -30,6 +30,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private List<String> komotoOids;
     private List<KoulutusOidNameViewModel> koulukses;
     private List<HakukohdeLiiteViewModel> liites;
+    private List<ValintakoeViewModel> valintaKokees;
 
     public HakukohdeViewModel() {
         super();
@@ -287,5 +288,16 @@ public class HakukohdeViewModel extends BaseUIViewModel {
 
     public void setLiites(List<HakukohdeLiiteViewModel> liites) {
         this.liites = liites;
+    }
+
+    public List<ValintakoeViewModel> getValintaKokees() {
+        if (valintaKokees == null) {
+            valintaKokees = new ArrayList<ValintakoeViewModel>();
+        }
+        return valintaKokees;
+    }
+
+    public void setValintaKokees(List<ValintakoeViewModel> valintaKokees) {
+        this.valintaKokees = valintaKokees;
     }
 }
