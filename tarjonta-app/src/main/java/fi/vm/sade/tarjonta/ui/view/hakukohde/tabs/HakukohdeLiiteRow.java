@@ -17,19 +17,28 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import java.util.List;
+
 /**
  * Created by: Tuomas Katva
  * Date: 21.1.2013
  */
-@Configurable(preConstruction = false)
+@Configurable(preConstruction = true)
 public class HakukohdeLiiteRow extends HorizontalLayout {
+
+
+    @Autowired
+    private TarjontaUIHelper tarjontaUIHelper;
 
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
@@ -50,7 +59,7 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
          liitteenTyyppi = param.getLiitteeTyyppiKoodistoNimi();
          liitteenSanallinenKuvaus = param.getLocalizedKuvaus();
          toimitettavaMennessa = param.getToimitusPvmTablePresentation();
-         toimitusOsoite = param.getToimitusOsoiteConcat();
+         toimitusOsoite = getStringConcat();
          muokkaaBtn = UiUtil.buttonLink(null,i18n.getMessage("muokkaaBtn"), new Button.ClickListener() {
              @Override
              public void buttonClick(Button.ClickEvent clickEvent) {
@@ -60,6 +69,20 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
 
     }
 
+    private String getStringConcat() {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (hakukohdeLiiteViewModel != null) {
+        stringBuilder.append(hakukohdeLiiteViewModel.getOsoiteRivi1());
+        stringBuilder.append("\n");
+        List<KoodiType> postinumeroKoodis = tarjontaUIHelper.gethKoodis(hakukohdeLiiteViewModel.getPostinumero());
+        if (postinumeroKoodis != null) {
+        stringBuilder.append(postinumeroKoodis.get(0).getKoodiArvo());
+        }
+        stringBuilder.append("\n");
+        stringBuilder.append(tarjontaUIHelper.getKoodiNimi(hakukohdeLiiteViewModel.getPostinumero(), I18N.getLocale()));
+        }
+        return stringBuilder.toString();
+    }
 
     public TarjontaPresenter getTarjontaPresenter() {
         return tarjontaPresenter;

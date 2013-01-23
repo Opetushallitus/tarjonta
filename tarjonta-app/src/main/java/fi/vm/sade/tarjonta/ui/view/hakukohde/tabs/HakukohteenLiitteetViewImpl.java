@@ -15,16 +15,21 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.ui.component.CaptionFormatter;
+import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
@@ -34,6 +39,7 @@ import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
@@ -53,6 +59,9 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     private static final Logger LOG = LoggerFactory.getLogger(PerustiedotViewImpl.class);
     private TarjontaPresenter presenter;
 
+    @Autowired
+    private TarjontaUIHelper tarjontaUIHelper;
+
     private VerticalLayout mainLayout;
     private GridLayout itemContainer;
     @PropertyId("liitteenTyyppi")
@@ -68,7 +77,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     @PropertyId("osoiteRivi2")
     private TextField osoiteRivi2;
     @PropertyId("postinumero")
-    private TextField postinumero;
+    private KoodistoComponent postinumero;
     @PropertyId("postitoimiPaikka")
     private TextField postitoimipaikka;
 
@@ -199,8 +208,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         osoiteRivi2.setInputPrompt(I18N.getMessage("PerustiedotView.osoiteRivi2"));
         osoiteLayout.addComponent(osoiteRivi2,0,1,1,1);
 
-        postinumero = UiUtil.textField(null);
-        postinumero.setInputPrompt(I18N.getMessage("PerustiedotView.postinumero"));
+        postinumero = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POSTINUMERO);
         osoiteLayout.addComponent(postinumero,0,2);
         postinumero.setSizeUndefined();
 
@@ -211,6 +219,43 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
         osoiteLayout.setColumnExpandRatio(0,2);
         osoiteLayout.setColumnExpandRatio(1,4);
+
+        postinumero.setFieldValueFormatter(new FieldValueFormatter() {
+            @Override
+            public Object formatFieldValue(Object dto) {
+                if (dto instanceof KoodiType) {
+                    KoodiType koodi = (KoodiType) dto;
+                    return koodi.getKoodiUri();
+                } else {
+                    return dto;
+                }
+            }
+        });
+
+        postinumero.setCaptionFormatter(new CaptionFormatter() {
+            @Override
+            public String formatCaption(Object dto) {
+                if(dto instanceof KoodiType) {
+                    KoodiType koodi = (KoodiType)dto;
+                    return  koodi.getKoodiArvo();
+                } else {
+                    return dto.toString();
+                }
+            }
+        });
+
+        postinumero.setImmediate(true);
+        postinumero.addListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                if (tarjontaUIHelper != null) {
+                String koodiUri = (String) valueChangeEvent.getProperty().getValue();
+                String postitoimipaikkaStr = tarjontaUIHelper.getKoodiNimi(koodiUri,I18N.getLocale());
+                postitoimipaikka.setValue(postitoimipaikkaStr);
+                }
+            }
+        });
+
 
         return osoiteLayout;
     }
