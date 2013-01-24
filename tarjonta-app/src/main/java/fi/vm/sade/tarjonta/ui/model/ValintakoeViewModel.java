@@ -15,6 +15,7 @@ package fi.vm.sade.tarjonta.ui.model;/*
  * European Union Public Licence for more details.
  */
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,6 +44,9 @@ public class ValintakoeViewModel {
     }
 
     public List<KielikaannosViewModel> getSanallisetKuvaukset() {
+        if (sanallisetKuvaukset == null) {
+            sanallisetKuvaukset = new ArrayList<KielikaannosViewModel>();
+        }
         return sanallisetKuvaukset;
     }
 
@@ -51,6 +55,9 @@ public class ValintakoeViewModel {
     }
 
     public List<ValintakoeAikaViewModel> getValintakoeAjat() {
+        if (valintakoeAjat == null) {
+            valintakoeAjat = new ArrayList<ValintakoeAikaViewModel>();
+        }
         return valintakoeAjat;
     }
 

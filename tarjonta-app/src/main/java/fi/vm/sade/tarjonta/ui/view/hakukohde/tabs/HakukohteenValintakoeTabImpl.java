@@ -17,10 +17,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
 
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
@@ -51,6 +48,10 @@ public class HakukohteenValintakoeTabImpl extends AbstractVerticalNavigationLayo
 
     private Button uusiValintakoeBtn;
 
+    private Window valintakoeEditWindow;
+
+    private HakukohdeValintakoeViewImpl valintakoeView;
+
     public HakukohteenValintakoeTabImpl() {
         super();
         setHeight(-1, UNITS_PIXELS);
@@ -62,7 +63,7 @@ public class HakukohteenValintakoeTabImpl extends AbstractVerticalNavigationLayo
         uusiValintakoeBtn = UiBuilder.button(null,T("uusiBtn"),new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-
+                  showValintakoeEditWithId(null);
             }
         });
 
@@ -70,6 +71,37 @@ public class HakukohteenValintakoeTabImpl extends AbstractVerticalNavigationLayo
         layout.addComponent(horizontalLayout);
 
         loadTableData();
+    }
+
+    public void closeValintakoeEditWindow() {
+       if (valintakoeEditWindow != null) {
+           getWindow().removeWindow(valintakoeEditWindow);
+           valintakoeEditWindow = null;
+       }
+    }
+
+    public void showValintakoeEditWithId(String id) {
+
+        if (id == null) {
+            presenter.getModel().setSelectedValintaKoe(new ValintakoeViewModel());
+        } else {
+            presenter.loadValintakoeWithId(id);
+        }
+
+        valintakoeView = new HakukohdeValintakoeViewImpl();
+        VerticalLayout mainWindowLayout = new VerticalLayout();
+        mainWindowLayout.addComponent(valintakoeView);
+        valintakoeEditWindow = new Window();
+        valintakoeEditWindow.setContent(mainWindowLayout);
+        getWindow().addWindow(valintakoeEditWindow);
+
+        mainWindowLayout.setSizeUndefined();
+        valintakoeView.setImmediate(true);
+        valintakoeView.setWidth("900px");
+
+        valintakoeEditWindow.setModal(true);
+        valintakoeEditWindow.center();
+
     }
 
     private void loadTableData() {

@@ -15,11 +15,27 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+import com.vaadin.data.Property;
+import com.vaadin.data.util.BeanContainer;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
+import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.ui.component.CaptionFormatter;
+import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
+import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
+import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
+import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
+import fi.vm.sade.vaadin.constants.UiConstant;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -27,19 +43,25 @@ import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by: Tuomas Katva
  * Date: 23.1.2013
  */
 
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
-@Configurable
+@Configurable(preConstruction = true)
 public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
     private ErrorMessage errorView;
 
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
+
+    @Autowired(required = true)
+    private transient UiBuilder uiBuilder;
 
     @Autowired
     private TarjontaPresenter presenter;
@@ -69,6 +91,62 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
     private Table valintakoeAikasTable;
 
+    private VerticalLayout mainLayout;
+
+    private GridLayout itemContainer;
+
+    private Button upRightInfoButton;
+
+    private Form form;
+
+    private Button cancelButton;
+    private Button saveButton;
+
+
+    public HakukohdeValintakoeViewImpl() {
+        super();
+        buildMainLayout();
+    }
+
+    private void initForm() {
+        BeanItem<ValintakoeViewModel> valintakoeViewModel = new BeanItem<ValintakoeViewModel>(presenter.getSelectedValintakoe());
+        form = new ValidatingViewBoundForm(this);
+        form.setItemDataSource(valintakoeViewModel);
+
+        JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
+        this.form.setValidationVisible(false);
+        this.form.setValidationVisibleOnCommit(false);
+    }
+
+    private void buildMainLayout() {
+
+        mainLayout = new VerticalLayout();
+
+        mainLayout.addComponent(buildErrorLayout());
+
+        mainLayout.addComponent(buildInfoButtonLayout());
+
+        mainLayout.addComponent(buildGridLayout());
+
+        mainLayout.addComponent(buildSaveCancelButtonLayout());
+
+        setCompositionRoot(mainLayout);
+
+        initForm();
+    }
+
+    private String T(String key) {
+        return I18N.getMessage(key);
+    }
+
+    private HorizontalLayout buildInfoButtonLayout() {
+        HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.TOP_RIGHT);
+        layout.setWidth(UiConstant.PCT100);
+        upRightInfoButton = UiUtil.buttonSmallInfo(layout);
+        layout.setComponentAlignment(upRightInfoButton, Alignment.TOP_RIGHT);
+        return layout;
+    }
+
     private HorizontalLayout buildErrorLayout() {
         HorizontalLayout topErrorArea = UiUtil.horizontalLayout();
         HorizontalLayout padding = UiUtil.horizontalLayout();
@@ -80,5 +158,195 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         topErrorArea.addComponent(errorView);
 
         return topErrorArea;
+    }
+
+    private GridLayout buildGridLayout() {
+        itemContainer =  new GridLayout(2,1);
+        itemContainer.setWidth(UiConstant.PCT100);
+        itemContainer.setSpacing(true);
+        itemContainer.setMargin(false, true, true, true);
+
+        addItemToGrid("HakukohdeValintakoeViewImpl.valintakokeenTyyppi",buildValintakokeenTyyppi());
+        addItemToGrid("HakukohdeValintakoeViewImpl.kuvaus",buildValintakoeKuvausTabSheet());
+        addItemToGrid("HakukohdeValintakoeViewImpl.valintakokeenSijainti",buildOsoiteEditLayout());
+        addItemToGrid("HakukohdeValintakoeViewImpl.valintakokeenAjankohta",buildValintakoeAikaLayout());
+        addItemToGrid("HakukohdeValintakoeViewImpl.tableHdr",buildValintakoeAikaTableLayout());
+
+        itemContainer.setColumnExpandRatio(0, 0f);
+        itemContainer.setColumnExpandRatio(1, 1f);
+        return itemContainer;
+
+    }
+
+    private VerticalLayout buildValintakoeAikaTableLayout() {
+        VerticalLayout tableLayout = new VerticalLayout();
+
+        valintakoeAikasTable = new Table();
+        tableLayout.addComponent(valintakoeAikasTable);
+        loadTableData();
+
+        return tableLayout;
+    }
+
+    private void loadTableData() {
+        if (valintakoeAikasTable != null) {
+            valintakoeAikasTable.removeAllItems();
+        }
+
+        valintakoeAikasTable.setContainerDataSource(createTableContainer(presenter.getModel().getSelectedValintaKoe().getValintakoeAjat()));
+        valintakoeAikasTable.setVisibleColumns(new String[] {"sijainti","ajankohta","lisatietoja","poistaBtn"});
+        valintakoeAikasTable.setColumnHeader("sijainti",T("tableSijainti"));
+        valintakoeAikasTable.setColumnHeader("ajankohta",T("tableAjankohta"));
+        valintakoeAikasTable.setColumnHeader("lisatietoja",T("tableLisatietoja"));
+        valintakoeAikasTable.setColumnHeader("poistaBtn","");
+
+        valintakoeAikasTable.setSizeFull();
+        valintakoeAikasTable.requestRepaint();
+
+
+    }
+
+    private BeanContainer<String,HakukohdeValintakoeAikaRow> createTableContainer(List<ValintakoeAikaViewModel> aikas) {
+        BeanContainer<String,HakukohdeValintakoeAikaRow> aikasContainer = new BeanContainer<String, HakukohdeValintakoeAikaRow>(HakukohdeValintakoeAikaRow.class);
+
+        for (ValintakoeAikaViewModel aika:aikas) {
+            HakukohdeValintakoeAikaRow aikaRow = new HakukohdeValintakoeAikaRow(aika);
+            aikasContainer.addItem(aika.getOsoiteRivi() + aika.getValintakoeAikaTiedot(),aikaRow);
+
+        }
+
+        return aikasContainer;
+    }
+
+
+    private KoodistoComponent buildValintakokeenTyyppi() {
+        valintakoeTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_LIITTEEN_TYYPPI_URI);
+
+        return valintakoeTyyppi;
+    }
+
+    private HorizontalLayout buildValintakoeAikaLayout() {
+        HorizontalLayout valintakoeAikaLayout = new HorizontalLayout();
+
+        alkupvm = new DateField();
+        alkupvm.setResolution(DateField.RESOLUTION_MIN);
+        valintakoeAikaLayout.addComponent(alkupvm);
+
+        Label hyphen = new Label();
+        hyphen.setValue(" - ");
+        valintakoeAikaLayout.addComponent(hyphen);
+
+        loppuPvm = new DateField();
+        loppuPvm.setResolution(DateField.RESOLUTION_MIN);
+        valintakoeAikaLayout.addComponent(loppuPvm);
+
+        return valintakoeAikaLayout;
+    }
+
+    private HorizontalLayout buildOsoiteEditLayout() {
+        HorizontalLayout osoiteAddLayout = new HorizontalLayout();
+
+        osoiteRiviTxt = UiUtil.textField(null);
+        osoiteRiviTxt.setInputPrompt(T("HakukohdeValintakoeViewImpl.osoiteRivi"));
+        osoiteAddLayout.addComponent(osoiteRiviTxt);
+
+        postinumeroCombo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POSTINUMERO);
+        osoiteAddLayout.addComponent(postinumeroCombo);
+
+        postitoimiPaikka = UiUtil.textField(null);
+        postitoimiPaikka.setInputPrompt(T("HakukohdeValintakoeViewImpl.postitoimipaikka"));
+        osoiteAddLayout.addComponent(postitoimiPaikka);
+
+        postinumeroCombo.setFieldValueFormatter(new FieldValueFormatter() {
+            @Override
+            public Object formatFieldValue(Object dto) {
+                if (dto instanceof KoodiType) {
+                    KoodiType koodi = (KoodiType) dto;
+                    return koodi.getKoodiUri();
+                } else {
+                    return dto;
+                }
+            }
+        });
+
+        postinumeroCombo.setCaptionFormatter(new CaptionFormatter() {
+            @Override
+            public String formatCaption(Object dto) {
+                if(dto instanceof KoodiType) {
+                    KoodiType koodi = (KoodiType)dto;
+                    return  koodi.getKoodiArvo();
+                } else {
+                    return dto.toString();
+                }
+            }
+        });
+
+        postinumeroCombo.addListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                if (tarjontaUIHelper != null) {
+                    String koodiUri = (String) valueChangeEvent.getProperty().getValue();
+                    String postitoimipaikkaStr = tarjontaUIHelper.getKoodiNimi(koodiUri,I18N.getLocale());
+                    postitoimiPaikka.setValue(postitoimipaikkaStr);
+                }
+            }
+        });
+
+
+        return osoiteAddLayout;
+    }
+
+    private ValintakoeKuvausTabSheet buildValintakoeKuvausTabSheet() {
+        valintaKoeKuvaus = new ValintakoeKuvausTabSheet();
+        valintaKoeKuvaus.setWidth("60%");
+        return valintaKoeKuvaus;
+
+    }
+
+    public List<KielikaannosViewModel> getValintakokeenKuvaukset() {
+        if (valintaKoeKuvaus != null) {
+            return valintaKoeKuvaus.getKieliKaannokset();
+        }
+        else {
+            return new ArrayList<KielikaannosViewModel>();
+        }
+    }
+
+    private HorizontalLayout buildSaveCancelButtonLayout() {
+
+        HorizontalLayout horizontalButtonLayout = UiUtil.horizontalLayout();
+
+        cancelButton = UiBuilder.button(null, T("HakukohdeValintakoeViewImpl.cancelBtn"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+
+            }
+        });
+        horizontalButtonLayout.addComponent(cancelButton);
+
+        saveButton = UiBuilder.button(null,T("HakukohdeValintakoeViewImpl.saveBtn"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+
+
+            }
+        });
+        horizontalButtonLayout.addComponent(saveButton);
+        horizontalButtonLayout.setWidth(UiConstant.PCT100);
+        horizontalButtonLayout.setComponentAlignment(cancelButton,Alignment.BOTTOM_LEFT);
+        horizontalButtonLayout.setComponentAlignment(saveButton,Alignment.BOTTOM_RIGHT);
+
+        return horizontalButtonLayout;
+    }
+
+
+    private void addItemToGrid(String captionKey, AbstractComponent component) {
+
+        if (itemContainer != null) {
+            itemContainer.addComponent(UiUtil.label(null, T(captionKey)));
+            itemContainer.addComponent(component);
+            itemContainer.newLine();
+        }
+
     }
 }

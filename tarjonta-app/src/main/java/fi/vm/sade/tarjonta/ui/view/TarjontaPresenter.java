@@ -637,6 +637,21 @@ public class TarjontaPresenter implements ICommonResource {
         return getModel().getSelectedLiite();
     }
 
+    public void loadValintakoeWithId(String id) {
+        LueHakukohteenValintakoeTunnisteellaKyselyTyyppi kysely = new LueHakukohteenValintakoeTunnisteellaKyselyTyyppi();
+        kysely.setHakukohteenValintakoeTunniste(id);
+        LueHakukohteenValintakoeTunnisteellaVastausTyyppi vastaus = tarjontaPublicService.lueHakukohteenValintakoeTunnisteella(kysely);
+        getModel().setSelectedValintaKoe(ValintakoeConverter.mapDtoToValintakoeViewModel(vastaus.getHakukohdeValintakoe()));
+    }
+
+    public ValintakoeViewModel getSelectedValintakoe() {
+       if (getModel().getSelectedValintaKoe() == null) {
+            getModel().setSelectedValintaKoe(new ValintakoeViewModel());
+        }
+
+        return getModel().getSelectedValintaKoe();
+    }
+
     /**
      * Show hakukohde edit view.
      *

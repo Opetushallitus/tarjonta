@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohdePerustiedotViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenLiitteetTabImpl;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenValintakoeTabImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -39,7 +40,9 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
     private TabSheet tabs;
     private TabSheet.Tab perustiedotTab;
     private TabSheet.Tab liitteetTab;
+    private TabSheet.Tab valintakokeetTab;
     private HakukohteenLiitteetTabImpl liitteet;
+    private HakukohteenValintakoeTabImpl valintakokeet;
     
     public EditHakukohdeView() {
         super();
@@ -82,8 +85,10 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
         HakukohdePerustiedotViewImpl perustiedot = new HakukohdePerustiedotViewImpl(hakukohdeOid);
         
         liitteet = new HakukohteenLiitteetTabImpl();
+        valintakokeet = new HakukohteenValintakoeTabImpl();
         perustiedotTab = tabs.addTab(perustiedot, T("tabNimi"));
         liitteetTab = tabs.addTab(liitteet, T("liitteetTab"));
+        valintakokeetTab = tabs.addTab(valintakokeet,T("valintakoeTab"));
         liitteetTab.setEnabled(hakukohdeOid != null);
         liitteet.reloadTableData();
     }
