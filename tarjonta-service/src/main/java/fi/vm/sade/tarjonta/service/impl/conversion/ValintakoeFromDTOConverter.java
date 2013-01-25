@@ -41,7 +41,10 @@ public class ValintakoeFromDTOConverter extends AbstractToDomainConverter<Valint
 
         valintakoe.setKuvaus(CommonFromDTOConverter.convertMonikielinenTekstiTyyppiToDomainValue(valintakoeTyyppi.getKuvaukset()));
         valintakoe.setTyyppiUri(valintakoeTyyppi.getValintakokeenTyyppi());
-        valintakoe.getAjankohtas().addAll(convertAjankohtaTyyppiToValintakoeAjankohta(valintakoeTyyppi.getAjankohdat()));
+        for (ValintakoeAjankohta ajankohta:convertAjankohtaTyyppiToValintakoeAjankohta(valintakoeTyyppi.getAjankohdat())) {
+            valintakoe.addAjankohta(ajankohta);
+        }
+
 
 
         return valintakoe;
