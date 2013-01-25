@@ -193,6 +193,20 @@ public class TarjontaPresenter implements ICommonResource {
         getModel().setSelectedLiite(null);
     }
 
+    public void saveHakukohdeValintakoe(List<KielikaannosViewModel> kuvaukset) {
+           getModel().getSelectedValintaKoe().setSanallisetKuvaukset(kuvaukset);
+          getModel().getHakukohde().getValintaKokees().add(getModel().getSelectedValintaKoe());
+          List<ValintakoeTyyppi> valintakokeet = new ArrayList<ValintakoeTyyppi>();
+          for (ValintakoeViewModel valintakoeViewModel:getModel().getHakukohde().getValintaKokees()) {
+              valintakokeet.add(ValintakoeConverter.mapKieliKaannosToValintakoeTyyppi(valintakoeViewModel));
+          }
+           tarjontaAdminService.tallennaValintakokeitaHakukohteelle(getModel().getHakukohde().getOid(),valintakokeet);
+         getModel().setSelectedValintaKoe(new ValintakoeViewModel());
+         editHakukohdeView.loadValintakokees();
+         editHakukohdeView.closeValintakoeEditWindow();
+    }
+
+
     public void closeCancelHakukohteenEditView() {
         editHakukohdeView.closeHakukohdeLiiteEditWindow();
     }
@@ -259,6 +273,10 @@ public class TarjontaPresenter implements ICommonResource {
         this.getHakukohdeListView().reload();
         getReloadKoulutusListData();
         getRootView().showMainView();
+    }
+
+    public void closeValintakoeEditWindow() {
+        editHakukohdeView.closeValintakoeEditWindow();
     }
 
     //Tuomas Katva : two following methods break the presenter pattern consider moving everything except service call to view
@@ -649,9 +667,39 @@ public class TarjontaPresenter implements ICommonResource {
             getModel().setSelectedValintaKoe(new ValintakoeViewModel());
         }
 
+
         return getModel().getSelectedValintaKoe();
     }
 
+
+    public ValintakoeAikaViewModel getSelectedAikaView() {
+        ValintakoeAikaViewModel aikaViewModel = new ValintakoeAikaViewModel();
+
+        if (getModel().getSelectedValintakoeAika() != null) {
+            aikaViewModel.setValintakoeAikaTiedot(getModel().getSelectedValintakoeAika().getValintakoeAikaTiedot());
+            aikaViewModel.setOsoiteRivi(getModel().getSelectedValintakoeAika().getOsoiteRivi());
+            aikaViewModel.setPostinumero(getModel().getSelectedValintakoeAika().getPostinumero());
+            aikaViewModel.setPostitoimiPaikka(getModel().getSelectedValintakoeAika().getPostitoimiPaikka());
+            aikaViewModel.setAlkamisAika(getModel().getSelectedValintakoeAika().getAlkamisAika());
+            aikaViewModel.setPaattymisAika(getModel().getSelectedValintakoeAika().getPaattymisAika());
+            getModel().setSelectedValintakoeAika(new ValintakoeAikaViewModel());
+        }
+
+
+        return aikaViewModel;
+    }
+
+    public void removeValintakoeAikaSelection(ValintakoeAikaViewModel valintakoeAikaViewModel) {
+        List<ValintakoeAikaViewModel> ajat = new ArrayList<ValintakoeAikaViewModel>();
+        if (getModel().getSelectedValintaKoe().getValintakoeAjat() != null) {
+            for (ValintakoeAikaViewModel aika : getModel().getSelectedValintaKoe().getValintakoeAjat()) {
+                    if (!aika.equals(valintakoeAikaViewModel))  {
+                        ajat.add(aika);
+                    }
+            }
+            getModel().getSelectedValintaKoe().setValintakoeAjat(ajat);
+        }
+    }
     /**
      * Show hakukohde edit view.
      *

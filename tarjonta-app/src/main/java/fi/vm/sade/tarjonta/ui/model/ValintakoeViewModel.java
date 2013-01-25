@@ -28,8 +28,6 @@ public class ValintakoeViewModel {
 
     private String valintakoeTyyppi;
 
-    private ValintakoeAikaViewModel currentAika;
-
     private List<KielikaannosViewModel> sanallisetKuvaukset;
 
     private List<ValintakoeAikaViewModel> valintakoeAjat;
@@ -73,11 +71,28 @@ public class ValintakoeViewModel {
         this.valintakoeTunniste = valintakoeTunniste;
     }
 
-    public ValintakoeAikaViewModel getCurrentAika() {
-        return currentAika;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ValintakoeViewModel that = (ValintakoeViewModel) o;
+
+        if (valintakoeAjat != null ? !valintakoeAjat.equals(that.valintakoeAjat) : that.valintakoeAjat != null)
+            return false;
+        if (valintakoeTunniste != null ? !valintakoeTunniste.equals(that.valintakoeTunniste) : that.valintakoeTunniste != null)
+            return false;
+        if (valintakoeTyyppi != null ? !valintakoeTyyppi.equals(that.valintakoeTyyppi) : that.valintakoeTyyppi != null)
+            return false;
+
+        return true;
     }
 
-    public void setCurrentAika(ValintakoeAikaViewModel currentAika) {
-        this.currentAika = currentAika;
+    @Override
+    public int hashCode() {
+        int result = valintakoeTunniste != null ? valintakoeTunniste.hashCode() : 0;
+        result = 31 * result + (valintakoeTyyppi != null ? valintakoeTyyppi.hashCode() : 0);
+        result = 31 * result + (valintakoeAjat != null ? valintakoeAjat.hashCode() : 0);
+        return result;
     }
 }

@@ -71,23 +71,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
     private ValintakoeKuvausTabSheet valintaKoeKuvaus;
 
-    @PropertyId("currentAika.osoiteRivi")
-    private TextField osoiteRiviTxt;
-
-    @PropertyId("currentAika.postinumero")
-    private KoodistoComponent postinumeroCombo;
-
-    @PropertyId("currentAika.postitoimiPaikka")
-    private TextField postitoimiPaikka;
-
-    @PropertyId("currentAika.alkamisAika")
-    private DateField alkupvm;
-
-    @PropertyId("currentAika.paattymisAika")
-    private DateField loppuPvm;
-
-    @PropertyId("currentAika.valintakoeAikaTiedot")
-    private TextField lisatietoja;
+    private VerticalLayout aikaInputFormLayout;
 
     private Table valintakoeAikasTable;
 
@@ -102,6 +86,8 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
     private Button cancelButton;
     private Button saveButton;
 
+    private HakukohdeValintaKoeAikaEditView valintaKoeAikaEditView;
+    private Form valintaKoeAikaForm;
 
     public HakukohdeValintakoeViewImpl() {
         super();
@@ -117,6 +103,50 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         this.form.setValidationVisible(false);
         this.form.setValidationVisibleOnCommit(false);
     }
+
+    private VerticalLayout buildOsoiteEditLayout() {
+        aikaInputFormLayout = new VerticalLayout();
+
+        valintaKoeAikaEditView = new HakukohdeValintaKoeAikaEditView();
+
+        BeanItem<ValintakoeAikaViewModel> valintakoeAikaViewModelBean = new BeanItem<ValintakoeAikaViewModel>(presenter.getModel().getSelectedValintakoeAika());
+        valintaKoeAikaForm = new ValidatingViewBoundForm(valintaKoeAikaEditView);
+        valintaKoeAikaForm.setItemDataSource(valintakoeAikaViewModelBean);
+
+        JSR303FieldValidator.addValidatorsBasedOnAnnotations(valintaKoeAikaForm);
+
+        aikaInputFormLayout.addComponent(valintaKoeAikaEditView);
+
+        valintaKoeAikaEditView.addClickListenerToLisaaButton(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                valintaKoeAikaForm.commit();
+                if (valintaKoeAikaForm.isValid()) {
+
+                    presenter.getModel().getSelectedValintaKoe().getValintakoeAjat().add(presenter.getSelectedAikaView());
+                    createNewModelToValintakoeAika();
+
+                    loadTableData();
+                }
+
+            }
+            });
+
+        return aikaInputFormLayout;
+    }
+
+    private void createNewModelToValintakoeAika() {
+        aikaInputFormLayout.removeAllComponents();
+        BeanItem<ValintakoeAikaViewModel> valintakoeAikaViewModelBean = new BeanItem<ValintakoeAikaViewModel>(presenter.getModel().getSelectedValintakoeAika());
+        valintaKoeAikaForm = new ValidatingViewBoundForm(valintaKoeAikaEditView);
+        valintaKoeAikaForm.setItemDataSource(valintakoeAikaViewModelBean);
+
+        JSR303FieldValidator.addValidatorsBasedOnAnnotations(valintaKoeAikaForm);
+
+        aikaInputFormLayout.addComponent(valintaKoeAikaEditView);
+    }
+
+
 
     private void buildMainLayout() {
 
@@ -169,7 +199,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         addItemToGrid("HakukohdeValintakoeViewImpl.valintakokeenTyyppi",buildValintakokeenTyyppi());
         addItemToGrid("HakukohdeValintakoeViewImpl.kuvaus",buildValintakoeKuvausTabSheet());
         addItemToGrid("HakukohdeValintakoeViewImpl.valintakokeenSijainti",buildOsoiteEditLayout());
-        addItemToGrid("HakukohdeValintakoeViewImpl.valintakokeenAjankohta",buildValintakoeAikaLayout());
+//        addItemToGrid("HakukohdeValintakoeViewImpl.valintakokeenAjankohta",buildValintakoeAikaLayout());
         addItemToGrid("HakukohdeValintakoeViewImpl.tableHdr",buildValintakoeAikaTableLayout());
 
         itemContainer.setColumnExpandRatio(0, 0f);
@@ -188,19 +218,25 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         return tableLayout;
     }
 
-    private void loadTableData() {
+
+
+    public void loadTableData() {
         if (valintakoeAikasTable != null) {
             valintakoeAikasTable.removeAllItems();
+        }  else {
+            valintakoeAikasTable = new Table();
         }
 
         valintakoeAikasTable.setContainerDataSource(createTableContainer(presenter.getModel().getSelectedValintaKoe().getValintakoeAjat()));
-        valintakoeAikasTable.setVisibleColumns(new String[] {"sijainti","ajankohta","lisatietoja","poistaBtn"});
-        valintakoeAikasTable.setColumnHeader("sijainti",T("tableSijainti"));
+        valintakoeAikasTable.setVisibleColumns(new String[]{"sijainti", "ajankohta", "lisatietoja", "poistaBtn"});
+        valintakoeAikasTable.setColumnHeader("sijainti", T("tableSijainti"));
         valintakoeAikasTable.setColumnHeader("ajankohta",T("tableAjankohta"));
         valintakoeAikasTable.setColumnHeader("lisatietoja",T("tableLisatietoja"));
         valintakoeAikasTable.setColumnHeader("poistaBtn","");
 
-        valintakoeAikasTable.setSizeFull();
+//        valintakoeAikasTable.setSizeFull();
+        valintakoeAikasTable.setHeight("200px");
+        valintakoeAikasTable.setWidth("750px");
         valintakoeAikasTable.requestRepaint();
 
 
@@ -211,6 +247,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
         for (ValintakoeAikaViewModel aika:aikas) {
             HakukohdeValintakoeAikaRow aikaRow = new HakukohdeValintakoeAikaRow(aika);
+            aikaRow.setParent(HakukohdeValintakoeViewImpl.this);
             aikasContainer.addItem(aika.getOsoiteRivi() + aika.getValintakoeAikaTiedot(),aikaRow);
 
         }
@@ -225,76 +262,9 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         return valintakoeTyyppi;
     }
 
-    private HorizontalLayout buildValintakoeAikaLayout() {
-        HorizontalLayout valintakoeAikaLayout = new HorizontalLayout();
-
-        alkupvm = new DateField();
-        alkupvm.setResolution(DateField.RESOLUTION_MIN);
-        valintakoeAikaLayout.addComponent(alkupvm);
-
-        Label hyphen = new Label();
-        hyphen.setValue(" - ");
-        valintakoeAikaLayout.addComponent(hyphen);
-
-        loppuPvm = new DateField();
-        loppuPvm.setResolution(DateField.RESOLUTION_MIN);
-        valintakoeAikaLayout.addComponent(loppuPvm);
-
-        return valintakoeAikaLayout;
-    }
-
-    private HorizontalLayout buildOsoiteEditLayout() {
-        HorizontalLayout osoiteAddLayout = new HorizontalLayout();
-
-        osoiteRiviTxt = UiUtil.textField(null);
-        osoiteRiviTxt.setInputPrompt(T("HakukohdeValintakoeViewImpl.osoiteRivi"));
-        osoiteAddLayout.addComponent(osoiteRiviTxt);
-
-        postinumeroCombo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POSTINUMERO);
-        osoiteAddLayout.addComponent(postinumeroCombo);
-
-        postitoimiPaikka = UiUtil.textField(null);
-        postitoimiPaikka.setInputPrompt(T("HakukohdeValintakoeViewImpl.postitoimipaikka"));
-        osoiteAddLayout.addComponent(postitoimiPaikka);
-
-        postinumeroCombo.setFieldValueFormatter(new FieldValueFormatter() {
-            @Override
-            public Object formatFieldValue(Object dto) {
-                if (dto instanceof KoodiType) {
-                    KoodiType koodi = (KoodiType) dto;
-                    return koodi.getKoodiUri();
-                } else {
-                    return dto;
-                }
-            }
-        });
-
-        postinumeroCombo.setCaptionFormatter(new CaptionFormatter() {
-            @Override
-            public String formatCaption(Object dto) {
-                if(dto instanceof KoodiType) {
-                    KoodiType koodi = (KoodiType)dto;
-                    return  koodi.getKoodiArvo();
-                } else {
-                    return dto.toString();
-                }
-            }
-        });
-
-        postinumeroCombo.addListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                if (tarjontaUIHelper != null) {
-                    String koodiUri = (String) valueChangeEvent.getProperty().getValue();
-                    String postitoimipaikkaStr = tarjontaUIHelper.getKoodiNimi(koodiUri,I18N.getLocale());
-                    postitoimiPaikka.setValue(postitoimipaikkaStr);
-                }
-            }
-        });
 
 
-        return osoiteAddLayout;
-    }
+
 
     private ValintakoeKuvausTabSheet buildValintakoeKuvausTabSheet() {
         valintaKoeKuvaus = new ValintakoeKuvausTabSheet();
@@ -319,7 +289,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         cancelButton = UiBuilder.button(null, T("HakukohdeValintakoeViewImpl.cancelBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-
+                  presenter.closeValintakoeEditWindow();
             }
         });
         horizontalButtonLayout.addComponent(cancelButton);
@@ -328,7 +298,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
 
-
+                 presenter.saveHakukohdeValintakoe(getValintakokeenKuvaukset());
             }
         });
         horizontalButtonLayout.addComponent(saveButton);

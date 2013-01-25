@@ -50,25 +50,50 @@ public class HakukohdeValintakoeRow extends HorizontalLayout {
 
     public HakukohdeValintakoeRow(ValintakoeViewModel valintakoe) {
         valintakoeViewModel = valintakoe;
-        valintakokeenTyyppi = valintakoeViewModel.getValintakoeTyyppi();
+        setValintakokeenTyyppi(tarjontaUIHelper.getKoodiNimi(valintakoeViewModel.getValintakoeTyyppi()));
         resolveSanallinenKuvaus();
 
-        muokkaaBtn = UiUtil.buttonLink(null, i18n.getMessage("muokkaaBtn"), new Button.ClickListener() {
+        setMuokkaaBtn(UiUtil.buttonLink(null, i18n.getMessage("muokkaaBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
 
             }
-        });
+        }));
     }
 
     private void resolveSanallinenKuvaus() {
         if (valintakoeViewModel != null && valintakoeViewModel.getSanallisetKuvaukset() != null) {
             for (KielikaannosViewModel teksti:valintakoeViewModel.getSanallisetKuvaukset()) {
                 if (teksti.getKielikoodi().trim().equalsIgnoreCase(I18N.getLocale().getLanguage().trim())) {
-                    sanallinenKuvaus = teksti.getNimi();
+                    setSanallinenKuvaus(teksti.getNimi());
                 }
             }
         }
+    }
+
+
+    public String getValintakokeenTyyppi() {
+        return valintakokeenTyyppi;
+    }
+
+    public void setValintakokeenTyyppi(String valintakokeenTyyppi) {
+        this.valintakokeenTyyppi = valintakokeenTyyppi;
+    }
+
+    public String getSanallinenKuvaus() {
+        return sanallinenKuvaus;
+    }
+
+    public void setSanallinenKuvaus(String sanallinenKuvaus) {
+        this.sanallinenKuvaus = sanallinenKuvaus;
+    }
+
+    public Button getMuokkaaBtn() {
+        return muokkaaBtn;
+    }
+
+    public void setMuokkaaBtn(Button muokkaaBtn) {
+        this.muokkaaBtn = muokkaaBtn;
     }
 
 

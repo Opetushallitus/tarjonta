@@ -41,6 +41,7 @@ public class TarjontaModel extends BaseUIViewModel {
     private HakukohdeViewModel hakukohde;
     private HakukohdeLiiteViewModel selectedLiite;
     private ValintakoeViewModel selectedValintaKoe;
+    private ValintakoeAikaViewModel selectedValintakoeAika;
 
     /*
      * Selected organisaatio data:
@@ -212,5 +213,16 @@ public class TarjontaModel extends BaseUIViewModel {
 
     public void setSelectedValintaKoe(ValintakoeViewModel selectedValintaKoe) {
         this.selectedValintaKoe = selectedValintaKoe;
+    }
+
+    public ValintakoeAikaViewModel getSelectedValintakoeAika() {
+        if (selectedValintakoeAika == null ) {
+            selectedValintakoeAika = new ValintakoeAikaViewModel();
+        }
+        return selectedValintakoeAika;
+    }
+
+    public void setSelectedValintakoeAika(ValintakoeAikaViewModel selectedValintakoeAika) {
+        this.selectedValintakoeAika = selectedValintakoeAika;
     }
 }

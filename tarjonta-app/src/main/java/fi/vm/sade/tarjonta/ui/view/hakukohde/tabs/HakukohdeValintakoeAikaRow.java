@@ -54,13 +54,18 @@ public class HakukohdeValintakoeAikaRow {
 
     private ValintakoeAikaViewModel rowValintakoeAika;
 
+    private HakukohdeValintakoeViewImpl parent;
+
     public  HakukohdeValintakoeAikaRow(ValintakoeAikaViewModel aika) {
         rowValintakoeAika = aika;
         resolveFields();
         poistaBtn = UiUtil.buttonLink(null, i18n.getMessage("poistaBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-
+                  tarjontaPresenter.removeValintakoeAikaSelection(rowValintakoeAika);
+                  if (parent != null) {
+                      parent.loadTableData();
+                  }
             }
         });
     }
@@ -74,6 +79,10 @@ public class HakukohdeValintakoeAikaRow {
 
             lisatietoja = rowValintakoeAika.getValintakoeAikaTiedot();
         }
+    }
+
+    public void setParent(HakukohdeValintakoeViewImpl param) {
+        parent = param;
     }
 
     public String getSijainti() {

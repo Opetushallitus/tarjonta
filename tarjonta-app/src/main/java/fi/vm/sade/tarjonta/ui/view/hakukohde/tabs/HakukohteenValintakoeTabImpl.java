@@ -19,6 +19,7 @@ import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
@@ -84,6 +85,7 @@ public class HakukohteenValintakoeTabImpl extends AbstractVerticalNavigationLayo
 
         if (id == null) {
             presenter.getModel().setSelectedValintaKoe(new ValintakoeViewModel());
+
         } else {
             presenter.loadValintakoeWithId(id);
         }
@@ -97,14 +99,14 @@ public class HakukohteenValintakoeTabImpl extends AbstractVerticalNavigationLayo
 
         mainWindowLayout.setSizeUndefined();
         valintakoeView.setImmediate(true);
-        valintakoeView.setWidth("900px");
+        valintakoeView.setWidth("1000px");
 
         valintakoeEditWindow.setModal(true);
         valintakoeEditWindow.center();
 
     }
 
-    private void loadTableData() {
+    public void loadTableData() {
 
         if (valintakoeTable != null) {
             valintakoeTable.removeAllItems();
@@ -117,9 +119,9 @@ public class HakukohteenValintakoeTabImpl extends AbstractVerticalNavigationLayo
 
         if (valintakoeTable != null) {
             valintakoeTable.setContainerDataSource(createBeanContainer(presenter.loadHakukohdeValintaKokees()));
-            valintakoeTable.setWidth(100,UNITS_PERCENTAGE);
-            valintakoeTable.setVisibleColumns(new String[]{"valintakokeenTyyppi","sanallinenKuvaus","muokkaaBtn"});
-            valintakoeTable.setColumnHeader("valintakokeenTyyppi",T("valinkoeTyyppiHdr"));
+            valintakoeTable.setWidth(100, UNITS_PERCENTAGE);
+            valintakoeTable.setVisibleColumns(new String[]{"valintakokeenTyyppi", "sanallinenKuvaus", "muokkaaBtn"});
+            valintakoeTable.setColumnHeader("valintakokeenTyyppi", T("valinkoeTyyppiHdr"));
             valintakoeTable.setColumnHeader("sanallinenKuvaus",T("sanallinenKuvaus"));
             valintakoeTable.setColumnHeader("muokkaaBtn","");
             valintakoeTable.setImmediate(true);
@@ -136,7 +138,7 @@ public class HakukohteenValintakoeTabImpl extends AbstractVerticalNavigationLayo
 
         for (ValintakoeViewModel valintakoe:valintaKokees) {
             HakukohdeValintakoeRow row = new HakukohdeValintakoeRow(valintakoe);
-            container.addItem(row);
+            container.addItem(valintakoe.getValintakoeTunniste(),row);
         }
 
         return container;

@@ -32,6 +32,36 @@ public class ValintakoeAikaViewModel {
     private Date alkamisAika;
     private Date paattymisAika;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ValintakoeAikaViewModel that = (ValintakoeAikaViewModel) o;
+
+        if (alkamisAika != null ? !alkamisAika.equals(that.alkamisAika) : that.alkamisAika != null) return false;
+        if (osoiteRivi != null ? !osoiteRivi.equals(that.osoiteRivi) : that.osoiteRivi != null) return false;
+        if (paattymisAika != null ? !paattymisAika.equals(that.paattymisAika) : that.paattymisAika != null)
+            return false;
+        if (postinumero != null ? !postinumero.equals(that.postinumero) : that.postinumero != null) return false;
+        if (postitoimiPaikka != null ? !postitoimiPaikka.equals(that.postitoimiPaikka) : that.postitoimiPaikka != null)
+            return false;
+        if (valintakoeAikaTiedot != null ? !valintakoeAikaTiedot.equals(that.valintakoeAikaTiedot) : that.valintakoeAikaTiedot != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = valintakoeAikaTiedot != null ? valintakoeAikaTiedot.hashCode() : 0;
+        result = 31 * result + (osoiteRivi != null ? osoiteRivi.hashCode() : 0);
+        result = 31 * result + (postinumero != null ? postinumero.hashCode() : 0);
+        result = 31 * result + (postitoimiPaikka != null ? postitoimiPaikka.hashCode() : 0);
+        result = 31 * result + (alkamisAika != null ? alkamisAika.hashCode() : 0);
+        result = 31 * result + (paattymisAika != null ? paattymisAika.hashCode() : 0);
+        return result;
+    }
 
     public String getValintakoeAikaTiedot() {
         return valintakoeAikaTiedot;

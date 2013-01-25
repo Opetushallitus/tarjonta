@@ -61,6 +61,18 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
             liitteet.reloadTableData();
         }
     }
+
+    public void loadValintakokees() {
+        if (valintakokeet != null) {
+            valintakokeet.loadTableData();
+        }
+    }
+
+    public void closeValintakoeEditWindow() {
+        if (valintakokeet != null) {
+            valintakokeet.closeValintakoeEditWindow();
+        }
+    }
     
     public void closeHakukohdeLiiteEditWindow() {
         if (liitteet != null) {
