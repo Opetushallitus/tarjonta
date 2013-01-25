@@ -27,6 +27,7 @@ import com.vaadin.ui.Component.Event;
 import com.vaadin.ui.Component.Listener;
 
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
 import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow;
 import fi.vm.sade.tarjonta.ui.view.haku.ListHakuViewImpl;
@@ -93,7 +94,7 @@ public class HakuRootView extends Window {
                 if (event instanceof HakuResultRow.HakuRowMenuEvent) {
                     handleHakuRowMenuEvent((HakuResultRow.HakuRowMenuEvent) event);
                 } else if (event instanceof ListHakuViewImpl.NewHakuEvent) {
-                    hakuPresenter.showHakuEdit(null);
+                    hakuPresenter.showHakuEdit(new HakuViewModel());
                 }
             }
         });

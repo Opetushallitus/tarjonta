@@ -35,7 +35,6 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
@@ -131,7 +130,6 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
     private Button lisaaHakuaika;
     private Form form;
     private transient I18NHelper _i18n;
-    private ErrorMessage errorView;
     private boolean attached = false;
 
     public EditHakuFormImpl() {
@@ -152,6 +150,7 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         // Create root layout for this component
         _layout = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
         addComponent(_layout);
+        
 
         //
         // Init fields
@@ -311,6 +310,22 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
 
     }
 
+    public List<String> checkNimi() {
+        List<String> errorMessages = new ArrayList<String>();
+        if (fieldEmpty(_haunNimiFI) 
+                && fieldEmpty(_haunNimiSE)
+                && fieldEmpty(_haunNimiEN)) {
+            errorMessages.add(T("validation.nimiNull"));
+        }
+        return errorMessages;
+    }
+    
+    public boolean fieldEmpty(TextField textField) {
+        return (textField == null)
+                || (textField.getValue() == null)
+                || (((String)textField.getValue()).isEmpty());
+    }
+
     /**
      * Translator helper. Makes code so much more hip... and shorter.
      *
@@ -344,24 +359,22 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
             initHakuaikaContainer(hakuajat);
         }
 
-        public boolean bindHakuajat() {
-            boolean isValid = true;
+        public List<String> bindHakuajat() {
+            List<String> errorMessages = new ArrayList<String>();
             List<HakuaikaViewModel> hakuajat = new ArrayList<HakuaikaViewModel>();
             for (HakuajatView curRow : this.getItemIds()) {
                 if (curRow.getLoppuPvm().getValue() != null && curRow.getAlkuPvm().getValue() != null) {
                     hakuajat.add(curRow.getModel());
                 } else {
-                    errorView.addError(_i18n.getMessage("HakuaikaVirhe"));
-                    isValid = false;
+                    errorMessages.add(_i18n.getMessage("HakuaikaVirhe"));
                 }
             }
-            if (isValid && hakuajat.isEmpty()) {
-                errorView.addError(_i18n.getMessage("hakuajatEmpty"));
-                isValid = false;
+            if (errorMessages.isEmpty() && hakuajat.isEmpty()) {
+                errorMessages.add(_i18n.getMessage("hakuajatEmpty"));
             }
             presenter.getHakuModel().setSisaisetHakuajat(hakuajat);
 
-            return isValid;
+            return errorMessages;
         }
 
         public void addRowToHakuajat() {

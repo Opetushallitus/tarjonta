@@ -70,7 +70,7 @@ public abstract class EditLayoutView<MODEL extends BaseUIViewModel, VIEW extends
     private String modelOid;
     private SisaltoTyyppi sisalto;
     private int formDataUnmodifiedHashcode = -1;
-    private ErrorMessage errorView;
+    protected ErrorMessage errorView;
     private Form form;
     private MODEL model;
     private String tilaNestedProperty = "tila"; //all models should have a variable name 'tila' for TarjontaTila enum.

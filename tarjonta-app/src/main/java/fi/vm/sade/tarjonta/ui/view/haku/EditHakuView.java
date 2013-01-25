@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.view.haku;
 
+import java.util.List;
+
 import com.vaadin.data.Validator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.VerticalLayout;
@@ -67,12 +69,16 @@ public class EditHakuView extends EditLayoutView<HakuViewModel, EditHakuFormImpl
 
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
-        boolean hakuajatValid = formView.getSisaisetHakuajatContainer().bindHakuajat();
-
+        List<String> errorMessages = formView.getSisaisetHakuajatContainer().bindHakuajat();
+        errorMessages.addAll(formView.checkNimi());
+        
         if (presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
             presenter.getHakuModel().setHakuLomakeUrl(null);
         }
-        if (!hakuajatValid) {
+        if (!errorMessages.isEmpty()) {
+            for (String curMessage : errorMessages) {
+                this.errorView.addError(curMessage);
+            }
             throw new Validator.InvalidValueException("");
         }
 
