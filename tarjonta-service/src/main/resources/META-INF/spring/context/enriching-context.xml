@@ -27,7 +27,7 @@
     </jaxws:client>
 
     <!-- wrapper service that uses koodisto webservice for content -->
-    <bean id="koodistoLookupService" class="fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupWebServiceImpl"/>
+    <bean id="koodistoLookupService" class="fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoLookupWebServiceImpl"/>
 
     <!-- wrapper service that uses tarjoaja webservice for content -->
     <bean id="tarjoajaLookupService" class="fi.vm.sade.tarjonta.publication.enricher.organisaatio.KoulutustarjoajaLookupWebServiceImpl"/>

@@ -22,7 +22,7 @@ import fi.vm.sade.tarjoaja.service.KoulutustarjoajaPublicService;
 import fi.vm.sade.tarjoaja.service.types.FindByOrganizationOidRequestType;
 import fi.vm.sade.tarjoaja.service.types.FindByOrganizationOidResponseType;
 import fi.vm.sade.tarjoaja.service.types.KoulutustarjoajaTyyppi;
-import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoCodeValueEnricher;
+import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoCodeValueEnricher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -15,12 +15,10 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher.factory;
 
-import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoCodeValueCollectionEnricher;
-import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoCodeValueEnricher;
-import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupService;
+import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoCodeValueEnricher;
+import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoLookupService;
 import fi.vm.sade.tarjonta.publication.enricher.XMLStreamEnricher;
-import fi.vm.sade.tarjonta.publication.enricher.organisaatio.KoulutustarjoajaEnricher;
-import fi.vm.sade.tarjonta.publication.enricher.organisaatio.KoulutustarjoajaLookupService;
+import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoCodeValueCollectionEnricher;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,9 +33,6 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
 
     @Autowired(required = true)
     private KoodistoLookupService koodistoService;
-
-    @Autowired(required = true)
-    private KoulutustarjoajaLookupService tarjoajaService;
 
     private boolean failOnKoodistoError = false;
 
@@ -132,12 +127,6 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
             processor.registerTagNameHandler(tag, codeValueCollectionEnricher);
         }
 
-        final KoulutustarjoajaEnricher tarjoajaEnricher = new KoulutustarjoajaEnricher();
-        tarjoajaEnricher.setTarjoajaService(tarjoajaService);
-        for (String tag : KOULUTUSTARJOAJA_TAGS) {
-            processor.registerTagNameHandler(tag, tarjoajaEnricher);
-        }
-
         return processor;
 
     }
@@ -152,15 +141,6 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
     }
 
     /**
-     * Set Tarjoaja service that will be passed to enrichers using Koulutustarjoaja data.
-     *
-     * @param tarjoajaService
-     */
-    public void setTarjoajaService(KoulutustarjoajaLookupService tarjoajaService) {
-        this.tarjoajaService = tarjoajaService;
-    }
-
-    /**
      * This flag is passed on to koodisto enrichers.
      *
      * @param failOnKoodistoError
@@ -171,6 +151,5 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
     public void setFailOnKoodistoError(boolean failOnKoodistoError) {
         this.failOnKoodistoError = failOnKoodistoError;
     }
-
 }
 

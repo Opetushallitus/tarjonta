@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher.mock;
 
-import fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupService;
+import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoLookupService;
 
 /**
  *

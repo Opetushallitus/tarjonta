@@ -44,7 +44,7 @@
                   address="${koodisto.webservice.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}"/>
 
     <!-- wrapper service that uses koodisto webservice for content -->
-    <bean id="koodistoLookupService" class="fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupWebServiceImpl"/>
+    <bean id="koodistoLookupService" class="fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoLookupWebServiceImpl"/>
     
     <!-- factory that knows how to create enricher for publication data -->
     <bean id="xmlEnricher" class="fi.vm.sade.tarjonta.publication.enricher.factory.LearningOpportunityDataEnricherFactory">
