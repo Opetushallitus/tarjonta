@@ -34,27 +34,21 @@
         </cxf:outInterceptors>
     </cxf:bus>
 
-
     <!-- todo: address to properties -->
     <jaxws:client id="koodiPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
-                  address="http://itest-virkailija.oph.ware.fi/cxf/koodiService"/>
+                  address="${koodi.webservice.url:http://NO_KOODI_WEBSERVICE_URL_CONFIGURED}"/>
 
-    <bean id="tarjoajaService" class="fi.vm.sade.tarjonta.publication.enricher.mock.KoulutustarjoajaPublicServiceMock"/>
+    <jaxws:client id="koodistoPublicService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
+                  address="${koodisto.webservice.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}"/>
 
-    
     <!-- wrapper service that uses koodisto webservice for content -->
     <bean id="koodistoLookupService" class="fi.vm.sade.tarjonta.publication.enricher.koodisto.KoodistoLookupWebServiceImpl"/>
-
-    <!-- wrapper service that uses tarjoaja webservice for content -->
-    <bean id="tarjoajaLookupService" class="fi.vm.sade.tarjonta.publication.enricher.organisaatio.KoulutustarjoajaLookupWebServiceImpl">  
-    </bean>
     
- 
     <!-- factory that knows how to create enricher for publication data -->
     <bean id="xmlEnricher" class="fi.vm.sade.tarjonta.publication.enricher.factory.LearningOpportunityDataEnricherFactory">
         <property name="failOnKoodistoError" value="false"/>
     </bean>
 
-   
 </beans>
