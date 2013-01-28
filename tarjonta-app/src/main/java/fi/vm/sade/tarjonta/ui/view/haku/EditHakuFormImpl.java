@@ -363,12 +363,16 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
             List<String> errorMessages = new ArrayList<String>();
             List<HakuaikaViewModel> hakuajat = new ArrayList<HakuaikaViewModel>();
             for (HakuajatView curRow : this.getItemIds()) {
-                if (curRow.getLoppuPvm().getValue() != null && curRow.getAlkuPvm().getValue() != null) {
-                    hakuajat.add(curRow.getModel());
-                } else {
+                if (curRow.getLoppuPvm().getValue() == null 
+                        || curRow.getAlkuPvm().getValue() == null) {
                     errorMessages.add(_i18n.getMessage("HakuaikaVirhe"));
+                } else if (curRow.getModel().getAlkamisPvm().after(curRow.getModel().getPaattymisPvm())) {
+                    errorMessages.add(_i18n.getMessage("HakuaikaVirheJarjestys"));
+                } else {
+                    hakuajat.add(curRow.getModel());
                 }
             }
+            
             if (errorMessages.isEmpty() && hakuajat.isEmpty()) {
                 errorMessages.add(_i18n.getMessage("hakuajatEmpty"));
             }
