@@ -97,10 +97,11 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichCredits() throws Exception {
 
-
-
-        final String basePath = SPECIFICATION_PATH + "/Credits";
-        assertCodeValue(basePath, "laajuus", "laajuus");
+        final String basePathUnits = SPECIFICATION_PATH + "/Credits/Units";
+        assertCodeValue(basePathUnits, "laajuus", "laajuus");
+        
+        final String basePathValue = SPECIFICATION_PATH + "/Credits/Value";
+        assertCodeValue(basePathValue, "20", "20");
 
     }
 
@@ -388,7 +389,10 @@ public class LearningOpportunityEnricherTest {
 
         when(service.lookupKoodi("371101", 2010)).thenReturn(createSimpleKoodiValue("koulutusluokitus"));
         when(service.lookupKoodi("uri:koulutusala", CODE_VERSION)).thenReturn(createSimpleKoodiValue("koulutusala"));
+       
         when(service.lookupKoodi("laajuus1", CODE_VERSION)).thenReturn(createSimpleKoodiValue("laajuus"));
+        when(service.lookupKoodi("uri:laajuusarvo", CODE_VERSION)).thenReturn(createSimpleKoodiValue("20"));
+         
         when(service.lookupKoodi("uri tutkintonimike", CODE_VERSION)).thenReturn(createSimpleKoodiValue("tutkintonimike"));
         when(service.lookupKoodi("uri:koulutusaste", CODE_VERSION)).thenReturn(createSimpleKoodiValue("koulutusaste"));
         when(service.lookupKoodi("uri:opintoala", CODE_VERSION)).thenReturn(createSimpleKoodiValue("opintoala"));
@@ -477,7 +481,7 @@ public class LearningOpportunityEnricherTest {
     }
 
     private KoodiValue createSimpleKoodiValue(String baseName) {
-
+        System.out.println(baseName);
         return new SimpleKoodiValue(baseName + "-uri", baseName + "-value", baseName + "-fi", baseName + "-en", baseName + "-sv");
 
     }

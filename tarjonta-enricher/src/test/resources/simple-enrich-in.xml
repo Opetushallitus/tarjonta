@@ -25,8 +25,12 @@
 
         <!-- laajuus sekä laajuusyksikkö -->
         <Credits>
-            <Code scheme="Koodisto" version="1" uri="laajuus1"></Code>
-            <Value>20</Value>
+            <Units>
+                <Code scheme="Koodisto" version="1" uri="laajuus1"></Code>
+            </Units>
+            <Value>
+                <Code scheme="Koodisto" version="1" uri="uri:laajuusarvo"></Code>
+            </Value>
         </Credits>
 
         <!-- tutkintonimike -->
@@ -158,14 +162,14 @@
         </Keywords>
 
         <!-- opetuskielet -->
-        <LanguagesOfInstruction scheme="Koodisto" version="1">
+        <LanguagesOfInstruction scheme="Koodisto">
 
-            <Code uri="uri:kieli/fi">
+            <Code version="1" uri="uri:kieli/fi">
                 <Label lang="fi">kieli-fi</Label>
                 <Label lang="en">kieli-en</Label>
                 <Label lang="sv">kieli-sv</Label>
             </Code>
-            <Code uri="uri:kieli/en">
+            <Code version="1" uri="uri:kieli/en">
                 <Label lang="fi">kieli-fi</Label>
                 <Label lang="en">kieli-en</Label>
                 <Label lang="sv">kieli-sv</Label>
@@ -174,8 +178,8 @@
         </LanguagesOfInstruction>
 
         <!--koulutuslaji -->
-        <FormOfEducation scheme="Koodisto" version="1">
-            <Code uri="uri:koulutuslaji/nuorten">
+        <FormOfEducation scheme="Koodisto">
+            <Code version="1" uri="uri:koulutuslaji/nuorten">
                 <Label lang="fi">koulutuslaji-fi</Label>
                 <Label lang="en">koulutuslaji-en</Label>
                 <Label lang="sv">koulutuslaji-sv</Label>
@@ -183,8 +187,8 @@
         </FormOfEducation>
 
         <!-- joukko opetusmuotoja -->
-        <FormsOfTeaching scheme="Koodisto" version="1">
-            <Code uri="uri:opetusmuoto/lahiopetus">
+        <FormsOfTeaching scheme="Koodisto" >
+            <Code uri="uri:opetusmuoto/lahiopetus" version="1">
                 <Label lang="fi">opetusmuoto-fi</Label>
                 <Label lang="en">opetusmuoto-en</Label>
                 <Label lang="sv">opetusmuoto-sv</Label>

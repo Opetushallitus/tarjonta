@@ -25,6 +25,7 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioKuvaTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioKuvailevatTiedotTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
+import fi.vm.sade.organisaatio.api.model.types.PuhelinNumeroTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.PuhelinnumeroDTO;
 import fi.vm.sade.organisaatio.api.model.types.SoMeLinkkiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.WwwDTO;
@@ -303,7 +304,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         addTutkintonimike(moduuli, specification);
 
         // LearningOpportunitySpecification/DegreeTitle
-        specification.setDegreeTitle(createExtendedString(moduuli.getTutkintoOhjelmanNimi()));
+        specification.setDegreeTitle(createCodeValue(CodeSchemeType.KOODISTO, moduuli.getKoulutusohjelmaKoodi()));
 
         // LearningOpportunitySpecification/Classification
         Classification classification = new Classification();
@@ -434,14 +435,19 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
                 } else if (yhtDto instanceof PuhelinnumeroDTO) {
                     PuhelinnumeroDTO p = (PuhelinnumeroDTO) yhtDto;
-                    if (p != null) {
-                        pat.setPhoneNumber(p.getPuhelinnumero());
+                    pat.setPhoneNumber(p.getPuhelinnumero());
+                    switch (p.getTyyppi()) {
+                        case FAKSI:
+                            pat.setScheme(AddressInfoSchemeType.FAX);
+                            break;
+                        case PUHELIN:
+                            pat.setScheme(AddressInfoSchemeType.PHONE);
+                            break;
                     }
                 } else if (yhtDto instanceof OsoiteDTO) {
                     OsoiteDTO osoiteDto = (OsoiteDTO) yhtDto;
 
                     if (osoiteDto != null) {
-
                         //address information
                         pat.getAddressLine().add(osoiteDto.getOsoite());
                         pat.getAddressLine().add(osoiteDto.getExtraRivi());
@@ -452,13 +458,13 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                         if (osoiteDto.getOsoiteTyyppi() != null) {
                             switch (osoiteDto.getOsoiteTyyppi()) {
                                 case KAYNTI:
-                                    pat.setLocationScheme(LocationSchemeType.ADMISSION_OFFICE_ENTRANCE);
+                                    pat.setScheme(AddressInfoSchemeType.ADMISSION_OFFICE_ENTRANCE);
                                     break;
                                 case POSTI:
-                                    pat.setLocationScheme(LocationSchemeType.ADMISSION_OFFICE_POST_ADDRESS);
+                                    pat.setScheme(AddressInfoSchemeType.ADMISSION_OFFICE_POST_ADDRESS);
                                     break;
                                 case MUU:
-                                    pat.setLocationScheme(LocationSchemeType.OTHER);
+                                    pat.setScheme(AddressInfoSchemeType.OTHER);
                                     break;
                             }
                         }
@@ -672,15 +678,9 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
     private void addLaajuus(Koulutusmoduuli source, LearningOpportunitySpecificationType target) {
 
         if (source.getLaajuusArvo() != null) {
-
             CreditsType credits = new CreditsType();
-
-            Code code = new Code();
-            code.setScheme(CodeSchemeType.KOODISTO);
-            code.setValue(source.getLaajuusYksikko());
-            credits.setCode(code);
-
-            credits.setValue(source.getLaajuusArvo());
+            credits.setUnits(createCodeValue(CodeSchemeType.KOODISTO, source.getLaajuusYksikko()));
+            credits.setValue(createCodeValue(CodeSchemeType.KOODISTO, source.getLaajuusArvo()));
             target.setCredits(credits);
         }
     }
@@ -805,6 +805,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                     event.setLocations(locations);
                     ExaminationLocationType location = new ExaminationLocationType();
                     location.getAddressLine().add(ajankohta.getAjankohdanOsoite().getOsoiterivi1());
+                    location.getAddressLine().add(ajankohta.getAjankohdanOsoite().getOsoiterivi2());
                     location.setCity(ajankohta.getAjankohdanOsoite().getPostitoimipaikka());
                     location.setPostalCode(ajankohta.getAjankohdanOsoite().getPostinumero());
                     locations.getLocation().add(location);
@@ -1242,6 +1243,8 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                 return DescriptionType.EXTRA_MURAL_AND_LEISURE_FACILITIES;
             case YLEISKUVAUS:
                 return DescriptionType.GENERAL;
+            case ESTEETOMYYS:
+                return DescriptionType.FACILITIES_FOR_STUDENTS_WITH_SPECIAL_NEEDS;
         }
         return null;
     }
@@ -1253,8 +1256,8 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      */
     private static DescriptionType lopInstitutionInformation(KuvailevaTietoTyyppi metaKey) {
         switch (metaKey.getTyyppi()) {
-            case ESTEETOMYYS:
-                return DescriptionType.ADMISSION_PROCEDURES;
+            case VALINTAMENETTELY:
+                  return  DescriptionType.ADMISSION_PROCEDURES;
             case VASTUUHENKILOT:
                 return DescriptionType.ACADEMIC_AUTHORITIES;
             case VUOSIKELLO:

@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher;
 
+import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoLookupService.KoodiValue;
+import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoLookupWebServiceImpl;
 import java.io.*;
 import java.util.regex.Pattern;
 
@@ -173,6 +175,11 @@ public class XMLStreamEnricherTest {
         public Attributes getAttributes() {
             return attr;
         }
+
+        @Override
+        public KoodiValue lookupKoodi(String koodiUri, Integer koodiVersion) {
+            throw new UnsupportedOperationException("TODO");
+        }
     }
 
     private class MockKoodistoHandler extends ElementEnricher {
@@ -229,6 +236,11 @@ public class XMLStreamEnricherTest {
         @Override
         public Attributes getAttributes() {
             return attr;
+        }
+
+        @Override
+        public KoodiValue lookupKoodi(String koodiUri, Integer koodiVersion) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     }
 }

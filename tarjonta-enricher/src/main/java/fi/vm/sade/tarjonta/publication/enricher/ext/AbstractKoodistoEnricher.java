@@ -48,7 +48,8 @@ public abstract class AbstractKoodistoEnricher extends ElementEnricher {
      * Helper method that invokes KoodistoLookupService and catches any errors
      * if {@link #failOnKoodiError} is set to false.
      */
-    protected KoodiValue lookupKoodi(String koodiUri, Integer koodiVersion) {
+    @Override
+    public KoodiValue lookupKoodi(final String koodiUri, final Integer koodiVersion) {
         log.debug("looking up koodi koodiUri: '{}', koodiVersion: '{}'", koodiUri, koodiVersion);
         if (failOnKoodiError) {
             return koodistoService.lookupKoodi(koodiUri, koodiVersion);
@@ -60,6 +61,7 @@ public abstract class AbstractKoodistoEnricher extends ElementEnricher {
                 return null;
             }
         }
-
     }
+
+    
 }

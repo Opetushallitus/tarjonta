@@ -16,11 +16,10 @@
 package fi.vm.sade.tarjonta.publication.enricher.ext;
 
 import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoLookupService.KoodiValue;
+import fi.vm.sade.tarjonta.publication.utils.SaxUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import java.util.HashSet;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.helpers.AttributesImpl;
@@ -33,31 +32,35 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 public class KoodistoCodeValueCollectionEnricher extends KoodistoCodeValueEnricher {
 
+    private static final String TAG_ATTRIBUTE_VALUE = "value";
     private static final Logger log = LoggerFactory.getLogger(KoodistoCodeValueCollectionEnricher.class);
     private KoodiValue koodistoKoodi;
 
     @Override
     public int startElement(String localName, Attributes attributes) throws SAXException {
         if (TAG_CODE.equals(localName)) {
-            koodiUri = koodiUri(attributes);
-            final KoodiValue koodistoKoodi = getKoodistoKoodi(localName);
-
-            if (koodistoKoodi != null) {
-                AttributesImpl atts = new AttributesImpl();
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    atts.addAttribute("", attributes.getQName(i), null, null, attributes.getValue(i));
-                }
-
-                atts.addAttribute("", "value", null, null, koodistoKoodi.getValue());
-                setAttributes(atts);
-            } else {
-                setAttributes(attributes);
+            for (int i = 0; i < attributes.getLength(); i++) {
+                log.debug(attributes.getURI(i) + "," + attributes.getLocalName(i) + "," + attributes.getQName(i) + "," + attributes.getType(i) + "," + attributes.getValue(i));
             }
+            int startElementHandler = startElementHandler(TAG_CODE, localName, attributes);
+            koodistoKoodi = getKoodistoKoodi(localName);
+
+            log.debug(localName);
+
+            //add a 'value'-attribute to tag
+            if (koodistoKoodi != null && koodistoKoodi.getValue() != null) {
+                AttributesImpl copy = SaxUtils.copyAttributes(attributes);
+                SaxUtils.addAttribute(copy, TAG_ATTRIBUTE_VALUE, koodistoKoodi.getValue());
+                setAttributes(copy);
+            }
+            return startElementHandler;
         } else {
+            //get a scheme 'Koodisto' form parent and store it for the next element loop.
+            if (scheme == null) {
+                scheme = attributes.getValue(EMPTY_STRING, ATTRIBUTE_SCHEME);
+            }
             return startElementHandler(mappedElementName, localName, attributes);
         }
-
-        return WRITE_AND_CONTINUE;
     }
 
     @Override

@@ -269,6 +269,10 @@
             </xs:element>
 
         </xs:sequence>
+    
+        <xs:attribute name="status"
+                      type="tns:StatusSchemeType"
+                      use="optional"/>
     </xs:complexType>
 
     <xs:complexType name="SelectionCriterionsType">
@@ -630,7 +634,7 @@
                                 maxOccurs="1"/>
 
                     <xs:element name="DegreeTitle"
-                                type="tns:ExtendedStringType"
+                                type="tns:CodeValueType"
                                 minOccurs="0"
                                 maxOccurs="1">
                         <xs:annotation>
@@ -808,11 +812,17 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                
+                <xs:attribute name="status"
+                              type="tns:StatusSchemeType"
+                              use="optional"/>
 
                 <xs:attributeGroup ref="tns:LearningOpportunityModuleAttrGroup"/>
 
             </xs:extension>
         </xs:complexContent>
+        
+        
     </xs:complexType>
 
 
@@ -962,6 +972,10 @@
 
         <xs:attribute name="id"
                       type="xs:ID"
+                      use="optional"/>
+        
+        <xs:attribute name="status"
+                      type="tns:StatusSchemeType"
                       use="optional"/>
 
     </xs:complexType>
@@ -1462,20 +1476,22 @@
     </xs:complexType>
 
     <xs:complexType name="CreditsType">
-        <xs:complexContent>
-            <xs:extension base="tns:CodeValueType">
-                <xs:sequence>
-                    <xs:element name="Value"
-                                type="xs:string">
-                        <xs:annotation>
-                            <xs:documentation xml:lang="fi">
-                                Data:n arvo.
-                            </xs:documentation>
-                        </xs:annotation>
-                    </xs:element>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
+        <xs:sequence>
+            <xs:element name="Units" type="tns:CodeValueType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Data:n tyyppi.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Value" type="tns:CodeValueType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Data:n arvo.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>  
     </xs:complexType>
 
     <xs:complexType name="ContributorType">
@@ -1633,6 +1649,10 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        
+        <xs:attribute name="status"
+                      type="tns:StatusSchemeType"
+                      use="optional"/>
 
     </xs:complexType>
 
@@ -2257,7 +2277,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:simpleType name="LocationSchemeType">
+    <xs:simpleType name="AddressInfoSchemeType">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
                 Osoite tyyppi.
@@ -2291,10 +2311,26 @@
             <xs:enumeration value="AdmissionOfficePostAddress">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
-                        Hakutoimisto.
+                        Hakutoimiston postiosoite.
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
+            
+            <xs:enumeration value="Phone">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Puhelin.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>   
+
+            <xs:enumeration value="Fax">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Faxi.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration> 
         </xs:restriction>
     </xs:simpleType>
     
@@ -2315,15 +2351,14 @@
             </xs:enumeration>   
         </xs:restriction>
     </xs:simpleType>
-    
-    
+   
     <xs:complexType name="ProviderAddressType">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>   
-            <xs:element name="LocationScheme" type="tns:LocationSchemeType"
+            <xs:element name="scheme" type="tns:AddressInfoSchemeType"
                         minOccurs="0"
                         maxOccurs="1">
                 <xs:annotation>
@@ -2358,5 +2393,12 @@
         </xs:sequence>      
        
     </xs:complexType>
+    
+    <xs:simpleType name="StatusSchemeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="published"/>
+            <xs:enumeration value="cancelled"/>
+        </xs:restriction>
+    </xs:simpleType>
     
 </xs:schema>

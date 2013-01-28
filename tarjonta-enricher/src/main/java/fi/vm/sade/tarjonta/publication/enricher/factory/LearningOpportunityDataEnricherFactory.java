@@ -23,9 +23,9 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Factory class that creates XMLStreamEnricher which has been populated
- * with XML enrichers which know how to enrich Tarjonta export
- * schema based XML (LearningOpportunityData).
+ * Factory class that creates XMLStreamEnricher which has been populated with
+ * XML enrichers which know how to enrich Tarjonta export schema based XML
+ * (LearningOpportunityData).
  *
  * @author Jukka Raanamo
  */
@@ -33,12 +33,10 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
 
     @Autowired(required = true)
     private KoodistoLookupService koodistoService;
-
     private boolean failOnKoodistoError = false;
-
     /**
-     * Element names that should be handled by KoodistoCodeValueEnricher. Note that these elements should have
-     * a unique name.
+     * Element names that should be handled by KoodistoCodeValueEnricher. Note
+     * that these elements should have a unique name.
      */
     private static final String[] KOODISTO_CODE_VALUE_TAGS = {
         "EducationClassification",
@@ -47,7 +45,6 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
         "StudyDomain",
         "EqfClassification",
         "NqfClassification",
-        "Credits",
         "Qualification",
         "Prerequisite",
         "Profession",
@@ -58,9 +55,12 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
         "ApplicationMethod",
         "ApplicationSeason",
         "EducationStartSeason",
-        "TargetGroup"
+        "TargetGroup",
+        "Text",
+        "DegreeTitle",
+        "Value",
+        "Description"
     };
-
     /**
      * Path expressions that should be handled by KoodistoCodeValueEnricher.
      */
@@ -68,17 +68,16 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
         ".*/ApplicationOption/Title",
         ".*/Attachment/Type"
     };
-
     /**
-     * Element names that should be handled by KoodistoCodeValueCollectionEnricher. Note that
-     * these elements should have a unique name.
+     * Element names that should be handled by
+     * KoodistoCodeValueCollectionEnricher. Note that these elements should have
+     * a unique name.
      */
     private static final String[] KOODISTO_CODE_VALUE_COLLECTION_TAGS = {
         "LanguagesOfInstruction",
         "FormOfEducation",
         "FormsOfTeaching"
     };
-
     /**
      * Element names that should be handled by KoulutustarjoajaEnricher.
      */
@@ -97,8 +96,8 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
     }
 
     /**
-     * Returns new XMLStreamEnricher prepared with enrichers that know how to handle
-     * LearningOpportunityData based XML documents.
+     * Returns new XMLStreamEnricher prepared with enrichers that know how to
+     * handle LearningOpportunityData based XML documents.
      *
      * @return
      */
@@ -132,7 +131,8 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
     }
 
     /**
-     * Set Koodisto service that will be passed to enrichers using Koodisto data.
+     * Set Koodisto service that will be passed to enrichers using Koodisto
+     * data.
      *
      * @param koodistoService
      */
@@ -152,4 +152,3 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
         this.failOnKoodistoError = failOnKoodistoError;
     }
 }
-

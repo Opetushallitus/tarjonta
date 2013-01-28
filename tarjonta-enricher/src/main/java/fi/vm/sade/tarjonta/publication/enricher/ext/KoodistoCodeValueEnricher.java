@@ -15,19 +15,15 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher.ext;
 
-import fi.vm.sade.tarjonta.publication.enricher.ElementEnricher;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoLookupService.KoodiValue;
 import fi.vm.sade.tarjonta.publication.utils.StringUtils;
-import fi.vm.sade.tarjonta.publication.utils.VersionedUri;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Handles elements that are of type:
@@ -51,11 +47,10 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
     private Set<String> existingLabels = new HashSet<String>();
     private Attributes attributes;
     private String value;
-    private String scheme;
+    protected String scheme;
 
     @Override
     public void reset() {
-        log.debug("reset");
         attributes = null;
         koodiUri = null;
         koodiVersion = null;
@@ -67,14 +62,18 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
     @Override
     public int startElement(String localName, Attributes attributes)
             throws SAXException {
+        scheme = attributes.getValue(EMPTY_STRING, ATTRIBUTE_SCHEME);
         return startElementHandler(TAG_CODE, localName, attributes);
     }
 
     protected int startElementHandler(final String tag, final String localName, final Attributes attributes) throws SAXException {
+        if (attributes == null) {
+            throw new IllegalArgumentException("Attributes object cannot be null.");
+        }
+
         this.attributes = attributes;
 
         if (tag.equals(localName)) {
-            scheme = attributes.getValue(EMPTY_STRING, ATTRIBUTE_SCHEME);
             if (!SCHEME_TYPE_KOODISTO.equals(scheme)) {
                 // this is not Koodisto based, nothing we can do about it
                 if (log.isDebugEnabled()) {
@@ -84,17 +83,9 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
                 return WRITE_AND_EXIT;
             }
 
-            koodiVersion = koodiVersion(attributes);
-            koodiUri = koodiUri(attributes);
-
-//            for (int i = 0; i < attributes.getLength(); i++) {
-//                String qName = attributes.getQName(i);
-//                System.out.println("qName for position " + i + ":  " + qName);
-//            }
-
+            findKoodiAttributes();
 
         } else if (TAG_LABEL.equals(localName)) {
-
             // label already exist, remember
             final String lang = attributes.getValue(ATTRIBUTE_LANG);
             if (StringUtils.notEmpty(lang)) {
@@ -103,6 +94,11 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
         }
 
         return WRITE_AND_CONTINUE;
+    }
+
+    protected void findKoodiAttributes() {
+        koodiVersion = koodiVersion(attributes);
+        koodiUri = koodiUri(attributes);
     }
 
     protected Integer koodiVersion(final Attributes attributes) {
@@ -135,7 +131,6 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
             maybeWriteLabels(localName, koodistoKoodi);
             return WRITE_AND_EXIT;
         } else {
-            //reset();
             return WRITE_AND_CONTINUE;
         }
     }
@@ -147,18 +142,18 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
         return WRITE_AND_CONTINUE;
     }
 
+    /**
+     * Search koodisto koodis by code uri and koodi version.
+     *
+     * @param localName
+     * @return
+     */
     protected KoodiValue getKoodistoKoodi(String localName) {
         if (koodiUri == null || koodiVersion == null) {
-            log.debug("no koodi value found for {}, skipping. uri: '{}", localName, koodiUri + "#" + koodiVersion);
+            log.warn("no koodi value found for {}, skipping. uri: '{}", localName, koodiUri + "#" + koodiVersion);
             return null;
         }
-        Date start = new Date();
-        KoodiValue lookupKoodi = lookupKoodi(koodiUri, koodiVersion);
-        
-        Date end = new Date();
-        log.debug("cal time : " + (start.getSeconds() - end.getSeconds()));
-
-        return lookupKoodi;
+        return lookupKoodi(koodiUri, koodiVersion);
     }
 
     protected void maybeWriteLabels(final String localName, KoodiValue koodistoKoodi) throws SAXException {
