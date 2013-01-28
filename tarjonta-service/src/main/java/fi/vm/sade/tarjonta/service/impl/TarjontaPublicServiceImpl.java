@@ -391,7 +391,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     }
 
     public LueKoulutusVastausTyyppi lueKoulutus(LueKoulutusKyselyTyyppi kysely) {
-        log.info("in LueKoulutusVastausTyyppi");
+        log.debug("in LueKoulutusVastausTyyppi");
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(kysely.getOid());
 
         LueKoulutusVastausTyyppi result = convert(komoto);
@@ -412,7 +412,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     }
 
     private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus fromKoulutus) {
-        log.info("in convert ");
+        log.debug("in convert ");
         LueKoulutusVastausTyyppi toKoulutus = new LueKoulutusVastausTyyppi();
         toKoulutus.setTila(EntityUtils.convertTila(fromKoulutus.getTila()));
 
