@@ -68,7 +68,7 @@ public class KoulutusResultRow extends HorizontalLayout {
     private String koulutusNimi;
     private Window removeKoulutusDialog;
     /**
-     * The presenter object for the component.
+     * The presenter object   for the component.
      */
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
