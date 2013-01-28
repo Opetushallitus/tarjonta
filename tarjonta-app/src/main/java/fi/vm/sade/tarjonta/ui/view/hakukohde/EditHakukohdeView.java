@@ -49,6 +49,12 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
         setHeight(-1, UNITS_PIXELS);
         
     }
+
+    public void enableValintakokeetTab() {
+        if (valintakokeetTab != null) {
+            valintakokeetTab.setEnabled(true);
+        }
+    }
     
     public void enableLiitteetTab() {
         if (liitteetTab != null) {
@@ -79,6 +85,12 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
             liitteet.closeEditWindow();
         }
     }
+
+    public void showHakukohdeValintakoeEditView(String valintakoeId) {
+        if (valintakokeet != null) {
+            valintakokeet.showValintakoeEditWithId(valintakoeId);
+        }
+    }
     
     public void showHakukohdeEditWindow(String liiteId) {
         if (liitteet != null) {
@@ -102,6 +114,7 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
         liitteetTab = tabs.addTab(liitteet, T("liitteetTab"));
         valintakokeetTab = tabs.addTab(valintakokeet,T("valintakoeTab"));
         liitteetTab.setEnabled(hakukohdeOid != null);
+        valintakokeetTab.setEnabled(hakukohdeOid != null);
         liitteet.reloadTableData();
     }
 }

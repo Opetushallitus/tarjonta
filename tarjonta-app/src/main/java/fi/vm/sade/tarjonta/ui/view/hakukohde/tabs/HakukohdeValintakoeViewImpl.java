@@ -43,6 +43,7 @@ import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +67,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
     @Autowired
     private TarjontaPresenter presenter;
 
+    @NotNull(message = "{validation.Koulutus.opetuskielet.notNull}")
     @PropertyId("valintakoeTyyppi")
     private KoodistoComponent valintakoeTyyppi;
 
@@ -229,9 +231,9 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
         valintakoeAikasTable.setContainerDataSource(createTableContainer(presenter.getModel().getSelectedValintaKoe().getValintakoeAjat()));
         valintakoeAikasTable.setVisibleColumns(new String[]{"sijainti", "ajankohta", "lisatietoja", "poistaBtn"});
-        valintakoeAikasTable.setColumnHeader("sijainti", T("tableSijainti"));
-        valintakoeAikasTable.setColumnHeader("ajankohta",T("tableAjankohta"));
-        valintakoeAikasTable.setColumnHeader("lisatietoja",T("tableLisatietoja"));
+        valintakoeAikasTable.setColumnHeader("sijainti", T("HakukohdeValintakoeViewImpl.tableSijainti"));
+        valintakoeAikasTable.setColumnHeader("ajankohta",T("HakukohdeValintakoeViewImpl.tableAjankohta"));
+        valintakoeAikasTable.setColumnHeader("lisatietoja",T("HakukohdeValintakoeViewImpl.tableLisatietoja"));
         valintakoeAikasTable.setColumnHeader("poistaBtn","");
 
 //        valintakoeAikasTable.setSizeFull();
@@ -267,7 +269,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
 
     private ValintakoeKuvausTabSheet buildValintakoeKuvausTabSheet() {
-        valintaKoeKuvaus = new ValintakoeKuvausTabSheet();
+        valintaKoeKuvaus = new ValintakoeKuvausTabSheet(true);
         valintaKoeKuvaus.setWidth("60%");
         return valintaKoeKuvaus;
 

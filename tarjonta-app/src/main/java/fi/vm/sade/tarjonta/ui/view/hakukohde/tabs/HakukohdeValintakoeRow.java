@@ -56,7 +56,7 @@ public class HakukohdeValintakoeRow extends HorizontalLayout {
         setMuokkaaBtn(UiUtil.buttonLink(null, i18n.getMessage("muokkaaBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-
+                     tarjontaPresenter.showHakukohdeValintakoeEditView(valintakoeViewModel.getValintakoeTunniste());
             }
         }));
     }

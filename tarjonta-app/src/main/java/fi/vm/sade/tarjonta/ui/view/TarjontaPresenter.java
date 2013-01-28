@@ -126,6 +126,7 @@ public class TarjontaPresenter implements ICommonResource {
 
         saveHakuKohdePerustiedot();
         editHakukohdeView.enableLiitteetTab();
+        editHakukohdeView.enableValintakokeetTab();
     }
 
     public void saveHakuKohdePerustiedot() {
@@ -637,6 +638,10 @@ public class TarjontaPresenter implements ICommonResource {
 
     public void showHakukohdeLiiteEditWindow(String liiteId) {
         editHakukohdeView.showHakukohdeEditWindow(liiteId);
+    }
+
+    public void showHakukohdeValintakoeEditView(String valintakoeId) {
+        editHakukohdeView.showHakukohdeValintakoeEditView(valintakoeId);
     }
 
     public HakukohdeLiiteViewModel getSelectedHakuliite() {

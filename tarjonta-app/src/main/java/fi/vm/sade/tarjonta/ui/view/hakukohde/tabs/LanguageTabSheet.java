@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.KoodistoSelectionTabSheet;
+import fi.vm.sade.generic.ui.component.OphRichTextArea;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -61,9 +62,16 @@ public abstract class LanguageTabSheet extends CustomComponent {
     protected VerticalLayout rootLayout = new VerticalLayout();
     @Autowired(required = true)
     protected transient UiBuilder uiBuilder;
+    private boolean useRichText = false;
 
     public LanguageTabSheet() {
         setCompositionRoot(rootLayout);
+    }
+
+    public LanguageTabSheet(boolean useRichText) {
+        this.useRichText = useRichText;
+        setCompositionRoot(rootLayout);
+
     }
 
     @Override
@@ -127,10 +135,18 @@ public abstract class LanguageTabSheet extends CustomComponent {
     }
 
     private AbstractField createRichText(String value) {
+        if (useRichText) {
+            OphRichTextArea richText = UiUtil.richTextArea(null,null,null);
+            richText.setHeight("100px");
+            richText.setWidth(UiConstant.PCT100);
+            richText.setValue(value);
+            return richText;
+        }  else {
         TextField textField = UiUtil.textField(null);
         textField.setHeight("100px");
         textField.setWidth(UiConstant.PCT100);
         textField.setValue(value);
         return textField;
+        }
     }
 }

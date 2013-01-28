@@ -21,6 +21,10 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  */
 public class ValintakoeKuvausTabSheet  extends LanguageTabSheet {
 
+    public ValintakoeKuvausTabSheet(boolean useRichText) {
+        super(useRichText);
+    }
+
     @Override
     protected void initializeTabsheet() {
         if (_model.getSelectedValintaKoe() != null) {
