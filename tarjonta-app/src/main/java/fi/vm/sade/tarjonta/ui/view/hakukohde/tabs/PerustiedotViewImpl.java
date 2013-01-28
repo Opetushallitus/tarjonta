@@ -55,8 +55,10 @@ import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 /**
+ * Hakukohde basic information.
  *
  * @author Tuomas Katva
  */
@@ -103,6 +105,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private TextField liitteidenPostitoimipaikkaText;
     @PropertyId("sahkoinenToimitusSallittu")
     private CheckBox myosSahkoinenToimitusSallittuCb;
+    @Pattern(regexp = "[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "{validation.invalid.www}")
     @PropertyId("liitteidenSahkoinenToimitusOsoite")
     private TextField sahkoinenToimitusOsoiteText;
     @PropertyId("kaytaHaunPaattymisenAikaa")
@@ -150,7 +153,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 if (event.getProperty().getValue() instanceof String) {
                     presenter.setTunnisteKoodi(event.getProperty().getValue().toString());
                 } else {
-                    //DEBUGSAWAY:LOG.debug("class" + event.getProperty().getValue().getClass().getName());
+                    LOG.warn("hakukohteenNimiCombo / value change listener - value was not a String! class = {}",
+                            (event.getProperty().getValue() != null) ? event.getProperty().getValue().getClass() : "NULL");
                 }
             }
         });
@@ -236,6 +240,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     private TextField buildSahkoinenToimitusOsoiteTextField() {
         sahkoinenToimitusOsoiteText = UiUtil.textField(null);
+        sahkoinenToimitusOsoiteText.setInputPrompt(T("PerustiedotView.sahkoinenToimitusOsoite.prompt"));
         sahkoinenToimitusOsoiteText.setEnabled(false);
         return sahkoinenToimitusOsoiteText;
     }
@@ -245,7 +250,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         kaytaHaunPaattymisAikaa = UiUtil.checkbox(null,null);
         kaytaHaunPaattymisAikaa.setImmediate(true);
-        kaytaHaunPaattymisAikaa.setCaption(I18N.getMessage("PerustiedotView.haunPaattymisenAikaCheckbox"));
+        kaytaHaunPaattymisAikaa.setCaption(T("PerustiedotView.haunPaattymisenAikaCheckbox"));
         kaytaHaunPaattymisAikaa.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
@@ -283,7 +288,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private CheckBox buildSahkoinenToimitusOsoiteCheckBox() {
             myosSahkoinenToimitusSallittuCb = UiUtil.checkbox(null,null);
             myosSahkoinenToimitusSallittuCb.setImmediate(true);
-            myosSahkoinenToimitusSallittuCb.setCaption(I18N.getMessage("PerustiedotView.LiiteVoidaanToimittaaSahkoisestiCheckbox"));
+            myosSahkoinenToimitusSallittuCb.setCaption(T("PerustiedotView.LiiteVoidaanToimittaaSahkoisestiCheckbox"));
             myosSahkoinenToimitusSallittuCb.addListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
@@ -308,12 +313,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         liitteidenOsoiteRivi1Text =  UiUtil.textField(null);
         liitteidenOsoiteRivi1Text.setWidth("100%");
-        liitteidenOsoiteRivi1Text.setInputPrompt(I18N.getMessage("PerustiedotView.osoiteRivi1"));
+        liitteidenOsoiteRivi1Text.setInputPrompt(T("PerustiedotView.osoiteRivi1"));
         osoiteLayout.addComponent(liitteidenOsoiteRivi1Text,0,0,1,0);
 
         liitteidenOsoiteRivi2Text = UiUtil.textField(null);
         liitteidenOsoiteRivi2Text.setWidth("100%");
-        liitteidenOsoiteRivi2Text.setInputPrompt(I18N.getMessage("PerustiedotView.osoiteRivi2"));
+        liitteidenOsoiteRivi2Text.setInputPrompt(T("PerustiedotView.osoiteRivi2"));
         osoiteLayout.addComponent(liitteidenOsoiteRivi2Text,0,1,1,1);
 
         liitteidenPostinumeroText =  uiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_POSTINUMERO);
@@ -324,7 +329,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         liitteidenPostinumeroText.setSizeUndefined();
 
         liitteidenPostitoimipaikkaText = UiUtil.textField(null);
-        liitteidenPostitoimipaikkaText.setInputPrompt(I18N.getMessage("PerustiedotView.postitoimipaikka"));
+        liitteidenPostitoimipaikkaText.setInputPrompt(T("PerustiedotView.postitoimipaikka"));
         osoiteLayout.addComponent(liitteidenPostitoimipaikkaText,1,2);
         liitteidenPostitoimipaikkaText.setSizeUndefined();
 
@@ -444,7 +449,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         hakukohteenNimiCombo = buildHaku();
         hakukohteenNimiCombo.setRequired(true);
         hl.addComponent(hakukohteenNimiCombo);
-        tunnisteKoodiText = UiUtil.textField(hl, "", T("tunnistekoodi"), true);
+        tunnisteKoodiText = UiUtil.textField(hl, "", T("PerustiedotView.tunnistekoodi.prompt"), true);
         tunnisteKoodiText.setEnabled(false);
 
         hl.setComponentAlignment(hakukohteenNimiCombo, Alignment.TOP_RIGHT);
