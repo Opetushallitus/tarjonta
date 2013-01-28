@@ -15,7 +15,9 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+import com.vaadin.data.Item;
 import com.vaadin.data.Property;
+import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
@@ -67,7 +69,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
     @Autowired
     private TarjontaPresenter presenter;
 
-    @NotNull(message = "{validation.Koulutus.opetuskielet.notNull}")
+    @NotNull(message = "{validation.Hakukohde.valintakoe.valintakoetyyppi.notNull}")
     @PropertyId("valintakoeTyyppi")
     private KoodistoComponent valintakoeTyyppi;
 
@@ -87,6 +89,9 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
     private Button cancelButton;
     private Button saveButton;
+
+    private String languageTabsheetWidth = "500px";
+    private String languageTabsheetHeight = "250px";
 
     private HakukohdeValintaKoeAikaEditView valintaKoeAikaEditView;
     private Form valintaKoeAikaForm;
@@ -233,7 +238,9 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         valintakoeAikasTable.setVisibleColumns(new String[]{"sijainti", "ajankohta", "lisatietoja", "poistaBtn"});
         valintakoeAikasTable.setColumnHeader("sijainti", T("HakukohdeValintakoeViewImpl.tableSijainti"));
         valintakoeAikasTable.setColumnHeader("ajankohta",T("HakukohdeValintakoeViewImpl.tableAjankohta"));
+
         valintakoeAikasTable.setColumnHeader("lisatietoja",T("HakukohdeValintakoeViewImpl.tableLisatietoja"));
+
         valintakoeAikasTable.setColumnHeader("poistaBtn","");
 
 //        valintakoeAikasTable.setSizeFull();
@@ -269,8 +276,9 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
 
     private ValintakoeKuvausTabSheet buildValintakoeKuvausTabSheet() {
-        valintaKoeKuvaus = new ValintakoeKuvausTabSheet(true);
-        valintaKoeKuvaus.setWidth("60%");
+        valintaKoeKuvaus = new ValintakoeKuvausTabSheet(true,languageTabsheetWidth,languageTabsheetHeight);
+
+        valintaKoeKuvaus.setSizeUndefined();
         return valintaKoeKuvaus;
 
     }
@@ -299,8 +307,17 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         saveButton = UiBuilder.button(null,T("HakukohdeValintakoeViewImpl.saveBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-
+                 errorView.resetErrors();
+                try {
+                 form.commit();
+                if (form.isValid()) {
                  presenter.saveHakukohdeValintakoe(getValintakokeenKuvaukset());
+                }
+                } catch (Validator.InvalidValueException e) {
+                    errorView.addError(e);
+                }  catch (Exception exp) {
+
+                }
             }
         });
         horizontalButtonLayout.addComponent(saveButton);

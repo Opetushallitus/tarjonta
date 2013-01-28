@@ -15,6 +15,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
@@ -119,10 +120,24 @@ public class HakukohteenValintakoeTabImpl extends AbstractVerticalNavigationLayo
 
         if (valintakoeTable != null) {
             valintakoeTable.setContainerDataSource(createBeanContainer(presenter.loadHakukohdeValintaKokees()));
+            valintakoeTable.addGeneratedColumn("sanallinenKuvaus",new Table.ColumnGenerator() {
+                @Override
+                public Object generateCell(Table table, Object o, Object o2) {
+                    if (table != null) {
+                    Item item = table.getItem(o);
+                    Label label = new Label(item.getItemProperty("sanallinenKuvaus"));
+                    label.setContentMode(Label.CONTENT_XHTML);
+                    return label;
+                    } else {
+                        return null;
+                    }
+                }
+            });
             valintakoeTable.setWidth(100, UNITS_PERCENTAGE);
             valintakoeTable.setVisibleColumns(new String[]{"valintakokeenTyyppi", "sanallinenKuvaus", "muokkaaBtn"});
             valintakoeTable.setColumnHeader("valintakokeenTyyppi", T("valinkoeTyyppiHdr"));
             valintakoeTable.setColumnHeader("sanallinenKuvaus",T("sanallinenKuvaus"));
+
             valintakoeTable.setColumnHeader("muokkaaBtn","");
             valintakoeTable.setImmediate(true);
             valintakoeTable.setSizeFull();

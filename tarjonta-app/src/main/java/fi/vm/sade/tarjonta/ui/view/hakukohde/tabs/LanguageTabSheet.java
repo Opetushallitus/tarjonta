@@ -64,13 +64,21 @@ public abstract class LanguageTabSheet extends CustomComponent {
     protected transient UiBuilder uiBuilder;
     private boolean useRichText = false;
 
+    private String TABSHEET_WIDTH = "500px";
+    private String TABSHEET_HEIGHT = "300px";
+
     public LanguageTabSheet() {
         setCompositionRoot(rootLayout);
+        rootLayout.setSizeUndefined();
     }
 
-    public LanguageTabSheet(boolean useRichText) {
+    public LanguageTabSheet(boolean useRichText, String width, String height) {
+        TABSHEET_WIDTH = width;
+        TABSHEET_HEIGHT = height;
         this.useRichText = useRichText;
+        rootLayout.setSizeUndefined();
         setCompositionRoot(rootLayout);
+
 
     }
 
@@ -93,6 +101,8 @@ public abstract class LanguageTabSheet extends CustomComponent {
         };
 
         rootLayout.addComponent(_languageTabsheet);
+        _languageTabsheet.setWidth(TABSHEET_WIDTH);
+        _languageTabsheet.setHeight(TABSHEET_HEIGHT);
         initializeTabsheet();
     }
 
@@ -137,8 +147,8 @@ public abstract class LanguageTabSheet extends CustomComponent {
     private AbstractField createRichText(String value) {
         if (useRichText) {
             OphRichTextArea richText = UiUtil.richTextArea(null,null,null);
-            richText.setHeight("100px");
-            richText.setWidth(UiConstant.PCT100);
+            richText.setHeight(TABSHEET_HEIGHT);
+            richText.setWidth(TABSHEET_WIDTH);
             richText.setValue(value);
             return richText;
         }  else {

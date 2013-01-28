@@ -64,6 +64,9 @@ public class HakukohdeValintakoeRow extends HorizontalLayout {
     private void resolveSanallinenKuvaus() {
         if (valintakoeViewModel != null && valintakoeViewModel.getSanallisetKuvaukset() != null) {
             for (KielikaannosViewModel teksti:valintakoeViewModel.getSanallisetKuvaukset()) {
+                if (teksti.getKielikoodi().trim().contains("Suomi")) {
+                    setSanallinenKuvaus(teksti.getNimi());
+                }
                 if (teksti.getKielikoodi().trim().equalsIgnoreCase(I18N.getLocale().getLanguage().trim())) {
                     setSanallinenKuvaus(teksti.getNimi());
                 }
