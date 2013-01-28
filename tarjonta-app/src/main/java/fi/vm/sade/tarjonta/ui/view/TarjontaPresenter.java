@@ -159,7 +159,6 @@ public class TarjontaPresenter implements ICommonResource {
     }
 
     public void setTunnisteKoodi(String hakukohdeNimiUri) {
-        // TODO add search from koodisto
         String koodiUri = TarjontaUIHelper.splitKoodiURI(hakukohdeNimiUri)[0];
         List<KoodiType> koodit = koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder
                 .latestAcceptedKoodiByUri(koodiUri));
