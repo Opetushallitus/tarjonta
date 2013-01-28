@@ -11,15 +11,12 @@
         http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
         http://cxf.apache.org/core  http://cxf.apache.org/schemas/core.xsd
         ">
-
-
-    <import resource="classpath:META-INF/cxf/cxf.xml" />
-    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
-
+    
+    
+    
     <!--<bean id="hakuService" class="fi.vm.sade.tarjonta.service.impl.HakuServiceImpl"/>-->
     <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl"/>
     <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicServiceImpl"/>
-
 
     <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="tarjontaAdminEndpoint"
                     address="/tarjontaAdmin" implementor="#tarjontaAdminService"/>
@@ -27,11 +24,12 @@
     <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="tarjontaPublicEndpoint"
                     address="/tarjontaPublic" implementor="#tarjontaPublicService"/>
 
-
-
+    <jaxws:client id="organisaatioService"
+                  serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
+                  address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
+    
     <bean id="tarjontaPublicationRESTService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationRESTService"/>
     <bean id="tarjontaExceptionMapper" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationExceptionMapper"/>
-
 
     <jaxrs:server id="tarjontaPublicationREST" address="/rest">
         <jaxrs:serviceBeans>
@@ -44,7 +42,4 @@
             <cxf:logging/>
         </jaxrs:features>
     </jaxrs:server>
-
-
-
 </beans>

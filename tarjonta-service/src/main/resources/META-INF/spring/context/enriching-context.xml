@@ -14,8 +14,12 @@
     -->
     <jaxws:client id="koodiPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
-                  address="${koodi.webservice.url:http://NO_KOODI_WEBSERVICE_URL_CONFIGURED}">
-    </jaxws:client>
+                  address="${koodi.webservice.url:http://NO_KOODI_WEBSERVICE_URL_CONFIGURED}"/>
+
+    <jaxws:client id="koodistoPublicService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
+                  address="${koodisto.webservice.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}"/>
+
 
     <jaxws:client id="tarjojaPublicService"
                   serviceClass="fi.vm.sade.tarjoaja.service.KoulutustarjoajaPublicService"
@@ -27,7 +31,8 @@
 
     <!-- wrapper service that uses tarjoaja webservice for content -->
     <bean id="tarjoajaLookupService" class="fi.vm.sade.tarjonta.publication.enricher.organisaatio.KoulutustarjoajaLookupWebServiceImpl"/>
-
+    
+  
     <!-- factory that knows how to create enricher for publication data -->
     <bean id="xmlEnricher" class="fi.vm.sade.tarjonta.publication.enricher.factory.LearningOpportunityDataEnricherFactory">
         <property name="failOnKoodistoError" value="false"/>

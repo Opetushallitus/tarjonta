@@ -40,7 +40,18 @@
         </xs:complexType>
     </xs:element>
 
-
+    <xs:element name="PhoneNumber">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Rakenne yhden puhelinumeron esittamiseksi
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <!-- TODO regexp -->
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
 
     <!-- ============================================================================================ -->
     <!-- Complex types                                                                                -->
@@ -96,10 +107,9 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-
+            
         </xs:sequence>
     </xs:complexType>
-
 
     <!-- ============================================================================================ -->
     <!-- LearningOpportunityDownloadData                                                              -->
@@ -152,7 +162,6 @@
                 </xs:annotation>
             </xs:element>
 
-
             <xs:element name="ApplicationOption"
                         type="tns:ApplicationOptionType"
                         minOccurs="1"
@@ -163,10 +172,8 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-
         </xs:sequence>
     </xs:complexType>
-
 
     <!-- ============================================================================================ -->
     <!-- ApplicationOption                                                                            -->
@@ -179,7 +186,6 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-
             <xs:element name="Identifier">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
@@ -272,7 +278,6 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-
             <xs:element name="StartingQuota"
                         type="xs:integer">
                 <xs:annotation>
@@ -304,7 +309,6 @@
                 </xs:annotation>
             </xs:element>
 
-
             <xs:element name="LastYearTotalApplicants"
                         type="xs:integer"
                         minOccurs="0"
@@ -315,7 +319,6 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-
 
             <xs:element name="Description"
                         type="tns:ExtendedStringType"
@@ -498,7 +501,6 @@
         </xs:sequence>
     </xs:complexType>
 
-
     <xs:complexType name="ExaminationEventType">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
@@ -539,8 +541,6 @@
             <xs:group ref="tns:PostalAddressGroup"/>
         </xs:sequence>
     </xs:complexType>
-
-
 
     <xs:complexType name="EligibilityRequirementsType">
         <xs:annotation>
@@ -594,7 +594,6 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-
 
     <!-- ============================================================================================ -->
     <!-- LearningOpportunitySpecification                                                             -->
@@ -959,7 +958,6 @@
                         type="tns:WebLinkCollectionType"
                         minOccurs="0"
                         maxOccurs="1"/>
-
         </xs:sequence>
 
         <xs:attribute name="id"
@@ -1160,7 +1158,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-
     <xs:complexType name="CodeLabelType">
         <xs:sequence>
             <xs:element name="Value"
@@ -1205,18 +1202,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="Code" minOccurs="1" maxOccurs="unbounded">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="Label"
-                                    minOccurs="0"
-                                    maxOccurs="unbounded"
-                                    type="tns:ExtendedStringType">
-                        </xs:element>
-                    </xs:sequence>
-                    <xs:attribute name="value" type="xs:string" use="required"/>
-                </xs:complexType>
-            </xs:element>
+            <xs:element name="Code" type="tns:CodeValueType" minOccurs="1" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="scheme"
                       type="tns:CodeSchemeType"
@@ -1254,6 +1240,13 @@
                                     </xs:documentation>
                                 </xs:annotation>
                             </xs:attribute>
+                            <xs:attribute name="uri" type="xs:string" use="optional">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="fi">
+                                        Kaytetyn koodiston uri
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
                         </xs:extension>
                     </xs:simpleContent>
                 </xs:complexType>
@@ -1268,6 +1261,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+           
         </xs:sequence>
     </xs:complexType>
 
@@ -1323,7 +1317,6 @@
         </xs:choice>
     </xs:complexType>
 
-
     <xs:complexType name="LearningOpportunityProviderType">
         <xs:sequence>
 
@@ -1337,13 +1330,13 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-
+            
             <xs:element name="InstitutionInfo"
                         minOccurs="0"
                         maxOccurs="1">
                 <xs:complexType>
                     <xs:sequence>
-
+                                          
                         <xs:element name="Name"
                                     type="tns:ExtendedStringType"
                                     minOccurs="0"
@@ -1351,6 +1344,17 @@
                             <xs:annotation>
                                 <xs:documentation xml:lang="fi">
                                     Organisaation nimi / koulutustoimijan nimi.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                                               
+                        <xs:element name="EctsCoordinator"
+                                    type="tns:PersonType"
+                                    minOccurs="0"
+                                    maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                    Organisaation ECTS-koordinaattori. 
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:element>
@@ -1374,6 +1378,15 @@
                         maxOccurs="1">
                 <xs:complexType>
                     <xs:sequence>
+                        <xs:element name="AdmissionOfficeName"
+                                    type="tns:ExtendedStringType"
+                                    minOccurs="0"
+                                    maxOccurs="unbounded"/> 
+                        
+                        <xs:element name="Address"
+                                    type="tns:ProviderAddressType"
+                                    minOccurs="1"
+                                    maxOccurs="unbounded" />
 
                         <xs:element name="Description"
                                     type="tns:TypedDescriptionType"
@@ -1388,6 +1401,27 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            
+            <xs:element name="WebLinks"
+                        type="tns:WebLinkCollectionType"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+           
+            <xs:element name="Images" minOccurs="0"  maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Image"
+                                    type="tns:ImageType"
+                                    minOccurs="0"
+                                    maxOccurs="unbounded">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>    
+                    </xs:sequence>          
+                </xs:complexType>
+            </xs:element> 
         </xs:sequence>
 
         <xs:attribute name="id"
@@ -1398,9 +1432,8 @@
                     Koulutuksentarjoajan tunniste tassa dokumentissa.
                 </xs:documentation>
             </xs:annotation>
-        </xs:attribute>
+        </xs:attribute>        
     </xs:complexType>
-
 
     <xs:complexType name="TextType" mixed="true">
         <xs:attribute name="lang" type="xs:string" use="optional"/>
@@ -1445,7 +1478,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-
     <xs:complexType name="ContributorType">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
@@ -1455,7 +1487,6 @@
         </xs:annotation>
         <xs:sequence>
             <xs:choice>
-
                 <xs:element name="Person"
                             type="tns:PersonType"
                             minOccurs="1"
@@ -1467,7 +1498,6 @@
                             minOccurs="1"
                             maxOccurs="1">
                 </xs:element>
-
             </xs:choice>
         </xs:sequence>
         <xs:attribute name="role">
@@ -1483,29 +1513,6 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-    </xs:complexType>
-
-
-    <xs:complexType name="PersonType">
-        <xs:annotation>
-            <xs:documentation xml:lang="fi">
-                Henkilotietojen kuvausrakenne.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-
-            <xs:element name="Name"
-                        type="xs:string"
-                        minOccurs="1"
-                        maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>
-                        Henkilon nimi yhtena tietona.
-                    </xs:documentation>
-                </xs:annotation>
-
-            </xs:element>
-        </xs:sequence>
     </xs:complexType>
 
 
@@ -1720,6 +1727,16 @@
                 <xs:annotation>
                     <xs:documentation>
                         Kaupunki
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Country"
+                        type="xs:string"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Maa
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -2071,7 +2088,7 @@
             <xs:maxLength value="20"/>
         </xs:restriction>
     </xs:simpleType>
-
+    
     <xs:simpleType name="DescriptionType">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
@@ -2228,5 +2245,118 @@
             </xs:enumeration>
         </xs:restriction>
     </xs:simpleType>
+    
+    <xs:complexType name="ImageType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">Yleinen kuvan sisalto tyyppi.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="mimeType" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="fileName" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="image" type="xs:base64Binary"/>
+        </xs:sequence>
+    </xs:complexType>
 
+    <xs:simpleType name="LocationSchemeType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Osoite tyyppi.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="MainEntrance">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Paasisaankaynti.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            
+            <xs:enumeration value="Other">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Paasisaankaynti.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+  
+            <xs:enumeration value="AdmissionOfficeEntrance">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Hakutoimisto.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            
+            <xs:enumeration value="AdmissionOfficePostAddress">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Hakutoimisto.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <xs:simpleType name="PersonSchemeType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Osoite tyyppi.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="EctsCoordinator">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        ECTS-koordinaattori.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>   
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <xs:complexType name="ProviderAddressType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>   
+            <xs:element name="LocationScheme" type="tns:LocationSchemeType"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Sijainti tyypppi.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            
+            <xs:element ref="tns:EmailAddress" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="tns:PhoneNumber" minOccurs="0" maxOccurs="1"/>
+            
+            <xs:group ref="tns:PostalAddressGroup"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+    <xs:complexType name="PersonType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Henkilotietojen kuvausrakenne.
+            </xs:documentation>
+        </xs:annotation>
+       
+        <xs:sequence>
+            <xs:element name="oidRef" type="tns:OidRefType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="fullName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="title" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="email" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="tns:PhoneNumber" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="personType" type="tns:PersonSchemeType" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>      
+       
+    </xs:complexType>
+    
 </xs:schema>

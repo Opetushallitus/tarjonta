@@ -139,6 +139,9 @@ public abstract class ElementEnricher {
      * Invoked to reset internal state so that instances can be recycled.
      */
     public abstract void reset();
+    
+    
+    public abstract Attributes getAttributes();
 
 }
 

@@ -13,28 +13,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.publication.enricher.organisaatio;
-
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioKuvailevatTiedotTyyppi;
+package fi.vm.sade.tarjonta.publication;
 
 /**
- * Data lookup contract used by content enrichment handlers to enrich
- * LearningOpportunityProvider data.
  *
- * TODO: do we want to use this return type directly...?
- *
- * @author Jukka Raanamo
+ * @author Jani Wilén
  */
-public interface KoulutustarjoajaLookupService {
+public class ExportParams {
+
+    private boolean showImages = false;
+
+    public ExportParams() {
+    }
+ 
+    
+    /**
+     * @return the showImages
+     */
+    public boolean showImages() {
+        return showImages;
+    }
 
     /**
-     *
-     * @param oid
-     * @return
+     * @param showImages the showImages to set
      */
-    public OrganisaatioDTO lookupKoulutustarjoajaByOrganisaatioOid(String oid)
-        throws Exception;
-
+    public void setShowImages(boolean showImages) {
+        this.showImages = showImages;
+    }
 }
-

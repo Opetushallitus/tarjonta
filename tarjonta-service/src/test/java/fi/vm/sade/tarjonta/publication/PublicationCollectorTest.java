@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.publication;
 
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -26,7 +27,6 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.publication.model.Koulutustarjoaja;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -87,6 +87,8 @@ public class PublicationCollectorTest {
     }
 
     @Test
+    
+    
     public void testMissingKoulutusmoduuliEndsWithFailure() throws Exception {
 
         List<KoulutusmoduuliToteutus> list = new ArrayList<KoulutusmoduuliToteutus>();
@@ -172,7 +174,7 @@ public class PublicationCollectorTest {
         }
 
         @Override
-        public void onCollect(Koulutustarjoaja tarjoaja) throws Exception {
+        public void onCollect(OrganisaatioDTO tarjoaja) throws Exception {
             koulutustarjoajaEvents++;
         }
 

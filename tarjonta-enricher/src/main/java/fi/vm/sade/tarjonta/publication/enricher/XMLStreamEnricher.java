@@ -185,9 +185,9 @@ public class XMLStreamEnricher {
             if (handler != null) {
 
                 int result = handler.startElement(localName, attrs);
-
+ 
                 if ((result & MASK_WRITE) == MASK_WRITE) {
-                    super.startElement(uri, localName, qname, attrs);
+                    super.startElement(uri, localName, qname, handler.getAttributes() != null ? handler.getAttributes() : attrs);
                 }
 
                 if ((result & MASK_EXIT) == MASK_EXIT) {
@@ -236,7 +236,6 @@ public class XMLStreamEnricher {
         public void characters(char[] chars, int start, int length) throws SAXException {
 
             if (handler != null) {
-
                 if ((handler.characters(chars, start, length) & MASK_WRITE) == MASK_WRITE) {
                     super.characters(chars, start, length);
                 }

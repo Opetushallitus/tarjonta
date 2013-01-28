@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.publication;
 
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,25 +28,24 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.publication.model.Koulutustarjoaja;
 
 /**
- * Gathers learning opportunity material (tarjonta) that is ready for publication. Invokes
- * handler to do something on the collected data, e.g. write to stream. Note: this class is not thread safe.
+ * Gathers learning opportunity material (tarjonta) that is ready for
+ * publication. Invokes handler to do something on the collected data, e.g.
+ * write to stream. Note: this class is not thread safe.
  *
  * @author Jukka Raanamo
  */
 public class PublicationCollector {
 
     private EventHandler handler;
-
     private PublicationDataService dataService;
-
+    private OrganisaatioService organisaatioService;
+    private ExportParams params;
     /**
      * Map used to avoid triggering events on re-occurring items.
      */
     private Map<String, String> notifiedMap = new HashMap<String, String>();
-
     private static final Logger log = LoggerFactory.getLogger(PublicationCollector.class);
 
     public void setHandler(EventHandler handler) {
@@ -56,9 +57,14 @@ public class PublicationCollector {
     }
 
     /**
-     * Starts the data collecting process. Invokes handler with data ready to be published.
-     * @throws fi.vm.sade.tarjonta.publication.PublicationCollector.ConfigurationException if collector has is not properly configured.
-     * @throws Exception  if data processing fails. Handler's onCollectFailed will be als called  with the same exception.
+     * Starts the data collecting process. Invokes handler with data ready to be
+     * published.
+     *
+     * @throws
+     * fi.vm.sade.tarjonta.publication.PublicationCollector.ConfigurationException
+     * if collector has is not properly configured.
+     * @throws Exception if data processing fails. Handler's onCollectFailed
+     * will be als called with the same exception.
      */
     public void start() throws ConfigurationException, Exception {
 
@@ -100,12 +106,14 @@ public class PublicationCollector {
 
     }
 
-    protected void fireCollect(Koulutustarjoaja t) throws Exception {
-
-        if (!isNotifiedBefore(t.getOrganisaatioOid())) {
-            handler.onCollect(t);
+    protected void fireCollect(OrganisaatioDTO dto) throws Exception {
+        if (dto == null) {
+            return;
         }
-        
+
+        if (!isNotifiedBefore(dto.getOid())) {
+            handler.onCollect(dto);
+        }
     }
 
     protected void fireCollect(KoulutusmoduuliToteutus t) throws Exception {
@@ -149,14 +157,18 @@ public class PublicationCollector {
         }
 
         for (KoulutusmoduuliToteutus t : koulutusList) {
-
             Koulutusmoduuli m = t.getKoulutusmoduuli();
+
+            if (log.isDebugEnabled()) {
+                log.debug("LOS OID : {}, LOI OID : {}", m.getOid(), t.getOid());
+                log.debug("LOS provider : {}, LOI provider : {}", m.getOmistajaOrganisaatioOid(), t.getTarjoaja());
+            }
 
             fireCollect(m);
             fireCollect(t);
-            fireCollect(new Koulutustarjoaja(m.getOmistajaOrganisaatioOid()));
-            fireCollect(new Koulutustarjoaja(t.getTarjoaja()));
 
+            fireCollect(findProviderByOid(m.getOmistajaOrganisaatioOid(), true));
+            fireCollect(findProviderByOid(t.getTarjoaja(), false));
         }
 
         List<Hakukohde> hakukohdeList = dataService.listHakukohde();
@@ -168,12 +180,26 @@ public class PublicationCollector {
         for (Haku h : hakuList) {
             fireCollect(h);
         }
+    }
 
+    private OrganisaatioDTO findProviderByOid(final String oid, final boolean allowNull) {
+        if (allowNull) {
+            return null;
+        } else if (oid == null) {
+            throw new IllegalArgumentException("Provider OID cannot be null");
+        }
+
+        OrganisaatioDTO dto = organisaatioService.findByOid(oid);
+
+        if (dto == null) {
+            throw new RuntimeException("Provider not found by OID  '" + oid + "'");
+        }
+        return dto;
     }
 
     /**
-     * Resets internal processing state so that multiple calls to start should produce
-     * identical results.
+     * Resets internal processing state so that multiple calls to start should
+     * produce identical results.
      */
     private void reset() {
 
@@ -193,7 +219,8 @@ public class PublicationCollector {
     }
 
     /**
-     * Returns true if isNotifiedBefore has been called with the same key before.
+     * Returns true if isNotifiedBefore has been called with the same key
+     * before.
      *
      * @param key
      * @return
@@ -209,6 +236,34 @@ public class PublicationCollector {
 
         return true;
 
+    }
+
+    /**
+     * @return the organisaatioService
+     */
+    public OrganisaatioService getOrganisaatioService() {
+        return organisaatioService;
+    }
+
+    /**
+     * @param organisaatioService the organisaatioService to set
+     */
+    public void setOrganisaatioService(OrganisaatioService organisaatioService) {
+        this.organisaatioService = organisaatioService;
+    }
+
+    /**
+     * @return the params
+     */
+    public ExportParams getParams() {
+        return params;
+    }
+
+    /**
+     * @param params the params to set
+     */
+    public void setParams(ExportParams params) {
+        this.params = params;
     }
 
     /**
@@ -232,10 +287,8 @@ public class PublicationCollector {
 
         public void onCollect(Haku haku) throws Exception;
 
-        public void onCollect(Koulutustarjoaja tarjoaja) throws Exception;
-
+        public void onCollect(OrganisaatioDTO tarjoaja) throws Exception;
     }
-
 
     /**
      * Convenience class that implements all EventHandler's methods as no-op.
@@ -259,7 +312,7 @@ public class PublicationCollector {
         }
 
         @Override
-        public void onCollect(Koulutustarjoaja tarjoaja) throws Exception {
+        public void onCollect(OrganisaatioDTO tarjoaja) throws Exception {
         }
 
         @Override
@@ -277,9 +330,7 @@ public class PublicationCollector {
         @Override
         public void onCollectWarning(String msg) {
         }
-
     }
-
 
     /**
      * Thrown when collector has not been properly configured.
@@ -291,9 +342,7 @@ public class PublicationCollector {
         public ConfigurationException(String string) {
             super(string);
         }
-
     }
-
 
     /**
      * Thrown when error occurs during data collection.
@@ -305,9 +354,5 @@ public class PublicationCollector {
         public CollectorException(String string) {
             super(string);
         }
-
     }
-
-
 }
-

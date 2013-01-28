@@ -15,9 +15,9 @@
  */
 package fi.vm.sade.tarjonta.publication;
 
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.publication.model.Koulutustarjoaja;
 import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadData;
 import java.io.StringWriter;
 
@@ -35,20 +35,18 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.*;
 
 /**
- * Smoke tests writing Tarjonta data as "Publication XML". The output still needs to be verified
- * using XPath. Most of this is validated with enrichment tests but the parts (at least) that are not
- * enriched and hence not tested, need to be validated here.
+ * Smoke tests writing Tarjonta data as "Publication XML". The output still
+ * needs to be verified using XPath. Most of this is validated with enrichment
+ * tests but the parts (at least) that are not enriched and hence not tested,
+ * need to be validated here.
  *
  * @author Jukka Raanamo
  */
 public class LearningOpportunityDataWriterTest {
 
     private LearningOpportunityJAXBWriter writer;
-
     private StringWriter out;
-
     private static JAXBContext sJaxbContext;
-
     private static boolean sPrintXML;
 
     @BeforeClass
@@ -60,7 +58,7 @@ public class LearningOpportunityDataWriterTest {
     @Before
     public void setUp() throws Exception {
 
-        writer = new LearningOpportunityJAXBWriter();
+        writer = new LearningOpportunityJAXBWriter(new ExportParams());
         out = new StringWriter();
         writer.setOutput(out);
         writer.setPartialDocument(false);
@@ -120,9 +118,10 @@ public class LearningOpportunityDataWriterTest {
 
     @Test
     public void testWriteSingleTarjoaja() throws Exception {
-
+        OrganisaatioDTO dto = new OrganisaatioDTO();
+        dto.setOid("1.2.3.4.5");
         writer.onCollectStart();
-        writer.onCollect(new Koulutustarjoaja("1.2.3.4.5"));
+        writer.onCollect(dto);
         writer.onCollectEnd();
 
         unmarshal();
@@ -249,6 +248,4 @@ public class LearningOpportunityDataWriterTest {
         return haku;
 
     }
-
 }
-

@@ -25,13 +25,13 @@
 
         <!-- laajuus sekä laajuusyksikkö -->
         <Credits>
-            <Code scheme="Koodisto">laajuus1</Code>
+            <Code scheme="Koodisto" version="1" uri="laajuus1"></Code>
             <Value>20</Value>
         </Credits>
 
         <!-- tutkintonimike -->
         <Qualification>
-            <Code scheme="Koodisto">lahihoitaja</Code>
+            <Code scheme="Koodisto" version="1" uri="uri tutkintonimike"></Code>
         </Qualification>
 
         <!-- tutkinnon nimi -->
@@ -41,7 +41,7 @@
 
             <!-- koulutusluokitus -->
             <EducationClassification>
-                <Code scheme="Koodisto" version="2010">371101</Code>
+                <Code scheme="Koodisto" uri="371101" version="2010"></Code>
                 <Label lang="fi">koulutusluokitus-fi</Label>
                 <Label lang="en">koulutusluokitus-en</Label>
                 <Label lang="sv">koulutusluokitus-sv</Label>
@@ -49,7 +49,7 @@
 
             <!-- koulutusala -->
             <EducationDomain>
-                <Code scheme="Koodisto" version="2002">uri:koulutusala</Code>
+                <Code scheme="Koodisto" version="1" uri="uri:koulutusala" ></Code>
                 <Label lang="fi">koulutusala-fi</Label>
                 <Label lang="en">koulutusala-en</Label>
                 <Label lang="sv">koulutusala-sv</Label>
@@ -57,7 +57,7 @@
 
             <!-- koulutusaste -->
             <EducationDegree>
-                <Code scheme="Koodisto" version="2002">uri:koulutusaste</Code>
+                <Code scheme="Koodisto" version="1" uri="uri:koulutusaste"></Code>
                 <Label>non-localized-value</Label>
                 <Label lang="fi">koulutusaste-fi</Label>
                 <Label lang="en">koulutusaste-en</Label>
@@ -66,7 +66,7 @@
 
             <!-- opintoala -->
             <StudyDomain>
-                <Code scheme="Koodisto" version="2002">uri:opintoala</Code>
+                <Code scheme="Koodisto" version="1" uri="uri:opintoala"></Code>
                 <Label lang="fi">opintoala-fi</Label>
                 <Label lang="en">opintoala-en</Label>
                 <Label lang="sv">opintoala-sv</Label>
@@ -74,12 +74,12 @@
 
             <!-- EQF -->
             <EqfClassification>
-                <Code scheme="Koodisto">uri:eqf</Code>
+                <Code scheme="Koodisto" version="1" uri="uri:eqf"></Code>
             </EqfClassification>
 
             <!-- NQF -->
             <NqfClassification>
-                <Code scheme="Koodisto">uri:nqf</Code>
+                <Code scheme="Koodisto" version="1" uri="uri:nqf"></Code>
             </NqfClassification>
 
 
@@ -131,54 +131,64 @@
         <!-- Pohjakoulutus vaatimus -->
         <!-- todo: mallissa tämä on koodisto joten arbitraaria dataa ei voida ottaa vastaan. -->
         <Prerequisite>
-            <Code scheme="Koodisto">uri:pohjakoulutusvaatimus</Code>
+            <Code scheme="Koodisto" version="1" uri="uri:pohjakoulutusvaatimus"></Code>
         </Prerequisite>
 
         <!-- ammattinimikkeet -->
         <ProfessionLabels>
             <Profession>
-                <Code scheme="Koodisto">uri:ammattinimike/lahihoitaja</Code>
+                <Code scheme="Koodisto" version="1" uri="uri:ammattinimike/lahihoitaja"></Code>
             </Profession>
             <Profession>
-                <Code scheme="Koodisto">uri:ammattinimike/perushoitaja</Code>
+                <Code scheme="Koodisto" version="1" uri="uri:ammattinimike/perushoitaja"></Code>
             </Profession>
             <Profession>
-                <Code scheme="Koodisto">uri:ammattinimike/ensihoitaja</Code>
+                <Code scheme="Koodisto" version="1" uri="uri:ammattinimike/ensihoitaja"></Code>
             </Profession>
         </ProfessionLabels>
 
         <!-- asiasanat -->
         <Keywords>
             <Keyword>
-                <Code scheme="Koodisto">uri:asiasana/lahihoitaja</Code>
+                <Code scheme="Koodisto" version="1" uri="uri:asiasana/lahihoitaja"></Code>
             </Keyword>
             <Keyword>
-                <Code scheme="Koodisto">uri:asiasana/hoivaala</Code>
+                <Code scheme="Koodisto" version="1" uri="uri:asiasana/hoivaala"></Code>
             </Keyword>
         </Keywords>
 
         <!-- opetuskielet -->
-        <LanguagesOfInstruction scheme="Koodisto">
+        <LanguagesOfInstruction scheme="Koodisto" version="1">
 
-            <Code value="uri:kieli/fi">
+            <Code uri="uri:kieli/fi">
                 <Label lang="fi">kieli-fi</Label>
-            </Code>
-            <Code value="uri:kieli/en">
                 <Label lang="en">kieli-en</Label>
+                <Label lang="sv">kieli-sv</Label>
+            </Code>
+            <Code uri="uri:kieli/en">
+                <Label lang="fi">kieli-fi</Label>
+                <Label lang="en">kieli-en</Label>
+                <Label lang="sv">kieli-sv</Label>
             </Code>
 
         </LanguagesOfInstruction>
 
         <!--koulutuslaji -->
-        <FormOfEducation scheme="Koodisto">
-            <Code value="uri:koulutuslaji/nuorten">
+        <FormOfEducation scheme="Koodisto" version="1">
+            <Code uri="uri:koulutuslaji/nuorten">
                 <Label lang="fi">koulutuslaji-fi</Label>
+                <Label lang="en">koulutuslaji-en</Label>
+                <Label lang="sv">koulutuslaji-sv</Label>
             </Code>
         </FormOfEducation>
 
         <!-- joukko opetusmuotoja -->
-        <FormsOfTeaching scheme="Koodisto">
-            <Code value="uri:opetusmuoto/lahiopetus"/>
+        <FormsOfTeaching scheme="Koodisto" version="1">
+            <Code uri="uri:opetusmuoto/lahiopetus">
+                <Label lang="fi">opetusmuoto-fi</Label>
+                <Label lang="en">opetusmuoto-en</Label>
+                <Label lang="sv">opetusmuoto-sv</Label>
+            </Code>
         </FormsOfTeaching>
 
         <!-- koulutuksen alkamispäivämäärä, ISO-8601 muodossa -->
@@ -189,7 +199,7 @@
 
         <Duration>
             <Units>
-                <Code scheme="Koodisto">uri:kesto/vuotta</Code>
+                <Code scheme="Koodisto" version="1" uri="uri:kesto/vuotta"></Code>
             </Units>
             <Value>40</Value>
         </Duration>
@@ -307,27 +317,27 @@
         </Name>
 
         <ApplicationType>
-            <Code scheme="Koodisto">uri:hakutyyppi/varsinaishaku</Code>
+            <Code scheme="Koodisto" version="1" uri="uri:hakutyyppi/varsinaishaku"></Code>
         </ApplicationType>
 
         <ApplicationMethod>
-            <Code scheme="Koodisto">uri:hakutapa/yhteishaku</Code>
+            <Code scheme="Koodisto" version="1" uri="uri:hakutapa/yhteishaku"></Code>
         </ApplicationMethod>
 
         <ApplicationSeason>
-            <Code scheme="Koodisto">uri:kausi/kevat</Code>
+            <Code scheme="Koodisto" version="1" uri="uri:kausi/kevat"></Code>
         </ApplicationSeason>
 
         <ApplicationYear>2013</ApplicationYear>
 
         <EducationStartSeason>
-            <Code scheme="Koodisto">uri:kausi/syksy</Code>
+            <Code scheme="Koodisto" version="1" uri="uri:kausi/syksy"></Code>
         </EducationStartSeason>
 
         <EducationStartYear>2014</EducationStartYear>
 
         <TargetGroup>
-            <Code scheme="Koodisto">uri:kohdejoukko/peruskoulut</Code>
+            <Code scheme="Koodisto" version="1" uri="uri:kohdejoukko/peruskoulut"></Code>
         </TargetGroup>
 
     </ApplicationSystem>
@@ -345,7 +355,7 @@
 
         <!-- hakukohteen nimi -->
         <Title>
-            <Code scheme="Koodisto">uri:hakukohde/876</Code>
+            <Code scheme="Koodisto" version="1" uri="uri:hakukohde/876"></Code>
         </Title>
 
         <!-- viittaus hakuun johon tämä hakukohde kuuluu -->
@@ -399,7 +409,7 @@
 
                     <!-- valintakoe tyyppi -->
                     <ExaminationType>
-                        <Code scheme="Koodisto">uri:valintakoetyyppi/123</Code>
+                        <Code scheme="Koodisto" version="1" uri="uri:valintakoetyyppi/123"></Code>
                         <Label lang="fi">valintakoe-fi</Label>
                     </ExaminationType>
 
@@ -443,7 +453,7 @@
 
                     <!-- liitteen tyyppi -->
                     <Type>
-                        <Code scheme="Koodisto">uri:liitetyyppi/12345</Code>
+                        <Code scheme="Koodisto" version="1" uri="uri:liitetyyppi/12345"></Code>
                         <Label lang="en">liitetyyppi-en</Label>
                     </Type>
 

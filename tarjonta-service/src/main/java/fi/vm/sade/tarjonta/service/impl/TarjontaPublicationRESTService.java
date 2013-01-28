@@ -15,7 +15,9 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
+import fi.vm.sade.tarjonta.publication.ExportParams;
 import fi.vm.sade.tarjonta.publication.LearningOpportunityJAXBWriter;
 import fi.vm.sade.tarjonta.publication.PublicationCollector;
 import java.io.IOException;
@@ -24,6 +26,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -37,8 +40,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * REST service for tarjonta publication. This is not intended for production use. Awaits for proper architecture choice
- * for data publication at OPH Sade -project.
+ * REST service for tarjonta publication. This is not intended for production
+ * use. Awaits for proper architecture choice for data publication at OPH Sade
+ * -project.
  *
  * @author Jukka Raanamo
  */
@@ -46,18 +50,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class TarjontaPublicationRESTService {
 
     private static final Logger log = LoggerFactory.getLogger(TarjontaPublicationRESTService.class);
-
     @Autowired
     private PublicationCollector dataCollector;
-
     @Autowired
     private TarjontaSampleData sampleData;
-
     @PersistenceContext
     private EntityManager em;
+    @Autowired(required = true)
+    protected OrganisaatioService organisaatioService;
 
     /**
-     * Dummy method that can be used to test connection. Always returns "hello" -string.
+     * Dummy method that can be used to test connection. Always returns "hello"
+     * -string.
      *
      * @return
      */
@@ -85,7 +89,8 @@ public class TarjontaPublicationRESTService {
     }
 
     /**
-     * For demostration/testing purposes only. Toggles all data to JULKAISTU state from VALMIS state.
+     * For demostration/testing purposes only. Toggles all data to JULKAISTU
+     * state from VALMIS state.
      *
      * @return
      */
@@ -100,7 +105,8 @@ public class TarjontaPublicationRESTService {
     }
 
     /**
-     * For demostration/testing purposes only. Toggles all data to VALMIS state from JULKAISTU state.
+     * For demostration/testing purposes only. Toggles all data to VALMIS state
+     * from JULKAISTU state.
      *
      * @return
      */
@@ -124,8 +130,8 @@ public class TarjontaPublicationRESTService {
 
         for (String entityName : entityNames) {
             resultMsg += "\nupdated "
-                + em.createQuery("UPDATE " + entityName + " set tila = '" + toStateName + "' where tila = '" + fromStateName + "'").executeUpdate()
-                + " " + entityName + " -objects";
+                    + em.createQuery("UPDATE " + entityName + " set tila = '" + toStateName + "' where tila = '" + fromStateName + "'").executeUpdate()
+                    + " " + entityName + " -objects";
 
         }
 
@@ -135,11 +141,11 @@ public class TarjontaPublicationRESTService {
 
     @GET
     @Path("/export-rich")
-    public Response exportRich() throws JAXBException {
+    public Response exportRich(@PathParam("images") String images) throws JAXBException {
 
         // enrichment is done is separate servlet filter, this method is just an endpoint to separate
         // the raw and enriched content. remove this when ESB is in place.
-        return export();
+        return export(images);
 
     }
 
@@ -153,20 +159,25 @@ public class TarjontaPublicationRESTService {
     @Path("/export")
     @Produces(MediaType.APPLICATION_XML)
     @Transactional(readOnly = true)
-    public Response export() throws JAXBException {
+    public Response export(@PathParam("images") String images) throws JAXBException {
+        final ExportParams params = new ExportParams();
 
-        final LearningOpportunityJAXBWriter writer = new LearningOpportunityJAXBWriter();
+        if (images != null) {
+            params.setShowImages(images.trim().equalsIgnoreCase("true"));
+            log.debug("show images : {}",  params.showImages());
+        }
 
+        final LearningOpportunityJAXBWriter writer = new LearningOpportunityJAXBWriter(params);
         final StreamingOutput output = new StreamingOutput() {
-
             @Override
             public void write(OutputStream out) throws IOException, WebApplicationException {
 
                 try {
 
                     writer.setOutput(out);
-
+                    dataCollector.setOrganisaatioService(organisaatioService);
                     dataCollector.setHandler(writer);
+                    dataCollector.setParams(params);
                     dataCollector.start();
 
                 } catch (XMLStreamException e) {
@@ -178,20 +189,17 @@ public class TarjontaPublicationRESTService {
 
                     log.error("data handler error", e);
                     throw new WebApplicationException(e, Response.serverError().
-                        entity(e.getMessage()).
-                        build());
+                            entity(e.getMessage()).
+                            build());
 
                 }
 
             }
-
         };
 
         return Response.ok().
-            type(MediaType.APPLICATION_XML).
-            entity(output).build();
+                type(MediaType.APPLICATION_XML).
+                entity(output).build();
 
     }
-
 }
-

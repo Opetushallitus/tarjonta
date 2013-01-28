@@ -57,7 +57,6 @@ public class XMLStreamEnricherTest {
 
     }
 
-
     @Test
     public void testMatchByTagName() throws Exception {
 
@@ -140,10 +139,9 @@ public class XMLStreamEnricherTest {
     private class InvocationCounter extends ElementEnricher {
 
         private int numEndCalled;
-
         private int numCharsCalled;
-
         private int numStartCalled;
+        private Attributes attr;
 
         @Override
         public int endElement(String localName) throws SAXException {
@@ -171,14 +169,17 @@ public class XMLStreamEnricherTest {
             return WRITE_AND_CONTINUE;
         }
 
-
+        @Override
+        public Attributes getAttributes() {
+            return attr;
+        }
     }
 
     private class MockKoodistoHandler extends ElementEnricher {
 
         private String label;
-
         private String lang;
+        private Attributes attr;
 
         public MockKoodistoHandler(String label, String lang) {
             this.label = label;
@@ -189,8 +190,6 @@ public class XMLStreamEnricherTest {
         public void reset() {
             // N/A
         }
-
-
 
         @Override
         public int startElement(String localName, Attributes attributes) throws SAXException {
@@ -227,8 +226,9 @@ public class XMLStreamEnricherTest {
 
         }
 
+        @Override
+        public Attributes getAttributes() {
+            return attr;
+        }
     }
-
-
 }
-

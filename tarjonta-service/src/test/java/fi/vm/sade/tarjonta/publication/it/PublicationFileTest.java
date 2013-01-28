@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.publication.it;
 
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -33,13 +35,13 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.publication.ExportParams;
 
 import fi.vm.sade.tarjonta.publication.LearningOpportunityJAXBWriter;
 import fi.vm.sade.tarjonta.publication.PublicationCollector;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import java.text.DecimalFormat;
 import java.util.Random;
-import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,15 +52,10 @@ import org.slf4j.LoggerFactory;
 public class PublicationFileTest {
 
     private PublicationCollector collector;
-
     private File outputFile;
-
     private OutputStream outputStream;
-
     private TarjontaFixtures fixtures = new TarjontaFixtures();
-
     private Random random = new Random(System.currentTimeMillis());
-
     private static final Logger log = LoggerFactory.getLogger("TEST");
 
     @Before
@@ -66,13 +63,18 @@ public class PublicationFileTest {
 
         collector = new PublicationCollector();
         collector.setDataService(null);
+        OrganisaatioService mock = mock(OrganisaatioService.class);
+        when(mock.findByOid(TarjontaFixtures.OID_ORGANISAATIO)).thenReturn(new OrganisaatioDTO());
+
+        collector.setOrganisaatioService(mock);
+
 
         outputFile = File.createTempFile("learning_publication", ".xml");
         outputStream = new FileOutputStream(outputFile);
 
         log.info("writing test data to: " + outputFile);
 
-        LearningOpportunityJAXBWriter jaxbWriter = new LearningOpportunityJAXBWriter();
+        LearningOpportunityJAXBWriter jaxbWriter = new LearningOpportunityJAXBWriter(new ExportParams());
         jaxbWriter.setOutput(outputStream);
 
         collector.setHandler(jaxbWriter);
@@ -107,9 +109,9 @@ public class PublicationFileTest {
         long bytes = outputFile.length();
 
         log.info("publication file size with " + numKoulutus + " koulutus"
-            + ", " + numHaku + " haku"
-            + ", " + numHakukohde + " hakukohde"
-            + ", file size: " + bytes + " bytes (" + formatMegs(bytes) + " MB)");
+                + ", " + numHaku + " haku"
+                + ", " + numHakukohde + " hakukohde"
+                + ", file size: " + bytes + " bytes (" + formatMegs(bytes) + " MB)");
 
     }
 
@@ -158,6 +160,4 @@ public class PublicationFileTest {
         } catch (Exception ignore) {
         }
     }
-
 }
-

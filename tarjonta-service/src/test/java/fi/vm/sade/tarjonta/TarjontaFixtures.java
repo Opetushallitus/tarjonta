@@ -25,41 +25,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Sets up common test fixtures that can be used through out different DAO/service tests.
+ * Sets up common test fixtures that can be used through out different
+ * DAO/service tests.
  *
  */
 @Component
 public class TarjontaFixtures {
 
+    public static final String OID_ORGANISAATIO = "1.2.3.4.555";
     public static final String OID_TIETOJENKASITTELYN_KOULUTUS = "dummy";
-
     public Koulutusmoduuli simpleTutkintoOhjelma;
-
     public KoulutusmoduuliToteutus simpleTutkintoOhjelmaToteutus;
-
     public Koulutusmoduuli simpleTutkinnonOsa;
-
     public Hakukohde simpleHakukohde;
-
     public Hakukohde hakukohdeWithValintakoe;
-
     public Haku simpleHaku;
-
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
-
     @Autowired
     private HakuDAO hakuDAO;
-
     @Autowired
     private KoulutusSisaltyvyysDAO rakenneDAO;
-
     private static final Random random = new Random(System.currentTimeMillis());
 
     public void recreate() {
@@ -109,7 +99,7 @@ public class TarjontaFixtures {
         valintakoe.addAjankohta(valintakoeAjankohta);
 
         MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
-        monikielinenTeksti.addTekstiKaannos("fi","testi");
+        monikielinenTeksti.addTekstiKaannos("fi", "testi");
         valintakoe.setKuvaus(monikielinenTeksti);
 
 
@@ -139,6 +129,7 @@ public class TarjontaFixtures {
         cal.add(Calendar.YEAR, 1);
 
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus(null);
+        t.setTarjoaja(OID_ORGANISAATIO);
         t.setOid(randomOid("koulutusmoduulitotetutus"));
         t.setKoulutuksenAlkamisPvm(cal.getTime());
         t.setMaksullisuus(null);
@@ -312,11 +303,11 @@ public class TarjontaFixtures {
     /**
      * Creates structure like (not tree):
      *
-     *    0
+     * 0
      *   / \
-     *  1   2
-     *   \ /
-     *    3
+     * 1 2
+     * \ /
+     * 3
      *
      * @return
      */
@@ -343,8 +334,6 @@ public class TarjontaFixtures {
         return (Koulutusmoduuli) koulutusmoduuliDAO.read(root.getId());
 
     }
-
-
 
     /**
      * Deletes all entities used in testing.
@@ -409,6 +398,4 @@ public class TarjontaFixtures {
         return teksti;
 
     }
-
 }
-

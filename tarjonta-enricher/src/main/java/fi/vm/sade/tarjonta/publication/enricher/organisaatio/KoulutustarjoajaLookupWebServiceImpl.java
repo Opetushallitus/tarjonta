@@ -15,6 +15,9 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher.organisaatio;
 
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioKuvailevatTiedotTyyppi;
 import fi.vm.sade.tarjoaja.service.KoulutustarjoajaPublicService;
 import fi.vm.sade.tarjoaja.service.types.FindByOrganizationOidRequestType;
 import fi.vm.sade.tarjoaja.service.types.FindByOrganizationOidResponseType;
@@ -33,18 +36,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class KoulutustarjoajaLookupWebServiceImpl implements KoulutustarjoajaLookupService {
 
-    @Autowired(required = true)
-    private KoulutustarjoajaPublicService tarjoajaService;
     private static final Logger log = LoggerFactory.getLogger(KoodistoCodeValueEnricher.class);
+    @Autowired(required = true)
+    protected OrganisaatioService organisaatioService;
 
     @Override
-    public KoulutustarjoajaTyyppi lookupKoulutustarjoajaByOrganisaatioOid(String oid) throws Exception {
+    public OrganisaatioDTO lookupKoulutustarjoajaByOrganisaatioOid(String oid) throws Exception {
 
         FindByOrganizationOidRequestType request = new FindByOrganizationOidRequestType();
         request.setOid(oid);
-
-        FindByOrganizationOidResponseType response = tarjoajaService.findByOrganizationOid(request);
-        return response.getReturn();
-
+        return organisaatioService.findByOid(oid);
     }
 }
