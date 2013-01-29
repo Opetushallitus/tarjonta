@@ -512,14 +512,14 @@
                     <xs:documentation>Haun sisaisen hakuajan kuvaus</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element minOccurs="1" maxOccurs="1" name="sisaisenHaunAlkamisPvm" type="xs:date">
+            <xs:element minOccurs="1" maxOccurs="1" name="sisaisenHaunAlkamisPvm" type="xs:dateTime">
                 <xs:annotation>
-                    <xs:documentation>Sisaisen haun alkamispaivamaara</xs:documentation>
+                    <xs:documentation>Sisaisen haun alkamispaivamaara ja kellonaika</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element minOccurs="1" maxOccurs="1" name="sisaisenHaunPaattymisPvm" type="xs:date">
+            <xs:element minOccurs="1" maxOccurs="1" name="sisaisenHaunPaattymisPvm" type="xs:dateTime">
                 <xs:annotation>
-                    <xs:documentation>Sisaisen haun paattymispaivamaara</xs:documentation>
+                    <xs:documentation>Sisaisen haun paattymispaivamaara ja kellonaika</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>

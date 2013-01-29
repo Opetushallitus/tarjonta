@@ -74,6 +74,8 @@ public class HakuViewModel extends BaseUIViewModel {
     private String nimiEn;
 
     private HakuTyyppi hakuDto;
+    
+    private String haunTila;
 
     public HakuViewModel() {
         super();
@@ -485,6 +487,16 @@ public class HakuViewModel extends BaseUIViewModel {
             hakuDto.getHaunKielistetytNimet().add(hNimi);
         }
 
+    }
+
+    public String getHaunTila() {
+        haunTila = hakuDto.getHaunTila().value();
+        return haunTila;
+    }
+
+    public void setHaunTila(String haunTila) {
+        this.haunTila = haunTila;
+        hakuDto.setHaunTila(TarjontaTila.fromValue(haunTila));
     }
 
 

@@ -144,13 +144,15 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
             hc.getContainerProperty(rootItem, presenter.COLUMN_A).setValue(rowStyle.format(e.getKey() + " (" + e.getValue().size() + ")", false));
 
             for (HakuViewModel curHaku : e.getValue()) {
-                HakuResultRow rowStyleInner = new HakuResultRow(curHaku, TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), curHaku));
+                HakuResultRow rowStyleInner = new HakuResultRow(curHaku, getListHakuName(curHaku));//TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), curHaku));
                 hc.addItem(curHaku);
                 hc.setParent(curHaku, rootItem);
-                hc.getContainerProperty(curHaku, presenter.COLUMN_A).setValue(rowStyleInner.format(TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), curHaku), true));
+                hc.getContainerProperty(curHaku, presenter.COLUMN_A).setValue(rowStyleInner.format(getListHakuName(curHaku), true));
                 hc.setChildrenAllowed(curHaku, false);
 
                 rowStyleInner.addListener(new Listener() {
+
+                    private static final long serialVersionUID = -3059346525675411902L;
 
                     @Override
                     public void componentEvent(Event event) {
@@ -162,6 +164,10 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
             }
         }
         return hc;
+    }
+    
+    private String getListHakuName(HakuViewModel curHaku) {
+        return TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), curHaku) + ", " + T(curHaku.getHaunTila());
     }
 
     private void changeHakuSelections(boolean selected) {

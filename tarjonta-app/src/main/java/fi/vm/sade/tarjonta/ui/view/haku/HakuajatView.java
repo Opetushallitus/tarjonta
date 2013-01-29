@@ -58,10 +58,12 @@ public class HakuajatView {
                 kuvaus.setHeight("25px");
 
 		alkuPvm = UiUtil.dateField();
+		alkuPvm.setDateFormat("dd.MM.yyyy HH:mm");
 		alkuPvm.setPropertyDataSource(new NestedMethodProperty(model, "alkamisPvm"));
 		alkuPvm.setImmediate(true);
 
 		loppuPvm = UiUtil.dateField();
+		loppuPvm.setDateFormat("dd.MM.yyyy HH:mm");
 		loppuPvm.setPropertyDataSource(new NestedMethodProperty(model, "paattymisPvm"));
 		loppuPvm.setImmediate(true);
 
