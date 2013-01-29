@@ -144,7 +144,7 @@ public class TarjontaPublicationRESTService {
 
     @GET
     @Path("/export-rich")
-    public Response exportRich(@PathParam("images") String images) throws JAXBException {
+    public Response exportRich(@PathParam("images") boolean images) throws JAXBException {
 
         // enrichment is done is separate servlet filter, this method is just an endpoint to separate
         // the raw and enriched content. remove this when ESB is in place.
