@@ -273,7 +273,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         buildGridOpetusmuotoRow(this, "Opetusmuoto");
         buildGridPohjakoulutusvaatimusRow(this, "Pohjakoulutusvaatimus");
         buildGridLinkkiRow(this, "Linkki");
-        buildGridYhteyshenkiloRow(this, "Yhteyshenkilo");
+        buildGridYhteyshenkiloRows(this, "Yhteyshenkilo");
 
         //activate all property annotation validations
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
@@ -288,8 +288,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
      * @param grid
      * @param propertyKey
      */
-    private void buildGridYhteyshenkiloRow(GridLayout grid, String propertyKey) {
-        gridLabel(grid, propertyKey);
+    private void buildGridYhteyshenkiloRows(GridLayout grid, String propertyKey) {
+        gridLabelMidAlign(grid, propertyKey);
         VerticalLayout vl = UiUtil.verticalLayout();
         yhtHenkKokoNimi = new AutocompleteTextField(vl, T("prompt.kokoNimi"), "", presenter, this.koulutusModel);
         yhtHenkKokoNimi.addListener(new Listener() {
@@ -310,10 +310,22 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
                 }
             }        
         });
-        yhtHenkTitteli = UiUtil.textField(vl, "", T("prompt.titteli"), true);
-        yhtHenkEmail = UiUtil.textField(vl, "", T("prompt.email"), true);
-        yhtHenkPuhelin = UiUtil.textField(vl, "", T("prompt.puhelin"), true);
         grid.addComponent(vl);
+        grid.newLine();
+        
+        gridLabel(grid, "prompt.titteli");
+        yhtHenkTitteli = UiUtil.textField(null, "", "", true);
+        grid.addComponent(yhtHenkTitteli);
+        grid.newLine();
+        
+        gridLabel(grid, "prompt.email");
+        yhtHenkEmail = UiUtil.textField(null, "", "", true);
+        grid.addComponent(yhtHenkEmail);
+        grid.newLine();
+        
+        gridLabel(grid, "prompt.puhelin");
+        yhtHenkPuhelin = UiUtil.textField(null, "", "", true);
+        grid.addComponent(yhtHenkPuhelin);
         grid.newLine();
     }
     
@@ -541,6 +553,21 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             labelValue.setSizeUndefined();
             grid.addComponent(hl);
             grid.setComponentAlignment(hl, Alignment.TOP_RIGHT);
+
+        }
+        return hl;
+    }
+    
+    private AbstractLayout gridLabelMidAlign(GridLayout grid, final String propertyKey) {
+        HorizontalLayout hl = UiUtil.horizontalLayout(false, UiMarginEnum.RIGHT);
+        hl.setSizeFull();
+
+        if (propertyKey != null) {
+            Label labelValue = UiUtil.label(hl, T(propertyKey));
+            hl.setComponentAlignment(labelValue, Alignment.MIDDLE_RIGHT);
+            labelValue.setSizeUndefined();
+            grid.addComponent(hl);
+            grid.setComponentAlignment(hl, Alignment.MIDDLE_RIGHT);
 
         }
         return hl;
