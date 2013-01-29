@@ -182,7 +182,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         lakkautetut = UiUtil.checkbox(panelTop, T("naytaMyosLakkautetut"));
         suunnitellut = UiUtil.checkbox(panelTop, T("naytaMyosSuunnitellut"));
         HorizontalLayout buttonsL = UiUtil.horizontalLayout();
-        searchB = UiUtil.buttonSmallPrimary(buttonsL, T("hae"), new Button.ClickListener() {
+        searchB = UiUtil.buttonSmallSecodary(buttonsL, T("hae"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
@@ -191,7 +191,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             }
         });
 
-        tyhjennaB = UiUtil.buttonSmallPrimary(buttonsL, T("tyhjenna"), new Button.ClickListener() {
+        tyhjennaB = UiUtil.buttonSmallSecodary(buttonsL, T("tyhjenna"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override

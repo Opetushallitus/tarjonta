@@ -182,7 +182,7 @@ public class DialogDataTable<MODEL> extends Table {
         HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.TOP);
         layout.addComponent(hl);
 
-        btnAdd = UiUtil.buttonSmallPrimary(hl, T(getButtonCaptionProperty(DialogDataTableButton.BUTTON_ADD)), new Button.ClickListener() {
+        btnAdd = UiUtil.buttonSmallSecodary(hl, T(getButtonCaptionProperty(DialogDataTableButton.BUTTON_ADD)), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 event.getButton().setEnabled(false);
@@ -203,7 +203,7 @@ public class DialogDataTable<MODEL> extends Table {
         });
         buttons.put(DialogDataTableButton.BUTTON_ADD, btnAdd);
 
-        final Button btnEdit = UiUtil.buttonSmallPrimary(hl, T(getButtonCaptionProperty(DialogDataTableButton.BUTTON_EDIT)), new Button.ClickListener() {
+        final Button btnEdit = UiUtil.buttonSmallSecodary(hl, T(getButtonCaptionProperty(DialogDataTableButton.BUTTON_EDIT)), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 if (getValue() == null) {
@@ -221,7 +221,7 @@ public class DialogDataTable<MODEL> extends Table {
         btnEdit.setEnabled(false);
         buttons.put(DialogDataTableButton.BUTTON_EDIT, btnEdit);
 
-        final Button btnDelete = UiUtil.buttonSmallPrimary(hl, T(getButtonCaptionProperty(DialogDataTableButton.BUTTON_REMOVE)), new Button.ClickListener() {
+        final Button btnDelete = UiUtil.buttonSmallSecodary(hl, T(getButtonCaptionProperty(DialogDataTableButton.BUTTON_REMOVE)), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 final MODEL rowObject = (MODEL) getValue();

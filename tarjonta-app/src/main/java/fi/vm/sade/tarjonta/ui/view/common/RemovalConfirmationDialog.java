@@ -56,8 +56,8 @@ public class RemovalConfirmationDialog extends AbstractVerticalLayout {
 		UiUtil.label(this, kohdenimi);
 		HorizontalLayout hl = UiUtil.horizontalLayout();
 		hl.setSizeFull();
-		Button noRemoveB = UiUtil.buttonSmallPrimary(hl, noRemoveStr, noRemoveListener);
-		Button removeB = UiUtil.buttonSmallPrimary(hl, removeStr, removeListener);
+		Button noRemoveB = UiUtil.buttonSmallSecodary(hl, noRemoveStr, noRemoveListener);
+		Button removeB = UiUtil.buttonSmallSecodary(hl, removeStr, removeListener);
 		addComponent(hl);
 		hl.setComponentAlignment(noRemoveB, Alignment.MIDDLE_LEFT);
 		hl.setComponentAlignment(removeB, Alignment.MIDDLE_RIGHT);

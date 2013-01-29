@@ -119,7 +119,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
             }
         });
 
-        btnHae = UiBuilder.buttonSmallPrimary(this, T("hae"), new Button.ClickListener() {
+        btnHae = UiBuilder.buttonSmallSecodary(this, T("hae"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
