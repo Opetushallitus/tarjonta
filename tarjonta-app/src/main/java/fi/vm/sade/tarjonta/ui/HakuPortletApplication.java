@@ -37,16 +37,11 @@ public class HakuPortletApplication extends AbstractSadePortletApplication {
     public synchronized void init() {
         super.init();
         this.transactionStart(this, null);
-
-        window = new HakuRootView();
-        setMainWindow(window);
-        setTheme("oph-app-tarjonta"); //include Vaadin Tree Table fix for Liferay
-
         initApplication();
     }
 
     protected void initApplication() {
-        window = new TarjontaRootView();
+        window = new HakuRootView();
         setMainWindow(window);
         setTheme(Oph.THEME_NAME);
     }
