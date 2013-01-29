@@ -2398,6 +2398,7 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="published"/>
             <xs:enumeration value="cancelled"/>
+            <xs:enumeration value="unknown"/>
         </xs:restriction>
     </xs:simpleType>
     

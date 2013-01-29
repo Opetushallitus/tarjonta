@@ -202,6 +202,9 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         final ApplicationSystemType applicationSystem = objectFactory.createApplicationSystemType();
         applicationSystem.setId(haku.getOid());
 
+        //ApplicationSystemType#status
+        applicationSystem.setStatus(status(haku.getTila()));
+
         // ApplicationSystem/Name
         copyTexts(haku.getNimi(), applicationSystem.getName());
 
@@ -240,6 +243,8 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
         ApplicationOptionType applicationOption = objectFactory.createApplicationOptionType();
 
+        //ApplicationSystemType#status
+        applicationOption.setStatus(status(hakukohde.getTila()));
         // ApplicationOption/Identifier
         ApplicationOptionType.Identifier identifier = new ApplicationOptionType.Identifier();
         identifier.setValue(hakukohde.getOid());
@@ -278,6 +283,9 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         if (moduuli.getModuuliTyyppi() != KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA) {
             throw new Exception("KoulutusmoduuliTyyppi not supported: " + moduuli.getModuuliTyyppi());
         }
+
+        //LearningOpportunitySpecification#status
+        specification.setStatus(status(moduuli.getTila()));
 
         // LearningOpportunitySpecification/Name
         addNimi(moduuli, specification);
@@ -339,6 +347,9 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         log.debug("processing KoulutusmoduuliToteutus, oid: " + toteutus.getOid());
 
         LearningOpportunityInstanceType instance = new LearningOpportunityInstanceType();
+
+        //LearningOpportunityInstance#status
+        instance.setStatus(status(toteutus.getTila()));
 
         // LearningOpportunityInstance#id
         instance.setId(putID(toteutus.getOid(), instance));
@@ -1257,7 +1268,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
     private static DescriptionType lopInstitutionInformation(KuvailevaTietoTyyppi metaKey) {
         switch (metaKey.getTyyppi()) {
             case VALINTAMENETTELY:
-                  return  DescriptionType.ADMISSION_PROCEDURES;
+                return DescriptionType.ADMISSION_PROCEDURES;
             case VASTUUHENKILOT:
                 return DescriptionType.ACADEMIC_AUTHORITIES;
             case VUOSIKELLO:
@@ -1287,5 +1298,16 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         targetLink.setType(type);
         targetLink.setUri(url);
         return targetLink;
+    }
+
+    private static StatusSchemeType status(final TarjontaTila tila) {
+        switch (tila) {
+            case JULKAISTU:
+                return StatusSchemeType.PUBLISHED;
+            case PERUTTU:
+                return StatusSchemeType.CANCELLED;
+            default:
+                return StatusSchemeType.UNKNOWN;
+        }
     }
 }

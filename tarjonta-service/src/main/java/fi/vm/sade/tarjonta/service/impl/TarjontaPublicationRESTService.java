@@ -24,10 +24,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -157,15 +160,15 @@ public class TarjontaPublicationRESTService {
      */
     @GET
     @Path("/export")
-    @Produces(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.TEXT_PLAIN})
+    @Produces({MediaType.APPLICATION_XML})
     @Transactional(readOnly = true)
-    public Response export(@PathParam("images") String images) throws JAXBException {
+    public Response export(
+            @DefaultValue(value = "false")
+            @QueryParam("images") boolean images) throws JAXBException {
         final ExportParams params = new ExportParams();
-
-        if (images != null) {
-            params.setShowImages(images.trim().equalsIgnoreCase("true"));
-            log.debug("show images : {}",  params.showImages());
-        }
+        log.info("Param : show images : '{}'", images);
+        params.setShowImages(images);
 
         final LearningOpportunityJAXBWriter writer = new LearningOpportunityJAXBWriter(params);
         final StreamingOutput output = new StreamingOutput() {
