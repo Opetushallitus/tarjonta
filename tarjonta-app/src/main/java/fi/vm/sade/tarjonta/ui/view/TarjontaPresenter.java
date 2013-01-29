@@ -617,7 +617,9 @@ public class TarjontaPresenter implements ICommonResource {
             }
         }
         SimpleDateFormat sdf = new SimpleDateFormat(LIITE_DATE_PATTERNS);
+        if (hakukohdeLiiteViewModel.getToimitettavaMennessa() != null) {
         hakukohdeLiiteViewModel.setToimitusPvmTablePresentation(sdf.format(hakukohdeLiiteViewModel.getToimitettavaMennessa()));
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append(hakukohdeLiiteViewModel.getOsoiteRivi1());

@@ -49,7 +49,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * Created by: Tuomas Katva
+ * @author: Tuomas Katva
  * Date: 14.1.2013
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
@@ -70,6 +70,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     KoodistoComponent liitteenTyyppi;
 
     private LiitteenSanallinenKuvausTabSheet liitteenSanallinenKuvausTxtArea;
+    @NotNull(message = "validation.HakukohdeLiitteet.toimitettavaMennessa.notNull")
     @PropertyId("toimitettavaMennessa")
     private DateField toimittettavaMennessa;
 
@@ -142,6 +143,13 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         BeanItem<HakukohdeLiiteViewModel> hakukohdeLiiteBean = new BeanItem<HakukohdeLiiteViewModel>(presenter.getSelectedHakuliite());
         form = new ValidatingViewBoundForm(this);
         form.setItemDataSource(hakukohdeLiiteBean);
+        if(presenter.getSelectedHakuliite() != null && presenter.getSelectedHakuliite().getSahkoinenToimitusOsoite() != null && presenter.getSelectedHakuliite().getSahkoinenToimitusOsoite().trim().length() > 0) {
+            sahkoinenToimitusOsoite.setEnabled(true);
+            voidaanToimittaaSahkoisesti.setValue(true);
+        } else {
+            sahkoinenToimitusOsoite.setEnabled(false);
+            voidaanToimittaaSahkoisesti.setValue(false);
+        }
 
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
         this.form.setValidationVisible(false);
@@ -179,7 +187,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     }
 
     private LiitteenSanallinenKuvausTabSheet buildLiitteenSanallinenKuvaus() {
-        liitteenSanallinenKuvausTxtArea = new LiitteenSanallinenKuvausTabSheet();
+        liitteenSanallinenKuvausTxtArea = new LiitteenSanallinenKuvausTabSheet(true,"500px","300px");
 
         liitteenSanallinenKuvausTxtArea.setWidth("60%");
         return liitteenSanallinenKuvausTxtArea;
@@ -266,6 +274,17 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
         voidaanToimittaaSahkoisesti = new CheckBox();
         voidaanToimittaaSahkoisesti.setCaption(T("HakukohteenLiitteetViewImpl.voidaanToimittaaMyosSahkoisesti"));
+        voidaanToimittaaSahkoisesti.setImmediate(true);
+        voidaanToimittaaSahkoisesti.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                if (clickEvent.getButton().booleanValue()) {
+                    sahkoinenToimitusOsoite.setEnabled(true);
+                } else {
+                    sahkoinenToimitusOsoite.setEnabled(false);
+                }
+            }
+        });
         sahkoinenToimitusOsoiteLayout.addComponent(voidaanToimittaaSahkoisesti);
         sahkoinenToimitusOsoite = UiUtil.textField(null);
         sahkoinenToimitusOsoiteLayout.addComponent(sahkoinenToimitusOsoite);
@@ -288,8 +307,18 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         saveButton = UiBuilder.button(null,T("HakukohteenLiitteetViewImpl.saveBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
+                errorView.resetErrors();
+                try {
+                form.commit();
+                if (form.isValid()) {
                 presenter.getModel().getSelectedLiite().setLiitteenSanallinenKuvaus(getLiitteenSanallisetKuvaukset());
                 presenter.saveHakukohteenEditView();
+                }
+                } catch (Validator.InvalidValueException e) {
+                    errorView.addError(e);
+                } catch (Exception exp) {
+                    errorView.addError(exp.toString());
+                }
             }
         });
         horizontalButtonLayout.addComponent(saveButton);

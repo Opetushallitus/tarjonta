@@ -110,29 +110,33 @@ public class HakukohteenValintakoeTabImpl extends AbstractVerticalNavigationLayo
     public void loadTableData() {
 
         if (valintakoeTable != null) {
-            valintakoeTable.removeAllItems();
+              valintakoeTable.removeAllItems();
+
         }
         else {
             valintakoeTable = new Table();
             valintakoeTable.setWidth(100, UNITS_PERCENTAGE);
             getLayout().addComponent(valintakoeTable);
-        }
 
-        if (valintakoeTable != null) {
-            valintakoeTable.setContainerDataSource(createBeanContainer(presenter.loadHakukohdeValintaKokees()));
             valintakoeTable.addGeneratedColumn("sanallinenKuvaus",new Table.ColumnGenerator() {
                 @Override
                 public Object generateCell(Table table, Object o, Object o2) {
                     if (table != null) {
-                    Item item = table.getItem(o);
-                    Label label = new Label(item.getItemProperty("sanallinenKuvaus"));
-                    label.setContentMode(Label.CONTENT_XHTML);
-                    return label;
+                        Item item = table.getItem(o);
+                        Label label = new Label(item.getItemProperty("sanallinenKuvaus"));
+                        label.setContentMode(Label.CONTENT_XHTML);
+                        return label;
                     } else {
                         return null;
                     }
                 }
             });
+
+        }
+        if (valintakoeTable != null) {
+            valintakoeTable.setContainerDataSource(createBeanContainer(presenter.loadHakukohdeValintaKokees()));
+
+
             valintakoeTable.setWidth(100, UNITS_PERCENTAGE);
             valintakoeTable.setVisibleColumns(new String[]{"valintakokeenTyyppi", "sanallinenKuvaus", "muokkaaBtn"});
             valintakoeTable.setColumnHeader("valintakokeenTyyppi", T("valinkoeTyyppiHdr"));

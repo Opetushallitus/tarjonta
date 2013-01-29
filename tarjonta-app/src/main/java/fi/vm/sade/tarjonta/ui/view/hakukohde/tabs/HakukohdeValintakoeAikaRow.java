@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
 
 import com.vaadin.ui.Button;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 /**
  * Created by: Tuomas Katva
@@ -72,10 +74,13 @@ public class HakukohdeValintakoeAikaRow {
 
     private void resolveFields() {
         if (rowValintakoeAika != null) {
-            sijainti = rowValintakoeAika.getOsoiteRivi() + ", " + rowValintakoeAika.getPostinumero() + ", " + rowValintakoeAika.getPostitoimiPaikka();
-            //TODO ajankohta to specified format
+            if (rowValintakoeAika.getPostinumero() != null) {
+            List<KoodiType> postinumeroKoodis = tarjontaUIHelper.gethKoodis(rowValintakoeAika.getPostinumero());
+            sijainti = rowValintakoeAika.getOsoiteRivi() + ", " + postinumeroKoodis.get(0).getKoodiArvo() + ", " + rowValintakoeAika.getPostitoimiPaikka();
+            }
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
-            ajankohta =  simpleDateFormat.format(rowValintakoeAika.getAlkamisAika());
+            ajankohta = simpleDateFormat.format(rowValintakoeAika.getAlkamisAika()) + " - " + simpleDateFormat.format(rowValintakoeAika.getPaattymisAika());
+
 
             lisatietoja = rowValintakoeAika.getValintakoeAikaTiedot();
         }

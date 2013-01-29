@@ -21,6 +21,11 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  */
 public class LiitteenSanallinenKuvausTabSheet extends LanguageTabSheet {
 
+
+    public LiitteenSanallinenKuvausTabSheet(boolean useRichText,String width,String height) {
+        super(useRichText,width,height);
+    }
+
     @Override
     protected void initializeTabsheet() {
         if(_model.getSelectedLiite() != null) {

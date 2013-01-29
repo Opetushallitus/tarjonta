@@ -22,6 +22,7 @@ import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
         setHakukohdeLiiteViewModel(param);
         liiteId = param.getHakukohdeLiiteId();
          liitteenTyyppi = param.getLiitteeTyyppiKoodistoNimi();
-         liitteenSanallinenKuvaus = param.getLocalizedKuvaus();
+         tryGetLocalizedSanallinenKuvaus(param);
          toimitettavaMennessa = param.getToimitusPvmTablePresentation();
          toimitusOsoite = getStringConcat();
          muokkaaBtn = UiUtil.buttonLink(null,i18n.getMessage("muokkaaBtn"), new Button.ClickListener() {
@@ -67,6 +68,17 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
              }
          });
 
+    }
+
+    private void tryGetLocalizedSanallinenKuvaus(HakukohdeLiiteViewModel param) {
+         for (KielikaannosViewModel teksti : param.getLiitteenSanallinenKuvaus()) {
+             if (teksti.getKielikoodi().trim().contains("Suomi")) {
+                 liitteenSanallinenKuvaus = teksti.getNimi();
+             }
+             if (teksti.getKielikoodi().trim().contains(I18N.getLocale().getLanguage())) {
+                 liitteenSanallinenKuvaus = teksti.getNimi();
+             }
+         }
     }
 
     private String getStringConcat() {

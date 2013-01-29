@@ -64,7 +64,7 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
     
     public void loadLiiteTableWithData() {
         if (liitteet != null) {
-            liitteet.reloadTableData();
+            liitteet.loadTableWithData();
         }
     }
 
@@ -111,10 +111,10 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
         liitteet = new HakukohteenLiitteetTabImpl();
         valintakokeet = new HakukohteenValintakoeTabImpl();
         perustiedotTab = tabs.addTab(perustiedot, T("tabNimi"));
-        liitteetTab = tabs.addTab(liitteet, T("liitteetTab"));
         valintakokeetTab = tabs.addTab(valintakokeet,T("valintakoeTab"));
+        liitteetTab = tabs.addTab(liitteet, T("liitteetTab"));
         liitteetTab.setEnabled(hakukohdeOid != null);
         valintakokeetTab.setEnabled(hakukohdeOid != null);
-        liitteet.reloadTableData();
+
     }
 }

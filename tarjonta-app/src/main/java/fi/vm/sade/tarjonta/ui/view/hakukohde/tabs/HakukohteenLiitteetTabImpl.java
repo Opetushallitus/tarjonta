@@ -15,6 +15,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanContainer;
@@ -84,7 +85,19 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
             hakukohteenLiitteetTable = new Table();
             hakukohteenLiitteetTable.setWidth(100, UNITS_PERCENTAGE);
             getLayout().addComponent(hakukohteenLiitteetTable);
-
+            hakukohteenLiitteetTable.addGeneratedColumn("liitteenSanallinenKuvaus",new Table.ColumnGenerator() {
+                @Override
+                public Object generateCell(Table table, Object o, Object o2) {
+                    if (table != null) {
+                        Item item = table.getItem(o);
+                        Label label = new Label(item.getItemProperty("liitteenSanallinenKuvaus"));
+                        label.setContentMode(Label.CONTENT_XHTML);
+                        return label;
+                    }  else {
+                        return null;
+                    }
+                }
+            });
         }
 
            if (hakukohteenLiitteetTable != null) {
@@ -93,8 +106,9 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
 
                hakukohteenLiitteetTable.setVisibleColumns(new String[] {"liitteenTyyppi","liitteenSanallinenKuvaus","toimitettavaMennessa",
                        "toimitusOsoite","muokkaaBtn"});
-               hakukohteenLiitteetTable.setColumnHeader("liitteenTyyppi",T("tableLiitteenTyyppi"));
+               hakukohteenLiitteetTable.setColumnHeader("liitteenTyyppi", T("tableLiitteenTyyppi"));
                hakukohteenLiitteetTable.setColumnHeader("liitteenSanallinenKuvaus",T("tableKuvaus"));
+
                hakukohteenLiitteetTable.setColumnHeader("toimitettavaMennessa",T("tableToimMennessa"));
                hakukohteenLiitteetTable.setColumnHeader("toimitusOsoite",T("tableToimitusOsoite"));
                hakukohteenLiitteetTable.setColumnHeader("muokkaaBtn","");
@@ -109,12 +123,7 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
            }
     }
 
-     public void reloadTableData() {
-         if (hakukohteenLiitteetTable != null) {
-        hakukohteenLiitteetTable.removeAllItems();
-        loadTableWithData();
-         }
-    }
+
 
     private BeanContainer<String,HakukohdeLiiteRow> createTableContainer(List<HakukohdeLiiteViewModel> liites) {
         BeanContainer<String,HakukohdeLiiteRow> liiteContainer = new BeanContainer<String, HakukohdeLiiteRow>(HakukohdeLiiteRow.class);
