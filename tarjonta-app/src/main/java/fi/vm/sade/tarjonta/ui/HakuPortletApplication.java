@@ -15,10 +15,13 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
+import com.vaadin.Application;
 import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
+import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
+import fi.vm.sade.vaadin.Oph;
 
 /**
  * Main portlet application class for Haku management.
@@ -26,16 +29,45 @@ import fi.vm.sade.tarjonta.ui.view.HakuRootView;
  * @author markus
  */
 public class HakuPortletApplication extends AbstractSadePortletApplication {
-    
-    
+
     private Window window;
+    private static ThreadLocal<HakuPortletApplication> tl = new ThreadLocal<HakuPortletApplication>();
 
     @Override
     public synchronized void init() {
         super.init();
+        this.transactionStart(this, null);
 
         window = new HakuRootView();
         setMainWindow(window);
         setTheme("oph-app-tarjonta"); //include Vaadin Tree Table fix for Liferay
+
+        initApplication();
+    }
+
+    protected void initApplication() {
+        window = new TarjontaRootView();
+        setMainWindow(window);
+        setTheme(Oph.THEME_NAME);
+    }
+
+    @Override
+    public void transactionStart(Application application, Object transactionData) {
+        super.transactionStart(application, transactionData);
+        if (application == this) {
+            tl.set(this);
+        }
+    }
+
+    @Override
+    public void transactionEnd(Application application, Object transactionData) {
+        super.transactionEnd(application, transactionData);
+        if (application == this) {
+            tl.remove();
+        }
+    }
+
+    public static HakuPortletApplication getInstance() {
+        return tl.get();
     }
 }

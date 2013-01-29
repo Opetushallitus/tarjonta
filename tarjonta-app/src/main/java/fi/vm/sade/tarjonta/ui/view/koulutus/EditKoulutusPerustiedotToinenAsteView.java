@@ -23,7 +23,7 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.view.common.EditLayoutView;
+import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author Jani Wilén
  */
 @Configurable(preConstruction = true)
-public class EditKoulutusPerustiedotToinenAsteView extends EditLayoutView<KoulutusToisenAsteenPerustiedotViewModel, EditKoulutusPerustiedotFormView> {
+public class EditKoulutusPerustiedotToinenAsteView extends AbstractEditLayoutView<KoulutusToisenAsteenPerustiedotViewModel, EditKoulutusPerustiedotFormView> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotToinenAsteView.class);
     private static final long serialVersionUID = -2238485065851932687L;
@@ -59,7 +59,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends EditLayoutView<Koulut
         model = presenter.getModel().getKoulutusPerustiedotModel();
         EditKoulutusPerustiedotFormView formView = new EditKoulutusPerustiedotFormView(presenter, getUiBuilder(), model);
 
-        buildFormLayout("KoulutuksenPerustiedot", presenter, layout, model, formView, getErrorView());
+        buildFormLayout("KoulutuksenPerustiedot", presenter, layout, model, formView);
     }
 
     @Override

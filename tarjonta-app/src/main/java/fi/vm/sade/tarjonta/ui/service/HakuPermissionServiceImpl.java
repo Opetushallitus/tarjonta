@@ -16,8 +16,7 @@
 package fi.vm.sade.tarjonta.ui.service;
 
 import fi.vm.sade.generic.ui.portlet.security.User;
-import fi.vm.sade.tarjonta.ui.TarjontaApplication;
-import fi.vm.sade.tarjonta.ui.TarjontaWebApplication;
+import fi.vm.sade.tarjonta.ui.HakuPortletApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,18 +26,18 @@ import org.springframework.stereotype.Service;
  * @author Jani Wilén
  */
 @Service
-public class TarjontaPermissionServiceImpl extends AbstractAppPermissionServiceImpl implements TarjontaPermissionService {
+public class HakuPermissionServiceImpl extends AbstractAppPermissionServiceImpl implements HakuPermissionService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TarjontaWebApplication.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HakuPermissionServiceImpl.class);
 
     @Override
     public User getUser() {
-        if (TarjontaApplication.getInstance() != null) {
+        if (HakuPortletApplication.getInstance() != null) {
 
-            if (TarjontaApplication.getInstance().getUser() != null) {
-                LOG.debug("USER OID : " + TarjontaApplication.getInstance().getUser().getOid());
+            if (HakuPortletApplication.getInstance().getUser() != null) {
+                LOG.debug("USER OID : " + HakuPortletApplication.getInstance().getUser().getOid());
             }
-            return TarjontaApplication.getInstance().getUser();
+            return HakuPortletApplication.getInstance().getUser();
         }
 
         throw new RuntimeException("Access denied - no Liferay user found.");

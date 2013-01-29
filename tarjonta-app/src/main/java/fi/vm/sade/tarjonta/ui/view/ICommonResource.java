@@ -15,10 +15,12 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
+import fi.vm.sade.generic.service.PermissionService;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
-import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
+import fi.vm.sade.tarjonta.ui.service.AppPermissionService;
+
 
 /**
  *
@@ -32,7 +34,7 @@ public interface ICommonResource {
 
     public void showMainDefaultView();
 
-    public TarjontaPermissionService getPermission();
+    public AppPermissionService getPermission();
 
     public void changeStateToCancelled(final String oid, final SisaltoTyyppi sisalto);
 

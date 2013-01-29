@@ -55,8 +55,10 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
+import fi.vm.sade.tarjonta.ui.service.AppPermissionService;
+import fi.vm.sade.tarjonta.ui.service.HakuPermissionService;
 import fi.vm.sade.tarjonta.ui.service.PublishingService;
-import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
+
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
 import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuViewImpl;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -91,7 +93,7 @@ public class HakuPresenter implements ICommonResource {
     @Autowired(required = true)
     private PublishingService publishingService;
     @Autowired(required = true)
-    private TarjontaPermissionService tarjontaPermissionService;
+    private HakuPermissionService tarjontaPermissionService;
 
     public HakuPresenter() {
     }
@@ -491,7 +493,7 @@ public class HakuPresenter implements ICommonResource {
     }
 
     @Override
-    public TarjontaPermissionService getPermission() {
+    public AppPermissionService getPermission() {
         return tarjontaPermissionService;
     }
 }

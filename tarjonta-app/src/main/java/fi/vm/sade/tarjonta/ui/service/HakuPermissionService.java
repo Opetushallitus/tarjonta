@@ -23,6 +23,6 @@ import fi.vm.sade.generic.service.PermissionService;
  *
  * @author Jani Wilén
  */
-public interface TarjontaPermissionService extends AppPermissionService {
+public interface HakuPermissionService extends AppPermissionService {
 
 }

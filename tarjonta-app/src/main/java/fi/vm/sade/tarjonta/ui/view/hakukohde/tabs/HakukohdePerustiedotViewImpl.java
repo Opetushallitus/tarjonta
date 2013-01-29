@@ -23,7 +23,7 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.view.common.EditLayoutView;
+import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  * Created by: Tuomas Katva Date: 15.1.2013
  */
 @Configurable
-public class HakukohdePerustiedotViewImpl extends EditLayoutView<HakukohdeViewModel, PerustiedotViewImpl> {
+public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<HakukohdeViewModel, PerustiedotViewImpl> {
 
     @Autowired(required = true)
     private TarjontaPresenter presenter;

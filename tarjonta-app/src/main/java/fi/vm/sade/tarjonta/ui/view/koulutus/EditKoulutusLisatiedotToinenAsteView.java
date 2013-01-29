@@ -25,7 +25,7 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.view.common.EditLayoutView;
+import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author Jani Wilén
  */
 @Configurable(preConstruction = true)
-public class EditKoulutusLisatiedotToinenAsteView extends EditLayoutView {
+public class EditKoulutusLisatiedotToinenAsteView extends AbstractEditLayoutView {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusLisatiedotToinenAsteView.class);
     private static final long serialVersionUID = -2238485065851932687L;
@@ -66,7 +66,7 @@ public class EditKoulutusLisatiedotToinenAsteView extends EditLayoutView {
         koulutusLisatiedotModel = presenter.getModel().getKoulutusLisatiedotModel();
         editKoulutusLisatiedotForm = new EditKoulutusLisatiedotForm(presenter, uiHelper, uiBuilder, koulutusLisatiedotModel);
 
-        buildFormLayout("KoulutuksenLisatiedot", presenter, layout, koulutusLisatiedotModel, editKoulutusLisatiedotForm, getErrorView());
+        buildFormLayout("KoulutuksenLisatiedot", presenter, layout, koulutusLisatiedotModel, editKoulutusLisatiedotForm);
     }
 
     @Override

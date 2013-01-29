@@ -50,7 +50,6 @@ public class KoulutusViewModelToDTOConverterTest {
      */
     //@Test
     public void testMapToKoulutuskoodiTyyppi_KoodistoKoodiTyyppi() {
-        System.out.println("mapToKoulutuskoodiTyyppi");
         KoulutusConverter instance = new KoulutusConverter();
         KoulutuskoodiModel result = instance.mapToKoulutuskoodiModel(koodistoTyyppi1, new Locale("fi"));
         assertEquals(URI, result.getKoodistoUri());

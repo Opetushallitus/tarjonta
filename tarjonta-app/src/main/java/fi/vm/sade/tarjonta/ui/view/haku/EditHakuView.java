@@ -25,7 +25,7 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
-import fi.vm.sade.tarjonta.ui.view.common.EditLayoutView;
+import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Jani Wilén
  */
-public class EditHakuView extends EditLayoutView<HakuViewModel, EditHakuFormImpl> {
+public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHakuFormImpl> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditHakuView.class);
     private HakuViewModel model;
@@ -59,7 +59,7 @@ public class EditHakuView extends EditLayoutView<HakuViewModel, EditHakuFormImpl
         formView = new EditHakuFormImpl();
         setTilaNestedProperty("hakuDto.haunTila");
 
-        buildFormLayout("HaunTiedot", presenter, layout, model, formView, getErrorView());
+        buildFormLayout("HaunTiedot", presenter, layout, model, formView);
     }
 
     @Override

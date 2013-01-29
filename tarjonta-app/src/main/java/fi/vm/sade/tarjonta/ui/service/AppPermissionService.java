@@ -23,6 +23,12 @@ import fi.vm.sade.generic.service.PermissionService;
  *
  * @author Jani Wilén
  */
-public interface TarjontaPermissionService extends AppPermissionService {
+public interface AppPermissionService extends PermissionService {
 
+    public static final String SERVICE = "APP_TARJONTA";
+    public static final String ROLE_CRUD = SERVICE + "_CRUD";
+    public static final String ROLE_RU = SERVICE + "_READ_UPDATE";
+    public static final String ROLE_R = SERVICE + "_READ";
+    
+    public List<String> getUserOrganisationOids(); 
 }

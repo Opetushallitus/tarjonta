@@ -63,6 +63,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
+import fi.vm.sade.tarjonta.ui.service.AppPermissionService;
 import fi.vm.sade.tarjonta.ui.service.PublishingService;
 import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
@@ -1273,7 +1274,8 @@ public class TarjontaPresenter implements ICommonResource {
     /**
      * @return the tarjontaPermissionService
      */
-    public TarjontaPermissionService getPermission() {
+    @Override
+    public AppPermissionService getPermission() {
         LOG.debug("tarjontaPermissionService : " + tarjontaPermissionService);
 
         return tarjontaPermissionService;
