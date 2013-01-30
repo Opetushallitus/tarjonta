@@ -103,23 +103,12 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         List<Hakukohde> hakukohdes = from(qHakukohde,qHaku,qKomoto)
                 .join(qHakukohde.haku,qHaku)
-                .leftJoin(qHakukohde.koulutusmoduuliToteutuses,qKomoto)
+                //.leftJoin(qHakukohde.koulutusmoduuliToteutuses,qKomoto)
                 .where(qHakukohde.oid.eq(oid.trim()))
                 .list(qHakukohde);
 
-       log.warn("findHakukohdeWithDepenciesByOid({}) --> hakukohdes.size={}", oid, hakukohdes.size());
 
-       for (Hakukohde hakukohde:hakukohdes) {
-           log.warn("  hakukohde.: {}", hakukohde.getOid());
 
-           hakukohde.setLisatiedot(findLisatiedotToHakuKohde(hakukohde));
-           try {
-           hakukohde.getHaku().getOid();
-           } catch (NullPointerException nullPointer) {
-                   log.info("HAKUKOHDE HAKU WAS NULL");
-           }
-
-       }
 
 
         return hakukohdes;
