@@ -70,6 +70,7 @@ public class HakukohteenValintakoeTabImpl extends AbstractVerticalNavigationLayo
         });
 
         horizontalLayout.addComponent(uusiValintakoeBtn);
+        horizontalLayout.setMargin(false,false,true,false);
         layout.addComponent(horizontalLayout);
 
         loadTableData();
@@ -116,6 +117,7 @@ public class HakukohteenValintakoeTabImpl extends AbstractVerticalNavigationLayo
         else {
             valintakoeTable = new Table();
             valintakoeTable.setWidth(100, UNITS_PERCENTAGE);
+            getLayout().setMargin(true);
             getLayout().addComponent(valintakoeTable);
 
             valintakoeTable.addGeneratedColumn("sanallinenKuvaus",new Table.ColumnGenerator() {

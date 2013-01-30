@@ -71,7 +71,11 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohde.setLisatiedot(convertTekstis(hakukohdevm.getLisatiedot()));
         hakukohde.setValintaPerusteidenKuvaukset(convertTekstis(hakukohdevm.getValintaPerusteidenKuvaus()));
         hakukohde.setLiitteidenToimitusPvm(hakukohdevm.getLiitteidenToimitusPvm());
+        try {
         hakukohde.setValinnanAloituspaikat(hakukohdevm.getValinnoissaKaytettavatPaikat());
+        } catch (Exception exp) {
+
+        }
         hakukohde.setSahkoinenToimitusOsoite(hakukohdevm.getLiitteidenSahkoinenToimitusOsoite());
 
         hakukohde.setKaytetaanHaunPaattymisenAikaa(hakukohdevm.isKaytaHaunPaattymisenAikaa());

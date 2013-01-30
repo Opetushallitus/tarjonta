@@ -72,6 +72,7 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
 
 
         horizontalLayout.addComponent(uusiLiiteBtn);
+        horizontalLayout.setMargin(false,false,true,false);
         layout.addComponent(horizontalLayout);
 
         loadTableWithData();
@@ -84,6 +85,7 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
         }  else {
             hakukohteenLiitteetTable = new Table();
             hakukohteenLiitteetTable.setWidth(100, UNITS_PERCENTAGE);
+            getLayout().setMargin(true);
             getLayout().addComponent(hakukohteenLiitteetTable);
             hakukohteenLiitteetTable.addGeneratedColumn("liitteenSanallinenKuvaus",new Table.ColumnGenerator() {
                 @Override
@@ -154,7 +156,7 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
         getWindow().addWindow(hakukohteenLiiteEditWindow);
         mainWindowLayout.setSizeUndefined();
         liitteet.setImmediate(true);
-        liitteet.setWidth("900px");
+        liitteet.setWidth("1000px");
 
 
         hakukohteenLiiteEditWindow.setModal(true);

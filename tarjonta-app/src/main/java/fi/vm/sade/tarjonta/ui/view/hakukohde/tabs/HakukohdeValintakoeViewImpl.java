@@ -47,6 +47,7 @@ import org.vaadin.addon.formbinder.PropertyId;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -129,11 +130,17 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
             public void buttonClick(Button.ClickEvent clickEvent) {
                 valintaKoeAikaForm.commit();
                 if (valintaKoeAikaForm.isValid()) {
-
-                    presenter.getModel().getSelectedValintaKoe().getValintakoeAjat().add(presenter.getSelectedAikaView());
+                    ValintakoeAikaViewModel valintakoeAika = presenter.getSelectedAikaView();
+                    if (valintakoeAika != null && valintakoeAika.getAlkamisAika().before(valintakoeAika.getPaattymisAika())) {
+                    errorView.resetErrors();
+                    presenter.getModel().getSelectedValintaKoe().getValintakoeAjat().add(valintakoeAika);
+                    presenter.getModel().setSelectedValintakoeAika(new ValintakoeAikaViewModel());
                     createNewModelToValintakoeAika();
 
                     loadTableData();
+                    } else {
+                        errorView.addError(T("HakukohdeValintakoeViewImpl.dateValidationFailed"));
+                    }
                 }
 
             }
@@ -158,6 +165,8 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
     private void buildMainLayout() {
 
         mainLayout = new VerticalLayout();
+
+        mainLayout.setMargin(true);
 
         mainLayout.addComponent(buildErrorLayout());
 
@@ -266,7 +275,9 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
 
     private KoodistoComponent buildValintakokeenTyyppi() {
+
         valintakoeTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_LIITTEEN_TYYPPI_URI);
+
 
         return valintakoeTyyppi;
     }
@@ -332,7 +343,11 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
     private void addItemToGrid(String captionKey, AbstractComponent component) {
 
         if (itemContainer != null) {
-            itemContainer.addComponent(UiUtil.label(null, T(captionKey)));
+
+
+            Label label =  UiUtil.label(null, T(captionKey));
+            itemContainer.addComponent(label);
+            itemContainer.setComponentAlignment(label,Alignment.MIDDLE_RIGHT);
             itemContainer.addComponent(component);
             itemContainer.newLine();
         }

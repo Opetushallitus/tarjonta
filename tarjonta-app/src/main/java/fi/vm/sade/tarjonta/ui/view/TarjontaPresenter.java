@@ -689,7 +689,7 @@ public class TarjontaPresenter implements ICommonResource {
             aikaViewModel.setPostitoimiPaikka(getModel().getSelectedValintakoeAika().getPostitoimiPaikka());
             aikaViewModel.setAlkamisAika(getModel().getSelectedValintakoeAika().getAlkamisAika());
             aikaViewModel.setPaattymisAika(getModel().getSelectedValintakoeAika().getPaattymisAika());
-            getModel().setSelectedValintakoeAika(new ValintakoeAikaViewModel());
+
         }
 
 

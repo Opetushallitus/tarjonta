@@ -55,6 +55,7 @@ import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -83,9 +84,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @NotNull(message = "{validation.Hakukohde.haku.notNull}")
     @PropertyId("hakuOid")
     ComboBox hakuCombo;
+    @Min(value = 0, message = "{validation.Hakukohde.aloituspaikat.num}")
     @NotNull(message = "{ShowHakukohdeViewImpl.liitaUusiKoulutusDialogTitle}")
     @PropertyId("aloitusPaikat")
     TextField aloitusPaikatText;
+    @Min(value = 0, message = "{validation.Hakukohde.valinnoissaKaytettavatPaikat.num}")
     @NotNull(message = "{validation.Hakukohde.valinnoissaKaytettavatPaikatText.notNull}")
     @PropertyId("valinnoissaKaytettavatPaikat")
     TextField valinnoissaKaytettavatPaikatText;
@@ -231,7 +234,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private void addItemToGrid(String captionKey, AbstractComponent component) {
 
         if (itemContainer != null) {
-            itemContainer.addComponent(UiUtil.label(null, T(captionKey)));
+            Label label = UiUtil.label(null, T(captionKey));
+            itemContainer.addComponent(label);
+            itemContainer.setComponentAlignment(label,Alignment.MIDDLE_RIGHT);
             itemContainer.addComponent(component);
             itemContainer.newLine();
         }
@@ -257,6 +262,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 if (clickEvent.getButton().booleanValue()) {
 
                     if (liitteidenToimitusPvm != null) {
+                        if (hakuCombo != null) {
+                            Object id = hakuCombo.getValue();
+
+                            if (id instanceof HakuViewModel) {
+                                liitteidenToimitusPvm.setValue(((HakuViewModel)id).getAlkamisPvm());
+                            }
+                        }
                         liitteidenToimitusPvm.setEnabled(false);
                     }
 
@@ -272,7 +284,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         verticalLayout.addComponent(kaytaHaunPaattymisAikaa);
 
-        liitteidenToimitusPvm = UiUtil.dateField();
+//        liitteidenToimitusPvm = UiUtil.dateField();
+        liitteidenToimitusPvm = new DateField();
         liitteidenToimitusPvm.setResolution(DateField.RESOLUTION_MIN);
         liitteidenToimitusPvm.setDateFormat("dd.MM.yyyy hh:mm");
 
@@ -318,7 +331,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         liitteidenOsoiteRivi2Text = UiUtil.textField(null);
         liitteidenOsoiteRivi2Text.setWidth("100%");
-        liitteidenOsoiteRivi2Text.setInputPrompt(T("PerustiedotView.osoiteRivi2"));
+
         osoiteLayout.addComponent(liitteidenOsoiteRivi2Text,0,1,1,1);
 
         liitteidenPostinumeroText =  uiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_POSTINUMERO);

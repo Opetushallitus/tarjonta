@@ -70,6 +70,11 @@ public class HakukohdeValintakoeRow extends HorizontalLayout {
                 if (teksti.getKielikoodi().trim().equalsIgnoreCase(I18N.getLocale().getLanguage().trim())) {
                     setSanallinenKuvaus(teksti.getNimi());
                 }
+                if (sanallinenKuvaus == null ||sanallinenKuvaus.trim().length() < 1) {
+                     if (valintakoeViewModel.getSanallisetKuvaukset() != null) {
+                         setSanallinenKuvaus(valintakoeViewModel.getSanallisetKuvaukset().get(0).getNimi());
+                     }
+                }
             }
         }
     }

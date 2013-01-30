@@ -78,6 +78,9 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
              if (teksti.getKielikoodi().trim().contains(I18N.getLocale().getLanguage())) {
                  liitteenSanallinenKuvaus = teksti.getNimi();
              }
+             if (liitteenSanallinenKuvaus == null || liitteenSanallinenKuvaus.trim().length() < 1) {
+                 liitteenSanallinenKuvaus = teksti.getNimi();
+             }
          }
     }
 

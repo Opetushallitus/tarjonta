@@ -72,9 +72,9 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
 
     private VerticalLayout mainLayout;
 
-
     public HakukohdeValintaKoeAikaEditView() {
          buildLayout();
+
     }
 
     private void buildLayout() {

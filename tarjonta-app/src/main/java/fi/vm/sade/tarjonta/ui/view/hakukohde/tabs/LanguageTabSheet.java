@@ -67,6 +67,9 @@ public abstract class LanguageTabSheet extends CustomComponent {
     private String TABSHEET_WIDTH = "500px";
     private String TABSHEET_HEIGHT = "300px";
 
+    private String RICH_TEXT_HEIGHT = null;
+    private String RICH_TEXT_WIDTH = null;
+
     public LanguageTabSheet() {
         setCompositionRoot(rootLayout);
         rootLayout.setSizeUndefined();
@@ -80,6 +83,16 @@ public abstract class LanguageTabSheet extends CustomComponent {
         setCompositionRoot(rootLayout);
 
 
+    }
+
+    public LanguageTabSheet(boolean useRichText, String tabSheetWidth, String tabSheetHeight,String rtWidth, String rtHeight) {
+        TABSHEET_WIDTH = tabSheetWidth;
+        TABSHEET_HEIGHT = tabSheetHeight;
+        RICH_TEXT_HEIGHT = rtHeight;
+        RICH_TEXT_WIDTH = rtWidth;
+        this.useRichText = useRichText;
+        rootLayout.setSizeUndefined();
+        setCompositionRoot(rootLayout);
     }
 
     @Override
@@ -133,6 +146,10 @@ public abstract class LanguageTabSheet extends CustomComponent {
         return languageValues;
     }
 
+    protected Tab getTab(String koodiUri) {
+        return _languageTabsheet.getTab(koodiUri);
+    }
+
     protected void setInitialValues(List<KielikaannosViewModel> values) {
         if (values != null) {
             Set<String> valitutKielet = new HashSet<String>();
@@ -144,16 +161,21 @@ public abstract class LanguageTabSheet extends CustomComponent {
         }
     }
 
-    private AbstractField createRichText(String value) {
+    protected AbstractField createRichText(String value) {
         if (useRichText) {
             OphRichTextArea richText = UiUtil.richTextArea(null,null,null);
+            if (RICH_TEXT_WIDTH == null || RICH_TEXT_HEIGHT == null) {
             richText.setHeight(TABSHEET_HEIGHT);
             richText.setWidth(TABSHEET_WIDTH);
+            } else {
+                richText.setHeight(RICH_TEXT_HEIGHT);
+                richText.setWidth(RICH_TEXT_WIDTH);
+            }
             richText.setValue(value);
             return richText;
         }  else {
         TextField textField = UiUtil.textField(null);
-        textField.setHeight("100px");
+        textField.setHeight(TABSHEET_HEIGHT);
         textField.setWidth(UiConstant.PCT100);
         textField.setValue(value);
         return textField;

@@ -15,6 +15,11 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+import fi.vm.sade.generic.common.I18N;
+
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by: Tuomas Katva
  * Date: 23.1.2013
@@ -29,6 +34,13 @@ public class ValintakoeKuvausTabSheet  extends LanguageTabSheet {
     protected void initializeTabsheet() {
         if (_model.getSelectedValintaKoe() != null) {
             setInitialValues(_model.getSelectedValintaKoe().getSanallisetKuvaukset());
+            if (_model.getSelectedValintaKoe().getSanallisetKuvaukset() == null || _model.getSelectedValintaKoe().getSanallisetKuvaukset().size() <1 ) {
+                String soomiKieli = I18N.getMessage("default.tab");
+                Set<String> kielet = new HashSet<String>();
+                kielet.add(soomiKieli);
+                _languageTabsheet.getKcSelection().setValue(kielet);
+                _languageTabsheet.setSelectedTab(getTab(soomiKieli));
+            }
         }
     }
 }

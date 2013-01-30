@@ -96,6 +96,12 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
     private Form form;
 
+    private String languageTabsheetWidth = "450px";
+    private String languageTabsheetHeight = "300px";
+
+    private String rtWidth = "400px";
+    private String rtHeight = "250px";
+
     Button upRightInfoButton;
 
     public HakukohteenLiitteetViewImpl(TarjontaPresenter presenter, UiBuilder uiBuilder) {
@@ -124,6 +130,8 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
     private void buildMainLayout() {
          mainLayout = new VerticalLayout();
+
+         mainLayout.setMargin(true);
 
          mainLayout.addComponent(buildErrorLayout());
 
@@ -173,7 +181,9 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     private void addItemToGrid(String captionKey, AbstractComponent component) {
 
         if (itemContainer != null) {
-            itemContainer.addComponent(UiUtil.label(null, T(captionKey)));
+            Label label = UiUtil.label(null, T(captionKey));
+            itemContainer.addComponent(label);
+            itemContainer.setComponentAlignment(label,Alignment.MIDDLE_RIGHT);
             itemContainer.addComponent(component);
             itemContainer.newLine();
         }
@@ -187,7 +197,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     }
 
     private LiitteenSanallinenKuvausTabSheet buildLiitteenSanallinenKuvaus() {
-        liitteenSanallinenKuvausTxtArea = new LiitteenSanallinenKuvausTabSheet(true,"500px","300px");
+        liitteenSanallinenKuvausTxtArea = new LiitteenSanallinenKuvausTabSheet(true,languageTabsheetWidth,languageTabsheetHeight,rtWidth,rtHeight);
 
         liitteenSanallinenKuvausTxtArea.setWidth("60%");
         return liitteenSanallinenKuvausTxtArea;
@@ -214,7 +224,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
         osoiteRivi2 = UiUtil.textField(null);
         osoiteRivi2.setWidth("100%");
-        osoiteRivi2.setInputPrompt(I18N.getMessage("PerustiedotView.osoiteRivi2"));
+
         osoiteLayout.addComponent(osoiteRivi2,0,1,1,1);
 
         postinumero = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POSTINUMERO);
