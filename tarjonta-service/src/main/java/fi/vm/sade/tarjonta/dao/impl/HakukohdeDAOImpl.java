@@ -107,9 +107,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
                 .where(qHakukohde.oid.eq(oid.trim()))
                 .list(qHakukohde);
 
-
-
-
+        log.info("findHakukohdeWithDepenciesByOid({}) --> result size = {}", oid, hakukohdes.size());
 
         return hakukohdes;
     }
