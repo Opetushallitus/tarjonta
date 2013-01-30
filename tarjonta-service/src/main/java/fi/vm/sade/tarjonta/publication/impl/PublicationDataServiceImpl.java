@@ -47,6 +47,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PublicationDataServiceImpl implements PublicationDataService {
 
+    private TarjontaTila[] PUBLIC_DATA = {TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU};
+    
     @PersistenceContext
     public EntityManager em;
 
@@ -61,7 +63,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QMonikielinenTeksti lkv = new QMonikielinenTeksti("loppukoevaatimukset");
         QMonikielinenTeksti nimi = new QMonikielinenTeksti("nimi");
 
-        BooleanExpression criteria = toteutus.tila.eq(TarjontaTila.JULKAISTU).and(m.tila.eq(TarjontaTila.JULKAISTU));
+        BooleanExpression criteria = toteutus.tila.in(PUBLIC_DATA).and(m.tila.eq(TarjontaTila.JULKAISTU));
 
         return from(toteutus).
                 leftJoin(toteutus.ammattinimikes).fetch().
@@ -91,7 +93,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QMonikielinenTeksti valintaperuste = new QMonikielinenTeksti("valintaperuste");
         QMonikielinenTeksti lisatiedot = new QMonikielinenTeksti("lisatiedot");
 
-        BooleanExpression criteria = hakukohde.tila.eq(TarjontaTila.JULKAISTU);
+        BooleanExpression criteria = hakukohde.tila.in(PUBLIC_DATA);
 
         return from(hakukohde).
                 leftJoin(hakukohde.valintakoes, valintakoe).fetch().
@@ -111,7 +113,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QHaku haku = QHaku.haku;
         QMonikielinenTeksti nimi = QMonikielinenTeksti.monikielinenTeksti;
 
-        BooleanExpression criteria = haku.tila.eq(TarjontaTila.JULKAISTU);
+        BooleanExpression criteria = haku.tila.in(PUBLIC_DATA);
 
         return from(haku).
                 leftJoin(haku.nimi, nimi).fetch().
