@@ -2,17 +2,22 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       xmlns:mockito="http://www.mockito.org/spring/mockito"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd">
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.mockito.org/spring/mockito classpath:spring/mockito.xsd"
+>
 
     <context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.tarjonta" />
+    
+    <mockito:mock id="eventSender" class="fi.vm.sade.events.EventSender" />
 
     <import resource="classpath:META-INF/spring/context/service-context.xml"/>
     <import resource="test-dao-context.xml" />
     <import resource="test-publication-context.xml"/>
-    <bean id="eventsSender" class="fi.vm.sade.tarjonta.mock.EventSenderMock" />
 
     <bean id="oidService" class="fi.vm.sade.oid.service.mock.OIDServiceMock" />
 
