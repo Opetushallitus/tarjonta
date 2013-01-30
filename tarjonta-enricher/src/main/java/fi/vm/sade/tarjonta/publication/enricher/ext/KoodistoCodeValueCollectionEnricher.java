@@ -39,13 +39,8 @@ public class KoodistoCodeValueCollectionEnricher extends KoodistoCodeValueEnrich
     @Override
     public int startElement(String localName, Attributes attributes) throws SAXException {
         if (TAG_CODE.equals(localName)) {
-            for (int i = 0; i < attributes.getLength(); i++) {
-                log.debug(attributes.getURI(i) + "," + attributes.getLocalName(i) + "," + attributes.getQName(i) + "," + attributes.getType(i) + "," + attributes.getValue(i));
-            }
             int startElementHandler = startElementHandler(TAG_CODE, localName, attributes);
             koodistoKoodi = getKoodistoKoodi(localName);
-
-            log.debug(localName);
 
             //add a 'value'-attribute to tag
             if (koodistoKoodi != null && koodistoKoodi.getValue() != null) {
