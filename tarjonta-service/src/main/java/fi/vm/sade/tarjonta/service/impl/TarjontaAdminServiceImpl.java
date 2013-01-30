@@ -16,8 +16,8 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
-import fi.vm.sade.events.Event;
-import fi.vm.sade.events.EventSender;
+//import fi.vm.sade.events.Event;
+//import fi.vm.sade.events.EventSender;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -83,7 +83,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Autowired(required = true)
     private PublicationDataService publication;
    
-    private EventSender eventSender;
+//    private EventSender eventSender;
    
     /**
      * Väliaikainne kunnes Koodisto on alustettu.
@@ -482,13 +482,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     private void sendEvent(final fi.vm.sade.tarjonta.model.TarjontaTila tila, final String oid, final String objectType, final String eventType) {
         log.debug("In sendEvent, tila:{}, oid : {}", tila, oid);
-        if (eventSender != null && fi.vm.sade.tarjonta.model.TarjontaTila.JULKAISTU.equals(tila) || fi.vm.sade.tarjonta.model.TarjontaTila.PERUTTU.equals(tila)) {
-            Event e = new Event("Tarjonta");
-            e.setValue("oid", oid)
-                    .setValue("dataType", objectType)
-                    .setValue("eventType", eventType)
-                    .setValue("date", DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(new Date()));
-            eventSender.sendEvent(e);
-        }
+//        if (eventSender != null && fi.vm.sade.tarjonta.model.TarjontaTila.JULKAISTU.equals(tila) || fi.vm.sade.tarjonta.model.TarjontaTila.PERUTTU.equals(tila)) {
+//            Event e = new Event("Tarjonta");
+//            e.setValue("oid", oid)
+//                    .setValue("dataType", objectType)
+//                    .setValue("eventType", eventType)
+//                    .setValue("date", DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(new Date()));
+//            eventSender.sendEvent(e);
+//        }
     }
 }
