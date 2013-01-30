@@ -107,7 +107,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
                 .where(qHakukohde.oid.eq(oid.trim()))
                 .list(qHakukohde);
 
+       log.warn("findHakukohdeWithDepenciesByOid({}) --> hakukohdes.size={}", oid, hakukohdes.size());
+
        for (Hakukohde hakukohde:hakukohdes) {
+           log.warn("  hakukohde.: {}", hakukohde.getOid());
+
            hakukohde.setLisatiedot(findLisatiedotToHakuKohde(hakukohde));
            try {
            hakukohde.getHaku().getOid();
@@ -116,7 +120,6 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
            }
 
        }
-
 
 
         return hakukohdes;
