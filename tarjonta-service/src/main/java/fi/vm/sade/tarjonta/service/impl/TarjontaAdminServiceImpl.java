@@ -17,9 +17,7 @@
 package fi.vm.sade.tarjonta.service.impl;
 
 import fi.vm.sade.events.Event;
-import fi.vm.sade.events.EventHandler;
 import fi.vm.sade.events.EventSender;
-import fi.vm.sade.events.impl.EventListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -34,8 +32,6 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
-import fi.vm.sade.tarjonta.jms.TarjontaEventHandler;
-import fi.vm.sade.tarjonta.jms.TarjontaEventHandlerImpl;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.GenericFault;
@@ -51,8 +47,6 @@ import java.util.Date;
 
 import java.util.HashSet;
 import java.util.Set;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

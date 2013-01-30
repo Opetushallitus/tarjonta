@@ -12,7 +12,7 @@
     <import resource="classpath:META-INF/spring/context/service-context.xml"/>
     <import resource="test-dao-context.xml" />
     <import resource="test-publication-context.xml"/>
-
+    <bean id="eventsSender" class="fi.vm.sade.tarjonta.mock.EventSenderMock" />
 
     <bean id="oidService" class="fi.vm.sade.oid.service.mock.OIDServiceMock" />
 
