@@ -82,7 +82,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private YhteyshenkiloDAO yhteyshenkiloDAO;
     @Autowired(required = true)
     private PublicationDataService publication;
-    @Autowired(required = true)
+   
     private EventSender eventSender;
    
     /**
@@ -482,7 +482,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     private void sendEvent(final fi.vm.sade.tarjonta.model.TarjontaTila tila, final String oid, final String objectType, final String eventType) {
         log.debug("In sendEvent, tila:{}, oid : {}", tila, oid);
-        if (fi.vm.sade.tarjonta.model.TarjontaTila.JULKAISTU.equals(tila) || fi.vm.sade.tarjonta.model.TarjontaTila.PERUTTU.equals(tila)) {
+        if (eventSender != null && fi.vm.sade.tarjonta.model.TarjontaTila.JULKAISTU.equals(tila) || fi.vm.sade.tarjonta.model.TarjontaTila.PERUTTU.equals(tila)) {
             Event e = new Event("Tarjonta");
             e.setValue("oid", oid)
                     .setValue("dataType", objectType)
