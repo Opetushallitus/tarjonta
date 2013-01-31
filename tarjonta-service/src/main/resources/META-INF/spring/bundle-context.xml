@@ -23,8 +23,9 @@
         location="classpath:tarjonta-service.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-service.properties"
         ignore-resource-not-found="true"/>
 
-    <!-- Get configuration for generic/generic-events system -->
+    <!-- Get configuration for generic/generic-events system 
     <import resource="classpath:META-INF/spring/events-context.xml" />
+    -->
     
     <!-- service configuration -->
     <import resource="classpath:META-INF/spring/context/service-context.xml"/>
