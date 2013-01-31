@@ -30,6 +30,13 @@ import java.util.List;
  */
 public interface PublicationDataService {
 
+    public static final String ACTION_INSERT = "INSERT";
+    public static final String ACTION_UPDATE = "UPDATE";
+    public static final String ACTION_CANCEL = "CANCEL";
+    public static final String DATA_TYPE_KOMOTO = "LOI";
+    public static final String DATA_TYPE_HAKU = "AS";
+    public static final String DATA_TYPE_HAKUKOHDE = "AO";
+
     /**
      * Returns a list of KoulutusmoduuliToteutus where: <ul>
      *  <li>{@link KoulutusmoduuliToteutus#getTila() } equal to
@@ -58,6 +65,8 @@ public interface PublicationDataService {
     public List<Haku> listHaku();
 
     public void updatePublicationStatus(List<GeneerinenTilaTyyppi> tilaOids);
-    
-    public boolean isValidStateChange(GeneerinenTilaTyyppi tyyppi);
+
+    public boolean isValidStatusChange(GeneerinenTilaTyyppi tyyppi);
+
+    public void sendEvent(final fi.vm.sade.tarjonta.model.TarjontaTila tila, final String oid, final String dataType, final String action);
 }

@@ -16,7 +16,11 @@
     <import resource="test-dao-context.xml" />
     <import resource="test-publication-context.xml"/>
     
-    <!--<mockito:mock id="eventSender" class="fi.vm.sade.events.EventSender" />-->
+    <!-- 
+        Create a dynamic mock class for the jms message sender. 
+        Read more : https://bitbucket.org/kubek2k/springockito/wiki/Home
+    -->
+    <mockito:mock id="eventSender" class="fi.vm.sade.events.EventSender" />
 
     <bean id="oidService" class="fi.vm.sade.oid.service.mock.OIDServiceMock" />
 

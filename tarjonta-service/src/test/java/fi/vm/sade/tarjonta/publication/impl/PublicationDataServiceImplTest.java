@@ -210,7 +210,7 @@ public class PublicationDataServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testisValidStateChangeNullParam() {
-        publicationDataService.isValidStateChange(null);
+        publicationDataService.isValidStatusChange(null);
     }
 
     @Test
@@ -224,28 +224,28 @@ public class PublicationDataServiceImplTest {
         g1.setSisalto(SisaltoTyyppi.KOMO);
 
         g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.LUONNOS);
-        assertEquals(true, publicationDataService.isValidStateChange(g1));
+        assertEquals(true, publicationDataService.isValidStatusChange(g1));
 
         //set the 'to' state
         g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.VALMIS);
-        assertEquals(true, publicationDataService.isValidStateChange(g1));
+        assertEquals(true, publicationDataService.isValidStatusChange(g1));
 
         changeTila(TarjontaTila.VALMIS, TarjontaTila.VALMIS);
-        assertEquals(true, publicationDataService.isValidStateChange(g1));
+        assertEquals(true, publicationDataService.isValidStatusChange(g1));
 
         g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.JULKAISTU);
-        assertEquals(true, publicationDataService.isValidStateChange(g1));
+        assertEquals(true, publicationDataService.isValidStatusChange(g1));
 
         changeTila(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
         g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.JULKAISTU);
-        assertEquals(true, publicationDataService.isValidStateChange(g1));
+        assertEquals(true, publicationDataService.isValidStatusChange(g1));
 
         g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.PERUTTU);
-        assertEquals(true, publicationDataService.isValidStateChange(g1));
+        assertEquals(true, publicationDataService.isValidStatusChange(g1));
 
         changeTila(TarjontaTila.PERUTTU, TarjontaTila.PERUTTU);
         g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.PERUTTU);
-        assertEquals(false, publicationDataService.isValidStateChange(g1));
+        assertEquals(false, publicationDataService.isValidStatusChange(g1));
     }
 
     /**

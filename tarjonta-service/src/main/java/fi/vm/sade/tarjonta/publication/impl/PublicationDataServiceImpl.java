@@ -22,6 +22,8 @@ import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
+import fi.vm.sade.events.Event;
+import fi.vm.sade.events.EventSender;
 import fi.vm.sade.generic.model.BaseEntity;
 
 
@@ -31,10 +33,15 @@ import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +54,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PublicationDataServiceImpl implements PublicationDataService {
 
+    private static final Logger log = LoggerFactory.getLogger(PublicationDataServiceImpl.class);
     private TarjontaTila[] PUBLIC_DATA = {TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU};
-    
+    @Autowired(required = true)
+    private EventSender eventSender;
     @PersistenceContext
     public EntityManager em;
 
@@ -166,7 +175,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
     }
 
     @Override
-    public boolean isValidStateChange(GeneerinenTilaTyyppi tyyppi) {
+    public boolean isValidStatusChange(GeneerinenTilaTyyppi tyyppi) {
         checkParam(tyyppi, "GeneerinenTilaTyyppi");
         checkParam(tyyppi.getOid(), "OID");
         checkParam(tyyppi.getTila(), "TarjontaTila");
@@ -180,32 +189,32 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             case HAKU:
                 fromStatus = ((Haku) isNullEntity(from(QHaku.haku).
                         where(QHaku.haku.oid.eq(oid)).
-                        singleResult(QHaku.haku),oid)).getTila();
+                        singleResult(QHaku.haku), oid)).getTila();
                 break;
             case HAKUKOHDE:
                 fromStatus = ((Hakukohde) isNullEntity(from(QHakukohde.hakukohde).
                         where(QHakukohde.hakukohde.oid.eq(oid)).
-                        singleResult(QHakukohde.hakukohde),oid)).getTila();
+                        singleResult(QHakukohde.hakukohde), oid)).getTila();
                 break;
             case KOMO:
                 fromStatus = ((Koulutusmoduuli) isNullEntity(from(QKoulutusmoduuli.koulutusmoduuli).
                         where(QKoulutusmoduuli.koulutusmoduuli.oid.eq(oid)).
-                        singleResult(QKoulutusmoduuli.koulutusmoduuli),oid)).getTila();
+                        singleResult(QKoulutusmoduuli.koulutusmoduuli), oid)).getTila();
 
                 break;
             case KOMOTO:
                 fromStatus = ((KoulutusmoduuliToteutus) isNullEntity(from(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus).
                         where(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.oid.eq(oid)).
-                        singleResult(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus),oid)).getTila();
+                        singleResult(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus), oid)).getTila();
                 break;
         }
 
         //the business rules for status codes.
         switch (toStatus) {
             //to state
-             case LUONNOS:
+            case LUONNOS:
                 //check if a step is allowed from A state to B state
-                return TarjontaTila.LUONNOS.equals(fromStatus) ? true : false;        
+                return TarjontaTila.LUONNOS.equals(fromStatus) ? true : false;
             case VALMIS:
                 return TarjontaTila.LUONNOS.equals(fromStatus) || TarjontaTila.VALMIS.equals(fromStatus) ? true : false;
             case PERUTTU:
@@ -257,5 +266,33 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(em).from(o);
+    }
+
+    /**
+     * Send an event for Oppijan Verkkopalvelu.
+     *
+     * @param tila
+     * @param oid
+     * @param dataType
+     * @param action
+     */
+    @Override
+    public void sendEvent(final fi.vm.sade.tarjonta.model.TarjontaTila tila, final String oid, final String dataType, final String action) {
+        log.debug("In sendEvent, tila:{}, oid : {}", tila, oid);
+
+        /*
+         * Filter all unpublished (delete, insert and update) actions. 
+         */
+        if (eventSender != null && PUBLIC_DATA[0].equals(tila) || PUBLIC_DATA[1].equals(tila)) {
+            /*
+             * TODO: Add more information for Oppijan Verkkopalvelu event.
+             */
+            Event e = new Event("Tarjonta");
+            e.setValue("oid", oid)
+                    .setValue("dataType", dataType)
+                    .setValue("eventType", action)
+                    .setValue("date", DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(new Date()));
+            eventSender.sendEvent(e);
+        }
     }
 }

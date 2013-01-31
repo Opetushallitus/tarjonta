@@ -16,8 +16,8 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
-//import fi.vm.sade.events.Event;
-//import fi.vm.sade.events.EventSender;
+import fi.vm.sade.events.Event;
+import fi.vm.sade.events.EventSender;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -82,9 +82,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private YhteyshenkiloDAO yhteyshenkiloDAO;
     @Autowired(required = true)
     private PublicationDataService publication;
-   
-//    private EventSender eventSender;
-   
     /**
      * Väliaikainne kunnes Koodisto on alustettu.
      */
@@ -98,7 +95,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         if (foundHaku != null) {
             mergeHaku(conversionService.convert(hakuDto, Haku.class), foundHaku);
             foundHaku = hakuBusinessService.update(foundHaku);
-            sendEvent(foundHaku.getTila(), foundHaku.getOid(), "AS", "UPDATE");
+            publication.sendEvent(foundHaku.getTila(), foundHaku.getOid(), PublicationDataService.DATA_TYPE_HAKU, PublicationDataService.ACTION_UPDATE);
             return conversionService.convert(foundHaku, HakuTyyppi.class);
         } else {
             throw new BusinessException("tarjonta.haku.update.no.oid");
@@ -182,7 +179,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakuk = hakukohdeDAO.insert(hakuk);
         hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(), hakuk));
         hakukohdeDAO.update(hakuk);
-        sendEvent(hakuk.getTila(), hakuk.getOid(), "AO", "INSERT");
+        publication.sendEvent(hakuk.getTila(), hakuk.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
 
 
         return hakukohde;
@@ -249,7 +246,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdePaivitys.getHakukohteenKoulutusOidit(), hakukohde));
 
         hakukohdeDAO.update(hakukohde);
-        sendEvent(hakukohde.getTila(), hakukohde.getOid(), "AO", "UPDATE");
+        publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
 
 
         return hakukohdePaivitys;
@@ -259,7 +256,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public HakuTyyppi lisaaHaku(HakuTyyppi hakuDto) {
         Haku haku = conversionService.convert(hakuDto, Haku.class);
         haku = hakuBusinessService.save(haku);
-        sendEvent(haku.getTila(), haku.getOid(), "AS", "INSERT");
+        publication.sendEvent(haku.getTila(), haku.getOid(), PublicationDataService.DATA_TYPE_HAKU, PublicationDataService.ACTION_INSERT);
 
         return conversionService.convert(haku, HakuTyyppi.class);
     }
@@ -296,7 +293,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
-        sendEvent(toteutus.getTila(), toteutus.getOid(), "LOI", "SAVE");
+        publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
         return vastaus;
     }
@@ -304,7 +301,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
-        sendEvent(toteutus.getTila(), toteutus.getOid(), "LOI", "UPDATE");
+        publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
 
         PaivitaKoulutusVastausTyyppi vastaus = new PaivitaKoulutusVastausTyyppi();
         return vastaus;
@@ -477,18 +474,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     public boolean testaaTilasiirtyma(GeneerinenTilaTyyppi parameters) {
-        return publication.isValidStateChange(parameters);
-    }
-
-    private void sendEvent(final fi.vm.sade.tarjonta.model.TarjontaTila tila, final String oid, final String objectType, final String eventType) {
-        log.debug("In sendEvent, tila:{}, oid : {}", tila, oid);
-//        if (eventSender != null && fi.vm.sade.tarjonta.model.TarjontaTila.JULKAISTU.equals(tila) || fi.vm.sade.tarjonta.model.TarjontaTila.PERUTTU.equals(tila)) {
-//            Event e = new Event("Tarjonta");
-//            e.setValue("oid", oid)
-//                    .setValue("dataType", objectType)
-//                    .setValue("eventType", eventType)
-//                    .setValue("date", DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(new Date()));
-//            eventSender.sendEvent(e);
-//        }
+        return publication.isValidStatusChange(parameters);
     }
 }
