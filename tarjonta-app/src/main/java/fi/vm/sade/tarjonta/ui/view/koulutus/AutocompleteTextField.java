@@ -24,10 +24,13 @@ import com.vaadin.event.FieldEvents.BlurEvent;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.FieldEvents.BlurListener;
+import com.vaadin.event.LayoutEvents;
+import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.TextField;
@@ -49,7 +52,8 @@ import fi.vm.sade.vaadin.util.UiUtil;
 public class AutocompleteTextField extends TextField implements Handler {
     
     private static final long serialVersionUID = 6906639431420923L;
-    VerticalLayout vl;
+    private VerticalLayout vl;
+    private GridLayout mainFormLayout;
     
     /* The suggestion list of users. */
     private ListSelect suggestionList;
@@ -72,6 +76,7 @@ public class AutocompleteTextField extends TextField implements Handler {
     private Action arrowDownAction = new ShortcutAction("Arrow down", ShortcutAction.KeyCode.ARROW_DOWN, null);
     private Action arrowUpAction = new ShortcutAction("Arrow up", ShortcutAction.KeyCode.ARROW_UP, null);
     private Action enterAction = new ShortcutAction("Enter", ShortcutAction.KeyCode.ENTER, null);
+    private Action tabAction = new ShortcutAction("Tab", ShortcutAction.KeyCode.TAB, null);
     
     private I18NHelper _i18n = new I18NHelper(this);
     
@@ -79,9 +84,11 @@ public class AutocompleteTextField extends TextField implements Handler {
             String inputPrompt, 
             String nullRepresentation, 
             TarjontaPresenter presenter,
-            KoulutusToisenAsteenPerustiedotViewModel koulutusModel) {
+            KoulutusToisenAsteenPerustiedotViewModel koulutusModel,
+            GridLayout mainFormLayout) {
         super();
         this.vl = vl;
+        this.mainFormLayout = mainFormLayout;
         setNullRepresentation(nullRepresentation);
         setInputPrompt(inputPrompt);
         this.presenter = presenter;
@@ -98,6 +105,19 @@ public class AutocompleteTextField extends TextField implements Handler {
     private void buildLayout() {
         buildTextField();
         buildSuggestionList();
+        
+        //Adding listener to clear and hide suggestion list when the main form is clicked.
+        this.mainFormLayout.addListener(new LayoutEvents.LayoutClickListener () {
+
+            private static final long serialVersionUID = -8106175852094905310L;
+
+            @Override
+            public void layoutClick(LayoutClickEvent event) {
+                System.out.println("Layout clicked!!");
+                handleEnter();
+            }
+            
+        });
     }
     
     /*
@@ -124,7 +144,7 @@ public class AutocompleteTextField extends TextField implements Handler {
        
         //Adding listener for the unfocus of the text field.
         //On unfocus the suggestion list is hidden.
-        addListener(new BlurListener() {
+        /*addListener(new BlurListener() {
 
             private static final long serialVersionUID = 255329698847125307L;
 
@@ -134,7 +154,7 @@ public class AutocompleteTextField extends TextField implements Handler {
             }
             
             
-        });
+        });*/
         hl.addComponent(this);
         
         //The clear button. When the button is pressed the yhteyshenkilo fields are cleared.
@@ -278,7 +298,7 @@ public class AutocompleteTextField extends TextField implements Handler {
     
     @Override
     public Action[] getActions(Object target, Object sender) {
-        return new Action[]{arrowDownAction, arrowUpAction, enterAction};
+        return new Action[]{arrowDownAction, arrowUpAction, enterAction, tabAction};
     }
 
     @Override
@@ -289,7 +309,7 @@ public class AutocompleteTextField extends TextField implements Handler {
         if (action == arrowUpAction) {
             arrowUpHandler();
         }
-        if (action == enterAction) {
+        if (action == enterAction || action == tabAction) {
             handleEnter();
         }
     }

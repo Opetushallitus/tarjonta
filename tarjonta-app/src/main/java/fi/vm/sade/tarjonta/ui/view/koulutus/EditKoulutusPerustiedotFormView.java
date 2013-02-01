@@ -139,7 +139,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     @PropertyId("pohjakoulutusvaatimus")
     private KoodistoComponent kcPohjakoulutusvaatimus;    
     
-    @Pattern(regexp = "[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "{validation.invalid.www}")
+    @Pattern(regexp = "[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "{validation.koulutus.opetussuunnitelma.invalid.www}")
     @PropertyId("opsuLinkki")
     private TextField linkki;
     
@@ -148,11 +148,11 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     @PropertyId("yhtHenkTitteli")
     private TextField yhtHenkTitteli;
     
-    @Pattern(regexp = EMAIL_PATTERN, message = "{validation.invalid.email}")
+    @Pattern(regexp = EMAIL_PATTERN, message = "{validation.koulutus.yhteyshenkilo.invalid.email}")
     @PropertyId("yhtHenkEmail")
     private TextField yhtHenkEmail;
     
-    @Pattern(regexp = "[+|-| |\\(|\\)|[0-9]]{3,100}", message = "{validation.invalid.phone}")
+    @Pattern(regexp = "[+|-| |\\(|\\)|[0-9]]{3,100}", message = "{validation.koulutus.yhteyshenkilo.invalid.phone}")
     @PropertyId("yhtHenkPuhelin")
     private TextField yhtHenkPuhelin;
     
@@ -291,7 +291,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private void buildGridYhteyshenkiloRows(GridLayout grid, String propertyKey) {
         gridLabelMidAlign(grid, propertyKey);
         VerticalLayout vl = UiUtil.verticalLayout();
-        yhtHenkKokoNimi = new AutocompleteTextField(vl, T("prompt.kokoNimi"), "", presenter, this.koulutusModel);
+        yhtHenkKokoNimi = new AutocompleteTextField(vl, T("prompt.kokoNimi"), "", presenter, this.koulutusModel, this);
         yhtHenkKokoNimi.addListener(new Listener() {
 
             private static final long serialVersionUID = 6680073663370984689L;
