@@ -280,7 +280,7 @@ public class ListKoulutusView extends VerticalLayout {
     private void showCreateHakukohdeDialog(List<String> oids) {
         createDialog = presenter.createHakukohdeCreationDialogWithKomotoOids(oids);
         createButtonListeners();
-        createDialog.setWidth("700px");
+        createDialog.setWidth("800px");
         createHakukohdeDialog = new Window();
         createHakukohdeDialog.setContent(createDialog);
         createHakukohdeDialog.setModal(true);
