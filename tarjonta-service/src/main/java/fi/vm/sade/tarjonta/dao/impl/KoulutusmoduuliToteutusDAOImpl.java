@@ -76,8 +76,12 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     @Override
     public List<KoulutusmoduuliToteutus> findKoulutusModuuliToteutusesByOids(List<String> oids) {
          QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+         //Added to enable ordering
+         QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
          return from(komoto)
                  .where(komoto.oid.in(oids))
+                 .join(komoto.koulutusmoduuli,komo)
+                 .orderBy(komo.koulutusKoodi.asc())
                  .list(komoto);
 
     }
