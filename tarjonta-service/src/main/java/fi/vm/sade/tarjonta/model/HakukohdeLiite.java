@@ -31,8 +31,17 @@ public class HakukohdeLiite extends BaseEntity {
     @ManyToOne
     private Hakukohde hakukohde;
 
+    /**
+     * Koodisto URI.
+     */
     @Column(name = "liitetyyppi", nullable = false)
     private String liitetyyppi;
+
+    /**
+     * Textual name for the koodisto URI, in Finnish.
+     */
+    private String liitteenTyyppiKoodistoNimi;
+
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "kuvaus_teksti_id")
@@ -46,7 +55,6 @@ public class HakukohdeLiite extends BaseEntity {
 
     private String sahkoinenToimitusosoite;
 
-    private String liitteenTyyppiKoodistoNimi;
 
     public Date getErapaiva() {
         return erapaiva;
