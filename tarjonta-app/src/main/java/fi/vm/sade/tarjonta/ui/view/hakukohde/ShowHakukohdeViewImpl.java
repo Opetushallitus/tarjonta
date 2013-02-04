@@ -184,7 +184,9 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
 
         addItemToGrid(grid, "haunNimi", tryGetLocalizedHakuNimi(model.getHakuOid()));
         addItemToGrid(grid,"aloitusPaikat",new Integer(model.getAloitusPaikat()).toString());
-        addItemToGrid(grid,"lisatiedot",getLocalizedLisatiedot(model.getLisatiedot()));
+        Label lisatiedotLabel = new Label(getLocalizedLisatiedot(model.getLisatiedot()));
+        lisatiedotLabel.setContentMode(Label.CONTENT_XHTML);
+        addItemToGrid(grid,"lisatiedot",lisatiedotLabel);
 
         grid.setColumnExpandRatio(0, 1f);
         grid.setColumnExpandRatio(1, 2f);
@@ -213,9 +215,11 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
     private String getLocalizedLisatiedot(List<KielikaannosViewModel> kielet) {
          String reply = null;
          for (KielikaannosViewModel kieli:kielet) {
-             if (kieli.getKielikoodi().trim().equalsIgnoreCase(I18N.getLocale().getLanguage().trim())) {
+             reply = kieli.getNimi();
+             if (kieli.getKielikoodi().trim().equalsIgnoreCase(T("default.tab"))) {
                  reply = kieli.getNimi();
              }
+
          }
         return reply;
     }

@@ -426,7 +426,7 @@ public class TarjontaPresenter implements ICommonResource {
 
     private String buildKoulutusCaption(KoulutusKoosteTyyppi curKoulutus) {
         String caption = getKoulutusNimi(curKoulutus);
-        caption += ", " + curKoulutus.getTila();
+        caption += ", " + curKoulutus.getTila().value();
         return caption;
     }
 

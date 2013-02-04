@@ -122,7 +122,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     Button upRightInfoButton;
     Button downRightInfoButton;
     private Form form;
-   
+
+    private String languageTabsheetWidth = "500px";
+    private String languageTabsheetHeight = "250px";
+
+
     private transient UiBuilder uiBuilder;
     private ErrorMessage errorView;
 
@@ -498,12 +502,14 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         return vl;
     }
 
+/*
     private HakukohdeLisatiedotTabSheet buildLanguageTab(List<KielikaannosViewModel> arvot) {
         return new HakukohdeLisatiedotTabSheet();
     }
+*/
 
     private HakukohdeLisatiedotTabSheet buildLanguageTab() {
-        return new HakukohdeLisatiedotTabSheet();
+        return new HakukohdeLisatiedotTabSheet(true,languageTabsheetWidth,languageTabsheetHeight);
     }
 
     private String T(String key) {

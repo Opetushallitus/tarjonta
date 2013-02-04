@@ -15,16 +15,40 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+import fi.vm.sade.generic.common.I18N;
+
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by: Tuomas Katva
  * Date: 16.1.2013
  */
 public class HakukohdeLisatiedotTabSheet extends LanguageTabSheet {
 
+
+    public HakukohdeLisatiedotTabSheet(boolean useRichText,String width,String height) {
+        super(useRichText,width,height);
+    }
+
     @Override
     protected void initializeTabsheet() {
-        if (_model.getHakukohde() != null && _model.getSelectedLiite() != null) {
-            setInitialValues(_model.getSelectedLiite().getLiitteenSanallinenKuvaus());
+        if (_model.getHakukohde() != null && _model.getHakukohde().getLisatiedot()!= null) {
+            setInitialValues(_model.getHakukohde().getLisatiedot());
+
       }
+
+        if (_model.getHakukohde() != null && _model.getHakukohde().getLisatiedot() == null || _model.getHakukohde().getLisatiedot().size() < 1) {
+
+            String soomiKieli = I18N.getMessage("default.tab");
+            Set<String> kielet = new HashSet<String>();
+            kielet.add(soomiKieli);
+            _languageTabsheet.getKcSelection().setValue(kielet);
+            _languageTabsheet.setSelectedTab(getTab(soomiKieli));
+
+        }
+
+
+
     }
 }
