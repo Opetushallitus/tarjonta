@@ -148,6 +148,14 @@
         <wsdl:part element="ns1:testaaTilasiirtymaVastaus" name="parameters"/>
     </wsdl:message>
     
+    <wsdl:message name="tarkistaKoulutusKopiointi">
+        <wsdl:part element="ns1:tarkistaKoulutusKopiointi" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="tarkistaKoulutusKopiointiVastaus">
+        <wsdl:part element="ns1:tarkistaKoulutusKopiointiVastaus" name="parameters"/>
+    </wsdl:message>
+    
   
     <wsdl:portType name="TarjontaAdminService">
 
@@ -306,6 +314,14 @@
             <wsdl:input message="tns:initSample"/>
         </wsdl:operation>
         
+        <wsdl:operation name="tarkistaKoulutuksenKopiointi">
+            <wsdl:documentation> Operaatiolla voidaan tarkistaa onko koulutuksesta mahdollista tehdä kopiota kyseiselle tarjojalle </wsdl:documentation>
+            <wsdl:input message="tns:tarkistaKoulutusKopiointi" name="tarkistaKoulutusKopiointi">
+            </wsdl:input>
+            <wsdl:output message="tns:tarkistaKoulutusKopiointiVastaus" name="tarkistaKoulutusKopiointiVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
         <wsdl:operation name="initKomo">
             <wsdl:documentation>
                 Alustaa tarjonnan koulutusmoduulin datalla.
@@ -416,6 +432,16 @@
                 <soap:body use="literal"/>
             </wsdl:input>
             <wsdl:output >
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="tarkistaKoulutuksenKopiointi">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
