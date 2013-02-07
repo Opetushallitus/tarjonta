@@ -21,6 +21,8 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -83,8 +85,12 @@ public class TarjontaAdminServiceTest {
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     private KoulutuksenKestoTyyppi kesto3Vuotta;
 
+    private static final Logger log = LoggerFactory.getLogger(TarjontaAdminServiceTest.class);
+
     /* Known koulutus that is inserted for each test. */
     private static final String SAMPLE_KOULUTUS_OID = "1.2.3.4.5";
+
+    private static final String SAMPLE_TARJOAJA = "1.2.3.4.5";
 
     @Before
     public void setUp() {
@@ -291,6 +297,28 @@ public class TarjontaAdminServiceTest {
 
     }
 
+    @Test
+    public void testKoulutusKopiointiTarkistus() {
+
+
+       TarkistaKoulutusKopiointiTyyppi kysely1 = new TarkistaKoulutusKopiointiTyyppi();
+        kysely1.setKausi("k");
+        kysely1.setPohjakoulutus("koulutusaste/lukio");
+        kysely1.setTarjoajaOid(SAMPLE_TARJOAJA);
+        kysely1.setVuosi(2013);
+        boolean kopiointiSallittu =  adminService.tarkistaKoulutuksenKopiointi(kysely1);
+
+        TarkistaKoulutusKopiointiTyyppi kysely2 = new TarkistaKoulutusKopiointiTyyppi();
+        kysely2.setVuosi(2013);
+        kysely2.setKausi("s");
+        kysely2.setTarjoajaOid(SAMPLE_TARJOAJA);
+        kysely2.setPohjakoulutus("koulutusaste/lukio");
+
+        boolean  kopiontiSallittu2 = adminService.tarkistaKoulutuksenKopiointi(kysely2);
+        assertFalse(kopiointiSallittu);
+        assertTrue(kopiontiSallittu2);
+    }
+
     private void assertMatch(YhteyshenkiloTyyppi expected, Yhteyshenkilo actual) {
 
         assertEquals(expected.getEtunimet(), actual.getEtunimis());
@@ -338,6 +366,8 @@ public class TarjontaAdminServiceTest {
         lisaaKoulutus.getOpetuskieli().add(createKoodi("opetuskieli/fi"));
         lisaaKoulutus.getKoulutuslaji().add(createKoodi("koulutuslaji/lahiopetus"));
         lisaaKoulutus.setKoulutusaste(createKoodi("koulutusaste/lukio"));
+        lisaaKoulutus.setPohjakoulutusvaatimus(createKoodi("koulutusaste/lukio"));
+        lisaaKoulutus.setTarjoaja(SAMPLE_TARJOAJA);
         lisaaKoulutus.setOid(SAMPLE_KOULUTUS_OID);
         lisaaKoulutus.setKoulutuksenAlkamisPaiva(new Date());
         lisaaKoulutus.setKesto(kesto3Vuotta);

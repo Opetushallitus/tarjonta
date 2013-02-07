@@ -48,6 +48,15 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     }
 
     @Override
+    public List<KoulutusmoduuliToteutus> findKoulutusModuuliWithPohjakoulutusAndTarjoaja(String tarjoaja, String pohjakoulutus) {
+        QKoulutusmoduuliToteutus qkomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        return from(qkomoto)
+                .where(qkomoto.pohjakoulutusvaatimus.eq(pohjakoulutus.trim()).and(qkomoto.tarjoaja.eq(tarjoaja.trim())))
+                .list(qkomoto);
+
+    }
+
+    @Override
     public List<KoulutusmoduuliToteutus> findKoulutusModuulisWithHakukohdesByOids(List<String> komotoOids) {
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         QHakukohde qHakukohde = QHakukohde.hakukohde;

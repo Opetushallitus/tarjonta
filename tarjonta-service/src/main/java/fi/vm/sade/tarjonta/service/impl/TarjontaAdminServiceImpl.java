@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.eclipse.jetty.util.log.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
@@ -120,6 +121,40 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             }
         } else {
             throw new BusinessException("tarjonta.haku.no.hakukohde.found");
+        }
+    }
+
+
+    @Override
+    public boolean tarkistaKoulutuksenKopiointi(@WebParam(partName = "parameters", name = "tarkistaKoulutusKopiointi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") TarkistaKoulutusKopiointiTyyppi parameters) {
+        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(parameters.getTarjoajaOid(),parameters.getPohjakoulutus());
+        if (komotos == null || komotos.size() < 1) {
+            log.debug("XXX  NO KOMOTOS FOUND");
+            return true;
+        } else {
+            log.debug("XXX KOMOS FOUND : {}",komotos.size());
+            for (KoulutusmoduuliToteutus komoto:komotos) {
+                  Calendar cal = Calendar.getInstance();
+                  cal.setTime(komoto.getKoulutuksenAlkamisPvm());
+                  if (cal.get(Calendar.YEAR) == parameters.getVuosi()) {
+                      Log.debug("YEAR MATCHED");
+                       int month = cal.get(Calendar.MONTH);
+                       month++;
+
+                      if (month > 6) {
+                        if (parameters.getKausi().startsWith("S") || parameters.getKausi().startsWith("s")) {
+                            return  false;
+                        }
+                      } else {
+                         if (parameters.getKausi().startsWith("K") || parameters.getKausi().startsWith("k")) {
+                             return false;
+                         }
+                      }
+
+                  }
+
+            }
+            return true;
         }
     }
 
