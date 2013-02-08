@@ -127,26 +127,24 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     public boolean tarkistaKoulutuksenKopiointi(@WebParam(partName = "parameters", name = "tarkistaKoulutusKopiointi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") TarkistaKoulutusKopiointiTyyppi parameters) {
-        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(parameters.getTarjoajaOid(),parameters.getPohjakoulutus());
+        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(parameters.getTarjoajaOid(),parameters.getPohjakoulutus(),parameters.getKoulutusLuokitusKoodi(),parameters.getKoulutusohjelmaKoodi());
         if (komotos == null || komotos.size() < 1) {
-            log.debug("XXX  NO KOMOTOS FOUND");
+
             return true;
         } else {
-            log.debug("XXX KOMOS FOUND : {}",komotos.size());
             for (KoulutusmoduuliToteutus komoto:komotos) {
                   Calendar cal = Calendar.getInstance();
                   cal.setTime(komoto.getKoulutuksenAlkamisPvm());
                   if (cal.get(Calendar.YEAR) == parameters.getVuosi()) {
-                      Log.debug("YEAR MATCHED");
-                       int month = cal.get(Calendar.MONTH);
+                      int month = cal.get(Calendar.MONTH);
                        month++;
 
                       if (month > 6) {
-                        if (parameters.getKausi().startsWith("S") || parameters.getKausi().startsWith("s")) {
+                        if (parameters.getKausi().startsWith("S") || parameters.getKausi().startsWith("s") || parameters.getKausi().contains("Syksy")) {
                             return  false;
                         }
                       } else {
-                         if (parameters.getKausi().startsWith("K") || parameters.getKausi().startsWith("k")) {
+                         if (parameters.getKausi().startsWith("K") || parameters.getKausi().startsWith("k") || parameters.getKausi().contains("Kevät")) {
                              return false;
                          }
                       }

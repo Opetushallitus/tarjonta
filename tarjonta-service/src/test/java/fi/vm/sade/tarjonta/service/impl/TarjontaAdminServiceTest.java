@@ -92,6 +92,10 @@ public class TarjontaAdminServiceTest {
 
     private static final String SAMPLE_TARJOAJA = "1.2.3.4.5";
 
+    private static final String KOULUTUSKOODI = "uri:koodi1";
+
+    private static final String KOKOODI = "uri:kokoodi1";
+
     @Before
     public void setUp() {
 
@@ -280,20 +284,19 @@ public class TarjontaAdminServiceTest {
     @Test
     public void testLisaaKoulutusmoduuliHappyPath() {
         String oid = "oid:" + System.currentTimeMillis();
-        String koulutuskoodi = "uri:koodi1";
-        String koKoodi = "uri:kokoodi1";
+
         KoulutusmoduuliKoosteTyyppi koulutusmoduuliT = new KoulutusmoduuliKoosteTyyppi();
         koulutusmoduuliT.setOid(oid);
-        koulutusmoduuliT.setKoulutuskoodiUri(koulutuskoodi);
-        koulutusmoduuliT.setKoulutusohjelmakoodiUri(koKoodi);
+        koulutusmoduuliT.setKoulutuskoodiUri(KOULUTUSKOODI);
+        koulutusmoduuliT.setKoulutusohjelmakoodiUri(KOKOODI);
         koulutusmoduuliT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         adminService.lisaaKoulutusmoduuli(koulutusmoduuliT);
 
         SearchCriteria sc = new SearchCriteria();
-        sc.setKoulutusKoodi(koulutuskoodi);
-        sc.setKoulutusohjelmaKoodi(koKoodi);
+        sc.setKoulutusKoodi(KOULUTUSKOODI);
+        sc.setKoulutusohjelmaKoodi(KOKOODI);
         Koulutusmoduuli komo = this.koulutusmoduuliDAO.search(sc).get(0);
-        assertEquals(koulutuskoodi, komo.getKoulutusKoodi());
+        assertEquals(KOULUTUSKOODI, komo.getKoulutusKoodi());
 
     }
 
@@ -303,12 +306,16 @@ public class TarjontaAdminServiceTest {
 
        TarkistaKoulutusKopiointiTyyppi kysely1 = new TarkistaKoulutusKopiointiTyyppi();
         kysely1.setKausi("k");
+        kysely1.setKoulutusLuokitusKoodi("321101");
+        kysely1.setKoulutusohjelmaKoodi("1603");
         kysely1.setPohjakoulutus("koulutusaste/lukio");
         kysely1.setTarjoajaOid(SAMPLE_TARJOAJA);
         kysely1.setVuosi(2013);
         boolean kopiointiSallittu =  adminService.tarkistaKoulutuksenKopiointi(kysely1);
 
         TarkistaKoulutusKopiointiTyyppi kysely2 = new TarkistaKoulutusKopiointiTyyppi();
+        kysely2.setKoulutusLuokitusKoodi("321101");
+        kysely2.setKoulutusohjelmaKoodi("1603");
         kysely2.setVuosi(2013);
         kysely2.setKausi("s");
         kysely2.setTarjoajaOid(SAMPLE_TARJOAJA);
@@ -362,6 +369,7 @@ public class TarjontaAdminServiceTest {
         lisaaKoulutus.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.LUONNOS);
         lisaaKoulutus.setKoulutusKoodi(createKoodi("321101"));
         lisaaKoulutus.setKoulutusohjelmaKoodi(createKoodi("1603"));
+
         lisaaKoulutus.getOpetusmuoto().add(createKoodi("opetusmuoto/aikuisopetus"));
         lisaaKoulutus.getOpetuskieli().add(createKoodi("opetuskieli/fi"));
         lisaaKoulutus.getKoulutuslaji().add(createKoodi("koulutuslaji/lahiopetus"));
