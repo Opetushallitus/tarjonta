@@ -101,14 +101,13 @@ public class TarjontaPublicationRESTService {
     @Path("/publish")
     @Produces(MediaType.TEXT_PLAIN)
     @Transactional(readOnly = false)
+    @Deprecated
     public String publish() {
-
-        return toggleChangePublishedState(TarjontaTila.VALMIS, TarjontaTila.JULKAISTU);
-
+        throw new UnsupportedOperationException("Deprecated operation.");
     }
 
     /**
-     * For demostration/testing purposes only. Toggles all data to VALMIS state
+     * For demostration/testing purposes only. Toggles all datasto VALMIS state
      * from JULKAISTU state.
      *
      * @return
@@ -117,28 +116,9 @@ public class TarjontaPublicationRESTService {
     @Path("/unpublish")
     @Produces(MediaType.TEXT_PLAIN)
     @Transactional(readOnly = false)
+    @Deprecated
     public String unpublish() {
-
-        return toggleChangePublishedState(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
-
-    }
-
-    private String toggleChangePublishedState(TarjontaTila fromState, TarjontaTila toState) {
-
-        String resultMsg = "toggling state from: " + fromState + ", to: " + toState;
-        String fromStateName = fromState.name();
-        String toStateName = toState.name();
-
-        String[] entityNames = {"Haku", "Hakukohde", "Koulutusmoduuli", "KoulutusmoduuliToteutus"};
-
-        for (String entityName : entityNames) {
-            resultMsg += "\nupdated "
-                    + em.createQuery("UPDATE " + entityName + " set tila = '" + toStateName + "' where tila = '" + fromStateName + "'").executeUpdate()
-                    + " " + entityName + " -objects";
-
-        }
-
-        return resultMsg;
+        throw new UnsupportedOperationException("Deprecated operation.");
 
     }
 

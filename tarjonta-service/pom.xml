@@ -189,12 +189,14 @@
         <dependency>
             <groupId>com.mysema.querydsl</groupId>
             <artifactId>querydsl-apt</artifactId>
+            <version>2.9.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.mysema.querydsl</groupId>
             <artifactId>querydsl-jpa</artifactId>
+            <version>2.9.0</version>
         </dependency>
 
         <!-- used by koodisto sync service -->
@@ -239,7 +241,7 @@
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-events</artifactId>
             <version>1.0-SNAPSHOT</version>
-             <type>jar</type>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.kubek2k</groupId>

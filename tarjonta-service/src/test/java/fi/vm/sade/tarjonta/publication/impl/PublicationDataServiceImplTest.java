@@ -84,30 +84,28 @@ public class PublicationDataServiceImplTest {
         komo3 = fixtures.createTutkintoOhjelma();
 
         komoto1 = fixtures.createTutkintoOhjelmaToteutus();
+        haku1 = fixtures.createHaku();
+        hakukohde1 = fixtures.createHakukohde();
+
+        //set komo ref to komoto and vice versa
         komoto1.setKoulutusmoduuli(komo1);
         komo1.addKoulutusmoduuliToteutus(komoto1);
 
-        haku1 = fixtures.createHaku();
-
-        hakukohde1 = fixtures.createHakukohde();
-        hakukohde1.setHaku(haku1);
+        //add komoto ref to hakukohde and vice versa
         komoto1.addHakukohde(hakukohde1);
-        haku1.addHakukohde(hakukohde1);
+        hakukohde1.addKoulutusmoduuliToteutus(komoto1);
 
+        //set hakukohde ref to haku and vice versa
+        haku1.addHakukohde(hakukohde1);
+        hakukohde1.setHaku(haku1);
 
         //Persist all entityes used in the test.
-        em.persist(komo1);
-        em.persist(komo2);
-        em.persist(komo3);
-        em.persist(komoto1);
-        em.persist(haku1);
-        em.persist(hakukohde1);
-        em.flush();
+        insertMergeDetach(true);
     }
 
     @Test
     public void testNewKoulutusmoduuliIsInSuunnitteluState() {
-        changeTila(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
+        quickObjectStatusChange(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
 
         Koulutusmoduuli k1 = em.find(Koulutusmoduuli.class, komo1.getId());
         Koulutusmoduuli k2 = em.find(Koulutusmoduuli.class, komo2.getId());
@@ -158,22 +156,22 @@ public class PublicationDataServiceImplTest {
      */
     @Test
     public void testListKoulutusmoduuliToteutus() {
-        changeTila(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
-
+        quickObjectStatusChange(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
         List result = publicationDataService.listKoulutusmoduuliToteutus();
+
         assertEquals(0, result.size());
 
-        changeTila(TarjontaTila.LUONNOS, TarjontaTila.JULKAISTU);
+        quickObjectStatusChange(TarjontaTila.LUONNOS, TarjontaTila.JULKAISTU);
 
         result = publicationDataService.listKoulutusmoduuliToteutus();
         assertEquals(0, result.size());
 
-        changeTila(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS);
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS);
 
         result = publicationDataService.listKoulutusmoduuliToteutus();
         assertEquals(0, result.size());
 
-        changeTila(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
 
         result = publicationDataService.listKoulutusmoduuliToteutus();
         assertEquals(1, result.size());
@@ -184,11 +182,11 @@ public class PublicationDataServiceImplTest {
      */
     @Test
     public void testListHakukohde() {
-        changeTila(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
+        quickObjectStatusChange(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
         List result = publicationDataService.listHakukohde();
         assertEquals(0, result.size());
 
-        changeTila(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
         result = publicationDataService.listHakukohde();
         assertEquals(1, result.size());
     }
@@ -198,11 +196,11 @@ public class PublicationDataServiceImplTest {
      */
     @Test
     public void testListHaku() {
-        changeTila(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
+        quickObjectStatusChange(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
         List result = publicationDataService.listHaku();
         assertEquals(0, result.size());
 
-        changeTila(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
         result = publicationDataService.listHaku();
 
         assertEquals(1, result.size());
@@ -217,7 +215,7 @@ public class PublicationDataServiceImplTest {
     public void testisValidStateChangeKOMO() {
 
         //set the base state
-        changeTila(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
+        quickObjectStatusChange(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
 
         GeneerinenTilaTyyppi g1 = new GeneerinenTilaTyyppi();
         g1.setOid(komo1.getOid());
@@ -230,20 +228,20 @@ public class PublicationDataServiceImplTest {
         g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.VALMIS);
         assertEquals(true, publicationDataService.isValidStatusChange(g1));
 
-        changeTila(TarjontaTila.VALMIS, TarjontaTila.VALMIS);
+        quickObjectStatusChange(TarjontaTila.VALMIS, TarjontaTila.VALMIS);
         assertEquals(true, publicationDataService.isValidStatusChange(g1));
 
         g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.JULKAISTU);
         assertEquals(true, publicationDataService.isValidStatusChange(g1));
 
-        changeTila(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
         g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.JULKAISTU);
         assertEquals(true, publicationDataService.isValidStatusChange(g1));
 
         g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.PERUTTU);
         assertEquals(true, publicationDataService.isValidStatusChange(g1));
 
-        changeTila(TarjontaTila.PERUTTU, TarjontaTila.PERUTTU);
+        quickObjectStatusChange(TarjontaTila.PERUTTU, TarjontaTila.PERUTTU);
         g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.PERUTTU);
         assertEquals(false, publicationDataService.isValidStatusChange(g1));
     }
@@ -257,17 +255,209 @@ public class PublicationDataServiceImplTest {
         publicationDataService.updatePublicationStatus(null);
     }
 
-    private void changeTila(TarjontaTila tilaKomo, TarjontaTila other) {
-        komo1.setTila(tilaKomo);
-        komoto1.setTila(other);
-        haku1.setTila(other);
-        hakukohde1.setTila(other);
-        em.merge(komo1);
-        em.merge(komo2);
-        em.merge(komo3);
-        em.merge(komoto1);
-        em.merge(haku1);
-        em.merge(hakukohde1);
+    /**
+     * Test helper method. Initializes demo data to given status.
+     *
+     * @param komoStatus
+     * @param otherStatus
+     */
+    private void quickObjectStatusChange(TarjontaTila komoStatus, TarjontaTila... otherStatus) {
+        haku1 = em.find(Haku.class, haku1.getId());
+        hakukohde1 = em.find(Hakukohde.class, hakukohde1.getId());
+        komo1 = em.find(Koulutusmoduuli.class, komo1.getId());
+        komoto1 = em.find(KoulutusmoduuliToteutus.class, komoto1.getId());
+
+        komo1.setTila(komoStatus);
+        if (otherStatus.length == 3) {
+            komoto1.setTila(otherStatus[0]);
+            haku1.setTila(otherStatus[1]);
+            hakukohde1.setTila(otherStatus[2]);
+        } else if (otherStatus.length == 1 && otherStatus != null) {
+            final TarjontaTila tila = otherStatus[0];
+            komoto1.setTila(tila);
+            haku1.setTila(tila);
+            hakukohde1.setTila(tila);
+        } else {
+            throw new RuntimeException("Test data error.");
+        }
+        insertMergeDetach(false);
+
+        final Haku h1 = em.find(Haku.class, haku1.getId());
+        final Hakukohde hk1 = em.find(Hakukohde.class, hakukohde1.getId());
+        final KoulutusmoduuliToteutus k1 = em.find(KoulutusmoduuliToteutus.class, komoto1.getId());
+
+        em.detach(h1);
+        em.detach(hk1);
+        em.detach(k1);
+
+        if (otherStatus.length == 3) {
+            assertEquals("komoto", otherStatus[0], k1.getTila());
+            assertEquals("haku", otherStatus[1], h1.getTila());
+            assertEquals("hakukohde", otherStatus[2], hk1.getTila());
+        } else if (otherStatus.length == 1 && otherStatus != null) {
+            final TarjontaTila tila = otherStatus[0];
+            assertEquals("komoto", tila, k1.getTila());
+            assertEquals("haku", tila, h1.getTila());
+            assertEquals("hakukohde", tila, hk1.getTila());
+        }
+    }
+
+    @Test
+    public void testSearchHakukohteetByHakuOid() {
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
+
+        ArrayList<String> hakuOids = new ArrayList<String>();
+        hakuOids.add(haku1.getOid());
+
+        List<Hakukohde> hakukohteet = publicationDataService.searchHakukohteetByHakuOid(hakuOids, TarjontaTila.JULKAISTU);
+        assertEquals(1, hakukohteet.size());
+        assertEquals(komoto1.getOid(), hakukohteet.get(0).getKoulutusmoduuliToteutuses().iterator().next().getOid());
+
+        hakukohteet = publicationDataService.searchHakukohteetByHakuOid(hakuOids, TarjontaTila.LUONNOS);
+        assertEquals(0, hakukohteet.size());
+    }
+
+    @Test
+    public void testiHakuPublish() {
+        GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
+        g2.setOid(haku1.getOid());
+        g2.setSisalto(SisaltoTyyppi.HAKU);
+        g2.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.JULKAISTU);
+        List<GeneerinenTilaTyyppi> list = new ArrayList<GeneerinenTilaTyyppi>();
+        list.add(g2);
+
+        //Happy path, publish everything
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
+        publicationDataService.updatePublicationStatus(list);
+        check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
+        
+        
+        //partial publish - only the haku is published
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS,TarjontaTila.VALMIS,TarjontaTila.VALMIS);
+        publicationDataService.updatePublicationStatus(list);
+        check(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS, TarjontaTila.VALMIS);
+    }
+
+    @Test
+    public void testiHakuCancel() {
+        GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
+        g2.setOid(haku1.getOid());
+        g2.setSisalto(SisaltoTyyppi.HAKU);
+        g2.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.PERUTTU);
+        List<GeneerinenTilaTyyppi> list = new ArrayList<GeneerinenTilaTyyppi>();
+        list.add(g2);
+
+        //set the base state to ready
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
+        //cancel haku and hakukohteet
+        publicationDataService.updatePublicationStatus(list);
+        check(TarjontaTila.PERUTTU, TarjontaTila.VALMIS, TarjontaTila.PERUTTU);
+
+        //same as above, but toteutus has a different status
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
+        publicationDataService.updatePublicationStatus(list);
+        check(TarjontaTila.PERUTTU, TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU);
+    }
+
+    @Test
+    public void testiToteutusPublish() {
+        GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
+        g2.setOid(komoto1.getOid());
+        g2.setSisalto(SisaltoTyyppi.KOMOTO);
+        g2.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.JULKAISTU);
+        List<GeneerinenTilaTyyppi> list = new ArrayList<GeneerinenTilaTyyppi>();
+        list.add(g2);
+
+        /*
+         * Haku not yet ready => no status change fot hakukohde.
+         */
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS); //set the base state
+        publicationDataService.updatePublicationStatus(list);
+        check(TarjontaTila.VALMIS, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
+
+        /*
+         * The happy path - in this case also the hakukohde will be published
+         */
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
+        publicationDataService.updatePublicationStatus(list);
+        check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
+        
+        /*
+         * The partial path - only toteutus is published
+         */
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
+        publicationDataService.updatePublicationStatus(list);
+        check(TarjontaTila.LUONNOS, TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS);
+    }
+
+    @Test
+    public void testiToteutusCancel() {
+        GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
+        g2.setOid(komoto1.getOid());
+        g2.setSisalto(SisaltoTyyppi.KOMOTO);
+        g2.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.PERUTTU);
+        List<GeneerinenTilaTyyppi> list = new ArrayList<GeneerinenTilaTyyppi>();
+        list.add(g2);
+
+        /*
+         * Cancel tutkinto(published -> cancelled) and hakukohde(ready -> cancelled).
+         */
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
+        publicationDataService.updatePublicationStatus(list);
+        check(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.PERUTTU);
+
+        /*
+         * Cancel tutkinto(published -> cancelled) and hakukohde(published -> cancelled).
+         */
+        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
+        publicationDataService.updatePublicationStatus(list);
+        check(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.PERUTTU);
+    }
+
+    private void insertMergeDetach(final boolean persist) {
+
+        if (persist) {
+            em.persist(komo1);
+            em.persist(komo2);
+            em.persist(komo3);
+            em.persist(komoto1);
+            em.persist(haku1);
+            em.persist(hakukohde1);
+        } else {
+            em.merge(komo1);
+            em.merge(komo2);
+            em.merge(komo3);
+            em.merge(komoto1);
+            em.merge(haku1);
+            em.merge(hakukohde1);
+        }
+
+        flush();
+    }
+
+    private void flush() {
         em.flush();
+
+        em.detach(komo1);
+        em.detach(komo2);
+        em.detach(komo3);
+        em.detach(komoto1);
+        em.detach(haku1);
+        em.detach(hakukohde1);
+    }
+
+    private void check(TarjontaTila statusHaku, TarjontaTila statusToteutus, TarjontaTila statusHakukohde) {
+        Haku h1 = em.find(Haku.class, haku1.getId());
+        Hakukohde hk1 = em.find(Hakukohde.class, hakukohde1.getId());
+        KoulutusmoduuliToteutus k1 = em.find(KoulutusmoduuliToteutus.class, komoto1.getId());
+
+        em.detach(h1);
+        em.detach(hk1);
+        em.detach(k1);
+
+        //haku not yet ready.
+        assertEquals("haku", statusHaku, h1.getTila());
+        assertEquals("toteutus", statusToteutus, k1.getTila());
+        assertEquals("hakukohde", statusHakukohde, hk1.getTila());
     }
 }
