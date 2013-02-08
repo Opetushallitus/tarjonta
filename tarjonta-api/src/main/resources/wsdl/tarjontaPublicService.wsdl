@@ -109,6 +109,14 @@
     <wsdl:message name="haeHakukohteenValintakokeetHakukohteenTunnisteellaVastaus">
         <wsdl:part element="ns1:haeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi" name="parameters"/>
     </wsdl:message>
+    
+    <wsdl:message name="haeTarjoajanKoulutustenPohjakoulutuksetKysely">
+        <wsdl:part element="ns1:haeTarjoajanKoulutustenPohjakoulutuksetKysely" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="haeTarjoajanKoulutustenPohjakoulutuksetVastaus">
+        <wsdl:part element="ns1:haeTarjoajanKoulutustenPohjakoulutuksetVastaus" name="parameters"/>
+    </wsdl:message>
 
     <wsdl:portType name="TarjontaPublicService">
 
@@ -228,6 +236,11 @@
             <wsdl:output message="tns:haeHakukohteenValintakokeetHakukohteenTunnisteellaVastaus" name="haeHakukohteenValintakokeetHakukohteenTunnisteellaVastaus"></wsdl:output>
         </wsdl:operation>
 
+        <wsdl:operation name="haeTarjoajanKoulutustenPohjakoulutukset">
+            <wsdl:documentation>Haetaan tarjoajan koulutusten pohjakoulutukset tietylla ajanjaksolla</wsdl:documentation>
+            <wsdl:input message="tns:haeTarjoajanKoulutustenPohjakoulutuksetKysely" name="haeTarjoajanKoulutustenPohjakoulutuksetKysely"></wsdl:input>
+            <wsdl:output message="tns:haeTarjoajanKoulutustenPohjakoulutuksetVastaus" name="haeTarjoajanKoulutustenPohjakoulutuksetVastaus"></wsdl:output>
+        </wsdl:operation>
 
     </wsdl:portType>
 
@@ -351,6 +364,16 @@
                 <soap:body use="literal"/>
             </wsdl:input>
             <wsdl:output name="haeHakukohteenValintakokeetHakukohteenTunnisteellaVastaus">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="haeTarjoajanKoulutustenPohjakoulutukset">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/haeTarjoajanKoulutustenPohjakoulutukset" style="document"/>
+            <wsdl:input name="haeTarjoajanKoulutustenPohjakoulutuksetKysely">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="haeTarjoajanKoulutustenPohjakoulutuksetVastaus">
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>

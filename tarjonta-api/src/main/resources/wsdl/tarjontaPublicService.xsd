@@ -43,6 +43,9 @@
     
     <xs:element name="haeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi" type="tns:HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi"/>
     <xs:element name="haeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi" type="tns:HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi"/>
+    
+    <xs:element name="haeTarjoajanKoulutustenPohjakoulutuksetKysely" type="tns:HaeTarjoajanKoulutustenPohjakoulutuksetKysely"/>
+    <xs:element name="haeTarjoajanKoulutustenPohjakoulutuksetVastaus" type="tns:HaeTarjoajanKoulutustenPohjakoulutuksetVastaus"/>
 
     <xs:complexType name="HaeHakukohteenLiitteetKyselyTyyppi">
         <xs:sequence>
@@ -291,6 +294,23 @@
     <xs:complexType name="HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="unbounded" name="hakukohteenValintaKokeet" type="tarjonta:ValintakoeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HaeTarjoajanKoulutustenPohjakoulutuksetKysely">
+        <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" name="koulutusluokitusKoodi" type="xs:string"/>
+            <xs:element maxOccurs="1" minOccurs="1" name="koulutusOhjelmaKoodi" type="xs:string"/>
+            <xs:element maxOccurs="1" minOccurs="1" name="pohjakoulutus" type="xs:string"/>
+            <xs:element maxOccurs="1" minOccurs="1" name="kausi" type="xs:string"/>
+            <xs:element maxOccurs="1" minOccurs="1" name="vuosi" type="xs:int"/>
+            <xs:element maxOccurs="1" minOccurs="1" name="tarjoaja" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HaeTarjoajanKoulutustenPohjakoulutuksetVastaus">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="pohjakoulutusKoodi" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
 

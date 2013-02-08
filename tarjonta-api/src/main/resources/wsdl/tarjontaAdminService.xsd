@@ -233,6 +233,8 @@
 
     <xs:complexType name="TarkistaKoulutusKopiointiTyyppi">
         <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="koulutusLuokitusKoodi" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="koulutusohjelmaKoodi" type="xs:string"/>
             <xs:element minOccurs="1" maxOccurs="1" name="pohjakoulutus" type="xs:string"/>
             <xs:element minOccurs="1" maxOccurs="1" name="kausi"  type="xs:string"/>
             <xs:element minOccurs="1" maxOccurs="1" name="vuosi" type="xs:int"/>
