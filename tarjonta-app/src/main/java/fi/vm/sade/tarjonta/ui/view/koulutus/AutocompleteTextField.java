@@ -21,6 +21,8 @@ import com.vaadin.data.Property;
 import com.vaadin.event.Action;
 import com.vaadin.event.Action.Handler;
 import com.vaadin.event.FieldEvents.BlurEvent;
+import com.vaadin.event.FieldEvents.FocusEvent;
+import com.vaadin.event.FieldEvents.FocusListener;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.FieldEvents.BlurListener;
@@ -53,7 +55,6 @@ public class AutocompleteTextField extends TextField implements Handler {
     
     private static final long serialVersionUID = 6906639431420923L;
     private VerticalLayout vl;
-    private GridLayout mainFormLayout;
     
     /* The suggestion list of users. */
     private ListSelect suggestionList;
@@ -80,15 +81,15 @@ public class AutocompleteTextField extends TextField implements Handler {
     
     private I18NHelper _i18n = new I18NHelper(this);
     
+    private boolean isFocused = false;
+    
     public AutocompleteTextField(VerticalLayout vl, 
             String inputPrompt, 
             String nullRepresentation, 
             TarjontaPresenter presenter,
-            KoulutusToisenAsteenPerustiedotViewModel koulutusModel,
-            GridLayout mainFormLayout) {
+            KoulutusToisenAsteenPerustiedotViewModel koulutusModel) {
         super();
         this.vl = vl;
-        this.mainFormLayout = mainFormLayout;
         setNullRepresentation(nullRepresentation);
         setInputPrompt(inputPrompt);
         this.presenter = presenter;
@@ -105,19 +106,6 @@ public class AutocompleteTextField extends TextField implements Handler {
     private void buildLayout() {
         buildTextField();
         buildSuggestionList();
-        
-        //Adding listener to clear and hide suggestion list when the main form is clicked.
-        this.mainFormLayout.addListener(new LayoutEvents.LayoutClickListener () {
-
-            private static final long serialVersionUID = -8106175852094905310L;
-
-            @Override
-            public void layoutClick(LayoutClickEvent event) {
-                System.out.println("Layout clicked!!");
-                handleEnter();
-            }
-            
-        });
     }
     
     /*
@@ -142,19 +130,32 @@ public class AutocompleteTextField extends TextField implements Handler {
             
         });
        
-        //Adding listener for the unfocus of the text field.
-        //On unfocus the suggestion list is hidden.
-        /*addListener(new BlurListener() {
+        
+        addListener(new BlurListener() {
 
             private static final long serialVersionUID = 255329698847125307L;
 
             @Override
             public void blur(BlurEvent event) {
-               handleEnter(); 
+               isFocused = false;
             }
             
             
-        });*/
+        });
+        
+        addListener(new FocusListener() {
+
+            private static final long serialVersionUID = 1872174705046291119L;
+
+            @Override
+            public void focus(FocusEvent event) {
+                isFocused = true;
+                
+            }
+
+            
+        });
+        
         hl.addComponent(this);
         
         //The clear button. When the button is pressed the yhteyshenkilo fields are cleared.
@@ -241,6 +242,9 @@ public class AutocompleteTextField extends TextField implements Handler {
      */
     private void handleValueChange() {
         fireEvent(new HenkiloAutocompleteEvent(this, (HenkiloType)(suggestionList.getValue()), HenkiloAutocompleteEvent.SELECTED));
+        if (!isFocused) {
+            handleEnter();
+        }
     }
     
     /*

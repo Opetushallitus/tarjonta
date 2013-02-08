@@ -291,7 +291,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private void buildGridYhteyshenkiloRows(GridLayout grid, String propertyKey) {
         gridLabelMidAlign(grid, propertyKey);
         VerticalLayout vl = UiUtil.verticalLayout();
-        yhtHenkKokoNimi = new AutocompleteTextField(vl, T("prompt.kokoNimi"), "", presenter, this.koulutusModel, this);
+        yhtHenkKokoNimi = new AutocompleteTextField(vl, T("prompt.kokoNimi"), "", presenter, this.koulutusModel);
         yhtHenkKokoNimi.addListener(new Listener() {
 
             private static final long serialVersionUID = 6680073663370984689L;
