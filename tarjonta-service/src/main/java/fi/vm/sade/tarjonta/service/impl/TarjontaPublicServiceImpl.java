@@ -34,6 +34,7 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTul
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -76,7 +77,32 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public HaeTarjoajanKoulutustenPohjakoulutuksetVastaus haeTarjoajanKoulutustenPohjakoulutukset(@WebParam(partName = "parameters", name = "haeTarjoajanKoulutustenPohjakoulutuksetKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") HaeTarjoajanKoulutustenPohjakoulutuksetKysely parameters) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+
+          HaeTarjoajanKoulutustenPohjakoulutuksetVastaus vastaus = new HaeTarjoajanKoulutustenPohjakoulutuksetVastaus();
+
+          List<KoulutusmoduuliToteutus> toteutuses = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(parameters.getTarjoaja(),parameters.getPohjakoulutus(),parameters.getKoulutusluokitusKoodi(),parameters.getKoulutusOhjelmaKoodi());
+
+          List<String> pohjakoulutusKoodis = new ArrayList<String>();
+
+          for (KoulutusmoduuliToteutus komoto : toteutuses) {
+
+              Calendar cal = Calendar.getInstance();
+              cal.setTime(komoto.getKoulutuksenAlkamisPvm());
+              if ((cal.get(Calendar.YEAR)  == parameters.getVuosi())) {
+                   List<Integer> kausiMonths = getAlkuKuukaudet(parameters.getKausi());
+                  int month = cal.get(Calendar.MONTH);
+                  month++;
+                  if (kausiMonths.contains(new Integer(month))) {
+                     pohjakoulutusKoodis.add(komoto.getPohjakoulutusvaatimus());
+                  }
+
+              }
+
+          }
+
+          vastaus.getPohjakoulutusKoodi().addAll(pohjakoulutusKoodis);
+
+          return vastaus;
     }
 
     @Override
