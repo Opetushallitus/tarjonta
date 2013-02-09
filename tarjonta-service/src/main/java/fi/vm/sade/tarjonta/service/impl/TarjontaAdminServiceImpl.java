@@ -127,7 +127,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     public boolean tarkistaKoulutuksenKopiointi(@WebParam(partName = "parameters", name = "tarkistaKoulutusKopiointi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") TarkistaKoulutusKopiointiTyyppi parameters) {
-        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(parameters.getTarjoajaOid(),parameters.getPohjakoulutus(),parameters.getKoulutusLuokitusKoodi(),parameters.getKoulutusohjelmaKoodi());
+
+        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(parameters.getTarjoajaOid(),parameters.getPohjakoulutus(),parameters.getKoulutusLuokitusKoodi(),parameters.getKoulutusohjelmaKoodi(),
+                parameters.getOpetuskielis(),parameters.getKoulutuslajis());
         if (komotos == null || komotos.size() < 1) {
 
             return true;
@@ -154,6 +156,15 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             }
             return true;
         }
+    }
+
+    public static Set<KoodistoUri> convertStringToUris(List<String> koodistoUriStrs) {
+        Set<KoodistoUri> koodistoUris = new HashSet<KoodistoUri>();
+        for (String koodistoUriStr:koodistoUriStrs) {
+            KoodistoUri koodistoUri = new KoodistoUri(koodistoUriStr);
+            koodistoUris.add(koodistoUri);
+        }
+        return koodistoUris;
     }
 
     @Override

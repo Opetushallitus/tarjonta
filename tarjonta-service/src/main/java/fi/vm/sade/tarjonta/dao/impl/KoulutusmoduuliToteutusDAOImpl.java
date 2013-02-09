@@ -17,15 +17,18 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPASubQuery;
+import com.mysema.query.support.Expressions;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
 
+import com.mysema.query.types.path.StringPath;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import static fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils.and;
 import fi.vm.sade.tarjonta.model.*;
 
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
@@ -47,15 +50,25 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         }
     }
 
+    /*
+      This is done in JPQL because querydsl seems to have a bug with querying element collections. Even version 2.6 does not seem to work
+     */
     @Override
-    public List<KoulutusmoduuliToteutus> findKoulutusModuuliWithPohjakoulutusAndTarjoaja(String tarjoaja, String pohjakoulutus, String koulutusluokitus,String koulutusohjelma) {
-        QKoulutusmoduuliToteutus qkomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        QKoulutusmoduuli qkomo = QKoulutusmoduuli.koulutusmoduuli;
+    public List<KoulutusmoduuliToteutus> findKoulutusModuuliWithPohjakoulutusAndTarjoaja(String tarjoaja, String pohjakoulutus, String koulutusluokitus,String koulutusohjelma,
+                                                                                         List<String> opetuskielis, List<String> koulutuslajis) {
 
-        return from(qkomoto,qkomo)
-                .join(qkomoto.koulutusmoduuli,qkomo)
-                .where(qkomoto.pohjakoulutusvaatimus.eq(pohjakoulutus.trim()).and(qkomoto.tarjoaja.eq(tarjoaja.trim())).and(qkomo.koulutusKoodi.eq(koulutusluokitus.trim())).and(qkomo.koulutusohjelmaKoodi.eq(koulutusohjelma.trim())))
-                .list(qkomoto);
+        String query = "SELECT komoto FROM KoulutusmoduuliToteutus komoto, Koulutusmoduuli komo, IN (komoto.opetuskielis) o, IN(komoto.koulutuslajis) k WHERE komoto.koulutusmoduuli = komo AND " +
+                "komoto.pohjakoulutusvaatimus = :pkv AND komoto.tarjoaja = :tarjoaja AND komo.koulutusKoodi = :koulutuskoodi AND komo.koulutusohjelmaKoodi = :koulutusohjelmaKoodi AND o.koodiUri IN (:opetuskielis) AND k.koodiUri IN (:koulutuslajis)";
+
+        return getEntityManager().createQuery(query)
+                .setParameter("pkv",pohjakoulutus.trim())
+                .setParameter("tarjoaja",tarjoaja.trim())
+                .setParameter("koulutuskoodi",koulutusluokitus.trim())
+                .setParameter("koulutusohjelmaKoodi",koulutusohjelma.trim())
+                .setParameter("opetuskielis",opetuskielis)
+                .setParameter("koulutuslajis",koulutuslajis)
+                .getResultList();
+
 
     }
 

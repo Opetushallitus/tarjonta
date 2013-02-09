@@ -52,11 +52,7 @@ import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.*;
 
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -303,12 +299,13 @@ public class TarjontaAdminServiceTest {
     @Test
     public void testKoulutusKopiointiTarkistus() {
 
-
        TarkistaKoulutusKopiointiTyyppi kysely1 = new TarkistaKoulutusKopiointiTyyppi();
         kysely1.setKausi("k");
         kysely1.setKoulutusLuokitusKoodi("321101");
         kysely1.setKoulutusohjelmaKoodi("1603");
         kysely1.setPohjakoulutus("koulutusaste/lukio");
+        kysely1.getKoulutuslajis().add("koulutuslaji/lahiopetus");
+        kysely1.getOpetuskielis().add("opetuskieli/fi");
         kysely1.setTarjoajaOid(SAMPLE_TARJOAJA);
         kysely1.setVuosi(2013);
         boolean kopiointiSallittu =  adminService.tarkistaKoulutuksenKopiointi(kysely1);
@@ -316,6 +313,9 @@ public class TarjontaAdminServiceTest {
         TarkistaKoulutusKopiointiTyyppi kysely2 = new TarkistaKoulutusKopiointiTyyppi();
         kysely2.setKoulutusLuokitusKoodi("321101");
         kysely2.setKoulutusohjelmaKoodi("1603");
+        kysely2.getKoulutuslajis().add("koulutuslaji/lahiopetus");
+        kysely2.getOpetuskielis().add("opetuskieli/se");
+        kysely2.setVuosi(2013);
         kysely2.setVuosi(2013);
         kysely2.setKausi("s");
         kysely2.setTarjoajaOid(SAMPLE_TARJOAJA);

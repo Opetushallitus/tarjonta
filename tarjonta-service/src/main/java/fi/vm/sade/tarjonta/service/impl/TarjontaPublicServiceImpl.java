@@ -33,10 +33,7 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi.Koulut
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 import javax.jws.WebParam;
 import javax.xml.datatype.DatatypeFactory;
@@ -80,7 +77,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
           HaeTarjoajanKoulutustenPohjakoulutuksetVastaus vastaus = new HaeTarjoajanKoulutustenPohjakoulutuksetVastaus();
 
-          List<KoulutusmoduuliToteutus> toteutuses = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(parameters.getTarjoaja(),parameters.getPohjakoulutus(),parameters.getKoulutusluokitusKoodi(),parameters.getKoulutusOhjelmaKoodi());
+        List<KoulutusmoduuliToteutus> toteutuses = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(parameters.getTarjoaja(),parameters.getPohjakoulutus(),
+                  parameters.getKoulutusluokitusKoodi(),parameters.getKoulutusOhjelmaKoodi(),parameters.getOpetuskielis(),parameters.getKoulutuslajis());
 
           List<String> pohjakoulutusKoodis = new ArrayList<String>();
 
