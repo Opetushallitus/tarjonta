@@ -236,8 +236,7 @@
             <xs:element minOccurs="1" maxOccurs="1" name="koulutusLuokitusKoodi" type="xs:string"/>
             <xs:element minOccurs="1" maxOccurs="1" name="koulutusohjelmaKoodi" type="xs:string"/>
             <xs:element minOccurs="1" maxOccurs="1" name="pohjakoulutus" type="xs:string"/>
-            <xs:element minOccurs="1" maxOccurs="1" name="kausi"  type="xs:string"/>
-            <xs:element minOccurs="1" maxOccurs="1" name="vuosi" type="xs:int"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="koulutusAlkamisPvm" type="xs:date"/>
             <xs:element minOccurs="1" maxOccurs="1" name="tarjoajaOid" type="xs:string"/>
             <xs:element minOccurs="1" maxOccurs="unbounded" name="koulutuslajis" type="xs:string"/>
             <xs:element minOccurs="1" maxOccurs="unbounded" name="opetuskielis" type="xs:string"/>
