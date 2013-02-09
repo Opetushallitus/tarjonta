@@ -513,6 +513,22 @@ public class TarjontaPresenter implements ICommonResource {
 
     }
 
+    public void showLisaaRinnakkainenToteutusEditView(final String koulutusOid) {
+        if (koulutusOid != null) {
+            readKoulutusToModel(koulutusOid);
+
+            getModel().getKoulutusPerustiedotModel().getKoulutuksenHakukohteet().clear();
+            getModel().getKoulutusPerustiedotModel().setOpetuskieli(null);
+            getModel().getKoulutusPerustiedotModel().setOid(null);
+            getModel().getKoulutusPerustiedotModel().setSuunniteltuKesto(null);
+            getModel().getKoulutusPerustiedotModel().setKoulutuslaji(null);
+            getModel().getKoulutusPerustiedotModel().setOpetusmuoto(null);
+            getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(null);
+
+            getRootView().changeView(new EditKoulutusView(koulutusOid));
+        }
+    }
+
     /*
      * Retrieves the oids of organisaatios that belong to the organisaatio tree of the organisaatio the oid of which is
      * given as a parameter to this method. 
@@ -912,10 +928,27 @@ public class TarjontaPresenter implements ICommonResource {
             lisaa.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
             koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
             checkKoulutusmoduuli();
+//            if (checkExistingKomoto(lisaa)) {
             tarjontaAdminService.lisaaKoulutus(lisaa);
+//            } else {
+               //TODO: add message to errorview
+//               LOG.debug("Unable to add koulutus because of the duplicate");
+//            }
             koulutusModel.setOid(lisaa.getOid());
         }
         koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
+    }
+
+    private boolean checkExistingKomoto(LisaaKoulutusTyyppi lisaaTyyppi) {
+        TarkistaKoulutusKopiointiTyyppi kysely  = new TarkistaKoulutusKopiointiTyyppi();
+        kysely.setKoulutusAlkamisPvm(lisaaTyyppi.getKoulutuksenAlkamisPaiva());
+        kysely.setKoulutusLuokitusKoodi(lisaaTyyppi.getKoulutusKoodi().getUri());
+        kysely.setKoulutusohjelmaKoodi(lisaaTyyppi.getKoulutusohjelmaKoodi().getUri());
+        kysely.setPohjakoulutus(lisaaTyyppi.getPohjakoulutusvaatimus().getUri());
+        kysely.setTarjoajaOid(lisaaTyyppi.getTarjoaja());
+
+        return tarjontaAdminService.tarkistaKoulutuksenKopiointi(kysely);
+
     }
 
     /**

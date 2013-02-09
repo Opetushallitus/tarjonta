@@ -352,7 +352,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Ei toteutettu");
+                _presenter.showLisaaRinnakkainenToteutusEditView(_presenter.getModel().getKoulutusPerustiedotModel().getOid());
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
