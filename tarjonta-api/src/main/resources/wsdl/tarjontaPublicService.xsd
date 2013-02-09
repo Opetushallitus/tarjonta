@@ -305,6 +305,8 @@
             <xs:element maxOccurs="1" minOccurs="1" name="kausi" type="xs:string"/>
             <xs:element maxOccurs="1" minOccurs="1" name="vuosi" type="xs:int"/>
             <xs:element maxOccurs="1" minOccurs="1" name="tarjoaja" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="1" name="opetuskielis" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="1" name="koulutuslajis" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
 
