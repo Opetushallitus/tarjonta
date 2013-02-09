@@ -123,8 +123,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             throw new BusinessException("tarjonta.haku.no.hakukohde.found");
         }
     }
-
-
+    /*
+    * This method returns true if komoto copy is allowed.
+    */
     @Override
     public boolean tarkistaKoulutuksenKopiointi(@WebParam(partName = "parameters", name = "tarkistaKoulutusKopiointi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") TarkistaKoulutusKopiointiTyyppi parameters) {
 
@@ -134,27 +135,50 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
             return true;
         } else {
-            for (KoulutusmoduuliToteutus komoto:komotos) {
-                  Calendar cal = Calendar.getInstance();
-                  cal.setTime(komoto.getKoulutuksenAlkamisPvm());
-                  if (cal.get(Calendar.YEAR) == parameters.getVuosi()) {
-                      int month = cal.get(Calendar.MONTH);
-                       month++;
-
-                      if (month > 6) {
-                        if (parameters.getKausi().startsWith("S") || parameters.getKausi().startsWith("s") || parameters.getKausi().contains("Syksy")) {
-                            return  false;
-                        }
-                      } else {
-                         if (parameters.getKausi().startsWith("K") || parameters.getKausi().startsWith("k") || parameters.getKausi().contains("Kevät")) {
-                             return false;
-                         }
-                      }
-
-                  }
-
+            boolean retVal = true;
+            komotoLoop : for (KoulutusmoduuliToteutus komoto:komotos) {
+                if (checkKausiAndVuosi(komoto.getKoulutuksenAlkamisPvm(),parameters.getKoulutusAlkamisPvm())) {
+                      retVal = false;
+                    break  komotoLoop;
+                }
             }
-            return true;
+            return retVal;
+        }
+    }
+    /*
+    * Returns true if compared dates year and kausi matches
+    */
+    private boolean checkKausiAndVuosi(Date komotoDate,Date checkDate) {
+        Calendar komotoCal = Calendar.getInstance();
+        Calendar checkCal = Calendar.getInstance();
+        komotoCal.setTime(komotoDate);
+        checkCal.setTime(checkDate);
+
+        if (komotoCal.get(Calendar.YEAR) == checkCal.get(Calendar.YEAR)) {
+           int komotoMonthInt = komotoCal.get(Calendar.MONTH);
+           int checkMonthInt = checkCal.get(Calendar.MONTH);
+           komotoMonthInt ++;
+           checkMonthInt++;
+           String komotoKausi = getKausiStringFromMonth(komotoMonthInt);
+           String checkKausi = getKausiStringFromMonth(checkMonthInt);
+
+           if (komotoKausi.trim().equalsIgnoreCase(checkKausi.trim())) {
+               return true;
+           } else {
+               return false;
+           }
+
+        } else {
+          return false;
+        }
+
+    }
+
+    private String getKausiStringFromMonth(int month) {
+        if (month > 6) {
+            return "s";
+        } else {
+            return "k";
         }
     }
 

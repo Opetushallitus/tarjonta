@@ -52,6 +52,7 @@ import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.*;
 
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -296,32 +297,44 @@ public class TarjontaAdminServiceTest {
 
     }
 
+    private Date getDateFromString(String dateStr) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        try {
+            return sdf.parse(dateStr);
+        } catch (Exception exp) {
+            return new Date();
+        }
+    }
+
     @Test
     public void testKoulutusKopiointiTarkistus() {
 
+
+
        TarkistaKoulutusKopiointiTyyppi kysely1 = new TarkistaKoulutusKopiointiTyyppi();
-        kysely1.setKausi("k");
+
+        kysely1.setKoulutusAlkamisPvm(getDateFromString("01.02.2013"));
+
         kysely1.setKoulutusLuokitusKoodi("321101");
         kysely1.setKoulutusohjelmaKoodi("1603");
         kysely1.setPohjakoulutus("koulutusaste/lukio");
         kysely1.getKoulutuslajis().add("koulutuslaji/lahiopetus");
         kysely1.getOpetuskielis().add("opetuskieli/fi");
         kysely1.setTarjoajaOid(SAMPLE_TARJOAJA);
-        kysely1.setVuosi(2013);
+
         boolean kopiointiSallittu =  adminService.tarkistaKoulutuksenKopiointi(kysely1);
 
         TarkistaKoulutusKopiointiTyyppi kysely2 = new TarkistaKoulutusKopiointiTyyppi();
         kysely2.setKoulutusLuokitusKoodi("321101");
         kysely2.setKoulutusohjelmaKoodi("1603");
         kysely2.getKoulutuslajis().add("koulutuslaji/lahiopetus");
-        kysely2.getOpetuskielis().add("opetuskieli/se");
-        kysely2.setVuosi(2013);
-        kysely2.setVuosi(2013);
-        kysely2.setKausi("s");
+        kysely2.getOpetuskielis().add("opetuskieli/fi");
+        kysely2.setKoulutusAlkamisPvm(getDateFromString("02.08.2013"));
         kysely2.setTarjoajaOid(SAMPLE_TARJOAJA);
         kysely2.setPohjakoulutus("koulutusaste/lukio");
 
         boolean  kopiontiSallittu2 = adminService.tarkistaKoulutuksenKopiointi(kysely2);
+
         assertFalse(kopiointiSallittu);
         assertTrue(kopiontiSallittu2);
     }
@@ -377,7 +390,7 @@ public class TarjontaAdminServiceTest {
         lisaaKoulutus.setPohjakoulutusvaatimus(createKoodi("koulutusaste/lukio"));
         lisaaKoulutus.setTarjoaja(SAMPLE_TARJOAJA);
         lisaaKoulutus.setOid(SAMPLE_KOULUTUS_OID);
-        lisaaKoulutus.setKoulutuksenAlkamisPaiva(new Date());
+        lisaaKoulutus.setKoulutuksenAlkamisPaiva(getDateFromString("02.02.2013"));
         lisaaKoulutus.setKesto(kesto3Vuotta);
         lisaaKoulutus.getYhteyshenkilo().add(createYhteyshenkilo());
         lisaaKoulutus.getLinkki().add(createLinkki("google", null, "http://google.com"));
