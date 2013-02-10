@@ -132,7 +132,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(parameters.getTarjoajaOid(),parameters.getPohjakoulutus(),parameters.getKoulutusLuokitusKoodi(),parameters.getKoulutusohjelmaKoodi(),
                 parameters.getOpetuskielis(),parameters.getKoulutuslajis());
         if (komotos == null || komotos.size() < 1) {
-
             return true;
         } else {
             boolean retVal = true;

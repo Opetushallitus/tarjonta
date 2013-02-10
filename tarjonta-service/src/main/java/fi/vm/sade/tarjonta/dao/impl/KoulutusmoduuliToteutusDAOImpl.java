@@ -29,7 +29,11 @@ import fi.vm.sade.tarjonta.model.*;
 
 import java.util.List;
 import java.util.Set;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -37,6 +41,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<KoulutusmoduuliToteutus, Long> implements KoulutusmoduuliToteutusDAO {
 
+    private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliToteutusDAOImpl.class);
     @Override
     public KoulutusmoduuliToteutus findByOid(String oid) {
 
@@ -56,11 +61,13 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     @Override
     public List<KoulutusmoduuliToteutus> findKoulutusModuuliWithPohjakoulutusAndTarjoaja(String tarjoaja, String pohjakoulutus, String koulutusluokitus,String koulutusohjelma,
                                                                                          List<String> opetuskielis, List<String> koulutuslajis) {
-
+       if (opetuskielis != null && opetuskielis.size() > 0 && koulutuslajis != null && koulutuslajis.size() > 0 ) {
         String query = "SELECT komoto FROM KoulutusmoduuliToteutus komoto, Koulutusmoduuli komo, IN (komoto.opetuskielis) o, IN(komoto.koulutuslajis) k WHERE komoto.koulutusmoduuli = komo AND " +
                 "komoto.pohjakoulutusvaatimus = :pkv AND komoto.tarjoaja = :tarjoaja AND komo.koulutusKoodi = :koulutuskoodi AND komo.koulutusohjelmaKoodi = :koulutusohjelmaKoodi AND o.koodiUri IN (:opetuskielis) AND k.koodiUri IN (:koulutuslajis)";
 
-        return getEntityManager().createQuery(query)
+
+        return getEntityManager()
+                .createQuery(query)
                 .setParameter("pkv",pohjakoulutus.trim())
                 .setParameter("tarjoaja",tarjoaja.trim())
                 .setParameter("koulutuskoodi",koulutusluokitus.trim())
@@ -69,6 +76,12 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                 .setParameter("koulutuslajis",koulutuslajis)
                 .getResultList();
 
+
+
+       } else {
+           log.info("Koulutuslajis and opetuskielis was null!!!");
+           return null;
+       }
 
     }
 
