@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:cxf="http://cxf.apache.org/core"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+       http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+
+    <!--
+    TODO: move attributes to properties
+    -->
+  
+    <bean id="authInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor"> 
+        <constructor-arg>
+            <map>
+                <entry key="action" value="UsernameToken" />
+                <entry key="passwordType" value="PasswordText" />
+                <entry key="user" value="1.2.246.562.24.00000000002" />
+                <entry key="mustUnderstand" value="false" /> 
+                <entry key="passwordCallbackRef">
+                    <bean id="passwdHandler" class="fi.vm.sade.tarjonta.data.util.AuthCallbackHandler">
+                        <property name="password" value="1.2.246.562.24.00000000002"/>
+                    </bean>
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+  
+    <!-- Configure CXF bus to contain ticketInterceptor  -->
+    <cxf:bus>
+        <cxf:outInterceptors>
+            <ref bean="authInterceptor" />
+        </cxf:outInterceptors>
+    </cxf:bus>
+
+    <jaxws:client id="koodiService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodiService"
+                  address="http://localhost:8080/koodisto-service/koodiWS"/>
+
+    <jaxws:client id="koodistoService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
+                  address="http://localhost:8080/koodisto-service/koodistoWS"/>
+    
+    <jaxws:client id="koodiAdminService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodiAdminService"
+                  address="http://localhost:8080/koodisto-service/koodiAdminWS"/>
+
+    <jaxws:client id="koodistoAdminService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodistoAdminService"
+                  address="http://localhost:8080/koodisto-service/koodistoAdminWS"/>
+
+    <jaxws:client id="oidService"
+                  serviceClass="fi.vm.sade.oid.service.OIDService"
+                  address="${oid.webservice.url:http://NO_OID_WEBSERVICE_URL_CONFIGURED}"/>
+
+</beans>
