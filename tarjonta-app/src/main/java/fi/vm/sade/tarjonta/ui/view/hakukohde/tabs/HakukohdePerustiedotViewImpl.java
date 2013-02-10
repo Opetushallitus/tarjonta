@@ -57,7 +57,10 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
 
     @Override
     public void actionNext(ClickEvent event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        if (getHakukohdeOid() != null) {
+        presenter.showHakukohdeViewImpl(getHakukohdeOid());
+        }
     }
 
     @Override
