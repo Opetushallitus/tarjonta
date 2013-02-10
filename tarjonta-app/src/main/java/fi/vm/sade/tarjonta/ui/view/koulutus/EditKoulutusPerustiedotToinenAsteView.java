@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
@@ -69,9 +70,18 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractEditLayoutVie
 
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
+        try {
         presenter.saveKoulutus(tila);
         presenter.getReloadKoulutusListData();
         return model.getOid();
+        } catch (ExceptionMessage exceptionMessage) {
+            if (exceptionMessage.getMessage().equalsIgnoreCase("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage")) {
+                errorView.addError(I18N.getMessage(exceptionMessage.getMessage()));
+                throw exceptionMessage;
+            }  else {
+                throw exceptionMessage;
+            }
+        }
     }
 
     @Override

@@ -928,15 +928,18 @@ public class TarjontaPresenter implements ICommonResource {
             lisaa.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
             koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
             checkKoulutusmoduuli();
-//            if (checkExistingKomoto(lisaa)) {
+            if (checkExistingKomoto(lisaa)) {
             tarjontaAdminService.lisaaKoulutus(lisaa);
-//            } else {
-               //TODO: add message to errorview
-//               LOG.debug("Unable to add koulutus because of the duplicate");
-//            }
+            koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
             koulutusModel.setOid(lisaa.getOid());
+            } else {
+
+               LOG.debug("Unable to add koulutus because of the duplicate");
+                throw  new ExceptionMessage("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage");
+            }
+
         }
-        koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
+
     }
 
     private boolean checkExistingKomoto(LisaaKoulutusTyyppi lisaaTyyppi) {
@@ -945,10 +948,22 @@ public class TarjontaPresenter implements ICommonResource {
         kysely.setKoulutusLuokitusKoodi(lisaaTyyppi.getKoulutusKoodi().getUri());
         kysely.setKoulutusohjelmaKoodi(lisaaTyyppi.getKoulutusohjelmaKoodi().getUri());
         kysely.setPohjakoulutus(lisaaTyyppi.getPohjakoulutusvaatimus().getUri());
+        kysely.getOpetuskielis().addAll(getUrisFromKoodistoTyyppis(lisaaTyyppi.getOpetuskieli()));
+        kysely.getKoulutuslajis().addAll(getUrisFromKoodistoTyyppis(lisaaTyyppi.getKoulutuslaji()));
         kysely.setTarjoajaOid(lisaaTyyppi.getTarjoaja());
 
         return tarjontaAdminService.tarkistaKoulutuksenKopiointi(kysely);
 
+    }
+
+    private List<String> getUrisFromKoodistoTyyppis(List<KoodistoKoodiTyyppi> koodistoKoodis) {
+        List<String> uris = new ArrayList<String>();
+
+        for (KoodistoKoodiTyyppi koodi: koodistoKoodis) {
+            uris.add(koodi.getUri());
+        }
+
+        return uris;
     }
 
     /**
