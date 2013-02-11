@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
+import com.vaadin.data.Validator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
@@ -76,8 +77,7 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractEditLayoutVie
         return model.getOid();
         } catch (ExceptionMessage exceptionMessage) {
             if (exceptionMessage.getMessage().equalsIgnoreCase("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage")) {
-                errorView.addError(I18N.getMessage(exceptionMessage.getMessage()));
-                throw exceptionMessage;
+                throw new Validator.InvalidValueException(I18N.getMessage(exceptionMessage.getMessage()));
             }  else {
                 throw exceptionMessage;
             }

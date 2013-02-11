@@ -374,6 +374,9 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
             } catch (GenericFault e) {
                 LOG.error("Application error - persist failed, message :  " + e.getMessage(), e);
                 presenter.showNotification(UserNotification.SAVE_FAILED);
+            } catch (Validator.InvalidValueException ex) {
+                errorView.addError(ex.getMessage());
+                presenter.showNotification(UserNotification.GENERIC_VALIDATION_FAILED);
             } catch (Exception ex) {
                 LOG.error("An unknown application error - persist failed, message :  " + ex.getMessage(), ex);
                 presenter.showNotification(UserNotification.SAVE_FAILED);
