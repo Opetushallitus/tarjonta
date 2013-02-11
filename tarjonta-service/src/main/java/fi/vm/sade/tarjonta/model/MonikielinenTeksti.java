@@ -22,7 +22,7 @@ import java.util.Set;
 import javax.persistence.*;
 
 /**
- *
+ * Translatable texts with modest "metadata" properties.
  */
 @Entity
 @Table(name = "monikielinen_teksti")
@@ -51,7 +51,6 @@ public class MonikielinenTeksti extends BaseEntity {
 
     /**
      * Convenience method that looks up translation for given language code.
-     * Note that translated texts are by default lazy loaded.
      *
      * @param kieliKoodi
      * @return
