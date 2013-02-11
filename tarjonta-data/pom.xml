@@ -10,7 +10,7 @@
     </parent>
     <artifactId>tarjonta-data</artifactId>
     <name>Tarjonta :: Data</name>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <deploy.to.server>tomcat</deploy.to.server>

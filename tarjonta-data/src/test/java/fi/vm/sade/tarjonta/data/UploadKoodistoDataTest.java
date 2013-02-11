@@ -12,13 +12,15 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import fi.vm.sade.oid.service.ExceptionMessage;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
+import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration(locations = "classpath:spring/context.xml")
 @TestExecutionListeners(listeners = {
-    DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
+    DependencyInjectionTestExecutionListener.class, 
+    DirtiesContextTestExecutionListener.class,
     TransactionalTestExecutionListener.class})
 @RunWith(SpringJUnit4ClassRunner.class)
-public class KoodistoDataImportTest {
+public class UploadKoodistoDataTest {
 
     @Autowired
     private UploadKoodistoData up;
@@ -26,5 +28,6 @@ public class KoodistoDataImportTest {
     @Test
     public void testCreate() throws IOException, ExceptionMessage {
         up.startFullImport();
+        assertTrue(true);
     }
 }
