@@ -30,10 +30,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -73,6 +75,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired(required = true)
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
+    @Autowired(required = true)
+    private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
     @Autowired(required = true)
     private HakuDAO hakuDAO;
     @Autowired(required = true)
@@ -419,8 +423,31 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli)
             throws GenericFault {
-        koulutusmoduuliDAO.insert(EntityUtils.copyFieldsToKoulutusmoduuli(koulutusmoduuli));
+        Koulutusmoduuli komo = koulutusmoduuliDAO.insert(EntityUtils.copyFieldsToKoulutusmoduuli(koulutusmoduuli));
+        if (koulutusmoduuli.getParentOid() != null) {
+            handleParentKomo(komo, koulutusmoduuli.getParentOid());
+        }
+        
         return koulutusmoduuli;
+    }
+    
+    private void handleParentKomo(Koulutusmoduuli komo, String parentOid) {
+        Koulutusmoduuli parent = koulutusmoduuliDAO.findByOid(parentOid);
+        if (parent.getSisaltyvyysList().isEmpty()) {
+            KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys();
+            sisaltyvyys.setYlamoduuli(parent);
+            sisaltyvyys.addAlamoduuli(komo);
+            sisaltyvyys.setValintaTyyppi(ValintaTyyppi.SOME_OFF);
+            this.koulutusSisaltyvyysDAO.insert(sisaltyvyys);
+            parent.addSisaltyvyys(sisaltyvyys);
+        } else {
+            KoulutusSisaltyvyys sisaltyvyys = parent.getSisaltyvyysList().iterator().next();
+            sisaltyvyys.addAlamoduuli(komo);
+            this.koulutusSisaltyvyysDAO.update(sisaltyvyys);
+        }
+        koulutusmoduuliDAO.update(parent);
+        komo.setKoulutusKoodi(parent.getKoulutusKoodi());
+        koulutusmoduuliDAO.update(komo);
     }
 
     private List<HakuTyyppi> convert(List<Haku> haut) {

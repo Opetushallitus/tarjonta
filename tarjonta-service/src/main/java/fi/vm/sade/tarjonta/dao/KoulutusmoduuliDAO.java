@@ -158,6 +158,13 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
 
     }
 
+    /**
+     * Returns the parent of the koulutusmoduuli given as parameter
+     * @param komo - the koulutusmoduuli the parent of which we are searching.
+     * @return - the parent koulutusmoduuli.
+     */
+    public Koulutusmoduuli findParentKomo(Koulutusmoduuli komo);
+
 
 }
 

@@ -244,6 +244,27 @@ public final class EntityUtils {
 
         return tyyppi;
     }
+    
+    public static KoulutusmoduuliKoosteTyyppi copyFieldsToKoulutusmoduuliKoosteTyyppi(final Koulutusmoduuli komo, final Koulutusmoduuli parentKomo) {
+        KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
+        tyyppi.setOid(komo.getOid());
+        tyyppi.setParentOid(parentKomo.getOid());
+        tyyppi.setKoulutuskoodiUri(parentKomo.getKoulutusKoodi());
+        tyyppi.setKoulutusohjelmakoodiUri(komo.getKoulutusohjelmaKoodi());
+        tyyppi.setLaajuusarvoUri(parentKomo.getLaajuusArvo());
+        tyyppi.setLaajuusyksikkoUri(parentKomo.getLaajuusYksikko());
+        tyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
+        tyyppi.setUlkoinenTunniste(komo.getUlkoinenTunniste());
+        tyyppi.setKoulutusasteUri(parentKomo.getKoulutusAste());
+        tyyppi.setKoulutusalaUri(parentKomo.getKoulutusala());
+        tyyppi.setOpintoalaUri(parentKomo.getOpintoala());
+
+        tyyppi.setKoulutuksenRakenne(copyFields(parentKomo.getKoulutuksenRakenne()));
+        tyyppi.setTavoitteet(copyFields(parentKomo.getTavoitteet()));
+        tyyppi.setJatkoOpintoMahdollisuudet(copyFields(parentKomo.getJatkoOpintoMahdollisuudet()));
+
+        return tyyppi;
+    }
 
     public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(final KoulutusmoduuliKoosteTyyppi tyyppi) {
         Koulutusmoduuli komo = new Koulutusmoduuli(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(tyyppi.getKoulutusmoduuliTyyppi().value()));

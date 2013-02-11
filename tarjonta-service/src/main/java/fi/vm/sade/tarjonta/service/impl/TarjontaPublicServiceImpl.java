@@ -436,7 +436,15 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
         //Asetetaan koulutusmoduuli
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
-        result.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo));
+        
+        Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(komo);
+        
+        if (parentKomo == null) {
+            result.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo));
+        } else {
+            result.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo, parentKomo));
+        }
+        
 
         return result;
     }
@@ -555,11 +563,30 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     public HaeKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit(HaeKoulutusmoduulitKyselyTyyppi kysely) {
         HaeKoulutusmoduulitVastausTyyppi vastaus = new HaeKoulutusmoduulitVastausTyyppi();
         for (Koulutusmoduuli curKomo : this.koulutusmoduuliDAO.findAllKomos()) {
-            KoulutusmoduuliKoosteTyyppi komo = EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(curKomo);
-            KoulutusmoduuliTulos koulutusmoduuliTulos = new KoulutusmoduuliTulos();
-            koulutusmoduuliTulos.setKoulutusmoduuli(komo);
-            vastaus.getKoulutusmoduuliTulos().add(koulutusmoduuliTulos);
+            if (!curKomo.getAlamoduuliList().isEmpty()) {
+                addChildModulesToVastaus(curKomo, vastaus.getKoulutusmoduuliTulos());
+            }
         }
         return vastaus;
+    }
+    
+    private void addChildModulesToVastaus(Koulutusmoduuli parentKomo, List<KoulutusmoduuliTulos> resultList) {
+        for (Koulutusmoduuli curKomo : parentKomo.getAlamoduuliList()) {
+            KoulutusmoduuliKoosteTyyppi komo = EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(curKomo, parentKomo);
+            if (!containsKomo(resultList, komo.getOid())) {
+                KoulutusmoduuliTulos koulutusmoduuliTulos = new KoulutusmoduuliTulos();
+                koulutusmoduuliTulos.setKoulutusmoduuli(komo);
+                resultList.add(koulutusmoduuliTulos);
+            }
+        }
+    }
+    
+    private boolean containsKomo(List<KoulutusmoduuliTulos> resultList, String komoOid) {
+        for (KoulutusmoduuliTulos curTulos : resultList) {
+            if (curTulos.getKoulutusmoduuli().getOid().equals(komoOid)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

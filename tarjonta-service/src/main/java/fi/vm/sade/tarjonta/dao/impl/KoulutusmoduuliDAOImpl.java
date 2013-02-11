@@ -153,4 +153,20 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }
+
+    @Override
+    public Koulutusmoduuli findParentKomo(Koulutusmoduuli komo) {
+        QKoulutusSisaltyvyys sisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
+        
+        List<KoulutusSisaltyvyys> parents = from(sisaltyvyys).
+                join(sisaltyvyys.alamoduuliList).fetch().
+                where(sisaltyvyys.alamoduuliList.contains(komo)).
+                list(sisaltyvyys);
+        
+        if (parents == null || parents.isEmpty()) {
+            return null;
+        }
+        
+        return parents.get(0).getYlamoduuli();
+    }
 }

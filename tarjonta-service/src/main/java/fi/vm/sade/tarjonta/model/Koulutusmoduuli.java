@@ -348,6 +348,10 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     public Set<KoulutusSisaltyvyys> getSisaltyvyysList() {
         return Collections.unmodifiableSet(sisaltyvyysList);
     }
+    
+    public void addSisaltyvyys(KoulutusSisaltyvyys sisaltyvyys) {
+        sisaltyvyysList.add(sisaltyvyys);
+    }
 
     /**
      *
