@@ -233,6 +233,7 @@ public class AutocompleteTextField extends TextField implements Handler {
             this.koulutusModel.setYhtHenkiloOid(null);
             fireEvent(new HenkiloAutocompleteEvent(this, null, HenkiloAutocompleteEvent.NOT_SELECTED));
         }
+        focus();
     }
     /*
      * Handling of value change event. Fires an event witch is listened by EditKoulutusPerustiedotForm which updates the yhteyshenkilo fields. 

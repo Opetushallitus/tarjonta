@@ -260,7 +260,8 @@ public final class EntityUtils {
         tyyppi.setOpintoalaUri(parentKomo.getOpintoala());
 
         tyyppi.setKoulutuksenRakenne(copyFields(parentKomo.getKoulutuksenRakenne()));
-        tyyppi.setTavoitteet(copyFields(parentKomo.getTavoitteet()));
+        tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
+        tyyppi.setTutkinnonTavoitteet(copyFields(parentKomo.getTavoitteet()));
         tyyppi.setJatkoOpintoMahdollisuudet(copyFields(parentKomo.getJatkoOpintoMahdollisuudet()));
 
         return tyyppi;

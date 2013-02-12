@@ -24,6 +24,7 @@ import java.util.Set;
 public class KoulutusohjelmaModel extends MonikielinenTekstiModel {
 
     private KoodiModel tutkintonimike;
+    private MonikielinenTekstiModel tavoitteet;
     
     public KoulutusohjelmaModel() {
     }
@@ -40,5 +41,13 @@ public class KoulutusohjelmaModel extends MonikielinenTekstiModel {
      */
     public void setTutkintonimike(KoodiModel tutkintonimike) {
         this.tutkintonimike = tutkintonimike;
+    }
+
+    public MonikielinenTekstiModel getTavoitteet() {
+        return tavoitteet;
+    }
+
+    public void setTavoitteet(MonikielinenTekstiModel tavoitteet) {
+        this.tavoitteet = tavoitteet;
     }
 }

@@ -496,6 +496,12 @@
                     <xs:documentation>Koulutukselliset ja ammatilliset tavoitteet</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            
+            <xs:element minOccurs="1" maxOccurs="1" name="tutkinnonTavoitteet" type="tns:MonikielinenTekstiTyyppi">
+                <xs:annotation>
+                    <xs:documentation>Tutkinnon koulutukselliset ja ammatilliset tavoitteet</xs:documentation>
+                </xs:annotation>
+            </xs:element>
 
             <xs:element minOccurs="1" maxOccurs="1" name="jatkoOpintoMahdollisuudet" type="tns:MonikielinenTekstiTyyppi">
                 <xs:annotation>

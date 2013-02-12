@@ -169,6 +169,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private Label koulutusala;
     private Label tavoitteet;
     private Label jatkoopintomahdollisuudet;
+    private Label koulutusohjelmanTavoitteet;
     
     private transient UiBuilder uiBuilder;
 
@@ -262,6 +263,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         koulutuksenRakenne = buildLabel(this, "koulutuksenRakenne");
         tavoitteet = buildLabel(this, "tavoitteet");
         jatkoopintomahdollisuudet = buildLabel(this, "jatkoopintomahdollisuudet");
+        koulutusohjelmanTavoitteet = buildLabel(this, "koTavoitteet");
 
         buildGridOpetuskieliRow(this, "Opetuskieli");
         buildGridDatesRow(this, "KoulutuksenAlkamisPvm");
@@ -669,6 +671,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             koulutusModel.setTavoitteet(koulutuskoodi.getTavoitteet());
             tavoitteet.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getTavoitteet(), MODEL_NAME_PROPERY));
         }
+        
 
         if (koulutuskoodi.getJatkoopintomahdollisuudet() != null) {
             koulutusModel.setJatkoopintomahdollisuudet(koulutuskoodi.getJatkoopintomahdollisuudet());
@@ -680,6 +683,11 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         if (koulutusohjelma != null && koulutusohjelma.getTutkintonimike() != null) {
             koulutusModel.setTutkintonimike(koulutusohjelma.getTutkintonimike());
             tutkintonimike.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getTutkintonimike(), MODEL_NAME_PROPERY));
+        }
+        
+        if (koulutusohjelma != null && koulutusohjelma.getTavoitteet() != null) {
+            koulutusModel.setKoulutusohjelmaTavoitteet(koulutusohjelma.getTavoitteet());
+            this.koulutusohjelmanTavoitteet.setPropertyDataSource(new NestedMethodProperty(koulutusModel.getKoulutusohjelmaTavoitteet(), MODEL_NAME_PROPERY));
         }
 
         disableOrEnableComponents(true);

@@ -37,6 +37,7 @@ import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConverter;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 
 /**
  * Model holding basic information data for Koulutus.
@@ -54,6 +55,8 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     private TarjontaTila tila;
     private List<MonikielinenTekstiTyyppi.Teksti> toteutuksenNimet;
     private List<SimpleHakukohdeViewModel> koulutuksenHakukohteet;
+    
+    private MonikielinenTekstiModel koulutusohjelmaTavoitteet;
     
     /*
      * Link to opetussuunnitelma
@@ -417,5 +420,13 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
 
     public void setOrganisaatioOidTree(List<String> organisaatioOidTree) {
         this.organisaatioOidTree = organisaatioOidTree;
+    }
+
+    public MonikielinenTekstiModel getKoulutusohjelmaTavoitteet() {
+        return koulutusohjelmaTavoitteet;
+    }
+
+    public void setKoulutusohjelmaTavoitteet(MonikielinenTekstiModel koulutusohjelmaTavoitteet) {
+        this.koulutusohjelmaTavoitteet = koulutusohjelmaTavoitteet;
     }
 }

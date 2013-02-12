@@ -456,11 +456,14 @@ public class KoulutusConverter {
         final KoulutusmoduuliKoosteTyyppi koulutusmoduuliTyyppi = koulutus.getKoulutusmoduuli();
 
         koulutusKoodisto.listaaSisalto(model2Aste.getKoulutuskoodiModel(), model2Aste.getKoulutusohjelmaModel(), koulutusmoduuliTyyppi, locale);
+        
         /*
          * Create real visible name, the name is also used in koulutus search.  
          */
 
         koulutus.getNimi();
+        
+        
 
         return model2Aste;
     }
