@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -32,8 +33,8 @@ public class TekstiKaannos extends BaseEntity {
 
     @Column(name = "kieli_koodi")
     private String kieliKoodi;
- 
-    @Column(name = "arvo", length=4096)
+
+    @Column(name = "arvo", length = 4096)
     private String arvo;
 
     @ManyToOne(optional = false)
