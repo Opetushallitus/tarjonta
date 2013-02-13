@@ -104,7 +104,7 @@ public class TarjontaAdminServiceTest {
 
     }
 
-    @Test(expected = TarjontaBusinessException.class)
+    @Test(expected = Exception.class)
     public void testCannotCreateKoulutusWithoutKoulutusmoduuli() {
 
         LisaaKoulutusTyyppi lisaaKoulutus = createSampleKoulutus();

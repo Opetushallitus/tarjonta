@@ -142,13 +142,13 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(moduuli);
         KoulutusmoduuliToteutus parentKomoto = 
                 this.koulutusmoduuliToteutusDAO.findKomotoByKomoAndtarjoaja(parentKomo, koulutus.getTarjoaja());
-        if (parentKomoto != null) {
+        if (parentKomoto != null && parentKomo != null) {
             parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
             parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta()));
             this.koulutusmoduuliToteutusDAO.update(parentKomoto);
             handleChildKomos(parentKomo, moduuli, koulutus);
             
-        } else {
+        } else if (parentKomo != null ) {
             parentKomoto = new KoulutusmoduuliToteutus();
             parentKomoto.setOid(koulutus.getOid() + parentKomoto.getOid());
             parentKomoto.setTarjoaja(koulutus.getTarjoaja());
