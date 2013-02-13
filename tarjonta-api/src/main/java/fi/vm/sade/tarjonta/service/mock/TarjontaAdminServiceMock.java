@@ -5,11 +5,7 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.types.*;
 
 import javax.jws.WebParam;
-import javax.xml.ws.Holder;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class TarjontaAdminServiceMock implements TarjontaAdminService {
 
@@ -151,6 +147,73 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
 
     @Override
     public boolean testaaTilasiirtyma(GeneerinenTilaTyyppi parameters) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    // Mock storage
+    private List<MonikielinenMetadataTyyppi> metadatas = new ArrayList<MonikielinenMetadataTyyppi>();
+
+    @Override
+    public List<MonikielinenMetadataTyyppi> haeMetadata(@WebParam(name = "avain", targetNamespace = "") String avain, @WebParam(name = "kategoria", targetNamespace = "") String kategoria) {
+        List<MonikielinenMetadataTyyppi> result = new ArrayList<MonikielinenMetadataTyyppi>();
+
+        for (MonikielinenMetadataTyyppi md : metadatas) {
+
+            // Compare avain & kategoria
+            if (avain != null && kategoria != null) {
+                if (avain.equals(md.getAvain()) && kategoria.equals(md.getKategoria())) {
+                    result.add(md);
+                }
+            }
+            // Compare Avain
+            else if (avain != null) {
+                if (avain.equals(md.getAvain())) {
+                    result.add(md);
+                }
+            }
+            // Compare kategory only
+            else if (kategoria != null) {
+                if (kategoria.equals(md.getKategoria())) {
+                    result.add(md);
+                }
+            }
+            // "null" search - return all metadatas
+            else {
+                // "null" search - return all metadatas
+                result.add(md);
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public MonikielinenMetadataTyyppi tallennaMetadata(@WebParam(name = "avain", targetNamespace = "") String avain, @WebParam(name = "kategoria", targetNamespace = "") String kategoria, @WebParam(name = "kieli", targetNamespace = "") String kieli, @WebParam(name = "arvo", targetNamespace = "") String arvo) {
+        MonikielinenMetadataTyyppi result = null;
+
+        if (avain == null) {
+            throw new IllegalArgumentException("Avain cannot be null.");
+        }
+
+        // Get matching metadatas
+        List<MonikielinenMetadataTyyppi> mds = haeMetadata(avain, kategoria);
+
+        for (MonikielinenMetadataTyyppi md : mds) {
+            if (kieli != null && kieli.equals(md.getKieli())) {
+                result = md;
+                break;
+            }
+        }
+
+        if (result == null) {
+            result = new MonikielinenMetadataTyyppi();
+            metadatas.add(result);
+        }
+        result.setArvo(arvo);
+        result.setAvain(avain);
+        result.setKategoria(kategoria);
+        result.setKieli(kieli);
+
+        return result;
     }
 }

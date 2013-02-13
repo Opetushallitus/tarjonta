@@ -16,24 +16,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
-import fi.vm.sade.events.Event;
-import fi.vm.sade.events.EventSender;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import org.eclipse.jetty.util.log.Log;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
+import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
@@ -44,22 +27,19 @@ import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
-import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import java.util.Date;
-
-import java.util.HashSet;
-import java.util.Set;
-
+import fi.vm.sade.tarjonta.service.types.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.jws.WebParam;
-import org.apache.commons.beanutils.converters.DateConverter;
-import org.apache.commons.lang.time.DateFormatUtils;
+import java.util.*;
 
 /**
- *
  * @author Tuomas Katva
  */
 @Transactional
@@ -67,6 +47,7 @@ import org.apache.commons.lang.time.DateFormatUtils;
 public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     private static final Logger log = LoggerFactory.getLogger(TarjontaAdminServiceImpl.class);
+
     @Autowired(required = true)
     private HakuBusinessService hakuBusinessService;
     @Autowired(required = true)
@@ -87,6 +68,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private YhteyshenkiloDAO yhteyshenkiloDAO;
     @Autowired(required = true)
     private PublicationDataService publication;
+    @Autowired(required = true)
+    private MonikielinenMetadataDAO metadataDAO;
+
     /**
      * Väliaikainne kunnes Koodisto on alustettu.
      */
@@ -127,52 +111,55 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             throw new BusinessException("tarjonta.haku.no.hakukohde.found");
         }
     }
+
     /*
     * This method returns true if komoto copy is allowed.
     */
     @Override
     public boolean tarkistaKoulutuksenKopiointi(@WebParam(partName = "parameters", name = "tarkistaKoulutusKopiointi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") TarkistaKoulutusKopiointiTyyppi parameters) {
 
-        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(parameters.getTarjoajaOid(),parameters.getPohjakoulutus(),parameters.getKoulutusLuokitusKoodi(),parameters.getKoulutusohjelmaKoodi(),
-                parameters.getOpetuskielis(),parameters.getKoulutuslajis());
+        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(parameters.getTarjoajaOid(), parameters.getPohjakoulutus(), parameters.getKoulutusLuokitusKoodi(), parameters.getKoulutusohjelmaKoodi(),
+                parameters.getOpetuskielis(), parameters.getKoulutuslajis());
         if (komotos == null || komotos.size() < 1) {
             return true;
         } else {
             boolean retVal = true;
-            komotoLoop : for (KoulutusmoduuliToteutus komoto:komotos) {
-                if (checkKausiAndVuosi(komoto.getKoulutuksenAlkamisPvm(),parameters.getKoulutusAlkamisPvm())) {
-                      retVal = false;
-                    break  komotoLoop;
+            komotoLoop:
+            for (KoulutusmoduuliToteutus komoto : komotos) {
+                if (checkKausiAndVuosi(komoto.getKoulutuksenAlkamisPvm(), parameters.getKoulutusAlkamisPvm())) {
+                    retVal = false;
+                    break komotoLoop;
                 }
             }
             return retVal;
         }
     }
+
     /*
     * Returns true if compared dates year and kausi matches
     */
-    private boolean checkKausiAndVuosi(Date komotoDate,Date checkDate) {
+    private boolean checkKausiAndVuosi(Date komotoDate, Date checkDate) {
         Calendar komotoCal = Calendar.getInstance();
         Calendar checkCal = Calendar.getInstance();
         komotoCal.setTime(komotoDate);
         checkCal.setTime(checkDate);
 
         if (komotoCal.get(Calendar.YEAR) == checkCal.get(Calendar.YEAR)) {
-           int komotoMonthInt = komotoCal.get(Calendar.MONTH);
-           int checkMonthInt = checkCal.get(Calendar.MONTH);
-           komotoMonthInt ++;
-           checkMonthInt++;
-           String komotoKausi = getKausiStringFromMonth(komotoMonthInt);
-           String checkKausi = getKausiStringFromMonth(checkMonthInt);
+            int komotoMonthInt = komotoCal.get(Calendar.MONTH);
+            int checkMonthInt = checkCal.get(Calendar.MONTH);
+            komotoMonthInt++;
+            checkMonthInt++;
+            String komotoKausi = getKausiStringFromMonth(komotoMonthInt);
+            String checkKausi = getKausiStringFromMonth(checkMonthInt);
 
-           if (komotoKausi.trim().equalsIgnoreCase(checkKausi.trim())) {
-               return true;
-           } else {
-               return false;
-           }
+            if (komotoKausi.trim().equalsIgnoreCase(checkKausi.trim())) {
+                return true;
+            } else {
+                return false;
+            }
 
         } else {
-          return false;
+            return false;
         }
 
     }
@@ -187,7 +174,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     public static Set<KoodistoUri> convertStringToUris(List<String> koodistoUriStrs) {
         Set<KoodistoUri> koodistoUris = new HashSet<KoodistoUri>();
-        for (String koodistoUriStr:koodistoUriStrs) {
+        for (String koodistoUriStr : koodistoUriStrs) {
             KoodistoUri koodistoUri = new KoodistoUri(koodistoUriStr);
             koodistoUris.add(koodistoUri);
         }
@@ -427,10 +414,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         if (koulutusmoduuli.getParentOid() != null) {
             handleParentKomo(komo, koulutusmoduuli.getParentOid());
         }
-        
+
         return koulutusmoduuli;
     }
-    
+
     private void handleParentKomo(Koulutusmoduuli komo, String parentOid) {
         Koulutusmoduuli parent = koulutusmoduuliDAO.findByOid(parentOid);
         if (parent.getSisaltyvyysList().isEmpty()) {
@@ -570,4 +557,49 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public boolean testaaTilasiirtyma(GeneerinenTilaTyyppi parameters) {
         return publication.isValidStatusChange(parameters);
     }
+
+    @Override
+    public MonikielinenMetadataTyyppi tallennaMetadata(@WebParam(name = "avain", targetNamespace = "") String avain, @WebParam(name = "kategoria", targetNamespace = "") String kategoria, @WebParam(name = "kieli", targetNamespace = "") String kieli, @WebParam(name = "arvo", targetNamespace = "") String arvo) {
+        log.info("tallennaMetadata({}, {}, {}, ...)", new Object[]{avain, kategoria, kieli});
+
+        MonikielinenMetadata md = metadataDAO.createOrUpdate(avain, kategoria, kieli, arvo);
+        log.info("  entity = {}", md);
+
+        MonikielinenMetadataTyyppi result = new MonikielinenMetadataTyyppi();
+        result.setKieli(md.getKieli());
+        result.setKategoria(md.getKategoria());
+        result.setAvain(md.getAvain());
+        result.setArvo(md.getArvo());
+
+        return result;
+    }
+
+    @Override
+    public List<MonikielinenMetadataTyyppi> haeMetadata(@WebParam(name = "avain", targetNamespace = "") String avain, @WebParam(name = "kategoria", targetNamespace = "") String kategoria) {
+        log.info("haeMetadata({}, {}) ...", avain, kategoria);
+
+        List<MonikielinenMetadataTyyppi> result = new ArrayList<MonikielinenMetadataTyyppi>();
+
+        List<MonikielinenMetadata> metadataEntities = null;
+        if (kategoria == null) {
+            metadataEntities = metadataDAO.findByAvain(avain);
+        } else {
+            metadataEntities = metadataDAO.findByAvainAndKategoria(avain, kategoria);
+        }
+
+        for (MonikielinenMetadata md : metadataEntities) {
+            MonikielinenMetadataTyyppi mdt = new MonikielinenMetadataTyyppi();
+            mdt.setArvo(md.getArvo());
+            mdt.setAvain(md.getAvain());
+            mdt.setKategoria(md.getKategoria());
+            mdt.setKieli(md.getKieli());
+
+            result.add(mdt);
+        }
+
+        log.info("  result = {}", result);
+
+        return result;
+    }
+
 }
