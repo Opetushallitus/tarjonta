@@ -817,6 +817,12 @@
     </xs:simpleType>
 
     <xs:complexType name="MonikielinenMetadataTyyppi">
+        <xs:annotation>
+            <xs:documentation>
+                Monikielinen metadata. Yksi elementti kuvaa vain yhden tyypin.
+                Avain, kategoria ja kieli muodostavat yksiloivan avaimen.
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="avain" type="tns:LongString"/>
             <xs:element minOccurs="1" maxOccurs="1" name="kategoria" type="tns:LongString"/>

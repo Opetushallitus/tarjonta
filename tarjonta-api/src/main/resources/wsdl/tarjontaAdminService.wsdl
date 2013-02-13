@@ -350,7 +350,10 @@
         </wsdl:operation>
 
         <wsdl:operation name="haeMetadata">
-            <wsdl:documentation>Haetaan metadataa avaimella ja/tai kategorialla.</wsdl:documentation>
+            <wsdl:documentation>Haetaan metadataa avaimella ja/tai kategorialla.
+                Jos "kategoria" on NULL, niin haetaan vain avaimella. Jos
+                molemmat ovat NULL, niin palautetaan kaikki metadatat.
+            </wsdl:documentation>
             <wsdl:input message="tns:haeMetadata" name="haeMetadata">
             </wsdl:input>
             <wsdl:output message="tns:haeMetadataVastaus" name="haeMetadataVastaus">
@@ -358,8 +361,10 @@
         </wsdl:operation>
 
         <wsdl:operation name="tallennaMetadata">
-            <wsdl:documentation>Tallennetaan metadataa avaimella ja/tai kategorialla. Jos arvo on tyhja, metadata
-                poistetaan.
+            <wsdl:documentation>Tallennetaan metadataa avaimella, kategoriall, kielellä.
+                Jos arvo on tyhja, metadatapoistetaan.
+                Jos metadataa ei ole olemassa, niin luodaan uusi - olemassaoleva päivitetään.
+                Vain "avain" on pakollinen tieto.
             </wsdl:documentation>
             <wsdl:input message="tns:tallennaMetadata" name="tallennaMetadata">
             </wsdl:input>
