@@ -581,12 +581,18 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         List<MonikielinenMetadataTyyppi> result = new ArrayList<MonikielinenMetadataTyyppi>();
 
         List<MonikielinenMetadata> metadataEntities = null;
-        if (kategoria == null) {
+        if (avain == null && kategoria == null) {
+            // Null search, find all
+            metadataEntities = metadataDAO.findAll();
+        } else if (kategoria == null) {
+            // Find by avain if kategoria does not matter
             metadataEntities = metadataDAO.findByAvain(avain);
         } else {
+            // Otherwise find by avain and kategoria
             metadataEntities = metadataDAO.findByAvainAndKategoria(avain, kategoria);
         }
 
+        // Convert to API
         for (MonikielinenMetadata md : metadataEntities) {
             MonikielinenMetadataTyyppi mdt = new MonikielinenMetadataTyyppi();
             mdt.setArvo(md.getArvo());
