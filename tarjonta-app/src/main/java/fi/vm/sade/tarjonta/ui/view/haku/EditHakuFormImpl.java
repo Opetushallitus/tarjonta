@@ -42,7 +42,7 @@ import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
-import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;

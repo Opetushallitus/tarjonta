@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.view;
+package fi.vm.sade.tarjonta.ui.presenter;
 
 import com.vaadin.ui.VerticalLayout;
 import java.util.ArrayList;
@@ -58,9 +58,12 @@ import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.service.AppPermissionService;
 import fi.vm.sade.tarjonta.ui.service.HakuPermissionService;
 import fi.vm.sade.tarjonta.ui.service.PublishingService;
+import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
 import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuViewImpl;
+import fi.vm.sade.tarjonta.ui.presenter.CommonPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
@@ -69,9 +72,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
  * @author markus
  *
  */
-@Component
-@Configurable(preConstruction = false)
-public class HakuPresenter implements ICommonResource {
+public class HakuPresenter implements CommonPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuPresenter.class);
     private KoulutusSearchSpesificationViewModel searchSpec = new KoulutusSearchSpesificationViewModel();
@@ -495,5 +496,10 @@ public class HakuPresenter implements ICommonResource {
     @Override
     public AppPermissionService getPermission() {
         return tarjontaPermissionService;
+    }
+
+    @Override
+    public HakuViewModel getModel() {
+        return hakuModel;
     }
 }

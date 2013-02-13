@@ -32,7 +32,7 @@ import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.vaadin.util.UiUtil;
 

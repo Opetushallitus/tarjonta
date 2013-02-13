@@ -39,7 +39,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
-import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
 
 /**

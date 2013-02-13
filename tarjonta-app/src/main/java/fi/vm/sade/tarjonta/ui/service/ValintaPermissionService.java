@@ -19,6 +19,6 @@ package fi.vm.sade.tarjonta.ui.service;
  *
  * @author Jani Wilén
  */
-public interface TarjontaPermissionService extends AppPermissionService {
+public interface ValintaPermissionService extends AppPermissionService {
 
 }

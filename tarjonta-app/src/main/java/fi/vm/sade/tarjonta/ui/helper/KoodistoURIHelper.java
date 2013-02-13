@@ -76,6 +76,10 @@ public class KoodistoURIHelper {
     public static String KOODISTO_AMMATTINIMIKKEET_URI;
     public static String KOODISTO_OPETUSMUOTO_URI;
     public static String KOODISTO_POSTINUMERO;
+    /*
+     * Valintaperustekuvaus URIs
+     */
+    public static String KOODISTO_VALINTAPERUSTEKUVAUSRYHMA;
 
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
@@ -225,5 +229,10 @@ public class KoodistoURIHelper {
     @Value("${koodisto-uris.liitteentyyppi:NOT_SET}")
     public void setLiitteenTyyppi(String liitteenTyyppi) {
         KOODISTO_LIITTEEN_TYYPPI_URI = liitteenTyyppi;
+    }
+
+    @Value("${koodisto-uris.valintaperustekuvausryhma:NOT_SET}")
+    public void setValintaperustekuvausryhma(String valintaperustekuvausryhma) {
+        KOODISTO_VALINTAPERUSTEKUVAUSRYHMA = valintaperustekuvausryhma;
     }
 }

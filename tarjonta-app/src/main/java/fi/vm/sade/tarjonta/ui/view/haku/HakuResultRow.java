@@ -33,7 +33,7 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.MenuBarActions;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import fi.vm.sade.tarjonta.ui.view.HakuPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;

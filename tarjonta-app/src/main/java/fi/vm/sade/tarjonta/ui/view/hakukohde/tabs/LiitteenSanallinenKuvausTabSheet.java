@@ -15,37 +15,40 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by: Tuomas Katva
- * Date: 16.1.2013
+ * Created by: Tuomas Katva Date: 16.1.2013
  */
-public class LiitteenSanallinenKuvausTabSheet extends LanguageTabSheet {
+public class LiitteenSanallinenKuvausTabSheet extends HakukohdeLanguageTabSheet {
 
-
-    public LiitteenSanallinenKuvausTabSheet(boolean useRichText,String width,String height) {
-        super(useRichText,width,height);
+    public LiitteenSanallinenKuvausTabSheet(boolean useRichText, String width, String height) {
+        super(useRichText, width, height);
     }
 
-    public LiitteenSanallinenKuvausTabSheet(boolean useRichText,String tbWidth,String tbHeight,String rtWidth,String rtHeight) {
-        super(useRichText,tbWidth,tbHeight,rtWidth,rtHeight);
+    public LiitteenSanallinenKuvausTabSheet(boolean useRichText, String tbWidth, String tbHeight, String rtWidth, String rtHeight) {
+        super(useRichText, tbWidth, tbHeight, rtWidth, rtHeight);
     }
 
     @Override
     protected void initializeTabsheet() {
-        if(_model.getSelectedLiite() != null) {
-           setInitialValues(_model.getSelectedLiite().getLiitteenSanallinenKuvaus());
-           if (_model.getSelectedLiite().getLiitteenSanallinenKuvaus() == null || _model.getSelectedLiite().getLiitteenSanallinenKuvaus().size() < 1) {
-               String soomiKieli = I18N.getMessage("default.tab");
-               _languageTabsheet.setSelectedTab(getTab(soomiKieli));
-               Set<String> valittuKieli = new HashSet<String>();
-               valittuKieli.add(soomiKieli);
-               _languageTabsheet.getKcSelection().setValue(valittuKieli);
-               _languageTabsheet.setSelectedTab(getTab(soomiKieli));
+        final TarjontaModel model = presenter.getModel();
+
+        if (model.getSelectedLiite() != null) {
+            setInitialValues(model.getSelectedLiite().getLiitteenSanallinenKuvaus());
+            if (model.getSelectedLiite().getLiitteenSanallinenKuvaus() == null || model.getSelectedLiite().getLiitteenSanallinenKuvaus().size() < 1) {
+                String soomiKieli = I18N.getMessage("default.tab");
+                _languageTabsheet.setSelectedTab(getTab(soomiKieli));
+                Set<String> valittuKieli = new HashSet<String>();
+                valittuKieli.add(soomiKieli);
+                _languageTabsheet.getKcSelection().setValue(valittuKieli);
+                _languageTabsheet.setSelectedTab(getTab(soomiKieli));
             }
         }
     }

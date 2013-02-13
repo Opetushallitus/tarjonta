@@ -22,7 +22,7 @@ import com.vaadin.ui.*;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
-import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohdeValintakoeRow;
 import org.springframework.beans.factory.annotation.Autowired;

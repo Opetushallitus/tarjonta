@@ -14,14 +14,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
+package fi.vm.sade.tarjonta.ui.view.common;
 
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.AbstractField;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -29,9 +29,6 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.util.UiUtil;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
-import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.view.common.KoodistoSelectionTabSheet;
 import fi.vm.sade.generic.ui.component.OphRichTextArea;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,54 +42,41 @@ import org.springframework.beans.factory.annotation.Configurable;
 /**
  *
  * @author Tuomas Katva
+ * @author Jani Wilén
  */
 @Configurable
-public abstract class LanguageTabSheet extends CustomComponent {
+public abstract class LanguageTabSheet extends VerticalLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(LanguageTabSheet.class);
     private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
     private static final long serialVersionUID = -185022467161014683L;
     private boolean attached = false;
-    protected TarjontaModel _model;
-    @Autowired
-    protected TarjontaPresenter presenter;
     @Autowired
     protected TarjontaUIHelper _uiHelper;
     protected KoodistoSelectionTabSheet _languageTabsheet;
-    protected VerticalLayout rootLayout = new VerticalLayout();
     @Autowired(required = true)
     protected transient UiBuilder uiBuilder;
     private boolean useRichText = false;
-
     private String TABSHEET_WIDTH = "500px";
     private String TABSHEET_HEIGHT = "300px";
-
     private String RICH_TEXT_HEIGHT = null;
     private String RICH_TEXT_WIDTH = null;
 
     public LanguageTabSheet() {
-        setCompositionRoot(rootLayout);
-        rootLayout.setSizeUndefined();
     }
 
     public LanguageTabSheet(boolean useRichText, String width, String height) {
         TABSHEET_WIDTH = width;
         TABSHEET_HEIGHT = height;
         this.useRichText = useRichText;
-        rootLayout.setSizeUndefined();
-        setCompositionRoot(rootLayout);
-
-
     }
 
-    public LanguageTabSheet(boolean useRichText, String tabSheetWidth, String tabSheetHeight,String rtWidth, String rtHeight) {
+    public LanguageTabSheet(boolean useRichText, String tabSheetWidth, String tabSheetHeight, String rtWidth, String rtHeight) {
         TABSHEET_WIDTH = tabSheetWidth;
         TABSHEET_HEIGHT = tabSheetHeight;
         RICH_TEXT_HEIGHT = rtHeight;
         RICH_TEXT_WIDTH = rtWidth;
         this.useRichText = useRichText;
-        rootLayout.setSizeUndefined();
-        setCompositionRoot(rootLayout);
     }
 
     @Override
@@ -105,7 +89,8 @@ public abstract class LanguageTabSheet extends CustomComponent {
     }
 
     private void initialize() {
-        _model = presenter.getModel();
+        setSizeUndefined();
+
         _languageTabsheet = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, uiBuilder) {
             @Override
             public void doAddTab(String uri) {
@@ -113,7 +98,7 @@ public abstract class LanguageTabSheet extends CustomComponent {
             }
         };
 
-        rootLayout.addComponent(_languageTabsheet);
+        addComponent(_languageTabsheet);
         _languageTabsheet.setWidth(TABSHEET_WIDTH);
         _languageTabsheet.setHeight(TABSHEET_HEIGHT);
         initializeTabsheet();
@@ -137,10 +122,8 @@ public abstract class LanguageTabSheet extends CustomComponent {
         List<KielikaannosViewModel> languageValues = new ArrayList<KielikaannosViewModel>();
 
         for (String key : _languageTabsheet.getTabs().keySet()) {
-
             KielikaannosViewModel kieli = new KielikaannosViewModel(key, retrieveTabText(_languageTabsheet.getTab(key)));
             languageValues.add(kieli);
-
         }
 
         return languageValues;
@@ -163,22 +146,22 @@ public abstract class LanguageTabSheet extends CustomComponent {
 
     protected AbstractField createRichText(String value) {
         if (useRichText) {
-            OphRichTextArea richText = UiUtil.richTextArea(null,null,null);
+            OphRichTextArea richText = UiUtil.richTextArea(null, null, null);
             if (RICH_TEXT_WIDTH == null || RICH_TEXT_HEIGHT == null) {
-            richText.setHeight(TABSHEET_HEIGHT);
-            richText.setWidth(TABSHEET_WIDTH);
+                richText.setHeight(TABSHEET_HEIGHT);
+                richText.setWidth(TABSHEET_WIDTH);
             } else {
                 richText.setHeight(RICH_TEXT_HEIGHT);
                 richText.setWidth(RICH_TEXT_WIDTH);
             }
             richText.setValue(value);
             return richText;
-        }  else {
-        TextField textField = UiUtil.textField(null);
-        textField.setHeight(TABSHEET_HEIGHT);
-        textField.setWidth(UiConstant.PCT100);
-        textField.setValue(value);
-        return textField;
+        } else {
+            TextField textField = UiUtil.textField(null);
+            textField.setHeight(TABSHEET_HEIGHT);
+            textField.setWidth(UiConstant.PCT100);
+            textField.setValue(value);
+            return textField;
         }
     }
 }

@@ -25,6 +25,8 @@ import fi.vm.sade.generic.service.PermissionService;
  */
 public interface AppPermissionService extends PermissionService {
 
+    public static final String ERROR_MESSAGE_USER_NOT_FOUND = "Access denied - no Liferay user found.";
+    
     public static final String SERVICE = "APP_TARJONTA";
     public static final String ROLE_CRUD = SERVICE + "_CRUD";
     public static final String ROLE_RU = SERVICE + "_READ_UPDATE";

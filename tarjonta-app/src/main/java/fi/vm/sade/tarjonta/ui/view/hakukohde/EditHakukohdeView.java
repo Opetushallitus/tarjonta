@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
 import com.vaadin.ui.TabSheet;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohdePerustiedotViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenLiitteetTabImpl;

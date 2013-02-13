@@ -27,7 +27,7 @@ import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
-import fi.vm.sade.tarjonta.ui.view.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.util.UiUtil;

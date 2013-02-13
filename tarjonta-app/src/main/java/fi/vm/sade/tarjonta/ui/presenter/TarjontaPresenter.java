@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.view;
+package fi.vm.sade.tarjonta.ui.presenter;
 
 import fi.vm.sade.authentication.service.UserService;
 import fi.vm.sade.authentication.service.types.HenkiloPagingObjectType;
@@ -66,7 +66,10 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.service.AppPermissionService;
 import fi.vm.sade.tarjonta.ui.service.PublishingService;
 import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
+import fi.vm.sade.tarjonta.ui.view.SearchResultsView;
+import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
+import fi.vm.sade.tarjonta.ui.presenter.CommonPresenter;
 
 import org.apache.commons.beanutils.BeanComparator;
 
@@ -75,7 +78,7 @@ import org.apache.commons.beanutils.BeanComparator;
  *
  * @author mlyly
  */
-public class TarjontaPresenter implements ICommonResource {
+public class TarjontaPresenter implements CommonPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
     private final String LIITE_DATE_PATTERNS = "dd.MM.yyyy hh:mm";

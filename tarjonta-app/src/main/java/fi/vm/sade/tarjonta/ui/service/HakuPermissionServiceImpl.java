@@ -32,14 +32,18 @@ public class HakuPermissionServiceImpl extends AbstractAppPermissionServiceImpl 
 
     @Override
     public User getUser() {
-        if (HakuPortletApplication.getInstance() != null) {
+        if (getInstance() != null) {
 
             if (HakuPortletApplication.getInstance().getUser() != null) {
-                LOG.debug("USER OID : " + HakuPortletApplication.getInstance().getUser().getOid());
+                LOG.debug("USER OID : " + getInstance().getUser().getOid());
             }
-            return HakuPortletApplication.getInstance().getUser();
+            return getInstance().getUser();
         }
 
-        throw new RuntimeException("Access denied - no Liferay user found.");
+        throw new RuntimeException(ERROR_MESSAGE_USER_NOT_FOUND);
+    }
+
+    private HakuPortletApplication getInstance() {
+        return HakuPortletApplication.getInstance();
     }
 }

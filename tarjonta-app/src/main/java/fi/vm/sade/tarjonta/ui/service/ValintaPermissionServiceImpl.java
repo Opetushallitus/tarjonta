@@ -16,9 +16,7 @@
 package fi.vm.sade.tarjonta.ui.service;
 
 import fi.vm.sade.generic.ui.portlet.security.User;
-import fi.vm.sade.tarjonta.ui.HakuPortletApplication;
-import fi.vm.sade.tarjonta.ui.TarjontaApplication;
-import fi.vm.sade.tarjonta.ui.TarjontaWebApplication;
+import fi.vm.sade.tarjonta.ui.ValintaperustekuvausPortletApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,15 +26,14 @@ import org.springframework.stereotype.Service;
  * @author Jani Wilén
  */
 @Service
-public class TarjontaPermissionServiceImpl extends AbstractAppPermissionServiceImpl implements TarjontaPermissionService {
+public class ValintaPermissionServiceImpl extends AbstractAppPermissionServiceImpl implements ValintaPermissionService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TarjontaWebApplication.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ValintaPermissionServiceImpl.class);
 
     @Override
     public User getUser() {
         if (getInstance() != null) {
-
-            if (TarjontaApplication.getInstance().getUser() != null) {
+            if (getInstance().getUser() != null) {
                 LOG.debug("USER OID : " + getInstance().getUser().getOid());
             }
             return getInstance().getUser();
@@ -44,8 +41,8 @@ public class TarjontaPermissionServiceImpl extends AbstractAppPermissionServiceI
 
         throw new RuntimeException(ERROR_MESSAGE_USER_NOT_FOUND);
     }
-    
-    private TarjontaApplication getInstance() {
-        return TarjontaApplication.getInstance();
+
+    private ValintaperustekuvausPortletApplication getInstance() {
+        return ValintaperustekuvausPortletApplication.getInstance();
     }
 }

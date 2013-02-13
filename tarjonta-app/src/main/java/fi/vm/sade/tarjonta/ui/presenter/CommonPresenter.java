@@ -13,20 +13,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.view;
+package fi.vm.sade.tarjonta.ui.presenter;
 
-import fi.vm.sade.generic.service.PermissionService;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
+import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 import fi.vm.sade.tarjonta.ui.service.AppPermissionService;
-
 
 /**
  *
  * @author jani
  */
-public interface ICommonResource {
+public interface CommonPresenter<MODEL extends BaseUIViewModel> {
 
     public boolean isSaveButtonEnabled(final String oid, final SisaltoTyyppi sisalto, final TarjontaTila... requiredState);
 
@@ -39,4 +38,6 @@ public interface ICommonResource {
     public void changeStateToCancelled(final String oid, final SisaltoTyyppi sisalto);
 
     public void changeStateToPublished(final String oid, final SisaltoTyyppi sisalto);
+
+    public MODEL getModel();
 }

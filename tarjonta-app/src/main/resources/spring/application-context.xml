@@ -24,7 +24,6 @@
         location="classpath:tarjonta-app.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-app.properties"
         ignore-resource-not-found="true"/>
 
-    
     <!--
       Localization
     -->
@@ -42,16 +41,24 @@
 
     <bean id="hakukohdeToDTOConverter" class="fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter"/>
 
-    <bean id="tarjontaPresenter" class="fi.vm.sade.tarjonta.ui.view.TarjontaPresenter" scope="session">
+    <!-- Initialize session beans -->
+    
+    <bean id="tarjontaPresenter" class="fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter" scope="session">
+        <aop:scoped-proxy/>
+    </bean>
+    
+    <bean id="hakuPresenter" class="fi.vm.sade.tarjonta.ui.presenter.HakuPresenter" scope="session">
+        <aop:scoped-proxy/>
+    </bean>
+    
+    <bean id="valintaPresenter" class="fi.vm.sade.tarjonta.ui.presenter.ValintaPresenter" scope="session">
         <aop:scoped-proxy/>
     </bean>
 
     <import resource="application-context-service.xml"/>
     <import resource="application-context-ws.xml"/>
-
     <import resource="cache-context.xml"/>
     
-
     <!--<import resource="file:///${user.home:''}/oph-configuration/cache-context.xml"/>-->
 
 </beans>

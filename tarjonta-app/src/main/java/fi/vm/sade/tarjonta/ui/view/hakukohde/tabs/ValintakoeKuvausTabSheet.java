@@ -15,26 +15,30 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by: Tuomas Katva
- * Date: 23.1.2013
+ * Created by: Tuomas Katva Date: 23.1.2013
  */
-public class ValintakoeKuvausTabSheet  extends LanguageTabSheet {
+public class ValintakoeKuvausTabSheet extends HakukohdeLanguageTabSheet {
 
-    public ValintakoeKuvausTabSheet(boolean useRichText,String width,String height) {
-        super(useRichText,width,height);
+    public ValintakoeKuvausTabSheet(boolean useRichText, String width, String height) {
+        super(useRichText, width, height);
     }
 
     @Override
     protected void initializeTabsheet() {
-        if (_model.getSelectedValintaKoe() != null) {
-            setInitialValues(_model.getSelectedValintaKoe().getSanallisetKuvaukset());
-            if (_model.getSelectedValintaKoe().getSanallisetKuvaukset() == null || _model.getSelectedValintaKoe().getSanallisetKuvaukset().size() <1 ) {
+        final TarjontaModel model = presenter.getModel();
+
+        if (model.getSelectedValintaKoe() != null) {
+            setInitialValues(model.getSelectedValintaKoe().getSanallisetKuvaukset());
+            if (model.getSelectedValintaKoe().getSanallisetKuvaukset() == null || model.getSelectedValintaKoe().getSanallisetKuvaukset().size() < 1) {
                 String soomiKieli = I18N.getMessage("default.tab");
                 Set<String> kielet = new HashSet<String>();
                 kielet.add(soomiKieli);

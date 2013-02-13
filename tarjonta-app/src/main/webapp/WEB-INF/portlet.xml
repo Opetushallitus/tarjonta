@@ -84,6 +84,46 @@
             <role-name>APP_TARJONTA_READ</role-name>
         </security-role-ref>
     </portlet>
+    
+    <portlet>
+        <description></description>
+        <portlet-name>ValintaperustekuvausPortletApplication</portlet-name>
+        <display-name>ValintaperustekuvausPortletApplication</display-name>
+
+        <portlet-class>com.vaadin.terminal.gwt.server.ApplicationPortlet2</portlet-class>
+
+        <init-param>
+            <name>application</name>
+            <value>fi.vm.sade.tarjonta.ui.ValintaperustekuvausPortletApplication</value>
+        </init-param>
+        <init-param>
+            <name>widgetset</name>
+            <value>fi.vm.sade.widgetset.GoogleMapComponent</value>
+        </init-param>
+
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+            <portlet-mode>edit</portlet-mode>
+            <portlet-mode>help</portlet-mode>
+        </supports>
+
+        <portlet-info>
+            <title>Valintaperustekuvaus</title>
+            <short-title>ValintaperustekuvausPortletApplication</short-title>
+            <keywords></keywords>
+        </portlet-info>
+        
+        <security-role-ref>
+            <role-name>APP_TARJONTA_CRUD</role-name>
+        </security-role-ref>
+        <security-role-ref>
+            <role-name>APP_TARJONTA_READ_UPDATE</role-name>
+        </security-role-ref>
+        <security-role-ref>
+            <role-name>APP_TARJONTA_READ</role-name>
+        </security-role-ref>
+    </portlet>
         
     <!-- TARJONTA ADMINISTRATION PORTLET -->
      <portlet>

@@ -19,21 +19,17 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Window;
-import fi.vm.sade.oid.service.ExceptionMessage;
 
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusLisatiedotForm;
-import java.io.IOException;
-import java.util.logging.Level;
+import fi.vm.sade.tarjonta.ui.view.ValintaperustekuvausRootView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.support.SimpleCacheManager;
 
 /**
  * Tarjonta WEB application - used for testing and development. For development
@@ -86,7 +82,17 @@ public class TarjontaWebApplication extends TarjontaApplication {
         });
         hl.addComponent(hakuButton);
 
-        
+        Button valitaButton = new Button("Valintaperustekuvaus", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                toValintaperustekuvaus();
+            }
+        });
+        hl.addComponent(valitaButton);
+
+
 
         Button btnKomo = new Button("Luo kaikki komot", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
@@ -101,9 +107,9 @@ public class TarjontaWebApplication extends TarjontaApplication {
                     LOG.error("Failed to create KOMOs", ex);
                 }
             }
-        });    
+        });
         hl.addComponent(btnKomo);
-        
+
         Button btnKomoTest = new Button("Testaa komon luonti", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -134,7 +140,12 @@ public class TarjontaWebApplication extends TarjontaApplication {
         setMainWindow(window);
     }
 
- 
+    public void toValintaperustekuvaus() {
+        this.removeWindow(window);
+        window = new ValintaperustekuvausRootView();
+        setMainWindow(window);
+    }
+
     /*
      * Development configurations, no real use in production environment.
      */
@@ -149,15 +160,15 @@ public class TarjontaWebApplication extends TarjontaApplication {
             //Add the property to tarjonta-app.properties:
             //
             //tarjonta-app.dev.redirect=KOULUTUS
-            if (developmentRedirect.equalsIgnoreCase("HAKU")) {
-                toHaku();
-            }
 
-            if (developmentRedirect.equalsIgnoreCase("KOULUTUS") || developmentRedirect.equalsIgnoreCase("TARJONTA")) {
+            if (developmentRedirect.equalsIgnoreCase("VALINTA")) {
+                toValintaperustekuvaus();
+            } else if (developmentRedirect.equalsIgnoreCase("HAKU")) {
+                toHaku();
+            } else if (developmentRedirect.equalsIgnoreCase("KOULUTUS") || developmentRedirect.equalsIgnoreCase("TARJONTA")) {
                 toTarjonta();
             }
         }
-
     }
 
     /**

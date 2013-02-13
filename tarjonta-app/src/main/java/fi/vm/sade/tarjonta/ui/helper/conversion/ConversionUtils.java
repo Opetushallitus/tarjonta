@@ -45,7 +45,7 @@ public class ConversionUtils {
     public static MonikielinenTekstiTyyppi convertKielikaannosToMonikielinenTeksti(List<KielikaannosViewModel> kielikaannokset) {
         MonikielinenTekstiTyyppi monikielinenTekstiTyyppi = new MonikielinenTekstiTyyppi();
 
-        for (KielikaannosViewModel kielikaannosViewModel:kielikaannokset) {
+        for (KielikaannosViewModel kielikaannosViewModel : kielikaannokset) {
             MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
 
             teksti.setKieliKoodi(kielikaannosViewModel.getKielikoodi());

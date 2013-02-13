@@ -15,40 +15,37 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by: Tuomas Katva
- * Date: 16.1.2013
+ * Created by: Tuomas Katva Date: 16.1.2013
  */
-public class HakukohdeLisatiedotTabSheet extends LanguageTabSheet {
+public class HakukohdeLisatiedotTabSheet extends HakukohdeLanguageTabSheet {
 
-
-    public HakukohdeLisatiedotTabSheet(boolean useRichText,String width,String height) {
-        super(useRichText,width,height);
+    public HakukohdeLisatiedotTabSheet(boolean useRichText, String width, String height) {
+        super(useRichText, width, height);
     }
 
     @Override
     protected void initializeTabsheet() {
-        if (_model.getHakukohde() != null && _model.getHakukohde().getLisatiedot()!= null) {
-            setInitialValues(_model.getHakukohde().getLisatiedot());
+        final TarjontaModel model = presenter.getModel();
 
-      }
+        if (model.getHakukohde() != null && model.getHakukohde().getLisatiedot() != null) {
+            setInitialValues(model.getHakukohde().getLisatiedot());
+        }
 
-        if (_model.getHakukohde() != null && _model.getHakukohde().getLisatiedot() == null || _model.getHakukohde().getLisatiedot().size() < 1) {
-
+        if (model.getHakukohde() != null && model.getHakukohde().getLisatiedot() == null || model.getHakukohde().getLisatiedot().size() < 1) {
             String soomiKieli = I18N.getMessage("default.tab");
             Set<String> kielet = new HashSet<String>();
             kielet.add(soomiKieli);
             _languageTabsheet.getKcSelection().setValue(kielet);
             _languageTabsheet.setSelectedTab(getTab(soomiKieli));
-
         }
-
-
-
     }
 }
