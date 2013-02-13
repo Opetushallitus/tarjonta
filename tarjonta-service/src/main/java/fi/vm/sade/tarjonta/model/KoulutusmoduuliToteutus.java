@@ -66,12 +66,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @CollectionTable(name = TABLE_NAME + "_avainsana", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> avainsanas = new HashSet<KoodistoUri>();
-    @Size(min = 1)
+    //@Size(min = 1) REMOVED RESTRICTION BECAUSE NOT APPLICABLE FOR TUTKINTO KOMOTOS
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_opetuskieli", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetuskielis = new HashSet<KoodistoUri>();
-    @Size(min = 1)
+    //@Size(min = 1) REMOVED RESTRICTION BECAUSE NOT APPLICABLE FOR TUTKINTO KOMOTOS
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_opetusmuoto", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
@@ -111,6 +111,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "painotus")
     private MonikielinenTeksti painotus;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "koulutusohjelmanvalinta")
+    private MonikielinenTeksti koulutusohjelmanValinta;
 
     /*
      * Koulutuksen Lisatiedot  (additional information)
@@ -614,5 +617,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
             this.painotus.getTekstis().clear();
         }
         this.painotus = painotus;
+    }
+    
+    public MonikielinenTeksti getKoulutusohjelmanValinta() {
+        return koulutusohjelmanValinta;
+    }
+
+    public void setKoulutusohjelmanValinta(
+            MonikielinenTeksti koulutusohjelmanValinta) {
+        this.koulutusohjelmanValinta = koulutusohjelmanValinta;
     }
 }

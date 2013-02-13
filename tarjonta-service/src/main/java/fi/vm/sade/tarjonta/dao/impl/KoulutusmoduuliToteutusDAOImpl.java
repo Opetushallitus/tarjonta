@@ -27,6 +27,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import static fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils.and;
 import fi.vm.sade.tarjonta.model.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
@@ -153,7 +154,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
             JPASubQuery subQuery = new JPASubQuery().from(komo).
                 join(komo.nimi.tekstis, nimiTeksti).
                 where(nimiTeksti.arvo.toLowerCase().contains(matchNimi.toLowerCase()));
-
+            
             criteria = komoto.koulutusmoduuli.in(subQuery.list(komo));
         }
 
@@ -169,9 +170,33 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
             criteria = and(criteria, komoto.koulutuksenAlkamisPvm.isNotNull()).and(komoto.koulutuksenAlkamisPvm.month().isNotNull()).and(komoto.koulutuksenAlkamisPvm.month().in(koulutusAlkuKuukaudet));
         }
 
+        List<KoulutusmoduuliToteutus> komotos = from(komoto).
+                where(criteria).
+                list(komoto);
+        
+        return filterTutkintos(komotos); 
+    }
+    
+
+    @Override
+    public KoulutusmoduuliToteutus findKomotoByKomoAndtarjoaja(
+            Koulutusmoduuli parentKomo, String tarjoaja) {
+        QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        
         return from(komoto).
-            where(criteria).
-            list(komoto);
+                join(komoto.koulutusmoduuli).fetch().
+                where(komoto.koulutusmoduuli.oid.eq(parentKomo.getOid()).and(komoto.tarjoaja.eq(tarjoaja))).
+                singleResult(komoto);
+    }
+    
+    private List<KoulutusmoduuliToteutus> filterTutkintos(List<KoulutusmoduuliToteutus> komotos) {
+        List<KoulutusmoduuliToteutus> result = new ArrayList<KoulutusmoduuliToteutus>();
+        for (KoulutusmoduuliToteutus curKomoto : komotos) {
+            if (!curKomoto.getKoulutusmoduuli().getModuuliTyyppi().name().equals(KoulutusmoduuliTyyppi.TUTKINTO.name())) {
+                result.add(curKomoto);
+            }
+        }
+        return result;
     }
 
 }

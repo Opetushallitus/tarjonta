@@ -150,6 +150,8 @@ public class TarjontaKomoData {
 
         final KomoExcelReader<KoulutusluokitusRowDTO> readerForKoulutusluokitus = new KomoExcelReader<KoulutusluokitusRowDTO>(KoulutusluokitusRowDTO.class, COLUMNS_KOULUTUSLUOKITUS, 3000);
         final Set<KoulutusluokitusRowDTO> koulutusluokitusDtos = readerForKoulutusluokitus.read(koulutusluokitus.getPath(), false);
+        
+        HashMap<String,String> kKoodiToKomoOid = new HashMap<String,String>();
 
         //merge the Excel files together by using koulutuskoodi as the key value
         for (Relaatiot5RowDTO r : loadedData) {
@@ -181,7 +183,7 @@ public class TarjontaKomoData {
             //base values
             KoulutusmoduuliKoosteTyyppi tutkintoKomo = new KoulutusmoduuliKoosteTyyppi();
             tutkintoKomo.setOid(this.oidService.newOid(NodeClassCode.TEKN_5));
-            tutkintoKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+            tutkintoKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
 
             //search Uris from Koodisto for komo
             tutkintoKomo.setKoulutuskoodiUri(getUriWithVersion(dto.getKoulutuskoodi(), KoodistoURIHelper.KOODISTO_TUTKINTO_URI));
@@ -217,7 +219,12 @@ public class TarjontaKomoData {
             
             //TODO:  komo.setEqfLuokitus(dto.getEqfUri());
             if (create) {
-                tarjontaAdminService.lisaaKoulutusmoduuli(tutkintoKomo);
+                KoulutusmoduuliKoosteTyyppi tKomo = tarjontaAdminService.lisaaKoulutusmoduuli(tutkintoKomo);
+                if (tKomo.getOid() != null) {
+                    kKoodiToKomoOid.put(tKomo.getKoulutuskoodiUri(), tKomo.getOid());
+                }
+                
+                koKomo.setParentOid(kKoodiToKomoOid.get(tutkintoKomo.getKoulutuskoodiUri()));
                 tarjontaAdminService.lisaaKoulutusmoduuli(koKomo);
             }
             

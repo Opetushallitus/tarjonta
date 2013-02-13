@@ -619,6 +619,8 @@
             <xs:element name="Koulutusaste" type="tns:KoodistoKoodiTyyppi"/>
             <xs:element name="Tarjoaja" type="xs:string"/>
             <xs:element name="Nimi" type="tns:MonikielinenTekstiTyyppi" minOccurs="1" maxOccurs="1"/>
+            
+            <xs:element name="KoulutusohjelmanValinta" type="tns:MonikielinenTekstiTyyppi" minOccurs="1" maxOccurs="1"/>
 
             <!-- Koulutuksen lisätiedot (additional information) -->
             <xs:element name="Ammattinimikkeet" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
@@ -772,6 +774,7 @@
     <xs:simpleType name="KoulutusmoduuliTyyppi">
         <xs:restriction base="xs:string">
             <xs:enumeration value="TUTKINNON_OSA"/>
+            <xs:enumeration value="TUTKINTO"/>
             <xs:enumeration value="TUTKINTO_OHJELMA"/>
         </xs:restriction>
     </xs:simpleType>

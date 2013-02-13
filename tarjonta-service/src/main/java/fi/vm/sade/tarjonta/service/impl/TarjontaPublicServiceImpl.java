@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
@@ -345,8 +346,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private List<KoulutusTulos> mapKomotoListToKoulutusTulosList(List<KoulutusmoduuliToteutus> komotos) {
         List<KoulutusTulos> koulutusTuloses = new ArrayList<KoulutusTulos>();
         for (KoulutusmoduuliToteutus komoto: komotos) {
-            KoulutusTulos tulos = getKoulutusTulosFromKoulutusmoduuliToteutus(komoto);
-            koulutusTuloses.add(tulos);
+            if (!komoto.getKoulutusmoduuli().getModuuliTyyppi().name().equals(KoulutusmoduuliTyyppi.TUTKINTO.name())) {
+                KoulutusTulos tulos = getKoulutusTulosFromKoulutusmoduuliToteutus(komoto);
+                koulutusTuloses.add(tulos);
+            }
         }
         return koulutusTuloses;
     }
@@ -443,10 +446,24 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             result.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo));
         } else {
             result.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo, parentKomo));
+            handleParentKomoto(parentKomo, komoto, result);    
         }
-        
 
         return result;
+    }
+    
+    private void handleParentKomoto(Koulutusmoduuli parentKomo, KoulutusmoduuliToteutus komoto, LueKoulutusVastausTyyppi result) {
+        KoulutusmoduuliToteutus parentKomoto = this.koulutusmoduuliToteutusDAO.findKomotoByKomoAndtarjoaja(parentKomo, komoto.getTarjoaja());
+        if (parentKomoto != null) {
+            GregorianCalendar greg = new GregorianCalendar();
+            greg.setTime(parentKomoto.getKoulutuksenAlkamisPvm());
+            try {
+                result.setKoulutuksenAlkamisPaiva(DatatypeFactory.newInstance().newXMLGregorianCalendar(greg));
+            } catch (Exception ex) {
+                result.setKoulutuksenAlkamisPaiva(null);
+            }
+            result.setKoulutusohjelmanValinta(EntityUtils.copyFields(parentKomoto.getKoulutusohjelmanValinta()));
+        }
     }
 
     private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus fromKoulutus) {

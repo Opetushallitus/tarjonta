@@ -27,6 +27,10 @@ public enum KoulutusmoduuliTyyppi {
     /**
      * 
      */
-    TUTKINNON_OSA
+    TUTKINNON_OSA,
+    /**
+     * 
+     */
+    TUTKINTO
 }
 

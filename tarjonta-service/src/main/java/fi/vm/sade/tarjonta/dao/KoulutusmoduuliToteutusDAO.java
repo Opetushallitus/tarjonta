@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +49,9 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
     public List<KoulutusmoduuliToteutus> findKoulutusModuuliWithPohjakoulutusAndTarjoaja(String tarjoaja,String pohjakoulutus,
                                                                                          String koulutusluokitus,String koulutusohjelma,
                                                                                          List<String> opetuskielis, List<String> koulutuslajis);
+
+    public KoulutusmoduuliToteutus findKomotoByKomoAndtarjoaja(
+            Koulutusmoduuli parentKomo, String tarjoaja);
 
 }
 

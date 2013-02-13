@@ -138,7 +138,9 @@ public final class EntityUtils {
         toKoulutus.setOpetusmuoto(toKoodistoUriSet(fromKoulutus.getOpetusmuoto()));
         toKoulutus.setOid(fromKoulutus.getOid());
         toKoulutus.setKoulutuksenAlkamisPvm(fromKoulutus.getKoulutuksenAlkamisPaiva());
-        toKoulutus.setSuunniteltuKesto(fromKoulutus.getKesto().getYksikko(), fromKoulutus.getKesto().getArvo());
+        if (fromKoulutus.getKesto() != null) {
+            toKoulutus.setSuunniteltuKesto(fromKoulutus.getKesto().getYksikko(), fromKoulutus.getKesto().getArvo());
+        }
         toKoulutus.setOpetuskieli(toKoodistoUriSet(fromKoulutus.getOpetuskieli()));
         toKoulutus.setKoulutuslajis(toKoodistoUriSet(fromKoulutus.getKoulutuslaji()));
         toKoulutus.setTarjoaja(fromKoulutus.getTarjoaja());

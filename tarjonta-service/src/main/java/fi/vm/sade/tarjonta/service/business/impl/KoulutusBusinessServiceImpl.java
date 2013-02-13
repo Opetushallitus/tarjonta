@@ -31,6 +31,7 @@ import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
+import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaVirheKoodi;
@@ -90,9 +91,16 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     @Override
     public KoulutusmoduuliToteutus createKoulutus(LisaaKoulutusTyyppi koulutus) {
 
-        Koulutusmoduuli moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(
+        Koulutusmoduuli moduuli = null;
+        if (koulutus.getKoulutusohjelmaKoodi() == null) {
+            moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(koulutus.getKoulutusKoodi().getUri(), null);
+        } else {
+            moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(
                 koulutus.getKoulutusKoodi().getUri(),
                 koulutus.getKoulutusohjelmaKoodi().getUri());
+            
+            handleParentKomoto(koulutus, moduuli);
+        }
 
         if (moduuli == null) {
             throw new TarjontaBusinessException(TarjontaVirheKoodi.KOULUTUSTA_EI_OLEMASSA.value());
@@ -105,12 +113,18 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         return koulutusmoduuliToteutusDAO.insert(komotoModel);
     }
+    
+
 
     @Override
     public KoulutusmoduuliToteutus updateKoulutus(PaivitaKoulutusTyyppi koulutus) {
 
         final String oid = koulutus.getOid();
         KoulutusmoduuliToteutus model = koulutusmoduuliToteutusDAO.findByOid(oid);
+        
+        Koulutusmoduuli moduuli = model.getKoulutusmoduuli();
+        
+        handleParentKomoto(koulutus, moduuli);
 
         if (model == null) {
             throw new TarjontaBusinessException(TarjontaVirheKoodi.OID_EI_OLEMASSA.value(), oid);
@@ -122,6 +136,43 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         return model;
 
+    }
+    
+    private void handleParentKomoto(KoulutusTyyppi koulutus, Koulutusmoduuli moduuli) {
+        Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(moduuli);
+        KoulutusmoduuliToteutus parentKomoto = 
+                this.koulutusmoduuliToteutusDAO.findKomotoByKomoAndtarjoaja(parentKomo, koulutus.getTarjoaja());
+        if (parentKomoto != null) {
+            parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
+            parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta()));
+            this.koulutusmoduuliToteutusDAO.update(parentKomoto);
+            handleChildKomos(parentKomo, moduuli, koulutus);
+            
+        } else {
+            parentKomoto = new KoulutusmoduuliToteutus();
+            parentKomoto.setOid(koulutus.getOid() + parentKomoto.getOid());
+            parentKomoto.setTarjoaja(koulutus.getTarjoaja());
+            parentKomoto.setTila(EntityUtils.convertTila(koulutus.getTila()));
+            parentKomoto.setKoulutusmoduuli(parentKomo);
+            parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta()));
+            parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
+            parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
+            this.koulutusmoduuliToteutusDAO.insert(parentKomoto);
+        }
+    }
+    
+    private void handleChildKomos(Koulutusmoduuli parentKomo, Koulutusmoduuli moduuli, KoulutusTyyppi koulutus) {
+        for (Koulutusmoduuli curChildKomo : parentKomo.getAlamoduuliList()) {
+            if (curChildKomo.getOid().equals(moduuli.getOid())) {
+                continue;
+            }
+            KoulutusmoduuliToteutus curKomoto = 
+                    this.koulutusmoduuliToteutusDAO.findKomotoByKomoAndtarjoaja(curChildKomo, koulutus.getTarjoaja());
+            if (curKomoto != null) {
+                curKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
+                this.koulutusmoduuliToteutusDAO.update(curKomoto);
+            }
+        }
     }
 
     private boolean isNew(BaseEntity e) {
