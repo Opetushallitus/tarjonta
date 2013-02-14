@@ -178,6 +178,13 @@ public class PublicationCollectorTest {
             koulutustarjoajaEvents++;
         }
 
+        @Override
+        public void onCollect(Koulutusmoduuli m, KoulutusmoduuliToteutus t)
+                throws Exception {
+            
+            koulutusmoduuliEvents++;
+        }
+
     }
 
 

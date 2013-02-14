@@ -249,6 +249,10 @@
                         maxOccurs="1">
                 <xs:complexType>
                     <xs:sequence>
+                       <xs:element name="ParentRef"
+                                    type="tns:LearningOpportunitySpecificationRefType"
+                                    minOccurs="1"
+                                    maxOccurs="1"/>
                         <xs:element name="InstanceRef"
                                     type="tns:LearningOpportunityInstanceRefType"
                                     minOccurs="1"
@@ -615,6 +619,11 @@
                                 type="tns:OrganizationRefType"
                                 minOccurs="1"
                                 maxOccurs="1"/>
+                                
+                   <xs:element name="ChildLOSRefs"
+                                type="tns:LearningOpportunitySpecificationRefType"
+                                minOccurs="0"
+                                maxOccurs="unbounded"/>
 
                     <xs:element name="OfferedBy"
                                 type="tns:LearningOpportunityProviderRefType"
@@ -782,6 +791,17 @@
                                     <xs:annotation>
                                         <xs:documentation xml:lang="fi">
                                             Jatko-opintomahdollisuudet.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                
+                                <xs:element name="SelectionOfDegreeProgram"
+                                            type="tns:ExtendedStringType"
+                                            minOccurs="0"
+                                            maxOccurs="unbounded">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="fi">
+                                            Koulutusohjelman valinta.
                                         </xs:documentation>
                                     </xs:annotation>
                                 </xs:element>

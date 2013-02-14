@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.publication;
 
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,7 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 
 /**
  * Gathers learning opportunity material (tarjonta) that is ready for
@@ -155,6 +158,8 @@ public class PublicationCollector {
         if (koulutusList.isEmpty()) {
             handler.onCollectWarning("zero koulutusmoduuliToteutus found");
         }
+        
+        List<KoulutusmoduuliToteutus> parentKoulutusList = new ArrayList<KoulutusmoduuliToteutus>();
 
         for (KoulutusmoduuliToteutus t : koulutusList) {
             Koulutusmoduuli m = t.getKoulutusmoduuli();
@@ -164,11 +169,36 @@ public class PublicationCollector {
                 log.debug("LOS provider : {}, LOI provider : {}", m.getOmistajaOrganisaatioOid(), t.getTarjoaja());
             }
 
-            fireCollect(m);
+            if (m.getModuuliTyyppi().name().equals(KoulutusmoduuliTyyppi.TUTKINTO.name())) {
+                parentKoulutusList.add(t);
+            } else {
+                fireCollect(m);
+            
+            
+                fireCollect(t);
+
+                fireCollect(findProviderByOid(m.getOmistajaOrganisaatioOid(), true));
+                fireCollect(findProviderByOid(t.getTarjoaja(), false));
+            }
+        }
+        
+        for (KoulutusmoduuliToteutus t : parentKoulutusList) {
+            Koulutusmoduuli m = t.getKoulutusmoduuli();
+
+            if (log.isDebugEnabled()) {
+                log.debug("LOS OID : {}, LOI OID : {}", m.getOid(), t.getOid());
+                log.debug("LOS provider : {}, LOI provider : {}", m.getOmistajaOrganisaatioOid(), t.getTarjoaja());
+            }
+
+
+            fireCollect(m, t);
+
+
             fireCollect(t);
 
             fireCollect(findProviderByOid(m.getOmistajaOrganisaatioOid(), true));
             fireCollect(findProviderByOid(t.getTarjoaja(), false));
+
         }
 
         List<Hakukohde> hakukohdeList = dataService.listHakukohde();
@@ -180,6 +210,14 @@ public class PublicationCollector {
         for (Haku h : hakuList) {
             fireCollect(h);
         }
+    }
+
+    private void fireCollect(Koulutusmoduuli m, KoulutusmoduuliToteutus t) throws Exception {
+
+        if (!isNotifiedBefore(m.getOid())) {
+            handler.onCollect(m, t);
+        }
+        
     }
 
     private OrganisaatioDTO findProviderByOid(final String oid, final boolean allowNull) {
@@ -273,6 +311,8 @@ public class PublicationCollector {
 
         public void onCollectStart() throws Exception;
 
+        public void onCollect(Koulutusmoduuli m, KoulutusmoduuliToteutus t) throws Exception;
+
         public void onCollectEnd() throws Exception;
 
         public void onCollectFailed(Exception e);
@@ -329,6 +369,11 @@ public class PublicationCollector {
 
         @Override
         public void onCollectWarning(String msg) {
+        }
+
+        @Override
+        public void onCollect(Koulutusmoduuli m, KoulutusmoduuliToteutus t) throws Exception {
+            
         }
     }
 

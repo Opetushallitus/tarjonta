@@ -73,11 +73,12 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QMonikielinenTeksti ak = new QMonikielinenTeksti("arviointikriteerit");
         QMonikielinenTeksti lkv = new QMonikielinenTeksti("loppukoevaatimukset");
         QMonikielinenTeksti nimi = new QMonikielinenTeksti("nimi");
+        QKoulutusSisaltyvyys sl = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
 
         final BooleanExpression criteria = komoto.tila.in(PUBLIC_DATA).and(komo.tila.eq(TarjontaTila.JULKAISTU));
 
         return from(komoto).
-                leftJoin(komoto.ammattinimikes).fetch().
+                leftJoin(komoto.ammattinimikes).fetch().                
                 leftJoin(komoto.avainsanas).fetch().
                 leftJoin(komoto.opetuskielis).fetch().
                 leftJoin(komoto.opetusmuotos).fetch().
@@ -89,6 +90,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 leftJoin(komo.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
                 leftJoin(komo.jatkoOpintoMahdollisuudet, jom).fetch().leftJoin(jom.tekstis).fetch().
                 leftJoin(komo.nimi, nimi).fetch().leftJoin(nimi.tekstis).fetch().
+                leftJoin(komo.sisaltyvyysList, sl).fetch().leftJoin(sl.alamoduuliList).fetch().
                 where(criteria).
                 distinct().list(komoto);
     }
@@ -103,6 +105,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QMonikielinenTeksti kuvaus = new QMonikielinenTeksti("kuvaus");
         QMonikielinenTeksti valintaperuste = new QMonikielinenTeksti("valintaperuste");
         QMonikielinenTeksti lisatiedot = new QMonikielinenTeksti("lisatiedot");
+        QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
 
         final BooleanExpression criteria = hakukohde.tila.in(PUBLIC_DATA);
 
@@ -111,7 +114,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 leftJoin(valintakoe.kuvaus, kuvaus).fetch().leftJoin(kuvaus.tekstis).fetch().
                 leftJoin(hakukohde.valintaperusteKuvaus, valintaperuste).fetch().leftJoin(valintaperuste.tekstis).fetch().
                 leftJoin(hakukohde.liites).fetch().
-                leftJoin(hakukohde.koulutusmoduuliToteutuses).fetch().
+                leftJoin(hakukohde.koulutusmoduuliToteutuses, komoto).fetch().leftJoin(komoto.koulutusmoduuli).fetch().
                 leftJoin(hakukohde.lisatiedot, lisatiedot).fetch().leftJoin(lisatiedot.tekstis).fetch().
                 where(criteria).
                 distinct().list(hakukohde);

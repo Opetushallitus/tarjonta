@@ -104,6 +104,8 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      */
     private Map<String, Object> idRefMap = new HashMap<String, Object>();
     private static final Logger log = LoggerFactory.getLogger(LearningOpportunityJAXBWriter.class);
+    
+    private Map<String,String> komotoParentMap = new HashMap<String,String>();
 
     /**
      * Constructs new writer and initializes JAXBContext. Cannot be reused.
@@ -263,6 +265,8 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
         // ApplicationOption/SelectionCriterions
         addValintaperusteet(hakukohde, applicationOption);
+        
+        
 
         // ApplicationOption/LearningOpportunities
         addKoulutukset(hakukohde, applicationOption);
@@ -277,13 +281,21 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     @Override
     public void onCollect(Koulutusmoduuli moduuli) throws Exception {
-
+        onCollect(moduuli, null);
+    }
+    
+    @Override
+    public void onCollect(Koulutusmoduuli moduuli, KoulutusmoduuliToteutus t) throws Exception {
         LearningOpportunitySpecificationType specification = objectFactory.createLearningOpportunitySpecificationType();
 
-        if (moduuli.getModuuliTyyppi() != KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA) {
+        if (moduuli.getModuuliTyyppi() != KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA && moduuli.getModuuliTyyppi() != KoulutusmoduuliTyyppi.TUTKINTO)  {
             throw new Exception("KoulutusmoduuliTyyppi not supported: " + moduuli.getModuuliTyyppi());
         }
 
+        if (t != null) {
+            handleChildren(moduuli, specification);
+        }
+        
         //LearningOpportunitySpecification#status
         specification.setStatus(status(moduuli.getTila()));
 
@@ -300,7 +312,12 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         addUlkoinenTunniste(moduuli, specification);
 
         // LearningOpportunitySpecification/OrganizationRef
-        addOrganisaatioRef(moduuli, specification);
+        if (t == null) {
+            addOrganisaatioRef(moduuli, specification);
+        } else {
+            addOrganisaatioRef(t, specification);
+        }
+        
 
         // LearningOpportunitySpecification/OfferedBy
         specification.setOfferedBy(null);
@@ -334,12 +351,37 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
         // LearningOpportunitySpecification/Description/AccessToFurtherStudies
         addJatkoOpintoMahdollisuudet(moduuli, description);
+        
+        if (t != null) {
+            addKoulutusohjelmanValinta(t, description);
+        }
 
         marshal(LearningOpportunitySpecificationType.class, specification);
 
         log.debug("marshalledKoulutusmoduuli, oid: " + moduuli.getOid());
-
     }
+
+    private void addKoulutusohjelmanValinta(KoulutusmoduuliToteutus koulutus,
+            Description description) {
+       copyTexts(koulutus.getKoulutusohjelmanValinta(), description.getSelectionOfDegreeProgram());
+    }
+
+    private void handleChildren(Koulutusmoduuli moduuli,
+            LearningOpportunitySpecificationType specification) {
+        for (Koulutusmoduuli curChild : moduuli.getAlamoduuliList()) {
+            this.komotoParentMap.put(curChild.getOid(), moduuli.getOid());
+            specification.getChildLOSRefs().add(createLOSRef(curChild.getOid()));
+        }
+        
+    }
+    
+    private LearningOpportunitySpecificationRefType createLOSRef(String moduuliOid) {
+        LearningOpportunitySpecificationRefType losRef = new LearningOpportunitySpecificationRefType();
+        losRef.setRef(getIDREF(moduuliOid));
+        return losRef;
+    }
+    
+    
 
     @Override
     public void onCollect(KoulutusmoduuliToteutus toteutus) throws Exception {
@@ -620,6 +662,12 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         to.setOrganizationRef(organizationRef);
 
     }
+    
+    private void addOrganisaatioRef(KoulutusmoduuliToteutus from, LearningOpportunitySpecificationType to) {
+        OrganizationRefType organizationRef = new OrganizationRefType();
+        organizationRef.setOidRef(from.getTarjoaja());
+        to.setOrganizationRef(organizationRef);
+    }
 
     private void addOrganisaatioRef(KoulutusmoduuliToteutus from, LearningOpportunityInstanceType to) {
 
@@ -674,11 +722,20 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         List<LearningOpportunityInstanceRefType> refList = refContainer.getInstanceRef();
 
         Set<KoulutusmoduuliToteutus> koulutukset = hakukohde.getKoulutusmoduuliToteutuses();
+        int laskuri = 0;
         for (KoulutusmoduuliToteutus koulutus : koulutukset) {
+            
+            if (laskuri == 0) {
+                String parentOid = this.komotoParentMap.get(koulutus.getKoulutusmoduuli().getOid());
+                if (parentOid != null) {
+                    refContainer.setParentRef(createLOSRef(parentOid));
+                }
+            }
 
             LearningOpportunityInstanceRefType ref = new LearningOpportunityInstanceRefType();
             ref.setRef(getIDREF(koulutus.getOid()));
             refList.add(ref);
+            ++laskuri;
 
         }
 
