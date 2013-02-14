@@ -47,7 +47,6 @@ import java.util.*;
 public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     private static final Logger log = LoggerFactory.getLogger(TarjontaAdminServiceImpl.class);
-
     @Autowired(required = true)
     private HakuBusinessService hakuBusinessService;
     @Autowired(required = true)
@@ -70,7 +69,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private PublicationDataService publication;
     @Autowired(required = true)
     private MonikielinenMetadataDAO metadataDAO;
-
     /**
      * Väliaikainne kunnes Koodisto on alustettu.
      */
@@ -113,8 +111,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     /*
-    * This method returns true if komoto copy is allowed.
-    */
+     * This method returns true if komoto copy is allowed.
+     */
     @Override
     public boolean tarkistaKoulutuksenKopiointi(@WebParam(partName = "parameters", name = "tarkistaKoulutusKopiointi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") TarkistaKoulutusKopiointiTyyppi parameters) {
 
@@ -136,8 +134,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     /*
-    * Returns true if compared dates year and kausi matches
-    */
+     * Returns true if compared dates year and kausi matches
+     */
     private boolean checkKausiAndVuosi(Date komotoDate, Date checkDate) {
         Calendar komotoCal = Calendar.getInstance();
         Calendar checkCal = Calendar.getInstance();
@@ -571,6 +569,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         MonikielinenMetadata md = metadataDAO.createOrUpdate(avain, kategoria, kieli, arvo);
         log.info("  entity = {}", md);
 
+        if (md == null) {
+            //Metadata was removed.
+            return null;
+        }
+
         MonikielinenMetadataTyyppi result = new MonikielinenMetadataTyyppi();
         result.setKieli(md.getKieli());
         result.setKategoria(md.getKategoria());
@@ -616,5 +619,4 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         return result;
     }
-
 }

@@ -22,6 +22,7 @@ import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -163,5 +164,17 @@ public abstract class LanguageTabSheet extends VerticalLayout {
             textField.setValue(value);
             return textField;
         }
+    }
+
+    /**
+     * Remove all tabs and add a language menu to tab.
+     */
+    public void resetTabSheets() {
+        _languageTabsheet.removeAllComponents();
+        _languageTabsheet.addLanguageMenuTab();
+    }
+
+    public Set<String> getRemovedTabs() {
+        return _languageTabsheet.getRemoved();
     }
 }

@@ -15,6 +15,10 @@
  */
 package fi.vm.sade.tarjonta.ui.view.valinta;
 
+import com.vaadin.ui.Component;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TabSheet.CloseHandler;
+import com.vaadin.ui.TabSheet.Tab;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.enums.MetaCategory;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
@@ -24,6 +28,8 @@ import fi.vm.sade.tarjonta.ui.presenter.ValintaPresenter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
@@ -33,6 +39,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable
 public class ValintaLanguageTabSheet extends LanguageTabSheet {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ValintaLanguageTabSheet.class);
     protected ValintaPresenter presenter;
     protected MetaCategory category;
 
@@ -41,16 +48,19 @@ public class ValintaLanguageTabSheet extends LanguageTabSheet {
 
     public ValintaLanguageTabSheet(boolean useRichText, String width, String height) {
         super(useRichText, width, height);
+
     }
 
     public ValintaLanguageTabSheet(boolean useRichText, String tabSheetWidth, String tabSheetHeight, String rtWidth, String rtHeight) {
         super(useRichText, tabSheetWidth, tabSheetHeight, rtWidth, rtHeight);
+
     }
 
     public ValintaLanguageTabSheet(ValintaPresenter presenter, MetaCategory category, boolean useRichText, String width, String height) {
         super(useRichText, width, height);
         this.presenter = presenter;
         this.category = category;
+
     }
 
     protected void addDefaultLanguage() {
@@ -73,12 +83,14 @@ public class ValintaLanguageTabSheet extends LanguageTabSheet {
             final List<KielikaannosViewModel> kuvaus = model.getKuvaus();
             setInitialValues(kuvaus);
 
-            if (kuvaus.size() < 1) {
+            if (kuvaus.size() > 1) {
                 String soomiKieli = I18N.getMessage("default.tab");
-                Set<String> kielet = new HashSet<String>();
-                kielet.add(soomiKieli);
-                _languageTabsheet.getKcSelection().setValue(kielet);
-                _languageTabsheet.setSelectedTab(getTab(soomiKieli));
+                TabSheet.Tab tab = getTab(soomiKieli);
+                if (tab != null) {
+                    _languageTabsheet.setSelectedTab(tab);
+                } else {
+                    addDefaultLanguage();
+                }
             } else {
                 addDefaultLanguage();
             }

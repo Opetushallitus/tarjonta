@@ -38,6 +38,7 @@ import fi.vm.sade.tarjonta.ui.model.valinta.ValintaperusteModel;
 import fi.vm.sade.tarjonta.ui.presenter.ValintaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import java.util.List;
+import java.util.Set;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 
@@ -53,7 +54,7 @@ import javax.validation.constraints.NotNull;
 @Configurable
 public class EditValintakuvausForm extends AbstractVerticalLayout {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PerustiedotViewImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EditValintakuvausForm.class);
     private transient UiBuilder uiBuilder;
     private ValintaPresenter presenter;
     //MainLayout element
@@ -139,6 +140,18 @@ public class EditValintakuvausForm extends AbstractVerticalLayout {
 
     public List<KielikaannosViewModel> getkuvaus() {
         return this.languagesTab.getKieliKaannokset();
+    }
+
+    public Set<String> getRemovedLanguages() {
+        return this.languagesTab.getRemovedTabs();
+    }
+
+    public void reloadkuvaus() {
+        this.languagesTab.initializeTabsheet();
+    }
+
+    public void resetKuvaus() {
+        this.languagesTab.resetTabSheets();
     }
 
     @Override

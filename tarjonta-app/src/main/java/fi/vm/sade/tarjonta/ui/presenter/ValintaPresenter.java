@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -46,7 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  */
 public class ValintaPresenter implements CommonPresenter {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(ValintaPresenter.class);
     private ValintaperustekuvausRootView rootView;
     @Autowired(required = true)
@@ -56,30 +57,30 @@ public class ValintaPresenter implements CommonPresenter {
     private TarjontaPermissionService permission;
     @Autowired(required = true)
     private TarjontaAdminService tarjontaAdminService;
-
+    
     public ValintaPresenter() {
     }
-
+    
     public void setRootView(ValintaperustekuvausRootView rootView) {
         this.rootView = rootView;
     }
-
+    
     public ValintaperustekuvausRootView getRootView() {
         return rootView;
     }
-
+    
     public void showMainView() {
         showValintaperustekuvaus();
     }
-
+    
     public void showValintaperustekuvaus() {
         initValintaperusteModel(MetaCategory.SORA_KUVAUS);
         initValintaperusteModel(MetaCategory.VALINTAPERUSTEKUVAUS);
-
+        
         ValintaperusteMainView view = new ValintaperusteMainView(this, uiBuilder);
         getRootView().addToWin(view);
     }
-
+    
     @Override
     public boolean isSaveButtonEnabled(String oid, SisaltoTyyppi sisalto, TarjontaTila... requiredState) {
         return true;
@@ -97,22 +98,22 @@ public class ValintaPresenter implements CommonPresenter {
             LOG.error("Application error - an unknown problem with UI notification. Value : {}", msg);
         }
     }
-
+    
     @Override
     public void showMainDefaultView() {
         getRootView();
     }
-
+    
     @Override
     public AppPermissionService getPermission() {
         return permission;
     }
-
+    
     @Override
     public void changeStateToCancelled(String oid, SisaltoTyyppi sisalto) {
         //Not needed, Leave method body empty.
     }
-
+    
     @Override
     public void changeStateToPublished(String oid, SisaltoTyyppi sisalto) {
         //Not needed, Leave method body empty.
@@ -126,48 +127,56 @@ public class ValintaPresenter implements CommonPresenter {
         if (model == null) {
             model = new ValintaModel();
         }
-
+        
         return model;
     }
-
-    public void save(final MetaCategory meatCategory) {
-        final ValintaperusteModel model = getValintaperustemodel(meatCategory);
+    
+    public void initValintaperusteModel(final MetaCategory metaCategory) {
+        initValintaperusteModel(metaCategory, null);
+    }
+    
+    private void initValintaperusteModel(final MetaCategory metaCategory, final String uri) {
+        getModel().getMap().put(metaCategory, new ValintaperusteModel(uri));
+    }
+    
+    public void remove(final MetaCategory metaCategory, final String selectedUri, final Set<String> removedLanguages) {
+        final String category = metaCategory.toString();
+        
+        for (String kieli : removedLanguages) {
+            if (kieli != null) {
+                LOG.debug("Remove language : {}", kieli);
+                tarjontaAdminService.tallennaMetadata(selectedUri, category, kieli, null);
+            }
+        }
+    }
+    
+    public void save(final MetaCategory metaCategory) {
+        final ValintaperusteModel model = getValintaperustemodel(metaCategory);
         final String selectedUri = model.getSelectedUri();
-        final String category = meatCategory.toString();
-
+        final String category = metaCategory.toString();
+        
         if (selectedUri == null) {
             throw new RuntimeException("Meta data key is required!");
         }
-
+        
         for (KielikaannosViewModel kieli : model.getKuvaus()) {
             tarjontaAdminService.tallennaMetadata(selectedUri, category, kieli.getKielikoodi(), kieli.getNimi());
         }
     }
-
-    public void initValintaperusteModel(final MetaCategory metaCategory) {
-        initValintaperusteModel(metaCategory, null);
-    }
-
-    private void initValintaperusteModel(final MetaCategory metaCategory, final String uri) {
-        getModel().getMap().put(metaCategory, new ValintaperusteModel(uri));
-    }
-
+    
     public void load(final MetaCategory metaCategory, String selectedUri) {
         if (selectedUri == null) {
             throw new RuntimeException("Meta data key is required!");
         }
-
+        
         initValintaperusteModel(metaCategory, selectedUri);
         final ValintaperusteModel valintaperusteModel = getValintaperustemodel(metaCategory);
-        final List<MonikielinenMetadataTyyppi> metaList = tarjontaAdminService.haeMetadata(null, null);
-        LOG.debug("uri : {}, MonikielinenMetadataTyyppi : {}", selectedUri, metaList);
+        final List<MonikielinenMetadataTyyppi> metaList = tarjontaAdminService.haeMetadata(null, metaCategory.toString());
         Map<String, List<KielikaannosViewModel>> map = new HashMap<String, List<KielikaannosViewModel>>();
-
+        
         for (MonikielinenMetadataTyyppi tyyppi : metaList) {
             final String uriKey = tyyppi.getAvain();
             final KielikaannosViewModel kieli = new KielikaannosViewModel(tyyppi.getKieli(), tyyppi.getArvo());
-           
-            LOG.debug(uriKey);
             if (map.containsKey(uriKey)) {
                 map.get(uriKey).add(kieli);
             } else {
@@ -176,18 +185,17 @@ public class ValintaPresenter implements CommonPresenter {
                 map.put(uriKey, list);
             }
         }
-
+        
         if (map.containsKey(selectedUri)) {
-            LOG.debug("data found by : {}, map : {}", selectedUri, map);
             valintaperusteModel.setKuvaus(map.get(selectedUri));
         } else {
-            LOG.debug("data not found by : {}, map : {}", selectedUri, map);
+            
             valintaperusteModel.setKuvaus(new ArrayList<KielikaannosViewModel>(0));
         }
-
+        
         valintaperusteModel.setLoaded(true);
     }
-
+    
     public ValintaperusteModel getValintaperustemodel(final MetaCategory metaCategory) {
         return getModel().getKuvausModelByCategory(metaCategory);
     }

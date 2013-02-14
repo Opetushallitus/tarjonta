@@ -57,6 +57,11 @@ public class MonikielinenMetatdataDAOImpl extends AbstractJpaDAOImpl<Monikieline
         LOG.info("createOrUpdate({}, {}, {}, {})", new Object[]{avain, kategoria, kieli, truncate(arvo)});
 
         MonikielinenMetadata result = findOrCreateByAvainKategoriaKieli(avain, kategoria, kieli);
+        if (arvo == null) {
+            //the entity will be removed.
+            remove(result);
+            return null;
+        }
         result.setArvo(arvo);
 
         if (result.getId() != null) {
@@ -85,8 +90,8 @@ public class MonikielinenMetatdataDAOImpl extends AbstractJpaDAOImpl<Monikieline
 
         MonikielinenMetadata result = null;
 
-        final String q = "SELECT x FROM MonikielinenMetadata x WHERE " +
-                "x.avain = :avain AND x.kategoria = :kategoria AND x.kieli = :kieli";
+        final String q = "SELECT x FROM MonikielinenMetadata x WHERE "
+                + "x.avain = :avain AND x.kategoria = :kategoria AND x.kieli = :kieli";
 
         Query query = getEntityManager().createQuery(q);
         query.setParameter("avain", avain);

@@ -15,19 +15,14 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.generic.ui.component.CaptionFormatter;
-import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -47,7 +42,6 @@ import org.vaadin.addon.formbinder.PropertyId;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**

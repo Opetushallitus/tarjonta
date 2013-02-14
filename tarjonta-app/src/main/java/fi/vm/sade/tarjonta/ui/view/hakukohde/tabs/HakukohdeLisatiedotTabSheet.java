@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
-import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -15,8 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
-import fi.vm.sade.tarjonta.ui.view.common.LanguageTabSheet;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.LanguageTabSheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 

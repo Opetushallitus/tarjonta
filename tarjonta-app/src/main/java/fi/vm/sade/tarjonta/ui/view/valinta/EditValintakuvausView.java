@@ -67,6 +67,7 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
                     errorView.addError(new Validator.InvalidValueException("unsaved"));
                 }
 
+                form.resetKuvaus();
                 form.getkuvaus().clear(); //clear model data
 
                 if (event != null && event.getProperty() != null) {
@@ -75,9 +76,11 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
                     ValintaperusteModel model = presenter.getValintaperustemodel(category);
                     presenter.load(category, uri);
 
-                    if (model != null && model.getKuvaus() != null) {
-                        form.getkuvaus().addAll(model.getKuvaus());
-                    }
+//                    if (model != null && model.getKuvaus() != null) {
+//                        form.getkuvaus().addAll(model.getKuvaus());
+//                    }
+//                    
+                    form.reloadkuvaus();
                 }
             }
         });
@@ -90,6 +93,12 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
 
     @Override
     public void actionSave(ClickEvent event) throws Exception {
+        LOG.debug("actionSave");
+        if (form.getRemovedLanguages() != null && !form.getRemovedLanguages().isEmpty()) {
+            LOG.debug("remove");
+            presenter.remove(category, getModel().getSelectedUri(), form.getRemovedLanguages());
+        }
+
         getModel().setKuvaus(form.getkuvaus());
 
         if (getModel().getSelectedUri() != null) {

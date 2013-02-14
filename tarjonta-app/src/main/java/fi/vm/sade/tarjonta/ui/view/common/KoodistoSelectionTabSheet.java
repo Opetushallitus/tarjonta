@@ -26,13 +26,13 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  * Simple tabsheet with "+" tab containing koodisto twincol select so that
@@ -50,6 +50,7 @@ public class KoodistoSelectionTabSheet extends TabSheet {
     private KoodistoComponent _kcSelection;
     // Map of tabs, key is the koodisto koodi uri
     private Map<String, Tab> _tabs = new HashMap<String, Tab>();
+    private Set<String> removedTabs = new HashSet<String>(); //keep count of removed languages
     private transient UiBuilder uiBuilder;
 
     /**
@@ -73,17 +74,36 @@ public class KoodistoSelectionTabSheet extends TabSheet {
         return _tabs.get(koodiUri);
     }
 
+    /**
+     * Get tab koodi uri by a tab instance.
+     *
+     * @param tab
+     * @return
+     */
+    public String getKoodiUri(Tab tab) {
+        for (Entry<String, Tab> e : _tabs.entrySet()) {
+            if (e.equals(tab)) {
+                return e.getKey();
+            }
+        }
+
+        return null;
+    }
+
     public Tab addTab(String koodiUri, Component c, String caption) {
         Tab tab = super.addTab(c, caption);
         _tabs.put(koodiUri, tab);
+        removedTabs.remove(koodiUri); //item unremoved (if any)
         return tab;
     }
 
     public Tab removeTab(String koodiUri) {
+        LOG.debug("remove koodiUri : {}", koodiUri);
         Tab tab = _tabs.remove(koodiUri);
 
         if (tab != null) {
             super.removeTab(tab);
+            removedTabs.add(koodiUri); //add new removed item
         }
         return tab;
     }
@@ -137,7 +157,7 @@ public class KoodistoSelectionTabSheet extends TabSheet {
             }
         });
 
-        addTab(_rootSelectionTabLayout, "", TAB_ICON_PLUS);
+        addLanguageMenuTab();
     }
 
     /**
@@ -159,5 +179,21 @@ public class KoodistoSelectionTabSheet extends TabSheet {
     public KoodistoComponent createKoodistoComponent() {
         // Create koodisto component
         return uiBuilder.koodistoTwinColSelect(_rootSelectionTabLayout, _koodistoUri, null, null);
+    }
+
+    /**
+     * Add language menu tab.
+     */
+    protected void addLanguageMenuTab() {
+        addTab(_rootSelectionTabLayout, "", TAB_ICON_PLUS);
+    }
+
+    /**
+     * @return the removed item koodi uris
+     */
+    public Set<String> getRemoved() {
+        LOG.debug("getRemoved : {}", removedTabs);
+
+        return removedTabs;
     }
 }
