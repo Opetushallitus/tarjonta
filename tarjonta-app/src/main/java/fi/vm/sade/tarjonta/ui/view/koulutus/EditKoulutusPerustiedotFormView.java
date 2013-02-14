@@ -450,6 +450,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private void buildGridDatesRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
         dfKoulutuksenAlkamisPvm = UiUtil.dateField(null, null, null, null, propertyKey);
+        dfKoulutuksenAlkamisPvm.setImmediate(true);
         grid.addComponent(dfKoulutuksenAlkamisPvm);
         grid.newLine();
         buildSpacingGridRow(grid);

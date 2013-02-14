@@ -20,6 +20,8 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
+
 import java.util.Date;
 import java.util.List;
 import static org.junit.Assert.*;
@@ -181,9 +183,46 @@ public class KoulutusmoduuliDAOTest {
 
         // this should be the case
         //assertEquals(originalOid, loaded.getOid());
-
+        
 
     }
+    
+    @Test
+    public void testFindParentKomo() {
+        String KOULUTUSKOODI = "uri:koulutuskoodi";
+        String KOULUTUSOHJELMAKOODI1 = "uri:koulutusohjelmakoodi1";
+        
+        //Create tutkinto (parent)
+        Koulutusmoduuli tutkinto = fixtures.createTutkintoOhjelma(KoulutusmoduuliTyyppi.TUTKINTO);
+        tutkinto.setKoulutusKoodi(KOULUTUSKOODI);
+        tutkinto.setKoulutusohjelmaKoodi(null);
+        
+        tutkinto = this.koulutusmoduuliDAO.insert(tutkinto);
+        
+        String parentOid = tutkinto.getOid();
+        
+        //Create koulutusohjelma (child)
+        Koulutusmoduuli koulutusohjelma = fixtures.createTutkintoOhjelma(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        koulutusohjelma.setKoulutusKoodi(KOULUTUSKOODI);
+        koulutusohjelma.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI1);
+        
+        koulutusohjelma = this.koulutusmoduuliDAO.insert(koulutusohjelma);
+        
+        
+        //Create hierarchy between the above too komos
+        KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys();
+        sisaltyvyys.setYlamoduuli(tutkinto);
+        sisaltyvyys.addAlamoduuli(koulutusohjelma);
+        sisaltyvyys.setValintaTyyppi(ValintaTyyppi.SOME_OFF);
+        this.sisaltyvyysDAO.insert(sisaltyvyys);
+        tutkinto.addSisaltyvyys(sisaltyvyys);
+        this.koulutusmoduuliDAO.update(tutkinto);
+        
+        
+        Koulutusmoduuli resultKomo = this.koulutusmoduuliDAO.findParentKomo(koulutusohjelma);
+        assertTrue(resultKomo.getOid().equals(parentOid));
+    }
+    
 
     @Test
     public void testSearchKoulutusmoduulit() {

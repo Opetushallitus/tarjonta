@@ -357,13 +357,26 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     @Override
     public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
 
+        //If a list of oids is provided the komotos matching those oids are returned
         if (kysely.getKoulutusOids() != null && kysely.getKoulutusOids().size() > 0) {
             HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
 
             List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(kysely.getKoulutusOids());
             vastaus.getKoulutusTulos().addAll(mapKomotoListToKoulutusTulosList(komotos));
             return vastaus;
-        }  else {
+        //If the search specifies a koulutuskoodi and tarjoaja, the komoto matching those is returned.
+        } else if (kysely.getKoulutusKoodi() != null && kysely.getTarjoajaOids() != null && !kysely.getTarjoajaOids().isEmpty()) {
+            Koulutusmoduuli tutkintoKomo = this.koulutusmoduuliDAO.findTutkintoOhjelma(kysely.getKoulutusKoodi(), null);
+            System.out.println("TutkintoKomo: " + (tutkintoKomo != null ? tutkintoKomo.getOid() : tutkintoKomo));
+            List<KoulutusmoduuliToteutus> komotoRes = this.koulutusmoduuliToteutusDAO.findKomotosByKomoAndtarjoaja(tutkintoKomo, kysely.getTarjoajaOids().get(0));
+            KoulutusmoduuliToteutus komoto = (komotoRes != null && !komotoRes.isEmpty()) ? komotoRes.get(0) : null;
+            HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
+            if (komoto != null) {
+                KoulutusTulos tulos = getKoulutusTulosFromKoulutusmoduuliToteutus(komoto);
+                vastaus.getKoulutusTulos().add(tulos);
+            }
+            return vastaus;
+        } else {
             //Retrieving komotos according to criteria provided in kysely, currently list of tarjoajaOids and a name
             int koulutusAlkuvuosi = kysely.getKoulutuksenAlkamisvuosi() != null ? kysely.getKoulutuksenAlkamisvuosi().intValue() : -1; 
             
@@ -371,8 +384,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
         //Creating the answer type
         HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
-
-        //Retrieving all komotos this will be extended search only for komotos matching the criteria
 
         //Populating the answer with required data
         for (KoulutusmoduuliToteutus komoto : komotos) {
@@ -453,7 +464,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     }
     
     private void handleParentKomoto(Koulutusmoduuli parentKomo, KoulutusmoduuliToteutus komoto, LueKoulutusVastausTyyppi result) {
-        KoulutusmoduuliToteutus parentKomoto = this.koulutusmoduuliToteutusDAO.findKomotoByKomoAndtarjoaja(parentKomo, komoto.getTarjoaja());
+        List<KoulutusmoduuliToteutus> parentList = this.koulutusmoduuliToteutusDAO.findKomotosByKomoAndtarjoaja(parentKomo, komoto.getTarjoaja()); 
+        KoulutusmoduuliToteutus parentKomoto = (parentList != null && !parentList.isEmpty()) ? parentList.get(0) : null;
         if (parentKomoto != null) {
             GregorianCalendar greg = new GregorianCalendar();
             greg.setTime(parentKomoto.getKoulutuksenAlkamisPvm());

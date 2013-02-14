@@ -501,6 +501,11 @@ public class KoulutusConverter {
                 result.getLisatiedot(mkt.getKieliKoodi()).setYhteistyoMuidenToimijoidenKanssa(mkt.getValue());
             }
         }
+        if (lueKoulutus.getKoulutusohjelmanValinta() != null) {
+            for (MonikielinenTekstiTyyppi.Teksti mkt : lueKoulutus.getKoulutusohjelmanValinta().getTeksti()) {
+                result.getLisatiedot(mkt.getKieliKoodi()).setKoulutusohjelmanValinta(mkt.getValue());
+            }
+        }
         return result;
     }
 
@@ -737,6 +742,12 @@ public class KoulutusConverter {
 
             koulutus.getYhteistyoMuidenToimijoidenKanssa().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.
                     getYhteistyoMuidenToimijoidenKanssa()));
+            
+            if (koulutus.getKoulutusohjelmanValinta() == null) {
+                koulutus.setKoulutusohjelmanValinta(new MonikielinenTekstiTyyppi());
+            }
+            
+            koulutus.getKoulutusohjelmanValinta().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getKoulutusohjelmanValinta()));
         }
     }
 

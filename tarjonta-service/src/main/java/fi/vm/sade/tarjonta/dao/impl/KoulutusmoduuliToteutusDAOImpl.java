@@ -179,15 +179,14 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     
 
     @Override
-    public KoulutusmoduuliToteutus findKomotoByKomoAndtarjoaja(
+    public List<KoulutusmoduuliToteutus> findKomotosByKomoAndtarjoaja(
             Koulutusmoduuli parentKomo, String tarjoaja) {
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        KoulutusmoduuliToteutus komotoRes = null;
+        List<KoulutusmoduuliToteutus> komotoRes = null;
         try {
             komotoRes = from(komoto).
                 join(komoto.koulutusmoduuli).fetch().
-                where(komoto.koulutusmoduuli.oid.eq(parentKomo.getOid()).and(komoto.tarjoaja.eq(tarjoaja))).
-                singleResult(komoto);
+                where(komoto.koulutusmoduuli.oid.eq(parentKomo.getOid()).and(komoto.tarjoaja.eq(tarjoaja))).list(komoto);
         } catch (Exception ex) {
             log.debug("Exception: " + ex.getMessage());
         }

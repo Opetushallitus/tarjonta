@@ -39,6 +39,9 @@ public class KoulutusLisatietoModel extends BaseUIViewModel {
 
     // Co-operative work with others
     String _yhteistyoMuidenToimijoidenKanssa;
+    
+    String koulutusohjelmanValinta;
+
 
     public String getLanguageUri() {
         return _languageUri;
@@ -87,4 +90,13 @@ public class KoulutusLisatietoModel extends BaseUIViewModel {
     public void setYhteistyoMuidenToimijoidenKanssa(String _yhteistyoMuidenToimijoidenKanssa) {
         this._yhteistyoMuidenToimijoidenKanssa = _yhteistyoMuidenToimijoidenKanssa;
     }
+    
+    public String getKoulutusohjelmanValinta() {
+        return koulutusohjelmanValinta;
+    }
+
+    public void setKoulutusohjelmanValinta(String koulutusohjelmanValinta) {
+        this.koulutusohjelmanValinta = koulutusohjelmanValinta;
+    }
+
 }

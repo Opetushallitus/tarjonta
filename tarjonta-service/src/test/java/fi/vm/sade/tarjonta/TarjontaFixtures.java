@@ -122,6 +122,23 @@ public class TarjontaFixtures {
         return m;
 
     }
+    
+    public Koulutusmoduuli createTutkintoOhjelma(KoulutusmoduuliTyyppi tyyppi) {
+
+        Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
+        m.setOid(randomOid("koulutusmoduuli"));
+        m.setTutkintoOhjelmanNimi("Simple Tutkinto-Ohjelma");
+        m.setEqfLuokitus(randomUri("eqf"));
+        m.setNqfLuokitus(randomUri("nqf"));
+        m.setKoulutusAste(randomUri("koulutusaste"));
+        m.setKoulutusala(randomUri("koulutusala"));
+        m.setKoulutusohjelmaKoodi(randomUri("koulutusohjelma"));
+        m.setKoulutusKoodi(randomUri("koulutusluokitus"));
+        m.setNimi(createText("Koulutusmoduulinimi (fi)", "Koulutusmoduulinimi (sv)", "Koulutusmoduulinimi (en)"));
+
+        return m;
+
+    }
 
     public KoulutusmoduuliToteutus createTutkintoOhjelmaToteutus() {
 

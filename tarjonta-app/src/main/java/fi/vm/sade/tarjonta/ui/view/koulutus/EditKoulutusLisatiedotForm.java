@@ -187,6 +187,14 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa.help"), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
+        
+        {
+            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "koulutusohjelmanValinta");
+            rta.setWidth("460px");
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutusOhjelmanValinta"), LabelStyleEnum.H2));
+            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutusOhjelmanValinta.help"), LabelStyleEnum.TEXT));
+            vl.addComponent(rta);
+        }
 
         return vl;
     }
