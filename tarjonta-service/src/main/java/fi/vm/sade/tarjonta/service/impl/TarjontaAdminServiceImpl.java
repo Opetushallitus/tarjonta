@@ -134,7 +134,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             return retVal;
         }
     }
-    
+
     /*
     * Returns true if compared dates year and kausi matches
     */
@@ -410,12 +410,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli)
             throws GenericFault {
-        
+
         if (koulutusmoduuliDAO.findTutkintoOhjelma(koulutusmoduuli.getKoulutuskoodiUri(), koulutusmoduuli.getKoulutusohjelmakoodiUri()) != null) {
-            log.warn("Koulutusmoduuli " +koulutusmoduuli.getKoulutuskoodiUri() + ", " + koulutusmoduuli.getKoulutusohjelmakoodiUri() + "already exists, not adding");
+            log.warn("Koulutusmoduuli " + koulutusmoduuli.getKoulutuskoodiUri() + ", " + koulutusmoduuli.getKoulutusohjelmakoodiUri() + "already exists, not adding");
             return new KoulutusmoduuliKoosteTyyppi();
         }
-        
+
         Koulutusmoduuli komo = koulutusmoduuliDAO.insert(EntityUtils.copyFieldsToKoulutusmoduuli(koulutusmoduuli));
         if (koulutusmoduuli.getParentOid() != null) {
             handleParentKomo(komo, koulutusmoduuli.getParentOid());
@@ -593,6 +593,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         } else if (kategoria == null) {
             // Find by avain if kategoria does not matter
             metadataEntities = metadataDAO.findByAvain(avain);
+        } else if (avain == null) {
+            // Find by kategoria if avain does not matter
+            metadataEntities = metadataDAO.findByKategoria(kategoria);
         } else {
             // Otherwise find by avain and kategoria
             metadataEntities = metadataDAO.findByAvainAndKategoria(avain, kategoria);
