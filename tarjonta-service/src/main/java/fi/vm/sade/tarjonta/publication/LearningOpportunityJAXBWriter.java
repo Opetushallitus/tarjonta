@@ -369,16 +369,22 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
     private void handleChildren(Koulutusmoduuli moduuli,
             LearningOpportunitySpecificationType specification) {
         for (Koulutusmoduuli curChild : moduuli.getAlamoduuliList()) {
-            this.komotoParentMap.put(curChild.getOid(), moduuli.getOid());
-            specification.getChildLOSRefs().add(createLOSRef(curChild.getOid()));
+            LearningOpportunitySpecificationRefType losRef = createLOSRef(curChild.getOid());
+            if (losRef != null) {
+                this.komotoParentMap.put(curChild.getOid(), moduuli.getOid());
+                specification.getChildLOSRefs().add(losRef);
+            }
         }
-        
     }
     
     private LearningOpportunitySpecificationRefType createLOSRef(String moduuliOid) {
-        LearningOpportunitySpecificationRefType losRef = new LearningOpportunitySpecificationRefType();
-        losRef.setRef(getIDREF(moduuliOid));
-        return losRef;
+        try {
+            LearningOpportunitySpecificationRefType losRef = new LearningOpportunitySpecificationRefType();
+            losRef.setRef(getIDREF(moduuliOid));
+            return losRef;
+        } catch (Exception ex) {
+            return null;
+        }
     }
     
     
