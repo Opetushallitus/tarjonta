@@ -5,6 +5,7 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd
                         http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd">
 
+    <!-- TARJONTA PORTLET -->
     <portlet>
         <description></description>
         <portlet-name>TarjontaPortletApplication</portlet-name>
@@ -45,6 +46,7 @@
         </security-role-ref>
     </portlet>
 
+    <!-- HAKU PORTLET -->
     <portlet>
         <description></description>
         <portlet-name>HakuPortletApplication</portlet-name>
@@ -85,16 +87,17 @@
         </security-role-ref>
     </portlet>
     
+    <!-- VALINTAPERUSTEKUVAUS PORTLET -->
     <portlet>
         <description></description>
-        <portlet-name>ValintaperustekuvausPortletApplication</portlet-name>
-        <display-name>ValintaperustekuvausPortletApplication</display-name>
+        <portlet-name>ValintaPortletApplication</portlet-name>
+        <display-name>ValintaPortletApplication</display-name>
 
         <portlet-class>com.vaadin.terminal.gwt.server.ApplicationPortlet2</portlet-class>
 
         <init-param>
             <name>application</name>
-            <value>fi.vm.sade.tarjonta.ui.ValintaperustekuvausPortletApplication</value>
+            <value>fi.vm.sade.tarjonta.ui.ValintaPortletApplication</value>
         </init-param>
         <init-param>
             <name>widgetset</name>
@@ -109,8 +112,8 @@
         </supports>
 
         <portlet-info>
-            <title>Valintaperustekuvaus</title>
-            <short-title>ValintaperustekuvausPortletApplication</short-title>
+            <title>Valintaperustekuvausten yllapito</title>
+            <short-title>ValintaPortletApplication</short-title>
             <keywords></keywords>
         </portlet-info>
         
@@ -126,7 +129,7 @@
     </portlet>
         
     <!-- TARJONTA ADMINISTRATION PORTLET -->
-     <portlet>
+    <portlet>
         <description></description>
         <portlet-name>TarjontaAdminPortletApplication</portlet-name>
         <display-name>TarjontaAdminPortletApplication</display-name>
@@ -155,7 +158,7 @@
             <keywords></keywords>
         </portlet-info>
         
-         <security-role-ref>
+        <security-role-ref>
             <role-name>APP_TARJONTA_CRUD</role-name>
         </security-role-ref>
         <security-role-ref>

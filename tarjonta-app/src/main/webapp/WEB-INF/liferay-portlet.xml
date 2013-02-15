@@ -17,6 +17,11 @@
         <instanceable>false</instanceable>
         <ajaxable>false</ajaxable>
     </portlet>
+    <portlet>
+        <portlet-name>ValintaPortletApplication</portlet-name>
+        <instanceable>false</instanceable>
+        <ajaxable>false</ajaxable>
+    </portlet>
     
     <role-mapper>
         <role-name>APP_TARJONTA_CRUD</role-name>
