@@ -1296,20 +1296,20 @@ public class TarjontaPresenter implements CommonPresenter {
     
     //Prefills the tutkinto komoto (koulutuksenAlkamisPvm, koulutusohjelmanValinta) fields if a tutkinto komoto exists
     private void loadTutkintoData(String koulutuskoodi, String tarjoaja) {
-        System.out.println("Starting load tutkinto right now!: " + koulutuskoodi + ", Tarjoaja: " + tarjoaja);
+        
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         kysely.setKoulutusKoodi(koulutuskoodi);
         
         kysely.getTarjoajaOids().add(tarjoaja);
         HaeKoulutuksetVastausTyyppi vastaus =  this.tarjontaPublicService.haeKoulutukset(kysely);
-        System.out.println("Vastaus: " + vastaus.getKoulutusTulos().size());
+        
         if (vastaus.getKoulutusTulos() != null && !vastaus.getKoulutusTulos().isEmpty()) {
             KoulutusTulos hakutulos = vastaus.getKoulutusTulos().get(0);
             LueKoulutusKyselyTyyppi lueKysely = new LueKoulutusKyselyTyyppi();
             lueKysely.setOid(hakutulos.getKoulutus().getKomotoOid());
             LueKoulutusVastausTyyppi lueVastaus = tarjontaPublicService.lueKoulutus(lueKysely);
             Date koulutuksenAlkuPvm = lueVastaus.getKoulutuksenAlkamisPaiva() != null ? lueVastaus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null;
-            System.out.println("\n\nDATE: " + koulutuksenAlkuPvm);
+            
             getModel().getKoulutusPerustiedotModel().setKoulutuksenAlkamisPvm(koulutuksenAlkuPvm);
             
             if (lueVastaus.getKoulutusohjelmanValinta() != null) {

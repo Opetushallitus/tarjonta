@@ -367,7 +367,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         //If the search specifies a koulutuskoodi and tarjoaja, the komoto matching those is returned.
         } else if (kysely.getKoulutusKoodi() != null && kysely.getTarjoajaOids() != null && !kysely.getTarjoajaOids().isEmpty()) {
             Koulutusmoduuli tutkintoKomo = this.koulutusmoduuliDAO.findTutkintoOhjelma(kysely.getKoulutusKoodi(), null);
-            System.out.println("TutkintoKomo: " + (tutkintoKomo != null ? tutkintoKomo.getOid() : tutkintoKomo));
             List<KoulutusmoduuliToteutus> komotoRes = this.koulutusmoduuliToteutusDAO.findKomotosByKomoAndtarjoaja(tutkintoKomo, kysely.getTarjoajaOids().get(0));
             KoulutusmoduuliToteutus komoto = (komotoRes != null && !komotoRes.isEmpty()) ? komotoRes.get(0) : null;
             HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
