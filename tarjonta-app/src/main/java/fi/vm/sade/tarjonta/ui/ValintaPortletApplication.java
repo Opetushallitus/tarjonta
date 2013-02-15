@@ -29,10 +29,10 @@ import fi.vm.sade.vaadin.Oph;
  *
  * @author markus
  */
-public class ValintaperustekuvausPortletApplication extends AbstractSadePortletApplication {
+public class ValintaPortletApplication extends AbstractSadePortletApplication {
 
     private Window window;
-    private static ThreadLocal<ValintaperustekuvausPortletApplication> tl = new ThreadLocal<ValintaperustekuvausPortletApplication>();
+    private static ThreadLocal<ValintaPortletApplication> tl = new ThreadLocal<ValintaPortletApplication>();
 
     @Override
     public synchronized void init() {
@@ -63,7 +63,7 @@ public class ValintaperustekuvausPortletApplication extends AbstractSadePortletA
         }
     }
 
-    public static ValintaperustekuvausPortletApplication getInstance() {
+    public static ValintaPortletApplication getInstance() {
         return tl.get();
     }
 }

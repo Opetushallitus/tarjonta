@@ -16,7 +16,7 @@
 package fi.vm.sade.tarjonta.ui.service;
 
 import fi.vm.sade.generic.ui.portlet.security.User;
-import fi.vm.sade.tarjonta.ui.ValintaperustekuvausPortletApplication;
+import fi.vm.sade.tarjonta.ui.ValintaPortletApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class ValintaPermissionServiceImpl extends AbstractAppPermissionServiceIm
         throw new RuntimeException(ERROR_MESSAGE_USER_NOT_FOUND);
     }
 
-    private ValintaperustekuvausPortletApplication getInstance() {
-        return ValintaperustekuvausPortletApplication.getInstance();
+    private ValintaPortletApplication getInstance() {
+        return ValintaPortletApplication.getInstance();
     }
 }
