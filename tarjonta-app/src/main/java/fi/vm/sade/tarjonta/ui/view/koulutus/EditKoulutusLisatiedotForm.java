@@ -54,6 +54,8 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
     private KoulutusLisatiedotModel koulutusLisatiedotModel;
     private transient UiBuilder uiBuilder;
     private transient I18NHelper _i18n;
+    
+    private KoodistoSelectionTabSheet tabs;
 
     public EditKoulutusLisatiedotForm(TarjontaPresenter presenter, TarjontaUIHelper uiHelper, UiBuilder uiBuilder, KoulutusLisatiedotModel koulutusLisatiedotModel) {
         this.setWidth(100, UNITS_PERCENTAGE);
@@ -113,7 +115,7 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
         //
         // Build tabsheet for languages with koodisto select languages
         //
-        final KoodistoSelectionTabSheet tabs = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, uiBuilder) {
+        tabs = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, uiBuilder) {
             private static final long serialVersionUID = -7916177514458213528L;
 
             @Override
@@ -130,6 +132,14 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
 
         addComponent(UiBuilder.label((AbstractLayout) null, T("kieliriippuvatTiedot"), LabelStyleEnum.H2));
         addComponent(tabs);
+    }
+    
+    public void reBuildTabsheet() {
+        LOG.debug("\n\nreBuildTabSheet\n\n");
+        for (String curKieli : koulutusLisatiedotModel.getKielet()) {
+            LOG.debug("curKieli: {}\n", curKieli);
+        }
+        tabs.getKcSelection().setValue(koulutusLisatiedotModel.getKielet());
     }
 
     /**

@@ -68,6 +68,8 @@ public class EditKoulutusView extends AbstractVerticalLayout {
 
         TabSheet tabs = UiBuilder.tabSheet(this);
         tabs.addTab(new EditKoulutusPerustiedotToinenAsteView(koulutusOid), T("perustiedot"));
-        tabs.addTab(new EditKoulutusLisatiedotToinenAsteView(koulutusOid), T("lisatiedot"));
+        EditKoulutusLisatiedotToinenAsteView lisatiedotView = new EditKoulutusLisatiedotToinenAsteView(koulutusOid);
+        tabs.addTab(lisatiedotView, T("lisatiedot"));
+        this.presenter.setLisatiedotView(lisatiedotView);
     }
 }

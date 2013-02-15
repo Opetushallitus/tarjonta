@@ -63,6 +63,7 @@ public class KoodistoSelectionTabSheet extends TabSheet {
         this.uiBuilder = uiBuilder;
         _koodistoUri = koodistoUri;
         _kcSelection = createKoodistoComponent();
+        _kcSelection.setImmediate(true);
         buildSelectionTabAndAddMonitoring();
     }
 

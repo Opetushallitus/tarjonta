@@ -367,8 +367,11 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         //If the search specifies a koulutuskoodi and tarjoaja, the komoto matching those is returned.
         } else if (kysely.getKoulutusKoodi() != null && kysely.getTarjoajaOids() != null && !kysely.getTarjoajaOids().isEmpty()) {
             Koulutusmoduuli tutkintoKomo = this.koulutusmoduuliDAO.findTutkintoOhjelma(kysely.getKoulutusKoodi(), null);
-            List<KoulutusmoduuliToteutus> komotoRes = this.koulutusmoduuliToteutusDAO.findKomotosByKomoAndtarjoaja(tutkintoKomo, kysely.getTarjoajaOids().get(0));
+            log.debug("TutkintoKomo: {}", (tutkintoKomo != null) ? tutkintoKomo.getOid() : null);
+            List<KoulutusmoduuliToteutus> komotoRes = this.koulutusmoduuliToteutusDAO.findKomotosByKomoAndtarjoaja(tutkintoKomo, kysely.getTarjoajaOids().get(0)); 
+            log.debug("komotoRes size: {}", (komotoRes != null) ? komotoRes.size() : 0);
             KoulutusmoduuliToteutus komoto = (komotoRes != null && !komotoRes.isEmpty()) ? komotoRes.get(0) : null;
+            log.debug("TutkintoKomoto: {}", (komoto != null) ? komoto.getOid() : null);
             HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
             if (komoto != null) {
                 KoulutusTulos tulos = getKoulutusTulosFromKoulutusmoduuliToteutus(komoto);
@@ -454,6 +457,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         
         if (parentKomo == null) {
             result.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo));
+            result.setKoulutusohjelmanValinta(EntityUtils.copyFields(komoto.getKoulutusohjelmanValinta()));
         } else {
             result.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo, parentKomo));
             handleParentKomoto(parentKomo, komoto, result);    

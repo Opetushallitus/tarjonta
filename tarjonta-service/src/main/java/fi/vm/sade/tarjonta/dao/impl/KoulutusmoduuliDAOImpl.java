@@ -125,10 +125,14 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
         if (criteria.getKoulutusKoodi() != null) {
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+        } else {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.isNull().or(moduuli.koulutusKoodi.isEmpty()));
         }
 
         if (criteria.getKoulutusohjelmaKoodi() != null) {
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaKoodi.eq(criteria.getKoulutusohjelmaKoodi()));
+        } else {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaKoodi.isEmpty().or(moduuli.koulutusohjelmaKoodi.isNull()));
         }
 
         return from(moduuli).

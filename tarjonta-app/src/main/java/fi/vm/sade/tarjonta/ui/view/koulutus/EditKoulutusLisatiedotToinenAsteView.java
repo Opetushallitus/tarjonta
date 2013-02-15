@@ -45,6 +45,8 @@ public class EditKoulutusLisatiedotToinenAsteView extends AbstractEditLayoutView
     @Autowired(required = true)
     private TarjontaPresenter presenter;
     private EditKoulutusLisatiedotForm editKoulutusLisatiedotForm;
+
+
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
     @Autowired(required = true)
@@ -84,5 +86,9 @@ public class EditKoulutusLisatiedotToinenAsteView extends AbstractEditLayoutView
     @Override
     public void actionNext(ClickEvent event) {
         presenter.showShowKoulutusView();
+    }
+    
+    public EditKoulutusLisatiedotForm getEditKoulutusLisatiedotForm() {
+        return editKoulutusLisatiedotForm;
     }
 }

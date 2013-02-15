@@ -52,6 +52,7 @@ import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ShowHakukohdeViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusLisatiedotToinenAsteView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 
 import java.text.DateFormat;
@@ -120,6 +121,7 @@ public class TarjontaPresenter implements CommonPresenter {
     private EditHakukohdeView editHakukohdeView;
     @Autowired(required = true)
     private PublishingService publishingService;
+    private EditKoulutusLisatiedotToinenAsteView lisatiedotView;
 
     public TarjontaPresenter() {
     }
@@ -511,6 +513,7 @@ public class TarjontaPresenter implements CommonPresenter {
 
             getModel().getKoulutusPerustiedotModel().clearModel(DocumentStatus.NEW);
             getModel().getKoulutusPerustiedotModel().setOrganisaatioOidTree(fetchOrganisaatioTree(getModel().getOrganisaatioOid()));
+            getModel().setKoulutusLisatiedotModel(new KoulutusLisatiedotModel());
         }
 
         getRootView().changeView(new EditKoulutusView(koulutusOid));
@@ -1296,13 +1299,13 @@ public class TarjontaPresenter implements CommonPresenter {
     
     //Prefills the tutkinto komoto (koulutuksenAlkamisPvm, koulutusohjelmanValinta) fields if a tutkinto komoto exists
     private void loadTutkintoData(String koulutuskoodi, String tarjoaja) {
-        
+        LOG.debug("loadtutkintoData, koulutuskoodi: {}, tarjoaja: {}", koulutuskoodi, tarjoaja);
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         kysely.setKoulutusKoodi(koulutuskoodi);
         
         kysely.getTarjoajaOids().add(tarjoaja);
         HaeKoulutuksetVastausTyyppi vastaus =  this.tarjontaPublicService.haeKoulutukset(kysely);
-        
+        LOG.debug("vastaus size {}", vastaus.getKoulutusTulos().size());
         if (vastaus.getKoulutusTulos() != null && !vastaus.getKoulutusTulos().isEmpty()) {
             KoulutusTulos hakutulos = vastaus.getKoulutusTulos().get(0);
             LueKoulutusKyselyTyyppi lueKysely = new LueKoulutusKyselyTyyppi();
@@ -1314,9 +1317,12 @@ public class TarjontaPresenter implements CommonPresenter {
             
             if (lueVastaus.getKoulutusohjelmanValinta() != null) {
                 for (MonikielinenTekstiTyyppi.Teksti mkt : lueVastaus.getKoulutusohjelmanValinta().getTeksti()) {
+                    LOG.debug("Kielikoodi: {}", mkt.getKieliKoodi());
                     getModel().getKoulutusLisatiedotModel().getLisatiedot(mkt.getKieliKoodi()).setKoulutusohjelmanValinta(mkt.getValue());
                 }
             }
+            LOG.debug("going to reload tabsheet");
+            this.lisatiedotView.getEditKoulutusLisatiedotForm().reBuildTabsheet();
         }
     }
 
@@ -1441,5 +1447,10 @@ public class TarjontaPresenter implements CommonPresenter {
         } else {
             showNotification(UserNotification.GENERIC_ERROR);
         }
+    }
+
+    public void setLisatiedotView(
+            EditKoulutusLisatiedotToinenAsteView lisatiedotView) {
+        this.lisatiedotView = lisatiedotView;
     }
 }
