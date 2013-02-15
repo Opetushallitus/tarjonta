@@ -35,11 +35,11 @@
 
     <jaxws:client id="tarjontaAdminService"
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService"
-                  address="http://localhost:8080/tarjonta-service/tarjontaAdmin"/>
+                  address="${tarjonta.admin.webservice.url:http://NO_TARJONTA_ADMIN_WEBSERVICE_URL_CONFIGURED}"/>
 
     <jaxws:client id="tarjontaPublicService"
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService"
-                  address="http://localhost:8080/tarjonta-service/tarjontaPublic"/>
+                  address="${tarjonta.public.webservice.url:http://NO_TARJONTA_PUBLIC_WEBSERVICE_URL_CONFIGURED}"/>
 
     <jaxws:client id="organisaatioService"
                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
