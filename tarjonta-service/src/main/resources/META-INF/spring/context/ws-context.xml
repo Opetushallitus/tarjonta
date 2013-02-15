@@ -65,10 +65,14 @@
     <bean id="tarjontaPublicationRESTService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationRESTService"/>
     <bean id="tarjontaExceptionMapper" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationExceptionMapper"/>
 
+    <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResource"/>
+    <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResource"/>
 
     <jaxrs:server id="tarjontaPublicationREST" address="/rest">
         <jaxrs:serviceBeans>
             <ref bean="tarjontaPublicationRESTService" />
+            <ref bean="tarjontaHakuResource" />
+            <ref bean="tarjontaHakukohdeResource" />
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="tarjontaExceptionMapper"/>

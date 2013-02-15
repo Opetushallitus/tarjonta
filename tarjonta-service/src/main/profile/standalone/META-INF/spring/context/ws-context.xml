@@ -2,15 +2,11 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jaxws="http://cxf.apache.org/jaxws"
-       xmlns:beans="http://www.springframework.org/schema/beans"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
        xmlns:cxf="http://cxf.apache.org/core"
-       xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+       xsi:schemaLocation="http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
         http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
-        http://cxf.apache.org/core  http://cxf.apache.org/schemas/core.xsd
-        ">
+        http://cxf.apache.org/core  http://cxf.apache.org/schemas/core.xsd">
     
     
     
@@ -31,9 +27,14 @@
     <bean id="tarjontaPublicationRESTService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationRESTService"/>
     <bean id="tarjontaExceptionMapper" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationExceptionMapper"/>
 
+    <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResource"/>
+    <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResource"/>
+
     <jaxrs:server id="tarjontaPublicationREST" address="/rest">
         <jaxrs:serviceBeans>
             <ref bean="tarjontaPublicationRESTService" />
+            <ref bean="tarjontaHakuResource" />
+            <ref bean="tarjontaHakukohdeResource" />
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="tarjontaExceptionMapper"/>
