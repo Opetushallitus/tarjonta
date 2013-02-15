@@ -1,0 +1,63 @@
+package fi.vm.sade.tarjonta.data.dto;/*
+ *
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ */
+
+/**
+ * @author: Tuomas Katva
+ * Date: 13.2.2013
+ */
+public class KoodiRelaatio {
+
+    private String ylaArvoKoodisto;
+
+    private String alaArvoKoodisto;
+
+    private String koodiYlaArvo;
+
+    private String koodiAlaArvo;
+
+    public String getKoodiYlaArvo() {
+        return koodiYlaArvo;
+    }
+
+    public void setKoodiYlaArvo(String koodiYlaArvo) {
+        this.koodiYlaArvo = koodiYlaArvo;
+    }
+
+    public String getKoodiAlaArvo() {
+        return koodiAlaArvo;
+    }
+
+    public void setKoodiAlaArvo(String koodiAlaArvo) {
+        this.koodiAlaArvo = koodiAlaArvo;
+    }
+
+    public String getYlaArvoKoodisto() {
+        return ylaArvoKoodisto;
+    }
+
+    public void setYlaArvoKoodisto(String ylaArvoKoodisto) {
+        this.ylaArvoKoodisto = ylaArvoKoodisto;
+    }
+
+    public String getAlaArvoKoodisto() {
+        return alaArvoKoodisto;
+    }
+
+    public void setAlaArvoKoodisto(String alaArvoKoodisto) {
+        this.alaArvoKoodisto = alaArvoKoodisto;
+    }
+}

@@ -1,20 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:cxf="http://cxf.apache.org/core"
        xmlns:jaxws="http://cxf.apache.org/jaxws"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+       http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
+
+
+    <context:property-placeholder
+            location="classpath:tarjonta-service.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-data.properties"
+            ignore-resource-not-found="true"/>
+    <!-- Bean configuration for interceptor & callback for development-->
+    <bean id="ticketInterceptor" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptor">
+        <property name="callback" ref="callback" />
+    </bean>
+
+    <bean id="callback" class="fi.vm.sade.generic.ui.portlet.security.mock.MockTicketCallback">
+
+    </bean>
+
+    <!-- Configure CXF bus to contain ticketInterceptor -->
+    <cxf:bus>
+        <cxf:outInterceptors>
+            <ref bean="ticketInterceptor" />
+        </cxf:outInterceptors>
+    </cxf:bus>
 
     <!--
     TODO: move attributes to properties
     -->
   
-    <bean id="authInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor"> 
+<!--    <bean id="authInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
         <constructor-arg>
             <map>
                 <entry key="action" value="UsernameToken" />
@@ -29,29 +50,33 @@
             </map>
         </constructor-arg>
     </bean>
-  
+  -->
     <!-- Configure CXF bus to contain ticketInterceptor  -->
-    <cxf:bus>
+<!--    <cxf:bus>
         <cxf:outInterceptors>
             <ref bean="authInterceptor" />
         </cxf:outInterceptors>
-    </cxf:bus>
+    </cxf:bus>-->
 
     <jaxws:client id="koodiService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
-                  address="http://localhost:8080/koodisto-service/koodiWS"/>
+                  address="${KoodiService.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}"/>
+                  <!--address="http://localhost:9090/koodisto-service/koodiWS"/>-->
 
     <jaxws:client id="koodistoService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
-                  address="http://localhost:8080/koodisto-service/koodistoWS"/>
+                  address="${KoodistoService.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}"/>
+               <!--   address="http://localhost:9090/koodisto-service/koodistoWS"/>-->
     
     <jaxws:client id="koodiAdminService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiAdminService"
-                  address="http://localhost:8080/koodisto-service/koodiAdminWS"/>
+                  address="${KoodiAdminService.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}" />
+               <!--   address="http://localhost:9090/koodisto-service/koodiAdminWS"/>-->
 
     <jaxws:client id="koodistoAdminService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoAdminService"
-                  address="http://localhost:8080/koodisto-service/koodistoAdminWS"/>
+                  address="${KoodistoAdminService.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}" />
+         <!--         address="http://localhost:9090/koodisto-service/koodistoAdminWS"/>-->
 
     <jaxws:client id="oidService"
                   serviceClass="fi.vm.sade.oid.service.OIDService"
