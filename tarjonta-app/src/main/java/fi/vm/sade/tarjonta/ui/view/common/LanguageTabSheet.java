@@ -21,9 +21,8 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.Reindeer;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -60,8 +59,6 @@ public abstract class LanguageTabSheet extends VerticalLayout {
     private boolean useRichText = false;
     private String TABSHEET_WIDTH = "500px";
     private String TABSHEET_HEIGHT = "300px";
-    private String RICH_TEXT_HEIGHT = null;
-    private String RICH_TEXT_WIDTH = null;
 
     public LanguageTabSheet() {
     }
@@ -69,14 +66,6 @@ public abstract class LanguageTabSheet extends VerticalLayout {
     public LanguageTabSheet(boolean useRichText, String width, String height) {
         TABSHEET_WIDTH = width;
         TABSHEET_HEIGHT = height;
-        this.useRichText = useRichText;
-    }
-
-    public LanguageTabSheet(boolean useRichText, String tabSheetWidth, String tabSheetHeight, String rtWidth, String rtHeight) {
-        TABSHEET_WIDTH = tabSheetWidth;
-        TABSHEET_HEIGHT = tabSheetHeight;
-        RICH_TEXT_HEIGHT = rtHeight;
-        RICH_TEXT_WIDTH = rtWidth;
         this.useRichText = useRichText;
     }
 
@@ -90,18 +79,22 @@ public abstract class LanguageTabSheet extends VerticalLayout {
     }
 
     private void initialize() {
-        setSizeUndefined();
-
+        setSizeFull();
+        setWidth(TABSHEET_WIDTH);
+        setHeight(TABSHEET_HEIGHT);
         _languageTabsheet = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, uiBuilder) {
             @Override
             public void doAddTab(String uri) {
-                addTab(uri, createRichText(""), _uiHelper.getKoodiNimi(uri));
+                VerticalLayout vl = new VerticalLayout();
+                vl.setWidth("100%");
+                vl.addComponent(createRichText(""));
+
+                addTab(uri, vl, _uiHelper.getKoodiNimi(uri));
             }
         };
 
         addComponent(_languageTabsheet);
-        _languageTabsheet.setWidth(TABSHEET_WIDTH);
-        _languageTabsheet.setHeight(TABSHEET_HEIGHT);
+        _languageTabsheet.setSizeFull();
         initializeTabsheet();
     }
 
@@ -148,19 +141,21 @@ public abstract class LanguageTabSheet extends VerticalLayout {
     protected AbstractField createRichText(String value) {
         if (useRichText) {
             OphRichTextArea richText = UiUtil.richTextArea(null, null, null);
-            if (RICH_TEXT_WIDTH == null || RICH_TEXT_HEIGHT == null) {
-                richText.setHeight(TABSHEET_HEIGHT);
-                richText.setWidth(TABSHEET_WIDTH);
-            } else {
-                richText.setHeight(RICH_TEXT_HEIGHT);
-                richText.setWidth(RICH_TEXT_WIDTH);
-            }
             richText.setValue(value);
+            richText.setWidth("100%");
+            /*
+             There is something wrong with the Vaadin height and width calculation when using
+             a rich text area addon. This is a quick hack fix, but at least it works. 
+             Problem 1. : when the rich text area has text data, height is lost.
+             Problem 2. : when height is set same as layout height, then Vaadin show a horizontal scroll bar.
+             */
+            String totalHack = TABSHEET_HEIGHT.replace("px", "");
+            richText.setHeight(Integer.parseInt(totalHack) - 48, UNITS_PIXELS);
+
             return richText;
         } else {
             TextField textField = UiUtil.textField(null);
-            textField.setHeight(TABSHEET_HEIGHT);
-            textField.setWidth(UiConstant.PCT100);
+            textField.setSizeFull();
             textField.setValue(value);
             return textField;
         }
@@ -172,6 +167,7 @@ public abstract class LanguageTabSheet extends VerticalLayout {
     public void resetTabSheets() {
         _languageTabsheet.removeAllComponents();
         _languageTabsheet.addLanguageMenuTab();
+        _languageTabsheet.setSizeFull();
     }
 
     public Set<String> getRemovedTabs() {

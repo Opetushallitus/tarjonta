@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.presenter;
 
+import com.vaadin.ui.Button;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.types.MonikielinenMetadataTyyppi;
 import org.slf4j.Logger;
@@ -32,7 +34,9 @@ import fi.vm.sade.tarjonta.ui.model.valinta.ValintaperusteModel;
 import fi.vm.sade.tarjonta.ui.service.AppPermissionService;
 import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
 import fi.vm.sade.tarjonta.ui.view.ValintaperustekuvausRootView;
+import fi.vm.sade.tarjonta.ui.view.valinta.SaveDialogView;
 import fi.vm.sade.tarjonta.ui.view.valinta.ValintaperusteMainView;
+import fi.vm.sade.vaadin.constants.StyleEnum;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +51,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  */
 public class ValintaPresenter implements CommonPresenter {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ValintaPresenter.class);
     private ValintaperustekuvausRootView rootView;
     @Autowired(required = true)
@@ -57,30 +61,30 @@ public class ValintaPresenter implements CommonPresenter {
     private TarjontaPermissionService permission;
     @Autowired(required = true)
     private TarjontaAdminService tarjontaAdminService;
-    
+
     public ValintaPresenter() {
     }
-    
+
     public void setRootView(ValintaperustekuvausRootView rootView) {
         this.rootView = rootView;
     }
-    
+
     public ValintaperustekuvausRootView getRootView() {
         return rootView;
     }
-    
+
     public void showMainView() {
         showValintaperustekuvaus();
     }
-    
+
     public void showValintaperustekuvaus() {
         initValintaperusteModel(MetaCategory.SORA_KUVAUS);
         initValintaperusteModel(MetaCategory.VALINTAPERUSTEKUVAUS);
-        
+
         ValintaperusteMainView view = new ValintaperusteMainView(this, uiBuilder);
         getRootView().addToWin(view);
     }
-    
+
     @Override
     public boolean isSaveButtonEnabled(String oid, SisaltoTyyppi sisalto, TarjontaTila... requiredState) {
         return true;
@@ -98,22 +102,22 @@ public class ValintaPresenter implements CommonPresenter {
             LOG.error("Application error - an unknown problem with UI notification. Value : {}", msg);
         }
     }
-    
+
     @Override
     public void showMainDefaultView() {
         getRootView();
     }
-    
+
     @Override
     public AppPermissionService getPermission() {
         return permission;
     }
-    
+
     @Override
     public void changeStateToCancelled(String oid, SisaltoTyyppi sisalto) {
         //Not needed, Leave method body empty.
     }
-    
+
     @Override
     public void changeStateToPublished(String oid, SisaltoTyyppi sisalto) {
         //Not needed, Leave method body empty.
@@ -127,21 +131,21 @@ public class ValintaPresenter implements CommonPresenter {
         if (model == null) {
             model = new ValintaModel();
         }
-        
+
         return model;
     }
-    
+
     public void initValintaperusteModel(final MetaCategory metaCategory) {
         initValintaperusteModel(metaCategory, null);
     }
-    
+
     private void initValintaperusteModel(final MetaCategory metaCategory, final String uri) {
         getModel().getMap().put(metaCategory, new ValintaperusteModel(uri));
     }
-    
+
     public void remove(final MetaCategory metaCategory, final String selectedUri, final Set<String> removedLanguages) {
         final String category = metaCategory.toString();
-        
+
         for (String kieli : removedLanguages) {
             if (kieli != null) {
                 LOG.debug("Remove language : {}", kieli);
@@ -149,31 +153,31 @@ public class ValintaPresenter implements CommonPresenter {
             }
         }
     }
-    
+
     public void save(final MetaCategory metaCategory) {
         final ValintaperusteModel model = getValintaperustemodel(metaCategory);
         final String selectedUri = model.getSelectedUri();
         final String category = metaCategory.toString();
-        
+
         if (selectedUri == null) {
             throw new RuntimeException("Meta data key is required!");
         }
-        
+
         for (KielikaannosViewModel kieli : model.getKuvaus()) {
             tarjontaAdminService.tallennaMetadata(selectedUri, category, kieli.getKielikoodi(), kieli.getNimi());
         }
     }
-    
+
     public void load(final MetaCategory metaCategory, String selectedUri) {
         if (selectedUri == null) {
             throw new RuntimeException("Meta data key is required!");
         }
-        
+
         initValintaperusteModel(metaCategory, selectedUri);
         final ValintaperusteModel valintaperusteModel = getValintaperustemodel(metaCategory);
         final List<MonikielinenMetadataTyyppi> metaList = tarjontaAdminService.haeMetadata(null, metaCategory.toString());
         Map<String, List<KielikaannosViewModel>> map = new HashMap<String, List<KielikaannosViewModel>>();
-        
+
         for (MonikielinenMetadataTyyppi tyyppi : metaList) {
             final String uriKey = tyyppi.getAvain();
             final KielikaannosViewModel kieli = new KielikaannosViewModel(tyyppi.getKieli(), tyyppi.getArvo());
@@ -185,18 +189,34 @@ public class ValintaPresenter implements CommonPresenter {
                 map.put(uriKey, list);
             }
         }
-        
+
         if (map.containsKey(selectedUri)) {
             valintaperusteModel.setKuvaus(map.get(selectedUri));
         } else {
-            
+
             valintaperusteModel.setKuvaus(new ArrayList<KielikaannosViewModel>(0));
         }
-        
+
         valintaperusteModel.setLoaded(true);
     }
-    
+
     public ValintaperusteModel getValintaperustemodel(final MetaCategory metaCategory) {
         return getModel().getKuvausModelByCategory(metaCategory);
+    }
+
+    public SaveDialogView showSaveDialog() {
+        final SaveDialogView modal = new SaveDialogView();
+        getRootView().addWindow(modal);
+
+        modal.addNavigationButton(I18N.getMessage("peruuta"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                // Stay in same view
+                getRootView().removeWindow(modal);
+                modal.removeDialogButtons();
+            }
+        }, StyleEnum.STYLE_BUTTON_SECONDARY);
+
+        return modal;
     }
 }

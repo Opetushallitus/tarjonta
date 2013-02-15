@@ -131,9 +131,16 @@ public class EditValintakuvausForm extends AbstractVerticalLayout {
 
     private HorizontalLayout buildSelectableKoodistoGroup() {
         HorizontalLayout hl = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
-        kcRyhma = uiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_VALINTAPERUSTEKUVAUSRYHMA);
+        if (category.equals(MetaCategory.SORA_KUVAUS)) {
+            kcRyhma = uiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_SORA_KUVAUSRYHMA);
+        } else if (category.equals(MetaCategory.VALINTAPERUSTEKUVAUS)) {
+            kcRyhma = uiBuilder.koodistoComboBox(hl, KoodistoURIHelper.KOODISTO_VALINTAPERUSTEKUVAUSRYHMA);
+        } else {
+            throw new RuntimeException("An unknown meta category. Meta : " + category);
+        }
         kcRyhma.setRequired(true);
-        kcRyhma.setImmediate(true);
+        kcRyhma.getField().setImmediate(true);
+        kcRyhma.getField().setNullSelectionAllowed(false);
 
         return hl;
     }

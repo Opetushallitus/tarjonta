@@ -50,8 +50,8 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable(preConstruction = true)
 public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel, VIEW extends AbstractLayout> extends AbstractVerticalNavigationLayout {
-
-    private static final Logger LOG = LoggerFactory.getLogger(fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView.class);
+    
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractSimpleEditLayoutView.class);
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
     @Autowired(required = true)
@@ -65,17 +65,21 @@ public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel
     private CommonPresenter presenter;
     private Label labelDocumentStatus;
     private Panel formPanel;
-
+    
     public AbstractSimpleEditLayoutView() {
         super();
     }
-
+    
     public void setFormDataObject(final MODEL model) {
         if (model != null) {
             setFormDataHashcode(model);
         }
     }
-
+    
+    public void buildFormLayout(final CommonPresenter presenter, final AbstractLayout layout, final MODEL model, final VIEW view) {
+        buildFormLayout(null, presenter, layout, model, view);
+    }
+    
     public void buildFormLayout(final String titleProperty, final CommonPresenter presenter, final AbstractLayout layout, final MODEL model, final VIEW view) {
         //check arguments
         validArg(presenter, "the presenter object has not been set correctly");
@@ -84,7 +88,7 @@ public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel
         validArg(layout, "the form base layout view has not been set correctly");
 
         //set data
-        this.model = model;
+        setFormDataObject(model);
         this.errorView = new ErrorMessage();
 
         //set presenter reference
@@ -95,9 +99,9 @@ public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel
 
         //build whole layout
         buildValidationLayout(titleProperty, layout, view);
-
+        
     }
-
+    
     private void buildValidationLayout(final String titleProperty, final AbstractLayout layout, final VIEW view) {
         //create panel inside navigation layout
         formPanel = new Panel();
@@ -122,36 +126,39 @@ public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel
          * THE GIVEN VIEW FORM
          */
         bindModelToViewForm(vlBaseFormLayout, view);
-
+        
     }
-
+    
     protected void buildNavigationButtons() {
 
         //add buttons to layout
         addNavigationButton("", getClickListenerBack(), StyleEnum.STYLE_BUTTON_BACK);
         addNavigationSaveButton(CommonTranslationKeys.TALLENNA, getClickListenerSave());
     }
-
+    
     private void buildInformationLayout(final String titleProperty, final AbstractLayout layout) {
         /*
          *  PAGE HEADLINE
          */
-        HorizontalLayout header = UiUtil.horizontalLayout();
-        header.setSizeFull();
-        Label pageLabel = UiUtil.label(header, T(titleProperty), LabelStyleEnum.H2);
-        pageLabel.setSizeUndefined();
-
-        labelDocumentStatus = UiUtil.label(layout, ""); //show document status
-        labelDocumentStatus.setSizeUndefined();
-        labelDocumentStatus.setImmediate(true);
-        header.addComponent(labelDocumentStatus);
-
-        header.setExpandRatio(labelDocumentStatus, 1l);
-        header.setComponentAlignment(labelDocumentStatus, Alignment.TOP_RIGHT);
-        layout.addComponent(header);
-        UiUtil.hr(layout);
+        
+        if (titleProperty != null) {
+            HorizontalLayout header = UiUtil.horizontalLayout();
+            header.setSizeFull();
+            Label pageLabel = UiUtil.label(header, T(titleProperty), LabelStyleEnum.H2);
+            pageLabel.setSizeUndefined();
+            
+            labelDocumentStatus = UiUtil.label(layout, ""); //show document status
+            labelDocumentStatus.setSizeUndefined();
+            labelDocumentStatus.setImmediate(true);
+            header.addComponent(labelDocumentStatus);
+            
+            header.setExpandRatio(labelDocumentStatus, 1l);
+            header.setComponentAlignment(labelDocumentStatus, Alignment.TOP_RIGHT);
+            layout.addComponent(header);
+            UiUtil.hr(layout);
+        }
     }
-
+    
     private void bindModelToViewForm(AbstractLayout layout, VIEW view) {
 
         //bind data to form
@@ -160,41 +167,41 @@ public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel
         form.setValidationVisible(false);
         form.setValidationVisibleOnCommit(false);
         form.setSizeFull();
-
+        
         setFormDataHashcode(model);
-
+        
         layout.addComponent(form);
     }
-
+    
     private void buildErrorLayoutWrapper(AbstractLayout layout) {
         HorizontalLayout topErrorArea = UiUtil.horizontalLayout();
         HorizontalLayout padding = UiUtil.horizontalLayout();
         padding.setWidth(30, UNITS_PERCENTAGE);
         errorView = new ErrorMessage();
         errorView.setSizeUndefined();
-
+        
         topErrorArea.addComponent(padding);
         topErrorArea.addComponent(errorView);
-
+        
         layout.addComponent(topErrorArea);
     }
-
+    
     @Override
     protected void buildLayout(VerticalLayout layout) {
         //INIT listeners
 
         clickListenerBack = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-
+            
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 eventBack(event);
             }
         };
-
+        
         clickListenerSave = new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-
+            
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 eventSave(event);
@@ -219,11 +226,11 @@ public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel
     protected void eventBack(Button.ClickEvent event) {
         presenter.showMainDefaultView();
     }
-
+    
     protected void eventSave(Button.ClickEvent event) {
         save(event);
     }
-
+    
     public abstract boolean isformDataLoaded();
 
     /**
@@ -232,7 +239,7 @@ public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel
      * @return OID
      */
     public abstract void actionSave(Button.ClickEvent event) throws Exception;
-
+    
     private void validateFormData() throws Validator.InvalidValueException {
         errorView.resetErrors();
         form.commit();
@@ -245,11 +252,12 @@ public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel
         if (model == null) {
             throw new RuntimeException("Initialization error - the form data model has not been set correctly.");
         }
-
+        
         return model.hashCode() != formDataUnmodifiedHashcode;
     }
-
+    
     protected boolean isSaved() {
+        
         return isformDataLoaded() && !isModified();
     }
 
@@ -257,15 +265,15 @@ public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel
      * Take a snapshot of model hashcode.
      * Used to check data model modifications.
      */
-    private int makeFormDataUnmodified() {
+    public int makeFormDataUnmodified() {
         if (model == null) {
             throw new RuntimeException("Initialization error - the form data model has not been set correctly.");
         }
-
+        
         formDataUnmodifiedHashcode = model.hashCode();
         return formDataUnmodifiedHashcode;
     }
-
+    
     private void save(Button.ClickEvent event) {
         try {
             validateFormData();
@@ -296,7 +304,7 @@ public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel
         if (form == null) {
             throw new RuntimeException("Initialization error - the form not initialized or set correctly.");
         }
-
+        
         return form;
     }
 
@@ -304,7 +312,7 @@ public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel
      * @param formDataHashcode the formDataHashcode to set
      */
     public void setFormDataHashcode(final MODEL model) {
-        this.model = model;
+        this.setModel(model);
         makeFormDataUnmodified();
     }
 
@@ -328,7 +336,7 @@ public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel
     public TarjontaUIHelper getUiHelper() {
         return uiHelper;
     }
-
+    
     private void validArg(final Object obj, final String msg) {
         if (obj == null) {
             throw new IllegalArgumentException("Initialization error - " + msg + ".");
@@ -354,5 +362,12 @@ public abstract class AbstractSimpleEditLayoutView<MODEL extends BaseUIViewModel
      */
     public Button.ClickListener getClickListenerSave() {
         return clickListenerSave;
+    }
+
+    /**
+     * @param model the model to set
+     */
+    public void setModel(MODEL model) {
+        this.model = model;
     }
 }

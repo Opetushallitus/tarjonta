@@ -32,9 +32,6 @@ public class LiitteenSanallinenKuvausTabSheet extends HakukohdeLanguageTabSheet 
         super(useRichText, width, height);
     }
 
-    public LiitteenSanallinenKuvausTabSheet(boolean useRichText, String tbWidth, String tbHeight, String rtWidth, String rtHeight) {
-        super(useRichText, tbWidth, tbHeight, rtWidth, rtHeight);
-    }
 
     @Override
     protected void initializeTabsheet() {

@@ -87,8 +87,6 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     private Form form;
     private String languageTabsheetWidth = "450px";
     private String languageTabsheetHeight = "300px";
-    private String rtWidth = "400px";
-    private String rtHeight = "250px";
     private Button upRightInfoButton;
 
     public HakukohteenLiitteetViewImpl(TarjontaPresenter presenter, UiBuilder uiBuilder) {
@@ -182,7 +180,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     }
 
     private LiitteenSanallinenKuvausTabSheet buildLiitteenSanallinenKuvaus() {
-        liitteenSanallinenKuvausTxtArea = new LiitteenSanallinenKuvausTabSheet(true, languageTabsheetWidth, languageTabsheetHeight, rtWidth, rtHeight);
+        liitteenSanallinenKuvausTxtArea = new LiitteenSanallinenKuvausTabSheet(true, languageTabsheetWidth, languageTabsheetHeight);
 
         liitteenSanallinenKuvausTxtArea.setWidth("60%");
         return liitteenSanallinenKuvausTxtArea;

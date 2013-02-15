@@ -80,6 +80,7 @@ public class KoodistoURIHelper {
      * Valintaperustekuvaus URIs
      */
     public static String KOODISTO_VALINTAPERUSTEKUVAUSRYHMA;
+    public static String KOODISTO_SORA_KUVAUSRYHMA;
 
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
@@ -234,5 +235,10 @@ public class KoodistoURIHelper {
     @Value("${koodisto-uris.valintaperustekuvausryhma:NOT_SET}")
     public void setValintaperustekuvausryhma(String valintaperustekuvausryhma) {
         KOODISTO_VALINTAPERUSTEKUVAUSRYHMA = valintaperustekuvausryhma;
+    }
+
+    @Value("${koodisto-uris.sorakuvausryhma:NOT_SET}")
+    public void setSoraKuvausryhma(String soraKuvausryhma) {
+        KOODISTO_SORA_KUVAUSRYHMA = soraKuvausryhma;
     }
 }

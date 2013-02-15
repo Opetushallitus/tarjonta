@@ -101,14 +101,12 @@ public class ValintaperusteModel extends BaseUIViewModel {
 
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(kuvaus, other.kuvaus);
-        builder.append(selectedUri, other.selectedUri);
         return builder.isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(selectedUri)
                 .append(kuvaus).toHashCode();
     }
 

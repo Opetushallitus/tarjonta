@@ -14,11 +14,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-
 package fi.vm.sade.tarjonta.ui.model;
 
-
-
+import fi.vm.sade.tarjonta.ui.model.valinta.ValintaperusteModel;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  *
@@ -27,7 +28,6 @@ package fi.vm.sade.tarjonta.ui.model;
 public class KielikaannosViewModel extends BaseUIViewModel {
 
     private String kielikoodi;
-
     private String nimi;
 
     public KielikaannosViewModel() {
@@ -66,4 +66,31 @@ public class KielikaannosViewModel extends BaseUIViewModel {
         this.nimi = nimi;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+        KielikaannosViewModel other = (KielikaannosViewModel) obj;
+
+        EqualsBuilder builder = new EqualsBuilder();
+        builder.append(kielikoodi, other.kielikoodi).
+                append(nimi, other.nimi);
+        return builder.isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(kielikoodi)
+                .append(nimi).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(kielikoodi).append(nimi).toString();
+    }
 }

@@ -17,15 +17,17 @@ package fi.vm.sade.tarjonta.ui.view.valinta;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.enums.MetaCategory;
-import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.valinta.ValintaperusteModel;
 import fi.vm.sade.tarjonta.ui.presenter.ValintaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractSimpleEditLayoutView;
+import fi.vm.sade.vaadin.constants.StyleEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,31 +58,65 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
          *  FORM LAYOUT (form components under navigation buttons)
          */
         form = new EditValintakuvausForm(category, presenter, uiBuilder);
-        buildFormLayout("Valintaperustekuvaus", presenter, layout, getModel(), form);
+        buildFormLayout(presenter, layout, getModel(), form);
 
         //Koodisto selectbox listener
         form.getRyhma().addListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
-                if (!isSaved()) {
-                    //TODO:
-                    errorView.addError(new Validator.InvalidValueException("unsaved"));
-                }
+                if (event != null && event.getProperty() != null && event.getProperty().getValue() != null) {
+                    final String newUri = (String) event.getProperty().getValue();
+                    final String selectedUri = getModel().getSelectedUri();
 
-                form.resetKuvaus();
-                form.getkuvaus().clear(); //clear model data
+                    setModelDataToValidationHandler();
 
-                if (event != null && event.getProperty() != null) {
-                    final String uri = (String) event.getProperty().getValue();
-                    LOG.debug("selected uri : {}", uri);
-                    ValintaperusteModel model = presenter.getValintaperustemodel(category);
-                    presenter.load(category, uri);
+                    if (presenter.getModel().isForward()) {
+                        /*
+                         * When an user has decided to levae page without saving. 
+                         */
+                        LOG.debug("Form data : go to");
+                        final String to = presenter.getModel().getForwardToUri();
+                        reload(to);
 
-//                    if (model != null && model.getKuvaus() != null) {
-//                        form.getkuvaus().addAll(model.getKuvaus());
-//                    }
-//                    
-                    form.reloadkuvaus();
+                        presenter.getModel().setForwardToUri(null);
+                        presenter.getModel().setForward(false);
+                    } else if (selectedUri != null && selectedUri.equals(newUri)) {
+                        LOG.debug("Form data : ignore event");
+                    } else if (selectedUri != null && !isSaved()) {
+                        LOG.debug("Form data : modified");
+
+                        /*
+                         * When user has changed form data, but not saved it.
+                         */
+
+                        changeSelectedRyhma(selectedUri); //revert event value change
+
+                        //Open modal dialog.
+                        final SaveDialogView modal = presenter.showSaveDialog();
+                        if (!presenter.getModel().isForward()) {
+                            presenter.getModel().setForwardToUri(newUri);
+                        }
+
+                        modal.addNavigationButton(I18N.getMessage("hylkaa"), new Button.ClickListener() {
+                            @Override
+                            public void buttonClick(Button.ClickEvent event) {
+                                final String forwardUri = presenter.getModel().getForwardToUri();
+                                LOG.debug("Form data : Load data and got to the next page. Goto : {}", forwardUri);
+
+                                presenter.getRootView().removeWindow(modal);
+                                modal.removeDialogButtons();
+                                presenter.getModel().setForward(true);
+                                changeSelectedRyhma(forwardUri); //revert event value change
+                            }
+                        }, StyleEnum.STYLE_BUTTON_PRIMARY);
+
+                        modal.buildDialogButtons();
+                    } else if (newUri != null) {
+                        LOG.debug("Form data : unmodified");
+                        //change page.
+
+                        reload(newUri);
+                    }
                 }
             }
         });
@@ -124,5 +160,29 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
     private void notifyValidationError() {
 
         errorView.addError(new Validator.InvalidValueException("error"));
+    }
+
+    public void changeSelectedRyhma(String selectedUri) {
+        form.getRyhma().setValue(selectedUri);
+    }
+
+    private void reload(final String uri) {
+        //Load data from back-end service and store it to the model
+        presenter.load(category, uri);
+        //Reset all description tabs.
+        form.resetKuvaus();
+        //Clear description data from the form.
+        form.getkuvaus().clear();
+        //Initialize tabsheet data from model.
+        form.reloadkuvaus();
+        //Reset checksum.
+        setModelDataToValidationHandler();
+        makeFormDataUnmodified();
+    }
+
+    private void setModelDataToValidationHandler() {
+        //this is a quick hack.
+        getModel().setKuvaus(form.getkuvaus());
+        setModel(getModel());
     }
 }

@@ -15,10 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view.valinta;
 
-import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TabSheet.CloseHandler;
-import com.vaadin.ui.TabSheet.Tab;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.enums.MetaCategory;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
@@ -51,11 +48,6 @@ public class ValintaLanguageTabSheet extends LanguageTabSheet {
 
     }
 
-    public ValintaLanguageTabSheet(boolean useRichText, String tabSheetWidth, String tabSheetHeight, String rtWidth, String rtHeight) {
-        super(useRichText, tabSheetWidth, tabSheetHeight, rtWidth, rtHeight);
-
-    }
-
     public ValintaLanguageTabSheet(ValintaPresenter presenter, MetaCategory category, boolean useRichText, String width, String height) {
         super(useRichText, width, height);
         this.presenter = presenter;
@@ -83,12 +75,13 @@ public class ValintaLanguageTabSheet extends LanguageTabSheet {
             final List<KielikaannosViewModel> kuvaus = model.getKuvaus();
             setInitialValues(kuvaus);
 
-            if (kuvaus.size() > 1) {
+            if (!kuvaus.isEmpty()) {
                 String soomiKieli = I18N.getMessage("default.tab");
                 TabSheet.Tab tab = getTab(soomiKieli);
                 if (tab != null) {
                     _languageTabsheet.setSelectedTab(tab);
                 } else {
+                    LOG.debug("Add a default language tab.");
                     addDefaultLanguage();
                 }
             } else {

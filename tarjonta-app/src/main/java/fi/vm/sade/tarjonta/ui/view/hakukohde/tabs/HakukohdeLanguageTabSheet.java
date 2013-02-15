@@ -42,9 +42,5 @@ public abstract class HakukohdeLanguageTabSheet extends LanguageTabSheet {
         this.presenter = presenter;
     }
 
-    public HakukohdeLanguageTabSheet(boolean useRichText, String tabSheetWidth, String tabSheetHeight, String rtWidth, String rtHeight) {
-        super(useRichText, tabSheetWidth, tabSheetHeight, rtWidth, rtHeight);
-    }
-    
     
 }
