@@ -194,7 +194,7 @@ public class PublicationCollector {
             fireCollect(m, t);
 
 
-            fireCollect(t);
+            //fireCollect(t);
 
             fireCollect(findProviderByOid(m.getOmistajaOrganisaatioOid(), true));
             fireCollect(findProviderByOid(t.getTarjoaja(), false));
@@ -214,7 +214,7 @@ public class PublicationCollector {
 
     private void fireCollect(Koulutusmoduuli m, KoulutusmoduuliToteutus t) throws Exception {
 
-        if (!isNotifiedBefore(m.getOid())) {
+        if (!isNotifiedBefore(m.getOid() + t.getOid())) {
             handler.onCollect(m, t);
         }
         

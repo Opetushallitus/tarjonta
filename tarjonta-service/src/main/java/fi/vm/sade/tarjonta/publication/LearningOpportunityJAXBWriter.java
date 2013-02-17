@@ -293,7 +293,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         }
 
         if (t != null) {
-            handleChildren(moduuli, specification);
+            handleChildren(moduuli, t, specification);
         }
         
         //LearningOpportunitySpecification#status
@@ -306,7 +306,11 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         specification.setType(LearningOpportunityTypeType.DEGREE_PROGRAMME);
 
         // LearningOpportunitySpecification/id
-        specification.setId(putID(moduuli.getOid(), specification));
+        if (t != null) {
+            specification.setId(putID(moduuli.getOid() + t.getOid(), specification));
+        } else {
+            specification.setId(putID(moduuli.getOid(), specification));
+        }
 
         // LearningOpportunitySpecification/Identifier
         addUlkoinenTunniste(moduuli, specification);
@@ -367,11 +371,12 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
     }
 
     private void handleChildren(Koulutusmoduuli moduuli,
+            KoulutusmoduuliToteutus toteutus,
             LearningOpportunitySpecificationType specification) {
         for (Koulutusmoduuli curChild : moduuli.getAlamoduuliList()) {
             LearningOpportunitySpecificationRefType losRef = createLOSRef(curChild.getOid());
             if (losRef != null) {
-                this.komotoParentMap.put(curChild.getOid(), moduuli.getOid());
+                this.komotoParentMap.put(curChild.getOid() + toteutus.getTarjoaja(), moduuli.getOid() + toteutus.getOid());
                 specification.getChildLOSRefs().add(losRef);
             }
         }
@@ -732,7 +737,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         for (KoulutusmoduuliToteutus koulutus : koulutukset) {
             
             if (laskuri == 0) {
-                String parentOid = this.komotoParentMap.get(koulutus.getKoulutusmoduuli().getOid());
+                String parentOid = this.komotoParentMap.get(koulutus.getKoulutusmoduuli().getOid() + koulutus.getTarjoaja());
                 if (parentOid != null) {
                     refContainer.setParentRef(createLOSRef(parentOid));
                 }
