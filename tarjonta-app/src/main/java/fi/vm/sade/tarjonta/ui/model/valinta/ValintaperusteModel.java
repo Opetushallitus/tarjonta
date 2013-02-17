@@ -18,7 +18,10 @@ package fi.vm.sade.tarjonta.ui.model.valinta;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -37,6 +40,8 @@ public class ValintaperusteModel extends BaseUIViewModel {
     /*
      * Other data objects
      */
+    //Map<keyUri, List<KielikaannosViewModel>>
+    private Map<String, List<KielikaannosViewModel>> categoryUris;
     private boolean loaded;
 
     public ValintaperusteModel() {
@@ -112,12 +117,26 @@ public class ValintaperusteModel extends BaseUIViewModel {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(selectedUri).append(kuvaus).append(loaded).toString();
+        return new ToStringBuilder(selectedUri).append(kuvaus).append(loaded).append(getCategoryUris()).toString();
     }
 
     public void reset(String uri) {
         setSelectedUri(uri);
         setLoaded(false);
         setKuvaus(new ArrayList<KielikaannosViewModel>());
+    }
+
+    /**
+     * @return the categoryUris
+     */
+    public Map<String, List<KielikaannosViewModel>> getCategoryUris() {
+        return categoryUris;
+    }
+
+    /**
+     * @param categoryUris the categoryUris to set
+     */
+    public void setCategoryUris(Map<String, List<KielikaannosViewModel>> categoryUris) {
+        this.categoryUris = categoryUris;
     }
 }

@@ -4,12 +4,13 @@ import fi.vm.sade.tarjonta.ui.enums.MetaCategory;
 import fi.vm.sade.tarjonta.ui.model.*;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ValintaModel extends BaseUIViewModel {
     
     private String forwardToUri;
     private boolean forward = false;
-
+    
     private Map<MetaCategory, ValintaperusteModel> map = new EnumMap<MetaCategory, ValintaperusteModel>(MetaCategory.class);
 
     /**

@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.ui.presenter;
 
 import com.vaadin.ui.Button;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.koodisto.service.KoodiService;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.types.MonikielinenMetadataTyyppi;
 import org.slf4j.Logger;
@@ -61,6 +63,8 @@ public class ValintaPresenter implements CommonPresenter {
     private TarjontaPermissionService permission;
     @Autowired(required = true)
     private TarjontaAdminService tarjontaAdminService;
+    @Autowired(required = true)
+    private TarjontaUIHelper tarjotaHelper;
 
     public ValintaPresenter() {
     }
@@ -143,6 +147,13 @@ public class ValintaPresenter implements CommonPresenter {
         getModel().getMap().put(metaCategory, new ValintaperusteModel(uri));
     }
 
+    /**
+     * Remove/delete a language by given koodi uri.
+     *
+     * @param metaCategory
+     * @param selectedUri
+     * @param removedLanguages
+     */
     public void remove(final MetaCategory metaCategory, final String selectedUri, final Set<String> removedLanguages) {
         final String category = metaCategory.toString();
 
@@ -154,6 +165,11 @@ public class ValintaPresenter implements CommonPresenter {
         }
     }
 
+    /**
+     * Save form data.
+     *
+     * @param metaCategory
+     */
     public void save(final MetaCategory metaCategory) {
         final ValintaperusteModel model = getValintaperustemodel(metaCategory);
         final String selectedUri = model.getSelectedUri();
@@ -168,42 +184,50 @@ public class ValintaPresenter implements CommonPresenter {
         }
     }
 
+    /**
+     * Load selected metadata to valinta model.
+     *
+     * @param metaCategory
+     * @param selectedUri
+     */
     public void load(final MetaCategory metaCategory, String selectedUri) {
         if (selectedUri == null) {
             throw new RuntimeException("Meta data key is required!");
         }
 
+        //init model
         initValintaperusteModel(metaCategory, selectedUri);
         final ValintaperusteModel valintaperusteModel = getValintaperustemodel(metaCategory);
-        final List<MonikielinenMetadataTyyppi> metaList = tarjontaAdminService.haeMetadata(null, metaCategory.toString());
-        Map<String, List<KielikaannosViewModel>> map = new HashMap<String, List<KielikaannosViewModel>>();
 
-        for (MonikielinenMetadataTyyppi tyyppi : metaList) {
-            final String uriKey = tyyppi.getAvain();
-            final KielikaannosViewModel kieli = new KielikaannosViewModel(tyyppi.getKieli(), tyyppi.getArvo());
-            if (map.containsKey(uriKey)) {
-                map.get(uriKey).add(kieli);
-            } else {
-                List<KielikaannosViewModel> list = new ArrayList<KielikaannosViewModel>();
-                list.add(kieli);
-                map.put(uriKey, list);
-            }
-        }
+        //load metadata to map object
+        loadMetaDataToModel(metaCategory);
+        Map<String, List<KielikaannosViewModel>> map = valintaperusteModel.getCategoryUris();
 
         if (map.containsKey(selectedUri)) {
             valintaperusteModel.setKuvaus(map.get(selectedUri));
         } else {
-
             valintaperusteModel.setKuvaus(new ArrayList<KielikaannosViewModel>(0));
         }
+
+        LOG.debug("Loaded desc data : {}", valintaperusteModel.getKuvaus());
 
         valintaperusteModel.setLoaded(true);
     }
 
+    /**
+     * Select a model by given category. Description tabs can have its own data
+     * model object.
+     *
+     * @param metaCategory
+     * @return
+     */
     public ValintaperusteModel getValintaperustemodel(final MetaCategory metaCategory) {
         return getModel().getKuvausModelByCategory(metaCategory);
     }
 
+    /*
+     * Create and open an user message dialog.
+     */
     public SaveDialogView showSaveDialog() {
         final SaveDialogView modal = new SaveDialogView();
         getRootView().addWindow(modal);
@@ -218,5 +242,44 @@ public class ValintaPresenter implements CommonPresenter {
         }, StyleEnum.STYLE_BUTTON_SECONDARY);
 
         return modal;
+    }
+
+    /**
+     * Load all metadata object from tarjonta service by given category.
+     *
+     * @param metaCategory
+     */
+    public void loadMetaDataToModel(final MetaCategory metaCategory) {
+        final List<MonikielinenMetadataTyyppi> metaList = tarjontaAdminService.haeMetadata(null, metaCategory.toString());
+        ValintaperusteModel valintaperustemodel = getValintaperustemodel(metaCategory);
+        valintaperustemodel.setCategoryUris(mapKielidata(metaList));
+    }
+
+    /**
+     * Convert raw tajonta service metadata to UI objects.
+     *
+     * @param metaCategory
+     * @return
+     */
+    private Map<String, List<KielikaannosViewModel>> mapKielidata(final List<MonikielinenMetadataTyyppi> metaList) {
+        Map<String, List<KielikaannosViewModel>> map = new HashMap<String, List<KielikaannosViewModel>>();
+
+        for (MonikielinenMetadataTyyppi tyyppi : metaList) {
+            final String uriKey = tyyppi.getAvain();
+            final KielikaannosViewModel kieli = new KielikaannosViewModel(tyyppi.getKieli(), tyyppi.getArvo());
+            if (map.containsKey(uriKey)) {
+                map.get(uriKey).add(kieli);
+            } else {
+                List<KielikaannosViewModel> list = new ArrayList<KielikaannosViewModel>();
+                list.add(kieli);
+                map.put(uriKey, list);
+            }
+        }
+
+        return map;
+    }
+
+    public KoodiType getKoodiByUri(String uri) {
+        return tarjotaHelper.gethKoodis(uri).get(0);
     }
 }

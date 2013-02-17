@@ -58,7 +58,7 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
          *  FORM LAYOUT (form components under navigation buttons)
          */
         form = new EditValintakuvausForm(category, presenter, uiBuilder);
-        buildFormLayout(presenter, layout, getModel(), form);
+        buildFormLayout(presenter, layout, getValintaModel(), form);
 
         //Koodisto selectbox listener
         form.getRyhma().addListener(new Property.ValueChangeListener() {
@@ -66,13 +66,13 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
             public void valueChange(Property.ValueChangeEvent event) {
                 if (event != null && event.getProperty() != null && event.getProperty().getValue() != null) {
                     final String newUri = (String) event.getProperty().getValue();
-                    final String selectedUri = getModel().getSelectedUri();
+                    final String selectedUri = getValintaModel().getSelectedUri();
 
                     setModelDataToValidationHandler();
 
                     if (presenter.getModel().isForward()) {
                         /*
-                         * When an user has decided to levae page without saving. 
+                         * When an user has decided to leave page without saving. 
                          */
                         LOG.debug("Form data : go to");
                         final String to = presenter.getModel().getForwardToUri();
@@ -86,9 +86,8 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
                         LOG.debug("Form data : modified");
 
                         /*
-                         * When user has changed form data, but not saved it.
+                         * When user have unsaved data.
                          */
-
                         changeSelectedRyhma(selectedUri); //revert event value change
 
                         //Open modal dialog.
@@ -132,16 +131,20 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
         LOG.debug("actionSave");
         if (form.getRemovedLanguages() != null && !form.getRemovedLanguages().isEmpty()) {
             LOG.debug("remove");
-            presenter.remove(category, getModel().getSelectedUri(), form.getRemovedLanguages());
+            presenter.remove(category, getValintaModel().getSelectedUri(), form.getRemovedLanguages());
         }
 
-        getModel().setKuvaus(form.getkuvaus());
+        getValintaModel().setKuvaus(form.getkuvaus());
 
-        if (getModel().getSelectedUri() != null) {
+        if (getValintaModel().getSelectedUri() != null) {
             presenter.save(category);
         } else {
-            notifyValidationError();
+            throw new Validator.InvalidValueException("error");
         }
+        
+        //presenter.getRootView().executeJavaScript("window.location.reload();");
+         presenter.loadMetaDataToModel(category);
+        form.reloadKoodistoComponentRyhmaCaption();
     }
 
     /*
@@ -153,36 +156,36 @@ public class EditValintakuvausView extends AbstractSimpleEditLayoutView {
         addNavigationSaveButton(CommonTranslationKeys.TALLENNA, getClickListenerSave());
     }
 
-    private ValintaperusteModel getModel() {
+    private ValintaperusteModel getValintaModel() {
         return presenter.getModel().getKuvausModelByCategory(category);
-    }
-
-    private void notifyValidationError() {
-
-        errorView.addError(new Validator.InvalidValueException("error"));
     }
 
     public void changeSelectedRyhma(String selectedUri) {
         form.getRyhma().setValue(selectedUri);
     }
 
+    /*
+     * Reload form data.
+     */
     private void reload(final String uri) {
-        //Load data from back-end service and store it to the model
+        //Load data from back-end service and store it to meta data model.
         presenter.load(category, uri);
-        //Reset all description tabs.
-        form.resetKuvaus();
+        //Reset all tabsheet to 'the factory settings'.
+        form.resetKuvausTabSheet();
         //Clear description data from the form.
         form.getkuvaus().clear();
-        //Initialize tabsheet data from model.
-        form.reloadkuvaus();
-        //Reset checksum.
+        //Initialize tabsheet data by valinta model values.
+        form.initializeKuvausTabSheet();
+        //Tab form data binding hard to implement, so we need to manually set 
+        //data model to super class. 
         setModelDataToValidationHandler();
+        //Reset checksum.
         makeFormDataUnmodified();
     }
 
     private void setModelDataToValidationHandler() {
-        //this is a quick hack.
-        getModel().setKuvaus(form.getkuvaus());
-        setModel(getModel());
+        //this is a quick data binding hack.
+        getValintaModel().setKuvaus(form.getkuvaus());
+        setModel(getValintaModel());
     }
 }

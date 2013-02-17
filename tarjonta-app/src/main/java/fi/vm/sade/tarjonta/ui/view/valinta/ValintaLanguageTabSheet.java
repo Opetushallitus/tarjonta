@@ -56,11 +56,12 @@ public class ValintaLanguageTabSheet extends LanguageTabSheet {
     }
 
     protected void addDefaultLanguage() {
+        LOG.debug("default language added.");
         String soomiKieli = I18N.getMessage("default.tab");
         Set<String> kielet = new HashSet<String>();
         kielet.add(soomiKieli);
+        _languageTabsheet.addTab(soomiKieli, createRichText(""), _uiHelper.getKoodiNimi(soomiKieli));
         _languageTabsheet.getKcSelection().setValue(kielet);
-        _languageTabsheet.setSelectedTab(getTab(soomiKieli));
     }
 
     protected ValintaperusteModel getValintaModel() {
@@ -71,24 +72,17 @@ public class ValintaLanguageTabSheet extends LanguageTabSheet {
     protected void initializeTabsheet() {
         ValintaperusteModel model = getValintaModel();
 
-        if (model.getKuvaus() != null) {
+        if (model.getKuvaus() != null && !model.getKuvaus().isEmpty()) {
             final List<KielikaannosViewModel> kuvaus = model.getKuvaus();
             setInitialValues(kuvaus);
-
-            if (!kuvaus.isEmpty()) {
-                String soomiKieli = I18N.getMessage("default.tab");
-                TabSheet.Tab tab = getTab(soomiKieli);
-                if (tab != null) {
-                    _languageTabsheet.setSelectedTab(tab);
-                } else {
-                    LOG.debug("Add a default language tab.");
-                    addDefaultLanguage();
-                }
-            } else {
-                addDefaultLanguage();
-            }
         } else {
             addDefaultLanguage();
+        }
+
+        String soomiKieli = I18N.getMessage("default.tab");
+        TabSheet.Tab tab = getTab(soomiKieli);
+        if (tab != null) {
+            _languageTabsheet.setSelectedTab(tab);
         }
     }
 }
