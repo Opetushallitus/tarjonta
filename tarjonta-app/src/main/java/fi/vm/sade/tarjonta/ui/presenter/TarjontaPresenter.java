@@ -304,6 +304,17 @@ public class TarjontaPresenter implements CommonPresenter {
         return dialog;
     }
 
+    public String validateKoulutusOidNameViewModel(Collection<KoulutusOidNameViewModel> koulutukses) {
+        List<String> selectedOids = new ArrayList<String>();
+        for (KoulutusOidNameViewModel koulutusOidNameViewModel : koulutukses) {
+            selectedOids.add(koulutusOidNameViewModel.getKoulutusOid());
+        }
+        HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
+        kysely.getKoulutusOids().addAll(selectedOids);
+        HaeKoulutuksetVastausTyyppi vastaus = tarjontaPublicService.haeKoulutukset(kysely);
+        return validateKoulutukses(vastaus.getKoulutusTulos());
+    }
+
     private String validateKoulutukses(List<KoulutusTulos> koulutukses) {
         List<String> koulutusKoodis = new ArrayList<String>();
         List<String> pohjakoulutukses = new ArrayList<String>();

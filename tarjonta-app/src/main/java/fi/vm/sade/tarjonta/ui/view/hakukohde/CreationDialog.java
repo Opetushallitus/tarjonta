@@ -23,6 +23,7 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
+import org.aspectj.bridge.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +97,11 @@ public class CreationDialog<T> extends CustomComponent {
 
     }
 
+    public void removeErrorMessages() {
+        if (errorView != null) {
+             errorView.resetErrors();
+        }
+    }
 
     public void addErrorMessage(String message) {
         if (errorView != null) {

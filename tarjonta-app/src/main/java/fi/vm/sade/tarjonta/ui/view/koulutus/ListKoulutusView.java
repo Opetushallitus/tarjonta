@@ -305,15 +305,25 @@ public class ListKoulutusView extends VerticalLayout {
             createDialog.getJatkaBtn().addListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
+                    createDialog.removeErrorMessages();
                     Object values = createDialog.getOptionGroup().getValue();
                     Collection<KoulutusOidNameViewModel> selectedKoulutukses = null;
                     if (values instanceof Collection) {
                         selectedKoulutukses = (Collection<KoulutusOidNameViewModel>) values;
                     }
 
-                    getWindow().removeWindow(createHakukohdeDialog);
+
                     if(selectedKoulutukses.size() > 0 ) {
-                    presenter.showHakukohdeEditView(koulutusNameViewModelToOidList(selectedKoulutukses), null);}
+                    String validationError = presenter.validateKoulutusOidNameViewModel(selectedKoulutukses);
+                    if (validationError != null && validationError.length() > 1) {
+                    createDialog.addErrorMessage(validationError);
+                    }  else {
+                    getWindow().removeWindow(createHakukohdeDialog);
+                    presenter.showHakukohdeEditView(koulutusNameViewModelToOidList(selectedKoulutukses), null);
+
+                    }
+
+                    }
 
 
                 }
