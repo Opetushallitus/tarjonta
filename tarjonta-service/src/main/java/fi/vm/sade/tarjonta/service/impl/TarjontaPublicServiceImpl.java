@@ -456,9 +456,13 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         
         Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(komo);
         
+        //if parent komo does not exist, we are reading a parent komoto, thus the koulutusohjelmanvalinta field is in the komoto itself
         if (parentKomo == null) {
             result.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo));
             result.setKoulutusohjelmanValinta(EntityUtils.copyFields(komoto.getKoulutusohjelmanValinta()));
+            
+        //if parent komo exists we read the koulutusohjelmanValinta field from the parent (tutkinto) komoto,
+        //and merging the parent and actual komo to get the komo fields.
         } else {
             result.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo, parentKomo));
             handleParentKomoto(parentKomo, komoto, result);    
@@ -467,6 +471,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         return result;
     }
     
+    /*
+     * reading the parent komoto fields to the result dto. 
+     */
     private void handleParentKomoto(Koulutusmoduuli parentKomo, KoulutusmoduuliToteutus komoto, LueKoulutusVastausTyyppi result) {
         List<KoulutusmoduuliToteutus> parentList = this.koulutusmoduuliToteutusDAO.findKomotosByKomoAndtarjoaja(parentKomo, komoto.getTarjoaja()); 
         KoulutusmoduuliToteutus parentKomoto = (parentList != null && !parentList.isEmpty()) ? parentList.get(0) : null;

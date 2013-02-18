@@ -1326,6 +1326,8 @@ public class TarjontaPresenter implements CommonPresenter {
             Collections.sort(listaaKoulutusohjelmat, new BeanComparator("nimi"));
             model.getKoulutusohjelmat().addAll(listaaKoulutusohjelmat);
             String organisaatioOid = model.getOrganisaatioOid() != null ? model.getOrganisaatioOid() : getModel().getOrganisaatioOid();
+            
+            //Loading data from the parent tutkinto komo (startDate and koulutusohjelmanValinta).
             loadTutkintoData(model.getKoulutuskoodiModel().getKoodistoUriVersio(), organisaatioOid); 
         }
     }

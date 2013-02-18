@@ -206,6 +206,8 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             addItemToGrid(grid, "tutkinnonSijoittuminenTyoelamaan", new Label(tiedotModel.getSijoittuminenTyoelamaan(), Label.CONTENT_XHTML));
             addItemToGrid(grid, "tutkinnonKansainvalistyminen", new Label(tiedotModel.getKansainvalistyminen(), Label.CONTENT_XHTML));
             addItemToGrid(grid, "tutkinnonYhteistyoMuidenToimijoidenKanssa", new Label(tiedotModel.getYhteistyoMuidenToimijoidenKanssa(), Label.CONTENT_XHTML));
+            addItemToGrid(grid, "koulutusohjelmanValinta", new Label(tiedotModel.getKoulutusohjelmanValinta(), Label.CONTENT_XHTML));
+            
 
             grid.setColumnExpandRatio(0, 1);
             grid.setColumnExpandRatio(1, 2);

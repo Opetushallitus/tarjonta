@@ -247,6 +247,9 @@ public final class EntityUtils {
         return tyyppi;
     }
     
+    /*
+     * Merging fields from parent and komo to create the result KoulutusmoduuliKoosteTyyppi.
+     */
     public static KoulutusmoduuliKoosteTyyppi copyFieldsToKoulutusmoduuliKoosteTyyppi(final Koulutusmoduuli komo, final Koulutusmoduuli parentKomo) {
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
         tyyppi.setOid(komo.getOid());
