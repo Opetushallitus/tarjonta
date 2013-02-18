@@ -99,6 +99,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
                 koulutus.getKoulutusKoodi().getUri(),
                 koulutus.getKoulutusohjelmaKoodi().getUri());
             
+            //Handling the creation of the parent komoto
             handleParentKomoto(koulutus, moduuli);
         }
 
@@ -123,7 +124,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         KoulutusmoduuliToteutus model = koulutusmoduuliToteutusDAO.findByOid(oid);
         
         Koulutusmoduuli moduuli = model.getKoulutusmoduuli();
-        
+        //Handling the creation or update of the parent (tutkinto) komoto
         handleParentKomoto(koulutus, moduuli);
 
         if (model == null) {
@@ -138,19 +139,23 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
     }
     
+    /*
+     * Handling the creation or update of the parent komoto
+     */
     private void handleParentKomoto(KoulutusTyyppi koulutus, Koulutusmoduuli moduuli) {
         Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(moduuli);
         List<KoulutusmoduuliToteutus> parentKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoAndtarjoaja(parentKomo, koulutus.getTarjoaja());
-        KoulutusmoduuliToteutus parentKomoto = (parentKomotos != null && !parentKomotos.isEmpty()) ? parentKomotos.get(0) : null;                
+        KoulutusmoduuliToteutus parentKomoto = (parentKomotos != null && !parentKomotos.isEmpty()) ? parentKomotos.get(0) : null;
+        //If the komoto for the parentKomo already exists it is updated according to the values given in koulutus
         if (parentKomoto != null && parentKomo != null) {
             parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
             parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta()));
             this.koulutusmoduuliToteutusDAO.update(parentKomoto);
             handleChildKomos(parentKomo, moduuli, koulutus);
-            
+        //If there is not a komoto for the parentKomo, it is created here.    
         } else if (parentKomo != null ) {
             parentKomoto = new KoulutusmoduuliToteutus();
-            parentKomoto.setOid(koulutus.getOid() + parentKomoto.getOid());
+            parentKomoto.setOid(koulutus.getOid() + parentKomo.getOid());
             parentKomoto.setTarjoaja(koulutus.getTarjoaja());
             parentKomoto.setTila(EntityUtils.convertTila(koulutus.getTila()));
             parentKomoto.setKoulutusmoduuli(parentKomo);

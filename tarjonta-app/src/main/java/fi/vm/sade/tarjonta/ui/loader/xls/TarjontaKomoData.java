@@ -73,7 +73,8 @@ public class TarjontaKomoData {
         new Column("koulutusasteenKoodiarvo", "Koulutusasteen koodiarvo", InputColumnType.INTEGER),
         new Column("laajuus", "Laajuus", InputColumnType.INTEGER),
         new Column("laajuusyksikko", "Laajuusyksikkö", InputColumnType.STRING),
-        new Column("eqf", "EQF", InputColumnType.INTEGER)
+        new Column("eqf", "EQF", InputColumnType.INTEGER),
+        new Column("koulutusohjelmanTavoitteet", "KOULUTUSOHJELMAN TAVOITTEET", InputColumnType.STRING)
     };
     public static final Column[] COLUMNS_KOULUTUSLUOKITUS = {
         //property, title desc, type= conversion type
@@ -214,6 +215,7 @@ public class TarjontaKomoData {
             koKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
             koKomo.setKoulutusmoduulinNimi(SearchWordUtil.createSearchKeywords(koulutuskoodiMeta, koulutusohjelmaMeta));
             koKomo.setTutkintonimikeUri(getUriWithVersion(dto.getTutkintonimikkeenKoodiarvo(), KoodistoURIHelper.KOODISTO_TUTKINTONIMIKE_URI));
+            koKomo.setTavoitteet(createTeksti(dto.getKoulutusohjelmanTavoitteet(), null, null));
             koKomo.setParentOid(tutkintoKomo.getOid());
             
             

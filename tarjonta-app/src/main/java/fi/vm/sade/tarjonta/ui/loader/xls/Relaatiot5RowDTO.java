@@ -38,6 +38,7 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
     private String laajuus;
     private String laajuusyksikko;
     private String eqf;
+    private String koulutusohjelmanTavoitteet;
 
     /**
      * @return the koulutuksenRakenne
@@ -261,5 +262,13 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
     public int hashCode() {
         return new HashCodeBuilder().
                 append(koulutuskoodi).append(koulutusohjelmanKoodiarvo).toHashCode();
+    }
+
+    public String getKoulutusohjelmanTavoitteet() {
+        return koulutusohjelmanTavoitteet;
+    }
+
+    public void setKoulutusohjelmanTavoitteet(String koulutusohjelmanTavoitteet) {
+        this.koulutusohjelmanTavoitteet = koulutusohjelmanTavoitteet;
     }
 }
