@@ -314,9 +314,11 @@ public class ListKoulutusView extends VerticalLayout {
 
 
                     if(selectedKoulutukses.size() > 0 ) {
-                    String validationError = presenter.validateKoulutusOidNameViewModel(selectedKoulutukses);
-                    if (validationError != null && validationError.length() > 1) {
-                    createDialog.addErrorMessage(validationError);
+                    List<String> validationErrors = presenter.validateKoulutusOidNameViewModel(selectedKoulutukses);
+                    if (validationErrors != null && validationErrors.size() > 0) {
+                        for (String validationError : validationErrors) {
+                            createDialog.addErrorMessage(validationError);
+                        }
                     }  else {
                     getWindow().removeWindow(createHakukohdeDialog);
                     presenter.showHakukohdeEditView(koulutusNameViewModelToOidList(selectedKoulutukses), null);

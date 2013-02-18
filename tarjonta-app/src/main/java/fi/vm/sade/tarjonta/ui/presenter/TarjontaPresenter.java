@@ -296,15 +296,17 @@ public class TarjontaPresenter implements CommonPresenter {
 
 
         CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(koulutusModel, KoulutusOidNameViewModel.class, "HakukohdeCreationDialog.title", "HakukohdeCreationDialog.valitutKoulutuksetOptionGroup");
-        String validationMessage = validateKoulutukses(vastaus.getKoulutusTulos());
-        if (validationMessage != null) {
+        List<String> validationMessages = validateKoulutukses(vastaus.getKoulutusTulos());
+        if (validationMessages != null && validationMessages.size() > 0) {
+            for (String validationMessage : validationMessages) {
             dialog.addErrorMessage(validationMessage);
+            }
         }
 
         return dialog;
     }
 
-    public String validateKoulutusOidNameViewModel(Collection<KoulutusOidNameViewModel> koulutukses) {
+    public List<String> validateKoulutusOidNameViewModel(Collection<KoulutusOidNameViewModel> koulutukses) {
         List<String> selectedOids = new ArrayList<String>();
         for (KoulutusOidNameViewModel koulutusOidNameViewModel : koulutukses) {
             selectedOids.add(koulutusOidNameViewModel.getKoulutusOid());
@@ -315,7 +317,9 @@ public class TarjontaPresenter implements CommonPresenter {
         return validateKoulutukses(vastaus.getKoulutusTulos());
     }
 
-    private String validateKoulutukses(List<KoulutusTulos> koulutukses) {
+    private List<String> validateKoulutukses(List<KoulutusTulos> koulutukses) {
+
+        List<String> returnVal = new ArrayList<String>();
         List<String> koulutusKoodis = new ArrayList<String>();
         List<String> pohjakoulutukses = new ArrayList<String>();
         for (KoulutusTulos koulutusModel : koulutukses) {
@@ -323,12 +327,12 @@ public class TarjontaPresenter implements CommonPresenter {
             pohjakoulutukses.add(koulutusModel.getKoulutus().getPohjakoulutusVaatimus());
         }
         if (!doesEqual(koulutusKoodis.toArray(new String[koulutusKoodis.size()]))) {
-            return I18N.getMessage("HakukohdeCreationDialog.wrongKoulutuskoodi");
-        }  else if (!doesEqual(pohjakoulutukses.toArray(new String[pohjakoulutukses.size()]))) {
-           return I18N.getMessage("HakukohdeCreationDialog.wrongPohjakoulutus");
-        }  else {
-            return null;
+            returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongKoulutuskoodi"));
         }
+        if (!doesEqual(pohjakoulutukses.toArray(new String[pohjakoulutukses.size()]))) {
+            returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongPohjakoulutus"));
+        }
+        return  returnVal;
     }
 
     private boolean doesEqual(String[] strs) {
