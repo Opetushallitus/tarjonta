@@ -100,15 +100,16 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     @Override
     public KoulutusmoduuliToteutus findKomotoByOid(String oid) {
          QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-         QHakukohde qHakukohde = QHakukohde.hakukohde;
          QKoulutusmoduuli qKomo = QKoulutusmoduuli.koulutusmoduuli;
-
-
-        return  from(qHakukohde, qKomoto,qKomo)
-                .leftJoin(qKomoto.koulutusmoduuli,qKomo)
-                .leftJoin(qKomoto.hakukohdes,qHakukohde)
-                .where(qKomoto.oid.eq(oid.trim()))
-                .singleResult(qKomoto);
+         
+         KoulutusmoduuliToteutus komoto = from(qKomoto,qKomo)
+                 .leftJoin(qKomoto.koulutusmoduuli,qKomo)
+                 .where(qKomoto.oid.eq(oid.trim()))
+                 .singleResult(qKomoto);
+         
+         komoto.getHakukohdes();
+         
+        return  komoto;
 
     }
 
