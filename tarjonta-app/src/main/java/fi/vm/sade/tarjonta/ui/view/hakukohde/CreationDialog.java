@@ -20,6 +20,7 @@ import java.util.List;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
@@ -43,6 +44,7 @@ public class CreationDialog<T> extends CustomComponent {
     private HorizontalLayout middleLayout;
     private HorizontalLayout buttonLayout;
     private OptionGroup optionGroup;
+    protected ErrorMessage errorView;
     private boolean attached = false;
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
@@ -60,6 +62,8 @@ public class CreationDialog<T> extends CustomComponent {
         typeClazz = clazzParam;
         rootLayout = new VerticalLayout();
         rootLayout.setMargin(true);
+        errorView = new ErrorMessage();
+
         this.dialogTitleKey = dialogTitle;
         this.dialogOptionGroupTitleKey = optionGroupTitle;
         setCompositionRoot(rootLayout);
@@ -86,11 +90,18 @@ public class CreationDialog<T> extends CustomComponent {
 
 
         rootLayout.addComponent(createTitleLayout());
+        rootLayout.addComponent(errorView);
         rootLayout.addComponent(createOptionGroupLayout(thingsModel));
         rootLayout.addComponent(createButtonLayout());
 
     }
 
+
+    public void addErrorMessage(String message) {
+        if (errorView != null) {
+            errorView.addError(message);
+        }
+    }
     /*
      * Create top horizontal layout containing Dialog title
      */

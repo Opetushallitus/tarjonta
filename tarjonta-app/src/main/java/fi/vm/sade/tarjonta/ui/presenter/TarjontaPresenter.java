@@ -291,9 +291,42 @@ public class TarjontaPresenter implements CommonPresenter {
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         kysely.getKoulutusOids().addAll(komotoOids);
         HaeKoulutuksetVastausTyyppi vastaus = tarjontaPublicService.haeKoulutukset(kysely);
+
         List<KoulutusOidNameViewModel> koulutusModel = convertKoulutusToNameOidViewModel(vastaus.getKoulutusTulos());
+
+
         CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(koulutusModel, KoulutusOidNameViewModel.class, "HakukohdeCreationDialog.title", "HakukohdeCreationDialog.valitutKoulutuksetOptionGroup");
+        String validationMessage = validateKoulutukses(vastaus.getKoulutusTulos());
+        if (validationMessage != null) {
+            dialog.addErrorMessage(validationMessage);
+        }
+
         return dialog;
+    }
+
+    private String validateKoulutukses(List<KoulutusTulos> koulutukses) {
+        List<String> koulutusKoodis = new ArrayList<String>();
+        List<String> pohjakoulutukses = new ArrayList<String>();
+        for (KoulutusTulos koulutusModel : koulutukses) {
+            koulutusKoodis.add(koulutusModel.getKoulutus().getKoulutuskoodi());
+            pohjakoulutukses.add(koulutusModel.getKoulutus().getPohjakoulutusVaatimus());
+        }
+        if (!doesEqual(koulutusKoodis.toArray(new String[koulutusKoodis.size()]))) {
+            return I18N.getMessage("HakukohdeCreationDialog.wrongKoulutuskoodi");
+        }  else if (!doesEqual(pohjakoulutukses.toArray(new String[pohjakoulutukses.size()]))) {
+           return I18N.getMessage("HakukohdeCreationDialog.wrongPohjakoulutus");
+        }  else {
+            return null;
+        }
+    }
+
+    private boolean doesEqual(String[] strs) {
+        for (int i = 0; i < strs.length; i++ ) {
+            if (!strs[0].equals(strs[i])) {
+                return  false;
+            }
+        }
+        return true;
     }
 
     public CreationDialog<KoulutusOidNameViewModel> createHakukohdeCreationDialogWithSelectedTarjoaja() {

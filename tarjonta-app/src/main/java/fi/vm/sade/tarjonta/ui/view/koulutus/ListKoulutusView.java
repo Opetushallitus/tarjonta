@@ -158,6 +158,7 @@ public class ListKoulutusView extends VerticalLayout {
      * @return the hierarchical container for Koulutus listing.
      */
     private Container createDataSource(Map<String, List<KoulutusTulos>> map) {
+
         Set<Map.Entry<String, List<KoulutusTulos>>> set = map.entrySet();
 
         HierarchicalContainer hc = new HierarchicalContainer();
