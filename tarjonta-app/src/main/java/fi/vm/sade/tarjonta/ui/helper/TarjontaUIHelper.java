@@ -15,31 +15,24 @@
  */
 package fi.vm.sade.tarjonta.ui.helper;
 
+
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.GetKoodistoByUriAndVersionType;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
-import fi.vm.sade.koodisto.service.types.common.KieliType;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.service.types.common.*;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +77,34 @@ public class TarjontaUIHelper {
      */
     public int getKoodiVersion(String koodiUriWithVersion) {
         return Integer.parseInt(splitKoodiURIWithVersion(koodiUriWithVersion)[1]);
+    }
+
+    public Set<KoodiType> getRelatedKoodis(List<String> koodiUris) {
+        HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
+        kysely.getKoulutusOids().addAll(koodiUris);
+        HaeKoulutuksetVastausTyyppi vastaus = _tarjontaPublicService.haeKoulutukset(kysely);
+
+        List<KoodiUriAndVersioType> koodiVersios = new ArrayList<KoodiUriAndVersioType>();
+        for (HaeKoulutuksetVastausTyyppi.KoulutusTulos koulutusTulos:vastaus.getKoulutusTulos()) {
+            KoodiUriAndVersioType koodiUriAndVersioType = new KoodiUriAndVersioType();
+            koodiUriAndVersioType.setKoodiUri(getKoodiURI(koulutusTulos.getKoulutus().getKoulutusohjelmakoodi()));
+            koodiUriAndVersioType.setVersio(getKoodiVersion(koulutusTulos.getKoulutus().getKoulutusohjelmakoodi()));
+            koodiVersios.add(koodiUriAndVersioType);
+        }
+
+       return getRelatedParentKoodis(koodiVersios);
+    }
+
+    private Set<KoodiType> getRelatedParentKoodis(List<KoodiUriAndVersioType> parentKoodis) {
+        Set<KoodiType> koodiTypes = new HashSet<KoodiType>();
+
+        for (KoodiUriAndVersioType koodiUriAndVersioType : parentKoodis) {
+
+            List<KoodiType> koodis = _koodiService.listKoodiByRelation(koodiUriAndVersioType,false, SuhteenTyyppiType.SISALTYY);
+            koodiTypes.addAll(koodis);
+        }
+
+        return koodiTypes;
     }
 
     /**

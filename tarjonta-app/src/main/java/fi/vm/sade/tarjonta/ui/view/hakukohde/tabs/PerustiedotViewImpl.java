@@ -29,6 +29,7 @@ import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
@@ -48,8 +49,13 @@ import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
@@ -64,7 +70,7 @@ import javax.validation.constraints.Pattern;
  * @author Tuomas Katva
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
-@Configurable
+@Configurable(preConstruction = true)
 public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotView {
 
     @Autowired
@@ -77,8 +83,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     GridLayout itemContainer;
     //Fields
     @NotNull(message = "{validation.Hakukohde.hakukohteenNimi.notNull}")
-    @PropertyId("hakukohdeNimi")
-    KoodistoComponent hakukohteenNimiCombo;
+//    @PropertyId("hakukohdeNimi")
+//    KoodistoComponent hakukohteenNimiCombo;
+    ComboBox hakukohteenNimiCombo;
     @PropertyId("tunnisteKoodi")
     TextField tunnisteKoodiText;
     @NotNull(message = "{validation.Hakukohde.haku.notNull}")
@@ -157,8 +164,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         hakukohteenNimiCombo.addListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(ValueChangeEvent event) {
-                if (event.getProperty().getValue() instanceof String) {
-                    presenter.setTunnisteKoodi(event.getProperty().getValue().toString());
+                if (event.getProperty().getValue() instanceof HakukohdeNameUriModel) {
+                    HakukohdeNameUriModel selectedHakukohde =   (HakukohdeNameUriModel) event.getProperty().getValue();
+                    tunnisteKoodiText.setValue(selectedHakukohde.getHakukohdeArvo());
                 } else {
                     LOG.warn("hakukohteenNimiCombo / value change listener - value was not a String! class = {}",
                             (event.getProperty().getValue() != null) ? event.getProperty().getValue().getClass() : "NULL");
@@ -447,9 +455,26 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         return hakuCombo;
     }
 
-    private KoodistoComponent buildHaku() {
+    private ComboBox buildHaku() {
 
-        hakukohteenNimiCombo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI);
+        //hakukohteenNimiCombo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI);
+        hakukohteenNimiCombo = UiUtil.comboBox(null,null,null);
+
+        Set<KoodiType> hakukohdeKoodis = tarjontaUIHelper.getRelatedKoodis(presenter.getModel().getHakukohde().getKomotoOids());
+        Set<HakukohdeNameUriModel> hakukohdes = new HashSet<HakukohdeNameUriModel>();
+        for(KoodiType koodiType : hakukohdeKoodis) {
+            HakukohdeNameUriModel hakukohde = new HakukohdeNameUriModel();
+            hakukohde.setHakukohdeArvo(koodiType.getKoodiArvo());
+            hakukohde.setHakukohdeUri(koodiType.getKoodiUri());
+            if (koodiType.getMetadata() != null) {
+            hakukohde.setHakukohdeNimi(koodiType.getMetadata().get(0).getNimi());
+            }
+            hakukohdes.add(hakukohde);
+        }
+        BeanItemContainer<HakukohdeNameUriModel> hakukohdeContainer = new BeanItemContainer<HakukohdeNameUriModel>(HakukohdeNameUriModel.class,hakukohdes);
+        hakukohteenNimiCombo.setContainerDataSource(hakukohdeContainer);
+        hakukohteenNimiCombo.setImmediate(true);
+//        hakukohteenNimiCombo.setItemCaptionPropertyId("hakukohdeNimi");
 
 
         return hakukohteenNimiCombo;
@@ -469,7 +494,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         tunnisteKoodiText = UiUtil.textField(hl, "", T("PerustiedotView.tunnistekoodi.prompt"), true);
         tunnisteKoodiText.setEnabled(false);
 
-        hl.setComponentAlignment(hakukohteenNimiCombo, Alignment.TOP_RIGHT);
+        hl.setComponentAlignment(hakukohteenNimiCombo, Alignment.TOP_LEFT);
 //        hl.setExpandRatio(tunnisteKoodiText, 5l);
         hl.setComponentAlignment(tunnisteKoodiText, Alignment.TOP_LEFT);
         return hl;
