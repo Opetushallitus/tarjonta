@@ -83,7 +83,7 @@ public class UploadKoodistoData {
             for (KoodiRelaatio koodiRelaatio:koodiRelaatios) {
                 log.info("Koodirelaatio yla-arvo : {} ala-arvo : {}", koodiRelaatio.getKoodiYlaArvo(),koodiRelaatio.getKoodiAlaArvo());
             }
-            //createKoodiRelations(koodiRelaatios);
+            createKoodiRelations(koodiRelaatios);
         } else {
             log.warn("No koodisto relations read from : {}", pathToFile);
         }
