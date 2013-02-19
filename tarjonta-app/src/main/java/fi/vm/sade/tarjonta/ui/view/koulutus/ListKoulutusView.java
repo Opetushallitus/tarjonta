@@ -151,8 +151,8 @@ public class ListKoulutusView extends VerticalLayout {
         categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
         categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
         
-        categoryTree.setColumnExpandRatio(COLUMN_A, 2.2f);
-        categoryTree.setColumnExpandRatio(COLUMN_TUTKINTONIMIKE, 0.5f);
+        categoryTree.setColumnExpandRatio(COLUMN_A, 2.4f);
+        categoryTree.setColumnExpandRatio(COLUMN_TUTKINTONIMIKE, 0.3f);
         categoryTree.setColumnExpandRatio(COLUMN_PVM, 0.3f);
         categoryTree.setColumnExpandRatio(COLUMN_TILA, 0.3f);
 
@@ -227,11 +227,12 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     private String getKoulutusNimi(KoulutusTulos curKoulutus) {
-        String nimi = getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi());
         if (curKoulutus.getKoulutus().getKoulutusohjelmakoodi() != null) {
-            nimi += ", " + getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi());
+            return getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi());
+        } else if (curKoulutus.getKoulutus().getKoulutuskoodi() != null) {
+            return getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi());
         }
-        return nimi;
+        return "";
     }
 
     private String getTilaStr(String tilaUri) {

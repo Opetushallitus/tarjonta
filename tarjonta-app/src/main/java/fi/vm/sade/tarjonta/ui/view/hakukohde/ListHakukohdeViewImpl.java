@@ -150,10 +150,10 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         categoryTree.addContainerProperty(COLUMN_ALOITUSPAIKAT, String.class, "");
         categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
         
-        categoryTree.setColumnExpandRatio(COLUMN_A,  2.0f);
+        categoryTree.setColumnExpandRatio(COLUMN_A,  2.1f);
         categoryTree.setColumnExpandRatio(COLUMN_PVM,  0.3f);
         categoryTree.setColumnExpandRatio(COLUMN_HAKUTAPA,  0.3f);
-        categoryTree.setColumnExpandRatio(COLUMN_ALOITUSPAIKAT,  0.2f);
+        categoryTree.setColumnExpandRatio(COLUMN_ALOITUSPAIKAT,  0.1f);
         categoryTree.setColumnExpandRatio(COLUMN_TILA,  0.3f);
         
 
