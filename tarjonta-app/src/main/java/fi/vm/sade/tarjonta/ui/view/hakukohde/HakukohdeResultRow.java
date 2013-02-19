@@ -21,14 +21,12 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 
-import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
@@ -54,6 +52,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable(preConstruction = false)
 public class HakukohdeResultRow extends HorizontalLayout {
 
+    private static final long serialVersionUID = 4163145140260915772L;
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResultRow.class);
     private transient I18NHelper i18n = new I18NHelper(this);
     private static final SisaltoTyyppi HAKUKOHDE = SisaltoTyyppi.HAKUKOHDE;
@@ -86,6 +85,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
      * selection in the menu.
      */
     private MenuBar.Command menuCommand = new MenuBar.Command() {
+
+        private static final long serialVersionUID = -3198339721387004359L;
+
         @Override
         public void menuSelected(MenuBar.MenuItem selectedItem) {
             //DEBUGSAWAY:LOG.debug(selectedItem.getText());
@@ -148,6 +150,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
     private void showRemoveDialog() {
         RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), hakukohdeNimi, T("removeYes"), T("removeNo"),
                 new Button.ClickListener() {
+
+                    private static final long serialVersionUID = -4938403467167578650L;
+
             @Override
             public void buttonClick(ClickEvent event) {
                 closeHakukohdeCreationDialog();
@@ -155,6 +160,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
             }
         },
                 new Button.ClickListener() {
+
+                    private static final long serialVersionUID = 8488147921050732676L;
+
             @Override
             public void buttonClick(ClickEvent event) {
                 closeHakukohdeCreationDialog();
@@ -181,6 +189,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
         isSelected = UiUtil.checkbox(null, null);
         isSelected.setImmediate(true);
         isSelected.addListener(new Property.ValueChangeListener() {
+
+            private static final long serialVersionUID = -613501895557976455L;
+
             @Override
             public void valueChange(ValueChangeEvent event) {
                 if (hakukohde != null
@@ -197,13 +208,22 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
         addComponent(isSelected);
         if (withMenuBar) {
-            Button nimiB = UiUtil.buttonLink(null, text);
+            Button nimiB = null;
+            if (text.length() > 70) {
+                String labelText = text.substring(0,  69) + "...";
+                nimiB = UiUtil.buttonLink(null, labelText);
+                nimiB.setDescription(text);
+            } else {
+                nimiB = UiUtil.buttonLink(null, text);
+            }
+            
             nimiB.addListener(new Button.ClickListener() {
+
+                private static final long serialVersionUID = 7334263722794344559L;
+
                 @Override
                 public void buttonClick(ClickEvent event) {
-                    tarjontaPresenter.showShowHakukohdeView(hakukohde.getHakukohde().getOid());
-                    //TODO poistetaan kun tarkastelu on toteutettu
-                    getWindow().showNotification("Tarkastelua ei ole toteutettu");
+                    tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getHakukohde().getOid());
                 }
             });
             nimiB.setStyleName("link-row");

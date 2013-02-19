@@ -704,5 +704,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         tavoitteet.setValue("");
         jatkoopintomahdollisuudet.setValue("");
         tutkintonimike.setValue("");
+        koulutusohjelmanTavoitteet.setValue("");
     }
 }
