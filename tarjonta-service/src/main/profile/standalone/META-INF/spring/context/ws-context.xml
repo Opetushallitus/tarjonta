@@ -4,15 +4,14 @@
        xmlns:jaxws="http://cxf.apache.org/jaxws"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
        xmlns:cxf="http://cxf.apache.org/core"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
        http://cxf.apache.org/core  http://cxf.apache.org/schemas/core.xsd">
     
-    
-    
-    <!--<bean id="hakuService" class="fi.vm.sade.tarjonta.service.impl.HakuServiceImpl"/>-->
     <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl"/>
     <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicServiceImpl"/>
 
@@ -29,9 +28,30 @@
     <bean id="tarjontaPublicationRESTService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationRESTService"/>
     <bean id="tarjontaExceptionMapper" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationExceptionMapper"/>
 
-    <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResource"/>
-    <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResource"/>
+    <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResourceImpl"/>
+    <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResourceImpl"/>
 
+    <!--
+        Needed to convert wsdl generated dtos to json. (no @XmlRootElement annotation)
+    -->
+    <bean id="tarjontaObjectMapper" class="org.codehaus.jackson.map.ObjectMapper"/>
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="tarjontaObjectMapper"/>
+        <property name="targetMethod" value="configure"/>
+        <property name="arguments">
+            <util:list>
+                <util:constant static-field="org.codehaus.jackson.map.SerializationConfig.Feature.INDENT_OUTPUT"/>
+                <util:constant static-field="java.lang.Boolean.TRUE"/>
+            </util:list>
+        </property>
+    </bean>
+    <bean id="tarjontaJacksonJsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider">
+        <property name="mapper" ref="tarjontaObjectMapper"/>
+    </bean>
+
+    <!--
+      REST services
+    -->
     <jaxrs:server id="tarjontaPublicationREST" address="/rest">
         <jaxrs:serviceBeans>
             <ref bean="tarjontaPublicationRESTService" />
@@ -40,6 +60,7 @@
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="tarjontaExceptionMapper"/>
+            <ref bean="tarjontaJacksonJsonProvider" />
         </jaxrs:providers>
         <jaxrs:features>
             <cxf:logging/>

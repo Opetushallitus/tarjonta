@@ -88,48 +88,20 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--        <dependency>
-            <groupId>org.jvnet.jaxb2_commons</groupId>
-            <artifactId>jaxb2-basics-runtime</artifactId>
-            <version>0.6.3</version>
-            <scope>provided</scope>
-        </dependency>-->
-        <!--        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-common</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>-->
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+        </dependency>
 
     </dependencies>
 
     <build>
         <plugins>
             
-           
-            <!-- make felix osgi bundle -->
-
-            <!--<plugin>-->
-                <!--<groupId>org.apache.felix</groupId>-->
-                <!--<artifactId>maven-bundle-plugin</artifactId>-->
-                <!--<extensions>true</extensions>-->
-                <!--<configuration>-->
-                    <!--<instructions>-->
-                        <!--<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>-->
-                        <!--<Bundle-Description>${project.description}</Bundle-Description>-->
-                        <!--<Export-Package>-->
-                            <!--fi.vm.sade.tarjonta.service.types,-->
-                            <!--fi.vm.sade.tarjonta.service.types.tarjonta,-->
-                            <!--fi.vm.sade.tarjonta.service-->
-                        <!--</Export-Package>-->
-                        <!--<Import-Package>-->
-                            <!--${felix.Import-Package}-->
-                        <!--</Import-Package>-->
-                        <!--<Include-Resource>META-INF=target/classes/META-INF</Include-Resource>-->
-                    <!--</instructions>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-
+            <!--
+              Generate SOAP / REST WS API classes.
+            -->
             <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-codegen-plugin</artifactId>
