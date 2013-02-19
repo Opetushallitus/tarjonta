@@ -294,6 +294,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
             hakukohde.setNimi(hakukohdeModel.getHakukohdeNimi());
             hakukohde.setTila(EntityUtils.convertTila(hakukohdeModel.getTila()));
+            hakukohde.setAloituspaikat((hakukohdeModel.getAloituspaikatLkm() != null) ? hakukohdeModel.getAloituspaikatLkm().toString() : "" + 0);
             hakukohde.setOid(hakukohdeModel.getOid());
 
             Haku hakuModel = hakukohdeModel.getHaku();
@@ -302,6 +303,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             haku.setOid(hakuModel.getOid());
             haku.setHakukausiUri(hakuModel.getHakukausiUri());
             haku.setHakuvuosi(hakuModel.getHakukausiVuosi().toString());
+            haku.setKoulutuksenAlkamiskausiUri(hakuModel.getKoulutuksenAlkamiskausiUri());
+            haku.setKoulutuksenAlkamisvuosi(hakuModel.getKoulutuksenAlkamisVuosi().toString());
 
             KoulutusmoduuliToteutus toteutus = CollectionUtils.singleItem(hakukohdeModel.getKoulutusmoduuliToteutuses());
             koulutus.setTarjoaja(toteutus.getTarjoaja());

@@ -65,6 +65,8 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListHakukohdeViewImpl.jarjestys.Organisaatio")};
     public static final String COLUMN_A = "Kategoriat";
     public static final String COLUMN_PVM = "Ajankohta";
+    public static final String COLUMN_HAKUTAPA = "Hakutapa";
+    public static final String COLUMN_ALOITUSPAIKAT = "Aloituspaikat";
     public static final String COLUMN_TILA = "Tila";
     
     private static final Logger LOG = LoggerFactory.getLogger(ListHakukohdeViewImpl.class);
@@ -144,10 +146,14 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         
         categoryTree.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, new HakukohdeResultRow());
         categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
+        categoryTree.addContainerProperty(COLUMN_HAKUTAPA, String.class, "");
+        categoryTree.addContainerProperty(COLUMN_ALOITUSPAIKAT, String.class, "");
         categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
         
         categoryTree.setColumnExpandRatio(COLUMN_A,  1.0f);
         categoryTree.setColumnExpandRatio(COLUMN_PVM,  0.5f);
+        categoryTree.setColumnExpandRatio(COLUMN_HAKUTAPA,  0.5f);
+        categoryTree.setColumnExpandRatio(COLUMN_ALOITUSPAIKAT,  0.2f);
         categoryTree.setColumnExpandRatio(COLUMN_TILA,  0.5f);
         
 
@@ -180,6 +186,8 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         HierarchicalContainer hc = new HierarchicalContainer();
         hc.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, new HakukohdeResultRow());
         hc.addContainerProperty(COLUMN_PVM, String.class, "");
+        hc.addContainerProperty(COLUMN_HAKUTAPA, String.class, "");
+        hc.addContainerProperty(COLUMN_ALOITUSPAIKAT, String.class, "");
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
 
         for (Map.Entry<String, List<HakukohdeTulos>> e : set) {
@@ -196,6 +204,8 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 hc.setParent(curHakukohde, rootItem);
                 hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getHakukohdeNimi(curHakukohde), true));
                 hc.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
+                hc.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
+                hc.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getHakukohde().getAloituspaikat());
                 hc.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
                 
                 hc.setChildrenAllowed(curHakukohde, false);
@@ -204,12 +214,16 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         return hc;
     }
 
+    private Object getHakutapa(HakukohdeTulos curHakukohde) {
+        return getKoodiNimi(curHakukohde.getHaku().getHakutapa());
+    }
+
     private String buildOrganisaatioCaption(Map.Entry<String, List<HakukohdeTulos>> e) {
         return e.getKey() + " (" + e.getValue().size() + ")";
     }
     
     private String getAjankohta(HakukohdeTulos curHakukohde) {
-        return getKoodiNimi(curHakukohde.getHaku().getHakukausiUri()) + " " + curHakukohde.getHaku().getHakuvuosi();
+        return getKoodiNimi(curHakukohde.getHaku().getKoulutuksenAlkamiskausiUri()) + " " + curHakukohde.getHaku().getKoulutuksenAlkamisvuosi();
     }
     
     private String getTilaStr(HakukohdeTulos curHakukohde) {
