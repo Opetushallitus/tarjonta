@@ -81,6 +81,7 @@ public class KoulutusResultRow extends HorizontalLayout {
     public KoulutusResultRow(KoulutusTulos koulutus, String koulutusNimi) {
         this.koulutus = koulutus;
         this.koulutusNimi = koulutusNimi;
+
     }
     /**
      * Command object for the row menubar. Starts operations based on user's

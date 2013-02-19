@@ -19,8 +19,11 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
@@ -35,6 +38,10 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
 
     @Autowired(required = true)
     private TarjontaPresenter presenter;
+    @Autowired
+    private TarjontaUIHelper tarjontaUIHelper;
+
+    private PerustiedotViewImpl formView;
 
     public HakukohdePerustiedotViewImpl(String oid) {
         super(oid, SisaltoTyyppi.HAKUKOHDE);
@@ -45,7 +52,7 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
     @Override
     protected void buildLayout(VerticalLayout layout) {
         super.buildLayout(layout); //init base navigation here
-        PerustiedotViewImpl formView = new PerustiedotViewImpl(presenter, getUiBuilder());
+        formView = new PerustiedotViewImpl(presenter, getUiBuilder());
         buildFormLayout("perustiedot", presenter, layout, presenter.getModel().getHakukohde(), formView);
     }
 
@@ -70,8 +77,14 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
 
     @Override
     public String actionSave(SaveButtonState tila, ClickEvent event) throws Exception {
+        HakukohdeNameUriModel selectedHakukohde = formView.getSelectedHakukohde();
+        presenter.getModel().getHakukohde().setHakukohdeNimi(getUriWithVersion(selectedHakukohde));
         presenter.saveHakuKohde(tila);
         return getHakukohdeOid();
+    }
+
+    private String getUriWithVersion(HakukohdeNameUriModel hakukohdeNameUriModel) {
+        return hakukohdeNameUriModel.getHakukohdeUri() + TarjontaUIHelper.KOODI_URI_AND_VERSION_SEPARATOR + hakukohdeNameUriModel.getUriVersio();
     }
 
     private String getHakukohdeOid() {

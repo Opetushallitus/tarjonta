@@ -107,6 +107,10 @@ public class TarjontaUIHelper {
         return koodiTypes;
     }
 
+    public String createUriWithVersion(KoodiType koodiType) {
+        return koodiType.getKoodiUri() + KOODI_URI_AND_VERSION_SEPARATOR + koodiType.getVersio();
+    }
+
     /**
      * Split uri from "#" and extract uri without version number.
      *

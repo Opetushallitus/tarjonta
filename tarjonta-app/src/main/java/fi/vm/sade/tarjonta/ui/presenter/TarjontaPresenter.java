@@ -165,21 +165,7 @@ public class TarjontaPresenter implements CommonPresenter {
 
     }
 
-    public void setTunnisteKoodi(String hakukohdeNimiUri) {
-        String koodiUri = TarjontaUIHelper.splitKoodiURI(hakukohdeNimiUri)[0];
-        List<KoodiType> koodit = koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder
-                .latestAcceptedKoodiByUri(koodiUri));
 
-        KoodiType foundKoodi = null;
-        for (KoodiType koodi : koodit) {
-            foundKoodi = koodi;
-        }
-        if (foundKoodi != null) {
-            String koodi = foundKoodi.getKoodiArvo();
-
-            hakuKohdePerustiedotView.setTunnisteKoodi(koodi);
-        }
-    }
 
     public void saveHakukohdeLiite() {
         ArrayList<HakukohdeLiiteTyyppi> liitteet = new ArrayList<HakukohdeLiiteTyyppi>();
@@ -226,9 +212,6 @@ public class TarjontaPresenter implements CommonPresenter {
 
     public void initHakukohdeForm(PerustiedotView hakuKohdePerustiedotView) {
         this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
-        if (getModel().getHakukohde().getHakukohdeNimi() != null) {
-            setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
-        }
 
         ListHakuVastausTyyppi haut = tarjontaPublicService.listHaku(new ListaaHakuTyyppi());
 
@@ -261,7 +244,7 @@ public class TarjontaPresenter implements CommonPresenter {
 
         }
         if (getModel().getHakukohde() != null && getModel().getHakukohde().getHakukohdeNimi() != null) {
-            setTunnisteKoodi(getModel().getHakukohde().getHakukohdeNimi());
+
 
             //TODO: If hakukohde is not now initialize hakukohdeLiite form
             getModel().setSelectedLiite(new HakukohdeLiiteViewModel());
@@ -778,6 +761,18 @@ public class TarjontaPresenter implements CommonPresenter {
             getModel().getSelectedValintaKoe().setValintakoeAjat(ajat);
         }
     }
+
+
+    private HakukohdeNameUriModel hakukohdeNameUriModelFromKoodi(KoodiType koodiType) {
+        HakukohdeNameUriModel hakukohdeNameUriModel = new HakukohdeNameUriModel();
+        hakukohdeNameUriModel.setUriVersio(koodiType.getVersio());
+        hakukohdeNameUriModel.setHakukohdeUri(koodiType.getKoodiUri());
+        hakukohdeNameUriModel.setHakukohdeArvo(koodiType.getKoodiArvo());
+        if (koodiType.getMetadata() != null) {
+            hakukohdeNameUriModel.setHakukohdeNimi(koodiType.getMetadata().get(0).getNimi());
+        }
+        return hakukohdeNameUriModel;
+    }
     /**
      * Show hakukohde edit view.
      *
@@ -794,6 +789,7 @@ public class TarjontaPresenter implements CommonPresenter {
         } else {
 
             editHakukohdeView.loadLiiteTableWithData();
+
         }
 
         //If a list of koulutusOids is provided they are set in the model
@@ -809,6 +805,13 @@ public class TarjontaPresenter implements CommonPresenter {
             getModel().setHakukohde(this.hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(tarjontaPublicService
                     .lueHakukohde(kysely).getHakukohde()));
             setKomotoOids(getModel().getHakukohde().getKomotoOids());
+
+            if (getModel().getHakukohde().getHakukohdeNimi() != null) {
+               List<KoodiType> koodis =  uiHelper.gethKoodis(getModel().getHakukohde().getHakukohdeNimi());
+                if (koodis != null && koodis.size() > 0) {
+               getModel().getHakukohde().setSelectedHakukohdeNimi(hakukohdeNameUriModelFromKoodi(koodis.get(0)));
+                }
+            }
         }
 
         getRootView().changeView(editHakukohdeView);

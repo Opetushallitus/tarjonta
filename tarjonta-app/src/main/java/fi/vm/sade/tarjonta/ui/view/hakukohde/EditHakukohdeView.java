@@ -16,7 +16,9 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
 import com.vaadin.ui.TabSheet;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohdePerustiedotViewImpl;
@@ -43,6 +45,7 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
     private TabSheet.Tab valintakokeetTab;
     private HakukohteenLiitteetTabImpl liitteet;
     private HakukohteenValintakoeTabImpl valintakokeet;
+    private HakukohdePerustiedotViewImpl perustiedot;
     
     public EditHakukohdeView() {
         super();
@@ -97,6 +100,8 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
             liitteet.showHakukohdeEditWindow(liiteId);
         }
     }
+
+
     
     @Override
     protected void buildLayout() {
@@ -106,7 +111,7 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
         }
         
         tabs = UiBuilder.tabSheet(this);
-        HakukohdePerustiedotViewImpl perustiedot = new HakukohdePerustiedotViewImpl(hakukohdeOid);
+        perustiedot = new HakukohdePerustiedotViewImpl(hakukohdeOid);
         
         liitteet = new HakukohteenLiitteetTabImpl();
         valintakokeet = new HakukohteenValintakoeTabImpl();

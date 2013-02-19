@@ -27,6 +27,8 @@ public class HakukohdeNameUriModel {
 
     private String hakukohdeArvo;
 
+    private Integer uriVersio;
+
 
     public String getHakukohdeNimi() {
         return hakukohdeNimi;
@@ -55,5 +57,39 @@ public class HakukohdeNameUriModel {
     @Override
     public String toString() {
         return hakukohdeNimi;
+    }
+
+    public Integer getUriVersio() {
+        return uriVersio;
+    }
+
+    public void setUriVersio(Integer uriVersio) {
+        this.uriVersio = uriVersio;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HakukohdeNameUriModel that = (HakukohdeNameUriModel) o;
+
+        if (hakukohdeArvo != null ? !hakukohdeArvo.equals(that.hakukohdeArvo) : that.hakukohdeArvo != null)
+            return false;
+        if (hakukohdeNimi != null ? !hakukohdeNimi.equals(that.hakukohdeNimi) : that.hakukohdeNimi != null)
+            return false;
+        if (hakukohdeUri != null ? !hakukohdeUri.equals(that.hakukohdeUri) : that.hakukohdeUri != null) return false;
+        if (uriVersio != null ? !uriVersio.equals(that.uriVersio) : that.uriVersio != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = hakukohdeNimi != null ? hakukohdeNimi.hashCode() : 0;
+        result = 31 * result + (hakukohdeUri != null ? hakukohdeUri.hashCode() : 0);
+        result = 31 * result + (hakukohdeArvo != null ? hakukohdeArvo.hashCode() : 0);
+        result = 31 * result + (uriVersio != null ? uriVersio.hashCode() : 0);
+        return result;
     }
 }

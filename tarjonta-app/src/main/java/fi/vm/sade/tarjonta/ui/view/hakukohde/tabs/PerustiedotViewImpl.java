@@ -161,18 +161,26 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
       
         hakukohteenNimiCombo.setImmediate(true);
+
         hakukohteenNimiCombo.addListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 if (event.getProperty().getValue() instanceof HakukohdeNameUriModel) {
                     HakukohdeNameUriModel selectedHakukohde =   (HakukohdeNameUriModel) event.getProperty().getValue();
+                    tunnisteKoodiText.setEnabled(true);
                     tunnisteKoodiText.setValue(selectedHakukohde.getHakukohdeArvo());
+                    tunnisteKoodiText.setEnabled(false);
                 } else {
                     LOG.warn("hakukohteenNimiCombo / value change listener - value was not a String! class = {}",
                             (event.getProperty().getValue() != null) ? event.getProperty().getValue().getClass() : "NULL");
                 }
             }
         });
+
+        if (presenter != null  && presenter.getModel() != null && presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getSelectedHakukohdeNimi() != null) {
+            hakukohteenNimiCombo.setValue(presenter.getModel().getHakukohde().getSelectedHakukohdeNimi());
+
+        }
     }
 
     /*
@@ -241,6 +249,20 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         topErrorArea.addComponent(errorView);
 
         return topErrorArea;
+    }
+
+    public void setSelectedHakukohdenimi(HakukohdeNameUriModel koodiType) {
+        if (hakukohteenNimiCombo != null) {
+            hakukohteenNimiCombo.setValue(koodiType);
+        }
+    }
+
+    public HakukohdeNameUriModel getSelectedHakukohde() {
+        if (hakukohteenNimiCombo != null) {
+            return (HakukohdeNameUriModel)hakukohteenNimiCombo.getValue();
+        }  else {
+            return null;
+        }
     }
 
     private void addItemToGrid(String captionKey, AbstractComponent component) {
@@ -466,6 +488,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             HakukohdeNameUriModel hakukohde = new HakukohdeNameUriModel();
             hakukohde.setHakukohdeArvo(koodiType.getKoodiArvo());
             hakukohde.setHakukohdeUri(koodiType.getKoodiUri());
+            hakukohde.setUriVersio(koodiType.getVersio());
             if (koodiType.getMetadata() != null) {
             hakukohde.setHakukohdeNimi(koodiType.getMetadata().get(0).getNimi());
             }
@@ -474,7 +497,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         BeanItemContainer<HakukohdeNameUriModel> hakukohdeContainer = new BeanItemContainer<HakukohdeNameUriModel>(HakukohdeNameUriModel.class,hakukohdes);
         hakukohteenNimiCombo.setContainerDataSource(hakukohdeContainer);
         hakukohteenNimiCombo.setImmediate(true);
-//        hakukohteenNimiCombo.setItemCaptionPropertyId("hakukohdeNimi");
+
 
 
         return hakukohteenNimiCombo;
