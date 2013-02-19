@@ -13,7 +13,7 @@
 
 
     <context:property-placeholder
-            location="classpath:tarjonta-service.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-data.properties"
+            location="classpath:tarjonta-data.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-data.properties"
             ignore-resource-not-found="true"/>
     <!-- Bean configuration for interceptor & callback for development-->
     <bean id="ticketInterceptor" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptor">
@@ -30,6 +30,12 @@
             <ref bean="ticketInterceptor" />
         </cxf:outInterceptors>
     </cxf:bus>
+
+    <bean id="commonConstants" class="fi.vm.sade.tarjonta.data.util.CommonConstants">
+        <constructor-arg index="0" value="${organisaatio.oid:NO_OID}"/>
+        <constructor-arg index="1" value="${organisaatio.nimi:NO_NIMI}"/>
+        <constructor-arg index="2" value="${base.uri:NO_URI}"/>
+    </bean>
 
     <!--
     TODO: move attributes to properties

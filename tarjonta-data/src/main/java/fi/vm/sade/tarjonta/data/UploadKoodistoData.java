@@ -30,6 +30,8 @@ import fi.vm.sade.koodisto.util.KoodistoServiceSearchCriteriaBuilder;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.data.dto.KoodiRelaatio;
 import fi.vm.sade.tarjonta.data.dto.YhteishakuKooditDTO;
+import fi.vm.sade.tarjonta.data.loader.xls.KoodistoRelaatioExcelReader;
+import fi.vm.sade.tarjonta.data.util.CommonConstants;
 import fi.vm.sade.tarjonta.data.util.DataUtils;
 import java.io.IOException;
 import java.util.*;
@@ -51,23 +53,12 @@ public class UploadKoodistoData {
 
     //TODO : clean these Strings and make main-class which calls this class
 
-    private static final String KOULUTUS_OHJELMA_KOODISTO_URI = "koulutusohjelmat";
-    private static final String HAKUKOHDE_OHJELMA_KOODISTO_URI = "Hakukohde";
 
-    //private static final String BASE_GROUP_URI_FOR_KOODISTO = "baseuri";
     private static final String BASE_GROUP_URI_FOR_KOODISTO = "http://ryhma";
-    private static final String KOODISTO_VALINTAKUVAUSRYHMA_URI = "uri:valintakuvausryhmäTesti";
-    private static final String KOODISTO_VALINTAKUVAUSRYHMA_NIMI = "ValintakuvausryhmäTesti";
 
-    private static final String KOODISTO_HAKUKOHDE_URI = "hakukohdeTestiTuomas";
-    private static final String KOODISTO_TUTKINTO_URI = "tutkintoTestiTuomas";
+    @Autowired
+    private CommonConstants commonConstants;
 
-    //private static final String KOODISTO_HAKUKOHDE_URI = "uri:hakukohdeTesti";
-    private static final String KOODISTO_HAKUKOHDE_NIMI = "HakukohdeTesti";
-    //private static final String ORGANISAATIO_NIMI = "omistaja";
-    private static final String ORGANISAATIO_NIMI = "Espoon kaupunki";
-    //private static final String ORGANISAATIO_OID = "xxxxxxxxxx.xxx.x.x.x";
-    private static final String ORGANISAATIO_OID = "1.2.246.562.10.10108401950";
     private static final Date ACTIVATED_DATE = new DateTime(2013, 1, 1, 1, 1).toDate();
     @Autowired
     private KoodistoAdminService koodistoAdminService;
@@ -81,24 +72,57 @@ public class UploadKoodistoData {
     @Autowired
     private TarjontaDataKoodistoHelper koodistoHelper;
 
-    private HakukohdeData data;
-    private List<KoodiType> hakukohdeCodes;
-
-
-    private HashMap<String,KoodiType> ylaKoodistoArvot;
-    private HashMap<String,KoodiType> alaKoodistoArvot;
 
     private final Logger log = LoggerFactory.getLogger(UploadKoodistoData.class);
 
+    public void createKoodistoRelations(String pathToFile) throws IOException {
+        KoodistoRelaatioExcelReader reader = new KoodistoRelaatioExcelReader();
+        List<KoodiRelaatio> relaatios = reader.readKoodiRelaatioExcel(pathToFile);
+        if (relaatios != null) {
+           Set<KoodiRelaatio> koodiRelaatios = new HashSet<KoodiRelaatio>(relaatios);
+            for (KoodiRelaatio koodiRelaatio:koodiRelaatios) {
+                log.info("Koodirelaatio yla-arvo : {} ala-arvo : {}", koodiRelaatio.getKoodiYlaArvo(),koodiRelaatio.getKoodiAlaArvo());
+            }
+            //createKoodiRelations(koodiRelaatios);
+        } else {
+            log.warn("No koodisto relations read from : {}", pathToFile);
+        }
+    }
 
+    public void loadKoodistoFromExcel(String pathToExcel,String koodistoNimi) throws  IOException, ExceptionMessage{
+        List<String> ryhmaUris = new ArrayList<String>();
+        ryhmaUris.add(commonConstants.getBaseGroupUri());
+        String koodistoUri = createKoodistoUriFromName(koodistoNimi);
+        CreateKoodistoDataType koodisto = koodistoHelper.addCodeGroup(ryhmaUris,koodistoUri,koodistoNimi);
+        CommonKoodiData koodis = new CommonKoodiData(pathToExcel);
+        if (koodis != null && koodis.getLoadedKoodis() != null && koodis.getLoadedKoodis().size() > 0) {
+            loadKoodisToKoodisto(koodis.getLoadedKoodis(),koodistoUri);
+        }   else {
+            log.warn("Loaded koodis was empty or null!");
+        }
+    }
+
+    private String createKoodistoUriFromName(String koodistoNimi) {
+        return koodistoNimi.replaceAll("\\s","");
+    }
+
+    //Test runs this method
     public void startFullImport() throws IOException, ExceptionMessage {
 //        data = new HakukohdeData();
-        List<String> ryhmaUris = new ArrayList<String>();
+        /*List<String> ryhmaUris = new ArrayList<String>();
         ryhmaUris.add(BASE_GROUP_URI_FOR_KOODISTO);
         koodistoHelper.setOrganisaatioNimi(ORGANISAATIO_NIMI);
-        koodistoHelper.setOrganisaatioOid(ORGANISAATIO_OID);
+        koodistoHelper.setOrganisaatioOid(ORGANISAATIO_OID);*/
 
-        String relaatioPath = "C:\\KoodistoImportTesti\\koulutusOhjelmaHakukohdeRelaatio.xls";
+       /* String relaatioPath = "C:\\KoodistoExcelTesti\\koodistoRelaatioImportTest.xls";
+
+        KoodistoRelaatioExcelReader reader = new KoodistoRelaatioExcelReader();
+        List<KoodiRelaatio> relaatios = reader.readKoodiRelaatioExcel(relaatioPath);
+        for (KoodiRelaatio relaatio : relaatios) {
+            log.info("YLA KOODISTO NAME : {} ALAKOODISTO NAME : {}",relaatio.getYlaArvoKoodisto(),relaatio.getAlaArvoKoodisto());
+            log.info("YLA ARVO : {} ALA ARVO : {} ", relaatio.getKoodiYlaArvo(),relaatio.getKoodiAlaArvo());
+        }*/
+
 
        /* KoodiRelaatioData koodiRelaatioData = new KoodiRelaatioData(relaatioPath);
 
@@ -175,7 +199,7 @@ public class UploadKoodistoData {
         }
     }
 
-    private void addKoodistoRelations(Set<KoodiRelaatio> relaatiot) {
+/*    private void addKoodistoRelations(Set<KoodiRelaatio> relaatiot) {
 
         for (KoodiRelaatio koodiRelaatio:relaatiot) {
             List<KoodiUriAndVersioType> alakoodis = new ArrayList<KoodiUriAndVersioType>();
@@ -187,17 +211,17 @@ public class UploadKoodistoData {
             koodiAdminService.addRelationByAlakoodi(koodistoHelper.createKoodiUriAndVersioType(koodi), alakoodis, SuhteenTyyppiType.SISALTYY);
         }
 
-    }
+    }*/
 
-    private String createHakukohdeKoodisto(List<String> baseUri, String uniqueId) {
+    /*private String createHakukohdeKoodisto(List<String> baseUri, String uniqueId) {
         final String uri = KOODISTO_HAKUKOHDE_URI + uniqueId;
         final String name = KOODISTO_HAKUKOHDE_NIMI + uniqueId;
 
         KoodistoType created = koodistoHelper.getKoodistoByUri(koodistoHelper.addCodeGroup(baseUri, uri, name).getKoodistoUri());
 
-        /*
+        *//*
          * Create the code group items.
-         */
+         *//*
         int index = 1;
 
         for (YhteishakuKooditDTO dto : data.getLoadedData()) {
@@ -224,16 +248,16 @@ public class UploadKoodistoData {
         final String uri = KOODISTO_VALINTAKUVAUSRYHMA_URI + uniqueId;
         final String name = KOODISTO_VALINTAKUVAUSRYHMA_NIMI + uniqueId;
 
-        /*
+        *//*
          * Create code
-         */
+         *//*
 
         KoodistoType created = koodistoHelper.getKoodistoByUri(koodistoHelper.addCodeGroup(baseUri, uri, name).getKoodistoUri());
         KoodiType addCodeItem = koodistoHelper.addCodeItem(created.getKoodistoUri(), "valintauri" + uniqueId, "valinta" + uniqueId, "valinta" + uniqueId);
 
-        /*
+        *//*
          * Add relatios for the code above.
-         */
+         *//*
         List<KoodiUriAndVersioType> alakoodis = new ArrayList<KoodiUriAndVersioType>();
         for (KoodiType koodisto : hakukohdeCodes) {
             alakoodis.add(koodistoHelper.createKoodiUriAndVersioType(koodisto));
@@ -243,11 +267,5 @@ public class UploadKoodistoData {
 
         return uri;
     }
-
-
-
-
-
-
-
+*/
 }
