@@ -67,6 +67,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     @Autowired
     private ConversionService conversionService;
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    
+    private final static String SYKSY = "syksy";
+    private final static String KEVAT = "kevat";
 
     public TarjontaPublicServiceImpl() {
         super();
@@ -431,11 +434,23 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         koulutusKooste.setKoulutuskoodi((komo != null) ? komo.getKoulutusKoodi() : null);
         koulutusKooste.setKoulutusohjelmakoodi((komo != null) ? komo.getKoulutusohjelmaKoodi() : null);
         koulutusKooste.setPohjakoulutusVaatimus(komoto.getPohjakoulutusvaatimus());
-        koulutusKooste.setAjankohta(new SimpleDateFormat("dd.MM.yyyy").format(komoto.getKoulutuksenAlkamisPvm()));
+        koulutusKooste.setAjankohta(parseAjankohtaString(komoto.getKoulutuksenAlkamisPvm()));
         koulutusKooste.setKomotoOid(komoto.getOid());
+        koulutusKooste.setTutkintonimike((komo != null) ? komo.getTutkintonimike() : null);
         tulos.setKoulutus(koulutusKooste);
         return tulos;
     }
+
+    private String parseAjankohtaString(Date koulutuksenAlkamisPvm) {
+        if (koulutuksenAlkamisPvm == null) {
+            return null;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(koulutuksenAlkamisPvm);
+        String pvmStr = cal.get(Calendar.MONTH) < 7 ? KEVAT : SYKSY;
+        return pvmStr + " " + cal.get(Calendar.YEAR);
+    }
+
 
     public LueKoulutusVastausTyyppi lueKoulutus(LueKoulutusKyselyTyyppi kysely) {
         log.debug("in LueKoulutusVastausTyyppi");

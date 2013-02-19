@@ -64,6 +64,9 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
 
     public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListHakukohdeViewImpl.jarjestys.Organisaatio")};
     public static final String COLUMN_A = "Kategoriat";
+    public static final String COLUMN_PVM = "Ajankohta";
+    public static final String COLUMN_TILA = "Tila";
+    
     private static final Logger LOG = LoggerFactory.getLogger(ListHakukohdeViewImpl.class);
     private static final long serialVersionUID = 60562140590088029L;
     /**
@@ -138,6 +141,15 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         categoryTree = new CategoryTreeView();
         addComponent(categoryTree);
         setHeight(Sizeable.SIZE_UNDEFINED, 0);
+        
+        categoryTree.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, new HakukohdeResultRow());
+        categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
+        categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
+        
+        categoryTree.setColumnExpandRatio(COLUMN_A,  1.0f);
+        categoryTree.setColumnExpandRatio(COLUMN_PVM,  0.5f);
+        categoryTree.setColumnExpandRatio(COLUMN_TILA,  0.5f);
+        
 
         setExpandRatio(wrapper, 0.07f);
         setExpandRatio(categoryTree, 0.93f);
@@ -166,8 +178,9 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         Set<Map.Entry<String, List<HakukohdeTulos>>> set = map.entrySet();
 
         HierarchicalContainer hc = new HierarchicalContainer();
-        HakukohdeResultRow rowStyleDef = new HakukohdeResultRow();
-        hc.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, rowStyleDef.format("", false));
+        hc.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, new HakukohdeResultRow());
+        hc.addContainerProperty(COLUMN_PVM, String.class, "");
+        hc.addContainerProperty(COLUMN_TILA, String.class, "");
 
         for (Map.Entry<String, List<HakukohdeTulos>> e : set) {
             LOG.debug("getTreeDataSource()" + e.getKey());
@@ -181,7 +194,10 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 HakukohdeResultRow rowStyleInner = new HakukohdeResultRow(curHakukohde, getHakukohdeNimi(curHakukohde));
                 hc.addItem(curHakukohde);
                 hc.setParent(curHakukohde, rootItem);
-                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(buildHakukohdeCaption(curHakukohde), true));
+                hc.getContainerProperty(curHakukohde, COLUMN_A).setValue(rowStyleInner.format(getHakukohdeNimi(curHakukohde), true));
+                hc.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
+                hc.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
+                
                 hc.setChildrenAllowed(curHakukohde, false);
             }
         }
@@ -191,15 +207,17 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     private String buildOrganisaatioCaption(Map.Entry<String, List<HakukohdeTulos>> e) {
         return e.getKey() + " (" + e.getValue().size() + ")";
     }
-
-    private String buildHakukohdeCaption(HakukohdeTulos curHakukohde) {
-        return getHakukohdeNimi(curHakukohde)
-                + ", " + i18n.getMessage(curHakukohde.getHakukohde().getTila().name());
+    
+    private String getAjankohta(HakukohdeTulos curHakukohde) {
+        return getKoodiNimi(curHakukohde.getHaku().getHakukausiUri()) + " " + curHakukohde.getHaku().getHakuvuosi();
+    }
+    
+    private String getTilaStr(HakukohdeTulos curHakukohde) {
+        return i18n.getMessage(curHakukohde.getHakukohde().getTila().name());
     }
     
     private String getHakukohdeNimi(HakukohdeTulos curHakukohde) {
-        return getKoodiNimi(curHakukohde.getHakukohde().getNimi())
-                + ", " + getKoodiNimi(curHakukohde.getHaku().getHakukausiUri()) + " " + curHakukohde.getHaku().getHakuvuosi();
+        return getKoodiNimi(curHakukohde.getHakukohde().getNimi());
     }
 
     /**
@@ -249,6 +267,9 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
          */
         poistaB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("Poista"), RequiredRole.CRUD, presenter.getPermission());
         poistaB.addListener(new Button.ClickListener() {
+
+            private static final long serialVersionUID = 5833582377090856884L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 presenter.removeSelectedHakukohteet();

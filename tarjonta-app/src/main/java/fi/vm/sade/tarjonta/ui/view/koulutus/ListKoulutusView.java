@@ -60,6 +60,9 @@ public class ListKoulutusView extends VerticalLayout {
     private static final long serialVersionUID = 2571418094927644189L;
     public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListKoulutusView.jarjestys.Organisaatio")};
     public static final String COLUMN_A = "Kategoriat";
+    public static final String COLUMN_TUTKINTONIMIKE = "Tutkintonimike";
+    public static final String COLUMN_PVM = "Ajankohta";
+    public static final String COLUMN_TILA = "Tila";
     /**
      * Presenter object for the Hakukohde listing.
      */
@@ -142,6 +145,16 @@ public class ListKoulutusView extends VerticalLayout {
         categoryTree = new CategoryTreeView();
         addComponent(categoryTree);
         setExpandRatio(categoryTree, 1f);
+        
+        categoryTree.addContainerProperty(COLUMN_A, KoulutusResultRow.class, new KoulutusResultRow());
+        categoryTree.addContainerProperty(COLUMN_TUTKINTONIMIKE, String.class, "");
+        categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
+        categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
+        
+        categoryTree.setColumnExpandRatio(COLUMN_A, 2.0f);
+        categoryTree.setColumnExpandRatio(COLUMN_TUTKINTONIMIKE, 0.5f);
+        categoryTree.setColumnExpandRatio(COLUMN_PVM, 0.5f);
+        categoryTree.setColumnExpandRatio(COLUMN_TILA, 0.5f);
 
         /**
          * Sets the datasource for the hierarchical listing of Koulutus objects.
@@ -163,7 +176,12 @@ public class ListKoulutusView extends VerticalLayout {
 
         HierarchicalContainer hc = new HierarchicalContainer();
         KoulutusResultRow rowStyleDef = new KoulutusResultRow();
+        
         hc.addContainerProperty(COLUMN_A, KoulutusResultRow.class, rowStyleDef.format("", false));
+        hc.addContainerProperty(COLUMN_TUTKINTONIMIKE, String.class, "");
+        hc.addContainerProperty(COLUMN_PVM, String.class, "");
+        hc.addContainerProperty(COLUMN_TILA, String.class, "");
+        
 
         for (Map.Entry<String, List<KoulutusTulos>> e : set) {
             LOG.debug("getTreeDataSource()" + e.getKey());
@@ -177,21 +195,35 @@ public class ListKoulutusView extends VerticalLayout {
                 KoulutusResultRow rowStyleInner = new KoulutusResultRow(curKoulutus, getKoulutusNimi(curKoulutus));
                 hc.addItem(curKoulutus);
                 hc.setParent(curKoulutus, rootItem);
-                hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(buildKoulutusCaption(curKoulutus), true));
+                hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(getKoulutusNimi(curKoulutus), true));
+                hc.getContainerProperty(curKoulutus, COLUMN_TUTKINTONIMIKE).setValue(getKoulutusTutkintoNimike(curKoulutus));
+                hc.getContainerProperty(curKoulutus, COLUMN_PVM).setValue(getAjankohtaStr(curKoulutus));
+                hc.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(getTilaStr(curKoulutus.getKoulutus().getTila().name()));
                 hc.setChildrenAllowed(curKoulutus, false);
             }
         }
         return hc;
     }
+    
+    private String getAjankohtaStr(KoulutusTulos curKoulutus) {
+        
+        String[] ajankohtaParts = curKoulutus.getKoulutus().getAjankohta().split(" ");
+        if (ajankohtaParts.length < 2) {
+            return "";
+        }
+        return I18N.getMessage(ajankohtaParts[0]) + " " + ajankohtaParts[1];
+    }
+
+
+    private String getKoulutusTutkintoNimike(KoulutusTulos curKoulutus) {
+        if (curKoulutus.getKoulutus().getTarjoaja() != null) {
+            return getKoodiNimi(curKoulutus.getKoulutus().getTutkintonimike());
+        }
+        return "";
+    }
 
     private String buildOrganisaatioCaption(Map.Entry<String, List<KoulutusTulos>> e) {
         return e.getKey() + " (" + e.getValue().size() + ")";
-    }
-
-    private String buildKoulutusCaption(KoulutusTulos curKoulutus) {
-        String caption = getKoulutusNimi(curKoulutus);
-        caption += ", " + getTilaStr(curKoulutus.getKoulutus().getTila().name());
-        return caption;
     }
 
     private String getKoulutusNimi(KoulutusTulos curKoulutus) {
@@ -199,7 +231,6 @@ public class ListKoulutusView extends VerticalLayout {
         if (curKoulutus.getKoulutus().getKoulutusohjelmakoodi() != null) {
             nimi += ", " + getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi());
         }
-        nimi += ", " + curKoulutus.getKoulutus().getAjankohta();
         return nimi;
     }
 

@@ -15,9 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view.haku;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,20 +40,14 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
-import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
-import fi.vm.sade.tarjonta.ui.view.haku.HakuResultRow.HakuRowMenuEvent;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -69,7 +61,16 @@ import fi.vm.sade.vaadin.util.UiUtil;
 @Configurable(preConstruction = false)
 public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
 
+    private static final long serialVersionUID = 6264485392051745482L;
+
     public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListaHakuViewImpl.jarjestys.Hakutapa")};
+    
+    private static final String COLUMN_A = "Kategoria";
+    private static final String COLUMN_PVM = "Ajankohta";
+    private static final String COLUMN_HAKUTAPA = "Hakutapa";
+    private static final String COLUMN_TILA = "Tila";
+    
+    
 
     private static final Logger LOG = LoggerFactory.getLogger(ListHakuViewImpl.class);
     private Button btnLuoUusiHaku;
@@ -83,6 +84,9 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
 
     @Autowired(required = true)
     private HakuPresenter presenter;
+    
+    @Autowired(required = true)
+    private TarjontaUIHelper _tarjontaUIHelper;
 
     public ListHakuViewImpl() {
         setWidth(UiConstant.PCT100);
@@ -93,6 +97,9 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         valKaikki = new CheckBox(i18n.getMessage("ValitseKaikki"));
         valKaikki.setImmediate(true);
         valKaikki.addListener(new Property.ValueChangeListener() {
+
+            private static final long serialVersionUID = 4379174913230877685L;
+
             @Override
             public void valueChange(ValueChangeEvent event) {
 
@@ -107,6 +114,17 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         categoryTree = new CategoryTreeView();
         addComponent(categoryTree);
         setHeight(Sizeable.SIZE_UNDEFINED, 0);
+        
+        categoryTree.addContainerProperty(COLUMN_A, HakuResultRow.class, new HakuResultRow());
+        categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
+        categoryTree.addContainerProperty(COLUMN_HAKUTAPA, String.class, "");
+        categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
+        
+        categoryTree.setColumnExpandRatio(COLUMN_A, 2.0f);
+        categoryTree.setColumnExpandRatio(COLUMN_PVM, 0.5f);
+        categoryTree.setColumnExpandRatio(COLUMN_HAKUTAPA, 0.5f);
+        categoryTree.setColumnExpandRatio(COLUMN_TILA, 0.5f);
+        
 
         setExpandRatio(wrapper, 0.07f);
         setExpandRatio(categoryTree, 0.93f);
@@ -132,8 +150,10 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         Set<Map.Entry<String, List<HakuViewModel>>> set = map.entrySet();
 
         HierarchicalContainer hc = new HierarchicalContainer();
-        HakuResultRow rowStyleDef = new HakuResultRow();
-        hc.addContainerProperty(presenter.COLUMN_A, HakuResultRow.class, rowStyleDef.format("", false));
+        hc.addContainerProperty(COLUMN_A, HakuResultRow.class, new HakuResultRow());
+        hc.addContainerProperty(COLUMN_PVM, String.class, "");
+        hc.addContainerProperty(COLUMN_HAKUTAPA, String.class, "");
+        hc.addContainerProperty(COLUMN_TILA, String.class, "");
 
         for (Map.Entry<String, List<HakuViewModel>> e : set) {
             LOG.info("getTreeDataSource()" + e.getKey());
@@ -141,13 +161,18 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
 
             Object rootItem = hc.addItem();
 
-            hc.getContainerProperty(rootItem, presenter.COLUMN_A).setValue(rowStyle.format(e.getKey() + " (" + e.getValue().size() + ")", false));
+            hc.getContainerProperty(rootItem, COLUMN_A).setValue(rowStyle.format(e.getKey() + " (" + e.getValue().size() + ")", false));
 
             for (HakuViewModel curHaku : e.getValue()) {
-                HakuResultRow rowStyleInner = new HakuResultRow(curHaku, getListHakuName(curHaku));//TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), curHaku));
+                HakuResultRow rowStyleInner = new HakuResultRow(curHaku, getListHakuName(curHaku));
                 hc.addItem(curHaku);
                 hc.setParent(curHaku, rootItem);
-                hc.getContainerProperty(curHaku, presenter.COLUMN_A).setValue(rowStyleInner.format(getListHakuName(curHaku), true));
+                hc.getContainerProperty(curHaku, COLUMN_A).setValue(rowStyleInner.format(getListHakuName(curHaku), true));
+                hc.getContainerProperty(curHaku, COLUMN_PVM).setValue(getAjankohtaStr(curHaku));
+                hc.getContainerProperty(curHaku, COLUMN_HAKUTAPA).setValue(getHakutapaStr(curHaku));
+                hc.getContainerProperty(curHaku, COLUMN_TILA).setValue(this.getTilaStr(curHaku));
+                
+                
                 hc.setChildrenAllowed(curHaku, false);
 
                 rowStyleInner.addListener(new Listener() {
@@ -167,14 +192,26 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     }
     
     private String getListHakuName(HakuViewModel curHaku) {
-        return TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), curHaku) + ", " + T(curHaku.getHaunTila());
+        return TarjontaUIHelper.getClosestHakuName(I18N.getLocale(), curHaku);// + ", " + T(curHaku.getHaunTila());
+    }
+    
+    private String getTilaStr(HakuViewModel curHaku) {
+        return T(curHaku.getHaunTila());
+    }
+    
+    private String getAjankohtaStr(HakuViewModel curHaku) {
+        return  getKoodiNimi(curHaku.getHakukausi()) + " " + curHaku.getHakuvuosi();
+    }
+    
+    private String getHakutapaStr(HakuViewModel curHaku) {
+        return  getKoodiNimi(curHaku.getHakutapa());
     }
 
     private void changeHakuSelections(boolean selected) {
         presenter.getSelectedhaut().clear();
         HierarchicalContainer hc = (HierarchicalContainer)(this.categoryTree.getContainerDataSource());
         for (Object item : hc.getItemIds()) {
-            HakuResultRow curRow = (HakuResultRow)(categoryTree.getContainerProperty(item, presenter.COLUMN_A).getValue());
+            HakuResultRow curRow = (HakuResultRow)(categoryTree.getContainerProperty(item, COLUMN_A).getValue());
             curRow.getIsSelected().setValue(selected);
         }
     }
@@ -188,6 +225,9 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         btnLuoUusiHaku.addStyleName(Oph.BUTTON_SMALL);
 
         btnLuoUusiHaku.addListener(new Button.ClickListener() {
+
+            private static final long serialVersionUID = 1564545922923588423L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 navigateToHakuEditForm();
@@ -199,6 +239,9 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         btnPoista.addStyleName(Oph.BUTTON_SMALL);
         //btnPoista.setEnabled(false);
         btnPoista.addListener(new Button.ClickListener() {
+
+            private static final long serialVersionUID = 4122064768579621095L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 //presenter.removeSelectedHaut();
@@ -294,6 +337,14 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         this.btnPoista.setEnabled(enable);
     }
     
+    private String getKoodiNimi(String koodiUri) {
+        String nimi = _tarjontaUIHelper.getKoodiNimi(koodiUri, I18N.getLocale());
+        if ("".equals(nimi)) {
+            nimi = koodiUri;
+        }
+        return nimi;
+    }
+    
     private String T(String key, Object... args) {
         return i18n.getMessage(key, args);
     }
@@ -304,6 +355,8 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
      * Event to signal that the user wants to create a new Haku.
     */
     public class NewHakuEvent extends Component.Event {
+
+        private static final long serialVersionUID = 7115444912604937940L;
 
         public NewHakuEvent(Component source) {
             super(source);
