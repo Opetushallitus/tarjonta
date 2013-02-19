@@ -205,12 +205,15 @@ public final class EntityUtils {
 
         to.setHenkioOid(from.getHenkiloOid());
         to.setEtunimis(from.getEtunimet());
-        to.setSukunimi(from.getSukunimi());
+        if (from.getSukunimi() == null) {
+            to.setSukunimi("");
+        } else {
+            to.setSukunimi(from.getSukunimi());
+        }
         to.setPuhelin(from.getPuhelin());
         to.setSahkoposti(from.getSahkoposti());
         to.setKielis(from.getKielet());
         to.setTitteli(from.getTitteli());
-
     }
 
     public static void copyFields(final Yhteyshenkilo from, YhteyshenkiloTyyppi to) {
