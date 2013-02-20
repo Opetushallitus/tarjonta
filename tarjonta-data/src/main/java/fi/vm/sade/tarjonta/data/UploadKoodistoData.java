@@ -44,6 +44,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import fi.vm.sade.tarjonta.data.dto.Koodi;
 
+import javax.annotation.PostConstruct;
+
 /**
  *
  * @author Jani Wilén
@@ -88,6 +90,12 @@ public class UploadKoodistoData {
             log.warn("No koodisto relations read from : {}", pathToFile);
         }
     }
+    @PostConstruct
+    private void loadOrgInfoToHelper() {
+        koodistoHelper.setOrganisaatioOid(commonConstants.getOrganisaatioOid());
+        koodistoHelper.setOrganisaatioNimi(commonConstants.getOrganisaatioNimi());
+    }
+
 
     public void loadKoodistoFromExcel(String pathToExcel,String koodistoNimi) throws  IOException, ExceptionMessage{
         List<String> ryhmaUris = new ArrayList<String>();
@@ -108,6 +116,9 @@ public class UploadKoodistoData {
 
     //Test runs this method
     public void startFullImport() throws IOException, ExceptionMessage {
+
+        /*loadKoodistoFromExcel("C:\\KoodistoImportTesti\\koodistoHakukohdeImportTest.xls","Tuomas testi koodisto");*/
+
 //        data = new HakukohdeData();
         /*List<String> ryhmaUris = new ArrayList<String>();
         ryhmaUris.add(BASE_GROUP_URI_FOR_KOODISTO);

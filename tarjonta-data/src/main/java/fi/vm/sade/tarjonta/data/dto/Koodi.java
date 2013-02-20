@@ -39,6 +39,9 @@ public class Koodi {
     private String koodiLyhytNimiSv;
     private String koodiLyhytNimiEn;
 
+    private String alkuPvm;
+    private String loppuPvm;
+
 
     public String getKoodiArvo() {
         return koodiArvo;
@@ -118,5 +121,21 @@ public class Koodi {
 
     public void setKoodiLyhytNimiEn(String koodiLyhytNimiEn) {
         this.koodiLyhytNimiEn = koodiLyhytNimiEn;
+    }
+
+    public String getAlkuPvm() {
+        return alkuPvm;
+    }
+
+    public void setAlkuPvm(String alkuPvm) {
+        this.alkuPvm = alkuPvm;
+    }
+
+    public String getLoppuPvm() {
+        return loppuPvm;
+    }
+
+    public void setLoppuPvm(String loppuPvm) {
+        this.loppuPvm = loppuPvm;
     }
 }

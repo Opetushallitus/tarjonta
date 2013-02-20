@@ -1,4 +1,10 @@
 
 Example -->
 
+Create koodisto relations from excel:
+
 mvn exec:java -Dexec.args="1 C:\\KoodistoExcelTesti\\koodistoRelaatioImportTest.xls"
+
+Create koodisto from excel:
+
+mvn exec:java -Dexec.args="0 C:\\KoodistoExcelTesti\\koodistoRelaatioImportTest.xls TuomasHakukohdeTesti"

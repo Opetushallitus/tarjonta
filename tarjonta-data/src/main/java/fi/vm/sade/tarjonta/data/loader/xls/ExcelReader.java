@@ -123,7 +123,7 @@ public class ExcelReader<T extends Object> {
 
                     String cellValue = getCellValueAsString(cell);
 
-                    if (cellValue == null || cellValue.isEmpty()) {
+                    if (cellValue == null || cellValue.isEmpty() || cellValue.trim().length() < 1) {
                         if (verbose) {
                             log.debug("Missing data column " + i);
                         }
@@ -172,8 +172,9 @@ public class ExcelReader<T extends Object> {
         if (cell == null) {
             return null;
         }
-
-        return cell.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell.getNumericCellValue() + "" : cell.getStringCellValue();
+        cell.setCellType(Cell.CELL_TYPE_STRING);
+        return cell.getStringCellValue();
+        //return cell.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell.getNumericCellValue() + "" : cell.getStringCellValue();
     }
 
     /**

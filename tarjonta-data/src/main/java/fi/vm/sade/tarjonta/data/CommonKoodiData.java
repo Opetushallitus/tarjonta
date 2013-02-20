@@ -44,11 +44,13 @@ public class CommonKoodiData {
         new Column("koodiNimiSv","NIMI_SV",InputColumnType.STRING),
         new Column("koodiNimiEn","NIMI_EN",InputColumnType.STRING),
         new Column("koodiKuvausFi","KUVAUS_FI",InputColumnType.STRING),
-        new Column("koodiKuvausSv","KUVAUS_SV",InputColumnType.STRING),
-        new Column("koodiKuvausEn","KUVAUS_EN",InputColumnType.STRING),
         new Column("koodiLyhytNimiFi","LYHYTNIMI_FI",InputColumnType.STRING),
+        new Column("koodiKuvausSv","KUVAUS_SV",InputColumnType.STRING),
         new Column("koodiLyhytNimiSv","LYHYTNIMI_SV",InputColumnType.STRING),
-        new Column("koodiLyhytNimiEn","LYHYTNIMI_EN",InputColumnType.STRING)
+        new Column("koodiKuvausEn","KUVAUS_EN",InputColumnType.STRING),
+        new Column("koodiLyhytNimiEn","LYHYTNIMI_EN",InputColumnType.STRING),
+        new Column("alkuPvm","ALKUPVM",InputColumnType.STRING),
+        new Column("loppuPvm","LOPPUPVM",InputColumnType.STRING)
     };
 
     public CommonKoodiData(String filepath) throws IOException, ExceptionMessage {

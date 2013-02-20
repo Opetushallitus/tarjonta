@@ -28,7 +28,11 @@ import fi.vm.sade.koodisto.service.types.common.KoodistoType;
 import fi.vm.sade.koodisto.service.types.common.TilaType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoServiceSearchCriteriaBuilder;
+import fi.vm.sade.tarjonta.data.CommonKoodiData;
+import fi.vm.sade.tarjonta.data.dto.Koodi;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -57,6 +61,8 @@ public class TarjontaDataKoodistoHelper {
 
     private String organisaatioOid;
 
+    private final Logger log = LoggerFactory.getLogger(TarjontaDataKoodistoHelper.class);
+
     public TarjontaDataKoodistoHelper() {
 
 
@@ -67,14 +73,31 @@ public class TarjontaDataKoodistoHelper {
          setOrganisaatioOid(orgOid);
     }
 
+    public KoodiType addCodeItem(Koodi koodiData,String koodistoUri) {
+        CreateKoodiDataType createKoodiDataType = DataUtils.createCreateKoodiDataType(koodiData,koodistoUri,TilaType.LUONNOS);
+        KoodiType createdKoodi = null;
+        try {
+            createdKoodi = koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);
+        } catch (Exception exp) {
+            log.warn("Unable to create koodi : with arvo : {}",createKoodiDataType.getKoodiUri(),createKoodiDataType.getKoodiArvo());
+        }
+        return createdKoodi;
+    }
+
     public KoodiType addCodeItem(String koodistoUri, String koodiUri, String arvo, String name) {
         CreateKoodiDataType createKoodiDataType = DataUtils.createCreateKoodiDataType(koodiUri,
                 arvo, TilaType.HYVAKSYTTY, ACTIVATED_DATE, null, name);
-        return koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);
-        //return new KoodiType();
+        KoodiType createdKoodi = null;
+        try {
+        createdKoodi = koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);
+        } catch (Exception exp) {
+          log.warn("Unable to create koodi : with arvo : {}",createKoodiDataType.getKoodiUri(),createKoodiDataType.getKoodiArvo());
+        }
+       return createdKoodi;
     }
 
     public CreateKoodistoDataType addCodeGroup(List<String> baseUri, String koodistoUri, String name) {
+        log.info("Creating koodisto with uri: {} and base uri : {}",koodistoUri,baseUri.get(0));
         CreateKoodistoDataType createKoodistoDataType = DataUtils.createCreateKoodistoDataType(
                 koodistoUri, getOrganisaatioNimi(), getOrganisaatioOid(), ACTIVATED_DATE, ACTIVATED_DATE,
                 name);
