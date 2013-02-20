@@ -27,6 +27,8 @@ import fi.vm.sade.events.EventSender;
 import fi.vm.sade.generic.model.BaseEntity;
 
 
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
@@ -60,6 +62,13 @@ public class PublicationDataServiceImpl implements PublicationDataService {
     private TarjontaTila[] PUBLIC_DATA = {TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU};
     @Autowired(required = true)
     private EventSender eventSender;
+    
+    @Autowired
+    private KoulutusmoduuliToteutusDAO komotoDAO;
+    
+    @Autowired
+    private KoulutusmoduuliDAO komoDAO;
+    
     @PersistenceContext
     public EntityManager em;
 
@@ -219,6 +228,8 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         //manage with the simple status check.
 
     }
+    
+
 
     private Map<TarjontaTila, List<String>> getSubMapByQHakukohde(Map<SisaltoTyyppi, Map<TarjontaTila, List<String>>> map, SisaltoTyyppi q) {
         if (map.containsKey(q)) {
@@ -446,8 +457,59 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
             for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
                 komoto.setTila(toStatus);
+                updateParentKomotoStatus(komoto, toStatus);
+                
             }
         }
+    }
+    
+    /**
+     * Updates status of parent of komoto according to parameters
+     * @param komoto - the komoto the parent of which to update
+     * @param toStatus - the status 
+     */
+    private void updateParentKomotoStatus(KoulutusmoduuliToteutus komoto, final TarjontaTila toStatus) {
+        KoulutusmoduuliToteutus parentKomoto = getParentKomoto(komoto);
+        if (parentKomoto != null) {
+               parentKomoto.setTila(toStatus);
+        }
+    }
+
+    private KoulutusmoduuliToteutus getParentKomoto(KoulutusmoduuliToteutus komoto) {
+        Koulutusmoduuli parentKomo = getParentKomo(komoto.getKoulutusmoduuli());
+        if (parentKomo != null) {
+            return findKomotoByKomoAndTarjoaja(parentKomo, komoto.getTarjoaja());
+        }
+        return null;
+    }
+    
+    private Koulutusmoduuli getParentKomo(Koulutusmoduuli komo) {
+        QKoulutusSisaltyvyys sisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
+        
+        List<KoulutusSisaltyvyys> parents = from(sisaltyvyys).
+                join(sisaltyvyys.alamoduuliList).fetch().
+                where(sisaltyvyys.alamoduuliList.contains(komo)).
+                list(sisaltyvyys);
+        
+        if (parents == null || parents.isEmpty()) {
+            return null;
+        }
+        
+        return parents.get(0).getYlamoduuli();
+    }
+
+    private KoulutusmoduuliToteutus findKomotoByKomoAndTarjoaja(
+            Koulutusmoduuli komo, String tarjoaja) {
+        QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        KoulutusmoduuliToteutus komotoRes = null;
+        try {
+            komotoRes = from(komoto).
+                join(komoto.koulutusmoduuli).fetch().
+                where(komoto.koulutusmoduuli.oid.eq(komo.getOid()).and(komoto.tarjoaja.eq(tarjoaja))).singleResult(komoto);
+        } catch (Exception ex) {
+            log.debug("Exception: " + ex.getMessage());
+        }
+        return komotoRes;
     }
 
     /**
