@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.business.impl;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,11 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
     @Autowired
     private YhteyshenkiloDAO yhteyshenkiloDAO;
+    
+    private static final String OID_PRE = "1.2.246.562.5.";
+    
+    private static long oidMin = 1000000000L;
+    private static long oidMax = 10000000000L;
 
     @Override
     public Koulutusmoduuli create(Koulutusmoduuli moduuli) {
@@ -159,7 +165,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         //If there is not a komoto for the parentKomo, it is created here.    
         } else if (parentKomo != null ) {
             parentKomoto = new KoulutusmoduuliToteutus();
-            parentKomoto.setOid(koulutus.getOid() + parentKomo.getOid());
+            generateOidForKomoto(parentKomoto);
             parentKomoto.setTarjoaja(koulutus.getTarjoaja());
             parentKomoto.setTila(EntityUtils.convertTila(koulutus.getTila()));
             parentKomoto.setKoulutusmoduuli(parentKomo);
@@ -168,6 +174,38 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
             this.koulutusmoduuliToteutusDAO.insert(parentKomoto);
         }
+    }
+    
+    private void generateOidForKomoto(KoulutusmoduuliToteutus parentKomoto) {
+        String oidCandidate = generateOid();
+        boolean oidExists = this.koulutusmoduuliToteutusDAO.findByOid(oidCandidate) != null ? true : false;
+        while (oidExists) {
+            oidCandidate = generateOid();
+            oidExists = this.koulutusmoduuliToteutusDAO.findByOid(oidCandidate) != null ? true : false;
+        }
+        parentKomoto.setOid(oidCandidate);
+    }
+
+    private String generateOid() {
+        Random r = new Random();
+        long number = oidMin + ((long) (r.nextDouble() * (oidMax - oidMin)));
+        int checkDigit = ibmCheck(number);
+        return OID_PRE + number + checkDigit; 
+    }
+    
+    private int ibmCheck(Long oid) {
+        String oidStr = oid.toString();
+
+        int sum = 0;
+        int[] alternate = {7, 3 , 1};
+
+        for (int i = oidStr.length() - 1, j = 0; i >= 0; i--, j++) {
+            int n = Integer.parseInt(oidStr.substring(i, i + 1));
+
+            sum += n * alternate[j % 3];
+        }
+
+        return 10 - sum % 10;
     }
     
     /*

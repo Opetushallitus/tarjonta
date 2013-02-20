@@ -303,7 +303,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
         // LearningOpportunitySpecification/id
         if (t != null) {
-            specification.setId(putID(moduuli.getOid() + t.getOid(), specification));
+            specification.setId(putID(t.getOid(), specification));
         } else {
             specification.setId(putID(moduuli.getOid(), specification));
         }
@@ -372,7 +372,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         for (Koulutusmoduuli curChild : moduuli.getAlamoduuliList()) {
             LearningOpportunitySpecificationRefType losRef = createLOSRef(curChild.getOid());
             if (losRef != null) {
-                this.komotoParentMap.put(curChild.getOid() + toteutus.getTarjoaja(), moduuli.getOid() + toteutus.getOid());
+                this.komotoParentMap.put(curChild.getOid() + toteutus.getTarjoaja(), toteutus.getOid());
                 specification.getChildLOSRefs().add(losRef);
             }
         }
