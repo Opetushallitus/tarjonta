@@ -54,16 +54,16 @@ public final class EntityUtils {
         if (from == null) {
             return null;
         }
-        
+
         MonikielinenTekstiTyyppi to = new MonikielinenTekstiTyyppi();
-        
+
         for (TekstiKaannos tekstiKaannos : from.getTekstis()) {
             Teksti teksti = new Teksti();
             teksti.setValue(tekstiKaannos.getArvo());
             teksti.setKieliKoodi(tekstiKaannos.getKieliKoodi());
             to.getTeksti().add(teksti);
         }
-        
+
         return to;
     }
 
@@ -77,48 +77,48 @@ public final class EntityUtils {
      * @return
      */
     public static MonikielinenTeksti copyFields(MonikielinenTekstiTyyppi from) {
-        
+
         if (from == null) {
             return null;
         }
-        
+
         MonikielinenTeksti to = new MonikielinenTeksti();
-        
+
         for (Teksti teksti : from.getTeksti()) {
             to.addTekstiKaannos(teksti.getKieliKoodi(), teksti.getValue());
         }
-        
+
         return to;
-        
+
     }
-    
+
     private EntityUtils() {
     }
-    
+
     public static void copyFields(PaivitaKoulutusTyyppi from, KoulutusmoduuliToteutus to) {
-        
+
         to.setTila(convertTila(from.getTila()));
         to.setOpetusmuoto(toKoodistoUriSet(from.getOpetusmuoto()));
         to.setKoulutuksenAlkamisPvm(from.getKoulutuksenAlkamisPaiva());
         to.setKoulutuslajis(toStringUriSet(from.getKoulutuslaji()));
-        
+
         final KoulutuksenKestoTyyppi kesto = from.getKesto();
         to.setSuunniteltuKesto(kesto.getYksikko(), kesto.getArvo());
-        
+
         to.setOpetuskieli(toKoodistoUriSet(from.getOpetuskieli()));
         to.setKoulutuslajis(toKoodistoUriSet(from.getKoulutuslaji()));
         to.setPainotus(copyFields(from.getPainotus()));
-        
+
         if (from.getKoulutusaste() != null) {
             to.setKoulutusaste(from.getKoulutusaste().getUri());
         }
-        
+
         if (from.getPohjakoulutusvaatimus() != null) {
             to.setPohjakoulutusvaatimus(from.getPohjakoulutusvaatimus().getUri());
         }
-        
+
         to.setTarjoaja(from.getTarjoaja());
-        
+
         Set<WebLinkki> toLinkkis = new HashSet<WebLinkki>();
         if (from.getLinkki() != null) {
             for (WebLinkkiTyyppi fromLinkki : from.getLinkki()) {
@@ -127,7 +127,7 @@ public final class EntityUtils {
             }
         } // else, set is empty which will clear all previous links
         to.setLinkkis(toLinkkis);
-        
+
         HashSet<Yhteyshenkilo> yhteyshenkilos = new HashSet<Yhteyshenkilo>();
         if (!from.getYhteyshenkiloTyyppi().isEmpty()) {
             Yhteyshenkilo newYhteyshenkilo = new Yhteyshenkilo();
@@ -135,12 +135,12 @@ public final class EntityUtils {
             yhteyshenkilos.add(newYhteyshenkilo);
         }
         to.setYhteyshenkilos(yhteyshenkilos);
-        
+
         copyLisatiedotFields(from, to);
     }
-    
+
     public static void copyFields(LisaaKoulutusTyyppi fromKoulutus, KoulutusmoduuliToteutus toKoulutus) {
-        
+
         toKoulutus.setTila(convertTila(fromKoulutus.getTila()));
         toKoulutus.setOpetusmuoto(toKoodistoUriSet(fromKoulutus.getOpetusmuoto()));
         toKoulutus.setOid(fromKoulutus.getOid());
@@ -152,23 +152,23 @@ public final class EntityUtils {
         toKoulutus.setKoulutuslajis(toKoodistoUriSet(fromKoulutus.getKoulutuslaji()));
         toKoulutus.setTarjoaja(fromKoulutus.getTarjoaja());
         toKoulutus.setPainotus(copyFields(fromKoulutus.getPainotus()));
-        
+
         copyLisatiedotFields(fromKoulutus, toKoulutus);
-        
+
         if (fromKoulutus.getKoulutusaste() != null) {
             toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
         }
-        
+
         if (fromKoulutus.getPohjakoulutusvaatimus() != null) {
             toKoulutus.setPohjakoulutusvaatimus(fromKoulutus.getPohjakoulutusvaatimus().getUri());
         }
-        
+
         for (YhteyshenkiloTyyppi henkiloFrom : fromKoulutus.getYhteyshenkilo()) {
             Yhteyshenkilo henkiloTo = new Yhteyshenkilo();
             copyFields(henkiloFrom, henkiloTo);
             toKoulutus.addYhteyshenkilo(henkiloTo);
         }
-        
+
         Set<WebLinkki> toLinkkis = new HashSet<WebLinkki>();
         if (fromKoulutus.getLinkki() != null) {
             for (WebLinkkiTyyppi fromLinkki : fromKoulutus.getLinkki()) {
@@ -177,7 +177,7 @@ public final class EntityUtils {
             }
         } // else, set is empty which will clear all previous links
         toKoulutus.setLinkkis(toLinkkis);
-        
+
     }
 
     /**
@@ -200,16 +200,16 @@ public final class EntityUtils {
             }
         }
         toKoulutus.setAmmattinimikes(ammattinimikes);
-        
+
         toKoulutus.setKuvailevatTiedot(copyFields(fromKoulutus.getKuvailevatTiedot()));
         toKoulutus.setKansainvalistyminen(copyFields(fromKoulutus.getKansainvalistyminen()));
         toKoulutus.setSijoittuminenTyoelamaan(copyFields(fromKoulutus.getSijoittuminenTyoelamaan()));
         toKoulutus.setSisalto(copyFields(fromKoulutus.getSisalto()));
         toKoulutus.setYhteistyoMuidenToimijoidenKanssa(copyFields(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa()));
     }
-    
+
     public static void copyFields(final YhteyshenkiloTyyppi from, Yhteyshenkilo to) {
-        
+
         to.setHenkioOid(from.getHenkiloOid());
         to.setEtunimis(from.getEtunimet());
         if (from.getSukunimi() == null) {
@@ -221,23 +221,23 @@ public final class EntityUtils {
         to.setSahkoposti(from.getSahkoposti());
         to.setKielis(from.getKielet());
         to.setTitteli(from.getTitteli());
-        
+
     }
-    
+
     public static void copyFields(final Yhteyshenkilo from, YhteyshenkiloTyyppi to) {
-        
+
         to.setEtunimet(from.getEtunimis());
         to.setHenkiloOid(from.getHenkioOid());
         to.setPuhelin(from.getPuhelin());
         to.setSahkoposti(from.getSahkoposti());
         to.setSukunimi(from.getSukunimi());
         to.setTitteli(from.getTitteli());
-        
+
         for (String kieliUri : from.getKielis()) {
             to.getKielet().add(kieliUri);
         }
     }
-    
+
     public static KoulutusmoduuliKoosteTyyppi copyFieldsToKoulutusmoduuliKoosteTyyppi(final Koulutusmoduuli komo) {
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
         tyyppi.setOid(komo.getOid());
@@ -250,11 +250,11 @@ public final class EntityUtils {
         tyyppi.setKoulutusasteUri(komo.getKoulutusAste());
         tyyppi.setKoulutusalaUri(komo.getKoulutusala());
         tyyppi.setOpintoalaUri(komo.getOpintoala());
-        
+
         tyyppi.setKoulutuksenRakenne(copyFields(komo.getKoulutuksenRakenne()));
         tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
         tyyppi.setJatkoOpintoMahdollisuudet(copyFields(komo.getJatkoOpintoMahdollisuudet()));
-        
+
         return tyyppi;
     }
 
@@ -274,15 +274,15 @@ public final class EntityUtils {
         tyyppi.setKoulutusasteUri(parentKomo.getKoulutusAste());
         tyyppi.setKoulutusalaUri(parentKomo.getKoulutusala());
         tyyppi.setOpintoalaUri(parentKomo.getOpintoala());
-        
+
         tyyppi.setKoulutuksenRakenne(copyFields(parentKomo.getKoulutuksenRakenne()));
         tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
         tyyppi.setTutkinnonTavoitteet(copyFields(parentKomo.getTavoitteet()));
         tyyppi.setJatkoOpintoMahdollisuudet(copyFields(parentKomo.getJatkoOpintoMahdollisuudet()));
-        
+
         return tyyppi;
     }
-    
+
     public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(final KoulutusmoduuliKoosteTyyppi tyyppi) {
         Koulutusmoduuli komo = new Koulutusmoduuli(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(tyyppi.getKoulutusmoduuliTyyppi().value()));
         komo.setOid(tyyppi.getOid());
@@ -304,20 +304,20 @@ public final class EntityUtils {
 
         //names for KOMOTO search 
         komo.setNimi(copyFields(tyyppi.getKoulutusmoduulinNimi()));
-        
+
         return komo;
     }
-    
+
     public static void copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList, Collection<YhteyshenkiloTyyppi> toList) {
-        
+
         for (Yhteyshenkilo fromHenkilo : fromList) {
             YhteyshenkiloTyyppi toHenkilo = new YhteyshenkiloTyyppi();
             copyFields(fromHenkilo, toHenkilo);
             toList.add(toHenkilo);
         }
-        
+
     }
-    
+
     public static Set<String> toStringUriSet(Collection<KoodistoKoodiTyyppi> koodit) {
         Set<String> set = new HashSet<String>();
         for (KoodistoKoodiTyyppi koodi : koodit) {
@@ -325,7 +325,7 @@ public final class EntityUtils {
         }
         return set;
     }
-    
+
     public static Set<KoodistoUri> toKoodistoUriSet(Collection<KoodistoKoodiTyyppi> koodit) {
         Set<KoodistoUri> set = new HashSet<KoodistoUri>();
         for (KoodistoKoodiTyyppi koodi : koodit) {
@@ -334,9 +334,9 @@ public final class EntityUtils {
         }
         return set;
     }
-    
+
     public static void copyKoodistoUris(Collection<KoodistoUri> from, Collection<KoodistoKoodiTyyppi> to) {
-        
+
         if (from != null) {
             for (KoodistoUri fromUri : from) {
                 KoodistoKoodiTyyppi toKoodi = new KoodistoKoodiTyyppi();
@@ -344,11 +344,11 @@ public final class EntityUtils {
                 to.add(toKoodi);
             }
         }
-        
+
     }
-    
+
     public static void copyWebLinkkis(Collection<WebLinkki> from, Collection<WebLinkkiTyyppi> to) {
-        
+
         for (WebLinkki fromLinkki : from) {
             WebLinkkiTyyppi toLinkki = new WebLinkkiTyyppi();
             toLinkki.setKieli(fromLinkki.getKieli());
@@ -356,7 +356,7 @@ public final class EntityUtils {
             toLinkki.setUri(fromLinkki.getUrl());
             to.add(toLinkki);
         }
-        
+
     }
 
     /**
@@ -366,9 +366,9 @@ public final class EntityUtils {
      * @return
      */
     public static fi.vm.sade.tarjonta.model.TarjontaTila convertTila(fi.vm.sade.tarjonta.service.types.TarjontaTila tila) {
-        
+
         return fi.vm.sade.tarjonta.model.TarjontaTila.valueOf(tila.name());
-        
+
     }
 
     /**
@@ -378,18 +378,23 @@ public final class EntityUtils {
      * @return
      */
     public static fi.vm.sade.tarjonta.service.types.TarjontaTila convertTila(fi.vm.sade.tarjonta.model.TarjontaTila tila) {
-        
+
         return fi.vm.sade.tarjonta.service.types.TarjontaTila.valueOf(tila.name());
-        
+
     }
-    
-    
-    
+
+    /**
+     * Convert metadata to multilanguage text type.
+     *
+     * @param from
+     * @param categoryKey
+     * @return
+     */
     public static MonikielinenTekstiTyyppi copyFields(Set<MonikielinenMetadata> from, final MetaCategory categoryKey) {
         if (from == null) {
             return null;
         }
-        
+
         MonikielinenTekstiTyyppi to = new MonikielinenTekstiTyyppi();
         for (MonikielinenMetadata mtt : getMonikielinenMetadata(from, categoryKey)) {
             Teksti teksti = new Teksti();
@@ -397,38 +402,29 @@ public final class EntityUtils {
             teksti.setKieliKoodi(mtt.getKieli());
             to.getTeksti().add(teksti);
         }
-        
+
         return to;
     }
 
     /**
-     * Get meta data from hakukohde (Application Option) object by given
-     * category key.
+     * Loop metadata list by a given category key.
      *
      * @param hakukohde
      * @param categoryKey
      * @return
      */
-    public static List<MonikielinenMetadata> getValintaperustekuvaus(final Hakukohde hakukohde) {
-        return getMonikielinenMetadata(hakukohde.getValintaperustekuvaus(), MetaCategory.VALINTAPERUSTEKUVAUS);
-    }
-    
-    public static List<MonikielinenMetadata> getSoraKuvaus(final Hakukohde hakukohde) {
-        return getMonikielinenMetadata(hakukohde.getValintaperustekuvaus(), MetaCategory.SORA_KUVAUS);
-    }
-    
     private static List<MonikielinenMetadata> getMonikielinenMetadata(final Collection<MonikielinenMetadata> metadata, final MetaCategory categoryKey) {
-        final List<MonikielinenMetadata> list =  getMonikielinenMetadata(metadata).get(categoryKey.toString());
+        final List<MonikielinenMetadata> list = getMonikielinenMetadata(metadata).get(categoryKey.toString());
         return Collections.unmodifiableList(list != null ? list : new ArrayList<MonikielinenMetadata>(0));
     }
-    
+
     private static Map<String, List<MonikielinenMetadata>> getMonikielinenMetadata(final Collection<MonikielinenMetadata> kuvaus) {
         //Map<category,  MonikielinenMetadata>>
         Map<String, List<MonikielinenMetadata>> map = new HashMap<String, List<MonikielinenMetadata>>();
-        
+
         for (MonikielinenMetadata meta : kuvaus) {
             final String category = meta.getKategoria();
-            
+
             if (map.containsKey(category)) {
                 map.get(category).add(meta);
             } else {
@@ -437,7 +433,7 @@ public final class EntityUtils {
                 map.put(category, list);
             }
         }
-        
+
         return map;
     }
 }

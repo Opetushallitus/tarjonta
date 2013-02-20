@@ -29,7 +29,9 @@ import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadDataType
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import org.junit.*;
@@ -48,6 +50,7 @@ public class LearningOpportunityDataWriterTest {
     private StringWriter out;
     private static JAXBContext sJaxbContext;
     private static boolean sPrintXML;
+    private List<MonikielinenMetadata> metadata;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -63,6 +66,8 @@ public class LearningOpportunityDataWriterTest {
         writer.setOutput(out);
         writer.setPartialDocument(false);
 
+        metadata = new ArrayList<MonikielinenMetadata>(1);
+        metadata.add(new MonikielinenMetadata());
     }
 
     @After
@@ -107,9 +112,8 @@ public class LearningOpportunityDataWriterTest {
 
     @Test
     public void testWriteSingleHakukohde() throws Exception {
-
         writer.onCollectStart();
-        writer.onCollect(createHakukohde());
+        writer.onCollect(createHakukohde(), metadata, metadata);
         writer.onCollectEnd();
 
         unmarshal();
@@ -174,7 +178,7 @@ public class LearningOpportunityDataWriterTest {
         writer.onCollectStart();
         writer.onCollect(m);
         writer.onCollect(t);
-        writer.onCollect(h);
+        writer.onCollect(h, metadata, metadata);
         writer.onCollectEnd();
 
     }

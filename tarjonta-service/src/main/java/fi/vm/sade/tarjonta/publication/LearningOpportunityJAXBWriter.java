@@ -233,11 +233,10 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         marshal(ApplicationSystemType.class, applicationSystem);
 
         log.debug("marshalled Haku, oid: " + haku.getOid());
-
     }
 
     @Override
-    public void onCollect(Hakukohde hakukohde) throws Exception {
+    public void onCollect(Hakukohde hakukohde, List<MonikielinenMetadata> soraDesc, List<MonikielinenMetadata> valintaperusteDesc) throws Exception {
 
         ApplicationOptionType applicationOption = objectFactory.createApplicationOptionType();
 
@@ -256,18 +255,14 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         applicationSystemRef.setOidRef(hakukohde.getHaku().getOid());
         applicationOption.setApplicationSystemRef(applicationSystemRef);
 
-
-
-
         // ApplicationOption/EligibilityRequirements
-        addHakukelpoisuusvaatimus(hakukohde, applicationOption);
+        addHakukelpoisuusvaatimus(soraDesc, applicationOption);
 
         // ApplicationOption/SelectionCriterions
-        addValintaperusteet(hakukohde, applicationOption);
+        addValintaperusteet(hakukohde, valintaperusteDesc, applicationOption);
 
         // ApplicationOption/LearningOpportunities
         addKoulutukset(hakukohde, applicationOption);
-
 
         marshal(ApplicationOptionType.class, applicationOption);
 
@@ -756,8 +751,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         }
     }
 
-    private void addValintaperusteet(Hakukohde source, ApplicationOptionType target) {
-
+    private void addValintaperusteet(Hakukohde source, List<MonikielinenMetadata> valintaperuste, ApplicationOptionType target) {
         SelectionCriterionsType criterions = new SelectionCriterionsType();
         target.setSelectionCriterions(criterions);
 
@@ -773,8 +767,8 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         if (source.getEdellisenVuodenHakijat() != null) {
             criterions.setLastYearTotalApplicants(BigInteger.valueOf(source.getEdellisenVuodenHakijat()));
         }
-       // Set<MonikielinenMetadata> monikielinenMetadata = source.getValintaperustekuvaus();
-        //copyTexts((Set<MonikielinenMetadata>)null, criterions.getDescription());
+
+        copyTexts(valintaperuste, criterions.getDescription());
         addValintakokeet(source, criterions);
 
         addLiitteet(source, criterions);
@@ -905,9 +899,9 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         }
     }
 
-    private void addHakukelpoisuusvaatimus(Hakukohde source, ApplicationOptionType target) {
+    private void addHakukelpoisuusvaatimus(List<MonikielinenMetadata> source, ApplicationOptionType target) {
         EligibilityRequirementsType eligibilityRequirements = new EligibilityRequirementsType();
-        //copyTexts(source.getSoraKuvaus(), eligibilityRequirements.getDescription());
+        copyTexts(source, eligibilityRequirements.getDescription());
         target.setEligibilityRequirements(eligibilityRequirements);
     }
 
@@ -950,6 +944,10 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
     }
 
     private static ExtendedStringType createExtendedString(String value, String langKey) {
+        if (langKey == null) {
+            log.warn("Data was missing language key. Value : {}, lang : {}", value, langKey);
+            return new ExtendedStringType();
+        }
 
         ExtendedStringType s = new ExtendedStringType();
         s.setLang(langKey.toLowerCase());

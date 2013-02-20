@@ -29,9 +29,11 @@ import fi.vm.sade.generic.model.BaseEntity;
 
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import java.util.ArrayList;
@@ -62,13 +64,12 @@ public class PublicationDataServiceImpl implements PublicationDataService {
     private TarjontaTila[] PUBLIC_DATA = {TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU};
     @Autowired(required = true)
     private EventSender eventSender;
-    
     @Autowired
     private KoulutusmoduuliToteutusDAO komotoDAO;
-    
     @Autowired
     private KoulutusmoduuliDAO komoDAO;
-    
+    @Autowired
+    private MonikielinenMetadataDAO metadataDAO;
     @PersistenceContext
     public EntityManager em;
 
@@ -228,8 +229,6 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         //manage with the simple status check.
 
     }
-    
-
 
     private Map<TarjontaTila, List<String>> getSubMapByQHakukohde(Map<SisaltoTyyppi, Map<TarjontaTila, List<String>>> map, SisaltoTyyppi q) {
         if (map.containsKey(q)) {
@@ -458,20 +457,21 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
                 komoto.setTila(toStatus);
                 updateParentKomotoStatus(komoto, toStatus);
-                
+
             }
         }
     }
-    
+
     /**
      * Updates status of parent of komoto according to parameters
+     *
      * @param komoto - the komoto the parent of which to update
-     * @param toStatus - the status 
+     * @param toStatus - the status
      */
     private void updateParentKomotoStatus(KoulutusmoduuliToteutus komoto, final TarjontaTila toStatus) {
         KoulutusmoduuliToteutus parentKomoto = getParentKomoto(komoto);
         if (parentKomoto != null) {
-               parentKomoto.setTila(toStatus);
+            parentKomoto.setTila(toStatus);
         }
     }
 
@@ -482,19 +482,19 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         }
         return null;
     }
-    
+
     private Koulutusmoduuli getParentKomo(Koulutusmoduuli komo) {
         QKoulutusSisaltyvyys sisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
-        
+
         List<KoulutusSisaltyvyys> parents = from(sisaltyvyys).
                 join(sisaltyvyys.alamoduuliList).fetch().
                 where(sisaltyvyys.alamoduuliList.contains(komo)).
                 list(sisaltyvyys);
-        
+
         if (parents == null || parents.isEmpty()) {
             return null;
         }
-        
+
         return parents.get(0).getYlamoduuli();
     }
 
@@ -504,8 +504,8 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         KoulutusmoduuliToteutus komotoRes = null;
         try {
             komotoRes = from(komoto).
-                join(komoto.koulutusmoduuli).fetch().
-                where(komoto.koulutusmoduuli.oid.eq(komo.getOid()).and(komoto.tarjoaja.eq(tarjoaja))).singleResult(komoto);
+                    join(komoto.koulutusmoduuli).fetch().
+                    where(komoto.koulutusmoduuli.oid.eq(komo.getOid()).and(komoto.tarjoaja.eq(tarjoaja))).singleResult(komoto);
         } catch (Exception ex) {
             log.debug("Exception: " + ex.getMessage());
         }
@@ -525,5 +525,10 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         for (Hakukohde hakukohde : result) {
             hakukohde.setTila(TarjontaTila.PERUTTU);
         }
+    }
+
+    @Override
+    public List<MonikielinenMetadata> searchMetaData(final String key, final MetaCategory category) {
+        return metadataDAO.findByAvainAndKategoria(key, category.toString());
     }
 }

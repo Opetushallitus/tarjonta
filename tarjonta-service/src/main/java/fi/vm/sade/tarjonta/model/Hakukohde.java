@@ -87,25 +87,10 @@ public class Hakukohde extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "valintaperustekuvaus_teksti_id")
     private MonikielinenTeksti valintaperusteKuvaus;
-    /*
-     * valintaperustekuvaus metadata keys
-     * TODO: rewrite the impl, it works but is a quite ugly.
-     */
     @Column(name = "valintaperustekuvaus_koodi_uri")
-    private String valintaperustekuvausKoodiUri;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "valintaperustekuvaus_kategoria")
-    private MetaCategory valintaperustekuvausKategoria = MetaCategory.VALINTAPERUSTEKUVAUS;
-    /*
-     * Sora metadata keys
-     * TODO: rewrite the impl, it works but is a quite ugly.
-     */
+    private String valintaperustekuvausKoodiUri; //the koodi uri points to metadata
     @Column(name = "sora_kuvaus_koodi_uri")
-    private String soraKuvausKoodiUri;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "sora_kuvaus_kategoria")
-    private MetaCategory soraKuvausKategoria = MetaCategory.SORA_KUVAUS;
-
+    private String soraKuvausKoodiUri; //the koodi uri points to metadata
     /**
      * @return the koulutuses
      */
@@ -378,34 +363,6 @@ public class Hakukohde extends BaseEntity {
     }
 
     /**
-     * @return the valintaperustekuvausKategoria
-     */
-    public MetaCategory getValintaperustekuvausKategoria() {
-        return valintaperustekuvausKategoria;
-    }
-
-    /**
-     * @param valintaperustekuvausKategoria the valintaperustekuvausKategoria to
-     * set
-     */
-    public void setValintaperustekuvausKategoria(MetaCategory valintaperustekuvausKategoria) {
-        this.valintaperustekuvausKategoria = valintaperustekuvausKategoria;
-    }
-
-    /**
-     * @return the valintaperustekuvaus
-     */
-    public Set<MonikielinenMetadata> getValintaperustekuvaus() {
-        return new HashSet<MonikielinenMetadata>();
-    }
-
-    /**
-     * @param valintaperustekuvaus the valintaperustekuvaus to set
-     */
-    public void setValintaperustekuvaus(Set<MonikielinenMetadata> valintaperustekuvaus) {
-    }
-
-    /**
      * @return the soraKuvausKoodiUri
      */
     public String getSoraKuvausKoodiUri() {
@@ -419,30 +376,4 @@ public class Hakukohde extends BaseEntity {
         this.soraKuvausKoodiUri = soraKuvausKoodiUri;
     }
 
-    /**
-     * @return the soraKuvausKategoria
-     */
-    public MetaCategory getSoraKuvausKategoria() {
-        return soraKuvausKategoria;
-    }
-
-    /**
-     * @param soraKuvausKategoria the soraKuvausKategoria to set
-     */
-    public void setSoraKuvausKategoria(MetaCategory soraKuvausKategoria) {
-        this.soraKuvausKategoria = soraKuvausKategoria;
-    }
-
-    /**
-     * @return the soraKuvaus
-     */
-    public Set<MonikielinenMetadata> getSoraKuvaus() {
-        return new HashSet<MonikielinenMetadata>();
-    }
-
-    /**
-     * @param soraKuvaus the soraKuvaus to set
-     */
-    public void setSoraKuvaus(Set<MonikielinenMetadata> soraKuvaus) {
-    }
 }

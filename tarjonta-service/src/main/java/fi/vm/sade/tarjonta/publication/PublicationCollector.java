@@ -31,6 +31,8 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
+import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 
 /**
  * Gathers learning opportunity material (tarjonta) that is ready for
@@ -135,10 +137,10 @@ public class PublicationCollector {
 
     }
 
-    protected void fireCollect(Hakukohde h) throws Exception {
+    protected void fireCollect(Hakukohde h, List<MonikielinenMetadata> sora, List<MonikielinenMetadata> valintaperuste) throws Exception {
 
         if (!isNotifiedBefore(h.getOid())) {
-            handler.onCollect(h);
+            handler.onCollect(h, sora, valintaperuste);
         }
 
     }
@@ -158,7 +160,7 @@ public class PublicationCollector {
         if (koulutusList.isEmpty()) {
             handler.onCollectWarning("zero koulutusmoduuliToteutus found");
         }
-        
+
         List<KoulutusmoduuliToteutus> parentKoulutusList = new ArrayList<KoulutusmoduuliToteutus>();
 
         for (KoulutusmoduuliToteutus t : koulutusList) {
@@ -173,15 +175,15 @@ public class PublicationCollector {
                 parentKoulutusList.add(t);
             } else {
                 fireCollect(m);
-            
-            
+
+
                 fireCollect(t);
 
                 fireCollect(findProviderByOid(m.getOmistajaOrganisaatioOid(), true));
                 fireCollect(findProviderByOid(t.getTarjoaja(), false));
             }
         }
-        
+
         for (KoulutusmoduuliToteutus t : parentKoulutusList) {
             Koulutusmoduuli m = t.getKoulutusmoduuli();
 
@@ -202,8 +204,13 @@ public class PublicationCollector {
         }
 
         List<Hakukohde> hakukohdeList = dataService.listHakukohde();
+
+
+
         for (Hakukohde hakukohde : hakukohdeList) {
-            fireCollect(hakukohde);
+            List<MonikielinenMetadata> sora = dataService.searchMetaData(hakukohde.getSoraKuvausKoodiUri(), MetaCategory.SORA_KUVAUS);
+            List<MonikielinenMetadata> valintaperuste = dataService.searchMetaData(hakukohde.getValintaperustekuvausKoodiUri(), MetaCategory.VALINTAPERUSTEKUVAUS);
+            fireCollect(hakukohde, sora, valintaperuste);
         }
 
         List<Haku> hakuList = dataService.listHaku();
@@ -217,7 +224,7 @@ public class PublicationCollector {
         if (!isNotifiedBefore(m.getOid() + t.getOid())) {
             handler.onCollect(m, t);
         }
-        
+
     }
 
     private OrganisaatioDTO findProviderByOid(final String oid, final boolean allowNull) {
@@ -323,7 +330,7 @@ public class PublicationCollector {
 
         public void onCollect(Koulutusmoduuli moduuli) throws Exception;
 
-        public void onCollect(Hakukohde hakukohde) throws Exception;
+        public void onCollect(Hakukohde hakukohde, List<MonikielinenMetadata> sora, List<MonikielinenMetadata> valintaperuste) throws Exception;
 
         public void onCollect(Haku haku) throws Exception;
 
@@ -340,7 +347,7 @@ public class PublicationCollector {
         }
 
         @Override
-        public void onCollect(Hakukohde hakukohde) throws Exception {
+        public void onCollect(Hakukohde hakukohde, List<MonikielinenMetadata> sora, List<MonikielinenMetadata> valintaperuste) throws Exception {
         }
 
         @Override
@@ -373,7 +380,6 @@ public class PublicationCollector {
 
         @Override
         public void onCollect(Koulutusmoduuli m, KoulutusmoduuliToteutus t) throws Exception {
-            
         }
     }
 

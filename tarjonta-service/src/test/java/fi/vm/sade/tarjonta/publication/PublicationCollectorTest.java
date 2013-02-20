@@ -27,6 +27,7 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -39,9 +40,7 @@ import org.slf4j.LoggerFactory;
 public class PublicationCollectorTest {
 
     private EventHandlerMock handler;
-
     private PublicationCollector collector;
-
     protected final Logger log = LoggerFactory.getLogger("TEST");
 
     @Before
@@ -87,8 +86,6 @@ public class PublicationCollectorTest {
     }
 
     @Test
-    
-    
     public void testMissingKoulutusmoduuliEndsWithFailure() throws Exception {
 
         List<KoulutusmoduuliToteutus> list = new ArrayList<KoulutusmoduuliToteutus>();
@@ -115,21 +112,13 @@ public class PublicationCollectorTest {
     public class EventHandlerMock implements EventHandler {
 
         private int startEvents;
-
         private int failedEvents;
-
         private int completedEvents;
-
         private int warningEvents;
-
         private int hakuEvents;
-
         private int hakukohdeEvents;
-
         private int koulutusmoduuliEvents;
-
         private int koulutusmoduuliToteutusEvents;
-
         private int koulutustarjoajaEvents;
 
         @Override
@@ -159,11 +148,6 @@ public class PublicationCollectorTest {
         }
 
         @Override
-        public void onCollect(Hakukohde hakukohde) {
-            hakukohdeEvents++;
-        }
-
-        @Override
         public void onCollect(Koulutusmoduuli moduuli) {
             koulutusmoduuliEvents++;
         }
@@ -181,12 +165,15 @@ public class PublicationCollectorTest {
         @Override
         public void onCollect(Koulutusmoduuli m, KoulutusmoduuliToteutus t)
                 throws Exception {
-            
+
             koulutusmoduuliEvents++;
         }
 
+        @Override
+        public void onCollect(Hakukohde hakukohde, List<MonikielinenMetadata> sora, List<MonikielinenMetadata> valintaperuste) throws Exception {
+            hakukohdeEvents++;
+        }
     }
-
 
     private Haku createHaku(String oid) {
 
@@ -196,6 +183,4 @@ public class PublicationCollectorTest {
         return h;
 
     }
-
 }
-

@@ -18,7 +18,9 @@ package fi.vm.sade.tarjonta.publication;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
+import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import java.util.Collection;
 import java.util.List;
@@ -40,7 +42,7 @@ public interface PublicationDataService {
 
     /**
      * Returns a list of KoulutusmoduuliToteutus where: <ul>
-     *  <li>{@link KoulutusmoduuliToteutus#getTila() } equal to
+     * <li>{@link KoulutusmoduuliToteutus#getTila() } equal to
      * {@link TarjontaTila#VALMIS}</li> </ul>
      *
      * @return
@@ -57,7 +59,7 @@ public interface PublicationDataService {
 
     /**
      * Return a list of Haku objects ready to be published, i.e: <ul>
-     *  <li>{@link Haku#getTila() } equal to {@link TarjontaTila#VALMIS}</li>
+     * <li>{@link Haku#getTila() } equal to {@link TarjontaTila#VALMIS}</li>
      * </ul>
      *
      *
@@ -74,4 +76,6 @@ public interface PublicationDataService {
     public List<Hakukohde> searchHakukohteetByHakuOid(final Collection<String> hakuOids, final TarjontaTila... requiredStatus);
 
     public List<Hakukohde> searchHakukohteetByKomotoOid(final Collection<String> komotoOids, final TarjontaTila hakuRequiredStatus, final TarjontaTila... hakukohdeRequiredStatus);
+
+    public List<MonikielinenMetadata> searchMetaData(final String key, final MetaCategory category);
 }
