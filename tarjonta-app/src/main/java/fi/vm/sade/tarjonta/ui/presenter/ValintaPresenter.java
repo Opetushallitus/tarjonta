@@ -232,18 +232,12 @@ public class ValintaPresenter implements CommonPresenter {
                         HakukohdeTyyppi updateHakukohde = lueHakukohde.getHakukohde();
 
                         if (updateHakukohde != null) {
-                            
-                            
                             if (MetaCategory.SORA_KUVAUS.equals(metaCategory)) {
                                 updateHakukohde.setSoraKuvausKoodiUri(kuvausRyhmaUri);
                             } else if (MetaCategory.VALINTAPERUSTEKUVAUS.equals(metaCategory)) {
                                 updateHakukohde.setValintaperustekuvausKoodiUri(kuvausRyhmaUri);
                             }
-                            
-                             
-                                LOG.debug("Hakukohde OID {} {}", updateHakukohde.getValintaperustekuvausKoodiUri(), updateHakukohde.getSoraKuvausKoodiUri());
-                           
-                            
+                   
                             tarjontaAdminService.paivitaHakukohde(updateHakukohde);
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Hakukohde OID {} updated successfully!", hakukohde.getOid());

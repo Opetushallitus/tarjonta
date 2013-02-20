@@ -87,9 +87,7 @@ public class Hakukohde extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "valintaperustekuvaus_teksti_id")
     private MonikielinenTeksti valintaperusteKuvaus;
-    
-    
-     /*
+    /*
      * valintaperustekuvaus metadata keys
      * TODO: rewrite the impl, it works but is a quite ugly.
      */
@@ -98,11 +96,7 @@ public class Hakukohde extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "valintaperustekuvaus_kategoria")
     private MetaCategory valintaperustekuvausKategoria = MetaCategory.VALINTAPERUSTEKUVAUS;
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumns({
-        @JoinColumn(name = "avain", referencedColumnName = "valintaperustekuvaus_koodi_uri", updatable = false, insertable = false),
-        @JoinColumn(name = "kategoria", referencedColumnName = "valintaperustekuvaus_kategoria", updatable = false, insertable = false)
-    })
+    @OneToMany
     private Set<MonikielinenMetadata> valintaperustekuvaus = new HashSet<MonikielinenMetadata>();
     /*
      * Sora metadata keys
@@ -113,11 +107,7 @@ public class Hakukohde extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "sora_kuvaus_kategoria")
     private MetaCategory soraKuvausKategoria = MetaCategory.SORA_KUVAUS;
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumns({
-        @JoinColumn(name = "avain", referencedColumnName = "sora_kuvaus_koodi_uri", updatable = false, insertable = false),
-        @JoinColumn(name = "kategoria", referencedColumnName = "sora_kuvaus_kategoria", updatable = false, insertable = false)
-    })
+    @OneToMany
     private Set<MonikielinenMetadata> soraKuvaus = new HashSet<MonikielinenMetadata>();
 
     /**
@@ -384,7 +374,8 @@ public class Hakukohde extends BaseEntity {
     }
 
     /**
-     * @param valintaperustekuvausKoodiUri the valintaperustekuvausKoodiUri to set
+     * @param valintaperustekuvausKoodiUri the valintaperustekuvausKoodiUri to
+     * set
      */
     public void setValintaperustekuvausKoodiUri(String valintaperustekuvausKoodiUri) {
         this.valintaperustekuvausKoodiUri = valintaperustekuvausKoodiUri;
@@ -398,7 +389,8 @@ public class Hakukohde extends BaseEntity {
     }
 
     /**
-     * @param valintaperustekuvausKategoria the valintaperustekuvausKategoria to set
+     * @param valintaperustekuvausKategoria the valintaperustekuvausKategoria to
+     * set
      */
     public void setValintaperustekuvausKategoria(MetaCategory valintaperustekuvausKategoria) {
         this.valintaperustekuvausKategoria = valintaperustekuvausKategoria;
@@ -459,7 +451,4 @@ public class Hakukohde extends BaseEntity {
     public void setSoraKuvaus(Set<MonikielinenMetadata> soraKuvaus) {
         this.soraKuvaus = soraKuvaus;
     }
-
-
-
 }

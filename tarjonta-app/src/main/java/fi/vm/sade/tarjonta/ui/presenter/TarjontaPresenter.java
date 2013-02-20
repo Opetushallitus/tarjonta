@@ -24,6 +24,8 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
+import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
@@ -31,7 +33,6 @@ import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.ui.helper.conversion.*;
 import fi.vm.sade.tarjonta.ui.model.*;
-import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidType;
@@ -46,6 +47,7 @@ import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
@@ -55,7 +57,6 @@ import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusLisatiedotToinenAsteView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -71,7 +72,6 @@ import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
 import fi.vm.sade.tarjonta.ui.view.SearchResultsView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
-import fi.vm.sade.tarjonta.ui.presenter.CommonPresenter;
 
 import org.apache.commons.beanutils.BeanComparator;
 
@@ -146,6 +146,21 @@ public class TarjontaPresenter implements CommonPresenter {
 
             HakukohdeTyyppi hakukohdeTyyppi = hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde());
             getModel().getHakukohde().setOid(hakukohdeTyyppi.getOid());
+
+            KoodiUriAndVersioType uriType = TarjontaUIHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(getModel().getHakukohde().getHakukohdeNimi());
+            List<KoodiType> listKoodiByRelation = koodiService.listKoodiByRelation(uriType, true, SuhteenTyyppiType.SISALTYY);
+
+            for (KoodiType koodi : listKoodiByRelation) {
+                final String koodistoUri = koodi.getKoodisto().getKoodistoUri();
+                if (KoodistoURIHelper.KOODISTO_VALINTAPERUSTEKUVAUSRYHMA_URI.equals(koodistoUri)) {
+                    hakukohdeTyyppi.setValintaperustekuvausKoodiUri(TarjontaUIHelper.createVersionUri(koodi.getKoodiUri(), koodi.getVersio()));
+                }
+                
+                if (KoodistoURIHelper.KOODISTO_SORA_KUVAUSRYHMA_URI.equals(koodistoUri)) {
+                    hakukohdeTyyppi.setSoraKuvausKoodiUri(TarjontaUIHelper.createVersionUri(koodi.getKoodiUri(), koodi.getVersio()));
+                }
+            }
+
             tarjontaAdminService.lisaaHakukohde(hakukohdeTyyppi);
 
         } else {
@@ -164,8 +179,6 @@ public class TarjontaPresenter implements CommonPresenter {
         }
 
     }
-
-
 
     public void saveHakukohdeLiite() {
         ArrayList<HakukohdeLiiteTyyppi> liitteet = new ArrayList<HakukohdeLiiteTyyppi>();
@@ -187,18 +200,17 @@ public class TarjontaPresenter implements CommonPresenter {
     }
 
     public void saveHakukohdeValintakoe(List<KielikaannosViewModel> kuvaukset) {
-           getModel().getSelectedValintaKoe().setSanallisetKuvaukset(kuvaukset);
-          getModel().getHakukohde().getValintaKokees().add(getModel().getSelectedValintaKoe());
-          List<ValintakoeTyyppi> valintakokeet = new ArrayList<ValintakoeTyyppi>();
-          for (ValintakoeViewModel valintakoeViewModel:getModel().getHakukohde().getValintaKokees()) {
-              valintakokeet.add(ValintakoeConverter.mapKieliKaannosToValintakoeTyyppi(valintakoeViewModel));
-          }
-           tarjontaAdminService.tallennaValintakokeitaHakukohteelle(getModel().getHakukohde().getOid(),valintakokeet);
-         getModel().setSelectedValintaKoe(new ValintakoeViewModel());
-         editHakukohdeView.loadValintakokees();
-         editHakukohdeView.closeValintakoeEditWindow();
+        getModel().getSelectedValintaKoe().setSanallisetKuvaukset(kuvaukset);
+        getModel().getHakukohde().getValintaKokees().add(getModel().getSelectedValintaKoe());
+        List<ValintakoeTyyppi> valintakokeet = new ArrayList<ValintakoeTyyppi>();
+        for (ValintakoeViewModel valintakoeViewModel : getModel().getHakukohde().getValintaKokees()) {
+            valintakokeet.add(ValintakoeConverter.mapKieliKaannosToValintakoeTyyppi(valintakoeViewModel));
+        }
+        tarjontaAdminService.tallennaValintakokeitaHakukohteelle(getModel().getHakukohde().getOid(), valintakokeet);
+        getModel().setSelectedValintaKoe(new ValintakoeViewModel());
+        editHakukohdeView.loadValintakokees();
+        editHakukohdeView.closeValintakoeEditWindow();
     }
-
 
     public void closeCancelHakukohteenEditView() {
         editHakukohdeView.closeHakukohdeLiiteEditWindow();
@@ -282,7 +294,7 @@ public class TarjontaPresenter implements CommonPresenter {
         List<String> validationMessages = validateKoulutukses(vastaus.getKoulutusTulos());
         if (validationMessages != null && validationMessages.size() > 0) {
             for (String validationMessage : validationMessages) {
-            dialog.addErrorMessage(validationMessage);
+                dialog.addErrorMessage(validationMessage);
             }
         }
 
@@ -315,13 +327,13 @@ public class TarjontaPresenter implements CommonPresenter {
         if (!doesEqual(pohjakoulutukses.toArray(new String[pohjakoulutukses.size()]))) {
             returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongPohjakoulutus"));
         }
-        return  returnVal;
+        return returnVal;
     }
 
     private boolean doesEqual(String[] strs) {
-        for (int i = 0; i < strs.length; i++ ) {
+        for (int i = 0; i < strs.length; i++) {
             if (!strs[0].equals(strs[i])) {
-                return  false;
+                return false;
             }
         }
         return true;
@@ -630,13 +642,13 @@ public class TarjontaPresenter implements CommonPresenter {
     public List<ValintakoeViewModel> loadHakukohdeValintaKokees() {
         ArrayList<ValintakoeViewModel> valintaKokeet = new ArrayList<ValintakoeViewModel>();
 
-        if(getModel().getHakukohde() != null && getModel().getHakukohde().getOid() != null) {
+        if (getModel().getHakukohde() != null && getModel().getHakukohde().getOid() != null) {
             HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi kysely = new HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi();
             kysely.setHakukohteenTunniste(getModel().getHakukohde().getOid());
             HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi vastaus = tarjontaPublicService.haeHakukohteenValintakokeetHakukohteenTunnisteella(kysely);
             if (vastaus != null && vastaus.getHakukohteenValintaKokeet() != null) {
-                for (ValintakoeTyyppi valintakoeTyyppi: vastaus.getHakukohteenValintaKokeet()) {
-                    ValintakoeViewModel valintakoeViewModel =  ValintakoeConverter.mapDtoToValintakoeViewModel(valintakoeTyyppi);
+                for (ValintakoeTyyppi valintakoeTyyppi : vastaus.getHakukohteenValintaKokeet()) {
+                    ValintakoeViewModel valintakoeViewModel = ValintakoeConverter.mapDtoToValintakoeViewModel(valintakoeTyyppi);
                     valintaKokeet.add(valintakoeViewModel);
                 }
             }
@@ -672,7 +684,7 @@ public class TarjontaPresenter implements CommonPresenter {
         }
         SimpleDateFormat sdf = new SimpleDateFormat(LIITE_DATE_PATTERNS);
         if (hakukohdeLiiteViewModel.getToimitettavaMennessa() != null) {
-        hakukohdeLiiteViewModel.setToimitusPvmTablePresentation(sdf.format(hakukohdeLiiteViewModel.getToimitettavaMennessa()));
+            hakukohdeLiiteViewModel.setToimitusPvmTablePresentation(sdf.format(hakukohdeLiiteViewModel.getToimitettavaMennessa()));
         }
 
         StringBuilder sb = new StringBuilder();
@@ -724,14 +736,13 @@ public class TarjontaPresenter implements CommonPresenter {
     }
 
     public ValintakoeViewModel getSelectedValintakoe() {
-       if (getModel().getSelectedValintaKoe() == null) {
+        if (getModel().getSelectedValintaKoe() == null) {
             getModel().setSelectedValintaKoe(new ValintakoeViewModel());
         }
 
 
         return getModel().getSelectedValintaKoe();
     }
-
 
     public ValintakoeAikaViewModel getSelectedAikaView() {
         ValintakoeAikaViewModel aikaViewModel = new ValintakoeAikaViewModel();
@@ -754,14 +765,13 @@ public class TarjontaPresenter implements CommonPresenter {
         List<ValintakoeAikaViewModel> ajat = new ArrayList<ValintakoeAikaViewModel>();
         if (getModel().getSelectedValintaKoe().getValintakoeAjat() != null) {
             for (ValintakoeAikaViewModel aika : getModel().getSelectedValintaKoe().getValintakoeAjat()) {
-                    if (!aika.equals(valintakoeAikaViewModel))  {
-                        ajat.add(aika);
-                    }
+                if (!aika.equals(valintakoeAikaViewModel)) {
+                    ajat.add(aika);
+                }
             }
             getModel().getSelectedValintaKoe().setValintakoeAjat(ajat);
         }
     }
-
 
     private HakukohdeNameUriModel hakukohdeNameUriModelFromKoodi(KoodiType koodiType) {
         HakukohdeNameUriModel hakukohdeNameUriModel = new HakukohdeNameUriModel();
@@ -773,6 +783,7 @@ public class TarjontaPresenter implements CommonPresenter {
         }
         return hakukohdeNameUriModel;
     }
+
     /**
      * Show hakukohde edit view.
      *
@@ -807,9 +818,9 @@ public class TarjontaPresenter implements CommonPresenter {
             setKomotoOids(getModel().getHakukohde().getKomotoOids());
 
             if (getModel().getHakukohde().getHakukohdeNimi() != null) {
-               List<KoodiType> koodis =  uiHelper.gethKoodis(getModel().getHakukohde().getHakukohdeNimi());
+                List<KoodiType> koodis = uiHelper.gethKoodis(getModel().getHakukohde().getHakukohdeNimi());
                 if (koodis != null && koodis.size() > 0) {
-               getModel().getHakukohde().setSelectedHakukohdeNimi(hakukohdeNameUriModelFromKoodi(koodis.get(0)));
+                    getModel().getHakukohde().setSelectedHakukohdeNimi(hakukohdeNameUriModelFromKoodi(koodis.get(0)));
                 }
             }
         }
@@ -987,13 +998,13 @@ public class TarjontaPresenter implements CommonPresenter {
             koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
             checkKoulutusmoduuli();
             if (checkExistingKomoto(lisaa)) {
-            tarjontaAdminService.lisaaKoulutus(lisaa);
-            koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
-            koulutusModel.setOid(lisaa.getOid());
+                tarjontaAdminService.lisaaKoulutus(lisaa);
+                koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
+                koulutusModel.setOid(lisaa.getOid());
             } else {
 
-               LOG.debug("Unable to add koulutus because of the duplicate");
-                throw  new ExceptionMessage("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage");
+                LOG.debug("Unable to add koulutus because of the duplicate");
+                throw new ExceptionMessage("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage");
             }
 
         }
@@ -1001,7 +1012,7 @@ public class TarjontaPresenter implements CommonPresenter {
     }
 
     private boolean checkExistingKomoto(LisaaKoulutusTyyppi lisaaTyyppi) {
-        TarkistaKoulutusKopiointiTyyppi kysely  = new TarkistaKoulutusKopiointiTyyppi();
+        TarkistaKoulutusKopiointiTyyppi kysely = new TarkistaKoulutusKopiointiTyyppi();
         kysely.setKoulutusAlkamisPvm(lisaaTyyppi.getKoulutuksenAlkamisPaiva());
         kysely.setKoulutusLuokitusKoodi(lisaaTyyppi.getKoulutusKoodi().getUri());
         kysely.setKoulutusohjelmaKoodi(lisaaTyyppi.getKoulutusohjelmaKoodi().getUri());
@@ -1017,7 +1028,7 @@ public class TarjontaPresenter implements CommonPresenter {
     private List<String> getUrisFromKoodistoTyyppis(List<KoodistoKoodiTyyppi> koodistoKoodis) {
         List<String> uris = new ArrayList<String>();
 
-        for (KoodistoKoodiTyyppi koodi: koodistoKoodis) {
+        for (KoodistoKoodiTyyppi koodi : koodistoKoodis) {
             uris.add(koodi.getUri());
         }
 
@@ -1333,7 +1344,7 @@ public class TarjontaPresenter implements CommonPresenter {
     }
 
     public void loadKoulutusohjelmat() {
-        
+
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
         //Select 'koulutusohjelma' from pre-filtered koodisto data.
         if (model.getKoulutuskoodiModel() != null && model.getKoulutuskoodiModel().getKoodi() != null) {
@@ -1344,20 +1355,20 @@ public class TarjontaPresenter implements CommonPresenter {
             Collections.sort(listaaKoulutusohjelmat, new BeanComparator("nimi"));
             model.getKoulutusohjelmat().addAll(listaaKoulutusohjelmat);
             String organisaatioOid = model.getOrganisaatioOid() != null ? model.getOrganisaatioOid() : getModel().getOrganisaatioOid();
-            
+
             //Loading data from the parent tutkinto komo (startDate and koulutusohjelmanValinta).
-            loadTutkintoData(model.getKoulutuskoodiModel().getKoodistoUriVersio(), organisaatioOid); 
+            loadTutkintoData(model.getKoulutuskoodiModel().getKoodistoUriVersio(), organisaatioOid);
         }
     }
-    
+
     //Prefills the tutkinto komoto (koulutuksenAlkamisPvm, koulutusohjelmanValinta) fields if a tutkinto komoto exists
     private void loadTutkintoData(String koulutuskoodi, String tarjoaja) {
         LOG.debug("loadtutkintoData, koulutuskoodi: {}, tarjoaja: {}", koulutuskoodi, tarjoaja);
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         kysely.setKoulutusKoodi(koulutuskoodi);
-        
+
         kysely.getTarjoajaOids().add(tarjoaja);
-        HaeKoulutuksetVastausTyyppi vastaus =  this.tarjontaPublicService.haeKoulutukset(kysely);
+        HaeKoulutuksetVastausTyyppi vastaus = this.tarjontaPublicService.haeKoulutukset(kysely);
         LOG.debug("vastaus size {}", vastaus.getKoulutusTulos().size());
         if (vastaus.getKoulutusTulos() != null && !vastaus.getKoulutusTulos().isEmpty()) {
             KoulutusTulos hakutulos = vastaus.getKoulutusTulos().get(0);
@@ -1365,9 +1376,9 @@ public class TarjontaPresenter implements CommonPresenter {
             lueKysely.setOid(hakutulos.getKoulutus().getKomotoOid());
             LueKoulutusVastausTyyppi lueVastaus = tarjontaPublicService.lueKoulutus(lueKysely);
             Date koulutuksenAlkuPvm = lueVastaus.getKoulutuksenAlkamisPaiva() != null ? lueVastaus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null;
-            
+
             getModel().getKoulutusPerustiedotModel().setKoulutuksenAlkamisPvm(koulutuksenAlkuPvm);
-            
+
             if (lueVastaus.getKoulutusohjelmanValinta() != null) {
                 for (MonikielinenTekstiTyyppi.Teksti mkt : lueVastaus.getKoulutusohjelmanValinta().getTeksti()) {
                     LOG.debug("Kielikoodi: {}", mkt.getKieliKoodi());

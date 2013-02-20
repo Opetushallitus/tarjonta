@@ -773,8 +773,8 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         if (source.getEdellisenVuodenHakijat() != null) {
             criterions.setLastYearTotalApplicants(BigInteger.valueOf(source.getEdellisenVuodenHakijat()));
         }
-        Set<MonikielinenMetadata> monikielinenMetadata = source.getValintaperustekuvaus();
-        copyTexts(monikielinenMetadata, criterions.getDescription());
+       // Set<MonikielinenMetadata> monikielinenMetadata = source.getValintaperustekuvaus();
+        //copyTexts((Set<MonikielinenMetadata>)null, criterions.getDescription());
         addValintakokeet(source, criterions);
 
         addLiitteet(source, criterions);
@@ -907,7 +907,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     private void addHakukelpoisuusvaatimus(Hakukohde source, ApplicationOptionType target) {
         EligibilityRequirementsType eligibilityRequirements = new EligibilityRequirementsType();
-        copyTexts(source.getSoraKuvaus(), eligibilityRequirements.getDescription());
+        //copyTexts(source.getSoraKuvaus(), eligibilityRequirements.getDescription());
         target.setEligibilityRequirements(eligibilityRequirements);
     }
 

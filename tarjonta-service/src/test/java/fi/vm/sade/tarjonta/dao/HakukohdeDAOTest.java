@@ -164,54 +164,54 @@ public class HakukohdeDAOTest {
         // assertEquals(0, loaded.getValintakoes().size());
     }
 
-    @Test
-    public void testMonikielinenValintaperusteKuvaus() {
-        Hakukohde h = fixtures.createHakukohde();
-        h.setValintaperustekuvausKoodiUri(KOODI_URI_METADATA_RELATION);
-        h.setHaku(fixtures.createPersistedHaku());
-
-        hakukohdeDAO.insert(h);
-        flush();
-
-        /*
-         * The object will be included to a query result.
-         */
-        MonikielinenMetadata metaIncluded = new fi.vm.sade.tarjonta.model.MonikielinenMetadata();
-        metaIncluded.setKategoria(MetaCategory.VALINTAPERUSTEKUVAUS.toString());
-        metaIncluded.setKieli("URI:FI");
-        metaIncluded.setArvo("Value");
-        assertNotNull("koodi uri was null?", h.getHakukohdeNimi());
-        metaIncluded.setAvain(KOODI_URI_METADATA_RELATION);
-        monikielinenMetadataDAO.insert(metaIncluded);
-
-        /*
-         * The object has no reference to Hakukohde object.
-         */
-        MonikielinenMetadata metaExcluded = new fi.vm.sade.tarjonta.model.MonikielinenMetadata();
-        metaExcluded.setKategoria(MetaCategory.VALINTAPERUSTEKUVAUS.toString());
-        metaExcluded.setKieli("URI:FI");
-        metaExcluded.setArvo("Value");
-        metaExcluded.setAvain("uri:excluded_test_object");
-
-        monikielinenMetadataDAO.insert(metaExcluded);
-        flush();
-        detach(metaExcluded);
-        detach(metaIncluded);
-        detach(h);
-
-        final Hakukohde result = hakukohdeDAO.read(h.getId());
-        final List<MonikielinenMetadata> metaResult = monikielinenMetadataDAO.findByAvain(metaIncluded.getAvain());
-
-        assertNotNull("MonikielinenMetadata entity was null", metaResult);
-        assertEquals("Metadata not inserted", 1, metaResult.size());
-        
-        assertEquals("query join key mismatch", KOODI_URI_METADATA_RELATION, metaResult.get(0).getAvain());
-        assertNotNull("Hakukohde entity was null", result);
-        assertEquals("Missing meta data", 1, result.getValintaperustekuvaus().size());
-        assertEquals("Missing category", MetaCategory.VALINTAPERUSTEKUVAUS.toString(), metaResult.get(0).getKategoria());
-        assertEquals("An invalid class", true, metaResult.get(0) instanceof MonikielinenMetadata);
-
-    }
+//    @Test
+//    public void testMonikielinenValintaperusteKuvaus() {
+//        Hakukohde h = fixtures.createHakukohde();
+//        h.setValintaperustekuvausKoodiUri(KOODI_URI_METADATA_RELATION);
+//        h.setHaku(fixtures.createPersistedHaku());
+//
+//        hakukohdeDAO.insert(h);
+//        flush();
+//
+//        /*
+//         * The object will be included to a query result.
+//         */
+//        MonikielinenMetadata metaIncluded = new fi.vm.sade.tarjonta.model.MonikielinenMetadata();
+//        metaIncluded.setKategoria(MetaCategory.VALINTAPERUSTEKUVAUS.toString());
+//        metaIncluded.setKieli("URI:FI");
+//        metaIncluded.setArvo("Value");
+//        assertNotNull("koodi uri was null?", h.getHakukohdeNimi());
+//        metaIncluded.setAvain(KOODI_URI_METADATA_RELATION);
+//        monikielinenMetadataDAO.insert(metaIncluded);
+//
+//        /*
+//         * The object has no reference to Hakukohde object.
+//         */
+//        MonikielinenMetadata metaExcluded = new fi.vm.sade.tarjonta.model.MonikielinenMetadata();
+//        metaExcluded.setKategoria(MetaCategory.VALINTAPERUSTEKUVAUS.toString());
+//        metaExcluded.setKieli("URI:FI");
+//        metaExcluded.setArvo("Value");
+//        metaExcluded.setAvain("uri:excluded_test_object");
+//
+//        monikielinenMetadataDAO.insert(metaExcluded);
+//        flush();
+//        detach(metaExcluded);
+//        detach(metaIncluded);
+//        detach(h);
+//
+//        final Hakukohde result = hakukohdeDAO.read(h.getId());
+//        final List<MonikielinenMetadata> metaResult = monikielinenMetadataDAO.findByAvain(metaIncluded.getAvain());
+//
+//        assertNotNull("MonikielinenMetadata entity was null", metaResult);
+//        assertEquals("Metadata not inserted", 1, metaResult.size());
+//        
+//        assertEquals("query join key mismatch", KOODI_URI_METADATA_RELATION, metaResult.get(0).getAvain());
+//        assertNotNull("Hakukohde entity was null", result);
+//        assertEquals("Missing meta data", 1, result.getValintaperustekuvaus().size());
+//        assertEquals("Missing category", MetaCategory.VALINTAPERUSTEKUVAUS.toString(), metaResult.get(0).getKategoria());
+//        assertEquals("An invalid class", true, metaResult.get(0) instanceof MonikielinenMetadata);
+//
+//    }
 
     @Test
     public void testFindByKoulutusOid() {

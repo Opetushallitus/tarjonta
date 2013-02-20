@@ -40,7 +40,6 @@ public class HakukohdeViewModelToDTOConverter {
 
     @Autowired(required = true)
     private OIDService oidService;
-
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(HakukohdeViewModelToDTOConverter.class);
 
     public HakukohdeTyyppi convertHakukohdeViewModelToDTO(HakukohdeViewModel hakukohdevm) {
@@ -51,8 +50,7 @@ public class HakukohdeViewModelToDTOConverter {
         if (hakukohdevm.getHakukohdeNimi() != null) {
             hakukohde.setHakukohdeNimi(hakukohdevm.getHakukohdeNimi());
         } else {
-            //TODO remove just for testing because koodisto dont work
-            hakukohde.setHakukohdeNimi("");
+            throw new RuntimeException("Hakukohde koodisto koodi cannot be null!");
         }
 
         hakukohde.setHakukohteenHakuOid(hakukohdevm.getHakuOid().getHakuOid());
@@ -72,14 +70,13 @@ public class HakukohdeViewModelToDTOConverter {
 //        hakukohde.sey(convertTekstis(hakukohdevm.getValintaPerusteidenKuvaus()));
         hakukohde.setLiitteidenToimitusPvm(hakukohdevm.getLiitteidenToimitusPvm());
         try {
-        hakukohde.setValinnanAloituspaikat(hakukohdevm.getValinnoissaKaytettavatPaikat());
+            hakukohde.setValinnanAloituspaikat(hakukohdevm.getValinnoissaKaytettavatPaikat());
         } catch (Exception exp) {
-
         }
         hakukohde.setSahkoinenToimitusOsoite(hakukohdevm.getLiitteidenSahkoinenToimitusOsoite());
 
         hakukohde.setKaytetaanHaunPaattymisenAikaa(hakukohdevm.isKaytaHaunPaattymisenAikaa());
-        if(hakukohdevm.getOsoiteRivi1() != null) {
+        if (hakukohdevm.getOsoiteRivi1() != null) {
             OsoiteTyyppi osoite = new OsoiteTyyppi();
             osoite.setOsoiteRivi(hakukohdevm.getOsoiteRivi1());
             osoite.setLisaOsoiteRivi(hakukohdevm.getOsoiteRivi2());
@@ -97,15 +94,15 @@ public class HakukohdeViewModelToDTOConverter {
 
         if (monikielinenTekstiTyyppi != null) {
 
-        for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
-            if (teksti.getKieliKoodi().trim().equalsIgnoreCase("fi")) {
-                haku.setNimiFi(teksti.getValue());
-            } else if (teksti.getKieliKoodi().trim().equalsIgnoreCase("en")) {
-                haku.setNimiEn(teksti.getValue());
-            } else if (teksti.getKieliKoodi().trim().equalsIgnoreCase("se")) {
-                haku.setNimiSe(teksti.getValue());
+            for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
+                if (teksti.getKieliKoodi().trim().equalsIgnoreCase("fi")) {
+                    haku.setNimiFi(teksti.getValue());
+                } else if (teksti.getKieliKoodi().trim().equalsIgnoreCase("en")) {
+                    haku.setNimiEn(teksti.getValue());
+                } else if (teksti.getKieliKoodi().trim().equalsIgnoreCase("se")) {
+                    haku.setNimiSe(teksti.getValue());
+                }
             }
-        }
         }
 
         return haku;
@@ -129,7 +126,7 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohdeVM.setValinnoissaKaytettavatPaikat(hakukohdeTyyppi.getValinnanAloituspaikat());
         hakukohdeVM.setLiitteidenSahkoinenToimitusOsoite(hakukohdeTyyppi.getSahkoinenToimitusOsoite());
         hakukohdeVM.setLiitteidenToimitusPvm(hakukohdeTyyppi.getLiitteidenToimitusPvm());
-        if(hakukohdeTyyppi.getLiitteidenToimitusOsoite() != null) {
+        if (hakukohdeTyyppi.getLiitteidenToimitusOsoite() != null) {
             hakukohdeVM.setOsoiteRivi1(hakukohdeTyyppi.getLiitteidenToimitusOsoite().getOsoiteRivi());
             hakukohdeVM.setOsoiteRivi2(hakukohdeTyyppi.getLiitteidenToimitusOsoite().getLisaOsoiteRivi());
             hakukohdeVM.setPostinumero(hakukohdeTyyppi.getLiitteidenToimitusOsoite().getPostinumero());
@@ -138,8 +135,6 @@ public class HakukohdeViewModelToDTOConverter {
 
         return hakukohdeVM;
     }
-
-
 
     private MonikielinenTekstiTyyppi convertTekstis(List<KielikaannosViewModel> kaannokset) {
         MonikielinenTekstiTyyppi tekstis = new MonikielinenTekstiTyyppi();
@@ -167,6 +162,4 @@ public class HakukohdeViewModelToDTOConverter {
     public void setOidService(OIDService oidService) {
         this.oidService = oidService;
     }
-
 }
-
