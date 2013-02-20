@@ -209,8 +209,8 @@ public class HakukohdeResultRow extends HorizontalLayout {
         addComponent(isSelected);
         if (withMenuBar) {
             Button nimiB = null;
-            if (text.length() > 70) {
-                String labelText = text.substring(0,  69) + "...";
+            if (text.length() > 75) {
+                String labelText = text.substring(0,  75) + "...";
                 nimiB = UiUtil.buttonLink(null, labelText);
                 nimiB.setDescription(text);
             } else {
