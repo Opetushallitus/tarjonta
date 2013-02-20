@@ -69,7 +69,7 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohde.setHakukohdeKoodistoNimi(hakukohdevm.getHakukohdeKoodistoNimi());
         hakukohde.getHakukohteenKoulutusOidit().addAll(hakukohdevm.getKomotoOids());
         hakukohde.setLisatiedot(convertTekstis(hakukohdevm.getLisatiedot()));
-        hakukohde.setValintaPerusteidenKuvaukset(convertTekstis(hakukohdevm.getValintaPerusteidenKuvaus()));
+//        hakukohde.sey(convertTekstis(hakukohdevm.getValintaPerusteidenKuvaus()));
         hakukohde.setLiitteidenToimitusPvm(hakukohdevm.getLiitteidenToimitusPvm());
         try {
         hakukohde.setValinnanAloituspaikat(hakukohdevm.getValinnoissaKaytettavatPaikat());
@@ -125,7 +125,7 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohdeVM.setOid(hakukohdeTyyppi.getOid());
         hakukohdeVM.setKomotoOids(hakukohdeTyyppi.getHakukohteenKoulutusOidit());
         hakukohdeVM.getLisatiedot().addAll(convertTekstiToVM(hakukohdeTyyppi.getLisatiedot()));
-        hakukohdeVM.getValintaPerusteidenKuvaus().addAll(convertTekstiToVM(hakukohdeTyyppi.getValintaPerusteidenKuvaukset()));
+//        hakukohdeVM.getValintaPerusteidenKuvaus().addAll(convertTekstiToVM(hakukohdeTyyppi.getValintaPerusteidenKuvaukset()));
         hakukohdeVM.setValinnoissaKaytettavatPaikat(hakukohdeTyyppi.getValinnanAloituspaikat());
         hakukohdeVM.setLiitteidenSahkoinenToimitusOsoite(hakukohdeTyyppi.getSahkoinenToimitusOsoite());
         hakukohdeVM.setLiitteidenToimitusPvm(hakukohdeTyyppi.getLiitteidenToimitusPvm());

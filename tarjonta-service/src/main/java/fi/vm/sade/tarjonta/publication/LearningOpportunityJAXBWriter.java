@@ -24,8 +24,6 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioKuvaTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioKuvailevatTiedotTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
-import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
-import fi.vm.sade.organisaatio.api.model.types.PuhelinNumeroTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.PuhelinnumeroDTO;
 import fi.vm.sade.organisaatio.api.model.types.SoMeLinkkiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.WwwDTO;
@@ -62,14 +60,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.publication.model.Koulutustarjoaja;
 import fi.vm.sade.tarjonta.publication.types.AttachmentCollectionType.Attachment;
 import fi.vm.sade.tarjonta.publication.types.LearningOpportunityProviderType.InstitutionInfo;
 import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType.EntranceExaminations.Examination;
 import fi.vm.sade.tarjonta.publication.types.WebLinkCollectionType.Link;
 import fi.vm.sade.tarjonta.publication.utils.VersionedUri;
 import java.io.UnsupportedEncodingException;
-import org.apache.commons.lang.StringUtils;
+import java.util.Collection;
 
 /**
  * Implements {@link PublicationCollector.EventHandler} by writing all
@@ -104,8 +101,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      */
     private Map<String, Object> idRefMap = new HashMap<String, Object>();
     private static final Logger log = LoggerFactory.getLogger(LearningOpportunityJAXBWriter.class);
-    
-    private Map<String,String> komotoParentMap = new HashMap<String,String>();
+    private Map<String, String> komotoParentMap = new HashMap<String, String>();
 
     /**
      * Constructs new writer and initializes JAXBContext. Cannot be reused.
@@ -260,18 +256,18 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         applicationSystemRef.setOidRef(hakukohde.getHaku().getOid());
         applicationOption.setApplicationSystemRef(applicationSystemRef);
 
+
+
+
         // ApplicationOption/EligibilityRequirements
         addHakukelpoisuusvaatimus(hakukohde, applicationOption);
 
         // ApplicationOption/SelectionCriterions
         addValintaperusteet(hakukohde, applicationOption);
-        
-        
 
         // ApplicationOption/LearningOpportunities
         addKoulutukset(hakukohde, applicationOption);
 
-        copyTexts(hakukohde.getLisatiedot(), applicationOption.getDescription());
 
         marshal(ApplicationOptionType.class, applicationOption);
 
@@ -283,19 +279,19 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
     public void onCollect(Koulutusmoduuli moduuli) throws Exception {
         onCollect(moduuli, null);
     }
-    
+
     @Override
     public void onCollect(Koulutusmoduuli moduuli, KoulutusmoduuliToteutus t) throws Exception {
         LearningOpportunitySpecificationType specification = objectFactory.createLearningOpportunitySpecificationType();
 
-        if (moduuli.getModuuliTyyppi() != KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA && moduuli.getModuuliTyyppi() != KoulutusmoduuliTyyppi.TUTKINTO)  {
+        if (moduuli.getModuuliTyyppi() != KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA && moduuli.getModuuliTyyppi() != KoulutusmoduuliTyyppi.TUTKINTO) {
             throw new Exception("KoulutusmoduuliTyyppi not supported: " + moduuli.getModuuliTyyppi());
         }
 
         if (t != null) {
             handleChildren(moduuli, t, specification);
         }
-        
+
         //LearningOpportunitySpecification#status
         specification.setStatus(status(moduuli.getTila()));
 
@@ -321,7 +317,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         } else {
             addOrganisaatioRef(t, specification);
         }
-        
+
 
         // LearningOpportunitySpecification/OfferedBy
         specification.setOfferedBy(null);
@@ -355,7 +351,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
         // LearningOpportunitySpecification/Description/AccessToFurtherStudies
         addJatkoOpintoMahdollisuudet(moduuli, description);
-        
+
         if (t != null) {
             addKoulutusohjelmanValinta(t, description);
         }
@@ -367,7 +363,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
     private void addKoulutusohjelmanValinta(KoulutusmoduuliToteutus koulutus,
             Description description) {
-       copyTexts(koulutus.getKoulutusohjelmanValinta(), description.getSelectionOfDegreeProgram());
+        copyTexts(koulutus.getKoulutusohjelmanValinta(), description.getSelectionOfDegreeProgram());
     }
 
     private void handleChildren(Koulutusmoduuli moduuli,
@@ -381,7 +377,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             }
         }
     }
-    
+
     private LearningOpportunitySpecificationRefType createLOSRef(String moduuliOid) {
         try {
             LearningOpportunitySpecificationRefType losRef = new LearningOpportunitySpecificationRefType();
@@ -391,12 +387,9 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             return null;
         }
     }
-    
-    
 
     @Override
     public void onCollect(KoulutusmoduuliToteutus toteutus) throws Exception {
-
         log.debug("processing KoulutusmoduuliToteutus, oid: " + toteutus.getOid());
 
         LearningOpportunityInstanceType instance = new LearningOpportunityInstanceType();
@@ -493,7 +486,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                 ProviderAddressType pat = new ProviderAddressType();
                 if (yhtDto instanceof EmailDTO) {
                     EmailDTO emailDto = (EmailDTO) yhtDto;
-                    if (emailDto != null) {
+                    if (emailDto.getEmail() != null) {
                         pat.setEmailAddress(emailDto.getEmail());
                     }
 
@@ -511,28 +504,27 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                 } else if (yhtDto instanceof OsoiteDTO) {
                     OsoiteDTO osoiteDto = (OsoiteDTO) yhtDto;
 
-                    if (osoiteDto != null) {
-                        //address information
-                        pat.getAddressLine().add(osoiteDto.getOsoite());
-                        pat.getAddressLine().add(osoiteDto.getExtraRivi());
-                        pat.setCity(osoiteDto.getPostitoimipaikka());
-                        pat.setPostalCode(osoiteDto.getPostinumero());
-                        pat.setCountry(osoiteDto.getMaa());
+                    //address information
+                    pat.getAddressLine().add(osoiteDto.getOsoite());
+                    pat.getAddressLine().add(osoiteDto.getExtraRivi());
+                    pat.setCity(osoiteDto.getPostitoimipaikka());
+                    pat.setPostalCode(osoiteDto.getPostinumero());
+                    pat.setCountry(osoiteDto.getMaa());
 
-                        if (osoiteDto.getOsoiteTyyppi() != null) {
-                            switch (osoiteDto.getOsoiteTyyppi()) {
-                                case KAYNTI:
-                                    pat.setScheme(AddressInfoSchemeType.ADMISSION_OFFICE_ENTRANCE);
-                                    break;
-                                case POSTI:
-                                    pat.setScheme(AddressInfoSchemeType.ADMISSION_OFFICE_POST_ADDRESS);
-                                    break;
-                                case MUU:
-                                    pat.setScheme(AddressInfoSchemeType.OTHER);
-                                    break;
-                            }
+                    if (osoiteDto.getOsoiteTyyppi() != null) {
+                        switch (osoiteDto.getOsoiteTyyppi()) {
+                            case KAYNTI:
+                                pat.setScheme(AddressInfoSchemeType.ADMISSION_OFFICE_ENTRANCE);
+                                break;
+                            case POSTI:
+                                pat.setScheme(AddressInfoSchemeType.ADMISSION_OFFICE_POST_ADDRESS);
+                                break;
+                            case MUU:
+                                pat.setScheme(AddressInfoSchemeType.OTHER);
+                                break;
                         }
                     }
+
                 } else if (yhtDto instanceof WwwDTO) {
                     //skip, the DTO not needed
                     continue;
@@ -673,7 +665,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         to.setOrganizationRef(organizationRef);
 
     }
-    
+
     private void addOrganisaatioRef(KoulutusmoduuliToteutus from, LearningOpportunitySpecificationType to) {
         OrganizationRefType organizationRef = new OrganizationRefType();
         organizationRef.setOidRef(from.getTarjoaja());
@@ -735,7 +727,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         Set<KoulutusmoduuliToteutus> koulutukset = hakukohde.getKoulutusmoduuliToteutuses();
         int laskuri = 0;
         for (KoulutusmoduuliToteutus koulutus : koulutukset) {
-            
+
             if (laskuri == 0) {
                 String parentOid = this.komotoParentMap.get(koulutus.getKoulutusmoduuli().getOid() + koulutus.getTarjoaja());
                 if (parentOid != null) {
@@ -781,9 +773,8 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         if (source.getEdellisenVuodenHakijat() != null) {
             criterions.setLastYearTotalApplicants(BigInteger.valueOf(source.getEdellisenVuodenHakijat()));
         }
-
-        copyTexts(source.getValintaperusteKuvaus(), criterions.getDescription());
-
+        Set<MonikielinenMetadata> monikielinenMetadata = source.getValintaperustekuvaus();
+        copyTexts(monikielinenMetadata, criterions.getDescription());
         addValintakokeet(source, criterions);
 
         addLiitteet(source, criterions);
@@ -798,17 +789,11 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         }
 
         SelectionCriterionsType.EntranceExaminations exams = new SelectionCriterionsType.EntranceExaminations();
-
-        copyTexts(source.getValintaperusteKuvaus(), exams.getDescription());
-
         for (Valintakoe sourceExamination : valintakoes) {
-
             Examination targetExamination = new Examination();
             addValintakoe(sourceExamination, targetExamination);
             exams.getExamination().add(targetExamination);
-
         }
-
         target.setEntranceExaminations(exams);
 
     }
@@ -918,27 +903,12 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             }
 
         }
-
-
     }
 
     private void addHakukelpoisuusvaatimus(Hakukohde source, ApplicationOptionType target) {
-
-        // todo: is this koodisto uri??
-        final String hakukelpoisuus = source.getHakukelpoisuusvaatimus();
-
-        if (hakukelpoisuus != null) {
-
-            EligibilityRequirementsType eligibilityRequirements = new EligibilityRequirementsType();
-            target.setEligibilityRequirements(eligibilityRequirements);
-
-            ExtendedStringType targetString = new ExtendedStringType();
-            targetString.setValue(hakukelpoisuus);
-
-            eligibilityRequirements.getDescription().add(targetString);
-
-        }
-
+        EligibilityRequirementsType eligibilityRequirements = new EligibilityRequirementsType();
+        copyTexts(source.getSoraKuvaus(), eligibilityRequirements.getDescription());
+        target.setEligibilityRequirements(eligibilityRequirements);
     }
 
     /**
@@ -1078,6 +1048,14 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         if (source != null) {
             for (Teksti teksti : source.getTeksti()) {
                 target.add(createExtendedString(teksti.getValue(), teksti.getKieliKoodi()));
+            }
+        }
+    }
+
+    private void copyTexts(Collection<MonikielinenMetadata> source, List<ExtendedStringType> target) {
+        if (source != null) {
+            for (MonikielinenMetadata teksti : source) {
+                target.add(createExtendedString(teksti.getArvo(), teksti.getKieli()));
             }
         }
     }

@@ -10,28 +10,23 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "monikielinen_metadata", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"avain", "kategoria", "kieli"})
+    @UniqueConstraint(columnNames = {"avain", "kategoria", "kieli"})
 })
 public class MonikielinenMetadata extends BaseEntity {
 
     // Make translated texts behave more like "metadata".
     // For example: "uri: Sosiaali- ja Terveysala"
     private String avain = null;
-
     // For example: "SORA", "Valintaperustekuvaus"
     private String kategoria = null;
-
     // For example: "uri: Finnish 358#1"
     private String kieli = null;
-
     @Lob
     @Basic(fetch = FetchType.EAGER)
     private String arvo = null;
-
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false, nullable = false)
     private Date created = new Date();
-
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = true, nullable = false)
     private Date modified = new Date();

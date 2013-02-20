@@ -368,7 +368,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         osoiteLayout.addComponent(liitteidenOsoiteRivi2Text,0,1,1,1);
 
-        liitteidenPostinumeroText =  uiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_POSTINUMERO);
+        liitteidenPostinumeroText =  uiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_POSTINUMERO_URI);
 
 
 

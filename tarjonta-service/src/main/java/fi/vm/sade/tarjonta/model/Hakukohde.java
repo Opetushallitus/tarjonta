@@ -16,9 +16,11 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -31,50 +33,36 @@ import javax.validation.constraints.NotNull;
 public class Hakukohde extends BaseEntity {
 
     private static final long serialVersionUID = -3320464257959195992L;
-
     @Column(name = "oid")
     private String oid;
-
-    @ManyToMany(mappedBy = "hakukohdes",cascade = {CascadeType.MERGE,CascadeType.REFRESH})
+    @ManyToMany(mappedBy = "hakukohdes", cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "hakukohde_id")
     private Set<Valintakoe> valintakoes = new HashSet<Valintakoe>();
-
     /**
      * The koodisto uri of the name of this hakukohde object.
      */
     @NotNull
     @Column(name = "hakukohde_nimi", nullable = false)
     private String hakukohdeNimi;
-
     /**
-     * The string containing the human readable name of this
-     * hakukohde object. Names in different languages are
-     * concatenated to this field. This field is created
-     * to enable search.
+     * The string containing the human readable name of this hakukohde object.
+     * Names in different languages are concatenated to this field. This field
+     * is created to enable search.
      */
     @Column(name = "hakukohde_koodisto_nimi")
     private String hakukohdeKoodistoNimi;
-
     @Column(name = "alin_valinta_pistamaara")
     private Integer alinValintaPistemaara;
-
-
     @Column(name = "ylin_valinta_pistemaara")
     private Integer ylinValintaPistemaara;
-
     @Column(name = "aloituspaikat_lkm")
     private Integer aloituspaikatLkm;
-
     private Integer valintojenAloituspaikatLkm;
-
     private boolean kaytetaanHaunPaattymisenAikaa;
-
     @Column(name = "edellisenvuodenhakijat")
     private Integer edellisenVuodenHakijat;
-
     @Column(name = "hakukelpoisuusvaatimus")
     private String hakukelpoisuusvaatumus;
 
@@ -82,29 +70,55 @@ public class Hakukohde extends BaseEntity {
     @Column(name = "tila")
     @Enumerated(EnumType.STRING)
     private TarjontaTila tila;
-
     @Embedded
     private Osoite liitteidenToimitusOsoite;
-
     private String sahkoinenToimitusOsoite;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date liitteidenToimitusPvm;
-
-    @ManyToOne 
+    @ManyToOne
     @NotNull
     private Haku haku;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "valintaperustekuvaus_teksti_id")
-    private MonikielinenTeksti valintaperusteKuvaus;
-
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "lisatiedot_teksti_id")
     private MonikielinenTeksti lisatiedot;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,orphanRemoval = true, mappedBy = "hakukohde")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "hakukohde")
     private Set<HakukohdeLiite> liites = new HashSet<HakukohdeLiite>();
+    @Deprecated
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "valintaperustekuvaus_teksti_id")
+    private MonikielinenTeksti valintaperusteKuvaus;
+    
+    
+     /*
+     * valintaperustekuvaus metadata keys
+     * TODO: rewrite the impl, it works but is a quite ugly.
+     */
+    @Column(name = "valintaperustekuvaus_koodi_uri")
+    private String valintaperustekuvausKoodiUri;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "valintaperustekuvaus_kategoria")
+    private MetaCategory valintaperustekuvausKategoria = MetaCategory.VALINTAPERUSTEKUVAUS;
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumns({
+        @JoinColumn(name = "avain", referencedColumnName = "valintaperustekuvaus_koodi_uri", updatable = false, insertable = false),
+        @JoinColumn(name = "kategoria", referencedColumnName = "valintaperustekuvaus_kategoria", updatable = false, insertable = false)
+    })
+    private Set<MonikielinenMetadata> valintaperustekuvaus = new HashSet<MonikielinenMetadata>();
+    /*
+     * Sora metadata keys
+     * TODO: rewrite the impl, it works but is a quite ugly.
+     */
+    @Column(name = "sora_kuvaus_koodi_uri")
+    private String soraKuvausKoodiUri;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "sora_kuvaus_kategoria")
+    private MetaCategory soraKuvausKategoria = MetaCategory.SORA_KUVAUS;
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumns({
+        @JoinColumn(name = "avain", referencedColumnName = "sora_kuvaus_koodi_uri", updatable = false, insertable = false),
+        @JoinColumn(name = "kategoria", referencedColumnName = "sora_kuvaus_kategoria", updatable = false, insertable = false)
+    })
+    private Set<MonikielinenMetadata> soraKuvaus = new HashSet<MonikielinenMetadata>();
 
     /**
      * @return the koulutuses
@@ -138,7 +152,8 @@ public class Hakukohde extends BaseEntity {
     }
 
     /**
-     * Set uri to koodisto that points to hakukohde's name. Example of a name is: "Autoalan Tutkinto, YO" (where Hakukohde could be for one
+     * Set uri to koodisto that points to hakukohde's name. Example of a name
+     * is: "Autoalan Tutkinto, YO" (where Hakukohde could be for one
      * KoulutusmoduuliToteutus that is "Autoalan Tutkinto").
      *
      *
@@ -214,14 +229,6 @@ public class Hakukohde extends BaseEntity {
 
     public void setTila(TarjontaTila tila) {
         this.tila = tila;
-    }
-
-    public MonikielinenTeksti getValintaperusteKuvaus() {
-        return valintaperusteKuvaus;
-    }
-
-    public void setValintaperusteKuvaus(MonikielinenTeksti valintaperusteKuvaus) {
-        this.valintaperusteKuvaus = valintaperusteKuvaus;
     }
 
     /**
@@ -354,5 +361,105 @@ public class Hakukohde extends BaseEntity {
     public void setKaytetaanHaunPaattymisenAikaa(boolean kaytetaanHaunPaattymisenAikaa) {
         this.kaytetaanHaunPaattymisenAikaa = kaytetaanHaunPaattymisenAikaa;
     }
-}
 
+    /**
+     * @return the valintaperusteKuvaus
+     */
+    public MonikielinenTeksti getValintaperusteKuvaus() {
+        return valintaperusteKuvaus;
+    }
+
+    /**
+     * @param valintaperusteKuvaus the valintaperusteKuvaus to set
+     */
+    public void setValintaperusteKuvaus(MonikielinenTeksti valintaperusteKuvaus) {
+        this.valintaperusteKuvaus = valintaperusteKuvaus;
+    }
+
+    /**
+     * @return the valintaperustekuvausKoodiUri
+     */
+    public String getValintaperustekuvausKoodiUri() {
+        return valintaperustekuvausKoodiUri;
+    }
+
+    /**
+     * @param valintaperustekuvausKoodiUri the valintaperustekuvausKoodiUri to set
+     */
+    public void setValintaperustekuvausKoodiUri(String valintaperustekuvausKoodiUri) {
+        this.valintaperustekuvausKoodiUri = valintaperustekuvausKoodiUri;
+    }
+
+    /**
+     * @return the valintaperustekuvausKategoria
+     */
+    public MetaCategory getValintaperustekuvausKategoria() {
+        return valintaperustekuvausKategoria;
+    }
+
+    /**
+     * @param valintaperustekuvausKategoria the valintaperustekuvausKategoria to set
+     */
+    public void setValintaperustekuvausKategoria(MetaCategory valintaperustekuvausKategoria) {
+        this.valintaperustekuvausKategoria = valintaperustekuvausKategoria;
+    }
+
+    /**
+     * @return the valintaperustekuvaus
+     */
+    public Set<MonikielinenMetadata> getValintaperustekuvaus() {
+        return valintaperustekuvaus;
+    }
+
+    /**
+     * @param valintaperustekuvaus the valintaperustekuvaus to set
+     */
+    public void setValintaperustekuvaus(Set<MonikielinenMetadata> valintaperustekuvaus) {
+        this.valintaperustekuvaus = valintaperustekuvaus;
+    }
+
+    /**
+     * @return the soraKuvausKoodiUri
+     */
+    public String getSoraKuvausKoodiUri() {
+        return soraKuvausKoodiUri;
+    }
+
+    /**
+     * @param soraKuvausKoodiUri the soraKuvausKoodiUri to set
+     */
+    public void setSoraKuvausKoodiUri(String soraKuvausKoodiUri) {
+        this.soraKuvausKoodiUri = soraKuvausKoodiUri;
+    }
+
+    /**
+     * @return the soraKuvausKategoria
+     */
+    public MetaCategory getSoraKuvausKategoria() {
+        return soraKuvausKategoria;
+    }
+
+    /**
+     * @param soraKuvausKategoria the soraKuvausKategoria to set
+     */
+    public void setSoraKuvausKategoria(MetaCategory soraKuvausKategoria) {
+        this.soraKuvausKategoria = soraKuvausKategoria;
+    }
+
+    /**
+     * @return the soraKuvaus
+     */
+    public Set<MonikielinenMetadata> getSoraKuvaus() {
+        return soraKuvaus;
+    }
+
+    /**
+     * @param soraKuvaus the soraKuvaus to set
+     */
+    public void setSoraKuvaus(Set<MonikielinenMetadata> soraKuvaus) {
+        this.soraKuvaus = soraKuvaus;
+    }
+
+
+
+}

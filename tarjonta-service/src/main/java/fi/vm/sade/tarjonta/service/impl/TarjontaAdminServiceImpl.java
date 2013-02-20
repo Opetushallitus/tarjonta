@@ -292,6 +292,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     public HakukohdeTyyppi paivitaHakukohde(HakukohdeTyyppi hakukohdePaivitys) {
+
         Hakukohde hakukohde = conversionService.convert(hakukohdePaivitys, Hakukohde.class);
         List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findBy("oid", hakukohdePaivitys.getOid());
         hakukohde.setId(hakukohdeTemp.get(0).getId());

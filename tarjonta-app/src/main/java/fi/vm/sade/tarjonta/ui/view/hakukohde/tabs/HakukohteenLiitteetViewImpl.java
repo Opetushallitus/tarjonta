@@ -210,7 +210,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
         osoiteLayout.addComponent(osoiteRivi2, 0, 1, 1, 1);
 
-        postinumero = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POSTINUMERO);
+        postinumero = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POSTINUMERO_URI);
         osoiteLayout.addComponent(postinumero, 0, 2);
         postinumero.setSizeUndefined();
 

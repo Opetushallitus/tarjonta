@@ -44,6 +44,10 @@ public abstract class AbstractKoodistoEnricher extends ElementEnricher {
         this.koodistoService = koodistoService;
     }
 
+    public KoodistoLookupService getKoodistoService() {
+        return koodistoService;
+    }
+
     /**
      * Helper method that invokes KoodistoLookupService and catches any errors
      * if {@link #failOnKoodiError} is set to false.
@@ -62,6 +66,4 @@ public abstract class AbstractKoodistoEnricher extends ElementEnricher {
             }
         }
     }
-
-    
 }

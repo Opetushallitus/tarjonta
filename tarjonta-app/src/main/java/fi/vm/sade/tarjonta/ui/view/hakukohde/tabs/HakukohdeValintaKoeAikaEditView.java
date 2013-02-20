@@ -93,7 +93,7 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
         osoiteRiviTxt.setInputPrompt(T("HakukohdeValintakoeViewImpl.osoiteRivi"));
         osoiteAddLayout.addComponent(osoiteRiviTxt);
 
-        postinumeroCombo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POSTINUMERO);
+        postinumeroCombo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POSTINUMERO_URI);
         osoiteAddLayout.addComponent(postinumeroCombo);
 
         postitoimiPaikka = UiUtil.textField(null);

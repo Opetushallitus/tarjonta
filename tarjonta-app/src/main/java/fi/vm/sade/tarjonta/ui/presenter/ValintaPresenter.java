@@ -18,8 +18,18 @@ package fi.vm.sade.tarjonta.ui.presenter;
 import com.vaadin.ui.Button;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
+import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
+import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenMetadataTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +38,7 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.MetaCategory;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
@@ -41,6 +52,7 @@ import fi.vm.sade.tarjonta.ui.view.valinta.ValintaperusteMainView;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,7 +76,13 @@ public class ValintaPresenter implements CommonPresenter {
     @Autowired(required = true)
     private TarjontaAdminService tarjontaAdminService;
     @Autowired(required = true)
+    private TarjontaPublicService tarjontaPublicService;
+    @Autowired(required = true)
     private TarjontaUIHelper tarjotaHelper;
+    @Autowired(required = true)
+    private KoodiService koodiService;
+    @Autowired(required = true)
+    private KoodistoService koodistoService;
 
     public ValintaPresenter() {
     }
@@ -172,15 +190,73 @@ public class ValintaPresenter implements CommonPresenter {
      */
     public void save(final MetaCategory metaCategory) {
         final ValintaperusteModel model = getValintaperustemodel(metaCategory);
-        final String selectedUri = model.getSelectedUri();
+        final String kuvausRyhmaUri = model.getSelectedUri();
         final String category = metaCategory.toString();
 
-        if (selectedUri == null) {
+        if (kuvausRyhmaUri == null) {
             throw new RuntimeException("Meta data key is required!");
         }
 
         for (KielikaannosViewModel kieli : model.getKuvaus()) {
-            tarjontaAdminService.tallennaMetadata(selectedUri, category, kieli.getKielikoodi(), kieli.getNimi());
+            tarjontaAdminService.tallennaMetadata(kuvausRyhmaUri, category, kieli.getKielikoodi(), kieli.getNimi());
+        }
+
+        KoodiUriAndVersioType uriType = TarjontaUIHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(kuvausRyhmaUri);
+
+        List<KoodiType> listKoodiByRelation = koodiService.listKoodiByRelation(uriType, false, SuhteenTyyppiType.SISALTYY);
+
+        if (koodiService != null && listKoodiByRelation != null) {
+            Set<String> koodiUris = new HashSet<String>();
+            //search all koodis related to descrption group
+            for (KoodiType koodi : listKoodiByRelation) {
+                final String koodistoUri = koodi.getKoodisto().getKoodistoUri();
+
+                if (KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI.equals(koodistoUri)) {
+                    koodiUris.add(TarjontaUIHelper.createVersionUri(koodi.getKoodiUri(), koodi.getVersio()));
+                }
+            }
+
+            //update all Application Options with metadata description
+            for (String koodiUri : koodiUris) {
+                HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
+                kysely.setNimiKoodiUri(koodiUri);
+                HaeHakukohteetVastausTyyppi haeHakukohteet = tarjontaPublicService.haeHakukohteet(kysely);
+                for (HaeHakukohteetVastausTyyppi.HakukohdeTulos result : haeHakukohteet.getHakukohdeTulos()) {
+
+                    HakukohdeKoosteTyyppi hakukohde = result.getHakukohde();
+
+                    if (hakukohde != null && hakukohde.getOid() != null) {
+                        LueHakukohdeKyselyTyyppi lueHakukohdeKyselyTyyppi = new LueHakukohdeKyselyTyyppi();
+                        lueHakukohdeKyselyTyyppi.setOid(hakukohde.getOid());
+                        LueHakukohdeVastausTyyppi lueHakukohde = tarjontaPublicService.lueHakukohde(lueHakukohdeKyselyTyyppi);
+                        HakukohdeTyyppi updateHakukohde = lueHakukohde.getHakukohde();
+
+                        if (updateHakukohde != null) {
+                            
+                            
+                            if (MetaCategory.SORA_KUVAUS.equals(metaCategory)) {
+                                updateHakukohde.setSoraKuvausKoodiUri(kuvausRyhmaUri);
+                            } else if (MetaCategory.VALINTAPERUSTEKUVAUS.equals(metaCategory)) {
+                                updateHakukohde.setValintaperustekuvausKoodiUri(kuvausRyhmaUri);
+                            }
+                            
+                             
+                                LOG.debug("Hakukohde OID {} {}", updateHakukohde.getValintaperustekuvausKoodiUri(), updateHakukohde.getSoraKuvausKoodiUri());
+                           
+                            
+                            tarjontaAdminService.paivitaHakukohde(updateHakukohde);
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Hakukohde OID {} updated successfully!", hakukohde.getOid());
+                            }
+                        }
+                    } else {
+                        LOG.debug("Search result was missing data?");
+
+                    }
+                }
+            }
+        } else {
+            LOG.warn("No koodisto relatios found!");
         }
     }
 

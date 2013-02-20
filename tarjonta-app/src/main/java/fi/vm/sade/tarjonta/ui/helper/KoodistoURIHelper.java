@@ -75,12 +75,12 @@ public class KoodistoURIHelper {
      */
     public static String KOODISTO_AMMATTINIMIKKEET_URI;
     public static String KOODISTO_OPETUSMUOTO_URI;
-    public static String KOODISTO_POSTINUMERO;
+    public static String KOODISTO_POSTINUMERO_URI;
     /*
      * Valintaperustekuvaus URIs
      */
-    public static String KOODISTO_VALINTAPERUSTEKUVAUSRYHMA;
-    public static String KOODISTO_SORA_KUVAUSRYHMA;
+    public static String KOODISTO_VALINTAPERUSTEKUVAUSRYHMA_URI;
+    public static String KOODISTO_SORA_KUVAUSRYHMA_URI;
 
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
@@ -224,7 +224,7 @@ public class KoodistoURIHelper {
 
     @Value("${koodisto-uris.postinumero:NOT_SET}")
     public void setPostinumero(String postinumero) {
-        KOODISTO_POSTINUMERO = postinumero;
+        KOODISTO_POSTINUMERO_URI = postinumero;
     }
 
     @Value("${koodisto-uris.liitteentyyppi:NOT_SET}")
@@ -234,11 +234,11 @@ public class KoodistoURIHelper {
 
     @Value("${koodisto-uris.valintaperustekuvausryhma:NOT_SET}")
     public void setValintaperustekuvausryhma(String valintaperustekuvausryhma) {
-        KOODISTO_VALINTAPERUSTEKUVAUSRYHMA = valintaperustekuvausryhma;
+        KOODISTO_VALINTAPERUSTEKUVAUSRYHMA_URI = valintaperustekuvausryhma;
     }
 
     @Value("${koodisto-uris.sorakuvausryhma:NOT_SET}")
     public void setSoraKuvausryhma(String soraKuvausryhma) {
-        KOODISTO_SORA_KUVAUSRYHMA = soraKuvausryhma;
+        KOODISTO_SORA_KUVAUSRYHMA_URI = soraKuvausryhma;
     }
 }

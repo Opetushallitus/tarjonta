@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.publication.enricher.mock;
 
 import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoLookupService;
+import java.util.Map;
 
 /**
  *
@@ -26,6 +27,21 @@ public class KoodistoLookupServiceMock implements KoodistoLookupService {
     @Override
     public KoodiValue lookupKoodi(String uri, Integer version) {
         return new SimpleKoodiValue(uri, "123", "Nimi", "Name", "Namn");
+    }
+
+    @Override
+    public KoodiValue searchKoodiRelation(String uri) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Map<String, String> getCachedKoodistoLanguageCodes() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getLanguageCodeByKoodiUri(String koodiUri) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

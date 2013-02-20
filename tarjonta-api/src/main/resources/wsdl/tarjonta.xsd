@@ -179,16 +179,21 @@
                         maxOccurs="1"
                         minOccurs="0"/>
 
-            <xs:element name="valintaPerusteidenKuvaukset"
-                        type="tns:MonikielinenTekstiTyyppi"
-                        minOccurs="0"
-                        maxOccurs="1"/>
-
             <xs:element name="hakukohdeKoulutukses"
                         type="tns:KoulutusKoosteTyyppi"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-
+            
+            <xs:element name="valintaperustekuvausKoodiUri"
+                         type="xs:string"
+                         minOccurs="0"
+                         maxOccurs="1"/>
+              
+            <xs:element name="soraKuvausKoodiUri"
+                         type="xs:string"
+                         minOccurs="0"
+                         maxOccurs="1"/>
+        
         </xs:sequence>
     </xs:complexType>
 

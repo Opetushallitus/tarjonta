@@ -19,8 +19,8 @@ package fi.vm.sade.tarjonta.service.impl.conversion;
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 
 import java.util.ArrayList;
@@ -44,12 +44,15 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.setOid(s.getOid());
         hakukohde.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
         hakukohde.setLisatiedot(EntityUtils.copyFields(s.getLisatiedot()));
-        hakukohde.setValintaPerusteidenKuvaukset(EntityUtils.copyFields(s.getValintaperusteKuvaus()));
+        
+        //TODO: hakukohde.setValintaPerusteidenKuvaukset(null);
         hakukohde.getHakukohteenKoulutusOidit().addAll(convertKoulutukses(s.getKoulutusmoduuliToteutuses()));
         hakukohde.setKaytetaanHaunPaattymisenAikaa(s.isKaytetaanHaunPaattymisenAikaa());
         hakukohde.setValinnanAloituspaikat(s.getValintojenAloituspaikatLkm());
         hakukohde.setSahkoinenToimitusOsoite(s.getSahkoinenToimitusOsoite());
         hakukohde.setLiitteidenToimitusPvm(s.getLiitteidenToimitusPvm());
+        hakukohde.setSoraKuvausKoodiUri(s.getSoraKuvausKoodiUri());
+        hakukohde.setValintaperustekuvausKoodiUri(s.getValintaperustekuvausKoodiUri());
         if (s.getLiitteidenToimitusOsoite() != null) {
             hakukohde.setLiitteidenToimitusOsoite(osoiteTyyppiFromOsoite(s.getLiitteidenToimitusOsoite()));
         }

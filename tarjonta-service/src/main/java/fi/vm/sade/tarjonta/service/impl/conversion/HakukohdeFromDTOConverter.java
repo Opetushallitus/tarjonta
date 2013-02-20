@@ -39,11 +39,15 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
         hakukohde.setLisatiedot(EntityUtils.copyFields(from.getLisatiedot()));
         hakukohde.setTila(EntityUtils.convertTila(from.getHakukohteenTila()));
         hakukohde.setHakukohdeKoodistoNimi(from.getHakukohdeKoodistoNimi());
-        hakukohde.setValintaperusteKuvaus(EntityUtils.copyFields(from.getValintaPerusteidenKuvaukset()));
+
+        //Valintaperustekuvaus is stored now in MonikielinenMetaData table.
+        //hakukohde.setValintaperusteKuvaus(EntityUtils.copyFields(from.getValintaPerusteidenKuvaukset())); 
         hakukohde.setValintojenAloituspaikatLkm(from.getValinnanAloituspaikat());
         hakukohde.setLiitteidenToimitusPvm(from.getLiitteidenToimitusPvm());
         hakukohde.setSahkoinenToimitusOsoite(from.getSahkoinenToimitusOsoite());
         hakukohde.setKaytetaanHaunPaattymisenAikaa(from.isKaytetaanHaunPaattymisenAikaa());
+        hakukohde.setSoraKuvausKoodiUri(from.getSoraKuvausKoodiUri());
+        hakukohde.setValintaperustekuvausKoodiUri(from.getValintaperustekuvausKoodiUri());
         if (from.getLiitteidenToimitusOsoite() != null) {
             hakukohde.setLiitteidenToimitusOsoite(convertOsoite(from.getLiitteidenToimitusOsoite()));
         }
@@ -61,6 +65,4 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
 
         return osoite;
     }
-
 }
-

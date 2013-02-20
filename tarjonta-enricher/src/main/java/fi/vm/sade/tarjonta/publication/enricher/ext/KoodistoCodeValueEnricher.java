@@ -186,4 +186,8 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
     public Attributes getAttributes() {
         return this.attributes;
     }
+
+    protected Set<String> getExistingLabels() {
+        return this.existingLabels;
+    }
 }

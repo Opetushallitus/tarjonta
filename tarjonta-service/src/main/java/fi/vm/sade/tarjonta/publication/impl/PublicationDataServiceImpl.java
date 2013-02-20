@@ -78,7 +78,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         final BooleanExpression criteria = komoto.tila.in(PUBLIC_DATA).and(komo.tila.eq(TarjontaTila.JULKAISTU));
 
         return from(komoto).
-                leftJoin(komoto.ammattinimikes).fetch().                
+                leftJoin(komoto.ammattinimikes).fetch().
                 leftJoin(komoto.avainsanas).fetch().
                 leftJoin(komoto.opetuskielis).fetch().
                 leftJoin(komoto.opetusmuotos).fetch().
@@ -103,7 +103,6 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QHakukohde hakukohde = QHakukohde.hakukohde;
         QValintakoe valintakoe = QValintakoe.valintakoe;
         QMonikielinenTeksti kuvaus = new QMonikielinenTeksti("kuvaus");
-        QMonikielinenTeksti valintaperuste = new QMonikielinenTeksti("valintaperuste");
         QMonikielinenTeksti lisatiedot = new QMonikielinenTeksti("lisatiedot");
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
 
@@ -111,11 +110,13 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
         return from(hakukohde).
                 leftJoin(hakukohde.valintakoes, valintakoe).fetch().
-                leftJoin(valintakoe.kuvaus, kuvaus).fetch().leftJoin(kuvaus.tekstis).fetch().
-                leftJoin(hakukohde.valintaperusteKuvaus, valintaperuste).fetch().leftJoin(valintaperuste.tekstis).fetch().
+                leftJoin(valintakoe.kuvaus, kuvaus).fetch().
+                leftJoin(kuvaus.tekstis).fetch().
                 leftJoin(hakukohde.liites).fetch().
-                leftJoin(hakukohde.koulutusmoduuliToteutuses, komoto).fetch().leftJoin(komoto.koulutusmoduuli).fetch().
-                leftJoin(hakukohde.lisatiedot, lisatiedot).fetch().leftJoin(lisatiedot.tekstis).fetch().
+                leftJoin(hakukohde.koulutusmoduuliToteutuses, komoto).fetch().
+                leftJoin(komoto.koulutusmoduuli).fetch().
+                leftJoin(hakukohde.lisatiedot, lisatiedot).fetch().
+                leftJoin(lisatiedot.tekstis).fetch().
                 where(criteria).
                 distinct().list(hakukohde);
 

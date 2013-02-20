@@ -3,6 +3,7 @@ package fi.vm.sade.tarjonta.dao.impl;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
 import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
+import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -103,6 +104,7 @@ public class MonikielinenMetatdataDAOImpl extends AbstractJpaDAOImpl<Monikieline
         List<MonikielinenMetadata> tmp = query.getResultList();
         if (tmp.size() == 0) {
             // New entry
+
             result = new MonikielinenMetadata();
             result.setAvain(avain);
             result.setKategoria(kategoria);

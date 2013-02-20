@@ -103,6 +103,7 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="nimi" minOccurs="0" maxOccurs="1" type="xs:string"/>
+            <xs:element name="nimiKoodiUri" minOccurs="0" maxOccurs="1" type="xs:string"/>
             <xs:element name="tarjoajaOids" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
             <xs:element name="koulutuksenAlkamisvuosi" minOccurs="0" maxOccurs="1" type="xs:int"/>
             <xs:element name="koulutuksenAlkamiskausi" minOccurs="0" maxOccurs="1" type="xs:string"/>
@@ -183,7 +184,7 @@
                         minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
                     <xs:sequence>
-                       <xs:element name="koulutusmoduuli" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="koulutusmoduuli" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1" maxOccurs="1"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -229,20 +230,20 @@
     <xs:complexType name="LueHakukohdeKoulutuksineenKyselyTyyppi">
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeOid" type="xs:string">
-               <xs:annotation>
-                   <xs:documentation>Hakukohteen yksilöllinen oid</xs:documentation>
-               </xs:annotation>
+                <xs:annotation>
+                    <xs:documentation>Hakukohteen yksilöllinen oid</xs:documentation>
+                </xs:annotation>
             </xs:element>
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="LueHakukohdeKoulutuksineenVastausTyyppi">
         <xs:sequence>
-           <xs:element minOccurs="1" maxOccurs="1" name="hakukohde" type="tarjonta:HakukohdeTyyppi">
-               <xs:annotation>
-                   <xs:documentation>Hakukohde joka sisältää mahdolliset siihen liitetyt koulutukset</xs:documentation>
-               </xs:annotation>
-           </xs:element>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohde" type="tarjonta:HakukohdeTyyppi">
+                <xs:annotation>
+                    <xs:documentation>Hakukohde joka sisältää mahdolliset siihen liitetyt koulutukset</xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
     
@@ -266,21 +267,21 @@
         </xs:sequence>
     </xs:complexType>
 
-   <xs:complexType name="LueHakukohteenValintakoeTunnisteellaKyselyTyyppi">
-       <xs:sequence>
-           <xs:element minOccurs="1" maxOccurs="1" name="hakukohteenValintakoeTunniste" type="xs:string">
-               <xs:annotation>
-                   <xs:documentation>Hakukohteen valintakokeen yksilöivä tunniste</xs:documentation>
-               </xs:annotation>
-           </xs:element>
-       </xs:sequence>
-   </xs:complexType>
+    <xs:complexType name="LueHakukohteenValintakoeTunnisteellaKyselyTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohteenValintakoeTunniste" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Hakukohteen valintakokeen yksilöivä tunniste</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 
-   <xs:complexType name="LueHakukohteenValintakoeTunnisteellaVastausTyyppi">
-       <xs:sequence>
-           <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeValintakoe" type="tarjonta:ValintakoeTyyppi"/>
-       </xs:sequence>
-   </xs:complexType>
+    <xs:complexType name="LueHakukohteenValintakoeTunnisteellaVastausTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeValintakoe" type="tarjonta:ValintakoeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
 
     <xs:complexType name="HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi">
         <xs:sequence>

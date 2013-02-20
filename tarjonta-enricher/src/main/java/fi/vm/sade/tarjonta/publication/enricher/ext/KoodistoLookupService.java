@@ -15,10 +15,12 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher.ext;
 
+import java.util.Map;
+
 /**
- * Simplified data contract used by content enrichment handlers to lookup Koodisto data to
- * inject into XML. This allows the actual data to come e.g. from live Koodisto link
- * or from pre-fetched data.
+ * Simplified data contract used by content enrichment handlers to lookup
+ * Koodisto data to inject into XML. This allows the actual data to come e.g.
+ * from live Koodisto link or from pre-fetched data.
  *
  * @author Jukka Raanamo
  */
@@ -39,9 +41,7 @@ public interface KoodistoLookupService {
     public interface KoodiValue {
 
         public static final String LANG_FI = "fi";
-
         public static final String LANG_EN = "en";
-
         public static final String LANG_SV = "sv";
 
         /**
@@ -59,27 +59,21 @@ public interface KoodistoLookupService {
         public String getValue();
 
         /**
-         * Returns koodi's name from it's metadata in asked language. Note
-         * that supported languages are usually fi, en, sv.
+         * Returns koodi's name from it's metadata in asked language. Note that
+         * supported languages are usually fi, en, sv.
          *
          * @param lang
          * @return
          */
         public String getMetaName(String lang);
-
     }
-
 
     public static class SimpleKoodiValue implements KoodiValue {
 
         private String nameFI;
-
         private String nameEN;
-
         private String nameSV;
-
         private String uri;
-
         private String value;
 
         public SimpleKoodiValue(String uri, String value, String nameFI, String nameEN, String nameSV) {
@@ -117,9 +111,17 @@ public interface KoodistoLookupService {
         public String getValue() {
             return value;
         }
-
     }
 
+    public KoodiValue searchKoodiRelation(final String koodiUri);
 
+    /**
+     * Get cached ISO language codes in a map. Koodisto URI is map key and
+     * the ISO language code is map value.
+     *
+     * @return Map<koodiUri, isoLangCode>
+     */
+    public Map<String, String> getCachedKoodistoLanguageCodes();
+    
+    public String getLanguageCodeByKoodiUri(final String koodiUri);
 }
-

@@ -19,6 +19,7 @@ import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoCodeValueEnricher;
 import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoLookupService;
 import fi.vm.sade.tarjonta.publication.enricher.XMLStreamEnricher;
 import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoCodeValueCollectionEnricher;
+import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,10 +31,11 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Jukka Raanamo
  */
 public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLStreamEnricher> {
-
+   
     @Autowired(required = true)
     private KoodistoLookupService koodistoService;
     private boolean failOnKoodistoError = false;
+    
     /**
      * Element names that should be handled by KoodistoCodeValueEnricher. Note
      * that these elements should have a unique name.
@@ -84,6 +86,9 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
     private static final String[] KOULUTUSTARJOAJA_TAGS = {
         "LearningOpportunityProvider"
     };
+    private static final String[] SELECTION_DESCRIPTION_TAGS = {
+        "SelectionCriterion"
+    };
 
     @Override
     public boolean isSingleton() {
@@ -127,7 +132,6 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
         }
 
         return processor;
-
     }
 
     /**
@@ -151,4 +155,6 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
     public void setFailOnKoodistoError(boolean failOnKoodistoError) {
         this.failOnKoodistoError = failOnKoodistoError;
     }
+
+   
 }

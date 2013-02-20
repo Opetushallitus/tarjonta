@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
+import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,8 +28,8 @@ public class MonikielinenMetadataDAOTest {
     public static final String AVAIN_1 = "avain1";
     public static final String AVAIN_2 = "avain2";
     public static final String AVAIN_3 = "avain3";
-    public static final String CAT_A = "catA";
-    public static final String CAT_B = "catB";
+    public static final String CAT_A = MetaCategory.SORA_KUVAUS.toString();
+    public static final String CAT_B = MetaCategory.VALINTAPERUSTEKUVAUS.toString();
 
     @Autowired(required = true)
     private MonikielinenMetadataDAO monikielinenMetadataDAO;

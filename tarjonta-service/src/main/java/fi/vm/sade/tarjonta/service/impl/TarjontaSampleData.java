@@ -146,7 +146,7 @@ public class TarjontaSampleData {
         h.setAloituspaikatLkm(100);
         h.setEdellisenVuodenHakijat(1200);
         h.setHakukelpoisuusvaatimus(randomKoodiUri("koulutustaso"));
-        h.setValintaperusteKuvaus(createTeksti("Valintaperustekuvaus...", null, "Selection criterion..."));
+        //h.setValintaperusteKuvaus(createTeksti("Valintaperustekuvaus...", null, "Selection criterion..."));
         h.setHakukohdeNimi(nimi);
         h.setOid(randomOid("hakukohde"));
         h.setYlinValintaPistemaara(90);
