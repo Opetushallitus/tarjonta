@@ -96,8 +96,6 @@ public class Hakukohde extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "valintaperustekuvaus_kategoria")
     private MetaCategory valintaperustekuvausKategoria = MetaCategory.VALINTAPERUSTEKUVAUS;
-    @OneToMany
-    private Set<MonikielinenMetadata> valintaperustekuvaus = new HashSet<MonikielinenMetadata>();
     /*
      * Sora metadata keys
      * TODO: rewrite the impl, it works but is a quite ugly.
@@ -107,8 +105,6 @@ public class Hakukohde extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "sora_kuvaus_kategoria")
     private MetaCategory soraKuvausKategoria = MetaCategory.SORA_KUVAUS;
-    @OneToMany
-    private Set<MonikielinenMetadata> soraKuvaus = new HashSet<MonikielinenMetadata>();
 
     /**
      * @return the koulutuses
@@ -400,14 +396,13 @@ public class Hakukohde extends BaseEntity {
      * @return the valintaperustekuvaus
      */
     public Set<MonikielinenMetadata> getValintaperustekuvaus() {
-        return valintaperustekuvaus;
+        return new HashSet<MonikielinenMetadata>();
     }
 
     /**
      * @param valintaperustekuvaus the valintaperustekuvaus to set
      */
     public void setValintaperustekuvaus(Set<MonikielinenMetadata> valintaperustekuvaus) {
-        this.valintaperustekuvaus = valintaperustekuvaus;
     }
 
     /**
@@ -442,13 +437,12 @@ public class Hakukohde extends BaseEntity {
      * @return the soraKuvaus
      */
     public Set<MonikielinenMetadata> getSoraKuvaus() {
-        return soraKuvaus;
+        return new HashSet<MonikielinenMetadata>();
     }
 
     /**
      * @param soraKuvaus the soraKuvaus to set
      */
     public void setSoraKuvaus(Set<MonikielinenMetadata> soraKuvaus) {
-        this.soraKuvaus = soraKuvaus;
     }
 }
