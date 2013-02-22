@@ -28,7 +28,7 @@ public class HakukohdeLiite extends BaseEntity {
 
     private static final long serialVersionUID = 6186622208433509334L;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.EAGER)
     private Hakukohde hakukohde;
 
     /**

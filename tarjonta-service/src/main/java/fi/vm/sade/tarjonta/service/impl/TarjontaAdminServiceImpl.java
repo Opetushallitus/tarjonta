@@ -110,9 +110,27 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
     }
 
+    @Override
+    public void poistaHakukohdeLiite(@WebParam(name = "hakukohdeLiiteTunniste", targetNamespace = "") String hakukohdeLiiteTunniste) {
+
+        HakukohdeLiite liite = hakukohdeDAO.findHakuKohdeLiiteById(hakukohdeLiiteTunniste);
+        Hakukohde hakukohde = liite.getHakukohde();
+        hakukohde.removeLiite(liite);
+        hakukohdeDAO.insert(hakukohde);
+    }
+
+    @Override
+    public void poistaValintakoe(@WebParam(name = "ValintakoeTunniste", targetNamespace = "") String valintakoeTunniste) {
+        Valintakoe valintakoe = new Valintakoe();
+        valintakoe.setId(new Long(valintakoeTunniste));
+
+        hakukohdeDAO.removeValintakoe(valintakoe);
+
+    }
+
     /*
-     * This method returns true if komoto copy is allowed.
-     */
+         * This method returns true if komoto copy is allowed.
+         */
     @Override
     public boolean tarkistaKoulutuksenKopiointi(@WebParam(partName = "parameters", name = "tarkistaKoulutusKopiointi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") TarkistaKoulutusKopiointiTyyppi parameters) {
 

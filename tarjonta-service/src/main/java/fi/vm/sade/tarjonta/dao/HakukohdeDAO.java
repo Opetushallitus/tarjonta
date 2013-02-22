@@ -42,5 +42,8 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     Hakukohde findHakukohdeWithKomotosByOid(String oid);
 
+    void removeValintakoe(Valintakoe valintakoe);
+
+
 }
 
