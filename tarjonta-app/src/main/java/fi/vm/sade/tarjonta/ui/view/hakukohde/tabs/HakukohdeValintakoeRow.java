@@ -47,6 +47,8 @@ public class HakukohdeValintakoeRow extends HorizontalLayout {
     private String valintakokeenTyyppi;
     private String sanallinenKuvaus;
     private Button muokkaaBtn;
+    private Button poistaBtn;
+
 
     public HakukohdeValintakoeRow(ValintakoeViewModel valintakoe) {
         valintakoeViewModel = valintakoe;
@@ -57,6 +59,13 @@ public class HakukohdeValintakoeRow extends HorizontalLayout {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                      tarjontaPresenter.showHakukohdeValintakoeEditView(valintakoeViewModel.getValintakoeTunniste());
+            }
+        }));
+
+        setPoistaBtn(UiUtil.buttonLink(null,i18n.getMessage("poistaBtn"),new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                tarjontaPresenter.removeValintakoeFromHakukohde(valintakoeViewModel);
             }
         }));
     }
@@ -105,4 +114,11 @@ public class HakukohdeValintakoeRow extends HorizontalLayout {
     }
 
 
+    public Button getPoistaBtn() {
+        return poistaBtn;
+    }
+
+    public void setPoistaBtn(Button poistaBtn) {
+        this.poistaBtn = poistaBtn;
+    }
 }

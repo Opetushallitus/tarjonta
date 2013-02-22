@@ -107,13 +107,14 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
 
 
                hakukohteenLiitteetTable.setVisibleColumns(new String[] {"liitteenTyyppi","liitteenSanallinenKuvaus","toimitettavaMennessa",
-                       "toimitusOsoite","muokkaaBtn"});
+                       "toimitusOsoite","muokkaaBtn","poistaBtn"});
                hakukohteenLiitteetTable.setColumnHeader("liitteenTyyppi", T("tableLiitteenTyyppi"));
                hakukohteenLiitteetTable.setColumnHeader("liitteenSanallinenKuvaus",T("tableKuvaus"));
 
                hakukohteenLiitteetTable.setColumnHeader("toimitettavaMennessa",T("tableToimMennessa"));
                hakukohteenLiitteetTable.setColumnHeader("toimitusOsoite",T("tableToimitusOsoite"));
                hakukohteenLiitteetTable.setColumnHeader("muokkaaBtn","");
+               hakukohteenLiitteetTable.setColumnHeader("poistaBtn","");
                hakukohteenLiitteetTable.setImmediate(true);
 
 

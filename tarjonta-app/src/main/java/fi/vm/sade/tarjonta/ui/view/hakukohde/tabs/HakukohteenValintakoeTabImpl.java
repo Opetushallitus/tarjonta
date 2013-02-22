@@ -140,11 +140,12 @@ public class HakukohteenValintakoeTabImpl extends AbstractVerticalNavigationLayo
 
 
             valintakoeTable.setWidth(100, UNITS_PERCENTAGE);
-            valintakoeTable.setVisibleColumns(new String[]{"valintakokeenTyyppi", "sanallinenKuvaus", "muokkaaBtn"});
+            valintakoeTable.setVisibleColumns(new String[]{"valintakokeenTyyppi", "sanallinenKuvaus", "muokkaaBtn","poistaBtn"});
             valintakoeTable.setColumnHeader("valintakokeenTyyppi", T("valinkoeTyyppiHdr"));
             valintakoeTable.setColumnHeader("sanallinenKuvaus",T("sanallinenKuvaus"));
 
             valintakoeTable.setColumnHeader("muokkaaBtn","");
+            valintakoeTable.setColumnHeader("poistaBtn","");
             valintakoeTable.setImmediate(true);
             valintakoeTable.setSizeFull();
             valintakoeTable.requestRepaint();

@@ -53,6 +53,7 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
     private String toimitettavaMennessa;
     private String toimitusOsoite;
     private Button muokkaaBtn;
+    private Button poistaBtn;
 
     public HakukohdeLiiteRow(HakukohdeLiiteViewModel param) {
         setHakukohdeLiiteViewModel(param);
@@ -67,6 +68,13 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
                  tarjontaPresenter.showHakukohdeLiiteEditWindow(liiteId);
              }
          });
+
+        poistaBtn = UiUtil.buttonLink(null,i18n.getMessage("poistaBtn"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                tarjontaPresenter.removeLiiteFromHakukohde(hakukohdeLiiteViewModel);
+            }
+        });
 
     }
 
@@ -161,5 +169,13 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
 
     public void setLiiteId(String liiteId) {
         this.liiteId = liiteId;
+    }
+
+    public Button getPoistaBtn() {
+        return poistaBtn;
+    }
+
+    public void setPoistaBtn(Button poistaBtn) {
+        this.poistaBtn = poistaBtn;
     }
 }

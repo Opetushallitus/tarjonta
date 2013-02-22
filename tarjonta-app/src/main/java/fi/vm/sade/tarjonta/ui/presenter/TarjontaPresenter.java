@@ -199,6 +199,16 @@ public class TarjontaPresenter implements CommonPresenter {
         getModel().setSelectedLiite(null);
     }
 
+    public void removeLiiteFromHakukohde(HakukohdeLiiteViewModel liite) {
+           tarjontaAdminService.poistaHakukohdeLiite(liite.getHakukohdeLiiteId());
+        editHakukohdeView.loadLiiteTableWithData();
+    }
+
+    public void removeValintakoeFromHakukohde(ValintakoeViewModel valintakoe) {
+         tarjontaAdminService.poistaValintakoe(valintakoe.getValintakoeTunniste());
+        editHakukohdeView.loadValintakokees();
+    }
+
     public void saveHakukohdeValintakoe(List<KielikaannosViewModel> kuvaukset) {
         getModel().getSelectedValintaKoe().setSanallisetKuvaukset(kuvaukset);
         getModel().getHakukohde().getValintaKokees().add(getModel().getSelectedValintaKoe());
