@@ -21,6 +21,16 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
     }
 
     @Override
+    public void poistaHakukohdeLiite(@WebParam(name = "hakukohdeLiiteTunniste", targetNamespace = "") String hakukohdeLiiteTunniste) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void poistaValintakoe(@WebParam(name = "ValintakoeTunniste", targetNamespace = "") String valintakoeTunniste) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public List<ValintakoeTyyppi> tallennaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }

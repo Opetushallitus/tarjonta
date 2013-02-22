@@ -66,6 +66,12 @@
     <xs:element name="tallennaMetadata" type="tns:TallennaMetadataTyyppi"/>
     <xs:element name="tallennaMetadataVastaus" type="tns:TallennaMetadataVastausTyyppi"/>
 
+    <xs:element name="poistaValintakoe" type="tns:PoistaValintaKoeTyyppi"/>
+    <xs:element name="poistaValintakoeVastaus" type="tns:PoistaValintaKoeTyyppiVastaus"/>
+
+    <xs:element name="poistaHakukohdeLiite" type="tns:PoistaHakukohdeLiiteTyyppi"/>
+    <xs:element name="poistaHakukohdeLiiteVastaus" type="tns:PoistaHakukohdeLiiteVastausTyyppi"/>
+
     <xs:element name="emptyString" type="xs:string"/>
 
     <xs:complexType name="PoistaHakukohdeType">
@@ -227,6 +233,26 @@
 
     <xs:complexType name="PaivitaTilaVastausTyyppi">
         <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="PoistaValintaKoeTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="ValintakoeTunniste" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="PoistaValintaKoeTyyppiVastaus">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="PoistaHakukohdeLiiteTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeLiiteTunniste" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="PoistaHakukohdeLiiteVastausTyyppi">
+        <xs:sequence />
     </xs:complexType>
 
     <xs:complexType name="PaivitaTilaTyyppi">

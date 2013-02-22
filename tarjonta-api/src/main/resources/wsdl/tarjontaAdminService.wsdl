@@ -172,10 +172,25 @@
         <wsdl:part element="ns1:tallennaMetadataVastaus" name="parameters"/>
     </wsdl:message>
 
+    <wsdl:message name="poistaValintakoe">
+        <wsdl:part element="ns1:poistaValintakoe" name="parameters"/>
+    </wsdl:message>
 
+    <wsdl:message name="poistaValintaKoeVastaus">
+        <wsdl:part element="ns1:poistaValintakoeVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="poistaHakukohdeLiite">
+        <wsdl:part name="parameters" element="ns1:poistaHakukohdeLiite"/>
+    </wsdl:message>
+
+    <wsdl:message name="poistaHakukohdeLiiteVastaus">
+        <wsdl:part name="parameters" element="ns1:poistaHakukohdeLiiteVastaus"/>
+    </wsdl:message>
+    
     <wsdl:portType name="TarjontaAdminService">
-
-        <wsdl:documentation>
+        
+       <wsdl:documentation>
             Palvelu hakujen yllapitoon.
         </wsdl:documentation>
 
@@ -228,6 +243,26 @@
             <wsdl:input message="tns:poistaKoulutus" name="poistaKoulutus">
             </wsdl:input>
             <wsdl:output message="tns:poistaKoulutusVastaus" name="poistaKoulutusVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="poistaValintakoe">
+            <wsdl:documentation>
+                Poista valintakoe hakukohteelta
+            </wsdl:documentation>
+            <wsdl:input message="tns:poistaValintakoe" name="poistaValintakoe">
+            </wsdl:input>
+            <wsdl:output message="tns:poistaValintaKoeVastaus" name="poistaValintakoeVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="poistaHakukohdeLiite">
+            <wsdl:documentation>
+                Poista liite hakukohteelta
+            </wsdl:documentation>
+            <wsdl:input message="tns:poistaHakukohdeLiite" name="poistaHakukohdeLiite">
+            </wsdl:input>
+            <wsdl:output message="tns:poistaHakukohdeLiiteVastaus" name="poistaHakukohdeLiiteVastaus">
             </wsdl:output>
         </wsdl:operation>
 
@@ -498,6 +533,27 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
+
+        <wsdl:operation name="poistaValintakoe">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="poistaHakukohdeLiite">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
 
         <wsdl:operation name="tallennaMetadata">
             <soap:operation soapAction="" style="document"/>
