@@ -31,6 +31,7 @@ public class KoodistoUploader {
                     uploader.createKoodistoRelations(args[1]);
                     log.info("Koodisto relations uploaded");
                  } catch (Exception exp) {
+                     exp.printStackTrace();
                      log.error("Exception occurred when loading koodisto relations from excel: {} , exception : {} ",args[1],exp.toString());
                  }
               }

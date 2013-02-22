@@ -38,10 +38,22 @@ public final class DataUtils {
         return type;
     }
 
-    public static CreateKoodiDataType createCreateKoodiDataType(Koodi koodiData, String koodiUri, TilaType tila) {
+    public static String createKoodiUriFromName(String koodistoNimi) {
+        koodistoNimi =  koodistoNimi.replaceAll("\\s","");
+        koodistoNimi = koodistoNimi.toUpperCase().replace('Ý', 'Y');
+        koodistoNimi = koodistoNimi.toUpperCase().replaceAll("Ù | Ú | Û | Ü", "U");
+        koodistoNimi = koodistoNimi.toUpperCase().replaceAll("Ò | Ó | Ô | Õ | Ö", "O");
+        koodistoNimi = koodistoNimi.toUpperCase().replaceAll("Ì | Í | Î | Ï", "I");
+        koodistoNimi = koodistoNimi.toUpperCase().replaceAll("È | É | Ê | Ë", "E");
+        koodistoNimi = koodistoNimi.toUpperCase().replace('Ç', 'C');
+        koodistoNimi = koodistoNimi.toUpperCase().replaceAll("À | Á | Â | Ã | Ä | Å | Æ", "A");
+        return koodistoNimi;
+    }
+
+    public static CreateKoodiDataType createCreateKoodiDataType(Koodi koodiData, TilaType tila) {
         CreateKoodiDataType koodiDataType = new CreateKoodiDataType();
         koodiDataType.setKoodiArvo(koodiData.getKoodiArvo());
-        koodiDataType.setKoodiUri(koodiUri);
+        koodiDataType.setKoodiUri(createKoodiUriFromName(koodiData.getKoodiNimiFi()));
         koodiDataType.setTila(tila);
 
         if (koodiData.getKoodiNimiFi() != null) {

@@ -74,7 +74,7 @@ public class TarjontaDataKoodistoHelper {
     }
 
     public KoodiType addCodeItem(Koodi koodiData,String koodistoUri) {
-        CreateKoodiDataType createKoodiDataType = DataUtils.createCreateKoodiDataType(koodiData,koodistoUri,TilaType.LUONNOS);
+        CreateKoodiDataType createKoodiDataType = DataUtils.createCreateKoodiDataType(koodiData,TilaType.LUONNOS);
         KoodiType createdKoodi = null;
         try {
             createdKoodi = koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);

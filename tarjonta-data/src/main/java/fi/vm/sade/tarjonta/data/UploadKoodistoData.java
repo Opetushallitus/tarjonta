@@ -100,7 +100,7 @@ public class UploadKoodistoData {
     public void loadKoodistoFromExcel(String pathToExcel,String koodistoNimi) throws  IOException, ExceptionMessage{
         List<String> ryhmaUris = new ArrayList<String>();
         ryhmaUris.add(commonConstants.getBaseGroupUri());
-        String koodistoUri = createKoodistoUriFromName(koodistoNimi);
+        String koodistoUri = DataUtils.createKoodiUriFromName(koodistoNimi);
         CreateKoodistoDataType koodisto = koodistoHelper.addCodeGroup(ryhmaUris,koodistoUri,koodistoNimi);
         CommonKoodiData koodis = new CommonKoodiData(pathToExcel);
         if (koodis != null && koodis.getLoadedKoodis() != null && koodis.getLoadedKoodis().size() > 0) {
@@ -110,9 +110,7 @@ public class UploadKoodistoData {
         }
     }
 
-    private String createKoodistoUriFromName(String koodistoNimi) {
-        return koodistoNimi.replaceAll("\\s","");
-    }
+
 
     //Test runs this method
     public void startFullImport() throws IOException, ExceptionMessage {
@@ -172,9 +170,9 @@ public class UploadKoodistoData {
 
         for (Koodi koodi : koodis) {
             final String koodiUri = koodistoName + "/" + koodi.getKoodiArvo();
-            KoodiType koodiType = koodistoHelper.addCodeItem(koodistoName, koodiUri, koodi.getKoodiArvo(), koodi.getKoodiNimiFi());
-
-            koodiUriArvoPair.put(koodi.getKoodiArvo(),koodiType);
+           // KoodiType koodiType = koodistoHelper.addCodeItem(koodistoName, koodiUri, koodi.getKoodiArvo(), koodi.getKoodiNimiFi());
+            KoodiType koodiType = koodistoHelper.addCodeItem(koodi,DataUtils.createKoodiUriFromName(koodistoName));
+            //koodiUriArvoPair.put(koodi.getKoodiArvo(),koodiType);
 
         }
 
