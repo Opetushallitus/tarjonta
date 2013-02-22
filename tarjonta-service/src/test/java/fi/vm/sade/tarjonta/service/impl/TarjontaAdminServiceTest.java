@@ -47,6 +47,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.*;
@@ -70,6 +71,9 @@ public class TarjontaAdminServiceTest {
 
     @Autowired
     private TarjontaAdminService adminService;
+    @Autowired 
+    private TarjontaPublicService publicService;
+    
     @Autowired
     private TarjontaFixtures fixtures;
     @Autowired
@@ -463,5 +467,104 @@ public class TarjontaAdminServiceTest {
         paivitaKoulutus.getOpetuskieli().add(createKoodi("updated-kieli"));
 
         return paivitaKoulutus;
+    }
+    
+    //Testing that komoto hierarchy works as expected
+    @Test
+    public void testKomotoHierarchyUpdate() {
+        //Creating a simple komoto hierarchy with parent komoto and two child komotos
+        String TARJOAJA_OID1 = "jokin.tarjoaja.oid.1";
+        String KOMOTO_OID1 = "jokin.KOMOTO.oid.1.1.12.2." + System.currentTimeMillis();
+        String KOMOTO_OID2 = KOMOTO_OID1 + "1";
+        String PARENT_KOMOTO_OID1 = KOMOTO_OID1 + "2";
+        createSimpleKomotoHierarchy(KOMOTO_OID1, KOMOTO_OID2, PARENT_KOMOTO_OID1, TARJOAJA_OID1);
+        
+        //Creating a simple komoto hierarchy with parent komoto and two child komotos for another tarjoaja
+        String TARJOAJA_OID2 = "jokin.tarjoaja.oid.2";
+        String KOMOTO_OID3= "jokin.KOMOTO.oid.1.1.12.3." + System.currentTimeMillis();
+        String KOMOTO_OID4 = KOMOTO_OID3 + "1";
+        String PARENT_KOMOTO_OID2 = KOMOTO_OID3 + "2";
+        createSimpleKomotoHierarchy(KOMOTO_OID3, KOMOTO_OID4, PARENT_KOMOTO_OID2, TARJOAJA_OID2);
+        
+        //Reading a child komoto from the first komoto hierarchy and updating its koulutuksenAlkamisPvm (a parent komoto field) 
+        LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
+        kysely.setOid(KOMOTO_OID1);
+        LueKoulutusVastausTyyppi vastaus = this.publicService.lueKoulutus(kysely);
+        Calendar calDate = Calendar.getInstance();
+        calDate.set(Calendar.MONTH, calDate.get(Calendar.MONDAY) + 1); //Changing the month of the date
+        Date updatedAlkamisPvm = calDate.getTime();
+        PaivitaKoulutusTyyppi paivita = convertLueToPaivita(vastaus);
+        paivita.setKoulutuksenAlkamisPaiva(updatedAlkamisPvm);
+        adminService.paivitaKoulutus(paivita);
+        
+        //Verifying that all komotos in the hierarchy have the updated date
+        LueKoulutusKyselyTyyppi kysely1 = new LueKoulutusKyselyTyyppi();
+        kysely1.setOid(KOMOTO_OID1);
+        LueKoulutusVastausTyyppi komoto = publicService.lueKoulutus(kysely1);
+        assertTrue(komoto.getKoulutuksenAlkamisPaiva().toGregorianCalendar().get(Calendar.MONTH) == calDate.get(Calendar.MONTH));
+        kysely1.setOid(KOMOTO_OID2);
+        komoto = publicService.lueKoulutus(kysely1);
+        assertTrue(komoto.getKoulutuksenAlkamisPaiva().getMonth() == calDate.get(Calendar.MONTH));
+        kysely1.setOid(PARENT_KOMOTO_OID1);
+        komoto = publicService.lueKoulutus(kysely1);
+        assertTrue(komoto.getKoulutuksenAlkamisPaiva().getMonth() == calDate.get(Calendar.MONTH));
+        
+        //Verifying that a komoto in the other hierarchy has not been updated
+        kysely1.setOid(KOMOTO_OID3);
+        komoto = publicService.lueKoulutus(kysely1);
+        assertTrue(komoto.getKoulutuksenAlkamisPaiva().toGregorianCalendar().get(Calendar.MONTH) != calDate.get(Calendar.MONTH));
+    }
+    
+    private PaivitaKoulutusTyyppi convertLueToPaivita(LueKoulutusVastausTyyppi vastaus) {
+        PaivitaKoulutusTyyppi paivita = new PaivitaKoulutusTyyppi();
+        paivita.setKesto(vastaus.getKesto());
+        paivita.setKoulutusaste(vastaus.getKoulutusaste());
+        paivita.setKoulutusKoodi(vastaus.getKoulutusKoodi());
+        paivita.setKoulutusohjelmaKoodi(vastaus.getKoulutusohjelmaKoodi());
+        paivita.setKoulutusohjelmanValinta(vastaus.getKoulutusohjelmanValinta());
+        paivita.setOid(vastaus.getOid());
+        paivita.setPohjakoulutusvaatimus(vastaus.getPohjakoulutusvaatimus());
+        paivita.setTarjoaja(vastaus.getTarjoaja());
+        paivita.setTila(vastaus.getTila());
+        paivita.getOpetuskieli().add(vastaus.getOpetuskieli().get(0));
+        paivita.getOpetusmuoto().add(vastaus.getOpetusmuoto().get(0));
+        return paivita;
+    }
+
+    private void createSimpleKomotoHierarchy(String komotoOid1, String komotoOid2, String parentKomotoOid, String tarjoajaOid) {
+        Koulutusmoduuli child = fixtures.createTutkintoOhjelma();
+        koulutusmoduuliDAO.insert(child);
+        Koulutusmoduuli parent = fixtures.createKoulutusmoduuli(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.TUTKINTO);
+        parent.getAlamoduuliList().add(child);
+        koulutusmoduuliDAO.insert(parent);
+        KoulutusmoduuliToteutus komotoChild1 = createKomotoWithKomoAndTarjoaja(child, tarjoajaOid, komotoOid1);
+        koulutusmoduuliToteutusDAO.insert(komotoChild1);
+        KoulutusmoduuliToteutus komotoChild2 = createKomotoWithKomoAndTarjoaja(child, tarjoajaOid, komotoOid2);
+        koulutusmoduuliToteutusDAO.insert(komotoChild2);
+        KoulutusmoduuliToteutus komotoParent = createKomotoWithKomoAndTarjoaja(parent, tarjoajaOid, parentKomotoOid);
+        koulutusmoduuliToteutusDAO.insert(komotoParent);
+    }
+    
+    private KoulutusmoduuliToteutus createKomotoWithKomoAndTarjoaja(Koulutusmoduuli komo, String tarjoajaOid, String komotoOid) {
+
+        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+        komoto.setOid(komotoOid);
+        komoto.setTila(TarjontaTila.LUONNOS);
+        komoto.setKoulutusmoduuli(komo);
+        komoto.setKoulutusaste("koulutusaste/lukio");
+        komoto.setOpetusmuoto(EntityUtils.toKoodistoUriSet(createKoodistoList("opetusmuoto/aikuisopetus")));
+        komoto.setOpetuskieli(EntityUtils.toKoodistoUriSet(createKoodistoList("opetuskieli/fi")));
+        komoto.setKoulutuslajis(EntityUtils.toKoodistoUriSet(createKoodistoList("koulutuslaji/lahiopetus")));
+        komoto.setTarjoaja(tarjoajaOid);
+        komoto.setKoulutuksenAlkamisPvm(Calendar.getInstance().getTime());
+        komoto.setPohjakoulutusvaatimus("koulutusaste/lukio");
+        komoto.setSuunniteltuKesto("kesto/vuosi", "3");
+        return komoto;
+    }
+    
+    private List<KoodistoKoodiTyyppi> createKoodistoList(String koodiUri) {
+        List<KoodistoKoodiTyyppi> opetusmuotos = new ArrayList<KoodistoKoodiTyyppi>();
+        opetusmuotos.add(createKoodi(koodiUri));
+        return opetusmuotos;
     }
 }

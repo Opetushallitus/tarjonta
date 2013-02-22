@@ -107,8 +107,11 @@ public class TarjontaFixtures {
     }
 
     public Koulutusmoduuli createTutkintoOhjelma() {
-
-        Koulutusmoduuli m = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        return createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+    }
+    
+    public Koulutusmoduuli createKoulutusmoduuli(KoulutusmoduuliTyyppi tyyppi) {
+        Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
         m.setOid(randomOid("koulutusmoduuli"));
         m.setTutkintoOhjelmanNimi("Simple Tutkinto-Ohjelma");
         m.setEqfLuokitus(randomUri("eqf"));
@@ -118,9 +121,7 @@ public class TarjontaFixtures {
         m.setKoulutusohjelmaKoodi(randomUri("koulutusohjelma"));
         m.setKoulutusKoodi(randomUri("koulutusluokitus"));
         m.setNimi(createText("Koulutusmoduulinimi (fi)", "Koulutusmoduulinimi (sv)", "Koulutusmoduulinimi (en)"));
-
         return m;
-
     }
     
     public Koulutusmoduuli createTutkintoOhjelma(KoulutusmoduuliTyyppi tyyppi) {

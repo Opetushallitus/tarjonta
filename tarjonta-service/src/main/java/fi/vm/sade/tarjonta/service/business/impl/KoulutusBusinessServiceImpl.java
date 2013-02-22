@@ -176,14 +176,14 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         }
     }
     
-    private void generateOidForKomoto(KoulutusmoduuliToteutus parentKomoto) {
-        String oidCandidate = generateOid();
-        boolean oidExists = this.koulutusmoduuliToteutusDAO.findByOid(oidCandidate) != null ? true : false;
+    private void generateOidForKomoto(KoulutusmoduuliToteutus komoto) {
+        String oidCandidate = null;
+        boolean oidExists = true;
         while (oidExists) {
             oidCandidate = generateOid();
             oidExists = this.koulutusmoduuliToteutusDAO.findByOid(oidCandidate) != null ? true : false;
         }
-        parentKomoto.setOid(oidCandidate);
+        komoto.setOid(oidCandidate);
     }
 
     private String generateOid() {
