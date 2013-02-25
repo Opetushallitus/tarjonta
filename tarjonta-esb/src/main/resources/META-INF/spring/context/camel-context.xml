@@ -71,6 +71,7 @@
     </cxf:cxfEndpoint>-->
     
          <!-- Define "to" endpoint, which is activemq queue -->
+    <!-- cas refac, poistettu
     <cxf:cxfEndpoint id="tarjontaAdminService"
                      address="camel://activemq:queue:${activeMq.queueNameTarjontaAdmin}?useMessageIDAsCorrelationID=true"
                      serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService">
@@ -78,8 +79,10 @@
             <entry key="dataFormat" value="PAYLOAD" />
         </cxf:properties>
     </cxf:cxfEndpoint>
+    -->
     
              <!-- Define "to" endpoint, which is activemq queue -->
+    <!-- cas refac, poistettu
     <cxf:cxfEndpoint id="tarjontaPublicService"
                      address="camel://activemq:queue:${activeMq.queueNameTarjontaPublic}?useMessageIDAsCorrelationID=true"
                      serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService">
@@ -87,22 +90,20 @@
             <entry key="dataFormat" value="PAYLOAD" />
         </cxf:properties>
     </cxf:cxfEndpoint>
+    -->
     
     <!-- define camel route with camel conduit which uses camel's own transport -->
     <camel:conduit name="*.camel-conduit">     
         <camelContext id="camelContext-tarjonta" xmlns="http://camel.apache.org/schema/spring">
-            <!--<route id="hakuRoute" >
-                <from uri="cxf:bean:hakuRouter?dataFormat=PAYLOAD" />
-                <to uri="cxf:bean:hakuService" />
-            </route>-->
-            
+            <endpoint id="callBackendTarjontaAdminService" uri="${tarjonta.admin.webservice.url.backend}?throwExceptionOnFailure=false"/>
+            <endpoint id="callBackendTarjontaPublicService" uri="${tarjonta.public.webservice.url.backend}?throwExceptionOnFailure=false"/>
             <route id="tarjontaAdminRoute" >
-                <from uri="cxf:bean:tarjontaAdminRouter?dataFormat=PAYLOAD" />
-                <to uri="cxf:bean:tarjontaAdminService" />
+                <from uri="cxf:bean:tarjontaAdminRouter?dataFormat=MESSAGE" />
+                <to ref="callBackendTarjontaAdminService"/>
             </route>
             <route id="tarjontaPublicRoute" >
-                <from uri="cxf:bean:tarjontaPublicRouter?dataFormat=PAYLOAD" />
-                <to uri="cxf:bean:tarjontaPublicService" />
+                <from uri="cxf:bean:tarjontaPublicRouter?dataFormat=MESSAGE" />
+                <to ref="callBackendTarjontaPublicService" />
             </route>
         </camelContext>
     </camel:conduit>

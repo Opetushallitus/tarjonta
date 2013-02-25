@@ -22,6 +22,7 @@
     <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl"/>
     <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicServiceImpl"/>
 
+    <!--
     <bean id="jmsConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory"
           destroy-method="stop">
         <property name="connectionFactory">
@@ -61,7 +62,7 @@
             </beans:bean>
         </jaxws:features>
     </jaxws:endpoint>
-
+    -->
 
     <bean id="tarjontaPublicationRESTService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationRESTService"/>
     <bean id="tarjontaExceptionMapper" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationExceptionMapper"/>
@@ -102,5 +103,8 @@
         </jaxrs:providers>
     </jaxrs:server>
 
+    <!-- cas refactor, endpoints as http - todo: poista jms -->
+    <jaxws:endpoint address="/services/tarjontaAdminService" implementor="#tarjontaAdminService" wsdlLocation="wsdl/tarjontaAdminService.wsdl" serviceName="tns:TarjontaAdminService" xmlns:tns="http://service.tarjonta.sade.vm.fi/"/>
+    <jaxws:endpoint address="/services/tarjontaPublicService" implementor="#tarjontaPublicService" wsdlLocation="wsdl/tarjontaPublicService.wsdl" serviceName="tns:TarjontaPublicService" xmlns:tns="http://service.tarjonta.sade.vm.fi/"/>
 
 </beans>

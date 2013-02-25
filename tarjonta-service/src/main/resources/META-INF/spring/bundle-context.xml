@@ -2,12 +2,25 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+    <context:property-placeholder
+            location="classpath:tarjonta-service.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-service.properties"
+            ignore-resource-not-found="true" properties-ref="defaultProps"/>
+    <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <util:properties local-override="true">
+                <prop key="cas_key">tarjonta-service</prop>
+                <prop key="cas_service">${cas.service.tarjonta-service}</prop>
+                <prop key="spring_security_default_access">permitAll</prop>
+            </util:properties>
+        </property>
+    </bean>
+    <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
 
     <context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.tarjonta" />
@@ -19,11 +32,7 @@
     
     <bean id="serviceExceptionWrapper" class="fi.vm.sade.tarjonta.service.impl.exceptionwrapper.ExceptionWrappingAspect"/>
     
-    <context:property-placeholder
-        location="classpath:tarjonta-service.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-service.properties"
-        ignore-resource-not-found="true"/>
-
-    <!-- Get configuration for generic/generic-events system --> 
+    <!-- Get configuration for generic/generic-events system -->
     <import resource="classpath:META-INF/spring/events-context.xml" />
        
     <!-- service configuration -->
