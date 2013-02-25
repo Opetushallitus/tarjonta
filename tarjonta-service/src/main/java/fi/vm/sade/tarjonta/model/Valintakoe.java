@@ -16,7 +16,7 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
-import java.util.Collections;
+
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -36,10 +36,6 @@ public class Valintakoe extends BaseEntity {
 
     private static final long serialVersionUID = 7092585555234995829L;
 
-    /**
-     * Collection of times when this Valintakoe is to be held. This collection is loaded
-     * eagerly since the number of items and amount of data will be very small.
-     */
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "valintakoe_id")
     private Set<ValintakoeAjankohta> ajankohtas = new HashSet<ValintakoeAjankohta>();
@@ -54,20 +50,25 @@ public class Valintakoe extends BaseEntity {
     private String tyyppiUri;
 
     /**
+     * Collection of times when this Valintakoe is to be held. This collection is loaded
+     * eagerly since the number of items and amount of data will be very small.
+     */ /**
      * Returns an immutable set of Ajankohtas.
      *
      * @return
      */
     public Set<ValintakoeAjankohta> getAjankohtas() {
-        return Collections.unmodifiableSet(ajankohtas);
+        return ajankohtas;
     }
 
+
+
     public void removeAjankohta(ValintakoeAjankohta ajankohta) {
-        ajankohtas.remove(ajankohta);
+        getAjankohtas().remove(ajankohta);
     }
 
     public void addAjankohta(ValintakoeAjankohta ajankohta) {
-        ajankohtas.add(ajankohta);
+        getAjankohtas().add(ajankohta);
     }
 
     /**
@@ -102,5 +103,8 @@ public class Valintakoe extends BaseEntity {
         this.tyyppiUri = tyyppiUri;
     }
 
+    public void setAjankohtas(Set<ValintakoeAjankohta> ajankohtas) {
+        this.ajankohtas = ajankohtas;
+    }
 }
 

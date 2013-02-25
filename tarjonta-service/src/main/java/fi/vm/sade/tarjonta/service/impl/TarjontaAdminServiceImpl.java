@@ -91,12 +91,25 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     public List<ValintakoeTyyppi> tallennaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
+
+        List<Valintakoe> valintakoes =  convertValintaKokees(hakukohteenValintakokeet);
+
+        for (Valintakoe valintakoe:valintakoes) {
+            if (valintakoe.getId() != null) {
+
+                hakukohdeDAO.updateValintakoe(valintakoe);
+               valintakoes.remove(valintakoe);
+            }
+
+        }
+
         List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
         if (hakukohdes != null && hakukohdes.size() > 0) {
-            for (Valintakoe valintakoe : convertValintaKokees(hakukohteenValintakokeet)) {
-                hakukohdes.get(0).addValintakoe(valintakoe);
 
+            for(Valintakoe valintakoe : valintakoes) {
+                hakukohdes.get(0).addValintakoe(valintakoe);
             }
+
             hakukohdeDAO.update(hakukohdes.get(0));
 
             hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);

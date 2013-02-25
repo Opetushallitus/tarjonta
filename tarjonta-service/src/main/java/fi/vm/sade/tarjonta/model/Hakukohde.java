@@ -168,13 +168,17 @@ public class Hakukohde extends BaseEntity {
      */
     public Set<Valintakoe> getValintakoes() {
         return Collections.unmodifiableSet(valintakoes);
+
     }
 
     /**
      *
      */
     public void addValintakoe(Valintakoe valintakoe) {
+
+
         valintakoes.add(valintakoe);
+
     }
 
     /**

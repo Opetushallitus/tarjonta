@@ -56,6 +56,12 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
+    public void updateValintakoe(Valintakoe valintakoe) {
+        getEntityManager().merge(valintakoe);
+        getEntityManager().flush();
+    }
+
+    @Override
     public List<Valintakoe> findValintakoeByHakukohdeOid(String oid) {
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QValintakoe qValintakoe = QValintakoe.valintakoe;
