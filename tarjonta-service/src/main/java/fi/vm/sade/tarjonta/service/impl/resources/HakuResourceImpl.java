@@ -1,13 +1,17 @@
 package fi.vm.sade.tarjonta.service.impl.resources;
 
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.resources.HakuResource;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 
-import javax.ws.rs.QueryParam;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,12 +24,11 @@ public class HakuResourceImpl implements HakuResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImpl.class);
 
-/*
     @Autowired
     private HakuDAO hakuDAO;
+
     @Autowired(required = true)
     private ConversionService conversionService;
-*/
 
     // /haku/hello
     @Override
@@ -36,33 +39,50 @@ public class HakuResourceImpl implements HakuResource {
 
     // /haku?etsi=XXX
     @Override
-    public List<HakuTyyppi> search(@QueryParam("etsi") String spec) {
+    public List<HakuTyyppi> search(String spec) {
         LOG.info("search(spec={})", spec);
-        return Collections.EMPTY_LIST;
-    }
 
-    // TODO how to set the "@XmlRootElelement" to HakuTyyppi when it's generated! Or how to avoid/go around it!
+        List<HakuTyyppi> hakuTyyppiList = new ArrayList<HakuTyyppi>();
+        List<Haku> hakus = null;
+
+        // TODO search spec from what?
+        // TODO published?
+
+        if (spec != null) {
+            hakus = hakuDAO.findBySearchString(spec, null);
+        } else {
+            hakus = hakuDAO.findAll();
+        }
+
+        for (Haku haku : hakus) {
+            hakuTyyppiList.add(conversionService.convert(haku, HakuTyyppi.class));
+        }
+
+        return hakuTyyppiList;
+    }
 
     // /haku/{oid}
     @Override
     public HakuTyyppi getByOID(String oid) {
         LOG.info("getByOID({})", oid);
 
-        // TESTING, requires "@XmlRootElement" in HakuTyyppi!
-
-        HakuTyyppi result = new HakuTyyppi();
-        result.setHakukausiUri("uri: hakukausi");
-        return result;
-
-//        Haku haku = hakuDAO.findByOid(oid);
-//        return conversionService.convert(haku, HakuTyyppi.class);
+        Haku haku = hakuDAO.findByOid(oid);
+        return conversionService.convert(haku, HakuTyyppi.class);
     }
 
-    // /haku/{oid}/hakukohde
+    // /haku/{oid}/hakukohde?etsi=xxx
     @Override
-    public List<HakukohdeTyyppi> getByOIDHakukohde(String spec) {
-        LOG.info("getByOIDHakukohde(spec={})", spec);
-        return Collections.EMPTY_LIST;
+    public List<HakukohdeTyyppi> getByOIDHakukohde(String oid, String spec) {
+        LOG.info("getByOIDHakukohde(oid={}, spec={})", oid, spec);
+
+        List<HakukohdeTyyppi> result = new ArrayList<HakukohdeTyyppi>();
+
+        Haku haku = hakuDAO.findByOid(oid);
+        for(Hakukohde hakukohde : haku.getHakukohdes()) {
+            result.add(conversionService.convert(hakukohde, HakukohdeTyyppi.class));
+        }
+
+        return result;
     }
 
 }

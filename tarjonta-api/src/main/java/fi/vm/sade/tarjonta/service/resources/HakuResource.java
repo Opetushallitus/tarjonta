@@ -32,6 +32,6 @@ public interface HakuResource {
     @GET
     @Path("{oid}/hakukohde")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<HakukohdeTyyppi> getByOIDHakukohde(@QueryParam("etsi") String spec);
+    public List<HakukohdeTyyppi> getByOIDHakukohde(@PathParam("oid") String oid, @QueryParam("etsi") String spec);
 
 }
