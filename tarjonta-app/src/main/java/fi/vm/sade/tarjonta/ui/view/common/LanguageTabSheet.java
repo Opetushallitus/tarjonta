@@ -21,8 +21,10 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.AbstractField;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.Reindeer;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -30,6 +32,8 @@ import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.util.UiUtil;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.generic.ui.component.OphRichTextArea;
+import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
+import fi.vm.sade.tarjonta.ui.model.valinta.ValintaperusteModel;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -82,14 +86,11 @@ public abstract class LanguageTabSheet extends VerticalLayout {
         setSizeFull();
         setWidth(TABSHEET_WIDTH);
         setHeight(TABSHEET_HEIGHT);
+
         _languageTabsheet = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, uiBuilder) {
             @Override
             public void doAddTab(String uri) {
-                VerticalLayout vl = new VerticalLayout();
-                vl.setWidth("100%");
-                vl.addComponent(createRichText(""));
-
-                addTab(uri, vl, _uiHelper.getKoodiNimi(uri));
+                addTab(uri, createRichText(""), _uiHelper.getKoodiNimi(uri));
             }
         };
 
@@ -98,18 +99,19 @@ public abstract class LanguageTabSheet extends VerticalLayout {
         initializeTabsheet();
     }
 
-    protected abstract void initializeTabsheet();
-
     private String retrieveTabText(Tab tab) {
-        Component component = tab.getComponent();
+        final Component component = tab.getComponent();
+
+        if (component == null) {
+            return "";
+        }
 
         if (component instanceof AbstractField) {
             AbstractField richArea = (AbstractField) component;
             return (String) richArea.getValue();
-        } else {
-            LOG.warn("Tab component not OphRichTextArea");
-            return "";
         }
+
+        throw new RuntimeException("An invalid Vaadin component - the Tab should be text area type component.");
     }
 
     public List<KielikaannosViewModel> getKieliKaannokset() {
@@ -173,4 +175,40 @@ public abstract class LanguageTabSheet extends VerticalLayout {
     public Set<String> getRemovedTabs() {
         return _languageTabsheet.getRemoved();
     }
+
+    protected void addDefaultLanguage() {
+        LOG.debug("default language added.");
+        String soomiKieli = I18N.getMessage("default.tab");
+        Set<String> kielet = new HashSet<String>();
+        kielet.add(soomiKieli);
+        _languageTabsheet.addTab(soomiKieli, createRichText(""), _uiHelper.getKoodiNimi(soomiKieli));
+        _languageTabsheet.getKcSelection().setValue(kielet);
+    }
+
+    protected void setSelectedTab() {
+        String soomiKieli = I18N.getMessage("default.tab");
+        TabSheet.Tab tab = getTab(soomiKieli);
+        if (tab != null) {
+            _languageTabsheet.setSelectedTab(tab);
+        }
+    }
+
+    public void initializeTabsheet() {
+        final List<KielikaannosViewModel> tabData = getTabData();
+
+        if (tabData != null && !tabData.isEmpty()) {
+            setInitialValues(tabData);
+        } else {
+            addDefaultLanguage();
+        }
+
+        setSelectedTab();
+    }
+
+    /**
+     *  KielikaannosViewModel data objects for TabSheet.
+     * 
+     * @return List<KielikaannosViewModel>
+     */
+    protected abstract List<KielikaannosViewModel> getTabData();
 }

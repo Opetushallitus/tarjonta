@@ -55,34 +55,12 @@ public class ValintaLanguageTabSheet extends LanguageTabSheet {
 
     }
 
-    protected void addDefaultLanguage() {
-        LOG.debug("default language added.");
-        String soomiKieli = I18N.getMessage("default.tab");
-        Set<String> kielet = new HashSet<String>();
-        kielet.add(soomiKieli);
-        _languageTabsheet.addTab(soomiKieli, createRichText(""), _uiHelper.getKoodiNimi(soomiKieli));
-        _languageTabsheet.getKcSelection().setValue(kielet);
-    }
-
     protected ValintaperusteModel getValintaModel() {
         return presenter.getValintaperustemodel(category);
     }
-
+    
     @Override
-    protected void initializeTabsheet() {
-        ValintaperusteModel model = getValintaModel();
-
-        if (model.getKuvaus() != null && !model.getKuvaus().isEmpty()) {
-            final List<KielikaannosViewModel> kuvaus = model.getKuvaus();
-            setInitialValues(kuvaus);
-        } else {
-            addDefaultLanguage();
-        }
-
-        String soomiKieli = I18N.getMessage("default.tab");
-        TabSheet.Tab tab = getTab(soomiKieli);
-        if (tab != null) {
-            _languageTabsheet.setSelectedTab(tab);
-        }
+    protected List<KielikaannosViewModel> getTabData() {
+        return getValintaModel().getKuvaus();
     }
 }

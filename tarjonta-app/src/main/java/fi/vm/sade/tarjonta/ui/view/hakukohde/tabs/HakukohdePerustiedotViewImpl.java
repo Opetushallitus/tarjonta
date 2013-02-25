@@ -40,7 +40,6 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
     private TarjontaPresenter presenter;
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
-
     private PerustiedotViewImpl formView;
 
     public HakukohdePerustiedotViewImpl(String oid) {
@@ -66,7 +65,7 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
     public void actionNext(ClickEvent event) {
 
         if (getHakukohdeOid() != null) {
-        presenter.showHakukohdeViewImpl(getHakukohdeOid());
+            presenter.showHakukohdeViewImpl(getHakukohdeOid());
         }
     }
 
@@ -77,8 +76,12 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
 
     @Override
     public String actionSave(SaveButtonState tila, ClickEvent event) throws Exception {
+        HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
+        hakukohde.getLisatiedot().clear();
+        hakukohde.getLisatiedot().addAll(formView.getLisatiedot());
+        
         HakukohdeNameUriModel selectedHakukohde = formView.getSelectedHakukohde();
-        presenter.getModel().getHakukohde().setHakukohdeNimi(getUriWithVersion(selectedHakukohde));
+        hakukohde.setHakukohdeNimi(getUriWithVersion(selectedHakukohde));
         presenter.saveHakuKohde(tila);
         return getHakukohdeOid();
     }

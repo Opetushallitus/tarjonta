@@ -17,10 +17,13 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
 
 
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import java.util.ArrayList;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -33,18 +36,12 @@ public class ValintakoeKuvausTabSheet extends HakukohdeLanguageTabSheet {
     }
 
     @Override
-    protected void initializeTabsheet() {
+    protected List<KielikaannosViewModel> getTabData() {
         final TarjontaModel model = presenter.getModel();
-
-        if (model.getSelectedValintaKoe() != null) {
-            setInitialValues(model.getSelectedValintaKoe().getSanallisetKuvaukset());
-            if (model.getSelectedValintaKoe().getSanallisetKuvaukset() == null || model.getSelectedValintaKoe().getSanallisetKuvaukset().size() < 1) {
-                String soomiKieli = I18N.getMessage("default.tab");
-                Set<String> kielet = new HashSet<String>();
-                kielet.add(soomiKieli);
-                _languageTabsheet.getKcSelection().setValue(kielet);
-                _languageTabsheet.setSelectedTab(getTab(soomiKieli));
-            }
+        if (model == null || model.getSelectedValintaKoe() == null) {
+            return new ArrayList<KielikaannosViewModel>(0);
         }
+
+        return model.getSelectedValintaKoe().getSanallisetKuvaukset();
     }
 }

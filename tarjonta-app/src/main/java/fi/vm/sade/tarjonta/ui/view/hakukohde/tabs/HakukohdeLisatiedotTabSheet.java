@@ -16,11 +16,11 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  */
 
 
-import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import java.util.ArrayList;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Created by: Tuomas Katva Date: 16.1.2013
@@ -32,19 +32,12 @@ public class HakukohdeLisatiedotTabSheet extends HakukohdeLanguageTabSheet {
     }
 
     @Override
-    protected void initializeTabsheet() {
+    protected List<KielikaannosViewModel> getTabData() {
         final TarjontaModel model = presenter.getModel();
-
-        if (model.getHakukohde() != null && model.getHakukohde().getLisatiedot() != null) {
-            setInitialValues(model.getHakukohde().getLisatiedot());
+        if (model == null || model.getHakukohde() == null) {
+            return new ArrayList<KielikaannosViewModel>(0);
         }
 
-        if (model.getHakukohde() != null && model.getHakukohde().getLisatiedot() == null || model.getHakukohde().getLisatiedot().size() < 1) {
-            String soomiKieli = I18N.getMessage("default.tab");
-            Set<String> kielet = new HashSet<String>();
-            kielet.add(soomiKieli);
-            _languageTabsheet.getKcSelection().setValue(kielet);
-            _languageTabsheet.setSelectedTab(getTab(soomiKieli));
-        }
+        return model.getHakukohde().getLisatiedot();
     }
 }
