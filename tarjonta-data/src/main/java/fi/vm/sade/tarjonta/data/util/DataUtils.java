@@ -25,7 +25,7 @@ public final class DataUtils {
         type.setOmistaja(omistaja);
         type.setOrganisaatioOid(organisaatioOid);
         type.setVoimassaAlkuPvm(voimassaAlkuPvm != null ? DateHelper.DateToXmlCal(voimassaAlkuPvm) : null);
-        type.setVoimassaAlkuPvm(voimassaLoppuPvm != null ? DateHelper.DateToXmlCal(voimassaLoppuPvm) : null);
+        type.setVoimassaLoppuPvm(voimassaLoppuPvm != null ? DateHelper.DateToXmlCal(voimassaLoppuPvm) : null);
 
         for (KieliType k : KieliType.values()) {
             KoodistoMetadataType m = new KoodistoMetadataType();
