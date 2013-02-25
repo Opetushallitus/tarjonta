@@ -106,6 +106,13 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         this.form.setValidationVisibleOnCommit(false);
     }
 
+    public void setEditableValintakoeAika(ValintakoeAikaViewModel valintakoeAika) {
+        if (valintaKoeAikaEditView != null && valintaKoeAikaForm != null) {
+            BeanItem<ValintakoeAikaViewModel> valintakoeAikaViewModelBean = new BeanItem<ValintakoeAikaViewModel>(valintakoeAika);
+            valintaKoeAikaForm.setItemDataSource(valintakoeAikaViewModelBean);
+        }
+    }
+
     private VerticalLayout buildOsoiteEditLayout() {
         aikaInputFormLayout = new VerticalLayout();
 
@@ -238,13 +245,14 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         }
 
         valintakoeAikasTable.setContainerDataSource(createTableContainer(presenter.getModel().getSelectedValintaKoe().getValintakoeAjat()));
-        valintakoeAikasTable.setVisibleColumns(new String[]{"sijainti", "ajankohta", "lisatietoja", "poistaBtn"});
+        valintakoeAikasTable.setVisibleColumns(new String[]{"sijainti", "ajankohta", "lisatietoja", "poistaBtn","muokkaaBtn"});
         valintakoeAikasTable.setColumnHeader("sijainti", T("HakukohdeValintakoeViewImpl.tableSijainti"));
         valintakoeAikasTable.setColumnHeader("ajankohta",T("HakukohdeValintakoeViewImpl.tableAjankohta"));
 
         valintakoeAikasTable.setColumnHeader("lisatietoja",T("HakukohdeValintakoeViewImpl.tableLisatietoja"));
 
         valintakoeAikasTable.setColumnHeader("poistaBtn","");
+        valintakoeAikasTable.setColumnHeader("muokkaaBtn","");
 
 //        valintakoeAikasTable.setSizeFull();
         valintakoeAikasTable.setHeight("200px");

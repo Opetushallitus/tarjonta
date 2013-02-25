@@ -54,6 +54,8 @@ public class HakukohdeValintakoeAikaRow {
 
     private Button poistaBtn;
 
+    private Button muokkaaBtn;
+
     private ValintakoeAikaViewModel rowValintakoeAika;
 
     private HakukohdeValintakoeViewImpl parent;
@@ -70,6 +72,16 @@ public class HakukohdeValintakoeAikaRow {
                   }
             }
         });
+
+        setMuokkaaBtn(UiUtil.buttonLink(null,i18n.getMessage("muokkaaBtn") , new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+
+                tarjontaPresenter.getModel().setSelectedValintakoeAika(rowValintakoeAika);
+                parent.setEditableValintakoeAika(rowValintakoeAika);
+
+            }
+        }));
     }
 
     private void resolveFields() {
@@ -120,5 +132,13 @@ public class HakukohdeValintakoeAikaRow {
 
     public void setPoistaBtn(Button poistaBtn) {
         this.poistaBtn = poistaBtn;
+    }
+
+    public Button getMuokkaaBtn() {
+        return muokkaaBtn;
+    }
+
+    public void setMuokkaaBtn(Button muokkaaBtn) {
+        this.muokkaaBtn = muokkaaBtn;
     }
 }

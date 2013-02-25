@@ -129,8 +129,10 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                 if (tarjontaUIHelper != null) {
                     String koodiUri = (String) valueChangeEvent.getProperty().getValue();
+                    if (koodiUri != null) {
                     String postitoimipaikkaStr = tarjontaUIHelper.getKoodiNimi(koodiUri, I18N.getLocale());
                     postitoimiPaikka.setValue(postitoimipaikkaStr);
+                    }
                 }
             }
         });
