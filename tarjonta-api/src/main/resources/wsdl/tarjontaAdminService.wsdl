@@ -132,6 +132,16 @@
         <wsdl:part element="ns1:tallennaValintakokeitaHakukohteelleVastaus" name="parameters"/>
     </wsdl:message>
 
+    <wsdl:message name="paivitaValintakokeitaHakukohteelle">
+        <wsdl:part element="ns1:paivitaValintakokeitaHakukohteelle" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="paivitaValintakokeitaHakukohteelleVastaus">
+        <wsdl:part element="ns1:paivitaValintakokeitaHakukohteelleVastaus" name="parameters"/>
+    </wsdl:message>
+
+
+
     <wsdl:message name="paivitaTila">
         <wsdl:part element="ns1:paivitaTila" name="parameters"/>
     </wsdl:message>
@@ -205,6 +215,13 @@
             <wsdl:output message="tns:tallennaValintakokeitaHakukohteelleVastaus"
                          name="tallennaValintakokeitaHakukohteelleVastaus"/>
         </wsdl:operation>
+
+        <wsdl:operation name="paivitaValintakokeitaHakukohteelle">
+            <wsdl:input message="tns:paivitaValintakokeitaHakukohteelle" name="paivitaValintakokeitaHakukohteelle"/>
+            <wsdl:output message="tns:paivitaValintakokeitaHakukohteelleVastaus"
+                         name="paivitaValintakokeitaHakukohteelleVastaus"/>
+        </wsdl:operation>
+
 
         <wsdl:operation name="lisaaHakukohde">
             <wsdl:documentation>
@@ -506,6 +523,16 @@
 
         <wsdl:operation name="tallennaValintakokeitaHakukohteelle">
             <soap:operation soapAction="" type="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="paivitaValintakokeitaHakukohteelle">
+            <soap:operation soapAction="" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>

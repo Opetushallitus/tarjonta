@@ -51,6 +51,11 @@
     <xs:element name="tallennaValintakokeitaHakukohteelleVastaus"
                 type="tns:TallennaValintakokeitaHakukohteelleVastausTyyppi"/>
 
+
+    <xs:element name="paivitaValintakokeitaHakukohteelle" type="tns:PaivitaValintakokeitaHakukohteelleTyyppi"/>
+    <xs:element name="paivitaValintakokeitaHakukohteelleVastaus"
+                type="tns:PaivitaValintakokeitaHakukohteelleVastausTyyppi"/>
+
     <xs:element name="paivitaTila" type="tns:PaivitaTilaTyyppi"/>
     <xs:element name="paivitaTilaVastaus" type="tns:PaivitaTilaVastausTyyppi"/>
 
@@ -230,6 +235,24 @@
                         type="tarjonta:ValintakoeTyyppi"/>
         </xs:sequence>
     </xs:complexType>
+
+    <xs:complexType name="PaivitaValintakokeitaHakukohteelleTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeOid" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="hakukohteenValintakokeet"
+                        type="tarjonta:ValintakoeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="PaivitaValintakokeitaHakukohteelleVastausTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="hakukohteenValintakokeetVastaus"
+                        type="tarjonta:ValintakoeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
 
     <xs:complexType name="PaivitaTilaVastausTyyppi">
         <xs:sequence/>
