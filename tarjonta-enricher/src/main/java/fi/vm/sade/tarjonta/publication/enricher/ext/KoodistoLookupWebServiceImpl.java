@@ -18,15 +18,12 @@ package fi.vm.sade.tarjonta.publication.enricher.ext;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
-import fi.vm.sade.koodisto.service.types.SearchKoodistosCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
-import fi.vm.sade.koodisto.service.types.common.KoodistoType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.koodisto.service.types.common.TilaType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
-import fi.vm.sade.koodisto.util.KoodistoServiceSearchCriteriaBuilder;
 import fi.vm.sade.tarjonta.publication.utils.VersionedUri;
 import java.util.HashMap;
 import java.util.List;
@@ -71,18 +68,27 @@ public class KoodistoLookupWebServiceImpl implements KoodistoLookupService {
 
         @Override
         public String getValue() {
-            return koodi.getKoodiArvo();
+            if (koodi != null) {
+                return koodi.getKoodiArvo();
+            }
+            return null;
         }
 
         @Override
         public String getUri() {
-            return koodi.getKoodiUri();
+            if (koodi != null) {
+                return koodi.getKoodiUri();
+            }
+
+            return null;
         }
 
         private String findName(String lang) {
-            for (KoodiMetadataType md : koodi.getMetadata()) {
-                if (md.getKieli().name().equalsIgnoreCase(lang)) {
-                    return md.getNimi();
+            if (koodi != null) {
+                for (KoodiMetadataType md : koodi.getMetadata()) {
+                    if (md.getKieli().name().equalsIgnoreCase(lang)) {
+                        return md.getNimi();
+                    }
                 }
             }
             return null;

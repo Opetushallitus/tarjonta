@@ -95,11 +95,16 @@ public class LearningOpportunityEnricherTest {
     }
 
     @Test
+    public void testDescriptionLanguageKoodiValue() throws Exception {
+        assertXPathEvals("DescriptionLanguage", "Lorem Lipsum", "//FinalExamination/Description[@lang='en-value']");
+    }
+
+    @Test
     public void testEnrichCredits() throws Exception {
 
         final String basePathUnits = SPECIFICATION_PATH + "/Credits/Units";
         assertCodeValue(basePathUnits, "laajuus", "laajuus");
-        
+
         final String basePathValue = SPECIFICATION_PATH + "/Credits/Value";
         assertCodeValue(basePathValue, "20", "20");
 
@@ -190,9 +195,9 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichLanguagesOfInstruction() throws Exception {
 
-        final String basePath = INSTANCE_PATH + "/LanguagesOfInstruction";
-        assertCodeValueCollection(basePath + "/Code[1]", "kieli-fi-value", "kieli");
-        assertCodeValueCollection(basePath + "/Code[2]", "kieli-en-value", "kieli");
+        final String basePath = INSTANCE_PATH + "/LanguagesOfInstruction/Codes";
+        assertCodeValueCollection(basePath + "/Code[2]", "kieli-fi-value", "kieli-fi");
+        assertCodeValueCollection(basePath + "/Code[1]", "kieli-en-value", "kieli-en");
 
     }
 
@@ -356,11 +361,8 @@ public class LearningOpportunityEnricherTest {
                 String expected = tmp[1];
 
                 assertEquals("bad result for xpath: " + expression, expected, path.evaluate(expression, is));
-
             }
-
         }
-
     }
 
     private void assertXPathEvals(String msg, String expected, String expression) throws XPathExpressionException {
@@ -389,10 +391,10 @@ public class LearningOpportunityEnricherTest {
 
         when(service.lookupKoodi("371101", 2010)).thenReturn(createSimpleKoodiValue("koulutusluokitus"));
         when(service.lookupKoodi("uri:koulutusala", CODE_VERSION)).thenReturn(createSimpleKoodiValue("koulutusala"));
-       
+
         when(service.lookupKoodi("laajuus1", CODE_VERSION)).thenReturn(createSimpleKoodiValue("laajuus"));
         when(service.lookupKoodi("uri:laajuusarvo", CODE_VERSION)).thenReturn(createSimpleKoodiValue("20"));
-         
+
         when(service.lookupKoodi("uri tutkintonimike", CODE_VERSION)).thenReturn(createSimpleKoodiValue("tutkintonimike"));
         when(service.lookupKoodi("uri:koulutusaste", CODE_VERSION)).thenReturn(createSimpleKoodiValue("koulutusaste"));
         when(service.lookupKoodi("uri:opintoala", CODE_VERSION)).thenReturn(createSimpleKoodiValue("opintoala"));
@@ -417,6 +419,9 @@ public class LearningOpportunityEnricherTest {
         when(service.lookupKoodi("uri:kausi/kevat", CODE_VERSION)).thenReturn(createSimpleKoodiValue("kausi"));
         when(service.lookupKoodi("uri:kausi/syksy", CODE_VERSION)).thenReturn(createSimpleKoodiValue("kausi"));
         when(service.lookupKoodi("uri:kohdejoukko/peruskoulut", CODE_VERSION)).thenReturn(createSimpleKoodiValue("kohdejoukko"));
+        when(service.lookupKoodi("uri:description en", CODE_VERSION)).thenReturn(createSimpleKoodiValue("en"));
+        when(service.lookupKoodi("uri:fi", CODE_VERSION)).thenReturn(createSimpleKoodiValue("fi"));
+
 
         return service;
 
@@ -481,8 +486,6 @@ public class LearningOpportunityEnricherTest {
     }
 
     private KoodiValue createSimpleKoodiValue(String baseName) {
-        System.out.println(baseName);
         return new SimpleKoodiValue(baseName + "-uri", baseName + "-value", baseName + "-fi", baseName + "-en", baseName + "-sv");
-
     }
 }

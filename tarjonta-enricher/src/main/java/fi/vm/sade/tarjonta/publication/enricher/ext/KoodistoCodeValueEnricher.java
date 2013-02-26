@@ -150,7 +150,7 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
      */
     protected KoodiValue getKoodistoKoodi(String localName) {
         if (koodiUri == null || koodiVersion == null) {
-            log.warn("no koodi value found for {}, skipping. uri: '{}", localName, koodiUri + "#" + koodiVersion);
+            log.warn("no koodi value found for element named '{}', skipping. uri: '{}", localName, koodiUri + "#" + koodiVersion);
             return null;
         }
         return lookupKoodi(koodiUri, koodiVersion);

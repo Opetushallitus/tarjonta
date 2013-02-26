@@ -212,6 +212,15 @@
             <artifactId>commons-beanutils</artifactId>
             <version>1.8.3</version>
         </dependency>
+        
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.0</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
+            
 
         <dependency>
             <groupId>org.powermock</groupId>
@@ -365,9 +374,9 @@
     <profiles>
 
         <!--
-        Local schema preparation from maven. Set environment properties for this to work. (fyway.user & flyway.password)
-            mvn -Dflyway.user=XXX -Dflyway.password=XXX -P flyway flyway:migrate
-      -->
+          Local schema preparation from maven. Set environment properties for this to work. (fyway.user & flyway.password)
+              mvn -Dflyway.user=XXX -Dflyway.password=XXX -P flyway flyway:migrate
+        -->
         <profile>
             <id>flyway</id>
             <build>

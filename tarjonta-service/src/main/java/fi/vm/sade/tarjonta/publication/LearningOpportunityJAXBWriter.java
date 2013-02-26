@@ -66,6 +66,7 @@ import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType.EntranceExa
 import fi.vm.sade.tarjonta.publication.types.WebLinkCollectionType.Link;
 import fi.vm.sade.tarjonta.publication.utils.VersionedUri;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -76,7 +77,8 @@ import java.util.Collection;
  * @author Jukka Raanamo
  */
 public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHandlerSuppport {
-
+    
+    private static final Logger log = LoggerFactory.getLogger(LearningOpportunityJAXBWriter.class);
     public static final String UTF_8 = "UTF-8";
     public static final String DEFAULT_ROOT_ELEMENT_NAME = "LearningOpportunityDownloadData";
     public static final String NAMESPACE = "http://publication.tarjonta.sade.vm.fi/types";
@@ -100,7 +102,6 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      * another is to use more low level writing.
      */
     private Map<String, Object> idRefMap = new HashMap<String, Object>();
-    private static final Logger log = LoggerFactory.getLogger(LearningOpportunityJAXBWriter.class);
     private Map<String, String> komotoParentMap = new HashMap<String, String>();
 
     /**
@@ -112,7 +113,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         this.params = params;
         final String packageName = LearningOpportunityDownloadDataType.class.getPackage().getName();
         final JAXBContext context = JAXBContext.newInstance(packageName, LearningOpportunityDownloadDataType.class.getClassLoader());
-
+        
         objectFactory = new ObjectFactory();
         try {
             datatypeFactory = DatatypeFactory.newInstance();
@@ -120,14 +121,14 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             // there's nothing that can be done
             throw new IllegalStateException("configuring DatatypeFactory failed", e);
         }
-
+        
         marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 
         // hmm... not supported
         //marshaller.setProperty("com.sun.xml.bind.IDResolver", new CustomIDResolver());
 
-
+        
     }
 
     /**
@@ -139,9 +140,9 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      * @param partial
      */
     public void setPartialDocument(boolean partial) {
-
+        
         this.partialDocument = partial;
-
+        
     }
 
     /**
@@ -151,9 +152,9 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      * @throws XMLStreamException
      */
     public void setOutput(Writer out) throws XMLStreamException {
-
+        
         xmlWriter = XMLOutputFactory.newFactory().createXMLStreamWriter(out);
-
+        
     }
 
     /**
@@ -163,40 +164,40 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      * @throws XMLStreamException
      */
     public void setOutput(OutputStream out) throws XMLStreamException {
-
+        
         try {
             setOutput(new OutputStreamWriter(out, UTF_8));
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException(UTF_8 + " must be supported");
         }
-
+        
     }
-
+    
     @Override
     public void onCollectStart() throws Exception {
-
+        
         if (!partialDocument) {
             xmlWriter.writeStartDocument(UTF_8, "1.0");
         }
-
+        
         xmlWriter.writeStartElement("", rootElementName);
         xmlWriter.writeAttribute("xmlns", NAMESPACE);
-
+        
     }
-
+    
     @Override
     public void onCollectEnd() throws Exception {
-
+        
         xmlWriter.writeEndElement();
         if (!partialDocument) {
             xmlWriter.writeEndDocument();
         }
-
+        
     }
-
+    
     @Override
     public void onCollect(Haku haku) throws Exception {
-
+        
         final ApplicationSystemType applicationSystem = objectFactory.createApplicationSystemType();
         applicationSystem.setId(haku.getOid());
 
@@ -229,26 +230,32 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
         // ApplicationSystem/TargetGroup
         addKohdejoukko(haku, applicationSystem);
-
+        
         marshal(ApplicationSystemType.class, applicationSystem);
-
-        log.debug("marshalled Haku, oid: " + haku.getOid());
     }
-
+    
     @Override
     public void onCollect(Hakukohde hakukohde, List<MonikielinenMetadata> soraDesc, List<MonikielinenMetadata> valintaperusteDesc) throws Exception {
-
+        
         ApplicationOptionType applicationOption = objectFactory.createApplicationOptionType();
 
         //ApplicationSystemType#status
         applicationOption.setStatus(status(hakukohde.getTila()));
         // ApplicationOption/Identifier
         ApplicationOptionType.Identifier identifier = new ApplicationOptionType.Identifier();
+
+        //ApplicationOption/Description
+        TypedDescriptionType description = new TypedDescriptionType();
+        description.setType(DescriptionType.GENERAL.value());
+        copyDescriptions(hakukohde.getLisatiedot(), description);
+        applicationOption.setDescription(description);
+        
         identifier.setValue(hakukohde.getOid());
         applicationOption.setIdentifier(identifier);
 
         // ApplicationOption/Title - insert koodisto uri only
         addHakukohdeNimi(hakukohde, applicationOption);
+
 
         // ApplicationOption/ApplicationSystemRef
         ApplicationSystemRefType applicationSystemRef = new ApplicationSystemRefType();
@@ -263,26 +270,23 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
         // ApplicationOption/LearningOpportunities
         addKoulutukset(hakukohde, applicationOption);
-
+        
         marshal(ApplicationOptionType.class, applicationOption);
-
-        log.debug("marshalled Hakukohde, oid: " + hakukohde.getOid());
-
     }
-
+    
     @Override
     public void onCollect(Koulutusmoduuli moduuli) throws Exception {
         onCollect(moduuli, null);
     }
-
+    
     @Override
     public void onCollect(Koulutusmoduuli moduuli, KoulutusmoduuliToteutus t) throws Exception {
         LearningOpportunitySpecificationType specification = objectFactory.createLearningOpportunitySpecificationType();
-
+        
         if (moduuli.getModuuliTyyppi() != KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA && moduuli.getModuuliTyyppi() != KoulutusmoduuliTyyppi.TUTKINTO) {
             throw new Exception("KoulutusmoduuliTyyppi not supported: " + moduuli.getModuuliTyyppi());
         }
-
+        
         if (t != null) {
             handleChildren(moduuli, t, specification);
         }
@@ -329,7 +333,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         // LearningOpportunitySpecification/Classification
         Classification classification = new Classification();
         specification.setClassification(classification);
-
+        
         addKoulutusluokitus(moduuli, classification);
         addKoulutusala(moduuli, classification);
         addKoulutusaste(moduuli, classification);
@@ -346,21 +350,18 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
         // LearningOpportunitySpecification/Description/AccessToFurtherStudies
         addJatkoOpintoMahdollisuudet(moduuli, description);
-
+        
         if (t != null) {
             addKoulutusohjelmanValinta(t, description);
         }
-
+        
         marshal(LearningOpportunitySpecificationType.class, specification);
-
-        log.debug("marshalledKoulutusmoduuli, oid: " + moduuli.getOid());
     }
-
-    private void addKoulutusohjelmanValinta(KoulutusmoduuliToteutus koulutus,
-            Description description) {
+    
+    private void addKoulutusohjelmanValinta(KoulutusmoduuliToteutus koulutus, Description description) {
         copyTexts(koulutus.getKoulutusohjelmanValinta(), description.getSelectionOfDegreeProgram());
     }
-
+    
     private void handleChildren(Koulutusmoduuli moduuli,
             KoulutusmoduuliToteutus toteutus,
             LearningOpportunitySpecificationType specification) {
@@ -372,7 +373,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             }
         }
     }
-
+    
     private LearningOpportunitySpecificationRefType createLOSRef(String moduuliOid) {
         try {
             LearningOpportunitySpecificationRefType losRef = new LearningOpportunitySpecificationRefType();
@@ -382,11 +383,10 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             return null;
         }
     }
-
+    
     @Override
     public void onCollect(KoulutusmoduuliToteutus toteutus) throws Exception {
-        log.debug("processing KoulutusmoduuliToteutus, oid: " + toteutus.getOid());
-
+        
         LearningOpportunityInstanceType instance = new LearningOpportunityInstanceType();
 
         //LearningOpportunityInstance#status
@@ -442,23 +442,21 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 
         // LearningOpportunityInstance/WebLinks
         addLinkit(toteutus, instance);
-
+        
         marshal(LearningOpportunityInstanceType.class, instance);
-
-        log.debug("marshalled KoulutusmoduuliToteutus, oid: " + toteutus.getOid());
     }
-
+    
     @Override
     public void onCollect(OrganisaatioDTO tarjoaja) throws Exception {
         LearningOpportunityProviderType provider = new LearningOpportunityProviderType();
         OrganisaatioKuvailevatTiedotTyyppi kuvailevatTiedot = tarjoaja.getKuvailevatTiedot();
-
+        
         InstitutionInfo institutionInfo = new InstitutionInfo();
         provider.setInstitutionInfo(institutionInfo);
-
+        
         LearningOpportunityProviderType.GeneralInformation generalInformation = new LearningOpportunityProviderType.GeneralInformation();
         provider.setGeneralInformation(generalInformation);
-
+        
         if (kuvailevatTiedot != null && kuvailevatTiedot.getHakutoimisto() != null) {
             HakutoimistoTyyppi hakutoimisto = kuvailevatTiedot.getHakutoimisto();
 
@@ -475,7 +473,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                 institutionInfo.setEctsCoordinator(person);
             }
             copyTexts(hakutoimisto.getOpintotoimistoNimi(), generalInformation.getAdmissionOfficeName());
-
+            
             kuvailevatTiedot.getHakutoimisto().getOpintotoimistoYhteystiedot();
             for (final YhteystietoDTO yhtDto : hakutoimisto.getOpintotoimistoYhteystiedot()) {
                 ProviderAddressType pat = new ProviderAddressType();
@@ -484,7 +482,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                     if (emailDto.getEmail() != null) {
                         pat.setEmailAddress(emailDto.getEmail());
                     }
-
+                    
                 } else if (yhtDto instanceof PuhelinnumeroDTO) {
                     PuhelinnumeroDTO p = (PuhelinnumeroDTO) yhtDto;
                     pat.setPhoneNumber(p.getPuhelinnumero());
@@ -505,7 +503,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                     pat.setCity(osoiteDto.getPostitoimipaikka());
                     pat.setPostalCode(osoiteDto.getPostinumero());
                     pat.setCountry(osoiteDto.getMaa());
-
+                    
                     if (osoiteDto.getOsoiteTyyppi() != null) {
                         switch (osoiteDto.getOsoiteTyyppi()) {
                             case KAYNTI:
@@ -519,12 +517,12 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                                 break;
                         }
                     }
-
+                    
                 } else if (yhtDto instanceof WwwDTO) {
                     //skip, the DTO not needed
                     continue;
                 }
-
+                
                 generalInformation.getAddress().add(pat);
             }
         }
@@ -533,9 +531,9 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         OrganizationRefType organizationRef = new OrganizationRefType();
         organizationRef.setOidRef(tarjoaja.getOid());
         provider.setOrganizationRef(organizationRef);
-
+        
         copyTexts(tarjoaja.getNimi(), institutionInfo.getName());
-
+        
         if (kuvailevatTiedot != null) {
             for (KuvailevaTietoTyyppi kuvailevat : kuvailevatTiedot.getVapaatKuvaukset()) {
                 if (kuvailevat != null) {
@@ -550,17 +548,17 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                     }
                 }
             }
-
+            
             final List<SoMeLinkkiTyyppi> soMeLinkit = kuvailevatTiedot.getSoMeLinkit();
-
+            
             if (!soMeLinkit.isEmpty()) {
                 provider.setWebLinks(new WebLinkCollectionType());
-
+                
                 for (SoMeLinkkiTyyppi sourceLink : soMeLinkit) {
                     provider.getWebLinks().getLink().add(link(sourceLink.getTyyppi().value(), sourceLink.getSisalto()));
                 }
             }
-
+            
             final OrganisaatioKuvaTyyppi kuva = kuvailevatTiedot.getKuva();
             if (params.showImages() && kuva != null) {
                 provider.setImages(new LearningOpportunityProviderType.Images());
@@ -571,178 +569,178 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                 provider.getImages().getImage().add(img);
             }
         }
-
+        
         marshal(LearningOpportunityProviderType.class, provider);
     }
-
+    
     private void addHakutapa(Haku source, ApplicationSystemType target) {
-
+        
         target.setApplicationMethod(createCodeValue(CodeSchemeType.KOODISTO, source.getHakutapaUri()));
-
+        
     }
-
+    
     private void addHakukausi(Haku source, ApplicationSystemType target) {
-
+        
         target.setApplicationSeason(createCodeValue(CodeSchemeType.KOODISTO, source.getHakukausiUri()));
-
+        
     }
-
+    
     private void addHakutyyppi(Haku source, ApplicationSystemType target) {
-
+        
         target.setApplicationType(createCodeValue(CodeSchemeType.KOODISTO, source.getHakutyyppiUri()));
-
+        
     }
-
+    
     private void addHakuvuosi(Haku source, ApplicationSystemType target) {
-
+        
         target.setApplicationYear(formatYear(source.getHakukausiVuosi()));
-
+        
     }
-
+    
     private void addKoulutuksenAlkamiskausi(Haku source, ApplicationSystemType target) {
-
+        
         target.setEducationStartSeason(createCodeValue(CodeSchemeType.KOODISTO, source.getKoulutuksenAlkamiskausiUri()));
-
+        
     }
-
+    
     private void addKoulutuksenAlkamisvuosi(Haku source, ApplicationSystemType target) {
-
+        
         target.setEducationStartYear(formatYear(source.getKoulutuksenAlkamisVuosi()));
-
+        
     }
-
+    
     private void addHaunTunniste(Haku source, ApplicationSystemType target) {
-
+        
         target.setIdentifier(source.getHaunTunniste());
-
+        
     }
-
+    
     private void addKohdejoukko(Haku source, ApplicationSystemType target) {
-
+        
         target.setTargetGroup(createCodeValue(CodeSchemeType.KOODISTO, source.getKohdejoukkoUri()));
-
+        
     }
-
+    
     private void addNimi(Koulutusmoduuli from, LearningOpportunitySpecificationType to) {
-
+        
         copyTexts(from.getNimi(), to.getName());
-
+        
     }
-
+    
     private void addUlkoinenTunniste(Koulutusmoduuli from, LearningOpportunitySpecificationType to) {
-
+        
         if (from.getUlkoinenTunniste() != null) {
             to.setIdentifier(from.getUlkoinenTunniste());
         }
-
+        
     }
-
+    
     private void addUlkoinenTunniste(KoulutusmoduuliToteutus from, LearningOpportunityInstanceType to) {
-
+        
         if (from.getUlkoinenTunniste() != null) {
             to.setIdentifier(from.getUlkoinenTunniste());
         }
-
+        
     }
-
+    
     private void addSpecificationRef(KoulutusmoduuliToteutus from, LearningOpportunityInstanceType to) {
-
+        
         LearningOpportunitySpecificationRefType losRef = new LearningOpportunitySpecificationRefType();
         losRef.setRef(getIDREF(from.getKoulutusmoduuli().getOid()));
         to.setSpecificationRef(losRef);
-
+        
     }
-
+    
     private void addOrganisaatioRef(Koulutusmoduuli from, LearningOpportunitySpecificationType to) {
-
+        
         OrganizationRefType organizationRef = new OrganizationRefType();
         organizationRef.setOidRef(from.getOmistajaOrganisaatioOid());
         to.setOrganizationRef(organizationRef);
-
+        
     }
-
+    
     private void addOrganisaatioRef(KoulutusmoduuliToteutus from, LearningOpportunitySpecificationType to) {
         OrganizationRefType organizationRef = new OrganizationRefType();
         organizationRef.setOidRef(from.getTarjoaja());
         to.setOrganizationRef(organizationRef);
     }
-
+    
     private void addOrganisaatioRef(KoulutusmoduuliToteutus from, LearningOpportunityInstanceType to) {
-
+        
         OrganizationRefType orgRef = new OrganizationRefType();
         orgRef.setOidRef(from.getTarjoaja());
         to.setOrganizationRef(orgRef);
-
+        
     }
-
+    
     private void addHakukohdeNimi(Hakukohde source, ApplicationOptionType target) {
-
+        
         target.setTitle(createCodeValue(CodeSchemeType.KOODISTO, source.getHakukohdeNimi()));
-
+        
     }
-
+    
     private void addTutkintonimike(Koulutusmoduuli source, LearningOpportunitySpecificationType target) {
-
+        
         final String nimike = source.getTutkintonimike();
         if (nimike != null) {
             target.setQualification(createCodeValue(CodeSchemeType.KOODISTO, nimike));
         }
-
+        
     }
-
+    
     private void addKesto(KoulutusmoduuliToteutus source, LearningOpportunityInstanceType target) {
-
+        
         final String units = source.getSuunniteltuKestoYksikko();
         final String value = source.getSuunniteltuKestoArvo();
-
+        
         if (units != null && value != null) {
-
+            
             EducationDurationType duration = new EducationDurationType();
-
+            
             duration.setUnits(createCodeValue(CodeSchemeType.KOODISTO, units));
             duration.setValue(value);
-
+            
             target.setDuration(duration);
-
+            
         }
-
+        
     }
-
+    
     private void addPohjakoulutusvaatimus(KoulutusmoduuliToteutus source, LearningOpportunityInstanceType target) {
-
+        
         target.setPrerequisite(createCodeValue(CodeSchemeType.KOODISTO, source.getPohjakoulutusvaatimus()));
-
+        
     }
-
+    
     private void addKoulutukset(Hakukohde hakukohde, ApplicationOptionType target) {
-
+        
         ApplicationOptionType.LearningOpportunities refContainer = new ApplicationOptionType.LearningOpportunities();
         List<LearningOpportunityInstanceRefType> refList = refContainer.getInstanceRef();
-
+        
         Set<KoulutusmoduuliToteutus> koulutukset = hakukohde.getKoulutusmoduuliToteutuses();
         int laskuri = 0;
         for (KoulutusmoduuliToteutus koulutus : koulutukset) {
-
+            
             if (laskuri == 0) {
                 String parentOid = this.komotoParentMap.get(koulutus.getKoulutusmoduuli().getOid() + koulutus.getTarjoaja());
                 if (parentOid != null) {
                     refContainer.setParentRef(createLOSRef(parentOid));
                 }
             }
-
+            
             LearningOpportunityInstanceRefType ref = new LearningOpportunityInstanceRefType();
             ref.setRef(getIDREF(koulutus.getOid()));
             refList.add(ref);
             ++laskuri;
-
+            
         }
-
+        
         target.setLearningOpportunities(refContainer);
-
+        
     }
-
+    
     private void addLaajuus(Koulutusmoduuli source, LearningOpportunitySpecificationType target) {
-
+        
         if (source.getLaajuusArvo() != null) {
             CreditsType credits = new CreditsType();
             credits.setUnits(createCodeValue(CodeSchemeType.KOODISTO, source.getLaajuusYksikko()));
@@ -750,11 +748,11 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             target.setCredits(credits);
         }
     }
-
-    private void addValintaperusteet(Hakukohde source, List<MonikielinenMetadata> valintaperuste, ApplicationOptionType target) {
+    
+    private void addValintaperusteet(Hakukohde source, List<MonikielinenMetadata> valintaperustekuvaus, ApplicationOptionType target) {
         SelectionCriterionsType criterions = new SelectionCriterionsType();
         target.setSelectionCriterions(criterions);
-
+        
         if (source.getAloituspaikatLkm() != null) {
             criterions.setStartingQuota(BigInteger.valueOf(source.getAloituspaikatLkm()));
         }
@@ -767,21 +765,22 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         if (source.getEdellisenVuodenHakijat() != null) {
             criterions.setLastYearTotalApplicants(BigInteger.valueOf(source.getEdellisenVuodenHakijat()));
         }
-
-        copyTexts(valintaperuste, criterions.getDescription());
+        
+        criterions.setDescription(new TypedDescriptionType());
+        copyTexts(valintaperustekuvaus, criterions.getDescription());
         addValintakokeet(source, criterions);
-
+        
         addLiitteet(source, criterions);
-
+        
     }
-
+    
     private void addValintakokeet(Hakukohde source, SelectionCriterionsType target) {
-
+        
         Set<Valintakoe> valintakoes = source.getValintakoes();
         if (valintakoes == null || valintakoes.isEmpty()) {
             return;
         }
-
+        
         SelectionCriterionsType.EntranceExaminations exams = new SelectionCriterionsType.EntranceExaminations();
         for (Valintakoe sourceExamination : valintakoes) {
             Examination targetExamination = new Examination();
@@ -789,118 +788,97 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             exams.getExamination().add(targetExamination);
         }
         target.setEntranceExaminations(exams);
-
+        
     }
-
+    
     private void addLiitteet(Hakukohde source, SelectionCriterionsType target) {
-
+        
         Set<HakukohdeLiite> liitteet = source.getLiites();
         if (liitteet == null || liitteet.isEmpty()) {
             return;
         }
-
+        
         AttachmentCollectionType attachmentContainer = new AttachmentCollectionType();
         List<Attachment> attachments = attachmentContainer.getAttachment();
-
+        
         for (HakukohdeLiite liite : liitteet) {
-
+            
             Attachment attachment = new Attachment();
-
+            
             attachment.setType(createCodeValue(CodeSchemeType.KOODISTO, liite.getLiitetyyppi()));
-
-            LocalizedTextType description = new LocalizedTextType();
-            copyTexts(liite.getKuvaus(), description.getText());
+            TypedDescriptionType description = new TypedDescriptionType();
+            description.setType(DescriptionType.GENERAL.value());
+            copyDescriptions(liite.getKuvaus(), description);
             attachment.setDescription(description);
-
+            
             Attachment.Return returnSpec = new Attachment.Return();
             returnSpec.setDueDate(liite.getErapaiva());
-
-            Attachment.Return.To to = new Attachment.Return.To();
-
+            Attachment.Return.To returnTo = new Attachment.Return.To();
+            
             if (liite.getSahkoinenToimitusosoite() != null) {
                 // could be anyUri???
-                to.setEmailAddress(liite.getSahkoinenToimitusosoite());
+                returnTo.setEmailAddress(liite.getSahkoinenToimitusosoite());
             }
-
-            // todo: postal address
-
-            returnSpec.setTo(to);
+            Osoite toimitusosoite = liite.getToimitusosoite();
+            
+            if (toimitusosoite != null) {
+                PostalAddress postTo = new PostalAddress();
+                postTo.getAddressLine().add(toimitusosoite.getOsoiterivi1());
+                postTo.getAddressLine().add(toimitusosoite.getOsoiterivi2());
+                postTo.setCity(toimitusosoite.getPostitoimipaikka());
+                postTo.setPostalCode(toimitusosoite.getPostinumero());
+                returnTo.setPostalAddress(postTo);
+            }
+            
+            returnSpec.setTo(returnTo);
             attachment.setReturn(returnSpec);
-
+            
             attachments.add(attachment);
-
+            
         }
-
+        
         target.setAttachments(attachmentContainer);
-
+        
     }
-
+    
     private void addValintakoe(Valintakoe source, Examination target) {
-
         // ApplicationOption/.../Examination/ExaminationType
         target.setExaminationType(createCodeValue(CodeSchemeType.KOODISTO, source.getTyyppiUri()));
 
         // ApplicationOption/.../Examination/Description
-        copyTexts(source.getKuvaus(), target.getDescription());
-
+        target.setDescription(new TypedDescriptionType());
+        copyDescriptions(source.getKuvaus(), target.getDescription());
+        
         Set<ValintakoeAjankohta> ajankohtas = source.getAjankohtas();
         if (ajankohtas != null && !ajankohtas.isEmpty()) {
-
             List<ExaminationEventType> events = target.getExaminationEvent();
-
-            for (ValintakoeAjankohta ajankohta : ajankohtas) {
-
+            
+            for (ValintakoeAjankohta sourceAjankohta : ajankohtas) {
                 // ApplicationOption/.../Examination/ExaminationEvent
                 ExaminationEventType event = new ExaminationEventType();
-
-                event.setStart(ajankohta.getAlkamisaika());
-                event.setEnd(ajankohta.getPaattymisaika());
-
-                /* Set<ValintakoeOsoite> osoites = ajankohta.getOsoites();*/
-
-                if (ajankohta.getAjankohdanOsoite() != null) {
+                event.setStart(sourceAjankohta.getAlkamisaika());
+                event.setEnd(sourceAjankohta.getPaattymisaika());
+                
+                if (sourceAjankohta.getAjankohdanOsoite() != null) {
                     ExaminationEventType.Locations locations = new ExaminationEventType.Locations();
                     event.setLocations(locations);
+                    
                     ExaminationLocationType location = new ExaminationLocationType();
-                    location.getAddressLine().add(ajankohta.getAjankohdanOsoite().getOsoiterivi1());
-                    location.getAddressLine().add(ajankohta.getAjankohdanOsoite().getOsoiterivi2());
-                    location.setCity(ajankohta.getAjankohdanOsoite().getPostitoimipaikka());
-                    location.setPostalCode(ajankohta.getAjankohdanOsoite().getPostinumero());
+                    location.getAddressLine().add(sourceAjankohta.getAjankohdanOsoite().getOsoiterivi1());
+                    location.getAddressLine().add(sourceAjankohta.getAjankohdanOsoite().getOsoiterivi2());
+                    location.setCity(sourceAjankohta.getAjankohdanOsoite().getPostitoimipaikka());
+                    location.setPostalCode(sourceAjankohta.getAjankohdanOsoite().getPostinumero());
                     locations.getLocation().add(location);
                 }
-                //Tuomas Katva 21.1.2013, removed because according to new specs Valintakoeajankohta and osoite
-                //has 1:1 relation
-               /* if (osoites != null && !osoites.isEmpty()) {
-
-
-
-                 for (ValintakoeOsoite valintakoeOsoite : osoites) {
-
-                 Osoite osoite = valintakoeOsoite.getOsoite();
-
-                 // ApplicationOption/.../Examination/ExaminationEvent/Locations/Location
-                 ExaminationLocationType location = new ExaminationLocationType();
-                 location.getAddressLine().add(osoite.getOsoiterivi1());
-                 if (!StringUtils.isEmpty(osoite.getOsoiterivi2())) {
-                 location.getAddressLine().add(osoite.getOsoiterivi2());
-                 }
-                 location.setCity(osoite.getPostitoimipaikka());
-                 location.setPostalCode(osoite.getPostinumero());
-                 locations.getLocation().add(location);
-
-                 }
-
-                 }*/
-
+                
                 events.add(event);
-
             }
-
         }
     }
-
+    
     private void addHakukelpoisuusvaatimus(List<MonikielinenMetadata> source, ApplicationOptionType target) {
         EligibilityRequirementsType eligibilityRequirements = new EligibilityRequirementsType();
+        eligibilityRequirements.setDescription(new TypedDescriptionType());
         copyTexts(source, eligibilityRequirements.getDescription());
         target.setEligibilityRequirements(eligibilityRequirements);
     }
@@ -919,119 +897,119 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         // class name with out the Type postfix
         String name = elementClass.getSimpleName();
         name = name.substring(0, name.length() - 4);
-
+        
         marshal(name, elementClass, data);
-
+        
     }
-
+    
     private void marshal(String elementName, Class elementClass, Object data) throws JAXBException, XMLStreamException {
-
+        
         QName qname = new QName("", elementName);
         JAXBElement e = new JAXBElement(qname, elementClass, data);
         marshaller.marshal(e, xmlWriter);
-
+        
         xmlWriter.flush();
-
+        
     }
-
+    
     private static ExtendedStringType createExtendedString(String valueFI) {
-
+        
         ExtendedStringType s = new ExtendedStringType();
         s.setLang("fi");
         s.setValue(valueFI);
         return s;
-
+        
     }
-
+    
     private static ExtendedStringType createExtendedString(String value, String langKey) {
         if (langKey == null) {
             log.warn("Data was missing language key. Value : {}, lang : {}", value, langKey);
             return new ExtendedStringType();
         }
-
+        
         ExtendedStringType s = new ExtendedStringType();
         s.setLang(langKey.toLowerCase());
         s.setValue(value);
         return s;
-
+        
     }
-
+    
     private void addLinkit(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
-
+        
         Set<WebLinkki> sourceLinkkis = toteutus.getLinkkis();
         if (sourceLinkkis != null && !sourceLinkkis.isEmpty()) {
-
+            
             WebLinkCollectionType linkContainer = new WebLinkCollectionType();
             target.setWebLinks(linkContainer);
-
+            
             List<Link> targetLinks = linkContainer.getLink();
-
+            
             for (WebLinkki sourceLink : sourceLinkkis) {
                 targetLinks.add(link(sourceLink.getTyyppi(), sourceLink.getUrl()));
             }
-
+            
         }
-
+        
     }
-
+    
     private void addMaksullisuus(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
         // TODO maksullisuus on koodisto url ...
     }
-
+    
     private void addLoppukoeVaatimukset(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
-
+        
         MonikielinenTeksti teksti = toteutus.getLoppukoeVaatimukset();
         if (teksti != null && !teksti.getTekstis().isEmpty()) {
             FinalExaminationCollectionType examinations = new FinalExaminationCollectionType();
             target.setFinalExamination(examinations);
-
-            copyTexts(teksti, examinations.getDescription());
+            
+            copyDescriptions(teksti, examinations.getDescription());
         }
-
+        
     }
-
+    
     private void addArviointikriteerit(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
-
+        
         MonikielinenTeksti tekstis = toteutus.getArviointikriteerit();
-
+        
         if (tekstis != null && !tekstis.getTekstis().isEmpty()) {
             AssessmentCollectionType assessments = new AssessmentCollectionType();
             copyTexts(tekstis, assessments.getAssessment());
         }
-
+        
     }
-
+    
     private void addOpetusmuodot(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
-
+        
         CodeValueCollectionType collection = toCodeValueCollection(toteutus.getOpetusmuotos());
         target.setFormsOfTeaching(collection);
-
+        
     }
-
+    
     private void addKoulutuslajit(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
-
+        
         CodeValueCollectionType collection = toCodeValueCollection(toteutus.getKoulutuslajis());
         target.setFormOfEducation(collection);
-
+        
     }
-
+    
     private void addOpetuskielet(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
-
+        
         CodeValueCollectionType collection = toCodeValueCollection(toteutus.getOpetuskielis());
         target.setLanguagesOfInstruction(collection);
-
+        
     }
-
+    
     private void addKoulutuksenRakenne(Koulutusmoduuli moduuli, Description target) {
-
+        
         copyTexts(moduuli.getKoulutuksenRakenne(), target.getStructureDiagram());
-
+        
     }
-
+    
     private void addJatkoOpintoMahdollisuudet(Koulutusmoduuli moduuli, Description target) {
-
+        
         copyTexts(moduuli.getJatkoOpintoMahdollisuudet(), target.getAccessToFurtherStudies());
-
+        
     }
 
     /**
@@ -1042,27 +1020,39 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      * @param target
      */
     private void copyTexts(MonikielinenTekstiTyyppi source, List<ExtendedStringType> target) {
-
+        
         if (source != null) {
             for (Teksti teksti : source.getTeksti()) {
                 target.add(createExtendedString(teksti.getValue(), teksti.getKieliKoodi()));
             }
         }
     }
-
-    private void copyTexts(Collection<MonikielinenMetadata> source, List<ExtendedStringType> target) {
-        if (source != null) {
+    
+    private void copyTexts(Collection<MonikielinenMetadata> source, TypedDescriptionType target) {
+        
+        if (source != null && target != null) {
+            target.setType(DescriptionType.GENERAL.value());
             for (MonikielinenMetadata teksti : source) {
-                target.add(createExtendedString(teksti.getArvo(), teksti.getKieli()));
+                target.getText().add(createExtendedString(teksti.getArvo(), teksti.getKieli()));
             }
         }
     }
-
+    
     private void copyTexts(MonikielinenTeksti source, List<ExtendedStringType> target) {
-
+        
         if (source != null) {
             for (TekstiKaannos teksti : source.getTekstis()) {
                 target.add(createExtendedString(teksti.getArvo(), teksti.getKieliKoodi()));
+            }
+        }
+    }
+    
+    private void copyDescriptions(MonikielinenTeksti source, TypedDescriptionType target) {
+        
+        if (source != null && target != null) {
+            target.setType(DescriptionType.GENERAL.value());
+            for (TekstiKaannos teksti : source.getTekstis()) {
+                target.getText().add(createExtendedString(teksti.getArvo(), teksti.getKieliKoodi()));
             }
         }
     }
@@ -1075,116 +1065,116 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      * @return
      */
     private static CodeValueCollectionType toCodeValueCollection(Set<KoodistoUri> uris) {
-
+        
         if (uris == null || uris.isEmpty()) {
             return null;
         }
-
+        
         CodeValueCollectionType collection = new CodeValueCollectionType();
         collection.setScheme(CodeSchemeType.KOODISTO);
         for (KoodistoUri uri : uris) {
-            collection.getCode().add(createCodeValue(null, uri.getKoodiUri()));
+            collection.getCodes().add(createCodeValue(null, uri.getKoodiUri()));
         }
         return collection;
-
+        
     }
-
+    
     private void addAmmattinimikkeet(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
-
+        
         final Set<KoodistoUri> uris = toteutus.getAmmattinimikes();
         if (uris != null && !uris.isEmpty()) {
-
+            
             ProfessionCollectionType professions = new ProfessionCollectionType();
             List<CodeValueType> list = professions.getProfession();
-
+            
             for (KoodistoUri uri : uris) {
                 list.add(createCodeValue(CodeSchemeType.KOODISTO, uri.getKoodiUri()));
             }
-
+            
             target.setProfessionLabels(professions);
-
+            
         }
-
+        
     }
-
+    
     private void addAvainsanat(KoulutusmoduuliToteutus toteutus, LearningOpportunityInstanceType target) {
-
+        
         final Set<KoodistoUri> uris = toteutus.getAvainsanas();
         if (uris != null && !uris.isEmpty()) {
-
+            
             LearningOpportunityInstanceType.Keywords keywords = new LearningOpportunityInstanceType.Keywords();
             List<CodeValueType> list = keywords.getKeyword();
-
+            
             for (KoodistoUri uri : uris) {
                 list.add(createCodeValue(CodeSchemeType.KOODISTO, uri.getKoodiUri()));
             }
-
+            
             target.setKeywords(keywords);
-
+            
         }
-
+        
     }
-
+    
     private void addKoulutusala(Koulutusmoduuli koulutusmoduuli, Classification target) {
-
+        
         final String uri = koulutusmoduuli.getKoulutusala();
         if (uri != null) {
             target.setEducationDomain(createCodeValue(CodeSchemeType.KOODISTO, uri));
         }
-
+        
     }
-
+    
     private void addKoulutusluokitus(Koulutusmoduuli koulutusmoduuli, Classification target) {
-
+        
         final String uri = koulutusmoduuli.getKoulutusKoodi();
         if (uri != null) {
             target.setEducationClassification(createCodeValue(CodeSchemeType.KOODISTO, uri));
         }
-
+        
     }
-
+    
     private void addKoulutusaste(Koulutusmoduuli koulutusmoduuli, Classification target) {
-
+        
         final String uri = koulutusmoduuli.getKoulutusAste();
         if (uri != null) {
             target.setEducationDegree(createCodeValue(CodeSchemeType.KOODISTO, uri));
         }
-
+        
     }
-
+    
     private void addOpintoala(Koulutusmoduuli koulutusmoduuli, Classification target) {
-
+        
         final String uri = koulutusmoduuli.getKoulutusala();
         if (uri != null) {
             target.setStudyDomain(createCodeValue(CodeSchemeType.KOODISTO, uri));
         }
-
+        
     }
-
+    
     private void addEqf(Koulutusmoduuli koulutusmoduuli, Classification target) {
-
+        
         final String uri = koulutusmoduuli.getEqfLuokitus();
         if (uri != null) {
             target.setEqfClassification(createCodeValue(CodeSchemeType.KOODISTO, uri));
         }
-
+        
     }
-
+    
     private void addNqf(Koulutusmoduuli koulutusmoduuli, Classification target) {
-
+        
         final String uri = koulutusmoduuli.getNqfLuokitus();
         if (uri != null) {
             target.setNqfClassification(createCodeValue(CodeSchemeType.KOODISTO, uri));
         }
-
+        
     }
-
+    
     private static String formatYear(Integer year) {
-
+        
         if (year == null) {
             return null;
         }
-
+        
         return year.toString();
     }
 
@@ -1195,9 +1185,9 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      * @return
      */
     private static String formatAcademicYear(Date date) {
-
+        
         return new SimpleDateFormat("yyyy").format(date);
-
+        
     }
 
     /**
@@ -1209,7 +1199,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      * @return
      */
     private static CodeValueType createCodeValue(CodeSchemeType scheme, String codeUriWithVersion) {
-
+        
         if (codeUriWithVersion == null) {
             return null;
         }
@@ -1222,9 +1212,9 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         code.setVersion(vuri.getVersio() != null ? vuri.getVersio().toString() : "");
         CodeValueType codeValueType = new CodeValueType();
         codeValueType.setCode(code);
-
+        
         return codeValueType;
-
+        
     }
 
     /**
@@ -1236,10 +1226,10 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      * @return
      */
     private String putID(String id, Object idTarget) {
-
+        
         idRefMap.put(id, idTarget);
         return id;
-
+        
     }
 
     /**
@@ -1251,7 +1241,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      * @return
      */
     private Object getIDREF(String key) {
-
+        
         Object value = idRefMap.get(key);
         if (value == null) {
             throw new IllegalStateException("no such mapped ID " + key);
@@ -1266,7 +1256,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
      */
     private static DescriptionType lopGeneralInformation(KuvailevaTietoTyyppi metaKey) {
         switch (metaKey.getTyyppi()) {
-
+            
             case KANSAINVALISET_KOULUTUSOHJELMAT:
                 return DescriptionType.INTERNATIONAL_PROGRAMMES;
             case KIELIOPINNOT:
@@ -1324,26 +1314,26 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         }
         return null;
     }
-
+    
     private static TypedDescriptionType typedDescriptionType(KuvailevaTietoTyyppi tyyppi, DescriptionType metaType) {
         TypedDescriptionType tdt = new TypedDescriptionType();
-
+        
         List<Teksti> tekstis = tyyppi.getSisalto().getTeksti();
         for (Teksti teksti : tekstis) {
             tdt.getText().add(createExtendedString(teksti.getValue(), teksti.getKieliKoodi()));
         }
-
+        
         tdt.setType(metaType.value());
         return tdt;
     }
-
+    
     private static Link link(String type, String url) {
         Link targetLink = new Link();
         targetLink.setType(type);
         targetLink.setUri(url);
         return targetLink;
     }
-
+    
     private static StatusSchemeType status(final TarjontaTila tila) {
         switch (tila) {
             case JULKAISTU:

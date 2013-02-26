@@ -33,6 +33,8 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
+import javax.xml.ws.WebServiceException;
+import org.apache.cxf.transport.http.HTTPException;
 
 /**
  * Gathers learning opportunity material (tarjonta) that is ready for
@@ -234,11 +236,19 @@ public class PublicationCollector {
             throw new IllegalArgumentException("Provider OID cannot be null");
         }
 
-        OrganisaatioDTO dto = organisaatioService.findByOid(oid);
+        OrganisaatioDTO dto = null;
+        try {
+            dto = organisaatioService.findByOid(oid);
 
-        if (dto == null) {
-            throw new RuntimeException("Provider not found by OID  '" + oid + "'");
+            if (dto == null) {
+                throw new RuntimeException("Provider not found by OID  '" + oid + "'");
+            }
+        } catch (WebServiceException e) {
+            log.error("Organisation service throws an exception - message : {}", e.getMessage());
+        } catch (Exception e) {
+            log.error("Caught an exception - cannot find provider.", e);
         }
+
         return dto;
     }
 
@@ -277,10 +287,7 @@ public class PublicationCollector {
             return false;
         }
 
-        log.debug("already notified, not notifying again, key: " + key);
-
         return true;
-
     }
 
     /**

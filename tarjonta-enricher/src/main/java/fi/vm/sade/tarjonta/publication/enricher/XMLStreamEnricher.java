@@ -311,7 +311,7 @@ public class XMLStreamEnricher {
          * @param attrs
          * @throws SAXException
          */
-        protected void writeStartElement(String name, Attributes attrs) throws SAXException {
+        public void writeStartElement(String name, Attributes attrs) throws SAXException {
             super.startElement(EMPTY_STRING, name, null, attrs);
         }
 
@@ -350,6 +350,11 @@ public class XMLStreamEnricher {
          * @throws SAXException
          */
         public void writeCharacters(String chars) throws SAXException {
+            if (chars == null) {
+                log.error("Data was null, the problem might be related to element : '{}'.", this.handler.mappedElementName);
+                return;
+            }
+
             super.characters(chars.toCharArray(), 0, chars.length());
         }
     }
@@ -376,9 +381,11 @@ public class XMLStreamEnricher {
 
             log.debug("Search language code by Koodisto uri {}#{}", koodiUri, KoodiVersion);
             final KoodiValue KoodiLangCode = handler.lookupKoodi(koodiUri, KoodiVersion);
-            if (KoodiLangCode != null) {
+            if (KoodiLangCode != null && KoodiLangCode.getValue() != null) {
                 //get a real language code
                 return KoodiLangCode.getValue().toLowerCase();
+            } else {
+                log.warn("Language code not found by uri: '{}'", str);
             }
         }
 

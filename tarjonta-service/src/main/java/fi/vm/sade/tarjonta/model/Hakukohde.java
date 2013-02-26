@@ -91,6 +91,7 @@ public class Hakukohde extends BaseEntity {
     private String valintaperustekuvausKoodiUri; //the koodi uri points to metadata
     @Column(name = "sora_kuvaus_koodi_uri")
     private String soraKuvausKoodiUri; //the koodi uri points to metadata
+
     /**
      * @return the koulutuses
      */
@@ -339,6 +340,7 @@ public class Hakukohde extends BaseEntity {
     /**
      * @return the valintaperusteKuvaus
      */
+    @Deprecated
     public MonikielinenTeksti getValintaperusteKuvaus() {
         return valintaperusteKuvaus;
     }
@@ -346,6 +348,7 @@ public class Hakukohde extends BaseEntity {
     /**
      * @param valintaperusteKuvaus the valintaperusteKuvaus to set
      */
+    @Deprecated
     public void setValintaperusteKuvaus(MonikielinenTeksti valintaperusteKuvaus) {
         this.valintaperusteKuvaus = valintaperusteKuvaus;
     }
@@ -378,5 +381,4 @@ public class Hakukohde extends BaseEntity {
     public void setSoraKuvausKoodiUri(String soraKuvausKoodiUri) {
         this.soraKuvausKoodiUri = soraKuvausKoodiUri;
     }
-
 }

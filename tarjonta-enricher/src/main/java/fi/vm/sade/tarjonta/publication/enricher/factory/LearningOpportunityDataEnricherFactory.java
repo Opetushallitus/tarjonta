@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.publication.enricher.factory;
 import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoCodeValueEnricher;
 import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoLookupService;
 import fi.vm.sade.tarjonta.publication.enricher.XMLStreamEnricher;
+import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoCodeLanguageEnricher;
 import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoCodeValueCollectionEnricher;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import org.springframework.beans.factory.FactoryBean;
@@ -31,15 +32,20 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Jukka Raanamo
  */
 public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLStreamEnricher> {
-   
+
     @Autowired(required = true)
     private KoodistoLookupService koodistoService;
     private boolean failOnKoodistoError = false;
-    
     /**
      * Element names that should be handled by KoodistoCodeValueEnricher. Note
      * that these elements should have a unique name.
      */
+    private static final String[] KOODISTO_LANG_CODE_VALUE_TAGS = {
+        ".*/FinalExamination/Description",
+        ".*/SelectionCriterions/Description",
+        ".*/EligibilityRequirements/Description",
+        ".*/ApplicationOption/Description"
+    };
     private static final String[] KOODISTO_CODE_VALUE_TAGS = {
         "EducationClassification",
         "EducationDomain",
@@ -60,8 +66,7 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
         "TargetGroup",
         "Text",
         "DegreeTitle",
-        "Value",
-        "Description"
+        "Value"
     };
     /**
      * Path expressions that should be handled by KoodistoCodeValueEnricher.
@@ -123,6 +128,14 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
             processor.registerRegexHandler(regex, codeValueEnricher);
         }
 
+        final KoodistoCodeLanguageEnricher languageValueEnricher = new KoodistoCodeLanguageEnricher();
+        languageValueEnricher.setKoodistoService(koodistoService);
+        languageValueEnricher.setFailOnKoodiError(failOnKoodistoError);
+
+        for (String regex : KOODISTO_LANG_CODE_VALUE_TAGS) {
+            processor.registerRegexHandler(regex, languageValueEnricher);
+        }
+
         final KoodistoCodeValueCollectionEnricher codeValueCollectionEnricher = new KoodistoCodeValueCollectionEnricher();
         codeValueCollectionEnricher.setKoodistoService(koodistoService);
         codeValueCollectionEnricher.setFailOnKoodiError(failOnKoodistoError);
@@ -155,6 +168,4 @@ public class LearningOpportunityDataEnricherFactory implements FactoryBean<XMLSt
     public void setFailOnKoodistoError(boolean failOnKoodistoError) {
         this.failOnKoodistoError = failOnKoodistoError;
     }
-
-   
 }

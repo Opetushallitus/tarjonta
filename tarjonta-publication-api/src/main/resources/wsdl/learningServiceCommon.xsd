@@ -262,9 +262,9 @@
             </xs:element>
 
             <xs:element name="Description"
-                        type="tns:ExtendedStringType"
+                        type="tns:TypedDescriptionType"
                         minOccurs="0"
-                        maxOccurs="unbounded">
+                        maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
                         Yleinen hakukohteen kuvaus.
@@ -329,9 +329,9 @@
             </xs:element>
 
             <xs:element name="Description"
-                        type="tns:ExtendedStringType"
+                        type="tns:TypedDescriptionType"
                         minOccurs="0"
-                        maxOccurs="unbounded">
+                        maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
                         Vapaa kuvaus valintaperusteista eri kielilla.
@@ -350,9 +350,9 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="Description"
-                                    type="tns:ExtendedStringType"
+                                    type="tns:TypedDescriptionType"
                                     minOccurs="0"
-                                    maxOccurs="unbounded">
+                                    maxOccurs="1">
                             <xs:annotation>
                                 <xs:documentation>
                                     Vapaamuotoinen kuvaus kaikista valintakokeista.
@@ -385,9 +385,9 @@
                                         </xs:element>
 
                                         <xs:element name="Description"
-                                                    type="tns:ExtendedStringType"
+                                                    type="tns:TypedDescriptionType"
                                                     minOccurs="0"
-                                                    maxOccurs="unbounded">
+                                                    maxOccurs="1">
                                             <xs:annotation>
                                                 <xs:documentation xml:lang="fi">
                                                     Yhden valintakokeen kuvaus halutuilla kielilla.
@@ -454,7 +454,7 @@
                         </xs:element>
 
                         <xs:element name="Description"
-                                    type="tns:LocalizedTextType"
+                                    type="tns:TypedDescriptionType"
                                     minOccurs="0"
                                     maxOccurs="1">
                             <xs:annotation>
@@ -558,9 +558,9 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="Description"
-                        type="tns:ExtendedStringType"
+                        type="tns:TypedDescriptionType"
                         minOccurs="1"
-                        maxOccurs="unbounded">
+                        maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
                         Vapaa kuvaus valitulla kielella.
@@ -867,9 +867,9 @@
                         maxOccurs="1"/>
 
             <xs:element name="Description"
-                        type="tns:ExtendedStringType"
+                        type="tns:TypedDescriptionType"
                         minOccurs="0"
-                        maxOccurs="unbounded">
+                        maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation xml:lang="fi">
                         Koulutuksen yleinen kuvaus.
@@ -1008,9 +1008,9 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="Description"
-                        type="tns:ExtendedStringType"
+                        type="tns:TypedDescriptionType"
                         minOccurs="1"
-                        maxOccurs="unbounded">
+                        maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>
                         Vapaa kuvaus stipendimahdollisuuksista.
@@ -1052,9 +1052,9 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="Description"
-                        type="tns:ExtendedStringType"
+                        type="tns:TypedDescriptionType"
                         minOccurs="1"
-                        maxOccurs="unbounded"/>
+                        maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -1236,7 +1236,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="Code" type="tns:CodeValueType" minOccurs="1" maxOccurs="unbounded" />
+            <xs:element name="Codes" type="tns:CodeValueType" minOccurs="1" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="scheme"
                       type="tns:CodeSchemeType"

@@ -162,19 +162,12 @@
         </Keywords>
 
         <!-- opetuskielet -->
+
         <LanguagesOfInstruction scheme="Koodisto">
-
-            <Code version="1" uri="uri:kieli/fi">
-                <Label lang="fi">kieli-fi</Label>
-                <Label lang="en">kieli-en</Label>
-                <Label lang="sv">kieli-sv</Label>
-            </Code>
-            <Code version="1" uri="uri:kieli/en">
-                <Label lang="fi">kieli-fi</Label>
-                <Label lang="en">kieli-en</Label>
-                <Label lang="sv">kieli-sv</Label>
-            </Code>
-
+            <Codes>
+                <Code version="1" uri="uri:kieli/en"/>
+                <Code version="1" uri="uri:kieli/fi" />
+            </Codes>
         </LanguagesOfInstruction>
 
         <!--koulutuslaji -->
@@ -221,9 +214,7 @@
         <!-- sanallinen kuvaus koulutuksen loppukokeista -->
         <FinalExamination>
 
-            <Description lang="fi">
-                Lorem Lipsum
-            </Description>
+            <Description lang="uri:description en#1">Lorem Lipsum</Description>
 
         </FinalExamination>
 
@@ -244,7 +235,7 @@
         <Scholarship>
 
             <!-- yleinen kuvaus stipendimahdollisuuksista -->
-            <Description lang="fi">
+            <Description lang="uri:fi#1">
                 Lorem Lipsum
             </Description>
 
@@ -374,7 +365,7 @@
         <EligibilityRequirements>
 
             <!-- vapaasti kuvattu vaatimus suomeksi -->
-            <Description lang="fi">
+            <Description lang="uri:fi#1">
                 peruskoulu/yo-pohjaisiin kohteisiin lukio
             </Description>
 
@@ -396,15 +387,27 @@
             <LastYearTotalApplicants>300</LastYearTotalApplicants>
 
             <!-- vapaa kuvaus -->
-            <Description lang="fi">
+            <Description lang="uri:fi#1">
                 Lorem Lipsum
+            </Description>
+ 
+            <Description lang="uri: viro, eesti 6138#1"/>
+            <Description lang="uri:description en#1">
+                <p>kiinaa</p>
+            </Description>
+            <Description lang="uri: inarinsaame 6219#1">
+                <p>ads ad ad s</p>
+            </Description>
+            <Description lang="uri: englanti 5935#1"/>
+            <Description lang="uri: suomi 5936#1">
+                <p>suomii</p>
             </Description>
 
             <!-- valintakokeet -->
             <EntranceExaminations>
 
                 <!-- yleinen kuvaus -->
-                <Description lang="fi">
+                <Description lang="uri:fi#1">
                     Vapaamuotoinen kuvaus kaikista valintakokeista.
                 </Description>
 
@@ -418,7 +421,7 @@
                     </ExaminationType>
 
                     <!-- yhden valintakokeen kuvaus -->
-                    <Description lang="fi">
+                    <Description lang="uri:fi#1">
                         Lorem Lipsum
                     </Description>
 
@@ -500,7 +503,7 @@
         </LearningOpportunities>
 
         <!-- hakukohteen vapaamuotoinen kuvaus -->
-        <Description lang="fi">
+        <Description lang="uri:fi#1">
             Lorem Lipsum
         </Description>
 
