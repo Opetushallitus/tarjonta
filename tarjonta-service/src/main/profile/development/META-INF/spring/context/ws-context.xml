@@ -34,7 +34,8 @@
             </bean>
         </property>
     </bean>
-    
+
+    <!-- todo: cas refac, poista koko dev profiili tarjonnasta -->
     <bean id="jmsConfigAdmin" class="org.apache.cxf.transport.jms.JMSConfiguration">
         <property name="connectionFactory" ref="jmsConnectionFactory" />
         <property name="targetDestination" value="${activeMq.targetDestinationAdmin.tarjonta}" />
