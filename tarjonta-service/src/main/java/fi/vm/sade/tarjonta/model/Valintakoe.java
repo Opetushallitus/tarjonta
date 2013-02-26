@@ -19,13 +19,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  *
@@ -40,7 +34,7 @@ public class Valintakoe extends BaseEntity {
     @JoinColumn(name = "valintakoe_id")
     private Set<ValintakoeAjankohta> ajankohtas = new HashSet<ValintakoeAjankohta>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "kuvaus_monikielinenteksti_id")
     private MonikielinenTeksti kuvaus;
 
@@ -106,5 +100,26 @@ public class Valintakoe extends BaseEntity {
     public void setAjankohtas(Set<ValintakoeAjankohta> ajankohtas) {
         this.ajankohtas = ajankohtas;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Valintakoe that = (Valintakoe) o;
+
+        if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (getId() != null ? getId().hashCode() : 0);
+        return result;
+    }
+
 }
 

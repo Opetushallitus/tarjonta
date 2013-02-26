@@ -15,6 +15,9 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
+import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.eclipse.jetty.util.log.Log;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -39,13 +42,6 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakuaika;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.TarjontaTila;
-import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
@@ -145,7 +141,7 @@ public class TarjontaAdminServiceTest {
         toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
         assertEquals("new-value", toteutus.getSuunniteltuKestoArvo());
         assertEquals("new-units", toteutus.getSuunniteltuKestoYksikko());
-        assertEquals( TarjontaTila.VALMIS, toteutus.getTila());
+        assertEquals( fi.vm.sade.tarjonta.model.TarjontaTila.VALMIS, toteutus.getTila());
     }
 
     @Test
@@ -214,6 +210,83 @@ public class TarjontaAdminServiceTest {
         	Log.debug("Exception thrown: " + ex.getMessage());
         }
         assertTrue(this.koulutusmoduuliToteutusDAO.findAll().size() == komotosOriginalSize);
+    }
+
+    @Test
+    public void testValintakoeUpdate() {
+        Hakukohde hakukohde = fixtures.createHakukohde();
+
+
+
+        Haku haku = fixtures.createHaku();
+
+        Hakuaika hakuaika = new Hakuaika();
+        Calendar alkuPvm = Calendar.getInstance();//.getTime();
+        hakuaika.setAlkamisPvm(alkuPvm.getTime());
+        Calendar loppuPvm = Calendar.getInstance();
+        loppuPvm.set(Calendar.YEAR, loppuPvm.get(Calendar.YEAR) + 1);
+        hakuaika.setPaattymisPvm(loppuPvm.getTime());
+        haku.addHakuaika(hakuaika);
+        this.hakuDAO.insert(haku);
+        hakukohde.setHaku(haku);
+
+
+        Valintakoe valintakoe = getValintakoe();
+
+        hakukohde.getValintakoes().add(valintakoe);
+
+
+        hakukohde = this.hakukohdeDAO.insert(hakukohde);
+
+        List<Hakukohde> hakukohdes = this.hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohde.getOid());
+
+        List<Valintakoe> valintakoes = new ArrayList<Valintakoe>(hakukohdes.get(0).getValintakoes());
+
+        Long valintaKoeId = valintakoes.get(0).getId();
+
+        if (valintaKoeId == null) {
+            fail("Valintakoe id was null");
+        }
+
+        Valintakoe updatedValintaKoe = getValintakoe();
+        updatedValintaKoe.setId(valintaKoeId);
+        final String muokattuUri = "uri:muokattu";
+        updatedValintaKoe.setTyyppiUri(muokattuUri);
+        List<Valintakoe> valintakoeList = new ArrayList<Valintakoe>();
+        valintakoeList.add(updatedValintaKoe);
+        hakukohdeDAO.updateValintakoe(valintakoeList,hakukohde.getOid());
+
+        hakukohdes = this.hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohde.getOid());
+
+        valintakoes = new ArrayList<Valintakoe>(hakukohdes.get(0).getValintakoes());
+        log.info("Tyyppi uri : {}", valintakoes.get(0).getTyyppiUri());
+        assertTrue(valintakoes.get(0).getTyyppiUri().equalsIgnoreCase(muokattuUri));
+
+    }
+
+    private Valintakoe getValintakoe() {
+        ValintakoeAjankohta aika = new ValintakoeAjankohta();
+        Osoite valOsoite = new Osoite();
+        valOsoite.setOsoiterivi1("Katu 12");
+        valOsoite.setPostitoimipaikka("Helsinki");
+        valOsoite.setPostinumero("00000");
+        aika.setAjankohdanOsoite(valOsoite);
+        aika.setAlkamisaika(new Date());
+        Calendar paatPvm = Calendar.getInstance();
+        paatPvm.set(Calendar.YEAR, paatPvm.get(Calendar.YEAR) + 1);
+        aika.setPaattymisaika(paatPvm.getTime());
+        aika.setLisatietoja("TIETOA");
+        Set<ValintakoeAjankohta> ajankohtas = new HashSet<ValintakoeAjankohta>();
+        ajankohtas.add(aika);
+
+        Valintakoe valintakoe = new Valintakoe();
+        MonikielinenTeksti mo = new MonikielinenTeksti();
+        mo.setTekstiKaannos("fi","TESTIA");
+        valintakoe.setKuvaus(mo);
+        valintakoe.setTyyppiUri("uri:valintakoe");
+        valintakoe.setAjankohtas(ajankohtas);
+
+        return valintakoe;
     }
     
     @Test
@@ -549,7 +622,7 @@ public class TarjontaAdminServiceTest {
 
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setOid(komotoOid);
-        komoto.setTila(TarjontaTila.LUONNOS);
+        komoto.setTila(fi.vm.sade.tarjonta.model.TarjontaTila.LUONNOS);
         komoto.setKoulutusmoduuli(komo);
         komoto.setKoulutusaste("koulutusaste/lukio");
         komoto.setOpetusmuoto(EntityUtils.toKoodistoUriSet(createKoodistoList("opetusmuoto/aikuisopetus")));

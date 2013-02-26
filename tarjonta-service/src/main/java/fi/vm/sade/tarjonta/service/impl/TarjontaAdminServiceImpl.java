@@ -90,27 +90,30 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
+    public List<ValintakoeTyyppi> paivitaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
+        List<Valintakoe> valintakoes = convertValintaKokees(hakukohteenValintakokeet);
+        List<Valintakoe> updateValintakokees = new ArrayList<Valintakoe>();
+        for (Valintakoe valintakoe: valintakoes) {
+            if (valintakoe.getId() != null) {
+             updateValintakokees.add(valintakoe);
+            }
+        }
+        hakukohdeDAO.updateValintakoe(updateValintakokees,hakukohdeOid);
+      return hakukohteenValintakokeet;
+    }
+
+    @Override
     public List<ValintakoeTyyppi> tallennaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
 
         List<Valintakoe> valintakoes =  convertValintaKokees(hakukohteenValintakokeet);
 
-        for (Valintakoe valintakoe:valintakoes) {
-            if (valintakoe.getId() != null) {
-
-                hakukohdeDAO.updateValintakoe(valintakoe);
-               valintakoes.remove(valintakoe);
-            }
-
-        }
-
         List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
-        if (hakukohdes != null && hakukohdes.size() > 0) {
 
-            for(Valintakoe valintakoe : valintakoes) {
-                hakukohdes.get(0).addValintakoe(valintakoe);
-            }
+        if (hakukohdes != null && hakukohdes.size() > 0 ) {
 
-            hakukohdeDAO.update(hakukohdes.get(0));
+
+
+            hakukohdeDAO.updateValintakoe(valintakoes,hakukohdes.get(0).getOid());
 
             hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
             if (hakukohdes != null && hakukohdes.get(0).getValintakoes() != null) {
@@ -121,6 +124,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         } else {
             throw new BusinessException("tarjonta.haku.no.hakukohde.found");
         }
+
     }
 
     @Override

@@ -167,7 +167,7 @@ public class Hakukohde extends BaseEntity {
      * @return the valintakoes
      */
     public Set<Valintakoe> getValintakoes() {
-        return Collections.unmodifiableSet(valintakoes);
+        return valintakoes;
 
     }
 
@@ -175,7 +175,6 @@ public class Hakukohde extends BaseEntity {
      *
      */
     public void addValintakoe(Valintakoe valintakoe) {
-
 
         valintakoes.add(valintakoe);
 
