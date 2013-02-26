@@ -8,8 +8,6 @@
         http://www.springframework.org/schema/context/spring-context.xsd
     ">
 
-    <!--smxremoved:<import resource="context/osgi-context.xml"/>-->
     <import resource="context/camel-context.xml"/>
 
-    
 </beans>

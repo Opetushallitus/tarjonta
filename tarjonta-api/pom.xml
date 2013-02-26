@@ -29,24 +29,6 @@
     <packaging>jar</packaging>
     <!--    <packaging>jar</packaging>-->
 
-    <properties>
-        <felix.Import-Package>
-            javax.jws,
-            javax.jws.soap,
-            javax.xml.ws,
-            javax.xml.bind,
-            javax.xml.datatype,
-            javax.xml.namespace,
-            javax.xml.bind.annotation,
-            javax.xml.bind.annotation.adapters,
-            javax.xml.ws.soap,
-            org.springframework.util,
-            com_*;resolution:=optional<!-- com_*... is for clover -->
-        </felix.Import-Package>
-
-
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.cxf</groupId>

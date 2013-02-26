@@ -12,20 +12,6 @@
        http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
 ">
-    <!--smxremoved:
-       xmlns:osgi="http://www.springframework.org/schema/osgi"
-        http://www.springframework.org/schema/osgi
-        http://www.springframework.org/schema/osgi/spring-osgi.xsd
-    -->
-
-    <!--http://www.springframework.org/schema/context/spring-context.xsd-->
-
-    <!-- smxremoved:
-    <import resource="classpath:META-INF/cxf/cxf.xml" />
-    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-    <import resource="classpath:META-INF/cxf/cxf-extension-jms.xml" />
-    -->
-
      <context:property-placeholder
         location="classpath:META-INF/tarjonta-esb.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-esb.properties"
         ignore-resource-not-found="true"/>
