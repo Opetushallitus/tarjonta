@@ -88,10 +88,10 @@ public class HakukohteenValintakoeTabImpl extends AbstractVerticalNavigationLayo
         if (id == null) {
             presenter.getModel().setSelectedValintaKoe(new ValintakoeViewModel());
 
-        } else {
+        } /*else {
             presenter.loadValintakoeWithId(id);
         }
-
+*/
         valintakoeView = new HakukohdeValintakoeViewImpl();
         VerticalLayout mainWindowLayout = new VerticalLayout();
         mainWindowLayout.addComponent(valintakoeView);

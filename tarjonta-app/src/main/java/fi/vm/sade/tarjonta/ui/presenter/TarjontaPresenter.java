@@ -216,7 +216,9 @@ public class TarjontaPresenter implements CommonPresenter {
         for (ValintakoeViewModel valintakoeViewModel : getModel().getHakukohde().getValintaKokees()) {
             valintakokeet.add(ValintakoeConverter.mapKieliKaannosToValintakoeTyyppi(valintakoeViewModel));
         }
+
         tarjontaAdminService.tallennaValintakokeitaHakukohteelle(getModel().getHakukohde().getOid(), valintakokeet);
+
         getModel().setSelectedValintaKoe(new ValintakoeViewModel());
         editHakukohdeView.loadValintakokees();
         editHakukohdeView.closeValintakoeEditWindow();
@@ -661,6 +663,8 @@ public class TarjontaPresenter implements CommonPresenter {
                     ValintakoeViewModel valintakoeViewModel = ValintakoeConverter.mapDtoToValintakoeViewModel(valintakoeTyyppi);
                     valintaKokeet.add(valintakoeViewModel);
                 }
+                getModel().getHakukohde().getValintaKokees().clear();
+                getModel().getHakukohde().getValintaKokees().addAll(valintaKokeet);
             }
 
         }
