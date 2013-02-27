@@ -21,49 +21,6 @@
     <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl"/>
     <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicServiceImpl"/>
 
-
-    <!--
-    <bean id="jmsConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory"
-          destroy-method="stop">
-        <property name="connectionFactory">
-            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
-                <property name="brokerURL">
-                    <value>${activemq.brokerurl}</value>
-                </property>
-            </bean>
-        </property>
-    </bean>
-
-    <bean id="jmsConfigAdmin" class="org.apache.cxf.transport.jms.JMSConfiguration">
-        <property name="connectionFactory" ref="jmsConnectionFactory" />
-        <property name="targetDestination" value="${activeMq.targetDestinationAdmin.tarjonta}" />
-        <property name="reconnectOnException" value="true"/>
-    </bean>
-    <bean id="jmsConfigPublic" class="org.apache.cxf.transport.jms.JMSConfiguration">
-        <property name="connectionFactory" ref="jmsConnectionFactory" />
-        <property name="targetDestination" value="${activeMq.targetDestinationPublic.tarjonta}" />
-        <property name="reconnectOnException" value="true"/>
-    </bean>
-
-    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="tarjontaAdminEndpoint"
-                    address="jms://" implementor="#tarjontaAdminService">
-        <jaxws:features>
-            <beans:bean class="org.apache.cxf.transport.jms.JMSConfigFeature">
-                <beans:property name="jmsConfig" ref="jmsConfigAdmin" />
-            </beans:bean>
-        </jaxws:features>
-    </jaxws:endpoint>
-
-    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" id="tarjontaPublicEndpoint"
-                    address="jms://" implementor="#tarjontaPublicService">
-        <jaxws:features>
-            <beans:bean class="org.apache.cxf.transport.jms.JMSConfigFeature">
-                <beans:property name="jmsConfig" ref="jmsConfigPublic" />
-            </beans:bean>
-        </jaxws:features>
-    </jaxws:endpoint>
-    -->
-
     <bean id="tarjontaPublicationRESTService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationRESTService"/>
     <bean id="tarjontaExceptionMapper" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationExceptionMapper"/>
 
@@ -107,7 +64,6 @@
         </jaxrs:providers>
     </jaxrs:server>
 
-    <!-- cas refactor, endpoints as http - todo: poista jms -->
     <jaxws:endpoint address="/services/tarjontaAdminService" implementor="#tarjontaAdminService" wsdlLocation="wsdl/tarjontaAdminService.wsdl" serviceName="tns:TarjontaAdminService" xmlns:tns="http://service.tarjonta.sade.vm.fi/"/>
     <jaxws:endpoint address="/services/tarjontaPublicService" implementor="#tarjontaPublicService" wsdlLocation="wsdl/tarjontaPublicService.wsdl" serviceName="tns:TarjontaPublicService" xmlns:tns="http://service.tarjonta.sade.vm.fi/"/>
 

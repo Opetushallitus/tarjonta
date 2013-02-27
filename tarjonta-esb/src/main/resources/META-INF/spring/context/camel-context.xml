@@ -16,21 +16,6 @@
         location="classpath:META-INF/tarjonta-esb.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-esb.properties"
         ignore-resource-not-found="true"/>
      
-      <!-- Define activemq component with activemq url -->
-    <!-- smxremoved:
-    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="brokerURL" value="${activemq.brokerurl}" />
-    </bean>
-    -->
-    
-     <!-- Define "listening" endpoint for haku Web Service -->
-    <!--<cxf:cxfEndpoint
-        id="hakuRouter"
-        address="/hakuService"
-        serviceClass="fi.vm.sade.tarjonta.service.HakuService"
-    >
-    </cxf:cxfEndpoint>-->
-    
          <!-- Define "listening" endpoint for haku Web Service -->
     <cxf:cxfEndpoint
         id="tarjontaAdminRouter"
@@ -46,37 +31,6 @@
         serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService"
     >
     </cxf:cxfEndpoint>
-    
-     <!-- Define "to" endpoint, which is activemq queue -->
-    <!--<cxf:cxfEndpoint id="hakuService"
-                     address="camel://activemq:queue:${activeMq.queueName.tarjonta}?useMessageIDAsCorrelationID=true"
-                     serviceClass="fi.vm.sade.tarjonta.service.HakuService">
-        <cxf:properties>
-            <entry key="dataFormat" value="PAYLOAD" />
-        </cxf:properties>
-    </cxf:cxfEndpoint>-->
-    
-         <!-- Define "to" endpoint, which is activemq queue -->
-    <!-- cas refac, poistettu
-    <cxf:cxfEndpoint id="tarjontaAdminService"
-                     address="camel://activemq:queue:${activeMq.queueNameTarjontaAdmin}?useMessageIDAsCorrelationID=true"
-                     serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService">
-        <cxf:properties>
-            <entry key="dataFormat" value="PAYLOAD" />
-        </cxf:properties>
-    </cxf:cxfEndpoint>
-    -->
-    
-             <!-- Define "to" endpoint, which is activemq queue -->
-    <!-- cas refac, poistettu
-    <cxf:cxfEndpoint id="tarjontaPublicService"
-                     address="camel://activemq:queue:${activeMq.queueNameTarjontaPublic}?useMessageIDAsCorrelationID=true"
-                     serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService">
-        <cxf:properties>
-            <entry key="dataFormat" value="PAYLOAD" />
-        </cxf:properties>
-    </cxf:cxfEndpoint>
-    -->
     
     <!-- define camel route with camel conduit which uses camel's own transport -->
     <camel:conduit name="*.camel-conduit">     
