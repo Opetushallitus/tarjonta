@@ -92,7 +92,12 @@
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
-        
+
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-core</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>

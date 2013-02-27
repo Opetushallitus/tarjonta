@@ -2,12 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jaxws="http://cxf.apache.org/jaxws"
-       xmlns:beans="http://www.springframework.org/schema/beans"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
 
@@ -69,6 +66,8 @@
 
     <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResourceImpl"/>
     <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResourceImpl"/>
+    <bean id="tarjontaKomoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomoResourceImpl" />
+    <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl" />
 
     <!--
       Needed to convert wsdl generated dtos to json. (no @XmlRootElement annotation)
@@ -96,6 +95,8 @@
             <ref bean="tarjontaPublicationRESTService" />
             <ref bean="tarjontaHakuResource" />
             <ref bean="tarjontaHakukohdeResource" />
+            <ref bean="tarjontaKomoResource"/>
+            <ref bean="tarjontaKomotoResource"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="tarjontaExceptionMapper"/>

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
  * @author mlyly
  */
 // @Path("/haku")
+@Transactional
 public class HakuResourceImpl implements HakuResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImpl.class);
@@ -37,10 +39,14 @@ public class HakuResourceImpl implements HakuResource {
         return "hello";
     }
 
-    // /haku?etsi=XXX
+    // /haku?...
     @Override
-    public List<HakuTyyppi> search(String spec) {
-        LOG.info("search(spec={})", spec);
+    public List<HakuTyyppi> search(String searchTerms,
+                                   int count,
+                                   int startIndex,
+                                   int startPage,
+                                   String language) {
+        LOG.info("search(searchTerms={})", searchTerms);
 
         List<HakuTyyppi> hakuTyyppiList = new ArrayList<HakuTyyppi>();
         List<Haku> hakus = null;
@@ -48,8 +54,8 @@ public class HakuResourceImpl implements HakuResource {
         // TODO search spec from what?
         // TODO published?
 
-        if (spec != null) {
-            hakus = hakuDAO.findBySearchString(spec, null);
+        if (searchTerms != null) {
+            hakus = hakuDAO.findBySearchString(searchTerms, null);
         } else {
             hakus = hakuDAO.findAll();
         }
@@ -63,22 +69,22 @@ public class HakuResourceImpl implements HakuResource {
 
     // /haku/{oid}
     @Override
-    public HakuTyyppi getByOID(String oid) {
+    public HakuTyyppi getByOID(String oid, String language) {
         LOG.info("getByOID({})", oid);
 
         Haku haku = hakuDAO.findByOid(oid);
         return conversionService.convert(haku, HakuTyyppi.class);
     }
 
-    // /haku/{oid}/hakukohde?etsi=xxx
+    // /haku/{oid}/hakukohde
     @Override
-    public List<HakukohdeTyyppi> getByOIDHakukohde(String oid, String spec) {
-        LOG.info("getByOIDHakukohde(oid={}, spec={})", oid, spec);
+    public List<HakukohdeTyyppi> getByOIDHakukohde(String oid, String language) {
+        LOG.info("getByOIDHakukohde(oid={}, language={})", oid, language);
 
         List<HakukohdeTyyppi> result = new ArrayList<HakukohdeTyyppi>();
 
         Haku haku = hakuDAO.findByOid(oid);
-        for(Hakukohde hakukohde : haku.getHakukohdes()) {
+        for (Hakukohde hakukohde : haku.getHakukohdes()) {
             result.add(conversionService.convert(hakukohde, HakukohdeTyyppi.class));
         }
 

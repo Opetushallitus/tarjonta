@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +20,7 @@ import java.util.List;
  * @author mlyly
  */
 // /hakukohde
+@Transactional
 public class HakukohdeResourceImpl implements HakukohdeResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResourceImpl.class);
@@ -32,10 +34,15 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     @Autowired
     private ConversionService conversionService;
 
-    // /hakukohde?etsi=xxx
+    // /hakukohde?searchTerms=xxx&...
     @Override
-    public List<HakukohdeTyyppi> search(String spec) {
-        LOG.info("search(spec={})", spec);
+    public List<HakukohdeTyyppi> search(String searchTerms,
+                                        int count,
+                                        int startIndex,
+                                        int startPage,
+                                        String language) {
+
+        LOG.info("search(searchTerms={})", searchTerms);
 
         List<HakukohdeTyyppi> hakukohdeTyyppiList = new ArrayList<HakukohdeTyyppi>();
 
@@ -52,7 +59,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
     // /hakukohde/{oid}
     @Override
-    public HakukohdeTyyppi getByOID(String oid) {
+    public HakukohdeTyyppi getByOID(String oid, String language) {
         LOG.info("getByOID({})", oid);
 
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
@@ -61,7 +68,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
     // /hakukohde/{oid}/koulutus
     @Override
-    public List<HakukohdeTyyppi> getByOIDKoulutus(String oid) {
+    public List<HakukohdeTyyppi> getByOIDKoulutus(String oid, String language) {
         LOG.info("getByOIDKoulutus({})", oid);
 
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
@@ -70,9 +77,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         }
 
         for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
-            
-            
-            
+
+
         }
 
         return Collections.EMPTY_LIST;
@@ -80,14 +86,14 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
     // /hakukohde/{oid}/paasykoe
     @Override
-    public List<HakukohdeTyyppi> getByOIDPaasykoe(String oid) {
+    public List<HakukohdeTyyppi> getByOIDPaasykoe(String oid, String language) {
         LOG.info("getByOIDPaasykoe({})", oid);
         return Collections.EMPTY_LIST;
     }
 
     // /hakukohde/{oid}/liite
     @Override
-    public List<HakukohdeTyyppi> getByOIDLiite(String oid) {
+    public List<HakukohdeTyyppi> getByOIDLiite(String oid, String language) {
         LOG.info("getByOIDLiite({})", oid);
         return Collections.EMPTY_LIST;
     }

@@ -20,18 +20,44 @@ public interface HakuResource {
     @Produces(MediaType.TEXT_PLAIN)
     public String hello();
 
+    /**
+     *
+     * @param searchTerms
+     * @param count
+     * @param startIndex
+     * @param startPage
+     * @param language
+     * @return
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<HakuTyyppi> search(@QueryParam("etsi") String spec);
+    public List<HakuTyyppi> search(@QueryParam("searchTerms") String searchTerms,
+                                   @QueryParam("count") int count,
+                                   @QueryParam("startIndex") int startIndex,
+                                   @QueryParam("startPage") int startPage,
+                                   @QueryParam("language") String language);
 
+    /**
+     *
+     * @param oid
+     * @param language
+     * @return
+     */
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public HakuTyyppi getByOID(@PathParam("oid") String oid);
+    public HakuTyyppi getByOID(@PathParam("oid") String oid, @QueryParam("language") String language);
 
+    /**
+     *
+     * @param oid
+     * @param language
+     * @return
+     */
     @GET
     @Path("{oid}/hakukohde")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<HakukohdeTyyppi> getByOIDHakukohde(@PathParam("oid") String oid, @QueryParam("etsi") String spec);
+    public List<HakukohdeTyyppi> getByOIDHakukohde(@PathParam("oid") String oid,
+                                                   @QueryParam("language") String language);
 
 }

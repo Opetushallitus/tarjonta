@@ -30,6 +30,8 @@
 
     <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResourceImpl"/>
     <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResourceImpl"/>
+    <bean id="tarjontaKomoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomoResourceImpl" />
+    <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl" />
 
     <!--
         Needed to convert wsdl generated dtos to json. (no @XmlRootElement annotation)
@@ -57,6 +59,8 @@
             <ref bean="tarjontaPublicationRESTService" />
             <ref bean="tarjontaHakuResource" />
             <ref bean="tarjontaHakukohdeResource" />
+            <ref bean="tarjontaKomoResource"/>
+            <ref bean="tarjontaKomotoResource"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="tarjontaExceptionMapper"/>

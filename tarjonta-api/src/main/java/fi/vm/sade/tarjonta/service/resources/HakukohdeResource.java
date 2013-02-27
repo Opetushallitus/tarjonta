@@ -15,57 +15,69 @@ import java.util.List;
 public interface HakukohdeResource {
 
     /**
-     * /hakukohde?etsi=xxx
+     * /hakukohde?searchTerms=xxx
      *
-     * @param spec may be null
+     * @param searchTerms may be null
+     * @param count
+     * @param startIndex
+     * @param startPage
+     * @param language
      * @return list of HakukohdeTyyppi's
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<HakukohdeTyyppi> search(@QueryParam("etsi") String spec);
+    public List<HakukohdeTyyppi> search(@QueryParam("searchTerms") String searchTerms,
+                                        @QueryParam("count") int count,
+                                        @QueryParam("startIndex") int startIndex,
+                                        @QueryParam("startPage") int startPage,
+                                        @QueryParam("language") String language);
 
     /**
      * /hakukohde/{oid}
      *
      * @param oid
+     * @param language
      * @return loaded HakukohdeTyyppi
      */
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public HakukohdeTyyppi getByOID(@PathParam("oid") String oid);
+    public HakukohdeTyyppi getByOID(@PathParam("oid") String oid, @QueryParam("language") String language);
 
     /**
      * /hakukohde/{oid}/koulutus
      *
      * @param oid
+     * @param language
      * @return
      */
     @GET
     @Path("{oid}/koulutus")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<HakukohdeTyyppi> getByOIDKoulutus(@PathParam("oid") String oid);
+    public List<HakukohdeTyyppi> getByOIDKoulutus(@PathParam("oid") String oid, @QueryParam("language") String language);
 
     /**
      * /hakukohde/{oid}/paasykoe
      *
      * @param oid
+     * @param language
      * @return
      */
     @GET
     @Path("{oid}/paasykoe")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<HakukohdeTyyppi> getByOIDPaasykoe(@PathParam("oid") String oid);
+    public List<HakukohdeTyyppi> getByOIDPaasykoe(@PathParam("oid") String oid, @QueryParam("language") String language);
 
     /**
      * /hakukohde/{oid}/liite
      *
      * @param oid
+     * @param language
      * @return
      */
     @GET
     @Path("{oid}/liite")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<HakukohdeTyyppi> getByOIDLiite(@PathParam("oid") String oid);
+    public List<HakukohdeTyyppi> getByOIDLiite(@PathParam("oid") String oid, @QueryParam("language") String language);
 
 }
