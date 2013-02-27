@@ -36,7 +36,10 @@ import fi.vm.sade.tarjonta.ui.model.*;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidType;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchCriteriaDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchOidType;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
@@ -1354,7 +1357,76 @@ public class TarjontaPresenter implements CommonPresenter {
         List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukset(uris, I18N.getLocale());
 
         Collections.sort(listaaKoulutuskoodit, new BeanComparator("nimi"));
-        model.getKoulutuskoodit().addAll(listaaKoulutuskoodit);
+        model.getKoulutuskoodit().addAll(filterBasedOnOppilaitosTyyppi(listaaKoulutuskoodit));
+    }
+    
+    /*
+     * Filters list of KoulutuskoodiModel objects such that only the objects related to the
+     * oppilaitostyyppi of the selected organisaatio are returned.
+     */
+    private List<KoulutuskoodiModel> filterBasedOnOppilaitosTyyppi(List<KoulutuskoodiModel> unfilteredKoodit) {
+        LOG.debug("fitlerBasedOnOppilaitosTyyppi");
+        //Constructing the list of oppilaitostyypit that apply to currently selected organisaatio.
+        OrganisaatioDTO selectedOrg = this.organisaatioService.findByOid(this._model.getOrganisaatioOid());
+        List<OrganisaatioTyyppi> tyypit = selectedOrg.getTyypit();
+        List<String> olTyyppiUris = new ArrayList<String>();
+        //If the types of the organisaatio contains oppilaitos, its oppilaitostyyppi is appended to the list of oppilaitostyyppikoodis
+        if (tyypit.contains(OrganisaatioTyyppi.OPPILAITOS)) {
+            olTyyppiUris.add(selectedOrg.getOppilaitosTyyppi());
+        }
+        //If the types of the organisaatio contain koulutustoimija the oppilaitostyyppis of its children are appended to the
+        //list of oppilaitostyyppikoodis
+        if (tyypit.contains(OrganisaatioTyyppi.KOULUTUSTOIMIJA)) {
+            olTyyppiUris.addAll(getChildOrgOlTyyppis(selectedOrg));
+        
+        //If the types of the organisaatio contain opetuspiste the oppilaitostyyppi of its parent organisaatio is appended to the list of
+        //oppilaitostyyppikoodis 
+        } else if (tyypit.contains(OrganisaatioTyyppi.OPETUSPISTE)) {
+            addParentOlTyyppi(selectedOrg, olTyyppiUris);
+        }
+        LOG.debug("olTyyppiUris size: {}", olTyyppiUris.size());
+      
+        //Filtering the koulutuskoodit based on the oppilaitostyypit.
+        return this.uiHelper.getKoulutusFilteredkooditRelatedToOlTyypit(olTyyppiUris, unfilteredKoodit);
+    }
+    
+    /*
+     * Adds the oppilaitostyypi of the parent of the organisaatio given as first parameter
+     * to the list of oppilaitostyyppis given as second parameters.
+     */
+    private void addParentOlTyyppi(OrganisaatioDTO selectedOrg, List<String> olTyyppiUris) {
+        String olTyyppi = getOrganisaatioOlTyyppi(selectedOrg.getParentOid());
+        if (olTyyppi != null) {
+            olTyyppiUris.add(olTyyppi);
+        }
+    }
+    
+    /*
+     * Gets the oppilaitostyyppi of the organisaatio the oid of which is given as parameters.
+     */
+    private String getOrganisaatioOlTyyppi(String oid) {
+        OrganisaatioDTO organisaatio = this.organisaatioService.findByOid(oid);
+        return organisaatio.getOppilaitosTyyppi();
+    }
+    
+    /*
+     * Gets the list of oppilaitostyyppi uris that match the children of the organisaatio given as parameter.
+     */
+    private List<String> getChildOrgOlTyyppis(OrganisaatioDTO selectedOrg) {
+        List<String> childOlTyyppis = new ArrayList<String>();
+        OrganisaatioSearchCriteriaDTO criteria = new OrganisaatioSearchCriteriaDTO();
+        criteria.setOrganisaatioTyyppi(OrganisaatioTyyppi.OPPILAITOS.value());
+        criteria.getOidResctrictionList().add(selectedOrg.getOid());
+        List<OrganisaatioDTO> childOrgs = this.organisaatioService.findChildrenTo(selectedOrg.getOid());
+        if (childOrgs != null) {
+            for (OrganisaatioDTO curChild : childOrgs) {
+                if (curChild.getTyypit().contains(OrganisaatioTyyppi.OPPILAITOS) 
+                        && !childOlTyyppis.contains(curChild.getOppilaitosTyyppi())) {
+                    childOlTyyppis.add(curChild.getOppilaitosTyyppi());
+                }
+            }
+        }
+        return childOlTyyppis;
     }
 
     public void loadKoulutusohjelmat() {
