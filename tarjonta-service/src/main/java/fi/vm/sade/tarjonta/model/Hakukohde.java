@@ -168,6 +168,10 @@ public class Hakukohde extends BaseEntity {
      * @return the valintakoes
      */
     public Set<Valintakoe> getValintakoes() {
+        if (valintakoes == null) {
+           valintakoes = new HashSet<Valintakoe>();
+        }
+
         return valintakoes;
 
     }
@@ -235,7 +239,11 @@ public class Hakukohde extends BaseEntity {
     }
 
     public Set<HakukohdeLiite> getLiites() {
-        return Collections.unmodifiableSet(liites);
+        if (liites == null) {
+            liites = new HashSet<HakukohdeLiite>();
+        }
+
+        return liites;
     }
 
     public void addLiite(HakukohdeLiite liite) {

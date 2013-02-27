@@ -68,6 +68,21 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
+    public void updateLiittees(List<HakukohdeLiite> liites, String hakukohdeOid) {
+        Hakukohde hakukohde = findHakukohdeByOid(hakukohdeOid);
+
+        hakukohde.getLiites().clear();
+
+        for (HakukohdeLiite liite: liites) {
+            liite.setHakukohde(hakukohde);
+        }
+
+        hakukohde.getLiites().addAll(liites);
+
+        getEntityManager().flush();
+    }
+
+    @Override
     public List<Valintakoe> findValintakoeByHakukohdeOid(String oid) {
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QValintakoe qValintakoe = QValintakoe.valintakoe;

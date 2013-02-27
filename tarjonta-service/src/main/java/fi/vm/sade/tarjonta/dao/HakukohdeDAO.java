@@ -46,6 +46,8 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     void updateValintakoe(List<Valintakoe> valintakoes, String hakukohdeOid);
 
+    void updateLiittees(List<HakukohdeLiite> liites, String hakukohdeOid);
+
 
 }
 

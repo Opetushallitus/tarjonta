@@ -216,18 +216,14 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     public void tallennaLiitteitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenLiitteen", targetNamespace = "") List<HakukohdeLiiteTyyppi> hakukohteenLiitteen) {
-        List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
-        if (hakukohdes != null && hakukohdes.size() > 0) {
+
+
+        List<HakukohdeLiite> liites = new ArrayList<HakukohdeLiite>();
             for (HakukohdeLiite hakukohdeLiite : convertLiiteTyyppi(hakukohteenLiitteen)) {
-                hakukohdes.get(0).addLiite(hakukohdeLiite);
-
-                hakukohdeLiite.setHakukohde(hakukohdes.get(0));
-
+              liites.add(hakukohdeLiite);
             }
-            hakukohdeDAO.update(hakukohdes.get(0));
-        } else {
-            throw new BusinessException("tarjonta.haku.no.hakukohde.found");
-        }
+
+        hakukohdeDAO.updateLiittees(liites,hakukohdeOid);
     }
 
     private List<HakukohdeLiite> convertLiiteTyyppi(List<HakukohdeLiiteTyyppi> tyyppis) {
