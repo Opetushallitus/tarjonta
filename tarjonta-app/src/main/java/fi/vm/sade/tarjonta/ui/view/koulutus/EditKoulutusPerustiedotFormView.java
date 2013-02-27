@@ -718,4 +718,26 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         tutkintonimike.setValue("");
         koulutusohjelmanTavoitteet.setValue("");
     }
+    
+    private void showNoKoulutusDialog() {
+        
+        NoKoulutusDialog noKoulutusView = new NoKoulutusDialog(new Button.ClickListener() {
+
+            private static final long serialVersionUID = -5998239901946190160L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeNoKoulutusDialog();
+            }
+            
+        });
+        noKoulutusDialog = new TarjontaDialogWindow(noKoulutusView, T("noKoulutusLabel"));
+        getWindow().addWindow(noKoulutusDialog);
+    }
+    
+    private void closeNoKoulutusDialog() {
+        if (noKoulutusDialog != null) {
+            getWindow().removeWindow(noKoulutusDialog);
+        }
+    }
 }
