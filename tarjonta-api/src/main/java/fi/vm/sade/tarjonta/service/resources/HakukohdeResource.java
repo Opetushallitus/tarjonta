@@ -25,7 +25,7 @@ public interface HakukohdeResource {
      * @return list of HakukohdeTyyppi's
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
     public List<HakukohdeTyyppi> search(@QueryParam("searchTerms") String searchTerms,
                                         @QueryParam("count") int count,
                                         @QueryParam("startIndex") int startIndex,
