@@ -37,6 +37,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
@@ -45,6 +46,7 @@ import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
+import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -91,6 +93,8 @@ public class ListKoulutusView extends VerticalLayout {
      * Checkbox for selecting all the Hakukohde objects in the list.
      */
     private CheckBox valKaikki;
+    
+    private TarjontaDialogWindow noKoulutusDialog;
 
     private CreationDialog<KoulutusOidNameViewModel> createDialog;
     private Button btnPoista;
@@ -292,7 +296,11 @@ public class ListKoulutusView extends VerticalLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                presenter.showKoulutusPerustiedotEditView(null);
+                if (presenter.availableKoulutus()) {
+                    presenter.showKoulutusPerustiedotEditView(null);
+                } else {
+                    showNoKoulutusDialog();
+                }
             }
         });
 
@@ -308,6 +316,28 @@ public class ListKoulutusView extends VerticalLayout {
         layout.addComponent(btnInfo);
 
         return layout;
+    }
+    
+    private void showNoKoulutusDialog() {
+        
+        NoKoulutusDialog noKoulutusView = new NoKoulutusDialog(new Button.ClickListener() {
+
+            private static final long serialVersionUID = -5998239901946190160L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeNoKoulutusDialog();
+            }
+            
+        });
+        noKoulutusDialog = new TarjontaDialogWindow(noKoulutusView, i18n.getMessage("noKoulutusLabel"));
+        getWindow().addWindow(noKoulutusDialog);
+    }
+    
+    private void closeNoKoulutusDialog() {
+        if (noKoulutusDialog != null) {
+            getWindow().removeWindow(noKoulutusDialog);
+        }
     }
 
     private void showCreateHakukohdeDialog(List<String> oids) {

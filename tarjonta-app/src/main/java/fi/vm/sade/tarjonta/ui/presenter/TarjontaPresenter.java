@@ -1366,30 +1366,40 @@ public class TarjontaPresenter implements CommonPresenter {
      */
     private List<KoulutuskoodiModel> filterBasedOnOppilaitosTyyppi(List<KoulutuskoodiModel> unfilteredKoodit) {
         LOG.debug("fitlerBasedOnOppilaitosTyyppi");
-        //Constructing the list of oppilaitostyypit that apply to currently selected organisaatio.
-        OrganisaatioDTO selectedOrg = this.organisaatioService.findByOid(this._model.getOrganisaatioOid());
-        List<OrganisaatioTyyppi> tyypit = selectedOrg.getTyypit();
-        List<String> olTyyppiUris = new ArrayList<String>();
-        //If the types of the organisaatio contains oppilaitos, its oppilaitostyyppi is appended to the list of oppilaitostyyppikoodis
-        if (tyypit.contains(OrganisaatioTyyppi.OPPILAITOS)) {
-            olTyyppiUris.add(selectedOrg.getOppilaitosTyyppi());
-        }
-        //If the types of the organisaatio contain koulutustoimija the oppilaitostyyppis of its children are appended to the
-        //list of oppilaitostyyppikoodis
-        if (tyypit.contains(OrganisaatioTyyppi.KOULUTUSTOIMIJA)) {
-            olTyyppiUris.addAll(getChildOrgOlTyyppis(selectedOrg));
         
-        //If the types of the organisaatio contain opetuspiste the oppilaitostyyppi of its parent organisaatio is appended to the list of
-        //oppilaitostyyppikoodis 
-        } else if (tyypit.contains(OrganisaatioTyyppi.OPETUSPISTE)) {
-            addParentOlTyyppi(selectedOrg, olTyyppiUris);
-        }
-        LOG.debug("olTyyppiUris size: {}", olTyyppiUris.size());
+        //Constructing the list of oppilaitostyyppis of the selected organisaatio
+        List<String> olTyyppiUris = getOppilaitostyyppiUris();
       
         //Filtering the koulutuskoodit based on the oppilaitostyypit.
         return this.uiHelper.getKoulutusFilteredkooditRelatedToOlTyypit(olTyyppiUris, unfilteredKoodit);
     }
     
+    /*
+     * Retrieves the list of oppilaitostyyppis matching the selected organisaatio.
+     */
+    private List<String> getOppilaitostyyppiUris() {
+        OrganisaatioDTO selectedOrg = this.organisaatioService.findByOid(this._model.getOrganisaatioOid());
+        List<OrganisaatioTyyppi> tyypit = selectedOrg.getTyypit();
+        List<String> olTyyppiUris = new ArrayList<String>();
+        //If the types of the organisaatio contains oppilaitos, its oppilaitostyyppi is appended to the list of oppilaitostyyppiuris
+        if (tyypit.contains(OrganisaatioTyyppi.OPPILAITOS)) {
+            olTyyppiUris.add(selectedOrg.getOppilaitosTyyppi());
+        }
+        //If the types of the organisaatio contain koulutustoimija the oppilaitostyyppis of its children are appended to the
+        //list of oppilaitostyyppiuris
+        if (tyypit.contains(OrganisaatioTyyppi.KOULUTUSTOIMIJA)) {
+            olTyyppiUris.addAll(getChildOrgOlTyyppis(selectedOrg));
+        
+        //If the types of the organisaatio contain opetuspiste the oppilaitostyyppi of its parent organisaatio is appended to the list of
+        //oppilaitostyyppiuris
+        } else if (tyypit.contains(OrganisaatioTyyppi.OPETUSPISTE)
+                && selectedOrg.getParentOid() != null) {
+            addParentOlTyyppi(selectedOrg, olTyyppiUris);
+        }
+        LOG.debug("olTyyppiUris size: {}", olTyyppiUris.size());
+        return olTyyppiUris;
+    }
+
     /*
      * Adds the oppilaitostyypi of the parent of the organisaatio given as first parameter
      * to the list of oppilaitostyyppis given as second parameters.
@@ -1603,4 +1613,15 @@ public class TarjontaPresenter implements CommonPresenter {
             EditKoulutusLisatiedotToinenAsteView lisatiedotView) {
         this.lisatiedotView = lisatiedotView;
     }
+
+    /**
+     * Returns true if there are koulutuskoodis that are related to the oppilaitostyyppis of the currently
+     * selected organisaatio.
+     * @return
+     */
+    public boolean availableKoulutus() {
+        List<String> oppilaitostyyppiUris = getOppilaitostyyppiUris();
+        return !this.uiHelper.getOlRelatedKoulutuskoodit(oppilaitostyyppiUris).isEmpty(); 
+    }
+
 }

@@ -232,7 +232,26 @@ public class TarjontaUIHelper {
         LOG.debug("getKoulutusFilteredKooditRelatedToOlTyypit");
         
         List<KoulutuskoodiModel> filteredKoodit = new ArrayList<KoulutuskoodiModel>();
-        
+        for (KoodiType curKoulutusKoodi : getOlRelatedKoulutuskoodit(olTyyppiUris)) {
+            LOG.debug("curKoulutusKoodi: {}, {}", curKoulutusKoodi.getKoodiUri(), curKoulutusKoodi.getVersio());
+            KoulutuskoodiModel matchingKoulutus = getKoulutusByKoodi(curKoulutusKoodi, unfilteredKoodit);
+            if (matchingKoulutus != null
+                    && !filteredKoodit.contains(matchingKoulutus)) {
+                filteredKoodit.add(matchingKoulutus);
+            }
+        }
+       
+        return filteredKoodit;
+    }
+    
+    /**
+     * Returns the koulutuskoodit related to one or more of the olTyyppiUris given as parameter.
+     * 
+     * @param olTyyppiUris - the oppilaitostyyppi uris
+     * @return
+     */
+    public List<KoodiType> getOlRelatedKoulutuskoodit(List<String> olTyyppiUris) {
+        List<KoodiType> koulutusKoodit = new ArrayList<KoodiType>();
         //First the list of koulutusastekoodis that are related to the oppilaitostyyppis is fetched
         List<KoodiType> koulutusasteKoodit = new ArrayList<KoodiType>();
         for (String curUri : olTyyppiUris) {
@@ -248,16 +267,7 @@ public class TarjontaUIHelper {
         LOG.debug("koulutusasteKoodit: {}", koulutusasteKoodit.size());
         
         //then the koulutuskoodi objects that are related to the koulutusastekoodis are fetced and returned.
-        for (KoodiType curKoulutusKoodi : getRelatedKoodit(koulutusasteKoodit, SuhteenTyyppiType.SISALTYY)) {
-            LOG.debug("curKoulutusKoodi: {}, {}", curKoulutusKoodi.getKoodiUri(), curKoulutusKoodi.getVersio());
-            KoulutuskoodiModel matchingKoulutus = getKoulutusByKoodi(curKoulutusKoodi, unfilteredKoodit);
-            if (matchingKoulutus != null
-                    && !filteredKoodit.contains(matchingKoulutus)) {
-                filteredKoodit.add(matchingKoulutus);
-            }
-        }
-       
-        return filteredKoodit;
+        return getRelatedKoodit(koulutusasteKoodit, SuhteenTyyppiType.SISALTYY);
     }
     
     /*

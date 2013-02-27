@@ -22,6 +22,7 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
@@ -32,6 +33,8 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Window;
 
 import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.generic.common.I18N;
@@ -45,6 +48,7 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.tarjonta.ui.view.koulutus.AutocompleteTextField.HenkiloAutocompleteEvent;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -171,6 +175,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private Label jatkoopintomahdollisuudet;
     private Label koulutusohjelmanTavoitteet;
     
+    private TarjontaDialogWindow noKoulutusDialog;
+    
     private transient UiBuilder uiBuilder;
 
     public EditKoulutusPerustiedotFormView() {
@@ -198,6 +204,10 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         initialYhtHenkTitteli = koulutusModel.getYhtHenkTitteli();
         initialYhtHenkEmail = koulutusModel.getYhtHenkEmail();
         initialYhtHenkPuhelin = koulutusModel.getYhtHenkPuhelin();
+        if (koulutusModel.getKoulutuskoodit() == null 
+                || koulutusModel.getKoulutuskoodit().isEmpty()) {
+            showNoKoulutusDialog();
+        }
     }
 
     private void initializeDataContainers() {
@@ -247,6 +257,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             reload();
         }
     }
+    
+    
 
     private void initializeLayout() {
         buildGridKoulutusRow(this, "KoulutusTaiTutkinto");
