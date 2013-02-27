@@ -37,7 +37,6 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchCriteriaDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
@@ -59,7 +58,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Value;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 
@@ -71,7 +69,7 @@ import org.vaadin.addon.formbinder.FormView;
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = false)
 public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLayout> {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(OrganisaatiohakuView.class);
     public static final String COLUMN_KEY = "COLUMN";
     private static I18NHelper i18n = new I18NHelper(OrganisaatiohakuView.class);
@@ -93,12 +91,10 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     private List<OrganisaatioPerustietoType> organisaatios;
     private OrganisaatioSearchCriteriaDTO criteria;
     List<String> rootOrganisaatioOids;
-    @Value("${root.organisaatio.oid:NOT_SET}")
-    private String ophOid;
     private boolean isAttached = false;
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
-
+    
     public OrganisaatiohakuView() {
         super(VerticalLayout.class);
         criteria = new OrganisaatioSearchCriteriaDTO();
@@ -108,9 +104,9 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             LOG.warn("max results not set: " + ex.getMessage());
         }
     }
-
+    
     public OrganisaatiohakuView(List<String> rootOrgOids) {
-        super(VerticalLayout.class);        
+        super(VerticalLayout.class);
         this.rootOrganisaatioOids = rootOrgOids;
         criteria = new OrganisaatioSearchCriteriaDTO();
         if (rootOrganisaatioOids != null) {
@@ -121,9 +117,9 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         } catch (Exception ex) {
             LOG.warn("max results not set: " + ex.getMessage());
         }
-
+        
     }
-
+    
     @Override
     public void attach() {
         super.attach();
@@ -134,13 +130,13 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         //initializeData();
         bind();
     }
-
+    
     @Override
     protected void buildLayout(VerticalLayout layout) {
         layout.setHeight(-1, UNITS_PIXELS);
         layout.setWidth(-1, UNITS_PIXELS);
         Panel panelTop = buildPanel(buildPanelLayout());
-
+        
         search = UiUtil.textFieldSmallSearch(panelTop);
         search.setInputPrompt(T("search.prompt"));
 
@@ -148,23 +144,23 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         search.setImmediate(true);
         search.addListener(new Property.ValueChangeListener() {
             private static final long serialVersionUID = -382717228031608542L;
-
+            
             @Override
             public void valueChange(ValueChangeEvent event) {
-                if (search.getValue() != null && !((String)(search.getValue())).isEmpty()) {
+                if (search.getValue() != null && !((String) (search.getValue())).isEmpty()) {
                     searchOrganisaatios();
                 }
             }
         });
-
+        
         organisaatioTyyppi = UiUtil.comboBox(panelTop, null,
                 new String[]{
-                    OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(),
-                    OrganisaatioTyyppi.OPPILAITOS.value(),
-                    OrganisaatioTyyppi.OPETUSPISTE.value(),
-                    OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(),
-                    OrganisaatioTyyppi.MUU_ORGANISAATIO.value()
-                });
+            OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(),
+            OrganisaatioTyyppi.OPPILAITOS.value(),
+            OrganisaatioTyyppi.OPETUSPISTE.value(),
+            OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(),
+            OrganisaatioTyyppi.MUU_ORGANISAATIO.value()
+        });
         setOrgTyyppiItemCaptions();
         organisaatioTyyppi.setSizeUndefined();
         organisaatioTyyppi.setInputPrompt(T("organisaatioTyyppi.prompt"));
@@ -177,23 +173,23 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         // TarjontaUIHelper.getKoodiTypeAsLocalizedNameCaptionFormatter());
 
         panelTop.addComponent(oppilaitosTyyppi);
-
-
+        
+        
         lakkautetut = UiUtil.checkbox(panelTop, T("naytaMyosLakkautetut"));
         suunnitellut = UiUtil.checkbox(panelTop, T("naytaMyosSuunnitellut"));
         HorizontalLayout buttonsL = UiUtil.horizontalLayout();
         searchB = UiUtil.buttonSmallSecodary(buttonsL, T("hae"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-
+            
             @Override
             public void buttonClick(ClickEvent event) {
                 searchOrganisaatios();
             }
         });
-
+        
         tyhjennaB = UiUtil.buttonSmallSecodary(buttonsL, T("tyhjenna"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-
+            
             @Override
             public void buttonClick(ClickEvent event) {
                 criteria = new OrganisaatioSearchCriteriaDTO();
@@ -209,16 +205,16 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
                 //initializeData();
             }
         });
-
+        
         panelTop.addComponent(buttonsL);
         Panel panelBottom = buildPanel(buildTreePanelLayout());
         panelBottom.setHeight(550, UNITS_PIXELS);
         panelBottom.addStyleName(Oph.CONTAINER_SECONDARY);
-
+        
         layout.addComponent(panelTop);
         layout.addComponent(panelBottom);
     }
-
+    
     private Panel buildPanel(AbstractLayout layout) {
         Panel panel = new Panel(layout);
         panel.setWidth(PANEL_WIDTH, Sizeable.UNITS_PIXELS);
@@ -227,30 +223,39 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         panel.setScrollable(true);
         return panel;
     }
-
+    
     private AbstractLayout buildTreePanelLayout() {
-
         VerticalLayout hl = buildPanelLayout();
-
+        
         tree = new Tree();
+        tree.setNullSelectionAllowed(false); //
         tree.setSizeUndefined();
-
+        
         tree.setItemCaptionPropertyId(COLUMN_KEY);
         tree.setItemCaptionMode(Tree.ITEM_CAPTION_MODE_PROPERTY);
-
+        
         tree.addListener(new ItemClickEvent.ItemClickListener() {
             private static final long serialVersionUID = -2318797984292753676L;
-
+            
             @Override
             public void itemClick(ItemClickEvent event) {
-                organisaatioSelected((OrganisaatioPerustietoType) event.getItemId());
+                if ((event != null && event.getItemId() != null)) {
+                    final OrganisaatioPerustietoType opt = (OrganisaatioPerustietoType) event.getItemId();
+                    final String newOrganisaatioOid = opt.getOid();
+                    final String previousOrganisaatioOid = presenter.getModel().getOrganisaatioOid();
+            
+                    //don't allow an user to deselect a row item in a tree component.
+                    if (newOrganisaatioOid != null && (previousOrganisaatioOid == null || !newOrganisaatioOid.equals(previousOrganisaatioOid))) {
+                        organisaatioSelected(opt);
+                    }
+                }
             }
         });
-
+        
         hl.addComponent(tree);
         return hl;
     }
-
+    
     private VerticalLayout buildPanelLayout() {
         VerticalLayout hl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
         hl.setSizeUndefined();
@@ -271,14 +276,14 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             this.organisaatios = this.organisaatioService.searchBasicOrganisaatios(criteria);//searchOrganisaatios(new OrganisaatioSearchCriteriaDTO());
         } catch (Exception ex) {
             /*if (ex.getMessage().contains("organisaatioSearch.tooManyResults")) {
-                this.getWindow().showNotification(T("tooManyOrganisaatioResults"), Notification.TYPE_WARNING_MESSAGE);
+             this.getWindow().showNotification(T("tooManyOrganisaatioResults"), Notification.TYPE_WARNING_MESSAGE);
                 
-            }*/
+             }*/
             this.organisaatios = new ArrayList<OrganisaatioPerustietoType>();
         }
-
+        
         sortAlphabetically();
-
+        
         tree.setContainerDataSource(createDatasource());
     }
 
@@ -292,7 +297,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         } catch (Exception ex) {
             if (ex.getMessage().contains("organisaatioSearch.tooManyResults")) {
                 this.getWindow().showNotification(T("tooManyOrganisaatioResults"), Notification.TYPE_WARNING_MESSAGE);
-            } 
+            }
             this.organisaatios = new ArrayList<OrganisaatioPerustietoType>();
         }
         tree.setContainerDataSource(createDatasource());
@@ -309,7 +314,6 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         hc.addContainerProperty(COLUMN_KEY, String.class, "");
         //Setting the items to the tree.
         for (OrganisaatioPerustietoType curOrg : organisaatios) {
-            //DEBUGSAWAY:LOG.debug("Organisaatio: " + curOrg);
             hc.addItem(curOrg);
             hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(getClosestNimi(I18N.getLocale(), curOrg));//curOrg.getNimiFi());
         }
@@ -329,14 +333,14 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             }
         }
     }
-
+    
     private void openTree(OrganisaatioPerustietoType organisaatio, OrganisaatioPerustietoType parentOrg) {
         if (criteria.getSearchStr() != null && !criteria.getSearchStr().isEmpty()
                 && getClosestNimi(I18N.getLocale(), organisaatio).toLowerCase().contains(criteria.getSearchStr().toLowerCase())) {
             expandPath(parentOrg); //this.setCollapsed(parentOrg, false);
         }
     }
-
+    
     private void expandPath(OrganisaatioPerustietoType org) {
         tree.expandItem(org);
         OrganisaatioPerustietoType parent = (OrganisaatioPerustietoType) (hc.getParent(org));
@@ -352,7 +356,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
      * @return
      */
     private boolean hasParentInCurrentResults(OrganisaatioPerustietoType org) {
-        if (org.getParentOid() == null || org.getParentOid().equals(this.ophOid)) {
+        if (org.getParentOid() == null || org.getParentOid().equals(presenter.getModel().getRootOrganisaatioOid())) {
             return false;
         }
         for (OrganisaatioPerustietoType curOrg : organisaatios) {
@@ -424,15 +428,15 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPILAITOS.value(), T(OrganisaatioTyyppi.OPPILAITOS.name()));
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(), T(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.name()));
     }
-
+    
     private String getClosestNimi(Locale locale, OrganisaatioPerustietoType org) {
         String lang = (locale != null) ? locale.getLanguage().toLowerCase() : "";
         if (lang.equals("fi") && org.getNimiFi() != null) {
-
+            
             return org.getNimiFi();
         }
         if (lang.equals("sv") && org.getNimiSv() != null) {
-
+            
             return org.getNimiSv();
         }
         if (lang.equals("en") && org.getNimiEn() != null) {
@@ -440,23 +444,23 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         }
         return getAvailableNimi(org);
     }
-
+    
     private String getAvailableNimi(OrganisaatioPerustietoType org) {
         if (org.getNimiFi() != null) {
-
+            
             return org.getNimiFi();
         }
         if (org.getNimiSv() != null) {
-
+            
             return org.getNimiSv();
         }
         if (org.getNimiEn() != null) {
-
+            
             return org.getNimiEn();
         }
         return "";
     }
-
+    
     private void sortAlphabetically() {
         Collections.sort(organisaatios, new Comparator<OrganisaatioPerustietoType>() {
             @Override
@@ -465,12 +469,12 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             }
         });
     }
-
+    
     public void clearTreeSelection() {
-
+        
         this.tree.setValue(null);
     }
-
+    
     private String T(String key, Object... args) {
         return i18n.getMessage(key, args);
     }

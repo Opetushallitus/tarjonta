@@ -37,4 +37,9 @@ public interface ListHakukohdeView {
     public void appendKoulutuksetToList(HakukohdeViewModel hakukohde);
 
     void showErrorMessage(String msg);
+
+    /**
+     * Clear all data items from a tree component.
+     */
+    public void clearAllDataItems();
 }

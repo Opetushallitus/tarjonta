@@ -68,7 +68,6 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     public static final String COLUMN_HAKUTAPA = "Hakutapa";
     public static final String COLUMN_ALOITUSPAIKAT = "Aloituspaikat";
     public static final String COLUMN_TILA = "Tila";
-    
     private static final Logger LOG = LoggerFactory.getLogger(ListHakukohdeViewImpl.class);
     private static final long serialVersionUID = 60562140590088029L;
     /**
@@ -128,6 +127,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         valKaikki.setImmediate(true);
         valKaikki.addListener(new Property.ValueChangeListener() {
             private static final long serialVersionUID = -382717228031608542L;
+
             @Override
             public void valueChange(ValueChangeEvent event) {
 
@@ -143,19 +143,19 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         categoryTree = new CategoryTreeView();
         addComponent(categoryTree);
         setHeight(Sizeable.SIZE_UNDEFINED, 0);
-        
+
         categoryTree.addContainerProperty(COLUMN_A, HakukohdeResultRow.class, new HakukohdeResultRow());
         categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
         categoryTree.addContainerProperty(COLUMN_HAKUTAPA, String.class, "");
         categoryTree.addContainerProperty(COLUMN_ALOITUSPAIKAT, String.class, "");
         categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
-        
-        categoryTree.setColumnExpandRatio(COLUMN_A,  2.1f);
-        categoryTree.setColumnExpandRatio(COLUMN_PVM,  0.3f);
-        categoryTree.setColumnExpandRatio(COLUMN_HAKUTAPA,  0.3f);
-        categoryTree.setColumnExpandRatio(COLUMN_ALOITUSPAIKAT,  0.1f);
-        categoryTree.setColumnExpandRatio(COLUMN_TILA,  0.3f);
-        
+
+        categoryTree.setColumnExpandRatio(COLUMN_A, 2.1f);
+        categoryTree.setColumnExpandRatio(COLUMN_PVM, 0.3f);
+        categoryTree.setColumnExpandRatio(COLUMN_HAKUTAPA, 0.3f);
+        categoryTree.setColumnExpandRatio(COLUMN_ALOITUSPAIKAT, 0.1f);
+        categoryTree.setColumnExpandRatio(COLUMN_TILA, 0.3f);
+
 
         setExpandRatio(wrapper, 0.07f);
         setExpandRatio(categoryTree, 0.93f);
@@ -207,7 +207,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 hc.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
                 hc.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getHakukohde().getAloituspaikat());
                 hc.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
-                
+
                 hc.setChildrenAllowed(curHakukohde, false);
             }
         }
@@ -221,15 +221,15 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     private String buildOrganisaatioCaption(Map.Entry<String, List<HakukohdeTulos>> e) {
         return e.getKey() + " (" + e.getValue().size() + ")";
     }
-    
+
     private String getAjankohta(HakukohdeTulos curHakukohde) {
         return getKoodiNimi(curHakukohde.getHaku().getKoulutuksenAlkamiskausiUri()) + " " + curHakukohde.getHaku().getKoulutuksenAlkamisvuosi();
     }
-    
+
     private String getTilaStr(HakukohdeTulos curHakukohde) {
         return i18n.getMessage(curHakukohde.getHakukohde().getTila().name());
     }
-    
+
     private String getHakukohdeNimi(HakukohdeTulos curHakukohde) {
         return getKoodiNimi(curHakukohde.getHakukohde().getNimi());
     }
@@ -281,7 +281,6 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
          */
         poistaB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("Poista"), RequiredRole.CRUD, presenter.getPermission());
         poistaB.addListener(new Button.ClickListener() {
-
             private static final long serialVersionUID = 5833582377090856884L;
 
             @Override
@@ -319,7 +318,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      */
     @Override
     public void reload() {
-        categoryTree.removeAllItems();
+        clearAllDataItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
     }
 
@@ -354,5 +353,10 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             hc.setChildrenAllowed(komotoOid, false);
         }
         this.categoryTree.setCollapsed(item, false);
+    }
+
+    @Override
+    public void clearAllDataItems() {
+        categoryTree.removeAllItems();
     }
 }

@@ -287,8 +287,7 @@ public class TarjontaPresenter implements CommonPresenter {
     }
 
     public void reloadAndShowMainDefaultView() {
-        this.getHakukohdeListView().reload();
-        getReloadKoulutusListData();
+        reloadMainView();
         getRootView().showMainView();
     }
 
@@ -1093,6 +1092,40 @@ public class TarjontaPresenter implements CommonPresenter {
     }
 
     /**
+     *
+     * Reload koulutus and hakukohde views when an user hasn't selected root
+     * organization OID. If the root organization is selected, then all data
+     * items are cleared from the views.
+     *
+     */
+    public void reloadMainView() {
+        reloadMainView(false);
+    }
+
+    /**
+     *
+     * Reload koulutus and hakukohde views when an user hasn't selected root
+     * organization OID. If the root organization is selected, then all data
+     * items are cleared from the views. There is also an option to force reload
+     * to the views.
+     *
+     * @param forceReload
+     */
+    public void reloadMainView(final boolean forceReload) {
+        //Main view will be reloaded only when an user has selected other than the root organisation
+        if (forceReload || (getModel().getOrganisaatioOid() != null && !getModel().isSelectedRootOrganisaatio())) {
+            LOG.debug("not root, main view reloaded {} {}", getModel().getOrganisaatioOid(), getModel().isSelectedRootOrganisaatio());
+            getReloadKoulutusListData();
+            getHakukohdeListView().reload();
+        } else {
+            getRootView().getListKoulutusView().clearAllDataItems();
+            getHakukohdeListView().clearAllDataItems();
+            this.searchResultsView.setResultSizeForKoulutusTab(0);
+            this.searchResultsView.setResultSizeForHakukohdeTab(0);
+        }
+    }
+
+    /**
      * Retrieves the koulutus objects for ListKoulutusView.
      *
      * @return the koulutus objects
@@ -1273,8 +1306,7 @@ public class TarjontaPresenter implements CommonPresenter {
         // Updating koulutuslista to show only komotos with tarjoaja matching
         // the selected org or one of its descendants
 
-        getReloadKoulutusListData();
-        this.getHakukohdeListView().reload();
+        reloadMainView(false);
         this.getRootView().getListKoulutusView().toggleCreateKoulutusB(true);
     }
 
@@ -1290,8 +1322,8 @@ public class TarjontaPresenter implements CommonPresenter {
         getModel().getSelectedKoulutukset().clear();
 
         getModel().getSearchSpec().setOrganisaatioOids(new ArrayList<String>());
-        getReloadKoulutusListData();
-        this.getHakukohdeListView().reload();
+        
+        reloadMainView();
         this.getRootView().getListKoulutusView().toggleCreateKoulutusB(false);
         this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(false);
     }
@@ -1378,7 +1410,7 @@ public class TarjontaPresenter implements CommonPresenter {
      * Retrieves the list of oppilaitostyyppis matching the selected organisaatio.
      */
     private List<String> getOppilaitostyyppiUris() {
-        OrganisaatioDTO selectedOrg = this.organisaatioService.findByOid(this._model.getOrganisaatioOid());
+        OrganisaatioDTO selectedOrg = this.organisaatioService.findByOid(this.getModel().getOrganisaatioOid());
         List<OrganisaatioTyyppi> tyypit = selectedOrg.getTyypit();
         List<String> olTyyppiUris = new ArrayList<String>();
         //If the types of the organisaatio contains oppilaitos, its oppilaitostyyppi is appended to the list of oppilaitostyyppiuris
@@ -1602,8 +1634,7 @@ public class TarjontaPresenter implements CommonPresenter {
             showNotification(UserNotification.GENERIC_SUCCESS);
 
             //reload result data in tables.
-            _hakukohdeListView.reload();
-            getReloadKoulutusListData();
+            reloadMainView();
         } else {
             showNotification(UserNotification.GENERIC_ERROR);
         }

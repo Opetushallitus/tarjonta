@@ -27,10 +27,12 @@ import java.util.List;
  * @author mlyly
  */
 public class TarjontaModel extends BaseUIViewModel {
+
     private static final long serialVersionUID = 6216606779350260527L;
     // Show label that shows last modification
     private Boolean _showIdentifier;
     private String _identifier;
+    private String rootOrganisaatioOid;
     private KoulutusSearchSpesificationViewModel _searchSpec = new KoulutusSearchSpesificationViewModel();
     private KoulutusToisenAsteenPerustiedotViewModel _koulutusPerustiedotModel;
     private KoulutusLisatiedotModel _koulutusLisatiedotModel;
@@ -186,7 +188,6 @@ public class TarjontaModel extends BaseUIViewModel {
         this.organisaatioOid = organisaatioOid;
     }
 
-
     public KoulutusLisatiedotModel getKoulutusLisatiedotModel() {
         if (_koulutusLisatiedotModel == null) {
             _koulutusLisatiedotModel = new KoulutusLisatiedotModel();
@@ -216,7 +217,7 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     public ValintakoeAikaViewModel getSelectedValintakoeAika() {
-        if (selectedValintakoeAika == null ) {
+        if (selectedValintakoeAika == null) {
             selectedValintakoeAika = new ValintakoeAikaViewModel();
         }
         return selectedValintakoeAika;
@@ -224,5 +225,45 @@ public class TarjontaModel extends BaseUIViewModel {
 
     public void setSelectedValintakoeAika(ValintakoeAikaViewModel selectedValintakoeAika) {
         this.selectedValintakoeAika = selectedValintakoeAika;
+    }
+
+    /**
+     * Get the root OID (OPH) of a organization tree. Throws an exception, if
+     * OID is not set.
+     *
+     * @return the root organization Oid
+     */
+    public String getRootOrganisaatioOid() {
+        if (rootOrganisaatioOid == null) {
+            throw new RuntimeException("Application initialization error - organization root OID cannot be null.");
+        }
+
+        return rootOrganisaatioOid;
+    }
+
+    /**
+     * Set the root OID (OPH) of a organization tree. Null OID not allowed.
+     *
+     * @param rootOrganisationOid the root organization Oid to set
+     */
+    public void setRootOrganisaatioOid(String rootOrganisationOid) {
+        if (rootOrganisationOid == null) {
+            throw new IllegalArgumentException("Organization root OID cannot be null.");
+        }
+
+        this.rootOrganisaatioOid = rootOrganisationOid;
+    }
+
+    /**
+     * Is selected organization same as the root organization (OPH).
+     *
+     * @return boolean
+     */
+    public boolean isSelectedRootOrganisaatio() {
+        if (getOrganisaatioOid() == null) {
+            return false;
+        }
+
+        return getRootOrganisaatioOid().equals(getOrganisaatioOid());
     }
 }

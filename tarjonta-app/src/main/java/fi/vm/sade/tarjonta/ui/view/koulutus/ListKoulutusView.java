@@ -149,12 +149,12 @@ public class ListKoulutusView extends VerticalLayout {
         categoryTree = new CategoryTreeView();
         addComponent(categoryTree);
         setExpandRatio(categoryTree, 1f);
-        
+
         categoryTree.addContainerProperty(COLUMN_A, KoulutusResultRow.class, new KoulutusResultRow());
         categoryTree.addContainerProperty(COLUMN_TUTKINTONIMIKE, String.class, "");
         categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
         categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
-        
+
         categoryTree.setColumnExpandRatio(COLUMN_A, 2.2f);
         categoryTree.setColumnExpandRatio(COLUMN_TUTKINTONIMIKE, 0.5f);
         categoryTree.setColumnExpandRatio(COLUMN_PVM, 0.3f);
@@ -180,12 +180,12 @@ public class ListKoulutusView extends VerticalLayout {
 
         HierarchicalContainer hc = new HierarchicalContainer();
         KoulutusResultRow rowStyleDef = new KoulutusResultRow();
-        
+
         hc.addContainerProperty(COLUMN_A, KoulutusResultRow.class, rowStyleDef.format("", false));
         hc.addContainerProperty(COLUMN_TUTKINTONIMIKE, String.class, "");
         hc.addContainerProperty(COLUMN_PVM, String.class, "");
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
-        
+
 
         for (Map.Entry<String, List<KoulutusTulos>> e : set) {
             LOG.debug("getTreeDataSource()" + e.getKey());
@@ -208,16 +208,15 @@ public class ListKoulutusView extends VerticalLayout {
         }
         return hc;
     }
-    
+
     private String getAjankohtaStr(KoulutusTulos curKoulutus) {
-        
+
         String[] ajankohtaParts = curKoulutus.getKoulutus().getAjankohta().split(" ");
         if (ajankohtaParts.length < 2) {
             return "";
         }
         return I18N.getMessage(ajankohtaParts[0]) + " " + ajankohtaParts[1];
     }
-
 
     private String getKoulutusTutkintoNimike(KoulutusTulos curKoulutus) {
         if (curKoulutus.getKoulutus().getTarjoaja() != null) {
@@ -354,44 +353,44 @@ public class ListKoulutusView extends VerticalLayout {
 
     private void createButtonListeners() {
 
-            createDialog.getPeruutaBtn().addListener(new Button.ClickListener() {
-                @Override
-                public void buttonClick(Button.ClickEvent clickEvent) {
-                    if (createHakukohdeDialog != null) {
-                        getWindow().removeWindow(createHakukohdeDialog);
-                    }
+        createDialog.getPeruutaBtn().addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                if (createHakukohdeDialog != null) {
+                    getWindow().removeWindow(createHakukohdeDialog);
                 }
-            });
+            }
+        });
 
 
-            createDialog.getJatkaBtn().addListener(new Button.ClickListener() {
-                @Override
-                public void buttonClick(Button.ClickEvent clickEvent) {
-                    createDialog.removeErrorMessages();
-                    Object values = createDialog.getOptionGroup().getValue();
-                    Collection<KoulutusOidNameViewModel> selectedKoulutukses = null;
-                    if (values instanceof Collection) {
-                        selectedKoulutukses = (Collection<KoulutusOidNameViewModel>) values;
-                    }
+        createDialog.getJatkaBtn().addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                createDialog.removeErrorMessages();
+                Object values = createDialog.getOptionGroup().getValue();
+                Collection<KoulutusOidNameViewModel> selectedKoulutukses = null;
+                if (values instanceof Collection) {
+                    selectedKoulutukses = (Collection<KoulutusOidNameViewModel>) values;
+                }
 
 
-                    if(selectedKoulutukses.size() > 0 ) {
+                if (selectedKoulutukses.size() > 0) {
                     List<String> validationErrors = presenter.validateKoulutusOidNameViewModel(selectedKoulutukses);
                     if (validationErrors != null && validationErrors.size() > 0) {
                         for (String validationError : validationErrors) {
                             createDialog.addErrorMessage(validationError);
                         }
-                    }  else {
-                    getWindow().removeWindow(createHakukohdeDialog);
-                    presenter.showHakukohdeEditView(koulutusNameViewModelToOidList(selectedKoulutukses), null);
+                    } else {
+                        getWindow().removeWindow(createHakukohdeDialog);
+                        presenter.showHakukohdeEditView(koulutusNameViewModelToOidList(selectedKoulutukses), null);
 
                     }
-
-                    }
-
 
                 }
-            });
+
+
+            }
+        });
 
     }
 
@@ -413,7 +412,7 @@ public class ListKoulutusView extends VerticalLayout {
      * Reloads the data to the Hakukohde list.
      */
     public void reload() {
-        categoryTree.removeAllItems();
+        clearAllDataItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getKoulutusDataSource()));
     }
 
@@ -444,5 +443,12 @@ public class ListKoulutusView extends VerticalLayout {
             nimi = hakukohdeUri;
         }
         return nimi;
+    }
+
+    /**
+     * Clear all data items from a tree component.
+     */
+    public void clearAllDataItems() {
+        categoryTree.removeAllItems();
     }
 }

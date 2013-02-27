@@ -61,6 +61,8 @@ public class TarjontaRootView extends Window {
     private Boolean _showIdentifier = false;
     @Value("${tarjonta-app.identifier:APPLICATION IDENTIFIER NOT AVAILABLE}")
     private String _identifier;
+    @Value("${root.organisaatio.oid:NOT_SET}")
+    private String ophOid;
     private VerticalLayout _appRootLayout;
     private OrganisaatiohakuView organisationSearchView;
     private BreadcrumbsView breadcrumbsView;
@@ -97,6 +99,7 @@ public class TarjontaRootView extends Window {
         // Show application identifier if needed
         _presenter.getModel().setShowIdentifier(_showIdentifier);
         _presenter.getModel().setIdentifier(_identifier);
+        _presenter.getModel().setRootOrganisaatioOid(ophOid);
         if (_presenter.isShowIdentifier()) {
             _appRootLayout.addComponent(new Label("ID=" + _presenter.getIdentifier()));
         }
@@ -183,8 +186,7 @@ public class TarjontaRootView extends Window {
             @Override
             public void componentEvent(Event event) {
                 if (event instanceof SearchSpesificationView.SearchEvent) {
-                    _presenter.getReloadKoulutusListData();
-                    _presenter.getHakukohdeListView().reload();
+                    _presenter.reloadMainView(true);
                 }
             }
         });
@@ -197,7 +199,7 @@ public class TarjontaRootView extends Window {
         vlRight.addComponent(searchResultsView);
         vlRight.setExpandRatio(searchResultsView, 1f);
         vlRight.setSizeFull();
-        
+
 
         organisationSearchView.addComponent(vlRight);
         organisationSearchView.setExpandRatio(vlRight, 1f);
