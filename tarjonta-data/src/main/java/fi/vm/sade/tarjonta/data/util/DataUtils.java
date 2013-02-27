@@ -59,8 +59,8 @@ public final class DataUtils {
         if (koodiData.getKoodiNimiFi() != null) {
             KoodiMetadataType metadataType = new KoodiMetadataType();
             metadataType.setNimi(koodiData.getKoodiNimiFi());
-            metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiFi() != null ? koodiData.getKoodiLyhytNimiFi() : "");
-            metadataType.setKuvaus(koodiData.getKoodiKuvausFi() != null ? koodiData.getKoodiKuvausFi() : "");
+            metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiFi() != null ? koodiData.getKoodiLyhytNimiFi() : koodiData.getKoodiNimiFi());
+            metadataType.setKuvaus(koodiData.getKoodiKuvausFi() != null ? koodiData.getKoodiKuvausFi() : koodiData.getKoodiNimiFi());
             metadataType.setKieli(KieliType.FI);
             koodiDataType.getMetadata().add(metadataType);
         }
@@ -68,8 +68,8 @@ public final class DataUtils {
         if (koodiData.getKoodiNimiSv() != null) {
             KoodiMetadataType metadataType = new KoodiMetadataType();
             metadataType.setNimi(koodiData.getKoodiNimiSv());
-            metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiSv() != null ? koodiData.getKoodiLyhytNimiSv() : "");
-            metadataType.setKuvaus(koodiData.getKoodiKuvausSv() != null ? koodiData.getKoodiKuvausSv() : "");
+            metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiSv() != null ? koodiData.getKoodiLyhytNimiSv() : koodiData.getKoodiNimiSv());
+            metadataType.setKuvaus(koodiData.getKoodiKuvausSv() != null ? koodiData.getKoodiKuvausSv() : koodiData.getKoodiNimiSv());
             metadataType.setKieli(KieliType.SV);
             koodiDataType.getMetadata().add(metadataType);
         }
@@ -77,8 +77,8 @@ public final class DataUtils {
         if (koodiData.getKoodiNimiEn() != null) {
             KoodiMetadataType metadataType = new KoodiMetadataType();
             metadataType.setNimi(koodiData.getKoodiNimiEn());
-            metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiEn() != null ? koodiData.getKoodiLyhytNimiEn() : "");
-            metadataType.setKuvaus(koodiData.getKoodiKuvausEn() != null ? koodiData.getKoodiKuvausEn() : "");
+            metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiEn() != null ? koodiData.getKoodiLyhytNimiEn() : koodiData.getKoodiNimiEn());
+            metadataType.setKuvaus(koodiData.getKoodiKuvausEn() != null ? koodiData.getKoodiKuvausEn() : koodiData.getKoodiNimiEn());
             metadataType.setKieli(KieliType.EN);
             koodiDataType.getMetadata().add(metadataType);
         }

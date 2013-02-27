@@ -169,7 +169,7 @@ public class UploadKoodistoData {
         HashMap<String,KoodiType> koodiUriArvoPair = new HashMap<String, KoodiType>();
 
         for (Koodi koodi : koodis) {
-            final String koodiUri = koodistoName + "/" + koodi.getKoodiArvo();
+
            // KoodiType koodiType = koodistoHelper.addCodeItem(koodistoName, koodiUri, koodi.getKoodiArvo(), koodi.getKoodiNimiFi());
             KoodiType koodiType = koodistoHelper.addCodeItem(koodi,DataUtils.createKoodiUriFromName(koodistoName));
             //koodiUriArvoPair.put(koodi.getKoodiArvo(),koodiType);

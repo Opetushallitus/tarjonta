@@ -18,10 +18,9 @@ package fi.vm.sade.tarjonta.data.loader.xls;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 import org.apache.commons.beanutils.BeanUtils;
 
 import org.slf4j.Logger;
@@ -31,6 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 
 /**
  *
@@ -40,6 +40,7 @@ public class ExcelReader<T extends Object> {
 
     private static Logger log = LoggerFactory.getLogger(ExcelReader.class);
     private int maxReadRows = 100;
+    private final String DATE_FORMAT = "dd.MM.yyyy";
     private Class dataObjectClass;
     private HSSFWorkbook workbook;
     //Data mapping config, map DTO property to a excel row column using reflection.
@@ -172,8 +173,24 @@ public class ExcelReader<T extends Object> {
         if (cell == null) {
             return null;
         }
+        try {
+        if (HSSFDateUtil.isCellDateFormatted(cell)) {
+
+                Date cellDate = cell.getDateCellValue();
+
+                SimpleDateFormat smp = new SimpleDateFormat(DATE_FORMAT);
+                return smp.format(cellDate);
+
+
+
+        }  else {
         cell.setCellType(Cell.CELL_TYPE_STRING);
         return cell.getStringCellValue();
+        }
+        }  catch (Exception exp) {
+            cell.setCellType(Cell.CELL_TYPE_STRING);
+            return cell.getStringCellValue();
+        }
         //return cell.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell.getNumericCellValue() + "" : cell.getStringCellValue();
     }
 

@@ -79,6 +79,7 @@ public class TarjontaDataKoodistoHelper {
             createdKoodi = koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);
         } catch (Exception exp) {
             log.warn("Unable to create koodi : with arvo : {}", createKoodiDataType.getKoodiUri(), createKoodiDataType.getKoodiArvo());
+            log.warn("Exception : {}", exp.getMessage());
         }
         return createdKoodi;
     }
@@ -98,7 +99,7 @@ public class TarjontaDataKoodistoHelper {
     public CreateKoodistoDataType addCodeGroup(List<String> baseUri, String koodistoUri, String name) {
         log.info("Creating koodisto with uri: {} and base uri : {}", koodistoUri, baseUri.get(0));
         CreateKoodistoDataType createKoodistoDataType = DataUtils.createCreateKoodistoDataType(
-                koodistoUri, getOrganisaatioNimi(), getOrganisaatioOid(), ACTIVATED_DATE, ACTIVATED_DATE,
+                koodistoUri, getOrganisaatioNimi(), getOrganisaatioOid(), ACTIVATED_DATE, null,
                 name);
         koodistoAdminService.createKoodisto(baseUri, createKoodistoDataType);
 

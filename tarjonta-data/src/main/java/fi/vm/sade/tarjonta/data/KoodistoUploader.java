@@ -32,7 +32,7 @@ public class KoodistoUploader {
                     log.info("Koodisto relations uploaded");
                  } catch (Exception exp) {
                      exp.printStackTrace();
-                     log.error("Exception occurred when loading koodisto relations from excel: {} , exception : {} ",args[1],exp.toString());
+                     log.error("Exception occurred when loading koodisto relations from excel: {} , exception : {} ",args[1],exp.getMessage());
                  }
               }
           } else {

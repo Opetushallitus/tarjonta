@@ -15,6 +15,7 @@
     <properties>
         <deploy.to.server>tomcat</deploy.to.server>
         <powermock.version>1.4.12</powermock.version>
+        <spring.security.version>${spring.version}</spring.security.version>
     </properties>
    
     <dependencies>
@@ -135,7 +136,7 @@
             <artifactId>commons-collections</artifactId>
             <version>3.2.1</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
