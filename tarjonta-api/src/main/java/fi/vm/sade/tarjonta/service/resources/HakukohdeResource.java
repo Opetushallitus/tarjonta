@@ -25,7 +25,7 @@ public interface HakukohdeResource {
      * @return list of HakukohdeTyyppi's
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public List<HakukohdeTyyppi> search(@QueryParam("searchTerms") String searchTerms,
                                         @QueryParam("count") int count,
                                         @QueryParam("startIndex") int startIndex,
@@ -41,7 +41,7 @@ public interface HakukohdeResource {
      */
     @GET
     @Path("{oid}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON  + ";charset=UTF-8")
     public HakukohdeTyyppi getByOID(@PathParam("oid") String oid, @QueryParam("language") String language);
 
     /**
@@ -53,7 +53,7 @@ public interface HakukohdeResource {
      */
     @GET
     @Path("{oid}/koulutus")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON  + ";charset=UTF-8")
     public List<HakukohdeTyyppi> getByOIDKoulutus(@PathParam("oid") String oid, @QueryParam("language") String language);
 
     /**
@@ -65,7 +65,7 @@ public interface HakukohdeResource {
      */
     @GET
     @Path("{oid}/paasykoe")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public List<HakukohdeTyyppi> getByOIDPaasykoe(@PathParam("oid") String oid, @QueryParam("language") String language);
 
     /**
@@ -77,7 +77,7 @@ public interface HakukohdeResource {
      */
     @GET
     @Path("{oid}/liite")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public List<HakukohdeTyyppi> getByOIDLiite(@PathParam("oid") String oid, @QueryParam("language") String language);
 
 }
