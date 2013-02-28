@@ -22,6 +22,7 @@ import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.authentication.service.types.dto.SearchConnectiveType;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.service.AbstractPermissionService;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
@@ -36,7 +37,6 @@ import fi.vm.sade.tarjonta.ui.model.*;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidType;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchCriteriaDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchOidType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
@@ -52,6 +52,7 @@ import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
@@ -69,9 +70,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
-import fi.vm.sade.tarjonta.ui.service.AppPermissionService;
 import fi.vm.sade.tarjonta.ui.service.PublishingService;
-import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
 import fi.vm.sade.tarjonta.ui.view.SearchResultsView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
@@ -90,7 +89,7 @@ public class TarjontaPresenter implements CommonPresenter {
     @Autowired
     private UserService userService;
     @Autowired
-    private TarjontaPermissionService tarjontaPermissionService;
+    private TarjontaPermissionServiceImpl tarjontaPermissionService;
     // Services used
     @Autowired(required = true)
     protected OIDService oidService;
@@ -1556,7 +1555,7 @@ public class TarjontaPresenter implements CommonPresenter {
      * @return the tarjontaPermissionService
      */
     @Override
-    public AppPermissionService getPermission() {
+    public AbstractPermissionService getPermission() {
         LOG.debug("tarjontaPermissionService : " + tarjontaPermissionService);
 
         return tarjontaPermissionService;

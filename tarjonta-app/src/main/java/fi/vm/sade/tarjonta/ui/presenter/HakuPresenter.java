@@ -21,11 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fi.vm.sade.generic.service.AbstractPermissionService;
+import fi.vm.sade.tarjonta.ui.service.HakuPermissionServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.stereotype.Component;
 
 import com.vaadin.ui.Window;
 
@@ -55,15 +55,11 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
-import fi.vm.sade.tarjonta.ui.service.AppPermissionService;
-import fi.vm.sade.tarjonta.ui.service.HakuPermissionService;
 import fi.vm.sade.tarjonta.ui.service.PublishingService;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
 import fi.vm.sade.tarjonta.ui.view.haku.ShowHakuViewImpl;
-import fi.vm.sade.tarjonta.ui.presenter.CommonPresenter;
-import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
@@ -94,7 +90,7 @@ public class HakuPresenter implements CommonPresenter {
     @Autowired(required = true)
     private PublishingService publishingService;
     @Autowired(required = true)
-    private HakuPermissionService tarjontaPermissionService;
+    private HakuPermissionServiceImpl tarjontaPermissionService;
 
     public HakuPresenter() {
     }
@@ -494,7 +490,7 @@ public class HakuPresenter implements CommonPresenter {
     }
 
     @Override
-    public AppPermissionService getPermission() {
+    public AbstractPermissionService getPermission() {
         return tarjontaPermissionService;
     }
 

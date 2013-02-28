@@ -23,6 +23,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.TwinColSelect;
+import fi.vm.sade.generic.service.AbstractPermissionService;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.component.OphTokenField;
@@ -32,7 +33,6 @@ import fi.vm.sade.koodisto.widget.DefaultKoodiCaptionFormatter;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.WidgetFactory;
 import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
-import fi.vm.sade.tarjonta.ui.service.AppPermissionService;
 import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
@@ -409,11 +409,11 @@ public class UiBuilder extends UiUtil {
         }
     }
 
-    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, final RequiredRole role, AppPermissionService tps) {
+    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, final RequiredRole role, AbstractPermissionService tps) {
         return buttonSmallPrimary(layout, caption, null, role, tps);
     }
 
-    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, Button.ClickListener listener, final RequiredRole role, AppPermissionService tps) {
+    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, Button.ClickListener listener, final RequiredRole role, AbstractPermissionService tps) {
         Button button = null;
         if (listener != null) {
             button = UiUtil.buttonSmallPrimary(layout, caption, listener);

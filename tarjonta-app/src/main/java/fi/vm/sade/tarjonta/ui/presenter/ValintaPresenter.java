@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.presenter;
 
 import com.vaadin.ui.Button;
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.service.AbstractPermissionService;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -31,6 +32,7 @@ import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenMetadataTyyppi;
+import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +46,6 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.valinta.ValintaModel;
 import fi.vm.sade.tarjonta.ui.model.valinta.ValintaperusteModel;
-import fi.vm.sade.tarjonta.ui.service.AppPermissionService;
-import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionService;
 import fi.vm.sade.tarjonta.ui.view.ValintaperustekuvausRootView;
 import fi.vm.sade.tarjonta.ui.view.valinta.SaveDialogView;
 import fi.vm.sade.tarjonta.ui.view.valinta.ValintaperusteMainView;
@@ -72,7 +72,7 @@ public class ValintaPresenter implements CommonPresenter {
     private transient UiBuilder uiBuilder;
     private ValintaModel model;
     @Autowired(required = true)
-    private TarjontaPermissionService permission;
+    private TarjontaPermissionServiceImpl permission;
     @Autowired(required = true)
     private TarjontaAdminService tarjontaAdminService;
     @Autowired(required = true)
@@ -131,7 +131,7 @@ public class ValintaPresenter implements CommonPresenter {
     }
 
     @Override
-    public AppPermissionService getPermission() {
+    public AbstractPermissionService getPermission() {
         return permission;
     }
 

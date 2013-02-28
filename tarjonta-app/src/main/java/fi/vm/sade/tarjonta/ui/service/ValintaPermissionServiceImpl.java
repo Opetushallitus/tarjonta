@@ -15,10 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.service;
 
-import fi.vm.sade.generic.ui.portlet.security.User;
-import fi.vm.sade.tarjonta.ui.ValintaPortletApplication;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import fi.vm.sade.generic.service.AbstractPermissionService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,23 +23,9 @@ import org.springframework.stereotype.Service;
  * @author Jani Wilén
  */
 @Service
-public class ValintaPermissionServiceImpl extends AbstractAppPermissionServiceImpl implements ValintaPermissionService {
+public class ValintaPermissionServiceImpl extends AbstractPermissionService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ValintaPermissionServiceImpl.class);
-
-    @Override
-    public User getUser() {
-        if (getInstance() != null) {
-            if (getInstance().getUser() != null) {
-                LOG.debug("USER OID : " + getInstance().getUser().getOid());
-            }
-            return getInstance().getUser();
-        }
-
-        throw new RuntimeException(ERROR_MESSAGE_USER_NOT_FOUND);
-    }
-
-    private ValintaPortletApplication getInstance() {
-        return ValintaPortletApplication.getInstance();
+    protected ValintaPermissionServiceImpl() {
+        super("TARJONTA");
     }
 }

@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.service;
 
+import fi.vm.sade.generic.service.AbstractPermissionService;
 import fi.vm.sade.generic.ui.portlet.security.User;
 import fi.vm.sade.tarjonta.ui.HakuPortletApplication;
 import org.slf4j.Logger;
@@ -26,24 +27,9 @@ import org.springframework.stereotype.Service;
  * @author Jani Wilén
  */
 @Service
-public class HakuPermissionServiceImpl extends AbstractAppPermissionServiceImpl implements HakuPermissionService {
+public class HakuPermissionServiceImpl extends AbstractPermissionService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HakuPermissionServiceImpl.class);
-
-    @Override
-    public User getUser() {
-        if (getInstance() != null) {
-
-            if (HakuPortletApplication.getInstance().getUser() != null) {
-                LOG.debug("USER OID : " + getInstance().getUser().getOid());
-            }
-            return getInstance().getUser();
-        }
-
-        throw new RuntimeException(ERROR_MESSAGE_USER_NOT_FOUND);
-    }
-
-    private HakuPortletApplication getInstance() {
-        return HakuPortletApplication.getInstance();
+    public HakuPermissionServiceImpl() {
+        super("TARJONTA");
     }
 }
