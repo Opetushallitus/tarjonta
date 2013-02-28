@@ -198,6 +198,16 @@
         <wsdl:part name="parameters" element="ns1:poistaHakukohdeLiiteVastaus"/>
     </wsdl:message>
     
+    <wsdl:message name="kopioiKoulutus">
+        <wsdl:part name="parameters" element="ns1:kopioiKoulutus"/>
+    </wsdl:message>
+    
+    <wsdl:message name="kopioiKoulutusVastaus">
+        <wsdl:part name="parameters" element="ns1:kopioiKoulutusVastaus"/>
+    </wsdl:message>
+    
+    
+    
     <wsdl:portType name="TarjontaAdminService">
         
        <wsdl:documentation>
@@ -220,6 +230,14 @@
             <wsdl:input message="tns:paivitaValintakokeitaHakukohteelle" name="paivitaValintakokeitaHakukohteelle"/>
             <wsdl:output message="tns:paivitaValintakokeitaHakukohteelleVastaus"
                          name="paivitaValintakokeitaHakukohteelleVastaus"/>
+        </wsdl:operation>
+        
+        <wsdl:operation name="kopioiKoulutus">
+            <wsdl:documentation>
+                Kopioi koulutukset annetuille organisaatioille
+            </wsdl:documentation>
+            <wsdl:input message="tns:kopioiKoulutus" name="kopioiKoulutus"/>
+            <wsdl:output message="tns:kopioiKoulutusVastaus" name="kopioiKoulutusVastaus"/>
         </wsdl:operation>
 
 
@@ -523,6 +541,16 @@
 
         <wsdl:operation name="tallennaValintakokeitaHakukohteelle">
             <soap:operation soapAction="" type="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="kopioiKoulutus">
+            <soap:operation soapAction="" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
