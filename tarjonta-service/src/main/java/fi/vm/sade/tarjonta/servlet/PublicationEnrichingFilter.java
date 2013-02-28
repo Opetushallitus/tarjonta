@@ -77,7 +77,8 @@ public class PublicationEnrichingFilter implements Filter {
         }
 
         // add Base64 encoded MD5 checksum of the content for additional cache control support
-        httpResponse.setHeader("Content-MD5", Base64.encodeBase64String(DigestUtils.md5(responseData)));
+        //TODO: fix it
+        //httpResponse.setHeader("Content-MD5", Base64.encodeBase64String(DigestUtils.md5(responseData)));
 
         OutputStream out = response.getOutputStream();
         ByteArrayInputStream in = new ByteArrayInputStream(responseData);

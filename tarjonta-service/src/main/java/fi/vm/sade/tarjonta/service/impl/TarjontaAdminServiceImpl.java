@@ -145,9 +145,15 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     }
 
+
+    @Override
+    public void kopioiKoulutus(@WebParam(name = "kopioitavaKoulutus", targetNamespace = "") KoulutusTyyppi kopioitavaKoulutus, @WebParam(name = "organisaatioOids", targetNamespace = "") List<String> organisaatioOids) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     /*
-         * This method returns true if komoto copy is allowed.
-         */
+             * This method returns true if komoto copy is allowed.
+             */
     @Override
     public boolean tarkistaKoulutuksenKopiointi(@WebParam(partName = "parameters", name = "tarkistaKoulutusKopiointi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") TarkistaKoulutusKopiointiTyyppi parameters) {
 
