@@ -54,7 +54,15 @@
         <wsdl:part element="ns1:haeKoulutusmoduulitVastaus" name="parameters"/>
     </wsdl:message>
     
-   <wsdl:message name="lueKoulutusKysely">
+    <wsdl:message name="haeKaikkiKoulutusmoduulitKysely">
+        <wsdl:part element="ns1:haeKaikkiKoulutusmoduulitKysely" name="kysely"/>
+    </wsdl:message>
+
+    <wsdl:message name="haeKaikkiKoulutusmoduulitVastaus">
+        <wsdl:part element="ns1:haeKaikkiKoulutusmoduulitVastaus" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="lueKoulutusKysely">
         <wsdl:part element="ns1:lueKoulutusKysely" name="kysely"/>
     </wsdl:message>
 
@@ -169,7 +177,7 @@
                 Hakee joukon koulutusmoduuleja ja niiden tarkeimmat tunnusmerkit.
             </wsdl:documentation>
             <wsdl:input message="tns:haeKoulutusmoduulitKysely" name="haeKoulutusmoduulitKysely">
-            </wsdl:input>haeKoulutusmoduulitKysely
+            </wsdl:input>
             <wsdl:output message="tns:haeKoulutusmoduulitVastaus" name="haeKoulutusmoduulitVastaus">
             </wsdl:output>
         </wsdl:operation>
@@ -178,9 +186,9 @@
             <wsdl:documentation>
                 Hakee joukon koulutusmoduuleja.
             </wsdl:documentation>
-            <wsdl:input message="tns:haeKoulutusmoduulitKysely" name="haeKoulutusmoduulitKysely">
-            </wsdl:input>haeKoulutusmoduulitKysely
-            <wsdl:output message="tns:haeKoulutusmoduulitVastaus" name="haeKoulutusmoduulitVastaus">
+            <wsdl:input message="tns:haeKaikkiKoulutusmoduulitKysely" name="haeKaikkiKoulutusmoduulitKysely">
+            </wsdl:input>
+            <wsdl:output message="tns:haeKaikkiKoulutusmoduulitVastaus" name="haeKaikkiKoulutusmoduulitVastaus">
             </wsdl:output>
         </wsdl:operation>
               
@@ -290,6 +298,16 @@
         
         <wsdl:operation name="haeKoulutusmoduulit">
             <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/haeKoulutusmoduulit"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="haeKaikkiKoulutusmoduulit">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/haeKaikkiKoulutusmoduulit"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>

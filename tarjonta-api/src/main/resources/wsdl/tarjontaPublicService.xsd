@@ -22,6 +22,9 @@
 
     <xs:element name="haeKoulutusmoduulitKysely" type="tns:HaeKoulutusmoduulitKyselyTyyppi" />
     <xs:element name="haeKoulutusmoduulitVastaus" type="tns:HaeKoulutusmoduulitVastausTyyppi" />
+    
+    <xs:element name="haeKaikkiKoulutusmoduulitKysely" type="tns:HaeKaikkiKoulutusmoduulitKyselyTyyppi" />
+    <xs:element name="haeKaikkiKoulutusmoduulitVastaus" type="tns:HaeKaikkiKoulutusmoduulitVastausTyyppi" />
 
     <xs:element name="lueKoulutusKysely" type="tns:LueKoulutusKyselyTyyppi" />
     <xs:element name="lueKoulutusVastaus" type="tns:LueKoulutusVastausTyyppi" />
@@ -173,21 +176,46 @@
             <xs:element name="koulutusohjelmakoodiUri" minOccurs="0" maxOccurs="1" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
-
+    
     <xs:complexType name="HaeKoulutusmoduulitVastausTyyppi">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="KoulutusmoduuliTulos"
-                        minOccurs="0" maxOccurs="unbounded">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="koulutusmoduuli" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1" maxOccurs="1"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
+             <xs:element name="KoulutusmoduuliTulos" type="tns:KoulutusmoduuliTulos" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="HaeKaikkiKoulutusmoduulitKyselyTyyppi">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Haku objekti jolla valitetaan haku kriteerit.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="koulutuskoodiUri" minOccurs="0" maxOccurs="1" type="xs:string"/>
+            <xs:element name="koulutusohjelmakoodiUri" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="HaeKaikkiKoulutusmoduulitVastausTyyppi">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="KoulutusmoduuliTulos" type="tns:KoulutusmoduuliTulos" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="KoulutusmoduuliTulos">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="koulutusmoduuli" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 

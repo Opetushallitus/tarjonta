@@ -21,6 +21,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.SearchResultsView;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.BreadcrumbsView;
@@ -95,11 +96,25 @@ public class TarjontaRootView extends Window {
 
         // create app layout with organization navigation
         buildMainLayout();
-
         // Show application identifier if needed
-        _presenter.getModel().setShowIdentifier(_showIdentifier);
-        _presenter.getModel().setIdentifier(_identifier);
-        _presenter.getModel().setRootOrganisaatioOid(ophOid);
+        final TarjontaModel model = _presenter.getModel();
+
+        model.setShowIdentifier(_showIdentifier);
+        model.setIdentifier(_identifier);
+        model.setRootOrganisaatioOid(ophOid);
+
+        /*
+         TODO: in future.
+         //Tries to set an user to correct navigation hierarchy level.
+
+         if (_presenter.getPermission().getDefaultOrganisationOid() != null) {   
+         model.setParentOrganisaatioOid(_presenter.getPermission().getDefaultOrganisationOid());
+         } else {
+         //no default organisation for the user, then we set user to root (OPH) hierarchy level.  
+         model.setParentOrganisaatioOid(ophOid);
+         }*/
+        model.setParentOrganisaatioOid(ophOid);
+
         if (_presenter.isShowIdentifier()) {
             _appRootLayout.addComponent(new Label("ID=" + _presenter.getIdentifier()));
         }

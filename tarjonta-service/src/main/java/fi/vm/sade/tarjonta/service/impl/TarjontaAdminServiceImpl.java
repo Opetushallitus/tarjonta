@@ -147,7 +147,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
 
-    @Override
     public void kopioiKoulutus(@WebParam(name = "kopioitavaKoulutus", targetNamespace = "") KoulutusTyyppi kopioitavaKoulutus, @WebParam(name = "organisaatioOids", targetNamespace = "") List<String> organisaatioOids) {
         //TODO: should add some organisaatio validation ? Or should it be handled in UI
         for(String organisaatioOid:organisaatioOids) {

@@ -199,6 +199,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
      * if the user tentatively selects some users from the autocompletion list but then decides not to use any of the
      * existing users.
      */
+    @Override
     public void attach() {
         super.attach();
         initialYhtHenkTitteli = koulutusModel.getYhtHenkTitteli();

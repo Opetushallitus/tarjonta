@@ -44,7 +44,6 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi.KoulutusmoduuliTulos;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
@@ -85,7 +84,8 @@ import org.apache.commons.beanutils.BeanComparator;
 public class TarjontaPresenter implements CommonPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
-    private final String LIITE_DATE_PATTERNS = "dd.MM.yyyy hh:mm";
+    private static final String LIITE_DATE_PATTERNS = "dd.MM.yyyy hh:mm";
+    private static final String NAME_OPH = "OPH";
     @Autowired
     private UserService userService;
     @Autowired
@@ -141,7 +141,7 @@ public class TarjontaPresenter implements CommonPresenter {
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
         //checkHakuLiitetoimitusPvm();
-        
+
         if (getModel().getHakukohde().getOid() == null) {
 
             LOG.debug(getModel().getHakukohde().getHakukohdeNimi() + ", " + getModel().getHakukohde().getHakukohdeKoodistoNimi());
@@ -157,7 +157,7 @@ public class TarjontaPresenter implements CommonPresenter {
                 if (KoodistoURIHelper.KOODISTO_VALINTAPERUSTEKUVAUSRYHMA_URI.equals(koodistoUri)) {
                     hakukohdeTyyppi.setValintaperustekuvausKoodiUri(TarjontaUIHelper.createVersionUri(koodi.getKoodiUri(), koodi.getVersio()));
                 }
-                
+
                 if (KoodistoURIHelper.KOODISTO_SORA_KUVAUSRYHMA_URI.equals(koodistoUri)) {
                     hakukohdeTyyppi.setSoraKuvausKoodiUri(TarjontaUIHelper.createVersionUri(koodi.getKoodiUri(), koodi.getVersio()));
                 }
@@ -202,12 +202,12 @@ public class TarjontaPresenter implements CommonPresenter {
     }
 
     public void removeLiiteFromHakukohde(HakukohdeLiiteViewModel liite) {
-           tarjontaAdminService.poistaHakukohdeLiite(liite.getHakukohdeLiiteId());
+        tarjontaAdminService.poistaHakukohdeLiite(liite.getHakukohdeLiiteId());
         editHakukohdeView.loadLiiteTableWithData();
     }
 
     public void removeValintakoeFromHakukohde(ValintakoeViewModel valintakoe) {
-         tarjontaAdminService.poistaValintakoe(valintakoe.getValintakoeTunniste());
+        tarjontaAdminService.poistaValintakoe(valintakoe.getValintakoeTunniste());
         editHakukohdeView.loadValintakokees();
     }
 
@@ -1310,9 +1310,10 @@ public class TarjontaPresenter implements CommonPresenter {
     }
 
     public void unSelectOrganisaatio() {
-        getModel().setOrganisaatioOid(null);
-        getModel().setOrganisaatioName(null);
-        getRootView().getBreadcrumbsView().setOrganisaatio("OPH");
+        //TODO: there is no real breadcrumb, so the parent is always root level (OPH)...
+        getModel().setOrganisaatioOid(getModel().getParentOrganisaatioOid());
+        getModel().setOrganisaatioName(NAME_OPH);
+        getRootView().getBreadcrumbsView().setOrganisaatio(NAME_OPH);
 
         getRootView().getOrganisaatiohakuView().clearTreeSelection();
 
@@ -1321,7 +1322,7 @@ public class TarjontaPresenter implements CommonPresenter {
         getModel().getSelectedKoulutukset().clear();
 
         getModel().getSearchSpec().setOrganisaatioOids(new ArrayList<String>());
-        
+
         reloadMainView();
         this.getRootView().getListKoulutusView().toggleCreateKoulutusB(false);
         this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(false);
@@ -1367,7 +1368,7 @@ public class TarjontaPresenter implements CommonPresenter {
      * More detailed information of selected 'koulutusluokitus'.
      */
     public void loadKoulutuskoodit() {
-        HaeKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit = tarjontaPublicService.haeKaikkiKoulutusmoduulit(new HaeKoulutusmoduulitKyselyTyyppi());
+        HaeKaikkiKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit = tarjontaPublicService.haeKaikkiKoulutusmoduulit(new HaeKaikkiKoulutusmoduulitKyselyTyyppi());
         List<KoulutusmoduuliTulos> koulutusmoduuliTulos = haeKaikkiKoulutusmoduulit.getKoulutusmoduuliTulos();
 
         Set<String> uris = new HashSet<String>();
@@ -1375,11 +1376,12 @@ public class TarjontaPresenter implements CommonPresenter {
 
         for (KoulutusmoduuliTulos tulos : koulutusmoduuliTulos) {
             komos.add(tulos.getKoulutusmoduuli());
-            KoulutusmoduuliKoosteTyyppi tyyppi = tulos.getKoulutusmoduuli();
             uris.add(tulos.getKoulutusmoduuli().getKoulutuskoodiUri());
         }
 
-        LOG.debug("KOMOs found " + komos.size());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("KOMOs found {}", komos.size());
+        }
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
         model.setKomos(komos);
         model.createCacheKomos(); //cache komos to map object
@@ -1390,21 +1392,21 @@ public class TarjontaPresenter implements CommonPresenter {
         Collections.sort(listaaKoulutuskoodit, new BeanComparator("nimi"));
         model.getKoulutuskoodit().addAll(filterBasedOnOppilaitosTyyppi(listaaKoulutuskoodit));
     }
-    
+
     /*
      * Filters list of KoulutuskoodiModel objects such that only the objects related to the
      * oppilaitostyyppi of the selected organisaatio are returned.
      */
     private List<KoulutuskoodiModel> filterBasedOnOppilaitosTyyppi(List<KoulutuskoodiModel> unfilteredKoodit) {
         LOG.debug("fitlerBasedOnOppilaitosTyyppi");
-        
+
         //Constructing the list of oppilaitostyyppis of the selected organisaatio
         List<String> olTyyppiUris = getOppilaitostyyppiUris();
-      
+
         //Filtering the koulutuskoodit based on the oppilaitostyypit.
         return this.uiHelper.getKoulutusFilteredkooditRelatedToOlTyypit(olTyyppiUris, unfilteredKoodit);
     }
-    
+
     /*
      * Retrieves the list of oppilaitostyyppis matching the selected organisaatio.
      */
@@ -1420,9 +1422,9 @@ public class TarjontaPresenter implements CommonPresenter {
         //list of oppilaitostyyppiuris
         if (tyypit.contains(OrganisaatioTyyppi.KOULUTUSTOIMIJA)) {
             olTyyppiUris.addAll(getChildOrgOlTyyppis(selectedOrg));
-        
-        //If the types of the organisaatio contain opetuspiste the oppilaitostyyppi of its parent organisaatio is appended to the list of
-        //oppilaitostyyppiuris
+
+            //If the types of the organisaatio contain opetuspiste the oppilaitostyyppi of its parent organisaatio is appended to the list of
+            //oppilaitostyyppiuris
         } else if (tyypit.contains(OrganisaatioTyyppi.OPETUSPISTE)
                 && selectedOrg.getParentOid() != null) {
             addParentOlTyyppi(selectedOrg, olTyyppiUris);
@@ -1441,7 +1443,7 @@ public class TarjontaPresenter implements CommonPresenter {
             olTyyppiUris.add(olTyyppi);
         }
     }
-    
+
     /*
      * Gets the oppilaitostyyppi of the organisaatio the oid of which is given as parameters.
      */
@@ -1449,7 +1451,7 @@ public class TarjontaPresenter implements CommonPresenter {
         OrganisaatioDTO organisaatio = this.organisaatioService.findByOid(oid);
         return organisaatio.getOppilaitosTyyppi();
     }
-    
+
     /*
      * Gets the list of oppilaitostyyppi uris that match the children of the organisaatio given as parameter.
      */
@@ -1461,7 +1463,7 @@ public class TarjontaPresenter implements CommonPresenter {
         List<OrganisaatioDTO> childOrgs = this.organisaatioService.findChildrenTo(selectedOrg.getOid());
         if (childOrgs != null) {
             for (OrganisaatioDTO curChild : childOrgs) {
-                if (curChild.getTyypit().contains(OrganisaatioTyyppi.OPPILAITOS) 
+                if (curChild.getTyypit().contains(OrganisaatioTyyppi.OPPILAITOS)
                         && !childOlTyyppis.contains(curChild.getOppilaitosTyyppi())) {
                     childOlTyyppis.add(curChild.getOppilaitosTyyppi());
                 }
@@ -1645,13 +1647,13 @@ public class TarjontaPresenter implements CommonPresenter {
     }
 
     /**
-     * Returns true if there are koulutuskoodis that are related to the oppilaitostyyppis of the currently
-     * selected organisaatio.
+     * Returns true if there are koulutuskoodis that are related to the
+     * oppilaitostyyppis of the currently selected organisaatio.
+     *
      * @return
      */
     public boolean availableKoulutus() {
         List<String> oppilaitostyyppiUris = getOppilaitostyyppiUris();
-        return !this.uiHelper.getOlRelatedKoulutuskoodit(oppilaitostyyppiUris).isEmpty(); 
+        return !this.uiHelper.getOlRelatedKoulutuskoodit(oppilaitostyyppiUris).isEmpty();
     }
-
 }

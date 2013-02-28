@@ -9,11 +9,9 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-
 public class TarjontaPublicServiceMock implements TarjontaPublicService {
 
     private static final Logger LOG = Logger.getAnonymousLogger();
-
     private HashMap<String, HakuTyyppi> haut = new HashMap<String, HakuTyyppi>();
 
     public TarjontaPublicServiceMock() {
@@ -123,29 +121,27 @@ public class TarjontaPublicServiceMock implements TarjontaPublicService {
         return null;
     }
 
-	@Override
-	public LueKoulutusVastausTyyppi lueKoulutus(LueKoulutusKyselyTyyppi kysely) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public LueKoulutusVastausTyyppi lueKoulutus(LueKoulutusKyselyTyyppi kysely) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public LueHakukohdeVastausTyyppi lueHakukohde(LueHakukohdeKyselyTyyppi kysely) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public LueHakukohdeVastausTyyppi lueHakukohde(LueHakukohdeKyselyTyyppi kysely) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public HaeKoulutusmoduulitVastausTyyppi haeKoulutusmoduulit(HaeKoulutusmoduulitKyselyTyyppi kysely) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-        
-        @Override
-	public HaeKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit(HaeKoulutusmoduulitKyselyTyyppi kysely) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public HaeKoulutusmoduulitVastausTyyppi haeKoulutusmoduulit(HaeKoulutusmoduulitKyselyTyyppi kysely) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
+    @Override
+    public HaeKaikkiKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit(HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
-

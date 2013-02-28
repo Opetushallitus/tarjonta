@@ -32,7 +32,8 @@ public class TarjontaModel extends BaseUIViewModel {
     // Show label that shows last modification
     private Boolean _showIdentifier;
     private String _identifier;
-    private String rootOrganisaatioOid;
+    private String rootOrganisaatioOid;//OPH's root oid.
+    private String parentOrganisaatioOid; //portal user's parent organisation.
     private KoulutusSearchSpesificationViewModel _searchSpec = new KoulutusSearchSpesificationViewModel();
     private KoulutusToisenAsteenPerustiedotViewModel _koulutusPerustiedotModel;
     private KoulutusLisatiedotModel _koulutusLisatiedotModel;
@@ -228,34 +229,34 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-     * Get the root OID (OPH) of a organization tree. Throws an exception, if
+     * Get the root OID (OPH) of a organisation tree. Throws an exception, if
      * OID is not set.
      *
-     * @return the root organization Oid
+     * @return the root organisation Oid
      */
     public String getRootOrganisaatioOid() {
         if (rootOrganisaatioOid == null) {
-            throw new RuntimeException("Application initialization error - organization root OID cannot be null.");
+            throw new RuntimeException("Application initialization error - organisation root OID cannot be null.");
         }
 
         return rootOrganisaatioOid;
     }
 
     /**
-     * Set the root OID (OPH) of a organization tree. Null OID not allowed.
+     * Set the root OID (OPH) of a organisation tree. Null OID not allowed.
      *
-     * @param rootOrganisationOid the root organization Oid to set
+     * @param rootOrganisationOid the root organisation Oid to set
      */
     public void setRootOrganisaatioOid(String rootOrganisationOid) {
         if (rootOrganisationOid == null) {
-            throw new IllegalArgumentException("Organization root OID cannot be null.");
+            throw new IllegalArgumentException("Organisation root OID cannot be null.");
         }
 
         this.rootOrganisaatioOid = rootOrganisationOid;
     }
 
     /**
-     * Is selected organization same as the root organization (OPH).
+     * Is selected organisation same as the root organisation (OPH).
      *
      * @return boolean
      */
@@ -265,5 +266,31 @@ public class TarjontaModel extends BaseUIViewModel {
         }
 
         return getRootOrganisaatioOid().equals(getOrganisaatioOid());
+    }
+
+    /**
+     * Set portal user's parent organisation.
+     *
+     * @return the parentOrganisaatioOid
+     */
+    public String getParentOrganisaatioOid() {
+        if (parentOrganisaatioOid == null) {
+            throw new IllegalArgumentException("Organisation parent OID cannot be null.");
+        }
+
+        return parentOrganisaatioOid;
+    }
+
+    /**
+     * Get portal user's parent organisation, at least used in navigation tree.
+     *
+     * @param parentOrganisaatioOid the parentOrganisaatioOid to set
+     */
+    public void setParentOrganisaatioOid(String parentOrganisaatioOid) {
+        if (parentOrganisaatioOid == null) {
+            throw new IllegalArgumentException("Organisation parent OID cannot be null.");
+        }
+
+        this.parentOrganisaatioOid = parentOrganisaatioOid;
     }
 }
