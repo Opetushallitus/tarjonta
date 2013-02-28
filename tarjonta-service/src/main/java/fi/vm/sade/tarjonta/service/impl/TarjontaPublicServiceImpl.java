@@ -631,7 +631,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private void addChildModulesToVastaus(Koulutusmoduuli parentKomo, List<KoulutusmoduuliTulos> resultList) {
         for (Koulutusmoduuli curKomo : parentKomo.getAlamoduuliList()) {
             KoulutusmoduuliKoosteTyyppi komo = EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(curKomo, parentKomo);
-            if (!containsKomo(resultList, komo.getOid())) {
+            if (!containsKomo(resultList, komo.getOid()) && komo.getKoulutusohjelmakoodiUri() != null) {
                 KoulutusmoduuliTulos koulutusmoduuliTulos = new KoulutusmoduuliTulos();
                 koulutusmoduuliTulos.setKoulutusmoduuli(komo);
                 resultList.add(koulutusmoduuliTulos);
