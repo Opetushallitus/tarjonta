@@ -28,6 +28,7 @@ import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.impl.conversion.ConvertKoulutusTyyppiToLisaaKoulutus;
 import fi.vm.sade.tarjonta.service.types.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,7 +149,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     public void kopioiKoulutus(@WebParam(name = "kopioitavaKoulutus", targetNamespace = "") KoulutusTyyppi kopioitavaKoulutus, @WebParam(name = "organisaatioOids", targetNamespace = "") List<String> organisaatioOids) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        //TODO: should add some organisaatio validation ? Or should it be handled in UI
+        for(String organisaatioOid:organisaatioOids) {
+             kopioitavaKoulutus.setTarjoaja(organisaatioOid);
+            LisaaKoulutusTyyppi lisaaKoulutusTyyppi = ConvertKoulutusTyyppiToLisaaKoulutus.convert(kopioitavaKoulutus);
+            lisaaKoulutus(lisaaKoulutusTyyppi);
+
+        }
     }
 
     /*
