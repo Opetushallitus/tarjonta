@@ -24,7 +24,7 @@
     <xs:element name="lisaaKoulutusVastaus" type="tns:LisaaKoulutusVastausTyyppi"/>
 
     <xs:element name="paivitaKoulutus" type="tns:PaivitaKoulutusTyyppi"/>
-    <xs:element name="paivitaKoulutusVastaus" type="tns:PaivitaKoulutusVastausTyyppi"/>poistaKoulutusVasta
+    <xs:element name="paivitaKoulutusVastaus" type="tns:PaivitaKoulutusVastausTyyppi"/>
 
     <xs:element name="lisaaKoulutusmoduuli" type="tns:LisaaKoulutusmoduuliTyyppi"/>
     <xs:element name="lisaaKoulutusmoduuliVastaus" type="tns:LisaaKoulutusmoduuliVastausTyyppi"/>
