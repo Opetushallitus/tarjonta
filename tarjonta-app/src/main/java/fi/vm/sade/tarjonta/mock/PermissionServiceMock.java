@@ -42,7 +42,12 @@ public class PermissionServiceMock implements PermissionService {
     protected String ROLE_CRUD;
     protected String ROLE_RU;
     protected String ROLE_R;
+    @Value("${root.organisaatio.oid:NOT_SET}")
     private String rootOrgOid;
+    @Value("${debug.role.crud:}")
+    private Boolean debugCRUD;
+    @Value("${debug.role.ru:}")
+    private Boolean debugRU;
     @Autowired(required = false)
     private OrganisationHierarchyAuthorizer authorizer;
 
@@ -117,12 +122,20 @@ public class PermissionServiceMock implements PermissionService {
     /*
      * The mocked Liferay portal user.
      */
-    private static final User user = new User() {
+    private final User user = new User() {
         @Override
         public boolean isUserInRole(String role) {
-            log.debug("DEBUG USER - required role for user : {}", role);
+            boolean allow;
+            if (ROLE_CRUD.equals(role)) {
+                allow = debugCRUD;
+            } else if (ROLE_RU.equals(role)) {
+                allow = debugRU;
+            } else {
+                allow = true;
+            }
 
-            return true;
+            log.info("MOCK USER ROLE - required role for user : {},  accpted : {} ", role, allow);
+            return allow;
         }
 
         @Override
@@ -145,7 +158,7 @@ public class PermissionServiceMock implements PermissionService {
         @Override
         public Set<String> getOrganisations() {
             Set<String> oids = new HashSet<String>();
-            oids.add(ROOT_OID);
+            oids.add(rootOrgOid);
             return oids;
         }
 
@@ -164,9 +177,4 @@ public class PermissionServiceMock implements PermissionService {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     };
-
-    @Value("${root.organisaatio.oid:NOT_SET}")
-    public void setRootOid(String rootOid) {
-        ROOT_OID = rootOid;
-    }
 }
