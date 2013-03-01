@@ -47,7 +47,7 @@
     <bean id="tarjontaPresenter" class="fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter" scope="session">
         <aop:scoped-proxy/>    
     </bean>
-
+    
     <bean id="hakuPresenter" class="fi.vm.sade.tarjonta.ui.presenter.HakuPresenter" scope="session">
         <aop:scoped-proxy/>
     </bean>
@@ -55,9 +55,10 @@
     <bean id="valintaPresenter" class="fi.vm.sade.tarjonta.ui.presenter.ValintaPresenter" scope="session">
         <aop:scoped-proxy/>
     </bean>
+    
+    <!-- MOCK PERMISSION SERVICE -->
+    <bean id="tarjontaPermissionService" class="fi.vm.sade.tarjonta.mock.PermissionServiceMock"></bean>
 
-    <bean id="tarjontaPermissionService" class="fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl" ></bean>
-   
     <import resource="application-context-service.xml"/>
     <import resource="application-context-ws.xml"/>
     <import resource="cache-context.xml"/>

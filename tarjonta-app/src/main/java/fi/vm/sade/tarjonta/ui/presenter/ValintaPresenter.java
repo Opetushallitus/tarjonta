@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.ui.presenter;
 
 import com.vaadin.ui.Button;
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.generic.service.AbstractPermissionService;
+import fi.vm.sade.generic.service.PermissionService;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -32,7 +32,6 @@ import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenMetadataTyyppi;
-import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +56,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Presenter for searching, creating, editing, and viewing Haku objects.
@@ -72,7 +72,8 @@ public class ValintaPresenter implements CommonPresenter {
     private transient UiBuilder uiBuilder;
     private ValintaModel model;
     @Autowired(required = true)
-    private TarjontaPermissionServiceImpl permission;
+    @Qualifier("tarjontaPermissionService")
+    private PermissionService tarjontaPermissionService;
     @Autowired(required = true)
     private TarjontaAdminService tarjontaAdminService;
     @Autowired(required = true)
@@ -131,8 +132,8 @@ public class ValintaPresenter implements CommonPresenter {
     }
 
     @Override
-    public AbstractPermissionService getPermission() {
-        return permission;
+    public PermissionService getPermission() {
+        return tarjontaPermissionService;
     }
 
     @Override
@@ -237,7 +238,7 @@ public class ValintaPresenter implements CommonPresenter {
                             } else if (MetaCategory.VALINTAPERUSTEKUVAUS.equals(metaCategory)) {
                                 updateHakukohde.setValintaperustekuvausKoodiUri(kuvausRyhmaUri);
                             }
-                   
+
                             tarjontaAdminService.paivitaHakukohde(updateHakukohde);
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Hakukohde OID {} updated successfully!", hakukohde.getOid());

@@ -22,7 +22,7 @@ import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.authentication.service.types.dto.SearchConnectiveType;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.generic.service.AbstractPermissionService;
+import fi.vm.sade.generic.service.PermissionService;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
@@ -51,7 +51,6 @@ import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
-import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
@@ -75,6 +74,7 @@ import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * This class is used to control the "tarjonta" UI.
@@ -86,10 +86,11 @@ public class TarjontaPresenter implements CommonPresenter {
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
     private static final String LIITE_DATE_PATTERNS = "dd.MM.yyyy hh:mm";
     private static final String NAME_OPH = "OPH";
-    @Autowired
+    @Autowired(required = true)
     private UserService userService;
-    @Autowired
-    private TarjontaPermissionServiceImpl tarjontaPermissionService;
+    @Autowired(required = true)
+    @Qualifier("tarjontaPermissionService")
+    private PermissionService tarjontaPermissionService; //initialized in spring config
     // Services used
     @Autowired(required = true)
     protected OIDService oidService;
@@ -1557,7 +1558,7 @@ public class TarjontaPresenter implements CommonPresenter {
      * @return the tarjontaPermissionService
      */
     @Override
-    public AbstractPermissionService getPermission() {
+    public PermissionService getPermission() {
         LOG.debug("tarjontaPermissionService : " + tarjontaPermissionService);
 
         return tarjontaPermissionService;

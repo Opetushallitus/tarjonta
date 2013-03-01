@@ -16,18 +16,11 @@
 package fi.vm.sade.tarjonta.ui.service;
 
 import fi.vm.sade.generic.service.AbstractPermissionService;
-import fi.vm.sade.generic.ui.portlet.security.User;
-import fi.vm.sade.tarjonta.ui.TarjontaApplication;
-import fi.vm.sade.tarjonta.ui.TarjontaWebApplication;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 /**
  *
  * @author Jani Wilén
  */
-@Service
 public class TarjontaPermissionServiceImpl extends AbstractPermissionService {
 
     public TarjontaPermissionServiceImpl() {

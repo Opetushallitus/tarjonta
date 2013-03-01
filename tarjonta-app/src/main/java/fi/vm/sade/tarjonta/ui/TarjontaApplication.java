@@ -19,6 +19,7 @@ import com.github.wolfie.blackboard.Blackboard;
 import com.vaadin.Application;
 import com.vaadin.ui.Window;
 import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
+import fi.vm.sade.generic.ui.feature.UserFeature;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.vaadin.Oph;
 import org.slf4j.Logger;
@@ -30,36 +31,36 @@ import org.slf4j.LoggerFactory;
  * @author jani
  */
 public class TarjontaApplication extends AbstractSadePortletApplication {
-
+    
     private static final long serialVersionUID = 4058508673680251653L;
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaApplication.class);
     private static ThreadLocal<TarjontaApplication> tl = new ThreadLocal<TarjontaApplication>();
     private Window window;
-
+    
     public TarjontaApplication() {
         super();
         LOG.info("TarjontaApplication()");
     }
-
+    
     @Override
     protected void registerListeners(Blackboard blackboard) {
         LOG.info("registerListeners()");
     }
-
+    
     @Override
     public synchronized void init() {
         super.init();
         this.transactionStart(this, null);
-
+        
         initApplication();
     }
-
+    
     protected void initApplication() {
         window = new TarjontaRootView();
         setMainWindow(window);
         setTheme(Oph.THEME_NAME);
     }
-
+    
     @Override
     public void transactionStart(Application application, Object transactionData) {
         super.transactionStart(application, transactionData);
@@ -67,15 +68,17 @@ public class TarjontaApplication extends AbstractSadePortletApplication {
             tl.set(this);
         }
     }
-
+    
     @Override
     public void transactionEnd(Application application, Object transactionData) {
         super.transactionEnd(application, transactionData);
+        
+        log.debug("user : {}", UserFeature.get().getOid());
         if (application == this) {
             tl.remove();
         }
     }
-
+    
     public static TarjontaApplication getInstance() {
         return tl.get();
     }

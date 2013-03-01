@@ -23,7 +23,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.TwinColSelect;
-import fi.vm.sade.generic.service.AbstractPermissionService;
+import fi.vm.sade.generic.service.PermissionService;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.component.OphTokenField;
@@ -409,11 +409,11 @@ public class UiBuilder extends UiUtil {
         }
     }
 
-    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, final RequiredRole role, AbstractPermissionService tps) {
+    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, final RequiredRole role, PermissionService tps) {
         return buttonSmallPrimary(layout, caption, null, role, tps);
     }
 
-    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, Button.ClickListener listener, final RequiredRole role, AbstractPermissionService tps) {
+    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, Button.ClickListener listener, final RequiredRole role, PermissionService tps) {
         Button button = null;
         if (listener != null) {
             button = UiUtil.buttonSmallPrimary(layout, caption, listener);
