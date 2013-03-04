@@ -165,6 +165,7 @@ public class ListKoulutusView extends VerticalLayout {
          */
         luoKoulutusB.setEnabled(presenter.getModel().getOrganisaatioOid() != null);
         luoHakukohdeB.setEnabled(!presenter.getModel().getSelectedKoulutukset().isEmpty());
+
     }
 
     /**
@@ -274,6 +275,15 @@ public class ListKoulutusView extends VerticalLayout {
         btnPoista.setEnabled(false);
         btnSiirraJaKopioi = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("siirraTaiKopioi"), RequiredRole.CRUD, presenter.getPermission());
         btnSiirraJaKopioi.setEnabled(false);
+        btnSiirraJaKopioi.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent clickEvent) {
+                KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog();
+                kopiointiDialog.setWidth("500px");
+                kopiointiDialog.setHeight("400px");
+                getWindow().addWindow(kopiointiDialog);
+            }
+        });
 
         luoHakukohdeB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LuoHakukohde"), RequiredRole.CRUD, presenter.getPermission());
         luoHakukohdeB.addListener(new Button.ClickListener() {
@@ -428,6 +438,7 @@ public class ListKoulutusView extends VerticalLayout {
     public void toggleCreateHakukohdeB(boolean b) {
         if (presenter.getPermission().userCanReadAndUpdate()) {
             this.luoHakukohdeB.setEnabled(b);
+            this.btnSiirraJaKopioi.setEnabled(b);
         }
     }
 
