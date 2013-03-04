@@ -139,11 +139,6 @@ public class PermissionServiceMock implements PermissionService {
         }
 
         @Override
-        public String getTicket() {
-            return "4907489q95qgrfr8c0vmbdt8cs";
-        }
-
-        @Override
         public List<AccessRight> getRawAccessRights() {
             return null;
         }
