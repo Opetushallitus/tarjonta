@@ -278,9 +278,12 @@ public class ListKoulutusView extends VerticalLayout {
         btnSiirraJaKopioi.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent clickEvent) {
-                KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog();
-                kopiointiDialog.setWidth("500px");
-                kopiointiDialog.setHeight("400px");
+                List<String> organisaatioOids = new ArrayList<String>();
+                organisaatioOids.add(presenter.getModel().getOrganisaatioOid());
+
+                KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog(organisaatioOids,"600px","500px");
+               /* kopiointiDialog.setWidth("600px");
+                kopiointiDialog.setHeight("500px");*/
                 getWindow().addWindow(kopiointiDialog);
             }
         });

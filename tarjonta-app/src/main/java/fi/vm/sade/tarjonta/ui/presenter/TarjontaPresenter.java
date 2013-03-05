@@ -30,16 +30,12 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.*;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.conversion.*;
 import fi.vm.sade.tarjonta.ui.model.*;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidType;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchCriteriaDTO;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchOidType;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
@@ -465,6 +461,17 @@ public class TarjontaPresenter implements CommonPresenter {
         }
     }
     
+    public List<OrganisaatioPerustietoType> fetchChildOrganisaatios(List<String> organisaatioOids) {
+
+      OrganisaatioSearchCriteriaDTO criteriaDTO = new OrganisaatioSearchCriteriaDTO();
+
+      criteriaDTO.getOidResctrictionList().addAll(organisaatioOids);
+      criteriaDTO.setMaxResults(400);
+
+      return organisaatioService.searchBasicOrganisaatios(criteriaDTO);
+
+    }
+
     private List<KoulutusOidNameViewModel> getHakukohdeKoulutukses(HakukohdeViewModel hakukohdeViewModel) {
         List<KoulutusOidNameViewModel> koulutukses = new ArrayList<KoulutusOidNameViewModel>();
         

@@ -18,49 +18,57 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;/*
 import com.vaadin.data.Property;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.ui.component.OphTokenField;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.view.common.SelectableItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import fi.vm.sade.vaadin.util.UiUtil;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+
+import java.util.*;
 
 /**
  * @author: Tuomas Katva
  * Date: 4.3.2013
  */
-@Configurable
+@Configurable(preConstruction =  true)
 public class KoulutusKopiointiDialog extends Window {
 
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
 
     @Autowired(required = true)
-    private OrganisaatioService organisaatioService;
+    private TarjontaPresenter presenter;
     private transient I18NHelper _i18n;
     private OptionGroup optionGroup;
     private TreeTable organisaatioChildTree;
+    private VerticalLayout vlRight;
+    private HashMap<String,OrganisaatioPerustietoType> selectedOrgs = new HashMap<String,OrganisaatioPerustietoType>();
     private static final String CHILD_TREE_PROPERTY = "childOrganisaatioButton";
 
-    public KoulutusKopiointiDialog() {
+    public KoulutusKopiointiDialog(List<String> organisaatioOids, String width,String height) {
         super();
         _i18n = new I18NHelper(this);
+        setWidth(width);
+        setHeight(height);
         setContent(buildMainLayout());
+        addElementsToTree(organisaatioOids);
         setModal(true);
         setCaption(_i18n.getMessage("dialog.title"));
-        buildMainLayout();
+
     }
 
     private VerticalLayout buildMainLayout() {
        VerticalLayout mainLayout = new VerticalLayout();
+        mainLayout.setSizeFull();
        mainLayout.addComponent(buildTopLayout());
        mainLayout.addComponent(buildBottomLayout());
+
        return mainLayout;
     }
 
@@ -88,47 +96,64 @@ public class KoulutusKopiointiDialog extends Window {
 
         Label orgTreeTableLabel = new Label(_i18n.getMessage("organisaatioTree.label"));
         VerticalLayout orgLabelLayout = new VerticalLayout();
-        orgLabelLayout.setMargin(false,false,false,true);
+        orgLabelLayout.setMargin(false, false, false, true);
         orgLabelLayout.addComponent(orgTreeTableLabel);
         topLayout.addComponent(orgLabelLayout);
-
+        topLayout.setSizeFull();
         return topLayout;
     }
 
     private HorizontalLayout buildBottomLayout() {
         HorizontalLayout bottomLayout = new HorizontalLayout();
+        bottomLayout.setSizeFull();
         bottomLayout.setMargin(false,false,true,false);
-        Label label = new Label("Tahan tulee organisaatiolistaus");
 
-        bottomLayout.addComponent(label);
 
-        VerticalLayout verticalLayout = new VerticalLayout();
-        Label anotherLabel = new Label("Tahan tulee valitut organisaatiot");
-        verticalLayout.addComponent(anotherLabel);
+       VerticalLayout vlLeft = new VerticalLayout();
+        vlLeft.setWidth("50%");
+        vlLeft.setHeight("100%");
+        vlLeft.addComponent(buildOrganisaatioTree());
 
+        vlRight = new VerticalLayout();
+        vlRight.setMargin(false);
+        vlRight.setWidth("50%");
+        vlRight.setHeight("100%");
+
+        bottomLayout.addComponent(vlLeft);
+        bottomLayout.addComponent(vlRight);
         return bottomLayout;
     }
 
-    private TreeTable buildOrganisaatioTree(List<OrganisaatioPerustietoType> organisaatios) {
+    public void addOrganisaatioToRight(OrganisaatioPerustietoType org) {
+        SelectableItem<OrganisaatioPerustietoType> link = new SelectableItem<OrganisaatioPerustietoType>(org,"nimiFi");
+        link.setMargin(false);
+        link.setSizeFull();
+        vlRight.addComponent(link);
+
+    }
+
+    private TreeTable buildOrganisaatioTree() {
         organisaatioChildTree = new TreeTable();
         organisaatioChildTree.setColumnHeaderMode(TreeTable.COLUMN_HEADER_MODE_HIDDEN);
         organisaatioChildTree.addContainerProperty(CHILD_TREE_PROPERTY, Button.class, null);
         organisaatioChildTree.setWidth("100%");
-
+        organisaatioChildTree.setHeight("100%");
         return organisaatioChildTree;
     }
 
-    public void addElementsToTree(List<OrganisaatioPerustietoType> organisaatios) {
-
+    private void addElementsToTree(List<String> organisaatioOids) {
+        List<OrganisaatioPerustietoType> organisaatios = presenter.fetchChildOrganisaatios(organisaatioOids);
         if (organisaatioChildTree != null) {
         for (final OrganisaatioPerustietoType curOrg:organisaatios) {
 
             Button buttonOrganisaatio = UiUtil.buttonLink(null, getAvailableNameBasic(curOrg), new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
-
+                     addOrganisaatioToRight(curOrg);
                 }
             });
+
+
 
             organisaatioChildTree.addItem(curOrg);
             Property prop = organisaatioChildTree.getContainerProperty(curOrg, CHILD_TREE_PROPERTY);
@@ -137,6 +162,7 @@ public class KoulutusKopiointiDialog extends Window {
             }
         }
         createHierarchy(organisaatios);
+        organisaatioChildTree.requestRepaint();
         }
     }
 
@@ -194,5 +220,13 @@ public class KoulutusKopiointiDialog extends Window {
 
     public void setUiBuilder(UiBuilder uiBuilder) {
         this.uiBuilder = uiBuilder;
+    }
+
+    public TarjontaPresenter getPresenter() {
+        return presenter;
+    }
+
+    public void setPresenter(TarjontaPresenter presenter) {
+        this.presenter = presenter;
     }
 }
