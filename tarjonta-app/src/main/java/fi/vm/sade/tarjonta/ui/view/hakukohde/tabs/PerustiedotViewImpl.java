@@ -131,8 +131,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private Form form;
 
     private String languageTabsheetWidth = "500px";
-    private String languageTabsheetHeight = "250px";
-
+    private String languageTabsheetHeight = "230px";
 
     private transient UiBuilder uiBuilder;
     private ErrorMessage errorView;
@@ -270,7 +269,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         if (itemContainer != null) {
             Label label = UiUtil.label(null, T(captionKey));
             itemContainer.addComponent(label);
-            itemContainer.setComponentAlignment(label,Alignment.MIDDLE_RIGHT);
+            itemContainer.setComponentAlignment(label,Alignment.TOP_RIGHT);
             itemContainer.addComponent(component);
             itemContainer.newLine();
         }

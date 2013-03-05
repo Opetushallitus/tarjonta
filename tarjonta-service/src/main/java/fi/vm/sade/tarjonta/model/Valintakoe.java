@@ -20,6 +20,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -29,7 +30,8 @@ import javax.persistence.*;
 public class Valintakoe extends BaseEntity {
 
     private static final long serialVersionUID = 7092585555234995829L;
-
+    @Column(name = "hakukohde_id", insertable = false, updatable = false)
+    private long hakukohdeId;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "valintakoe_id")
     private Set<ValintakoeAjankohta> ajankohtas = new HashSet<ValintakoeAjankohta>();
@@ -37,16 +39,20 @@ public class Valintakoe extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "kuvaus_monikielinenteksti_id")
     private MonikielinenTeksti kuvaus;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hakukohde_id")
+    private Hakukohde hakukohde;
     /**
      * Valintakokeen tyyppi. Koodisto uri.
      */
     private String tyyppiUri;
 
     /**
-     * Collection of times when this Valintakoe is to be held. This collection is loaded
-     * eagerly since the number of items and amount of data will be very small.
-     */ /**
+     * Collection of times when this Valintakoe is to be held. This collection
+     * is loaded eagerly since the number of items and amount of data will be
+     * very small.
+     */
+    /**
      * Returns an immutable set of Ajankohtas.
      *
      * @return
@@ -54,8 +60,6 @@ public class Valintakoe extends BaseEntity {
     public Set<ValintakoeAjankohta> getAjankohtas() {
         return ajankohtas;
     }
-
-
 
     public void removeAjankohta(ValintakoeAjankohta ajankohta) {
         getAjankohtas().remove(ajankohta);
@@ -80,7 +84,8 @@ public class Valintakoe extends BaseEntity {
     }
 
     /**
-     * Kertaoo valintakokeen tyypin, esim. sovelutuvuuskoe (arvoltaan koodisto uri).
+     * Kertaoo valintakokeen tyypin, esim. sovelutuvuuskoe (arvoltaan koodisto
+     * uri).
      *
      * @return
      */
@@ -103,13 +108,21 @@ public class Valintakoe extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         Valintakoe that = (Valintakoe) o;
 
-        if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) return false;
+        if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) {
+            return false;
+        }
 
         return true;
     }
@@ -121,5 +134,31 @@ public class Valintakoe extends BaseEntity {
         return result;
     }
 
-}
+    /**
+     * @return the hakukohde
+     */
+    public Hakukohde getHakukohde() {
+        return hakukohde;
+    }
 
+    /**
+     * @param hakukohde the hakukohde to set
+     */
+    public void setHakukohde(Hakukohde hakukohde) {
+        this.hakukohde = hakukohde;
+    }
+
+    /**
+     * @return the hakukohdeId
+     */
+    public long getHakukohdeId() {
+        return hakukohdeId;
+    }
+
+    /**
+     * @param hakukohdeId the hakukohdeId to set
+     */
+    public void setHakukohdeId(long hakukohdeId) {
+        this.hakukohdeId = hakukohdeId;
+    }
+}

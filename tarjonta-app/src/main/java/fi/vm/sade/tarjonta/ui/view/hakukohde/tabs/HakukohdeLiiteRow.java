@@ -15,6 +15,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.generic.common.I18N;
@@ -31,22 +32,17 @@ import org.springframework.beans.factory.annotation.Configurable;
 import java.util.List;
 
 /**
- * Created by: Tuomas Katva
- * Date: 21.1.2013
+ * Created by: Tuomas Katva Date: 21.1.2013
  */
 @Configurable(preConstruction = true)
 public class HakukohdeLiiteRow extends HorizontalLayout {
 
-
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
-
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
-
     private HakukohdeLiiteViewModel hakukohdeLiiteViewModel;
     private transient I18NHelper i18n = new I18NHelper(this);
-
     private String liiteId;
     private String liitteenTyyppi;
     private String liitteenSanallinenKuvaus;
@@ -58,18 +54,18 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
     public HakukohdeLiiteRow(HakukohdeLiiteViewModel param) {
         setHakukohdeLiiteViewModel(param);
         liiteId = param.getHakukohdeLiiteId();
-         liitteenTyyppi = param.getLiitteeTyyppiKoodistoNimi();
-         tryGetLocalizedSanallinenKuvaus(param);
-         toimitettavaMennessa = param.getToimitusPvmTablePresentation();
-         toimitusOsoite = getStringConcat();
-         muokkaaBtn = UiUtil.buttonLink(null,i18n.getMessage("muokkaaBtn"), new Button.ClickListener() {
-             @Override
-             public void buttonClick(Button.ClickEvent clickEvent) {
-                 tarjontaPresenter.showHakukohdeLiiteEditWindow(liiteId);
-             }
-         });
+        liitteenTyyppi = param.getLiitteeTyyppiKoodistoNimi();
+        tryGetLocalizedSanallinenKuvaus(param);
+        toimitettavaMennessa = param.getToimitusPvmTablePresentation();
+        toimitusOsoite = getStringConcat();
+        muokkaaBtn = UiUtil.buttonLink(null, i18n.getMessage("muokkaaBtn"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                tarjontaPresenter.showHakukohdeLiiteEditWindow(liiteId);
+            }
+        });
 
-        poistaBtn = UiUtil.buttonLink(null,i18n.getMessage("poistaBtn"), new Button.ClickListener() {
+        poistaBtn = UiUtil.buttonLink(null, i18n.getMessage("poistaBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 tarjontaPresenter.removeLiiteFromHakukohde(hakukohdeLiiteViewModel);
@@ -79,30 +75,30 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
     }
 
     private void tryGetLocalizedSanallinenKuvaus(HakukohdeLiiteViewModel param) {
-         for (KielikaannosViewModel teksti : param.getLiitteenSanallinenKuvaus()) {
-             if (teksti.getKielikoodi().trim().contains("Suomi")) {
-                 liitteenSanallinenKuvaus = teksti.getNimi();
-             }
-             if (teksti.getKielikoodi().trim().contains(I18N.getLocale().getLanguage())) {
-                 liitteenSanallinenKuvaus = teksti.getNimi();
-             }
-             if (liitteenSanallinenKuvaus == null || liitteenSanallinenKuvaus.trim().length() < 1) {
-                 liitteenSanallinenKuvaus = teksti.getNimi();
-             }
-         }
+        for (KielikaannosViewModel teksti : param.getLiitteenSanallinenKuvaus()) {
+            if (teksti.getKielikoodi().trim().contains("Suomi")) {
+                liitteenSanallinenKuvaus = teksti.getNimi();
+            }
+            if (teksti.getKielikoodi().trim().contains(I18N.getLocale().getLanguage())) {
+                liitteenSanallinenKuvaus = teksti.getNimi();
+            }
+            if (liitteenSanallinenKuvaus == null || liitteenSanallinenKuvaus.trim().length() < 1) {
+                liitteenSanallinenKuvaus = teksti.getNimi();
+            }
+        }
     }
 
     private String getStringConcat() {
         StringBuilder stringBuilder = new StringBuilder();
         if (hakukohdeLiiteViewModel != null) {
-        stringBuilder.append(hakukohdeLiiteViewModel.getOsoiteRivi1());
-        stringBuilder.append("\n");
-        List<KoodiType> postinumeroKoodis = tarjontaUIHelper.gethKoodis(hakukohdeLiiteViewModel.getPostinumero());
-        if (postinumeroKoodis != null) {
-        stringBuilder.append(postinumeroKoodis.get(0).getKoodiArvo());
-        }
-        stringBuilder.append("\n");
-        stringBuilder.append(tarjontaUIHelper.getKoodiNimi(hakukohdeLiiteViewModel.getPostinumero(), I18N.getLocale()));
+            stringBuilder.append(hakukohdeLiiteViewModel.getOsoiteRivi1());
+            stringBuilder.append("\n");
+            List<KoodiType> postinumeroKoodis = tarjontaUIHelper.gethKoodis(hakukohdeLiiteViewModel.getPostinumero());
+            if (postinumeroKoodis != null) {
+                stringBuilder.append(postinumeroKoodis.get(0).getKoodiArvo());
+            }
+            stringBuilder.append("\n");
+            stringBuilder.append(tarjontaUIHelper.getKoodiNimi(hakukohdeLiiteViewModel.getPostinumero(), I18N.getLocale()));
         }
         return stringBuilder.toString();
     }

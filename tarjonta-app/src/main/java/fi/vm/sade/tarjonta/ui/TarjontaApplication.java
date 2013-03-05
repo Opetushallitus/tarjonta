@@ -72,8 +72,7 @@ public class TarjontaApplication extends AbstractSadePortletApplication {
     @Override
     public void transactionEnd(Application application, Object transactionData) {
         super.transactionEnd(application, transactionData);
-        
-        log.debug("user : {}", UserFeature.get().getOid());
+
         if (application == this) {
             tl.remove();
         }

@@ -64,10 +64,10 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     private VerticalLayout mainLayout;
     private GridLayout itemContainer;
     @PropertyId("liitteenTyyppi")
-    @NotNull(message = "validation.HakukohdeLiitteet.liitteenTyyppi.notNull")
+    @NotNull(message = "{validation.HakukohdeLiitteet.liitteenTyyppi.notNull}")
     KoodistoComponent liitteenTyyppi;
     private LiitteenSanallinenKuvausTabSheet liitteenSanallinenKuvausTxtArea;
-    @NotNull(message = "validation.HakukohdeLiitteet.toimitettavaMennessa.notNull")
+    @NotNull(message = "{validation.HakukohdeLiitteet.toimitettavaMennessa.notNull}")
     @PropertyId("toimitettavaMennessa")
     private DateField toimittettavaMennessa;
     @PropertyId("osoiteRivi1")
@@ -81,18 +81,19 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     private CheckBox voidaanToimittaaSahkoisesti;
     @PropertyId("sahkoinenToimitusOsoite")
     private TextField sahkoinenToimitusOsoite;
-    private ErrorMessage errorView;
+    private ErrorMessage errorMessage;
     private Button cancelButton;
     private Button saveButton;
     private Form form;
-    private String languageTabsheetWidth = "450px";
-    private String languageTabsheetHeight = "300px";
+    private String languageTabsheetWidth = "650px";
+    private String languageTabsheetHeight = "250px";
     private Button upRightInfoButton;
 
-    public HakukohteenLiitteetViewImpl(TarjontaPresenter presenter, UiBuilder uiBuilder) {
+    public HakukohteenLiitteetViewImpl(ErrorMessage errorMessage, TarjontaPresenter presenter, UiBuilder uiBuilder) {
         super();
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
+        this.errorMessage = errorMessage;
         buildMainLayout();
     }
 
@@ -100,25 +101,10 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         return I18N.getMessage(key);
     }
 
-    private HorizontalLayout buildErrorLayout() {
-        HorizontalLayout topErrorArea = UiUtil.horizontalLayout();
-        HorizontalLayout padding = UiUtil.horizontalLayout();
-        padding.setWidth(30, UNITS_PERCENTAGE);
-        errorView = new ErrorMessage();
-        errorView.setSizeUndefined();
-
-        topErrorArea.addComponent(padding);
-        topErrorArea.addComponent(errorView);
-
-        return topErrorArea;
-    }
-
     private void buildMainLayout() {
         mainLayout = new VerticalLayout();
 
         mainLayout.setMargin(true);
-
-        mainLayout.addComponent(buildErrorLayout());
 
         mainLayout.addComponent(buildInfoButtonLayout());
 
@@ -165,8 +151,9 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
         if (itemContainer != null) {
             Label label = UiUtil.label(null, T(captionKey));
+            label.setContentMode(Label.CONTENT_XHTML);
             itemContainer.addComponent(label);
-            itemContainer.setComponentAlignment(label, Alignment.MIDDLE_RIGHT);
+            itemContainer.setComponentAlignment(label, Alignment.TOP_RIGHT);
             itemContainer.addComponent(component);
             itemContainer.newLine();
         }
@@ -300,7 +287,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         saveButton = UiBuilder.button(null, T("HakukohteenLiitteetViewImpl.saveBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                errorView.resetErrors();
+                errorMessage.resetErrors();
                 try {
                     form.commit();
                     if (form.isValid()) {
@@ -308,9 +295,9 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
                         presenter.saveHakukohteenEditView();
                     }
                 } catch (Validator.InvalidValueException e) {
-                    errorView.addError(e);
+                    errorMessage.addError(e);
                 } catch (Exception exp) {
-                    errorView.addError(exp.toString());
+                    errorMessage.addError(exp.toString());
                 }
             }
         });

@@ -25,9 +25,6 @@ import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
-import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
-import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -82,6 +79,14 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
 
         mainLayout.addComponent(buildOsoiteEditLayout());
         mainLayout.addComponent(buildValintakoeAikaLayout());
+        
+        lisatietoja = UiUtil.textField(null);
+        lisatietoja.setWidth("485px");
+        lisatietoja.setInputPrompt(T("HakukohdeValintakoeViewImpl.lisatietojaValintakokeesta"));
+        mainLayout.addComponent(lisatietoja);
+
+        lisaaBtn = UiBuilder.button(null,T("HakukohdeValintakoeViewImpl.lisaaBtn"),null);
+        mainLayout.addComponent(lisaaBtn);
 
         setCompositionRoot(mainLayout);
     }
@@ -163,14 +168,6 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
         loppuPvm = new DateField();
         loppuPvm.setResolution(DateField.RESOLUTION_MIN);
         valintakoeAikaLayout.addComponent(loppuPvm);
-
-        lisatietoja = UiUtil.textField(null);
-        lisatietoja.setInputPrompt(T("HakukohdeValintakoeViewImpl.lisatietojaValintakokeesta"));
-
-        valintakoeAikaLayout.addComponent(lisatietoja);
-
-        lisaaBtn = UiBuilder.button(null,T("HakukohdeValintakoeViewImpl.lisaaBtn"),null);
-        valintakoeAikaLayout.addComponent(lisaaBtn);
 
         return valintakoeAikaLayout;
     }

@@ -73,7 +73,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         hakukohde.getLiites().clear();
 
-        for (HakukohdeLiite liite: liites) {
+        for (HakukohdeLiite liite : liites) {
             liite.setHakukohde(hakukohde);
         }
 
@@ -87,8 +87,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QValintakoe qValintakoe = QValintakoe.valintakoe;
         return from(qHakukohde, qValintakoe)
-                .join(qHakukohde.valintakoes, qValintakoe)
-                .where(qHakukohde.oid.eq(oid))
+                .where(qHakukohde.oid.eq(oid).and(qValintakoe.hakukohde.id.eq(qHakukohde.id)))
                 .list(qValintakoe);
     }
 
@@ -103,13 +102,14 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     public void removeValintakoe(Valintakoe valintakoe) {
         if (valintakoe != null && valintakoe.getId() != null) {
 
-        getEntityManager().remove(getEntityManager().find(Valintakoe.class,valintakoe.getId()));
+            getEntityManager().remove(getEntityManager().find(Valintakoe.class, valintakoe.getId()));
 
-        getEntityManager().flush();
+            getEntityManager().flush();
 
         }
     }
-  @Override
+
+    @Override
     public Valintakoe findValintaKoeById(String id) {
         QValintakoe qValintakoe = QValintakoe.valintakoe;
         Long idLong = new Long(id);

@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
@@ -132,6 +133,7 @@ public class TarjontaPublicServiceTest {
 
         //1. hakukohde valintakoe
         Valintakoe valintakoe = fixtures.createValintakoe();
+        valintakoe.setHakukohde(hakukohde);
         hakukohde.addValintakoe(valintakoe);
         hakukohdeDAO.update(hakukohde);
 
@@ -234,7 +236,8 @@ public class TarjontaPublicServiceTest {
 
         HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi vastaus = service.haeHakukohteenValintakokeetHakukohteenTunnisteella(kyselyTyyppi);
 
-        assertTrue(vastaus.getHakukohteenValintaKokeet() != null && vastaus.getHakukohteenValintaKokeet().size() > 0);
+        assertNotNull(vastaus.getHakukohteenValintaKokeet());
+        assertEquals(1, vastaus.getHakukohteenValintaKokeet().size());
 
     }
 

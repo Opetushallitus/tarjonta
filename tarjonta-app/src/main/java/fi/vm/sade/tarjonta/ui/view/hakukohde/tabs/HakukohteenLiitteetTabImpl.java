@@ -15,30 +15,21 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+
 import com.vaadin.data.Item;
-import com.vaadin.data.Property;
-import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanContainer;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
-import fi.vm.sade.generic.ui.validation.ErrorMessage;
-import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
-import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
-import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
-import fi.vm.sade.vaadin.constants.StyleEnum;
-import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import java.util.List;
 
 /**
- * Created by: Tuomas Katva
- * Date: 15.1.2013
+ * Created by: Tuomas Katva Date: 15.1.2013
  */
 @Configurable(preConstruction = true)
 public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout {
@@ -47,32 +38,27 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
     private TarjontaPresenter presenter;
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
-
     private Table hakukohteenLiitteetTable = null;
-
     private Button uusiLiiteBtn;
-    private HakukohteenLiitteetViewImpl liitteet;
-    private Window hakukohteenLiiteEditWindow = null;
-
+    private HakukohdeLiiteetDialog liitteetDialog = null;
 
     public HakukohteenLiitteetTabImpl() {
         super();
-        setHeight(-1, UNITS_PIXELS);
     }
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
         HorizontalLayout horizontalLayout = new HorizontalLayout();
-        uusiLiiteBtn = UiBuilder.button(null,T("uusiLiiteBtn"),new Button.ClickListener() {
+        uusiLiiteBtn = UiBuilder.button(null, T("uusiLiiteBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                 showHakukohdeEditWindow(null);
+                showHakukohdeEditWindow(null);
             }
         });
 
 
         horizontalLayout.addComponent(uusiLiiteBtn);
-        horizontalLayout.setMargin(false,false,true,false);
+        horizontalLayout.setMargin(false, false, true, false);
         layout.addComponent(horizontalLayout);
 
         loadTableWithData();
@@ -82,12 +68,12 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
 
         if (hakukohteenLiitteetTable != null) {
             hakukohteenLiitteetTable.removeAllItems();
-        }  else {
+        } else {
             hakukohteenLiitteetTable = new Table();
             hakukohteenLiitteetTable.setWidth(100, UNITS_PERCENTAGE);
             getLayout().setMargin(true);
             getLayout().addComponent(hakukohteenLiitteetTable);
-            hakukohteenLiitteetTable.addGeneratedColumn("liitteenSanallinenKuvaus",new Table.ColumnGenerator() {
+            hakukohteenLiitteetTable.addGeneratedColumn("liitteenSanallinenKuvaus", new Table.ColumnGenerator() {
                 @Override
                 public Object generateCell(Table table, Object o, Object o2) {
                     if (table != null) {
@@ -95,103 +81,61 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
                         Label label = new Label(item.getItemProperty("liitteenSanallinenKuvaus"));
                         label.setContentMode(Label.CONTENT_XHTML);
                         return label;
-                    }  else {
+                    } else {
                         return null;
                     }
                 }
             });
         }
 
-           if (hakukohteenLiitteetTable != null) {
-               hakukohteenLiitteetTable.setContainerDataSource(createTableContainer(presenter.loadHakukohdeLiitteet()));
+        if (hakukohteenLiitteetTable != null) {
+            List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet = presenter.loadHakukohdeLiitteet();            
+            hakukohteenLiitteetTable.setContainerDataSource(createTableContainer(loadHakukohdeLiitteet));
+            hakukohteenLiitteetTable.setVisibleColumns(new String[]{"liitteenTyyppi", "liitteenSanallinenKuvaus", "toimitettavaMennessa",
+                "toimitusOsoite", "muokkaaBtn", "poistaBtn"});
+            hakukohteenLiitteetTable.setColumnHeader("liitteenTyyppi", T("tableLiitteenTyyppi"));
+            hakukohteenLiitteetTable.setColumnHeader("liitteenSanallinenKuvaus", T("tableKuvaus"));
 
-
-               hakukohteenLiitteetTable.setVisibleColumns(new String[] {"liitteenTyyppi","liitteenSanallinenKuvaus","toimitettavaMennessa",
-                       "toimitusOsoite","muokkaaBtn","poistaBtn"});
-               hakukohteenLiitteetTable.setColumnHeader("liitteenTyyppi", T("tableLiitteenTyyppi"));
-               hakukohteenLiitteetTable.setColumnHeader("liitteenSanallinenKuvaus",T("tableKuvaus"));
-
-               hakukohteenLiitteetTable.setColumnHeader("toimitettavaMennessa",T("tableToimMennessa"));
-               hakukohteenLiitteetTable.setColumnHeader("toimitusOsoite",T("tableToimitusOsoite"));
-               hakukohteenLiitteetTable.setColumnHeader("muokkaaBtn","");
-               hakukohteenLiitteetTable.setColumnHeader("poistaBtn","");
-               hakukohteenLiitteetTable.setImmediate(true);
-
-
-
-
-
-               hakukohteenLiitteetTable.setSizeFull();
-               hakukohteenLiitteetTable.requestRepaint();
-           }
+            hakukohteenLiitteetTable.setColumnHeader("toimitettavaMennessa", T("tableToimMennessa"));
+            hakukohteenLiitteetTable.setColumnHeader("toimitusOsoite", T("tableToimitusOsoite"));
+            hakukohteenLiitteetTable.setColumnHeader("muokkaaBtn", "");
+            hakukohteenLiitteetTable.setColumnHeader("poistaBtn", "");
+            hakukohteenLiitteetTable.setImmediate(true);
+            hakukohteenLiitteetTable.setSizeFull();
+            hakukohteenLiitteetTable.requestRepaint();
+            hakukohteenLiitteetTable.setPageLength(loadHakukohdeLiitteet.size());
+        }
     }
 
-
-
-    private BeanContainer<String,HakukohdeLiiteRow> createTableContainer(List<HakukohdeLiiteViewModel> liites) {
-        BeanContainer<String,HakukohdeLiiteRow> liiteContainer = new BeanContainer<String, HakukohdeLiiteRow>(HakukohdeLiiteRow.class);
-        for (HakukohdeLiiteViewModel liite:liites) {
-             HakukohdeLiiteRow liiteRow = new HakukohdeLiiteRow(liite);
-             liiteContainer.addItem(liiteRow.getLiiteId(),liiteRow);
+    private BeanContainer<String, HakukohdeLiiteRow> createTableContainer(List<HakukohdeLiiteViewModel> liites) {
+        BeanContainer<String, HakukohdeLiiteRow> liiteContainer = new BeanContainer<String, HakukohdeLiiteRow>(HakukohdeLiiteRow.class);
+        for (HakukohdeLiiteViewModel liite : liites) {
+            HakukohdeLiiteRow liiteRow = new HakukohdeLiiteRow(liite);
+            liiteContainer.addItem(liiteRow.getLiiteId(), liiteRow);
         }
         return liiteContainer;
     }
 
-    public void showHakukohdeEditWindow(String id) {
+    public void showHakukohdeEditWindow(final String id) {
         if (id == null) {
-        presenter.getModel().setSelectedLiite(new HakukohdeLiiteViewModel());
+            presenter.getModel().setSelectedLiite(new HakukohdeLiiteViewModel());
         } else {
-           presenter.loadHakukohdeLiiteWithId(id);
+            presenter.loadHakukohdeLiiteWithId(id);
         }
 
-        liitteet = new HakukohteenLiitteetViewImpl(presenter,uiBuilder);
-
-
-
-        VerticalLayout mainWindowLayout = new VerticalLayout();
-        mainWindowLayout.addComponent(liitteet);
-
-        hakukohteenLiiteEditWindow = new Window();
-        //hakukohteenLiiteEditWindow.addComponent(liitteet);
-        hakukohteenLiiteEditWindow.setContent(mainWindowLayout);
-        getWindow().addWindow(hakukohteenLiiteEditWindow);
-        mainWindowLayout.setSizeUndefined();
-        liitteet.setImmediate(true);
-        liitteet.setWidth("1000px");
-
-
-        hakukohteenLiiteEditWindow.setModal(true);
-        hakukohteenLiiteEditWindow.center();
+        liitteetDialog = new HakukohdeLiiteetDialog(presenter, uiBuilder);
+        liitteetDialog.windowOpen();
 
     }
 
     public void closeEditWindow() {
-          if (hakukohteenLiiteEditWindow != null) {
-              getWindow().removeWindow(hakukohteenLiiteEditWindow);
-              hakukohteenLiiteEditWindow = null;
-          }
+        if (liitteetDialog != null) {
+            liitteetDialog.windowClose();
+        }
     }
-
-    private void createButtons() {
-        addNavigationButton("", new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                presenter.getModel().setSelectedLiite(null);
-                presenter.showMainDefaultView();
-                presenter.getHakukohdeListView().reload();
-            }
-        }, StyleEnum.STYLE_BUTTON_BACK);
-
-        addNavigationButton(T("tallennaValmiina"), new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                //presenter.commitHakukohdeForm("VALMIS");
-
-            }
-        });
-
+    
+     public void showWindow() {
+        
+      
     }
-
-
-
 }

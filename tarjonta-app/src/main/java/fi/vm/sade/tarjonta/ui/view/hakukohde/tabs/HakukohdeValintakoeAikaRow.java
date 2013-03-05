@@ -15,7 +15,10 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+
 import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -29,38 +32,28 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
- * Created by: Tuomas Katva
- * Date: 24.1.2013
+ * Created by: Tuomas Katva Date: 24.1.2013
  */
-
 @Configurable(preConstruction = true)
-public class HakukohdeValintakoeAikaRow {
+public class HakukohdeValintakoeAikaRow extends HorizontalLayout{
 
+    private static final String SIJAINTI_FORMAT = "%s<br/>%s %s";
     private final String DATE_FORMAT = "dd.MM.yyyy HH:mm";
-
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
-
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
-
     private transient I18NHelper i18n = new I18NHelper(this);
-
-    private String sijainti;
-
+    private Label sijainti;
     private String ajankohta;
-
     private String lisatietoja;
-
     private Button poistaBtn;
-
     private Button muokkaaBtn;
-
     private ValintakoeAikaViewModel rowValintakoeAika;
-
     private HakukohdeValintakoeViewImpl parent;
 
     public  HakukohdeValintakoeAikaRow(ValintakoeAikaViewModel aika) {
+        setHeight("80px");
         rowValintakoeAika = aika;
         resolveFields();
         poistaBtn = UiUtil.buttonLink(null, i18n.getMessage("poistaBtn"), new Button.ClickListener() {
@@ -72,8 +65,8 @@ public class HakukohdeValintakoeAikaRow {
                   }
             }
         });
-
-        setMuokkaaBtn(UiUtil.buttonLink(null,i18n.getMessage("muokkaaBtn") , new Button.ClickListener() {
+  
+        muokkaaBtn = UiUtil.buttonLink(null,i18n.getMessage("muokkaaBtn") , new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
 
@@ -81,14 +74,14 @@ public class HakukohdeValintakoeAikaRow {
                 parent.setEditableValintakoeAika(rowValintakoeAika);
 
             }
-        }));
+        });
     }
 
     private void resolveFields() {
         if (rowValintakoeAika != null) {
             if (rowValintakoeAika.getPostinumero() != null) {
-            List<KoodiType> postinumeroKoodis = tarjontaUIHelper.gethKoodis(rowValintakoeAika.getPostinumero());
-            sijainti = rowValintakoeAika.getOsoiteRivi() + ", " + postinumeroKoodis.get(0).getKoodiArvo() + ", " + rowValintakoeAika.getPostitoimiPaikka();
+                List<KoodiType> postinumeroKoodis = tarjontaUIHelper.gethKoodis(rowValintakoeAika.getPostinumero());
+                sijainti = new Label(String.format(SIJAINTI_FORMAT, new Object[]{rowValintakoeAika.getOsoiteRivi(), postinumeroKoodis.get(0).getKoodiArvo(), rowValintakoeAika.getPostitoimiPaikka()}), Label.CONTENT_XHTML);
             }
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
             ajankohta = simpleDateFormat.format(rowValintakoeAika.getAlkamisAika()) + " - " + simpleDateFormat.format(rowValintakoeAika.getPaattymisAika());
@@ -102,11 +95,11 @@ public class HakukohdeValintakoeAikaRow {
         parent = param;
     }
 
-    public String getSijainti() {
+    public Label getSijainti() {
         return sijainti;
     }
 
-    public void setSijainti(String sijainti) {
+    public void setSijainti(Label sijainti) {
         this.sijainti = sijainti;
     }
 
