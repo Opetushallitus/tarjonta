@@ -133,7 +133,6 @@ public class TarjontaPublicServiceTest {
 
         //1. hakukohde valintakoe
         Valintakoe valintakoe = fixtures.createValintakoe();
-        valintakoe.setHakukohde(hakukohde);
         hakukohde.addValintakoe(valintakoe);
         hakukohdeDAO.update(hakukohde);
 

@@ -101,9 +101,6 @@ public class HakukohdeDAOImplTest {
         haku.addHakukohde(kohde2);
         haku.addHakukohde(kohde3);
 
-        //koe4 <- hakukohde2
-        koe4.setHakukohde(kohde2);
-
         /* 
          * PERSIST ALL OBJECTS 
          */
@@ -115,11 +112,6 @@ public class HakukohdeDAOImplTest {
 
         //hakukohde2 <- koe4
         kohde2.addValintakoe(koe4);
-
-        //koe(1,2,3) <- hakukohde1
-        koe1.setHakukohde(kohde1);
-        koe2.setHakukohde(kohde1);
-        koe3.setHakukohde(kohde1);
 
         persist(kohde1);
         persist(kohde2);

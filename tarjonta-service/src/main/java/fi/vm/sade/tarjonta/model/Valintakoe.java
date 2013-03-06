@@ -39,9 +39,7 @@ public class Valintakoe extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "kuvaus_monikielinenteksti_id")
     private MonikielinenTeksti kuvaus;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hakukohde_id")
-    private Hakukohde hakukohde;
+
     /**
      * Valintakokeen tyyppi. Koodisto uri.
      */
@@ -132,20 +130,6 @@ public class Valintakoe extends BaseEntity {
         int result = super.hashCode();
         result = 31 * result + (getId() != null ? getId().hashCode() : 0);
         return result;
-    }
-
-    /**
-     * @return the hakukohde
-     */
-    public Hakukohde getHakukohde() {
-        return hakukohde;
-    }
-
-    /**
-     * @param hakukohde the hakukohde to set
-     */
-    public void setHakukohde(Hakukohde hakukohde) {
-        this.hakukohde = hakukohde;
     }
 
     /**

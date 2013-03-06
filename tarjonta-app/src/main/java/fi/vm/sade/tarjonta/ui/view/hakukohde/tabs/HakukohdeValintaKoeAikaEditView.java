@@ -81,7 +81,7 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
         mainLayout.addComponent(buildValintakoeAikaLayout());
         
         lisatietoja = UiUtil.textField(null);
-        lisatietoja.setWidth("485px");
+        lisatietoja.setWidth("482px");
         lisatietoja.setInputPrompt(T("HakukohdeValintakoeViewImpl.lisatietojaValintakokeesta"));
         mainLayout.addComponent(lisatietoja);
 

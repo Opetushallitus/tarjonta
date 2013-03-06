@@ -112,11 +112,14 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         valintaKoeAikaEditView.addClickListenerToLisaaButton(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
+                errorView.resetErrors();
                 valintaKoeAikaForm.commit();
                 if (valintaKoeAikaForm.isValid()) {
                     ValintakoeAikaViewModel valintakoeAika = presenter.getSelectedAikaView();
-                    if (valintakoeAika != null && valintakoeAika.getAlkamisAika().before(valintakoeAika.getPaattymisAika())) {
-                        errorView.resetErrors();
+                    if (valintakoeAika != null
+                            && valintakoeAika.getAlkamisAika() != null
+                            && valintakoeAika.getPaattymisAika() != null
+                            && valintakoeAika.getAlkamisAika().before(valintakoeAika.getPaattymisAika())) {
                         presenter.getModel().getSelectedValintaKoe().getValintakoeAjat().add(valintakoeAika);
                         presenter.getModel().setSelectedValintakoeAika(new ValintakoeAikaViewModel());
                         createNewModelToValintakoeAika();

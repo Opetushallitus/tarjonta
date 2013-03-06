@@ -87,7 +87,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QValintakoe qValintakoe = QValintakoe.valintakoe;
         return from(qHakukohde, qValintakoe)
-                .where(qHakukohde.oid.eq(oid).and(qValintakoe.hakukohde.id.eq(qHakukohde.id)))
+                .where(qHakukohde.oid.eq(oid).and(qValintakoe.hakukohdeId.eq(qHakukohde.id)))
                 .list(qValintakoe);
     }
 
