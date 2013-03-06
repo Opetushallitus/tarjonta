@@ -15,36 +15,12 @@ package fi.vm.sade.tarjonta.ui.view.common;/*
  * European Union Public Licence for more details.
  */
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.VerticalLayout;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author: Tuomas Katva
- * Date: 5.3.2013
+ * Date: 6.3.2013
  */
-public class SelectableItemContainer extends VerticalLayout {
+public interface SelectableItemListener<T> {
 
-      private GridLayout grid;
-
-
-      public SelectableItemContainer(String width,String heigth) {
-          grid = new GridLayout(1,1);
-          grid.setWidth(width);
-          grid.setHeight(heigth);
-          addComponent(grid);
-          setSizeFull();
-      }
-
-      public void addItem(Component item) {
-           grid.addComponent(item);
-      }
-
-    public void removeComponentFromGrid(Component component) {
-        this.removeComponent(component);
-    }
+    public void itemSelected(T item);
 
 }

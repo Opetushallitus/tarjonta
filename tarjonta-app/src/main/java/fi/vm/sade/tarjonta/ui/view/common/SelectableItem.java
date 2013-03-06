@@ -20,7 +20,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.apache.commons.beanutils.BeanUtils;
-
+import fi.vm.sade.tarjonta.ui.view.common.SelectableItemListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ public class SelectableItem<T> extends HorizontalLayout {
      private T item;
 
 
-     private List<Button.ClickListener> listeners;
+     private List<SelectableItemListener> listeners;
 
     public SelectableItem(T selectableItem, String captionProperty) {
          item = selectableItem;
@@ -45,8 +45,8 @@ public class SelectableItem<T> extends HorizontalLayout {
              @Override
              public void buttonClick(Button.ClickEvent clickEvent) {
                  if (listeners != null) {
-                  for (Button.ClickListener listener : listeners) {
-                      listener.buttonClick(clickEvent);
+                  for (SelectableItemListener listener : listeners) {
+                      listener.itemSelected(SelectableItem.this);
                   }
                  }
              }
@@ -75,9 +75,9 @@ public class SelectableItem<T> extends HorizontalLayout {
 
     }
 
-    public void addListener(Button.ClickListener listener) {
+    public void addListener(SelectableItemListener listener) {
         if(listeners == null) {
-            listeners = new ArrayList<Button.ClickListener>();
+            listeners = new ArrayList<SelectableItemListener>();
         }
         listeners.add(listener);
     }

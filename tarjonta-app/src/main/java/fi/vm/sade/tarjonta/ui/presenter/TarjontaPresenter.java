@@ -497,6 +497,10 @@ public class TarjontaPresenter implements CommonPresenter {
         caption += ", " + curKoulutus.getTila().value();
         return caption;
     }
+
+    public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustietoType> orgs) {
+
+    }
     
     private String getKoulutusNimi(KoulutusKoosteTyyppi curKoulutus) {
         String nimi = getKoodiNimi(curKoulutus.getKoulutuskoodi());

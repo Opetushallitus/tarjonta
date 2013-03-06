@@ -19,6 +19,7 @@ import com.vaadin.data.Property;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.OphTokenField;
+import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
@@ -26,6 +27,8 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.SelectableItem;
+import fi.vm.sade.tarjonta.ui.view.common.SelectableItemContainer;
+import fi.vm.sade.tarjonta.ui.view.common.SelectableItemListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -47,7 +50,8 @@ public class KoulutusKopiointiDialog extends Window {
     private transient I18NHelper _i18n;
     private OptionGroup optionGroup;
     private TreeTable organisaatioChildTree;
-    private VerticalLayout vlRight;
+    private SelectableItemContainer vlRight;
+    protected ErrorMessage errorView;
     private HashMap<String,OrganisaatioPerustietoType> selectedOrgs = new HashMap<String,OrganisaatioPerustietoType>();
     private static final String CHILD_TREE_PROPERTY = "childOrganisaatioButton";
 
@@ -65,6 +69,7 @@ public class KoulutusKopiointiDialog extends Window {
 
     private VerticalLayout buildMainLayout() {
        VerticalLayout mainLayout = new VerticalLayout();
+
         mainLayout.setSizeFull();
        mainLayout.addComponent(buildTopLayout());
        mainLayout.addComponent(buildBottomLayout());
@@ -72,9 +77,16 @@ public class KoulutusKopiointiDialog extends Window {
        return mainLayout;
     }
 
+    public void addErrorMessage(String message) {
+        if (errorView != null) {
+            errorView.addError(message);
+        }
+    }
+
     private VerticalLayout buildTopLayout() {
         VerticalLayout topLayout = new VerticalLayout();
-
+        errorView = new ErrorMessage();
+        topLayout.addComponent(errorView);
         VerticalLayout labelLayout = new VerticalLayout();
         Label ohjeTekstiLbl = new Label(_i18n.getMessage("dialog.ohjeteksti"));
         labelLayout.addComponent(ohjeTekstiLbl);
@@ -110,26 +122,88 @@ public class KoulutusKopiointiDialog extends Window {
 
 
        VerticalLayout vlLeft = new VerticalLayout();
-        vlLeft.setWidth("50%");
+        vlLeft.setWidth("100%");
         vlLeft.setHeight("100%");
         vlLeft.addComponent(buildOrganisaatioTree());
 
-        vlRight = new VerticalLayout();
+       GridLayout gridRight = new GridLayout(1,2);
+       /* vlParentRight.setWidth("100%");
+        vlParentRight.setHeight("100%");*/
+        Panel vlRightPanel = new Panel();
+    /*    vlRightPanel.setWidth("100%");
+        vlRightPanel.setHeight("100%");*/
+        vlRight = new SelectableItemContainer("100%","100%");
         vlRight.setMargin(false);
-        vlRight.setWidth("50%");
-        vlRight.setHeight("100%");
+        vlRightPanel.addComponent(vlRight);
+        Button peruutaBtn = UiUtil.button(null,_i18n.getMessage("peruutaBtn"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+               getParent().removeWindow(KoulutusKopiointiDialog.this);
+            }
+        });
+
+        Button jatkaBtn = UiUtil.button(null,_i18n.getMessage("jatkaBtn"), new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                errorView.resetErrors();
+                if (selectedOrgs.values() != null && selectedOrgs.values().size() > 0) {
+                presenter.copyKoulutusToOrganizations(selectedOrgs.values());
+                getParent().removeWindow(KoulutusKopiointiDialog.this);
+                } else {
+                    addErrorMessage(_i18n.getMessage("valitseOrganisaatioMessage"));
+                }
+            }
+        });
+
+        HorizontalLayout buttonHl = new HorizontalLayout();
+
+        buttonHl.setMargin(false,true,false,true);
+        buttonHl.setWidth("100%");
+        buttonHl.addComponent(peruutaBtn);
+        buttonHl.addComponent(jatkaBtn);
+        buttonHl.setComponentAlignment(peruutaBtn,Alignment.BOTTOM_LEFT);
+        buttonHl.setComponentAlignment(jatkaBtn,Alignment.BOTTOM_RIGHT);
+
+        gridRight.addComponent(vlRightPanel);
+        gridRight.addComponent(buttonHl);
+
+        gridRight.setRowExpandRatio(0,10);
+        gridRight.setRowExpandRatio(1,0.1f);
+
+
+
+
 
         bottomLayout.addComponent(vlLeft);
-        bottomLayout.addComponent(vlRight);
+        bottomLayout.addComponent(gridRight);
+        gridRight.setSizeFull();
+        vlRightPanel.setSizeFull();
+        vlRight.setSizeFull();
+
+
+        bottomLayout.setSizeFull();
         return bottomLayout;
     }
 
     public void addOrganisaatioToRight(OrganisaatioPerustietoType org) {
+        if (!selectedOrgs.containsKey(org.getOid())) {
         SelectableItem<OrganisaatioPerustietoType> link = new SelectableItem<OrganisaatioPerustietoType>(org,"nimiFi");
+        selectedOrgs.put(org.getOid(),org);
         link.setMargin(false);
+        link.addListener(new SelectableItemListener() {
+            @Override
+            public void itemSelected(Object item) {
+                if (item instanceof SelectableItem) {
+                    SelectableItem<OrganisaatioPerustietoType> link = (SelectableItem<OrganisaatioPerustietoType>)item;
+                    selectedOrgs.remove(link.getItem().getOid());
+                    vlRight.removeComponentFromGrid(link);
+                }
+            }
+        });
         link.setSizeFull();
         vlRight.addComponent(link);
-
+        vlRight.requestRepaintAll();
+        }
     }
 
     private TreeTable buildOrganisaatioTree() {
