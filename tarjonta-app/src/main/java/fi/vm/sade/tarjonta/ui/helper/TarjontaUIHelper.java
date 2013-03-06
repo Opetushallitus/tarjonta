@@ -265,7 +265,13 @@ public class TarjontaUIHelper {
         List<KoodiType> koulutusasteKoodit = new ArrayList<KoodiType>();
         for (String curUri : olTyyppiUris) {
             LOG.debug("olTyyppiUri: {}", curUri);
-            SearchKoodisCriteriaType criteria = KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(curUri);
+            SearchKoodisCriteriaType criteria = null;
+            if (curUri.split(TarjontaUIHelper.KOODI_URI_AND_VERSION_SEPARATOR).length > 1) {
+                KoodiUriAndVersioType uriAndVersio = getKoodiUriAndVersioTypeByKoodiUriAndVersion(curUri);
+                criteria = KoodiServiceSearchCriteriaBuilder.koodiByUriAndVersion(uriAndVersio.getKoodiUri(), uriAndVersio.getVersio());
+            } else {
+                criteria = KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(curUri);
+            }
             List<KoodiType> olTyyppiKoodit = _koodiService.searchKoodis(criteria);
             LOG.debug("olTyyppiKoodit: {}", olTyyppiKoodit.size());
             if (olTyyppiKoodit != null && !olTyyppiKoodit.isEmpty()) {

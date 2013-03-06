@@ -430,10 +430,7 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     public void toggleCreateKoulutusB(boolean b) {
-        if (presenter.getPermission().userCanReadAndUpdate() && !presenter.availableKoulutus()) {
-            showNoKoulutusDialog();
-            luoKoulutusB.setEnabled(false);
-        } else if (presenter.getPermission().userCanReadAndUpdate()) {
+        if (presenter.getPermission().userCanReadAndUpdate()) {
             luoKoulutusB.setEnabled(b);
         }
     }

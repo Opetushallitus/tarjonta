@@ -166,7 +166,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         organisaatioTyyppi.setInputPrompt(T("organisaatioTyyppi.prompt"));
 
         // TODO missä tämä koodisto on? Eikös orgnanisaation puolella se ole olemassa?
-        oppilaitosTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI, null, null, T("oppilaitostyyppi.prompt"), false);
+        oppilaitosTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI, null, null, T("oppilaitostyyppi.prompt"), true);
         oppilaitosTyyppi.getField().setNullSelectionAllowed(true);
         oppilaitosTyyppi.setWidth("210px");
         oppilaitosTyyppi.setCaptionFormatter(UiBuilder.DEFAULT_URI_CAPTION_FORMATTER);
