@@ -37,7 +37,8 @@ public class KoodistoCodeValueCollectionEnricher extends KoodistoCodeValueEnrich
     private KoodiValue koodistoKoodi;
 
     @Override
-    public int startElement(String localName, Attributes attributes) throws SAXException {
+    public int startElement(String uri, String localName, Attributes attributes) throws SAXException {
+   
         if (TAG_CODE.equals(localName)) {
             int startElementHandler = startElementHandler(TAG_CODE, localName, attributes);
             koodistoKoodi = getKoodistoKoodi(localName);
@@ -45,7 +46,7 @@ public class KoodistoCodeValueCollectionEnricher extends KoodistoCodeValueEnrich
             //add a 'value'-attribute to tag
             if (koodistoKoodi != null && koodistoKoodi.getValue() != null) {
                 AttributesImpl copy = SaxUtils.copyAttributes(attributes);
-                SaxUtils.addAttribute(copy, TAG_ATTRIBUTE_VALUE, koodistoKoodi.getValue());
+                SaxUtils.addAttribute(copy, uri,  TAG_ATTRIBUTE_VALUE, koodistoKoodi.getValue());
                 setAttributes(copy);
             }
             return startElementHandler;
@@ -59,9 +60,9 @@ public class KoodistoCodeValueCollectionEnricher extends KoodistoCodeValueEnrich
     }
 
     @Override
-    public int endElement(String localName) throws SAXException {
+    public int endElement(String uri, String localName) throws SAXException {
         if (TAG_CODE.equals(localName)) {
-            this.maybeWriteLabels(localName, koodistoKoodi);
+            this.maybeWriteLabels(uri, localName, koodistoKoodi);
         } else if (mappedElementName.equals(localName)) {
             reset();
             return WRITE_AND_EXIT;

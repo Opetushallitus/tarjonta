@@ -6,7 +6,7 @@
  * of the EUPL (the "Licence");
  *
  * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ * You may obtain a copy of the Licence at: http://dft:www.osor.eu/dft:eupl/dft:
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.publication.enricher.ext;
 
-import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoLookupService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioKuvailevatTiedotTyyppi;
@@ -45,9 +44,17 @@ import fi.vm.sade.tarjonta.publication.enricher.PublicationNamespaceContext;
 import fi.vm.sade.tarjonta.publication.enricher.XMLStreamEnricher;
 import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoLookupService.KoodiValue;
 import fi.vm.sade.tarjonta.publication.enricher.organisaatio.KoulutustarjoajaLookupService;
-import fi.vm.sade.tarjonta.publication.types.DescriptionType;
+import fi.vm.sade.tarjonta.publication.types.ExtendedStringType;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadDataType;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunitySpecificationType;
 
 import fi.vm.sade.tarjonta.util.SystemUtils;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.util.List;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 /**
  * Test to verify that "raw" Tarjonta XML is correctly enriched.
@@ -57,12 +64,12 @@ import fi.vm.sade.tarjonta.util.SystemUtils;
 public class LearningOpportunityEnricherTest {
 
     private static final Integer CODE_VERSION = 1;
-    private static final String DOWNLOAD_DATA_PATH = "//LearningOpportunityDownloadData";
-    private static final String SPECIFICATION_PATH = DOWNLOAD_DATA_PATH + "/LearningOpportunitySpecification[1]";
-    private static final String CLASSIFICATION_PATH = SPECIFICATION_PATH + "/Classification";
-    private static final String INSTANCE_PATH = DOWNLOAD_DATA_PATH + "/LearningOpportunityInstance[1]";
-    private static final String APPLICATION_OPTION_PATH = DOWNLOAD_DATA_PATH + "/ApplicationOption[1]";
-    private static final String APPLICATION_SYSTEM_PATH = DOWNLOAD_DATA_PATH + "/ApplicationSystem[1]";
+    private static final String DOWNLOAD_DATA_PATH = "//dft:LearningOpportunityDownloadData";
+    private static final String SPECIFICATION_PATH = DOWNLOAD_DATA_PATH + "/dft:LearningOpportunitySpecification[1]";
+    private static final String CLASSIFICATION_PATH = SPECIFICATION_PATH + "/dft:Classification";
+    private static final String INSTANCE_PATH = DOWNLOAD_DATA_PATH + "/dft:LearningOpportunityInstance[1]";
+    private static final String APPLICATION_OPTION_PATH = DOWNLOAD_DATA_PATH + "/dft:ApplicationOption[1]";
+    private static final String APPLICATION_SYSTEM_PATH = DOWNLOAD_DATA_PATH + "//dft:ApplicationSystem[1]";
     private XMLStreamEnricher processor;
     private ByteArrayOutputStream out;
     private XPath xpath;
@@ -96,16 +103,16 @@ public class LearningOpportunityEnricherTest {
 
     @Test
     public void testDescriptionLanguageKoodiValue() throws Exception {
-        assertXPathEvals("DescriptionLanguage", "Lorem Lipsum", "//FinalExamination/Description[@lang='en-value']");
+        assertXPathEvals("DescriptionLanguage", "Lorem Lipsum", "//dft:FinalExamination/dft:Description/dft:Text[text()=\"Lorem Lipsum\"]");
     }
 
     @Test
     public void testEnrichCredits() throws Exception {
 
-        final String basePathUnits = SPECIFICATION_PATH + "/Credits/Units";
+        final String basePathUnits = SPECIFICATION_PATH + "/dft:Credits/dft:Units";
         assertCodeValue(basePathUnits, "laajuus", "laajuus");
 
-        final String basePathValue = SPECIFICATION_PATH + "/Credits/Value";
+        final String basePathValue = SPECIFICATION_PATH + "/dft:Credits/dft:Value";
         assertCodeValue(basePathValue, "20", "20");
 
     }
@@ -113,7 +120,7 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichQualification() throws Exception {
 
-        final String basePath = SPECIFICATION_PATH + "/Qualification";
+        final String basePath = SPECIFICATION_PATH + "/dft:Qualification";
         assertCodeValue(basePath, "tutkintonimike", "tutkintonimike");
 
     }
@@ -121,14 +128,14 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichEducationClassification() throws Exception {
 
-        final String basePath = CLASSIFICATION_PATH + "/EducationClassification";
+        final String basePath = CLASSIFICATION_PATH + "/dft:EducationClassification";
         assertCodeValue(basePath, "371101", "koulutusluokitus");
     }
 
     @Test
     public void testEnrichEducationDomain() throws Exception {
 
-        final String basePath = CLASSIFICATION_PATH + "/EducationDomain";
+        final String basePath = CLASSIFICATION_PATH + "/dft:EducationDomain";
         assertCodeValue(basePath, "uri:koulutusala", "koulutusala");
 
     }
@@ -136,7 +143,7 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichEducationDegree() throws Exception {
 
-        final String basePath = CLASSIFICATION_PATH + "/EducationDegree";
+        final String basePath = CLASSIFICATION_PATH + "/dft:EducationDegree";
         assertCodeValue(basePath, "uri:koulutusaste", "koulutusaste");
 
     }
@@ -144,7 +151,7 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichOpintoala() throws Exception {
 
-        final String basePath = CLASSIFICATION_PATH + "/StudyDomain";
+        final String basePath = CLASSIFICATION_PATH + "/dft:StudyDomain";
         assertCodeValue(basePath, "uri:opintoala", "opintoala");
 
     }
@@ -152,7 +159,7 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichEqf() throws Exception {
 
-        final String basePath = CLASSIFICATION_PATH + "/EqfClassification";
+        final String basePath = CLASSIFICATION_PATH + "/dft:EqfClassification";
         assertCodeValue(basePath, "uri:eqf", "eqf");
 
     }
@@ -160,7 +167,7 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichNqf() throws Exception {
 
-        final String basePath = CLASSIFICATION_PATH + "/NqfClassification";
+        final String basePath = CLASSIFICATION_PATH + "/dft:NqfClassification";
         assertCodeValue(basePath, "uri:nqf", "nqf");
 
     }
@@ -168,70 +175,69 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichPrerequisite() throws Exception {
 
-        final String basePath = INSTANCE_PATH + "/Prerequisite";
+        final String basePath = INSTANCE_PATH + "/dft:Prerequisite";
         assertCodeValue(basePath, "uri:pohjakoulutusvaatimus", "pohjakoulutusvaatimus");
 
     }
 
     @Test
     public void testEnrichProfessionLabels() throws Exception {
-
-        final String basePath = INSTANCE_PATH + "/ProfessionLabels/Profession";
+    
+        final String basePath = INSTANCE_PATH + "/dft:ProfessionLabels/dft:Profession";
         assertCodeValue(basePath + "[1]", "uri:ammattinimike/lahihoitaja", "ammattinimike");
         assertCodeValue(basePath + "[2]", "uri:ammattinimike/perushoitaja", "ammattinimike");
         assertCodeValue(basePath + "[3]", "uri:ammattinimike/ensihoitaja", "ammattinimike");
-
     }
 
     @Test
     public void testEnrichKeywords() throws Exception {
 
-        final String basePath = INSTANCE_PATH + "/Keywords";
-        assertCodeValue(basePath + "/Keyword[1]", "uri:asiasana/lahihoitaja", "asiasana");
-        assertCodeValue(basePath + "/Keyword[2]", "uri:asiasana/hoivaala", "asiasana");
+        final String basePath = INSTANCE_PATH + "/dft:Keywords";
+        assertCodeValue(basePath + "/dft:Keyword[1]", "uri:asiasana/lahihoitaja", "asiasana");
+        assertCodeValue(basePath + "/dft:Keyword[2]", "uri:asiasana/hoivaala", "asiasana");
 
     }
 
     @Test
     public void testEnrichLanguagesOfInstruction() throws Exception {
 
-        final String basePath = INSTANCE_PATH + "/LanguagesOfInstruction/Codes";
-        assertCodeValueCollection(basePath + "/Code[2]", "kieli-fi-value", "kieli-fi");
-        assertCodeValueCollection(basePath + "/Code[1]", "kieli-en-value", "kieli-en");
+        final String basePath = INSTANCE_PATH + "/dft:LanguagesOfInstruction/dft:Codes";
+        assertCodeValueCollection(basePath + "/dft:Code[2]", "kieli-fi-value", "kieli-fi");
+        assertCodeValueCollection(basePath + "/dft:Code[1]", "kieli-en-value", "kieli-en");
 
     }
 
     @Test
     public void testEnrichFormOfEducation() throws Exception {
 
-        final String basePath = INSTANCE_PATH + "/FormOfEducation";
-        assertCodeValueCollection(basePath + "/Code[1]", "koulutuslaji-value", "koulutuslaji");
+        final String basePath = INSTANCE_PATH + "/dft:FormOfEducation";
+        assertCodeValueCollection(basePath + "/dft:Code[1]", "koulutuslaji-value", "koulutuslaji");
 
     }
 
     @Test
     public void testEnrichFormOfTeaching() throws Exception {
 
-        final String basePath = INSTANCE_PATH + "/FormsOfTeaching";
-        assertCodeValueCollection(basePath + "/Code[1]", "opetusmuoto-value", "opetusmuoto");
+        final String basePath = INSTANCE_PATH + "/dft:FormsOfTeaching";
+        assertCodeValueCollection(basePath + "/dft:Code[1]", "opetusmuoto-value", "opetusmuoto");
 
     }
 
     @Test
     public void testEnrichDurationUnits() throws Exception {
 
-        final String basePath = INSTANCE_PATH + "/Duration";
-        assertCodeValue(basePath + "/Units", "uri:kesto/vuotta", "kesto");
+        final String basePath = INSTANCE_PATH + "/dft:Duration";
+        assertCodeValue(basePath + "/dft:Units", "uri:kesto/vuotta", "kesto");
 
-        // check that the actual duration value is still there
-        assertXPathEvals("unexpected duration value", "40", basePath + "/Value/text()");
+        //check that the actual duration value is still there
+        assertXPathEvals("unexpected duration value", "40", basePath + "/dft:Value/text()");
 
     }
 
     @Test
     public void testEnrichApplicationOptionTitle() throws Exception {
 
-        final String basePath = APPLICATION_OPTION_PATH + "/Title";
+        final String basePath = APPLICATION_OPTION_PATH + "/dft:Title";
         assertCodeValue(basePath, "uri:hakukohde/876", "hakukohde");
 
     }
@@ -239,7 +245,7 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichExaminationType() throws Exception {
 
-        final String basePath = APPLICATION_OPTION_PATH + "/SelectionCriterions/EntranceExaminations/Examination/ExaminationType";
+        final String basePath = APPLICATION_OPTION_PATH + "/dft:SelectionCriterions/dft:EntranceExaminations/dft:Examination/dft:ExaminationType";
         assertCodeValue(basePath, "uri:valintakoetyyppi/123", "valintakoe");
 
     }
@@ -247,7 +253,7 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichAttachmentType() throws Exception {
 
-        final String basePath = APPLICATION_OPTION_PATH + "/SelectionCriterions/Attachments/Attachment/Type";
+        final String basePath = APPLICATION_OPTION_PATH + "/dft:SelectionCriterions/dft:Attachments/dft:Attachment/dft:Type";
         assertCodeValue(basePath, "uri:liitetyyppi/12345", "liitetyyppi");
 
     }
@@ -255,7 +261,7 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichApplicationType() throws Exception {
 
-        final String basePath = APPLICATION_SYSTEM_PATH + "/ApplicationType";
+        final String basePath = APPLICATION_SYSTEM_PATH + "/dft:ApplicationType";
         assertCodeValue(basePath, "uri:hakutyyppi/varsinaishaku", "hakutyyppi");
 
     }
@@ -263,7 +269,7 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichApplicationMethod() throws Exception {
 
-        final String basePath = APPLICATION_SYSTEM_PATH + "/ApplicationMethod";
+        final String basePath = APPLICATION_SYSTEM_PATH + "/dft:ApplicationMethod";
         assertCodeValue(basePath, "uri:hakutapa/yhteishaku", "hakutapa");
 
     }
@@ -271,7 +277,7 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichApplicationSeason() throws Exception {
 
-        final String basePath = APPLICATION_SYSTEM_PATH + "/ApplicationSeason";
+        final String basePath = APPLICATION_SYSTEM_PATH + "/dft:ApplicationSeason";
         assertCodeValue(basePath, "uri:kausi/kevat", "kausi");
 
     }
@@ -279,7 +285,7 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichEducationStartSeason() throws Exception {
 
-        final String basePath = APPLICATION_SYSTEM_PATH + "/EducationStartSeason";
+        final String basePath = APPLICATION_SYSTEM_PATH + "/dft:EducationStartSeason";
         assertCodeValue(basePath, "uri:kausi/syksy", "kausi");
 
     }
@@ -287,7 +293,7 @@ public class LearningOpportunityEnricherTest {
     @Test
     public void testEnrichTargetGroup() throws Exception {
 
-        final String basePath = APPLICATION_SYSTEM_PATH + "/TargetGroup";
+        final String basePath = APPLICATION_SYSTEM_PATH + "/dft:TargetGroup";
         assertCodeValue(basePath, "uri:kohdejoukko/peruskoulut", "kohdejoukko");
 
     }
@@ -304,9 +310,9 @@ public class LearningOpportunityEnricherTest {
     private void assertCodeValueCollection(String baseXPath, String expectedValue, String expectedBaseLabel) throws Exception {
 
         assertXPathEvals("unexpected Code value ->" + baseXPath, expectedValue, baseXPath + "/@value");
-        assertXPathEvals("unexpected Label (fi) ->" + baseXPath, expectedBaseLabel + "-fi", baseXPath + "/Label[@lang='fi']/text()");
-        assertXPathEvals("unexpected Label (en) ->" + baseXPath, expectedBaseLabel + "-en", baseXPath + "/Label[@lang='en']/text()");
-        assertXPathEvals("unexpected Label (sv) ->" + baseXPath, expectedBaseLabel + "-sv", baseXPath + "/Label[@lang='sv']/text()");
+        assertXPathEvals("unexpected Label (fi) ->" + baseXPath, expectedBaseLabel + "-fi", baseXPath + "/dft:Label[@lang='fi']/text()");
+        assertXPathEvals("unexpected Label (en) ->" + baseXPath, expectedBaseLabel + "-en", baseXPath + "/dft:Label[@lang='en']/text()");
+        assertXPathEvals("unexpected Label (sv) ->" + baseXPath, expectedBaseLabel + "-sv", baseXPath + "/dft:Label[@lang='sv']/text()");
 
     }
 
@@ -321,10 +327,10 @@ public class LearningOpportunityEnricherTest {
      */
     private void assertCodeValue(String baseXPath, String expectedValue, String expectedBaseLabel) throws Exception {
 
-        assertXPathEvals("unexpected Code value -> " + baseXPath, expectedBaseLabel + "-value", baseXPath + "/Code/text()");
-        assertXPathEvals("unexpected Label (fi) -> " + baseXPath, expectedBaseLabel + "-fi", baseXPath + "/Label[@lang='fi']/text()");
-        assertXPathEvals("unexpected Label (en) -> " + baseXPath, expectedBaseLabel + "-en", baseXPath + "/Label[@lang='en']/text()");
-        assertXPathEvals("unexpected Label (sv) -> " + baseXPath, expectedBaseLabel + "-sv", baseXPath + "/Label[@lang='sv']/text()");
+        assertXPathEvals("unexpected Code value -> " + baseXPath, expectedBaseLabel + "-value", baseXPath + "/dft:Code/text()");
+        assertXPathEvals("unexpected Label (fi) -> " + baseXPath, expectedBaseLabel + "-fi", baseXPath + "/dft:Label[@lang='fi']/text()");
+        assertXPathEvals("unexpected Label (en) -> " + baseXPath, expectedBaseLabel + "-en", baseXPath + "/dft:Label[@lang='en']/text()");
+        assertXPathEvals("unexpected Label (sv) -> " + baseXPath, expectedBaseLabel + "-sv", baseXPath + "/dft:Label[@lang='sv']/text()");
 
     }
 
@@ -422,7 +428,6 @@ public class LearningOpportunityEnricherTest {
         when(service.lookupKoodi("uri:description en", CODE_VERSION)).thenReturn(createSimpleKoodiValue("en"));
         when(service.lookupKoodi("uri:fi", CODE_VERSION)).thenReturn(createSimpleKoodiValue("fi"));
 
-
         return service;
 
     }
@@ -447,7 +452,7 @@ public class LearningOpportunityEnricherTest {
         OrganisaatioKuvailevatTiedotTyyppi kuvailevatTiedot = tarjoaja.getKuvailevatTiedot();
 //        kuvailevatTiedot.getVapaatKuvaukset().add(createMetatieto(MetatietoAvainTyyppi.ESTEETTOMYYS_PALVELUT));
 //        kuvailevatTiedot.getVapaatKuvaukset().add(createMetatieto(MetatietoAvainTyyppi.KUSTANNUKSET));
-//        kuvailevatTiedot.getVapaatKuvaukset().add(createMetatieto(MetatietoAvainTyyppi.OPPIMISYMPARISTOT));
+//       kuvailevatTiedot.getVapaatKuvaukset().add(createMetatieto(MetatietoAvainTyyppi.OPPIMISYMPARISTOT));
 //        kuvailevatTiedot.getVapaatKuvaukset().add(createMetatieto(MetatietoAvainTyyppi.RUOKAILU));
 //        kuvailevatTiedot.getVapaatKuvaukset().add(createMetatieto(MetatietoAvainTyyppi.TERVEYDENHUOLTO));
 
@@ -487,5 +492,20 @@ public class LearningOpportunityEnricherTest {
 
     private KoodiValue createSimpleKoodiValue(String baseName) {
         return new SimpleKoodiValue(baseName + "-uri", baseName + "-value", baseName + "-fi", baseName + "-en", baseName + "-sv");
+    }
+
+    @Test
+    public void RichXmlTest() throws FileNotFoundException, JAXBException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(out.toByteArray());
+
+        Unmarshaller unmashaller = JAXBContext.newInstance(LearningOpportunityDownloadDataType.class.getPackage().getName()).createUnmarshaller();
+    
+        LearningOpportunityDownloadDataType learningOpportunityDownloadDataType = (LearningOpportunityDownloadDataType) unmashaller.unmarshal(bais);
+        LearningOpportunitySpecificationType get = learningOpportunityDownloadDataType.getLearningOpportunitySpecification().get(0);
+        assertEquals("S1508", get.getId());
+        List<ExtendedStringType> label = get.getQualification().getLabel();
+
+        assertEquals(3, label.size());
+        
     }
 }

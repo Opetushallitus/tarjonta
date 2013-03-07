@@ -87,7 +87,7 @@ public abstract class ElementEnricher {
      * continue processing
      * @throws SAXException
      */
-    public int startElement(String localName, Attributes attributes) throws SAXException {
+    public int startElement(String uri, String localName, Attributes attributes) throws SAXException {
         return WRITE_AND_CONTINUE;
     }
 
@@ -103,7 +103,7 @@ public abstract class ElementEnricher {
      * @return
      * @throws SAXException
      */
-    public int endElement(String localName) throws SAXException {
+    public int endElement(String uri, String localName) throws SAXException {
 
         if (mappedElementName.equals(localName)) {
             return WRITE_AND_EXIT;

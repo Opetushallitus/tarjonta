@@ -28,12 +28,12 @@ import org.xml.sax.SAXException;
 public class KoodistoCodeLanguageEnricher extends KoodistoCodeValueEnricher {
 
     @Override
-    public int startElement(String localName, Attributes attributes) {
+    public int startElement(String uri, String localName, Attributes attributes) {
         return WRITE_AND_CONTINUE;
     }
 
     @Override
-    public int endElement(String localName) throws SAXException {
+    public int endElement(String uri, String localName) throws SAXException {
         return WRITE_AND_EXIT;
     }
 }

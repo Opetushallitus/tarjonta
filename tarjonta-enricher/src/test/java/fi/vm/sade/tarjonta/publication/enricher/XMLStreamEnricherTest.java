@@ -146,7 +146,7 @@ public class XMLStreamEnricherTest {
         private Attributes attr;
 
         @Override
-        public int endElement(String localName) throws SAXException {
+        public int endElement(String uri, String localName) throws SAXException {
             numEndCalled++;
             if (mappedElementName.equals(localName)) {
                 return WRITE_AND_EXIT;
@@ -166,7 +166,7 @@ public class XMLStreamEnricherTest {
         }
 
         @Override
-        public int startElement(String localName, Attributes attributes) throws SAXException {
+        public int startElement(String uri, String localName, Attributes attributes) throws SAXException {
             numStartCalled++;
             return WRITE_AND_CONTINUE;
         }
@@ -199,21 +199,21 @@ public class XMLStreamEnricherTest {
         }
 
         @Override
-        public int startElement(String localName, Attributes attributes) throws SAXException {
+        public int startElement(String uri, String localName, Attributes attributes) throws SAXException {
             // keep calling us
             return WRITE_AND_CONTINUE;
         }
 
         @Override
-        public int endElement(String localName) throws SAXException {
+        public int endElement(String uri, String localName) throws SAXException {
 
             if ("EducationClassification".equals(localName)) {
 
                 AttributesImpl attributes = new AttributesImpl();
                 attributes.addAttribute("", "xml:lang", null, null, lang);
-                parent.writeStartElement("Label", attributes);
+                parent.writeStartElement(uri,"Label", attributes);
                 parent.writeCharacters(label);
-                parent.writeEndElement("Label");
+                parent.writeEndElement(uri,"Label");
 
                 // we're done
                 return WRITE_AND_EXIT;

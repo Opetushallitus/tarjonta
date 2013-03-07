@@ -2,7 +2,11 @@
 <!--
     Namespace declarations removed on purpose - caused problems with XPath checks in JUnit tests.
 -->
-<LearningOpportunityDownloadData>
+<LearningOpportunityDownloadData 
+    xmlns="http://publication.tarjonta.sade.vm.fi/types" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://publication.tarjonta.sade.vm.fi/types learningServiceCommon.xsd">
+    >
 
     <!-- ========================================================================================= -->
     <!-- Koulutusmoduuli, ensihoidon ko, 1508                                                      -->
@@ -39,7 +43,10 @@
         </Qualification>
 
         <!-- tutkinnon nimi -->
-        <DegreeTitle>sosiaali- ja terveysalan pt</DegreeTitle>
+        <DegreeTitle>
+            <Code scheme="Koodisto" uri="uri: sosiaali- ja terveysalan pt">sosiaali- ja terveysalan pt</Code>
+            <Label lang="fi">sosiaali- ja terveysalan pt</Label> 
+        </DegreeTitle>
 
         <Classification>
 
@@ -165,7 +172,7 @@
 
         <LanguagesOfInstruction scheme="Koodisto">
             <Codes>
-                <Code version="1" uri="uri:kieli/en"/>
+                <Code  version="1" uri="uri:kieli/en"/>
                 <Code version="1" uri="uri:kieli/fi" />
             </Codes>
         </LanguagesOfInstruction>
@@ -213,9 +220,9 @@
 
         <!-- sanallinen kuvaus koulutuksen loppukokeista -->
         <FinalExamination>
-
-            <Description lang="uri:description en#1">Lorem Lipsum</Description>
-
+            <Description>
+                <Text lang="en-value">Lorem Lipsum</Text>
+            </Description>
         </FinalExamination>
 
         <!-- tieto opiskelun maksullisuudesta -->
@@ -235,8 +242,10 @@
         <Scholarship>
 
             <!-- yleinen kuvaus stipendimahdollisuuksista -->
-            <Description lang="uri:fi#1">
-                Lorem Lipsum
+            <Description >
+                <Text lang="uri:fi#1">
+                    Lorem Lipsum
+                </Text>
             </Description>
 
         </Scholarship>
@@ -268,32 +277,75 @@
         <OrganizationRef>
             <OidRef>1.2.3.4.5</OidRef>
         </OrganizationRef>
-
+        
         <InstitutionInfo>
-            <Name>Helsingin sosiaali- ja terveysalan oppilaitos, Laakson koulutusyksikkö</Name>
-            <AcademicCalendar>Lorem Lipsum</AcademicCalendar>
-            <AcademicAuthorities>Lorem Lipsum</AcademicAuthorities>
-            <AdmissionProcedures>Lorem Lipsum</AdmissionProcedures>
-            <GeneralDescription>Lorem Lipsum</GeneralDescription>
-            <MainUniversityRequlations>Lorem Lipsum</MainUniversityRequlations>
+            <Name lang="fi">Helsingin sosiaali- ja terveysalan oppilaitos, Laakson koulutusyksikkö</Name>
+            <EctsCoordinator></EctsCoordinator>
+            <Description type="AcademicCalendar">
+                <Text> Lorem Lipsum</Text>
+            </Description>
+            <Description type="AcademicAuthorities">
+                <Text> Lorem Lipsum</Text>
+            </Description>
+            <Description type="AdmissionProcedures">
+                <Text> Lorem Lipsum</Text>
+            </Description>
+            <Description type="General">
+                <Text> Lorem Lipsum</Text>
+            </Description>
+            <Description type="MainUniversityRequlations">
+                <Text> Lorem Lipsum</Text>
+            </Description>
+           
         </InstitutionInfo>
 
         <GeneralInformation>
-            <CostOfLiving>Lorem Lipsum</CostOfLiving>
-            <Meals>Lorem Lipsum</Meals>
-            <MedicalFacilities>Lorem Lipsum</MedicalFacilities>
-            <FacilitiesForStudentsWithSpecialNeeds>Lorem Lipsum</FacilitiesForStudentsWithSpecialNeeds>
-            <Insurance>Lorem Lipsum</Insurance>
-            <FinancialSupport>Lorem Lipsum</FinancialSupport>
-            <StudentAffairsOffice>Lorem Lipsum</StudentAffairsOffice>
-            <StudyFacilities>Lorem Lipsum</StudyFacilities>
-            <InternationalProgrammes>Lorem Lipsum</InternationalProgrammes>
-            <MobileStudents>Lorem Lipsum</MobileStudents>
-            <LanguageCourses>Lorem Lipsum</LanguageCourses>
-            <Internships>Lorem Lipsum</Internships>
-            <SportsFacilities>Lorem Lipsum</SportsFacilities>
-            <ExtraMuralAndLeisureFacilities>Lorem Lipsum</ExtraMuralAndLeisureFacilities>
-            <StudentAssociations>Lorem Lipsum</StudentAssociations>
+            <AdmissionOfficeName></AdmissionOfficeName>
+            <Address >
+                <AddressLine>address</AddressLine>
+                
+                <PostalCode>12345</PostalCode>
+                <City>city</City>
+                <Country>country</Country>
+            </Address>
+            <Description type="CostOfLiving">
+                <Text>Lorem Lipsum</Text>
+            </Description>
+            <Description type="MedicalFacilities"> 
+                <Text>Lorem Lipsum</Text>
+            </Description>
+            <Description type="Insurance"> 
+                <Text>Lorem Lipsum</Text>
+            </Description>
+            <Description type="FinancialSupport"> 
+                <Text>Lorem Lipsum</Text>
+            </Description>
+            <Description type="StudentAffairsOffice"> 
+                <Text>Lorem Lipsum</Text>
+            </Description>
+            <Description type="InternationalProgrammes"> 
+                <Text>Lorem Lipsum</Text>
+            </Description>
+            <Description type="MobileStudents"> 
+                <Text>Lorem Lipsum</Text>
+            </Description>
+            <Description type="LanguageCourses"> 
+                <Text>Lorem Lipsum</Text>
+            </Description>
+            <Description type="Internships"> 
+                <Text>Lorem Lipsum</Text>
+            </Description>
+            <Description type="SportsFacilities"> 
+                <Text>Lorem Lipsum</Text>
+            </Description>
+            <Description type="ExtraMuralAndLeisureFacilities"> 
+                <Text>Lorem Lipsum</Text>
+            </Description>
+            <Description type="StudentAssociations"> 
+                <Text>Lorem Lipsum</Text>
+            </Description>
+                    
+
         </GeneralInformation>
 
     </LearningOpportunityProvider>
@@ -302,14 +354,12 @@
     <!-- Haku:                                                                                     -->
     <!-- ========================================================================================= -->
 
-    <ApplicationSystem>
+    <ApplicationSystem id="applicationsystemoid">
 
         <!-- Haun tunniste: OID -->
         <Identifier>1.5.7.3.77.3322.3</Identifier>
 
-        <Name>
-            <Text lang="fi">Yhteishaku</Text>
-        </Name>
+        <Name lang="fi">Yhteishaku</Name>
 
         <ApplicationType>
             <Code scheme="Koodisto" version="1" uri="uri:hakutyyppi/varsinaishaku"></Code>
@@ -365,8 +415,10 @@
         <EligibilityRequirements>
 
             <!-- vapaasti kuvattu vaatimus suomeksi -->
-            <Description lang="uri:fi#1">
-                peruskoulu/yo-pohjaisiin kohteisiin lukio
+            <Description >
+                <Text lang="uri:fi#1">
+                    peruskoulu/yo-pohjaisiin kohteisiin lukio
+                </Text>
             </Description>
 
         </EligibilityRequirements>
@@ -387,28 +439,18 @@
             <LastYearTotalApplicants>300</LastYearTotalApplicants>
 
             <!-- vapaa kuvaus -->
-            <Description lang="uri:fi#1">
-                Lorem Lipsum
-            </Description>
- 
-            <Description lang="uri: viro, eesti 6138#1"/>
-            <Description lang="uri:description en#1">
-                <p>kiinaa</p>
-            </Description>
-            <Description lang="uri: inarinsaame 6219#1">
-                <p>ads ad ad s</p>
-            </Description>
-            <Description lang="uri: englanti 5935#1"/>
-            <Description lang="uri: suomi 5936#1">
-                <p>suomii</p>
+            <Description>
+                <Text lang="uri:fi#1">
+                    Lorem Lipsum
+                </Text>
             </Description>
 
             <!-- valintakokeet -->
             <EntranceExaminations>
 
                 <!-- yleinen kuvaus -->
-                <Description lang="uri:fi#1">
-                    Vapaamuotoinen kuvaus kaikista valintakokeista.
+                <Description >
+                    <Text lang="uri:fi#1">Vapaamuotoinen kuvaus kaikista valintakokeista.</Text>
                 </Description>
 
                 <!-- valintakoe -->
@@ -421,8 +463,9 @@
                     </ExaminationType>
 
                     <!-- yhden valintakokeen kuvaus -->
-                    <Description lang="uri:fi#1">
-                        Lorem Lipsum
+                    <Description >
+                        <Text lang="uri:fi#1"> Lorem Lipsum</Text>
+                       
                     </Description>
 
                     <!-- valintakoe tapahtuma -->
@@ -503,8 +546,10 @@
         </LearningOpportunities>
 
         <!-- hakukohteen vapaamuotoinen kuvaus -->
-        <Description lang="uri:fi#1">
-            Lorem Lipsum
+        <Description >
+            <Text lang="uri:fi#1">
+                Lorem Lipsum
+            </Text>
         </Description>
 
     </ApplicationOption>

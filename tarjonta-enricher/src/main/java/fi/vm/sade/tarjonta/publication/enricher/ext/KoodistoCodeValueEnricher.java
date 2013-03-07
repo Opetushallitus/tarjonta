@@ -60,8 +60,9 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
     }
 
     @Override
-    public int startElement(String localName, Attributes attributes)
+    public int startElement(String uri, String localName, Attributes attributes)
             throws SAXException {
+
         scheme = attributes.getValue(EMPTY_STRING, ATTRIBUTE_SCHEME);
         return startElementHandler(TAG_CODE, localName, attributes);
     }
@@ -121,14 +122,14 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
     }
 
     @Override
-    public int endElement(String localName) throws SAXException {
+    public int endElement(String uri, String localName) throws SAXException {
         KoodiValue koodistoKoodi = getKoodistoKoodi(localName);
         if (TAG_CODE.equals(localName) && koodistoKoodi != null) {
             parent.writeCharacters(koodistoKoodi.getValue());
         }
 
         if (mappedElementName.equals(localName)) {
-            maybeWriteLabels(localName, koodistoKoodi);
+            maybeWriteLabels(uri, localName, koodistoKoodi);
             return WRITE_AND_EXIT;
         } else {
             return WRITE_AND_CONTINUE;
@@ -156,24 +157,25 @@ public class KoodistoCodeValueEnricher extends AbstractKoodistoEnricher {
         return lookupKoodi(koodiUri, koodiVersion);
     }
 
-    protected void maybeWriteLabels(final String localName, KoodiValue koodistoKoodi) throws SAXException {
+    protected void maybeWriteLabels(final String uri, final String localName, KoodiValue koodistoKoodi) throws SAXException {
         if (koodistoKoodi != null) {
-            writeLabel(koodistoKoodi);
+            writeLabel(uri, koodistoKoodi);
         }
     }
 
-    private void writeLabel(KoodiValue value) throws SAXException {
-        writeLabel(KoodiValue.LANG_FI, value.getMetaName(KoodiValue.LANG_FI));
-        writeLabel(KoodiValue.LANG_SV, value.getMetaName(KoodiValue.LANG_SV));
-        writeLabel(KoodiValue.LANG_EN, value.getMetaName(KoodiValue.LANG_EN));
+    private void writeLabel(final String uri, KoodiValue value) throws SAXException {
+        writeLabel(uri, KoodiValue.LANG_FI, value.getMetaName(KoodiValue.LANG_FI));
+        writeLabel(uri, KoodiValue.LANG_SV, value.getMetaName(KoodiValue.LANG_SV));
+        writeLabel(uri, KoodiValue.LANG_EN, value.getMetaName(KoodiValue.LANG_EN));
     }
 
-    private void writeLabel(String lang, String value) throws SAXException {
+    private void writeLabel(final String uri, String lang, String value) throws SAXException {
 
         if (value != null && !existingLabels.contains(lang)) {
-            parent.writeStartElement(TAG_LABEL, ATTRIBUTE_LANG, lang);
+            log.debug(uri);
+            parent.writeStartElement(uri, TAG_LABEL, ATTRIBUTE_LANG, lang);
             parent.writeCharacters(value);
-            parent.writeEndElement(TAG_LABEL);
+            parent.writeEndElement(uri, TAG_LABEL);
         }
 
     }

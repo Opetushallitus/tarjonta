@@ -128,6 +128,14 @@ public class XMLStreamEnricher {
 
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final XMLWriter xmlWriter = new XMLWriter(xmlReader, new NullWriter());
+        xmlReader.setFeature("http://xml.org/sax/features/namespaces",  true);
+        xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
+        xmlReader.setFeature("http://xml.org/sax/features/validation", true);
+
+        xmlReader.setFeature("http://apache.org/xml/features/validation/schema", true);
+        xmlReader.setFeature("http://apache.org/xml/features/validation/schema/normalized-value", true);
+        xmlReader.setFeature("http://xml.org/sax/features/xmlns-uris", false);
+
         final XMLProcessor processor = new XMLProcessor(xmlWriter);
 
         processor.setContentHandler(new XMLWriter(new OutputStreamWriter(out)));
@@ -173,7 +181,6 @@ public class XMLStreamEnricher {
          */
         @Override
         public void startElement(String uri, String localName, String qname, Attributes attributes) throws SAXException {
-
             pushTag(localName);
 
             if (handler == null) {
@@ -186,7 +193,7 @@ public class XMLStreamEnricher {
                     attributes = copyAndFilterLangAttributes(handler, attributes);
                 }
 
-                int result = handler.startElement(localName, attributes);
+                int result = handler.startElement(uri, localName, attributes);
 
                 if ((result & MASK_WRITE) == MASK_WRITE) {
                     super.startElement(uri, localName, qname, handler.getAttributes() != null ? handler.getAttributes() : attributes);
@@ -208,10 +215,9 @@ public class XMLStreamEnricher {
 
         @Override
         public void endElement(String uri, String localName, String qname) throws SAXException {
-
             if (handler != null) {
 
-                int result = handler.endElement(localName);
+                int result = handler.endElement(uri, localName);
 
                 if ((result & MASK_WRITE) == MASK_WRITE) {
                     super.endElement(uri, localName, qname);
@@ -311,8 +317,8 @@ public class XMLStreamEnricher {
          * @param attrs
          * @throws SAXException
          */
-        public void writeStartElement(String name, Attributes attrs) throws SAXException {
-            super.startElement(EMPTY_STRING, name, null, attrs);
+        public void writeStartElement(String uri, String name, Attributes attrs) throws SAXException {
+            super.startElement(uri, name, name, attrs);
         }
 
         /**
@@ -323,14 +329,13 @@ public class XMLStreamEnricher {
          * key, value
          * @throws SAXException
          */
-        public void writeStartElement(String name, String... keyValuePairs) throws SAXException {
+        public void writeStartElement(String uri, String name, String... keyValuePairs) throws SAXException {
 
             AttributesImpl attributes = new AttributesImpl();
             for (int i = 0; i < keyValuePairs.length; i += 2) {
-                attributes.addAttribute(EMPTY_STRING, keyValuePairs[i], null, null, keyValuePairs[i + 1]);
+                SaxUtils.addAttribute(attributes, uri, keyValuePairs[i], keyValuePairs[i + 1]);
             }
-            writeStartElement(name, attributes);
-
+            super.startElement(uri, name, name, attributes);
         }
 
         /**
@@ -339,8 +344,8 @@ public class XMLStreamEnricher {
          * @param name
          * @throws SAXException
          */
-        public void writeEndElement(String name) throws SAXException {
-            super.endElement(EMPTY_STRING, name, null);
+        public void writeEndElement(String uri, String name) throws SAXException {
+            super.endElement(uri, name, name);
         }
 
         /**

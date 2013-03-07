@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.publication.utils;
 
 import fi.vm.sade.tarjonta.publication.enricher.ElementEnricher;
+import static fi.vm.sade.tarjonta.publication.enricher.ElementEnricher.EMPTY_STRING;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -24,24 +25,28 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author Jani Wilén
  */
 public class SaxUtils {
-
+    
     private static final String ATTRIBUTE_TYPE_CDATA = "CDATA";
-
+    
     public static AttributesImpl copyAttributes(final Attributes attributes) {
         AttributesImpl copy = new AttributesImpl();
         for (int i = 0; i < attributes.getLength(); i++) {
             if (attributes.getValue(i) != null) {
+                
+                
+                
                 copy.addAttribute(attributes.getURI(i), attributes.getLocalName(i), attributes.getQName(i), attributes.getType(i), attributes.getValue(i));
             }
         }
-
+        
         return copy;
     }
-
-    public static void addAttribute(AttributesImpl attributes, final String key, final String value) {
+    
+    public static void addAttribute(AttributesImpl attributes, final String uri,  final String key, final String value) {
         if (value == null) {
             throw new IllegalArgumentException("Value object cannot be null.");
         }
-        attributes.addAttribute(ElementEnricher.EMPTY_STRING, key, key, ATTRIBUTE_TYPE_CDATA, value);
+        
+        attributes.addAttribute(uri, key, "xsi" + key, ATTRIBUTE_TYPE_CDATA, value);
     }
 }
