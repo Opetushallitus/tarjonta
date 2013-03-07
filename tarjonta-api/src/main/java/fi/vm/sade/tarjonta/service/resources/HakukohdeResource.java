@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.resources;
 
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -12,6 +13,7 @@ import java.util.List;
  * @author mlyly
  */
 @Path("/hakukohde")
+@CrossOriginResourceSharing(allowAllOrigins = true)
 public interface HakukohdeResource {
 
     /**
