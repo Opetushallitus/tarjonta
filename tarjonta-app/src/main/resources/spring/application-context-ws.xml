@@ -24,31 +24,30 @@
 
     <jaxws:client id="koodiPublicService"
                 serviceClass="fi.vm.sade.koodisto.service.KoodiService"
-                address="${koodi.webservice.url:http://NO_KOODI_WEBSERVICE_URL_CONFIGURED}"/>
+                address="${koodi.public.webservice.url.backend:http://NO_KOODI_WEBSERVICE_URL_CONFIGURED}"/>
 
     <jaxws:client id="koodistoPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
-                  address="${koodisto.webservice.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}"/>
+                  address="${koodisto.public.webservice.url.backend:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}"/>
 
     <jaxws:client id="oidService"
                   serviceClass="fi.vm.sade.oid.service.OIDService"
-                  address="${oid.webservice.url:http://NO_OID_WEBSERVICE_URL_CONFIGURED}"/>
+                  address="${oid.webservice.url.backend:http://NO_OID_WEBSERVICE_URL_CONFIGURED}"/>
 
     <jaxws:client id="tarjontaAdminService"
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService"
-                  address="${tarjonta.admin.webservice.url:http://NO_TARJONTA_ADMIN_WEBSERVICE_URL_CONFIGURED}"/>
+                  address="${tarjonta.admin.webservice.url.backend:http://NO_TARJONTA_ADMIN_WEBSERVICE_URL_CONFIGURED}"/>
 
     <jaxws:client id="tarjontaPublicService"
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService"
-                  address="${tarjonta.public.webservice.url:http://NO_TARJONTA_PUBLIC_WEBSERVICE_URL_CONFIGURED}"/>
+                  address="${tarjonta.public.webservice.url.backend:http://NO_TARJONTA_PUBLIC_WEBSERVICE_URL_CONFIGURED}"/>
 
     <jaxws:client id="organisaatioService"
                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
-                  address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
+                  address="${organisaatio.webservice.url.backend:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
                   
     <jaxws:client id="userService"
                   serviceClass="fi.vm.sade.authentication.service.UserService"
-                  address="${user.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
-
+                  address="${user.webservice.url.backend:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
 
 </beans>
