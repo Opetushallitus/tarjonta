@@ -14,7 +14,9 @@
 
     <properties>
         <powermock.version>1.4.12</powermock.version>
+        <webapp.port>8480</webapp.port>
     </properties>
+
 
     <dependencies>
 

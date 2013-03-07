@@ -14,6 +14,7 @@
     <properties>
         <deploy.to.server>tomcat</deploy.to.server>
         <powermock.version>1.4.12</powermock.version>
+        <webapp.port>8084</webapp.port>
     </properties>
 
     <dependencies>
@@ -41,36 +42,6 @@
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-test-support</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>com.springsource.org.hibernate</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>com.springsource.slf4j.api</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>com.springsource.org.hibernate.ejb</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>com.springsource.slf4j.api</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.common</groupId>
-            <artifactId>com.springsource.org.hibernate.annotations.common</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>com.springsource.slf4j.api</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
@@ -151,10 +122,6 @@
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-pool</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -259,6 +226,24 @@
             <version>1.0.4</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- depsukat: logging: modules need slsf4j-api as provided, but container will provide implementation -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -343,7 +328,7 @@
                 </dependencies>
                 <executions>
                     <execution>
-                        <phase>compile</phase>
+                        <phase>clean</phase>
                         <goals>
                             <goal>hbm2ddl</goal>
                         </goals>
