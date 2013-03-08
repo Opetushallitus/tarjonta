@@ -1475,6 +1475,12 @@ public class TarjontaPresenter implements CommonPresenter {
      */
     private List<KoulutuskoodiModel> filterBasedOnOppilaitosTyyppi(List<KoulutuskoodiModel> unfilteredKoodit) {
         LOG.debug("fitlerBasedOnOppilaitosTyyppi");
+        
+        //If an existing koulutus is being edited no filtering is done.
+        if (getModel().getKoulutusPerustiedotModel() != null &&
+                getModel().getKoulutusPerustiedotModel().getOid() != null) {
+            return unfilteredKoodit;
+        }
 
         //Constructing the list of oppilaitostyyppis of the selected organisaatio
         List<String> olTyyppiUris = getOppilaitostyyppiUris();
