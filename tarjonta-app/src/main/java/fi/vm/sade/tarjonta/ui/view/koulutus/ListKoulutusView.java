@@ -278,13 +278,17 @@ public class ListKoulutusView extends VerticalLayout {
         btnSiirraJaKopioi.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent clickEvent) {
+                List<String> koulutusOids = presenter.getSelectedKoulutusOids();
+                if (koulutusOids.size() == 1) {
                 List<String> organisaatioOids = new ArrayList<String>();
                 organisaatioOids.add(presenter.getModel().getOrganisaatioOid());
 
                 KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog(organisaatioOids,"600px","500px");
-               /* kopiointiDialog.setWidth("600px");
-                kopiointiDialog.setHeight("500px");*/
+
                 getWindow().addWindow(kopiointiDialog);
+                } else {
+                  showNoKoulutusDialog("vainYksiKoulutusViesti");
+                }
             }
         });
 
@@ -311,7 +315,7 @@ public class ListKoulutusView extends VerticalLayout {
                 if (presenter.availableKoulutus()) {
                     presenter.showKoulutusPerustiedotEditView(null);
                 } else {
-                    showNoKoulutusDialog();
+                    showNoKoulutusDialog("viesti");
                 }
             }
         });
@@ -330,9 +334,9 @@ public class ListKoulutusView extends VerticalLayout {
         return layout;
     }
     
-    private void showNoKoulutusDialog() {
+    private void showNoKoulutusDialog(String msg) {
         
-        NoKoulutusDialog noKoulutusView = new NoKoulutusDialog(new Button.ClickListener() {
+        NoKoulutusDialog noKoulutusView = new NoKoulutusDialog(msg,new Button.ClickListener() {
 
             private static final long serialVersionUID = -5998239901946190160L;
 
@@ -345,7 +349,8 @@ public class ListKoulutusView extends VerticalLayout {
         noKoulutusDialog = new TarjontaDialogWindow(noKoulutusView, i18n.getMessage("noKoulutusLabel"));
         getWindow().addWindow(noKoulutusDialog);
     }
-    
+
+
     private void closeNoKoulutusDialog() {
         if (noKoulutusDialog != null) {
             getWindow().removeWindow(noKoulutusDialog);

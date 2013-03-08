@@ -15,16 +15,16 @@ public class NoKoulutusDialog extends VerticalLayout {
     
     private transient I18NHelper i18n = new I18NHelper(this);
     
-    public NoKoulutusDialog(Button.ClickListener clickListener) {
+    public NoKoulutusDialog(String messageName,Button.ClickListener clickListener) {
         this.closeListener = clickListener;
-        createLayout();
+        createLayout(messageName);
     }
     
-    private void createLayout() {
+    private void createLayout(String messageName) {
         setSizeUndefined();
         setSpacing(true);
         setMargin(true);
-        UiUtil.label(this, T("viesti"));
+        UiUtil.label(this, T(messageName));
         UiUtil.button(this, T("sulje"), this.closeListener);
     }
     

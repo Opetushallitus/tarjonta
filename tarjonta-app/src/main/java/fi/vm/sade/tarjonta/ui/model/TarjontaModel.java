@@ -15,10 +15,13 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -45,7 +48,34 @@ public class TarjontaModel extends BaseUIViewModel {
     private HakukohdeLiiteViewModel selectedLiite;
     private ValintakoeViewModel selectedValintaKoe;
     private ValintakoeAikaViewModel selectedValintakoeAika;
+    private Collection<OrganisaatioOidNamePair> organisaatios;
 
+
+   public static class OrganisaatioOidNamePair {
+        private String oid;
+        private String name;
+
+       public OrganisaatioOidNamePair(String oid,String name) {
+           this.oid = oid;
+           this.name = name;
+       }
+
+        public String getOid() {
+            return oid;
+        }
+
+        public void setOid(String oid) {
+            this.oid = oid;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
     /*
      * Selected organisaatio data:
      */
@@ -281,6 +311,11 @@ public class TarjontaModel extends BaseUIViewModel {
         return parentOrganisaatioOid;
     }
 
+
+    public void addOneOrganisaatioNameOidPair(OrganisaatioOidNamePair pair) {
+        getOrganisaatios().clear();
+        organisaatios.add(pair);
+    }
     /**
      * Get portal user's parent organisation, at least used in navigation tree.
      *
@@ -292,5 +327,16 @@ public class TarjontaModel extends BaseUIViewModel {
         }
 
         this.parentOrganisaatioOid = parentOrganisaatioOid;
+    }
+
+    public Collection<OrganisaatioOidNamePair> getOrganisaatios() {
+        if (organisaatios == null) {
+            organisaatios = new ArrayList<OrganisaatioOidNamePair>();
+        }
+        return organisaatios;
+    }
+
+    public void setOrganisaatios(Collection<OrganisaatioOidNamePair> organisaatios) {
+        this.organisaatios = organisaatios;
     }
 }

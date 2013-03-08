@@ -499,7 +499,19 @@ public class TarjontaPresenter implements CommonPresenter {
     }
 
     public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustietoType> orgs) {
+          getModel().setOrganisaatios(convertPerustietoToNameOidPair(orgs));
 
+        showCopyKoulutusPerustiedotEditView(getSelectedKoulutusOids().get(0));
+        getModel().getSelectedKoulutukset().clear();
+    }
+
+    private Collection<TarjontaModel.OrganisaatioOidNamePair> convertPerustietoToNameOidPair(Collection<OrganisaatioPerustietoType> orgs) {
+        Collection<TarjontaModel.OrganisaatioOidNamePair> oidNamePairs = new ArrayList<TarjontaModel.OrganisaatioOidNamePair>();
+        for (OrganisaatioPerustietoType org:orgs) {
+            TarjontaModel.OrganisaatioOidNamePair organisaatioOidNamePair = new TarjontaModel.OrganisaatioOidNamePair(org.getOid(),org.getNimiFi());
+            oidNamePairs.add(organisaatioOidNamePair);
+        }
+        return oidNamePairs;
     }
     
     private String getKoulutusNimi(KoulutusKoosteTyyppi curKoulutus) {
@@ -565,7 +577,22 @@ public class TarjontaPresenter implements CommonPresenter {
     public void setKomotoOids(List<String> komotoOids) {
         getModel().getHakukohde().setKomotoOids(komotoOids);
     }
-    
+
+    public void showCopyKoulutusPerustiedotEditView(final String koulutusOid) {
+        // If oid of koulutus is provided the koulutus is read from database
+        // before opening the KoulutusEditView
+        if (koulutusOid != null) {
+            copyKoulutusToModel(koulutusOid);
+
+            getModel().getKoulutusPerustiedotModel().setTila(TarjontaTila.LUONNOS);
+            getRootView().changeView(new EditKoulutusView(koulutusOid));
+            getModel().getKoulutusPerustiedotModel().setOid(null);
+        }
+
+
+
+    }
+
     @SuppressWarnings("empty-statement")
     public void showKoulutusPerustiedotEditView(final String koulutusOid) {
         // If oid of koulutus is provided the koulutus is read from database
@@ -625,6 +652,31 @@ public class TarjontaPresenter implements CommonPresenter {
             LOG.error("Problem fetching organisaatio oid tree: {}", ex.getMessage());
         }
         return organisaatioOidTree;
+    }
+
+    private void copyKoulutusToModel(final String koulutusOid) {
+        LueKoulutusVastausTyyppi lueKoulutus = this.getKoulutusByOid(koulutusOid);
+        try {
+            KoulutusToisenAsteenPerustiedotViewModel koulutus;
+            koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(lueKoulutus, DocumentStatus.NEW, I18N.getLocale());
+            koulutus.setOrganisaatioOidTree(fetchOrganisaatioTree(koulutus.getOrganisaatioOid()));
+            getModel().setKoulutusPerustiedotModel(koulutus);
+            getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(lueKoulutus));
+
+            //Empty previous Koodisto data from the comboboxes.
+            koulutus.getKoulutusohjelmat().clear();
+            koulutus.getKoulutuskoodit().clear();
+            koulutus.getKoulutuksenHakukohteet().clear();
+
+            //Add selected data to the comboboxes.
+            if (koulutus.getKoulutusohjelmaModel() != null && koulutus.getKoulutusohjelmaModel().getKoodistoUri() != null) {
+                koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
+            }
+            koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());
+        } catch (ExceptionMessage ex) {
+            LOG.error("Service call failed.", ex);
+            showMainDefaultView();
+        }
     }
     
     private void readKoulutusToModel(final String koulutusOid) {
@@ -1015,26 +1067,34 @@ public class TarjontaPresenter implements CommonPresenter {
             koulutusToDTOConverter.validateSaveData(paivita, koulutusModel);
             tarjontaAdminService.paivitaKoulutus(paivita);
         } else {
-            //persist new KOMO and KOMOTO
-            koulutusModel.setOrganisaatioOid(getModel().getOrganisaatioOid());
-            koulutusModel.setOrganisaatioName(getModel().getOrganisaatioName());
-            
-            LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(getModel(), getModel().getOrganisaatioOid());
-            lisaa.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
-            koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
-            checkKoulutusmoduuli();
-            if (checkExistingKomoto(lisaa)) {
-                tarjontaAdminService.lisaaKoulutus(lisaa);
-                koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
-                koulutusModel.setOid(lisaa.getOid());
-            } else {
-                
-                LOG.debug("Unable to add koulutus because of the duplicate");
-                throw new ExceptionMessage("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage");
+            for (TarjontaModel.OrganisaatioOidNamePair pair: getModel().getOrganisaatios()) {
+                getModel().setOrganisaatioName(pair.getName());
+                getModel().setOrganisaatioOid(pair.getOid());
+                persistKoulutus(koulutusModel,tila);
+
             }
-            
         }
         
+    }
+
+    private void persistKoulutus(KoulutusToisenAsteenPerustiedotViewModel koulutusModel,SaveButtonState tila) throws ExceptionMessage{
+        //persist new KOMO and KOMOTO
+        koulutusModel.setOrganisaatioOid(getModel().getOrganisaatioOid());
+        koulutusModel.setOrganisaatioName(getModel().getOrganisaatioName());
+
+        LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(getModel(), getModel().getOrganisaatioOid());
+        lisaa.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
+        koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
+        checkKoulutusmoduuli();
+        if (checkExistingKomoto(lisaa)) {
+            tarjontaAdminService.lisaaKoulutus(lisaa);
+            koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
+            koulutusModel.setOid(lisaa.getOid());
+        } else {
+
+            LOG.debug("Unable to add koulutus because of the duplicate");
+            throw new ExceptionMessage("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage");
+        }
     }
     
     private boolean checkExistingKomoto(LisaaKoulutusTyyppi lisaaTyyppi) {
@@ -1280,6 +1340,11 @@ public class TarjontaPresenter implements CommonPresenter {
         
     }
 
+    private void addOrganisaatioNameValuePair(String oid,String name) {
+        TarjontaModel.OrganisaatioOidNamePair pair = new TarjontaModel.OrganisaatioOidNamePair(oid,name);
+        getModel().addOneOrganisaatioNameOidPair(pair);
+    }
+
     /**
      * Selects the organisaatio in tarjonta, by setting the organisaatio name in
      * breadcrumb and setting the organisaatioOid and organisaatioNimi in
@@ -1291,7 +1356,7 @@ public class TarjontaPresenter implements CommonPresenter {
     public void selectOrganisaatio(String organisaatioOid, String organisaatioName) {
         getModel().setOrganisaatioOid(organisaatioOid);
         getModel().setOrganisaatioName(organisaatioName);
-        
+        addOrganisaatioNameValuePair(organisaatioOid,organisaatioName);
         getRootView().getBreadcrumbsView().setOrganisaatio(organisaatioName);
 
         // Descendant organisation oids to limit the search
@@ -1670,4 +1735,51 @@ public class TarjontaPresenter implements CommonPresenter {
         List<String> oppilaitostyyppiUris = getOppilaitostyyppiUris();
         return !this.uiHelper.getOlRelatedKoulutuskoodit(oppilaitostyyppiUris).isEmpty();
     }
+
+    public boolean checkOrganisaatiosKoulutukses(Collection<OrganisaatioPerustietoType> orgs) {
+        for (OrganisaatioPerustietoType org:orgs) {
+        List<String> oppilaitosTyyppis = new ArrayList<String>(getOppilaitosUrisForOrg(org));
+        boolean isEmpty = this.uiHelper.getOlRelatedKoulutuskoodit(oppilaitosTyyppis).isEmpty();
+            if (isEmpty) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Set<String> getOppilaitosUrisForOrg(OrganisaatioPerustietoType org) {
+        Set<String> oppilaitosTyyppis = new HashSet<String>();
+
+
+        OrganisaatioDTO selectedOrg = this.organisaatioService.findByOid(org.getOid());
+
+        if (selectedOrg == null) {
+            throw new RuntimeException("No organisation found by OID " + this.getModel().getOrganisaatioOid() + ".");
+        }
+
+        List<OrganisaatioTyyppi> tyypit = selectedOrg.getTyypit();
+
+        //If the types of the organisaatio contains oppilaitos, its oppilaitostyyppi is appended to the list of oppilaitostyyppiuris
+        if (tyypit.contains(OrganisaatioTyyppi.OPPILAITOS)) {
+            oppilaitosTyyppis.add(selectedOrg.getOppilaitosTyyppi());
+        }
+        //If the types of the organisaatio contain koulutustoimija the oppilaitostyyppis of its children are appended to the
+        //list of oppilaitostyyppiuris
+        if (tyypit.contains(OrganisaatioTyyppi.KOULUTUSTOIMIJA)) {
+            oppilaitosTyyppis.addAll(getChildOrgOlTyyppis(selectedOrg));
+
+            //If the types of the organisaatio contain opetuspiste the oppilaitostyyppi of its parent organisaatio is appended to the list of
+            //oppilaitostyyppiuris
+        } else if (tyypit.contains(OrganisaatioTyyppi.OPETUSPISTE)
+                && selectedOrg.getParentOid() != null) {
+            List<String> olTyyppis = new ArrayList<String>(oppilaitosTyyppis);
+            addParentOlTyyppi(selectedOrg,olTyyppis);
+            olTyyppis.addAll(olTyyppis);
+        }
+        LOG.debug("olTyyppiUris size: {}", oppilaitosTyyppis.size());
+
+        return oppilaitosTyyppis;
+    }
+
+
 }

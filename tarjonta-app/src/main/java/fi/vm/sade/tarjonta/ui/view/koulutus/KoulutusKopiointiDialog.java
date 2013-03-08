@@ -146,11 +146,24 @@ public class KoulutusKopiointiDialog extends Window {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 errorView.resetErrors();
+                if (optionGroup.getValue() !=  null) {
+                String value =  (String)optionGroup.getValue();
+                if (value.equalsIgnoreCase(_i18n.getMessage("optionGroup.kopioidaan"))) {
                 if (selectedOrgs.values() != null && selectedOrgs.values().size() > 0) {
-                presenter.copyKoulutusToOrganizations(selectedOrgs.values());
-                getParent().removeWindow(KoulutusKopiointiDialog.this);
+                    if (presenter.checkOrganisaatiosKoulutukses(selectedOrgs.values())) {
+                    presenter.copyKoulutusToOrganizations(selectedOrgs.values());
+                    getParent().removeWindow(KoulutusKopiointiDialog.this);
+                    } else {
+                      addErrorMessage(_i18n.getMessage("koulutusOrgMismatch"));
+                    }
                 } else {
                     addErrorMessage(_i18n.getMessage("valitseOrganisaatioMessage"));
+                }
+                } else {
+                    addErrorMessage("Vain kopiointi toteutettu");
+                }
+                } else {
+                    addErrorMessage(_i18n.getMessage("valitseToiminto"));
                 }
             }
         });

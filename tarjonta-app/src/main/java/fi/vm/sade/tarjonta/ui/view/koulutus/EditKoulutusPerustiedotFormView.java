@@ -722,7 +722,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     
     private void showNoKoulutusDialog() {
         
-        NoKoulutusDialog noKoulutusView = new NoKoulutusDialog(new Button.ClickListener() {
+        NoKoulutusDialog noKoulutusView = new NoKoulutusDialog("viesti",new Button.ClickListener() {
 
             private static final long serialVersionUID = -5998239901946190160L;
 
