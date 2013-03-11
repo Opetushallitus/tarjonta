@@ -55,6 +55,7 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.service.PublishingService;
+import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 
 import fi.vm.sade.tarjonta.ui.view.haku.EditHakuView;
@@ -68,7 +69,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @author markus
  *
  */
-public class HakuPresenter implements CommonPresenter {
+public class HakuPresenter implements CommonPresenter<HakuViewModel> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuPresenter.class);
     private KoulutusSearchSpesificationViewModel searchSpec = new KoulutusSearchSpesificationViewModel();
@@ -90,8 +91,7 @@ public class HakuPresenter implements CommonPresenter {
     @Autowired(required = true)
     private PublishingService publishingService;
     @Autowired(required = true)
-    @Qualifier("tarjontaPermissionService")
-    private PermissionService tarjontaPermissionService;
+    private TarjontaPermissionServiceImpl tarjontaPermissionService;
 
     public HakuPresenter() {
     }
@@ -491,7 +491,7 @@ public class HakuPresenter implements CommonPresenter {
     }
 
     @Override
-    public PermissionService getPermission() {
+    public TarjontaPermissionServiceImpl getPermission() {
         return tarjontaPermissionService;
     }
 

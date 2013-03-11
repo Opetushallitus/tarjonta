@@ -19,6 +19,7 @@ import java.util.*;
 
 
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
+import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -434,17 +435,14 @@ public class ListKoulutusView extends VerticalLayout {
         categoryTree.setContainerDataSource(createDataSource(presenter.getKoulutusDataSource()));
     }
 
-    public void toggleCreateKoulutusB(boolean b) {
-        if (presenter.getPermission().userCanReadAndUpdate()) {
-            luoKoulutusB.setEnabled(b);
-        }
+    public void toggleCreateKoulutusB(String organisaatioOid, boolean b) {
+    	luoKoulutusB.setEnabled(b && presenter.getPermission().userCanCreateKoulutus(OrganisaatioContext.getContext(organisaatioOid)));
     }
 
-    public void toggleCreateHakukohdeB(boolean b) {
-        if (presenter.getPermission().userCanReadAndUpdate()) {
-            this.luoHakukohdeB.setEnabled(b);
-            this.btnSiirraJaKopioi.setEnabled(b);
-        }
+    public void toggleCreateHakukohdeB(String organisaatioOid, boolean b) {
+		boolean enabled = b && presenter.getPermission().userCanCreateHakukohde(OrganisaatioContext.getContext(organisaatioOid));
+        this.luoHakukohdeB.setEnabled(enabled);
+        this.btnSiirraJaKopioi.setEnabled(enabled);
     }
 
     /**

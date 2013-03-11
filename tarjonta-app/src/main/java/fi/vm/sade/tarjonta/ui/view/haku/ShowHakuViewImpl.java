@@ -78,7 +78,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 
-        addNavigationButton(T("Poista"), new Button.ClickListener() {
+        Button poista = addNavigationButton(T("Poista"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
                 hakuPresenter.removeHaku(hakuPresenter.getHakuModel());
@@ -86,6 +86,9 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
                 backFired();
             }
         });
+        
+        //permissions
+        poista.setVisible(hakuPresenter.getPermission().userCanDeleteHaku());
 
         addLayoutSplit();
         buildLayoutMiddleTop(layout);

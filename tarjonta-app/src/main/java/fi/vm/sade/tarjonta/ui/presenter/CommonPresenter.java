@@ -15,11 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.presenter;
 
-import fi.vm.sade.generic.service.PermissionService;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
+import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 
 /**
  *
@@ -33,7 +33,7 @@ public interface CommonPresenter<MODEL extends BaseUIViewModel> {
 
     public void showMainDefaultView();
 
-    public PermissionService getPermission();
+    public TarjontaPermissionServiceImpl getPermission();
 
     public void changeStateToCancelled(final String oid, final SisaltoTyyppi sisalto);
 

@@ -65,6 +65,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.service.PublishingService;
+import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
+import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.tarjonta.ui.view.SearchResultsView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
@@ -77,7 +79,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  *
  * @author mlyly
  */
-public class TarjontaPresenter implements CommonPresenter {
+public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
     private static final String LIITE_DATE_PATTERNS = "dd.MM.yyyy hh:mm";
@@ -85,8 +87,10 @@ public class TarjontaPresenter implements CommonPresenter {
     @Autowired(required = true)
     private UserService userService;
     @Autowired(required = true)
-    @Qualifier("tarjontaPermissionService")
-    private PermissionService tarjontaPermissionService; //initialized in spring config
+    private TarjontaPermissionServiceImpl tarjontaPermissionService; //initialized in spring config
+    @Autowired(required = true)
+    private UserContext userContext;
+
     // Services used
     @Autowired(required = true)
     protected OIDService oidService;
@@ -1382,7 +1386,7 @@ public class TarjontaPresenter implements CommonPresenter {
         // the selected org or one of its descendants
 
         reloadMainView(false);
-        this.getRootView().getListKoulutusView().toggleCreateKoulutusB(true);
+        this.getRootView().getListKoulutusView().toggleCreateKoulutusB(organisaatioOid, true);
     }
     
     public void unSelectOrganisaatio() {
@@ -1400,8 +1404,8 @@ public class TarjontaPresenter implements CommonPresenter {
         getModel().getSearchSpec().setOrganisaatioOids(new ArrayList<String>());
         
         reloadMainView();
-        this.getRootView().getListKoulutusView().toggleCreateKoulutusB(false);
-        this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(false);
+        this.getRootView().getListKoulutusView().toggleCreateKoulutusB(getModel().getParentOrganisaatioOid(), false);
+        this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(getModel().getParentOrganisaatioOid(), false);
     }
 
     /**
@@ -1644,7 +1648,7 @@ public class TarjontaPresenter implements CommonPresenter {
      * @return the tarjontaPermissionService
      */
     @Override
-    public PermissionService getPermission() {
+    public TarjontaPermissionServiceImpl getPermission() {
         return tarjontaPermissionService;
     }
 
@@ -1653,7 +1657,7 @@ public class TarjontaPresenter implements CommonPresenter {
      * koulutus objects in the list.
      */
     public void toggleCreateHakukohde() {
-        this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(!this._model.getSelectedKoulutukset().isEmpty());
+        this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(this.getModel().getOrganisaatioOid(), !this._model.getSelectedKoulutukset().isEmpty());
     }
     
     public void setSearchResultsView(SearchResultsView searchResultsView) {

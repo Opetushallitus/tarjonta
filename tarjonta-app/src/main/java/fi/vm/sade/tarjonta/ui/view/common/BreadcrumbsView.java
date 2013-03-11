@@ -15,6 +15,9 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -22,6 +25,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -32,12 +36,15 @@ import fi.vm.sade.vaadin.util.UiUtil;
  *
  * @author mlyly
  */
+@Configurable
 public class BreadcrumbsView extends AbstractVerticalLayout {
 
     private static final long serialVersionUID = 2254224099223350768L;
     private Label organisaatioNimi;
     private Button poistaValintaB;
-   
+
+    @Autowired
+    UserContext userContext;
     TarjontaPresenter presenter;
 
     public BreadcrumbsView(TarjontaPresenter presenter) {
@@ -58,6 +65,8 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
             
             @Override
             public void buttonClick(ClickEvent event) {
+                ///XXX how to restore use restriction??
+                userContext.setUseRestriction(false);
                 presenter.unSelectOrganisaatio();
             }
         });

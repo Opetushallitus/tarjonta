@@ -20,10 +20,10 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
-import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.*;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.StyleEnum;
@@ -58,8 +58,12 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
     private CreationDialog<KoulutusOidNameViewModel> addlKoulutusDialog;
     private Window addlKoulutusDialogWindow;
 
+    private final OrganisaatioContext context;
+
     public ShowHakukohdeViewImpl (String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
+        context = OrganisaatioContext.getContext(tarjontaPresenterPresenter.getModel().getOrganisaatioOid());
+        LOG.debug(this.getClass().getName()+ "()");
     }
 
     @Override
@@ -74,7 +78,9 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
         layout.addComponent(panel);
 
         //Build the layout
-        addNavigationButtons(vl);
+
+        //XXX oid not set
+        addNavigationButtons(vl, OrganisaatioContext.getContext(tarjontaPresenterPresenter.getModel().getOrganisaatioOid()));
         addLayoutSplit(vl);
         buildMiddleContentLayout(vl);
         addLayoutSplit(vl);
@@ -85,7 +91,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
 
     private void buildKoulutuksesLayout(VerticalLayout layout) {
 
-        layout.addComponent(buildHeaderLayout(T("sisaltyvatKoulutukset"),null,null,true));
+        layout.addComponent(buildHeaderLayout(context, T("sisaltyvatKoulutukset"),null,null,true));
 
         CategoryTreeView categoryTree = new CategoryTreeView();
         categoryTree.setHeight("100px");
@@ -99,7 +105,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
     }
 
     private void buildLiitaUusiKoulutusButton(VerticalLayout verticalLayout) {
-        Button liitaUusiKoulutusBtn = UiBuilder.buttonSmallPrimary(null,T("liitaUusiKoulutusPainike"),null,null);
+        Button liitaUusiKoulutusBtn = UiBuilder.buttonSmallPrimary(null,T("liitaUusiKoulutusPainike"));
         liitaUusiKoulutusBtn.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
@@ -115,6 +121,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
             }
         });
 
+        liitaUusiKoulutusBtn.setVisible(tarjontaPresenterPresenter.getPermission().userCanAddKoulutusToHakukohde(OrganisaatioContext.getContext(tarjontaPresenterPresenter)));
        verticalLayout.addComponent(liitaUusiKoulutusBtn);
     }
 
@@ -165,7 +172,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
 
     private void buildMiddleContentLayout(VerticalLayout layout) {
 
-        layout.addComponent(buildHeaderLayout(T("perustiedot"), T(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
+        layout.addComponent(buildHeaderLayout(context, T("perustiedot"), T(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -224,14 +231,15 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
         return reply;
     }
 
-    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, boolean enable) {
+    private HorizontalLayout buildHeaderLayout(OrganisaatioContext context, String title, String btnCaption, Button.ClickListener listener, boolean enable) {
         HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         Label titleLabel = UiUtil.label(headerLayout, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
 
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);
-            Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener, RequiredRole.UPDATE, tarjontaPresenterPresenter.getPermission());
+            Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener);
+            btn.setVisible(tarjontaPresenterPresenter.getPermission().userCanUpdateHakukohde(OrganisaatioContext.getContext(tarjontaPresenterPresenter)));
 
             // Add default click listener so that we can show that action has not been implemented as of yet
             if (listener == null) {
@@ -250,7 +258,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
         return headerLayout;
     }
 
-    private void addNavigationButtons(VerticalLayout layout) {
+    private void addNavigationButtons(VerticalLayout layout, OrganisaatioContext context) {
         addNavigationButton("", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
@@ -259,7 +267,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
 
-        addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
+        Button poista = addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -272,7 +280,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
+        Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -280,6 +288,9 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
+        //permissions
+        poista.setVisible(tarjontaPresenterPresenter.getPermission().userCanDeleteHakukohde(context));
+        kopioiUudeksi.setVisible(tarjontaPresenterPresenter.getPermission().userCanCopyHakukohdAsNew(context));
     }
 
     private void showConfirmationDialog() {

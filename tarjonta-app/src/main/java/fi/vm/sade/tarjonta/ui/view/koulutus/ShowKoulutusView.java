@@ -33,6 +33,8 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
+import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
@@ -90,7 +92,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         panel.setContent(vl);
         layout.addComponent(panel);
 
-        addNavigationButtons(vl);
+        addNavigationButtons(vl, OrganisaatioContext.getContext(_presenter.getModel().getKoulutusPerustiedotModel().getOrganisaatioOid()));
         addLayoutSplit(vl);
         buildKoulutuksenPerustiedot(vl);
         addLayoutSplit(vl);
@@ -294,9 +296,11 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         Label titleLabel = UiUtil.label(headerLayout, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
 
+        System.out.println("title:" + title);
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);
-            Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener, RequiredRole.UPDATE, _presenter.getPermission());
+            Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener);
+            btn.setVisible(_presenter.getPermission().userCanUpdateKoulutus(OrganisaatioContext.getContext(_presenter)));
 
             // Add default click listener so that we can show that action has not been implemented as of yet
             if (listener == null) {
@@ -315,7 +319,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         return headerLayout;
     }
 
-    private void addNavigationButtons(VerticalLayout layout) {
+    private void addNavigationButtons(VerticalLayout layout, OrganisaatioContext context) {
         addNavigationButton("", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
@@ -324,8 +328,8 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
                 _presenter.reloadAndShowMainDefaultView();
             }
         }, StyleEnum.STYLE_BUTTON_BACK);
-
-        addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
+        
+        final Button poista = addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -333,8 +337,8 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
                 
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
-
-        addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
+        
+        final Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -342,7 +346,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        addNavigationButton(T("siirraOsaksiToistaKoulutusta"), new Button.ClickListener() {
+        final Button siirraOsaksiToista = addNavigationButton(T("siirraOsaksiToistaKoulutusta"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -350,7 +354,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        addNavigationButton(T("lisaaToteutus"), new Button.ClickListener() {
+        final Button lisaaToteutus = addNavigationButton(T("lisaaToteutus"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -358,7 +362,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        addNavigationButton(T("esikatsele"), new Button.ClickListener() {
+        final Button esikatsele = addNavigationButton(T("esikatsele"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -366,6 +370,13 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
+
+        //check permissions
+        final TarjontaPermissionServiceImpl permissions = _presenter.getPermission(); 
+        poista.setVisible(permissions.userCanDeleteKoulutus(context));
+        kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
+        siirraOsaksiToista.setVisible(permissions.userCanMoveKoulutus(context));
+        lisaaToteutus.setVisible(permissions.userCanAddKoulutusInstanceToKoulutus(context));
     }
 
     public void addLayoutSplit(VerticalLayout layout) {

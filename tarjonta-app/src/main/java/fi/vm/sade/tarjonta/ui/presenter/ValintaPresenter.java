@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.ui.presenter;
 
 import com.vaadin.ui.Button;
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.generic.service.PermissionService;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -45,6 +44,7 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.valinta.ValintaModel;
 import fi.vm.sade.tarjonta.ui.model.valinta.ValintaperusteModel;
+import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.view.ValintaperustekuvausRootView;
 import fi.vm.sade.tarjonta.ui.view.valinta.SaveDialogView;
 import fi.vm.sade.tarjonta.ui.view.valinta.ValintaperusteMainView;
@@ -64,7 +64,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @author markus
  *
  */
-public class ValintaPresenter implements CommonPresenter {
+public class ValintaPresenter implements CommonPresenter<ValintaModel> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValintaPresenter.class);
     private ValintaperustekuvausRootView rootView;
@@ -72,8 +72,7 @@ public class ValintaPresenter implements CommonPresenter {
     private transient UiBuilder uiBuilder;
     private ValintaModel model;
     @Autowired(required = true)
-    @Qualifier("tarjontaPermissionService")
-    private PermissionService tarjontaPermissionService;
+    private TarjontaPermissionServiceImpl tarjontaPermissionService;
     @Autowired(required = true)
     private TarjontaAdminService tarjontaAdminService;
     @Autowired(required = true)
@@ -132,7 +131,7 @@ public class ValintaPresenter implements CommonPresenter {
     }
 
     @Override
-    public PermissionService getPermission() {
+    public TarjontaPermissionServiceImpl getPermission() {
         return tarjontaPermissionService;
     }
 

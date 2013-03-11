@@ -33,6 +33,7 @@ import fi.vm.sade.koodisto.widget.DefaultKoodiCaptionFormatter;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.koodisto.widget.WidgetFactory;
 import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
+import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
@@ -409,11 +410,11 @@ public class UiBuilder extends UiUtil {
         }
     }
 
-    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, final RequiredRole role, PermissionService tps) {
+    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, final RequiredRole role, TarjontaPermissionServiceImpl tps) {
         return buttonSmallPrimary(layout, caption, null, role, tps);
     }
 
-    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, Button.ClickListener listener, final RequiredRole role, PermissionService tps) {
+    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, Button.ClickListener listener, final RequiredRole role, TarjontaPermissionServiceImpl tps) {
         Button button = null;
         if (listener != null) {
             button = UiUtil.buttonSmallPrimary(layout, caption, listener);

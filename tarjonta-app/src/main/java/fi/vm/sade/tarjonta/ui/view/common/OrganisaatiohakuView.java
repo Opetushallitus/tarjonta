@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.HierarchicalContainer;
@@ -43,6 +45,7 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.ui.OphAbstractCollapsibleLeft;
@@ -85,6 +88,8 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     private Tree tree;
     private HierarchicalContainer hc;
     @Autowired
+    private UserContext userContext;
+    @Autowired
     private OrganisaatioService organisaatioService;
     @Autowired
     private TarjontaPresenter presenter;
@@ -97,6 +102,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     
     public OrganisaatiohakuView() {
         super(VerticalLayout.class);
+
         criteria = new OrganisaatioSearchCriteriaDTO();
         try {
             criteria.setMaxResults(Integer.parseInt(T("maxResults")));
@@ -126,11 +132,38 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         if (isAttached) {
             return;
         }
+
+        autoSearch();
+
         isAttached = true;
         //initializeData();
         bind();
     }
     
+    private void autoSearch() {
+        Preconditions.checkNotNull(userContext);
+        if(userContext.isDoAutoSearch()) {
+            this.rootOrganisaatioOids = Lists.newArrayList(userContext.getUserOrganisations());
+            
+            criteria.getOidResctrictionList().clear();
+            criteria.getOidResctrictionList().addAll(rootOrganisaatioOids);
+            LOG.info("Autosearching orgs, restrictions: " + criteria.getOidResctrictionList());
+            searchOrganisaatios();
+            
+            //auto select
+            final String ooid = userContext.getFirstOrganisaatio();
+            if (ooid != null) {
+                for (OrganisaatioPerustietoType organisaatio : organisaatios) {
+                    if (ooid.equals(organisaatio.getOid())) {
+                        LOG.debug("Comparing {} against {}.", ooid, organisaatio.getOid());
+                        organisaatioSelected(organisaatio);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     protected void buildLayout(VerticalLayout layout) {
         layout.setHeight(-1, UNITS_PIXELS);
@@ -292,7 +325,14 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
      * the tree.
      */
     private void searchOrganisaatios() {
+        long time = System.currentTimeMillis();
+        LOG.debug("Doing organisaatio search");
         try {
+            criteria.getOidResctrictionList().clear();
+            if(userContext.isUseRestriction()) {
+                LOG.debug("Using restriction:" + userContext.getUserOrganisations());
+                criteria.getOidResctrictionList().addAll(userContext.getUserOrganisations());
+            }
             organisaatios = organisaatioService.searchBasicOrganisaatios(criteria);
         } catch (Exception ex) {
             if (ex.getMessage().contains("organisaatioSearch.tooManyResults")) {
@@ -300,6 +340,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             }
             this.organisaatios = new ArrayList<OrganisaatioPerustietoType>();
         }
+        LOG.debug("org search done. took {}ms.", System.currentTimeMillis()-time);
         tree.setContainerDataSource(createDatasource());
     }
 

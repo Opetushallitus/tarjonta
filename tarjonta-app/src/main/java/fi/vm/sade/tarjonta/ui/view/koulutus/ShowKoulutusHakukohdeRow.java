@@ -20,6 +20,7 @@ import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 /*
  * Author: Tuomas Katva
  */
-@Configurable
+@Configurable(preConstruction=true)
 public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
 
     private SimpleHakukohdeViewModel hakukohdeViewModel;
@@ -60,6 +61,8 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
                 tarjontaPresenter.showRemoveHakukohdeFromKoulutusDialog(hakukohdeViewModel.getHakukohdeOid(), hakukohdeViewModel.getHakukohdeNimi());
             }
         });
+        
+        poistaBtn.setVisible(tarjontaPresenter.getPermission().userCanDeleteHakukohdeFromKoulutus(OrganisaatioContext.getContext(tarjontaPresenter)));
         poistaBtn.setStyleName("link-row");
     }
 

@@ -33,6 +33,7 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.MenuBarActions;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;
@@ -98,25 +99,26 @@ public class HakukohdeResultRow extends HorizontalLayout {
     OphRowMenuBar rowMenuBar;
 
     private OphRowMenuBar newMenuBar() {
+        final OrganisaatioContext context = OrganisaatioContext.getContext(this.hakukohde.getKoulutus().getTarjoaja());
+
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
         final TarjontaTila tila = hakukohde.getHakukohde().getTila();
 
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
-        if (tarjontaPresenter.getPermission().userCanCreateReadUpdateAndDelete()
-                || tarjontaPresenter.getPermission().userCanReadAndUpdate()) {
+        if (tarjontaPresenter.getPermission().userCanUpdateHakukohde(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaKoulutukset"), menuCommand);
 
-        if (tila.equals(TarjontaTila.LUONNOS) && tarjontaPresenter.getPermission().userCanCreateReadUpdateAndDelete()) {
+        if (tila.equals(TarjontaTila.LUONNOS) && tarjontaPresenter.getPermission().userCanDeleteHakukohde(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
 
-        if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanCreateReadUpdateAndDelete()) {
+        if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
-        } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCreateReadUpdateAndDelete()) {
+        } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelPublish(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         }
 

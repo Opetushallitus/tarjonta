@@ -15,11 +15,13 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
+import com.google.common.base.Preconditions;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +31,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 /*
  * Author: Tuomas Katva
  */
-@Configurable
+@Configurable(preConstruction=true)
 public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
 
     private KoulutusOidNameViewModel koulutusOidNameViewModel;
@@ -65,6 +67,11 @@ public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
             }
         });
         poistaBtn.setStyleName("link-row");
+        
+        //button permissions:
+        Preconditions.checkNotNull(tarjontaPresenter, "Tarjonta presenter cannot be null");
+        final OrganisaatioContext context = OrganisaatioContext.getContext(tarjontaPresenter);
+        poistaBtn.setVisible(tarjontaPresenter.getPermission().userCanUpdateHakukohde(context));
     }
     //TODO: Remove this when button logic is implemented
 

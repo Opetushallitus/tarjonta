@@ -56,7 +56,7 @@ public class HakuResultRow extends HorizontalLayout {
     private static final Logger LOG = LoggerFactory.getLogger(HakuResultRow.class);
     private transient I18NHelper i18n = new I18NHelper(this);
     private static final SisaltoTyyppi HAKU = SisaltoTyyppi.HAKU;
-    private HakuViewModel haku;
+    private final HakuViewModel haku;
     private CheckBox isSelected;
     private String hakuNimi;
     private Window removeDialogWindow;
@@ -87,20 +87,19 @@ public class HakuResultRow extends HorizontalLayout {
 
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
-        if (hakuPresenter.getPermission().userCanCreateReadUpdateAndDelete()
-                || hakuPresenter.getPermission().userCanReadAndUpdate()) {
+        if (hakuPresenter.getPermission().userCanEditHaku()) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaKohteet"), menuCommand);
 
-        if (tila.equals(TarjontaTila.LUONNOS) && hakuPresenter.getPermission().userCanCreateReadUpdateAndDelete()) {
+        if (tila.equals(TarjontaTila.LUONNOS) && hakuPresenter.getPermission().userCanDeleteHaku()) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
 
-        if (tila.equals(TarjontaTila.VALMIS) && hakuPresenter.getPermission().userCanCreateReadUpdateAndDelete()) {
+        if (tila.equals(TarjontaTila.VALMIS) && hakuPresenter.getPermission().userCanPublishHaku()) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
-        } else if (tila.equals(TarjontaTila.JULKAISTU) && hakuPresenter.getPermission().userCanCreateReadUpdateAndDelete()) {
+        } else if (tila.equals(TarjontaTila.JULKAISTU) && hakuPresenter.getPermission().userCanCancelHakuPublish()) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         }
 
