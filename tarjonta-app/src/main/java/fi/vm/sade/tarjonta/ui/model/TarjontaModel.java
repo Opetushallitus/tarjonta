@@ -49,9 +49,18 @@ public class TarjontaModel extends BaseUIViewModel {
     private ValintakoeViewModel selectedValintaKoe;
     private ValintakoeAikaViewModel selectedValintakoeAika;
     private Collection<OrganisaatioOidNamePair> organisaatios;
+    private String selectedKoulutusOid;
+
+    public String getSelectedKoulutusOid() {
+        return selectedKoulutusOid;
+    }
+
+    public void setSelectedKoulutusOid(String selectedKoulutusOid) {
+        this.selectedKoulutusOid = selectedKoulutusOid;
+    }
 
 
-   public static class OrganisaatioOidNamePair {
+    public static class OrganisaatioOidNamePair {
         private String oid;
         private String name;
 

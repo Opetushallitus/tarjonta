@@ -21,6 +21,7 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 
+import fi.vm.sade.generic.ui.feature.UserFeature;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
@@ -342,7 +343,16 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Ei toteutettu");
+                List<String> koulutusOids = new ArrayList<String>();
+                koulutusOids.add(_presenter.getModel().getKoulutusPerustiedotModel().getOid());
+
+                List<String> organisaatioOids = new ArrayList<String>();
+                organisaatioOids.addAll(UserFeature.get().getOrganisations());
+                KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog(organisaatioOids,"600px","500px");
+
+                getWindow().addWindow(kopiointiDialog);
+
+
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 

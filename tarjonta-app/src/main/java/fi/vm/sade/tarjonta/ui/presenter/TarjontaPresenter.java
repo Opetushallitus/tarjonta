@@ -503,9 +503,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustietoType> orgs) {
-          getModel().setOrganisaatios(convertPerustietoToNameOidPair(orgs));
+        getModel().setOrganisaatios(convertPerustietoToNameOidPair(orgs));
 
-        showCopyKoulutusPerustiedotEditView(getSelectedKoulutusOids().get(0));
+        showCopyKoulutusPerustiedotEditView(getModel().getSelectedKoulutusOid());
         getModel().getSelectedKoulutukset().clear();
     }
 

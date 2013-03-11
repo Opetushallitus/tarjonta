@@ -20,6 +20,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
@@ -49,17 +50,21 @@ public class EditKoulutusView extends AbstractVerticalLayout {
     @Override
     protected void buildLayout() {
 
+        String organisaatioName = getOrganisaationNames();
+
         if (presenter.getModel().getKoulutusPerustiedotModel().isLoaded()) {
             title = UiUtil.label((AbsoluteLayout) null, T(LABEL_FORMAT_EDIT),
                     LabelStyleEnum.TEXT_RAW,
                     DEMO_DATA,
-                    presenter.getModel().getKoulutusPerustiedotModel().getOrganisaatioName());
+                    organisaatioName);
+                    //presenter.getModel().getKoulutusPerustiedotModel().getOrganisaatioName());
         } else {
             title = UiUtil.label((AbsoluteLayout) null,
                     T(LABEL_FORMAT_NEW),
                     LabelStyleEnum.TEXT_RAW,
                     DEMO_DATA,
-                    presenter.getModel().getOrganisaatioName());
+                    organisaatioName);
+                    //presenter.getModel().getOrganisaatioName());
         }
         HorizontalLayout hlLabelWrapper = new HorizontalLayout();
         hlLabelWrapper.setMargin(false, false, true, true);
@@ -71,5 +76,18 @@ public class EditKoulutusView extends AbstractVerticalLayout {
         EditKoulutusLisatiedotToinenAsteView lisatiedotView = new EditKoulutusLisatiedotToinenAsteView(koulutusOid);
         tabs.addTab(lisatiedotView, T("lisatiedot"));
         this.presenter.setLisatiedotView(lisatiedotView);
+    }
+
+    private String getOrganisaationNames() {
+        StringBuilder organisaatios = new StringBuilder();
+        int counter = 0;
+        for (TarjontaModel.OrganisaatioOidNamePair pair: presenter.getModel().getOrganisaatios())  {
+            if (counter != 0) {
+                organisaatios.append(", ");
+            }
+            organisaatios.append(pair.getName());
+            counter++;
+        }
+        return organisaatios.toString();
     }
 }

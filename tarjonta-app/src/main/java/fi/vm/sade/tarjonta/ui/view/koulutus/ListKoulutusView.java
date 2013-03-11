@@ -51,6 +51,7 @@ import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
+import fi.vm.sade.generic.ui.feature.UserFeature;
 
 /**
  *
@@ -280,9 +281,12 @@ public class ListKoulutusView extends VerticalLayout {
             @Override
             public void buttonClick(ClickEvent clickEvent) {
                 List<String> koulutusOids = presenter.getSelectedKoulutusOids();
+
                 if (koulutusOids.size() == 1) {
+                presenter.getModel().setSelectedKoulutusOid(koulutusOids.get(0));
                 List<String> organisaatioOids = new ArrayList<String>();
-                organisaatioOids.add(presenter.getModel().getOrganisaatioOid());
+                organisaatioOids.addAll(UserFeature.get().getOrganisations());
+                /*organisaatioOids.add(presenter.getModel().getOrganisaatioOid());*/
 
                 KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog(organisaatioOids,"600px","500px");
 
