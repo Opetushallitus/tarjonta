@@ -77,7 +77,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         }
 
         for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
-
+            // TODO convert to some representation
 
         }
 

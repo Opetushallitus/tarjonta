@@ -11,18 +11,21 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * European Union Public Licence for more details. 
+ * European Union Public Licence for more details.
  */
-
 package fi.vm.sade.tarjonta.service.resources;
 
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import java.util.List;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -34,14 +37,42 @@ import javax.ws.rs.core.MediaType;
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public interface KomoResource {
 
+    /**
+     * Test that API responds.
+     *
+     * @return
+     */
     @GET
     @Path("/hello")
     @Produces(MediaType.TEXT_PLAIN)
     public String hello();
 
+    /**
+     * /komo/{oid}
+     *
+     * @param oid
+     * @return KoulutusmoduuliKoosteTyyppi
+     */
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public KoulutusmoduuliTyyppi getByOID(@PathParam("oid") String oid);
+    public KoulutusmoduuliKoosteTyyppi getByOID(@PathParam("oid") String oid);
 
+    /**
+     * /komo?searchTerms=xxx
+     *
+     * @param searchTerms may be null
+     * @param count
+     * @param startIndex
+     * @param startPage
+     * @param language
+     * @return list of KoulutusmoduuliKoosteTyyppi's
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public List<KoulutusmoduuliKoosteTyyppi> search(@QueryParam("searchTerms") String searchTerms,
+            @QueryParam("count") int count,
+            @QueryParam("startIndex") int startIndex,
+            @QueryParam("startPage") int startPage,
+            @QueryParam("language") String language);
 }
