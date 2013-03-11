@@ -54,8 +54,9 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
     private KoulutusLisatiedotModel koulutusLisatiedotModel;
     private transient UiBuilder uiBuilder;
     private transient I18NHelper _i18n;
-    
     private KoodistoSelectionTabSheet tabs;
+    private OphTokenField f;
+    private HorizontalLayout hl;
 
     public EditKoulutusLisatiedotForm(TarjontaPresenter presenter, TarjontaUIHelper uiHelper, UiBuilder uiBuilder, KoulutusLisatiedotModel koulutusLisatiedotModel) {
         this.setWidth(100, UNITS_PERCENTAGE);
@@ -67,37 +68,14 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
         //
         // Ammattinimikkeet
         //
+        addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet"), LabelStyleEnum.H2));
+        addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet.help"), LabelStyleEnum.TEXT));
 
-        {
-            addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet"), LabelStyleEnum.H2));
-            addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet.help"), LabelStyleEnum.TEXT));
 
-            PropertysetItem psi = new BeanItem(koulutusLisatiedotModel);
-            OphTokenField f = uiBuilder.koodistoTokenField(this, KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
-            f.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
-                @Override
-                public String formatToken(Object selectedToken) {
-                    return _uiHelper.getKoodiNimi((String) selectedToken);
-                }
-            });
-
-            // Create caption formatter for koodisto component.
-            KoodistoComponent k = (KoodistoComponent) f.getSelectionComponent();
-            k.setCaptionFormatter(new CaptionFormatter() {
-                @Override
-                public String formatCaption(Object dto) {
-                    if (dto instanceof KoodiType) {
-                        KoodiType kt = (KoodiType) dto;
-                        return _uiHelper.getKoodiNimi(kt, null);
-                        // return _uiHelper.getKoodiNimi(kt.getKoodiUri());
-                    } else {
-                        return "??? " + dto;
-                    }
-                }
-            });
-
-            //f.getSelectionLayout().setWidth("600px");
-        }
+        hl = new HorizontalLayout();
+        PropertysetItem psi = new BeanItem(koulutusLisatiedotModel);
+        f = uiBuilder.koodistoTokenField(hl, KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
+        this.addComponent(hl);
 
         //
         // Language dependant information
@@ -133,7 +111,7 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
         addComponent(UiBuilder.label((AbstractLayout) null, T("kieliriippuvatTiedot"), LabelStyleEnum.H2));
         addComponent(tabs);
     }
-    
+
     public void reBuildTabsheet() {
         LOG.debug("\n\nreBuildTabSheet\n\n");
         for (String curKieli : koulutusLisatiedotModel.getKielet()) {
@@ -197,7 +175,7 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa.help"), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
         }
-        
+
         {
             OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "koulutusohjelmanValinta");
             rta.setWidth("460px");
@@ -219,5 +197,39 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
             _i18n = new I18NHelper(this);
         }
         return _i18n;
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+
+        {
+
+
+            f.getSelectionLayout().setWidth("900px");
+            f.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
+                @Override
+                public String formatToken(Object selectedToken) {
+                    return _uiHelper.getKoodiNimi((String) selectedToken);
+                }
+            });
+
+            // Create caption formatter for koodisto component.
+            KoodistoComponent k = (KoodistoComponent) f.getSelectionComponent();
+            k.setCaptionFormatter(new CaptionFormatter() {
+                @Override
+                public String formatCaption(Object dto) {
+                    if (dto instanceof KoodiType) {
+                        KoodiType kt = (KoodiType) dto;
+                        return _uiHelper.getKoodiNimi(kt, null);
+                        // return _uiHelper.getKoodiNimi(kt.getKoodiUri());
+                    } else {
+                        return "??? " + dto;
+                    }
+                }
+            });
+
+            hl.addComponent(f);
+        }
     }
 }
