@@ -10,30 +10,12 @@
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
 
-   <!--
-    TODO: move attributes to properties
-   -->
-    <bean id="authInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
-        <constructor-arg>
-            <map>
-                <entry key="action" value="UsernameToken Timestamp" />
-                <entry key="user" value="1.2.246.562.24.00000000002" />
-                <entry key="passwordType" value="PasswordText" />
-                <entry key="passwordCallbackRef">
-                    <bean id="passwdHandler" class="fi.vm.sade.tarjonta.koodisto.service.impl.AuthCallbackHandler">
-                        <property name="password" value="1.2.246.562.24.00000000002"/>
-                    </bean>
-                </entry>
-            </map>
-        </constructor-arg>
-    </bean>
 
 
 
     <!-- Configure CXF bus to contain ticketInterceptor -->
     <cxf:bus>
         <cxf:outInterceptors>
-            <ref bean="authInterceptor" />
         </cxf:outInterceptors>
     </cxf:bus>
 
