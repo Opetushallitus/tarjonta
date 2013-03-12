@@ -43,7 +43,7 @@ public class EditKoulutusView extends AbstractVerticalLayout {
     private static final String DEMO_DATA = "tutkintoon johtavaa koulutusta";
     private Label title;  //formated title label
     private String koulutusOid;
-    private KoulutusActiveTab activeTab;
+    private KoulutusActiveTab activeTab = KoulutusActiveTab.PERUSTIEDOT;
 
     public EditKoulutusView(String koulutusOid) {
         this.koulutusOid = koulutusOid;
