@@ -276,7 +276,7 @@ public class ListKoulutusView extends VerticalLayout {
         btnMuokkaa.setEnabled(false);
         btnPoista = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("poista"), RequiredRole.CRUD, presenter.getPermission());
         btnPoista.setEnabled(false);
-        btnSiirraJaKopioi = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("siirraTaiKopioi"), RequiredRole.CRUD, presenter.getPermission());
+        btnSiirraJaKopioi = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("siirraTaiKopioi"));
         btnSiirraJaKopioi.setEnabled(false);
         btnSiirraJaKopioi.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
@@ -299,7 +299,7 @@ public class ListKoulutusView extends VerticalLayout {
             }
         });
 
-        luoHakukohdeB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LuoHakukohde"), RequiredRole.CRUD, presenter.getPermission());
+        luoHakukohdeB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LuoHakukohde"));
         luoHakukohdeB.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -313,7 +313,7 @@ public class ListKoulutusView extends VerticalLayout {
         });
 
         //Creating the create koulutus button
-        luoKoulutusB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LuoKoulutus"), RequiredRole.CRUD, presenter.getPermission());
+        luoKoulutusB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LuoKoulutus"));
         luoKoulutusB.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
