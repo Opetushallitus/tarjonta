@@ -23,6 +23,7 @@ import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.CreateKoodiDataType;
 import fi.vm.sade.koodisto.service.types.CreateKoodistoDataType;
 import fi.vm.sade.koodisto.service.types.SearchKoodistosCriteriaType;
+import fi.vm.sade.koodisto.service.types.UpdateKoodistoDataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.KoodistoType;
@@ -80,6 +81,17 @@ public class TarjontaDataKoodistoHelper {
         } catch (Exception exp) {
             log.warn("Unable to create koodi : with arvo : {}", createKoodiDataType.getKoodiUri(), createKoodiDataType.getKoodiArvo());
             log.warn("Exception : {}", exp.getMessage());
+            log.warn("Trying to create with another NimiFi");
+            //TODO: remove when Koodisto Team has managed to get this working
+            try {
+                koodiData.setKoodiNimiFi(koodiData.getKoodiNimiFi() + "_");
+                createKoodiDataType = DataUtils.createCreateKoodiDataType(koodiData, TilaType.HYVAKSYTTY);
+                createdKoodi = koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);
+            }  catch (Exception exx) {
+                log.warn("Unable to create koodi : with new arvo : {}", createKoodiDataType.getKoodiUri(), createKoodiDataType.getKoodiArvo());
+                log.warn("Exception : {}", exx.getMessage());
+            }
+
         }
         return createdKoodi;
     }
@@ -104,6 +116,29 @@ public class TarjontaDataKoodistoHelper {
         koodistoAdminService.createKoodisto(baseUri, createKoodistoDataType);
 
         return createKoodistoDataType;
+    }
+
+    public boolean removeKoodisto(String koodistoUri) {
+        log.info("Removing koodisto with uri : {}", koodistoUri);
+        try {
+            KoodistoType koodisto = getKoodistoByUri(koodistoUri);
+            UpdateKoodistoDataType update = new UpdateKoodistoDataType();
+            update.setKoodistoUri(koodistoUri);
+            update.setTila(TilaType.PASSIIVINEN);
+            update.setOmistaja(koodisto.getOmistaja());
+            update.setOrganisaatioOid(koodisto.getOrganisaatioOid());
+            update.getMetadataList().addAll(koodisto.getMetadataList());
+            update.setVoimassaAlkuPvm(koodisto.getVoimassaAlkuPvm());
+            update.setVoimassaLoppuPvm(koodisto.getVoimassaLoppuPvm());
+
+            koodistoAdminService.updateKoodisto(update);
+            koodistoAdminService.deleteKoodistoVersion(koodistoUri,koodisto.getVersio());
+            return true;
+        }  catch (Exception exp) {
+            exp.printStackTrace();
+            log.warn("Unable to remove koodisto : {}, exception : {}",koodistoUri,exp.toString());
+            return false;
+        }
     }
 
     public KoodiUriAndVersioType createKoodiUriAndVersioType(KoodiType koodi) {

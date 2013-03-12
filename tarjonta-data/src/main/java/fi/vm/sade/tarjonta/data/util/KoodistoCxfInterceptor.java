@@ -50,6 +50,7 @@ public class KoodistoCxfInterceptor extends AbstractPhaseInterceptor<Message> {
             log.info("SETTING HTTP HEADERS");
             headers.put("CasSecurityTicket", Collections.singletonList("oldDeprecatedSecurity_REMOVE"));
             headers.put("oldDeprecatedSecurity_REMOVE_username",Collections.singletonList("admin@oph.fi"));
+            headers.put("oldDeprecatedSecurity_REMOVE_authorities",Collections.singletonList("ROLE_APP_KOODISTO_CRUD,ROLE_APP_KOODISTO_CRUD_1.2.246.562.10.10108401950"));
 
         } catch (Exception exp) {
              log.warn("UNABLE TO SET HTTP HEADERS!");

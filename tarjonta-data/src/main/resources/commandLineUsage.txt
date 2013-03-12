@@ -7,4 +7,4 @@ mvn exec:java -Dexec.args="1 C:\\KoodistoExcelTesti\\koodistoRelaatioImportTest.
 
 Create koodisto from excel:
 
-mvn exec:java -Dexec.args="0 C:\\KoodistoExcelTesti\\koodistoRelaatioImportTest.xls TuomasHakukohdeTesti"
+mvn exec:java -Dexec.args="0 C:\\KoodistoImportTesti\\OPETUSMUOTO.xls OpetusmuotoTesti"

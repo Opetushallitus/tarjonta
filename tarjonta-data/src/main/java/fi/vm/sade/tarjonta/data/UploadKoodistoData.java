@@ -96,17 +96,36 @@ public class UploadKoodistoData {
         koodistoHelper.setOrganisaatioNimi(commonConstants.getOrganisaatioNimi());
     }
 
-
-    public void loadKoodistoFromExcel(String pathToExcel,String koodistoNimi) throws  IOException, ExceptionMessage{
+    private boolean createKoodisto(String koodistoNimi, String koodistoUri) {
         List<String> ryhmaUris = new ArrayList<String>();
         ryhmaUris.add(commonConstants.getBaseGroupUri());
+
+
+        try {
+            CreateKoodistoDataType koodisto = koodistoHelper.addCodeGroup(ryhmaUris,koodistoUri,koodistoNimi);
+            return true;
+        } catch (Exception exp) {
+            log.warn("Unable to create koodisto : {}, trying to remove it and create it again",koodistoUri);
+            try {
+                koodistoHelper.removeKoodisto(koodistoUri);
+                CreateKoodistoDataType koodisto = koodistoHelper.addCodeGroup(ryhmaUris,koodistoUri,koodistoNimi);
+                return true;
+            } catch (Exception exxp) {
+                  return false;
+            }
+
+        }
+    }
+
+    public void loadKoodistoFromExcel(String pathToExcel,String koodistoNimi) throws  IOException, ExceptionMessage{
         String koodistoUri = DataUtils.createKoodiUriFromName(koodistoNimi);
-        CreateKoodistoDataType koodisto = koodistoHelper.addCodeGroup(ryhmaUris,koodistoUri,koodistoNimi);
+        if (createKoodisto(koodistoNimi,koodistoUri)) {
         CommonKoodiData koodis = new CommonKoodiData(pathToExcel);
         if (koodis != null && koodis.getLoadedKoodis() != null && koodis.getLoadedKoodis().size() > 0) {
             loadKoodisToKoodisto(koodis.getLoadedKoodis(),koodistoUri);
         }   else {
             log.warn("Loaded koodis was empty or null!");
+        }
         }
     }
 
@@ -172,6 +191,7 @@ public class UploadKoodistoData {
 
            // KoodiType koodiType = koodistoHelper.addCodeItem(koodistoName, koodiUri, koodi.getKoodiArvo(), koodi.getKoodiNimiFi());
             KoodiType koodiType = koodistoHelper.addCodeItem(koodi,DataUtils.createKoodiUriFromName(koodistoName));
+
             //koodiUriArvoPair.put(koodi.getKoodiArvo(),koodiType);
 
         }
