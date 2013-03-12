@@ -15,9 +15,9 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
-
 import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
+import static com.vaadin.terminal.Sizeable.SIZE_UNDEFINED;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 
@@ -25,6 +25,7 @@ import fi.vm.sade.generic.ui.feature.UserFeature;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -106,20 +107,18 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     }
 
     private void buildKoulutuksenPerustiedot(VerticalLayout layout) {
-
         KoulutusToisenAsteenPerustiedotViewModel model = _presenter.getModel().getKoulutusPerustiedotModel();
-        final String komotoOid = model.getOid();
 
         layout.addComponent(buildHeaderLayout(T("perustiedot"), T(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(ClickEvent event) {
-                _presenter.showKoulutusPerustiedotEditView(komotoOid);
+                _presenter.showKoulutustEditView(getEditViewOid(), KoulutusActiveTab.PERUSTIEDOT);
             }
-        }, true));
+        }));
         GridLayout grid = new GridLayout(2, 1);
         grid.setMargin(true);
-        grid.setHeight("100%");
 
         addItemToGrid(grid, "organisaatio", model.getOrganisaatioName());
         addItemToGrid(grid, "koulutuslaji", _tarjontaUIHelper.getKoodiNimi(model.getKoulutuslaji()));
@@ -129,11 +128,11 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         addItemToGrid(grid, "opetuskieli", _tarjontaUIHelper.getKoodiNimi(model.getOpetuskieli(), null));
         addItemToGrid(grid, "ammattinimikkeet", _tarjontaUIHelper.getKoodiNimi(_presenter.getModel().getKoulutusLisatiedotModel().getAmmattinimikkeet(), null));
 
-        grid.setColumnExpandRatio(0, 1f);
-        grid.setColumnExpandRatio(1, 2f);
+        grid.setColumnExpandRatio(0, 0.5f);
+        grid.setColumnExpandRatio(1, 0.5f);
 
         layout.addComponent(grid);
-        layout.setExpandRatio(grid, 1f);
+        layout.setComponentAlignment(grid, Alignment.TOP_LEFT);
     }
 
     private String suunniteltuKesto(KoulutusToisenAsteenPerustiedotViewModel model) {
@@ -175,12 +174,16 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     private void addItemToGrid(GridLayout grid, String labelCaptionKey, Component component) {
         if (grid != null) {
             HorizontalLayout hl = UiUtil.horizontalLayout(false, UiMarginEnum.RIGHT);
-            hl.setSizeFull();
+            hl.setSizeUndefined();
             UiUtil.label(hl, T(labelCaptionKey));
             grid.addComponent(hl);
-            grid.addComponent(component);
+
+            HorizontalLayout textArea = UiUtil.horizontalLayout(false, UiMarginEnum.NONE);
+            textArea.addComponent(component);
+            grid.addComponent(textArea);
+
             grid.setComponentAlignment(hl, Alignment.TOP_RIGHT);
-            grid.setComponentAlignment(component, Alignment.TOP_LEFT);
+            grid.setComponentAlignment(textArea, Alignment.TOP_LEFT);
             grid.newLine();
         }
     }
@@ -191,8 +194,16 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
      * @param layout
      */
     private void buildKoulutuksenKuvailevatTiedot(VerticalLayout layout) {
-        layout.addComponent(buildHeaderLayout(T("kuvailevatTiedot"), T(CommonTranslationKeys.MUOKKAA), null, false));
         KoulutusLisatiedotModel lisatiedotModel = _presenter.getModel().getKoulutusLisatiedotModel();
+
+        layout.addComponent(buildHeaderLayout(T("kuvailevatTiedot"), T(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                _presenter.showKoulutustEditView(getEditViewOid(), KoulutusActiveTab.PERUSTIEDOT);
+            }
+        }));
 
         TabSheet tab = new TabSheet();
         tab.setSizeFull();
@@ -202,56 +213,53 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             KoulutusLisatietoModel tiedotModel = lisatiedotModel.getLisatiedot(languageUri);
 
             GridLayout grid = new GridLayout(2, 1);
+            grid.setWidth("100%");
             grid.setMargin(true);
-            grid.setHeight("100%");
-            addItemToGrid(grid, "tutkinnonSisalto", new Label(tiedotModel.getSisalto(), Label.CONTENT_XHTML));
-            addItemToGrid(grid, "tutkinnonKuvailevatTiedot", new Label(tiedotModel.getKuvailevatTiedot(), Label.CONTENT_XHTML));
-            addItemToGrid(grid, "tutkinnonSijoittuminenTyoelamaan", new Label(tiedotModel.getSijoittuminenTyoelamaan(), Label.CONTENT_XHTML));
-            addItemToGrid(grid, "tutkinnonKansainvalistyminen", new Label(tiedotModel.getKansainvalistyminen(), Label.CONTENT_XHTML));
-            addItemToGrid(grid, "tutkinnonYhteistyoMuidenToimijoidenKanssa", new Label(tiedotModel.getYhteistyoMuidenToimijoidenKanssa(), Label.CONTENT_XHTML));
-            addItemToGrid(grid, "koulutusohjelmanValinta", new Label(tiedotModel.getKoulutusohjelmanValinta(), Label.CONTENT_XHTML));
-            
 
-            grid.setColumnExpandRatio(0, 1);
-            grid.setColumnExpandRatio(1, 2);
+            addItemToGrid(grid, "tutkinnonSisalto", buildLabel(tiedotModel.getSisalto()));
+            addItemToGrid(grid, "tutkinnonKuvailevatTiedot", buildLabel(tiedotModel.getKuvailevatTiedot()));
+            addItemToGrid(grid, "tutkinnonSijoittuminenTyoelamaan", buildLabel(tiedotModel.getSijoittuminenTyoelamaan()));
+            addItemToGrid(grid, "tutkinnonKansainvalistyminen", buildLabel(tiedotModel.getKansainvalistyminen()));
+            addItemToGrid(grid, "tutkinnonYhteistyoMuidenToimijoidenKanssa", buildLabel(tiedotModel.getYhteistyoMuidenToimijoidenKanssa()));
+            addItemToGrid(grid, "koulutusohjelmanValinta", buildLabel(tiedotModel.getKoulutusohjelmanValinta()));
+
+            grid.setColumnExpandRatio(1, 1f);
 
             tab.addTab(grid, _tarjontaUIHelper.getKoodiNimi(languageUri));
-
         }
 
         layout.addComponent(tab);
-        layout.setExpandRatio(tab, 1f);
+        layout.setComponentAlignment(tab, Alignment.TOP_LEFT);
     }
 
     private void buildKoulutuksenSisaltyvatOpintokokonaisuudet(VerticalLayout layout) {
         // TODO get number of included(?) Koulutus entries
         int numberOfIncludedOpintokokonaisuus = 1;
 
-        layout.addComponent(buildHeaderLayout(T("sisaltyvatOpintokokonaisuudet", numberOfIncludedOpintokokonaisuus), T(CommonTranslationKeys.MUOKKAA), null, false));
+        layout.addComponent(buildHeaderLayout(T("sisaltyvatOpintokokonaisuudet", numberOfIncludedOpintokokonaisuus), T(CommonTranslationKeys.MUOKKAA), null));
     }
 
     private void buildKoulutuksenHakukohteet(VerticalLayout layout) {
-
         int numberOfApplicationTargets = _presenter.getModel().getKoulutusPerustiedotModel().getKoulutuksenHakukohteet().size();
 
         layout.addComponent(buildHeaderLayout(T("hakukohteet", numberOfApplicationTargets), T("luoUusiHakukohdeBtn"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-                @Override
-                public void buttonClick(ClickEvent event) {
-                   List<String> koulutus = new ArrayList<String>();
-                   koulutus.add(_presenter.getModel().getKoulutusPerustiedotModel().getOid());
-                   _presenter.showHakukohdeEditView(koulutus,null);
-                }
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                List<String> koulutus = new ArrayList<String>();
+                koulutus.add(_presenter.getModel().getKoulutusPerustiedotModel().getOid());
+                _presenter.showHakukohdeEditView(koulutus, null);
             }
-                , false));
+        }));
 
         CategoryTreeView categoryTree = new CategoryTreeView();
         categoryTree.setHeight("100px");
         categoryTree.setContainerDataSource(createHakukohdelistContainer(_presenter.getModel().getKoulutusPerustiedotModel().getKoulutuksenHakukohteet()));
-        String[] visibleColumns = {"nimiBtn","poistaBtn"};
+        String[] visibleColumns = {"nimiBtn", "poistaBtn"};
         categoryTree.setVisibleColumns(visibleColumns);
-        for (Object item:categoryTree.getItemIds()) {
-            categoryTree.setChildrenAllowed(item,false);
+        for (Object item : categoryTree.getItemIds()) {
+            categoryTree.setChildrenAllowed(item, false);
         }
         layout.addComponent(categoryTree);
 
@@ -259,17 +267,19 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     public void showHakukohdeRemovalDialog(final String hakukohdeOid, final String hakukohdeNimi) {
         final Window hakukohdeRemovalDialog = new Window();
-        RemovalConfirmationDialog removalConfirmationDialog = new RemovalConfirmationDialog(T("removeHakukohdeFromKoulutusQ"),hakukohdeNimi,T("jatkaBtn"),T("peruutaBtn"),new Button.ClickListener() {
+        RemovalConfirmationDialog removalConfirmationDialog = new RemovalConfirmationDialog(T("removeHakukohdeFromKoulutusQ"), hakukohdeNimi, T("jatkaBtn"), T("peruutaBtn"), new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 getWindow().removeWindow(hakukohdeRemovalDialog);
                 _presenter.removeHakukohdeFromKoulutus(hakukohdeOid);
 
-            }},new Button.ClickListener() {
+            }
+        }, new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 getWindow().removeWindow(hakukohdeRemovalDialog);
-            } });
+            }
+        });
         hakukohdeRemovalDialog.setContent(removalConfirmationDialog);
         hakukohdeRemovalDialog.setModal(true);
         hakukohdeRemovalDialog.center();
@@ -285,19 +295,19 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     private List<ShowKoulutusHakukohdeRow> getKoulutusHakukohdeRows(List<SimpleHakukohdeViewModel> hakukohdes) {
         List<ShowKoulutusHakukohdeRow> rows = new ArrayList<ShowKoulutusHakukohdeRow>();
-        for (SimpleHakukohdeViewModel hakukohdeViewModel:hakukohdes) {
+        for (SimpleHakukohdeViewModel hakukohdeViewModel : hakukohdes) {
             ShowKoulutusHakukohdeRow row = new ShowKoulutusHakukohdeRow(hakukohdeViewModel);
             rows.add(row);
         }
         return rows;
     }
 
-    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, boolean enable) {
+    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener) {
         HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         Label titleLabel = UiUtil.label(headerLayout, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
 
-        System.out.println("title:" + title);
+
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);
             Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener);
@@ -307,6 +317,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             if (listener == null) {
                 btn.addListener(new Button.ClickListener() {
                     private static final long serialVersionUID = 5019806363620874205L;
+
                     @Override
                     public void buttonClick(ClickEvent event) {
                         getWindow().showNotification("Toiminnallisuutta ei vielä toteutettu");
@@ -323,6 +334,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     private void addNavigationButtons(VerticalLayout layout, OrganisaatioContext context) {
         addNavigationButton("", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
 
@@ -332,15 +344,17 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         
         final Button poista = addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 showRemoveDialog();
-                
+
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
         
         final Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 List<String> koulutusOids = new ArrayList<String>();
@@ -358,6 +372,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
         final Button siirraOsaksiToista = addNavigationButton(T("siirraOsaksiToistaKoulutusta"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 getWindow().showNotification("Ei toteutettu");
@@ -366,6 +381,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
         final Button lisaaToteutus = addNavigationButton(T("lisaaToteutus"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 _presenter.showLisaaRinnakkainenToteutusEditView(_presenter.getModel().getKoulutusPerustiedotModel().getOid());
@@ -374,12 +390,12 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
         final Button esikatsele = addNavigationButton(T("esikatsele"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 getWindow().showNotification("Ei toteutettu");
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
-
 
         //check permissions
         final TarjontaPermissionServiceImpl permissions = _presenter.getPermission(); 
@@ -398,31 +414,33 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
         layout.addComponent(split);
     }
-    
+
     private void showRemoveDialog() {
-        RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), "", T("removeYes"), T("removeNo"), 
-                new Button.ClickListener() {    
-                        @Override
-                        public void buttonClick(ClickEvent event) {
-                            closeKoulutusCreationDialog();
-                            KoulutusTulos koulutus = new KoulutusTulos();
-                            KoulutusKoosteTyyppi koulutusKooste = new KoulutusKoosteTyyppi();
-                            koulutusKooste.setKoulutusmoduuliToteutus(_presenter.getModel().getKoulutusPerustiedotModel().getOid());
-                            koulutus.setKoulutus(koulutusKooste);
-                            boolean removeSuccess = _presenter.removeKoulutus(koulutus);
-                            _presenter.getHakukohdeListView().reload();
-                            if (removeSuccess) {
-                                _presenter.showMainDefaultView();
-                            } 
-                        }
-                },
-                new Button.ClickListener() {
+        RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), "", T("removeYes"), T("removeNo"), new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
 
-                           @Override
-                           public void buttonClick(ClickEvent event) {
-                               closeKoulutusCreationDialog();
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeKoulutusCreationDialog();
+                KoulutusTulos koulutus = new KoulutusTulos();
+                KoulutusKoosteTyyppi koulutusKooste = new KoulutusKoosteTyyppi();
+                koulutusKooste.setKoulutusmoduuliToteutus(getEditViewOid());
+                koulutus.setKoulutus(koulutusKooste);
+                boolean removeSuccess = _presenter.removeKoulutus(koulutus);
+                _presenter.getHakukohdeListView().reload();
+                if (removeSuccess) {
+                    _presenter.showMainDefaultView();
+                }
+            }
+        }, new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
 
-                           }});
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeKoulutusCreationDialog();
+
+            }
+        });
         tarjontaDialog = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
         getWindow().addWindow(tarjontaDialog);
     }
@@ -431,5 +449,17 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         if (tarjontaDialog != null) {
             getWindow().removeWindow(tarjontaDialog);
         }
+    }
+
+    private String getEditViewOid() {
+        KoulutusToisenAsteenPerustiedotViewModel model = _presenter.getModel().getKoulutusPerustiedotModel();
+        return model.getOid();
+    }
+
+    private Label buildLabel(String text) {
+        Label label = UiUtil.label(null, text);
+        label.setContentMode(Label.CONTENT_XHTML);
+        label.setSizeFull();
+        return label;
     }
 }

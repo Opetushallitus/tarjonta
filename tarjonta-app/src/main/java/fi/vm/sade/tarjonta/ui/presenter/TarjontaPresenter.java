@@ -42,6 +42,7 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTu
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
@@ -592,13 +593,10 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             getRootView().changeView(new EditKoulutusView(koulutusOid));
             getModel().getKoulutusPerustiedotModel().setOid(null);
         }
-
-
-
     }
 
     @SuppressWarnings("empty-statement")
-    public void showKoulutusPerustiedotEditView(final String koulutusOid) {
+    public void showKoulutustEditView(final String koulutusOid, final KoulutusActiveTab tab) {
         // If oid of koulutus is provided the koulutus is read from database
         // before opening the KoulutusEditView
         if (koulutusOid != null) {
@@ -613,8 +611,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             getModel().setKoulutusLisatiedotModel(new KoulutusLisatiedotModel());
         }
         
-        getRootView().changeView(new EditKoulutusView(koulutusOid));
-        
+        getRootView().changeView(new EditKoulutusView(koulutusOid, tab));        
     }
     
     public void showLisaaRinnakkainenToteutusEditView(final String koulutusOid) {

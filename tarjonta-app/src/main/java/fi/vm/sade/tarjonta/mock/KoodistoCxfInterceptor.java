@@ -44,16 +44,12 @@ public class KoodistoCxfInterceptor extends AbstractPhaseInterceptor<Message> {
 
     @Override
     public void handleMessage(Message message) throws Fault {
-
         Map<String, List> headers = (Map<String, List>) message.get(Message.PROTOCOL_HEADERS);
         try {
-            log.info("SETTING HTTP HEADERS");
             headers.put("CasSecurityTicket", Collections.singletonList("oldDeprecatedSecurity_REMOVE"));
             headers.put("oldDeprecatedSecurity_REMOVE_username",Collections.singletonList("admin@oph.fi"));
-
         } catch (Exception exp) {
              log.warn("UNABLE TO SET HTTP HEADERS!");
         }
-
     }
 }

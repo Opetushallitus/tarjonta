@@ -29,6 +29,7 @@ import fi.vm.sade.vaadin.Oph;
  * @author markus
  */
 public class HakuPortletApplication extends AbstractSadePortletApplication {
+    private static final long serialVersionUID = -5438300477469075L;
 
     private Window window;
     private static ThreadLocal<HakuPortletApplication> tl = new ThreadLocal<HakuPortletApplication>();

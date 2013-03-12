@@ -43,6 +43,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
@@ -278,6 +279,7 @@ public class ListKoulutusView extends VerticalLayout {
         btnSiirraJaKopioi = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("siirraTaiKopioi"), RequiredRole.CRUD, presenter.getPermission());
         btnSiirraJaKopioi.setEnabled(false);
         btnSiirraJaKopioi.addListener(new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent clickEvent) {
                 List<String> koulutusOids = presenter.getSelectedKoulutusOids();
@@ -318,7 +320,7 @@ public class ListKoulutusView extends VerticalLayout {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 if (presenter.availableKoulutus()) {
-                    presenter.showKoulutusPerustiedotEditView(null);
+                    presenter.showKoulutustEditView(null, KoulutusActiveTab.PERUSTIEDOT);
                 } else {
                     showNoKoulutusDialog("viesti");
                 }
@@ -377,6 +379,7 @@ public class ListKoulutusView extends VerticalLayout {
     private void createButtonListeners() {
 
         createDialog.getPeruutaBtn().addListener(new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 if (createHakukohdeDialog != null) {
@@ -387,6 +390,7 @@ public class ListKoulutusView extends VerticalLayout {
 
 
         createDialog.getJatkaBtn().addListener(new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 createDialog.removeErrorMessages();

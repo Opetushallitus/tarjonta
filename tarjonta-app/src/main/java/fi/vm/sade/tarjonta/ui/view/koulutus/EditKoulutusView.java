@@ -19,6 +19,7 @@ import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
@@ -42,9 +43,15 @@ public class EditKoulutusView extends AbstractVerticalLayout {
     private static final String DEMO_DATA = "tutkintoon johtavaa koulutusta";
     private Label title;  //formated title label
     private String koulutusOid;
+    private KoulutusActiveTab activeTab;
 
     public EditKoulutusView(String koulutusOid) {
         this.koulutusOid = koulutusOid;
+    }
+
+    public EditKoulutusView(String koulutusOid, KoulutusActiveTab activeTab) {
+        this.koulutusOid = koulutusOid;
+        this.activeTab = activeTab;
     }
 
     @Override
@@ -72,10 +79,17 @@ public class EditKoulutusView extends AbstractVerticalLayout {
         addComponent(hlLabelWrapper);
 
         TabSheet tabs = UiBuilder.tabSheet(this);
-        tabs.addTab(new EditKoulutusPerustiedotToinenAsteView(koulutusOid), T("perustiedot"));
+        EditKoulutusPerustiedotToinenAsteView perustiedotView = new EditKoulutusPerustiedotToinenAsteView(koulutusOid);
+        tabs.addTab(perustiedotView, T("perustiedot"));
         EditKoulutusLisatiedotToinenAsteView lisatiedotView = new EditKoulutusLisatiedotToinenAsteView(koulutusOid);
         tabs.addTab(lisatiedotView, T("lisatiedot"));
         this.presenter.setLisatiedotView(lisatiedotView);
+
+        if (KoulutusActiveTab.PERUSTIEDOT.equals(activeTab)) {
+            tabs.setSelectedTab(perustiedotView);
+        } else {
+            tabs.setSelectedTab(lisatiedotView);
+        }
     }
 
     private String getOrganisaationNames() {

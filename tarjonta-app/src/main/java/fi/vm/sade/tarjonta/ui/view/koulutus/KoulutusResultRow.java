@@ -35,6 +35,7 @@ import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.MenuBarActions;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
@@ -135,7 +136,7 @@ public class KoulutusResultRow extends HorizontalLayout {
         if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
             tarjontaPresenter.showShowKoulutusView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
         } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
-            tarjontaPresenter.showKoulutusPerustiedotEditView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
+            tarjontaPresenter.showKoulutustEditView(koulutus.getKoulutus().getKoulutusmoduuliToteutus(), KoulutusActiveTab.PERUSTIEDOT);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.DELETE.key))) {
             showRemoveDialog();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
