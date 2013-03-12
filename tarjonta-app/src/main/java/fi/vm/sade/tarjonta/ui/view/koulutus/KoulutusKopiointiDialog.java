@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.tarjonta.ui.view.common.SelectableItem;
 import fi.vm.sade.tarjonta.ui.view.common.SelectableItemContainer;
 import fi.vm.sade.tarjonta.ui.view.common.SelectableItemListener;
@@ -44,6 +45,8 @@ public class KoulutusKopiointiDialog extends Window {
 
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
+    @Autowired(required = true)
+    private UserContext userContext;
 
     @Autowired(required = true)
     private TarjontaPresenter presenter;
@@ -55,16 +58,20 @@ public class KoulutusKopiointiDialog extends Window {
     private HashMap<String,OrganisaatioPerustietoType> selectedOrgs = new HashMap<String,OrganisaatioPerustietoType>();
     private static final String CHILD_TREE_PROPERTY = "childOrganisaatioButton";
 
-    public KoulutusKopiointiDialog(List<String> organisaatioOids, String width,String height) {
+    public KoulutusKopiointiDialog(String width,String height) {
         super();
         _i18n = new I18NHelper(this);
         setWidth(width);
         setHeight(height);
         setContent(buildMainLayout());
-        addElementsToTree(organisaatioOids);
+        addElementsToTree(getUserOrgnanisaatioOids());
         setModal(true);
         setCaption(_i18n.getMessage("dialog.title"));
 
+    }
+
+    private Collection<String> getUserOrgnanisaatioOids() {
+       return userContext.getUserOrganisations();
     }
 
     private VerticalLayout buildMainLayout() {
@@ -228,8 +235,9 @@ public class KoulutusKopiointiDialog extends Window {
         return organisaatioChildTree;
     }
 
-    private void addElementsToTree(List<String> organisaatioOids) {
-        List<OrganisaatioPerustietoType> organisaatios = presenter.fetchChildOrganisaatios(organisaatioOids);
+    private void addElementsToTree(Collection<String> organisaatioOids) {
+        List<String> orgOids = new ArrayList<String>(organisaatioOids);
+        List<OrganisaatioPerustietoType> organisaatios = presenter.fetchChildOrganisaatios(orgOids);
         if (organisaatioChildTree != null) {
         for (final OrganisaatioPerustietoType curOrg:organisaatios) {
 

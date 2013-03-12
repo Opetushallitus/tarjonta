@@ -360,9 +360,8 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
                 List<String> koulutusOids = new ArrayList<String>();
                 koulutusOids.add(_presenter.getModel().getKoulutusPerustiedotModel().getOid());
 
-                List<String> organisaatioOids = new ArrayList<String>();
-                organisaatioOids.addAll(UserFeature.get().getOrganisations());
-                KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog(organisaatioOids,"600px","500px");
+
+                KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px","500px");
 
                 getWindow().addWindow(kopiointiDialog);
 

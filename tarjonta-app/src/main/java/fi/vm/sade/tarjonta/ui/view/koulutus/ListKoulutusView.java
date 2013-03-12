@@ -286,11 +286,9 @@ public class ListKoulutusView extends VerticalLayout {
 
                 if (koulutusOids.size() == 1) {
                 presenter.getModel().setSelectedKoulutusOid(koulutusOids.get(0));
-                List<String> organisaatioOids = new ArrayList<String>();
-                organisaatioOids.addAll(UserFeature.get().getOrganisations());
-                /*organisaatioOids.add(presenter.getModel().getOrganisaatioOid());*/
 
-                KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog(organisaatioOids,"600px","500px");
+
+                KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px","500px");
 
                 getWindow().addWindow(kopiointiDialog);
                 } else {
