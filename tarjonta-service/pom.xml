@@ -141,6 +141,16 @@
             <artifactId>querydsl-apt</artifactId>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency> 
+            <!-- Spring AOP dependency -->
+            <!-- A quick fix for :
+            AopConfigException: Cannot proxy target class because CGLIB2 is not available.
+            -->
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.2</version>
+        </dependency>
 
     </dependencies>
 
