@@ -249,7 +249,7 @@
                         maxOccurs="1">
                 <xs:complexType>
                     <xs:sequence>
-                       <xs:element name="ParentRef"
+                        <xs:element name="ParentRef"
                                     type="tns:LearningOpportunitySpecificationRefType"
                                     minOccurs="1"
                                     maxOccurs="1"/>
@@ -620,7 +620,7 @@
                                 minOccurs="1"
                                 maxOccurs="1"/>
                                 
-                   <xs:element name="ChildLOSRefs"
+                    <xs:element name="ChildLOSRefs"
                                 type="tns:LearningOpportunitySpecificationRefType"
                                 minOccurs="0"
                                 maxOccurs="unbounded"/>
@@ -1216,6 +1216,13 @@
             <xs:extension base="tns:CodeLabelType">
                 <xs:attribute name="scheme" type="tns:LearningClassificationCodeSchemeType"/>
                 <xs:attribute name="version" type="xs:string" use="optional"/>
+                <xs:attribute name="uri" type="xs:string" use="optional">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="fi">
+                            Kaytetyn koodiston uri
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>                   
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -1236,12 +1243,20 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="Codes" type="tns:CodeValueType" minOccurs="1" maxOccurs="unbounded" />
+            <xs:element name="Codes" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Code" type="tns:ExtendedCodeLabelType" minOccurs="1" maxOccurs="unbounded" />
+                    </xs:sequence>        
+                </xs:complexType>    
+            </xs:element>
         </xs:sequence>
         <xs:attribute name="scheme"
                       type="tns:CodeSchemeType"
                       use="required"/>
     </xs:complexType>
+    
+    
 
     <xs:complexType name="CodeValueType">
         <xs:annotation>

@@ -44,8 +44,11 @@ import fi.vm.sade.tarjonta.publication.enricher.PublicationNamespaceContext;
 import fi.vm.sade.tarjonta.publication.enricher.XMLStreamEnricher;
 import fi.vm.sade.tarjonta.publication.enricher.ext.KoodistoLookupService.KoodiValue;
 import fi.vm.sade.tarjonta.publication.enricher.organisaatio.KoulutustarjoajaLookupService;
+import fi.vm.sade.tarjonta.publication.types.CodeSchemeType;
+import fi.vm.sade.tarjonta.publication.types.CodeValueCollectionType;
 import fi.vm.sade.tarjonta.publication.types.ExtendedStringType;
 import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadDataType;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunityInstanceType;
 import fi.vm.sade.tarjonta.publication.types.LearningOpportunitySpecificationType;
 
 import fi.vm.sade.tarjonta.util.SystemUtils;
@@ -182,7 +185,7 @@ public class LearningOpportunityEnricherTest {
 
     @Test
     public void testEnrichProfessionLabels() throws Exception {
-    
+
         final String basePath = INSTANCE_PATH + "/dft:ProfessionLabels/dft:Profession";
         assertCodeValue(basePath + "[1]", "uri:ammattinimike/lahihoitaja", "ammattinimike");
         assertCodeValue(basePath + "[2]", "uri:ammattinimike/perushoitaja", "ammattinimike");
@@ -211,7 +214,7 @@ public class LearningOpportunityEnricherTest {
     public void testEnrichFormOfEducation() throws Exception {
 
         final String basePath = INSTANCE_PATH + "/dft:FormOfEducation";
-        assertCodeValueCollection(basePath + "/dft:Code[1]", "koulutuslaji-value", "koulutuslaji");
+        assertCodeValueCollection(basePath + "/dft:Codes/dft:Code[1]", "koulutuslaji-value", "koulutuslaji");
 
     }
 
@@ -219,7 +222,7 @@ public class LearningOpportunityEnricherTest {
     public void testEnrichFormOfTeaching() throws Exception {
 
         final String basePath = INSTANCE_PATH + "/dft:FormsOfTeaching";
-        assertCodeValueCollection(basePath + "/dft:Code[1]", "opetusmuoto-value", "opetusmuoto");
+        assertCodeValueCollection(basePath + "/dft:Codes/dft:Code[1]", "opetusmuoto-value", "opetusmuoto");
 
     }
 
@@ -499,13 +502,22 @@ public class LearningOpportunityEnricherTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(out.toByteArray());
 
         Unmarshaller unmashaller = JAXBContext.newInstance(LearningOpportunityDownloadDataType.class.getPackage().getName()).createUnmarshaller();
-    
-        LearningOpportunityDownloadDataType learningOpportunityDownloadDataType = (LearningOpportunityDownloadDataType) unmashaller.unmarshal(bais);
-        LearningOpportunitySpecificationType get = learningOpportunityDownloadDataType.getLearningOpportunitySpecification().get(0);
-        assertEquals("S1508", get.getId());
-        List<ExtendedStringType> label = get.getQualification().getLabel();
 
+        LearningOpportunityDownloadDataType learningOpportunityDownloadDataType = (LearningOpportunityDownloadDataType) unmashaller.unmarshal(bais);
+        LearningOpportunitySpecificationType los = learningOpportunityDownloadDataType.getLearningOpportunitySpecification().get(0);
+        assertEquals("S1508", los.getId());
+        List<ExtendedStringType> label = los.getQualification().getLabel();
         assertEquals(3, label.size());
-        
+
+        LearningOpportunityInstanceType loi = learningOpportunityDownloadDataType.getLearningOpportunityInstance().get(0);
+        assertEquals("I1508YO", loi.getId());
+        CodeValueCollectionType languagesOfInstruction = loi.getLanguagesOfInstruction();
+        assertEquals(CodeSchemeType.KOODISTO, languagesOfInstruction.getScheme());
+        assertEquals(2, languagesOfInstruction.getCodes().getCode().size());
+        assertEquals(3, languagesOfInstruction.getCodes().getCode().get(0).getLabel().size());
+
+        CodeValueCollectionType formOfEducation = loi.getFormOfEducation();
+        assertEquals(1, formOfEducation.getCodes().getCode().size());
+        assertEquals(3, formOfEducation.getCodes().getCode().get(0).getLabel().size());
     }
 }

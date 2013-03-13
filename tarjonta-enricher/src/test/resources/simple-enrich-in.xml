@@ -172,27 +172,31 @@
 
         <LanguagesOfInstruction scheme="Koodisto">
             <Codes>
-                <Code  version="1" uri="uri:kieli/en"/>
+                <Code version="1" uri="uri:kieli/en"/>
                 <Code version="1" uri="uri:kieli/fi" />
             </Codes>
         </LanguagesOfInstruction>
 
         <!--koulutuslaji -->
         <FormOfEducation scheme="Koodisto">
-            <Code version="1" uri="uri:koulutuslaji/nuorten">
-                <Label lang="fi">koulutuslaji-fi</Label>
-                <Label lang="en">koulutuslaji-en</Label>
-                <Label lang="sv">koulutuslaji-sv</Label>
-            </Code>
+            <Codes>
+                <Code version="1" uri="uri:koulutuslaji/nuorten">
+                    <Label lang="fi">koulutuslaji-fi</Label>
+                    <Label lang="en">koulutuslaji-en</Label>
+                    <Label lang="sv">koulutuslaji-sv</Label>
+                </Code>
+            </Codes>
         </FormOfEducation>
 
         <!-- joukko opetusmuotoja -->
         <FormsOfTeaching scheme="Koodisto" >
-            <Code uri="uri:opetusmuoto/lahiopetus" version="1">
-                <Label lang="fi">opetusmuoto-fi</Label>
-                <Label lang="en">opetusmuoto-en</Label>
-                <Label lang="sv">opetusmuoto-sv</Label>
-            </Code>
+            <Codes>
+                <Code uri="uri:opetusmuoto/lahiopetus" version="1">
+                    <Label lang="fi">opetusmuoto-fi</Label>
+                    <Label lang="en">opetusmuoto-en</Label>
+                    <Label lang="sv">opetusmuoto-sv</Label>
+                </Code>
+            </Codes>
         </FormsOfTeaching>
 
         <!-- koulutuksen alkamispäivämäärä, ISO-8601 muodossa -->

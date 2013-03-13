@@ -218,9 +218,10 @@ public class LearningOpportunityDataWriterTest {
         assertEquals(2, location.getAddressLine().size());
         assertEquals("hakukohde_valintakoe_ajankohdan_osoite_postitoimipaikka", location.getCity());
         assertEquals("hakukohde_valintakoe_ajankohdan_osoite_postinumero", location.getPostalCode());
+        assertEquals("valintakoe_ajankohdan_lisatietoja", location.getName());
         assertEquals(null, location.getCompany());
         assertEquals(null, location.getCountry());
-        assertEquals(null, location.getName());
+
         assertEquals(null, location.getRecipientName());
 
         //descriptions
@@ -368,6 +369,7 @@ public class LearningOpportunityDataWriterTest {
         ajankohta.setAlkamisaika(DATE_START);
         ajankohta.setPaattymisaika(DATE_END);
         ajankohta.setAjankohdanOsoite(createOsoite(AO_PREFIX + "valintakoe_ajankohdan_osoite_"));
+        ajankohta.setLisatietoja("valintakoe_ajankohdan_lisatietoja");
         valintakoe.addAjankohta(ajankohta);
         valintakoe.setKuvaus(createMonikielinenTeksti(AO_PREFIX + "valintakoe_kuvaus"));
         valintakoe.setTyyppiUri(prefixUri + "valintakoetyyppi");

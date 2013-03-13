@@ -864,6 +864,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                     event.setLocations(locations);
                     
                     ExaminationLocationType location = new ExaminationLocationType();
+                    location.setName(sourceAjankohta.getLisatietoja());
                     location.getAddressLine().add(sourceAjankohta.getAjankohdanOsoite().getOsoiterivi1());
                     location.getAddressLine().add(sourceAjankohta.getAjankohdanOsoite().getOsoiterivi2());
                     location.setCity(sourceAjankohta.getAjankohdanOsoite().getPostitoimipaikka());
@@ -1071,9 +1072,11 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         }
         
         CodeValueCollectionType collection = new CodeValueCollectionType();
+        collection.setCodes(new CodeValueCollectionType.Codes());
         collection.setScheme(CodeSchemeType.KOODISTO);
-        for (KoodistoUri uri : uris) {
-            collection.getCodes().add(createCodeValue(null, uri.getKoodiUri()));
+       
+        for (KoodistoUri uri : uris) {  
+            collection.getCodes().getCode().add(createExtendedCodeValue(uri.getKoodiUri()));
         }
         return collection;
         
@@ -1217,6 +1220,22 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         
     }
 
+    private static ExtendedCodeLabelType createExtendedCodeValue(String codeUriWithVersion) {
+        
+        if (codeUriWithVersion == null) {
+            return null;
+        }
+        VersionedUri vuri = VersionedUri.parse(codeUriWithVersion);  
+        ExtendedCodeLabelType code = new ExtendedCodeLabelType();
+             
+        code.setUri(vuri.getUri()); // always Koodisto service uri
+        code.setVersion(vuri.getVersio() != null ? vuri.getVersio().toString() : "");
+        code.setValue(codeUriWithVersion);
+      
+        return code;
+    }
+
+    
     /**
      * Stores element that is used as a target of IDREF later. Returns the input
      * id for method chaining.
