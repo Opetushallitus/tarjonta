@@ -20,7 +20,13 @@ public class KoodistoUploader {
               UploadKoodistoData uploader = ctx.getBean(UploadKoodistoData.class);
               if (args[0].trim().equalsIgnoreCase("0")) {
                   try {
-                  uploader.loadKoodistoFromExcel(args[1],args[2]);
+                  String orgOid = null;
+                  try {
+                  orgOid = args[3];
+                  } catch (IndexOutOfBoundsException iobe) {
+
+                  }
+                  uploader.loadKoodistoFromExcel(args[1],args[2],orgOid);
                       System.out.println("Koodisto uploaded");
                   } catch (Exception exp) {
                      log.error("Exception occurred when loading koodisto from excel : {} , exception : {}",args[1], exp.toString());

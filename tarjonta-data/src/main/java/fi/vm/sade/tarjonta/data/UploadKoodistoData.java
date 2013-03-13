@@ -96,7 +96,7 @@ public class UploadKoodistoData {
         koodistoHelper.setOrganisaatioNimi(commonConstants.getOrganisaatioNimi());
     }
 
-    private boolean createKoodisto(String koodistoNimi, String koodistoUri) {
+    private boolean createKoodisto(String koodistoNimi, String koodistoUri, String orgOid) {
         List<String> ryhmaUris = new ArrayList<String>();
         ryhmaUris.add(commonConstants.getBaseGroupUri());
 
@@ -107,7 +107,7 @@ public class UploadKoodistoData {
         } catch (Exception exp) {
             log.warn("Unable to create koodisto : {}, trying to remove it and create it again",koodistoUri);
             try {
-                koodistoHelper.removeKoodisto(koodistoUri);
+                koodistoHelper.removeKoodisto(koodistoUri,orgOid);
                 CreateKoodistoDataType koodisto = koodistoHelper.addCodeGroup(ryhmaUris,koodistoUri,koodistoNimi);
                 return true;
             } catch (Exception exxp) {
@@ -117,9 +117,9 @@ public class UploadKoodistoData {
         }
     }
 
-    public void loadKoodistoFromExcel(String pathToExcel,String koodistoNimi) throws  IOException, ExceptionMessage{
+    public void loadKoodistoFromExcel(String pathToExcel,String koodistoNimi, String orgOid) throws  IOException, ExceptionMessage{
         String koodistoUri = DataUtils.createKoodiUriFromName(koodistoNimi);
-        if (createKoodisto(koodistoNimi,koodistoUri)) {
+        if (createKoodisto(koodistoNimi,koodistoUri,orgOid)) {
         CommonKoodiData koodis = new CommonKoodiData(pathToExcel);
         if (koodis != null && koodis.getLoadedKoodis() != null && koodis.getLoadedKoodis().size() > 0) {
             loadKoodisToKoodisto(koodis.getLoadedKoodis(),koodistoUri);

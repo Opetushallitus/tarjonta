@@ -118,15 +118,18 @@ public class TarjontaDataKoodistoHelper {
         return createKoodistoDataType;
     }
 
-    public boolean removeKoodisto(String koodistoUri) {
+    public boolean removeKoodisto(String koodistoUri, String orgOid) {
         log.info("Removing koodisto with uri : {}", koodistoUri);
+        log.info("Org oid : {}",orgOid);
         try {
             KoodistoType koodisto = getKoodistoByUri(koodistoUri);
             UpdateKoodistoDataType update = new UpdateKoodistoDataType();
             update.setKoodistoUri(koodistoUri);
             update.setTila(TilaType.PASSIIVINEN);
             update.setOmistaja(koodisto.getOmistaja());
-            update.setOrganisaatioOid(koodisto.getOrganisaatioOid());
+            if (orgOid != null) {
+            update.setOrganisaatioOid(orgOid);
+            }
             update.getMetadataList().addAll(koodisto.getMetadataList());
             update.setVoimassaAlkuPvm(koodisto.getVoimassaAlkuPvm());
             update.setVoimassaLoppuPvm(koodisto.getVoimassaLoppuPvm());
