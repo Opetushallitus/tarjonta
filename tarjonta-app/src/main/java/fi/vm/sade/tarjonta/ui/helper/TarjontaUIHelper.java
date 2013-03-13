@@ -143,7 +143,7 @@ public class TarjontaUIHelper {
         
         StringBuilder result = new StringBuilder();
         result.append(getAllHakukohdeNimet(hakukohdeNimi));
-        result.append(" ");
+        result.append(", ");
         result.append(getHakuKausiJaVuosi(hakuOid, locale));
         return result.toString();
     }

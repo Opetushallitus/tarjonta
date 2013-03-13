@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable(preConstruction=true)
 public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
+    private static final long serialVersionUID = 6701627452818790862L;
 
     private KoulutusOidNameViewModel koulutusOidNameViewModel;
     private Button nimiBtn;

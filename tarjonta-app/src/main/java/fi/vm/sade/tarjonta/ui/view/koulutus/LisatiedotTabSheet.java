@@ -74,7 +74,6 @@ public class LisatiedotTabSheet extends KoodistoSelectionTabSheet {
             //get loaded data from model
             setInitialValues(languageUris);
         } else if(allowDefault) { 
-            LOG.info("Add default language.");
             //no data
             final String defautLang = getDefaultLanguageKoodiUri();
             Set<String> values = new HashSet<String>(1);

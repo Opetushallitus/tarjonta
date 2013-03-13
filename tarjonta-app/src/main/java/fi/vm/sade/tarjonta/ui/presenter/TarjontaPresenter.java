@@ -131,7 +131,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public void saveHakuKohde(SaveButtonState tila) {
         HakukohdeViewModel hakukohde = getModel().getHakukohde();
         hakukohde.setTila(tila.toTarjontaTila(getModel().getHakukohde().getTila()));
-        hakukohde.setHakukohdeKoodistoNimi(resolveHakukohdeKoodistonimiFields() + " " + tila);
+        hakukohde.setHakukohdeKoodistoNimi(resolveHakukohdeKoodistonimiFields() + " " + tilaToLangStr(hakukohde.getTila()));
 
         saveHakuKohdePerustiedot();
         editHakukohdeView.enableLiitteetTab();
@@ -454,10 +454,14 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             kysely.setOid(hakukohdeOid);
             LueHakukohdeVastausTyyppi vastaus = tarjontaPublicService.lueHakukohde(kysely);
             if (vastaus.getHakukohde() != null) {
+                //creata name string
                 getModel().setHakukohde(hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(vastaus.getHakukohde()));
-                getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
-                hakukohdeView = new ShowHakukohdeViewImpl(getModel().getHakukohde().getHakukohdeKoodistoNimi(), null, null);
+                final String hakukohdenimi = resolveHakukohdeKoodistonimiFields() + ", " + tilaToLangStr(getModel().getHakukohde().getTila());
 
+                getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
+                getModel().getHakukohde().setHakukohdeKoodistoNimi(hakukohdenimi);
+
+                hakukohdeView = new ShowHakukohdeViewImpl(hakukohdenimi, null, null);
                 getRootView().changeView(hakukohdeView);
 
             }
@@ -497,7 +501,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
     private String buildKoulutusCaption(KoulutusKoosteTyyppi curKoulutus) {
         String caption = getKoulutusNimi(curKoulutus);
-        caption += ", " + curKoulutus.getTila().value();
+        caption += ", " + this.tilaToLangStr(curKoulutus.getTila());
         return caption;
     }
 
@@ -1786,13 +1790,17 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     /**
-     * Open edit koulutus view.  
-     * 
+     * Open edit koulutus view.
+     *
      * @param koulutusOid
-     * @param tab 
+     * @param tab
      */
     private void showEditKoulutusView(final String koulutusOid, final KoulutusActiveTab tab) {
         editKoulutusView = new EditKoulutusView(koulutusOid, tab);
         getRootView().changeView(editKoulutusView);
+    }
+
+    private String tilaToLangStr(TarjontaTila tila) {
+        return i18n.getMessage(tila.value());
     }
 }
