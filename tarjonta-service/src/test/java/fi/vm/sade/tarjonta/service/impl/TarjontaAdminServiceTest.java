@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.service.impl;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-import org.eclipse.jetty.util.log.Log;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
@@ -207,7 +206,7 @@ public class TarjontaAdminServiceTest {
         	this.adminService.poistaKoulutus(oid);
         	fail();
         } catch (Exception ex) {
-        	Log.debug("Exception thrown: " + ex.getMessage());
+        	log.debug("Exception thrown: " + ex.getMessage());
         }
         assertTrue(this.koulutusmoduuliToteutusDAO.findAll().size() == komotosOriginalSize);
     }
@@ -320,7 +319,7 @@ public class TarjontaAdminServiceTest {
         	this.adminService.poistaHakukohde(hakukohdeT);
         	fail();
         } catch (Exception ex) {
-        	Log.debug("Exception thrown");
+        	log.debug("Exception thrown");
         }
         assertTrue(this.hakukohdeDAO.findAll().size() == originalSize);
         

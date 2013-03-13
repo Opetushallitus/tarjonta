@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable
 public class EditKoulutusView extends AbstractVerticalLayout {
 
+    private static final long serialVersionUID = -1074453323245469183L;
     @Autowired(required = true)
     private TarjontaPresenter presenter;
     private static final String LABEL_FORMAT_NEW = "title.new";
@@ -44,6 +45,7 @@ public class EditKoulutusView extends AbstractVerticalLayout {
     private Label title;  //formated title label
     private String koulutusOid;
     private KoulutusActiveTab activeTab = KoulutusActiveTab.PERUSTIEDOT;
+    private TabSheet.Tab liitteetTab;
 
     public EditKoulutusView(String koulutusOid) {
         this.koulutusOid = koulutusOid;
@@ -64,14 +66,12 @@ public class EditKoulutusView extends AbstractVerticalLayout {
                     LabelStyleEnum.TEXT_RAW,
                     DEMO_DATA,
                     organisaatioName);
-                    //presenter.getModel().getKoulutusPerustiedotModel().getOrganisaatioName());
         } else {
             title = UiUtil.label((AbsoluteLayout) null,
                     T(LABEL_FORMAT_NEW),
                     LabelStyleEnum.TEXT_RAW,
                     DEMO_DATA,
                     organisaatioName);
-                    //presenter.getModel().getOrganisaatioName());
         }
         HorizontalLayout hlLabelWrapper = new HorizontalLayout();
         hlLabelWrapper.setMargin(false, false, true, true);
@@ -81,8 +81,12 @@ public class EditKoulutusView extends AbstractVerticalLayout {
         TabSheet tabs = UiBuilder.tabSheet(this);
         EditKoulutusPerustiedotToinenAsteView perustiedotView = new EditKoulutusPerustiedotToinenAsteView(koulutusOid);
         tabs.addTab(perustiedotView, T("perustiedot"));
+
         EditKoulutusLisatiedotToinenAsteView lisatiedotView = new EditKoulutusLisatiedotToinenAsteView(koulutusOid);
-        tabs.addTab(lisatiedotView, T("lisatiedot"));
+
+        liitteetTab = tabs.addTab(lisatiedotView, T("lisatiedot"));
+        liitteetTab.setEnabled(presenter.getModel().getKoulutusPerustiedotModel().isLoaded());
+        
         this.presenter.setLisatiedotView(lisatiedotView);
 
         if (KoulutusActiveTab.PERUSTIEDOT.equals(activeTab)) {
@@ -92,10 +96,14 @@ public class EditKoulutusView extends AbstractVerticalLayout {
         }
     }
 
+    public void enableLisatiedotTab() {
+        liitteetTab.setEnabled(true);
+    }
+
     private String getOrganisaationNames() {
         StringBuilder organisaatios = new StringBuilder();
         int counter = 0;
-        for (TarjontaModel.OrganisaatioOidNamePair pair: presenter.getModel().getOrganisaatios())  {
+        for (TarjontaModel.OrganisaatioOidNamePair pair : presenter.getModel().getOrganisaatios()) {
             if (counter != 0) {
                 organisaatios.append(", ");
             }

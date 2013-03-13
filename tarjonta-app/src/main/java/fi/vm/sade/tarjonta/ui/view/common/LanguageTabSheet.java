@@ -21,10 +21,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.Reindeer;
-import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -32,8 +29,6 @@ import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.util.UiUtil;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.generic.ui.component.OphRichTextArea;
-import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
-import fi.vm.sade.tarjonta.ui.model.valinta.ValintaperusteModel;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -87,10 +82,12 @@ public abstract class LanguageTabSheet extends VerticalLayout {
         setWidth(TABSHEET_WIDTH);
         setHeight(TABSHEET_HEIGHT);
 
-        _languageTabsheet = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, uiBuilder) {
+        _languageTabsheet = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, _uiHelper, uiBuilder) {
+            private static final long serialVersionUID = 7641598427815355362L;
+
             @Override
             public void doAddTab(String uri) {
-                addTab(uri, createRichText(""), _uiHelper.getKoodiNimi(uri));
+                addTab(uri, createTextArea(""), _uiHelper.getKoodiNimi(uri));
             }
         };
 
@@ -134,13 +131,13 @@ public abstract class LanguageTabSheet extends VerticalLayout {
             Set<String> valitutKielet = new HashSet<String>();
             for (KielikaannosViewModel kieliKaannos : values) {
                 valitutKielet.add(kieliKaannos.getKielikoodi());
-                _languageTabsheet.addTab(kieliKaannos.getKielikoodi(), createRichText(kieliKaannos.getNimi()), _uiHelper.getKoodiNimi(kieliKaannos.getKielikoodi()));
+                _languageTabsheet.addTab(kieliKaannos.getKielikoodi(), createTextArea(kieliKaannos.getNimi()), _uiHelper.getKoodiNimi(kieliKaannos.getKielikoodi()));
             }
             _languageTabsheet.getKcSelection().setValue(valitutKielet);
         }
     }
 
-    protected AbstractField createRichText(String value) {
+    protected AbstractField createTextArea(String value) {
         if (useRichText) {
             OphRichTextArea richText = UiUtil.richTextArea(null, null, null);
             richText.setValue(value);
@@ -176,38 +173,22 @@ public abstract class LanguageTabSheet extends VerticalLayout {
         return _languageTabsheet.getRemoved();
     }
 
-    protected void addDefaultLanguage() {
-        LOG.debug("default language added.");
-        String soomiKieli = I18N.getMessage("default.tab");
-        Set<String> kielet = new HashSet<String>();
-        kielet.add(soomiKieli);
-        _languageTabsheet.addTab(soomiKieli, createRichText(""), _uiHelper.getKoodiNimi(soomiKieli));
-        _languageTabsheet.getKcSelection().setValue(kielet);
-    }
-
-    protected void setSelectedTab() {
-        String soomiKieli = I18N.getMessage("default.tab");
-        TabSheet.Tab tab = getTab(soomiKieli);
-        if (tab != null) {
-            _languageTabsheet.setSelectedTab(tab);
-        }
-    }
-
     public void initializeTabsheet() {
         final List<KielikaannosViewModel> tabData = getTabData();
 
         if (tabData != null && !tabData.isEmpty()) {
             setInitialValues(tabData);
         } else {
-            addDefaultLanguage();
+            //add empty text area
+            _languageTabsheet.addDefaultLanguage(createTextArea(""));
         }
 
-        setSelectedTab();
+        _languageTabsheet.setSelectedTab();
     }
 
     /**
-     *  KielikaannosViewModel data objects for TabSheet.
-     * 
+     * KielikaannosViewModel data objects for TabSheet.
+     *
      * @return List<KielikaannosViewModel>
      */
     protected abstract List<KielikaannosViewModel> getTabData();

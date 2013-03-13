@@ -34,6 +34,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @author mlyly
  */
 public class KoulutusLisatiedotModel extends BaseUIViewModel {
+    private static final long serialVersionUID = 7745705875364869396L;
 
     private TarjontaTila tila;
     private Set<String> _kielet;

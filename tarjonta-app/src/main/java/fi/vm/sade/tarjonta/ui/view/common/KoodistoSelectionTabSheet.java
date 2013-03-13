@@ -17,11 +17,14 @@ package fi.vm.sade.tarjonta.ui.view.common;
 
 import com.vaadin.data.Property;
 import com.vaadin.terminal.ThemeResource;
+import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import java.util.ArrayList;
@@ -43,6 +46,7 @@ import org.slf4j.LoggerFactory;
 public class KoodistoSelectionTabSheet extends TabSheet {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoodistoSelectionTabSheet.class);
+    private static final String DEFAULT_LANGUAGE = "default.tab";
     private static final ThemeResource TAB_ICON_PLUS = new ThemeResource(UiConstant.RESOURCE_URL_OPH_IMG + "icon-add-black.png");
     private static final long serialVersionUID = 2357490409207157859L;
     private String _koodistoUri;
@@ -52,18 +56,21 @@ public class KoodistoSelectionTabSheet extends TabSheet {
     private Map<String, Tab> _tabs = new HashMap<String, Tab>();
     private Set<String> removedTabs = new HashSet<String>(); //keep count of removed languages
     private transient UiBuilder uiBuilder;
+    private transient TarjontaUIHelper uiHelper;
 
     /**
      * Createt tabsheet with given koodisto used for tabs "keys".
      *
      * @param koodistoUri
      */
-    public KoodistoSelectionTabSheet(String koodistoUri, UiBuilder uiBuilder) {
+    public KoodistoSelectionTabSheet(String koodistoUri, TarjontaUIHelper uiHelper, UiBuilder uiBuilder) {
         super();
+        this.uiHelper = uiHelper;
         this.uiBuilder = uiBuilder;
         _koodistoUri = koodistoUri;
         _kcSelection = createKoodistoComponent();
         _kcSelection.setImmediate(true);
+
         buildSelectionTabAndAddMonitoring();
     }
 
@@ -98,8 +105,17 @@ public class KoodistoSelectionTabSheet extends TabSheet {
         return tab;
     }
 
+    public Tab addTab(String koodiUri, Component c) {
+        Tab tab = super.addTab(c, uiHelper.getKoodiNimi(koodiUri));
+        _tabs.put(koodiUri, tab);
+        removedTabs.remove(koodiUri); //item unremoved (if any)
+        return tab;
+    }
+
     public Tab removeTab(String koodiUri) {
-        LOG.debug("remove koodiUri : {}", koodiUri);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("remove koodiUri : {}", koodiUri);
+        }
         Tab tab = _tabs.remove(koodiUri);
 
         if (tab != null) {
@@ -193,8 +209,56 @@ public class KoodistoSelectionTabSheet extends TabSheet {
      * @return the removed item koodi uris
      */
     public Set<String> getRemoved() {
-        LOG.debug("getRemoved : {}", removedTabs);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getRemoved : {}", removedTabs);
+        }
 
         return removedTabs;
+    }
+
+    /**
+     * Set active pre-defined a language tab.
+     */
+    public void setSelectedTab() {
+        final String finnishLangKoodiUri = getDefaultLanguageKoodiUri();
+        TabSheet.Tab tab = getTab(finnishLangKoodiUri);
+        if (tab != null) {
+            setSelectedTab(tab);
+        }
+    }
+
+    /**
+     * Set active a language tab by Koodisto service koodi uri.
+     */
+    public void setSelectedTab(String koodiUri) {
+        if (koodiUri == null) {
+            setSelectedTab();
+        } else {
+            TabSheet.Tab tab = getTab(koodiUri);
+            if (tab != null) {
+                setSelectedTab(tab);
+            }
+        }
+    }
+
+    /**
+     * Add default language.
+     *
+     * @param field
+     */
+    public void addDefaultLanguage(AbstractComponent field) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("default language added.");
+        }
+
+        final String soomiKieli = getDefaultLanguageKoodiUri();
+        Set<String> kielet = new HashSet<String>();
+        kielet.add(soomiKieli);
+        addTab(soomiKieli, field, uiHelper.getKoodiNimi(soomiKieli));
+        getKcSelection().setValue(kielet);
+    }
+
+    protected String getDefaultLanguageKoodiUri() {
+        return I18N.getMessage(DEFAULT_LANGUAGE);
     }
 }

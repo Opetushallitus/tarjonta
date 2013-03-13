@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
-import static com.vaadin.terminal.Sizeable.SIZE_UNDEFINED;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 
@@ -26,7 +25,6 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTul
 import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
-import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -201,7 +199,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                _presenter.showKoulutustEditView(getEditViewOid(), KoulutusActiveTab.PERUSTIEDOT);
+                _presenter.showKoulutustEditView(getEditViewOid(), KoulutusActiveTab.LISATIEDOT);
             }
         }));
 

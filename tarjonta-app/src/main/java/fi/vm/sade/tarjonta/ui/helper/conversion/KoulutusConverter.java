@@ -118,7 +118,7 @@ public class KoulutusConverter {
         }
 
         // Lisätiedot
-        mapToKoulutusLisatiedotModel(paivita, tarjontaModel.getKoulutusLisatiedotModel());
+        mapToKoulutusLisatiedotTyyppi(paivita, tarjontaModel.getKoulutusLisatiedotModel());
 
         return paivita;
     }
@@ -147,7 +147,7 @@ public class KoulutusConverter {
         }
 
         // Lisätiedot
-        mapToKoulutusLisatiedotModel(lisaa, tarjontaModel.getKoulutusLisatiedotModel());
+        mapToKoulutusLisatiedotTyyppi(lisaa, tarjontaModel.getKoulutusLisatiedotModel());
 
         return lisaa;
     }
@@ -691,7 +691,7 @@ public class KoulutusConverter {
         return result;
     }
 
-    private void mapToKoulutusLisatiedotModel(KoulutusTyyppi koulutus, KoulutusLisatiedotModel koulutusLisatiedotModel) {
+    private void mapToKoulutusLisatiedotTyyppi(KoulutusTyyppi koulutus, KoulutusLisatiedotModel koulutusLisatiedotModel) {
 
         koulutus.getAmmattinimikkeet().clear();
         for (String uri : koulutusLisatiedotModel.getAmmattinimikkeet()) {

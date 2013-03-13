@@ -51,18 +51,14 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
     private static final long serialVersionUID = -4054591599209251060L;
     private TarjontaPresenter _presenter;
     private TarjontaUIHelper _uiHelper;
-    private KoulutusLisatiedotModel koulutusLisatiedotModel;
-    private transient UiBuilder uiBuilder;
     private transient I18NHelper _i18n;
-    private KoodistoSelectionTabSheet tabs;
+    private LisatiedotTabSheet tabs;
     private OphTokenField f;
-    private HorizontalLayout hl;
+    private HorizontalLayout hlAmmattinimike;
 
     public EditKoulutusLisatiedotForm(TarjontaPresenter presenter, TarjontaUIHelper uiHelper, UiBuilder uiBuilder, KoulutusLisatiedotModel koulutusLisatiedotModel) {
         this.setWidth(100, UNITS_PERCENTAGE);
         this._presenter = presenter;
-        this.koulutusLisatiedotModel = koulutusLisatiedotModel;
-        this.uiBuilder = uiBuilder;
         this._uiHelper = uiHelper;
 
         //
@@ -72,119 +68,44 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
         addComponent(UiBuilder.label((AbstractLayout) null, T("ammattinimikkeet.help"), LabelStyleEnum.TEXT));
 
 
-        hl = new HorizontalLayout();
+        hlAmmattinimike = new HorizontalLayout();
         PropertysetItem psi = new BeanItem(koulutusLisatiedotModel);
-        f = uiBuilder.koodistoTokenField(hl, KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
-        this.addComponent(hl);
+        f = uiBuilder.koodistoTokenField(hlAmmattinimike, KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, "ammattinimikkeet");
+        f.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
+            @Override
+            public String formatToken(Object selectedToken) {
+                return _uiHelper.getKoodiNimi((String) selectedToken);
+            }
+        });
 
-        //
-        // Language dependant information
-        //
+        // Create caption formatter for koodisto component.
+        KoodistoComponent k = (KoodistoComponent) f.getSelectionComponent();
+        k.setCaptionFormatter(new CaptionFormatter() {
+            @Override
+            public String formatCaption(Object dto) {
+                if (dto instanceof KoodiType) {
+                    KoodiType kt = (KoodiType) dto;
+                    return _uiHelper.getKoodiNimi(kt, null);
+                    // return _uiHelper.getKoodiNimi(kt.getKoodiUri());
+                } else {
+                    return "??? " + dto;
+                }
+            }
+        });
 
-        // What languages should we have as preselection when initializing the form?
-        // Current hypothesis is that we should use the opetuskielet + any possible additional languages added to additional information
-        Set<String> languageUris = new HashSet<String>();
-        languageUris.add(_presenter.getModel().getKoulutusPerustiedotModel().getOpetuskieli()); //only single language in 2aste
-        languageUris.addAll(koulutusLisatiedotModel.getKielet());
-
-        // Update language selections to contain opetuskielet AND lisätiedot languages
-        koulutusLisatiedotModel.setKielet(languageUris);
+        hlAmmattinimike.addComponent(f);
+        this.addComponent(hlAmmattinimike);
 
         //
         // Build tabsheet for languages with koodisto select languages
         //
-        tabs = new KoodistoSelectionTabSheet(KoodistoURIHelper.KOODISTO_KIELI_URI, uiBuilder) {
-            private static final long serialVersionUID = -7916177514458213528L;
-
-            @Override
-            public void doAddTab(String uri) {
-                Component c = createLanguageEditor(uri);
-                addTab(uri, c, _uiHelper.getKoodiNimi(uri));
-            }
-        };
-
-        // TODO Autoselect first content tab?
-
-        // Initialize with all preselected languages
-        tabs.getKcSelection().setValue(koulutusLisatiedotModel.getKielet());
-
+        tabs = new LisatiedotTabSheet(_presenter.getModel(), uiHelper, uiBuilder);
         addComponent(UiBuilder.label((AbstractLayout) null, T("kieliriippuvatTiedot"), LabelStyleEnum.H2));
         addComponent(tabs);
     }
 
     public void reBuildTabsheet() {
-        LOG.debug("\n\nreBuildTabSheet\n\n");
-        for (String curKieli : koulutusLisatiedotModel.getKielet()) {
-            LOG.debug("curKieli: {}\n", curKieli);
-        }
-        tabs.getKcSelection().setValue(koulutusLisatiedotModel.getKielet());
-    }
-
-    /**
-     * Create rich text editors for content editing.
-     *
-     * @param uri
-     * @return
-     */
-    private Component createLanguageEditor(String uri) {
-        VerticalLayout vl = UiBuilder.verticalLayout();
-
-        vl.setSpacing(true);
-        vl.setMargin(true);
-
-        vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kuvailevatTiedot.title"), LabelStyleEnum.H2));
-        vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kuvailevatTiedot.help"), LabelStyleEnum.TEXT));
-
-        KoulutusLisatietoModel model = koulutusLisatiedotModel.getLisatiedot(uri);
-        PropertysetItem psi = new BeanItem(model);
-
-//        {
-//            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "kuvailevatTiedot");
-//            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kuvailevatTiedot"), LabelStyleEnum.H2));
-//            vl.addComponent(rta);
-//        }
-
-        {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "sisalto");
-            rta.setWidth("460px");
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto.help"), LabelStyleEnum.TEXT));
-            vl.addComponent(rta);
-        }
-
-        {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "sijoittuminenTyoelamaan");
-            rta.setWidth("460px");
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("sijoittuminenTyoelamaan"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("sijoittuminenTyoelamaan.help"), LabelStyleEnum.TEXT));
-            vl.addComponent(rta);
-        }
-
-        {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "kansainvalistyminen");
-            rta.setWidth("460px");
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kansainvalistyminen"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kansainvalistyminen.help"), LabelStyleEnum.TEXT));
-            vl.addComponent(rta);
-        }
-
-        {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "yhteistyoMuidenToimijoidenKanssa");
-            rta.setWidth("460px");
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa.help"), LabelStyleEnum.TEXT));
-            vl.addComponent(rta);
-        }
-
-        {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "koulutusohjelmanValinta");
-            rta.setWidth("460px");
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutusOhjelmanValinta"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutusOhjelmanValinta.help"), LabelStyleEnum.TEXT));
-            vl.addComponent(rta);
-        }
-
-        return vl;
+        tabs.reload();
     }
 
     // Generic translatio helpers
@@ -202,34 +123,8 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
     @Override
     public void attach() {
         super.attach();
-
         {
-
-
             f.getSelectionLayout().setWidth("900px");
-            f.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
-                @Override
-                public String formatToken(Object selectedToken) {
-                    return _uiHelper.getKoodiNimi((String) selectedToken);
-                }
-            });
-
-            // Create caption formatter for koodisto component.
-            KoodistoComponent k = (KoodistoComponent) f.getSelectionComponent();
-            k.setCaptionFormatter(new CaptionFormatter() {
-                @Override
-                public String formatCaption(Object dto) {
-                    if (dto instanceof KoodiType) {
-                        KoodiType kt = (KoodiType) dto;
-                        return _uiHelper.getKoodiNimi(kt, null);
-                        // return _uiHelper.getKoodiNimi(kt.getKoodiUri());
-                    } else {
-                        return "??? " + dto;
-                    }
-                }
-            });
-
-            hl.addComponent(f);
         }
     }
 }

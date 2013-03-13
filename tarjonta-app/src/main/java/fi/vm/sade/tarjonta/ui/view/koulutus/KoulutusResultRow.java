@@ -149,6 +149,7 @@ public class KoulutusResultRow extends HorizontalLayout {
     private void showRemoveDialog() {
         RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), koulutusNimi, T("removeYes"), T("removeNo"),
                 new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
                 closeKoulutusCreationDialog();
@@ -157,6 +158,7 @@ public class KoulutusResultRow extends HorizontalLayout {
             }
         },
                 new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent event) {
                 closeKoulutusCreationDialog();
