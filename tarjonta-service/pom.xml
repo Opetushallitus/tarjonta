@@ -8,6 +8,7 @@
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tarjonta-service</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <name>Tarjonta :: Service</name>
     <packaging>war</packaging>
 
@@ -44,7 +45,14 @@
         </dependency>
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-service</artifactId>
+            <artifactId>generic-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>dependencies-service</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
@@ -112,13 +120,16 @@
             <version>3.1</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- todo: tartteeks oikeesti servicessä vaadin depsuja? -->
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-portlet-support</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <!-- TODO: ei servicessä voi olla vaadin jne dependencyjä? muutettu test-scopeen -->
+            <artifactId>dependencies-vaadin</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-events</artifactId>
