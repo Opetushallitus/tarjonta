@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.helper.conversion;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
@@ -41,6 +42,7 @@ import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import static fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper.splitKoodiURIAllowNull;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
@@ -134,14 +136,14 @@ public class KoulutusConverter {
 
         //convert yhteyshenkilo model objects to yhteyshenkilo type objects.
         //addToYhteyshenkiloTyyppiList(model.getYhteyshenkilot(), lisaa.getYhteyshenkilo());
-        
+
         if (model.getYhtHenkKokoNimi() != null && !model.getYhtHenkKokoNimi().isEmpty()) {
             lisaa.getYhteyshenkilo().add(mapYhteyshenkiloToTyyppi(model));
         }
 
         //convert linkki model objects to linkki type objects.
         //addToWebLinkkiTyyppiList(model.getKoulutusLinkit(), lisaa.getLinkki());
-        
+
         if (model.getOpsuLinkki() != null && !model.getOpsuLinkki().isEmpty()) {
             lisaa.getLinkki().add(mapOpetussuunnitelmaLinkkiToTyyppi(model.getOpsuLinkki()));
         }
@@ -151,7 +153,7 @@ public class KoulutusConverter {
 
         return lisaa;
     }
-    
+
     private WebLinkkiTyyppi mapOpetussuunnitelmaLinkkiToTyyppi(String linkki) {
         WebLinkkiTyyppi webLink = new WebLinkkiTyyppi();
         webLink.setKieli(I18N.getLocale().getLanguage());
@@ -159,11 +161,11 @@ public class KoulutusConverter {
         webLink.setTyyppi(KoulutusLinkkiViewModel.LINKKI_TYYPIT[1]);
         return webLink;
     }
-    
+
     private String checkWwwOsoite(String linkki) {
         return (!isValidUrl(linkki)) ? "http://" + linkki : linkki;
     }
-    
+
     private boolean isValidUrl(String givenUrl) {
         return givenUrl == null
                 || givenUrl.isEmpty()
@@ -172,7 +174,7 @@ public class KoulutusConverter {
                 || givenUrl.startsWith("ftp://")
                 || givenUrl.startsWith("file://");
     }
-    
+
     private YhteyshenkiloTyyppi mapYhteyshenkiloToTyyppi(KoulutusToisenAsteenPerustiedotViewModel model) {
         YhteyshenkiloTyyppi yhteyshenkilo = new YhteyshenkiloTyyppi();
         String kokoNimi = model.getYhtHenkKokoNimi();
@@ -213,12 +215,12 @@ public class KoulutusConverter {
 
         return model2Aste;
     }
-    
+
     private void mapYhteyshenkiloToViewModel(KoulutusToisenAsteenPerustiedotViewModel model2Aste, LueKoulutusVastausTyyppi tyyppi) {
         if (tyyppi.getYhteyshenkilo().isEmpty()) {
             return;
         }
-        
+
         YhteyshenkiloTyyppi yhtHenk = tyyppi.getYhteyshenkilo().get(0);
         model2Aste.setYhtHenkKokoNimi(yhtHenk.getEtunimet() + " " + yhtHenk.getSukunimi());
         model2Aste.setYhtHenkEmail(yhtHenk.getSahkoposti());
@@ -456,14 +458,12 @@ public class KoulutusConverter {
         final KoulutusmoduuliKoosteTyyppi koulutusmoduuliTyyppi = koulutus.getKoulutusmoduuli();
 
         koulutusKoodisto.listaaSisalto(model2Aste.getKoulutuskoodiModel(), model2Aste.getKoulutusohjelmaModel(), koulutusmoduuliTyyppi, locale);
-        
+
         /*
          * Create real visible name, the name is also used in koulutus search.  
          */
 
         koulutus.getNimi();
-        
-        
 
         return model2Aste;
     }
@@ -519,13 +519,44 @@ public class KoulutusConverter {
             return koulutusKoodisto.listaaKoulutusohjelma(tyyppi, locale);
         }
 
+        LOG.warn("Data conversion error - koulutusohjelma koodi URI not found.");
+
         return null;
     }
 
     public KoulutuskoodiModel mapToKoulutuskoodiModel(final KoodistoKoodiTyyppi koulutusKoodi, final Locale locale) {
         if (koulutusKoodi != null && koulutusKoodi.getUri() != null) {
-            return koulutusKoodisto.listaaKoulutuskoodi(koulutusKoodi, locale);
+            KoulutuskoodiModel model = koulutusKoodisto.listaaKoulutuskoodi(koulutusKoodi, locale);
+
+            if (model == null) {
+                /**
+                 * Serious external system error has occured: Koodisto koodi
+                 * search has returned a null data object. It's very likely that
+                 * someone has changed Koodisto service koodi uris or the
+                 * service is having other an internal problem.
+                 *
+                 * Let just show koodi uris in all UI data fields, as there is
+                 * no way to get correct language data from the Koodisto
+                 * service.
+                 */
+                model = new KoulutuskoodiModel();
+                model.setNimi(koulutusKoodi.getUri());
+                model.setKuvaus(koulutusKoodi.getUri());
+                model.setKoodi(koulutusKoodi.getUri());
+                final String[] koodiUriAndVersion = splitKoodiURIAllowNull(koulutusKoodi.getUri());
+
+                model.setKoodistoUri(koodiUriAndVersion[0]);
+                model.setKoodistoVersio(Integer.parseInt(koodiUriAndVersion[1]));
+                model.getKielikaannos().add(new KielikaannosViewModel("FI", koulutusKoodi.getUri()));
+                model.setKielikoodi("FI");
+
+                LOG.error("Data conversion error - Koodisto service do not have a koodi with URI '{}' and version '{}'.", koodiUriAndVersion[0], koodiUriAndVersion[1]);
+            }
+
+            return model;
         }
+
+        LOG.error("Data conversion error - koulutus Koodisto service koodi URI was null.");
 
         return null;
     }
@@ -703,7 +734,7 @@ public class KoulutusConverter {
         clear(koulutus.getSijoittuminenTyoelamaan());
         clear(koulutus.getKansainvalistyminen());
         clear(koulutus.getYhteistyoMuidenToimijoidenKanssa());
-        
+
 
         for (String kieliUri : koulutusLisatiedotModel.getLisatiedot().keySet()) {
 
@@ -742,11 +773,11 @@ public class KoulutusConverter {
 
             koulutus.getYhteistyoMuidenToimijoidenKanssa().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.
                     getYhteistyoMuidenToimijoidenKanssa()));
-            
+
             if (koulutus.getKoulutusohjelmanValinta() == null) {
                 koulutus.setKoulutusohjelmanValinta(new MonikielinenTekstiTyyppi());
             }
-            
+
             koulutus.getKoulutusohjelmanValinta().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getKoulutusohjelmanValinta()));
         }
     }
@@ -887,8 +918,6 @@ public class KoulutusConverter {
         return m;
     }
 
-
- 
     public static Map<Entry, KoulutusmoduuliKoosteTyyppi> fullKomoCacheMap(Collection<KoulutusmoduuliKoosteTyyppi> komos) {
         Map<Entry, KoulutusmoduuliKoosteTyyppi> hashMap = new HashMap<Entry, KoulutusmoduuliKoosteTyyppi>();
 

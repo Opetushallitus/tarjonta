@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.ui.model.koulutus;
 
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -23,14 +24,17 @@ import java.util.Set;
  * @author Jani Wilén
  */
 public class MonikielinenTekstiModel extends KoulutusKoodistoModel {
-    private static final long serialVersionUID = -3004063117090257469L;
 
+    private static final long serialVersionUID = -3004063117090257469L;
     private Set<KielikaannosViewModel> kielikaannos;
 
     /**
      * @return the kielikaannos
      */
     public Set<KielikaannosViewModel> getKielikaannos() {
+        if (kielikaannos == null) {
+            kielikaannos = new HashSet<KielikaannosViewModel>();
+        }
         return kielikaannos;
     }
 

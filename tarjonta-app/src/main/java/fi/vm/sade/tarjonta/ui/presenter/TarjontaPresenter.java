@@ -1618,6 +1618,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             KoulutusmoduuliKoosteTyyppi tyyppi = model.getQuickKomo(
                     koulutuskoodi.getKoodistoUriVersio(),
                     ohjelma.getKoodistoUriVersio());
+
+            if (tyyppi == null) {
+                LOG.error("No tutkinto & koulutusohjelma result was null. Search by '" + koulutuskoodi.getKoodistoUriVersio() + "'" + " and '" + koulutuskoodi.getKoodistoUriVersio() + "'");
+            }
+
             kolutusKoodistoConverter.listaaSisalto(koulutuskoodi, ohjelma, tyyppi, I18N.getLocale());
         }
     }
