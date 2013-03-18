@@ -831,11 +831,11 @@
     
     <xs:simpleType name="KoulutusasteTyyppi">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="Ammatillinen peruskoulutus" />
+            <xs:enumeration value="AmmatillinenPeruskoulutus" />
             <xs:enumeration value="Lukiokoulutus"/>
             <xs:enumeration value="Ammattikorkeakoulutus"/>
             <xs:enumeration value="Yliopistokoulutus"/>
-            <xs:enumeration value="Perusopetuksen lisaopetus"/>   
+            <xs:enumeration value="PerusopetuksenLisaopetus"/>   
         </xs:restriction>
     </xs:simpleType>
 
