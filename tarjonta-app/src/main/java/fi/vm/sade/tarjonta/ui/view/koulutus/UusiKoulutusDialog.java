@@ -1,30 +1,18 @@
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
-import com.vaadin.data.Property;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
-import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatioSelectDialog;
-import fi.vm.sade.tarjonta.ui.view.common.SelectableItem;
-import fi.vm.sade.tarjonta.ui.view.common.SelectableItemContainer;
-import fi.vm.sade.tarjonta.ui.view.common.SelectableItemListener;
 import fi.vm.sade.vaadin.util.UiUtil;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /*
@@ -51,6 +39,9 @@ import org.springframework.beans.factory.annotation.Configurable;
 public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
 
     List<String> organisaatioOids;
+    private ComboBox koulutusAsteCombo;
+    private ComboBox koulutusValintaCombo;
+    
     
     public UusiKoulutusDialog(String width, String height, List<String> orgnasaatioOids) {
         super(width,height);
@@ -91,7 +82,31 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     private AbstractLayout createComboLayout() {
         HorizontalLayout comboLayout = new HorizontalLayout();
         
+        koulutusValintaCombo = buildKoulutusValintaCombo();
+        koulutusAsteCombo = buildKoulutusAsteCombobox();
+                
+        comboLayout.addComponent(koulutusValintaCombo);
+        comboLayout.addComponent(koulutusAsteCombo);
+        
         return comboLayout;
+    }
+    
+    private ComboBox buildKoulutusValintaCombo() {
+        ComboBox koulutusValintaTmp = new ComboBox();
+        
+        koulutusValintaTmp.addItem("Koulutus");
+        
+        return koulutusValintaTmp;
+    } 
+    
+    private ComboBox buildKoulutusAsteCombobox() {
+        ComboBox koulutusCombo = UiUtil.comboBox(null, null, null);
+        String[] koulutusAsteValues = new String[KoulutusasteTyyppi.values().length];
+        for(KoulutusasteTyyppi aste : KoulutusasteTyyppi.values()) {
+          koulutusCombo.addItem(aste.value());
+          koulutusCombo.setItemCaption(aste.value(), _i18n.getMessage(aste.value()));
+        }
+        return koulutusCombo; 
     }
     
     private AbstractLayout createLabelLayout() {
@@ -110,9 +125,5 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     }
     
  
-    
-
-    
-   
   
 }
