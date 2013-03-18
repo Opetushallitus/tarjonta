@@ -1,0 +1,14 @@
+target/
+tarjonta-api/.project
+tarjonta-api/target/
+tarjonta-app/.project
+tarjonta-app/target/
+tarjonta-enricher/.project
+tarjonta-enricher/target/
+tarjonta-esb/.project
+tarjonta-esb/target/
+tarjonta-publication-api/.project
+tarjonta-publication-api/target/
+tarjonta-service/.project
+tarjonta-service/target/
+
