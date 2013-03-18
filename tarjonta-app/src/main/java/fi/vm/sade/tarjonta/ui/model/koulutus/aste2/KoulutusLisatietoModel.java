@@ -13,7 +13,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.model;
+package fi.vm.sade.tarjonta.ui.model.koulutus.aste2;
+
+import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 
 /**
  * Single language additional information for studies.

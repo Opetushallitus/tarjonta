@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.view.koulutus;
+package fi.vm.sade.tarjonta.ui.view.koulutus.aste2;
 
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.HorizontalLayout;

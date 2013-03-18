@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.view.koulutus;
+package fi.vm.sade.tarjonta.ui.view.koulutus.aste2;
 
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.PropertysetItem;
@@ -27,8 +27,8 @@ import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
-import fi.vm.sade.tarjonta.ui.model.KoulutusLisatietoModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.KoodistoSelectionTabSheet;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
@@ -52,7 +52,7 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
     private TarjontaPresenter _presenter;
     private TarjontaUIHelper _uiHelper;
     private transient I18NHelper _i18n;
-    private LisatiedotTabSheet tabs;
+    private EditLisatiedotTabSheet tabs;
     private OphTokenField f;
     private HorizontalLayout hlAmmattinimike;
 
@@ -99,7 +99,7 @@ public class EditKoulutusLisatiedotForm extends VerticalLayout {
         //
         // Build tabsheet for languages with koodisto select languages
         //
-        tabs = new LisatiedotTabSheet(_presenter.getModel(), uiHelper, uiBuilder);
+        tabs = new EditLisatiedotTabSheet(_presenter.getModel(), uiHelper, uiBuilder);
         addComponent(UiBuilder.label((AbstractLayout) null, T("kieliriippuvatTiedot"), LabelStyleEnum.H2));
         addComponent(tabs);
     }

@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.presenter;
 
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.authentication.service.UserService;
 import fi.vm.sade.authentication.service.types.HenkiloPagingObjectType;
 import fi.vm.sade.authentication.service.types.HenkiloSearchObjectType;
@@ -52,7 +54,7 @@ import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.ShowHakukohdeViewImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusLisatiedotToinenAsteView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusLisatiedotToinenAsteView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 
 import java.text.SimpleDateFormat;
@@ -69,7 +71,7 @@ import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.tarjonta.ui.view.SearchResultsView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.EditKoulutusView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusView;
 
 import org.apache.commons.beanutils.BeanComparator;
 

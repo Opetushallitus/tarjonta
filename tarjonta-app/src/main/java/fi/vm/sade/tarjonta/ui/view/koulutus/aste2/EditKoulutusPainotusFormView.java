@@ -13,14 +13,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.view.koulutus;
+package fi.vm.sade.tarjonta.ui.view.koulutus.aste2;
 
 import fi.vm.sade.tarjonta.ui.view.common.DialogKoodistoDataTable;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import fi.vm.sade.tarjonta.ui.model.KoulutusToisenAsteenPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;

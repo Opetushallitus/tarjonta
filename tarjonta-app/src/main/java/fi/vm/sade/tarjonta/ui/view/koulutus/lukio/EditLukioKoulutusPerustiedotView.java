@@ -13,17 +13,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.view.koulutus;
+package fi.vm.sade.tarjonta.ui.view.koulutus.lukio;
 
+import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.*;
+import com.vaadin.data.Validator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
-import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
-import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.KoulutusLisatiedotModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import org.slf4j.Logger;
@@ -32,26 +34,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
- *
- * @author mlyly
  * @author Jani Wilén
  */
 @Configurable(preConstruction = true)
-public class EditKoulutusLisatiedotToinenAsteView extends AbstractEditLayoutView {
+public class EditLukioKoulutusPerustiedotView extends AbstractEditLayoutView<KoulutusLukioPerustiedotViewModel, EditLukioKoulutusPerustiedotFormView> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusLisatiedotToinenAsteView.class);
-    private static final long serialVersionUID = -2238485065851932687L;
-    private KoulutusLisatiedotModel koulutusLisatiedotModel;
+    private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotToinenAsteView.class);
+    private static final long serialVersionUID = 2756886453541825771L;
+    private KoulutusLukioPerustiedotViewModel model;
     @Autowired(required = true)
     private TarjontaPresenter presenter;
-    private EditKoulutusLisatiedotForm editKoulutusLisatiedotForm;
-    @Autowired(required = true)
-    private transient UiBuilder uiBuilder;
-    @Autowired(required = true)
-    private transient TarjontaUIHelper uiHelper;
 
-    public EditKoulutusLisatiedotToinenAsteView(String oid) {
+    public EditLukioKoulutusPerustiedotView(String oid) {
         super(oid, SisaltoTyyppi.KOMOTO);
+
+        LOG.info("EditLukioKoulutusPerustiedotView");
         setMargin(true);
         setHeight(-1, UNITS_PIXELS);
     }
@@ -59,34 +56,37 @@ public class EditKoulutusLisatiedotToinenAsteView extends AbstractEditLayoutView
     @Override
     protected void buildLayout(VerticalLayout layout) {
         super.buildLayout(layout); //init base navigation here
-
+        LOG.info("buildLayout");
         /*
          *  FORM LAYOUT (form components under navigation buttons)
          */
-        koulutusLisatiedotModel = presenter.getModel().getKoulutusLisatiedotModel();
-        editKoulutusLisatiedotForm = new EditKoulutusLisatiedotForm(presenter, uiHelper, uiBuilder, koulutusLisatiedotModel);
-
-        buildFormLayout("KoulutuksenLisatiedot", presenter, layout, koulutusLisatiedotModel, editKoulutusLisatiedotForm);
+        model = presenter.getModel().getKoulutusLukioPerustiedot();
+        EditLukioKoulutusPerustiedotFormView formView = new EditLukioKoulutusPerustiedotFormView(presenter, getUiBuilder(), model);
+        buildFormLayout("KoulutuksenPerustiedot", presenter, layout, model, formView);
     }
 
     @Override
     public boolean isformDataLoaded() {
-        return presenter.getModel().getKoulutusPerustiedotModel().isLoaded();
+        return model.isLoaded();
     }
 
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
-        presenter.saveKoulutus(tila);
-        presenter.getReloadKoulutusListData();
-        return presenter.getModel().getKoulutusPerustiedotModel().getOid();
+        try {
+            presenter.saveKoulutus(tila);
+            presenter.getReloadKoulutusListData();
+            return model.getOid();
+        } catch (ExceptionMessage exceptionMessage) {
+            if (exceptionMessage.getMessage().equalsIgnoreCase("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage")) {
+                throw new Validator.InvalidValueException(I18N.getMessage(exceptionMessage.getMessage()));
+            } else {
+                throw exceptionMessage;
+            }
+        }
     }
 
     @Override
     public void actionNext(ClickEvent event) {
         presenter.showShowKoulutusView();
-    }
-
-    public EditKoulutusLisatiedotForm getEditKoulutusLisatiedotForm() {
-        return editKoulutusLisatiedotForm;
     }
 }

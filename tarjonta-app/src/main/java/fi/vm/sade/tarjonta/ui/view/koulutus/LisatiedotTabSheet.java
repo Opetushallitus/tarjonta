@@ -15,20 +15,13 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.AbstractLayout;
-import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.generic.ui.component.OphRichTextArea;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.common.KoodistoSelectionTabSheet;
-import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import java.util.HashSet;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -38,12 +31,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jani Wilén
  */
-public class LisatiedotTabSheet extends KoodistoSelectionTabSheet {
+public abstract class LisatiedotTabSheet extends KoodistoSelectionTabSheet {
 
     private static final Logger LOG = LoggerFactory.getLogger(LisatiedotTabSheet.class);
-    private static final String TEXT_AREA_DEFAULT_WIDTH = "550px";
     private static final long serialVersionUID = 8350473574707759159L;
-    TarjontaModel tarjontaModel;
+    private TarjontaModel tarjontaModel;
     private transient I18NHelper _i18n;
 
     public LisatiedotTabSheet(TarjontaModel tarjontaModel, TarjontaUIHelper uiHelper, UiBuilder uiBuilder) {
@@ -59,32 +51,9 @@ public class LisatiedotTabSheet extends KoodistoSelectionTabSheet {
         addTab(uri, createLanguageEditor(uri));
     }
 
-    private void initializeTabsheet(boolean allowDefault) {
-        // What languages should we have as preselection when initializing the form?
-        // Current hypothesis is that we should use the opetuskielet + any possible additional languages added to additional information
-        Set<String> languageUris = new HashSet<String>();
-        final String opetuskieliKoodiUri = tarjontaModel.getKoulutusPerustiedotModel().getOpetuskieli();
+    protected abstract void initializeTabsheet(boolean allowDefault);
 
-        if (opetuskieliKoodiUri != null) {
-            languageUris.add(opetuskieliKoodiUri); //only single language in 2aste
-        }
-        languageUris.addAll(tarjontaModel.getKoulutusLisatiedotModel().getKielet());
-
-        if (!languageUris.isEmpty()) {
-            //get loaded data from model
-            setInitialValues(languageUris);
-        } else if(allowDefault) { 
-            //no data
-            final String defautLang = getDefaultLanguageKoodiUri();
-            Set<String> values = new HashSet<String>(1);
-            values.add(defautLang);
-            getKcSelection().setValue(values);       
-        }
-
-        setSelectedTab(opetuskieliKoodiUri);
-    }
-
-    private void setInitialValues(final Set<String> values) {
+    protected void setInitialValues(final Set<String> values) {
         if (values != null) {
             for (String kieliKaannos : values) {
                 addTab(kieliKaannos, createLanguageEditor(kieliKaannos));
@@ -105,63 +74,19 @@ public class LisatiedotTabSheet extends KoodistoSelectionTabSheet {
      * @param uri
      * @return
      */
-    private AbstractComponent createLanguageEditor(String uri) {
-        VerticalLayout vl = UiBuilder.verticalLayout();
+    protected abstract AbstractComponent createLanguageEditor(String uri);
 
-        vl.setSpacing(true);
-        vl.setMargin(true);
-
-        vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kuvailevatTiedot.title"), LabelStyleEnum.H2));
-        vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kuvailevatTiedot.help"), LabelStyleEnum.TEXT));
-
-        KoulutusLisatietoModel model = tarjontaModel.getKoulutusLisatiedotModel().getLisatiedot(uri);
-        PropertysetItem psi = new BeanItem(model);
-
-        {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "sisalto");
-            rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto.help"), LabelStyleEnum.TEXT));
-            vl.addComponent(rta);
-        }
-
-        {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "sijoittuminenTyoelamaan");
-            rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("sijoittuminenTyoelamaan"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("sijoittuminenTyoelamaan.help"), LabelStyleEnum.TEXT));
-            vl.addComponent(rta);
-        }
-
-        {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "kansainvalistyminen");
-            rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kansainvalistyminen"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kansainvalistyminen.help"), LabelStyleEnum.TEXT));
-            vl.addComponent(rta);
-        }
-
-        {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "yhteistyoMuidenToimijoidenKanssa");
-            rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("yhteistyoMuidenToimijoidenKanssa.help"), LabelStyleEnum.TEXT));
-            vl.addComponent(rta);
-        }
-
-        {
-            OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "koulutusohjelmanValinta");
-            rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutusOhjelmanValinta"), LabelStyleEnum.H2));
-            vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutusOhjelmanValinta.help"), LabelStyleEnum.TEXT));
-            vl.addComponent(rta);
-        }
-
-        return vl;
+    /**
+     * Get base UI model.
+     *
+     * @return
+     */
+    protected TarjontaModel getModel() {
+        return this.tarjontaModel;
     }
 
     // Generic translatio helpers
-    private String T(String key) {
+    protected String T(String key) {
         return getI18n().getMessage(key);
     }
 

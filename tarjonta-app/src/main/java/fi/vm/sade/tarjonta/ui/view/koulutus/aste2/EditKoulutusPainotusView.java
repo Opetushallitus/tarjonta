@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.view.koulutus;
+package fi.vm.sade.tarjonta.ui.view.koulutus.aste2;
 
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.Button;
@@ -27,6 +27,8 @@ import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.view.common.DataTableEvent;
 import fi.vm.sade.vaadin.util.UiUtil;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,75 +51,48 @@ import org.vaadin.addon.formbinder.PropertyId;
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
-public class EditKoulutusPerustiedotYhteystietoView extends VerticalLayout implements Component {
+public class EditKoulutusPainotusView extends VerticalLayout implements Component {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotYhteystietoView.class);
-    private static final long serialVersionUID = 765235947511196071L;
-    @PropertyId("etunimet")
-    private TextField tfEtunimet;
-    @PropertyId("sukunimi")
-    private TextField tfSukunimi;
-    @PropertyId("titteli")
-    private TextField tfTitteli;
-    @PropertyId("email")
-    private TextField tfEmail;
-    @PropertyId("puhelin")
-    private TextField tfPuhelin;
-    @PropertyId("kielet")
-    private KoodistoComponent kcKielet;
+    private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPainotusView.class);
+    @PropertyId("nimi")
+    private TextField tfNimi;
+    @PropertyId("kielikoodi")
+    private KoodistoComponent kcKieli;
     private transient I18NHelper i18n = new I18NHelper(this);
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
 
-    public EditKoulutusPerustiedotYhteystietoView() {
+    public EditKoulutusPainotusView() {
         this.setSpacing(true);
+        this.addComponent(UiUtil.label(null, i18n.getMessage("Painotus")));
 
-        buildLayout();
-    }
+        tfNimi = UiUtil.textField(this, "", i18n.getMessage("painotus.prompt"), true);
+        tfNimi.setWidth(400, UNITS_PIXELS);
+        tfNimi.setRequired(true);
+        tfNimi.setRequiredError(i18n.getMessage("painotus.tyhja"));
 
-    private void buildLayout() {
-        tfEtunimet = UiUtil.textField(this, "", i18n.getMessage("Etunimet.prompt"), true);
-        tfEtunimet.setRequired(true);
-        tfEtunimet.setRequiredError(i18n.getMessage("Etunimet.tyhja"));
-
-        tfSukunimi = UiUtil.textField(this, "", i18n.getMessage("Sukunimi.prompt"), true);
-        tfSukunimi.setRequired(true);
-        tfSukunimi.setRequiredError(i18n.getMessage("Sukunimi.tyhja"));
-
-        tfTitteli = UiUtil.textField(this, "", i18n.getMessage("Titteli.prompt"), true);
-
-        tfEmail = UiUtil.textField(this, "", i18n.getMessage("Email.prompt"), true);
-        tfEmail.setRequired(true);
-        tfEmail.setRequiredError(i18n.getMessage("Email.tyhja"));
-
-        tfPuhelin = UiUtil.textField(this, "", i18n.getMessage("Puhelin.prompt"), true);
-        tfPuhelin.setRequired(true);
-        tfPuhelin.setRequiredError(i18n.getMessage("Puhelin.tyhja"));
-        tfPuhelin.addValidator(new RegexpValidator("^(\\s+|\\d+)*", i18n.getMessage("Puhelin.muoto")));
-
-        UiUtil.label(this, i18n.getMessage("YhteyshenkiloKielissa"));
-
-        kcKielet = uiBuilder.koodistoTwinColSelectUri(this, KoodistoURIHelper.KOODISTO_KIELI_URI);
+        UiUtil.label(this, i18n.getMessage("Kielelle"));
+        kcKieli = uiBuilder.koodistoComboBox(this, KoodistoURIHelper.KOODISTO_KIELI_URI, true);
+        kcKieli.getField().setRequired(true);
+        kcKieli.getField().setNullSelectionAllowed(false);
+        kcKieli.getField().setRequiredError(i18n.getMessage("kieli.tyhja"));
+        
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSpacing(true);
         this.addComponent(hl);
 
         UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Tallenna"), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 LOG.debug("fire : SaveEvent");
-                fireEvent(new DataTableEvent.SaveEvent(EditKoulutusPerustiedotYhteystietoView.this));
+                fireEvent(new DataTableEvent.SaveEvent(EditKoulutusPainotusView.this));
             }
         });
 
         UiUtil.buttonSmallSecodary(hl, i18n.getMessage("Peruuta"), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                fireEvent(new DataTableEvent.CancelEvent(EditKoulutusPerustiedotYhteystietoView.this));
+                fireEvent(new DataTableEvent.CancelEvent(EditKoulutusPainotusView.this));
             }
         });
 

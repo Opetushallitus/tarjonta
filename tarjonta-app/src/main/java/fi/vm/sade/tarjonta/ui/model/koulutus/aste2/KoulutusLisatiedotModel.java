@@ -13,9 +13,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.model;
+package fi.vm.sade.tarjonta.ui.model.koulutus.aste2;
 
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

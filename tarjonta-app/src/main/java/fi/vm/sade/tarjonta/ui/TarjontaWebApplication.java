@@ -25,6 +25,7 @@ import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.ValintaperustekuvausRootView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusPerustiedotView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 @Configurable(preConstruction = true)
 public class TarjontaWebApplication extends TarjontaApplication {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaWebApplication.class);
     private static final long serialVersionUID = 7402559260126333807L;
     private Window window;
@@ -52,52 +53,51 @@ public class TarjontaWebApplication extends TarjontaApplication {
     private TarjontaAdminService tarjontaAdminService;
     @Autowired
     private TarjontaKomoData tarjontaKomoData;
-    
+
     @Override
     protected void initApplication() {
-  
+
         window = new Window("Valitse");
         setMainWindow(window);
-        
+
         developmentConfiguration();
         HorizontalLayout hl = new HorizontalLayout();
         window.addComponent(hl);
-        
-        Button tarjontaButton = new Button("Tarjontaan", new Button.ClickListener() {
+
+        final Button tarjontaButton = new Button("Tarjontaan", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-            
+
             @Override
             public void buttonClick(ClickEvent event) {
                 toTarjonta();
             }
         });
         hl.addComponent(tarjontaButton);
-        
-        Button hakuButton = new Button("Hakuihin", new Button.ClickListener() {
+
+        final Button hakuButton = new Button("Hakuihin", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-            
+
             @Override
             public void buttonClick(ClickEvent event) {
                 toHaku();
             }
         });
         hl.addComponent(hakuButton);
-        
-        Button valitaButton = new Button("Valintaperustekuvaus", new Button.ClickListener() {
+
+        final Button valitaButton = new Button("Valintaperustekuvaus", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-            
+
             @Override
             public void buttonClick(ClickEvent event) {
                 toValintaperustekuvaus();
             }
         });
         hl.addComponent(valitaButton);
-        
-        
-        
-        Button btnKomo = new Button("Luo kaikki komot", new Button.ClickListener() {
+
+
+        final Button btnKomo = new Button("Luo kaikki komot", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-            
+
             @Override
             public void buttonClick(ClickEvent event) {
                 try {
@@ -110,10 +110,10 @@ public class TarjontaWebApplication extends TarjontaApplication {
             }
         });
         hl.addComponent(btnKomo);
-        
-        Button btnKomoTest = new Button("Testaa komon luonti", new Button.ClickListener() {
+
+        final Button btnKomoTest = new Button("Testaa komon luonti", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-            
+
             @Override
             public void buttonClick(ClickEvent event) {
                 try {
@@ -125,25 +125,44 @@ public class TarjontaWebApplication extends TarjontaApplication {
                 }
             }
         });
-        
+
         hl.addComponent(btnKomoTest);
+
+        final Button lukiokoulutus = new Button("Luo lukiokoulutus", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                toLukiokoulutus();
+            }
+        });
+
+        hl.addComponent(lukiokoulutus);
     }
-    
+
     public void toTarjonta() {
         this.removeWindow(window);
         window = new TarjontaRootView();
         setMainWindow(window);
     }
-    
+
     public void toHaku() {
         this.removeWindow(window);
         window = new HakuRootView();
         setMainWindow(window);
     }
-    
+
     public void toValintaperustekuvaus() {
         this.removeWindow(window);
         window = new ValintaperustekuvausRootView();
+        setMainWindow(window);
+    }
+
+    public void toLukiokoulutus() {
+        this.removeWindow(window);
+        TarjontaRootView e = new TarjontaRootView();
+        e.changeView(new EditLukioKoulutusPerustiedotView(null));
+        window = e;
         setMainWindow(window);
     }
 
@@ -155,7 +174,7 @@ public class TarjontaWebApplication extends TarjontaApplication {
             //set a development theme.
             setTheme(developmentTheme);
         }
-        
+
         if (developmentRedirect != null && developmentRedirect.length() > 0) {
             //This code block is only for making UI development little bit faster
             //Add the property to tarjonta-app.properties:

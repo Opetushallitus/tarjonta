@@ -15,11 +15,14 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -38,8 +41,18 @@ public class TarjontaModel extends BaseUIViewModel {
     private String rootOrganisaatioOid;//OPH's root oid.
     private String parentOrganisaatioOid; //portal user's parent organisation.
     private KoulutusSearchSpesificationViewModel _searchSpec = new KoulutusSearchSpesificationViewModel();
+    /*
+     * 2-aste ammattikoulut
+     */
     private KoulutusToisenAsteenPerustiedotViewModel _koulutusPerustiedotModel;
     private KoulutusLisatiedotModel _koulutusLisatiedotModel;
+    /*
+     * 2-aste lukiokoulutus
+     */
+    private KoulutusLukioPerustiedotViewModel koulutusLukioPerustiedot;
+    /*
+     * Hakutulos
+     */
     private List<HakukohdeTulos> _hakukohteet;
     private List<HakukohdeTulos> _selectedhakukohteet;
     private List<KoulutusTulos> _koulutukset;
@@ -59,15 +72,33 @@ public class TarjontaModel extends BaseUIViewModel {
         this.selectedKoulutusOid = selectedKoulutusOid;
     }
 
+    /**
+     * @return the koulutusLukioPerustiedot
+     */
+    public KoulutusLukioPerustiedotViewModel getKoulutusLukioPerustiedot() {
+        if (koulutusLukioPerustiedot == null) {
+            koulutusLukioPerustiedot = new KoulutusLukioPerustiedotViewModel(DocumentStatus.NEW);
+        }
+
+        return koulutusLukioPerustiedot;
+    }
+
+    /**
+     * @param koulutusLukioPerustiedot the koulutusLukioPerustiedot to set
+     */
+    public void setKoulutusLukioPerustiedot(KoulutusLukioPerustiedotViewModel koulutusLukioPerustiedot) {
+        this.koulutusLukioPerustiedot = koulutusLukioPerustiedot;
+    }
 
     public static class OrganisaatioOidNamePair {
+
         private String oid;
         private String name;
 
-       public OrganisaatioOidNamePair(String oid,String name) {
-           this.oid = oid;
-           this.name = name;
-       }
+        public OrganisaatioOidNamePair(String oid, String name) {
+            this.oid = oid;
+            this.name = name;
+        }
 
         public String getOid() {
             return oid;
@@ -320,11 +351,11 @@ public class TarjontaModel extends BaseUIViewModel {
         return parentOrganisaatioOid;
     }
 
-
     public void addOneOrganisaatioNameOidPair(OrganisaatioOidNamePair pair) {
         getOrganisaatios().clear();
         organisaatios.add(pair);
     }
+
     /**
      * Get portal user's parent organisation, at least used in navigation tree.
      *
