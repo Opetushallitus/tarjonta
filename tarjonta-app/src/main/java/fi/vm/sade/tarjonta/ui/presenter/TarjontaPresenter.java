@@ -507,6 +507,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         return caption;
     }
 
+    public void showKoulutusEditView(Collection<OrganisaatioPerustietoType> orgs)  {
+        getModel().setOrganisaatios(convertPerustietoToNameOidPair(orgs));
+        showKoulutustEditView(null, KoulutusActiveTab.PERUSTIEDOT);
+    }
+
     public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustietoType> orgs) {
         getModel().setOrganisaatios(convertPerustietoToNameOidPair(orgs));
 

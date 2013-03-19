@@ -318,7 +318,12 @@ public class ListKoulutusView extends VerticalLayout {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 if (presenter.availableKoulutus()) {
-                    presenter.showKoulutustEditView(null, KoulutusActiveTab.PERUSTIEDOT);
+                    List<String> organisaatioOids = new ArrayList<String>();
+                    organisaatioOids.add(presenter.getModel().getOrganisaatioOid());
+                    UusiKoulutusDialog uusiKoulutusDialog = new UusiKoulutusDialog("600px","500px");
+
+                    getWindow().addWindow(uusiKoulutusDialog);
+                    //presenter.showKoulutustEditView(null, KoulutusActiveTab.PERUSTIEDOT);
                 } else {
                     showNoKoulutusDialog("viesti");
                 }
