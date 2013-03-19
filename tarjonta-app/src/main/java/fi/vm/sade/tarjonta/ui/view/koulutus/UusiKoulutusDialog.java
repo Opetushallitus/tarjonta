@@ -68,7 +68,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         jatkaBtn.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-
+                if (presenter.checkOrganisaatioOppilaitosTyyppimatches(selectedOrgs.values())) {
                 if (koulutusAsteCombo.getValue() instanceof String && ((String)koulutusAsteCombo.getValue()).equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value())) {
                 presenter.showKoulutusEditView(selectedOrgs.values());
                 getParent().removeWindow(UusiKoulutusDialog.this);
@@ -78,6 +78,9 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                 }
                 else {
                     showNotification("Ei toteutettu");
+                }
+            } else {
+                    addErrorMessage(_i18n.getMessage("oppilaitosTyyppiDoesNotMatch"));
                 }
             }
         });

@@ -60,6 +60,7 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1765,6 +1766,28 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             }
         }
         return true;
+    }
+
+    public boolean checkOrganisaatioOppilaitosTyyppimatches(Collection<OrganisaatioPerustietoType> orgs) {
+        List<Set<String>> listOfOppilaitostyyppisLists = new ArrayList<Set<String>>();
+        boolean isOk = true;
+        for (OrganisaatioPerustietoType org:orgs) {
+            listOfOppilaitostyyppisLists.add(getOppilaitosUrisForOrg(org));
+        }
+
+
+        for (int counter = 1; counter < listOfOppilaitostyyppisLists.size() ; counter++ ) {
+            Set<String> current = listOfOppilaitostyyppisLists.get(counter);
+            int oneBefore = counter -1;
+            Set<String> oneBeforeList = listOfOppilaitostyyppisLists.get(oneBefore);
+
+            if (!CollectionUtils.containsAny(current,oneBeforeList)) {
+               isOk = false;
+                break;
+            }
+        }
+
+        return isOk;
     }
 
     private Set<String> getOppilaitosUrisForOrg(OrganisaatioPerustietoType org) {
