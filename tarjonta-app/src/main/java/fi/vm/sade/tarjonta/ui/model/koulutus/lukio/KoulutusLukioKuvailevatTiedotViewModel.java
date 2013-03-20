@@ -33,6 +33,13 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends KoulutusRelaatioMode
 
     // kielet
     private List<String> kieliA;
+    @Override
+    public String toString() {
+        return "KoulutusLukioKuvailevatTiedotViewModel [diplomit=" + diplomit + ", kieliA=" + kieliA + ", kieliB1="
+                + kieliB1 + ", kieliB2=" + kieliB2 + ", kieliB3=" + kieliB3 + ", kieletMuu=" + kieletMuu + ", tekstit="
+                + tekstit + "]";
+    }
+
     private List<String> kieliB1;
     private List<String> kieliB2;
     private List<String> kieliB3;

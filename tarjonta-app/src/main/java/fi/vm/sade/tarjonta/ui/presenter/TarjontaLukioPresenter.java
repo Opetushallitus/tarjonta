@@ -25,6 +25,7 @@ import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolajiModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusPerustiedotView;
@@ -45,6 +46,7 @@ public class TarjontaLukioPresenter {
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaLukioPresenter.class);
     private TarjontaModel model;
     private KoulutusLukioPerustiedotViewModel perustiedotModel;
+    private KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedotModel;
     private TarjontaPresenter presenter;
     private EditLukioKoulutusPerustiedotView editLukioKoulutusPerustiedotView;
 
@@ -53,6 +55,7 @@ public class TarjontaLukioPresenter {
         this.presenter = presenter;
 
         perustiedotModel = this.model.getKoulutusLukioPerustiedot();
+        kuvailevatTiedotModel = model.getKoulutusLukioKuvailevatTiedot();
     }
 
     public void loadLukiolajis() {
@@ -109,6 +112,7 @@ public class TarjontaLukioPresenter {
         LOG.info("in saveKoulutus : {}", tila);
         LOG.info("model : {}", perustiedotModel.toString());
         LOG.info("yhteyshenkilo : {}", perustiedotModel.getYhteyshenkilo());
+        LOG.info("kuvailevat tiedot model: {}", kuvailevatTiedotModel);
     }
 
     public void getReloadKoulutusListData() {
@@ -148,4 +152,6 @@ public class TarjontaLukioPresenter {
     public TarjontaModel getModel() {
         return this.model;
     }
+    
+    
 }
