@@ -193,6 +193,21 @@
                          type="xs:string"
                          minOccurs="0"
                          maxOccurs="1"/>
+            
+            <xs:element  name="painotettavatOppiaineet"
+                        type="tns:PainotettavaOppiaineTyyppi"
+                        minOccurs="0"
+                        maxOccurs="unbounded"/>
+            
+            <xs:element  name="alinHyvaksyttavaKeskiarvo"
+                         type="xs:decimal"
+                         minOccurs="0"
+                         maxOccurs="1"/>
+            
+            <xs:element name="hakukohteenKoulutusaste"
+                        type="tns:KoulutusasteTyyppi"
+                        minOccurs="0"
+                        maxOccurs="1"/>
         
         </xs:sequence>
     </xs:complexType>
@@ -396,6 +411,8 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="pisterajat" type="tns:PisterajaTyyppi" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="lisaNaytot" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="unbounded"/> 
         </xs:sequence>
 
     </xs:complexType>
@@ -808,6 +825,22 @@
             <xs:pattern value="[a-z]{2}"/>
         </xs:restriction>
     </xs:simpleType>
+    
+    <xs:complexType name="PainotettavaOppiaineTyyppi">
+        <xs:sequence>
+            <xs:element name="oppiaine" type="xs:string"/>
+            <xs:element name="painokerroin" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="PisterajaTyyppi">
+        <xs:sequence>
+            <xs:element name="valinnanPisteraja" type="tns:ValinnanPisterajaTyyppi" />
+            <xs:element name="alinPistemaara" type="xs:int"/>
+            <xs:element name="ylinPistemaara" type="xs:int"/>
+            <xs:element name="alinHyvaksyttyPistemaara" type="xs:int"/> 
+        </xs:sequence>
+    </xs:complexType>
 
     <xs:complexType name="GenericFaultInfo">
         <xs:sequence>
@@ -849,6 +882,13 @@
             <xs:enumeration value="Ammattikorkeakoulutus"/>
             <xs:enumeration value="Yliopistokoulutus"/>
             <xs:enumeration value="PerusopetuksenLisaopetus"/>   
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="ValinnanPisterajaTyyppi">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Paasykoe"/>
+            <xs:enumeration value="Lisapisteet"/>
         </xs:restriction>
     </xs:simpleType>
 
