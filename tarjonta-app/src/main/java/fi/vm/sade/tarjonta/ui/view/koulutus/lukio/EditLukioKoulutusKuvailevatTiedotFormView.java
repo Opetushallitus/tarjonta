@@ -63,7 +63,7 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
         GridLayout kielivalinnat = new GridLayout(2, 1);
         buildSpacingGridRow(kielivalinnat);
         kielivalinnat.setSizeFull();
-        //SIGH, how to set the right column to accupy all available space?
+        //SIGH, how to set the right column to occupy all available space?
         kielivalinnat.setColumnExpandRatio(0, 0.15f);
         kielivalinnat.setColumnExpandRatio(1, 0.85f);
         addRow(kielivalinnat, "kieliA");

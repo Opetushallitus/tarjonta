@@ -30,6 +30,7 @@ import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaLukioPresenter;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusPerustiedotToinenAsteView;
@@ -71,8 +72,8 @@ public class EditLukioKoulutusKuvailevatTiedotView extends AbstractEditLayoutVie
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
         try {
-            presenter.saveKoulutus(tila);
-            presenter.getReloadKoulutusListData();
+            presenter.getLukioPresenter().saveKoulutus(tila);
+            //presenter.getLukioPresenter().getReloadKoulutusListData();
             return model.getOid();
         } catch (ExceptionMessage exceptionMessage) {
             if (exceptionMessage.getMessage().equalsIgnoreCase("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage")) {
