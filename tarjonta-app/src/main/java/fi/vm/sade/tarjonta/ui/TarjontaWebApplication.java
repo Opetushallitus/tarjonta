@@ -21,6 +21,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Window;
 
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
@@ -161,9 +162,9 @@ public class TarjontaWebApplication extends TarjontaApplication {
     public void toLukiokoulutus() {
         this.removeWindow(window);
         TarjontaRootView e = new TarjontaRootView();
-        e.changeView(new EditLukioKoulutusPerustiedotView(null));
-        window = e;
-        setMainWindow(window);
+        setMainWindow(e);
+        e.getTarjontaPresenter().getLukioPresenter().showEditLukioKoulutusPerustiedotView(null, KoulutusActiveTab.PERUSTIEDOT);
+        window = e;      
     }
 
     /*

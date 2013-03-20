@@ -60,6 +60,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
     private static final Logger LOG = LoggerFactory.getLogger(AbstractEditLayoutView.class);
     private static final TarjontaTila TO_STATE_LUONNOS = TarjontaTila.LUONNOS;
     private static final TarjontaTila[] TO_STATE_VALMIS = {TO_STATE_LUONNOS, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU};
+    private static final long serialVersionUID = 6843368378990612314L;
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
     @Autowired(required = true)

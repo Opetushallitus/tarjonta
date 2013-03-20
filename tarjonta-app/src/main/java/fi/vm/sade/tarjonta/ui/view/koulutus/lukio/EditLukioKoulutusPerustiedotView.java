@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus.lukio;
 
-import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.*;
 import com.vaadin.data.Validator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -24,7 +23,6 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
-import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
@@ -39,7 +37,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable(preConstruction = true)
 public class EditLukioKoulutusPerustiedotView extends AbstractEditLayoutView<KoulutusLukioPerustiedotViewModel, EditLukioKoulutusPerustiedotFormView> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotToinenAsteView.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EditLukioKoulutusPerustiedotView.class);
     private static final long serialVersionUID = 2756886453541825771L;
     private KoulutusLukioPerustiedotViewModel model;
     @Autowired(required = true)
@@ -73,8 +71,8 @@ public class EditLukioKoulutusPerustiedotView extends AbstractEditLayoutView<Kou
     @Override
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
         try {
-            presenter.saveKoulutus(tila);
-            presenter.getReloadKoulutusListData();
+            presenter.getLukioPresenter().saveKoulutus(tila);
+            presenter.getLukioPresenter().getReloadKoulutusListData();
             return model.getOid();
         } catch (ExceptionMessage exceptionMessage) {
             if (exceptionMessage.getMessage().equalsIgnoreCase("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage")) {
@@ -87,6 +85,6 @@ public class EditLukioKoulutusPerustiedotView extends AbstractEditLayoutView<Kou
 
     @Override
     public void actionNext(ClickEvent event) {
-        presenter.showShowKoulutusView();
+        throw new RuntimeException("not implemented");
     }
 }

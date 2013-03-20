@@ -22,7 +22,6 @@ import com.vaadin.ui.Window;
 
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
-import fi.vm.sade.tarjonta.ui.view.SearchResultsView;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.BreadcrumbsView;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
@@ -102,17 +101,6 @@ public class TarjontaRootView extends Window {
         model.setShowIdentifier(_showIdentifier);
         model.setIdentifier(_identifier);
         model.setRootOrganisaatioOid(ophOid);
-
-        /*
-         TODO: in future.
-         //Tries to set an user to correct navigation hierarchy level.
-
-         if (_presenter.getPermission().getDefaultOrganisationOid() != null) {   
-         model.setParentOrganisaatioOid(_presenter.getPermission().getDefaultOrganisationOid());
-         } else {
-         //no default organisation for the user, then we set user to root (OPH) hierarchy level.  
-         model.setParentOrganisaatioOid(ophOid);
-         }*/
         model.setParentOrganisaatioOid(ophOid);
 
         if (_presenter.isShowIdentifier()) {
@@ -218,5 +206,9 @@ public class TarjontaRootView extends Window {
 
         organisationSearchView.addComponent(vlRight);
         organisationSearchView.setExpandRatio(vlRight, 1f);
+    }
+
+    public TarjontaPresenter getTarjontaPresenter() {
+        return _presenter;
     }
 }

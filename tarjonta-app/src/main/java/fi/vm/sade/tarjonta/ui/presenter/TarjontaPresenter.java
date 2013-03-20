@@ -127,8 +127,10 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     @Autowired(required = true)
     private PublishingService publishingService;
     private EditKoulutusLisatiedotToinenAsteView lisatiedotView;
+    private TarjontaLukioPresenter lukioPresenter;
 
     public TarjontaPresenter() {
+        lukioPresenter = new  TarjontaLukioPresenter(this);
     }
 
     public void saveHakuKohde(SaveButtonState tila) {
@@ -643,7 +645,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * given as a parameter to this method. 
      * The retrieved oid list is used when querying for potential yhteyshenkilos of a koulutus object.
      */
-    private List<String> fetchOrganisaatioTree(String organisaatioOid) {
+    public List<String> fetchOrganisaatioTree(String organisaatioOid) {
         List<String> organisaatioOidTree = new ArrayList<String>();
         organisaatioOidTree.add(organisaatioOid);
         try {
@@ -1682,7 +1684,15 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * @param value - the name or part of the name of the user to search for
      */
     public List<HenkiloType> searchYhteyshenkilo(String value) {
+        return searchYhteyshenkilo(value, getModel().getKoulutusPerustiedotModel().getOrganisaatioOidTree());
+    }
+
+    public List<HenkiloType> searchYhteyshenkilo(String value, List organisaatioOids) {
         //If given string is null or empty returning an empty list, i.e. not doing an empty search.
+        if (organisaatioOids == null) {
+            throw new RuntimeException("A list of contact persons cannot be null.");
+        }
+
         if (value == null || value.isEmpty()) {
             return new ArrayList<HenkiloType>();
         }
@@ -1696,7 +1706,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         } else {
             searchType.setEtunimet(value);
         }
-        searchType.getOrganisaatioOids().addAll(_model.getKoulutusPerustiedotModel().getOrganisaatioOidTree());
+        searchType.getOrganisaatioOids().addAll(organisaatioOids);
         HenkiloPagingObjectType paging = new HenkiloPagingObjectType();
         List<HenkiloType> henkilos = new ArrayList<HenkiloType>();
         try {
@@ -1837,5 +1847,19 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
     private String tilaToLangStr(TarjontaTila tila) {
         return i18n.getMessage(tila.value());
+    }
+
+    /**
+     * @return the lukioPresenter
+     */
+    public TarjontaLukioPresenter getLukioPresenter() {
+        return lukioPresenter;
+    }
+
+    /**
+     * @param lukioPresenter the lukioPresenter to set
+     */
+    public void setLukioPresenter(TarjontaLukioPresenter lukioPresenter) {
+        this.lukioPresenter = lukioPresenter;
     }
 }

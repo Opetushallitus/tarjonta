@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -57,6 +58,11 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      */
     protected String opsuLinkki;
     protected YhteyshenkiloModel yhteyshenkilo;
+    /*
+     * the organisaatio oids of the organisaatio tree of the tarjoaja organisaatio of this koulutus.
+     * Is used when fetching potential yhteyshenkilos for the current koulutus.
+     */
+    private List<String> organisaatioOidTree;
 
     public KoulutusLukioPerustiedotViewModel(DocumentStatus status) {
         super();
@@ -311,6 +317,10 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      * @return the komos
      */
     public List<KoulutusmoduuliKoosteTyyppi> getKomos() {
+        if (komos == null) {
+            komos = new ArrayList<KoulutusmoduuliKoosteTyyppi>();
+        }
+
         return komos;
     }
 
@@ -325,22 +335,10 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      * @return the koulutuskoodis
      */
     public Set<KoulutuskoodiModel> getKoulutuskoodis() {
-
-        KoulutuskoodiModel m = new KoulutuskoodiModel();
-        m.setKoulutusaste(new KoodiModel());
-        m.setKoulutusala(new KoodiModel());
-        m.setOpintojenLaajuusyksikko(new KoodiModel());
-        m.setOpintojenLaajuus(new KoodiModel());
-        m.setOpintoala(new KoodiModel());
-        m.setKoulutuksenRakenne(new MonikielinenTekstiModel());
-        m.setTavoitteet(new MonikielinenTekstiModel());
-        m.setJatkoopintomahdollisuudet(new MonikielinenTekstiModel());
-
-        Set<KoulutuskoodiModel> set = new HashSet<KoulutuskoodiModel>();
-        set.add(m);
-        
-        return set;
-        //  return koulutuskoodis;
+        if (koulutuskoodis == null) {
+            koulutuskoodis = new HashSet<KoulutuskoodiModel>();
+        }
+        return koulutuskoodis;
     }
 
     /**
@@ -354,6 +352,10 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      * @return the lukiolajis
      */
     public Set<LukiolajiModel> getLukiolajis() {
+        if (lukiolajis == null) {
+            lukiolajis = new HashSet<LukiolajiModel>();
+        }
+
         return lukiolajis;
     }
 
@@ -362,5 +364,19 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      */
     public void setLukiolajis(Set<LukiolajiModel> lukiolajis) {
         this.lukiolajis = lukiolajis;
+    }
+
+    /**
+     * @return the organisaatioOidTree
+     */
+    public List<String> getOrganisaatioOidTree() {
+        return organisaatioOidTree;
+    }
+
+    /**
+     * @param organisaatioOidTree the organisaatioOidTree to set
+     */
+    public void setOrganisaatioOidTree(List<String> organisaatioOidTree) {
+        this.organisaatioOidTree = organisaatioOidTree;
     }
 }
