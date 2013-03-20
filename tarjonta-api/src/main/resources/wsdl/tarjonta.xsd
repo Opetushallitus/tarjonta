@@ -590,6 +590,7 @@
             <xs:element name="ajankohta" type="xs:string"></xs:element>
             <xs:element name="komotoOid" type="xs:string"></xs:element>
             <xs:element name="PohjakoulutusVaatimus" type="xs:string"></xs:element>
+            <xs:element name="Koulutustyyppi" type="tns:KoulutusasteTyyppi" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
