@@ -53,6 +53,8 @@ import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import fi.vm.sade.generic.ui.feature.UserFeature;
+import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 /**
  *
@@ -303,10 +305,19 @@ public class ListKoulutusView extends VerticalLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
+               
+               if (!checkForLukioKoulutus()) {
                 List<String> selectedKoulutusOids = presenter.getSelectedKoulutusOids();
                 if (!selectedKoulutusOids.isEmpty()) {
                     showCreateHakukohdeDialog(selectedKoulutusOids);
-                }
+                } 
+               } else {
+                  if (presenter.getSelectedKoulutukset().size() > 1) {
+                    //More than one koulutus chosen and atleast one of them is Lukio koulutus, show error dialog  
+                  }  else {
+                      
+                  }
+               }
             }
         });
 
@@ -342,6 +353,17 @@ public class ListKoulutusView extends VerticalLayout {
         layout.addComponent(btnInfo);
 
         return layout;
+    }
+    
+    private boolean checkForLukioKoulutus() {
+        boolean lukioFound = false;
+        for (KoulutusTulos koulutus: presenter.getSelectedKoulutukset()) {
+            if (koulutus.getKoulutus().getKoulutustyyppi() != null &&  koulutus.getKoulutus().getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+                lukioFound = true;
+                break;
+            }
+        }
+        return lukioFound;
     }
     
     private void showNoKoulutusDialog(String msg) {
