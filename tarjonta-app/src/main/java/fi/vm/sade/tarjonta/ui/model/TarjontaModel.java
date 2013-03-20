@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTu
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,6 +64,7 @@ public class TarjontaModel extends BaseUIViewModel {
     private ValintakoeAikaViewModel selectedValintakoeAika;
     private Collection<OrganisaatioOidNamePair> organisaatios;
     private String selectedKoulutusOid;
+    private KoulutusLukioKuvailevatTiedotViewModel koulutusLukioKuvailevatTiedot;
 
     public String getSelectedKoulutusOid() {
         return selectedKoulutusOid;
@@ -81,6 +83,18 @@ public class TarjontaModel extends BaseUIViewModel {
         }
 
         return koulutusLukioPerustiedot;
+    }
+
+    /**
+     * @return the koulutusLukioKuvailevatTiedot
+     */
+    public KoulutusLukioKuvailevatTiedotViewModel getKoulutusLukioKuvailevatTiedot() {
+        //TODO have a map!
+        if (koulutusLukioKuvailevatTiedot == null) {
+            koulutusLukioKuvailevatTiedot = new KoulutusLukioKuvailevatTiedotViewModel(DocumentStatus.NEW);
+        }
+
+        return koulutusLukioKuvailevatTiedot;
     }
 
     /**

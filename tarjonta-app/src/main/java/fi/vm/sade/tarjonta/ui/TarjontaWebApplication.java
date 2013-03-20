@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.ValintaperustekuvausRootView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusKuvailevatTiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusPerustiedotView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,6 +140,18 @@ public class TarjontaWebApplication extends TarjontaApplication {
         });
 
         hl.addComponent(lukiokoulutus);
+
+        final Button lukiokoulutus_kuvailevat = new Button("Lukiokoulutus kuvailevat tiedot", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                toLukiokoulutusKuvailevat();
+            }
+        });
+
+        hl.addComponent(lukiokoulutus_kuvailevat);
+
     }
 
     public void toTarjonta() {
@@ -165,6 +178,15 @@ public class TarjontaWebApplication extends TarjontaApplication {
         setMainWindow(e);
         e.getTarjontaPresenter().getLukioPresenter().showEditLukioKoulutusPerustiedotView(null, KoulutusActiveTab.PERUSTIEDOT);
         window = e;      
+    }
+
+    public void toLukiokoulutusKuvailevat() {
+        System.out.println("lukiokuvailevat!!");
+        this.removeWindow(window);
+        TarjontaRootView e = new TarjontaRootView();
+        window = e;
+        setMainWindow(window);
+        e.changeView(new EditLukioKoulutusKuvailevatTiedotView(null));
     }
 
     /*

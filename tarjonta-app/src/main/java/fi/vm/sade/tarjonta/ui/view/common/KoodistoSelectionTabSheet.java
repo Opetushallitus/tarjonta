@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import com.google.common.base.Preconditions;
 import com.vaadin.data.Property;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.AbstractComponent;
@@ -63,8 +64,11 @@ public class KoodistoSelectionTabSheet extends TabSheet {
      *
      * @param koodistoUri
      */
-    public KoodistoSelectionTabSheet(String koodistoUri, TarjontaUIHelper uiHelper, UiBuilder uiBuilder) {
+    public KoodistoSelectionTabSheet(final String koodistoUri, final TarjontaUIHelper uiHelper, final UiBuilder uiBuilder) {
         super();
+        Preconditions.checkNotNull(koodistoUri, "koodistoUri cannot be null");
+        Preconditions.checkNotNull(uiHelper, "uiHelper cannot be null");
+        Preconditions.checkNotNull(uiBuilder, "uiBuilder cannot be null");
         this.uiHelper = uiHelper;
         this.uiBuilder = uiBuilder;
         _koodistoUri = koodistoUri;
@@ -105,7 +109,9 @@ public class KoodistoSelectionTabSheet extends TabSheet {
         return tab;
     }
 
-    public Tab addTab(String koodiUri, Component c) {
+    public Tab addTab(final String koodiUri, final Component c) {
+        Preconditions.checkNotNull(koodiUri, "koodiUri cannot be null");
+        Preconditions.checkNotNull(c, "Component cannot be null");
         Tab tab = super.addTab(c, uiHelper.getKoodiNimi(koodiUri));
         _tabs.put(koodiUri, tab);
         removedTabs.remove(koodiUri); //item unremoved (if any)
