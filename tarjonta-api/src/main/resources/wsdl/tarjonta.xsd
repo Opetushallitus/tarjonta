@@ -616,7 +616,7 @@
 
             <xs:element name="Tila" type="tns:TarjontaTila"/>
             <xs:element name="KoulutusKoodi" type="tns:KoodistoKoodiTyyppi"/>
-            <xs:element name="KoulutusohjelmaKoodi" type="tns:KoodistoKoodiTyyppi"/>
+            <xs:element name="KoulutusohjelmaKoodi" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="1"/>
             <xs:element name="Opetusmuoto" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
             <xs:element name="Opetuskieli" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
             <xs:element name="Painotus" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
@@ -631,6 +631,8 @@
             <xs:element name="Nimi" type="tns:MonikielinenTekstiTyyppi" minOccurs="1" maxOccurs="1"/>
             
             <xs:element name="KoulutusohjelmanValinta" type="tns:MonikielinenTekstiTyyppi" minOccurs="1" maxOccurs="1"/>
+            
+            <xs:element name="Koulutustyyppi" type="tns:KoulutusasteTyyppi" minOccurs="0" maxOccurs="1"/>
 
             <!-- Koulutuksen lisätiedot (additional information) -->
             <xs:element name="Ammattinimikkeet" type="tns:KoodistoKoodiTyyppi" minOccurs="1" maxOccurs="unbounded"/>
@@ -640,6 +642,16 @@
             <xs:element name="Kansainvalistyminen" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
             <xs:element name="YhteistyoMuidenToimijoidenKanssa" type="tns:MonikielinenTekstiTyyppi" minOccurs="0"
                         maxOccurs="1"/>
+            
+            <!--Lukiokoulutukselle spesifeja tietoja -->
+            <xs:element name="LukiolinjaKoodi" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="Lukiodiplomit" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="A1A2Kieli" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="B1Kieli" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="B2Kieli" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="B3Kieli" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="MuutKielet" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
+            
         </xs:sequence>
     </xs:group>
 
