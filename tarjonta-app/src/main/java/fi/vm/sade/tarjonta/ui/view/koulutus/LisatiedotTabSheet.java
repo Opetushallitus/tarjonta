@@ -22,7 +22,6 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.view.common.KoodistoSelectionTabSheet;
-import java.util.HashSet;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,7 +91,7 @@ public abstract class LisatiedotTabSheet extends KoodistoSelectionTabSheet {
 
     private I18NHelper getI18n() {
         if (_i18n == null) {
-            _i18n = new I18NHelper("EditKoulutusLisatiedotForm.");
+            _i18n = new I18NHelper(getClass().getSimpleName() + ".");
         }
         return _i18n;
     }

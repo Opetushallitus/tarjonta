@@ -64,19 +64,18 @@ public class EditLukioKoulutusKuvailevatTiedotTekstikentatTabSheet extends EditL
         
         final PropertysetItem psi = new BeanItem(model);
 
-        createEditor(uri, vl, psi, "koulutuksenSisalto.label", "sisalto");
-        createEditor(uri, vl, psi, "kansainvalistyminen.label", "kansainvalistyminen");
-        createEditor(uri, vl, psi, "yhteistyo.label", "yhteistyoMuidenToimijoidenKanssa");
+        createEditor(uri, vl, psi, "sisalto");
+        createEditor(uri, vl, psi, "kansainvalistyminen");
+        createEditor(uri, vl, psi, "yhteistyoMuidenToimijoidenKanssa");
 
         return vl;
     }
 
-    private void createEditor(final String langUri, final VerticalLayout vl, final PropertysetItem psi, final String caption,
-            final String help) {
-        final OphRichTextArea rta = UiBuilder.richTextArea(null, psi, "tekstit.sisalto");
+    private void createEditor(final String langUri, final VerticalLayout vl, final PropertysetItem psi, final String id) {
+        final OphRichTextArea rta = UiBuilder.richTextArea(null, psi, id);
         rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
-        vl.addComponent(UiBuilder.label((AbstractLayout) null, caption, LabelStyleEnum.H2));
-        vl.addComponent(UiBuilder.label((AbstractLayout) null, help, LabelStyleEnum.TEXT));
+        vl.addComponent(UiBuilder.label((AbstractLayout) null, T(id + ".label"), LabelStyleEnum.H2));
+        vl.addComponent(UiBuilder.label((AbstractLayout) null, T(id + ".help"), LabelStyleEnum.TEXT));
         vl.addComponent(rta);
     }
 }
