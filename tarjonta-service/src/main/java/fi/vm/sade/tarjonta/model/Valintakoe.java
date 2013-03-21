@@ -35,11 +35,14 @@ public class Valintakoe extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "valintakoe_id")
     private Set<ValintakoeAjankohta> ajankohtas = new HashSet<ValintakoeAjankohta>();
-
-    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "kuvaus_monikielinenteksti_id")
     private MonikielinenTeksti kuvaus;
-
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "lisanaytot_monikielinenteksti_id")
+    private MonikielinenTeksti lisanaytot;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
     /**
      * Valintakokeen tyyppi. Koodisto uri.
      */
@@ -144,5 +147,33 @@ public class Valintakoe extends BaseEntity {
      */
     public void setHakukohdeId(long hakukohdeId) {
         this.hakukohdeId = hakukohdeId;
+    }
+
+    /**
+     * @return the lisanaytot
+     */
+    public MonikielinenTeksti getLisanaytot() {
+        return lisanaytot;
+    }
+
+    /**
+     * @param lisanaytot the lisanaytot to set
+     */
+    public void setLisanaytot(MonikielinenTeksti lisanaytot) {
+        this.lisanaytot = lisanaytot;
+    }
+
+    /**
+     * @return the pisterajat
+     */
+    public Set<Pisteraja> getPisterajat() {
+        return pisterajat;
+    }
+
+    /**
+     * @param pisterajat the pisterajat to set
+     */
+    public void setPisterajat(Set<Pisteraja> pisterajat) {
+        this.pisterajat = pisterajat;
     }
 }

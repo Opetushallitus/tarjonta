@@ -81,6 +81,8 @@ public class Hakukohde extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "lisatiedot_teksti_id")
     private MonikielinenTeksti lisatiedot;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<PainotettavaOppiaine> painotettavatOppiaineet = new HashSet<PainotettavaOppiaine>();
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "hakukohde")
     private Set<HakukohdeLiite> liites = new HashSet<HakukohdeLiite>();
     @Deprecated
@@ -91,6 +93,9 @@ public class Hakukohde extends BaseEntity {
     private String valintaperustekuvausKoodiUri; //the koodi uri points to metadata
     @Column(name = "sora_kuvaus_koodi_uri")
     private String soraKuvausKoodiUri; //the koodi uri points to metadata
+    @Column(name ="alinHyvaksyttavaKeskiarvo")
+    private Double alinHyvaksyttavaKeskiarvo;
+    
 
     /**
      * @return the koulutuses
@@ -389,4 +394,33 @@ public class Hakukohde extends BaseEntity {
     public void setSoraKuvausKoodiUri(String soraKuvausKoodiUri) {
         this.soraKuvausKoodiUri = soraKuvausKoodiUri;
     }
+
+    /**
+     * @return the alinHyvaksyttavaKeskiarvo
+     */
+    public Double getAlinHyvaksyttavaKeskiarvo() {
+        return alinHyvaksyttavaKeskiarvo;
+    }
+
+    /**
+     * @param alinHyvaksyttavaKeskiarvo the alinHyvaksyttavaKeskiarvo to set
+     */
+    public void setAlinHyvaksyttavaKeskiarvo(Double alinHyvaksyttavaKeskiarvo) {
+        this.alinHyvaksyttavaKeskiarvo = alinHyvaksyttavaKeskiarvo;
+    }
+
+    /**
+     * @return the painotettavatOppiaineet
+     */
+    public Set<PainotettavaOppiaine> getPainotettavatOppiaineet() {
+        return painotettavatOppiaineet;
+    }
+
+    /**
+     * @param painotettavatOppiaineet the painotettavatOppiaineet to set
+     */
+    public void setPainotettavatOppiaineet(Set<PainotettavaOppiaine> painotettavatOppiaineet) {
+        this.painotettavatOppiaineet = painotettavatOppiaineet;
+    }
+
 }

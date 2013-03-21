@@ -21,6 +21,10 @@ import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
+import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -51,10 +55,24 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
         if (from.getLiitteidenToimitusOsoite() != null) {
             hakukohde.setLiitteidenToimitusOsoite(convertOsoite(from.getLiitteidenToimitusOsoite()));
         }
-
+        if (from.getAlinHyvaksyttavaKeskiarvo() != null) {
+        hakukohde.setAlinHyvaksyttavaKeskiarvo(from.getAlinHyvaksyttavaKeskiarvo().doubleValue());
+        }
         return hakukohde;
     }
 
+    private Set<PainotettavaOppiaine> convertPainotettavatOppiaineet(List<PainotettavaOppiaineTyyppi> oppiaineet) {
+        Set<PainotettavaOppiaine> painotettavatOppiaineet = new HashSet<PainotettavaOppiaine>();
+        
+        for(PainotettavaOppiaineTyyppi oppiaineTyyppi:oppiaineet) {
+            PainotettavaOppiaine painotettavaOppiaine = new PainotettavaOppiaine();
+            painotettavaOppiaine.setOppiaine(oppiaineTyyppi.getOppiaine());
+            painotettavaOppiaine.setPainokerroin(oppiaineTyyppi.getPainokerroin());
+        } 
+        
+        return painotettavatOppiaineet;
+    }
+    
     private Osoite convertOsoite(OsoiteTyyppi osoiteTyyppi) {
         Osoite osoite = new Osoite();
 
