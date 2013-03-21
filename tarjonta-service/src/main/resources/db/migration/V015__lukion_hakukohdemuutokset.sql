@@ -1,4 +1,12 @@
-    create table hakukohde_painotettavaoppiaine (
+    create table painotettavaoppiaine (
+        id int8 not null unique,
+        version int8 not null,
+        oppiaine varchar(255),
+        painokerroin int4,
+        primary key (id)
+    );
+	
+	create table hakukohde_painotettavaoppiaine (
         hakukohde_id int8 not null,
         painotettavatOppiaineet_id int8 not null,
         primary key (hakukohde_id, painotettavatOppiaineet_id),
