@@ -9,6 +9,9 @@ import fi.vm.sade.vaadin.util.UiUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /*
@@ -34,6 +37,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable(preConstruction = true)
 public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
 
+    private Logger logger = LoggerFactory.getLogger(UusiKoulutusDialog.class);
     List<String> organisaatioOids;
     private ComboBox koulutusAsteCombo;
     private ComboBox koulutusValintaCombo;
@@ -70,10 +74,12 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
             public void buttonClick(Button.ClickEvent clickEvent) {
                 if (presenter.checkOrganisaatioOppilaitosTyyppimatches(selectedOrgs.values())) {
                 if (koulutusAsteCombo.getValue() instanceof String && ((String)koulutusAsteCombo.getValue()).equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value())) {
-                presenter.showKoulutusEditView(selectedOrgs.values());
-                getParent().removeWindow(UusiKoulutusDialog.this);
+                    presenter.getLukioPresenter().showLukioKoulutusEditView(selectedOrgs.values());
+                    logger.info("lukiokoulutus()");
+                    getParent().removeWindow(UusiKoulutusDialog.this);
                 } else if (koulutusAsteCombo.getValue() instanceof String && ((String)koulutusAsteCombo.getValue()).equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value()))  {
                     presenter.showKoulutusEditView(selectedOrgs.values());
+                    logger.info("ammatillinen peruskoulutus()");
                     getParent().removeWindow(UusiKoulutusDialog.this);
                 }
                 else {

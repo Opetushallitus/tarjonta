@@ -19,34 +19,42 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
+import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 
-public class KoulutusLukioKuvailevatTiedotViewModel extends KoulutusRelaatioModel {
+public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
 
     private static final long serialVersionUID = 1L;
 
-    // diplomi
-    private List<String> diplomit;
-
-    // kielet
-    private List<String> kieliA;
-    @Override
-    public String toString() {
-        return "KoulutusLukioKuvailevatTiedotViewModel [diplomit=" + diplomit + ", kieliA=" + kieliA + ", kieliB1="
-                + kieliB1 + ", kieliB2=" + kieliB2 + ", kieliB3=" + kieliB3 + ", kieletMuu=" + kieletMuu + ", tekstit="
-                + tekstit + "]";
+    private TarjontaTila tila;
+    
+    public TarjontaTila getTila() {
+        return tila;
     }
 
-    private List<String> kieliB1;
-    private List<String> kieliB2;
-    private List<String> kieliB3;
-    private List<String> kieletMuu;
+    public void setTila(TarjontaTila tila) {
+        this.tila = tila;
+    }
+
+    // diplomit
+    private List<String> diplomit = Lists.newArrayList();
+
+    // kielet
+    private List<String> kieliA = Lists.newArrayList();
+    private List<String> kieliB1 = Lists.newArrayList();
+    private List<String> kieliB2 = Lists.newArrayList();
+    private List<String> kieliB3 = Lists.newArrayList();
+    private List<String> kieletMuu = Lists.newArrayList();
 
     // tekstikentät
     private Map<String, KoulutusLisatietoModel> tekstit = Maps.newHashMap();
+
+    private String oid;
 
     public Map<String, KoulutusLisatietoModel> getTekstikentat() {
         return tekstit;
@@ -110,6 +118,31 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends KoulutusRelaatioMode
 
     public void setKieliB3(List<String> kieliB3) {
         this.kieliB3 = kieliB3;
+    }
+
+    /**
+     * Reset model state
+     */
+    public void clearModel(DocumentStatus status) {
+        diplomit.clear();
+        kieliA.clear();
+        kieliB1.clear();
+        kieliB2.clear();
+        kieliB3.clear();
+        kieletMuu.clear();
+        tekstit.clear();
+    }
+
+    /**
+     * Is model loaded?
+     */
+    public boolean isLoaded() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public String getOid() {
+        return oid;
     }
 
 }

@@ -16,10 +16,12 @@
 package fi.vm.sade.tarjonta.ui.presenter;
 
 import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConverter;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
@@ -28,14 +30,16 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolajiModel;
+import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusKuvailevatTiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusPerustiedotView;
-import java.util.ArrayList;
+import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusView;
+
+import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
 
 /**
  *
@@ -49,6 +53,9 @@ public class TarjontaLukioPresenter {
     private KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedotModel;
     private TarjontaPresenter presenter;
     private EditLukioKoulutusPerustiedotView editLukioKoulutusPerustiedotView;
+    private EditLukioKoulutusKuvailevatTiedotView editLukioKoulutusKuvailevatTiedotView;
+    private EditLukioKoulutusKuvailevatTiedotView kuvailevatTiedotView;
+    private EditLukioKoulutusView editLukioKoulutusView;
 
     public TarjontaLukioPresenter(TarjontaPresenter presenter) {
         this.model = presenter.getModel();
@@ -113,6 +120,8 @@ public class TarjontaLukioPresenter {
         LOG.info("model : {}", perustiedotModel.toString());
         LOG.info("yhteyshenkilo : {}", perustiedotModel.getYhteyshenkilo());
         LOG.info("kuvailevat tiedot model: {}", kuvailevatTiedotModel);
+        this.editLukioKoulutusView.enableKuvailevatTiedotTab();
+        this.kuvailevatTiedotView.getLisatiedotForm().reBuildTabsheet();
     }
 
     public void getReloadKoulutusListData() {
@@ -122,16 +131,25 @@ public class TarjontaLukioPresenter {
     public void showEditLukioKoulutusPerustiedotView(final String koulutusOid, final KoulutusActiveTab tab) {
         // If oid of koulutus is provided the koulutus is read from database
         // before opening the KoulutusEditView
-//        if (koulutusOid != null) {
-//            readKoulutusToModel(koulutusOid);
-//        } else {
+        if (koulutusOid != null) {
+            readKoulutusToModel(koulutusOid);
+        } else {
         if (getModel().getOrganisaatioOid() == null) {
             throw new RuntimeException("Application error - missing organisation OID.");
         }
         perustiedotModel.clearModel(DocumentStatus.NEW);
         perustiedotModel.setOrganisaatioOidTree(presenter.fetchOrganisaatioTree(getModel().getOrganisaatioOid()));
-//        }
+        }
         showEditLukioKoulutusPerustiedotView(koulutusOid);
+    }
+
+    private void readKoulutusToModel(String koulutusOid) {
+        Preconditions.checkNotNull(koulutusOid, "koulutusOid cannot be null");
+        LueKoulutusVastausTyyppi koulutus = presenter.getKoulutusByOid(koulutusOid);
+        //perustiedot TODO
+        
+        //kuvailevattiedot
+        kuvailevatTiedotModel = KoulutusConverter.createKoulutusLukioKuvailevatTiedotViewModel(koulutus, DocumentStatus.LOADED);
     }
 
     /**
@@ -145,6 +163,20 @@ public class TarjontaLukioPresenter {
         presenter.getRootView().changeView(editLukioKoulutusPerustiedotView);
     }
 
+    public void showEditLukioKoulutusKuvailevatTiedotView(final String koulutusOid, final KoulutusActiveTab tab) {
+        if (getModel().getOrganisaatioOid() == null) {
+            throw new RuntimeException("Application error - missing organisation OID.");
+        }
+        kuvailevatTiedotModel.clearModel(DocumentStatus.NEW);
+        perustiedotModel.setOrganisaatioOidTree(presenter.fetchOrganisaatioTree(getModel().getOrganisaatioOid()));
+        showEditLukioKoulutusPerustiedotView(koulutusOid);
+    }
+
+    private void showEditLukioKoulutusKuvailevatTiedotView(final String koulutusOid) {
+        editLukioKoulutusKuvailevatTiedotView = new EditLukioKoulutusKuvailevatTiedotView(koulutusOid);
+        presenter.getRootView().changeView(editLukioKoulutusKuvailevatTiedotView);
+    }
+
     public void setModel(TarjontaModel model) {
         this.model = model;
     }
@@ -152,6 +184,40 @@ public class TarjontaLukioPresenter {
     public TarjontaModel getModel() {
         return this.model;
     }
+
+    public void setKuvailevatTiedotView(EditLukioKoulutusKuvailevatTiedotView kuvailevatTiedotView) {
+        this.kuvailevatTiedotView = kuvailevatTiedotView;
+    }
+
+    public void setEditKoulutusView(EditLukioKoulutusView editLukioKoulutusView) {
+        this.editLukioKoulutusView = editLukioKoulutusView;
+        
+    }
+    
+    public void showLukioKoulutusEditView(Collection<OrganisaatioPerustietoType> orgs)  {
+        getModel().setOrganisaatios(presenter.convertPerustietoToNameOidPair(orgs));
+        showLukioKoulutustEditView(null, KoulutusActiveTab.PERUSTIEDOT);
+    }
+    
+    public void showLukioKoulutustEditView(final String koulutusOid, final KoulutusActiveTab tab) {
+        // If oid of koulutus is provided the koulutus is read from database
+        // before opening the KoulutusEditView
+        if (koulutusOid != null) {
+            readKoulutusToModel(koulutusOid);
+        } else {
+            Preconditions.checkNotNull(getModel().getOrganisaatioOid(), "Application error - missing organisation OID.");
+            getModel().getKoulutusLukioPerustiedot().clearModel(DocumentStatus.NEW);
+            getModel().getKoulutusLukioKuvailevatTiedot().clearModel(DocumentStatus.NEW);
+        }
+        showEditLukioKoulutusView(koulutusOid, tab);
+    }
+
+    private void showEditLukioKoulutusView(final String koulutusOid, final KoulutusActiveTab tab) {
+        setEditKoulutusView(new EditLukioKoulutusView(koulutusOid, tab));
+        presenter.getRootView().changeView(editLukioKoulutusView);
+    }
+
+
     
     
 }

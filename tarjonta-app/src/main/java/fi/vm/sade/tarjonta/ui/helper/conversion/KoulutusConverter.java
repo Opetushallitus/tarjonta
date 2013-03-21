@@ -49,6 +49,8 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
@@ -68,6 +70,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  *
@@ -214,6 +221,36 @@ public class KoulutusConverter {
         }
 
         return model2Aste;
+    }
+
+    /**
+     * Create KoulutusLukioKuvailevatTiedotViewModel
+     * @return
+     */
+    public static KoulutusLukioKuvailevatTiedotViewModel createKoulutusLukioKuvailevatTiedotViewModel(final LueKoulutusVastausTyyppi input, final DocumentStatus status) {
+        KoulutusLukioKuvailevatTiedotViewModel model = new KoulutusLukioKuvailevatTiedotViewModel(status);
+        model.setKieliA(Lists.newArrayList(Iterables.transform(input.getA1A2Kieli(), fromKoodistoKoodiTyyppi)));
+        model.setKieliB1(Lists.newArrayList(Iterables.transform(input.getB1Kieli(), fromKoodistoKoodiTyyppi)));
+        model.setKieliB2(Lists.newArrayList(Iterables.transform(input.getB2Kieli(), fromKoodistoKoodiTyyppi)));
+        model.setKieliB3(Lists.newArrayList(Iterables.transform(input.getB3Kieli(), fromKoodistoKoodiTyyppi)));
+        model.setKieletMuu(Lists.newArrayList(Iterables.transform(input.getMuutKielet(), fromKoodistoKoodiTyyppi)));
+        model.setDiplomit(Lists.newArrayList(Iterables.transform(input.getLukiodiplomit(), fromKoodistoKoodiTyyppi)));
+//sisältö
+        input.getSisalto();
+        
+//        if (input.getSisalto() != null) {
+//            for (MonikielinenTekstiTyyppi.Teksti mkt : input.getSisalto().getTeksti()) {
+//                KoulutusLisatiedotModel klt = model.getTekstikentat().get(mkt.getKieliKoodi());
+//                
+//                .setSijoittuminenTyoelamaan(mkt.getValue());
+//            }
+//        }
+
+//kansainvälistyminen
+        input.getKansainvalistyminen();
+//Yhteistyö
+        input.getYhteistyoMuidenToimijoidenKanssa();
+        return model;
     }
 
     private void mapYhteyshenkiloToViewModel(KoulutusToisenAsteenPerustiedotViewModel model2Aste, LueKoulutusVastausTyyppi tyyppi) {
@@ -710,16 +747,29 @@ public class KoulutusConverter {
         }
     }
 
-    private static Set<String> mapToKoodistoKoodis(List<KoodistoKoodiTyyppi> ammattinimikkeet) {
-        Set<String> result = new HashSet<String>();
-
-        if (ammattinimikkeet != null) {
-            for (KoodistoKoodiTyyppi koodistoKoodiTyyppi : ammattinimikkeet) {
-                result.add(koodistoKoodiTyyppi.getUri());
-            }
+    
+    /**
+     * Converter KoodistoKoodiTyyppi -> String
+     */
+    private static final Function<KoodistoKoodiTyyppi, String> fromKoodistoKoodiTyyppi = new Function<KoodistoKoodiTyyppi, String>() {
+        public String apply(KoodistoKoodiTyyppi koodi) {
+            return koodi.getUri();
         }
+    };
 
-        return result;
+    /**
+     * Converter String -> KoodistoKoodiTyyppi
+     */
+    private static final Function<String, KoodistoKoodiTyyppi> toKoodistoKoodiTyypi = new Function<String, KoodistoKoodiTyyppi>() {
+        public KoodistoKoodiTyyppi apply(String uri) {
+            final KoodistoKoodiTyyppi tyyppi = new KoodistoKoodiTyyppi();
+            tyyppi.setUri(uri);
+            return tyyppi;
+        }
+    };
+
+    private static Set<String> mapToKoodistoKoodis(List<KoodistoKoodiTyyppi> ammattinimikkeet) {
+        return Sets.newHashSet(Iterables.transform(ammattinimikkeet,  fromKoodistoKoodiTyyppi));
     }
 
     private void mapToKoulutusLisatiedotTyyppi(KoulutusTyyppi koulutus, KoulutusLisatiedotModel koulutusLisatiedotModel) {

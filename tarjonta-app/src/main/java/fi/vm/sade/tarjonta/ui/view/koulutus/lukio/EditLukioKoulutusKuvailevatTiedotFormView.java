@@ -58,6 +58,7 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
     private transient I18NHelper i18n;
     private transient TarjontaPresenter presenter;
     private transient UiBuilder uiBuilder;
+    private EditLukioKoulutusKuvailevatTiedotTekstikentatTabSheet tekstit;
 
     private GridLayout buildKielivalinnat() {
         GridLayout kielivalinnat = new GridLayout(2, 1);
@@ -119,8 +120,9 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
 
         addComponent(buildLukioDiplomit());
 
-        addComponent(new EditLukioKoulutusKuvailevatTiedotTekstikentatTabSheet(presenter.getModel(), uiHelper,
-                uiBuilder));
+        tekstit = new EditLukioKoulutusKuvailevatTiedotTekstikentatTabSheet(presenter.getModel(), uiHelper,
+                uiBuilder);
+        addComponent(tekstit);
 
         // activate all property annotation validations
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
@@ -187,6 +189,10 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
      */
     public void reload() {
         LOG.info("reload()");
+    }
+
+    public void reBuildTabsheet() {
+        tekstit.reload();
     }
 
 }

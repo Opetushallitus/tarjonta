@@ -43,11 +43,12 @@ public class EditLukioKoulutusKuvailevatTiedotView extends AbstractEditLayoutVie
     private KoulutusLukioKuvailevatTiedotViewModel model;
     @Autowired(required = true)
     private TarjontaPresenter presenter;
+    private EditLukioKoulutusKuvailevatTiedotFormView formView;
 
     public EditLukioKoulutusKuvailevatTiedotView(String oid) {
         super(oid, SisaltoTyyppi.KOMOTO);
 
-        LOG.info("EditLukioKoulutusKuvailevatTiedotView");
+        LOG.info("EditLukioKoulutusKuvailevatTiedotView()");
         setMargin(true);
         setHeight(-1, UNITS_PIXELS);
     }
@@ -60,7 +61,7 @@ public class EditLukioKoulutusKuvailevatTiedotView extends AbstractEditLayoutVie
          *  FORM LAYOUT (form components under navigation buttons)
          */
         model = presenter.getModel().getKoulutusLukioKuvailevatTiedot();
-        EditLukioKoulutusKuvailevatTiedotFormView formView = new EditLukioKoulutusKuvailevatTiedotFormView(presenter, getUiBuilder(), model);
+        formView = new EditLukioKoulutusKuvailevatTiedotFormView(presenter, getUiBuilder(), model);
         buildFormLayout("kuvailevatTiedot", presenter, layout, model, formView);
     }
 
@@ -87,5 +88,9 @@ public class EditLukioKoulutusKuvailevatTiedotView extends AbstractEditLayoutVie
     @Override
     public void actionNext(ClickEvent event) {
         presenter.showShowKoulutusView();
+    }
+
+    public EditLukioKoulutusKuvailevatTiedotFormView getLisatiedotForm() {
+        return formView;
     }
 }

@@ -73,8 +73,11 @@ import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.tarjonta.ui.view.SearchResultsView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusView;
 
 import org.apache.commons.beanutils.BeanComparator;
+
+import com.google.common.base.Preconditions;
 
 /**
  * This class is used to control the "tarjonta" UI.
@@ -522,7 +525,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         getModel().getSelectedKoulutukset().clear();
     }
 
-    private Collection<TarjontaModel.OrganisaatioOidNamePair> convertPerustietoToNameOidPair(Collection<OrganisaatioPerustietoType> orgs) {
+    Collection<TarjontaModel.OrganisaatioOidNamePair> convertPerustietoToNameOidPair(Collection<OrganisaatioPerustietoType> orgs) {
         Collection<TarjontaModel.OrganisaatioOidNamePair> oidNamePairs = new ArrayList<TarjontaModel.OrganisaatioOidNamePair>();
         for (OrganisaatioPerustietoType org : orgs) {
             TarjontaModel.OrganisaatioOidNamePair organisaatioOidNamePair = new TarjontaModel.OrganisaatioOidNamePair(org.getOid(), org.getNimiFi());
