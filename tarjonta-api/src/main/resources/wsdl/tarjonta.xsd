@@ -412,7 +412,7 @@
                 </xs:annotation>
             </xs:element>
             <xs:element name="pisterajat" type="tns:PisterajaTyyppi" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="lisaNaytot" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="unbounded"/> 
+            <xs:element name="lisaNaytot" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/> 
         </xs:sequence>
 
     </xs:complexType>
@@ -843,6 +843,7 @@
     
     <xs:complexType name="PainotettavaOppiaineTyyppi">
         <xs:sequence>
+            <xs:element name="painotettavaOppiaineTunniste" type="xs:string"/>
             <xs:element name="oppiaine" type="xs:string"/>
             <xs:element name="painokerroin" type="xs:int"/>
         </xs:sequence>
@@ -850,6 +851,7 @@
     
     <xs:complexType name="PisterajaTyyppi">
         <xs:sequence>
+            <xs:element name="pisterajaTunniste" type="xs:string"/>
             <xs:element name="valinnanPisteraja" type="tns:ValinnanPisterajaTyyppi" />
             <xs:element name="alinPistemaara" type="xs:int"/>
             <xs:element name="ylinPistemaara" type="xs:int"/>
