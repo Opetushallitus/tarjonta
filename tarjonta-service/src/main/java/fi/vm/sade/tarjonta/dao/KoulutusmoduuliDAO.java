@@ -165,6 +165,8 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
      */
     public Koulutusmoduuli findParentKomo(Koulutusmoduuli komo);
 
+    public Koulutusmoduuli findLukiolinja(String uri, String uri2);
+
 
 }
 

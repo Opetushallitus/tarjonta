@@ -562,6 +562,14 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         toKoulutus.setKansainvalistyminen(EntityUtils.copyFields(fromKoulutus.getKansainvalistyminen()));
         toKoulutus.setYhteistyoMuidenToimijoidenKanssa(EntityUtils.copyFields(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa()));
         
+        toKoulutus.getA1A2Kieli().addAll(EntityUtils.copyFields(fromKoulutus.getTarjotutKielet(), Kieliaine.A1A2KIELI));
+        toKoulutus.getB1Kieli().addAll(EntityUtils.copyFields(fromKoulutus.getTarjotutKielet(), Kieliaine.B1KIELI));
+        toKoulutus.getB2Kieli().addAll(EntityUtils.copyFields(fromKoulutus.getTarjotutKielet(), Kieliaine.B2KIELI));
+        toKoulutus.getB3Kieli().addAll(EntityUtils.copyFields(fromKoulutus.getTarjotutKielet(), Kieliaine.B3KIELI));
+        toKoulutus.getMuutKielet().addAll(EntityUtils.copyFields(fromKoulutus.getTarjotutKielet(), Kieliaine.MUUT_KIELET));
+        
+        EntityUtils.copyKoodistoUris(fromKoulutus.getLukiodiplomit(), toKoulutus.getLukiodiplomit());
+        
         return toKoulutus;
     }
     

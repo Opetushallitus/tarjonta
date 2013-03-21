@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.service.business.impl;
 
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.Kieliaine;
+import fi.vm.sade.tarjonta.model.Kielivalikoima;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
@@ -188,7 +190,9 @@ public final class EntityUtils {
      * @param toKoulutus
      */
     private static void copyLisatiedotFields(KoulutusTyyppi fromKoulutus, KoulutusmoduuliToteutus toKoulutus) {
-
+        
+        copyKielivalikoima(fromKoulutus, toKoulutus);
+        
         //
         // Additional information for Koulutus (koulutuksen lisätiedot)
         //
@@ -200,12 +204,40 @@ public final class EntityUtils {
             }
         }
         toKoulutus.setAmmattinimikes(ammattinimikes);
+        
+        Set<KoodistoUri> lukiodiplomit = new HashSet<KoodistoUri>();
+        if (fromKoulutus.getLukiodiplomit() != null) {
+            for (KoodistoKoodiTyyppi koodistoKoodiTyyppi : fromKoulutus.getLukiodiplomit()) {
+                KoodistoUri uri = new KoodistoUri(koodistoKoodiTyyppi.getUri());
+                lukiodiplomit.add(uri);
+            }
+        }
+        toKoulutus.setLukiodiplomit(lukiodiplomit);
 
         toKoulutus.setKuvailevatTiedot(copyFields(fromKoulutus.getKuvailevatTiedot()));
         toKoulutus.setKansainvalistyminen(copyFields(fromKoulutus.getKansainvalistyminen()));
         toKoulutus.setSijoittuminenTyoelamaan(copyFields(fromKoulutus.getSijoittuminenTyoelamaan()));
         toKoulutus.setSisalto(copyFields(fromKoulutus.getSisalto()));
         toKoulutus.setYhteistyoMuidenToimijoidenKanssa(copyFields(fromKoulutus.getYhteistyoMuidenToimijoidenKanssa()));
+    }
+    
+    private static void copyKielivalikoima(KoulutusTyyppi fromKoulutus, KoulutusmoduuliToteutus toKoulutus) {
+        copyTarjottuKieli(fromKoulutus.getA1A2Kieli(), toKoulutus, Kieliaine.A1A2KIELI);
+        copyTarjottuKieli(fromKoulutus.getB1Kieli(), toKoulutus, Kieliaine.B1KIELI);
+        copyTarjottuKieli(fromKoulutus.getB2Kieli(), toKoulutus, Kieliaine.B2KIELI);
+        copyTarjottuKieli(fromKoulutus.getB3Kieli(), toKoulutus, Kieliaine.B3KIELI);
+        copyTarjottuKieli(fromKoulutus.getMuutKielet(), toKoulutus, Kieliaine.MUUT_KIELET); 
+    }
+    
+    private static void copyTarjottuKieli(List<KoodistoKoodiTyyppi> koodit, KoulutusmoduuliToteutus toKoulutus, Kieliaine aine) {
+        if (koodit != null && !koodit.isEmpty()) {
+            Kielivalikoima tarjottuKieli = new Kielivalikoima();
+            tarjottuKieli.setKey(aine.name());
+            for (KoodistoKoodiTyyppi curKoodi : koodit) {
+                tarjottuKieli.addKieli(curKoodi.getUri());
+            }
+            toKoulutus.addTarjottuKieli(tarjottuKieli);
+        }
     }
 
     public static void copyFields(final YhteyshenkiloTyyppi from, Yhteyshenkilo to) {
@@ -254,6 +286,8 @@ public final class EntityUtils {
         tyyppi.setKoulutuksenRakenne(copyFields(komo.getKoulutuksenRakenne()));
         tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
         tyyppi.setJatkoOpintoMahdollisuudet(copyFields(komo.getJatkoOpintoMahdollisuudet()));
+        tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(komo.getKoulutustyyppi()));
+        tyyppi.setLukiolinjakoodiUri(komo.getLukiolinja());
 
         return tyyppi;
     }
@@ -279,6 +313,9 @@ public final class EntityUtils {
         tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
         tyyppi.setTutkinnonTavoitteet(copyFields(parentKomo.getTavoitteet()));
         tyyppi.setJatkoOpintoMahdollisuudet(copyFields(parentKomo.getJatkoOpintoMahdollisuudet()));
+        
+        tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(parentKomo.getKoulutustyyppi()));
+        tyyppi.setLukiolinjakoodiUri(komo.getLukiolinja());
 
         return tyyppi;
     }
@@ -286,6 +323,10 @@ public final class EntityUtils {
     public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(final KoulutusmoduuliKoosteTyyppi tyyppi) {
         Koulutusmoduuli komo = new Koulutusmoduuli(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(tyyppi.getKoulutusmoduuliTyyppi().value()));
         komo.setOid(tyyppi.getOid());
+        
+        if (tyyppi.getKoulutustyyppi() != null) {
+            komo.setKoulutustyyppi(tyyppi.getKoulutustyyppi().value());
+        }
 
         //URIs
         komo.setKoulutusKoodi(tyyppi.getKoulutuskoodiUri());
@@ -296,11 +337,14 @@ public final class EntityUtils {
         komo.setKoulutusAste(tyyppi.getKoulutusasteUri());
         komo.setKoulutusala(tyyppi.getKoulutusalaUri());
         komo.setOpintoala(tyyppi.getOpintoalaUri());
+        komo.setLukiolinja(tyyppi.getLukiolinjakoodiUri());
 
         //multilanguage objects
         komo.setKoulutuksenRakenne(copyFields(tyyppi.getKoulutuksenRakenne()));
         komo.setTavoitteet(copyFields(tyyppi.getTavoitteet()));
         komo.setJatkoOpintoMahdollisuudet(copyFields(tyyppi.getJatkoOpintoMahdollisuudet()));
+       
+        
 
         //names for KOMOTO search 
         komo.setNimi(copyFields(tyyppi.getKoulutusmoduulinNimi()));
@@ -435,5 +479,26 @@ public final class EntityUtils {
         }
 
         return map;
+    }
+
+    public static List<KoodistoKoodiTyyppi> copyFields(Set<Kielivalikoima> tarjotutKielet, Kieliaine aine) {
+        List<KoodistoKoodiTyyppi> kielet = new ArrayList<KoodistoKoodiTyyppi>();
+        for (Kielivalikoima curKielivalikoima : tarjotutKielet) {
+            if (curKielivalikoima.getKey().equals(aine.name())) {
+                kielet.addAll(createKieliUris(curKielivalikoima.getKielet()));
+            }
+        }
+        
+        return kielet;
+    }
+    
+    private static List<KoodistoKoodiTyyppi> createKieliUris(Set<KoodistoUri> kieliKoodit) {
+        List<KoodistoKoodiTyyppi> kielet = new ArrayList<KoodistoKoodiTyyppi>();
+        for (KoodistoUri curUri : kieliKoodit) {
+            KoodistoKoodiTyyppi newKieli = new KoodistoKoodiTyyppi();
+            newKieli.setUri(curUri.getKoodiUri());
+            kielet.add(newKieli);
+        }
+        return kielet;
     }
 }

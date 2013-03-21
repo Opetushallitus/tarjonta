@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 import java.util.Date;
 import java.util.List;
@@ -264,6 +265,35 @@ public class KoulutusmoduuliDAOTest {
 
         assertTrue(komos.size() > 2);
 
+    }
+    
+    @Test
+    public void testFindLukiolinja() {
+        String KOULUTUSKOODI = "uri:yotutkinto";
+        String LUKIOLINJA1 = "uri:lukiolinja1";
+        String LUKIOLINJA2 = "uri:lukiolinja2";
+        
+        //KOMO1
+        Koulutusmoduuli koulutus = fixtures.createTutkintoOhjelma();
+        koulutus.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
+        koulutus.setKoulutusKoodi(KOULUTUSKOODI);
+        koulutus.setLukiolinja(LUKIOLINJA1);
+        koulutus.setKoulutusohjelmaKoodi(null);
+        koulutusmoduuliDAO.insert(koulutus);
+        
+        //KOMO2
+        Koulutusmoduuli koulutus1 = fixtures.createTutkintoOhjelma();
+        koulutus1.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
+        koulutus1.setKoulutusKoodi(KOULUTUSKOODI);
+        koulutus1.setLukiolinja(LUKIOLINJA2);
+        koulutus1.setKoulutusohjelmaKoodi(null);
+        koulutusmoduuliDAO.insert(koulutus1);
+        
+        Koulutusmoduuli res = koulutusmoduuliDAO.findLukiolinja(KOULUTUSKOODI, LUKIOLINJA1);
+        assertTrue(res.getLukiolinja().equals(LUKIOLINJA1));
+        
+        res = koulutusmoduuliDAO.findLukiolinja(KOULUTUSKOODI, LUKIOLINJA2);
+        assertTrue(res.getLukiolinja().equals(LUKIOLINJA2)); 
     }
 
     private void flush() {

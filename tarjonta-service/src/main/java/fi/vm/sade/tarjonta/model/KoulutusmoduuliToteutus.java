@@ -137,6 +137,17 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "yhteistyomuidentoimijoidenkanssa")
     private MonikielinenTeksti yhteistyoMuidenToimijoidenKanssa;
+    
+    //Lukiospesifeja kenttia
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Kielivalikoima> tarjotutKielet = new HashSet<Kielivalikoima>();
+    
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_lukiodiplomi", joinColumns =
+    @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<KoodistoUri> lukiodiplomit = new HashSet<KoodistoUri>();
+    
+    
 
     public KoulutusmoduuliToteutus() {
         super();
@@ -410,6 +421,23 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         this.yhteyshenkilos.clear();
         this.yhteyshenkilos = yhteyshenkilos;
     }
+    
+    public Set<Kielivalikoima> getTarjotutKielet() {
+        return Collections.unmodifiableSet(tarjotutKielet);
+    }
+
+    public void addTarjottuKieli(Kielivalikoima tarjottuKieli) {
+        tarjotutKielet.add(tarjottuKieli);
+    }
+
+    public void removeTarjottuKieli(Kielivalikoima tarjottuKieli) {
+        tarjotutKielet.remove(tarjottuKieli);
+    }
+    
+    public void setTarjotutKielet(Set<Kielivalikoima> tarjotutKielet) {
+        this.tarjotutKielet.clear();
+        this.tarjotutKielet = tarjotutKielet;
+    }
 
     /**
      * @return the maksullisuusUrl
@@ -626,5 +654,22 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setKoulutusohjelmanValinta(
             MonikielinenTeksti koulutusohjelmanValinta) {
         this.koulutusohjelmanValinta = koulutusohjelmanValinta;
+    }
+    
+    public void setLukiodiplomit(Set<KoodistoUri> lukiodiplomit) {
+        this.lukiodiplomit.clear();
+        this.lukiodiplomit = lukiodiplomit;
+    }
+
+    public Set<KoodistoUri> getLukiodiplomit() {
+        return Collections.unmodifiableSet(lukiodiplomit);
+    }
+
+    public void addLukiodiplomi(KoodistoUri lukiodiplomi) {
+        lukiodiplomit.add(lukiodiplomi);
+    }
+
+    public void removeLukiodiplomi(KoodistoUri lukiodiplomi) {
+        lukiodiplomit.remove(lukiodiplomi);
     }
 }

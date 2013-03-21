@@ -363,6 +363,7 @@ public class TarjontaAdminServiceTest {
         koulutusmoduuliT.setKoulutuskoodiUri(KOULUTUSKOODI);
         koulutusmoduuliT.setKoulutusohjelmakoodiUri(KOKOODI);
         koulutusmoduuliT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        koulutusmoduuliT.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
         adminService.lisaaKoulutusmoduuli(koulutusmoduuliT);
 
         SearchCriteria sc = new SearchCriteria();
@@ -372,6 +373,77 @@ public class TarjontaAdminServiceTest {
         assertEquals(KOULUTUSKOODI, komo.getKoulutusKoodi());
 
     }
+    
+    @Test
+    public void testLisaaLukiokoulutusmoduuliHappyPath() {
+        String oidParent = "oid:" + System.currentTimeMillis();
+        String oidChild = oidParent + 2;
+        String LUKIOTUTKINTO = "yoTutkinto11";
+        String LUKIOLINJA = "jokuMediaLinja";
+        
+        KoulutusmoduuliKoosteTyyppi koulutusmoduuliParentT = new KoulutusmoduuliKoosteTyyppi();
+        koulutusmoduuliParentT.setOid(oidParent);
+        koulutusmoduuliParentT.setKoulutuskoodiUri(LUKIOTUTKINTO);
+        //koulutusmoduuliT.//setKoulutusohjelmakoodiUri(KOKOODI);
+        koulutusmoduuliParentT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        koulutusmoduuliParentT.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        adminService.lisaaKoulutusmoduuli(koulutusmoduuliParentT);
+        
+        KoulutusmoduuliKoosteTyyppi koulutusmoduuliChildT = new KoulutusmoduuliKoosteTyyppi();
+        koulutusmoduuliChildT.setOid(oidChild);
+        koulutusmoduuliChildT.setParentOid(oidParent);
+        koulutusmoduuliChildT.setKoulutuskoodiUri(LUKIOTUTKINTO);
+        koulutusmoduuliChildT.setLukiolinjakoodiUri(LUKIOLINJA);
+        koulutusmoduuliChildT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        koulutusmoduuliChildT.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        adminService.lisaaKoulutusmoduuli(koulutusmoduuliChildT);
+        
+        Koulutusmoduuli child = koulutusmoduuliDAO.findLukiolinja(LUKIOTUTKINTO, LUKIOLINJA);
+        assertTrue(child.getOid().equals(oidChild));
+    }
+    
+    @Test
+    public void testLisaaLukiokoulutusHappyPath() {
+        String oidParent = "oid:" + System.currentTimeMillis();
+        String oidChild = oidParent + 2;
+        String komotoOid = oidChild + 2;
+        
+        String LUKIOTUTKINTO = "yoTutkinto11";
+        String LUKIOLINJA = "jokuMediaLinja";
+        
+        KoulutusmoduuliKoosteTyyppi koulutusmoduuliParentT = new KoulutusmoduuliKoosteTyyppi();
+        koulutusmoduuliParentT.setOid(oidParent);
+        koulutusmoduuliParentT.setKoulutuskoodiUri(LUKIOTUTKINTO);
+        //koulutusmoduuliT.//setKoulutusohjelmakoodiUri(KOKOODI);
+        koulutusmoduuliParentT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        koulutusmoduuliParentT.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        adminService.lisaaKoulutusmoduuli(koulutusmoduuliParentT);
+        
+        KoulutusmoduuliKoosteTyyppi koulutusmoduuliChildT = new KoulutusmoduuliKoosteTyyppi();
+        koulutusmoduuliChildT.setOid(oidChild);
+        koulutusmoduuliChildT.setParentOid(oidParent);
+        koulutusmoduuliChildT.setKoulutuskoodiUri(LUKIOTUTKINTO);
+        koulutusmoduuliChildT.setLukiolinjakoodiUri(LUKIOLINJA);
+        koulutusmoduuliChildT.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        koulutusmoduuliChildT.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        adminService.lisaaKoulutusmoduuli(koulutusmoduuliChildT);
+        
+        Koulutusmoduuli child = koulutusmoduuliDAO.findLukiolinja(LUKIOTUTKINTO, LUKIOLINJA);
+        assertTrue(child.getOid().equals(oidChild));
+        
+        LisaaKoulutusTyyppi koulutusTyyppi = createSampleKoulutus();
+        koulutusTyyppi.setOid(komotoOid);
+        koulutusTyyppi.setKoulutusKoodi(createKoodi(LUKIOTUTKINTO));
+        koulutusTyyppi.setKoulutusohjelmaKoodi(null);
+        koulutusTyyppi.setLukiolinjaKoodi(createKoodi(LUKIOLINJA));
+        koulutusTyyppi.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        adminService.lisaaKoulutus(koulutusTyyppi);
+        
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
+        assertTrue(komoto != null);
+    }
+    
+    
 
     private Date getDateFromString(String dateStr) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
@@ -470,6 +542,7 @@ public class TarjontaAdminServiceTest {
         lisaaKoulutus.setKesto(kesto3Vuotta);
         lisaaKoulutus.getYhteyshenkilo().add(createYhteyshenkilo());
         lisaaKoulutus.getLinkki().add(createLinkki("google", null, "http://google.com"));
+        lisaaKoulutus.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
 
 
         return lisaaKoulutus;

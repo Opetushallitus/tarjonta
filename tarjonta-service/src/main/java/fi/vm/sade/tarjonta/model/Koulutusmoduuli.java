@@ -138,6 +138,10 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tavoitteet")
     private MonikielinenTeksti tavoitteet;
+    
+    private String koulutustyyppi = null;
+    
+    private String lukiolinja = null;
 
     /**
      * JPA konstruktori
@@ -552,6 +556,22 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      */
     public void setOpintoala(String opintoala) {
         this.opintoala = opintoala;
+    }
+
+    public String getKoulutustyyppi() {
+        return koulutustyyppi;
+    }
+
+    public void setKoulutustyyppi(String koulutustyyppi) {
+        this.koulutustyyppi = koulutustyyppi;
+    }
+
+    public String getLukiolinja() {
+        return lukiolinja;
+    }
+
+    public void setLukiolinja(String lukiolinja) {
+        this.lukiolinja = lukiolinja;
     } 
 
 }

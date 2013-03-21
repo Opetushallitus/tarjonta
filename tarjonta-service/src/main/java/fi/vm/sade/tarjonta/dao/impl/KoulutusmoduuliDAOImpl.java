@@ -173,4 +173,30 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         
         return parents.get(0).getYlamoduuli();
     }
+
+    @Override
+    public Koulutusmoduuli findLukiolinja(String koulutusLuokitusUri, String lukiolinjaUri) {
+        QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+        BooleanExpression whereExpr = null;
+
+        SearchCriteria criteria = new SearchCriteria();
+        criteria.setKoulutusKoodi(koulutusLuokitusUri);
+        criteria.setKoulutusohjelmaKoodi(lukiolinjaUri);
+
+        if (criteria.getKoulutusKoodi() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+        } else {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.isNull().or(moduuli.koulutusKoodi.isEmpty()));
+        }
+
+        if (criteria.getKoulutusohjelmaKoodi() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinja.eq(criteria.getKoulutusohjelmaKoodi()));
+        } else {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinja.isEmpty().or(moduuli.lukiolinja.isNull()));
+        }
+
+        return from(moduuli).
+                where(whereExpr).
+                singleResult(moduuli);
+    }
 }

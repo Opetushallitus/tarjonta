@@ -450,11 +450,14 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli)
-            throws GenericFault {
+    public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli) throws GenericFault {
 
-        if (koulutusmoduuliDAO.findTutkintoOhjelma(koulutusmoduuli.getKoulutuskoodiUri(), koulutusmoduuli.getKoulutusohjelmakoodiUri()) != null) {
+        if (koulutusmoduuli.getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS) && koulutusmoduuliDAO.findTutkintoOhjelma(koulutusmoduuli.getKoulutuskoodiUri(), koulutusmoduuli.getKoulutusohjelmakoodiUri()) != null) {
             log.warn("Koulutusmoduuli " + koulutusmoduuli.getKoulutuskoodiUri() + ", " + koulutusmoduuli.getKoulutusohjelmakoodiUri() + "already exists, not adding");
+            return new KoulutusmoduuliKoosteTyyppi();
+        }
+        else if (koulutusmoduuli.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS) && koulutusmoduuliDAO.findLukiolinja(koulutusmoduuli.getKoulutuskoodiUri(), koulutusmoduuli.getLukiolinjakoodiUri()) != null) {
+            log.warn("Koulutusmoduuli " + koulutusmoduuli.getKoulutuskoodiUri() + ", " + koulutusmoduuli.getLukiolinjakoodiUri() + "already exists, not adding");
             return new KoulutusmoduuliKoosteTyyppi();
         }
 
@@ -462,7 +465,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         if (koulutusmoduuli.getParentOid() != null) {
             handleParentKomo(komo, koulutusmoduuli.getParentOid());
         }
-
         return koulutusmoduuli;
     }
 

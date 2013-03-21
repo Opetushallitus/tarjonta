@@ -18,6 +18,8 @@ package fi.vm.sade.tarjonta;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
@@ -121,6 +123,8 @@ public class TarjontaFixtures {
         m.setKoulutusohjelmaKoodi(randomUri("koulutusohjelma"));
         m.setKoulutusKoodi(randomUri("koulutusluokitus"));
         m.setNimi(createText("Koulutusmoduulinimi (fi)", "Koulutusmoduulinimi (sv)", "Koulutusmoduulinimi (en)"));
+        m.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value());
+        
         return m;
     }
     

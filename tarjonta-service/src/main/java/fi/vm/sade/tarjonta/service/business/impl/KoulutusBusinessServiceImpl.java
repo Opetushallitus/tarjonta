@@ -33,6 +33,7 @@ import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaVirheKoodi;
@@ -96,7 +97,14 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
     @Override
     public KoulutusmoduuliToteutus createKoulutus(LisaaKoulutusTyyppi koulutus) {
-
+        if (koulutus.getKoulutustyyppi() != null && koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+            return createLukiokoulutus(koulutus);
+        } else {
+            return createToisenAsteenKoulutus(koulutus);
+        }
+    }
+    
+    private KoulutusmoduuliToteutus createToisenAsteenKoulutus (LisaaKoulutusTyyppi koulutus) {
         Koulutusmoduuli moduuli = null;
         if (koulutus.getKoulutusohjelmaKoodi() == null) {
             moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(koulutus.getKoulutusKoodi().getUri(), null);
@@ -109,6 +117,23 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             handleParentKomoto(koulutus, moduuli);
         }
 
+        if (moduuli == null) {
+            throw new TarjontaBusinessException(TarjontaVirheKoodi.KOULUTUSTA_EI_OLEMASSA.value());
+        }
+
+        KoulutusmoduuliToteutus komotoModel = new KoulutusmoduuliToteutus();
+        EntityUtils.copyFields(koulutus, komotoModel);
+        komotoModel.setKoulutusmoduuli(moduuli);
+        moduuli.addKoulutusmoduuliToteutus(komotoModel);
+
+        return koulutusmoduuliToteutusDAO.insert(komotoModel);
+    }
+    
+    private KoulutusmoduuliToteutus createLukiokoulutus(LisaaKoulutusTyyppi koulutus) {
+        Koulutusmoduuli moduuli = koulutusmoduuliDAO.findLukiolinja(koulutus.getKoulutusKoodi().getUri(), koulutus.getLukiolinjaKoodi().getUri());
+        //Handling the creation of the parent komoto
+        handleParentKomoto(koulutus, moduuli);
+        
         if (moduuli == null) {
             throw new TarjontaBusinessException(TarjontaVirheKoodi.KOULUTUSTA_EI_OLEMASSA.value());
         }
