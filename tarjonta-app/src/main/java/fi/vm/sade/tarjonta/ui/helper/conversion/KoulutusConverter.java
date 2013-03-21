@@ -235,21 +235,26 @@ public class KoulutusConverter {
         model.setKieliB3(Lists.newArrayList(Iterables.transform(input.getB3Kieli(), fromKoodistoKoodiTyyppi)));
         model.setKieletMuu(Lists.newArrayList(Iterables.transform(input.getMuutKielet(), fromKoodistoKoodiTyyppi)));
         model.setDiplomit(Lists.newArrayList(Iterables.transform(input.getLukiodiplomit(), fromKoodistoKoodiTyyppi)));
-//sisältö
-        input.getSisalto();
-        
-//        if (input.getSisalto() != null) {
-//            for (MonikielinenTekstiTyyppi.Teksti mkt : input.getSisalto().getTeksti()) {
-//                KoulutusLisatiedotModel klt = model.getTekstikentat().get(mkt.getKieliKoodi());
-//                
-//                .setSijoittuminenTyoelamaan(mkt.getValue());
-//            }
-//        }
+        if (input.getSisalto() != null) {
+            for (MonikielinenTekstiTyyppi.Teksti mkt : input.getSisalto().getTeksti()) {
+                KoulutusLisatietoModel lisatieto = model.getLisatiedot(mkt.getKieliKoodi());
+                lisatieto.setSisalto(mkt.getValue());
+            }
+        }
 
-//kansainvälistyminen
-        input.getKansainvalistyminen();
-//Yhteistyö
-        input.getYhteistyoMuidenToimijoidenKanssa();
+        if (input.getKansainvalistyminen() != null) {
+            for (MonikielinenTekstiTyyppi.Teksti mkt : input.getKansainvalistyminen().getTeksti()) {
+                KoulutusLisatietoModel lisatieto = model.getLisatiedot(mkt.getKieliKoodi());
+                lisatieto.setKansainvalistyminen(mkt.getValue());
+            }
+        }
+
+        if (input.getYhteistyoMuidenToimijoidenKanssa() != null) {
+            for (MonikielinenTekstiTyyppi.Teksti mkt : input.getYhteistyoMuidenToimijoidenKanssa().getTeksti()) {
+                KoulutusLisatietoModel lisatieto = model.getLisatiedot(mkt.getKieliKoodi());
+                lisatieto.setYhteistyoMuidenToimijoidenKanssa(mkt.getValue());
+            }
+        }
         return model;
     }
 

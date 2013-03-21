@@ -32,7 +32,7 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
     private static final long serialVersionUID = 1L;
 
     private TarjontaTila tila;
-    
+
     public TarjontaTila getTila() {
         return tila;
     }
@@ -143,6 +143,13 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
 
     public String getOid() {
         return oid;
+    }
+
+    public KoulutusLisatietoModel getLisatiedot(String kieliKoodi) {
+        if (!tekstit.containsKey(kieliKoodi)) {
+            tekstit.put(kieliKoodi, new KoulutusLisatietoModel());
+        }
+        return tekstit.get(kieliKoodi);
     }
 
 }
