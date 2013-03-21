@@ -105,9 +105,9 @@ public class KoulutusKoodistoConverter {
         }
 
         //text data models
-        tutkinto.setTavoitteet(KoulutusConverter.mapToMonikielinenTekstiModel(tyyppi.getTutkinnonTavoitteet(), locale));
-        tutkinto.setJatkoopintomahdollisuudet(KoulutusConverter.mapToMonikielinenTekstiModel(tyyppi.getJatkoOpintoMahdollisuudet(), locale));
-        tutkinto.setKoulutuksenRakenne(KoulutusConverter.mapToMonikielinenTekstiModel(tyyppi.getKoulutuksenRakenne(), locale));
+        tutkinto.setTavoitteet(Koulutus2asteConverter.mapToMonikielinenTekstiModel(tyyppi.getTutkinnonTavoitteet(), locale));
+        tutkinto.setJatkoopintomahdollisuudet(Koulutus2asteConverter.mapToMonikielinenTekstiModel(tyyppi.getJatkoOpintoMahdollisuudet(), locale));
+        tutkinto.setKoulutuksenRakenne(Koulutus2asteConverter.mapToMonikielinenTekstiModel(tyyppi.getKoulutuksenRakenne(), locale));
 
         //koodisto koodi data models 
         tutkinto.setOpintojenLaajuus(listaaKoodi(tyyppi.getLaajuusarvoUri(), kc, locale));
@@ -118,7 +118,7 @@ public class KoulutusKoodistoConverter {
 
         if (ohjelma != null) {
             ohjelma.setTutkintonimike(listaaKoodi(tyyppi.getTutkintonimikeUri(), kc, locale));
-            ohjelma.setTavoitteet(KoulutusConverter.mapToMonikielinenTekstiModel(tyyppi.getTavoitteet(), locale));
+            ohjelma.setTavoitteet(Koulutus2asteConverter.mapToMonikielinenTekstiModel(tyyppi.getTavoitteet(), locale));
         }
     }
 

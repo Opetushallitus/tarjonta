@@ -55,7 +55,7 @@ public class TarjontaAdminPortletApplication extends TarjontaApplication {
             public void buttonClick(Button.ClickEvent event) {
                 try {
                     LOG.debug("Luo komot event");
-                    tarjontaKomoData.loadKoodistot();
+                    tarjontaKomoData.preLoadAllKoodistot();
                     tarjontaKomoData.createData(true);
                 } catch (Exception ex) {
                     LOG.error("Failed to create KOMOs", ex);
@@ -71,7 +71,7 @@ public class TarjontaAdminPortletApplication extends TarjontaApplication {
             public void buttonClick(Button.ClickEvent event) {
                 try {
                     LOG.debug("Luo komot event");
-                    tarjontaKomoData.loadKoodistot();
+                    tarjontaKomoData.preLoadAllKoodistot();
                     tarjontaKomoData.createData(false);
                 } catch (Exception ex) {
                     LOG.error("Failed to create KOMOs", ex);

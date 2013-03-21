@@ -236,4 +236,9 @@ public class TarjontaAdminServiceMock implements TarjontaAdminService {
 
         return result;
     }
+
+    @Override
+    public KoulutusmoduuliKoosteTyyppi paivitaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli) throws GenericFault {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

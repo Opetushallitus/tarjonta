@@ -23,6 +23,7 @@ import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
  * @author mlyly
  */
 public class KoulutusLisatietoModel extends BaseUIViewModel {
+    private static final long serialVersionUID = 8902210093799373397L;
 
     // Language this information is given in
     String _languageUri;

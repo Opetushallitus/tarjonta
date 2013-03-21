@@ -185,19 +185,19 @@
                         maxOccurs="unbounded"/>
             
             <xs:element name="valintaperustekuvausKoodiUri"
-                         type="xs:string"
-                         minOccurs="0"
-                         maxOccurs="1"/>
+                        type="xs:string"
+                        minOccurs="0"
+                        maxOccurs="1"/>
               
             <xs:element name="soraKuvausKoodiUri"
-                         type="xs:string"
-                         minOccurs="0"
-                         maxOccurs="1"/>
+                        type="xs:string"
+                        minOccurs="0"
+                        maxOccurs="1"/>
             
             <xs:element  name="painotettavatOppiaineet"
-                        type="tns:PainotettavaOppiaineTyyppi"
-                        minOccurs="0"
-                        maxOccurs="unbounded"/>
+                         type="tns:PainotettavaOppiaineTyyppi"
+                         minOccurs="0"
+                         maxOccurs="unbounded"/>
             
             <xs:element  name="alinHyvaksyttavaKeskiarvo"
                          type="xs:decimal"
@@ -466,7 +466,7 @@
                 </xs:annotation>
             </xs:element>
             
-            <xs:element minOccurs="1" maxOccurs="1" name="lukiolinjakoodiUri" type="xs:string">
+            <xs:element minOccurs="0" maxOccurs="1" name="lukiolinjakoodiUri" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Lukiolinjakoodi
                     </xs:documentation>
@@ -478,7 +478,7 @@
                     <xs:documentation>Koulutuskoodi</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element minOccurs="1" maxOccurs="1" name="koulutusohjelmakoodiUri" type="xs:string">
+            <xs:element minOccurs="0" maxOccurs="1" name="koulutusohjelmakoodiUri" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Koulutusohjelmakoodi</xs:documentation>
                 </xs:annotation>
@@ -553,6 +553,7 @@
                     <xs:documentation>Ulkoinen tunniste</xs:documentation>
                 </xs:annotation>
             </xs:element>
+           
         </xs:sequence>
     </xs:complexType>
 

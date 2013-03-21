@@ -18,10 +18,7 @@ package fi.vm.sade.tarjonta.ui.model.koulutus.lukio;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -43,11 +40,11 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      */
     private List<KoulutusmoduuliKoosteTyyppi> komos;
     private Set<KoulutuskoodiModel> koulutuskoodis;
-    private Set<LukiolajiModel> lukiolajis;
+    private Set<LukiolinjaModel> lukiolinjas;
     /*
      * Other user selected form input data
      */
-    protected LukiolajiModel lukiolaji;
+    private LukiolinjaModel lukiolinja;
     protected Date koulutuksenAlkamisPvm;
     protected String suunniteltuKesto;
     protected String suunniteltuKestoTyyppi;
@@ -196,7 +193,7 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
          *  Form selection logic
          */
         setKoulutuskoodiModel(null);
-        setLukiolaji(null);
+        setLukiolinja(null);
 
         /*
          * Koodisto service koodi data
@@ -248,7 +245,7 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
         builder.append(userFrienlyDocumentStatus, other.userFrienlyDocumentStatus);
         builder.append(organisaatioName, other.organisaatioName);
         builder.append(organisaatioOid, other.organisaatioOid);
-        builder.append(getLukiolaji(), other.getLukiolaji());
+        builder.append(getLukiolinja(), other.getLukiolinja());
         builder.append(getKoulutusala(), other.getKoulutusala());
         builder.append(getTutkinto(), other.getTutkinto());
         builder.append(getTutkintonimike(), other.getTutkintonimike());
@@ -276,7 +273,7 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
                 .append(userFrienlyDocumentStatus)
                 .append(organisaatioName)
                 .append(organisaatioOid)
-                .append(getLukiolaji())
+                .append(getLukiolinja())
                 .append(getKoulutusala())
                 .append(getTutkinto())
                 .append(getTutkintonimike())
@@ -299,19 +296,7 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
         return ToStringBuilder.reflectionToString(this);
     }
 
-    /**
-     * @return the lukiolaji
-     */
-    public LukiolajiModel getLukiolaji() {
-        return lukiolaji;
-    }
-
-    /**
-     * @param lukiolaji the lukiolaji to set
-     */
-    public void setLukiolaji(LukiolajiModel lukiolaji) {
-        this.lukiolaji = lukiolaji;
-    }
+ 
 
     /**
      * @return the komos
@@ -349,21 +334,21 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
     }
 
     /**
-     * @return the lukiolajis
+     * @return the lukiolinjas
      */
-    public Set<LukiolajiModel> getLukiolajis() {
-        if (lukiolajis == null) {
-            lukiolajis = new HashSet<LukiolajiModel>();
+    public Set<LukiolinjaModel> getLukiolinjas() {
+        if (lukiolinjas == null) {
+            lukiolinjas = new HashSet<LukiolinjaModel>();
         }
 
-        return lukiolajis;
+        return lukiolinjas;
     }
 
     /**
-     * @param lukiolajis the lukiolajis to set
+     * @param lukiolinjas the lukiolinjas to set
      */
-    public void setLukiolajis(Set<LukiolajiModel> lukiolajis) {
-        this.lukiolajis = lukiolajis;
+    public void setLukiolinjas(Set<LukiolinjaModel> lukiolinjas) {
+        this.lukiolinjas = lukiolinjas;
     }
 
     /**
@@ -378,5 +363,19 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      */
     public void setOrganisaatioOidTree(List<String> organisaatioOidTree) {
         this.organisaatioOidTree = organisaatioOidTree;
+    }
+
+    /**
+     * @return the lukiolinja
+     */
+    public LukiolinjaModel getLukiolinja() {
+        return lukiolinja;
+    }
+
+    /**
+     * @param lukiolinja the lukiolinja to set
+     */
+    public void setLukiolinja(LukiolinjaModel lukiolinja) {
+        this.lukiolinja = lukiolinja;
     }
 }

@@ -176,7 +176,7 @@ public class HakuResultRow extends HorizontalLayout {
             }
         });
         setWidth(-1, Sizeable.UNITS_PIXELS);
-        setHeight(-1, Sizeable.UNITS_PIXELS); //Tämä toimii!!!
+        setHeight(-1, Sizeable.UNITS_PIXELS);
 
         addComponent(isSelected);
         if (withMenuBar) {

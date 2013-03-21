@@ -45,6 +45,10 @@
 
     <!-- Initialize session beans -->
    
+    <bean id="tarjontaLukioPresenter" class="fi.vm.sade.tarjonta.ui.presenter.TarjontaLukioPresenter">
+        <property name="presenter" ref="tarjontaPresenter" />
+    </bean>
+   
     <bean id="tarjontaPresenter" class="fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter" scope="session">
         <aop:scoped-proxy/>    
     </bean>
@@ -58,11 +62,11 @@
     </bean>
     
     <!-- MOCK PERMISSION SERVICE -->
-<!-- <bean id="tarjontaPermissionService2" class="fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl"/>
- -->
-<bean id="oidProvider" class="fi.vm.sade.security.OidProvider"/>
-<bean id="userProvider" class="fi.vm.sade.tarjonta.mock.UserProviderMock"/>
-<bean id="authorizer" class="fi.vm.sade.tarjonta.ui.service.CustomOrganisaatioHierarchyAuthorizer"/>
+    <!-- <bean id="tarjontaPermissionService2" class="fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl"/>
+    -->
+    <bean id="oidProvider" class="fi.vm.sade.security.OidProvider"/>
+    <bean id="userProvider" class="fi.vm.sade.tarjonta.mock.UserProviderMock"/>
+    <bean id="authorizer" class="fi.vm.sade.tarjonta.ui.service.CustomOrganisaatioHierarchyAuthorizer"/>
 
     <import resource="application-context-service.xml"/>
     <import resource="application-context-ws.xml"/>

@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.loader.xls;
 
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -25,6 +26,11 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  */
 public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
 
+    private static final String KOULUTUSASTE_AMMATTILLINEN_KOODI_ARVO = "32";
+    private static final String KOULUTUSASTE_LUKIO_AMMATTILLINEN_KOODI_ARVO = "31";
+    /*
+     * 2-aste + common data
+     */
     private String koulutuksenRakenne;
     private String tavoitteet;
     private String jatkoOpinto;
@@ -39,6 +45,11 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
     private String laajuusyksikko;
     private String eqf;
     private String koulutusohjelmanTavoitteet;
+    /*
+     * Lukio data
+     */
+    private String lukiolinjaNimi;
+    private String lukiolinjaKoodiarvo;
 
     /**
      * @return the koulutuksenRakenne
@@ -233,7 +244,7 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
     public String getLaajuusyksikkoUri() {
         return laajuusyksikko.toUpperCase() + VERSION;
     }
-    
+
     public String getLaajuusUri() {
         return laajuus + VERSION;
     }
@@ -261,7 +272,7 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().
-                append(koulutuskoodi).append(koulutusohjelmanKoodiarvo).toHashCode();
+                append(koulutuskoodi).append(koulutusohjelmanKoodiarvo).append(lukiolinjaKoodiarvo).toHashCode();
     }
 
     public String getKoulutusohjelmanTavoitteet() {
@@ -270,5 +281,58 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
 
     public void setKoulutusohjelmanTavoitteet(String koulutusohjelmanTavoitteet) {
         this.koulutusohjelmanTavoitteet = koulutusohjelmanTavoitteet;
+    }
+
+    /**
+     * @return the lukiolinjaNimi
+     */
+    public String getLukiolinjaNimi() {
+        return lukiolinjaNimi;
+    }
+
+    /**
+     * @param lukiolinjaNimi the lukiolinjaNimi to set
+     */
+    public void setLukiolinjaNimi(String lukiolinjaNimi) {
+        this.lukiolinjaNimi = lukiolinjaNimi;
+    }
+
+    /**
+     * @return the lukiolinjaKoodiarvo
+     */
+    public String getLukiolinjaKoodiarvo() {
+        if (lukiolinjaKoodiarvo != null) {
+            //just to be sure that the import excel has 
+            //more data than empty string;
+            final String trim = lukiolinjaKoodiarvo.trim();
+
+            if (!trim.isEmpty()) {
+                return trim;
+            } else {
+                //no empty strings
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param lukiolinjaKoodiarvo the lukiolinjaKoodiarvo to set
+     */
+    public void setLukiolinjaKoodiarvo(String lukiolinjaKoodiarvo) {
+        this.lukiolinjaKoodiarvo = lukiolinjaKoodiarvo;
+    }
+
+    public KoulutusasteTyyppi getKoulutusTyyppi() {
+        if (koulutusasteenKoodiarvo != null && koulutusasteenKoodiarvo.contains(KOULUTUSASTE_AMMATTILLINEN_KOODI_ARVO)) {
+            return KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
+        } else if (koulutusasteenKoodiarvo != null && koulutusasteenKoodiarvo.contains(KOULUTUSASTE_LUKIO_AMMATTILLINEN_KOODI_ARVO)) {
+            return KoulutusasteTyyppi.LUKIOKOULUTUS;
+        } else if (!koulutusasteenKoodiarvo.isEmpty()) {
+            throw new RuntimeException("No valid KoulutusasteTyyppi enum found by koodi value '" + koulutusaste + "'");
+        }
+        
+        return null;
     }
 }

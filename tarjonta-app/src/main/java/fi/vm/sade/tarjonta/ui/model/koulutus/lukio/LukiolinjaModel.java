@@ -21,10 +21,10 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.*;
  *
  * @author Jani Wilén
  */
-public class LukiolajiModel extends MonikielinenTekstiModel {
+public class LukiolinjaModel extends MonikielinenTekstiModel {
 
     private static final long serialVersionUID = -5207611570035520551L;
 
-    public LukiolajiModel() {
+    public LukiolinjaModel() {
     }
 }

@@ -54,7 +54,7 @@ import org.vaadin.addon.formbinder.PropertyId;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolajiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.NoKoulutusDialog;
 import fi.vm.sade.tarjonta.ui.view.koulutus.YhteyshenkiloViewForm;
@@ -78,7 +78,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
     private transient UiBuilder uiBuilder;
     private YhteyshenkiloViewForm yhteistieto;
     private BeanItemContainer<KoulutuskoodiModel> bicKoulutuskoodi;
-    private BeanItemContainer<LukiolajiModel> bicLukiolaji;
+    private BeanItemContainer<LukiolinjaModel> bicLukiolaji;
 
     /*
      * Koodisto code (url).
@@ -157,7 +157,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         bicKoulutuskoodi = new BeanItemContainer<KoulutuskoodiModel>(KoulutuskoodiModel.class, model.getKoulutuskoodis());
         cbKoulutusTaiTutkinto.setContainerDataSource(bicKoulutuskoodi);
 
-        bicLukiolaji = new BeanItemContainer<LukiolajiModel>(LukiolajiModel.class, model.getLukiolajis());
+        bicLukiolaji = new BeanItemContainer<LukiolinjaModel>(LukiolinjaModel.class, model.getLukiolinjas());
         cbLukiolaji.setContainerDataSource(bicLukiolaji);
 
         if (!model.isLoaded()) {
@@ -175,7 +175,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
                         clearKomoLabels();
                     }
                     presenter.getLukioPresenter().loadLukiolajis();
-                    bicLukiolaji.addAll(model.getLukiolajis());
+                    bicLukiolaji.addAll(model.getLukiolinjas());
                     disableOrEnableComponents(true);
                 }
             });
@@ -471,7 +471,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
             jatkoopintomahdollisuudet.setPropertyDataSource(new NestedMethodProperty(model.getJatkoopintomahdollisuudet(), MODEL_NAME_PROPERY));
         }
 
-        final LukiolajiModel lukiolinja = model.getLukiolaji();
+        final LukiolinjaModel lukiolinja = model.getLukiolinja();
 
 //        if (lukiolinja != null && lukiolinja.getTutkintonimike() != null) {
 //            koulutusModel.setTutkintonimike(lukiolinja.getTutkintonimike());

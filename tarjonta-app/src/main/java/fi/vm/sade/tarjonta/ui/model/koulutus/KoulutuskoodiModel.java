@@ -26,6 +26,7 @@ public class KoulutuskoodiModel extends MonikielinenTekstiModel {
 
     private static final long serialVersionUID = -7111768236565522022L;
     private Set<KoulutusohjelmaModel> koulutusohjelmaModels;
+    private Set<KoulutusohjelmaModel> lukiolinjaModels;
     private KoodiModel koulutusaste;
     private KoodiModel koulutusala;
     private KoodiModel opintojenLaajuusyksikko;
@@ -166,7 +167,6 @@ public class KoulutuskoodiModel extends MonikielinenTekstiModel {
     public void setJatkoopintomahdollisuudet(MonikielinenTekstiModel jatkoopintomahdollisuudet) {
         this.jatkoopintomahdollisuudet = jatkoopintomahdollisuudet;
     }
-
 //    public void clearLabels() {
 //        if (koulutusaste != null) {
 //            koulutusaste.clear();
@@ -194,4 +194,18 @@ public class KoulutuskoodiModel extends MonikielinenTekstiModel {
 //            jatkoopintomahdollisuudet.clear();
 //        }
 //    }
+
+    /**
+     * @return the lukiolinjaModels
+     */
+    public Set<KoulutusohjelmaModel> getLukiolinjaModels() {
+        return lukiolinjaModels;
+    }
+
+    /**
+     * @param lukiolinjaModels the lukiolinjaModels to set
+     */
+    public void setLukiolinjaModels(Set<KoulutusohjelmaModel> lukiolinjaModels) {
+        this.lukiolinjaModels = lukiolinjaModels;
+    }
 }

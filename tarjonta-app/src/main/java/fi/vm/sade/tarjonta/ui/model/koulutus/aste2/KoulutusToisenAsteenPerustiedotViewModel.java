@@ -33,7 +33,7 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
-import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConverter;
+import fi.vm.sade.tarjonta.ui.helper.conversion.Koulutus2asteConverter;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
@@ -326,8 +326,8 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     }
 
     public void createCacheKomos() {
-        setCacheKomoTutkinto(KoulutusConverter.komoCacheMapByKoulutuskoodi(komos));
-        setCacheKomo(KoulutusConverter.fullKomoCacheMap(komos));
+        setCacheKomoTutkinto(Koulutus2asteConverter.komoCacheMapByKoulutuskoodi(komos));
+        setCacheKomo(Koulutus2asteConverter.fullKomoCacheMap(komos));
     }
 
     /**

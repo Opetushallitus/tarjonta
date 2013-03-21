@@ -24,6 +24,7 @@ import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,6 +58,7 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      */
     protected KoulutusohjelmaModel koulutusohjelmaModel;
     protected KoulutuskoodiModel koulutuskoodiModel;
+    private LukiolinjaModel lukiolinjaModel;
     /*
      * KOMO koodisto URIs (static labels):
      */
@@ -480,5 +482,19 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      */
     public void setOpetuskieli(String opetuskieli) {
         this.opetuskieli = opetuskieli;
+    }
+
+    /**
+     * @return the lukiolinjaModel
+     */
+    public LukiolinjaModel getLukiolinjaModel() {
+        return lukiolinjaModel;
+    }
+
+    /**
+     * @param lukiolinjaModel the lukiolinjaModel to set
+     */
+    public void setLukiolinjaModel(LukiolinjaModel lukiolinjaModel) {
+        this.lukiolinjaModel = lukiolinjaModel;
     }
 }

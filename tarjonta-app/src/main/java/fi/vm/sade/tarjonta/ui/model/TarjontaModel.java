@@ -64,7 +64,7 @@ public class TarjontaModel extends BaseUIViewModel {
     private ValintakoeAikaViewModel selectedValintakoeAika;
     private Collection<OrganisaatioOidNamePair> organisaatios;
     private String selectedKoulutusOid;
-    private KoulutusLukioKuvailevatTiedotViewModel koulutusLukioKuvailevatTiedot;
+    public KoulutusLukioKuvailevatTiedotViewModel koulutusLukioKuvailevatTiedot;
 
     public String getSelectedKoulutusOid() {
         return selectedKoulutusOid;
@@ -91,7 +91,7 @@ public class TarjontaModel extends BaseUIViewModel {
     public KoulutusLukioKuvailevatTiedotViewModel getKoulutusLukioKuvailevatTiedot() {
         //TODO have a map!
         if (koulutusLukioKuvailevatTiedot == null) {
-            koulutusLukioKuvailevatTiedot = new KoulutusLukioKuvailevatTiedotViewModel(DocumentStatus.NEW);
+            setKoulutusLukioKuvailevatTiedot(new KoulutusLukioKuvailevatTiedotViewModel(DocumentStatus.NEW));
         }
 
         return koulutusLukioKuvailevatTiedot;
@@ -102,6 +102,13 @@ public class TarjontaModel extends BaseUIViewModel {
      */
     public void setKoulutusLukioPerustiedot(KoulutusLukioPerustiedotViewModel koulutusLukioPerustiedot) {
         this.koulutusLukioPerustiedot = koulutusLukioPerustiedot;
+    }
+
+    /**
+     * @param koulutusLukioKuvailevatTiedot the koulutusLukioKuvailevatTiedot to set
+     */
+    public void setKoulutusLukioKuvailevatTiedot(KoulutusLukioKuvailevatTiedotViewModel koulutusLukioKuvailevatTiedot) {
+        this.koulutusLukioKuvailevatTiedot = koulutusLukioKuvailevatTiedot;
     }
 
     public static class OrganisaatioOidNamePair {

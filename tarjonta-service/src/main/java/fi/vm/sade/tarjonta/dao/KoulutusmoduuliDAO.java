@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 import java.util.List;
 
@@ -36,18 +37,18 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
      * @return
      */
     public List<Koulutusmoduuli> find(String tila, int startIndex, int pageSize);
-    
+
     /*
      * Returns all koulutusmoduulitoteutukses for given hakukohde
      * 
      * @param hakukohde
      * @return List<KoulutusmoduuliToteutus>
      */
-    
     List<KoulutusmoduuliToteutus> findKomotoByHakukohde(Hakukohde hakukohde);
 
     /**
-     * Returns a list of Koulutusmoduulis that are direct children of given <code>oid</code>
+     * Returns a list of Koulutusmoduulis that are direct children of given
+     * <code>oid</code>
      *
      * @param <T>
      * @param type
@@ -76,9 +77,8 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
      */
     public List<Koulutusmoduuli> search(SearchCriteria criteria);
 
-
     /**
-     * 
+     *
      * @param koulutusLuokitusUri
      * @param koulutusOhjelmaUri
      * @return
@@ -87,25 +87,25 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
 
     /**
      * Get full KOMO objects with language text data.
-     * 
-     * @return 
+     *
+     * @return
      */
     public List<Koulutusmoduuli> findAllKomos();
-    
+
     /**
-     * Contract and model for passing search criterias to DAO. Another option would be to use an object declared in WSDL but this would
-     * imply that any and all changes in WSDL are immediately visible on DAO layer and in worst case might require code changes.
+     * Contract and model for passing search criterias to DAO. Another option
+     * would be to use an object declared in WSDL but this would imply that any
+     * and all changes in WSDL are immediately visible on DAO layer and in worst
+     * case might require code changes.
      */
     public static class SearchCriteria {
 
-
-
-		private String nimiQuery;
+        private String nimiQuery;
         private String koulutusKoodiUri;
         private String koulutusohjelmaKoodiUri;
-
+        private String lukiolinjaKoodiUri;
+        private KoulutusasteTyyppi koulutustyyppi;
         private Class<? extends BaseKoulutusmoduuli> type;
-
         private GroupBy groupBy = GroupBy.ORGANISAATIORAKENNE;
 
         public void setNimiQuery(String nimiQuery) {
@@ -131,42 +131,64 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         public Class<? extends BaseKoulutusmoduuli> getType() {
             return type;
         }
-        
+
         public String getKoulutusKoodi() {
-			return koulutusKoodiUri;
-		}
+            return koulutusKoodiUri;
+        }
 
-		public void setKoulutusKoodi(String koulutusKoodi) {
-			this.koulutusKoodiUri = koulutusKoodi;
-		}
+        public void setKoulutusKoodi(String koulutusKoodi) {
+            this.koulutusKoodiUri = koulutusKoodi;
+        }
 
-		public String getKoulutusohjelmaKoodi() {
-			return koulutusohjelmaKoodiUri;
-		}
+        public String getKoulutusohjelmaKoodi() {
+            return koulutusohjelmaKoodiUri;
+        }
 
-		public void setKoulutusohjelmaKoodi(String koulutusohjelmaKoodi) {
-			this.koulutusohjelmaKoodiUri = koulutusohjelmaKoodi;
-		}
+        public void setKoulutusohjelmaKoodi(String koulutusohjelmaKoodi) {
+            this.koulutusohjelmaKoodiUri = koulutusohjelmaKoodi;
+        }
+
+        /**
+         * @return the koulutustyyppi
+         */
+        public KoulutusasteTyyppi getKoulutustyyppi() {
+            return koulutustyyppi;
+        }
+
+        /**
+         * @param koulutustyyppi the koulutustyyppi to set
+         */
+        public void setKoulutustyyppi(KoulutusasteTyyppi koulutustyyppi) {
+            this.koulutustyyppi = koulutustyyppi;
+        }
+
+        /**
+         * @return the lukiolinjaKoodiUri
+         */
+        public String getLukiolinjaKoodiUri() {
+            return lukiolinjaKoodiUri;
+        }
+
+        /**
+         * @param lukiolinjaKoodiUri the lukiolinjaKoodiUri to set
+         */
+        public void setLukiolinjaKoodiUri(String lukiolinjaKoodiUri) {
+            this.lukiolinjaKoodiUri = lukiolinjaKoodiUri;
+        }
 
         public enum GroupBy {
 
             ORGANISAATIORAKENNE;
         }
-        
-        
-
-
     }
 
     /**
      * Returns the parent of the koulutusmoduuli given as parameter
+     *
      * @param komo - the koulutusmoduuli the parent of which we are searching.
      * @return - the parent koulutusmoduuli.
      */
     public Koulutusmoduuli findParentKomo(Koulutusmoduuli komo);
 
     public Koulutusmoduuli findLukiolinja(String uri, String uri2);
-
-
 }
-

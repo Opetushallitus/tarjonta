@@ -17,13 +17,11 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.Expression;
 import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 
 import java.util.List;
 import org.slf4j.Logger;
@@ -106,6 +104,13 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaKoodi.eq(criteria.getKoulutusohjelmaKoodi()));
         }
 
+        if (criteria.getKoulutustyyppi() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutustyyppi.eq(criteria.getKoulutustyyppi().value()));
+        }
+
+        if (criteria.getLukiolinjaKoodiUri() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinja.eq(criteria.getLukiolinjaKoodiUri()));
+        }
 
         return from(moduuli).
                 where(whereExpr).
@@ -161,16 +166,16 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
     @Override
     public Koulutusmoduuli findParentKomo(Koulutusmoduuli komo) {
         QKoulutusSisaltyvyys sisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
-        
+
         List<KoulutusSisaltyvyys> parents = from(sisaltyvyys).
                 join(sisaltyvyys.alamoduuliList).fetch().
                 where(sisaltyvyys.alamoduuliList.contains(komo)).
                 list(sisaltyvyys);
-        
+
         if (parents == null || parents.isEmpty()) {
             return null;
         }
-        
+
         return parents.get(0).getYlamoduuli();
     }
 

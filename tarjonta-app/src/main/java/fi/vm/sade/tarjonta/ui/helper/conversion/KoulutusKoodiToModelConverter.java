@@ -62,7 +62,7 @@ public class KoulutusKoodiToModelConverter<MODEL extends KoulutusKoodistoModel> 
         model.setKoodistoUri(koodiType.getKoodiUri());
         model.setKoodistoVersio(koodiType.getVersio());
 
-        final String uriWithVersio = KoulutusConverter.mapToVersionUri(koodiType.getKoodiUri(), koodiType.getVersio());
+        final String uriWithVersio = Koulutus2asteConverter.mapToVersionUri(koodiType.getKoodiUri(), koodiType.getVersio());
         model.setKoodistoUriVersio(uriWithVersio);
 
         if (model instanceof MonikielinenTekstiModel) {

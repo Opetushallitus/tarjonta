@@ -81,6 +81,10 @@ public class KoodistoURIHelper {
      */
     public static String KOODISTO_VALINTAPERUSTEKUVAUSRYHMA_URI;
     public static String KOODISTO_SORA_KUVAUSRYHMA_URI;
+    /*
+     * Lukio tuktinto URIs
+     */
+    public static String KOODISTO_LUKIOLINJA_URI;
 
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
@@ -240,5 +244,10 @@ public class KoodistoURIHelper {
     @Value("${koodisto-uris.sorakuvausryhma:NOT_SET}")
     public void setSoraKuvausryhma(String soraKuvausryhma) {
         KOODISTO_SORA_KUVAUSRYHMA_URI = soraKuvausryhma;
+    }
+
+    @Value("${koodisto-uris.lukiolinja:NOT_SET}")
+    public void setLukiolinja(String lukiolinja) {
+        KOODISTO_LUKIOLINJA_URI = lukiolinja;
     }
 }

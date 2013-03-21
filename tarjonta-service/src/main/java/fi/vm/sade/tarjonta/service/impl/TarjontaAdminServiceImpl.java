@@ -94,27 +94,27 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public List<ValintakoeTyyppi> paivitaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
         List<Valintakoe> valintakoes = convertValintaKokees(hakukohteenValintakokeet);
         List<Valintakoe> updateValintakokees = new ArrayList<Valintakoe>();
-        for (Valintakoe valintakoe: valintakoes) {
+        for (Valintakoe valintakoe : valintakoes) {
             if (valintakoe.getId() != null) {
-             updateValintakokees.add(valintakoe);
+                updateValintakokees.add(valintakoe);
             }
         }
-        hakukohdeDAO.updateValintakoe(updateValintakokees,hakukohdeOid);
-      return hakukohteenValintakokeet;
+        hakukohdeDAO.updateValintakoe(updateValintakokees, hakukohdeOid);
+        return hakukohteenValintakokeet;
     }
 
     @Override
     public List<ValintakoeTyyppi> tallennaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
 
-        List<Valintakoe> valintakoes =  convertValintaKokees(hakukohteenValintakokeet);
+        List<Valintakoe> valintakoes = convertValintaKokees(hakukohteenValintakokeet);
 
         List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
 
-        if (hakukohdes != null && hakukohdes.size() > 0 ) {
+        if (hakukohdes != null && hakukohdes.size() > 0) {
 
 
 
-            hakukohdeDAO.updateValintakoe(valintakoes,hakukohdes.get(0).getOid());
+            hakukohdeDAO.updateValintakoe(valintakoes, hakukohdes.get(0).getOid());
 
             hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
             if (hakukohdes != null && hakukohdes.get(0).getValintakoes() != null) {
@@ -146,11 +146,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     }
 
-
     public void kopioiKoulutus(@WebParam(name = "kopioitavaKoulutus", targetNamespace = "") KoulutusTyyppi kopioitavaKoulutus, @WebParam(name = "organisaatioOids", targetNamespace = "") List<String> organisaatioOids) {
         //TODO: should add some organisaatio validation ? Or should it be handled in UI
-        for(String organisaatioOid:organisaatioOids) {
-             kopioitavaKoulutus.setTarjoaja(organisaatioOid);
+        for (String organisaatioOid : organisaatioOids) {
+            kopioitavaKoulutus.setTarjoaja(organisaatioOid);
             LisaaKoulutusTyyppi lisaaKoulutusTyyppi = ConvertKoulutusTyyppiToLisaaKoulutus.convert(kopioitavaKoulutus);
             lisaaKoulutus(lisaaKoulutusTyyppi);
 
@@ -158,8 +157,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     /*
-             * This method returns true if komoto copy is allowed.
-             */
+     * This method returns true if komoto copy is allowed.
+     */
     @Override
     public boolean tarkistaKoulutuksenKopiointi(@WebParam(partName = "parameters", name = "tarkistaKoulutusKopiointi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") TarkistaKoulutusKopiointiTyyppi parameters) {
 
@@ -231,11 +230,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
 
         List<HakukohdeLiite> liites = new ArrayList<HakukohdeLiite>();
-            for (HakukohdeLiite hakukohdeLiite : convertLiiteTyyppi(hakukohteenLiitteen)) {
-              liites.add(hakukohdeLiite);
-            }
+        for (HakukohdeLiite hakukohdeLiite : convertLiiteTyyppi(hakukohteenLiitteen)) {
+            liites.add(hakukohdeLiite);
+        }
 
-        hakukohdeDAO.updateLiittees(liites,hakukohdeOid);
+        hakukohdeDAO.updateLiittees(liites, hakukohdeOid);
     }
 
     private List<HakukohdeLiite> convertLiiteTyyppi(List<HakukohdeLiiteTyyppi> tyyppis) {
@@ -444,9 +443,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
      */
     @Override
     public void initKomo(String parameters) {
-
         log.warn("Implementation is still missing!");
-
     }
 
     @Override
@@ -455,8 +452,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         if (koulutusmoduuli.getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS) && koulutusmoduuliDAO.findTutkintoOhjelma(koulutusmoduuli.getKoulutuskoodiUri(), koulutusmoduuli.getKoulutusohjelmakoodiUri()) != null) {
             log.warn("Koulutusmoduuli " + koulutusmoduuli.getKoulutuskoodiUri() + ", " + koulutusmoduuli.getKoulutusohjelmakoodiUri() + "already exists, not adding");
             return new KoulutusmoduuliKoosteTyyppi();
-        }
-        else if (koulutusmoduuli.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS) && koulutusmoduuliDAO.findLukiolinja(koulutusmoduuli.getKoulutuskoodiUri(), koulutusmoduuli.getLukiolinjakoodiUri()) != null) {
+        } else if (koulutusmoduuli.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS) && koulutusmoduuliDAO.findLukiolinja(koulutusmoduuli.getKoulutuskoodiUri(), koulutusmoduuli.getLukiolinjakoodiUri()) != null) {
             log.warn("Koulutusmoduuli " + koulutusmoduuli.getKoulutuskoodiUri() + ", " + koulutusmoduuli.getLukiolinjakoodiUri() + "already exists, not adding");
             return new KoulutusmoduuliKoosteTyyppi();
         }
@@ -466,6 +462,21 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             handleParentKomo(komo, koulutusmoduuli.getParentOid());
         }
         return koulutusmoduuli;
+    }
+
+    @Override
+    public KoulutusmoduuliKoosteTyyppi paivitaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli) throws GenericFault {
+        if (koulutusmoduuli == null || koulutusmoduuli.getOid() == null) {
+            throw new IllegalArgumentException("OID cannot be null.");
+        }
+        Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(koulutusmoduuli.getOid());
+        if (komo == null) {
+            throw new RuntimeException("No result found by OID " + koulutusmoduuli.getOid() + ".");
+        }
+
+        EntityUtils.copyFieldsToKoulutusmoduuli(koulutusmoduuli, komo);
+        koulutusmoduuliDAO.update(komo);
+        return EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(komo);
     }
 
     private void handleParentKomo(Koulutusmoduuli komo, String parentOid) {

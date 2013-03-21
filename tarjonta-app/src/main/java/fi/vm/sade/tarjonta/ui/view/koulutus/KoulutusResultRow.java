@@ -203,7 +203,7 @@ public class KoulutusResultRow extends HorizontalLayout {
 
         //newAddressBtn.addStyleName(StyleNames.B_PRIMARY_LARGE_PLUS);
         setWidth(-1, Sizeable.UNITS_PIXELS);
-        setHeight(-1, Sizeable.UNITS_PIXELS); //Tämä toimii!!!
+        setHeight(-1, Sizeable.UNITS_PIXELS);
 
         addComponent(isSelected);
         if (withMenuBar) {

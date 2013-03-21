@@ -134,7 +134,6 @@ public class XMLStreamEnricher {
 
         xmlReader.setFeature("http://apache.org/xml/features/validation/schema", true);
         xmlReader.setFeature("http://apache.org/xml/features/validation/schema/normalized-value", true);
-        xmlReader.setFeature("http://xml.org/sax/features/xmlns-uris", false);
 
         final XMLProcessor processor = new XMLProcessor(xmlWriter);
 

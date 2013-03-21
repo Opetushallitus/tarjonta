@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
 import fi.vm.sade.koodisto.service.types.common.KieliType;
@@ -50,7 +65,7 @@ public class KoulutusViewModelToDTOConverterTest {
      */
     //@Test
     public void testMapToKoulutuskoodiTyyppi_KoodistoKoodiTyyppi() {
-        KoulutusConverter instance = new KoulutusConverter();
+        Koulutus2asteConverter instance = new Koulutus2asteConverter();
         KoulutuskoodiModel result = instance.mapToKoulutuskoodiModel(koodistoTyyppi1, new Locale("fi"));
         assertEquals(URI, result.getKoodistoUri());
         assertEquals(URI_VERSION, result.getKoodistoUriVersio());
@@ -64,34 +79,18 @@ public class KoulutusViewModelToDTOConverterTest {
     @Test
     public void testMapToVersionUri() {
         final String uri = "uri: abc1234567";
-        final String result = KoulutusConverter.mapToVersionUri(uri, 10);
+        final String result = Koulutus2asteConverter.mapToVersionUri(uri, 10);
         assertEquals(uri + "#10", result);
     }
     
     @Test
     public void mapToKoodistoKoodiTyyppi() {
-        KoodistoKoodiTyyppi result = KoulutusConverter.mapToValidKoodistoKoodiTyyppi(false, KoulutuskoodiModel);
+        KoodistoKoodiTyyppi result = Koulutus2asteConverter.mapToValidKoodistoKoodiTyyppi(false, KoulutuskoodiModel);
         assertNotNull("KoodistoKoodiTyyppi obj cannot be null", result);
         assertEquals(NIMI, result.getArvo());
         assertEquals(0, result.getNimi().size());
         assertEquals(URI_VERSION, result.getUri());
         assertEquals(null, result.getVersio());
     }
-    
-    @Test
-    public void testMultilanguageKomotoName() {   
-        KielikaannosViewModel langModel = new KielikaannosViewModel();
-        langModel.setNimi("nimi");
-        langModel.setKielikoodi(KieliType.FI.name());
-        Set<KielikaannosViewModel> languages = new HashSet<KielikaannosViewModel>(1);
-        languages.add(langModel);
-        
-        KoulutusToisenAsteenPerustiedotViewModel model = new KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus.NEW);
-        KoulutuskoodiModel kkm = new KoulutuskoodiModel();
-        kkm.setKielikaannos(languages);
-        model.setKoulutuskoodiModel(kkm);
-        Map<String, StringBuilder> multilanguageKomotoName = KoulutusConverter.multilanguageKomotoName(model);
-        
-        assertNotNull(multilanguageKomotoName.get(KieliType.FI.name()));
-    }
+   
 }
