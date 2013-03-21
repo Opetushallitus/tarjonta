@@ -75,7 +75,7 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
             PainotettavaOppiaineTyyppi painotettavaOppiaine = new PainotettavaOppiaineTyyppi();
             painotettavaOppiaine.setOppiaine(oppiaine.getOppiaine());
             painotettavaOppiaine.setPainokerroin(oppiaine.getPainokerroin());
-            
+            painotettavaOppiaine.setPainotettavaOppiaineTunniste(oppiaine.getId().toString());
             painotettavatOppiaineet.add(painotettavaOppiaine);
         }
         

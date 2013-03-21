@@ -58,6 +58,10 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
         if (from.getAlinHyvaksyttavaKeskiarvo() != null) {
         hakukohde.setAlinHyvaksyttavaKeskiarvo(from.getAlinHyvaksyttavaKeskiarvo().doubleValue());
         }
+        if(from.getPainotettavatOppiaineet() != null) {
+            hakukohde.getPainotettavatOppiaineet().addAll(convertPainotettavatOppiaineet(from.getPainotettavatOppiaineet()));
+        }
+        
         return hakukohde;
     }
 
@@ -68,6 +72,10 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
             PainotettavaOppiaine painotettavaOppiaine = new PainotettavaOppiaine();
             painotettavaOppiaine.setOppiaine(oppiaineTyyppi.getOppiaine());
             painotettavaOppiaine.setPainokerroin(oppiaineTyyppi.getPainokerroin());
+            if (oppiaineTyyppi.getPainotettavaOppiaineTunniste() != null) {
+                painotettavaOppiaine.setId(new Long(oppiaineTyyppi.getPainotettavaOppiaineTunniste()));
+            }
+           
         } 
         
         return painotettavatOppiaineet;

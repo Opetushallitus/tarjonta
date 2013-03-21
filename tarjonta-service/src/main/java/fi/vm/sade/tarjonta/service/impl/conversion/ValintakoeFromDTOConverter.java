@@ -16,13 +16,17 @@ package fi.vm.sade.tarjonta.service.impl.conversion;/*
  */
 
 import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
+import fi.vm.sade.tarjonta.model.Pisteraja;
 import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
 import fi.vm.sade.tarjonta.service.types.AjankohtaTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.service.types.PisterajaTyyppi;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by: Tuomas Katva
@@ -44,10 +48,30 @@ public class ValintakoeFromDTOConverter extends AbstractToDomainConverter<Valint
         for (ValintakoeAjankohta ajankohta:convertAjankohtaTyyppiToValintakoeAjankohta(valintakoeTyyppi.getAjankohdat())) {
             valintakoe.addAjankohta(ajankohta);
         }
-
-
+        if (valintakoeTyyppi.getLisaNaytot() != null) {
+            valintakoe.setLisanaytot(CommonFromDTOConverter.convertMonikielinenTekstiTyyppiToDomainValue(valintakoeTyyppi.getLisaNaytot()));
+        }
+        if (valintakoeTyyppi.getPisterajat() != null) {
+            valintakoe.setPisterajat(convertPisterajat(valintakoeTyyppi.getPisterajat()));
+        }
 
         return valintakoe;
+    }
+    
+    private Set<Pisteraja> convertPisterajat(List<PisterajaTyyppi> pisterajaTyypit) {
+        Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
+        for (PisterajaTyyppi pisterajaTyyppi:pisterajaTyypit) {
+            Pisteraja pisteRaja = new Pisteraja();
+            pisteRaja.setAlinHyvaksyttyPistemaara(pisterajaTyyppi.getAlinHyvaksyttyPistemaara());
+            pisteRaja.setAlinPistemaara(pisterajaTyyppi.getAlinPistemaara());
+            pisteRaja.setValinnanPisterajaTyyppi(pisterajaTyyppi.getValinnanPisteraja().value());
+            pisteRaja.setYlinPistemaara(pisterajaTyyppi.getYlinPistemaara());
+            if (pisterajaTyyppi.getPisterajaTunniste() != null) {
+                pisteRaja.setId(new Long(pisterajaTyyppi.getPisterajaTunniste()));
+            }
+            pisterajat.add(pisteRaja);
+        }
+        return pisterajat;
     }
 
     private List<ValintakoeAjankohta> convertAjankohtaTyyppiToValintakoeAjankohta(List<AjankohtaTyyppi> ajankohtaTyyppis) {

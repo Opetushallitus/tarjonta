@@ -16,9 +16,12 @@ package fi.vm.sade.tarjonta.service.impl.conversion;/*
  */
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
+import fi.vm.sade.tarjonta.model.Pisteraja;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
 import fi.vm.sade.tarjonta.service.types.AjankohtaTyyppi;
+import fi.vm.sade.tarjonta.service.types.PisterajaTyyppi;
+import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 
 import java.util.ArrayList;
@@ -40,8 +43,30 @@ public class ValintakoeToDTOConverter extends AbstractFromDomainConverter<Valint
         valintakoeTyyppi.setValintakokeenTyyppi(valintakoe.getTyyppiUri());
         valintakoeTyyppi.setKuvaukset(CommonToDTOConverter.convertMonikielinenTekstiToTekstiTyyppi(valintakoe.getKuvaus()));
         valintakoeTyyppi.getAjankohdat().addAll(convertAjankohta(valintakoe.getAjankohtas()));
-
+        if (valintakoe.getLisanaytot()  != null) {
+            valintakoeTyyppi.setLisaNaytot(CommonToDTOConverter.convertMonikielinenTekstiToTekstiTyyppi(valintakoe.getLisanaytot()));
+        }
+        if (valintakoe.getPisterajat() != null) {
+            valintakoeTyyppi.getPisterajat().addAll(convertPisterajat(valintakoe.getPisterajat()));
+        }     
+        
         return valintakoeTyyppi;
+    }
+    
+    private List<PisterajaTyyppi> convertPisterajat(Set<Pisteraja> pisterajat) {
+        List<PisterajaTyyppi> pisterajaTyypit = new ArrayList<PisterajaTyyppi>();
+        
+        for (Pisteraja pisteraja:pisterajat) {
+            PisterajaTyyppi pisterajatyyppi = new PisterajaTyyppi();
+            pisterajatyyppi.setAlinHyvaksyttyPistemaara(pisteraja.getAlinHyvaksyttyPistemaara());
+            pisterajatyyppi.setAlinPistemaara(pisteraja.getAlinPistemaara());
+            pisterajatyyppi.setYlinPistemaara(pisteraja.getYlinPistemaara());
+            pisterajatyyppi.setPisterajaTunniste(pisteraja.getId().toString());
+            pisterajatyyppi.setValinnanPisteraja(ValinnanPisterajaTyyppi.fromValue(pisteraja.getValinnanPisterajaTyyppi()));
+            
+        }
+        
+        return pisterajaTyypit;
     }
 
     private List<AjankohtaTyyppi> convertAjankohta(Set<ValintakoeAjankohta> ajankohtas) {
