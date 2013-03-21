@@ -97,42 +97,12 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
     @Override
     public KoulutusmoduuliToteutus createKoulutus(LisaaKoulutusTyyppi koulutus) {
-        if (koulutus.getKoulutustyyppi() != null && koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
-            return createLukiokoulutus(koulutus);
-        } else {
-            return createToisenAsteenKoulutus(koulutus);
-        }
-    }
-    
-    private KoulutusmoduuliToteutus createToisenAsteenKoulutus (LisaaKoulutusTyyppi koulutus) {
         Koulutusmoduuli moduuli = null;
-        if (koulutus.getKoulutusohjelmaKoodi() == null) {
-            moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(koulutus.getKoulutusKoodi().getUri(), null);
+        if (koulutus.getKoulutustyyppi() != null && koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+            moduuli = handleLukiomoduuli(koulutus);
         } else {
-            moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(
-                koulutus.getKoulutusKoodi().getUri(),
-                koulutus.getKoulutusohjelmaKoodi().getUri());
-            
-            //Handling the creation of the parent komoto
-            handleParentKomoto(koulutus, moduuli);
+            moduuli = handleToisenAsteenModuuli(koulutus);
         }
-
-        if (moduuli == null) {
-            throw new TarjontaBusinessException(TarjontaVirheKoodi.KOULUTUSTA_EI_OLEMASSA.value());
-        }
-
-        KoulutusmoduuliToteutus komotoModel = new KoulutusmoduuliToteutus();
-        EntityUtils.copyFields(koulutus, komotoModel);
-        komotoModel.setKoulutusmoduuli(moduuli);
-        moduuli.addKoulutusmoduuliToteutus(komotoModel);
-
-        return koulutusmoduuliToteutusDAO.insert(komotoModel);
-    }
-    
-    private KoulutusmoduuliToteutus createLukiokoulutus(LisaaKoulutusTyyppi koulutus) {
-        Koulutusmoduuli moduuli = koulutusmoduuliDAO.findLukiolinja(koulutus.getKoulutusKoodi().getUri(), koulutus.getLukiolinjaKoodi().getUri());
-        //Handling the creation of the parent komoto
-        handleParentKomoto(koulutus, moduuli);
         
         if (moduuli == null) {
             throw new TarjontaBusinessException(TarjontaVirheKoodi.KOULUTUSTA_EI_OLEMASSA.value());
@@ -146,7 +116,34 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         return koulutusmoduuliToteutusDAO.insert(komotoModel);
     }
     
-
+    private Koulutusmoduuli handleToisenAsteenModuuli(LisaaKoulutusTyyppi koulutus) {
+        Koulutusmoduuli moduuli = null;
+        if (koulutus.getKoulutusohjelmaKoodi() == null) {
+            moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(koulutus.getKoulutusKoodi().getUri(), null);
+        } else {
+            moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(
+                koulutus.getKoulutusKoodi().getUri(),
+                koulutus.getKoulutusohjelmaKoodi().getUri());
+            
+            //Handling the creation of the parent komoto
+            handleParentKomoto(koulutus, moduuli);
+        }
+        return moduuli;
+        
+    }
+    
+    private Koulutusmoduuli handleLukiomoduuli(LisaaKoulutusTyyppi koulutus) {
+       Koulutusmoduuli moduuli = null;
+        if (koulutus.getLukiolinjaKoodi() == null) {
+            moduuli = koulutusmoduuliDAO.findLukiolinja(koulutus.getKoulutusKoodi().getUri(), null);
+       } else {
+           moduuli = koulutusmoduuliDAO.findLukiolinja(koulutus.getKoulutusKoodi().getUri(), koulutus.getLukiolinjaKoodi().getUri());
+         //Handling the creation of the parent komoto
+           handleParentKomoto(koulutus, moduuli);
+       }
+       
+       return moduuli;
+    }
 
     @Override
     public KoulutusmoduuliToteutus updateKoulutus(PaivitaKoulutusTyyppi koulutus) {
