@@ -19,7 +19,7 @@
         </init-param>
         <init-param>
             <name>widgetset</name>
-            <value>fi.vm.sade.widgetset.GoogleMapComponent</value>
+            <value>fi.vm.sade.widgetset.OPH</value>
         </init-param>
 
         <supports>
@@ -60,7 +60,7 @@
         </init-param>
         <init-param>
             <name>widgetset</name>
-            <value>fi.vm.sade.widgetset.GoogleMapComponent</value>
+            <value>fi.vm.sade.widgetset.OPH</value>
         </init-param>
 
         <supports>
@@ -101,7 +101,7 @@
         </init-param>
         <init-param>
             <name>widgetset</name>
-            <value>fi.vm.sade.widgetset.GoogleMapComponent</value>
+            <value>fi.vm.sade.widgetset.OPH</value>
         </init-param>
 
         <supports>
@@ -142,7 +142,7 @@
         </init-param>
         <init-param>
             <name>widgetset</name>
-            <value>fi.vm.sade.widgetset.GoogleMapComponent</value>
+            <value>fi.vm.sade.widgetset.OPH</value>
         </init-param>
 
         <supports>
