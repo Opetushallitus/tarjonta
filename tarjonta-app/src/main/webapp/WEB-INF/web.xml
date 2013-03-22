@@ -47,7 +47,7 @@
         </init-param>
         <init-param>
             <param-name>widgetset</param-name>
-            <param-value>fi.vm.sade.widgetset.GoogleMapComponent</param-value>
+            <param-value>fi.vm.sade.widgetset.OPH</param-value>
         </init-param>
     </servlet>
 
