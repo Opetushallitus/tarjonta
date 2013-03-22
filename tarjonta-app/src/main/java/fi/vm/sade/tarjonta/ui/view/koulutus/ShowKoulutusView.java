@@ -247,7 +247,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
             public void buttonClick(ClickEvent event) {
                 List<String> koulutus = new ArrayList<String>();
                 koulutus.add(_presenter.getModel().getKoulutusPerustiedotModel().getOid());
-                _presenter.showHakukohdeEditView(koulutus, null);
+                _presenter.showHakukohdeEditView(koulutus, null,null);
             }
         }));
 

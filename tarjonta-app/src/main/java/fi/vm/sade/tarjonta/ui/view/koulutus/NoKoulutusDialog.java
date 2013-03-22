@@ -1,8 +1,10 @@
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
 
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.common.I18NHelper;
@@ -21,11 +23,16 @@ public class NoKoulutusDialog extends VerticalLayout {
     }
     
     private void createLayout(String messageName) {
-        setSizeUndefined();
+        setSizeFull();
         setSpacing(true);
         setMargin(true);
-        UiUtil.label(this, T(messageName));
-        UiUtil.button(this, T("sulje"), this.closeListener);
+        Label label = UiUtil.label(null, T(messageName));
+        addComponent(label);
+        label.setSizeFull();
+
+        Button button = UiUtil.button(null, T("sulje"), this.closeListener);
+        addComponent(button);
+        setComponentAlignment(button, Alignment.BOTTOM_CENTER);
     }
     
     private String T(String key, Object... args) {

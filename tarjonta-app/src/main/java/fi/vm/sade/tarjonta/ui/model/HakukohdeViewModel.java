@@ -201,6 +201,9 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     }
 
     public List<KoulutusOidNameViewModel> getKoulukses() {
+        if (koulukses == null) {
+            koulukses = new ArrayList<KoulutusOidNameViewModel>();
+        }
         return koulukses;
     }
 

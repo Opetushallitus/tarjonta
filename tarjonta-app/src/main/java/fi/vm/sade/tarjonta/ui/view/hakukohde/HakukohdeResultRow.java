@@ -136,7 +136,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
         if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
             tarjontaPresenter.showHakukohdeViewImpl(hakukohdeOid);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
-            tarjontaPresenter.showHakukohdeEditView(null, hakukohdeOid);
+            tarjontaPresenter.showHakukohdeEditView(null, hakukohdeOid,null);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.DELETE.key))) {
             showRemoveDialog();
         } else if (selection.equals(i18n.getMessage("naytaKoulutukset"))) {

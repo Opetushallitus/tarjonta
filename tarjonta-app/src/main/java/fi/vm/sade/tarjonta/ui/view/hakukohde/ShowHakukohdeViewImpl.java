@@ -177,7 +177,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 tarjontaPresenterPresenter.showHakukohdeEditView(tarjontaPresenterPresenter.getModel().getHakukohde().getKomotoOids(),
-                        tarjontaPresenterPresenter.getModel().getHakukohde().getOid());
+                        tarjontaPresenterPresenter.getModel().getHakukohde().getOid(),null);
             }
         }, true));
         GridLayout grid = new GridLayout(2, 1);

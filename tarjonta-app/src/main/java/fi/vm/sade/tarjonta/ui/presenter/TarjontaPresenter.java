@@ -405,6 +405,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             
             nimiOid.setKoulutusNimi(nimi);
             nimiOid.setKoulutustyyppi(tulos.getKoulutus().getKoulutustyyppi());
+            nimiOid.setKoulutustyyppi(tulos.getKoulutus().getKoulutustyyppi());
             result.add(nimiOid);
             
         }
@@ -885,13 +886,15 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * @param koulutusOids
      * @param hakukohdeOid
      */
-    public void showHakukohdeEditView(List<String> koulutusOids, String hakukohdeOid) {
+    public void showHakukohdeEditView(List<String> koulutusOids, String hakukohdeOid, List<KoulutusOidNameViewModel> koulutusOidNameViewModels) {
         LOG.info("showHakukohdeEditView()");
         //After the data has been initialized the form is created
         editHakukohdeView = new EditHakukohdeView();
         if (hakukohdeOid == null) {
             getModel().setHakukohde(new HakukohdeViewModel());
-            
+            if (koulutusOidNameViewModels != null) {
+                getModel().getHakukohde().getKoulukses().addAll(koulutusOidNameViewModels);
+            }
         } else {
             
             editHakukohdeView.loadLiiteTableWithData();
@@ -1284,7 +1287,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      */
     public List<String> getSelectedKoulutusOids() {
         List<String> kOids = new ArrayList<String>();
-        
+
         if (getModel().getSelectedKoulutukset() != null || !getModel().getSelectedKoulutukset().isEmpty()) {
             for (KoulutusTulos curKoul : getModel().getSelectedKoulutukset()) {
                 if (curKoul != null && curKoul.getKoulutus() != null) {
@@ -1293,6 +1296,16 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             }
         }
         return kOids;
+    }
+
+    public List<KoulutusOidNameViewModel> getSelectedKoulutusOidNameViewModels() {
+        List<KoulutusOidNameViewModel> koulutukses = new ArrayList<KoulutusOidNameViewModel>();
+
+        if (getModel().getSelectedKoulutukset() != null || !getModel().getSelectedKoulutukset().isEmpty()) {
+            koulutukses = convertKoulutusToNameOidViewModel(getModel().getSelectedKoulutukset());
+        }
+
+        return koulutukses;
     }
     
     public void showRemoveHakukohdeFromKoulutusDialog(String hakukohdeOid, String hakukohdeNimi) {

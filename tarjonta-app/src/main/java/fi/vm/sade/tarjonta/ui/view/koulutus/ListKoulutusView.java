@@ -305,17 +305,29 @@ public class ListKoulutusView extends VerticalLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-               
-               if (!checkForLukioKoulutus()) {
+               IntTuple tuple =  checkForLukioKoulutus();
+               if (tuple.getValOne() < 1) {
                 List<String> selectedKoulutusOids = presenter.getSelectedKoulutusOids();
                 if (!selectedKoulutusOids.isEmpty()) {
                     showCreateHakukohdeDialog(selectedKoulutusOids);
                 } 
                } else {
-                  if (presenter.getSelectedKoulutukset().size() > 1) {
-                    //More than one koulutus chosen and atleast one of them is Lukio koulutus, show error dialog  
+                  if (tuple.getValOne() > 1 || tuple.getValTwo() > tuple.getValOne() ) {
+                    final Window dialog = new Window();
+                    NoKoulutusDialog koulutusDialog = new NoKoulutusDialog("lukioHakukohdeTooMany", new Button.ClickListener() {
+                        @Override
+                        public void buttonClick(ClickEvent clickEvent) {
+                            getWindow().removeWindow(dialog);
+                        }
+                    });
+                    dialog.setContent(koulutusDialog);
+                    dialog.setWidth("500px");
+                    dialog.setHeight("200px");
+                    dialog.setModal(true);
+                    dialog.center();
+                    getWindow().addWindow(dialog);
                   }  else {
-                      
+                      presenter.showHakukohdeEditView(null, null,presenter.getSelectedKoulutusOidNameViewModels());
                   }
                }
             }
@@ -354,16 +366,22 @@ public class ListKoulutusView extends VerticalLayout {
 
         return layout;
     }
+
+
     
-    private boolean checkForLukioKoulutus() {
-        boolean lukioFound = false;
+    private IntTuple checkForLukioKoulutus() {
+        int lukioKoulutusCounter = 0;
+        int koulutusCounter = 0;
         for (KoulutusTulos koulutus: presenter.getSelectedKoulutukset()) {
+            koulutusCounter ++;
             if (koulutus.getKoulutus().getKoulutustyyppi() != null &&  koulutus.getKoulutus().getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
-                lukioFound = true;
-                break;
+                lukioKoulutusCounter ++;
             }
         }
-        return lukioFound;
+        IntTuple tuple = new IntTuple();
+        tuple.setValOne(lukioKoulutusCounter);
+        tuple.setValTwo(koulutusCounter);
+        return tuple;
     }
     
     private void showNoKoulutusDialog(String msg) {
@@ -434,7 +452,7 @@ public class ListKoulutusView extends VerticalLayout {
                         }
                     } else {
                         getWindow().removeWindow(createHakukohdeDialog);
-                        presenter.showHakukohdeEditView(koulutusNameViewModelToOidList(selectedKoulutukses), null);
+                        presenter.showHakukohdeEditView(koulutusNameViewModelToOidList(selectedKoulutukses), null,null);
 
                     }
 
@@ -497,5 +515,28 @@ public class ListKoulutusView extends VerticalLayout {
      */
     public void clearAllDataItems() {
         categoryTree.removeAllItems();
+    }
+
+    private static class IntTuple {
+
+        private int valOne;
+        private int valTwo;
+
+
+        public int getValOne() {
+            return valOne;
+        }
+
+        public void setValOne(int valOne) {
+            this.valOne = valOne;
+        }
+
+        public int getValTwo() {
+            return valTwo;
+        }
+
+        public void setValTwo(int valTwo) {
+            this.valTwo = valTwo;
+        }
     }
 }
