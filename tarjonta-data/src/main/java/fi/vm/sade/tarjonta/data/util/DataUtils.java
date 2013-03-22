@@ -1,9 +1,5 @@
 package fi.vm.sade.tarjonta.data.util;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import fi.vm.sade.generic.common.DateHelper;
 import fi.vm.sade.koodisto.service.types.CreateKoodiDataType;
 import fi.vm.sade.koodisto.service.types.CreateKoodistoDataType;
@@ -11,17 +7,19 @@ import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodistoMetadataType;
 import fi.vm.sade.koodisto.service.types.common.TilaType;
-import fi.vm.sade.tarjonta.data.CommonKoodiData;
 import fi.vm.sade.tarjonta.data.dto.Koodi;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public final class DataUtils {
 
     private static final String DATE_PATTERN = "dd.MM.yyyy";
 
-    public static CreateKoodistoDataType createCreateKoodistoDataType(String koodistoUri, String omistaja,
-            String organisaatioOid, Date voimassaAlkuPvm, Date voimassaLoppuPvm, String nimi) {
+    public static CreateKoodistoDataType createCreateKoodistoDataType(String omistaja,
+                                                                      String organisaatioOid, Date voimassaAlkuPvm, Date voimassaLoppuPvm, String nimi) {
         CreateKoodistoDataType type = new CreateKoodistoDataType();
-        type.setKoodistoUri(koodistoUri);
         type.setOmistaja(omistaja);
         type.setOrganisaatioOid(organisaatioOid);
         type.setVoimassaAlkuPvm(voimassaAlkuPvm != null ? DateHelper.DateToXmlCal(voimassaAlkuPvm) : null);
@@ -39,22 +37,23 @@ public final class DataUtils {
     }
 
     public static String createKoodiUriFromName(String koodistoNimi) {
-        koodistoNimi =  koodistoNimi.replaceAll("\\s","");
-        koodistoNimi = koodistoNimi.toUpperCase().replace('Ý', 'Y');
-        koodistoNimi = koodistoNimi.toUpperCase().replaceAll("Ù | Ú | Û | Ü", "U");
-        koodistoNimi = koodistoNimi.toUpperCase().replaceAll("Ò | Ó | Ô | Õ | Ö", "O");
-        koodistoNimi = koodistoNimi.toUpperCase().replaceAll("Ì | Í | Î | Ï", "I");
-        koodistoNimi = koodistoNimi.toUpperCase().replaceAll("È | É | Ê | Ë", "E");
-        koodistoNimi = koodistoNimi.toUpperCase().replace('Ç', 'C');
-        koodistoNimi = koodistoNimi.toUpperCase().replaceAll("À | Á | Â | Ã | Ä | Å | Æ", "A");
-        return koodistoNimi;
+        koodistoNimi = koodistoNimi.toUpperCase().replaceAll("\\s", "");
+        koodistoNimi = koodistoNimi.replace('Ý', 'Y');
+        koodistoNimi = koodistoNimi.replaceAll("Ù | Ú | Û | Ü", "U");
+        koodistoNimi = koodistoNimi.replaceAll("Ò | Ó | Ô | Õ | Ö", "O");
+        koodistoNimi = koodistoNimi.replaceAll("Ì | Í | Î | Ï", "I");
+        koodistoNimi = koodistoNimi.replaceAll("È | É | Ê | Ë", "E");
+        koodistoNimi = koodistoNimi.replace('Ç', 'C');
+        koodistoNimi = koodistoNimi.replaceAll("À | Á | Â | Ã | Ä | Æ", "A");
+        koodistoNimi = koodistoNimi.replaceAll("Å", "O");
+        koodistoNimi = koodistoNimi.replaceAll("_", "");
+        koodistoNimi = koodistoNimi.replaceAll("-", "");
+        return koodistoNimi.toLowerCase();
     }
 
-    public static CreateKoodiDataType createCreateKoodiDataType(Koodi koodiData, TilaType tila) {
+    public static CreateKoodiDataType createCreateKoodiDataType(Koodi koodiData) {
         CreateKoodiDataType koodiDataType = new CreateKoodiDataType();
         koodiDataType.setKoodiArvo(koodiData.getKoodiArvo());
-        koodiDataType.setKoodiUri(createKoodiUriFromName(koodiData.getKoodiNimiFi()));
-        koodiDataType.setTila(tila);
 
         if (koodiData.getKoodiNimiFi() != null) {
             KoodiMetadataType metadataType = new KoodiMetadataType();
@@ -83,7 +82,7 @@ public final class DataUtils {
             koodiDataType.getMetadata().add(metadataType);
         }
         koodiDataType.setVoimassaAlkuPvm(koodiData.getAlkuPvm() != null ? DateHelper.DateToXmlCal(tryGetDate(koodiData.getAlkuPvm())) : DateHelper.DateToXmlCal(new Date()));
-        koodiDataType.setVoimassaLoppuPvm(koodiData.getLoppuPvm() != null ? DateHelper.DateToXmlCal(tryGetDate(koodiData.getLoppuPvm())): null);
+        koodiDataType.setVoimassaLoppuPvm(koodiData.getLoppuPvm() != null ? DateHelper.DateToXmlCal(tryGetDate(koodiData.getLoppuPvm())) : null);
 
         return koodiDataType;
     }
@@ -97,12 +96,10 @@ public final class DataUtils {
         }
     }
 
-    public static CreateKoodiDataType createCreateKoodiDataType(String koodiUri, String koodiArvo, TilaType tila,
-            Date voimassaAlkuPvm, Date voimassaLoppuPvm, String nimi) {
+    public static CreateKoodiDataType createCreateKoodiDataType(String koodiArvo,
+                                                                Date voimassaAlkuPvm, Date voimassaLoppuPvm, String nimi) {
         CreateKoodiDataType koodiDataType = new CreateKoodiDataType();
         koodiDataType.setKoodiArvo(koodiArvo);
-        koodiDataType.setKoodiUri(koodiUri);
-        koodiDataType.setTila(tila);
         koodiDataType.setVoimassaAlkuPvm(voimassaAlkuPvm != null ? DateHelper.DateToXmlCal(voimassaAlkuPvm) : null);
         koodiDataType.setVoimassaLoppuPvm(voimassaLoppuPvm != null ? DateHelper.DateToXmlCal(voimassaLoppuPvm) : null);
         for (KieliType k : KieliType.values()) {

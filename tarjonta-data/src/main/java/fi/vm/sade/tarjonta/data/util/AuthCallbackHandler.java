@@ -17,17 +17,17 @@ package fi.vm.sade.tarjonta.data.util;
  */
 
 
-import java.io.IOException;
+import org.apache.ws.security.WSPasswordCallback;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import org.apache.ws.security.WSPasswordCallback;
+import java.io.IOException;
 
 /**
  *
  */
 public class AuthCallbackHandler implements CallbackHandler {
-
     private String password;
 
     public void setPassword(String password) {
@@ -40,14 +40,8 @@ public class AuthCallbackHandler implements CallbackHandler {
 
     @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-
-
-         WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
-         pc.setPassword(password);
-
+        WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
+        pc.setPassword(password);
     }
-
-
-
 }
 

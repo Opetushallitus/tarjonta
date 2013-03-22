@@ -15,6 +15,8 @@ package fi.vm.sade.tarjonta.data.dto;/*
  * European Union Public Licence for more details.
  */
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author: Tuomas Katva
  * Date: 13.2.2013
@@ -23,7 +25,7 @@ package fi.vm.sade.tarjonta.data.dto;/*
 /*
 * This bean is populated with values from Excel-sheet containing koodisto data
  */
-public class Koodi {
+public class Koodi extends AbstractReadableRow {
 
     private String koodiArvo;
 
@@ -137,5 +139,15 @@ public class Koodi {
 
     public void setLoppuPvm(String loppuPvm) {
         this.loppuPvm = loppuPvm;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return StringUtils.isBlank(koodiArvo) && StringUtils.isBlank(koodiNimiFi)
+                && StringUtils.isBlank(koodiNimiSv) && StringUtils.isBlank(koodiNimiEn)
+                && StringUtils.isBlank(koodiKuvausFi) && StringUtils.isBlank(koodiKuvausSv)
+                && StringUtils.isBlank(koodiKuvausEn) && StringUtils.isBlank(koodiLyhytNimiFi)
+                && StringUtils.isBlank(koodiLyhytNimiSv) && StringUtils.isBlank(koodiLyhytNimiEn)
+                && StringUtils.isBlank(alkuPvm) && StringUtils.isBlank(loppuPvm);
     }
 }

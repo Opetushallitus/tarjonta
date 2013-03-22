@@ -20,31 +20,20 @@ import fi.vm.sade.koodisto.service.KoodiAdminService;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoAdminService;
 import fi.vm.sade.koodisto.service.KoodistoService;
-import fi.vm.sade.koodisto.service.types.CreateKoodiDataType;
-import fi.vm.sade.koodisto.service.types.CreateKoodistoDataType;
-import fi.vm.sade.koodisto.service.types.SearchKoodistosCriteriaType;
-import fi.vm.sade.koodisto.service.types.UpdateKoodistoDataType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
-import fi.vm.sade.koodisto.service.types.common.KoodistoType;
-import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
-import fi.vm.sade.koodisto.service.types.common.TilaType;
+import fi.vm.sade.koodisto.service.types.*;
+import fi.vm.sade.koodisto.service.types.common.*;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoServiceSearchCriteriaBuilder;
-import fi.vm.sade.tarjonta.data.CommonKoodiData;
 import fi.vm.sade.tarjonta.data.dto.Koodi;
 import fi.vm.sade.tarjonta.data.dto.KoodiRelaatio;
-import java.util.ArrayList;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author: Tuomas Katva Date: 14.2.2013
@@ -60,6 +49,7 @@ public class TarjontaDataKoodistoHelper {
     private KoodiService koodiService;
     @Autowired
     private KoodistoService koodistoService;
+
     private static final Date ACTIVATED_DATE = new DateTime(2013, 1, 1, 1, 1).toDate();
     private String organisaatioNimi;
     private String organisaatioOid;
@@ -74,53 +64,89 @@ public class TarjontaDataKoodistoHelper {
     }
 
     public KoodiType addCodeItem(Koodi koodiData, String koodistoUri) {
-        CreateKoodiDataType createKoodiDataType = DataUtils.createCreateKoodiDataType(koodiData, TilaType.HYVAKSYTTY);
+        CreateKoodiDataType createKoodiDataType = DataUtils.createCreateKoodiDataType(koodiData);
         KoodiType createdKoodi = null;
         try {
             createdKoodi = koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);
+
+            // TODO update tila to HYVAKSYTTY
+            final KoodiType updated = koodiAdminService.updateKoodi(getUpdateKoodiType(createdKoodi));
         } catch (Exception exp) {
-            log.warn("Unable to create koodi : with arvo : {}", createKoodiDataType.getKoodiUri(), createKoodiDataType.getKoodiArvo());
-            log.warn("Exception : {}", exp.getMessage());
-            log.warn("Trying to create with another NimiFi");
+            log.warn("Unable to create koodi with arvo [{}], exception [{}], trying to re-create with another nimi", createKoodiDataType.getKoodiArvo(), exp.getMessage());
             //TODO: remove when Koodisto Team has managed to get this working
             try {
-                koodiData.setKoodiNimiFi(koodiData.getKoodiNimiFi() + "_");
-                createKoodiDataType = DataUtils.createCreateKoodiDataType(koodiData, TilaType.HYVAKSYTTY);
+                koodiData.setKoodiNimiFi(String.format("%s (%s)", koodiData.getKoodiNimiFi(), koodiData.getKoodiArvo()));
+                if (StringUtils.isNotBlank(koodiData.getKoodiNimiSv())) {
+                    koodiData.setKoodiNimiSv(String.format("%s (%s)", koodiData.getKoodiNimiSv(), koodiData.getKoodiArvo()));
+                }
+                if (StringUtils.isNotBlank(koodiData.getKoodiNimiEn())) {
+                    koodiData.setKoodiNimiEn(String.format("%s (%s)", koodiData.getKoodiNimiEn(), koodiData.getKoodiArvo()));
+                }
+                createKoodiDataType = DataUtils.createCreateKoodiDataType(koodiData);
                 createdKoodi = koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);
-            }  catch (Exception exx) {
-                log.warn("Unable to create koodi : with new arvo : {}", createKoodiDataType.getKoodiUri(), createKoodiDataType.getKoodiArvo());
-                log.warn("Exception : {}", exx.getMessage());
+
+                // TODO update tila to HYVAKSYTTY
+                final KoodiType updated = koodiAdminService.updateKoodi(getUpdateKoodiType(createdKoodi));
+            } catch (Exception exx) {
+                // gotta throw up
+                throw new RuntimeException(String.format("Failed to re-create koodi with new arvo [%s], exception [%s]", createKoodiDataType.getKoodiArvo(), exx.getMessage()));
             }
 
         }
         return createdKoodi;
     }
 
-    public KoodiType addCodeItem(String koodistoUri, String koodiUri, String arvo, String name) {
-        CreateKoodiDataType createKoodiDataType = DataUtils.createCreateKoodiDataType(koodiUri,
-                arvo, TilaType.HYVAKSYTTY, ACTIVATED_DATE, null, name);
-        KoodiType createdKoodi = null;
-        try {
-            createdKoodi = koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);
-        } catch (Exception exp) {
-            log.warn("Unable to create koodi : with arvo : {}", createKoodiDataType.getKoodiUri(), createKoodiDataType.getKoodiArvo());
-        }
-        return createdKoodi;
+    /**
+     * Converts KoodiType to UpdateKoodiDataType with tila as HYVAKSYTTY.
+     *
+     * @param koodi
+     * @return
+     */
+    private UpdateKoodiDataType getUpdateKoodiType(final KoodiType koodi) {
+        final UpdateKoodiDataType updateType = new UpdateKoodiDataType();
+        updateType.setKoodiArvo(koodi.getKoodiArvo());
+        updateType.setKoodiUri(koodi.getKoodiUri());
+        updateType.setTila(TilaType.HYVAKSYTTY);
+        updateType.setVoimassaAlkuPvm(koodi.getVoimassaAlkuPvm());
+        updateType.setVoimassaLoppuPvm(koodi.getVoimassaLoppuPvm());
+        updateType.getMetadata().addAll(koodi.getMetadata());
+        return updateType;
     }
 
     public CreateKoodistoDataType addCodeGroup(List<String> baseUri, String koodistoUri, String name) {
-        log.info("Creating koodisto with uri: {} and base uri : {}", koodistoUri, baseUri.get(0));
+        log.info("Creating koodisto with uri [{}] and base uri [{}]", koodistoUri, baseUri.get(0));
         CreateKoodistoDataType createKoodistoDataType = DataUtils.createCreateKoodistoDataType(
-                koodistoUri, getOrganisaatioNimi(), getOrganisaatioOid(), ACTIVATED_DATE, null,
+                getOrganisaatioNimi(), getOrganisaatioOid(), ACTIVATED_DATE, null,
                 name);
-        koodistoAdminService.createKoodisto(baseUri, createKoodistoDataType);
+        final KoodistoType createdKoodisto = koodistoAdminService.createKoodisto(baseUri, createKoodistoDataType);
+
+        // update tila to HYVAKSYTTY
+        final KoodistoType updatedKoodisto = koodistoAdminService.updateKoodisto(getUpdateKoodistoType(createdKoodisto));
 
         return createKoodistoDataType;
     }
 
+    /**
+     * Converts KoodistoType to UpdateKoodistoDataType with tila as HYVAKSYTTY.
+     *
+     * @param koodisto
+     * @return
+     */
+    private UpdateKoodistoDataType getUpdateKoodistoType(final KoodistoType koodisto) {
+        final UpdateKoodistoDataType updateType = new UpdateKoodistoDataType();
+        updateType.setKoodistoUri(koodisto.getKoodistoUri());
+        updateType.setLukittu(koodisto.isLukittu());
+        updateType.setOmistaja(koodisto.getOmistaja());
+        updateType.setOrganisaatioOid(koodisto.getOrganisaatioOid());
+        updateType.setTila(TilaType.HYVAKSYTTY);
+        updateType.setVoimassaAlkuPvm(koodisto.getVoimassaAlkuPvm());
+        updateType.setVoimassaLoppuPvm(koodisto.getVoimassaLoppuPvm());
+        updateType.getMetadataList().addAll(koodisto.getMetadataList());
+        return updateType;
+    }
+
     public boolean removeKoodisto(String koodistoUri, String orgOid) {
-        log.info("Removing koodisto with uri : {}", koodistoUri);
-        log.info("Org oid : {}",orgOid);
+        log.info("Removing koodisto with uri [{}], orgOid [{}]", koodistoUri, orgOid);
         try {
             KoodistoType koodisto = getKoodistoByUri(koodistoUri);
             UpdateKoodistoDataType update = new UpdateKoodistoDataType();
@@ -128,18 +154,18 @@ public class TarjontaDataKoodistoHelper {
             update.setTila(TilaType.PASSIIVINEN);
             update.setOmistaja(koodisto.getOmistaja());
             if (orgOid != null) {
-            update.setOrganisaatioOid(orgOid);
+                update.setOrganisaatioOid(orgOid);
             }
             update.getMetadataList().addAll(koodisto.getMetadataList());
             update.setVoimassaAlkuPvm(koodisto.getVoimassaAlkuPvm());
             update.setVoimassaLoppuPvm(koodisto.getVoimassaLoppuPvm());
 
             koodistoAdminService.updateKoodisto(update);
-            koodistoAdminService.deleteKoodistoVersion(koodistoUri,koodisto.getVersio());
+            koodistoAdminService.deleteKoodistoVersion(koodistoUri, koodisto.getVersio());
             return true;
-        }  catch (Exception exp) {
+        } catch (Exception exp) {
             exp.printStackTrace();
-            log.warn("Unable to remove koodisto : {}, exception : {}",koodistoUri,exp.toString());
+            log.warn("Unable to remove koodisto [{}], exception [{}]", koodistoUri, exp.toString());
             return false;
         }
     }
@@ -196,16 +222,11 @@ public class TarjontaDataKoodistoHelper {
     }
 
     public HashMap<String, KoodiType> loadKoodisToKoodisto(Set<Koodi> koodis, String koodistoName) {
-        HashMap<String, KoodiType> koodiUriArvoPair = new HashMap<String, KoodiType>();
+        final HashMap<String, KoodiType> koodiUriArvoPair = new HashMap<String, KoodiType>();
 
-        for (Koodi koodi : koodis) {
-            final String koodiUri = koodistoName + "/" + koodi.getKoodiArvo();
-            // KoodiType koodiType = koodistoHelper.addCodeItem(koodistoName, koodiUri, koodi.getKoodiArvo(), koodi.getKoodiNimiFi());
-            KoodiType koodiType = addCodeItem(koodi, DataUtils.createKoodiUriFromName(koodistoName));
-            //koodiUriArvoPair.put(koodi.getKoodiArvo(),koodiType);
-
+        for (final Koodi koodi : koodis) {
+            addCodeItem(koodi, DataUtils.createKoodiUriFromName(koodistoName));
         }
-
 
         return koodiUriArvoPair;
     }
@@ -220,10 +241,10 @@ public class TarjontaDataKoodistoHelper {
         List<KoodiUriAndVersioType> alakoodis = new ArrayList<KoodiUriAndVersioType>();
         alakoodis.add(createKoodiUriVersio(koodiRelaatio.getKoodiAlaArvo(), koodiRelaatio.getAlaArvoKoodisto()));
         try {
-            log.info("Trying to create relation with yla-arvo : {} and ala-arvo : {}", koodiRelaatio.getKoodiYlaArvo(), koodiRelaatio.getKoodiAlaArvo());
+            log.info("Trying to create relation with yla-arvo [{}], ala-arvo [{}]", koodiRelaatio.getKoodiYlaArvo(), koodiRelaatio.getKoodiAlaArvo());
             koodiAdminService.addRelationByAlakoodi(createKoodiUriVersio(koodiRelaatio.getKoodiYlaArvo(), koodiRelaatio.getYlaArvoKoodisto()), alakoodis, SuhteenTyyppiType.SISALTYY);
         } catch (Exception exp) {
-            log.warn("Unable to create relation with arvos : {} exception : {}", koodiRelaatio.getKoodiYlaArvo() + " " + koodiRelaatio.getKoodiAlaArvo(), exp.toString());
+            log.error("Unable to create relation with arvos [{}], exception [{}]", koodiRelaatio.getKoodiYlaArvo() + ", " + koodiRelaatio.getKoodiAlaArvo(), exp.toString());
         }
     }
 
@@ -235,6 +256,16 @@ public class TarjontaDataKoodistoHelper {
             return createKoodiUriAndVersioType(koodiTypes.get(0));
         } else {
             return new KoodiUriAndVersioType();
+        }
+    }
+
+    public void addRelationByAlakoodi(final KoodiUriAndVersioType ylaKoodi, final List<KoodiUriAndVersioType> alaKoodis,
+                                      final SuhteenTyyppiType suhteenTyyppi) {
+        try {
+            log.info("Trying to create relation with yla-arvo [{}], ala-arvo [{}]", ylaKoodi.getKoodiUri(), alaKoodis);
+            koodiAdminService.addRelationByAlakoodi(ylaKoodi, alaKoodis, suhteenTyyppi);
+        } catch (Exception exp) {
+            log.warn("Unable to create relation, exception [{}]", exp.toString());
         }
     }
 }

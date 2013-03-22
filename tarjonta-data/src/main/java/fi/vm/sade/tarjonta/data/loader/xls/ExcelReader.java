@@ -15,28 +15,25 @@
  */
 package fi.vm.sade.tarjonta.data.loader.xls;
 
+import fi.vm.sade.tarjonta.data.dto.AbstractReadableRow;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
-import org.apache.commons.beanutils.BeanUtils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- *
  * @author jani
  */
-public class ExcelReader<T extends Object> {
+public class ExcelReader<T extends AbstractReadableRow> {
 
     private static Logger log = LoggerFactory.getLogger(ExcelReader.class);
     private int maxReadRows = 100;
@@ -126,14 +123,14 @@ public class ExcelReader<T extends Object> {
 
                     if (cellValue == null || cellValue.isEmpty() || cellValue.trim().length() < 1) {
                         if (verbose) {
-                            log.debug("Missing data column " + i);
+                            log.debug("Missing data column {} {}", rowNumber, i);
                         }
                         continue;
                     }
 
                     if (columns[i].getKey() == null) {
                         if (verbose) {
-                            log.debug("Skip column " + i);
+                            log.debug("Skip column {} {}", rowNumber, i);
                         }
                         continue;
                     }
@@ -161,7 +158,7 @@ public class ExcelReader<T extends Object> {
                 }
             }
 
-            if (!stop) {
+            if (!stop && !dto.isEmpty()) {
                 list.add(dto);
             }
         }
@@ -174,7 +171,7 @@ public class ExcelReader<T extends Object> {
             return null;
         }
         try {
-        if (HSSFDateUtil.isCellDateFormatted(cell)) {
+            if (HSSFDateUtil.isCellDateFormatted(cell)) {
 
                 Date cellDate = cell.getDateCellValue();
 
@@ -182,12 +179,11 @@ public class ExcelReader<T extends Object> {
                 return smp.format(cellDate);
 
 
-
-        }  else {
-        cell.setCellType(Cell.CELL_TYPE_STRING);
-        return cell.getStringCellValue();
-        }
-        }  catch (Exception exp) {
+            } else {
+                cell.setCellType(Cell.CELL_TYPE_STRING);
+                return cell.getStringCellValue();
+            }
+        } catch (Exception exp) {
             cell.setCellType(Cell.CELL_TYPE_STRING);
             return cell.getStringCellValue();
         }

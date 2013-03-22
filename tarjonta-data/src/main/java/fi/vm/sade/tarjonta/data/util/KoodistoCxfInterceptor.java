@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.data.util;
  * European Union Public Licence for more details.
  */
 
-import org.apache.cxf.attachment.AttachmentDeserializer;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
@@ -47,13 +46,11 @@ public class KoodistoCxfInterceptor extends AbstractPhaseInterceptor<Message> {
 
         Map<String, List> headers = (Map<String, List>) message.get(Message.PROTOCOL_HEADERS);
         try {
-            log.info("SETTING HTTP HEADERS");
             headers.put("CasSecurityTicket", Collections.singletonList("oldDeprecatedSecurity_REMOVE"));
-            headers.put("oldDeprecatedSecurity_REMOVE_username",Collections.singletonList("admin@oph.fi"));
-            headers.put("oldDeprecatedSecurity_REMOVE_authorities",Collections.singletonList("ROLE_APP_KOODISTO_CRUD,ROLE_APP_KOODISTO_CRUD_1.2.246.562.10.10108401950"));
-
+            headers.put("oldDeprecatedSecurity_REMOVE_username", Collections.singletonList("admin@oph.fi"));
+            headers.put("oldDeprecatedSecurity_REMOVE_authorities", Collections.singletonList("ROLE_APP_KOODISTO_CRUD,ROLE_APP_KOODISTO_CRUD_1.2.246.562.10.00000000001"));
         } catch (Exception exp) {
-             log.warn("UNABLE TO SET HTTP HEADERS!");
+            log.warn("UNABLE TO SET HTTP HEADERS!");
         }
 
     }

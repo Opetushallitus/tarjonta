@@ -13,7 +13,7 @@ public class CommonConstants {
 
     private String baseGroupUri;
 
-    public CommonConstants(String orgOid,String orgName,String baseUri) {
+    public CommonConstants(String orgOid, String orgName, String baseUri) {
         this.organisaatioNimi = orgName;
         this.organisaatioOid = orgOid;
         this.baseGroupUri = baseUri;

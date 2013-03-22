@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.data.loader.xls;
 
 /**
- *
  * @author Jani Wilén
  */
 public class Column {

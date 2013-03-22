@@ -15,15 +15,14 @@
  */
 package fi.vm.sade.tarjonta.data.dto;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
- *
  * @author Jani Wilén
  */
-public class YhteishakuKooditDTO {
+public class YhteishakuKooditDTO extends AbstractReadableRow {
 
     private String koulutusohjelmanKoodiarvo;
     private String tutkintonimike;
@@ -102,6 +101,7 @@ public class YhteishakuKooditDTO {
     public void setKoulutuskoodi(String koulutuskoodi) {
         this.koulutuskoodi = koulutuskoodi;
     }
+
     //Toisen_asteen_tutkinnot/321101
     private static final String SEPARATOR = "/";
     private static final String VERSION = "#1";
@@ -154,5 +154,13 @@ public class YhteishakuKooditDTO {
      */
     public void setHakukohteenNimi(String hakukohteenNimi) {
         this.hakukohteenNimi = hakukohteenNimi;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return StringUtils.isBlank(koulutusohjelmanKoodiarvo) && StringUtils.isBlank(tutkintonimike)
+                && StringUtils.isBlank(tutkintonimikkeenKoodiarvo) && StringUtils.isBlank(tutkinnonNimi)
+                && StringUtils.isBlank(koulutuskoodi) && StringUtils.isBlank(hakukohdeKoodiArvo)
+                && StringUtils.isBlank(hakukohteenNimi);
     }
 }

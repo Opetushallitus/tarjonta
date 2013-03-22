@@ -19,13 +19,14 @@ import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.data.dto.KoodiRelaatio;
 import fi.vm.sade.tarjonta.data.util.CommonConstants;
 import fi.vm.sade.tarjonta.data.util.TarjontaDataKoodistoHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Create Valintaperustekuvaus demo data to Koodisto service.

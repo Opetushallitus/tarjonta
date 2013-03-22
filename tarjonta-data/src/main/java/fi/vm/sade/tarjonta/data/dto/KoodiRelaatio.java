@@ -15,11 +15,13 @@ package fi.vm.sade.tarjonta.data.dto;/*
  * European Union Public Licence for more details.
  */
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author: Tuomas Katva
  * Date: 13.2.2013
  */
-public class KoodiRelaatio {
+public class KoodiRelaatio extends AbstractReadableRow {
 
     private String ylaArvoKoodisto;
 
@@ -59,5 +61,11 @@ public class KoodiRelaatio {
 
     public void setAlaArvoKoodisto(String alaArvoKoodisto) {
         this.alaArvoKoodisto = alaArvoKoodisto;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return StringUtils.isBlank(ylaArvoKoodisto) && StringUtils.isBlank(alaArvoKoodisto)
+                && StringUtils.isBlank(koodiYlaArvo) && StringUtils.isBlank(koodiAlaArvo);
     }
 }

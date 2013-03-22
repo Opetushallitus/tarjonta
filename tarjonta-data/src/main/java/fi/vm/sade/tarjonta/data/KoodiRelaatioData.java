@@ -16,7 +16,6 @@ package fi.vm.sade.tarjonta.data;/*
  */
 
 import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.tarjonta.data.dto.Koodi;
 import fi.vm.sade.tarjonta.data.dto.KoodiRelaatio;
 import fi.vm.sade.tarjonta.data.loader.xls.Column;
 import fi.vm.sade.tarjonta.data.loader.xls.ExcelReader;
@@ -25,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Set;
 
 /**
@@ -40,23 +38,18 @@ public class KoodiRelaatioData {
     private Set<KoodiRelaatio> koodiRelaatios;
 
     public static final Column[] COMMON_KOODI_RELATIONS = {
-        new Column("koodiYlaArvo","YLA_KOODI_ARVO", InputColumnType.STRING),
-        new Column("koodiAlaArvo","ALA_KOODI_ARVO",InputColumnType.STRING)
+            new Column("koodiYlaArvo", "YLA_KOODI_ARVO", InputColumnType.STRING),
+            new Column("koodiAlaArvo", "ALA_KOODI_ARVO", InputColumnType.STRING)
     };
 
     public KoodiRelaatioData(String filepath) throws IOException, ExceptionMessage {
         fileUri = filepath;
         if (fileUri != null && fileUri.length() > 1) {
-//            final URL koodisFileURL = this.getClass().getResource(fileUri);
-
             final ExcelReader<KoodiRelaatio> koodiReader = new ExcelReader<KoodiRelaatio>(KoodiRelaatio.class, COMMON_KOODI_RELATIONS, Integer.MAX_VALUE);
-            koodiRelaatios = koodiReader.read(fileUri,true);
-
-
+            koodiRelaatios = koodiReader.read(fileUri, true);
         } else {
             log.error("Invalid file path : {}", fileUri);
         }
-
     }
 
     public Set<KoodiRelaatio> getKoodiRelaatios() {

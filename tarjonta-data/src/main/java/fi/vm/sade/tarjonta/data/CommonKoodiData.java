@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Set;
 
 /**
@@ -39,39 +38,31 @@ public class CommonKoodiData {
     private Set<Koodi> loadedKoodis;
 
     public static final Column[] COMMON_KOODI_COLUMNS = {
-        new Column("koodiArvo","KOODIARVO", InputColumnType.STRING),
-        new Column("koodiNimiFi","NIMI_FI",InputColumnType.STRING),
-        new Column("koodiNimiSv","NIMI_SV",InputColumnType.STRING),
-        new Column("koodiNimiEn","NIMI_EN",InputColumnType.STRING),
-        new Column("koodiKuvausFi","KUVAUS_FI",InputColumnType.STRING),
-        new Column("koodiLyhytNimiFi","LYHYTNIMI_FI",InputColumnType.STRING),
-        new Column("koodiKuvausSv","KUVAUS_SV",InputColumnType.STRING),
-        new Column("koodiLyhytNimiSv","LYHYTNIMI_SV",InputColumnType.STRING),
-        new Column("koodiKuvausEn","KUVAUS_EN",InputColumnType.STRING),
-        new Column("koodiLyhytNimiEn","LYHYTNIMI_EN",InputColumnType.STRING),
-        new Column("alkuPvm","ALKUPVM",InputColumnType.STRING),
-        new Column("loppuPvm","LOPPUPVM",InputColumnType.STRING)
+            new Column("koodiArvo", "KOODIARVO", InputColumnType.STRING),
+            new Column("koodiNimiFi", "NIMI_FI", InputColumnType.STRING),
+            new Column("koodiNimiSv", "NIMI_SV", InputColumnType.STRING),
+            new Column("koodiNimiEn", "NIMI_EN", InputColumnType.STRING),
+            new Column("koodiKuvausFi", "KUVAUS_FI", InputColumnType.STRING),
+            new Column("koodiLyhytNimiFi", "LYHYTNIMI_FI", InputColumnType.STRING),
+            new Column("koodiKuvausSv", "KUVAUS_SV", InputColumnType.STRING),
+            new Column("koodiLyhytNimiSv", "LYHYTNIMI_SV", InputColumnType.STRING),
+            new Column("koodiKuvausEn", "KUVAUS_EN", InputColumnType.STRING),
+            new Column("koodiLyhytNimiEn", "LYHYTNIMI_EN", InputColumnType.STRING),
+            new Column("alkuPvm", "ALKUPVM", InputColumnType.STRING),
+            new Column("loppuPvm", "LOPPUPVM", InputColumnType.STRING)
     };
 
     public CommonKoodiData(String filepath) throws IOException, ExceptionMessage {
         fileUri = filepath;
         if (fileUri != null && fileUri.length() > 1) {
-            try {
-            //final URL koodisFileURL = this.getClass().getResource(fileUri);
             final ExcelReader<Koodi> koodiReader = new ExcelReader<Koodi>(Koodi.class, COMMON_KOODI_COLUMNS, Integer.MAX_VALUE);
-
-            loadedKoodis = koodiReader.read(fileUri,true);
-            } catch (Exception exp) {
-                exp.printStackTrace();
-                log.error("EXCEPTION READING KOODISTO DATA, file path : {} Exception : {}" ,fileUri , exp.toString() );
-            }
-
+            loadedKoodis = koodiReader.read(fileUri, true);
         } else {
             log.error("Invalid file path : {}", fileUri);
         }
     }
 
-    public Set<Koodi> getLoadedKoodis()  {
+    public Set<Koodi> getLoadedKoodis() {
         return loadedKoodis;
     }
 
