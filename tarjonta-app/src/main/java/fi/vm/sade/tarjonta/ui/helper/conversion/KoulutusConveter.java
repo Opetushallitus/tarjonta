@@ -168,25 +168,6 @@ public class KoulutusConveter {
         }
     }
 
-    /*
-     *
-     *
-     * Static helper methods:
-     *
-     *
-     */
-    private static void addToWebLinkkiTyyppiList(final Collection<KoulutusLinkkiViewModel> model, List<WebLinkkiTyyppi> listTyyppi) throws ExceptionMessage {
-        if (listTyyppi == null) {
-            throw new RuntimeException(INVALID_DATA + "list of WebLinkkiTyyppi objects cannot be null.");
-        }
-
-        if (model != null && !model.isEmpty()) {
-            for (KoulutusLinkkiViewModel linkkiModel : model) {
-                listTyyppi.add(mapToWebLinkkiTyyppiDto(linkkiModel));
-            }
-        }
-    }
-
     public static KoulutusLinkkiViewModel mapToKoulutusLinkkiViewModel(WebLinkkiTyyppi type) {
         KoulutusLinkkiViewModel koulutusLinkkiViewModel = new KoulutusLinkkiViewModel();
         koulutusLinkkiViewModel.setKieli(type.getKieli());
@@ -251,14 +232,6 @@ public class KoulutusConveter {
             }
         }
         return yhteyshenkiloModel;
-    }
-
-    private static void addToKoulutusYhteyshenkiloViewModel(List<YhteyshenkiloTyyppi> yhteyshenkilo, Collection<KoulutusYhteyshenkiloViewModel> yhteistietoModel) {
-        if (yhteyshenkilo != null && !yhteyshenkilo.isEmpty()) {
-            for (YhteyshenkiloTyyppi type : yhteyshenkilo) {
-                yhteistietoModel.add(mapToKoulutusYhteyshenkiloViewModel(type));
-            }
-        }
     }
 
     public KoulutuskoodiModel mapToKoulutuskoodiModel(final KoodistoKoodiTyyppi koulutusKoodi, final Locale locale) {
@@ -529,17 +502,6 @@ public class KoulutusConveter {
 
         m.setKielikaannos(mapToKoodiModel(tyyppi));
         return m;
-    }
-
-    public static Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> fullKomoCacheMap(Collection<KoulutusmoduuliKoosteTyyppi> komos) {
-        Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> hashMap = new HashMap<Map.Entry, KoulutusmoduuliKoosteTyyppi>();
-
-        for (KoulutusmoduuliKoosteTyyppi komo : komos) {
-            Map.Entry e = new AbstractMap.SimpleEntry<String, String>(komo.getKoulutuskoodiUri(), komo.getKoulutusohjelmakoodiUri());
-            hashMap.put(e, komo);
-        }
-
-        return hashMap;
     }
 
     public static Map<String, List<KoulutusmoduuliKoosteTyyppi>> komoCacheMapByKoulutuskoodi(Collection<KoulutusmoduuliKoosteTyyppi> komos) {

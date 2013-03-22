@@ -78,20 +78,20 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
     private transient UiBuilder uiBuilder;
     private YhteyshenkiloViewForm yhteistieto;
     private BeanItemContainer<KoulutuskoodiModel> bicKoulutuskoodi;
-    private BeanItemContainer<LukiolinjaModel> bicLukiolaji;
+    private BeanItemContainer<LukiolinjaModel> bicLukiolinjas;
 
     /*
      * Koodisto code (url).
      */
     @NotNull(message = "{validation.Koulutus.koulutus.notNull}")
-    @PropertyId("koulutuskoodiModel")
+    @PropertyId("koulutuskoodiModel") //KoulutusRelaatioModel.koulutuskoodiModel
     private ComboBox cbKoulutusTaiTutkinto;
     /*
      * Koodisto code (url).
      */
-    @NotNull(message = "{validation.Koulutus.koulutusohjelma.notNull}")
-    @PropertyId("koulutusohjelmaModel")
-    private ComboBox cbLukiolaji;
+    @NotNull(message = "{validation.Koulutus.lukiolinja.notNull}")
+    @PropertyId("lukiolinja") //KoulutusLukioPerustiedotViewModel.lukiolinja
+    private ComboBox cbLukiolinja;
     /*
      * Language, multiple languages are accepted, only single in lukio.
      */
@@ -157,8 +157,8 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         bicKoulutuskoodi = new BeanItemContainer<KoulutuskoodiModel>(KoulutuskoodiModel.class, model.getKoulutuskoodis());
         cbKoulutusTaiTutkinto.setContainerDataSource(bicKoulutuskoodi);
 
-        bicLukiolaji = new BeanItemContainer<LukiolinjaModel>(LukiolinjaModel.class, model.getLukiolinjas());
-        cbLukiolaji.setContainerDataSource(bicLukiolaji);
+        bicLukiolinjas = new BeanItemContainer<LukiolinjaModel>(LukiolinjaModel.class, model.getLukiolinjas());
+        cbLukiolinja.setContainerDataSource(bicLukiolinjas);
 
         if (!model.isLoaded()) {
             //when data is loaded, it do not need listeners.
@@ -169,23 +169,23 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
                 @Override
                 public void valueChange(Property.ValueChangeEvent event) {
                     LOG.debug("Koulutuskoodi event.");
-                    if (cbLukiolaji.getVisibleItemIds() != null && !cbLukiolaji.getVisibleItemIds().isEmpty()) {
+                    if (cbLukiolinja.getVisibleItemIds() != null && !cbLukiolinja.getVisibleItemIds().isEmpty()) {
                         //clear result data.
-                        cbLukiolaji.removeAllItems();
+                        cbLukiolinja.removeAllItems();
                         clearKomoLabels();
                     }
-                    presenter.getLukioPresenter().loadLukiolajis();
-                    bicLukiolaji.addAll(model.getLukiolinjas());
+                    presenter.getLukioPresenter().loadLukiolinjas();
+                    bicLukiolinjas.addAll(model.getLukiolinjas());
                     disableOrEnableComponents(true);
                 }
             });
 
-            cbLukiolaji.addListener(new Property.ValueChangeListener() {
+            cbLukiolinja.addListener(new Property.ValueChangeListener() {
                 private static final long serialVersionUID = -382717228031608542L;
 
                 @Override
                 public void valueChange(Property.ValueChangeEvent event) {
-                    presenter.loadSelectedKomoData();
+                    presenter.getLukioPresenter().loadSelectedKomoData();
                     reload();
                 }
             });
@@ -274,16 +274,16 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
     private void buildGridKoulutusohjelmaRow(GridLayout grid, final String propertyKey) {
         gridLabel(grid, propertyKey);
 
-        cbLukiolaji = new ComboBox();
-        cbLukiolaji.setInputPrompt(T(propertyKey + PROPERTY_PROMPT_SUFFIX));
-        cbLukiolaji.setEnabled(false);
-        cbLukiolaji.setWidth(300, UNITS_PIXELS);
-        cbLukiolaji.setNullSelectionAllowed(false);
-        cbLukiolaji.setImmediate(true);
-        cbLukiolaji.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
-        cbLukiolaji.setItemCaptionPropertyId(MODEL_NAME_PROPERY);
-        cbLukiolaji.setReadOnly(model.isLoaded());
-        grid.addComponent(cbLukiolaji);
+        cbLukiolinja = new ComboBox();
+        cbLukiolinja.setInputPrompt(T(propertyKey + PROPERTY_PROMPT_SUFFIX));
+        cbLukiolinja.setEnabled(false);
+        cbLukiolinja.setWidth(300, UNITS_PIXELS);
+        cbLukiolinja.setNullSelectionAllowed(false);
+        cbLukiolinja.setImmediate(true);
+        cbLukiolinja.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
+        cbLukiolinja.setItemCaptionPropertyId(MODEL_NAME_PROPERY);
+        cbLukiolinja.setReadOnly(model.isLoaded());
+        grid.addComponent(cbLukiolinja);
         grid.newLine();
 
         buildSpacingGridRow(grid);
@@ -407,7 +407,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
 
     private void disableOrEnableComponents(boolean active) {
         kcOpetuskieli.setEnabled(active);
-        cbLukiolaji.setEnabled(active);
+        cbLukiolinja.setEnabled(active);
         dfKoulutuksenAlkamisPvm.setEnabled(active);
         tfSuunniteltuKesto.setEnabled(active);
         kcSuunniteltuKestoTyyppi.setEnabled(active);
@@ -465,7 +465,6 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
             tavoitteet.setPropertyDataSource(new NestedMethodProperty(model.getTavoitteet(), MODEL_NAME_PROPERY));
         }
 
-
         if (koulutuskoodi.getJatkoopintomahdollisuudet() != null) {
             model.setJatkoopintomahdollisuudet(koulutuskoodi.getJatkoopintomahdollisuudet());
             jatkoopintomahdollisuudet.setPropertyDataSource(new NestedMethodProperty(model.getJatkoopintomahdollisuudet(), MODEL_NAME_PROPERY));
@@ -521,7 +520,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
     @Override
     public void attach() {
         super.attach();
-        
+
         yhteistieto.initialize();
     }
 }

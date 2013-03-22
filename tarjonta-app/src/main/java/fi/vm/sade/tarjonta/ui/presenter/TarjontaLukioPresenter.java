@@ -21,12 +21,8 @@ import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
-import fi.vm.sade.tarjonta.ui.helper.conversion.Koulutus2asteConverter;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
@@ -35,15 +31,12 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusPerustiedotVi
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusView;
 
 import java.util.Collection;
-import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitKyselyTyyppi;
@@ -55,9 +48,9 @@ import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarkistaKoulutusKopiointiTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,46 +88,64 @@ public class TarjontaLukioPresenter {
     public TarjontaLukioPresenter() {
     }
 
-    public void loadLukiolajis() {
-        LOG.debug("in loadLukiolajis");
+    public void loadLukiolinjas() {
+        LOG.debug("in loadLukiolinjas");
+        KoulutusLukioPerustiedotViewModel perustiedot = getPerustiedotModel();
+        KoulutuskoodiModel koulutuskoodiModel = getPerustiedotModel().getKoulutuskoodiModel();
 
-        getPerustiedotModel().getLukiolinjas().clear();
+        //Select 'lukiolinja' from pre-filtered koodisto data.
 
-        LukiolinjaModel l = new LukiolinjaModel();
-        l.setKielikoodi("fi");
-        l.setKoodistoUri("uri");
-        l.setKoodistoVersio(1);
-        l.setKuvaus("LukiolajiModel");
-        l.setNimi("LukiolajiModel");
-        l.getKielikaannos().add(new KielikaannosViewModel("fi", "laji " + new Date()));
-        getPerustiedotModel().getLukiolinjas().add(l);
+        if (koulutuskoodiModel != null && koulutuskoodiModel.getKoodi() != null) {
+            getPerustiedotModel().getLukiolinjas().clear();
+            LOG.debug("Lukiolinjas list size : {}.", perustiedot.getKoulutuskoodiModel().getKoodistoUriVersio());
+            List<KoulutusmoduuliKoosteTyyppi> tyyppis = perustiedot.getQuickKomosByKoulutuskoodiUri(perustiedot.getKoulutuskoodiModel().getKoodistoUriVersio());
+
+            final List<LukiolinjaModel> lukiolinjas = kolutusKoodistoConverter.listaaLukiolinjas(tyyppis, I18N.getLocale());
+            LOG.debug("Lukiolinjas list size : {}.", lukiolinjas);
+            Collections.sort(lukiolinjas, new BeanComparator("nimi"));
+            perustiedot.getLukiolinjas().addAll(lukiolinjas);
+        } else {
+            LOG.debug("No lukiolinja selected.");
+        }
     }
 
     public void loadKoulutuskoodis() {
+        LOG.debug("in loadKoulutuskoodis");
         HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
         kysely.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
-        HaeKaikkiKoulutusmoduulitVastausTyyppi allKomos = tarjontaPublicService.haeKaikkiKoulutusmoduulit(kysely);
-        List<KoulutusmoduuliTulos> koulutusmoduuliTulos = allKomos.getKoulutusmoduuliTulos();
+        HaeKaikkiKoulutusmoduulitVastausTyyppi allKomoParents = tarjontaPublicService.haeKaikkiKoulutusmoduulit(kysely);
+        List<KoulutusmoduuliTulos> resultKomos = allKomoParents.getKoulutusmoduuliTulos();
 
         Set<String> uris = new HashSet<String>();
         List<KoulutusmoduuliKoosteTyyppi> komos = new ArrayList<KoulutusmoduuliKoosteTyyppi>();
 
-        for (KoulutusmoduuliTulos tulos : koulutusmoduuliTulos) {
-            komos.add(tulos.getKoulutusmoduuli());
-            uris.add(tulos.getKoulutusmoduuli().getKoulutuskoodiUri());
+        for (KoulutusmoduuliTulos komoParents : resultKomos) {
+            komos.add(komoParents.getKoulutusmoduuli());
+            uris.add(komoParents.getKoulutusmoduuli().getKoulutuskoodiUri());
+
+            LOG.debug("k:{}, l:{}", komoParents.getKoulutusmoduuli().getKoulutuskoodiUri(), komoParents.getKoulutusmoduuli().getLukiolinjakoodiUri());
         }
+
+        KoulutusLukioPerustiedotViewModel perusModel = getPerustiedotModel();
+        perusModel.setKomos(komos);
+        perusModel.createCacheKomos(); //cache komos to map object
+        perusModel.getKoulutuskoodis().clear();
+
+        //koodisto service search result remapped to UI model objects.
+        List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukses(uris, I18N.getLocale());
+        final String komotoOid = perusModel.getKomotoOid() != null ? perusModel.getKomotoOid() : null;
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("KOMOs found {}", komos.size());
+            LOG.debug("listaaKoulutuskoodit found : {}", listaaKoulutuskoodit.size());
+            LOG.debug("filterBasedOnOppilaitosTyyppi found : {}", getPresenter().filterBasedOnOppilaitosTyyppi(listaaKoulutuskoodit, komotoOid).size());
         }
 
-        getPerustiedotModel().setKomos(komos);
-
-        //koodisto service search result remapped to UI model objects.
-        List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukset(uris, I18N.getLocale());
-
         Collections.sort(listaaKoulutuskoodit, new BeanComparator("nimi"));
-        getPerustiedotModel().getKoulutuskoodis().addAll(getPresenter().filterBasedOnOppilaitosTyyppi(listaaKoulutuskoodit));
+
+        //TODO : Fix the organisation filter... if it's needed.
+        getPerustiedotModel().getKoulutuskoodis().addAll(getPresenter().filterBasedOnOppilaitosTyyppi(listaaKoulutuskoodit, komotoOid));
+        //getPerustiedotModel().getKoulutuskoodis().addAll(listaaKoulutuskoodit);
     }
 
     public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
@@ -145,19 +156,18 @@ public class TarjontaLukioPresenter {
         this.editLukioKoulutusView.enableKuvailevatTiedotTab();
         this.kuvailevatTiedotView.getLisatiedotForm().reBuildTabsheet();
 
+        KoulutusLukioPerustiedotViewModel perustiedot = getPerustiedotModel();
 
-        KoulutusToisenAsteenPerustiedotViewModel koulutusModel = getTarjontaModel().getKoulutusPerustiedotModel();
-
-        if (koulutusModel.isLoaded()) {
+        if (perustiedot.isLoaded()) {
             //update KOMOTO
-            PaivitaKoulutusTyyppi paivita = lukioKoulutusConverter.createPaivitaLukioKoulutusTyyppi(getTarjontaModel(), null);
-            paivita.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
+            PaivitaKoulutusTyyppi paivita = lukioKoulutusConverter.createPaivitaLukioKoulutusTyyppi(getTarjontaModel(), perustiedot.getKomotoOid());
+            paivita.setTila(tila.toTarjontaTila(perustiedot.getTila()));
             tarjontaAdminService.paivitaKoulutus(paivita);
         } else {
             for (TarjontaModel.OrganisaatioOidNamePair pair : getTarjontaModel().getOrganisaatios()) {
                 getTarjontaModel().setOrganisaatioName(pair.getName());
                 getTarjontaModel().setOrganisaatioOid(pair.getOid());
-                persistKoulutus(koulutusModel, tila);
+                persistKoulutus(perustiedot, tila);
             }
         }
 //
@@ -166,7 +176,7 @@ public class TarjontaLukioPresenter {
 
     }
 
-    private void persistKoulutus(KoulutusToisenAsteenPerustiedotViewModel koulutusModel, SaveButtonState tila) throws ExceptionMessage {
+    private void persistKoulutus(KoulutusLukioPerustiedotViewModel koulutusModel, SaveButtonState tila) throws ExceptionMessage {
         //persist new KOMO and KOMOTO
         koulutusModel.setOrganisaatioOid(getTarjontaModel().getOrganisaatioOid());
         koulutusModel.setOrganisaatioName(getTarjontaModel().getOrganisaatioName());
@@ -178,7 +188,7 @@ public class TarjontaLukioPresenter {
         if (checkExistingKomoto(lisaa)) {
             tarjontaAdminService.lisaaKoulutus(lisaa);
             koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
-            koulutusModel.setOid(lisaa.getOid());
+            koulutusModel.setKomotoOid(lisaa.getOid());
         } else {
 
             LOG.debug("Unable to add koulutus because of the duplicate");
@@ -249,7 +259,7 @@ public class TarjontaLukioPresenter {
         //perustiedot TODO
 
         //kuvailevattiedot
-         getTarjontaModel().setKoulutusLukioKuvailevatTiedot(KoulutusLukioConverter.createKoulutusLukioKuvailevatTiedotViewModel(koulutus, DocumentStatus.LOADED));
+        getTarjontaModel().setKoulutusLukioKuvailevatTiedot(KoulutusLukioConverter.createKoulutusLukioKuvailevatTiedotViewModel(koulutus, DocumentStatus.LOADED));
     }
 
     /**
@@ -270,6 +280,25 @@ public class TarjontaLukioPresenter {
         getKuvailevatTiedotModel().clearModel(DocumentStatus.NEW);
         getPerustiedotModel().setOrganisaatioOidTree(getPresenter().fetchOrganisaatioTree(getTarjontaModel().getOrganisaatioOid()));
         showEditLukioKoulutusPerustiedotView(koulutusOid);
+    }
+
+    public void loadSelectedKomoData() {
+        KoulutusLukioPerustiedotViewModel perustiedotModel = getPerustiedotModel();
+        final KoulutuskoodiModel koulutuskoodi = perustiedotModel.getKoulutuskoodiModel();
+        LukiolinjaModel lukiolinja = perustiedotModel.getLukiolinja();
+
+        if (koulutuskoodi != null && koulutuskoodi.getKoodi() != null && lukiolinja != null && lukiolinja.getKoodi() != null) {
+            perustiedotModel.getLukiolinjas().clear();
+            KoulutusmoduuliKoosteTyyppi tyyppi = perustiedotModel.getQuickKomo(
+                    koulutuskoodi.getKoodistoUriVersio(),
+                    lukiolinja.getKoodistoUriVersio());
+
+            if (tyyppi == null) {
+                LOG.error("No tutkinto & koulutusohjelma result was null. Search by '" + koulutuskoodi.getKoodistoUriVersio() + "'" + " and '" + koulutuskoodi.getKoodistoUriVersio() + "'");
+            }
+
+            kolutusKoodistoConverter.listaaLukioSisalto(koulutuskoodi, lukiolinja, tyyppi, I18N.getLocale());
+        }
     }
 
     private void showEditLukioKoulutusKuvailevatTiedotView(final String koulutusOid) {

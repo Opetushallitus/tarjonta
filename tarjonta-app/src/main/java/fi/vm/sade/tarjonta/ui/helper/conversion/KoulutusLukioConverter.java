@@ -36,9 +36,15 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.fromKoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
+import java.util.AbstractMap;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -229,7 +235,6 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         return paivita;
     }
 
-    //XXX Jani needs to fix this, not complete!!!
     public static KoulutusTyyppi mapToLukioKoulutusTyyppi(KoulutusTyyppi tyyppi, final KoulutusLukioPerustiedotViewModel model, final String komotoOid,
             OrganisaatioDTO organisatio) {
         Preconditions.checkNotNull(tyyppi, INVALID_DATA + "KoulutusTyyppi object cannot be null.");
@@ -237,20 +242,18 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");
         Preconditions.checkNotNull(organisatio, INVALID_DATA + "Organisatio DTO cannot be null.");
 
-
         tyyppi.setTarjoaja(organisatio.getOid());
         tyyppi.setOid(komotoOid);
-        tyyppi.setKoulutusaste(mapToValidKoodistoKoodiTyyppi(false, model.getKoulutuskoodiModel().getKoulutusaste()));
+        tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
         tyyppi.setKoulutusKoodi(mapToValidKoodistoKoodiTyyppi(false, model.getKoulutuskoodiModel()));
 
-        //URI data example : "koulutusohjelma/1603#1"
-        tyyppi.setLukiolinjaKoodi(mapToValidKoodistoKoodiTyyppi(true, model.getLukiolinja()));
+        //URI data example : "lukiolinja/xxxx#1"
+        tyyppi.setLukiolinjaKoodi(mapToValidKoodistoKoodiTyyppi(false, model.getLukiolinja()));
         tyyppi.setKoulutuksenAlkamisPaiva(model.getKoulutuksenAlkamisPvm());
         KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
         koulutuksenKestoTyyppi.setArvo(model.getSuunniteltuKesto());
         koulutuksenKestoTyyppi.setYksikko(model.getSuunniteltuKestoTyyppi());
         tyyppi.setKesto(koulutuksenKestoTyyppi);
-//        tyyppi.setPohjakoulutusvaatimus(createKoodi(model.getPohjakoulutusvaatimus(), true, "pohjakoulutusvaatimus"));
 
         //TODO: create a different form model for every level of education: 
         //The datatypes on bottom must be list types as in future we need to have 
@@ -266,5 +269,16 @@ public class KoulutusLukioConverter extends KoulutusConveter {
             tyyppi.getKoulutuslaji().add(createKoodi(koulutuslaji, true, "koulutuslaji"));
         }
         return tyyppi;
+    }
+
+    public static Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> fullLukioKomoCacheMap(Collection<KoulutusmoduuliKoosteTyyppi> komos) {
+        Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> hashMap = new HashMap<Map.Entry, KoulutusmoduuliKoosteTyyppi>();
+
+        for (KoulutusmoduuliKoosteTyyppi komo : komos) {
+            Map.Entry e = new AbstractMap.SimpleEntry<String, String>(komo.getKoulutuskoodiUri(), komo.getLukiolinjakoodiUri());
+            hashMap.put(e, komo);
+        }
+
+        return hashMap;
     }
 }

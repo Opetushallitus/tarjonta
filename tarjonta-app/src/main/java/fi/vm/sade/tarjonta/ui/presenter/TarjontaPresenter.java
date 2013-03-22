@@ -1503,7 +1503,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         model.createCacheKomos(); //cache komos to map object
         model.getKoulutuskoodit().clear();
         //koodisto service search result remapped to UI model objects.
-        List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukset(uris, I18N.getLocale());
+        List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukses(uris, I18N.getLocale());
         
         Collections.sort(listaaKoulutuskoodit, new BeanComparator("nimi"));
         model.getKoulutuskoodit().addAll(filterBasedOnOppilaitosTyyppi(listaaKoulutuskoodit));
@@ -1514,7 +1514,14 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * oppilaitostyyppi of the selected organisaatio are returned.
      */
     public List<KoulutuskoodiModel> filterBasedOnOppilaitosTyyppi(List<KoulutuskoodiModel> unfilteredKoodit) {
-        LOG.debug("fitlerBasedOnOppilaitosTyyppi");
+        KoulutusToisenAsteenPerustiedotViewModel perusModel = getModel().getKoulutusPerustiedotModel();
+        final String komotoOid = perusModel != null && perusModel.getOid() != null ? getModel().getKoulutusPerustiedotModel().getOid() : null;
+
+        return filterBasedOnOppilaitosTyyppi(unfilteredKoodit, komotoOid);
+    }
+
+    public List<KoulutuskoodiModel> filterBasedOnOppilaitosTyyppi(final List<KoulutuskoodiModel> unfilteredKoodit, final String komotoOid) {
+        LOG.debug("filterBasedOnOppilaitosTyyppi - oid : {}", komotoOid);
 
         //If an existing koulutus is being edited no filtering is done.
         if (getModel().getKoulutusPerustiedotModel() != null
@@ -1606,7 +1613,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         if (model.getKoulutuskoodiModel() != null && model.getKoulutuskoodiModel().getKoodi() != null) {
             model.getKoulutusohjelmat().clear();
             List<KoulutusmoduuliKoosteTyyppi> tyyppis = model.getQuickKomosByKoulutuskoodiUri(model.getKoulutuskoodiModel().getKoodistoUriVersio());
-            List<KoulutusohjelmaModel> listaaKoulutusohjelmat = kolutusKoodistoConverter.listaaKoulutusohjelmat(tyyppis, I18N.getLocale());
+            List<KoulutusohjelmaModel> listaaKoulutusohjelmat = kolutusKoodistoConverter.listaaKoulutusohjelmas(tyyppis, I18N.getLocale());
             
             Collections.sort(listaaKoulutusohjelmat, new BeanComparator("nimi"));
             model.getKoulutusohjelmat().addAll(listaaKoulutusohjelmat);
@@ -1661,7 +1668,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 LOG.error("No tutkinto & koulutusohjelma result was null. Search by '" + koulutuskoodi.getKoodistoUriVersio() + "'" + " and '" + koulutuskoodi.getKoodistoUriVersio() + "'");
             }
             
-            kolutusKoodistoConverter.listaaSisalto(koulutuskoodi, ohjelma, tyyppi, I18N.getLocale());
+            kolutusKoodistoConverter.listaa2asteSisalto(koulutuskoodi, ohjelma, tyyppi, I18N.getLocale());
         }
     }
     

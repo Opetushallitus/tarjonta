@@ -18,11 +18,14 @@ package fi.vm.sade.tarjonta.ui.model.koulutus.lukio;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
+import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -41,10 +44,10 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
     private List<KoulutusmoduuliKoosteTyyppi> komos;
     private Set<KoulutuskoodiModel> koulutuskoodis;
     private Set<LukiolinjaModel> lukiolinjas;
+    protected LukiolinjaModel lukiolinja;
     /*
      * Other user selected form input data
      */
-    private LukiolinjaModel lukiolinja;
     protected Date koulutuksenAlkamisPvm;
     protected String suunniteltuKesto;
     protected String suunniteltuKestoTyyppi;
@@ -60,6 +63,11 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      * Is used when fetching potential yhteyshenkilos for the current koulutus.
      */
     private List<String> organisaatioOidTree;
+    /*
+     * cache maps
+     */
+    public Map<String, List<KoulutusmoduuliKoosteTyyppi>> cacheKomoTutkinto;
+    public Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo;
 
     public KoulutusLukioPerustiedotViewModel(DocumentStatus status) {
         super();
@@ -180,7 +188,7 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
         /*
          * OIDs
          */
-        setOid(null); //KOMOTO OID
+        setKomotoOid(null); //KOMOTO OID
         setKoulutusmoduuliOid(null); //KOMO OID
 
         /*
@@ -237,7 +245,7 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
         KoulutusLukioPerustiedotViewModel other = (KoulutusLukioPerustiedotViewModel) obj;
 
         EqualsBuilder builder = new EqualsBuilder();
-        builder.append(oid, other.oid);
+        builder.append(komotoOid, other.komotoOid);
         builder.append(koulutusaste, other.koulutusaste);
         builder.append(koulutusmoduuliOid, other.koulutusmoduuliOid);
         builder.append(getKoulutuskoodiModel(), other.getKoulutuskoodiModel());
@@ -265,7 +273,7 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(oid)
+        return new HashCodeBuilder().append(komotoOid)
                 .append(koulutusaste)
                 .append(koulutusmoduuliOid)
                 .append(getKoulutuskoodiModel())
@@ -295,8 +303,6 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-
- 
 
     /**
      * @return the komos
@@ -363,6 +369,51 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      */
     public void setOrganisaatioOidTree(List<String> organisaatioOidTree) {
         this.organisaatioOidTree = organisaatioOidTree;
+    }
+
+    public void createCacheKomos() {
+        setCacheKomoTutkinto(KoulutusLukioConverter.komoCacheMapByKoulutuskoodi(komos));
+        setCacheKomo(KoulutusLukioConverter.fullLukioKomoCacheMap(komos));
+    }
+
+    /**
+     * @return the cacheKomoTutkinto
+     */
+    public KoulutusmoduuliKoosteTyyppi getQuickKomo(final String koulutuskoodiUri, final String koulutusohjelmaUri) {
+        Map.Entry<String, String> e = new AbstractMap.SimpleEntry<String, String>(koulutuskoodiUri, koulutusohjelmaUri);
+        return getCacheKomo().get(e);
+    }
+
+    public List<KoulutusmoduuliKoosteTyyppi> getQuickKomosByKoulutuskoodiUri(final String koulutuskoodiUri) {
+        return getCacheKomoTutkinto().get(koulutuskoodiUri);
+    }
+
+    /**
+     * @return the cacheKomoTutkinto
+     */
+    public Map<String, List<KoulutusmoduuliKoosteTyyppi>> getCacheKomoTutkinto() {
+        return cacheKomoTutkinto;
+    }
+
+    /**
+     * @param cacheKomoTutkinto the cacheKomoTutkinto to set
+     */
+    public void setCacheKomoTutkinto(Map<String, List<KoulutusmoduuliKoosteTyyppi>> cacheKomoTutkinto) {
+        this.cacheKomoTutkinto = cacheKomoTutkinto;
+    }
+
+    /**
+     * @return the cacheKomo
+     */
+    public Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> getCacheKomo() {
+        return cacheKomo;
+    }
+
+    /**
+     * @param cacheKomo the cacheKomo to set
+     */
+    public void setCacheKomo(Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo) {
+        this.cacheKomo = cacheKomo;
     }
 
     /**

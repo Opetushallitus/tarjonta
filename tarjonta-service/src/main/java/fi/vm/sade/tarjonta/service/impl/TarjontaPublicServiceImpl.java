@@ -639,6 +639,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         criteria.setLukiolinjaKoodiUri(kysely.getLukiolinjakoodiUri());
         criteria.setKoulutustyyppi(kysely.getKoulutustyyppi());
 
+        System.out.println("kysely.getKoulutustyyppi(): " + kysely.getKoulutustyyppi());
+        System.out.println("kysely.getKoulutusohjelmakoodiUri() : " + kysely.getKoulutusohjelmakoodiUri());
+        System.out.println("kysely.getLukiolinjakoodiUri() : " + kysely.getLukiolinjakoodiUri());
+
         for (Koulutusmoduuli curKomo : this.koulutusmoduuliDAO.search(criteria)) {
             if (!curKomo.getAlamoduuliList().isEmpty()) {
                 addChildModulesToVastaus(curKomo, vastaus.getKoulutusmoduuliTulos());
@@ -650,7 +654,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private void addChildModulesToVastaus(Koulutusmoduuli parentKomo, List<KoulutusmoduuliTulos> resultList) {
         for (Koulutusmoduuli curKomo : parentKomo.getAlamoduuliList()) {
             KoulutusmoduuliKoosteTyyppi komo = EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(curKomo, parentKomo);
-            if (!containsKomo(resultList, komo.getOid()) && komo.getKoulutusohjelmakoodiUri() != null) {
+            if (!containsKomo(resultList, komo.getOid())) {
                 KoulutusmoduuliTulos koulutusmoduuliTulos = new KoulutusmoduuliTulos();
                 koulutusmoduuliTulos.setKoulutusmoduuli(komo);
                 resultList.add(koulutusmoduuliTulos);

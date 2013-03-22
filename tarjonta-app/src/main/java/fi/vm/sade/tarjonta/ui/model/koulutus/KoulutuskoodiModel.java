@@ -15,9 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui.model.koulutus;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  *
  * @author Jani Wilén
@@ -25,8 +22,6 @@ import java.util.Set;
 public class KoulutuskoodiModel extends MonikielinenTekstiModel {
 
     private static final long serialVersionUID = -7111768236565522022L;
-    private Set<KoulutusohjelmaModel> koulutusohjelmaModels;
-    private Set<KoulutusohjelmaModel> lukiolinjaModels;
     private KoodiModel koulutusaste;
     private KoodiModel koulutusala;
     private KoodiModel opintojenLaajuusyksikko;
@@ -124,23 +119,6 @@ public class KoulutuskoodiModel extends MonikielinenTekstiModel {
     }
 
     /**
-     * @return the koulutusohjelmaModels
-     */
-    public Set<KoulutusohjelmaModel> getKoulutusohjelmaModels() {
-        if (koulutusohjelmaModels == null) {
-            koulutusohjelmaModels = new HashSet<KoulutusohjelmaModel>();
-        }
-        return koulutusohjelmaModels;
-    }
-
-    /**
-     * @param koulutusohjelmaModels the koulutusohjelmaModels to set
-     */
-    public void setKoulutusohjelmaModels(Set<KoulutusohjelmaModel> koulutusohjelmaModels) {
-        this.koulutusohjelmaModels = koulutusohjelmaModels;
-    }
-
-    /**
      * @return the tavoitteet
      */
     public MonikielinenTekstiModel getTavoitteet() {
@@ -166,46 +144,5 @@ public class KoulutuskoodiModel extends MonikielinenTekstiModel {
      */
     public void setJatkoopintomahdollisuudet(MonikielinenTekstiModel jatkoopintomahdollisuudet) {
         this.jatkoopintomahdollisuudet = jatkoopintomahdollisuudet;
-    }
-//    public void clearLabels() {
-//        if (koulutusaste != null) {
-//            koulutusaste.clear();
-//        }
-//        if (koulutusala != null) {
-//            koulutusala.clear();
-//        }
-//        if (opintojenLaajuusyksikko != null) {
-//            opintojenLaajuusyksikko.clear();
-//        }
-//        if (opintojenLaajuus != null) {
-//            opintojenLaajuus.clear();
-//        }
-//        if (opintoala != null) {
-//            opintoala.clear();
-//        }
-//        if (koulutuksenRakenne != null) {
-//            koulutuksenRakenne.clear();
-//        }
-//        if (tavoitteet != null) {
-//            tavoitteet.clear();
-//        }
-//
-//        if (jatkoopintomahdollisuudet != null) {
-//            jatkoopintomahdollisuudet.clear();
-//        }
-//    }
-
-    /**
-     * @return the lukiolinjaModels
-     */
-    public Set<KoulutusohjelmaModel> getLukiolinjaModels() {
-        return lukiolinjaModels;
-    }
-
-    /**
-     * @param lukiolinjaModels the lukiolinjaModels to set
-     */
-    public void setLukiolinjaModels(Set<KoulutusohjelmaModel> lukiolinjaModels) {
-        this.lukiolinjaModels = lukiolinjaModels;
     }
 }

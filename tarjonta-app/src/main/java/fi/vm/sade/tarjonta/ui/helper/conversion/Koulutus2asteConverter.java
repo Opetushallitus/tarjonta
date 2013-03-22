@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
@@ -35,19 +36,22 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import java.util.AbstractMap;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 
 /**
  *
  * @author Jani Wilén
  */
 @Component
-public class Koulutus2asteConverter extends KoulutusConveter{
+public class Koulutus2asteConverter extends KoulutusConveter {
 
     private static final Logger LOG = LoggerFactory.getLogger(Koulutus2asteConverter.class);
     @Autowired(required = true)
@@ -95,7 +99,7 @@ public class Koulutus2asteConverter extends KoulutusConveter{
 
         return paivita;
     }
-    
+
     public LisaaKoulutusTyyppi createLisaaKoulutusTyyppi(TarjontaModel tarjontaModel, final String organisaatioOid) throws ExceptionMessage {
 
         KoulutusToisenAsteenPerustiedotViewModel model = tarjontaModel.getKoulutusPerustiedotModel();
@@ -124,7 +128,6 @@ public class Koulutus2asteConverter extends KoulutusConveter{
 
         return lisaa;
     }
-
 
     /**
      *
@@ -170,6 +173,7 @@ public class Koulutus2asteConverter extends KoulutusConveter{
 
         tyyppi.setTarjoaja(organisatio.getOid());
         tyyppi.setOid(komotoOid);
+        tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
         tyyppi.setKoulutusaste(mapToValidKoodistoKoodiTyyppi(false, model.getKoulutuskoodiModel().getKoulutusaste()));
         tyyppi.setKoulutusKoodi(mapToValidKoodistoKoodiTyyppi(false, model.getKoulutuskoodiModel()));
 
@@ -253,7 +257,7 @@ public class Koulutus2asteConverter extends KoulutusConveter{
          */
         final KoulutusmoduuliKoosteTyyppi koulutusmoduuliTyyppi = koulutus.getKoulutusmoduuli();
 
-        koulutusKoodisto.listaaSisalto(model2Aste.getKoulutuskoodiModel(), model2Aste.getKoulutusohjelmaModel(), koulutusmoduuliTyyppi, locale);
+        koulutusKoodisto.listaa2asteSisalto(model2Aste.getKoulutuskoodiModel(), model2Aste.getKoulutusohjelmaModel(), koulutusmoduuliTyyppi, locale);
 
         /*
          * Create real visible name, the name is also used in koulutus search.  
@@ -362,7 +366,6 @@ public class Koulutus2asteConverter extends KoulutusConveter{
         }
     }
 
-
     private void mapToKoulutusLisatiedotTyyppi(KoulutusTyyppi koulutus, KoulutusLisatiedotModel koulutusLisatiedotModel) {
 
         koulutus.getAmmattinimikkeet().clear();
@@ -420,5 +423,16 @@ public class Koulutus2asteConverter extends KoulutusConveter{
 
             koulutus.getKoulutusohjelmanValinta().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getKoulutusohjelmanValinta()));
         }
+    }
+    
+     public static Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> full2asteKomoCacheMap(Collection<KoulutusmoduuliKoosteTyyppi> komos) {
+        Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> hashMap = new HashMap<Map.Entry, KoulutusmoduuliKoosteTyyppi>();
+
+        for (KoulutusmoduuliKoosteTyyppi komo : komos) {
+            Map.Entry e = new AbstractMap.SimpleEntry<String, String>(komo.getKoulutuskoodiUri(), komo.getKoulutusohjelmakoodiUri());
+            hashMap.put(e, komo);
+        }
+
+        return hashMap;
     }
 }

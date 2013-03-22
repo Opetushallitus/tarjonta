@@ -73,7 +73,7 @@ public class EditLukioKoulutusPerustiedotView extends AbstractEditLayoutView<Kou
         try {
             presenter.getLukioPresenter().saveKoulutus(tila);
             presenter.getLukioPresenter().getReloadKoulutusListData();
-            return model.getOid();
+            return model.getKomotoOid();
         } catch (ExceptionMessage exceptionMessage) {
             if (exceptionMessage.getMessage().equalsIgnoreCase("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage")) {
                 throw new Validator.InvalidValueException(I18N.getMessage(exceptionMessage.getMessage()));

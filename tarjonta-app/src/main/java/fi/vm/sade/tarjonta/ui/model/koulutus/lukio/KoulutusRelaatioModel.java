@@ -34,7 +34,7 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
      * OID of the loaded enity.
      * Update database
      */
-    protected String oid;
+    protected String komotoOid;
     protected String koulutusmoduuliOid;
     protected TarjontaTila tila;
     /*
@@ -50,7 +50,8 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
     /*
      * Koodisto logic data:
      */
-    private KoulutuskoodiModel koulutuskoodiModel;
+    protected KoulutuskoodiModel koulutuskoodiModel;
+
     /*
      * KOMO koodisto URIs (static labels):
      */
@@ -74,15 +75,15 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
     /**
      * @return the oid
      */
-    public String getOid() {
-        return oid;
+    public String getKomotoOid() {
+        return komotoOid;
     }
 
     /**
      * @param oid the oid to set
      */
-    public void setOid(String oid) {
-        this.oid = oid;
+    public void setKomotoOid(String oid) {
+        this.komotoOid = oid;
     }
 
     /**
@@ -357,6 +358,7 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
      * @return Boolean
      */
     public boolean isLoaded() {
-        return getOid() != null;
+        return getKomotoOid() != null;
     }
+
 }

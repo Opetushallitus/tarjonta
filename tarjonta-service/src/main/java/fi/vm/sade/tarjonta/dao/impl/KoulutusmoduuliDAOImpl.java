@@ -186,7 +186,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
         SearchCriteria criteria = new SearchCriteria();
         criteria.setKoulutusKoodi(koulutusLuokitusUri);
-        criteria.setKoulutusohjelmaKoodi(lukiolinjaUri);
+        criteria.setLukiolinjaKoodiUri(lukiolinjaUri);
 
         if (criteria.getKoulutusKoodi() != null) {
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
@@ -194,8 +194,8 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.isNull().or(moduuli.koulutusKoodi.isEmpty()));
         }
 
-        if (criteria.getKoulutusohjelmaKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinja.eq(criteria.getKoulutusohjelmaKoodi()));
+        if (criteria.getLukiolinjaKoodiUri() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinja.eq(criteria.getLukiolinjaKoodiUri()));
         } else {
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinja.isEmpty().or(moduuli.lukiolinja.isNull()));
         }

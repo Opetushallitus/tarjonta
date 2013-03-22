@@ -54,9 +54,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
     @Autowired
     private YhteyshenkiloDAO yhteyshenkiloDAO;
-    
     private static final String OID_PRE = "1.2.246.562.5.";
-    
     private static long oidMin = 1000000000L;
     private static long oidMax = 10000000000L;
 
@@ -74,36 +72,39 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         toteutus.setKoulutusmoduuli(m);
 
         return (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.insert(toteutus);
-
     }
 
     @Override
     public Koulutusmoduuli findTutkintoOhjelma(String koulutusLuokitusUri, String koulutusOhjelmaUri) {
-
         // todo: dao kerroksen voisi poistaa, ainoastaan vaikeammat haut voisi sijoittaa helper:n taakse
-
         return koulutusmoduuliDAO.findTutkintoOhjelma(koulutusLuokitusUri, koulutusOhjelmaUri);
-
     }
-    
+
     @Override
     public List<Koulutusmoduuli> findTutkintoOhjelmat() {
-
-        // todo: dao kerroksen voisi poistaa, ainoastaan vaikeammat haut voisi sijoittaa helper:n taakse
-
+        // todo: dao kerroksen voisi poistaa, ainoastaan vaikeammat haut voisi sijoittaa helper:n taakse      
         return koulutusmoduuliDAO.findAll();
-
     }
 
     @Override
     public KoulutusmoduuliToteutus createKoulutus(LisaaKoulutusTyyppi koulutus) {
         Koulutusmoduuli moduuli = null;
-        if (koulutus.getKoulutustyyppi() != null && koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
-            moduuli = handleLukiomoduuli(koulutus);
-        } else {
-            moduuli = handleToisenAsteenModuuli(koulutus);
+
+        if (koulutus.getKoulutustyyppi() == null) {
+            throw new TarjontaBusinessException("Undefined koulutustyyppi.");
         }
-        
+
+        switch (koulutus.getKoulutustyyppi()) {
+            case AMMATILLINEN_PERUSKOULUTUS:
+                moduuli = handleToisenAsteenModuuli(koulutus);
+                break;
+            case LUKIOKOULUTUS:
+                moduuli = handleLukiomoduuli(koulutus);
+                break;
+            default:
+                throw new RuntimeException("Unsupported koulutustyyppi.");
+        }
+
         if (moduuli == null) {
             throw new TarjontaBusinessException(TarjontaVirheKoodi.KOULUTUSTA_EI_OLEMASSA.value());
         }
@@ -115,34 +116,49 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         return koulutusmoduuliToteutusDAO.insert(komotoModel);
     }
-    
+
     private Koulutusmoduuli handleToisenAsteenModuuli(LisaaKoulutusTyyppi koulutus) {
-        Koulutusmoduuli moduuli = null;
-        if (koulutus.getKoulutusohjelmaKoodi() == null) {
-            moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(koulutus.getKoulutusKoodi().getUri(), null);
-        } else {
-            moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(
+
+//        if (koulutus.getKoulutusohjelmaKoodi() == null) {
+//            moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(koulutus.getKoulutusKoodi().getUri(), null);
+//        } else {
+        Koulutusmoduuli moduuli = koulutusmoduuliDAO.findTutkintoOhjelma(
                 koulutus.getKoulutusKoodi().getUri(),
                 koulutus.getKoulutusohjelmaKoodi().getUri());
-            
-            //Handling the creation of the parent komoto
-            handleParentKomoto(koulutus, moduuli);
+
+        if (moduuli == null) {
+            throw new TarjontaBusinessException(TarjontaVirheKoodi.KOULUTUSTA_EI_OLEMASSA.value()
+                    + " - koulutus koodi : " + koulutus.getKoulutusKoodi().getUri()
+                    + ", koulutusohjelma koodi : " + koulutus.getLukiolinjaKoodi().getUri());
         }
+
+        //Handling the creation of the parent komoto
+        handleParentKomoto(koulutus, moduuli);
+        //}
         return moduuli;
-        
+
     }
-    
+
     private Koulutusmoduuli handleLukiomoduuli(LisaaKoulutusTyyppi koulutus) {
-       Koulutusmoduuli moduuli = null;
-        if (koulutus.getLukiolinjaKoodi() == null) {
-            moduuli = koulutusmoduuliDAO.findLukiolinja(koulutus.getKoulutusKoodi().getUri(), null);
-       } else {
-           moduuli = koulutusmoduuliDAO.findLukiolinja(koulutus.getKoulutusKoodi().getUri(), koulutus.getLukiolinjaKoodi().getUri());
-         //Handling the creation of the parent komoto
-           handleParentKomoto(koulutus, moduuli);
-       }
-       
-       return moduuli;
+
+//        if (koulutus.getLukiolinjaKoodi() == null) {
+//            moduuli = koulutusmoduuliDAO.findLukiolinja(koulutus.getKoulutusKoodi().getUri(), null);
+//       } else {
+
+        Koulutusmoduuli moduuli = koulutusmoduuliDAO.findLukiolinja(koulutus.getKoulutusKoodi().getUri(), koulutus.getLukiolinjaKoodi().getUri());
+
+        if (moduuli == null) {
+            throw new TarjontaBusinessException(TarjontaVirheKoodi.KOULUTUSTA_EI_OLEMASSA.value()
+                    + " - koulutus koodi : " + koulutus.getKoulutusKoodi().getUri()
+                    + ", lukiolinja koodi : " + koulutus.getLukiolinjaKoodi().getUri());
+        }
+
+        System.out.println("Koulutusmoduuli : " + moduuli.getId());
+        //Handling the creation of the parent komoto
+        handleParentKomoto(koulutus, moduuli);
+        //}
+
+        return moduuli;
     }
 
     @Override
@@ -150,7 +166,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         final String oid = koulutus.getOid();
         KoulutusmoduuliToteutus model = koulutusmoduuliToteutusDAO.findByOid(oid);
-        
+
         Koulutusmoduuli moduuli = model.getKoulutusmoduuli();
         //Handling the creation or update of the parent (tutkinto) komoto
         handleParentKomoto(koulutus, moduuli);
@@ -166,7 +182,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         return model;
 
     }
-    
+
     /*
      * Handling the creation or update of the parent komoto
      */
@@ -179,13 +195,13 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
             parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta()));
             this.koulutusmoduuliToteutusDAO.update(parentKomoto);
-            
+
             //Start date is updated to siblings of the komoto given in koulutus. The start date is 
             //replicated to the children of the parent komoto to enable more efficient search based 
             //on start year and semester of komotos. 
             handleChildKomos(parentKomo, moduuli, koulutus);
-        //If there is not a komoto for the parentKomo, it is created here.    
-        } else if (parentKomo != null ) {
+            //If there is not a komoto for the parentKomo, it is created here.    
+        } else if (parentKomo != null) {
             parentKomoto = new KoulutusmoduuliToteutus();
             generateOidForKomoto(parentKomoto);
             parentKomoto.setTarjoaja(koulutus.getTarjoaja());
@@ -197,7 +213,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             this.koulutusmoduuliToteutusDAO.insert(parentKomoto);
         }
     }
-    
+
     private void generateOidForKomoto(KoulutusmoduuliToteutus komoto) {
         String oidCandidate = null;
         boolean oidExists = true;
@@ -212,14 +228,14 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         Random r = new Random();
         long number = oidMin + ((long) (r.nextDouble() * (oidMax - oidMin)));
         int checkDigit = ibmCheck(number);
-        return OID_PRE + number + checkDigit; 
+        return OID_PRE + number + checkDigit;
     }
-    
+
     private int ibmCheck(Long oid) {
         String oidStr = oid.toString();
 
         int sum = 0;
-        int[] alternate = {7, 3 , 1};
+        int[] alternate = {7, 3, 1};
 
         for (int i = oidStr.length() - 1, j = 0; i >= 0; i--, j++) {
             int n = Integer.parseInt(oidStr.substring(i, i + 1));
@@ -229,7 +245,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         return 10 - sum % 10;
     }
-    
+
     /*
      * updating the startDate to siblings of the komoto given in koulutus. 
      */
@@ -247,12 +263,11 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
                     this.koulutusmoduuliToteutusDAO.update(curKomoto);
                 }
             }
-        }        
+        }
     }
 
     private boolean isNew(BaseEntity e) {
         // no good
         return (e.getId() == null);
     }
-    
 }
