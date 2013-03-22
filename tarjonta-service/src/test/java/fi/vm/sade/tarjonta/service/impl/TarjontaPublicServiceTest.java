@@ -23,6 +23,8 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -74,6 +76,9 @@ public class TarjontaPublicServiceTest {
 	private static final String KOULUTUSOHJELMAKOODI1 = "uri:koulutusohjelmakoodi1";
 	private static final String KOULUTUSOHJELMAKOODI2 = "uri:koulutusohjelmakoodi2";
 	private static final String KOULUTUSASTEKOODI = "uri:koulutuasteLukio";
+
+
+    private static final Logger log = LoggerFactory.getLogger(TarjontaPublicServiceTest.class);
 
     @Autowired
     private TarjontaPublicService service;
@@ -127,12 +132,32 @@ public class TarjontaPublicServiceTest {
         hakukohde.setHaku(haku);
         hakukohde.setHakukohdeNimi("Peltikorjaajan perustutkinto");
         hakukohde.setHakukohdeKoodistoNimi("Peltikorjaajan perustutkinto");
+        hakukohde.setAlinHyvaksyttavaKeskiarvo(7.5d);
         hakukohde.setTila(TarjontaTila.VALMIS);
+
+        PainotettavaOppiaine painotettavaOppiaine = new PainotettavaOppiaine();
+        painotettavaOppiaine.setOppiaine("Matematiikka");
+        painotettavaOppiaine.setPainokerroin(5);
+        hakukohde.getPainotettavatOppiaineet().add(painotettavaOppiaine);
+
+        PainotettavaOppiaine painotettavaOppiaine1 = new PainotettavaOppiaine();
+        painotettavaOppiaine1.setPainokerroin(6);
+        painotettavaOppiaine1.setOppiaine("Englanti");
+        hakukohde.getPainotettavatOppiaineet().add(painotettavaOppiaine1);
+
 
         hakukohde = hakukohdeDAO.insert(hakukohde);
 
         //1. hakukohde valintakoe
         Valintakoe valintakoe = fixtures.createValintakoe();
+
+        Pisteraja pisteraja = new Pisteraja();
+        pisteraja.setValinnanPisterajaTyyppi("Paasykoe");
+        pisteraja.setAlinHyvaksyttyPistemaara(5);
+        pisteraja.setAlinPistemaara(4);
+        pisteraja.setYlinPistemaara(6);
+        valintakoe.getPisterajat().add(pisteraja);
+
         hakukohde.addValintakoe(valintakoe);
         hakukohdeDAO.update(hakukohde);
 
@@ -225,6 +250,22 @@ public class TarjontaPublicServiceTest {
         assertEquals(fi.vm.sade.tarjonta.service.types.TarjontaTila.VALMIS, hakukohde.getTila());
         assertEquals(ORGANISAATIO_B, koulutus.getTarjoaja());
 
+    }
+
+    @Test
+    public void testPisterajat()  {
+        List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(HAKUKOHDE_OID);
+        Valintakoe valintakoe = null;
+        for (Valintakoe valintakoe1 : hakukohdes.get(0).getValintakoes()) {
+            valintakoe = valintakoe1;
+        }
+        assertTrue(valintakoe.getPisterajat().size() > 0);
+    }
+
+    @Test
+    public void testPainotettavatOppiaineet() {
+       List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(HAKUKOHDE_OID);
+       assertTrue(hakukohdes.get(0).getPainotettavatOppiaineet().size() > 0);
     }
 
     @Test
