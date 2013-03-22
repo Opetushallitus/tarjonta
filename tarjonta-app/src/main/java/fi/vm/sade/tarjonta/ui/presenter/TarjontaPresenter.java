@@ -465,7 +465,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             kysely.setOid(hakukohdeOid);
             LueHakukohdeVastausTyyppi vastaus = getTarjontaPublicService().lueHakukohde(kysely);
             if (vastaus.getHakukohde() != null) {
-                //creata name string
+                //create name string
                 getModel().setHakukohde(hakukohdeToDTOConverter.convertDTOToHakukohdeViewMode(vastaus.getHakukohde()));
                 final String hakukohdenimi = resolveHakukohdeKoodistonimiFields() + ", " + tilaToLangStr(getModel().getHakukohde().getTila());
                 
