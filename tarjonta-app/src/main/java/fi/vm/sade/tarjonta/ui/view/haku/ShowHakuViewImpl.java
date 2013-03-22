@@ -81,9 +81,11 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         Button poista = addNavigationButton(T("Poista"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
+                /*
                 hakuPresenter.removeHaku(hakuPresenter.getHakuModel());
                 getWindow().showNotification(T("HakuPoistettu"));
-                backFired();
+                backFired();*/
+                ShowHakuViewImpl.this.getParent().getWindow().showNotification("Ei toteuttettu");
             }
         });
         
