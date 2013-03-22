@@ -31,7 +31,7 @@
             <artifactId>organisaatio-ui-widgets</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>-->
-        
+
        <dependency>
             <groupId>fi.vm.sade.koodisto</groupId>
             <artifactId>koodisto-api</artifactId>
@@ -42,13 +42,13 @@
             <artifactId>koodisto-widget</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        
+
         <dependency>
             <groupId>fi.vm.sade.organisaatio</groupId>
             <artifactId>organisaatio-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        
+
         <dependency>
             <groupId>fi.vm.sade.auth</groupId>
             <artifactId>authentication-api</artifactId>
@@ -111,20 +111,20 @@
             <artifactId>jaxb-api</artifactId>
             <version>2.2.3</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
             <version>2.2.4-1</version>
         </dependency>
-        
-        <dependency> 
+
+        <dependency>
             <!-- Spring AOP dependency -->
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
             <version>2.2</version>
         </dependency>
-        
+
         <dependency>
             <groupId>javax.portlet</groupId>
             <artifactId>portlet-api</artifactId>
@@ -136,13 +136,13 @@
             <artifactId>commons-collections</artifactId>
             <version>3.2.1</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>3.8</version>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
@@ -179,21 +179,23 @@
             <version>3.1</version>
             <scope>test</scope>
         </dependency>
-              
-        <!-- servlet dependencies start... -->      
+
+        <!-- servlet dependencies start... -->
+        <!--
         <dependency>
             <groupId>org.vaadin.addons</groupId>
             <artifactId>googlemapwidget</artifactId>
             <version>${google.map.widget.version}</version>
         </dependency>
-                
+        -->
+
         <dependency>
             <groupId>com.google.gwt.google-apis</groupId>
             <artifactId>gwt-maps</artifactId>
             <version>1.1.0</version>
             <classifier>gwt23</classifier>
         </dependency>
-                                   
+
         <dependency>
             <groupId>fi.vm.sade.vaadin</groupId>
             <artifactId>vaadin-common</artifactId>
@@ -206,6 +208,19 @@
             <version>1.0-SNAPSHOT</version>
             <type>war</type>
         </dependency>
+        <dependency>
+          <groupId>org.vaadin.addons</groupId>
+          <artifactId>animator</artifactId>
+          <version>1.6.6</version>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>org.vaadin.addons</groupId>
+            <artifactId>googlemapwidget</artifactId>
+            <version>${google.map.widget.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        -->
 
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
@@ -223,9 +238,9 @@
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-portlet-support</artifactId>
             <version>${project.version}</version>
-        </dependency>             
+        </dependency>
         <!-- ...servlet dependencies end -->
-        
+
     </dependencies>
 
 
@@ -241,7 +256,7 @@
                     </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
@@ -290,7 +305,7 @@
             </activation>
 
             <dependencies>
-             
+
                 <dependency>
                     <groupId>fi.vm.sade.vaadin</groupId>
                     <artifactId>vaadin-theme-oph</artifactId>
@@ -325,7 +340,7 @@
                             </execution>
                         </executions>
                     </plugin>
-                    
+
                 </plugins>
             </build>
         </profile>
