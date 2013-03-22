@@ -16,15 +16,20 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
+import com.google.common.base.Preconditions;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.*;
 import com.vaadin.ui.AbstractSelect.Filtering;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.data.util.PropertysetItem;
+
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -42,6 +47,7 @@ import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 
@@ -132,6 +138,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private transient UiBuilder uiBuilder;
     private ErrorMessage errorView;
 
+    private TextField alinHyvaksyttavaKeskiarvoText;
+
+    private GridLayout painotettavatOppiaineet;
+
+    private KoulutusasteTyyppi koulutusasteTyyppi;
+
     /*
      *
      * Init view with new model
@@ -139,9 +151,14 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
      */
     public PerustiedotViewImpl(TarjontaPresenter presenter, UiBuilder uiBuilder) {
         super();
-
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
+
+        Preconditions.checkNotNull(presenter.getModel().getHakukohde().getKoulukses(), "Modelissa ei ole koulutuksia!");
+        final KoulutusasteTyyppi koulutusasteTyyppi = presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi();
+        LOG.info("koulutustyyppi: {}", koulutusasteTyyppi);
+        this.koulutusasteTyyppi = koulutusasteTyyppi;
+
         buildMainLayout();
         this.presenter.initHakukohdeForm(this);
     }
@@ -154,7 +171,6 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @Override
     public void initForm(HakukohdeViewModel model) {
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
-      
         hakukohteenNimiCombo.setImmediate(true);
 
         hakukohteenNimiCombo.addListener(new Property.ValueChangeListener() {
@@ -211,6 +227,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         addItemToGrid("PerustiedotView.aloitusPaikat", buildAloitusPaikat());
         addItemToGrid("PerustiedotView.valinnoissaKaytettavatPaikatText",buildValinnoissaKaytettavatAloitusPaikat());
 
+        if (this.koulutusasteTyyppi == KoulutusasteTyyppi.LUKIOKOULUTUS) {
+            addItemToGrid("PerustiedotView.alinHyvaksyttavaKeskiarvoText", buildAlinHyvaksyttavaKeskiarvo());
+            addItemToGrid("PerustiedotView.painotettavatOppiaineet", buildPainotettavatOppiaineet());
+        }
+        
         addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite", buildLiitteidenToimitusOsoite());
         addItemToGrid("",buildSahkoinenToimitusOsoiteCheckBox());
         addItemToGrid("",buildSahkoinenToimitusOsoiteTextField());
@@ -221,6 +242,24 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         checkCheckboxes();
         return itemContainer;
+    }
+
+    private AbstractComponent buildPainotettavatOppiaineet() {
+        painotettavatOppiaineet = new GridLayout(2, 1);
+        painotettavatOppiaineet.addComponent(UiUtil.label(null, T("PerustiedotView.painokerroin")), 1, 0);
+        painotettavatOppiaineet.newLine();
+        for (PainotettavaOppiaineViewModel painotettava : presenter.getModel().getHakukohde().getPainotettavat()) {
+            final PropertysetItem psi = new BeanItem(painotettava);
+            //TODO change koodisto to oppiaine
+            final KoodistoComponent painotus = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KIELI_URI, psi, "oppiaine", T("PerusTiedotView.oppiainePrompt"), true);
+            painotus.getField().setRequired(false);
+            painotus.getField().setNullSelectionAllowed(false);
+            painotettavatOppiaineet.addComponent(painotus);
+            final TextField tf = uiBuilder.textField(null, psi, "painotus",null, null);
+            painotettavatOppiaineet.addComponent(tf);
+        }
+        
+        return painotettavatOppiaineet;
     }
 
     private void checkCheckboxes() {
@@ -430,6 +469,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         valinnoissaKaytettavatPaikatText = UiUtil.textField(null);
         valinnoissaKaytettavatPaikatText.setRequired(true);
         return valinnoissaKaytettavatPaikatText;
+    }
+
+    private TextField buildAlinHyvaksyttavaKeskiarvo() {
+        alinHyvaksyttavaKeskiarvoText = UiUtil.textField(null);
+        alinHyvaksyttavaKeskiarvoText.setRequired(true);
+        return alinHyvaksyttavaKeskiarvoText;
     }
 
     private String tryGetHaunNimi(HakuViewModel haku) {

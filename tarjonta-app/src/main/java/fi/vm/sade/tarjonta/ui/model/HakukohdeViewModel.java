@@ -1,12 +1,17 @@
 package fi.vm.sade.tarjonta.ui.model;
 
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
+import com.google.common.collect.Lists;
+
 public class HakukohdeViewModel extends BaseUIViewModel {
 
+    private static final long serialVersionUID = 1L;
     private String oid;
     private String organisaatioOid;
     private String hakukohdeNimi;
@@ -31,7 +36,21 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private List<KoulutusOidNameViewModel> koulukses;
     private List<HakukohdeLiiteViewModel> liites;
     private List<ValintakoeViewModel> valintaKokees;
+    private List<PainotettavaOppiaineViewModel> painotettavat = Lists.newArrayList();
     private HakukohdeNameUriModel selectedHakukohdeNimi;
+    private BigDecimal alinHyvaksyttavaKeskiarvo;
+
+    public List<PainotettavaOppiaineViewModel> getPainotettavat() {
+        return painotettavat;
+    }
+
+    public void setPainotettavat(List<PainotettavaOppiaineViewModel> painotettavat) {
+        this.painotettavat = painotettavat;
+    }
+
+    public BigDecimal getAlinHyvaksyttavaKeskiarvo() {
+        return alinHyvaksyttavaKeskiarvo;
+    }
 
     public HakukohdeViewModel() {
         super();
@@ -311,5 +330,13 @@ public class HakukohdeViewModel extends BaseUIViewModel {
 
     public void setSelectedHakukohdeNimi(HakukohdeNameUriModel selectedHakukohdeNimi) {
         this.selectedHakukohdeNimi = selectedHakukohdeNimi;
+    }
+
+    public void addPainotettavaOppiaine(PainotettavaOppiaineViewModel painotettava) {
+        this.painotettavat.add(painotettava);
+    }
+
+    public void setAlinHyvaksyttavaKeskiarvo(BigDecimal alinHyvaksyttavaKeskiarvo) {
+        this.alinHyvaksyttavaKeskiarvo = alinHyvaksyttavaKeskiarvo;
     }
 }

@@ -114,6 +114,7 @@ public class ListKoulutusView extends VerticalLayout {
         setMargin(true);
 
         if (presenter == null) {
+            LOG.error("Why am I creating new presenter??");
             presenter = new TarjontaPresenter();
         }
     }

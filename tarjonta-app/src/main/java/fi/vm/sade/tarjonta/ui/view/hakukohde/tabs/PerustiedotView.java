@@ -16,8 +16,6 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
 
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;

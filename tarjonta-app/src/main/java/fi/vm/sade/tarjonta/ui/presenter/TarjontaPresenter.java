@@ -256,8 +256,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         List<HakuViewModel> foundHaut = new ArrayList<HakuViewModel>();
         for (HakuTyyppi foundHaku : haut.getResponse()) {
             HakuViewModel haku = new HakuViewModel(foundHaku);
-            haku.getHakuOid();
-            haku.getNimiFi();
+//            haku.getHakuOid();
+//            haku.getNimiFi();
             
             foundHaut.add(haku);
         }
@@ -470,8 +470,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 final String hakukohdenimi = resolveHakukohdeKoodistonimiFields() + ", " + tilaToLangStr(getModel().getHakukohde().getTila());
                 
                 getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
-                getModel().getHakukohde().setHakukohdeKoodistoNimi(hakukohdenimi);
-                
+                getModel().getHakukohde().setHakukohdeKoodistoNimi(hakukohdenimi);                
                 hakukohdeView = new ShowHakukohdeViewImpl(hakukohdenimi, null, null);
                 getRootView().changeView(hakukohdeView);
                 
@@ -922,6 +921,10 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 }
             }
         }
+        getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
+
+        getModel().getHakukohde();
+
         
         getRootView().changeView(editHakukohdeView);
         
