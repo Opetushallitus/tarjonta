@@ -18,16 +18,13 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Validator;
 import com.vaadin.ui.*;
 import com.vaadin.ui.AbstractSelect.Filtering;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -46,8 +43,6 @@ import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
-import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
@@ -72,6 +67,8 @@ import javax.validation.constraints.Pattern;
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
 public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotView {
+
+    private static final long serialVersionUID = 1L;
 
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
@@ -128,7 +125,6 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     //Info buttons
     Button upRightInfoButton;
     Button downRightInfoButton;
-    private Form form;
 
     private String languageTabsheetWidth = "500px";
     private String languageTabsheetHeight = "230px";
@@ -210,10 +206,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         addItemToGrid("PerustiedotView.hakukohteenNimi", buildHakukode());
         addItemToGrid("PerustiedotView.hakuValinta", buildHakuCombo());
 
+        addItemToGrid("PerustiedotView.hakukelpoisuusVaatimukset", buildHakukelpoisuusVaatimukset());
+
         addItemToGrid("PerustiedotView.aloitusPaikat", buildAloitusPaikat());
         addItemToGrid("PerustiedotView.valinnoissaKaytettavatPaikatText",buildValinnoissaKaytettavatAloitusPaikat());
 
-        addItemToGrid("PerustiedotView.hakukelpoisuusVaatimukset", buildHakukelpoisuusVaatimukset());
         addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite", buildLiitteidenToimitusOsoite());
         addItemToGrid("",buildSahkoinenToimitusOsoiteCheckBox());
         addItemToGrid("",buildSahkoinenToimitusOsoiteTextField());
@@ -381,7 +378,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         osoiteLayout.setColumnExpandRatio(0,2);
         osoiteLayout.setColumnExpandRatio(1,4);
-         liitteidenPostinumeroText.setFieldValueFormatter(new FieldValueFormatter() {
+        liitteidenPostinumeroText.setFieldValueFormatter(new FieldValueFormatter() {
              @Override
              public Object formatFieldValue(Object dto) {
                  if (dto instanceof KoodiType) {
@@ -418,10 +415,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
 
     private Label buildHakukelpoisuusVaatimukset() {
-
-        hakuKelpoisuusVaatimuksetLabel = UiUtil.label(null, "");
-
-
+        //TODO get the text from valintaperusteista
+        hakuKelpoisuusVaatimuksetLabel = UiUtil.label((AbstractLayout)null, T("PerustiedotView.hakukelpoisuusvaatimukset.help"), LabelStyleEnum.TEXT);
         return hakuKelpoisuusVaatimuksetLabel;
     }
 
@@ -544,6 +539,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         hl.setComponentAlignment(label, Alignment.TOP_LEFT);
         hl.setComponentAlignment(downRightInfoButton, Alignment.TOP_RIGHT);
         vl.addComponent(hl);
+        UiUtil.label(vl, T("PerustiedotView.lisatiedot.help"), LabelStyleEnum.TEXT);
         lisatiedotTabs = buildLanguageTab();
         vl.addComponent(lisatiedotTabs);
         return vl;

@@ -16,9 +16,7 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
 import com.vaadin.ui.TabSheet;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohdePerustiedotViewImpl;
@@ -36,7 +34,7 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
     
     private static final long serialVersionUID = 8806220426371090907L;
     @Autowired
-    private TarjontaPresenter _presenter;
+    private TarjontaPresenter presenter;
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
     private TabSheet tabs;
@@ -50,7 +48,6 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
     public EditHakukohdeView() {
         super();
         setHeight(-1, UNITS_PIXELS);
-        
     }
 
     public void enableValintakokeetTab() {
@@ -106,8 +103,8 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
     @Override
     protected void buildLayout() {
         String hakukohdeOid = null;
-        if (_presenter.getModel().getHakukohde() != null && _presenter.getModel().getHakukohde().getOid() != null) {
-            hakukohdeOid = _presenter.getModel().getHakukohde().getOid();
+        if (presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getOid() != null) {
+            hakukohdeOid = presenter.getModel().getHakukohde().getOid();
         }
         
         tabs = UiBuilder.tabSheet(this);

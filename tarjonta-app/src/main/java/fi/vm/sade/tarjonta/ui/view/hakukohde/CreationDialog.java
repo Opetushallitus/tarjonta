@@ -23,7 +23,6 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
-import org.aspectj.bridge.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +39,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable
 public class CreationDialog<T> extends CustomComponent {
 
+    private static final long serialVersionUID = 1L;
     private VerticalLayout rootLayout;
     private HorizontalLayout titleLayout;
     private HorizontalLayout middleLayout;
@@ -53,12 +53,12 @@ public class CreationDialog<T> extends CustomComponent {
     //TODO Use UiBuilder instead of UiUtil ???
     private Button peruutaBtn;
     private Button jatkaBtn;
-    private Class typeClazz;
+    private Class<T> typeClazz;
     private static final Logger LOG = LoggerFactory.getLogger(CreationDialog.class);
     private String dialogTitleKey = null;
     private String dialogOptionGroupTitleKey = null;
 
-    public CreationDialog(List<T> selectedThingsParam, Class clazzParam, String dialogTitle, String optionGroupTitle) {
+    public CreationDialog(List<T> selectedThingsParam, Class<T> clazzParam, String dialogTitle, String optionGroupTitle) {
         selectedThings = selectedThingsParam;
         typeClazz = clazzParam;
         rootLayout = new VerticalLayout();
@@ -83,18 +83,13 @@ public class CreationDialog<T> extends CustomComponent {
         }
 
         attached = true;
-
     }
 
     public void buildLayout(List<T> thingsModel) {
-
-
-
         rootLayout.addComponent(createTitleLayout());
         rootLayout.addComponent(errorView);
         rootLayout.addComponent(createOptionGroupLayout(thingsModel));
         rootLayout.addComponent(createButtonLayout());
-
     }
 
     public void removeErrorMessages() {
