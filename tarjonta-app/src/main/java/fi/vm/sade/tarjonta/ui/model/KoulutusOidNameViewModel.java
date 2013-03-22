@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+
 /*
 * Author: Tuomas Katva
 */
@@ -23,6 +25,8 @@ public class KoulutusOidNameViewModel {
     private String koulutusOid;
 
     private String koulutusNimi;
+    
+    private KoulutusasteTyyppi koulutustyyppi;
 
 
     public String getKoulutusOid() {
@@ -44,5 +48,13 @@ public class KoulutusOidNameViewModel {
     @Override
     public String toString() {
         return koulutusNimi;
+    }
+
+    public KoulutusasteTyyppi getKoulutustyyppi() {
+        return koulutustyyppi;
+    }
+
+    public void setKoulutustyyppi(KoulutusasteTyyppi koulutustyyppi) {
+        this.koulutustyyppi = koulutustyyppi;
     }
 }

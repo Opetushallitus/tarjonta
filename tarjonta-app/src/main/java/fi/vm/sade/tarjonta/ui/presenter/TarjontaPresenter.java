@@ -404,6 +404,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             }
             
             nimiOid.setKoulutusNimi(nimi);
+            nimiOid.setKoulutustyyppi(tulos.getKoulutus().getKoulutustyyppi());
             result.add(nimiOid);
             
         }
@@ -501,6 +502,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 KoulutusOidNameViewModel koulutus = new KoulutusOidNameViewModel();
                 koulutus.setKoulutusNimi(buildKoulutusCaption(koulutusKooste));
                 koulutus.setKoulutusOid(koulutusKooste.getKomotoOid());
+                koulutus.setKoulutustyyppi(koulutusKooste.getKoulutustyyppi());
                 koulutukses.add(koulutus);
             }
         }
