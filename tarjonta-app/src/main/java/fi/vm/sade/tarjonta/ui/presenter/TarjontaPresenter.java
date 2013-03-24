@@ -217,6 +217,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         getTarjontaAdminService().poistaValintakoe(valintakoe.getValintakoeTunniste());
         editHakukohdeView.loadValintakokees();
     }
+
+    public OrganisaatioDTO getSelectOrganisaatioModel() {
+        OrganisaatioDTO organisaatioDTO = organisaatioService.findByOid(getModel().getOrganisaatioOid());
+        return organisaatioDTO;
+    }
     
     public void saveHakukohdeValintakoe(List<KielikaannosViewModel> kuvaukset) {
         getModel().getSelectedValintaKoe().setSanallisetKuvaukset(kuvaukset);
@@ -235,6 +240,30 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     
     public void closeCancelHakukohteenEditView() {
         editHakukohdeView.closeHakukohdeLiiteEditWindow();
+    }
+
+    public void setHakukohteenOletusOsoiteToEmpty() {
+        if (getModel().getHakukohde() != null) {
+            getModel().getHakukohde().setPostinumero(null);
+            getModel().getHakukohde().setPostitoimipaikka("");
+            getModel().getHakukohde().setOsoiteRivi1("");
+            getModel().getHakukohde().setOsoiteRivi2("");
+
+        }
+    }
+
+    public void emptySelectedLiiteOsoite() {
+        getSelectedHakuliite().setOsoiteRivi1("");
+        getSelectedHakuliite().setOsoiteRivi2("");
+        getSelectedHakuliite().setPostinumero(null);
+        getSelectedHakuliite().setPostitoimiPaikka("");
+    }
+
+    public void setDefaultSelectedLiiteToimitusOsoite() {
+        getSelectedHakuliite().setOsoiteRivi1(getModel().getHakukohde().getOsoiteRivi1());
+        getSelectedHakuliite().setOsoiteRivi2(getModel().getHakukohde().getOsoiteRivi2());
+        getSelectedHakuliite().setPostinumero(getModel().getHakukohde().getPostinumero());
+        getSelectedHakuliite().setPostitoimiPaikka(getModel().getHakukohde().getPostitoimipaikka());
     }
     
     public void saveHakukohteenEditView() {
@@ -892,6 +921,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         if (hakukohdeOid == null) {
             getModel().setHakukohde(new HakukohdeViewModel());
             if (koulutusOidNameViewModels != null) {
+                addKomotoOidsToModel(koulutusOidNameViewModels);
                 getModel().getHakukohde().getKoulukses().addAll(koulutusOidNameViewModels);
             }
         } else {
@@ -921,13 +951,21 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 }
             }
         }
-        getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
+        //TKatva, TODO: Remove these if not needed. When creating new hakukohde it broke the display because cannot query
+        //koulutukses to hakuohde that does not exist
+        /*getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
 
-        getModel().getHakukohde();
+        getModel().getHakukohde();*/
 
-        
+
         getRootView().changeView(editHakukohdeView);
         
+    }
+
+    private void addKomotoOidsToModel(List<KoulutusOidNameViewModel> koulutukses) {
+        for (KoulutusOidNameViewModel koulutus : koulutukses) {
+            getModel().getHakukohde().getKomotoOids().add(koulutus.getKoulutusOid());
+        }
     }
     
     public String resolveHakukohdeKoodistonimiFields() {

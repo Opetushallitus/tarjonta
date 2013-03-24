@@ -27,7 +27,7 @@ import fi.vm.sade.tarjonta.ui.view.common.TarjontaWindow;
  */
 public class HakukohdeLiiteetDialog extends TarjontaWindow {
 
-    private static final String WINDOW_HEIGHT = "700px";
+    private static final String WINDOW_HEIGHT = "750px";
     private static final String WINDOW_WIDTH = "1000px";
     private TarjontaPresenter presenter;
     private UiBuilder uiBuilder;

@@ -29,6 +29,10 @@ import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
+import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
+import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
@@ -53,6 +57,7 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -105,15 +110,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @PropertyId("hakukelpoisuusVaatimus")
     Label hakuKelpoisuusVaatimuksetLabel;
 
-    @NotNull(message = "{validation.Hakukohde.osoiteRivi1.notNull}")
     @PropertyId("osoiteRivi1")
     private TextField liitteidenOsoiteRivi1Text;
     @PropertyId("osoiteRivi2")
     private TextField liitteidenOsoiteRivi2Text;
-    @NotNull(message = "{validation.Hakukohde.postinumero.notNull}")
     @PropertyId("postinumero")
     private KoodistoComponent liitteidenPostinumeroText;
-    @NotNull(message = "{validation.Hakukohde.postitoimipaikka.notNull}")
     @PropertyId("postitoimipaikka")
     private TextField liitteidenPostitoimipaikkaText;
     @PropertyId("sahkoinenToimitusSallittu")
@@ -125,8 +127,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private CheckBox kaytaHaunPaattymisAikaa;
     @PropertyId("liitteidenToimitusPvm")
     private DateField liitteidenToimitusPvm;
+
+    private OptionGroup osoiteSelectOptionGroup;
 //    LanguageTabSheet valintaPerusteidenKuvausTabs;
     HakukohdeLisatiedotTabSheet lisatiedotTabs;
+
+    private Label osoiteSelectLabel;
     Label serverMessage = new Label("");
     //Info buttons
     Button upRightInfoButton;
@@ -232,7 +238,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             addItemToGrid("PerustiedotView.painotettavatOppiaineet", buildPainotettavatOppiaineet());
         }
         
-        addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite", buildLiitteidenToimitusOsoite());
+        //addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite", buildLiitteidenToimitusOsoite());
+        addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite",buildOsoiteSelectLabel());
+        addItemToGrid("",buildOsoiteSelect());
+        addItemToGrid("", buildLiitteidenToimitusOsoite());
         addItemToGrid("",buildSahkoinenToimitusOsoiteCheckBox());
         addItemToGrid("",buildSahkoinenToimitusOsoiteTextField());
         addItemToGrid("PerustiedotView.toimitettavaMennessa", buildToimitusPvmField());
@@ -241,6 +250,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         itemContainer.setColumnExpandRatio(1, 1f);
 
         checkCheckboxes();
+
+        setLiitteidenToimOsoite();
+        enableOrDeEnableOsoite(false);
         return itemContainer;
     }
 
@@ -310,6 +322,89 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             itemContainer.newLine();
         }
 
+    }
+
+    private AbstractLayout buildOsoiteSelectLabel() {
+        VerticalLayout osoiteSelectLayout = new VerticalLayout();
+        osoiteSelectLayout.setSizeFull();
+
+
+        osoiteSelectLabel = new Label(T("PerustiedotView.osoiteSelectLabel"));
+        //osoiteSelectLayout.addComponent(osoiteSelectLabel);
+
+        osoiteSelectLayout.addComponent(osoiteSelectLabel);
+
+
+
+
+
+
+
+
+        return osoiteSelectLayout;
+    }
+
+    private void enableOrDeEnableOsoite(boolean toEnableOrNot) {
+        if (liitteidenOsoiteRivi1Text != null) {
+            liitteidenOsoiteRivi1Text.setEnabled(toEnableOrNot);
+        }
+        if (liitteidenOsoiteRivi2Text != null) {
+            liitteidenOsoiteRivi2Text.setEnabled(toEnableOrNot);
+        }
+        if (liitteidenPostinumeroText != null) {
+            liitteidenPostinumeroText.setEnabled(toEnableOrNot);
+        }
+        if (liitteidenPostitoimipaikkaText != null) {
+            liitteidenPostitoimipaikkaText.setEnabled(toEnableOrNot);
+        }
+
+    }
+
+    private void setLiitteidenToimOsoite() {
+        OrganisaatioDTO organisaatioDTO = presenter.getSelectOrganisaatioModel();
+         for (YhteystietoDTO yhteystietoDTO: organisaatioDTO.getYhteystiedot()) {
+             if (yhteystietoDTO instanceof OsoiteDTO) {
+                 OsoiteDTO osoite = (OsoiteDTO)yhteystietoDTO;
+                 if (osoite.getOsoiteTyyppi().equals(OsoiteTyyppi.POSTI)) {
+                     presenter.getModel().getHakukohde().setOsoiteRivi1(osoite.getOsoite());
+                     presenter.getModel().getHakukohde().setPostinumero(osoite.getPostinumero());
+                     presenter.getModel().getHakukohde().setPostitoimipaikka(osoite.getPostitoimipaikka());
+
+                 }
+             }
+         }
+    }
+
+    private AbstractLayout buildOsoiteSelect() {
+        VerticalLayout osoiteSelectOptionLayout = new VerticalLayout();
+        List<String> selections = new ArrayList<String>();
+        selections.add(T("PerustiedotView.osoiteSelectOrganisaatioPostiOsoite"));
+        selections.add(T("PerustiedotView.osoiteSelectMuuOsoite"));
+        //selections.add("Organisaation postiosoite");
+        //selections.add("Muu osoite");
+        osoiteSelectOptionGroup = new OptionGroup("",selections);
+        osoiteSelectOptionGroup.setNullSelectionAllowed(false);
+        osoiteSelectOptionGroup.select(T("PerustiedotView.osoiteSelectOrganisaatioPostiOsoite"));
+        osoiteSelectOptionGroup.setImmediate(true);
+        osoiteSelectOptionGroup.addListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(ValueChangeEvent valueChangeEvent) {
+                if(valueChangeEvent.getProperty().getValue().equals(T("PerustiedotView.osoiteSelectOrganisaatioPostiOsoite"))) {
+                     enableOrDeEnableOsoite(true);
+                     setLiitteidenToimOsoite();
+                     enableOrDeEnableOsoite(false);
+                } else {
+                     enableOrDeEnableOsoite(true);
+                     presenter.setHakukohteenOletusOsoiteToEmpty();
+                }
+            }
+        });
+
+        osoiteSelectOptionLayout.addComponent(osoiteSelectOptionGroup);
+
+
+
+        return osoiteSelectOptionLayout;
     }
 
     private TextField buildSahkoinenToimitusOsoiteTextField() {
@@ -391,6 +486,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     private GridLayout buildLiitteidenToimitusOsoite() {
         GridLayout osoiteLayout = new GridLayout(2,3);
+
 
 
         liitteidenOsoiteRivi1Text =  UiUtil.textField(null);

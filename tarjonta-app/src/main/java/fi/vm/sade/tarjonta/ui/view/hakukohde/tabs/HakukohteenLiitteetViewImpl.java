@@ -46,13 +46,14 @@ import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author: Tuomas Katva Date: 14.1.2013
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
-@Configurable
+@Configurable(preConstruction = true)
 public class HakukohteenLiitteetViewImpl extends CustomComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(PerustiedotViewImpl.class);
@@ -88,6 +89,8 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
     private String languageTabsheetWidth = "650px";
     private String languageTabsheetHeight = "250px";
     private Button upRightInfoButton;
+
+    private OptionGroup osoiteValinta;
 
     public HakukohteenLiitteetViewImpl(ErrorMessage errorMessage, TarjontaPresenter presenter, UiBuilder uiBuilder) {
         super();
@@ -309,6 +312,52 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         return horizontalButtonLayout;
     }
 
+    private void deEnableOrEnableOsoite(boolean toEnableOrNot) {
+        if (osoiteRivi1 != null) {
+            osoiteRivi1.setEnabled(toEnableOrNot);
+        }
+        if (osoiteRivi2 != null) {
+            osoiteRivi2.setEnabled(toEnableOrNot);
+        }
+        if (postinumero != null ) {
+            postinumero.setEnabled(toEnableOrNot);
+
+        }
+        if (postitoimipaikka != null ) {
+            postitoimipaikka.setEnabled(toEnableOrNot);
+        }
+    }
+
+    private VerticalLayout buildOsoiteSelectionLayout() {
+        VerticalLayout osoiteSelectLayout = new VerticalLayout();
+
+        List<String> selections = new ArrayList<String>();
+        selections.add(T("HakukohteenLiitteetViewImpl.toimitusOsoiteValintaOletus"));
+        selections.add(T("HakukohteenLiitteetViewImpl.toimitusOsoiteValintaMuu"));
+
+        osoiteValinta = new OptionGroup("",selections);
+        osoiteValinta.setNullSelectionAllowed(false);
+        osoiteValinta.select(T("HakukohteenLiitteetViewImpl.toimitusOsoiteValintaOletus"));
+        osoiteValinta.setImmediate(true);
+        osoiteValinta.addListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                if (valueChangeEvent.getProperty().getValue().equals(T("HakukohteenLiitteetViewImpl.toimitusOsoiteValintaOletus")))  {
+                   deEnableOrEnableOsoite(true);
+                   presenter.setDefaultSelectedLiiteToimitusOsoite();
+                   deEnableOrEnableOsoite(false);
+                } else {
+                    deEnableOrEnableOsoite(true);
+                    presenter.emptySelectedLiiteOsoite();
+                }
+            }
+        });
+
+        osoiteSelectLayout.addComponent(osoiteValinta);
+
+        return osoiteSelectLayout;
+    }
+
     private GridLayout buildGridLayout() {
         itemContainer = new GridLayout(2, 1);
         itemContainer.setWidth(UiConstant.PCT100);
@@ -318,9 +367,13 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent {
         addItemToGrid("HakukohteenLiitteetViewImpl.liitteenTyyppi", buildLiitteenTyyppiCombo());
         addItemToGrid("HakukohteenLiitteetViewImpl.liitteenSanallinenKuvaus", buildLiitteenSanallinenKuvaus());
         addItemToGrid("HakukohteenLiitteetViewImpl.toimitettavaMennessa", buildToimitettavaMennessa());
-        addItemToGrid("HakukohteenLiitteetViewImpl.toimitusOsoite", buildLiitteidenToimitusOsoite());
+        addItemToGrid("HakukohteenLiitteetViewImpl.toimitusOsoite",buildOsoiteSelectionLayout());
+        addItemToGrid("", buildLiitteidenToimitusOsoite());
         addItemToGrid("", buildSahkoinenToimitusOsoite());
 
+
+        presenter.setDefaultSelectedLiiteToimitusOsoite();
+        deEnableOrEnableOsoite(false);
         itemContainer.setColumnExpandRatio(0, 0f);
         itemContainer.setColumnExpandRatio(1, 1f);
         return itemContainer;
