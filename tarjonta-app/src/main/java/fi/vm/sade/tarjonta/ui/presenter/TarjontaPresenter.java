@@ -919,7 +919,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         //After the data has been initialized the form is created
         editHakukohdeView = new EditHakukohdeView();
         if (hakukohdeOid == null) {
-            getModel().setHakukohde(new HakukohdeViewModel());
+            getModel().setHakukohde(HakukohdeViewModel.create());
             if (koulutusOidNameViewModels != null) {
                 addKomotoOidsToModel(koulutusOidNameViewModels);
                 getModel().getHakukohde().getKoulukses().addAll(koulutusOidNameViewModels);
@@ -950,14 +950,12 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                     getModel().getHakukohde().setSelectedHakukohdeNimi(hakukohdeNameUriModelFromKoodi(koodis.get(0)));
                 }
             }
-        }
-
-        if (getModel().getHakukohde().getKoulukses() == null || getModel().getHakukohde().getKoulukses().size() == 0) {
-            getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
+            if (getModel().getHakukohde().getKoulukses() == null || getModel().getHakukohde().getKoulukses().size() == 0) {
+                getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
+            }
         }
 
         getRootView().changeView(editHakukohdeView);
-        
     }
 
     private void addKomotoOidsToModel(List<KoulutusOidNameViewModel> koulutukses) {

@@ -236,7 +236,7 @@ public class TarjontaModel extends BaseUIViewModel {
      */
     public HakukohdeViewModel getHakukohde() {
         if (hakukohde == null) {
-            hakukohde = new HakukohdeViewModel();
+            hakukohde = HakukohdeViewModel.create();
         }
         return hakukohde;
     }

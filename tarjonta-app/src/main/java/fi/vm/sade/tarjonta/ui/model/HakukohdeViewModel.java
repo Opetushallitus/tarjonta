@@ -339,4 +339,17 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     public void setAlinHyvaksyttavaKeskiarvo(BigDecimal alinHyvaksyttavaKeskiarvo) {
         this.alinHyvaksyttavaKeskiarvo = alinHyvaksyttavaKeskiarvo;
     }
+
+    /**
+     * Create new (empty) model
+     */
+    public static HakukohdeViewModel create() {
+        final HakukohdeViewModel model = new HakukohdeViewModel();
+        for(int i=0;i<3;i++) {
+            model.addPainotettavaOppiaine(new PainotettavaOppiaineViewModel());
+        }
+
+        
+        return model;
+    }
 }

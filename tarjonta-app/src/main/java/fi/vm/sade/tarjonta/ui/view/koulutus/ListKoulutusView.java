@@ -328,10 +328,7 @@ public class ListKoulutusView extends VerticalLayout {
                     dialog.center();
                     getWindow().addWindow(dialog);
                   }  else {
-
-
-
-                      presenter.showHakukohdeEditView(null, null,presenter.getSelectedKoulutusOidNameViewModels());
+                      presenter.showHakukohdeEditView(null, null, presenter.getSelectedKoulutusOidNameViewModels());
                   }
                }
             }

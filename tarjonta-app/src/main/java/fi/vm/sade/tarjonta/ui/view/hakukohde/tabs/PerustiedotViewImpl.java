@@ -161,15 +161,28 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
 
-        Preconditions.checkNotNull(presenter.getModel().getHakukohde().getKoulukses(), "Modelissa ei ole koulutuksia!");
-        Preconditions.checkArgument(presenter.getModel().getHakukohde().getKoulukses().size() > 0,
-                "Modelissa ei ole koulutuksia!");
-        final KoulutusasteTyyppi koulutusasteTyyppi = presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi();
-        LOG.info("koulutustyyppi: {}", koulutusasteTyyppi);
-        this.koulutusasteTyyppi = koulutusasteTyyppi;
+        this.koulutusasteTyyppi = getKoulutusasteTyyppi();
 
         buildMainLayout();
         this.presenter.initHakukohdeForm(this);
+    }
+    
+    // Figure out the type
+    private KoulutusasteTyyppi getKoulutusasteTyyppi() {
+        final HakukohdeViewModel model = presenter.getModel().getHakukohde();
+
+        Preconditions.checkNotNull(model);
+
+        // first check if there are some koulutuses attached
+        if (model.getKoulukses() != null && model.getKoulukses().size() > 0) {
+            return model.getKoulukses().get(0).getKoulutustyyppi();
+        }
+        if (presenter.getModel().getSelectedKoulutukset() != null
+                && presenter.getModel().getSelectedKoulutukset().size() > 0) {
+            return presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getKoulutustyyppi();
+        }
+
+        throw new RuntimeException("Can not figure out the type!");
     }
 
     @Override
@@ -270,7 +283,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             addOppiaine(painotettava);
         }
         //lisää nappula
-        UiUtil.button(lo, "Lisää", new Button.ClickListener() {
+        UiUtil.button(lo, T("PerustiedotView.lisaaPainotettavaOppiaine"), new Button.ClickListener() {
             
             @Override
             public void buttonClick(ClickEvent event) {
