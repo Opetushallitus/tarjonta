@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.impl;
 
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -289,7 +290,7 @@ public class TarjontaAdminServiceTest {
     }
     
     @Test
-    public void testPoistaHakukohde() {
+    public void testCRUDHakukohde() {
     	
     	String oid = "56.56.56.57.57.57";
     	String oid2 = "56.56.56.57.57.58";
@@ -343,6 +344,51 @@ public class TarjontaAdminServiceTest {
         
         originalSize = this.hakukohdeDAO.findAll().size();
         
+        LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
+        kysely.setOid(oid2);
+        LueHakukohdeVastausTyyppi vastaus = this.publicService.lueHakukohde(kysely);
+        assertNotNull(vastaus);
+
+        HakukohdeTyyppi dto = vastaus.getHakukohde();
+        assertEquals(0,dto.getPainotettavatOppiaineet().size());
+        PainotettavaOppiaineTyyppi oppiaine = new PainotettavaOppiaineTyyppi();
+        oppiaine.setOppiaine("foo");
+        oppiaine.setPainokerroin(1);
+        dto.getPainotettavatOppiaineet().add(oppiaine);
+        dto=this.adminService.paivitaHakukohde(dto);
+        assertEquals(1,dto.getPainotettavatOppiaineet().size());
+        assertEquals("foo",dto.getPainotettavatOppiaineet().get(0).getOppiaine());
+        assertEquals(1,dto.getPainotettavatOppiaineet().get(0).getPainokerroin());
+        assertNotNull(dto.getPainotettavatOppiaineet().get(0).getPainotettavaOppiaineTunniste());
+        assertTrue(dto.getPainotettavatOppiaineet().get(0).getVersion()==0);
+
+
+        //edit oppiaineet
+        PainotettavaOppiaineTyyppi oppiaine2 = new PainotettavaOppiaineTyyppi();
+        oppiaine2.setOppiaine("bar");
+        oppiaine2.setPainokerroin(9);
+        dto.getPainotettavatOppiaineet().add(oppiaine2);
+        dto=this.adminService.paivitaHakukohde(dto);
+        assertEquals(2,dto.getPainotettavatOppiaineet().size());
+
+        assertEquals(oppiaine.getOppiaine(),dto.getPainotettavatOppiaineet().get(0).getOppiaine());
+        assertEquals(oppiaine.getPainokerroin(),dto.getPainotettavatOppiaineet().get(0).getPainokerroin());
+        assertNotNull(dto.getPainotettavatOppiaineet().get(0).getPainotettavaOppiaineTunniste());
+        assertTrue(dto.getPainotettavatOppiaineet().get(0).getVersion()==0);
+        
+        dto.getPainotettavatOppiaineet().remove(0);
+        dto=this.adminService.paivitaHakukohde(dto);
+        assertEquals(1,dto.getPainotettavatOppiaineet().size());
+
+        assertEquals(oppiaine2.getOppiaine(),dto.getPainotettavatOppiaineet().get(0).getOppiaine());
+        assertEquals(oppiaine2.getPainokerroin(),dto.getPainotettavatOppiaineet().get(0).getPainokerroin());
+        assertNotNull(dto.getPainotettavatOppiaineet().get(0).getPainotettavaOppiaineTunniste());
+        assertTrue(dto.getPainotettavatOppiaineet().get(0).getVersion()==0);
+        
+        dto.getPainotettavatOppiaineet().remove(0);
+        dto=this.adminService.paivitaHakukohde(dto);
+        assertEquals(0,dto.getPainotettavatOppiaineet().size());
+
         try {
         	HakukohdeTyyppi hakukohdeT = new HakukohdeTyyppi();
         	hakukohdeT.setOid(oid2);
