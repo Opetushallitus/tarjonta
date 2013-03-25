@@ -302,6 +302,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             haku.setHakuvuosi(hakuModel.getHakukausiVuosi().toString());
             haku.setKoulutuksenAlkamiskausiUri(hakuModel.getKoulutuksenAlkamiskausiUri());
             haku.setKoulutuksenAlkamisvuosi(hakuModel.getKoulutuksenAlkamisVuosi().toString());
+            haku.setHakuAlkamisPvm(getStartDate(hakukohdeModel.getHaku().getHakuaikas()));
+            haku.setHakuPaattymisPvm(getEndDate(hakukohdeModel.getHaku().getHakuaikas()));
 
             KoulutusmoduuliToteutus toteutus = CollectionUtils.singleItem(hakukohdeModel.getKoulutusmoduuliToteutuses());
             koulutus.setTarjoaja(toteutus.getTarjoaja());
@@ -316,6 +318,30 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
         return vastaus;
 
+    }
+
+    private Date getStartDate(Set<Hakuaika> hakuaikas) {
+        Date startDate = null;
+        for (Hakuaika aika:hakuaikas) {
+            if (startDate == null) {
+                startDate = aika.getAlkamisPvm();
+            }  else if (aika.getAlkamisPvm().before(startDate)) {
+                startDate = aika.getAlkamisPvm();
+            }
+        }
+        return startDate;
+    }
+
+    private Date getEndDate(Set<Hakuaika> hakuaikas) {
+        Date endDate = null;
+        for (Hakuaika aika:hakuaikas) {
+            if (endDate == null) {
+              endDate = aika.getPaattymisPvm();
+            } else if (aika.getPaattymisPvm().after(endDate)) {
+                endDate = aika.getPaattymisPvm();
+            }
+        }
+        return endDate;
     }
 
     @Override
