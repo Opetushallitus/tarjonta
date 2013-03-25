@@ -33,7 +33,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 /**
  * Created by: Tuomas Katva Date: 15.1.2013
  */
-@Configurable
+@Configurable(preConstruction = true)
 public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<HakukohdeViewModel, PerustiedotViewImpl> {
 
     @Autowired(required = true)

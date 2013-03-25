@@ -65,6 +65,9 @@ public class TarjontaModel extends BaseUIViewModel {
     private Collection<OrganisaatioOidNamePair> organisaatios;
     private String selectedKoulutusOid;
     public KoulutusLukioKuvailevatTiedotViewModel koulutusLukioKuvailevatTiedot;
+    private boolean selectedHakuStarted = false;
+
+
 
     public String getSelectedKoulutusOid() {
         return selectedKoulutusOid;
@@ -109,6 +112,14 @@ public class TarjontaModel extends BaseUIViewModel {
      */
     public void setKoulutusLukioKuvailevatTiedot(KoulutusLukioKuvailevatTiedotViewModel koulutusLukioKuvailevatTiedot) {
         this.koulutusLukioKuvailevatTiedot = koulutusLukioKuvailevatTiedot;
+    }
+
+    public boolean isSelectedHakuStarted() {
+        return selectedHakuStarted;
+    }
+
+    public void setSelectedHakuStarted(boolean selectedHakuStarted) {
+        this.selectedHakuStarted = selectedHakuStarted;
     }
 
     public static class OrganisaatioOidNamePair {

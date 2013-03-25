@@ -43,9 +43,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import java.util.Date;
+
 /**
  * The component and functionality for showing a hakukohde object in hakukohde
  * search result list.
+ *
+ * TKatva, 25.3.2013. This should be refactored so that hakukohdeTulos-object would be passed to other views.
+ * Now instead every view loads it again. For example "inpection"-view could use just the passed model. Edit view maybe should load model again.
  *
  * @author markus
  *
@@ -67,6 +72,8 @@ public class HakukohdeResultRow extends HorizontalLayout {
      */
     private CheckBox isSelected;
     private Window removeHakukohdeDialog;
+
+    private boolean hakuStarted = false;
     /**
      * The presenter object for the component.
      */
@@ -79,6 +86,11 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
     public HakukohdeResultRow(HakukohdeTulos hakukohde, String hakukohdeNimi) {
         this.hakukohde = hakukohde;
+        Date today = new Date();
+        if (hakukohde.getHaku() != null && hakukohde.getHaku().getHakuAlkamisPvm().before(today)) {
+            hakuStarted = true;
+        }
+
         this.hakukohdeNimi = hakukohdeNimi;
     }
     /**
@@ -106,7 +118,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
-        if (tarjontaPresenter.getPermission().userCanUpdateHakukohde(context)) {
+        if (tarjontaPresenter.getPermission().userCanUpdateHakukohde(context) && !hakuStarted) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
 
@@ -134,6 +146,8 @@ public class HakukohdeResultRow extends HorizontalLayout {
         final String hakukohdeOid = hakukohde.getHakukohde().getOid();
 
         if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
+            //Ugly, refactor when whole object is passed
+            tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
             tarjontaPresenter.showHakukohdeViewImpl(hakukohdeOid);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
             tarjontaPresenter.showHakukohdeEditView(null, hakukohdeOid,null);

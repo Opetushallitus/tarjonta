@@ -40,6 +40,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private HakukohdeNameUriModel selectedHakukohdeNimi;
     private BigDecimal alinHyvaksyttavaKeskiarvo;
 
+
     public List<PainotettavaOppiaineViewModel> getPainotettavat() {
         return painotettavat;
     }
@@ -352,4 +353,6 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         
         return model;
     }
+
+
 }

@@ -172,6 +172,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
 
     private void buildMiddleContentLayout(VerticalLayout layout) {
 
+        if (!tarjontaPresenterPresenter.getModel().isSelectedHakuStarted()) {
         layout.addComponent(buildHeaderLayout(context, T("perustiedot"), T(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
 
             @Override
@@ -180,6 +181,8 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
                         tarjontaPresenterPresenter.getModel().getHakukohde().getOid(),null);
             }
         }, true));
+        }
+
         GridLayout grid = new GridLayout(2, 1);
         grid.setMargin(true);
         grid.setHeight("100%");

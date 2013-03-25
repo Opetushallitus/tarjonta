@@ -108,8 +108,7 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
             hakukohdeOid = presenter.getModel().getHakukohde().getOid();
         }
         
-        System.out.println("koulutukset:" + presenter.getModel().getKoulutukset());
-        
+
         tabs = UiBuilder.tabSheet(this);
         perustiedot = new HakukohdePerustiedotViewImpl(hakukohdeOid);
         
