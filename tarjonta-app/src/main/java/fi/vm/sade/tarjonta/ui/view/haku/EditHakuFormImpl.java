@@ -53,6 +53,7 @@ import java.util.Calendar;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Min;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,12 +90,14 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
     @PropertyId("hakukausi")
     private KoodistoComponent _hakukausi;
     @NotNull(message = "{validation.Haku.hakuvuosiNull}")
+    @Min(value = 2000, message = "{validation.Haku.hakuvuosi}")
     @PropertyId("hakuvuosi")
     private TextField _hakuvuosi;
     @NotNull(message = "{validation.Haku.koulutuksenAlkamisKausiNull}")
     @PropertyId("koulutuksenAlkamisKausi")
     private KoodistoComponent _koulutusAlkamiskausi;
     @NotNull(message = "{validation.Haku.koulutuksenAlkamisVuosiNull}")
+    @Min(value = 2000, message = "{validation.Haku.koulutuksenAlkamisVuosiNumber}")
     @PropertyId("koulutuksenAlkamisvuosi")
     private TextField koulutuksenAlkamisvuosi;
     @NotNull(message = "{validation.Haku.kohdejoukkoNull}")
