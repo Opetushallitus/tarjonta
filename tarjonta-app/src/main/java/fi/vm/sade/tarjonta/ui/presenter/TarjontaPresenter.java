@@ -171,11 +171,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                     hakukohdeTyyppi.setSoraKuvausKoodiUri(TarjontaUIHelper.createVersionUri(koodi.getKoodiUri(), koodi.getVersio()));
                 }
             }
-            
-            getTarjontaAdminService().lisaaHakukohde(hakukohdeTyyppi);
-            
+            HakukohdeTyyppi fresh = getTarjontaAdminService().lisaaHakukohde(hakukohdeTyyppi);
+            //TODO copy this fresh dto to model;
         } else {
-            getTarjontaAdminService().paivitaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
+            HakukohdeTyyppi fresh = getTarjontaAdminService().paivitaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
+            //TODO copy this fresh dto to model;
         }
     }
     
@@ -951,12 +951,10 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 }
             }
         }
-        //TKatva, TODO: Remove these if not needed. When creating new hakukohde it broke the display because cannot query
-        //koulutukses to hakuohde that does not exist
-        /*getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
 
-        getModel().getHakukohde();*/
-
+        if (getModel().getHakukohde().getKoulukses() == null || getModel().getHakukohde().getKoulukses().size() == 0) {
+            getModel().getHakukohde().setKoulukses(getHakukohdeKoulutukses(getModel().getHakukohde()));
+        }
 
         getRootView().changeView(editHakukohdeView);
         

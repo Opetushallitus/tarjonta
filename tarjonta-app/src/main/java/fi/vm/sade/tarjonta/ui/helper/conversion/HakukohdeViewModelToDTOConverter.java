@@ -33,8 +33,6 @@ import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.gwt.maps.client.impl.PanoramaImpl;
-
 import static fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils.convertTekstiToVM;
 
 /**
@@ -91,14 +89,21 @@ public class HakukohdeViewModelToDTOConverter {
             hakukohde.setLiitteidenToimitusOsoite(osoite);
         }
 
+        //alin hyväksyttävä keskiarvo
         hakukohde.setAlinHyvaksyttavaKeskiarvo(hakukohdevm.getAlinHyvaksyttavaKeskiarvo());
         
+        //painotettavat oppiaineet
         for (PainotettavaOppiaineViewModel painotettava : hakukohdevm.getPainotettavat()) {
-            final PainotettavaOppiaineTyyppi dto = new PainotettavaOppiaineTyyppi();
-            dto.setOppiaine(painotettava.getOppiaine());
-            dto.setPainokerroin(painotettava.getPainokerroin());
-            dto.setPainotettavaOppiaineTunniste(painotettava.getPainotettavaOppiaineTunniste());
-            hakukohde.getPainotettavatOppiaineet().add(dto);
+            if (painotettava.getOppiaine() != null && painotettava.getPainokerroin() != null) {
+                final PainotettavaOppiaineTyyppi dto = new PainotettavaOppiaineTyyppi();
+                dto.setOppiaine(painotettava.getOppiaine());
+                dto.setPainokerroin(painotettava.getPainokerroin());
+                dto.setPainotettavaOppiaineTunniste(painotettava.getPainotettavaOppiaineTunniste());
+                if(painotettava.getVersion()!=null) {
+                    dto.setVersion(painotettava.getVersion());
+                }
+                hakukohde.getPainotettavatOppiaineet().add(dto);
+            }
         }
 
         return hakukohde;
@@ -148,12 +153,13 @@ public class HakukohdeViewModelToDTOConverter {
             hakukohdeVM.setPostitoimipaikka(hakukohdeTyyppi.getLiitteidenToimitusOsoite().getPostitoimipaikka());
         }
 
+        //painotettavat oppiaineet
         int visible = hakukohdeTyyppi.getPainotettavatOppiaineet()!=null?hakukohdeTyyppi.getPainotettavatOppiaineet().size():0;
 
-                if (hakukohdeTyyppi.getPainotettavatOppiaineet() != null) {
+        if (hakukohdeTyyppi.getPainotettavatOppiaineet() != null) {
             for (PainotettavaOppiaineTyyppi pot : hakukohdeTyyppi.getPainotettavatOppiaineet()) {
                 PainotettavaOppiaineViewModel painotettava = new PainotettavaOppiaineViewModel(pot.getOppiaine(),
-                        pot.getPainokerroin(), pot.getPainotettavaOppiaineTunniste());
+                        pot.getPainokerroin(), pot.getPainotettavaOppiaineTunniste(), pot.getVersion());
                 hakukohdeVM.addPainotettavaOppiaine(painotettava);
             }
         }
@@ -161,7 +167,8 @@ public class HakukohdeViewModelToDTOConverter {
         for(int i=0;i<visible;i++) {
             hakukohdeVM.addPainotettavaOppiaine(new PainotettavaOppiaineViewModel());
         }
-        
+
+        //alin hyväksyttava keskiarvo
         hakukohdeVM.setAlinHyvaksyttavaKeskiarvo(hakukohdeTyyppi.getAlinHyvaksyttavaKeskiarvo());
 
         return hakukohdeVM;

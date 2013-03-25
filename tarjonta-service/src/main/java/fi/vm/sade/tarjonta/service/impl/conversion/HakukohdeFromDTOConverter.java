@@ -55,9 +55,11 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
         if (from.getLiitteidenToimitusOsoite() != null) {
             hakukohde.setLiitteidenToimitusOsoite(convertOsoite(from.getLiitteidenToimitusOsoite()));
         }
+
         if (from.getAlinHyvaksyttavaKeskiarvo() != null) {
-        hakukohde.setAlinHyvaksyttavaKeskiarvo(from.getAlinHyvaksyttavaKeskiarvo().doubleValue());
+            hakukohde.setAlinHyvaksyttavaKeskiarvo(from.getAlinHyvaksyttavaKeskiarvo().doubleValue());
         }
+
         if(from.getPainotettavatOppiaineet() != null) {
             hakukohde.getPainotettavatOppiaineet().addAll(convertPainotettavatOppiaineet(from.getPainotettavatOppiaineet()));
         }
@@ -67,17 +69,18 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
 
     private Set<PainotettavaOppiaine> convertPainotettavatOppiaineet(List<PainotettavaOppiaineTyyppi> oppiaineet) {
         Set<PainotettavaOppiaine> painotettavatOppiaineet = new HashSet<PainotettavaOppiaine>();
-        
-        for(PainotettavaOppiaineTyyppi oppiaineTyyppi:oppiaineet) {
+
+        for (PainotettavaOppiaineTyyppi oppiaineTyyppi : oppiaineet) {
             PainotettavaOppiaine painotettavaOppiaine = new PainotettavaOppiaine();
             painotettavaOppiaine.setOppiaine(oppiaineTyyppi.getOppiaine());
             painotettavaOppiaine.setPainokerroin(oppiaineTyyppi.getPainokerroin());
+            painotettavaOppiaine.setVersion(oppiaineTyyppi.getVersion());
             if (oppiaineTyyppi.getPainotettavaOppiaineTunniste() != null) {
                 painotettavaOppiaine.setId(new Long(oppiaineTyyppi.getPainotettavaOppiaineTunniste()));
             }
-           
-        } 
-        
+            painotettavatOppiaineet.add(painotettavaOppiaine);
+        }
+
         return painotettavatOppiaineet;
     }
     

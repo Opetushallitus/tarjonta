@@ -847,6 +847,7 @@
             <xs:element name="painotettavaOppiaineTunniste" type="xs:string"/>
             <xs:element name="oppiaine" type="xs:string"/>
             <xs:element name="painokerroin" type="xs:int"/>
+            <xs:element name="version" type="xs:long"/>
         </xs:sequence>
     </xs:complexType>
     

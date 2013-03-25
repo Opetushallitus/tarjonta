@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
@@ -70,6 +71,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private PublicationDataService publication;
     @Autowired(required = true)
     private MonikielinenMetadataDAO metadataDAO;
+    @Autowired
+    private TarjontaPublicService publicService;
     /**
      * Väliaikainne kunnes Koodisto on alustettu.
      */
@@ -279,8 +282,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakukohdeDAO.update(hakuk);
         publication.sendEvent(hakuk.getTila(), hakuk.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
 
-
-        return hakukohde;
+        //return fresh copy (that has fresh versions so that optimistic locking works)
+        LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
+        kysely.setOid(hakuk.getOid());
+        return publicService.lueHakukohde(kysely).getHakukohde();
     }
 
     private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids, Hakukohde hakukohde) {
@@ -338,6 +343,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         Hakukohde hakukohde = conversionService.convert(hakukohdePaivitys, Hakukohde.class);
         List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findBy("oid", hakukohdePaivitys.getOid());
         hakukohde.setId(hakukohdeTemp.get(0).getId());
+        
+        //why do we overwrite version from DTO?
         hakukohde.setVersion(hakukohdeTemp.get(0).getVersion());
         Haku haku = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
 
@@ -347,8 +354,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakukohdeDAO.update(hakukohde);
         publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
 
-
-        return hakukohdePaivitys;
+        //return fresh copy (that has fresh versions so that optimistic locking works)
+        LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
+        kysely.setOid(hakukohdePaivitys.getOid());
+        return publicService.lueHakukohde(kysely).getHakukohde();
     }
 
     @Override
