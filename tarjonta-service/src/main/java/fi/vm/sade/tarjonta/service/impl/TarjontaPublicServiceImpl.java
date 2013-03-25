@@ -438,6 +438,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         koulutusKooste.setKomotoOid(komoto.getOid());
         koulutusKooste.setTutkintonimike((komo != null) ? komo.getTutkintonimike() : null);
         koulutusKooste.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(komo.getKoulutustyyppi()));
+        koulutusKooste.setLukiolinjakoodi(komo.getLukiolinja());
         tulos.setKoulutus(koulutusKooste);
         return tulos;
     }

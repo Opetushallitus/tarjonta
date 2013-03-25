@@ -87,8 +87,13 @@ public class TarjontaUIHelper {
         List<KoodiUriAndVersioType> koodiVersios = new ArrayList<KoodiUriAndVersioType>();
         for (HaeKoulutuksetVastausTyyppi.KoulutusTulos koulutusTulos : vastaus.getKoulutusTulos()) {
             KoodiUriAndVersioType koodiUriAndVersioType = new KoodiUriAndVersioType();
-            koodiUriAndVersioType.setKoodiUri(getKoodiURI(koulutusTulos.getKoulutus().getKoulutusohjelmakoodi()));
-            koodiUriAndVersioType.setVersio(getKoodiVersion(koulutusTulos.getKoulutus().getKoulutusohjelmakoodi()));
+            if (koulutusTulos.getKoulutus().getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+                koodiUriAndVersioType.setKoodiUri(getKoodiURI(koulutusTulos.getKoulutus().getLukiolinjakoodi()));
+                koodiUriAndVersioType.setVersio(getKoodiVersion(koulutusTulos.getKoulutus().getLukiolinjakoodi()));
+            } else {
+                koodiUriAndVersioType.setKoodiUri(getKoodiURI(koulutusTulos.getKoulutus().getKoulutusohjelmakoodi()));
+                koodiUriAndVersioType.setVersio(getKoodiVersion(koulutusTulos.getKoulutus().getKoulutusohjelmakoodi()));
+            }
             koodiVersios.add(koodiUriAndVersioType);
         }
         

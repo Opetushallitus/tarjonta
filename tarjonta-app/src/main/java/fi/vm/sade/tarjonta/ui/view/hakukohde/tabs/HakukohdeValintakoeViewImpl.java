@@ -21,17 +21,20 @@ import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
 import static com.vaadin.terminal.Sizeable.UNITS_EM;
 import com.vaadin.ui.*;
+
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
 import fi.vm.sade.generic.ui.validation.ValidatingViewBoundForm;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -70,12 +73,14 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
     private String languageTabsheetHeight = "250px";
     private HakukohdeValintaKoeAikaEditView valintaKoeAikaEditView;
     private Form valintaKoeAikaForm;
+    private KoulutusasteTyyppi koulutustyyppi;
 
-    public HakukohdeValintakoeViewImpl(ErrorMessage errorView, TarjontaPresenter presenter, UiBuilder uiBuilder) {
+    public HakukohdeValintakoeViewImpl(ErrorMessage errorView, TarjontaPresenter presenter, UiBuilder uiBuilder, KoulutusasteTyyppi koulutustyyppi) {
         super();
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
         this.errorView = errorView;
+        this.koulutustyyppi = koulutustyyppi;
         buildMainLayout();
     }
 
@@ -152,7 +157,9 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
         mainLayout.setMargin(true);
 
-        mainLayout.addComponent(buildInfoButtonLayout());
+        if (koulutustyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
+            mainLayout.addComponent(buildInfoButtonLayout());
+        }
 
         mainLayout.addComponent(buildGridLayout());
 
@@ -181,7 +188,9 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         itemContainer.setSpacing(true);
         itemContainer.setMargin(false, true, true, true);
 
-        addItemToGrid("HakukohdeValintakoeViewImpl.valintakokeenTyyppi", buildValintakokeenTyyppi());
+        if (koulutustyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
+            addItemToGrid("HakukohdeValintakoeViewImpl.valintakokeenTyyppi", buildValintakokeenTyyppi());
+        }
         addItemToGrid("HakukohdeValintakoeViewImpl.kuvaus", buildValintakoeKuvausTabSheet());
         addItemToGrid("HakukohdeValintakoeViewImpl.valintakokeenSijainti", buildOsoiteEditLayout());
         addItemToGrid("HakukohdeValintakoeViewImpl.tableHdr", buildValintakoeAikaTableLayout());
@@ -193,7 +202,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
     private VerticalLayout buildValintakoeAikaTableLayout() {
         VerticalLayout tableLayout = new VerticalLayout();
-
+        
         valintakoeAikasTable = new Table();
         tableLayout.addComponent(valintakoeAikasTable);
         loadTableData();
@@ -207,8 +216,11 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         } else {
             valintakoeAikasTable = new Table();
         }
-        final List<ValintakoeAikaViewModel> valintakoeAjat = presenter.getModel().getSelectedValintaKoe().getValintakoeAjat();
-
+       
+        
+        final List<ValintakoeAikaViewModel> valintakoeAjat = presenter.getModel().getSelectedValintaKoe() != null ? presenter.getModel().getSelectedValintaKoe().getValintakoeAjat() : new ArrayList<ValintakoeAikaViewModel>(); 
+        
+        
         valintakoeAikasTable.setContainerDataSource(createTableContainer(valintakoeAjat));
         valintakoeAikasTable.setVisibleColumns(new String[]{"sijainti", "ajankohta", "lisatietoja", "poistaBtn", "muokkaaBtn"});
         valintakoeAikasTable.setColumnHeader("sijainti", T("HakukohdeValintakoeViewImpl.tableSijainti"));
@@ -243,6 +255,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
     private KoodistoComponent buildValintakokeenTyyppi() {
         valintakoeTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_LIITTEEN_TYYPPI_URI);
+        valintakoeTyyppi.setVisible(false);
         return valintakoeTyyppi;
     }
 

@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
 import com.vaadin.ui.VerticalLayout;
+
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaWindow;
@@ -55,7 +57,7 @@ public class HakukohdeValintakoeDialog extends TarjontaWindow {
     }
 
     public void windowOpen() {
-        view = new HakukohdeValintakoeViewImpl(getErrorView(), presenter, uiBuilder);
+        view = new HakukohdeValintakoeViewImpl(getErrorView(), presenter, uiBuilder, KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
         presenter.getRootView().addWindow(this);
     }
 }

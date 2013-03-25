@@ -20,8 +20,9 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohdePerustiedotViewImpl;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohdeValintakoeTabImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenLiitteetTabImpl;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenValintakoeTabImpl;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.ValintakoeViewImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -42,7 +43,7 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
     private TabSheet.Tab liitteetTab;
     private TabSheet.Tab valintakokeetTab;
     private HakukohteenLiitteetTabImpl liitteet;
-    private HakukohteenValintakoeTabImpl valintakokeet;
+    private HakukohdeValintakoeTabImpl valintakokeet;
     private HakukohdePerustiedotViewImpl perustiedot;
     
     public EditHakukohdeView() {
@@ -70,13 +71,13 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
 
     public void loadValintakokees() {
         if (valintakokeet != null) {
-            valintakokeet.loadTableData();
+            valintakokeet.getFormView().loadTableData();
         }
     }
 
     public void closeValintakoeEditWindow() {
         if (valintakokeet != null) {
-            valintakokeet.closeValintakoeEditWindow();
+            valintakokeet.getFormView().closeValintakoeEditWindow();
         }
     }
     
@@ -88,7 +89,7 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
 
     public void showHakukohdeValintakoeEditView(String valintakoeId) {
         if (valintakokeet != null) {
-            valintakokeet.showValintakoeEditWithId(valintakoeId);
+            valintakokeet.getFormView().showValintakoeEditWithId(valintakoeId);
         }
     }
     
@@ -113,7 +114,7 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
         perustiedot = new HakukohdePerustiedotViewImpl(hakukohdeOid);
         
         liitteet = new HakukohteenLiitteetTabImpl();
-        valintakokeet = new HakukohteenValintakoeTabImpl();
+        valintakokeet = new HakukohdeValintakoeTabImpl(hakukohdeOid);
         perustiedotTab = tabs.addTab(perustiedot, T("tabNimi"));
         valintakokeetTab = tabs.addTab(valintakokeet,T("valintakoeTab"));
         liitteetTab = tabs.addTab(liitteet, T("liitteetTab"));
