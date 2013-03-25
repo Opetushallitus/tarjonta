@@ -93,7 +93,7 @@ public class HakukohdeLiiteRow extends HorizontalLayout {
         if (hakukohdeLiiteViewModel != null) {
             stringBuilder.append(hakukohdeLiiteViewModel.getOsoiteRivi1());
             stringBuilder.append("\n");
-            List<KoodiType> postinumeroKoodis = tarjontaUIHelper.gethKoodis(hakukohdeLiiteViewModel.getPostinumero());
+            List<KoodiType> postinumeroKoodis = tarjontaUIHelper.getKoodis(hakukohdeLiiteViewModel.getPostinumero());
             if (postinumeroKoodis != null) {
                 stringBuilder.append(postinumeroKoodis.get(0).getKoodiArvo());
             }

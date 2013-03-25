@@ -328,15 +328,14 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
 
     public void createCacheKomos() {
         setCacheKomoTutkinto(Koulutus2asteConverter.komoCacheMapByKoulutuskoodi(komos));
-        setCacheKomo(KoulutusLukioConverter.fullLukioKomoCacheMap(komos));
+        setCacheKomo(Koulutus2asteConverter.full2asteKomoCacheMap(komos));
     }
 
     /**
      * @return the cacheKomoTutkinto
      */
     public KoulutusmoduuliKoosteTyyppi getQuickKomo(final String koulutuskoodiUri, final String koulutusohjelmaUri) {
-        Entry<String, String> e = new AbstractMap.SimpleEntry<String, String>(koulutuskoodiUri, koulutusohjelmaUri);
-        return cacheKomo.get(e);
+        return cacheKomo.get(new AbstractMap.SimpleEntry<String, String>(koulutuskoodiUri, koulutusohjelmaUri));
     }
 
     public List<KoulutusmoduuliKoosteTyyppi> getQuickKomosByKoulutuskoodiUri(final String koulutuskoodiUri) {

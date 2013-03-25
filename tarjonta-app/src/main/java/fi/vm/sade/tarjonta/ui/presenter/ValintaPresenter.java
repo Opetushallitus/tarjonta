@@ -350,6 +350,6 @@ public class ValintaPresenter implements CommonPresenter<ValintaModel> {
     }
 
     public KoodiType getKoodiByUri(String uri) {
-        return tarjotaHelper.gethKoodis(uri).get(0);
+        return tarjotaHelper.getKoodis(uri).get(0);
     }
 }

@@ -162,6 +162,10 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      * @return the yhteyshenkilo
      */
     public YhteyshenkiloModel getYhteyshenkilo() {
+        if (yhteyshenkilo == null) {
+            yhteyshenkilo = new YhteyshenkiloModel();
+        }
+
         return yhteyshenkilo;
     }
 

@@ -118,7 +118,7 @@ public class KoulutusKoodistoConverter {
         return list;
     }
 
-    public void listaaLukioSisalto(final KoulutuskoodiModel tutkinto, final LukiolinjaModel ohjelma, final KoulutusmoduuliKoosteTyyppi tyyppi, final Locale locale) {
+    public void listaaLukioSisalto(final KoulutuskoodiModel tutkinto, final LukiolinjaModel lukiolinja, final KoulutusmoduuliKoosteTyyppi tyyppi, final Locale locale) {
         final KoulutusKoodiToModelConverter<KoodiModel> kc = new KoulutusKoodiToModelConverter<KoodiModel>();
 
         if (tyyppi == null) {
@@ -126,7 +126,7 @@ public class KoulutusKoodistoConverter {
             return;
         }
 
-       KomoBaseData(tutkinto, tyyppi, kc, locale);
+        komoBaseData(tutkinto, tyyppi, kc, locale);
     }
 
     public void listaa2asteSisalto(final KoulutuskoodiModel tutkinto, final KoulutusohjelmaModel ohjelma, final KoulutusmoduuliKoosteTyyppi tyyppi, final Locale locale) {
@@ -138,11 +138,11 @@ public class KoulutusKoodistoConverter {
         }
 
         //text data models
-       KomoBaseData(tutkinto, tyyppi, kc, locale);
+        komoBaseData(tutkinto, tyyppi, kc, locale);
 
         if (ohjelma != null) {
             ohjelma.setTutkintonimike(listaaKoodi(tyyppi.getTutkintonimikeUri(), kc, locale));
-            ohjelma.setTavoitteet(Koulutus2asteConverter.mapToMonikielinenTekstiModel(tyyppi.getTavoitteet(), locale));
+            ohjelma.setTavoitteet(KoulutusConveter.convertToMonikielinenTekstiModel(tyyppi.getTavoitteet(), locale));
         }
     }
 
@@ -160,7 +160,7 @@ public class KoulutusKoodistoConverter {
             return null;
         }
 
-        final List<KoodiType> koodistoData = tarjontaUiHelper.gethKoodis(uri);
+        final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodis(uri);
         final KoulutusKoodiToModelConverter<KoodiModel> kc = new KoulutusKoodiToModelConverter<KoodiModel>();
         if (koodistoData != null && !koodistoData.isEmpty()) {
             List<KoodiModel> list = kc.mapKoodistoToModel(KoodiModel.class, handleLocale(locale), koodistoData);
@@ -183,10 +183,32 @@ public class KoulutusKoodistoConverter {
      * @return
      */
     public KoulutusohjelmaModel listaaKoulutusohjelma(final KoodistoKoodiTyyppi tyyppi, final Locale locale) {
-        final List<KoodiType> koodistoData = tarjontaUiHelper.gethKoodis(tyyppi.getUri());
+        final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodis(tyyppi.getUri());
         final KoulutusKoodiToModelConverter<KoulutusohjelmaModel> kc = new KoulutusKoodiToModelConverter<KoulutusohjelmaModel>();
         if (koodistoData != null && !koodistoData.isEmpty()) {
             List<KoulutusohjelmaModel> list = kc.mapKoodistoToModel(KoulutusohjelmaModel.class, handleLocale(locale), koodistoData);
+
+            if (!list.isEmpty() && list.size() > 0) {
+                return list.get(0);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Search single lukiolina object from Koodisto service. Accepts koodi with
+     * URI version information.
+     *
+     * @param model
+     * @param locale
+     * @return
+     */
+    public LukiolinjaModel listaaLukiolinja(final KoodistoKoodiTyyppi tyyppi, final Locale locale) {
+        final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodis(tyyppi.getUri());
+        final KoulutusKoodiToModelConverter<LukiolinjaModel> kc = new KoulutusKoodiToModelConverter<LukiolinjaModel>();
+        if (koodistoData != null && !koodistoData.isEmpty()) {
+            List<LukiolinjaModel> list = kc.mapKoodistoToModel(LukiolinjaModel.class, handleLocale(locale), koodistoData);
 
             if (!list.isEmpty() && list.size() > 0) {
                 return list.get(0);
@@ -204,7 +226,7 @@ public class KoulutusKoodistoConverter {
      * @return
      */
     public KoulutuskoodiModel listaaKoulutuskoodi(final KoodistoKoodiTyyppi tyyppi, final Locale locale) {
-        final List<KoodiType> koodistoData = tarjontaUiHelper.gethKoodis(tyyppi.getUri());
+        final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodis(tyyppi.getUri());
         final KoulutusKoodiToModelConverter<KoulutuskoodiModel> kc = new KoulutusKoodiToModelConverter<KoulutuskoodiModel>();
         if (koodistoData != null && !koodistoData.isEmpty()) {
             List<KoulutuskoodiModel> list = kc.mapKoodistoToModel(KoulutuskoodiModel.class, handleLocale(locale), koodistoData);
@@ -223,7 +245,7 @@ public class KoulutusKoodistoConverter {
             return null;
         }
 
-        final List<KoodiType> koodistoData = tarjontaUiHelper.gethKoodis(uri);
+        final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodis(uri);
         if (koodistoData != null && !koodistoData.isEmpty()) {
             List<KoodiModel> list = kc.mapKoodistoToModel(KoodiModel.class, handleLocale(locale), koodistoData);
 
@@ -260,11 +282,11 @@ public class KoulutusKoodistoConverter {
         return model;
     }
 
-    private void KomoBaseData(final KoulutuskoodiModel tutkinto, final KoulutusmoduuliKoosteTyyppi tyyppi, final KoulutusKoodiToModelConverter<KoodiModel> kc, final Locale locale) {
+    private void komoBaseData(final KoulutuskoodiModel tutkinto, final KoulutusmoduuliKoosteTyyppi tyyppi, final KoulutusKoodiToModelConverter<KoodiModel> kc, final Locale locale) {
         //text data models
-        tutkinto.setTavoitteet(Koulutus2asteConverter.mapToMonikielinenTekstiModel(tyyppi.getTutkinnonTavoitteet(), locale));
-        tutkinto.setJatkoopintomahdollisuudet(Koulutus2asteConverter.mapToMonikielinenTekstiModel(tyyppi.getJatkoOpintoMahdollisuudet(), locale));
-        tutkinto.setKoulutuksenRakenne(Koulutus2asteConverter.mapToMonikielinenTekstiModel(tyyppi.getKoulutuksenRakenne(), locale));
+        tutkinto.setTavoitteet(KoulutusConveter.convertToMonikielinenTekstiModel(tyyppi.getTutkinnonTavoitteet(), locale));
+        tutkinto.setJatkoopintomahdollisuudet(KoulutusConveter.convertToMonikielinenTekstiModel(tyyppi.getJatkoOpintoMahdollisuudet(), locale));
+        tutkinto.setKoulutuksenRakenne(KoulutusConveter.convertToMonikielinenTekstiModel(tyyppi.getKoulutuksenRakenne(), locale));
 
         //koodisto koodi data models 
         tutkinto.setOpintojenLaajuus(listaaKoodi(tyyppi.getLaajuusarvoUri(), kc, locale));

@@ -205,7 +205,7 @@ public class TarjontaUIHelper {
      * @param uri
      * @return
      */
-    public List<KoodiType> gethKoodis(String uri) {
+    public List<KoodiType> getKoodis(String uri) {
         final String[] spitByUriAndVersion = splitKoodiURIAllowNull(uri);
         final String version = spitByUriAndVersion[1];
         return gethKoodis(spitByUriAndVersion[0], version == null ? null : Integer.valueOf(version));

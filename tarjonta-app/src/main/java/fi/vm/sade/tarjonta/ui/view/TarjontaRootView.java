@@ -71,9 +71,11 @@ public class TarjontaRootView extends Window {
     private VerticalLayout vlRight;
     private boolean isAttached = false;
 
-    public TarjontaRootView() {
+    public TarjontaRootView(boolean init) {
         super();
-        init();
+        if (init) {
+            init();
+        }
     }
 
     private void init() {

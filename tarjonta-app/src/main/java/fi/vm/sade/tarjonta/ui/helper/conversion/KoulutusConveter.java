@@ -66,12 +66,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class KoulutusConveter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Koulutus2asteConverter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KoulutusConveter.class);
     public static final String INVALID_DATA = "Invalid data exception - ";
     @Autowired(required = true)
     private OrganisaatioService organisaatioService;
     @Autowired(required = true)
-    private KoulutusKoodistoConverter koulutusKoodisto;
+    protected KoulutusKoodistoConverter koulutusKoodisto;
     @Autowired(required = true)
     private OIDService oidService;
 
@@ -88,11 +88,11 @@ public class KoulutusConveter {
         return dto;
     }
 
-    public String checkWwwOsoite(String linkki) {
+    public static String checkWwwOsoite(String linkki) {
         return (!isValidUrl(linkki)) ? "http://" + linkki : linkki;
     }
 
-    public WebLinkkiTyyppi mapOpetussuunnitelmaLinkkiToTyyppi(String linkki) {
+    public static WebLinkkiTyyppi mapOpetussuunnitelmaLinkkiToTyyppi(String linkki) {
         WebLinkkiTyyppi webLink = new WebLinkkiTyyppi();
         webLink.setKieli(I18N.getLocale().getLanguage());
         webLink.setUri(checkWwwOsoite(linkki));
@@ -100,7 +100,7 @@ public class KoulutusConveter {
         return webLink;
     }
 
-    public boolean isValidUrl(String givenUrl) {
+    public static boolean isValidUrl(String givenUrl) {
         return givenUrl == null
                 || givenUrl.isEmpty()
                 || givenUrl.startsWith("http://")
@@ -109,7 +109,7 @@ public class KoulutusConveter {
                 || givenUrl.startsWith("file://");
     }
 
-    public YhteyshenkiloTyyppi mapYhteyshenkiloToTyyppi(KoulutusToisenAsteenPerustiedotViewModel model) {
+    public static YhteyshenkiloTyyppi mapYhteyshenkiloToTyyppi(KoulutusToisenAsteenPerustiedotViewModel model) {
         YhteyshenkiloTyyppi yhteyshenkilo = new YhteyshenkiloTyyppi();
         String kokoNimi = model.getYhtHenkKokoNimi();
         String[] nimet = kokoNimi.split(" ");
@@ -126,7 +126,7 @@ public class KoulutusConveter {
         return yhteyshenkilo;
     }
 
-    public YhteyshenkiloTyyppi mapYhteyshenkiloToTyyppi(YhteyshenkiloModel model) {
+    public static YhteyshenkiloTyyppi mapYhteyshenkiloToTyyppi(YhteyshenkiloModel model) {
         YhteyshenkiloTyyppi yhteyshenkilo = new YhteyshenkiloTyyppi();
         yhteyshenkilo.setEtunimet(model.getYhtHenkKokoNimi());
         yhteyshenkilo.setPuhelin(model.getYhtHenkPuhelin());
@@ -149,23 +149,17 @@ public class KoulutusConveter {
         model2Aste.setYhtHenkiloOid(yhtHenk.getHenkiloOid());
     }
 
-    protected void addToYhteyshenkiloTyyppiList(final Collection<KoulutusYhteyshenkiloViewModel> fromModel, List<YhteyshenkiloTyyppi> toTyyppi) throws
-            ExceptionMessage {
-        if (toTyyppi == null) {
-            throw new RuntimeException(INVALID_DATA + "list of YhteyshenkiloTyyppi objects cannot be null.");
+    protected void mapYhteyshenkiloToViewModel(YhteyshenkiloModel yhteyshenkiloModel, LueKoulutusVastausTyyppi tyyppi) {
+        if (tyyppi.getYhteyshenkilo().isEmpty()) {
+            return;
         }
 
-        if (fromModel != null && !fromModel.isEmpty()) {
-            for (KoulutusYhteyshenkiloViewModel yhteyshenkiloModel : fromModel) {
-                if (yhteyshenkiloModel.getHenkiloOid() == null) {
-                    //generate OID to new yhteyshenkilo.
-                    //back-end not not accept null OIDs.
-                    yhteyshenkiloModel.setHenkiloOid(oidService.newOid(NodeClassCode.TEKN_5));
-                }
-
-                toTyyppi.add(mapToYhteyshenkiloTyyppiDto(yhteyshenkiloModel));
-            }
-        }
+        YhteyshenkiloTyyppi yhtHenk = tyyppi.getYhteyshenkilo().get(0);
+        yhteyshenkiloModel.setYhtHenkKokoNimi(yhtHenk.getEtunimet() + " " + yhtHenk.getSukunimi());
+        yhteyshenkiloModel.setYhtHenkEmail(yhtHenk.getSahkoposti());
+        yhteyshenkiloModel.setYhtHenkPuhelin(yhtHenk.getPuhelin());
+        yhteyshenkiloModel.setYhtHenkTitteli(yhtHenk.getTitteli());
+        yhteyshenkiloModel.setYhtHenkiloOid(yhtHenk.getHenkiloOid());
     }
 
     public static KoulutusLinkkiViewModel mapToKoulutusLinkkiViewModel(WebLinkkiTyyppi type) {
@@ -281,11 +275,15 @@ public class KoulutusConveter {
         if (model != null && model.getKoodistoUri() != null) {
             return mapToKoodistoKoodiTyyppi(model);
         } else if (allowNull) {
-            //KoulutusohjelmaModel obejct can have null uri
+            //allow null object
             return null;
         }
 
-        throw new RuntimeException("KoulutusasteModel or KoulutuskoodiModel cannot be null! Object " + model);
+        if (model != null) {
+            throw new RuntimeException("KoulutusKoodistoModel cannot be null!");
+        } else {
+            throw new RuntimeException("KoulutusKoodistoModel koodisto URI cannot be null!");
+        }
     }
 
     public static KoodistoKoodiTyyppi mapToKoodistoKoodiTyyppi(KoulutusKoodistoModel model) {
@@ -365,12 +363,12 @@ public class KoulutusConveter {
         return type.getUri();
     }
 
-    public static Set<String> convertOpetuskielet(final List<KoodistoKoodiTyyppi> opetuskieliKoodit) {
-        Set<String> opetuskielet = new HashSet<String>();
+    public static Set<String> convertListToSet(final List<KoodistoKoodiTyyppi> opetuskieliKoodit) {
+        Set<String> set = new HashSet<String>();
         for (KoodistoKoodiTyyppi curKoodi : opetuskieliKoodit) {
-            opetuskielet.add(curKoodi.getUri());
+            set.add(curKoodi.getUri());
         }
-        return opetuskielet;
+        return set;
     }
     /**
      * Converter KoodistoKoodiTyyppi -> String
@@ -425,13 +423,17 @@ public class KoulutusConveter {
         MonikielinenTekstiTyyppi tyyppi = new MonikielinenTekstiTyyppi();
 
         for (KielikaannosViewModel nimi : kielet) {
-            MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
-            teksti.setKieliKoodi(nimi.getKielikoodi());
-            teksti.setValue(nimi.getNimi());
-            tyyppi.getTeksti().add(teksti);
+            tyyppi.getTeksti().add(convertToMonikielinenTekstiTyyppiTeksti(nimi.getKielikoodi(), nimi.getNimi()));
         }
 
         return tyyppi;
+    }
+
+    public static MonikielinenTekstiTyyppi.Teksti convertToMonikielinenTekstiTyyppiTeksti(String kielikoodi, String nimi) {
+        MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
+        teksti.setKieliKoodi(kielikoodi);
+        teksti.setValue(nimi);
+        return teksti;
     }
 
     public static List<KielikaannosViewModel> mapToKielikaannosViewModel(final MonikielinenTekstiTyyppi kielet) {
@@ -458,7 +460,7 @@ public class KoulutusConveter {
         return model;
     }
 
-    public static MonikielinenTekstiModel mapToMonikielinenTekstiModel(final MonikielinenTekstiTyyppi tyyppi, final Locale locale) {
+    public static MonikielinenTekstiModel convertToMonikielinenTekstiModel(final MonikielinenTekstiTyyppi tyyppi, final Locale locale) {
         MonikielinenTekstiModel m = new MonikielinenTekstiModel();
 
         if (tyyppi == null) {

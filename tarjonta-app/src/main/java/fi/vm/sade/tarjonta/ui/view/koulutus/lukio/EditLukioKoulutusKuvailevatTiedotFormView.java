@@ -46,7 +46,7 @@ import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 
-@Configurable(preConstruction=true)
+@Configurable(preConstruction = true)
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
 
@@ -100,6 +100,9 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
                 return "ft:" + uiHelper.getKoodiNimi((String) selectedToken);
             }
         });
+    }
+
+    public EditLukioKoulutusKuvailevatTiedotFormView() {
     }
 
     public EditLukioKoulutusKuvailevatTiedotFormView(final TarjontaPresenter presenter, final UiBuilder uiBuilder,
@@ -192,7 +195,8 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
     }
 
     public void reBuildTabsheet() {
-        tekstit.reload();
+        if (tekstit != null) {
+            tekstit.reload();
+        }
     }
-
 }

@@ -56,7 +56,7 @@ public class TarjontaApplication extends AbstractSadePortletApplication {
     }
     
     protected void initApplication() {
-        window = new TarjontaRootView();
+        window = new TarjontaRootView(true);
         setMainWindow(window);
         setTheme(Oph.THEME_NAME);
     }

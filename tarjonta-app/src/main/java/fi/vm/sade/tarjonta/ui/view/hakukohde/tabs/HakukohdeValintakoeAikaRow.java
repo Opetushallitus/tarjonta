@@ -80,7 +80,7 @@ public class HakukohdeValintakoeAikaRow extends HorizontalLayout{
     private void resolveFields() {
         if (rowValintakoeAika != null) {
             if (rowValintakoeAika.getPostinumero() != null) {
-                List<KoodiType> postinumeroKoodis = tarjontaUIHelper.gethKoodis(rowValintakoeAika.getPostinumero());
+                List<KoodiType> postinumeroKoodis = tarjontaUIHelper.getKoodis(rowValintakoeAika.getPostinumero());
                 sijainti = new Label(String.format(SIJAINTI_FORMAT, new Object[]{rowValintakoeAika.getOsoiteRivi(), postinumeroKoodis.get(0).getKoodiArvo(), rowValintakoeAika.getPostitoimiPaikka()}), Label.CONTENT_XHTML);
             }
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);

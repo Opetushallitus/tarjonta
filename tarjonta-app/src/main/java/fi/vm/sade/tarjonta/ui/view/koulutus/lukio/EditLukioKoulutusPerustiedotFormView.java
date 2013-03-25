@@ -76,7 +76,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
     private TarjontaPresenter presenter;
     private TarjontaDialogWindow noKoulutusDialog;
     private transient UiBuilder uiBuilder;
-    private YhteyshenkiloViewForm yhteistieto;
+    private YhteyshenkiloViewForm yhteyshenkiloForm;
     private BeanItemContainer<KoulutuskoodiModel> bicKoulutuskoodi;
     private BeanItemContainer<LukiolinjaModel> bicLukiolinjas;
 
@@ -315,26 +315,26 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
      * @param propertyKey
      */
     private void buildGridYhteyshenkiloRows(GridLayout grid) {
-        yhteistieto = new YhteyshenkiloViewForm(presenter, model.getYhteyshenkilo());
-        Form form = new ValidatingViewBoundForm(yhteistieto);
+        yhteyshenkiloForm = new YhteyshenkiloViewForm(presenter, model.getYhteyshenkilo());
+        Form form = new ValidatingViewBoundForm(yhteyshenkiloForm);
         form.setItemDataSource(new BeanItem<YhteyshenkiloModel>(model.getYhteyshenkilo()));
         form.setValidationVisible(false);
         form.setValidationVisibleOnCommit(false);
 
         gridLabel(grid, "prompt.yhteyshenkilo");
-        grid.addComponent(yhteistieto.getYhtHenkKokoNimi());
+        grid.addComponent(yhteyshenkiloForm.getYhtHenkKokoNimi());
         grid.newLine();
 
         gridLabel(grid, "prompt.titteli");
-        grid.addComponent(yhteistieto.getYhtHenkTitteli());
+        grid.addComponent(yhteyshenkiloForm.getYhtHenkTitteli());
         grid.newLine();
 
         gridLabel(grid, "prompt.email");
-        grid.addComponent(yhteistieto.getYhtHenkEmail());
+        grid.addComponent(yhteyshenkiloForm.getYhtHenkEmail());
         grid.newLine();
 
         gridLabel(grid, "prompt.puhelin");
-        grid.addComponent(yhteistieto.getYhtHenkPuhelin());
+        grid.addComponent(yhteyshenkiloForm.getYhtHenkPuhelin());
         grid.newLine();
     }
 
@@ -521,6 +521,6 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
     public void attach() {
         super.attach();
 
-        yhteistieto.initialize();
+        yhteyshenkiloForm.initialize();
     }
 }

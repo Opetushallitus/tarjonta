@@ -309,7 +309,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         return result;
     }
 
-    public KoulutusohjelmaModel mapToKoulutusohjelmaModel(final KoodistoKoodiTyyppi tyyppi, final Locale locale) {
+    private KoulutusohjelmaModel mapToKoulutusohjelmaModel(final KoodistoKoodiTyyppi tyyppi, final Locale locale) {
         if (tyyppi != null && tyyppi.getUri() != null) {
 
             if (tyyppi.getUri() == null && tyyppi.getVersio() == null) {

@@ -156,7 +156,7 @@ public class TarjontaWebApplication extends TarjontaApplication {
 
     public void toTarjonta() {
         this.removeWindow(window);
-        window = new TarjontaRootView();
+        window = new TarjontaRootView(true);
         setMainWindow(window);
     }
 
@@ -174,16 +174,16 @@ public class TarjontaWebApplication extends TarjontaApplication {
 
     public void toLukiokoulutus() {
         this.removeWindow(window);
-        TarjontaRootView e = new TarjontaRootView();
+        TarjontaRootView e = new TarjontaRootView(true);
         setMainWindow(e);
-        e.getTarjontaPresenter().getLukioPresenter().showEditLukioKoulutusPerustiedotView(null, KoulutusActiveTab.PERUSTIEDOT);
+        e.getTarjontaPresenter().getLukioPresenter().showEditKoulutusView(null, KoulutusActiveTab.PERUSTIEDOT);
         window = e;      
     }
 
     public void toLukiokoulutusKuvailevat() {
         System.out.println("lukiokuvailevat!!");
         this.removeWindow(window);
-        TarjontaRootView e = new TarjontaRootView();
+        TarjontaRootView e = new TarjontaRootView(true);
         window = e;
         setMainWindow(window);
         e.changeView(new EditLukioKoulutusKuvailevatTiedotView(null));

@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable
 public class EditLukioKoulutusView extends AbstractVerticalLayout {
-
+    
     private static final long serialVersionUID = -1074453323245469183L;
     @Autowired(required = true)
     private TarjontaPresenter presenter;
@@ -46,21 +46,21 @@ public class EditLukioKoulutusView extends AbstractVerticalLayout {
     private String koulutusOid;
     private KoulutusActiveTab activeTab = KoulutusActiveTab.PERUSTIEDOT;
     private TabSheet.Tab kuvailevatTiedot;
-
+    
     public EditLukioKoulutusView(String koulutusOid) {
         this.koulutusOid = koulutusOid;
     }
-
+    
     public EditLukioKoulutusView(String koulutusOid, KoulutusActiveTab activeTab) {
         this.koulutusOid = koulutusOid;
         this.activeTab = activeTab;
     }
-
+    
     @Override
     protected void buildLayout() {
-
+        
         String organisaatioName = getOrganisaationNames();
-
+        
         if (presenter.getModel().getKoulutusPerustiedotModel().isLoaded()) {
             title = UiUtil.label((AbsoluteLayout) null, T(LABEL_FORMAT_EDIT),
                     LabelStyleEnum.TEXT_RAW,
@@ -77,29 +77,30 @@ public class EditLukioKoulutusView extends AbstractVerticalLayout {
         hlLabelWrapper.setMargin(false, false, true, true);
         hlLabelWrapper.addComponent(title);
         addComponent(hlLabelWrapper);
-
+        
         TabSheet tabs = UiBuilder.tabSheet(this);
         EditLukioKoulutusPerustiedotView perustiedotView = new EditLukioKoulutusPerustiedotView(koulutusOid);
         tabs.addTab(perustiedotView, T("perustiedot"));
-
+        
         EditLukioKoulutusKuvailevatTiedotView lisatiedotView = new EditLukioKoulutusKuvailevatTiedotView(koulutusOid);
-
+        
         kuvailevatTiedot = tabs.addTab(lisatiedotView, T("kuvailevattiedot"));
         kuvailevatTiedot.setEnabled(presenter.getModel().getKoulutusPerustiedotModel().isLoaded());
         
+        this.presenter.getLukioPresenter().setPerustiedotView(perustiedotView);
         this.presenter.getLukioPresenter().setKuvailevatTiedotView(lisatiedotView);
-
+        
         if (KoulutusActiveTab.PERUSTIEDOT.equals(activeTab)) {
             tabs.setSelectedTab(perustiedotView);
         } else {
             tabs.setSelectedTab(lisatiedotView);
         }
     }
-
+    
     public void enableKuvailevatTiedotTab() {
         kuvailevatTiedot.setEnabled(true);
     }
-
+    
     private String getOrganisaationNames() {
         StringBuilder organisaatios = new StringBuilder();
         int counter = 0;
