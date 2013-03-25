@@ -68,6 +68,7 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     private static final String COLUMN_A = "Kategoria";
     private static final String COLUMN_PVM = "Ajankohta";
     private static final String COLUMN_HAKUTAPA = "Hakutapa";
+    private static final String COLUMN_HAKUTYYPPI = "Hakutyyppi";
     private static final String COLUMN_TILA = "Tila";
     
     
@@ -118,11 +119,13 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         categoryTree.addContainerProperty(COLUMN_A, HakuResultRow.class, new HakuResultRow());
         categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
         categoryTree.addContainerProperty(COLUMN_HAKUTAPA, String.class, "");
+        categoryTree.addContainerProperty(COLUMN_HAKUTYYPPI, String.class,"");
         categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
         
         categoryTree.setColumnExpandRatio(COLUMN_A, 2.0f);
         categoryTree.setColumnExpandRatio(COLUMN_PVM, 0.5f);
         categoryTree.setColumnExpandRatio(COLUMN_HAKUTAPA, 0.5f);
+        categoryTree.setColumnExpandRatio(COLUMN_HAKUTYYPPI, 0.5f);
         categoryTree.setColumnExpandRatio(COLUMN_TILA, 0.5f);
         
 
@@ -153,6 +156,7 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
         hc.addContainerProperty(COLUMN_A, HakuResultRow.class, new HakuResultRow());
         hc.addContainerProperty(COLUMN_PVM, String.class, "");
         hc.addContainerProperty(COLUMN_HAKUTAPA, String.class, "");
+        hc.addContainerProperty(COLUMN_HAKUTYYPPI, String.class,"");
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
 
         for (Map.Entry<String, List<HakuViewModel>> e : set) {
@@ -170,6 +174,7 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
                 hc.getContainerProperty(curHaku, COLUMN_A).setValue(rowStyleInner.format(getListHakuName(curHaku), true));
                 hc.getContainerProperty(curHaku, COLUMN_PVM).setValue(getAjankohtaStr(curHaku));
                 hc.getContainerProperty(curHaku, COLUMN_HAKUTAPA).setValue(getHakutapaStr(curHaku));
+                hc.getContainerProperty(curHaku, COLUMN_HAKUTYYPPI).setValue(getHakuTyyppiStr(curHaku));
                 hc.getContainerProperty(curHaku, COLUMN_TILA).setValue(this.getTilaStr(curHaku));
                 
                 
@@ -197,6 +202,10 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
     
     private String getTilaStr(HakuViewModel curHaku) {
         return T(curHaku.getHaunTila());
+    }
+
+    private String getHakuTyyppiStr(HakuViewModel curHaku) {
+        return getKoodiNimi(curHaku.getHakutyyppi());
     }
     
     private String getAjankohtaStr(HakuViewModel curHaku) {
