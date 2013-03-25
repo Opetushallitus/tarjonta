@@ -605,6 +605,8 @@
             <xs:element name="Hakutapa" type="xs:string"></xs:element>
             <xs:element name="hakukausiUri" type="xs:string"></xs:element>
             <xs:element name="hakuvuosi" type="xs:string"></xs:element>
+            <xs:element name="hakuAlkamisPvm" type="xs:dateTime"></xs:element>
+            <xs:element name="hakuPaattymisPvm" type="xs:dateTime"></xs:element>
             <xs:element name="koulutuksenAlkamiskausiUri" type="xs:string"></xs:element>
             <xs:element name="koulutuksenAlkamisvuosi" type="xs:string"></xs:element>
         </xs:sequence>
