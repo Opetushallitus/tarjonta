@@ -130,7 +130,6 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
 
             @Override
             public void componentEvent(Event event) {
-                System.out.println("Catching pisteraja event");
                 if (event instanceof PisterajaEvent) {
                     applyVisiblilities((PisterajaEvent)event);
                 }
