@@ -124,9 +124,11 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
     }
     
     private void buildPisterajaTable(VerticalLayout layout) {
-        
-        Label pisterajatLabel = UiUtil.label(layout, T("pisterajat"));
-        pisterajatLabel.setStyleName(Oph.LABEL_H2); 
+        VerticalLayout lvl = UiUtil.verticalLayout();
+        lvl.setMargin(true, false, false, false);
+        Label pisterajatLabel = UiUtil.label(lvl, T("pisterajat"));
+        pisterajatLabel.setStyleName(Oph.LABEL_H2);
+        layout.addComponent(lvl);
         pisterajaTable = new PisterajaTable(presenter.getModel().getSelectedValintaKoe()); 
         pisterajaTable.addListener(new Listener() {
 

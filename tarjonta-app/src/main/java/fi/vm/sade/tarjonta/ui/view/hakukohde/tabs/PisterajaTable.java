@@ -57,11 +57,20 @@ public class PisterajaTable extends GridLayout {
     
     private TextField kpAlinHyvaksyttyPM;
     
+    CheckBox lpCb;
+    
+    CheckBox pkCb;
+    
     public PisterajaTable(ValintakoeViewModel valintakoe) {
         super(5,4);
         setSpacing(true);
         setMargin(true);
-        setWidth(60, UNITS_PERCENTAGE);
+        setWidth(40, UNITS_PERCENTAGE);
+        setColumnExpandRatio(0, 1.0f);
+        setColumnExpandRatio(1, 1.0f);
+        setColumnExpandRatio(2, 0.5f);
+        setColumnExpandRatio(3, 1.0f);
+        setColumnExpandRatio(4, 1.0f);
         this.valintakoe = valintakoe;
         buildLayout();
     }
@@ -74,7 +83,7 @@ public class PisterajaTable extends GridLayout {
         
         
         //Paasykoe row
-        final CheckBox pkCb = UiUtil.checkbox(null, T("paasykoe"));
+        pkCb = UiUtil.checkbox(null, T("paasykoe"));
         pkCb.setImmediate(true);
         pkCb.addListener(new ClickListener() {
 
@@ -107,7 +116,7 @@ public class PisterajaTable extends GridLayout {
         addComponent(pkAlinHyvaksyttyPM, 4, 1);
         
         //Lisapisteet row
-        final CheckBox lpCb = UiUtil.checkbox(null, T("lisapisteet"));
+        lpCb = UiUtil.checkbox(null, T("lisapisteet"));
         lpCb.setImmediate(true);
         lpCb.addListener(new ClickListener() {
 
@@ -141,9 +150,11 @@ public class PisterajaTable extends GridLayout {
         //Kokonaispisteet row
         addComponent(UiUtil.label(null, T("kokonaispisteet")), 0, 3);
         addComponent(UiUtil.label(null, T("hyphen")), 2, 3);
+        
         addComponent(UiUtil.label(null, T("max10")), 3, 3);
         kpAlinHyvaksyttyPM = UiUtil.textField(null);
         kpAlinHyvaksyttyPM.setImmediate(true);
+        kpAlinHyvaksyttyPM.setEnabled(false);
         kpAlinHyvaksyttyPM.setPropertyDataSource(new NestedMethodProperty(valintakoe, "kpAlinHyvaksyttyPM"));
         addComponent(kpAlinHyvaksyttyPM, 4, 3);
     }
@@ -158,9 +169,10 @@ public class PisterajaTable extends GridLayout {
             pkYlinPM.setEnabled(cb.booleanValue());
             pkAlinHyvaksyttyPM.setEnabled(cb.booleanValue());
         }
+        kpAlinHyvaksyttyPM.setEnabled(pkCb.booleanValue() || lpCb.booleanValue());
     }
 
-    public boolean validateInputs() {
+    public boolean validateInputTypes() {
         try {
             Integer.parseInt(valintakoe.getKpAlinHyvaksyttyPM() != null ? valintakoe.getKpAlinHyvaksyttyPM() : "0");
             Integer.parseInt(valintakoe.getPkAlinHyvaksyttyPM() != null ? valintakoe.getPkAlinHyvaksyttyPM() : "0");
@@ -175,6 +187,54 @@ public class PisterajaTable extends GridLayout {
         return true;
     }
     
+    public boolean validateInputRestrictions() {
+        try {
+            int kpAlinH = Integer.parseInt(valintakoe.getKpAlinHyvaksyttyPM() != null ? valintakoe.getKpAlinHyvaksyttyPM() : "0");
+            int pkAlinH = Integer.parseInt(valintakoe.getPkAlinHyvaksyttyPM() != null ? valintakoe.getPkAlinHyvaksyttyPM() : "0");
+            int pkAlin = Integer.parseInt(valintakoe.getPkAlinPM() != null ? valintakoe.getPkAlinPM() : "0");
+            int pkYlin = Integer.parseInt(valintakoe.getPkYlinPM() != null ? valintakoe.getPkYlinPM() : "0");
+            int lpAlin = Integer.parseInt(valintakoe.getLpAlinPM() != null ? valintakoe.getLpAlinPM() : "0");
+            int lpYlin = Integer.parseInt(valintakoe.getLpYlinPM() != null ? valintakoe.getLpYlinPM() : "0");
+            int lpAlinH = Integer.parseInt(valintakoe.getLpAlinHyvaksyttyPM() != null ? valintakoe.getLpAlinHyvaksyttyPM() : "0");
+            
+            if (isOutOfRange(kpAlinH, pkAlinH, pkAlin, pkYlin, lpAlin, lpYlin, lpAlinH)) {
+                return false;
+            }
+            
+            if (sumsExceedMaximum(pkYlin, lpYlin)) {
+                return false;
+            }
+            
+            if (rowRestrictionsViolated(pkAlin, pkYlin, pkAlinH)) {
+                return false;
+            }
+            
+            if (rowRestrictionsViolated(lpAlin, lpYlin, lpAlinH)) {
+                return false;
+            }
+            
+            
+        } catch (Exception ex) {
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean rowRestrictionsViolated(int pkAlin, int pkYlin, int pkAlinH) {
+        return (pkAlin > pkYlin) || (pkAlinH < pkAlin) || (pkAlinH > pkYlin);
+    }
+
+    private boolean sumsExceedMaximum(int pkYlin, int lpYlin) {
+        
+        return pkYlin + lpYlin > 10;
+    }
+
+    private boolean isOutOfRange(int kpAlinH, int pkAlinH, int pkAlin,
+            int pkYlin, int lpAlin, int lpYlin, int lpAlinH) {
+        return kpAlinH < 0 || kpAlinH > 10 || pkAlinH < 0 || pkAlinH > 10 || pkAlin < 0 || pkAlin > 10 || pkYlin < 0 || pkYlin > 10 
+                || lpAlinH < 0 || lpAlinH > 10 || lpAlin < 0 || lpAlin > 10 || lpYlin < 0 || lpYlin > 10;      
+    }
+
     private void fireEvent(CheckBox cb, String type) {
         fireEvent(new PisterajaEvent(this, cb.booleanValue(), type));
     }

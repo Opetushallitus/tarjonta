@@ -86,23 +86,33 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
         if (formView.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
             try {
                 errorView.resetErrors();
-                boolean pisterajatValid = formView.getPisterajaTable().validateInputs();
+                boolean pisterajatValidType = formView.getPisterajaTable().validateInputTypes();
+                boolean pisterajatCorrect = true; 
+                if (pisterajatValidType) {
+                    pisterajatCorrect = formView.getPisterajaTable().validateInputRestrictions(); 
+                }
                 this.formView.getValintakoeComponent().getForm().commit();
-                if (!pisterajatValid) {
+                if (!pisterajatValidType) {
+                    errorView.addError(T("validation.pisterajatNotValidType"));
+                    throw new Validator.InvalidValueException("");
+                } else if (!pisterajatCorrect) {
                     errorView.addError(T("validation.pisterajatNotValid"));
                     throw new Validator.InvalidValueException("");
                 }
                 if (this.formView.getValintakoeComponent().getForm().isValid()) {
                     presenter.getModel().getSelectedValintaKoe().setLisanayttoKuvaukset(formView.getLisanayttoKuvaukset());
                     presenter.saveHakukohdeValintakoe(formView.getValintakoeComponent().getValintakokeenKuvaukset());
+                    return getHakukohdeOid();
+                } else {
+                    throw new Validator.InvalidValueException("");
                 }
             } catch (Validator.InvalidValueException e) {
                 errorView.addError(e);
-            } catch (Exception exp) {
-                exp.printStackTrace();
-            }
+                throw e;
+            } 
         }
-        return getHakukohdeOid();
+        return null;
+        
     }
     
     @Override
