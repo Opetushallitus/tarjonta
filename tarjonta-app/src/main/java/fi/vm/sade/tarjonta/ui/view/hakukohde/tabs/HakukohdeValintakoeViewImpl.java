@@ -163,7 +163,9 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
         mainLayout.addComponent(buildGridLayout());
 
-        mainLayout.addComponent(buildSaveCancelButtonLayout());
+        if (koulutustyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
+            mainLayout.addComponent(buildSaveCancelButtonLayout());
+        }
 
         setCompositionRoot(mainLayout);
 
@@ -216,7 +218,6 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         } else {
             valintakoeAikasTable = new Table();
         }
-       
         
         final List<ValintakoeAikaViewModel> valintakoeAjat = presenter.getModel().getSelectedValintaKoe() != null ? presenter.getModel().getSelectedValintaKoe().getValintakoeAjat() : new ArrayList<ValintakoeAikaViewModel>(); 
         
@@ -238,6 +239,10 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         valintakoeAikasTable.setColumnExpandRatio("lisatietoja", 30);
         valintakoeAikasTable.setColumnExpandRatio("poistaBtn", 8);
         valintakoeAikasTable.setColumnExpandRatio("muokkaaBtn", 8);
+    }
+    
+    public Form getForm() {
+        return form;
     }
 
     private BeanContainer<String, HakukohdeValintakoeAikaRow> createTableContainer(List<ValintakoeAikaViewModel> aikas) {
@@ -322,4 +327,5 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         }
 
     }
+    
 }

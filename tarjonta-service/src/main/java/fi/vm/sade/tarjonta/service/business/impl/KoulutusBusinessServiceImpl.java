@@ -153,7 +153,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
                     + ", lukiolinja koodi : " + koulutus.getLukiolinjaKoodi().getUri());
         }
 
-        System.out.println("Koulutusmoduuli : " + moduuli.getId());
+        
         //Handling the creation of the parent komoto
         handleParentKomoto(koulutus, moduuli);
         //}

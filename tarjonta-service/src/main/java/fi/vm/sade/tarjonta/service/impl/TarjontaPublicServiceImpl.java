@@ -670,10 +670,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         criteria.setLukiolinjaKoodiUri(kysely.getLukiolinjakoodiUri());
         criteria.setKoulutustyyppi(kysely.getKoulutustyyppi());
 
-        System.out.println("kysely.getKoulutustyyppi(): " + kysely.getKoulutustyyppi());
-        System.out.println("kysely.getKoulutusohjelmakoodiUri() : " + kysely.getKoulutusohjelmakoodiUri());
-        System.out.println("kysely.getLukiolinjakoodiUri() : " + kysely.getLukiolinjakoodiUri());
-
         for (Koulutusmoduuli curKomo : this.koulutusmoduuliDAO.search(criteria)) {
             if (!curKomo.getAlamoduuliList().isEmpty()) {
                 addChildModulesToVastaus(curKomo, vastaus.getKoulutusmoduuliTulos());

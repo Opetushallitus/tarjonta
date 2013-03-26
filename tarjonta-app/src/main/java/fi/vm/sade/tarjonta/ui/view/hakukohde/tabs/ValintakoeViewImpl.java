@@ -28,6 +28,7 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
@@ -41,36 +42,31 @@ import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by: Tuomas Katva Date: 23.1.2013
  */
-//@Configurable(preConstruction = true)
 public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
 
-
-    //@Autowired
     private TarjontaPresenter presenter;
-    //@Autowired(required = true)
     private transient UiBuilder uiBuilder;
     private Table valintakoeTable;
     private Button uusiValintakoeBtn;
     private HakukohdeValintakoeDialog dialog;
     private KoulutusasteTyyppi koulutustyyppi = KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
     
-    private GridLayout pisterajaTable;
-    
+    private PisterajaTable pisterajaTable;
+
+
     private VerticalLayout paasykoeLayout;
     private VerticalLayout lisapisteetLayout;
     
+    LisanaytotTabSheet lisanaytotKuvaus;
+    
+    private HakukohdeValintakoeViewImpl valintakoeComponent;
 
-    
-    /*
-    public ValintakoeViewImpl() {
-        super();
-    }*/
-    
     public ValintakoeViewImpl(TarjontaPresenter presenter, UiBuilder uiBuilder) {
         super();
         this.presenter = presenter;
@@ -90,6 +86,11 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
     
     private void buildLukioLayout(VerticalLayout layout) {
        layout.setSpacing(true);
+       List<ValintakoeViewModel> valintakokees = presenter.loadHakukohdeValintaKokees();
+       
+       if (!valintakokees.isEmpty()) {
+           presenter.getModel().setSelectedValintaKoe(valintakokees.get(0));
+       }
        buildPisterajaLayout(layout);
        buildPaasykoeLayout(layout);
        buildLisanaytotlayout(layout);
@@ -123,7 +124,7 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
         
         Label pisterajatLabel = UiUtil.label(layout, T("pisterajat"));
         pisterajatLabel.setStyleName(Oph.LABEL_H2); 
-        pisterajaTable = new PisterajaTable(); 
+        pisterajaTable = new PisterajaTable(presenter.getModel().getSelectedValintaKoe()); 
         pisterajaTable.addListener(new Listener() {
 
             private static final long serialVersionUID = 5409894266822689283L;
@@ -165,7 +166,7 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
         lisanaytotL.setSpacing(true);
         lisanaytotL.addComponent(UiUtil.label(null, T("lisanayttojenKuvaus")), 0, 0);
         
-        LisanaytotTabSheet lisanaytotKuvaus = new LisanaytotTabSheet(true, "650px", "250px");
+        lisanaytotKuvaus = new LisanaytotTabSheet(true, "650px", "250px");
         lisanaytotKuvaus.setSizeUndefined();
         lisanaytotL.addComponent(lisanaytotKuvaus, 1, 0);
         
@@ -186,8 +187,9 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
         paasykoeLayout.addComponent(infoLayout);
         Label ohje = UiUtil.label(paasykoeLayout, T("paasykoeOhje"));
         ohje.addStyleName(Oph.LABEL_SMALL);   
-        HakukohdeValintakoeViewImpl valintakoeC = new HakukohdeValintakoeViewImpl(new ErrorMessage(), presenter, uiBuilder, KoulutusasteTyyppi.LUKIOKOULUTUS);
-        paasykoeLayout.addComponent(valintakoeC);
+        //presenter.getSelected
+        valintakoeComponent = new HakukohdeValintakoeViewImpl(new ErrorMessage(), presenter, uiBuilder, KoulutusasteTyyppi.LUKIOKOULUTUS);
+        paasykoeLayout.addComponent(valintakoeComponent);
         layout.addComponent(paasykoeLayout);
         paasykoeLayout.setVisible(false);
         layout.addComponent(buildSplitPanel());
@@ -231,6 +233,9 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
     }
 
     public void loadTableData() {
+        if (koulutustyyppi.equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+            return;
+        }
 
         if (valintakoeTable != null) {
             valintakoeTable.removeAllItems();
@@ -275,6 +280,14 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
             valintakoeTable.setColumnExpandRatio("poistaBtn", 10);
         }
     }
+    
+    public List<KielikaannosViewModel> getLisanayttoKuvaukset() {
+        if (lisanaytotKuvaus != null) {
+            return lisanaytotKuvaus.getKieliKaannokset();
+        } else {
+            return new ArrayList<KielikaannosViewModel>();
+        }
+    }
 
     private BeanContainer<String, HakukohdeValintakoeRow> createBeanContainer(List<ValintakoeViewModel> valintaKokees) {
         BeanContainer<String, HakukohdeValintakoeRow> container = new BeanContainer<String, HakukohdeValintakoeRow>(HakukohdeValintakoeRow.class);
@@ -285,6 +298,15 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
         }
 
         return container;
+    }
+    
+    public HakukohdeValintakoeViewImpl getValintakoeComponent() {
+        return valintakoeComponent;
+    }
+    
+    
+    public PisterajaTable getPisterajaTable() {
+        return pisterajaTable;
     }
 
 }

@@ -34,7 +34,12 @@ public class LisanaytotTabSheet extends HakukohdeLanguageTabSheet {
     
     @Override
     protected List<KielikaannosViewModel> getTabData() {
-        return new ArrayList<KielikaannosViewModel>(0);
+        final TarjontaModel model = presenter.getModel();
+        if (model == null || model.getSelectedValintaKoe() == null) {
+            return new ArrayList<KielikaannosViewModel>(0);
+        }
+
+        return model.getSelectedValintaKoe().getLisanayttoKuvaukset();
     }
 
 }

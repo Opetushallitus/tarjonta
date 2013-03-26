@@ -18,10 +18,12 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.data.Validator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -74,13 +76,25 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
     @Override
     public String actionSave(SaveButtonState tila, ClickEvent event)
             throws Exception {
-        /*HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
-        hakukohde.getLisatiedot().clear();
-        hakukohde.getLisatiedot().addAll(formView.getLisatiedot());
-        
-        HakukohdeNameUriModel selectedHakukohde = formView.getSelectedHakukohde();
-        hakukohde.setHakukohdeNimi(getUriWithVersion(selectedHakukohde));
-        presenter.saveHakuKohde(tila);*/
+        if (presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+        try {
+            errorView.resetErrors();
+            boolean pisterajatValid = formView.getPisterajaTable().validateInputs();
+            this.formView.getValintakoeComponent().getForm().commit();
+            if (!pisterajatValid) {
+                errorView.addError(T("validation.pisterajatNotValid"));
+                throw new Validator.InvalidValueException("");
+            }
+            if (this.formView.getValintakoeComponent().getForm().isValid()) {
+                presenter.getModel().getSelectedValintaKoe().setLisanayttoKuvaukset(formView.getLisanayttoKuvaukset());
+                presenter.saveHakukohdeValintakoe(formView.getValintakoeComponent().getValintakokeenKuvaukset());
+            }
+        } catch (Validator.InvalidValueException e) {
+            errorView.addError(e);
+        } catch (Exception exp) {
+            exp.printStackTrace();
+        }
+        }
         return getHakukohdeOid();
     }
     

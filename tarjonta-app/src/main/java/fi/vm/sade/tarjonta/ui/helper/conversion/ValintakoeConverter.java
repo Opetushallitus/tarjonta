@@ -18,6 +18,8 @@ package fi.vm.sade.tarjonta.ui.helper.conversion;/*
 import fi.vm.sade.tarjonta.service.types.AjankohtaTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
+import fi.vm.sade.tarjonta.service.types.PisterajaTyyppi;
+import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
@@ -39,10 +41,34 @@ public class ValintakoeConverter {
         valintakoeViewModel.setValintakoeTunniste(valintakoeTyyppi.getValintakokeenTunniste());
         valintakoeViewModel.setValintakoeTyyppi(valintakoeTyyppi.getValintakokeenTyyppi());
         valintakoeViewModel.setSanallisetKuvaukset(ConversionUtils.convertTekstiToVM(valintakoeTyyppi.getKuvaukset()));
+        convertPisterajatToViewModel(valintakoeViewModel, valintakoeTyyppi);
+        valintakoeViewModel.setLisanayttoKuvaukset(ConversionUtils.convertTekstiToVM(valintakoeTyyppi.getLisaNaytot()));
 
         valintakoeViewModel.setValintakoeAjat(mapAjat(valintakoeTyyppi.getAjankohdat()));
 
         return valintakoeViewModel;
+    }
+
+    private static void convertPisterajatToViewModel(ValintakoeViewModel valintakoeViewModel, ValintakoeTyyppi valintakoeTyyppi) {
+        PisterajaTyyppi valintakoeRajat = null;
+        PisterajaTyyppi lisapisteRajat = null;
+        for (PisterajaTyyppi curRajat:  valintakoeTyyppi.getPisterajat()) {
+            if (curRajat.getValinnanPisteraja().equals(ValinnanPisterajaTyyppi.PAASYKOE)) {
+                valintakoeRajat = curRajat;
+            } else if (curRajat.getValinnanPisteraja().equals(ValinnanPisterajaTyyppi.LISAPISTEET)) {
+                lisapisteRajat = curRajat;
+            }
+        }
+        if (valintakoeRajat != null) {
+            valintakoeViewModel.setPkAlinHyvaksyttyPM("" + valintakoeRajat.getAlinHyvaksyttyPistemaara());
+            valintakoeViewModel.setPkAlinPM("" + valintakoeRajat.getAlinPistemaara());
+            valintakoeViewModel.setPkYlinPM("" + valintakoeRajat.getYlinPistemaara());
+        } 
+        if (lisapisteRajat != null) {
+            valintakoeViewModel.setLpAlinHyvaksyttyPM("" + lisapisteRajat.getAlinHyvaksyttyPistemaara());
+            valintakoeViewModel.setLpAlinPM("" + lisapisteRajat.getAlinPistemaara());
+            valintakoeViewModel.setLpYlinPM("" + lisapisteRajat.getYlinPistemaara());
+        }
     }
 
     private static List<ValintakoeAikaViewModel> mapAjat(List<AjankohtaTyyppi> ajankohtaTyyppis) {
@@ -73,9 +99,31 @@ public class ValintakoeConverter {
         valintakoeTyyppi.setValintakokeenTyyppi(valintakoeViewModel.getValintakoeTyyppi());
         valintakoeTyyppi.setKuvaukset(ConversionUtils.convertKielikaannosToMonikielinenTeksti(valintakoeViewModel.getSanallisetKuvaukset()));
         valintakoeTyyppi.getAjankohdat().addAll(mapAjankohdat(valintakoeViewModel.getValintakoeAjat()));
-
+        valintakoeTyyppi.getPisterajat().addAll(mapPisterajatToDTO(valintakoeViewModel));
+        valintakoeTyyppi.setLisaNaytot(ConversionUtils.convertKielikaannosToMonikielinenTeksti(valintakoeViewModel.getLisanayttoKuvaukset()));
 
         return valintakoeTyyppi;
+    }
+    
+    private static List<PisterajaTyyppi> mapPisterajatToDTO(ValintakoeViewModel valintakoeViewModel) {
+        List<PisterajaTyyppi> pisterajat = new ArrayList<PisterajaTyyppi>();
+        if (valintakoeViewModel.getPkAlinHyvaksyttyPM() != null || valintakoeViewModel.getPkAlinPM() != null || valintakoeViewModel.getPkYlinPM() != null) {
+            PisterajaTyyppi pkTyyppi = new PisterajaTyyppi();
+            pkTyyppi.setValinnanPisteraja(ValinnanPisterajaTyyppi.PAASYKOE);
+            pkTyyppi.setAlinHyvaksyttyPistemaara(Integer.parseInt(valintakoeViewModel.getPkAlinHyvaksyttyPM()));
+            pkTyyppi.setAlinPistemaara(Integer.parseInt(valintakoeViewModel.getPkAlinPM()));
+            pkTyyppi.setYlinPistemaara(Integer.parseInt(valintakoeViewModel.getPkYlinPM()));
+            pisterajat.add(pkTyyppi);
+        }
+        if (valintakoeViewModel.getLpAlinHyvaksyttyPM() != null || valintakoeViewModel.getLpAlinPM() != null || valintakoeViewModel.getLpYlinPM() != null) {
+            PisterajaTyyppi lpTyyppi = new PisterajaTyyppi();
+            lpTyyppi.setValinnanPisteraja(ValinnanPisterajaTyyppi.LISAPISTEET);
+            lpTyyppi.setAlinHyvaksyttyPistemaara(Integer.parseInt(valintakoeViewModel.getLpAlinHyvaksyttyPM()));
+            lpTyyppi.setAlinPistemaara(Integer.parseInt(valintakoeViewModel.getLpAlinPM()));
+            lpTyyppi.setYlinPistemaara(Integer.parseInt(valintakoeViewModel.getLpYlinPM()));
+            pisterajat.add(lpTyyppi);
+        }
+        return pisterajat;
     }
 
     private static List<AjankohtaTyyppi> mapAjankohdat(List<ValintakoeAikaViewModel> valintaKoeaikas) {

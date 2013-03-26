@@ -162,7 +162,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         super();
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
-
+        
         this.koulutusasteTyyppi = getKoulutusasteTyyppi();
 
         buildMainLayout();

@@ -24,6 +24,8 @@ import java.util.List;
  */
 public class ValintakoeViewModel {
 
+   
+
     private String valintakoeTunniste;
 
     private String valintakoeTyyppi;
@@ -32,6 +34,15 @@ public class ValintakoeViewModel {
 
     private List<ValintakoeAikaViewModel> valintakoeAjat;
 
+    private String pkAlinPM;
+    private String pkYlinPM;
+    private String pkAlinHyvaksyttyPM;
+    private String lpAlinPM;
+    private String lpYlinPM;
+    private String lpAlinHyvaksyttyPM;
+    private String kpAlinHyvaksyttyPM;
+    
+    private List<KielikaannosViewModel> lisanayttoKuvaukset;
 
     public String getValintakoeTyyppi() {
         return valintakoeTyyppi;
@@ -50,6 +61,17 @@ public class ValintakoeViewModel {
 
     public void setSanallisetKuvaukset(List<KielikaannosViewModel> sanallisetKuvaukset) {
         this.sanallisetKuvaukset = sanallisetKuvaukset;
+    }
+    
+    public List<KielikaannosViewModel> getLisanayttoKuvaukset() {
+        if (lisanayttoKuvaukset == null) {
+            lisanayttoKuvaukset = new ArrayList<KielikaannosViewModel>();
+        }
+        return lisanayttoKuvaukset;
+    }
+
+    public void setLisanayttoKuvaukset(List<KielikaannosViewModel> lisanayttoKuvaukset) {
+        this.lisanayttoKuvaukset = lisanayttoKuvaukset;
     }
 
     public List<ValintakoeAikaViewModel> getValintakoeAjat() {
@@ -94,5 +116,61 @@ public class ValintakoeViewModel {
         result = 31 * result + (valintakoeTyyppi != null ? valintakoeTyyppi.hashCode() : 0);
         result = 31 * result + (valintakoeAjat != null ? valintakoeAjat.hashCode() : 0);
         return result;
+    }
+    
+    public String getPkAlinPM() {
+        return pkAlinPM;
+    }
+
+    public void setPkAlinPM(String pkAlinPM) {
+        this.pkAlinPM = pkAlinPM;
+    }
+
+    public String getPkYlinPM() {
+        return pkYlinPM;
+    }
+
+    public void setPkYlinPM(String pkYlinPM) {
+        this.pkYlinPM = pkYlinPM;
+    }
+
+    public String getPkAlinHyvaksyttyPM() {
+        return pkAlinHyvaksyttyPM;
+    }
+
+    public void setPkAlinHyvaksyttyPM(String pkAlinHyvaksyttyPM) {
+        this.pkAlinHyvaksyttyPM = pkAlinHyvaksyttyPM;
+    }
+
+    public String getLpAlinPM() {
+        return lpAlinPM;
+    }
+
+    public void setLpAlinPM(String lpAlinPM) {
+        this.lpAlinPM = lpAlinPM;
+    }
+
+    public String getLpYlinPM() {
+        return lpYlinPM;
+    }
+
+    public void setLpYlinPM(String lpYlinPM) {
+        this.lpYlinPM = lpYlinPM;
+    }
+
+    public String getLpAlinHyvaksyttyPM() {
+        return lpAlinHyvaksyttyPM;
+    }
+
+    public void setLpAlinHyvaksyttyPM(String lpAlinHyvaksyttyPM) {
+        this.lpAlinHyvaksyttyPM = lpAlinHyvaksyttyPM;
+    }
+
+    public String getKpAlinHyvaksyttyPM() {
+        return kpAlinHyvaksyttyPM;
+    }
+
+    public void setKpAlinHyvaksyttyPM(String aliHyvaksyttyPM) {
+        this.kpAlinHyvaksyttyPM = aliHyvaksyttyPM;
     }
 }
