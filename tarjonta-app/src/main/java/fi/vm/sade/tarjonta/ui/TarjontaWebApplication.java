@@ -129,29 +129,6 @@ public class TarjontaWebApplication extends TarjontaApplication {
         });
 
         hl.addComponent(btnKomoTest);
-
-        final Button lukiokoulutus = new Button("Luo lukiokoulutus", new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-
-            @Override
-            public void buttonClick(ClickEvent event) {
-                toLukiokoulutus();
-            }
-        });
-
-        hl.addComponent(lukiokoulutus);
-
-        final Button lukiokoulutus_kuvailevat = new Button("Lukiokoulutus kuvailevat tiedot", new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-
-            @Override
-            public void buttonClick(ClickEvent event) {
-                toLukiokoulutusKuvailevat();
-            }
-        });
-
-        hl.addComponent(lukiokoulutus_kuvailevat);
-
     }
 
     public void toTarjonta() {
@@ -170,23 +147,6 @@ public class TarjontaWebApplication extends TarjontaApplication {
         this.removeWindow(window);
         window = new ValintaperustekuvausRootView();
         setMainWindow(window);
-    }
-
-    public void toLukiokoulutus() {
-        this.removeWindow(window);
-        TarjontaRootView e = new TarjontaRootView(true);
-        setMainWindow(e);
-        e.getTarjontaPresenter().getLukioPresenter().showEditKoulutusView(null, KoulutusActiveTab.PERUSTIEDOT);
-        window = e;      
-    }
-
-    public void toLukiokoulutusKuvailevat() {
-        System.out.println("lukiokuvailevat!!");
-        this.removeWindow(window);
-        TarjontaRootView e = new TarjontaRootView(true);
-        window = e;
-        setMainWindow(window);
-        e.changeView(new EditLukioKoulutusKuvailevatTiedotView(null));
     }
 
     /*

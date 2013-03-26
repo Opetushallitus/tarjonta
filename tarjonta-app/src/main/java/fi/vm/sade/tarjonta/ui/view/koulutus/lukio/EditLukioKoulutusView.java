@@ -85,7 +85,7 @@ public class EditLukioKoulutusView extends AbstractVerticalLayout {
         EditLukioKoulutusKuvailevatTiedotView lisatiedotView = new EditLukioKoulutusKuvailevatTiedotView(koulutusOid);
         
         kuvailevatTiedot = tabs.addTab(lisatiedotView, T("kuvailevattiedot"));
-        kuvailevatTiedot.setEnabled(presenter.getModel().getKoulutusPerustiedotModel().isLoaded());
+        kuvailevatTiedot.setEnabled(presenter.getModel().getKoulutusLukioPerustiedot().isLoaded());
         
         this.presenter.getLukioPresenter().setPerustiedotView(perustiedotView);
         this.presenter.getLukioPresenter().setKuvailevatTiedotView(lisatiedotView);

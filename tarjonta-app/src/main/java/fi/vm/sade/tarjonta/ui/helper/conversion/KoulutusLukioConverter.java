@@ -112,6 +112,10 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         tarjontaModel.setKoulutusLukioPerustiedot(perustiedot);
         KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedot = createKoulutusLukioKuvailevatTiedotViewModel(koulutus, DocumentStatus.LOADED);
         tarjontaModel.setKoulutusLukioKuvailevatTiedot(kuvailevatTiedot);
+
+        //clear and set the loaded lukiolinja to combobox field data list
+        perustiedot.getLukiolinjas().clear();
+        perustiedot.getLukiolinjas().add(perustiedot.getLukiolinja());
     }
 
     private void convertToLukioKoulutusLisatiedotTyyppi(KoulutusTyyppi target, KoulutusLukioKuvailevatTiedotViewModel source) {
@@ -249,21 +253,10 @@ public class KoulutusLukioConverter extends KoulutusConveter {
 
     private KoulutusLukioPerustiedotViewModel createToKoulutusLukioPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus, DocumentStatus status,
             OrganisaatioDTO organisatio, Locale locale) {
-        if (koulutus == null) {
-            throw new RuntimeException(INVALID_DATA + "LueKoulutusVastausTyyppi object cannot be null.");
-        }
-
-        if (status == null) {
-            throw new RuntimeException(INVALID_DATA + "DocumentStatus enum cannot be null.");
-        }
-
-        if (organisatio == null) {
-            throw new RuntimeException(INVALID_DATA + "Organisatio DTO cannot be null.");
-        }
-
-        if (organisatio.getOid() == null) {
-            throw new RuntimeException(INVALID_DATA + "Organisatio OID cannot be null.");
-        }
+        Preconditions.checkNotNull(koulutus, INVALID_DATA + "LueKoulutusVastausTyyppi object cannot be null.");
+        Preconditions.checkNotNull(status, INVALID_DATA + "DocumentStatus enum cannot be null.");
+        Preconditions.checkNotNull(organisatio, INVALID_DATA + "Organisatio DTO cannot be null.");
+        Preconditions.checkNotNull(organisatio.getOid(), INVALID_DATA + "Organisatio OID cannot be null.");
 
         KoulutusLukioPerustiedotViewModel perustiedot = new KoulutusLukioPerustiedotViewModel(status);
         perustiedot.setTila(koulutus.getTila());
@@ -273,8 +266,12 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         perustiedot.setOrganisaatioName(OrganisaatioDisplayHelper.getClosest(locale, organisatio));
 
         /* Select KOMO by koulutusaste, koulutuskoodi and koulutusohjelma */
+
         perustiedot.setKoulutuskoodiModel(mapToKoulutuskoodiModel(koulutus.getKoulutusKoodi(), locale));
         perustiedot.setLukiolinja(mapToLukiolinjaModel(koulutus.getLukiolinjaKoodi(), locale));
+
+        Preconditions.checkNotNull(perustiedot.getKoulutuskoodiModel(), INVALID_DATA + "kolutuskoodi model cannot be null.");
+        Preconditions.checkNotNull(perustiedot.getLukiolinja(), INVALID_DATA + "lukiolinja model cannot be null.");
 
         perustiedot.setKoulutuksenAlkamisPvm(
                 koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);

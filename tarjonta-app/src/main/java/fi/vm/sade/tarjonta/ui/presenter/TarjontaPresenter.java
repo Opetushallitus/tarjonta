@@ -299,11 +299,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             hakuModel.getNimiFi();
             getModel().getHakukohde().setHakuOid(hakuModel);
             this.hakuKohdePerustiedotView.setSelectedHaku(hakuView);
-
         }
         if (getModel().getHakukohde() != null && getModel().getHakukohde().getHakukohdeNimi() != null) {
-
-
             //TODO: If hakukohde is not now initialize hakukohdeLiite form
             getModel().setSelectedLiite(new HakukohdeLiiteViewModel());
         }

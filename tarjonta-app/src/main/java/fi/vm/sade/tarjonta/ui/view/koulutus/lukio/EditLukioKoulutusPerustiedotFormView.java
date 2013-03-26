@@ -316,6 +316,8 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
      */
     private void buildGridYhteyshenkiloRows(GridLayout grid) {
         yhteyshenkiloForm = new YhteyshenkiloViewForm(presenter, model.getYhteyshenkilo());
+        yhteyshenkiloForm.getYhtHenkKokoNimi().setInputPrompt(T("prompt.kokoNimi"));
+        
         Form form = new ValidatingViewBoundForm(yhteyshenkiloForm);
         form.setItemDataSource(new BeanItem<YhteyshenkiloModel>(model.getYhteyshenkilo()));
         form.setValidationVisible(false);

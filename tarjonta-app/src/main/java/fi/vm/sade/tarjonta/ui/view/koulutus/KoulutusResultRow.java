@@ -70,7 +70,7 @@ public class KoulutusResultRow extends HorizontalLayout {
     private String koulutusNimi;
     private Window removeKoulutusDialog;
     /**
-     * The presenter object   for the component.
+     * The presenter object for the component.
      */
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
@@ -107,7 +107,7 @@ public class KoulutusResultRow extends HorizontalLayout {
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
         final OrganisaatioContext context = OrganisaatioContext.getContext(koulutus.getKoulutus().getTarjoaja());
-        
+
         if (tarjontaPresenter.getPermission().userCanUpdateKoulutus(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
@@ -150,6 +150,7 @@ public class KoulutusResultRow extends HorizontalLayout {
         RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), koulutusNimi, T("removeYes"), T("removeNo"),
                 new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(ClickEvent event) {
                 closeKoulutusCreationDialog();
@@ -159,6 +160,7 @@ public class KoulutusResultRow extends HorizontalLayout {
         },
                 new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(ClickEvent event) {
                 closeKoulutusCreationDialog();
@@ -212,7 +214,18 @@ public class KoulutusResultRow extends HorizontalLayout {
 
                 @Override
                 public void buttonClick(ClickEvent event) {
-                    tarjontaPresenter.showShowKoulutusView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
+                    final String komotoOid = koulutus.getKoulutus().getKoulutusmoduuliToteutus();
+
+                    switch (koulutus.getKoulutus().getKoulutustyyppi()) {
+                        case AMMATILLINEN_PERUSKOULUTUS:
+                            LOG.debug("AMMATILLINEN_PERUSKOULUTUS : {}", komotoOid);
+                            tarjontaPresenter.showShowKoulutusView(komotoOid);
+                            break;
+                        case LUKIOKOULUTUS:
+                            LOG.debug("LUKIOKOULUTUS : {}", komotoOid);
+                            tarjontaPresenter.getLukioPresenter().showEditKoulutusView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
+                            break;
+                    }
                 }
             });
             nimiB.setStyleName("link-row");

@@ -322,10 +322,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     private Date getStartDate(Set<Hakuaika> hakuaikas) {
         Date startDate = null;
-        for (Hakuaika aika:hakuaikas) {
+        for (Hakuaika aika : hakuaikas) {
             if (startDate == null) {
                 startDate = aika.getAlkamisPvm();
-            }  else if (aika.getAlkamisPvm().before(startDate)) {
+            } else if (aika.getAlkamisPvm().before(startDate)) {
                 startDate = aika.getAlkamisPvm();
             }
         }
@@ -334,9 +334,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     private Date getEndDate(Set<Hakuaika> hakuaikas) {
         Date endDate = null;
-        for (Hakuaika aika:hakuaikas) {
+        for (Hakuaika aika : hakuaikas) {
             if (endDate == null) {
-              endDate = aika.getPaattymisPvm();
+                endDate = aika.getPaattymisPvm();
             } else if (aika.getPaattymisPvm().after(endDate)) {
                 endDate = aika.getPaattymisPvm();
             }
@@ -492,6 +492,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         KoodistoKoodiTyyppi koulutusOhjelmaKoodi = new KoodistoKoodiTyyppi();
         koulutusOhjelmaKoodi.setUri(komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi());
         result.setKoulutusohjelmaKoodi(koulutusOhjelmaKoodi);
+
+        KoodistoKoodiTyyppi lukiolinja = new KoodistoKoodiTyyppi();
+        lukiolinja.setUri(komoto.getKoulutusmoduuli().getLukiolinja());
+        result.setLukiolinjaKoodi(lukiolinja);
 
         //Asetetaan koulutusmoduuli
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();

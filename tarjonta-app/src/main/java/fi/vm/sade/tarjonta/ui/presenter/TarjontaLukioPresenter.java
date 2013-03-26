@@ -77,7 +77,7 @@ public class TarjontaLukioPresenter {
     private KoulutusLukioConverter lukioKoulutusConverter;
     @Autowired(required = true)
     private KoulutusKoodistoConverter kolutusKoodistoConverter;
-    private TarjontaPresenter presenter;
+    private TarjontaPresenter presenter; //initialized in Spring xml configuration file.
     public EditLukioKoulutusPerustiedotView perustiedotView;
     private EditLukioKoulutusKuvailevatTiedotView kuvailevatTiedotView;
     private EditLukioKoulutusView editLukioKoulutusView;
@@ -207,23 +207,17 @@ public class TarjontaLukioPresenter {
         // before opening the KoulutusEditView
 
         if (komotoOid != null) {
-            readKoulutusToModel(komotoOid);
+            Preconditions.checkNotNull(komotoOid, "KOMOTO OID cannot be null.");
+            LueKoulutusVastausTyyppi koulutus = getPresenter().getKoulutusByOid(komotoOid);
+            lukioKoulutusConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, I18N.getLocale());
         } else {
-            if (getTarjontaModel().getOrganisaatioOid() == null) {
-                throw new RuntimeException("Application error - missing organisation OID.");
-            }
+            Preconditions.checkNotNull(getTarjontaModel().getOrganisaatioOid(), "Missing organisation OID.");
             getPerustiedotModel().clearModel(DocumentStatus.NEW);
             getTarjontaModel().setKoulutusLukioKuvailevatTiedot(new KoulutusLukioKuvailevatTiedotViewModel(DocumentStatus.NEW));
         }
         getPerustiedotModel().setOrganisaatioOidTree(getPresenter().fetchOrganisaatioTree(getTarjontaModel().getOrganisaatioOid()));
         setEditKoulutusView(new EditLukioKoulutusView(komotoOid, tab));
         getPresenter().getRootView().changeView(editLukioKoulutusView);
-    }
-
-    private void readKoulutusToModel(final String koulutusOid) {
-        Preconditions.checkNotNull(koulutusOid, "koulutusOid cannot be null");
-        LueKoulutusVastausTyyppi koulutus = getPresenter().getKoulutusByOid(koulutusOid);
-        lukioKoulutusConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, I18N.getLocale());
     }
 
     public void loadSelectedKomoData() {
