@@ -141,43 +141,39 @@ public class TarjontaLukioPresenter {
     }
 
     public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
+        LOG.debug("in saveKoulutus, tila : {}", tila);
         this.editLukioKoulutusView.enableKuvailevatTiedotTab();
         this.kuvailevatTiedotView.getLisatiedotForm().reBuildTabsheet();
 
         KoulutusLukioPerustiedotViewModel perustiedot = getPerustiedotModel();
 
         if (perustiedot.isLoaded()) {
+            LOG.debug("update");
             //update KOMOTO
             PaivitaKoulutusTyyppi paivita = lukioKoulutusConverter.createPaivitaLukioKoulutusTyyppi(getTarjontaModel(), perustiedot.getKomotoOid());
             paivita.setTila(tila.toTarjontaTila(perustiedot.getTila()));
             tarjontaAdminService.paivitaKoulutus(paivita);
         } else {
+            LOG.debug("insert to organisations : {}", getTarjontaModel().getOrganisaatios());
             for (TarjontaModel.OrganisaatioOidNamePair pair : getTarjontaModel().getOrganisaatios()) {
                 getTarjontaModel().setOrganisaatioName(pair.getName());
                 getTarjontaModel().setOrganisaatioOid(pair.getOid());
-                persistKoulutus(perustiedot, tila);
+                perustiedot.setOrganisaatioOid(pair.getOid());
+                perustiedot.setOrganisaatioName(pair.getName());
+
+                LisaaKoulutusTyyppi lisaa = lukioKoulutusConverter.createLisaaLukioKoulutusTyyppi(getTarjontaModel(), getPerustiedotModel().getOrganisaatioOid(), tila);
+                LOG.debug("getKuvailevatTiedotModel() :  {}", getKuvailevatTiedotModel());
+
+                checkKoulutusmoduuli();
+                if (checkExistingKomoto(lisaa)) {
+                    tarjontaAdminService.lisaaKoulutus(lisaa);
+                    perustiedot.setDocumentStatus(DocumentStatus.SAVED);
+                    perustiedot.setKomotoOid(lisaa.getOid());
+                } else {
+                    LOG.debug("Unable to add koulutus because of the duplicate");
+                    throw new ExceptionMessage("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage");
+                }
             }
-        }
-    }
-
-    private void persistKoulutus(KoulutusLukioPerustiedotViewModel koulutusModel, SaveButtonState tila) throws ExceptionMessage {
-        //persist new KOMO and KOMOTO
-        koulutusModel.setOrganisaatioOid(getTarjontaModel().getOrganisaatioOid());
-        koulutusModel.setOrganisaatioName(getTarjontaModel().getOrganisaatioName());
-
-        LisaaKoulutusTyyppi lisaa = lukioKoulutusConverter.createLisaaLukioKoulutusTyyppi(getTarjontaModel(), getPerustiedotModel().getOrganisaatioOid());
-        lisaa.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
-
-        LOG.debug("getKuvailevatTiedotModel() :  {}", getKuvailevatTiedotModel());
-        
-        checkKoulutusmoduuli();
-        if (checkExistingKomoto(lisaa)) {
-            tarjontaAdminService.lisaaKoulutus(lisaa);
-            koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
-            koulutusModel.setKomotoOid(lisaa.getOid());
-        } else {
-            LOG.debug("Unable to add koulutus because of the duplicate");
-            throw new ExceptionMessage("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage");
         }
     }
 
@@ -246,11 +242,11 @@ public class TarjontaLukioPresenter {
             }
 
             kolutusKoodistoConverter.listaaLukioSisalto(koulutuskoodi, lukiolinja, tyyppi, I18N.getLocale());
-            
+
             //TODO: do we need the setters on bottom?
             perustiedotModel.setKoulutusaste(koulutuskoodi.getKoulutusaste());
             perustiedotModel.setKoulutusala(koulutuskoodi.getKoulutusala());
-            perustiedotModel.setKoulutuslaji( null );//TODO!!!!!!!!!!!
+            perustiedotModel.setKoulutuslaji(null);//TODO!!!!!!!!!!!
         }
     }
 
@@ -260,11 +256,9 @@ public class TarjontaLukioPresenter {
 
     public void setEditKoulutusView(EditLukioKoulutusView editLukioKoulutusView) {
         this.editLukioKoulutusView = editLukioKoulutusView;
-
     }
 
     public void showLukioKoulutusEditView(Collection<OrganisaatioPerustietoType> orgs) {
-        getTarjontaModel().setOrganisaatios(getPresenter().convertPerustietoToNameOidPair(orgs));
         showEditKoulutusView(null, KoulutusActiveTab.PERUSTIEDOT);
     }
 
@@ -318,6 +312,7 @@ public class TarjontaLukioPresenter {
      * TODO: fix this to support lukio.
      */
     private boolean checkExistingKomoto(LisaaKoulutusTyyppi lisaaTyyppi) {
+        LOG.warn("checkExistingKomoto method is still disabled!");
 //        TarkistaKoulutusKopiointiTyyppi kysely = new TarkistaKoulutusKopiointiTyyppi();
 //        kysely.setKoulutusAlkamisPvm(lisaaTyyppi.getKoulutuksenAlkamisPaiva());
 //        kysely.setKoulutusLuokitusKoodi(lisaaTyyppi.getKoulutusKoodi().getUri());

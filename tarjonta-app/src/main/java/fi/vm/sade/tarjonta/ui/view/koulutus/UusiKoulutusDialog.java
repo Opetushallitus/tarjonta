@@ -36,64 +36,61 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable(preConstruction = true)
 public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
-
+    
     private Logger logger = LoggerFactory.getLogger(UusiKoulutusDialog.class);
     List<String> organisaatioOids;
     private ComboBox koulutusAsteCombo;
     private ComboBox koulutusValintaCombo;
     
-    
     public UusiKoulutusDialog(String width, String height) {
-        super(width,height);
+        super(width, height);
         setCaption(_i18n.getMessage("dialog.title"));
-
+        
         
     }
-
+    
     @Override
     protected Collection<String> getOrganisaatioOids() {
         if (organisaatioOids == null) {
-        organisaatioOids = new ArrayList<String>();
+            organisaatioOids = new ArrayList<String>();
         }
         organisaatioOids.add(presenter.getModel().getOrganisaatioOid());
         return organisaatioOids;
     }
-
+    
     @Override
     protected void setButtonListeners() {
         peruutaBtn.addListener(new Button.ClickListener() {
-
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 getParent().getWindow().removeWindow(UusiKoulutusDialog.this);
             }
         });
-
+        
         jatkaBtn.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 if (presenter.checkOrganisaatioOppilaitosTyyppimatches(selectedOrgs.values())) {
-                if (koulutusAsteCombo.getValue() instanceof String && ((String)koulutusAsteCombo.getValue()).equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value())) {
-                    presenter.getLukioPresenter().showLukioKoulutusEditView(selectedOrgs.values());
-                    logger.info("lukiokoulutus()");
-                    getParent().removeWindow(UusiKoulutusDialog.this);
-                } else if (koulutusAsteCombo.getValue() instanceof String && ((String)koulutusAsteCombo.getValue()).equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value()))  {
-                    presenter.showKoulutusEditView(selectedOrgs.values());
-                    logger.info("ammatillinen peruskoulutus()");
-                    getParent().removeWindow(UusiKoulutusDialog.this);
-                }
-                else {
-                    showNotification("Ei toteutettu");
-                }
-            } else {
+                    presenter.setAllSelectedOrganisaatios(selectedOrgs.values());
+                    
+                    if (koulutusAsteCombo.getValue() instanceof String && ((String) koulutusAsteCombo.getValue()).equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value())) {
+                        presenter.getLukioPresenter().showLukioKoulutusEditView(selectedOrgs.values());
+                        logger.info("lukiokoulutus()");
+                        getParent().removeWindow(UusiKoulutusDialog.this);
+                    } else if (koulutusAsteCombo.getValue() instanceof String && ((String) koulutusAsteCombo.getValue()).equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value())) {
+                        presenter.showKoulutusEditView(selectedOrgs.values());
+                        logger.info("ammatillinen peruskoulutus()");
+                        getParent().removeWindow(UusiKoulutusDialog.this);
+                    } else {
+                        showNotification("Ei toteutettu");
+                    }
+                } else {
                     addErrorMessage(_i18n.getMessage("oppilaitosTyyppiDoesNotMatch"));
                 }
             }
         });
     }
     
-    
-     
     @Override
     protected VerticalLayout buildTopLayout() {
         VerticalLayout topLayout = new VerticalLayout();
@@ -111,14 +108,14 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         koulutusValintaCombo = buildKoulutusValintaCombo();
         koulutusAsteCombo = buildKoulutusAsteCombobox();
         koulutusValintaCombo.setEnabled(false);
-
-
+        
+        
         comboLayout.addComponent(koulutusValintaCombo);
         comboLayout.setComponentAlignment(koulutusValintaCombo, Alignment.BOTTOM_LEFT);
         comboLayout.addComponent(koulutusAsteCombo);
-        comboLayout.setComponentAlignment(koulutusAsteCombo,Alignment.BOTTOM_RIGHT);
-
-        comboLayout.setMargin(false,true,true,true);
+        comboLayout.setComponentAlignment(koulutusAsteCombo, Alignment.BOTTOM_RIGHT);
+        
+        comboLayout.setMargin(false, true, true, true);
         comboLayout.setSizeFull();
         return comboLayout;
     }
@@ -129,34 +126,31 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         koulutusValintaTmp.addItem("Koulutus");
         
         return koulutusValintaTmp;
-    } 
+    }
     
     private ComboBox buildKoulutusAsteCombobox() {
         ComboBox koulutusCombo = UiUtil.comboBox(null, null, null);
-        for(KoulutusasteTyyppi aste : KoulutusasteTyyppi.values()) {
-          koulutusCombo.addItem(aste.value());
-          koulutusCombo.setItemCaption(aste.value(), _i18n.getMessage(aste.value()));
+        for (KoulutusasteTyyppi aste : KoulutusasteTyyppi.values()) {
+            koulutusCombo.addItem(aste.value());
+            koulutusCombo.setItemCaption(aste.value(), _i18n.getMessage(aste.value()));
         }
-        return koulutusCombo; 
+        return koulutusCombo;
     }
     
     private AbstractLayout createLabelLayout() {
-       GridLayout labelLayout = new GridLayout(2, 1);
+        GridLayout labelLayout = new GridLayout(2, 1);
         labelLayout.setColumnExpandRatio(0, 10);
         labelLayout.setColumnExpandRatio(1, 0.1f);
-        labelLayout.setMargin(false,true,true,true);
+        labelLayout.setMargin(false, true, true, true);
 
         //HorizontalLayout labelLayout = new HorizontalLayout();
         Label ohjeteksti = new Label(_i18n.getMessage("dialog.ohjeTeksti"));
         //labelLayout.addComponent(ohjeteksti);
         labelLayout.addComponent(ohjeteksti, 0, 0);
         Button ohjeBtn = UiUtil.buttonSmallInfo(null);
-        labelLayout.addComponent(ohjeBtn,1,0);
+        labelLayout.addComponent(ohjeBtn, 1, 0);
         labelLayout.setSizeFull();
         
         return labelLayout;
     }
-    
- 
-  
 }

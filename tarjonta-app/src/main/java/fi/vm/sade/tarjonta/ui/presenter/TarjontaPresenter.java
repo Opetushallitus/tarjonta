@@ -76,13 +76,13 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusView;
 
 import org.apache.commons.beanutils.BeanComparator;
 
-
 /**
  * This class is used to control the "tarjonta" UI.
  *
  * @author mlyly
  */
 public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
+
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
     private static final String LIITE_DATE_PATTERNS = "dd.MM.yyyy hh:mm";
     private static final String NAME_OPH = "OPH";
@@ -542,8 +542,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         return caption;
     }
 
-    public void showKoulutusEditView(Collection<OrganisaatioPerustietoType> orgs) {
+    public void setAllSelectedOrganisaatios(Collection<OrganisaatioPerustietoType> orgs) {
         getModel().setOrganisaatios(convertPerustietoToNameOidPair(orgs));
+    }
+
+    public void showKoulutusEditView(Collection<OrganisaatioPerustietoType> orgs) {
         showKoulutustEditView(null, KoulutusActiveTab.PERUSTIEDOT);
     }
 
@@ -554,7 +557,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         getModel().getSelectedKoulutukset().clear();
     }
 
-    Collection<TarjontaModel.OrganisaatioOidNamePair> convertPerustietoToNameOidPair(Collection<OrganisaatioPerustietoType> orgs) {
+    private Collection<TarjontaModel.OrganisaatioOidNamePair> convertPerustietoToNameOidPair(Collection<OrganisaatioPerustietoType> orgs) {
         Collection<TarjontaModel.OrganisaatioOidNamePair> oidNamePairs = new ArrayList<TarjontaModel.OrganisaatioOidNamePair>();
         for (OrganisaatioPerustietoType org : orgs) {
             TarjontaModel.OrganisaatioOidNamePair organisaatioOidNamePair = new TarjontaModel.OrganisaatioOidNamePair(org.getOid(), org.getNimiFi());
