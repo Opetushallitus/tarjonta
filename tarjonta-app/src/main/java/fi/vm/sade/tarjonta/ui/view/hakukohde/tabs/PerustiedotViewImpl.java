@@ -35,6 +35,8 @@ import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -180,6 +182,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         if (presenter.getModel().getSelectedKoulutukset() != null
                 && presenter.getModel().getSelectedKoulutukset().size() > 0) {
             return presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getKoulutustyyppi();
+        }
+        
+        if(model.getKomotoOids().size()>0) {
+            //XXX probably this information is available somewhere in the presenter
+            LueKoulutusVastausTyyppi koulutus = presenter.getKoulutusByOid(model.getKomotoOids().get(0));
+            return koulutus.getKoulutusmoduuli().getKoulutustyyppi();
         }
 
         throw new RuntimeException("Can not figure out the type!");
