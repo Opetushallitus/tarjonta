@@ -87,7 +87,10 @@ public class HakukohdeResultRow extends HorizontalLayout {
     public HakukohdeResultRow(HakukohdeTulos hakukohde, String hakukohdeNimi) {
         this.hakukohde = hakukohde;
         Date today = new Date();
-        if (hakukohde.getHaku() != null && hakukohde.getHaku().getHakuAlkamisPvm().before(today)) {
+        if (hakukohde!=null
+        		&& hakukohde.getHaku() != null
+        		&& hakukohde.getHaku().getHakuAlkamisPvm() != null
+        		&& hakukohde.getHaku().getHakuAlkamisPvm().before(today)) {
             hakuStarted = true;
         }
 
