@@ -77,7 +77,7 @@ import org.powermock.reflect.Whitebox;
  * @author jani
  */
 public class TarjontaLukioPresenterTest {
-    
+
     private static final String LAAJUUS_ARVO = "laajuus_arvo";
     private static final String LAAJUUS_YKSIKKO = "laajuus_tyyppi";
     private static final String KOULUTUSALA = "koulutusala";
@@ -112,18 +112,18 @@ public class TarjontaLukioPresenterTest {
     private OrganisaatioDTO orgDto;
     private TarjontaUIHelper tarjontaUiHelper;
     private YhteyshenkiloModel yhteyshenkiloModel;
-    
+
     public TarjontaLukioPresenterTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
         orgDto = new OrganisaatioDTO();
@@ -134,30 +134,30 @@ public class TarjontaLukioPresenterTest {
         teksti.setValue("organisation name");
         omtt.getTeksti().add(teksti);
         orgDto.setNimi(omtt);
-        
+
         TarjontaPresenter tarjontaPresenter = new TarjontaPresenter();
         tarjontaPresenter.getModel().setOrganisaatioOid(ORGANISAATIO_OID);
         tarjontaPresenter.setRootView(new TarjontaRootView(false));
         instance = new TarjontaLukioPresenter();
-        
+
         koulutusLukioConverter = new KoulutusLukioConverter();
         kuvailevatTiedotView = new EditLukioKoulutusKuvailevatTiedotView("text");
         editLukioKoulutusView = new EditLukioKoulutusView(KOMOTO_OID);
         instance.setKuvailevatTiedotView(kuvailevatTiedotView);
-        
+
         TabSheet tabSheet = UiBuilder.tabSheet(new VerticalLayout());
         EditLukioKoulutusKuvailevatTiedotView lisatiedotView = new EditLukioKoulutusKuvailevatTiedotView(KOMOTO_OID);
         kuvailevatTiedotTab = tabSheet.addTab(lisatiedotView, "kuvailevattiedot");
-        
+
         oidServiceMock = createMock(OIDService.class);
         tarjontaAdminServiceMock = createMock(TarjontaAdminService.class);
         organisaatioServiceMock = createMock(OrganisaatioService.class);
         koulutusKoodisto = new KoulutusKoodistoConverter();//createMock(KoulutusKoodistoConverter.class);
         tarjontaUiHelper = createMock(TarjontaUIHelper.class);
-        
+
         tarjontaPublicServiceMock = createMock(TarjontaPublicService.class);
-        
-        
+
+
         Whitebox.setInternalState(kuvailevatTiedotView, "formView", new EditLukioKoulutusKuvailevatTiedotFormView());
         Whitebox.setInternalState(editLukioKoulutusView, "kuvailevatTiedot", kuvailevatTiedotTab);
         Whitebox.setInternalState(koulutusLukioConverter, "oidService", oidServiceMock);
@@ -170,7 +170,7 @@ public class TarjontaLukioPresenterTest {
         Whitebox.setInternalState(instance, "tarjontaPublicService", tarjontaPublicServiceMock);
         Whitebox.setInternalState(instance, "presenter", tarjontaPresenter);
         Whitebox.setInternalState(koulutusKoodisto, "tarjontaUiHelper", tarjontaUiHelper);
-        
+
         tarjontaPresenter.getModel().getOrganisaatios().add(new TarjontaModel.OrganisaatioOidNamePair(ORGANISAATIO_OID, "org name"));
 
 
@@ -188,11 +188,11 @@ public class TarjontaLukioPresenterTest {
         perustiedot.setKoulutusaste(createKoodiModel(KOULUTUSASTE));
         perustiedot.setKoulutuslaji(createKoodiModel(KOULUTUSLAJI));
         perustiedot.setOpetuskieli("kieli");
-        
+
         Set<String> opetusmuodos = new HashSet<String>();
         opetusmuodos.add("opetumuoto1");
         opetusmuodos.add("opetumuoto2");
-        
+
         perustiedot.setOpetusmuoto(opetusmuodos);
         perustiedot.setOpintojenLaajuus(createKoodiModel(LAAJUUS_ARVO));
         perustiedot.setOpintojenLaajuusyksikko(createKoodiModel(LAAJUUS_YKSIKKO));
@@ -205,14 +205,14 @@ public class TarjontaLukioPresenterTest {
         perustiedot.setTavoitteet(createMonikielinenTeksti(TUTKINNON_TAVOITTEET));
         perustiedot.setTutkinto(createKoodiModel(KOULUTUSKOODI));
         perustiedot.setTutkintonimike(createKoodiModel(TUTKINTONIMIKE));
-        
+
         yhteyshenkiloModel = new YhteyshenkiloModel();
         yhteyshenkiloModel.setYhtHenkEmail("email");
         yhteyshenkiloModel.setYhtHenkKokoNimi("full name");
         yhteyshenkiloModel.setYhtHenkPuhelin("12345678910");
         yhteyshenkiloModel.setYhtHenkTitteli("Mr.");
         yhteyshenkiloModel.setYhtHenkiloOid("12.1232402.8320948.2843");
-        
+
         perustiedot.setYhteyshenkilo(yhteyshenkiloModel);
 
         //form logic
@@ -222,7 +222,7 @@ public class TarjontaLukioPresenterTest {
         /*
          * Kuvailevat tiedot tab data
          */
-        
+
         kuvailevatTiedot = instance.getKuvailevatTiedotModel();
         kuvailevatTiedot.setDiplomit(createList(1, "diplomi"));
         kuvailevatTiedot.setKieletMuu(createList(2, "kieliMuu"));
@@ -230,18 +230,18 @@ public class TarjontaLukioPresenterTest {
         kuvailevatTiedot.setKieliB1(createList(4, "kieliB1"));
         kuvailevatTiedot.setKieliB2(createList(5, "kieliB2"));
         kuvailevatTiedot.setKieliB3(createList(6, "kieliB3"));
-        
+
         Map<String, KoulutusLisatietoModel> map = new HashMap<String, KoulutusLisatietoModel>();
         KoulutusLisatietoModel koulutusLisatietoModel = new KoulutusLisatietoModel();
         koulutusLisatietoModel.setKansainvalistyminen("Kansainvalistyminen");
         koulutusLisatietoModel.setYhteistyoMuidenToimijoidenKanssa("YhteistyoMuidenToimijoidenKanssa");
         koulutusLisatietoModel.setSisalto("Sisalto");
         map.put("fi", koulutusLisatietoModel);
-        
+
         kuvailevatTiedot.setLisatiedot(map);
         kuvailevatTiedot.setTila(TarjontaTila.VALMIS);
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -262,7 +262,7 @@ public class TarjontaLukioPresenterTest {
         t.setOid(KOMO_OID);
         koulutusmoduuliTulos.setKoulutusmoduuli(t);
         vastaus.getKoulutusmoduuliTulos().add(koulutusmoduuliTulos);
-        
+
         Capture<LisaaKoulutusTyyppi> localeCapture = new Capture<LisaaKoulutusTyyppi>();
 
         /*
@@ -294,14 +294,14 @@ public class TarjontaLukioPresenterTest {
         verify(organisaatioServiceMock);
         verify(tarjontaPublicServiceMock);
         LisaaKoulutusTyyppi koulutus = localeCapture.getValue();
-        
+
         assertNotNull(koulutus);
         assertEquals(KOMOTO_OID, koulutus.getOid());
         assertKuvailevatTiedot(koulutus);
-        
+
         assertEquals(1, koulutus.getOpetuskieli().size());
         assertEquals(2, koulutus.getOpetusmuoto().size());
-        
+
         assertNotNull("Koulutuksen kesto tyyppi", koulutus.getKesto());
         assertEquals("kesto", koulutus.getKesto().getArvo());
         assertEquals("kesto_tyyppi", koulutus.getKesto().getYksikko());
@@ -312,11 +312,11 @@ public class TarjontaLukioPresenterTest {
         assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, koulutus.getKoulutustyyppi());
         assertEquals("http://localhost:8080/", koulutus.getLinkki().get(0).getUri());
         assertEquals(createUri(LUKIOLINJA), koulutus.getLukiolinjaKoodi().getUri());
-        
+
         assertEquals(createUri("pohjakoulutusvaatimus"), koulutus.getPohjakoulutusvaatimus().getUri());
         assertEquals(ORGANISAATIO_OID, koulutus.getTarjoaja());
         assertEquals(TarjontaTila.LUONNOS, koulutus.getTila());
-        
+
         assertNotNull(koulutus.getYhteyshenkiloTyyppi());
         YhteyshenkiloTyyppi yhteyshenkilo = koulutus.getYhteyshenkiloTyyppi().get(0);
         assertYhteyshenkilo(yhteyshenkilo);
@@ -324,14 +324,14 @@ public class TarjontaLukioPresenterTest {
 
         assertEquals("Kansainvalistyminen", koulutus.getKansainvalistyminen().getTeksti().get(0).getValue());
         assertEquals(LANGUAGE_FI, koulutus.getKansainvalistyminen().getTeksti().get(0).getKieliKoodi());
-        
+
         assertEquals("YhteistyoMuidenToimijoidenKanssa", koulutus.getYhteistyoMuidenToimijoidenKanssa().getTeksti().get(0).getValue());
         assertEquals(LANGUAGE_FI, koulutus.getYhteistyoMuidenToimijoidenKanssa().getTeksti().get(0).getKieliKoodi());
-        
+
         assertEquals("Sisalto", koulutus.getSisalto().getTeksti().get(0).getValue());
         assertEquals(LANGUAGE_FI, koulutus.getSisalto().getTeksti().get(0).getKieliKoodi());
-        
-        
+
+
         assertEquals(null, koulutus.getPainotus());
         assertEquals(null, koulutus.getNimi()); ///????
         assertEquals(null, koulutus.getSijoittuminenTyoelamaan());
@@ -339,7 +339,7 @@ public class TarjontaLukioPresenterTest {
         assertEquals(null, koulutus.getKoulutusohjelmanValinta());
         assertEquals(null, koulutus.getKuvailevatTiedot());
     }
-    
+
     @Test
     public void testUpdateSaveKoulutus() throws Exception {
         /*
@@ -351,7 +351,7 @@ public class TarjontaLukioPresenterTest {
         t.setOid(KOMO_OID);
         koulutusmoduuliTulos.setKoulutusmoduuli(t);
         vastaus.getKoulutusmoduuliTulos().add(koulutusmoduuliTulos);
-        
+
         Capture<PaivitaKoulutusTyyppi> localeCapture = new Capture<PaivitaKoulutusTyyppi>();
 
         /*
@@ -363,7 +363,7 @@ public class TarjontaLukioPresenterTest {
         /*
          * replay
          */
-        
+
         replay(tarjontaAdminServiceMock);
         replay(organisaatioServiceMock);
 
@@ -377,16 +377,16 @@ public class TarjontaLukioPresenterTest {
          */
         verify(tarjontaAdminServiceMock);
         verify(organisaatioServiceMock);
-        
+
         PaivitaKoulutusTyyppi koulutus = localeCapture.getValue();
-        
+
         assertNotNull(koulutus);
         assertEquals(KOMOTO_OID, koulutus.getOid());
         assertKuvailevatTiedot(koulutus);
-        
+
         assertEquals(1, koulutus.getOpetuskieli().size());
         assertEquals(2, koulutus.getOpetusmuoto().size());
-        
+
         assertNotNull("Koulutuksen kesto tyyppi", koulutus.getKesto());
         assertEquals("kesto", koulutus.getKesto().getArvo());
         assertEquals("kesto_tyyppi", koulutus.getKesto().getYksikko());
@@ -397,26 +397,26 @@ public class TarjontaLukioPresenterTest {
         assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, koulutus.getKoulutustyyppi());
         assertEquals("http://localhost:8080/", koulutus.getLinkki().get(0).getUri());
         assertEquals(createUri(LUKIOLINJA), koulutus.getLukiolinjaKoodi().getUri());
-        
+
         assertEquals(createUri("pohjakoulutusvaatimus"), koulutus.getPohjakoulutusvaatimus().getUri());
         assertEquals(ORGANISAATIO_OID, koulutus.getTarjoaja());
         assertEquals(TarjontaTila.LUONNOS, koulutus.getTila());
-        
+
         assertNotNull(koulutus.getYhteyshenkiloTyyppi());
         assertNotNull("getYhteyshenkiloTyyppi not null", koulutus.getYhteyshenkiloTyyppi()); //not needed
 
         YhteyshenkiloTyyppi yhteyshenkilo = koulutus.getYhteyshenkiloTyyppi().get(0);
         assertYhteyshenkilo(yhteyshenkilo);
-        
+
         assertEquals("Kansainvalistyminen", koulutus.getKansainvalistyminen().getTeksti().get(0).getValue());
         assertEquals(LANGUAGE_FI, koulutus.getKansainvalistyminen().getTeksti().get(0).getKieliKoodi());
-        
+
         assertEquals("YhteistyoMuidenToimijoidenKanssa", koulutus.getYhteistyoMuidenToimijoidenKanssa().getTeksti().get(0).getValue());
         assertEquals(LANGUAGE_FI, koulutus.getYhteistyoMuidenToimijoidenKanssa().getTeksti().get(0).getKieliKoodi());
-        
+
         assertEquals("Sisalto", koulutus.getSisalto().getTeksti().get(0).getValue());
         assertEquals(LANGUAGE_FI, koulutus.getSisalto().getTeksti().get(0).getKieliKoodi());
-        
+
         assertEquals(null, koulutus.getPainotus());
         assertEquals(null, koulutus.getNimi()); ///????
         assertEquals(null, koulutus.getSijoittuminenTyoelamaan());
@@ -424,7 +424,7 @@ public class TarjontaLukioPresenterTest {
         assertEquals(null, koulutus.getKoulutusohjelmanValinta());
         assertEquals(null, koulutus.getKuvailevatTiedot());
     }
-    
+
     @Test
     public void testLoad() throws Exception {
         /*
@@ -438,18 +438,18 @@ public class TarjontaLukioPresenterTest {
         koulutuksenKestoTyyppi.setArvo("kesto");
         koulutuksenKestoTyyppi.setYksikko("yksikko");
         vastaus.setKesto(koulutuksenKestoTyyppi);
-        
+
         vastaus.setKoulutusKoodi(createKoodistoKoodiTyyppi(KOULUTUSKOODI));
         vastaus.setKoulutusaste(createKoodistoKoodiTyyppi(KOULUTUSASTE));
         vastaus.setKoulutusmoduuli(new KoulutusmoduuliKoosteTyyppi());
-        
+
         vastaus.setKoulutusohjelmanValinta(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "KoulutusohjelmanValinta"));
         vastaus.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
         vastaus.setKuvailevatTiedot(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "KuvailevatTiedot"));
         vastaus.setLukiolinjaKoodi(createKoodistoKoodiTyyppi(LUKIOLINJA));
         vastaus.setNimi(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "nimi"));
         vastaus.setOid(KOMOTO_OID);
-        
+
         vastaus.setSisalto(convertToMonikielinenTekstiTyyppi(LANGUAGE_FI, "sisalto"));
         vastaus.setTarjoaja(ORGANISAATIO_OID);
         vastaus.setTila(TarjontaTila.VALMIS);
@@ -464,7 +464,7 @@ public class TarjontaLukioPresenterTest {
         vastaus.setKoulutusohjelmaKoodi(null);
         vastaus.setPohjakoulutusvaatimus(null);
         vastaus.setSijoittuminenTyoelamaan(null);
-        
+
         YhteyshenkiloTyyppi y = new YhteyshenkiloTyyppi();
         y.setSukunimi("suku");
         y.setEtunimet(yhteyshenkiloModel.getYhtHenkKokoNimi());
@@ -473,7 +473,7 @@ public class TarjontaLukioPresenterTest {
         y.setSahkoposti(yhteyshenkiloModel.getYhtHenkEmail());
         y.setTitteli(yhteyshenkiloModel.getYhtHenkTitteli());
         vastaus.getYhteyshenkilo().add(y);
-        
+
         KoulutusmoduuliKoosteTyyppi t = new KoulutusmoduuliKoosteTyyppi();
         t.setOid(KOMO_OID);
         t.setKoulutusalaUri(createUri(KOULUTUSALA));
@@ -494,7 +494,7 @@ public class TarjontaLukioPresenterTest {
         t.setParentOid(null);
         t.setTavoitteet(null);
         t.setKoulutusohjelmakoodiUri(null);
-        
+
         vastaus.setKoulutusmoduuli(t);
         /*
          * Expect
@@ -502,12 +502,12 @@ public class TarjontaLukioPresenterTest {
         expect(organisaatioServiceMock.findByOid(and(isA(String.class), eq(ORGANISAATIO_OID)))).andReturn(orgDto);
         expect(oidServiceMock.newOid(and(isA(NodeClassCode.class), eq(NodeClassCode.TEKN_5)))).andReturn(KOMOTO_OID).anyTimes();
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(vastaus);
-        
+
         expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSKOODI)))).andReturn(createKoodiType(KOULUTUSKOODI));
         expect(tarjontaUiHelper.getKoodis(eq(createUri(LUKIOLINJA)))).andReturn(createKoodiType(LUKIOLINJA));
         expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSASTE)))).andReturn(createKoodiType(KOULUTUSASTE));
         expect(tarjontaUiHelper.getKoodis(eq(createUri(OPINTOALA)))).andReturn(createKoodiType(OPINTOALA));
-        //expect(tarjontaUiHelper.getKoodis(eq(createUri(TUTKINTONIMIKE)))).andReturn(createKoodiType(TUTKINTONIMIKE));
+        expect(tarjontaUiHelper.getKoodis(eq(createUri(TUTKINTONIMIKE)))).andReturn(createKoodiType(TUTKINTONIMIKE));
         //expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSLAJI)))).andReturn(createKoodiType(KOULUTUSLAJI));
         expect(tarjontaUiHelper.getKoodis(eq(createUri(LAAJUUS_YKSIKKO)))).andReturn(createKoodiType(LAAJUUS_YKSIKKO));
         expect(tarjontaUiHelper.getKoodis(eq(createUri(LAAJUUS_ARVO)))).andReturn(createKoodiType(LAAJUUS_ARVO));
@@ -524,7 +524,7 @@ public class TarjontaLukioPresenterTest {
         /*
          * Presenter method call
          */
-        
+
         instance.showEditKoulutusView(KOMOTO_OID, null);
 
         /*
@@ -534,13 +534,14 @@ public class TarjontaLukioPresenterTest {
         verify(oidServiceMock);
         verify(organisaatioServiceMock);
         verify(tarjontaPublicServiceMock);
-        
+
         KoulutusLukioPerustiedotViewModel perustiedotModel = instance.getPerustiedotModel();
         assertEquals(KOMOTO_OID, perustiedotModel.getKomotoOid());
         assertEquals(null, perustiedotModel.getKoulutuksenAlkamisPvm());
         assertEquals(null, perustiedotModel.getKoulutuksenRakenne());
-        
+
         assertNotNull("koulutuskoodi model", perustiedotModel.getKoulutuskoodiModel());
+        assertEquals(createUri(TUTKINTONIMIKE), perustiedotModel.getKoulutuskoodiModel().getTutkintonimike().getKoodistoUriVersio());
         assertEquals(createUri(KOULUTUSALA), perustiedotModel.getKoulutuskoodiModel().getKoulutusala().getKoodistoUriVersio());
         assertEquals(createUri(KOULUTUSASTE), perustiedotModel.getKoulutuskoodiModel().getKoulutusaste().getKoodistoUriVersio());
         assertEquals(createUri(KOULUTUSKOODI), perustiedotModel.getKoulutuskoodiModel().getKoodistoUriVersio());
@@ -570,7 +571,7 @@ public class TarjontaLukioPresenterTest {
         assertEquals(null, perustiedotModel.getTutkintonimike());
         assertYhteyshenkilo(perustiedotModel.getYhteyshenkilo());
     }
-    
+
     private void assertYhteyshenkilo(YhteyshenkiloModel cperson) {
         assertNotNull("YhteyshenkiloTyyppi", cperson);
         assertEquals(yhteyshenkiloModel.getYhtHenkKokoNimi() + " suku", cperson.getYhtHenkKokoNimi());
@@ -579,7 +580,7 @@ public class TarjontaLukioPresenterTest {
         assertEquals(yhteyshenkiloModel.getYhtHenkTitteli(), cperson.getYhtHenkTitteli());
         assertEquals(yhteyshenkiloModel.getYhtHenkiloOid(), cperson.getYhtHenkiloOid());
     }
-    
+
     private void assertYhteyshenkilo(YhteyshenkiloTyyppi yhteyshenkilo) {
         assertNotNull("YhteyshenkiloTyyppi", yhteyshenkilo);
         assertEquals(yhteyshenkiloModel.getYhtHenkKokoNimi(), yhteyshenkilo.getEtunimet());
@@ -589,7 +590,7 @@ public class TarjontaLukioPresenterTest {
         assertEquals(yhteyshenkiloModel.getYhtHenkEmail(), yhteyshenkilo.getSahkoposti());
         assertEquals(yhteyshenkiloModel.getYhtHenkTitteli(), yhteyshenkilo.getTitteli());
     }
-    
+
     private void assertKuvailevatTiedot(KoulutusTyyppi koulutus) {
         assertEquals(1, koulutus.getLukiodiplomit().size());
         assertEquals(2, koulutus.getMuutKielet().size());
@@ -607,35 +608,35 @@ public class TarjontaLukioPresenterTest {
         MonikielinenTekstiModel mtm = new MonikielinenTekstiModel();
         mtm.getKielikaannos().add(new KielikaannosViewModel(LANGUAGE_FI, TEXT));
         createKoodiModel(mtm, koodiUri);
-        
+
         return mtm;
     }
-    
+
     private KoodiModel createKoodiModel(String koodiUri) {
         KoodiModel koodiModel = new KoodiModel();
         createKoodiModel(koodiModel, koodiUri);
         return koodiModel;
     }
-    
+
     private LukiolinjaModel createLukiolinja(String koodiUri) {
         LukiolinjaModel lukiolinja = new LukiolinjaModel();
         createKoodiModel(lukiolinja, koodiUri);
         return lukiolinja;
     }
-    
+
     private KoulutuskoodiModel createKoulutuskoodiModel(String koodiUri) {
         KoulutuskoodiModel km = new KoulutuskoodiModel();
         createKoodiModel(km, koodiUri);
         return km;
     }
-    
+
     private KoulutusKoodistoModel createKoodiModel(KoulutusKoodistoModel kkm, String fieldName) {
         if (kkm == null) {
             kkm = new KoodiModel();
         }
-        
+
         final String koodiUri = fieldName + "_uri";
-        
+
         kkm.setKielikoodi(LANGUAGE_FI);
         kkm.setKoodi(fieldName);
         kkm.setKoodistoUri(koodiUri);
@@ -643,51 +644,51 @@ public class TarjontaLukioPresenterTest {
         kkm.setKoodistoVersio(1);
         kkm.setKuvaus(fieldName + " kuvaus");
         kkm.setNimi(fieldName + " nimi");
-        
+
         return kkm;
     }
-    
+
     private static String createUri(String fieldName) {
         return createUri(fieldName, VERSION);
     }
-    
+
     private static String createUri(String fieldName, int version) {
         return fieldName + "_uri#" + version;
     }
-    
+
     private List<String> createList(final int max, final String value) {
         List<String> list = new ArrayList<String>(max);
-        
+
         for (int i = 0; i < max; i++) {
             list.add(value + "_" + i);
         }
         return list;
     }
-    
+
     private MonikielinenTekstiTyyppi convertToMonikielinenTekstiTyyppi(String languageCode, String text) {
         MonikielinenTekstiTyyppi tyyppi = new MonikielinenTekstiTyyppi();
         tyyppi.getTeksti().add(KoulutusConveter.convertToMonikielinenTekstiTyyppiTeksti(languageCode, text));
-        
+
         return tyyppi;
     }
-    
+
     private KoodistoKoodiTyyppi createKoodistoKoodiTyyppi(String fieldName) {
         return KoulutusConveter.createKoodi(createUri(fieldName), false, fieldName);
     }
-    
+
     private List<KoodiType> createKoodiType(String fieldName) {
         KoodiType koodiType = new KoodiType();
         koodiType.setKoodiUri(fieldName + "_uri");
         koodiType.setVersio(VERSION);
         koodiType.setKoodiArvo(fieldName);
         koodiType.setTila(TilaType.HYVAKSYTTY);
-        
+
         KoodiMetadataType meta = new KoodiMetadataType();
         meta.setKuvaus(fieldName + " kuvaus");
         meta.setKieli(KieliType.FI);
         koodiType.getMetadata().add(meta);
         koodiType.setKoodisto(new KoodistoItemType());
-        
+
         List<KoodiType> types = new ArrayList<KoodiType>();
         types.add(koodiType);
         return types;

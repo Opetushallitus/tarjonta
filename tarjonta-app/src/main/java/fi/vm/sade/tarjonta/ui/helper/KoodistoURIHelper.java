@@ -85,8 +85,9 @@ public class KoodistoURIHelper {
      * Lukio tuktinto URIs
      */
     public static String KOODISTO_LUKIOLINJA_URI;
-
-    /** 
+    public static String LUKIO_KOODI_KOULUTUSLAJI_URI;
+    public static String LUKIO_KOODI_POHJAKOULUTUSVAATIMUS_URI;
+    /**
      * Oppiaineet
      */
     public static String KOODISTO_OPPIAINEET_URI;
@@ -254,6 +255,16 @@ public class KoodistoURIHelper {
     @Value("${koodisto-uris.lukiolinja:NOT_SET}")
     public void setLukiolinja(String lukiolinja) {
         KOODISTO_LUKIOLINJA_URI = lukiolinja;
+    }
+
+    @Value("${koodi-uri.lukio.pohjakoulutusvaatimus:NOT_SET}")
+    public void setLukioKoodiPohjakoulutusvaatimus(String pohjakoulutusvaatimus) {
+        LUKIO_KOODI_POHJAKOULUTUSVAATIMUS_URI = pohjakoulutusvaatimus;
+    }
+
+    @Value("${koodi-uri.lukio.kolutuslaji:NOT_SET}")
+    public void setLukioKoodiKoulutuslaji(String koulutuslaji) {
+        LUKIO_KOODI_KOULUTUSLAJI_URI = koulutuslaji;
     }
 
     @Value("${koodisto-uris.oppiaineet:NOT_SET}")

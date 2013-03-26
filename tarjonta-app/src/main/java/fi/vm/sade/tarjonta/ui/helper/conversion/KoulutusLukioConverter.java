@@ -93,7 +93,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
      * @return
      * @throws ExceptionMessage
      */
-    public PaivitaKoulutusTyyppi createPaivitaLukioKoulutusTyyppi(final TarjontaModel tarjontaModel, final String komotoOid) throws ExceptionMessage {
+    public PaivitaKoulutusTyyppi createPaivitaLukioKoulutusTyyppi(final TarjontaModel tarjontaModel, final String komotoOid, final SaveButtonState tila) throws ExceptionMessage {
         Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");
 
         KoulutusLukioPerustiedotViewModel perustiedotModel = tarjontaModel.getKoulutusLukioPerustiedot();
@@ -102,6 +102,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         PaivitaKoulutusTyyppi paivita = new PaivitaKoulutusTyyppi();
         convertToLukioKoulutusTyyppi(paivita, perustiedotModel, komotoOid, organisaatio);
         convertToLukioKoulutusLisatiedotTyyppi(paivita, tarjontaModel.getKoulutusLukioKuvailevatTiedot());
+        paivita.setTila(tila.toTarjontaTila(perustiedotModel.getTila()));
 
         return paivita;
     }
@@ -265,14 +266,18 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         perustiedot.setOrganisaatioOid(organisatio.getOid());
         perustiedot.setOrganisaatioName(OrganisaatioDisplayHelper.getClosest(locale, organisatio));
 
-        /* Select KOMO by koulutusaste, koulutuskoodi and koulutusohjelma */
-
+        /*
+         * Combobox fields;
+         */
         perustiedot.setKoulutuskoodiModel(mapToKoulutuskoodiModel(koulutus.getKoulutusKoodi(), locale));
         perustiedot.setLukiolinja(mapToLukiolinjaModel(koulutus.getLukiolinjaKoodi(), locale));
 
         Preconditions.checkNotNull(perustiedot.getKoulutuskoodiModel(), INVALID_DATA + "kolutuskoodi model cannot be null.");
         Preconditions.checkNotNull(perustiedot.getLukiolinja(), INVALID_DATA + "lukiolinja model cannot be null.");
 
+        /*
+         * Other UI fields
+         */
         perustiedot.setKoulutuksenAlkamisPvm(
                 koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
 
@@ -289,15 +294,23 @@ public class KoulutusLukioConverter extends KoulutusConveter {
             perustiedot.setOpetuskieli(getUri(koulutus.getOpetuskieli().get(0)));
         }
 
+        /*
+         * contact person data conversion
+         */
         mapYhteyshenkiloToViewModel(perustiedot.getYhteyshenkilo(), koulutus);
 
-//        if (koulutus.getKoulutuslaji() != null && !koulutus.getKoulutuslaji().isEmpty()) {
-//            Set<String> convertListToSet = convertListToSet(koulutus.getKoulutuslaji());
-//    
-//            model2Aste.setKoulutuslaji());
-//        }
+        /*
+         * convert koodisto uris to UI models
+         */
         final KoulutusmoduuliKoosteTyyppi koulutusmoduuliTyyppi = koulutus.getKoulutusmoduuli();
         koulutusKoodisto.listaaLukioSisalto(perustiedot.getKoulutuskoodiModel(), perustiedot.getLukiolinja(), koulutusmoduuliTyyppi, locale);
+
+        /*
+         * Data fields used on UI only as extra information:
+         */
+
+        //6-numero koodi arvo 
+        perustiedot.setKoulutuskoodi(perustiedot.getKoulutuskoodiModel().getKoodi());
 
         return perustiedot;
     }

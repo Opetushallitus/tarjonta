@@ -15,13 +15,12 @@
  */
 package fi.vm.sade.tarjonta.ui.model.koulutus;
 
-import java.util.Set;
-
 /**
  *
  * @author Jani Wilén
  */
 public class KoulutusohjelmaModel extends MonikielinenTekstiModel {
+    private static final long serialVersionUID = -5947159028438495028L;
 
     private KoodiModel tutkintonimike;
     private MonikielinenTekstiModel tavoitteet;

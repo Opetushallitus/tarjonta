@@ -33,6 +33,8 @@ import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
+import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.LUKIOKOULUTUS;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
@@ -136,7 +138,17 @@ public class KoulutusResultRow extends HorizontalLayout {
         if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
             tarjontaPresenter.showShowKoulutusView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
         } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
-            tarjontaPresenter.showKoulutustEditView(koulutus.getKoulutus().getKoulutusmoduuliToteutus(), KoulutusActiveTab.PERUSTIEDOT);
+            final String komotoOid = koulutus.getKoulutus().getKoulutusmoduuliToteutus();
+
+            switch (koulutus.getKoulutus().getKoulutustyyppi()) {
+                case AMMATILLINEN_PERUSKOULUTUS:
+                    tarjontaPresenter.showKoulutustEditView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
+                    break;
+                case LUKIOKOULUTUS:
+                    tarjontaPresenter.getLukioPresenter().showEditKoulutusView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
+                    break;
+            }
+
         } else if (selection.equals(i18n.getMessage(MenuBarActions.DELETE.key))) {
             showRemoveDialog();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
@@ -218,12 +230,10 @@ public class KoulutusResultRow extends HorizontalLayout {
 
                     switch (koulutus.getKoulutus().getKoulutustyyppi()) {
                         case AMMATILLINEN_PERUSKOULUTUS:
-                            LOG.debug("AMMATILLINEN_PERUSKOULUTUS : {}", komotoOid);
                             tarjontaPresenter.showShowKoulutusView(komotoOid);
                             break;
                         case LUKIOKOULUTUS:
-                            LOG.debug("LUKIOKOULUTUS : {}", komotoOid);
-                            tarjontaPresenter.getLukioPresenter().showEditKoulutusView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
+                            tarjontaPresenter.getLukioPresenter().showSummaryKoulutusView(komotoOid);
                             break;
                     }
                 }

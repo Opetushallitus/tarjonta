@@ -24,7 +24,37 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.*;
 public class LukiolinjaModel extends MonikielinenTekstiModel {
 
     private static final long serialVersionUID = -5207611570035520551L;
+    public KoodiModel koulutuslaji;
+    public KoodiModel pohjakoulutusvaatimus;
 
     public LukiolinjaModel() {
+    }
+
+    /**
+     * @return the koulutuslaji
+     */
+    public KoodiModel getKoulutuslaji() {
+        return koulutuslaji;
+    }
+
+    /**
+     * @param koulutuslaji the koulutuslaji to set
+     */
+    public void setKoulutuslaji(KoodiModel koulutuslaji) {
+        this.koulutuslaji = koulutuslaji;
+    }
+
+    /**
+     * @return the pohjakoulutusvaatimus
+     */
+    public KoodiModel getPohjakoulutusvaatimus() {
+        return pohjakoulutusvaatimus;
+    }
+
+    /**
+     * @param pohjakoulutusvaatimus the pohjakoulutusvaatimus to set
+     */
+    public void setPohjakoulutusvaatimus(KoodiModel pohjakoulutusvaatimus) {
+        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
     }
 }

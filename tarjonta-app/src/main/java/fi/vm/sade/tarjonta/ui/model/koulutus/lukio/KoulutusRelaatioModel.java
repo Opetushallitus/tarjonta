@@ -72,6 +72,11 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
     protected MonikielinenTekstiModel tavoitteet;
     protected MonikielinenTekstiModel jatkoopintomahdollisuudet;
 
+    /*
+     * Other info
+     */
+    public String koulutuskoodi; //6-numero koodi arvo
+
     /**
      * @return the oid
      */
@@ -361,4 +366,17 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
         return getKomotoOid() != null;
     }
 
+    /**
+     * @return the koulutuskoodi
+     */
+    public String getKoulutuskoodi() {
+        return koulutuskoodi;
+    }
+
+    /**
+     * @param koulutuskoodi the koulutuskoodi to set
+     */
+    public void setKoulutuskoodi(String koulutuskoodi) {
+        this.koulutuskoodi = koulutuskoodi;
+    }
 }

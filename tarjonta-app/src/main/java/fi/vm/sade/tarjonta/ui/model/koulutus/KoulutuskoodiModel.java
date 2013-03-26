@@ -27,6 +27,7 @@ public class KoulutuskoodiModel extends MonikielinenTekstiModel {
     private KoodiModel opintojenLaajuusyksikko;
     private KoodiModel opintojenLaajuus;
     private KoodiModel opintoala;
+    private KoodiModel tutkintonimike; //lukio
     private MonikielinenTekstiModel koulutuksenRakenne;
     private MonikielinenTekstiModel tavoitteet;
     private MonikielinenTekstiModel jatkoopintomahdollisuudet;
@@ -144,5 +145,19 @@ public class KoulutuskoodiModel extends MonikielinenTekstiModel {
      */
     public void setJatkoopintomahdollisuudet(MonikielinenTekstiModel jatkoopintomahdollisuudet) {
         this.jatkoopintomahdollisuudet = jatkoopintomahdollisuudet;
+    }
+
+    /**
+     * @return the tutkintonimike
+     */
+    public KoodiModel getTutkintonimike() {
+        return tutkintonimike;
+    }
+
+    /**
+     * @param tutkintonimike the tutkintonimike to set
+     */
+    public void setTutkintonimike(KoodiModel tutkintonimike) {
+        this.tutkintonimike = tutkintonimike;
     }
 }

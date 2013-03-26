@@ -23,6 +23,7 @@ import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import static fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper.LUKIO_KOODI_POHJAKOULUTUSVAATIMUS_URI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
@@ -127,6 +128,12 @@ public class KoulutusKoodistoConverter {
         }
 
         komoBaseData(tutkinto, tyyppi, kc, locale);
+
+        //TODO:  Fix this after koodisto data and koodi relations are fixed.
+        if (lukiolinja != null) {
+            lukiolinja.setKoulutuslaji(listaaKoodi(KoodistoURIHelper.LUKIO_KOODI_KOULUTUSLAJI_URI, kc, locale));
+            lukiolinja.setPohjakoulutusvaatimus(listaaKoodi(KoodistoURIHelper.LUKIO_KOODI_POHJAKOULUTUSVAATIMUS_URI, kc, locale));
+        }
     }
 
     public void listaa2asteSisalto(final KoulutuskoodiModel tutkinto, final KoulutusohjelmaModel ohjelma, final KoulutusmoduuliKoosteTyyppi tyyppi, final Locale locale) {
@@ -294,5 +301,6 @@ public class KoulutusKoodistoConverter {
         tutkinto.setOpintoala(listaaKoodi(tyyppi.getOpintoalaUri(), kc, locale));
         tutkinto.setKoulutusaste(listaaKoodi(tyyppi.getKoulutusasteUri(), kc, locale));
         tutkinto.setKoulutusala(listaaKoodi(tyyppi.getKoulutusalaUri(), kc, locale));
+        tutkinto.setTutkintonimike(listaaKoodi(tyyppi.getTutkintonimikeUri(), kc, locale));
     }
 }
