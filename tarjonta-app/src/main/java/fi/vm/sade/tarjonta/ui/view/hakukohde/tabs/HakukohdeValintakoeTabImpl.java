@@ -56,6 +56,13 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
         super.buildLayout(layout); //init base navigation here
         formView = new ValintakoeViewImpl(presenter, getUiBuilder());
         buildFormLayout("perustiedot", presenter, layout, presenter.getModel().getHakukohde(), formView);
+        
+        if (presenter.getModel().getHakukohde().getKoulukses() == null
+                || presenter.getModel().getHakukohde().getKoulukses().isEmpty() 
+                || !presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+            visibleButtonByListener(clickListenerSaveAsDraft, false);
+            visibleButtonByListener(clickListenerSaveAsReady, false);
+        }
     }
 
     private static final long serialVersionUID = -6105916942362263403L;
@@ -76,24 +83,24 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
     @Override
     public String actionSave(SaveButtonState tila, ClickEvent event)
             throws Exception {
-        if (presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
-        try {
-            errorView.resetErrors();
-            boolean pisterajatValid = formView.getPisterajaTable().validateInputs();
-            this.formView.getValintakoeComponent().getForm().commit();
-            if (!pisterajatValid) {
-                errorView.addError(T("validation.pisterajatNotValid"));
-                throw new Validator.InvalidValueException("");
+        if (formView.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+            try {
+                errorView.resetErrors();
+                boolean pisterajatValid = formView.getPisterajaTable().validateInputs();
+                this.formView.getValintakoeComponent().getForm().commit();
+                if (!pisterajatValid) {
+                    errorView.addError(T("validation.pisterajatNotValid"));
+                    throw new Validator.InvalidValueException("");
+                }
+                if (this.formView.getValintakoeComponent().getForm().isValid()) {
+                    presenter.getModel().getSelectedValintaKoe().setLisanayttoKuvaukset(formView.getLisanayttoKuvaukset());
+                    presenter.saveHakukohdeValintakoe(formView.getValintakoeComponent().getValintakokeenKuvaukset());
+                }
+            } catch (Validator.InvalidValueException e) {
+                errorView.addError(e);
+            } catch (Exception exp) {
+                exp.printStackTrace();
             }
-            if (this.formView.getValintakoeComponent().getForm().isValid()) {
-                presenter.getModel().getSelectedValintaKoe().setLisanayttoKuvaukset(formView.getLisanayttoKuvaukset());
-                presenter.saveHakukohdeValintakoe(formView.getValintakoeComponent().getValintakokeenKuvaukset());
-            }
-        } catch (Validator.InvalidValueException e) {
-            errorView.addError(e);
-        } catch (Exception exp) {
-            exp.printStackTrace();
-        }
         }
         return getHakukohdeOid();
     }

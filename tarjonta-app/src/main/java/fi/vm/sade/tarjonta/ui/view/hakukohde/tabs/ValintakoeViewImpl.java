@@ -56,7 +56,8 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
     private Button uusiValintakoeBtn;
     private HakukohdeValintakoeDialog dialog;
     private KoulutusasteTyyppi koulutustyyppi = KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
-    
+
+
     private PisterajaTable pisterajaTable;
 
 
@@ -75,7 +76,9 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
-        koulutustyyppi = presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi();
+        if (!presenter.getModel().getHakukohde().getKoulukses().isEmpty()) {
+            koulutustyyppi = presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi();
+        }
         
         if (koulutustyyppi.equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
             buildLukioLayout(layout);
@@ -309,4 +312,7 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
         return pisterajaTable;
     }
 
+    public KoulutusasteTyyppi getKoulutustyyppi() {
+        return koulutustyyppi;
+    }
 }

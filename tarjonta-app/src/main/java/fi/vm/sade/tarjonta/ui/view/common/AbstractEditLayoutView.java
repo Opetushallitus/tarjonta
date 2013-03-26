@@ -65,10 +65,10 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
     private transient UiBuilder uiBuilder;
     @Autowired(required = true)
     private transient TarjontaUIHelper uiHelper;
-    private Button.ClickListener clickListenerBack;
-    private Button.ClickListener clickListenerSaveAsDraft;
-    private Button.ClickListener clickListenerSaveAsReady;
-    private Button.ClickListener clickListenerNext;
+    protected Button.ClickListener clickListenerBack;
+    protected Button.ClickListener clickListenerSaveAsDraft;
+    protected Button.ClickListener clickListenerSaveAsReady;
+    protected Button.ClickListener clickListenerNext;
     private String modelOid;
     private SisaltoTyyppi sisalto;
     private int formDataUnmodifiedHashcode = -1;

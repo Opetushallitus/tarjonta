@@ -260,7 +260,6 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
     private KoodistoComponent buildValintakokeenTyyppi() {
         valintakoeTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_LIITTEEN_TYYPPI_URI);
-        valintakoeTyyppi.setVisible(false);
         return valintakoeTyyppi;
     }
 
