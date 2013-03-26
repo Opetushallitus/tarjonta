@@ -283,13 +283,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private AbstractComponent buildPainotettavatOppiaineet() {
         final VerticalLayout lo = new VerticalLayout();
         
-        painotettavatOppiaineet = new GridLayout(2, 1);
+        painotettavatOppiaineet = new GridLayout(3, 1);
         lo.addComponent(painotettavatOppiaineet);
         painotettavatOppiaineet.addComponent(UiUtil.label(null, T("PerustiedotView.painokerroin")), 1, 0);
         painotettavatOppiaineet.newLine();
-        for (PainotettavaOppiaineViewModel painotettava : presenter.getModel().getHakukohde().getPainotettavat()) {
-            addOppiaine(painotettava);
-        }
+        
+        refreshOppiaineet();
+
         //lisää nappula
         UiUtil.button(lo, T("PerustiedotView.lisaaPainotettavaOppiaine"), new Button.ClickListener() {
             
@@ -303,17 +303,53 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         return lo;
     }
 
-    private void addOppiaine(PainotettavaOppiaineViewModel painotettava) {
+    
+    /**
+     * (re)draw painotettavat oppiaineet contents, first remove old content (if any) and then re add form fields
+     */
+    public void refreshOppiaineet() {
+        while (painotettavatOppiaineet.getRows() > 1) {
+            painotettavatOppiaineet.removeRow(1);
+        }
+        
+        for (PainotettavaOppiaineViewModel painotettava : presenter.getModel().getHakukohde().getPainotettavat()) {
+            addOppiaine(painotettava);
+        }
+    }
+
+    private void addOppiaine(final PainotettavaOppiaineViewModel painotettava) {
         final PropertysetItem psi = new BeanItem(painotettava);
         //TODO change koodisto to oppiaine
-        final KoodistoComponent painotus = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_KIELI_URI, psi, "oppiaine", T("PerusTiedotView.oppiainePrompt"), true);
+        System.out.println("uri:" + KoodistoURIHelper.KOODISTO_OPPIAINEET_URI);
+        final KoodistoComponent painotus = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPIAINEET_URI, psi, "oppiaine", T("PerusTiedotView.oppiainePrompt"), true);
         painotus.getField().setRequired(false);
         painotus.getField().setNullSelectionAllowed(false);
         painotettavatOppiaineet.addComponent(painotus);
         final TextField tf = uiBuilder.textField(null, psi, "painokerroin",null, null);
         painotettavatOppiaineet.addComponent(tf);
+        final Button removeRowButton = UiUtil.button(null, T("PerustiedotView.poistaPainotettavaOppiaine"),
+                new Button.ClickListener() {
+
+                    @Override
+                    public void buttonClick(ClickEvent event) {
+                        deleteOppiaineRow(painotettava);
+                    }
+
+                    private void deleteOppiaineRow(PainotettavaOppiaineViewModel painotettava) {
+                        for (int y = 1; y < painotettavatOppiaineet.getRows(); y++) {
+                            final TextField textField = (TextField) painotettavatOppiaineet.getComponent(1, y);
+                            
+                            if (textField == tf) { //yes I am comparing references
+                                presenter.getModel().getHakukohde().getPainotettavat().remove(painotettava);
+                                painotettavatOppiaineet.removeRow(y);
+                            }
+                        }
+                    }
+                });
+        painotettavatOppiaineet.addComponent(removeRowButton);
     }
 
+    
     private void addNewOppiaineRow() {
         PainotettavaOppiaineViewModel uusi = new PainotettavaOppiaineViewModel();
         presenter.getModel().getHakukohde().getPainotettavat().add(uusi);
@@ -451,9 +487,6 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         });
 
         osoiteSelectOptionLayout.addComponent(osoiteSelectOptionGroup);
-
-
-
         return osoiteSelectOptionLayout;
     }
 

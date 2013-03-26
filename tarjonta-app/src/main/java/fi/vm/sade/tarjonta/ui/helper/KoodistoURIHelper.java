@@ -86,6 +86,11 @@ public class KoodistoURIHelper {
      */
     public static String KOODISTO_LUKIOLINJA_URI;
 
+    /** 
+     * Oppiaineet
+     */
+    public static String KOODISTO_OPPIAINEET_URI;
+
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
         KOODISTO_HAKUTYYPPI_URI = uri;
@@ -249,5 +254,10 @@ public class KoodistoURIHelper {
     @Value("${koodisto-uris.lukiolinja:NOT_SET}")
     public void setLukiolinja(String lukiolinja) {
         KOODISTO_LUKIOLINJA_URI = lukiolinja;
+    }
+
+    @Value("${koodisto-uris.oppiaineet:NOT_SET}")
+    public void setOppiaineet(String oppiaineet) {
+        KOODISTO_OPPIAINEET_URI = oppiaineet;
     }
 }
