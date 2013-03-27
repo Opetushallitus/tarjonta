@@ -21,6 +21,10 @@
             <name>widgetset</name>
             <value>fi.vm.sade.widgetset.OPH</value>
         </init-param>
+        <init-param>
+            <name>disable-xsrf-protection</name>
+            <value>true</value>
+        </init-param>
 
         <supports>
             <mime-type>text/html</mime-type>
@@ -61,6 +65,10 @@
         <init-param>
             <name>widgetset</name>
             <value>fi.vm.sade.widgetset.OPH</value>
+        </init-param>
+        <init-param>
+            <name>disable-xsrf-protection</name>
+            <value>true</value>
         </init-param>
 
         <supports>
@@ -103,6 +111,10 @@
             <name>widgetset</name>
             <value>fi.vm.sade.widgetset.OPH</value>
         </init-param>
+        <init-param>
+            <name>disable-xsrf-protection</name>
+            <value>true</value>
+        </init-param>
 
         <supports>
             <mime-type>text/html</mime-type>
@@ -143,6 +155,10 @@
         <init-param>
             <name>widgetset</name>
             <value>fi.vm.sade.widgetset.OPH</value>
+        </init-param>
+        <init-param>
+            <name>disable-xsrf-protection</name>
+            <value>true</value>
         </init-param>
 
         <supports>
