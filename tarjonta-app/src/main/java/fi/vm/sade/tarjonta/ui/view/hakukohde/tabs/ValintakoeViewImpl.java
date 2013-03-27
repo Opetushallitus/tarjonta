@@ -174,14 +174,14 @@ public class ValintakoeViewImpl extends VerticalLayout {
     }
 
     private void buildLisanaytotlayout(VerticalLayout layout) {
-        lisapisteetLayout = UiUtil.verticalLayout();
-        lisapisteetLayout.setImmediate(true);
         HorizontalLayout infoLayout = UiUtil.horizontalLayout(true, UiMarginEnum.TOP_RIGHT);
         infoLayout.setWidth(UiConstant.PCT100);
         Label lisanaytotLabel = UiUtil.label(infoLayout, T("lisanaytot"));
         lisanaytotLabel.setStyleName(Oph.LABEL_H2); 
         buildInfoButtonLayout(infoLayout);
-        lisapisteetLayout.addComponent(infoLayout);
+        layout.addComponent(infoLayout);
+        lisapisteetLayout = UiUtil.verticalLayout();
+        lisapisteetLayout.setImmediate(true);
         Label ohje = UiUtil.label(lisapisteetLayout, T("lisanaytotOhje"));
         ohje.addStyleName(Oph.LABEL_SMALL);
         
@@ -200,14 +200,14 @@ public class ValintakoeViewImpl extends VerticalLayout {
     }
 
     private void buildPaasykoeLayout(VerticalLayout layout) {
-        paasykoeLayout = UiUtil.verticalLayout();
-        paasykoeLayout.setImmediate(true);
         HorizontalLayout infoLayout = UiUtil.horizontalLayout(true, UiMarginEnum.TOP_RIGHT);
         infoLayout.setWidth(UiConstant.PCT100);
         Label pisterajatLabel = UiUtil.label(infoLayout, T("paasykoe"));
         pisterajatLabel.setStyleName(Oph.LABEL_H2); 
         buildInfoButtonLayout(infoLayout);
-        paasykoeLayout.addComponent(infoLayout);
+        layout.addComponent(infoLayout);
+        paasykoeLayout = UiUtil.verticalLayout();
+        paasykoeLayout.setImmediate(true);
         Label ohje = UiUtil.label(paasykoeLayout, T("paasykoeOhje"));
         ohje.addStyleName(Oph.LABEL_SMALL);   
         //presenter.getSelected
