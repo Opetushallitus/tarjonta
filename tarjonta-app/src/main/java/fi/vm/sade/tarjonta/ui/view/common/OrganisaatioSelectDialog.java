@@ -160,6 +160,12 @@ public abstract class OrganisaatioSelectDialog extends Window {
             errorView.addError(message);
         }
     }
+
+    protected void setTableCaption(String tableCaption) {
+        if (organisaatioChildTree != null) {
+            organisaatioChildTree.setCaption(tableCaption);
+        }
+    }
     
     protected TreeTable buildOrganisaatioTree() {
         organisaatioChildTree = new TreeTable();
@@ -167,6 +173,8 @@ public abstract class OrganisaatioSelectDialog extends Window {
         organisaatioChildTree.addContainerProperty(CHILD_TREE_PROPERTY, Button.class, null);
         organisaatioChildTree.setWidth("100%");
         organisaatioChildTree.setHeight("100%");
+
+
         return organisaatioChildTree;
     }
     

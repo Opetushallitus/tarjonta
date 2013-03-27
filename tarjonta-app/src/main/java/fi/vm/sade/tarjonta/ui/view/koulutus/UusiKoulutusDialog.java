@@ -46,7 +46,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         super(width, height);
         setCaption(_i18n.getMessage("dialog.title"));
         
-        
+
     }
     
     @Override
@@ -70,6 +70,10 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         jatkaBtn.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
+                 if (selectedOrgs == null || selectedOrgs.size() < 1) {
+                     errorView.addError(_i18n.getMessage("valitseVahintaanYksiOrganisaatio"));
+                     return;
+                 }
                 if (presenter.checkOrganisaatioOppilaitosTyyppimatches(selectedOrgs.values())) {
                     presenter.setAllSelectedOrganisaatios(selectedOrgs.values());
                     
@@ -104,18 +108,23 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     
     private AbstractLayout createComboLayout() {
         HorizontalLayout comboLayout = new HorizontalLayout();
-        
+
+        Label valitseKoulutusLbl = new Label(_i18n.getMessage("valitseKoulutusLbl"));
+        comboLayout.addComponent(valitseKoulutusLbl);
+        comboLayout.setComponentAlignment(valitseKoulutusLbl,Alignment.MIDDLE_LEFT);
         koulutusValintaCombo = buildKoulutusValintaCombo();
         koulutusAsteCombo = buildKoulutusAsteCombobox();
         koulutusValintaCombo.setEnabled(false);
         
         
         comboLayout.addComponent(koulutusValintaCombo);
-        comboLayout.setComponentAlignment(koulutusValintaCombo, Alignment.BOTTOM_LEFT);
+
+        comboLayout.setComponentAlignment(koulutusValintaCombo, Alignment.MIDDLE_CENTER);
         comboLayout.addComponent(koulutusAsteCombo);
-        comboLayout.setComponentAlignment(koulutusAsteCombo, Alignment.BOTTOM_RIGHT);
+        comboLayout.setComponentAlignment(koulutusAsteCombo, Alignment.MIDDLE_RIGHT);
         
         comboLayout.setMargin(false, true, true, true);
+
         comboLayout.setSizeFull();
         return comboLayout;
     }
@@ -141,7 +150,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         GridLayout labelLayout = new GridLayout(2, 1);
         labelLayout.setColumnExpandRatio(0, 10);
         labelLayout.setColumnExpandRatio(1, 0.1f);
-        labelLayout.setMargin(false, true, true, true);
+        labelLayout.setMargin(false, true, false, true);
 
         //HorizontalLayout labelLayout = new HorizontalLayout();
         Label ohjeteksti = new Label(_i18n.getMessage("dialog.ohjeTeksti"));
