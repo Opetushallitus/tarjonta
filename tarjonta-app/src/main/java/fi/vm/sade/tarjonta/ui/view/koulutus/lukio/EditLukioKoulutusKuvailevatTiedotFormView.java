@@ -84,7 +84,7 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
     private void addRow(final GridLayout kielivalinnat, final String name) {
         buildLabel(kielivalinnat, name);
         final VerticalLayout vl = new VerticalLayout();
-        buildTokenField(name, vl);
+        buildTokenField(name, vl, KoodistoURIHelper.KOODISTO_KIELIVALIKOIMA_URI);
 
         kielivalinnat.addComponent(vl, 1, kielivalinnat.getCursorY() - 1);
         Label help = UiBuilder.label(this, T(name + ".help"), LabelStyleEnum.TEXT);
@@ -92,10 +92,9 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
         vl.addComponent(help);
     }
 
-    private void buildTokenField(final String name, final VerticalLayout vl) {
+    private void buildTokenField(final String name, final VerticalLayout vl, final String koodistoUri) {
         final PropertysetItem psi = new BeanItem(presenter.getModel().getKoulutusLukioKuvailevatTiedot());
-        final OphTokenField tokenField = uiBuilder.koodistoTokenField(vl,
-                KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, psi, name);
+        final OphTokenField tokenField = uiBuilder.koodistoTokenField(vl, koodistoUri, psi, name);
         tokenField.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
             @Override
             public String formatToken(Object selectedToken) {
@@ -138,7 +137,7 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
         VerticalLayout kielivalinnat = new VerticalLayout();
         UiBuilder.label(kielivalinnat, T("luokiodiplomit.label"), LabelStyleEnum.H2);
         UiBuilder.label(kielivalinnat, T("luokiodiplomit.help"), LabelStyleEnum.TEXT);
-        buildTokenField("diplomit", kielivalinnat);
+        buildTokenField("diplomit", kielivalinnat, KoodistoURIHelper.KOODISTO_LUKIODIPLOMIT_URI);
         return kielivalinnat;
     }
 

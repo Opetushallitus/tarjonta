@@ -82,16 +82,19 @@ public class KoodistoURIHelper {
     public static String KOODISTO_VALINTAPERUSTEKUVAUSRYHMA_URI;
     public static String KOODISTO_SORA_KUVAUSRYHMA_URI;
     /*
-     * Lukio tuktinto URIs
+     * Lukiotutkinto URIs
      */
     public static String KOODISTO_LUKIOLINJA_URI;
     public static String LUKIO_KOODI_KOULUTUSLAJI_URI;
     public static String LUKIO_KOODI_POHJAKOULUTUSVAATIMUS_URI;
+    public static String KOODISTO_LUKIODIPLOMIT_URI;
     /**
      * Oppiaineet
      */
     public static String KOODISTO_OPPIAINEET_URI;
 
+    
+    
     @Value("${koodisto-uris.hakutyyppi:NOT_SET}")
     public void setKoodistoHakutyyppiUri(String uri) {
         KOODISTO_HAKUTYYPPI_URI = uri;
@@ -271,4 +274,13 @@ public class KoodistoURIHelper {
     public void setOppiaineet(String oppiaineet) {
         KOODISTO_OPPIAINEET_URI = oppiaineet;
     }
+    
+    
+    @Value("${koodisto-uris.lukiodiplomit:NOT_SET}")
+    public void setLukiodiplomit(String lukiodiplomit) {
+        KOODISTO_LUKIODIPLOMIT_URI = lukiodiplomit;
+    }
+    
+    
+    
 }

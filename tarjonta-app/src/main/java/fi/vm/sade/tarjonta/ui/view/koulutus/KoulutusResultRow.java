@@ -136,7 +136,7 @@ public class KoulutusResultRow extends HorizontalLayout {
      */
     private void menuItemClicked(String selection) {
         if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
-            tarjontaPresenter.showShowKoulutusView(koulutus.getKoulutus().getKoulutusmoduuliToteutus());
+            showSummaryView();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
             final String komotoOid = koulutus.getKoulutus().getKoulutusmoduuliToteutus();
 
@@ -226,16 +226,7 @@ public class KoulutusResultRow extends HorizontalLayout {
 
                 @Override
                 public void buttonClick(ClickEvent event) {
-                    final String komotoOid = koulutus.getKoulutus().getKoulutusmoduuliToteutus();
-
-                    switch (koulutus.getKoulutus().getKoulutustyyppi()) {
-                        case AMMATILLINEN_PERUSKOULUTUS:
-                            tarjontaPresenter.showShowKoulutusView(komotoOid);
-                            break;
-                        case LUKIOKOULUTUS:
-                            tarjontaPresenter.getLukioPresenter().showSummaryKoulutusView(komotoOid);
-                            break;
-                    }
+                    showSummaryView();
                 }
             });
             nimiB.setStyleName("link-row");
@@ -270,5 +261,18 @@ public class KoulutusResultRow extends HorizontalLayout {
 
     private String T(String key, Object... args) {
         return i18n.getMessage(key, args);
+    }
+
+    private void showSummaryView() {
+        final String komotoOid = koulutus.getKoulutus().getKoulutusmoduuliToteutus();
+
+        switch (koulutus.getKoulutus().getKoulutustyyppi()) {
+            case AMMATILLINEN_PERUSKOULUTUS:
+                tarjontaPresenter.showShowKoulutusView(komotoOid);
+                break;
+            case LUKIOKOULUTUS:
+                tarjontaPresenter.getLukioPresenter().showSummaryKoulutusView(komotoOid);
+                break;
+        }
     }
 }
