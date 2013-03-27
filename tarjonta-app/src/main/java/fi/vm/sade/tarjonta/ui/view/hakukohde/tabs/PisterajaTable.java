@@ -57,15 +57,18 @@ public class PisterajaTable extends GridLayout {
     
     private TextField kpAlinHyvaksyttyPM;
     
-    CheckBox lpCb;
+    private CheckBox lpCb;
+
+
+    private CheckBox pkCb;
     
-    CheckBox pkCb;
-    
+
+
     public PisterajaTable(ValintakoeViewModel valintakoe) {
         super(5,4);
         setSpacing(true);
         setMargin(true);
-        setWidth(40, UNITS_PERCENTAGE);
+        setWidth(60, UNITS_PERCENTAGE);
         setColumnExpandRatio(0, 1.0f);
         setColumnExpandRatio(1, 1.0f);
         setColumnExpandRatio(2, 0.5f);
@@ -157,8 +160,32 @@ public class PisterajaTable extends GridLayout {
         kpAlinHyvaksyttyPM.setEnabled(false);
         kpAlinHyvaksyttyPM.setPropertyDataSource(new NestedMethodProperty(valintakoe, "kpAlinHyvaksyttyPM"));
         addComponent(kpAlinHyvaksyttyPM, 4, 3);
+        
+        if (isPaasykokeet()) {
+            pkCb.setValue(Boolean.TRUE);
+            adjustTextFields(PisterajaEvent.PAASYKOE, pkCb);
+        }
+        if (isLisapisteet()) {
+            lpCb.setValue(Boolean.TRUE);
+            adjustTextFields(PisterajaEvent.LISAPISTEET, lpCb);
+        }
     }
     
+    private boolean isLisapisteet() {
+       return (valintakoe.getLpAlinHyvaksyttyPM() != null && !valintakoe.getLpAlinHyvaksyttyPM().isEmpty())
+               || (valintakoe.getLpAlinPM() != null && !valintakoe.getLpAlinPM().isEmpty())
+               || (valintakoe.getLpYlinPM() != null && !valintakoe.getLpYlinPM().isEmpty())
+               || (valintakoe.getLisanayttoKuvaukset() != null && !valintakoe.getLisanayttoKuvaukset().isEmpty());
+    }
+
+    private boolean isPaasykokeet() {
+        return (valintakoe.getPkAlinHyvaksyttyPM() != null && !valintakoe.getPkAlinHyvaksyttyPM().isEmpty())
+                || (valintakoe.getPkAlinPM() != null && !valintakoe.getPkAlinPM().isEmpty())
+                || (valintakoe.getPkYlinPM() != null && !valintakoe.getPkYlinPM().isEmpty())
+                || (valintakoe.getSanallisetKuvaukset() != null && !valintakoe.getSanallisetKuvaukset().isEmpty())
+                || (valintakoe.getValintakoeAjat() != null && !valintakoe.getValintakoeAjat().isEmpty());
+    }
+
     protected void adjustTextFields(String tyyppi,CheckBox cb) {
         if (tyyppi.equals(PisterajaEvent.LISAPISTEET)) {
             lpAlinPM.setEnabled(cb.booleanValue());
@@ -252,6 +279,14 @@ public class PisterajaTable extends GridLayout {
             _i18n = new I18NHelper(this);
         }
         return _i18n;
+    }  
+    
+    public CheckBox getLpCb() {
+        return lpCb;
+    }
+    
+    public CheckBox getPkCb() {
+        return pkCb;
     }
     
     public class PisterajaEvent extends Component.Event {

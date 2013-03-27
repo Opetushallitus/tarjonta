@@ -136,7 +136,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
                     } else if (koulutustyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)){
                         errorView.addError(T("HakukohdeValintakoeViewImpl.dateValidationFailed"));
                     } else  if (koulutustyyppi.equals(KoulutusasteTyyppi.LUKIOKOULUTUS)){
-                        getWindow().showNotification(T("HakukohdeValintakoeViewImpl.dateValidationFailed"), Notification.TYPE_ERROR_MESSAGE);
+                        getWindow().showNotification(T("HakukohdeValintakoeViewImpl.dateValidationFailed"), Notification.TYPE_WARNING_MESSAGE);
                     }
                 } else {
                         errorView.addError(T("HakukohdeValintakoeViewImpl.valintakoeAikaOsoiteNotNull"));

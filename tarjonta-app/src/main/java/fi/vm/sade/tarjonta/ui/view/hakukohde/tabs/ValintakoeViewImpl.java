@@ -22,6 +22,7 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 
+import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
@@ -32,6 +33,7 @@ import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
+import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalNavigationLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PisterajaTable.PisterajaEvent;
 import fi.vm.sade.vaadin.Oph;
@@ -48,7 +50,7 @@ import java.util.List;
 /**
  * Created by: Tuomas Katva Date: 23.1.2013
  */
-public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
+public class ValintakoeViewImpl extends VerticalLayout {
 
     private TarjontaPresenter presenter;
     private transient UiBuilder uiBuilder;
@@ -67,15 +69,22 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
     LisanaytotTabSheet lisanaytotKuvaus;
     
     private HakukohdeValintakoeViewImpl valintakoeComponent;
+    
+    private VerticalLayout layout;
+    
+    private transient I18NHelper _i18n;
 
     public ValintakoeViewImpl(TarjontaPresenter presenter, UiBuilder uiBuilder) {
         super();
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
+        buildLayout();
     }
+    
 
-    @Override
-    protected void buildLayout(VerticalLayout layout) {
+    
+    protected void buildLayout() {
+        layout = UiUtil.verticalLayout();
         if (!presenter.getModel().getHakukohde().getKoulukses().isEmpty()) {
             koulutustyyppi = presenter.getModel().getHakukohde().getKoulukses().get(0).getKoulutustyyppi();
         }
@@ -85,7 +94,14 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
         } else if (koulutustyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
             buildToinenAsteLayout(layout);
         }
+        addComponent(layout);
     }
+
+    /*
+    @Override
+    protected void buildLayout(VerticalLayout layout) {
+       
+    }*/
     
     private void buildLukioLayout(VerticalLayout layout) {
        layout.setSpacing(true);
@@ -179,7 +195,7 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
         
         lisapisteetLayout.addComponent(lisanaytotL);
         layout.addComponent(lisapisteetLayout);
-        lisapisteetLayout.setVisible(false);
+        lisapisteetLayout.setVisible(pisterajaTable.getLpCb().booleanValue());
         layout.addComponent(buildSplitPanel());
     }
 
@@ -198,7 +214,7 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
         valintakoeComponent = new HakukohdeValintakoeViewImpl(new ErrorMessage(), presenter, uiBuilder, KoulutusasteTyyppi.LUKIOKOULUTUS);
         paasykoeLayout.addComponent(valintakoeComponent);
         layout.addComponent(paasykoeLayout);
-        paasykoeLayout.setVisible(false);
+        paasykoeLayout.setVisible(pisterajaTable.getPkCb().booleanValue());
         layout.addComponent(buildSplitPanel());
     }
     
@@ -250,8 +266,10 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
         } else {
             valintakoeTable = new Table();
             valintakoeTable.setWidth(100, UNITS_PERCENTAGE);
-            getLayout().setMargin(true);
-            getLayout().addComponent(valintakoeTable);
+            /*getLayout().setMargin(true);
+            getLayout().addComponent(valintakoeTable);*/
+            layout.setMargin(true);
+            layout.addComponent(valintakoeTable);
 
             valintakoeTable.addGeneratedColumn("sanallinenKuvaus", new Table.ColumnGenerator() {
                 @Override
@@ -319,4 +337,20 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
     public KoulutusasteTyyppi getKoulutustyyppi() {
         return koulutustyyppi;
     }
+    
+    protected String T(String key) {
+        return getI18n().getMessage(key);
+    }
+
+    protected String T(String key, Object... args) {
+        return getI18n().getMessage(key, args);
+    }
+
+    protected I18NHelper getI18n() {
+        if (_i18n == null) {
+            _i18n = new I18NHelper(this);
+        }
+        return _i18n;
+    }
+
 }
