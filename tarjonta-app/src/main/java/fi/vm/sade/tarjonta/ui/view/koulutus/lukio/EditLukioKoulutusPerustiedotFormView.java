@@ -132,8 +132,14 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
     @Pattern(regexp = "[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "{validation.koulutus.opetussuunnitelma.invalid.www}")
     @PropertyId("opsuLinkki")
     private TextField linkki;
+    /*
+     * Koulutukoodi code value
+     */
     @PropertyId("koulutuskoodi")
     private TextField koulutuskoodi;
+    /*
+     * Labels
+     */
     private Label koulutusaste;
     private Label opintoala;
     private Label opintojenLaajuusyksikko;
@@ -184,6 +190,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
                     presenter.getLukioPresenter().loadLukiolinjas();
                     bicLukiolinjas.addAll(model.getLukiolinjas());
                     disableOrEnableComponents(true);
+                    reload();
                 }
             });
 
@@ -450,6 +457,8 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
     public void reload() {
         KoulutusLukioConverter.copySelectedKoodiDataToModel(model);
 
+        koulutuskoodi.setValue(model.getKoulutuskoodi());
+        
         labelDataBind(opintoala, model.getOpintoala());
         labelDataBind(koulutusaste, model.getKoulutusaste());
         labelDataBind(koulutusala, model.getKoulutusala());
@@ -461,6 +470,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         labelDataBind(jatkoopintomahdollisuudet, model.getJatkoopintomahdollisuudet());
         labelDataBind(koulutuslaji, model.getKoulutuslaji());
         labelDataBind(pohjakoulutusvaatimus, model.getPohjakoulutusvaatimus());
+
 
         disableOrEnableComponents(true);
     }
@@ -476,6 +486,8 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         jatkoopintomahdollisuudet.setValue("");
         tutkintonimike.setValue("");
         pohjakoulutusvaatimus.setValue("");
+        koulutuskoodi.setValue("");
+
     }
 
     private void showNoKoulutusDialog() {

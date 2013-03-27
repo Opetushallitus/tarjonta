@@ -180,6 +180,7 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      * @param status of koulutus document
      */
     public void clearModel() {
+
         /*
          * Other save&load logic data
          */
@@ -232,6 +233,11 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
         setOpetusmuoto(new HashSet<String>());
         setOpsuLinkki(null);
         setYhteyshenkilo(new YhteyshenkiloModel());
+
+        /*
+         * Other from info
+         */
+        setKoulutuskoodi(null);
     }
 
     @Override

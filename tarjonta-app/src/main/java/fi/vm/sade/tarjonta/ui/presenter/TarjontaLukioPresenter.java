@@ -149,6 +149,10 @@ public class TarjontaLukioPresenter {
         getPresenter().getRootView().getListKoulutusView().reload();
     }
 
+    public void showEditKoulutusView(final KoulutusActiveTab tab) {
+        showEditKoulutusView(tab);
+    }
+
     /**
      * Open lukiokoulutus edit view. When KOMOTO OID is provided to the method,
      * lukiokoulutus data is preloaded to the edit view form.
@@ -195,6 +199,7 @@ public class TarjontaLukioPresenter {
             lukioKoulutusConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, I18N.getLocale());
         } else {
             Preconditions.checkNotNull(getTarjontaModel().getOrganisaatioOid(), "Missing organisation OID.");
+            getPerustiedotModel().clearModel();
             getTarjontaModel().setKoulutusLukioKuvailevatTiedot(new KoulutusLukioKuvailevatTiedotViewModel());
         }
         getPerustiedotModel().setOrganisaatioOidTree(getPresenter().fetchOrganisaatioTree(getTarjontaModel().getOrganisaatioOid()));
@@ -220,7 +225,7 @@ public class TarjontaLukioPresenter {
             //TODO: do we need the setters on bottom?
             perustiedotModel.setKoulutusaste(koulutuskoodi.getKoulutusaste());
             perustiedotModel.setKoulutusala(koulutuskoodi.getKoulutusala());
-            perustiedotModel.setKoulutuslaji(null);//TODO!!!!!!!!!!!
+            //perustiedotModel.setKoulutuslaji(null);//TODO!!!!!!!!!!!
         }
     }
 
@@ -243,7 +248,7 @@ public class TarjontaLukioPresenter {
             final List<LukiolinjaModel> lukiolinjas = kolutusKoodistoConverter.listaaLukiolinjas(tyyppis, I18N.getLocale());
             LOG.debug("Lukiolinjas list size : {}.", lukiolinjas);
             Collections.sort(lukiolinjas, new BeanComparator("nimi"));
-            perustiedot.getLukiolinjas().addAll(lukiolinjas); 
+            perustiedot.getLukiolinjas().addAll(lukiolinjas);
         } else {
             LOG.debug("No lukiolinja selected.");
         }
@@ -354,6 +359,4 @@ public class TarjontaLukioPresenter {
 //        return tarjontaAdminService.tarkistaKoulutuksenKopiointi(kysely);
         return true;
     }
-
-    
 }
