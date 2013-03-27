@@ -30,15 +30,13 @@ import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
-import fi.vm.sade.tarjonta.ui.presenter.TarjontaLukioPresenter;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusPerustiedotToinenAsteView;
 
 @Configurable(preConstruction = true)
 public class EditLukioKoulutusKuvailevatTiedotView extends AbstractEditLayoutView<KoulutusLukioKuvailevatTiedotViewModel, EditLukioKoulutusKuvailevatTiedotFormView> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditKoulutusPerustiedotToinenAsteView.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EditLukioKoulutusKuvailevatTiedotView.class);
     private static final long serialVersionUID = 2756886453541825771L;
     private KoulutusLukioKuvailevatTiedotViewModel model;
     @Autowired(required = true)
@@ -67,7 +65,7 @@ public class EditLukioKoulutusKuvailevatTiedotView extends AbstractEditLayoutVie
 
     @Override
     public boolean isformDataLoaded() {
-        return model.isLoaded();
+        return presenter.getModel().getKoulutusLukioPerustiedot().isLoaded();
     }
 
     @Override
@@ -75,7 +73,7 @@ public class EditLukioKoulutusKuvailevatTiedotView extends AbstractEditLayoutVie
         try {
             presenter.getLukioPresenter().saveKoulutus(tila);
             presenter.getLukioPresenter().getReloadKoulutusListData();
-            return model.getOid();
+            return presenter.getModel().getKoulutusLukioPerustiedot().getKomotoOid();
         } catch (ExceptionMessage exceptionMessage) {
             if (exceptionMessage.getMessage().equalsIgnoreCase("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage")) {
                 throw new Validator.InvalidValueException(I18N.getMessage(exceptionMessage.getMessage()));
@@ -93,4 +91,5 @@ public class EditLukioKoulutusKuvailevatTiedotView extends AbstractEditLayoutVie
     public EditLukioKoulutusKuvailevatTiedotFormView getLisatiedotForm() {
         return formView;
     }
+    
 }

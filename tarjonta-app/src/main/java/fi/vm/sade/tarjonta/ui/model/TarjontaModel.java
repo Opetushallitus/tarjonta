@@ -82,7 +82,7 @@ public class TarjontaModel extends BaseUIViewModel {
      */
     public KoulutusLukioPerustiedotViewModel getKoulutusLukioPerustiedot() {
         if (koulutusLukioPerustiedot == null) {
-            koulutusLukioPerustiedot = new KoulutusLukioPerustiedotViewModel(DocumentStatus.NEW);
+            koulutusLukioPerustiedot = new KoulutusLukioPerustiedotViewModel();
         }
 
         return koulutusLukioPerustiedot;
@@ -94,7 +94,7 @@ public class TarjontaModel extends BaseUIViewModel {
     public KoulutusLukioKuvailevatTiedotViewModel getKoulutusLukioKuvailevatTiedot() {
         //TODO have a map!
         if (koulutusLukioKuvailevatTiedot == null) {
-            setKoulutusLukioKuvailevatTiedot(new KoulutusLukioKuvailevatTiedotViewModel(DocumentStatus.NEW));
+            setKoulutusLukioKuvailevatTiedot(new KoulutusLukioKuvailevatTiedotViewModel());
         }
 
         return koulutusLukioKuvailevatTiedot;

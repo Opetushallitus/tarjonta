@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.ui.model.koulutus.lukio;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import java.util.AbstractMap;
@@ -29,7 +28,6 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  *
@@ -69,9 +67,9 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
     public Map<String, List<KoulutusmoduuliKoosteTyyppi>> cacheKomoTutkinto;
     public Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo;
 
-    public KoulutusLukioPerustiedotViewModel(DocumentStatus status) {
+    public KoulutusLukioPerustiedotViewModel() {
         super();
-        clearModel(status);
+        clearModel();
     }
 
     /**
@@ -181,13 +179,11 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      *
      * @param status of koulutus document
      */
-    public void clearModel(final DocumentStatus status) {
+    public void clearModel() {
         /*
          * Other save&load logic data
          */
-        setDocumentStatus(status);
         setTila(TarjontaTila.LUONNOS);
-        setUserFrienlyDocumentStatus(null);
 
         /*
          * OIDs
@@ -253,8 +249,6 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
         builder.append(koulutusaste, other.koulutusaste);
         builder.append(koulutusmoduuliOid, other.koulutusmoduuliOid);
         builder.append(getKoulutuskoodiModel(), other.getKoulutuskoodiModel());
-        builder.append(documentStatus, other.documentStatus);
-        builder.append(userFrienlyDocumentStatus, other.userFrienlyDocumentStatus);
         builder.append(organisaatioName, other.organisaatioName);
         builder.append(organisaatioOid, other.organisaatioOid);
         builder.append(getLukiolinja(), other.getLukiolinja());
@@ -281,8 +275,6 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
                 .append(koulutusaste)
                 .append(koulutusmoduuliOid)
                 .append(getKoulutuskoodiModel())
-                .append(documentStatus)
-                .append(userFrienlyDocumentStatus)
                 .append(organisaatioName)
                 .append(organisaatioOid)
                 .append(getLukiolinja())

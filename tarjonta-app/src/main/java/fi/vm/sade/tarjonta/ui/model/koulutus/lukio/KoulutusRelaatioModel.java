@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.ui.model.koulutus.lukio;
 
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
@@ -37,11 +36,7 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
     protected String komotoOid;
     protected String koulutusmoduuliOid;
     protected TarjontaTila tila;
-    /*
-     * Status of active form.
-     */
-    protected DocumentStatus documentStatus;
-    protected String userFrienlyDocumentStatus;
+
     /*
      * Organisaatio data:
      */
@@ -105,33 +100,6 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
         this.koulutusmoduuliOid = koulutusmoduuliOid;
     }
 
-    /**
-     * @return the documentStatus
-     */
-    public DocumentStatus getDocumentStatus() {
-        return documentStatus;
-    }
-
-    /**
-     * @param documentStatus the documentStatus to set
-     */
-    public void setDocumentStatus(DocumentStatus documentStatus) {
-        this.documentStatus = documentStatus;
-    }
-
-    /**
-     * @return the userFrienlyDocumentStatus
-     */
-    public String getUserFrienlyDocumentStatus() {
-        return userFrienlyDocumentStatus;
-    }
-
-    /**
-     * @param userFrienlyDocumentStatus the userFrienlyDocumentStatus to set
-     */
-    public void setUserFrienlyDocumentStatus(String userFrienlyDocumentStatus) {
-        this.userFrienlyDocumentStatus = userFrienlyDocumentStatus;
-    }
 
     /**
      * @return the organisaatioName

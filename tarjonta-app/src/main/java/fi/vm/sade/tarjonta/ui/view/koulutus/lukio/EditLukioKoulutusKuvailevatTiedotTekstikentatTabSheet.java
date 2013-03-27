@@ -31,6 +31,8 @@ import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditLisatiedotTabSheet;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
+import java.util.HashSet;
+import java.util.Set;
 
 public class EditLukioKoulutusKuvailevatTiedotTekstikentatTabSheet extends EditLisatiedotTabSheet {
 
@@ -77,5 +79,32 @@ public class EditLukioKoulutusKuvailevatTiedotTekstikentatTabSheet extends EditL
         vl.addComponent(UiBuilder.label((AbstractLayout) null, T(id + ".label"), LabelStyleEnum.H2));
         vl.addComponent(UiBuilder.label((AbstractLayout) null, T(id + ".help"), LabelStyleEnum.TEXT));
         vl.addComponent(rta);
+    }
+    
+    
+    @Override
+    protected void initializeTabsheet(boolean allowDefault) {
+        // What languages should we have as preselection when initializing the form?
+        // Current hypothesis is that we should use the opetuskielet + any possible additional languages added to additional information
+        Set<String> languageUris = new HashSet<String>();
+        final String opetuskieliKoodiUri = getModel().getKoulutusLukioPerustiedot().getOpetuskieli();
+
+        if (opetuskieliKoodiUri != null) {
+            languageUris.add(opetuskieliKoodiUri); //only single language in 2aste
+        }
+        languageUris.addAll(getModel().getKoulutusLukioKuvailevatTiedot().getKielet());
+
+        if (!languageUris.isEmpty()) {
+            //get loaded data from model
+            setInitialValues(languageUris);
+        } else if (allowDefault) {
+            //no data
+            final String defautLang = getDefaultLanguageKoodiUri();
+            Set<String> values = new HashSet<String>(1);
+            values.add(defautLang);
+            getKcSelection().setValue(values);
+        }
+
+        setSelectedTab(opetuskieliKoodiUri);
     }
 }

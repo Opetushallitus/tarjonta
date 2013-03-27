@@ -30,6 +30,7 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
@@ -78,6 +79,7 @@ import org.powermock.reflect.Whitebox;
  */
 public class TarjontaLukioPresenterTest {
 
+    private static final String WEB_LINK = "http://localhost:8080/";
     private static final String LAAJUUS_ARVO = "laajuus_arvo";
     private static final String LAAJUUS_YKSIKKO = "laajuus_tyyppi";
     private static final String KOULUTUSALA = "koulutusala";
@@ -180,7 +182,6 @@ public class TarjontaLukioPresenterTest {
         perustiedot = instance.getPerustiedotModel();
         perustiedot.setKomotoOid(KOMOTO_OID);
         perustiedot.setKoulutusmoduuliOid("1.2.3.170");
-        perustiedot.setDocumentStatus(DocumentStatus.NEW);
         perustiedot.setJatkoopintomahdollisuudet(createMonikielinenTeksti(JATKOOPINTOMAHDOLLISUUDET));
         perustiedot.setKoulutuksenAlkamisPvm(DATE);
         perustiedot.setKoulutuksenRakenne(createMonikielinenTeksti(KOULUTUKSEN_RAKENNE));
@@ -197,7 +198,7 @@ public class TarjontaLukioPresenterTest {
         perustiedot.setOpetusmuoto(opetusmuodos);
         perustiedot.setOpintojenLaajuus(createKoodiModel(LAAJUUS_ARVO));
         perustiedot.setOpintojenLaajuusyksikko(createKoodiModel(LAAJUUS_YKSIKKO));
-        perustiedot.setOpsuLinkki("http://localhost:8080/");
+        perustiedot.setOpsuLinkki(WEB_LINK);
         perustiedot.setOrganisaatioName("organisaatio");
         perustiedot.setOrganisaatioOid(ORGANISAATIO_OID);
         perustiedot.setPohjakoulutusvaatimus(createKoodiModel("pohjakoulutusvaatimus"));
@@ -310,7 +311,7 @@ public class TarjontaLukioPresenterTest {
         assertEquals(createUri(KOULUTUSASTE), koulutus.getKoulutusaste().getUri());
         assertEquals(createUri(KOULUTUSLAJI), koulutus.getKoulutuslaji().get(0).getUri()); //only one needed
         assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, koulutus.getKoulutustyyppi());
-        assertEquals("http://localhost:8080/", koulutus.getLinkki().get(0).getUri());
+        assertEquals(WEB_LINK, koulutus.getLinkki().get(0).getUri());
         assertEquals(createUri(LUKIOLINJA), koulutus.getLukiolinjaKoodi().getUri());
 
         assertEquals(createUri("pohjakoulutusvaatimus"), koulutus.getPohjakoulutusvaatimus().getUri());
@@ -395,7 +396,7 @@ public class TarjontaLukioPresenterTest {
         assertEquals(createUri(KOULUTUSASTE), koulutus.getKoulutusaste().getUri());
         assertEquals(createUri(KOULUTUSLAJI), koulutus.getKoulutuslaji().get(0).getUri()); //only one needed
         assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, koulutus.getKoulutustyyppi());
-        assertEquals("http://localhost:8080/", koulutus.getLinkki().get(0).getUri());
+        assertEquals(WEB_LINK, koulutus.getLinkki().get(0).getUri());
         assertEquals(createUri(LUKIOLINJA), koulutus.getLukiolinjaKoodi().getUri());
 
         assertEquals(createUri("pohjakoulutusvaatimus"), koulutus.getPohjakoulutusvaatimus().getUri());
@@ -464,6 +465,12 @@ public class TarjontaLukioPresenterTest {
         vastaus.setKoulutusohjelmaKoodi(null);
         vastaus.setPohjakoulutusvaatimus(null);
         vastaus.setSijoittuminenTyoelamaan(null);
+
+        WebLinkkiTyyppi web = new WebLinkkiTyyppi();
+        web.setUri(WEB_LINK);
+        vastaus.getLinkki().add(web);
+
+        vastaus.getOpetuskieli().add(createKoodistoKoodiTyyppi("opetuskieli"));
 
         YhteyshenkiloTyyppi y = new YhteyshenkiloTyyppi();
         y.setSukunimi("suku");
@@ -564,9 +571,9 @@ public class TarjontaLukioPresenterTest {
         /*
          * values on bottom are loaded to the model only after combox event is fired
          */
-        assertEquals(null, perustiedotModel.getOpetuskieli());
+        assertEquals(createUri("opetuskieli"), perustiedotModel.getOpetuskieli());
         assertEquals(0, perustiedotModel.getOpetusmuoto().size());
-        assertEquals(null, perustiedotModel.getOpsuLinkki());
+        assertEquals(WEB_LINK, perustiedotModel.getOpsuLinkki());
         assertEquals("organisation name", perustiedotModel.getOrganisaatioName());
         assertEquals(ORGANISAATIO_OID, perustiedotModel.getOrganisaatioOid());
         assertEquals(1, perustiedotModel.getOrganisaatioOidTree().size());

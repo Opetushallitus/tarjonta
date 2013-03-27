@@ -51,7 +51,6 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
     private List<String> kieletMuu = Lists.newArrayList();
     // tekstikentät
     private Map<String, KoulutusLisatietoModel> tekstit = Maps.newHashMap();
-    private String oid;
 
     public Map<String, KoulutusLisatietoModel> getTekstikentat() {
         return tekstit;
@@ -61,7 +60,7 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
         this.tekstit = lisatiedot;
     }
 
-    public KoulutusLukioKuvailevatTiedotViewModel(DocumentStatus status) {
+    public KoulutusLukioKuvailevatTiedotViewModel() {
         super();
     }
 
@@ -121,7 +120,6 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
      * Reset model state
      */
     public void clearModel(DocumentStatus status) {
-        oid = null;
         diplomit.clear();
         kieliA.clear();
         kieliB1.clear();
@@ -129,18 +127,6 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
         kieliB3.clear();
         kieletMuu.clear();
         tekstit.clear();
-    }
-
-    /**
-     * Is model loaded?
-     */
-    public boolean isLoaded() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    public String getOid() {
-        return oid;
     }
 
     public KoulutusLisatietoModel getLisatiedot(String kieliKoodi) {
@@ -168,7 +154,6 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
         builder.append(kieliB2, other.kieliB2);
         builder.append(kieliB3, other.kieliB3);
         builder.append(kieletMuu, other.kieletMuu);
-        builder.append(oid, other.oid);
         builder.append(tekstit, other.tekstit);
         return builder.isEquals();
     }
@@ -182,7 +167,6 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
                 .append(kieliB2)
                 .append(kieliB3)
                 .append(kieletMuu)
-                .append(oid)
                 .toHashCode();
     }
 }

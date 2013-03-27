@@ -41,6 +41,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.INVALID_DATA;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.convertListToSet;
@@ -57,6 +58,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -110,9 +112,9 @@ public class KoulutusLukioConverter extends KoulutusConveter {
 
     public void loadLueKoulutusVastausTyyppiToModel(final TarjontaModel tarjontaModel, final LueKoulutusVastausTyyppi koulutus, final Locale locale) {
         final OrganisaatioDTO organisaatio = searchOrganisatioByOid(koulutus.getTarjoaja());
-        KoulutusLukioPerustiedotViewModel perustiedot = createToKoulutusLukioPerustiedotViewModel(koulutus, DocumentStatus.LOADED, organisaatio, locale);
+        KoulutusLukioPerustiedotViewModel perustiedot = createToKoulutusLukioPerustiedotViewModel(koulutus, organisaatio, locale);
         tarjontaModel.setKoulutusLukioPerustiedot(perustiedot);
-        KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedot = createKoulutusLukioKuvailevatTiedotViewModel(koulutus, DocumentStatus.LOADED);
+        KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedot = createKoulutusLukioKuvailevatTiedotViewModel(koulutus);
         tarjontaModel.setKoulutusLukioKuvailevatTiedot(kuvailevatTiedot);
 
         //clear and set the loaded lukiolinja to combobox field data list
@@ -164,8 +166,8 @@ public class KoulutusLukioConverter extends KoulutusConveter {
      *
      * @return
      */
-    public static KoulutusLukioKuvailevatTiedotViewModel createKoulutusLukioKuvailevatTiedotViewModel(final LueKoulutusVastausTyyppi input, final DocumentStatus status) {
-        KoulutusLukioKuvailevatTiedotViewModel model = new KoulutusLukioKuvailevatTiedotViewModel(status);
+    public static KoulutusLukioKuvailevatTiedotViewModel createKoulutusLukioKuvailevatTiedotViewModel(final LueKoulutusVastausTyyppi input) {
+        KoulutusLukioKuvailevatTiedotViewModel model = new KoulutusLukioKuvailevatTiedotViewModel();
         model.setKieliA(Lists.newArrayList(Iterables.transform(input.getA1A2Kieli(), fromKoodistoKoodiTyyppi)));
         model.setKieliB1(Lists.newArrayList(Iterables.transform(input.getB1Kieli(), fromKoodistoKoodiTyyppi)));
         model.setKieliB2(Lists.newArrayList(Iterables.transform(input.getB2Kieli(), fromKoodistoKoodiTyyppi)));
@@ -253,14 +255,13 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         return hashMap;
     }
 
-    private KoulutusLukioPerustiedotViewModel createToKoulutusLukioPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus, DocumentStatus status,
+    private KoulutusLukioPerustiedotViewModel createToKoulutusLukioPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus,
             OrganisaatioDTO organisatio, Locale locale) {
         Preconditions.checkNotNull(koulutus, INVALID_DATA + "LueKoulutusVastausTyyppi object cannot be null.");
-        Preconditions.checkNotNull(status, INVALID_DATA + "DocumentStatus enum cannot be null.");
         Preconditions.checkNotNull(organisatio, INVALID_DATA + "Organisatio DTO cannot be null.");
         Preconditions.checkNotNull(organisatio.getOid(), INVALID_DATA + "Organisatio OID cannot be null.");
 
-        KoulutusLukioPerustiedotViewModel perustiedot = new KoulutusLukioPerustiedotViewModel(status);
+        KoulutusLukioPerustiedotViewModel perustiedot = new KoulutusLukioPerustiedotViewModel();
         perustiedot.setTila(koulutus.getTila());
         perustiedot.setKomotoOid(koulutus.getOid());
         perustiedot.setKoulutusmoduuliOid(koulutus.getKoulutusmoduuli().getOid());
@@ -275,10 +276,19 @@ public class KoulutusLukioConverter extends KoulutusConveter {
 
         Preconditions.checkNotNull(perustiedot.getKoulutuskoodiModel(), INVALID_DATA + "kolutuskoodi model cannot be null.");
         Preconditions.checkNotNull(perustiedot.getLukiolinja(), INVALID_DATA + "lukiolinja model cannot be null.");
-
         /*
          * Other UI fields
          */
+        List<WebLinkkiTyyppi> wwwLinks = koulutus.getLinkki();
+        if (wwwLinks != null && !wwwLinks.isEmpty()) {
+            if (wwwLinks.size() > 1) {
+                for (WebLinkkiTyyppi link : wwwLinks) {
+                    LOG.warn("Too many links - lukiokoulutus can use only one. Link : {}", link);
+                }
+            }
+            perustiedot.setOpsuLinkki(wwwLinks.get(0).getUri());
+        }
+
         perustiedot.setKoulutuksenAlkamisPvm(
                 koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
 

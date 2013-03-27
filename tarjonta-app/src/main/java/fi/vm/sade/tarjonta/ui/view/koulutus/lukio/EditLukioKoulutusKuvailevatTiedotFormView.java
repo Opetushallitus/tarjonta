@@ -59,6 +59,8 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
     private transient TarjontaPresenter presenter;
     private transient UiBuilder uiBuilder;
     private EditLukioKoulutusKuvailevatTiedotTekstikentatTabSheet tekstit;
+    private OphTokenField[] tokenFields = new OphTokenField[6];
+    private int tokenFieldIndex = 0;
 
     private GridLayout buildKielivalinnat() {
         GridLayout kielivalinnat = new GridLayout(2, 1);
@@ -100,6 +102,8 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
                 return uiHelper.getKoodiNimi((String) selectedToken);
             }
         });
+
+        tokenFields[tokenFieldIndex++] = tokenField;
     }
 
     public EditLukioKoulutusKuvailevatTiedotFormView() {
@@ -196,6 +200,15 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
     public void reBuildTabsheet() {
         if (tekstit != null) {
             tekstit.reload();
+        }
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+
+        for (OphTokenField t : tokenFields) {
+            t.getSelectionLayout().setWidth("900px");
         }
     }
 }
