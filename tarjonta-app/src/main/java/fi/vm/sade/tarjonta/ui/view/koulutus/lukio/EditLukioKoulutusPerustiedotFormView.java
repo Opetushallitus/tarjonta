@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus.lukio;
 
+import com.google.common.base.Preconditions;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
@@ -53,6 +54,8 @@ import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
@@ -445,66 +448,20 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
      * Reload data from UI model
      */
     public void reload() {
+        KoulutusLukioConverter.copySelectedKoodiDataToModel(model);
 
-        final KoulutuskoodiModel koulutuskoodi = model.getKoulutuskoodiModel();
-        if (koulutuskoodi.getOpintoala() != null) {
-            model.setOpintoala(koulutuskoodi.getOpintoala());
-            opintoala.setPropertyDataSource(new NestedMethodProperty(model.getOpintoala(), MODEL_NAME_PROPERY));
-        }
+        labelDataBind(opintoala, model.getOpintoala());
+        labelDataBind(koulutusaste, model.getKoulutusaste());
+        labelDataBind(koulutusala, model.getKoulutusala());
+        labelDataBind(opintojenLaajuusyksikko, model.getOpintojenLaajuusyksikko());
+        labelDataBind(opintojenLaajuus, model.getOpintojenLaajuus());
+        labelDataBind(tutkintonimike, model.getTutkintonimike());
+        labelDataBind(koulutuksenRakenne, model.getKoulutuksenRakenne());
+        labelDataBind(tavoitteet, model.getTavoitteet());
+        labelDataBind(jatkoopintomahdollisuudet, model.getJatkoopintomahdollisuudet());
+        labelDataBind(koulutuslaji, model.getKoulutuslaji());
+        labelDataBind(pohjakoulutusvaatimus, model.getPohjakoulutusvaatimus());
 
-        if (koulutuskoodi.getKoulutusaste() != null) {
-            model.setKoulutusaste(koulutuskoodi.getKoulutusaste());
-            koulutusaste.setPropertyDataSource(new NestedMethodProperty(model.getKoulutusaste(), MODEL_NAME_PROPERY));
-        }
-
-        if (koulutuskoodi.getKoulutusala() != null) {
-            model.setKoulutusala(koulutuskoodi.getKoulutusala());
-            koulutusala.setPropertyDataSource(new NestedMethodProperty(model.getKoulutusala(), MODEL_NAME_PROPERY));
-        }
-
-        if (koulutuskoodi.getOpintojenLaajuusyksikko() != null) {
-            model.setOpintojenLaajuusyksikko(koulutuskoodi.getOpintojenLaajuusyksikko());
-            opintojenLaajuusyksikko.setPropertyDataSource(new NestedMethodProperty(model.getOpintojenLaajuusyksikko(), MODEL_NAME_PROPERY));
-        }
-
-        if (koulutuskoodi.getOpintojenLaajuus() != null) {
-            model.setOpintojenLaajuus(koulutuskoodi.getOpintojenLaajuus());
-            opintojenLaajuus.setPropertyDataSource(new NestedMethodProperty(model.getOpintojenLaajuus(), MODEL_NAME_PROPERY));
-        }
-
-        if (koulutuskoodi.getOpintojenLaajuus() != null) {
-            model.setTutkintonimike(koulutuskoodi.getTutkintonimike());
-            tutkintonimike.setPropertyDataSource(new NestedMethodProperty(model.getTutkintonimike(), MODEL_NAME_PROPERY));
-        }
-
-        if (koulutuskoodi.getKoulutuksenRakenne() != null) {
-            model.setKoulutuksenRakenne(koulutuskoodi.getKoulutuksenRakenne());
-            koulutuksenRakenne.setPropertyDataSource(new NestedMethodProperty(model.getKoulutuksenRakenne(), MODEL_NAME_PROPERY));
-        }
-
-        if (koulutuskoodi.getTavoitteet() != null) {
-            model.setTavoitteet(koulutuskoodi.getTavoitteet());
-            tavoitteet.setPropertyDataSource(new NestedMethodProperty(model.getTavoitteet(), MODEL_NAME_PROPERY));
-        }
-
-        if (koulutuskoodi.getJatkoopintomahdollisuudet() != null) {
-            model.setJatkoopintomahdollisuudet(koulutuskoodi.getJatkoopintomahdollisuudet());
-            jatkoopintomahdollisuudet.setPropertyDataSource(new NestedMethodProperty(model.getJatkoopintomahdollisuudet(), MODEL_NAME_PROPERY));
-        }
-
-        final LukiolinjaModel lukiolinja = model.getLukiolinja();
-
-        if (lukiolinja != null) {
-            if (lukiolinja.getKoulutuslaji() != null) {
-                model.setKoulutuslaji(lukiolinja.getKoulutuslaji());
-                koulutuslaji.setPropertyDataSource(new NestedMethodProperty(model.getKoulutuslaji(), MODEL_NAME_PROPERY));
-            }
-
-            if (lukiolinja.getPohjakoulutusvaatimus() != null) {
-                model.setPohjakoulutusvaatimus(lukiolinja.getPohjakoulutusvaatimus());
-                pohjakoulutusvaatimus.setPropertyDataSource(new NestedMethodProperty(model.getPohjakoulutusvaatimus(), MODEL_NAME_PROPERY));
-            }
-        }
         disableOrEnableComponents(true);
     }
 
@@ -545,5 +502,12 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         super.attach();
 
         yhteyshenkiloForm.initialize();
+    }
+
+    private void labelDataBind(Label label, KoulutusKoodistoModel dataField) {
+        Preconditions.checkNotNull(label, "Label object cannot be null.");
+        if (dataField != null) {
+            label.setPropertyDataSource(new NestedMethodProperty(dataField, MODEL_NAME_PROPERY));
+        }
     }
 }

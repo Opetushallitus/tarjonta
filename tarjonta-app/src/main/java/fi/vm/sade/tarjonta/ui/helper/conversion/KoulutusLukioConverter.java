@@ -51,6 +51,7 @@ import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapOpetu
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapToValidKoodistoKoodiTyyppi;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.mapYhteyshenkiloToTyyppi;
 import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.toKoodistoKoodiTyypi;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
 import java.util.AbstractMap;
@@ -304,13 +305,14 @@ public class KoulutusLukioConverter extends KoulutusConveter {
          */
         final KoulutusmoduuliKoosteTyyppi koulutusmoduuliTyyppi = koulutus.getKoulutusmoduuli();
         koulutusKoodisto.listaaLukioSisalto(perustiedot.getKoulutuskoodiModel(), perustiedot.getLukiolinja(), koulutusmoduuliTyyppi, locale);
-
+        KoulutusLukioConverter.copySelectedKoodiDataToModel(perustiedot);
         /*
          * Data fields used on UI only as extra information:
          */
 
         //6-numero koodi arvo 
         perustiedot.setKoulutuskoodi(perustiedot.getKoulutuskoodiModel().getKoodi());
+
 
         return perustiedot;
     }
@@ -323,5 +325,28 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         LOG.warn("Data conversion error - lukiolinja koodi URI not found.");
 
         return null;
+    }
+
+    public static void copySelectedKoodiDataToModel(KoulutusLukioPerustiedotViewModel model) {
+        Preconditions.checkNotNull(model, "KoulutusLukioPerustiedotViewModel cannot be null.");
+        final KoulutuskoodiModel koulutuskoodi = model.getKoulutuskoodiModel();
+
+        if (koulutuskoodi != null) {
+            model.setOpintoala(koulutuskoodi.getOpintoala());
+            model.setKoulutusaste(koulutuskoodi.getKoulutusaste());
+            model.setKoulutusala(koulutuskoodi.getKoulutusala());
+            model.setOpintojenLaajuusyksikko(koulutuskoodi.getOpintojenLaajuusyksikko());
+            model.setOpintojenLaajuus(koulutuskoodi.getOpintojenLaajuus());
+            model.setTutkintonimike(koulutuskoodi.getTutkintonimike());
+            model.setKoulutuksenRakenne(koulutuskoodi.getKoulutuksenRakenne());
+            model.setTavoitteet(koulutuskoodi.getTavoitteet());
+            model.setJatkoopintomahdollisuudet(koulutuskoodi.getJatkoopintomahdollisuudet());
+        }
+
+        final LukiolinjaModel lukiolinja = model.getLukiolinja();
+        if (lukiolinja != null) {
+            model.setKoulutuslaji(lukiolinja.getKoulutuslaji());
+            model.setPohjakoulutusvaatimus(lukiolinja.getPohjakoulutusvaatimus());
+        }
     }
 }

@@ -45,8 +45,6 @@ public class EditLukioKoulutusPerustiedotView extends AbstractEditLayoutView<Kou
 
     public EditLukioKoulutusPerustiedotView(String oid) {
         super(oid, SisaltoTyyppi.KOMOTO);
-
-        LOG.info("EditLukioKoulutusPerustiedotView");
         setMargin(true);
         setHeight(-1, UNITS_PIXELS);
     }
@@ -54,7 +52,6 @@ public class EditLukioKoulutusPerustiedotView extends AbstractEditLayoutView<Kou
     @Override
     protected void buildLayout(VerticalLayout layout) {
         super.buildLayout(layout); //init base navigation here
-        LOG.info("buildLayout");
         /*
          *  FORM LAYOUT (form components under navigation buttons)
          */
@@ -85,6 +82,6 @@ public class EditLukioKoulutusPerustiedotView extends AbstractEditLayoutView<Kou
 
     @Override
     public void actionNext(ClickEvent event) {
-        throw new RuntimeException("not implemented");
+        presenter.getLukioPresenter().showSummaryKoulutusView();
     }
 }

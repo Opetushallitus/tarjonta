@@ -303,11 +303,6 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
                 .toHashCode();
     }
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
-
     /**
      * @return the komos
      */

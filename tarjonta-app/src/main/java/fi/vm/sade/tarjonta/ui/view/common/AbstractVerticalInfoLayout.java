@@ -25,6 +25,7 @@ import fi.vm.sade.vaadin.ui.OphAbstractInfoLayout;
  * @author markus
  */
 public abstract class AbstractVerticalInfoLayout extends OphAbstractInfoLayout<VerticalLayout> {
+    private static final long serialVersionUID = -6824507060238974279L;
 
     protected transient I18NHelper _i18n;
 

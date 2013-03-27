@@ -183,7 +183,8 @@ public class TarjontaLukioPresenterTest {
         perustiedot.setDocumentStatus(DocumentStatus.NEW);
         perustiedot.setJatkoopintomahdollisuudet(createMonikielinenTeksti(JATKOOPINTOMAHDOLLISUUDET));
         perustiedot.setKoulutuksenAlkamisPvm(DATE);
-        perustiedot.setKoulutuksenRakenne(createMonikielinenTeksti(TUTKINNON_TAVOITTEET));
+        perustiedot.setKoulutuksenRakenne(createMonikielinenTeksti(KOULUTUKSEN_RAKENNE));
+        perustiedot.setTavoitteet(createMonikielinenTeksti(TUTKINNON_TAVOITTEET));
         perustiedot.setKoulutusala(createKoodiModel(KOULUTUSALA));
         perustiedot.setKoulutusaste(createKoodiModel(KOULUTUSASTE));
         perustiedot.setKoulutuslaji(createKoodiModel(KOULUTUSLAJI));
@@ -202,7 +203,6 @@ public class TarjontaLukioPresenterTest {
         perustiedot.setPohjakoulutusvaatimus(createKoodiModel("pohjakoulutusvaatimus"));
         perustiedot.setSuunniteltuKesto("kesto");
         perustiedot.setSuunniteltuKestoTyyppi("kesto_tyyppi");
-        perustiedot.setTavoitteet(createMonikielinenTeksti(TUTKINNON_TAVOITTEET));
         perustiedot.setTutkinto(createKoodiModel(KOULUTUSKOODI));
         perustiedot.setTutkintonimike(createKoodiModel(TUTKINTONIMIKE));
 
@@ -538,7 +538,7 @@ public class TarjontaLukioPresenterTest {
         KoulutusLukioPerustiedotViewModel perustiedotModel = instance.getPerustiedotModel();
         assertEquals(KOMOTO_OID, perustiedotModel.getKomotoOid());
         assertEquals(null, perustiedotModel.getKoulutuksenAlkamisPvm());
-        assertEquals(null, perustiedotModel.getKoulutuksenRakenne());
+        assertEquals(KOULUTUKSEN_RAKENNE, perustiedotModel.getKoulutuksenRakenne().getNimi());
 
         assertNotNull("koulutuskoodi model", perustiedotModel.getKoulutuskoodiModel());
         assertEquals(createUri(TUTKINTONIMIKE), perustiedotModel.getKoulutuskoodiModel().getTutkintonimike().getKoodistoUriVersio());
@@ -550,7 +550,15 @@ public class TarjontaLukioPresenterTest {
         assertEquals(createUri(LAAJUUS_YKSIKKO), perustiedotModel.getKoulutuskoodiModel().getOpintojenLaajuusyksikko().getKoodistoUriVersio());
         assertEquals(createUri(LUKIOLINJA), perustiedotModel.getLukiolinja().getKoodistoUriVersio());
 
-        //assertNotNull(perustiedotModel.getKoulutuslaji());
+        //the same data as above, but in perustiedot object
+        assertEquals(createUri(TUTKINTONIMIKE), perustiedotModel.getTutkintonimike().getKoodistoUriVersio());
+        assertEquals(createUri(KOULUTUSALA), perustiedotModel.getKoulutusala().getKoodistoUriVersio());
+        assertEquals(createUri(KOULUTUSASTE), perustiedotModel.getKoulutusaste().getKoodistoUriVersio());
+        assertEquals(createUri(KOULUTUSKOODI), perustiedotModel.getKoulutuskoodiModel().getKoodistoUriVersio());
+        assertEquals(createUri(OPINTOALA), perustiedotModel.getOpintoala().getKoodistoUriVersio());
+        assertEquals(createUri(LAAJUUS_ARVO), perustiedotModel.getOpintojenLaajuus().getKoodistoUriVersio());
+        assertEquals(createUri(LAAJUUS_YKSIKKO), perustiedotModel.getOpintojenLaajuusyksikko().getKoodistoUriVersio());
+        assertEquals(createUri(LUKIOLINJA), perustiedotModel.getLukiolinja().getKoodistoUriVersio());
         assertEquals(KOMO_OID, perustiedotModel.getKoulutusmoduuliOid());
 
         /*
@@ -562,14 +570,13 @@ public class TarjontaLukioPresenterTest {
         assertEquals("organisation name", perustiedotModel.getOrganisaatioName());
         assertEquals(ORGANISAATIO_OID, perustiedotModel.getOrganisaatioOid());
         assertEquals(1, perustiedotModel.getOrganisaatioOidTree().size());
-        assertEquals(null, perustiedotModel.getPohjakoulutusvaatimus());
         assertEquals("kesto", perustiedotModel.getSuunniteltuKesto());
         assertEquals("yksikko", perustiedotModel.getSuunniteltuKestoTyyppi());
-        assertEquals(null, perustiedotModel.getTavoitteet());
+        assertEquals(TUTKINNON_TAVOITTEET, perustiedotModel.getTavoitteet().getNimi());
         assertEquals(TarjontaTila.VALMIS, perustiedotModel.getTila());
-        assertEquals(null, perustiedotModel.getTutkinto());
-        assertEquals(null, perustiedotModel.getTutkintonimike());
         assertYhteyshenkilo(perustiedotModel.getYhteyshenkilo());
+        assertEquals(null, perustiedotModel.getTutkinto());
+        assertEquals(null, perustiedotModel.getPohjakoulutusvaatimus());
     }
 
     private void assertYhteyshenkilo(YhteyshenkiloModel cperson) {

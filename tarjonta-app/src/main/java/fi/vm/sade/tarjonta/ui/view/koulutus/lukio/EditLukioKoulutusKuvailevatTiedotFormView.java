@@ -97,7 +97,7 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
         tokenField.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
             @Override
             public String formatToken(Object selectedToken) {
-                return "ft:" + uiHelper.getKoodiNimi((String) selectedToken);
+                return uiHelper.getKoodiNimi((String) selectedToken);
             }
         });
     }
@@ -114,7 +114,6 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
 
     private void initializeLayout() {
         UiBuilder.label(this, T("kielivalikoima.label"), LabelStyleEnum.H2);
-
         UiBuilder.label(this, T("kielivalikoima.help"), LabelStyleEnum.TEXT);
 
         AbstractLayout kielivalinnat = buildKielivalinnat();

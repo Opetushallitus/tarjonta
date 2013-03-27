@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.vaadin.data.util.NestedMethodProperty;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -171,14 +172,24 @@ public class TarjontaLukioPresenter {
 
     /**
      *
-     * Open lukiokoulutus summary view.
+     * Open lukiokoulutus summary page with current komoto OID.
      *
      * @param komotoOid
      */
+    public void showSummaryKoulutusView() {
+        final String komotoOid = getPerustiedotModel().getKomotoOid();
+        if (komotoOid != null) {
+            showSummaryKoulutusView(komotoOid);
+        } else {
+            LOG.error("Page navigation error - No KOMOTO OID selected, return to main page.");
+            presenter.showMainDefaultView();
+        }
+    }
+
     public void showSummaryKoulutusView(final String komotoOid) {
         Preconditions.checkNotNull(komotoOid, "KOMOTO OID object cannot be null.");
         loadKomoto(komotoOid);
-        getPresenter().getRootView().changeView(new ShowKoulutusSummaryView(null, null));
+        getPresenter().getRootView().changeView(new ShowKoulutusSummaryView(getPerustiedotModel().getLukiolinja().getNimi(), null));
     }
 
     private void loadKomoto(final String komotoOid) {
@@ -237,7 +248,7 @@ public class TarjontaLukioPresenter {
             final List<LukiolinjaModel> lukiolinjas = kolutusKoodistoConverter.listaaLukiolinjas(tyyppis, I18N.getLocale());
             LOG.debug("Lukiolinjas list size : {}.", lukiolinjas);
             Collections.sort(lukiolinjas, new BeanComparator("nimi"));
-            perustiedot.getLukiolinjas().addAll(lukiolinjas);
+            perustiedot.getLukiolinjas().addAll(lukiolinjas); 
         } else {
             LOG.debug("No lukiolinja selected.");
         }
@@ -348,4 +359,6 @@ public class TarjontaLukioPresenter {
 //        return tarjontaAdminService.tarkistaKoulutuksenKopiointi(kysely);
         return true;
     }
+
+    
 }

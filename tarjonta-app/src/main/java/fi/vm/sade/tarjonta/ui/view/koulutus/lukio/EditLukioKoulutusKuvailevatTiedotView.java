@@ -74,7 +74,7 @@ public class EditLukioKoulutusKuvailevatTiedotView extends AbstractEditLayoutVie
     public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
         try {
             presenter.getLukioPresenter().saveKoulutus(tila);
-            //presenter.getLukioPresenter().getReloadKoulutusListData();
+            presenter.getLukioPresenter().getReloadKoulutusListData();
             return model.getOid();
         } catch (ExceptionMessage exceptionMessage) {
             if (exceptionMessage.getMessage().equalsIgnoreCase("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage")) {
@@ -87,7 +87,7 @@ public class EditLukioKoulutusKuvailevatTiedotView extends AbstractEditLayoutVie
 
     @Override
     public void actionNext(ClickEvent event) {
-        presenter.showShowKoulutusView();
+        presenter.getLukioPresenter().showSummaryKoulutusView();
     }
 
     public EditLukioKoulutusKuvailevatTiedotFormView getLisatiedotForm() {

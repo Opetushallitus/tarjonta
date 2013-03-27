@@ -26,11 +26,12 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
 
     private static final long serialVersionUID = 1L;
-
     private TarjontaTila tila;
 
     public TarjontaTila getTila() {
@@ -40,20 +41,16 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
     public void setTila(TarjontaTila tila) {
         this.tila = tila;
     }
-
     // diplomit
     private List<String> diplomit = Lists.newArrayList();
-
     // kielet
     private List<String> kieliA = Lists.newArrayList();
     private List<String> kieliB1 = Lists.newArrayList();
     private List<String> kieliB2 = Lists.newArrayList();
     private List<String> kieliB3 = Lists.newArrayList();
     private List<String> kieletMuu = Lists.newArrayList();
-
     // tekstikentät
     private Map<String, KoulutusLisatietoModel> tekstit = Maps.newHashMap();
-
     private String oid;
 
     public Map<String, KoulutusLisatietoModel> getTekstikentat() {
@@ -124,6 +121,7 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
      * Reset model state
      */
     public void clearModel(DocumentStatus status) {
+        oid = null;
         diplomit.clear();
         kieliA.clear();
         kieliB1.clear();
@@ -152,4 +150,39 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
         return tekstit.get(kieliKoodi);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+        KoulutusLukioKuvailevatTiedotViewModel other = (KoulutusLukioKuvailevatTiedotViewModel) obj;
+
+        EqualsBuilder builder = new EqualsBuilder();
+        builder.append(tila, other.tila);
+        builder.append(diplomit, other.diplomit);
+        builder.append(kieliA, other.kieliA);
+        builder.append(kieliB1, other.kieliB1);
+        builder.append(kieliB2, other.kieliB2);
+        builder.append(kieliB3, other.kieliB3);
+        builder.append(kieletMuu, other.kieletMuu);
+        builder.append(oid, other.oid);
+        builder.append(tekstit, other.tekstit);
+        return builder.isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(tila)
+                .append(diplomit)
+                .append(kieliA)
+                .append(kieliB1)
+                .append(kieliB2)
+                .append(kieliB3)
+                .append(kieletMuu)
+                .append(oid)
+                .toHashCode();
+    }
 }
