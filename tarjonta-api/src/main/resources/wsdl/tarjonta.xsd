@@ -911,6 +911,7 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="Paasykoe"/>
             <xs:enumeration value="Lisapisteet"/>
+            <xs:enumeration value="Kokonaispisteet"/>
         </xs:restriction>
     </xs:simpleType>
 

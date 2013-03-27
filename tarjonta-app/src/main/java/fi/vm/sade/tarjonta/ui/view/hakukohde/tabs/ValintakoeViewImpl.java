@@ -93,6 +93,8 @@ public class ValintakoeViewImpl extends AbstractVerticalNavigationLayout {
        
        if (!valintakokees.isEmpty()) {
            presenter.getModel().setSelectedValintaKoe(valintakokees.get(0));
+       } else {
+           presenter.getModel().setSelectedValintaKoe(new ValintakoeViewModel());
        }
        buildPisterajaLayout(layout);
        buildPaasykoeLayout(layout);

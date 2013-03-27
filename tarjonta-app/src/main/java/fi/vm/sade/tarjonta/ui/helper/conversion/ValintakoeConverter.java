@@ -52,11 +52,14 @@ public class ValintakoeConverter {
     private static void convertPisterajatToViewModel(ValintakoeViewModel valintakoeViewModel, ValintakoeTyyppi valintakoeTyyppi) {
         PisterajaTyyppi valintakoeRajat = null;
         PisterajaTyyppi lisapisteRajat = null;
+        PisterajaTyyppi kokonaispisteRajat = null;
         for (PisterajaTyyppi curRajat:  valintakoeTyyppi.getPisterajat()) {
             if (curRajat.getValinnanPisteraja().equals(ValinnanPisterajaTyyppi.PAASYKOE)) {
                 valintakoeRajat = curRajat;
             } else if (curRajat.getValinnanPisteraja().equals(ValinnanPisterajaTyyppi.LISAPISTEET)) {
                 lisapisteRajat = curRajat;
+            } else if (curRajat.getValinnanPisteraja().equals(ValinnanPisterajaTyyppi.KOKONAISPISTEET)) {
+                kokonaispisteRajat = curRajat;
             }
         }
         if (valintakoeRajat != null) {
@@ -68,6 +71,9 @@ public class ValintakoeConverter {
             valintakoeViewModel.setLpAlinHyvaksyttyPM("" + lisapisteRajat.getAlinHyvaksyttyPistemaara());
             valintakoeViewModel.setLpAlinPM("" + lisapisteRajat.getAlinPistemaara());
             valintakoeViewModel.setLpYlinPM("" + lisapisteRajat.getYlinPistemaara());
+        } if (kokonaispisteRajat != null) {
+            System.out.println("Kokonaispisteet: " + kokonaispisteRajat.getAlinHyvaksyttyPistemaara());
+            valintakoeViewModel.setKpAlinHyvaksyttyPM("" + kokonaispisteRajat.getAlinHyvaksyttyPistemaara());
         }
     }
 
@@ -122,6 +128,12 @@ public class ValintakoeConverter {
             lpTyyppi.setAlinPistemaara(Integer.parseInt(valintakoeViewModel.getLpAlinPM()));
             lpTyyppi.setYlinPistemaara(Integer.parseInt(valintakoeViewModel.getLpYlinPM()));
             pisterajat.add(lpTyyppi);
+        }
+        if (valintakoeViewModel.getKpAlinHyvaksyttyPM() != null) {
+            PisterajaTyyppi kpTyyppi = new PisterajaTyyppi();
+            kpTyyppi.setValinnanPisteraja(ValinnanPisterajaTyyppi.KOKONAISPISTEET);
+            kpTyyppi.setAlinHyvaksyttyPistemaara(Integer.parseInt(valintakoeViewModel.getKpAlinHyvaksyttyPM()));
+            pisterajat.add(kpTyyppi);
         }
         return pisterajat;
     }

@@ -174,6 +174,7 @@ public class Valintakoe extends BaseEntity {
      * @param pisterajat the pisterajat to set
      */
     public void setPisterajat(Set<Pisteraja> pisterajat) {
+        this.pisterajat.clear();
         this.pisterajat = pisterajat;
     }
 }
