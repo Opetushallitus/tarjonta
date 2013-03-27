@@ -21,6 +21,7 @@ import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
 import static com.vaadin.terminal.Sizeable.UNITS_EM;
 import com.vaadin.ui.*;
+import com.vaadin.ui.Window.Notification;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
@@ -130,8 +131,10 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
                         createNewModelToValintakoeAika();
 
                         loadTableData();
-                    } else {
+                    } else if (koulutustyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)){
                         errorView.addError(T("HakukohdeValintakoeViewImpl.dateValidationFailed"));
+                    } else  if (koulutustyyppi.equals(KoulutusasteTyyppi.LUKIOKOULUTUS)){
+                        getWindow().showNotification(T("HakukohdeValintakoeViewImpl.dateValidationFailed"), Notification.TYPE_ERROR_MESSAGE);
                     }
                 }
             }
