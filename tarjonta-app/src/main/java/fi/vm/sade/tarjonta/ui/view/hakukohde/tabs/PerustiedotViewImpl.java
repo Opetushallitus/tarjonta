@@ -25,6 +25,8 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.PropertysetItem;
+import com.vaadin.data.validator.DoubleValidator;
+import com.vaadin.data.validator.IntegerValidator;
 
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
@@ -69,6 +71,7 @@ import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
@@ -326,6 +329,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         painotus.getField().setNullSelectionAllowed(false);
         painotettavatOppiaineet.addComponent(painotus);
         final TextField tf = uiBuilder.textField(null, psi, "painokerroin",null, null);
+        tf.addValidator(new IntegerValidator(T("validation.PerustiedotView.painokerroin.num")));
         painotettavatOppiaineet.addComponent(tf);
         final Button removeRowButton = UiUtil.button(null, T("PerustiedotView.poistaPainotettavaOppiaine"),
                 new Button.ClickListener() {
@@ -653,6 +657,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private TextField buildAlinHyvaksyttavaKeskiarvo() {
         alinHyvaksyttavaKeskiarvoText = UiUtil.textField(null);
         alinHyvaksyttavaKeskiarvoText.setRequired(true);
+        alinHyvaksyttavaKeskiarvoText.addValidator(new DoubleValidator(T("validation.PerustiedotView.alinHyvaksyttavaKeskiarvo.num")));
         return alinHyvaksyttavaKeskiarvoText;
     }
 
