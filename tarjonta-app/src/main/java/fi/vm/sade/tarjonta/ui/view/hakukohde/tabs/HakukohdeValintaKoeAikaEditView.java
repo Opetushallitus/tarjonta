@@ -15,6 +15,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  * European Union Public Licence for more details.
  */
 
+
 import com.vaadin.data.Property;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
@@ -32,6 +33,9 @@ import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
+import javax.validation.constraints.NotNull;
+
+
 /**
  * Created by: Tuomas Katva
  * Date: 25.1.2013
@@ -47,18 +51,20 @@ public class HakukohdeValintaKoeAikaEditView extends CustomComponent {
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
 
+    @NotNull(message = "{validation.HakukohdeValintaKoeAikaEditView.osoiteNotNull}")
     @PropertyId("osoiteRivi")
     private TextField osoiteRiviTxt;
 
+    @NotNull(message = "{validation.HakukohdeValintaKoeAikaEditView.postinumeroNotNull}")
     @PropertyId("postinumero")
     private KoodistoComponent postinumeroCombo;
-
+    @NotNull(message = "{validation.HakukohdeValintaKoeAikaEditView.postitoimipaikkaNotNull}")
     @PropertyId("postitoimiPaikka")
     private TextField postitoimiPaikka;
-
+    @NotNull(message = "{validation.HakukohdeValintaKoeAikaEditView.alkamisAikaNotNull}")
     @PropertyId("alkamisAika")
     private DateField alkupvm;
-
+    @NotNull (message = "{validation.HakukohdeValintaKoeAikaEditView.paattymisAikaNotNull}")
     @PropertyId("paattymisAika")
     private DateField loppuPvm;
 

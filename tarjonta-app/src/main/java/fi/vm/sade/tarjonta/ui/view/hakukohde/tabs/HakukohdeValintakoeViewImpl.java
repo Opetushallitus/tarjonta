@@ -122,6 +122,8 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
                 valintaKoeAikaForm.commit();
                 if (valintaKoeAikaForm.isValid()) {
                     ValintakoeAikaViewModel valintakoeAika = presenter.getSelectedAikaView();
+
+                    if (checkValintakoeAikaOsoite(valintakoeAika)) {
                     if (valintakoeAika != null
                             && valintakoeAika.getAlkamisAika() != null
                             && valintakoeAika.getPaattymisAika() != null
@@ -136,11 +138,25 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
                     } else  if (koulutustyyppi.equals(KoulutusasteTyyppi.LUKIOKOULUTUS)){
                         getWindow().showNotification(T("HakukohdeValintakoeViewImpl.dateValidationFailed"), Notification.TYPE_ERROR_MESSAGE);
                     }
+                } else {
+                        errorView.addError(T("HakukohdeValintakoeViewImpl.valintakoeAikaOsoiteNotNull"));
+                    }
                 }
             }
         });
 
         return aikaInputFormLayout;
+    }
+
+    private boolean checkValintakoeAikaOsoite(ValintakoeAikaViewModel valintakoeAika) {
+        if(valintakoeAika.getOsoiteRivi() != null && valintakoeAika.getOsoiteRivi().length() > 0 &&
+                valintakoeAika.getPostinumero() != null && valintakoeAika.getPostinumero().length() > 0 &&
+                valintakoeAika.getPostitoimiPaikka() != null && valintakoeAika.getPostitoimiPaikka().length() > 0) {
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void createNewModelToValintakoeAika() {
@@ -301,7 +317,13 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
                 try {
                     form.commit();
                     if (form.isValid()) {
+
+                        if (presenter.getSelectedValintakoe().getValintakoeAjat() != null && presenter.getSelectedValintakoe().getValintakoeAjat().size() > 0) {
+
                         presenter.saveHakukohdeValintakoe(getValintakokeenKuvaukset());
+                        } else {
+                          errorView.addError(T("HakukohdeValintakoeViewImpl.vahintaaYksiValintakoeAika"));
+                        }
                     }
                 } catch (Validator.InvalidValueException e) {
                     errorView.addError(e);
