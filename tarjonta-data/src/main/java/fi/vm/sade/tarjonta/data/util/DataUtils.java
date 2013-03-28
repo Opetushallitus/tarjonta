@@ -14,18 +14,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public final class DataUtils {
-
     private static final String DATE_PATTERN = "dd.MM.yyyy";
 
-    public static CreateKoodistoDataType createCreateKoodistoDataType(String omistaja,
-                                                                      String organisaatioOid, Date voimassaAlkuPvm, Date voimassaLoppuPvm, String nimi) {
-        CreateKoodistoDataType type = new CreateKoodistoDataType();
+    public static CreateKoodistoDataType createCreateKoodistoDataType(final String omistaja,
+                                                                      final String organisaatioOid,
+                                                                      final Date voimassaAlkuPvm,
+                                                                      final Date voimassaLoppuPvm,
+                                                                      final String nimi) {
+        final CreateKoodistoDataType type = new CreateKoodistoDataType();
         type.setOmistaja(omistaja);
         type.setOrganisaatioOid(organisaatioOid);
         type.setVoimassaAlkuPvm(voimassaAlkuPvm != null ? DateHelper.DateToXmlCal(voimassaAlkuPvm) : null);
         type.setVoimassaLoppuPvm(voimassaLoppuPvm != null ? DateHelper.DateToXmlCal(voimassaLoppuPvm) : null);
 
-        for (KieliType k : KieliType.values()) {
+        for (final KieliType k : KieliType.values()) {
             KoodistoMetadataType m = new KoodistoMetadataType();
             m.setNimi(nimi);
             m.setKieli(k);
@@ -36,27 +38,28 @@ public final class DataUtils {
         return type;
     }
 
-    public static String createKoodiUriFromName(String koodistoNimi) {
-        koodistoNimi = koodistoNimi.toUpperCase().replaceAll("\\s", "");
-        koodistoNimi = koodistoNimi.replace('Ý', 'Y');
-        koodistoNimi = koodistoNimi.replaceAll("Ù | Ú | Û | Ü", "U");
-        koodistoNimi = koodistoNimi.replaceAll("Ò | Ó | Ô | Õ | Ö", "O");
-        koodistoNimi = koodistoNimi.replaceAll("Ì | Í | Î | Ï", "I");
-        koodistoNimi = koodistoNimi.replaceAll("È | É | Ê | Ë", "E");
-        koodistoNimi = koodistoNimi.replace('Ç', 'C');
-        koodistoNimi = koodistoNimi.replaceAll("À | Á | Â | Ã | Ä | Æ", "A");
-        koodistoNimi = koodistoNimi.replaceAll("Å", "O");
-        koodistoNimi = koodistoNimi.replaceAll("_", "");
-        koodistoNimi = koodistoNimi.replaceAll("-", "");
-        return koodistoNimi.toLowerCase();
+    public static String createKoodiUriFromName(final String koodistoNimi) {
+        String localNimi = koodistoNimi.toUpperCase();
+        localNimi = localNimi.replaceAll("\\s", "");
+        localNimi = localNimi.replace('Ý', 'Y');
+        localNimi = localNimi.replaceAll("Ù | Ú | Û | Ü", "U");
+        localNimi = localNimi.replaceAll("Ò | Ó | Ô | Õ | Ö", "O");
+        localNimi = localNimi.replaceAll("Ì | Í | Î | Ï", "I");
+        localNimi = localNimi.replaceAll("È | É | Ê | Ë", "E");
+        localNimi = localNimi.replace('Ç', 'C');
+        localNimi = localNimi.replaceAll("À | Á | Â | Ã | Ä | Æ", "A");
+        localNimi = localNimi.replaceAll("Å", "O");
+        localNimi = localNimi.replaceAll("_", "");
+        localNimi = localNimi.replaceAll("-", "");
+        return localNimi.toLowerCase();
     }
 
-    public static CreateKoodiDataType createCreateKoodiDataType(Koodi koodiData) {
-        CreateKoodiDataType koodiDataType = new CreateKoodiDataType();
+    public static CreateKoodiDataType createCreateKoodiDataType(final Koodi koodiData) {
+        final CreateKoodiDataType koodiDataType = new CreateKoodiDataType();
         koodiDataType.setKoodiArvo(koodiData.getKoodiArvo());
 
         if (koodiData.getKoodiNimiFi() != null) {
-            KoodiMetadataType metadataType = new KoodiMetadataType();
+            final KoodiMetadataType metadataType = new KoodiMetadataType();
             metadataType.setNimi(koodiData.getKoodiNimiFi());
             metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiFi() != null && koodiData.getKoodiLyhytNimiFi().trim().length() > 0 ? koodiData.getKoodiLyhytNimiFi() : koodiData.getKoodiNimiFi());
             metadataType.setKuvaus(koodiData.getKoodiKuvausFi() != null && koodiData.getKoodiKuvausFi().trim().length() > 0 ? koodiData.getKoodiKuvausFi() : koodiData.getKoodiNimiFi());
@@ -65,7 +68,7 @@ public final class DataUtils {
         }
 
         if (koodiData.getKoodiNimiSv() != null) {
-            KoodiMetadataType metadataType = new KoodiMetadataType();
+            final KoodiMetadataType metadataType = new KoodiMetadataType();
             metadataType.setNimi(koodiData.getKoodiNimiSv());
             metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiSv() != null && koodiData.getKoodiLyhytNimiSv().trim().length() > 0 ? koodiData.getKoodiLyhytNimiSv() : koodiData.getKoodiNimiSv());
             metadataType.setKuvaus(koodiData.getKoodiKuvausSv() != null && koodiData.getKoodiKuvausSv().trim().length() > 0 ? koodiData.getKoodiKuvausSv() : koodiData.getKoodiNimiSv());
@@ -74,7 +77,7 @@ public final class DataUtils {
         }
 
         if (koodiData.getKoodiNimiEn() != null) {
-            KoodiMetadataType metadataType = new KoodiMetadataType();
+            final KoodiMetadataType metadataType = new KoodiMetadataType();
             metadataType.setNimi(koodiData.getKoodiNimiEn());
             metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiEn() != null && koodiData.getKoodiLyhytNimiFi().trim().length() > 0 ? koodiData.getKoodiLyhytNimiEn() : koodiData.getKoodiNimiEn());
             metadataType.setKuvaus(koodiData.getKoodiKuvausEn() != null && koodiData.getKoodiKuvausEn().trim().length() > 0 ? koodiData.getKoodiKuvausEn() : koodiData.getKoodiNimiEn());
@@ -87,8 +90,8 @@ public final class DataUtils {
         return koodiDataType;
     }
 
-    private static Date tryGetDate(String dateToParse) {
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
+    private static Date tryGetDate(final String dateToParse) {
+        final SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
         try {
             return sdf.parse(dateToParse);
         } catch (ParseException e) {
@@ -96,13 +99,13 @@ public final class DataUtils {
         }
     }
 
-    public static CreateKoodiDataType createCreateKoodiDataType(String koodiArvo,
-                                                                Date voimassaAlkuPvm, Date voimassaLoppuPvm, String nimi) {
-        CreateKoodiDataType koodiDataType = new CreateKoodiDataType();
+    public static CreateKoodiDataType createCreateKoodiDataType(final String koodiArvo, final Date voimassaAlkuPvm,
+                                                                final Date voimassaLoppuPvm, final String nimi) {
+        final CreateKoodiDataType koodiDataType = new CreateKoodiDataType();
         koodiDataType.setKoodiArvo(koodiArvo);
         koodiDataType.setVoimassaAlkuPvm(voimassaAlkuPvm != null ? DateHelper.DateToXmlCal(voimassaAlkuPvm) : null);
         koodiDataType.setVoimassaLoppuPvm(voimassaLoppuPvm != null ? DateHelper.DateToXmlCal(voimassaLoppuPvm) : null);
-        for (KieliType k : KieliType.values()) {
+        for (final KieliType k : KieliType.values()) {
             KoodiMetadataType metadataType = new KoodiMetadataType();
             metadataType.setNimi(nimi);
             metadataType.setLyhytNimi(nimi);

@@ -15,13 +15,9 @@
  */
 package fi.vm.sade.tarjonta.data;
 
-import fi.vm.sade.koodisto.service.KoodiAdminService;
-import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.KoodistoAdminService;
-import fi.vm.sade.koodisto.service.KoodistoService;
-import fi.vm.sade.koodisto.service.types.CreateKoodistoDataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
+import fi.vm.sade.koodisto.service.types.common.KoodistoType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.data.dto.Koodi;
@@ -44,8 +40,6 @@ import java.util.*;
  */
 @Service
 public class UploadKoodistoData {
-    private static final String BASE_GROUP_URI_FOR_KOODISTO = "http://ryhma";
-
     @Autowired
     private CommonConstants commonConstants;
 
@@ -57,10 +51,10 @@ public class UploadKoodistoData {
 
     private final Logger log = LoggerFactory.getLogger(UploadKoodistoData.class);
 
-    public void createKoodistoRelations(String pathToFile) throws IOException {
-        List<KoodiRelaatio> relaatios = koodistoRelaatioExcelReader.readKoodiRelaatioExcel(pathToFile);
+    public void createKoodistoRelations(final String pathToFile) throws IOException {
+        final List<KoodiRelaatio> relaatios = koodistoRelaatioExcelReader.readKoodiRelaatioExcel(pathToFile);
         if (relaatios != null) {
-            Set<KoodiRelaatio> koodiRelaatios = new HashSet<KoodiRelaatio>(relaatios);
+            final Set<KoodiRelaatio> koodiRelaatios = new HashSet<KoodiRelaatio>(relaatios);
             createKoodiRelations(koodiRelaatios);
         } else {
             log.warn("No koodisto relations read from [{}]", pathToFile);
@@ -73,21 +67,19 @@ public class UploadKoodistoData {
         koodistoHelper.setOrganisaatioNimi(commonConstants.getOrganisaatioNimi());
     }
 
-    private boolean createKoodisto(String koodistoNimi, String koodistoUri, String orgOid) throws ExceptionMessage {
-        List<String> ryhmaUris = new ArrayList<String>();
+    private KoodistoType createKoodisto(final String koodistoNimi, final String koodistoUri, final String orgOid) throws ExceptionMessage {
+        final List<String> ryhmaUris = new ArrayList<String>();
         ryhmaUris.add(commonConstants.getBaseGroupUri());
 
 
         try {
-            CreateKoodistoDataType koodisto = koodistoHelper.addCodeGroup(ryhmaUris, koodistoUri, koodistoNimi);
-            return true;
-        } catch (Exception exp) {
+            return koodistoHelper.addKoodisto(ryhmaUris, koodistoUri, koodistoNimi);
+        } catch (final Exception exp) {
             log.warn("Unable to create koodisto [{}], trying to remove it and create it again", koodistoUri);
             try {
                 koodistoHelper.removeKoodisto(koodistoUri, orgOid);
-                CreateKoodistoDataType koodisto = koodistoHelper.addCodeGroup(ryhmaUris, koodistoUri, koodistoNimi);
-                return true;
-            } catch (Exception exxp) {
+                return koodistoHelper.addKoodisto(ryhmaUris, koodistoUri, koodistoNimi);
+            } catch (final Exception exxp) {
                 log.error("re-creation of koodisto failed [{}]", exxp.getMessage());
 
                 throw new ExceptionMessage(exxp.getMessage());
@@ -96,47 +88,48 @@ public class UploadKoodistoData {
         }
     }
 
-    public void loadKoodistoFromExcel(String pathToExcel, String koodistoNimi, String orgOid) throws IOException, ExceptionMessage {
-        String koodistoUri = DataUtils.createKoodiUriFromName(koodistoNimi);
-        if (createKoodisto(koodistoNimi, koodistoUri, orgOid)) {
-            CommonKoodiData koodis = new CommonKoodiData(pathToExcel);
+    public void loadKoodistoFromExcel(final String pathToExcel, final String koodistoNimi,
+                                      final String orgOid) throws IOException, ExceptionMessage {
+        final String koodistoUri = DataUtils.createKoodiUriFromName(koodistoNimi);
+        final KoodistoType createdKoodisto = createKoodisto(koodistoNimi, koodistoUri, orgOid);
+        if (createdKoodisto != null) {
+            final CommonKoodiData koodis = new CommonKoodiData(pathToExcel);
             if (koodis != null && koodis.getLoadedKoodis() != null && koodis.getLoadedKoodis().size() > 0) {
                 loadKoodisToKoodisto(koodis.getLoadedKoodis(), koodistoUri);
             } else {
                 log.warn("Loaded koodis was empty or null!");
             }
+
+            // change koodisto tila to HYVAKSYTTY: this should also approve all sketched koodis in the koodisto
+            // NOTE! takes a long time if there are lots of koodis
+            final KoodistoType approvedKoodisto = koodistoHelper.approveKoodisto(createdKoodisto);
         }
     }
 
-    private HashMap<String, KoodiType> loadKoodisToKoodisto(Set<Koodi> koodis, String koodistoName) {
-        HashMap<String, KoodiType> koodiUriArvoPair = new HashMap<String, KoodiType>();
+    private HashMap<String, KoodiType> loadKoodisToKoodisto(final Set<Koodi> koodis, final String koodistoName) {
+        final HashMap<String, KoodiType> koodiUriArvoPair = new HashMap<String, KoodiType>();
 
-        for (Koodi koodi : koodis) {
-            KoodiType koodiType = koodistoHelper.addCodeItem(koodi, DataUtils.createKoodiUriFromName(koodistoName));
+        for (final Koodi koodi : koodis) {
+            final KoodiType koodiType = koodistoHelper.addKoodi(koodi, DataUtils.createKoodiUriFromName(koodistoName));
         }
 
         return koodiUriArvoPair;
     }
 
-    private void createKoodiRelations(Set<KoodiRelaatio> koodiRelaatios) {
-        for (KoodiRelaatio koodiRelaatio : koodiRelaatios) {
+    private void createKoodiRelations(final Set<KoodiRelaatio> koodiRelaatios) {
+        for (final KoodiRelaatio koodiRelaatio : koodiRelaatios) {
             addKoodiRelation(koodiRelaatio);
         }
     }
 
-    private void addKoodiRelation(KoodiRelaatio koodiRelaatio) {
-        List<KoodiUriAndVersioType> alakoodis = new ArrayList<KoodiUriAndVersioType>();
+    private void addKoodiRelation(final KoodiRelaatio koodiRelaatio) {
+        final List<KoodiUriAndVersioType> alakoodis = new ArrayList<KoodiUriAndVersioType>();
         alakoodis.add(createKoodiUriVersio(koodiRelaatio.getKoodiAlaArvo(), koodiRelaatio.getAlaArvoKoodisto()));
-        try {
-            log.info("Trying to create relation with yla-arvo [{}], ala-arvo [{}]", koodiRelaatio.getKoodiYlaArvo(), koodiRelaatio.getKoodiAlaArvo());
-            koodistoHelper.addRelationByAlakoodi(createKoodiUriVersio(koodiRelaatio.getKoodiYlaArvo(), koodiRelaatio.getYlaArvoKoodisto()), alakoodis, SuhteenTyyppiType.SISALTYY);
-        } catch (Exception exp) {
-            log.warn("Unable to create relation with arvos [{}], exception [{}]", koodiRelaatio.getKoodiYlaArvo() + " " + koodiRelaatio.getKoodiAlaArvo(), exp.toString());
-        }
+        koodistoHelper.addRelaatioByAlakoodi(createKoodiUriVersio(koodiRelaatio.getKoodiYlaArvo(), koodiRelaatio.getYlaArvoKoodisto()), alakoodis, SuhteenTyyppiType.SISALTYY);
     }
 
-    private KoodiUriAndVersioType createKoodiUriVersio(String koodiArvo, String koodistoUri) {
-        List<KoodiType> koodiTypes = koodistoHelper.getKoodiByArvoAndKoodistoNimi(koodiArvo, koodistoUri);
+    private KoodiUriAndVersioType createKoodiUriVersio(final String koodiArvo, final String koodistoUri) {
+        final List<KoodiType> koodiTypes = koodistoHelper.getKoodiByArvoAndKoodistoNimi(koodiArvo, koodistoUri);
 
         if (koodiTypes != null && koodiTypes.size() > 0) {
 

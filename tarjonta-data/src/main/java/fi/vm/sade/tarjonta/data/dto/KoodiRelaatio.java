@@ -22,20 +22,16 @@ import org.apache.commons.lang.StringUtils;
  * Date: 13.2.2013
  */
 public class KoodiRelaatio extends AbstractReadableRow {
-
     private String ylaArvoKoodisto;
-
     private String alaArvoKoodisto;
-
     private String koodiYlaArvo;
-
     private String koodiAlaArvo;
 
     public String getKoodiYlaArvo() {
         return koodiYlaArvo;
     }
 
-    public void setKoodiYlaArvo(String koodiYlaArvo) {
+    public void setKoodiYlaArvo(final String koodiYlaArvo) {
         this.koodiYlaArvo = koodiYlaArvo;
     }
 
@@ -43,7 +39,7 @@ public class KoodiRelaatio extends AbstractReadableRow {
         return koodiAlaArvo;
     }
 
-    public void setKoodiAlaArvo(String koodiAlaArvo) {
+    public void setKoodiAlaArvo(final String koodiAlaArvo) {
         this.koodiAlaArvo = koodiAlaArvo;
     }
 
@@ -51,7 +47,7 @@ public class KoodiRelaatio extends AbstractReadableRow {
         return ylaArvoKoodisto;
     }
 
-    public void setYlaArvoKoodisto(String ylaArvoKoodisto) {
+    public void setYlaArvoKoodisto(final String ylaArvoKoodisto) {
         this.ylaArvoKoodisto = ylaArvoKoodisto;
     }
 
@@ -59,7 +55,7 @@ public class KoodiRelaatio extends AbstractReadableRow {
         return alaArvoKoodisto;
     }
 
-    public void setAlaArvoKoodisto(String alaArvoKoodisto) {
+    public void setAlaArvoKoodisto(final String alaArvoKoodisto) {
         this.alaArvoKoodisto = alaArvoKoodisto;
     }
 

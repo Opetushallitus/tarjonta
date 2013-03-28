@@ -27,32 +27,35 @@ import java.util.List;
  */
 @Service
 public class KoodistoRelaatioExcelReader {
+    private final Logger log = LoggerFactory.getLogger(KoodistoRelaatioExcelReader.class);
+
     @Autowired
     private TarjontaDataKoodistoHelper koodistoHelper;
 
     private HSSFWorkbook workbook;
-    private static Logger log = LoggerFactory.getLogger(KoodistoRelaatioExcelReader.class);
 
     public List<KoodiRelaatio> readKoodiRelaatioExcel(final String pathToFile) throws IOException {
-        List<KoodiRelaatio> koodiRelaatios = new ArrayList<KoodiRelaatio>();
+        final List<KoodiRelaatio> koodiRelaatios = new ArrayList<KoodiRelaatio>();
         if (pathToFile == null) {
             throw new RuntimeException("Missing file path.");
         }
 
-        FileInputStream fileInputStream = new FileInputStream(pathToFile);
+        final FileInputStream fileInputStream = new FileInputStream(pathToFile);
 
         workbook = new HSSFWorkbook(fileInputStream);
-        HSSFSheet sheet = workbook.getSheetAt(0);
-        List<String> headers = new ArrayList<String>();
+        final HSSFSheet sheet = workbook.getSheetAt(0);
+        final List<String> headers = new ArrayList<String>();
         rows: for (int rowNumber = 0; rowNumber <= sheet.getLastRowNum(); rowNumber++) {
-            HSSFRow currentRow = sheet.getRow(rowNumber);
+            final HSSFRow currentRow = sheet.getRow(rowNumber);
             if (rowNumber == 0) {
                 for (int cellCount = 0; cellCount <= currentRow.getLastCellNum(); cellCount++) {
-                    String header = getCellValueAsString(currentRow.getCell(cellCount));
+                    final String header = getCellValueAsString(currentRow.getCell(cellCount));
                     if (header != null) {
-                        if (koodistoHelper.isKoodisto(DataUtils.createKoodiUriFromName(header))) {
-                            headers.add(DataUtils.createKoodiUriFromName(header));
+                        final String koodistoUri = DataUtils.createKoodiUriFromName(header);
+                        if (koodistoHelper.isKoodisto(koodistoUri)) {
+                            headers.add(koodistoUri);
                         } else {
+                            log.warn("Koodisto not found with koodistoUri [{}], skipping this column", koodistoUri);
                             if (cellCount == 0) {
                                 // ylaKoodisto not found, abort whole file
                                 break rows;
@@ -65,14 +68,14 @@ public class KoodistoRelaatioExcelReader {
             } else {
                 for (int cellCount = 0; cellCount < headers.size(); cellCount++) {
                     // skip koodistos with "-1"
-                    if (cellCount > 0 && !StringUtils.equals(headers.get(cellCount), "-1")) {
-                        KoodiRelaatio relaatio = new KoodiRelaatio();
+                    final String alaKoodistoUri = headers.get(cellCount);
+                    if (!StringUtils.equals(alaKoodistoUri, "-1")) {
+                        final KoodiRelaatio relaatio = new KoodiRelaatio();
                         relaatio.setYlaArvoKoodisto(headers.get(0));
-                        String ylaArvo = getCellValueAsString(currentRow.getCell(0));
+                        final String ylaArvo = getCellValueAsString(currentRow.getCell(0));
                         if (ylaArvo != null && ylaArvo.trim().length() > 0) {
                             relaatio.setKoodiYlaArvo(ylaArvo);
-                            relaatio.setAlaArvoKoodisto(headers.get(cellCount));
-
+                            relaatio.setAlaArvoKoodisto(alaKoodistoUri);
                             relaatio.setKoodiAlaArvo(getCellValueAsString(currentRow.getCell(cellCount)));
                             koodiRelaatios.add(relaatio);
                         }
@@ -85,7 +88,7 @@ public class KoodistoRelaatioExcelReader {
         return koodiRelaatios;
     }
 
-    private String getCellValueAsString(HSSFCell cell) {
+    private String getCellValueAsString(final HSSFCell cell) {
         if (cell == null) {
             return null;
         }

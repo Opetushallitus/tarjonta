@@ -19,6 +19,5 @@ package fi.vm.sade.tarjonta.data.loader.xls;
  * @author jani
  */
 public enum InputColumnType {
-
     INTEGER, STRING;
 }

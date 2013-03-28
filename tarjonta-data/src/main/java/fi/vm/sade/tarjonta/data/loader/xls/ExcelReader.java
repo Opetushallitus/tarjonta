@@ -34,8 +34,7 @@ import java.util.Set;
  * @author jani
  */
 public class ExcelReader<T extends AbstractReadableRow> {
-
-    private static Logger log = LoggerFactory.getLogger(ExcelReader.class);
+    private final Logger log = LoggerFactory.getLogger(ExcelReader.class);
     private int maxReadRows = 100;
     private final String DATE_FORMAT = "dd.MM.yyyy";
     private Class dataObjectClass;
@@ -43,7 +42,7 @@ public class ExcelReader<T extends AbstractReadableRow> {
     //Data mapping config, map DTO property to a excel row column using reflection.
     private Column[] columns;
 
-    public ExcelReader(Class dataObjectClass, Column[] columns, int maxReadRows) {
+    public ExcelReader(final Class dataObjectClass, final Column[] columns, final int maxReadRows) {
         if (dataObjectClass == null) {
             throw new RuntimeException("Class instance cannot be null");
         }
@@ -62,18 +61,18 @@ public class ExcelReader<T extends AbstractReadableRow> {
             throw new RuntimeException("Missing file path.");
         }
 
-        FileInputStream fileInputStream = new FileInputStream(pathToFile);
+        final FileInputStream fileInputStream = new FileInputStream(pathToFile);
 
         try {
             log.info("Read file : " + pathToFile);
             log.info("Read bytes : " + fileInputStream.available());
             return read(fileInputStream, verbose);
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             log.error("File load failed", ex);
         } finally {
             try {
                 fileInputStream.close();
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 log.warn("File input stream close failed.");
             }
         }
@@ -81,18 +80,18 @@ public class ExcelReader<T extends AbstractReadableRow> {
         return null;
     }
 
-    public Set<T> read(InputStream excelAsInputStream, boolean verbose) throws IOException {
-        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(excelAsInputStream);
+    public Set<T> read(final InputStream excelAsInputStream, final boolean verbose) throws IOException {
+        final HSSFWorkbook hssfWorkbook = new HSSFWorkbook(excelAsInputStream);
         this.setWorkbook(hssfWorkbook);
         excelAsInputStream.close();
-        HSSFSheet sheet = getWorkbook().getSheetAt(0); // first sheet
+        final HSSFSheet sheet = getWorkbook().getSheetAt(0); // first sheet
 
         if (verbose) {
             log.info("Read rows : " + maxReadRows);
             log.info("Max rows available : " + sheet.getLastRowNum());
         }
 
-        Set<T> list = new HashSet<T>();
+        final Set<T> list = new HashSet<T>();
         boolean stop = false;
 
         for (int rowNumber = 1; rowNumber <= maxReadRows; rowNumber++) {
@@ -103,7 +102,7 @@ public class ExcelReader<T extends AbstractReadableRow> {
             T dto;
             try {
                 dto = (T) dataObjectClass.newInstance();
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 throw new RuntimeException("Initialization of the data object instance failed.");
             }
             HSSFCell cell = null;
@@ -119,7 +118,7 @@ public class ExcelReader<T extends AbstractReadableRow> {
 
                     cell = currentRow.getCell(i);
 
-                    String cellValue = getCellValueAsString(cell);
+                    final String cellValue = getCellValueAsString(cell);
 
                     if (cellValue == null || cellValue.isEmpty() || cellValue.trim().length() < 1) {
                         if (verbose) {
@@ -153,7 +152,7 @@ public class ExcelReader<T extends AbstractReadableRow> {
                             //do nothing
                             break;
                     }
-                } catch (Exception ex) {
+                } catch (final Exception ex) {
                     log.error("Excel reader failed.", ex);
                 }
             }
@@ -166,24 +165,20 @@ public class ExcelReader<T extends AbstractReadableRow> {
         return list;
     }
 
-    private String getCellValueAsString(HSSFCell cell) {
+    private String getCellValueAsString(final HSSFCell cell) {
         if (cell == null) {
             return null;
         }
         try {
             if (HSSFDateUtil.isCellDateFormatted(cell)) {
-
-                Date cellDate = cell.getDateCellValue();
-
-                SimpleDateFormat smp = new SimpleDateFormat(DATE_FORMAT);
+                final Date cellDate = cell.getDateCellValue();
+                final SimpleDateFormat smp = new SimpleDateFormat(DATE_FORMAT);
                 return smp.format(cellDate);
-
-
             } else {
                 cell.setCellType(Cell.CELL_TYPE_STRING);
                 return cell.getStringCellValue();
             }
-        } catch (Exception exp) {
+        } catch (final Exception exp) {
             cell.setCellType(Cell.CELL_TYPE_STRING);
             return cell.getStringCellValue();
         }
@@ -200,7 +195,7 @@ public class ExcelReader<T extends AbstractReadableRow> {
     /**
      * @param workbook the workbook to set
      */
-    public void setWorkbook(HSSFWorkbook workbook) {
+    public void setWorkbook(final HSSFWorkbook workbook) {
         this.workbook = workbook;
     }
 }

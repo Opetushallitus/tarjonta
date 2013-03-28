@@ -31,7 +31,6 @@ import java.util.Set;
  * Date: 13.2.2013
  */
 public class KoodiRelaatioData {
-
     private final Logger log = LoggerFactory.getLogger(CommonKoodiData.class);
     private String fileUri = null;
 
@@ -42,7 +41,7 @@ public class KoodiRelaatioData {
             new Column("koodiAlaArvo", "ALA_KOODI_ARVO", InputColumnType.STRING)
     };
 
-    public KoodiRelaatioData(String filepath) throws IOException, ExceptionMessage {
+    public KoodiRelaatioData(final String filepath) throws IOException, ExceptionMessage {
         fileUri = filepath;
         if (fileUri != null && fileUri.length() > 1) {
             final ExcelReader<KoodiRelaatio> koodiReader = new ExcelReader<KoodiRelaatio>(KoodiRelaatio.class, COMMON_KOODI_RELATIONS, Integer.MAX_VALUE);
@@ -55,5 +54,4 @@ public class KoodiRelaatioData {
     public Set<KoodiRelaatio> getKoodiRelaatios() {
         return koodiRelaatios;
     }
-
 }

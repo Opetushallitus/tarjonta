@@ -52,7 +52,7 @@ public class CommonKoodiData {
             new Column("loppuPvm", "LOPPUPVM", InputColumnType.STRING)
     };
 
-    public CommonKoodiData(String filepath) throws IOException, ExceptionMessage {
+    public CommonKoodiData(final String filepath) throws IOException, ExceptionMessage {
         fileUri = filepath;
         if (fileUri != null && fileUri.length() > 1) {
             final ExcelReader<Koodi> koodiReader = new ExcelReader<Koodi>(Koodi.class, COMMON_KOODI_COLUMNS, Integer.MAX_VALUE);

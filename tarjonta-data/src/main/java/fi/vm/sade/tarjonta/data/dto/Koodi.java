@@ -26,7 +26,6 @@ import org.apache.commons.lang.StringUtils;
 * This bean is populated with values from Excel-sheet containing koodisto data
  */
 public class Koodi extends AbstractReadableRow {
-
     private String koodiArvo;
 
     private String koodiNimiFi;
@@ -49,7 +48,7 @@ public class Koodi extends AbstractReadableRow {
         return koodiArvo;
     }
 
-    public void setKoodiArvo(String koodiArvo) {
+    public void setKoodiArvo(final String koodiArvo) {
         this.koodiArvo = koodiArvo;
     }
 
@@ -57,7 +56,7 @@ public class Koodi extends AbstractReadableRow {
         return koodiNimiFi;
     }
 
-    public void setKoodiNimiFi(String koodiNimiFi) {
+    public void setKoodiNimiFi(final String koodiNimiFi) {
         this.koodiNimiFi = koodiNimiFi;
     }
 
@@ -65,7 +64,7 @@ public class Koodi extends AbstractReadableRow {
         return koodiNimiSv;
     }
 
-    public void setKoodiNimiSv(String koodiNimiSv) {
+    public void setKoodiNimiSv(final String koodiNimiSv) {
         this.koodiNimiSv = koodiNimiSv;
     }
 
@@ -73,7 +72,7 @@ public class Koodi extends AbstractReadableRow {
         return koodiNimiEn;
     }
 
-    public void setKoodiNimiEn(String koodiNimiEn) {
+    public void setKoodiNimiEn(final String koodiNimiEn) {
         this.koodiNimiEn = koodiNimiEn;
     }
 
@@ -81,7 +80,7 @@ public class Koodi extends AbstractReadableRow {
         return koodiKuvausFi;
     }
 
-    public void setKoodiKuvausFi(String koodiKuvausFi) {
+    public void setKoodiKuvausFi(final String koodiKuvausFi) {
         this.koodiKuvausFi = koodiKuvausFi;
     }
 
@@ -89,7 +88,7 @@ public class Koodi extends AbstractReadableRow {
         return koodiKuvausSv;
     }
 
-    public void setKoodiKuvausSv(String koodiKuvausSv) {
+    public void setKoodiKuvausSv(final String koodiKuvausSv) {
         this.koodiKuvausSv = koodiKuvausSv;
     }
 
@@ -97,7 +96,7 @@ public class Koodi extends AbstractReadableRow {
         return koodiKuvausEn;
     }
 
-    public void setKoodiKuvausEn(String koodiKuvausEn) {
+    public void setKoodiKuvausEn(final String koodiKuvausEn) {
         this.koodiKuvausEn = koodiKuvausEn;
     }
 
@@ -105,7 +104,7 @@ public class Koodi extends AbstractReadableRow {
         return koodiLyhytNimiFi;
     }
 
-    public void setKoodiLyhytNimiFi(String koodiLyhytNimiFi) {
+    public void setKoodiLyhytNimiFi(final String koodiLyhytNimiFi) {
         this.koodiLyhytNimiFi = koodiLyhytNimiFi;
     }
 
@@ -113,7 +112,7 @@ public class Koodi extends AbstractReadableRow {
         return koodiLyhytNimiSv;
     }
 
-    public void setKoodiLyhytNimiSv(String koodiLyhytNimiSv) {
+    public void setKoodiLyhytNimiSv(final String koodiLyhytNimiSv) {
         this.koodiLyhytNimiSv = koodiLyhytNimiSv;
     }
 
@@ -121,7 +120,7 @@ public class Koodi extends AbstractReadableRow {
         return koodiLyhytNimiEn;
     }
 
-    public void setKoodiLyhytNimiEn(String koodiLyhytNimiEn) {
+    public void setKoodiLyhytNimiEn(final String koodiLyhytNimiEn) {
         this.koodiLyhytNimiEn = koodiLyhytNimiEn;
     }
 
@@ -129,7 +128,7 @@ public class Koodi extends AbstractReadableRow {
         return alkuPvm;
     }
 
-    public void setAlkuPvm(String alkuPvm) {
+    public void setAlkuPvm(final String alkuPvm) {
         this.alkuPvm = alkuPvm;
     }
 
@@ -137,17 +136,12 @@ public class Koodi extends AbstractReadableRow {
         return loppuPvm;
     }
 
-    public void setLoppuPvm(String loppuPvm) {
+    public void setLoppuPvm(final String loppuPvm) {
         this.loppuPvm = loppuPvm;
     }
 
     @Override
     public boolean isEmpty() {
-        return StringUtils.isBlank(koodiArvo) && StringUtils.isBlank(koodiNimiFi)
-                && StringUtils.isBlank(koodiNimiSv) && StringUtils.isBlank(koodiNimiEn)
-                && StringUtils.isBlank(koodiKuvausFi) && StringUtils.isBlank(koodiKuvausSv)
-                && StringUtils.isBlank(koodiKuvausEn) && StringUtils.isBlank(koodiLyhytNimiFi)
-                && StringUtils.isBlank(koodiLyhytNimiSv) && StringUtils.isBlank(koodiLyhytNimiEn)
-                && StringUtils.isBlank(alkuPvm) && StringUtils.isBlank(loppuPvm);
+        return StringUtils.isBlank(koodiArvo);
     }
 }

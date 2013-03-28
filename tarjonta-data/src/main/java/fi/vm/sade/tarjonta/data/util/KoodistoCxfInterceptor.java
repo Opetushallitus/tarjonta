@@ -34,7 +34,6 @@ import java.util.Map;
  * Date: 27.2.2013
  */
 public class KoodistoCxfInterceptor extends AbstractPhaseInterceptor<Message> {
-
     private final Logger log = LoggerFactory.getLogger(KoodistoCxfInterceptor.class);
 
     public KoodistoCxfInterceptor() {
@@ -42,9 +41,8 @@ public class KoodistoCxfInterceptor extends AbstractPhaseInterceptor<Message> {
     }
 
     @Override
-    public void handleMessage(Message message) throws Fault {
-
-        Map<String, List> headers = (Map<String, List>) message.get(Message.PROTOCOL_HEADERS);
+    public void handleMessage(final Message message) throws Fault {
+        final Map<String, List> headers = (Map<String, List>) message.get(Message.PROTOCOL_HEADERS);
         try {
             headers.put("CasSecurityTicket", Collections.singletonList("oldDeprecatedSecurity_REMOVE"));
             headers.put("oldDeprecatedSecurity_REMOVE_username", Collections.singletonList("admin@oph.fi"));
@@ -52,6 +50,5 @@ public class KoodistoCxfInterceptor extends AbstractPhaseInterceptor<Message> {
         } catch (Exception exp) {
             log.warn("UNABLE TO SET HTTP HEADERS!");
         }
-
     }
 }

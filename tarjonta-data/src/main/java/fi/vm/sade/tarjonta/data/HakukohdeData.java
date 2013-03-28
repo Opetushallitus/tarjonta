@@ -28,7 +28,6 @@ import java.net.URL;
 import java.util.Set;
 
 public class HakukohdeData {
-
     private static final Logger log = LoggerFactory.getLogger(HakukohdeData.class);
     private static final String FILE_URI = "/YHTEISHAKUKOODIT_TOINEN_ASTE_Relaatiot2.xls";
     private Set<YhteishakuKooditDTO> loadedData;

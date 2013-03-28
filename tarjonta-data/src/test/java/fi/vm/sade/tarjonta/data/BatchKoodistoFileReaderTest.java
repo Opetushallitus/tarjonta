@@ -115,17 +115,18 @@ public class BatchKoodistoFileReaderTest {
         log.info("captured create koodi arvo {}", capturedCreateKoodiArvo);
         assertTrue("create koodi arvo should be alpha-numeric-space", StringUtils.isAlphanumericSpace(capturedCreateKoodiArvo));
 
-        // verify update koodi tila
-        final ArgumentCaptor<UpdateKoodiDataType> updateKoodi = ArgumentCaptor.forClass(UpdateKoodiDataType.class);
-        verify(koodiAdminService, times(4)).updateKoodi(updateKoodi.capture());
-        final TilaType capturedUpdateKoodiTila = updateKoodi.getValue().getTila();
-        log.info("captured update koodi tila {}", capturedUpdateKoodiTila.value());
-        assertEquals("HYVAKSYTTY", capturedUpdateKoodiTila.value());
-
         // verify suhteentyyppi
         final ArgumentCaptor<SuhteenTyyppiType> createSuhteentyyppi = ArgumentCaptor.forClass(SuhteenTyyppiType.class);
-        verify(koodiAdminService, times(2)).addRelationByAlakoodi(any(KoodiUriAndVersioType.class), anyListOf(KoodiUriAndVersioType.class), createSuhteentyyppi.capture());
+        verify(koodiAdminService, times(4)).addRelationByAlakoodi(any(KoodiUriAndVersioType.class), anyListOf(KoodiUriAndVersioType.class), createSuhteentyyppi.capture());
         log.info("captured suhteentyyppi {}", createSuhteentyyppi.getValue().value());
         assertEquals("SISALTYY", createSuhteentyyppi.getValue().value());
+    }
+
+    @Test
+    public void testProgress() {
+        assertEquals("Progress: [##########          ] 50 % done", reader.getProgress(1, 2));
+        assertEquals("Progress: [####################] 100 % done", reader.getProgress(10, 10));
+        assertEquals("Progress: [####                ] 20 % done", reader.getProgress(20, 100));
+        assertEquals("[invalid]", reader.getProgress(1, 0));
     }
 }

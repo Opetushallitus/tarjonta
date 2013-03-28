@@ -19,12 +19,11 @@ package fi.vm.sade.tarjonta.data.loader.xls;
  * @author Jani Wilén
  */
 public class Column {
-
     private String key;
     private String title;
     private InputColumnType type;
 
-    public Column(String key, String title, InputColumnType type) {
+    public Column(final String key, final String title, final InputColumnType type) {
         this.key = key;
         this.type = type;
         this.title = title;

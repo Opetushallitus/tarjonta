@@ -6,14 +6,13 @@ package fi.vm.sade.tarjonta.data.util;
  * Time: 18:08
  */
 public class CommonConstants {
-
     private String organisaatioOid;
 
     private String organisaatioNimi;
 
     private String baseGroupUri;
 
-    public CommonConstants(String orgOid, String orgName, String baseUri) {
+    public CommonConstants(final String orgOid, final String orgName, final String baseUri) {
         this.organisaatioNimi = orgName;
         this.organisaatioOid = orgOid;
         this.baseGroupUri = baseUri;

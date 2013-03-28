@@ -30,7 +30,7 @@ import java.io.IOException;
 public class AuthCallbackHandler implements CallbackHandler {
     private String password;
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
@@ -39,8 +39,8 @@ public class AuthCallbackHandler implements CallbackHandler {
     }
 
     @Override
-    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-        WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
+    public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
         pc.setPassword(password);
     }
 }

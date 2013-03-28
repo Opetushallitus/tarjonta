@@ -34,7 +34,6 @@ import java.util.Set;
  * @author Jani Wilén
  */
 public class Valintaperustekuvaus {
-
     private final Logger log = LoggerFactory.getLogger(Valintaperustekuvaus.class);
     private static final String KOODISTO_HAKUKOHDE_URI = "Hakukohde";
     private static final String KOODISTO_HAKUKOHDE_NAME = "T2 hakukohde";
@@ -46,7 +45,8 @@ public class Valintaperustekuvaus {
     private static final String FILE_HAKUKOHDE_PATH = "/koodistoHakukohdeImportTest.xls";
     private static final String FILE_VALINTAPERUSTEKUVAUS_PATH = "/koodistoValintaperutekuvausImport.xls";
 
-    public Valintaperustekuvaus(TarjontaDataKoodistoHelper koodistoHelper, CommonConstants constant) throws IOException, ExceptionMessage {
+    public Valintaperustekuvaus(final TarjontaDataKoodistoHelper koodistoHelper,
+                                final CommonConstants constant) throws IOException, ExceptionMessage {
         final List ryhmaUris = new ArrayList<String>();
         ryhmaUris.add(constant.getBaseGroupUri());
 
@@ -56,7 +56,7 @@ public class Valintaperustekuvaus {
         if (!koodistoHelper.isKoodisto(KOODISTO_HAKUKOHDE_URI)) {
             //final URL hakukohdeExcelPath = this.getClass().getResource(FILE_HAKUKOHDE_PATH);
 
-            //koodistoHelper.addCodeGroup(ryhmaUris, KOODISTO_HAKUKOHDE_URI, KOODISTO_HAKUKOHDE_NAME);
+            //koodistoHelper.addKoodisto(ryhmaUris, KOODISTO_HAKUKOHDE_URI, KOODISTO_HAKUKOHDE_NAME);
             //log.debug("createdkoodisto : {}", KOODISTO_HAKUKOHDE_URI);
 
             throw new RuntimeException("Hakukohde koodisto was missing!");
@@ -72,9 +72,10 @@ public class Valintaperustekuvaus {
         addKoodistoRelations(koodistoHelper);
     }
 
-    private void addKoodistos(final TarjontaDataKoodistoHelper koodistoHelper, final List<String> ryhmaUris) throws IOException, ExceptionMessage {
+    private void addKoodistos(final TarjontaDataKoodistoHelper koodistoHelper,
+                              final List<String> ryhmaUris) throws IOException, ExceptionMessage {
         if (!koodistoHelper.isKoodisto(KOODISTO_VALINTAPERUSTEKUVAUS_URI)) {
-            koodistoHelper.addCodeGroup(ryhmaUris, KOODISTO_VALINTAPERUSTEKUVAUS_URI, KOODISTO_VALINTAPERUSTEKUVAUS_NAME);
+            koodistoHelper.addKoodisto(ryhmaUris, KOODISTO_VALINTAPERUSTEKUVAUS_URI, KOODISTO_VALINTAPERUSTEKUVAUS_NAME);
             log.debug("Koodisto created, koodisto uri : {}", KOODISTO_VALINTAPERUSTEKUVAUS_URI);
         } else {
             log.info("Koodisto service already has the koodisto.  Koodisto uri : {}", KOODISTO_VALINTAPERUSTEKUVAUS_URI);
@@ -82,18 +83,18 @@ public class Valintaperustekuvaus {
     }
 
     private void addKoodis(final TarjontaDataKoodistoHelper koodistoHelper) throws IOException, ExceptionMessage {
-        URL valintaperustekuvaus = this.getClass().getResource(FILE_VALINTAPERUSTEKUVAUS_PATH);
-        CommonKoodiData valinta = new CommonKoodiData(valintaperustekuvaus.getPath());
+        final URL valintaperustekuvaus = this.getClass().getResource(FILE_VALINTAPERUSTEKUVAUS_PATH);
+        final CommonKoodiData valinta = new CommonKoodiData(valintaperustekuvaus.getPath());
         koodistoHelper.loadKoodisToKoodisto(valinta.getLoadedKoodis(), KOODISTO_VALINTAPERUSTEKUVAUS_URI);
         log.debug("Koodis imported to koodisto uri : {}", KOODISTO_VALINTAPERUSTEKUVAUS_URI);
     }
 
-    private void addKoodistoRelations(TarjontaDataKoodistoHelper koodistoHelper) throws IOException, ExceptionMessage {
+    private void addKoodistoRelations(final TarjontaDataKoodistoHelper koodistoHelper) throws IOException, ExceptionMessage {
         final URL resource = this.getClass().getResource(RELATION_VALINTA_HAKUKOHDE_FILE_PATH);
-        KoodiRelaatioData koodiRelaatioData = new KoodiRelaatioData(resource.getPath());
+        final KoodiRelaatioData koodiRelaatioData = new KoodiRelaatioData(resource.getPath());
 
-        Set<KoodiRelaatio> koodiRelaatios = koodiRelaatioData.getKoodiRelaatios();
-        for (KoodiRelaatio relaatio : koodiRelaatios) {
+        final Set<KoodiRelaatio> koodiRelaatios = koodiRelaatioData.getKoodiRelaatios();
+        for (final KoodiRelaatio relaatio : koodiRelaatios) {
             relaatio.setYlaArvoKoodisto(KOODISTO_VALINTAPERUSTEKUVAUS_URI);
             relaatio.setAlaArvoKoodisto(KOODISTO_HAKUKOHDE_URI);
         }

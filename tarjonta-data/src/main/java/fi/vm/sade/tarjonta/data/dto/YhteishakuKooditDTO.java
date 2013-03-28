@@ -23,7 +23,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @author Jani Wilén
  */
 public class YhteishakuKooditDTO extends AbstractReadableRow {
-
     private String koulutusohjelmanKoodiarvo;
     private String tutkintonimike;
     private String tutkintonimikkeenKoodiarvo;
@@ -42,7 +41,7 @@ public class YhteishakuKooditDTO extends AbstractReadableRow {
     /**
      * @param koulutusohjelmanKoodiarvo the koulutusohjelmanKoodiarvo to set
      */
-    public void setKoulutusohjelmanKoodiarvo(String koulutusohjelmanKoodiarvo) {
+    public void setKoulutusohjelmanKoodiarvo(final String koulutusohjelmanKoodiarvo) {
         this.koulutusohjelmanKoodiarvo = koulutusohjelmanKoodiarvo;
     }
 
@@ -56,7 +55,7 @@ public class YhteishakuKooditDTO extends AbstractReadableRow {
     /**
      * @param tutkintonimike the tutkintonimike to set
      */
-    public void setTutkintonimike(String tutkintonimike) {
+    public void setTutkintonimike(final String tutkintonimike) {
         this.tutkintonimike = tutkintonimike;
     }
 
@@ -70,7 +69,7 @@ public class YhteishakuKooditDTO extends AbstractReadableRow {
     /**
      * @param tutkintonimikkeenKoodiarvo the tutkintonimikkeenKoodiarvo to set
      */
-    public void setTutkintonimikkeenKoodiarvo(String tutkintonimikkeenKoodiarvo) {
+    public void setTutkintonimikkeenKoodiarvo(final String tutkintonimikkeenKoodiarvo) {
         this.tutkintonimikkeenKoodiarvo = tutkintonimikkeenKoodiarvo;
     }
 
@@ -84,7 +83,7 @@ public class YhteishakuKooditDTO extends AbstractReadableRow {
     /**
      * @param tutkinnonNimi the tutkinnonNimi to set
      */
-    public void setTutkinnonNimi(String tutkinnonNimi) {
+    public void setTutkinnonNimi(final String tutkinnonNimi) {
         this.tutkinnonNimi = tutkinnonNimi;
     }
 
@@ -98,7 +97,7 @@ public class YhteishakuKooditDTO extends AbstractReadableRow {
     /**
      * @param koulutuskoodi the koulutuskoodi to set
      */
-    public void setKoulutuskoodi(String koulutuskoodi) {
+    public void setKoulutuskoodi(final String koulutuskoodi) {
         this.koulutuskoodi = koulutuskoodi;
     }
 
@@ -107,15 +106,15 @@ public class YhteishakuKooditDTO extends AbstractReadableRow {
     private static final String VERSION = "#1";
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
         if (obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
-        YhteishakuKooditDTO other = (YhteishakuKooditDTO) obj;
-        EqualsBuilder builder = new EqualsBuilder();
+        final YhteishakuKooditDTO other = (YhteishakuKooditDTO) obj;
+        final EqualsBuilder builder = new EqualsBuilder();
         builder.append(getKoulutuskoodi(), other.getKoulutuskoodi()).
                 append(koulutusohjelmanKoodiarvo, other.koulutusohjelmanKoodiarvo);
 
@@ -138,7 +137,7 @@ public class YhteishakuKooditDTO extends AbstractReadableRow {
     /**
      * @param hakukohdeKoodiArvo the hakukohdeKoodiArvo to set
      */
-    public void setHakukohdeKoodiArvo(String hakukohdeKoodiArvo) {
+    public void setHakukohdeKoodiArvo(final String hakukohdeKoodiArvo) {
         this.hakukohdeKoodiArvo = hakukohdeKoodiArvo;
     }
 
@@ -152,7 +151,7 @@ public class YhteishakuKooditDTO extends AbstractReadableRow {
     /**
      * @param hakukohteenNimi the hakukohteenNimi to set
      */
-    public void setHakukohteenNimi(String hakukohteenNimi) {
+    public void setHakukohteenNimi(final String hakukohteenNimi) {
         this.hakukohteenNimi = hakukohteenNimi;
     }
 

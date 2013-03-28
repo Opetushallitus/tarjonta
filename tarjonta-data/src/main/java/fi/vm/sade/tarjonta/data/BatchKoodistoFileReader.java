@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +49,9 @@ public class BatchKoodistoFileReader {
         }
         log.info("Found [{}] koodisto files and [{}] relaatio files", koodistoFiles.size(), relaatioFiles.size());
 
+        final int fileCount = koodistoFiles.size() + relaatioFiles.size();
+        int fileCounter = 1;
+
         final Map<File, Exception> koodistoErrors = new HashMap<File, Exception>();
         // insert koodistos
         for (final File koodisto : koodistoFiles) {
@@ -54,6 +61,8 @@ public class BatchKoodistoFileReader {
                 log.error(e.getMessage());
                 koodistoErrors.put(koodisto, e);
             }
+
+            log.info(getProgress(fileCounter++, fileCount));
         }
 
         final Map<File, Exception> relaatioErrors = new HashMap<File, Exception>();
@@ -65,6 +74,8 @@ public class BatchKoodistoFileReader {
                 log.error(e.getMessage());
                 relaatioErrors.put(relaatio, e);
             }
+
+            log.info(getProgress(fileCounter++, fileCount));
         }
 
         if (koodistoErrors.size() > 0 || relaatioErrors.size() > 0) {
@@ -78,6 +89,25 @@ public class BatchKoodistoFileReader {
             }
             log.error(message.toString());
         }
+    }
+
+    protected String getProgress(final int currentCount, final int totalCount) {
+        if (totalCount == 0) {
+            return "[invalid]";
+        }
+        final int done = new BigDecimal(currentCount).divide(new BigDecimal(totalCount), new MathContext(2, RoundingMode.HALF_UP))
+                .multiply(new BigDecimal(100)).intValue(); // 0 ... 100
+        final StringBuilder progress = new StringBuilder("Progress: [");
+        for (int i = 0; i < 20; i++) {
+            if (done > (i * 5)) {
+                progress.append("#");
+            } else {
+                progress.append(" ");
+            }
+        }
+        progress.append("] ").append(done).append(" % done");
+
+        return progress.toString();
     }
 
     private void iterateDirectories(final List<File> koodistoFiles, final List<File> relaatioFiles, final File file) {
