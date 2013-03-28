@@ -68,7 +68,7 @@ public class PisterajaTable extends GridLayout {
         super(5,4);
         setSpacing(true);
         setMargin(true);
-        setWidth(60, UNITS_PERCENTAGE);
+        setWidth(750, UNITS_PIXELS);
         setColumnExpandRatio(0, 1.0f);
         setColumnExpandRatio(1, 1.0f);
         setColumnExpandRatio(2, 0.5f);

@@ -96,12 +96,6 @@ public class ValintakoeViewImpl extends VerticalLayout {
         }
         addComponent(layout);
     }
-
-    /*
-    @Override
-    protected void buildLayout(VerticalLayout layout) {
-       
-    }*/
     
     private void buildLukioLayout(VerticalLayout layout) {
        layout.setSpacing(true);
