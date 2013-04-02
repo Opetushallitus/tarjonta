@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.data.loader.xls.KoodistoRelaatioExcelReader;
 import fi.vm.sade.tarjonta.data.util.CommonConstants;
 import fi.vm.sade.tarjonta.data.util.DataUtils;
 import fi.vm.sade.tarjonta.data.util.TarjontaDataKoodistoHelper;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,10 +68,13 @@ public class UploadKoodistoData {
         koodistoHelper.setOrganisaatioNimi(commonConstants.getOrganisaatioNimi());
     }
 
-    private KoodistoType createKoodisto(final String koodistoNimi, final String koodistoUri, final String orgOid) throws ExceptionMessage {
+    private KoodistoType createKoodisto(final String koodistoRyhmaUri, final String koodistoNimi,
+                                        final String koodistoUri, final String orgOid) throws ExceptionMessage {
         final List<String> ryhmaUris = new ArrayList<String>();
         ryhmaUris.add(commonConstants.getBaseGroupUri());
-
+        if (StringUtils.isNotBlank(koodistoRyhmaUri)) {
+            ryhmaUris.add(koodistoRyhmaUri);
+        }
 
         try {
             return koodistoHelper.addKoodisto(ryhmaUris, koodistoUri, koodistoNimi);
@@ -88,10 +92,11 @@ public class UploadKoodistoData {
         }
     }
 
-    public void loadKoodistoFromExcel(final String pathToExcel, final String koodistoNimi,
+    public void loadKoodistoFromExcel(final String pathToExcel, final String koodistoRyhmaUri, final String koodistoNimi,
                                       final String orgOid) throws IOException, ExceptionMessage {
         final String koodistoUri = DataUtils.createKoodiUriFromName(koodistoNimi);
-        final KoodistoType createdKoodisto = createKoodisto(koodistoNimi, koodistoUri, orgOid);
+
+        final KoodistoType createdKoodisto = createKoodisto(koodistoRyhmaUri, koodistoNimi, koodistoUri, orgOid);
         if (createdKoodisto != null) {
             final CommonKoodiData koodis = new CommonKoodiData(pathToExcel);
             if (koodis != null && koodis.getLoadedKoodis() != null && koodis.getLoadedKoodis().size() > 0) {

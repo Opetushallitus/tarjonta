@@ -8,6 +8,7 @@ import fi.vm.sade.koodisto.service.types.*;
 import fi.vm.sade.koodisto.service.types.common.*;
 import fi.vm.sade.tarjonta.data.loader.xls.KoodistoRelaatioExcelReader;
 import fi.vm.sade.tarjonta.data.util.TarjontaDataKoodistoHelper;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,13 +94,18 @@ public class BatchKoodistoFileReaderTest {
         reader.read();
 
         // verify create koodistoUri
+        final ArgumentCaptor<List> koodistoUriList = ArgumentCaptor.forClass(List.class);
         final ArgumentCaptor<CreateKoodistoDataType> createKoodisto = ArgumentCaptor.forClass(CreateKoodistoDataType.class);
-        verify(koodistoAdminService, times(2)).createKoodisto(any(List.class), createKoodisto.capture());
+        verify(koodistoAdminService, times(2)).createKoodisto(koodistoUriList.capture(), createKoodisto.capture());
         final String capturedCreateKoodistoUri = createKoodisto.getValue().getMetadataList().get(0).getNimi();
         log.info("captured create koodistoUri {}", capturedCreateKoodistoUri);
         assertTrue("create koodistoUri should be kausi or kunta",
                 StringUtils.equals(capturedCreateKoodistoUri, "kausi")
                         || StringUtils.equals(capturedCreateKoodistoUri, "kunta"));
+        log.info("captured create koodistoRyhmaUris [{}]", StringUtils.join(koodistoUriList.getValue(), ", "));
+        assertTrue("create koodistoRyhmaUris should contain http://kaikkikoodistot and http://alueet",
+                CollectionUtils.containsAny(koodistoUriList.getValue(), Collections.singletonList("http://kaikkikoodistot"))
+                        && CollectionUtils.containsAny(koodistoUriList.getValue(), Collections.singletonList("http://alueet")));
 
         // verify update koodistoUri
         final ArgumentCaptor<UpdateKoodistoDataType> updateKoodisto = ArgumentCaptor.forClass(UpdateKoodistoDataType.class);

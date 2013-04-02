@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.data;
 
+import fi.vm.sade.tarjonta.data.util.DataUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -56,7 +56,8 @@ public class BatchKoodistoFileReader {
         // insert koodistos
         for (final File koodisto : koodistoFiles) {
             try {
-                uploadKoodistoData.loadKoodistoFromExcel(koodisto.getAbsolutePath(), StringUtils.substringBefore(koodisto.getName().toLowerCase(), "."), organisaatioOid);
+                uploadKoodistoData.loadKoodistoFromExcel(koodisto.getAbsolutePath(), getKoodistoRyhmaUri(koodisto.toURI().toString()),
+                        StringUtils.substringBefore(koodisto.getName().toLowerCase(), "."), organisaatioOid);
             } catch (final Exception e) {
                 log.error(e.getMessage());
                 koodistoErrors.put(koodisto, e);
@@ -89,6 +90,19 @@ public class BatchKoodistoFileReader {
             }
             log.error(message.toString());
         }
+    }
+
+    private String getKoodistoRyhmaUri(final String filePath) {
+        if (StringUtils.containsIgnoreCase(filePath, koodistoDirectory)) {
+            final String koodistoRyhmaNimi = StringUtils.substringBetween(filePath, koodistoDirectory + "/", "/");
+            if (StringUtils.isNotBlank(koodistoRyhmaNimi)) {
+                final String uri = String.format("http://%s", DataUtils.createKoodiUriFromName(koodistoRyhmaNimi));
+                log.info("Found koodistoRyhmaUri [{}]", uri);
+                return uri;
+            }
+        }
+        log.warn("koodistoRyhmaUri not found");
+        return null;
     }
 
     protected String getProgress(final int currentCount, final int totalCount) {

@@ -24,7 +24,7 @@ public class KoodistoUploader {
                     } catch (final IndexOutOfBoundsException iobe) {
                         log.info("organisaatio OID was not entered");
                     }
-                    uploader.loadKoodistoFromExcel(args[1], args[2], orgOid);
+                    uploader.loadKoodistoFromExcel(args[1], null, args[2], orgOid);
                     System.out.println("Koodisto uploaded");
                 } catch (final Exception exp) {
                     log.error("Exception occurred when loading koodisto from excel : {} , exception : {}", args[1], exp.toString());
