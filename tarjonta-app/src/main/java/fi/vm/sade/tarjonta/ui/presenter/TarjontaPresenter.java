@@ -675,7 +675,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public void fetchOrganisaatioTree() {
-        fetchOrganisaatioTree(getTarjoaja().getOrganisationOid());
+        fetchOrganisaatioTree(getNavigationOrganisation().getOrganisationOid());
     }
 
     /*

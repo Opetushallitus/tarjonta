@@ -116,7 +116,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         comboLayout.setComponentAlignment(valitseKoulutusLbl,Alignment.MIDDLE_LEFT);
         koulutusValintaCombo = buildKoulutusValintaCombo();
         koulutusAsteCombo = buildKoulutusAsteCombobox();
-        koulutusValintaCombo.setEnabled(false);
+
         
         
         comboLayout.addComponent(koulutusValintaCombo);
@@ -135,6 +135,8 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         ComboBox koulutusValintaTmp = new ComboBox();
         
         koulutusValintaTmp.addItem("Koulutus");
+        koulutusValintaTmp.select("Koulutus");
+        koulutusValintaTmp.setNullSelectionAllowed(false);
         
         return koulutusValintaTmp;
     }
