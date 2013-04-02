@@ -15,8 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -24,13 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
@@ -41,8 +34,6 @@ import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
-import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
@@ -50,11 +41,8 @@ import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
-import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.StyleEnum;
-import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
-import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
  * Show collected information about koulutus.
@@ -127,50 +115,6 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         hakukohdeRemovalDialog.center();
         getWindow().addWindow(hakukohdeRemovalDialog);
 
-    }
-
-    private Container createHakukohdelistContainer(List<SimpleHakukohdeViewModel> hakukohdes) {
-        BeanItemContainer<ShowKoulutusHakukohdeRow> hakukohdeRows = new BeanItemContainer<ShowKoulutusHakukohdeRow>(ShowKoulutusHakukohdeRow.class);
-        hakukohdeRows.addAll(getKoulutusHakukohdeRows(hakukohdes));
-        return hakukohdeRows;
-    }
-
-    private List<ShowKoulutusHakukohdeRow> getKoulutusHakukohdeRows(List<SimpleHakukohdeViewModel> hakukohdes) {
-        List<ShowKoulutusHakukohdeRow> rows = new ArrayList<ShowKoulutusHakukohdeRow>();
-        for (SimpleHakukohdeViewModel hakukohdeViewModel : hakukohdes) {
-            ShowKoulutusHakukohdeRow row = new ShowKoulutusHakukohdeRow(hakukohdeViewModel);
-            rows.add(row);
-        }
-        return rows;
-    }
-
-    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener) {
-        HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
-        Label titleLabel = UiUtil.label(headerLayout, title);
-        titleLabel.setStyleName(Oph.LABEL_H2);
-
-
-        if (btnCaption != null) {
-            headerLayout.addComponent(titleLabel);
-            Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener);
-            btn.setVisible(presenter.getPermission().userCanUpdateKoulutus(OrganisaatioContext.getContext(presenter)));
-
-            // Add default click listener so that we can show that action has not been implemented as of yet
-            if (listener == null) {
-                btn.addListener(new Button.ClickListener() {
-                    private static final long serialVersionUID = 5019806363620874205L;
-
-                    @Override
-                    public void buttonClick(ClickEvent event) {
-                        getWindow().showNotification("Toiminnallisuutta ei vielä toteutettu");
-                    }
-                });
-            }
-
-            headerLayout.setExpandRatio(btn, 1f);
-            headerLayout.setComponentAlignment(btn, Alignment.TOP_RIGHT);
-        }
-        return headerLayout;
     }
 
     private void addNavigationButtons(VerticalLayout layout, OrganisaatioContext context) {
@@ -290,10 +234,4 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         return model.getOid();
     }
 
-    private Label buildLabel(String text) {
-        Label label = UiUtil.label(null, text);
-        label.setContentMode(Label.CONTENT_XHTML);
-        label.setSizeFull();
-        return label;
-    }
 }
