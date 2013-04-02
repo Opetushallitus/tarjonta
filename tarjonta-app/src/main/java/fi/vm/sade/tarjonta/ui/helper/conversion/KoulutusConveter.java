@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import fi.vm.sade.generic.common.I18N;
@@ -41,6 +42,7 @@ import static fi.vm.sade.tarjonta.ui.helper.conversion.Koulutus2asteConverter.ma
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
+import fi.vm.sade.tarjonta.ui.model.org.TarjoajaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
@@ -75,15 +77,16 @@ public class KoulutusConveter {
     @Autowired(required = true)
     private OIDService oidService;
 
-    public OrganisaatioDTO searchOrganisatioByOid(final String organisaatioOid) {
-        if (organisaatioOid == null) {
-            throw new RuntimeException(INVALID_DATA + "organisation OID cannot be null.");
-        }
+    public OrganisaatioDTO searchOrganisationByOid(final String organisaatioOid, TarjoajaModel model) {
+        Preconditions.checkNotNull(organisaatioOid, "Organisation OID cannot be null.");
+        Preconditions.checkNotNull(model, "TarjoajaModel object cannot be null.");
         OrganisaatioDTO dto = this.organisaatioService.findByOid(organisaatioOid);
 
         if (dto == null || dto.getOid() == null) {
             throw new RuntimeException("No organisation found by OID : " + organisaatioOid);
         }
+
+        model.dtoToModel(dto);
 
         return dto;
     }

@@ -84,7 +84,7 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
     private void addRow(final GridLayout kielivalinnat, final String name) {
         buildLabel(kielivalinnat, name);
         final VerticalLayout vl = new VerticalLayout();
-        buildTokenField(name, vl, KoodistoURIHelper.KOODISTO_KIELIVALIKOIMA_URI);
+        buildTokenField(name, vl, KoodistoURIHelper.KOODISTO_KIELI_URI);
 
         kielivalinnat.addComponent(vl, 1, kielivalinnat.getCursorY() - 1);
         Label help = UiBuilder.label(this, T(name + ".help"), LabelStyleEnum.TEXT);

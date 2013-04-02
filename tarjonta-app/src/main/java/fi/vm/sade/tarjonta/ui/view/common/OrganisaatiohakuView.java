@@ -275,7 +275,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
                 if ((event != null && event.getItemId() != null)) {
                     final OrganisaatioPerustietoType opt = (OrganisaatioPerustietoType) event.getItemId();
                     final String newOrganisaatioOid = opt.getOid();
-                    final String previousOrganisaatioOid = presenter.getModel().getOrganisaatioOid();
+                    final String previousOrganisaatioOid = presenter.getNavigationOrganisation().getOrganisationOid();
             
                     //don't allow an user to deselect a row item in a tree component.
                     if (newOrganisaatioOid != null && (previousOrganisaatioOid == null || !newOrganisaatioOid.equals(previousOrganisaatioOid))) {
@@ -449,9 +449,9 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
      *
      * @param item the organisaatio selected.
      */
-    private void organisaatioSelected(OrganisaatioPerustietoType item) {
+    private void organisaatioSelected(final OrganisaatioPerustietoType item) {
         LOG.info("Event fired: " + item.getOid());
-        if (!item.getOid().equals(presenter.getModel().getOrganisaatioOid())) {
+        if (!item.getOid().equals(presenter.getNavigationOrganisation().getOrganisationOid())) {
             presenter.selectOrganisaatio(item.getOid(), item.getNimiFi());
         } else {
             presenter.unSelectOrganisaatio();

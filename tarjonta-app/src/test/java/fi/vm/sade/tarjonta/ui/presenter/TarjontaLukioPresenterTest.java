@@ -32,7 +32,6 @@ import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
-import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -40,7 +39,7 @@ import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
@@ -59,7 +58,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import org.easymock.Capture;
@@ -79,6 +77,7 @@ import org.powermock.reflect.Whitebox;
  */
 public class TarjontaLukioPresenterTest {
 
+    private static final String ORGANISATION_NAME = "organisation name";
     private static final String WEB_LINK = "http://localhost:8080/";
     private static final String LAAJUUS_ARVO = "laajuus_arvo";
     private static final String LAAJUUS_YKSIKKO = "laajuus_tyyppi";
@@ -114,6 +113,7 @@ public class TarjontaLukioPresenterTest {
     private OrganisaatioDTO orgDto;
     private TarjontaUIHelper tarjontaUiHelper;
     private YhteyshenkiloModel yhteyshenkiloModel;
+    private TarjontaPresenter tarjontaPresenter;
 
     public TarjontaLukioPresenterTest() {
     }
@@ -133,12 +133,12 @@ public class TarjontaLukioPresenterTest {
         fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi omtt = new fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi();
         fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti teksti = new fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti();
         teksti.setKieliKoodi(LANGUAGE_FI);
-        teksti.setValue("organisation name");
+        teksti.setValue(ORGANISATION_NAME);
         omtt.getTeksti().add(teksti);
         orgDto.setNimi(omtt);
 
-        TarjontaPresenter tarjontaPresenter = new TarjontaPresenter();
-        tarjontaPresenter.getModel().setOrganisaatioOid(ORGANISAATIO_OID);
+        tarjontaPresenter = new TarjontaPresenter();
+        tarjontaPresenter.getNavigationOrganisation().setOrganisationOid(ORGANISAATIO_OID);
         tarjontaPresenter.setRootView(new TarjontaRootView(false));
         instance = new TarjontaLukioPresenter();
 
@@ -173,7 +173,7 @@ public class TarjontaLukioPresenterTest {
         Whitebox.setInternalState(instance, "presenter", tarjontaPresenter);
         Whitebox.setInternalState(koulutusKoodisto, "tarjontaUiHelper", tarjontaUiHelper);
 
-        tarjontaPresenter.getModel().getOrganisaatios().add(new TarjontaModel.OrganisaatioOidNamePair(ORGANISAATIO_OID, "org name"));
+        tarjontaPresenter.getTarjoaja().addOneOrganisaatioNameOidPair(new OrganisationOidNamePair(ORGANISAATIO_OID, "org name"));
 
 
         /*
@@ -199,8 +199,6 @@ public class TarjontaLukioPresenterTest {
         perustiedot.setOpintojenLaajuus(createKoodiModel(LAAJUUS_ARVO));
         perustiedot.setOpintojenLaajuusyksikko(createKoodiModel(LAAJUUS_YKSIKKO));
         perustiedot.setOpsuLinkki(WEB_LINK);
-        perustiedot.setOrganisaatioName("organisaatio");
-        perustiedot.setOrganisaatioOid(ORGANISAATIO_OID);
         perustiedot.setPohjakoulutusvaatimus(createKoodiModel("pohjakoulutusvaatimus"));
         perustiedot.setSuunniteltuKesto("kesto");
         perustiedot.setSuunniteltuKestoTyyppi("kesto_tyyppi");
@@ -352,6 +350,8 @@ public class TarjontaLukioPresenterTest {
         t.setOid(KOMO_OID);
         koulutusmoduuliTulos.setKoulutusmoduuli(t);
         vastaus.getKoulutusmoduuliTulos().add(koulutusmoduuliTulos);
+
+        tarjontaPresenter.getModel().getTarjoajaModel().setOrganisation(ORGANISAATIO_OID, ORGANISATION_NAME);
 
         Capture<PaivitaKoulutusTyyppi> localeCapture = new Capture<PaivitaKoulutusTyyppi>();
 
@@ -574,9 +574,8 @@ public class TarjontaLukioPresenterTest {
         assertEquals(createUri("opetuskieli"), perustiedotModel.getOpetuskieli());
         assertEquals(0, perustiedotModel.getOpetusmuoto().size());
         assertEquals(WEB_LINK, perustiedotModel.getOpsuLinkki());
-        assertEquals("organisation name", perustiedotModel.getOrganisaatioName());
-        assertEquals(ORGANISAATIO_OID, perustiedotModel.getOrganisaatioOid());
-        assertEquals(1, perustiedotModel.getOrganisaatioOidTree().size());
+        assertEquals(ORGANISATION_NAME, tarjontaPresenter.getTarjoaja().getOrganisationName());
+        assertEquals(ORGANISAATIO_OID, tarjontaPresenter.getTarjoaja().getOrganisationOid());
         assertEquals("kesto", perustiedotModel.getSuunniteltuKesto());
         assertEquals("yksikko", perustiedotModel.getSuunniteltuKestoTyyppi());
         assertEquals(TUTKINNON_TAVOITTEET, perustiedotModel.getTavoitteet().getNimi());

@@ -56,11 +56,7 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      */
     protected String opsuLinkki;
     protected YhteyshenkiloModel yhteyshenkilo;
-    /*
-     * the organisaatio oids of the organisaatio tree of the tarjoaja organisaatio of this koulutus.
-     * Is used when fetching potential yhteyshenkilos for the current koulutus.
-     */
-    private List<String> organisaatioOidTree;
+
     /*
      * cache maps
      */
@@ -192,11 +188,6 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
         setKomotoOid(null); //KOMOTO OID
         setKoulutusmoduuliOid(null); //KOMO OID
 
-        /*
-         * Organisation data
-         */
-        setOrganisaatioName(null);
-        setOrganisaatioOid(null);
 
         /*
          *  Form selection logic
@@ -255,8 +246,6 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
         builder.append(koulutusaste, other.koulutusaste);
         builder.append(koulutusmoduuliOid, other.koulutusmoduuliOid);
         builder.append(getKoulutuskoodiModel(), other.getKoulutuskoodiModel());
-        builder.append(organisaatioName, other.organisaatioName);
-        builder.append(organisaatioOid, other.organisaatioOid);
         builder.append(getLukiolinja(), other.getLukiolinja());
         builder.append(getKoulutusala(), other.getKoulutusala());
         builder.append(getTutkinto(), other.getTutkinto());
@@ -281,8 +270,6 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
                 .append(koulutusaste)
                 .append(koulutusmoduuliOid)
                 .append(getKoulutuskoodiModel())
-                .append(organisaatioName)
-                .append(organisaatioOid)
                 .append(getLukiolinja())
                 .append(getKoulutusala())
                 .append(getTutkinto())
@@ -352,20 +339,6 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      */
     public void setLukiolinjas(Set<LukiolinjaModel> lukiolinjas) {
         this.lukiolinjas = lukiolinjas;
-    }
-
-    /**
-     * @return the organisaatioOidTree
-     */
-    public List<String> getOrganisaatioOidTree() {
-        return organisaatioOidTree;
-    }
-
-    /**
-     * @param organisaatioOidTree the organisaatioOidTree to set
-     */
-    public void setOrganisaatioOidTree(List<String> organisaatioOidTree) {
-        this.organisaatioOidTree = organisaatioOidTree;
     }
 
     public void createCacheKomos() {

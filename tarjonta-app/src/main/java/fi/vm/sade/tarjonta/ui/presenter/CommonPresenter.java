@@ -40,4 +40,6 @@ public interface CommonPresenter<MODEL extends BaseUIViewModel> {
     public void changeStateToPublished(final String oid, final SisaltoTyyppi sisalto);
 
     public MODEL getModel();
+    
+    
 }

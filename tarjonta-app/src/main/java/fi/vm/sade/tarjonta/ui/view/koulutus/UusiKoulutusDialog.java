@@ -36,9 +36,10 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable(preConstruction = true)
 public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
+    private static final long serialVersionUID = 6240999779746262735L;
     
     private Logger logger = LoggerFactory.getLogger(UusiKoulutusDialog.class);
-    List<String> organisaatioOids;
+    private List<String> organisaatioOids;
     private ComboBox koulutusAsteCombo;
     private ComboBox koulutusValintaCombo;
     
@@ -54,13 +55,14 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         if (organisaatioOids == null) {
             organisaatioOids = new ArrayList<String>();
         }
-        organisaatioOids.add(presenter.getModel().getOrganisaatioOid());
+        organisaatioOids.add(presenter.getNavigationOrganisation().getOrganisationOid());
         return organisaatioOids;
     }
     
     @Override
     protected void setButtonListeners() {
         peruutaBtn.addListener(new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 getParent().getWindow().removeWindow(UusiKoulutusDialog.this);

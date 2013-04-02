@@ -21,7 +21,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
@@ -103,11 +103,11 @@ public class EditKoulutusView extends AbstractVerticalLayout {
     private String getOrganisaationNames() {
         StringBuilder organisaatios = new StringBuilder();
         int counter = 0;
-        for (TarjontaModel.OrganisaatioOidNamePair pair : presenter.getModel().getOrganisaatios()) {
+        for (OrganisationOidNamePair pair : presenter.getTarjoaja().getOrganisaatioOidNamePairs()) {
             if (counter != 0) {
                 organisaatios.append(", ");
             }
-            organisaatios.append(pair.getName());
+            organisaatios.append(pair.getOrganisationName());
             counter++;
         }
         return organisaatios.toString();

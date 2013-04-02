@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
+import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
@@ -23,8 +24,9 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTul
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.org.NavigationModel;
+import fi.vm.sade.tarjonta.ui.model.org.TarjoajaModel;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -39,9 +41,9 @@ public class TarjontaModel extends BaseUIViewModel {
     private Boolean _showIdentifier;
     private String _identifier;
     private String rootOrganisaatioOid;//OPH's root oid.
-    private String parentOrganisaatioOid; //portal user's parent organisation.
+    private NavigationModel navigationModel; //data instance of selected organisation
+    private TarjoajaModel tarjoajaModel; //data instace of exam provider
     private KoulutusSearchSpesificationViewModel _searchSpec = new KoulutusSearchSpesificationViewModel();
-    
     /*
      * 2-aste ammattikoulut
      */
@@ -62,12 +64,9 @@ public class TarjontaModel extends BaseUIViewModel {
     private HakukohdeLiiteViewModel selectedLiite;
     private ValintakoeViewModel selectedValintaKoe;
     private ValintakoeAikaViewModel selectedValintakoeAika;
-    private Collection<OrganisaatioOidNamePair> organisaatios;
     private String selectedKoulutusOid;
     public KoulutusLukioKuvailevatTiedotViewModel koulutusLukioKuvailevatTiedot;
     private boolean selectedHakuStarted = false;
-
-
 
     public String getSelectedKoulutusOid() {
         return selectedKoulutusOid;
@@ -108,7 +107,8 @@ public class TarjontaModel extends BaseUIViewModel {
     }
 
     /**
-     * @param koulutusLukioKuvailevatTiedot the koulutusLukioKuvailevatTiedot to set
+     * @param koulutusLukioKuvailevatTiedot the koulutusLukioKuvailevatTiedot to
+     * set
      */
     public void setKoulutusLukioKuvailevatTiedot(KoulutusLukioKuvailevatTiedotViewModel koulutusLukioKuvailevatTiedot) {
         this.koulutusLukioKuvailevatTiedot = koulutusLukioKuvailevatTiedot;
@@ -122,37 +122,41 @@ public class TarjontaModel extends BaseUIViewModel {
         this.selectedHakuStarted = selectedHakuStarted;
     }
 
-    public static class OrganisaatioOidNamePair {
-
-        private String oid;
-        private String name;
-
-        public OrganisaatioOidNamePair(String oid, String name) {
-            this.oid = oid;
-            this.name = name;
-        }
-
-        public String getOid() {
-            return oid;
-        }
-
-        public void setOid(String oid) {
-            this.oid = oid;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
-    /*
-     * Selected organisaatio data:
+    /**
+     * @return the navigationModel
      */
-    private String organisaatioName;
-    private String organisaatioOid;
+    public NavigationModel getNavigationModel() {
+        if (navigationModel == null) {
+            navigationModel = new NavigationModel();
+        }
+
+        return navigationModel;
+    }
+
+    /**
+     * @param navigaatioModel the navigaatioModel to set
+     */
+    public void setNavigaatioModel(NavigationModel navigationModel) {
+        this.navigationModel = navigationModel;
+    }
+
+    /**
+     * @return the tarjoajaModel
+     */
+    public TarjoajaModel getTarjoajaModel() {
+        if (tarjoajaModel == null) {
+            tarjoajaModel = new TarjoajaModel();
+        }
+
+        return tarjoajaModel;
+    }
+
+    /**
+     * @param tarjoajaModel the tarjoajaModel to set
+     */
+    public void setTarjoajaModel(TarjoajaModel tarjoajaModel) {
+        this.tarjoajaModel = tarjoajaModel;
+    }
 
     public String getIdentifier() {
         return _identifier;
@@ -255,42 +259,6 @@ public class TarjontaModel extends BaseUIViewModel {
         this.hakukohde = hakukohde;
     }
 
-    /**
-     * Gets the name of the selected organisaatio
-     *
-     * @return the organisaatio name
-     */
-    public String getOrganisaatioName() {
-        return organisaatioName;
-    }
-
-    /**
-     * Sets the name of the selected organisaatio
-     *
-     * @param organisaatioName - the organisaatio name to set
-     */
-    public void setOrganisaatioName(String organisaatioName) {
-        this.organisaatioName = organisaatioName;
-    }
-
-    /**
-     * Gets the oid of the selected organisaatio
-     *
-     * @return the organisaatio oid
-     */
-    public String getOrganisaatioOid() {
-        return organisaatioOid;
-    }
-
-    /**
-     * Sets the oid of the selected organisaatio
-     *
-     * @param organisaatioOid - the organisaatio oid to set
-     */
-    public void setOrganisaatioOid(String organisaatioOid) {
-        this.organisaatioOid = organisaatioOid;
-    }
-
     public KoulutusLisatiedotModel getKoulutusLisatiedotModel() {
         if (_koulutusLisatiedotModel == null) {
             _koulutusLisatiedotModel = new KoulutusLisatiedotModel();
@@ -337,9 +305,7 @@ public class TarjontaModel extends BaseUIViewModel {
      * @return the root organisation Oid
      */
     public String getRootOrganisaatioOid() {
-        if (rootOrganisaatioOid == null) {
-            throw new RuntimeException("Application initialization error - organisation root OID cannot be null.");
-        }
+        Preconditions.checkNotNull(rootOrganisaatioOid, "Application initialization error - organisation root OID cannot be null.");
 
         return rootOrganisaatioOid;
     }
@@ -350,9 +316,7 @@ public class TarjontaModel extends BaseUIViewModel {
      * @param rootOrganisationOid the root organisation Oid to set
      */
     public void setRootOrganisaatioOid(String rootOrganisationOid) {
-        if (rootOrganisationOid == null) {
-            throw new IllegalArgumentException("Organisation root OID cannot be null.");
-        }
+        Preconditions.checkNotNull(rootOrganisationOid, "Organisation root OID cannot be null.");
 
         this.rootOrganisaatioOid = rootOrganisationOid;
     }
@@ -363,52 +327,10 @@ public class TarjontaModel extends BaseUIViewModel {
      * @return boolean
      */
     public boolean isSelectedRootOrganisaatio() {
-        if (getOrganisaatioOid() == null) {
+        if (getNavigationModel().getOrganisationOid() == null) {
             return false;
         }
 
-        return getRootOrganisaatioOid().equals(getOrganisaatioOid());
-    }
-
-    /**
-     * Set portal user's parent organisation.
-     *
-     * @return the parentOrganisaatioOid
-     */
-    public String getParentOrganisaatioOid() {
-        if (parentOrganisaatioOid == null) {
-            throw new IllegalArgumentException("Organisation parent OID cannot be null.");
-        }
-
-        return parentOrganisaatioOid;
-    }
-
-    public void addOneOrganisaatioNameOidPair(OrganisaatioOidNamePair pair) {
-        getOrganisaatios().clear();
-        organisaatios.add(pair);
-    }
-
-    /**
-     * Get portal user's parent organisation, at least used in navigation tree.
-     *
-     * @param parentOrganisaatioOid the parentOrganisaatioOid to set
-     */
-    public void setParentOrganisaatioOid(String parentOrganisaatioOid) {
-        if (parentOrganisaatioOid == null) {
-            throw new IllegalArgumentException("Organisation parent OID cannot be null.");
-        }
-
-        this.parentOrganisaatioOid = parentOrganisaatioOid;
-    }
-
-    public Collection<OrganisaatioOidNamePair> getOrganisaatios() {
-        if (organisaatios == null) {
-            organisaatios = new ArrayList<OrganisaatioOidNamePair>();
-        }
-        return organisaatios;
-    }
-
-    public void setOrganisaatios(Collection<OrganisaatioOidNamePair> organisaatios) {
-        this.organisaatios = organisaatios;
+        return getRootOrganisaatioOid().equals(getNavigationModel().getOrganisationOid());
     }
 }

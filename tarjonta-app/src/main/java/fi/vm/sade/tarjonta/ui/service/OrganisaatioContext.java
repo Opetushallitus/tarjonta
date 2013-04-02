@@ -64,7 +64,7 @@ public class OrganisaatioContext {
      */
     public static OrganisaatioContext getContext(final TarjontaPresenter tarjontaPresenter) {
         Preconditions.checkNotNull(tarjontaPresenter);
-        return getContext(tarjontaPresenter.getModel().getOrganisaatioOid());
+        return getContext(tarjontaPresenter.getNavigationOrganisation().getOrganisationOid());
     }
     
     @Override

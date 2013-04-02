@@ -75,12 +75,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     private String yhtHenkEmail;
     private String yhtHenkPuhelin;
     private String YhtHenkiloOid;
-    
-    /*
-     * the organisaatio oids of the organisaatio tree of the tarjoaja organisaatio of this koulutus.
-     * Is used when fetching potential yhteyshenkilos for the current koulutus.
-     */
-    private List<String> organisaatioOidTree;
 
     /*
      * cache maps
@@ -103,7 +97,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
      */
     public void clearModel(final DocumentStatus status) {
         //OIDs
-        setOrganisaatioOid(null);
         setOid(null); //KOMOTO OID
         setTila(TarjontaTila.LUONNOS);
         setKoulutusmoduuliOid(null); //KOMO OID
@@ -127,7 +120,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setSuunniteltuKestoTyyppi(null);
         setOpetusmuoto(null);
         setKoulutuksenTyyppi(null);
-        setOrganisaatioName(null);
         setKoulutuslaji(null);
         setPohjakoulutusvaatimus(null);
         setOpetusmuoto(null);
@@ -226,8 +218,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         builder.append(koulutuskoodiModel, other.koulutuskoodiModel);
         builder.append(documentStatus, other.documentStatus);
         builder.append(userFrienlyDocumentStatus, other.userFrienlyDocumentStatus);
-        builder.append(organisaatioName, other.organisaatioName);
-        builder.append(organisaatioOid, other.organisaatioOid);
         builder.append(koulutusohjelmaModel, other.koulutusohjelmaModel);
         builder.append(koulutuksenTyyppi, other.koulutuksenTyyppi);
         builder.append(getKoulutusala(), other.getKoulutusala());
@@ -258,8 +248,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
                 .append(koulutuskoodiModel)
                 .append(documentStatus)
                 .append(userFrienlyDocumentStatus)
-                .append(organisaatioName)
-                .append(organisaatioOid)
                 .append(koulutusohjelmaModel)
                 .append(koulutuksenTyyppi)
                 .append(getKoulutusala())
@@ -416,14 +404,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
 
     public void setYhtHenkiloOid(String oidHenkilo) {
         this.YhtHenkiloOid = oidHenkilo;
-    }
-    
-    public List<String> getOrganisaatioOidTree() {
-        return organisaatioOidTree;
-    }
-
-    public void setOrganisaatioOidTree(List<String> organisaatioOidTree) {
-        this.organisaatioOidTree = organisaatioOidTree;
     }
 
     public MonikielinenTekstiModel getKoulutusohjelmaTavoitteet() {

@@ -43,27 +43,24 @@ import java.util.Date;
 import java.util.List;
 
 /*
-* Author: Tuomas Katva
-*/
+ * Author: Tuomas Katva
+ */
 @Configurable(preConstruction = true)
-public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
+public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShowHakukohdeViewImpl.class);
-
-    @Autowired(required=true)
+    private static final long serialVersionUID = -4485798240650803109L;
+    @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenterPresenter;
-
     private Window confirmationWindow;
-
     private CreationDialog<KoulutusOidNameViewModel> addlKoulutusDialog;
     private Window addlKoulutusDialogWindow;
-
     private final OrganisaatioContext context;
 
-    public ShowHakukohdeViewImpl (String pageTitle, String message, PageNavigationDTO dto) {
+    public ShowHakukohdeViewImpl(String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
-        context = OrganisaatioContext.getContext(tarjontaPresenterPresenter.getModel().getOrganisaatioOid());
-        LOG.debug(this.getClass().getName()+ "()");
+        context = OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getOrganisationOid());
+        LOG.debug(this.getClass().getName() + "()");
     }
 
     @Override
@@ -80,7 +77,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
         //Build the layout
 
         //XXX oid not set
-        addNavigationButtons(vl, OrganisaatioContext.getContext(tarjontaPresenterPresenter.getModel().getOrganisaatioOid()));
+        addNavigationButtons(vl, OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getOrganisationOid()));
         addLayoutSplit(vl);
         buildMiddleContentLayout(vl);
         addLayoutSplit(vl);
@@ -91,43 +88,47 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
 
     private void buildKoulutuksesLayout(VerticalLayout layout) {
 
-        layout.addComponent(buildHeaderLayout(context, T("sisaltyvatKoulutukset"),null,null,true));
+        layout.addComponent(buildHeaderLayout(context, T("sisaltyvatKoulutukset"), null, null, true));
 
         CategoryTreeView categoryTree = new CategoryTreeView();
         categoryTree.setHeight("100px");
         categoryTree.setContainerDataSource(createHakukohdeKoulutusDatasource(tarjontaPresenterPresenter.getModel().getHakukohde().getKoulukses()));
-        String[] visibleColumns = {"nimiBtn","poistaBtn"};
+        String[] visibleColumns = {"nimiBtn", "poistaBtn"};
         categoryTree.setVisibleColumns(visibleColumns);
-        for (Object item:categoryTree.getItemIds()) {
-            categoryTree.setChildrenAllowed(item,false);
+        for (Object item : categoryTree.getItemIds()) {
+            categoryTree.setChildrenAllowed(item, false);
         }
         layout.addComponent(categoryTree);
     }
 
     private void buildLiitaUusiKoulutusButton(VerticalLayout verticalLayout) {
-        Button liitaUusiKoulutusBtn = UiBuilder.buttonSmallPrimary(null,T("liitaUusiKoulutusPainike"));
+        Button liitaUusiKoulutusBtn = UiBuilder.buttonSmallPrimary(null, T("liitaUusiKoulutusPainike"));
         liitaUusiKoulutusBtn.addListener(new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-               addlKoulutusDialog = tarjontaPresenterPresenter.createHakukohdeCreationDialogWithSelectedTarjoaja();
-               createButtonListenersForDialog();
-               addlKoulutusDialog.setWidth("700px");
-               addlKoulutusDialogWindow = new Window();
-               addlKoulutusDialogWindow.setContent(addlKoulutusDialog);
-               addlKoulutusDialogWindow.setModal(true);
-               addlKoulutusDialogWindow.center();
-               addlKoulutusDialogWindow.setCaption(T("liitaUusiKoulutusDialogTitle"));
-               getWindow().addWindow(addlKoulutusDialogWindow);
+                addlKoulutusDialog = tarjontaPresenterPresenter.createHakukohdeCreationDialogWithSelectedTarjoaja();
+                createButtonListenersForDialog();
+                addlKoulutusDialog.setWidth("700px");
+                addlKoulutusDialogWindow = new Window();
+                addlKoulutusDialogWindow.setContent(addlKoulutusDialog);
+                addlKoulutusDialogWindow.setModal(true);
+                addlKoulutusDialogWindow.center();
+                addlKoulutusDialogWindow.setCaption(T("liitaUusiKoulutusDialogTitle"));
+                getWindow().addWindow(addlKoulutusDialogWindow);
             }
         });
 
         liitaUusiKoulutusBtn.setVisible(tarjontaPresenterPresenter.getPermission().userCanAddKoulutusToHakukohde(OrganisaatioContext.getContext(tarjontaPresenterPresenter)));
-       verticalLayout.addComponent(liitaUusiKoulutusBtn);
+        verticalLayout.addComponent(liitaUusiKoulutusBtn);
     }
 
     private void createButtonListenersForDialog() {
         if (addlKoulutusDialog != null) {
             addlKoulutusDialog.getPeruutaBtn().addListener(new Button.ClickListener() {
+                private static final long serialVersionUID = 5019806363620874205L;
+
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
                     if (addlKoulutusDialogWindow != null) {
@@ -137,6 +138,8 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
             });
 
             addlKoulutusDialog.getJatkaBtn().addListener(new Button.ClickListener() {
+                private static final long serialVersionUID = 5019806363620874205L;
+
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
                     Object values = addlKoulutusDialog.getOptionGroup().getValue();
@@ -161,26 +164,25 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
 
     private List<ShowHakukohdeKoulutusRow> getRows(List<KoulutusOidNameViewModel> koulutukses) {
         List<ShowHakukohdeKoulutusRow> rows = new ArrayList<ShowHakukohdeKoulutusRow>();
-        for (KoulutusOidNameViewModel koulutus:koulutukses) {
+        for (KoulutusOidNameViewModel koulutus : koulutukses) {
             ShowHakukohdeKoulutusRow row = new ShowHakukohdeKoulutusRow(koulutus);
             rows.add(row);
         }
         return rows;
     }
 
-
-
     private void buildMiddleContentLayout(VerticalLayout layout) {
 
         if (!tarjontaPresenterPresenter.getModel().isSelectedHakuStarted()) {
-        layout.addComponent(buildHeaderLayout(context, T("perustiedot"), T(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
+            layout.addComponent(buildHeaderLayout(context, T("perustiedot"), T(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
+                private static final long serialVersionUID = 5019806363620874205L;
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                tarjontaPresenterPresenter.showHakukohdeEditView(tarjontaPresenterPresenter.getModel().getHakukohde().getKomotoOids(),
-                        tarjontaPresenterPresenter.getModel().getHakukohde().getOid(),null);
-            }
-        }, true));
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    tarjontaPresenterPresenter.showHakukohdeEditView(tarjontaPresenterPresenter.getModel().getHakukohde().getKomotoOids(),
+                            tarjontaPresenterPresenter.getModel().getHakukohde().getOid(), null);
+                }
+            }, true));
         }
 
         GridLayout grid = new GridLayout(2, 1);
@@ -193,10 +195,10 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
         addItemToGrid(grid, "hakukohdeNimi", model.getHakukohdeKoodistoNimi());
 
         addItemToGrid(grid, "haunNimi", tryGetLocalizedHakuNimi(model.getHakuOid()));
-        addItemToGrid(grid,"aloitusPaikat",new Integer(model.getAloitusPaikat()).toString());
+        addItemToGrid(grid, "aloitusPaikat", new Integer(model.getAloitusPaikat()).toString());
         Label lisatiedotLabel = new Label(getLocalizedLisatiedot(model.getLisatiedot()));
         lisatiedotLabel.setContentMode(Label.CONTENT_XHTML);
-        addItemToGrid(grid,"lisatiedot",lisatiedotLabel);
+        addItemToGrid(grid, "lisatiedot", lisatiedotLabel);
 
         grid.setColumnExpandRatio(0, 1f);
         grid.setColumnExpandRatio(1, 2f);
@@ -209,7 +211,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
     private String tryGetLocalizedHakuNimi(HakuViewModel hakuViewModel) {
         String haunNimi = null;
 
-        if(I18N.getLocale().getLanguage().trim().equalsIgnoreCase("en")) {
+        if (I18N.getLocale().getLanguage().trim().equalsIgnoreCase("en")) {
             haunNimi = hakuViewModel.getNimiEn();
         } else if (I18N.getLocale().getLanguage().trim().equalsIgnoreCase("se")) {
             haunNimi = hakuViewModel.getNimiSe();
@@ -219,18 +221,18 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
             haunNimi = hakuViewModel.getNimiFi();
         }
 
-        return  haunNimi;
+        return haunNimi;
     }
 
     private String getLocalizedLisatiedot(List<KielikaannosViewModel> kielet) {
-         String reply = null;
-         for (KielikaannosViewModel kieli:kielet) {
-             reply = kieli.getNimi();
-             if (kieli.getKielikoodi().trim().equalsIgnoreCase(T("default.tab"))) {
-                 reply = kieli.getNimi();
-             }
+        String reply = null;
+        for (KielikaannosViewModel kieli : kielet) {
+            reply = kieli.getNimi();
+            if (kieli.getKielikoodi().trim().equalsIgnoreCase(T("default.tab"))) {
+                reply = kieli.getNimi();
+            }
 
-         }
+        }
         return reply;
     }
 
@@ -248,6 +250,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
             if (listener == null) {
                 btn.addListener(new Button.ClickListener() {
                     private static final long serialVersionUID = 5019806363620874205L;
+
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
                         getWindow().showNotification("Toiminnallisuutta ei vielä toteutettu");
@@ -264,6 +267,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
     private void addNavigationButtons(VerticalLayout layout, OrganisaatioContext context) {
         addNavigationButton("", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 tarjontaPresenterPresenter.reloadAndShowMainDefaultView();
@@ -272,19 +276,21 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
 
         Button poista = addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                    if(checkHaunAlkaminen()) {
-                           showConfirmationDialog();
-                    }  else {
-                        getWindow().showNotification(T("hakukohdePoistoEpaonnistui"), Window.Notification.TYPE_ERROR_MESSAGE);
-                    }
+                if (checkHaunAlkaminen()) {
+                    showConfirmationDialog();
+                } else {
+                    getWindow().showNotification(T("hakukohdePoistoEpaonnistui"), Window.Notification.TYPE_ERROR_MESSAGE);
+                }
 
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
         Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 getWindow().showNotification("Ei toteutettu");
@@ -298,24 +304,28 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
 
     private void showConfirmationDialog() {
         RemovalConfirmationDialog confirmationDialog = new RemovalConfirmationDialog(T("poistoVarmistus"),
-                tarjontaPresenterPresenter.getModel().getHakukohde().getHakukohdeKoodistoNimi(),T("poistaPainike"),T("peruutaPainike"),
+                tarjontaPresenterPresenter.getModel().getHakukohde().getHakukohdeKoodistoNimi(), T("poistaPainike"), T("peruutaPainike"),
                 new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent clickEvent) {
-                        getWindow().removeWindow(confirmationWindow);
-                        tarjontaPresenterPresenter.removeSelectedHakukohde();
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                getWindow().removeWindow(confirmationWindow);
+                tarjontaPresenterPresenter.removeSelectedHakukohde();
 
 
-                    }
-                },
+            }
+        },
                 new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent clickEvent) {
-                       if(confirmationWindow != null) {
-                           getWindow().removeWindow(confirmationWindow);
-                       }
-                    }
-                });
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                if (confirmationWindow != null) {
+                    getWindow().removeWindow(confirmationWindow);
+                }
+            }
+        });
         confirmationWindow = new Window();
         confirmationWindow.setContent(confirmationDialog);
         confirmationWindow.setModal(true);
@@ -327,21 +337,25 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
 
     public void showKoulutusRemovalDialog(final KoulutusOidNameViewModel koulutus) {
         final Window koulutusRemovalDialog = new Window();
-        RemovalConfirmationDialog confirmationDialog = new RemovalConfirmationDialog(T("removeKoulutusFromHakukohde"),koulutus.getKoulutusNimi(),T("poistaRemoveKoulutusFromHakukohde"),
+        RemovalConfirmationDialog confirmationDialog = new RemovalConfirmationDialog(T("removeKoulutusFromHakukohde"), koulutus.getKoulutusNimi(), T("poistaRemoveKoulutusFromHakukohde"),
                 T("peruutaRemoveKoulutusFromHakukohde"),
                 new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent clickEvent) {
-                        getWindow().removeWindow(koulutusRemovalDialog);
-                        tarjontaPresenterPresenter.removeKoulutusFromHakukohde(koulutus);
-                    }
-                },
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                getWindow().removeWindow(koulutusRemovalDialog);
+                tarjontaPresenterPresenter.removeKoulutusFromHakukohde(koulutus);
+            }
+        },
                 new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent clickEvent) {
-                        getWindow().removeWindow(koulutusRemovalDialog);
-                    }
-                });
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                getWindow().removeWindow(koulutusRemovalDialog);
+            }
+        });
         koulutusRemovalDialog.setContent(confirmationDialog);
         koulutusRemovalDialog.setModal(true);
         koulutusRemovalDialog.center();
@@ -351,7 +365,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
     private boolean checkHaunAlkaminen() {
         tarjontaPresenterPresenter.loadHakukohdeHakuPvm();
         Date haunPaattymisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuOid().getPaattymisPvm();
-        Date haunAlkamisPvm =  tarjontaPresenterPresenter.getModel().getHakukohde().getHakuOid().getAlkamisPvm();
+        Date haunAlkamisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuOid().getAlkamisPvm();
         Date tanaan = new Date();
         if (tanaan.after(haunAlkamisPvm) && tanaan.before(haunPaattymisPvm)) {
             return false;
@@ -414,6 +428,8 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
      */
     public class BackEvent extends Component.Event {
 
+        private static final long serialVersionUID = -1576894176022341609L;
+
         public BackEvent(Component source) {
             super(source);
 
@@ -425,11 +441,11 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout  {
      */
     public class EditEvent extends Component.Event {
 
+        private static final long serialVersionUID = -5412731409384095606L;
+
         public EditEvent(Component source) {
             super(source);
 
         }
     }
-
-
 }

@@ -38,11 +38,6 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
     protected TarjontaTila tila;
 
     /*
-     * Organisaatio data:
-     */
-    protected String organisaatioName;
-    protected String organisaatioOid;
-    /*
      * Koodisto logic data:
      */
     protected KoulutuskoodiModel koulutuskoodiModel;
@@ -98,35 +93,6 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
      */
     public void setKoulutusmoduuliOid(String koulutusmoduuliOid) {
         this.koulutusmoduuliOid = koulutusmoduuliOid;
-    }
-
-
-    /**
-     * @return the organisaatioName
-     */
-    public String getOrganisaatioName() {
-        return organisaatioName;
-    }
-
-    /**
-     * @param organisaatioName the organisaatioName to set
-     */
-    public void setOrganisaatioName(String organisaatioName) {
-        this.organisaatioName = organisaatioName;
-    }
-
-    /**
-     * @return the organisaatioOid
-     */
-    public String getOrganisaatioOid() {
-        return organisaatioOid;
-    }
-
-    /**
-     * @param organisaatioOid the organisaatioOid to set
-     */
-    public void setOrganisaatioOid(String organisaatioOid) {
-        this.organisaatioOid = organisaatioOid;
     }
 
     /**

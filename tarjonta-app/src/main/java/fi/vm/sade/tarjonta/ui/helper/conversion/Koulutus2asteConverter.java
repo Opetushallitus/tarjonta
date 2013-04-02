@@ -15,11 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
+import com.google.common.base.Preconditions;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
@@ -71,16 +71,12 @@ public class Koulutus2asteConverter extends KoulutusConveter {
      * @throws ExceptionMessage
      */
     public PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi(final TarjontaModel tarjontaModel, final String komotoOid) throws ExceptionMessage {
-
         KoulutusToisenAsteenPerustiedotViewModel model = tarjontaModel.getKoulutusPerustiedotModel();
-
-        if (komotoOid == null) {
-            throw new RuntimeException(INVALID_DATA + "KOMOTO OID cannot be null.");
-        }
-        final OrganisaatioDTO organisaatio = searchOrganisatioByOid(model.getOrganisaatioOid());
+        Preconditions.checkNotNull(komotoOid, "KOMOTO OID cannot be null.");
+        final OrganisaatioDTO dto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getOrganisationOid(), tarjontaModel.getTarjoajaModel());
 
         PaivitaKoulutusTyyppi paivita = new PaivitaKoulutusTyyppi();
-        mapToKoulutusTyyppi(paivita, model, komotoOid, organisaatio);
+        mapToKoulutusTyyppi(paivita, model, komotoOid, dto);
 
         //convert yhteyshenkilo model objects to yhteyshenkilo type objects.
         //addToYhteyshenkiloTyyppiList(model.getYhteyshenkilot(), paivita.getYhteyshenkiloTyyppi());
@@ -100,11 +96,11 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         return paivita;
     }
 
-    public LisaaKoulutusTyyppi createLisaaKoulutusTyyppi(TarjontaModel tarjontaModel, final String organisaatioOid) throws ExceptionMessage {
-
+    public LisaaKoulutusTyyppi createLisaaKoulutusTyyppi(TarjontaModel tarjontaModel) throws ExceptionMessage {
+        final String organisaatioOid = tarjontaModel.getTarjoajaModel().getOrganisationOid();
         KoulutusToisenAsteenPerustiedotViewModel model = tarjontaModel.getKoulutusPerustiedotModel();
 
-        final OrganisaatioDTO organisaatio = searchOrganisatioByOid(organisaatioOid);
+        final OrganisaatioDTO organisaatio = searchOrganisationByOid(organisaatioOid, tarjontaModel.getTarjoajaModel());
 
         LisaaKoulutusTyyppi lisaa = new LisaaKoulutusTyyppi();
         mapToKoulutusTyyppi(lisaa, model, oidService.newOid(NodeClassCode.TEKN_5), organisaatio);
@@ -138,11 +134,10 @@ public class Koulutus2asteConverter extends KoulutusConveter {
      * @return
      * @throws ExceptionMessage
      */
-    public KoulutusToisenAsteenPerustiedotViewModel createKoulutusPerustiedotViewModel(final LueKoulutusVastausTyyppi tyyppi, final DocumentStatus status,
-            Locale locale) throws ExceptionMessage {
-        final OrganisaatioDTO organisaatio = searchOrganisatioByOid(tyyppi.getTarjoaja());
-
-        KoulutusToisenAsteenPerustiedotViewModel model2Aste = mapToKoulutusToisenAsteenPerustiedotViewModel(tyyppi, status, organisaatio, locale);
+    public KoulutusToisenAsteenPerustiedotViewModel createKoulutusPerustiedotViewModel(TarjontaModel model, final LueKoulutusVastausTyyppi tyyppi, Locale locale) throws ExceptionMessage {
+        final OrganisaatioDTO organisaatio = searchOrganisationByOid(tyyppi.getTarjoaja(), model.getTarjoajaModel());
+        
+        KoulutusToisenAsteenPerustiedotViewModel model2Aste = mapToKoulutusToisenAsteenPerustiedotViewModel(tyyppi, DocumentStatus.NEW, organisaatio, locale);
         //addToKoulutusYhteyshenkiloViewModel(tyyppi.getYhteyshenkilo(), model2Aste.getYhteyshenkilot());
         mapYhteyshenkiloToViewModel(model2Aste, tyyppi);
         //addToKoulutusLinkkiViewModel(tyyppi.getLinkki(), model2Aste.getKoulutusLinkit());
@@ -218,8 +213,6 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         KoulutusToisenAsteenPerustiedotViewModel model2Aste = new KoulutusToisenAsteenPerustiedotViewModel(status);
         model2Aste.setTila(koulutus.getTila());
         model2Aste.setOid(koulutus.getOid());
-        model2Aste.setOrganisaatioOid(organisatio.getOid());
-        model2Aste.setOrganisaatioName(OrganisaatioDisplayHelper.getClosest(locale, organisatio));
 
         /* Select KOMO by koulutusaste, koulutuskoodi and koulutusohjelma */
         model2Aste.setKoulutuskoodiModel(mapToKoulutuskoodiModel(koulutus.getKoulutusKoodi(), locale));
@@ -424,8 +417,8 @@ public class Koulutus2asteConverter extends KoulutusConveter {
             koulutus.getKoulutusohjelmanValinta().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getKoulutusohjelmanValinta()));
         }
     }
-    
-     public static Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> full2asteKomoCacheMap(Collection<KoulutusmoduuliKoosteTyyppi> komos) {
+
+    public static Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> full2asteKomoCacheMap(Collection<KoulutusmoduuliKoosteTyyppi> komos) {
         Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> hashMap = new HashMap<Map.Entry, KoulutusmoduuliKoosteTyyppi>();
 
         for (KoulutusmoduuliKoosteTyyppi komo : komos) {

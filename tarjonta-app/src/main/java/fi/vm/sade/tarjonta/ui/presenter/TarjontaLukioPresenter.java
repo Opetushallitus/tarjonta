@@ -49,6 +49,7 @@ import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
+import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.ShowKoulutusSummaryView;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -99,20 +100,13 @@ public class TarjontaLukioPresenter {
         KoulutusLukioPerustiedotViewModel perustiedot = getPerustiedotModel();
 
         if (perustiedot.isLoaded()) {//update KOMOTO
-            LOG.debug("update");
             PaivitaKoulutusTyyppi paivita = lukioKoulutusConverter.createPaivitaLukioKoulutusTyyppi(getTarjontaModel(), perustiedot.getKomotoOid(), tila);
             tarjontaAdminService.paivitaKoulutus(paivita);
         } else { //insert new KOMOTO
-            LOG.debug("insert to organisations : {}", getNotNullOrganisaatioOid());
-            for (TarjontaModel.OrganisaatioOidNamePair pair : getTarjontaModel().getOrganisaatios()) {
-                getTarjontaModel().setOrganisaatioName(pair.getName());
-                getTarjontaModel().setOrganisaatioOid(pair.getOid());
-                perustiedot.setOrganisaatioOid(pair.getOid());
-                perustiedot.setOrganisaatioName(pair.getName());
+            for (OrganisationOidNamePair pair : getTarjontaModel().getTarjoajaModel().getOrganisaatioOidNamePairs()) {
+                getTarjontaModel().getTarjoajaModel().copyToModel(pair);
 
-                LisaaKoulutusTyyppi lisaa = lukioKoulutusConverter.createLisaaLukioKoulutusTyyppi(getTarjontaModel(), getPerustiedotModel().getOrganisaatioOid(), tila);
-                LOG.debug("getKuvailevatTiedotModel() :  {}", getKuvailevatTiedotModel());
-
+                LisaaKoulutusTyyppi lisaa = lukioKoulutusConverter.createLisaaLukioKoulutusTyyppi(getTarjontaModel(), tila);
                 checkKoulutusmoduuli();
                 if (checkExistingKomoto(lisaa)) {
                     tarjontaAdminService.lisaaKoulutus(lisaa);
@@ -194,15 +188,14 @@ public class TarjontaLukioPresenter {
 
     private void loadKomoto(final String komotoOid) {
         if (komotoOid != null) {
-            Preconditions.checkNotNull(komotoOid, "KOMOTO OID cannot be null.");
             LueKoulutusVastausTyyppi koulutus = getPresenter().getKoulutusByOid(komotoOid);
             lukioKoulutusConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, I18N.getLocale());
         } else {
-            Preconditions.checkNotNull(getTarjontaModel().getOrganisaatioOid(), "Missing organisation OID.");
+            Preconditions.checkNotNull(getTarjontaModel().getTarjoajaModel().getOrganisationOid(), "Missing organisation OID.");
             getPerustiedotModel().clearModel();
             getTarjontaModel().setKoulutusLukioKuvailevatTiedot(new KoulutusLukioKuvailevatTiedotViewModel());
         }
-        getPerustiedotModel().setOrganisaatioOidTree(getPresenter().fetchOrganisaatioTree(getNotNullOrganisaatioOid()));
+        presenter.fetchOrganisaatioTree();
     }
 
     public void loadSelectedKomoData() {
@@ -358,15 +351,5 @@ public class TarjontaLukioPresenter {
 //        kysely.setTarjoajaOid(lisaaTyyppi.getTarjoaja());
 //        return tarjontaAdminService.tarkistaKoulutuksenKopiointi(kysely);
         return true;
-    }
-
-    private String getNotNullOrganisaatioOid() {
-        String org = presenter.getModel().getOrganisaatioOid();
-
-        if (org == null) {
-            org = presenter.getModel().getRootOrganisaatioOid();
-        }
-
-        return org;
     }
 }

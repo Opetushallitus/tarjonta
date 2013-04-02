@@ -167,9 +167,8 @@ public class ListKoulutusView extends VerticalLayout {
         /**
          * Sets the datasource for the hierarchical listing of Koulutus objects.
          */
-        luoKoulutusB.setEnabled(presenter.getModel().getOrganisaatioOid() != null);
-        luoHakukohdeB.setEnabled(!presenter.getModel().getSelectedKoulutukset().isEmpty());
-        
+        luoKoulutusB.setEnabled(presenter.getNavigationOrganisation().isOrganisationSelected());
+        luoHakukohdeB.setEnabled(!presenter.getModel().getSelectedKoulutukset().isEmpty());      
     }
 
     /**
@@ -342,7 +341,7 @@ public class ListKoulutusView extends VerticalLayout {
             public void buttonClick(Button.ClickEvent event) {
                 if (presenter.availableKoulutus()) {
                     List<String> organisaatioOids = new ArrayList<String>();
-                    organisaatioOids.add(presenter.getModel().getOrganisaatioOid());
+                    organisaatioOids.add(presenter.getTarjoaja().getOrganisationOid());
                     UusiKoulutusDialog uusiKoulutusDialog = new UusiKoulutusDialog("600px", "500px");
                     
                     getWindow().addWindow(uusiKoulutusDialog);

@@ -28,7 +28,6 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  *
@@ -48,11 +47,7 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      */
     protected DocumentStatus documentStatus;
     protected String userFrienlyDocumentStatus;
-    /*
-     * Organisaatio data:
-     */
-    protected String organisaatioName;
-    protected String organisaatioOid;
+
     /*
      * Koodisto logic data:
      */
@@ -172,34 +167,6 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     public void setDocumentStatus(DocumentStatus status) {
         this.documentStatus = status;
         this.setUserFrienlyDocumentStatus(status.getStatus());
-    }
-
-    /**
-     * @return the organisaatioName
-     */
-    public String getOrganisaatioName() {
-        return organisaatioName;
-    }
-
-    /**
-     * @param organisaatioName the organisaatioName to set
-     */
-    public void setOrganisaatioName(String organisaatioName) {
-        this.organisaatioName = organisaatioName;
-    }
-
-    /**
-     * @return the organisaatioOid
-     */
-    public String getOrganisaatioOid() {
-        return organisaatioOid;
-    }
-
-    /**
-     * @param organisaatioOid the organisaatioOid to set
-     */
-    public void setOrganisaatioOid(String organisaatioOid) {
-        this.organisaatioOid = organisaatioOid;
     }
 
     /**

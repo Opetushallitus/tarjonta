@@ -97,7 +97,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         panel.setContent(vl);
         layout.addComponent(panel);
 
-        addNavigationButtons(vl, OrganisaatioContext.getContext(perustiedot.getOrganisaatioOid()));
+        addNavigationButtons(vl, OrganisaatioContext.getContext(_presenter.getTarjoaja().getOrganisationOid()));
 
         buildPerustiedot(vl, perustiedot, "lukiolinja", perustiedot.getLukiolinja());
         addLayoutSplit(vl);
@@ -125,7 +125,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
         grid.setMargin(true);
-        addItemToGrid(grid, "organisaatio", model.getOrganisaatioName());
+        addItemToGrid(grid, "organisaatio", _presenter.getTarjoaja().getOrganisationName());
         addItemToGrid(grid, "tutkinto", modelToStr(model.getKoulutuskoodiModel()));
         addItemToGrid(grid, otherCbLabel, modelToStr(otherCbKoodi));
         addItemToGrid(grid, null, new Label("&nbsp;", Label.CONTENT_XHTML));

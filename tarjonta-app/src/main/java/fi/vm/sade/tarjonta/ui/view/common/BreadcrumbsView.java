@@ -42,7 +42,6 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
     private static final long serialVersionUID = 2254224099223350768L;
     private Label organisaatioNimi;
     private Button poistaValintaB;
-
     @Autowired
     UserContext userContext;
     TarjontaPresenter presenter;
@@ -62,7 +61,8 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
         organisaatioNimi.setSizeUndefined();
         poistaValintaB = UiUtil.buttonLink(hl, T("poistaOrganisaatioValinta"));
         poistaValintaB.addListener(new Button.ClickListener() {
-            
+            private static final long serialVersionUID = 5019806363620874205L;
+
             @Override
             public void buttonClick(ClickEvent event) {
                 ///XXX how to restore use restriction??
@@ -72,7 +72,7 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
         });
         hl.setComponentAlignment(organisaatioNimi, Alignment.MIDDLE_LEFT);
         hl.setComponentAlignment(poistaValintaB, Alignment.TOP_RIGHT);
-        poistaValintaB.setVisible(presenter.getModel().getOrganisaatioOid() != null);
+        poistaValintaB.setVisible(isNavigationOrganisationSelected());
         addComponent(hl);
     }
 
@@ -81,6 +81,10 @@ public class BreadcrumbsView extends AbstractVerticalLayout {
      */
     public void setOrganisaatio(String organisaatioNimi) {
         this.organisaatioNimi.setValue(organisaatioNimi);
-        poistaValintaB.setVisible(presenter.getModel().getOrganisaatioOid() != null);
+        poistaValintaB.setVisible(isNavigationOrganisationSelected());
+    }
+    
+    private boolean isNavigationOrganisationSelected(){
+        return presenter.getNavigationOrganisation().isOrganisationSelected();
     }
 }

@@ -349,7 +349,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         form.setValidationVisibleOnCommit(false);
 
         gridLabel(grid, "prompt.yhteyshenkilo");
-        grid.addComponent(yhteyshenkiloForm.getYhtHenkKokoNimi());
+        grid.addComponent(yhteyshenkiloForm.getSelectionFieldLayout());
         grid.newLine();
 
         gridLabel(grid, "prompt.titteli");

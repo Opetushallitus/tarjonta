@@ -24,6 +24,8 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
 import javax.validation.constraints.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
@@ -35,6 +37,8 @@ import org.vaadin.addon.formbinder.PropertyId;
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 public class YhteyshenkiloViewForm extends VerticalLayout {
 
+    private static transient final Logger LOG = LoggerFactory
+            .getLogger(YhteyshenkiloViewForm.class);
     private static final long serialVersionUID = -3571709365318709818L;
     @PropertyId("yhtHenkKokoNimi")
     private TextField yhtHenkKokoNimi;
@@ -51,6 +55,7 @@ public class YhteyshenkiloViewForm extends VerticalLayout {
     private String initialYhtHenkPuhelin;
     private YhteyshenkiloModel model;
     private TarjontaPresenter presenter;
+    private VerticalLayout selectionFieldLayout;
 
     public YhteyshenkiloViewForm(TarjontaPresenter presenter, YhteyshenkiloModel model) {
         this.model = model;
@@ -66,10 +71,13 @@ public class YhteyshenkiloViewForm extends VerticalLayout {
      * @param henkiloType
      */
     public void populateYhtHenkiloFields(HenkiloType henkiloType) {
+       
         if (henkiloType == null) {
             return;
         }
-        this.getYhtHenkKokoNimi().setValue(henkiloType.getEtunimet() + " " + henkiloType.getSukunimi());
+        LOG.info(henkiloType.getEtunimet());
+        
+        this.yhtHenkKokoNimi.setValue(henkiloType.getEtunimet() + " " + henkiloType.getSukunimi());
         this.model.setYhtHenkiloOid(henkiloType.getOidHenkilo());
         if (henkiloType.getOrganisaatioHenkilos() != null && !henkiloType.getOrganisaatioHenkilos().isEmpty()) {
             this.getYhtHenkEmail().setValue(henkiloType.getOrganisaatioHenkilos().get(0).getSahkopostiosoite());
@@ -113,7 +121,10 @@ public class YhteyshenkiloViewForm extends VerticalLayout {
      * @param propertyKey
      */
     public void init() {
-        yhtHenkKokoNimi = new YhteyshenkiloAutocompleteTextField(this, "prompt.kokoNimi", "", presenter, model);
+        selectionFieldLayout = new VerticalLayout();
+
+        yhtHenkKokoNimi = new YhteyshenkiloAutocompleteTextField(selectionFieldLayout, "prompt.kokoNimi", "", presenter, model);
+
         yhtHenkKokoNimi.addListener(new Listener() {
             private static final long serialVersionUID = 6680073663370984689L;
 
@@ -136,6 +147,10 @@ public class YhteyshenkiloViewForm extends VerticalLayout {
         yhtHenkPuhelin = UiUtil.textField(null, "", "", true);
 
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
+    }
+
+    public VerticalLayout getSelectionFieldLayout() {
+        return selectionFieldLayout;
     }
 
     /**

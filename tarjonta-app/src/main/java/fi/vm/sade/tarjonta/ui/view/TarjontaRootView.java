@@ -28,6 +28,7 @@ import fi.vm.sade.tarjonta.ui.view.common.OrganisaatiohakuView;
 import fi.vm.sade.tarjonta.ui.view.common.SearchSpesificationView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ListKoulutusView;
 import fi.vm.sade.vaadin.Oph;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,12 +100,9 @@ public class TarjontaRootView extends Window {
         buildMainLayout();
         // Show application identifier if needed
         final TarjontaModel model = _presenter.getModel();
-
         model.setShowIdentifier(_showIdentifier);
         model.setIdentifier(_identifier);
-        model.setRootOrganisaatioOid(ophOid);
-        model.setParentOrganisaatioOid(ophOid);
-
+        initializeOrganisationData();
         if (_presenter.isShowIdentifier()) {
             _appRootLayout.addComponent(new Label("ID=" + _presenter.getIdentifier()));
         }
@@ -212,5 +210,12 @@ public class TarjontaRootView extends Window {
 
     public TarjontaPresenter getTarjontaPresenter() {
         return _presenter;
+    }
+
+    private void initializeOrganisationData() {
+        TarjontaModel model = _presenter.getModel();
+
+        //Set OPH organisaatio OID.
+        model.setRootOrganisaatioOid(ophOid);
     }
 }
