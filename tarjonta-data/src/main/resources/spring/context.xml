@@ -50,6 +50,6 @@
 
     <http-conf:conduit name="*.http-conduit">
         <!-- extended receive timeout due to koodisto updates take a long time if there are lots of koodis -->
-        <http-conf:client ConnectionTimeout="10000" ReceiveTimeout="600000" />
+        <http-conf:client ConnectionTimeout="10000" ReceiveTimeout="1200000" />
     </http-conf:conduit>
 </beans>

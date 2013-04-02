@@ -12,6 +12,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +57,7 @@ public class BatchKoodistoFileReader {
         // insert koodistos
         for (final File koodisto : koodistoFiles) {
             try {
-                uploadKoodistoData.loadKoodistoFromExcel(koodisto.getAbsolutePath(), getKoodistoRyhmaUri(koodisto.toURI().toString()),
+                uploadKoodistoData.loadKoodistoFromExcel(koodisto.getAbsolutePath(), getKoodistoRyhmaUri(URLDecoder.decode(koodisto.toURI().toString(), "UTF-8")),
                         StringUtils.substringBefore(koodisto.getName().toLowerCase(), "."), organisaatioOid);
             } catch (final Exception e) {
                 log.error(e.getMessage());
