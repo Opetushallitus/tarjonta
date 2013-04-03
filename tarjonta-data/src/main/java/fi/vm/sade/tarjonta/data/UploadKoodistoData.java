@@ -105,20 +105,17 @@ public class UploadKoodistoData {
                 log.warn("Loaded koodis was empty or null!");
             }
 
-            // change koodisto tila to HYVAKSYTTY: this should also approve all sketched koodis in the koodisto
+            // change koodisto tila to HYVAKSYTTY: this should also approve all unapproved koodis in the koodisto
             // NOTE! takes a long time if there are lots of koodis
             final KoodistoType approvedKoodisto = koodistoHelper.approveKoodisto(createdKoodisto);
         }
     }
 
-    private HashMap<String, KoodiType> loadKoodisToKoodisto(final Set<Koodi> koodis, final String koodistoName) {
-        final HashMap<String, KoodiType> koodiUriArvoPair = new HashMap<String, KoodiType>();
-
+    private void loadKoodisToKoodisto(final Set<Koodi> koodis, final String koodistoUri) {
+        log.info("Adding [{}] koodis to koodisto [{}]", koodis.size(), koodistoUri);
         for (final Koodi koodi : koodis) {
-            final KoodiType koodiType = koodistoHelper.addKoodi(koodi, DataUtils.createKoodiUriFromName(koodistoName));
+            final KoodiType koodiType = koodistoHelper.addKoodi(koodi, koodistoUri);
         }
-
-        return koodiUriArvoPair;
     }
 
     private void createKoodiRelations(final Set<KoodiRelaatio> koodiRelaatios) {

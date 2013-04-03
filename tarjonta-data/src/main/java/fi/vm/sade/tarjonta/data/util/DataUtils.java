@@ -42,12 +42,12 @@ public final class DataUtils {
         String localNimi = koodistoNimi.toUpperCase();
         localNimi = localNimi.replaceAll("\\s", "");
         localNimi = localNimi.replace('Ý', 'Y');
-        localNimi = localNimi.replaceAll("Ù | Ú | Û | Ü", "U");
-        localNimi = localNimi.replaceAll("Ò | Ó | Ô | Õ | Ö", "O");
-        localNimi = localNimi.replaceAll("Ì | Í | Î | Ï", "I");
-        localNimi = localNimi.replaceAll("È | É | Ê | Ë", "E");
+        localNimi = localNimi.replaceAll("Ù|Ú|Û|Ü", "U");
+        localNimi = localNimi.replaceAll("Ò|Ó|Ô|Õ|Ö", "O");
+        localNimi = localNimi.replaceAll("Ì|Í|Î|Ï", "I");
+        localNimi = localNimi.replaceAll("È|É|Ê|Ë", "E");
         localNimi = localNimi.replace('Ç', 'C');
-        localNimi = localNimi.replaceAll("À | Á | Â | Ã | Ä | Æ", "A");
+        localNimi = localNimi.replaceAll("À|Á|Â|Ã|Ä|Æ", "A");
         localNimi = localNimi.replaceAll("Å", "O");
         localNimi = localNimi.replaceAll("_", "");
         localNimi = localNimi.replaceAll("-", "");
