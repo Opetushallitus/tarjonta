@@ -203,11 +203,11 @@ public class TarjontaDataKoodistoHelper {
         this.organisaatioOid = organisaatioOid;
     }
 
-    public HashMap<String, KoodiType> loadKoodisToKoodisto(final Set<Koodi> koodis, final String koodistoName) {
+    public HashMap<String, KoodiType> loadKoodisToKoodisto(final Set<Koodi> koodis, final String koodistoUri) {
         final HashMap<String, KoodiType> koodiUriArvoPair = new HashMap<String, KoodiType>();
 
         for (final Koodi koodi : koodis) {
-            addKoodi(koodi, DataUtils.createKoodiUriFromName(koodistoName));
+            addKoodi(koodi, DataUtils.createKoodiUriFromName(koodistoUri));
         }
 
         return koodiUriArvoPair;

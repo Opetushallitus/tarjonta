@@ -71,7 +71,7 @@ public class BatchKoodistoFileReader {
         // insert relations
         for (final File relaatio : relaatioFiles) {
             try {
-                uploadKoodistoData.createKoodistoRelations(relaatio.getAbsolutePath());
+                //uploadKoodistoData.createKoodistoRelations(relaatio.getAbsolutePath());
             } catch (final Exception e) {
                 log.error(e.getMessage());
                 relaatioErrors.put(relaatio, e);
