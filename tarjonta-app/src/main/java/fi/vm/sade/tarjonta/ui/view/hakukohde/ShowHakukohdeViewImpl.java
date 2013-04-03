@@ -20,6 +20,7 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.*;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
@@ -37,10 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /*
  * Author: Tuomas Katva
@@ -52,10 +50,12 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
     private static final long serialVersionUID = -4485798240650803109L;
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenterPresenter;
+    @Autowired(required = true)
+    private TarjontaUIHelper tarjontaUIHelper;
     private Window confirmationWindow;
     private CreationDialog<KoulutusOidNameViewModel> addlKoulutusDialog;
     private Window addlKoulutusDialogWindow;
-    private final OrganisaatioContext context;
+    private final OrganisaatioContext context ;
 
     public ShowHakukohdeViewImpl(String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
@@ -78,12 +78,33 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
 
         //XXX oid not set
         addNavigationButtons(vl, OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getOrganisationOid()));
-        addLayoutSplit(vl);
+        Set<String> allLangs = getAllKielet();
+        final TabSheet tabs = new TabSheet();
+        for (String lang:allLangs) {
+           ShowHakukohdeTab hakukohdeTab = new ShowHakukohdeTab(lang);
+           tabs.addTab(hakukohdeTab, tarjontaUIHelper.getKoodiNimi(lang));
+        }
+        vl.addComponent(tabs);
+        /*addLayoutSplit(vl);
         buildMiddleContentLayout(vl);
         addLayoutSplit(vl);
         buildKoulutuksesLayout(vl);
-        buildLiitaUusiKoulutusButton(vl);
+        buildLiitaUusiKoulutusButton(vl);*/
 
+    }
+
+    private Set<String> getAllKielet() {
+        Set<String> kielet = new HashSet<String>();
+        List<KielikaannosViewModel> lisatietoKielet = tarjontaPresenterPresenter.getModel().getHakukohde().getLisatiedot();
+        for (KielikaannosViewModel kieli : lisatietoKielet) {
+            kielet.add(kieli.getKielikoodi());
+        }
+        List<KielikaannosViewModel> valintakoeKielet = tarjontaPresenterPresenter.getModel().getHakukohde().getValintaPerusteidenKuvaus();
+        for (KielikaannosViewModel kieli:valintakoeKielet) {
+            kielet.add(kieli.getKielikoodi());
+        }
+
+        return kielet;
     }
 
     private void buildKoulutuksesLayout(VerticalLayout layout) {
