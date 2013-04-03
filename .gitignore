@@ -31,4 +31,5 @@ tarjonta-api/bin/
 tarjonta-app/.classpath
 tarjonta-app/.settings/
 tarjonta-app/bin/
-
+*~
+**/*~
