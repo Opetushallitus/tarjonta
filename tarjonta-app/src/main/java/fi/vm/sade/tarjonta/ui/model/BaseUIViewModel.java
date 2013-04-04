@@ -24,6 +24,7 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  * @author mlyly
  */
 public class BaseUIViewModel implements Serializable {
+    private static final long serialVersionUID = -4907157020537505450L;
 
     @Override
     public String toString() {

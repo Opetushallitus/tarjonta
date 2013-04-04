@@ -60,6 +60,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaLukioPresenter;
 import fi.vm.sade.tarjonta.ui.view.koulutus.NoKoulutusDialog;
 import fi.vm.sade.tarjonta.ui.view.koulutus.YhteyshenkiloViewForm;
 
@@ -77,7 +78,8 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
     private static final long serialVersionUID = -8964329145514588760L;
     private transient I18NHelper _i18n;
     private KoulutusLukioPerustiedotViewModel model;
-    private TarjontaPresenter presenter;
+    private TarjontaPresenter tarjontaPresenter;
+    private TarjontaLukioPresenter lukioPresenter;
     private TarjontaDialogWindow noKoulutusDialog;
     private transient UiBuilder uiBuilder;
     private YhteyshenkiloViewForm yhteyshenkiloForm;
@@ -159,7 +161,8 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         super(2, 1);
         setSizeFull();
         this.uiBuilder = uiBuilder;
-        this.presenter = presenter;
+        this.tarjontaPresenter = presenter;
+        this.lukioPresenter = tarjontaPresenter.getLukioPresenter();
         this.model = model;
         initializeLayout();
         disableOrEnableComponents(model.isLoaded());
@@ -187,7 +190,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
                         cbLukiolinja.removeAllItems();
                         clearKomoLabels();
                     }
-                    presenter.getLukioPresenter().loadLukiolinjas();
+                    lukioPresenter.loadLukiolinjas();
                     bicLukiolinjas.addAll(model.getLukiolinjas());
                     disableOrEnableComponents(true);
                     reload();
@@ -199,18 +202,18 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
 
                 @Override
                 public void valueChange(Property.ValueChangeEvent event) {
-                    presenter.getLukioPresenter().loadSelectedKomoData();
+                    lukioPresenter.loadSelectedKomoData();
                     reload();
                 }
             });
         }
 
-        presenter.getLukioPresenter().loadKoulutuskoodis();
+        lukioPresenter.loadKoulutuskoodis();
         bicKoulutuskoodi.addAll(model.getKoulutuskoodis());
 
         if (model.isLoaded()) {
             //reload component data from UI model
-            presenter.loadSelectedKomoData();
+            lukioPresenter.loadSelectedKomoData();
             reload();
         }
     }
@@ -340,7 +343,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
      * @param propertyKey
      */
     private void buildGridYhteyshenkiloRows(GridLayout grid) {
-        yhteyshenkiloForm = new YhteyshenkiloViewForm(presenter, model.getYhteyshenkilo());
+        yhteyshenkiloForm = new YhteyshenkiloViewForm(tarjontaPresenter, model.getYhteyshenkilo());
         yhteyshenkiloForm.getYhtHenkKokoNimi().setInputPrompt(T("prompt.kokoNimi"));
 
         Form form = new ValidatingViewBoundForm(yhteyshenkiloForm);
@@ -458,7 +461,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         KoulutusLukioConverter.copySelectedKoodiDataToModel(model);
 
         koulutuskoodi.setValue(model.getKoulutuskoodi());
-        
+
         labelDataBind(opintoala, model.getOpintoala());
         labelDataBind(koulutusaste, model.getKoulutusaste());
         labelDataBind(koulutusala, model.getKoulutusala());

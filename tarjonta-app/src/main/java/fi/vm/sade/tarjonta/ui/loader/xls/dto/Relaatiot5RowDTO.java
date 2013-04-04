@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.loader.xls;
+package fi.vm.sade.tarjonta.ui.loader.xls.dto;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -28,6 +28,7 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
 
     private static final String KOULUTUSASTE_AMMATTILLINEN_KOODI_ARVO = "32";
     private static final String KOULUTUSASTE_LUKIO_AMMATTILLINEN_KOODI_ARVO = "31";
+    private String tyyppi;
     /*
      * 2-aste + common data
      */
@@ -219,11 +220,6 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
         this.eqf = eqf;
     }
 
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
-    }
-
     /**
      * @return the koulutusaste
      */
@@ -332,7 +328,26 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
         } else if (!koulutusasteenKoodiarvo.isEmpty()) {
             throw new RuntimeException("No valid KoulutusasteTyyppi enum found by koodi value '" + koulutusaste + "'");
         }
-        
+
         return null;
+    }
+
+    /**
+     * @return the tyyppi
+     */
+    public String getTyyppi() {
+        return tyyppi;
+    }
+
+    /**
+     * @param tyyppi the tyyppi to set
+     */
+    public void setTyyppi(String tyyppi) {
+        this.tyyppi = tyyppi;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 }
