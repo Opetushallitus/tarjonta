@@ -15,21 +15,12 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;/*
  * European Union Public Licence for more details.
  */
 
-import com.vaadin.data.Property;
 import com.vaadin.ui.*;
-import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
-import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatioSelectDialog;
-import fi.vm.sade.tarjonta.ui.view.common.SelectableItem;
-import fi.vm.sade.tarjonta.ui.view.common.SelectableItemContainer;
-import fi.vm.sade.tarjonta.ui.view.common.SelectableItemListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import fi.vm.sade.vaadin.util.UiUtil;
 
 import java.util.*;
 
@@ -40,19 +31,19 @@ import java.util.*;
 @Configurable(preConstruction =  true)
 public class KoulutusKopiointiDialog extends OrganisaatioSelectDialog {
 
-    
+
     @Autowired(required = true)
     private UserContext userContext;
 
-    
-    
+
+
     private OptionGroup optionGroup;
-    
+
     public KoulutusKopiointiDialog(String width,String height) {
         super(width,height);
-        
+
         setCaption(_i18n.getMessage("dialog.title"));
-        
+
     }
 
     @Override
@@ -92,7 +83,7 @@ public class KoulutusKopiointiDialog extends OrganisaatioSelectDialog {
         topLayout.setSizeFull();
         return topLayout;
     }
-    
+
     @Override
     protected void setButtonListeners() {
         jatkaBtn.addListener(new Button.ClickListener() {
@@ -120,7 +111,7 @@ public class KoulutusKopiointiDialog extends OrganisaatioSelectDialog {
                 }
             }
         });
-        
+
         peruutaBtn.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
@@ -129,5 +120,5 @@ public class KoulutusKopiointiDialog extends OrganisaatioSelectDialog {
         });
     }
 
-    
+
 }

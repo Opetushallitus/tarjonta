@@ -338,6 +338,17 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            
+            <xs:element name="scoreLimits"
+            			type="tns:ScoreLimitsType"
+            			minOccurs="0"
+            			maxOccurs="1">
+            	<xs:annotation>
+                	<xs:documentation xml:lang="fi">
+               			Pisterajojen kuvaus. Kaytossa lukiokoulutusten hakukohteilla.
+               		</xs:documentation>
+         		</xs:annotation>
+            </xs:element>
 
             <xs:element name="EntranceExaminations"
                         minOccurs="0"
@@ -414,6 +425,18 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            
+            <xs:element name="ExtraEvidenceDescription"
+                  		type="tns:TypedDescriptionType"
+                         minOccurs="0"
+                         maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="fi">
+                                	Lisanayttojen (lisapisteiden) kuvaus. Kaytossa lukiokoulutusten hakukohteilla.
+                                </xs:documentation>
+                            </xs:annotation>
+            </xs:element>
+
 
             <xs:element name="Attachments"
                         type="tns:AttachmentCollectionType"
@@ -426,6 +449,18 @@
                 </xs:annotation>
             </xs:element>
 
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="ScoreLimitsType">
+        <xs:sequence>
+            <xs:element name="examinationMinScore" type="xs:int"/>
+            <xs:element name="examinationMaxScore" type="xs:int" />
+            <xs:element name="examinationMinApplicableScore" type="xs:int" />
+            <xs:element name="extraPointsMinScore" type="xs:int"/>
+            <xs:element name="extraPointsMaxScore" type="xs:int"/>
+            <xs:element name="extraPointsMinApplicableScore" type="xs:int" />
+            <xs:element name="overallMinApplicableScore" type="xs:int"/> 
         </xs:sequence>
     </xs:complexType>
 
@@ -988,6 +1023,16 @@
                         type="tns:WebLinkCollectionType"
                         minOccurs="0"
                         maxOccurs="1"/>
+                        
+            <xs:element name="LanguageAssortment"
+                        type="tns:LanguageSetType"
+                        minOccurs="0"
+                        maxOccurs="unbounded"/>
+                        
+            <xs:element name="HighSchoolDiplomas"
+                        type="tns:CodeValueCollectionType"
+                        minOccurs="0"
+                        maxOccurs="1"/>
         </xs:sequence>
 
         <xs:attribute name="id"
@@ -998,6 +1043,37 @@
                       type="tns:StatusSchemeType"
                       use="optional"/>
 
+    </xs:complexType>
+    
+    <xs:complexType name="LanguageSetType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Kielivalikoima. Koostuu oppiaineen tunnisteesta (esim. B1-kieli) ja listasta kielia joita voi kyseisena aineena opiskella.  
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Subject"
+                        type="xs:string"
+                        minOccurs="1"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Oppiaine.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Languages"
+                        type="tns:CodeValueCollectionType"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Oppiaine.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="ScholarshipType">

@@ -119,6 +119,10 @@ public class TarjontaLukioPresenter {
         }
     }
 
+    /**
+     * Tries to find KoulutusModuuli ("KOMO") for given koulutus
+     * (tutkinto == KoulutudKoodiUri AND koulutusohjelma == KoulutusOhjelmsKoodiUri)
+     */
     private void checkKoulutusmoduuli() {
         HaeKoulutusmoduulitKyselyTyyppi kysely =
                 KoulutusLukioConverter.mapToHaeKoulutusmoduulitKyselyTyyppi(
@@ -195,7 +199,7 @@ public class TarjontaLukioPresenter {
             getPerustiedotModel().clearModel();
             getTarjontaModel().setKoulutusLukioKuvailevatTiedot(new KoulutusLukioKuvailevatTiedotViewModel());
         }
-        presenter.fetchOrganisaatioTree();
+        presenter.readNavigationOrgTreeToTarjoaja();
     }
 
     public void loadSelectedKomoData() {
@@ -339,10 +343,10 @@ public class TarjontaLukioPresenter {
     }
 
     /*
-     * TODO: fix this to support lukio.
+     * TODO checkExistingKomoto() fix this to support lukio. Now returns true always.
      */
     private boolean checkExistingKomoto(LisaaKoulutusTyyppi lisaaTyyppi) {
-        LOG.warn("checkExistingKomoto method is still disabled!");
+        LOG.error("checkExistingKomoto method is still disabled!");
 //        TarkistaKoulutusKopiointiTyyppi kysely = new TarkistaKoulutusKopiointiTyyppi();
 //        kysely.setKoulutusAlkamisPvm(lisaaTyyppi.getKoulutuksenAlkamisPaiva());
 //        kysely.setKoulutusLuokitusKoodi(lisaaTyyppi.getKoulutusKoodi().getUri());

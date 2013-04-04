@@ -210,7 +210,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
 
         if (model.isLoaded()) {
             //reload component data from UI model
-            presenter.loadSelectedKomoData();
+            presenter.getLukioPresenter().loadSelectedKomoData();
             reload();
         }
     }
