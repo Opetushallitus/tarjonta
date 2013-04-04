@@ -65,7 +65,6 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +83,9 @@ import org.apache.commons.beanutils.BeanComparator;
 /**
  * This class is used to control the "tarjonta" UI.
  *
+ * @author jwilen
+ * @author tkatva
+ * @author mholi
  * @author mlyly
  */
 public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
@@ -680,7 +682,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
     /*
      * Retrieves the oids of organisaatios that belong to the organisaatio tree of the organisaatio the oid of which is
-     * given as a parameter to this method. 
+     * given as a parameter to this method.
      * The retrieved oid list is used when querying for potential yhteyshenkilos of a koulutus object.
      */
     public void fetchOrganisaatioTree(String organisaatioOid) {
@@ -1580,7 +1582,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     /*
-     * Retrieves the list of oppilaitostyyppis matching the selected organisaatio.
+     * Retrieves the list of (koodisto) oppilaitostyyppi uri's matching the currently selected organisaatio.
      */
     private List<String> getOppilaitostyyppiUris() {
         final String organisaatioOid = this.getNavigationOrganisation().getOrganisationOid();
@@ -1841,9 +1843,18 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         return !this.uiHelper.getOlRelatedKoulutuskoodit(oppilaitostyyppiUris).isEmpty();
     }
 
+    /**
+     * FIXME shouldn't this check that the (given) koulutus is allowed for ALL of the given organisations?
+     *
+     * Only used from KoulutusKopiointiDialog, safe to modify. Maybe rename to
+     * "checkKoulutusCanBeAddedToOrganisations(String koulutusKoodiUri, Collection<> orgs)" ?
+     *
+     * @param orgs
+     * @return
+     */
     public boolean checkOrganisaatiosKoulutukses(Collection<OrganisaatioPerustietoType> orgs) {
         for (OrganisaatioPerustietoType org : orgs) {
-            List<String> oppilaitosTyyppis = new ArrayList<String>(getOppilaitosUrisForOrg(org));
+            List<String> oppilaitosTyyppis = new ArrayList<String>(getOppilaitosTyyppiUrisForOrg(org));
             boolean isEmpty = this.uiHelper.getOlRelatedKoulutuskoodit(oppilaitosTyyppis).isEmpty();
             if (isEmpty) {
                 return false;
@@ -1852,31 +1863,48 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         return true;
     }
 
+    /**
+     * Used only from UusiKoulutusDialog.
+     *
+     * Make sure selected Organisaatios have at least one common organisation type.
+     *
+     * @param orgs
+     * @return true if there is at leas one common organisaatio type in selected organisation types
+     */
     public boolean checkOrganisaatioOppilaitosTyyppimatches(Collection<OrganisaatioPerustietoType> orgs) {
+
+        // Load the list containing the SET of all OppilaitosTyyppi uris.
         List<Set<String>> listOfOppilaitostyyppisLists = new ArrayList<Set<String>>();
-        boolean isOk = true;
         for (OrganisaatioPerustietoType org : orgs) {
-            listOfOppilaitostyyppisLists.add(getOppilaitosUrisForOrg(org));
+            listOfOppilaitostyyppisLists.add(getOppilaitosTyyppiUrisForOrg(org));
         }
 
-
-        for (int counter = 1; counter < listOfOppilaitostyyppisLists.size(); counter++) {
-            Set<String> current = listOfOppilaitostyyppisLists.get(counter);
-            int oneBefore = counter - 1;
-            Set<String> oneBeforeList = listOfOppilaitostyyppisLists.get(oneBefore);
-
-            if (!CollectionUtils.containsAny(current, oneBeforeList)) {
-                isOk = false;
-                break;
-            }
+        // Initialize intersection with the first set in the list (if any)
+        Set<String> intersectionSet = new HashSet<String>();
+        if (!listOfOppilaitostyyppisLists.isEmpty()) {
+            intersectionSet.addAll(listOfOppilaitostyyppisLists.get(0));
         }
 
-        return isOk;
+        // Make intersection with all the sets
+        for (Set<String> set : listOfOppilaitostyyppisLists) {
+            intersectionSet.retainAll(set);
+        }
+
+        // If we have any common elements in the set we conlucde that there is a match and reation can proceed.
+        return !intersectionSet.isEmpty();
     }
 
-    private Set<String> getOppilaitosUrisForOrg(OrganisaatioPerustietoType org) {
+    /**
+     * Returns a set of OppilaitosTyyppi's for a given organisation.
+     * If org is of type "OPPILAITOS" then we use that orgs type AND
+     * (If org is of type "KOULUTUSTOIMIJA" then we use the types for the child organisations. OR
+     * If org is of type "OPETUSPISTE" then we use the parents OppilaitosTyyppi uris also)
+     *
+     * @param org
+     * @return
+     */
+    private Set<String> getOppilaitosTyyppiUrisForOrg(OrganisaatioPerustietoType org) {
         Set<String> oppilaitosTyyppis = new HashSet<String>();
-
 
         OrganisaatioDTO selectedOrg = this.getOrganisaatioService().findByOid(org.getOid());
 
@@ -1901,7 +1929,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 && selectedOrg.getParentOid() != null) {
             List<String> olTyyppis = new ArrayList<String>(oppilaitosTyyppis);
             addParentOlTyyppi(selectedOrg, olTyyppis);
-            olTyyppis.addAll(olTyyppis);
+            oppilaitosTyyppis.addAll(olTyyppis);
         }
         LOG.debug("olTyyppiUris size: {}", oppilaitosTyyppis.size());
 
