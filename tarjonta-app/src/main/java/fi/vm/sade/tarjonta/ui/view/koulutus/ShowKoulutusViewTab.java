@@ -161,8 +161,8 @@ public class ShowKoulutusViewTab extends CustomComponent {
 		addLayoutSplit(parent);
 		buildKoulutuksenKuvailevatTiedot(parent);
 		addLayoutSplit(parent);
-		buildKoulutuksenSisaltyvatOpintokokonaisuudet(parent);
-		addLayoutSplit(parent);
+//		buildKoulutuksenSisaltyvatOpintokokonaisuudet(parent);
+//		addLayoutSplit(parent);
 		buildKoulutuksenHakukohteet(parent);
 		addLayoutSplit(parent);
 	}
@@ -265,20 +265,16 @@ public class ShowKoulutusViewTab extends CustomComponent {
 		grid.setWidth("100%");
 		grid.setMargin(true);
 
-        addItemToGrid(grid, "tutkinnonKoulutuksellisetJaAmmatillisetTavoitteet", getText(model.getTavoitteet()));
-        addItemToGrid(grid, "koulutuksenKoulutuksellisetJaAmmatillisetTavoitteet", getText(model.getKoulutusohjelmaTavoitteet()));
+        addItemToGrid(grid, "tutkinnonKoulutuksellisetJaAmmatillisetTavoitteet", getText(model.getKoulutusohjelmaModel().getTavoitteet()));
+        addItemToGrid(grid, "koulutuksenKoulutuksellisetJaAmmatillisetTavoitteet", getText(model.getKoulutuskoodiModel().getTavoitteet()));
 		addItemToGrid(grid, "koulutusohjelmanValinta",
 				buildLabel(lisatietoForLang.getKoulutusohjelmanValinta()));
-		addItemToGrid(grid, "koulutuksenSisalto",
-				buildLabel(lisatietoForLang.getSisalto()));
-		addItemToGrid(grid, "koulutuksenRakenne",
-				uiHelper.getKoodiNimi(koulutuksenRakenne.getKoodistoUri(), locale));
-		addItemToGrid(grid, "tutkinnonKansainvalistyminen",
-				buildLabel(lisatietoForLang.getKansainvalistyminen()));
-		addItemToGrid(grid, "tutkinnonSijoittuminenTyoelamaan",
-				buildLabel(lisatietoForLang.getSijoittuminenTyoelamaan()));
+		addItemToGrid(grid, "koulutuksenSisalto", buildLabel(lisatietoForLang.getSisalto()));
+		addItemToGrid(grid, "koulutuksenRakenne", getText(model.getKoulutuskoodiModel().getKoulutuksenRakenne()));
+		addItemToGrid(grid, "tutkinnonKansainvalistyminen", buildLabel(lisatietoForLang.getKansainvalistyminen()));
+		addItemToGrid(grid, "tutkinnonSijoittuminenTyoelamaan", buildLabel(lisatietoForLang.getSijoittuminenTyoelamaan()));
         addItemToGrid(grid, "ammattinimikkeet", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusLisatiedotModel().getAmmattinimikkeet(), locale));
-        addItemToGrid(grid, "jatkoOpintomahdollisuudet", getText(model.getJatkoopintomahdollisuudet()));
+        addItemToGrid(grid, "jatkoOpintomahdollisuudet", getText(model.getKoulutuskoodiModel().getJatkoopintomahdollisuudet()));
 
 		grid.setColumnExpandRatio(1, 1f);
 
