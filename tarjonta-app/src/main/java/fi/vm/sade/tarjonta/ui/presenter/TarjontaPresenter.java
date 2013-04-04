@@ -551,6 +551,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public void showKoulutusEditView(Collection<OrganisaatioPerustietoType> orgs) {
+        List<OrganisaatioPerustietoType> tempOrgs = new ArrayList<OrganisaatioPerustietoType>(orgs);
+        getTarjoaja().setOrganisationOid(tempOrgs.get(0).getOid());
+        getTarjoaja().setOrganisationName(tempOrgs.get(0).getNimiFi());
         showKoulutustEditView(null, KoulutusActiveTab.PERUSTIEDOT);
     }
 
@@ -1665,7 +1668,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
             Collections.sort(listaaKoulutusohjelmat, new BeanComparator("nimi"));
             model.getKoulutusohjelmat().addAll(listaaKoulutusohjelmat);
+            //TODO: Jani fix this, what does this do ? If we create only one koulutus per org then maybe should set this in the dialog?
             getNavigationOrganisation().copyToModel(getTarjoaja());
+
             //Loading data from the parent tutkinto komo (startDate and koulutusohjelmanValinta).
             loadTutkintoData(model.getKoulutuskoodiModel().getKoodistoUriVersio());
         }

@@ -5,13 +5,11 @@ import com.vaadin.data.util.BeanContainer;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
-import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
+import fi.vm.sade.tarjonta.ui.model.*;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.ShowHakukohdeValintakoeRow;
@@ -21,6 +19,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -43,6 +42,8 @@ public class ShowHakukohdeTab extends CustomComponent {
 
     private final OrganisaatioContext context;
 
+    private final String datePattern = "dd.MM.yyyy HH:mm";
+
     public ShowHakukohdeTab(String language) {
           Preconditions.checkNotNull(language,"Language cannot be null");
           this.language = language;
@@ -57,7 +58,51 @@ public class ShowHakukohdeTab extends CustomComponent {
          buildPerustiedotLayout(layout);
          addLayoutSplit(layout);
          buildValintakokeetLayout(layout);
+         addLayoutSplit(layout);
+         buildLiiteLayout(layout);
+    }
 
+    private void buildLiiteLayout(VerticalLayout layout) {
+        layout.addComponent(buildHeaderLayout(this.i18n.getMessage("liitteetTitle"),i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent clickEvent) {
+
+                    }
+                }
+                ,presenter.getPermission().userCanUpdateHakukohde(context)));
+
+        final GridLayout grid = new GridLayout(2, 1);
+        grid.setWidth("100%");
+        grid.setMargin(true);
+        for (HakukohdeLiiteViewModel liite: presenter.loadHakukohdeLiitteet()) {
+           addItemToGrid(grid,"liiteoimMennessaLbl",getLiiteAika(liite));
+           addItemToGrid(grid,"liiteToimOsoiteLbl",getLiiteOsoite(liite));
+           addRichTextToGrid(grid,"liiteKuvaus",getLanguageString(liite.getLiitteenSanallinenKuvaus()));
+        }
+        grid.setColumnExpandRatio(1,1f);
+        layout.addComponent(grid);
+        layout.setComponentAlignment(grid, Alignment.TOP_LEFT);
+    }
+
+    private String getLiiteAika(HakukohdeLiiteViewModel liiteViewModel) {
+        SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
+        return sdf.format(liiteViewModel.getToimitettavaMennessa());
+    }
+
+    private String getLiiteOsoite(HakukohdeLiiteViewModel liiteViewModel) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(liiteViewModel.getOsoiteRivi1());
+        sb.append(", ");
+        List<KoodiType> koodis = uiHelper.getKoodis(liiteViewModel.getPostinumero());
+        if (koodis != null) {
+            sb.append(koodis.get(0).getKoodiArvo());
+        }
+        sb.append(", ");
+        sb.append(uiHelper.getKoodiNimi(liiteViewModel.getPostinumero(),I18N.getLocale()));
+
+        return sb.toString();
     }
 
     private void buildValintakokeetLayout(VerticalLayout layout) {
@@ -108,6 +153,15 @@ public class ShowHakukohdeTab extends CustomComponent {
         layout.addComponent(yetAnotherLayout);
 
 
+    }
+
+    private boolean checkLiiteKieli(HakukohdeLiiteViewModel liiteViewModel) {
+        for (KielikaannosViewModel kieli:liiteViewModel.getLiitteenSanallinenKuvaus()) {
+            if (kieli.getKielikoodi().trim().equalsIgnoreCase(this.language)){
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean checkValintakoeKieli(ValintakoeViewModel valintakoeViewModel) {
