@@ -119,12 +119,16 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         QMonikielinenTeksti kuvaus = new QMonikielinenTeksti("kuvaus");
         QMonikielinenTeksti lisatiedot = new QMonikielinenTeksti("lisatiedot");
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        QPisteraja pisterajat = QPisteraja.pisteraja;
+        QMonikielinenTeksti lisanaytto = new QMonikielinenTeksti("lisanaytto");
 
         final BooleanExpression criteria = hakukohde.tila.in(PUBLIC_DATA);
 
         return from(hakukohde).
                 leftJoin(hakukohde.valintakoes, valintakoe).fetch().
                 leftJoin(valintakoe.kuvaus, kuvaus).fetch().
+                leftJoin(valintakoe.pisterajat, pisterajat).fetch().
+                leftJoin(valintakoe.lisanaytot, lisanaytto).fetch().
                 leftJoin(kuvaus.tekstis).fetch().
                 leftJoin(hakukohde.liites).fetch().
                 leftJoin(hakukohde.koulutusmoduuliToteutuses, komoto).fetch().

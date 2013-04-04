@@ -25,7 +25,10 @@ import fi.vm.sade.tarjonta.publication.types.CodeValueType;
 import fi.vm.sade.tarjonta.publication.types.ExaminationEventType;
 import fi.vm.sade.tarjonta.publication.types.ExaminationLocationType;
 import fi.vm.sade.tarjonta.publication.types.ExtendedStringType;
+import fi.vm.sade.tarjonta.publication.types.LanguageSetType;
 import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadData;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunityInstanceType;
+
 import java.io.StringWriter;
 
 import org.junit.Test;
@@ -38,13 +41,19 @@ import fi.vm.sade.tarjonta.publication.types.PostalAddress;
 import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType;
 import fi.vm.sade.tarjonta.publication.types.StatusSchemeType;
 import fi.vm.sade.tarjonta.publication.types.TypedDescriptionType;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
+
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import org.joda.time.DateTime;
@@ -178,6 +187,82 @@ public class LearningOpportunityDataWriterTest {
         //Exams
         assertValintakoe(sc.getEntranceExaminations());
     }
+    
+    @Test
+    public void testWriteSingleLukioHakukohde() throws Exception {
+        // references created:
+        //
+        // hakukohde -> komoto -> komo
+        //
+
+    	int minExamScore = 3;
+    	String oppiaine = "Matematiikka";
+    	int painotus = 2;
+    	
+        Koulutusmoduuli m = createKoulutusmoduuli();
+        m.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
+        KoulutusmoduuliToteutus t = createKoulutusmoduuliToteutus();
+        Hakukohde h = createLukioHakukohde(minExamScore, oppiaine, painotus);
+        h.addKoulutusmoduuliToteutus(t);
+
+        t.setKoulutusmoduuli(m);
+
+        writer.onCollectStart();
+        writer.onCollect(m);
+        writer.onCollect(t);
+        writer.onCollect(h, MMD_SORA, MMD_VALINTAPERUSTEKUVAUS);
+        writer.onCollectEnd();
+
+        LearningOpportunityDownloadDataType unmarshal = unmarshal();
+        List<ApplicationOptionType> applicationOption = unmarshal.getApplicationOption();
+        assertEquals(1, applicationOption.size());
+
+        final ApplicationOptionType ao = applicationOption.get(0);
+        assertEquals("hakukohde/1.2.3.4.5", ao.getIdentifier().getValue());
+        assertEquals(StatusSchemeType.UNKNOWN, ao.getStatus()); //valmis => unknown
+        assertKoodi(ao.getTitle().getCode(), "HN1", "", "", CodeSchemeType.KOODISTO);
+        assertNotNull(ao.getSelectionCriterions());
+        
+        assertTrue(ao.getWeightedSubjects().get(0).getSubject().getUri().equals(oppiaine));
+
+        final TypedDescriptionType descPerustiedot = ao.getDescription();
+        assertEquals(1, descPerustiedot.getText().size());
+        assertEquals("hakukohde_lisatiedot", descPerustiedot.getText().get(0).getValue());
+        assertEquals(LANGUAGE_CODE_FI, descPerustiedot.getText().get(0).getLang());
+
+        final SelectionCriterionsType sc = ao.getSelectionCriterions();
+        assertNotNull(ao.getSelectionCriterions());
+        assertNotNull(sc.getAttachments());
+        assertNotNull(sc.getDescription());
+        assertNotNull(sc.getEntranceExaminations());
+        assertNotNull(sc.getLastYearMaxScore());
+        assertNotNull(sc.getLastYearMinScore());
+        assertNotNull(sc.getLastYearTotalApplicants());
+        assertNotNull(sc.getStartingQuota());
+
+        assertEquals(new BigInteger("200"), sc.getLastYearMaxScore());
+        assertEquals(new BigInteger("5"), sc.getLastYearMinScore());
+        assertEquals(new BigInteger("1111"), sc.getLastYearTotalApplicants());
+        assertEquals(new BigInteger("10"), sc.getStartingQuota());
+
+        final TypedDescriptionType scDesc = sc.getDescription();
+        assertEquals(1, scDesc.getText().size());
+        assertEquals("valintaperustekuvaus", scDesc.getText().get(0).getValue());
+        assertEquals(LANGUAGE_CODE_FI, scDesc.getText().get(0).getLang());
+
+        final TypedDescriptionType erDesc = ao.getEligibilityRequirements().getDescription();
+        assertEquals(1, erDesc.getText().size());
+        assertEquals("SORA", erDesc.getText().get(0).getValue());
+        assertEquals(LANGUAGE_CODE_FI, erDesc.getText().get(0).getLang());
+
+        //Attachments
+        assertAttachment(sc.getAttachments());
+
+        //Exams
+        assertValintakoe(sc.getEntranceExaminations());
+        assertTrue(sc.getEntranceExaminations().getScoreLimits().getExaminationMinScore() == minExamScore);
+       
+    }
 
     private void assertAttachment(AttachmentCollectionType act) {
         assertEquals(1, act.getAttachment().size());
@@ -270,6 +355,36 @@ public class LearningOpportunityDataWriterTest {
         unmarshal();
 
     }
+    
+    @Test
+    public void testWriteLukioKoulutusmoduuliToteutus() throws Exception {
+
+    	String aineKey = "B1KIELI";
+    	String kieli1 = "Suomi";
+    	String[] kielet = new String[]{kieli1};
+    	String lukiodiplomi = "Yrittajadiplomi";
+    	
+        Koulutusmoduuli m = createKoulutusmoduuli();
+        m.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
+        KoulutusmoduuliToteutus t = createLukioKoulutusmoduuliToteutus(aineKey, kielet, lukiodiplomi);
+
+        t.setKoulutusmoduuli(m);
+
+        writer.onCollectStart();
+        writer.onCollect(m);
+        writer.onCollect(t);
+        writer.onCollectEnd();
+        
+        LearningOpportunityDownloadDataType unmarshal = unmarshal();
+        List<LearningOpportunityInstanceType> lois = unmarshal.getLearningOpportunityInstance();
+        assertEquals(1, lois.size());
+        
+        LearningOpportunityInstanceType loi = lois.get(0);
+        assertEquals(loi.getHighSchoolDiplomas().getCodes().getCode().get(0).getUri(), lukiodiplomi);
+        List<LanguageSetType> languageAssortment = loi.getLanguageAssortment();
+        assertEquals(languageAssortment.get(0).getSubject(), aineKey);
+        assertEquals(languageAssortment.get(0).getLanguages().getCodes().getCode().get(0).getUri(), kieli1);
+    }
 
     @Test
     public void testWriteHakukohdeReferencesKoulutusmoduuliToteutus() throws Exception {
@@ -328,6 +443,24 @@ public class LearningOpportunityDataWriterTest {
         return new TarjontaFixtures().createTutkintoOhjelmaToteutus();
 
     }
+    
+    private KoulutusmoduuliToteutus createLukioKoulutusmoduuliToteutus(String aineKey, String[] kielis, String lukiodiplomi) {
+
+        KoulutusmoduuliToteutus lukioKomoto = createKoulutusmoduuliToteutus();
+        
+        Kielivalikoima kieliV = new Kielivalikoima();
+        kieliV.setKey(aineKey);
+        for(String curKieli : kielis) {
+        	kieliV.addKieli(curKieli);
+        }
+        lukioKomoto.addTarjottuKieli(kieliV);
+        
+        lukioKomoto.addLukiodiplomi(new KoodistoUri(lukiodiplomi));
+        
+        return lukioKomoto;
+    }
+    
+    
 
     private Hakukohde createHakukohde() {
         final String prefixUri = "uri:" + AO_PREFIX;
@@ -395,6 +528,25 @@ public class LearningOpportunityDataWriterTest {
 
         return hakukohde;
 
+    }
+    
+    private Hakukohde createLukioHakukohde(int minExamScore, String oppiaine, int painotus) {
+    	Hakukohde lukioHakukohde = createHakukohde();
+    	Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
+    	for (Valintakoe vKoe : lukioHakukohde.getValintakoes()) {
+    		Pisteraja pisteraja = new Pisteraja();
+    		pisteraja.setValinnanPisterajaTyyppi(ValinnanPisterajaTyyppi.PAASYKOE.value());
+    		pisteraja.setAlinPistemaara(minExamScore);
+    		pisteraja.setYlinPistemaara(minExamScore);
+    		pisteraja.setAlinHyvaksyttyPistemaara(minExamScore);
+    		pisterajat.add(pisteraja);
+    		vKoe.setPisterajat(pisterajat);
+    	}
+    	PainotettavaOppiaine painotettavaAine = new PainotettavaOppiaine();
+    	painotettavaAine.setOppiaine(oppiaine);
+    	painotettavaAine.setPainokerroin(painotus);
+    	lukioHakukohde.getPainotettavatOppiaineet().add(painotettavaAine);
+    	return lukioHakukohde;
     }
 
     private Haku createHaku() {

@@ -232,6 +232,17 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            
+            <xs:element name="WeightedSubjects"
+                        type="tns:WeightedSubjectType"
+                        minOccurs="0"
+                        maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Painotettavat oppiaineet, kaytossa lukiohakukohteilla.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
 
             <xs:element name="SelectionCriterions"
                         type="tns:SelectionCriterionsType"
@@ -277,6 +288,18 @@
         <xs:attribute name="status"
                       type="tns:StatusSchemeType"
                       use="optional"/>
+    </xs:complexType>
+    
+    <xs:complexType name="WeightedSubjectType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Painotettava oppiaine. Kaytossa lukion hakukohteella.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Weight" type="xs:decimal"></xs:element>
+            <xs:element name="Subject" type="tns:ExtendedCodeLabelType"></xs:element>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="SelectionCriterionsType">
@@ -338,17 +361,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            
-            <xs:element name="scoreLimits"
-            			type="tns:ScoreLimitsType"
-            			minOccurs="0"
-            			maxOccurs="1">
-            	<xs:annotation>
-                	<xs:documentation xml:lang="fi">
-               			Pisterajojen kuvaus. Kaytossa lukiokoulutusten hakukohteilla.
-               		</xs:documentation>
-         		</xs:annotation>
-            </xs:element>
+
 
             <xs:element name="EntranceExaminations"
                         minOccurs="0"
@@ -369,7 +382,27 @@
                                     Vapaamuotoinen kuvaus kaikista valintakokeista.
                                 </xs:documentation>
                             </xs:annotation>
-                        </xs:element>
+                        </xs:element>                         
+            			<xs:element name="scoreLimits"
+            						type="tns:ScoreLimitsType"
+            						minOccurs="0"
+            						maxOccurs="1">
+            				<xs:annotation>
+                				<xs:documentation xml:lang="fi">
+               						Pisterajojen kuvaus. Kaytossa lukiokoulutusten hakukohteilla.
+               					</xs:documentation>
+         					</xs:annotation>
+            			</xs:element>           
+            			<xs:element name="ExtraEvidenceDescription"
+                  					type="tns:TypedDescriptionType"
+                         			minOccurs="0"
+                         			maxOccurs="1">
+                            <xs:annotation>
+                               	<xs:documentation xml:lang="fi">
+                               		Lisanayttojen (lisapisteiden) kuvaus. Kaytossa lukiokoulutusten hakukohteilla.
+                               	</xs:documentation>
+                            </xs:annotation>
+            			</xs:element>
                         <xs:choice>
                             <xs:element name="NoExam">
                                 <xs:annotation>
@@ -424,17 +457,6 @@
                         </xs:choice>
                     </xs:sequence>
                 </xs:complexType>
-            </xs:element>
-            
-            <xs:element name="ExtraEvidenceDescription"
-                  		type="tns:TypedDescriptionType"
-                         minOccurs="0"
-                         maxOccurs="1">
-                            <xs:annotation>
-                                <xs:documentation xml:lang="fi">
-                                	Lisanayttojen (lisapisteiden) kuvaus. Kaytossa lukiokoulutusten hakukohteilla.
-                                </xs:documentation>
-                            </xs:annotation>
             </xs:element>
 
 
