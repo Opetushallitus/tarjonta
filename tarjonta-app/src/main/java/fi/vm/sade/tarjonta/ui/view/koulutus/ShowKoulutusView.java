@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
+import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -29,8 +31,10 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
 
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -80,13 +84,17 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
         addNavigationButtons(layout, OrganisaatioContext.getContext(presenter.getModel().getTarjoajaModel().getOrganisationOid()));
 
+        final LueKoulutusVastausTyyppi koulutus = presenter.getKoulutusByOid(presenter.getModel().getKoulutusPerustiedotModel().getOid());
+        
         //language tabs
     	final TabSheet tabs = new TabSheet();
 
 		final Set<String> languages = presenter.getModel()
 				.getKoulutusLisatiedotModel().getLisatiedot().keySet();
+		
 		for (String language : languages) {
-			ShowKoulutusViewTab tab = new ShowKoulutusViewTab(language);
+			List<KoodiType> koodit = tarjontaUIHelper.getKoodis(language);
+			ShowKoulutusViewTab tab = new ShowKoulutusViewTab(language, new Locale(koodit.get(0).getKoodiArvo()), koulutus);
 			tabs.addTab(tab, tarjontaUIHelper.getKoodiNimi(language));
 		}
 		
