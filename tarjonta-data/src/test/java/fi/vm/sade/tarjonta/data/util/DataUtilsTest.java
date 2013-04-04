@@ -6,6 +6,6 @@ import org.junit.Test;
 public class DataUtilsTest {
     @Test
     public void testGetKoodistoUri() {
-        Assert.assertEquals("kuntaryhma", DataUtils.createKoodiUriFromName("KUNTARYHMÄ"));
+        Assert.assertEquals("kuntaryhma", DataUtils.createKoodistoUriFromName("KUNTARYHMÄ"));
     }
 }

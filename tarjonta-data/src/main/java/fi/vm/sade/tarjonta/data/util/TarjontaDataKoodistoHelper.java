@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 /**
@@ -68,7 +67,8 @@ public class TarjontaDataKoodistoHelper {
         try {
             return koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);
         } catch (final Exception exp) {
-            log.warn("Unable to create koodi with arvo [{}], exception [{}], trying to re-create with another nimi", createKoodiDataType.getKoodiArvo(), exp.getMessage());
+            log.warn("Unable to create koodi with arvo [{}], exception [{}], trying to re-create with another nimi",
+                    createKoodiDataType.getKoodiArvo(), exp.getMessage());
             //TODO: remove when Koodisto Team has managed to get this working
             try {
                 koodiData.setKoodiNimiFi(String.format("%s (%s)", koodiData.getKoodiNimiFi(), koodiData.getKoodiArvo()));
@@ -82,7 +82,8 @@ public class TarjontaDataKoodistoHelper {
                 return koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);
             } catch (final Exception exx) {
                 // gotta throw up
-                throw new RuntimeException(String.format("Failed to re-create koodi with new arvo [%s], exception [%s]", createKoodiDataType.getKoodiArvo(), exx.getMessage()));
+                throw new RuntimeException(String.format("Failed to re-create koodi with new arvo [%s], exception [%s]",
+                        createKoodiDataType.getKoodiArvo(), exx.getMessage()));
             }
         }
     }
@@ -90,13 +91,13 @@ public class TarjontaDataKoodistoHelper {
     /**
      * Creates a new koodisto. If koodisto already exists, it will be removed and created again.
      *
+     *
      * @param baseUri
-     * @param koodistoUri
      * @param name
      * @return
      */
-    public KoodistoType addKoodisto(final List<String> baseUri, final String koodistoUri, final String name) {
-        log.info("Creating koodisto with uri [{}] and base uri [{}]", koodistoUri, StringUtils.join(baseUri, ", "));
+    public KoodistoType addKoodisto(final List<String> baseUri, final String name) {
+        log.info("Creating koodisto with name [{}] and base uri [{}]", name, StringUtils.join(baseUri, ", "));
         final CreateKoodistoDataType createKoodistoDataType = DataUtils.createCreateKoodistoDataType(
                 getOrganisaatioNimi(), getOrganisaatioOid(), ACTIVATED_DATE, null, name);
         return koodistoAdminService.createKoodisto(baseUri, createKoodistoDataType);
@@ -161,7 +162,8 @@ public class TarjontaDataKoodistoHelper {
     }
 
     public List<KoodiType> getKoodiByArvoAndKoodistoNimi(final String koodiArvo, final String koodistoUri) {
-        final List<KoodiType> koodis = koodiService.searchKoodisByKoodisto(KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koodiArvo, koodistoUri));
+        final List<KoodiType> koodis = koodiService.searchKoodisByKoodisto(KoodiServiceSearchCriteriaBuilder
+                .koodisByArvoAndKoodistoUri(koodiArvo, koodistoUri));
         return koodis;
     }
 
@@ -207,7 +209,7 @@ public class TarjontaDataKoodistoHelper {
         final HashMap<String, KoodiType> koodiUriArvoPair = new HashMap<String, KoodiType>();
 
         for (final Koodi koodi : koodis) {
-            addKoodi(koodi, DataUtils.createKoodiUriFromName(koodistoUri));
+            addKoodi(koodi, DataUtils.createKoodistoUriFromName(koodistoUri));
         }
 
         return koodiUriArvoPair;
@@ -220,43 +222,20 @@ public class TarjontaDataKoodistoHelper {
     }
 
     public void addKoodiRelation(final KoodiRelaatio koodiRelaatio) {
-        final List<KoodiUriAndVersioType> alakoodis = new ArrayList<KoodiUriAndVersioType>();
-        alakoodis.add(createKoodiUriVersio(koodiRelaatio.getKoodiAlaArvo(), koodiRelaatio.getAlaArvoKoodisto()));
+        final String ylaKoodiUri = getKoodiUri(koodiRelaatio.getYlaArvoKoodisto(), koodiRelaatio.getKoodiYlaArvo());
+        final String alaKoodiUri = getKoodiUri(koodiRelaatio.getAlaArvoKoodisto(), koodiRelaatio.getKoodiAlaArvo());
         try {
-            log.info("Trying to create relation with yla-arvo [{}], ala-arvo [{}]", koodiRelaatio.getKoodiYlaArvo(), koodiRelaatio.getKoodiAlaArvo());
-            koodiAdminService.addRelationByAlakoodi(createKoodiUriVersio(koodiRelaatio.getKoodiYlaArvo(), koodiRelaatio.getYlaArvoKoodisto()), alakoodis, SuhteenTyyppiType.SISALTYY);
+            log.info("Trying to create relation with yla-arvo [{}], ala-arvo [{}]", ylaKoodiUri, alaKoodiUri);
+            koodiAdminService.addRelationByAlakoodi(ylaKoodiUri, Collections.singletonList(alaKoodiUri), SuhteenTyyppiType.SISALTYY);
         } catch (final Exception exp) {
-            log.error("Unable to create relation with arvos [{}], exception [{}]", koodiRelaatio.getKoodiYlaArvo() + ", " + koodiRelaatio.getKoodiAlaArvo(), exp.toString());
+            log.error("Unable to create relation with arvos [{}], exception [{}]", ylaKoodiUri + ", " + alaKoodiUri, exp.toString());
         }
     }
 
-    public KoodiUriAndVersioType createKoodiUriVersio(final String koodiArvo, final String koodistoUri) {
-        final List<KoodiType> koodiTypes = getKoodiByArvoAndKoodistoNimi(koodiArvo, koodistoUri);
-
-        if (koodiTypes != null && koodiTypes.size() > 0) {
-
-            return createKoodiUriAndVersioType(koodiTypes.get(0));
-        } else {
-            return new KoodiUriAndVersioType();
+    private String getKoodiUri(final String koodistoUri, final String koodiArvo) {
+        if (StringUtils.isBlank(koodistoUri) || StringUtils.isBlank(koodiArvo)) {
+            return null;
         }
-    }
-
-    public void addRelaatioByAlakoodi(final KoodiUriAndVersioType ylaKoodi, final List<KoodiUriAndVersioType> alaKoodis,
-                                      final SuhteenTyyppiType suhteenTyyppi) {
-        try {
-            final StringBuilder alaKoodiArvos = new StringBuilder();
-            final Iterator<KoodiUriAndVersioType> koodiIterator = alaKoodis.iterator();
-            while (koodiIterator.hasNext()) {
-                final KoodiUriAndVersioType koodi = koodiIterator.next();
-                alaKoodiArvos.append(koodi.getKoodiUri());
-                if (koodiIterator.hasNext()) {
-                    alaKoodiArvos.append(", ");
-                }
-            }
-            log.info("Trying to create relation with yla-arvo [{}], ala-arvos [{}]", ylaKoodi.getKoodiUri(), alaKoodiArvos.toString());
-            koodiAdminService.addRelationByAlakoodi(ylaKoodi, alaKoodis, suhteenTyyppi);
-        } catch (final Exception exp) {
-            log.warn("Unable to create relation, exception [{}]", exp.toString());
-        }
+        return String.format("%s_%s", koodistoUri, DataUtils.createKoodistoUriFromName(koodiArvo));
     }
 }

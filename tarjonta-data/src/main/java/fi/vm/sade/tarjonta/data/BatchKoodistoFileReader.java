@@ -20,6 +20,7 @@ import java.util.Map;
 
 @Service
 public class BatchKoodistoFileReader {
+    private static final int HUNDRED_PERCENT = 100;
     private final Logger log = LoggerFactory.getLogger(BatchKoodistoFileReader.class);
 
     @Autowired
@@ -57,7 +58,8 @@ public class BatchKoodistoFileReader {
         // insert koodistos
         for (final File koodisto : koodistoFiles) {
             try {
-                uploadKoodistoData.loadKoodistoFromExcel(koodisto.getAbsolutePath(), getKoodistoRyhmaUri(URLDecoder.decode(koodisto.toURI().toString(), "UTF-8")),
+                uploadKoodistoData.loadKoodistoFromExcel(koodisto.getAbsolutePath(),
+                        getKoodistoRyhmaUri(URLDecoder.decode(koodisto.toURI().toString(), "UTF-8")),
                         StringUtils.substringBefore(koodisto.getName().toLowerCase(), "."), organisaatioOid);
             } catch (final Exception e) {
                 log.error(e.getMessage());
@@ -71,7 +73,7 @@ public class BatchKoodistoFileReader {
         // insert relations
         for (final File relaatio : relaatioFiles) {
             try {
-                //uploadKoodistoData.createKoodistoRelations(relaatio.getAbsolutePath());
+                uploadKoodistoData.createKoodistoRelations(relaatio.getAbsolutePath());
             } catch (final Exception e) {
                 log.error(e.getMessage());
                 relaatioErrors.put(relaatio, e);
@@ -97,7 +99,7 @@ public class BatchKoodistoFileReader {
         if (StringUtils.containsIgnoreCase(filePath, koodistoDirectory)) {
             final String koodistoRyhmaNimi = StringUtils.substringBetween(filePath, koodistoDirectory + "/", "/");
             if (StringUtils.isNotBlank(koodistoRyhmaNimi)) {
-                final String uri = String.format("http://%s", DataUtils.createKoodiUriFromName(koodistoRyhmaNimi));
+                final String uri = String.format("http://%s", DataUtils.createKoodistoUriFromName(koodistoRyhmaNimi));
                 log.info("Found koodistoRyhmaUri [{}]", uri);
                 return uri;
             }
@@ -111,7 +113,7 @@ public class BatchKoodistoFileReader {
             return "[invalid]";
         }
         final int done = new BigDecimal(currentCount).divide(new BigDecimal(totalCount), new MathContext(2, RoundingMode.HALF_UP))
-                .multiply(new BigDecimal(100)).intValue(); // 0 ... 100
+                .multiply(new BigDecimal(HUNDRED_PERCENT)).intValue(); // 0 ... 100
         final StringBuilder progress = new StringBuilder("Progress: [");
         for (int i = 0; i < 20; i++) {
             if (done > (i * 5)) {

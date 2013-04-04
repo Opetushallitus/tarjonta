@@ -28,7 +28,7 @@ import java.net.URL;
 import java.util.Set;
 
 public class HakukohdeData {
-    private static final Logger log = LoggerFactory.getLogger(HakukohdeData.class);
+    private final Logger log = LoggerFactory.getLogger(HakukohdeData.class);
     private static final String FILE_URI = "/YHTEISHAKUKOODIT_TOINEN_ASTE_Relaatiot2.xls";
     private Set<YhteishakuKooditDTO> loadedData;
     public static final Column[] YHTEISHAKUKOODIT_TOINEN_ASTE = {
@@ -47,7 +47,8 @@ public class HakukohdeData {
         log.info("Load a file : {}", FILE_URI);
         final URL relaatiot5 = this.getClass().getResource(FILE_URI);
 
-        final ExcelReader<YhteishakuKooditDTO> readerForRelaatiot5 = new ExcelReader<YhteishakuKooditDTO>(YhteishakuKooditDTO.class, YHTEISHAKUKOODIT_TOINEN_ASTE, 800);
+        final ExcelReader<YhteishakuKooditDTO> readerForRelaatiot5 = new ExcelReader<YhteishakuKooditDTO>(YhteishakuKooditDTO.class,
+                YHTEISHAKUKOODIT_TOINEN_ASTE, 800);
         loadedData = readerForRelaatiot5.read(relaatiot5.getPath(), false);
     }
 

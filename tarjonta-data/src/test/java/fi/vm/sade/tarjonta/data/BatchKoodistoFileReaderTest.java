@@ -123,7 +123,7 @@ public class BatchKoodistoFileReaderTest {
 
         // verify suhteentyyppi
         final ArgumentCaptor<SuhteenTyyppiType> createSuhteentyyppi = ArgumentCaptor.forClass(SuhteenTyyppiType.class);
-        verify(koodiAdminService, times(4)).addRelationByAlakoodi(any(KoodiUriAndVersioType.class), anyListOf(KoodiUriAndVersioType.class), createSuhteentyyppi.capture());
+        verify(koodiAdminService, times(4)).addRelationByAlakoodi(any(String.class), anyListOf(String.class), createSuhteentyyppi.capture());
         log.info("captured suhteentyyppi {}", createSuhteentyyppi.getValue().value());
         assertEquals("SISALTYY", createSuhteentyyppi.getValue().value());
     }
