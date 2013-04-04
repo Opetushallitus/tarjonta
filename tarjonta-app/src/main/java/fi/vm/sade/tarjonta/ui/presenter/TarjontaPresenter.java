@@ -655,15 +655,18 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             readKoulutusToModel(koulutusOid);
         } else {
             getModel().getKoulutusPerustiedotModel().clearModel(DocumentStatus.NEW);
-            fetchOrganisaatioTree();
             getModel().setKoulutusLisatiedotModel(new KoulutusLisatiedotModel());
         }
+        readNavigationOrgTreeToTarjoaja();
+
         showEditKoulutusView(koulutusOid, tab);
     }
 
     public void showLisaaRinnakkainenToteutusEditView(final String koulutusOid) {
         if (koulutusOid != null) {
             readKoulutusToModel(koulutusOid);
+            readNavigationOrgTreeToTarjoaja();
+
 
             getModel().getKoulutusPerustiedotModel().getKoulutuksenHakukohteet().clear();
             getModel().getKoulutusPerustiedotModel().setOpetuskieli(null);
@@ -676,8 +679,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         }
     }
 
-    public void fetchOrganisaatioTree() {
-        fetchOrganisaatioTree(getNavigationOrganisation().getOrganisationOid());
+    public void readNavigationOrgTreeToTarjoaja() {
+        readOrgTreeToTarjoaja(getNavigationOrganisation().getOrganisationOid());
     }
 
     /*
@@ -685,7 +688,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * given as a parameter to this method.
      * The retrieved oid list is used when querying for potential yhteyshenkilos of a koulutus object.
      */
-    public void fetchOrganisaatioTree(String organisaatioOid) {
+    public void readOrgTreeToTarjoaja(String organisaatioOid) {
         if (organisaatioOid == null) {
             throw new RuntimeException("Organisation OID cannot be null.");
         }
@@ -717,7 +720,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
 
             koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), lueKoulutus, I18N.getLocale());
-            fetchOrganisaatioTree();
+            readNavigationOrgTreeToTarjoaja();
             getModel().setKoulutusPerustiedotModel(koulutus);
             getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(lueKoulutus));
 
@@ -742,7 +745,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         try {
             KoulutusToisenAsteenPerustiedotViewModel koulutus;
             koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), lueKoulutus, I18N.getLocale());
-            fetchOrganisaatioTree();
 
             getModel().setKoulutusPerustiedotModel(koulutus);
             getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(lueKoulutus));

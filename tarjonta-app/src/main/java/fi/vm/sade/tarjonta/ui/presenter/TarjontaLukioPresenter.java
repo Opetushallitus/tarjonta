@@ -199,7 +199,7 @@ public class TarjontaLukioPresenter {
             getPerustiedotModel().clearModel();
             getTarjontaModel().setKoulutusLukioKuvailevatTiedot(new KoulutusLukioKuvailevatTiedotViewModel());
         }
-        presenter.fetchOrganisaatioTree();
+        presenter.readNavigationOrgTreeToTarjoaja();
     }
 
     public void loadSelectedKomoData() {
