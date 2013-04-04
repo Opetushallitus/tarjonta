@@ -65,6 +65,8 @@ import fi.vm.sade.tarjonta.publication.types.LearningOpportunityProviderType.Ins
 import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType.EntranceExaminations.Examination;
 import fi.vm.sade.tarjonta.publication.types.WebLinkCollectionType.Link;
 import fi.vm.sade.tarjonta.publication.utils.VersionedUri;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -443,10 +445,33 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         // LearningOpportunityInstance/WebLinks
         addLinkit(toteutus, instance);
         
+        if (toteutus.getKoulutusmoduuli().getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value())) {
+        	addLukiodiplomit(toteutus, instance);
+        	addKielivalikoimat(toteutus, instance);
+        }
+        
         marshal(LearningOpportunityInstanceType.class, instance);
     }
     
-    @Override
+    
+    
+    private void addKielivalikoimat(KoulutusmoduuliToteutus toteutus,
+			LearningOpportunityInstanceType instance) {
+		for (Kielivalikoima curValikoima : toteutus.getTarjotutKielet()) {
+			LanguageSetType curLangSet = new LanguageSetType();
+			curLangSet.setSubject(curValikoima.getKey());
+			curLangSet.setLanguages(toCodeValueCollection(curValikoima.getKielet()));
+			instance.getLanguageAssortment().add(curLangSet);			
+		}
+	}
+
+	private void addLukiodiplomit(KoulutusmoduuliToteutus toteutus,
+			LearningOpportunityInstanceType instance) {
+        CodeValueCollectionType collection = toCodeValueCollection(toteutus.getLukiodiplomit());
+        instance.setHighSchoolDiplomas(collection);
+	}
+
+	@Override
     public void onCollect(OrganisaatioDTO tarjoaja) throws Exception {
         LearningOpportunityProviderType provider = new LearningOpportunityProviderType();
         OrganisaatioKuvailevatTiedotTyyppi kuvailevatTiedot = tarjoaja.getKuvailevatTiedot();
