@@ -49,13 +49,13 @@ public class KoodistoRelaatioExcelReader {
             final HSSFRow currentRow = sheet.getRow(rowNumber);
             if (rowNumber == 0) {
                 for (int cellCount = 0; cellCount <= currentRow.getLastCellNum(); cellCount++) {
-                    final String header = getCellValueAsString(currentRow.getCell(cellCount));
-                    if (header != null) {
-                        final String koodistoUri = DataUtils.createKoodiUriFromName(header);
+                    final String koodistoNimi = getCellValueAsString(currentRow.getCell(cellCount));
+                    if (koodistoNimi != null) {
+                        final String koodistoUri = DataUtils.createKoodistoUriFromName(koodistoNimi);
                         if (koodistoHelper.isKoodisto(koodistoUri)) {
                             headers.add(koodistoUri);
                         } else {
-                            log.warn("Koodisto not found with koodistoUri [{}], skipping this column", koodistoUri);
+                            log.warn("Koodisto not found with koodistoUri [{}], skipping this column in file [{}]", koodistoUri, pathToFile);
                             if (cellCount == 0) {
                                 // ylaKoodisto not found, abort whole file
                                 break rows;

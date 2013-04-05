@@ -75,7 +75,7 @@ public class Valintaperustekuvaus {
     private void addKoodistos(final TarjontaDataKoodistoHelper koodistoHelper,
                               final List<String> ryhmaUris) throws IOException, ExceptionMessage {
         if (!koodistoHelper.isKoodisto(KOODISTO_VALINTAPERUSTEKUVAUS_URI)) {
-            koodistoHelper.addKoodisto(ryhmaUris, KOODISTO_VALINTAPERUSTEKUVAUS_URI, KOODISTO_VALINTAPERUSTEKUVAUS_NAME);
+            koodistoHelper.addKoodisto(ryhmaUris, KOODISTO_VALINTAPERUSTEKUVAUS_NAME);
             log.debug("Koodisto created, koodisto uri : {}", KOODISTO_VALINTAPERUSTEKUVAUS_URI);
         } else {
             log.info("Koodisto service already has the koodisto.  Koodisto uri : {}", KOODISTO_VALINTAPERUSTEKUVAUS_URI);

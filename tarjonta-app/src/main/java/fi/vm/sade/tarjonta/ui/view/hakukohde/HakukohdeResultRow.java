@@ -150,6 +150,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
         if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
             //Ugly, refactor when whole object is passed
+            tarjontaPresenter.getTarjoaja().setOrganisationOid(this.hakukohde.getKoulutus().getTarjoaja());
             tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
             tarjontaPresenter.showHakukohdeViewImpl(hakukohdeOid);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {

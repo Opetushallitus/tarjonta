@@ -36,7 +36,7 @@ import java.util.Set;
 public class ExcelReader<T extends AbstractReadableRow> {
     private final Logger log = LoggerFactory.getLogger(ExcelReader.class);
     private int maxReadRows = 100;
-    private final String DATE_FORMAT = "dd.MM.yyyy";
+    private static final String DATE_FORMAT = "dd.MM.yyyy";
     private Class dataObjectClass;
     private HSSFWorkbook workbook;
     //Data mapping config, map DTO property to a excel row column using reflection.

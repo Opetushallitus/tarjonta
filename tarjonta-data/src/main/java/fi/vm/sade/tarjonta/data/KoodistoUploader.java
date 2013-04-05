@@ -9,8 +9,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * Date: 19.2.2013
  * Time: 19:24
  */
-public class KoodistoUploader {
+public final class KoodistoUploader {
     private static Logger log = LoggerFactory.getLogger(KoodistoUploader.class);
+
+    private KoodistoUploader() {
+
+    }
 
     public static void main(final String[] args) {
         if (args != null && args.length > 1) {

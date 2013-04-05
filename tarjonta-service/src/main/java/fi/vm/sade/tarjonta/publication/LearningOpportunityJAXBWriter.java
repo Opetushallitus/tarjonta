@@ -36,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,6 +66,9 @@ import fi.vm.sade.tarjonta.publication.types.LearningOpportunityProviderType.Ins
 import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType.EntranceExaminations.Examination;
 import fi.vm.sade.tarjonta.publication.types.WebLinkCollectionType.Link;
 import fi.vm.sade.tarjonta.publication.utils.VersionedUri;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -271,10 +275,26 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         // ApplicationOption/LearningOpportunities
         addKoulutukset(hakukohde, applicationOption);
         
+        //ApplicationOption/WeightedSubjects
+        addPainotettavatOppiaineet(hakukohde, applicationOption);
+        
         marshal(ApplicationOptionType.class, applicationOption);
-    }
-    
-    @Override
+    }  
+
+    /*
+     * Adds painotettavat oppiaineet to hakukohde. Lukio hakukohde contains these. 
+     */
+	private void addPainotettavatOppiaineet(Hakukohde hakukohde,
+			ApplicationOptionType applicationOption) {
+		for (PainotettavaOppiaine curOp : hakukohde.getPainotettavatOppiaineet()) {
+			WeightedSubjectType ws = new WeightedSubjectType();
+			ws.setSubject(createExtendedCodeValue(curOp.getOppiaine()));
+			ws.setWeight(BigDecimal.valueOf(curOp.getPainokerroin()));
+			applicationOption.getWeightedSubjects().add(ws);
+		}
+	}
+
+	@Override
     public void onCollect(Koulutusmoduuli moduuli) throws Exception {
         onCollect(moduuli, null);
     }
@@ -443,10 +463,36 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         // LearningOpportunityInstance/WebLinks
         addLinkit(toteutus, instance);
         
+        //If the LOI is lukio, adding high school diplomas, and language assortment
+        if (toteutus.getKoulutusmoduuli().getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value())) {
+        	//LearningOpportunityInstance/LanguageAssortment
+        	addLukiodiplomit(toteutus, instance);
+        	//LearningOpportunityInstance/HighSchoolDiplomas
+        	addKielivalikoimat(toteutus, instance);
+        }
+        
         marshal(LearningOpportunityInstanceType.class, instance);
     }
     
-    @Override
+    
+    
+    private void addKielivalikoimat(KoulutusmoduuliToteutus toteutus,
+			LearningOpportunityInstanceType instance) {
+		for (Kielivalikoima curValikoima : toteutus.getTarjotutKielet()) {
+			LanguageSetType curLangSet = new LanguageSetType();
+			curLangSet.setSubject(curValikoima.getKey());
+			curLangSet.setLanguages(toCodeValueCollection(curValikoima.getKielet()));
+			instance.getLanguageAssortment().add(curLangSet);			
+		}
+	}
+
+	private void addLukiodiplomit(KoulutusmoduuliToteutus toteutus,
+			LearningOpportunityInstanceType instance) {
+        CodeValueCollectionType collection = toCodeValueCollection(toteutus.getLukiodiplomit());
+        instance.setHighSchoolDiplomas(collection);
+	}
+
+	@Override
     public void onCollect(OrganisaatioDTO tarjoaja) throws Exception {
         LearningOpportunityProviderType provider = new LearningOpportunityProviderType();
         OrganisaatioKuvailevatTiedotTyyppi kuvailevatTiedot = tarjoaja.getKuvailevatTiedot();
@@ -772,6 +818,8 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         
         addLiitteet(source, criterions);
         
+      
+        
     }
     
     private void addValintakokeet(Hakukohde source, SelectionCriterionsType target) {
@@ -781,17 +829,65 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
             return;
         }
         
+        
+        
         SelectionCriterionsType.EntranceExaminations exams = new SelectionCriterionsType.EntranceExaminations();
         for (Valintakoe sourceExamination : valintakoes) {
             Examination targetExamination = new Examination();
             addValintakoe(sourceExamination, targetExamination);
             exams.getExamination().add(targetExamination);
+
+        }
+        //If the source hakukohde relates to high school education the
+        //high school specific data is added (score limits, and extra evidence description)
+        if (KoulutusasteTyyppi.LUKIOKOULUTUS.value().equals(getKoulutustyyppi(source))) {
+        	Valintakoe lukioValintakoe = valintakoes.iterator().next();
+        	//EntranceExaminations/ScoreLimits
+        	addPisterajat(lukioValintakoe, exams);
+        	//EntranceExaminations/ExtraEvidenceDescription
+        	addLisanaytto(lukioValintakoe, exams);
         }
         target.setEntranceExaminations(exams);
-        
     }
     
-    private void addLiitteet(Hakukohde source, SelectionCriterionsType target) {
+    /*
+     * Add extra evidence description. Used in high school application option.
+     */
+    private void addLisanaytto(Valintakoe source, SelectionCriterionsType.EntranceExaminations target) {
+		target.setExtraEvidenceDescription(new TypedDescriptionType());
+        copyDescriptions(source.getLisanaytot(), target.getExtraEvidenceDescription());
+	}
+
+    /*
+     * Add score limits. Used in high school application option.
+     */
+	private void addPisterajat(Valintakoe source, SelectionCriterionsType.EntranceExaminations target) {
+		ScoreLimitsType limits = new ScoreLimitsType();
+		for(Pisteraja curPisteraja : source.getPisterajat()) {
+			if (curPisteraja.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.PAASYKOE.value())) {
+				limits.setExaminationMaxScore(curPisteraja.getYlinPistemaara());
+				limits.setExaminationMinScore(curPisteraja.getAlinPistemaara());
+				limits.setExaminationMinApplicableScore(curPisteraja.getAlinHyvaksyttyPistemaara());
+			} else if (curPisteraja.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.LISAPISTEET.value())) {
+				limits.setExtraPointsMaxScore(curPisteraja.getYlinPistemaara());
+				limits.setExtraPointsMinScore(curPisteraja.getAlinPistemaara());
+				limits.setExtraPointsMinApplicableScore(curPisteraja.getAlinHyvaksyttyPistemaara());
+			} else if (curPisteraja.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.KOKONAISPISTEET.value())) {
+				limits.setOverallMinApplicableScore(curPisteraja.getAlinHyvaksyttyPistemaara());
+			}
+		}
+		target.setScoreLimits(limits);
+	}
+    
+    private String getKoulutustyyppi(Hakukohde hakukohde) {
+    	String koulutustyyppi = null;
+        if (!hakukohde.getKoulutusmoduuliToteutuses().isEmpty()) {
+        	koulutustyyppi = hakukohde.getKoulutusmoduuliToteutuses().iterator().next().getKoulutusmoduuli().getKoulutustyyppi();
+        }
+		return koulutustyyppi;
+	}
+
+	private void addLiitteet(Hakukohde source, SelectionCriterionsType target) {
         
         Set<HakukohdeLiite> liitteet = source.getLiites();
         if (liitteet == null || liitteet.isEmpty()) {

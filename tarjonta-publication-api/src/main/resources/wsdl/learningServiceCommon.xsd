@@ -232,6 +232,17 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            
+            <xs:element name="WeightedSubjects"
+                        type="tns:WeightedSubjectType"
+                        minOccurs="0"
+                        maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Painotettavat oppiaineet, kaytossa lukiohakukohteilla.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
 
             <xs:element name="SelectionCriterions"
                         type="tns:SelectionCriterionsType"
@@ -277,6 +288,18 @@
         <xs:attribute name="status"
                       type="tns:StatusSchemeType"
                       use="optional"/>
+    </xs:complexType>
+    
+    <xs:complexType name="WeightedSubjectType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Painotettava oppiaine. Kaytossa lukion hakukohteella.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Weight" type="xs:decimal"></xs:element>
+            <xs:element name="Subject" type="tns:ExtendedCodeLabelType"></xs:element>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="SelectionCriterionsType">
@@ -339,6 +362,7 @@
                 </xs:annotation>
             </xs:element>
 
+
             <xs:element name="EntranceExaminations"
                         minOccurs="0"
                         maxOccurs="1">
@@ -358,7 +382,27 @@
                                     Vapaamuotoinen kuvaus kaikista valintakokeista.
                                 </xs:documentation>
                             </xs:annotation>
-                        </xs:element>
+                        </xs:element>                         
+            			<xs:element name="scoreLimits"
+            						type="tns:ScoreLimitsType"
+            						minOccurs="0"
+            						maxOccurs="1">
+            				<xs:annotation>
+                				<xs:documentation xml:lang="fi">
+               						Pisterajojen kuvaus. Kaytossa lukiokoulutusten hakukohteilla.
+               					</xs:documentation>
+         					</xs:annotation>
+            			</xs:element>           
+            			<xs:element name="ExtraEvidenceDescription"
+                  					type="tns:TypedDescriptionType"
+                         			minOccurs="0"
+                         			maxOccurs="1">
+                            <xs:annotation>
+                               	<xs:documentation xml:lang="fi">
+                               		Lisanayttojen (lisapisteiden) kuvaus. Kaytossa lukiokoulutusten hakukohteilla.
+                               	</xs:documentation>
+                            </xs:annotation>
+            			</xs:element>
                         <xs:choice>
                             <xs:element name="NoExam">
                                 <xs:annotation>
@@ -415,6 +459,7 @@
                 </xs:complexType>
             </xs:element>
 
+
             <xs:element name="Attachments"
                         type="tns:AttachmentCollectionType"
                         minOccurs="0"
@@ -426,6 +471,18 @@
                 </xs:annotation>
             </xs:element>
 
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="ScoreLimitsType">
+        <xs:sequence>
+            <xs:element name="examinationMinScore" type="xs:int"/>
+            <xs:element name="examinationMaxScore" type="xs:int" />
+            <xs:element name="examinationMinApplicableScore" type="xs:int" />
+            <xs:element name="extraPointsMinScore" type="xs:int"/>
+            <xs:element name="extraPointsMaxScore" type="xs:int"/>
+            <xs:element name="extraPointsMinApplicableScore" type="xs:int" />
+            <xs:element name="overallMinApplicableScore" type="xs:int"/> 
         </xs:sequence>
     </xs:complexType>
 
@@ -988,6 +1045,28 @@
                         type="tns:WebLinkCollectionType"
                         minOccurs="0"
                         maxOccurs="1"/>
+                        
+            <xs:element name="LanguageAssortment"
+                        type="tns:LanguageSetType"
+                        minOccurs="0"
+                        maxOccurs="unbounded">
+                 <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Lukion tarjoama kielivalikoima, ts. opiskeltavissa olevat kielet. Kaytossa lukiokoulutuksilla.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>            
+                        
+            <xs:element name="HighSchoolDiplomas"
+                        type="tns:CodeValueCollectionType"
+                        minOccurs="0"
+                        maxOccurs="1">
+           		<xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Lukion tarjoamat lukiodiplomit. Kaytossa lukiokoulutuksilla.
+                    </xs:documentation>
+                </xs:annotation>
+           </xs:element>             
         </xs:sequence>
 
         <xs:attribute name="id"
@@ -998,6 +1077,38 @@
                       type="tns:StatusSchemeType"
                       use="optional"/>
 
+    </xs:complexType>
+    
+    <xs:complexType name="LanguageSetType">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+                Joukko opetettavia kielia oppiaineen tunnuksella varustettuna. 
+                Koostuu oppiaineen tunnisteesta (esim. B1-kieli) ja listasta kielia joita voi kyseisena aineena opiskella.  
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Subject"
+                        type="xs:string"
+                        minOccurs="1"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Oppiaine.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Languages"
+                        type="tns:CodeValueCollectionType"
+                        minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Opetettavat kielet.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="ScholarshipType">

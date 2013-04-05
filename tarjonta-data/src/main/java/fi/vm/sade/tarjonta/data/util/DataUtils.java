@@ -6,8 +6,8 @@ import fi.vm.sade.koodisto.service.types.CreateKoodistoDataType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodistoMetadataType;
-import fi.vm.sade.koodisto.service.types.common.TilaType;
 import fi.vm.sade.tarjonta.data.dto.Koodi;
+import org.apache.commons.lang.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,6 +15,10 @@ import java.util.Date;
 
 public final class DataUtils {
     private static final String DATE_PATTERN = "dd.MM.yyyy";
+
+    private DataUtils() {
+
+    }
 
     public static CreateKoodistoDataType createCreateKoodistoDataType(final String omistaja,
                                                                       final String organisaatioOid,
@@ -28,7 +32,7 @@ public final class DataUtils {
         type.setVoimassaLoppuPvm(voimassaLoppuPvm != null ? DateHelper.DateToXmlCal(voimassaLoppuPvm) : null);
 
         for (final KieliType k : KieliType.values()) {
-            KoodistoMetadataType m = new KoodistoMetadataType();
+            final KoodistoMetadataType m = new KoodistoMetadataType();
             m.setNimi(nimi);
             m.setKieli(k);
             m.setKuvaus(nimi);
@@ -38,7 +42,11 @@ public final class DataUtils {
         return type;
     }
 
-    public static String createKoodiUriFromName(final String koodistoNimi) {
+    public static String createKoodistoUriFromName(final String koodistoNimi) {
+        if (koodistoNimi == null) {
+            return StringUtils.EMPTY;
+        }
+
         String localNimi = koodistoNimi.toUpperCase();
         localNimi = localNimi.replaceAll("\\s", "");
         localNimi = localNimi.replace('Ý', 'Y');
@@ -51,6 +59,7 @@ public final class DataUtils {
         localNimi = localNimi.replaceAll("Å", "O");
         localNimi = localNimi.replaceAll("_", "");
         localNimi = localNimi.replaceAll("-", "");
+
         return localNimi.toLowerCase();
     }
 
@@ -61,8 +70,10 @@ public final class DataUtils {
         if (koodiData.getKoodiNimiFi() != null) {
             final KoodiMetadataType metadataType = new KoodiMetadataType();
             metadataType.setNimi(koodiData.getKoodiNimiFi());
-            metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiFi() != null && koodiData.getKoodiLyhytNimiFi().trim().length() > 0 ? koodiData.getKoodiLyhytNimiFi() : koodiData.getKoodiNimiFi());
-            metadataType.setKuvaus(koodiData.getKoodiKuvausFi() != null && koodiData.getKoodiKuvausFi().trim().length() > 0 ? koodiData.getKoodiKuvausFi() : koodiData.getKoodiNimiFi());
+            metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiFi() != null
+                    && koodiData.getKoodiLyhytNimiFi().trim().length() > 0 ? koodiData.getKoodiLyhytNimiFi() : koodiData.getKoodiNimiFi());
+            metadataType.setKuvaus(koodiData.getKoodiKuvausFi() != null
+                    && koodiData.getKoodiKuvausFi().trim().length() > 0 ? koodiData.getKoodiKuvausFi() : koodiData.getKoodiNimiFi());
             metadataType.setKieli(KieliType.FI);
             koodiDataType.getMetadata().add(metadataType);
         }
@@ -70,8 +81,10 @@ public final class DataUtils {
         if (koodiData.getKoodiNimiSv() != null) {
             final KoodiMetadataType metadataType = new KoodiMetadataType();
             metadataType.setNimi(koodiData.getKoodiNimiSv());
-            metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiSv() != null && koodiData.getKoodiLyhytNimiSv().trim().length() > 0 ? koodiData.getKoodiLyhytNimiSv() : koodiData.getKoodiNimiSv());
-            metadataType.setKuvaus(koodiData.getKoodiKuvausSv() != null && koodiData.getKoodiKuvausSv().trim().length() > 0 ? koodiData.getKoodiKuvausSv() : koodiData.getKoodiNimiSv());
+            metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiSv() != null
+                    && koodiData.getKoodiLyhytNimiSv().trim().length() > 0 ? koodiData.getKoodiLyhytNimiSv() : koodiData.getKoodiNimiSv());
+            metadataType.setKuvaus(koodiData.getKoodiKuvausSv() != null
+                    && koodiData.getKoodiKuvausSv().trim().length() > 0 ? koodiData.getKoodiKuvausSv() : koodiData.getKoodiNimiSv());
             metadataType.setKieli(KieliType.SV);
             koodiDataType.getMetadata().add(metadataType);
         }
@@ -79,13 +92,17 @@ public final class DataUtils {
         if (koodiData.getKoodiNimiEn() != null) {
             final KoodiMetadataType metadataType = new KoodiMetadataType();
             metadataType.setNimi(koodiData.getKoodiNimiEn());
-            metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiEn() != null && koodiData.getKoodiLyhytNimiFi().trim().length() > 0 ? koodiData.getKoodiLyhytNimiEn() : koodiData.getKoodiNimiEn());
-            metadataType.setKuvaus(koodiData.getKoodiKuvausEn() != null && koodiData.getKoodiKuvausEn().trim().length() > 0 ? koodiData.getKoodiKuvausEn() : koodiData.getKoodiNimiEn());
+            metadataType.setLyhytNimi(koodiData.getKoodiLyhytNimiEn() != null
+                    && koodiData.getKoodiLyhytNimiFi().trim().length() > 0 ? koodiData.getKoodiLyhytNimiEn() : koodiData.getKoodiNimiEn());
+            metadataType.setKuvaus(koodiData.getKoodiKuvausEn() != null
+                    && koodiData.getKoodiKuvausEn().trim().length() > 0 ? koodiData.getKoodiKuvausEn() : koodiData.getKoodiNimiEn());
             metadataType.setKieli(KieliType.EN);
             koodiDataType.getMetadata().add(metadataType);
         }
-        koodiDataType.setVoimassaAlkuPvm(koodiData.getAlkuPvm() != null ? DateHelper.DateToXmlCal(tryGetDate(koodiData.getAlkuPvm())) : DateHelper.DateToXmlCal(new Date()));
-        koodiDataType.setVoimassaLoppuPvm(koodiData.getLoppuPvm() != null ? DateHelper.DateToXmlCal(tryGetDate(koodiData.getLoppuPvm())) : null);
+        koodiDataType.setVoimassaAlkuPvm(koodiData.getAlkuPvm() != null
+                ? DateHelper.DateToXmlCal(tryGetDate(koodiData.getAlkuPvm())) : DateHelper.DateToXmlCal(new Date()));
+        koodiDataType.setVoimassaLoppuPvm(koodiData.getLoppuPvm() != null
+                ? DateHelper.DateToXmlCal(tryGetDate(koodiData.getLoppuPvm())) : null);
 
         return koodiDataType;
     }
@@ -97,23 +114,5 @@ public final class DataUtils {
         } catch (ParseException e) {
             return null;
         }
-    }
-
-    public static CreateKoodiDataType createCreateKoodiDataType(final String koodiArvo, final Date voimassaAlkuPvm,
-                                                                final Date voimassaLoppuPvm, final String nimi) {
-        final CreateKoodiDataType koodiDataType = new CreateKoodiDataType();
-        koodiDataType.setKoodiArvo(koodiArvo);
-        koodiDataType.setVoimassaAlkuPvm(voimassaAlkuPvm != null ? DateHelper.DateToXmlCal(voimassaAlkuPvm) : null);
-        koodiDataType.setVoimassaLoppuPvm(voimassaLoppuPvm != null ? DateHelper.DateToXmlCal(voimassaLoppuPvm) : null);
-        for (final KieliType k : KieliType.values()) {
-            KoodiMetadataType metadataType = new KoodiMetadataType();
-            metadataType.setNimi(nimi);
-            metadataType.setLyhytNimi(nimi);
-            metadataType.setKuvaus(nimi);
-            metadataType.setKieli(k);
-            koodiDataType.getMetadata().add(metadataType);
-        }
-
-        return koodiDataType;
     }
 }
