@@ -1,22 +1,25 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
 import com.google.common.base.Preconditions;
+import com.vaadin.data.util.BeanContainer;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.*;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.ShowHakukohdeValintakoeRow;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -39,6 +42,8 @@ public class ShowHakukohdeTab extends CustomComponent {
 
     private final OrganisaatioContext context;
 
+    private final String datePattern = "dd.MM.yyyy HH:mm";
+
     public ShowHakukohdeTab(String language) {
           Preconditions.checkNotNull(language,"Language cannot be null");
           this.language = language;
@@ -51,8 +56,153 @@ public class ShowHakukohdeTab extends CustomComponent {
 
     private void buildPage(VerticalLayout layout) {
          buildPerustiedotLayout(layout);
+         addLayoutSplit(layout);
+         buildValintakokeetLayout(layout);
+         addLayoutSplit(layout);
+         buildLiiteLayout(layout);
+    }
+
+    private void buildLiiteLayout(VerticalLayout layout) {
+        layout.addComponent(buildHeaderLayout(this.i18n.getMessage("liitteetTitle"),i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent clickEvent) {
+
+                    }
+                }
+                ,presenter.getPermission().userCanUpdateHakukohde(context)));
+
+        final GridLayout grid = new GridLayout(2, 1);
+        grid.setWidth("100%");
+        grid.setMargin(true);
+        for (HakukohdeLiiteViewModel liite: presenter.loadHakukohdeLiitteet()) {
+           addItemToGrid(grid,"liiteoimMennessaLbl",getLiiteAika(liite));
+           addItemToGrid(grid,"liiteToimOsoiteLbl",getLiiteOsoite(liite));
+           addRichTextToGrid(grid,"liiteKuvaus",getLanguageString(liite.getLiitteenSanallinenKuvaus()));
+        }
+        grid.setColumnExpandRatio(1,1f);
+        layout.addComponent(grid);
+        layout.setComponentAlignment(grid, Alignment.TOP_LEFT);
+    }
+
+    private String getLiiteAika(HakukohdeLiiteViewModel liiteViewModel) {
+        SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
+        return sdf.format(liiteViewModel.getToimitettavaMennessa());
+    }
+
+    private String getLiiteOsoite(HakukohdeLiiteViewModel liiteViewModel) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(liiteViewModel.getOsoiteRivi1());
+        sb.append(", ");
+        List<KoodiType> koodis = uiHelper.getKoodis(liiteViewModel.getPostinumero());
+        if (koodis != null) {
+            sb.append(koodis.get(0).getKoodiArvo());
+        }
+        sb.append(", ");
+        sb.append(uiHelper.getKoodiNimi(liiteViewModel.getPostinumero(),I18N.getLocale()));
+
+        return sb.toString();
+    }
+
+    private void buildValintakokeetLayout(VerticalLayout layout) {
+
+        layout.addComponent(buildHeaderLayout(this.i18n.getMessage("valintakokeetTitle"),i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent clickEvent) {
+
+                    }
+                }
+                ,presenter.getPermission().userCanUpdateHakukohde(context)));
+
+        VerticalLayout yetAnotherLayout = new VerticalLayout();
+        yetAnotherLayout.setMargin(true);
+
+        for (ValintakoeViewModel valintakoe:presenter.loadHakukohdeValintaKokees()) {
+
+            if (checkValintakoeKieli(valintakoe)) {
+
+            Label titleLabel = UiUtil.label(null,i18n.getMessage("valintakoeTitle"));
+            titleLabel.setStyleName(Oph.LABEL_H2);
+            yetAnotherLayout.addComponent(titleLabel);
+
+            Label valintaKoeTiedot = new Label(getLanguageString(valintakoe.getSanallisetKuvaukset()));
+            valintaKoeTiedot.setContentMode(Label.CONTENT_XHTML);
+            yetAnotherLayout.addComponent(valintaKoeTiedot);
+
+            Label valintakoeAikaTitle = UiUtil.label(null,i18n.getMessage("valintakoeAjatTitle"));
+            valintakoeAikaTitle.setStyleName(Oph.LABEL_H2);
+            yetAnotherLayout.addComponent(valintakoeAikaTitle);
+            yetAnotherLayout.addComponent(buildValintakoeAikaTable(valintakoe));
+
+            String lisanayttoKuvaus = getLanguageString(valintakoe.getLisanayttoKuvaukset());
+            if (lisanayttoKuvaus != null && lisanayttoKuvaus.trim().length() > 0) {
+            Label lisanaytotLbl = UiUtil.label(null,i18n.getMessage("lisanaytotLabel"));
+            lisanaytotLbl.setStyleName(Oph.LABEL_H2);
+            yetAnotherLayout.addComponent(lisanaytotLbl);
+
+            Label lisaNayttoLbl = new Label(getLanguageString(valintakoe.getLisanayttoKuvaukset()));
+            lisaNayttoLbl.setContentMode(Label.CONTENT_XHTML);
+            yetAnotherLayout.addComponent(lisaNayttoLbl);
+            }
+
+            }
+        }
+
+        layout.addComponent(yetAnotherLayout);
 
 
+    }
+
+    private boolean checkLiiteKieli(HakukohdeLiiteViewModel liiteViewModel) {
+        for (KielikaannosViewModel kieli:liiteViewModel.getLiitteenSanallinenKuvaus()) {
+            if (kieli.getKielikoodi().trim().equalsIgnoreCase(this.language)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkValintakoeKieli(ValintakoeViewModel valintakoeViewModel) {
+
+
+        for (KielikaannosViewModel kieli: valintakoeViewModel.getSanallisetKuvaukset()) {
+            if (kieli.getKielikoodi().trim().equalsIgnoreCase(this.language)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private Table buildValintakoeAikaTable(ValintakoeViewModel valintakoe) {
+        Table valintakoeAikaTable = new Table();
+
+        valintakoeAikaTable.setContainerDataSource(createBeanContainer(valintakoe.getValintakoeAjat()));
+        valintakoeAikaTable.setWidth(100,UNITS_PERCENTAGE);
+        valintakoeAikaTable.setVisibleColumns(new String[]{"valintakoeSijainti","valintakoeAika","valintakoeLisatiedot"});
+        valintakoeAikaTable.setColumnHeader("valintakoeSijainti",this.i18n.getMessage("tableValintakoeAikaSijainti"));
+        valintakoeAikaTable.setColumnHeader("valintakoeAika",this.i18n.getMessage("tableValintakoeAikaAjankohta"));
+        valintakoeAikaTable.setColumnHeader("valintakoeLisatiedot",this.i18n.getMessage("tableValintakoeAikaLisatietoja"));
+        valintakoeAikaTable.setColumnExpandRatio("valintakoeSijainti",40);
+        valintakoeAikaTable.setColumnExpandRatio("valintakoeAika",30);
+        valintakoeAikaTable.setColumnExpandRatio("valintakoeLisatiedot",30);
+        valintakoeAikaTable.setPageLength(valintakoe.getValintakoeAjat().size());
+
+        return valintakoeAikaTable;
+    }
+
+    private BeanContainer<String, ShowHakukohdeValintakoeRow> createBeanContainer(List<ValintakoeAikaViewModel> valintaAikas) {
+        BeanContainer<String, ShowHakukohdeValintakoeRow> container = new BeanContainer<String, ShowHakukohdeValintakoeRow>(ShowHakukohdeValintakoeRow.class);
+
+        for (ValintakoeAikaViewModel valintakoeAika:valintaAikas) {
+            ShowHakukohdeValintakoeRow row = new ShowHakukohdeValintakoeRow(valintakoeAika,this.language);
+            container.addItem(new Integer(row.hashCode()).toString(),row);
+
+        }
+
+        return container;
     }
 
     private void buildPerustiedotLayout(VerticalLayout layout) {
@@ -63,7 +213,7 @@ public class ShowHakukohdeTab extends CustomComponent {
 
                      }
                  }
-                 ,presenter.getPermission().userCanCreateHakukohde(context)));
+                 ,presenter.getPermission().userCanUpdateHakukohde(context)));
 
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
@@ -74,7 +224,8 @@ public class ShowHakukohdeTab extends CustomComponent {
         addItemToGrid(grid,"valinnoissaKaytettavatAloituspaikat",new Integer(presenter.getModel().getHakukohde().getValinnoissaKaytettavatPaikat()).toString());
         addRichTextToGrid(grid,"hakukelpoisuusVaatimukset",getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus()));
         addRichTextToGrid(grid,"lisatietojaHakemisesta",getLanguageString(presenter.getModel().getHakukohde().getLisatiedot()));
-
+        //grid.setColumnExpandRatio(0,0.2f);
+        grid.setColumnExpandRatio(1,1f);
 
         layout.addComponent(grid);
         layout.setComponentAlignment(grid, Alignment.TOP_LEFT);
@@ -88,8 +239,11 @@ public class ShowHakukohdeTab extends CustomComponent {
 
     private void addRichTextToGrid(final GridLayout grid,
                                final String labelCaptionKey, final String labelCaptionValue) {
+
+
         Label lbl = new Label(labelCaptionValue);
         lbl.setContentMode(Label.CONTENT_XHTML);
+
         addItemToGrid(grid, labelCaptionKey, lbl);
     }
 
@@ -104,6 +258,7 @@ public class ShowHakukohdeTab extends CustomComponent {
 
             final HorizontalLayout textArea = UiUtil.horizontalLayout(false,
                     UiMarginEnum.NONE);
+
             textArea.addComponent(component);
             grid.addComponent(textArea);
 
