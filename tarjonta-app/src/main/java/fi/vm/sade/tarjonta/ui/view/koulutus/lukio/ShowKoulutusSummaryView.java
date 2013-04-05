@@ -97,6 +97,8 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         layout.removeAllComponents();
 
         Set<String> langs = getLanguages();
+        addNavigationButtons(layout, OrganisaatioContext.getContext(_presenter.getTarjoaja().getOrganisationOid()));
+
         if (langs.size()==1) {
             Panel panel = new Panel();
             panel.setContent(buildMainLayout(perustiedot, langs.iterator().next()));
@@ -130,7 +132,6 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
     
     private VerticalLayout buildMainLayout(KoulutusLukioPerustiedotViewModel perustiedot, String lang) {
         VerticalLayout vl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
-        addNavigationButtons(vl, OrganisaatioContext.getContext(_presenter.getTarjoaja().getOrganisationOid()));
 
         buildPerustiedot(vl, perustiedot, "lukiolinja", perustiedot.getLukiolinja());
         addLayoutSplit(vl);
