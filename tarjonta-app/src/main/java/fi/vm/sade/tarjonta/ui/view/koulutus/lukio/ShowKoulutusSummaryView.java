@@ -186,6 +186,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         addItemToGrid(grid, "opetuskieli", koodiToStr(model.getOpetuskieli()));
         addItemToGrid(grid, "koulutuksenAlkamisPvm", _tarjontaUIHelper.formatDate(model.getKoulutuksenAlkamisPvm()));
         addItemToGrid(grid, "suunniteltuKesto", suunniteltuKesto(model.getSuunniteltuKesto(), model.getSuunniteltuKestoTyyppi()));
+        addItemToGrid(grid, "opetusmuoto",  getOpetusMuoto(model.getOpetusmuoto()), Label.CONTENT_PREFORMATTED);
 
         Label buildLabel = new Label();
         if (model.getOpsuLinkki() != null && !model.getOpsuLinkki().isEmpty()) {
@@ -194,6 +195,14 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
         addItemToGrid(grid, "linkki", buildLabel);
         buildYhteyshenkilo(grid, model.getYhteyshenkilo());
+    }
+    
+    private String getOpetusMuoto(Set<String> oms) {
+    	StringBuffer ret = new StringBuffer();
+    	for (String om : oms) {
+    		ret.append(_tarjontaUIHelper.getKoodiNimi(om)).append('\n');
+    	}
+    	return ret.toString();
     }
     
     private Set<String> getLanguages() {
@@ -272,17 +281,23 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
      * @param grid
      * @param labelCaptionKey
      * @param labelCaptionValue
+     * @param contentMode {@link Label#setContentMode(int)}
      */
-    private void addItemToGrid(GridLayout grid, String labelCaptionKey, String labelCaptionValue) {
-        addItemToGrid(grid, labelCaptionKey, new Label(labelCaptionValue));
+    private void addItemToGrid(GridLayout grid, String labelCaptionKey, String labelCaptionValue, int contentMode) {
+        addItemToGrid(grid, labelCaptionKey, new Label(labelCaptionValue, contentMode));
     }
 
+    private void addItemToGrid(GridLayout grid, String labelCaptionKey, String labelCaptionValue) {
+        addItemToGrid(grid, labelCaptionKey, labelCaptionValue, Label.CONTENT_DEFAULT);
+    }
+    
     /**
      * Add label + component to grid layout.
      *
      * @param grid
      * @param labelCaptionKey
      * @param component
+     * @param contentMode {@link Label#setContentMode(int)}
      */
     private void addItemToGrid(GridLayout grid, String labelCaptionKey, Component component) {
         if (grid != null) {
