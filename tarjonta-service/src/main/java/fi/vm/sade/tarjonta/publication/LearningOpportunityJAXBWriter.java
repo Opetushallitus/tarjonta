@@ -275,11 +275,15 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         // ApplicationOption/LearningOpportunities
         addKoulutukset(hakukohde, applicationOption);
         
+        //ApplicationOption/WeightedSubjects
         addPainotettavatOppiaineet(hakukohde, applicationOption);
         
         marshal(ApplicationOptionType.class, applicationOption);
     }  
 
+    /*
+     * Adds painotettavat oppiaineet to hakukohde. Lukio hakukohde contains these. 
+     */
 	private void addPainotettavatOppiaineet(Hakukohde hakukohde,
 			ApplicationOptionType applicationOption) {
 		for (PainotettavaOppiaine curOp : hakukohde.getPainotettavatOppiaineet()) {
@@ -459,8 +463,11 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         // LearningOpportunityInstance/WebLinks
         addLinkit(toteutus, instance);
         
+        //If the LOI is lukio, adding high school diplomas, and language assortment
         if (toteutus.getKoulutusmoduuli().getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value())) {
+        	//LearningOpportunityInstance/LanguageAssortment
         	addLukiodiplomit(toteutus, instance);
+        	//LearningOpportunityInstance/HighSchoolDiplomas
         	addKielivalikoimat(toteutus, instance);
         }
         
@@ -835,14 +842,16 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
         //high school specific data is added (score limits, and extra evidence description)
         if (KoulutusasteTyyppi.LUKIOKOULUTUS.value().equals(getKoulutustyyppi(source))) {
         	Valintakoe lukioValintakoe = valintakoes.iterator().next();
+        	//EntranceExaminations/ScoreLimits
         	addPisterajat(lukioValintakoe, exams);
+        	//EntranceExaminations/ExtraEvidenceDescription
         	addLisanaytto(lukioValintakoe, exams);
         }
         target.setEntranceExaminations(exams);
     }
     
     /*
-     * Add extra evidence description
+     * Add extra evidence description. Used in high school application option.
      */
     private void addLisanaytto(Valintakoe source, SelectionCriterionsType.EntranceExaminations target) {
 		target.setExtraEvidenceDescription(new TypedDescriptionType());
@@ -850,7 +859,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
 	}
 
     /*
-     * Add score limits
+     * Add score limits. Used in high school application option.
      */
 	private void addPisterajat(Valintakoe source, SelectionCriterionsType.EntranceExaminations target) {
 		ScoreLimitsType limits = new ScoreLimitsType();

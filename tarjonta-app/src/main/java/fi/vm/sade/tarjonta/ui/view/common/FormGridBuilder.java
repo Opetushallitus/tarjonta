@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view.common;
 
+import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 
@@ -38,7 +39,7 @@ public class FormGridBuilder extends GridLayout {
 	}
 
 	public FormGridBuilder(float ratio, FieldInfo... fields) {
-    	super(2, fields.length);
+		super(2, fields.length > 0 ? fields.length : 1);
     	setSizeFull();
     	setColumnExpandRatio(0, ratio);
     	setColumnExpandRatio(1, 1-ratio);
@@ -49,6 +50,23 @@ public class FormGridBuilder extends GridLayout {
     		add(fi);
     	}
     }
+	
+	/**
+	 * Add header. Header is a {@link AbstractComponent} that occupies two columns.
+	 * @param header
+	 */
+	public void addHeader(AbstractComponent header) {
+		if(getCursorX()==1) {
+			newLine(); //make sure there is room for header
+		}
+		
+		//SIGH hack to add new row
+		final Label placeHolder=new Label("ph");
+		addComponent(placeHolder);
+		removeComponent(placeHolder);
+		final int y=getCursorY();
+		addComponent(header, 0, y, 1, y);
+	}
 	
 	public void add(FieldInfo fi) {
 		addComponent(fi.titleLabel);
@@ -70,9 +88,13 @@ public class FormGridBuilder extends GridLayout {
 		}
 		
 		public FieldInfo(String titleKey, int cmode) {
-			this(titleKey, null, cmode);
+			this(titleKey, (Label)null, cmode);
 		}
-		
+
+		public FieldInfo(String titleKey, String value, int mode) {
+			this(titleKey, new Label(value, mode));
+		}
+
 		public FieldInfo(String titleKey, Label valueLabel, int cmode) {
 			super();			
 			this.valueLabel = valueLabel==null ? new Label() : valueLabel;
@@ -90,6 +112,13 @@ public class FormGridBuilder extends GridLayout {
 			return valueLabel;
 		}
     	
+		public static FieldInfo text(String key, String value) {
+			return new FieldInfo(key, new Label(value), Label.CONTENT_TEXT);
+		}
+
+		public static FieldInfo xhtml(String key, String value) {
+			return new FieldInfo(key, new Label(value), Label.CONTENT_XHTML);
+		}
     }
     
 }
