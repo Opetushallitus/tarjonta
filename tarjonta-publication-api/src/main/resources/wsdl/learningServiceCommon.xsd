@@ -1049,12 +1049,24 @@
             <xs:element name="LanguageAssortment"
                         type="tns:LanguageSetType"
                         minOccurs="0"
-                        maxOccurs="unbounded"/>
+                        maxOccurs="unbounded">
+                 <xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Lukion tarjoama kielivalikoima, ts. opiskeltavissa olevat kielet. Kaytossa lukiokoulutuksilla.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>            
                         
             <xs:element name="HighSchoolDiplomas"
                         type="tns:CodeValueCollectionType"
                         minOccurs="0"
-                        maxOccurs="1"/>
+                        maxOccurs="1">
+           		<xs:annotation>
+                    <xs:documentation xml:lang="fi">
+                        Lukion tarjoamat lukiodiplomit. Kaytossa lukiokoulutuksilla.
+                    </xs:documentation>
+                </xs:annotation>
+           </xs:element>             
         </xs:sequence>
 
         <xs:attribute name="id"
@@ -1070,7 +1082,8 @@
     <xs:complexType name="LanguageSetType">
         <xs:annotation>
             <xs:documentation xml:lang="fi">
-                Kielivalikoima. Koostuu oppiaineen tunnisteesta (esim. B1-kieli) ja listasta kielia joita voi kyseisena aineena opiskella.  
+                Joukko opetettavia kielia oppiaineen tunnuksella varustettuna. 
+                Koostuu oppiaineen tunnisteesta (esim. B1-kieli) ja listasta kielia joita voi kyseisena aineena opiskella.  
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
@@ -1090,7 +1103,7 @@
                         maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>
-                        Oppiaine.
+                        Opetettavat kielet.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
