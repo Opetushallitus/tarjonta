@@ -243,6 +243,8 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
                 @Override
                 public void buttonClick(ClickEvent event) {
+                	 tarjontaPresenter.getTarjoaja().setOrganisationOid(hakukohde.getKoulutus().getTarjoaja());
+                     tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
                     tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getHakukohde().getOid());
                 }
             });
