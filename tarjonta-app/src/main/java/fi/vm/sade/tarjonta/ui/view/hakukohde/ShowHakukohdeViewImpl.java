@@ -15,30 +15,36 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.ui.*;
-import fi.vm.sade.generic.common.I18N;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.VerticalSplitPanel;
+import com.vaadin.ui.Window;
+
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
-import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.*;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
+import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
-import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.StyleEnum;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.dto.PageNavigationDTO;
 import fi.vm.sade.vaadin.util.UiUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Autowired;
-import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
-import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
-
-import java.util.*;
 
 /*
  * Author: Tuomas Katva
@@ -53,13 +59,13 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
     @Autowired(required = true)
     private TarjontaUIHelper tarjontaUIHelper;
     private Window confirmationWindow;
-    private CreationDialog<KoulutusOidNameViewModel> addlKoulutusDialog;
-    private Window addlKoulutusDialogWindow;
-    private final OrganisaatioContext context ;
+    //private CreationDialog<KoulutusOidNameViewModel> addlKoulutusDialog;
+    //private Window addlKoulutusDialogWindow;
+    //private final OrganisaatioContext context ;
 
     public ShowHakukohdeViewImpl(String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
-        context = OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getOrganisationOid());
+        //context = OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getOrganisationOid());
         LOG.debug(this.getClass().getName() + "()");
     }
 
@@ -107,7 +113,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
         return kielet;
     }
 
-    private void buildKoulutuksesLayout(VerticalLayout layout) {
+    /*private void buildKoulutuksesLayout(VerticalLayout layout) {
 
         layout.addComponent(buildHeaderLayout(context, T("sisaltyvatKoulutukset"), null, null, true));
 
@@ -120,9 +126,9 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
             categoryTree.setChildrenAllowed(item, false);
         }
         layout.addComponent(categoryTree);
-    }
+    }*/
 
-    private void buildLiitaUusiKoulutusButton(VerticalLayout verticalLayout) {
+    /*private void buildLiitaUusiKoulutusButton(VerticalLayout verticalLayout) {
         Button liitaUusiKoulutusBtn = UiBuilder.buttonSmallPrimary(null, T("liitaUusiKoulutusPainike"));
         liitaUusiKoulutusBtn.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
@@ -143,9 +149,9 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
 
         liitaUusiKoulutusBtn.setVisible(tarjontaPresenterPresenter.getPermission().userCanAddKoulutusToHakukohde(OrganisaatioContext.getContext(tarjontaPresenterPresenter)));
         verticalLayout.addComponent(liitaUusiKoulutusBtn);
-    }
+    }*/
 
-    private void createButtonListenersForDialog() {
+    /*private void createButtonListenersForDialog() {
         if (addlKoulutusDialog != null) {
             addlKoulutusDialog.getPeruutaBtn().addListener(new Button.ClickListener() {
                 private static final long serialVersionUID = 5019806363620874205L;
@@ -161,7 +167,8 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
             addlKoulutusDialog.getJatkaBtn().addListener(new Button.ClickListener() {
                 private static final long serialVersionUID = 5019806363620874205L;
 
-                @Override
+                @SuppressWarnings("unchecked")
+				@Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
                     Object values = addlKoulutusDialog.getOptionGroup().getValue();
                     Collection<KoulutusOidNameViewModel> selectedKoulutukses = null;
@@ -173,26 +180,26 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
                 }
             });
         }
-    }
+    }*/
 
-    private Container createHakukohdeKoulutusDatasource(List<KoulutusOidNameViewModel> koulutukses) {
+    /*private Container createHakukohdeKoulutusDatasource(List<KoulutusOidNameViewModel> koulutukses) {
         BeanItemContainer<ShowHakukohdeKoulutusRow> container = new BeanItemContainer<ShowHakukohdeKoulutusRow>(ShowHakukohdeKoulutusRow.class);
 
         container.addAll(getRows(koulutukses));
 
         return container;
-    }
+    }*/
 
-    private List<ShowHakukohdeKoulutusRow> getRows(List<KoulutusOidNameViewModel> koulutukses) {
+    /*private List<ShowHakukohdeKoulutusRow> getRows(List<KoulutusOidNameViewModel> koulutukses) {
         List<ShowHakukohdeKoulutusRow> rows = new ArrayList<ShowHakukohdeKoulutusRow>();
         for (KoulutusOidNameViewModel koulutus : koulutukses) {
             ShowHakukohdeKoulutusRow row = new ShowHakukohdeKoulutusRow(koulutus);
             rows.add(row);
         }
         return rows;
-    }
+    }*/
 
-    private void buildMiddleContentLayout(VerticalLayout layout) {
+    /*private void buildMiddleContentLayout(VerticalLayout layout) {
 
         if (!tarjontaPresenterPresenter.getModel().isSelectedHakuStarted()) {
             layout.addComponent(buildHeaderLayout(context, T("perustiedot"), T(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
@@ -227,9 +234,9 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
         layout.addComponent(grid);
         layout.setExpandRatio(grid, 1f);
 
-    }
+    }*/
 
-    private String tryGetLocalizedHakuNimi(HakuViewModel hakuViewModel) {
+    /*private String tryGetLocalizedHakuNimi(HakuViewModel hakuViewModel) {
         String haunNimi = null;
 
         if (I18N.getLocale().getLanguage().trim().equalsIgnoreCase("en")) {
@@ -243,9 +250,9 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
         }
 
         return haunNimi;
-    }
+    }*/
 
-    private String getLocalizedLisatiedot(List<KielikaannosViewModel> kielet) {
+    /*private String getLocalizedLisatiedot(List<KielikaannosViewModel> kielet) {
         String reply = null;
         for (KielikaannosViewModel kieli : kielet) {
             reply = kieli.getNimi();
@@ -255,9 +262,9 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
 
         }
         return reply;
-    }
+    }*/
 
-    private HorizontalLayout buildHeaderLayout(OrganisaatioContext context, String title, String btnCaption, Button.ClickListener listener, boolean enable) {
+    /*private HorizontalLayout buildHeaderLayout(OrganisaatioContext context, String title, String btnCaption, Button.ClickListener listener, boolean enable) {
         HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         Label titleLabel = UiUtil.label(headerLayout, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
@@ -283,7 +290,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
             headerLayout.setComponentAlignment(btn, Alignment.TOP_RIGHT);
         }
         return headerLayout;
-    }
+    }*/
 
     private void addNavigationButtons(VerticalLayout layout, OrganisaatioContext context) {
         addNavigationButton("", new Button.ClickListener() {
@@ -395,24 +402,24 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
         }
     }
 
-    /**
+    /* *
      * Add line with label + textual label value to the grid.
      *
      * @param grid
      * @param labelCaptionKey
      * @param labelCaptionValue
-     */
+     * /
     private void addItemToGrid(GridLayout grid, String labelCaptionKey, String labelCaptionValue) {
         addItemToGrid(grid, labelCaptionKey, new Label(labelCaptionValue));
-    }
+    }*/
 
-    /**
+    /* *
      * Add label + component to grid layout.
      *
      * @param grid
      * @param labelCaptionKey
      * @param component
-     */
+     * /
     private void addItemToGrid(GridLayout grid, String labelCaptionKey, Component component) {
         if (grid != null) {
             HorizontalLayout hl = UiUtil.horizontalLayout(false, UiMarginEnum.RIGHT);
@@ -424,7 +431,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
             grid.setComponentAlignment(component, Alignment.TOP_LEFT);
             grid.newLine();
         }
-    }
+    }*/
 
     public void addLayoutSplit(VerticalLayout layout) {
         VerticalSplitPanel split = new VerticalSplitPanel();
@@ -436,13 +443,13 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
         layout.addComponent(split);
     }
 
-    private void backFired() {
+    /*private void backFired() {
         fireEvent(new BackEvent(this));
     }
 
     private void editFired() {
         fireEvent(new EditEvent(this));
-    }
+    }*/
 
     /**
      * Fired when Back is pressed.
