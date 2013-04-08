@@ -145,10 +145,12 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QHaku qHaku = QHaku.haku;
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        QMonikielinenTeksti qMonikielinenTeksti = QMonikielinenTeksti.monikielinenTeksti;
 
         List<Hakukohde> hakukohdes = from(qHakukohde, qHaku, qKomoto)
                 .join(qHakukohde.haku, qHaku)
                 //.leftJoin(qHakukohde.koulutusmoduuliToteutuses,qKomoto)
+                .leftJoin(qHakukohde.valintaperusteKuvaus,qMonikielinenTeksti).fetch()
                 .where(qHakukohde.oid.eq(oid.trim()))
                 .list(qHakukohde);
 
