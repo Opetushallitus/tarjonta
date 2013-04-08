@@ -2,8 +2,10 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -12,20 +14,8 @@ import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.terminal.ExternalResource;
-import com.vaadin.ui.AbstractLayout;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Link;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.VerticalSplitPanel;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
@@ -71,16 +61,11 @@ public class ShowHakukohdeTab extends CustomComponent {
     private final OrganisaatioContext context;
 
     private final String datePattern = "dd.MM.yyyy HH:mm";
-    
-    private ClickListener editButtonListener = new ClickListener() {
-		private static final long serialVersionUID = 1L;
 
-		@Override
-		public void buttonClick(ClickEvent event) {
-			presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
-					presenter.getModel().getHakukohde().getOid(), null);
-		}
-	};
+    private CreationDialog<KoulutusOidNameViewModel> addlKoulutusDialog;
+    private Window addlKoulutusDialogWindow;
+    
+
 
     public ShowHakukohdeTab(String language) {
           Preconditions.checkNotNull(language,"Language cannot be null");
@@ -99,16 +84,51 @@ public class ShowHakukohdeTab extends CustomComponent {
          addLayoutSplit(layout);
          buildLiiteLayout(layout);
          addLayoutSplit(layout);
+         buildValintaPerusteetLayout(layout);
+         addLayoutSplit(layout);
          buildKoulutuksesLayout(layout);
+    }
+
+
+    private void buildValintaPerusteetLayout(VerticalLayout layout) {
+        if (presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus() != null && presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus().size() > 0) {
+        VerticalLayout valintaperusteetLayout = new VerticalLayout();
+        valintaperusteetLayout.setMargin(true);
+
+        valintaperusteetLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("valintaPerusteetTitle"),i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                new ClickListener() {
+                    @Override
+                    public void buttonClick(ClickEvent clickEvent) {
+                           getWindow().showNotification("Toiminnallisuutta ei ole viela toteuttettu");
+                    }
+                }
+                ,presenter.getPermission().userCanUpdateHakukohde(context)));
+
+        final GridLayout grid = new GridLayout(2, 1);
+        grid.setWidth("100%");
+        grid.setMargin(true);
+
+        addRichTextToGrid(grid,"valintaPerusteetTeksti",getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus()));
+
+        grid.setColumnExpandRatio(1,1f);
+        valintaperusteetLayout.addComponent(grid);
+        layout.addComponent(valintaperusteetLayout);
+        }
     }
 
     private void buildLiiteLayout(VerticalLayout layout) {
         VerticalLayout liiteLayout = new VerticalLayout();
         liiteLayout.setMargin(true);
 
-        liiteLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("liitteetTitle"),i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-        		editButtonListener
-                ,presenter.getPermission().userCanUpdateHakukohde(context)));
+        liiteLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("liitteetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                new ClickListener() {
+                    @Override
+                    public void buttonClick(ClickEvent clickEvent) {
+                        presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
+                                presenter.getModel().getHakukohde().getOid(), null,TarjontaPresenter.LIITTEET_TAB_SELECT);
+                    }
+                }
+                , presenter.getPermission().userCanUpdateHakukohde(context)));
 
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
@@ -119,11 +139,12 @@ public class ShowHakukohdeTab extends CustomComponent {
             addKoodiHeaderToGrid(grid,uiHelper.getKoodiNimi(liite.getLiitteenTyyppi(),I18N.getLocale()));
            addItemToGrid(grid,"liiteoimMennessaLbl",getLiiteAika(liite));
            addItemToGrid(grid,"liiteToimOsoiteLbl",getLiiteOsoite(liite));
+           if (liite.getSahkoinenToimitusOsoite() != null) {
            Link liiteSahkToimOsoiteLink = new Link(liite.getSahkoinenToimitusOsoite(),new ExternalResource(liite.getSahkoinenToimitusOsoite()));
            liiteSahkToimOsoiteLink.setTargetName("_blank");
            addItemToGrid(grid, "sahkoinenToimOsoite", liiteSahkToimOsoiteLink);
-
-           addRichTextToGrid(grid,"liiteKuvaus",getLanguageString(liite.getLiitteenSanallinenKuvaus()));
+           }
+           addRichTextToGrid(grid, "liiteKuvaus", getLanguageString(liite.getLiitteenSanallinenKuvaus()));
         }
         grid.setColumnExpandRatio(1,1f);
         liiteLayout.addComponent(grid);
@@ -169,13 +190,20 @@ public class ShowHakukohdeTab extends CustomComponent {
         return null;
     }
 
+
     private void buildValintakokeetLayout(VerticalLayout layout) {
 
         VerticalLayout valintakoeLayout = new VerticalLayout();
         valintakoeLayout.setMargin(true);
 
         valintakoeLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("valintakokeetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-        		editButtonListener
+        		new ClickListener() {
+                    @Override
+                    public void buttonClick(ClickEvent clickEvent) {
+                        presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
+                                presenter.getModel().getHakukohde().getOid(), null,TarjontaPresenter.VALINTAKOE_TAB_SELECT);
+                    }
+                }
                 , presenter.getPermission().userCanUpdateHakukohde(context)));
 
         VerticalLayout yetAnotherLayout = new VerticalLayout();
@@ -213,18 +241,6 @@ public class ShowHakukohdeTab extends CustomComponent {
     }
 
 
-    /*private boolean checkValintakoeKieli(ValintakoeViewModel valintakoeViewModel) {
-
-
-        for (KielikaannosViewModel kieli: valintakoeViewModel.getSanallisetKuvaukset()) {
-            if (kieli.getKielikoodi().trim().equalsIgnoreCase(this.language)) {
-                return true;
-            }
-        }
-
-        return false;
-    }*/
-
     private Table buildValintakoeAikaTable(ValintakoeViewModel valintakoe) {
         Table valintakoeAikaTable = new Table();
 
@@ -258,10 +274,10 @@ public class ShowHakukohdeTab extends CustomComponent {
 
         VerticalLayout koulutuksesLayout = new VerticalLayout();
         koulutuksesLayout.setMargin(true);
+        Label koulutuksetTitle = new Label(i18n.getMessage("koulutuksetTitle"));
+        koulutuksetTitle.setStyleName(Oph.LABEL_H2);
+        koulutuksesLayout.addComponent(koulutuksetTitle);
 
-        koulutuksesLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("koulutuksetTitle"),i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-        		editButtonListener
-                ,presenter.getPermission().userCanUpdateHakukohde(context)));
 
         CategoryTreeView categoryTree = new CategoryTreeView();
         categoryTree.setHeight("100px");
@@ -272,7 +288,63 @@ public class ShowHakukohdeTab extends CustomComponent {
             categoryTree.setChildrenAllowed(item, false);
         }
         koulutuksesLayout.addComponent(categoryTree);
+        buildLiitaUusiKoulutusButton(koulutuksesLayout);
         layout.addComponent(koulutuksesLayout);
+    }
+
+
+    private void buildLiitaUusiKoulutusButton(VerticalLayout verticalLayout) {
+        Button liitaUusiKoulutusBtn = UiBuilder.buttonSmallPrimary(null, i18n.getMessage("liitaUusiKoulutusPainike"));
+        liitaUusiKoulutusBtn.addListener(new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                addlKoulutusDialog = presenter.createHakukohdeCreationDialogWithSelectedTarjoaja();
+                createButtonListenersForDialog();
+                addlKoulutusDialog.setWidth("700px");
+                addlKoulutusDialogWindow = new Window();
+                addlKoulutusDialogWindow.setContent(addlKoulutusDialog);
+                addlKoulutusDialogWindow.setModal(true);
+                addlKoulutusDialogWindow.center();
+                addlKoulutusDialogWindow.setCaption(i18n.getMessage("liitaUusiKoulutusDialogTitle"));
+                getWindow().addWindow(addlKoulutusDialogWindow);
+            }
+        });
+
+        liitaUusiKoulutusBtn.setVisible(presenter.getPermission().userCanAddKoulutusToHakukohde(OrganisaatioContext.getContext(presenter)));
+        verticalLayout.addComponent(liitaUusiKoulutusBtn);
+    }
+
+    private void createButtonListenersForDialog() {
+        if (addlKoulutusDialog != null) {
+            addlKoulutusDialog.getPeruutaBtn().addListener(new Button.ClickListener() {
+                private static final long serialVersionUID = 5019806363620874205L;
+
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    if (addlKoulutusDialogWindow != null) {
+                        getWindow().removeWindow(addlKoulutusDialogWindow);
+                    }
+                }
+            });
+
+            addlKoulutusDialog.getJatkaBtn().addListener(new Button.ClickListener() {
+                private static final long serialVersionUID = 5019806363620874205L;
+
+                @SuppressWarnings("unchecked")
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    Object values = addlKoulutusDialog.getOptionGroup().getValue();
+                    Collection<KoulutusOidNameViewModel> selectedKoulutukses = null;
+                    if (values instanceof Collection) {
+                        selectedKoulutukses = (Collection<KoulutusOidNameViewModel>) values;
+                    }
+                    getWindow().removeWindow(addlKoulutusDialogWindow);
+                    presenter.addKoulutuksesToHakukohde(selectedKoulutukses);
+                }
+            });
+        }
     }
 
     private Container createHakukohdeKoulutusDatasource(List<KoulutusOidNameViewModel> koulutukses) {
@@ -298,7 +370,13 @@ public class ShowHakukohdeTab extends CustomComponent {
 
 
         hdrLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("perustiedot"),i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-        		editButtonListener
+        		new ClickListener() {
+                    @Override
+                    public void buttonClick(ClickEvent clickEvent) {
+                        presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
+                                presenter.getModel().getHakukohde().getOid(), null,null);
+                    }
+                }
                  ,presenter.getPermission().userCanUpdateHakukohde(context)));
 
         final GridLayout grid = new GridLayout(2, 1);
