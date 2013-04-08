@@ -328,22 +328,18 @@ public final class EntityUtils {
      */
     public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(final KoulutusmoduuliKoosteTyyppi source, final Koulutusmoduuli target) {
 
-        /*
-         TODO: add missing fields to tyyppi objects
-         target.setEqfLuokitus();
-         target.setNqfLuokitus();
-         */
-
         target.setOid(source.getOid());
         target.setKoulutusKoodi(source.getKoulutuskoodiUri());
         target.setKoulutusohjelmaKoodi(source.getKoulutusohjelmakoodiUri());
-        target.setLaajuus(source.getLaajuusarvoUri(), source.getLaajuusyksikkoUri());
+        target.setLaajuus(source.getLaajuusyksikkoUri(), source.getLaajuusarvoUri());
         target.setTutkintonimike(source.getTutkintonimikeUri());
         target.setUlkoinenTunniste(source.getUlkoinenTunniste());
         target.setKoulutusAste(source.getKoulutusasteUri());
         target.setKoulutusala(source.getKoulutusalaUri());
         target.setOpintoala(source.getOpintoalaUri());
         target.setLukiolinja(source.getLukiolinjakoodiUri());
+        target.setEqfLuokitus(source.getEqfLuokitus());
+        target.setNqfLuokitus(source.getNqfLuokitus());
         target.setKoulutuksenRakenne(copyFields(source.getKoulutuksenRakenne(), target.getKoulutuksenRakenne()));
         target.setTavoitteet(copyFields(source.getTavoitteet(), target.getTavoitteet()));
         target.setJatkoOpintoMahdollisuudet(copyFields(source.getJatkoOpintoMahdollisuudet(), target.getJatkoOpintoMahdollisuudet()));
