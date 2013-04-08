@@ -88,7 +88,7 @@ public class ShowHakukohdeTab extends CustomComponent {
         for (HakukohdeLiiteViewModel liite: presenter.loadHakukohdeLiitteet()) {
 
 
-           addHeaderToGrid(grid,"LiiteHdr");
+            addKoodiHeaderToGrid(grid,uiHelper.getKoodiNimi(liite.getLiitteenTyyppi(),I18N.getLocale()));
            addItemToGrid(grid,"liiteoimMennessaLbl",getLiiteAika(liite));
            addItemToGrid(grid,"liiteToimOsoiteLbl",getLiiteOsoite(liite));
            Link liiteSahkToimOsoiteLink = new Link(liite.getSahkoinenToimitusOsoite(),new ExternalResource(liite.getSahkoinenToimitusOsoite()));
@@ -346,6 +346,22 @@ public class ShowHakukohdeTab extends CustomComponent {
 
             grid.setComponentAlignment(hl, Alignment.TOP_RIGHT);
             grid.setComponentAlignment(textArea, Alignment.TOP_LEFT);
+            grid.newLine();
+        }
+    }
+
+    private void addKoodiHeaderToGrid(final GridLayout grid,final String label) {
+        if (grid != null) {
+            final HorizontalLayout hl = UiUtil.horizontalLayout(false,
+                    UiMarginEnum.RIGHT);
+            hl.setSizeUndefined();
+            Label hdrLbl = UiUtil.label(null,label);
+            hdrLbl.setStyleName(Oph.LABEL_H2);
+            hl.addComponent(hdrLbl);
+            grid.addComponent(hl);
+
+            grid.setComponentAlignment(hl, Alignment.TOP_RIGHT);
+
             grid.newLine();
         }
     }
