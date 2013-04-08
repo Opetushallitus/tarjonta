@@ -1,31 +1,52 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
 import com.google.common.base.Preconditions;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.terminal.ExternalResource;
-import com.vaadin.ui.*;
+import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Link;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.VerticalSplitPanel;
+
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.*;
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
+import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
+import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.ShowHakukohdeValintakoeRow;
-import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.Oph;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author : Tuomas Katva
@@ -35,7 +56,9 @@ import java.util.List;
 @Configurable(preConstruction = true)
 public class ShowHakukohdeTab extends CustomComponent {
 
-    @Autowired
+	private static final long serialVersionUID = 1L;
+
+	@Autowired
     private TarjontaPresenter presenter;
 
     @Autowired
@@ -48,6 +71,16 @@ public class ShowHakukohdeTab extends CustomComponent {
     private final OrganisaatioContext context;
 
     private final String datePattern = "dd.MM.yyyy HH:mm";
+    
+    private ClickListener editButtonListener = new ClickListener() {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void buttonClick(ClickEvent event) {
+			presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
+					presenter.getModel().getHakukohde().getOid(), null);
+		}
+	};
 
     public ShowHakukohdeTab(String language) {
           Preconditions.checkNotNull(language,"Language cannot be null");
@@ -74,12 +107,7 @@ public class ShowHakukohdeTab extends CustomComponent {
         liiteLayout.setMargin(true);
 
         liiteLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("liitteetTitle"),i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-                new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent clickEvent) {
-
-                    }
-                }
+        		editButtonListener
                 ,presenter.getPermission().userCanUpdateHakukohde(context)));
 
         final GridLayout grid = new GridLayout(2, 1);
@@ -147,12 +175,7 @@ public class ShowHakukohdeTab extends CustomComponent {
         valintakoeLayout.setMargin(true);
 
         valintakoeLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("valintakokeetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-                new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent clickEvent) {
-
-                    }
-                }
+        		editButtonListener
                 , presenter.getPermission().userCanUpdateHakukohde(context)));
 
         VerticalLayout yetAnotherLayout = new VerticalLayout();
@@ -190,7 +213,7 @@ public class ShowHakukohdeTab extends CustomComponent {
     }
 
 
-    private boolean checkValintakoeKieli(ValintakoeViewModel valintakoeViewModel) {
+    /*private boolean checkValintakoeKieli(ValintakoeViewModel valintakoeViewModel) {
 
 
         for (KielikaannosViewModel kieli: valintakoeViewModel.getSanallisetKuvaukset()) {
@@ -200,7 +223,7 @@ public class ShowHakukohdeTab extends CustomComponent {
         }
 
         return false;
-    }
+    }*/
 
     private Table buildValintakoeAikaTable(ValintakoeViewModel valintakoe) {
         Table valintakoeAikaTable = new Table();
@@ -237,12 +260,7 @@ public class ShowHakukohdeTab extends CustomComponent {
         koulutuksesLayout.setMargin(true);
 
         koulutuksesLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("koulutuksetTitle"),i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-                new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent clickEvent) {
-
-                    }
-                }
+        		editButtonListener
                 ,presenter.getPermission().userCanUpdateHakukohde(context)));
 
         CategoryTreeView categoryTree = new CategoryTreeView();
@@ -280,12 +298,7 @@ public class ShowHakukohdeTab extends CustomComponent {
 
 
         hdrLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("perustiedot"),i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-                 new Button.ClickListener() {
-                     @Override
-                     public void buttonClick(Button.ClickEvent clickEvent) {
-
-                     }
-                 }
+        		editButtonListener
                  ,presenter.getPermission().userCanUpdateHakukohde(context)));
 
         final GridLayout grid = new GridLayout(2, 1);
@@ -298,7 +311,8 @@ public class ShowHakukohdeTab extends CustomComponent {
         addRichTextToGrid(grid,"hakukelpoisuusVaatimukset",getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus()));
         addRichTextToGrid(grid,"lisatietojaHakemisesta",getLanguageString(presenter.getModel().getHakukohde().getLisatiedot()));
         SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
-        addItemToGrid(grid,"liitteetToimMennessa",sdf.format(presenter.getModel().getHakukohde().getLiitteidenToimitusPvm()));
+        addItemToGrid(grid,"liitteetToimMennessa", presenter.getModel().getHakukohde().getLiitteidenToimitusPvm()==null ? null :
+        		sdf.format(presenter.getModel().getHakukohde().getLiitteidenToimitusPvm()));
         addItemToGrid(grid,"liitteidenToimitusOsoite",getHakukohdeLiiteOsoite(presenter.getModel().getHakukohde()));
         if (presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite() != null && presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite().trim().length() > 0) {
             Link sahkoinenToimOsoiteLink = new Link(presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite(),new ExternalResource(presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite()));
