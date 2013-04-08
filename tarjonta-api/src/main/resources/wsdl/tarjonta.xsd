@@ -521,7 +521,18 @@
                     <xs:documentation>Opintoala</xs:documentation>
                 </xs:annotation>
             </xs:element>
-
+            
+            <xs:element minOccurs="1" maxOccurs="1" name="eqfLuokitus" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>EQF-luokitus</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            
+            <xs:element minOccurs="1" maxOccurs="1" name="nqfLuokitus" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>NQF-luokitus</xs:documentation>
+                </xs:annotation>
+            </xs:element>
 
             <xs:element minOccurs="1" maxOccurs="1" name="koulutuksenRakenne" type="tns:MonikielinenTekstiTyyppi">
                 <xs:annotation>
