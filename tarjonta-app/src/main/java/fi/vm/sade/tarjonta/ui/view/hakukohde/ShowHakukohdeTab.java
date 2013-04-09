@@ -204,6 +204,26 @@ public class ShowHakukohdeTab extends CustomComponent {
         VerticalLayout yetAnotherLayout = new VerticalLayout();
         yetAnotherLayout.setMargin(true);
 
+        if (checkLukioKoulutus()) {
+            Label pisterajaLbl = new Label(i18n.getMessage("valinnoissaKaytettavatPisterajatLbl"));
+            pisterajaLbl.setStyleName(Oph.LABEL_H2);
+            yetAnotherLayout.addComponent(pisterajaLbl);
+
+               Table pisterajatTable = new Table();
+               pisterajatTable.setContainerDataSource(createPisterajatContainer());
+               pisterajatTable.setWidth(100,UNITS_PERCENTAGE);
+               pisterajatTable.setVisibleColumns(new String[] {"pisteRajaTyyppi","alinPistemaara","ylinPistemaara","alinHyvaksyttyPistemaara"});
+
+            pisterajatTable.setColumnHeader("pisteRajaTyyppi","");
+            pisterajatTable.setColumnHeader("alinPistemaara",i18n.getMessage("alinPistemaaraLbl"));
+            pisterajatTable.setColumnHeader("ylinPistemaara",i18n.getMessage("ylinPistemaaraLbl"));
+            pisterajatTable.setColumnHeader("alinHyvaksyttyPistemaara",i18n.getMessage("alinHyvaksyttyPistemaaraLbl"));
+            pisterajatTable.setPageLength(pisterajatTable.getContainerDataSource().size());
+
+            yetAnotherLayout.addComponent(pisterajatTable);
+        }
+
+
         for (ValintakoeViewModel valintakoe:presenter.loadHakukohdeValintaKokees()) {
 
             final GridLayout grid = new GridLayout(2, 1);
@@ -340,6 +360,46 @@ public class ShowHakukohdeTab extends CustomComponent {
                 }
             });
         }
+    }
+
+    private Container createPisterajatContainer() {
+        BeanItemContainer<PisterajaRow> pisterajatContainer = new BeanItemContainer<PisterajaRow>(PisterajaRow.class);
+
+        pisterajatContainer.addAll(mapPisterajaList(presenter.loadHakukohdeValintaKokees()));
+
+        return pisterajatContainer;
+    }
+
+    private List<PisterajaRow> mapPisterajaList(List<ValintakoeViewModel> valintakokees) {
+        List<PisterajaRow> pisterajaRows = new ArrayList<PisterajaRow>();
+
+        for (ValintakoeViewModel valintakoeV : valintakokees) {
+             PisterajaRow paasyKoePisteraja = new PisterajaRow();
+             paasyKoePisteraja.setPisteRajaTyyppi(i18n.getMessage("paasykoe"));
+             paasyKoePisteraja.setAlinPistemaara(valintakoeV.getPkAlinPM());
+             paasyKoePisteraja.setYlinPistemaara(valintakoeV.getPkYlinPM());
+             paasyKoePisteraja.setAlinHyvaksyttyPistemaara(valintakoeV.getPkAlinHyvaksyttyPM());
+
+             pisterajaRows.add(paasyKoePisteraja);
+
+             PisterajaRow lisaNaytotRow = new PisterajaRow();
+             lisaNaytotRow.setPisteRajaTyyppi(i18n.getMessage("lisanaytot"));
+             lisaNaytotRow.setAlinPistemaara(valintakoeV.getLpAlinPM());
+             lisaNaytotRow.setYlinPistemaara(valintakoeV.getLpYlinPM());
+             lisaNaytotRow.setAlinHyvaksyttyPistemaara(valintakoeV.getLpAlinHyvaksyttyPM());
+
+             pisterajaRows.add(lisaNaytotRow);
+
+             PisterajaRow kokonaisPisteet = new PisterajaRow();
+             kokonaisPisteet.setPisteRajaTyyppi(i18n.getMessage("kokonaispisteet"));
+             kokonaisPisteet.setYlinPistemaara(i18n.getMessage("ylinPisteMaara"));
+             kokonaisPisteet.setAlinHyvaksyttyPistemaara(valintakoeV.getKpAlinHyvaksyttyPM());
+
+
+             pisterajaRows.add(lisaNaytotRow);
+        }
+
+        return pisterajaRows;
     }
 
     private Container createHakukohdeKoulutusDatasource(List<KoulutusOidNameViewModel> koulutukses) {
