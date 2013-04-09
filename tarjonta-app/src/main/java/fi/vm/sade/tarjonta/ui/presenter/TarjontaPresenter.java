@@ -138,6 +138,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     @Autowired(required = true)
     private TarjontaLukioPresenter lukioPresenter;
 
+    public static final String VALINTAKOE_TAB_SELECT = "valintakokeet";
+    public static final String LIITTEET_TAB_SELECT = "liitteet";
+
     public TarjontaPresenter() {
     }
 
@@ -932,7 +935,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * @param koulutusOids
      * @param hakukohdeOid
      */
-    public void showHakukohdeEditView(List<String> koulutusOids, String hakukohdeOid, List<KoulutusOidNameViewModel> koulutusOidNameViewModels) {
+    public void showHakukohdeEditView(List<String> koulutusOids, String hakukohdeOid, List<KoulutusOidNameViewModel> koulutusOidNameViewModels, String selectedTab) {
         LOG.info("showHakukohdeEditView()");
         //After the data has been initialized the form is created
         editHakukohdeView = new EditHakukohdeView();
@@ -973,7 +976,14 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             }
         }
 
+
         getRootView().changeView(editHakukohdeView);
+        //If selected tab is given set it to selected
+        if (selectedTab != null && selectedTab.trim().equalsIgnoreCase(TarjontaPresenter.VALINTAKOE_TAB_SELECT)) {
+            editHakukohdeView.setValintakokeetTabSelected();
+        } else if (selectedTab != null && selectedTab.trim().equalsIgnoreCase(TarjontaPresenter.LIITTEET_TAB_SELECT)) {
+            editHakukohdeView.setLiitteetTabSelected();
+        }
     }
 
     private void addKomotoOidsToModel(List<KoulutusOidNameViewModel> koulutukses) {

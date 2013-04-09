@@ -326,7 +326,7 @@ public class ListKoulutusView extends VerticalLayout {
                         dialog.center();
                         getWindow().addWindow(dialog);
                     } else {
-                        presenter.showHakukohdeEditView(null, null, presenter.getSelectedKoulutusOidNameViewModels());
+                        presenter.showHakukohdeEditView(null, null, presenter.getSelectedKoulutusOidNameViewModels(),null);
                     }
                 }
             }
@@ -447,7 +447,7 @@ public class ListKoulutusView extends VerticalLayout {
                         }
                     } else {
                         getWindow().removeWindow(createHakukohdeDialog);
-                        presenter.showHakukohdeEditView(koulutusNameViewModelToOidList(selectedKoulutukses), null, null);
+                        presenter.showHakukohdeEditView(koulutusNameViewModelToOidList(selectedKoulutukses), null, null,null);
                         
                     }
                     

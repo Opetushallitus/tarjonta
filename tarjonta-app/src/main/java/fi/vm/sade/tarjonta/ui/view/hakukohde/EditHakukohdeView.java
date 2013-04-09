@@ -111,6 +111,8 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
 
         tabs = UiBuilder.tabSheet(this);
         perustiedot = new HakukohdePerustiedotViewImpl(hakukohdeOid);
+
+
         
         liitteet = new HakukohteenLiitteetTabImpl();
         valintakokeet = new HakukohdeValintakoeTabImpl(hakukohdeOid);
@@ -120,5 +122,18 @@ public class EditHakukohdeView extends AbstractVerticalLayout {
         liitteetTab.setEnabled(hakukohdeOid != null);
         valintakokeetTab.setEnabled(hakukohdeOid != null);
 
+    }
+
+    public void setValintakokeetTabSelected() {
+        if (tabs != null && valintakokeetTab != null) {
+
+            tabs.setSelectedTab(valintakokeetTab);
+        }
+    }
+
+    public void setLiitteetTabSelected() {
+        if (tabs != null && liitteetTab != null) {
+            tabs.setSelectedTab(liitteetTab);
+        }
     }
 }
