@@ -17,7 +17,10 @@ package fi.vm.sade.tarjonta.ui.loader.xls;
 
 import fi.vm.sade.tarjonta.ui.loader.xls.helper.RelaatioMap;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.GenericRow;
+import fi.vm.sade.tarjonta.ui.loader.xls.dto.OppilaitostyyppiRow;
+import fi.vm.sade.tarjonta.ui.loader.xls.helper.OppilaitostyyppiMap;
 import java.net.URL;
+import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -68,5 +71,21 @@ public class TarjontaKomoDataTest {
 
         next = excelDataMap.get("0086");
         assertEquals("301101", next.getKoulutuskoodiKoodiarvo());
+    }
+
+    @Test
+    public void testReadExcelOppilaitostyyppis() throws Exception {
+        URL resource = this.getClass().getResource("/OPPILAITOSTYYPPI_relaatiot.xls");
+        boolean verbose = true;
+        KomoExcelReader instance = new KomoExcelReader(OppilaitostyyppiRow.class, OppilaitostyyppiRow.OPPILAITOSTYYPPI_RELAATIOT, 100);
+        Set<OppilaitostyyppiRow> result = instance.read(resource.getPath(), verbose);
+        OppilaitostyyppiMap excelDataMap = new OppilaitostyyppiMap(result);
+
+        assertEquals(26, result.size());
+        List<String> next = excelDataMap.get("31");
+
+        assertNotNull("result koulutusaste list cannot be null", next);
+        assertEquals(3, next.size());
+
     }
 }

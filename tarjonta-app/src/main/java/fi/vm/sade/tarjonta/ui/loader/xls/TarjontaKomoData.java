@@ -318,6 +318,8 @@ public class TarjontaKomoData {
         tutkintoKomo.setTavoitteet(createTeksti(dto.getTavoitteet(), null, null));
         tutkintoKomo.setJatkoOpintoMahdollisuudet(createTeksti(dto.getJatkoOpinto(), null, null));
         tutkintoKomo.setKoulutustyyppi(dto.getKoulutusTyyppi());
+        tutkintoKomo.getOppilaitostyyppi().addAll(dto.getOppilaitostyyppis());
+        log.debug("oppilaitostyyppis : " + dto.getOppilaitostyyppis());
 
         //create search words from Koodisto meta data 
         List<KoodiMetadataType> koulutuskoodiMeta = getKoodiMetadataTypes(dto.getKoulutuskoodi(), KoodistoURIHelper.KOODISTO_TUTKINTO_URI);

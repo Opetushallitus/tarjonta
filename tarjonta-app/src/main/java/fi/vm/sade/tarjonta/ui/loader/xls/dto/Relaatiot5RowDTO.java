@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.ui.loader.xls.dto;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -46,6 +48,7 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
     private String laajuusyksikko;
     private String eqf;
     private String koulutusohjelmanTavoitteet;
+    private List<String> oppilaitostyyppis;
     /*
      * Lukio data
      */
@@ -349,5 +352,23 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
     @Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this);
+    }
+
+    /**
+     * @return the oppilaitostyyppis
+     */
+    public List<String> getOppilaitostyyppis() {
+        if (oppilaitostyyppis == null) {
+            oppilaitostyyppis = new ArrayList<String>();
+        }
+
+        return oppilaitostyyppis;
+    }
+
+    /**
+     * @param oppilaitostyyppis the oppilaitostyyppis to set
+     */
+    public void setOppilaitostyyppis(List<String> oppilaitostyyppis) {
+        this.oppilaitostyyppis = oppilaitostyyppis;
     }
 }

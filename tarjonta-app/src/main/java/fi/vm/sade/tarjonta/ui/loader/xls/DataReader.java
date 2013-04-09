@@ -19,9 +19,11 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.loader.xls.helper.RelaatioMap;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.GenericRow;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.KoulutusRelaatioRow;
+import fi.vm.sade.tarjonta.ui.loader.xls.dto.OppilaitostyyppiRow;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.Relaatiot5RowDTO;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.TutkintonimikeRow;
 import fi.vm.sade.tarjonta.ui.loader.xls.helper.KoulutuskoodiMap;
+import fi.vm.sade.tarjonta.ui.loader.xls.helper.OppilaitostyyppiMap;
 import fi.vm.sade.tarjonta.ui.loader.xls.helper.TutkintonimikeMap;
 import java.io.IOException;
 import java.net.URL;
@@ -74,6 +76,7 @@ public class DataReader {
         new Column("koulutusasteIsced1997Koodiarvo", "KOULUTUSASTE ISCED1997", InputColumnType.INTEGER),
         new Column("koulutusalaIsced1997Koodiarvo", "KOULUTUSALA ISCED1997", InputColumnType.INTEGER)
     };
+ 
     private Set<Relaatiot5RowDTO> mergedData;
 
     public DataReader() throws IOException {
@@ -88,6 +91,11 @@ public class DataReader {
          */
         convertAmmatillinenData();
         /*
+         * Oppilaitostyyppi <-> koulutusaste relations*
+         */
+        OppilaitostyyppiMap oppilaitosTyyppiMap = getOppilaitosTyyppiMap();
+
+        /*
          * MISC 
          */
         final KomoExcelReader<KoulutusRelaatioRow> readerForKoulutusRelations = new KomoExcelReader<KoulutusRelaatioRow>(KoulutusRelaatioRow.class, KOULUTUS_RELAATIOT, 3000);
@@ -101,6 +109,7 @@ public class DataReader {
                 r.setKoulutusalaKoodi(rowKr.getKoulutusalaOph2002Koodiarvo());
                 r.setOpintoalaKoodi(rowKr.getOpintoalaOph2002Koodiarvo());
                 r.setKoulutusasteenKoodiarvo(rowKr.getKoulutusasteOph2002Koodiarvo());
+                r.setOppilaitostyyppis(oppilaitosTyyppiMap.get(rowKr.getKoulutusasteOph2002Koodiarvo()));
             } else {
                 log.warn("Required koulutuskoodi " + r.getKoulutuskoodi() + " relation not found.");
             }
@@ -183,5 +192,10 @@ public class DataReader {
         TutkintonimikeMap mapAmmTukintonimike = new TutkintonimikeMap(readerForAmmNimike.read(getFilePath("TUTKINTONIMIKKEET_koulutusohjelmat_relaatio"), true));
 
         addImportedData(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS, mapAmm, mapAmmTukintonimike);
+    }
+
+    private OppilaitostyyppiMap getOppilaitosTyyppiMap() throws IOException {
+        final KomoExcelReader<OppilaitostyyppiRow> readerOppilaitostyyppi = new KomoExcelReader<OppilaitostyyppiRow>(OppilaitostyyppiRow.class, OppilaitostyyppiRow.OPPILAITOSTYYPPI_RELAATIOT, 50);
+        return new OppilaitostyyppiMap(readerOppilaitostyyppi.read(getFilePath("OPPILAITOSTYYPPI_relaatiot"), false));
     }
 }

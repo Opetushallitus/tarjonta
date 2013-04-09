@@ -139,9 +139,14 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @JoinColumn(name = "tavoitteet")
     private MonikielinenTeksti tavoitteet;
     
-    private String koulutustyyppi = null;
+    @Column(name = "koulutustyyppi")
+    private String koulutustyyppi;
     
-    private String lukiolinja = null;
+    @Column(name = "lukiolinja")
+    private String lukiolinja;
+    
+    @Column(name = "oppilaitostyyppi", length = 500)
+    private String oppilaitostyyppi;
 
     /**
      * JPA konstruktori
@@ -573,6 +578,20 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     public void setLukiolinja(String lukiolinja) {
         this.lukiolinja = lukiolinja;
     } 
+
+    /**
+     * @return the oppilaitostyyppi
+     */
+    public String getOppilaitostyyppi() {
+        return oppilaitostyyppi;
+    }
+
+    /**
+     * @param oppilaitostyyppi the oppilaitostyyppi to set
+     */
+    public void setOppilaitostyyppi(String oppilaitostyyppi) {
+        this.oppilaitostyyppi = oppilaitostyyppi;
+    }
 
 }
 

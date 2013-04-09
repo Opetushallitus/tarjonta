@@ -1540,6 +1540,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public void loadKoulutuskoodit() {
         HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
         kysely.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        kysely.getOppilaitostyyppiUris();
         HaeKaikkiKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit = getTarjontaPublicService().haeKaikkiKoulutusmoduulit(kysely);
         List<KoulutusmoduuliTulos> koulutusmoduuliTulos = haeKaikkiKoulutusmoduulit.getKoulutusmoduuliTulos();
 
@@ -1590,7 +1591,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         //Filtering the koulutuskoodit based on the oppilaitostyypit.
         //TODO: fix this:
-        // return this.uiHelper.getKoulutusFilteredkooditRelatedToOlTyypit(olTyyppiUris, unfilteredKoodit);
+        //return this.uiHelper.getKoulutusFilteredkooditRelatedToOlTyypit(olTyyppiUris, unfilteredKoodit);
         return unfilteredKoodit;
     }
 

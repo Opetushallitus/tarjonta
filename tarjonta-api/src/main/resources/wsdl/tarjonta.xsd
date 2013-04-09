@@ -533,6 +533,12 @@
                     <xs:documentation>NQF-luokitus</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="oppilaitostyyppi" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Lista oppilaitostyyppien koodeja.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
 
             <xs:element minOccurs="1" maxOccurs="1" name="koulutuksenRakenne" type="tns:MonikielinenTekstiTyyppi">
                 <xs:annotation>
