@@ -102,7 +102,7 @@ public class UploadKoodistoData {
 
             // change koodisto tila to HYVAKSYTTY: this should also approve all unapproved koodis in the koodisto
             // NOTE! takes a long time if there are lots of koodis
-            koodistoHelper.approveKoodisto(createdKoodisto);
+            //koodistoHelper.approveKoodisto(createdKoodisto);
         }
     }
 
