@@ -394,7 +394,7 @@ public class ShowHakukohdeTab extends CustomComponent {
              kokonaisPisteet.setPisteRajaTyyppi(i18n.getMessage("kokonaispisteet"));
              kokonaisPisteet.setYlinPistemaara(i18n.getMessage("ylinPisteMaara"));
              kokonaisPisteet.setAlinHyvaksyttyPistemaara(valintakoeV.getKpAlinHyvaksyttyPM());
-
+             pisterajaRows.add(kokonaisPisteet);
 
              pisterajaRows.add(lisaNaytotRow);
         }
