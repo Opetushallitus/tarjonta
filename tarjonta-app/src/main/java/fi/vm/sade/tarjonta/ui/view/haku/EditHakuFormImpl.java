@@ -170,15 +170,15 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
         koulutuksenAlkamisvuosi = UiUtil.textField(null, "", T("KoulutuksenAlkamisvuosi.prompt"), false);
         koulutuksenAlkamisvuosi.setSizeUndefined();
         _hakuKohdejoukko = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAUN_KOHDEJOUKKO_URI, null, null, T("HakuKohdejoukko.prompt"));
-        _hakuKohdejoukko.setSizeUndefined();
+        _hakuKohdejoukko.setWidth("350px");//_hakuKohdejoukko.setSizeUndefined();
         _hakutapa = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUTAPA_URI, null, null, T("Hakutapa.prompt"));
-        _hakutapa.setSizeUndefined();
+        _hakutapa.setWidth("350px");//.setSizeUndefined();
         _haunNimiFI = UiUtil.textField(null, "", T("HaunNimiFI.prompt"), false);
-        _haunNimiFI.setSizeUndefined();
+        _haunNimiFI.setWidth("450px");
         _haunNimiSE = UiUtil.textField(null, "", T("HaunNimiSE.prompt"), false);
-        _haunNimiSE.setSizeUndefined();
+        _haunNimiSE.setWidth("450px");
         _haunNimiEN = UiUtil.textField(null, "", T("HaunNimiEN.prompt"), false);
-        _haunNimiEN.setSizeUndefined();
+        _haunNimiEN.setWidth("450px");
         _haunTunniste = UiUtil.label((AbstractLayout) null, hakuViewModel.getHaunTunniste());
         _haunTunniste.setSizeUndefined();
         // TODO hakuaika
