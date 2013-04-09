@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.data.loader.xls;
 
+import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.data.dto.KoodiRelaatio;
 import fi.vm.sade.tarjonta.data.util.DataUtils;
 import fi.vm.sade.tarjonta.data.util.TarjontaDataKoodistoHelper;
@@ -77,6 +78,11 @@ public class KoodistoRelaatioExcelReader {
                             relaatio.setKoodiYlaArvo(ylaArvo);
                             relaatio.setAlaArvoKoodisto(alaKoodistoUri);
                             relaatio.setKoodiAlaArvo(getCellValueAsString(currentRow.getCell(cellCount)));
+                            if (StringUtils.containsIgnoreCase(pathToFile, "rinnastei")) {
+                                relaatio.setSuhteenTyyppi(SuhteenTyyppiType.RINNASTEINEN);
+                            } else {
+                                relaatio.setSuhteenTyyppi(SuhteenTyyppiType.SISALTYY);
+                            }
                             koodiRelaatios.add(relaatio);
                         }
                     }

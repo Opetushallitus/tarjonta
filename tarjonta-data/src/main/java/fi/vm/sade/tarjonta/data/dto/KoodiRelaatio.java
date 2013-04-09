@@ -15,6 +15,7 @@ package fi.vm.sade.tarjonta.data.dto;/*
  * European Union Public Licence for more details.
  */
 
+import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -26,6 +27,7 @@ public class KoodiRelaatio extends AbstractReadableRow {
     private String alaArvoKoodisto;
     private String koodiYlaArvo;
     private String koodiAlaArvo;
+    private SuhteenTyyppiType suhteenTyyppi;
 
     public String getKoodiYlaArvo() {
         return koodiYlaArvo;
@@ -57,6 +59,14 @@ public class KoodiRelaatio extends AbstractReadableRow {
 
     public void setAlaArvoKoodisto(final String alaArvoKoodisto) {
         this.alaArvoKoodisto = alaArvoKoodisto;
+    }
+
+    public SuhteenTyyppiType getSuhteenTyyppi() {
+        return suhteenTyyppi;
+    }
+
+    public void setSuhteenTyyppi(final SuhteenTyyppiType suhteenTyyppi) {
+        this.suhteenTyyppi = suhteenTyyppi;
     }
 
     @Override
