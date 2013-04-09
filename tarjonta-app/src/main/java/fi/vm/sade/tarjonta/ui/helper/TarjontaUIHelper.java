@@ -18,13 +18,11 @@ package fi.vm.sade.tarjonta.ui.helper;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.types.GetKoodistoByUriAndVersionType;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.*;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
-import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
@@ -292,7 +290,7 @@ public class TarjontaUIHelper {
                 KoodiUriAndVersioType uriAndVersio = getKoodiUriAndVersioTypeByKoodiUriAndVersion(curUri);
                 criteria = KoodiServiceSearchCriteriaBuilder.koodiByUriAndVersion(uriAndVersio.getKoodiUri(), uriAndVersio.getVersio());
             } else {
-                criteria = KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(curUri);
+                criteria = KoodiServiceSearchCriteriaBuilder.latestKoodisByUris(curUri);
             }
             List<KoodiType> olTyyppiKoodit = _koodiService.searchKoodis(criteria);
             LOG.debug("olTyyppiKoodit: {}", olTyyppiKoodit.size());
@@ -384,7 +382,7 @@ public class TarjontaUIHelper {
                 SearchKoodisCriteriaType searchCriteria;
 
                 if (version < 0) {
-                    searchCriteria = KoodiServiceSearchCriteriaBuilder.latestValidAcceptedKoodiByUri(uri);
+                    searchCriteria = KoodiServiceSearchCriteriaBuilder.latestKoodisByUris(uri);
                 } else {
                     searchCriteria = KoodiServiceSearchCriteriaBuilder.koodiByUriAndVersion(uri, version);
                 }

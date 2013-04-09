@@ -137,7 +137,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private EditKoulutusLisatiedotToinenAsteView lisatiedotView;
     @Autowired(required = true)
     private TarjontaLukioPresenter lukioPresenter;
-
     public static final String VALINTAKOE_TAB_SELECT = "valintakokeet";
     public static final String LIITTEET_TAB_SELECT = "liitteet";
 
@@ -575,8 +574,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         getModel().getSelectedKoulutukset().clear();
     }
 
-   
-    
     private String getKoulutusNimi(KoulutusKoosteTyyppi curKoulutus) {
         String nimi = getKoodiNimi(curKoulutus.getKoulutuskoodi());
         if (curKoulutus.getKoulutusohjelmakoodi() != null) {
@@ -698,7 +695,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      */
     public void readOrgTreeToTarjoaja(String organisaatioOid) {
         Preconditions.checkNotNull(getTarjoaja().getSelectedOrganisationOid(), "Organisation OID cannot be null.");
-     
+
         List<String> organisaatioOidTree = new ArrayList<String>();
         organisaatioOidTree.add(organisaatioOid);
         try {
@@ -1592,7 +1589,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         List<String> olTyyppiUris = getOppilaitostyyppiUris();
 
         //Filtering the koulutuskoodit based on the oppilaitostyypit.
-        return this.uiHelper.getKoulutusFilteredkooditRelatedToOlTyypit(olTyyppiUris, unfilteredKoodit);
+        //TODO: fix this:
+        // return this.uiHelper.getKoulutusFilteredkooditRelatedToOlTyypit(olTyyppiUris, unfilteredKoodit);
+        return unfilteredKoodit;
     }
 
     /*

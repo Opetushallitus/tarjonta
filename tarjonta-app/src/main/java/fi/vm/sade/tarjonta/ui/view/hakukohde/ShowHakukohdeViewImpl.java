@@ -64,7 +64,6 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
     private @Value("${koodisto.suomi.uri:suomi}") String suomiUri;
     public ShowHakukohdeViewImpl(String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
-        context = OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getSelectedOrganisationOid());
         LOG.debug(this.getClass().getName() + "()");
     }
 
