@@ -345,7 +345,6 @@ public class ListKoulutusView extends VerticalLayout {
                     UusiKoulutusDialog uusiKoulutusDialog = new UusiKoulutusDialog("600px", "500px");
                     
                     getWindow().addWindow(uusiKoulutusDialog);
-                    //presenter.showKoulutustEditView(null, KoulutusActiveTab.PERUSTIEDOT);
                 } else {
                     showNoKoulutusDialog("viesti");
                 }

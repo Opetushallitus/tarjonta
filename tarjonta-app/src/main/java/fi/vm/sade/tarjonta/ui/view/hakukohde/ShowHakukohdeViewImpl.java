@@ -59,7 +59,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
 
     public ShowHakukohdeViewImpl(String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
-        context = OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getOrganisationOid());
+        context = OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getSelectedOrganisationOid());
         LOG.debug(this.getClass().getName() + "()");
     }
 
@@ -77,7 +77,7 @@ public class ShowHakukohdeViewImpl extends AbstractVerticalInfoLayout {
         //Build the layout
 
         //XXX oid not set
-        addNavigationButtons(vl, OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getOrganisationOid()));
+        addNavigationButtons(vl, OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getSelectedOrganisationOid()));
         Set<String> allLangs = getAllKielet();
         final TabSheet tabs = new TabSheet();
         for (String lang:allLangs) {

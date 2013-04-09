@@ -14,7 +14,7 @@
     <properties>
         <powermock.version>1.4.12</powermock.version>
         <webapp.port>8480</webapp.port>
-        <google.map.widget.version>0.9.13</google.map.widget.version>
+        <google.map.widget.version>0.9.13</google.map.widget.version> 
     </properties>
 
 
@@ -35,12 +35,12 @@
        <dependency>
             <groupId>fi.vm.sade.koodisto</groupId>
             <artifactId>koodisto-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${koodisto.version}</version>
         </dependency>
        <dependency>
             <groupId>fi.vm.sade.koodisto</groupId>
             <artifactId>koodisto-widget</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${koodisto.version}</version>
         </dependency>
 
         <dependency>

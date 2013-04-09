@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.ui.loader.xls;
 
 import fi.vm.sade.tarjonta.ui.loader.xls.helper.RelaatioMap;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.GenericRow;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import java.net.URL;
 import java.util.Set;
 import org.junit.Test;
@@ -44,7 +43,7 @@ public class TarjontaKomoDataTest {
         assertEquals("32", next.getKoulutusasteKoodiarvo());
         assertEquals("120", next.getLaajuusKoodiarvo());
         assertEquals("4", next.getEqfKoodiarvo());
-        assertEquals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value(), next.getKoulutusasteTyyppi());
+        assertEquals("1", next.getLaajuusyksikkoKoodiarvo());
     }
 
     @Test
@@ -61,8 +60,8 @@ public class TarjontaKomoDataTest {
         assertEquals("301101", next.getKoulutuskoodiKoodiarvo());
         assertEquals("31", next.getKoulutusasteKoodiarvo());
         assertEquals("70", next.getLaajuusKoodiarvo());
+        assertEquals("2", next.getLaajuusyksikkoKoodiarvo());
         assertEquals("3", next.getEqfKoodiarvo());
-        assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS.value(), next.getKoulutusasteTyyppi());
 
         next = excelDataMap.get("0014");
         assertEquals("301104", next.getKoulutuskoodiKoodiarvo());

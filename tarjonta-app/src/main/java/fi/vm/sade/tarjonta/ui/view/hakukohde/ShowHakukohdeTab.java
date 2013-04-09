@@ -52,7 +52,7 @@ public class ShowHakukohdeTab extends CustomComponent {
     public ShowHakukohdeTab(String language) {
           Preconditions.checkNotNull(language,"Language cannot be null");
           this.language = language;
-        this.context = OrganisaatioContext.getContext(presenter.getTarjoaja().getOrganisationOid());
+        this.context = OrganisaatioContext.getContext(presenter.getTarjoaja().getSelectedOrganisationOid());
         VerticalLayout mainLayout = new VerticalLayout();
         mainLayout.setMargin(true);
         setCompositionRoot(mainLayout);

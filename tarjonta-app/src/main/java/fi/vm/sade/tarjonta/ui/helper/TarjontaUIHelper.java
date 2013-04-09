@@ -101,11 +101,15 @@ public class TarjontaUIHelper {
     }
 
     private Set<KoodiType> getRelatedParentKoodis(List<KoodiUriAndVersioType> parentKoodis, SuhteenTyyppiType suhdeTyyppi) {
+        return getRelatedParentKoodis(parentKoodis, false, suhdeTyyppi);
+    }
+
+    private Set<KoodiType> getRelatedParentKoodis(List<KoodiUriAndVersioType> parentKoodis, boolean alaKoodi, SuhteenTyyppiType suhdeTyyppi) {
         Set<KoodiType> koodiTypes = new HashSet<KoodiType>();
 
         for (KoodiUriAndVersioType koodiUriAndVersioType : parentKoodis) {
 
-            List<KoodiType> koodis = _koodiService.listKoodiByRelation(koodiUriAndVersioType, false, suhdeTyyppi);//SuhteenTyyppiType.SISALTYY);
+            List<KoodiType> koodis = _koodiService.listKoodiByRelation(koodiUriAndVersioType, alaKoodi, suhdeTyyppi);//SuhteenTyyppiType.SISALTYY);
             koodiTypes.addAll(koodis);
         }
 
@@ -234,23 +238,24 @@ public class TarjontaUIHelper {
      * oppilaitostyyppis given as parameter
      *
      * @param olTyyppiUris - the oppilaitostyyppi uris to match
-     * @param unfilteredKoodit - the list of all KoulutuskoodiModel objects in
-     * the system
+     * @param unfilteredKoulutuskoodis - the list of all KoulutuskoodiModel
+     * objects in the system
      * @return the list of KoulutuskoodiModel objects that match the
      * oppilaitostyyppis.
      */
     public List<KoulutuskoodiModel> getKoulutusFilteredkooditRelatedToOlTyypit(
             List<String> olTyyppiUris,
-            List<KoulutuskoodiModel> unfilteredKoodit) {
+            List<KoulutuskoodiModel> unfilteredKoulutuskoodis) {
         LOG.debug("getKoulutusFilteredKooditRelatedToOlTyypit");
 
         List<KoulutuskoodiModel> filteredKoodit = new ArrayList<KoulutuskoodiModel>();
         for (KoodiType curKoulutusKoodi : getOlRelatedKoulutuskoodit(olTyyppiUris)) {
-            LOG.debug("curKoulutusKoodi: {}, {}", curKoulutusKoodi.getKoodiUri(), curKoulutusKoodi.getVersio());
-            KoulutuskoodiModel matchingKoulutus = getKoulutusByKoodi(curKoulutusKoodi, unfilteredKoodit);
+
+            KoulutuskoodiModel matchingKoulutus = getKoulutusByKoodi(curKoulutusKoodi, unfilteredKoulutuskoodis);
             if (matchingKoulutus != null
                     && !filteredKoodit.contains(matchingKoulutus)) {
                 filteredKoodit.add(matchingKoulutus);
+                LOG.debug("Match : {}", matchingKoulutus.getKoodistoUriVersio());
             }
         }
 
@@ -274,10 +279,10 @@ public class TarjontaUIHelper {
      * </pre>
      *
      * @param olTyyppiUris - the oppilaitostyyppi uris
-     * @return list of koodis related from Oppilaitostyyppi to KoulutusAsteKoodi to KoulutusKoodi
+     * @return list of koodis related from Oppilaitostyyppi to KoulutusAsteKoodi
+     * to KoulutusKoodi
      */
     public List<KoodiType> getOlRelatedKoulutuskoodit(List<String> olTyyppiUris) {
-        List<KoodiType> koulutusKoodit = new ArrayList<KoodiType>();
         //First the list of koulutusastekoodis that are related to the oppilaitostyyppis is fetched
         List<KoodiType> koulutusasteKoodit = new ArrayList<KoodiType>();
         for (String curUri : olTyyppiUris) {
@@ -292,23 +297,23 @@ public class TarjontaUIHelper {
             List<KoodiType> olTyyppiKoodit = _koodiService.searchKoodis(criteria);
             LOG.debug("olTyyppiKoodit: {}", olTyyppiKoodit.size());
             if (olTyyppiKoodit != null && !olTyyppiKoodit.isEmpty()) {
-                koulutusasteKoodit.addAll(getRelatedKoodit(olTyyppiKoodit, SuhteenTyyppiType.SISALTYY));
+                koulutusasteKoodit.addAll(getRelatedKoodit(olTyyppiKoodit, KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI, SuhteenTyyppiType.SISALTYY));
             }
         }
 
         LOG.debug("koulutusasteKoodit: {}", koulutusasteKoodit.size());
 
         //then the koulutuskoodi objects that are related to the koulutusastekoodis are fetced and returned.
-        return getRelatedKoodit(koulutusasteKoodit, SuhteenTyyppiType.SISALTYY);
+        return getRelatedKoodit(koulutusasteKoodit, null, true, SuhteenTyyppiType.SISALTYY);
     }
 
     /*
      * Returns the KoulutuskoodiModel objects that  matches the koulutusKoodi given as parameter.
      */
-    private KoulutuskoodiModel getKoulutusByKoodi(KoodiType koulutusKoodi, List<KoulutuskoodiModel> koulutukset) {
-        LOG.debug("getKoulutusByKoodi: {}, {}", koulutusKoodi.getKoodiUri(), koulutusKoodi.getVersio());
-        for (KoulutuskoodiModel curKoulutus : koulutukset) {
-            LOG.debug("curKoulutus koodistoUri: {}", curKoulutus.getKoodistoUri());
+    private KoulutuskoodiModel getKoulutusByKoodi(KoodiType koulutusKoodi, List<KoulutuskoodiModel> unfilteredKoulutuskoodis) {
+        //LOG.debug("getKoulutusByKoodi: {}, {}", koulutusKoodi.getKoodiUri(), koulutusKoodi.getVersio());
+        for (KoulutuskoodiModel curKoulutus : unfilteredKoulutuskoodis) {
+            LOG.debug("getKoulutusByKoodi: {}, {}", curKoulutus.getKoodistoUri(), koulutusKoodi.getKoodiUri());
             if (curKoulutus.getKoodistoUri().equals(koulutusKoodi.getKoodiUri())) {
                 LOG.debug("MATCH");
                 return curKoulutus;
@@ -321,7 +326,15 @@ public class TarjontaUIHelper {
      * Gets the koodis that are related to one or more of the koodit given as parameters with the suhdeTyyppi
      * given as parameters.
      */
-    private List<KoodiType> getRelatedKoodit(List<KoodiType> koodit, SuhteenTyyppiType suhdeTyyppi) {
+    private List<KoodiType> getRelatedKoodit(List<KoodiType> koodit, String koodistoUri, SuhteenTyyppiType suhdeTyyppi) {
+        return getRelatedKoodit(koodit, koodistoUri, false, suhdeTyyppi);
+    }
+
+    /*
+     * Gets the koodis that are related to one or more of the koodit given as parameters with the suhdeTyyppi
+     * given as parameters.
+     */
+    private List<KoodiType> getRelatedKoodit(List<KoodiType> koodit, String koodistoUri, boolean alaKoodi, SuhteenTyyppiType suhdeTyyppi) {
         LOG.debug("getRelatedKoodit");
         List<KoodiType> relatedKoodit = new ArrayList<KoodiType>();
         List<KoodiUriAndVersioType> koodiVersios = new ArrayList<KoodiUriAndVersioType>();
@@ -331,10 +344,14 @@ public class TarjontaUIHelper {
             koodiUriAndVersioType.setVersio(curOlTyyppiKoodi.getVersio());
             LOG.debug("KoodiURI and versio: {}, {}", koodiUriAndVersioType.getKoodiUri(), koodiUriAndVersioType.getVersio());
             koodiVersios.add(koodiUriAndVersioType);
+
         }
 
-        for (KoodiType curKoodi : this.getRelatedParentKoodis(koodiVersios, suhdeTyyppi)) {
-            relatedKoodit.add(curKoodi);
+        for (KoodiType curKoodi : this.getRelatedParentKoodis(koodiVersios, alaKoodi, suhdeTyyppi)) {
+            if (koodistoUri == null || koodistoUri.equals(curKoodi.getKoodisto().getKoodistoUri())) {
+                LOG.debug("RelatedParentKoodi URI: {}", curKoodi.getKoodiUri());
+                relatedKoodit.add(curKoodi);
+            }
         }
         LOG.debug("relatedKoodit size: {}", relatedKoodit.size());
 

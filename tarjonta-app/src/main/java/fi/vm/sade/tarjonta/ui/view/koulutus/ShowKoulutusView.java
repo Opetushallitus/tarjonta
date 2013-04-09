@@ -82,7 +82,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
         layout.removeAllComponents();
 
-        addNavigationButtons(layout, OrganisaatioContext.getContext(presenter.getModel().getTarjoajaModel().getOrganisationOid()));
+        addNavigationButtons(layout, OrganisaatioContext.getContext(presenter.getModel().getTarjoajaModel().getSelectedOrganisationOid()));
 
         final LueKoulutusVastausTyyppi koulutus = presenter.getKoulutusByOid(presenter.getModel().getKoulutusPerustiedotModel().getOid());
         

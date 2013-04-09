@@ -25,7 +25,6 @@ public class GenericRow {
 
     private String koulutuskoodiKoodiarvo;
     private String relaatioKoodiarvo;
-    private String koulutusasteTyyppi;
     private String koulutusasteKoodiarvo;
     private String laajuusKoodiarvo;
     private String laajuusyksikkoKoodiarvo;
@@ -57,20 +56,6 @@ public class GenericRow {
      */
     public void setRelaatioKoodiarvo(String relaatioKoodiarvo) {
         this.relaatioKoodiarvo = relaatioKoodiarvo;
-    }
-
-    /**
-     * @return the koulutusasteTyyppi
-     */
-    public String getKoulutusasteTyyppi() {
-        return koulutusasteTyyppi;
-    }
-
-    /**
-     * @param koulutusasteTyyppi the koulutusasteTyyppi to set
-     */
-    public void setKoulutusasteTyyppi(String koulutusasteTyyppi) {
-        this.koulutusasteTyyppi = koulutusasteTyyppi;
     }
 
     /**

@@ -103,10 +103,8 @@ public class TarjontaLukioPresenter {
             PaivitaKoulutusTyyppi paivita = lukioKoulutusConverter.createPaivitaLukioKoulutusTyyppi(getTarjontaModel(), perustiedot.getKomotoOid(), tila);
             tarjontaAdminService.paivitaKoulutus(paivita);
         } else { //insert new KOMOTO
-            for (OrganisationOidNamePair pair : getTarjontaModel().getTarjoajaModel().getOrganisaatioOidNamePairs()) {
-                getTarjontaModel().getTarjoajaModel().copyToModel(pair);
-
-                LisaaKoulutusTyyppi lisaa = lukioKoulutusConverter.createLisaaLukioKoulutusTyyppi(getTarjontaModel(), tila);
+            for (OrganisationOidNamePair pair : getTarjontaModel().getTarjoajaModel().getOrganisationOidNamePairs()) {
+                LisaaKoulutusTyyppi lisaa = lukioKoulutusConverter.createLisaaLukioKoulutusTyyppi(getTarjontaModel(), pair, tila);
                 checkKoulutusmoduuli();
                 if (checkExistingKomoto(lisaa)) {
                     tarjontaAdminService.lisaaKoulutus(lisaa);
@@ -120,8 +118,8 @@ public class TarjontaLukioPresenter {
     }
 
     /**
-     * Tries to find KoulutusModuuli ("KOMO") for given koulutus
-     * (tutkinto == KoulutudKoodiUri AND koulutusohjelma == KoulutusOhjelmsKoodiUri)
+     * Tries to find KoulutusModuuli ("KOMO") for given koulutus (tutkinto ==
+     * KoulutudKoodiUri AND koulutusohjelma == KoulutusOhjelmsKoodiUri)
      */
     private void checkKoulutusmoduuli() {
         HaeKoulutusmoduulitKyselyTyyppi kysely =
@@ -159,8 +157,8 @@ public class TarjontaLukioPresenter {
      * @param tab
      */
     public void showEditKoulutusView(final String komotoOid, final KoulutusActiveTab tab) {
-        // If oid of koulutus is provided the koulutus is read from database
-        // before opening the KoulutusEditView
+        // If koulutus OID is provided, the koulutus is read from database
+        // before opening the KoulutusEditView.
 
         loadKomoto(komotoOid);
 
@@ -195,7 +193,8 @@ public class TarjontaLukioPresenter {
             LueKoulutusVastausTyyppi koulutus = getPresenter().getKoulutusByOid(komotoOid);
             lukioKoulutusConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, I18N.getLocale());
         } else {
-            Preconditions.checkNotNull(getTarjontaModel().getTarjoajaModel().getOrganisationOid(), "Missing organisation OID.");
+            Preconditions.checkNotNull(getTarjontaModel().getTarjoajaModel().getSelectedOrganisationOid(), "Missing organisation OID.");
+            presenter.getTarjoaja().setSelectedResultRowOrganisationOid(null);
             getPerustiedotModel().clearModel();
             getTarjontaModel().setKoulutusLukioKuvailevatTiedot(new KoulutusLukioKuvailevatTiedotViewModel());
         }

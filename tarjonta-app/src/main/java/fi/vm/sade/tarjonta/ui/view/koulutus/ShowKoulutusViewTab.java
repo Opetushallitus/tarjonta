@@ -84,11 +84,11 @@ public class ShowKoulutusViewTab extends CustomComponent {
 	public ShowKoulutusViewTab(final String language, final Locale locale, final LueKoulutusVastausTyyppi koulutus) {
 		Preconditions.checkNotNull(language, "Language cannot be null");
 		Preconditions.checkNotNull(presenter.getTarjoaja(), "Tarjoaja cannot be null");
-		Preconditions.checkNotNull(presenter.getTarjoaja().getOrganisationOid(), "Tarjoaja organisaatioOid cannot be null");
+		Preconditions.checkNotNull(presenter.getTarjoaja().getSelectedOrganisationOid(), "Tarjoaja organisaatioOid cannot be null");
 		this.language = language;
 		this.locale = getKoodistoLocale(locale);
 		this.koulutus = koulutus;
-		this.context = OrganisaatioContext.getContext(presenter.getTarjoaja().getOrganisationOid());
+		this.context = OrganisaatioContext.getContext(presenter.getTarjoaja().getSelectedOrganisationOid());
 		final VerticalLayout layout = new VerticalLayout();
         layout.setSpacing(true);
         layout.setMargin(true);
@@ -210,6 +210,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
 
 					@Override
 					public void buttonClick(ClickEvent event) {
+                                              presenter.getTarjoaja().setSelectedResultRowOrganisationOid(null);
 						presenter.showKoulutustEditView(getEditViewOid(),
 								KoulutusActiveTab.LISATIEDOT);
 					}
@@ -259,6 +260,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
 			private static final long serialVersionUID = 1L;
 			@Override
             public void buttonClick(ClickEvent event) {
+                            presenter.getTarjoaja().setSelectedResultRowOrganisationOid(null);
                 presenter.showKoulutustEditView(getEditViewOid(), KoulutusActiveTab.PERUSTIEDOT);
             }
         }, presenter.getPermission().userCanUpdateKoulutus(context), true));
@@ -271,7 +273,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
         final KoodiModel opintojenLaajuusyksikko = koodiModel.getOpintojenLaajuusyksikko();
 
         //TODO get org name for current language?
-        layout.add(getTextRow("organisaatio", presenter.getTarjoaja().getOrganisationName()));
+        layout.add(getTextRow("organisaatio", presenter.getTarjoaja().getSelectedOrganisation().getOrganisationName()));
         layout.add(getTextRow("koulutusTutkinto", uiHelper.getKoodiNimi(koulutus.getKoulutusKoodi().getUri(), locale)));
         layout.add(getTextRow("koulutusohjelma", uiHelper.getKoodiNimi(koulutus.getKoulutusohjelmaKoodi().getUri(), locale)));
         layout.add(getTextRow("koulutusaste", uiHelper.getKoodiNimi(koulutus.getKoulutusaste().getUri(), locale)));

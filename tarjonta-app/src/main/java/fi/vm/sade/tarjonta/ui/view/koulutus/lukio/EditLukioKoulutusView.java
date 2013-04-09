@@ -104,7 +104,7 @@ public class EditLukioKoulutusView extends AbstractVerticalLayout {
     private String getOrganisaationNames() {
         StringBuilder organisaatios = new StringBuilder();
         int counter = 0;
-        for (OrganisationOidNamePair pair : presenter.getTarjoaja().getOrganisaatioOidNamePairs()) {
+        for (OrganisationOidNamePair pair : presenter.getTarjoaja().getOrganisationOidNamePairs()) {
             if (counter != 0) {
                 organisaatios.append(", ");
             }

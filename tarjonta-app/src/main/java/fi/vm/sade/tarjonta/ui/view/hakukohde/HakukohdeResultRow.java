@@ -49,8 +49,10 @@ import java.util.Date;
  * The component and functionality for showing a hakukohde object in hakukohde
  * search result list.
  *
- * TKatva, 25.3.2013. This should be refactored so that hakukohdeTulos-object would be passed to other views.
- * Now instead every view loads it again. For example "inpection"-view could use just the passed model. Edit view maybe should load model again.
+ * TKatva, 25.3.2013. This should be refactored so that hakukohdeTulos-object
+ * would be passed to other views. Now instead every view loads it again. For
+ * example "inpection"-view could use just the passed model. Edit view maybe
+ * should load model again.
  *
  * @author markus
  *
@@ -72,7 +74,6 @@ public class HakukohdeResultRow extends HorizontalLayout {
      */
     private CheckBox isSelected;
     private Window removeHakukohdeDialog;
-
     private boolean hakuStarted = false;
     /**
      * The presenter object for the component.
@@ -87,10 +88,10 @@ public class HakukohdeResultRow extends HorizontalLayout {
     public HakukohdeResultRow(HakukohdeTulos hakukohde, String hakukohdeNimi) {
         this.hakukohde = hakukohde;
         Date today = new Date();
-        if (hakukohde!=null
-        		&& hakukohde.getHaku() != null
-        		&& hakukohde.getHaku().getHakuAlkamisPvm() != null
-        		&& hakukohde.getHaku().getHakuAlkamisPvm().before(today)) {
+        if (hakukohde != null
+                && hakukohde.getHaku() != null
+                && hakukohde.getHaku().getHakuAlkamisPvm() != null
+                && hakukohde.getHaku().getHakuAlkamisPvm().before(today)) {
             hakuStarted = true;
         }
 
@@ -101,7 +102,6 @@ public class HakukohdeResultRow extends HorizontalLayout {
      * selection in the menu.
      */
     private MenuBar.Command menuCommand = new MenuBar.Command() {
-
         private static final long serialVersionUID = -3198339721387004359L;
 
         @Override
@@ -149,12 +149,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
         final String hakukohdeOid = hakukohde.getHakukohde().getOid();
 
         if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
-            //Ugly, refactor when whole object is passed
-            tarjontaPresenter.getTarjoaja().setOrganisationOid(this.hakukohde.getKoulutus().getTarjoaja());
-            tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
-            tarjontaPresenter.showHakukohdeViewImpl(hakukohdeOid);
+            openHakukohdeView();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
-            tarjontaPresenter.showHakukohdeEditView(null, hakukohdeOid,null);
+            tarjontaPresenter.showHakukohdeEditView(null, hakukohdeOid, null);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.DELETE.key))) {
             showRemoveDialog();
         } else if (selection.equals(i18n.getMessage("naytaKoulutukset"))) {
@@ -170,8 +167,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
     private void showRemoveDialog() {
         RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), hakukohdeNimi, T("removeYes"), T("removeNo"),
                 new Button.ClickListener() {
-
-                    private static final long serialVersionUID = -4938403467167578650L;
+            private static final long serialVersionUID = -4938403467167578650L;
 
             @Override
             public void buttonClick(ClickEvent event) {
@@ -180,8 +176,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
             }
         },
                 new Button.ClickListener() {
-
-                    private static final long serialVersionUID = 8488147921050732676L;
+            private static final long serialVersionUID = 8488147921050732676L;
 
             @Override
             public void buttonClick(ClickEvent event) {
@@ -209,7 +204,6 @@ public class HakukohdeResultRow extends HorizontalLayout {
         isSelected = UiUtil.checkbox(null, null);
         isSelected.setImmediate(true);
         isSelected.addListener(new Property.ValueChangeListener() {
-
             private static final long serialVersionUID = -613501895557976455L;
 
             @Override
@@ -230,22 +224,19 @@ public class HakukohdeResultRow extends HorizontalLayout {
         if (withMenuBar) {
             Button nimiB = null;
             if (text.length() > 75) {
-                String labelText = text.substring(0,  75) + "...";
+                String labelText = text.substring(0, 75) + "...";
                 nimiB = UiUtil.buttonLink(null, labelText);
                 nimiB.setDescription(text);
             } else {
                 nimiB = UiUtil.buttonLink(null, text);
             }
-            
-            nimiB.addListener(new Button.ClickListener() {
 
+            nimiB.addListener(new Button.ClickListener() {
                 private static final long serialVersionUID = 7334263722794344559L;
 
                 @Override
                 public void buttonClick(ClickEvent event) {
-                	 tarjontaPresenter.getTarjoaja().setOrganisationOid(hakukohde.getKoulutus().getTarjoaja());
-                     tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
-                    tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getHakukohde().getOid());
+                    openHakukohdeView();
                 }
             });
             nimiB.setStyleName("link-row");
@@ -289,5 +280,13 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
     private String T(String key, Object... args) {
         return i18n.getMessage(key, args);
+    }
+
+    private void openHakukohdeView() {
+        tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getKoulutus().getTarjoaja());
+
+        //Ugly, refactor when whole object is passed
+        tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
+        tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getHakukohde().getOid(), hakukohde.getKoulutus().getTarjoaja());
     }
 }

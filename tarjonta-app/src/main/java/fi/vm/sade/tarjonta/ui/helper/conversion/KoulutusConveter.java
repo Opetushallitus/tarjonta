@@ -49,6 +49,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
+import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,7 +78,20 @@ public class KoulutusConveter {
     @Autowired(required = true)
     private OIDService oidService;
 
-    public OrganisaatioDTO searchOrganisationByOid(final String organisaatioOid, TarjoajaModel model) {
+    public OrganisationOidNamePair searchOrganisationByOid(final String organisaatioOid) {
+        Preconditions.checkNotNull(organisaatioOid, "Organisation OID cannot be null.");
+        OrganisaatioDTO dto = this.organisaatioService.findByOid(organisaatioOid);
+
+        if (dto == null || dto.getOid() == null) {
+            throw new RuntimeException("No organisation found by OID : " + organisaatioOid);
+        }
+        OrganisationOidNamePair pair = new OrganisationOidNamePair();
+        pair.dtoToModel(dto);
+
+        return pair;
+    }
+
+    public OrganisaatioDTO searchOrganisationByOid(final String organisaatioOid, final OrganisationOidNamePair model) {
         Preconditions.checkNotNull(organisaatioOid, "Organisation OID cannot be null.");
         Preconditions.checkNotNull(model, "TarjoajaModel object cannot be null.");
         OrganisaatioDTO dto = this.organisaatioService.findByOid(organisaatioOid);

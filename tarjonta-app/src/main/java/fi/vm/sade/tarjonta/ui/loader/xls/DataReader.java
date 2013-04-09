@@ -16,9 +16,6 @@
 package fi.vm.sade.tarjonta.ui.loader.xls;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.ui.loader.xls.Column;
-import fi.vm.sade.tarjonta.ui.loader.xls.InputColumnType;
-import fi.vm.sade.tarjonta.ui.loader.xls.KomoExcelReader;
 import fi.vm.sade.tarjonta.ui.loader.xls.helper.RelaatioMap;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.GenericRow;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.KoulutusRelaatioRow;
@@ -28,7 +25,6 @@ import fi.vm.sade.tarjonta.ui.loader.xls.helper.KoulutuskoodiMap;
 import fi.vm.sade.tarjonta.ui.loader.xls.helper.TutkintonimikeMap;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -53,20 +49,18 @@ public class DataReader {
     public static final Column[] GENERIC_AMMATILLINEN = {
         new Column("koulutuskoodiKoodiarvo", "KOULUTUS", InputColumnType.INTEGER),
         new Column("relaatioKoodiarvo", "KOULUTUOSOHJELMA", InputColumnType.INTEGER),
-        new Column("koulutusasteTyyppi", "Koulutusaste", InputColumnType.INTEGER),
-        new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER),
-        new Column("laajuusKoodiarvo", "Laajuus", InputColumnType.INTEGER),
+        new Column("eqfKoodiarvo", "EQF", InputColumnType.INTEGER),
         new Column("laajuusyksikkoKoodiarvo", "Laajuusyksikko", InputColumnType.INTEGER),
-        new Column("eqfKoodiarvo", "EQF", InputColumnType.INTEGER)
+        new Column("laajuusKoodiarvo", "Laajuus", InputColumnType.INTEGER),
+        new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER)
     };
     public static final Column[] GENERIC_LUKIO = {
         new Column("koulutuskoodiKoodiarvo", "KOULUTUS", InputColumnType.INTEGER),
         new Column("relaatioKoodiarvo", "LUKIOLINJA", InputColumnType.STRING),
-        new Column("koulutusasteTyyppi", "Koulutusaste", InputColumnType.INTEGER),
-        new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER),
-        new Column("laajuusKoodiarvo", "Laajuus", InputColumnType.INTEGER),
+        new Column("eqfKoodiarvo", "EQF", InputColumnType.INTEGER),
         new Column("laajuusyksikkoKoodiarvo", "Laajuusyksikko", InputColumnType.INTEGER),
-        new Column("eqfKoodiarvo", "EQF", InputColumnType.INTEGER)
+        new Column("laajuusKoodiarvo", "Laajuus", InputColumnType.INTEGER),
+        new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER)
     };
     public static final Column[] KOULUTUS_RELAATIOT = {
         new Column("koulutuskoodiKoodiarvo", "KOULUTUS", InputColumnType.INTEGER),
@@ -113,14 +107,14 @@ public class DataReader {
         }
     }
 
-    private void addImportedData(Map<String, GenericRow> mapBasicData, TutkintonimikeMap mapTutkintonimikes) {
+    private void addImportedData(KoulutusasteTyyppi type, Map<String, GenericRow> mapBasicData, TutkintonimikeMap mapTutkintonimikes) {
         for (Map.Entry<String, GenericRow> e : mapBasicData.entrySet()) {
             final GenericRow value = e.getValue();
 
             Relaatiot5RowDTO row = new Relaatiot5RowDTO();
             row.setEqf(value.getEqfKoodiarvo());
 
-            row.setTyyppi(value.getKoulutusasteTyyppi());
+            row.setTyyppi(type.value());
             //text data
             row.setJatkoOpinto("");
             row.setKoulutuksenRakenne("");
@@ -135,7 +129,7 @@ public class DataReader {
             row.setLaajuus(value.getLaajuusKoodiarvo());
             row.setLaajuusyksikko(value.getLaajuusyksikkoKoodiarvo());
 
-            switch (KoulutusasteTyyppi.fromValue(value.getKoulutusasteTyyppi())) {
+            switch (type) {
                 case AMMATILLINEN_PERUSKOULUTUS:
                     row.setKoulutusohjelmanKoodiarvo(relaatioKoodiarvo);
                     break;
@@ -143,7 +137,7 @@ public class DataReader {
                     row.setLukiolinjaKoodiarvo(relaatioKoodiarvo);
                     break;
                 default:
-                    throw new RuntimeException("An unsupported type.");
+                    throw new RuntimeException("An unsupported type " + type);
             }
 
             if (mapTutkintonimikes.containsKey(relaatioKoodiarvo)) {
@@ -179,7 +173,7 @@ public class DataReader {
 
         final KomoExcelReader<TutkintonimikeRow> readerForLukioNimike = new KomoExcelReader<TutkintonimikeRow>(TutkintonimikeRow.class, GENERIC_TUTKINTONIMIKE_LUKIO, 200);
         TutkintonimikeMap mapLukioNimikkeet = new TutkintonimikeMap(readerForLukioNimike.read(getFilePath("LUKIOLINJA_TUTKINTONIMIKE_relaatio"), true));
-        addImportedData(mapLukio, mapLukioNimikkeet);
+        addImportedData(KoulutusasteTyyppi.LUKIOKOULUTUS, mapLukio, mapLukioNimikkeet);
     }
 
     private void convertAmmatillinenData() throws IOException {
@@ -188,6 +182,6 @@ public class DataReader {
         final KomoExcelReader<TutkintonimikeRow> readerForAmmNimike = new KomoExcelReader<TutkintonimikeRow>(TutkintonimikeRow.class, GENERIC_TUTKINTONIMIKE_AMMATILLINEN, 200);
         TutkintonimikeMap mapAmmTukintonimike = new TutkintonimikeMap(readerForAmmNimike.read(getFilePath("TUTKINTONIMIKKEET_koulutusohjelmat_relaatio"), true));
 
-        addImportedData(mapAmm, mapAmmTukintonimike);
+        addImportedData(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS, mapAmm, mapAmmTukintonimike);
     }
 }

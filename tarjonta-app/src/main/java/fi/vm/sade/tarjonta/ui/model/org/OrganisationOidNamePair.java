@@ -22,8 +22,12 @@ package fi.vm.sade.tarjonta.ui.model.org;
 public class OrganisationOidNamePair extends OrganisationModel {
 
     private static final long serialVersionUID = -6877242953937705116L;
-
+    
+    public OrganisationOidNamePair() {
+    }
+    
     public OrganisationOidNamePair(String oid, String name) {
         super(oid, name);
     }
+    
 }
