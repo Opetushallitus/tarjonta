@@ -5,12 +5,11 @@
     <parent>
         <artifactId>tarjonta</artifactId>
         <groupId>fi.vm.sade.tarjonta</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>3.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tarjonta-data</artifactId>
     <name>Tarjonta :: Data</name>
-    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -37,7 +36,7 @@
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-events</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${generic.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -49,12 +48,12 @@
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-common</artifactId>
-            <version>${project.version}</version>
+            <version>${generic.version}</version>
         </dependency>
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>dependencies-vaadin</artifactId>
-            <version>${project.version}</version>
+            <version>${generic.version}</version>
             <type>pom</type>
             <scope>provided</scope>
         </dependency>
@@ -115,7 +114,7 @@
         <dependency>
             <groupId>fi.vm.sade.koodisto</groupId>
             <artifactId>koodisto-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${koodisto.api.version}</version>
             <type>jar</type>
         </dependency>
         
@@ -168,13 +167,13 @@
         <dependency>
             <groupId>fi.vm.sade.oid</groupId>
             <artifactId>oid-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${oid.api.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
