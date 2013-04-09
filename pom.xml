@@ -14,16 +14,17 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <koodisto.version>3.1-SNAPSHOT</koodisto.version>
+    </properties>
+    
     <modules>
-      <module>tarjonta-api</module>
-      <module>tarjonta-publication-api</module>
-      <module>tarjonta-enricher</module>
-      <module>tarjonta-service</module>
-      <module>tarjonta-app</module>
-<!--
-      <module>tarjonta-app-poc</module>
--->
-      <module>tarjonta-esb</module>
+        <module>tarjonta-api</module>
+        <module>tarjonta-publication-api</module>
+        <module>tarjonta-enricher</module>
+        <module>tarjonta-service</module>
+        <module>tarjonta-app</module>
+        <module>tarjonta-esb</module>
     </modules>
 
 </project>
