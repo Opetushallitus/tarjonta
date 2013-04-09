@@ -224,11 +224,12 @@ public class TarjontaDataKoodistoHelper {
     public void addKoodiRelation(final KoodiRelaatio koodiRelaatio) {
         final String ylaKoodiUri = getKoodiUri(koodiRelaatio.getYlaArvoKoodisto(), koodiRelaatio.getKoodiYlaArvo());
         final String alaKoodiUri = getKoodiUri(koodiRelaatio.getAlaArvoKoodisto(), koodiRelaatio.getKoodiAlaArvo());
+        final SuhteenTyyppiType suhteenTyyppi = koodiRelaatio.getSuhteenTyyppi();
         try {
-            log.info("Trying to create relation with yla-arvo [{}], ala-arvo [{}]", ylaKoodiUri, alaKoodiUri);
-            koodiAdminService.addRelationByAlakoodi(ylaKoodiUri, Collections.singletonList(alaKoodiUri), SuhteenTyyppiType.SISALTYY);
+            log.info("Trying to create relation with koodiUris [{}], suhteenTyyppi [{}]", ylaKoodiUri + ", " + alaKoodiUri, suhteenTyyppi.name());
+            koodiAdminService.addRelationByAlakoodi(ylaKoodiUri, Collections.singletonList(alaKoodiUri), suhteenTyyppi);
         } catch (final Exception exp) {
-            log.error("Unable to create relation with arvos [{}], exception [{}]", ylaKoodiUri + ", " + alaKoodiUri, exp.toString());
+            log.error("Unable to create relation with koodiUris [{}], exception [{}]", ylaKoodiUri + ", " + alaKoodiUri, exp.toString());
         }
     }
 
