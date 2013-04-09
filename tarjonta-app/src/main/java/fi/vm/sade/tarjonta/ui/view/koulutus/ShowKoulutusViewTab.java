@@ -98,7 +98,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
 	
 	/**
 	 * Return locale based on submitted locale 
-	 * @param locale2 if one of fi,en,sv return it, in other cases return "fi" 
+	 * @param locale if one of fi,en,sv return it, in other cases return "fi"
 	 * @return
 	 */
 	private Locale getKoodistoLocale(final Locale locale) {

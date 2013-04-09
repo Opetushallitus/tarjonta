@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.List;
 
 import com.vaadin.ui.*;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.ui.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -23,13 +25,6 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
-import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
-import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
@@ -386,7 +381,13 @@ public class ShowHakukohdeTab extends CustomComponent {
         addItemToGrid(grid,"haku",tryGetLocalizedHakuNimi(presenter.getModel().getHakukohde().getHakuOid()));
         addItemToGrid(grid,"hakijoilleIlmoitetutAloituspaikat",new Integer(presenter.getModel().getHakukohde().getAloitusPaikat()).toString());
         addItemToGrid(grid,"valinnoissaKaytettavatAloituspaikat",new Integer(presenter.getModel().getHakukohde().getValinnoissaKaytettavatPaikat()).toString());
-        addRichTextToGrid(grid,"hakukelpoisuusVaatimukset",getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus()));
+        if (checkLukioKoulutus()) {
+
+            addItemToGrid(grid,"alinHyvaksyttyvaKeskiarvo",presenter.getModel().getHakukohde().getAlinHyvaksyttavaKeskiarvo().toString());
+            addItemToGrid(grid,"painotettavatOppiaineet",getHakukohdeOppiaineet());
+
+        }
+        addRichTextToGrid(grid, "hakukelpoisuusVaatimukset", getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus()));
         addRichTextToGrid(grid,"lisatietojaHakemisesta",getLanguageString(presenter.getModel().getHakukohde().getLisatiedot()));
         SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
         addItemToGrid(grid,"liitteetToimMennessa", presenter.getModel().getHakukohde().getLiitteidenToimitusPvm()==null ? null :
@@ -404,6 +405,32 @@ public class ShowHakukohdeTab extends CustomComponent {
         hdrLayout.setComponentAlignment(grid, Alignment.TOP_LEFT);
         layout.addComponent(hdrLayout);
 
+    }
+
+    private String getHakukohdeOppiaineet() {
+        StringBuilder sb = new StringBuilder();
+        boolean isFirst = true;
+        for ( PainotettavaOppiaineViewModel painotettavaOppiaine: presenter.getModel().getHakukohde().getPainotettavat()) {
+            if (!isFirst) {
+                sb.append(", ");
+            }
+            sb.append(uiHelper.getKoodiNimi(painotettavaOppiaine.getOppiaine()));
+            isFirst = false;
+
+        }
+        return sb.toString();
+    }
+
+    private boolean checkLukioKoulutus() {
+         boolean returnVal = false;
+
+         for (KoulutusOidNameViewModel koulutus:presenter.getModel().getHakukohde().getKoulukses()) {
+             if (koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+                 returnVal = true;
+             }
+         }
+
+        return returnVal;
     }
 
     private void addItemToGrid(final GridLayout grid,
