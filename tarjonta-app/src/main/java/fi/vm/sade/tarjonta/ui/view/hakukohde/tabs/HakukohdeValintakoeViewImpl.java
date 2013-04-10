@@ -223,7 +223,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
 
     private VerticalLayout buildValintakoeAikaTableLayout() {
         VerticalLayout tableLayout = new VerticalLayout();
-        
+
         valintakoeAikasTable = new Table();
         tableLayout.addComponent(valintakoeAikasTable);
         loadTableData();
@@ -237,10 +237,10 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         } else {
             valintakoeAikasTable = new Table();
         }
-        
-        final List<ValintakoeAikaViewModel> valintakoeAjat = presenter.getModel().getSelectedValintaKoe() != null ? presenter.getModel().getSelectedValintaKoe().getValintakoeAjat() : new ArrayList<ValintakoeAikaViewModel>(); 
-        
-        
+
+        final List<ValintakoeAikaViewModel> valintakoeAjat = presenter.getModel().getSelectedValintaKoe() != null ? presenter.getModel().getSelectedValintaKoe().getValintakoeAjat() : new ArrayList<ValintakoeAikaViewModel>();
+
+
         valintakoeAikasTable.setContainerDataSource(createTableContainer(valintakoeAjat));
         valintakoeAikasTable.setVisibleColumns(new String[]{"sijainti", "ajankohta", "lisatietoja", "poistaBtn", "muokkaaBtn"});
         valintakoeAikasTable.setColumnHeader("sijainti", T("HakukohdeValintakoeViewImpl.tableSijainti"));
@@ -259,7 +259,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         valintakoeAikasTable.setColumnExpandRatio("poistaBtn", 8);
         valintakoeAikasTable.setColumnExpandRatio("muokkaaBtn", 8);
     }
-    
+
     public Form getForm() {
         return form;
     }
@@ -278,7 +278,7 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
     }
 
     private KoodistoComponent buildValintakokeenTyyppi() {
-        valintakoeTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_LIITTEEN_TYYPPI_URI);
+        valintakoeTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_VALINTAKOE_TYYPPI_URI);
         return valintakoeTyyppi;
     }
 
@@ -351,5 +351,5 @@ public class HakukohdeValintakoeViewImpl extends CustomComponent {
         }
 
     }
-    
+
 }

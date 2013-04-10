@@ -53,6 +53,7 @@ import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.toKoodis
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
+import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
@@ -74,11 +75,11 @@ public class KoulutusLukioConverter extends KoulutusConveter {
     public KoulutusLukioConverter() {
     }
 
-    public LisaaKoulutusTyyppi createLisaaLukioKoulutusTyyppi(TarjontaModel tarjontaModel, final SaveButtonState tila) throws ExceptionMessage {
-        final String organisationOid = tarjontaModel.getTarjoajaModel().getOrganisationOid();
+    public LisaaKoulutusTyyppi createLisaaLukioKoulutusTyyppi(TarjontaModel tarjontaModel, OrganisationOidNamePair selectedOrganisation, final SaveButtonState tila) throws ExceptionMessage {
+        final String organisationOid = tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid();
         final KoulutusLukioPerustiedotViewModel perustiedotModel = tarjontaModel.getKoulutusLukioPerustiedot();
         final KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedotModel = tarjontaModel.getKoulutusLukioKuvailevatTiedot();
-        final OrganisaatioDTO organisaatio = searchOrganisationByOid(organisationOid, tarjontaModel.getTarjoajaModel());
+        final OrganisaatioDTO organisaatio = searchOrganisationByOid(organisationOid, selectedOrganisation);
 
         LisaaKoulutusTyyppi lisaa = new LisaaKoulutusTyyppi();
         lisaa.setTila(tila.toTarjontaTila(perustiedotModel.getTila()));
@@ -99,7 +100,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");
 
         KoulutusLukioPerustiedotViewModel perustiedotModel = tarjontaModel.getKoulutusLukioPerustiedot();
-        final OrganisaatioDTO dto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getOrganisationOid(), tarjontaModel.getTarjoajaModel());
+        final OrganisaatioDTO dto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid(), tarjontaModel.getTarjoajaModel().getSelectedOrganisation());
 
         PaivitaKoulutusTyyppi paivita = new PaivitaKoulutusTyyppi();
         convertToLukioKoulutusTyyppi(paivita, perustiedotModel, komotoOid, dto);
@@ -110,7 +111,8 @@ public class KoulutusLukioConverter extends KoulutusConveter {
     }
 
     public void loadLueKoulutusVastausTyyppiToModel(final TarjontaModel tarjontaModel, final LueKoulutusVastausTyyppi koulutus, final Locale locale) {
-        final OrganisaatioDTO dto = searchOrganisationByOid(koulutus.getTarjoaja(), tarjontaModel.getTarjoajaModel());
+        //set tarjoaja data to UI model
+        tarjontaModel.getTarjoajaModel().setSelectedOrganisation(searchOrganisationByOid(koulutus.getTarjoaja()));
 
         KoulutusLukioPerustiedotViewModel perustiedot = createToKoulutusLukioPerustiedotViewModel(koulutus, locale);
         tarjontaModel.setKoulutusLukioPerustiedot(perustiedot);

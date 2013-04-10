@@ -37,12 +37,15 @@ import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.ui.component.CaptionFormatter;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchCriteriaDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.UserContext;
@@ -99,6 +102,17 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
     private boolean isAttached = false;
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
+    
+    private CaptionFormatter koodiNimiFormatter = new CaptionFormatter<KoodiType>() {
+        @Override
+        public String formatCaption(KoodiType dto) {
+            if (dto == null) {
+                return "";
+            }
+
+            return TarjontaUIHelper.getKoodiMetadataForLanguage(dto, I18N.getLocale()).getNimi();
+        }
+    };
     
     public OrganisaatiohakuView() {
         super(VerticalLayout.class);
@@ -202,8 +216,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
         oppilaitosTyyppi = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI, null, null, T("oppilaitostyyppi.prompt"), true);
         oppilaitosTyyppi.getField().setNullSelectionAllowed(true);
         oppilaitosTyyppi.setWidth("210px");
-        oppilaitosTyyppi.setCaptionFormatter(UiBuilder.DEFAULT_URI_CAPTION_FORMATTER);
-        // TarjontaUIHelper.getKoodiTypeAsLocalizedNameCaptionFormatter());
+        oppilaitosTyyppi.setCaptionFormatter(this.koodiNimiFormatter);
 
         panelTop.addComponent(oppilaitosTyyppi);
         

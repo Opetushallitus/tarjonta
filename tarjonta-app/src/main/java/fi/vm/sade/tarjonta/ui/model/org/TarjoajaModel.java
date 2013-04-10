@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.ui.model.org;
 
 import com.google.common.base.Preconditions;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
+import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,55 +26,87 @@ import java.util.List;
  *
  * @author Jani Wilén
  */
-public class TarjoajaModel extends OrganisationModel {
+public class TarjoajaModel extends BaseUIViewModel {
 
+    private static final int SINGLE_ORGANISATION = 0;
     private static final long serialVersionUID = -7107381962666068440L;
-    private Collection<OrganisationOidNamePair> organisaatioOidNamePairs;
+    /*
+     * A list of selected organisations. 
+     * When user create new koulutus, the list should have one or more 
+     * organisations. Null or empty list is an error case.
+     */
+    private List<OrganisationOidNamePair> organisationOidNamePairs;
     /*
      * the organisaatio oids of the organisaatio tree of the tarjoaja organisaatio of this koulutus.
      * Is used when fetching potential yhteyshenkilos for the current koulutus.
      */
     public List<String> organisaatioOidTree;
-    
-    public TarjoajaModel() {
-    }
+    /*
+     *  OID is set when an result item was selected.
+     */
+    private String selectedResultRowOrganisationOid;
 
-    public TarjoajaModel(String organisaatioOid, String organisaatioNimi) {
-        this.organisationOid = organisaatioOid;
-        this.organisationName = organisaatioNimi;
+    public TarjoajaModel() {
     }
 
     /**
      * @return the organisaatioOidNamePairs
      */
-    public Collection<OrganisationOidNamePair> getOrganisaatioOidNamePairs() {
-        if (organisaatioOidNamePairs == null) {
-            organisaatioOidNamePairs = new ArrayList<OrganisationOidNamePair>();
+    public List<OrganisationOidNamePair> getOrganisationOidNamePairs() {
+        if (organisationOidNamePairs == null) {
+            organisationOidNamePairs = new ArrayList<OrganisationOidNamePair>();
         }
 
-        return organisaatioOidNamePairs;
+        return organisationOidNamePairs;
+    }
+
+    private List<OrganisationOidNamePair> checkSingleOrganisation() {
+        final List<OrganisationOidNamePair> pair = getOrganisationOidNamePairs();
+
+        Preconditions.checkNotNull(pair, "Organisation list object cannot be null.");
+        Preconditions.checkArgument(!pair.isEmpty(), "No organisation was selected.");
+        Preconditions.checkArgument(!isMultiSelect(), "Too many organisations was selected. Organisation count : " + pair.size());
+        return pair;
     }
 
     /**
-     * @return the organisaatioOid
+     * Get the selected organisation String OID. Use the method only when user
+     * has select a single organisation. Throws an exception if an invalid data.
+     *
+     * @return List of organisations.
      */
-    @Override
-    public String getOrganisationOid() {
-        Preconditions.checkNotNull(organisationOid, "Organisation OID  cannot be null.");
+    public String getSelectedOrganisationOid() {
+        return checkSingleOrganisation().get(SINGLE_ORGANISATION).getOrganisationOid();
+    }
 
-        return organisationOid;
+    /**
+     * Get the selected organisation object. Use the method only when user has
+     * select a single organisation. Throws an exception if an invalid data.
+     *
+     * @return List of organisations.
+     */
+    public OrganisationOidNamePair getSelectedOrganisation() {
+        return checkSingleOrganisation().get(SINGLE_ORGANISATION);
+    }
+
+    /*
+     * Returns true when user has selected multiple organisations.
+     */
+    public boolean isMultiSelect() {
+        Collection<OrganisationOidNamePair> pairs = getOrganisationOidNamePairs();
+
+        return pairs.size() > 1 ? true : false;
     }
 
     /**
      * @param organisaatioOidNamePairs the organisaatioOidNamePairs to set
      */
-    public void setOrganisaatioOidNamePairs(Collection<OrganisationOidNamePair> organisaatioOidNamePairs) {
-        this.organisaatioOidNamePairs = organisaatioOidNamePairs;
+    public void setOrganisationOidNamePairs(List<OrganisationOidNamePair> organisaatioOidNamePairs) {
+        this.organisationOidNamePairs = organisaatioOidNamePairs;
     }
 
-    public void addOneOrganisaatioNameOidPair(OrganisationOidNamePair pair) {
-        getOrganisaatioOidNamePairs().clear();
-        getOrganisaatioOidNamePairs().add(pair);
+    private void addOrganisation(OrganisationOidNamePair pair) {
+        getOrganisationOidNamePairs().add(pair);
     }
 
     /**
@@ -87,5 +121,57 @@ public class TarjoajaModel extends OrganisationModel {
      */
     public void setOrganisaatioOidTree(List<String> organisaatioOidTree) {
         this.organisaatioOidTree = organisaatioOidTree;
+    }
+
+    /*
+     * Remove all previously added organisations from a list of organisations and adds new organisations to the list.
+     */
+    public void addSelectedOrganisations(Collection<OrganisaatioPerustietoType> orgs) {
+        getOrganisationOidNamePairs().clear();
+        List<OrganisaatioPerustietoType> tempOrgs = new ArrayList<OrganisaatioPerustietoType>(orgs);
+        addOrganisation(new OrganisationOidNamePair(tempOrgs.get(0).getOid(), tempOrgs.get(0).getNimiFi()));
+    }
+
+    /*
+     * Remove all previously added organisations from a list of organisations and set new organisation to the list.
+     */
+    public void setSelectedOrganisation(OrganisationModel naviOrg) {
+        getOrganisationOidNamePairs().clear();
+        OrganisationOidNamePair pair = new OrganisationOidNamePair();
+        pair.copyToModel(naviOrg);
+        addOrganisation(pair);
+    }
+
+    /**
+     * @return the selectedResultRowOrganisationOid
+     */
+    public String getSelectedResultRowOrganisationOid() {
+        return selectedResultRowOrganisationOid;
+    }
+
+    /**
+     * @param selectedResultRowOrganisationOid the
+     * selectedResultRowOrganisationOid to set
+     */
+    public void setSelectedResultRowOrganisationOid(String selectedResultRowOrganisationOid) {
+        this.selectedResultRowOrganisationOid = selectedResultRowOrganisationOid;
+    }
+
+    /**
+     * Returns selected row organisation OID.
+     */
+    public String getSingleSelectRowResultOrganisationOid() {
+        if (getSelectedResultRowOrganisationOid() != null && getOrganisationOidNamePairs().size() > 1) {
+            /*
+             * Used when user copy koulutus from organisation A to organisation B,C,D,E etc.  
+             * Also ignore all selected organisations on dialog.
+             */
+            return getSelectedResultRowOrganisationOid();
+        } else {
+            /*
+             * Create new koulutus by an organisation selected on dialog.
+             */
+            return getSelectedOrganisation().getOrganisationOid();
+        }
     }
 }

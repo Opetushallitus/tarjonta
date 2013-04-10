@@ -36,6 +36,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
@@ -70,10 +71,10 @@ public class Koulutus2asteConverter extends KoulutusConveter {
      * @return
      * @throws ExceptionMessage
      */
-    public PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi(final TarjontaModel tarjontaModel, final String komotoOid) throws ExceptionMessage {
+    public PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi(final TarjontaModel tarjontaModel, final OrganisationOidNamePair pair, final String komotoOid) throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel model = tarjontaModel.getKoulutusPerustiedotModel();
         Preconditions.checkNotNull(komotoOid, "KOMOTO OID cannot be null.");
-        final OrganisaatioDTO dto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getOrganisationOid(), tarjontaModel.getTarjoajaModel());
+        final OrganisaatioDTO dto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid(), pair);
 
         PaivitaKoulutusTyyppi paivita = new PaivitaKoulutusTyyppi();
         mapToKoulutusTyyppi(paivita, model, komotoOid, dto);
@@ -96,11 +97,11 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         return paivita;
     }
 
-    public LisaaKoulutusTyyppi createLisaaKoulutusTyyppi(TarjontaModel tarjontaModel) throws ExceptionMessage {
-        final String organisaatioOid = tarjontaModel.getTarjoajaModel().getOrganisationOid();
+    public LisaaKoulutusTyyppi createLisaaKoulutusTyyppi(TarjontaModel tarjontaModel, OrganisationOidNamePair selectedOrganisation) throws ExceptionMessage {
+        final String organisaatioOid = tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid();
         KoulutusToisenAsteenPerustiedotViewModel model = tarjontaModel.getKoulutusPerustiedotModel();
 
-        final OrganisaatioDTO organisaatio = searchOrganisationByOid(organisaatioOid, tarjontaModel.getTarjoajaModel());
+        final OrganisaatioDTO organisaatio = searchOrganisationByOid(organisaatioOid, selectedOrganisation);
 
         LisaaKoulutusTyyppi lisaa = new LisaaKoulutusTyyppi();
         mapToKoulutusTyyppi(lisaa, model, oidService.newOid(NodeClassCode.TEKN_5), organisaatio);
@@ -135,8 +136,11 @@ public class Koulutus2asteConverter extends KoulutusConveter {
      * @throws ExceptionMessage
      */
     public KoulutusToisenAsteenPerustiedotViewModel createKoulutusPerustiedotViewModel(TarjontaModel model, final LueKoulutusVastausTyyppi tyyppi, Locale locale) throws ExceptionMessage {
-        final OrganisaatioDTO organisaatio = searchOrganisationByOid(tyyppi.getTarjoaja(), model.getTarjoajaModel());
-        
+        //set selected tarjoaja to UI model
+        OrganisationOidNamePair pair = new OrganisationOidNamePair();
+        final OrganisaatioDTO organisaatio = searchOrganisationByOid(tyyppi.getTarjoaja(), pair);
+        model.getTarjoajaModel().setSelectedOrganisation(pair);
+
         KoulutusToisenAsteenPerustiedotViewModel model2Aste = mapToKoulutusToisenAsteenPerustiedotViewModel(tyyppi, DocumentStatus.NEW, organisaatio, locale);
         //addToKoulutusYhteyshenkiloViewModel(tyyppi.getYhteyshenkilo(), model2Aste.getYhteyshenkilot());
         mapYhteyshenkiloToViewModel(model2Aste, tyyppi);

@@ -108,13 +108,11 @@ public class BatchKoodistoFileReaderTest {
                         && CollectionUtils.containsAny(koodistoUriList.getValue(), Collections.singletonList("http://alueet")));
 
         // verify update koodistoUri
-        /*
         final ArgumentCaptor<UpdateKoodistoDataType> updateKoodisto = ArgumentCaptor.forClass(UpdateKoodistoDataType.class);
         verify(koodistoAdminService, times(2)).updateKoodisto(updateKoodisto.capture());
         final TilaType capturedTila = updateKoodisto.getValue().getTila();
         log.info("captured tila {}", capturedTila.value());
         assertEquals("HYVAKSYTTY", capturedTila.value());
-        */
 
         // verify create koodi arvo
         final ArgumentCaptor<CreateKoodiDataType> createKoodi = ArgumentCaptor.forClass(CreateKoodiDataType.class);

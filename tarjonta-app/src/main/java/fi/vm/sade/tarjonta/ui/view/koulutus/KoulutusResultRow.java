@@ -139,6 +139,7 @@ public class KoulutusResultRow extends HorizontalLayout {
             showSummaryView();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
             final String komotoOid = koulutus.getKoulutus().getKoulutusmoduuliToteutus();
+            tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(koulutus.getKoulutus().getTarjoaja());
 
             switch (koulutus.getKoulutus().getKoulutustyyppi()) {
                 case AMMATILLINEN_PERUSKOULUTUS:

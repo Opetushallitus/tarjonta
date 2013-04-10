@@ -74,14 +74,7 @@ public class OrganisationModel extends BaseUIViewModel {
 
     public void copyToModel(OrganisationModel obj) {
         Preconditions.checkNotNull(obj, "OrganisationModel object cannot be null!");
-
-        if (obj instanceof TarjoajaModel) {
-            TarjoajaModel model = (TarjoajaModel) obj;
-            Preconditions.checkNotNull(model.getOrganisationOid(), "TarjoajaModel object OID cannot be null!");
-        } else if (obj instanceof OrganisationOidNamePair) {
-            OrganisationOidNamePair pair = (OrganisationOidNamePair) obj;
-            Preconditions.checkNotNull(pair.getOrganisationOid(), "OrganisaatioOidNamePair object OID cannot be null!");
-        }
+        Preconditions.checkNotNull(obj.getOrganisationOid(), "OrganisationModel object OID cannot be null!");
         setOrganisation(obj.getOrganisationOid(), obj.getOrganisationName());
     }
 

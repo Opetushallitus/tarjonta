@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import java.util.ArrayList;
 
 import java.util.List;
 
@@ -104,6 +105,7 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         private String koulutusKoodiUri;
         private String koulutusohjelmaKoodiUri;
         private String lukiolinjaKoodiUri;
+        private List<String> oppilaitostyyppis;
         private KoulutusasteTyyppi koulutustyyppi;
         private Class<? extends BaseKoulutusmoduuli> type;
         private GroupBy groupBy = GroupBy.ORGANISAATIORAKENNE;
@@ -174,6 +176,23 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
          */
         public void setLukiolinjaKoodiUri(String lukiolinjaKoodiUri) {
             this.lukiolinjaKoodiUri = lukiolinjaKoodiUri;
+        }
+
+        /**
+         * @return the oppilaitostyyppis
+         */
+        public List<String> getOppilaitostyyppis() {
+            if (oppilaitostyyppis == null) {
+                oppilaitostyyppis = new ArrayList<String>();
+            }
+            return oppilaitostyyppis;
+        }
+
+        /**
+         * @param oppilaitostyyppis the oppilaitostyyppis to set
+         */
+        public void setOppilaitostyyppis(List<String> oppilaitostyyppis) {
+            this.oppilaitostyyppis = oppilaitostyyppis;
         }
 
         public enum GroupBy {

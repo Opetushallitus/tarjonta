@@ -113,7 +113,7 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
             String hakuKey = "";
             try {
                 String hakutapaUri = parseKoodiUri(curHaku.getHakutapa());
-                SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.latestValidAcceptedKoodiByUri(hakutapaUri);
+                SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.latestKoodisByUris(hakutapaUri);
                 List<KoodiType> result = this.koodiService.searchKoodis(searchCriteria);
                 if (result.size() != 1) {
                     throw new RuntimeException("No valid accepted koodi found for URI " + curHaku.getHakutapa());

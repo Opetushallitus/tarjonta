@@ -46,6 +46,7 @@ import java.util.Set;
 public class TwinColSelectKoodisto extends CssLayout  {
 
     private static final Logger LOG = LoggerFactory.getLogger(TwinColSelectKoodisto.class);
+    private static final long serialVersionUID = -7210953910055846524L;
     private KoodistoComponent kc;
 
     private Set<String> languages = new HashSet<String>();
@@ -140,8 +141,7 @@ public class TwinColSelectKoodisto extends CssLayout  {
     //Try to get localised name for uri
     public String getCaptionFor(String uri) {
 
-        // List<KoodiType> koodit = kc.getKoodiService().searchKoodis(KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(uri));
-        List<KoodiType> koodit = koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder.latestAcceptedKoodiByUri(uri));
+        List<KoodiType> koodit = koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder.latestKoodisByUris(uri));
         if (koodit != null && koodit.size() > 0) {
             return tryToGetLocalisedValue(koodit.get(0));
         }  else {

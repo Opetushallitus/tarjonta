@@ -98,7 +98,7 @@ public class KomoExcelReader<T extends Object> {
         boolean stop = false;
 
         for (int rowNumber = 1; rowNumber < maxReadRows; rowNumber++) {
-            if (stop || rowNumber == sheet.getLastRowNum()) {
+            if (stop || rowNumber == sheet.getLastRowNum() + 1) {
                 break;
             }
 

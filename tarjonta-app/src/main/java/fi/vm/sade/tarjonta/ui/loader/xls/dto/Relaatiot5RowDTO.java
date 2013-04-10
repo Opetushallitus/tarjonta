@@ -13,9 +13,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.loader.xls;
+package fi.vm.sade.tarjonta.ui.loader.xls.dto;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -28,6 +30,7 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
 
     private static final String KOULUTUSASTE_AMMATTILLINEN_KOODI_ARVO = "32";
     private static final String KOULUTUSASTE_LUKIO_AMMATTILLINEN_KOODI_ARVO = "31";
+    private String tyyppi;
     /*
      * 2-aste + common data
      */
@@ -45,6 +48,7 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
     private String laajuusyksikko;
     private String eqf;
     private String koulutusohjelmanTavoitteet;
+    private List<String> oppilaitostyyppis;
     /*
      * Lukio data
      */
@@ -219,11 +223,6 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
         this.eqf = eqf;
     }
 
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
-    }
-
     /**
      * @return the koulutusaste
      */
@@ -332,7 +331,44 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
         } else if (!koulutusasteenKoodiarvo.isEmpty()) {
             throw new RuntimeException("No valid KoulutusasteTyyppi enum found by koodi value '" + koulutusaste + "'");
         }
-        
+
         return null;
+    }
+
+    /**
+     * @return the tyyppi
+     */
+    public String getTyyppi() {
+        return tyyppi;
+    }
+
+    /**
+     * @param tyyppi the tyyppi to set
+     */
+    public void setTyyppi(String tyyppi) {
+        this.tyyppi = tyyppi;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
+    }
+
+    /**
+     * @return the oppilaitostyyppis
+     */
+    public List<String> getOppilaitostyyppis() {
+        if (oppilaitostyyppis == null) {
+            oppilaitostyyppis = new ArrayList<String>();
+        }
+
+        return oppilaitostyyppis;
+    }
+
+    /**
+     * @param oppilaitostyyppis the oppilaitostyyppis to set
+     */
+    public void setOppilaitostyyppis(List<String> oppilaitostyyppis) {
+        this.oppilaitostyyppis = oppilaitostyyppis;
     }
 }

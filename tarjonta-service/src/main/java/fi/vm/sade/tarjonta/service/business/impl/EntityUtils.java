@@ -30,6 +30,7 @@ import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,11 +38,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
  */
 public final class EntityUtils {
+
+    public static final String STR_ARRAY_SEPARATOR = "|";
 
     /**
      * Copies all text translations from domain model type into web service
@@ -285,9 +289,10 @@ public final class EntityUtils {
         tyyppi.setKoulutusasteUri(komo.getKoulutusAste());
         tyyppi.setKoulutusalaUri(komo.getKoulutusala());
         tyyppi.setOpintoalaUri(komo.getOpintoala());
+        tyyppi.setEqfLuokitus(komo.getEqfLuokitus());
+        tyyppi.setNqfLuokitus(komo.getNqfLuokitus());
+        tyyppi.getOppilaitostyyppi().addAll(splitStringToList(komo.getOppilaitostyyppi()));
 
-        tyyppi.setKoulutuksenRakenne(copyFields(komo.getKoulutuksenRakenne()));
-        tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
         tyyppi.setJatkoOpintoMahdollisuudet(copyFields(komo.getJatkoOpintoMahdollisuudet()));
         tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(komo.getKoulutustyyppi()));
         tyyppi.setLukiolinjakoodiUri(komo.getLukiolinja());
@@ -311,6 +316,9 @@ public final class EntityUtils {
         tyyppi.setKoulutusasteUri(parentKomo.getKoulutusAste());
         tyyppi.setKoulutusalaUri(parentKomo.getKoulutusala());
         tyyppi.setOpintoalaUri(parentKomo.getOpintoala());
+        tyyppi.getOppilaitostyyppi().addAll(splitStringToList(parentKomo.getOppilaitostyyppi()));
+        tyyppi.setEqfLuokitus(parentKomo.getEqfLuokitus());
+        tyyppi.setNqfLuokitus(parentKomo.getNqfLuokitus());
 
         tyyppi.setKoulutuksenRakenne(copyFields(parentKomo.getKoulutuksenRakenne()));
         tyyppi.setTavoitteet(copyFields(komo.getTavoitteet()));
@@ -328,22 +336,20 @@ public final class EntityUtils {
      */
     public static Koulutusmoduuli copyFieldsToKoulutusmoduuli(final KoulutusmoduuliKoosteTyyppi source, final Koulutusmoduuli target) {
 
-        /*
-         TODO: add missing fields to tyyppi objects
-         target.setEqfLuokitus();
-         target.setNqfLuokitus();
-         */
-
         target.setOid(source.getOid());
         target.setKoulutusKoodi(source.getKoulutuskoodiUri());
         target.setKoulutusohjelmaKoodi(source.getKoulutusohjelmakoodiUri());
-        target.setLaajuus(source.getLaajuusarvoUri(), source.getLaajuusyksikkoUri());
+        target.setLaajuus(source.getLaajuusyksikkoUri(), source.getLaajuusarvoUri());
         target.setTutkintonimike(source.getTutkintonimikeUri());
         target.setUlkoinenTunniste(source.getUlkoinenTunniste());
         target.setKoulutusAste(source.getKoulutusasteUri());
         target.setKoulutusala(source.getKoulutusalaUri());
         target.setOpintoala(source.getOpintoalaUri());
         target.setLukiolinja(source.getLukiolinjakoodiUri());
+        target.setEqfLuokitus(source.getEqfLuokitus());
+        target.setNqfLuokitus(source.getNqfLuokitus());
+        target.setOppilaitostyyppi(joinListToString(source.getOppilaitostyyppi()));
+
         target.setKoulutuksenRakenne(copyFields(source.getKoulutuksenRakenne(), target.getKoulutuksenRakenne()));
         target.setTavoitteet(copyFields(source.getTavoitteet(), target.getTavoitteet()));
         target.setJatkoOpintoMahdollisuudet(copyFields(source.getJatkoOpintoMahdollisuudet(), target.getJatkoOpintoMahdollisuudet()));
@@ -369,6 +375,9 @@ public final class EntityUtils {
         komo.setKoulutusala(tyyppi.getKoulutusalaUri());
         komo.setOpintoala(tyyppi.getOpintoalaUri());
         komo.setLukiolinja(tyyppi.getLukiolinjakoodiUri());
+        komo.setOppilaitostyyppi(joinListToString(tyyppi.getOppilaitostyyppi()));
+        komo.setEqfLuokitus(tyyppi.getEqfLuokitus());
+        komo.setNqfLuokitus(tyyppi.getNqfLuokitus());
 
         //multilanguage objects
         komo.setKoulutuksenRakenne(copyFields(tyyppi.getKoulutuksenRakenne()));
@@ -531,5 +540,25 @@ public final class EntityUtils {
             kielet.add(newKieli);
         }
         return kielet;
+    }
+
+    public static String joinListToString(Collection<String> list) {
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+
+        //remove all nulls
+        list.removeAll(Collections.singleton(null));
+
+        //return |str1#str2| ...
+        return STR_ARRAY_SEPARATOR + StringUtils.join(list, STR_ARRAY_SEPARATOR) + STR_ARRAY_SEPARATOR;
+    }
+
+    public static List<String> splitStringToList(String str) {
+        if (str == null) {
+            return new ArrayList<String>(0);
+        }
+
+        return new ArrayList<String>(Arrays.asList(StringUtils.split(str, STR_ARRAY_SEPARATOR)));
     }
 }

@@ -173,7 +173,7 @@ public class TarjontaLukioPresenterTest {
         Whitebox.setInternalState(instance, "presenter", tarjontaPresenter);
         Whitebox.setInternalState(koulutusKoodisto, "tarjontaUiHelper", tarjontaUiHelper);
 
-        tarjontaPresenter.getTarjoaja().addOneOrganisaatioNameOidPair(new OrganisationOidNamePair(ORGANISAATIO_OID, "org name"));
+        tarjontaPresenter.getTarjoaja().setSelectedOrganisation(new OrganisationOidNamePair(ORGANISAATIO_OID, "org name"));
 
 
         /*
@@ -351,7 +351,7 @@ public class TarjontaLukioPresenterTest {
         koulutusmoduuliTulos.setKoulutusmoduuli(t);
         vastaus.getKoulutusmoduuliTulos().add(koulutusmoduuliTulos);
 
-        tarjontaPresenter.getModel().getTarjoajaModel().setOrganisation(ORGANISAATIO_OID, ORGANISATION_NAME);
+        tarjontaPresenter.getModel().getTarjoajaModel().setSelectedOrganisation(new OrganisationOidNamePair(ORGANISAATIO_OID, ORGANISATION_NAME));
 
         Capture<PaivitaKoulutusTyyppi> localeCapture = new Capture<PaivitaKoulutusTyyppi>();
 
@@ -574,8 +574,8 @@ public class TarjontaLukioPresenterTest {
         assertEquals(createUri("opetuskieli"), perustiedotModel.getOpetuskieli());
         assertEquals(0, perustiedotModel.getOpetusmuoto().size());
         assertEquals(WEB_LINK, perustiedotModel.getOpsuLinkki());
-        assertEquals(ORGANISATION_NAME, tarjontaPresenter.getTarjoaja().getOrganisationName());
-        assertEquals(ORGANISAATIO_OID, tarjontaPresenter.getTarjoaja().getOrganisationOid());
+        assertEquals(ORGANISATION_NAME, tarjontaPresenter.getTarjoaja().getSelectedOrganisation().getOrganisationName());
+        assertEquals(ORGANISAATIO_OID, tarjontaPresenter.getTarjoaja().getSelectedOrganisationOid());
         assertEquals("kesto", perustiedotModel.getSuunniteltuKesto());
         assertEquals("yksikko", perustiedotModel.getSuunniteltuKestoTyyppi());
         assertEquals(TUTKINNON_TAVOITTEET, perustiedotModel.getTavoitteet().getNimi());

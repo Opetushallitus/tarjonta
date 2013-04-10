@@ -55,95 +55,88 @@ import fi.vm.sade.vaadin.util.UiUtil;
 @Configurable(preConstruction = true)
 public class ShowKoulutusViewTab extends CustomComponent {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    @Autowired
+    private TarjontaPresenter presenter;
+    @Autowired
+    TarjontaUIHelper uiHelper;
+    private I18NHelper i18n = new I18NHelper("ShowKoulutusView.");
+    private final String language;
+    private final Locale locale;
+    //if provided locale is one of these use it instead of null
+    private final Set<String> allowedKoodistoLocales = ImmutableSet.copyOf(new String[]{"fi", "sv", "en"});
+    private final OrganisaatioContext context;
+    private final LueKoulutusVastausTyyppi koulutus;
 
-	@Autowired
-	private TarjontaPresenter presenter;
-
-	@Autowired
-	TarjontaUIHelper uiHelper;
-	
-	private I18NHelper i18n = new I18NHelper("ShowKoulutusView.");
-
-	private final String language;
-	
-	private final Locale locale;
-	
-	//if provided locale is one of these use it instead of null
-	private final Set<String> allowedKoodistoLocales = ImmutableSet.copyOf(new String[]{"fi", "sv", "en"});
-	
-	private final OrganisaatioContext context;
-	private final LueKoulutusVastausTyyppi koulutus;
-
-	/**
-	 * 
-	 * @param language is used to match monikielinen teksi
-	 * @param locale is used for koodi values
-	 * @param koulutus the koulutus to display
-	 */
-	public ShowKoulutusViewTab(final String language, final Locale locale, final LueKoulutusVastausTyyppi koulutus) {
-		Preconditions.checkNotNull(language, "Language cannot be null");
-		Preconditions.checkNotNull(presenter.getTarjoaja(), "Tarjoaja cannot be null");
-		Preconditions.checkNotNull(presenter.getTarjoaja().getOrganisationOid(), "Tarjoaja organisaatioOid cannot be null");
-		this.language = language;
-		this.locale = getKoodistoLocale(locale);
-		this.koulutus = koulutus;
-		this.context = OrganisaatioContext.getContext(presenter.getTarjoaja().getOrganisationOid());
-		final VerticalLayout layout = new VerticalLayout();
+    /**
+     *
+     * @param language is used to match monikielinen teksi
+     * @param locale is used for koodi values
+     * @param koulutus the koulutus to display
+     */
+    public ShowKoulutusViewTab(final String language, final Locale locale, final LueKoulutusVastausTyyppi koulutus) {
+        Preconditions.checkNotNull(language, "Language cannot be null");
+        Preconditions.checkNotNull(presenter.getTarjoaja(), "Tarjoaja cannot be null");
+        Preconditions.checkNotNull(presenter.getTarjoaja().getSelectedOrganisationOid(), "Tarjoaja organisaatioOid cannot be null");
+        this.language = language;
+        this.locale = getKoodistoLocale(locale);
+        this.koulutus = koulutus;
+        this.context = OrganisaatioContext.getContext(presenter.getTarjoaja().getSelectedOrganisationOid());
+        final VerticalLayout layout = new VerticalLayout();
         layout.setSpacing(true);
         layout.setMargin(true);
-		setCompositionRoot(layout);
-		build(layout);
-	}
-	
-	/**
-	 * Return locale based on submitted locale 
-	 * @param locale if one of fi,en,sv return it, in other cases return "fi"
-	 * @return
-	 */
-	private Locale getKoodistoLocale(final Locale locale) {
-		if(allowedKoodistoLocales.contains(locale.getLanguage().toLowerCase())) {
-			return locale;
-		}
-		return new Locale("fi");
-	}
+        setCompositionRoot(layout);
+        build(layout);
+    }
 
-	private void insertLayoutSplit(final FormGridBuilder layout) {
-		final VerticalSplitPanel split = new VerticalSplitPanel();
-		split.setImmediate(false);
-		split.setWidth("100%");
-		split.setHeight("2px");
-		split.setLocked(true);
-		layout.addHeader(split);
-	}
+    /**
+     * Return locale based on submitted locale
+     *
+     * @return
+     */
+    private Locale getKoodistoLocale(final Locale locale) {
+        if (allowedKoodistoLocales.contains(locale.getLanguage().toLowerCase())) {
+            return locale;
+        }
+        return new Locale("fi");
+    }
+
+    private void insertLayoutSplit(final FormGridBuilder layout) {
+        final VerticalSplitPanel split = new VerticalSplitPanel();
+        split.setImmediate(false);
+        split.setWidth("100%");
+        split.setHeight("2px");
+        split.setLocked(true);
+        layout.addHeader(split);
+    }
 
     private void build(final VerticalLayout parent) {
-    	FormGridBuilder layout = new FormGridBuilder();
-    	layout.setWidth("100%");
-    	parent.addComponent(layout);
-		insertKoulutuksenmPerustiedot(layout);
-		insertLayoutSplit(layout);
-		insertKoulutuksenKuvailevatTiedot(layout);
-		insertLayoutSplit(layout);
-		insertKoulutuksenHakukohteet(layout);
-	}
+        FormGridBuilder layout = new FormGridBuilder();
+        layout.setWidth("100%");
+        parent.addComponent(layout);
+        insertKoulutuksenmPerustiedot(layout);
+        insertLayoutSplit(layout);
+        insertKoulutuksenKuvailevatTiedot(layout);
+        insertLayoutSplit(layout);
+        insertKoulutuksenHakukohteet(layout);
+    }
 
     private AbstractComponent buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, boolean hide, boolean showTime) {
-		VerticalLayout vl = new VerticalLayout();
-    	final GridLayout grid = new GridLayout(showTime ? 3 : 2, 1);
-    	grid.setWidth("100%");
-    	vl.addComponent(grid);
-		vl.setWidth("100%");
-		
+        VerticalLayout vl = new VerticalLayout();
+        final GridLayout grid = new GridLayout(showTime ? 3 : 2, 1);
+        grid.setWidth("100%");
+        vl.addComponent(grid);
+        vl.setWidth("100%");
+
         final Label titleLabel = UiUtil.label(grid, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
 
         //TODO get real date
         final Date modifiedDate = new Date();
-        
-        if(showTime) {
-        	final Label modifiedLabel = UiUtil.label(grid, i18n.getMessage("tallennettuLabel", uiHelper.formatDate(modifiedDate), uiHelper.formatTime(modifiedDate)));
-        	modifiedLabel.setStyleName(Oph.LABEL_SMALL);
+
+        if (showTime) {
+            final Label modifiedLabel = UiUtil.label(grid, i18n.getMessage("tallennettuLabel", uiHelper.formatDate(modifiedDate), uiHelper.formatTime(modifiedDate)));
+            modifiedLabel.setStyleName(Oph.LABEL_SMALL);
         }
 
         if (btnCaption != null) {
@@ -165,7 +158,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
         }
         return vl;
     }
-    
+
     private void insertKoulutuksenHakukohteet(FormGridBuilder layout) {
         int numberOfApplicationTargets = presenter.getModel().getKoulutusPerustiedotModel().getKoulutuksenHakukohteet().size();
 
@@ -176,7 +169,6 @@ public class ShowKoulutusViewTab extends CustomComponent {
             public void buttonClick(ClickEvent event) {
                 List<String> koulutus = new ArrayList<String>();
                 koulutus.add(presenter.getModel().getKoulutusPerustiedotModel().getOid());
-                presenter.showHakukohdeEditView(koulutus, null,null,null);
             }
         }, presenter.getPermission().userCanCreateHakukohde(context), false));
 
@@ -191,78 +183,81 @@ public class ShowKoulutusViewTab extends CustomComponent {
         layout.addHeader(categoryTree);
         layout.newLine();
     }
-    
-     /**
-	 * Localized descriptive data about the koulutus.
-	 * 
-	 * @param layout
-	 */
-	private void insertKoulutuksenKuvailevatTiedot(final FormGridBuilder layout) {
-		Preconditions.checkNotNull(layout, "Layout cannot be null");
-		final KoulutusLisatiedotModel lisatiedotModel = presenter.getModel()
-				.getKoulutusLisatiedotModel();
 
-		layout.addHeader(buildHeaderLayout(
-				i18n.getMessage("kuvailevatTiedot"),
-				i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-				new Button.ClickListener() {
-					private static final long serialVersionUID = 5019806363620874205L;
+    /**
+     * Localized descriptive data about the koulutus.
+     *
+     * @param layout
+     */
+    private void insertKoulutuksenKuvailevatTiedot(final FormGridBuilder layout) {
+        Preconditions.checkNotNull(layout, "Layout cannot be null");
+        final KoulutusLisatiedotModel lisatiedotModel = presenter.getModel()
+                .getKoulutusLisatiedotModel();
 
-					@Override
-					public void buttonClick(ClickEvent event) {
-						presenter.showKoulutustEditView(getEditViewOid(),
-								KoulutusActiveTab.LISATIEDOT);
-					}
-				}, presenter.getPermission().userCanUpdateKoulutus(context), false));
+        layout.addHeader(buildHeaderLayout(
+                i18n.getMessage("kuvailevatTiedot"),
+                i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
 
-		final KoulutusLisatietoModel lisatietoForLang = lisatiedotModel
-				.getLisatiedot().get(language);
+            @Override
+            public void buttonClick(ClickEvent event) {
+                presenter.getTarjoaja().setSelectedResultRowOrganisationOid(null);
+                presenter.showKoulutustEditView(getEditViewOid(),
+                        KoulutusActiveTab.LISATIEDOT);
+            }
+        }, presenter.getPermission().userCanUpdateKoulutus(context), false));
+
+        final KoulutusLisatietoModel lisatietoForLang = lisatiedotModel
+                .getLisatiedot().get(language);
 
         final KoulutusToisenAsteenPerustiedotViewModel model = presenter.getModel().getKoulutusPerustiedotModel();
 
         layout.add(getTextRow("tutkinnonKoulutuksellisetJaAmmatillisetTavoitteet", getText(model.getKoulutusohjelmaModel().getTavoitteet())));
         layout.add(getTextRow("koulutuksenKoulutuksellisetJaAmmatillisetTavoitteet", getText(model.getKoulutuskoodiModel().getTavoitteet())));
-		layout.add(getXhtmlRow("koulutusohjelmanValinta", lisatietoForLang.getKoulutusohjelmanValinta()));
-		layout.add(getXhtmlRow("koulutuksenSisalto", lisatietoForLang.getSisalto()));
+        layout.add(getXhtmlRow("koulutusohjelmanValinta", lisatietoForLang.getKoulutusohjelmanValinta()));
+        layout.add(getXhtmlRow("koulutuksenSisalto", lisatietoForLang.getSisalto()));
         layout.add(getTextRow("koulutuksenRakenne", getText(model.getKoulutuskoodiModel().getKoulutuksenRakenne())));
         layout.add(getXhtmlRow("tutkinnonKansainvalistyminen", lisatietoForLang.getKansainvalistyminen()));
         layout.add(getXhtmlRow("tutkinnonSijoittuminenTyoelamaan", lisatietoForLang.getSijoittuminenTyoelamaan()));
         layout.add(getTextRow("ammattinimikkeet", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusLisatiedotModel().getAmmattinimikkeet(), locale)));
         layout.add(getTextRow("jatkoOpintomahdollisuudet", getText(model.getKoulutuskoodiModel().getJatkoopintomahdollisuudet())));
-	}
-    
-	/**
-	 * Return localized (uses koodistoLocale) text (if available)
-	 */
-	private String getText(MonikielinenTekstiModel koulutusohjelmaTavoitteet) {
-		if (locale != null && koulutusohjelmaTavoitteet != null) {
-			Set<KielikaannosViewModel> kaannokset = koulutusohjelmaTavoitteet
-					.getKielikaannos();
-			for (KielikaannosViewModel kaannos : kaannokset) {
-				if (kaannos.getKielikoodi()
-						.equals(locale.getLanguage())) {
-					return kaannos.getNimi();
-				}
-			}
-		}
-		return "";
-	}
+    }
 
-	private void insertKoulutuksenmPerustiedot(FormGridBuilder layout) {
-    	
-    	Preconditions.checkNotNull(presenter, "presenter cannot be null");
-    	Preconditions.checkNotNull(presenter.getModel(), "model cannot be null");
-    	Preconditions.checkNotNull(presenter.getModel().getKoulutusPerustiedotModel(), "koulutusperustiedot model cannot be null");
+    /**
+     * Return localized (uses koodistoLocale) text (if available)
+     */
+    private String getText(MonikielinenTekstiModel koulutusohjelmaTavoitteet) {
+        if (locale != null && koulutusohjelmaTavoitteet != null) {
+            Set<KielikaannosViewModel> kaannokset = koulutusohjelmaTavoitteet
+                    .getKielikaannos();
+            for (KielikaannosViewModel kaannos : kaannokset) {
+                if (kaannos.getKielikoodi()
+                        .equals(locale.getLanguage())) {
+                    return kaannos.getNimi();
+                }
+            }
+        }
+        return "";
+    }
+
+    private void insertKoulutuksenmPerustiedot(FormGridBuilder layout) {
+
+        Preconditions.checkNotNull(presenter, "presenter cannot be null");
+        Preconditions.checkNotNull(presenter.getModel(), "model cannot be null");
+        Preconditions.checkNotNull(presenter.getModel().getKoulutusPerustiedotModel(), "koulutusperustiedot model cannot be null");
         final KoulutusToisenAsteenPerustiedotViewModel model = presenter.getModel().getKoulutusPerustiedotModel();
 
         layout.addHeader(buildHeaderLayout(i18n.getMessage("perustiedot"), i18n.getMessage(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
-			private static final long serialVersionUID = 1L;
-			@Override
+            private static final long serialVersionUID = 1L;
+
+            @Override
             public void buttonClick(ClickEvent event) {
+                presenter.getTarjoaja().setSelectedResultRowOrganisationOid(null);
                 presenter.showKoulutustEditView(getEditViewOid(), KoulutusActiveTab.PERUSTIEDOT);
             }
         }, presenter.getPermission().userCanUpdateKoulutus(context), true));
-        
+
         final KoulutuskoodiModel koodiModel = model.getKoulutuskoodiModel();
         final KoodiModel koulutusala = koodiModel.getKoulutusala();
         final KoodiModel tutkintonimike = model.getKoulutusohjelmaModel().getTutkintonimike();
@@ -271,14 +266,20 @@ public class ShowKoulutusViewTab extends CustomComponent {
         final KoodiModel opintojenLaajuusyksikko = koodiModel.getOpintojenLaajuusyksikko();
 
         //TODO get org name for current language?
-        layout.add(getTextRow("organisaatio", presenter.getTarjoaja().getOrganisationName()));
+        layout.add(getTextRow("organisaatio", presenter.getTarjoaja().getSelectedOrganisation().getOrganisationName()));
         layout.add(getTextRow("koulutusTutkinto", uiHelper.getKoodiNimi(koulutus.getKoulutusKoodi().getUri(), locale)));
         layout.add(getTextRow("koulutusohjelma", uiHelper.getKoodiNimi(koulutus.getKoulutusohjelmaKoodi().getUri(), locale)));
         layout.add(getTextRow("koulutusaste", uiHelper.getKoodiNimi(koulutus.getKoulutusaste().getUri(), locale)));
         layout.add(getTextRow("koulutusala", uiHelper.getKoodiNimi(koulutusala.getKoodistoUri(), locale)));
         layout.add(getTextRow("opintoala", uiHelper.getKoodiNimi(opintoala.getKoodistoUri(), locale)));
         layout.add(getTextRow("tutkintonimike", uiHelper.getKoodiNimi(tutkintonimike.getKoodistoUri(), locale)));
-        layout.add(getTextRow("opintojenLaajuus", uiHelper.getKoodiNimi(opintojenLaajuus.getKoodi(), locale) + "/" + uiHelper.getKoodiNimi(opintojenLaajuusyksikko.getKoodistoUri(), locale)));
+
+        if (opintojenLaajuus != null) {
+            layout.add(getTextRow("opintojenLaajuus", uiHelper.getKoodiNimi(opintojenLaajuus.getKoodi(), locale) + "/" + uiHelper.getKoodiNimi(opintojenLaajuusyksikko.getKoodistoUri(), locale)));
+        } else {
+            layout.add(getTextRow("opintojenLaajuus", uiHelper.getKoodiNimi(opintojenLaajuusyksikko.getKoodi(), locale)));
+        }
+
         layout.add(getTextRow("koulutuslaji", uiHelper.getKoodiNimi(koulutus.getKoulutuslaji().get(0).getUri(), locale)));
         layout.add(getTextRow("pohjakoulutusvaatimus", uiHelper.getKoodiNimi(koulutus.getPohjakoulutusvaatimus().getUri(), locale)));
         layout.add(getTextRow("koulutuksenAlkamisPvm", uiHelper.formatDate(model.getKoulutuksenAlkamisPvm())));
@@ -289,48 +290,47 @@ public class ShowKoulutusViewTab extends CustomComponent {
         layout.add(getTextRow("koulutuksenYhteyshenkilo", getYhteyshenkilo()));
     }
 
-	private FieldInfo getTextRow(String label, String content) {
-		return text(i18n.getMessage(label), content);
-	}
+    private FieldInfo getTextRow(String label, String content) {
+        return text(i18n.getMessage(label), content);
+    }
 
-	private FieldInfo getXhtmlRow(String label, String content) {
-		return xhtml(i18n.getMessage(label), content);
-	}
+    private FieldInfo getXhtmlRow(String label, String content) {
+        return xhtml(i18n.getMessage(label), content);
+    }
 
     /**
      * Opetussuunnitelman linkki
      */
-	private String getLinkkiOpetussuunnitelmaan() {
-		return presenter.getModel().getKoulutusPerustiedotModel().getOpsuLinkki();
-	}
+    private String getLinkkiOpetussuunnitelmaan() {
+        return presenter.getModel().getKoulutusPerustiedotModel().getOpsuLinkki();
+    }
 
+    /**
+     * Yhteyshenkilö
+     */
+    private String getYhteyshenkilo() {
+        final List<fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi> yhteyshenkilot = koulutus.getYhteyshenkilo();
 
-	/**
-	 * Yhteyshenkilö
-	 */
-	private String getYhteyshenkilo() {
-		final List<fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi> yhteyshenkilot = koulutus.getYhteyshenkilo();
-		
-		if(yhteyshenkilot.size()<1) {
-			return "";
-		}
-		final fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi yhteyshenkilo = yhteyshenkilot.get(0);
-		return yhteyshenkilo.getEtunimet() + " " + yhteyshenkilo.getSukunimi() + ", " + yhteyshenkilo.getTitteli() + ", " + yhteyshenkilo.getPuhelin() + ", " + yhteyshenkilo.getSahkoposti();
-	}
+        if (yhteyshenkilot.size() < 1) {
+            return "";
+        }
+        final fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi yhteyshenkilo = yhteyshenkilot.get(0);
+        return yhteyshenkilo.getEtunimet() + " " + yhteyshenkilo.getSukunimi() + ", " + yhteyshenkilo.getTitteli() + ", " + yhteyshenkilo.getPuhelin() + ", " + yhteyshenkilo.getSahkoposti();
+    }
 
-	private Container createHakukohdelistContainer(List<SimpleHakukohdeViewModel> hakukohdes) {
+    private Container createHakukohdelistContainer(List<SimpleHakukohdeViewModel> hakukohdes) {
         final BeanItemContainer<ShowKoulutusHakukohdeRow> hakukohdeRows = new BeanItemContainer<ShowKoulutusHakukohdeRow>(ShowKoulutusHakukohdeRow.class);
         hakukohdeRows.addAll(getKoulutusHakukohdeRows(hakukohdes));
         return hakukohdeRows;
     }
 
-	private String getEditViewOid() {
-		final KoulutusToisenAsteenPerustiedotViewModel model = presenter
-				.getModel().getKoulutusPerustiedotModel();
-		return model.getOid();
-	}
+    private String getEditViewOid() {
+        final KoulutusToisenAsteenPerustiedotViewModel model = presenter
+                .getModel().getKoulutusPerustiedotModel();
+        return model.getOid();
+    }
 
-	private List<ShowKoulutusHakukohdeRow> getKoulutusHakukohdeRows(List<SimpleHakukohdeViewModel> hakukohdes) {
+    private List<ShowKoulutusHakukohdeRow> getKoulutusHakukohdeRows(List<SimpleHakukohdeViewModel> hakukohdes) {
         final List<ShowKoulutusHakukohdeRow> rows = Lists.newArrayList();
         for (SimpleHakukohdeViewModel hakukohdeViewModel : hakukohdes) {
             final ShowKoulutusHakukohdeRow row = new ShowKoulutusHakukohdeRow(hakukohdeViewModel);
@@ -356,5 +356,4 @@ public class ShowKoulutusViewTab extends CustomComponent {
         }
         return tmp;
     }
-
 }
