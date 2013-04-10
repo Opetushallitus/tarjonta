@@ -342,6 +342,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         Hakukohde hakukohde = conversionService.convert(hakukohdePaivitys, Hakukohde.class);
         List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findBy("oid", hakukohdePaivitys.getOid());
+        //List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdePaivitys.getOid());
         hakukohde.setId(hakukohdeTemp.get(0).getId());
         
         //why do we overwrite version from DTO?
@@ -350,6 +351,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         hakukohde.setHaku(haku);
         hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdePaivitys.getHakukohteenKoulutusOidit(), hakukohde));
+        hakukohde.getValintakoes().addAll(hakukohdeTemp.get(0).getValintakoes());
+        hakukohde.getLiites().addAll(hakukohdeTemp.get(0).getLiites());
 
         hakukohdeDAO.update(hakukohde);
         publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
