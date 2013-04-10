@@ -87,7 +87,8 @@ public class TarjontaKomoData {
             KoodistoURIHelper.KOODISTO_OPINTOALA_URI,
             //KoodistoURIHelper.KOODISTO_OPINTOJEN_LAAJUUS_URI,
             KoodistoURIHelper.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI,
-            KoodistoURIHelper.KOODISTO_LUKIOLINJA_URI
+            KoodistoURIHelper.KOODISTO_LUKIOLINJA_URI,
+            KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI
         };
         
         for (String koodisto : koodistot) {
@@ -307,8 +308,7 @@ public class TarjontaKomoData {
         tutkintoKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
 
         //search Uris from Koodisto for komo
-        tutkintoKomo.setKoulutuskoodiUri(getUriWithVersion(dto.getKoulutuskoodi(), KoodistoURIHelper.KOODISTO_TUTKINTO_URI));
-        
+        tutkintoKomo.setKoulutuskoodiUri(getUriWithVersion(dto.getKoulutuskoodi(), KoodistoURIHelper.KOODISTO_TUTKINTO_URI));     
         tutkintoKomo.setOpintoalaUri(getUriWithVersion(dto.getOpintoalaKoodi(), KoodistoURIHelper.KOODISTO_OPINTOALA_URI));  //Automaalari
         tutkintoKomo.setKoulutusalaUri(getUriWithVersion(dto.getKoulutusalaKoodi(), KoodistoURIHelper.KOODISTO_KOULUTUSALA_URI));
         tutkintoKomo.setKoulutusasteUri(getUriWithVersion(dto.getKoulutusasteenKoodiarvo(), KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI));
@@ -318,9 +318,11 @@ public class TarjontaKomoData {
         tutkintoKomo.setTavoitteet(createTeksti(dto.getTavoitteet(), null, null));
         tutkintoKomo.setJatkoOpintoMahdollisuudet(createTeksti(dto.getJatkoOpinto(), null, null));
         tutkintoKomo.setKoulutustyyppi(dto.getKoulutusTyyppi());
-        tutkintoKomo.getOppilaitostyyppi().addAll(dto.getOppilaitostyyppis());
-        log.debug("oppilaitostyyppis : " + dto.getOppilaitostyyppis());
-
+        
+        tutkintoKomo.getOppilaitostyyppi().clear();
+        for (String codeValue : dto.getOppilaitostyyppis()) {
+            tutkintoKomo.getOppilaitostyyppi().add(getUriWithVersion(codeValue, KoodistoURIHelper.KOODISTO_OPPILAITOSTYYPPI_URI));
+        }
         //create search words from Koodisto meta data 
         List<KoodiMetadataType> koulutuskoodiMeta = getKoodiMetadataTypes(dto.getKoulutuskoodi(), KoodistoURIHelper.KOODISTO_TUTKINTO_URI);
         
@@ -350,7 +352,7 @@ public class TarjontaKomoData {
         koKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         
         Preconditions.checkNotNull(dto.getTutkintonimikkeenKoodiarvo(), "Tutkintonimike koodi uri cannot be null. Obj : " + dto);
-        koKomo.setTutkintonimikeUri(getUriWithVersion(dto.getTutkintonimikkeenKoodiarvo(), KoodistoURIHelper.KOODISTO_TUTKINTONIMIKE_URI, "10060"));
+        koKomo.setTutkintonimikeUri(getUriWithVersion(dto.getTutkintonimikkeenKoodiarvo(), KoodistoURIHelper.KOODISTO_TUTKINTONIMIKE_URI, "00000")); //00000 -> empty line
         koKomo.setTavoitteet(createTeksti(dto.getKoulutusohjelmanTavoitteet(), null, null));
         koKomo.setParentOid(tutkintoKomo.getOid());
         koKomo.setKoulutustyyppi(dto.getKoulutusTyyppi());

@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
@@ -22,6 +23,7 @@ import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 
 import java.util.List;
 import org.slf4j.Logger;
@@ -113,9 +115,13 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         }
 
         if (criteria.getOppilaitostyyppis() != null && !criteria.getOppilaitostyyppis().isEmpty()) {
-            for (String oppilaitostyyppiUri : criteria.getOppilaitostyyppis()) {
-                whereExpr = QuerydslUtils.and(whereExpr, moduuli.oppilaitostyyppi.like("%" + oppilaitostyyppiUri + "#%"));
+            BooleanExpression ors = null;
+
+            for (String oppilaitostyyppi : criteria.getOppilaitostyyppis()) {
+                final BooleanExpression like = moduuli.oppilaitostyyppi.like("%|" + oppilaitostyyppi + "|%");
+                ors = (ors != null) ? ors.or(like) : like;
             }
+            whereExpr = QuerydslUtils.and(whereExpr, ors);
         }
 
         return from(moduuli).

@@ -19,6 +19,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.junit.After;
@@ -51,6 +52,9 @@ public class KoulutusmoduuliDAOImplTest {
 
     private static final String LUKIOLINJA_URI = "uri_lukiolinja";
     private static final String KOULUTUSOHJELMA_URI = "uri_koulutusohjelma";
+    private static final String SEARCH_BY_URI_A = "uri_170";
+    private static final String SEARCH_BY_URI_B = "uri_2";
+    private static final String SEARCH_BY_URI_C = "uri_a";
     @Autowired(required = true)
     private KoulutusmoduuliDAOImpl instance;
     private Koulutusmoduuli komo1, komo2, komo3;
@@ -67,18 +71,20 @@ public class KoulutusmoduuliDAOImplTest {
 
     @Before
     public void setUp() {
+        final String sep = EntityUtils.STR_ARRAY_SEPARATOR;
+
         em = instance.getEntityManager();
         komo1 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
-        komo1.setOppilaitostyyppi("uri_1#uri_2#uri_170#");
+        komo1.setOppilaitostyyppi(sep + "uri_1" + sep + SEARCH_BY_URI_B + sep + SEARCH_BY_URI_A + sep);
         persist(komo1);
 
         komo2 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
-        komo2.setOppilaitostyyppi("uri_a#");
+        komo2.setOppilaitostyyppi(sep + SEARCH_BY_URI_C + sep);
         komo2.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
         persist(komo2);
 
         komo3 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
-        komo3.setOppilaitostyyppi("uri_fuu#");
+        komo3.setOppilaitostyyppi(sep + "uri_fuu" + sep);
         komo3.setLukiolinja(LUKIOLINJA_URI);
         persist(komo3);
     }
@@ -87,11 +93,29 @@ public class KoulutusmoduuliDAOImplTest {
      * Test of search method, of class KoulutusmoduuliDAOImpl.
      */
     @Test
-    public void testSearchByOppilaitostyyppi() {
+    public void testSearchByOppilaitostyyppiByUri() {
         KoulutusmoduuliDAO.SearchCriteria criteria = new KoulutusmoduuliDAO.SearchCriteria();
-        criteria.getOppilaitostyyppis().add("uri_170");
+        criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_A);
         List result = instance.search(criteria);
         assertEquals(1, result.size());
+    }
+
+    @Test
+    public void testSearchByOppilaitostyyppiByUris() {
+        KoulutusmoduuliDAO.SearchCriteria criteria = new KoulutusmoduuliDAO.SearchCriteria();
+        criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_A);
+        criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_B);
+
+        List result = instance.search(criteria);
+        assertEquals(1, result.size());
+
+        criteria = new KoulutusmoduuliDAO.SearchCriteria();
+        criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_A);
+        criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_B);
+        criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_C);
+
+        result = instance.search(criteria);
+        assertEquals(2, result.size());
     }
 
     @Test

@@ -57,7 +57,7 @@ public class EntityUtilsTest {
     public void testJoinListToString() {
         Collection<String> list = new ArrayList<String>(Arrays.asList("uri1", "uri2", "uri3"));
         final String result = EntityUtils.joinListToString(list);
-        assertEquals("uri1#uri2#uri3#", result);
+        assertEquals("|uri1|uri2|uri3|", result);
         assertEquals(3, EntityUtils.splitStringToList(result).size());
     }
 }

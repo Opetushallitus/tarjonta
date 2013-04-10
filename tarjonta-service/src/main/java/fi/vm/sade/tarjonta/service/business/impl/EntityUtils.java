@@ -45,7 +45,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public final class EntityUtils {
 
-    private static final String STR_ARRAY_SEPARATOR = "#";
+    public static final String STR_ARRAY_SEPARATOR = "|";
 
     /**
      * Copies all text translations from domain model type into web service
@@ -550,8 +550,8 @@ public final class EntityUtils {
         //remove all nulls
         list.removeAll(Collections.singleton(null));
 
-        //return str1#str2# ...
-        return StringUtils.join(list, STR_ARRAY_SEPARATOR) + STR_ARRAY_SEPARATOR;
+        //return |str1#str2| ...
+        return STR_ARRAY_SEPARATOR + StringUtils.join(list, STR_ARRAY_SEPARATOR) + STR_ARRAY_SEPARATOR;
     }
 
     public static List<String> splitStringToList(String str) {

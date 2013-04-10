@@ -258,6 +258,7 @@ public class TarjontaLukioPresenter {
         LOG.debug("in loadKoulutuskoodis");
         HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
         kysely.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        kysely.getOppilaitostyyppiUris().addAll(presenter.getOppilaitostyyppiUris());
         HaeKaikkiKoulutusmoduulitVastausTyyppi allKomoParents = tarjontaPublicService.haeKaikkiKoulutusmoduulit(kysely);
         List<KoulutusmoduuliTulos> resultKomos = allKomoParents.getKoulutusmoduuliTulos();
 
@@ -276,11 +277,8 @@ public class TarjontaLukioPresenter {
 
         //koodisto service search result remapped to UI model objects.
         List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukses(uris, I18N.getLocale());
-        final String komotoOid = perusModel.getKomotoOid() != null ? perusModel.getKomotoOid() : null;
-
         LOG.debug("KOMOs found {}", komos.size());
         Collections.sort(listaaKoulutuskoodit, new BeanComparator("nimi"));
-        getPerustiedotModel().getKoulutuskoodis().addAll(getPresenter().filterBasedOnOppilaitosTyyppi(listaaKoulutuskoodit, komotoOid));
     }
 
     public void setKuvailevatTiedotView(EditLukioKoulutusKuvailevatTiedotView kuvailevatTiedotView) {

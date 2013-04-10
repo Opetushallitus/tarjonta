@@ -1540,7 +1540,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public void loadKoulutuskoodit() {
         HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
         kysely.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
-        kysely.getOppilaitostyyppiUris();
+        kysely.getOppilaitostyyppiUris().addAll(getOppilaitostyyppiUris());
         HaeKaikkiKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit = getTarjontaPublicService().haeKaikkiKoulutusmoduulit(kysely);
         List<KoulutusmoduuliTulos> koulutusmoduuliTulos = haeKaikkiKoulutusmoduulit.getKoulutusmoduuliTulos();
 
@@ -1563,42 +1563,13 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukses(uris, I18N.getLocale());
 
         Collections.sort(listaaKoulutuskoodit, new BeanComparator("nimi"));
-        model.getKoulutuskoodit().addAll(filterBasedOnOppilaitosTyyppi(listaaKoulutuskoodit));
     }
 
-    /*
-     * Filters list of KoulutuskoodiModel objects such that only the objects related to the
-     * oppilaitostyyppi of the selected organisaatio are returned.
-     */
-    public List<KoulutuskoodiModel> filterBasedOnOppilaitosTyyppi(List<KoulutuskoodiModel> unfilteredKoodit) {
-        KoulutusToisenAsteenPerustiedotViewModel perusModel = getModel().getKoulutusPerustiedotModel();
-        final String komotoOid = perusModel != null && perusModel.getOid() != null ? getModel().getKoulutusPerustiedotModel().getOid() : null;
-
-        return filterBasedOnOppilaitosTyyppi(unfilteredKoodit, komotoOid);
-    }
-
-    public List<KoulutuskoodiModel> filterBasedOnOppilaitosTyyppi(final List<KoulutuskoodiModel> unfilteredKoodit, final String komotoOid) {
-        LOG.debug("filterBasedOnOppilaitosTyyppi - KOMOTO OID : {}", komotoOid);
-
-        //If an existing koulutus is being edited no filtering is done.
-        if (getModel().getKoulutusPerustiedotModel() != null
-                && getModel().getKoulutusPerustiedotModel().getOid() != null) {
-            return unfilteredKoodit;
-        }
-
-        //Constructing the list of oppilaitostyyppis of the selected organisaatio
-        List<String> olTyyppiUris = getOppilaitostyyppiUris();
-
-        //Filtering the koulutuskoodit based on the oppilaitostyypit.
-        //TODO: fix this:
-        //return this.uiHelper.getKoulutusFilteredkooditRelatedToOlTyypit(olTyyppiUris, unfilteredKoodit);
-        return unfilteredKoodit;
-    }
 
     /*
      * Retrieves the list of (koodisto) oppilaitostyyppi uri's matching the currently selected organisaatio.
      */
-    private List<String> getOppilaitostyyppiUris() {
+    public List<String> getOppilaitostyyppiUris() {
         final String organisaatioOid = this.getNavigationOrganisation().getOrganisationOid();
         OrganisaatioDTO selectedOrg = this.getOrganisaatioService().findByOid(organisaatioOid);
 
@@ -1623,6 +1594,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 && selectedOrg.getParentOid() != null) {
             addParentOlTyyppi(selectedOrg, olTyyppiUris);
         }
+
+        LOG.debug("TyyppiUris : {}", olTyyppiUris);
         LOG.debug("olTyyppiUris size: {}", olTyyppiUris.size());
         return olTyyppiUris;
     }
