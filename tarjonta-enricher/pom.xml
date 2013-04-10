@@ -11,10 +11,6 @@
     <artifactId>tarjonta-enricher</artifactId>
     <name>Tarjonta :: XML Enricher</name>
 
-    <properties>
-        <publication.api.version>${project.version}</publication.api.version>
-    </properties>
-
     <dependencies>
 
         <!-- autowiring -->
@@ -93,7 +89,7 @@
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-publication-api</artifactId>
-            <version>${publication.api.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
