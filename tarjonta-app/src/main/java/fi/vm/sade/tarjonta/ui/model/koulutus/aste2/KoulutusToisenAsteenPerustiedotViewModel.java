@@ -34,7 +34,7 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.conversion.Koulutus2asteConverter;
-import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
+import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
@@ -43,6 +43,8 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Model holding basic information data for Koulutus.
@@ -53,6 +55,7 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
  */
 public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedotViewModel {
 
+    private static final Logger LOG = LoggerFactory.getLogger(KoulutusToisenAsteenPerustiedotViewModel.class);
     private static final long serialVersionUID = 4511930754933045032L;
     private List<KoulutusmoduuliKoosteTyyppi> komos;
     private Set<KoulutuskoodiModel> koulutuskoodit;
@@ -60,9 +63,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     private TarjontaTila tila;
     private List<MonikielinenTekstiTyyppi.Teksti> toteutuksenNimet;
     private List<SimpleHakukohdeViewModel> koulutuksenHakukohteet;
-    
     private MonikielinenTekstiModel koulutusohjelmaTavoitteet;
-    
     /*
      * Link to opetussuunnitelma
      */
@@ -81,9 +82,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
      */
     private Map<String, List<KoulutusmoduuliKoosteTyyppi>> cacheKomoTutkinto;
     private Map<Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo;
-    
-    
-
 
     public KoulutusToisenAsteenPerustiedotViewModel(DocumentStatus status) {
         super();
@@ -132,7 +130,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         setYhtHenkPuhelin(null); //optional
         setYhtHenkTitteli(null); //optional
         setYhtHenkiloOid(null); //optional
-        
+
         //Table data
         setPainotus(new ArrayList<KielikaannosViewModel>(0)); //optional
         setKoulutusLinkit(new ArrayList<KoulutusLinkkiViewModel>(0)); //optional
@@ -180,19 +178,19 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         if (getKoulutuskoodiModel() == null) {
             throw new RuntimeException("Exception : invalid data - No koulutuskoodi selected!");
         }
-        final KoodiModel koulutusaste = getKoulutuskoodiModel().getKoulutusaste();
+        final KoodiModel koulutusasteKoodiModel = getKoulutuskoodiModel().getKoulutusaste();
 
         if (getKoulutuskoodiModel().getKoulutusaste() == null) {
             throw new RuntimeException("Exception : invalid data - No koulutusaste selected!");
         }
 
-        if (koulutusaste.getKoodi() == null) {
+        if (koulutusasteKoodiModel.getKoodi() == null) {
             throw new RuntimeException("Exception : invalid data - koulutusaste selected, but no numeric code!");
         }
 
-        final KoulutusasteType koulutus = KoulutusasteType.getByKoulutusaste(koulutusaste.getKoodi());
+        final KoulutusasteType koulutus = KoulutusasteType.getByKoulutusaste(koulutusasteKoodiModel.getKoodi());
         if (koulutus == null) {
-            throw new RuntimeException("Selectable koulutusaste numeric code do not match to koodisto data. Value : " + koulutusaste.getKoodi());
+            throw new RuntimeException("Selectable koulutusaste numeric code do not match to koodisto data. Value : " + koulutusasteKoodiModel.getKoodi());
         }
 
         return koulutus;
@@ -315,8 +313,16 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     }
 
     public void createCacheKomos() {
+
         setCacheKomoTutkinto(Koulutus2asteConverter.komoCacheMapByKoulutuskoodi(komos));
         setCacheKomo(Koulutus2asteConverter.full2asteKomoCacheMap(komos));
+
+        if (LOG.isDebugEnabled()) {
+            Set<Map.Entry<Map.Entry, KoulutusmoduuliKoosteTyyppi>> entrySet = getCacheKomo().entrySet();
+            for (Entry<Map.Entry, KoulutusmoduuliKoosteTyyppi> t : entrySet) {
+                LOG.debug("key : " + t.getKey() + ", " + t.getValue().getKoulutuskoodiUri() + ", " + t.getValue().getKoulutusohjelmakoodiUri());
+            }
+        }
     }
 
     /**
@@ -357,7 +363,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
         }
         return koulutuksenHakukohteet;
     }
-    
+
     public String getOpsuLinkki() {
         return opsuLinkki;
     }
@@ -397,7 +403,7 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
     public void setYhtHenkPuhelin(String yhtHenkPuhelin) {
         this.yhtHenkPuhelin = yhtHenkPuhelin;
     }
-    
+
     public String getYhtHenkiloOid() {
         return YhtHenkiloOid;
     }
