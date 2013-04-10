@@ -16,10 +16,7 @@ package fi.vm.sade.tarjonta.data.util;/*
  */
 
 
-import fi.vm.sade.koodisto.service.KoodiAdminService;
-import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.KoodistoAdminService;
-import fi.vm.sade.koodisto.service.KoodistoService;
+import fi.vm.sade.koodisto.service.*;
 import fi.vm.sade.koodisto.service.types.*;
 import fi.vm.sade.koodisto.service.types.common.*;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
@@ -62,29 +59,37 @@ public class TarjontaDataKoodistoHelper {
      * @param koodistoUri
      * @return
      */
-    public KoodiType addKoodi(final Koodi koodiData, final String koodistoUri) {
+    public void addKoodi(final Koodi koodiData, final String koodistoUri) {
         CreateKoodiDataType createKoodiDataType = DataUtils.createCreateKoodiDataType(koodiData);
         try {
-            return koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);
+            koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);
         } catch (final Exception exp) {
-            log.warn("Unable to create koodi with arvo [{}], exception [{}], trying to re-create with another nimi",
-                    createKoodiDataType.getKoodiArvo(), exp.getMessage());
-            //TODO: remove when Koodisto Team has managed to get this working
-            try {
-                koodiData.setKoodiNimiFi(String.format("%s (%s)", koodiData.getKoodiNimiFi(), koodiData.getKoodiArvo()));
-                if (StringUtils.isNotBlank(koodiData.getKoodiNimiSv())) {
-                    koodiData.setKoodiNimiSv(String.format("%s (%s)", koodiData.getKoodiNimiSv(), koodiData.getKoodiArvo()));
+            //TODO: remove this retry functionality, when Koodisto handles it itself
+            if (exp instanceof GenericFault) {
+                final GenericFault genericFault = (GenericFault) exp;
+                if (genericFault.getFaultInfo() != null) {
+                    if (StringUtils.contains(genericFault.getFaultInfo().getErrorCode(), "KoodiNimiNotUniqueException")) {
+                        log.warn("Unable to create koodi with arvo [{}], exception [{}], trying to re-create with another nimi",
+                                createKoodiDataType.getKoodiArvo(), exp.getMessage());
+                        try {
+                            koodiData.setKoodiNimiFi(String.format("%s (%s)", koodiData.getKoodiNimiFi(), koodiData.getKoodiArvo()));
+                            if (StringUtils.isNotBlank(koodiData.getKoodiNimiSv())) {
+                                koodiData.setKoodiNimiSv(String.format("%s (%s)", koodiData.getKoodiNimiSv(), koodiData.getKoodiArvo()));
+                            }
+                            if (StringUtils.isNotBlank(koodiData.getKoodiNimiEn())) {
+                                koodiData.setKoodiNimiEn(String.format("%s (%s)", koodiData.getKoodiNimiEn(), koodiData.getKoodiArvo()));
+                            }
+                            createKoodiDataType = DataUtils.createCreateKoodiDataType(koodiData);
+                            koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);
+                        } catch (final Exception exx) {
+                            log.error("Failed to re-create koodi with new arvo [{}], exception [{}]", createKoodiDataType.getKoodiArvo(), exx.getMessage());
+                        }
+                        return;
+                    }
                 }
-                if (StringUtils.isNotBlank(koodiData.getKoodiNimiEn())) {
-                    koodiData.setKoodiNimiEn(String.format("%s (%s)", koodiData.getKoodiNimiEn(), koodiData.getKoodiArvo()));
-                }
-                createKoodiDataType = DataUtils.createCreateKoodiDataType(koodiData);
-                return koodiAdminService.createKoodi(koodistoUri, createKoodiDataType);
-            } catch (final Exception exx) {
-                // gotta throw up
-                throw new RuntimeException(String.format("Failed to re-create koodi with new arvo [%s], exception [%s]",
-                        createKoodiDataType.getKoodiArvo(), exx.getMessage()));
             }
+
+            log.error("Error while creating a koodi", exp);
         }
     }
 

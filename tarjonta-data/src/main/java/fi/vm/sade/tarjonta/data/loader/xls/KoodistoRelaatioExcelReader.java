@@ -67,7 +67,7 @@ public class KoodistoRelaatioExcelReader {
                     }
                 }
             } else {
-                for (int cellCount = 0; cellCount < headers.size(); cellCount++) {
+                for (int cellCount = 1; cellCount < headers.size(); cellCount++) {
                     // skip koodistos with "-1"
                     final String alaKoodistoUri = headers.get(cellCount);
                     if (!StringUtils.equals(alaKoodistoUri, "-1")) {

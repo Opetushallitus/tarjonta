@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.data.loader.xls;
 
 import fi.vm.sade.tarjonta.data.dto.AbstractReadableRow;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.slf4j.Logger;
@@ -26,9 +27,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author jani
@@ -94,7 +93,27 @@ public class ExcelReader<T extends AbstractReadableRow> {
         final Set<T> list = new HashSet<T>();
         boolean stop = false;
 
-        for (int rowNumber = 1; rowNumber <= maxReadRows; rowNumber++) {
+        final List<String> columnHeaders = new ArrayList<String>();
+
+        for (int rowNumber = 0; rowNumber <= maxReadRows; rowNumber++) {
+            // gather column headers
+            if (rowNumber == 0) {
+                final HSSFRow headerRow = sheet.getRow(0);
+                if (headerRow != null) {
+                    headers: for (int i = 0; i < headerRow.getPhysicalNumberOfCells(); i++) {
+                        final String header = getCellValueAsString(headerRow.getCell(i));
+                        columnHeaders.add(header);
+                        for (final Column column : columns) {
+                            if (StringUtils.equals(column.getTitle(), header)) {
+                                continue headers;
+                            }
+                        }
+                        log.warn("Invalid column [{}] will be skipped.", header);
+                    }
+                }
+                continue;
+            }
+
             if (stop || rowNumber > sheet.getLastRowNum()) {
                 break;
             }
@@ -108,53 +127,60 @@ public class ExcelReader<T extends AbstractReadableRow> {
             HSSFCell cell = null;
             HSSFRow currentRow = null;
 
-            for (int i = 0; i < columns.length; i++) {
-                try {
-                    currentRow = sheet.getRow(rowNumber);
-                    if (currentRow == null) {
-                        stop = true;
-                        break;
-                    }
+            try {
+                currentRow = sheet.getRow(rowNumber);
+                if (currentRow == null) {
+                    stop = true;
+                    break;
+                }
 
+                rows: for (int i = 0; i < columnHeaders.size(); i++) {
                     cell = currentRow.getCell(i);
 
                     final String cellValue = getCellValueAsString(cell);
 
                     if (cellValue == null || cellValue.isEmpty() || cellValue.trim().length() < 1) {
                         if (verbose) {
-                            log.debug("Missing data column {} {}", rowNumber, i);
+                            log.debug("Missing data column [{}][{}]", rowNumber, i);
                         }
+
                         continue;
                     }
 
-                    if (columns[i].getKey() == null) {
-                        if (verbose) {
-                            log.debug("Skip column {} {}", rowNumber, i);
-                        }
-                        continue;
-                    }
+                    for (final Column column : columns) {
+                        if (StringUtils.equals(column.getTitle(), columnHeaders.get(i))) {
+                            if (column.getKey() == null) {
+                                if (verbose) {
+                                    log.debug("Skip column [{}][{}]", rowNumber, i);
+                                }
+                                continue;
+                            }
 
-                    switch (columns[i].getType()) {
-                        case INTEGER:
-                            if (cellValue.indexOf(".") == -1) {
-                                BeanUtils.setProperty(dto, columns[i].getKey(), cellValue);
-                            } else {
-                                BeanUtils.setProperty(dto, columns[i].getKey(), cellValue.substring(0, cellValue.indexOf(".")));
+                            switch (column.getType()) {
+                                case INTEGER:
+                                    if (cellValue.indexOf(".") == -1) {
+                                        BeanUtils.setProperty(dto, column.getKey(), cellValue);
+                                    } else {
+                                        BeanUtils.setProperty(dto, column.getKey(), cellValue.substring(0, cellValue.indexOf(".")));
+                                    }
+                                    break;
+                                case STRING:
+                                    BeanUtils.setProperty(dto, column.getKey(), cellValue);
+                                    break;
+                                default:
+                                    if (verbose) {
+                                        log.debug("Found an unknown type " + cellValue);
+                                    }
+                                    //do nothing
+                                    break;
                             }
-                            break;
-                        case STRING:
-                            BeanUtils.setProperty(dto, columns[i].getKey(), cellValue);
-                            break;
-                        default:
-                            if (verbose) {
-                                log.debug("Found an unknown type " + cellValue);
-                            }
-                            //do nothing
-                            break;
+
+                            continue rows;
+                        }
                     }
-                } catch (final Exception ex) {
-                    log.error("Excel reader failed.", ex);
                 }
+            } catch (final Exception ex) {
+                log.error("Excel reader failed.", ex);
             }
 
             if (!stop && !dto.isEmpty()) {
@@ -182,7 +208,6 @@ public class ExcelReader<T extends AbstractReadableRow> {
             cell.setCellType(Cell.CELL_TYPE_STRING);
             return cell.getStringCellValue();
         }
-        //return cell.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell.getNumericCellValue() + "" : cell.getStringCellValue();
     }
 
     /**
