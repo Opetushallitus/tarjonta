@@ -316,13 +316,6 @@ public class KoulutusToisenAsteenPerustiedotViewModel extends KoulutusPerustiedo
 
         setCacheKomoTutkinto(Koulutus2asteConverter.komoCacheMapByKoulutuskoodi(komos));
         setCacheKomo(Koulutus2asteConverter.full2asteKomoCacheMap(komos));
-
-        if (LOG.isDebugEnabled()) {
-            Set<Map.Entry<Map.Entry, KoulutusmoduuliKoosteTyyppi>> entrySet = getCacheKomo().entrySet();
-            for (Entry<Map.Entry, KoulutusmoduuliKoosteTyyppi> t : entrySet) {
-                LOG.debug("key : " + t.getKey() + ", " + t.getValue().getKoulutuskoodiUri() + ", " + t.getValue().getKoulutusohjelmakoodiUri());
-            }
-        }
     }
 
     /**
