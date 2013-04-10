@@ -26,6 +26,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -48,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
+@Ignore
 public class KoulutusmoduuliDAOImplTest {
 
     private static final String LUKIOLINJA_URI = "uri_lukiolinja";
@@ -144,7 +146,7 @@ public class KoulutusmoduuliDAOImplTest {
     /*
      *
      * Private helpper methods
-     * 
+     *
      */
     private void persist(Object o) {
         em.persist(o);

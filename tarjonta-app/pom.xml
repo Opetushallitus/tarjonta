@@ -240,10 +240,18 @@ FIXME WHAT IS THIS tarjonta-ui-widgets?
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>2.1</version>
             <scope>test</scope>
             <type>jar</type>
         </dependency>
+
+<!-- 
+	      <dependency>
+	        <groupId>org.slf4j</groupId>
+	        <artifactId>slf4j-simple</artifactId>
+	        <version>1.6.4</version>
+	        <scope>provided</scope>
+	      </dependency>
+      -->	   
     </dependencies>
 
 
