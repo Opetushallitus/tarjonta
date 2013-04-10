@@ -1551,10 +1551,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             komos.add(tulos.getKoulutusmoduuli());
             uris.add(tulos.getKoulutusmoduuli().getKoulutuskoodiUri());
         }
+        LOG.debug("KOMOs found {}", komos.size());
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("KOMOs found {}", komos.size());
-        }
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
         model.setKomos(komos);
         model.createCacheKomos(); //cache komos to map object
@@ -1563,9 +1561,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukses(uris, I18N.getLocale());
 
         Collections.sort(listaaKoulutuskoodit, new BeanComparator("nimi"));
+        model.getKoulutuskoodit().addAll(listaaKoulutuskoodit);
     }
-
-
+    
     /*
      * Retrieves the list of (koodisto) oppilaitostyyppi uri's matching the currently selected organisaatio.
      */

@@ -269,6 +269,7 @@ public class TarjontaLukioPresenter {
             komos.add(komoParents.getKoulutusmoduuli());
             uris.add(komoParents.getKoulutusmoduuli().getKoulutuskoodiUri());
         }
+        LOG.debug("KOMOs found {}", komos.size());
 
         KoulutusLukioPerustiedotViewModel perusModel = getPerustiedotModel();
         perusModel.setKomos(komos);
@@ -277,8 +278,8 @@ public class TarjontaLukioPresenter {
 
         //koodisto service search result remapped to UI model objects.
         List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukses(uris, I18N.getLocale());
-        LOG.debug("KOMOs found {}", komos.size());
         Collections.sort(listaaKoulutuskoodit, new BeanComparator("nimi"));
+        getPerustiedotModel().getKoulutuskoodis().addAll(listaaKoulutuskoodit);
     }
 
     public void setKuvailevatTiedotView(EditLukioKoulutusKuvailevatTiedotView kuvailevatTiedotView) {
