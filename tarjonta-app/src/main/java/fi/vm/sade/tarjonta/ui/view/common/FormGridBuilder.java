@@ -30,16 +30,31 @@ import fi.vm.sade.vaadin.Oph;
  */
 public class FormGridBuilder extends GridLayout {
 	
-	public static final float RATIO = 0.2f;
+	public static final float DEFAULT_RATIO = 0.2f;
 
 	private static final long serialVersionUID = 1L;
 	
+	private String prefix;
+	
 	public FormGridBuilder(FieldInfo... fields) {
-		this(RATIO, fields);
+		this(null, DEFAULT_RATIO, fields);
+	}
+
+	public FormGridBuilder(Class<?> prefix, FieldInfo... fields) {
+		this(prefix.getSimpleName()+".", DEFAULT_RATIO, fields);
+	}
+
+	public FormGridBuilder(String prefix, FieldInfo... fields) {
+		this(prefix, DEFAULT_RATIO, fields);
 	}
 
 	public FormGridBuilder(float ratio, FieldInfo... fields) {
+		this(null, DEFAULT_RATIO, fields);
+	}
+	
+	public FormGridBuilder(String prefix, float ratio, FieldInfo... fields) {
 		super(2, fields.length > 0 ? fields.length : 1);
+		this.prefix = prefix==null ? "" : prefix;
     	setSizeFull();
     	setColumnExpandRatio(0, ratio);
     	setColumnExpandRatio(1, 1-ratio);
@@ -68,10 +83,51 @@ public class FormGridBuilder extends GridLayout {
 		addComponent(header, 0, y, 1, y);
 	}
 	
-	public void add(FieldInfo fi) {
+	public FormGridBuilder add(FieldInfo fi) {
 		addComponent(fi.titleLabel);
 		addComponent(fi.valueLabel);
 		fi.titleLabel.addStyleName(Oph.TEXT_ALIGN_RIGHT);
+		return this;
+	}
+	
+	private String withPrefix(String key) {
+		return key==null ? null : prefix + key;
+	}
+	
+	public FormGridBuilder addSpace() {
+		// TODO fiksumpi toteutus
+		addPreformatted(null, "\n");
+		return this;
+	}
+
+	public FormGridBuilder addText(String titleKey, String value) {
+		add(new FieldInfo(withPrefix(titleKey), value, Label.CONTENT_TEXT));
+		return this;
+	}
+
+	public FormGridBuilder addXhtml(String titleKey, String value) {
+		add(new FieldInfo(withPrefix(titleKey), value, Label.CONTENT_XHTML));
+		return this;
+	}
+
+	public FormGridBuilder addPreformatted(String titleKey, String value) {
+		add(new FieldInfo(withPrefix(titleKey), value, Label.CONTENT_PREFORMATTED));
+		return this;
+	}
+
+	public FormGridBuilder add(String titleKey, String value, int cmode) {
+		add(new FieldInfo(withPrefix(titleKey), value, cmode));
+		return this;
+	}
+
+	public FormGridBuilder add(String titleKey, Label valueLabel) {
+		add(new FieldInfo(withPrefix(titleKey), valueLabel));
+		return this;
+	}
+
+	public FormGridBuilder add(String titleKey, Label valueLabel, int cmode) {
+		add(new FieldInfo(withPrefix(titleKey), valueLabel, cmode));
+		return this;
 	}
 
     public static class FieldInfo {
@@ -92,7 +148,7 @@ public class FormGridBuilder extends GridLayout {
 		}
 
 		public FieldInfo(String titleKey, String value, int mode) {
-			this(titleKey, new Label(value, mode));
+			this(titleKey, new Label(value), mode);
 		}
 
 		public FieldInfo(String titleKey, Label valueLabel, int cmode) {
@@ -101,7 +157,9 @@ public class FormGridBuilder extends GridLayout {
 			this.valueLabel.setContentMode(cmode);
 			
 			titleLabel = new Label();
-			titleLabel.setValue(I18N.getMessage(titleKey));
+			if (titleKey!=null) {
+				titleLabel.setValue(I18N.getMessage(titleKey));
+			}
 		}
 		
 		public Label getTitleLabel() {
