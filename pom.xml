@@ -20,7 +20,7 @@
       <organisaatio.api.version>3.1-SNAPSHOT</organisaatio.api.version>
       <authentication.api.version>1.0-SNAPSHOT</authentication.api.version>
       <generic.version>${sade-generic.version}</generic.version>
-      <koodisto.api.version>3.1</koodisto.api.version>
+      <koodisto.api.version>3.1-SNAPSHOT</koodisto.api.version>
       <koodisto.widget.version>3.1-SNAPSHOT</koodisto.widget.version>
       <oid.api.version>1.1-SNAPSHOT</oid.api.version>
     </properties>
