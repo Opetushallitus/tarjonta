@@ -169,6 +169,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
             public void buttonClick(ClickEvent event) {
                 List<String> koulutus = new ArrayList<String>();
                 koulutus.add(presenter.getModel().getKoulutusPerustiedotModel().getOid());
+                presenter.showHakukohdeEditView(koulutus, null, null, null);
             }
         }, presenter.getPermission().userCanCreateHakukohde(context), false));
 
