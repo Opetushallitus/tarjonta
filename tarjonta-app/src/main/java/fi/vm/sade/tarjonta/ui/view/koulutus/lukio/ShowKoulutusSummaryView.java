@@ -27,8 +27,6 @@ import com.google.common.base.Preconditions;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -53,6 +51,7 @@ import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalInfoLayout;
+import fi.vm.sade.tarjonta.ui.view.common.FormGridBuilder;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
@@ -153,47 +152,45 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
                 _presenter.getLukioPresenter().showEditKoulutusView(getEditViewOid(), KoulutusActiveTab.PERUSTIEDOT);
             }
         }));
-
-        GridLayout grid = new GridLayout(2, 1);
-        grid.setWidth("100%");
-        grid.setMargin(true);
-        addItemToGrid(grid, "organisaatio", _presenter.getTarjoaja().getSelectedOrganisation().getOrganisationName());
-        addItemToGrid(grid, "tutkinto", modelToStr(model.getKoulutuskoodiModel()));
-        addItemToGrid(grid, otherCbLabel, modelToStr(otherCbKoodi));
-        addItemToGrid(grid, null, new Label("&nbsp;", Label.CONTENT_XHTML));
-        addItemToGrid(grid, "koulutusaste", modelToStr(model.getKoulutusaste()));
-        addItemToGrid(grid, "koulutusala", modelToStr(model.getKoulutusala()));
-        addItemToGrid(grid, "opintoala", modelToStr(model.getOpintoala()));
-        addItemToGrid(grid, "tutkintonimike", modelToStr(model.getTutkintonimike()));
-        addItemToGrid(grid, "opintojenLaajuusyksikko", modelToStr(model.getOpintojenLaajuusyksikko()));
-        addItemToGrid(grid, "opintojenLaajuus", modelToStr(model.getOpintojenLaajuus()));
-        addItemToGrid(grid, "koulutuslaji", modelToStr(model.getKoulutuslaji()));
-        addItemToGrid(grid, "pohjakoulutusvaatimus", modelToStr(model.getPohjakoulutusvaatimus()));
-        addItemToGrid(grid, "koulutuksenRakenne", buildLabel(modelToStr(model.getKoulutuksenRakenne())));
-        addItemToGrid(grid, "tavoitteet", buildLabel(modelToStr(model.getTavoitteet())));
-        addItemToGrid(grid, "jatkoopintomahdollisuudet", buildLabel(modelToStr(model.getJatkoopintomahdollisuudet())));
-        addItemToGrid(grid, null, new Label("&nbsp;", Label.CONTENT_XHTML));
+        
+        FormGridBuilder grid = new FormGridBuilder(getClass());
+        
+        grid.addText("organisaatio", _presenter.getTarjoaja().getSelectedOrganisation().getOrganisationName())
+        	.addText("tutkinto", modelToStr(model.getKoulutuskoodiModel()))
+	        .addText(otherCbLabel, modelToStr(otherCbKoodi))
+	        .addSpace()
+	        .addText("koulutusaste", modelToStr(model.getKoulutusaste()))
+	        .addText("koulutusala", modelToStr(model.getKoulutusala()))
+	        .addText("opintoala", modelToStr(model.getOpintoala()))
+	        .addText("tutkintonimike", modelToStr(model.getTutkintonimike()))
+	        .addText("opintojenLaajuusyksikko", modelToStr(model.getOpintojenLaajuusyksikko()))
+	        .addText("opintojenLaajuus", modelToStr(model.getOpintojenLaajuus()))
+	        .addText("koulutuslaji", modelToStr(model.getKoulutuslaji()))
+	        .addText("pohjakoulutusvaatimus", modelToStr(model.getPohjakoulutusvaatimus()))
+	        .addXhtml("koulutuksenRakenne", modelToStr(model.getKoulutuksenRakenne()))
+	        .addXhtml("tavoitteet", modelToStr(model.getTavoitteet()))
+	        .addXhtml("jatkoopintomahdollisuudet", modelToStr(model.getJatkoopintomahdollisuudet()))
+	        .addSpace();
         buildLukiokoulutuksenPerustiedot(grid);
 
-        grid.setColumnExpandRatio(1, 1f);
-
         vl.addComponent(grid);
-        vl.setComponentAlignment(grid, Alignment.TOP_LEFT);
     }
 
-    private void buildLukiokoulutuksenPerustiedot(GridLayout grid) {
+    private void buildLukiokoulutuksenPerustiedot(FormGridBuilder grid) {
         KoulutusLukioPerustiedotViewModel model = _presenter.getModel().getKoulutusLukioPerustiedot();
-        addItemToGrid(grid, "opetuskieli", koodiToStr(model.getOpetuskieli()));
-        addItemToGrid(grid, "koulutuksenAlkamisPvm", _tarjontaUIHelper.formatDate(model.getKoulutuksenAlkamisPvm()));
-        addItemToGrid(grid, "suunniteltuKesto", suunniteltuKesto(model.getSuunniteltuKesto(), model.getSuunniteltuKestoTyyppi()));
-        addItemToGrid(grid, "opetusmuoto",  getOpetusMuoto(model.getOpetusmuoto()), Label.CONTENT_PREFORMATTED);
+        
+        grid.addText("opetuskieli", koodiToStr(model.getOpetuskieli()))
+        	.addText("koulutuksenAlkamisPvm", _tarjontaUIHelper.formatDate(model.getKoulutuksenAlkamisPvm()))
+        	.addText("suunniteltuKesto", suunniteltuKesto(model.getSuunniteltuKesto(), model.getSuunniteltuKestoTyyppi()))
+        	.add("opetusmuoto",  getOpetusMuoto(model.getOpetusmuoto()), Label.CONTENT_PREFORMATTED);
 
-        Label buildLabel = new Label();
+        String lnk = null;
         if (model.getOpsuLinkki() != null && !model.getOpsuLinkki().isEmpty()) {
-            buildLabel = buildLabel("<a href=" + model.getOpsuLinkki() + ">" + model.getOpsuLinkki() + "</a>");
+            lnk = "<a href=" + model.getOpsuLinkki() + ">" + model.getOpsuLinkki() + "</a>";
         }
 
-        addItemToGrid(grid, "linkki", buildLabel);
+        grid.addXhtml("linkki", lnk);
+
         buildYhteyshenkilo(grid, model.getYhteyshenkilo());
     }
     
@@ -221,40 +218,32 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
             }
         }));
 
-        GridLayout grid = new GridLayout(2, 1);
-        grid.setWidth("100%");
-        grid.setMargin(true);
-        addItemToGrid(grid, "kieliA", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliA(), null));
-        addItemToGrid(grid, "kieliB1", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliB1(), null));
-        addItemToGrid(grid, "kieliB2", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliB2(), null));
-        addItemToGrid(grid, "kieliB3", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliB3(), null));
-        addItemToGrid(grid, "kieletMuu", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieletMuu(), null));
-        addItemToGrid(grid, "luokiodiplomit", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getDiplomit(), null));
 
-        grid.setColumnExpandRatio(1, 1f);
+        FormGridBuilder grid = new FormGridBuilder(getClass())
+        	.addText("kieliA", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliA(), null))
+        	.addText("kieliB1", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliB1(), null))
+        	.addText("kieliB2", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliB2(), null))
+        	.addText("kieliB3", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliB3(), null))
+        	.addText("kieletMuu", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieletMuu(), null))
+        	.addText("luokiodiplomit", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getDiplomit(), null));
 
         vl.addComponent(grid);
-        vl.setComponentAlignment(grid, Alignment.TOP_LEFT);
 
         KoulutusLisatietoModel tiedotModel = kuvailevatTiedot.getLisatiedot(lang);
 
-        GridLayout gridLang = new GridLayout(2, 1);
-        gridLang.setWidth("100%");
-        gridLang.setMargin(true);
+        FormGridBuilder gridLang = new FormGridBuilder(getClass());
 
-        addItemToGrid(gridLang, "tutkinnonSisalto", buildLabel(tiedotModel.getSisalto()));
-        addItemToGrid(gridLang, "tutkinnonKansainvalistyminen", buildLabel(tiedotModel.getKansainvalistyminen()));
-        addItemToGrid(gridLang, "tutkinnonYhteistyoMuidenToimijoidenKanssa", buildLabel(tiedotModel.getYhteistyoMuidenToimijoidenKanssa()));
-
-        gridLang.setColumnExpandRatio(1, 1f);
+        gridLang
+        	.addXhtml("tutkinnonSisalto", tiedotModel.getSisalto())
+        	.addXhtml("tutkinnonKansainvalistyminen", tiedotModel.getKansainvalistyminen())
+        	.addXhtml("tutkinnonYhteistyoMuidenToimijoidenKanssa", tiedotModel.getYhteistyoMuidenToimijoidenKanssa());
         
         vl.addComponent(gridLang);
-        vl.setComponentAlignment(gridLang, Alignment.TOP_LEFT);
     }
 
-    private void buildYhteyshenkilo(GridLayout grid, YhteyshenkiloModel model) {
-        addItemToGrid(grid, "yhteyshenkilo", noNullStr(model.getYhtHenkTitteli()) + " " + noNullStr(model.getYhtHenkKokoNimi()));
-        addItemToGrid(grid, null, noNullStr(model.getYhtHenkPuhelin()) + " " + noNullStr(model.getYhtHenkEmail()));
+    private void buildYhteyshenkilo(FormGridBuilder grid, YhteyshenkiloModel model) {
+    	grid.addText("yhteyshenkilo", noNullStr(model.getYhtHenkTitteli()) + " " + noNullStr(model.getYhtHenkKokoNimi()))
+    		.addText(null, noNullStr(model.getYhtHenkPuhelin()) + " " + noNullStr(model.getYhtHenkEmail()));
     }
 
     private String suunniteltuKesto(final String kestoUri, final String kestoTyyppiUri) {
@@ -275,49 +264,6 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         return tmp;
     }
 
-    /**
-     * Add line with label + textual label value to the grid.
-     *
-     * @param grid
-     * @param labelCaptionKey
-     * @param labelCaptionValue
-     * @param contentMode {@link Label#setContentMode(int)}
-     */
-    private void addItemToGrid(GridLayout grid, String labelCaptionKey, String labelCaptionValue, int contentMode) {
-        addItemToGrid(grid, labelCaptionKey, new Label(labelCaptionValue, contentMode));
-    }
-
-    private void addItemToGrid(GridLayout grid, String labelCaptionKey, String labelCaptionValue) {
-        addItemToGrid(grid, labelCaptionKey, labelCaptionValue, Label.CONTENT_DEFAULT);
-    }
-    
-    /**
-     * Add label + component to grid layout.
-     *
-     * @param grid
-     * @param labelCaptionKey
-     * @param component
-     * @param contentMode {@link Label#setContentMode(int)}
-     */
-    private void addItemToGrid(GridLayout grid, String labelCaptionKey, Component component) {
-        if (grid != null) {
-            HorizontalLayout hl = UiUtil.horizontalLayout(false, UiMarginEnum.RIGHT);
-            hl.setSizeUndefined();
-
-            if (labelCaptionKey != null) {
-                UiUtil.label(hl, T(labelCaptionKey));
-            }
-            grid.addComponent(hl);
-
-            HorizontalLayout textArea = UiUtil.horizontalLayout(false, UiMarginEnum.NONE);
-            textArea.addComponent(component);
-            grid.addComponent(textArea);
-
-            grid.setComponentAlignment(hl, Alignment.TOP_RIGHT);
-            grid.setComponentAlignment(textArea, Alignment.TOP_LEFT);
-            grid.newLine();
-        }
-    }
 
 //    private void buildKoulutuksenHakukohteet(VerticalLayout layout) {
 //        int numberOfApplicationTargets = _presenter.getModel().getKoulutusLukioPerustiedot().getKoulutuksenHakukohteet().size();
@@ -533,12 +479,14 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         return model.getKomotoOid();
     }
 
+    /*
     private Label buildLabel(String text) {
         Label label = UiUtil.label(null, text);
         label.setContentMode(Label.CONTENT_XHTML);
         label.setSizeFull();
         return label;
     }
+    */
 
     private static String modelToStr(KoulutusKoodistoModel model) {
         if (model != null) {
