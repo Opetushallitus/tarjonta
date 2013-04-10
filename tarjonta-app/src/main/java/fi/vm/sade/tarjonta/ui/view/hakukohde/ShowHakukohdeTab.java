@@ -152,6 +152,35 @@ public class ShowHakukohdeTab extends CustomComponent {
         return sdf.format(liiteViewModel.getToimitettavaMennessa());
     }
 
+    private void addTwoColumnRowToGrid(final GridLayout grid,final Component component) {
+        if (grid != null) {
+            //Hack to add two column row to table dynamically
+            final HorizontalLayout hl = UiUtil.horizontalLayout(false,
+                    UiMarginEnum.RIGHT);
+            Label placeHolder = new Label("PLACEHOLDER");
+
+            grid.addComponent(placeHolder);
+            grid.removeComponent(placeHolder);
+            final int y = grid.getCursorY();
+            hl.addComponent(component);
+            grid.addComponent(hl, 0, y, 1, y);
+        }
+    }
+
+    private Label getHdrH2Label(String caption) {
+        Label hdrLbl = new Label(i18n.getMessage(caption));
+        hdrLbl.setStyleName(Oph.LABEL_H2);
+        return hdrLbl;
+
+    }
+
+    private Label getRichTxtLbl(String labelMsg) {
+        Label richTxtLbl = new Label(i18n.getMessage(labelMsg));
+        richTxtLbl.setContentMode(Label.CONTENT_XHTML);
+        return richTxtLbl;
+    }
+
+
     private String getLiiteOsoite(HakukohdeLiiteViewModel liiteViewModel) {
         StringBuilder sb = new StringBuilder();
 
@@ -230,20 +259,24 @@ public class ShowHakukohdeTab extends CustomComponent {
             grid.setWidth("100%");
 
 
-            addHeaderToGrid(grid, "valintakoeTitle");
+            //addHeaderToGrid(grid, "valintakoeTitle");
+            addTwoColumnRowToGrid(grid,getHdrH2Label("valintakoeTitle"));
 
-            Label valintaKoeTiedot = new Label(getLanguageString(valintakoe.getSanallisetKuvaukset()));
+            /*Label valintaKoeTiedot = new Label(getLanguageString(valintakoe.getSanallisetKuvaukset()));
             valintaKoeTiedot.setContentMode(Label.CONTENT_XHTML);
-            addItemToGrid(grid,"sanallinenKuvaus",valintaKoeTiedot);
+            addItemToGrid(grid,"sanallinenKuvaus",valintaKoeTiedot);*/
+            addTwoColumnRowToGrid(grid,getRichTxtLbl(getLanguageString(valintakoe.getSanallisetKuvaukset())));
 
-            addItemToGrid(grid,"valintakoeAjatTitle",buildValintakoeAikaTable(valintakoe));
+            //addItemToGrid(grid,"valintakoeAjatTitle",buildValintakoeAikaTable(valintakoe));
+            addTwoColumnRowToGrid(grid,buildValintakoeAikaTable(valintakoe));
 
             String lisanayttoKuvaus = getLanguageString(valintakoe.getLisanayttoKuvaukset());
             if (lisanayttoKuvaus != null && lisanayttoKuvaus.trim().length() > 0) {
-            addHeaderToGrid(grid,"lisanaytotLabel");
+            //addHeaderToGrid(grid,"lisanaytotLabel");
+            addTwoColumnRowToGrid(grid,getHdrH2Label("lisanaytotLabel"));
 
-
-            addRichTextToGrid(grid,"lisanayttoLabel",getLanguageString(valintakoe.getLisanayttoKuvaukset()));
+            addTwoColumnRowToGrid(grid,getRichTxtLbl(lisanayttoKuvaus));
+            //addRichTextToGrid(grid,"lisanayttoLabel",getLanguageString(valintakoe.getLisanayttoKuvaukset()));
             }
             grid.setColumnExpandRatio(1,1f);
             yetAnotherLayout.addComponent(grid);
