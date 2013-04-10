@@ -99,82 +99,82 @@ public class KoodistoURIHelper {
     public static String KOODISTO_VALINTAKOE_TYYPPI_URI;
 
 
-    @Value("${koodisto-uris.valintakokeentyyppi:NOT_SET_valintakokeentyyppi}")
+    @Value("${koodisto-uris.valintakokeentyyppi}")
     public void setKoodistoValintakoetyyppiUri(String uri) {
         KOODISTO_VALINTAKOE_TYYPPI_URI = uri;
     }
 
-    @Value("${koodisto-uris.hakutyyppi:NOT_SET_hakutyyppi}")
+    @Value("${koodisto-uris.hakutyyppi}")
     public void setKoodistoHakutyyppiUri(String uri) {
         KOODISTO_HAKUTYYPPI_URI = uri;
     }
 
-    @Value("${koodisto-uris.kieli:NOT_SET_kieli}")
+    @Value("${koodisto-uris.kieli}")
     public void setKoodistoKieliUri(String uri) {
         KOODISTO_KIELI_URI = uri;
     }
 
-    @Value("${koodisto-uris.hakutapa:NOT_SET_hakutapa}")
+    @Value("${koodisto-uris.hakutapa}")
     public void setKoodistoHakutapaUri(String uri) {
         KOODISTO_HAKUTAPA_URI = uri;
     }
 
-    @Value("${koodisto-uris.haunKohdejoukko:NOT_SET_haunKohdejoukko}")
+    @Value("${koodisto-uris.haunKohdejoukko}")
     public void setKoodistoHaunKohdejoukkoUri(String uri) {
         KOODISTO_HAUN_KOHDEJOUKKO_URI = uri;
     }
 
-    @Value("${koodisto-uris.koulutuksenAlkamiskausi:NOT_SET_koulutuksenAlkamiskausi}")
+    @Value("${koodisto-uris.koulutuksenAlkamiskausi}")
     public void setKoodistoKoulutuksenAlkamiskausiUri(String uri) {
         KOODISTO_KAUDEN_TARKENNE_URI = uri;
     }
 
-    @Value("${koodisto-uris.alkamiskausi:NOT_SET_alkamiskausi}")
+    @Value("${koodisto-uris.alkamiskausi}")
     public void setKoodistoAlkamiskausiUri(String uri) {
         KOODISTO_ALKAMISKAUSI_URI = uri;
     }
 
-    @Value("${koodisto-uris.oppilaitostyyppi:NOT_SET_oppilaitostyyppi}")
+    @Value("${koodisto-uris.oppilaitostyyppi}")
     public void setKoodistoOppilaitosTyyppiUri(String uri) {
         KOODISTO_OPPILAITOSTYYPPI_URI = uri;
     }
 
-    @Value("${koodisto-uris.hakukelpoisuusVaatimukset:NOT_SET_hakukelpoisuusVaatimukset}")
+    @Value("${koodisto-uris.hakukelpoisuusVaatimukset}")
     public void setKoodistoHakukelpoisuusVaatimuksetUri(String uri) {
         KOODISTO_HAKUKELPOISUUS_VAATIMUKSET_URI = uri;
     }
 
-    @Value("${koodisto-uris.hakukohde:NOT_SET_hakukohde}")
+    @Value("${koodisto-uris.hakukohde}")
     public void setKoodistoHakukohdeUri(String uri) {
         KOODISTO_HAKUKOHDE_URI = uri;
     }
 
-    @Value("${koodisto-uris.suunniteltuKesto:NOT_SET_suunniteltuKesto}")
+    @Value("${koodisto-uris.suunniteltuKesto}")
     public void setKoodistoSuunniteltuKestoUri(String uri) {
         KOODISTO_SUUNNITELTU_KESTO_URI = uri;
     }
 
-    @Value("${koodisto-uris.opetusmuoto:NOT_SET_opetusmuoto}")
+    @Value("${koodisto-uris.opetusmuoto}")
     public void setKoodistoOpetusmuotoUri(String uri) {
         KOODISTO_OPETUSMUOTO_URI = uri;
     }
 
-    @Value("${koodisto-uris.koulutuslaji:NOT_SET_koulutuslaji}")
+    @Value("${koodisto-uris.koulutuslaji}")
     public void setKoodistoKoulutuslajiUri(String uri) {
         KOODISTO_KOULUTUSLAJI_URI = uri;
     }
 
-    @Value("${koodisto-uris.avainsanat:NOT_SET_avainsanat}")
+    @Value("${koodisto-uris.avainsanat}")
     public void setKoodistoAvainsanatUri(String uri) {
         KOODISTO_AVAINSANAT_URI = uri;
     }
 
-    @Value("${koodisto-uris.kielivalikoima:NOT_SET_kielivalikoima}")
+    @Value("${koodisto-uris.kielivalikoima}")
     public void setKoodistoKielivalikoimaUri(String uri) {
         KOODISTO_KIELIVALIKOIMA_URI = uri;
     }
 
-    @Value("${koodisto-uris.ammattinimikkeet:NOT_SET_ammattinimikkeet}")
+    @Value("${koodisto-uris.ammattinimikkeet}")
     public void setAmmattinimikkeetUri(String uri) {
         KOODISTO_AMMATTINIMIKKEET_URI = uri;
     }
@@ -184,108 +184,107 @@ public class KoodistoURIHelper {
      * KOMO URIs
      *
      */
-    @Value("${koodisto-uris.tutkinto:NOT_SET_tutkinto}")
+    @Value("${koodisto-uris.tutkinto}")
     public void setKoodistoTutkintoUri(String uri) {
         KOODISTO_TUTKINTO_URI = uri;
     }
 
-    @Value("${koodisto-uris.koulutusohjelma:NOT_SET_koulutusohjelma}")
+    @Value("${koodisto-uris.koulutusohjelma}")
     public void setKoodistoKoulutusohjelmaUri(String uri) {
         KOODISTO_KOULUTUSOHJELMA_URI = uri;
     }
 
-    @Value("${koodisto-uris.koulutusaste:NOT_SET_koulutusaste}")
+    @Value("${koodisto-uris.koulutusaste}")
     public void setKoodistoasteUri(String uri) {
         KOODISTO_KOULUTUSASTE_URI = uri;
     }
 
-    @Value("${koodisto-uris.koulutusala:NOT_SET_koulutusala}")
+    @Value("${koodisto-uris.koulutusala}")
     public void setKoulutusalaUri(String uri) {
         KOODISTO_KOULUTUSALA_URI = uri;
     }
 
-    @Value("${koodisto-uris.tutkintonimike:NOT_SET_tutkintonimike}")
+    @Value("${koodisto-uris.tutkintonimike}")
     public void setTutkintonimikeUri(String uri) {
         KOODISTO_TUTKINTONIMIKE_URI = uri;
     }
 
-    @Value("${koodisto-uris.koulutuksenRakenne:NOT_SET_koulutuksenRakenne}")
+    @Value("${koodisto-uris.koulutuksenRakenne}")
     public void setKoulutuksenRakenneUri(String uri) {
         KOODISTO_KOULUTUKSEN_RAKENNE_URI = uri;
     }
 
-    @Value("${koodisto-uris.opintoala:NOT_SET_opintoala}")
+    @Value("${koodisto-uris.opintoala}")
     public void setOpintoalaUri(String uri) {
         KOODISTO_OPINTOALA_URI = uri;
     }
 
-    @Value("${koodisto-uris.opintojenLaajuus:NOT_SET_opintojenLaajuus}")
+    @Value("${koodisto-uris.opintojenLaajuus}")
     public void setOpintojenLaajuusUri(String uri) {
         KOODISTO_OPINTOJEN_LAAJUUS_URI = uri;
     }
 
-    @Value("${koodisto-uris.opintojenLaajuusyksikko:NOT_SET_opintojenLaajuusyksikko}")
+    @Value("${koodisto-uris.opintojenLaajuusyksikko}")
     public void setOpintojenLaajuusyksikkoUri(String uri) {
         KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI = uri;
     }
 
-    @Value("${koodisto-uris.tavoitteet:NOT_SET_tavoitteet}")
+    @Value("${koodisto-uris.tavoitteet}")
     public void setOpintojenTavoitteetUri(String uri) {
         KOODISTO_TAVOITTEET_URI = uri;
     }
 
-    @Value("${koodisto-uris.jatkoopintomahdollisuudet:NOT_SET_jatkoopintomahdollisuudet}")
+    @Value("${koodisto-uris.jatkoopintomahdollisuudet}")
     public void setOpintojenJatkoopintomahdollisuudetUri(String uri) {
         KOODISTO_JATKOOPINTOMAHDOLLISUUDET_URI = uri;
     }
 
-    @Value("${koodisto-uris.pohjakoulutusvaatimus:NOT_SET_pohjakoulutusvaatimus}")
+    @Value("${koodisto-uris.pohjakoulutusvaatimus}")
     public void setPohjakoulutusvaatimuksetUri(String uri) {
         KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI = uri;
     }
 
-    @Value("${koodisto-uris.postinumero:NOT_SET_postinumero}")
+    @Value("${koodisto-uris.postinumero}")
     public void setPostinumero(String postinumero) {
         KOODISTO_POSTINUMERO_URI = postinumero;
     }
 
-    @Value("${koodisto-uris.liitteentyyppi:NOT_SET_liitteentyyppi}")
+    @Value("${koodisto-uris.liitteentyyppi}")
     public void setLiitteenTyyppi(String liitteenTyyppi) {
         KOODISTO_LIITTEEN_TYYPPI_URI = liitteenTyyppi;
     }
 
-    @Value("${koodisto-uris.valintaperustekuvausryhma:NOT_SET_valintaperustekuvausryhma}")
+    @Value("${koodisto-uris.valintaperustekuvausryhma}")
     public void setValintaperustekuvausryhma(String valintaperustekuvausryhma) {
         KOODISTO_VALINTAPERUSTEKUVAUSRYHMA_URI = valintaperustekuvausryhma;
     }
 
-    @Value("${koodisto-uris.sorakuvausryhma:NOT_SET_sorakuvausryhma}")
+    @Value("${koodisto-uris.sorakuvausryhma}")
     public void setSoraKuvausryhma(String soraKuvausryhma) {
         KOODISTO_SORA_KUVAUSRYHMA_URI = soraKuvausryhma;
     }
 
-    @Value("${koodisto-uris.lukiolinja:NOT_SET_lukiolinja}")
+    @Value("${koodisto-uris.lukiolinja}")
     public void setLukiolinja(String lukiolinja) {
         KOODISTO_LUKIOLINJA_URI = lukiolinja;
     }
 
-    @Value("${koodi-uri.lukio.pohjakoulutusvaatimus:NOT_SET_pohjakoulutusvaatimus}")
+    @Value("${koodi-uri.lukio.pohjakoulutusvaatimus}")
     public void setLukioKoodiPohjakoulutusvaatimus(String pohjakoulutusvaatimus) {
         LUKIO_KOODI_POHJAKOULUTUSVAATIMUS_URI = pohjakoulutusvaatimus;
     }
 
-    @Value("${koodi-uri.lukio.kolutuslaji:NOT_SET_kolutuslaji}")
+    @Value("${koodi-uri.lukio.kolutuslaji}")
     public void setLukioKoodiKoulutuslaji(String koulutuslaji) {
         LUKIO_KOODI_KOULUTUSLAJI_URI = koulutuslaji;
     }
 
-    @Value("${koodisto-uris.oppiaineet:NOT_SET_oppiaineet}")
+    @Value("${koodisto-uris.oppiaineet}")
     public void setOppiaineet(String oppiaineet) {
         KOODISTO_OPPIAINEET_URI = oppiaineet;
     }
 
-
-    @Value("${koodisto-uris.lukiodiplomit:NOT_SET_lukiodiplomit}")
+    @Value("${koodisto-uris.lukiodiplomit}")
     public void setLukiodiplomit(String lukiodiplomit) {
         KOODISTO_LUKIODIPLOMIT_URI = lukiodiplomit;
     }

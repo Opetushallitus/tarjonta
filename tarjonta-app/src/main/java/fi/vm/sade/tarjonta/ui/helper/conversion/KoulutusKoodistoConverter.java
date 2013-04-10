@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
+import com.google.common.base.Preconditions;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
@@ -83,6 +84,8 @@ public class KoulutusKoodistoConverter {
     public List<KoulutusohjelmaModel> listaaKoulutusohjelmas(final List<KoulutusmoduuliKoosteTyyppi> komos, final Locale locale) {
         LOG.debug(KoodistoURIHelper.KOODISTO_KOULUTUSOHJELMA_URI);
 
+        Preconditions.checkNotNull(komos, "List of KoulutusmoduuliKoosteTyyppi object cannot be null.");
+            
         List<String> listKoodiUris = new ArrayList<String>();
         for (KoulutusmoduuliKoosteTyyppi t : komos) {
             listKoodiUris.add(TarjontaUIHelper.splitKoodiURI(t.getKoulutusohjelmakoodiUri())[0]);

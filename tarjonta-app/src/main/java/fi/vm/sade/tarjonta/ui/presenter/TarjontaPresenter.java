@@ -1540,7 +1540,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public void loadKoulutuskoodit() {
         HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
         kysely.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
-        kysely.getOppilaitostyyppiUris().addAll(getOppilaitostyyppiUris());
+        //TODO: fix this
+        //kysely.getOppilaitostyyppiUris().addAll(getOppilaitostyyppiUris());
         HaeKaikkiKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit = getTarjontaPublicService().haeKaikkiKoulutusmoduulit(kysely);
         List<KoulutusmoduuliTulos> koulutusmoduuliTulos = haeKaikkiKoulutusmoduulit.getKoulutusmoduuliTulos();
 
@@ -1556,14 +1557,16 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
         model.setKomos(komos);
         model.createCacheKomos(); //cache komos to map object
-        model.getKoulutuskoodit().clear();
+
+
         //koodisto service search result remapped to UI model objects.
         List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukses(uris, I18N.getLocale());
-
         Collections.sort(listaaKoulutuskoodit, new BeanComparator("nimi"));
+
+        model.getKoulutuskoodit().clear();
         model.getKoulutuskoodit().addAll(listaaKoulutuskoodit);
     }
-    
+
     /*
      * Retrieves the list of (koodisto) oppilaitostyyppi uri's matching the currently selected organisaatio.
      */
@@ -1643,7 +1646,10 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         //Select 'koulutusohjelma' from pre-filtered koodisto data.
         if (model.getKoulutuskoodiModel() != null && model.getKoulutuskoodiModel().getKoodi() != null) {
             model.getKoulutusohjelmat().clear();
-            List<KoulutusmoduuliKoosteTyyppi> tyyppis = model.getQuickKomosByKoulutuskoodiUri(model.getKoulutuskoodiModel().getKoodistoUriVersio());
+            final String koulutuskoodiUri = model.getKoulutuskoodiModel().getKoodistoUriVersio();
+
+            LOG.debug("Find koulutusohjelma by koulutuskoodi uri : '{}'", koulutuskoodiUri);
+            List<KoulutusmoduuliKoosteTyyppi> tyyppis = model.getQuickKomosByKoulutuskoodiUri(koulutuskoodiUri);
             List<KoulutusohjelmaModel> listaaKoulutusohjelmat = kolutusKoodistoConverter.listaaKoulutusohjelmas(tyyppis, I18N.getLocale());
 
             Collections.sort(listaaKoulutusohjelmat, new BeanComparator("nimi"));
