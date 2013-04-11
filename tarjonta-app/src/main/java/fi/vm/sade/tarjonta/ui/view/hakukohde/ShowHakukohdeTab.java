@@ -614,7 +614,7 @@ public class ShowHakukohdeTab extends CustomComponent {
         parent.addComponent(split);
     }
 
-    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, boolean hide) {
+    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, boolean showButton) {
         HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         Label titleLabel = UiUtil.label(headerLayout, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
@@ -623,6 +623,7 @@ public class ShowHakukohdeTab extends CustomComponent {
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);
             Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener);
+            btn.setVisible(showButton);
 
             // Add default click listener so that we can show that action has not been implemented as of yet
             if (listener == null) {
