@@ -38,7 +38,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private List<ValintakoeViewModel> valintaKokees;
     private List<PainotettavaOppiaineViewModel> painotettavat = Lists.newArrayList();
     private HakukohdeNameUriModel selectedHakukohdeNimi;
-    private BigDecimal alinHyvaksyttavaKeskiarvo;
+    private String alinHyvaksyttavaKeskiarvo;
 
 
     public List<PainotettavaOppiaineViewModel> getPainotettavat() {
@@ -49,7 +49,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         this.painotettavat = painotettavat;
     }
 
-    public BigDecimal getAlinHyvaksyttavaKeskiarvo() {
+    public String getAlinHyvaksyttavaKeskiarvo() {
         return alinHyvaksyttavaKeskiarvo;
     }
 
@@ -337,7 +337,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
         this.painotettavat.add(painotettava);
     }
 
-    public void setAlinHyvaksyttavaKeskiarvo(BigDecimal alinHyvaksyttavaKeskiarvo) {
+    public void setAlinHyvaksyttavaKeskiarvo(String alinHyvaksyttavaKeskiarvo) {
         this.alinHyvaksyttavaKeskiarvo = alinHyvaksyttavaKeskiarvo;
     }
 

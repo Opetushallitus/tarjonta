@@ -25,6 +25,8 @@ import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.oid.service.OIDService;
@@ -45,6 +47,7 @@ public class HakukohdeViewModelToDTOConverter {
     @Autowired(required = true)
     private OIDService oidService;
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(HakukohdeViewModelToDTOConverter.class);
+    private static final String NUMBER_FORMAT = "#.##";
 
     public HakukohdeTyyppi convertHakukohdeViewModelToDTO(HakukohdeViewModel hakukohdevm) {
         HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
@@ -90,7 +93,7 @@ public class HakukohdeViewModelToDTOConverter {
         }
 
         //alin hyväksyttävä keskiarvo
-        hakukohde.setAlinHyvaksyttavaKeskiarvo(hakukohdevm.getAlinHyvaksyttavaKeskiarvo());
+        hakukohde.setAlinHyvaksyttavaKeskiarvo(new BigDecimal(hakukohdevm.getAlinHyvaksyttavaKeskiarvo()));
         
         //painotettavat oppiaineet
         for (PainotettavaOppiaineViewModel painotettava : hakukohdevm.getPainotettavat()) {
@@ -169,7 +172,7 @@ public class HakukohdeViewModelToDTOConverter {
         }
 
         //alin hyväksyttava keskiarvo
-        hakukohdeVM.setAlinHyvaksyttavaKeskiarvo(hakukohdeTyyppi.getAlinHyvaksyttavaKeskiarvo());
+        hakukohdeVM.setAlinHyvaksyttavaKeskiarvo(new DecimalFormat(NUMBER_FORMAT).format(hakukohdeTyyppi.getAlinHyvaksyttavaKeskiarvo()));
 
         return hakukohdeVM;
     }

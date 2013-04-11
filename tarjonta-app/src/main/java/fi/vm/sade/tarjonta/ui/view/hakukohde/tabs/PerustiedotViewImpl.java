@@ -31,6 +31,8 @@ import com.vaadin.data.validator.IntegerValidator;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
+import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
@@ -62,10 +64,7 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
@@ -713,7 +712,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             hakukohde.setHakukohdeUri(koodiType.getKoodiUri());
             hakukohde.setUriVersio(koodiType.getVersio());
             if (koodiType.getMetadata() != null) {
-            hakukohde.setHakukohdeNimi(koodiType.getMetadata().get(0).getNimi());
+            hakukohde.setHakukohdeNimi(getLocalizedKoodiNimi(koodiType));
             }
             hakukohdes.add(hakukohde);
         }
@@ -724,6 +723,21 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
 
         return hakukohteenNimiCombo;
+    }
+
+    private String getLocalizedKoodiNimi(KoodiType koodi) {
+        String koodiNimi = "";
+        String lang = I18N.getLocale().getLanguage();
+        for (KoodiMetadataType meta:koodi.getMetadata()) {
+            if (lang.trim().equalsIgnoreCase("fi") && meta.getKieli().equals(KieliType.FI)) {
+                  return meta.getNimi();
+            } else if (lang.trim().equalsIgnoreCase("sv") && meta.getKieli().equals(KieliType.SV)) {
+                return meta.getNimi();
+            } else if (lang.trim().equalsIgnoreCase("en") && meta.getKieli().equals(KieliType.EN)) {
+                return meta.getNimi();
+            }
+        }
+        return koodiNimi;
     }
 
     /*

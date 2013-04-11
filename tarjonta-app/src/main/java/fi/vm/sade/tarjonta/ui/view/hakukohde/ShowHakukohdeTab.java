@@ -1,5 +1,7 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -454,7 +456,7 @@ public class ShowHakukohdeTab extends CustomComponent {
         return rows;
     }
 
-    private void buildPerustiedotLayout(VerticalLayout layout) {
+    private void  buildPerustiedotLayout(VerticalLayout layout) {
         VerticalLayout hdrLayout = new VerticalLayout();
         hdrLayout.setMargin(true);
 
@@ -478,7 +480,7 @@ public class ShowHakukohdeTab extends CustomComponent {
         addItemToGrid(grid,"valinnoissaKaytettavatAloituspaikat",new Integer(presenter.getModel().getHakukohde().getValinnoissaKaytettavatPaikat()).toString());
         if (checkLukioKoulutus()) {
 
-            addItemToGrid(grid,"alinHyvaksyttyvaKeskiarvo",presenter.getModel().getHakukohde().getAlinHyvaksyttavaKeskiarvo().toString());
+            addItemToGrid(grid,"alinHyvaksyttyvaKeskiarvo",presenter.getModel().getHakukohde().getAlinHyvaksyttavaKeskiarvo());
             addItemToGrid(grid,"painotettavatOppiaineet",getHakukohdeOppiaineet());
 
         }
