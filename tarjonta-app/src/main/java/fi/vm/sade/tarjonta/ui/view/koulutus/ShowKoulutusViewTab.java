@@ -121,7 +121,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
         insertKoulutuksenHakukohteet(layout);
     }
 
-    private AbstractComponent buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, boolean hide, boolean showTime) {
+    private AbstractComponent buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, boolean buttonVisible, boolean showTime) {
         VerticalLayout vl = new VerticalLayout();
         final GridLayout grid = new GridLayout(showTime ? 3 : 2, 1);
         grid.setWidth("100%");
@@ -141,6 +141,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
 
         if (btnCaption != null) {
             Button button = UiBuilder.buttonSmallPrimary(grid, btnCaption, listener);
+            button.setVisible(buttonVisible);
 
             // Add default click listener so that we can show that action has not been implemented as of yet
             if (listener == null) {
