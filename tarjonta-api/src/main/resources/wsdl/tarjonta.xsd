@@ -208,6 +208,16 @@
                         type="tns:KoulutusasteTyyppi"
                         minOccurs="0"
                         maxOccurs="1"/>
+
+            <xs:element name="viimeisinPaivittajaOid"
+                        type="xs:string"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+
+            <xs:element name="viimeisinPaivitysPvm"
+                        type="xs:dateTime"
+                        minOccurs="0"
+                        maxOccurs="1"/>
         
         </xs:sequence>
     </xs:complexType>
@@ -221,6 +231,15 @@
             <xs:element minOccurs="1" maxOccurs="1" name="liitteenToimitusOsoite" type="tns:OsoiteTyyppi"/>
             <xs:element minOccurs="0" maxOccurs="1" name="sahkoinenToimitusOsoite" type="xs:string"/>
             <xs:element minOccurs="0" maxOccurs="1" name="liitteenTyyppiKoodistoNimi" type="xs:string"/>
+            <xs:element name="viimeisinPaivittajaOid"
+                        type="xs:string"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+
+            <xs:element name="viimeisinPaivitysPvm"
+                        type="xs:dateTime"
+                        minOccurs="0"
+                        maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -412,7 +431,16 @@
                 </xs:annotation>
             </xs:element>
             <xs:element name="pisterajat" type="tns:PisterajaTyyppi" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="lisaNaytot" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/> 
+            <xs:element name="lisaNaytot" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="viimeisinPaivittajaOid"
+                        type="xs:string"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+
+            <xs:element name="viimeisinPaivitysPvm"
+                        type="xs:dateTime"
+                        minOccurs="0"
+                        maxOccurs="1"/>
         </xs:sequence>
 
     </xs:complexType>
@@ -570,6 +598,16 @@
                     <xs:documentation>Ulkoinen tunniste</xs:documentation>
                 </xs:annotation>
             </xs:element>
+
+            <xs:element name="viimeisinPaivittajaOid"
+                        type="xs:string"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+
+            <xs:element name="viimeisinPaivitysPvm"
+                        type="xs:dateTime"
+                        minOccurs="0"
+                        maxOccurs="1"/>
            
         </xs:sequence>
     </xs:complexType>
@@ -705,6 +743,16 @@
             <xs:element name="B2Kieli" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="B3Kieli" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="MuutKielet" type="tns:KoodistoKoodiTyyppi" minOccurs="0" maxOccurs="unbounded"/>
+
+            <xs:element name="viimeisinPaivittajaOid"
+                        type="xs:string"
+                        minOccurs="0"
+                        maxOccurs="1"/>
+
+            <xs:element name="viimeisinPaivitysPvm"
+                        type="xs:dateTime"
+                        minOccurs="0"
+                        maxOccurs="1"/>
             
         </xs:sequence>
     </xs:group>
