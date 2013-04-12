@@ -39,6 +39,8 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private List<PainotettavaOppiaineViewModel> painotettavat = Lists.newArrayList();
     private HakukohdeNameUriModel selectedHakukohdeNimi;
     private String alinHyvaksyttavaKeskiarvo;
+    private String viimeisinPaivittaja;
+    private Date viimeisinPaivitysPvm;
 
 
     public List<PainotettavaOppiaineViewModel> getPainotettavat() {
@@ -355,4 +357,19 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     }
 
 
+    public String getViimeisinPaivittaja() {
+        return viimeisinPaivittaja;
+    }
+
+    public void setViimeisinPaivittaja(String viimeisinPaivittaja) {
+        this.viimeisinPaivittaja = viimeisinPaivittaja;
+    }
+
+    public Date getViimeisinPaivitysPvm() {
+        return viimeisinPaivitysPvm;
+    }
+
+    public void setViimeisinPaivitysPvm(Date viimeisinPaivitysPvm) {
+        this.viimeisinPaivitysPvm = viimeisinPaivitysPvm;
+    }
 }

@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.ui.presenter;
 
 import com.google.common.base.Preconditions;
+import fi.vm.sade.generic.ui.feature.UserFeature;
+import fi.vm.sade.generic.ui.portlet.security.User;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.model.org.NavigationModel;
 import fi.vm.sade.tarjonta.ui.model.org.TarjoajaModel;
@@ -156,13 +158,14 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
         //checkHakuLiitetoimitusPvm();
-
+        User usr = UserFeature.get();
         if (getModel().getHakukohde().getOid() == null) {
 
             LOG.debug(getModel().getHakukohde().getHakukohdeNimi() + ", " + getModel().getHakukohde().getHakukohdeKoodistoNimi());
 
             HakukohdeTyyppi hakukohdeTyyppi = hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde());
             getModel().getHakukohde().setOid(hakukohdeTyyppi.getOid());
+
 
             KoodiUriAndVersioType uriType = TarjontaUIHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(getModel().getHakukohde().getHakukohdeNimi());
             List<KoodiType> listKoodiByRelation = getKoodiService().listKoodiByRelation(uriType, true, SuhteenTyyppiType.SISALTYY);
@@ -180,6 +183,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             HakukohdeTyyppi fresh = getTarjontaAdminService().lisaaHakukohde(hakukohdeTyyppi);
             //TODO copy this fresh dto to model;
         } else {
+
             HakukohdeTyyppi fresh = getTarjontaAdminService().paivitaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
             //TODO copy this fresh dto to model;
         }

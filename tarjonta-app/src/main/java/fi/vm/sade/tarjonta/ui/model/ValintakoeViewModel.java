@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.ui.model;/*
  */
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,6 +42,9 @@ public class ValintakoeViewModel {
     private String lpYlinPM;
     private String lpAlinHyvaksyttyPM;
     private String kpAlinHyvaksyttyPM;
+
+    private String viimeisinPaivittaja;
+    private Date viimeisinPaivitysPvm;
     
     private List<KielikaannosViewModel> lisanayttoKuvaukset;
 
@@ -172,5 +176,21 @@ public class ValintakoeViewModel {
 
     public void setKpAlinHyvaksyttyPM(String aliHyvaksyttyPM) {
         this.kpAlinHyvaksyttyPM = aliHyvaksyttyPM;
+    }
+
+    public String getViimeisinPaivittaja() {
+        return viimeisinPaivittaja;
+    }
+
+    public void setViimeisinPaivittaja(String viimeisinPaivittaja) {
+        this.viimeisinPaivittaja = viimeisinPaivittaja;
+    }
+
+    public Date getViimeisinPaivitysPvm() {
+        return viimeisinPaivitysPvm;
+    }
+
+    public void setViimeisinPaivitysPvm(Date viimeisinPaivitysPvm) {
+        this.viimeisinPaivitysPvm = viimeisinPaivitysPvm;
     }
 }

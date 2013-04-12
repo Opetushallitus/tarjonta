@@ -15,6 +15,7 @@ package fi.vm.sade.tarjonta.ui.helper.conversion;/*
  * European Union Public Licence for more details.
  */
 
+import fi.vm.sade.generic.ui.feature.UserFeature;
 import fi.vm.sade.tarjonta.service.types.AjankohtaTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
@@ -45,6 +46,12 @@ public class ValintakoeConverter {
         valintakoeViewModel.setLisanayttoKuvaukset(ConversionUtils.convertTekstiToVM(valintakoeTyyppi.getLisaNaytot()));
 
         valintakoeViewModel.setValintakoeAjat(mapAjat(valintakoeTyyppi.getAjankohdat()));
+        if (valintakoeTyyppi.getViimeisinPaivittajaOid() !=null) {
+            valintakoeViewModel.setViimeisinPaivittaja(valintakoeTyyppi.getViimeisinPaivittajaOid());
+        }
+        if (valintakoeTyyppi.getViimeisinPaivitysPvm() != null) {
+            valintakoeViewModel.setViimeisinPaivitysPvm(valintakoeTyyppi.getViimeisinPaivitysPvm());
+        }
 
         return valintakoeViewModel;
     }
@@ -107,6 +114,7 @@ public class ValintakoeConverter {
         valintakoeTyyppi.getAjankohdat().addAll(mapAjankohdat(valintakoeViewModel.getValintakoeAjat()));
         valintakoeTyyppi.getPisterajat().addAll(mapPisterajatToDTO(valintakoeViewModel));
         valintakoeTyyppi.setLisaNaytot(ConversionUtils.convertKielikaannosToMonikielinenTeksti(valintakoeViewModel.getLisanayttoKuvaukset()));
+        valintakoeTyyppi.setViimeisinPaivittajaOid(UserFeature.get().getOid());
 
         return valintakoeTyyppi;
     }

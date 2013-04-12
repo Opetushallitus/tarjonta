@@ -20,6 +20,7 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
  * Created by: Tuomas Katva
  * Date: 17.1.2013
  */
+
 public class HakukohdeLiiteTyyppiToViewModelConverter {
 
 
@@ -41,6 +43,12 @@ public class HakukohdeLiiteTyyppiToViewModelConverter {
           liiteViewModel.setSahkoinenToimitusOsoite(hakukohdeLiiteTyyppi.getSahkoinenToimitusOsoite());
           mapOsoite(liiteViewModel,hakukohdeLiiteTyyppi.getLiitteenToimitusOsoite());
           liiteViewModel.getLiitteenSanallinenKuvaus().addAll(mapSanallisetKuvaukset(hakukohdeLiiteTyyppi.getLiitteenKuvaus()));
+          if (hakukohdeLiiteTyyppi.getViimeisinPaivitysPvm() !=null) {
+               liiteViewModel.setViimeisinPaivitysPvm(hakukohdeLiiteTyyppi.getViimeisinPaivitysPvm());
+          }
+          if (hakukohdeLiiteTyyppi.getViimeisinPaivittajaOid() != null) {
+              liiteViewModel.setViimeisinPaivittaja(hakukohdeLiiteTyyppi.getViimeisinPaivittajaOid());
+          }
 
           return liiteViewModel;
       }

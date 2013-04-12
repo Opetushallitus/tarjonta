@@ -16,6 +16,8 @@
  */
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
+import fi.vm.sade.generic.ui.feature.UserFeature;
+import fi.vm.sade.generic.ui.portlet.security.User;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
@@ -51,6 +53,8 @@ public class HakukohdeViewModelToDTOConverter {
 
     public HakukohdeTyyppi convertHakukohdeViewModelToDTO(HakukohdeViewModel hakukohdevm) {
         HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
+        User usr = UserFeature.get();
+        hakukohde.setViimeisinPaivittajaOid(usr.getOid());
 
         hakukohde.setAloituspaikat(hakukohdevm.getAloitusPaikat());
         hakukohde.setHakukelpoisuusVaatimukset(hakukohdevm.getHakukelpoisuusVaatimus());
@@ -156,6 +160,16 @@ public class HakukohdeViewModelToDTOConverter {
             hakukohdeVM.setPostitoimipaikka(hakukohdeTyyppi.getLiitteidenToimitusOsoite().getPostitoimipaikka());
         }
 
+        if (hakukohdeTyyppi.getViimeisinPaivittajaOid() != null) {
+
+        }
+
+        if (hakukohdeTyyppi.getViimeisinPaivittajaOid() != null) {
+            hakukohdeVM.setViimeisinPaivittaja(hakukohdeTyyppi.getViimeisinPaivittajaOid());
+        }
+        if (hakukohdeTyyppi.getViimeisinPaivitysPvm() != null) {
+            hakukohdeVM.setViimeisinPaivitysPvm(hakukohdeTyyppi.getViimeisinPaivitysPvm());
+        }
         //painotettavat oppiaineet
         int visible = hakukohdeTyyppi.getPainotettavatOppiaineet()!=null?hakukohdeTyyppi.getPainotettavatOppiaineet().size():0;
 

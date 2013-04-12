@@ -51,6 +51,11 @@ public class HakukohdeLiiteViewModel {
 
     private String sahkoinenToimitusOsoite;
 
+    private String viimeisinPaivittaja;
+
+    private Date viimeisinPaivitysPvm;
+
+
 
     public String getLiitteenTyyppi() {
         return liitteenTyyppi;
@@ -164,5 +169,21 @@ public class HakukohdeLiiteViewModel {
 
     public void setToimitusOsoiteConcat(String toimitusOsoiteConcat) {
         this.toimitusOsoiteConcat = toimitusOsoiteConcat;
+    }
+
+    public String getViimeisinPaivittaja() {
+        return viimeisinPaivittaja;
+    }
+
+    public void setViimeisinPaivittaja(String viimeisinPaivittaja) {
+        this.viimeisinPaivittaja = viimeisinPaivittaja;
+    }
+
+    public Date getViimeisinPaivitysPvm() {
+        return viimeisinPaivitysPvm;
+    }
+
+    public void setViimeisinPaivitysPvm(Date viimeisinPaivitysPvm) {
+        this.viimeisinPaivitysPvm = viimeisinPaivitysPvm;
     }
 }
