@@ -29,15 +29,9 @@ import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import java.util.*;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -145,6 +139,10 @@ public final class EntityUtils {
         }
         to.setYhteyshenkilos(yhteyshenkilos);
 
+        Date today = Calendar.getInstance().getTime();
+        to.setLastUpdateDate(today);
+        to.setLastUpdatedByOid(from.getViimeisinPaivittajaOid());
+
         copyLisatiedotFields(from, to);
     }
 
@@ -187,6 +185,8 @@ public final class EntityUtils {
         } // else, set is empty which will clear all previous links
         toKoulutus.setLinkkis(toLinkkis);
 
+        toKoulutus.setLastUpdatedByOid(fromKoulutus.getViimeisinPaivittajaOid());
+        toKoulutus.setLastUpdateDate(Calendar.getInstance().getTime());
     }
 
     /**

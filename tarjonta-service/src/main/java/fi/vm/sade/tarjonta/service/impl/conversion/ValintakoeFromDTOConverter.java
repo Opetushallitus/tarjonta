@@ -23,10 +23,7 @@ import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.types.PisterajaTyyppi;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by: Tuomas Katva
@@ -54,6 +51,12 @@ public class ValintakoeFromDTOConverter extends AbstractToDomainConverter<Valint
         if (valintakoeTyyppi.getPisterajat() != null) {
             valintakoe.setPisterajat(convertPisterajat(valintakoeTyyppi.getPisterajat()));
         }
+
+        if (valintakoeTyyppi.getViimeisinPaivittajaOid() != null) {
+            valintakoe.setLastUpdatedByOid(valintakoeTyyppi.getViimeisinPaivittajaOid());
+        }
+
+        valintakoe.setLastUpdateDate(Calendar.getInstance().getTime());
 
         return valintakoe;
     }

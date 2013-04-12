@@ -146,8 +146,13 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @CollectionTable(name = TABLE_NAME + "_lukiodiplomi", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> lukiodiplomit = new HashSet<KoodistoUri>();
-    
-    
+
+    @Column(name="viimPaivitysPvm")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdateDate;
+    @Column(name="viimPaivittajaOid")
+    private String lastUpdatedByOid;
+
 
     public KoulutusmoduuliToteutus() {
         super();
@@ -671,5 +676,21 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void removeLukiodiplomi(KoodistoUri lukiodiplomi) {
         lukiodiplomit.remove(lukiodiplomi);
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public String getLastUpdatedByOid() {
+        return lastUpdatedByOid;
+    }
+
+    public void setLastUpdatedByOid(String lastUpdatedByOid) {
+        this.lastUpdatedByOid = lastUpdatedByOid;
     }
 }

@@ -47,6 +47,13 @@ public class HakukohdeLiiteToDTOConverter extends AbstractFromDomainConverter<Ha
         hakukohdeLiiteTyyppi.setSahkoinenToimitusOsoite(hakukohdeLiite.getSahkoinenToimitusosoite());
         hakukohdeLiiteTyyppi.setLiitteenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteTyyppi(hakukohdeLiite.getToimitusosoite()));
 
+        if (hakukohdeLiite.getLastUpdatedByOid() != null) {
+            hakukohdeLiiteTyyppi.setViimeisinPaivittajaOid(hakukohdeLiite.getLastUpdatedByOid());
+        }
+        if (hakukohdeLiite.getLastUpdateDate() != null) {
+            hakukohdeLiiteTyyppi.setViimeisinPaivitysPvm(hakukohdeLiite.getLastUpdateDate());
+        }
+
         return hakukohdeLiiteTyyppi;
     }
 

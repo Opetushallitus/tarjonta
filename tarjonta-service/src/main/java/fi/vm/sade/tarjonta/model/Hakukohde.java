@@ -95,7 +95,11 @@ public class Hakukohde extends BaseEntity {
     private String soraKuvausKoodiUri; //the koodi uri points to metadata
     @Column(name ="alinHyvaksyttavaKeskiarvo")
     private Double alinHyvaksyttavaKeskiarvo;
-    
+    @Column(name="viimPaivitysPvm")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdateDate;
+    @Column(name="viimPaivittajaOid")
+    private String lastUpdatedByOid;
 
     /**
      * @return the koulutuses
@@ -423,4 +427,19 @@ public class Hakukohde extends BaseEntity {
         this.painotettavatOppiaineet = painotettavatOppiaineet;
     }
 
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public String getLastUpdatedByOid() {
+        return lastUpdatedByOid;
+    }
+
+    public void setLastUpdatedByOid(String lastUpdatedByOid) {
+        this.lastUpdatedByOid = lastUpdatedByOid;
+    }
 }

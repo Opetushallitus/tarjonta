@@ -55,6 +55,12 @@ public class HakukohdeLiite extends BaseEntity {
 
     private String sahkoinenToimitusosoite;
 
+    @Column(name="viimPaivitysPvm")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdateDate;
+    @Column(name="viimPaivittajaOid")
+    private String lastUpdatedByOid;
+
 
     public Date getErapaiva() {
         return erapaiva;
@@ -110,6 +116,22 @@ public class HakukohdeLiite extends BaseEntity {
 
     public void setLiitteenTyyppiKoodistoNimi(String liitteenTyyppiKoodistoNimi) {
         this.liitteenTyyppiKoodistoNimi = liitteenTyyppiKoodistoNimi;
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public String getLastUpdatedByOid() {
+        return lastUpdatedByOid;
+    }
+
+    public void setLastUpdatedByOid(String lastUpdatedByOid) {
+        this.lastUpdatedByOid = lastUpdatedByOid;
     }
 }
 

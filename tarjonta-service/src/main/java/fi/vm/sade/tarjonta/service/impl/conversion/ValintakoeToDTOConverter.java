@@ -48,7 +48,13 @@ public class ValintakoeToDTOConverter extends AbstractFromDomainConverter<Valint
         }
         if (valintakoe.getPisterajat() != null) {
             valintakoeTyyppi.getPisterajat().addAll(convertPisterajat(valintakoe.getPisterajat()));
-        }     
+        }
+        if (valintakoe.getLastUpdateDate() != null) {
+            valintakoeTyyppi.setViimeisinPaivitysPvm(valintakoe.getLastUpdateDate());
+        }
+        if (valintakoe.getLastUpdatedByOid() != null) {
+            valintakoeTyyppi.setViimeisinPaivittajaOid(valintakoe.getLastUpdatedByOid());
+        }
         
         return valintakoeTyyppi;
     }

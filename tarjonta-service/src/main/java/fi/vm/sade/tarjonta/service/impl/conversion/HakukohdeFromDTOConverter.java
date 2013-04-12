@@ -22,6 +22,8 @@ import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
+
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +65,11 @@ public class HakukohdeFromDTOConverter extends AbstractToDomainConverter<Hakukoh
         if(from.getPainotettavatOppiaineet() != null) {
             hakukohde.getPainotettavatOppiaineet().addAll(convertPainotettavatOppiaineet(from.getPainotettavatOppiaineet()));
         }
+
+        if (from.getViimeisinPaivittajaOid() != null) {
+            hakukohde.setLastUpdatedByOid(from.getViimeisinPaivittajaOid());
+        }
+        hakukohde.setLastUpdateDate(Calendar.getInstance().getTime());
         
         return hakukohde;
     }

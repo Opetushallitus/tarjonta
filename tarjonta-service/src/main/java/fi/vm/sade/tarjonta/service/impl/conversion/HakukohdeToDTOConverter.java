@@ -64,7 +64,14 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         if (s.getPainotettavatOppiaineet() != null) {
         hakukohde.getPainotettavatOppiaineet().addAll(convertPainotettavatOppiaineet(s.getPainotettavatOppiaineet()));
         }
-        
+
+        if (s.getLastUpdatedByOid() != null) {
+            hakukohde.setViimeisinPaivittajaOid(s.getLastUpdatedByOid());
+        }
+        if (s.getLastUpdateDate() != null) {
+            hakukohde.setViimeisinPaivitysPvm(s.getLastUpdateDate());
+        }
+
         return hakukohde;
     }
     

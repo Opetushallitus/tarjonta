@@ -22,6 +22,8 @@ import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 
+import java.util.Calendar;
+
 /**
  * Created by: Tuomas Katva
  */
@@ -45,6 +47,12 @@ public class HakukohdeLiiteFromDTOConverter extends AbstractToDomainConverter<Ha
              hakukohdeLiite.setLiitetyyppi(hakukohdeLiiteTyyppi.getLiitteenTyyppi());
              hakukohdeLiite.setSahkoinenToimitusosoite(hakukohdeLiiteTyyppi.getSahkoinenToimitusOsoite());
              hakukohdeLiite.setToimitusosoite(CommonFromDTOConverter.convertOsoiteToOsoiteTyyppi(hakukohdeLiiteTyyppi.getLiitteenToimitusOsoite()));
+
+             if (hakukohdeLiiteTyyppi.getViimeisinPaivittajaOid() != null) {
+                 hakukohdeLiite.setLastUpdatedByOid(hakukohdeLiiteTyyppi.getViimeisinPaivittajaOid());
+             }
+
+             hakukohdeLiite.setLastUpdateDate(Calendar.getInstance().getTime());
 
              return hakukohdeLiite;
       }

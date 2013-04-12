@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
@@ -43,6 +44,13 @@ public class Valintakoe extends BaseEntity {
     private MonikielinenTeksti lisanaytot;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
+
+
+    @Column(name="viimPaivitysPvm")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdateDate;
+    @Column(name="viimPaivittajaOid")
+    private String lastUpdatedByOid;
     /**
      * Valintakokeen tyyppi. Koodisto uri.
      */
@@ -176,5 +184,21 @@ public class Valintakoe extends BaseEntity {
     public void setPisterajat(Set<Pisteraja> pisterajat) {
         this.pisterajat.clear();
         this.pisterajat = pisterajat;
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public String getLastUpdatedByOid() {
+        return lastUpdatedByOid;
+    }
+
+    public void setLastUpdatedByOid(String lastUpdatedByOid) {
+        this.lastUpdatedByOid = lastUpdatedByOid;
     }
 }
