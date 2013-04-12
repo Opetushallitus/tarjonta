@@ -23,6 +23,7 @@ import fi.vm.sade.tarjonta.data.loader.xls.KoodistoRelaatioExcelReader;
 import fi.vm.sade.tarjonta.data.util.CommonConstants;
 import fi.vm.sade.tarjonta.data.util.DataUtils;
 import fi.vm.sade.tarjonta.data.util.TarjontaDataKoodistoHelper;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,7 @@ public class UploadKoodistoData {
             final Set<KoodiRelaatio> koodiRelaatios = new HashSet<KoodiRelaatio>(relaatios);
             createKoodiRelations(koodiRelaatios);
         } else {
-            log.warn("No koodisto relations read from [{}]", pathToFile);
+            log.error("No koodisto relations read from [{}]", pathToFile);
         }
     }
 
@@ -94,15 +95,15 @@ public class UploadKoodistoData {
         final KoodistoType createdKoodisto = createKoodisto(koodistoRyhmaUri, koodistoNimi, orgOid);
         if (createdKoodisto != null) {
             final CommonKoodiData koodis = new CommonKoodiData(pathToExcel);
-            if (koodis != null && koodis.getLoadedKoodis() != null && koodis.getLoadedKoodis().size() > 0) {
+            if (koodis != null && CollectionUtils.isNotEmpty(koodis.getLoadedKoodis())) {
                 loadKoodisToKoodisto(koodis.getLoadedKoodis(), createdKoodisto.getKoodistoUri());
             } else {
-                log.warn("Loaded koodis was empty or null!");
+                log.error("Loaded koodis was empty or null!");
             }
 
             // change koodisto tila to HYVAKSYTTY: this should also approve all unapproved koodis in the koodisto
             // NOTE! takes a long time if there are lots of koodis
-            koodistoHelper.approveKoodisto(createdKoodisto);
+            //koodistoHelper.approveKoodisto(createdKoodisto);
         }
     }
 
