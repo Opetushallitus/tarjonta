@@ -67,7 +67,7 @@ public class KoodistoRelaatioExcelReader {
                     }
                 }
             } else {
-                for (int cellCount = 1; cellCount < headers.size(); cellCount++) {
+                alaArvos: for (int cellCount = 1; cellCount < headers.size(); cellCount++) {
                     // skip koodistos with "-1"
                     final String alaKoodistoUri = headers.get(cellCount);
                     if (!StringUtils.equals(alaKoodistoUri, "-1")) {
@@ -77,7 +77,11 @@ public class KoodistoRelaatioExcelReader {
                         if (ylaArvo != null && ylaArvo.trim().length() > 0) {
                             relaatio.setKoodiYlaArvo(ylaArvo);
                             relaatio.setAlaArvoKoodisto(alaKoodistoUri);
-                            relaatio.setKoodiAlaArvo(getCellValueAsString(currentRow.getCell(cellCount)));
+                            final String alaArvo = getCellValueAsString(currentRow.getCell(cellCount));
+                            if (alaArvo == null) {
+                                continue alaArvos;
+                            }
+                            relaatio.setKoodiAlaArvo(alaArvo);
                             if (StringUtils.containsIgnoreCase(pathToFile, "rinnastei")) {
                                 relaatio.setSuhteenTyyppi(SuhteenTyyppiType.RINNASTEINEN);
                             } else {

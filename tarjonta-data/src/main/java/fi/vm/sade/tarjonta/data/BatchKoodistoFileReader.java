@@ -137,9 +137,17 @@ public class BatchKoodistoFileReader {
             }
         } else if (StringUtils.containsIgnoreCase(file.getName(), "xls")) {
             if (StringUtils.containsIgnoreCase(file.getName(), "relaatio")) {
-                relaatioFiles.add(file);
+                if (StringUtils.containsIgnoreCase(file.getName(), "xlsx")) {
+                    log.warn("Skipping relaatio file [{}]: not in correct format", file.getAbsoluteFile());
+                } else {
+                    relaatioFiles.add(file);
+                }
             } else if (!StringUtils.containsIgnoreCase(file.getName(), "koodisto")) {
-                koodistoFiles.add(file);
+                if (StringUtils.containsIgnoreCase(file.getName(), "xlsx")) {
+                    log.warn("Skipping koodisto file [{}]: not in correct format", file.getAbsoluteFile());
+                } else {
+                    koodistoFiles.add(file);
+                }
             }
         }
     }

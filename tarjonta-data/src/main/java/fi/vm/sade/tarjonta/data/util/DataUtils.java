@@ -8,13 +8,18 @@ import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodistoMetadataType;
 import fi.vm.sade.tarjonta.data.dto.Koodi;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public final class DataUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataUtils.class);
     private static final String DATE_PATTERN = "dd.MM.yyyy";
+    private static final String ISO_DATE_PATTERN = "yyyy-MM-dd";
+    private static final String REGEX_ISO_DATE = "\\d{4}-\\d{2}-\\d{2}";
 
     private DataUtils() {
 
@@ -99,8 +104,7 @@ public final class DataUtils {
             metadataType.setKieli(KieliType.EN);
             koodiDataType.getMetadata().add(metadataType);
         }
-        koodiDataType.setVoimassaAlkuPvm(koodiData.getAlkuPvm() != null
-                ? DateHelper.DateToXmlCal(tryGetDate(koodiData.getAlkuPvm())) : DateHelper.DateToXmlCal(new Date()));
+        koodiDataType.setVoimassaAlkuPvm(DateHelper.DateToXmlCal(tryGetDate(koodiData.getAlkuPvm())));
         koodiDataType.setVoimassaLoppuPvm(koodiData.getLoppuPvm() != null
                 ? DateHelper.DateToXmlCal(tryGetDate(koodiData.getLoppuPvm())) : null);
 
@@ -108,11 +112,24 @@ public final class DataUtils {
     }
 
     private static Date tryGetDate(final String dateToParse) {
-        final SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
-        try {
-            return sdf.parse(dateToParse);
-        } catch (ParseException e) {
-            return null;
+        if (StringUtils.isNotBlank(dateToParse)) {
+            if (dateToParse.matches(REGEX_ISO_DATE)) {
+                final SimpleDateFormat sdf = new SimpleDateFormat(ISO_DATE_PATTERN);
+                try {
+                    return sdf.parse(dateToParse);
+                } catch (final ParseException e) {
+                    LOGGER.warn("Could not parse date [{}]", dateToParse);
+                }
+            } else {
+                final SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
+                try {
+                    return sdf.parse(dateToParse);
+                } catch (final ParseException e) {
+                    LOGGER.warn("Could not parse date [{}]", dateToParse);
+                }
+
+            }
         }
+        return new Date();
     }
 }
