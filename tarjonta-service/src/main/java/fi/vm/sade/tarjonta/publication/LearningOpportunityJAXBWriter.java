@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.publication;
 import fi.vm.sade.organisaatio.api.model.types.EmailDTO;
 import fi.vm.sade.organisaatio.api.model.types.HakutoimistoTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.KuvailevaTietoTyyppi;
+import fi.vm.sade.organisaatio.api.model.types.KuvailevaTietoTyyppiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
@@ -588,7 +589,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
                     if (dt != null) {
                         tdt = typedDescriptionType(kuvailevat, dt);
                         provider.getInstitutionInfo().getDescription().add(tdt);
-                    } else {
+                    } else if (!kuvailevat.getTyyppi().equals(KuvailevaTietoTyyppiTyyppi.TIETOA_ASUMISESTA)){
                         tdt = typedDescriptionType(kuvailevat, lopGeneralInformation(kuvailevat));
                         provider.getGeneralInformation().getDescription().add(tdt);
                     }
