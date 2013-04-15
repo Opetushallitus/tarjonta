@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -64,6 +65,8 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     private TarjontaUIHelper tarjontaUIHelper;
     private TarjontaDialogWindow tarjontaDialog;
 
+    private @Value("${koodisto.suomi.uri:suomi}") String suomiUri;
+
     public ShowKoulutusView(String pageTitle, PageNavigationDTO pageNavigationDTO) {
         super(VerticalLayout.class, pageTitle, null, pageNavigationDTO);
     }
@@ -85,20 +88,26 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         addNavigationButtons(layout, OrganisaatioContext.getContext(presenter.getModel().getTarjoajaModel().getSelectedOrganisationOid()));
 
         final LueKoulutusVastausTyyppi koulutus = presenter.getKoulutusByOid(presenter.getModel().getKoulutusPerustiedotModel().getOid());
-        
-        //language tabs
-    	final TabSheet tabs = new TabSheet();
 
-		final Set<String> languages = presenter.getModel()
-				.getKoulutusLisatiedotModel().getLisatiedot().keySet();
-		
-		for (String language : languages) {
-			List<KoodiType> koodit = tarjontaUIHelper.getKoodis(language);
-			ShowKoulutusViewTab tab = new ShowKoulutusViewTab(language, new Locale(koodit.get(0).getKoodiArvo()), koulutus);
-			tabs.addTab(tab, tarjontaUIHelper.getKoodiNimi(language));
-		}
-		
-    	layout.addComponent(tabs);
+        // language tabs
+        final TabSheet tabs = new TabSheet();
+
+        final Set<String> languages = presenter.getModel()
+                .getKoulutusLisatiedotModel().getLisatiedot().keySet();
+
+        if(languages.size()==0) {
+            //no languages available, "add" fi 
+            presenter.getModel().getKoulutusLisatiedotModel().getLisatiedot(suomiUri);
+        }
+        
+        for (String language : languages) {
+            List<KoodiType> koodit = tarjontaUIHelper.getKoodis(language);
+            ShowKoulutusViewTab tab = new ShowKoulutusViewTab(language,
+                    new Locale(koodit.get(0).getKoodiArvo()), koulutus);
+            tabs.addTab(tab, tarjontaUIHelper.getKoodiNimi(language));
+        }
+
+        layout.addComponent(tabs);
     }
 
     public void showHakukohdeRemovalDialog(final String hakukohdeOid, final String hakukohdeNimi) {
