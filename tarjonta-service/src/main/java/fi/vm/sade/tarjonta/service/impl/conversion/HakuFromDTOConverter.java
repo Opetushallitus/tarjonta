@@ -22,6 +22,8 @@ import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaunNimi;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
+
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,6 +48,14 @@ public class HakuFromDTOConverter extends AbstractToDomainConverter<HakuTyyppi, 
         m.setSijoittelu(s.isSijoittelu());
         m.setTila(EntityUtils.convertTila(s.getHaunTila()));
         m.setHaunTunniste(s.getHaunTunniste());
+        if (s.getViimeisinPaivitysPvm() != null) {
+            m.setLastUpdateDate(s.getViimeisinPaivitysPvm());
+        } else {
+            m.setLastUpdateDate(new Date());
+        }
+        m.setLastUpdatedByOid(s.getViimeisinPaivittajaOid());
+
+
         convertSisaisetHaunAlkamisAjat(m, s.getSisaisetHakuajat());
         return m;
     }

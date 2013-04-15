@@ -25,6 +25,7 @@ import javax.validation.constraints.Pattern;
 
 import static fi.vm.sade.generic.common.validation.ValidationConstants.*;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -113,6 +114,12 @@ public class Haku extends BaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "haku")
     private Set<Hakuaika> hakuaikas = new HashSet<Hakuaika>();
+
+    @Column(name="viimPaivitysPvm")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdateDate;
+    @Column(name="viimPaivittajaOid")
+    private String lastUpdatedByOid;
 
     public String getOid() {
         return oid;
@@ -343,5 +350,20 @@ public class Haku extends BaseEntity {
         this.haunTunniste = haunTunniste;
     }
 
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public String getLastUpdatedByOid() {
+        return lastUpdatedByOid;
+    }
+
+    public void setLastUpdatedByOid(String lastUpdatedByOid) {
+        this.lastUpdatedByOid = lastUpdatedByOid;
+    }
 }
 

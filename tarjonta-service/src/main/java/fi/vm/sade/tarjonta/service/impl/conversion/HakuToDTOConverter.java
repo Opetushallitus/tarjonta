@@ -47,6 +47,12 @@ public class HakuToDTOConverter extends AbstractFromDomainConverter<Haku, HakuTy
         h.setOid(from.getOid());
         h.setSijoittelu(from.isSijoittelu());
         h.setHaunTunniste(from.getHaunTunniste());
+        if (from.getLastUpdateDate() != null) {
+            h.setViimeisinPaivitysPvm(from.getLastUpdateDate());
+        }
+        if (from.getLastUpdatedByOid() != null) {
+            h.setViimeisinPaivittajaOid(from.getLastUpdatedByOid());
+        }
         ConvertHaunNimet(h, from);
         ConvertHaunAjat(h, from);
         return h;
