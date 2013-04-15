@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:context="http://www.springframework.org/schema/context"
-        xmlns:cxf="http://cxf.apache.org/core"
-        xmlns:jaxws="http://cxf.apache.org/jaxws"
-        xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:cxf="http://cxf.apache.org/core"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
            http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
            http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd">
 
     <context:annotation-config />
-	<context:component-scan base-package="fi.vm.sade" />
+    <context:component-scan base-package="fi.vm.sade" />
 
     <context:property-placeholder
-            location="classpath:tarjonta-data.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-data.properties"
-            ignore-resource-not-found="true"/>
+        location="classpath:tarjonta-data.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-data.properties"
+        ignore-resource-not-found="true"/>
 
     <bean id="commonConstants" class="fi.vm.sade.tarjonta.data.util.CommonConstants">
         <constructor-arg index="0" value="${organisaatio.oid:NO_OID}"/>
@@ -47,6 +47,18 @@
     <jaxws:client id="oidService"
                   serviceClass="fi.vm.sade.oid.service.OIDService"
                   address="${oid.webservice.url:http://NO_OID_WEBSERVICE_URL_CONFIGURED}"/>
+    <jaxws:client id="tarjontaAdminService"
+                  serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService"
+                  address="${TarjontaAdminService.url:http://NO_TARJONTA_ADMIN_WEBSERVICE_URL_CONFIGURED}"/>
+    <jaxws:client id="tarjontaPublicService"
+                  serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService"
+                  address="${TarjontaPublicService.url:http://NO_TARJONTA_PUBLIC_WEBSERVICE_URL_CONFIGURED}"/>
+    <jaxws:client id="organisaatioService"
+                  serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
+                  address="${OrganisaatioService.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>         
+    <jaxws:client id="userService"
+                  serviceClass="fi.vm.sade.authentication.service.UserService"
+                  address="${UserService.uri:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
 
     <http-conf:conduit name="*.http-conduit">
         <!-- extended receive timeout due to koodisto updates take a long time if there are lots of koodis -->

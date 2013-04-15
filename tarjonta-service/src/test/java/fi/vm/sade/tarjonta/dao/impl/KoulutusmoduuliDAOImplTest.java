@@ -20,6 +20,7 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.junit.After;
@@ -64,30 +65,39 @@ public class KoulutusmoduuliDAOImplTest {
     private TarjontaFixtures fixtures;
     private EntityManager em;
 
-    @After
-    public void cleanUp() {
+    @Before
+    public void setUp() {
+        //CLEAN ENTITYMANAGER: 
+        //This should be done in junit after method, but for some reason there is a
+        //something wrong with the after annotation in Bamboo environment
         remove(komo1);
         remove(komo2);
         remove(komo3);
+        if (em != null) {
+            em.clear();
     }
 
-    @Before
-    public void setUp() {
+        //RE-INITIALIZE ENITMANAGER:
         final String sep = EntityUtils.STR_ARRAY_SEPARATOR;
 
         em = instance.getEntityManager();
         komo1 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo1.setOppilaitostyyppi(sep + "uri_1" + sep + SEARCH_BY_URI_B + sep + SEARCH_BY_URI_A + sep);
+        komo1.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
+        komo1.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value());
+
         persist(komo1);
 
         komo2 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo2.setOppilaitostyyppi(sep + SEARCH_BY_URI_C + sep);
         komo2.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
+        komo2.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value());
         persist(komo2);
 
         komo3 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
-        komo3.setOppilaitostyyppi(sep + "uri_fuu" + sep);
+        komo3.setOppilaitostyyppi(sep + "uri_fuubar" + sep);
         komo3.setLukiolinja(LUKIOLINJA_URI);
+        komo1.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
         persist(komo3);
     }
 
@@ -139,7 +149,27 @@ public class KoulutusmoduuliDAOImplTest {
         KoulutusmoduuliDAO.SearchCriteria criteria = new KoulutusmoduuliDAO.SearchCriteria();
         criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
         List result = instance.search(criteria);
+        assertEquals(2, result.size());
+
+        criteria = new KoulutusmoduuliDAO.SearchCriteria();
+        criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
+        criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_C);
+        result = instance.search(criteria);
         assertEquals(1, result.size());
+
+        criteria = new KoulutusmoduuliDAO.SearchCriteria();
+        criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
+        criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_C);
+        criteria.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        result = instance.search(criteria);
+        assertEquals(1, result.size());
+
+        criteria = new KoulutusmoduuliDAO.SearchCriteria();
+        criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
+        criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_C);
+        criteria.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        result = instance.search(criteria);
+        assertEquals(0, result.size());
     }
 
 
@@ -165,6 +195,10 @@ public class KoulutusmoduuliDAOImplTest {
     }
 
     private void remove(Object o) {
+        if (o == null) {
+            return;
+        }
+
         if (o instanceof Koulutusmoduuli) {
             em.remove(em.find(Koulutusmoduuli.class, ((Koulutusmoduuli) o).getId()));
         }

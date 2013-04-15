@@ -126,7 +126,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         if (moduuli == null) {
             throw new TarjontaBusinessException(TarjontaVirheKoodi.KOULUTUSTA_EI_OLEMASSA.value()
                     + " - koulutus koodi : " + koulutus.getKoulutusKoodi().getUri()
-                    + ", koulutusohjelma koodi : " + koulutus.getLukiolinjaKoodi().getUri());
+                    + ", koulutusohjelma koodi : " + koulutus.getKoulutusohjelmaKoodi().getUri());
         }
 
         //Handling the creation of the parent komoto

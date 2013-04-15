@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.service.business.impl;
 
+import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Kieliaine;
 import fi.vm.sade.tarjonta.model.Kielivalikoima;
@@ -450,7 +451,7 @@ public final class EntityUtils {
      * @return
      */
     public static fi.vm.sade.tarjonta.model.TarjontaTila convertTila(fi.vm.sade.tarjonta.service.types.TarjontaTila tila) {
-
+        Preconditions.checkNotNull(tila, "TarjontaTila enum cannot be null.");
         return fi.vm.sade.tarjonta.model.TarjontaTila.valueOf(tila.name());
 
     }
