@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus.lukio;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -76,6 +78,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
     @Autowired(required = true)
     private TarjontaUIHelper _tarjontaUIHelper;
     private TarjontaDialogWindow tarjontaDialog;
+    private final String datePattern = "dd.MM.yyyy HH:mm";
 
     public ShowKoulutusSummaryView(String pageTitle, PageNavigationDTO pageNavigationDTO) {
         super(VerticalLayout.class, pageTitle, null, pageNavigationDTO);
@@ -138,11 +141,62 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         return vl;
     }
 
+    private Label buildTallennettuLabel(Date date) {
+        SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
+        Label lastUpdLbl = new Label("( " + T("tallennettuLbl") + " " + sdp.format(date) + " )");
+        return lastUpdLbl;
+    }
+
+    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, Label lastUpdatedLabel ,boolean showButton) {
+        HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
+        Label titleLabel = UiUtil.label(headerLayout, title);
+        titleLabel.setStyleName(Oph.LABEL_H2);
+
+
+        if (btnCaption != null) {
+            headerLayout.addComponent(titleLabel);
+            if (lastUpdatedLabel != null) {
+                headerLayout.addComponent(lastUpdatedLabel);
+            }
+
+            Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener);
+            btn.setVisible(showButton);
+
+            // Add default click listener so that we can show that action has not been implemented as of yet
+            if (listener == null) {
+                btn.addListener(new Button.ClickListener() {
+                    private static final long serialVersionUID = 5019806363620874205L;
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        getWindow().showNotification("Toiminnallisuutta ei vielä toteutettu");
+                    }
+                });
+            }
+
+
+            //headerLayout.setExpandRatio(btn, 1f);
+            headerLayout.setComponentAlignment(btn, Alignment.TOP_RIGHT);
+            if (lastUpdatedLabel != null) {
+                headerLayout.setComponentAlignment(lastUpdatedLabel,Alignment.TOP_CENTER);
+            }
+        }
+        return headerLayout;
+    }
+
+
+
     private void buildPerustiedot(VerticalLayout vl, KoulutusRelaatioModel model, String otherCbLabel, MonikielinenTekstiModel otherCbKoodi) {
         Preconditions.checkNotNull(vl, "VericalLayout object cannot be null.");
         Preconditions.checkNotNull(model, "KoulutusRelaatioModel object cannot be null.");
         Preconditions.checkNotNull(otherCbLabel, "Combobox label key cannot be null.");
         Preconditions.checkNotNull(otherCbKoodi, "Combobox MonikielinenTekstiModel object cannot be null.");
+
+        Label viimeisinPaivitysPvm = null;
+        if (model instanceof KoulutusLukioPerustiedotViewModel && ((KoulutusLukioPerustiedotViewModel)model).getViimeisinPaivitysPvm() != null) {
+
+           viimeisinPaivitysPvm = buildTallennettuLabel(((KoulutusLukioPerustiedotViewModel)model).getViimeisinPaivitysPvm());
+        }
 
         vl.addComponent(buildHeaderLayout(T("perustiedot"), T(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
@@ -151,7 +205,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
             public void buttonClick(ClickEvent event) {
                 _presenter.getLukioPresenter().showEditKoulutusView(getEditViewOid(), KoulutusActiveTab.PERUSTIEDOT);
             }
-        }));
+        },viimeisinPaivitysPvm,true));
         
         FormGridBuilder grid = new FormGridBuilder(getClass());
         

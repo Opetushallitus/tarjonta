@@ -58,6 +58,9 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
     protected String opsuLinkki;
     protected YhteyshenkiloModel yhteyshenkilo;
 
+    private Date viimeisinPaivitysPvm;
+    private String viimeisinPaivittajaOid;
+
     /*
      * cache maps
      */
@@ -399,5 +402,21 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      */
     public void setLukiolinja(LukiolinjaModel lukiolinja) {
         this.lukiolinja = lukiolinja;
+    }
+
+    public Date getViimeisinPaivitysPvm() {
+        return viimeisinPaivitysPvm;
+    }
+
+    public void setViimeisinPaivitysPvm(Date viimeisinPaivitysPvm) {
+        this.viimeisinPaivitysPvm = viimeisinPaivitysPvm;
+    }
+
+    public String getViimeisinPaivittajaOid() {
+        return viimeisinPaivittajaOid;
+    }
+
+    public void setViimeisinPaivittajaOid(String viimeisinPaivittajaOid) {
+        this.viimeisinPaivittajaOid = viimeisinPaivittajaOid;
     }
 }

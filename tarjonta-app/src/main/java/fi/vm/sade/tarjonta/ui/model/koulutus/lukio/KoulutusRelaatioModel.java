@@ -21,6 +21,8 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 
+import java.util.Date;
+
 /**
  *
  * @author mlyly
@@ -313,4 +315,5 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
     public void setKoulutuskoodi(String koulutuskoodi) {
         this.koulutuskoodi = koulutuskoodi;
     }
+
 }

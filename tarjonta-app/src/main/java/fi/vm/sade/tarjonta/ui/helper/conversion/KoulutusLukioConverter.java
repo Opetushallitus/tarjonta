@@ -54,12 +54,8 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
-import java.util.AbstractMap;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+
+import java.util.*;
 
 /**
  *
@@ -115,6 +111,10 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         tarjontaModel.getTarjoajaModel().setSelectedOrganisation(searchOrganisationByOid(koulutus.getTarjoaja()));
 
         KoulutusLukioPerustiedotViewModel perustiedot = createToKoulutusLukioPerustiedotViewModel(koulutus, locale);
+        perustiedot.setViimeisinPaivittajaOid(koulutus.getViimeisinPaivittajaOid());
+        if (koulutus.getViimeisinPaivitysPvm() != null) {
+            perustiedot.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm().toGregorianCalendar().getTime());
+        }
         tarjontaModel.setKoulutusLukioPerustiedot(perustiedot);
         KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedot = createKoulutusLukioKuvailevatTiedotViewModel(koulutus);
         tarjontaModel.setKoulutusLukioKuvailevatTiedot(kuvailevatTiedot);
@@ -241,6 +241,12 @@ public class KoulutusLukioConverter extends KoulutusConveter {
 
         if (model.getOpsuLinkki() != null && !model.getOpsuLinkki().isEmpty()) {
             tyyppi.getLinkki().add(mapOpetussuunnitelmaLinkkiToTyyppi(model.getOpsuLinkki()));
+        }
+        tyyppi.setViimeisinPaivittajaOid(model.getViimeisinPaivittajaOid());
+        if (model.getViimeisinPaivitysPvm() != null) {
+            tyyppi.setViimeisinPaivitysPvm(model.getViimeisinPaivitysPvm());
+        } else {
+            tyyppi.setViimeisinPaivitysPvm(new Date());
         }
 
         return tyyppi;

@@ -49,10 +49,6 @@ import java.util.Date;
  * The component and functionality for showing a hakukohde object in hakukohde
  * search result list.
  *
- * TKatva, 25.3.2013. This should be refactored so that hakukohdeTulos-object
- * would be passed to other views. Now instead every view loads it again. For
- * example "inpection"-view could use just the passed model. Edit view maybe
- * should load model again.
  *
  * @author markus
  *
@@ -285,7 +281,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
     private void openHakukohdeView() {
         tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getKoulutus().getTarjoaja());
 
-        //Ugly, refactor when whole object is passed
+
         tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
         tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getHakukohde().getOid(), hakukohde.getKoulutus().getTarjoaja());
     }

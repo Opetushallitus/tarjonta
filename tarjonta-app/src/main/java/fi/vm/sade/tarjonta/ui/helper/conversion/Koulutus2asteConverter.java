@@ -37,11 +37,9 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustied
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
-import java.util.AbstractMap;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -192,6 +190,12 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         tyyppi.getOpetusmuoto().add(createKoodi(model.getOpetusmuoto(), true, "opetusmuoto"));
         tyyppi.getOpetuskieli().add(createKoodi(model.getOpetuskieli(), true, "opetuskieli"));
         tyyppi.getKoulutuslaji().add(createKoodi(model.getKoulutuslaji(), true, "koulutuslaji"));
+        tyyppi.setViimeisinPaivittajaOid(model.getViimeisinPaivittajaOid());
+        if (model.getViimeisinPaivitysPvm() != null) {
+        tyyppi.setViimeisinPaivitysPvm(model.getViimeisinPaivitysPvm());
+        } else {
+            tyyppi.setViimeisinPaivitysPvm(new Date());
+        }
 
         return tyyppi;
     }
@@ -222,7 +226,10 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         model2Aste.setKoulutuskoodiModel(mapToKoulutuskoodiModel(koulutus.getKoulutusKoodi(), locale));
         model2Aste.setKoulutusohjelmaModel(mapToKoulutusohjelmaModel(koulutus.getKoulutusohjelmaKoodi(), locale));
         model2Aste.setPainotus(mapToKielikaannosViewModel(koulutus.getPainotus()));
-
+        if (koulutus.getViimeisinPaivitysPvm() != null) {
+        model2Aste.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm().toGregorianCalendar().getTime());
+        }
+        model2Aste.setViimeisinPaivittajaOid(koulutus.getViimeisinPaivittajaOid());
         model2Aste.setKoulutuksenAlkamisPvm(
                 koulutus.getKoulutuksenAlkamisPaiva() != null ? koulutus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null);
 
@@ -417,6 +424,8 @@ public class Koulutus2asteConverter extends KoulutusConveter {
             if (koulutus.getKoulutusohjelmanValinta() == null) {
                 koulutus.setKoulutusohjelmanValinta(new MonikielinenTekstiTyyppi());
             }
+
+
 
             koulutus.getKoulutusohjelmanValinta().getTeksti().add(convertToMonikielinenTekstiTyyppi(kieliUri, lisatieto.getKoulutusohjelmanValinta()));
         }

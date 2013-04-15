@@ -3,12 +3,15 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 import static fi.vm.sade.tarjonta.ui.view.common.FormGridBuilder.FieldInfo.text;
 import static fi.vm.sade.tarjonta.ui.view.common.FormGridBuilder.FieldInfo.xhtml;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import com.vaadin.ui.*;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -17,15 +20,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.VerticalSplitPanel;
 
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
@@ -67,6 +62,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
     private final Set<String> allowedKoodistoLocales = ImmutableSet.copyOf(new String[]{"fi", "sv", "en"});
     private final OrganisaatioContext context;
     private final LueKoulutusVastausTyyppi koulutus;
+    private final String datePattern = "dd.MM.yyyy HH:mm";
 
     /**
      *
@@ -160,6 +156,43 @@ public class ShowKoulutusViewTab extends CustomComponent {
         return vl;
     }
 
+    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, Label lastUpdatedLabel ,boolean showButton) {
+        HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
+        Label titleLabel = UiUtil.label(headerLayout, title);
+        titleLabel.setStyleName(Oph.LABEL_H2);
+
+
+        if (btnCaption != null) {
+            headerLayout.addComponent(titleLabel);
+            if (lastUpdatedLabel != null) {
+                headerLayout.addComponent(lastUpdatedLabel);
+            }
+
+            Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener);
+            btn.setVisible(showButton);
+
+            // Add default click listener so that we can show that action has not been implemented as of yet
+            if (listener == null) {
+                btn.addListener(new Button.ClickListener() {
+                    private static final long serialVersionUID = 5019806363620874205L;
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        getWindow().showNotification("Toiminnallisuutta ei vielä toteutettu");
+                    }
+                });
+            }
+
+
+            //headerLayout.setExpandRatio(btn, 1f);
+            headerLayout.setComponentAlignment(btn, Alignment.TOP_RIGHT);
+            if (lastUpdatedLabel != null) {
+                headerLayout.setComponentAlignment(lastUpdatedLabel,Alignment.TOP_CENTER);
+            }
+        }
+        return headerLayout;
+    }
+
     private void insertKoulutuksenHakukohteet(FormGridBuilder layout) {
         int numberOfApplicationTargets = presenter.getModel().getKoulutusPerustiedotModel().getKoulutuksenHakukohteet().size();
 
@@ -243,12 +276,23 @@ public class ShowKoulutusViewTab extends CustomComponent {
         return "";
     }
 
+    private Label buildTallennettuLabel(Date date) {
+        SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
+        Label lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + " )");
+        return lastUpdLbl;
+    }
+
     private void insertKoulutuksenmPerustiedot(FormGridBuilder layout) {
 
         Preconditions.checkNotNull(presenter, "presenter cannot be null");
         Preconditions.checkNotNull(presenter.getModel(), "model cannot be null");
         Preconditions.checkNotNull(presenter.getModel().getKoulutusPerustiedotModel(), "koulutusperustiedot model cannot be null");
         final KoulutusToisenAsteenPerustiedotViewModel model = presenter.getModel().getKoulutusPerustiedotModel();
+
+        Label lastUpdDateLbl = null;
+        if (model.getViimeisinPaivitysPvm() != null) {
+            lastUpdDateLbl = buildTallennettuLabel(model.getViimeisinPaivitysPvm());
+        }
 
         layout.addHeader(buildHeaderLayout(i18n.getMessage("perustiedot"), i18n.getMessage(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
             private static final long serialVersionUID = 1L;
@@ -258,7 +302,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
                 presenter.getTarjoaja().setSelectedResultRowOrganisationOid(null);
                 presenter.showKoulutustEditView(getEditViewOid(), KoulutusActiveTab.PERUSTIEDOT);
             }
-        }, presenter.getPermission().userCanUpdateKoulutus(context), true));
+        },lastUpdDateLbl, presenter.getPermission().userCanUpdateKoulutus(context)));
 
         final KoulutuskoodiModel koodiModel = model.getKoulutuskoodiModel();
         final KoodiModel koulutusala = koodiModel.getKoulutusala();

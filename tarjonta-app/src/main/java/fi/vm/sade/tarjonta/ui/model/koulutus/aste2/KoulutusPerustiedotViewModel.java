@@ -86,6 +86,9 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
     protected List<KoulutusYhteyshenkiloViewModel> yhteyshenkilot;
     protected List<KoulutusLinkkiViewModel> koulutusLinkit;
 
+    private Date viimeisinPaivitysPvm;
+    private String viimeisinPaivittajaOid;
+
     public KoulutusPerustiedotViewModel() {
         this.documentStatus = DocumentStatus.NEW;
     }
@@ -463,5 +466,21 @@ public class KoulutusPerustiedotViewModel extends BaseUIViewModel {
      */
     public void setLukiolinjaModel(LukiolinjaModel lukiolinjaModel) {
         this.lukiolinjaModel = lukiolinjaModel;
+    }
+
+    public Date getViimeisinPaivitysPvm() {
+        return viimeisinPaivitysPvm;
+    }
+
+    public void setViimeisinPaivitysPvm(Date viimeisinPaivitysPvm) {
+        this.viimeisinPaivitysPvm = viimeisinPaivitysPvm;
+    }
+
+    public String getViimeisinPaivittajaOid() {
+        return viimeisinPaivittajaOid;
+    }
+
+    public void setViimeisinPaivittajaOid(String viimeisinPaivittajaOid) {
+        this.viimeisinPaivittajaOid = viimeisinPaivittajaOid;
     }
 }
