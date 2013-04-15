@@ -1841,7 +1841,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      */
     public boolean availableKoulutus() {
         List<String> oppilaitostyyppiUris = getOppilaitostyyppiUris();
-        return !this.uiHelper.getOlRelatedKoulutuskoodit(oppilaitostyyppiUris).isEmpty();
+        HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new  HaeKaikkiKoulutusmoduulitKyselyTyyppi();
+        kysely.getOppilaitostyyppiUris().addAll(oppilaitostyyppiUris);
+        return !this.tarjontaPublicService.haeKaikkiKoulutusmoduulit(kysely).getKoulutusmoduuliTulos().isEmpty();
     }
 
     /**
