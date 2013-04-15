@@ -29,7 +29,8 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  */
 public class OppilaitostyyppiRow {
 
-    public static final Column[] OPPILAITOSTYYPPI_RELAATIOT = {
+    public static final String FILENAME = "OPPILAITOSTYYPPI_relaatiot";
+    public static final Column[] COLUMNS = {
         new Column("oppilaitostyyppiKoodiarvo", "OPPILAITOSTYYPPI", InputColumnType.INTEGER),
         new Column("koulutusasteKoodiarvo1", "KOULUTUSASTE_OPH2002", InputColumnType.INTEGER),
         new Column("koulutusasteKoodiarvo2", "KOULUTUSASTE_OPH2002", InputColumnType.INTEGER),

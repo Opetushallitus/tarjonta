@@ -19,11 +19,17 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.loader.xls.helper.RelaatioMap;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.GenericRow;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.KoulutusRelaatioRow;
+import fi.vm.sade.tarjonta.ui.loader.xls.dto.KoulutusohjelmanKuvauksetRow;
+import fi.vm.sade.tarjonta.ui.loader.xls.dto.LukionKoulutusModuulitRow;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.OppilaitostyyppiRow;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.Relaatiot5RowDTO;
+import fi.vm.sade.tarjonta.ui.loader.xls.dto.TutkinnonKuvauksetNuoretRow;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.TutkintonimikeRow;
-import fi.vm.sade.tarjonta.ui.loader.xls.helper.KoulutuskoodiMap;
+import fi.vm.sade.tarjonta.ui.loader.xls.helper.KoulutusRelaatioMap;
+import fi.vm.sade.tarjonta.ui.loader.xls.helper.KoulutusohjelmanKuvauksetMap;
+import fi.vm.sade.tarjonta.ui.loader.xls.helper.LukionModuulitMap;
 import fi.vm.sade.tarjonta.ui.loader.xls.helper.OppilaitostyyppiMap;
+import fi.vm.sade.tarjonta.ui.loader.xls.helper.TutkinnonKuvauksetMap;
 import fi.vm.sade.tarjonta.ui.loader.xls.helper.TutkintonimikeMap;
 import java.io.IOException;
 import java.net.URL;
@@ -40,43 +46,6 @@ import org.slf4j.LoggerFactory;
 public class DataReader {
 
     private static final Logger log = LoggerFactory.getLogger(DataReader.class);
-    public static final Column[] GENERIC_TUTKINTONIMIKE_LUKIO = {
-        new Column("relaatioKoodiarvo", "LUKIOLNJA", InputColumnType.INTEGER),
-        new Column("tutkintonimikeKoodiarvo", "TUTKINTONIMIKE", InputColumnType.INTEGER)
-    };
-    public static final Column[] GENERIC_TUTKINTONIMIKE_AMMATILLINEN = {
-        new Column("relaatioKoodiarvo", "KOULUTUSOHJELMA", InputColumnType.INTEGER),
-        new Column("tutkintonimikeKoodiarvo", "TUTKINTONIMIKE", InputColumnType.INTEGER)
-    };
-    public static final Column[] GENERIC_AMMATILLINEN = {
-        new Column("koulutuskoodiKoodiarvo", "KOULUTUS", InputColumnType.INTEGER),
-        new Column("relaatioKoodiarvo", "KOULUTUOSOHJELMA", InputColumnType.INTEGER),
-        new Column("eqfKoodiarvo", "EQF", InputColumnType.INTEGER),
-        new Column("laajuusyksikkoKoodiarvo", "Laajuusyksikko", InputColumnType.INTEGER),
-        new Column("laajuusKoodiarvo", "Laajuus", InputColumnType.INTEGER),
-        new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER)
-    };
-    public static final Column[] GENERIC_LUKIO = {
-        new Column("koulutuskoodiKoodiarvo", "KOULUTUS", InputColumnType.INTEGER),
-        new Column("relaatioKoodiarvo", "LUKIOLINJA", InputColumnType.STRING),
-        new Column("eqfKoodiarvo", "EQF", InputColumnType.INTEGER),
-        new Column("laajuusyksikkoKoodiarvo", "Laajuusyksikko", InputColumnType.INTEGER),
-        new Column("laajuusKoodiarvo", "Laajuus", InputColumnType.INTEGER),
-        new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER)
-    };
-    public static final Column[] KOULUTUS_RELAATIOT = {
-        new Column("koulutuskoodiKoodiarvo", "KOULUTUS", InputColumnType.INTEGER),
-        new Column("koulutusluokituksenTasoKoodiarvo", "KOULUTUSLUOKITUKSEN TASO", InputColumnType.INTEGER),
-        new Column("koulutusalaOph2002Koodiarvo", "KOULUTUSALAOPH2002", InputColumnType.INTEGER),
-        new Column("opintoalaOph2002Koodiarvo", "OPINTOALAOPH2002", InputColumnType.INTEGER),
-        new Column("koulutusasteOph2002Koodiarvo", "KOULUTUSASTEOPH2002", InputColumnType.INTEGER),
-        new Column("koulutusalaOph1995Koodiarvo", "KOULUTUSALAOPH1995", InputColumnType.INTEGER),
-        new Column("opintoala1995Koodiarvo", "OPINTOALAOPH1995", InputColumnType.INTEGER),
-        new Column("koulutusasteOph1997Koodiarvo", "KOULUTUSASTEOPH1995", InputColumnType.INTEGER),
-        new Column("koulutusasteIsced1997Koodiarvo", "KOULUTUSASTE ISCED1997", InputColumnType.INTEGER),
-        new Column("koulutusalaIsced1997Koodiarvo", "KOULUTUSALA ISCED1997", InputColumnType.INTEGER)
-    };
- 
     private Set<Relaatiot5RowDTO> mergedData;
 
     public DataReader() throws IOException {
@@ -93,30 +62,43 @@ public class DataReader {
         /*
          * Oppilaitostyyppi <-> koulutusaste relations*
          */
-        OppilaitostyyppiMap oppilaitosTyyppiMap = getOppilaitosTyyppiMap();
+        OppilaitostyyppiMap oppilaitosTyyppiMap = createOppilaitosTyyppiMap();
 
         /*
          * MISC 
          */
-        final KomoExcelReader<KoulutusRelaatioRow> readerForKoulutusRelations = new KomoExcelReader<KoulutusRelaatioRow>(KoulutusRelaatioRow.class, KOULUTUS_RELAATIOT, 3000);
-        KoulutuskoodiMap mapRelations = new KoulutuskoodiMap(readerForKoulutusRelations.read(getFilePath("KOULUTUS_RELAATIOT"), false));
+        final KomoExcelReader<KoulutusRelaatioRow> readerForKoulutusRelations = new KomoExcelReader<KoulutusRelaatioRow>(KoulutusRelaatioRow.class, KoulutusRelaatioRow.COLUMNS, 3000);
+        KoulutusRelaatioMap mapRelations = new KoulutusRelaatioMap(readerForKoulutusRelations.read(getFilePath(KoulutusRelaatioRow.FILENAME), false));
+
+        TutkinnonKuvauksetMap tutkinnonKuvauksetMap = createTutkinnonKuvauksetMap();
+        LukionModuulitMap createLukionModuulitMap = createLukionModuulitMap();
 
         for (Relaatiot5RowDTO r : mergedData) {
-            final String keyKoulutuskoodi = r.getKoulutuskoodi();
+            final String keyKoulutuskoodi = r.getKoulutuskoodiKoodiarvo();
 
             if (mapRelations.containsKey(keyKoulutuskoodi)) {
                 final KoulutusRelaatioRow rowKr = mapRelations.get(keyKoulutuskoodi);
                 r.setKoulutusalaKoodi(rowKr.getKoulutusalaOph2002Koodiarvo());
                 r.setOpintoalaKoodi(rowKr.getOpintoalaOph2002Koodiarvo());
                 r.setKoulutusasteenKoodiarvo(rowKr.getKoulutusasteOph2002Koodiarvo());
+
                 r.setOppilaitostyyppis(oppilaitosTyyppiMap.get(rowKr.getKoulutusasteOph2002Koodiarvo()));
+
+                if (tutkinnonKuvauksetMap.containsKey(keyKoulutuskoodi)) {
+                    r.setTutkinnonKuvaukset(tutkinnonKuvauksetMap.get(keyKoulutuskoodi));
+                } else if (tutkinnonKuvauksetMap.containsKey(keyKoulutuskoodi)) {
+                    r.setTutkinnonKuvaukset(createLukionModuulitMap.get(keyKoulutuskoodi));
+                }
+
             } else {
-                log.warn("Required koulutuskoodi " + r.getKoulutuskoodi() + " relation not found.");
+                log.warn("Required koulutuskoodi " + r.getKoulutuskoodiKoodiarvo() + " relation not found.");
             }
+
         }
+
     }
 
-    private void addImportedData(KoulutusasteTyyppi type, Map<String, GenericRow> mapBasicData, TutkintonimikeMap mapTutkintonimikes) {
+    private void addImportedData(KoulutusasteTyyppi type, Map<String, GenericRow> mapBasicData, TutkintonimikeMap mapTutkintonimikes, KoulutusohjelmanKuvauksetMap koulutusohjelmanKuvaukset) {
         for (Map.Entry<String, GenericRow> e : mapBasicData.entrySet()) {
             final GenericRow value = e.getValue();
 
@@ -125,35 +107,36 @@ public class DataReader {
 
             row.setTyyppi(type.value());
             //text data
-            row.setJatkoOpinto("");
-            row.setKoulutuksenRakenne("");
-            row.setTavoitteet("");
+//            row.setJatkoOpinto("");
+//            row.setKoulutuksenRakenne("");
+//            row.setTavoitteet("");
 
-            final String relaatioKoodiarvo = value.getRelaatioKoodiarvo();
+            final String lukiolinjaTaiKoulutuohjelmaKoodiarvo = value.getRelaatioKoodiarvo();
 
             //values
             row.setKoulutusasteenKoodiarvo(value.getKoulutusasteKoodiarvo());
-            row.setKoulutuskoodi(value.getKoulutuskoodiKoodiarvo());
+            row.setKoulutuskoodiKoodiarvo(value.getKoulutuskoodiKoodiarvo());
 
             row.setLaajuus(value.getLaajuusKoodiarvo());
             row.setLaajuusyksikko(value.getLaajuusyksikkoKoodiarvo());
 
             switch (type) {
                 case AMMATILLINEN_PERUSKOULUTUS:
-                    row.setKoulutusohjelmanKoodiarvo(relaatioKoodiarvo);
+                    row.setKoulutusohjelmanKuvaukset(koulutusohjelmanKuvaukset.get(lukiolinjaTaiKoulutuohjelmaKoodiarvo));
+                    row.setKoulutusohjelmanKoodiarvo(lukiolinjaTaiKoulutuohjelmaKoodiarvo);
                     break;
                 case LUKIOKOULUTUS:
-                    row.setLukiolinjaKoodiarvo(relaatioKoodiarvo);
+                    row.setLukiolinjaKoodiarvo(lukiolinjaTaiKoulutuohjelmaKoodiarvo);
                     break;
                 default:
                     throw new RuntimeException("An unsupported type " + type);
             }
 
-            if (mapTutkintonimikes.containsKey(relaatioKoodiarvo)) {
-                TutkintonimikeRow tutkintonimikeRow = mapTutkintonimikes.get(relaatioKoodiarvo);
+            if (mapTutkintonimikes.containsKey(lukiolinjaTaiKoulutuohjelmaKoodiarvo)) {
+                TutkintonimikeRow tutkintonimikeRow = mapTutkintonimikes.get(lukiolinjaTaiKoulutuohjelmaKoodiarvo);
                 row.setTutkintonimikkeenKoodiarvo(tutkintonimikeRow.getTutkintonimikeKoodiarvo());
             } else {
-                log.error("Require tutkintonimike koodi for value {}. Obj : {}", relaatioKoodiarvo, row);
+                log.error("Require tutkintonimike koodi for value {}. Obj : {}", lukiolinjaTaiKoulutuohjelmaKoodiarvo, row);
                 throw new RuntimeException("A required relation to tutkintonimike not found.");
 
             }
@@ -170,32 +153,56 @@ public class DataReader {
     }
 
     private String getFilePath(String resourceFilename) {
-        final URL urlAmmTutkintonimike = this.getClass().getResource("/" + resourceFilename + ".xls");
+        final String filename = "/" + resourceFilename + ".xls";
+        log.info("Trying to load resource {} ...", filename);
+        final URL url = this.getClass().getResource(filename);
 
-        return urlAmmTutkintonimike.getPath();
+        if (url == null) {
+            throw new RuntimeException("Unable to load resource with filename '" + filename + "'.");
+        }
+
+        return url.getPath();
     }
 
     private void convertLukioData() throws IOException {
 
-        final KomoExcelReader<GenericRow> readerForLukio = new KomoExcelReader<GenericRow>(GenericRow.class, GENERIC_LUKIO, 100);
-        RelaatioMap mapLukio = new RelaatioMap(readerForLukio.read(getFilePath("KOULUTUS_LUKIOLINJAT_relaatio"), true));
+        final KomoExcelReader<GenericRow> readerForLukio = new KomoExcelReader<GenericRow>(GenericRow.class, GenericRow.COLUMNS_LUKIO, 100);
+        RelaatioMap mapLukio = new RelaatioMap(readerForLukio.read(getFilePath(GenericRow.FILENAME_LUKIO), true));
 
-        final KomoExcelReader<TutkintonimikeRow> readerForLukioNimike = new KomoExcelReader<TutkintonimikeRow>(TutkintonimikeRow.class, GENERIC_TUTKINTONIMIKE_LUKIO, 200);
-        TutkintonimikeMap mapLukioNimikkeet = new TutkintonimikeMap(readerForLukioNimike.read(getFilePath("LUKIOLINJA_TUTKINTONIMIKE_relaatio"), true));
-        addImportedData(KoulutusasteTyyppi.LUKIOKOULUTUS, mapLukio, mapLukioNimikkeet);
+        final KomoExcelReader<TutkintonimikeRow> readerForLukioNimike = new KomoExcelReader<TutkintonimikeRow>(TutkintonimikeRow.class, TutkintonimikeRow.COLUMNS_LUKIO, 200);
+        TutkintonimikeMap mapLukioNimikkeet = new TutkintonimikeMap(readerForLukioNimike.read(getFilePath(TutkintonimikeRow.FILENAME_LUKIO), true));
+
+        addImportedData(KoulutusasteTyyppi.LUKIOKOULUTUS, mapLukio, mapLukioNimikkeet, null);
     }
 
     private void convertAmmatillinenData() throws IOException {
-        final KomoExcelReader<GenericRow> readerForAmmatillinen = new KomoExcelReader<GenericRow>(GenericRow.class, GENERIC_AMMATILLINEN, 200);
-        RelaatioMap mapAmm = new RelaatioMap(readerForAmmatillinen.read(getFilePath("KOULUTUS_KOULUTUSOHJELMA_RELAATIO"), false));
-        final KomoExcelReader<TutkintonimikeRow> readerForAmmNimike = new KomoExcelReader<TutkintonimikeRow>(TutkintonimikeRow.class, GENERIC_TUTKINTONIMIKE_AMMATILLINEN, 200);
-        TutkintonimikeMap mapAmmTukintonimike = new TutkintonimikeMap(readerForAmmNimike.read(getFilePath("TUTKINTONIMIKKEET_koulutusohjelmat_relaatio"), true));
+        final KomoExcelReader<GenericRow> readerForAmmatillinen = new KomoExcelReader<GenericRow>(GenericRow.class, GenericRow.COLUMNS_AMMATILLINEN, 200);
+        RelaatioMap mapAmm = new RelaatioMap(readerForAmmatillinen.read(getFilePath(GenericRow.FILENAME_AMMATILLINEN), false));
+        final KomoExcelReader<TutkintonimikeRow> readerForAmmNimike = new KomoExcelReader<TutkintonimikeRow>(TutkintonimikeRow.class, TutkintonimikeRow.COLUMNS_AMMATILLINEN, 200);
+        TutkintonimikeMap mapAmmTukintonimike = new TutkintonimikeMap(readerForAmmNimike.read(getFilePath(TutkintonimikeRow.FILENAME_AMMATILLINEN), true));
 
-        addImportedData(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS, mapAmm, mapAmmTukintonimike);
+        KoulutusohjelmanKuvauksetMap koulutusohjelmanKuvaukset = createKoulutusohjelmanKuvauksetMap();
+
+        addImportedData(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS, mapAmm, mapAmmTukintonimike, koulutusohjelmanKuvaukset);
     }
 
-    private OppilaitostyyppiMap getOppilaitosTyyppiMap() throws IOException {
-        final KomoExcelReader<OppilaitostyyppiRow> readerOppilaitostyyppi = new KomoExcelReader<OppilaitostyyppiRow>(OppilaitostyyppiRow.class, OppilaitostyyppiRow.OPPILAITOSTYYPPI_RELAATIOT, 50);
-        return new OppilaitostyyppiMap(readerOppilaitostyyppi.read(getFilePath("OPPILAITOSTYYPPI_relaatiot"), false));
+    private OppilaitostyyppiMap createOppilaitosTyyppiMap() throws IOException {
+        final KomoExcelReader<OppilaitostyyppiRow> readerOppilaitostyyppi = new KomoExcelReader<OppilaitostyyppiRow>(OppilaitostyyppiRow.class, OppilaitostyyppiRow.COLUMNS, 50);
+        return new OppilaitostyyppiMap(readerOppilaitostyyppi.read(getFilePath(OppilaitostyyppiRow.FILENAME), false));
+    }
+
+    private LukionModuulitMap createLukionModuulitMap() throws IOException {
+        final KomoExcelReader<LukionKoulutusModuulitRow> readerOppilaitostyyppi = new KomoExcelReader<LukionKoulutusModuulitRow>(LukionKoulutusModuulitRow.class, LukionKoulutusModuulitRow.COLUMNS, 6);
+        return new LukionModuulitMap(readerOppilaitostyyppi.read(getFilePath(LukionKoulutusModuulitRow.FILENAME), false));
+    }
+
+    private TutkinnonKuvauksetMap createTutkinnonKuvauksetMap() throws IOException {
+        final KomoExcelReader<TutkinnonKuvauksetNuoretRow> readerOppilaitostyyppi = new KomoExcelReader<TutkinnonKuvauksetNuoretRow>(TutkinnonKuvauksetNuoretRow.class, TutkinnonKuvauksetNuoretRow.COLUMNS, 6);
+        return new TutkinnonKuvauksetMap(readerOppilaitostyyppi.read(getFilePath(TutkinnonKuvauksetNuoretRow.FILENAME), false));
+    }
+
+    private KoulutusohjelmanKuvauksetMap createKoulutusohjelmanKuvauksetMap() throws IOException {
+        final KomoExcelReader<KoulutusohjelmanKuvauksetRow> readerOppilaitostyyppi = new KomoExcelReader<KoulutusohjelmanKuvauksetRow>(KoulutusohjelmanKuvauksetRow.class, KoulutusohjelmanKuvauksetRow.COLUMNS, 6);
+        return new KoulutusohjelmanKuvauksetMap(readerOppilaitostyyppi.read(getFilePath(KoulutusohjelmanKuvauksetRow.FILENAME), false));
     }
 }

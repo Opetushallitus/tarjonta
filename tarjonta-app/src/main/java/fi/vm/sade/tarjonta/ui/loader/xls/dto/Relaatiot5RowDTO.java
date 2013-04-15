@@ -34,9 +34,9 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
     /*
      * 2-aste + common data
      */
-    private String koulutuksenRakenne;
-    private String tavoitteet;
-    private String jatkoOpinto;
+    ///private String koulutuksenRakenne;
+    /// private String tavoitteet;
+    //private String jatkoOpinto;
     private String koulutusohjelmanNimi;
     private String koulutusohjelmanKoodiarvo;
     private String tutkintonimike;
@@ -54,49 +54,53 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
      */
     private String lukiolinjaNimi;
     private String lukiolinjaKoodiarvo;
-
-    /**
-     * @return the koulutuksenRakenne
+    /*
+     * Koulutusohjelman lisatiedot
      */
-    public String getKoulutuksenRakenne() {
-        return koulutuksenRakenne;
-    }
+    private KuvausDTO tutkinnonKuvaukset;
+    private KuvausDTO koulutusohjelmanKuvaukset;
 
-    /**
-     * @param koulutuksenRakenne the koulutuksenRakenne to set
-     */
-    public void setKoulutuksenRakenne(String koulutuksenRakenne) {
-        this.koulutuksenRakenne = koulutuksenRakenne;
-    }
-
-    /**
-     * @return the tavoitteet
-     */
-    public String getTavoitteet() {
-        return tavoitteet;
-    }
-
-    /**
-     * @param tavoitteet the tavoitteet to set
-     */
-    public void setTavoitteet(String tavoitteet) {
-        this.tavoitteet = tavoitteet;
-    }
-
-    /**
-     * @return the jatkoOpinto
-     */
-    public String getJatkoOpinto() {
-        return jatkoOpinto;
-    }
-
-    /**
-     * @param jatkoOpinto the jatkoOpinto to set
-     */
-    public void setJatkoOpinto(String jatkoOpinto) {
-        this.jatkoOpinto = jatkoOpinto;
-    }
-
+//    /**
+//     * @return the koulutuksenRakenne
+//     */
+//    public String getKoulutuksenRakenne() {
+//        return koulutuksenRakenne;
+//    }
+//
+//    /**
+//     * @param koulutuksenRakenne the koulutuksenRakenne to set
+//     */
+//    public void setKoulutuksenRakenne(String koulutuksenRakenne) {
+//        this.koulutuksenRakenne = koulutuksenRakenne;
+//    }
+//
+//    /**
+//     * @return the tavoitteet
+//     */
+//    public String getTavoitteet() {
+//        return tavoitteet;
+//    }
+//
+//    /**
+//     * @param tavoitteet the tavoitteet to set
+//     */
+//    public void setTavoitteet(String tavoitteet) {
+//        this.tavoitteet = tavoitteet;
+//    }
+//
+//    /**
+//     * @return the jatkoOpinto
+//     */
+//    public String getJatkoOpinto() {
+//        return jatkoOpinto;
+//    }
+//
+//    /**
+//     * @param jatkoOpinto the jatkoOpinto to set
+//     */
+//    public void setJatkoOpinto(String jatkoOpinto) {
+//        this.jatkoOpinto = jatkoOpinto;
+//    }
     /**
      * @return the koulutusohjelmanNimi
      */
@@ -262,7 +266,7 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
         }
         Relaatiot5RowDTO other = (Relaatiot5RowDTO) obj;
         EqualsBuilder builder = new EqualsBuilder();
-        builder.append(koulutuskoodi, other.koulutuskoodi).
+        builder.append(koulutuskoodiKoodiarvo, other.koulutuskoodiKoodiarvo).
                 append(koulutusohjelmanKoodiarvo, other.koulutusohjelmanKoodiarvo);
 
         return builder.isEquals();
@@ -271,7 +275,9 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().
-                append(koulutuskoodi).append(koulutusohjelmanKoodiarvo).append(lukiolinjaKoodiarvo).toHashCode();
+                append(koulutuskoodiKoodiarvo)
+                .append(koulutusohjelmanKoodiarvo)
+                .append(lukiolinjaKoodiarvo).toHashCode();
     }
 
     public String getKoulutusohjelmanTavoitteet() {
@@ -370,5 +376,41 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
      */
     public void setOppilaitostyyppis(List<String> oppilaitostyyppis) {
         this.oppilaitostyyppis = oppilaitostyyppis;
+    }
+
+    /**
+     * @return the tutkinnonKuvaukset
+     */
+    public KuvausDTO getTutkinnonKuvaukset() {
+        if (tutkinnonKuvaukset == null) {
+            tutkinnonKuvaukset = new KuvausDTO();
+        }
+        return tutkinnonKuvaukset;
+    }
+
+    /**
+     * @param tutkinnonKuvaukset the tutkinnonKuvaukset to set
+     */
+    public void setTutkinnonKuvaukset(KuvausDTO tutkinnonKuvaukset) {
+
+        this.tutkinnonKuvaukset = tutkinnonKuvaukset;
+    }
+
+    /**
+     * @param koulutusohjelmanKuvaukset the koulutusohjelmanKuvaukset to set
+     */
+    public void setKoulutusohjelmanKuvaukset(KuvausDTO koulutusohjelmanKuvaukset) {
+        this.koulutusohjelmanKuvaukset = koulutusohjelmanKuvaukset;
+    }
+
+    /**
+     * @return the koulutusohjelmanKuvaukset
+     */
+    public KuvausDTO getKoulutusohjelmanKuvaukset() {
+        if (koulutusohjelmanKuvaukset == null) {
+            koulutusohjelmanKuvaukset = new KuvausDTO();
+        }
+
+        return koulutusohjelmanKuvaukset;
     }
 }

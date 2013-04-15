@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.ui.loader.xls.helper;
 
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.GenericRow;
 import java.util.Collection;
-import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +24,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jani Wilén
  */
-public class RelaatioMap extends HashMap<String, GenericRow> {
+public class RelaatioMap extends AbstractKeyMap<GenericRow> {
 
     private static final long serialVersionUID = 863191778040860554L;
     private static final Logger log = LoggerFactory.getLogger(RelaatioMap.class);

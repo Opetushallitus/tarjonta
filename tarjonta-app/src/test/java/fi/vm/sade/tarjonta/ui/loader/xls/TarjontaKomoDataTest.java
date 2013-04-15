@@ -17,7 +17,10 @@ package fi.vm.sade.tarjonta.ui.loader.xls;
 
 import fi.vm.sade.tarjonta.ui.loader.xls.helper.RelaatioMap;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.GenericRow;
+import fi.vm.sade.tarjonta.ui.loader.xls.dto.KoulutusohjelmanKuvauksetRow;
+import fi.vm.sade.tarjonta.ui.loader.xls.dto.LukionKoulutusModuulitRow;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.OppilaitostyyppiRow;
+import fi.vm.sade.tarjonta.ui.loader.xls.dto.TutkinnonKuvauksetNuoretRow;
 import fi.vm.sade.tarjonta.ui.loader.xls.helper.OppilaitostyyppiMap;
 import java.net.URL;
 import java.util.List;
@@ -33,9 +36,9 @@ public class TarjontaKomoDataTest {
 
     @Test
     public void testReadExcelAmm() throws Exception {
-        URL resource = this.getClass().getResource("/KOULUTUS_KOULUTUSOHJELMA_RELAATIO.xls");
+        final URL resource = filenameToURL("KOULUTUS_KOULUTUSOHJELMA_RELAATIO");
         boolean verbose = true;
-        KomoExcelReader instance = new KomoExcelReader(GenericRow.class, DataReader.GENERIC_AMMATILLINEN, 2);
+        KomoExcelReader instance = new KomoExcelReader(GenericRow.class, GenericRow.COLUMNS_AMMATILLINEN, 2);
         Set<GenericRow> result = instance.read(resource.getPath(), verbose);
 
         assertEquals(1, result.size());
@@ -51,9 +54,9 @@ public class TarjontaKomoDataTest {
 
     @Test
     public void testReadExcelLukio() throws Exception {
-        URL resource = this.getClass().getResource("/KOULUTUS_LUKIOLINJAT_relaatio.xls");
+        final URL resource = filenameToURL("KOULUTUS_LUKIOLINJAT_relaatio");
         boolean verbose = true;
-        KomoExcelReader instance = new KomoExcelReader(GenericRow.class, DataReader.GENERIC_LUKIO, 100);
+        KomoExcelReader instance = new KomoExcelReader(GenericRow.class, GenericRow.COLUMNS_LUKIO, 100);
         Set<GenericRow> result = instance.read(resource.getPath(), verbose);
         RelaatioMap excelDataMap = new RelaatioMap(result);
 
@@ -75,9 +78,9 @@ public class TarjontaKomoDataTest {
 
     @Test
     public void testReadExcelOppilaitostyyppis() throws Exception {
-        URL resource = this.getClass().getResource("/OPPILAITOSTYYPPI_relaatiot.xls");
+        final URL resource = filenameToURL(OppilaitostyyppiRow.FILENAME);
         boolean verbose = true;
-        KomoExcelReader instance = new KomoExcelReader(OppilaitostyyppiRow.class, OppilaitostyyppiRow.OPPILAITOSTYYPPI_RELAATIOT, 100);
+        KomoExcelReader instance = new KomoExcelReader(OppilaitostyyppiRow.class, OppilaitostyyppiRow.COLUMNS, 100);
         Set<OppilaitostyyppiRow> result = instance.read(resource.getPath(), verbose);
         OppilaitostyyppiMap excelDataMap = new OppilaitostyyppiMap(result);
 
@@ -86,6 +89,65 @@ public class TarjontaKomoDataTest {
 
         assertNotNull("result koulutusaste list cannot be null", next);
         assertEquals(3, next.size());
+    }
 
+    @Test
+    public void testReadExcelKoulutusohjelmanKuvaukset() throws Exception {
+        final URL resource = filenameToURL(KoulutusohjelmanKuvauksetRow.FILENAME);
+        boolean verbose = true;
+        KomoExcelReader instance = new KomoExcelReader(KoulutusohjelmanKuvauksetRow.class, KoulutusohjelmanKuvauksetRow.COLUMNS, 2);
+        Set<KoulutusohjelmanKuvauksetRow> result = instance.read(resource.getPath(), verbose);
+
+        assertEquals(1, result.size());
+        KoulutusohjelmanKuvauksetRow next = result.iterator().next();
+
+        assertEquals("1501", next.getKoulutusohjelmaKoodiarvo());
+        assertNotNull("KoulutusohjelmanSeliteTeksti", next.getKoulutusohjelmanSeliteTeksti());
+        assertNotNull("KoulutusohjelmanTavoiteFiTeksti", next.getKoulutusohjelmanTavoiteFiTeksti());
+        assertNotNull("getKoulutusohjelmanTavoiteSvTeksti", next.getKoulutusohjelmanTavoiteSvTeksti());
+    }
+
+    @Test
+    public void testReadExcelLukionModuulit() throws Exception {
+        final URL resource = filenameToURL(LukionKoulutusModuulitRow.FILENAME);
+        boolean verbose = true;
+        KomoExcelReader instance = new KomoExcelReader(LukionKoulutusModuulitRow.class, LukionKoulutusModuulitRow.COLUMNS, 2);
+        Set<LukionKoulutusModuulitRow> result = instance.read(resource.getPath(), verbose);
+
+        assertEquals(1, result.size());
+        LukionKoulutusModuulitRow next = result.iterator().next();
+
+        assertEquals("301101", next.getKoulutuskoodiKoodiarvo());
+        assertNotNull("JatkoOpintomahdollisuudetTeksti", next.getJatkoOpintomahdollisuudetTeksti());
+        assertNotNull("KoulutuksellisetTeksti", next.getKoulutuksellisetTeksti());
+        assertNotNull("KoulutuksenRakenneTeksti", next.getKoulutuksenRakenneTeksti());
+    }
+
+    @Test
+    public void testReadExcelTutkinnonKuvaukset() throws Exception {
+        final URL resource = filenameToURL(TutkinnonKuvauksetNuoretRow.FILENAME);
+        boolean verbose = true;
+        KomoExcelReader instance = new KomoExcelReader(TutkinnonKuvauksetNuoretRow.class, TutkinnonKuvauksetNuoretRow.COLUMNS, 2);
+        Set<TutkinnonKuvauksetNuoretRow> result = instance.read(resource.getPath(), verbose);
+
+        assertEquals(1, result.size());
+        TutkinnonKuvauksetNuoretRow next = result.iterator().next();
+
+        assertEquals("321602", next.getKoulutuskoodiKoodiarvo());
+        assertEquals(null, next.getKoulutuksenRakenneSvTeksti());
+        assertEquals(null, next.getJatkoOpintomahdollisuudetEnTeksti());
+        assertNotNull("JatkoOpintomahdollisuudetFiTeksti", next.getJatkoOpintomahdollisuudetFiTeksti());
+        assertNotNull("JatkoOpintomahdollisuudetSvTeksti", next.getJatkoOpintomahdollisuudetSvTeksti());
+        assertEquals("NULL", next.getKoulutuksellisetJaAmmatillisetTavoitteetEnTeksti());
+        assertNotNull("KoulutuksellisetJaAmmatillisetTavoitteetFiTeksti", next.getKoulutuksellisetJaAmmatillisetTavoitteetFiTeksti());
+        assertNotNull("KoulutuksellisetJaAmmatillisetTavoitteetSvTeksti", next.getKoulutuksellisetJaAmmatillisetTavoitteetSvTeksti());
+        assertEquals(null, next.getKoulutuksenRakenneEnTeksti());
+        assertNotNull("KoulutuksenRakenneFiTeksti", next.getKoulutuksenRakenneFiTeksti());
+        assertNotNull("TukinnonNimiFiTeksti", next.getTukinnonNimiFiTeksti());
+        assertNotNull("TukinnonNimiSvTeksti", next.getTukinnonNimiSvTeksti());
+    }
+
+    private URL filenameToURL(final String filename) {
+        return this.getClass().getResource("/" + filename + ".xls");
     }
 }

@@ -15,9 +15,9 @@
  */
 package fi.vm.sade.tarjonta.ui.loader.xls.helper;
 
-import fi.vm.sade.tarjonta.ui.loader.xls.dto.KoulutusRelaatioRow;
+import fi.vm.sade.tarjonta.ui.loader.xls.dto.AbstractKoulutuskoodiField;
+import fi.vm.sade.tarjonta.ui.loader.xls.dto.KoulutusohjelmanKuvauksetRow;
 import java.util.Collection;
-import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,28 +25,29 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jani Wilén
  */
-public class KoulutuskoodiMap extends HashMap<String, KoulutusRelaatioRow> {
+public class KoulutuskoodiMap<ROWOBJECT extends AbstractKoulutuskoodiField> extends AbstractKeyMap<ROWOBJECT> {
 
     private static final long serialVersionUID = 863191778040860554L;
     private static final Logger log = LoggerFactory.getLogger(KoulutuskoodiMap.class);
-    private int index = 1;
 
-    public KoulutuskoodiMap(Collection<KoulutusRelaatioRow> dtos) {
+    public KoulutuskoodiMap() {
+    }
+
+    public KoulutuskoodiMap(Collection<ROWOBJECT> dtos) {
         super();
 
         log.info("Row item count : {}", dtos.size());
+        convert(dtos);
+    }
 
-        for (KoulutusRelaatioRow rowKr : dtos) {
-            if (rowKr.getKoulutuskoodiKoodiarvo() == null || rowKr.getKoulutuskoodiKoodiarvo().isEmpty()) {
-                throw new RuntimeException("koulutuskoodi cannot be null! Row number : " + index);
-            }
+    protected void convert(Collection<ROWOBJECT> dtos) {
+        int rowIndex = 1;
+        for (ROWOBJECT rowKr : dtos) {
+            final String koulutuskoodiKoodiarvo = rowKr.getKoulutuskoodiKoodiarvo();
 
-            if (rowKr.getKoulutuskoodiKoodiarvo().contains(".")) {
-                throw new RuntimeException("An invalid character was found in relation key : '" + rowKr.getKoulutuskoodiKoodiarvo() + "'");
-            }
-
-            this.put(rowKr.getKoulutuskoodiKoodiarvo(), rowKr);
-            index++;
+            checkKey(koulutuskoodiKoodiarvo, rowKr, "Koulutuskoodi", rowIndex);
+            this.put(koulutuskoodiKoodiarvo, rowKr);
+            rowIndex++;
         }
     }
 }

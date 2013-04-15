@@ -15,13 +15,28 @@
  */
 package fi.vm.sade.tarjonta.ui.loader.xls.dto;
 
+import fi.vm.sade.tarjonta.ui.loader.xls.Column;
+import fi.vm.sade.tarjonta.ui.loader.xls.InputColumnType;
+
 /**
  *
  * @author Jani Wilén
  */
-public class KoulutusRelaatioRow {
+public class KoulutusRelaatioRow extends AbstractKoulutuskoodiField {
 
-    private String koulutuskoodiKoodiarvo;
+    public static final String FILENAME = "KOULUTUS_RELAATIOT";
+    public static final Column[] COLUMNS = {
+        new Column(KOULUTUSKOODI_PROPERTY, "KOULUTUS", InputColumnType.INTEGER),
+        new Column("koulutusluokituksenTasoKoodiarvo", "KOULUTUSLUOKITUKSEN TASO", InputColumnType.INTEGER),
+        new Column("koulutusalaOph2002Koodiarvo", "KOULUTUSALAOPH2002", InputColumnType.INTEGER),
+        new Column("opintoalaOph2002Koodiarvo", "OPINTOALAOPH2002", InputColumnType.INTEGER),
+        new Column("koulutusasteOph2002Koodiarvo", "KOULUTUSASTEOPH2002", InputColumnType.INTEGER),
+        new Column("koulutusalaOph1995Koodiarvo", "KOULUTUSALAOPH1995", InputColumnType.INTEGER),
+        new Column("opintoala1995Koodiarvo", "OPINTOALAOPH1995", InputColumnType.INTEGER),
+        new Column("koulutusasteOph1997Koodiarvo", "KOULUTUSASTEOPH1995", InputColumnType.INTEGER),
+        new Column("koulutusasteIsced1997Koodiarvo", "KOULUTUSASTE ISCED1997", InputColumnType.INTEGER),
+        new Column("koulutusalaIsced1997Koodiarvo", "KOULUTUSALA ISCED1997", InputColumnType.INTEGER)
+    };
     private String koulutusluokituksenTasoKoodiarvo;
     private String koulutusalaOph2002Koodiarvo;
     private String opintoalaOph2002Koodiarvo;
@@ -164,19 +179,5 @@ public class KoulutusRelaatioRow {
      */
     public void setKoulutusalaIsced1997Koodiarvo(String koulutusalaIsced1997Koodiarvo) {
         this.koulutusalaIsced1997Koodiarvo = koulutusalaIsced1997Koodiarvo;
-    }
-
-    /**
-     * @return the koulutuskoodiKoodiarvo
-     */
-    public String getKoulutuskoodiKoodiarvo() {
-        return koulutuskoodiKoodiarvo;
-    }
-
-    /**
-     * @param koulutuskoodiKoodiarvo the koulutuskoodiKoodiarvo to set
-     */
-    public void setKoulutuskoodiKoodiarvo(String koulutuskoodiKoodiarvo) {
-        this.koulutuskoodiKoodiarvo = koulutuskoodiKoodiarvo;
     }
 }

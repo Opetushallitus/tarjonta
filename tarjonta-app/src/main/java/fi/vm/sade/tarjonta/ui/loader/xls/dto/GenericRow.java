@@ -15,34 +15,39 @@
  */
 package fi.vm.sade.tarjonta.ui.loader.xls.dto;
 
+import fi.vm.sade.tarjonta.ui.loader.xls.Column;
+import fi.vm.sade.tarjonta.ui.loader.xls.InputColumnType;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
  *
  * @author Jani Wilén
  */
-public class GenericRow {
+public class GenericRow extends AbstractKoulutuskoodiField {
 
-    private String koulutuskoodiKoodiarvo;
+    public static final String FILENAME_AMMATILLINEN = "KOULUTUS_KOULUTUSOHJELMA_RELAATIO";
+    public static final String FILENAME_LUKIO = "KOULUTUS_LUKIOLINJAT_relaatio";
+    public static final Column[] COLUMNS_AMMATILLINEN = {
+        new Column(KOULUTUSKOODI_PROPERTY, "KOULUTUS", InputColumnType.INTEGER),
+        new Column("relaatioKoodiarvo", "KOULUTUOSOHJELMA", InputColumnType.INTEGER),
+        new Column("eqfKoodiarvo", "EQF", InputColumnType.INTEGER),
+        new Column("laajuusyksikkoKoodiarvo", "Laajuusyksikko", InputColumnType.INTEGER),
+        new Column("laajuusKoodiarvo", "Laajuus", InputColumnType.INTEGER),
+        new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER)
+    };
+    public static final Column[] COLUMNS_LUKIO = {
+        new Column(KOULUTUSKOODI_PROPERTY, "KOULUTUS", InputColumnType.INTEGER),
+        new Column("relaatioKoodiarvo", "LUKIOLINJA", InputColumnType.STRING),
+        new Column("eqfKoodiarvo", "EQF", InputColumnType.INTEGER),
+        new Column("laajuusyksikkoKoodiarvo", "Laajuusyksikko", InputColumnType.INTEGER),
+        new Column("laajuusKoodiarvo", "Laajuus", InputColumnType.INTEGER),
+        new Column("koulutusasteKoodiarvo", "Koulutusasteen", InputColumnType.INTEGER)
+    };
     private String relaatioKoodiarvo;
     private String koulutusasteKoodiarvo;
     private String laajuusKoodiarvo;
     private String laajuusyksikkoKoodiarvo;
     private String eqfKoodiarvo;
-
-    /**
-     * @return the koulutuskoodiKoodiarvo
-     */
-    public String getKoulutuskoodiKoodiarvo() {
-        return koulutuskoodiKoodiarvo;
-    }
-
-    /**
-     * @param koulutuskoodiKoodiarvo the koulutuskoodiKoodiarvo to set
-     */
-    public void setKoulutuskoodiKoodiarvo(String koulutuskoodiKoodiarvo) {
-        this.koulutuskoodiKoodiarvo = koulutuskoodiKoodiarvo;
-    }
 
     /**
      * @return the relaatioKoodiarvo

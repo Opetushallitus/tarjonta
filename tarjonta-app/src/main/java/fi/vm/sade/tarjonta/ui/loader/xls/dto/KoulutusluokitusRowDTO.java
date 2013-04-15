@@ -19,27 +19,12 @@ package fi.vm.sade.tarjonta.ui.loader.xls.dto;
  *
  * @author Jani Wilén
  */
-public class KoulutusluokitusRowDTO {
+public class KoulutusluokitusRowDTO extends AbstractKoulutuskoodiField {
 
-    protected String koulutuskoodi;
     protected String koulutusalaNimi;
     protected String koulutusalaKoodi;
     protected String opintoalaNimi;
     protected String opintoalaKoodi;
-
-    /**
-     * @return the koulutuskoodi
-     */
-    public String getKoulutuskoodi() {
-        return koulutuskoodi;
-    }
-
-    /**
-     * @param koulutuskoodi the koulutuskoodi to set
-     */
-    public void setKoulutuskoodi(String koulutuskoodi) {
-        this.koulutuskoodi = koulutuskoodi;
-    }
 
     /**
      * @return the koulutusalaNimi
@@ -96,6 +81,4 @@ public class KoulutusluokitusRowDTO {
     public void setOpintoalaKoodi(String opintoalaKoodi) {
         this.opintoalaKoodi = opintoalaKoodi;
     }
-
- 
 }

@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.loader.xls.dto;
 
+import fi.vm.sade.tarjonta.ui.loader.xls.Column;
+import fi.vm.sade.tarjonta.ui.loader.xls.InputColumnType;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
@@ -23,6 +25,16 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  */
 public class TutkintonimikeRow {
 
+    public static final String FILENAME_AMMATILLINEN = "TUTKINTONIMIKKEET_koulutusohjelmat_relaatio";
+    public static final String FILENAME_LUKIO = "LUKIOLINJA_TUTKINTONIMIKE_relaatio";
+    public static final Column[] COLUMNS_LUKIO = {
+        new Column("relaatioKoodiarvo", "LUKIOLNJA", InputColumnType.INTEGER),
+        new Column("tutkintonimikeKoodiarvo", "TUTKINTONIMIKE", InputColumnType.INTEGER)
+    };
+    public static final Column[] COLUMNS_AMMATILLINEN = {
+        new Column("relaatioKoodiarvo", "KOULUTUSOHJELMA", InputColumnType.INTEGER),
+        new Column("tutkintonimikeKoodiarvo", "TUTKINTONIMIKE", InputColumnType.INTEGER)
+    };
     private String relaatioKoodiarvo;
     private String tutkintonimikeKoodiarvo;
 

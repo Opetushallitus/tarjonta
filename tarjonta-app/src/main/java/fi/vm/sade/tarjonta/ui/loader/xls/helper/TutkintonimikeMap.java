@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jani Wilén
  */
-public class TutkintonimikeMap extends HashMap<String, TutkintonimikeRow> {
+public class TutkintonimikeMap extends AbstractKeyMap<TutkintonimikeRow> {
 
     private static final long serialVersionUID = 863191778040860554L;
     private static final Logger log = LoggerFactory.getLogger(TutkintonimikeMap.class);
@@ -38,7 +38,7 @@ public class TutkintonimikeMap extends HashMap<String, TutkintonimikeRow> {
 
         for (TutkintonimikeRow row : dtos) {
             if (row.getTutkintonimikeKoodiarvo() == null || row.getTutkintonimikeKoodiarvo().isEmpty()) {
-                throw new RuntimeException("koulutuskoodi cannot be null! Row number : " + index + ", object : " + row);
+                throw new RuntimeException("Koulutuskoodi code value cannot be null! Row number : " + index + ", object : " + row);
             }
             final String relation = row.getRelaatioKoodiarvo();
 
