@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fi.vm.sade.generic.ui.feature.UserFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -213,9 +214,13 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
             } catch (Exception ex) {
                 LOG.error(ex.getMessage());
             }
-            tarjontaAdminService.lisaaHaku(hakuModel.getHakuDto());
+            HakuTyyppi hakuTyyppi = hakuModel.getHakuDto();
+            hakuTyyppi.setViimeisinPaivittajaOid(UserFeature.get().getOid());
+            tarjontaAdminService.lisaaHaku(hakuTyyppi);
         } else {
-            tarjontaAdminService.paivitaHaku(hakuModel.getHakuDto());
+            HakuTyyppi hakuTyyppi = hakuModel.getHakuDto();
+            hakuTyyppi.setViimeisinPaivittajaOid(UserFeature.get().getOid());
+            tarjontaAdminService.paivitaHaku(hakuTyyppi);
         }
         LOG.info("Haku tallennettu valmiina");
     }

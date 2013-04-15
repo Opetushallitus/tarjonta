@@ -77,6 +77,10 @@ public class HakuViewModel extends BaseUIViewModel {
     
     private String haunTila;
 
+    private Date viimeisinPaivitysPvm;
+
+    private String viimeisinPaivittaja;
+
     public HakuViewModel() {
         super();
         hakuDto = new HakuTyyppi();
@@ -460,6 +464,17 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the hakuDto
      */
     public HakuTyyppi getHakuDto() {
+
+        if (viimeisinPaivitysPvm != null) {
+            hakuDto.setViimeisinPaivitysPvm(this.getViimeisinPaivitysPvm());
+        } else {
+            hakuDto.setViimeisinPaivitysPvm(new Date());
+        }
+
+        if (this.viimeisinPaivittaja != null) {
+            hakuDto.setViimeisinPaivittajaOid(this.viimeisinPaivittaja);
+        }
+
         return hakuDto;
     }
 
@@ -500,5 +515,22 @@ public class HakuViewModel extends BaseUIViewModel {
     }
 
 
+    public Date getViimeisinPaivitysPvm() {
+        if (hakuDto.getViimeisinPaivitysPvm() != null) {
+            viimeisinPaivitysPvm = hakuDto.getViimeisinPaivitysPvm();
+        }
+        return viimeisinPaivitysPvm;
+    }
 
+    public void setViimeisinPaivitysPvm(Date viimeisinPaivitysPvm) {
+        this.viimeisinPaivitysPvm = viimeisinPaivitysPvm;
+    }
+
+    public String getViimeisinPaivittaja() {
+        return viimeisinPaivittaja;
+    }
+
+    public void setViimeisinPaivittaja(String viimeisinPaivittaja) {
+        this.viimeisinPaivittaja = viimeisinPaivittaja;
+    }
 }
