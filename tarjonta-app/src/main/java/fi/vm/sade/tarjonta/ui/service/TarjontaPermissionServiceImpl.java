@@ -26,8 +26,8 @@ import com.google.common.base.Preconditions;
 
 import fi.vm.sade.generic.service.AbstractPermissionService;
 import fi.vm.sade.generic.service.PermissionService;
-import fi.vm.sade.generic.ui.feature.UserFeature;
 import fi.vm.sade.generic.ui.portlet.security.User;
+import fi.vm.sade.security.OrganisationHierarchyAuthorizer;
 
 /**
  * This class encapsulates permission service so that changes the actual
@@ -39,16 +39,27 @@ import fi.vm.sade.generic.ui.portlet.security.User;
 @Component
 public class TarjontaPermissionServiceImpl implements InitializingBean {
 
+    @Autowired
+    private UserProvider userProvider;
+    
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaPermissionServiceImpl.class);
+
     @Component
     public static class TPermissionService extends AbstractPermissionService {
         public TPermissionService() {
             super("TARJONTA");
         }
+        
+        @Override
+        @Autowired
+        public void setAuthorizer(OrganisationHierarchyAuthorizer authorizer) {
+            LOG.info("Using authorizer:" + authorizer.getClass().getName());
+            super.setAuthorizer(authorizer);
+        }
     }
 
     @Autowired(required = true)
-    TPermissionService wrapped;
+    TPermissionService wrapped = new TPermissionService();
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -56,7 +67,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     }
 
     protected User getUser() {
-        return UserFeature.get();
+        return userProvider.getUser();
     }
 
     /**
@@ -92,7 +103,6 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public boolean userCanCreateReadUpdateAndDelete() {
         Exception e = new Exception();
         LOG.info("Obsolete call for checking crud, called from: {}", e.getStackTrace()[1]);
-//        e.printStackTrace(System.out);
         return getUser().isUserInRole(wrapped.ROLE_CRUD);
     }
 
@@ -139,7 +149,9 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * @return
      */
     public boolean userCanUpdateHakukohde(final OrganisaatioContext context) {
-        return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD, wrapped.ROLE_RU);
+        final boolean result = wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD, wrapped.ROLE_RU);
+        LOG.debug("userCanUpdateHakukohde({}):{}", context, result);
+        return result;
     }
 
     /**
@@ -148,7 +160,9 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * @return
      */
     public boolean userCanUpdateKoulutus(final OrganisaatioContext context) {
-        return wrapped.checkAccess(context.ooid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
+        final boolean result = wrapped.checkAccess(context.ooid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
+        LOG.debug("userCanUpdateKoulutus({}):{}", context, result);
+        return result;
     }
 
     /**
@@ -213,9 +227,14 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         //now checking if user has CRUD on oph 
         //return wrapped.checkAccess(wrapped.getRootOrgOid(), wrapped.ROLE_CRUD);
     }
+   
+    public boolean userCanPublishCancelledKoulutus() {
+    	return wrapped.checkAccess(wrapped.getRootOrgOid(), wrapped.ROLE_CRUD);
+    }
 
     /**
      * Check if user can edit haku.
+     * XXX Haku is not tied to any organisation.
      * @return
      */
     public boolean userCanEditHaku() {
@@ -227,6 +246,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Check if user can publish haku.
+     * XXX Haku is not tied to any organisation.
      * 
      * @return
      */
@@ -239,6 +259,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Check if user can Cancel haku publishment.
+     * XXX Haku is not tied to any organisation.
      * @return
      */
     public boolean userCanCancelHakuPublish() {

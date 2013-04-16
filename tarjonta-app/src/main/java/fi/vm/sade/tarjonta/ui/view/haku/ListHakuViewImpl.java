@@ -275,7 +275,9 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
 
     @Override
     public void showErrorMessage(String msg) {
+        if (getWindow() != null) {
         getWindow().showNotification(msg, Window.Notification.TYPE_ERROR_MESSAGE);
+        }
     }
     
     /**

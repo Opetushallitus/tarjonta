@@ -19,11 +19,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -40,10 +44,14 @@ import fi.vm.sade.tarjonta.ui.service.UserProvider;
  * This implementation is used when developing the app, specifically
  * permissions. Constructs user permissions & org membership from properties.
  */
+@Component
+@Profile("dev")
 public class UserProviderMock extends UserProvider {
 
     private static final String ROLEPREFIX = "ROLE_APP_TARJONTA";
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    
     public void setDebugCRUD(Boolean debugCRUD) {
         this.debugCRUD = debugCRUD;
     }
@@ -73,6 +81,7 @@ public class UserProviderMock extends UserProvider {
     public User getUser() {
 
         final UserMock mockUser = new UserMock() {
+            
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -97,8 +106,10 @@ public class UserProviderMock extends UserProvider {
             }
 
             @Override
-            public boolean isUserInRole(String role) {
-                throw new RuntimeException("not supported!");
+            public boolean isUserInRole(final String role) {
+                Exception e = new Exception();
+                logger.error("Nobody should call this method, caller from: {}", e.getStackTrace()[1]);
+                return false;
             }
 
             @Override

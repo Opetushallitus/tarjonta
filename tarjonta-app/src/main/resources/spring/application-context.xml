@@ -63,7 +63,6 @@
     <bean id="tarjontaPermissionService" class="fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl" ></bean>
 
     <bean id="oidProvider" class="fi.vm.sade.security.OidProvider"/>
-    <bean id="userProvider" class="fi.vm.sade.tarjonta.ui.service.UserProvider"/>
     <bean id="authorizer" class="fi.vm.sade.tarjonta.ui.service.CustomOrganisaatioHierarchyAuthorizer"/>
 
     <import resource="application-context-service.xml"/>

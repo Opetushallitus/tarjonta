@@ -15,8 +15,13 @@
  */
 package fi.vm.sade.tarjonta.ui.view.haku;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -65,8 +70,35 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
     @Autowired(required=true)
     private TarjontaUIHelper _tarjontaUIHelper;
 
+    private HakuViewModel model;
+
+    private I18NHelper i18n = new I18NHelper("ShowHakuViewImpl.");
+
+    private final String datePattern = "dd.MM.yyyy HH:mm";
+
     public ShowHakuViewImpl(String pageTitle, String message, PageNavigationDTO dto) {
         super(VerticalLayout.class, pageTitle, message, dto);
+    }
+
+    private void addItemToGrid(final GridLayout grid,
+                               final String labelCaptionKey, final Component component) {
+        if (grid != null) {
+            final HorizontalLayout hl = UiUtil.horizontalLayout(false,
+                    UiMarginEnum.RIGHT);
+            hl.setSizeUndefined();
+            UiUtil.label(hl, i18n.getMessage(labelCaptionKey));
+            grid.addComponent(hl);
+
+            final HorizontalLayout textArea = UiUtil.horizontalLayout(false,
+                    UiMarginEnum.NONE);
+
+            textArea.addComponent(component);
+            grid.addComponent(textArea);
+
+            grid.setComponentAlignment(hl, Alignment.TOP_RIGHT);
+            grid.setComponentAlignment(textArea, Alignment.TOP_LEFT);
+            grid.newLine();
+        }
     }
 
     @Override
@@ -81,11 +113,17 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         Button poista = addNavigationButton(T("Poista"), new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                /*
-                hakuPresenter.removeHaku(hakuPresenter.getHakuModel());
-                getWindow().showNotification(T("HakuPoistettu"));
-                backFired();*/
-                ShowHakuViewImpl.this.getParent().getWindow().showNotification("Ei toteuttettu");
+                if (model != null)  {
+                try {
+                hakuPresenter.removeHaku(model);
+                backFired();
+                } catch (Exception exp ) {
+                    if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakuUsedException")) {
+                    getWindow().showNotification(I18N.getMessage("notification.error.haku.used"));
+                    }
+                }
+
+                }
             }
         });
         
@@ -94,62 +132,112 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
 
         addLayoutSplit();
         buildLayoutMiddleTop(layout);
-        addLayoutSplit();
-        buildLayoutMiddleMid2(layout);
+        //addLayoutSplit();
+        //buildLayoutMiddleMid2(layout);
         addLayoutSplit();
         buildLayoutMiddleBottom(layout);
         addLayoutSplit();
     }
 
+
+    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, Label lastUpdatedLabel ,boolean showButton) {
+        HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
+        Label titleLabel = UiUtil.label(headerLayout, title);
+        titleLabel.setStyleName(Oph.LABEL_H2);
+
+
+        if (btnCaption != null) {
+            headerLayout.addComponent(titleLabel);
+            if (lastUpdatedLabel != null) {
+                headerLayout.addComponent(lastUpdatedLabel);
+            }
+
+            Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener);
+            btn.setVisible(showButton);
+
+            // Add default click listener so that we can show that action has not been implemented as of yet
+            if (listener == null) {
+                btn.addListener(new Button.ClickListener() {
+                    private static final long serialVersionUID = 5019806363620874205L;
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        getWindow().showNotification("Toiminnallisuutta ei vielä toteutettu");
+                    }
+                });
+            }
+
+
+            //headerLayout.setExpandRatio(btn, 1f);
+            headerLayout.setComponentAlignment(btn, Alignment.TOP_RIGHT);
+            if (lastUpdatedLabel != null) {
+                headerLayout.setComponentAlignment(lastUpdatedLabel,Alignment.TOP_CENTER);
+            }
+        }
+        return headerLayout;
+    }
+
+    private void addRichTextToGrid(final GridLayout grid,
+                                   final String labelCaptionKey, final String labelCaptionValue) {
+
+
+        Label lbl = new Label(labelCaptionValue);
+        lbl.setContentMode(Label.CONTENT_XHTML);
+
+        addItemToGrid(grid, labelCaptionKey, lbl);
+    }
+
+    private Label buildTallennettuLabel(Date date) {
+        SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
+        Label lastUpdLbl = new Label("( " + hakuPresenter.getHakuModel().getHaunTila() + " ," + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + " )");
+        return lastUpdLbl;
+    }
+
+
     private void buildLayoutMiddleTop(VerticalLayout layout) {
-        layout.addComponent(buildHeaderLayout(T("HaunTiedot"), T("Muokkaa")));
+        VerticalLayout hdrLayout = new VerticalLayout();
+        hdrLayout.setMargin(true);
 
-        HakuViewModel model = hakuPresenter.getHakuModel();
+        model = hakuPresenter.getHakuModel();
 
-        GridLayout grid = new GridLayout(2, 9);
-        grid.setHeight("100%");
-        grid.setWidth("800px");
+        Label lastUpdLbl = null;
 
-        LOG.info("Building lalbels");
-        grid.addComponent(UiUtil.label(null, T("Hakutyyppi") + ": "), 0, 0);
-        grid.addComponent(UiUtil.label(null, T("HakukausiJaVuosi") + ": "), 0, 1);
-        grid.addComponent(UiUtil.label(null, T("KoulutuksenAlkamiskausi") + ": "), 0, 2);
-        grid.addComponent(UiUtil.label(null, T("HakuKohdejoukko") + ": "), 0, 3);
-        grid.addComponent(UiUtil.label(null, T("Hakutapa") + ": "), 0, 4);
-        grid.addComponent(UiUtil.label(null, T("HaunTunniste") + ": "), 0, 5);
-        grid.addComponent(UiUtil.label(null, T("Hakuaika") + ": "), 0, 6);
-        grid.addComponent(UiUtil.label(null, T("Hakulomake") + ": "), 0, 7);
+        if (hakuPresenter.getHakuModel().getViimeisinPaivitysPvm() != null) {
+           lastUpdLbl = buildTallennettuLabel(model.getViimeisinPaivitysPvm());
 
+        }
 
-        LOG.info("building content labels");
-        grid.addComponent(UiUtil.label(null, _tarjontaUIHelper.getKoodiNimi(model.getHakutyyppi())), 1, 0);
+        hdrLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("perustiedot"),i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(ClickEvent clickEvent) {
+                         hakuPresenter.showHakuEdit(hakuPresenter.getHakuModel());
+                    }
+                }
+                ,lastUpdLbl , true));
 
+        final GridLayout grid = new GridLayout(2, 1);
+        grid.setWidth("100%");
+        grid.setMargin(true);
 
-        grid.addComponent(UiUtil.label(null, _tarjontaUIHelper.getKoodiNimi(model.getHakukausi()) + " " + model.getHakuvuosi()), 1, 1);
-        grid.addComponent(UiUtil.label(null, _tarjontaUIHelper.getKoodiNimi(model.getKoulutuksenAlkamisKausi()) + " " + model.getKoulutuksenAlkamisvuosi()), 1, 2);
-        grid.addComponent(UiUtil.label(null, _tarjontaUIHelper.getKoodiNimi(model.getHaunKohdejoukko())), 1, 3);
-        grid.addComponent(UiUtil.label(null, _tarjontaUIHelper.getKoodiNimi(model.getHakutapa())), 1, 4);
-        grid.addComponent(UiUtil.label(null, model.getHaunTunniste()), 1, 5);
-        grid.addComponent(UiUtil.label(null,
-                _tarjontaUIHelper.formatDate(model.getAlkamisPvm()) + " - " + _tarjontaUIHelper.formatDate(model.getPaattymisPvm())),
-                1, 6);
+        addItemToGrid(grid, "Hakutyyppi", _tarjontaUIHelper.getKoodiNimi(model.getHakutyyppi()));
+        addItemToGrid(grid, "HakukausiJaVuosi", _tarjontaUIHelper.getKoodiNimi(model.getHakukausi()) + " " + model.getHakuvuosi());
+        addItemToGrid(grid, "KoulutuksenAlkamiskausi",_tarjontaUIHelper.getKoodiNimi(model.getKoulutuksenAlkamisKausi()) + "  " + model.getKoulutuksenAlkamisvuosi());
+        addItemToGrid(grid, "HakuKohdejoukko", _tarjontaUIHelper.getKoodiNimi(model.getHaunKohdejoukko()) );
+        addItemToGrid(grid, "Hakutapa", _tarjontaUIHelper.getKoodiNimi(model.getHakutapa()));
+        addItemToGrid(grid, "HaunTunniste", model.getHaunTunniste());
+        addItemToGrid(grid ,"Hakuaika", _tarjontaUIHelper.formatDate(model.getAlkamisPvm()) + " - " + _tarjontaUIHelper.formatDate(model.getPaattymisPvm()));
         String hakulomakeStr = hakuPresenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()
                 ? T("KaytetaanJarjestelmanHakulomaketta")
                 : hakuPresenter.getHakuModel().getHakuLomakeUrl();
-        grid.addComponent(UiUtil.label(null, hakulomakeStr), 1, 7);
+        addItemToGrid(grid,"Hakulomake",hakulomakeStr);
 
-        grid.setColumnExpandRatio(0, 1);
-        grid.setColumnExpandRatio(1, 2);
+        grid.setColumnExpandRatio(1,1f);
 
-        for (int row = 0; row < grid.getRows(); row++) {
-            //alignment code not working?
-            Component c = grid.getComponent(0, row);
-            grid.setComponentAlignment(c, Alignment.TOP_RIGHT);
-        }
+        hdrLayout.addComponent(grid);
+        hdrLayout.setComponentAlignment(grid, Alignment.TOP_LEFT);
 
-        layout.addComponent(grid);
-        layout.setExpandRatio(grid, 1f);
-        LOG.info("Middle part done.");
+        layout.addComponent(hdrLayout);
     }
 
     private void buildLayoutMiddleMid2(VerticalLayout layout) {
@@ -161,15 +249,34 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         layout.addComponent(categoryTree);
     }
 
-
+    private void addItemToGrid(final GridLayout grid,
+                               final String labelCaptionKey, final String labelCaptionValue) {
+        addItemToGrid(grid, labelCaptionKey, new Label(labelCaptionValue));
+    }
 
     private void buildLayoutMiddleBottom(VerticalLayout layout) {
-        layout.addComponent(buildBottomHeaderLayout(T("Hakukohteet"), T("LuoHakukohde")));
+        //layout.addComponent(buildBottomHeaderLayout(T("Hakukohteet"), T("LuoHakukohde")));
+
+        VerticalLayout mBottomLayout = new VerticalLayout();
+        mBottomLayout.setMargin(true);
+
+
+        mBottomLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("perustiedot"),i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(ClickEvent clickEvent) {
+                          ShowHakuViewImpl.this.getWindow().showNotification("Ei toteutettu");
+                    }
+                }
+                ,null , true));
 
         CategoryTreeView categoryTree = new CategoryTreeView();
         categoryTree.setHeight("100px");
         categoryTree.setContainerDataSource(createHakukohteetTreeDataSource(hakuPresenter.getHakukohteet()));
-        layout.addComponent(categoryTree);
+        mBottomLayout.addComponent(categoryTree);
+
+        layout.addComponent(mBottomLayout);
+
     }
 
 
