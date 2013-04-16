@@ -67,7 +67,7 @@ public class TarjontaUIHelper {
     @Autowired
     private CacheManager _cacheManager;
 
-    @Scheduled(cron = "*/30 * * * * ?")
+    @Scheduled(cron = "0 */5 * * * ?")
     public void printCacheStats() {
         LOG.debug("---------- printCacheStats(): " + this);
         for (String cacheName : _cacheManager.getCacheNames()) {
