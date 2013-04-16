@@ -240,9 +240,11 @@ public class ShowHakukohdeTab extends CustomComponent {
     }
 
     private String getKoodiarvo(String uri) {
+        if(uri!=null) { 
         List<KoodiType> koodis = uiHelper.getKoodis(uri);
         if (koodis != null) {
             return koodis.get(0).getKoodiArvo();
+        }
         }
         return null;
     }
@@ -400,7 +402,7 @@ public class ShowHakukohdeTab extends CustomComponent {
             }
         });
 
-        liitaUusiKoulutusBtn.setVisible(presenter.getPermission().userCanAddKoulutusToHakukohde(OrganisaatioContext.getContext(presenter)));
+        liitaUusiKoulutusBtn.setVisible(presenter.getPermission().userCanAddKoulutusToHakukohde(context));
         verticalLayout.addComponent(liitaUusiKoulutusBtn);
     }
 

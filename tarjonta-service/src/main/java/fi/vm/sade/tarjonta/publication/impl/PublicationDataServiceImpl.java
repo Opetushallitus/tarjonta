@@ -227,7 +227,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             case PERUTTU:
                 return TarjontaTila.JULKAISTU.equals(fromStatus) ? true : false;
             case JULKAISTU:
-                return TarjontaTila.VALMIS.equals(fromStatus) || TarjontaTila.JULKAISTU.equals(fromStatus) ? true : false;
+                return TarjontaTila.VALMIS.equals(fromStatus) || TarjontaTila.JULKAISTU.equals(fromStatus) || TarjontaTila.PERUTTU.equals(fromStatus) ? true : false;
             default:
                 return false;
         }

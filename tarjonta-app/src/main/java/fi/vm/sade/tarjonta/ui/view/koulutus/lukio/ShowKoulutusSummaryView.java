@@ -79,6 +79,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
     private TarjontaUIHelper _tarjontaUIHelper;
     private TarjontaDialogWindow tarjontaDialog;
     private final String datePattern = "dd.MM.yyyy HH:mm";
+    private OrganisaatioContext context;
 
     public ShowKoulutusSummaryView(String pageTitle, PageNavigationDTO pageNavigationDTO) {
         super(VerticalLayout.class, pageTitle, null, pageNavigationDTO);
@@ -86,6 +87,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
     @Override
     protected void buildLayout(VerticalLayout layout) {
+        context = OrganisaatioContext.getContext(_presenter.getTarjoaja().getSelectedOrganisationOid());
         LOG.debug("buildLayout(): hakutyyppi uri={}", KoodistoURIHelper.KOODISTO_HAKUTYYPPI_URI);
         final KoulutusLukioPerustiedotViewModel perustiedot = _presenter.getModel().getKoulutusLukioPerustiedot();
         if (_presenter == null) {
@@ -99,7 +101,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         layout.removeAllComponents();
 
         Set<String> langs = getLanguages();
-        addNavigationButtons(layout, OrganisaatioContext.getContext(_presenter.getTarjoaja().getSelectedOrganisationOid()));
+        addNavigationButtons(layout, context);
 
         if (langs.size()==1) {
             Panel panel = new Panel();
@@ -198,6 +200,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
            viimeisinPaivitysPvm = buildTallennettuLabel(((KoulutusLukioPerustiedotViewModel)model).getViimeisinPaivitysPvm());
         }
 
+        
         vl.addComponent(buildHeaderLayout(T("perustiedot"), T(CommonTranslationKeys.MUOKKAA), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -205,7 +208,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
             public void buttonClick(ClickEvent event) {
                 _presenter.getLukioPresenter().showEditKoulutusView(getEditViewOid(), KoulutusActiveTab.PERUSTIEDOT);
             }
-        },viimeisinPaivitysPvm,true));
+        },viimeisinPaivitysPvm, _presenter.getPermission().userCanUpdateKoulutus(context)));
         
         FormGridBuilder grid = new FormGridBuilder(getClass());
         

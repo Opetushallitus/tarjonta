@@ -13,6 +13,8 @@
         <artifactId>build-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+    
+    <!-- jotakin -->
 
     <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

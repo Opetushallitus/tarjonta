@@ -71,7 +71,7 @@ public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
         
         //button permissions:
         Preconditions.checkNotNull(tarjontaPresenter, "Tarjonta presenter cannot be null");
-        final OrganisaatioContext context = OrganisaatioContext.getContext(tarjontaPresenter);
+        final OrganisaatioContext context = OrganisaatioContext.getContext(tarjontaPresenter.getTarjoaja().getSelectedOrganisationOid());
         poistaBtn.setVisible(tarjontaPresenter.getPermission().userCanUpdateHakukohde(context));
     }
     //TODO: Remove this when button logic is implemented

@@ -213,6 +213,10 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         //now checking if user has CRUD on oph 
         //return wrapped.checkAccess(wrapped.getRootOrgOid(), wrapped.ROLE_CRUD);
     }
+   
+    public boolean userCanPublishCancelledKoulutus() {
+    	return wrapped.checkAccess(wrapped.getRootOrgOid(), wrapped.ROLE_CRUD);
+    }
 
     /**
      * Check if user can edit haku.
