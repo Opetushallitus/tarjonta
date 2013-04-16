@@ -116,7 +116,8 @@ public class KoulutusResultRow extends HorizontalLayout {
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaHakukohteet"), menuCommand);
 
-        if (tila.equals(TarjontaTila.LUONNOS) && tarjontaPresenter.getPermission().userCanDeleteKoulutus(context)) {
+        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS)) 
+        		&& tarjontaPresenter.getPermission().userCanDeleteKoulutus(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
 
@@ -124,6 +125,8 @@ public class KoulutusResultRow extends HorizontalLayout {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
         } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelPublish(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
+        } else if (tila.equals(TarjontaTila.PERUTTU) && tarjontaPresenter.getPermission().userCanPublishCancelledKoulutus()) {
+        	rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
         }
 
         return rowMenuBar;
