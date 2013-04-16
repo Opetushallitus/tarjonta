@@ -235,7 +235,8 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
             tarjontaAdminService.poistaHaku(haku.getHakuDto());
         } catch (Exception exp) {
             if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakuUsedException")) {
-                hakuList.showErrorMessage(I18N.getMessage("notification.error.haku.used"));
+
+                throw new RuntimeException(exp.getMessage());
             }
         }
         hakuList.reload();
