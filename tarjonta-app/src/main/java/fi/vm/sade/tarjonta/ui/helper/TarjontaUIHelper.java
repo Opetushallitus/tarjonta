@@ -30,11 +30,14 @@ import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import net.sf.ehcache.CacheManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
@@ -46,16 +49,36 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Configurable(preConstruction = false)
+@EnableScheduling
 public class TarjontaUIHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaUIHelper.class);
+
     public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";
     private static final String LANGUAGE_SEPARATOR = ", ";
+
     @Autowired
     private KoodiService _koodiService;
     @Autowired(required = true)
     private TarjontaPublicService _tarjontaPublicService;
+
     private transient I18NHelper _i18n = new I18NHelper(TarjontaUIHelper.class);
+
+    @Autowired
+    private CacheManager _cacheManager;
+
+    @Scheduled(cron = "*/30 * * * * ?")
+    public void printCacheStats() {
+        LOG.debug("---------- printCacheStats(): " + this);
+        for (String cacheName : _cacheManager.getCacheNames()) {
+            LOG.debug("  {}", _cacheManager.getCache(cacheName).getStatistics());
+            if (false) {
+                for (Object key : _cacheManager.getCache(cacheName).getKeys()) {
+                    LOG.debug("  key={}", key);
+                }
+            }
+        }
+    }
 
     /**
      * Default version for those uris without version information is "-1".
@@ -103,10 +126,11 @@ public class TarjontaUIHelper {
     }
 
     private Set<KoodiType> getRelatedParentKoodis(List<KoodiUriAndVersioType> parentKoodis, boolean alaKoodi, SuhteenTyyppiType suhdeTyyppi) {
+        LOG.debug("getRelatedParentKoodis(..)");
+
         Set<KoodiType> koodiTypes = new HashSet<KoodiType>();
 
         for (KoodiUriAndVersioType koodiUriAndVersioType : parentKoodis) {
-
             List<KoodiType> koodis = _koodiService.listKoodiByRelation(koodiUriAndVersioType, alaKoodi, suhdeTyyppi);//SuhteenTyyppiType.SISALTYY);
             koodiTypes.addAll(koodis);
         }
@@ -170,6 +194,8 @@ public class TarjontaUIHelper {
     }
 
     private String getAllHakukohdeNimet(String hakuKohdeNimi) {
+        LOG.debug("getAllHakukohdeNimet({})", hakuKohdeNimi);
+
         StringBuilder nimet = new StringBuilder();
         try {
             List<KoodiType> koodit = _koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder.latestKoodisByUris(getKoodiURI(hakuKohdeNimi)));
@@ -196,6 +222,7 @@ public class TarjontaUIHelper {
      * @return
      */
     public List<KoodiType> getKoodisByKoodisto(String uri) {
+        LOG.debug("getKoodisByKoodisto({})", uri);
         SearchKoodisByKoodistoCriteriaType criteriUri = KoodiServiceSearchCriteriaBuilder.koodisByKoodistoUri(getKoodiURI(uri));
         return _koodiService.searchKoodisByKoodisto(criteriUri);
     }
@@ -220,6 +247,7 @@ public class TarjontaUIHelper {
      * @return
      */
     public List<KoodiType> gethKoodis(String uri, Integer version) {
+        LOG.debug("getKoodis({}, {})", uri, version);
         SearchKoodisCriteriaType criteria;
 
         if (version == null) {
@@ -281,6 +309,8 @@ public class TarjontaUIHelper {
      * to KoulutusKoodi
      */
     public List<KoodiType> getOlRelatedKoulutuskoodit(List<String> olTyyppiUris) {
+        LOG.debug("getOlRelatedKoulutuskoodit({})", olTyyppiUris);
+
         //First the list of koulutusastekoodis that are related to the oppilaitostyyppis is fetched
         List<KoodiType> koulutusasteKoodit = new ArrayList<KoodiType>();
         for (String curUri : olTyyppiUris) {
@@ -304,6 +334,7 @@ public class TarjontaUIHelper {
         //then the koulutuskoodi objects that are related to the koulutusastekoodis are fetced and returned.
         return getRelatedKoodit(koulutusasteKoodit, null, true, SuhteenTyyppiType.SISALTYY);
     }
+
 
     /*
      * Returns the KoulutuskoodiModel objects that  matches the koulutusKoodi given as parameter.
@@ -333,7 +364,7 @@ public class TarjontaUIHelper {
      * given as parameters.
      */
     private List<KoodiType> getRelatedKoodit(List<KoodiType> koodit, String koodistoUri, boolean alaKoodi, SuhteenTyyppiType suhdeTyyppi) {
-        LOG.debug("getRelatedKoodit");
+        LOG.debug("getRelatedKoodit()");
         List<KoodiType> relatedKoodit = new ArrayList<KoodiType>();
         List<KoodiUriAndVersioType> koodiVersios = new ArrayList<KoodiUriAndVersioType>();
         for (KoodiType curOlTyyppiKoodi : koodit) {
@@ -342,7 +373,6 @@ public class TarjontaUIHelper {
             koodiUriAndVersioType.setVersio(curOlTyyppiKoodi.getVersio());
             LOG.debug("KoodiURI and versio: {}, {}", koodiUriAndVersioType.getKoodiUri(), koodiUriAndVersioType.getVersio());
             koodiVersios.add(koodiUriAndVersioType);
-
         }
 
         for (KoodiType curKoodi : this.getRelatedParentKoodis(koodiVersios, alaKoodi, suhdeTyyppi)) {
@@ -367,6 +397,8 @@ public class TarjontaUIHelper {
      * also error text is given
      */
     public String getKoodiNimi(String koodiUriWithPossibleVersionInformation, Locale locale) {
+        LOG.debug("getKoodiNimi('{}', {}) ...", new Object[]{koodiUriWithPossibleVersionInformation, locale});
+
         String result = "";
 
         try {
@@ -496,6 +528,13 @@ public class TarjontaUIHelper {
         return sdf.format(date);
     }
 
+    /**
+     * Creates koodi uro for storage, appends: koodi URI + "#" + version number.
+     *
+     * @param uri
+     * @param version
+     * @return
+     */
     public static String createVersionUri(String uri, int version) {
         return new StringBuilder(uri)
                 .append(KOODI_URI_AND_VERSION_SEPARATOR)
@@ -503,6 +542,12 @@ public class TarjontaUIHelper {
 
     }
 
+    /**
+     * Extract components from the versioned koodi uri.
+     *
+     * @param koodiUriWithVersion
+     * @return
+     */
     public static String[] splitKoodiURI(final String koodiUriWithVersion) {
         if (koodiUriWithVersion == null) {
             throw new IllegalArgumentException("Koodi uri with version string object cannot be null.");
@@ -522,6 +567,12 @@ public class TarjontaUIHelper {
         return result;
     }
 
+    /**
+     * Extract koodi uri and version from mayve versioned koodi URI.
+     *
+     * @param koodiUriWithVersion
+     * @return
+     */
     public static String[] splitKoodiURIAllowNull(final String koodiUriWithVersion) {
         String[] result = new String[2];
         int index = koodiUriWithVersion.lastIndexOf(KOODI_URI_AND_VERSION_SEPARATOR);
@@ -629,10 +680,162 @@ public class TarjontaUIHelper {
         type.setKoodiUri(splitUri[0]);
         type.setVersio(Integer.parseInt(splitUri[1]));
 
-        if (LOG.isDebugEnabled()) {
-            LOG.warn("KoodiUriAndVersioType : '{}', '{}'", splitUri[0], splitUri[1]);
-        }
+        LOG.debug("getKoodiUriAndVersioTypeByKoodiUriAndVersion : '{}', '{}'", splitUri[0], splitUri[1]);
 
         return type;
     }
+
+
+//    /**
+//     * Return koodi with uri and version.
+//     *
+//     * If koodi uri contains version it is constructed without service calls, otherwise latest koodi version will be queried from the
+//     * KoodiService.
+//     *
+//     * TODO ADD CACHE!
+//     *
+//     * @param koodiUri
+//     * @return
+//     */
+//    private KoodiUriAndVersioType getKoodiUriAndVersioByKoodiUri(String koodiUri) {
+//        // Does uri contain version information?
+//        if (koodiUri.indexOf(KOODI_URI_AND_VERSION_SEPARATOR) >= 0) {
+//            // yes, it does, construct the KoodiUriAndVersionType
+//            return getKoodiUriAndVersioTypeByKoodiUriAndVersion(koodiUri);
+//        } else {
+//            // Nope, search for the given koodi uri, query the latest from the service
+//            SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.latestKoodisByUris(koodiUri);
+//
+//            List<KoodiType> koodis = _koodiService.searchKoodis(searchCriteria);
+//            if (koodis == null || koodis.isEmpty()) {
+//                return null;
+//            }
+//
+//            if (koodis.size() != 1) {
+//                LOG.warn("Koodi with uri: {} -- returns {} KoodiType's ... using first one.", koodiUri, koodis.size());
+//            }
+//
+//            KoodiType kt = koodis.get(0);
+//
+//            KoodiUriAndVersioType result = new KoodiUriAndVersioType();
+//            result.setKoodiUri(kt.getKoodiUri());
+//            result.setVersio(kt.getVersio());
+//
+//            return result;
+//        }
+//    }
+//
+//
+//
+//    /**
+//     * Given list of koodiUri's - find the related koodis in the list of given target koodistos.
+//     *
+//     * TODO CACHING
+//     *
+//     * @param koodiUris
+//     * @param targetKoodistoUris
+//     * @return
+//     */
+//    public Set<KoodiType> getRelatedKoodisX(List<String> koodiUris, String... targetKoodistoUris) {
+//        LOG.info("getRelatedKoodis(uris = {}, koodistos = {})...", koodiUris, targetKoodistoUris);
+//
+//        Set<KoodiType> result = new HashSet<KoodiType>();
+//
+//        for (String koodiUri : koodiUris) {
+//            result.addAll(getRelatedKoodisX(koodiUri, targetKoodistoUris));
+//        }
+//
+//        return result;
+//    }
+//
+//    /**
+//     * Get related koodis in given koodistos.
+//     *
+//     * TODO CACHING?
+//     *
+//     * @param koodiUri
+//     * @param targetKoodistoUris
+//     * @return
+//     */
+//    public Set<KoodiType> getRelatedKoodisX(String koodiUri, String... targetKoodistoUris) {
+//        LOG.info("getRelatedKoodis(uri = {}, koodistos = {})...", koodiUri, targetKoodistoUris);
+//
+//        Set<KoodiType> result = new HashSet<KoodiType>();
+//
+//        for (String targetKoodistoUri : targetKoodistoUris) {
+//            result.addAll(getRelatedKoodisX(koodiUri, targetKoodistoUri));
+//        }
+//
+//        return result;
+//    }
+//
+//
+//    /**
+//     * Load related koodis in target koodisto. Removes other related koodis.
+//     *
+//     * TODO CACHING
+//     *
+//     * @param koodiUri
+//     * @param targetKoodistoUri if null returns all related koodis
+//     * @return
+//     */
+//    public Set<KoodiType> getRelatedKoodisX(String koodiUri, String targetKoodistoUri) {
+//
+//        // Get the Koodi, uses version info in uri if any  otherwise calls service to get lates
+//        KoodiUriAndVersioType koodi =  getKoodiUriAndVersioByKoodiUri(koodiUri);
+//
+//        if (koodi == null) {
+//            LOG.warn("getRelatedKoodis(koodiUri = {}, targetKoodistoUri = {})", koodiUri, targetKoodistoUri);
+//            return new HashSet<KoodiType>();
+//        }
+//
+//        List<KoodiUriAndVersioType> koodis = new ArrayList<KoodiUriAndVersioType>();
+//        koodis.add(koodi);
+//
+//        // Filter the correct koodisto koodis
+//        Set<KoodiType> result = null;
+//        Set<KoodiType> tmp = getRelatedKoodisX(koodis, false, SuhteenTyyppiType.SISALTYY);
+//
+//        // Filtering?
+//        if (targetKoodistoUri == null) {
+//            result = tmp;
+//        } else {
+//            result = new HashSet<KoodiType>();
+//
+//            for (KoodiType koodiType : tmp) {
+//                if (targetKoodistoUri.equals(koodiType.getKoodisto().getKoodistoUri())) {
+//                  result.add(koodiType);
+//                }
+//            }
+//        }
+//
+//        return result;
+//    }
+//
+//
+//    /**
+//     * Gets the related koodis for the given koodi(s) from KoodiService.
+//     *
+//     * TODO CACHING
+//     *
+//     * @param koodis
+//     * @param alaKoodi
+//     * @param suhdeTyyppi
+//     * @return
+//     */
+//    private Set<KoodiType> getRelatedKoodisX(List<KoodiUriAndVersioType> koodis, boolean alaKoodi, SuhteenTyyppiType suhdeTyyppi) {
+//        LOG.info("getRelatedKoodisX({}, {}, {})", new Object[] {koodis, alaKoodi, suhdeTyyppi} );
+//
+//        Set<KoodiType> result = new HashSet<KoodiType>();
+//
+//        for (KoodiUriAndVersioType koodiUriAndVersioType : koodis) {
+//            List<KoodiType> resultKoodis = _koodiService.listKoodiByRelation(koodiUriAndVersioType, alaKoodi, suhdeTyyppi); //SuhteenTyyppiType.SISALTYY);
+//            result.addAll(resultKoodis);
+//        }
+//
+//        return result;
+//    }
+
+
+
 }

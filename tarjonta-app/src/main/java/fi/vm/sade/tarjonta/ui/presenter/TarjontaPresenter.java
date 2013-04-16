@@ -1458,16 +1458,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         getModel().getSearchSpec().getOrganisaatioOids().addAll(findAllChilrenOidsByParentOid(organisaatioOid));
         getModel().getSearchSpec().getOrganisaatioOids().add(organisaatioOid);
 
-//        List<OrganisaatioDTO> childOrgs = this.organisaatioService.findAllChildrenWithOid(organisaatioOid);
-//
-//        List<String> orgOids = new ArrayList<String>();
-//        orgOids.add(organisaatioOid);
-//        for (OrganisaatioDTO org : childOrgs) {
-//
-//            orgOids.add(org.getOid());
-//        }
-//        getModel().getSearchSpec().setOrganisaatioOids(orgOids);
-
         //Clearing the selected hakukohde and koulutus objects
         getModel().getSelectedhakukohteet().clear();
         getModel().getSelectedKoulutukset().clear();
@@ -1630,7 +1620,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private List<String> getChildOrgOlTyyppis(OrganisaatioDTO selectedOrg) {
         List<String> childOlTyyppis = new ArrayList<String>();
         OrganisaatioSearchCriteriaDTO criteria = new OrganisaatioSearchCriteriaDTO();
-    
+
         criteria.getOidResctrictionList().add(selectedOrg.getOid());
         //criteria.setMaxResults(1000);
         List<OrganisaatioPerustietoType> childOrgs = this.getOrganisaatioService().searchBasicOrganisaatios(criteria);
@@ -1672,9 +1662,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         kysely.setKoulutusKoodi(koulutuskoodi);
 
         /*
-         * When use has selected many organisations(example koulutus copy), 
+         * When use has selected many organisations(example koulutus copy),
          * an organisation OID is taken from the selected result row item, if
-         * use has selected only one organisation on dialog, then the OID is 
+         * use has selected only one organisation on dialog, then the OID is
          * taken from the selected organisation.
          */
         kysely.getTarjoajaOids().add(getTarjoaja().getSingleSelectRowResultOrganisationOid());

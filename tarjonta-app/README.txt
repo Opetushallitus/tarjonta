@@ -2,6 +2,11 @@
 			  Tarjonta APP (UI)
 ======================================================================
 
+Käynnistäminen:
+
+  mvn -Pdevelopment -Dlog4j.configuration=file:src/main/profile/development/log4j.properties jetty:run
+
+
 Proertyfilet jota ladataan
 
   classpath:tarjonta-app.properties
