@@ -410,10 +410,18 @@ public class UiBuilder extends UiUtil {
         }
     }
 
+    /**
+     * @deprecated
+     * Do not use this method, use specific methods from {@link TarjontaPermissionServiceImpl}!
+     */
     public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, final RequiredRole role, TarjontaPermissionServiceImpl tps) {
         return buttonSmallPrimary(layout, caption, null, role, tps);
     }
 
+    /**
+     * @deprecated
+     * Do not use this method, use specific methods from {@link TarjontaPermissionServiceImpl}!
+     */
     public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, Button.ClickListener listener, final RequiredRole role, TarjontaPermissionServiceImpl tps) {
         Button button = null;
         if (listener != null) {
