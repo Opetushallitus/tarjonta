@@ -400,7 +400,7 @@ public class ShowHakukohdeTab extends CustomComponent {
             }
         });
 
-        liitaUusiKoulutusBtn.setVisible(presenter.getPermission().userCanAddKoulutusToHakukohde(OrganisaatioContext.getContext(presenter)));
+        liitaUusiKoulutusBtn.setVisible(presenter.getPermission().userCanAddKoulutusToHakukohde(context));
         verticalLayout.addComponent(liitaUusiKoulutusBtn);
     }
 
