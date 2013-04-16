@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.data.test;
 
+import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.data.test.modules.HakukohdeGenerator;
 import fi.vm.sade.tarjonta.data.test.modules.HakuGenerator;
 import fi.vm.sade.tarjonta.data.test.modules.KomotoGenerator;
@@ -45,14 +46,13 @@ public class DataUploader {
     public DataUploader() {
     }
 
-    public void upload() {
+    public void upload(final String organisationOid) {
+        Preconditions.checkNotNull(organisationOid, "Organisation OID cannot be null.");
         HakuGenerator haku = new HakuGenerator(tarjotantaAdminService);
         final String hakukohdeOid = haku.create();
 
         OrganisaatioSearchOidType oid = new OrganisaatioSearchOidType();
-        oid.setSearchOid("1.2.246.562.10.44513634004");
-
-        //oid.setSearchOid("1.2.246.562.10.00000000001");
+        oid.setSearchOid(organisationOid);
         OrganisaatioOidListType result = organisaatioService.findChildrenOidsByOid(oid);
         KomotoGenerator komoto = new KomotoGenerator(tarjotantaAdminService, tarjotantaPublicService);
         HakukohdeGenerator hakukohde = new HakukohdeGenerator(tarjotantaAdminService);
@@ -60,6 +60,7 @@ public class DataUploader {
         for (OrganisaatioOidType oidType : result.getOrganisaatioOidList()) {
             for (int i = 0; i < MAX_KOMOTOS_PER_ORGANISATION; i++) {
                 final String komotoOid = komoto.create(oidType.getOrganisaatioOid());
+
                 hakukohde.create(hakukohdeOid, komotoOid);
             }
         }

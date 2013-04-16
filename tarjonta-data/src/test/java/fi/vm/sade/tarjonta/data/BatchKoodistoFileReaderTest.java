@@ -6,8 +6,11 @@ import fi.vm.sade.koodisto.service.KoodistoAdminService;
 import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.*;
 import fi.vm.sade.koodisto.service.types.common.*;
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.data.loader.xls.KoodistoRelaatioExcelReader;
 import fi.vm.sade.tarjonta.data.util.TarjontaDataKoodistoHelper;
+import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
@@ -33,25 +36,21 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners(listeners = {
-        DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class,
-        TransactionalTestExecutionListener.class})
+    DependencyInjectionTestExecutionListener.class,
+    DirtiesContextTestExecutionListener.class,
+    TransactionalTestExecutionListener.class})
 @ContextConfiguration("classpath:spring/test-context.xml")
 public class BatchKoodistoFileReaderTest {
-    private final Logger log = LoggerFactory.getLogger(BatchKoodistoFileReaderTest.class);
 
+    private final Logger log = LoggerFactory.getLogger(BatchKoodistoFileReaderTest.class);
     @Autowired
     private BatchKoodistoFileReader reader;
-
     @Autowired
     private UploadKoodistoData uploadKoodistoData;
-
     @Autowired
     private TarjontaDataKoodistoHelper koodistoHelper;
-
     @Autowired
     private KoodistoRelaatioExcelReader koodistoRelaatioExcelReader;
-
     private KoodistoAdminService koodistoAdminService;
     private KoodiAdminService koodiAdminService;
     private KoodiService koodiService;
@@ -101,20 +100,20 @@ public class BatchKoodistoFileReaderTest {
         log.info("captured create koodistoUri {}", capturedCreateKoodistoUri);
         assertTrue("create koodistoUri should be kausi or kunta",
                 StringUtils.equals(capturedCreateKoodistoUri, "kausi")
-                        || StringUtils.equals(capturedCreateKoodistoUri, "kunta"));
+                || StringUtils.equals(capturedCreateKoodistoUri, "kunta"));
         log.info("captured create koodistoRyhmaUris [{}]", StringUtils.join(koodistoUriList.getValue(), ", "));
         assertTrue("create koodistoRyhmaUris should contain http://kaikkikoodistot and http://alueet",
                 CollectionUtils.containsAny(koodistoUriList.getValue(), Collections.singletonList("http://kaikkikoodistot"))
-                        && CollectionUtils.containsAny(koodistoUriList.getValue(), Collections.singletonList("http://alueet")));
+                && CollectionUtils.containsAny(koodistoUriList.getValue(), Collections.singletonList("http://alueet")));
 
         // verify update koodistoUri
         /*
-        final ArgumentCaptor<UpdateKoodistoDataType> updateKoodisto = ArgumentCaptor.forClass(UpdateKoodistoDataType.class);
-        verify(koodistoAdminService, times(2)).updateKoodisto(updateKoodisto.capture());
-        final TilaType capturedTila = updateKoodisto.getValue().getTila();
-        log.info("captured tila {}", capturedTila.value());
-        assertEquals("HYVAKSYTTY", capturedTila.value());
-        */
+         final ArgumentCaptor<UpdateKoodistoDataType> updateKoodisto = ArgumentCaptor.forClass(UpdateKoodistoDataType.class);
+         verify(koodistoAdminService, times(2)).updateKoodisto(updateKoodisto.capture());
+         final TilaType capturedTila = updateKoodisto.getValue().getTila();
+         log.info("captured tila {}", capturedTila.value());
+         assertEquals("HYVAKSYTTY", capturedTila.value());
+         */
 
         // verify create koodi arvo
         final ArgumentCaptor<CreateKoodiDataType> createKoodi = ArgumentCaptor.forClass(CreateKoodiDataType.class);

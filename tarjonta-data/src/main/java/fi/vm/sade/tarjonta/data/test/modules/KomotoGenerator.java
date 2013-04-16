@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
@@ -51,7 +53,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Configurable(preConstruction = false)
 public class KomotoGenerator extends AbstractGenerator {
-
+    
+    private static final Logger LOG = LoggerFactory.getLogger(KomotoGenerator.class);
     private static final String KOULUTUSASTE_AMMATTILLINEN_KOULUTUS = "32";
     private static final String OID_TYPE = "KOMOTO_";
     private static final Date DATE = new DateTime(2013, 1, 1, 1, 1).toDate();
@@ -59,15 +62,15 @@ public class KomotoGenerator extends AbstractGenerator {
     private TarjontaAdminService tarjontaAdminService;
     private List< Map.Entry<String, String>> komoPairs = new ArrayList< Map.Entry<String, String>>();
     private int komoIndex = 0;
-
+    
     public KomotoGenerator() {
         super(OID_TYPE);
     }
-
+    
     public KomotoGenerator(TarjontaAdminService tarjontaAdminService, TarjontaPublicService tarjontaPublicService) {
         super(OID_TYPE);
         this.tarjontaAdminService = tarjontaAdminService;
-
+        
         HaeKoulutusmoduulitKyselyTyyppi tyyppi = new HaeKoulutusmoduulitKyselyTyyppi();
         tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
         HaeKoulutusmoduulitVastausTyyppi haeKoulutusmoduulit = tarjontaPublicService.haeKoulutusmoduulit(tyyppi);
@@ -78,28 +81,31 @@ public class KomotoGenerator extends AbstractGenerator {
             addKomoPair(tulos.getKoulutusmoduuli());
         }
     }
-
+    
     public String create(final String organisationOid) {
         Preconditions.checkNotNull(organisationOid, "Organisation OID cannot be null.");
         final LisaaKoulutusTyyppi createToteutus = createToteutus(organisationOid);
-        tarjontaAdminService.lisaaKoulutus(createToteutus(organisationOid));
+        tarjontaAdminService.lisaaKoulutus(createToteutus);
         return createToteutus.getOid();
     }
-
-    private LisaaKoulutusTyyppi createToteutus(String organisationOid) {
+    
+    private LisaaKoulutusTyyppi createToteutus(final String organisationOid) {
+        
         if (komoIndex >= komoPairs.size()) {
             komoIndex = 0;
         }
-
+        
         LisaaKoulutusTyyppi tyyppi = new LisaaKoulutusTyyppi();
-        Map.Entry<String, String> komoPair = komoPairs.get(komoIndex);
+        Map.Entry<String, String> komoPair = getNextKomoPair();
         tyyppi.setKoulutusKoodi(simpleKoodistoTyyppi(komoPair.getKey()));
         tyyppi.setKoulutusohjelmaKoodi(simpleKoodistoTyyppi(komoPair.getValue()));
-        komoIndex++;
-
+        
         tyyppi.setTila(TarjontaTila.JULKAISTU);
         tyyppi.setTarjoaja(organisationOid);
         tyyppi.setOid(generateOid());
+        
+        LOG.debug("Insert komoto with OID {}, komoto pair {}", tyyppi.getOid(), komoPair);
+        
         tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
         tyyppi.setKoulutusaste(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI, KOULUTUSASTE_AMMATTILLINEN_KOULUTUS));
         tyyppi.setKoulutuksenAlkamisPaiva(DATE);
@@ -109,30 +115,43 @@ public class KomotoGenerator extends AbstractGenerator {
         tyyppi.setPainotus(new MonikielinenTekstiTyyppi());
         tyyppi.setKesto(koulutuksenKestoTyyppi);
         tyyppi.setPohjakoulutusvaatimus(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI, "er"));
-
+        
         tyyppi.getOpetusmuoto().add(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI, "im"));
         tyyppi.getOpetuskieli().add(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_KIELI_URI, "FI"));
         tyyppi.getKoulutuslaji().add(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI, "n"));
-
+        
+        tyyppi.setKansainvalistyminen(createLorem());
+        tyyppi.setKoulutusohjelmanValinta(createLorem());
+        tyyppi.setKuvailevatTiedot(createLorem());
+        tyyppi.setSijoittuminenTyoelamaan(createLorem());
+        tyyppi.setYhteistyoMuidenToimijoidenKanssa(createLorem());
+        
         return tyyppi;
     }
-
+    
     private static KoodistoKoodiTyyppi simpleKoodistoTyyppi(String uri) {
         KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
         koodi.setUri(uri);
         koodi.setArvo(null);
-
+        
         return koodi;
     }
-
+    
     public void addKomoPair(KoulutusmoduuliKoosteTyyppi komo) {
-
+        
         final String koulutusohjelmakoodiUri = komo.getKoulutusohjelmakoodiUri();
         if (koulutusohjelmakoodiUri == null) {
             return;
         }
-
+        
         Map.Entry e = new AbstractMap.SimpleEntry<String, String>(komo.getKoulutuskoodiUri(), koulutusohjelmakoodiUri);
         komoPairs.add(e);
+    }
+    
+    private Map.Entry<String, String> getNextKomoPair() {
+        Map.Entry<String, String> komoPair = komoPairs.get(komoIndex);
+        komoIndex++;
+        
+        return komoPair;
     }
 }

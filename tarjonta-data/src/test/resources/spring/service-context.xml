@@ -78,25 +78,29 @@
     <jaxws:client id="koodiService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
                   address="${KoodiService.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}"/>
-                  <!--address="http://localhost:9090/koodisto-service/koodiWS"/>-->
-
     <jaxws:client id="koodistoService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
                   address="${KoodistoService.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}"/>
-               <!--   address="http://localhost:9090/koodisto-service/koodistoWS"/>-->
-    
     <jaxws:client id="koodiAdminService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiAdminService"
                   address="${KoodiAdminService.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}" />
-               <!--   address="http://localhost:9090/koodisto-service/koodiAdminWS"/>-->
-
     <jaxws:client id="koodistoAdminService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoAdminService"
                   address="${KoodistoAdminService.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}" />
-         <!--         address="http://localhost:9090/koodisto-service/koodistoAdminWS"/>-->
-
     <jaxws:client id="oidService"
                   serviceClass="fi.vm.sade.oid.service.OIDService"
                   address="${oid.webservice.url:http://NO_OID_WEBSERVICE_URL_CONFIGURED}"/>
+    <jaxws:client id="tarjontaAdminService"
+                  serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService"
+                  address="${TarjontaAdminService.url:http://NO_TARJONTA_ADMIN_WEBSERVICE_URL_CONFIGURED}"/>
+    <jaxws:client id="tarjontaPublicService"
+                  serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService"
+                  address="${TarjontaPublicService.url:http://NO_TARJONTA_PUBLIC_WEBSERVICE_URL_CONFIGURED}"/>
+    <jaxws:client id="organisaatioService"
+                  serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
+                  address="${OrganisaatioService.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>         
+    <jaxws:client id="userService"
+                  serviceClass="fi.vm.sade.authentication.service.UserService"
+                  address="${UserService.uri:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
 
 </beans>

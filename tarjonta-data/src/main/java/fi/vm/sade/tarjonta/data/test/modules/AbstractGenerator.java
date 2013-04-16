@@ -20,6 +20,8 @@ import fi.vm.sade.tarjonta.data.util.KoodistoUtil;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -27,6 +29,7 @@ import java.util.Date;
  */
 public abstract class AbstractGenerator {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractGenerator.class);
     private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
     private static final String OID_FORMAT = "%09d_";
     private static final String[] LANGUAGES = new String[]{"fi", "sv", "en"};
@@ -45,27 +48,30 @@ public abstract class AbstractGenerator {
             + "Mauris interdum massa ultrices lorem pretium sit amet sodales justo malesuada. Praesent lorem est, tincidunt"
             + "a commodo at, volutpat et ipsum. Etiam diam tellus";
     private String oidType;
-    private long oid = 0l;
-
+    private long oid = 1l;
+    
     public AbstractGenerator(String oidType) {
         this.oidType = oidType;
     }
-
+    
     protected String generateOid() {
+        final String strOid = new StringBuilder(oidType).append(String.format(OID_FORMAT, oid)).append(FORMATTER.format(new Date())).toString();
         oid++;
-        return new StringBuilder(oidType).append(String.format(OID_FORMAT, oid)).append(FORMATTER.format(new Date())).toString();
+        LOG.info("generate OID {}", strOid);
+        
+        return strOid;
     }
-
+    
     protected MonikielinenTekstiTyyppi createLorem() {
         MonikielinenTekstiTyyppi mktt = new MonikielinenTekstiTyyppi();
-
+        
         for (String lang : LANGUAGES) {
             MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
             teksti.setKieliKoodi(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_KIELI_URI, lang));
             teksti.setValue(LOREM);
             mktt.getTeksti().add(teksti);
         }
-
+        
         return mktt;
     }
 }
