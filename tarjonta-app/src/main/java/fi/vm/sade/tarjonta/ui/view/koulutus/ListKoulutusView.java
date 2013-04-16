@@ -327,6 +327,8 @@ public class ListKoulutusView extends VerticalLayout {
                         getWindow().addWindow(dialog);
                     } else {
                         presenter.showHakukohdeEditView(null, null, presenter.getSelectedKoulutusOidNameViewModels(),null);
+                        presenter.getTarjoaja().setSelectedResultRowOrganisationOid(
+                        		presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getTarjoaja());
                     }
                 }
             }

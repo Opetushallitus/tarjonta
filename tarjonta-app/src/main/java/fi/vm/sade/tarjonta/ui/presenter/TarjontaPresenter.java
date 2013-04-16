@@ -946,10 +946,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 addKomotoOidsToModel(koulutusOidNameViewModels);
                 getModel().getHakukohde().getKoulukses().addAll(koulutusOidNameViewModels);
             }
+            getTarjoaja().setSelectedResultRowOrganisationOid(getModel().getSelectedKoulutukset().get(0).getKoulutus().getKomotoOid());
         } else {
-
             editHakukohdeView.loadLiiteTableWithData();
-
         }
 
         //If a list of koulutusOids is provided they are set in the model
@@ -1277,6 +1276,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             this.searchResultsView.setResultSizeForKoulutusTab(0);
             this.searchResultsView.setResultSizeForHakukohdeTab(0);
         }
+        getModel().getSelectedKoulutukset().clear();
+        getModel().getSelectedhakukohteet().clear();
+        this.searchResultsView.getKoulutusList().toggleCreateHakukohdeB(null, false);
     }
 
     /**
@@ -1457,16 +1459,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         getModel().getSearchSpec().getOrganisaatioOids().clear();
         getModel().getSearchSpec().getOrganisaatioOids().addAll(findAllChilrenOidsByParentOid(organisaatioOid));
         getModel().getSearchSpec().getOrganisaatioOids().add(organisaatioOid);
-
-//        List<OrganisaatioDTO> childOrgs = this.organisaatioService.findAllChildrenWithOid(organisaatioOid);
-//
-//        List<String> orgOids = new ArrayList<String>();
-//        orgOids.add(organisaatioOid);
-//        for (OrganisaatioDTO org : childOrgs) {
-//
-//            orgOids.add(org.getOid());
-//        }
-//        getModel().getSearchSpec().setOrganisaatioOids(orgOids);
 
         //Clearing the selected hakukohde and koulutus objects
         getModel().getSelectedhakukohteet().clear();
