@@ -17,7 +17,7 @@
     <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
-      <organisaatio.api.version>3.1</organisaatio.api.version>
+      <organisaatio.api.version>4.0-SNAPSHOT</organisaatio.api.version>
       <authentication.api.version>1.0-SNAPSHOT</authentication.api.version>
       <generic.version>${sade-generic.version}</generic.version>
       <koodisto.api.version>3.1-SNAPSHOT</koodisto.api.version>
