@@ -240,9 +240,11 @@ public class ShowHakukohdeTab extends CustomComponent {
     }
 
     private String getKoodiarvo(String uri) {
+        if(uri!=null) { 
         List<KoodiType> koodis = uiHelper.getKoodis(uri);
         if (koodis != null) {
             return koodis.get(0).getKoodiArvo();
+        }
         }
         return null;
     }
