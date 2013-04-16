@@ -45,7 +45,7 @@ public class CustomOrganisaatioHierarchyAuthorizer extends OrganisationHierarchy
     }
 
     @Override
-    public void checkAccess(Authentication currentUser, String targetOrganisationOid, String... roles)
+    public void checkAccess(Authentication currentUser, String targetOrganisationOid, String[] roles)
             throws NotAuthorizedException {
         super.checkAccess(userProvider.getUser().getAuthentication(), targetOrganisationOid, roles);
     }
