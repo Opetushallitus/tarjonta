@@ -213,7 +213,10 @@ public class ShowHakukohdeTab extends CustomComponent {
         sb.append(liiteViewModel.getOsoiteRivi1());
         sb.append(", ");
         sb.append(getKoodiarvo(liiteViewModel.getPostinumero()));
-
+        if (liiteViewModel.getOsoiteRivi2() != null && liiteViewModel.getOsoiteRivi2().length() > 1) {
+        sb.append(liiteViewModel.getOsoiteRivi2());
+        sb.append(", ");
+        }
         sb.append(", ");
         sb.append(uiHelper.getKoodiNimi(liiteViewModel.getPostinumero(), I18N.getLocale()));
 
@@ -225,6 +228,10 @@ public class ShowHakukohdeTab extends CustomComponent {
 
         sb.append(hakukohdeViewModel.getOsoiteRivi1());
         sb.append(", ");
+        if (hakukohdeViewModel.getOsoiteRivi2() != null && hakukohdeViewModel.getOsoiteRivi2().length() > 1) {
+            sb.append(hakukohdeViewModel.getOsoiteRivi2());
+            sb.append(", ");
+        }
         sb.append(getKoodiarvo(hakukohdeViewModel.getPostinumero()));
         sb.append(", ");
         sb.append(uiHelper.getKoodiNimi(hakukohdeViewModel.getPostinumero(),I18N.getLocale()));
