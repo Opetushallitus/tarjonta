@@ -22,21 +22,21 @@
            maxElementsInMemory="10000"
            eternal="false"
            timeToIdleSeconds="600"
-           timeToLiveSeconds="600"
+           timeToLiveSeconds="1200"
            overflowToDisk="false"
            statistics="true" />
     <cache name="koodis"
            maxElementsInMemory="10000"
            eternal="false"
            timeToIdleSeconds="600"
-           timeToLiveSeconds="600"
+           timeToLiveSeconds="1200"
            overflowToDisk="false"
            statistics="true" />
     <cache name="koodi_relations"
            maxElementsInMemory="10000"
            eternal="false"
            timeToIdleSeconds="600"
-           timeToLiveSeconds="600"
+           timeToLiveSeconds="1200"
            overflowToDisk="false"
            statistics="true" />
 
@@ -49,14 +49,14 @@
            maxElementsInMemory="10000"
            eternal="false"
            timeToIdleSeconds="600"
-           timeToLiveSeconds="600"
+           timeToLiveSeconds="1200"
            overflowToDisk="false"
            statistics="true" />
     <cache name="organisaatiosChildrenByOid"
            maxElementsInMemory="10000"
            eternal="false"
            timeToIdleSeconds="600"
-           timeToLiveSeconds="600"
+           timeToLiveSeconds="1200"
            overflowToDisk="false"
            statistics="true" />
 
