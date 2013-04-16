@@ -65,7 +65,7 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
     public void actionNext(ClickEvent event) {
 
         if (getHakukohdeOid() != null) {
-            presenter.showHakukohdeViewImpl(getHakukohdeOid());
+            presenter.showHakukohdeViewImpl(getHakukohdeOid(), presenter.getTarjoaja().getSelectedResultRowOrganisationOid());
         }
     }
 

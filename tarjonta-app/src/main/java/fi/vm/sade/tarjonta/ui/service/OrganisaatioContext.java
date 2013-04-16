@@ -57,7 +57,7 @@ public class OrganisaatioContext {
     }
 
     /**
-     * Creates new context.
+     * Creates new context based on data available in presenter.
      * 
      * @param tarjontaPresenter
      * @return

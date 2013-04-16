@@ -97,7 +97,9 @@ public class HakukohdeViewModelToDTOConverter {
         }
 
         //alin hyväksyttävä keskiarvo
+        if (hakukohdevm.getAlinHyvaksyttavaKeskiarvo() != null) {
         hakukohde.setAlinHyvaksyttavaKeskiarvo(new BigDecimal(hakukohdevm.getAlinHyvaksyttavaKeskiarvo()));
+        }
         
         //painotettavat oppiaineet
         for (PainotettavaOppiaineViewModel painotettava : hakukohdevm.getPainotettavat()) {
@@ -186,7 +188,9 @@ public class HakukohdeViewModelToDTOConverter {
         }
 
         //alin hyväksyttava keskiarvo
+        if (hakukohdeTyyppi.getAlinHyvaksyttavaKeskiarvo() != null) {
         hakukohdeVM.setAlinHyvaksyttavaKeskiarvo(new DecimalFormat(NUMBER_FORMAT).format(hakukohdeTyyppi.getAlinHyvaksyttavaKeskiarvo()));
+        }
 
         return hakukohdeVM;
     }

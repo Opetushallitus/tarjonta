@@ -946,10 +946,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 addKomotoOidsToModel(koulutusOidNameViewModels);
                 getModel().getHakukohde().getKoulukses().addAll(koulutusOidNameViewModels);
             }
+            getTarjoaja().setSelectedResultRowOrganisationOid(getModel().getSelectedKoulutukset().get(0).getKoulutus().getKomotoOid());
         } else {
-
             editHakukohdeView.loadLiiteTableWithData();
-
         }
 
         //If a list of koulutusOids is provided they are set in the model
@@ -1277,6 +1276,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             this.searchResultsView.setResultSizeForKoulutusTab(0);
             this.searchResultsView.setResultSizeForHakukohdeTab(0);
         }
+        getModel().getSelectedKoulutukset().clear();
+        getModel().getSelectedhakukohteet().clear();
+        this.searchResultsView.getKoulutusList().toggleCreateHakukohdeB(null, false);
     }
 
     /**
@@ -1458,16 +1460,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         getModel().getSearchSpec().getOrganisaatioOids().addAll(findAllChilrenOidsByParentOid(organisaatioOid));
         getModel().getSearchSpec().getOrganisaatioOids().add(organisaatioOid);
 
-//        List<OrganisaatioDTO> childOrgs = this.organisaatioService.findAllChildrenWithOid(organisaatioOid);
-//
-//        List<String> orgOids = new ArrayList<String>();
-//        orgOids.add(organisaatioOid);
-//        for (OrganisaatioDTO org : childOrgs) {
-//
-//            orgOids.add(org.getOid());
-//        }
-//        getModel().getSearchSpec().setOrganisaatioOids(orgOids);
-
         //Clearing the selected hakukohde and koulutus objects
         getModel().getSelectedhakukohteet().clear();
         getModel().getSelectedKoulutukset().clear();
@@ -1630,9 +1622,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private List<String> getChildOrgOlTyyppis(OrganisaatioDTO selectedOrg) {
         List<String> childOlTyyppis = new ArrayList<String>();
         OrganisaatioSearchCriteriaDTO criteria = new OrganisaatioSearchCriteriaDTO();
-        criteria.setOrganisaatioTyyppi(OrganisaatioTyyppi.OPPILAITOS.value());
+
         criteria.getOidResctrictionList().add(selectedOrg.getOid());
-        criteria.setMaxResults(1000);
+        //criteria.setMaxResults(1000);
         List<OrganisaatioPerustietoType> childOrgs = this.getOrganisaatioService().searchBasicOrganisaatios(criteria);
         if (childOrgs != null) {
             for (OrganisaatioPerustietoType curChild : childOrgs) {
@@ -1672,9 +1664,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         kysely.setKoulutusKoodi(koulutuskoodi);
 
         /*
-         * When use has selected many organisations(example koulutus copy), 
+         * When use has selected many organisations(example koulutus copy),
          * an organisation OID is taken from the selected result row item, if
-         * use has selected only one organisation on dialog, then the OID is 
+         * use has selected only one organisation on dialog, then the OID is
          * taken from the selected organisation.
          */
         kysely.getTarjoajaOids().add(getTarjoaja().getSingleSelectRowResultOrganisationOid());

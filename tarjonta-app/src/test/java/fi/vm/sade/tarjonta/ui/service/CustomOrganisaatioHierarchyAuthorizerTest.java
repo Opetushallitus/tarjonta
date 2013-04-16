@@ -49,7 +49,7 @@ public class CustomOrganisaatioHierarchyAuthorizerTest {
         expect(userProvider.getUser()).andReturn(mockUserProvider.getUser());
         replay(userProvider);
 
-        a.checkAccess(null, ORG_OID, "APP_TARJONTA_CRUD");
+        a.checkAccess(null, ORG_OID, new String[]{"APP_TARJONTA_CRUD"});
         EasyMock.verify(userProvider);
     }
 

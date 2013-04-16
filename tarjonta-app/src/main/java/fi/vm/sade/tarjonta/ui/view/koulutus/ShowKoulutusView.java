@@ -36,6 +36,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -135,69 +136,75 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     }
 
     private void addNavigationButtons(VerticalLayout layout, OrganisaatioContext context) {
-        addNavigationButton("", new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
+    	addNavigationButton("", new Button.ClickListener() {
+    		private static final long serialVersionUID = 5019806363620874205L;
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
+    		@Override
+    		public void buttonClick(Button.ClickEvent event) {
 
-                presenter.reloadAndShowMainDefaultView();
-            }
-        }, StyleEnum.STYLE_BUTTON_BACK);
-        
-        final Button poista = addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
+    			presenter.reloadAndShowMainDefaultView();
+    		}
+    	}, StyleEnum.STYLE_BUTTON_BACK);
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                showRemoveDialog();
 
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
-        
-        final Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px","500px");
-                getWindow().addWindow(kopiointiDialog);
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        final Button siirraOsaksiToista = addNavigationButton(T("siirraOsaksiToistaKoulutusta"), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
+    	final Button poista = addNavigationButton(T(CommonTranslationKeys.POISTA), new Button.ClickListener() {
+    		private static final long serialVersionUID = 5019806363620874205L;
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Ei toteutettu");
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
+    		@Override
+    		public void buttonClick(Button.ClickEvent event) {
+    			showRemoveDialog();
 
-        final Button lisaaToteutus = addNavigationButton(T("lisaaToteutus"), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
+    		}
+    	}, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                presenter.showLisaaRinnakkainenToteutusEditView(presenter.getModel().getKoulutusPerustiedotModel().getOid());
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        final Button esikatsele = addNavigationButton(T("esikatsele"), new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
+    	final Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
+    		private static final long serialVersionUID = 5019806363620874205L;
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                getWindow().showNotification("Ei toteutettu");
-            }
-        }, StyleEnum.STYLE_BUTTON_PRIMARY);
+    		@Override
+    		public void buttonClick(Button.ClickEvent event) {
+    			KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px","500px");
+    			getWindow().addWindow(kopiointiDialog);
+    		}
+    	}, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-        //check permissions
-        final TarjontaPermissionServiceImpl permissions = presenter.getPermission(); 
-        poista.setVisible(permissions.userCanDeleteKoulutus(context));
-        kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
-        siirraOsaksiToista.setVisible(permissions.userCanMoveKoulutus(context));
-        lisaaToteutus.setVisible(permissions.userCanAddKoulutusInstanceToKoulutus(context));
+    	final Button siirraOsaksiToista = addNavigationButton(T("siirraOsaksiToistaKoulutusta"), new Button.ClickListener() {
+    		private static final long serialVersionUID = 5019806363620874205L;
+
+    		@Override
+    		public void buttonClick(Button.ClickEvent event) {
+    			getWindow().showNotification("Ei toteutettu");
+    		}
+    	}, StyleEnum.STYLE_BUTTON_PRIMARY);
+
+    	final Button lisaaToteutus = addNavigationButton(T("lisaaToteutus"), new Button.ClickListener() {
+    		private static final long serialVersionUID = 5019806363620874205L;
+
+    		@Override
+    		public void buttonClick(Button.ClickEvent event) {
+    			presenter.showLisaaRinnakkainenToteutusEditView(presenter.getModel().getKoulutusPerustiedotModel().getOid());
+    		}
+    	}, StyleEnum.STYLE_BUTTON_PRIMARY);
+
+    	final Button esikatsele = addNavigationButton(T("esikatsele"), new Button.ClickListener() {
+    		private static final long serialVersionUID = 5019806363620874205L;
+
+    		@Override
+    		public void buttonClick(Button.ClickEvent event) {
+    			getWindow().showNotification("Ei toteutettu");
+    		}
+    	}, StyleEnum.STYLE_BUTTON_PRIMARY);
+
+    	//check permissions
+    	final TarjontaPermissionServiceImpl permissions = presenter.getPermission(); 
+    	poista.setVisible((presenter.getModel().getKoulutusPerustiedotModel().getTila().equals(TarjontaTila.VALMIS) 
+    						|| presenter.getModel().getKoulutusPerustiedotModel().getTila().equals(TarjontaTila.LUONNOS)) 
+    					    && permissions.userCanDeleteKoulutus(context));
+    	kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
+    	siirraOsaksiToista.setVisible(permissions.userCanMoveKoulutus(context));
+    	lisaaToteutus.setVisible(permissions.userCanAddKoulutusInstanceToKoulutus(context));
     }
 
     public void addLayoutSplit(VerticalLayout layout) {

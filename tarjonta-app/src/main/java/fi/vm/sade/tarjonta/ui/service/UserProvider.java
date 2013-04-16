@@ -15,6 +15,9 @@
  */
 package fi.vm.sade.tarjonta.ui.service;
 
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+
 import fi.vm.sade.generic.ui.feature.UserFeature;
 import fi.vm.sade.generic.ui.portlet.security.User;
 
@@ -23,6 +26,8 @@ import fi.vm.sade.generic.ui.portlet.security.User;
  * current user is stored inside {@link UserFeature}. When the user is
  * accessible from somewhere else this design needs to be revisited.
  */
+@Component
+@Profile("default")
 public class UserProvider {
 
     public User getUser() {
