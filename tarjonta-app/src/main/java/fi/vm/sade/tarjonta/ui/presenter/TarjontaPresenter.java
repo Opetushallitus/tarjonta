@@ -1630,9 +1630,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private List<String> getChildOrgOlTyyppis(OrganisaatioDTO selectedOrg) {
         List<String> childOlTyyppis = new ArrayList<String>();
         OrganisaatioSearchCriteriaDTO criteria = new OrganisaatioSearchCriteriaDTO();
-        criteria.setOrganisaatioTyyppi(OrganisaatioTyyppi.OPPILAITOS.value());
+    
         criteria.getOidResctrictionList().add(selectedOrg.getOid());
-        criteria.setMaxResults(1000);
+        //criteria.setMaxResults(1000);
         List<OrganisaatioPerustietoType> childOrgs = this.getOrganisaatioService().searchBasicOrganisaatios(criteria);
         if (childOrgs != null) {
             for (OrganisaatioPerustietoType curChild : childOrgs) {
