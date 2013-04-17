@@ -249,7 +249,7 @@ public class Relaatiot5RowDTO extends KoulutusluokitusRowDTO {
     }
 
     public String getLaajuusUri() {
-        return laajuus + VERSION;
+        return laajuus;
     }
 
     public String getEqfUri() {
