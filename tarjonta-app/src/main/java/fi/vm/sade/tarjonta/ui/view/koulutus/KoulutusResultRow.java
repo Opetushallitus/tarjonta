@@ -208,14 +208,17 @@ public class KoulutusResultRow extends HorizontalLayout {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 if (koulutus != null
+                		&& koulutus.getKoulutus() != null
                         && isSelected.booleanValue()) {
                     tarjontaPresenter.getSelectedKoulutukset().add(koulutus);
 
-                } else if (koulutus != null) {
+                } else if (koulutus != null 
+                		&& koulutus.getKoulutus() != null) {
                     tarjontaPresenter.getSelectedKoulutukset().remove(koulutus);
                 }
 
                 tarjontaPresenter.toggleCreateHakukohde();
+                tarjontaPresenter.togglePoistaKoulutusB();
             }
         });
 

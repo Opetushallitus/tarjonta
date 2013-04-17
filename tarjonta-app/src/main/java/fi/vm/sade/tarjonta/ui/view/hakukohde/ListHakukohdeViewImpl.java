@@ -49,6 +49,8 @@ import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
+import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
+import fi.vm.sade.tarjonta.ui.view.koulutus.MultipleKoulutusRemovalDialog;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiConstant;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -92,6 +94,9 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      * Checkbox for selecting all the Hakukohde objects in the list.
      */
     private CheckBox valKaikki;
+    
+    private TarjontaDialogWindow hakukohdeDialog;
+    
     private transient I18NHelper i18n = new I18NHelper(this);
     /**
      * Presenter object for the Hakukohde listing.
@@ -269,23 +274,13 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      */
     private HorizontalLayout buildMiddleResultLayout() {
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
-        /*
-         lisaaHakuunB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LisaaHakuun"), RequiredRole.CRUD, presenter.getPermission());
-         lisaaHakuunB.addListener(new Button.ClickListener() {
-         @Override
-         public void buttonClick(Button.ClickEvent event) {
-         getWindow().showNotification("Toiminnallisuutta ei ole toteutettu");
-
-         }
-         });
-         */
-        poistaB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("Poista"), RequiredRole.CRUD, presenter.getPermission());
+        poistaB = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("Poista"));
         poistaB.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 5833582377090856884L;
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                presenter.removeSelectedHakukohteet();
+                showRemoveDialog();
             }
         });
         
@@ -302,6 +297,22 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         layout.addComponent(btnInfo);
 
         return layout;
+    }
+    
+    /**
+     * Showing the confirmation dialog for removing multiple hakukohde objects.
+     * @param haku
+     */
+    private void showRemoveDialog() {
+        MultipleHakukohdeRemovalDialog removeDialog = new  MultipleHakukohdeRemovalDialog(T("removeQ"), T("removeYes"), T("removeNo"), presenter);
+        hakukohdeDialog = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
+        getWindow().addWindow(hakukohdeDialog);
+    }
+    
+    public void closeRemoveDialog() {
+    	if (hakukohdeDialog != null) {
+    		getWindow().removeWindow(hakukohdeDialog);
+    	}
     }
 
     /**
@@ -321,6 +332,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     @Override
     public void reload() {
         clearAllDataItems();
+        this.poistaB.setEnabled(false);
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
     }
 
@@ -360,5 +372,13 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     @Override
     public void clearAllDataItems() {
         categoryTree.removeAllItems();
+    }
+    
+    public void togglePoistaB(boolean b) {
+    	poistaB.setEnabled(b);
+    }
+    
+    private String T(String key, Object... args) {
+        return i18n.getMessage(key, args);
     }
 }

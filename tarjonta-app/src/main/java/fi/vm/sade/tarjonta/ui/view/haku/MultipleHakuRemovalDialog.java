@@ -108,7 +108,7 @@ public class MultipleHakuRemovalDialog extends RemovalConfirmationDialog {
         for (Object obj: hakuOptions.getItemIds()) {
             hakuOptions.select(obj);
         }
-        Label lbl = new Label(I18N.getMessage("RemovalConfirmationDialog.valitutKoulutuksetOptionGroup"));
+        Label lbl = new Label(I18N.getMessage("RemovalConfirmationDialog.valitutHautOptionGroup"));
         hl.addComponent(lbl);
         hl.addComponent(hakuOptions);
         addComponent(hl);
@@ -119,8 +119,6 @@ public class MultipleHakuRemovalDialog extends RemovalConfirmationDialog {
         Collection<HakuViewModel> selectedHakuOptions = null;
             if (values instanceof  Collection) {
              selectedHakuOptions = (Collection<HakuViewModel>)values;
-             
-             presenter.getSelectedhaut().clear();
              
              presenter.getSelectedhaut().clear();
              presenter.getSelectedhaut().addAll(selectedHakuOptions);

@@ -100,4 +100,11 @@ public class SearchResultsView extends VerticalLayout {
     public void setKoulutusList(ListKoulutusView koulutusList) {
         this.koulutusList = koulutusList;
     }
+    
+    /**
+     * @return the hakukohdeList
+     */
+    public ListHakukohdeViewImpl getHakukohdeList() {
+        return this.hakukohdeList;
+    }
 }
