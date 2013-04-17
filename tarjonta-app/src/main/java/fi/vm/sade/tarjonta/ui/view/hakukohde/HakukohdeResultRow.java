@@ -213,6 +213,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
                 } else if (hakukohde != null) {
                     tarjontaPresenter.getSelectedhakukohteet().remove(hakukohde);
                 }
+                tarjontaPresenter.togglePoistaHakukohdeB();
             }
         });
 

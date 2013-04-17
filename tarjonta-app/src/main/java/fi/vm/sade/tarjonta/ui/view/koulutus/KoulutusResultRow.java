@@ -216,6 +216,7 @@ public class KoulutusResultRow extends HorizontalLayout {
                 }
 
                 tarjontaPresenter.toggleCreateHakukohde();
+                tarjontaPresenter.togglePoistaKoulutusB();
             }
         });
 

@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.ui.presenter;
 
 import com.google.common.base.Preconditions;
+import com.vaadin.ui.Window;
+
 import fi.vm.sade.generic.ui.feature.UserFeature;
 import fi.vm.sade.generic.ui.portlet.security.User;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
@@ -52,6 +54,7 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
+import fi.vm.sade.tarjonta.ui.enums.MenuBarActions;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
@@ -74,6 +77,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationModel;
+import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.service.PublishingService;
 import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.service.UserContext;
@@ -1127,13 +1131,44 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * Removes the selected koulutus objects from the database.
      */
     public void removeSelectedKoulutukset() {
+    	
+    	int removalLaskuri = 0;
+        String errorNotes = "";
         for (KoulutusTulos curKoulutus : getModel().getSelectedKoulutukset()) {
-            getTarjontaAdminService().poistaKoulutus(curKoulutus.getKoulutus().getKoulutusmoduuliToteutus());
+        	String koulutusNimiUri = curKoulutus.getKoulutus().getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS) ?
+            		curKoulutus.getKoulutus().getKoulutuskoodi() 
+            		: curKoulutus.getKoulutus().getKoulutusohjelmakoodi();
+        	try {
+            	final OrganisaatioContext context = OrganisaatioContext.getContext(curKoulutus.getKoulutus().getTarjoaja());
+    			TarjontaTila tila = curKoulutus.getKoulutus().getTila();
+    			
+    	        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS)) 
+    	        		&& getPermission().userCanDeleteKoulutus(context)) {
+    	        	getTarjontaAdminService().poistaKoulutus(curKoulutus.getKoulutus().getKoulutusmoduuliToteutus());
+    	        	++removalLaskuri;
+    	        } else {
+    	        	errorNotes += I18N.getMessage("notification.error.koulutus.notRemovable", uiHelper.getKoodiNimi(koulutusNimiUri)) + "<br/>";
+    	        }
+            } catch (Throwable e) {
+            	
+            	if (e.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException")) {
+                    errorNotes += I18N.getMessage("notification.error.koulutus.used.multiple", uiHelper.getKoodiNimi(koulutusNimiUri)) + "<br/>";
+                } else {
+                    LOG.error(e.getMessage());
+                }
+            }
         }
+
+        String notificationMessage = "<br />" + I18N.getMessage("notification.deleted.haut", removalLaskuri) + "<br />" + errorNotes;
         getModel().getSelectedKoulutukset().clear();
 
         // Force UI update.
         getReloadKoulutusListData();
+        
+        getRootView().getListKoulutusView().getWindow().showNotification(I18N.getMessage("notification.deleted.haut.title"),
+                notificationMessage,
+                Window.Notification.TYPE_HUMANIZED_MESSAGE);
+        getRootView().getListKoulutusView().closeKoulutusDialog();
     }
 
     /**
@@ -2018,4 +2053,34 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public NavigationModel getNavigationOrganisation() {
         return getModel().getNavigationModel();
     }
+
+	public void togglePoistaKoulutusB() {
+		boolean showPoista = false;
+		for (KoulutusTulos curKoul : getSelectedKoulutukset()) {
+			final OrganisaatioContext context = OrganisaatioContext.getContext(curKoul.getKoulutus().getTarjoaja());
+			TarjontaTila tila = curKoul.getKoulutus().getTila();
+	        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS)) 
+	        		&& getPermission().userCanDeleteKoulutus(context)) {
+	            showPoista = true;
+	        }
+		}
+		this.getRootView().getListKoulutusView().togglePoistaB(showPoista);
+	}
+	
+	public void togglePoistaHakukohdeB() {
+		boolean showPoista = false;
+		for (HakukohdeTulos curHakukohde : getSelectedhakukohteet()) {
+			final OrganisaatioContext context = OrganisaatioContext.getContext(curHakukohde.getKoulutus().getTarjoaja());
+			TarjontaTila tila = curHakukohde.getHakukohde().getTila();
+	        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS)) 
+	        		&& getPermission().userCanDeleteHakukohde(context)) {
+	            showPoista = true;
+	        }
+		}
+		this.getRootView().getSearchResultsView().getHakukohdeList().togglePoistaB(showPoista);
+	}
+
+	public void closeKoulutusRemovalDialog() {
+		getRootView().getListKoulutusView().closeKoulutusDialog();
+	}
 }

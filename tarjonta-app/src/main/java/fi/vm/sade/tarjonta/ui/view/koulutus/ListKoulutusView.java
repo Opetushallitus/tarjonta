@@ -18,8 +18,10 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 import java.util.*;
 
 
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
+import fi.vm.sade.tarjonta.ui.view.haku.MultipleHakuRemovalDialog;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,10 +100,10 @@ public class ListKoulutusView extends VerticalLayout {
      * Checkbox for selecting all the Hakukohde objects in the list.
      */
     private CheckBox valKaikki;
-    private TarjontaDialogWindow noKoulutusDialog;
+    private TarjontaDialogWindow koulutusDialog;
     private CreationDialog<KoulutusOidNameViewModel> createDialog;
     private Button btnPoista;
-    private Button btnMuokkaa;
+    //private Button btnMuokkaa;
     private Button btnSiirraJaKopioi;
     private transient I18NHelper i18n = new I18NHelper(this);
     private boolean isAttached = false;
@@ -272,11 +274,23 @@ public class ListKoulutusView extends VerticalLayout {
         layout.setSizeFull();
 
         //Creating the create hakukohde button
-        btnMuokkaa = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("muokkaa"), RequiredRole.UPDATE, presenter.getPermission());
-        btnMuokkaa.setEnabled(false);
-        btnPoista = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("poista"), RequiredRole.CRUD, presenter.getPermission());
+        //btnMuokkaa = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("muokkaa"));
+        //btnMuokkaa.setEnabled(false);
+        btnPoista = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("poista"));
         btnPoista.setEnabled(false);
-        btnSiirraJaKopioi = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("siirraTaiKopioi"));
+        btnPoista.addListener(new Button.ClickListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 4580339518654622579L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				showRemoveDialog();
+			}
+		});
+        btnSiirraJaKopioi = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("siirraTaiKopioi"));
         btnSiirraJaKopioi.setEnabled(false);
         btnSiirraJaKopioi.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
@@ -298,7 +312,7 @@ public class ListKoulutusView extends VerticalLayout {
             }
         });
         
-        luoHakukohdeB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LuoHakukohde"));
+        luoHakukohdeB = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("LuoHakukohde"));
         luoHakukohdeB.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             
@@ -335,7 +349,7 @@ public class ListKoulutusView extends VerticalLayout {
         });
 
         //Creating the create koulutus button
-        luoKoulutusB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LuoKoulutus"));
+        luoKoulutusB = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("LuoKoulutus"));
         luoKoulutusB.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
             
@@ -367,6 +381,16 @@ public class ListKoulutusView extends VerticalLayout {
         return layout;
     }
     
+    /**
+     * Showing the confirmation dialog for removing multiple haku objects.
+     * @param haku
+     */
+    private void showRemoveDialog() {
+        MultipleKoulutusRemovalDialog removeDialog = new  MultipleKoulutusRemovalDialog(T("removeQ"), T("removeYes"), T("removeNo"), presenter);
+        koulutusDialog = new TarjontaDialogWindow(removeDialog, T("removeDialog"));
+        getWindow().addWindow(koulutusDialog);
+    }
+    
     private IntTuple checkForLukioKoulutus() {
         int lukioKoulutusCounter = 0;
         int koulutusCounter = 0;
@@ -389,16 +413,16 @@ public class ListKoulutusView extends VerticalLayout {
             
             @Override
             public void buttonClick(ClickEvent event) {
-                closeNoKoulutusDialog();
+                closeKoulutusDialog();
             }
         });
-        noKoulutusDialog = new TarjontaDialogWindow(noKoulutusView, i18n.getMessage("noKoulutusLabel"));
-        getWindow().addWindow(noKoulutusDialog);
+        koulutusDialog = new TarjontaDialogWindow(noKoulutusView, i18n.getMessage("noKoulutusLabel"));
+        getWindow().addWindow(koulutusDialog);
     }
     
-    private void closeNoKoulutusDialog() {
-        if (noKoulutusDialog != null) {
-            getWindow().removeWindow(noKoulutusDialog);
+    public void closeKoulutusDialog() {
+        if (koulutusDialog != null) {
+            getWindow().removeWindow(koulutusDialog);
         }
     }
     
@@ -480,6 +504,9 @@ public class ListKoulutusView extends VerticalLayout {
      */
     public void reload() {
         clearAllDataItems();
+        this.btnPoista.setEnabled(false);
+        this.btnSiirraJaKopioi.setEnabled(false);
+        this.luoHakukohdeB.setEnabled(false);
         categoryTree.setContainerDataSource(createDataSource(presenter.getKoulutusDataSource()));
     }
     
@@ -491,6 +518,10 @@ public class ListKoulutusView extends VerticalLayout {
         boolean enabled = b && presenter.getPermission().userCanCreateHakukohde(OrganisaatioContext.getContext(organisaatioOid));
         this.luoHakukohdeB.setEnabled(enabled);
         this.btnSiirraJaKopioi.setEnabled(enabled);
+    }
+    
+    public void togglePoistaB(boolean b) {
+    	btnPoista.setEnabled(b);
     }
 
     /**
@@ -534,5 +565,9 @@ public class ListKoulutusView extends VerticalLayout {
         public void setValTwo(int valTwo) {
             this.valTwo = valTwo;
         }
+    }
+	
+    private String T(String key, Object... args) {
+        return i18n.getMessage(key, args);
     }
 }

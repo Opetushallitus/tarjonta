@@ -269,17 +269,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      */
     private HorizontalLayout buildMiddleResultLayout() {
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
-        /*
-         lisaaHakuunB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("LisaaHakuun"), RequiredRole.CRUD, presenter.getPermission());
-         lisaaHakuunB.addListener(new Button.ClickListener() {
-         @Override
-         public void buttonClick(Button.ClickEvent event) {
-         getWindow().showNotification("Toiminnallisuutta ei ole toteutettu");
-
-         }
-         });
-         */
-        poistaB = UiBuilder.buttonSmallPrimary(layout, i18n.getMessage("Poista"), RequiredRole.CRUD, presenter.getPermission());
+        poistaB = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("Poista"));
         poistaB.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 5833582377090856884L;
 
@@ -321,6 +311,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     @Override
     public void reload() {
         clearAllDataItems();
+        this.poistaB.setEnabled(false);
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
     }
 
@@ -360,5 +351,9 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     @Override
     public void clearAllDataItems() {
         categoryTree.removeAllItems();
+    }
+    
+    public void togglePoistaB(boolean b) {
+    	poistaB.setEnabled(b);
     }
 }
