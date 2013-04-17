@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.ui.view.koulutus;
+package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
 import java.util.Collection;
 
@@ -26,8 +26,7 @@ import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -37,18 +36,15 @@ import fi.vm.sade.vaadin.util.UiUtil;
  * @author Markus
  *
  */
-public class MultipleKoulutusRemovalDialog extends RemovalConfirmationDialog {
+public class MultipleHakukohdeRemovalDialog extends RemovalConfirmationDialog {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8006973486299776672L;
 
-	protected OptionGroup koulutusOptions;
+	protected OptionGroup hakukohdeOptions;
 	private TarjontaPresenter presenter;
 
 
-	public MultipleKoulutusRemovalDialog(String questionStr, String removeStr, String noRemoveStr, TarjontaPresenter pres) {
+	public MultipleHakukohdeRemovalDialog(String questionStr, String removeStr, String noRemoveStr, TarjontaPresenter pres) {
 		super(questionStr, null, removeStr, noRemoveStr, null,
 				null);
 		
@@ -58,7 +54,7 @@ public class MultipleKoulutusRemovalDialog extends RemovalConfirmationDialog {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
-				removeSelectedKoulutukset();
+				removeSelectedHakukohteet();
 			}
 		};
 		this.noRemoveListener = new Button.ClickListener() {
@@ -67,7 +63,7 @@ public class MultipleKoulutusRemovalDialog extends RemovalConfirmationDialog {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				presenter.closeKoulutusRemovalDialog();
+				presenter.closeHakukohdeRemovalDialog();
 
 			}
 		};
@@ -93,33 +89,31 @@ public class MultipleKoulutusRemovalDialog extends RemovalConfirmationDialog {
     private void createOptionGroupLayout() {
         HorizontalLayout hl = UiUtil.horizontalLayout();
         hl.setMargin(true,false,false,false);
-        BeanItemContainer<KoulutusTulos> haut = new BeanItemContainer<KoulutusTulos>(KoulutusTulos.class, presenter.getSelectedKoulutukset());
+        BeanItemContainer<HakukohdeTulos> hakukohteet = new BeanItemContainer<HakukohdeTulos>(HakukohdeTulos.class, presenter.getSelectedhakukohteet());
 
-        koulutusOptions = new OptionGroup(null,haut);
-        koulutusOptions.setMultiSelect(true);
+        hakukohdeOptions = new OptionGroup(null,hakukohteet);
+        hakukohdeOptions.setMultiSelect(true);
         //Set all selected as default
-        for (Object obj: koulutusOptions.getItemIds()) {
-        	KoulutusTulos curKoul = (KoulutusTulos)obj;
-        	String nimi = curKoul.getKoulutus().getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS) 
-        			? getKoodiNimi(curKoul.getKoulutus().getKoulutuskoodi()) 
-        					: getKoodiNimi(curKoul.getKoulutus().getKoulutusohjelmakoodi());
-        	koulutusOptions.setItemCaption(obj, nimi);
-            koulutusOptions.select(obj);
+        for (Object obj: hakukohdeOptions.getItemIds()) {
+        	HakukohdeTulos curHakuk = (HakukohdeTulos)obj;
+        	String nimi = getKoodiNimi(curHakuk.getHakukohde().getNimi());
+        	hakukohdeOptions.setItemCaption(obj, nimi);
+            hakukohdeOptions.select(obj);
         }
-        Label lbl = new Label(I18N.getMessage("RemovalConfirmationDialog.valitutKoulutuksetOptionGroup"));
+        Label lbl = new Label(I18N.getMessage("RemovalConfirmationDialog.valitutHakukohteetOptionGroup"));
         hl.addComponent(lbl);
-        hl.addComponent(koulutusOptions);
+        hl.addComponent(hakukohdeOptions);
         addComponent(hl);
     }
     
-    private void removeSelectedKoulutukset() {
-    	Object values = koulutusOptions.getValue();
-    	Collection<KoulutusTulos> selectedKoulutusOptions = null;
+    private void removeSelectedHakukohteet() {
+    	Object values = hakukohdeOptions.getValue();
+    	Collection<HakukohdeTulos> selectedHakukohdeOptions = null;
     	if (values instanceof  Collection) {
-    		selectedKoulutusOptions = (Collection<KoulutusTulos>)values;
-    		presenter.getSelectedKoulutukset().clear();
-    		presenter.getSelectedKoulutukset().addAll(selectedKoulutusOptions);
-    		presenter.removeSelectedKoulutukset();
+    		selectedHakukohdeOptions = (Collection<HakukohdeTulos>)values;
+    		presenter.getSelectedhakukohteet().clear();
+    		presenter.getSelectedhakukohteet().addAll(selectedHakukohdeOptions);
+    		presenter.removeSelectedHakukohteet();
     	}
     }
     

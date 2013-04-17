@@ -1078,23 +1078,43 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * Removes the selected hakukohde objects from the database.
      */
     public void removeSelectedHakukohteet() {
-        try {
-            for (HakukohdeTulos curHakukohde : getModel().getSelectedhakukohteet()) {
-                HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
-                hakukohde.setOid(curHakukohde.getHakukohde().getOid());
-                getTarjontaAdminService().poistaHakukohde(hakukohde);
-            }
-            getModel().getSelectedhakukohteet().clear();
-
-            // Force UI update.
-            getHakukohdeListView().reload();
-        } catch (Exception exp) {
-            if (exp.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException")) {
-                getHakukohdeListView().showErrorMessage(I18N.getMessage("notification.error.hakukohde.used"));
-            } else {
-                showNotification(UserNotification.SAVE_FAILED);
+    	
+    	int removalLaskuri = 0;
+        String errorNotes = "";
+        for (HakukohdeTulos curHakukohde : getModel().getSelectedhakukohteet()) {
+        	String hakukohdeNimi = uiHelper.getKoodiNimi(curHakukohde.getHakukohde().getNimi());
+        	try {
+            	final OrganisaatioContext context = OrganisaatioContext.getContext(curHakukohde.getKoulutus().getTarjoaja());
+    			TarjontaTila tila = curHakukohde.getHakukohde().getTila();
+    			
+    	        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS)) 
+    	        		&& getPermission().userCanDeleteHakukohde(context)) {
+    	        	HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
+                    hakukohde.setOid(curHakukohde.getHakukohde().getOid());
+    	        	getTarjontaAdminService().poistaHakukohde(hakukohde);
+    	        	++removalLaskuri;
+    	        } else {
+    	        	errorNotes += I18N.getMessage("notification.error.hakukohde.notRemovable", hakukohdeNimi) + "<br/>";
+    	        }
+            } catch (Throwable e) {
+            	
+            	if (e.getMessage().contains("fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException")) {
+                    errorNotes += I18N.getMessage("notification.error.hakukohde.used.multiple", hakukohdeNimi) + "<br/>";
+                } else {
+                    LOG.error(e.getMessage());
+                }
             }
         }
+
+        String notificationMessage = "<br />" + I18N.getMessage("notification.deleted.hakukohteet", removalLaskuri) + "<br />" + errorNotes;
+        getModel().getSelectedhakukohteet().clear();
+
+        getHakukohdeListView().reload();
+        
+        getRootView().getSearchResultsView().getHakukohdeList().getWindow().showNotification(I18N.getMessage("notification.deleted.hakukohteet.title"),
+                notificationMessage,
+                Window.Notification.TYPE_HUMANIZED_MESSAGE);
+        getRootView().getSearchResultsView().getHakukohdeList().closeRemoveDialog();
     }
 
     public void removeHakukohde(HakukohdeTulos curHakukohde) {
@@ -1159,13 +1179,13 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             }
         }
 
-        String notificationMessage = "<br />" + I18N.getMessage("notification.deleted.haut", removalLaskuri) + "<br />" + errorNotes;
+        String notificationMessage = "<br />" + I18N.getMessage("notification.deleted.koulutukset", removalLaskuri) + "<br />" + errorNotes;
         getModel().getSelectedKoulutukset().clear();
 
         // Force UI update.
         getReloadKoulutusListData();
         
-        getRootView().getListKoulutusView().getWindow().showNotification(I18N.getMessage("notification.deleted.haut.title"),
+        getRootView().getListKoulutusView().getWindow().showNotification(I18N.getMessage("notification.deleted.koulutukset.title"),
                 notificationMessage,
                 Window.Notification.TYPE_HUMANIZED_MESSAGE);
         getRootView().getListKoulutusView().closeKoulutusDialog();
@@ -2082,5 +2102,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
 	public void closeKoulutusRemovalDialog() {
 		getRootView().getListKoulutusView().closeKoulutusDialog();
+	}
+
+	public void closeHakukohdeRemovalDialog() {
+		getRootView().getSearchResultsView().getHakukohdeList().closeRemoveDialog();
 	}
 }
