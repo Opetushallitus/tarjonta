@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.data.util;
 
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -29,10 +30,10 @@ public class KoodistoUtil {
 
     public static String toKoodiUri(final String koodisto, final String value) {
         //URI data example : "koulutusohjelma_1603#1"
-        return new StringBuilder(koodisto).append(KOODI_PREFIX).append(value).append(KOODI_VERSION).toString();
+        return new StringBuilder(koodisto.toLowerCase()).append(KOODI_PREFIX).append(value.toLowerCase()).append(KOODI_VERSION).toString();
     }
 
-    public static KoodistoKoodiTyyppi toKoodistoTyyppi(String uri, String arvo) {
+    public static KoodistoKoodiTyyppi toKoodistoTyyppi(final String uri, final String arvo) {
         KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
         koodi.setUri(toKoodiUri(uri, arvo));
         koodi.setArvo(arvo);
@@ -40,5 +41,14 @@ public class KoodistoUtil {
         return koodi;
     }
 
-    
+    public static void addToKoodiToKoodistoTyyppi(final String uri, String[] arvos, List<KoodistoKoodiTyyppi> list) {
+
+        for (String arvo : arvos) {
+            KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
+            koodi.setUri(toKoodiUri(uri, arvo));
+            koodi.setArvo(arvo);
+            list.add(koodi);
+        }
+
+    }
 }

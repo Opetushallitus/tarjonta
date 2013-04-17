@@ -85,9 +85,12 @@ public class HakuGenerator extends AbstractGenerator {
         return tyyppi;
     }
 
+    /*
+     * Language code is the real language code, not a koodi uri!
+     */
     private HaunNimi createHakunimi(String nimi, String lang) {
         HaunNimi haunNimi = new HaunNimi();
-        haunNimi.setKielikoodi(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_KIELI_URI, lang));
+        haunNimi.setKielikoodi(lang);
         haunNimi.setNimi(nimi + " " + lang);
 
         return haunNimi;

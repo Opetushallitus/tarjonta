@@ -35,7 +35,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DataUploader {
 
-    private static final int MAX_KOMOTOS_PER_ORGANISATION = 5;
+ 
     @Autowired(required = true)
     private OrganisaatioService organisaatioService;
     @Autowired(required = true)
@@ -46,7 +46,7 @@ public class DataUploader {
     public DataUploader() {
     }
 
-    public void upload(final String organisationOid) {
+    public void upload(final String organisationOid, final int loiItemCountPerOrganisation) {
         Preconditions.checkNotNull(organisationOid, "Organisation OID cannot be null.");
         HakuGenerator haku = new HakuGenerator(tarjotantaAdminService);
         final String hakukohdeOid = haku.create();
@@ -58,7 +58,7 @@ public class DataUploader {
         HakukohdeGenerator hakukohde = new HakukohdeGenerator(tarjotantaAdminService);
 
         for (OrganisaatioOidType oidType : result.getOrganisaatioOidList()) {
-            for (int i = 0; i < MAX_KOMOTOS_PER_ORGANISATION; i++) {
+            for (int i = 0; i < loiItemCountPerOrganisation; i++) {
                 final String komotoOid = komoto.create(oidType.getOrganisaatioOid());
 
                 hakukohde.create(hakukohdeOid, komotoOid);
