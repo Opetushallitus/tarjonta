@@ -22,10 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaunNimi;
-import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 
 
@@ -80,6 +77,8 @@ public class HakuViewModel extends BaseUIViewModel {
     private Date viimeisinPaivitysPvm;
 
     private String viimeisinPaivittaja;
+
+
 
     public HakuViewModel() {
         super();
@@ -533,4 +532,19 @@ public class HakuViewModel extends BaseUIViewModel {
     public void setViimeisinPaivittaja(String viimeisinPaivittaja) {
         this.viimeisinPaivittaja = viimeisinPaivittaja;
     }
+
+
+    public List<HakuHakukohdeResultRow> getHakukohteet() {
+        List<HakuHakukohdeResultRow> hakukohteetRows = new ArrayList<HakuHakukohdeResultRow>();
+        if (this.hakuDto != null && this.hakuDto.getHakukohteet() != null) {
+        for (HakukohdeTyyppi hakukohdeTyyppi:this.hakuDto.getHakukohteet()) {
+            HakuHakukohdeResultRow hakuHakukohdeResultRow = new HakuHakukohdeResultRow(hakukohdeTyyppi);
+            hakukohteetRows.add(hakuHakukohdeResultRow);
+        }
+
+        }
+        return hakukohteetRows;
+    }
+
+
 }
