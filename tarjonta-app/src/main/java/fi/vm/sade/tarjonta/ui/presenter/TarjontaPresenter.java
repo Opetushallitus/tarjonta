@@ -32,6 +32,7 @@ import fi.vm.sade.authentication.service.types.dto.SearchConnectiveType;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.KoodiService;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
@@ -294,11 +295,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         }
         List<HakuViewModel> foundHaut = new ArrayList<HakuViewModel>();
         for (HakuTyyppi foundHaku : haut.getResponse()) {
-            HakuViewModel haku = new HakuViewModel(foundHaku);
-//            haku.getHakuOid();
-//            haku.getNimiFi();
-
-            foundHaut.add(haku);
+            foundHaut.add(new HakuViewModel(foundHaku));
         }
 
         this.hakuKohdePerustiedotView.addItemsToHakuCombobox(foundHaut);
@@ -924,9 +921,15 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         hakukohdeNameUriModel.setUriVersio(koodiType.getVersio());
         hakukohdeNameUriModel.setHakukohdeUri(koodiType.getKoodiUri());
         hakukohdeNameUriModel.setHakukohdeArvo(koodiType.getKoodiArvo());
-        if (koodiType.getMetadata() != null) {
-            hakukohdeNameUriModel.setHakukohdeNimi(koodiType.getMetadata().get(0).getNimi());
+
+        KoodiMetadataType meta = TarjontaUIHelper.getKoodiMetadataForLanguage(koodiType, I18N.getLocale());
+        if (meta != null) {
+            hakukohdeNameUriModel.setHakukohdeNimi(meta.getNimi());
+        } else {
+            //no text found for any language, so only way to show something is to show a koodiuri.
+            hakukohdeNameUriModel.setHakukohdeNimi(koodiType.getKoodiUri() + "#" + koodiType.getVersio());
         }
+        
         return hakukohdeNameUriModel;
     }
 
@@ -1834,7 +1837,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      */
     public boolean availableKoulutus() {
         List<String> oppilaitostyyppiUris = getOppilaitostyyppiUris();
-        HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new  HaeKaikkiKoulutusmoduulitKyselyTyyppi();
+        HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
         kysely.getOppilaitostyyppiUris().addAll(oppilaitostyyppiUris);
         return !this.tarjontaPublicService.haeKaikkiKoulutusmoduulit(kysely).getKoulutusmoduuliTulos().isEmpty();
     }

@@ -40,7 +40,6 @@ import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -70,7 +69,6 @@ import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
@@ -85,36 +83,33 @@ import javax.validation.constraints.Pattern;
 public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotView {
 
     private static final long serialVersionUID = 1L;
-
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
-
     private static final Logger LOG = LoggerFactory.getLogger(PerustiedotViewImpl.class);
     private TarjontaPresenter presenter;
     //MainLayout element
-    VerticalLayout mainLayout;
-    GridLayout itemContainer;
+    private VerticalLayout mainLayout;
+    private GridLayout itemContainer;
     //Fields
     @NotNull(message = "{validation.Hakukohde.hakukohteenNimi.notNull}")
 //    @PropertyId("hakukohdeNimi")
 //    KoodistoComponent hakukohteenNimiCombo;
-    ComboBox hakukohteenNimiCombo;
+    private ComboBox hakukohteenNimiCombo;
     @PropertyId("tunnisteKoodi")
-    TextField tunnisteKoodiText;
+    private TextField tunnisteKoodiText;
     @NotNull(message = "{validation.Hakukohde.haku.notNull}")
     @PropertyId("hakuOid")
-    ComboBox hakuCombo;
+    private ComboBox hakuCombo;
     @Min(value = 0, message = "{validation.Hakukohde.aloituspaikat.num}")
     @NotNull(message = "{ShowHakukohdeViewImpl.liitaUusiKoulutusDialogTitle}")
     @PropertyId("aloitusPaikat")
-    TextField aloitusPaikatText;
+    private TextField aloitusPaikatText;
     @Min(value = 0, message = "{validation.Hakukohde.valinnoissaKaytettavatPaikat.num}")
     @NotNull(message = "{validation.Hakukohde.valinnoissaKaytettavatPaikatText.notNull}")
     @PropertyId("valinnoissaKaytettavatPaikat")
-    TextField valinnoissaKaytettavatPaikatText;
+    private TextField valinnoissaKaytettavatPaikatText;
     @PropertyId("hakukelpoisuusVaatimus")
-    Label hakuKelpoisuusVaatimuksetLabel;
-
+    private Label hakuKelpoisuusVaatimuksetLabel;
     @PropertyId("osoiteRivi1")
     private TextField liitteidenOsoiteRivi1Text;
     @PropertyId("osoiteRivi2")
@@ -134,25 +129,19 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private DateField liitteidenToimitusPvm;
     @PropertyId("alinHyvaksyttavaKeskiarvo")
     private TextField alinHyvaksyttavaKeskiarvoText;
-
     private OptionGroup osoiteSelectOptionGroup;
 //    LanguageTabSheet valintaPerusteidenKuvausTabs;
-    HakukohdeLisatiedotTabSheet lisatiedotTabs;
-
+    private HakukohdeLisatiedotTabSheet lisatiedotTabs;
     private Label osoiteSelectLabel;
-    Label serverMessage = new Label("");
+    private Label serverMessage = new Label("");
     //Info buttons
-    Button upRightInfoButton;
-    Button downRightInfoButton;
-
+    private Button upRightInfoButton;
+    private Button downRightInfoButton;
     private String languageTabsheetWidth = "500px";
     private String languageTabsheetHeight = "230px";
-
     private transient UiBuilder uiBuilder;
     private ErrorMessage errorView;
-
     private GridLayout painotettavatOppiaineet;
-
     private KoulutusasteTyyppi koulutusasteTyyppi;
 
     /*
@@ -164,13 +153,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         super();
         this.presenter = presenter;
         this.uiBuilder = uiBuilder;
-        
+
         this.koulutusasteTyyppi = getKoulutusasteTyyppi();
 
         buildMainLayout();
         this.presenter.initHakukohdeForm(this);
     }
-    
+
     // Figure out the type
     private KoulutusasteTyyppi getKoulutusasteTyyppi() {
         final HakukohdeViewModel model = presenter.getModel().getHakukohde();
@@ -185,8 +174,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 && presenter.getModel().getSelectedKoulutukset().size() > 0) {
             return presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getKoulutustyyppi();
         }
-        
-        if(model.getKomotoOids().size()>0) {
+
+        if (model.getKomotoOids().size() > 0) {
             //XXX probably this information is available somewhere in the presenter
             LueKoulutusVastausTyyppi koulutus = presenter.getKoulutusByOid(model.getKomotoOids().get(0));
             return koulutus.getKoulutusmoduuli().getKoulutustyyppi();
@@ -209,7 +198,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             @Override
             public void valueChange(ValueChangeEvent event) {
                 if (event.getProperty().getValue() instanceof HakukohdeNameUriModel) {
-                    HakukohdeNameUriModel selectedHakukohde =   (HakukohdeNameUriModel) event.getProperty().getValue();
+                    HakukohdeNameUriModel selectedHakukohde = (HakukohdeNameUriModel) event.getProperty().getValue();
                     tunnisteKoodiText.setEnabled(true);
                     tunnisteKoodiText.setValue(selectedHakukohde.getHakukohdeArvo());
                     tunnisteKoodiText.setEnabled(false);
@@ -217,10 +206,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                     LOG.warn("hakukohteenNimiCombo / value change listener - value was not a String! class = {}",
                             (event.getProperty().getValue() != null) ? event.getProperty().getValue().getClass() : "NULL");
                 }
+
+
             }
         });
 
-        if (presenter != null  && presenter.getModel() != null && presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getSelectedHakukohdeNimi() != null) {
+        if (presenter != null && presenter.getModel() != null && presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getSelectedHakukohdeNimi() != null) {
             hakukohteenNimiCombo.setValue(presenter.getModel().getHakukohde().getSelectedHakukohdeNimi());
 
         }
@@ -250,26 +241,26 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         itemContainer.setSpacing(true);
         itemContainer.setMargin(false, true, true, true);
 
-        addItemToGrid("",buildErrorLayout());
+        addItemToGrid("", buildErrorLayout());
         addItemToGrid("PerustiedotView.hakukohteenNimi", buildHakukode());
         addItemToGrid("PerustiedotView.hakuValinta", buildHakuCombo());
 
         addItemToGrid("PerustiedotView.hakukelpoisuusVaatimukset", buildHakukelpoisuusVaatimukset());
 
         addItemToGrid("PerustiedotView.aloitusPaikat", buildAloitusPaikat());
-        addItemToGrid("PerustiedotView.valinnoissaKaytettavatPaikatText",buildValinnoissaKaytettavatAloitusPaikat());
+        addItemToGrid("PerustiedotView.valinnoissaKaytettavatPaikatText", buildValinnoissaKaytettavatAloitusPaikat());
 
         if (this.koulutusasteTyyppi == KoulutusasteTyyppi.LUKIOKOULUTUS) {
             addItemToGrid("PerustiedotView.alinHyvaksyttavaKeskiarvoText", buildAlinHyvaksyttavaKeskiarvo());
             addItemToGrid("PerustiedotView.painotettavatOppiaineet", buildPainotettavatOppiaineet());
         }
-        
+
         //addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite", buildLiitteidenToimitusOsoite());
-        addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite",buildOsoiteSelectLabel());
-        addItemToGrid("",buildOsoiteSelect());
+        addItemToGrid("PerustiedotView.LiitteidenToimitusOsoite", buildOsoiteSelectLabel());
+        addItemToGrid("", buildOsoiteSelect());
         addItemToGrid("", buildLiitteidenToimitusOsoite());
-        addItemToGrid("",buildSahkoinenToimitusOsoiteCheckBox());
-        addItemToGrid("",buildSahkoinenToimitusOsoiteTextField());
+        addItemToGrid("", buildSahkoinenToimitusOsoiteCheckBox());
+        addItemToGrid("", buildSahkoinenToimitusOsoiteTextField());
         addItemToGrid("PerustiedotView.toimitettavaMennessa", buildToimitusPvmField());
 
         itemContainer.setColumnExpandRatio(0, 0f);
@@ -284,36 +275,34 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     private AbstractComponent buildPainotettavatOppiaineet() {
         final VerticalLayout lo = new VerticalLayout();
-        
+
         painotettavatOppiaineet = new GridLayout(3, 1);
         lo.addComponent(painotettavatOppiaineet);
         painotettavatOppiaineet.addComponent(UiUtil.label(null, T("PerustiedotView.painokerroin")), 1, 0);
         painotettavatOppiaineet.newLine();
-        
+
         refreshOppiaineet();
 
         //lisää nappula
         UiUtil.button(lo, T("PerustiedotView.lisaaPainotettavaOppiaine"), new Button.ClickListener() {
-            
             @Override
             public void buttonClick(ClickEvent event) {
                 addNewOppiaineRow();
             }
-
         });
-        
+
         return lo;
     }
 
-    
     /**
-     * (re)draw painotettavat oppiaineet contents, first remove old content (if any) and then re add form fields
+     * (re)draw painotettavat oppiaineet contents, first remove old content (if
+     * any) and then re add form fields
      */
     public void refreshOppiaineet() {
         while (painotettavatOppiaineet.getRows() > 1) {
             painotettavatOppiaineet.removeRow(1);
         }
-        
+
         for (PainotettavaOppiaineViewModel painotettava : presenter.getModel().getHakukohde().getPainotettavat()) {
             addOppiaine(painotettava);
         }
@@ -327,32 +316,30 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         painotus.getField().setRequired(false);
         painotus.getField().setNullSelectionAllowed(false);
         painotettavatOppiaineet.addComponent(painotus);
-        final TextField tf = uiBuilder.textField(null, psi, "painokerroin",null, null);
+        final TextField tf = uiBuilder.textField(null, psi, "painokerroin", null, null);
         tf.addValidator(new IntegerValidator(T("validation.PerustiedotView.painokerroin.num")));
         painotettavatOppiaineet.addComponent(tf);
         final Button removeRowButton = UiUtil.button(null, T("PerustiedotView.poistaPainotettavaOppiaine"),
                 new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                deleteOppiaineRow(painotettava);
+            }
 
-                    @Override
-                    public void buttonClick(ClickEvent event) {
-                        deleteOppiaineRow(painotettava);
-                    }
+            private void deleteOppiaineRow(PainotettavaOppiaineViewModel painotettava) {
+                for (int y = 1; y < painotettavatOppiaineet.getRows(); y++) {
+                    final TextField textField = (TextField) painotettavatOppiaineet.getComponent(1, y);
 
-                    private void deleteOppiaineRow(PainotettavaOppiaineViewModel painotettava) {
-                        for (int y = 1; y < painotettavatOppiaineet.getRows(); y++) {
-                            final TextField textField = (TextField) painotettavatOppiaineet.getComponent(1, y);
-                            
-                            if (textField == tf) { //yes I am comparing references
-                                presenter.getModel().getHakukohde().getPainotettavat().remove(painotettava);
-                                painotettavatOppiaineet.removeRow(y);
-                            }
-                        }
+                    if (textField == tf) { //yes I am comparing references
+                        presenter.getModel().getHakukohde().getPainotettavat().remove(painotettava);
+                        painotettavatOppiaineet.removeRow(y);
                     }
-                });
+                }
+            }
+        });
         painotettavatOppiaineet.addComponent(removeRowButton);
     }
 
-    
     private void addNewOppiaineRow() {
         PainotettavaOppiaineViewModel uusi = new PainotettavaOppiaineViewModel();
         presenter.getModel().getHakukohde().getPainotettavat().add(uusi);
@@ -360,14 +347,14 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
 
     private void checkCheckboxes() {
-          if (this.presenter != null && this.presenter.getModel().getHakukohde() != null) {
+        if (this.presenter != null && this.presenter.getModel().getHakukohde() != null) {
 
-              if (presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite() != null) {
-                  myosSahkoinenToimitusSallittuCb.setValue(true);
-              } else {
-                  myosSahkoinenToimitusSallittuCb.setValue(false);
-              }
-          }
+            if (presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite() != null) {
+                myosSahkoinenToimitusSallittuCb.setValue(true);
+            } else {
+                myosSahkoinenToimitusSallittuCb.setValue(false);
+            }
+        }
     }
 
     private HorizontalLayout buildErrorLayout() {
@@ -391,8 +378,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     public HakukohdeNameUriModel getSelectedHakukohde() {
         if (hakukohteenNimiCombo != null) {
-            return (HakukohdeNameUriModel)hakukohteenNimiCombo.getValue();
-        }  else {
+            return (HakukohdeNameUriModel) hakukohteenNimiCombo.getValue();
+        } else {
             return null;
         }
     }
@@ -402,7 +389,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         if (itemContainer != null) {
             Label label = UiUtil.label(null, T(captionKey));
             itemContainer.addComponent(label);
-            itemContainer.setComponentAlignment(label,Alignment.TOP_RIGHT);
+            itemContainer.setComponentAlignment(label, Alignment.TOP_RIGHT);
             itemContainer.addComponent(component);
             itemContainer.newLine();
         }
@@ -447,20 +434,20 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     private void setLiitteidenToimOsoite() {
         OrganisaatioDTO organisaatioDTO = presenter.getSelectOrganisaatioModel();
-        
-        //TODO organisaatio can be null here?
-        if(organisaatioDTO!=null) {
-        for (YhteystietoDTO yhteystietoDTO: organisaatioDTO.getYhteystiedot()) {
-             if (yhteystietoDTO instanceof OsoiteDTO) {
-                 OsoiteDTO osoite = (OsoiteDTO)yhteystietoDTO;
-                 if (osoite.getOsoiteTyyppi().equals(OsoiteTyyppi.POSTI)) {
-                     presenter.getModel().getHakukohde().setOsoiteRivi1(osoite.getOsoite());
-                     presenter.getModel().getHakukohde().setPostinumero(osoite.getPostinumero());
-                     presenter.getModel().getHakukohde().setPostitoimipaikka(osoite.getPostitoimipaikka());
 
-                 }
-             }
-         }
+        //TODO organisaatio can be null here?
+        if (organisaatioDTO != null) {
+            for (YhteystietoDTO yhteystietoDTO : organisaatioDTO.getYhteystiedot()) {
+                if (yhteystietoDTO instanceof OsoiteDTO) {
+                    OsoiteDTO osoite = (OsoiteDTO) yhteystietoDTO;
+                    if (osoite.getOsoiteTyyppi().equals(OsoiteTyyppi.POSTI)) {
+                        presenter.getModel().getHakukohde().setOsoiteRivi1(osoite.getOsoite());
+                        presenter.getModel().getHakukohde().setPostinumero(osoite.getPostinumero());
+                        presenter.getModel().getHakukohde().setPostitoimipaikka(osoite.getPostitoimipaikka());
+
+                    }
+                }
+            }
         }
     }
 
@@ -471,20 +458,20 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         selections.add(T("PerustiedotView.osoiteSelectMuuOsoite"));
         //selections.add("Organisaation postiosoite");
         //selections.add("Muu osoite");
-        osoiteSelectOptionGroup = new OptionGroup("",selections);
+        osoiteSelectOptionGroup = new OptionGroup("", selections);
         osoiteSelectOptionGroup.setNullSelectionAllowed(false);
         osoiteSelectOptionGroup.select(T("PerustiedotView.osoiteSelectOrganisaatioPostiOsoite"));
         osoiteSelectOptionGroup.setImmediate(true);
         osoiteSelectOptionGroup.addListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(ValueChangeEvent valueChangeEvent) {
-                if(valueChangeEvent.getProperty().getValue().equals(T("PerustiedotView.osoiteSelectOrganisaatioPostiOsoite"))) {
-                     enableOrDeEnableOsoite(true);
-                     setLiitteidenToimOsoite();
-                     enableOrDeEnableOsoite(false);
+                if (valueChangeEvent.getProperty().getValue().equals(T("PerustiedotView.osoiteSelectOrganisaatioPostiOsoite"))) {
+                    enableOrDeEnableOsoite(true);
+                    setLiitteidenToimOsoite();
+                    enableOrDeEnableOsoite(false);
                 } else {
-                     enableOrDeEnableOsoite(true);
-                     presenter.setHakukohteenOletusOsoiteToEmpty();
+                    enableOrDeEnableOsoite(true);
+                    presenter.setHakukohteenOletusOsoiteToEmpty();
                 }
             }
         });
@@ -500,10 +487,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         return sahkoinenToimitusOsoiteText;
     }
 
-    private VerticalLayout buildToimitusPvmField()  {
-         VerticalLayout verticalLayout = new VerticalLayout();
+    private VerticalLayout buildToimitusPvmField() {
+        VerticalLayout verticalLayout = new VerticalLayout();
 
-        kaytaHaunPaattymisAikaa = UiUtil.checkbox(null,null);
+        kaytaHaunPaattymisAikaa = UiUtil.checkbox(null, null);
         kaytaHaunPaattymisAikaa.setImmediate(true);
         kaytaHaunPaattymisAikaa.setCaption(T("PerustiedotView.haunPaattymisenAikaCheckbox"));
         kaytaHaunPaattymisAikaa.addListener(new Button.ClickListener() {
@@ -516,13 +503,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                             Object id = hakuCombo.getValue();
 
                             if (id instanceof HakuViewModel) {
-                                liitteidenToimitusPvm.setValue(((HakuViewModel)id).getAlkamisPvm());
+                                liitteidenToimitusPvm.setValue(((HakuViewModel) id).getAlkamisPvm());
                             }
                         }
                         liitteidenToimitusPvm.setEnabled(false);
                     }
 
-                }  else {
+                } else {
 
                     if (liitteidenToimitusPvm != null) {
                         liitteidenToimitusPvm.setEnabled(true);
@@ -545,80 +532,80 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         kaytaHaunPaattymisAikaa.setValue(true);
 
 
-         return verticalLayout;
+        return verticalLayout;
     }
 
     private CheckBox buildSahkoinenToimitusOsoiteCheckBox() {
-            myosSahkoinenToimitusSallittuCb = UiUtil.checkbox(null,null);
-            myosSahkoinenToimitusSallittuCb.setImmediate(true);
-            myosSahkoinenToimitusSallittuCb.setCaption(T("PerustiedotView.LiiteVoidaanToimittaaSahkoisestiCheckbox"));
-            myosSahkoinenToimitusSallittuCb.addListener(new Button.ClickListener() {
-                @Override
-                public void buttonClick(Button.ClickEvent clickEvent) {
-                  if (clickEvent.getButton().booleanValue()) {
-                      if (sahkoinenToimitusOsoiteText != null) {
-                          sahkoinenToimitusOsoiteText.setEnabled(true);
-                      }
-                  } else {
-                      if (sahkoinenToimitusOsoiteText != null) {
-                          sahkoinenToimitusOsoiteText.setEnabled(false);
-                      }
-                  }
+        myosSahkoinenToimitusSallittuCb = UiUtil.checkbox(null, null);
+        myosSahkoinenToimitusSallittuCb.setImmediate(true);
+        myosSahkoinenToimitusSallittuCb.setCaption(T("PerustiedotView.LiiteVoidaanToimittaaSahkoisestiCheckbox"));
+        myosSahkoinenToimitusSallittuCb.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                if (clickEvent.getButton().booleanValue()) {
+                    if (sahkoinenToimitusOsoiteText != null) {
+                        sahkoinenToimitusOsoiteText.setEnabled(true);
+                    }
+                } else {
+                    if (sahkoinenToimitusOsoiteText != null) {
+                        sahkoinenToimitusOsoiteText.setEnabled(false);
+                    }
                 }
-            });
+            }
+        });
 
-            return myosSahkoinenToimitusSallittuCb;
+        return myosSahkoinenToimitusSallittuCb;
     }
 
     private GridLayout buildLiitteidenToimitusOsoite() {
-        GridLayout osoiteLayout = new GridLayout(2,3);
+        GridLayout osoiteLayout = new GridLayout(2, 3);
 
 
 
-        liitteidenOsoiteRivi1Text =  UiUtil.textField(null);
+        liitteidenOsoiteRivi1Text = UiUtil.textField(null);
         liitteidenOsoiteRivi1Text.setWidth("100%");
         liitteidenOsoiteRivi1Text.setInputPrompt(T("PerustiedotView.osoiteRivi1"));
-        osoiteLayout.addComponent(liitteidenOsoiteRivi1Text,0,0,1,0);
+        osoiteLayout.addComponent(liitteidenOsoiteRivi1Text, 0, 0, 1, 0);
 
         liitteidenOsoiteRivi2Text = UiUtil.textField(null);
         liitteidenOsoiteRivi2Text.setWidth("100%");
 
-        osoiteLayout.addComponent(liitteidenOsoiteRivi2Text,0,1,1,1);
+        osoiteLayout.addComponent(liitteidenOsoiteRivi2Text, 0, 1, 1, 1);
 
-        liitteidenPostinumeroText =  uiBuilder.koodistoComboBox(null,KoodistoURIHelper.KOODISTO_POSTINUMERO_URI);
+        liitteidenPostinumeroText = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POSTINUMERO_URI);
 
 
 
-        osoiteLayout.addComponent(liitteidenPostinumeroText,0,2);
+        osoiteLayout.addComponent(liitteidenPostinumeroText, 0, 2);
         liitteidenPostinumeroText.setSizeUndefined();
 
         liitteidenPostitoimipaikkaText = UiUtil.textField(null);
         liitteidenPostitoimipaikkaText.setInputPrompt(T("PerustiedotView.postitoimipaikka"));
-        osoiteLayout.addComponent(liitteidenPostitoimipaikkaText,1,2);
+        osoiteLayout.addComponent(liitteidenPostitoimipaikkaText, 1, 2);
         liitteidenPostitoimipaikkaText.setSizeUndefined();
 
-        osoiteLayout.setColumnExpandRatio(0,2);
-        osoiteLayout.setColumnExpandRatio(1,4);
+        osoiteLayout.setColumnExpandRatio(0, 2);
+        osoiteLayout.setColumnExpandRatio(1, 4);
         liitteidenPostinumeroText.setFieldValueFormatter(new FieldValueFormatter() {
-             @Override
-             public Object formatFieldValue(Object dto) {
-                 if (dto instanceof KoodiType) {
-                     KoodiType koodi = (KoodiType) dto;
-                     return koodi.getKoodiUri();
-                 } else {
-                     return dto;
-                 }
-             }
-         });
+            @Override
+            public Object formatFieldValue(Object dto) {
+                if (dto instanceof KoodiType) {
+                    KoodiType koodi = (KoodiType) dto;
+                    return koodi.getKoodiUri();
+                } else {
+                    return dto;
+                }
+            }
+        });
 
         liitteidenPostinumeroText.setCaptionFormatter(new CaptionFormatter() {
             @Override
             public String formatCaption(Object dto) {
-                if(dto instanceof KoodiType) {
-                   KoodiType koodi = (KoodiType)dto;
-                    return  koodi.getKoodiArvo();
+                if (dto instanceof KoodiType) {
+                    KoodiType koodi = (KoodiType) dto;
+                    return koodi.getKoodiArvo();
                 } else {
-                   return dto.toString();
+                    return dto.toString();
                 }
             }
         });
@@ -627,7 +614,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             @Override
             public void valueChange(ValueChangeEvent valueChangeEvent) {
                 String koodiUri = (String) valueChangeEvent.getProperty().getValue();
-                String postitoimipaikka = tarjontaUIHelper.getKoodiNimi(koodiUri,I18N.getLocale());
+                String postitoimipaikka = tarjontaUIHelper.getKoodiNimi(koodiUri, I18N.getLocale());
                 liitteidenPostitoimipaikkaText.setValue(postitoimipaikka);
             }
         });
@@ -637,7 +624,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     private Label buildHakukelpoisuusVaatimukset() {
         //TODO get the text from valintaperusteista
-        hakuKelpoisuusVaatimuksetLabel = UiUtil.label((AbstractLayout)null, T("PerustiedotView.hakukelpoisuusvaatimukset.help"), LabelStyleEnum.TEXT);
+        hakuKelpoisuusVaatimuksetLabel = UiUtil.label((AbstractLayout) null, T("PerustiedotView.hakukelpoisuusvaatimukset.help"), LabelStyleEnum.TEXT);
         return hakuKelpoisuusVaatimuksetLabel;
     }
 
@@ -658,18 +645,6 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         alinHyvaksyttavaKeskiarvoText.setRequired(true);
         alinHyvaksyttavaKeskiarvoText.addValidator(new DoubleValidator(T("validation.PerustiedotView.alinHyvaksyttavaKeskiarvo.num")));
         return alinHyvaksyttavaKeskiarvoText;
-    }
-
-    private String tryGetHaunNimi(HakuViewModel haku) {
-        if (I18N.getLocale().getLanguage().trim().equals("fi")) {
-            return haku.getNimiFi();
-        } else if (I18N.getLocale().getLanguage().trim().equals("se")) {
-            return haku.getNimiSe();
-        } else if (I18N.getLocale().getLanguage().trim().equals("en")) {
-            return haku.getNimiEn();
-        } else {
-            return haku.getNimiFi();
-        }
     }
 
     /*
@@ -702,21 +677,21 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private ComboBox buildHaku() {
 
         //hakukohteenNimiCombo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI);
-        hakukohteenNimiCombo = UiUtil.comboBox(null,null,null);
+        hakukohteenNimiCombo = UiUtil.comboBox(null, null, null);
 
         Set<KoodiType> hakukohdeKoodis = tarjontaUIHelper.getRelatedKoodis(presenter.getModel().getHakukohde().getKomotoOids());
         Set<HakukohdeNameUriModel> hakukohdes = new HashSet<HakukohdeNameUriModel>();
-        for(KoodiType koodiType : hakukohdeKoodis) {
+        for (KoodiType koodiType : hakukohdeKoodis) {
             HakukohdeNameUriModel hakukohde = new HakukohdeNameUriModel();
             hakukohde.setHakukohdeArvo(koodiType.getKoodiArvo());
             hakukohde.setHakukohdeUri(koodiType.getKoodiUri());
             hakukohde.setUriVersio(koodiType.getVersio());
             if (koodiType.getMetadata() != null) {
-            hakukohde.setHakukohdeNimi(getLocalizedKoodiNimi(koodiType));
+                hakukohde.setHakukohdeNimi(getLocalizedKoodiNimi(koodiType));
             }
             hakukohdes.add(hakukohde);
         }
-        BeanItemContainer<HakukohdeNameUriModel> hakukohdeContainer = new BeanItemContainer<HakukohdeNameUriModel>(HakukohdeNameUriModel.class,hakukohdes);
+        BeanItemContainer<HakukohdeNameUriModel> hakukohdeContainer = new BeanItemContainer<HakukohdeNameUriModel>(HakukohdeNameUriModel.class, hakukohdes);
         hakukohteenNimiCombo.setContainerDataSource(hakukohdeContainer);
         hakukohteenNimiCombo.setImmediate(true);
 
@@ -726,18 +701,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
 
     private String getLocalizedKoodiNimi(KoodiType koodi) {
-        String koodiNimi = "";
-        String lang = I18N.getLocale().getLanguage();
-        for (KoodiMetadataType meta:koodi.getMetadata()) {
-            if (lang.trim().equalsIgnoreCase("fi") && meta.getKieli().equals(KieliType.FI)) {
-                  return meta.getNimi();
-            } else if (lang.trim().equalsIgnoreCase("sv") && meta.getKieli().equals(KieliType.SV)) {
-                return meta.getNimi();
-            } else if (lang.trim().equalsIgnoreCase("en") && meta.getKieli().equals(KieliType.EN)) {
-                return meta.getNimi();
-            }
-        }
-        return koodiNimi;
+        KoodiMetadataType meta = TarjontaUIHelper.getKoodiMetadataForLanguage(koodi, I18N.getLocale());
+        return meta != null ? meta.getNimi() : koodi.getKoodiUri() + "#" + koodi.getVersio();
+
     }
 
     /*
@@ -788,14 +754,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         return vl;
     }
 
-/*
-    private HakukohdeLisatiedotTabSheet buildLanguageTab(List<KielikaannosViewModel> arvot) {
-        return new HakukohdeLisatiedotTabSheet();
-    }
-*/
-
+    /*
+     private HakukohdeLisatiedotTabSheet buildLanguageTab(List<KielikaannosViewModel> arvot) {
+     return new HakukohdeLisatiedotTabSheet();
+     }
+     */
     private HakukohdeLisatiedotTabSheet buildLanguageTab() {
-        return new HakukohdeLisatiedotTabSheet(true,languageTabsheetWidth,languageTabsheetHeight);
+        return new HakukohdeLisatiedotTabSheet(true, languageTabsheetWidth, languageTabsheetHeight);
     }
 
     private String T(String key) {

@@ -25,6 +25,7 @@ import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 
@@ -36,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -53,19 +55,21 @@ import org.springframework.stereotype.Component;
 public class TarjontaUIHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaUIHelper.class);
-
     public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";
     private static final String LANGUAGE_SEPARATOR = ", ";
-
     @Autowired
     private KoodiService _koodiService;
     @Autowired(required = true)
     private TarjontaPublicService _tarjontaPublicService;
-
     private transient I18NHelper _i18n = new I18NHelper(TarjontaUIHelper.class);
-
     @Autowired
     private CacheManager _cacheManager;
+    @Value("${koodisto.language.fi.uri:kieli_fi}")
+    private String langKoodiUriFi;
+    @Value("${koodisto.language.en.uri:kieli_en}")
+    private String langKoodiUriEn;
+    @Value("${koodisto.language.sv.uri:kieli_sv}")
+    private String langKoodiUriSv;
 
     @Scheduled(cron = "0 */5 * * * ?")
     public void printCacheStats() {
@@ -397,7 +401,7 @@ public class TarjontaUIHelper {
      * also error text is given
      */
     public String getKoodiNimi(String koodiUriWithPossibleVersionInformation, Locale locale) {
-        LOG.debug("getKoodiNimi('{}', {}) ...", new Object[]{koodiUriWithPossibleVersionInformation, locale});
+        // LOG.debug("getKoodiNimi('{}', {}) ...", new Object[]{koodiUriWithPossibleVersionInformation, locale});
 
         String result = "";
 
@@ -437,7 +441,7 @@ public class TarjontaUIHelper {
             result = _i18n.getMessage("_koodiError", koodiUriWithPossibleVersionInformation);
         }
 
-        LOG.debug("getKoodiNimi('{}', {}) --> {}", new Object[]{koodiUriWithPossibleVersionInformation, locale, result});
+        //LOG.debug("getKoodiNimi('{}', {}) --> {}", new Object[]{koodiUriWithPossibleVersionInformation, locale, result});
 
         return result;
     }
@@ -587,6 +591,13 @@ public class TarjontaUIHelper {
         return result;
     }
 
+    /**
+     * Get koodi metadata by locale with language fallback to FI
+     *
+     * @param koodiType
+     * @param locale
+     * @return
+     */
     public static KoodiMetadataType getKoodiMetadataForLanguage(KoodiType koodiType, Locale locale) {
         KoodiMetadataType kmdt = KoodistoHelper.getKoodiMetadataForLanguage(koodiType, KoodistoHelper.getKieliForLocale(locale));
         if (kmdt == null || (kmdt.getNimi() == null || kmdt.getNimi().length() == 0)) {
@@ -685,7 +696,30 @@ public class TarjontaUIHelper {
         return type;
     }
 
-
+    /**
+     * Convert basic(fi,en,sv) language koodi URI to language enum. It also
+     * converts 2 char language code to BasicLanguage enum. If no match, then it
+     * will return BasicLanguage.FI.
+     *
+     * @param koodiLanguageUri
+     * @return
+     */
+    public BasicLanguage toLanguageEnum(final String koodiLanguageUri) {
+        if (koodiLanguageUri == null) {
+            return BasicLanguage.FI;
+        } else if (langKoodiUriFi.contains(koodiLanguageUri)) {
+            return BasicLanguage.FI;
+        } else if (langKoodiUriEn.contains(koodiLanguageUri)) {
+            return BasicLanguage.EN;
+        } else if (langKoodiUriSv.contains(koodiLanguageUri)) {
+            return BasicLanguage.SV;
+        } else {
+            //final check before fallback to Finnish language:
+            //it's possible that the language code string is real 'en' etc. language code.
+            //if no match, it return BasicLanguage.FI
+            return BasicLanguage.toLanguageEnum(koodiLanguageUri);
+        }
+    }
 //    /**
 //     * Return koodi with uri and version.
 //     *
@@ -835,7 +869,4 @@ public class TarjontaUIHelper {
 //
 //        return result;
 //    }
-
-
-
 }
