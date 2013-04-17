@@ -39,6 +39,7 @@ import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QTekstiKaannos;
 import fi.vm.sade.tarjonta.model.QHakukohde;
+
 /**
  * @author Antti Salonen
  */
@@ -59,7 +60,20 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         
         return haut;
     }
-    
+
+    @Override
+    public Haku findByOid(String oidString) {
+        QHaku qHaku = QHaku.haku;
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+
+        return from(qHaku,qHakukohde)
+            .leftJoin(qHaku.hakukohdes,qHakukohde).fetch()
+            .where(qHaku.oid.eq(oidString.trim()))
+            .singleResult(qHaku);
+
+
+    }
+
     @Override
     public List<Haku> findBySearchString(String searchString,String kieliKoodi) {
         QMonikielinenTeksti qTekstis = QMonikielinenTeksti.monikielinenTeksti;
@@ -150,12 +164,6 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         return orderBy;
     }
 
-    public Haku findByOid(String oidString) {
-        List<Haku> hakueras = findBy("oid", oidString);
-        if (hakueras.size() == 1) {
-            return hakueras.get(0);
-        }
-        return null;
-    }
+
 }
 
