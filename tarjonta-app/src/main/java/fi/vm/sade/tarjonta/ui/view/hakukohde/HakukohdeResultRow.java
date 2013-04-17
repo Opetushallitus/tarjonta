@@ -208,11 +208,14 @@ public class HakukohdeResultRow extends HorizontalLayout {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 if (hakukohde != null
+                		&& hakukohde.getHakukohde() != null
                         && isSelected.booleanValue()) {
                     tarjontaPresenter.getSelectedhakukohteet().add(hakukohde);
-                } else if (hakukohde != null) {
+                } else if (hakukohde != null 
+                		&& hakukohde.getHakukohde() != null) {
                     tarjontaPresenter.getSelectedhakukohteet().remove(hakukohde);
                 }
+                tarjontaPresenter.togglePoistaHakukohdeB();
             }
         });
 
@@ -286,6 +289,6 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
 
         tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
-        tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getHakukohde().getOid(), hakukohde.getKoulutus().getTarjoaja());
+        tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getHakukohde().getOid());
     }
 }

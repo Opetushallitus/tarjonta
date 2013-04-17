@@ -19,9 +19,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.vaadin.data.util.BeanItemContainer;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.HakuHakukohdeResultRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -261,7 +263,8 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         mBottomLayout.setMargin(true);
 
 
-        mBottomLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("perustiedot"),i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+
+        mBottomLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("hakukohteet"),i18n.getMessage(CommonTranslationKeys.MUOKKAA),
                 new Button.ClickListener() {
                     @Override
                     public void buttonClick(ClickEvent clickEvent) {
@@ -272,7 +275,12 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
 
         CategoryTreeView categoryTree = new CategoryTreeView();
         categoryTree.setHeight("100px");
-        categoryTree.setContainerDataSource(createHakukohteetTreeDataSource(hakuPresenter.getHakukohteet()));
+        categoryTree.setContainerDataSource(createHakukohteetTreeDataSource(model.getHakukohteet()));
+        String[]  visibleColums = {"hakukohdeBtn"};
+        categoryTree.setVisibleColumns(visibleColums);
+        for (Object item : categoryTree.getItemIds()) {
+            categoryTree.setChildrenAllowed(item, false);
+        }
         mBottomLayout.addComponent(categoryTree);
 
         layout.addComponent(mBottomLayout);
@@ -328,9 +336,12 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
     }
 
     private Container createHakukohteetTreeDataSource(
-            List<HakukohdeViewModel> hakukohteet) {
-        HierarchicalContainer hc = new HierarchicalContainer();
-        return hc;
+            List<HakuHakukohdeResultRow> hakukohteet) {
+        BeanItemContainer<HakuHakukohdeResultRow>  container = new BeanItemContainer<HakuHakukohdeResultRow>(HakuHakukohdeResultRow.class);
+
+        container.addAll(hakukohteet);
+
+        return container;
     }
 
     private void backFired() {

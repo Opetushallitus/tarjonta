@@ -55,17 +55,20 @@ public class HakuajatView {
 		kuvaus = UiUtil.textField(null, "", i18n.getMessage("hakuajanKuvaus"), false);
 		kuvaus.setPropertyDataSource(new NestedMethodProperty(model, "hakuajanKuvaus"));
 		kuvaus.setImmediate(true);
-                kuvaus.setHeight("25px");
+        kuvaus.setHeight("25px");
+        kuvaus.setWidth("300px");
 
 		alkuPvm = UiUtil.dateField();
 		alkuPvm.setDateFormat("dd.MM.yyyy HH:mm");
 		alkuPvm.setPropertyDataSource(new NestedMethodProperty(model, "alkamisPvm"));
 		alkuPvm.setImmediate(true);
+		alkuPvm.setWidth("235px");
 
 		loppuPvm = UiUtil.dateField();
 		loppuPvm.setDateFormat("dd.MM.yyyy HH:mm");
 		loppuPvm.setPropertyDataSource(new NestedMethodProperty(model, "paattymisPvm"));
 		loppuPvm.setImmediate(true);
+		loppuPvm.setWidth("235px");
 
 		poistaB = UiUtil.buttonSmallPrimary(null, i18n.getMessage("minus"));
 		//poistaB.setEnabled(false);

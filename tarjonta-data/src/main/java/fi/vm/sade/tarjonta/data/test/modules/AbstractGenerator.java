@@ -69,7 +69,7 @@ public abstract class AbstractGenerator {
      *
      * @return ~1500 characters
      */
-    protected MonikielinenTekstiTyyppi createLorem() {
+    protected MonikielinenTekstiTyyppi createKoodiUriLorem() {
         return createMonikielinenTekstiTyyppi(LOREM);
     }
 

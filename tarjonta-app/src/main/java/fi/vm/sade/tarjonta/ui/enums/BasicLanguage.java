@@ -35,7 +35,7 @@ public enum BasicLanguage {
         final String trimmedCode = code.trim();
 
         for (BasicLanguage e : BasicLanguage.values()) {
-            if (e.code.equals(trimmedCode)) {
+            if (e.code.equalsIgnoreCase(trimmedCode)) {
                 return e;
             }
         }

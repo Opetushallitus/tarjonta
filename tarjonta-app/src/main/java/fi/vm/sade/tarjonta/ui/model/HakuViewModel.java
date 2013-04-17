@@ -21,10 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaunNimi;
-import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 
@@ -367,6 +364,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param nimiEn the nimiEn to set
      */
     public void setNimiEn(String nimiEn) {
+
         setKielistettyNimiToDto(nimiEn, BasicLanguage.EN);
         this.nimiEn = nimiEn;
     }
@@ -449,6 +447,7 @@ public class HakuViewModel extends BaseUIViewModel {
 
     private String getKielistettyNimiFromDto(BasicLanguage kieliKoodi) {
         for (HaunNimi haunNimi : hakuDto.getHaunKielistetytNimet()) {
+
             if (haunNimi.getKielikoodi().equals(kieliKoodi.getLowercaseLanguageCode())) {
                 return haunNimi.getNimi();
             }
@@ -459,6 +458,7 @@ public class HakuViewModel extends BaseUIViewModel {
     private void setKielistettyNimiToDto(String nimi, BasicLanguage kielikoodi) {
         boolean nimiExists = false;
         for (HaunNimi haunNimi : hakuDto.getHaunKielistetytNimet()) {
+
             if (haunNimi.getKielikoodi().equals(kielikoodi.getLowercaseLanguageCode())) {
                 haunNimi.setNimi(nimi);
                 nimiExists = true;
@@ -466,6 +466,7 @@ public class HakuViewModel extends BaseUIViewModel {
         }
         if (!nimiExists) {
             HaunNimi hNimi = new HaunNimi();
+
             hNimi.setKielikoodi(kielikoodi.getLowercaseLanguageCode());
             hNimi.setNimi(nimi);
             hakuDto.getHaunKielistetytNimet().add(hNimi);
@@ -500,5 +501,18 @@ public class HakuViewModel extends BaseUIViewModel {
 
     public void setViimeisinPaivittaja(String viimeisinPaivittaja) {
         this.viimeisinPaivittaja = viimeisinPaivittaja;
+    }
+
+    public List<HakuHakukohdeResultRow> getHakukohteet() {
+        List<HakuHakukohdeResultRow> hakukohteetRows = new ArrayList<HakuHakukohdeResultRow>();
+        if (this.hakuDto != null && this.hakuDto.getHakukohteet() != null) {
+
+            for (HakukohdeTyyppi hakukohdeTyyppi : this.hakuDto.getHakukohteet()) {
+                HakuHakukohdeResultRow hakuHakukohdeResultRow = new HakuHakukohdeResultRow(hakukohdeTyyppi);
+                hakukohteetRows.add(hakuHakukohdeResultRow);
+            }
+
+        }
+        return hakukohteetRows;
     }
 }

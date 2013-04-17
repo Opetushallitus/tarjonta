@@ -87,16 +87,19 @@ public class HakukohdeGenerator extends AbstractGenerator {
         tyyppi.setOid(generateOid());
 
         tyyppi.setLiitteidenToimitusOsoite(createPostiosoite());
-        tyyppi.setLisatiedot(createLorem());
+        tyyppi.setLisatiedot(createKoodiUriLorem());
         tyyppi.setValinnanAloituspaikat(1000);
         tyyppi.setAloituspaikat(1000);
         tyyppi.setKaytetaanHaunPaattymisenAikaa(Boolean.TRUE);
         tyyppi.setHakukohdeKoodistoNimi(tyyppi.getHakukohteenHakuOid() + " " + koodiarvo);
         tyyppi.setAlinHyvaksyttavaKeskiarvo(BigDecimal.ZERO);
 
-        tyyppi.setLisatiedot(createLorem());
+        tyyppi.setLisatiedot(createKoodiUriLorem());
         tyyppi.setHakukohteenHaunNimi(createMonikielinenTekstiTyyppi(hakuOid + " " + komotoOid));
         tyyppi.setSahkoinenToimitusOsoite(createUri(hakuOid, komotoOid));
+
+        tyyppi.setValintaperustekuvausKoodiUri(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI, "4"));
+        tyyppi.setSoraKuvausKoodiUri(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI, "1"));
 
         return tyyppi;
     }
@@ -106,7 +109,7 @@ public class HakukohdeGenerator extends AbstractGenerator {
 
         for (int i = 0; i < MAX_LIITTEES; i++) {
             HakukohdeLiiteTyyppi hakukohdeLiiteTyyppi = new HakukohdeLiiteTyyppi();
-            hakukohdeLiiteTyyppi.setLiitteenKuvaus(createLorem());
+            hakukohdeLiiteTyyppi.setLiitteenKuvaus(createKoodiUriLorem());
             hakukohdeLiiteTyyppi.setLiitteenToimitusOsoite(createPostiosoite());
             hakukohdeLiiteTyyppi.setLiitteenTyyppi(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_LIITTEEN_TYYPPI_URI, "1"));
             hakukohdeLiiteTyyppi.setSahkoinenToimitusOsoite(createUri(hakuOid, komotoOid));

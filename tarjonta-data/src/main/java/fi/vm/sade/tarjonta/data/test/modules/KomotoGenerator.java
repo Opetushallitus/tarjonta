@@ -116,11 +116,11 @@ public class KomotoGenerator extends AbstractGenerator {
         tyyppi.getOpetuskieli().add(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_KIELI_URI, LANGUAGE_FI));
         tyyppi.getKoulutuslaji().add(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI, "n"));
 
-        tyyppi.setKansainvalistyminen(createLorem());
-        tyyppi.setKoulutusohjelmanValinta(createLorem());
-        tyyppi.setKuvailevatTiedot(createLorem());
-        tyyppi.setSijoittuminenTyoelamaan(createLorem());
-        tyyppi.setYhteistyoMuidenToimijoidenKanssa(createLorem());
+        tyyppi.setKansainvalistyminen(createKoodiUriLorem());
+        tyyppi.setKoulutusohjelmanValinta(createKoodiUriLorem());
+        tyyppi.setKuvailevatTiedot(createKoodiUriLorem());
+        tyyppi.setSijoittuminenTyoelamaan(createKoodiUriLorem());
+        tyyppi.setYhteistyoMuidenToimijoidenKanssa(createKoodiUriLorem());
 
         KoodistoUtil.addToKoodiToKoodistoTyyppi(KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, new String[]{"1", "2", "3", "4", "5", "6"}, tyyppi.getAmmattinimikkeet());
 

@@ -701,23 +701,27 @@ public class TarjontaUIHelper {
      * converts 2 char language code to BasicLanguage enum. If no match, then it
      * will return BasicLanguage.FI.
      *
-     * @param koodiLanguageUri
+     * @param langCode
      * @return
      */
-    public BasicLanguage toLanguageEnum(final String koodiLanguageUri) {
-        if (koodiLanguageUri == null) {
+    public BasicLanguage toLanguageEnum(final String langCode) {
+        if (langCode == null) {
             return BasicLanguage.FI;
-        } else if (langKoodiUriFi.contains(koodiLanguageUri)) {
+        }
+
+        final String trimmedLangCode = langCode.trim();
+
+        if (trimmedLangCode.startsWith(langKoodiUriFi)) {
             return BasicLanguage.FI;
-        } else if (langKoodiUriEn.contains(koodiLanguageUri)) {
+        } else if (trimmedLangCode.startsWith(langKoodiUriEn)) {
             return BasicLanguage.EN;
-        } else if (langKoodiUriSv.contains(koodiLanguageUri)) {
+        } else if (trimmedLangCode.startsWith(langKoodiUriSv)) {
             return BasicLanguage.SV;
         } else {
             //final check before fallback to Finnish language:
             //it's possible that the language code string is real 'en' etc. language code.
             //if no match, it return BasicLanguage.FI
-            return BasicLanguage.toLanguageEnum(koodiLanguageUri);
+            return BasicLanguage.toLanguageEnum(trimmedLangCode);
         }
     }
 //    /**

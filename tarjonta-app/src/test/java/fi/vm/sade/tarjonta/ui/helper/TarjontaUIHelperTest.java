@@ -21,6 +21,7 @@ import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,6 +37,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import static org.easymock.EasyMock.*;
 import org.powermock.reflect.Whitebox;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * UI helper tests.
@@ -126,5 +128,33 @@ public class TarjontaUIHelperTest {
         verify(createMock1);
 
         assertEquals("teksti, teksti, teksti", result);
+    }
+
+    @Test
+    public void testToLanguageEnum() {
+        TarjontaUIHelper tuih = new TarjontaUIHelper();
+        Whitebox.setInternalState(tuih, "langKoodiUriFi", "kieli_fi");
+        Whitebox.setInternalState(tuih, "langKoodiUriEn", "kieli_en");
+        Whitebox.setInternalState(tuih, "langKoodiUriSv", "kieli_sv");
+
+        //correct converions
+        assertEquals(BasicLanguage.EN, tuih.toLanguageEnum("kieli_en#1"));
+        assertEquals(BasicLanguage.EN, tuih.toLanguageEnum(" kieli_en#1 "));
+        assertEquals(BasicLanguage.SV, tuih.toLanguageEnum("kieli_sv#1"));
+        assertEquals(BasicLanguage.FI, tuih.toLanguageEnum("kieli_fi#1"));
+        assertEquals(BasicLanguage.EN, tuih.toLanguageEnum("en"));
+        assertEquals(BasicLanguage.EN, tuih.toLanguageEnum("EN"));
+        assertEquals(BasicLanguage.SV, tuih.toLanguageEnum("sv"));
+        assertEquals(BasicLanguage.FI, tuih.toLanguageEnum("fi"));
+
+        //fallback to FI
+        assertEquals(BasicLanguage.FI, tuih.toLanguageEnum(null));
+        assertEquals(BasicLanguage.FI, tuih.toLanguageEnum("KIELI_EN#1"));
+
+        assertEquals(BasicLanguage.FI, tuih.toLanguageEnum(""));
+        assertEquals(BasicLanguage.FI, tuih.toLanguageEnum("fuubar"));
+        assertEquals(BasicLanguage.FI, tuih.toLanguageEnum("kieli_"));
+        assertEquals(BasicLanguage.FI, tuih.toLanguageEnum("e"));
+
     }
 }

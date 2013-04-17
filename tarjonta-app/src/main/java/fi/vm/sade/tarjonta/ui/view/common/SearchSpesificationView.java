@@ -161,7 +161,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
 //        kcKohdejoukko.setReadOnly(true);
 //        kcKohdejoukko.setSizeUndefined();
 
-        btnTyhjenna = UiBuilder.buttonSmallPrimary(this, T("tyhjenna"), new Button.ClickListener() {
+        btnTyhjenna = UiBuilder.buttonSmallSecodary(this, T("tyhjenna"), new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
