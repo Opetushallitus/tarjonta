@@ -301,13 +301,14 @@ public class TarjontaKomoData {
     private LOS createKomo(final Relaatiot5RowDTO dto) throws ExceptionMessage {
         //base values
         Preconditions.checkNotNull(dto.getKoulutuskoodiKoodiarvo(), "Import data error - koulutuskoodi value cannot be null!");
-
+        final String koulutuskoodiUri = getUriWithVersion(dto.getKoulutuskoodiKoodiarvo(), KoodistoURIHelper.KOODISTO_TUTKINTO_URI);
+        
         KoulutusmoduuliKoosteTyyppi tutkintoKomo = new KoulutusmoduuliKoosteTyyppi();
         tutkintoKomo.setOid(this.oidService.newOid(NodeClassCode.TEKN_5));
         tutkintoKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
 
         //search Uris from Koodisto for komo
-        tutkintoKomo.setKoulutuskoodiUri(getUriWithVersion(dto.getKoulutuskoodiKoodiarvo(), KoodistoURIHelper.KOODISTO_TUTKINTO_URI));
+        tutkintoKomo.setKoulutuskoodiUri(koulutuskoodiUri);
         tutkintoKomo.setOpintoalaUri(getUriWithVersion(dto.getOpintoalaKoodi(), KoodistoURIHelper.KOODISTO_OPINTOALA_URI));  //Automaalari
         tutkintoKomo.setKoulutusalaUri(getUriWithVersion(dto.getKoulutusalaKoodi(), KoodistoURIHelper.KOODISTO_KOULUTUSALA_URI));
         tutkintoKomo.setKoulutusasteUri(getUriWithVersion(dto.getKoulutusasteenKoodiarvo(), KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI));
@@ -350,6 +351,7 @@ public class TarjontaKomoData {
                 break;
         }
 
+        koKomo.setKoulutuskoodiUri(koulutuskoodiUri);
         koKomo.setOid(this.oidService.newOid(NodeClassCode.TEKN_5));
         koKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
 
