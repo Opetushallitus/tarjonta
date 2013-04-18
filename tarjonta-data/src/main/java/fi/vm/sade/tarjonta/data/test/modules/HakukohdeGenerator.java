@@ -24,10 +24,11 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 import com.google.common.base.Preconditions;
+import static fi.vm.sade.tarjonta.data.test.modules.AbstractGenerator.UPDATED_BY_USER;
 import fi.vm.sade.tarjonta.data.util.KoodistoUtil;
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.AjankohtaTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
-import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
+import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,7 +47,11 @@ public class HakukohdeGenerator extends AbstractGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeGenerator.class);
     private static final Date DATE = new DateTime(2020, 1, 1, 1, 1).toDate();
-    private static final int MAX_LIITTEES = 10;
+    private static final Date EXAM_START_DATE = new DateTime(2013, 1, 1, 1, 1).toDate();
+    private static final Date EXAM_END_DATE = new DateTime(2022, 1, 1, 1, 1).toDate();
+    private static final int MAX_ATTACHMENTS = 10;
+    private static final int MAX_EXAMS = 10;
+    private static final int MAX_EXAMS_DAYS = 10;
     private static final Integer[] HAKUKOHTEET_KOODISTO_ARVO = new Integer[]{
         582, 498, 490, 186, 977, 600, 597, 601, 858, 414, 910, 886
     };
@@ -69,7 +74,10 @@ public class HakukohdeGenerator extends AbstractGenerator {
         for (Integer koodiarvo : HAKUKOHTEET_KOODISTO_ARVO) {
             HakukohdeTyyppi hakukohde = createHakukohde(hakuOid, komotoOid, koodiarvo);
             tarjontaAdminService.lisaaHakukohde(hakukohde);
-            tarjontaAdminService.tallennaLiitteitaHakukohteelle(hakukohde.getOid(), createLiittees(hakuOid, komotoOid));
+
+            final String hakukohdeOid = hakukohde.getOid();
+            tarjontaAdminService.tallennaLiitteitaHakukohteelle(hakukohdeOid, createLiittees(hakuOid, komotoOid));
+            tarjontaAdminService.tallennaValintakokeitaHakukohteelle(hakukohdeOid, createValintakoes());
         }
     }
 
@@ -100,6 +108,8 @@ public class HakukohdeGenerator extends AbstractGenerator {
 
         tyyppi.setValintaperustekuvausKoodiUri(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI, "4"));
         tyyppi.setSoraKuvausKoodiUri(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI, "1"));
+        tyyppi.setViimeisinPaivittajaOid(UPDATED_BY_USER);
+        //tyyppi.setViimeisinPaivitysPvm(UPDATED_DATE);
 
         return tyyppi;
     }
@@ -107,15 +117,45 @@ public class HakukohdeGenerator extends AbstractGenerator {
     private List<HakukohdeLiiteTyyppi> createLiittees(final String hakuOid, final String komotoOid) {
         List<HakukohdeLiiteTyyppi> types = new ArrayList<HakukohdeLiiteTyyppi>();
 
-        for (int i = 0; i < MAX_LIITTEES; i++) {
-            HakukohdeLiiteTyyppi hakukohdeLiiteTyyppi = new HakukohdeLiiteTyyppi();
-            hakukohdeLiiteTyyppi.setLiitteenKuvaus(createKoodiUriLorem());
-            hakukohdeLiiteTyyppi.setLiitteenToimitusOsoite(createPostiosoite());
-            hakukohdeLiiteTyyppi.setLiitteenTyyppi(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_LIITTEEN_TYYPPI_URI, "1"));
-            hakukohdeLiiteTyyppi.setSahkoinenToimitusOsoite(createUri(hakuOid, komotoOid));
-            hakukohdeLiiteTyyppi.setSahkoinenToimitusOsoite(LOREM);
-            hakukohdeLiiteTyyppi.setLiitteenTyyppiKoodistoNimi("???");
-            hakukohdeLiiteTyyppi.setToimitettavaMennessa(DATE);
+        for (int i = 0; i < MAX_ATTACHMENTS; i++) {
+            HakukohdeLiiteTyyppi tyyppi = new HakukohdeLiiteTyyppi();
+            tyyppi.setLiitteenKuvaus(createKoodiUriLorem());
+            tyyppi.setLiitteenToimitusOsoite(createPostiosoite());
+            tyyppi.setLiitteenTyyppi(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_LIITTEEN_TYYPPI_URI, "1"));
+            tyyppi.setSahkoinenToimitusOsoite(createUri(hakuOid, komotoOid));
+            tyyppi.setLiitteenTyyppiKoodistoNimi("???");
+            tyyppi.setToimitettavaMennessa(DATE);
+
+            tyyppi.setViimeisinPaivittajaOid(UPDATED_BY_USER);
+            tyyppi.setViimeisinPaivitysPvm(UPDATED_DATE);
+            types.add(tyyppi);
+        }
+
+        return types;
+    }
+
+    private List<ValintakoeTyyppi> createValintakoes() {
+        List<ValintakoeTyyppi> types = new ArrayList<ValintakoeTyyppi>();
+
+        for (int i = 0; i < MAX_EXAMS; i++) {
+            ValintakoeTyyppi tyyppi = new ValintakoeTyyppi();
+            tyyppi.setKuvaukset(createKoodiUriLorem());
+            tyyppi.setLisaNaytot(createKoodiUriLorem());
+            // hakukohdeLiiteTyyppi.setValintakokeenTunniste(hakuOid + " " + komotoOid); //long ID not String OID
+            tyyppi.setValintakokeenTyyppi("???");
+            tyyppi.setViimeisinPaivittajaOid(UPDATED_BY_USER);
+            tyyppi.setViimeisinPaivitysPvm(UPDATED_DATE);
+
+            for (int indexDays = 0; indexDays < MAX_EXAMS_DAYS; indexDays++) {
+                AjankohtaTyyppi ajankohtaTyyppi = new AjankohtaTyyppi();
+                ajankohtaTyyppi.setAlkamisAika(EXAM_START_DATE);
+                ajankohtaTyyppi.setPaattymisAika(EXAM_END_DATE);
+                ajankohtaTyyppi.setKuvaus(LOREM.substring(0, 30));
+                ajankohtaTyyppi.setValintakoeAjankohtaOsoite(createPostiosoite());
+                tyyppi.getAjankohdat().add(ajankohtaTyyppi);
+            }
+            
+            types.add(tyyppi);
         }
 
         return types;

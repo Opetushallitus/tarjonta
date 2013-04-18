@@ -911,7 +911,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         }
     }
 
-    private HakukohdeNameUriModel hakukohdeNameUriModelFromKoodi(KoodiType koodiType) {
+    public HakukohdeNameUriModel hakukohdeNameUriModelFromKoodi(KoodiType koodiType) {
         HakukohdeNameUriModel hakukohdeNameUriModel = new HakukohdeNameUriModel();
         hakukohdeNameUriModel.setUriVersio(koodiType.getVersio());
         hakukohdeNameUriModel.setHakukohdeUri(koodiType.getKoodiUri());

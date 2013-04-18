@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,8 @@ public abstract class AbstractGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractGenerator.class);
     private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
     private static final String OID_FORMAT = "%09d_";
+    protected static final String UPDATED_BY_USER = "DATA UPLOAD";
+    protected static final Date UPDATED_DATE = new DateTime(2013, 1, 1, 1, 1).toDate();
     protected static final String LANGUAGE_FI = "fi";
     protected static final String[] LANGUAGES = new String[]{LANGUAGE_FI, "sv", "en"};
     protected static final String LOREM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis magna libero. "
