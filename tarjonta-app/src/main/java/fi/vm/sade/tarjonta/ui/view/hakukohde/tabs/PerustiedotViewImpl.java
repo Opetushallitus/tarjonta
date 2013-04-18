@@ -679,7 +679,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         //hakukohteenNimiCombo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI);
         hakukohteenNimiCombo = UiUtil.comboBox(null, null, null);
 
-        Set<KoodiType> hakukohdeKoodis = tarjontaUIHelper.getRelatedKoodis(presenter.getModel().getHakukohde().getKomotoOids());
+        Collection<KoodiType> hakukohdeKoodis = tarjontaUIHelper.getRelatedHakukohdeKoodisByKomotoOids(presenter.getModel().getHakukohde().getKomotoOids());
         Set<HakukohdeNameUriModel> hakukohdes = new HashSet<HakukohdeNameUriModel>();
         for (KoodiType koodiType : hakukohdeKoodis) {
             HakukohdeNameUriModel hakukohde = new HakukohdeNameUriModel();
