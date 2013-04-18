@@ -16,13 +16,9 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
-import static fi.vm.sade.tarjonta.dao.impl.TestData.OID1;
+import static fi.vm.sade.tarjonta.dao.impl.TestData.HAKU_OID1;
 import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.junit.After;
@@ -51,21 +47,15 @@ import org.springframework.transaction.annotation.Transactional;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class HakukohdeDAOImplTest extends TestData {
+public class HakuDAOImplTest extends TestData {
 
-    @Autowired(required = true)
-    private HakukohdeDAOImpl instance;
     @Autowired(required = true)
     private TarjontaFixtures fixtures;
     private EntityManager em;
+    @Autowired(required = true)
+    private HakuDAOImpl instance;
 
-    public HakukohdeDAOImplTest() {
-        super();
-    }
-
-    @After
-    public void cleanUp() {
-        super.clean();
+    public HakuDAOImplTest() {
     }
 
     @Before
@@ -74,40 +64,33 @@ public class HakukohdeDAOImplTest extends TestData {
         super.initializeData(em, fixtures);
     }
 
+    @After
+    public void cleanUp() {
+        super.clean();
+    }
+
+    /**
+     * Test of findByOid method, of class HakuDAOImpl.
+     */
     @Test
-    public void testFindHakukohdeByOid() {
-        Hakukohde hakukohde = instance.findHakukohdeByOid(OID1);
-        assertNotNull(hakukohde);
-        assertEquals(OID1, hakukohde.getOid());
-        assertEquals(HAKU_OID1, hakukohde.getHaku().getOid());
-        assertEquals(VALINTAKOE_COUNT_FOR_OID1, hakukohde.getValintakoes().size());
+    public void testFindByOid() {
+        Haku result = instance.findByOid(HAKU_OID1);
+        assertEquals(haku1, result);
+        assertEquals(3, result.getHakukohdes().size());
+
+        result = instance.findByOid("none");
+        assertEquals(null, result);
     }
 
     @Test
-    public void testFindValintakoeByHakukohdeOid1() {
-        final List result = instance.findValintakoeByHakukohdeOid(OID1);
-        assertEquals(VALINTAKOE_COUNT_FOR_OID1, result.size());
-    }
+    public void testFindHakukohdeHakus() {
+        assertEquals(2, instance.findAll().size());
 
-    @Test
-    public void testFindValintakoeByHakukohdeOid2() {
-        final List result = instance.findValintakoeByHakukohdeOid(OID2);
-        assertEquals(1, result.size());
-    }
+        //TODO:If I have understood this correctly, it should output 3 items, not 6? 
+        List<Haku> findHakukohdeHakus = instance.findHakukohdeHakus(haku1);
+        assertEquals(3, findHakukohdeHakus.size());
 
-    @Test
-    public void testFindValintakoeByHakukohdeOid3() {
-        final List result = instance.findValintakoeByHakukohdeOid(OID3);
-        assertEquals(0, result.size());
+        findHakukohdeHakus = instance.findHakukohdeHakus(haku2);
+        assertEquals(0, findHakukohdeHakus.size());
     }
-//    @Test
-//    public void testHaeHakukohteetJaKoulutukset() {
-//        HaeHakukohteetKyselyTyyppi tyyppi = new HaeHakukohteetKyselyTyyppi();
-//        //tyyppi.setNimiKoodiUri(KOODISTO_URI_1);
-//
-//        tyyppi.setNimi(HUMAN_READABLE_NAME_1);
-//        
-//        final List result = instance.haeHakukohteetJaKoulutukset(tyyppi);
-//        assertEquals(1, result.size());
-//    }
 }

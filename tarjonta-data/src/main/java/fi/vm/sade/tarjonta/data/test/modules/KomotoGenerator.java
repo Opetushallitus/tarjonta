@@ -127,6 +127,7 @@ public class KomotoGenerator extends AbstractGenerator {
         tyyppi.setKuvailevatTiedot(createKoodiUriLorem());
         tyyppi.setSijoittuminenTyoelamaan(createKoodiUriLorem());
         tyyppi.setYhteistyoMuidenToimijoidenKanssa(createKoodiUriLorem());
+        tyyppi.setSisalto(createKoodiUriLorem());
 
         tyyppi.setViimeisinPaivittajaOid(UPDATED_BY_USER);
         // tyyppi.setViimeisinPaivitysPvm(UPDATED_DATE);
