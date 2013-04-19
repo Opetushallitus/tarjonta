@@ -111,7 +111,9 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         komotoModel.setKoulutusmoduuli(moduuli);
         moduuli.addKoulutusmoduuliToteutus(komotoModel);
 
-        return koulutusmoduuliToteutusDAO.insert(komotoModel);
+        KoulutusmoduuliToteutus response =  koulutusmoduuliToteutusDAO.insert(komotoModel);
+        //TODO index
+        return response;
     }
 
     private Koulutusmoduuli handleToisenAsteenModuuli(LisaaKoulutusTyyppi koulutus) {

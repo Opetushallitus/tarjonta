@@ -34,11 +34,9 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QTekstiKaannos;
-import fi.vm.sade.tarjonta.model.QHakukohde;
 
 /**
  * @author Antti Salonen
@@ -47,48 +45,47 @@ import fi.vm.sade.tarjonta.model.QHakukohde;
 public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuDAO {
 
     private static final Logger log = LoggerFactory.getLogger(HakuDAOImpl.class);
-    
+
     @Override
     public List<Haku> findHakukohdeHakus(Haku haku) {
-        QHaku qHaku = QHaku.haku;
-        QHakukohde qHakukohde = QHakukohde.hakukohde;
-        
-        List<Haku> haut = from(qHaku, qHakukohde)
-                .join(qHakukohde.haku,qHaku)
-                .where(qHaku.oid.eq(haku.getOid()))
-                .list(qHaku);
-        
-        return haut;
+//        QHaku qHaku = QHaku.haku;
+//        QHakukohde qHakukohde = QHakukohde.hakukohde;
+//
+////        List<Haku> haut = from(qHaku, qHakukohde)
+//                .join(qHakukohde.haku, qHaku)
+//                .where(qHaku.oid.eq(haku.getOid()))
+//                .list(qHaku);
+
+        return getEntityManager()
+                .createQuery("select h.haku from Hakukohde h where h.haku.oid = :oid")
+                .setParameter("oid", haku.getOid()).getResultList();
+
     }
 
     @Override
     public Haku findByOid(String oidString) {
         QHaku qHaku = QHaku.haku;
-        QHakukohde qHakukohde = QHakukohde.hakukohde;
 
-        return from(qHaku,qHakukohde)
-            .leftJoin(qHaku.hakukohdes,qHakukohde).fetch()
-            .where(qHaku.oid.eq(oidString.trim()))
-            .singleResult(qHaku);
-
-
+        return from(qHaku)
+                .where(qHaku.oid.eq(oidString.trim()))
+                .singleResult(qHaku);
     }
 
     @Override
-    public List<Haku> findBySearchString(String searchString,String kieliKoodi) {
+    public List<Haku> findBySearchString(String searchString, String kieliKoodi) {
         QMonikielinenTeksti qTekstis = QMonikielinenTeksti.monikielinenTeksti;
         QTekstiKaannos qKaannos = QTekstiKaannos.tekstiKaannos;
         QHaku qHaku = QHaku.haku;
-        
-        List<Haku> haut = from(qTekstis,qHaku,qKaannos)
-                .join(qHaku.nimi,qTekstis)
-                .join(qTekstis.tekstis,qKaannos)
-                .where(qKaannos.kieliKoodi.eq(kieliKoodi).and(qKaannos.arvo.like("%"+ searchString+"%")))
+
+        List<Haku> haut = from(qTekstis, qHaku, qKaannos)
+                .join(qHaku.nimi, qTekstis)
+                .join(qTekstis.tekstis, qKaannos)
+                .where(qKaannos.kieliKoodi.eq(kieliKoodi).and(qKaannos.arvo.like("%" + searchString + "%")))
                 .distinct()
                 .list(qHaku);
         return haut;
     }
-    
+
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }
@@ -128,8 +125,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
             // päättyneet ja tulevat -> loppuaika pienempi kuin nyt TAI alkuaika suurempi kuin nyt
             where = cb.or(
                     cb.lessThan(hakuera.<Date>get(HAUN_LOPPUMIS_PVM), cb.currentTimestamp()),
-                    cb.greaterThan(hakuera.<Date>get(HAUN_ALKAMIS_PVM), cb.currentTimestamp())
-            );
+                    cb.greaterThan(hakuera.<Date>get(HAUN_ALKAMIS_PVM), cb.currentTimestamp()));
         } else if (p && !m && !t) {
             // päättyneet -> loppuaika pienempi kuin nyt
             where = cb.lessThan(hakuera.<Date>get(HAUN_LOPPUMIS_PVM), cb.currentTimestamp());
@@ -163,7 +159,4 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         }
         return orderBy;
     }
-
-
 }
-

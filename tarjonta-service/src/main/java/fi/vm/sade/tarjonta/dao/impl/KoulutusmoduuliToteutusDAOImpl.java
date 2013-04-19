@@ -15,13 +15,11 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.jpa.impl.JPASubQuery;
-import com.mysema.query.support.Expressions;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
 
-import com.mysema.query.types.path.StringPath;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import static fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils.and;
@@ -29,8 +27,6 @@ import fi.vm.sade.tarjonta.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.slf4j.Logger;
@@ -43,6 +39,7 @@ import org.springframework.stereotype.Repository;
 public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<KoulutusmoduuliToteutus, Long> implements KoulutusmoduuliToteutusDAO {
 
     private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliToteutusDAOImpl.class);
+
     @Override
     public KoulutusmoduuliToteutus findByOid(String oid) {
 
@@ -57,32 +54,32 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     }
 
     /*
-      This is done in JPQL because querydsl seems to have a bug with querying element collections. Even version 2.6 does not seem to work
+     This is done in JPQL because querydsl seems to have a bug with querying element collections. Even version 2.6 does not seem to work
      */
     @Override
-    public List<KoulutusmoduuliToteutus> findKoulutusModuuliWithPohjakoulutusAndTarjoaja(String tarjoaja, String pohjakoulutus, String koulutusluokitus,String koulutusohjelma,
-                                                                                         List<String> opetuskielis, List<String> koulutuslajis) {
-       if (opetuskielis != null && opetuskielis.size() > 0 && koulutuslajis != null && koulutuslajis.size() > 0 ) {
-        String query = "SELECT komoto FROM KoulutusmoduuliToteutus komoto, Koulutusmoduuli komo, IN (komoto.opetuskielis) o, IN(komoto.koulutuslajis) k WHERE komoto.koulutusmoduuli = komo AND " +
-                "komoto.pohjakoulutusvaatimus = :pkv AND komoto.tarjoaja = :tarjoaja AND komo.koulutusKoodi = :koulutuskoodi AND komo.koulutusohjelmaKoodi = :koulutusohjelmaKoodi AND o.koodiUri IN (:opetuskielis) AND k.koodiUri IN (:koulutuslajis)";
+    public List<KoulutusmoduuliToteutus> findKoulutusModuuliWithPohjakoulutusAndTarjoaja(String tarjoaja, String pohjakoulutus, String koulutusluokitus, String koulutusohjelma,
+            List<String> opetuskielis, List<String> koulutuslajis) {
+        if (opetuskielis != null && opetuskielis.size() > 0 && koulutuslajis != null && koulutuslajis.size() > 0) {
+            String query = "SELECT komoto FROM KoulutusmoduuliToteutus komoto, Koulutusmoduuli komo, IN (komoto.opetuskielis) o, IN(komoto.koulutuslajis) k WHERE komoto.koulutusmoduuli = komo AND "
+                    + "komoto.pohjakoulutusvaatimus = :pkv AND komoto.tarjoaja = :tarjoaja AND komo.koulutusKoodi = :koulutuskoodi AND komo.koulutusohjelmaKoodi = :koulutusohjelmaKoodi AND o.koodiUri IN (:opetuskielis) AND k.koodiUri IN (:koulutuslajis)";
 
 
-        return getEntityManager()
-                .createQuery(query)
-                .setParameter("pkv",pohjakoulutus.trim())
-                .setParameter("tarjoaja",tarjoaja.trim())
-                .setParameter("koulutuskoodi",koulutusluokitus.trim())
-                .setParameter("koulutusohjelmaKoodi",koulutusohjelma.trim())
-                .setParameter("opetuskielis",opetuskielis)
-                .setParameter("koulutuslajis",koulutuslajis)
-                .getResultList();
+            return getEntityManager()
+                    .createQuery(query)
+                    .setParameter("pkv", pohjakoulutus.trim())
+                    .setParameter("tarjoaja", tarjoaja.trim())
+                    .setParameter("koulutuskoodi", koulutusluokitus.trim())
+                    .setParameter("koulutusohjelmaKoodi", koulutusohjelma.trim())
+                    .setParameter("opetuskielis", opetuskielis)
+                    .setParameter("koulutuslajis", koulutuslajis)
+                    .getResultList();
 
 
 
-       } else {
-           log.info("Koulutuslajis and opetuskielis was null!!!");
-           return null;
-       }
+        } else {
+            log.info("Koulutuslajis and opetuskielis was null!!!");
+            return null;
+        }
 
     }
 
@@ -91,47 +88,47 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         QHakukohde qHakukohde = QHakukohde.hakukohde;
 
-        return from(qHakukohde,qKomoto)
-                .join(qKomoto.hakukohdes,qHakukohde)
+        return from(qHakukohde, qKomoto)
+                .join(qKomoto.hakukohdes, qHakukohde)
                 .where(qKomoto.oid.in(komotoOids))
                 .list(qKomoto);
     }
 
     @Override
     public KoulutusmoduuliToteutus findKomotoByOid(String oid) {
-         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-         QKoulutusmoduuli qKomo = QKoulutusmoduuli.koulutusmoduuli;
-         
-         KoulutusmoduuliToteutus komoto = from(qKomoto,qKomo)
-                 .leftJoin(qKomoto.koulutusmoduuli,qKomo)
-                 .where(qKomoto.oid.eq(oid.trim()))
-                 .singleResult(qKomoto);
-         
-         komoto.getHakukohdes();
-         
-        return  komoto;
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        QKoulutusmoduuli qKomo = QKoulutusmoduuli.koulutusmoduuli;
+
+        KoulutusmoduuliToteutus komoto = from(qKomoto, qKomo)
+                .leftJoin(qKomoto.koulutusmoduuli, qKomo)
+                .where(qKomoto.oid.eq(oid.trim()))
+                .singleResult(qKomoto);
+
+        komoto.getHakukohdes();
+
+        return komoto;
 
     }
 
     @Override
     public List<KoulutusmoduuliToteutus> findKoulutusModuuliToteutusesByOids(List<String> oids) {
-         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-         //Added to enable ordering
-         QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
-         return from(komoto)
-                 .where(komoto.oid.in(oids))
-                 .join(komoto.koulutusmoduuli,komo)
-                 .orderBy(komo.koulutusKoodi.asc())
-                 .list(komoto);
+        QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        //Added to enable ordering
+        QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
+        return from(komoto)
+                .where(komoto.oid.in(oids))
+                .join(komoto.koulutusmoduuli, komo)
+                .orderBy(komo.koulutusKoodi.asc())
+                .list(komoto);
 
     }
 
     @Override
     public KoulutusmoduuliToteutus findKomotoWithYhteyshenkilosByOid(String oid) {
         Query query = getEntityManager().createQuery(""
-            + "SELECT k FROM KoulutusmoduuliToteutus k "
-            + "LEFT JOIN FETCH k.yhteyshenkilos "
-            + "where k.oid=:oid");
+                + "SELECT k FROM KoulutusmoduuliToteutus k "
+                + "LEFT JOIN FETCH k.yhteyshenkilos "
+                + "where k.oid=:oid");
         query.setParameter("oid", oid);
         return (KoulutusmoduuliToteutus) query.getSingleResult();
     }
@@ -153,31 +150,36 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
 
 
             JPASubQuery subQuery = new JPASubQuery().from(komo).
-                join(komo.nimi.tekstis, nimiTeksti).
-                where(nimiTeksti.arvo.toLowerCase().contains(matchNimi.toLowerCase()));
-            
+                    join(komo.nimi.tekstis, nimiTeksti).
+                    where(nimiTeksti.arvo.toLowerCase().contains(matchNimi.toLowerCase()));
+
             criteria = komoto.koulutusmoduuli.in(subQuery.list(komo));
         }
 
         if (!tarjoajaOids.isEmpty()) {
             criteria = and(criteria, komoto.tarjoaja.in(tarjoajaOids));
         }
-        
-        if (koulutusAlkuVuosi > 0) {           
+
+        if (koulutusAlkuVuosi > 0) {
             criteria = and(criteria, komoto.koulutuksenAlkamisPvm.isNotNull()).and(komoto.koulutuksenAlkamisPvm.year().isNotNull()).and(komoto.koulutuksenAlkamisPvm.year().eq(koulutusAlkuVuosi));
         }
-        
+
         if (!koulutusAlkuKuukaudet.isEmpty()) {
             criteria = and(criteria, komoto.koulutuksenAlkamisPvm.isNotNull()).and(komoto.koulutuksenAlkamisPvm.month().isNotNull()).and(komoto.koulutuksenAlkamisPvm.month().in(koulutusAlkuKuukaudet));
         }
 
-        List<KoulutusmoduuliToteutus> komotos = from(komoto).
-                where(criteria).
-                list(komoto);
-        
-        return filterTutkintos(komotos); 
+        List<KoulutusmoduuliToteutus> komotos;
+        if (criteria == null) {
+            komotos = from(komoto).
+                    list(komoto);
+        } else {
+            komotos = from(komoto).
+                    where(criteria).
+                    list(komoto);
+        }
+
+        return filterTutkintos(komotos);
     }
-    
 
     @Override
     public List<KoulutusmoduuliToteutus> findKomotosByKomoAndtarjoaja(
@@ -186,15 +188,15 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         List<KoulutusmoduuliToteutus> komotoRes = null;
         try {
             komotoRes = from(komoto).
-                join(komoto.koulutusmoduuli).fetch().
-                where(komoto.koulutusmoduuli.oid.eq(parentKomo.getOid()).and(komoto.tarjoaja.eq(tarjoaja))).list(komoto);
+                    join(komoto.koulutusmoduuli).fetch().
+                    where(komoto.koulutusmoduuli.oid.eq(parentKomo.getOid()).and(komoto.tarjoaja.eq(tarjoaja))).list(komoto);
         } catch (Exception ex) {
             log.debug("Exception: " + ex.getMessage());
         }
-        
+
         return komotoRes;
     }
-    
+
     private List<KoulutusmoduuliToteutus> filterTutkintos(List<KoulutusmoduuliToteutus> komotos) {
         List<KoulutusmoduuliToteutus> result = new ArrayList<KoulutusmoduuliToteutus>();
         for (KoulutusmoduuliToteutus curKomoto : komotos) {
@@ -204,6 +206,4 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         }
         return result;
     }
-
 }
-

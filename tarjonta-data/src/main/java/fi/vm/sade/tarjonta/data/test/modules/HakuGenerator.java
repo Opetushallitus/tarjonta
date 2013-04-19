@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.data.test.modules;
 
+import static fi.vm.sade.tarjonta.data.test.modules.AbstractGenerator.UPDATED_BY_USER;
 import fi.vm.sade.tarjonta.data.util.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.data.util.KoodistoUtil;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -25,6 +26,8 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 import java.util.Date;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +38,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Configurable(preConstruction = false)
 public class HakuGenerator extends AbstractGenerator {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HakuGenerator.class);
 
     private static final String OID_TYPE = "AS_";
     private static final Date DATE_HAKUAIKA_BEGIN = new DateTime(2013, 1, 1, 1, 1).toDate();
@@ -53,7 +58,7 @@ public class HakuGenerator extends AbstractGenerator {
     public String create() {
         HakuTyyppi createToteutus = createToteutus();
         tarjontaAdminService.lisaaHaku(createToteutus);
-
+        LOG.info("hakukohde created : {}", createToteutus.getOid());
         return createToteutus.getOid();
     }
 
@@ -82,6 +87,8 @@ public class HakuGenerator extends AbstractGenerator {
         sisaisetHakuAjat.setSisaisenHaunPaattymisPvm(DATE_HAKUAIKA_END);
         tyyppi.getSisaisetHakuajat().add(sisaisetHakuAjat);
 
+        tyyppi.setViimeisinPaivittajaOid(UPDATED_BY_USER);
+      
         return tyyppi;
     }
 

@@ -243,7 +243,7 @@ public class KoulutusmoduuliDAOTest {
     	koulutus.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI2);
         koulutusmoduuliDAO.insert(koulutus);
 
-    	//KOMO3
+    	//KOMO3o
     	koulutus = fixtures.createTutkintoOhjelma();
         koulutusmoduuliDAO.insert(koulutus);
 

@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.data.test.modules;
 
 import com.google.common.base.Preconditions;
+import static fi.vm.sade.tarjonta.data.test.modules.AbstractGenerator.UPDATED_BY_USER;
 import fi.vm.sade.tarjonta.data.util.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.data.util.KoodistoUtil;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -52,7 +53,7 @@ public class KomotoGenerator extends AbstractGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(KomotoGenerator.class);
     private static final String KOULUTUSASTE_AMMATTILLINEN_KOULUTUS = "32";
-    private static final String OID_TYPE = "KOMOTO_";
+    private static final String OID_TYPE = "LOI_";
     private static final Date DATE = new DateTime(2013, 1, 1, 1, 1).toDate();
     //private static final Random random = new Random(System.currentTimeMillis());
     private TarjontaAdminService tarjontaAdminService;
@@ -72,6 +73,10 @@ public class KomotoGenerator extends AbstractGenerator {
         HaeKoulutusmoduulitVastausTyyppi haeKoulutusmoduulit = tarjontaPublicService.haeKoulutusmoduulit(tyyppi);
         List<KoulutusmoduuliTulos> koulutusmoduuliTulos = haeKoulutusmoduulit.getKoulutusmoduuliTulos();
 
+        if (koulutusmoduuliTulos.isEmpty()) {
+            throw new RuntimeException("No KOMOS, you need to create base KOMO data to koulutusmoduuli table.");
+        }
+
         //create all possible komo combinations
         for (KoulutusmoduuliTulos tulos : koulutusmoduuliTulos) {
             addKomoPair(tulos.getKoulutusmoduuli());
@@ -82,6 +87,7 @@ public class KomotoGenerator extends AbstractGenerator {
         Preconditions.checkNotNull(organisationOid, "Organisation OID cannot be null.");
         final LisaaKoulutusTyyppi createToteutus = createToteutus(organisationOid);
         tarjontaAdminService.lisaaKoulutus(createToteutus);
+        LOG.info("koulutus created : {}", createToteutus.getOid());
         return createToteutus.getOid();
     }
 
@@ -121,6 +127,10 @@ public class KomotoGenerator extends AbstractGenerator {
         tyyppi.setKuvailevatTiedot(createKoodiUriLorem());
         tyyppi.setSijoittuminenTyoelamaan(createKoodiUriLorem());
         tyyppi.setYhteistyoMuidenToimijoidenKanssa(createKoodiUriLorem());
+        tyyppi.setSisalto(createKoodiUriLorem());
+
+        tyyppi.setViimeisinPaivittajaOid(UPDATED_BY_USER);
+        // tyyppi.setViimeisinPaivitysPvm(UPDATED_DATE);
 
         KoodistoUtil.addToKoodiToKoodistoTyyppi(KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, new String[]{"1", "2", "3", "4", "5", "6"}, tyyppi.getAmmattinimikkeet());
 

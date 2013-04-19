@@ -679,17 +679,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         //hakukohteenNimiCombo = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI);
         hakukohteenNimiCombo = UiUtil.comboBox(null, null, null);
 
-        Set<KoodiType> hakukohdeKoodis = tarjontaUIHelper.getRelatedKoodis(presenter.getModel().getHakukohde().getKomotoOids());
+        Collection<KoodiType> hakukohdeKoodis = tarjontaUIHelper.getRelatedHakukohdeKoodisByKomotoOids(presenter.getModel().getHakukohde().getKomotoOids());
         Set<HakukohdeNameUriModel> hakukohdes = new HashSet<HakukohdeNameUriModel>();
         for (KoodiType koodiType : hakukohdeKoodis) {
-            HakukohdeNameUriModel hakukohde = new HakukohdeNameUriModel();
-            hakukohde.setHakukohdeArvo(koodiType.getKoodiArvo());
-            hakukohde.setHakukohdeUri(koodiType.getKoodiUri());
-            hakukohde.setUriVersio(koodiType.getVersio());
-            if (koodiType.getMetadata() != null) {
-                hakukohde.setHakukohdeNimi(getLocalizedKoodiNimi(koodiType));
-            }
-            hakukohdes.add(hakukohde);
+            presenter.hakukohdeNameUriModelFromKoodi(koodiType);
         }
         BeanItemContainer<HakukohdeNameUriModel> hakukohdeContainer = new BeanItemContainer<HakukohdeNameUriModel>(HakukohdeNameUriModel.class, hakukohdes);
         hakukohteenNimiCombo.setContainerDataSource(hakukohdeContainer);
@@ -698,12 +691,6 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
 
         return hakukohteenNimiCombo;
-    }
-
-    private String getLocalizedKoodiNimi(KoodiType koodi) {
-        KoodiMetadataType meta = TarjontaUIHelper.getKoodiMetadataForLanguage(koodi, I18N.getLocale());
-        return meta != null ? meta.getNimi() : koodi.getKoodiUri() + "#" + koodi.getVersio();
-
     }
 
     /*

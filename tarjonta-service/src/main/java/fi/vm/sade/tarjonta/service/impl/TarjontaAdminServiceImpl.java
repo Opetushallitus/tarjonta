@@ -16,6 +16,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
+import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
@@ -273,8 +274,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) {
+        Preconditions.checkNotNull(hakukohde, "HakukohdeTyyppi cannot be null.");
+        final String hakuOid = hakukohde.getHakukohteenHakuOid();
+
+        Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
         Hakukohde hakuk = conversionService.convert(hakukohde, Hakukohde.class);
-        Haku haku = hakuDAO.findByOid(hakukohde.getHakukohteenHakuOid());
+        Haku haku = hakuDAO.findByOid(hakuOid);
+        Preconditions.checkNotNull(haku, "Insert failed - no haku entity found by haku OID", hakuOid);
 
         hakuk.setHaku(haku);
         hakuk = hakukohdeDAO.insert(hakuk);
@@ -344,7 +350,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findBy("oid", hakukohdePaivitys.getOid());
         //List<Hakukohde> hakukohdeTemp = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdePaivitys.getOid());
         hakukohde.setId(hakukohdeTemp.get(0).getId());
-        
+
         //why do we overwrite version from DTO?
         hakukohde.setVersion(hakukohdeTemp.get(0).getVersion());
         Haku haku = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
@@ -462,10 +468,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli) throws GenericFault {
 
         if (koulutusmoduuli.getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS) && koulutusmoduuliDAO.findTutkintoOhjelma(koulutusmoduuli.getKoulutuskoodiUri(), koulutusmoduuli.getKoulutusohjelmakoodiUri()) != null) {
-            log.warn("Koulutusmoduuli " + koulutusmoduuli.getKoulutuskoodiUri() + ", " + koulutusmoduuli.getKoulutusohjelmakoodiUri() + "already exists, not adding");
+            log.warn("Koulutusmoduuli " + koulutusmoduuli.getKoulutuskoodiUri() + ", " + koulutusmoduuli.getKoulutusohjelmakoodiUri() + " already exists, not adding");
             return new KoulutusmoduuliKoosteTyyppi();
         } else if (koulutusmoduuli.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS) && koulutusmoduuliDAO.findLukiolinja(koulutusmoduuli.getKoulutuskoodiUri(), koulutusmoduuli.getLukiolinjakoodiUri()) != null) {
-            log.warn("Koulutusmoduuli " + koulutusmoduuli.getKoulutuskoodiUri() + ", " + koulutusmoduuli.getLukiolinjakoodiUri() + "already exists, not adding");
+            log.warn("Koulutusmoduuli " + koulutusmoduuli.getKoulutuskoodiUri() + ", " + koulutusmoduuli.getLukiolinjakoodiUri() + " already exists, not adding");
             return new KoulutusmoduuliKoosteTyyppi();
         }
 
