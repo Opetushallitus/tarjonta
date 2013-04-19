@@ -15,6 +15,7 @@ import com.google.common.base.Preconditions;
 
 public class TarjontaSolrFilter extends SolrDispatchFilter {
 
+
     private SolrConfigBean solrConfig;
     
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -24,6 +25,7 @@ public class TarjontaSolrFilter extends SolrDispatchFilter {
         WebApplicationContext springContext = WebApplicationContextUtils
                 .getWebApplicationContext(config.getServletContext());
         solrConfig = springContext.getBean(SolrConfigBean.class);
+        
         if (solrConfig.getStart()) {
             logger.info("Per configuration Solr is going to be started...");
             init();
