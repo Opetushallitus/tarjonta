@@ -289,6 +289,6 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
 
         tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
-        tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getHakukohde().getOid(), hakukohde.getKoulutus().getTarjoaja());
+        tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getHakukohde().getOid());
     }
 }

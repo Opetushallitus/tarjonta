@@ -14,7 +14,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-
 package fi.vm.sade.tarjonta.ui.model;
 
 import fi.vm.sade.generic.common.I18N;
@@ -22,12 +21,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaunNimi;
-import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
-
 
 /**
  * For editing "Haku" in the UI.
@@ -38,47 +34,26 @@ import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 public class HakuViewModel extends BaseUIViewModel {
 
     private String hakuOid;
-
     private String hakutyyppi;
-
     private String hakukausi;
-
     private int hakuvuosi;
-
     private String koulutuksenAlkamisKausi;
-
     private int koulutuksenAlkamisvuosi;
-
     private String haunKohdejoukko;
-
     private String hakutapa;
-
     private String haunTunniste;
-
     private Date alkamisPvm;
-
     private Date paattymisPvm;
-
     private boolean haussaKaytetaanSijoittelua;
-
     private boolean kaytetaanJarjestelmanHakulomaketta;
-
     private String hakuLomakeUrl;
-
     private List<HakuaikaViewModel> sisaisetHakuajat;
-
     private String nimiFi;
-
     private String nimiSe;
-
     private String nimiEn;
-
     private HakuTyyppi hakuDto;
-    
     private String haunTila;
-
     private Date viimeisinPaivitysPvm;
-
     private String viimeisinPaivittaja;
 
     public HakuViewModel() {
@@ -101,7 +76,6 @@ public class HakuViewModel extends BaseUIViewModel {
         this.hakuOid = hakuDto.getOid();
         return hakuOid;
     }
-
 
     /**
      * @param hakuOid the hakuOid to set
@@ -209,17 +183,18 @@ public class HakuViewModel extends BaseUIViewModel {
 
     /**
      * Gets the earlieast start date for the Haku object.
+     *
      * @return the alkamisPvm
      */
     public Date getAlkamisPvm() {
-    	for (HakuaikaViewModel curHA :getSisaisetHakuajat()) {
-    		if (curHA.getAlkamisPvm() == null) {
-    			continue;
-    		}
-    		if (alkamisPvm == null || curHA.getAlkamisPvm().before(alkamisPvm)) {
-    			alkamisPvm = curHA.getAlkamisPvm();
-    		}
-    	}
+        for (HakuaikaViewModel curHA : getSisaisetHakuajat()) {
+            if (curHA.getAlkamisPvm() == null) {
+                continue;
+            }
+            if (alkamisPvm == null || curHA.getAlkamisPvm().before(alkamisPvm)) {
+                alkamisPvm = curHA.getAlkamisPvm();
+            }
+        }
         return alkamisPvm;
     }
 
@@ -233,17 +208,18 @@ public class HakuViewModel extends BaseUIViewModel {
 
     /**
      * Gets the latest end date for the Haku object.
+     *
      * @return the paattymisPvm
      */
     public Date getPaattymisPvm() {
-    	for (HakuaikaViewModel curHA :getSisaisetHakuajat()) {
-    		if (curHA.getPaattymisPvm() == null) {
-    			continue;
-    		}
-    		if (paattymisPvm == null || curHA.getPaattymisPvm().after(paattymisPvm)) {
-    			paattymisPvm = curHA.getPaattymisPvm();
-    		}
-    	}
+        for (HakuaikaViewModel curHA : getSisaisetHakuajat()) {
+            if (curHA.getPaattymisPvm() == null) {
+                continue;
+            }
+            if (paattymisPvm == null || curHA.getPaattymisPvm().after(paattymisPvm)) {
+                paattymisPvm = curHA.getPaattymisPvm();
+            }
+        }
         return paattymisPvm;
     }
 
@@ -302,7 +278,6 @@ public class HakuViewModel extends BaseUIViewModel {
         return sisaisetHakuajat;
     }
 
-
     /**
      * @param sisaisetHakuajat the sisaisethakuajat to set
      */
@@ -313,7 +288,6 @@ public class HakuViewModel extends BaseUIViewModel {
         }
         this.sisaisetHakuajat = sisaisetHakuajat;
     }
-
 
     /**
      * @return the hakutapa
@@ -339,7 +313,8 @@ public class HakuViewModel extends BaseUIViewModel {
     }
 
     /**
-     * @param kaytetaanJarjestelmanHakulomaketta the kaytetaanJarjestelmanHakulomaketta to set
+     * @param kaytetaanJarjestelmanHakulomaketta the
+     * kaytetaanJarjestelmanHakulomaketta to set
      */
     public void setKaytetaanJarjestelmanHakulomaketta(boolean kaytetaanJarjestelmanHakulomaketta) {
         this.kaytetaanJarjestelmanHakulomaketta = kaytetaanJarjestelmanHakulomaketta;
@@ -349,7 +324,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the nimiFi
      */
     public String getNimiFi() {
-        nimiFi = this.getKielistettyNimiFromDto("fi");
+        nimiFi = this.getKielistettyNimiFromDto(BasicLanguage.FI);
         return nimiFi;
     }
 
@@ -357,16 +332,15 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param nimiFi the nimiFi to set
      */
     public void setNimiFi(String nimiFi) {
-        setKielistettyNimiToDto(nimiFi, "fi");
+        setKielistettyNimiToDto(nimiFi, BasicLanguage.FI);
         this.nimiFi = nimiFi;
     }
-
 
     /**
      * @return the nimiSe
      */
     public String getNimiSe() {
-        nimiSe = getKielistettyNimiFromDto("sv");
+        nimiSe = getKielistettyNimiFromDto(BasicLanguage.SV);
         return nimiSe;
     }
 
@@ -374,7 +348,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param nimiSe the nimiSe to set
      */
     public void setNimiSe(String nimiSe) {
-        setKielistettyNimiToDto(nimiSe, "sv");
+        setKielistettyNimiToDto(nimiSe, BasicLanguage.SV);
         this.nimiSe = nimiSe;
     }
 
@@ -382,7 +356,7 @@ public class HakuViewModel extends BaseUIViewModel {
      * @return the nimiEn
      */
     public String getNimiEn() {
-        nimiEn = getKielistettyNimiFromDto("en");
+        nimiEn = getKielistettyNimiFromDto(BasicLanguage.EN);
         return nimiEn;
     }
 
@@ -390,7 +364,8 @@ public class HakuViewModel extends BaseUIViewModel {
      * @param nimiEn the nimiEn to set
      */
     public void setNimiEn(String nimiEn) {
-        setKielistettyNimiToDto(nimiEn, "en");
+
+        setKielistettyNimiToDto(nimiEn, BasicLanguage.EN);
         this.nimiEn = nimiEn;
     }
 
@@ -403,14 +378,8 @@ public class HakuViewModel extends BaseUIViewModel {
 
     @Override
     public String toString() {
-        if (I18N.getLocale() != null) {
-            return getKielistettyNimiFromDto(I18N.getLocale().getLanguage());
-        } else {
-            return getKielistettyNimiFromDto("fi");
-        }
+        return getKielistettyNimiFromDto(BasicLanguage.toLanguageEnum(I18N.getLocale().getLanguage()));
     }
-
-
 
     @Override
     public boolean equals(Object obj) {
@@ -422,7 +391,7 @@ public class HakuViewModel extends BaseUIViewModel {
         }
 
         if (obj instanceof HakuViewModel) {
-            HakuViewModel haku = (HakuViewModel)obj;
+            HakuViewModel haku = (HakuViewModel) obj;
             if (haku.getHakuOid() != null && haku.getHakuOid().equals(this.getHakuOid())) {
                 return true;
             } else {
@@ -441,8 +410,6 @@ public class HakuViewModel extends BaseUIViewModel {
 
         return hash;
     }
-
-
 
     /**
      * @return the koulutuksenAlkamisvuosi
@@ -478,26 +445,29 @@ public class HakuViewModel extends BaseUIViewModel {
         return hakuDto;
     }
 
-    private String getKielistettyNimiFromDto(String kieliKoodi) {
+    private String getKielistettyNimiFromDto(BasicLanguage kieliKoodi) {
         for (HaunNimi haunNimi : hakuDto.getHaunKielistetytNimet()) {
-            if (haunNimi.getKielikoodi().equals(kieliKoodi)) {
+
+            if (haunNimi.getKielikoodi().equals(kieliKoodi.getLowercaseLanguageCode())) {
                 return haunNimi.getNimi();
             }
         }
         return null;
     }
 
-    private void setKielistettyNimiToDto(String nimi, String kielikoodi) {
+    private void setKielistettyNimiToDto(String nimi, BasicLanguage kielikoodi) {
         boolean nimiExists = false;
         for (HaunNimi haunNimi : hakuDto.getHaunKielistetytNimet()) {
-            if (haunNimi.getKielikoodi().equals(kielikoodi)) {
+
+            if (haunNimi.getKielikoodi().equals(kielikoodi.getLowercaseLanguageCode())) {
                 haunNimi.setNimi(nimi);
                 nimiExists = true;
             }
         }
         if (!nimiExists) {
             HaunNimi hNimi = new HaunNimi();
-            hNimi.setKielikoodi(kielikoodi);
+
+            hNimi.setKielikoodi(kielikoodi.getLowercaseLanguageCode());
             hNimi.setNimi(nimi);
             hakuDto.getHaunKielistetytNimet().add(hNimi);
         }
@@ -513,7 +483,6 @@ public class HakuViewModel extends BaseUIViewModel {
         this.haunTila = haunTila;
         hakuDto.setHaunTila(TarjontaTila.fromValue(haunTila));
     }
-
 
     public Date getViimeisinPaivitysPvm() {
         if (hakuDto.getViimeisinPaivitysPvm() != null) {
@@ -532,5 +501,18 @@ public class HakuViewModel extends BaseUIViewModel {
 
     public void setViimeisinPaivittaja(String viimeisinPaivittaja) {
         this.viimeisinPaivittaja = viimeisinPaivittaja;
+    }
+
+    public List<HakuHakukohdeResultRow> getHakukohteet() {
+        List<HakuHakukohdeResultRow> hakukohteetRows = new ArrayList<HakuHakukohdeResultRow>();
+        if (this.hakuDto != null && this.hakuDto.getHakukohteet() != null) {
+
+            for (HakukohdeTyyppi hakukohdeTyyppi : this.hakuDto.getHakukohteet()) {
+                HakuHakukohdeResultRow hakuHakukohdeResultRow = new HakuHakukohdeResultRow(hakukohdeTyyppi);
+                hakukohteetRows.add(hakuHakukohdeResultRow);
+            }
+
+        }
+        return hakukohteetRows;
     }
 }
