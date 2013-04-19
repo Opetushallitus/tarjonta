@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.ui.helper;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.*;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
@@ -141,39 +140,7 @@ public class TarjontaUIHelper {
         }
 
         return getKoodistoRelationsForUris(sourceKoodiUris, KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI);
-
-//        List<KoodiUriAndVersioType> koodiVersios = new ArrayList<KoodiUriAndVersioType>();
-//        for (HaeKoulutuksetVastausTyyppi.KoulutusTulos koulutusTulos : vastaus.getKoulutusTulos()) {
-//            KoodiUriAndVersioType koodiUriAndVersioType = new KoodiUriAndVersioType();
-//            if (koulutusTulos.getKoulutus().getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
-//                koodiUriAndVersioType.setKoodiUri(getKoodiURI(koulutusTulos.getKoulutus().getLukiolinjakoodi()));
-//                koodiUriAndVersioType.setVersio(getKoodiVersion(koulutusTulos.getKoulutus().getLukiolinjakoodi()));
-//            } else {
-//                koodiUriAndVersioType.setKoodiUri(getKoodiURI(koulutusTulos.getKoulutus().getKoulutusohjelmakoodi()));
-//                koodiUriAndVersioType.setVersio(getKoodiVersion(koulutusTulos.getKoulutus().getKoulutusohjelmakoodi()));
-//            }
-//            koodiVersios.add(koodiUriAndVersioType);
-//        }
-//
-//        return getRelatedParentKoodis(koodiVersios, SuhteenTyyppiType.SISALTYY);
     }
-
-//    private Set<KoodiType> getRelatedParentKoodis(List<KoodiUriAndVersioType> parentKoodis, SuhteenTyyppiType suhdeTyyppi) {
-//        return getRelatedParentKoodis(parentKoodis, false, suhdeTyyppi);
-//    }
-//
-//    private Set<KoodiType> getRelatedParentKoodis(List<KoodiUriAndVersioType> parentKoodis, boolean alaKoodi, SuhteenTyyppiType suhdeTyyppi) {
-//        LOG.debug("getRelatedParentKoodis(..)");
-//
-//        Set<KoodiType> koodiTypes = new HashSet<KoodiType>();
-//
-//        for (KoodiUriAndVersioType koodiUriAndVersioType : parentKoodis) {
-//            List<KoodiType> koodis = _koodiService.listKoodiByRelation(koodiUriAndVersioType, alaKoodi, suhdeTyyppi);//SuhteenTyyppiType.SISALTYY);
-//            koodiTypes.addAll(koodis);
-//        }
-//
-//        return koodiTypes;
-//    }
 
     /**
      * Construct versioned koodi uri (adds #version to the end of uri).
@@ -263,19 +230,6 @@ public class TarjontaUIHelper {
         return nimet.toString();
     }
 
-//    /**
-//     * Search koodis by koodisto uri, the uri can be with or without koodisto
-//     * version information.
-//     *
-//     * @param uri
-//     * @return
-//     */
-//    public List<KoodiType> getKoodisByKoodisto(String uri) {
-//        LOG.debug("getKoodisByKoodisto({})", uri);
-//        SearchKoodisByKoodistoCriteriaType criteriUri = KoodiServiceSearchCriteriaBuilder.koodisByKoodistoUri(getKoodiURI(uri));
-//        return _koodiService.searchKoodisByKoodisto(criteriUri);
-//    }
-
     /**
      * Search koodis by koodi uri, the uri can be with or without koodi version
      * information.
@@ -308,35 +262,6 @@ public class TarjontaUIHelper {
         return _koodiService.searchKoodis(criteria);
     }
 
-//    /**
-//     * Gets the list of KoulutuskoodiModel objects that match the list of
-//     * oppilaitostyyppis given as parameter
-//     *
-//     * @param olTyyppiUris - the oppilaitostyyppi uris to match
-//     * @param unfilteredKoulutuskoodis - the list of all KoulutuskoodiModel
-//     * objects in the system
-//     * @return the list of KoulutuskoodiModel objects that match the
-//     * oppilaitostyyppis.
-//     */
-//    public List<KoulutuskoodiModel> getKoulutusFilteredkooditRelatedToOlTyypit(
-//            List<String> olTyyppiUris,
-//            List<KoulutuskoodiModel> unfilteredKoulutuskoodis) {
-//        LOG.debug("getKoulutusFilteredKooditRelatedToOlTyypit");
-//
-//        List<KoulutuskoodiModel> filteredKoodit = new ArrayList<KoulutuskoodiModel>();
-//        for (KoodiType curKoulutusKoodi : getOlRelatedKoulutuskoodit(olTyyppiUris)) {
-//
-//            KoulutuskoodiModel matchingKoulutus = getKoulutusByKoodi(curKoulutusKoodi, unfilteredKoulutuskoodis);
-//            if (matchingKoulutus != null
-//                    && !filteredKoodit.contains(matchingKoulutus)) {
-//                filteredKoodit.add(matchingKoulutus);
-//                LOG.debug("Match : {}", matchingKoulutus.getKoodistoUriVersio());
-//            }
-//        }
-//
-//        return filteredKoodit;
-//    }
-
     /**
      * Returns the koulutuskoodit related to one or more of the olTyyppiUris
      * given as parameter.
@@ -359,83 +284,8 @@ public class TarjontaUIHelper {
      */
     public Collection<KoodiType> getOlRelatedKoulutuskoodit(List<String> olTyyppiUris) {
         LOG.debug("getOlRelatedKoulutuskoodit({})", olTyyppiUris);
-
         return getKoodistoRelationsForUris(olTyyppiUris, KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI, KoodistoURIHelper.KOODISTO_TUTKINTO_URI);
-
-//        //First the list of koulutusastekoodis that are related to the oppilaitostyyppis is fetched
-//        List<KoodiType> koulutusasteKoodit = new ArrayList<KoodiType>();
-//        for (String curUri : olTyyppiUris) {
-//            LOG.debug("olTyyppiUri: {}", curUri);
-//            SearchKoodisCriteriaType criteria = null;
-//            if (curUri.split(TarjontaUIHelper.KOODI_URI_AND_VERSION_SEPARATOR).length > 1) {
-//                KoodiUriAndVersioType uriAndVersio = getKoodiUriAndVersioTypeByKoodiUriAndVersion(curUri);
-//                criteria = KoodiServiceSearchCriteriaBuilder.koodiByUriAndVersion(uriAndVersio.getKoodiUri(), uriAndVersio.getVersio());
-//            } else {
-//                criteria = KoodiServiceSearchCriteriaBuilder.latestKoodisByUris(curUri);
-//            }
-//            List<KoodiType> olTyyppiKoodit = _koodiService.searchKoodis(criteria);
-//            LOG.debug("olTyyppiKoodit: {}", olTyyppiKoodit.size());
-//            if (olTyyppiKoodit != null && !olTyyppiKoodit.isEmpty()) {
-//                koulutusasteKoodit.addAll(getRelatedKoodit(olTyyppiKoodit, KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI, SuhteenTyyppiType.SISALTYY));
-//            }
-//        }
-//
-//        LOG.debug("koulutusasteKoodit: {}", koulutusasteKoodit.size());
-//
-//        //then the koulutuskoodi objects that are related to the koulutusastekoodis are fetced and returned.
-//        return getRelatedKoodit(koulutusasteKoodit, null, true, SuhteenTyyppiType.SISALTYY);
     }
-
-
-//    /*
-//     * Returns the KoulutuskoodiModel objects that  matches the koulutusKoodi given as parameter.
-//     */
-//    private KoulutuskoodiModel getKoulutusByKoodi(KoodiType koulutusKoodi, List<KoulutuskoodiModel> unfilteredKoulutuskoodis) {
-//        //LOG.debug("getKoulutusByKoodi: {}, {}", koulutusKoodi.getKoodiUri(), koulutusKoodi.getVersio());
-//        for (KoulutuskoodiModel curKoulutus : unfilteredKoulutuskoodis) {
-//            LOG.debug("getKoulutusByKoodi: {}, {}", curKoulutus.getKoodistoUri(), koulutusKoodi.getKoodiUri());
-//            if (curKoulutus.getKoodistoUri().equals(koulutusKoodi.getKoodiUri())) {
-//                LOG.debug("MATCH");
-//                return curKoulutus;
-//            }
-//        }
-//        return null;
-//    }
-
-//    /*
-//     * Gets the koodis that are related to one or more of the koodit given as parameters with the suhdeTyyppi
-//     * given as parameters.
-//     */
-//    private List<KoodiType> getRelatedKoodit(List<KoodiType> koodit, String koodistoUri, SuhteenTyyppiType suhdeTyyppi) {
-//        return getRelatedKoodit(koodit, koodistoUri, false, suhdeTyyppi);
-//    }
-
-//    /*
-//     * Gets the koodis that are related to one or more of the koodit given as parameters with the suhdeTyyppi
-//     * given as parameters.
-//     */
-//    private List<KoodiType> getRelatedKoodit(List<KoodiType> koodit, String koodistoUri, boolean alaKoodi, SuhteenTyyppiType suhdeTyyppi) {
-//        LOG.debug("getRelatedKoodit()");
-//        List<KoodiType> relatedKoodit = new ArrayList<KoodiType>();
-//        List<KoodiUriAndVersioType> koodiVersios = new ArrayList<KoodiUriAndVersioType>();
-//        for (KoodiType curOlTyyppiKoodi : koodit) {
-//            KoodiUriAndVersioType koodiUriAndVersioType = new KoodiUriAndVersioType();
-//            koodiUriAndVersioType.setKoodiUri(curOlTyyppiKoodi.getKoodiUri());
-//            koodiUriAndVersioType.setVersio(curOlTyyppiKoodi.getVersio());
-//            LOG.debug("KoodiURI and versio: {}, {}", koodiUriAndVersioType.getKoodiUri(), koodiUriAndVersioType.getVersio());
-//            koodiVersios.add(koodiUriAndVersioType);
-//        }
-//
-//        for (KoodiType curKoodi : this.getRelatedParentKoodis(koodiVersios, alaKoodi, suhdeTyyppi)) {
-//            if (koodistoUri == null || koodistoUri.equals(curKoodi.getKoodisto().getKoodistoUri())) {
-//                LOG.debug("RelatedParentKoodi URI: {}", curKoodi.getKoodiUri());
-//                relatedKoodit.add(curKoodi);
-//            }
-//        }
-//        LOG.debug("relatedKoodit size: {}", relatedKoodit.size());
-//
-//        return relatedKoodit;
-//    }
 
     /**
      * Get koodi's name in given locale. If nimi for given
@@ -488,7 +338,7 @@ public class TarjontaUIHelper {
             result = _i18n.getMessage("_koodiError", koodiUriWithPossibleVersionInformation);
         }
 
-        //LOG.debug("getKoodiNimi('{}', {}) --> {}", new Object[]{koodiUriWithPossibleVersionInformation, locale, result});
+        // LOG.debug("getKoodiNimi('{}', {}) --> {}", new Object[]{koodiUriWithPossibleVersionInformation, locale, result});
 
         return result;
     }
