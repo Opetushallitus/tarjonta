@@ -22,12 +22,12 @@ import org.apache.solr.common.SolrDocument;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
 
 /**
- * Convert {@link SolrDocument} from solr to {@link HaeKoulutuksetVastausTyyppi.KoulutusTulos}
+ * Convert {@link SolrDocument} from solr to {@link HaeHakukohteetVastausTyyppi.HakukohdeTulos}
  */
 public class SolrDocumentToHakukohdetulosFunction implements
         Function<SolrDocument, HakukohdeTulos> {
