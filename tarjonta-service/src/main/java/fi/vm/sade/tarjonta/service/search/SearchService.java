@@ -1,0 +1,196 @@
+/*
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ */
+package fi.vm.sade.tarjonta.service.search;
+
+import java.util.List;
+
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+
+import fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde;
+import fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
+
+@Component
+public class SearchService {
+
+    @Value("${root.organisaatio.oid}")
+    private String rootOrganisaatioOid;
+
+    private final SolrDocumentToKoulutusPerustietoTypeFunction koulutusConverter = new SolrDocumentToKoulutusPerustietoTypeFunction();
+    private final SolrDocumentToHakukohdetulosFunction hakukohdeConverter = new SolrDocumentToHakukohdetulosFunction();
+
+    private final SolrServer koulutusSolr;
+    private final SolrServer hakukohdeSolr;
+    private final Logger LOG = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    public SearchService(SolrServerFactory factory) {
+        this.koulutusSolr = factory.getSolrServer("koulutukset");
+        this.hakukohdeSolr = factory.getSolrServer("hakukohteet");
+    }
+
+    public HaeHakukohteetVastausTyyppi haeHakukohteet(
+            final HaeHakukohteetKyselyTyyppi kysely) {
+
+        final HaeHakukohteetVastausTyyppi response = new HaeHakukohteetVastausTyyppi();
+
+        String nimi = kysely.getNimi();
+        final String kausi = kysely.getKoulutuksenAlkamiskausi();
+        final String vuosi = Integer.toString(kysely
+                .getKoulutuksenAlkamisvuosi());
+        final List<String> oids = kysely.getTarjoajaOids();
+        final String nimikoodiURI = kysely.getNimiKoodiUri(); // what for?
+
+        final List<String> queryParts = Lists.newArrayList();
+
+        final SolrQuery q = new SolrQuery("*:*");
+
+        nimi = escape(nimi);
+
+        // nimihaku
+        if (nimi != null && nimi.length() > 0) {
+            addQuery(nimi, queryParts, "%s:*%s*",
+                    Hakukohde.HAKUKOHTEEN_NIMI_FI, nimi);
+            addQuery(nimi, queryParts, "%s:*%s*",
+                    Hakukohde.HAKUKOHTEEN_NIMI_SV, nimi);
+            addQuery(nimi, queryParts, "%s:*%s*",
+                    Hakukohde.HAKUKOHTEEN_NIMI_EN, nimi);
+            q.addFilterQuery(Joiner.on(" ").join(queryParts));
+            queryParts.clear();
+        }
+
+        // vuosi & kausi
+        addFilterForVuosiKausi(kausi, vuosi, queryParts, q);
+
+        // restrict by org
+        addFilterForOrgs(oids, queryParts, q);
+
+        try {
+            // query solr
+            QueryResponse searchResponse = hakukohdeSolr.query(q);
+            // convert
+            response.getHakukohdeTulos().addAll(
+                    (Lists.transform(searchResponse.getResults(),
+                            hakukohdeConverter)));
+
+        } catch (SolrServerException e) {
+            throw new RuntimeException("haku.error", e);
+        }
+
+        return response;
+    }
+
+    private void addFilterForOrgs(final List<String> oids,
+            final List<String> queryParts, SolrQuery q) {
+        if (oids.size() > 0) {
+            addQuery("", queryParts, "%s:(%s)", Hakukohde.ORG_PATH,
+                    Joiner.on(" ").join(oids));
+            q.addFilterQuery(Joiner.on(" ").join(queryParts));
+        }
+    }
+
+    private void addFilterForVuosiKausi(final String kausi, final String vuosi,
+            final List<String> queryParts, SolrQuery q) {
+        // vuosi kausi
+        addQuery(vuosi, queryParts, "%s:%s", Hakukohde.VUOSI_KOODI, vuosi);
+        addQuery(kausi, queryParts, "%s:%s", Hakukohde.KAUSI_KOODI, kausi);
+        q.addFilterQuery(Joiner.on(" ").join(queryParts));
+        queryParts.clear();
+    }
+
+    // TODO
+    public HaeKoulutuksetVastausTyyppi haeKoulutukset(
+            final HaeKoulutuksetKyselyTyyppi kysely) {
+
+        final HaeKoulutuksetVastausTyyppi response = new HaeKoulutuksetVastausTyyppi();
+
+        String nimi = kysely.getNimi();
+        final String kausi = kysely.getKoulutuksenAlkamiskausi();
+        final String vuosi = Integer.toString(kysely
+                .getKoulutuksenAlkamisvuosi());
+        final List<String> tarjoajaOids = kysely.getTarjoajaOids();
+        final List<String> koulutusOids = kysely.getKoulutusOids();
+
+        nimi = escape(nimi);
+
+        final SolrQuery q = new SolrQuery("*:*");
+        final List<String> queryParts = Lists.newArrayList();
+
+        // nimihaku
+        if (nimi != null && nimi.length() > 0) {
+            addQuery(nimi, queryParts, "%s:*%s*", Koulutus.KOULUTUSKOODI_FI,
+                    nimi);
+            addQuery(nimi, queryParts, "%s:*%s*", Koulutus.KOULUTUSKOODI_SV,
+                    nimi);
+            addQuery(nimi, queryParts, "%s:*%s*", Koulutus.KOULUTUSKOODI_EN,
+                    nimi);
+            q.addFilterQuery(Joiner.on(" ").join(queryParts));
+            queryParts.clear();
+        }
+
+        // vuosi & kausi
+        addFilterForVuosiKausi(kausi, vuosi, queryParts, q);
+
+        // restrict by org
+        addFilterForOrgs(tarjoajaOids, queryParts, q);
+
+        try {
+            // query solr
+            QueryResponse searchResponse = koulutusSolr.query(q);
+            // convert
+            response.getKoulutusTulos().addAll(
+                    Lists.transform(searchResponse.getResults(),
+                            koulutusConverter));
+
+        } catch (SolrServerException e) {
+            throw new RuntimeException("haku.error", e);
+        }
+
+        return response;
+
+    }
+
+    private void addQuery(final String param, final List<String> queryParts,
+            String template, Object... params) {
+        if (param != null) {
+            queryParts.add(String.format(template, params));
+        }
+    }
+
+    private String escape(String searchStr) {
+        if (searchStr == null) {
+            return null;
+        }
+
+        searchStr = searchStr.replaceAll("\"", "\\\\\"");
+        return searchStr;
+    }
+
+}

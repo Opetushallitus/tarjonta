@@ -144,6 +144,30 @@
         </dependency>
 
         <dependency>
+    	    <groupId>org.apache.solr</groupId>
+    	    <artifactId>solr-solrj</artifactId>
+    	    <version>4.2.0</version>
+        </dependency>
+        <dependency>
+    	    <groupId>org.apache.solr</groupId>
+    	    <artifactId>solr-core</artifactId>
+    	    <version>4.2.0</version>
+    	    <scope>provided</scope>
+    	    <exclusions>
+                <exclusion>
+                    <groupId>org.apache.zookeeper</groupId>
+                    <artifactId>zookeeper</artifactId>
+                </exclusion>
+    	    </exclusions>
+        </dependency>
+        <dependency>
+    	    <groupId>org.apache.solr</groupId>
+    	    <artifactId>solr</artifactId>
+    	    <version>4.2.0</version>
+    	    <type>war</type>
+    	    <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
