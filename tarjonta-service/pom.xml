@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-      <artifactId>tarjonta</artifactId>
-      <groupId>fi.vm.sade.tarjonta</groupId>
-      <version>4.0-SNAPSHOT</version>
-      <relativePath>..</relativePath>
+        <artifactId>tarjonta</artifactId>
+        <groupId>fi.vm.sade.tarjonta</groupId>
+        <version>4.0-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
 
     <artifactId>tarjonta-service</artifactId>
@@ -144,15 +144,35 @@
         </dependency>
 
         <dependency>
+    	    <groupId>org.apache.solr</groupId>
+    	    <artifactId>solr-solrj</artifactId>
+    	    <version>4.2.0</version>
+        </dependency>
+        <dependency>
+    	    <groupId>org.apache.solr</groupId>
+    	    <artifactId>solr-core</artifactId>
+    	    <version>4.2.0</version>
+    	    <scope>provided</scope>
+    	    <exclusions>
+                <exclusion>
+                    <groupId>org.apache.zookeeper</groupId>
+                    <artifactId>zookeeper</artifactId>
+                </exclusion>
+    	    </exclusions>
+        </dependency>
+        <dependency>
+    	    <groupId>org.apache.solr</groupId>
+    	    <artifactId>solr</artifactId>
+    	    <version>4.2.0</version>
+    	    <type>war</type>
+    	    <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.mysema.querydsl</groupId>
-            <artifactId>querydsl-apt</artifactId>
-            <scope>provided</scope>
-        </dependency>
+
         
         <dependency> 
             <!-- Spring AOP dependency -->
@@ -175,6 +195,28 @@
             <artifactId>xerces</artifactId>
             <version>2.4.0</version>
         </dependency>
+        
+        <dependency>
+            <groupId>com.mysema.querydsl</groupId>
+            <artifactId>querydsl-apt</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mysema.querydsl</groupId>
+            <artifactId>querydsl-jpa</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mysema.querydsl</groupId>
+            <artifactId>querydsl-codegen</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mysema.querydsl</groupId>
+            <artifactId>querydsl-core</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
 
     </dependencies>
 
@@ -267,6 +309,34 @@
                         <version>${hibernate.version}</version>
                     </dependency>
                 </dependencies>
+<<<<<<< HEAD
+=======
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>hbm2ddl</goal>
+                        </goals>
+                        <configuration>
+                            <components>
+                                <component>
+                                    <name>hbm2ddl</name>
+                                    <implementation>jpaconfiguration</implementation>
+                                </component>
+                            </components>
+                            <componentProperties>
+                                <dialect>org.hibernate.dialect.PostgreSQLDialect</dialect>
+                                <persistenceunit>tarjonta</persistenceunit>
+                                <outputfilename>schema.ddl</outputfilename>
+                                <drop>false</drop>
+                                <create>true</create>
+                                <export>false</export>
+                                <format>true</format>
+                            </componentProperties>
+                        </configuration>
+                    </execution>
+                </executions>
+>>>>>>> 613cbf8e8b8519cf5a88b0d57fba1059caed89f7
             </plugin>
         </plugins>
     </build>
