@@ -249,12 +249,12 @@
 
 
     <build>
-        <!-- 
+        <!--
         poistettu koska se poistaa kaiken myos development-profiilia kaytettaessa.
                 <resources>
                     <resource>
                         <directory>src/main/resources</directory>
-                        <filtering>true</filtering>         
+                        <filtering>true</filtering>
                     </resource>
                 </resources>
         -->
@@ -382,7 +382,7 @@
                         </executions>
                     </plugin>
 
-                  
+
                 </plugins>
             </build>
         </profile>

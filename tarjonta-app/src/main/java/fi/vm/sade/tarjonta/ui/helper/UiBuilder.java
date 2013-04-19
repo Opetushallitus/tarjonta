@@ -17,13 +17,17 @@ package fi.vm.sade.tarjonta.ui.helper;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.util.PropertysetItem;
+import com.vaadin.data.validator.AbstractValidator;
+import com.vaadin.data.validator.CompositeValidator;
+import com.vaadin.data.validator.IntegerValidator;
+import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
-import fi.vm.sade.generic.service.PermissionService;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.component.OphTokenField;
@@ -36,6 +40,7 @@ import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
 import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.vaadin.util.UiBaseUtil;
 import fi.vm.sade.vaadin.util.UiUtil;
+import static fi.vm.sade.vaadin.util.UiUtil.textField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -451,4 +456,45 @@ public class UiBuilder extends UiUtil {
 
         return button;
     }
+
+
+
+    public static TextField integerField(final AbstractComponentContainer layout,
+                                         final PropertysetItem psi,
+                                         final String expression,
+                                         final String caption,
+                                         final String prompt,
+                                         final int minValue,
+                                         final int maxValue,
+                                         final String errorMessage) {
+
+        TextField tf = textField(layout, psi, expression, caption, prompt);
+
+        CompositeValidator cv = new CompositeValidator();
+        if (errorMessage != null) {
+            cv.setErrorMessage(errorMessage);
+        }
+
+        cv.addValidator(new IntegerValidator(errorMessage));
+        cv.addValidator(new AbstractValidator(errorMessage){
+            @Override
+            public boolean isValid(Object value) {
+                Integer v;
+                if (value instanceof Integer) {
+                    v = (Integer) value;
+                } else if(value instanceof String) {
+                    v = Integer.parseInt((String) value);
+                } else {
+                    return false;
+                }
+
+                return (v >= minValue && v <= maxValue);
+            }
+        });
+
+        tf.addValidator(cv);
+
+        return tf;
+    }
+
 }

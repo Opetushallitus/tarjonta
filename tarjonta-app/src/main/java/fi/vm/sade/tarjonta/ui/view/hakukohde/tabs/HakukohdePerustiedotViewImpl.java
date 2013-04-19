@@ -79,7 +79,10 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
         HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
         hakukohde.getLisatiedot().clear();
         hakukohde.getLisatiedot().addAll(formView.getLisatiedot());
-        
+
+        // TODO call subform to perform validation (weigthed stdies can FAIL and still the save succeeds)
+        // formView.validateExtraData();
+
         HakukohdeNameUriModel selectedHakukohde = formView.getSelectedHakukohde();
         hakukohde.setHakukohdeNimi(getUriWithVersion(selectedHakukohde));
         presenter.saveHakuKohde(tila);
