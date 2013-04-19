@@ -47,7 +47,7 @@ public class PathUpdaterTask {
     }
 
     // @Scheduled(fixedRate = 5000L)
-    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 */15 * * * ?")
     public void updatePath() {
         LOG.info("updating tarjonta index.");
         //TODO update tarjonta index
