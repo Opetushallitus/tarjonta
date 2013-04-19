@@ -79,10 +79,34 @@ public class IndexerResource {
     }
 
     @javax.ws.rs.Path("/hakukohde/start")
-    public void rebuildHakukohdeIndex(){
+    @Produces("text/plain")
+    public String rebuildHakukohdeIndex(final boolean clean){
         //TODO fetch all, index em
-    }
+        TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        int count = tt.execute(new TransactionCallback<Integer>() {
+            @Override
+            public Integer doInTransaction(TransactionStatus arg0) {
 
+//                List<Jotain> hakukohteet = jokuDAOImpl
+//                        .findAll();
+//                try {
+//                    if (clean) {
+//                        hakukohdeSolr.deleteByQuery("*:*");
+//                    }
+//                } catch (SolrServerException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                }
+//                indexHakukohde(hakukohteet);
+//                return hakukohteet.size();
+                return 0;
+            }
+        });
+        return Integer.toString(count);
+    }
     
     @Autowired
     public IndexerResource(SolrServerFactory factory) {
@@ -93,22 +117,14 @@ public class IndexerResource {
     // TODO is this proper object to pass in the api??
     public void indexHakukohde(List<KoulutusmoduuliToteutus> hakukohteet) {
         final List<SolrInputDocument> docs = Lists.newArrayList();
-
-        for (KoulutusmoduuliToteutus hakukohde : hakukohteet) {
-            docs.add(hakukohdeConverter.apply(hakukohde));
-        }
-
+        docs.addAll(Lists.transform(hakukohteet, hakukohdeConverter));
         index(hakukohdeSolr, docs);
     }
 
     // TODO is this proper object to pass in the api??
     public void indexKoulutus(List<Koulutusmoduuli> koulutukset) {
         final List<SolrInputDocument> docs = Lists.newArrayList();
-
-        for (Koulutusmoduuli hakukohde : koulutukset) {
-            docs.add(koulutusConverter.apply(hakukohde));
-        }
-
+        docs.addAll(Lists.transform(koulutukset, koulutusConverter));
         index(koulutusSolr, docs);
     }
 
