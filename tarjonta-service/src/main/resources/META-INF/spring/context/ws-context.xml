@@ -69,6 +69,7 @@
             <ref bean="tarjontaHakukohdeResource" />
             <ref bean="tarjontaKomoResource"/>
             <ref bean="tarjontaKomotoResource"/>
+            <ref bean="indexerResource"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="cors-filter" />
