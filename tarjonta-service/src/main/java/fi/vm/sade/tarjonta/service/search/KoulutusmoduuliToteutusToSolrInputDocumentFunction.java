@@ -15,27 +15,135 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.solr.common.SolrInputDocument;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
+import fi.vm.sade.koodisto.service.KoodiService;
+import fi.vm.sade.koodisto.service.KoodistoService;
+import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
+import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
+import fi.vm.sade.koodisto.util.KoodistoHelper;
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
 
 /**
  * Convert "Koulutus" to {@link SolrInputDocument} so that it can be
  * indexed.
  */
+@Configurable
 public class KoulutusmoduuliToteutusToSolrInputDocumentFunction implements
-        Function<KoulutusmoduuliToteutus, SolrInputDocument> {
+Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
+
+    @Autowired
+    private OrganisaatioService organisaatioService;
+
+    @Autowired
+    private KoodistoService koodistoPublicService;
+
+    @Autowired
+    private KoodiService koodiService;
+
+   
 
     @Override
-    public SolrInputDocument apply(final KoulutusmoduuliToteutus komoto) {
+    public List<SolrInputDocument> apply(final KoulutusmoduuliToteutus komoto) {
         Preconditions.checkNotNull(komoto);
-        final SolrInputDocument doc = new SolrInputDocument();
-        add(doc, OID, komoto.getOid());
-        return doc;
+        //If the komoto is not a koulutusohjelma or lukiolinja komoto it is not index, becuse they are not
+        //shown in search
+        List<SolrInputDocument> docs = new ArrayList<SolrInputDocument>();
+        if (komoto.getKoulutusmoduuli().getLukiolinja() == null
+                && komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi() == null) {
+            return docs;
+        }
+       
+        final SolrInputDocument komotoDoc = new SolrInputDocument();
+        add(komotoDoc, OID, komoto.getOid());
+        OrganisaatioDTO org = organisaatioService.findByOid(komoto.getTarjoaja());
+        addOrganisaatioTiedot(komotoDoc, org, docs);
+        addKoulutusohjelmaTiedot(komotoDoc, komoto.getKoulutusmoduuli().getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value()) 
+                ? komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi() : komoto.getKoulutusmoduuli().getLukiolinja());
+        addKoulutuskoodiTiedot(komotoDoc, komoto.getKoulutusmoduuli().getKoulutusKoodi());
+        add(komotoDoc, KAUSI_KOODI, IndexingUtils.parseKausi(komoto.getKoulutuksenAlkamisPvm()));
+        add(komotoDoc, VUOSI_KOODI, IndexingUtils.parseYear(komoto.getKoulutuksenAlkamisPvm()));
+        add(komotoDoc, TILA_EN, komoto.getTila());
+        docs.add(komotoDoc);
+        return docs;
+    }
+
+
+
+    private void addKoulutuskoodiTiedot(SolrInputDocument doc,
+            String koulutusKoodi) {
+        if (koulutusKoodi == null) {
+            return;
+        }
+
+        KoodiType koodi = IndexingUtils.getKoodiByUriWithVersion(koulutusKoodi, koodiService); 
+
+        if (koodi != null) {
+            KoodiMetadataType metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+            add(doc, KOULUTUSKOODI_FI, metadata.getNimi());
+            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+            add(doc, KOULUTUSKOODI_SV, metadata.getNimi());
+            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+            add(doc, KOULUTUSKOODI_EN, metadata.getNimi());
+        }
+    }
+
+
+
+    private void addKoulutusohjelmaTiedot(SolrInputDocument doc, String koulutusohjelmaKoodi) {
+        if (koulutusohjelmaKoodi == null) {
+            return;
+        }
+
+        KoodiType koodi = IndexingUtils.getKoodiByUriWithVersion(koulutusohjelmaKoodi, koodiService); 
+
+        if (koodi != null) {
+            KoodiMetadataType metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+            add(doc, KOULUTUSOHJELMA_FI, metadata.getNimi());
+            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+            add(doc, KOULUTUSOHJELMA_SV, metadata.getNimi());
+            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+            add(doc, KOULUTUSOHJELMA_EN, metadata.getNimi());
+        }
+    }
+
+    private void addOrganisaatioTiedot(SolrInputDocument doc, OrganisaatioDTO org, List<SolrInputDocument> docs) {
+        if (org == null) {
+            return;
+        }
+        final SolrInputDocument orgDoc = new SolrInputDocument();
+        add(doc, ORG_OID, org.getOid());
+        for (Teksti curTeksti : org.getNimi().getTeksti()) {
+            String kielikoodi = curTeksti.getKieliKoodi();//.equals("fi");
+            if (kielikoodi.equals("fi")) {
+                add(orgDoc, ORG_NAME_FI, curTeksti.getValue());
+            } else if (kielikoodi.equals("sv")) {
+                add(orgDoc, ORG_NAME_SV, curTeksti.getValue());
+            } else if (kielikoodi.equals("en")) {
+                add(orgDoc, ORG_NAME_EN, curTeksti.getValue());
+            }
+        }
+        add(orgDoc, OID, org.getOid());
+        docs.add(orgDoc);
     }
 
     /**
@@ -50,4 +158,6 @@ public class KoulutusmoduuliToteutusToSolrInputDocumentFunction implements
             doc.addField(fieldName, value);
         }
     }
+
+    
 }

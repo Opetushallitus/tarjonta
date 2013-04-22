@@ -3,11 +3,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mockito="http://www.mockito.org/spring/mockito"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
        xsi:schemaLocation="http://www.springframework.org/schema/beans 
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.mockito.org/spring/mockito classpath:spring/mockito.xsd"
+        http://www.mockito.org/spring/mockito classpath:spring/mockito.xsd
+        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd"
 >
 
     <context:annotation-config />
@@ -15,6 +17,18 @@
     <import resource="classpath:META-INF/spring/context/service-context.xml"/>
     <import resource="test-dao-context.xml" />
     <import resource="test-publication-context.xml"/>
+    
+    <jaxws:client id="organisaatioService"
+                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
+                   address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
+                   
+    <jaxws:client id="koodiPublicService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodiService"
+                  address="${koodi.webservice.url}"/>
+
+    <jaxws:client id="koodistoPublicService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
+                  address="${koodisto.webservice.url}"/>
     
     <!-- 
         Create a dynamic mock class for the jms message sender. 
@@ -46,5 +60,8 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="hakukohdeSolrConverter" class="fi.vm.sade.tarjonta.service.search.HakukohdeToSolrInputDocumentFunction" ></bean>
+    <bean id="koulutusSolrConverter" class="fi.vm.sade.tarjonta.service.search.KoulutusmoduuliToteutusToSolrInputDocumentFunction" ></bean>
 
 </beans>

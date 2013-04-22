@@ -122,9 +122,9 @@ public class ShowHakukohdeTab extends CustomComponent {
 
             if (liite.getViimeisinPaivitysPvm() != null) {
                 Label lastUpdLbl = buildTallennettuLabel(liite.getViimeisinPaivitysPvm());
-                addTwoComponentsToGrid(grid, getHdrH2Label(uiHelper.getKoodiNimi(liite.getLiitteenTyyppi(), I18N.getLocale())), lastUpdLbl);
+                addTwoComponentsToGrid(grid, getOphH2Label(uiHelper.getKoodiNimi(liite.getLiitteenTyyppi(), I18N.getLocale())), lastUpdLbl);
             } else {
-                addTwoColumnRowToGrid(grid, getHdrH2Label(uiHelper.getKoodiNimi(liite.getLiitteenTyyppi(), I18N.getLocale())));
+                addTwoColumnRowToGrid(grid, getOphH2Label(uiHelper.getKoodiNimi(liite.getLiitteenTyyppi(), I18N.getLocale())));
             }
             //addKoodiHeaderToGrid(grid,uiHelper.getKoodiNimi(liite.getLiitteenTyyppi(),I18N.getLocale()));
             addItemToGrid(grid, "liiteoimMennessaLbl", getLiiteAika(liite));
@@ -134,6 +134,7 @@ public class ShowHakukohdeTab extends CustomComponent {
                 liiteSahkToimOsoiteLink.setTargetName("_blank");
                 addItemToGrid(grid, "sahkoinenToimOsoite", liiteSahkToimOsoiteLink);
             }
+
             addTwoColumnRowToGrid(grid, getRichTxtLbl(getLanguageString(liite.getLiitteenSanallinenKuvaus())));
         }
         grid.setColumnExpandRatio(1, 1f);
@@ -146,6 +147,14 @@ public class ShowHakukohdeTab extends CustomComponent {
         SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
         return sdf.format(liiteViewModel.getToimitettavaMennessa());
     }
+
+    private Label getOphH2Label(String caption) {
+        Label label = new Label(caption);
+        label.setStyleName(Oph.LABEL_H2);
+        return label;
+    }
+
+
 
     private void addTwoColumnRowToGrid(final GridLayout grid, final Component component) {
         if (grid != null) {
@@ -187,10 +196,13 @@ public class ShowHakukohdeTab extends CustomComponent {
 
     }
 
-    private Label getRichTxtLbl(String labelMsg) {
+    private HorizontalLayout getRichTxtLbl(String labelMsg) {
+        HorizontalLayout hl = new HorizontalLayout();
         Label richTxtLbl = new Label(labelMsg);
         richTxtLbl.setContentMode(Label.CONTENT_XHTML);
-        return richTxtLbl;
+        hl.addComponent(richTxtLbl);
+        hl.setMargin(true,false,false,false);
+        return hl;
     }
 
     private String getLiiteOsoite(HakukohdeLiiteViewModel liiteViewModel) {
@@ -540,12 +552,16 @@ public class ShowHakukohdeTab extends CustomComponent {
         StringBuilder sb = new StringBuilder();
         boolean isFirst = true;
         for (PainotettavaOppiaineViewModel painotettavaOppiaine : presenter.getModel().getHakukohde().getPainotettavat()) {
+            if (painotettavaOppiaine.getOppiaine() != null && painotettavaOppiaine.getOppiaine().trim().length() > 0) {
             if (!isFirst) {
                 sb.append(", ");
             }
             sb.append(uiHelper.getKoodiNimi(painotettavaOppiaine.getOppiaine()));
+            sb.append("( ");
+            sb.append(painotettavaOppiaine.getPainokerroin());
+            sb.append(" )");
             isFirst = false;
-
+            }
         }
         return sb.toString();
     }

@@ -52,7 +52,10 @@ public class SolrFields {
         protected static final String ORG_OID = "orgoid_s";                                     //needed for permissions
         protected static final String ORG_PATH = "orgpath_ss";                                  //needed search (org restriction)
         protected static final String VUOSI_KOODI = "vuosikoodi_s";                             //this is used in search
-        protected static final String KAUSI_KOODI = "kausi_s";                                  //this is used in search
+        protected static final String KAUSI_KOODI= "kausi_s";
+        protected static final String KAUSI_FI = "kausifi_s";    
+        protected static final String KAUSI_SV = "kausisv_s";
+        protected static final String KAUSI_EN = "kausien_s";    
         protected static final String HAKUTAPA_FI = "hakutapafi_s";
         protected static final String HAKUTAPA_SV = "hakutapasv_s";
         protected static final String HAKUTAPA_EN = "hakutapaen_s";
@@ -63,4 +66,13 @@ public class SolrFields {
         protected static final String HAKUKOHTEEN_NIMI_EN = "hakukohteennimien_t";              //this is used in search
     }
     
+    /**
+     * Field names for organisaatio docs
+     */
+    public static class Organisaatio {
+    	protected static final String OID="id";
+        protected static final String ORG_NAME_FI = "orgnamefi_s";
+        protected static final String ORG_NAME_SV = "orgnamesv_s";
+        protected static final String ORG_NAME_EN = "orgnameen_s";
+    }
 }

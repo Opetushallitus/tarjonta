@@ -18,6 +18,14 @@
     <jaxws:client id="organisaatioService"
                    serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
                    address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
+                   
+    <jaxws:client id="koodiPublicService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodiService"
+                  address="${koodi.webservice.url}"/>
+
+    <jaxws:client id="koodistoPublicService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
+                  address="${koodisto.webservice.url}"/>
     
     <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl"/>
     <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicServiceImpl"/>
@@ -50,6 +58,8 @@
 
      <!-- CORS (cross domain) support for rest services -->
     <bean id="cors-filter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter"/>
+    <bean id="hakukohdeSolrConverter" class="fi.vm.sade.tarjonta.service.search.HakukohdeToSolrInputDocumentFunction" ></bean>
+    <bean id="koulutusSolrConverter" class="fi.vm.sade.tarjonta.service.search.KoulutusmoduuliToteutusToSolrInputDocumentFunction" ></bean>
 
     <!--
         REST Services
@@ -61,6 +71,7 @@
             <ref bean="tarjontaHakukohdeResource" />
             <ref bean="tarjontaKomoResource"/>
             <ref bean="tarjontaKomotoResource"/>
+            <ref bean="indexerResource"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="cors-filter" />

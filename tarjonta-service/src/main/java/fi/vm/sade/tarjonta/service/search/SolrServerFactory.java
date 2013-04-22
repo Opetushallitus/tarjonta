@@ -21,7 +21,7 @@ public class SolrServerFactory implements InitializingBean {
     protected String solrBaseUrl;
 
     public SolrServer getSolrServer(final String coreName) {
-        final String url = solrBaseUrl + coreName;
+        final String url = solrBaseUrl + "/" + coreName;
         logger.info("instantiating new solr client with url {}", url);
         return new HttpSolrServer(url);
     }
