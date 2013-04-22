@@ -161,13 +161,6 @@
     	    </exclusions>
         </dependency>
         <dependency>
-    	    <groupId>org.apache.solr</groupId>
-    	    <artifactId>solr</artifactId>
-    	    <version>4.2.0</version>
-    	    <type>war</type>
-    	    <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
@@ -184,18 +177,18 @@
             <version>2.2</version>
         </dependency>
         
-        <dependency>
+<!--        <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
             <version>2.4.0</version>
         </dependency>
-        
-        <dependency>
+    -->    
+<!--        <dependency>
             <groupId>xerces</groupId>
             <artifactId>xerces</artifactId>
             <version>2.4.0</version>
         </dependency>
-        
+    -->    
         <dependency>
             <groupId>com.mysema.querydsl</groupId>
             <artifactId>querydsl-apt</artifactId>
@@ -216,6 +209,14 @@
             <artifactId>querydsl-core</artifactId>
             <version>3.1.0</version>
         </dependency>
+                <dependency>
+                    <groupId>org.apache.solr</groupId>
+                    <artifactId>solr</artifactId>
+                    <version>4.2.0</version>
+                    <type>war</type>
+                    <scope>runtime</scope>
+                </dependency>
+
 
 
     </dependencies>
@@ -280,51 +281,35 @@
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>hibernate3-maven-plugin</artifactId>
-                <version>2.2</version>
+                <groupId>de.smartics.maven.plugin</groupId>
+                <artifactId>hibernate4-maven-plugin</artifactId>
+                <version>0.1.1</version>
+                <executions>
+                    <execution>
+                        <id>export</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>hbm2ddl</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <unitName>tarjonta</unitName>
+                    <createOutputFile>${project.build.directory}/hibernate3/sql/schema.ddl</createOutputFile>
+                    <dropOutputFile>${project.build.directory}/hibernate3/sql/drop.ddl</dropOutputFile>
+                </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>org.hibernate</groupId>
                         <artifactId>hibernate-core</artifactId>
-                        <version>3.6.0.Final</version>
+                        <version>${hibernate.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.hibernate</groupId>
-                        <artifactId>hibernate-entitymanager</artifactId>
-                        <version>3.6.0.Final</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>javax.validation</groupId>
-                        <artifactId>validation-api</artifactId>
-                        <version>1.0.0.GA</version>
+                        <artifactId>hibernate-ehcache</artifactId>
+                        <version>${hibernate.version}</version>
                     </dependency>
                 </dependencies>
-                <executions>
-                    <execution>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>hbm2ddl</goal>
-                        </goals>
-                        <configuration>
-                            <components>
-                                <component>
-                                    <name>hbm2ddl</name>
-                                    <implementation>jpaconfiguration</implementation>
-                                </component>
-                            </components>
-                            <componentProperties>
-                                <dialect>org.hibernate.dialect.PostgreSQLDialect</dialect>
-                                <persistenceunit>tarjonta</persistenceunit>
-                                <outputfilename>schema.ddl</outputfilename>
-                                <drop>false</drop>
-                                <create>true</create>
-                                <export>false</export>
-                                <format>true</format>
-                            </componentProperties>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
@@ -370,6 +355,13 @@
                 <dependency>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-log4j12</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.solr</groupId>
+                    <artifactId>solr</artifactId>
+                    <version>4.2.0</version>
+                    <type>war</type>
+                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -489,5 +481,18 @@
             </build>
         </profile>
     </profiles>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>smartics</id>
+            <url>http://www.smartics.eu/nexus/content/groups/public-group</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>

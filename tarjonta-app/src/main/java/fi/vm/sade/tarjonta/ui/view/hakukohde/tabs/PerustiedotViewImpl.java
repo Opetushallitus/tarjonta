@@ -26,13 +26,10 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.data.validator.DoubleValidator;
-import com.vaadin.data.validator.IntegerValidator;
 
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
 import fi.vm.sade.generic.ui.component.FieldValueFormatter;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
-import fi.vm.sade.koodisto.service.types.common.KieliType;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
@@ -316,8 +313,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         painotus.getField().setRequired(false);
         painotus.getField().setNullSelectionAllowed(false);
         painotettavatOppiaineet.addComponent(painotus);
-        final TextField tf = uiBuilder.textField(null, psi, "painokerroin", null, null);
-        tf.addValidator(new IntegerValidator(T("validation.PerustiedotView.painokerroin.num")));
+
+        final TextField tf = uiBuilder.integerField(null, psi, "painokerroin", null, null, 1, 100,  T("validation.PerustiedotView.painokerroin.num"));
+        // uiBuilder.textField(null, psi, "painokerroin", null, null);
+        // tf.addValidator(new IntegerValidator(T("validation.PerustiedotView.painokerroin.num")));
         painotettavatOppiaineet.addComponent(tf);
         final Button removeRowButton = UiUtil.button(null, T("PerustiedotView.poistaPainotettavaOppiaine"),
                 new Button.ClickListener() {
@@ -682,7 +681,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         Collection<KoodiType> hakukohdeKoodis = tarjontaUIHelper.getRelatedHakukohdeKoodisByKomotoOids(presenter.getModel().getHakukohde().getKomotoOids());
         Set<HakukohdeNameUriModel> hakukohdes = new HashSet<HakukohdeNameUriModel>();
         for (KoodiType koodiType : hakukohdeKoodis) {
-            presenter.hakukohdeNameUriModelFromKoodi(koodiType);
+            hakukohdes.add(presenter.hakukohdeNameUriModelFromKoodi(koodiType));
         }
         BeanItemContainer<HakukohdeNameUriModel> hakukohdeContainer = new BeanItemContainer<HakukohdeNameUriModel>(HakukohdeNameUriModel.class, hakukohdes);
         hakukohteenNimiCombo.setContainerDataSource(hakukohdeContainer);

@@ -27,8 +27,6 @@
         <class>fi.vm.sade.tarjonta.model.PainotettavaOppiaine</class>
         <class>fi.vm.sade.tarjonta.model.Pisteraja</class>
         <class>fi.vm.sade.tarjonta.model.Kielivalikoima</class>
-        <!-- experimental -->
-        <class>fi.vm.sade.tarjonta.koodisto.model.Koodi</class>
         
 
         <properties>

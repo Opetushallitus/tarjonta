@@ -2,6 +2,11 @@
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" metadata-complete="true">
+    <absolute-ordering>
+    <!--
+     Empty absolute ordering is necessary to completely desactivate classpath scanning
+      -->
+    </absolute-ordering>
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
@@ -12,7 +17,21 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-    <servlet>
+        <filter>
+        <filter-name>solrFilter</filter-name>
+        <filter-class>fi.vm.sade.tarjonta.service.search.TarjontaSolrFilter</filter-class>
+            <init-param>
+          <param-name>path-prefix</param-name>
+          <param-value>/solr</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>solrFilter</filter-name>
+        <url-pattern>/solr/*</url-pattern>
+    </filter-mapping>
+
+<servlet>
         <servlet-name>cxf</servlet-name>
         <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
