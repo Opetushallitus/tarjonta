@@ -17,6 +17,7 @@
         <deploy.to.server>tomcat</deploy.to.server>
         <powermock.version>1.4.12</powermock.version>
         <webapp.port>8084</webapp.port>
+        <skipDbDiagramGenerate>false</skipDbDiagramGenerate>
     </properties>
 
     <dependencies>
