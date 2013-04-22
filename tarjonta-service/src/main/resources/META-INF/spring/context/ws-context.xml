@@ -18,6 +18,14 @@
     <jaxws:client id="organisaatioService"
                    serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
                    address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
+                   
+    <jaxws:client id="koodiPublicService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodiService"
+                  address="${koodi.webservice.url}"/>
+
+    <jaxws:client id="koodistoPublicService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
+                  address="${koodisto.webservice.url}"/>
     
     <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl"/>
     <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicServiceImpl"/>
