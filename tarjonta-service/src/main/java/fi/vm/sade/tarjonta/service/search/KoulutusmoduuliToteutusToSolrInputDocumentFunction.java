@@ -67,11 +67,12 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
         Preconditions.checkNotNull(komoto);
         //If the komoto is not a koulutusohjelma or lukiolinja komoto it is not index, becuse they are not
         //shown in search
+        List<SolrInputDocument> docs = new ArrayList<SolrInputDocument>();
         if (komoto.getKoulutusmoduuli().getLukiolinja() == null
                 && komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi() == null) {
-            return null;
+            return docs;
         }
-        List<SolrInputDocument> docs = new ArrayList<SolrInputDocument>();
+       
         final SolrInputDocument komotoDoc = new SolrInputDocument();
         add(komotoDoc, OID, komoto.getOid());
         OrganisaatioDTO org = organisaatioService.findByOid(komoto.getTarjoaja());

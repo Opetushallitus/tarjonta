@@ -43,8 +43,10 @@ public class IndexerResource {
 
     private SolrServer hakukohdeSolr;
     private SolrServer koulutusSolr;
-    private HakukohdeToSolrInputDocumentFunction hakukohdeConverter = new HakukohdeToSolrInputDocumentFunction();
-    private KoulutusmoduuliToteutusToSolrInputDocumentFunction koulutusConverter = new KoulutusmoduuliToteutusToSolrInputDocumentFunction();
+    @Autowired
+    private HakukohdeToSolrInputDocumentFunction hakukohdeSolrConverter;// = new HakukohdeToSolrInputDocumentFunction();
+    @Autowired
+    private KoulutusmoduuliToteutusToSolrInputDocumentFunction koulutusSolrConverter;// = new KoulutusmoduuliToteutusToSolrInputDocumentFunction();
 
     @javax.ws.rs.Path("/koulutus/start")
     @Produces("text/plain")
@@ -119,7 +121,7 @@ public class IndexerResource {
     public void indexHakukohde(List<Hakukohde> hakukohteet) {
         final List<SolrInputDocument> docs = Lists.newArrayList();
         for (Hakukohde hakukohde : hakukohteet) {
-            docs.addAll(hakukohdeConverter.apply(hakukohde));
+            docs.addAll(hakukohdeSolrConverter.apply(hakukohde));
         }
         index(hakukohdeSolr, docs);
     }
@@ -128,7 +130,7 @@ public class IndexerResource {
     public void indexKoulutus(List<KoulutusmoduuliToteutus> koulutukset) {
         final List<SolrInputDocument> docs = Lists.newArrayList();
         for (KoulutusmoduuliToteutus koulutus : koulutukset) {
-            docs.addAll(koulutusConverter.apply(koulutus));
+            docs.addAll(koulutusSolrConverter.apply(koulutus));
         }
         index(koulutusSolr, docs);
     }
