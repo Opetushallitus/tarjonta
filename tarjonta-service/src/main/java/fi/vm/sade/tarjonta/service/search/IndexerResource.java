@@ -3,8 +3,11 @@ package fi.vm.sade.tarjonta.service.search;
 import java.io.IOException;
 import java.util.List;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -13,12 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -26,12 +28,10 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 
+@Transactional
 @Component
-@javax.ws.rs.Path("/indexer")
+@Path("/indexer")
 public class IndexerResource {
-
-    @Autowired
-    private PlatformTransactionManager transactionManager;
 
     @Autowired
     private HakukohdeDAO hakukohdeDao;
@@ -43,74 +43,56 @@ public class IndexerResource {
 
     private SolrServer hakukohdeSolr;
     private SolrServer koulutusSolr;
-    private HakukohdeToSolrInputDocumentFunction hakukohdeConverter = new HakukohdeToSolrInputDocumentFunction();
-    private KoulutusmoduuliToteutusToSolrInputDocumentFunction koulutusConverter = new KoulutusmoduuliToteutusToSolrInputDocumentFunction();
+    
+    @Autowired
+    private HakukohdeToSolrInputDocumentFunction hakukohdeSolrConverter;// = new HakukohdeToSolrInputDocumentFunction();
+    @Autowired
+    private KoulutusmoduuliToteutusToSolrInputDocumentFunction koulutusSolrConverter;// = new KoulutusmoduuliToteutusToSolrInputDocumentFunction();
 
-    @javax.ws.rs.Path("/koulutus/start")
+    @GET
+    @Path("/koulutus/start")
     @Produces("text/plain")
-    public String rebuildKoulutuIndex(@QueryParam("clean") final boolean clean) {
-        // TODO fetch all, index em
-        Preconditions.checkNotNull(transactionManager, "need TM!");
-
-        // sigh... annotations, for some reason, did not work
-        TransactionTemplate tt = new TransactionTemplate(transactionManager);
-        int count = tt.execute(new TransactionCallback<Integer>() {
-            @Override
-            public Integer doInTransaction(TransactionStatus arg0) {
-
-                List<KoulutusmoduuliToteutus> koulutukset = koulutusDao
-                        .findAll();
-                try {
-                    if (clean) {
-                        koulutusSolr.deleteByQuery("*:*");
-                    }
-                } catch (SolrServerException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                indexKoulutus(koulutukset);
-                return koulutukset.size();
-
+    public Response rebuildKoulutuIndex(@QueryParam("clean") final boolean clean) {
+        List<KoulutusmoduuliToteutus> koulutukset = koulutusDao.findAll();
+        try {
+            if (clean) {
+                koulutusSolr.deleteByQuery("*:*");
             }
-        });
-
-        return Integer.toString(count);
-
+        } catch (SolrServerException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        indexKoulutus(koulutukset);
+        return Response.ok(Integer.toString(koulutukset.size())).build();
     }
 
-    @javax.ws.rs.Path("/hakukohde/start")
+    @GET
+    @Path("/hakukohde/start")
     @Produces("text/plain")
     public String rebuildHakukohdeIndex(@QueryParam("clean") final boolean clean) {
         // TODO fetch all, index em
-        TransactionTemplate tt = new TransactionTemplate(transactionManager);
-        int count = tt.execute(new TransactionCallback<Integer>() {
-            @Override
-            public Integer doInTransaction(TransactionStatus arg0) {
-
-                List<Hakukohde> hakukohteet = hakukohdeDao.findAll();
-                try {
-                    if (clean) {
-                        hakukohdeSolr.deleteByQuery("*:*");
-                    }
-                } catch (SolrServerException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                indexHakukohde(hakukohteet);
-                return hakukohteet.size();
+        List<Hakukohde> hakukohteet = hakukohdeDao.findAll();
+        try {
+            if (clean) {
+                hakukohdeSolr.deleteByQuery("*:*");
             }
-        });
-        return Integer.toString(count);
+        } catch (SolrServerException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        indexHakukohde(hakukohteet);
+        return Integer.toString(hakukohteet.size());
     }
-
+    
+    
     @Autowired
-    public IndexerResource(SolrServerFactory factory) {
+    public void setSolrServerFactory(SolrServerFactory factory) {
         this.hakukohdeSolr = factory.getSolrServer("hakukohteet");
         this.koulutusSolr = factory.getSolrServer("koulutukset");
     }
@@ -119,7 +101,7 @@ public class IndexerResource {
     public void indexHakukohde(List<Hakukohde> hakukohteet) {
         final List<SolrInputDocument> docs = Lists.newArrayList();
         for (Hakukohde hakukohde : hakukohteet) {
-            docs.addAll(hakukohdeConverter.apply(hakukohde));
+            docs.addAll(hakukohdeSolrConverter.apply(hakukohde));
         }
         index(hakukohdeSolr, docs);
     }
@@ -128,7 +110,7 @@ public class IndexerResource {
     public void indexKoulutus(List<KoulutusmoduuliToteutus> koulutukset) {
         final List<SolrInputDocument> docs = Lists.newArrayList();
         for (KoulutusmoduuliToteutus koulutus : koulutukset) {
-            docs.addAll(koulutusConverter.apply(koulutus));
+            docs.addAll(koulutusSolrConverter.apply(koulutus));
         }
         index(koulutusSolr, docs);
     }
