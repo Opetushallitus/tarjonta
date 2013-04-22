@@ -44,16 +44,16 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
 @Configurable
 public class HakukohdeToSolrInputDocumentFunction implements
         Function<Hakukohde, List<SolrInputDocument>> {
-	
-	@Autowired
-	 private OrganisaatioService organisaatioService;
-	 
-	 @Autowired
-	 private KoodistoService koodistoPublicService;
-	 
-	 @Autowired
-	 private KoodiService koodiService;
-	
+
+    @Autowired
+    private OrganisaatioService organisaatioService;
+
+    @Autowired
+    private KoodistoService koodistoPublicService;
+
+    @Autowired
+    private KoodiService koodiService;
+
     @Override
     public List<SolrInputDocument> apply(final Hakukohde hakukohde) {
         Preconditions.checkNotNull(hakukohde);
