@@ -38,7 +38,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
 
 /**
- * Convert "Koulutus" to {@link SolrInputDocument} so that it can be
+ * Convert "Hakukohde" to {@link SolrInputDocument} so that it can be
  * indexed.
  */
 @Configurable

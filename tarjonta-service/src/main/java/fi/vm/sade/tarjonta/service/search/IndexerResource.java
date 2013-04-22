@@ -20,6 +20,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 
@@ -37,8 +38,8 @@ public class IndexerResource {
 
     private SolrServer hakukohdeSolr;
     private SolrServer koulutusSolr;
-    private HakukohdeToSolrInputDocumentFunction koulutusConverter = new HakukohdeToSolrInputDocumentFunction();
-    private KoulutusmoduuliToteutusToSolrInputDocumentFunction hakukohdeConverter = new KoulutusmoduuliToteutusToSolrInputDocumentFunction();
+    private HakukohdeToSolrInputDocumentFunction hakukohdeConverter = new HakukohdeToSolrInputDocumentFunction();
+    private KoulutusmoduuliToteutusToSolrInputDocumentFunction koulutusConverter = new KoulutusmoduuliToteutusToSolrInputDocumentFunction();
 
     
     
@@ -115,16 +116,20 @@ public class IndexerResource {
     }
 
     // TODO is this proper object to pass in the api??
-    public void indexHakukohde(List<KoulutusmoduuliToteutus> hakukohteet) {
+    public void indexHakukohde(List<Hakukohde> hakukohteet) {
         final List<SolrInputDocument> docs = Lists.newArrayList();
-        //docs.addAll(Lists.transform(hakukohteet, hakukohdeConverter));
+        for(Hakukohde hakukohde: hakukohteet) {
+            docs.addAll(hakukohdeConverter.apply(hakukohde));
+        }
         index(hakukohdeSolr, docs);
     }
 
     // TODO is this proper object to pass in the api??
-    public void indexKoulutus(List<Koulutusmoduuli> koulutukset) {
+    public void indexKoulutus(List<KoulutusmoduuliToteutus> koulutukset) {
         final List<SolrInputDocument> docs = Lists.newArrayList();
-        //docs.addAll(Lists.transform(koulutukset, koulutusConverter));
+        for(KoulutusmoduuliToteutus koulutus:koulutukset) {
+            docs.addAll(koulutusConverter.apply(koulutus));
+        }
         index(koulutusSolr, docs);
     }
 
