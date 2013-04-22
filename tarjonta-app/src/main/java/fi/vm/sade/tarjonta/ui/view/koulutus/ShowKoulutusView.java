@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,8 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     @Autowired(required = true)
     private TarjontaUIHelper tarjontaUIHelper;
     private TarjontaDialogWindow tarjontaDialog;
+
+
 
     private @Value("${koodisto.suomi.uri:suomi}") String suomiUri;
 
@@ -165,7 +168,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     		@Override
     		public void buttonClick(Button.ClickEvent event) {
-    			KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px","500px");
+    			KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px","500px",KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS );
     			getWindow().addWindow(kopiointiDialog);
     		}
     	}, StyleEnum.STYLE_BUTTON_PRIMARY);
