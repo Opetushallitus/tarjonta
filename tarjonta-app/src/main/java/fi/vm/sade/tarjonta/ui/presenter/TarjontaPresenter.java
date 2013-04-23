@@ -565,8 +565,17 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustietoType> orgs) {
+
         getTarjoaja().addSelectedOrganisations(orgs);
         showCopyKoulutusPerustiedotEditView(getModel().getSelectedKoulutusOid());
+        getModel().getSelectedKoulutukset().clear();
+    }
+
+    public void copyLukioKoulutusToOrganization(Collection<OrganisaatioPerustietoType> orgs)  {
+
+
+        lukioPresenter.showCopyKoulutusView(getModel().getSelectedKoulutusOid(),KoulutusActiveTab.PERUSTIEDOT,orgs);
+
         getModel().getSelectedKoulutukset().clear();
     }
 
@@ -644,6 +653,12 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
             showEditKoulutusView(koulutusOid, KoulutusActiveTab.PERUSTIEDOT);
             getModel().getKoulutusPerustiedotModel().setOid(null);
+        }
+    }
+
+    public void showLukioCopyKoulutusPerustiedotView(final String koulutusOid) {
+        if (koulutusOid != null) {
+
         }
     }
 
@@ -730,8 +745,14 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
             //Add selected data to the comboboxes.
             if (koulutus.getKoulutusohjelmaModel() != null && koulutus.getKoulutusohjelmaModel().getKoodistoUri() != null) {
-                koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
+
+                getModel().getKoulutusPerustiedotModel().getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
             }
+            getModel().getKoulutusPerustiedotModel().setKoulutuslaji(koulutus.getKoulutuslaji());
+            getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(koulutus.getPohjakoulutusvaatimus());
+
+            getModel().getKoulutusPerustiedotModel().setSuunniteltuKesto(koulutus.getSuunniteltuKesto());
+            getModel().getKoulutusPerustiedotModel().setSuunniteltuKestoTyyppi(koulutus.getSuunniteltuKestoTyyppi());
             koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());
         } catch (ExceptionMessage ex) {
             LOG.error("Service call failed.", ex);
@@ -1673,7 +1694,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         OrganisaatioSearchCriteriaDTO criteria = new OrganisaatioSearchCriteriaDTO();
 
         criteria.getOidResctrictionList().add(selectedOrg.getOid());
-        //criteria.setMaxResults(1000);
+        criteria.setMaxResults(1000);
         List<OrganisaatioPerustietoType> childOrgs = this.getOrganisaatioService().searchBasicOrganisaatios(criteria);
         if (childOrgs != null) {
             for (OrganisaatioPerustietoType curChild : childOrgs) {

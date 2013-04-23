@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 import java.util.*;
 
 
+import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
@@ -297,18 +298,23 @@ public class ListKoulutusView extends VerticalLayout {
 
             @Override
             public void buttonClick(ClickEvent clickEvent) {
-                List<String> koulutusOids = presenter.getSelectedKoulutusOids();
-                
-                if (koulutusOids.size() == 1) {
-                    presenter.getModel().setSelectedKoulutusOid(koulutusOids.get(0));
-                    
-                    
-                    KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px", "500px");
-                    
-                    getWindow().addWindow(kopiointiDialog);
-                } else {
-                    showNoKoulutusDialog("vainYksiKoulutusViesti");
+
+               List<KoulutusTulos> valitutKoulutukset = presenter.getSelectedKoulutukset();
+
+                if (valitutKoulutukset != null && valitutKoulutukset.size() > 0 ) {
+                    if (valitutKoulutukset.size() > 1) {
+                        getWindow().showNotification(i18n.getMessage("yksiKopioitavaKoulutus"));
+                    } else {
+                           presenter.getModel().setSelectedKoulutusOid(valitutKoulutukset.get(0).getKoulutus().getKomotoOid());
+                                KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px", "500px",valitutKoulutukset.get(0).getKoulutus().getKoulutustyyppi());
+
+                                getWindow().addWindow(kopiointiDialog);
+
+                    }
+
                 }
+
+
             }
         });
         

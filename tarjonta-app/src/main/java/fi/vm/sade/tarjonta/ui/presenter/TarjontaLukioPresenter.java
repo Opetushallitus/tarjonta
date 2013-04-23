@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.ui.presenter;
 
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
@@ -38,15 +38,6 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
@@ -163,6 +154,26 @@ public class TarjontaLukioPresenter {
         loadKomoto(komotoOid);
 
         setEditKoulutusView(new EditLukioKoulutusView(komotoOid, tab));
+        getPresenter().getRootView().changeView(editLukioKoulutusView);
+    }
+
+    public void showCopyKoulutusView(final String komotoOid, final KoulutusActiveTab tab, Collection<OrganisaatioPerustietoType> orgs) {
+        // If koulutus OID is provided, the koulutus is read from database
+        // before opening the KoulutusEditView.
+
+        loadKomoto(komotoOid);
+        if (orgs != null && orgs.size() > 0) {
+            presenter.getModel().getTarjoajaModel().getOrganisationOidNamePairs().clear();
+            for (OrganisaatioPerustietoType org:orgs) {
+                OrganisationOidNamePair oidNamePair = new OrganisationOidNamePair();
+                oidNamePair.setOrganisation(org.getOid(),org.getNimiFi());
+                presenter.getModel().getTarjoajaModel().getOrganisationOidNamePairs().add(oidNamePair);
+            }
+        }
+        setEditKoulutusView(new EditLukioKoulutusView(komotoOid, tab));
+        getPerustiedotModel().setKomotoOid(null);
+        getPerustiedotModel().setTila(TarjontaTila.LUONNOS);
+
         getPresenter().getRootView().changeView(editLukioKoulutusView);
     }
 
