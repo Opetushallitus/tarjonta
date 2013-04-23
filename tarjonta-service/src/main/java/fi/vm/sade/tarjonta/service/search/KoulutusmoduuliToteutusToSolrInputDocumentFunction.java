@@ -84,8 +84,8 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
         for(String path: Splitter.on("|").omitEmptyStrings().split(org.getParentOidPath())) {
             add(komotoDoc, ORG_PATH, path);
         }
-
-
+        
+        add(komotoDoc, ORG_PATH, org.getOid());
         
         addKoulutusohjelmaTiedot(komotoDoc, komoto.getKoulutusmoduuli().getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value()) 
                 ? komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi() : komoto.getKoulutusmoduuli().getLukiolinja());

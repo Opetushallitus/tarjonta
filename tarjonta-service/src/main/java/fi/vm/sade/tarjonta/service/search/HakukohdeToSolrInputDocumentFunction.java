@@ -175,6 +175,7 @@ public class HakukohdeToSolrInputDocumentFunction implements
         for(String path: Splitter.on("|").omitEmptyStrings().split(org.getParentOidPath())) {
             add(hakukohdeDoc, ORG_PATH, path);
         }
+        add(hakukohdeDoc, ORG_PATH, org.getOid());
         
         for (Teksti curTeksti : org.getNimi().getTeksti()) {
                 String kielikoodi = curTeksti.getKieliKoodi();//.equals("fi");
