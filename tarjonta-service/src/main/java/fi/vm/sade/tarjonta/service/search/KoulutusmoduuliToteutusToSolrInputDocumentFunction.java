@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoService;
@@ -41,6 +42,7 @@ import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ORG_PATH;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
 
 /**
@@ -77,6 +79,12 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
         add(komotoDoc, OID, komoto.getOid());
         OrganisaatioDTO org = organisaatioService.findByOid(komoto.getTarjoaja());
         addOrganisaatioTiedot(komotoDoc, org, docs);
+        
+        for(String path: Splitter.on("|").omitEmptyStrings().split(org.getParentOidPath())) {
+            add(komotoDoc, ORG_PATH, path);
+        }
+
+        
         addKoulutusohjelmaTiedot(komotoDoc, komoto.getKoulutusmoduuli().getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value()) 
                 ? komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi() : komoto.getKoulutusmoduuli().getLukiolinja());
         addKoulutuskoodiTiedot(komotoDoc, komoto.getKoulutusmoduuli().getKoulutusKoodi());
@@ -167,6 +175,7 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
             }
         }
         add(orgDoc, OID, org.getOid());
+        
         docs.add(orgDoc);
     }
 
