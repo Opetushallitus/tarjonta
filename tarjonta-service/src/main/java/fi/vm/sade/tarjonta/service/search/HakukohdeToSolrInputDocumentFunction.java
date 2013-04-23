@@ -26,6 +26,7 @@ import java.util.Set;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -50,6 +51,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
  * indexed.
  */
 @Configurable
+@Component
 public class HakukohdeToSolrInputDocumentFunction implements
         Function<Hakukohde, List<SolrInputDocument>> {
 
