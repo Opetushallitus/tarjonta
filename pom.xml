@@ -33,5 +33,19 @@
         <module>tarjonta-app</module>
         <module>tarjonta-esb</module>
     </modules>
+    
+    <repositories>
+       <repository>
+            <id>oph-sade-artifactory-snapshots</id>
+            <url>http://penaali.hard.ware.fi/artifactory/oph-sade-snapshot-local</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>oph-sade-artifactory-releases</id>
+            <url>http://penaali.hard.ware.fi/artifactory/oph-sade-release-local</url>
+        </repository>
+    </repositories>
 
 </project>
