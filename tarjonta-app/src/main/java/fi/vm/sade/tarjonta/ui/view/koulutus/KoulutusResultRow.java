@@ -211,6 +211,7 @@ public class KoulutusResultRow extends HorizontalLayout {
                 		&& koulutus.getKoulutus() != null
                         && isSelected.booleanValue()) {
                     tarjontaPresenter.getSelectedKoulutukset().add(koulutus);
+                    tarjontaPresenter.getTarjoaja().setSelectedOrganisationOid(koulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
 
                 } else if (koulutus != null 
                 		&& koulutus.getKoulutus() != null) {

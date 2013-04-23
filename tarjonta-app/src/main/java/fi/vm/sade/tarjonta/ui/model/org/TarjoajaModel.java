@@ -174,4 +174,12 @@ public class TarjoajaModel extends BaseUIViewModel {
             return getSelectedOrganisation().getOrganisationOid();
         }
     }
+
+    public void setSelectedOrganisationOid(String tarjoajaOid) {
+        getOrganisationOidNamePairs().clear();
+        OrganisationOidNamePair pair = new OrganisationOidNamePair();
+        pair.setOrganisationOid(tarjoajaOid);
+        addOrganisation(pair);
+        
+    }
 }

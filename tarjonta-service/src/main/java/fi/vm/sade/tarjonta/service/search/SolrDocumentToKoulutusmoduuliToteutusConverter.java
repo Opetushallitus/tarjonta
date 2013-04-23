@@ -31,12 +31,17 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         koulutus.setKoulutuskoodi(IndexingUtils.createKoodiTyyppi(KOULUTUSKOODI_URI, KOULUTUSKOODI_FI, KOULUTUSKOODI_SV, KOULUTUSKOODI_EN, koulutusDoc));
         koulutus.setKoulutusmoduuli("" + koulutusDoc.getFieldValue(KOULUTUSMODUULI_OID));
         koulutus.setKoulutusmoduuliToteutus("" + koulutusDoc.getFieldValue(OID));
-        koulutus.setKoulutusohjelmakoodi(IndexingUtils.createKoodiTyyppi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
+        koulutus.setKoulutustyyppi(createKoulutustyyppi(koulutusDoc));
+        if (koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
+            koulutus.setKoulutusohjelmakoodi(IndexingUtils.createKoodiTyyppi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
+        } else if (koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+            koulutus.setLukiolinjakoodi(IndexingUtils.createKoodiTyyppi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
+        }
         koulutus.setNimi(createKoulutusNimi(koulutusDoc));
         koulutus.setTila(IndexingUtils.createTila(koulutusDoc));
         koulutus.setTutkintonimike(IndexingUtils.createKoodiTyyppi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
         koulutus.setTarjoaja(IndexingUtils.createTarjoaja(koulutusDoc, solrOrgList));
-        koulutus.setKoulutustyyppi(createKoulutustyyppi(koulutusDoc));
+       
         koulutus.setPohjakoulutusVaatimus("" + koulutusDoc.getFieldValue(POHJAKOULUTUSVAATIMUS_URI));
         tulos.setKoulutus(koulutus);
         return tulos;

@@ -364,9 +364,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         for (KoulutusOidNameViewModel koulutusOidNameViewModel : koulutukses) {
             selectedOids.add(koulutusOidNameViewModel.getKoulutusOid());
         }
+        
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         kysely.getKoulutusOids().addAll(selectedOids);
         HaeKoulutuksetVastausTyyppi vastaus = getTarjontaPublicService().haeKoulutukset(kysely);
+        System.out.println("vastaus koko: " + vastaus.getKoulutusTulos().size());
         return validateKoulutukses(vastaus.getKoulutusTulos());
     }
 
@@ -390,6 +392,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
     private boolean doesEqual(String[] strs) {
         for (int i = 0; i < strs.length; i++) {
+            System.out.println("koodi: " + strs[i]);
             if (!strs[0].equals(strs[i])) {
                 return false;
             }
