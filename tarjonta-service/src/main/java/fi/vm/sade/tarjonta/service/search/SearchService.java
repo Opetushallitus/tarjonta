@@ -96,6 +96,8 @@ public class SearchService {
         // restrict by org
         addFilterForOrgs(oids, queryParts, q);
 
+        //filter out orgs
+        filterOutOrgs(q);
         try {
             // query solr
             QueryResponse hakukohdeResponse = hakukohdeSolr.query(q);
@@ -145,8 +147,10 @@ public class SearchService {
     private void addFilterForVuosiKausi(final String kausi, final String vuosi,
             final List<String> queryParts, SolrQuery q) {
         // vuosi kausi
-        String qVuosi = Integer.parseInt(vuosi) < 0 ? "*" : vuosi;
-        addQuery(vuosi, queryParts, "%s:%s", Hakukohde.VUOSI_KOODI, qVuosi);
+        if(vuosi!=null) {
+            String qVuosi = Integer.parseInt(vuosi) < 0 ? "*" : vuosi;
+            addQuery(qVuosi, queryParts, "%s:%s", Hakukohde.VUOSI_KOODI, qVuosi);
+        }
         addQuery(kausi, queryParts, "%s:%s", Hakukohde.KAUSI_KOODI, kausi);
         q.addFilterQuery(Joiner.on(" ").join(queryParts));
         queryParts.clear();
@@ -160,8 +164,8 @@ public class SearchService {
 
         String nimi = kysely.getNimi();
         final String kausi = kysely.getKoulutuksenAlkamiskausi();
-        final String vuosi = Integer.toString(kysely
-                .getKoulutuksenAlkamisvuosi());
+        final String vuosi = kysely.getKoulutuksenAlkamisvuosi()!=null?Integer.toString(kysely
+                .getKoulutuksenAlkamisvuosi()):null;
         final List<String> tarjoajaOids = kysely.getTarjoajaOids();
         final List<String> koulutusOids = kysely.getKoulutusOids();
 
@@ -188,6 +192,8 @@ public class SearchService {
         // restrict by org
         addFilterForOrgs(tarjoajaOids, queryParts, q);
 
+        //filter out orgs
+        filterOutOrgs(q);
         try {
             // query solr
             QueryResponse koulutusResponse = koulutusSolr.query(q);
@@ -202,7 +208,6 @@ public class SearchService {
 
             if (orgOids.size() > 0) {
                 QueryResponse orgResponse = searchOrgs(orgOids, koulutusSolr);
-                searchOrgs(orgOids, koulutusSolr);
 
                 SolrDocumentToKoulutusmoduuliToteutusConverter converter = new SolrDocumentToKoulutusmoduuliToteutusConverter();
 
@@ -219,6 +224,10 @@ public class SearchService {
             throw new RuntimeException("haku.error", e);
         }
         return response;
+    }
+    
+    private void filterOutOrgs(SolrQuery query){
+        query.addFilterQuery("-" + Organisaatio.TYPE + ":ORG");
     }
 
     private void addQuery(final String param, final List<String> queryParts,

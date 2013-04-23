@@ -42,6 +42,7 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.search.SolrFields.Organisaatio;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
 
 /**
@@ -167,6 +168,8 @@ public class HakukohdeToSolrInputDocumentFunction implements
             return;
         }
         add(orgDoc, OID, org.getOid());
+        add(orgDoc, Organisaatio.TYPE, "ORG");
+
         add(hakukohdeDoc, ORG_OID, org.getOid());
 
         for(String path: Splitter.on("|").omitEmptyStrings().split(org.getParentOidPath())) {

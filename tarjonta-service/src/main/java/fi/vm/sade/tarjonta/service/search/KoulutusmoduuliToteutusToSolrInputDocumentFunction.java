@@ -41,6 +41,7 @@ import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.search.SolrFields.Organisaatio;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ORG_PATH;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
@@ -83,6 +84,7 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
         for(String path: Splitter.on("|").omitEmptyStrings().split(org.getParentOidPath())) {
             add(komotoDoc, ORG_PATH, path);
         }
+
 
         
         addKoulutusohjelmaTiedot(komotoDoc, komoto.getKoulutusmoduuli().getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value()) 
@@ -164,6 +166,8 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
             return;
         }
         final SolrInputDocument orgDoc = new SolrInputDocument();
+        add(orgDoc, Organisaatio.TYPE, "ORG");
+
         add(doc, ORG_OID, org.getOid());
         for (Teksti curTeksti : org.getNimi().getTeksti()) {
             String kielikoodi = curTeksti.getKieliKoodi();//.equals("fi");

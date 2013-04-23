@@ -87,5 +87,7 @@ public class SolrFields {
         protected static final String ORG_NAME_FI = "orgnamefi_s";
         protected static final String ORG_NAME_SV = "orgnamesv_s";
         protected static final String ORG_NAME_EN = "orgnameen_s";
+        protected static final String TYPE = "type_s";
+
     }
 }
