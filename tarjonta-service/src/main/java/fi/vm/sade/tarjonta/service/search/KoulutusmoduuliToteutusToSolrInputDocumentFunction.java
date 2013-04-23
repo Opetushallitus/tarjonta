@@ -81,11 +81,16 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
         OrganisaatioDTO org = organisaatioService.findByOid(komoto.getTarjoaja());
         addOrganisaatioTiedot(komotoDoc, org, docs);
         
-        for(String path: Splitter.on("|").omitEmptyStrings().split(org.getParentOidPath())) {
-            add(komotoDoc, ORG_PATH, path);
+        if (org != null && org.getParentOidPath() != null) {
+            for (String path : Splitter.on("|").omitEmptyStrings()
+                    .split(org.getParentOidPath())) {
+                add(komotoDoc, ORG_PATH, path);
+            }
         }
         
-        add(komotoDoc, ORG_PATH, org.getOid());
+        if (org != null) {
+            add(komotoDoc, ORG_PATH, org.getOid());
+        }
         
         addKoulutusohjelmaTiedot(komotoDoc, komoto.getKoulutusmoduuli().getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value()) 
                 ? komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi() : komoto.getKoulutusmoduuli().getLukiolinja());

@@ -18,18 +18,11 @@
     <import resource="test-dao-context.xml" />
     <import resource="test-publication-context.xml"/>
     
-    <jaxws:client id="organisaatioService"
-                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
-                   address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
+    <mockito:mock id="organisaatioService" class="fi.vm.sade.organisaatio.api.model.OrganisaatioService"/>
                    
-    <jaxws:client id="koodiPublicService"
-                  serviceClass="fi.vm.sade.koodisto.service.KoodiService"
-                  address="${koodi.webservice.url}"/>
+    <mockito:mock id="koodiPublicService" class="fi.vm.sade.koodisto.service.KoodiService"/>
 
-    <jaxws:client id="koodistoPublicService"
-                  serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
-                  address="${koodisto.webservice.url}"/>
-    
+    <mockito:mock id="koodistoPublicService" class="fi.vm.sade.koodisto.service.KoodistoService"/>
     <!-- 
         Create a dynamic mock class for the jms message sender. 
         Read more : https://bitbucket.org/kubek2k/springockito/wiki/Home

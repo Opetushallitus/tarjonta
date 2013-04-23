@@ -17,6 +17,8 @@
 package fi.vm.sade.tarjonta.service.impl;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
@@ -31,6 +33,7 @@ import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.conversion.ConvertKoulutusTyyppiToLisaaKoulutus;
+import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.types.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +43,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.jws.WebParam;
+
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -74,6 +79,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private MonikielinenMetadataDAO metadataDAO;
     @Autowired
     private TarjontaPublicService publicService;
+    @Autowired
+    private IndexerResource solrIndexer;
     /**
      * Väliaikainne kunnes Koodisto on alustettu.
      */
@@ -286,6 +293,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakuk = hakukohdeDAO.insert(hakuk);
         hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(), hakuk));
         hakukohdeDAO.update(hakuk);
+        solrIndexer.indexHakukohde(Lists.newArrayList(hakuk));
+
         publication.sendEvent(hakuk.getTila(), hakuk.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
 
         //return fresh copy (that has fresh versions so that optimistic locking works)
@@ -338,6 +347,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             for (KoulutusmoduuliToteutus curKoul : hakukohde.getKoulutusmoduuliToteutuses()) {
                 curKoul.removeHakukohde(hakukohde);
             }
+            try {
+                solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohdePoisto.getOid()));
+            } catch (IOException e) {
+                throw new GenericFault("indexing.error", e);
+            }
+
             hakukohdeDAO.remove(hakukohde);
         }
         return new HakukohdeTyyppi();
@@ -361,6 +376,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakukohde.getLiites().addAll(hakukohdeTemp.get(0).getLiites());
 
         hakukohdeDAO.update(hakukohde);
+        solrIndexer.indexHakukohde(Lists.newArrayList(hakukohde));
         publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
 
         //return fresh copy (that has fresh versions so that optimistic locking works)
@@ -410,6 +426,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
+        solrIndexer.indexKoulutus(Lists.newArrayList(toteutus));
+
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
         return vastaus;
@@ -419,7 +437,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
-
+        solrIndexer.indexKoulutus(Lists.newArrayList(toteutus));
         PaivitaKoulutusVastausTyyppi vastaus = new PaivitaKoulutusVastausTyyppi();
         return vastaus;
     }
@@ -427,11 +445,18 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public void poistaKoulutus(String koulutusOid) throws GenericFault {
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
+        
         if (komoto.getHakukohdes().isEmpty()) {
             this.koulutusmoduuliToteutusDAO.remove(komoto);
+            try {
+                solrIndexer.deleteKoulutus(Lists.newArrayList(koulutusOid));
+            } catch (IOException e) {
+                throw new GenericFault("indexing.error", e);
+            }
         } else {
             throw new KoulutusUsedException();
         }
+        
     }
 
     private boolean hakuAlkanut(Hakukohde hakukohde) {

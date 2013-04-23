@@ -32,13 +32,14 @@ public class EmbeddedSolrServerFactory extends SolrServerFactory {
 
     EmbeddedSolrServer server = null;
 
-    public SolrServer getSolrServer() {
+    @Override
+    public SolrServer getSolrServer(String collection) {
         if (server == null) {
             System.setProperty("solr.solr.home", "src/test/resources/solr");
             System.setProperty("solr.data.dir", "target/solr-data");
             CoreContainer.Initializer initializer = new CoreContainer.Initializer();
             CoreContainer coreContainer = initializer.initialize();
-            server = new EmbeddedSolrServer(coreContainer, "organisaatiot");
+            server = new EmbeddedSolrServer(coreContainer, collection);
             System.clearProperty("solr.solr.home");
             System.clearProperty("solr.data.dir");
         }

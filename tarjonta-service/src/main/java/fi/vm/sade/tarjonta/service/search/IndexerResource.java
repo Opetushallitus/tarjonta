@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.search;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -129,6 +130,24 @@ public class IndexerResource {
                 logger.error("Indexing failed", e);
             }
         }
+    }
+    
+    public void deleteKoulutus(List<String> oids) throws IOException {
+        deleteByOid(oids, koulutusSolr);
+    }
+
+    private void deleteByOid(List<String> oids, SolrServer solr) throws IOException {
+        try {
+            solr.deleteById(oids);
+        } catch (SolrServerException e) {
+            throw new IOException("indexing.error", e);
+        } catch (IOException e) {
+            throw new IOException("indexing.error", e);
+        }
+    }
+
+    public void deleteHakukohde(ArrayList<String> oids) throws IOException {
+        deleteByOid(oids, hakukohdeSolr);
     }
 
 }

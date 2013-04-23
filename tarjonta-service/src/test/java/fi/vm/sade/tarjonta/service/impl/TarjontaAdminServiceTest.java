@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -63,6 +64,7 @@ import java.util.*;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
+@ActiveProfiles("embedded-solr")
 public class TarjontaAdminServiceTest {
 
     @Autowired
