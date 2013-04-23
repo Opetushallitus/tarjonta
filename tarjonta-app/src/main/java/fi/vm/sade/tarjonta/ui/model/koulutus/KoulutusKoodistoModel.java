@@ -25,8 +25,11 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @author Jani Wilén
  */
 public abstract class KoulutusKoodistoModel extends BaseUIViewModel {
-    private static final long serialVersionUID = 8200934283387389504L;
 
+    private static final long serialVersionUID = 8200934283387389504L;
+    public static final String MODEL_NAME_PROPERY = "nimi";
+    public static final String MODEL_VALUE_PROPERY = "koodi";
+    
     protected String nimi;
     protected String kuvaus;
     protected String kielikoodi;

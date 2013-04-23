@@ -25,7 +25,7 @@ public class KoulutuskoodiModel extends MonikielinenTekstiModel {
     private KoodiModel koulutusaste;
     private KoodiModel koulutusala;
     private KoodiModel opintojenLaajuusyksikko;
-    private KoodiModel opintojenLaajuus;
+    private String opintojenLaajuus;
     private KoodiModel opintoala;
     private KoodiModel tutkintonimike; //lukio
     private MonikielinenTekstiModel koulutuksenRakenne;
@@ -80,14 +80,14 @@ public class KoulutuskoodiModel extends MonikielinenTekstiModel {
     /**
      * @return the opintojenLaajuus
      */
-    public KoodiModel getOpintojenLaajuus() {
+    public String getOpintojenLaajuus() {
         return opintojenLaajuus;
     }
 
     /**
      * @param opintojenLaajuus the opintojenLaajuus to set
      */
-    public void setOpintojenLaajuus(KoodiModel opintojenLaajuus) {
+    public void setOpintojenLaajuus(String opintojenLaajuus) {
         this.opintojenLaajuus = opintojenLaajuus;
     }
 

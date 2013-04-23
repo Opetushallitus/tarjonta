@@ -73,7 +73,6 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.YhteyshenkiloViewForm;
 public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditLukioKoulutusPerustiedotFormView.class);
-    private static final String MODEL_NAME_PROPERY = "nimi";
     private static final String PROPERTY_PROMPT_SUFFIX = ".prompt";
     private static final long serialVersionUID = -8964329145514588760L;
     private transient I18NHelper _i18n;
@@ -286,7 +285,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         cbKoulutusTaiTutkinto.setWidth(350, UNITS_PIXELS);
         cbKoulutusTaiTutkinto.setReadOnly(model.isLoaded());
         cbKoulutusTaiTutkinto.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
-        cbKoulutusTaiTutkinto.setItemCaptionPropertyId(MODEL_NAME_PROPERY);
+        cbKoulutusTaiTutkinto.setItemCaptionPropertyId(KoulutusKoodistoModel.MODEL_NAME_PROPERY);
 
         this.koulutuskoodi = UiUtil.textField(null, "", "", true);
         this.koulutuskoodi.setEnabled(false);
@@ -309,7 +308,7 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         cbLukiolinja.setNullSelectionAllowed(false);
         cbLukiolinja.setImmediate(true);
         cbLukiolinja.setItemCaptionMode(ComboBox.ITEM_CAPTION_MODE_PROPERTY);
-        cbLukiolinja.setItemCaptionPropertyId(MODEL_NAME_PROPERY);
+        cbLukiolinja.setItemCaptionPropertyId(KoulutusKoodistoModel.MODEL_NAME_PROPERY);
         cbLukiolinja.setReadOnly(model.isLoaded());
         grid.addComponent(cbLukiolinja);
         grid.newLine();
@@ -466,14 +465,17 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
         labelDataBind(koulutusaste, model.getKoulutusaste());
         labelDataBind(koulutusala, model.getKoulutusala());
         labelDataBind(opintojenLaajuusyksikko, model.getOpintojenLaajuusyksikko());
-        labelDataBind(opintojenLaajuus, model.getOpintojenLaajuus());
+
+        if (model.getOpintojenLaajuus() != null) {
+            opintojenLaajuus.setPropertyDataSource(new NestedMethodProperty(model, "opintojenLaajuus"));
+        }
+
         labelDataBind(tutkintonimike, model.getTutkintonimike());
         labelDataBind(koulutuksenRakenne, model.getKoulutuksenRakenne());
         labelDataBind(tavoitteet, model.getTavoitteet());
         labelDataBind(jatkoopintomahdollisuudet, model.getJatkoopintomahdollisuudet());
         labelDataBind(koulutuslaji, model.getKoulutuslaji());
         labelDataBind(pohjakoulutusvaatimus, model.getPohjakoulutusvaatimus());
-
 
         disableOrEnableComponents(true);
     }
@@ -520,9 +522,13 @@ public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
     }
 
     private void labelDataBind(Label label, KoulutusKoodistoModel dataField) {
+        labelDataBind(label, dataField, KoulutusKoodistoModel.MODEL_NAME_PROPERY);
+    }
+
+    private void labelDataBind(Label label, KoulutusKoodistoModel dataField, String fieldProperty) {
         Preconditions.checkNotNull(label, "Label object cannot be null.");
         if (dataField != null) {
-            label.setPropertyDataSource(new NestedMethodProperty(dataField, MODEL_NAME_PROPERY));
+            label.setPropertyDataSource(new NestedMethodProperty(dataField, fieldProperty));
         }
     }
 }

@@ -308,7 +308,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
         final KoodiModel koulutusala = koodiModel.getKoulutusala();
         final KoodiModel tutkintonimike = model.getKoulutusohjelmaModel().getTutkintonimike();
         final KoodiModel opintoala = koodiModel.getOpintoala();
-        final KoodiModel opintojenLaajuus = koodiModel.getOpintojenLaajuus();
+        final String opintojenLaajuusArvo = koodiModel.getOpintojenLaajuus();
         final KoodiModel opintojenLaajuusyksikko = koodiModel.getOpintojenLaajuusyksikko();
 
         //TODO get org name for current language?
@@ -319,11 +319,13 @@ public class ShowKoulutusViewTab extends CustomComponent {
         layout.add(getTextRow("koulutusala", uiHelper.getKoodiNimi(koulutusala.getKoodistoUri(), locale)));
         layout.add(getTextRow("opintoala", uiHelper.getKoodiNimi(opintoala.getKoodistoUri(), locale)));
         layout.add(getTextRow("tutkintonimike", uiHelper.getKoodiNimi(tutkintonimike.getKoodistoUri(), locale)));
-
-        if (opintojenLaajuus != null) {
-            layout.add(getTextRow("opintojenLaajuus", uiHelper.getKoodiNimi(opintojenLaajuus.getKoodi(), locale) + "/" + uiHelper.getKoodiNimi(opintojenLaajuusyksikko.getKoodistoUri(), locale)));
+        
+        final String opintojenLaajuusYksikko = uiHelper.getKoodiNimi(opintojenLaajuusyksikko.getKoodistoUri(), locale);
+        
+        if (opintojenLaajuusArvo != null) {
+            layout.add(getTextRow("opintojenLaajuus", opintojenLaajuusArvo + "/" +opintojenLaajuusYksikko));
         } else {
-            layout.add(getTextRow("opintojenLaajuus", uiHelper.getKoodiNimi(opintojenLaajuusyksikko.getKoodi(), locale)));
+            layout.add(getTextRow("opintojenLaajuus", opintojenLaajuusYksikko));
         }
 
         layout.add(getTextRow("koulutuslaji", uiHelper.getKoodiNimi(koulutus.getKoulutuslaji().get(0).getUri(), locale)));

@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractGenerator.class);
-    private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+    private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
     private static final String OID_FORMAT = "%09d_";
     protected static final String UPDATED_BY_USER = "DATA UPLOAD";
     protected static final Date UPDATED_DATE = new DateTime(2013, 1, 1, 1, 1).toDate();

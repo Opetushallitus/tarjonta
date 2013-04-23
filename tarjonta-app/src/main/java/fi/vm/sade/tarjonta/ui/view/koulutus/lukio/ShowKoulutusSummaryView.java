@@ -221,7 +221,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 	        .addText("opintoala", modelToStr(model.getOpintoala()))
 	        .addText("tutkintonimike", modelToStr(model.getTutkintonimike()))
 	        .addText("opintojenLaajuusyksikko", modelToStr(model.getOpintojenLaajuusyksikko()))
-	        .addText("opintojenLaajuus", modelToStr(model.getOpintojenLaajuus()))
+	        .addText("opintojenLaajuus", model.getOpintojenLaajuus() != null ? model.getOpintojenLaajuus() : "")
 	        .addText("koulutuslaji", modelToStr(model.getKoulutuslaji()))
 	        .addText("pohjakoulutusvaatimus", modelToStr(model.getPohjakoulutusvaatimus()))
 	        .addXhtml("koulutuksenRakenne", modelToStr(model.getKoulutuksenRakenne()))
