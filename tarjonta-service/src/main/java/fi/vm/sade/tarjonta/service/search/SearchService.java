@@ -107,15 +107,14 @@ public class SearchService {
                 orgOids.add((String)doc.getFieldValue(Hakukohde.ORG_OID));
             }
             
-            QueryResponse orgResponse = searchOrgs(orgOids, hakukohdeSolr);
-            
-            // convert and populate response
-            //orgResponse.getResults(), hakukodeResponse.getResults()
-//            response.getHakukohdeTulos().addAll(
-//                    (Lists.transform(hakukohdeResponse.getResults(),
-//                            hakukohdeConverter)));
-            SolrDocumentToHakukohdeConverter converter = new SolrDocumentToHakukohdeConverter();
-            response = converter.convertSolrToHakukohteetVastaus(hakukohdeResponse.getResults(), orgResponse.getResults());
+            if(orgOids.size()>0) {
+                QueryResponse orgResponse = searchOrgs(orgOids, hakukohdeSolr);
+                SolrDocumentToHakukohdeConverter converter = new SolrDocumentToHakukohdeConverter();
+                response = converter.convertSolrToHakukohteetVastaus(hakukohdeResponse.getResults(), orgResponse.getResults());
+            } else {
+                //empty result
+                response = new HaeHakukohteetVastausTyyppi();
+            }
             
         } catch (SolrServerException e) {
             throw new RuntimeException("haku.error", e);
@@ -127,7 +126,7 @@ public class SearchService {
     private QueryResponse searchOrgs(Set<String> orgOids, SolrServer solr) throws SolrServerException {
         SolrQuery orgQ = new SolrQuery();
         
-        String orgQuery = String.format("%s:(%s)", Organisaatio.OID, Joiner.on(" ").join(orgOids));//"{0}:({1})", Hakukohde.ORG_OID, Joiner.on(" ").join(orgOids));
+        String orgQuery = String.format("%s:(%s)", Organisaatio.OID, Joiner.on(" ").join(orgOids));
         orgQ.setQuery(orgQuery);
 
         QueryResponse orgResponse = solr.query(orgQ);
@@ -195,21 +194,26 @@ public class SearchService {
             
             //now we have the hakukohteet, fetch orgs
             Set<String> orgOids = Sets.newHashSet();
+
             
             for(SolrDocument doc: koulutusResponse.getResults()){
                 orgOids.add((String)doc.getFieldValue(Hakukohde.ORG_OID));
             }
-            QueryResponse orgResponse = searchOrgs(orgOids, hakukohdeSolr);
-            searchOrgs(orgOids, hakukohdeSolr);
-            
-            // convert and populate response
-            //orgResponse.getResults(), koulutusResponse.getResults()
-//            response.getHakukohdeTulos().addAll(
-//                    (Lists.transform(hakukohdeResponse.getResults(),
-//                            hakukohdeConverter)));
-            SolrDocumentToKoulutusmoduuliToteutusConverter converter = new SolrDocumentToKoulutusmoduuliToteutusConverter();
-            
-            response = converter.convertSolrToKoulutuksetVastaus(koulutusResponse.getResults(), orgResponse.getResults());
+
+            if (orgOids.size() > 0) {
+                QueryResponse orgResponse = searchOrgs(orgOids, koulutusSolr);
+                searchOrgs(orgOids, koulutusSolr);
+
+                SolrDocumentToKoulutusmoduuliToteutusConverter converter = new SolrDocumentToKoulutusmoduuliToteutusConverter();
+
+                response = converter
+                        .convertSolrToKoulutuksetVastaus(
+                                koulutusResponse.getResults(),
+                                orgResponse.getResults());
+                
+            } else {
+                response = new HaeKoulutuksetVastausTyyppi();
+            }
 
         } catch (SolrServerException e) {
             throw new RuntimeException("haku.error", e);

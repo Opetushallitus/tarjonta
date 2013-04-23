@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoService;
@@ -167,6 +168,11 @@ public class HakukohdeToSolrInputDocumentFunction implements
         }
         add(orgDoc, OID, org.getOid());
         add(hakukohdeDoc, ORG_OID, org.getOid());
+
+        for(String path: Splitter.on("|").omitEmptyStrings().split(org.getParentOidPath())) {
+            add(hakukohdeDoc, ORG_PATH, path);
+        }
+        
         for (Teksti curTeksti : org.getNimi().getTeksti()) {
                 String kielikoodi = curTeksti.getKieliKoodi();//.equals("fi");
                 if (kielikoodi.equals("fi")) {
