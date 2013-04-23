@@ -48,7 +48,6 @@
   You can read more about SolrCloud mode at http://wiki.apache.org/solr/SolrCloud
   -->
   <cores adminPath="/admin/cores" host="${host:}" hostPort="${jetty.port:}" hostContext="${hostContext:}">
-    <core name="organisaatiot" instanceDir="solr" config="solrconfig-organisaatiot.xml"/>
     <core name="koulutukset" instanceDir="solr" config="solrconfig-koulutukset.xml"/>
     <core name="hakukohteet" instanceDir="solr" config="solrconfig-hakukohteet.xml"/>
   </cores>
