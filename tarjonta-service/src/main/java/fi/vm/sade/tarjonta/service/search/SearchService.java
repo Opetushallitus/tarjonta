@@ -105,6 +105,7 @@ public class SearchService {
             for(SolrDocument doc: hakukohdeResponse.getResults()){
                 orgOids.add((String)doc.getFieldValue(Hakukohde.ORG_OID));
             }
+            
             QueryResponse orgResponse = searchOrgs(orgOids, hakukohdeSolr);
             
             // convert and populate response
@@ -197,6 +198,7 @@ public class SearchService {
                 orgOids.add((String)doc.getFieldValue(Hakukohde.ORG_OID));
             }
             QueryResponse orgResponse = searchOrgs(orgOids, hakukohdeSolr);
+            searchOrgs(orgOids, hakukohdeSolr);
             
             // convert and populate response
             //orgResponse.getResults(), koulutusResponse.getResults()

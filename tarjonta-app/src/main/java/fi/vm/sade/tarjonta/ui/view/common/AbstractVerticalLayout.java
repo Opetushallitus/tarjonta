@@ -35,7 +35,8 @@ public abstract class AbstractVerticalLayout extends VerticalLayout {
     protected boolean _initialized = false;
 
     protected String T(String key) {
-        return getI18n().getMessage(key);
+       String retVal = getI18n().getMessage(key);
+        return retVal;
     }
 
     protected String T(String key, Object... args) {

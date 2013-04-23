@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;/*
 
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
+import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatioSelectDialog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +37,15 @@ public class KoulutusKopiointiDialog extends OrganisaatioSelectDialog {
     @Autowired(required = true)
     private UserContext userContext;
 
+    private KoulutusasteTyyppi koulutusTyyppi;
+
 
 
     private OptionGroup optionGroup;
 
-    public KoulutusKopiointiDialog(String width,String height) {
+    public KoulutusKopiointiDialog(String width,String height, KoulutusasteTyyppi tyyppi) {
         super(width,height);
+        koulutusTyyppi = tyyppi;
 
         setCaption(_i18n.getMessage("dialog.title"));
 
@@ -94,12 +99,22 @@ public class KoulutusKopiointiDialog extends OrganisaatioSelectDialog {
                 String value =  (String)optionGroup.getValue();
                 if (value.equalsIgnoreCase(_i18n.getMessage("optionGroup.kopioidaan"))) {
                 if (selectedOrgs.values() != null && selectedOrgs.values().size() > 0) {
-                    if (presenter.checkOrganisaatiosKoulutukses(selectedOrgs.values())) {
+
+
+                    //if (presenter.checkOrganisaatiosKoulutukses(selectedOrgs.values())) {
+                    switch (koulutusTyyppi) {
+
+                    case AMMATILLINEN_PERUSKOULUTUS:
                     presenter.copyKoulutusToOrganizations(selectedOrgs.values());
-                    getParent().removeWindow(KoulutusKopiointiDialog.this);
-                    } else {
-                      addErrorMessage(_i18n.getMessage("koulutusOrgMismatch"));
+                    break;
+                    case LUKIOKOULUTUS:
+                    presenter.copyLukioKoulutusToOrganization(selectedOrgs.values());
+                    break;
                     }
+                    getParent().removeWindow(KoulutusKopiointiDialog.this);
+                    /*} else {
+                      addErrorMessage(_i18n.getMessage("koulutusOrgMismatch"));
+                    }*/
                 } else {
                     addErrorMessage(_i18n.getMessage("valitseOrganisaatioMessage"));
                 }

@@ -70,7 +70,7 @@ public class HakuToDTOConverter extends AbstractFromDomainConverter<Haku, HakuTy
                  hakukohdeTyyppi.setValintaperustekuvausKoodiUri(hakukohde.getValintaperustekuvausKoodiUri());
                  hakukohdeTyyppi.setAloituspaikat(hakukohde.getAloituspaikatLkm());
                  hakukohdeTyyppi.setValinnanAloituspaikat(hakukohde.getValintojenAloituspaikatLkm());
-                 hakukohdeTyyppi.setOid(from.getOid());
+                 hakukohdeTyyppi.setOid(hakukohde.getOid());
                  hakukohdeTyyppi.setHakukohteenTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.fromValue(hakukohde.getTila().name()));
                  hakukohdeTyyppi.setLiitteidenToimitusPvm(hakukohde.getLiitteidenToimitusPvm());
                  hakukohdeTyyppi.setHakukelpoisuusVaatimukset(hakukohde.getHakukelpoisuusvaatimus());

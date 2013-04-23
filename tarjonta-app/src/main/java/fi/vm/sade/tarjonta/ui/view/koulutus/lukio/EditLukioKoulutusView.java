@@ -41,7 +41,7 @@ public class EditLukioKoulutusView extends AbstractVerticalLayout {
     private TarjontaPresenter presenter;
     private static final String LABEL_FORMAT_NEW = "title.new";
     private static final String LABEL_FORMAT_EDIT = "title.edit";
-    private static final String DEMO_DATA = "tutkintoon johtavaa koulutusta";
+    private static final String LABEL_TITLE = "tutkintoKoulutus";
     private Label title;  //formated title label
     private String koulutusOid;
     private KoulutusActiveTab activeTab = KoulutusActiveTab.PERUSTIEDOT;
@@ -64,13 +64,13 @@ public class EditLukioKoulutusView extends AbstractVerticalLayout {
         if (presenter.getModel().getKoulutusPerustiedotModel().isLoaded()) {
             title = UiUtil.label((AbsoluteLayout) null, T(LABEL_FORMAT_EDIT),
                     LabelStyleEnum.TEXT_RAW,
-                    DEMO_DATA,
+                    LABEL_TITLE,
                     organisaatioName);
         } else {
             title = UiUtil.label((AbsoluteLayout) null,
                     T(LABEL_FORMAT_NEW),
                     LabelStyleEnum.TEXT_RAW,
-                    DEMO_DATA,
+                    LABEL_TITLE,
                     organisaatioName);
         }
         HorizontalLayout hlLabelWrapper = new HorizontalLayout();

@@ -291,7 +291,7 @@ public class TarjontaUIHelper {
                 new KoodistoRelationTraversal(KoodistoURIHelper.KOODISTO_TUTKINTO_URI, true, SuhteenTyyppiType.SISALTYY));
     }
 
-    
+
     /**
      * Spesify koodisto traversal directions.
      */
@@ -318,7 +318,6 @@ public class TarjontaUIHelper {
             return _alakoodi;
         }
     }
-
 
     /**
      * Get koodi's name in given locale. If nimi for given

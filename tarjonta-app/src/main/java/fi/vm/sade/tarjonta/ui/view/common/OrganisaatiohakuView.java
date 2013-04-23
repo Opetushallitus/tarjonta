@@ -51,7 +51,6 @@ import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
-import fi.vm.sade.vaadin.ui.OphAbstractCollapsibleLeft;
 import fi.vm.sade.vaadin.util.UiUtil;
 
 import java.util.ArrayList;
