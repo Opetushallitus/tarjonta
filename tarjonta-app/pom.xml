@@ -196,12 +196,6 @@
         </dependency>
 
         <dependency>
-            <groupId>fi.vm.sade.vaadin</groupId>
-            <artifactId>vaadin-common</artifactId>
-            <version>${generic.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-vaadin-widgetset</artifactId>
             <version>${generic.version}</version>
@@ -221,23 +215,7 @@
         </dependency>
         -->
 
-        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-vaadin-support</artifactId>
-            <version>${generic.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.gwt</groupId>
-                    <artifactId>gwt-user</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
-        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-portlet-support</artifactId>
-            <version>${generic.version}</version>
-        </dependency>
         <!-- ...servlet dependencies end -->
         <dependency>
             <groupId>joda-time</groupId>
