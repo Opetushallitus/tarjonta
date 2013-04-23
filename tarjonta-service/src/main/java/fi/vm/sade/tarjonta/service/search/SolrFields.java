@@ -47,6 +47,7 @@ public class SolrFields {
         protected static final String TILA_EN = "tila_s";
         protected static final String KOULUTUSMODUULI_OID = "koulutusmoduuli_s";
         protected static final String KOULUTUSTYYPPI = "koulutustyyppi_s";
+        protected static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutusvaatimusuri_s";
     }
     
     /**

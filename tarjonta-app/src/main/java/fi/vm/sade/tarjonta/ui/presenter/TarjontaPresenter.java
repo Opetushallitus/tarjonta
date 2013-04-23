@@ -343,13 +343,13 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public CreationDialog<KoulutusOidNameViewModel> createHakukohdeCreationDialogWithKomotoOids(List<String> komotoOids) {
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         kysely.getKoulutusOids().addAll(komotoOids);
-        HaeKoulutuksetVastausTyyppi vastaus = getTarjontaPublicService().haeKoulutukset(kysely);
+        //HaeKoulutuksetVastausTyyppi vastaus = getTarjontaPublicService().haeKoulutukset(kysely);
 
-        List<KoulutusOidNameViewModel> koulutusModel = convertKoulutusToNameOidViewModel(vastaus.getKoulutusTulos());
+        List<KoulutusOidNameViewModel> koulutusModel = convertKoulutusToNameOidViewModel(getSelectedKoulutukset());//vastaus.getKoulutusTulos());
 
 
         CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(koulutusModel, KoulutusOidNameViewModel.class, "HakukohdeCreationDialog.title", "HakukohdeCreationDialog.valitutKoulutuksetOptionGroup");
-        List<String> validationMessages = validateKoulutukses(vastaus.getKoulutusTulos());
+        List<String> validationMessages = validateKoulutukses(getSelectedKoulutukset());//vastaus.getKoulutusTulos());
         if (validationMessages != null && validationMessages.size() > 0) {
             for (String validationMessage : validationMessages) {
                 dialog.addErrorMessage(validationMessage);
@@ -1390,21 +1390,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         return sortedMap;
     }
 
-    private List<String> findAllChilrenOidsByParentOid(String parentOid) {
-        List<String> oids = new ArrayList<String>();
-
-        // Find all descendant organisation oids
-        OrganisaatioSearchOidType sot = new OrganisaatioSearchOidType();
-        sot.setSearchOid(parentOid);
-        OrganisaatioOidListType olt = getOrganisaatioService().findChildrenOidsByOid(sot);
-
-        for (OrganisaatioOidType childOidType : olt.getOrganisaatioOidList()) {
-            oids.add(childOidType.getOrganisaatioOid());
-        }
-
-        return oids;
-    }
-
     public String getOrganisaatioNimiByOid(String organisaatioOid) {
         String vastaus = organisaatioOid;
         try {
@@ -1527,7 +1512,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         // Descendant organisation oids to limit the search
         getModel().getSearchSpec().getOrganisaatioOids().clear();
-        getModel().getSearchSpec().getOrganisaatioOids().addAll(findAllChilrenOidsByParentOid(organisaatioOid));
+        //getModel().getSearchSpec().getOrganisaatioOids().addAll(findAllChilrenOidsByParentOid(organisaatioOid));
         getModel().getSearchSpec().getOrganisaatioOids().add(organisaatioOid);
 
         //Clearing the selected hakukohde and koulutus objects
@@ -1693,11 +1678,14 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         List<String> childOlTyyppis = new ArrayList<String>();
         OrganisaatioSearchCriteriaDTO criteria = new OrganisaatioSearchCriteriaDTO();
 
+        System.out.println("Org oid: " + selectedOrg.getOid());
         criteria.getOidResctrictionList().add(selectedOrg.getOid());
         criteria.setMaxResults(1000);
         List<OrganisaatioPerustietoType> childOrgs = this.getOrganisaatioService().searchBasicOrganisaatios(criteria);
+        System.out.println("child orgs size: " + childOrgs.size());
         if (childOrgs != null) {
             for (OrganisaatioPerustietoType curChild : childOrgs) {
+                System.out.println("orgnaisaatiotyyppi: " + curChild.getTyypit().get(0) + ", oppilaitostyyppi: " + curChild.getOppilaitostyyppi());
                 if (curChild.getTyypit().contains(OrganisaatioTyyppi.OPPILAITOS)
                         && !childOlTyyppis.contains(curChild.getOppilaitostyyppi())) {
                     childOlTyyppis.add(curChild.getOppilaitostyyppi());
