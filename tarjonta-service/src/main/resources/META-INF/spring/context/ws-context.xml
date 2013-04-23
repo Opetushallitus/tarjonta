@@ -17,7 +17,7 @@
 
     <jaxws:client id="organisaatioService"
                    serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
-                   address="${organisaatio.webservice.url:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
+                   address="${organisaatio.webservice.url}"/>
                    
     <jaxws:client id="koodiPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
