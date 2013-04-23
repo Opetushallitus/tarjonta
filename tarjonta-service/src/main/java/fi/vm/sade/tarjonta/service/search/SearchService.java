@@ -170,6 +170,9 @@ public class SearchService {
         final List<String> koulutusOids = kysely.getKoulutusOids();
 
         nimi = escape(nimi);
+        
+        
+        
 
         final SolrQuery q = new SolrQuery("*:*");
         final List<String> queryParts = Lists.newArrayList();
@@ -191,6 +194,11 @@ public class SearchService {
 
         // restrict by org
         addFilterForOrgs(tarjoajaOids, queryParts, q);
+
+        //restrict by koulutus
+        if (koulutusOids.size() > 0) {
+            addFilterForKOulutus(koulutusOids, q);
+        }
 
         //filter out orgs
         filterOutOrgs(q);
@@ -226,6 +234,10 @@ public class SearchService {
         return response;
     }
     
+    private void addFilterForKOulutus(List<String> tarjoajaOids, SolrQuery q) {
+        q.addFilterQuery(String.format("%s:(%s)", Koulutus.OID, Joiner.on(" ").join(tarjoajaOids)));
+    }
+
     private void filterOutOrgs(SolrQuery query){
         query.addFilterQuery("-" + Organisaatio.TYPE + ":ORG");
     }

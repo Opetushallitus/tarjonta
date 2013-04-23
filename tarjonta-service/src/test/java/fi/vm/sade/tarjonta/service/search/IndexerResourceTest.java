@@ -57,6 +57,7 @@ public class IndexerResourceTest {
     private OrganisaatioDTO getOrg(String oid) {
         OrganisaatioDTO dto = new OrganisaatioDTO();
         dto.setOid(oid);
+        dto.setParentOidPath("|010101|");
         MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
         Teksti teksti = new Teksti();
         teksti.setKieliKoodi("fi");
