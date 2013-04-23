@@ -35,7 +35,7 @@ public class EmbeddedSolrServerFactory extends SolrServerFactory {
     @Override
     public SolrServer getSolrServer(String collection) {
         if (server == null) {
-            System.setProperty("solr.solr.home", "src/test/resources/solr");
+            System.setProperty("solr.solr.home", "src/main/resources/solr");
             System.setProperty("solr.data.dir", "target/solr-data");
             CoreContainer.Initializer initializer = new CoreContainer.Initializer();
             CoreContainer coreContainer = initializer.initialize();
