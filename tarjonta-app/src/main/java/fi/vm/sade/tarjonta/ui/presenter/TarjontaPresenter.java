@@ -376,7 +376,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         List<String> koulutusKoodis = new ArrayList<String>();
         List<String> pohjakoulutukses = new ArrayList<String>();
         for (KoulutusTulos koulutusModel : koulutukses) {
-            koulutusKoodis.add(koulutusModel.getKoulutus().getKoulutuskoodi());
+            koulutusKoodis.add(koulutusModel.getKoulutus().getKoulutuskoodi().getUri());
             pohjakoulutukses.add(koulutusModel.getKoulutus().getPohjakoulutusVaatimus());
         }
         if (!doesEqual(koulutusKoodis.toArray(new String[koulutusKoodis.size()]))) {
@@ -565,8 +565,17 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustietoType> orgs) {
+
         getTarjoaja().addSelectedOrganisations(orgs);
         showCopyKoulutusPerustiedotEditView(getModel().getSelectedKoulutusOid());
+        getModel().getSelectedKoulutukset().clear();
+    }
+
+    public void copyLukioKoulutusToOrganization(Collection<OrganisaatioPerustietoType> orgs)  {
+
+
+        lukioPresenter.showCopyKoulutusView(getModel().getSelectedKoulutusOid(),KoulutusActiveTab.PERUSTIEDOT,orgs);
+
         getModel().getSelectedKoulutukset().clear();
     }
 
@@ -644,6 +653,12 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
             showEditKoulutusView(koulutusOid, KoulutusActiveTab.PERUSTIEDOT);
             getModel().getKoulutusPerustiedotModel().setOid(null);
+        }
+    }
+
+    public void showLukioCopyKoulutusPerustiedotView(final String koulutusOid) {
+        if (koulutusOid != null) {
+
         }
     }
 
@@ -730,8 +745,14 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
             //Add selected data to the comboboxes.
             if (koulutus.getKoulutusohjelmaModel() != null && koulutus.getKoulutusohjelmaModel().getKoodistoUri() != null) {
-                koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
+
+                getModel().getKoulutusPerustiedotModel().getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
             }
+            getModel().getKoulutusPerustiedotModel().setKoulutuslaji(koulutus.getKoulutuslaji());
+            getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(koulutus.getPohjakoulutusvaatimus());
+
+            getModel().getKoulutusPerustiedotModel().setSuunniteltuKesto(koulutus.getSuunniteltuKesto());
+            getModel().getKoulutusPerustiedotModel().setSuunniteltuKestoTyyppi(koulutus.getSuunniteltuKestoTyyppi());
             koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());
         } catch (ExceptionMessage ex) {
             LOG.error("Service call failed.", ex);
@@ -1020,7 +1041,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         }
         this.searchResultsView.setResultSizeForHakukohdeTab(getModel().getHakukohteet().size());
         for (HakukohdeTulos curHk : getModel().getHakukohteet()) {
-            String hkKey = this.getOrganisaatioNimiByOid(curHk.getKoulutus().getTarjoaja());
+            String hkKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHk.getHakukohde().getTarjoaja().getNimi()).getValue();
             if (!map.containsKey(hkKey)) {
                 LOG.info("Adding a new key to the map: " + hkKey);
                 List<HakukohdeTulos> hakukohteetM = new ArrayList<HakukohdeTulos>();
@@ -1059,7 +1080,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public void removeSelectedHakukohde() {
         getModel().getSelectedhakukohteet().clear();
         HakukohdeTulos tmp = new HakukohdeTulos();
-        HakukohdeKoosteTyyppi wtf = new HakukohdeKoosteTyyppi();
+        HakukohdeListausTyyppi wtf = new HakukohdeListausTyyppi();
         wtf.setOid(getModel().getHakukohde().getOid());
         tmp.setHakukohde(wtf);
         getModel().getSelectedhakukohteet().add(tmp);
@@ -1076,9 +1097,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     	int removalLaskuri = 0;
         String errorNotes = "";
         for (HakukohdeTulos curHakukohde : getModel().getSelectedhakukohteet()) {
-        	String hakukohdeNimi = uiHelper.getKoodiNimi(curHakukohde.getHakukohde().getNimi());
+        	String hakukohdeNimi = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakukohde.getHakukohde().getNimi()).getValue();
         	try {
-            	final OrganisaatioContext context = OrganisaatioContext.getContext(curHakukohde.getKoulutus().getTarjoaja());
+            	final OrganisaatioContext context = OrganisaatioContext.getContext(curHakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
     			TarjontaTila tila = curHakukohde.getHakukohde().getTila();
     			
     	        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS)) 
@@ -1150,10 +1171,10 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         String errorNotes = "";
         for (KoulutusTulos curKoulutus : getModel().getSelectedKoulutukset()) {
         	String koulutusNimiUri = curKoulutus.getKoulutus().getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS) ?
-            		curKoulutus.getKoulutus().getKoulutuskoodi() 
-            		: curKoulutus.getKoulutus().getKoulutusohjelmakoodi();
+            		curKoulutus.getKoulutus().getKoulutuskoodi().getUri() 
+            		: curKoulutus.getKoulutus().getKoulutusohjelmakoodi().getUri();
         	try {
-            	final OrganisaatioContext context = OrganisaatioContext.getContext(curKoulutus.getKoulutus().getTarjoaja());
+            	final OrganisaatioContext context = OrganisaatioContext.getContext(curKoulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
     			TarjontaTila tila = curKoulutus.getKoulutus().getTila();
     			
     	        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS)) 
@@ -1353,7 +1374,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         this.searchResultsView.setResultSizeForKoulutusTab(getModel().getKoulutukset().size());
         // Creating the datasource model
         for (KoulutusTulos curKoulutus : getModel().getKoulutukset()) {
-            String koulutusKey = this.getOrganisaatioNimiByOid(curKoulutus.getKoulutus().getTarjoaja());
+            String koulutusKey = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(),curKoulutus.getKoulutus().getTarjoaja().getNimi()).getValue();
             if (!map.containsKey(koulutusKey)) {
                 LOG.info("Adding a new key to the map: " + koulutusKey);
                 List<KoulutusTulos> koulutuksetM = new ArrayList<KoulutusTulos>();
@@ -1673,7 +1694,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         OrganisaatioSearchCriteriaDTO criteria = new OrganisaatioSearchCriteriaDTO();
 
         criteria.getOidResctrictionList().add(selectedOrg.getOid());
-        //criteria.setMaxResults(1000);
+        criteria.setMaxResults(1000);
         List<OrganisaatioPerustietoType> childOrgs = this.getOrganisaatioService().searchBasicOrganisaatios(criteria);
         if (childOrgs != null) {
             for (OrganisaatioPerustietoType curChild : childOrgs) {
@@ -2071,7 +2092,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 	public void togglePoistaKoulutusB() {
 		boolean showPoista = false;
 		for (KoulutusTulos curKoul : getSelectedKoulutukset()) {
-			final OrganisaatioContext context = OrganisaatioContext.getContext(curKoul.getKoulutus().getTarjoaja());
+			final OrganisaatioContext context = OrganisaatioContext.getContext(curKoul.getKoulutus().getTarjoaja().getTarjoajaOid());
 			TarjontaTila tila = curKoul.getKoulutus().getTila();
 	        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS)) 
 	        		&& getPermission().userCanDeleteKoulutus(context)) {
@@ -2084,7 +2105,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 	public void togglePoistaHakukohdeB() {
 		boolean showPoista = false;
 		for (HakukohdeTulos curHakukohde : getSelectedhakukohteet()) {
-			final OrganisaatioContext context = OrganisaatioContext.getContext(curHakukohde.getKoulutus().getTarjoaja());
+			final OrganisaatioContext context = OrganisaatioContext.getContext(curHakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
 			TarjontaTila tila = curHakukohde.getHakukohde().getTila();
 	        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS)) 
 	        		&& getPermission().userCanDeleteHakukohde(context)) {

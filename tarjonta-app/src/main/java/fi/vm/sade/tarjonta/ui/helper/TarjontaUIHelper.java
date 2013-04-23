@@ -123,10 +123,10 @@ public class TarjontaUIHelper {
         for (HaeKoulutuksetVastausTyyppi.KoulutusTulos koulutusTulos : vastaus.getKoulutusTulos()) {
             switch (koulutusTulos.getKoulutus().getKoulutustyyppi()) {
                 case AMMATILLINEN_PERUSKOULUTUS:
-                    sourceKoodiUris.add(koulutusTulos.getKoulutus().getKoulutusohjelmakoodi());
+                    sourceKoodiUris.add(koulutusTulos.getKoulutus().getKoulutusohjelmakoodi().getUri());
                     break;
                 case LUKIOKOULUTUS:
-                    sourceKoodiUris.add(koulutusTulos.getKoulutus().getLukiolinjakoodi());
+                    sourceKoodiUris.add(koulutusTulos.getKoulutus().getLukiolinjakoodi().getUri());
                     break;
 
                 case AMMATTIKORKEAKOULUTUS:
@@ -284,8 +284,41 @@ public class TarjontaUIHelper {
      */
     public Collection<KoodiType> getOlRelatedKoulutuskoodit(List<String> olTyyppiUris) {
         LOG.debug("getOlRelatedKoulutuskoodit({})", olTyyppiUris);
-        return getKoodistoRelationsForUris(olTyyppiUris, KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI, KoodistoURIHelper.KOODISTO_TUTKINTO_URI);
+        // return getKoodistoRelationsForUris(olTyyppiUris, KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI, KoodistoURIHelper.KOODISTO_TUTKINTO_URI);
+
+        return getKoodistoRelationsForUris(olTyyppiUris,
+                new KoodistoRelationTraversal(KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI, false, SuhteenTyyppiType.SISALTYY),
+                new KoodistoRelationTraversal(KoodistoURIHelper.KOODISTO_TUTKINTO_URI, true, SuhteenTyyppiType.SISALTYY));
     }
+
+    
+    /**
+     * Spesify koodisto traversal directions.
+     */
+    public class KoodistoRelationTraversal {
+        private String _koodistonNimi = null;
+        private boolean _alakoodi = Boolean.FALSE;
+        private SuhteenTyyppiType _suhteenTyyppi = SuhteenTyyppiType.SISALTYY;
+
+        public KoodistoRelationTraversal(String koodistonNimi, boolean alakoodi, SuhteenTyyppiType suhteenTyyppi) {
+            _koodistonNimi = koodistonNimi;
+            _alakoodi = alakoodi;
+            _suhteenTyyppi = suhteenTyyppi;
+        }
+
+        public String getKoodistonNimi() {
+            return _koodistonNimi;
+        }
+
+        public SuhteenTyyppiType getSuhteenTyyppi() {
+            return _suhteenTyyppi;
+        }
+
+        public boolean getAlakoodi() {
+            return _alakoodi;
+        }
+    }
+
 
     /**
      * Get koodi's name in given locale. If nimi for given
@@ -656,55 +689,29 @@ public class TarjontaUIHelper {
      *   oppilaitosTyyppiUri --> [koulutusAlaKoodiUris] --> [koulutusKoodiUris]
      *
      *   getKoodistoRelations("ammattikoulu#1", ["koulutusAlaKoodistoUri", "koulutusKoodiKoodistoUri"]);
+     *
+     * NOTE: direction is always "alakoodi" == FALSE and "SISÄLTYY"
      * </pre>
      *
      * @param koodiUris the koodiUris to start from
-     * @param koodistoUris the "path" to follow
+     * @param koodistoUris the "path" to follow (assumed: koodiUri + alaKoodi=false, relationType=SISALTYY)
      * @return
      */
     public Collection<KoodiType> getKoodistoRelationsForUris(Collection<String> koodiUris, String... koodistoUris) {
-        Set<KoodiType> result = new HashSet<KoodiType>();
+        LOG.info("getKoodistoRelationsForUris({}, {})", koodiUris, koodistoUris);
 
-        // Loop over avery koodi and collect results
-        for (String koodiUri : koodiUris) {
-            result.addAll(getKoodistoRelations(koodiUri, koodistoUris));
+        KoodistoRelationTraversal relations[] = new KoodistoRelationTraversal[koodistoUris.length];
+        for (int i = 0; i < koodistoUris.length; i++) {
+            relations[i] = new KoodistoRelationTraversal(koodistoUris[i], false, SuhteenTyyppiType.SISALTYY);
         }
 
-        return result;
+        return getKoodistoRelationsForUris(koodiUris, relations);
     }
-
-
-    /**
-     * Extract relations for given KoodiType's and koodisto path.
-     * @param koodis
-     * @param koodistoUris
-     * @return
-     */
-    public Collection<KoodiType> getKoodistoRelationsForKoodiTypes(Collection<KoodiType> koodis, String... koodistoUris) {
-        Set<KoodiType> result = new HashSet<KoodiType>();
-
-        for (KoodiType koodiType : koodis) {
-            result.addAll(getKoodistoRelations(koodiType, koodistoUris));
-        }
-
-        return result;
-    }
-
-    /**
-     * Extract relations for given koodisto path and KoodiType.
-     *
-     * @param koodi
-     * @param koodistoUris
-     * @return
-     */
-    public Collection<KoodiType> getKoodistoRelations(KoodiType koodi, String... koodistoUris) {
-        String koodiUri = createUriWithVersion(koodi);
-        return getKoodistoRelations(koodiUri, koodistoUris);
-    }
-
 
     /**
      * Extract transitive koodisto relations with a path and koodi given.
+     *
+     * NOTE: direction is always "alakoodi" == FALSE and "SISÄLTYY"
      *
      * <nl>
      * <li>If koodisto uris == null or epty -> empty result</li>
@@ -720,35 +727,76 @@ public class TarjontaUIHelper {
     public Collection<KoodiType> getKoodistoRelations(String koodiUri, String... koodistoUris) {
         LOG.info("getKoodistoRelations({}, {})", koodiUri, koodistoUris);
 
+        KoodistoRelationTraversal relations[] = new KoodistoRelationTraversal[koodistoUris.length];
+        for (int i = 0; i < koodistoUris.length; i++) {
+            relations[i] = new KoodistoRelationTraversal(koodistoUris[i], false, SuhteenTyyppiType.SISALTYY);
+        }
+
+        return getKoodistoRelations(koodiUri, relations);
+    }
+
+
+    /**
+     * Use this when kooditsto relation type or direction of relation matters.
+     *
+     * @param koodiUris koodis to start from
+     * @param koodistoRelations relations to traverse
+     * @return
+     */
+    public Collection<KoodiType> getKoodistoRelationsForUris(Collection<String> koodiUris, KoodistoRelationTraversal... koodistoRelations) {
+        LOG.info("getKoodistoRelationsForUris({}, {})", koodiUris, koodistoRelations);
+
+        Set<KoodiType> result = new HashSet<KoodiType>();
+
+        // Loop over avery koodi and collect results
+        for (String koodiUri : koodiUris) {
+            result.addAll(getKoodistoRelations(koodiUri, koodistoRelations));
+        }
+
+        return result;
+    }
+
+
+    /**
+     * Relations to desired koodisto, direction etc.
+     *
+     * Calls this method itself recursively.
+     *
+     * @param koodiUri source koodi
+     * @param koodistoRelations relations definitions
+     * @return
+     */
+    public Collection<KoodiType> getKoodistoRelations(String koodiUri, KoodistoRelationTraversal... koodistoRelations) {
+        LOG.info("getKoodistoRelations({}, {})", koodiUri, koodistoRelations);
+
         Collection<KoodiType> result = new HashSet<KoodiType>();
 
-        if (koodistoUris == null || koodistoUris.length == 0) {
+        if (koodistoRelations == null || koodistoRelations.length == 0) {
             LOG.warn("empty target koodisto? return empty result.");
             return result;
         }
 
-        // Current target koodisto (relations filtered with this one)
-        String koodistoUri = koodistoUris[0];
+        // Get the current target relation
+        KoodistoRelationTraversal koodistoRelation = koodistoRelations[0];
 
-        // Fetch relations to target koodisto
-        // TODO getKoodistoRelations - alakoodi false? sisätyy?
-        Collection<KoodiType> nextStepResult = getKoodistoRelations(koodiUri, koodistoUri, false, SuhteenTyyppiType.SISALTYY);
+        // Get the relations
+        Collection<KoodiType> nextStepResult =
+                getKoodistoRelations(koodiUri, koodistoRelation.getKoodistonNimi(), koodistoRelation.getAlakoodi(), koodistoRelation.getSuhteenTyyppi());
 
-        // Final step, return the actual results
-        if (koodistoUris.length == 1) {
+        if (koodistoRelations.length == 1) {
+            // Final step! Return the result
             result = nextStepResult;
         }
 
-        // Nonfinal step, use intermediate results to loop and fetch next step recursively
-        if (koodistoUris.length > 1) {
-            // Extract next koodistoUris (skip/exclude the current)
-            String[] nextKoodistoUris = Arrays.copyOfRange(koodistoUris, 1, koodistoUris.length);
+        if (koodistoRelations.length > 1) {
+            // Non final step, advance to next relation and call recurively
+            KoodistoRelationTraversal nextRelations[] = Arrays.copyOfRange(koodistoRelations, 1, koodistoRelations.length);
 
             Collection<KoodiType> tmp = new HashSet<KoodiType>();
 
             // Get the results for next step for each koodi
             for (KoodiType koodiType : nextStepResult) {
-                tmp.addAll(getKoodistoRelations(koodiType, nextKoodistoUris));
+                tmp.addAll(getKoodistoRelations(createUriWithVersion(koodiType), nextRelations));
             }
 
             return tmp;
@@ -769,7 +817,7 @@ public class TarjontaUIHelper {
      * @return
      */
     public Collection<KoodiType> getKoodistoRelations(String koodiUri, String koodistoUri, boolean alaKoodi, SuhteenTyyppiType suhdeTyyppi) {
-        LOG.info("getKoodistoRelations({}, {}, {}, {})", new Object[] {koodiUri, koodistoUri, alaKoodi, suhdeTyyppi});
+        LOG.info("getKoodistoRelations(koodiUri={}, koodistoUri={}, alaKoodi={}, suhdeTyyppi={})", new Object[] {koodiUri, koodistoUri, alaKoodi, suhdeTyyppi});
 
         Set<KoodiType> result = new HashSet<KoodiType>();
 
@@ -781,7 +829,7 @@ public class TarjontaUIHelper {
         KoodiUriAndVersioType koodiUriAndVersioType = getKoodiUriAndVersioByKoodiUri(koodiUri);
 
         // Get relations and filter only wanted koodisto koodis
-        List<KoodiType> resultKoodis = _koodiService.listKoodiByRelation(koodiUriAndVersioType, alaKoodi, suhdeTyyppi); //SuhteenTyyppiType.SISALTYY);
+        List<KoodiType> resultKoodis = _koodiService.listKoodiByRelation(koodiUriAndVersioType, alaKoodi, suhdeTyyppi);
         for (KoodiType koodiType : resultKoodis) {
             if (koodistoUri == null || koodiType.getKoodisto().getKoodistoUri().equals(koodistoUri)) {
                 result.add(koodiType);

@@ -37,7 +37,7 @@ public class SolrDocumentToKoulutusPerustietoTypeFunction implements
         final HaeKoulutuksetVastausTyyppi.KoulutusTulos result = new HaeKoulutuksetVastausTyyppi.KoulutusTulos();
         
         final KoulutusKoosteTyyppi kooste = new KoulutusKoosteTyyppi();
-        result.setKoulutus(kooste);
+        //result.setKoulutus(kooste);
         
         //TODO populate the values...
         

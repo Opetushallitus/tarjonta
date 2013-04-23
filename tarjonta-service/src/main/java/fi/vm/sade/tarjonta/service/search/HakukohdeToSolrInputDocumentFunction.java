@@ -15,9 +15,13 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +37,8 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
@@ -44,16 +50,16 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
 @Configurable
 public class HakukohdeToSolrInputDocumentFunction implements
         Function<Hakukohde, List<SolrInputDocument>> {
-	
-	@Autowired
-	 private OrganisaatioService organisaatioService;
-	 
-	 @Autowired
-	 private KoodistoService koodistoPublicService;
-	 
-	 @Autowired
-	 private KoodiService koodiService;
-	
+
+    @Autowired
+    private OrganisaatioService organisaatioService;
+
+    @Autowired
+    private KoodistoService koodistoPublicService;
+
+    @Autowired
+    private KoodiService koodiService;
+
     @Override
     public List<SolrInputDocument> apply(final Hakukohde hakukohde) {
         Preconditions.checkNotNull(hakukohde);
@@ -67,10 +73,16 @@ public class HakukohdeToSolrInputDocumentFunction implements
         add(hakukohdeDoc, ALOITUSPAIKAT, hakukohde.getAloituspaikatLkm());
         add(hakukohdeDoc, TILA, hakukohde.getTila());
         addNimitiedot(hakukohdeDoc, hakukohde.getHakukohdeNimi());
+        addHakuajat(hakukohdeDoc, hakukohde.getHaku());
         docs.add(hakukohdeDoc);
         return docs;
     }
     
+    private void addHakuajat(SolrInputDocument hakukohdeDoc, Haku haku) {
+        add(hakukohdeDoc, HAUN_ALKAMISPVM, getStartDate(haku.getHakuaikas()));
+        add(hakukohdeDoc, HAUN_PAATTYMISPVM, getEndDate(haku.getHakuaikas()));
+    }
+
     private void addNimitiedot(SolrInputDocument doc,
             String hakukohdeNimi) {
         if (hakukohdeNimi == null) {
@@ -85,6 +97,7 @@ public class HakukohdeToSolrInputDocumentFunction implements
             add(doc, HAKUKOHTEEN_NIMI_SV, metadata.getNimi());
             metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
             add(doc, HAKUKOHTEEN_NIMI_EN, metadata.getNimi());
+            add(doc, HAKUKOHTEEN_NIMI_URI, hakukohdeNimi);
         }
         
     }
@@ -103,6 +116,7 @@ public class HakukohdeToSolrInputDocumentFunction implements
             add(doc, HAKUTAPA_SV, metadata.getNimi());
             metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
             add(doc, HAKUTAPA_EN, metadata.getNimi());
+            add(doc, HAKUTAPA_URI, hakutapaUri);
         }
         
     }
@@ -164,5 +178,37 @@ public class HakukohdeToSolrInputDocumentFunction implements
                 }
         }
         docs.add(orgDoc);
+    }
+    
+    private String getStartDate(Set<Hakuaika> hakuaikas) {
+        Date startDate = null;
+        for (Hakuaika aika : hakuaikas) {
+            if (startDate == null) {
+                startDate = aika.getAlkamisPvm();
+            } else if (aika.getAlkamisPvm().before(startDate)) {
+                startDate = aika.getAlkamisPvm();
+            }
+        }
+        if (startDate != null) {
+            DateFormat df = new SimpleDateFormat("MM.dd.yyyy HH:mm:ss");
+            return df.format(startDate);
+        }
+        return "";
+    }
+
+    private String getEndDate(Set<Hakuaika> hakuaikas) {
+        Date endDate = null;
+        for (Hakuaika aika : hakuaikas) {
+            if (endDate == null) {
+                endDate = aika.getPaattymisPvm();
+            } else if (aika.getPaattymisPvm().after(endDate)) {
+                endDate = aika.getPaattymisPvm();
+            }
+        }
+        if (endDate != null) {
+            DateFormat df = new SimpleDateFormat("MM.dd.yyyy HH:mm:ss");
+            return df.format(endDate);
+        }
+        return "";
     }
 }

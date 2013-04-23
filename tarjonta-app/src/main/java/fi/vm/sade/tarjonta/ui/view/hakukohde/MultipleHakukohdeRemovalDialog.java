@@ -26,7 +26,10 @@ import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -96,7 +99,7 @@ public class MultipleHakukohdeRemovalDialog extends RemovalConfirmationDialog {
         //Set all selected as default
         for (Object obj: hakukohdeOptions.getItemIds()) {
         	HakukohdeTulos curHakuk = (HakukohdeTulos)obj;
-        	String nimi = getKoodiNimi(curHakuk.getHakukohde().getNimi());
+        	String nimi = TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakuk.getHakukohde().getNimi()).getValue();
         	hakukohdeOptions.setItemCaption(obj, nimi);
             hakukohdeOptions.select(obj);
         }
@@ -115,19 +118,5 @@ public class MultipleHakukohdeRemovalDialog extends RemovalConfirmationDialog {
     		presenter.getSelectedhakukohteet().addAll(selectedHakukohdeOptions);
     		presenter.removeSelectedHakukohteet();
     	}
-    }
-    
-    /**
-     * Returns the name of the koodi based on koodisto uri given.
-     *
-     * @param hakukohdeUri the koodisto uri given.
-     * @return
-     */
-    private String getKoodiNimi(String koodiUri) {
-        String nimi = presenter.getUiHelper().getKoodiNimi(koodiUri, I18N.getLocale());
-        if ("".equals(nimi)) {
-            nimi = koodiUri;
-        }
-        return nimi;
     }
 }

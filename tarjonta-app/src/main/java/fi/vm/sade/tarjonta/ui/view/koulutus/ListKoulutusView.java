@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 import java.util.*;
 
 
+import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
@@ -47,6 +48,7 @@ import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
@@ -55,6 +57,8 @@ import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import fi.vm.sade.generic.ui.feature.UserFeature;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
@@ -107,6 +111,8 @@ public class ListKoulutusView extends VerticalLayout {
     private Button btnSiirraJaKopioi;
     private transient I18NHelper i18n = new I18NHelper(this);
     private boolean isAttached = false;
+    @Autowired(required = true)
+    private transient TarjontaUIHelper uiHelper;
     
     public ListKoulutusView() {
         setWidth(100, UNITS_PERCENTAGE);
@@ -297,18 +303,23 @@ public class ListKoulutusView extends VerticalLayout {
 
             @Override
             public void buttonClick(ClickEvent clickEvent) {
-                List<String> koulutusOids = presenter.getSelectedKoulutusOids();
-                
-                if (koulutusOids.size() == 1) {
-                    presenter.getModel().setSelectedKoulutusOid(koulutusOids.get(0));
-                    
-                    
-                    KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px", "500px");
-                    
-                    getWindow().addWindow(kopiointiDialog);
-                } else {
-                    showNoKoulutusDialog("vainYksiKoulutusViesti");
+
+               List<KoulutusTulos> valitutKoulutukset = presenter.getSelectedKoulutukset();
+
+                if (valitutKoulutukset != null && valitutKoulutukset.size() > 0 ) {
+                    if (valitutKoulutukset.size() > 1) {
+                        getWindow().showNotification(i18n.getMessage("yksiKopioitavaKoulutus"));
+                    } else {
+                           presenter.getModel().setSelectedKoulutusOid(valitutKoulutukset.get(0).getKoulutus().getKomotoOid());
+                                KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px", "500px",valitutKoulutukset.get(0).getKoulutus().getKoulutustyyppi());
+
+                                getWindow().addWindow(kopiointiDialog);
+
+                    }
+
                 }
+
+
             }
         });
         
@@ -342,7 +353,7 @@ public class ListKoulutusView extends VerticalLayout {
                     } else {
                         presenter.showHakukohdeEditView(null, null, presenter.getSelectedKoulutusOidNameViewModels(),null);
                         presenter.getTarjoaja().setSelectedResultRowOrganisationOid(
-                        		presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getTarjoaja());
+                        		presenter.getModel().getSelectedKoulutukset().get(0).getKoulutus().getTarjoaja().getTarjoajaOid());
                     }
                 }
             }
@@ -527,15 +538,17 @@ public class ListKoulutusView extends VerticalLayout {
     /**
      * Returns the name of the hakukohde based on koodisto uri given.
      *
-     * @param hakukohdeUri the koodisto uri given.
+     * @param koodistoKoodiTyyppi the koodisto uri given.
      * @return
      */
-    private String getKoodiNimi(String hakukohdeUri) {
-        String nimi = presenter.getUiHelper().getKoodiNimi(hakukohdeUri, I18N.getLocale());
-        if ("".equals(nimi)) {
-            nimi = hakukohdeUri;
+    private String getKoodiNimi(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
+        String nimi = null;//presenter.getUiHelper().getKoodiNimi(koodistoKoodiTyyppi, I18N.getLocale());
+        for (Nimi curNimi :koodistoKoodiTyyppi.getNimi()) {
+            if (curNimi.getKieli().equals(I18N.getLocale().getLanguage())) {
+                return curNimi.getValue();
+            }
         }
-        return nimi;
+        return koodistoKoodiTyyppi.getNimi().get(0).getValue();
     }
 
     /**

@@ -123,9 +123,9 @@
                         minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="Hakukohde" type="tarjonta:HakukohdeKoosteTyyppi"/>
-                        <xs:element name="Haku" type="tarjonta:HakuKoosteTyyppi"/>
-                        <xs:element name="Koulutus" type="tarjonta:KoulutusKoosteTyyppi"/>
+                        <xs:element name="Hakukohde" type="tarjonta:HakukohdeListausTyyppi"/>
+                        <!--<xs:element name="Haku" type="tarjonta:HakuKoosteTyyppi"/>
+                        <xs:element name="Koulutus" type="tarjonta:KoulutusKoosteTyyppi"/>-->
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -158,7 +158,7 @@
                         minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="Koulutus" type="tarjonta:KoulutusKoosteTyyppi"/>
+                        <xs:element name="Koulutus" type="tarjonta:KoulutusListausTyyppi"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>

@@ -27,6 +27,8 @@ import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.RemovalConfirmationDialog;
@@ -129,11 +131,13 @@ public class MultipleKoulutusRemovalDialog extends RemovalConfirmationDialog {
      * @param hakukohdeUri the koodisto uri given.
      * @return
      */
-    private String getKoodiNimi(String koodiUri) {
-        String nimi = presenter.getUiHelper().getKoodiNimi(koodiUri, I18N.getLocale());
-        if ("".equals(nimi)) {
-            nimi = koodiUri;
+    private String getKoodiNimi(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
+        String nimi = null;//presenter.getUiHelper().getKoodiNimi(koodistoKoodiTyyppi, I18N.getLocale());
+        for (Nimi curNimi :koodistoKoodiTyyppi.getNimi()) {
+            if (curNimi.getKieli().equals(I18N.getLocale().getLanguage())) {
+                return curNimi.getValue();
+            }
         }
-        return nimi;
+        return koodistoKoodiTyyppi.getNimi().get(0).getValue();
     }
 }

@@ -85,9 +85,8 @@ public class HakukohdeResultRow extends HorizontalLayout {
         this.hakukohde = hakukohde;
         Date today = new Date();
         if (hakukohde != null
-                && hakukohde.getHaku() != null
-                && hakukohde.getHaku().getHakuAlkamisPvm() != null
-                && hakukohde.getHaku().getHakuAlkamisPvm().before(today)) {
+                && hakukohde.getHakukohde().getHakuAlkamisPvm() != null
+                && hakukohde.getHakukohde().getHakuAlkamisPvm().before(today)) {
             hakuStarted = true;
         }
 
@@ -110,7 +109,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
     OphRowMenuBar rowMenuBar;
 
     private OphRowMenuBar newMenuBar() {
-        final OrganisaatioContext context = OrganisaatioContext.getContext(this.hakukohde.getKoulutus().getTarjoaja());
+        final OrganisaatioContext context = OrganisaatioContext.getContext(this.hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
 
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
         final TarjontaTila tila = hakukohde.getHakukohde().getTila();
@@ -285,7 +284,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
     }
 
     private void openHakukohdeView() {
-        tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getKoulutus().getTarjoaja());
+        tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
 
 
         tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);

@@ -207,6 +207,7 @@ public class TarjontaPublicServiceTest {
 
     }
 
+    /*
     @Test
     public void testEtsiHakukohteet() {
 
@@ -250,7 +251,7 @@ public class TarjontaPublicServiceTest {
         assertEquals(fi.vm.sade.tarjonta.service.types.TarjontaTila.VALMIS, hakukohde.getTila());
         assertEquals(ORGANISAATIO_B, koulutus.getTarjoaja());
 
-    }
+    }*/
 
     @Test
     public void testPisterajat()  {
@@ -281,6 +282,7 @@ public class TarjontaPublicServiceTest {
 
     }
 
+    /*
     @Test
     public void testEtsiKoulutukset() {
 
@@ -315,7 +317,7 @@ public class TarjontaPublicServiceTest {
         koulutus = rivi.getKoulutus();
         assertEquals(ORGANISAATIO_B, koulutus.getTarjoaja());
 
-    }
+    }*/
 
     @Test
     public void testEtsiKoulutusmoduulit() {

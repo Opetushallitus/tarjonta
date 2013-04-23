@@ -80,11 +80,34 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
         addKoulutusohjelmaTiedot(komotoDoc, komoto.getKoulutusmoduuli().getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value()) 
                 ? komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi() : komoto.getKoulutusmoduuli().getLukiolinja());
         addKoulutuskoodiTiedot(komotoDoc, komoto.getKoulutusmoduuli().getKoulutusKoodi());
+        addTutkintonimikeTiedot(komotoDoc, komoto.getKoulutusmoduuli().getTutkintonimike());
         add(komotoDoc, KAUSI_KOODI, IndexingUtils.parseKausi(komoto.getKoulutuksenAlkamisPvm()));
         add(komotoDoc, VUOSI_KOODI, IndexingUtils.parseYear(komoto.getKoulutuksenAlkamisPvm()));
         add(komotoDoc, TILA_EN, komoto.getTila());
+        add(komotoDoc, KOULUTUSMODUULI_OID, komoto.getKoulutusmoduuli().getOid());
         docs.add(komotoDoc);
         return docs;
+    }
+
+
+
+    private void addTutkintonimikeTiedot(SolrInputDocument doc,
+            String tutkintonimike) {
+        if (tutkintonimike == null) {
+            return;
+        }
+
+        KoodiType koodi = IndexingUtils.getKoodiByUriWithVersion(tutkintonimike, koodiService); 
+
+        if (koodi != null) {
+            KoodiMetadataType metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+            add(doc, TUTKINTONIMIKE_FI, metadata.getNimi());
+            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+            add(doc, TUTKINTONIMIKE_SV, metadata.getNimi());
+            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+            add(doc, TUTKINTONIMIKE_EN, metadata.getNimi());
+            add(doc, TUTKINTONIMIKE_URI, tutkintonimike);
+        }
     }
 
 
@@ -104,6 +127,7 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
             add(doc, KOULUTUSKOODI_SV, metadata.getNimi());
             metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
             add(doc, KOULUTUSKOODI_EN, metadata.getNimi());
+            add(doc, KOULUTUSKOODI_URI, koulutusKoodi);
         }
     }
 
@@ -123,6 +147,7 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
             add(doc, KOULUTUSOHJELMA_SV, metadata.getNimi());
             metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
             add(doc, KOULUTUSOHJELMA_EN, metadata.getNimi());
+            add(doc, KOULUTUSOHJELMA_URI, koulutusohjelmaKoodi);
         }
     }
 

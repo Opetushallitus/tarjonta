@@ -27,6 +27,7 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeListausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
@@ -223,7 +224,7 @@ public class ValintaPresenter implements CommonPresenter<ValintaModel> {
                 HaeHakukohteetVastausTyyppi haeHakukohteet = tarjontaPublicService.haeHakukohteet(kysely);
                 for (HaeHakukohteetVastausTyyppi.HakukohdeTulos result : haeHakukohteet.getHakukohdeTulos()) {
 
-                    HakukohdeKoosteTyyppi hakukohde = result.getHakukohde();
+                    HakukohdeListausTyyppi hakukohde = result.getHakukohde();
 
                     if (hakukohde != null && hakukohde.getOid() != null) {
                         LueHakukohdeKyselyTyyppi lueHakukohdeKyselyTyyppi = new LueHakukohdeKyselyTyyppi();

@@ -38,7 +38,7 @@ public class SolrDocumentToHakukohdetulosFunction implements
         final HakukohdeTulos result = new HakukohdeTulos();
         
         final KoulutusKoosteTyyppi kooste = new KoulutusKoosteTyyppi();
-        result.setKoulutus(kooste);
+        //result.setKoulutus(kooste);
         
         //TODO populate the values...
         

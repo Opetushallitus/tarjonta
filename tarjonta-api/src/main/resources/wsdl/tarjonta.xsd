@@ -657,6 +657,22 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:complexType name="HakukohdeListausTyyppi">
+        <xs:sequence>
+            <xs:element name="Oid" type="xs:string"></xs:element>
+            <xs:element name="Nimi" type="tns:MonikielinenTekstiTyyppi"></xs:element>
+            <xs:element name="KoodistoNimi" type="xs:string"></xs:element>
+            <xs:element name="Tila" type="tns:TarjontaTila"></xs:element>
+            <xs:element name="Aloituspaikat" type="xs:string"></xs:element>
+            <xs:element name="koulutuksenAlkamiskausiUri" type="xs:string"></xs:element>
+            <xs:element name="koulutuksenAlkamisvuosi" type="xs:string"></xs:element>
+            <xs:element name="HakutapaKoodi" type="tns:KoodistoKoodiTyyppi"></xs:element>
+            <xs:element name="Tarjoaja" type="tns:TarjoajaTyyppi"></xs:element>
+            <xs:element name="hakuAlkamisPvm" type="xs:dateTime"></xs:element>
+            <xs:element name="hakuPaattymisPvm" type="xs:dateTime"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
 
     <xs:complexType name="HakukohdeKoosteTyyppi">
         <xs:sequence>
@@ -679,6 +695,31 @@
             <xs:element name="hakuPaattymisPvm" type="xs:dateTime"></xs:element>
             <xs:element name="koulutuksenAlkamiskausiUri" type="xs:string"></xs:element>
             <xs:element name="koulutuksenAlkamisvuosi" type="xs:string"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="TarjoajaTyyppi">
+        <xs:sequence>
+            <xs:element name="tarjoajaOid" type="xs:string"></xs:element>
+            <xs:element name="Nimi" type="tns:MonikielinenTekstiTyyppi"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="KoulutusListausTyyppi">
+        <xs:sequence>
+            <xs:element name="Nimi" type="tns:MonikielinenTekstiTyyppi" minOccurs="1" maxOccurs="1"></xs:element>
+            <xs:element name="Koulutusmoduuli" type="xs:string"></xs:element>
+            <xs:element name="KoulutusmoduuliToteutus" type="xs:string"></xs:element>
+            <xs:element name="Tarjoaja" type="tns:TarjoajaTyyppi"></xs:element>
+            <xs:element name="Tila" type="tns:TarjontaTila"></xs:element>
+            <xs:element name="Koulutuskoodi" type="tns:KoodistoKoodiTyyppi"></xs:element>
+            <xs:element name="Koulutusohjelmakoodi" type="tns:KoodistoKoodiTyyppi"></xs:element>
+            <xs:element name="Tutkintonimike" type="tns:KoodistoKoodiTyyppi"></xs:element>
+            <xs:element name="ajankohta" type="xs:string"></xs:element>
+            <xs:element name="komotoOid" type="xs:string"></xs:element>
+            <xs:element name="PohjakoulutusVaatimus" type="xs:string"></xs:element>
+            <xs:element name="Koulutustyyppi" type="tns:KoulutusasteTyyppi" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="Lukiolinjakoodi" type="tns:KoodistoKoodiTyyppi"></xs:element>
         </xs:sequence>
     </xs:complexType>
 

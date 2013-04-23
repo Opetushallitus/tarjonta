@@ -42,6 +42,8 @@ import com.vaadin.ui.Window.Notification;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.RequiredRole;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -220,7 +222,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     }
 
     private Object getHakutapa(HakukohdeTulos curHakukohde) {
-        return getKoodiNimi(curHakukohde.getHaku().getHakutapa());
+        return getKoodiNimi(curHakukohde.getHakukohde().getHakutapaKoodi());
     }
 
     private String buildOrganisaatioCaption(Map.Entry<String, List<HakukohdeTulos>> e) {
@@ -228,7 +230,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     }
 
     private String getAjankohta(HakukohdeTulos curHakukohde) {
-        return getKoodiNimi(curHakukohde.getHaku().getKoulutuksenAlkamiskausiUri()) + " " + curHakukohde.getHaku().getKoulutuksenAlkamisvuosi();
+        return curHakukohde.getHakukohde().getKoulutuksenAlkamiskausiUri() + " " + curHakukohde.getHakukohde().getKoulutuksenAlkamisvuosi();
     }
 
     private String getTilaStr(HakukohdeTulos curHakukohde) {
@@ -236,7 +238,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     }
 
     private String getHakukohdeNimi(HakukohdeTulos curHakukohde) {
-        return getKoodiNimi(curHakukohde.getHakukohde().getNimi());
+        return TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curHakukohde.getHakukohde().getNimi()).getValue();
     }
 
     /**
@@ -245,12 +247,14 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      * @param koodiUri the koodisto uri given.
      * @return
      */
-    private String getKoodiNimi(String koodiUri) {
-        String nimi = _tarjontaUIHelper.getKoodiNimi(koodiUri, I18N.getLocale());
-        if ("".equals(nimi)) {
-            nimi = koodiUri;
+    private String getKoodiNimi(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
+        String nimi = null;//presenter.getUiHelper().getKoodiNimi(koodistoKoodiTyyppi, I18N.getLocale());
+        for (Nimi curNimi :koodistoKoodiTyyppi.getNimi()) {
+            if (curNimi.getKieli().equals(I18N.getLocale().getLanguage())) {
+                return curNimi.getValue();
+            }
         }
-        return nimi;
+        return koodistoKoodiTyyppi.getNimi().get(0).getValue();
     }
 
     /**
@@ -351,8 +355,9 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         }
     }
 
+    //TODO this has to be reimplemented now that solr does the searching!!!
     private void addKoulutuksetToTree(Object item, HakukohdeViewModel hakukohde, HierarchicalContainer hc) {
-        hc.setChildrenAllowed(item, true);
+        /*hc.setChildrenAllowed(item, true);
         for (String komotoOid : hakukohde.getKomotoOids()) {
             HakukohdeResultRow rowStyle = new HakukohdeResultRow();
             hc.addItem(komotoOid);
@@ -366,7 +371,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             hc.getContainerProperty(komotoOid, COLUMN_A).setValue(rowStyle.format(koulutusNimi, false));
             hc.setChildrenAllowed(komotoOid, false);
         }
-        this.categoryTree.setCollapsed(item, false);
+        this.categoryTree.setCollapsed(item, false);*/
     }
 
     @Override

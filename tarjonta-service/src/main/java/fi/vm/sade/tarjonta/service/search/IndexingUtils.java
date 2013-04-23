@@ -15,10 +15,20 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.OID;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_NAME_EN;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_NAME_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_NAME_SV;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA_EN;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
@@ -27,6 +37,12 @@ import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjoajaTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 
 /**
  * 
@@ -118,6 +134,82 @@ public class IndexingUtils {
         Calendar cal = Calendar.getInstance();
         cal.setTime(koulutuksenAlkamisPvm);
         return "" + cal.get(Calendar.YEAR);
+    }
+    
+    public static KoodistoKoodiTyyppi createKoodiTyyppi(String koodiUri,
+            String koodiFi, String koodiSv,
+            String koodiEn, SolrDocument koulutusDoc) {
+        KoodistoKoodiTyyppi koodiTyyppi = new KoodistoKoodiTyyppi();
+        koodiTyyppi.setUri("" + koulutusDoc.getFieldValue(koodiUri));
+        Nimi nimiFi = new Nimi();
+        nimiFi.setKieli("fi");
+        nimiFi.setValue("" + koulutusDoc.getFieldValue(koodiFi));
+        koodiTyyppi.getNimi().add(nimiFi);
+        Nimi nimiSv = new Nimi();
+        nimiSv.setKieli("sv");
+        nimiSv.setValue("" + koulutusDoc.getFieldValue(koodiSv));
+        koodiTyyppi.getNimi().add(nimiSv);
+        Nimi nimiEn = new Nimi();
+        nimiEn.setKieli("en");
+        nimiEn.setValue("" + koulutusDoc.getFieldValue(koodiEn));
+        koodiTyyppi.getNimi().add(nimiEn);
+        return koodiTyyppi;
+    }
+    
+    public static TarjontaTila createTila(SolrDocument doc) {
+        String tila = "" + doc.getFieldValue(TILA_EN);
+        if (tila.isEmpty()) {
+            return null;
+        }
+        if (tila.equals(TarjontaTila.JULKAISTU.name())) {
+            return TarjontaTila.JULKAISTU;
+        }
+        if (tila.equals(TarjontaTila.LUONNOS.name())) {
+            return TarjontaTila.LUONNOS;
+        }
+        if (tila.equals(TarjontaTila.VALMIS.name())) {
+            return TarjontaTila.VALMIS;
+        }
+        if (tila.equals(TarjontaTila.PERUTTU.name())) {
+            return TarjontaTila.PERUTTU;
+        }
+        return null;
+    }
+    
+    public static TarjoajaTyyppi createTarjoaja(SolrDocument koulutusDoc,
+            SolrDocumentList solrOrgList) {
+        TarjoajaTyyppi tarjoaja = new TarjoajaTyyppi();
+        tarjoaja.setTarjoajaOid("" + koulutusDoc.getFieldValue(ORG_OID));
+        tarjoaja.setNimi(createTarjoajaNimi(tarjoaja.getTarjoajaOid(), solrOrgList));
+        return tarjoaja;
+    }
+
+    private static MonikielinenTekstiTyyppi createTarjoajaNimi(String tarjoajaOid,
+            SolrDocumentList solrOrgList) {
+        for (int i = 0; i < solrOrgList.size(); ++i) {
+            SolrDocument orgdoc = solrOrgList.get(i);
+            if (tarjoajaOid.equals("" + orgdoc.getFieldValue(OID))) {
+                return getNimiFromTarjoajaDoc(orgdoc);
+            }
+        }
+        return null;
+    }
+
+    private static MonikielinenTekstiTyyppi getNimiFromTarjoajaDoc(SolrDocument orgdoc) {
+        MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
+        Teksti nimiFi = new Teksti();
+        nimiFi.setKieliKoodi("fi");
+        nimiFi.setValue("" + orgdoc.getFieldValue(ORG_NAME_FI));
+        nimi.getTeksti().add(nimiFi);
+        Teksti nimiSv = new Teksti();
+        nimiSv.setKieliKoodi("sv");
+        nimiSv.setValue("" + orgdoc.getFieldValue(ORG_NAME_SV));
+        nimi.getTeksti().add(nimiSv);
+        Teksti nimiEn = new Teksti();
+        nimiEn.setKieliKoodi("en");
+        nimiEn.setValue("" + orgdoc.getFieldValue(ORG_NAME_EN));
+        nimi.getTeksti().add(nimiEn);
+        return nimi;
     }
     
 }

@@ -108,7 +108,7 @@ public class KoulutusResultRow extends HorizontalLayout {
         rowMenuBar = new OphRowMenuBar("../oph/img/icon-treetable-button.png");
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
-        final OrganisaatioContext context = OrganisaatioContext.getContext(koulutus.getKoulutus().getTarjoaja());
+        final OrganisaatioContext context = OrganisaatioContext.getContext(koulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
 
         if (tarjontaPresenter.getPermission().userCanUpdateKoulutus(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
@@ -142,7 +142,7 @@ public class KoulutusResultRow extends HorizontalLayout {
             showSummaryView();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
             final String komotoOid = koulutus.getKoulutus().getKoulutusmoduuliToteutus();
-            tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(koulutus.getKoulutus().getTarjoaja());
+            tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(koulutus.getKoulutus().getTarjoaja().getTarjoajaOid());
 
             switch (koulutus.getKoulutus().getKoulutustyyppi()) {
                 case AMMATILLINEN_PERUSKOULUTUS:

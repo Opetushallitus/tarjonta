@@ -29,6 +29,7 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.conversion.util.DatatypeHelper;
+import fi.vm.sade.tarjonta.service.search.SearchService;
 import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
@@ -67,6 +68,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
     private ConversionService conversionService;
+    
+    @Autowired
+    private SearchService searchService;
+    
     private final static String SYKSY = "syksy";
     private final static String KEVAT = "kevat";
 
@@ -277,6 +282,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public HaeHakukohteetVastausTyyppi haeHakukohteet(HaeHakukohteetKyselyTyyppi kysely) {
+        
+        return this.searchService.haeHakukohteet(kysely);
+        //return new HaeHakukohteetVastausTyyppi();
+        /*
         List<Hakukohde> hakukohteet = hakukohdeDAO.haeHakukohteetJaKoulutukset(kysely);
         HaeHakukohteetVastausTyyppi vastaus = new HaeHakukohteetVastausTyyppi();
 
@@ -314,10 +323,11 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             tulos.setHaku(haku);
             tulos.setKoulutus(koulutus);
             rivit.add(tulos);
+            
 
         }
 
-        return vastaus;
+        return vastaus;*/
 
     }
 
@@ -367,26 +377,17 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private List<KoulutusKoosteTyyppi> mapKomotoListToKoulutusKoosteTyyppiList(List<KoulutusmoduuliToteutus> komotos) {
         List<KoulutusKoosteTyyppi> koulutusKoostees = new ArrayList<KoulutusKoosteTyyppi>();
         for (KoulutusmoduuliToteutus komoto : komotos) {
-            KoulutusTulos koulutusTulos = getKoulutusTulosFromKoulutusmoduuliToteutus(komoto);
-            koulutusKoostees.add(koulutusTulos.getKoulutus());
+            koulutusKoostees.add(getKoulutusTulosFromKoulutusmoduuliToteutus(komoto));
         }
         return koulutusKoostees;
     }
 
-    private List<KoulutusTulos> mapKomotoListToKoulutusTulosList(List<KoulutusmoduuliToteutus> komotos) {
-        List<KoulutusTulos> koulutusTuloses = new ArrayList<KoulutusTulos>();
-        for (KoulutusmoduuliToteutus komoto : komotos) {
-            if (!komoto.getKoulutusmoduuli().getModuuliTyyppi().name().equals(KoulutusmoduuliTyyppi.TUTKINTO.name())) {
-                KoulutusTulos tulos = getKoulutusTulosFromKoulutusmoduuliToteutus(komoto);
-                koulutusTuloses.add(tulos);
-            }
-        }
-        return koulutusTuloses;
-    }
 
     @Override
     public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
 
+        return this.searchService.haeKoulutukset(kysely);
+        /*
         //If a list of oids is provided the komotos matching those oids are returned
         if (kysely.getKoulutusOids() != null && kysely.getKoulutusOids().size() > 0) {
             HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
@@ -424,7 +425,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
                 vastaus.getKoulutusTulos().add(tulos);
             }
             return vastaus;
-        }
+        }*/
     }
 
     private List<Integer> getAlkuKuukaudet(String kausi) {
@@ -448,8 +449,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         return kuukaudet;
     }
 
-    private KoulutusTulos getKoulutusTulosFromKoulutusmoduuliToteutus(KoulutusmoduuliToteutus komoto) {
-        KoulutusTulos tulos = new KoulutusTulos();
+    private KoulutusKoosteTyyppi getKoulutusTulosFromKoulutusmoduuliToteutus(KoulutusmoduuliToteutus komoto) {
+        //KoulutusTulos tulos = new KoulutusTulos();
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
 
         KoulutusKoosteTyyppi koulutusKooste = new KoulutusKoosteTyyppi();
@@ -466,8 +467,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         koulutusKooste.setTutkintonimike((komo != null) ? komo.getTutkintonimike() : null);
         koulutusKooste.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(komo.getKoulutustyyppi()));
         koulutusKooste.setLukiolinjakoodi(komo.getLukiolinja());
-        tulos.setKoulutus(koulutusKooste);
-        return tulos;
+        //tulos.setKoulutus(koulutusKooste);
+        return koulutusKooste;
     }
 
     private String parseAjankohtaString(Date koulutuksenAlkamisPvm) {
