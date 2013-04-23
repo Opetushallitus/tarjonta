@@ -35,6 +35,7 @@ import com.google.common.collect.Sets;
 
 import fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde;
 import fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus;
+import fi.vm.sade.tarjonta.service.search.SolrFields.Organisaatio;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
@@ -126,7 +127,7 @@ public class SearchService {
     private QueryResponse searchOrgs(Set<String> orgOids, SolrServer solr) throws SolrServerException {
         SolrQuery orgQ = new SolrQuery();
         
-        String orgQuery = String.format("{0}:({1})", Hakukohde.ORG_OID, Joiner.on(" ").join(orgOids));
+        String orgQuery = String.format("%s:(%s)", Organisaatio.OID, Joiner.on(" ").join(orgOids));//"{0}:({1})", Hakukohde.ORG_OID, Joiner.on(" ").join(orgOids));
         orgQ.setQuery(orgQuery);
 
         QueryResponse orgResponse = solr.query(orgQ);
@@ -145,7 +146,8 @@ public class SearchService {
     private void addFilterForVuosiKausi(final String kausi, final String vuosi,
             final List<String> queryParts, SolrQuery q) {
         // vuosi kausi
-        addQuery(vuosi, queryParts, "%s:%s", Hakukohde.VUOSI_KOODI, vuosi);
+        String qVuosi = Integer.parseInt(vuosi) < 0 ? "*" : vuosi;
+        addQuery(vuosi, queryParts, "%s:%s", Hakukohde.VUOSI_KOODI, qVuosi);
         addQuery(kausi, queryParts, "%s:%s", Hakukohde.KAUSI_KOODI, kausi);
         q.addFilterQuery(Joiner.on(" ").join(queryParts));
         queryParts.clear();

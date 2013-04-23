@@ -9,6 +9,7 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTul
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.TarjoajaTyyppi;
@@ -20,7 +21,7 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
     public HaeKoulutuksetVastausTyyppi convertSolrToKoulutuksetVastaus(SolrDocumentList solrKomotoList, SolrDocumentList solrOrgList) {
         HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
         for (int i = 0; i < solrKomotoList.size(); ++i) {
-            SolrDocument curDoc = solrOrgList.get(i);
+            SolrDocument curDoc = solrKomotoList.get(i);
             vastaus.getKoulutusTulos().add(convertKoulutus(curDoc, solrOrgList));
         }
         return vastaus;
@@ -39,8 +40,13 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         koulutus.setTila(IndexingUtils.createTila(koulutusDoc));
         koulutus.setTutkintonimike(IndexingUtils.createKoodiTyyppi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
         koulutus.setTarjoaja(IndexingUtils.createTarjoaja(koulutusDoc, solrOrgList));
+        koulutus.setKoulutustyyppi(createKoulutustyyppi(koulutusDoc));
         tulos.setKoulutus(koulutus);
         return tulos;
+    }
+    
+    private KoulutusasteTyyppi createKoulutustyyppi(SolrDocument koulutusDoc) {
+        return KoulutusasteTyyppi.fromValue("" + koulutusDoc.getFieldValue(KOULUTUSTYYPPI));
     }
 
     private MonikielinenTekstiTyyppi createKoulutusNimi(SolrDocument koulutusDoc) {

@@ -85,11 +85,10 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
         add(komotoDoc, VUOSI_KOODI, IndexingUtils.parseYear(komoto.getKoulutuksenAlkamisPvm()));
         add(komotoDoc, TILA_EN, komoto.getTila());
         add(komotoDoc, KOULUTUSMODUULI_OID, komoto.getKoulutusmoduuli().getOid());
+        add(komotoDoc, KOULUTUSTYYPPI, komoto.getKoulutusmoduuli().getKoulutustyyppi());
         docs.add(komotoDoc);
         return docs;
     }
-
-
 
     private void addTutkintonimikeTiedot(SolrInputDocument doc,
             String tutkintonimike) {

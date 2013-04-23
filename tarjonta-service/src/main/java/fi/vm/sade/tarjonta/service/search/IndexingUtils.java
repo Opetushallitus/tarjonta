@@ -188,7 +188,9 @@ public class IndexingUtils {
             SolrDocumentList solrOrgList) {
         for (int i = 0; i < solrOrgList.size(); ++i) {
             SolrDocument orgdoc = solrOrgList.get(i);
+            System.out.println("tarjoajaOid: " + tarjoajaOid + ", orgdoc oid: " + orgdoc.getFieldValue(OID));
             if (tarjoajaOid.equals("" + orgdoc.getFieldValue(OID))) {
+                System.out.println("MATCH!!!");
                 return getNimiFromTarjoajaDoc(orgdoc);
             }
         }
