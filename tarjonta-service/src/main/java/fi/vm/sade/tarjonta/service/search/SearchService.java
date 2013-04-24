@@ -100,6 +100,7 @@ public class SearchService {
         filterOutOrgs(q);
         try {
             // query solr
+            q.setRows(Integer.MAX_VALUE);
             QueryResponse hakukohdeResponse = hakukohdeSolr.query(q);
             
             //now we have the hakukohteet, fetch orgs
@@ -204,6 +205,7 @@ public class SearchService {
         filterOutOrgs(q);
         try {
             // query solr
+            q.setRows(Integer.MAX_VALUE);
             QueryResponse koulutusResponse = koulutusSolr.query(q);
             
             //now we have the hakukohteet, fetch orgs
