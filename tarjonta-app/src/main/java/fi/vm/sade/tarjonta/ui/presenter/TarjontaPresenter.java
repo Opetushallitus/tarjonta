@@ -964,6 +964,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         editHakukohdeView = new EditHakukohdeView();
         if (hakukohdeOid == null) {
             getModel().setHakukohde(HakukohdeViewModel.create());
+
             if (koulutusOidNameViewModels != null) {
                 addKomotoOidsToModel(koulutusOidNameViewModels);
                 getModel().getHakukohde().getKoulukses().addAll(koulutusOidNameViewModels);

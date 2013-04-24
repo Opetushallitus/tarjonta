@@ -141,6 +141,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private GridLayout painotettavatOppiaineet;
     private KoulutusasteTyyppi koulutusasteTyyppi;
 
+    private boolean muuOsoite;
+
     /*
      *
      * Init view with new model
@@ -265,8 +267,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         checkCheckboxes();
 
-        setLiitteidenToimOsoite();
-        enableOrDeEnableOsoite(false);
+        if (muuOsoite) {
+            enableOrDeEnableOsoite(true);
+        } else {
+            enableOrDeEnableOsoite(false);
+        }
+
         return itemContainer;
     }
 
@@ -431,23 +437,48 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     }
 
-    private void setLiitteidenToimOsoite() {
-        OrganisaatioDTO organisaatioDTO = presenter.getSelectOrganisaatioModel();
+    private boolean setLiitteidenToimOsoite() {
 
-        //TODO organisaatio can be null here?
+        OsoiteDTO osoite = getOrganisaationPostiOsoite();
+        if (presenter.getModel().getHakukohde().getOsoiteRivi1() != null && presenter.getModel().getHakukohde().getPostinumero() != null ) {
+
+            String hakukohdeOsoite = presenter.getModel().getHakukohde().getOsoiteRivi1().trim();
+            String hakukohdePostinumero = presenter.getModel().getHakukohde().getPostinumero().trim();
+            if (osoite.getOsoite().trim().equalsIgnoreCase(hakukohdeOsoite) && osoite.getPostinumero().trim().equalsIgnoreCase(hakukohdePostinumero)) {
+                return false;
+            } else {
+                return true;
+            }
+
+
+        } else {
+            setOsoiteToOrganisaationPostiOsoite(osoite);
+            return false;
+        }
+
+
+    }
+
+    private void setOsoiteToOrganisaationPostiOsoite(OsoiteDTO osoite) {
+        presenter.getModel().getHakukohde().setOsoiteRivi1(osoite.getOsoite());
+        presenter.getModel().getHakukohde().setPostinumero(osoite.getPostinumero());
+        presenter.getModel().getHakukohde().setPostitoimipaikka(osoite.getPostitoimipaikka());
+    }
+
+    private OsoiteDTO getOrganisaationPostiOsoite() {
+        OrganisaatioDTO organisaatioDTO = presenter.getSelectOrganisaatioModel();
+        OsoiteDTO returnValue = null;
         if (organisaatioDTO != null) {
             for (YhteystietoDTO yhteystietoDTO : organisaatioDTO.getYhteystiedot()) {
                 if (yhteystietoDTO instanceof OsoiteDTO) {
                     OsoiteDTO osoite = (OsoiteDTO) yhteystietoDTO;
                     if (osoite.getOsoiteTyyppi().equals(OsoiteTyyppi.POSTI)) {
-                        presenter.getModel().getHakukohde().setOsoiteRivi1(osoite.getOsoite());
-                        presenter.getModel().getHakukohde().setPostinumero(osoite.getPostinumero());
-                        presenter.getModel().getHakukohde().setPostitoimipaikka(osoite.getPostitoimipaikka());
-
+                        returnValue = osoite;
                     }
                 }
             }
         }
+        return returnValue;
     }
 
     private AbstractLayout buildOsoiteSelect() {
@@ -459,7 +490,14 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         //selections.add("Muu osoite");
         osoiteSelectOptionGroup = new OptionGroup("", selections);
         osoiteSelectOptionGroup.setNullSelectionAllowed(false);
-        osoiteSelectOptionGroup.select(T("PerustiedotView.osoiteSelectOrganisaatioPostiOsoite"));
+        boolean isMuuOsoiteOsoite = setLiitteidenToimOsoite();
+        if (isMuuOsoiteOsoite) {
+
+            osoiteSelectOptionGroup.select(T("PerustiedotView.osoiteSelectMuuOsoite"));
+
+        } else {
+            osoiteSelectOptionGroup.select(T("PerustiedotView.osoiteSelectOrganisaatioPostiOsoite"));
+        }
         osoiteSelectOptionGroup.setImmediate(true);
         osoiteSelectOptionGroup.addListener(new Property.ValueChangeListener() {
             @Override
@@ -474,7 +512,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 }
             }
         });
-
+        muuOsoite = isMuuOsoiteOsoite;
         osoiteSelectOptionLayout.addComponent(osoiteSelectOptionGroup);
         return osoiteSelectOptionLayout;
     }
@@ -564,21 +602,23 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         liitteidenOsoiteRivi1Text = UiUtil.textField(null);
         liitteidenOsoiteRivi1Text.setWidth("100%");
         liitteidenOsoiteRivi1Text.setInputPrompt(T("PerustiedotView.osoiteRivi1"));
+        liitteidenOsoiteRivi1Text.setImmediate(true);
         osoiteLayout.addComponent(liitteidenOsoiteRivi1Text, 0, 0, 1, 0);
 
         liitteidenOsoiteRivi2Text = UiUtil.textField(null);
         liitteidenOsoiteRivi2Text.setWidth("100%");
-
+        liitteidenOsoiteRivi2Text.setImmediate(true);
         osoiteLayout.addComponent(liitteidenOsoiteRivi2Text, 0, 1, 1, 1);
 
         liitteidenPostinumeroText = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POSTINUMERO_URI);
-
+        liitteidenPostinumeroText.setImmediate(true);
 
 
         osoiteLayout.addComponent(liitteidenPostinumeroText, 0, 2);
         liitteidenPostinumeroText.setSizeUndefined();
 
         liitteidenPostitoimipaikkaText = UiUtil.textField(null);
+        liitteidenPostitoimipaikkaText.setImmediate(true);
         liitteidenPostitoimipaikkaText.setInputPrompt(T("PerustiedotView.postitoimipaikka"));
         osoiteLayout.addComponent(liitteidenPostitoimipaikkaText, 1, 2);
         liitteidenPostitoimipaikkaText.setSizeUndefined();
