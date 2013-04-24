@@ -19,6 +19,18 @@ Palvelun deployment
 
 1. tyhjä tomcat
 
+2. Solr
+Lataa solr paketti urlista http://www.nic.funet.fi/pub/mirrors/apache.org/lucene/solr
+
+kopioi solr.war paketin hakemistosta solr-4.2.1/example/webapps/ tomcatin webapps -hakemistoon
+
+Muokkaa catalina.sh scriptistä solr asetukset:
+
+JAVA_OPTS="-Dsolr.solr.home=<organisaatio-git-checkout>/organisaatio-solrconfig/src/main/resources -Dsolr.data.dir=<joku-paikallinen-hakemisto>/solr-data"
+
+Windowsissa: set "JAVA.... "
+
+
 2. alusta palvelu
 
 ./conf/Catalina/localhost/tarjonta-service.xml:
@@ -64,6 +76,9 @@ Propertyt joita ladataan:
   ~/oph-configuration/common.properties
   ~/oph-configuration/tarjonta-service.properties
 
+
+
+
 Esimerkkidataa:
 
 ----------------------------------------------------------------------
@@ -79,4 +94,7 @@ activeMq.targetDestinationPublic.tarjonta=xxx
 # koodisto-sync-context.xml: ??? tätä ei kai enää käytetä ???
 # koodi.webservice.url
 # koodisto.webservice.url
+#solr
+tarjonta.solr.baseurl=http://127.0.0.1:8181/solr
+
 ----------------------------------------------------------------------
