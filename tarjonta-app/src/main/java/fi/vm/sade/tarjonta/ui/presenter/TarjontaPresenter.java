@@ -169,6 +169,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             LOG.debug(getModel().getHakukohde().getHakukohdeNimi() + ", " + getModel().getHakukohde().getHakukohdeKoodistoNimi());
 
             HakukohdeTyyppi hakukohdeTyyppi = hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde());
+            hakukohdeTyyppi.setViimeisinPaivittajaOid(usr.getOid());
             getModel().getHakukohde().setOid(hakukohdeTyyppi.getOid());
 
 
@@ -1218,12 +1219,13 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      */
     public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel koulutusModel = getModel().getKoulutusPerustiedotModel();
-
+        koulutusModel.setViimeisinPaivittajaOid(UserFeature.get().getOid());
         if (koulutusModel.isLoaded()) {
             //update KOMOTO
             OrganisationOidNamePair selectedOrganisation = getModel().getTarjoajaModel().getSelectedOrganisation();
             PaivitaKoulutusTyyppi paivita = koulutusToDTOConverter.createPaivitaKoulutusTyyppi(getModel(), selectedOrganisation, koulutusModel.getOid());
             paivita.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
+
             koulutusToDTOConverter.validateSaveData(paivita, koulutusModel);
             getTarjontaAdminService().paivitaKoulutus(paivita);
         } else {
