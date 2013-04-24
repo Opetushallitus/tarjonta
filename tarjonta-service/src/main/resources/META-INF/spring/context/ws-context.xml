@@ -58,9 +58,9 @@
 
      <!-- CORS (cross domain) support for rest services -->
     <bean id="cors-filter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter"/>
-    <bean id="hakukohdeSolrConverter" class="fi.vm.sade.tarjonta.service.search.HakukohdeToSolrInputDocumentFunction" ></bean>
+<!--     <bean id="hakukohdeSolrConverter" class="fi.vm.sade.tarjonta.service.search.HakukohdeToSolrInputDocumentFunction" ></bean>
     <bean id="koulutusSolrConverter" class="fi.vm.sade.tarjonta.service.search.KoulutusmoduuliToteutusToSolrInputDocumentFunction" ></bean>
-
+ -->
     <!--
         REST Services
     -->

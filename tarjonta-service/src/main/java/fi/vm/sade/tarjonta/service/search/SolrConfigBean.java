@@ -14,10 +14,10 @@ public class SolrConfigBean {
         return solrDataDir;
     }
 
-    @Value("${tarjonta.solr.home:target/solr-home}")
+    @Value("${tarjonta.solr.home}")
     String solrHome;
 
-    @Value("${tarjonta.solr.dataDir:/solr-data}")
+    @Value("${tarjonta.solr.dataDir}")
     String solrDataDir;
 
     @Value("${tarjonta.solr.start:false}")

@@ -24,6 +24,7 @@ import java.util.Locale;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -51,6 +52,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
  * indexed.
  */
 @Configurable
+@Component
 public class KoulutusmoduuliToteutusToSolrInputDocumentFunction implements
 Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
 
