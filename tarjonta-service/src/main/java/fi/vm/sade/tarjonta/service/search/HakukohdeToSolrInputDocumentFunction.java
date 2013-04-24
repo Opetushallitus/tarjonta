@@ -78,13 +78,28 @@ public class HakukohdeToSolrInputDocumentFunction implements
         add(hakukohdeDoc, TILA, hakukohde.getTila());
         addNimitiedot(hakukohdeDoc, hakukohde.getHakukohdeNimi());
         addHakuajat(hakukohdeDoc, hakukohde.getHaku());
+        addTekstihaku(hakukohdeDoc);
         docs.add(hakukohdeDoc);
         return docs;
     }
     
+    private void addTekstihaku(SolrInputDocument hakukohdeDoc) {
+       add(hakukohdeDoc, TEKSTIHAKU, String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
+                hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_FI), 
+                hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_SV), 
+                hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_EN),
+                hakukohdeDoc.getFieldValue(KAUSI_FI),
+                hakukohdeDoc.getFieldValue(KAUSI_SV),
+                hakukohdeDoc.getFieldValue(KAUSI_EN),
+                hakukohdeDoc.getFieldValue(VUOSI_KOODI),
+                hakukohdeDoc.getFieldValue(HAKUTAPA_FI),
+                hakukohdeDoc.getFieldValue(HAKUTAPA_SV),
+                hakukohdeDoc.getFieldValue(HAKUTAPA_EN)));
+    }
+
     private void addHakuajat(SolrInputDocument hakukohdeDoc, Haku haku) {
-        add(hakukohdeDoc, HAUN_ALKAMISPVM, getStartDate(haku.getHakuaikas()));
-        add(hakukohdeDoc, HAUN_PAATTYMISPVM, getEndDate(haku.getHakuaikas()));
+        add(hakukohdeDoc, HAUN_ALKAMISPVM, getStartDateStr(haku.getHakuaikas()));
+        add(hakukohdeDoc, HAUN_PAATTYMISPVM, getEndDateStr(haku.getHakuaikas()));
     }
 
     private void addNimitiedot(SolrInputDocument doc,
@@ -192,7 +207,7 @@ public class HakukohdeToSolrInputDocumentFunction implements
         docs.add(orgDoc);
     }
     
-    private String getStartDate(Set<Hakuaika> hakuaikas) {
+    private Date getStartDate(Set<Hakuaika> hakuaikas) {
         Date startDate = null;
         for (Hakuaika aika : hakuaikas) {
             if (startDate == null) {
@@ -201,14 +216,19 @@ public class HakukohdeToSolrInputDocumentFunction implements
                 startDate = aika.getAlkamisPvm();
             }
         }
+        return startDate;
+    }
+    
+    private String getStartDateStr(Set<Hakuaika> hakuaikas) {
+        Date startDate = getStartDate(hakuaikas);
         if (startDate != null) {
             DateFormat df = new SimpleDateFormat("MM.dd.yyyy HH:mm:ss");
             return df.format(startDate);
         }
         return "";
     }
-
-    private String getEndDate(Set<Hakuaika> hakuaikas) {
+    
+    private Date getEndDate(Set<Hakuaika> hakuaikas) {
         Date endDate = null;
         for (Hakuaika aika : hakuaikas) {
             if (endDate == null) {
@@ -217,6 +237,11 @@ public class HakukohdeToSolrInputDocumentFunction implements
                 endDate = aika.getPaattymisPvm();
             }
         }
+        return endDate;
+    }
+
+    private String getEndDateStr(Set<Hakuaika> hakuaikas) {
+        Date endDate = getEndDate(hakuaikas);
         if (endDate != null) {
             DateFormat df = new SimpleDateFormat("MM.dd.yyyy HH:mm:ss");
             return df.format(endDate);

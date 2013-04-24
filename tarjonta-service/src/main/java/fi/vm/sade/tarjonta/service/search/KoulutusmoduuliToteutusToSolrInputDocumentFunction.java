@@ -44,7 +44,6 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.search.SolrFields.Organisaatio;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ORG_PATH;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
 
 /**
@@ -104,9 +103,25 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
         add(komotoDoc, KOULUTUSMODUULI_OID, komoto.getKoulutusmoduuli().getOid());
         add(komotoDoc, KOULUTUSTYYPPI, komoto.getKoulutusmoduuli().getKoulutustyyppi());
         add(komotoDoc, POHJAKOULUTUSVAATIMUS_URI, komoto.getPohjakoulutusvaatimus());
+        addTekstihaku(komotoDoc);
         docs.add(komotoDoc);
         return docs;
     }
+    
+    private void addTekstihaku(SolrInputDocument komotoDoc) {
+        add(komotoDoc, TEKSTIHAKU, String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
+                 komotoDoc.getFieldValue(KOULUTUSKOODI_FI), 
+                 komotoDoc.getFieldValue(KOULUTUSKOODI_SV), 
+                 komotoDoc.getFieldValue(KOULUTUSKOODI_EN),
+                 komotoDoc.getFieldValue(KAUSI_KOODI),
+                 komotoDoc.getFieldValue(VUOSI_KOODI),
+                 komotoDoc.getFieldValue(KOULUTUSOHJELMA_FI),
+                 komotoDoc.getFieldValue(KOULUTUSOHJELMA_SV),
+                 komotoDoc.getFieldValue(KOULUTUSOHJELMA_EN),
+                 komotoDoc.getFieldValue(TUTKINTONIMIKE_FI),
+                 komotoDoc.getFieldValue(TUTKINTONIMIKE_SV),
+                 komotoDoc.getFieldValue(TUTKINTONIMIKE_EN)));
+     }
 
     private void addTutkintonimikeTiedot(SolrInputDocument doc,
             String tutkintonimike) {

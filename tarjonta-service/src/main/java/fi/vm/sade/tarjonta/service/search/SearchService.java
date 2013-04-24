@@ -81,11 +81,7 @@ public class SearchService {
         // nimihaku
         if (nimi != null && nimi.length() > 0) {
             addQuery(nimi, queryParts, "%s:*%s*",
-                    Hakukohde.HAKUKOHTEEN_NIMI_FI, nimi);
-            addQuery(nimi, queryParts, "%s:*%s*",
-                    Hakukohde.HAKUKOHTEEN_NIMI_SV, nimi);
-            addQuery(nimi, queryParts, "%s:*%s*",
-                    Hakukohde.HAKUKOHTEEN_NIMI_EN, nimi);
+                    Hakukohde.TEKSTIHAKU, nimi);
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
             queryParts.clear();
         }
@@ -181,11 +177,7 @@ public class SearchService {
 
         // nimihaku
         if (nimi != null && nimi.length() > 0) {
-            addQuery(nimi, queryParts, "%s:*%s*", Koulutus.KOULUTUSKOODI_FI,
-                    nimi);
-            addQuery(nimi, queryParts, "%s:*%s*", Koulutus.KOULUTUSKOODI_SV,
-                    nimi);
-            addQuery(nimi, queryParts, "%s:*%s*", Koulutus.KOULUTUSKOODI_EN,
+            addQuery(nimi, queryParts, "%s:*%s*", Koulutus.TEKSTIHAKU,
                     nimi);
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
             queryParts.clear();
