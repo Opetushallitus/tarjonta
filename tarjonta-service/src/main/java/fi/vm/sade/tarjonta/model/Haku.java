@@ -109,7 +109,7 @@ public class Haku extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TarjontaTila tila;
 
-    @OneToMany(mappedBy = "haku")
+    @OneToMany(mappedBy = "haku", fetch = FetchType.LAZY)
     private Set<Hakukohde> hakukohdes = new HashSet<Hakukohde>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "haku")

@@ -56,31 +56,11 @@ public class HakuToDTOConverter extends AbstractFromDomainConverter<Haku, HakuTy
         }
         ConvertHaunNimet(h, from);
         ConvertHaunAjat(h, from);
-        ConvertHakukohdes(h,from);
+        //ConvertHakukohdes(h,from);
         return h;
     }
 
-    private void ConvertHakukohdes(HakuTyyppi to,Haku from) {
-        if (from.getHakukohdes() != null) {
-            List<HakukohdeTyyppi> hakuTyyppis = new ArrayList<HakukohdeTyyppi>();
-            for (Hakukohde hakukohde:from.getHakukohdes())  {
-                 HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
-                 hakukohdeTyyppi.setHakukohdeKoodistoNimi(hakukohde.getHakukohdeKoodistoNimi());
-                 hakukohdeTyyppi.setHakukohdeNimi(hakukohde.getHakukohdeNimi());
-                 hakukohdeTyyppi.setValintaperustekuvausKoodiUri(hakukohde.getValintaperustekuvausKoodiUri());
-                 hakukohdeTyyppi.setAloituspaikat(hakukohde.getAloituspaikatLkm());
-                 hakukohdeTyyppi.setValinnanAloituspaikat(hakukohde.getValintojenAloituspaikatLkm());
-                 hakukohdeTyyppi.setOid(hakukohde.getOid());
-                 hakukohdeTyyppi.setHakukohteenTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.fromValue(hakukohde.getTila().name()));
-                 hakukohdeTyyppi.setLiitteidenToimitusPvm(hakukohde.getLiitteidenToimitusPvm());
-                 hakukohdeTyyppi.setHakukelpoisuusVaatimukset(hakukohde.getHakukelpoisuusvaatimus());
-
-
-                 hakuTyyppis.add(hakukohdeTyyppi);
-            }
-            to.getHakukohteet().addAll(hakuTyyppis);
-        }
-    }
+   
 
     private void ConvertHaunAjat(HakuTyyppi h, Haku s) {
         if (s.getHakuaikas() != null) {
