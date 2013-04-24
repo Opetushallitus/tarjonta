@@ -25,10 +25,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
+import net.sf.ehcache.CacheManager;
 
 
 /**
- * 
+ *
  * @author mlyly
  */
 @Service
@@ -47,9 +48,29 @@ public class PathUpdaterTask {
     }
 
     // @Scheduled(fixedRate = 5000L)
-    @Scheduled(cron = "0 */15 * * * ?")
+    @Scheduled(cron = "0 * * * * ?")
     public void updatePath() {
-        LOG.info("updating tarjonta index.");
-        //TODO update tarjonta index
+        // LOG.debug("updating tarjonta index.");
+        // TODO update tarjonta index
+
+        printCacheStats();
     }
+
+
+    @Autowired(required = false)
+    private CacheManager _cacheManager;
+
+    private void printCacheStats() {
+        LOG.warn("---------- printCacheStats(): " + this);
+
+        if (_cacheManager == null) {
+            LOG.info("  NO EHCACHE ... no stats!");
+            return;
+        }
+
+        for (String cacheName : _cacheManager.getCacheNames()) {
+            LOG.warn("  {}", _cacheManager.getCache(cacheName).getStatistics());
+        }
+    }
+
 }

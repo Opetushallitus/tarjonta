@@ -24,17 +24,17 @@
 
     <context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.tarjonta" />
-    
-    <!-- Configure AOP and aspect to handle and wrap exceptions to GenericFault --> 
+
+    <!-- Configure AOP and aspect to handle and wrap exceptions to GenericFault -->
     <aop:aspectj-autoproxy>
         <aop:include name="serviceExceptionWrapper"/>
     </aop:aspectj-autoproxy>
-    
+
     <bean id="serviceExceptionWrapper" class="fi.vm.sade.tarjonta.service.impl.exceptionwrapper.ExceptionWrappingAspect"/>
-    
+
     <!-- Get configuration for generic/generic-events system -->
     <import resource="classpath:META-INF/spring/events-context.xml" />
-       
+
     <!-- service configuration -->
     <import resource="classpath:META-INF/spring/context/service-context.xml"/>
     <import resource="classpath:META-INF/spring/context/dao-context.xml"/>
@@ -43,5 +43,8 @@
 
     <!-- todo: remove when ESB for the publication/enrichiment process is in place -->
     <import resource="classpath:META-INF/spring/context/enriching-context.xml" />
+
+    <!-- cache -->
+    <import resource="classpath:META-INF/spring/context/tarjonta-service-cache-context.xml" />
 
 </beans>
