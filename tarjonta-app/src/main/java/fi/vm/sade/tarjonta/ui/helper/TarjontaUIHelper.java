@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -68,6 +69,7 @@ public class TarjontaUIHelper {
     private transient I18NHelper _i18n = new I18NHelper(TarjontaUIHelper.class);
 
     @Autowired
+    @Qualifier(value = "ehcacheTarjonta")
     private CacheManager _cacheManager;
 
     @Value("${koodisto.language.fi.uri:kieli_fi}")

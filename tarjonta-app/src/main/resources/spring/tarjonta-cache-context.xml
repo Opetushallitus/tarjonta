@@ -25,9 +25,9 @@
 
     <!-- Configure EHCache with koodisto caches. -->
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager"
-          p:cacheManager-ref="ehcache"/>
+          p:cacheManager-ref="ehcacheTarjonta"/>
 
-    <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+    <bean id="ehcacheTarjonta" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
           p:configLocation="classpath:/spring/tarjonta-ehcache.xml"
           p:shared="true"/>
 
