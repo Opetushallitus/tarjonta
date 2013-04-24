@@ -131,6 +131,7 @@ public class SearchService {
         
         String orgQuery = String.format("%s:(%s)", Organisaatio.OID, Joiner.on(" ").join(orgOids));
         orgQ.setQuery(orgQuery);
+        orgQ.setRows(Integer.MAX_VALUE);
 
         QueryResponse orgResponse = solr.query(orgQ);
         return orgResponse;
