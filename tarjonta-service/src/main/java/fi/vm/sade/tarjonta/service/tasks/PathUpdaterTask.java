@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import net.sf.ehcache.CacheManager;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 
 /**
@@ -58,6 +59,7 @@ public class PathUpdaterTask {
 
 
     @Autowired(required = false)
+    @Qualifier(value = "ehcacheTarjontaService")
     private CacheManager _cacheManager;
 
     private void printCacheStats() {
