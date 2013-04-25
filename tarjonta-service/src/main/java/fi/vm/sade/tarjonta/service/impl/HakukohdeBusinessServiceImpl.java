@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  *
  */
-@Transactional
+@Transactional(readOnly=true)
 @Service
 public class HakukohdeBusinessServiceImpl implements HakukohdeBusinessService {
 
@@ -34,6 +34,7 @@ public class HakukohdeBusinessServiceImpl implements HakukohdeBusinessService {
     private HakukohdeDAO hakukohdeDAO;
 
     @Override
+    @Transactional(readOnly=false)
     public Hakukohde createHakukohde(Hakukohde hakukohde) {
 
         return hakukohdeDAO.insert(hakukohde);
@@ -41,7 +42,8 @@ public class HakukohdeBusinessServiceImpl implements HakukohdeBusinessService {
     }
 
     @Override
-    public Hakukohde updateHakukohde(Hakukohde hakukohde) {
+    @Transactional(readOnly=false)
+   public Hakukohde updateHakukohde(Hakukohde hakukohde) {
 
         hakukohdeDAO.update(hakukohde);
         return hakukohde;

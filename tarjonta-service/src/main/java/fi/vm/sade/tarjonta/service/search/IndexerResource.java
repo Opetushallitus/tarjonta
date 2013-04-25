@@ -48,7 +48,33 @@ public class IndexerResource {
     private KoulutusmoduuliToteutusToSolrInputDocumentFunction koulutusSolrConverter;// = new KoulutusmoduuliToteutusToSolrInputDocumentFunction();
 
     @GET
-    @Path("/koulutus/start")
+    @Path("/koulutukset/clear")
+    @Produces("text/plain")
+    public Response clearKoulutusIndex() {
+        try {
+            hakukohdeSolr.deleteByQuery("*:*");
+            hakukohdeSolr.commit(true, true, false);
+            return Response.ok().build();
+        } catch (Throwable t) {
+            return Response.serverError().entity(t.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("/hakukohteet/clear")
+    @Produces("text/plain")
+    public Response clearHakukohdeIndex() {
+        try {
+            koulutusSolr.deleteByQuery("*:*");
+            koulutusSolr.commit(true, true, false);
+            return Response.ok().build();
+        } catch (Throwable t) {
+            return Response.serverError().entity(t.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("/koulutukset/start")
     @Produces("text/plain")
     public Response rebuildKoulutuIndex(@QueryParam("clean") final boolean clean) {
         List<KoulutusmoduuliToteutus> koulutukset = koulutusDao.findAll();
@@ -68,7 +94,7 @@ public class IndexerResource {
     }
 
     @GET
-    @Path("/hakukohde/start")
+    @Path("/hakukohteet/start")
     @Produces("text/plain")
     public String rebuildHakukohdeIndex(@QueryParam("clean") final boolean clean) {
         // TODO fetch all, index em
