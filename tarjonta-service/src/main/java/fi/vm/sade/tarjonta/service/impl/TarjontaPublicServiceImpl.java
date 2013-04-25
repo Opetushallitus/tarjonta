@@ -557,6 +557,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             }
         }
 
+
         toKoulutus.setViimeisinPaivittajaOid(fromKoulutus.getLastUpdatedByOid());
         toKoulutus.setViimeisinPaivitysPvm(DatatypeHelper.convertDateToXmlGregorianCal(fromKoulutus.getLastUpdateDate()));
         toKoulutus.setOid(fromKoulutus.getOid());
