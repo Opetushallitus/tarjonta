@@ -797,7 +797,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         List<String> organisaatioOidTree = new ArrayList<String>();
         for(OrganisaatioPerustietoType perus: orgs) {
             if(perus!=null) {
-                System.out.println("perus:" + perus);
                 organisaatioOidTree.add(perus.getOid());
             }
         }
