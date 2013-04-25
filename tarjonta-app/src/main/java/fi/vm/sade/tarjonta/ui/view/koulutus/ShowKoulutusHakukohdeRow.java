@@ -39,10 +39,12 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
     private Button poistaBtn;
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
+    private OrganisaatioContext context;
     private static final Logger LOG = LoggerFactory.getLogger(ShowKoulutusHakukohdeRow.class);
 
-    public ShowKoulutusHakukohdeRow(SimpleHakukohdeViewModel model) {
+    public ShowKoulutusHakukohdeRow(SimpleHakukohdeViewModel model, OrganisaatioContext context) {
         super();
+        this.context = context;
         hakukohdeViewModel = model;
         buildButtons();
     }
@@ -62,7 +64,7 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
             }
         });
         
-        poistaBtn.setVisible(tarjontaPresenter.getPermission().userCanDeleteHakukohdeFromKoulutus(OrganisaatioContext.getContext(tarjontaPresenter)));
+        poistaBtn.setVisible(tarjontaPresenter.getPermission().userCanDeleteHakukohdeFromKoulutus(context));
         poistaBtn.setStyleName("link-row");
     }
 
