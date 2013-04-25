@@ -35,9 +35,7 @@ import com.vaadin.ui.Window;
 
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
-import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
@@ -92,8 +90,6 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
         addNavigationButtons(layout, OrganisaatioContext.getContext(presenter.getModel().getTarjoajaModel().getSelectedOrganisationOid()));
 
-        final LueKoulutusVastausTyyppi koulutus = presenter.getKoulutusByOid(presenter.getModel().getKoulutusPerustiedotModel().getOid());
-
         // language tabs
         final TabSheet tabs = new TabSheet();
 
@@ -108,7 +104,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         for (String language : languages) {
             List<KoodiType> koodit = tarjontaUIHelper.getKoodis(language);
             ShowKoulutusViewTab tab = new ShowKoulutusViewTab(language,
-                    new Locale(koodit.get(0).getKoodiArvo()), koulutus);
+                    new Locale(koodit.get(0).getKoodiArvo()));
             tabs.addTab(tab, tarjontaUIHelper.getKoodiNimi(language));
         }
 

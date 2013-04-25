@@ -15,17 +15,26 @@
  */
 package fi.vm.sade.tarjonta.ui.presenter;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import org.apache.commons.beanutils.BeanComparator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.google.common.base.Preconditions;
 import com.vaadin.ui.Window;
 
-import fi.vm.sade.generic.ui.feature.UserFeature;
-import fi.vm.sade.generic.ui.portlet.security.User;
-import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
-import fi.vm.sade.tarjonta.ui.model.org.NavigationModel;
-import fi.vm.sade.tarjonta.ui.model.org.TarjoajaModel;
-import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.authentication.service.UserService;
 import fi.vm.sade.authentication.service.types.HenkiloPagingObjectType;
 import fi.vm.sade.authentication.service.types.HenkiloSearchObjectType;
@@ -33,6 +42,8 @@ import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.authentication.service.types.dto.SearchConnectiveType;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.generic.ui.feature.UserFeature;
+import fi.vm.sade.generic.ui.portlet.security.User;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -43,50 +54,98 @@ import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.*;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
-import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.ui.helper.conversion.*;
-import fi.vm.sade.tarjonta.ui.model.*;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeListausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusHakukohteelleTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKoulutuksineenKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKoulutuksineenVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohteenLiiteTunnisteellaKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohteenLiiteTunnisteellaVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohteenValintakoeTunnisteellaKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohteenValintakoeTunnisteellaVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
+import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.service.types.TarkistaKoulutusKopiointiTyyppi;
+import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
-import fi.vm.sade.tarjonta.ui.enums.MenuBarActions;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.ShowHakukohdeViewImpl;
-import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusLisatiedotToinenAsteView;
-import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
+import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeLiiteTyyppiToViewModelConverter;
+import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeLiiteViewModelToDtoConverter;
+import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter;
+import fi.vm.sade.tarjonta.ui.helper.conversion.Koulutus2asteConverter;
+import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
+import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusSearchSpecificationViewModelToDTOConverter;
+import fi.vm.sade.tarjonta.ui.helper.conversion.ValintakoeConverter;
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
+import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
+import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
-import fi.vm.sade.tarjonta.ui.model.org.OrganisationModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.org.NavigationModel;
+import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
+import fi.vm.sade.tarjonta.ui.model.org.TarjoajaModel;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.service.PublishingService;
 import fi.vm.sade.tarjonta.ui.service.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.service.UserContext;
 import fi.vm.sade.tarjonta.ui.view.SearchResultsView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.CreationDialog;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.ListHakukohdeView;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.ShowHakukohdeViewImpl;
+import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.ShowKoulutusView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusLisatiedotToinenAsteView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusView;
-
-import org.apache.commons.beanutils.BeanComparator;
 
 /**
  * This class is used to control the "tarjonta" UI.
@@ -144,6 +203,12 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private EditKoulutusLisatiedotToinenAsteView lisatiedotView;
     @Autowired(required = true)
     private TarjontaLukioPresenter lukioPresenter;
+    private LueKoulutusVastausTyyppi rawKoulutus;
+    
+    public LueKoulutusVastausTyyppi getRawKoulutus() {
+        return rawKoulutus;
+    }
+
     public static final String VALINTAKOE_TAB_SELECT = "valintakokeet";
     public static final String LIITTEET_TAB_SELECT = "liitteet";
 
@@ -724,24 +789,40 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public void readOrgTreeToTarjoaja(String organisaatioOid) {
         Preconditions.checkNotNull(getTarjoaja().getSelectedOrganisationOid(), "Organisation OID cannot be null.");
 
-        List<String> organisaatioOidTree = new ArrayList<String>();
-        organisaatioOidTree.add(organisaatioOid);
+        LOG.info("getting org oid tree");
+        OrganisaatioSearchCriteriaDTO dto = new OrganisaatioSearchCriteriaDTO();
+        dto.getOidResctrictionList().add(organisaatioOid);
         try {
-            List<OrganisaatioDTO> parentOrganisaatios = getOrganisaatioService().findParentsTo(organisaatioOid);
-            for (OrganisaatioDTO curOrg : parentOrganisaatios) {
-                organisaatioOidTree.add(curOrg.getOid());
+        List<OrganisaatioPerustietoType> orgs = getOrganisaatioService().searchBasicOrganisaatios(dto);
+        List<String> organisaatioOidTree = new ArrayList<String>();
+        for(OrganisaatioPerustietoType perus: orgs) {
+            if(perus!=null) {
+                organisaatioOidTree.add(perus.getOid());
             }
-            OrganisaatioSearchOidType childKysely = new OrganisaatioSearchOidType();
-            childKysely.setSearchOid(organisaatioOid);
-            OrganisaatioOidListType childVastaus = getOrganisaatioService().findChildrenOidsByOid(childKysely);
-            for (OrganisaatioOidType curOid : childVastaus.getOrganisaatioOidList()) {
-                organisaatioOidTree.add(curOid.getOrganisaatioOid());
-            }
+        }
+        getTarjoaja().setOrganisaatioOidTree(organisaatioOidTree);
+
         } catch (Exception ex) {
             LOG.error("Problem fetching organisaatio oid tree: {}", ex.getMessage());
         }
-
-        getTarjoaja().setOrganisaatioOidTree(organisaatioOidTree);
+        LOG.info("getting org oid tree, done.");
+//        
+//        organisaatioOidTree.add(organisaatioOid);
+//        try {
+//            List<OrganisaatioDTO> parentOrganisaatios = getOrganisaatioService().findParentsTo(organisaatioOid);
+//            for (OrganisaatioDTO curOrg : parentOrganisaatios) {
+//                organisaatioOidTree.add(curOrg.getOid());
+//            }
+//            OrganisaatioSearchOidType childKysely = new OrganisaatioSearchOidType();
+//            childKysely.setSearchOid(organisaatioOid);
+//            OrganisaatioOidListType childVastaus = getOrganisaatioService().findChildrenOidsByOid(childKysely);
+//            for (OrganisaatioOidType curOid : childVastaus.getOrganisaatioOidList()) {
+//                organisaatioOidTree.add(curOid.getOrganisaatioOid());
+//            }
+//        } catch (Exception ex) {
+//            LOG.error("Problem fetching organisaatio oid tree: {}", ex.getMessage());
+//        }
+//
     }
 
     private void copyKoulutusToModel(final String koulutusOid) {
@@ -778,20 +859,20 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     private void readKoulutusToModel(final String koulutusOid) {
-        LueKoulutusVastausTyyppi lueKoulutus = this.getKoulutusByOid(koulutusOid);
+        rawKoulutus = this.getKoulutusByOid(koulutusOid);
         try {
             KoulutusToisenAsteenPerustiedotViewModel koulutus;
-            koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), lueKoulutus, I18N.getLocale());
+            koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), rawKoulutus, I18N.getLocale());
 
             getModel().setKoulutusPerustiedotModel(koulutus);
-            getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(lueKoulutus));
+            getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(rawKoulutus));
 
             //Empty previous Koodisto data from the comboboxes.
             koulutus.getKoulutusohjelmat().clear();
             koulutus.getKoulutuskoodit().clear();
-            if (lueKoulutus.getHakukohteet() != null) {
+            if (rawKoulutus.getHakukohteet() != null) {
                 koulutus.getKoulutuksenHakukohteet().clear();
-                for (HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi : lueKoulutus.getHakukohteet()) {
+                for (HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi : rawKoulutus.getHakukohteet()) {
                     SimpleHakukohdeViewModel hakukohdeViewModel = new SimpleHakukohdeViewModel();
                     hakukohdeViewModel.setHakukohdeNimi(hakukohdeKoosteTyyppi.getKoodistoNimi());
                     hakukohdeViewModel.setHakukohdeNimiKoodi(hakukohdeKoosteTyyppi.getNimi());
@@ -1573,7 +1654,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         Preconditions.checkNotNull(komotoOid, "KOMOTO OID cannot be null.");
         LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
         kysely.setOid(komotoOid);
+        LOG.info("getKoulutusByOId");
         LueKoulutusVastausTyyppi vastaus = this.getTarjontaPublicService().lueKoulutus(kysely);
+        LOG.info("getKoulutusByOId, done.");
 
         return vastaus;
     }

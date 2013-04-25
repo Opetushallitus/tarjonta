@@ -70,14 +70,14 @@ public class ShowKoulutusViewTab extends CustomComponent {
      * @param locale is used for koodi values
      * @param koulutus the koulutus to display
      */
-    public ShowKoulutusViewTab(final String language, final Locale locale, final LueKoulutusVastausTyyppi koulutus) {
+    public ShowKoulutusViewTab(final String language, final Locale locale) {
         Preconditions.checkNotNull(language, "Language cannot be null");
         Preconditions.checkNotNull(presenter.getTarjoaja(), "Tarjoaja cannot be null");
         Preconditions.checkNotNull(presenter.getTarjoaja().getSelectedOrganisationOid(), "Tarjoaja organisaatioOid cannot be null");
         this.language = language;
         this.locale = getKoodistoLocale(locale);
-        this.koulutus = koulutus;
-        this.context = OrganisaatioContext.getContext(presenter.getTarjoaja().getSelectedOrganisationOid());
+        this.koulutus = presenter.getRawKoulutus();
+        this.context = OrganisaatioContext.getContext(koulutus.getTarjoaja());
         final VerticalLayout layout = new VerticalLayout();
         layout.setSpacing(true);
         layout.setMargin(true);
@@ -381,7 +381,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
     private List<ShowKoulutusHakukohdeRow> getKoulutusHakukohdeRows(List<SimpleHakukohdeViewModel> hakukohdes) {
         final List<ShowKoulutusHakukohdeRow> rows = Lists.newArrayList();
         for (SimpleHakukohdeViewModel hakukohdeViewModel : hakukohdes) {
-            final ShowKoulutusHakukohdeRow row = new ShowKoulutusHakukohdeRow(hakukohdeViewModel);
+            final ShowKoulutusHakukohdeRow row = new ShowKoulutusHakukohdeRow(hakukohdeViewModel, context);
             rows.add(row);
         }
         return rows;
