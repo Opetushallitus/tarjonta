@@ -52,7 +52,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author Tuomas Katva
  */
-@Transactional
+@Transactional(readOnly=true)
 @Service("tarjontaPublicService")
 public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 

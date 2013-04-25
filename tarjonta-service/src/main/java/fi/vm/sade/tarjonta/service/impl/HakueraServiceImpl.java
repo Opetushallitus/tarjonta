@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * @author Antti Salonen
  */
-@Transactional
+@Transactional(readOnly=true)
 @Service("koulutusmoduuliAdminService")
 public class HakueraServiceImpl implements HakueraService {
 
@@ -43,6 +43,7 @@ public class HakueraServiceImpl implements HakueraService {
     }
 
     @Override
+    @Transactional(readOnly=false)
     public HakueraTyyppi createHakuera(HakueraTyyppi hakuera) {
         Haku entity = conversionService.convert(hakuera, Haku.class);
         entity = businessService.save(entity);
@@ -50,6 +51,7 @@ public class HakueraServiceImpl implements HakueraService {
     }
 
     @Override
+    @Transactional(readOnly=false)
     public HakueraTyyppi updateHakuera(HakueraTyyppi hakuera) {
         Haku entity = conversionService.convert(hakuera, Haku.class);
         entity = businessService.update(entity);
