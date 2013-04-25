@@ -301,7 +301,7 @@
                 <dependency>
                     <groupId>fi.vm.sade.vaadin</groupId>
                     <artifactId>vaadin-theme-oph</artifactId>
-                    <version>${generic.version}</version>
+                    <version>${vaadin.theme.version}</version>
                     <type>jar</type>
                 </dependency>
 

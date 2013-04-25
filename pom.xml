@@ -17,12 +17,13 @@
     <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
-      <organisaatio.api.version>5.0-SNAPSHOT</organisaatio.api.version>
-      <authentication.api.version>5.0-SNAPSHOT</authentication.api.version>
-      <generic.version>${sade-generic.version}</generic.version>
-      <koodisto.api.version>5.0-SNAPSHOT</koodisto.api.version>
-      <koodisto.widget.version>5.0-SNAPSHOT</koodisto.widget.version>
-      <oid.api.version>5.0-SNAPSHOT</oid.api.version>
+      <organisaatio.api.version>4.0-SNAPSHOT</organisaatio.api.version>
+      <authentication.api.version>4.0-SNAPSHOT</authentication.api.version>
+      <generic.version>4.0-SNAPSHOT</generic.version>
+      <vaadin.theme.version>4.0-SNAPSHOT</vaadin.theme.version>
+      <koodisto.api.version>4.0-SNAPSHOT</koodisto.api.version>
+      <koodisto.widget.version>4.0-SNAPSHOT</koodisto.widget.version>
+      <oid.api.version>4.0-SNAPSHOT</oid.api.version>
     </properties>
 
     <modules>
