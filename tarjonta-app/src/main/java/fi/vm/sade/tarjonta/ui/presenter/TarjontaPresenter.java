@@ -570,8 +570,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
     public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustietoType> orgs) {
 
+
         getTarjoaja().addSelectedOrganisations(orgs);
-        showCopyKoulutusPerustiedotEditView(getModel().getSelectedKoulutusOid());
+        showCopyKoulutusPerustiedotEditView(getModel().getSelectedKoulutusOid(),orgs);
         getModel().getSelectedKoulutukset().clear();
     }
 
@@ -647,11 +648,23 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         getModel().getHakukohde().setKomotoOids(komotoOids);
     }
 
-    public void showCopyKoulutusPerustiedotEditView(final String koulutusOid) {
+    public void showCopyKoulutusPerustiedotEditView(final String koulutusOid, Collection<OrganisaatioPerustietoType> orgs) {
+
+
         // If oid of koulutus is provided the koulutus is read from database
         // before opening the KoulutusEditView
         if (koulutusOid != null) {
             copyKoulutusToModel(koulutusOid);
+
+            if (orgs != null && orgs.size() > 0) {
+
+                getModel().getTarjoajaModel().getOrganisationOidNamePairs().clear();
+                for (OrganisaatioPerustietoType org:orgs) {
+                    OrganisationOidNamePair oidNamePair = new OrganisationOidNamePair();
+                    oidNamePair.setOrganisation(org.getOid(),org.getNimiFi());
+                    getModel().getTarjoajaModel().getOrganisationOidNamePairs().add(oidNamePair);
+                }
+            }
 
             getModel().getKoulutusPerustiedotModel().setTila(TarjontaTila.LUONNOS);
 
