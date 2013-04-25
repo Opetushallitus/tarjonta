@@ -541,24 +541,40 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         }
     }
 
+    private String getHakukohdeTulosKoodistoNimi(HakukohdeTulos hakukohdeTulos) {
+        String koodistoNimi = null;
+
+        for (MonikielinenTekstiTyyppi.Teksti teksti: hakukohdeTulos.getHakukohde().getNimi().getTeksti())   {
+            if (teksti.getKieliKoodi().trim().equalsIgnoreCase("fi")) {
+                koodistoNimi = teksti.getValue();
+            }
+        }
+        if (koodistoNimi != null) {
+            koodistoNimi = koodistoNimi + ", " + hakukohdeTulos.getHakukohde().getTila().value();
+        }
+
+        return koodistoNimi;
+    }
+
     private LueKoulutusVastausTyyppi convert(KoulutusmoduuliToteutus fromKoulutus) {
         log.debug("in convert ");
         LueKoulutusVastausTyyppi toKoulutus = new LueKoulutusVastausTyyppi();
         toKoulutus.setTila(EntityUtils.convertTila(fromKoulutus.getTila()));
 
-       /* HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
-
-        HaeHakukohteetVastausTyyppi vastaus =  searchService.haeHakukohteet();*/
-        /*if (fromKoulutus.getHakukohdes() != null) {
-            for (Hakukohde hakukohde : fromKoulutus.getHakukohdes()) {
+        HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
+        kysely.getKoulutusOids().add(fromKoulutus.getOid());
+        kysely.setKoulutuksenAlkamisvuosi(0);
+        HaeHakukohteetVastausTyyppi vastaus =  searchService.haeHakukohteet(kysely);
+        if (fromKoulutus.getHakukohdes() != null) {
+            for (HakukohdeTulos hakukohde : vastaus.getHakukohdeTulos()) {
                 HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi = new HakukohdeKoosteTyyppi();
-                hakukohdeKoosteTyyppi.setOid(hakukohde.getOid());
-                hakukohdeKoosteTyyppi.setKoodistoNimi(hakukohde.getHakukohdeKoodistoNimi());
-                hakukohdeKoosteTyyppi.setNimi(hakukohde.getHakukohdeNimi());
-                hakukohdeKoosteTyyppi.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.fromValue(hakukohde.getTila().name()));
+                hakukohdeKoosteTyyppi.setOid(hakukohde.getHakukohde().getOid());
+                hakukohdeKoosteTyyppi.setKoodistoNimi(getHakukohdeTulosKoodistoNimi(hakukohde));
+                hakukohdeKoosteTyyppi.setNimi(hakukohde.getHakukohde().getKoodistoNimi());
+                hakukohdeKoosteTyyppi.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.fromValue(hakukohde.getHakukohde().getTila().name()));
                 toKoulutus.getHakukohteet().add(hakukohdeKoosteTyyppi);
             }
-        }*/
+        }
 
 
         toKoulutus.setViimeisinPaivittajaOid(fromKoulutus.getLastUpdatedByOid());
