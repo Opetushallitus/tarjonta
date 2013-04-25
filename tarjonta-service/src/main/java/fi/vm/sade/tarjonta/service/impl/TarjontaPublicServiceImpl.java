@@ -546,7 +546,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         LueKoulutusVastausTyyppi toKoulutus = new LueKoulutusVastausTyyppi();
         toKoulutus.setTila(EntityUtils.convertTila(fromKoulutus.getTila()));
 
-        if (fromKoulutus.getHakukohdes() != null) {
+       /* HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
+
+        HaeHakukohteetVastausTyyppi vastaus =  searchService.haeHakukohteet();*/
+        /*if (fromKoulutus.getHakukohdes() != null) {
             for (Hakukohde hakukohde : fromKoulutus.getHakukohdes()) {
                 HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi = new HakukohdeKoosteTyyppi();
                 hakukohdeKoosteTyyppi.setOid(hakukohde.getOid());
@@ -555,7 +558,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
                 hakukohdeKoosteTyyppi.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.fromValue(hakukohde.getTila().name()));
                 toKoulutus.getHakukohteet().add(hakukohdeKoosteTyyppi);
             }
-        }
+        }*/
 
 
         toKoulutus.setViimeisinPaivittajaOid(fromKoulutus.getLastUpdatedByOid());
