@@ -15,9 +15,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources;
 
-import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.service.resources.dto.Komo;
+import fi.vm.sade.tarjonta.service.resources.dto.Komoto;
 import java.util.List;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 
@@ -30,6 +29,13 @@ import javax.ws.rs.core.MediaType;
 
 /**
  * REST services for KOMO's.
+ *
+ * <pre>
+ * /komo?searchTerms=xxx&count=100&(startIndex=50|startPage=10)&language=fi
+ * /komo
+ * /komo/hello
+ * /komo/{OID}/komotos
+ * </pre>
  *
  * @author mlyly
  */
@@ -55,24 +61,42 @@ public interface KomoResource {
      */
     @GET
     @Path("{oid}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public KoulutusmoduuliKoosteTyyppi getByOID(@PathParam("oid") String oid);
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public Komo getByOID(@PathParam("oid") String oid);
 
     /**
-     * /komo?searchTerms=xxx
+     * /komo?searchTerms=xxx&count=5&startIndex=100&language=fi
      *
      * @param searchTerms may be null
      * @param count
      * @param startIndex
-     * @param startPage
      * @param language
      * @return list of KoulutusmoduuliKoosteTyyppi's
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<KoulutusmoduuliKoosteTyyppi> search(@QueryParam("searchTerms") String searchTerms,
+    public List<Komo> search(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex,
-            @QueryParam("startPage") int startPage,
             @QueryParam("language") String language);
+
+    /**
+     * GET Komoto's by Komo.
+     *
+     * @param oid
+     * @param startIndex
+     * @param count
+     * @param language
+     * @return
+     */
+    @GET
+    @Path("{oid}/komotos")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public List<Komoto> getKomotosByKomotoOID(
+            @PathParam("oid") String oid,
+            @QueryParam("startIndex") int startIndex,
+            @QueryParam("count") int count,
+            @QueryParam("language") String language);
+
+
 }

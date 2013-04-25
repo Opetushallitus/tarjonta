@@ -15,10 +15,11 @@
  */
 package fi.vm.sade.tarjonta.service.resources;
 
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import java.util.List;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+
+import fi.vm.sade.tarjonta.service.resources.dto.Komo;
+import fi.vm.sade.tarjonta.service.resources.dto.Komoto;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -29,6 +30,17 @@ import javax.ws.rs.core.MediaType;
 
 /**
  * REST services for KOMOTO's.
+ *
+ * <pre>
+ * /komoto?searchTerms=xxx&count=100&(startIndex=50|startPage=10)&language=fi
+ * /komoto
+ * /komoto/hello
+ * /komoto/{OID}
+ *
+ * TODO
+ * /komoto/{OID}/komo
+ * /komoto/{OID}/hakukohde
+ * </pre>
  *
  * @author mlyly
  */
@@ -54,8 +66,13 @@ public interface KomotoResource {
      */
     @GET
     @Path("{oid}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public KoulutusmoduuliKoosteTyyppi getByOID(@PathParam("oid") String oid);
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public Komoto getByOID(@PathParam("oid") String oid);
+
+    @GET
+    @Path("{oid}/komo")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public Komo getKomoByKomotoOID(@PathParam("oid") String oid);
 
     /**
      * /komoto?searchTerms=xxx
@@ -63,15 +80,13 @@ public interface KomotoResource {
      * @param searchTerms may be null
      * @param count
      * @param startIndex
-     * @param startPage
      * @param language
      * @return list of KoulutusmoduuliKoosteTyyppi's
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<KoulutusmoduuliKoosteTyyppi> search(@QueryParam("searchTerms") String searchTerms,
+    public List<Komoto> search(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex,
-            @QueryParam("startPage") int startPage,
             @QueryParam("language") String language);
 }

@@ -40,6 +40,11 @@
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToteutusDTOToModelConverter"/>
                 -->
 
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToKomoConverter"/>
+                <!--
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToteutusToKomotoConverter"/>
+                -->
+
             </list>
         </property>
     </bean>

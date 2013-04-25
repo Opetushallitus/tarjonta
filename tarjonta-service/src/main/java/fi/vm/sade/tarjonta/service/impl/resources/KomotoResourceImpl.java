@@ -19,7 +19,8 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.KomotoResource;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.resources.dto.Komo;
+import fi.vm.sade.tarjonta.service.resources.dto.Komoto;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
  * REST /komoto/*
  *
  * @author mlyly
+ * @see KomotoResource
  */
 @Transactional
 public class KomotoResourceImpl implements KomotoResource {
@@ -47,22 +49,26 @@ public class KomotoResourceImpl implements KomotoResource {
     // GET /komoto/hello
     @Override
     public String hello() {
+        LOG.info("hello() -- /komoto/hello");
         return "hello";
     }
 
     // GET /komoto/{oid}
     @Override
-    public KoulutusmoduuliKoosteTyyppi getByOID(String oid) {
-        LOG.warn("getByOID({})", oid);
-        return new KoulutusmoduuliKoosteTyyppi();
+    public Komoto getByOID(String oid) {
+        LOG.info("getByOID() -- /komoto/{}", oid);
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
+        Komoto result = conversionService.convert(komoto, Komoto.class);
+        LOG.info("  result={}", result);
+        return result;
     }
 
     // GET /komoto?searchParams=xxx etc.
     @Override
-    public List<KoulutusmoduuliKoosteTyyppi> search(String searchTerms, int count, int startIndex, int startPage, String language) {
-        LOG.warn("search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex, startPage, language});
+    public List<Komoto> search(String searchTerms, int count, int startIndex, String language) {
+        LOG.info("search() -- /komoto?st={}, c={}, si={}, l={})", new Object[]{searchTerms, count, startIndex, language});
 
-        List<KoulutusmoduuliKoosteTyyppi> result = new ArrayList<KoulutusmoduuliKoosteTyyppi>();
+        List<Komoto> result = new ArrayList<Komoto>();
 
         // Default values for params
         count = (count == 0) ? 100 : count;
@@ -72,12 +78,22 @@ public class KomotoResourceImpl implements KomotoResource {
 
         List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findAll();
         for (KoulutusmoduuliToteutus komoto : komotos) {
-            KoulutusmoduuliKoosteTyyppi komokt = conversionService.convert(komoto, KoulutusmoduuliKoosteTyyppi.class);
-            result.add(komokt);
+            Komoto k = conversionService.convert(komoto, Komoto.class);
+            result.add(k);
         }
 
         LOG.info("  result={}", result);
 
+        return result;
+    }
+
+    // GET /komoto/{oid}/komo
+    @Override
+    public Komo getKomoByKomotoOID(String oid) {
+        LOG.info("getKomoByKomotoOID() -- /komoto/{}/komo", oid);
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
+        Komo result = conversionService.convert(komoto.getKoulutusmoduuli(), Komo.class);
+        LOG.info("  result={}", result);
         return result;
     }
 }
