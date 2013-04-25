@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.search.SolrFields.Organisaatio;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -103,11 +105,25 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
         add(komotoDoc, KOULUTUSMODUULI_OID, komoto.getKoulutusmoduuli().getOid());
         add(komotoDoc, KOULUTUSTYYPPI, komoto.getKoulutusmoduuli().getKoulutustyyppi());
         add(komotoDoc, POHJAKOULUTUSVAATIMUS_URI, komoto.getPohjakoulutusvaatimus());
+        addHakukohdeOids(komotoDoc, komoto.getHakukohdes());
         addTekstihaku(komotoDoc);
         docs.add(komotoDoc);
         return docs;
     }
     
+    private void addHakukohdeOids(SolrInputDocument komotoDoc,
+            Set<Hakukohde> hakukohdes) {
+        if (hakukohdes == null) {
+            return;
+        }
+        
+        List<Hakukohde> hakukohdeList = new ArrayList<Hakukohde>(hakukohdes);
+        for (Hakukohde curHakukohde : hakukohdeList) {
+            add(komotoDoc, HAKUKOHDE_OIDS, curHakukohde.getOid());
+        }
+        
+    }
+
     private void addTekstihaku(SolrInputDocument komotoDoc) {
         add(komotoDoc, TEKSTIHAKU, String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
                  komotoDoc.getFieldValue(KOULUTUSKOODI_FI), 

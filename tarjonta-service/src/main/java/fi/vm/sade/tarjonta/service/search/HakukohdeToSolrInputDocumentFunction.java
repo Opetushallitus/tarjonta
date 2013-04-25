@@ -79,10 +79,22 @@ public class HakukohdeToSolrInputDocumentFunction implements
         addNimitiedot(hakukohdeDoc, hakukohde.getHakukohdeNimi());
         addHakuajat(hakukohdeDoc, hakukohde.getHaku());
         addTekstihaku(hakukohdeDoc);
+        addKomotoOids(hakukohdeDoc, hakukohde.getKoulutusmoduuliToteutuses());
         docs.add(hakukohdeDoc);
         return docs;
     }
     
+    private void addKomotoOids(SolrInputDocument hakukohdeDoc,
+            Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses) {
+       if (koulutusmoduuliToteutuses == null) {
+           return;
+       }
+       List<KoulutusmoduuliToteutus> komotoList = new ArrayList<KoulutusmoduuliToteutus>(koulutusmoduuliToteutuses);
+       for (KoulutusmoduuliToteutus komoto : komotoList) {
+           add(hakukohdeDoc, KOULUTUS_OIDS, komoto.getOid());
+       }
+    }
+
     private void addTekstihaku(SolrInputDocument hakukohdeDoc) {
        add(hakukohdeDoc, TEKSTIHAKU, String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
                 hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_FI), 

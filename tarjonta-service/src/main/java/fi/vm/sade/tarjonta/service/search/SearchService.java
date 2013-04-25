@@ -91,6 +91,8 @@ public class SearchService {
 
         // restrict by org
         addFilterForOrgs(oids, queryParts, q);
+        
+        addFilterForKoulutukset(kysely.getKoulutusOids(), queryParts, q);
 
         //filter out orgs
         filterOutOrgs(q);
@@ -137,6 +139,15 @@ public class SearchService {
             final List<String> queryParts, SolrQuery q) {
         if (oids.size() > 0) {
             addQuery("", queryParts, "%s:(%s)", Hakukohde.ORG_PATH,
+                    Joiner.on(" ").join(oids));
+            q.addFilterQuery(Joiner.on(" ").join(queryParts));
+        }
+    }
+    
+    private void addFilterForKoulutukset(final List<String> oids,
+            final List<String> queryParts, SolrQuery q) {
+        if (oids.size() > 0) {
+            addQuery("", queryParts, "%s:(%s)", Hakukohde.KOULUTUS_OIDS,
                     Joiner.on(" ").join(oids));
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
         }

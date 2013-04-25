@@ -14,16 +14,16 @@
     -->
     <jaxws:client id="koodiPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
-                  address="${koodi.webservice.url:http://NO_KOODI_WEBSERVICE_URL_CONFIGURED}"/>
+                  address="${koodi.webservice.url.backend"/>
 
     <jaxws:client id="koodistoPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
-                  address="${koodisto.webservice.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}"/>
+                  address="${koodisto.webservice.url.backend"/>
 
 
     <jaxws:client id="tarjojaPublicService"
                   serviceClass="fi.vm.sade.tarjoaja.service.KoulutustarjoajaPublicService"
-                  address="${koulutustarjoaja.webservice.url:http://NO_KOODI_WEBSERVICE_URL_CONFIGURED}">
+                  address="${koulutustarjoaja.webservice.url.backend">
     </jaxws:client>
 
     <!-- wrapper service that uses koodisto webservice for content -->
