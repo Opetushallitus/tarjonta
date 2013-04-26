@@ -20,9 +20,11 @@ import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import java.util.ArrayList;
+import java.util.Date;
 
 import java.util.List;
 
@@ -41,7 +43,7 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
 
     /*
      * Returns all koulutusmoduulitoteutukses for given hakukohde
-     * 
+     *
      * @param hakukohde
      * @return List<KoulutusmoduuliToteutus>
      */
@@ -92,6 +94,20 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
      * @return
      */
     public List<Koulutusmoduuli> findAllKomos();
+
+
+    /**
+     * Find list of oid's matching.
+     *
+     * @param tila
+     * @param count
+     * @param startIndex
+     * @param lastModifiedBefore
+     * @param lastModifiedAfter
+     * @return
+     */
+    public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedAfter);
+
 
     /**
      * Contract and model for passing search criterias to DAO. Another option

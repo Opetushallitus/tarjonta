@@ -20,6 +20,7 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 
 import fi.vm.sade.tarjonta.service.resources.dto.Komo;
 import fi.vm.sade.tarjonta.service.resources.dto.Komoto;
+import java.util.Date;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -69,24 +70,34 @@ public interface KomotoResource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public Komoto getByOID(@PathParam("oid") String oid);
 
+    /**
+     * Get KOMO for given KOMOTO.
+     *
+     * @param oid
+     * @return
+     */
     @GET
     @Path("{oid}/komo")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public Komo getKomoByKomotoOID(@PathParam("oid") String oid);
 
     /**
-     * /komoto?searchTerms=xxx
+     * Get list of KOMOTO's.
      *
-     * @param searchTerms may be null
+     * /komoto?searchTerms=xxx&count=x&startIndex=XX&language=XXX
+     *
+     * @param searchTerms
      * @param count
      * @param startIndex
-     * @param language
-     * @return list of KoulutusmoduuliKoosteTyyppi's
+     * @param lastModifiedBefore
+     * @param lastModifiedSince
+     * @return list of KOMOTO OID's which you can then load by oid
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<Komoto> search(@QueryParam("searchTerms") String searchTerms,
+    public List<String> search(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex,
-            @QueryParam("language") String language);
+            @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
+            @QueryParam("lastModifiedSince") Date lastModifiedSince);
 }

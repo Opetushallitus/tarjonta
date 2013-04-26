@@ -24,6 +24,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import java.util.Date;
 
 import java.util.List;
 import org.slf4j.Logger;
@@ -221,5 +222,46 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         return from(moduuli).
                 where(whereExpr).
                 singleResult(moduuli);
+    }
+
+    @Override
+    public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedAfter) {
+
+        QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
+
+        BooleanExpression whereExpr = null;
+
+        if (tila != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, komo.tila.eq(tila));
+        }
+        if (lastModifiedBefore != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, komo.updated.before(lastModifiedBefore));
+        }
+        if (lastModifiedAfter != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, komo.updated.after(lastModifiedAfter));
+        }
+
+        JPAQuery q = from(komo);
+        if (whereExpr != null) {
+            q = q.where(whereExpr);
+        }
+
+        if (count > 0) {
+            q = q.limit(count);
+        }
+
+        if (startIndex > 0) {
+            q.offset(startIndex);
+        }
+
+        return q.list(komo.oid);
+
+//        QCustomer customer = new QCustomer("c"); // alias for the CUSTOMER table
+//
+//        SQLTemplates dialect = new HSQLDBTemplates(); // SQL-dialect
+//        SQLQuery query = new SQLQueryImpl(connection, dialect);
+//        List<String> lastNames = query.from(customer)
+//        .where(customer.firstName.eq("Bob"))
+//        .list(customer.lastName);
     }
 }
