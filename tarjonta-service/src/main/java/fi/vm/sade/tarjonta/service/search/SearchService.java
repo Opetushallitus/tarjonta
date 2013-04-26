@@ -153,6 +153,15 @@ public class SearchService {
         }
     }
 
+    private void addFilterForHakukohdes(final List<String> oids,
+                                         final List<String> queryParts, SolrQuery q) {
+        if (oids.size() > 0) {
+            addQuery("", queryParts, "%s:(%s)",Koulutus.HAKUKOHDE_OIDS,
+                    Joiner.on(" ").join(oids));
+            q.addFilterQuery(Joiner.on(" ").join(queryParts));
+        }
+    }
+
     private void addFilterForVuosiKausi(final String kausi, final String vuosi,
             final List<String> queryParts, SolrQuery q) {
         // vuosi kausi
@@ -177,7 +186,7 @@ public class SearchService {
                 .getKoulutuksenAlkamisvuosi()):null;
         final List<String> tarjoajaOids = kysely.getTarjoajaOids();
         final List<String> koulutusOids = kysely.getKoulutusOids();
-
+        final List<String> hakukohdeOids = kysely.getHakukohdeOids();
         nimi = escape(nimi);
         
         
@@ -200,10 +209,17 @@ public class SearchService {
         // restrict by org
         addFilterForOrgs(tarjoajaOids, queryParts, q);
 
+
+        //restrict with hakukohde oids
+        if (hakukohdeOids != null && hakukohdeOids.size() > 0) {
+            addFilterForHakukohdes(hakukohdeOids,queryParts,q);
+        }
+
         //restrict by koulutus
         if (koulutusOids.size() > 0) {
             addFilterForKOulutus(koulutusOids, q);
         }
+
 
         //filter out orgs
         filterOutOrgs(q);

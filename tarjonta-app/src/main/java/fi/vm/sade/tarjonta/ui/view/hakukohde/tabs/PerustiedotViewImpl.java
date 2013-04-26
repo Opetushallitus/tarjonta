@@ -460,9 +460,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
 
     private void setOsoiteToOrganisaationPostiOsoite(OsoiteDTO osoite) {
+        if (osoite != null) {
         presenter.getModel().getHakukohde().setOsoiteRivi1(osoite.getOsoite());
         presenter.getModel().getHakukohde().setPostinumero(osoite.getPostinumero());
         presenter.getModel().getHakukohde().setPostitoimipaikka(osoite.getPostitoimipaikka());
+        }
     }
 
     private OsoiteDTO getOrganisaationPostiOsoite() {
