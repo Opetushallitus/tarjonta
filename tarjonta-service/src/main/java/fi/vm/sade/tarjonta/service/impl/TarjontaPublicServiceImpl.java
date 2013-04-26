@@ -362,14 +362,34 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public LueHakukohdeKoulutuksineenVastausTyyppi lueHakukohdeKoulutuksineen(@WebParam(partName = "hakukohdeKysely", name = "LueHakukohdeKoulutuksineenKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LueHakukohdeKoulutuksineenKyselyTyyppi hakukohdeKysely) {
-        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(hakukohdeKysely.getHakukohdeOid());
+       /* Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(hakukohdeKysely.getHakukohdeOid());
         List<KoulutusmoduuliToteutus> komotos = new ArrayList<KoulutusmoduuliToteutus>();
         if (hakukohde.getKoulutusmoduuliToteutuses() != null) {
             komotos.addAll(hakukohde.getKoulutusmoduuliToteutuses());
-        }
-        HakukohdeTyyppi hakukohdeTyyppi = conversionService.convert(hakukohde, HakukohdeTyyppi.class);
+        }*/
 
-        hakukohdeTyyppi.getHakukohdeKoulutukses().addAll(mapKomotoListToKoulutusKoosteTyyppiList(komotos));
+
+        HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
+        hakukohdeTyyppi.setOid(hakukohdeKysely.getHakukohdeOid());
+
+        HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
+        kysely.getHakukohdeOids().add(hakukohdeKysely.getHakukohdeOid());
+
+        HaeKoulutuksetVastausTyyppi koulutusVastaus = searchService.haeKoulutukset(kysely);
+
+        for (KoulutusTulos tulos : koulutusVastaus.getKoulutusTulos()) {
+
+           KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
+           koulutus.setTila(tulos.getKoulutus().getTila());
+           koulutus.setKomotoOid(tulos.getKoulutus().getKomotoOid());
+           koulutus.setKoulutustyyppi(tulos.getKoulutus().getKoulutustyyppi());
+           koulutus.setAjankohta(tulos.getKoulutus().getAjankohta());
+           koulutus.setKoulutusohjelmakoodi(tulos.getKoulutus().getKoulutusohjelmakoodi().getUri());
+           koulutus.setKoulutuskoodi(tulos.getKoulutus().getKoulutuskoodi().getUri());
+
+          hakukohdeTyyppi.getHakukohdeKoulutukses().add(koulutus);
+        }
+
 
         LueHakukohdeKoulutuksineenVastausTyyppi vastaus = new LueHakukohdeKoulutuksineenVastausTyyppi();
 
