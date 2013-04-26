@@ -22,10 +22,12 @@ import com.mysema.query.types.expr.BooleanExpression;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import static fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils.and;
 import fi.vm.sade.tarjonta.model.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Query;
 
@@ -206,4 +208,42 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         }
         return result;
     }
+
+
+    @Override
+    public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedAfter) {
+
+        QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+        BooleanExpression whereExpr = null;
+
+        if (tila != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, komoto.tila.eq(tila));
+        }
+        if (lastModifiedBefore != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, komoto.updated.before(lastModifiedBefore));
+        }
+        if (lastModifiedAfter != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, komoto.updated.after(lastModifiedAfter));
+        }
+
+        JPAQuery q = from(komoto);
+        if (whereExpr != null) {
+            q = q.where(whereExpr);
+        }
+
+        if (count > 0) {
+            q = q.limit(count);
+        }
+
+        if (startIndex > 0) {
+            q.offset(startIndex);
+        }
+
+        return q.list(komoto.oid);
+    }
+
+
 }
+
+

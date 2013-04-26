@@ -2,19 +2,18 @@
 <project name="deploy-to-remote-tomcat" basedir="." default="deploy-to-remote-tomcat" >
 
     <target name="deploy-to-remote-tomcat">
-		
 <!--
 	deploy to luokka shell command:
 	#ant -Dtomcat-host=luokka -Dtomcat-port=8302
 -->
 		<property name="oph.name" value="tarjonta"/>
+		<property name="pom.version" value="5.0-SNAPSHOT"/>
+		
+		<property name="maven.repo" value="${user.home}/.m2/repository"/>
 		<property name="tomcat.name" value="tomcat_${oph.name}"/>
 		<property name="tomcat.home" value="/data00/oph/${oph.name}/apache-tomcat-7.0.29"/>
-		<!--
 		<property name="ssh.keyfile" location="${user.home}/.ssh/id_rsa"/>
-		<property name="ssh.keypass" value=""/> -->
-		<property name="ssh.keyfile" location="C:\Users\karjari\sshkeys\T420_openssh"/>
-		<property name="ssh.keypass" value="Mopedi99++"/>
+		<property name="ssh.keypass" value=""/>
 
         <echo>Stop Tomcat</echo>
         <sshexec command="/etc/init.d/${tomcat.name} stop"
@@ -37,11 +36,13 @@
         <echo>Copy files to server...</echo>
 		<scp todir="tomcat@${tomcat-host}:${tomcat.home}/webapps/"
                keyfile="${ssh.keyfile}" passphrase="${ssh.keypass}" >
-			<fileset dir="tarjonta-service/target">
-				<include name="tarjonta-service*.war"/>
+			
+			<!-- deploy lates from local maven repo -->
+			<fileset dir="${maven.repo}/fi/vm/sade/tarjonta/tarjonta-service/${pom.version}">
+				<include name="*.war"/>
 			</fileset>
-			<fileset dir="tarjonta-app/target">
-				<include name="tarjonta-app*.war"/>
+			<fileset dir="${maven.repo}/fi/vm/sade/tarjonta/tarjonta-app/${pom.version}">
+				<include name="*.war"/>
 			</fileset>
 		</scp>
 

@@ -16,7 +16,7 @@
 package fi.vm.sade.tarjonta.service.resources;
 
 import fi.vm.sade.tarjonta.service.resources.dto.Komo;
-import fi.vm.sade.tarjonta.service.resources.dto.Komoto;
+import java.util.Date;
 import java.util.List;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 
@@ -31,7 +31,7 @@ import javax.ws.rs.core.MediaType;
  * REST services for KOMO's.
  *
  * <pre>
- * /komo?searchTerms=xxx&count=100&(startIndex=50|startPage=10)&language=fi
+ * /komo?searchTerms=xxx&count=100&startIndex=50
  * /komo
  * /komo/hello
  * /komo/{OID}/komotos
@@ -65,38 +65,37 @@ public interface KomoResource {
     public Komo getByOID(@PathParam("oid") String oid);
 
     /**
-     * /komo?searchTerms=xxx&count=5&startIndex=100&language=fi
+     * Search KOMO's
      *
-     * @param searchTerms may be null
+     * @param searchTerms
      * @param count
      * @param startIndex
-     * @param language
-     * @return list of KoulutusmoduuliKoosteTyyppi's
+     * @param lastModifiedBefore
+     * @param lastModifiedSince
+     * @return list of KOMO OID's that match
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<Komo> search(@QueryParam("searchTerms") String searchTerms,
+    public List<String> search(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex,
-            @QueryParam("language") String language);
+            @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
+            @QueryParam("lastModifiedSince") Date lastModifiedSince);
 
     /**
      * GET Komoto's by Komo.
      *
      * @param oid
-     * @param startIndex
      * @param count
-     * @param language
-     * @return
+     * @param startIndex
+     * @return list of KOMOTO OID's belonging to given KOMO
      */
     @GET
     @Path("{oid}/komotos")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<Komoto> getKomotosByKomotoOID(
+    public List<String> getKomotosByKomotoOID(
             @PathParam("oid") String oid,
-            @QueryParam("startIndex") int startIndex,
             @QueryParam("count") int count,
-            @QueryParam("language") String language);
-
+            @QueryParam("startIndex") int startIndex);
 
 }

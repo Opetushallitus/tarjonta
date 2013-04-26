@@ -19,6 +19,8 @@ import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.TarjontaTila;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -52,6 +54,19 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
 
     public List<KoulutusmoduuliToteutus> findKomotosByKomoAndtarjoaja(
             Koulutusmoduuli parentKomo, String tarjoaja);
+
+
+    /**
+     * Find list of oid's matching.
+     *
+     * @param tila
+     * @param count
+     * @param startIndex
+     * @param lastModifiedBefore
+     * @param lastModifiedAfter
+     * @return
+     */
+    public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedAfter);
 
 }
 

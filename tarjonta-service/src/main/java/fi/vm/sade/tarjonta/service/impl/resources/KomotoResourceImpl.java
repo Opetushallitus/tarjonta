@@ -18,10 +18,12 @@ package fi.vm.sade.tarjonta.service.impl.resources;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.service.resources.KomotoResource;
 import fi.vm.sade.tarjonta.service.resources.dto.Komo;
 import fi.vm.sade.tarjonta.service.resources.dto.Komoto;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,27 +65,17 @@ public class KomotoResourceImpl implements KomotoResource {
         return result;
     }
 
-    // GET /komoto?searchParams=xxx etc.
+    // GET /komoto?searchTerms=xxx etc.
     @Override
-    public List<Komoto> search(String searchTerms, int count, int startIndex, String language) {
-        LOG.info("search() -- /komoto?st={}, c={}, si={}, l={})", new Object[]{searchTerms, count, startIndex, language});
+    public List<String> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
+        LOG.info("search() -- /komoto?st={}, c={}, si={}, lmb={}, lma={})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
-        List<Komoto> result = new ArrayList<Komoto>();
+        // TODO hard coded, add param tarjonta tila + get the state!
+        TarjontaTila tarjontaTila = TarjontaTila.JULKAISTU;
 
-        // Default values for params
-        count = (count == 0) ? 100 : count;
-        language = (language == null) ? "fi" : language;
-
-        // TODO paging + searching!
-
-        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findAll();
-        for (KoulutusmoduuliToteutus komoto : komotos) {
-            Komoto k = conversionService.convert(komoto, Komoto.class);
-            result.add(k);
-        }
-
+        List<String> result = new ArrayList<String>();
+        result.addAll(koulutusmoduuliToteutusDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
         LOG.info("  result={}", result);
-
         return result;
     }
 

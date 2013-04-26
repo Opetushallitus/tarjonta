@@ -20,12 +20,12 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.service.resources.KomoResource;
 import fi.vm.sade.tarjonta.service.resources.dto.Komo;
-import fi.vm.sade.tarjonta.service.resources.dto.Komoto;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -38,9 +38,9 @@ import org.springframework.transaction.annotation.Transactional;
  * REST /komo/*
  *
  * @author mlyly
- * @see KomoResource
+ * @see KomoResource for fuller docs.
  */
-@Transactional
+@Transactional(readOnly = true)
 public class KomoResourceImpl implements KomoResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(KomoResourceImpl.class);
@@ -62,66 +62,44 @@ public class KomoResourceImpl implements KomoResource {
     @Override
     public Komo getByOID(String oid) {
         LOG.info("getByOID() -- /komo/{}", oid);
-
         Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
-        if (false && komo == null) {
-            LOG.warn("TESTING -- NULL KOMO!");
-            // TODO TESTING
-            komo = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
-            komo.setEqfLuokitus("eqf_a#2");
-            komo.setOid(oid);
-
-            MonikielinenTeksti mt = new MonikielinenTeksti();
-            mt.addTekstiKaannos("kieli_fi#1", "Suomeksi dataaa");
-            mt.addTekstiKaannos("kieli_sv#1", "Svenska talande!");
-            komo.setJatkoOpintoMahdollisuudet(mt);
-        }
-
         Komo result = conversionService.convert(komo, Komo.class);
         LOG.info("  result={}", result);
         return result;
     }
 
-    // GET /komo?searchParams=xxx etc.
+    // GET /komo?searchTerms=xxx&count=x&startIndex=x&lastModifiedBefore=x&lastModifiedSince=x
     @Override
-    public List<Komo> search(String searchTerms, int count, int startIndex, String language) {
-        LOG.info("search() -- /komo/  (st={}, c={}, si={}, l={})", new Object[]{searchTerms, count, startIndex, language});
+    public List<String> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
+        LOG.info("/komo -- search(st={}, c={}, si={}, lmb={}, lms={})", new Object[] {searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
-        List<Komo> result = new ArrayList<Komo>();
+        // TODO hard coded, add param tarjonta tila + get the state!
+        TarjontaTila tarjontaTila = TarjontaTila.JULKAISTU;
 
-        // Default values for params
-        count = (count == 0) ? 100 : count;
-        language = (language == null) ? "fi" : language;
-
-        // TODO paging + searching!
-
-        List<Koulutusmoduuli> komos = koulutusmoduuliDAO.findAll();
-        for (Koulutusmoduuli komo : komos) {
-            Komo k = conversionService.convert(komo, Komo.class);
-            result.add(k);
-        }
-
+        List<String> result = new ArrayList<String>();
+        result.addAll(koulutusmoduuliDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
         LOG.info("  result={}", result);
-
         return result;
     }
 
-    // GET /komo/{oid}/komotos
+    // GET /komo/OID/komotos?count=x&startIndex=x
     @Override
-    public List<Komoto> getKomotosByKomotoOID(String oid, int startIndex, int count, String language) {
-        LOG.info("getKomotosByKomotoOID() -- /komo/{}/komotos (startIndex={}, count={}, language={}", new Object[] {oid, startIndex, count, language});
+    public List<String> getKomotosByKomotoOID(String oid, int count, int startIndex) {
+        LOG.info("/komo/{}/komotos -- (si={}, c={})", new Object[] {oid, count, startIndex});
 
-        List<Komoto> result = new ArrayList<Komoto>();
+        List<String> result = new ArrayList<String>();
+
+        // TODO wery, wery, weeery inefficient... fixme!
 
         Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
         Set<KoulutusmoduuliToteutus> komos = komo.getKoulutusmoduuliToteutusList();
 
         for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : komos) {
-            result.add(conversionService.convert(koulutusmoduuliToteutus, Komoto.class));
+            result.add(koulutusmoduuliToteutus.getOid());
         }
 
         LOG.info("  result={}", result);
-
         return result;
     }
+
 }
