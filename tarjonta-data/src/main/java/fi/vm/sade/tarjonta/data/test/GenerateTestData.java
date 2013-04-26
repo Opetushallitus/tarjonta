@@ -34,9 +34,9 @@ public class GenerateTestData {
     public GenerateTestData() {
     }
 
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws InterruptedException {
         final ApplicationContext context = new ClassPathXmlApplicationContext("spring/context.xml");
         final DataUploader uploader = context.getBean(DataUploader.class);
-        uploader.upload(ORGANISATION_OID_SMALL, MAX_KOMOTOS_PER_ORGANISATION);
+        uploader.upload(ORGANISATION_OID_OPH, MAX_KOMOTOS_PER_ORGANISATION);
     }
 }

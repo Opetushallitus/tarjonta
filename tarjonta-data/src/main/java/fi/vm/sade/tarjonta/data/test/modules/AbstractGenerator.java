@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.data.test.modules;
 
+import fi.vm.sade.tarjonta.data.test.IdFactory;
 import fi.vm.sade.tarjonta.data.util.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.data.util.KoodistoUtil;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
@@ -32,8 +33,9 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractGenerator.class);
+    protected static final String SEPARATOR = "_";
     private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
-    private static final String OID_FORMAT = "%09d_";
+    private static final String OID_FORMAT = "%09d" + SEPARATOR;
     protected static final String UPDATED_BY_USER = "DATA UPLOAD";
     protected static final Date UPDATED_DATE = new DateTime(2013, 1, 1, 1, 1).toDate();
     protected static final String LANGUAGE_FI = "fi";
@@ -53,18 +55,18 @@ public abstract class AbstractGenerator {
             + "Mauris interdum massa ultrices lorem pretium sit amet sodales justo malesuada. Praesent lorem est, tincidunt"
             + "a commodo at, volutpat et ipsum. Etiam diam tellus";
     private String oidType;
-    private long oid = 1l;
+
 
     public AbstractGenerator(String oidType) {
         this.oidType = oidType;
     }
 
-    protected String generateOid() {
-        final String strOid = new StringBuilder(oidType).append(String.format(OID_FORMAT, oid)).append(FORMATTER.format(new Date())).toString();
-        oid++;
-        //LOG.info("generate OID {}", strOid);
+    protected synchronized String generateOid() {
+        long oid = IdFactory.geNextIdByType(oidType);        
+        final StringBuilder append = new StringBuilder(oidType).append(String.format(OID_FORMAT, oid)).append(FORMATTER.format(new Date()));
 
-        return strOid;
+        //LOG.info("generate OID {}", strOid);
+        return append.toString();
     }
 
     /**
