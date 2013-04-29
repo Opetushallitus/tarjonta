@@ -24,9 +24,13 @@ import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
 
 public class IndexerResourceTest {
 
@@ -49,6 +53,7 @@ public class IndexerResourceTest {
         organisaatioService = Mockito.mock(OrganisaatioService.class);
         stub(organisaatioService.findByOid("o-oid-12345")).toReturn(getOrg("o-oid-12345"));
         ReflectionTestUtils.setField(hakukohdeToSolr, "organisaatioService", organisaatioService);
+        ReflectionTestUtils.setField(hakukohdeToSolr, "komotoDao", Mockito.mock(KoulutusmoduuliToteutusDAO.class));
 
         koodiService = Mockito.mock(KoodiService.class);
         ReflectionTestUtils.setField(hakukohdeToSolr, "koodiService", koodiService);
@@ -87,6 +92,7 @@ public class IndexerResourceTest {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setTarjoaja("o-oid-12345");
         hakukohde.setKoulutusmoduuliToteutuses(Sets.newHashSet(komoto));
+        hakukohde.setId(10l);
         return hakukohde;
     }
 

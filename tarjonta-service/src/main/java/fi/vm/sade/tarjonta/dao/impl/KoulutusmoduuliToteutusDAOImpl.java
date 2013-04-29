@@ -243,6 +243,14 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         return q.list(komoto.oid);
     }
 
+    @Override
+    public List<String> findOidsByHakukohdeId(long hakukohdeId) {
+        //TODO use constants
+        Query q = getEntityManager().createQuery("select k.oid from KoulutusmoduuliToteutus k JOIN k.hakukohdes hk where hk.id= :hakukohdeId").setParameter("hakukohdeId", hakukohdeId);
+        List<String> results = (List<String>) q.getResultList();
+        return results;        
+    }
+
 
 }
 

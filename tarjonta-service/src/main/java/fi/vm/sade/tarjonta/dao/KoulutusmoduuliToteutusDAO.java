@@ -67,6 +67,13 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
      * @return
      */
     public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedAfter);
+    
+    /**
+     * Find list of komoto oids by hakukohdeid
+     * @param id
+     * @return
+     */
+    public List<String> findOidsByHakukohdeId(long id);
 
 }
 

@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoService;
@@ -39,6 +40,8 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
@@ -63,6 +66,9 @@ public class HakukohdeToSolrInputDocumentFunction implements
 
     @Autowired
     private KoodiService koodiService;
+    
+    @Autowired
+    private KoulutusmoduuliToteutusDAO komotoDao;
 
     @Override
     public List<SolrInputDocument> apply(final Hakukohde hakukohde) {
@@ -79,24 +85,23 @@ public class HakukohdeToSolrInputDocumentFunction implements
         addNimitiedot(hakukohdeDoc, hakukohde.getHakukohdeNimi());
         addHakuajat(hakukohdeDoc, hakukohde.getHaku());
         addTekstihaku(hakukohdeDoc);
-        addKomotoOids(hakukohdeDoc, hakukohde.getKoulutusmoduuliToteutuses());
+        addKomotoOids(hakukohdeDoc, hakukohde.getId());
         docs.add(hakukohdeDoc);
         return docs;
     }
     
     private void addKomotoOids(SolrInputDocument hakukohdeDoc,
-            Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses) {
-       if (koulutusmoduuliToteutuses == null) {
-           return;
-       }
-       List<KoulutusmoduuliToteutus> komotoList = new ArrayList<KoulutusmoduuliToteutus>(koulutusmoduuliToteutuses);
-       for (KoulutusmoduuliToteutus komoto : komotoList) {
-           add(hakukohdeDoc, KOULUTUS_OIDS, komoto.getOid());
+            long hakukohdeId) {
+
+        List<String> komotoOids = komotoDao.findOidsByHakukohdeId(hakukohdeId);
+        
+       for (String komotoOId : komotoOids) {
+           add(hakukohdeDoc, KOULUTUS_OIDS, komotoOId);
        }
     }
 
     private void addTekstihaku(SolrInputDocument hakukohdeDoc) {
-       add(hakukohdeDoc, TEKSTIHAKU, String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
+       add(hakukohdeDoc, TEKSTIHAKU, Lists.newArrayList( 
                 hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_FI), 
                 hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_SV), 
                 hakukohdeDoc.getFieldValue(HAKUKOHTEEN_NIMI_EN),

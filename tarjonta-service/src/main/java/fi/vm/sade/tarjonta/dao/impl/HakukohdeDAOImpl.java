@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import com.mysema.query.jpa.hibernate.sql.HibernateSQLQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
@@ -30,7 +31,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
+
+import org.apache.commons.collections.PredicateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -323,6 +327,12 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         return q.list(hakukohde.oid);
     }
 
-
-
+    @Override
+    public List<String> findOidsByKoulutusId(long koulutusId) {
+        //TODO use constants
+        Query q = getEntityManager().createQuery("select h.oid from Hakukohde h JOIN h.koulutusmoduuliToteutuses kmt where kmt.id= :komotoId").setParameter("komotoId", koulutusId );
+        
+        List<String> results = (List<String>) q.getResultList();
+        return results;        
+    }
 }

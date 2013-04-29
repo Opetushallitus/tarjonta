@@ -24,10 +24,12 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import com.google.common.collect.Lists;
 
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
+import fi.vm.sade.tarjonta.service.resources.KomotoResource;
 
 @Transactional
 @Component
@@ -35,7 +37,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 public class IndexerResource {
 
     @Autowired
-    private HakukohdeDAO hakukohdeDao;
+    private HakukohdeDAOImpl hakukohdeDao;
 
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusDao;
@@ -44,11 +46,20 @@ public class IndexerResource {
 
     private SolrServer hakukohdeSolr;
     private SolrServer koulutusSolr;
-    
+
     @Autowired
-    private HakukohdeToSolrInputDocumentFunction hakukohdeSolrConverter;// = new HakukohdeToSolrInputDocumentFunction();
+    private HakukohdeToSolrInputDocumentFunction hakukohdeSolrConverter;// = new
+                                                                        // HakukohdeToSolrInputDocumentFunction();
     @Autowired
-    private KoulutusmoduuliToteutusToSolrInputDocumentFunction koulutusSolrConverter;// = new KoulutusmoduuliToteutusToSolrInputDocumentFunction();
+    private KoulutusmoduuliToteutusToSolrInputDocumentFunction koulutusSolrConverter;// =
+                                                                                     // new
+                                                                                     // KoulutusmoduuliToteutusToSolrInputDocumentFunction();
+
+    @Autowired
+    private KomotoResource komotoResource;
+
+    @Autowired
+    private HakukohdeResource hakukohdeResource;
 
     @GET
     @Path("/koulutukset/clear")
@@ -79,52 +90,79 @@ public class IndexerResource {
     @GET
     @Path("/koulutukset/start")
     @Produces("text/plain")
-    public Response rebuildKoulutuIndex(@QueryParam("clean") final boolean clean) {
-        List<KoulutusmoduuliToteutus> koulutukset = koulutusDao.findAll();
-        try {
-            if (clean) {
-                koulutusSolr.deleteByQuery("*:*");
-            }
-        } catch (SolrServerException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+    public Response rebuildKoulutuIndex(@QueryParam("clean") final boolean clean)
+            throws IOException {
+
+        int index = 0;
+        int pageSize = 50;
+
+        if (clean) {
+            clearIndex(koulutusSolr);
         }
-        indexKoulutus(koulutukset);
-        return Response.ok(Integer.toString(koulutukset.size())).build();
+        do {
+            List<String> koulutusOidit = komotoResource.search(null, pageSize,
+                    index, null, null);
+            if (koulutusOidit.size() == 0) {
+                break;
+            }
+            index += koulutusOidit.size();
+            List<KoulutusmoduuliToteutus> koulutukset = Lists.newArrayList();
+            for (String oid : koulutusOidit) {
+                logger.info("Retrieving koulutus {}", oid);
+                koulutukset.add(koulutusDao.findByOid(oid));
+            }
+            logger.info("Converting {} entries.", koulutukset.size());
+            indexKoulutus(koulutukset);
+        } while (true);
+        return Response.ok(Integer.toString(index)).build();
+    }
+
+    private void clearIndex(SolrServer solr) throws IOException {
+        try {
+            solr.deleteByQuery("*:*");
+        } catch (SolrServerException e) {
+            throw new IOException(e);
+        }
     }
 
     @GET
     @Path("/hakukohteet/start")
     @Produces("text/plain")
-    public String rebuildHakukohdeIndex(@QueryParam("clean") final boolean clean) {
-        // TODO fetch all, index em
-        List<Hakukohde> hakukohteet = hakukohdeDao.findAll();
-        try {
-            if (clean) {
-                hakukohdeSolr.deleteByQuery("*:*");
-            }
-        } catch (SolrServerException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+    public String rebuildHakukohdeIndex(@QueryParam("clean") final boolean clean)
+            throws IOException {
+
+        int pageSize = 50;
+        int index = 0;
+
+        if (clean) {
+            clearIndex(hakukohdeSolr);
         }
-        indexHakukohde(hakukohteet);
-        return Integer.toString(hakukohteet.size());
+
+        do {
+            List<String> hakukohdeOidit = hakukohdeResource.search(null,
+                    pageSize, index, null, null);
+            if (hakukohdeOidit.size() == 0) {
+                break;
+            }
+            index += hakukohdeOidit.size();
+            List<Hakukohde> hakukohteet = Lists.newArrayList();
+            for (String oid : hakukohdeOidit) {
+                logger.info("Retrieving hakukohde {}", oid);
+                hakukohteet.add(hakukohdeDao.findHakukohdeByOid(oid));
+            }
+            logger.info("Converting {} entries.", hakukohteet.size());
+            indexHakukohde(hakukohteet);
+        } while (true);
+
+        return Integer.toString(index);
     }
-    
-    
+
     @Autowired
     public void setSolrServerFactory(SolrServerFactory factory) {
         this.hakukohdeSolr = factory.getSolrServer("hakukohteet");
         this.koulutusSolr = factory.getSolrServer("koulutukset");
     }
 
-    // TODO is this proper object to pass in the api??
     public void indexHakukohde(List<Hakukohde> hakukohteet) {
         final List<SolrInputDocument> docs = Lists.newArrayList();
         for (Hakukohde hakukohde : hakukohteet) {
@@ -133,57 +171,60 @@ public class IndexerResource {
         index(hakukohdeSolr, docs);
     }
 
-    // TODO is this proper object to pass in the api??
     public void indexKoulutus(List<KoulutusmoduuliToteutus> koulutukset) {
         final List<SolrInputDocument> docs = Lists.newArrayList();
         for (KoulutusmoduuliToteutus koulutus : koulutukset) {
+            logger.info("Converting  {}", koulutus.getOid());
             docs.addAll(koulutusSolrConverter.apply(koulutus));
         }
+        logger.info("Indexing to solr");
         index(koulutusSolr, docs);
+        logger.info("Indexing to solr done.");
     }
 
     private void index(final SolrServer solr, final List<SolrInputDocument> docs) {
         if (docs.size() > 0) {
-        	afterCommit(new TransactionSynchronizationAdapter() {
-				@Override
-				public void afterCommit() {
-			    	try {
-		                logger.info("Indexing {} docs.", docs.size());
-		                solr.add(docs);
-		                logger.info("Committing changes to index.", docs.size());
-		                solr.commit(true, true, false);
-		                logger.info("Done.");
-			        } catch (Exception e) {
-			        	logger.warn("Indexing failed", e);
-			        }
-				}
-			});
+            afterCommit(new TransactionSynchronizationAdapter() {
+                @Override
+                public void afterCommit() {
+                    try {
+                        logger.info("Indexing {} docs.", docs.size());
+                        solr.add(docs);
+                        logger.info("Committing changes to index.", docs.size());
+                        solr.commit(true, true, false);
+                        logger.info("Done.");
+                    } catch (Exception e) {
+                        logger.warn("Indexing failed", e);
+                    }
+                }
+            });
         }
     }
-    
+
     public void deleteKoulutus(List<String> oids) throws IOException {
         deleteByOid(oids, koulutusSolr);
     }
 
-    private void deleteByOid(final List<String> oids, final SolrServer solr) throws IOException {
-    	afterCommit(((TransactionSynchronization) new TransactionSynchronizationAdapter() {
-			@Override
-			public void afterCommit() {
-		    	try {
-		            solr.deleteById(oids);
-		        } catch (Exception e) {
-		        	logger.warn("Indexing failed", e);
-		        }
-			}
-		}));
+    private void deleteByOid(final List<String> oids, final SolrServer solr)
+            throws IOException {
+        afterCommit(((TransactionSynchronization) new TransactionSynchronizationAdapter() {
+            @Override
+            public void afterCommit() {
+                try {
+                    solr.deleteById(oids);
+                } catch (Exception e) {
+                    logger.warn("Indexing failed", e);
+                }
+            }
+        }));
     }
-    
+
     private static void afterCommit(TransactionSynchronization sync) {
-    	if (TransactionSynchronizationManager.isSynchronizationActive()) {
-    		TransactionSynchronizationManager.registerSynchronization(sync);
-    	} else {
-    		sync.afterCommit();
-    	}
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(sync);
+        } else {
+            sync.afterCommit();
+        }
     }
 
     public void deleteHakukohde(ArrayList<String> oids) throws IOException {

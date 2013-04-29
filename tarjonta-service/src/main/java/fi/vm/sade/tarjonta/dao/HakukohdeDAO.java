@@ -61,6 +61,13 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
      * @return list of oids.
      */
     public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince);
+    
+    /**
+     * Hae hakukohteet jotka liittyvät komotoon
+     * @param id komoto id (ei oid!)
+     * @return
+     */
+    List<String> findOidsByKoulutusId(long id); 
 
 }
 
