@@ -23,7 +23,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.service.resources.KomoResource;
-import fi.vm.sade.tarjonta.service.resources.dto.Komo;
+import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,10 +60,10 @@ public class KomoResourceImpl implements KomoResource {
 
     // GET /komo/{oid}
     @Override
-    public Komo getByOID(String oid) {
+    public KomoDTO getByOID(String oid) {
         LOG.info("getByOID() -- /komo/{}", oid);
         Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
-        Komo result = conversionService.convert(komo, Komo.class);
+        KomoDTO result = conversionService.convert(komo, KomoDTO.class);
         LOG.info("  result={}", result);
         return result;
     }

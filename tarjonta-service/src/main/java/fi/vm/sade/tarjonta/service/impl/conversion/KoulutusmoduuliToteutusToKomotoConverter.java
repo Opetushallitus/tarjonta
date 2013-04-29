@@ -16,7 +16,7 @@ package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.service.resources.dto.Komoto;
+import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,18 +24,18 @@ import org.slf4j.LoggerFactory;
  *
  * @author mlyly
  */
-public class KoulutusmoduuliToteutusToKomotoConverter extends AbstractFromDomainConverter<KoulutusmoduuliToteutus, Komoto>{
+public class KoulutusmoduuliToteutusToKomotoConverter extends AbstractFromDomainConverter<KoulutusmoduuliToteutus, KomotoDTO>{
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusmoduuliToKomoConverter.class);
 
     @Override
-    public Komoto convert(KoulutusmoduuliToteutus s) {
+    public KomotoDTO convert(KoulutusmoduuliToteutus s) {
 
         if (s == null) {
             return null;
         }
 
-        Komoto t = new Komoto();
+        KomotoDTO t = new KomotoDTO();
 
         t.setAmmattinimikeUris(KoulutusmoduuliToKomoConverter.convert(s.getAmmattinimikes()));
         t.setArviointikriteerit(KoulutusmoduuliToKomoConverter.convert(s.getArviointikriteerit()));

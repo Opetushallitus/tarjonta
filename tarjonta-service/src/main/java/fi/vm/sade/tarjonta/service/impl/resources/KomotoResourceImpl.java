@@ -20,8 +20,8 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.service.resources.KomotoResource;
-import fi.vm.sade.tarjonta.service.resources.dto.Komo;
-import fi.vm.sade.tarjonta.service.resources.dto.Komoto;
+import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author mlyly
  * @see KomotoResource
  */
-@Transactional
+@Transactional(readOnly = true)
 public class KomotoResourceImpl implements KomotoResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(KomotoResourceImpl.class);
@@ -57,10 +57,10 @@ public class KomotoResourceImpl implements KomotoResource {
 
     // GET /komoto/{oid}
     @Override
-    public Komoto getByOID(String oid) {
+    public KomotoDTO getByOID(String oid) {
         LOG.info("getByOID() -- /komoto/{}", oid);
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
-        Komoto result = conversionService.convert(komoto, Komoto.class);
+        KomotoDTO result = conversionService.convert(komoto, KomotoDTO.class);
         LOG.info("  result={}", result);
         return result;
     }
@@ -81,12 +81,12 @@ public class KomotoResourceImpl implements KomotoResource {
 
     // GET /komoto/{oid}/komo
     @Override
-    public Komo getKomoByKomotoOID(String oid) {
+    public KomoDTO getKomoByKomotoOID(String oid) {
         LOG.info("getKomoByKomotoOID() -- /komoto/{}/komo", oid);
-        Komo result = null;
+        KomoDTO result = null;
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         if (komoto != null) {
-            result = conversionService.convert(komoto.getKoulutusmoduuli(), Komo.class);
+            result = conversionService.convert(komoto.getKoulutusmoduuli(), KomoDTO.class);
         }
         LOG.info("  result={}", result);
         return result;

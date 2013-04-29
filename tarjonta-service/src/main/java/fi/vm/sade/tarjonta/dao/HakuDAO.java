@@ -3,6 +3,8 @@ package fi.vm.sade.tarjonta.dao;
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import java.util.Date;
 
 import java.util.List;
 
@@ -16,8 +18,19 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
     Haku findByOid(String oidString);
 
     List<Haku> findBySearchString(String searchString,String kieliKoodi);
-    
+
     List<Haku> findHakukohdeHakus(Haku haku);
 
+    /**
+     * Listing of Hakus, for REST apis.
+     *
+     * @param tila
+     * @param count
+     * @param startIndex
+     * @param lastModifiedBefore
+     * @param lastModifiedSince
+     * @return
+     */
+    List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince);
 }
 

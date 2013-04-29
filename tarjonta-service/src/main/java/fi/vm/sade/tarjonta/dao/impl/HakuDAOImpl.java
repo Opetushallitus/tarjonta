@@ -37,6 +37,7 @@ import com.mysema.query.types.EntityPath;
 import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QTekstiKaannos;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 /**
  * @author Antti Salonen
@@ -158,5 +159,10 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
             orderBy = cb.asc(hakuera.get("nimiFi"));
         }
         return orderBy;
+    }
+
+    @Override
+    public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

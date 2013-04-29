@@ -20,8 +20,8 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.WebLinkki;
-import fi.vm.sade.tarjonta.service.resources.dto.Komo;
-import fi.vm.sade.tarjonta.service.resources.dto.MonikielinenTekstis;
+import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.MonikielinenTekstisDTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -32,19 +32,19 @@ import org.slf4j.LoggerFactory;
  *
  * @author mlyly
  */
-public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<Koulutusmoduuli, Komo>{
+public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<Koulutusmoduuli, KomoDTO>{
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusmoduuliToKomoConverter.class);
 
     @Override
-    public Komo convert(Koulutusmoduuli s) {
+    public KomoDTO convert(Koulutusmoduuli s) {
         LOG.debug("convert({}) --> Komo", s);
 
         if (s == null) {
             return null;
         }
 
-        Komo t = new Komo();
+        KomoDTO t = new KomoDTO();
 
         // TODO convert, but efficiently! t.setAlaModuulit(null);
 
@@ -87,11 +87,11 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
         return t;
     }
 
-    public static MonikielinenTekstis convert(MonikielinenTeksti s) {
+    public static MonikielinenTekstisDTO convert(MonikielinenTeksti s) {
         if (s == null) {
             return null;
         }
-        MonikielinenTekstis t = new MonikielinenTekstis();
+        MonikielinenTekstisDTO t = new MonikielinenTekstisDTO();
 
         for (TekstiKaannos tekstiKaannos : s.getTekstis()) {
             t.addKieli(tekstiKaannos.getKieliKoodi(), tekstiKaannos.getArvo());
@@ -116,12 +116,12 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
     }
 
 
-    public static MonikielinenTekstis convertWebLinkkis(Set<WebLinkki> webLinkkis) {
+    public static MonikielinenTekstisDTO convertWebLinkkis(Set<WebLinkki> webLinkkis) {
         if (webLinkkis == null) {
             return null;
         }
 
-        MonikielinenTekstis result = new MonikielinenTekstis();
+        MonikielinenTekstisDTO result = new MonikielinenTekstisDTO();
 
         for (WebLinkki l : webLinkkis) {
             result.addKieli(l.getTyyppi(), l.getUrl());
