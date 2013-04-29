@@ -14,7 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
-import static fi.vm.sade.tarjonta.service.resources.dto.Komoto.MKT_KOULUTUSOHJELMAN_VALINTA;
+import static fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO.MKT_KOULUTUSOHJELMAN_VALINTA;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,7 +26,7 @@ import java.util.Map;
  *
  * @author mlyly
  */
-public class Komo implements Serializable {
+public class KomoDTO implements Serializable {
 
     public static String MKT_NIMI = "MKT_NIMI";
     public static String MKT_TAVOITTEET = "MKT_TAVOITTEET";
@@ -112,27 +112,27 @@ public class Komo implements Serializable {
     // Multilanguage support with keys
     //
 
-    private Map<String, MonikielinenTekstis> _monikielinenData;
+    private Map<String, MonikielinenTekstisDTO> _monikielinenData;
 
-    protected void setMonikielinenData(Map<String, MonikielinenTekstis> _monikielinenData) {
+    protected void setMonikielinenData(Map<String, MonikielinenTekstisDTO> _monikielinenData) {
         this._monikielinenData = _monikielinenData;
     }
 
-    protected Map<String, MonikielinenTekstis> getMonikielinenData() {
+    protected Map<String, MonikielinenTekstisDTO> getMonikielinenData() {
         if (_monikielinenData == null) {
-            _monikielinenData = new HashMap<String, MonikielinenTekstis>();
+            _monikielinenData = new HashMap<String, MonikielinenTekstisDTO>();
         }
         return _monikielinenData;
     }
 
-    protected MonikielinenTekstis getMonikielinenData(String key) {
+    protected MonikielinenTekstisDTO getMonikielinenData(String key) {
         return getMonikielinenData().get(key);
     }
 
-    protected void addMonikielinenData(String key, MonikielinenTeksti mkt) {
-        MonikielinenTekstis mkts = getMonikielinenData().get(key);
+    protected void addMonikielinenData(String key, MonikielinenTekstiDTO mkt) {
+        MonikielinenTekstisDTO mkts = getMonikielinenData().get(key);
         if (mkts == null) {
-            mkts = new MonikielinenTekstis();
+            mkts = new MonikielinenTekstisDTO();
             getMonikielinenData().put(key, mkts);
         }
 
@@ -140,7 +140,7 @@ public class Komo implements Serializable {
     }
 
     protected void addMonikielinenData(String key, String kieliUri, String arvo) {
-        MonikielinenTeksti mkt = new MonikielinenTeksti();
+        MonikielinenTekstiDTO mkt = new MonikielinenTekstiDTO();
         mkt.setArvo(arvo);
         mkt.setKieliUri(kieliUri);
         addMonikielinenData(key, mkt);
@@ -364,40 +364,36 @@ public class Komo implements Serializable {
     // Multilanguage metadata
     //
 
-    public MonikielinenTekstis getNimi() {
+    public MonikielinenTekstisDTO getNimi() {
         return getMonikielinenData(MKT_NIMI);
     }
 
-    public void setNimi(MonikielinenTekstis v) {
+    public void setNimi(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_NIMI, v);
     }
 
-    public MonikielinenTekstis getKoulutuksenRakenne() {
+    public MonikielinenTekstisDTO getKoulutuksenRakenne() {
         return getMonikielinenData(MKT_KOULUTUKSEN_RAKENNE);
     }
 
-    public void setKoulutuksenRakenne(MonikielinenTekstis v) {
+    public void setKoulutuksenRakenne(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_KOULUTUKSEN_RAKENNE, v);
     }
 
-    public MonikielinenTekstis getJatkoOpintoMahdollisuudet() {
+    public MonikielinenTekstisDTO getJatkoOpintoMahdollisuudet() {
         return getMonikielinenData(MKT_JATKO_OPINTO_MAHDOLLISUUDET);
     }
 
-    public void setJatkoOpintoMahdollisuudet(MonikielinenTekstis v) {
+    public void setJatkoOpintoMahdollisuudet(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_JATKO_OPINTO_MAHDOLLISUUDET, v);
     }
 
-    public MonikielinenTekstis getTavoitteet() {
+    public MonikielinenTekstisDTO getTavoitteet() {
         return getMonikielinenData(MKT_TAVOITTEET);
     }
 
-    public void setTavoitteet(MonikielinenTekstis v) {
+    public void setTavoitteet(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_TAVOITTEET, v);
-    }
-
-    public void setVersion(Long version) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

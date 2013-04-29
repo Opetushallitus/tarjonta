@@ -1,7 +1,8 @@
 package fi.vm.sade.tarjonta.service.resources;
 
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
+import java.util.Date;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 
 import javax.ws.rs.*;
@@ -23,43 +24,42 @@ public interface HakuResource {
     public String hello();
 
     /**
+     * /haku?searchTerms=xxx&count=10&startIndex=100&lastModifiedBefore=X&lastModifiedSince=XX
      *
      * @param searchTerms
      * @param count
      * @param startIndex
-     * @param startPage
-     * @param language
+     * @param lastModifiedBefore
+     * @param lastModifiedSince
      * @return
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<HakuTyyppi> search(@QueryParam("searchTerms") String searchTerms,
-                                   @QueryParam("count") int count,
-                                   @QueryParam("startIndex") int startIndex,
-                                   @QueryParam("startPage") int startPage,
-                                   @QueryParam("language") String language);
+    public List<String> search(@QueryParam("searchTerms") String searchTerms,
+            @QueryParam("count") int count,
+            @QueryParam("startIndex") int startIndex,
+            @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
+            @QueryParam("lastModifiedSince") Date lastModifiedSince);
 
     /**
+     * /haku/OID
      *
      * @param oid
-     * @param language
-     * @return
+     * @return HakuDTO
      */
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public HakuTyyppi getByOID(@PathParam("oid") String oid, @QueryParam("language") String language);
+    public HakuDTO getByOID(@PathParam("oid") String oid);
 
     /**
+     * /haku/OID/hakukohde
      *
      * @param oid
-     * @param language
-     * @return
+     * @return list of Hakukohde oid's
      */
     @GET
     @Path("{oid}/hakukohde")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<HakukohdeTyyppi> getByOIDHakukohde(@PathParam("oid") String oid,
-                                                   @QueryParam("language") String language);
-
+    public List<String> getByOIDHakukohde(@PathParam("oid") String oid);
 }

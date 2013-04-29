@@ -18,8 +18,8 @@ package fi.vm.sade.tarjonta.service.resources;
 import java.util.List;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 
-import fi.vm.sade.tarjonta.service.resources.dto.Komo;
-import fi.vm.sade.tarjonta.service.resources.dto.Komoto;
+import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
 import java.util.Date;
 
 import javax.ws.rs.GET;
@@ -68,7 +68,7 @@ public interface KomotoResource {
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Komoto getByOID(@PathParam("oid") String oid);
+    public KomotoDTO getByOID(@PathParam("oid") String oid);
 
     /**
      * Get KOMO for given KOMOTO.
@@ -79,7 +79,7 @@ public interface KomotoResource {
     @GET
     @Path("{oid}/komo")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Komo getKomoByKomotoOID(@PathParam("oid") String oid);
+    public KomoDTO getKomoByKomotoOID(@PathParam("oid") String oid);
 
     /**
      * Get list of KOMOTO's.

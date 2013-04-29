@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author mlyly
  */
-public class Komoto extends Komo {
+public class KomotoDTO extends KomoDTO {
 
     private Date koulutuksenAlkamisDate;
     private boolean _maksullisuus;
@@ -85,91 +85,91 @@ public class Komoto extends Komo {
 //        getMonikielinenData().put(MKT_POHJAKOULUTUS_VAATIMUS, v);
 //    }
 
-    public MonikielinenTekstis getArviointikriteerit() {
+    public MonikielinenTekstisDTO getArviointikriteerit() {
         return getMonikielinenData(MKT_ARVIOINTIKRITEERIT);
     }
 
-    public void setArviointikriteerit(MonikielinenTekstis v) {
+    public void setArviointikriteerit(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_ARVIOINTIKRITEERIT, v);
     }
 
-    public MonikielinenTekstis getKansainvalistyminen() {
+    public MonikielinenTekstisDTO getKansainvalistyminen() {
         return getMonikielinenData(MKT_KANSAINVALISTYMINEN);
     }
 
-    public void setKansainvalistyminen(MonikielinenTekstis v) {
+    public void setKansainvalistyminen(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_KANSAINVALISTYMINEN, v);
     }
 
-    public MonikielinenTekstis getKuvailevatTiedot() {
+    public MonikielinenTekstisDTO getKuvailevatTiedot() {
         return getMonikielinenData(MKT_KUVAILEVAT_TIEDOT);
     }
 
-    public void setKuvailevatTiedot(MonikielinenTekstis v) {
+    public void setKuvailevatTiedot(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_KUVAILEVAT_TIEDOT, v);
     }
 
-    public MonikielinenTekstis getLoppukoeVaatimukset() {
+    public MonikielinenTekstisDTO getLoppukoeVaatimukset() {
         return getMonikielinenData(MKT_LOPPUKOE_VAATIMUKSET);
     }
 
-    public void setLoppukoeVaatimukset(MonikielinenTekstis v) {
+    public void setLoppukoeVaatimukset(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_LOPPUKOE_VAATIMUKSET, v);
     }
 
-    public MonikielinenTekstis getMaksullisuusTeksti() {
+    public MonikielinenTekstisDTO getMaksullisuusTeksti() {
         return getMonikielinenData(MKT_MAKSULLISUUS);
     }
 
-    public void setMaksullisuusTeksti(MonikielinenTekstis v) {
+    public void setMaksullisuusTeksti(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_MAKSULLISUUS, v);
     }
 
-    public MonikielinenTekstis getSijoittuminenTyoelamaan() {
+    public MonikielinenTekstisDTO getSijoittuminenTyoelamaan() {
         return getMonikielinenData(MKT_SIJOITTUMINEN_TYOELAMAAN);
     }
 
-    public void setSijoittuminenTyoelamaan(MonikielinenTekstis v) {
+    public void setSijoittuminenTyoelamaan(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_SIJOITTUMINEN_TYOELAMAAN, v);
     }
 
-    public MonikielinenTekstis getSisalto() {
+    public MonikielinenTekstisDTO getSisalto() {
         return getMonikielinenData(MKT_SISALTO);
     }
 
-    public void setSisalto(MonikielinenTekstis v) {
+    public void setSisalto(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_SISALTO, v);
     }
 
-    public MonikielinenTekstis getYhteistyoMuidenToimijoidenKanssa() {
+    public MonikielinenTekstisDTO getYhteistyoMuidenToimijoidenKanssa() {
         return getMonikielinenData(MKT_YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA);
     }
 
-    public void setYhteistyoMuidenToimijoidenKanssa(MonikielinenTekstis v) {
+    public void setYhteistyoMuidenToimijoidenKanssa(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA, v);
     }
 
-    public MonikielinenTekstis getKoulutusohjelmanValinta() {
+    public MonikielinenTekstisDTO getKoulutusohjelmanValinta() {
         return getMonikielinenData(MKT_KOULUTUSOHJELMAN_VALINTA);
     }
 
-    public void setKoulutusohjelmanValinta(MonikielinenTekstis v) {
+    public void setKoulutusohjelmanValinta(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_KOULUTUSOHJELMAN_VALINTA, v);
     }
 
-    public MonikielinenTekstis getWebLinkkis() {
+    public MonikielinenTekstisDTO getWebLinkkis() {
         return getMonikielinenData(MKT_WEB_LINKKIS);
     }
 
-    public void setWebLinkkis(MonikielinenTekstis v) {
+    public void setWebLinkkis(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_WEB_LINKKIS, v);
     }
 
-    public MonikielinenTekstis getPainotus() {
+    public MonikielinenTekstisDTO getPainotus() {
         return getMonikielinenData(MKT_PAINOTUS);
     }
 
-    public void setPainotus(MonikielinenTekstis v) {
+    public void setPainotus(MonikielinenTekstisDTO v) {
         getMonikielinenData().put(MKT_PAINOTUS, v);
     }
 

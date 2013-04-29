@@ -15,30 +15,36 @@
 package fi.vm.sade.tarjonta.service.resources.dto;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Simple language dependant data.
  *
  * @author mlyly
  */
-public class MonikielinenTeksti implements Serializable {
+public class KoodiMetaDTO implements Serializable {
 
-    String _kieliUri;
-    String _arvo;
+    private String koodiUri;
+    private Map<String, String> _meta = new HashMap<String, String>();
 
-    public String getArvo() {
-        return _arvo;
+    public String getKoodiUri() {
+        return koodiUri;
     }
 
-    public void setArvo(String _arvo) {
-        this._arvo = _arvo;
+    public void setKoodiUri(String koodiUri) {
+        this.koodiUri = koodiUri;
     }
 
-    public String getKieliUri() {
-        return _kieliUri;
+    public Map<String, String> getMeta() {
+        if (_meta == null) {
+            _meta = new HashMap<String, String>();
+        }
+        return _meta;
     }
 
-    public void setKieliUri(String _kieliUri) {
-        this._kieliUri = _kieliUri;
+    public void setMeta(Map<String, String> _meta) {
+        this._meta = _meta;
     }
+
+
 }

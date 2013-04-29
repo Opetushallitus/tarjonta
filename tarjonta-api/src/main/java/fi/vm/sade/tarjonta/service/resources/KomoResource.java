@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.service.resources;
 
-import fi.vm.sade.tarjonta.service.resources.dto.Komo;
+import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import java.util.Date;
 import java.util.List;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
@@ -62,7 +62,7 @@ public interface KomoResource {
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public Komo getByOID(@PathParam("oid") String oid);
+    public KomoDTO getByOID(@PathParam("oid") String oid);
 
     /**
      * Search KOMO's

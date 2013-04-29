@@ -23,18 +23,18 @@ import java.util.List;
  *
  * @author mlyly
  */
-public class MonikielinenTekstis implements Serializable {
+public class MonikielinenTekstisDTO implements Serializable {
 
-    private List<MonikielinenTeksti> _arvot = new ArrayList<MonikielinenTeksti>();
+    private List<MonikielinenTekstiDTO> _arvot = new ArrayList<MonikielinenTekstiDTO>();
 
-    public List<MonikielinenTeksti> getArvot() {
+    public List<MonikielinenTekstiDTO> getArvot() {
         if (_arvot == null) {
-            _arvot = new ArrayList<MonikielinenTeksti>();
+            _arvot = new ArrayList<MonikielinenTekstiDTO>();
         }
         return _arvot;
     }
 
-    public void setArvot(List<MonikielinenTeksti> _arvot) {
+    public void setArvot(List<MonikielinenTekstiDTO> _arvot) {
         this._arvot = _arvot;
     }
 
@@ -46,7 +46,7 @@ public class MonikielinenTekstis implements Serializable {
      * @param arvo
      */
     public void addKieli(String kieliUri, String arvo) {
-        MonikielinenTeksti t = new MonikielinenTeksti();
+        MonikielinenTekstiDTO t = new MonikielinenTekstiDTO();
         t.setArvo(arvo);
         t.setKieliUri(kieliUri);
         addKieli(t);
@@ -58,8 +58,8 @@ public class MonikielinenTekstis implements Serializable {
      *
      * @param mkt
      */
-    public void addKieli(MonikielinenTeksti mkt) {
-        for (MonikielinenTeksti monikielinenTeksti : getArvot()) {
+    public void addKieli(MonikielinenTekstiDTO mkt) {
+        for (MonikielinenTekstiDTO monikielinenTeksti : getArvot()) {
             // Already there?
             if (monikielinenTeksti.getKieliUri().equals(mkt.getKieliUri())) {
                 // Yes, already saved, just update content
@@ -77,8 +77,8 @@ public class MonikielinenTekstis implements Serializable {
      * @param kieliUri
      * @return
      */
-    public MonikielinenTeksti getKieli(String kieliUri) {
-        for (MonikielinenTeksti monikielinenTeksti : getArvot()) {
+    public MonikielinenTekstiDTO getKieli(String kieliUri) {
+        for (MonikielinenTekstiDTO monikielinenTeksti : getArvot()) {
             if (monikielinenTeksti.getKieliUri().equals(kieliUri)) {
                 return monikielinenTeksti;
             }
