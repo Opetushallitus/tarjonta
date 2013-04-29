@@ -42,6 +42,8 @@
 
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToKomoConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToteutusToKomotoConverter"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakuToHakuDTOConverter"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeToHakukohdeDTOConverter"/>
 
             </list>
         </property>

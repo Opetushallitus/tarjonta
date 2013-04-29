@@ -20,12 +20,14 @@ import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.model.util.CollectionUtils;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -180,7 +182,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
             //search by koodisto koodi uri (hakukohde combobox uri)
             criteriaExpr = qHakukohde.hakukohdeNimi.eq(kysely.getNimiKoodiUri());
         } else {
-            //search by concatenated text (result list name) 
+            //search by concatenated text (result list name)
             String searchStr = (kysely.getNimi() != null) ? kysely.getNimi().toLowerCase() : "";
             criteriaExpr = qHakukohde.hakukohdeKoodistoNimi.toLowerCase().contains(searchStr);
         }
@@ -282,4 +284,45 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         BooleanExpression toteutusesEmpty = hakukohde.koulutusmoduuliToteutuses.isEmpty();
         return from(hakukohde).where(toteutusesEmpty).list(hakukohde);
     }
+
+
+    @Override
+    public List<String> findOIDsBy(fi.vm.sade.tarjonta.service.types.TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
+
+        // Convert Enums from API enum to DB enum
+        fi.vm.sade.tarjonta.model.TarjontaTila dbTarjontaTila = null;
+        if (tila != null) {
+            dbTarjontaTila = fi.vm.sade.tarjonta.model.TarjontaTila.valueOf(tila.name());
+        }
+
+        QHakukohde hakukohde = QHakukohde.hakukohde;
+
+        BooleanExpression whereExpr = null;
+
+        if (dbTarjontaTila != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, hakukohde.tila.eq(dbTarjontaTila));
+        }
+        if (lastModifiedBefore != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, hakukohde.lastUpdateDate.before(lastModifiedBefore));
+        }
+        if (lastModifiedSince != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, hakukohde.lastUpdateDate.after(lastModifiedSince));
+        }
+
+        JPAQuery q = from(hakukohde);
+        if (whereExpr != null) {
+            q = q.where(whereExpr);
+        }
+        if (count > 0) {
+            q = q.limit(count);
+        }
+        if (startIndex > 0) {
+            q.offset(startIndex);
+        }
+
+        return q.list(hakukohde.oid);
+    }
+
+
+
 }
