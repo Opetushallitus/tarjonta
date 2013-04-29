@@ -18,6 +18,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.google.common.collect.Lists;
 
@@ -141,17 +144,20 @@ public class IndexerResource {
 
     private void index(final SolrServer solr, final List<SolrInputDocument> docs) {
         if (docs.size() > 0) {
-            try {
-                logger.info("Indexing {} docs.", docs.size());
-                solr.add(docs);
-                logger.info("Committing changes to index.", docs.size());
-                solr.commit(true, true, false);
-                logger.info("Done.");
-            } catch (SolrServerException e) {
-                logger.error("Indexing failed", e);
-            } catch (IOException e) {
-                logger.error("Indexing failed", e);
-            }
+        	afterCommit(new TransactionSynchronizationAdapter() {
+				@Override
+				public void afterCommit() {
+			    	try {
+		                logger.info("Indexing {} docs.", docs.size());
+		                solr.add(docs);
+		                logger.info("Committing changes to index.", docs.size());
+		                solr.commit(true, true, false);
+		                logger.info("Done.");
+			        } catch (Exception e) {
+			        	logger.warn("Indexing failed", e);
+			        }
+				}
+			});
         }
     }
     
@@ -159,14 +165,25 @@ public class IndexerResource {
         deleteByOid(oids, koulutusSolr);
     }
 
-    private void deleteByOid(List<String> oids, SolrServer solr) throws IOException {
-        try {
-            solr.deleteById(oids);
-        } catch (SolrServerException e) {
-            throw new IOException("indexing.error", e);
-        } catch (IOException e) {
-            throw new IOException("indexing.error", e);
-        }
+    private void deleteByOid(final List<String> oids, final SolrServer solr) throws IOException {
+    	afterCommit(((TransactionSynchronization) new TransactionSynchronizationAdapter() {
+			@Override
+			public void afterCommit() {
+		    	try {
+		            solr.deleteById(oids);
+		        } catch (Exception e) {
+		        	logger.warn("Indexing failed", e);
+		        }
+			}
+		}));
+    }
+    
+    private static void afterCommit(TransactionSynchronization sync) {
+    	if (TransactionSynchronizationManager.isSynchronizationActive()) {
+    		TransactionSynchronizationManager.registerSynchronization(sync);
+    	} else {
+    		sync.afterCommit();
+    	}
     }
 
     public void deleteHakukohde(ArrayList<String> oids) throws IOException {
