@@ -15,11 +15,16 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
+import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
+import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.service.resources.dto.Komo;
 import fi.vm.sade.tarjonta.service.resources.dto.MonikielinenTekstis;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,6 +100,35 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
         return t;
     }
 
+
+    public static List<String> convert(Set<KoodistoUri> koodistoUris) {
+        if (koodistoUris == null) {
+            return null;
+        }
+
+        List<String> result = new ArrayList<String>();
+
+        for (KoodistoUri koodistoUri : koodistoUris) {
+            result.add(koodistoUri.getKoodiUri());
+        }
+
+        return result;
+    }
+
+
+    public static MonikielinenTekstis convertWebLinkkis(Set<WebLinkki> webLinkkis) {
+        if (webLinkkis == null) {
+            return null;
+        }
+
+        MonikielinenTekstis result = new MonikielinenTekstis();
+
+        for (WebLinkki l : webLinkkis) {
+            result.addKieli(l.getTyyppi(), l.getUrl());
+        }
+
+        return result;
+    }
 
 
 }

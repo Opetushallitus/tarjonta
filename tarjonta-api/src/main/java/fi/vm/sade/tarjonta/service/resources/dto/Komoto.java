@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.resources.dto;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -23,14 +24,11 @@ import java.util.Date;
 public class Komoto extends Komo {
 
     private Date koulutuksenAlkamisDate;
+    private boolean _maksullisuus;
+    private String _komoOid;
+    private String _pohjakoulutusVaatimusUri;
 
-    private boolean _maksullisus;
-
-    private String _koulutusmoduuliId; // ???
-
-    private String _painotus; // rakenne?
-
-    public static String MKT_POHJAKOULUTUS_VAATIMUS = "MKT_POHJAKOULUTUS_VAATIMUS";
+//    public static String MKT_POHJAKOULUTUS_VAATIMUS = "MKT_POHJAKOULUTUS_VAATIMUS";
     public static String MKT_ARVIOINTIKRITEERIT = "MKT_ARVIOINTIKRITEERIT";
     public static String MKT_KANSAINVALISTYMINEN = "MKT_KANSAINVALISTYMINEN";
     public static String MKT_KUVAILEVAT_TIEDOT = "MKT_KUVAILEVAT_TIEDOT";
@@ -40,6 +38,8 @@ public class Komoto extends Komo {
     public static String MKT_SISALTO = "MKT_SISALTO";
     public static String MKT_YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA = "MKT_YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA";
     public static String MKT_KOULUTUSOHJELMAN_VALINTA = "MKT_KOULUTUSOHJELMAN_VALINTA";
+    public static String MKT_WEB_LINKKIS = "MKT_WEB_LINKKIS";
+    public static String MKT_PAINOTUS = "MKT_PAINOTUS";
 
     public Date getKoulutuksenAlkamisDate() {
         return koulutuksenAlkamisDate;
@@ -49,29 +49,41 @@ public class Komoto extends Komo {
         this.koulutuksenAlkamisDate = koulutuksenAlkamisDate;
     }
 
-    public boolean isMaksullisus() {
-        return _maksullisus;
+    public boolean isMaksullisuus() {
+        return _maksullisuus;
     }
 
-    public void setMaksullisus(boolean maksullisus) {
-        this._maksullisus = maksullisus;
+    public void setMaksullisuus(boolean maksullisuus) {
+        this._maksullisuus = maksullisuus;
     }
 
-    public String getKoulutusmoduuliId() {
-        return _koulutusmoduuliId;
+    public String getKomoOid() {
+        return _komoOid;
     }
 
-    public void setKoulutusmoduuliId(String koulutusmoduuliId) {
-        this._koulutusmoduuliId = koulutusmoduuliId;
+    public void setKomoOid(String _komoOid) {
+        this._komoOid = _komoOid;
     }
 
-    public MonikielinenTekstis getPohjakoulutusvaatimus() {
-        return getMonikielinenData(MKT_POHJAKOULUTUS_VAATIMUS);
+    public void setPohjakoulutusVaatimusUri(String _pohjakoulutusVaatimusUri) {
+        this._pohjakoulutusVaatimusUri = _pohjakoulutusVaatimusUri;
     }
 
-    public void setPohjakoulutusvaatimus(MonikielinenTekstis v) {
-        getMonikielinenData().put(MKT_POHJAKOULUTUS_VAATIMUS, v);
+    public String getPohjakoulutusVaatimusUri() {
+        return _pohjakoulutusVaatimusUri;
     }
+
+    // ------------------------------------------
+    // Multilingual text data
+    //
+
+//    public MonikielinenTekstis getPohjakoulutusvaatimus() {
+//        return getMonikielinenData(MKT_POHJAKOULUTUS_VAATIMUS);
+//    }
+//
+//    public void setPohjakoulutusvaatimus(MonikielinenTekstis v) {
+//        getMonikielinenData().put(MKT_POHJAKOULUTUS_VAATIMUS, v);
+//    }
 
     public MonikielinenTekstis getArviointikriteerit() {
         return getMonikielinenData(MKT_ARVIOINTIKRITEERIT);
@@ -145,4 +157,88 @@ public class Komoto extends Komo {
         getMonikielinenData().put(MKT_KOULUTUSOHJELMAN_VALINTA, v);
     }
 
+    public MonikielinenTekstis getWebLinkkis() {
+        return getMonikielinenData(MKT_WEB_LINKKIS);
+    }
+
+    public void setWebLinkkis(MonikielinenTekstis v) {
+        getMonikielinenData().put(MKT_WEB_LINKKIS, v);
+    }
+
+    public MonikielinenTekstis getPainotus() {
+        return getMonikielinenData(MKT_PAINOTUS);
+    }
+
+    public void setPainotus(MonikielinenTekstis v) {
+        getMonikielinenData().put(MKT_PAINOTUS, v);
+    }
+
+
+    // -----------------------------------------
+    // URI LISTS
+    //
+
+    public static String URIS_AVAINSANAT = "URIS_AVAINSANAT";
+    public static String URIS_AMMATTINIMIKE = "URIS_AMMATTINIMIKE";
+    public static String URIS_KOULUTUSLAJI = "URIS_KOULUTUSLAJI";
+    public static String URIS_LUKIODIPLOMIT = "URIS_LUKIODIPLOMIT";
+    public static String URIS_OPETUSKIELET = "URIS_OPETUSKIELET";
+    public static String URIS_OPETUSMUODOT = "URIS_OPETUSMUODOT";
+    public static String URIS_TEEMAT = "URIS_TEEMAT";
+
+    public List<String> getAvainsanaUris() {
+        return getKoodistoUris(URIS_AVAINSANAT);
+    }
+
+    public void setAvainsanaUris(List<String> uris) {
+        setKoodistoUris(URIS_AVAINSANAT, uris);
+    }
+
+    public List<String> getAmmattinimikeUris() {
+        return getKoodistoUris(URIS_AMMATTINIMIKE);
+    }
+
+    public void setAmmattinimikeUris(List<String> uris) {
+        setKoodistoUris(URIS_AMMATTINIMIKE, uris);
+    }
+
+    public List<String> getKoulutuslajiUris() {
+        return getKoodistoUris(URIS_KOULUTUSLAJI);
+    }
+
+    public void setKoulutuslajiUris(List<String> uris) {
+        setKoodistoUris(URIS_KOULUTUSLAJI, uris);
+    }
+
+    public void setLukiodiplomiUris(List<String> uris) {
+        setKoodistoUris(URIS_LUKIODIPLOMIT, uris);
+    }
+
+    public List<String> getLukiodiplomiUris() {
+        return getKoodistoUris(URIS_LUKIODIPLOMIT);
+    }
+
+    public void setOpetusKieletUris(List<String> uris) {
+        setKoodistoUris(URIS_OPETUSKIELET, uris);
+    }
+
+    public List<String> getOpetusKieletUris() {
+        return getKoodistoUris(URIS_OPETUSKIELET);
+    }
+
+    public void setOpetusmuotoUris(List<String> uris) {
+        setKoodistoUris(URIS_OPETUSMUODOT, uris);
+    }
+
+    public List<String> getOpetusmuotoUris() {
+        return getKoodistoUris(URIS_OPETUSMUODOT);
+    }
+
+    public void setTeemaUris(List<String> uris) {
+        setKoodistoUris(URIS_OPETUSMUODOT, uris);
+    }
+
+    public List<String> getTeemaUris() {
+        return getKoodistoUris(URIS_TEEMAT);
+    }
 }
