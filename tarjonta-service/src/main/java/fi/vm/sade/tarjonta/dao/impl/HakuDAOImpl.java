@@ -34,7 +34,10 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.expr.BooleanExpression;
+import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.QHaku;
+import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QTekstiKaannos;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
@@ -163,6 +166,38 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
 
     @Override
     public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        // Convert Enums from API enum to DB enum
+        fi.vm.sade.tarjonta.model.TarjontaTila dbTarjontaTila = null;
+        if (tila != null) {
+            dbTarjontaTila = fi.vm.sade.tarjonta.model.TarjontaTila.valueOf(tila.name());
+        }
+
+        QHaku haku = QHaku.haku;
+
+        BooleanExpression whereExpr = null;
+
+        if (dbTarjontaTila != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, haku.tila.eq(dbTarjontaTila));
+        }
+        if (lastModifiedBefore != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, haku.lastUpdateDate.before(lastModifiedBefore));
+        }
+        if (lastModifiedSince != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, haku.lastUpdateDate.after(lastModifiedSince));
+        }
+
+        JPAQuery q = from(haku);
+        if (whereExpr != null) {
+            q = q.where(whereExpr);
+        }
+        if (count > 0) {
+            q = q.limit(count);
+        }
+        if (startIndex > 0) {
+            q.offset(startIndex);
+        }
+
+        return q.list(haku.oid);
     }
 }

@@ -20,6 +20,8 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,9 +31,9 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     public List<Hakukohde> findByKoulutusOid(String koulutusmoduuliToteutusOid);
 
     public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely);
-    
+
     public List<Hakukohde> findOrphanHakukohteet();
-    
+
     List<Hakukohde> findHakukohdeWithDepenciesByOid(String oid);
 
     HakukohdeLiite findHakuKohdeLiiteById(String id);
@@ -48,6 +50,17 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     void updateLiittees(List<HakukohdeLiite> liites, String hakukohdeOid);
 
+    /**
+     * Find list of OIDs with given search specs.
+     *
+     * @param tila
+     * @param count
+     * @param startIndex
+     * @param lastModifiedBefore
+     * @param lastModifiedSince
+     * @return list of oids.
+     */
+    public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince);
 
 }
 

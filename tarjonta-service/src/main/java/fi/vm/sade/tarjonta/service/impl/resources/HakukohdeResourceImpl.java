@@ -2,9 +2,13 @@ package fi.vm.sade.tarjonta.service.impl.resources;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,9 +105,15 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     // /hakukohde?...
     @Override
     public List<String> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-        LOG.info("/hakukohde -- search({}, {}, {}, {}, {})", new Object[] {searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
+        LOG.info("/hakukohde -- search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO hardcoded JULKAISTU!
+        TarjontaTila tarjontaTila = TarjontaTila.JULKAISTU;
+
+        List<String> result = new ArrayList<String>();
+        result.addAll(hakukohdeDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
+        LOG.info("  result={}", result);
+        return result;
     }
 
     // /hakukohde/OID
@@ -111,7 +121,10 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     public HakukohdeDTO getByOID(String oid) {
         LOG.info("/hakukohde/{} -- getByOID()", oid);
 
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
+        HakukohdeDTO result = conversionService.convert(hakukohde, HakukohdeDTO.class);
+        LOG.info("  result={}", result);
+        return result;
     }
 
     // /hakukohde/OID/haku
@@ -119,7 +132,10 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     public HakuDTO getHakuByHakukohdeOID(String oid) {
         LOG.info("/hakukohde/{}/haku -- getHakuByHakukohdeOID()", oid);
 
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
+        HakuDTO result = conversionService.convert(hakukohde.getHaku(), HakuDTO.class);
+        LOG.info("  result={}", result);
+        return result;
     }
 
     // /hakukohde/OID/komoto
@@ -127,7 +143,14 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     public List<String> getKomotosByHakukohdeOID(String oid) {
         LOG.info("/hakukohde/{}/komoto -- getKomotosByHakukohdeOID()", oid);
 
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO fixme to be more efficient!
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
+        List<String> result = new ArrayList<String>();
+        for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
+            result.add(koulutusmoduuliToteutus.getOid());
+        }
+        LOG.info("  result={}", result);
+        return result;
     }
 
 }
