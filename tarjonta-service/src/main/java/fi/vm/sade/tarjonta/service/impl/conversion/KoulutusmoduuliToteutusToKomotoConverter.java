@@ -15,12 +15,8 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
-import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.dto.Komoto;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,63 +37,50 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends AbstractFromDomain
 
         Komoto t = new Komoto();
 
-//        t.setAmmattinimikeUris(convert(s.getAmmattinimikes()));
+        t.setAmmattinimikeUris(KoulutusmoduuliToKomoConverter.convert(s.getAmmattinimikes()));
         t.setArviointikriteerit(KoulutusmoduuliToKomoConverter.convert(s.getArviointikriteerit()));
-//        t.setAvainsanaUris(KoulutusmoduuliToKomoConverter.convert(s.getAvainsanas()));
-//        t.set(s.get);
+        t.setAvainsanaUris(KoulutusmoduuliToKomoConverter.convert(s.getAvainsanas()));
 
-//
-//        t.setCreated(null);
-//        t.setCreatedByOid(null);
-//        t.setEqfLuokitusUri(s.getEqfLuokitus());
-//        t.setJatkoOpintoMahdollisuudet(convert(s.getJatkoOpintoMahdollisuudet()));
-//        t.setKoulutuksenRakenne(convert(s.getKoulutuksenRakenne()));
-//        t.setKoulutusAlaUri(s.getKoulutusala());
-//        t.setKoulutusAsteUri(s.getKoulutusAste());
-//        // TODO t.setKoulutusLuokitusKoodiUri(s.get); ??? waat
-//        t.setKoulutusOhjelmaKoodiUri(s.getKoulutusohjelmaKoodi());
-//        t.setKoulutusTyyppiUri(s.getKoulutustyyppi()); // TODO onko uri?
-//        t.setLaajuusArvo(s.getLaajuusArvo());
-//        t.setLaajuusYksikkoUri(s.getLaajuusYksikko());
-//        t.setLukiolinjaUri(s.getLukiolinja()); // TODO onko?
-//        // TODO ei ole, on enum! t.setModuuliTyyppiUri(s.getModuuliTyyppi());
-//        t.setNimi(convert(s.getNimi()));
-//        t.setNqfLuokitusUri(s.getNqfLuokitus()); // TODO onko nqf koodisto?
-//        t.setOid(s.getOid());
-//        t.setOpintoalaUri(s.getOpintoala()); // TODO onko uri?
-//
-//        // TODO onko organisaatioita KOMOilla ollenkaan?
-//        t.setOrganisaatioOid(s.getOmistajaOrganisaatioOid());
-//        t.setTarjoajaOid(s.getOmistajaOrganisaatioOid());
-//
-//        t.setTavoitteet(convert(s.getTavoitteet()));
-//        t.setTila("" + s.getTila()); // TODO tila & sen konversio?
-//        t.setTutkintoOhjelmanNimiUri(s.getTutkintoOhjelmanNimi());
-//        t.setTutkintonimikeUri(s.getTutkintonimike());
-//        t.setUlkoinenTunniste(s.getUlkoinenTunniste());
-//        t.setUpdateByOid(null); // TODO modifier OID KOMOLLA?
-//        t.setUpdated(s.getUpdated());
-//        t.setVersion(s.getVersion() == null ? 0 : s.getVersion().intValue());
-//
-//        // // TODO convert, but efficiently! t.setYlaModuulit(null);
+        // t.set(s.getHakukohdes()); TODO list OIDs
 
+        t.setKansainvalistyminen(KoulutusmoduuliToKomoConverter.convert(s.getKansainvalistyminen()));
+        t.setKoulutuksenAlkamisDate(s.getKoulutuksenAlkamisPvm());
+        t.setKoulutusAsteUri(s.getKoulutusaste());
+        t.setKoulutuslajiUris(KoulutusmoduuliToKomoConverter.convert(s.getKoulutuslajis()));
+        t.setKoulutusohjelmanValinta(KoulutusmoduuliToKomoConverter.convert(s.getKoulutusohjelmanValinta()));
+        t.setKuvailevatTiedot(KoulutusmoduuliToKomoConverter.convert(s.getKuvailevatTiedot()));
+        t.setUpdated(s.getLastUpdateDate()); // TODO vai getUpdated() ???
+        t.setUpdateByOid(s.getLastUpdatedByOid());
+        t.setWebLinkkis(KoulutusmoduuliToKomoConverter.convertWebLinkkis(s.getLinkkis()));
+        t.setLoppukoeVaatimukset(KoulutusmoduuliToKomoConverter.convert(s.getLoppukoeVaatimukset()));
+        t.setLukiodiplomiUris(KoulutusmoduuliToKomoConverter.convert(s.getLukiodiplomit()));
+        t.setMaksullisuus(s.getMaksullisuus() != null);
+        t.setMaksullisuusTeksti(KoulutusmoduuliToKomoConverter.convert(s.getMaksullisuusUrl()));
         t.setOid(s.getOid());
+        t.setOpetusKieletUris(KoulutusmoduuliToKomoConverter.convert(s.getOpetuskielis()));
+        t.setOpetusmuotoUris(KoulutusmoduuliToKomoConverter.convert(s.getOpetusmuotos()));
+        t.setPainotus(KoulutusmoduuliToKomoConverter.convert(s.getPainotus()));
+        t.setPohjakoulutusVaatimusUri(s.getPohjakoulutusvaatimus());
+        t.setSijoittuminenTyoelamaan(KoulutusmoduuliToKomoConverter.convert(s.getSijoittuminenTyoelamaan()));
+        t.setSisalto(KoulutusmoduuliToKomoConverter.convert(s.getSisalto()));
+        t.setLaajuusArvo(s.getSuunniteltuKestoArvo());
+        t.setLaajuusYksikkoUri(s.getSuunniteltuKestoYksikko());
+        t.setTarjoajaOid(s.getTarjoaja());
+        // t.setTarjotutKieletUris(KoulutusmoduuliToKomoConverter.convert(s.getTarjotutKielet())); // KieliValikoima?
+        t.setTeemaUris(KoulutusmoduuliToKomoConverter.convert(s.getTeemas()));
+        t.setTila("" + s.getTila());
+        t.setUlkoinenTunniste(s.getUlkoinenTunniste());
+        // t.setUpdated(s.getUpdated()); // TODO POISTA "lastUpdateDate"
+        t.setVersion((s.getVersion() != null) ? s.getVersion().intValue() : -1);
+        t.setYhteistyoMuidenToimijoidenKanssa(KoulutusmoduuliToKomoConverter.convert(s.getYhteistyoMuidenToimijoidenKanssa()));
+        // t.setYhteyshenkilos(KoulutusmoduuliToKomoConverter.convert(s.getYhteyshenkilos()));
+
+        //
+        // Relations
+        //
+        t.setKomoOid(s.getKoulutusmoduuli() != null ? s.getKoulutusmoduuli().getOid() : null);
 
         return t;
     }
-
-
-
-
-    public List<String> convert(Set<KoodistoUri> uris) {
-        List<String> result = new ArrayList<String>();
-
-        for (KoodistoUri koodistoUri : uris) {
-            result.add(koodistoUri.getKoodiUri());
-        }
-
-        return result;
-    }
-
 
 }

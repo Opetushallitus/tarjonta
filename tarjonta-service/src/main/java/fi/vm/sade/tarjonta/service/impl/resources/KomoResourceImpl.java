@@ -92,10 +92,12 @@ public class KomoResourceImpl implements KomoResource {
         // TODO wery, wery, weeery inefficient... fixme!
 
         Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
-        Set<KoulutusmoduuliToteutus> komos = komo.getKoulutusmoduuliToteutusList();
+        if (komo != null) {
+            Set<KoulutusmoduuliToteutus> komos = komo.getKoulutusmoduuliToteutusList();
 
-        for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : komos) {
-            result.add(koulutusmoduuliToteutus.getOid());
+            for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : komos) {
+                result.add(koulutusmoduuliToteutus.getOid());
+            }
         }
 
         LOG.info("  result={}", result);

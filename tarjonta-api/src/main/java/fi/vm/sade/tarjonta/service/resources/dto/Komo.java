@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.service.resources.dto;
 
 import static fi.vm.sade.tarjonta.service.resources.dto.Komoto.MKT_KOULUTUSOHJELMAN_VALINTA;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +66,47 @@ public class Komo implements Serializable {
 
 //    private String _oppilaitosTyyppi;
     private String _ulkoinenTunniste;
+
+    // ------------------------------------------------------------------------------
+    // Multilanguage support with keys
+    //
+
+    private Map<String, List<String>> _koodistoUrisMap = new HashMap<String, List<String>>();
+
+    /**
+     * Get koodisto uri list by "key"
+     *
+     * @param key ex. "Ammattinimikkeet"
+     * @return list of uris, if not exists list will be created as empty
+     */
+    protected List<String> getKoodistoUris(String key) {
+        List<String> result = _koodistoUrisMap.get(key);
+        if (result == null) {
+            result = new ArrayList<String>();
+            _koodistoUrisMap.put(key, result);
+        }
+        return result;
+    }
+
+    /**
+     * Add single uri to a given koodisto list by "key". (like Ammattinimikkeet etc.)
+     *
+     * @param key ex. Ammattinimikkeet
+     * @param uri ex. "pianonvirittaja#1"
+     */
+    protected void addKoodistoUri(String key, String uri) {
+        getKoodistoUris(key).add(uri);
+    }
+
+    /**
+     * Set uris for koodisto list by "key".
+     *
+     * @param key ex. "Ammattinimikkeet"
+     * @param uris  ex. ["maalari#1", "suutari#2", "juoppo#1"]
+     */
+    protected void setKoodistoUris(String key, List<String> uris) {
+        _koodistoUrisMap.put(key, uris);
+    }
 
     // ------------------------------------------------------------------------------
     // Multilanguage support with keys

@@ -83,8 +83,11 @@ public class KomotoResourceImpl implements KomotoResource {
     @Override
     public Komo getKomoByKomotoOID(String oid) {
         LOG.info("getKomoByKomotoOID() -- /komoto/{}/komo", oid);
+        Komo result = null;
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
-        Komo result = conversionService.convert(komoto.getKoulutusmoduuli(), Komo.class);
+        if (komoto != null) {
+            result = conversionService.convert(komoto.getKoulutusmoduuli(), Komo.class);
+        }
         LOG.info("  result={}", result);
         return result;
     }
