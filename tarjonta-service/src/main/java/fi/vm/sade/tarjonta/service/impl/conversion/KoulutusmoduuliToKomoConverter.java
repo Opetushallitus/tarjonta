@@ -82,7 +82,7 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
         return t;
     }
 
-    private MonikielinenTekstis convert(MonikielinenTeksti s) {
+    public static MonikielinenTekstis convert(MonikielinenTeksti s) {
         if (s == null) {
             return null;
         }
