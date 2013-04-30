@@ -23,7 +23,9 @@ import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.MonikielinenTekstisDTO;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +40,7 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
 
     @Override
     public KomoDTO convert(Koulutusmoduuli s) {
-        LOG.debug("convert({}) --> Komo", s);
+        // LOG.debug("convert({}) --> Komo", s);
 
         if (s == null) {
             return null;
@@ -72,7 +74,7 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
         t.setTarjoajaOid(s.getOmistajaOrganisaatioOid());
 
         t.setTavoitteet(convert(s.getTavoitteet()));
-        t.setTila("" + s.getTila()); // TODO tila & sen konversio?
+        t.setTila(s.getTila() != null ? s.getTila().name() : null);
         t.setTutkintoOhjelmanNimiUri(s.getTutkintoOhjelmanNimi());
         t.setTutkintonimikeUri(s.getTutkintonimike());
         t.setUlkoinenTunniste(s.getUlkoinenTunniste());
@@ -82,26 +84,12 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
 
         // // TODO convert, but efficiently! t.setYlaModuulit(null);
 
-        LOG.debug("  --> {}", t);
+        // LOG.debug("  --> {}", t);
 
         return t;
     }
 
-    public static MonikielinenTekstisDTO convert(MonikielinenTeksti s) {
-        if (s == null) {
-            return null;
-        }
-        MonikielinenTekstisDTO t = new MonikielinenTekstisDTO();
-
-        for (TekstiKaannos tekstiKaannos : s.getTekstis()) {
-            t.addKieli(tekstiKaannos.getKieliKoodi(), tekstiKaannos.getArvo());
-        }
-
-        return t;
-    }
-
-
-    public static List<String> convert(Set<KoodistoUri> koodistoUris) {
+    public static List<String> convertKoodistoUris(Set<KoodistoUri> koodistoUris) {
         if (koodistoUris == null) {
             return null;
         }
@@ -116,19 +104,32 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
     }
 
 
-    public static MonikielinenTekstisDTO convertWebLinkkis(Set<WebLinkki> webLinkkis) {
-        if (webLinkkis == null) {
+    public static Map<String, String> convertWebLinkkis(Set<WebLinkki> s) {
+        if (s == null) {
             return null;
         }
 
-        MonikielinenTekstisDTO result = new MonikielinenTekstisDTO();
+        Map<String, String> t = new HashMap<String, String>();
 
-        for (WebLinkki l : webLinkkis) {
-            result.addKieli(l.getTyyppi(), l.getUrl());
+        for (WebLinkki webLinkki : s) {
+            t.put(webLinkki.getTyyppi(), webLinkki.getUrl());
         }
 
-        return result;
+        return t;
     }
 
+    public static Map<String, String> convert(MonikielinenTeksti s) {
+        if (s == null) {
+            return null;
+        }
+
+        Map<String, String> t = new HashMap<String, String>();
+
+        for (TekstiKaannos tekstiKaannos : s.getTekstis()) {
+            t.put(tekstiKaannos.getKieliKoodi(), tekstiKaannos.getArvo());
+        }
+
+        return t;
+    }
 
 }

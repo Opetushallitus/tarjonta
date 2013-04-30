@@ -14,11 +14,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
-import static fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO.MKT_KOULUTUSOHJELMAN_VALINTA;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,28 +25,18 @@ import java.util.Map;
  */
 public class KomoDTO implements Serializable {
 
-    public static String MKT_NIMI = "MKT_NIMI";
-    public static String MKT_TAVOITTEET = "MKT_TAVOITTEET";
-    public static String MKT_KOULUTUKSEN_RAKENNE = "MKT_KOULUTUKSEN_RAKENNE";
-    public static String MKT_JATKO_OPINTO_MAHDOLLISUUDET = "MKT_JATKO_OPINTO_MAHDOLLISUUDET";
-
     private String _oid;
     private int _version;
     private String _tila;
-
     private Date _updated;
     private String _updateByOid;
     private Date _created;
     private String _createdByOid;
-
     private List<String> _ylaModuulit;
     private List<String> _alaModuulit;
-
     private String _organisaatioOid;
     private String _tarjoajaOid; // onko sama kuin organisaatioOid?
-
     private String _laajuusArvo;
-
     private String _laajuusYksikkoUri;
     private String _eqfLuokitusUri;
     private String _koulutusAsteUri;
@@ -63,93 +50,17 @@ public class KomoDTO implements Serializable {
     private String _tutkintonimikeUri;
     private String _koulutusTyyppiUri;
     private String _lukiolinjaUri;
-
-//    private String _oppilaitosTyyppi;
+//    private String _oppilaitosTyyppi; ???
     private String _ulkoinenTunniste;
 
-    // ------------------------------------------------------------------------------
-    // Multilanguage support with keys
-    //
-
-    private Map<String, List<String>> _koodistoUrisMap = new HashMap<String, List<String>>();
-
-    /**
-     * Get koodisto uri list by "key"
-     *
-     * @param key ex. "Ammattinimikkeet"
-     * @return list of uris, if not exists list will be created as empty
-     */
-    protected List<String> getKoodistoUris(String key) {
-        List<String> result = _koodistoUrisMap.get(key);
-        if (result == null) {
-            result = new ArrayList<String>();
-            _koodistoUrisMap.put(key, result);
-        }
-        return result;
-    }
-
-    /**
-     * Add single uri to a given koodisto list by "key". (like Ammattinimikkeet etc.)
-     *
-     * @param key ex. Ammattinimikkeet
-     * @param uri ex. "pianonvirittaja#1"
-     */
-    protected void addKoodistoUri(String key, String uri) {
-        getKoodistoUris(key).add(uri);
-    }
-
-    /**
-     * Set uris for koodisto list by "key".
-     *
-     * @param key ex. "Ammattinimikkeet"
-     * @param uris  ex. ["maalari#1", "suutari#2", "juoppo#1"]
-     */
-    protected void setKoodistoUris(String key, List<String> uris) {
-        _koodistoUrisMap.put(key, uris);
-    }
-
-    // ------------------------------------------------------------------------------
-    // Multilanguage support with keys
-    //
-
-    private Map<String, MonikielinenTekstisDTO> _monikielinenData;
-
-    protected void setMonikielinenData(Map<String, MonikielinenTekstisDTO> _monikielinenData) {
-        this._monikielinenData = _monikielinenData;
-    }
-
-    protected Map<String, MonikielinenTekstisDTO> getMonikielinenData() {
-        if (_monikielinenData == null) {
-            _monikielinenData = new HashMap<String, MonikielinenTekstisDTO>();
-        }
-        return _monikielinenData;
-    }
-
-    protected MonikielinenTekstisDTO getMonikielinenData(String key) {
-        return getMonikielinenData().get(key);
-    }
-
-    protected void addMonikielinenData(String key, MonikielinenTekstiDTO mkt) {
-        MonikielinenTekstisDTO mkts = getMonikielinenData().get(key);
-        if (mkts == null) {
-            mkts = new MonikielinenTekstisDTO();
-            getMonikielinenData().put(key, mkts);
-        }
-
-        mkts.addKieli(mkt);
-    }
-
-    protected void addMonikielinenData(String key, String kieliUri, String arvo) {
-        MonikielinenTekstiDTO mkt = new MonikielinenTekstiDTO();
-        mkt.setArvo(arvo);
-        mkt.setKieliUri(kieliUri);
-        addMonikielinenData(key, mkt);
-    }
+    private Map<String, String> _nimi;
+    private Map<String, String> _koulutuksenRakenne;
+    private Map<String, String> _jatkoOpintoMahdollisuudet;
+    private Map<String, String> _tavoitteet;
 
     // ------------------------------------------------------------------------------
     // Getters and setters
     //
-
     public String getOid() {
         return _oid;
     }
@@ -358,42 +269,38 @@ public class KomoDTO implements Serializable {
         this._ulkoinenTunniste = ulkoinenTunniste;
     }
 
-
-
     // -----------------------------------------------
     // Multilanguage metadata
     //
-
-    public MonikielinenTekstisDTO getNimi() {
-        return getMonikielinenData(MKT_NIMI);
+    public Map<String, String> getNimi() {
+        return _nimi;
     }
 
-    public void setNimi(MonikielinenTekstisDTO v) {
-        getMonikielinenData().put(MKT_NIMI, v);
+    public void setNimi(Map<String, String> _nimi) {
+        this._nimi = _nimi;
     }
 
-    public MonikielinenTekstisDTO getKoulutuksenRakenne() {
-        return getMonikielinenData(MKT_KOULUTUKSEN_RAKENNE);
+    public Map<String, String> getKoulutuksenRakenne() {
+        return _koulutuksenRakenne;
     }
 
-    public void setKoulutuksenRakenne(MonikielinenTekstisDTO v) {
-        getMonikielinenData().put(MKT_KOULUTUKSEN_RAKENNE, v);
+    public void setKoulutuksenRakenne(Map<String, String> _koulutuksenRakenne) {
+        this._koulutuksenRakenne = _koulutuksenRakenne;
     }
 
-    public MonikielinenTekstisDTO getJatkoOpintoMahdollisuudet() {
-        return getMonikielinenData(MKT_JATKO_OPINTO_MAHDOLLISUUDET);
+    public Map<String, String> getJatkoOpintoMahdollisuudet() {
+        return _jatkoOpintoMahdollisuudet;
     }
 
-    public void setJatkoOpintoMahdollisuudet(MonikielinenTekstisDTO v) {
-        getMonikielinenData().put(MKT_JATKO_OPINTO_MAHDOLLISUUDET, v);
+    public void setJatkoOpintoMahdollisuudet(Map<String, String> _jatkoOpintoMahdollisuudet) {
+        this._jatkoOpintoMahdollisuudet = _jatkoOpintoMahdollisuudet;
     }
 
-    public MonikielinenTekstisDTO getTavoitteet() {
-        return getMonikielinenData(MKT_TAVOITTEET);
+    public Map<String, String> getTavoitteet() {
+        return _tavoitteet;
     }
 
-    public void setTavoitteet(MonikielinenTekstisDTO v) {
-        getMonikielinenData().put(MKT_TAVOITTEET, v);
+    public void setTavoitteet(Map<String, String> _tavoitteet) {
+        this._tavoitteet = _tavoitteet;
     }
-
 }
