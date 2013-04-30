@@ -16,43 +16,91 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Set;
+
+import javax.jws.WebParam;
+import javax.xml.datatype.DatatypeFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.model.TarjontaTila;
-import fi.vm.sade.tarjonta.model.util.CollectionUtils;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.Kieliaine;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
+import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeSetToDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.util.DatatypeHelper;
 import fi.vm.sade.tarjonta.service.search.SearchService;
-import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import javax.jws.WebParam;
-import javax.xml.datatype.DatatypeFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeTarjoajanKoulutustenPohjakoulutuksetKysely;
+import fi.vm.sade.tarjonta.service.types.HaeTarjoajanKoulutustenPohjakoulutuksetVastaus;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
+import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKoulutuksineenKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKoulutuksineenVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohteenLiiteTunnisteellaKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohteenLiiteTunnisteellaVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohteenValintakoeTunnisteellaKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohteenValintakoeTunnisteellaVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
+import fi.vm.sade.tarjonta.service.types.TarjontaTyyppi;
+import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 
 /**
  *
  * @author Tuomas Katva
  */
-@Transactional(readOnly=true)
+@Transactional(rollbackFor=Throwable.class, readOnly=true)
 @Service("tarjontaPublicService")
 public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 

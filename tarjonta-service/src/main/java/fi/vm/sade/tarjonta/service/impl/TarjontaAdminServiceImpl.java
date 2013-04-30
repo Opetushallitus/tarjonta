@@ -50,7 +50,7 @@ import java.util.*;
 /**
  * @author Tuomas Katva
  */
-@Transactional(readOnly=true)
+@Transactional(rollbackFor=Throwable.class, readOnly=true)
 @Service("tarjontaAdminService")
 public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
@@ -88,7 +88,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private TarjontaSampleData sampleData;
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
 
         Haku foundHaku = hakuBusinessService.findByOid(hakuDto.getOid());
@@ -103,7 +103,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public List<ValintakoeTyyppi> paivitaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
         List<Valintakoe> valintakoes = convertValintaKokees(hakukohteenValintakokeet);
         List<Valintakoe> updateValintakokees = new ArrayList<Valintakoe>();
@@ -117,7 +117,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public List<ValintakoeTyyppi> tallennaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
 
         List<Valintakoe> valintakoes = convertValintaKokees(hakukohteenValintakokeet);
@@ -143,7 +143,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public void poistaHakukohdeLiite(@WebParam(name = "hakukohdeLiiteTunniste", targetNamespace = "") String hakukohdeLiiteTunniste) {
 
         HakukohdeLiite liite = hakukohdeDAO.findHakuKohdeLiiteById(hakukohdeLiiteTunniste);
@@ -153,7 +153,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
    public void poistaValintakoe(@WebParam(name = "ValintakoeTunniste", targetNamespace = "") String valintakoeTunniste) {
         Valintakoe valintakoe = new Valintakoe();
         valintakoe.setId(new Long(valintakoeTunniste));
@@ -162,7 +162,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     }
 
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public void kopioiKoulutus(@WebParam(name = "kopioitavaKoulutus", targetNamespace = "") KoulutusTyyppi kopioitavaKoulutus, @WebParam(name = "organisaatioOids", targetNamespace = "") List<String> organisaatioOids) {
         //TODO: should add some organisaatio validation ? Or should it be handled in UI
         for (String organisaatioOid : organisaatioOids) {
@@ -243,7 +243,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public void tallennaLiitteitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenLiitteen", targetNamespace = "") List<HakukohdeLiiteTyyppi> hakukohteenLiitteen) {
 
 
@@ -287,7 +287,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) {
         Preconditions.checkNotNull(hakukohde, "HakukohdeTyyppi cannot be null.");
         final String hakuOid = hakukohde.getHakukohteenHakuOid();
@@ -324,7 +324,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public void lisaaTaiPoistaKoulutuksiaHakukohteelle(@WebParam(partName = "parameters", name = "lisaaKoulutusHakukohteelle", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LisaaKoulutusHakukohteelleTyyppi parameters) {
         List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
         Hakukohde hakukohde = hakukohdes.get(0);
@@ -348,7 +348,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) throws GenericFault {
         Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
         if (hakuAlkanut(hakukohde)) {
@@ -369,7 +369,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public HakukohdeTyyppi paivitaHakukohde(HakukohdeTyyppi hakukohdePaivitys) {
 
         Hakukohde hakukohde = conversionService.convert(hakukohdePaivitys, Hakukohde.class);
@@ -397,7 +397,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public HakuTyyppi lisaaHaku(HakuTyyppi hakuDto) {
         Haku haku = conversionService.convert(hakuDto, Haku.class);
         haku = hakuBusinessService.save(haku);
@@ -407,7 +407,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public void poistaHaku(HakuTyyppi hakuDto) throws GenericFault {
 
         Haku haku = hakuBusinessService.findByOid(hakuDto.getOid());
@@ -437,7 +437,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
         solrIndexer.indexKoulutus(Lists.newArrayList(toteutus));
@@ -448,7 +448,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
@@ -458,7 +458,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public void poistaKoulutus(String koulutusOid) throws GenericFault {
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
         
@@ -488,7 +488,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
      * Remove once koodisto has proper data.
      */
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public void initSample(String parameters) {
         try {
             sampleData.init();
@@ -507,7 +507,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public KoulutusmoduuliKoosteTyyppi lisaaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli) throws GenericFault {
 
         if (koulutusmoduuli.getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS) && koulutusmoduuliDAO.findTutkintoOhjelma(koulutusmoduuli.getKoulutuskoodiUri(), koulutusmoduuli.getKoulutusohjelmakoodiUri()) != null) {
@@ -526,7 +526,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public KoulutusmoduuliKoosteTyyppi paivitaKoulutusmoduuli(KoulutusmoduuliKoosteTyyppi koulutusmoduuli) throws GenericFault {
         if (koulutusmoduuli == null || koulutusmoduuli.getOid() == null) {
             throw new IllegalArgumentException("OID cannot be null.");
@@ -671,7 +671,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public PaivitaTilaVastausTyyppi paivitaTilat(PaivitaTilaTyyppi tarjontatiedonTila) {
         publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());
         return new PaivitaTilaVastausTyyppi();
@@ -683,7 +683,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     @Override
-    @Transactional(readOnly=false)
+    @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public MonikielinenMetadataTyyppi tallennaMetadata(@WebParam(name = "avain", targetNamespace = "") String avain, @WebParam(name = "kategoria", targetNamespace = "") String kategoria, @WebParam(name = "kieli", targetNamespace = "") String kieli, @WebParam(name = "arvo", targetNamespace = "") String arvo) {
         log.info("tallennaMetadata({}, {}, {}, ...)", new Object[]{avain, kategoria, kieli});
 
