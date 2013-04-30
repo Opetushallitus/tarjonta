@@ -16,7 +16,11 @@ package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -46,7 +50,7 @@ public class HakukohdeToHakukohdeDTOConverter  extends AbstractFromDomainConvert
         // t.set(s.getLiitteidenToimitusOsoite());
         t.setLiitteidenToimitusPvm(s.getLiitteidenToimitusPvm());
         t.setLisatiedot(KoulutusmoduuliToKomoConverter.convert(s.getLisatiedot()));
-        // t.set(s.getPainotettavatOppiaineet());
+        t.setPainotettavatOppiaineet(convert(s.getPainotettavatOppiaineet()));
         t.setSahkoinenToimitusOsoite(s.getSahkoinenToimitusOsoite());
         t.setSoraKuvausKoodiUri(s.getSoraKuvausKoodiUri());
         t.setTila(s.getTila() != null ? s.getTila().name() : null);
@@ -56,6 +60,21 @@ public class HakukohdeToHakukohdeDTOConverter  extends AbstractFromDomainConvert
         t.setYlinValintapistemaara(s.getYlinValintaPistemaara() != null ? s.getYlinValintaPistemaara().intValue() : 0);
 
         return t;
+    }
+
+
+    public List<List<String>> convert(Set<PainotettavaOppiaine> s) {
+       List<List<String>> result = new ArrayList<List<String>>();
+
+       for (PainotettavaOppiaine painotettavaOppiaine : s) {
+           List<String> t = new ArrayList<String>();
+           t.add(painotettavaOppiaine.getOppiaine());
+           t.add("" + painotettavaOppiaine.getPainokerroin());
+
+           result.add(t);
+       }
+
+        return result;
     }
 
 }

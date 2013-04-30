@@ -21,7 +21,6 @@ import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.MonikielinenTekstisDTO;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,13 +62,13 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
         t.setLaajuusArvo(s.getLaajuusArvo());
         t.setLaajuusYksikkoUri(s.getLaajuusYksikko());
         t.setLukiolinjaUri(s.getLukiolinja()); // TODO onko?
-        // TODO ei ole, on enum! t.setModuuliTyyppiUri(s.getModuuliTyyppi());
+        t.setModuuliTyyppi(s.getModuuliTyyppi() != null ? s.getModuuliTyyppi().name() : null);
         t.setNimi(convert(s.getNimi()));
-        t.setNqfLuokitusUri(s.getNqfLuokitus()); // TODO onko nqf koodisto?
+        t.setNqfLuokitusUri(s.getNqfLuokitus());
         t.setOid(s.getOid());
-        t.setOpintoalaUri(s.getOpintoala()); // TODO onko uri?
+        t.setOpintoalaUri(s.getOpintoala());
 
-        // TODO onko organisaatioita KOMOilla ollenkaan?
+        // ? Does KOMO have a "owner" other that OPH?
         t.setOrganisaatioOid(s.getOmistajaOrganisaatioOid());
         t.setTarjoajaOid(s.getOmistajaOrganisaatioOid());
 
@@ -78,7 +77,7 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
         t.setTutkintoOhjelmanNimiUri(s.getTutkintoOhjelmanNimi());
         t.setTutkintonimikeUri(s.getTutkintonimike());
         t.setUlkoinenTunniste(s.getUlkoinenTunniste());
-        t.setUpdateByOid(null); // TODO modifier OID KOMOLLA?
+        t.setUpdateByOid(null);
         t.setUpdated(s.getUpdated());
         t.setVersion(s.getVersion() == null ? 0 : s.getVersion().intValue());
 

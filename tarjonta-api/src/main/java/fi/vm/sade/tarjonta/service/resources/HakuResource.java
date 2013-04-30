@@ -1,7 +1,6 @@
 package fi.vm.sade.tarjonta.service.resources;
 
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import java.util.Date;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 
@@ -11,6 +10,13 @@ import java.util.List;
 
 /**
  * REST services for haku's.
+ *
+ * <pre>
+ * /haku/hello
+ * /haku?searchTerms...
+ * /haku/OID
+ * /haku/OID/hakukohde
+ * </pre>
  *
  * @author mlyly
  */

@@ -52,6 +52,7 @@ public class KomoDTO implements Serializable {
     private String _lukiolinjaUri;
 //    private String _oppilaitosTyyppi; ???
     private String _ulkoinenTunniste;
+    private String _moduuliTyyppi;
 
     private Map<String, String> _nimi;
     private Map<String, String> _koulutuksenRakenne;
@@ -267,6 +268,14 @@ public class KomoDTO implements Serializable {
 
     public void setUlkoinenTunniste(String ulkoinenTunniste) {
         this._ulkoinenTunniste = ulkoinenTunniste;
+    }
+
+    public String getModuuliTyyppi() {
+        return _moduuliTyyppi;
+    }
+
+    public void setModuuliTyyppi(String _moduuliTyyppi) {
+        this._moduuliTyyppi = _moduuliTyyppi;
     }
 
     // -----------------------------------------------

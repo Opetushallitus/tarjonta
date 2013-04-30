@@ -12,6 +12,16 @@ import java.util.List;
 /**
  * REST service for hakukohde's.
  *
+ * <pre>
+ * /hakukohde?searchTerms..
+ * /hakukohde/OID
+ * /hakukohde/OID/haku
+ * /hakukohde/OID/komoto
+ * /hakukohde/OID/liite
+ * /hakukohde/OID/paasykoe
+ * /hakukohde/OID/valintakoe
+ * </pre>
+ *
  * @author mlyly
  */
 @Path("/hakukohde")
@@ -69,66 +79,36 @@ public interface HakukohdeResource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public List<String> getKomotosByHakukohdeOID(@PathParam("oid") String oid);
 
+    /**
+     * /hakukohde/{oid}/liite
+     *
+     * @param oid
+     * @return loaded list Liite's
+     */
+    @GET
+    @Path("{oid}/liite")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public List<String> getLiitesByHakukohdeOID(@PathParam("oid") String oid);
 
-//   /**
-//     * /hakukohde/{oid}/valintakoe
-//     *
-//     * @param oid
-//     * @return loaded list of valintakoe objects
-//     */
-//    @GET
-//    @Path("{oid}/valintakoe")
-//    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-//    public List<Valintakoe> getValintakoesByHakukohdeOID(@PathParam("oid") String oid);
-//
-//       /**
-//     * /hakukohde/{oid}/valintakoe
-//     *
-//     * @param oid
-//     * @return loaded list of valintakoe objects
-//     */
-//    @GET
-//    @Path("{oid}/hakukohdeliite")
-//    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-//    public List<HakukohdeLiite> getHakukohdeLiitesByHakukohdeOID(@PathParam("oid") String oid);
+    /**
+     * /hakukohde/{oid}/paasykoe
+     *
+     * @param oid
+     * @return loaded list Paasykoe's
+     */
+    @GET
+    @Path("{oid}/paasykoe")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public List<String> getPaasykoesByHakukohdeOID(@PathParam("oid") String oid);
 
-
-
-
-
-//    /**
-//     * /hakukohde/{oid}/koulutus
-//     *
-//     * @param oid
-//     * @param language
-//     * @return
-//     */
-//    @GET
-//    @Path("{oid}/koulutus")
-//    @Produces(MediaType.APPLICATION_JSON  + ";charset=UTF-8")
-//    public List<HakukohdeTyyppi> getByOIDKoulutus(@PathParam("oid") String oid, @QueryParam("language") String language);
-//
-//    /**
-//     * /hakukohde/{oid}/paasykoe
-//     *
-//     * @param oid
-//     * @param language
-//     * @return
-//     */
-//    @GET
-//    @Path("{oid}/paasykoe")
-//    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-//    public List<HakukohdeTyyppi> getByOIDPaasykoe(@PathParam("oid") String oid, @QueryParam("language") String language);
-//
-//    /**
-//     * /hakukohde/{oid}/liite
-//     *
-//     * @param oid
-//     * @param language
-//     * @return
-//     */
-//    @GET
-//    @Path("{oid}/liite")
-//    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-//    public List<HakukohdeTyyppi> getByOIDLiite(@PathParam("oid") String oid, @QueryParam("language") String language);
+    /**
+     * /hakukohde/{oid}/valintakoe
+     *
+     * @param oid
+     * @return loaded list Valintakoe's
+     */
+    @GET
+    @Path("{oid}/valintakoe")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public List<String> getValintakoesByHakukohdeOID(@PathParam("oid") String oid);
 }

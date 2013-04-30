@@ -36,79 +36,12 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     @Autowired
     private ConversionService conversionService;
 
-//    // /hakukohde?searchTerms=xxx&...
-//    @Override
-//    public List<HakukohdeTyyppi> search(String searchTerms,
-//                                        int count,
-//                                        int startIndex,
-//                                        int startPage,
-//                                        String language) {
-//
-//        LOG.info("search(searchTerms={})", searchTerms);
-//
-//        List<HakukohdeTyyppi> hakukohdeTyyppiList = new ArrayList<HakukohdeTyyppi>();
-//
-//        // TODO search spec not used - whats wanted here?
-//        // TODO published?
-//
-//        List<Hakukohde> hakukohdes = hakukohdeDAO.findAll();
-//        for (Hakukohde hakukohde : hakukohdes) {
-//            hakukohdeTyyppiList.add(conversionService.convert(hakukohde, HakukohdeTyyppi.class));
-//        }
-//
-//        return hakukohdeTyyppiList;
-//    }
-//
-//    // /hakukohde/{oid}
-//    @Override
-//    public HakukohdeTyyppi getByOID(String oid, String language) {
-//        LOG.info("getByOID({})", oid);
-//
-//        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
-//        return conversionService.convert(hakukohde, HakukohdeTyyppi.class);
-//    }
-//
-//    // /hakukohde/{oid}/koulutus
-//    @Override
-//    public List<HakukohdeTyyppi> getByOIDKoulutus(String oid, String language) {
-//        LOG.info("getByOIDKoulutus({})", oid);
-//
-//        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
-//        if (hakukohde == null) {
-//            return Collections.EMPTY_LIST;
-//        }
-//
-//        for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
-//            // TODO convert to some representation
-//
-//        }
-//
-//        return Collections.EMPTY_LIST;
-//    }
-//
-//    // /hakukohde/{oid}/paasykoe
-//    @Override
-//    public List<HakukohdeTyyppi> getByOIDPaasykoe(String oid, String language) {
-//        LOG.info("getByOIDPaasykoe({})", oid);
-//        return Collections.EMPTY_LIST;
-//    }
-//
-//    // /hakukohde/{oid}/liite
-//    @Override
-//    public List<HakukohdeTyyppi> getByOIDLiite(String oid, String language) {
-//        LOG.info("getByOIDLiite({})", oid);
-//        return Collections.EMPTY_LIST;
-//    }
-//
-
-
     // /hakukohde?...
     @Override
     public List<String> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
         LOG.info("/hakukohde -- search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
-        // TODO hardcoded JULKAISTU!
-        TarjontaTila tarjontaTila = TarjontaTila.JULKAISTU;
+        TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
         List<String> result = new ArrayList<String>();
         result.addAll(hakukohdeDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
@@ -151,6 +84,21 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         }
         LOG.info("  result={}", result);
         return result;
+    }
+
+    @Override
+    public List<String> getLiitesByHakukohdeOID(String oid) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<String> getPaasykoesByHakukohdeOID(String oid) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<String> getValintakoesByHakukohdeOID(String oid) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

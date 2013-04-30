@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.service.resources.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,6 +44,8 @@ public class HakukohdeDTO implements Serializable {
     private String _updatedByOid;
     private Date _liitteidenToimitusPvm;
     private Map<String, String> _lisatiedot;
+
+    private List<List<String>> _painotettavatOppiaineet;
 
     public String getOid() {
         return _oid;
@@ -195,4 +198,13 @@ public class HakukohdeDTO implements Serializable {
     public void setLisatiedot(Map<String, String> lisatiedot) {
         this._lisatiedot = lisatiedot;
     }
+
+    public void setPainotettavatOppiaineet(List<List<String>> _painotettavatOppiaineet) {
+        this._painotettavatOppiaineet = _painotettavatOppiaineet;
+    }
+
+    public List<List<String>> getPainotettavatOppiaineet() {
+        return _painotettavatOppiaineet;
+    }
+
 }
