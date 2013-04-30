@@ -376,13 +376,13 @@ public class HakuPresenter implements CommonPresenter<HakuViewModel> {
 
     public void selectHaku(HakuViewModel haku) {
         selectedhaut.add(haku);
-        this.hakuList.toggleRemoveButton(true);
+        this.hakuList.toggleRemoveButton(getPermission().userCanDeleteHaku());
     }
 
     public void unSelectHaku(HakuViewModel haku) {
         LOG.info("unSelectHaku({})", haku);
         selectedhaut.remove(haku);
-        this.hakuList.toggleRemoveButton(!selectedhaut.isEmpty());
+        this.hakuList.toggleRemoveButton(!selectedhaut.isEmpty() && getPermission().userCanDeleteHaku());
     }
 
     /**

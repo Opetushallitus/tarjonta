@@ -415,50 +415,6 @@ public class UiBuilder extends UiUtil {
         }
     }
 
-    /**
-     * @deprecated
-     * Do not use this method, use specific methods from {@link TarjontaPermissionServiceImpl}!
-     */
-    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, final RequiredRole role, TarjontaPermissionServiceImpl tps) {
-        return buttonSmallPrimary(layout, caption, null, role, tps);
-    }
-
-    /**
-     * @deprecated
-     * Do not use this method, use specific methods from {@link TarjontaPermissionServiceImpl}!
-     */
-    public static Button buttonSmallPrimary(final AbstractLayout layout, final String caption, Button.ClickListener listener, final RequiredRole role, TarjontaPermissionServiceImpl tps) {
-        Button button = null;
-        if (listener != null) {
-            button = UiUtil.buttonSmallPrimary(layout, caption, listener);
-        } else {
-            button = UiUtil.buttonSmallPrimary(layout, caption);
-        }
-
-        if (role == null) {
-            return button;
-        }
-
-        switch (role) {
-            case CRUD:
-                button.setVisible(tps.userCanCreateReadUpdateAndDelete());
-                break;
-            case UPDATE:
-                button.setVisible(tps.userCanReadAndUpdate());
-                break;
-            default:
-                break;
-        }
-
-        if (!button.isVisible()) {
-            LOG.debug("Insufficient user role - button with a caption '{}' was disabled. Required role '{}'", caption, role);
-        }
-
-        return button;
-    }
-
-
-
     public static TextField integerField(final AbstractComponentContainer layout,
                                          final PropertysetItem psi,
                                          final String expression,

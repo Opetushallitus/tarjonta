@@ -216,7 +216,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
                          hakuPresenter.showHakuEdit(hakuPresenter.getHakuModel());
                     }
                 }
-                ,lastUpdLbl , true));
+                ,lastUpdLbl , this.hakuPresenter.getPermission().userCanEditHaku()));
 
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
@@ -242,14 +242,14 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
         layout.addComponent(hdrLayout);
     }
 
-    private void buildLayoutMiddleMid2(VerticalLayout layout) {
-        layout.addComponent(buildHeaderLayout(T("Sisaisethaut"), T("Muokkaa")));
-
-        CategoryTreeView categoryTree = new CategoryTreeView();
-        categoryTree.setHeight("100px");
-        categoryTree.setContainerDataSource(createHakuaikaTreeDataSource(hakuPresenter.getSisaisetHautSource()));
-        layout.addComponent(categoryTree);
-    }
+//    private void buildLayoutMiddleMid2(VerticalLayout layout) {
+//        layout.addComponent(buildHeaderLayout(T("Sisaisethaut"), T("Muokkaa")));
+//
+//        CategoryTreeView categoryTree = new CategoryTreeView();
+//        categoryTree.setHeight("100px");
+//        categoryTree.setContainerDataSource(createHakuaikaTreeDataSource(hakuPresenter.getSisaisetHautSource()));
+//        layout.addComponent(categoryTree);
+//    }
 
     private void addItemToGrid(final GridLayout grid,
                                final String labelCaptionKey, final String labelCaptionValue) {
@@ -271,7 +271,7 @@ public class ShowHakuViewImpl extends AbstractVerticalInfoLayout implements Show
                           ShowHakuViewImpl.this.getWindow().showNotification("Ei toteutettu");
                     }
                 }
-                ,null , true));
+                ,null , hakuPresenter.getPermission().userCanEditHaku()));
 
         CategoryTreeView categoryTree = new CategoryTreeView();
         categoryTree.setHeight("100px");

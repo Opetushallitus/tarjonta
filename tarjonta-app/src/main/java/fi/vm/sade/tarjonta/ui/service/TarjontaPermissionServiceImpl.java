@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
@@ -39,10 +40,15 @@ import fi.vm.sade.security.OrganisationHierarchyAuthorizer;
 @Component
 public class TarjontaPermissionServiceImpl implements InitializingBean {
 
+    //OPH oid
+    @Value("${root.organisaatio.oid}")
+    String rootOrgOid;
+
+    
     @Autowired
     private UserProvider userProvider;
     
-    private static final Logger LOG = LoggerFactory.getLogger(TarjontaPermissionServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TarjontaPermissionServiceImpl.class);
 
     @Component
     public static class TPermissionService extends AbstractPermissionService {
@@ -53,7 +59,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         @Override
         @Autowired
         public void setAuthorizer(OrganisationHierarchyAuthorizer authorizer) {
-            LOG.info("Using authorizer:" + authorizer.getClass().getName());
+            LOGGER.info("Using authorizer:" + authorizer.getClass().getName());
             super.setAuthorizer(authorizer);
         }
     }
@@ -94,18 +100,6 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
     }
 
-    /**
-     * This is to be removed.
-     * 
-     * @return
-     */
-    @Deprecated
-    public boolean userCanCreateReadUpdateAndDelete() {
-        Exception e = new Exception();
-        LOG.info("Obsolete call for checking crud, called from: {}", e.getStackTrace()[1]);
-        return getUser().isUserInRole(wrapped.ROLE_CRUD);
-    }
-
     public boolean userCanDeleteHakukohde(final OrganisaatioContext context) {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
     }
@@ -130,27 +124,13 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     }
 
     /**
-     * This is to be removed!!
-     * 
-     * @return
-     */
-    @Deprecated
-    public boolean userCanReadAndUpdate() {
-        Exception e = new Exception();
-        LOG.info("Obsolete call for checking ru, called from: {}", e.getStackTrace()[1]);
-
-//        e.printStackTrace(System.out);
-        return true;
-    }
-
-    /**
      * Checks if user can update hakukohde.
      * @param context
      * @return
      */
     public boolean userCanUpdateHakukohde(final OrganisaatioContext context) {
         final boolean result = wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD, wrapped.ROLE_RU);
-        LOG.debug("userCanUpdateHakukohde({}):{}", context, result);
+        LOGGER.debug("userCanUpdateHakukohde({}):{}", context, result);
         return result;
     }
 
@@ -161,7 +141,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      */
     public boolean userCanUpdateKoulutus(final OrganisaatioContext context) {
         final boolean result = wrapped.checkAccess(context.ooid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
-        LOG.debug("userCanUpdateKoulutus({}):{}", context, result);
+        LOGGER.debug("userCanUpdateKoulutus({}):{}", context, result);
         return result;
     }
 
@@ -216,57 +196,54 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public boolean userCanAddKoulutusToHakukohde(OrganisaatioContext context) {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
     }
-    
+
+    public boolean userCanPublishCancelledKoulutus() {
+        return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
+    }
+
     /**
      * Check if user can delete haku.
      * @return
      */
     public boolean userCanDeleteHaku() {
-        //XXX not checking auth now
-        return true;
-        //now checking if user has CRUD on oph 
-        //return wrapped.checkAccess(wrapped.getRootOrgOid(), wrapped.ROLE_CRUD);
+        return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
-   
-    public boolean userCanPublishCancelledKoulutus() {
-    	return wrapped.checkAccess(wrapped.getRootOrgOid(), wrapped.ROLE_CRUD);
+
+    /**
+     * Check if user can delete haku.
+     * @return
+     */
+    public boolean userCanCreateHaku() {
+        boolean userCanCreateHalku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
+        LOGGER.debug("userCanCreateHaku:" + userCanCreateHalku);
+        return userCanCreateHalku;
     }
 
     /**
      * Check if user can edit haku.
-     * XXX Haku is not tied to any organisation.
      * @return
      */
     public boolean userCanEditHaku() {
-        //XXX not checking auth now
-        return true;
-        //now checking if user has RU on oph 
-        //return wrapped.checkAccess(wrapped.getRootOrgOid(), wrapped.ROLE_RU);
+        boolean userCanEditHaku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
+        LOGGER.debug("userCanEditHaku:" + userCanEditHaku);
+        return userCanEditHaku;
     }
 
     /**
      * Check if user can publish haku.
-     * XXX Haku is not tied to any organisation.
      * 
      * @return
      */
     public boolean userCanPublishHaku() {
-        //XXX not checking auth now.
-        return true;
-        //checking if user has RU on oph 
-        //return wrapped.checkAccess(wrapped.getRootOrgOid(), wrapped.ROLE_RU);
+        return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
     }
 
     /**
      * Check if user can Cancel haku publishment.
-     * XXX Haku is not tied to any organisation.
      * @return
      */
     public boolean userCanCancelHakuPublish() {
-        //XXX not checking auth now
-        return true;
-        //now checking if user has RU on oph 
-        //return wrapped.checkAccess(wrapped.getRootOrgOid(), wrapped.ROLE_RU);
+        return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
     }
 
 }

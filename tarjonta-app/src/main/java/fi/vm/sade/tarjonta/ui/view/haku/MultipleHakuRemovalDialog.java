@@ -91,7 +91,9 @@ public class MultipleHakuRemovalDialog extends RemovalConfirmationDialog {
         HorizontalLayout hl = UiUtil.horizontalLayout();
         hl.setSizeFull();
         Button noRemoveB = UiUtil.buttonSmallSecodary(hl, noRemoveStr, noRemoveListener);
+        noRemoveB.setVisible(this.presenter.getPermission().userCanDeleteHaku());
         Button removeB = UiUtil.buttonSmallSecodary(hl, removeStr, removeListener);
+        removeB.setVisible(this.presenter.getPermission().userCanDeleteHaku());
         addComponent(hl);
         hl.setComponentAlignment(noRemoveB, Alignment.MIDDLE_LEFT);
         hl.setComponentAlignment(removeB, Alignment.MIDDLE_RIGHT);

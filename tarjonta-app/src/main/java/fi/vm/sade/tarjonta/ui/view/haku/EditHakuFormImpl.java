@@ -269,7 +269,7 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
                     getSisaisetHakuajatContainer().addRowToHakuajat();
                 }
             });
-            lisaaHakuaika.setEnabled(true);
+            lisaaHakuaika.setEnabled(presenter.getPermission().userCanEditHaku());
             vl.addComponent(sisaisetHakuajatTable);
 
             grid.addComponent(vl);
@@ -393,6 +393,7 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
                 }
             });
             addItem(hakuaikaRow);
+            hakuaikaRow.getPoistaB().setVisible(presenter.getPermission().userCanEditHaku());
         }
 
         private void initHakuaikaContainer(List<HakuaikaViewModel> hakuajat) {
@@ -408,6 +409,7 @@ public class EditHakuFormImpl extends VerticalLayout implements EditHakuForm {
                         removeItem(hakuaikaRow);
                     }
                 });
+                hakuaikaRow.getPoistaB().setVisible(presenter.getPermission().userCanEditHaku());
                 addItem(hakuaikaRow);
             }
         }

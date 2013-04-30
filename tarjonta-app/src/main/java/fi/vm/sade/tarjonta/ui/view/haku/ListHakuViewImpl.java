@@ -137,6 +137,10 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
 
     @PostConstruct
     public void setDataSource() {
+        //permissions
+        btnLuoUusiHaku.setVisible(presenter.getPermission().userCanCreateHaku());
+
+        
         presenter.setHakuList(this);
         categoryTree.removeAllItems();
         categoryTree.setContainerDataSource(createDataSource(presenter.getTreeDataSource()));
@@ -259,7 +263,6 @@ public class ListHakuViewImpl extends VerticalLayout implements ListHakuView {
             }
         });
         btnPoista.setEnabled(false);
-
 
         cbJarjestys = UiUtil.comboBox(layout, null, ORDER_BY);
         cbJarjestys.setWidth("300px");

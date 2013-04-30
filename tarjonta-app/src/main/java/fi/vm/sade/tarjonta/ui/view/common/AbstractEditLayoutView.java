@@ -271,7 +271,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
                 presenter.isSaveButtonEnabled(
                 oid,
                 sisalto, tila));
-        visibleButtonByListener(listener, presenter.getPermission().userCanReadAndUpdate());
+        visibleButtonByListener(listener, presenter.getPermission().userCanEditHaku());
     }
 
     protected void updateNavigationButtonStates(final String oid, final SisaltoTyyppi sisalto) {
