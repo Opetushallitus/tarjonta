@@ -19,6 +19,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 
 import fi.vm.sade.vaadin.util.UiUtil;
 
@@ -50,10 +51,17 @@ public class RemovalConfirmationDialog extends AbstractVerticalLayout {
 	@Override
 	protected void buildLayout() {
 	    setSizeUndefined();
+	    setWidth("400px");
 	    setSpacing(true);
 	    this.setMargin(true);
-		UiUtil.label(this, questionStr);
-		UiUtil.label(this, kohdenimi);
+	        Label question = new Label();
+	        question.setSizeFull();
+	        question.setValue(questionStr);
+	        addComponent(question);
+		//UiUtil.label(this, questionStr);
+		if (kohdenimi != null) {
+		    UiUtil.label(this, kohdenimi);
+		}
 		HorizontalLayout hl = UiUtil.horizontalLayout();
 		hl.setSizeFull();
 		Button noRemoveB = UiUtil.buttonSmallSecodary(hl, noRemoveStr, noRemoveListener);

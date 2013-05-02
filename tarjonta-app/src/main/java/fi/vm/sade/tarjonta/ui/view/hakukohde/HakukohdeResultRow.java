@@ -162,7 +162,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
     }
     
     private void showPeruutaDialog() {
-        RemovalConfirmationDialog cancelDialog = new RemovalConfirmationDialog(T("peruutaQ"), hakukohdeNimi, T("removeYes"), T("removeNo"),
+        String peruutaQ = T("peruutaQ", 
+                hakukohdeNimi, hakukohde.getHakukohde().getKoulutuksenAlkamiskausiUri() + " " + hakukohde.getHakukohde().getKoulutuksenAlkamisvuosi());
+        RemovalConfirmationDialog cancelDialog = new RemovalConfirmationDialog(peruutaQ, null, T("removeYes"), T("removeNo"),
                 new Button.ClickListener() {
 
                     private static final long serialVersionUID = -908351229767113315L;

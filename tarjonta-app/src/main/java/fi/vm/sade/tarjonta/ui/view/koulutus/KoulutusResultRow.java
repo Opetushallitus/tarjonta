@@ -31,6 +31,7 @@ import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Window;
 
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
@@ -163,7 +164,8 @@ public class KoulutusResultRow extends HorizontalLayout {
     }
     
     private void showPeruutaDialog() {
-        RemovalConfirmationDialog cancelDialog = new RemovalConfirmationDialog(T("peruutaQ"), koulutusNimi, T("removeYes"), T("removeNo"),
+        String peruutaQ = T("peruutaQ", koulutusNimi, getAjankohtaStr(koulutus.getKoulutus().getAjankohta()));
+        RemovalConfirmationDialog cancelDialog = new RemovalConfirmationDialog(peruutaQ, null, T("removeYes"), T("removeNo"),
                 new Button.ClickListener() {
 
                     private static final long serialVersionUID = -908351229767113315L;
@@ -186,6 +188,15 @@ public class KoulutusResultRow extends HorizontalLayout {
             });
         removeKoulutusDialog = new TarjontaDialogWindow(cancelDialog, T("peruutaDialog"));
         getWindow().addWindow(removeKoulutusDialog);
+    }
+    
+    private String getAjankohtaStr(String pvmStr) {
+        
+        String[] ajankohtaParts = pvmStr.split(" ");
+        if (ajankohtaParts.length < 2) {
+            return "";
+        }
+        return I18N.getMessage(ajankohtaParts[0]) + " " + ajankohtaParts[1];
     }
 
     private void showRemoveDialog() {
