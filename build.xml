@@ -44,10 +44,10 @@
 			
 			<!-- deploy lates from local maven repo -->
 			<fileset dir="${maven.repo}/fi/vm/sade/tarjonta/tarjonta-service/${pom.version}">
-				<include name="*.war"/>
+				<include name="*-SNAPSHOT.war"/>
 			</fileset>
 			<fileset dir="${maven.repo}/fi/vm/sade/tarjonta/tarjonta-app/${pom.version}">
-				<include name="*.war"/>
+				<include name="*-SNAPSHOT.war"/>
 			</fileset>
 			<fileset dir="${maven.repo}/org/apache/solr/solr/4.2.0">
 				<include name="*.war"/>
