@@ -35,7 +35,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * REST /komo/*
+ * REST: /komo , /komo/hello, /komo/OID, /komo/OID/komoto
  *
  * @author mlyly
  * @see KomoResource for fuller docs.
@@ -73,8 +73,8 @@ public class KomoResourceImpl implements KomoResource {
     public List<String> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
         LOG.info("/komo -- search(st={}, c={}, si={}, lmb={}, lms={})", new Object[] {searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
-        // TODO hard coded, add param tarjonta tila + get the state!
-        TarjontaTila tarjontaTila = TarjontaTila.JULKAISTU;
+        // TODO hard TarjontaTila == null (== all states ok)
+        TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
         List<String> result = new ArrayList<String>();
         result.addAll(koulutusmoduuliDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
@@ -82,13 +82,14 @@ public class KomoResourceImpl implements KomoResource {
         return result;
     }
 
-    // GET /komo/OID/komotos?count=x&startIndex=x
+    // GET /komo/OID/komoto?count=x&startIndex=x
     @Override
     public List<String> getKomotosByKomotoOID(String oid, int count, int startIndex) {
-        LOG.info("/komo/{}/komotos -- (si={}, c={})", new Object[] {oid, count, startIndex});
+        LOG.info("/komo/{}/komoto -- (si={}, c={})", new Object[] {oid, count, startIndex});
 
         List<String> result = new ArrayList<String>();
 
+        // TODO add paging
         // TODO wery, wery, weeery inefficient... fixme!
 
         Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);

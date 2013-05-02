@@ -19,9 +19,11 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * REST API impl.
+ *
  * @author mlyly
+ * @see HakukohdeResource
  */
-// /hakukohde
 @Transactional(readOnly = true)
 public class HakukohdeResourceImpl implements HakukohdeResource {
 

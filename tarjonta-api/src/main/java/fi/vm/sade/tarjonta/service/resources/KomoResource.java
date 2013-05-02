@@ -31,10 +31,11 @@ import javax.ws.rs.core.MediaType;
  * REST services for KOMO's.
  *
  * <pre>
- * /komo?searchTerms=xxx&count=100&startIndex=50
- * /komo
  * /komo/hello
- * /komo/{OID}/komotos
+ * /komo  (?searchTerms=xxx&count=100&startIndex=50)
+ * /komo/{OID}
+ * /komo/{OID}/komoto
+ * /komo/{OID}/komoto  (?count=100&startIndex=50)
  * </pre>
  *
  * @author mlyly
@@ -91,7 +92,7 @@ public interface KomoResource {
      * @return list of KOMOTO OID's belonging to given KOMO
      */
     @GET
-    @Path("{oid}/komotos")
+    @Path("{oid}/komoto")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public List<String> getKomotosByKomotoOID(
             @PathParam("oid") String oid,

@@ -37,11 +37,13 @@ import javax.ws.rs.core.MediaType;
  * /komoto
  * /komoto/hello
  * /komoto/{OID}
+ * /komoto/{OID}/komo
  *
  * TODO
- * /komoto/{OID}/komo
  * /komoto/{OID}/hakukohde
  * </pre>
+ *
+ * Internal documentation: http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
  *
  * @author mlyly
  */

@@ -32,7 +32,9 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * REST /komoto/*
+ * /komoto, /komoto/hello, /komoto/OID, /komoto/OID/komo
+ *
+ * Internal documentation: http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
  *
  * @author mlyly
  * @see KomotoResource

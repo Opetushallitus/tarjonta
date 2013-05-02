@@ -13,7 +13,7 @@ import java.util.List;
  *
  * <pre>
  * /haku/hello
- * /haku?searchTerms...
+ * /haku  (?searchTerms...
  * /haku/OID
  * /haku/OID/hakukohde
  * </pre>

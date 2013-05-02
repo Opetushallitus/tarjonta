@@ -21,7 +21,10 @@ import java.util.Set;
 /**
  * http://localhost:8181/tarjonta-service/rest/haku/hello
  *
+ * Internal documentation: http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
+ *
  * @author mlyly
+ * @see HakuResource
  */
 // @Path("/haku")
 @Transactional(readOnly = true)
