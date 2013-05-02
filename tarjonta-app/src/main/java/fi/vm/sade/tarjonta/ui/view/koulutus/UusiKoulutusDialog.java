@@ -121,7 +121,13 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
 
     private boolean checkOppilaitosTyyppi(OrganisaatioPerustietoType org, String tyyppi) {
 
-        Collection<KoodiType> koodis = helper.getKoodistoRelations(org.getOppilaitostyyppi(), KoodistoURIHelper.KOODISTO_TARJONTA_KOULUTUSASTE, false, SuhteenTyyppiType.SISALTYY);
+
+        List<String> oppilaitosTyyppis = this.presenter.getOppilaitostyyppiUris();
+        Collection<KoodiType> koodis = new ArrayList<KoodiType>();
+        for (String oppilaitosTyyppi : oppilaitosTyyppis) {
+        Collection<KoodiType> curKoodis = helper.getKoodistoRelations(oppilaitosTyyppi, KoodistoURIHelper.KOODISTO_TARJONTA_KOULUTUSASTE, false, SuhteenTyyppiType.SISALTYY);
+        koodis.addAll(curKoodis);
+        }
         String[] tyyppiUri = TarjontaUIHelper.splitKoodiURI(tyyppi);
       for (KoodiType koodi: koodis) {
             if (koodi.getKoodiUri().equals(tyyppiUri[0])) {
@@ -130,6 +136,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         }
 
         return false;
+
     }
     
     @Override
