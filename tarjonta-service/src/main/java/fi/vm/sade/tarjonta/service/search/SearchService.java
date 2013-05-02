@@ -105,7 +105,9 @@ public class SearchService {
             Set<String> orgOids = Sets.newHashSet();
             
             for(SolrDocument doc: hakukohdeResponse.getResults()){
-                orgOids.add((String)doc.getFieldValue(Hakukohde.ORG_OID));
+                if (doc.getFieldValue(Hakukohde.ORG_OID) != null) {
+                    orgOids.add((String) doc.getFieldValue(Hakukohde.ORG_OID));
+                }
             }
             
             if(orgOids.size()>0) {
@@ -233,7 +235,9 @@ public class SearchService {
 
             
             for(SolrDocument doc: koulutusResponse.getResults()){
-                orgOids.add((String)doc.getFieldValue(Hakukohde.ORG_OID));
+                if(doc.getFieldValue(Hakukohde.ORG_OID)!=null) {
+                    orgOids.add((String)doc.getFieldValue(Hakukohde.ORG_OID));
+                }
             }
 
             if (orgOids.size() > 0) {

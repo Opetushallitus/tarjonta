@@ -24,6 +24,8 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.apache.solr.common.SolrInputDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
@@ -58,6 +60,8 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
 public class HakukohdeToSolrInputDocumentFunction implements
         Function<Hakukohde, List<SolrInputDocument>> {
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    
     @Autowired
     private OrganisaatioService organisaatioService;
 
@@ -76,7 +80,13 @@ public class HakukohdeToSolrInputDocumentFunction implements
         List<SolrInputDocument> docs = new ArrayList<SolrInputDocument>();
         final SolrInputDocument hakukohdeDoc = new SolrInputDocument();
         add(hakukohdeDoc, OID, hakukohde.getOid());
-        addOrganisaatioTiedot(hakukohdeDoc, docs, hakukohde);
+        boolean orgFound = addOrganisaatioTiedot(hakukohdeDoc, docs, hakukohde);
+        
+        if(!orgFound) {
+            logger.warn("Skipping hakukohde:" + hakukohde.getOid());
+            return Lists.newArrayList();
+        }
+        
         addKausikoodiTiedot(hakukohdeDoc, hakukohde.getHaku().getHakukausiUri());
         add(hakukohdeDoc, VUOSI_KOODI, hakukohde.getHaku().getHakukausiVuosi());
         addHakutapaTiedot(hakukohdeDoc, hakukohde.getHaku().getHakutapaUri());
@@ -189,17 +199,24 @@ public class HakukohdeToSolrInputDocumentFunction implements
         }
     }
     
-    private void addOrganisaatioTiedot(SolrInputDocument hakukohdeDoc, List<SolrInputDocument> docs, Hakukohde hakukohde) {
-    	for (KoulutusmoduuliToteutus curKoulutus : hakukohde.getKoulutusmoduuliToteutuses()) {
-    		handleOrganisaatio(curKoulutus, hakukohdeDoc, docs);
-    	}
+    private boolean addOrganisaatioTiedot(SolrInputDocument hakukohdeDoc, List<SolrInputDocument> docs, Hakukohde hakukohde) {
+        boolean orgFound = false;
+        for (KoulutusmoduuliToteutus curKoulutus : hakukohde
+                .getKoulutusmoduuliToteutuses()) {
+            orgFound = handleOrganisaatio(curKoulutus, hakukohdeDoc, docs);
+            if(orgFound) {
+                return orgFound;
+            }
+        }
+        return false;
     }
     
-    private void handleOrganisaatio(KoulutusmoduuliToteutus komoto, SolrInputDocument hakukohdeDoc, List<SolrInputDocument> docs) {
+    private boolean handleOrganisaatio(KoulutusmoduuliToteutus komoto, SolrInputDocument hakukohdeDoc, List<SolrInputDocument> docs) {
         final SolrInputDocument orgDoc = new SolrInputDocument();
+        
         OrganisaatioDTO org = organisaatioService.findByOid(komoto.getTarjoaja());
         if (org == null) {
-            return;
+            return false;
         }
         add(orgDoc, OID, org.getOid());
         add(orgDoc, Organisaatio.TYPE, "ORG");
@@ -222,6 +239,7 @@ public class HakukohdeToSolrInputDocumentFunction implements
                 }
         }
         docs.add(orgDoc);
+        return true;
     }
     
     private Date getStartDate(Set<Hakuaika> hakuaikas) {

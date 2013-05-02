@@ -90,6 +90,10 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
         final SolrInputDocument komotoDoc = new SolrInputDocument();
         add(komotoDoc, OID, komoto.getOid());
         OrganisaatioDTO org = organisaatioService.findByOid(komoto.getTarjoaja());
+        if(org==null) {
+            logger.warn("No org found for komoto: " + komoto.getOid());
+            return Lists.newArrayList();
+        }
         addOrganisaatioTiedot(komotoDoc, org, docs);
         
         if (org != null && org.getParentOidPath() != null) {
