@@ -64,6 +64,7 @@
 				unzip -qo -d${tomcat.home}/webapps/tarjonta-app ${tomcat.home}/webapps/tarjonta-app*.war;
 				unzip -qo -d${tomcat.home}/webapps/solr ${tomcat.home}/webapps/solr*.war;
 				
+				rm -rf ${tomcat.home}/webapps/*.war;
 				"
                 host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
                 passphrase="${ssh.keypass}" trust="true" failonerror="false" />
