@@ -37,6 +37,7 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         koulutus.setKoulutustyyppi(createKoulutustyyppi(koulutusDoc));
         if (koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
             koulutus.setKoulutusohjelmakoodi(IndexingUtils.createKoodiTyyppi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
+            koulutus.setKoulutuslaji(getKoulutuslaji(koulutusDoc));
         } else if (koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
             koulutus.setLukiolinjakoodi(IndexingUtils.createKoodiTyyppi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
         }
@@ -52,6 +53,14 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         koulutus.setPohjakoulutusVaatimus("" + koulutusDoc.getFieldValue(POHJAKOULUTUSVAATIMUS_URI));
         tulos.setKoulutus(koulutus);
         return tulos;
+    }
+
+    private String getKoulutuslaji(SolrDocument doc) {
+       try {
+       return (String)doc.getFirstValue(KOULUTUSLAJI_URIS);
+       } catch (Exception exp) {
+           return null;
+       }
     }
     
     private KoulutusasteTyyppi createKoulutustyyppi(SolrDocument koulutusDoc) {

@@ -22,9 +22,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import fi.vm.sade.tarjonta.model.KoodistoUri;
 import org.apache.solr.common.SolrInputDocument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
@@ -32,7 +31,6 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoService;
@@ -45,7 +43,6 @@ import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.search.SolrFields.Organisaatio;
@@ -61,8 +58,6 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
 public class KoulutusmoduuliToteutusToSolrInputDocumentFunction implements
 Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    
     @Autowired
     private OrganisaatioService organisaatioService;
 
@@ -72,8 +67,6 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
     @Autowired
     private KoodiService koodiService;
 
-    @Autowired
-    HakukohdeDAO hakukohdeDao;
    
 
     @Override
@@ -90,10 +83,6 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
         final SolrInputDocument komotoDoc = new SolrInputDocument();
         add(komotoDoc, OID, komoto.getOid());
         OrganisaatioDTO org = organisaatioService.findByOid(komoto.getTarjoaja());
-        if(org==null) {
-            logger.warn("No org found for komoto: " + komoto.getOid());
-            return Lists.newArrayList();
-        }
         addOrganisaatioTiedot(komotoDoc, org, docs);
         
         if (org != null && org.getParentOidPath() != null) {
@@ -107,45 +96,50 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
             add(komotoDoc, ORG_PATH, org.getOid());
         }
         
-        logger.info("koulutusohjelmatiedot");
         addKoulutusohjelmaTiedot(komotoDoc, komoto.getKoulutusmoduuli().getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value()) 
                 ? komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi() : komoto.getKoulutusmoduuli().getLukiolinja());
-        logger.info("koulutuskooditoedot");
         addKoulutuskoodiTiedot(komotoDoc, komoto.getKoulutusmoduuli().getKoulutusKoodi());
-        logger.info("tutkintonimike");
         addTutkintonimikeTiedot(komotoDoc, komoto.getKoulutusmoduuli().getTutkintonimike());
-        logger.info("kausi");
         add(komotoDoc, KAUSI_KOODI, IndexingUtils.parseKausi(komoto.getKoulutuksenAlkamisPvm()));
-        logger.info("vuosi");
         add(komotoDoc, VUOSI_KOODI, IndexingUtils.parseYear(komoto.getKoulutuksenAlkamisPvm()));
-        logger.info("tila");
         add(komotoDoc, TILA_EN, komoto.getTila());
         add(komotoDoc, KOULUTUSMODUULI_OID, komoto.getKoulutusmoduuli().getOid());
-        logger.info("pohjakoulutustyyppi");
         add(komotoDoc, KOULUTUSTYYPPI, komoto.getKoulutusmoduuli().getKoulutustyyppi());
-        logger.info("pohjakoulutusvaatimus");
         add(komotoDoc, POHJAKOULUTUSVAATIMUS_URI, komoto.getPohjakoulutusvaatimus());
-        logger.info("hakukohdeoids");
-        addHakukohdeOids(komotoDoc, komoto.getId());
-        logger.info("tekstihaku");
+        addKoulutuslajiUris(komotoDoc,komoto.getKoulutuslajis());
+        addHakukohdeOids(komotoDoc, komoto.getHakukohdes());
         addTekstihaku(komotoDoc);
         docs.add(komotoDoc);
-        logger.info("done");
         return docs;
+    }
+
+    private void addKoulutuslajiUris(SolrInputDocument doc,Set<KoodistoUri> koodistoUris) {
+          if (koodistoUris == null) {
+              return;
+          }
+
+         List<KoodistoUri> uris = new ArrayList<KoodistoUri>(koodistoUris);
+        for (KoodistoUri uri:uris) {
+            add(doc,KOULUTUSLAJI_URIS,uri.getKoodiUri());
+        }
     }
     
     private void addHakukohdeOids(SolrInputDocument komotoDoc,
-            long id) {
-        for(String oid: hakukohdeDao.findOidsByKoulutusId(id)){
-            add(komotoDoc, HAKUKOHDE_OIDS, oid);
+            Set<Hakukohde> hakukohdes) {
+        if (hakukohdes == null) {
+            return;
+        }
+        
+        List<Hakukohde> hakukohdeList = new ArrayList<Hakukohde>(hakukohdes);
+        for (Hakukohde curHakukohde : hakukohdeList) {
+            add(komotoDoc, HAKUKOHDE_OIDS, curHakukohde.getOid());
         }
         
     }
 
     private void addTekstihaku(SolrInputDocument komotoDoc) {
-        add(komotoDoc, TEKSTIHAKU, 
-                
-                Lists.newArrayList(komotoDoc.getFieldValue(KOULUTUSKOODI_FI), 
+        add(komotoDoc, TEKSTIHAKU, String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
+                 komotoDoc.getFieldValue(KOULUTUSKOODI_FI), 
                  komotoDoc.getFieldValue(KOULUTUSKOODI_SV), 
                  komotoDoc.getFieldValue(KOULUTUSKOODI_EN),
                  komotoDoc.getFieldValue(KAUSI_KOODI),

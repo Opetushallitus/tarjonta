@@ -15,6 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
+import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +36,6 @@ import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Window;
 
-import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS;
@@ -47,6 +51,9 @@ import fi.vm.sade.tarjonta.ui.view.common.TarjontaDialogWindow;
 import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Configurable;
+
+import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -72,6 +79,9 @@ public class KoulutusResultRow extends HorizontalLayout {
      */
     private String koulutusNimi;
     private Window removeKoulutusDialog;
+
+    @Autowired(required = true)
+    private TarjontaUIHelper tarjontaUIHelper;
     /**
      * The presenter object for the component.
      */
@@ -86,7 +96,32 @@ public class KoulutusResultRow extends HorizontalLayout {
     public KoulutusResultRow(KoulutusTulos koulutus, String koulutusNimi) {
         this.koulutus = koulutus;
         this.koulutusNimi = koulutusNimi;
+        formatKoulutusName();
+    }
 
+    private void formatKoulutusName() {
+        if (this.koulutusNimi != null && koulutus.getKoulutus() != null && koulutus.getKoulutus().getPohjakoulutusVaatimus() != null && this.koulutusNimi.length() > 0) {
+           List<KoodiType> koodis = tarjontaUIHelper.getKoodis(koulutus.getKoulutus().getPohjakoulutusVaatimus());
+           if (koodis != null && koodis.size() > 0) {
+             this.koulutusNimi = this.koulutusNimi + ", " + tryGetKoodistoLyhytNimi(koodis.get(0));
+           }
+        }
+    }
+
+    private String tryGetKoodistoLyhytNimi(KoodiType koodi) {
+        String retval = koodi.getKoodiArvo();
+
+        List<KoodiMetadataType> metas =  koodi.getMetadata();
+        Locale locale = I18N.getLocale();
+        for (KoodiMetadataType meta : metas) {
+            if (meta.getKieli().equals(KieliType.FI) && locale.getLanguage().equals("fi")) {
+                return meta.getLyhytNimi();
+            } else if (meta.getKieli().equals(KieliType.SV) && locale.getLanguage().equals("sv")) {
+                return meta.getLyhytNimi();
+            }
+        }
+
+        return retval;
     }
     /**
      * Command object for the row menubar. Starts operations based on user's
@@ -159,13 +194,12 @@ public class KoulutusResultRow extends HorizontalLayout {
         } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
             tarjontaPresenter.changeStateToPublished(koulutus.getKoulutus().getKomotoOid(), KOMOTO);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {
-            showPeruutaDialog(); 
+            showPeruutaDialog();
         }
     }
     
     private void showPeruutaDialog() {
-        String peruutaQ = T("peruutaQ", koulutusNimi, getAjankohtaStr(koulutus.getKoulutus().getAjankohta()));
-        RemovalConfirmationDialog cancelDialog = new RemovalConfirmationDialog(peruutaQ, null, T("removeYes"), T("removeNo"),
+        RemovalConfirmationDialog cancelDialog = new RemovalConfirmationDialog(T("peruutaQ"), koulutusNimi, T("removeYes"), T("removeNo"),
                 new Button.ClickListener() {
 
                     private static final long serialVersionUID = -908351229767113315L;
@@ -188,15 +222,6 @@ public class KoulutusResultRow extends HorizontalLayout {
             });
         removeKoulutusDialog = new TarjontaDialogWindow(cancelDialog, T("peruutaDialog"));
         getWindow().addWindow(removeKoulutusDialog);
-    }
-    
-    private String getAjankohtaStr(String pvmStr) {
-        
-        String[] ajankohtaParts = pvmStr.split(" ");
-        if (ajankohtaParts.length < 2) {
-            return "";
-        }
-        return I18N.getMessage(ajankohtaParts[0]) + " " + ajankohtaParts[1];
     }
 
     private void showRemoveDialog() {
