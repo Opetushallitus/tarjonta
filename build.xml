@@ -15,6 +15,11 @@
 		<property name="ssh.keyfile" location="${user.home}/.ssh/id_rsa"/>
 		<property name="ssh.keypass" value=""/>
 
+        <echo>tarjonta / build.xml</echo>
+        <echo>  maven.repo = ${maven.repo}</echo>
+        <echo>  tomcat.name = ${tomcat.name}</echo>
+        <echo>  tomcat.home = ${tomcat.home}</echo>
+
         <echo>Stop Tomcat</echo>
         <sshexec command="/etc/init.d/${tomcat.name} stop"
                  host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
@@ -59,7 +64,7 @@
 				unzip -qo -d${tomcat.home}/webapps/tarjonta-app ${tomcat.home}/webapps/tarjonta-app*.war;
 				unzip -qo -d${tomcat.home}/webapps/solr ${tomcat.home}/webapps/solr*.war;
 				
-				# rm -rf ${tomcat.home}/webapps/*.war;
+				rm -rf ${tomcat.home}/webapps/*.war;
 				"
                 host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
                 passphrase="${ssh.keypass}" trust="true" failonerror="false" />
