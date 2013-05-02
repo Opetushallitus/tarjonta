@@ -228,7 +228,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.2.1</version>
                 <configuration>
-                    <mainClass>fi.vm.sade.tarjonta.data.BatchKoodistoUploader</mainClass>
+                    <mainClass>fi.vm.sade.tarjonta.data.KoodistoUploader</mainClass>
                 </configuration>
             </plugin>
             
