@@ -89,10 +89,17 @@ public class KoodistoURIHelper {
      */
     public static String KOODISTO_VALINTAKOE_TYYPPI_URI;
 
+    public static String KOODISTO_TARJONTA_KOULUTUSASTE;
+
 
     @Value("${koodisto-uris.valintakokeentyyppi}")
     public void setKoodistoValintakoetyyppiUri(String uri) {
         KOODISTO_VALINTAKOE_TYYPPI_URI = uri;
+    }
+
+    @Value("${koodisto-uris.tarjontakoulutusaste}")
+    public void setKoodistoTarjontaKoulutusaste(String uri) {
+        KOODISTO_TARJONTA_KOULUTUSASTE = uri;
     }
 
     @Value("${koodisto-uris.hakutyyppi}")

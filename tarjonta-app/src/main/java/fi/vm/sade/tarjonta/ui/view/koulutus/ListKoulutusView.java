@@ -369,7 +369,7 @@ public class ListKoulutusView extends VerticalLayout {
                 if (presenter.availableKoulutus()) {
                     List<String> organisaatioOids = new ArrayList<String>();
                     organisaatioOids.add(presenter.getNavigationOrganisation().getOrganisationOid());
-                    UusiKoulutusDialog uusiKoulutusDialog = new UusiKoulutusDialog("600px", "500px");
+                    UusiKoulutusDialog uusiKoulutusDialog = new UusiKoulutusDialog("800px", "500px");
                     
                     getWindow().addWindow(uusiKoulutusDialog);
                 } else {
@@ -394,7 +394,7 @@ public class ListKoulutusView extends VerticalLayout {
     
     /**
      * Showing the confirmation dialog for removing multiple haku objects.
-     * @param haku
+     *
      */
     private void showRemoveDialog() {
         MultipleKoulutusRemovalDialog removeDialog = new  MultipleKoulutusRemovalDialog(T("removeQ"), T("removeYes"), T("removeNo"), presenter);
