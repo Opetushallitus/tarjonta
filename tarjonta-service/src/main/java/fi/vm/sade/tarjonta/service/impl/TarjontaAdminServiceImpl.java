@@ -674,8 +674,29 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public PaivitaTilaVastausTyyppi paivitaTilat(PaivitaTilaTyyppi tarjontatiedonTila) {
         publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());
+        indexTilatToSolr(tarjontatiedonTila); 
         return new PaivitaTilaVastausTyyppi();
     }
+    
+    private void indexTilatToSolr(PaivitaTilaTyyppi tarjontatiedonTila) {
+        List<KoulutusmoduuliToteutus> komotot = new ArrayList<KoulutusmoduuliToteutus>();
+        List<Hakukohde> hakukohteet = new ArrayList<Hakukohde>();
+        for (GeneerinenTilaTyyppi curTilaT : tarjontatiedonTila.getTilaOids()) {
+            if (SisaltoTyyppi.KOMOTO.equals(curTilaT.getSisalto())) {
+                KoulutusmoduuliToteutus komoto =this.koulutusmoduuliToteutusDAO.findByOid(curTilaT.getOid());
+                if (komoto != null) {
+                    komotot.add(komoto);
+                }
+            } else if (SisaltoTyyppi.HAKUKOHDE.equals(curTilaT.getSisalto())) {
+                Hakukohde hakukohde = this.hakukohdeDAO.findHakukohdeWithKomotosByOid(curTilaT.getOid());
+                if (hakukohde != null) {
+                    hakukohteet.add(hakukohde);
+                }
+            }   
+        }
+        solrIndexer.indexKoulutus(komotot);
+        solrIndexer.indexHakukohde(hakukohteet);
+    } 
 
     @Override
     public boolean testaaTilasiirtyma(GeneerinenTilaTyyppi parameters) {

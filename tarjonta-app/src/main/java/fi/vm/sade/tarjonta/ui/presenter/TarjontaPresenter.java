@@ -2175,6 +2175,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         return getModel().getNavigationModel();
     }
 
+    /*
 	public void togglePoistaKoulutusB() {
 		boolean showPoista = false;
 		for (KoulutusTulos curKoul : getSelectedKoulutukset()) {
@@ -2199,7 +2200,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 	        }
 		}
 		this.getRootView().getSearchResultsView().getHakukohdeList().togglePoistaB(showPoista);
-	}
+	}*/
 
 	public void closeKoulutusRemovalDialog() {
 		getRootView().getListKoulutusView().closeKoulutusDialog();

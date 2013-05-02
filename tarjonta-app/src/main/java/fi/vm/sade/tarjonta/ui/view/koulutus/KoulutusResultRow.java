@@ -158,8 +158,34 @@ public class KoulutusResultRow extends HorizontalLayout {
         } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
             tarjontaPresenter.changeStateToPublished(koulutus.getKoulutus().getKomotoOid(), KOMOTO);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {
-            tarjontaPresenter.changeStateToCancelled(koulutus.getKoulutus().getKomotoOid(), KOMOTO);
+            showPeruutaDialog(); 
         }
+    }
+    
+    private void showPeruutaDialog() {
+        RemovalConfirmationDialog cancelDialog = new RemovalConfirmationDialog(T("peruutaQ"), koulutusNimi, T("removeYes"), T("removeNo"),
+                new Button.ClickListener() {
+
+                    private static final long serialVersionUID = -908351229767113315L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeKoulutusCreationDialog();
+                tarjontaPresenter.changeStateToCancelled(koulutus.getKoulutus().getKomotoOid(), KOMOTO);
+            }
+
+        },
+               new Button.ClickListener() {
+                private static final long serialVersionUID = 5019806363620874205L;
+
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    closeKoulutusCreationDialog();
+
+                }
+            });
+        removeKoulutusDialog = new TarjontaDialogWindow(cancelDialog, T("peruutaDialog"));
+        getWindow().addWindow(removeKoulutusDialog);
     }
 
     private void showRemoveDialog() {
@@ -219,7 +245,7 @@ public class KoulutusResultRow extends HorizontalLayout {
                 }
 
                 tarjontaPresenter.toggleCreateHakukohde();
-                tarjontaPresenter.togglePoistaKoulutusB();
+                //tarjontaPresenter.togglePoistaKoulutusB();
             }
         });
 

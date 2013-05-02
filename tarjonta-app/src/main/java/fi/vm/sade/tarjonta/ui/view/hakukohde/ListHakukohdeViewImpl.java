@@ -81,7 +81,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     /**
      * Button for removing selected Hakukohde objects.
      */
-    private Button poistaB;
+    //private Button poistaB;
     /**
      * Component for selecting desired sorting/grouping criteria for listed
      * Hakukohde objects.
@@ -278,7 +278,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      */
     private HorizontalLayout buildMiddleResultLayout() {
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
-        poistaB = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("Poista"));
+        /*poistaB = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("Poista"));
         poistaB.addListener(new Button.ClickListener() {
             private static final long serialVersionUID = 5833582377090856884L;
 
@@ -289,7 +289,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         });
         
         //TODO when enabled add auth check!
-        poistaB.setEnabled(false);
+        poistaB.setEnabled(false);*/
 
         cbJarjestys = UiUtil.comboBox(layout, null, ORDER_BY);
         cbJarjestys.setWidth("300px");
@@ -336,7 +336,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     @Override
     public void reload() {
         clearAllDataItems();
-        this.poistaB.setEnabled(false);
+        //this.poistaB.setEnabled(false);
         categoryTree.setContainerDataSource(createDataSource(presenter.getHakukohdeDataSource()));
     }
 
@@ -378,10 +378,10 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     public void clearAllDataItems() {
         categoryTree.removeAllItems();
     }
-    
+    /*
     public void togglePoistaB(boolean b) {
     	poistaB.setEnabled(b);
-    }
+    }*/
     
     private String T(String key, Object... args) {
         return i18n.getMessage(key, args);

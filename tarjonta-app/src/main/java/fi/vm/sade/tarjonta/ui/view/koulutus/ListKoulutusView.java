@@ -106,7 +106,7 @@ public class ListKoulutusView extends VerticalLayout {
     private CheckBox valKaikki;
     private TarjontaDialogWindow koulutusDialog;
     private CreationDialog<KoulutusOidNameViewModel> createDialog;
-    private Button btnPoista;
+    //private Button btnPoista;
     //private Button btnMuokkaa;
     private Button btnSiirraJaKopioi;
     private transient I18NHelper i18n = new I18NHelper(this);
@@ -282,20 +282,20 @@ public class ListKoulutusView extends VerticalLayout {
         //Creating the create hakukohde button
         //btnMuokkaa = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("muokkaa"));
         //btnMuokkaa.setEnabled(false);
-        btnPoista = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("poista"));
-        btnPoista.setEnabled(false);
-        btnPoista.addListener(new Button.ClickListener() {
+        //btnPoista = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("poista"));
+        //btnPoista.setEnabled(false);
+        //btnPoista.addListener(new Button.ClickListener() {
 			
 			/**
 			 * 
 			 */
-			private static final long serialVersionUID = 4580339518654622579L;
+	/*		private static final long serialVersionUID = 4580339518654622579L;
 
 			@Override
 			public void buttonClick(ClickEvent event) {
 				showRemoveDialog();
 			}
-		});
+		});*/
         btnSiirraJaKopioi = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("siirraTaiKopioi"));
         btnSiirraJaKopioi.setEnabled(false);
         btnSiirraJaKopioi.addListener(new Button.ClickListener() {
@@ -515,7 +515,7 @@ public class ListKoulutusView extends VerticalLayout {
      */
     public void reload() {
         clearAllDataItems();
-        this.btnPoista.setEnabled(false);
+        //this.btnPoista.setEnabled(false);
         this.btnSiirraJaKopioi.setEnabled(false);
         this.luoHakukohdeB.setEnabled(false);
         categoryTree.setContainerDataSource(createDataSource(presenter.getKoulutusDataSource()));
@@ -530,10 +530,10 @@ public class ListKoulutusView extends VerticalLayout {
         this.luoHakukohdeB.setEnabled(enabled);
         this.btnSiirraJaKopioi.setEnabled(enabled);
     }
-    
+    /*
     public void togglePoistaB(boolean b) {
     	btnPoista.setEnabled(b);
-    }
+    }*/
 
     /**
      * Returns the name of the hakukohde based on koodisto uri given.

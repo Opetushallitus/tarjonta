@@ -157,10 +157,35 @@ public class HakukohdeResultRow extends HorizontalLayout {
         } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
             tarjontaPresenter.changeStateToPublished(hakukohdeOid, HAKUKOHDE);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {
-            tarjontaPresenter.changeStateToCancelled(hakukohdeOid, HAKUKOHDE);
+            showPeruutaDialog();
         }
-
     }
+    
+    private void showPeruutaDialog() {
+        RemovalConfirmationDialog cancelDialog = new RemovalConfirmationDialog(T("peruutaQ"), hakukohdeNimi, T("removeYes"), T("removeNo"),
+                new Button.ClickListener() {
+
+                    private static final long serialVersionUID = -908351229767113315L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                closeHakukohdeCreationDialog();
+                tarjontaPresenter.changeStateToCancelled(hakukohde.getHakukohde().getOid(), HAKUKOHDE);
+            }
+
+        },
+               new Button.ClickListener() {
+                private static final long serialVersionUID = 5019806363620874205L;
+
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    closeHakukohdeCreationDialog();
+
+                }
+            });
+        removeHakukohdeDialog = new TarjontaDialogWindow(cancelDialog, T("peruutaDialog"));
+        getWindow().addWindow(removeHakukohdeDialog);
+    } 
 
     private void showRemoveDialog() {
         RemovalConfirmationDialog removeDialog = new RemovalConfirmationDialog(T("removeQ"), hakukohdeNimi, T("removeYes"), T("removeNo"),
@@ -214,7 +239,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
                 		&& hakukohde.getHakukohde() != null) {
                     tarjontaPresenter.getSelectedhakukohteet().remove(hakukohde);
                 }
-                tarjontaPresenter.togglePoistaHakukohdeB();
+                //tarjontaPresenter.togglePoistaHakukohdeB();
             }
         });
 

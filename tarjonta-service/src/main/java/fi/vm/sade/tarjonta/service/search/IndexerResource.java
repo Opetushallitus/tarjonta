@@ -212,6 +212,7 @@ public class IndexerResource {
             public void afterCommit() {
                 try {
                     solr.deleteById(oids);
+                    solr.commit(true, true, false); 
                 } catch (Exception e) {
                     logger.warn("Indexing failed", e);
                 }
