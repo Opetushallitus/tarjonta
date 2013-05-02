@@ -18,7 +18,10 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         HaeKoulutuksetVastausTyyppi vastaus = new HaeKoulutuksetVastausTyyppi();
         for (int i = 0; i < solrKomotoList.size(); ++i) {
             SolrDocument curDoc = solrKomotoList.get(i);
-            vastaus.getKoulutusTulos().add(convertKoulutus(curDoc, solrOrgList));
+            KoulutusTulos tulos = convertKoulutus(curDoc, solrOrgList);
+            if(tulos!=null) {
+                vastaus.getKoulutusTulos().add(tulos);
+            }
         }
         return vastaus;
     }
@@ -41,6 +44,10 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
         koulutus.setTila(IndexingUtils.createTila(koulutusDoc));
         koulutus.setTutkintonimike(IndexingUtils.createKoodiTyyppi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
         koulutus.setTarjoaja(IndexingUtils.createTarjoaja(koulutusDoc, solrOrgList));
+        
+        if(koulutus.getTarjoaja().getNimi()==null) {
+            return null;
+        }
        
         koulutus.setPohjakoulutusVaatimus("" + koulutusDoc.getFieldValue(POHJAKOULUTUSVAATIMUS_URI));
         tulos.setKoulutus(koulutus);

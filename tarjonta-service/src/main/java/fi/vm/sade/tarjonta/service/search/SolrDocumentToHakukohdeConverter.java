@@ -22,7 +22,10 @@ public class SolrDocumentToHakukohdeConverter {
         HaeHakukohteetVastausTyyppi vastaus = new HaeHakukohteetVastausTyyppi();
         for (int i = 0 ; i < solrHakukohdeList.size(); ++i) {
             SolrDocument hakukohdeDoc = solrHakukohdeList.get(i);
-            vastaus.getHakukohdeTulos().add(convertHakukohde(hakukohdeDoc, solrOrgList));
+            HakukohdeTulos tulos = convertHakukohde(hakukohdeDoc, solrOrgList);
+            if(tulos!=null) {
+                vastaus.getHakukohdeTulos().add(tulos);
+            }
         }
         
         return vastaus;
@@ -43,6 +46,9 @@ public class SolrDocumentToHakukohdeConverter {
         hakukohde.setOid("" + hakukohdeDoc.getFieldValue(OID));
         hakukohde.setTila(IndexingUtils.createTila(hakukohdeDoc));
         hakukohde.setTarjoaja(IndexingUtils.createTarjoaja(hakukohdeDoc, solrOrgList));
+        if(hakukohde.getTarjoaja().getNimi()==null) {
+            return null;
+        }
         vastaus.setHakukohde(hakukohde);
         return vastaus;
     }
