@@ -72,7 +72,7 @@ public class UserContext implements InitializingBean {
      * @return
      */
     public boolean isDoAutoSearch() {
-        final boolean is = !isOphUser() && getUser().getOrganisations().size() == 1;
+        final boolean is = !isOphUser() && getUser().getOrganisations().size() >= 1;
         log.info("is Autosearch:{}",is);
         return is;
     }
@@ -111,8 +111,8 @@ public class UserContext implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         Preconditions.checkNotNull(rootOrgOid, "rootOrgOid is not set.");
         Preconditions.checkNotNull(userProvider, "userProvider is not set.");
-        //use restriction only if not oph user and user has single organisation
-        isUseRestriction = !isOphUser() && getUserOrganisations().size()==1;
+        //use restriction only if not oph user and user has organisations
+        isUseRestriction = !isOphUser() && getUserOrganisations().size() >= 1;
         log.debug("userProvider: {}, useRestriction: {}", userProvider.getClass().getName(), isUseRestriction);
     }
 

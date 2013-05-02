@@ -40,7 +40,7 @@ public class UserContextTest {
         userProvider = new UserProviderMock();
         userProvider.setUserOrgSet("2 3 4");
         userContext.userProvider = userProvider;
-        Assert.assertFalse(userContext.isDoAutoSearch());
+        Assert.assertTrue(userContext.isDoAutoSearch());
         Assert.assertFalse(userContext.isOphUser());
 
         //non "oph user" with single org

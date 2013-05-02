@@ -164,7 +164,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             searchOrganisaatios();
             
             //auto select
-            final String ooid = userContext.getFirstOrganisaatio();
+            final String ooid = userContext.getUserOrganisations().size() == 1 ? userContext.getFirstOrganisaatio() : null; 
             if (ooid != null) {
                 for (OrganisaatioPerustietoType organisaatio : organisaatios) {
                     if (ooid.equals(organisaatio.getOid())) {
@@ -413,7 +413,7 @@ public class OrganisaatiohakuView extends OphAbstractCollapsibleLeft<VerticalLay
             return false;
         }
         for (OrganisaatioPerustietoType curOrg : organisaatios) {
-            if (org.getParentOid().equals(curOrg.getParentOid())) {
+            if (org.getParentOid().equals(curOrg.getOid())) {
                 return true;
             }
         }

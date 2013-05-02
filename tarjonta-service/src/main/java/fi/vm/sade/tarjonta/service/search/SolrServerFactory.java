@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Preconditions;
 
 @Component
-@Profile("default")
+@Profile(value = {"default", "solr"})
 public class SolrServerFactory implements InitializingBean {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
