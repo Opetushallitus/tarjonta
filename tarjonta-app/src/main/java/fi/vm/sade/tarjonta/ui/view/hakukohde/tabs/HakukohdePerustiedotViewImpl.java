@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
 
 
 import com.vaadin.ui.Button;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -76,6 +77,8 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
 
     @Override
     public String actionSave(SaveButtonState tila, ClickEvent event) throws Exception {
+        
+        
         HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
         hakukohde.getLisatiedot().clear();
         hakukohde.getLisatiedot().addAll(formView.getLisatiedot());
@@ -85,6 +88,14 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
 
         HakukohdeNameUriModel selectedHakukohde = formView.getSelectedHakukohde();
         hakukohde.setHakukohdeNimi(getUriWithVersion(selectedHakukohde));
+
+        for(TextField tf: formView.getPainotettavat()){
+            tf.validate();
+        }
+        
+        //XXXX validoi painotettavat
+
+        
         presenter.saveHakuKohde(tila);
         return getHakukohdeOid();
     }

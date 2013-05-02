@@ -17,6 +17,7 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.*;
@@ -66,6 +67,7 @@ import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
@@ -140,6 +142,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private ErrorMessage errorView;
     private GridLayout painotettavatOppiaineet;
     private KoulutusasteTyyppi koulutusasteTyyppi;
+    
+    private List<TextField> painotettavat = Lists.newArrayList();
+
+    public List<TextField> getPainotettavat() {
+        return painotettavat;
+    }
 
     private boolean muuOsoite;
 
@@ -302,6 +310,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
      * any) and then re add form fields
      */
     public void refreshOppiaineet() {
+        painotettavat.clear();
         while (painotettavatOppiaineet.getRows() > 1) {
             painotettavatOppiaineet.removeRow(1);
         }
@@ -321,6 +330,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         painotettavatOppiaineet.addComponent(painotus);
 
         final TextField tf = uiBuilder.integerField(null, psi, "painokerroin", null, null, 1, 100,  T("validation.PerustiedotView.painokerroin.num"));
+        painotettavat.add(tf);
         // uiBuilder.textField(null, psi, "painokerroin", null, null);
         // tf.addValidator(new IntegerValidator(T("validation.PerustiedotView.painokerroin.num")));
         painotettavatOppiaineet.addComponent(tf);
@@ -337,6 +347,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
                     if (textField == tf) { //yes I am comparing references
                         presenter.getModel().getHakukohde().getPainotettavat().remove(painotettava);
+                        painotettavat.remove(tf); //remove from validation
                         painotettavatOppiaineet.removeRow(y);
                     }
                 }
