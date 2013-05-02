@@ -40,7 +40,7 @@
 
         <echo>Copy files to server...</echo>
 		<scp todir="tomcat@${tomcat-host}:${tomcat.home}/webapps/"
-               keyfile="${ssh.keyfile}" passphrase="${ssh.keypass}" >
+               keyfile="${ssh.keyfile}" passphrase="${ssh.keypass}" verbose="true">
 			
 			<!-- deploy lates from local maven repo -->
 			<fileset dir="${maven.repo}/fi/vm/sade/tarjonta/tarjonta-service/${pom.version}">
