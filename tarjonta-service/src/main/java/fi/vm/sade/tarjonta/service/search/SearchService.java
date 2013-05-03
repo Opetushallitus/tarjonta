@@ -47,9 +47,6 @@ public class SearchService {
     @Value("${root.organisaatio.oid}")
     private String rootOrganisaatioOid;
 
-    private final SolrDocumentToKoulutusPerustietoTypeFunction koulutusConverter = new SolrDocumentToKoulutusPerustietoTypeFunction();
-    private final SolrDocumentToHakukohdetulosFunction hakukohdeConverter = new SolrDocumentToHakukohdetulosFunction();
-
     private final SolrServer koulutusSolr;
     private final SolrServer hakukohdeSolr;
     private final Logger LOG = LoggerFactory.getLogger(getClass());
