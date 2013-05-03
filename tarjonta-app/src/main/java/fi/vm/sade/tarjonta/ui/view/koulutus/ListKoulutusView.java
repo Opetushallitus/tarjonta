@@ -18,6 +18,9 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 import java.util.*;
 
 
+import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
@@ -75,6 +78,7 @@ public class ListKoulutusView extends VerticalLayout {
     public static final String COLUMN_A = "Kategoriat";
     public static final String COLUMN_TUTKINTONIMIKE = "Tutkintonimike";
     public static final String COLUMN_PVM = "Ajankohta";
+    public static final String COLUMN_KOULUTUSLAJI = "Koulutuslaji";
     public static final String COLUMN_TILA = "Tila";
     /**
      * Presenter object for the Hakukohde listing.
@@ -165,11 +169,13 @@ public class ListKoulutusView extends VerticalLayout {
         categoryTree.addContainerProperty(COLUMN_A, KoulutusResultRow.class, new KoulutusResultRow());
         categoryTree.addContainerProperty(COLUMN_TUTKINTONIMIKE, String.class, "");
         categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
+        categoryTree.addContainerProperty(COLUMN_KOULUTUSLAJI,String.class,"");
         categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
         
         categoryTree.setColumnExpandRatio(COLUMN_A, 2.2f);
         categoryTree.setColumnExpandRatio(COLUMN_TUTKINTONIMIKE, 0.5f);
         categoryTree.setColumnExpandRatio(COLUMN_PVM, 0.3f);
+        categoryTree.setColumnExpandRatio(COLUMN_KOULUTUSLAJI,0.3f);
         categoryTree.setColumnExpandRatio(COLUMN_TILA, 0.3f);
 
         /**
@@ -196,6 +202,7 @@ public class ListKoulutusView extends VerticalLayout {
         hc.addContainerProperty(COLUMN_A, KoulutusResultRow.class, rowStyleDef.format("", false));
         hc.addContainerProperty(COLUMN_TUTKINTONIMIKE, String.class, "");
         hc.addContainerProperty(COLUMN_PVM, String.class, "");
+        hc.addContainerProperty(COLUMN_KOULUTUSLAJI,String.class,"");
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
         
         
@@ -214,11 +221,22 @@ public class ListKoulutusView extends VerticalLayout {
                 hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(getKoulutusNimi(curKoulutus), true));
                 hc.getContainerProperty(curKoulutus, COLUMN_TUTKINTONIMIKE).setValue(getKoulutusTutkintoNimike(curKoulutus));
                 hc.getContainerProperty(curKoulutus, COLUMN_PVM).setValue(getAjankohtaStr(curKoulutus));
+                hc.getContainerProperty(curKoulutus, COLUMN_KOULUTUSLAJI).setValue(getKoulutuslaji(curKoulutus));
                 hc.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(getTilaStr(curKoulutus.getKoulutus().getTila().name()));
                 hc.setChildrenAllowed(curKoulutus, false);
             }
         }
         return hc;
+    }
+
+    private String getKoulutuslaji(KoulutusTulos tulos ) {
+        List<String> uris = new ArrayList<String>();
+        if (tulos.getKoulutus().getKoulutuslaji() != null) {
+            uris.add(tulos.getKoulutus().getKoulutuslaji());
+
+            return uiHelper.getKoodiNimi(uris,I18N.getLocale());
+        }
+        return "";
     }
     
     private String getAjankohtaStr(KoulutusTulos curKoulutus) {
@@ -240,12 +258,43 @@ public class ListKoulutusView extends VerticalLayout {
     private String buildOrganisaatioCaption(Map.Entry<String, List<KoulutusTulos>> e) {
         return e.getKey() + " (" + e.getValue().size() + ")";
     }
+
+    private String tryGetKoodistoLyhytNimi(Collection<KoodiType> koodis) {
+        if (koodis == null || koodis.size() < 1) {
+            return "";
+        }
+        List<KoodiType> koodisList = new ArrayList<KoodiType>(koodis);
+        KoodiType koodi = koodisList.get(0);
+
+        if (koodi != null) {
+        String retval = koodi.getKoodiArvo();
+
+        List<KoodiMetadataType> metas =  koodi.getMetadata();
+        Locale locale = I18N.getLocale();
+        for (KoodiMetadataType meta : metas) {
+            if (meta.getKieli().equals(KieliType.FI) && locale.getLanguage().equals("fi")) {
+                return ", " + meta.getLyhytNimi();
+            } else if (meta.getKieli().equals(KieliType.SV) && locale.getLanguage().equals("sv")) {
+                return ", "+  meta.getLyhytNimi();
+            }
+        }
+
+        return retval;
+        } else {
+            return "";
+        }
+    }
     
     private String getKoulutusNimi(KoulutusTulos curKoulutus) {
+
+        List<KoodiType> koodis = uiHelper.getKoodis(curKoulutus.getKoulutus().getPohjakoulutusVaatimus());
+        if (koodis == null) {
+            koodis = new ArrayList<KoodiType>();
+        }
         if (curKoulutus.getKoulutus().getKoulutusohjelmakoodi() != null) {
-            return getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi());
+            return getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi()) + tryGetKoodistoLyhytNimi(koodis) ;
         } else if (curKoulutus.getKoulutus().getKoulutuskoodi() != null) {
-            return getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi());
+            return getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi()) + tryGetKoodistoLyhytNimi(koodis);
         }
         return "";
     }
@@ -369,7 +418,7 @@ public class ListKoulutusView extends VerticalLayout {
                 if (presenter.availableKoulutus()) {
                     List<String> organisaatioOids = new ArrayList<String>();
                     organisaatioOids.add(presenter.getNavigationOrganisation().getOrganisationOid());
-                    UusiKoulutusDialog uusiKoulutusDialog = new UusiKoulutusDialog("600px", "500px");
+                    UusiKoulutusDialog uusiKoulutusDialog = new UusiKoulutusDialog("800px", "500px");
                     
                     getWindow().addWindow(uusiKoulutusDialog);
                 } else {
@@ -394,7 +443,7 @@ public class ListKoulutusView extends VerticalLayout {
     
     /**
      * Showing the confirmation dialog for removing multiple haku objects.
-     * @param haku
+     *
      */
     private void showRemoveDialog() {
         MultipleKoulutusRemovalDialog removeDialog = new  MultipleKoulutusRemovalDialog(T("removeQ"), T("removeYes"), T("removeNo"), presenter);

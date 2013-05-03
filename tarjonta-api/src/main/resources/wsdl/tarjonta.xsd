@@ -718,6 +718,7 @@
             <xs:element name="ajankohta" type="xs:string"></xs:element>
             <xs:element name="komotoOid" type="xs:string"></xs:element>
             <xs:element name="PohjakoulutusVaatimus" type="xs:string"></xs:element>
+            <xs:element name="Koulutuslaji" type="xs:string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="Koulutustyyppi" type="tns:KoulutusasteTyyppi" minOccurs="0" maxOccurs="1"/>
             <xs:element name="Lukiolinjakoodi" type="tns:KoodistoKoodiTyyppi"></xs:element>
         </xs:sequence>

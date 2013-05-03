@@ -1720,6 +1720,37 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         model.getKoulutuskoodit().addAll(listaaKoulutuskoodit);
     }
 
+
+    public List<String> getOppilaitostyyppiUris(String orgOid) {
+        final String organisaatioOid = orgOid;
+        OrganisaatioDTO selectedOrg = this.getOrganisaatioService().findByOid(organisaatioOid);
+
+        if (selectedOrg == null) {
+            throw new RuntimeException("No organisation found by OID " + organisaatioOid + ".");
+        }
+
+        List<OrganisaatioTyyppi> tyypit = selectedOrg.getTyypit();
+        List<String> olTyyppiUris = new ArrayList<String>();
+        //If the types of the organisaatio contains oppilaitos, its oppilaitostyyppi is appended to the list of oppilaitostyyppiuris
+        if (tyypit.contains(OrganisaatioTyyppi.OPPILAITOS)) {
+            olTyyppiUris.add(selectedOrg.getOppilaitosTyyppi());
+        }
+        //If the types of the organisaatio contain koulutustoimija the oppilaitostyyppis of its children are appended to the
+        //list of oppilaitostyyppiuris
+        if (tyypit.contains(OrganisaatioTyyppi.KOULUTUSTOIMIJA)) {
+            olTyyppiUris.addAll(getChildOrgOlTyyppis(selectedOrg));
+
+            //If the types of the organisaatio contain opetuspiste the oppilaitostyyppi of its parent organisaatio is appended to the list of
+            //oppilaitostyyppiuris
+        } else if (tyypit.contains(OrganisaatioTyyppi.OPETUSPISTE)
+                && selectedOrg.getParentOid() != null) {
+            addParentOlTyyppi(selectedOrg, olTyyppiUris);
+        }
+
+        LOG.debug("TyyppiUris : {}", olTyyppiUris);
+        LOG.debug("olTyyppiUris size: {}", olTyyppiUris.size());
+        return olTyyppiUris;
+    }
     /*
      * Retrieves the list of (koodisto) oppilaitostyyppi uri's matching the currently selected organisaatio.
      */
