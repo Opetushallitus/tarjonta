@@ -1,16 +1,11 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import com.vaadin.ui.*;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.ui.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -19,16 +14,38 @@ import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.terminal.ExternalResource;
+import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Link;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.VerticalSplitPanel;
+import com.vaadin.ui.Window;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeLiiteViewModel;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
+import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
+import fi.vm.sade.tarjonta.ui.model.PisterajaRow;
+import fi.vm.sade.tarjonta.ui.model.ValintakoeAikaViewModel;
+import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
@@ -39,6 +56,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
  * @author : Tuomas Katva Date: 4/3/13
+ * @author Timo Santasalo / Teknokala Ky
  */
 @Configurable(preConstruction = true)
 public class ShowHakukohdeTab extends CustomComponent {
@@ -520,6 +538,7 @@ public class ShowHakukohdeTab extends CustomComponent {
         grid.setMargin(true);
         addItemToGrid(grid, "hakukohdeNimi", uiHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi(), null));
         addItemToGrid(grid, "haku", tryGetLocalizedHakuNimi(presenter.getModel().getHakukohde().getHakuOid()));
+        addItemToGrid(grid, "hakuaika", presenter.getModel().getHakukohde().getHakuaika());
         addItemToGrid(grid, "hakijoilleIlmoitetutAloituspaikat", new Integer(presenter.getModel().getHakukohde().getAloitusPaikat()).toString());
         addItemToGrid(grid, "valinnoissaKaytettavatAloituspaikat", new Integer(presenter.getModel().getHakukohde().getValinnoissaKaytettavatPaikat()).toString());
         if (checkLukioKoulutus()) {
@@ -579,15 +598,15 @@ public class ShowHakukohdeTab extends CustomComponent {
     }
 
     private void addItemToGrid(final GridLayout grid,
-            final String labelCaptionKey, final String labelCaptionValue) {
-        addItemToGrid(grid, labelCaptionKey, new Label(labelCaptionValue));
+            final String labelCaptionKey, final Object labelCaptionValue) {
+        addItemToGrid(grid, labelCaptionKey, new Label(labelCaptionValue==null ? null : labelCaptionValue.toString()));
     }
 
     private void addRichTextToGrid(final GridLayout grid,
-            final String labelCaptionKey, final String labelCaptionValue) {
+            final String labelCaptionKey, final Object labelCaptionValue) {
 
 
-        Label lbl = new Label(labelCaptionValue);
+        Label lbl = new Label(labelCaptionValue==null ? null : labelCaptionValue.toString());
         lbl.setContentMode(Label.CONTENT_XHTML);
 
         addItemToGrid(grid, labelCaptionKey, lbl);

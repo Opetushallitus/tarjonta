@@ -20,6 +20,7 @@ import fi.vm.sade.generic.ui.feature.UserFeature;
 import fi.vm.sade.generic.ui.portlet.security.User;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
+import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
@@ -43,6 +44,7 @@ import static fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils.convertTe
 /**
  *
  * @author Tuomas Katva
+ * @author Timo Santasalo / Teknokala Ky
  */
 @Component
 public class HakukohdeViewModelToDTOConverter {
@@ -57,6 +59,10 @@ public class HakukohdeViewModelToDTOConverter {
         User usr = UserFeature.get();
         hakukohde.setViimeisinPaivittajaOid(usr.getOid());
 
+        if (hakukohdevm.getHakuaika()!=null) {
+        	hakukohde.setHakukohteenHakuaika(hakukohdevm.getHakuaika().getHakuaikaDto());
+        }
+        
         hakukohde.setAloituspaikat(hakukohdevm.getAloitusPaikat());
         hakukohde.setHakukelpoisuusVaatimukset(hakukohdevm.getHakukelpoisuusVaatimus());
         if (hakukohdevm.getHakukohdeNimi() != null) {
@@ -144,8 +150,14 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohdeVM.setHakukelpoisuusVaatimus(hakukohdeTyyppi.getHakukelpoisuusVaatimukset());
         hakukohdeVM.setHakukohdeNimi(hakukohdeTyyppi.getHakukohdeNimi());
         hakukohdeVM.setTila(hakukohdeTyyppi.getHakukohteenTila());
+        
         HakuViewModel haku = mapHakuNimi(hakukohdeTyyppi.getHakukohteenHaunNimi());
         haku.setHakuOid(hakukohdeTyyppi.getHakukohteenHakuOid());
+
+        if (hakukohdeTyyppi.getHakukohteenHakuaika()!=null) {
+        	hakukohdeVM.setHakuaika(new HakuaikaViewModel(hakukohdeTyyppi.getHakukohteenHakuaika()));
+        }
+        
         hakukohdeVM.setKaytaHaunPaattymisenAikaa(hakukohdeTyyppi.isKaytetaanHaunPaattymisenAikaa());
         hakukohdeVM.setHakuOid(haku);
         hakukohdeVM.setHakukohdeKoodistoNimi(hakukohdeTyyppi.getHakukohdeKoodistoNimi());

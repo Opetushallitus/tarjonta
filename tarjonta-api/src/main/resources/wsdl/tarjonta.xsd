@@ -123,7 +123,12 @@
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1"/>
-
+                        
+            <xs:element name="hakukohteenHakuaika"
+            			minOccurs="0"
+            			maxOccurs="1"
+            			type="tns:SisaisetHakuAjat"/>
+            
             <xs:element name="hakukohteenHaunNimi"
                         type="tns:MonikielinenTekstiTyyppi"
                         maxOccurs="1"

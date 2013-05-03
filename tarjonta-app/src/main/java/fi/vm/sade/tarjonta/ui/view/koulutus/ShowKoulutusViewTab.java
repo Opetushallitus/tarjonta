@@ -328,7 +328,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
             layout.add(getTextRow("opintojenLaajuus", opintojenLaajuusYksikko));
         }
 
-        layout.add(getTextRow("koulutuslaji", uiHelper.getKoodiNimi(koulutus.getKoulutuslaji().get(0).getUri(), locale)));
+        layout.add(getTextRow("koulutuslaji", koulutus.getKoulutuslaji().isEmpty() ? null : uiHelper.getKoodiNimi(koulutus.getKoulutuslaji().get(0).getUri(), locale)));
         layout.add(getTextRow("pohjakoulutusvaatimus", uiHelper.getKoodiNimi(koulutus.getPohjakoulutusvaatimus().getUri(), locale)));
         layout.add(getTextRow("koulutuksenAlkamisPvm", uiHelper.formatDate(model.getKoulutuksenAlkamisPvm())));
         layout.add(getTextRow("suunniteltuKesto", getSuunniteltuKesto(model)));

@@ -100,6 +100,17 @@ public class Hakukohde extends BaseEntity {
     private Date lastUpdateDate;
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
+    
+    @ManyToOne(optional=true, fetch=FetchType.LAZY)
+    private Hakuaika hakuaika;
+    
+    public Hakuaika getHakuaika() {
+		return hakuaika;
+	}
+    
+    public void setHakuaika(Hakuaika hakuaika) {
+		this.hakuaika = hakuaika;
+	}    
 
     /**
      * @return the koulutuses

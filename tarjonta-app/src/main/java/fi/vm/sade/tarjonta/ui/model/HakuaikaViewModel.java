@@ -17,8 +17,10 @@
 
 package fi.vm.sade.tarjonta.ui.model;
 
+import java.text.DateFormat;
 import java.util.Date;
 
+import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 
 /**
@@ -27,20 +29,20 @@ import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
  */
 public class HakuaikaViewModel {
 
-    private String hakuajanKuvaus;
-
-    private Date alkamisPvm;
-
-    private Date paattymisPvm;
-
-    SisaisetHakuAjat hakuaikaDto;
+	private final SisaisetHakuAjat hakuaikaDto;
 
     public HakuaikaViewModel(SisaisetHakuAjat hakuaikaDto) {
         this.hakuaikaDto = hakuaikaDto;
     }
 
     public HakuaikaViewModel() {
-        hakuaikaDto = new SisaisetHakuAjat();
+    	this(new SisaisetHakuAjat());
+    }
+    
+    @Override
+    public String toString() {
+    	final DateFormat fmt = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, I18N.getLocale());
+    	return getHakuajanKuvaus()+" "+fmt.format(getAlkamisPvm())+" - "+fmt.format(getPaattymisPvm());
     }
 
 
@@ -48,8 +50,7 @@ public class HakuaikaViewModel {
      * @return the alkamisPvm
      */
     public Date getAlkamisPvm() {
-        alkamisPvm = hakuaikaDto.getSisaisenHaunAlkamisPvm();
-        return alkamisPvm;
+        return hakuaikaDto.getSisaisenHaunAlkamisPvm();
     }
 
     /**
@@ -57,15 +58,13 @@ public class HakuaikaViewModel {
      */
     public void setAlkamisPvm(Date alkamisPvm) {
         hakuaikaDto.setSisaisenHaunAlkamisPvm(alkamisPvm);
-        this.alkamisPvm = alkamisPvm;
     }
 
     /**
      * @return the paattymisPvm
      */
     public Date getPaattymisPvm() {
-        paattymisPvm = hakuaikaDto.getSisaisenHaunPaattymisPvm();
-        return paattymisPvm;
+        return hakuaikaDto.getSisaisenHaunPaattymisPvm();
     }
 
 
@@ -73,8 +72,7 @@ public class HakuaikaViewModel {
      * @return the hakuajanKuvaus
      */
     public String getHakuajanKuvaus() {
-        hakuajanKuvaus = hakuaikaDto.getHakuajanKuvaus();
-        return hakuajanKuvaus;
+        return hakuaikaDto.getHakuajanKuvaus();
     }
 
     /**
@@ -82,7 +80,6 @@ public class HakuaikaViewModel {
      */
     public void setHakuajanKuvaus(String hakuajanKuvaus) {
         hakuaikaDto.setHakuajanKuvaus(hakuajanKuvaus);
-        this.hakuajanKuvaus = hakuajanKuvaus;
     }
 
     /**
@@ -90,7 +87,6 @@ public class HakuaikaViewModel {
      */
     public void setPaattymisPvm(Date paattymisPvm) {
         hakuaikaDto.setSisaisenHaunPaattymisPvm(paattymisPvm);
-        this.paattymisPvm = paattymisPvm;
     }
 
 

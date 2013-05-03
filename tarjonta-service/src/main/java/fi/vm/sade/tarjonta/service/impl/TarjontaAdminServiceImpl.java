@@ -16,12 +16,44 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.jws.WebParam;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import fi.vm.sade.tarjonta.dao.*;
-import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
+import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.KoodistoUri;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
+import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -34,21 +66,30 @@ import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.conversion.ConvertKoulutusTyyppiToLisaaKoulutus;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
-import fi.vm.sade.tarjonta.service.types.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.jws.WebParam;
-
-import java.io.IOException;
-import java.util.*;
+import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusHakukohteelleTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenMetadataTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaTilaVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
+import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarkistaKoulutusKopiointiTyyppi;
+import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 
 /**
  * @author Tuomas Katva
+ * @author Timo Santasalo / Teknokala Ky
  */
 @Transactional(rollbackFor=Throwable.class, readOnly=true)
 @Service("tarjontaAdminService")
@@ -285,6 +326,20 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         return valintakoes;
     }
+    
+    private Hakuaika findHakuaika(Haku hk, SisaisetHakuAjat ha) {
+    	if (ha==null) {
+    		return null;
+    	}
+    	for (Hakuaika hka : hk.getHakuaikas()) {
+    		if (hka.getSisaisenHakuajanNimi().equals(ha.getHakuajanKuvaus())
+    				&& hka.getAlkamisPvm().equals(ha.getSisaisenHaunAlkamisPvm())
+    				&& hka.getPaattymisPvm().equals(ha.getSisaisenHaunPaattymisPvm())) {
+    			return hka;
+    		}
+    	}
+    	return null;
+    }
 
     @Override
     @Transactional(rollbackFor=Throwable.class, readOnly=false)
@@ -298,6 +353,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         Preconditions.checkNotNull(haku, "Insert failed - no haku entity found by haku OID", hakuOid);
 
         hakuk.setHaku(haku);
+        hakuk.setHakuaika(findHakuaika(haku, hakukohde.getHakukohteenHakuaika()));
         hakuk = hakukohdeDAO.insert(hakuk);
         hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(), hakuk));
         hakukohdeDAO.update(hakuk);

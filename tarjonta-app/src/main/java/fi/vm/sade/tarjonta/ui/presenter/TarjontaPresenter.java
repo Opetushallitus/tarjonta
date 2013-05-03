@@ -154,6 +154,7 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusView;
  * @author tkatva
  * @author mholi
  * @author mlyly
+ * @author Timo Santasalo / Teknokala Ky
  */
 public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
@@ -1064,7 +1065,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 addKomotoOidsToModel(koulutusOidNameViewModels);
                 getModel().getHakukohde().getKoulukses().addAll(koulutusOidNameViewModels);
             }
-            getTarjoaja().setSelectedResultRowOrganisationOid(getModel().getSelectedKoulutukset().get(0).getKoulutus().getKomotoOid());
+            if (!getModel().getSelectedKoulutukset().isEmpty()) {
+                getTarjoaja().setSelectedResultRowOrganisationOid(getModel().getSelectedKoulutukset().get(0).getKoulutus().getKomotoOid());
+            }
         } else {
             editHakukohdeView.loadLiiteTableWithData();
         }

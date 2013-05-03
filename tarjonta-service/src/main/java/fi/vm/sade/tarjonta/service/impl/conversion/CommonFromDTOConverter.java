@@ -15,10 +15,12 @@ package fi.vm.sade.tarjonta.service.impl.conversion;/*
  * European Union Public Licence for more details.
  */
 
+import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
+import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 
 /**
  * Created by: Tuomas Katva
@@ -50,4 +52,15 @@ public class CommonFromDTOConverter {
         return osoite;
     }
 
+    public static Hakuaika convertSisaisetHakuAjatToHakuaika(SisaisetHakuAjat ha) {
+    	if (ha==null) {
+    		return null;
+    	}
+    	Hakuaika ret = new Hakuaika();
+    	ret.setSisaisenHakuajanNimi(ha.getHakuajanKuvaus());
+    	ret.setAlkamisPvm(ha.getSisaisenHaunAlkamisPvm());
+    	ret.setPaattymisPvm(ha.getSisaisenHaunPaattymisPvm());
+    	return ret;
+    }
+    
 }
