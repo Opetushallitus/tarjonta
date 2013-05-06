@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * REST DTO for Hakukohde. (Application Option)
  *
  * @author mlyly
  */
@@ -44,6 +45,9 @@ public class HakukohdeDTO implements Serializable {
     private String _updatedByOid;
     private Date _liitteidenToimitusPvm;
     private Map<String, String> _lisatiedot;
+
+    // TODO Spesiaalit hakukohteet, hakukohteen muokkausnäytöllä!
+    private boolean _specialHakukohde = false;
 
     private List<List<String>> _painotettavatOppiaineet;
 
@@ -207,4 +211,11 @@ public class HakukohdeDTO implements Serializable {
         return _painotettavatOppiaineet;
     }
 
+    public boolean isSpecialHakukohde() {
+        return _specialHakukohde;
+    }
+
+    public void setSpecialHakukohde(boolean specialHakukohde) {
+        this._specialHakukohde = specialHakukohde;
+    }
 }

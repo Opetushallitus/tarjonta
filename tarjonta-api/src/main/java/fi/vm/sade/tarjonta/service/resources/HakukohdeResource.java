@@ -22,6 +22,8 @@ import java.util.List;
  * /hakukohde/OID/valintakoe
  * </pre>
  *
+ * Internal documentation: http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
+ *
  * @author mlyly
  */
 @Path("/hakukohde")
