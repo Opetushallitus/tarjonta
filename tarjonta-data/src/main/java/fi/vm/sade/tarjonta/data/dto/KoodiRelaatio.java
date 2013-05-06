@@ -71,7 +71,7 @@ public class KoodiRelaatio extends AbstractReadableRow {
 
     @Override
     public boolean isEmpty() {
-        return StringUtils.isBlank(ylaArvoKoodisto) && StringUtils.isBlank(alaArvoKoodisto)
-                && StringUtils.isBlank(koodiYlaArvo) && StringUtils.isBlank(koodiAlaArvo);
+        return StringUtils.isBlank(ylaArvoKoodisto) || StringUtils.isBlank(alaArvoKoodisto)
+                || StringUtils.isBlank(koodiYlaArvo) || StringUtils.isBlank(koodiAlaArvo);
     }
 }

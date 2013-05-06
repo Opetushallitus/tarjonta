@@ -21,12 +21,16 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author mlyly
  */
 public class HakukohdeToHakukohdeDTOConverter  extends AbstractFromDomainConverter<Hakukohde, HakukohdeDTO> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HakukohdeToHakukohdeDTOConverter.class);
 
     @Override
     public HakukohdeDTO convert(Hakukohde s) {
@@ -58,6 +62,9 @@ public class HakukohdeToHakukohdeDTOConverter  extends AbstractFromDomainConvert
         t.setValintaperustekuvausKoodiUri(s.getValintaperustekuvausKoodiUri());
         t.setValintojenAloituspaikatLkm(s.getValintojenAloituspaikatLkm() != null ? s.getValintojenAloituspaikatLkm().intValue() : 0);
         t.setYlinValintapistemaara(s.getYlinValintaPistemaara() != null ? s.getYlinValintaPistemaara().intValue() : 0);
+
+        LOG.warn("convert: SpecialHakukohde? already implemented? FIXME when it has been done!");
+        t.setSpecialHakukohde(false);
 
         return t;
     }
