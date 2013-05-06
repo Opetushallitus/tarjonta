@@ -9,19 +9,7 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
         http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
-    <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-        <property name="properties">
-            <util:properties local-override="true">
-                <prop key="cas_key">tarjonta-service</prop>
-                <prop key="cas_service">${cas.service.tarjonta-service}</prop>
-                <prop key="spring_security_default_access">permitAll</prop>
-            </util:properties>
-        </property>
-    </bean>
 
-    <context:property-placeholder
-            location="classpath:tarjonta-service.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-service.properties"
-            ignore-resource-not-found="true" properties-ref="defaultProps"/>
     <!-- Conversion service -->
     <bean id="conversionService"
           class="fi.vm.sade.generic.service.conversion.SadeConversionServiceFactoryBean">

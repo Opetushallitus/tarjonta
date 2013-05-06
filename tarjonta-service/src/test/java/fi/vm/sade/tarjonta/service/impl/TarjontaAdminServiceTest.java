@@ -107,12 +107,7 @@ public class TarjontaAdminServiceTest {
 
     }
 
-    @Ignore
-    @Test
-    public void testHakukohdeDaoProperties() {
-        log.info("KAUSI URI: " + hakukohdeDAO.getAlkamiskausiUri());
-        assertEquals("kausi_s",hakukohdeDAO.getAlkamiskausiUri());
-    }
+
 
     @Test(expected = Exception.class)
     public void testCannotCreateKoulutusWithoutKoulutusmoduuli() {
