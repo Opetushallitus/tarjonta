@@ -5,33 +5,9 @@
        xmlns:cxf="http://cxf.apache.org/core"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
 
-	<!-- LIFERAYN POISTON VAATIMAT VÄLIAIKAISKORJAUKSET -->
-     
-    <bean class="fi.vm.sade.tarjonta.mock.UserProviderMock"/>
-
-    <!-- Bean configuration for interceptor & callback -->
-	<!-- 
-    <bean id="ticketInterceptor" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptor">
-        <property name="callback" ref="callback" />
-    </bean>
-
-    <bean id="callback" class="fi.vm.sade.generic.ui.app.LiferaySecurityTicketCallback">
-
-    </bean>
-    -->
-
-    <!-- Configure CXF bus to contain ticketInterceptor -->
-    <!-- 
-    <cxf:bus>
-        <cxf:outInterceptors>
-            <ref bean="ticketInterceptor" />
-        </cxf:outInterceptors>
-    </cxf:bus>
-	 -->
-
-	<!-- /LIFERAYN POISTON VAATIMAT VÄLIAIKAISKORJAUKSET -->
-
- 
+    <!-- AUTHENTICATION / AUTHORIZATION SUPPORT -->
+    <import resource="classpath:authentication-client.xml"/>
+	 
     <jaxws:client id="koodiPublicService"
                 serviceClass="fi.vm.sade.koodisto.service.KoodiService"
                 address="${koodi.public.webservice.url.backend:http://NO_KOODI_WEBSERVICE_URL_CONFIGURED}"/>
