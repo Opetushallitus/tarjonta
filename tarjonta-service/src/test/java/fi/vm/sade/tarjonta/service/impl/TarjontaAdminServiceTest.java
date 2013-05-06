@@ -20,6 +20,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -104,6 +105,13 @@ public class TarjontaAdminServiceTest {
 
         insertSampleKoulutus();
 
+    }
+
+    @Ignore
+    @Test
+    public void testHakukohdeDaoProperties() {
+        log.info("KAUSI URI: " + hakukohdeDAO.getAlkamiskausiUri());
+        assertEquals("kausi_s",hakukohdeDAO.getAlkamiskausiUri());
     }
 
     @Test(expected = Exception.class)

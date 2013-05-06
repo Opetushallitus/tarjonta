@@ -50,6 +50,8 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     void updateLiittees(List<HakukohdeLiite> liites, String hakukohdeOid);
 
+    String getAlkamiskausiUri();
+
     /**
      * Find list of OIDs with given search specs.
      *
