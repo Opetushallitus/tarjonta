@@ -184,18 +184,25 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     }
 
     @Override
-    public List<KoulutusmoduuliToteutus> findKomotosByKomoAndtarjoaja(
-            Koulutusmoduuli parentKomo, String tarjoaja) {
+    public List<KoulutusmoduuliToteutus> findKomotosByKomoTarjoajaPohjakoulutus(
+            Koulutusmoduuli parentKomo, String tarjoaja, String pohjakoulutusvaatimusUri) {
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         List<KoulutusmoduuliToteutus> komotoRes = null;
         try {
+            BooleanExpression criteria = komoto.koulutusmoduuli.oid.eq(parentKomo.getOid());
+            if (tarjoaja != null) {
+                criteria = criteria.and(komoto.tarjoaja.eq(tarjoaja));
+            }
+            if (pohjakoulutusvaatimusUri != null) {
+                criteria = criteria.and(komoto.pohjakoulutusvaatimus.eq(pohjakoulutusvaatimusUri));
+            }
+       
             komotoRes = from(komoto).
                     join(komoto.koulutusmoduuli).fetch().
-                    where(komoto.koulutusmoduuli.oid.eq(parentKomo.getOid()).and(komoto.tarjoaja.eq(tarjoaja))).list(komoto);
+                    where(criteria).list(komoto);
         } catch (Exception ex) {
             log.debug("Exception: " + ex.getMessage());
         }
-
         return komotoRes;
     }
 

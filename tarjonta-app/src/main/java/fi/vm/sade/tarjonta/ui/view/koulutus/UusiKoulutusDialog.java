@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
+import com.vaadin.data.Property;
 import com.vaadin.ui.*;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -49,6 +50,8 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     private List<String> organisaatioOids;
     private KoodistoComponent koulutusAsteCombo;
     private ComboBox koulutusValintaCombo;
+    Label pohjakoulutusvaatimusLbl;
+    private KoodistoComponent kcPohjakoulutusvaatimus;
 
     @Autowired
     private TarjontaUIHelper helper;
@@ -60,6 +63,8 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     
     public UusiKoulutusDialog(String width, String height) {
         super(width, height);
+        //setSizeUndefined();
+        //setWidth(width);
         setCaption(_i18n.getMessage("dialog.title"));
         
 
@@ -97,6 +102,12 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                      errorView.addError(_i18n.getMessage("tarkistaOppilaitosJaKoulutusaste"));
                     return;
                 }
+                if (koulutusAsteCombo.getValue() instanceof String 
+                        && ((String) koulutusAsteCombo.getValue()).contains("tarjontakoulutusaste_ap")
+                        && kcPohjakoulutusvaatimus.getValue() == null) {
+                    errorView.addError(_i18n.getMessage("valitsePohjakoulutusvaatimus"));
+                    return;
+                }
 
                 if (presenter.checkOrganisaatioOppilaitosTyyppimatches(selectedOrgs.values())) {
                     presenter.setAllSelectedOrganisaatios(selectedOrgs.values());
@@ -106,7 +117,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                         logger.info("lukiokoulutus()");
                         getParent().removeWindow(UusiKoulutusDialog.this);
                     } else if (koulutusAsteCombo.getValue() instanceof String && ((String) koulutusAsteCombo.getValue()).contains("tarjontakoulutusaste_ap")) {
-                        presenter.showKoulutusEditView(selectedOrgs.values());
+                        presenter.showKoulutusEditView(selectedOrgs.values(), (String) kcPohjakoulutusvaatimus.getValue());
                         logger.info("ammatillinen peruskoulutus()");
                         getParent().removeWindow(UusiKoulutusDialog.this);
                     } else {
@@ -151,26 +162,48 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     }
     
     private AbstractLayout createComboLayout() {
-        HorizontalLayout comboLayout = new HorizontalLayout();
-
+        GridLayout firstRowLayout = new GridLayout(3,2);
         Label valitseKoulutusLbl = new Label(_i18n.getMessage("valitseKoulutusLbl"));
-        comboLayout.addComponent(valitseKoulutusLbl);
-        comboLayout.setComponentAlignment(valitseKoulutusLbl,Alignment.MIDDLE_LEFT);
+        firstRowLayout.addComponent(valitseKoulutusLbl);
+        firstRowLayout.setComponentAlignment(valitseKoulutusLbl,Alignment.MIDDLE_RIGHT);
         koulutusValintaCombo = buildKoulutusValintaCombo();
-        koulutusAsteCombo = buildKoulutusAsteCombobox();
+        koulutusAsteCombo = buildKoodistoCombobox(KoodistoURIHelper.KOODISTO_TARJONTA_KOULUTUSASTE);
+        koulutusAsteCombo.setImmediate(true);
+       
+        firstRowLayout.addComponent(koulutusValintaCombo, 1, 0);
 
+        firstRowLayout.setComponentAlignment(koulutusValintaCombo, Alignment.MIDDLE_LEFT);
+        firstRowLayout.addComponent(koulutusAsteCombo, 2, 0);
+        firstRowLayout.setComponentAlignment(koulutusAsteCombo, Alignment.MIDDLE_RIGHT);
         
         
-        comboLayout.addComponent(koulutusValintaCombo);
-
-        comboLayout.setComponentAlignment(koulutusValintaCombo, Alignment.MIDDLE_LEFT);
-        comboLayout.addComponent(koulutusAsteCombo);
-        comboLayout.setComponentAlignment(koulutusAsteCombo, Alignment.MIDDLE_RIGHT);
+        pohjakoulutusvaatimusLbl = new Label(_i18n.getMessage("Pohjakoulutusvaatimus"));
+        pohjakoulutusvaatimusLbl.setEnabled(false);
+        firstRowLayout.addComponent(pohjakoulutusvaatimusLbl);
+        firstRowLayout.setComponentAlignment(pohjakoulutusvaatimusLbl,Alignment.MIDDLE_RIGHT);
+        kcPohjakoulutusvaatimus = buildKoodistoCombobox(KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI);
+        kcPohjakoulutusvaatimus.setEnabled(false);
         
-        comboLayout.setMargin(false, true, true, true);
+        koulutusAsteCombo.addListener(new Property.ValueChangeListener() {
 
-        comboLayout.setSizeFull();
-        return comboLayout;
+            private static final long serialVersionUID = -8476437837944397351L;
+
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                boolean isEnabled = koulutusAsteCombo.getValue() instanceof String && ((String) koulutusAsteCombo.getValue()).contains("tarjontakoulutusaste_ap");
+                pohjakoulutusvaatimusLbl.setEnabled(isEnabled);
+                kcPohjakoulutusvaatimus.setEnabled(isEnabled);
+            }
+        });
+        
+        firstRowLayout.addComponent(kcPohjakoulutusvaatimus, 1, 1);
+        
+        firstRowLayout.setMargin(false, true, false, true);
+
+        firstRowLayout.setSizeFull();
+        firstRowLayout.setHeight("100px");
+        
+        return firstRowLayout;
     }
     
     private ComboBox buildKoulutusValintaCombo() {
@@ -183,10 +216,10 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
         return koulutusValintaTmp;
     }
     
-    private KoodistoComponent buildKoulutusAsteCombobox() {
-       return uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_TARJONTA_KOULUTUSASTE,null);
+    private KoodistoComponent buildKoodistoCombobox(String koodistoUri) {
+       return uiBuilder.koodistoComboBox(null, koodistoUri, null);//KoodistoURIHelper.KOODISTO_TARJONTA_KOULUTUSASTE,null);
     }
-    
+    //kcPohjakoulutusvaatimus = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI, true);
     private AbstractLayout createLabelLayout() {
         GridLayout labelLayout = new GridLayout(2, 1);
         labelLayout.setColumnExpandRatio(0, 10);

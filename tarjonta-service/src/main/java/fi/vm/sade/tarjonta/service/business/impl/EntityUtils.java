@@ -167,6 +167,7 @@ public final class EntityUtils {
             toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
         }
 
+        
         if (fromKoulutus.getPohjakoulutusvaatimus() != null) {
             toKoulutus.setPohjakoulutusvaatimus(fromKoulutus.getPohjakoulutusvaatimus().getUri());
         }

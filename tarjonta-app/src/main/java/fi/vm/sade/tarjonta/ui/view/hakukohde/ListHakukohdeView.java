@@ -15,7 +15,10 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
+import java.util.List;
+
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 
 /**
  *
@@ -34,7 +37,7 @@ public interface ListHakukohdeView {
      *
      * @param hakukohde
      */
-    public void appendKoulutuksetToList(HakukohdeViewModel hakukohde);
+    public void showKoulutuksetForHakukohde(List<KoulutusTulos> koulutukset);
 
     void showErrorMessage(String msg);
 
