@@ -676,7 +676,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         return i18n.getMessage(parts[parts.length - 1]);
     }
 
-    private String getKoodiNimi(String hakukohdeUri) {
+    public String getKoodiNimi(String hakukohdeUri) {
         String nimi = this.getUiHelper().getKoodiNimi(hakukohdeUri, I18N.getLocale());
         if ("".equals(nimi)) {
             nimi = hakukohdeUri;
