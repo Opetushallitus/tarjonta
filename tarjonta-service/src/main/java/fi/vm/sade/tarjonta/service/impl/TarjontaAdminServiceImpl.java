@@ -20,6 +20,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import fi.vm.sade.tarjonta.dao.*;
+import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
@@ -452,9 +453,29 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
-        solrIndexer.indexKoulutus(Lists.newArrayList(toteutus));
+        List<KoulutusmoduuliToteutus> indexedKoulutukset = getIndexedKoulutukset(toteutus);
+        solrIndexer.indexKoulutus(indexedKoulutukset);
         PaivitaKoulutusVastausTyyppi vastaus = new PaivitaKoulutusVastausTyyppi();
         return vastaus;
+    }
+
+    private List<KoulutusmoduuliToteutus> getIndexedKoulutukset(
+            KoulutusmoduuliToteutus toteutus) {
+        List<KoulutusmoduuliToteutus> result = new ArrayList<KoulutusmoduuliToteutus>();
+        result.add(toteutus);
+        Koulutusmoduuli komo = toteutus.getKoulutusmoduuli();
+        Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
+        if (parentKomo == null) {
+            return result;
+        }
+        for (Koulutusmoduuli curChildKomo : parentKomo.getAlamoduuliList()) {
+            List<KoulutusmoduuliToteutus> siblings = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(curChildKomo, toteutus.getTarjoaja(), toteutus.getPohjakoulutusvaatimus());
+            if (siblings != null) {
+                result.addAll(siblings);
+            }
+        }
+        
+        return result;
     }
 
     @Override

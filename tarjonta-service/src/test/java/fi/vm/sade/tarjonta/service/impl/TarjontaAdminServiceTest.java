@@ -677,17 +677,18 @@ public class TarjontaAdminServiceTest {
     public void testKomotoHierarchyUpdate() {
         //Creating a simple komoto hierarchy with parent komoto and two child komotos
         String TARJOAJA_OID1 = "jokin.tarjoaja.oid.1";
+        String POHJAKOULUTUSVAATIMUS = "http://vaatimus.fi/yo";
         String KOMOTO_OID1 = "jokin.KOMOTO.oid.1.1.12.2." + System.currentTimeMillis();
         String KOMOTO_OID2 = KOMOTO_OID1 + "1";
         String PARENT_KOMOTO_OID1 = KOMOTO_OID1 + "2";
-        createSimpleKomotoHierarchy(KOMOTO_OID1, KOMOTO_OID2, PARENT_KOMOTO_OID1, TARJOAJA_OID1);
+        createSimpleKomotoHierarchy(KOMOTO_OID1, KOMOTO_OID2, PARENT_KOMOTO_OID1, TARJOAJA_OID1, POHJAKOULUTUSVAATIMUS);
         
         //Creating a simple komoto hierarchy with parent komoto and two child komotos for another tarjoaja
         String TARJOAJA_OID2 = "jokin.tarjoaja.oid.2";
         String KOMOTO_OID3= "jokin.KOMOTO.oid.1.1.12.3." + System.currentTimeMillis();
         String KOMOTO_OID4 = KOMOTO_OID3 + "1";
         String PARENT_KOMOTO_OID2 = KOMOTO_OID3 + "2";
-        createSimpleKomotoHierarchy(KOMOTO_OID3, KOMOTO_OID4, PARENT_KOMOTO_OID2, TARJOAJA_OID2);
+        createSimpleKomotoHierarchy(KOMOTO_OID3, KOMOTO_OID4, PARENT_KOMOTO_OID2, TARJOAJA_OID2, POHJAKOULUTUSVAATIMUS);
         
         //Reading a child komoto from the first komoto hierarchy and updating its koulutuksenAlkamisPvm (a parent komoto field) 
         LueKoulutusKyselyTyyppi kysely = new LueKoulutusKyselyTyyppi();
@@ -734,21 +735,22 @@ public class TarjontaAdminServiceTest {
         return paivita;
     }
 
-    private void createSimpleKomotoHierarchy(String komotoOid1, String komotoOid2, String parentKomotoOid, String tarjoajaOid) {
+    private void createSimpleKomotoHierarchy(String komotoOid1, String komotoOid2, String parentKomotoOid, String tarjoajaOid, String pohjakoulutusvaatimus) {
         Koulutusmoduuli child = fixtures.createTutkintoOhjelma();
         koulutusmoduuliDAO.insert(child);
         Koulutusmoduuli parent = fixtures.createKoulutusmoduuli(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.TUTKINTO);
         parent.getAlamoduuliList().add(child);
         koulutusmoduuliDAO.insert(parent);
-        KoulutusmoduuliToteutus komotoChild1 = createKomotoWithKomoAndTarjoaja(child, tarjoajaOid, komotoOid1);
+        KoulutusmoduuliToteutus komotoChild1 = createKomotoWithKomoTarjoajaPohjakoulutus(child, tarjoajaOid, komotoOid1, pohjakoulutusvaatimus);
+   
         koulutusmoduuliToteutusDAO.insert(komotoChild1);
-        KoulutusmoduuliToteutus komotoChild2 = createKomotoWithKomoAndTarjoaja(child, tarjoajaOid, komotoOid2);
+        KoulutusmoduuliToteutus komotoChild2 = createKomotoWithKomoTarjoajaPohjakoulutus(child, tarjoajaOid, komotoOid2, pohjakoulutusvaatimus);
         koulutusmoduuliToteutusDAO.insert(komotoChild2);
-        KoulutusmoduuliToteutus komotoParent = createKomotoWithKomoAndTarjoaja(parent, tarjoajaOid, parentKomotoOid);
+        KoulutusmoduuliToteutus komotoParent = createKomotoWithKomoTarjoajaPohjakoulutus(parent, tarjoajaOid, parentKomotoOid, pohjakoulutusvaatimus);
         koulutusmoduuliToteutusDAO.insert(komotoParent);
     }
     
-    private KoulutusmoduuliToteutus createKomotoWithKomoAndTarjoaja(Koulutusmoduuli komo, String tarjoajaOid, String komotoOid) {
+    private KoulutusmoduuliToteutus createKomotoWithKomoTarjoajaPohjakoulutus(Koulutusmoduuli komo, String tarjoajaOid, String komotoOid, String pohjakoulutusvaatimus) {
 
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setOid(komotoOid);
@@ -762,6 +764,7 @@ public class TarjontaAdminServiceTest {
         komoto.setKoulutuksenAlkamisPvm(Calendar.getInstance().getTime());
         komoto.setPohjakoulutusvaatimus("koulutusaste/lukio");
         komoto.setSuunniteltuKesto("kesto/vuosi", "3");
+        komoto.setPohjakoulutusvaatimus(pohjakoulutusvaatimus);
         return komoto;
     }
     

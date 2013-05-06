@@ -187,7 +187,8 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
      */
     private void handleParentKomoto(KoulutusTyyppi koulutus, Koulutusmoduuli moduuli) {
         Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(moduuli);
-        List<KoulutusmoduuliToteutus> parentKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoAndtarjoaja(parentKomo, koulutus.getTarjoaja());
+        String pohjakoulutusUri = koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null;
+        List<KoulutusmoduuliToteutus> parentKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(parentKomo, koulutus.getTarjoaja(), pohjakoulutusUri);
         KoulutusmoduuliToteutus parentKomoto = (parentKomotos != null && !parentKomotos.isEmpty()) ? parentKomotos.get(0) : null;
         //If the komoto for the parentKomo already exists it is updated according to the values given in koulutus
         if (parentKomoto != null && parentKomo != null) {
@@ -208,6 +209,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             parentKomoto.setKoulutusmoduuli(parentKomo);
             parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta()));
             parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
+            parentKomoto.setPohjakoulutusvaatimus(koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null);
             parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
             this.koulutusmoduuliToteutusDAO.insert(parentKomoto);
         }
@@ -251,7 +253,8 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     private void handleChildKomos(Koulutusmoduuli parentKomo, Koulutusmoduuli moduuli, KoulutusTyyppi koulutus) {
         for (Koulutusmoduuli curChildKomo : parentKomo.getAlamoduuliList()) {
 
-            List<KoulutusmoduuliToteutus> curKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoAndtarjoaja(curChildKomo, koulutus.getTarjoaja());
+            String pohjakoulutusUri = koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null;
+            List<KoulutusmoduuliToteutus> curKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(curChildKomo, koulutus.getTarjoaja(), pohjakoulutusUri);
 
             if (curKomotos == null) {
                 continue;

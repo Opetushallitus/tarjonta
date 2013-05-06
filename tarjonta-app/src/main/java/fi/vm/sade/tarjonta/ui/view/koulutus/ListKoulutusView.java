@@ -418,7 +418,7 @@ public class ListKoulutusView extends VerticalLayout {
                 if (presenter.availableKoulutus()) {
                     List<String> organisaatioOids = new ArrayList<String>();
                     organisaatioOids.add(presenter.getNavigationOrganisation().getOrganisationOid());
-                    UusiKoulutusDialog uusiKoulutusDialog = new UusiKoulutusDialog("800px", "500px");
+                    UusiKoulutusDialog uusiKoulutusDialog = new UusiKoulutusDialog("800px", "600px");
                     
                     getWindow().addWindow(uusiKoulutusDialog);
                 } else {

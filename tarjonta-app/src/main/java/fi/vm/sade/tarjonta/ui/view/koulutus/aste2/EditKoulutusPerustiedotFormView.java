@@ -142,9 +142,9 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     @NotNull(message = "{validation.Koulutus.opetusmuoto.notNull}")
     @PropertyId("opetusmuoto")
     private KoodistoComponent kcOpetusmuoto;
-    @NotNull(message = "{validation.Koulutus.pohjakoulutusvaatimus.notNull}")
+    /*@NotNull(message = "{validation.Koulutus.pohjakoulutusvaatimus.notNull}")
     @PropertyId("pohjakoulutusvaatimus")
-    private KoodistoComponent kcPohjakoulutusvaatimus;    
+    private KoodistoComponent kcPohjakoulutusvaatimus;*/    
     
     @Pattern(regexp = "[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "{validation.koulutus.opetussuunnitelma.invalid.www}")
     @PropertyId("opsuLinkki")
@@ -289,7 +289,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         buildGridPainotus(this, "painotus");
         buildGridKoulutuslajiRow(this, "Koulutuslaji");
         buildGridOpetusmuotoRow(this, "Opetusmuoto");
-        buildGridPohjakoulutusvaatimusRow(this, "Pohjakoulutusvaatimus");
+        //buildGridPohjakoulutusvaatimusRow(this, "Pohjakoulutusvaatimus");
         buildGridLinkkiRow(this, "Linkki");
         buildGridYhteyshenkiloRows(this, "Yhteyshenkilo");
 
@@ -527,17 +527,19 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         addSelectedFormComponents(type, kcKoulutuslaji);
     }
 
+    /*
     private void buildGridPohjakoulutusvaatimusRow(GridLayout grid, final String propertyKey) {
         final KoulutusasteType type = KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS;
         gridLabel(grid, propertyKey, type);
         kcPohjakoulutusvaatimus = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI, true);
         kcPohjakoulutusvaatimus.setCaptionFormatter(koodiNimiFormatter);
         kcPohjakoulutusvaatimus.setImmediate(true);
+        kcPohjakoulutusvaatimus.setEnabled(false);
         grid.addComponent(kcPohjakoulutusvaatimus);
         grid.newLine();
         buildSpacingGridRow(grid);
         addSelectedFormComponents(type, kcPohjakoulutusvaatimus);
-    }
+    }*/
 
     /*
      * PRIVATE HELPER METHODS:
@@ -635,7 +637,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         kcSuunniteltuKestoTyyppi.setEnabled(active);
         kcKoulutuslaji.setEnabled(active);
         kcOpetusmuoto.setEnabled(active);
-        kcPohjakoulutusvaatimus.setEnabled(active);
+        //kcPohjakoulutusvaatimus.setEnabled(active);
     }
     private CaptionFormatter koodiNimiFormatter = new CaptionFormatter<KoodiType>() {
         @Override

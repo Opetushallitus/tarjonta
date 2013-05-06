@@ -599,7 +599,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
      * reading the parent komoto fields to the result dto. 
      */
     private void handleParentKomoto(Koulutusmoduuli parentKomo, KoulutusmoduuliToteutus komoto, LueKoulutusVastausTyyppi result) {
-        List<KoulutusmoduuliToteutus> parentList = this.koulutusmoduuliToteutusDAO.findKomotosByKomoAndtarjoaja(parentKomo, komoto.getTarjoaja());
+        List<KoulutusmoduuliToteutus> parentList = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(parentKomo, komoto.getTarjoaja(), komoto.getPohjakoulutusvaatimus());
         KoulutusmoduuliToteutus parentKomoto = (parentList != null && !parentList.isEmpty()) ? parentList.get(0) : null;
         if (parentKomoto != null) {
             GregorianCalendar greg = new GregorianCalendar();
