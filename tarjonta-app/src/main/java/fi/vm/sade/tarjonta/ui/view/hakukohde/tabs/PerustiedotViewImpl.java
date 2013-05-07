@@ -69,7 +69,9 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -344,7 +346,6 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private void addOppiaine(final PainotettavaOppiaineViewModel painotettava) {
         final PropertysetItem psi = new BeanItem(painotettava);
         //TODO change koodisto to oppiaine
-        System.out.println("uri:" + KoodistoURIHelper.KOODISTO_OPPIAINEET_URI);
         final KoodistoComponent painotus = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPIAINEET_URI, psi, "oppiaine", T("PerusTiedotView.oppiainePrompt"), true);
         painotus.getField().setRequired(false);
         painotus.getField().setNullSelectionAllowed(false);
@@ -736,7 +737,6 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     @Override
     public void setSelectedHaku(HakuViewModel haku) {
-    	System.err.println("SET SELECTED HAKU "+haku.getSisaisetHakuajat());
         hakuCombo.setValue(haku);
     }
     
@@ -746,6 +746,17 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
     
     private void prepareHakuAikas(HakuViewModel hvm) {
+    	if (hvm.getSisaisetHakuajat().isEmpty()) {
+    		ListaaHakuTyyppi lht = new ListaaHakuTyyppi();
+    		lht.setHakuOid(hvm.getHakuOid());
+    		List<HakuTyyppi> hakus = presenter.getTarjontaPublicService().listHaku(lht).getResponse();
+    		if (hakus.size()!=1) {
+    			LOG.warn("Hakua ei löytynyt: {}",hvm.getHakuOid());
+    		} else {
+    			hvm = new HakuViewModel(hakus.iterator().next());
+    		}
+    	}
+    	
     	BeanItemContainer<HakuaikaViewModel> container = new BeanItemContainer<HakuaikaViewModel>(HakuaikaViewModel.class);
     	container.addAll(hvm.getSisaisetHakuajat());
     	hakuAikaCombo.setReadOnly(false);
@@ -756,8 +767,6 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     
     private void selectHakuAika(HakuaikaViewModel hvm, HakuViewModel hk, boolean initial) {
 		
-    	System.err.println((initial ? "INITIAL" : "COMBO")+" SELECT "+hvm+" OF "+hk+" -- "+hk.getSisaisetHakuajat());
-    	
     	hakuAikaCombo.setReadOnly(false); // setValue ei toimi jos readonly
     	if (hk==null || hk.getSisaisetHakuajat().isEmpty()) {
     		hakuAikaCombo.setValue(null);

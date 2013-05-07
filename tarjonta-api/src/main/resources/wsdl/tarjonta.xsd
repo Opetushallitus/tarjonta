@@ -634,6 +634,11 @@
 
     <xs:complexType name="SisaisetHakuAjat">
         <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="oid" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Yksilollinen tunniste haulle</xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element minOccurs="1" maxOccurs="1" name="hakuajanKuvaus" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Haun sisaisen hakuajan kuvaus</xs:documentation>

@@ -68,6 +68,7 @@ public class CommonToDTOConverter {
     	ret.setHakuajanKuvaus(ha.getSisaisenHakuajanNimi());
     	ret.setSisaisenHaunAlkamisPvm(ha.getAlkamisPvm());
     	ret.setSisaisenHaunPaattymisPvm(ha.getPaattymisPvm());
+    	ret.setOid(Long.toString(ha.getId()));
     	return ret;
     }
     

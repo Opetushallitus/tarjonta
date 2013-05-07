@@ -22,7 +22,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.jws.WebParam;
 
@@ -331,11 +333,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     	if (hk.getHakuaikas().size()==1) {
     		return hk.getHakuaikas().iterator().next();
     	}
-    	if (ha!=null) {
+    	if (ha!=null && ha.getOid()!=null) {
+    		long id = Long.parseLong(ha.getOid());
         	for (Hakuaika hka : hk.getHakuaikas()) {
-        		if (hka.getSisaisenHakuajanNimi().equals(ha.getHakuajanKuvaus())
-        				&& hka.getAlkamisPvm().getTime()==ha.getSisaisenHaunAlkamisPvm().getTime()
-        				&& hka.getPaattymisPvm().getTime()==ha.getSisaisenHaunPaattymisPvm().getTime()) {
+        		if (hka.getId() == id) {
         			return hka;
         		}
         	}
@@ -704,20 +705,29 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         target.setHaunTunniste(source.getHaunTunniste());
         mergeSisaisetHaunAlkamisAjat(source, target);
     }
-
+    
     private void mergeSisaisetHaunAlkamisAjat(Haku source, Haku target) {
-        List<Hakuaika> hakuajat = new ArrayList<Hakuaika>();
-        for (Hakuaika curAika : target.getHakuaikas()) {
-            hakuajat.add(curAika);
-        }
+    	Map<Long, Hakuaika> ths = new TreeMap<Long, Hakuaika>();
+    	for (Hakuaika ca : target.getHakuaikas()) {
+    		ths.put(ca.getId(), ca);
+    	}
 
-        for (Hakuaika curHak : hakuajat) {
-            target.removeHakuaika(curHak);
-        }
-
-        for (Hakuaika curHakuaika : source.getHakuaikas()) {
-            target.addHakuaika(curHakuaika);
-        }
+    	for (Hakuaika ca : source.getHakuaikas()) {
+    		if (ca.getId()==null) {
+    			// uusi
+    			target.addHakuaika(ca);
+    		} else {
+    			// vanha
+    			Hakuaika na = ths.remove(ca.getId());
+    			na.setSisaisenHakuajanNimi(ca.getSisaisenHakuajanNimi());
+    			na.setAlkamisPvm(ca.getAlkamisPvm());
+    			na.setPaattymisPvm(ca.getPaattymisPvm());
+    		}
+    	}
+    	
+    	for (Hakuaika ca : ths.values()) {
+    		target.removeHakuaika(ca);
+    	}
     }
 
     /**

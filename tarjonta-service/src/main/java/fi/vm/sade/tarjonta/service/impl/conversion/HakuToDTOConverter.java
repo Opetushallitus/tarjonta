@@ -19,12 +19,12 @@ package fi.vm.sade.tarjonta.service.impl.conversion;
 
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
-import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.types.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaunNimi;
 
 /**
  *
@@ -54,27 +54,21 @@ public class HakuToDTOConverter extends AbstractFromDomainConverter<Haku, HakuTy
         if (from.getLastUpdatedByOid() != null) {
             h.setViimeisinPaivittajaOid(from.getLastUpdatedByOid());
         }
-        ConvertHaunNimet(h, from);
-        ConvertHaunAjat(h, from);
+        convertHaunNimet(h, from);
+        convertHaunAjat(h, from);
         //ConvertHakukohdes(h,from);
         return h;
     }
 
-   
-
-    private void ConvertHaunAjat(HakuTyyppi h, Haku s) {
+    private void convertHaunAjat(HakuTyyppi h, Haku s) {
         if (s.getHakuaikas() != null) {
             for (Hakuaika ha: s.getHakuaikas()) {
-                SisaisetHakuAjat aika = new SisaisetHakuAjat();
-                aika.setHakuajanKuvaus(ha.getSisaisenHakuajanNimi());
-                aika.setSisaisenHaunAlkamisPvm(ha.getAlkamisPvm());
-                aika.setSisaisenHaunPaattymisPvm(ha.getPaattymisPvm());
-                h.getSisaisetHakuajat().add(aika);
+                h.getSisaisetHakuajat().add(CommonToDTOConverter.convertHakuaikaToSisaisetHakuAjat(ha));
             }
         }
     }
 
-    private void ConvertHaunNimet(HakuTyyppi h, Haku s) {
+    private void convertHaunNimet(HakuTyyppi h, Haku s) {
         if (s.getNimi() != null && s.getNimi().getTekstis() != null) {
         for (TekstiKaannos tk: s.getNimi().getTekstis()) {
             HaunNimi hn = new HaunNimi();

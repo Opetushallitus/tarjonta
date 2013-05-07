@@ -68,7 +68,7 @@ public class ShowHakukohdeTab extends CustomComponent {
     TarjontaUIHelper uiHelper;
     private I18NHelper i18n = new I18NHelper("ShowHakukohdeTab.");
     private final String language;
-    private final OrganisaatioContext context;
+    private OrganisaatioContext context;
     private final String datePattern = "dd.MM.yyyy HH:mm";
     private CreationDialog<KoulutusOidNameViewModel> addlKoulutusDialog;
     private Window addlKoulutusDialogWindow;
@@ -76,11 +76,17 @@ public class ShowHakukohdeTab extends CustomComponent {
     public ShowHakukohdeTab(String language) {
         Preconditions.checkNotNull(language, "Language cannot be null");
         this.language = language;
-        this.context = OrganisaatioContext.getContext(presenter.getTarjoaja().getSelectedOrganisationOid());
         VerticalLayout mainLayout = new VerticalLayout();
         mainLayout.setMargin(true);
         setCompositionRoot(mainLayout);
         buildPage(mainLayout);
+    }
+    
+    private OrganisaatioContext getContext() {
+    	if (context == null) {
+            context = OrganisaatioContext.getContext(presenter.getTarjoaja().getSelectedOrganisationOid());
+    	}
+    	return context;
     }
 
     private void buildPage(VerticalLayout layout) {
@@ -106,7 +112,7 @@ public class ShowHakukohdeTab extends CustomComponent {
                 public void buttonClick(ClickEvent clickEvent) {
                     getWindow().showNotification("Toiminnallisuutta ei ole viela toteuttettu");
                 }
-            }, null, presenter.getPermission().userCanUpdateHakukohde(context)));
+            }, null, presenter.getPermission().userCanUpdateHakukohde(getContext())));
 
             final GridLayout grid = new GridLayout(2, 1);
             grid.setWidth("100%");
@@ -131,7 +137,7 @@ public class ShowHakukohdeTab extends CustomComponent {
                 presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
                         presenter.getModel().getHakukohde().getOid(), null, TarjontaPresenter.LIITTEET_TAB_SELECT);
             }
-        }, null, presenter.getPermission().userCanUpdateHakukohde(context)));
+        }, null, presenter.getPermission().userCanUpdateHakukohde(getContext())));
 
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
@@ -280,7 +286,7 @@ public class ShowHakukohdeTab extends CustomComponent {
                 presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
                         presenter.getModel().getHakukohde().getOid(), null, TarjontaPresenter.VALINTAKOE_TAB_SELECT);
             }
-        }, null, presenter.getPermission().userCanUpdateHakukohde(context)));
+        }, null, presenter.getPermission().userCanUpdateHakukohde(getContext())));
 
         VerticalLayout yetAnotherLayout = new VerticalLayout();
         yetAnotherLayout.setMargin(true);
@@ -414,7 +420,7 @@ public class ShowHakukohdeTab extends CustomComponent {
             }
         });
 
-        liitaUusiKoulutusBtn.setVisible(presenter.getPermission().userCanAddKoulutusToHakukohde(context));
+        liitaUusiKoulutusBtn.setVisible(presenter.getPermission().userCanAddKoulutusToHakukohde(getContext()));
         verticalLayout.addComponent(liitaUusiKoulutusBtn);
     }
 
@@ -528,7 +534,7 @@ public class ShowHakukohdeTab extends CustomComponent {
                 presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
                         presenter.getModel().getHakukohde().getOid(), null, null);
             }
-        }, lastUpdLbl, presenter.getPermission().userCanUpdateHakukohde(context)));
+        }, lastUpdLbl, presenter.getPermission().userCanUpdateHakukohde(getContext())));
 
 
 

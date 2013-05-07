@@ -46,6 +46,10 @@ public class HakuaikaViewModel {
     	final DateFormat fmt = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, I18N.getLocale());
     	return getHakuajanKuvaus()+" "+fmt.format(getAlkamisPvm())+" - "+fmt.format(getPaattymisPvm());
     }
+    
+    public String getHakuaikaOid() {
+    	return hakuaikaDto.getOid();
+    }
 
 
     /**
@@ -101,9 +105,10 @@ public class HakuaikaViewModel {
     
     @Override
     public int hashCode() {
-    	return hakuaikaDto.getHakuajanKuvaus().hashCode()
+    	return getHakuaikaOid()!=null ? getHakuaikaDto().getOid().hashCode() :
+    			(hakuaikaDto.getHakuajanKuvaus().hashCode()
     			^ hakuaikaDto.getSisaisenHaunAlkamisPvm().hashCode()
-    			^ hakuaikaDto.getSisaisenHaunPaattymisPvm().hashCode();
+    			^ hakuaikaDto.getSisaisenHaunPaattymisPvm().hashCode());
 	}
     
     @Override
@@ -112,7 +117,9 @@ public class HakuaikaViewModel {
     		return false;
     	}
     	HakuaikaViewModel vm = (HakuaikaViewModel) obj;
-    	return Objects.equal(getHakuajanKuvaus(), vm.getHakuajanKuvaus())
+    	return getHakuaikaOid()!=null && vm.getHakuaikaOid()!=null
+    			? getHakuaikaOid().equals(vm.getHakuaikaOid())
+    			: Objects.equal(getHakuajanKuvaus(), vm.getHakuajanKuvaus())
     			&& Objects.equal(getAlkamisPvm(), vm.getAlkamisPvm())
     			&& Objects.equal(getPaattymisPvm(), vm.getPaattymisPvm());
     }
