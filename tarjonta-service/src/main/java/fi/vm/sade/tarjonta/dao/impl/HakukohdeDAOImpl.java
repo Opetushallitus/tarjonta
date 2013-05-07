@@ -15,9 +15,11 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import com.mysema.query.Tuple;
 import com.mysema.query.jpa.hibernate.sql.HibernateSQLQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.Expression;
 import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -293,18 +295,12 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     @Override
     public List<String> findOIDsBy(fi.vm.sade.tarjonta.service.types.TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
 
-        // Convert Enums from API enum to DB enum
-        fi.vm.sade.tarjonta.model.TarjontaTila dbTarjontaTila = null;
-        if (tila != null) {
-            dbTarjontaTila = fi.vm.sade.tarjonta.model.TarjontaTila.valueOf(tila.name());
-        }
-
         QHakukohde hakukohde = QHakukohde.hakukohde;
-
         BooleanExpression whereExpr = null;
 
-        if (dbTarjontaTila != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, hakukohde.tila.eq(dbTarjontaTila));
+        if (tila != null) {
+            // Convert Enums from API enum to DB enum
+            whereExpr = QuerydslUtils.and(whereExpr, hakukohde.tila.eq(fi.vm.sade.tarjonta.model.TarjontaTila.valueOf(tila.name())));
         }
         if (lastModifiedBefore != null) {
             whereExpr = QuerydslUtils.and(whereExpr, hakukohde.lastUpdateDate.before(lastModifiedBefore));
@@ -312,6 +308,84 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         if (lastModifiedSince != null) {
             whereExpr = QuerydslUtils.and(whereExpr, hakukohde.lastUpdateDate.after(lastModifiedSince));
         }
+
+        // Result selection
+        Expression<?>[] projectionExpr = new Expression<?>[] {hakukohde.oid};
+
+        List<Object[]> tmp = findScalars(whereExpr, count, startIndex, projectionExpr);
+        return convertToSingleStringList(tmp);
+    }
+
+    @Override
+    public List<String> findOidsByKoulutusId(long koulutusId) {
+        //TODO use constants
+        Query q = getEntityManager().createQuery("select h.oid from Hakukohde h JOIN h.koulutusmoduuliToteutuses kmt where kmt.id= :komotoId").setParameter("komotoId", koulutusId );
+
+        List<String> results = (List<String>) q.getResultList();
+        return results;
+    }
+
+
+    @Override
+    public List<String> findByHakuOid(String hakuOid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
+        log.info("findByHakuOid({}, ...)", hakuOid);
+
+        QHakukohde hakukohde = QHakukohde.hakukohde;
+
+        // Select by haku OID
+        BooleanExpression whereExpr = hakukohde.haku.oid.eq(hakuOid);
+
+        // Result selection
+        Expression<?>[] projectionExpr = new Expression<?>[] {hakukohde.oid};
+
+        if (lastModifiedBefore != null) {
+            whereExpr = whereExpr.and(hakukohde.lastUpdateDate.before(lastModifiedBefore));
+        }
+        if (lastModifiedSince != null) {
+            whereExpr = whereExpr.and(hakukohde.lastUpdateDate.after(lastModifiedSince));
+        }
+
+        List<Object[]> tmp = findScalars(whereExpr, count, startIndex, projectionExpr);
+
+        return convertToSingleStringList(tmp);
+    }
+
+
+    /**
+     * Convert Object[] listo to String list.
+     *
+     * @param input
+     * @return
+     */
+    private List<String> convertToSingleStringList(List<Object[]> input) {
+        List<String> result = new ArrayList<String>();
+
+        for (Object[] row : input) {
+            if (row != null && row.length != 0 && row[0] != null) {
+                if (row[0] instanceof String) {
+                    result.add((String) row[0]);
+                } else {
+                    result.add(row[0].toString());
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Do actual search, convert to list of result object arrays.
+     *
+     * @param whereExpr
+     * @param count
+     * @param startIndex
+     * @param projectionExpr
+     * @return
+     */
+    private List<Object[]> findScalars(BooleanExpression whereExpr, int count, int startIndex, Expression<?>... projectionExpr) {
+        log.info("findScalars({}, {}, {}, {})", new Object[] {whereExpr, count, startIndex, projectionExpr});
+
+        QHakukohde hakukohde = QHakukohde.hakukohde;
 
         JPAQuery q = from(hakukohde);
         if (whereExpr != null) {
@@ -324,15 +398,17 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
             q.offset(startIndex);
         }
 
-        return q.list(hakukohde.oid);
+        List<Object[]> result = new ArrayList<Object[]>();
+
+        // Get result and convert to result array
+        List<Tuple> lt = q.list(projectionExpr);
+        for (Tuple tuple : lt) {
+            result.add(tuple.toArray());
+        }
+
+        log.info("  result --> {}", result);
+
+        return result;
     }
 
-    @Override
-    public List<String> findOidsByKoulutusId(long koulutusId) {
-        //TODO use constants
-        Query q = getEntityManager().createQuery("select h.oid from Hakukohde h JOIN h.koulutusmoduuliToteutuses kmt where kmt.id= :komotoId").setParameter("komotoId", koulutusId );
-        
-        List<String> results = (List<String>) q.getResultList();
-        return results;        
-    }
 }

@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import static fi.vm.sade.tarjonta.dao.impl.TestData.HAKU_OID1;
 import static fi.vm.sade.tarjonta.dao.impl.TestData.OID1;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
@@ -23,6 +24,8 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.junit.After;
@@ -100,13 +103,70 @@ public class HakukohdeDAOImplTest extends TestData {
         final List result = instance.findValintakoeByHakukohdeOid(OID3);
         assertEquals(0, result.size());
     }
+
+
+    @Test
+    public void testFindOidsBy() {
+        {
+            // TILA
+            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 0, null, null);
+            assertEquals(result.size(), 3);
+        }
+        {
+            // TILA
+            List<String> result = instance.findOIDsBy(TarjontaTila.LUONNOS, 100, 0, null, null);
+            assertEquals(result.size(), 0);
+        }
+
+
+        {
+            // TILA
+            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 2, 0, null, null);
+            assertEquals(result.size(), 2);
+        }
+        {
+            // TILA
+            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 1, null, null);
+            assertEquals(result.size(), 2);
+        }
+
+        Date d = new Date();
+        {
+            // TILA + date before
+            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 0, d, null);
+            assertEquals(result.size(), 3);
+        }
+        {
+            // TILA + date after
+            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 0, null, d);
+            assertEquals(result.size(), 0);
+        }
+
+
+    }
+
+
+
+    @Test
+    public void testFindByHakuOid() {
+        {
+            List<String> result = instance.findByHakuOid(HAKU_OID1, null, 100, 0, null, null);
+            assertEquals(result.size(), 3);
+        }
+        {
+            List<String> result = instance.findByHakuOid(HAKU_OID2, null, 100, 0, null, null);
+            assertEquals(result.size(), 0);
+        }
+    }
+
+
 //    @Test
 //    public void testHaeHakukohteetJaKoulutukset() {
 //        HaeHakukohteetKyselyTyyppi tyyppi = new HaeHakukohteetKyselyTyyppi();
 //        //tyyppi.setNimiKoodiUri(KOODISTO_URI_1);
 //
 //        tyyppi.setNimi(HUMAN_READABLE_NAME_1);
-//        
+//
 //        final List result = instance.haeHakukohteetJaKoulutukset(tyyppi);
 //        assertEquals(1, result.size());
 //    }

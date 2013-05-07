@@ -117,7 +117,7 @@ public class Haku extends BaseEntity {
 
     @Column(name="viimPaivitysPvm")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdateDate;
+    private Date lastUpdateDate = new Date();
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
 

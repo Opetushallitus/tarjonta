@@ -111,7 +111,7 @@ public class TarjontaFixtures {
     public Koulutusmoduuli createTutkintoOhjelma() {
         return createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
     }
-    
+
     public Koulutusmoduuli createKoulutusmoduuli(KoulutusmoduuliTyyppi tyyppi) {
         Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
         m.setOid(randomOid("koulutusmoduuli"));
@@ -124,10 +124,10 @@ public class TarjontaFixtures {
         m.setKoulutusKoodi(randomUri("koulutusluokitus"));
         m.setNimi(createText("Koulutusmoduulinimi (fi)", "Koulutusmoduulinimi (sv)", "Koulutusmoduulinimi (en)"));
         m.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value());
-        
+
         return m;
     }
-    
+
     public Koulutusmoduuli createTutkintoOhjelma(KoulutusmoduuliTyyppi tyyppi) {
 
         Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
@@ -214,6 +214,7 @@ public class TarjontaFixtures {
         hakukohde.setHakukelpoisuusvaatimus(randomUri("koulutustaso"));
         hakukohde.setTila(TarjontaTila.VALMIS);
         hakukohde.setYlinValintaPistemaara(200);
+        hakukohde.setLastUpdateDate(new Date());
 
         return hakukohde;
 
@@ -255,6 +256,8 @@ public class TarjontaFixtures {
         haku.setHakutapaUri(randomUri("hakutapa"));
         haku.setHakutyyppiUri(randomUri("hakutyyppi"));
         haku.setTila(TarjontaTila.LUONNOS);
+        haku.setLastUpdateDate(new Date());
+        haku.setLastUpdatedByOid("TEST");
         return haku;
     }
 

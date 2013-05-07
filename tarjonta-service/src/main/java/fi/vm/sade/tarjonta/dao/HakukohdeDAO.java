@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * DAO interface to retrieve Application Options (Hakukohde's).
  */
 public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
@@ -61,13 +62,25 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
      * @return list of oids.
      */
     public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince);
-    
+
     /**
      * Hae hakukohteet jotka liittyvät komotoon
      * @param id komoto id (ei oid!)
      * @return
      */
-    List<String> findOidsByKoulutusId(long id); 
+    List<String> findOidsByKoulutusId(long id);
+
+    /**
+     *
+     * @param hakuOid
+     * @param searchTerms
+     * @param count
+     * @param startIndex
+     * @param lastModifiedBefore
+     * @param lastModifiedSince
+     * @return
+     */
+    public List<String> findByHakuOid(String hakuOid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince);
 
 }
 

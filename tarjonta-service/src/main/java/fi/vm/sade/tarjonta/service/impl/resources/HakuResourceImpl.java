@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.resources.HakuResource;
@@ -15,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -34,6 +37,9 @@ public class HakuResourceImpl implements HakuResource {
 
     @Autowired
     private HakuDAO hakuDAO;
+
+    @Autowired
+    private HakukohdeDAO hakukohdeDAO;
 
     @Autowired(required = true)
     private ConversionService conversionService;
@@ -128,24 +134,72 @@ public class HakuResourceImpl implements HakuResource {
         return result;
     }
 
+//    // /haku/OID/hakukohde
+//    @Override
+//    public List<String> getByOIDHakukohde(String oid) {
+//        LOG.info("/haku/{}/hakukohde -- getByOIDHakukohde()", oid);
+//
+//        List<String> result = new ArrayList<String>();
+//
+//        Haku h = hakuDAO.findByOid(oid);
+//        if (h != null) {
+//            // TODO fixme to be more efficient!
+//            Set<Hakukohde> hakukohdes = h.getHakukohdes();
+//            for (Hakukohde hakukohde : hakukohdes) {
+//                result.add(hakukohde.getOid());
+//            }
+//        }
+//        LOG.info("  result={}", result);
+//        return result;
+//    }
+
     // /haku/OID/hakukohde
     @Override
-    public List<String> getByOIDHakukohde(String oid) {
+    public List<String> getByOIDHakukohde(String oid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
         LOG.info("/haku/{}/hakukohde -- getByOIDHakukohde()", oid);
 
         List<String> result = new ArrayList<String>();
 
-        Haku h = hakuDAO.findByOid(oid);
-        if (h != null) {
-            // TODO fixme to be more efficient!
-            Set<Hakukohde> hakukohdes = h.getHakukohdes();
-            for (Hakukohde hakukohde : hakukohdes) {
-                result.add(hakukohde.getOid());
-            }
-        }
+        result = hakukohdeDAO.findByHakuOid(oid, searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince);
+
+//        Haku h = hakuDAO.findByOid(oid);
+//        if (h != null) {
+//            // TODO fixme to be more efficient!
+//            Set<Hakukohde> hakukohdes = h.getHakukohdes();
+//            for (Hakukohde hakukohde : hakukohdes) {
+//                result.add(hakukohde.getOid());
+//            }
+//        }
+
         LOG.info("  result={}", result);
         return result;
     }
 
+    // /haku/OID/hakukohdeWithName
+    @Override
+    public List<Map<String, String>> getByOIDHakukohdeExtra(String oid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
+        LOG.info("/haku/{}/hakukohdeWithName -- getByOIDHakukohdeExtra()", oid);
+
+        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+
+        // Get list of oids
+        List<String> hakukohdeOids = getByOIDHakukohde(oid, searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince);
+
+        // Loop the result
+        for (String hakukohdeOid : hakukohdeOids) {
+            Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(hakukohdeOid);
+
+            Map<String, String> row = new HashMap<String, String>();
+
+            row.put("oid", hakukohde.getOid());
+            row.put("nimiUri", hakukohde.getHakukohdeNimi());
+
+            // TODO resolve nimi uri :)
+
+            result.add(row);
+        }
+
+        return result;
+    }
 
 }

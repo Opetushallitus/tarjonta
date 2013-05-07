@@ -97,7 +97,7 @@ public class Hakukohde extends BaseEntity {
     private Double alinHyvaksyttavaKeskiarvo;
     @Column(name="viimPaivitysPvm")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdateDate;
+    private Date lastUpdateDate = new Date();
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
 
