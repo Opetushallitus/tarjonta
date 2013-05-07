@@ -48,7 +48,13 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.setOid(s.getOid());
         hakukohde.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
         hakukohde.setLisatiedot(EntityUtils.copyFields(s.getLisatiedot()));
-        hakukohde.setHakukohteenHakuaika(CommonToDTOConverter.convertHakuaikaToSisaisetHakuAjat(s.getHakuaika()));
+        
+        if (s.getHakuaika()==null && s.getHaku().getHakuaikas().size()==1) {
+        	// jos hakuaikaa ei valittu ja vain yksi on tarjolla, näytetään se
+            hakukohde.setSisaisetHakuajat(CommonToDTOConverter.convertHakuaikaToSisaisetHakuAjat(s.getHaku().getHakuaikas().iterator().next()));
+        } else {
+            hakukohde.setSisaisetHakuajat(CommonToDTOConverter.convertHakuaikaToSisaisetHakuAjat(s.getHakuaika()));
+        }
         
         //TODO: hakukohde.setValintaPerusteidenKuvaukset(null);
         hakukohde.getHakukohteenKoulutusOidit().addAll(convertKoulutukses(s.getKoulutusmoduuliToteutuses()));

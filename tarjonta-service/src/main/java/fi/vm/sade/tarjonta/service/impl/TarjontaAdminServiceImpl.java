@@ -328,15 +328,17 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
     
     private Hakuaika findHakuaika(Haku hk, SisaisetHakuAjat ha) {
-    	if (ha==null) {
-    		return null;
+    	if (hk.getHakuaikas().size()==1) {
+    		return hk.getHakuaikas().iterator().next();
     	}
-    	for (Hakuaika hka : hk.getHakuaikas()) {
-    		if (hka.getSisaisenHakuajanNimi().equals(ha.getHakuajanKuvaus())
-    				&& hka.getAlkamisPvm().equals(ha.getSisaisenHaunAlkamisPvm())
-    				&& hka.getPaattymisPvm().equals(ha.getSisaisenHaunPaattymisPvm())) {
-    			return hka;
-    		}
+    	if (ha!=null) {
+        	for (Hakuaika hka : hk.getHakuaikas()) {
+        		if (hka.getSisaisenHakuajanNimi().equals(ha.getHakuajanKuvaus())
+        				&& hka.getAlkamisPvm().getTime()==ha.getSisaisenHaunAlkamisPvm().getTime()
+        				&& hka.getPaattymisPvm().getTime()==ha.getSisaisenHaunPaattymisPvm().getTime()) {
+        			return hka;
+        		}
+        	}
     	}
     	return null;
     }
@@ -353,7 +355,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         Preconditions.checkNotNull(haku, "Insert failed - no haku entity found by haku OID", hakuOid);
 
         hakuk.setHaku(haku);
-        hakuk.setHakuaika(findHakuaika(haku, hakukohde.getHakukohteenHakuaika()));
+        hakuk.setHakuaika(findHakuaika(haku, hakukohde.getSisaisetHakuajat()));
         hakuk = hakukohdeDAO.insert(hakuk);
         hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(), hakuk));
         hakukohdeDAO.update(hakuk);
@@ -423,7 +425,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
         return new HakukohdeTyyppi();
     }
-
+    
     @Override
     @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public HakukohdeTyyppi paivitaHakukohde(HakukohdeTyyppi hakukohdePaivitys) {
@@ -438,6 +440,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         Haku haku = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
 
         hakukohde.setHaku(haku);
+        hakukohde.setHakuaika(findHakuaika(haku, hakukohdePaivitys.getSisaisetHakuajat()));
         hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdePaivitys.getHakukohteenKoulutusOidit(), hakukohde));
         hakukohde.getValintakoes().addAll(hakukohdeTemp.get(0).getValintakoes());
         hakukohde.getLiites().addAll(hakukohdeTemp.get(0).getLiites());

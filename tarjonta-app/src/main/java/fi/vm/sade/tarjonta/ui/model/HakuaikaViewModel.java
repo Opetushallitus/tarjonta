@@ -20,6 +20,8 @@ package fi.vm.sade.tarjonta.ui.model;
 import java.text.DateFormat;
 import java.util.Date;
 
+import com.google.common.base.Objects;
+
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 
@@ -95,6 +97,24 @@ public class HakuaikaViewModel {
      */
     public SisaisetHakuAjat getHakuaikaDto() {
         return hakuaikaDto;
+    }
+    
+    @Override
+    public int hashCode() {
+    	return hakuaikaDto.getHakuajanKuvaus().hashCode()
+    			^ hakuaikaDto.getSisaisenHaunAlkamisPvm().hashCode()
+    			^ hakuaikaDto.getSisaisenHaunPaattymisPvm().hashCode();
+	}
+    
+    @Override
+    public boolean equals(Object obj) {
+    	if (!(obj instanceof HakuaikaViewModel)) {
+    		return false;
+    	}
+    	HakuaikaViewModel vm = (HakuaikaViewModel) obj;
+    	return Objects.equal(getHakuajanKuvaus(), vm.getHakuajanKuvaus())
+    			&& Objects.equal(getAlkamisPvm(), vm.getAlkamisPvm())
+    			&& Objects.equal(getPaattymisPvm(), vm.getPaattymisPvm());
     }
 
 

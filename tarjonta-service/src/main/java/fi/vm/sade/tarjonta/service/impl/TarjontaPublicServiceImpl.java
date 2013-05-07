@@ -712,6 +712,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
             hakukohdeTyyppi.setHakukohteenHaunNimi(mapMonikielinenTekstiToTyyppi(hakukohde.getHaku().getNimi()));
         }
+        
         LueHakukohdeVastausTyyppi vastaus = new LueHakukohdeVastausTyyppi();
         vastaus.setHakukohde(hakukohdeTyyppi);
         return vastaus;

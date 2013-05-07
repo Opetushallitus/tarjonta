@@ -60,7 +60,7 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohde.setViimeisinPaivittajaOid(usr.getOid());
 
         if (hakukohdevm.getHakuaika()!=null) {
-        	hakukohde.setHakukohteenHakuaika(hakukohdevm.getHakuaika().getHakuaikaDto());
+        	hakukohde.setSisaisetHakuajat(hakukohdevm.getHakuaika().getHakuaikaDto());
         }
         
         hakukohde.setAloituspaikat(hakukohdevm.getAloitusPaikat());
@@ -154,8 +154,8 @@ public class HakukohdeViewModelToDTOConverter {
         HakuViewModel haku = mapHakuNimi(hakukohdeTyyppi.getHakukohteenHaunNimi());
         haku.setHakuOid(hakukohdeTyyppi.getHakukohteenHakuOid());
 
-        if (hakukohdeTyyppi.getHakukohteenHakuaika()!=null) {
-        	hakukohdeVM.setHakuaika(new HakuaikaViewModel(hakukohdeTyyppi.getHakukohteenHakuaika()));
+        if (hakukohdeTyyppi.getSisaisetHakuajat()!=null) {
+        	hakukohdeVM.setHakuaika(new HakuaikaViewModel(hakukohdeTyyppi.getSisaisetHakuajat()));
         }
         
         hakukohdeVM.setKaytaHaunPaattymisenAikaa(hakukohdeTyyppi.isKaytetaanHaunPaattymisenAikaa());

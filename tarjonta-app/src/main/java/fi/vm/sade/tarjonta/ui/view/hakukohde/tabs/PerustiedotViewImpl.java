@@ -240,9 +240,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         	if (presenter.getModel().getHakukohde().getSelectedHakukohdeNimi() != null) {
                 hakukohteenNimiCombo.setValue(presenter.getModel().getHakukohde().getSelectedHakukohdeNimi());
         	}
-        	
-       		hakuAikaCombo.setValue(presenter.getModel().getHakukohde().getHakuaika());
-
+        	selectHakuAika(presenter.getModel().getHakukohde().getHakuaika(), presenter.getModel().getHakukohde().getHakuOid(), true);
         }
     }
 
@@ -738,6 +736,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     @Override
     public void setSelectedHaku(HakuViewModel haku) {
+    	System.err.println("SET SELECTED HAKU "+haku.getSisaisetHakuajat());
         hakuCombo.setValue(haku);
     }
     
@@ -748,30 +747,38 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     
     private void prepareHakuAikas(HakuViewModel hvm) {
     	BeanItemContainer<HakuaikaViewModel> container = new BeanItemContainer<HakuaikaViewModel>(HakuaikaViewModel.class);
-		hakuAikaCombo.setReadOnly(false);
+    	container.addAll(hvm.getSisaisetHakuajat());
+    	hakuAikaCombo.setReadOnly(false);
     	hakuAikaCombo.setContainerDataSource(container);
-    	if (hvm!=null && !hvm.getSisaisetHakuajat().isEmpty()) {
-        	container.addAll(hvm.getSisaisetHakuajat());
-        	hakuAikaCombo.setRequired(true);
-        	if (hvm.getSisaisetHakuajat().size()==1) {
-        		hakuAikaCombo.setValue(container.getItemIds().iterator().next());        		
-        		hakuAikaCombo.setReadOnly(true);
-        	} else {
-            	hakuAikaCombo.setValue(null);
-        	}
+    	
+    	selectHakuAika(presenter.getModel().getHakukohde().getHakuaika(), hvm, false);
+    }
+    
+    private void selectHakuAika(HakuaikaViewModel hvm, HakuViewModel hk, boolean initial) {
+		
+    	System.err.println((initial ? "INITIAL" : "COMBO")+" SELECT "+hvm+" OF "+hk+" -- "+hk.getSisaisetHakuajat());
+    	
+    	hakuAikaCombo.setReadOnly(false); // setValue ei toimi jos readonly
+    	if (hk==null || hk.getSisaisetHakuajat().isEmpty()) {
+    		hakuAikaCombo.setValue(null);
+        	hakuAikaCombo.setReadOnly(true);
+        	hakuAikaCombo.setEnabled(false);
+        } else if (hk.getSisaisetHakuajat().size()==1) {
+    		hakuAikaCombo.setValue(hakuAikaCombo.getContainerDataSource().getItemIds().iterator().next());
+        	hakuAikaCombo.setReadOnly(true);
         	hakuAikaCombo.setEnabled(true);
     	} else {
-        	hakuAikaCombo.setEnabled(false);
-    		hakuAikaCombo.setRequired(false);
-    		hakuAikaCombo.setReadOnly(true);
-    		hakuAikaCombo.setValue(null);
+    		hakuAikaCombo.setValue(hvm);
+        	hakuAikaCombo.setEnabled(true);
     	}
+
+
     }
     
     private ComboBox buildHakuaikaCombo() {
     	hakuAikaCombo = new ComboBox();
+    	hakuAikaCombo.setRequired(true);
     	hakuAikaCombo.setEnabled(false);
-		hakuAikaCombo.setNullSelectionAllowed(false);
     	return hakuAikaCombo;
     }
     	 
