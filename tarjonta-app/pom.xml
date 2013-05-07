@@ -229,9 +229,14 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
-     
-    </dependencies>
 
+        <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>webapp-portal-decorator</artifactId>
+            <version>${generic.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
 
     <build>
         <!--
