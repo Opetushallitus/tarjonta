@@ -154,6 +154,7 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusView;
  * @author tkatva
  * @author mholi
  * @author mlyly
+ * @author Timo Santasalo / Teknokala Ky
  */
 public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
@@ -203,12 +204,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private EditKoulutusLisatiedotToinenAsteView lisatiedotView;
     @Autowired(required = true)
     private TarjontaLukioPresenter lukioPresenter;
-    private LueKoulutusVastausTyyppi rawKoulutus;
     
-    public LueKoulutusVastausTyyppi getRawKoulutus() {
-        return rawKoulutus;
-    }
-
     public static final String VALINTAKOE_TAB_SELECT = "valintakokeet";
     public static final String LIITTEET_TAB_SELECT = "liitteet";
 
@@ -434,7 +430,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         kysely.getKoulutusOids().addAll(selectedOids);
         HaeKoulutuksetVastausTyyppi vastaus = getTarjontaPublicService().haeKoulutukset(kysely);
-        System.out.println("vastaus koko: " + vastaus.getKoulutusTulos().size());
         return validateKoulutukses(vastaus.getKoulutusTulos());
     }
 
@@ -458,7 +453,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
     private boolean doesEqual(String[] strs) {
         for (int i = 0; i < strs.length; i++) {
-            System.out.println("koodi: " + strs[i]);
             if (!strs[0].equals(strs[i])) {
                 return false;
             }
@@ -647,8 +641,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     
 
     public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustietoType> orgs) {
-
-
         getTarjoaja().addSelectedOrganisations(orgs);
         showCopyKoulutusPerustiedotEditView(getModel().getSelectedKoulutusOid(),orgs);
         getModel().getSelectedKoulutukset().clear();
@@ -676,7 +668,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         return i18n.getMessage(parts[parts.length - 1]);
     }
 
-    private String getKoodiNimi(String hakukohdeUri) {
+    public String getKoodiNimi(String hakukohdeUri) {
         String nimi = this.getUiHelper().getKoodiNimi(hakukohdeUri, I18N.getLocale());
         if ("".equals(nimi)) {
             nimi = hakukohdeUri;
@@ -872,7 +864,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     private void readKoulutusToModel(final String koulutusOid) {
-        rawKoulutus = this.getKoulutusByOid(koulutusOid);
+        LueKoulutusVastausTyyppi rawKoulutus = this.getKoulutusByOid(koulutusOid);
         try {
             KoulutusToisenAsteenPerustiedotViewModel koulutus;
             koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), rawKoulutus, I18N.getLocale());
@@ -1077,7 +1069,12 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 addKomotoOidsToModel(koulutusOidNameViewModels);
                 getModel().getHakukohde().getKoulukses().addAll(koulutusOidNameViewModels);
             }
-            getTarjoaja().setSelectedResultRowOrganisationOid(getModel().getSelectedKoulutukset().get(0).getKoulutus().getKomotoOid());
+
+            if (getModel().getSelectedKoulutukset() != null && !getModel().getSelectedKoulutukset().isEmpty()) {  
+                getTarjoaja().setSelectedResultRowOrganisationOid(getModel().getSelectedKoulutukset().get(0).getKoulutus().getKomotoOid());
+            } else if (koulutusOids != null && !koulutusOids.isEmpty()) {
+                getTarjoaja().setSelectedResultRowOrganisationOid(koulutusOids.get(0));
+            }
         } else {
             editHakukohdeView.loadLiiteTableWithData();
         }
@@ -1869,7 +1866,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private void loadKoulutusohjelmaLisatiedotData(final String koulutuskoodi, String pohjakoulutusvaatimus) {
         LOG.debug("loadtutkintoData, koulutuskoodi: {}, tarjoaja: {}", koulutuskoodi, getTarjoaja());
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
-        kysely.setKoulutusKoodi(koulutuskoodi);
+        kysely.setKoulutusKoodi(koulutuskoodi); 
 
         /*
          * When use has selected many organisations(example koulutus copy),
@@ -1903,6 +1900,32 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             }
             this.lisatiedotView.getEditKoulutusLisatiedotForm().reBuildTabsheet();
         }
+    }
+    
+    public KoulutusTulos findKomotoByKoulutuskoodiPohjakoulutus(String koulutuskoodi, String pohjakoulutusvaatimus) {
+        HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
+        kysely.setKoulutusKoodi(koulutuskoodi); 
+
+        /*
+         * When use has selected many organisations(example koulutus copy),
+         * an organisation OID is taken from the selected result row item, if
+         * use has selected only one organisation on dialog, then the OID is
+         * taken from the selected organisation.
+         */
+        kysely.getTarjoajaOids().add(getTarjoaja().getSingleSelectRowResultOrganisationOid());
+        HaeKoulutuksetVastausTyyppi vastaus = this.getTarjontaPublicService().haeKoulutukset(kysely);
+
+        if (vastaus.getKoulutusTulos() != null && !vastaus.getKoulutusTulos().isEmpty()) {
+            for (KoulutusTulos curTulos : vastaus.getKoulutusTulos()) {
+                if ((pohjakoulutusvaatimus == null 
+                        && curTulos.getKoulutus().getPohjakoulutusVaatimus() == null)
+                     || (pohjakoulutusvaatimus != null 
+                        && pohjakoulutusvaatimus.equals(curTulos.getKoulutus().getPohjakoulutusVaatimus()))) {
+                    return curTulos;
+                }
+            }
+        }
+        return null;
     }
 
     public void loadSelectedKomoData() {

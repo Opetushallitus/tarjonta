@@ -65,12 +65,14 @@ public class EditKoulutusView extends AbstractVerticalLayout {
             title = UiUtil.label((AbsoluteLayout) null, T(LABEL_FORMAT_EDIT),
                     LabelStyleEnum.TEXT_RAW,
                     DEMO_DATA,
+                    presenter.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getPohjakoulutusvaatimus()),
                     organisaatioName);
         } else {
             title = UiUtil.label((AbsoluteLayout) null,
                     T(LABEL_FORMAT_NEW),
                     LabelStyleEnum.TEXT_RAW,
                     DEMO_DATA,
+                    presenter.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getPohjakoulutusvaatimus()),
                     organisaatioName);
         }
         HorizontalLayout hlLabelWrapper = new HorizontalLayout();

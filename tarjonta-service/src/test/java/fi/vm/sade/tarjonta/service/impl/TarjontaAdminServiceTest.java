@@ -20,6 +20,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -105,6 +106,8 @@ public class TarjontaAdminServiceTest {
         insertSampleKoulutus();
 
     }
+
+
 
     @Test(expected = Exception.class)
     public void testCannotCreateKoulutusWithoutKoulutusmoduuli() {

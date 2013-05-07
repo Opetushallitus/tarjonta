@@ -16,11 +16,14 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;/*
  */
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
 import com.vaadin.ui.Button;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
+
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -28,16 +31,17 @@ import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  * Created by: Tuomas Katva Date: 15.1.2013
+ * @author Timo Santasalo / Teknokala Ky
  */
 @Configurable(preConstruction = true)
 public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<HakukohdeViewModel, PerustiedotViewImpl> {
 
-    @Autowired(required = true)
+	private static final long serialVersionUID = 1L;
+	
+	@Autowired(required = true)
     private TarjontaPresenter presenter;
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
@@ -82,6 +86,7 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
         HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
         hakukohde.getLisatiedot().clear();
         hakukohde.getLisatiedot().addAll(formView.getLisatiedot());
+        hakukohde.setHakuaika(formView.getSelectedHakuaika());
 
         // TODO call subform to perform validation (weigthed stdies can FAIL and still the save succeeds)
         // formView.validateExtraData();

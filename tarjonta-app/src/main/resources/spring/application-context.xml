@@ -24,7 +24,7 @@
     -->
     <context:property-placeholder
         location="classpath:tarjonta-app.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-app.properties"
-        ignore-resource-not-found="true"/>
+        ignore-resource-not-found="true" properties-ref="defaultProps" />
 
     <!--
       Load security settings
@@ -35,7 +35,7 @@
                 <prop key="cas_mode">front</prop>
                 <prop key="cas_key">tarjonta-app</prop>
                 <prop key="cas_service">${cas.service.tarjonta-app}</prop>
-                <!--prop key="spring_security_default_access">permitAll</prop -->
+                <!--prop key="spring_security_default_access">permitAll</prop-->
                 <prop key="spring_security_default_access">hasRole('ROLE_APP_TARJONTA')</prop>
             </util:properties>
         </property>

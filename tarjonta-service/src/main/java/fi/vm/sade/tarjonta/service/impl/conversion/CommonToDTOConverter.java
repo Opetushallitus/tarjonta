@@ -15,11 +15,13 @@ package fi.vm.sade.tarjonta.service.impl.conversion;/*
  * European Union Public Licence for more details.
  */
 
+import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
+import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 
 import java.util.ArrayList;
 
@@ -57,4 +59,17 @@ public class CommonToDTOConverter {
         monikielinenTekstiTyyppi.getTeksti().addAll(tekstis);
         return monikielinenTekstiTyyppi;
     }
+
+    public static SisaisetHakuAjat convertHakuaikaToSisaisetHakuAjat(Hakuaika ha) {
+    	if (ha==null) {
+    		return null;
+    	}
+    	SisaisetHakuAjat ret = new SisaisetHakuAjat();
+    	ret.setHakuajanKuvaus(ha.getSisaisenHakuajanNimi());
+    	ret.setSisaisenHaunAlkamisPvm(ha.getAlkamisPvm());
+    	ret.setSisaisenHaunPaattymisPvm(ha.getPaattymisPvm());
+    	ret.setOid(Long.toString(ha.getId()));
+    	return ret;
+    }
+    
 }
