@@ -30,6 +30,8 @@ import java.util.Locale;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
+import com.google.common.base.Preconditions;
+
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
@@ -197,18 +199,25 @@ public class IndexingUtils {
 
     private static MonikielinenTekstiTyyppi getNimiFromTarjoajaDoc(SolrDocument orgdoc) {
         MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
-        Teksti nimiFi = new Teksti();
-        nimiFi.setKieliKoodi("fi");
-        nimiFi.setValue("" + orgdoc.getFieldValue(ORG_NAME_FI));
-        nimi.getTeksti().add(nimiFi);
-        Teksti nimiSv = new Teksti();
-        nimiSv.setKieliKoodi("sv");
-        nimiSv.setValue("" + orgdoc.getFieldValue(ORG_NAME_SV));
-        nimi.getTeksti().add(nimiSv);
-        Teksti nimiEn = new Teksti();
-        nimiEn.setKieliKoodi("en");
-        nimiEn.setValue("" + orgdoc.getFieldValue(ORG_NAME_EN));
-        nimi.getTeksti().add(nimiEn);
+        if (orgdoc.getFieldValue(ORG_NAME_FI) != null) {
+            Teksti nimiFi = new Teksti();
+            nimiFi.setKieliKoodi("fi");
+            nimiFi.setValue(orgdoc.getFieldValue(ORG_NAME_FI).toString());
+            nimi.getTeksti().add(nimiFi);
+        }
+        if (orgdoc.getFieldValue(ORG_NAME_SV) != null) {
+            Teksti nimiSv = new Teksti();
+            nimiSv.setKieliKoodi("sv");
+            nimiSv.setValue(orgdoc.getFieldValue(ORG_NAME_SV).toString());
+            nimi.getTeksti().add(nimiSv);
+        }
+        if (orgdoc.getFieldValue(ORG_NAME_EN) != null) {
+            Teksti nimiEn = new Teksti();
+            nimiEn.setKieliKoodi("en");
+            nimiEn.setValue(orgdoc.getFieldValue(ORG_NAME_EN).toString());
+            nimi.getTeksti().add(nimiEn);
+        }
+        Preconditions.checkArgument(nimi.getTeksti().size()>0);
         return nimi;
     }
     

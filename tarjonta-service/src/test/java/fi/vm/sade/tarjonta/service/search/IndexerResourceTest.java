@@ -24,10 +24,13 @@ import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.TarjontaTila;
+import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
+import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
 
 public class IndexerResourceTest {
 
@@ -44,16 +47,34 @@ public class IndexerResourceTest {
                 .toReturn(hakukohteetServer);
         indexer = new IndexerResource();
         indexer.setSolrServerFactory(factory);
-        HakukohdeToSolrInputDocumentFunction hakukohdeToSolr = new HakukohdeToSolrInputDocumentFunction();
-        ReflectionTestUtils.setField(indexer, "hakukohdeSolrConverter", hakukohdeToSolr);
+        HakukohdeIndexEntityToSolrDocument hakukohdeToSolr = new HakukohdeIndexEntityToSolrDocument();
+        ReflectionTestUtils.setField(indexer, "hakukohdeConverter", hakukohdeToSolr);
         
         organisaatioService = Mockito.mock(OrganisaatioService.class);
         stub(organisaatioService.findByOid("o-oid-12345")).toReturn(getOrg("o-oid-12345"));
         ReflectionTestUtils.setField(hakukohdeToSolr, "organisaatioService", organisaatioService);
-        ReflectionTestUtils.setField(hakukohdeToSolr, "komotoDao", Mockito.mock(KoulutusmoduuliToteutusDAO.class));
 
         koodiService = Mockito.mock(KoodiService.class);
         ReflectionTestUtils.setField(hakukohdeToSolr, "koodiService", koodiService);
+        
+        IndexerDAO indexerDao = Mockito.mock(IndexerDAO.class);
+        ReflectionTestUtils.setField(indexer, "indexerDao", indexerDao);
+        ReflectionTestUtils.setField(hakukohdeToSolr, "indexerDao", indexerDao);
+        
+        stub(indexerDao.findHakukohdeById(1l)).toReturn(getHakukohdeIndexEntity(1l));
+        stub(indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(1l)).toReturn(getHakukohdeKoulutukset(1l));
+    }
+
+    private List<KoulutusIndexEntity> getHakukohdeKoulutukset(long id) {
+        List<KoulutusIndexEntity> hakukohteenKoulutukset = Lists.newArrayList();
+        KoulutusIndexEntity koulutus = new KoulutusIndexEntity("koulutus-oid", "o-oid-12345");
+        hakukohteenKoulutukset.add(koulutus);
+        return hakukohteenKoulutukset;
+    }
+
+    private HakukohdeIndexEntity getHakukohdeIndexEntity(long id) {
+        HakukohdeIndexEntity hie = new HakukohdeIndexEntity(id, "oid", "hakukohdenimi", "hakukausiUri", Integer.valueOf(2013), TarjontaTila.JULKAISTU,"hakutapaUri", Integer.valueOf(5), 2l);
+        return hie;
     }
 
     private OrganisaatioDTO getOrg(String oid) {
@@ -74,25 +95,22 @@ public class IndexerResourceTest {
         List<Hakukohde> hakukohteet = Lists.newArrayList();
         hakukohteet.add(getHakukohde());
         indexer.indexHakukohde(hakukohteet);
-        //verify docs are added
+        verify(hakukohteetServer, times(2)).commit(true, true, false);
         verify(hakukohteetServer, times(1)).add(any(Collection.class));
-        //verify that commit occurs
-        verify(hakukohteetServer, times(1)).commit(true, true, false);
-        //verify that koodis are resolved
-        verify(koodiService, times(1)).searchKoodis(any(SearchKoodisCriteriaType.class));
-        //verify that organisaatioservice is called
+        verify(koodiService, times(3)).searchKoodis(any(SearchKoodisCriteriaType.class));
         verify(organisaatioService, times(1)).findByOid("o-oid-12345");
     }
 
     private Hakukohde getHakukohde() {
+        
         Haku haku = new Haku();
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setHakukohdeNimi("xxx");
+        hakukohde.setId(1l);
         hakukohde.setHaku(haku);
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setTarjoaja("o-oid-12345");
         hakukohde.setKoulutusmoduuliToteutuses(Sets.newHashSet(komoto));
-        hakukohde.setId(10l);
         return hakukohde;
     }
 
