@@ -1077,7 +1077,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 addKomotoOidsToModel(koulutusOidNameViewModels);
                 getModel().getHakukohde().getKoulukses().addAll(koulutusOidNameViewModels);
             }
-            getTarjoaja().setSelectedResultRowOrganisationOid(getModel().getSelectedKoulutukset().get(0).getKoulutus().getKomotoOid());
+            if (getModel().getSelectedKoulutukset() != null && !getModel().getSelectedKoulutukset().isEmpty()) {  
+                getTarjoaja().setSelectedResultRowOrganisationOid(getModel().getSelectedKoulutukset().get(0).getKoulutus().getKomotoOid());
+            } else if (koulutusOids != null && !koulutusOids.isEmpty()) {
+                getTarjoaja().setSelectedResultRowOrganisationOid(koulutusOids.get(0));
+            }
         } else {
             editHakukohdeView.loadLiiteTableWithData();
         }
