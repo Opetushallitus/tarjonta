@@ -41,7 +41,7 @@ public class KoulutusIndexEntity {
             TarjontaTila tila, String koulutusTyyppi,
             String koulutusmoduuliOid, String koulutusKoodi,
             String tutkintoNimike, String koulutustyyppi, String lukiolinja,
-            String koulutusohjelmaKoodi, String tarjoaja) {
+            String koulutusohjelmaKoodi, String tarjoaja, String pohjakoulutusVaatimus) {
         this.koulutusId = id;
         this.oid = oid;
         this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
@@ -54,6 +54,7 @@ public class KoulutusIndexEntity {
         this.lukiolinja = lukiolinja;
         this.koulutusohjelmaKoodi = koulutusohjelmaKoodi;
         this.tarjoaja = tarjoaja;
+        this.pohjakoulutusVaatimus = pohjakoulutusVaatimus;
     }
 
     /**
