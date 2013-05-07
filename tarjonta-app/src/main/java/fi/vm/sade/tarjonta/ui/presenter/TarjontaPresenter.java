@@ -1879,6 +1879,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         if (vastaus.getKoulutusTulos() != null && !vastaus.getKoulutusTulos().isEmpty()) {
             for (KoulutusTulos curTulos : vastaus.getKoulutusTulos()) {
+                
                 if (pohjakoulutusvaatimus == null 
                         || (pohjakoulutusvaatimus != null 
                             && pohjakoulutusvaatimus.equals(curTulos.getKoulutus().getPohjakoulutusVaatimus()))) {
