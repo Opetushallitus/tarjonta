@@ -42,6 +42,7 @@ import com.vaadin.ui.Window.Notification;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
@@ -341,8 +342,10 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     }
 
     @Override
-    public void appendKoulutuksetToList(HakukohdeViewModel hakukohde) {
-        HierarchicalContainer hc = (HierarchicalContainer) (this.categoryTree.getContainerDataSource());
+    public void showKoulutuksetForHakukohde(List<KoulutusTulos> koulutukset) {
+        
+        
+        /*HierarchicalContainer hc = (HierarchicalContainer) (this.categoryTree.getContainerDataSource());
         for (Object item : hc.getItemIds()) {
             if (!(categoryTree.getContainerProperty(item, COLUMN_A).getValue() instanceof HakukohdeResultRow)) {
                 continue;
@@ -352,11 +355,11 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 addKoulutuksetToTree(item, hakukohde, hc);
                 return;
             }
-        }
+        }*/
     }
 
     //TODO this has to be reimplemented now that solr does the searching!!!
-    private void addKoulutuksetToTree(Object item, HakukohdeViewModel hakukohde, HierarchicalContainer hc) {
+    //private void addKoulutuksetToTree(Object item, HakukohdeViewModel hakukohde, HierarchicalContainer hc) {
         /*hc.setChildrenAllowed(item, true);
         for (String komotoOid : hakukohde.getKomotoOids()) {
             HakukohdeResultRow rowStyle = new HakukohdeResultRow();
@@ -372,7 +375,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
             hc.setChildrenAllowed(komotoOid, false);
         }
         this.categoryTree.setCollapsed(item, false);*/
-    }
+    //}
 
     @Override
     public void clearAllDataItems() {

@@ -34,15 +34,17 @@ public class KoulutusmoduuliToteutusDAOTest {
 
     
     @Test
-    public void testFindKomotosByKomoAndTarjoaja() {
+    public void testFindKomotosByKomoTarjoajaPohjakoulutus() {
         String TARJOAJA_OID = "jokin.tarjoaja.oid";
         String KOMOTO_OID = "jokin.KOMOTO.oid.1.1.12.2." + System.currentTimeMillis();
+        String POHJAKOULUTUS = "http://jokin.pohjakoulutus/yo";
         Koulutusmoduuli komo = fixtures.createTutkintoOhjelma();
         komo = this.koulutusmoduuliDAO.insert(komo);
         
         KoulutusmoduuliToteutus komoto = fixtures.createTutkintoOhjelmaToteutus();
         komoto.setOid(KOMOTO_OID);
         komoto.setTarjoaja(TARJOAJA_OID);
+        komoto.setPohjakoulutusvaatimus(POHJAKOULUTUS);
         komoto.setKoulutusmoduuli(komo);
         komoto = this.koulutusmoduuliToteutusDAO.insert(komoto);
         
@@ -51,7 +53,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         komoto1.setKoulutusmoduuli(komo);
         komoto1 = this.koulutusmoduuliToteutusDAO.insert(komoto1);
         
-        KoulutusmoduuliToteutus result = this.koulutusmoduuliToteutusDAO.findKomotosByKomoAndtarjoaja(komo, TARJOAJA_OID).get(0);
+        KoulutusmoduuliToteutus result = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(komo, TARJOAJA_OID, POHJAKOULUTUS).get(0);
         assertTrue(result.getOid().equals(KOMOTO_OID));        
         
     }

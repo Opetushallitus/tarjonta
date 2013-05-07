@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import com.mysema.query.jpa.hibernate.sql.HibernateSQLQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
@@ -31,13 +30,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.apache.commons.collections.PredicateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -46,6 +44,9 @@ import org.springframework.stereotype.Repository;
 public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implements HakukohdeDAO {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
+
+    @Value("${tarjonta-alkamiskausi-syksy}")
+    private String alkamiskausiUri;
 
     @Override
     public List<Hakukohde> findByKoulutusOid(String koulutusmoduuliToteutusOid) {
@@ -269,10 +270,12 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     private boolean isKausiMatch(Calendar cal, HaeHakukohteetKyselyTyyppi kysely) {
+
+        log.info("ALKAMISKAUSI URI : " + this.getAlkamiskausiUri());
         if (kysely.getKoulutuksenAlkamiskausi() == null || kysely.getKoulutuksenAlkamiskausi().isEmpty()) {
             return true;
         }
-        if (kysely.getKoulutuksenAlkamiskausi().contains("uri: Syksy")) {
+        if (kysely.getKoulutuksenAlkamiskausi().contains(getAlkamiskausiUri())) {
             return cal.get(Calendar.MONTH) >= 6;
         }
         return cal.get(Calendar.MONTH) < 6;
@@ -334,5 +337,15 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         
         List<String> results = (List<String>) q.getResultList();
         return results;        
+    }
+
+    public String getAlkamiskausiUri() {
+
+        return alkamiskausiUri;
+    }
+
+    public void setAlkamiskausiUri(String alkamiskausiUri) {
+
+        this.alkamiskausiUri = alkamiskausiUri;
     }
 }

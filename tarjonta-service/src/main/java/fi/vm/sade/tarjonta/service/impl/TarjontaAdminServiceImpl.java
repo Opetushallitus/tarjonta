@@ -499,7 +499,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
-        solrIndexer.indexKoulutus(Lists.newArrayList(toteutus));
+        solrIndexer.indexKoulutus(getIndexedKoulutukset(toteutus));
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
@@ -511,9 +511,28 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
-        solrIndexer.indexKoulutus(Lists.newArrayList(toteutus));
+        solrIndexer.indexKoulutus(getIndexedKoulutukset(toteutus));
         PaivitaKoulutusVastausTyyppi vastaus = new PaivitaKoulutusVastausTyyppi();
         return vastaus;
+    }
+
+    private List<KoulutusmoduuliToteutus> getIndexedKoulutukset(
+            KoulutusmoduuliToteutus toteutus) {
+        List<KoulutusmoduuliToteutus> result = new ArrayList<KoulutusmoduuliToteutus>();
+        result.add(toteutus);
+        Koulutusmoduuli komo = toteutus.getKoulutusmoduuli();
+        Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
+        if (parentKomo == null) {
+            return result;
+        }
+        for (Koulutusmoduuli curChildKomo : parentKomo.getAlamoduuliList()) {
+            List<KoulutusmoduuliToteutus> siblings = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(curChildKomo, toteutus.getTarjoaja(), toteutus.getPohjakoulutusvaatimus());
+            if (siblings != null) {
+                result.addAll(siblings);
+            }
+        }
+        
+        return result;
     }
 
     @Override

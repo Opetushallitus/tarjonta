@@ -29,6 +29,7 @@ import javax.xml.datatype.DatatypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,6 +119,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
     private ConversionService conversionService;
+    @Value("${tarjonta-alkamiskausi-syksy}")
+    private String kausiUri;
     @Autowired
     private SearchService searchService;
     private final static String SYKSY = "syksy";
@@ -503,7 +506,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     private List<Integer> getAlkuKuukaudet(String kausi) {
         List<Integer> kuukaudet = new ArrayList<Integer>();
-        if (kausi != null && kausi.contains("uri: Syksy")) {
+        if (kausi != null && kausi.contains(kausiUri)) {
             kuukaudet.add(7);
             kuukaudet.add(8);
             kuukaudet.add(9);
@@ -596,7 +599,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
      * reading the parent komoto fields to the result dto. 
      */
     private void handleParentKomoto(Koulutusmoduuli parentKomo, KoulutusmoduuliToteutus komoto, LueKoulutusVastausTyyppi result) {
-        List<KoulutusmoduuliToteutus> parentList = this.koulutusmoduuliToteutusDAO.findKomotosByKomoAndtarjoaja(parentKomo, komoto.getTarjoaja());
+        List<KoulutusmoduuliToteutus> parentList = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(parentKomo, komoto.getTarjoaja(), komoto.getPohjakoulutusvaatimus());
         KoulutusmoduuliToteutus parentKomoto = (parentList != null && !parentList.isEmpty()) ? parentList.get(0) : null;
         if (parentKomoto != null) {
             GregorianCalendar greg = new GregorianCalendar();

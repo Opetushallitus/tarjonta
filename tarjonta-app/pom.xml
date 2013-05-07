@@ -223,6 +223,13 @@
             <scope>test</scope>
             <type>jar</type>
         </dependency>
+        
+        <!-- remove slf4j after logging is working on luokka etc. -->
+        <dependency> 
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+     
     </dependencies>
 
 
@@ -315,26 +322,26 @@
 
             <build>
                 <plugins>
-            <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>properties-maven-plugin</artifactId>
-              <version>1.0-alpha-2</version>
-              <executions>
-                <execution>
-                  <goals>
-                    <goal>set-system-properties</goal>
-                  </goals>
-                  <configuration>
-                    <properties>
-                      <property>
-                        <name>log4j.configuration</name>
-                        <value>file:src/main/profile/development/log4j.properties</value>
-                      </property>
-                    </properties>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <version>1.0-alpha-2</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>set-system-properties</goal>
+                                </goals>
+                                <configuration>
+                                    <properties>
+                                        <property>
+                                            <name>log4j.configuration</name>
+                                            <value>file:src/main/profile/development/log4j.properties</value>
+                                        </property>
+                                    </properties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.zeroturnaround</groupId>
                         <artifactId>jrebel-maven-plugin</artifactId>
