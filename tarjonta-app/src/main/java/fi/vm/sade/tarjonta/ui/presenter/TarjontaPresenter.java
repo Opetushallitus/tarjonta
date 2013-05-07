@@ -204,12 +204,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private EditKoulutusLisatiedotToinenAsteView lisatiedotView;
     @Autowired(required = true)
     private TarjontaLukioPresenter lukioPresenter;
-    private LueKoulutusVastausTyyppi rawKoulutus;
     
-    public LueKoulutusVastausTyyppi getRawKoulutus() {
-        return rawKoulutus;
-    }
-
     public static final String VALINTAKOE_TAB_SELECT = "valintakokeet";
     public static final String LIITTEET_TAB_SELECT = "liitteet";
 
@@ -646,8 +641,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     
 
     public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustietoType> orgs) {
-
-
         getTarjoaja().addSelectedOrganisations(orgs);
         showCopyKoulutusPerustiedotEditView(getModel().getSelectedKoulutusOid(),orgs);
         getModel().getSelectedKoulutukset().clear();
@@ -871,7 +864,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     private void readKoulutusToModel(final String koulutusOid) {
-        rawKoulutus = this.getKoulutusByOid(koulutusOid);
+        LueKoulutusVastausTyyppi rawKoulutus = this.getKoulutusByOid(koulutusOid);
         try {
             KoulutusToisenAsteenPerustiedotViewModel koulutus;
             koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), rawKoulutus, I18N.getLocale());

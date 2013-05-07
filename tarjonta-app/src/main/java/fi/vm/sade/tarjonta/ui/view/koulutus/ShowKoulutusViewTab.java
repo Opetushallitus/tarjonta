@@ -23,12 +23,12 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
@@ -61,7 +61,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
     //if provided locale is one of these use it instead of null
     private final Set<String> allowedKoodistoLocales = ImmutableSet.copyOf(new String[]{"fi", "sv", "en"});
     private final OrganisaatioContext context;
-    private final LueKoulutusVastausTyyppi koulutus;
+//    private final LueKoulutusVastausTyyppi koulutus;
     private final String datePattern = "dd.MM.yyyy HH:mm";
 
     /**
@@ -76,8 +76,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
         Preconditions.checkNotNull(presenter.getTarjoaja().getSelectedOrganisationOid(), "Tarjoaja organisaatioOid cannot be null");
         this.language = language;
         this.locale = getKoodistoLocale(locale);
-        this.koulutus = presenter.getRawKoulutus();
-        this.context = OrganisaatioContext.getContext(koulutus.getTarjoaja());
+        this.context = OrganisaatioContext.getContext(presenter.getTarjoaja().getSelectedOrganisationOid());
         final VerticalLayout layout = new VerticalLayout();
         layout.setSpacing(true);
         layout.setMargin(true);
@@ -313,9 +312,12 @@ public class ShowKoulutusViewTab extends CustomComponent {
 
         //TODO get org name for current language?
         layout.add(getTextRow("organisaatio", presenter.getTarjoaja().getSelectedOrganisation().getOrganisationName()));
-        layout.add(getTextRow("koulutusTutkinto", uiHelper.getKoodiNimi(koulutus.getKoulutusKoodi().getUri(), locale)));
-        layout.add(getTextRow("koulutusohjelma", uiHelper.getKoodiNimi(koulutus.getKoulutusohjelmaKoodi().getUri(), locale)));
-        layout.add(getTextRow("koulutusaste", uiHelper.getKoodiNimi(koulutus.getKoulutusaste().getUri(), locale)));
+        layout.add(getTextRow("koulutusTutkinto", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutuskoodiModel().getKoodistoUri(), locale)));
+        
+        
+        layout.add(getTextRow("koulutusohjelma", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutusohjelmaModel().getKoodistoUri(), locale)));
+        
+        layout.add(getTextRow("koulutusaste", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutusaste().getKoodistoUri(), locale)));
         layout.add(getTextRow("koulutusala", uiHelper.getKoodiNimi(koulutusala.getKoodistoUri(), locale)));
         layout.add(getTextRow("opintoala", uiHelper.getKoodiNimi(opintoala.getKoodistoUri(), locale)));
         layout.add(getTextRow("tutkintonimike", uiHelper.getKoodiNimi(tutkintonimike.getKoodistoUri(), locale)));
@@ -328,8 +330,8 @@ public class ShowKoulutusViewTab extends CustomComponent {
             layout.add(getTextRow("opintojenLaajuus", opintojenLaajuusYksikko));
         }
 
-        layout.add(getTextRow("koulutuslaji", koulutus.getKoulutuslaji().isEmpty() ? null : uiHelper.getKoodiNimi(koulutus.getKoulutuslaji().get(0).getUri(), locale)));
-        layout.add(getTextRow("pohjakoulutusvaatimus", uiHelper.getKoodiNimi(koulutus.getPohjakoulutusvaatimus().getUri(), locale)));
+        layout.add(getTextRow("koulutuslaji", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getKoulutuslaji(), locale)));
+        layout.add(getTextRow("pohjakoulutusvaatimus", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusPerustiedotModel().getPohjakoulutusvaatimus(), locale)));
         layout.add(getTextRow("koulutuksenAlkamisPvm", uiHelper.formatDate(model.getKoulutuksenAlkamisPvm())));
         layout.add(getTextRow("suunniteltuKesto", getSuunniteltuKesto(model)));
         layout.add(getTextRow("opetuskieli", uiHelper.getKoodiNimi(model.getOpetuskieli(), locale)));
@@ -357,13 +359,13 @@ public class ShowKoulutusViewTab extends CustomComponent {
      * Yhteyshenkilö
      */
     private String getYhteyshenkilo() {
-        final List<fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi> yhteyshenkilot = koulutus.getYhteyshenkilo();
+        final List<KoulutusYhteyshenkiloViewModel> yhteyshenkilot = presenter.getModel().getKoulutusPerustiedotModel().getYhteyshenkilot();
 
         if (yhteyshenkilot.size() < 1) {
             return "";
         }
-        final fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi yhteyshenkilo = yhteyshenkilot.get(0);
-        return yhteyshenkilo.getEtunimet() + " " + yhteyshenkilo.getSukunimi() + ", " + yhteyshenkilo.getTitteli() + ", " + yhteyshenkilo.getPuhelin() + ", " + yhteyshenkilo.getSahkoposti();
+        final KoulutusYhteyshenkiloViewModel yhteyshenkilo = yhteyshenkilot.get(0);
+        return yhteyshenkilo.getEtunimet() + " " + yhteyshenkilo.getSukunimi() + ", " + yhteyshenkilo.getTitteli() + ", " + yhteyshenkilo.getPuhelin() + ", " + yhteyshenkilo.getEmail();
     }
 
     private Container createHakukohdelistContainer(List<SimpleHakukohdeViewModel> hakukohdes) {
