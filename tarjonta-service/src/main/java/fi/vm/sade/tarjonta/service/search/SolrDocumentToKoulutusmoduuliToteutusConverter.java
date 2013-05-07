@@ -50,7 +50,9 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
             return null;
         }
        
-        koulutus.setPohjakoulutusVaatimus("" + koulutusDoc.getFieldValue(POHJAKOULUTUSVAATIMUS_URI));
+        if (koulutusDoc.getFieldValue(POHJAKOULUTUSVAATIMUS_URI) != null) {
+            koulutus.setPohjakoulutusVaatimus("" + koulutusDoc.getFieldValue(POHJAKOULUTUSVAATIMUS_URI));
+        }
         tulos.setKoulutus(koulutus);
         return tulos;
     }

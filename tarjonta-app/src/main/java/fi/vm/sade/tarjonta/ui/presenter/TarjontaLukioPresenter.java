@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.presenter;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
@@ -44,6 +45,7 @@ import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.ShowKoulutusSummaryView;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -256,8 +258,23 @@ public class TarjontaLukioPresenter {
             LOG.debug("Lukiolinjas list size : {}.", lukiolinjas);
             Collections.sort(lukiolinjas, new BeanComparator("nimi"));
             perustiedot.getLukiolinjas().addAll(lukiolinjas);
+            loadParentKomotoData(koulutuskoodiModel.getKoodi());
         } else {
             LOG.debug("No lukiolinja selected.");
+        }
+    }
+    /**
+     * Loading start date for created komoto from an existing relative komoto
+     * @param koulutuskoodi
+     */
+    private void loadParentKomotoData(String koulutuskoodi) {
+        KoulutusTulos komoto = presenter.findKomotoByKoulutuskoodiPohjakoulutus(koulutuskoodi, null);
+        if (komoto != null) {
+            LueKoulutusKyselyTyyppi lueKysely = new LueKoulutusKyselyTyyppi();
+            lueKysely.setOid(komoto.getKoulutus().getKomotoOid());
+            LueKoulutusVastausTyyppi lueVastaus = this.tarjontaPublicService.lueKoulutus(lueKysely);
+            Date koulutuksenAlkuPvm = lueVastaus.getKoulutuksenAlkamisPaiva() != null ? lueVastaus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null;
+            this.getPerustiedotModel().setKoulutuksenAlkamisPvm(koulutuksenAlkuPvm);
         }
     }
 

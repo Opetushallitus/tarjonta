@@ -1873,7 +1873,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private void loadKoulutusohjelmaLisatiedotData(final String koulutuskoodi, String pohjakoulutusvaatimus) {
         LOG.debug("loadtutkintoData, koulutuskoodi: {}, tarjoaja: {}", koulutuskoodi, getTarjoaja());
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
-        kysely.setKoulutusKoodi(koulutuskoodi);
+        kysely.setKoulutusKoodi(koulutuskoodi); 
 
         /*
          * When use has selected many organisations(example koulutus copy),
@@ -1907,6 +1907,34 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             }
             this.lisatiedotView.getEditKoulutusLisatiedotForm().reBuildTabsheet();
         }
+    }
+    
+    public KoulutusTulos findKomotoByKoulutuskoodiPohjakoulutus(String koulutuskoodi, String pohjakoulutusvaatimus) {
+        HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
+        kysely.setKoulutusKoodi(koulutuskoodi); 
+
+        /*
+         * When use has selected many organisations(example koulutus copy),
+         * an organisation OID is taken from the selected result row item, if
+         * use has selected only one organisation on dialog, then the OID is
+         * taken from the selected organisation.
+         */
+        kysely.getTarjoajaOids().add(getTarjoaja().getSingleSelectRowResultOrganisationOid());
+        HaeKoulutuksetVastausTyyppi vastaus = this.getTarjontaPublicService().haeKoulutukset(kysely);
+
+        if (vastaus.getKoulutusTulos() != null && !vastaus.getKoulutusTulos().isEmpty()) {
+            for (KoulutusTulos curTulos : vastaus.getKoulutusTulos()) {
+                System.out.println("\n\n" + pohjakoulutusvaatimus + ", Cur komoto: " + curTulos.getKoulutus().getPohjakoulutusVaatimus() + "\n\n");
+                if ((pohjakoulutusvaatimus == null 
+                        && curTulos.getKoulutus().getPohjakoulutusVaatimus() == null)
+                     || (pohjakoulutusvaatimus != null 
+                        && pohjakoulutusvaatimus.equals(curTulos.getKoulutus().getPohjakoulutusVaatimus()))) {
+                    System.out.println("Match!!!");
+                    return curTulos;
+                }
+            }
+        }
+        return null;
     }
 
     public void loadSelectedKomoData() {
