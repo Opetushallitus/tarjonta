@@ -541,7 +541,7 @@ public class TarjontaUIHelper {
 
     /**
      * Get text for "closest" match for a given language.
-     * Actully this means exact match, if not found use FI.
+     * Actully this means exact match, if not found use fi, if not found use first existing
      *
      * @param locale
      * @param monikielinenTeksti
@@ -553,15 +553,24 @@ public class TarjontaUIHelper {
             teksti = searchTekstiTyyppiByLanguage(monikielinenTeksti.getTeksti(), locale);
         }
 
-        if (teksti == null || teksti.getKieliKoodi() == null || teksti.getValue() == null) {
-            //FI default fallback
-            final Locale locale1 = new Locale("FI");
+        
+        //fi default fallback
+        if ((teksti == null || teksti.getKieliKoodi() == null || teksti.getValue() == null) && !locale.getLanguage().equalsIgnoreCase("fi")) {
+            final Locale locale1 = new Locale("fi");
             teksti = searchTekstiTyyppiByLanguage(monikielinenTeksti.getTeksti(), locale1);
+        }
 
+        //get first existing
+        if (teksti == null || teksti.getKieliKoodi() == null || teksti.getValue() == null) {
+            //first existing
+            if(monikielinenTeksti.getTeksti().size()>0) {
+                teksti = monikielinenTeksti.getTeksti().get(0);
+            }
             if (teksti == null || teksti.getKieliKoodi() == null || teksti.getValue() == null) {
-                LOG.error("An invalid data error -´MonikielinenTekstiTyyppi object was missing Finnish language data.");
+                LOG.error("An invalid data error - MonikielinenTekstiTyyppi did not contain any tekstis.");
             }
         }
+
         return teksti;
     }
 

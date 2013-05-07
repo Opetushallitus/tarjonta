@@ -287,7 +287,10 @@ public class ListKoulutusView extends VerticalLayout {
     
     private String getKoulutusNimi(KoulutusTulos curKoulutus) {
 
-        List<KoodiType> koodis = uiHelper.getKoodis(curKoulutus.getKoulutus().getPohjakoulutusVaatimus());
+        List<KoodiType> koodis = null;
+        if (curKoulutus.getKoulutus().getPohjakoulutusVaatimus() != null) {
+            koodis = uiHelper.getKoodis(curKoulutus.getKoulutus().getPohjakoulutusVaatimus());
+        }
         if (koodis == null) {
             koodis = new ArrayList<KoodiType>();
         }

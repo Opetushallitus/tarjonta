@@ -21,6 +21,7 @@ import java.util.Set;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.slf4j.Logger;
@@ -130,7 +131,7 @@ public class SearchService {
         orgQ.setQuery(orgQuery);
         orgQ.setRows(Integer.MAX_VALUE);
 
-        QueryResponse orgResponse = solr.query(orgQ);
+        QueryResponse orgResponse = solr.query(orgQ, METHOD.POST);
         return orgResponse;
     }
 

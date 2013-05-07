@@ -10,7 +10,7 @@
                 <Set name="Password">oph</Set>
                 <Set name="DatabaseName">tarjonta</Set>
                 <Set name="ServerName"><SystemProperty name="dbhost" default="localhost"/></Set>
-                <Set name="PortNumber">5432</Set>
+                <Set name="PortNumber"><SystemProperty name="dbport" default="5432"/></Set>
             </New>
         </Arg>
     </New>
