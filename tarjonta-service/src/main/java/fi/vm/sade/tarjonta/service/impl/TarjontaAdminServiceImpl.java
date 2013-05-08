@@ -361,6 +361,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(), hakuk));
         hakukohdeDAO.update(hakuk);
         solrIndexer.indexHakukohde(Lists.newArrayList(hakuk));
+        solrIndexer.indexKoulutus(new ArrayList<KoulutusmoduuliToteutus>(hakuk.getKoulutusmoduuliToteutuses()));
 
         publication.sendEvent(hakuk.getTila(), hakuk.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
 

@@ -101,6 +101,7 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
                 }
                 if (this.formView.getValintakoeComponent().getForm().isValid()) {
                     presenter.getModel().getSelectedValintaKoe().setLisanayttoKuvaukset(formView.getLisanayttoKuvaukset());
+                    presenter.getModel().getHakukohde().getValintaKokees().clear();
                     presenter.saveHakukohdeValintakoe(formView.getValintakoeComponent().getValintakokeenKuvaukset());
                     return getHakukohdeOid();
                 } else {
