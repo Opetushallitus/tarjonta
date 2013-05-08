@@ -436,7 +436,12 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
            koulutus.setKomotoOid(tulos.getKoulutus().getKomotoOid());
            koulutus.setKoulutustyyppi(tulos.getKoulutus().getKoulutustyyppi());
            koulutus.setAjankohta(tulos.getKoulutus().getAjankohta());
-           koulutus.setKoulutusohjelmakoodi(tulos.getKoulutus().getKoulutusohjelmakoodi().getUri());
+           if (tulos.getKoulutus().getKoulutusohjelmakoodi() != null) {
+               koulutus.setKoulutusohjelmakoodi(tulos.getKoulutus().getKoulutusohjelmakoodi().getUri());
+           } else if (tulos.getKoulutus().getLukiolinjakoodi() != null) {
+               koulutus.setLukiolinjakoodi(tulos.getKoulutus().getLukiolinjakoodi().getUri());
+           }
+           
            koulutus.setKoulutuskoodi(tulos.getKoulutus().getKoulutuskoodi().getUri());
 
           hakukohdeTyyppi.getHakukohdeKoulutukses().add(koulutus);
