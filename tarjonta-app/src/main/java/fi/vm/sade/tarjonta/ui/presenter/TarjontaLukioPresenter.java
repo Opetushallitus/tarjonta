@@ -258,7 +258,7 @@ public class TarjontaLukioPresenter {
             LOG.debug("Lukiolinjas list size : {}.", lukiolinjas);
             Collections.sort(lukiolinjas, new BeanComparator("nimi"));
             perustiedot.getLukiolinjas().addAll(lukiolinjas);
-            loadParentKomotoData(koulutuskoodiModel.getKoodi());
+            loadParentKomotoData(koulutuskoodiModel.getKoodistoUriVersio());
         } else {
             LOG.debug("No lukiolinja selected.");
         }

@@ -1880,9 +1880,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         if (vastaus.getKoulutusTulos() != null && !vastaus.getKoulutusTulos().isEmpty()) {
             for (KoulutusTulos curTulos : vastaus.getKoulutusTulos()) {
                 
-                if (pohjakoulutusvaatimus == null 
-                        || (pohjakoulutusvaatimus != null 
-                            && pohjakoulutusvaatimus.equals(curTulos.getKoulutus().getPohjakoulutusVaatimus()))) {
+                if (pohjakoulutusMatches(pohjakoulutusvaatimus, curTulos)
+                        && tarjoajaMatches(getTarjoaja().getSingleSelectRowResultOrganisationOid(), curTulos)) {
                     LueKoulutusKyselyTyyppi lueKysely = new LueKoulutusKyselyTyyppi();
                     lueKysely.setOid(curTulos.getKoulutus().getKomotoOid());
                     LueKoulutusVastausTyyppi lueVastaus = getTarjontaPublicService().lueKoulutus(lueKysely);
@@ -1903,6 +1902,17 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         }
     }
     
+    private boolean tarjoajaMatches(String tarjoajaOid, KoulutusTulos koulutusTulos) {
+        return (tarjoajaOid != null) && tarjoajaOid.equals(koulutusTulos.getKoulutus().getTarjoaja().getTarjoajaOid());
+    }
+    
+    private boolean pohjakoulutusMatches(String pohjakoulutusvaatimus, KoulutusTulos koulutusTulos) {
+        return (pohjakoulutusvaatimus == null 
+                    && koulutusTulos.getKoulutus().getPohjakoulutusVaatimus() == null)
+                || (pohjakoulutusvaatimus != null 
+                    && pohjakoulutusvaatimus.equals(koulutusTulos.getKoulutus().getPohjakoulutusVaatimus()));
+    }
+    
     public KoulutusTulos findKomotoByKoulutuskoodiPohjakoulutus(String koulutuskoodi, String pohjakoulutusvaatimus) {
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         kysely.setKoulutusKoodi(koulutuskoodi); 
@@ -1915,13 +1925,12 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
          */
         kysely.getTarjoajaOids().add(getTarjoaja().getSingleSelectRowResultOrganisationOid());
         HaeKoulutuksetVastausTyyppi vastaus = this.getTarjontaPublicService().haeKoulutukset(kysely);
-
+        
         if (vastaus.getKoulutusTulos() != null && !vastaus.getKoulutusTulos().isEmpty()) {
+            
             for (KoulutusTulos curTulos : vastaus.getKoulutusTulos()) {
-                if ((pohjakoulutusvaatimus == null 
-                        && curTulos.getKoulutus().getPohjakoulutusVaatimus() == null)
-                     || (pohjakoulutusvaatimus != null 
-                        && pohjakoulutusvaatimus.equals(curTulos.getKoulutus().getPohjakoulutusVaatimus()))) {
+                if (pohjakoulutusMatches(pohjakoulutusvaatimus, curTulos)
+                        && tarjoajaMatches(getTarjoaja().getSingleSelectRowResultOrganisationOid(), curTulos)) {
                     return curTulos;
                 }
             }
@@ -2255,33 +2264,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public NavigationModel getNavigationOrganisation() {
         return getModel().getNavigationModel();
     }
-
-    /*
-	public void togglePoistaKoulutusB() {
-		boolean showPoista = false;
-		for (KoulutusTulos curKoul : getSelectedKoulutukset()) {
-			final OrganisaatioContext context = OrganisaatioContext.getContext(curKoul.getKoulutus().getTarjoaja().getTarjoajaOid());
-			TarjontaTila tila = curKoul.getKoulutus().getTila();
-	        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS)) 
-	        		&& getPermission().userCanDeleteKoulutus(context)) {
-	            showPoista = true;
-	        }
-		}
-		this.getRootView().getListKoulutusView().togglePoistaB(showPoista);
-	}
-	
-	public void togglePoistaHakukohdeB() {
-		boolean showPoista = false;
-		for (HakukohdeTulos curHakukohde : getSelectedhakukohteet()) {
-			final OrganisaatioContext context = OrganisaatioContext.getContext(curHakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
-			TarjontaTila tila = curHakukohde.getHakukohde().getTila();
-	        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.LUONNOS)) 
-	        		&& getPermission().userCanDeleteHakukohde(context)) {
-	            showPoista = true;
-	        }
-		}
-		this.getRootView().getSearchResultsView().getHakukohdeList().togglePoistaB(showPoista);
-	}*/
 
 	public void closeKoulutusRemovalDialog() {
 		getRootView().getListKoulutusView().closeKoulutusDialog();
