@@ -19,6 +19,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.RuntimeErrorException;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -245,11 +246,7 @@ public class Haku extends BaseEntity {
     }
 
     public void setNimi(MonikielinenTeksti newNimi) {
-        if (this.nimi != null && newNimi != null) {
-            this.nimi.updateFrom(newNimi);
-        } else {
-            this.nimi = newNimi;
-        }
+    	nimi = MonikielinenTeksti.merge(nimi, newNimi);
     }
 
     private String getNimi(String kieliKoodi) {
