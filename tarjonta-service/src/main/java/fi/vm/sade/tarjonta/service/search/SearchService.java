@@ -202,6 +202,10 @@ public class SearchService {
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
             queryParts.clear();
         }
+        
+        if (kysely.getKoulutusKoodi() != null) {
+            q.addFilterQuery(String.format("%s:%s", Koulutus.KOULUTUSKOODI_URI, kysely.getKoulutusKoodi()));
+        }
 
         // vuosi & kausi
         addFilterForVuosiKausi(kausi, vuosi, queryParts, q);
