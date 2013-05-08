@@ -15,12 +15,13 @@
  */
 package fi.vm.sade.tarjonta.data.test;
 
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
-import fi.vm.sade.tarjonta.data.test.modules.HakuGenerator;
+import fi.vm.sade.tarjonta.data.test.modules.AbstractGenerator;
 import fi.vm.sade.tarjonta.data.test.modules.HakukohdeGenerator;
 import fi.vm.sade.tarjonta.data.test.modules.KomotoGenerator;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,13 +30,13 @@ import org.slf4j.LoggerFactory;
  * @author Jani Wilén
  */
 public class ThreadedDataUploader extends Thread {
-
     private static final Logger LOG = LoggerFactory.getLogger(ThreadedDataUploader.class);
     private String organisationOid;
     private String hakuOid;
     private KomotoGenerator komoto;
     private HakukohdeGenerator hakukohde;
-    private int loiItemCountPerOrganisation;
+    private int maxKomotosPerOrganisation;
+    private List<String> komotoOids;
 
     public ThreadedDataUploader(
             String name,
@@ -45,7 +46,8 @@ public class ThreadedDataUploader extends Thread {
             int loiItemCountPerOrganisation) {
         super(name);
         this.hakuOid = hakuOid;
-        this.loiItemCountPerOrganisation = loiItemCountPerOrganisation;
+        this.maxKomotosPerOrganisation = loiItemCountPerOrganisation;
+        this.komotoOids = new ArrayList<String>();
 
         komoto = new KomotoGenerator(tarjontaAdminService, tarjontaPublicService);
         hakukohde = new HakukohdeGenerator(tarjontaAdminService);
@@ -54,10 +56,14 @@ public class ThreadedDataUploader extends Thread {
     @Override
     public void run() {
         LOG.info("Thread start {}", getName());
-        for (int i = 0; i < loiItemCountPerOrganisation; i++) {
-            final String komotoOid = komoto.create(getOrganisationOid());
-            hakukohde.create(hakuOid, komotoOid);
+        for (int i = 0; i < AbstractGenerator.randomIntByRange(1, maxKomotosPerOrganisation); i++) {
+            komotoOids.add(komoto.create(getOrganisationOid()));
         }
+
+        for (Integer koodiarvo : HakukohdeGenerator.HAKUKOHTEET_KOODISTO_ARVO) {
+            hakukohde.create(hakuOid, koodiarvo, komotoOids);
+        }
+
         LOG.info("Thread end {}", getName());
     }
 
