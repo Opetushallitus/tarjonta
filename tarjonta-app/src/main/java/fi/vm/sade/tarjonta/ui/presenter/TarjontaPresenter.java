@@ -765,7 +765,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         showEditKoulutusView(koulutusOid, tab);
     }
 
-    public void showLisaaRinnakkainenToteutusEditView(final String koulutusOid) {
+    public void showLisaaRinnakkainenToteutusEditView(final String koulutusOid, String pohjakoulutusVaatimus) {
         if (koulutusOid != null) {
             readKoulutusToModel(koulutusOid);
             readNavigationOrgTreeToTarjoaja();
@@ -775,9 +775,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             getModel().getKoulutusPerustiedotModel().setOpetuskieli(null);
             getModel().getKoulutusPerustiedotModel().setOid(null);
             getModel().getKoulutusPerustiedotModel().setSuunniteltuKesto(null);
+            getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(pohjakoulutusVaatimus);
             getModel().getKoulutusPerustiedotModel().setKoulutuslaji(null);
             getModel().getKoulutusPerustiedotModel().setOpetusmuoto(null);
-            getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(null);
+            getModel().setKoulutusLisatiedotModel(new KoulutusLisatiedotModel());
+
             showEditKoulutusView(koulutusOid, KoulutusActiveTab.PERUSTIEDOT);
         }
     }

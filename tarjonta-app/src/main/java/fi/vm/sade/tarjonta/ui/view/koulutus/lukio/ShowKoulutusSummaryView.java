@@ -464,7 +464,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                _presenter.showLisaaRinnakkainenToteutusEditView(_presenter.getModel().getKoulutusPerustiedotModel().getOid());
+                _presenter.showLisaaRinnakkainenToteutusEditView(_presenter.getModel().getKoulutusPerustiedotModel().getOid(),_presenter.getModel().getKoulutusPerustiedotModel().getPohjakoulutusvaatimus());
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 

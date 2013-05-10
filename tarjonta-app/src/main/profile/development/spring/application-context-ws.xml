@@ -69,25 +69,25 @@
     <jaxws:client id="tarjontaAdminService"
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService"
                   address="${tarjonta.admin.webservice.url.backend:http://NO_TARJONTA_ADMIN_WEBSERVICE_URL_CONFIGURED}">
-        <jaxws:outInterceptors>
+      <!--  <jaxws:outInterceptors>
             <ref bean="tarjontaCasInterceptor" />
-        </jaxws:outInterceptors>
+        </jaxws:outInterceptors>  -->
     </jaxws:client>     
 
     <jaxws:client id="tarjontaPublicService"
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService"
                   address="${tarjonta.public.webservice.url.backend:http://NO_TARJONTA_PUBLIC_WEBSERVICE_URL_CONFIGURED}">
-        <jaxws:outInterceptors>
+      <!--  <jaxws:outInterceptors>
             <ref bean="tarjontaCasInterceptor" />
-        </jaxws:outInterceptors>
+        </jaxws:outInterceptors>   -->
     </jaxws:client>     
 
     <jaxws:client id="organisaatioService"
                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
                   address="${organisaatio.webservice.url.backend}">
-        <jaxws:outInterceptors>
+      <!--  <jaxws:outInterceptors>
             <ref bean="organisaatioCasInterceptor" />
-        </jaxws:outInterceptors>
+        </jaxws:outInterceptors>     -->
     </jaxws:client>     
                   
     <jaxws:client id="userService"
