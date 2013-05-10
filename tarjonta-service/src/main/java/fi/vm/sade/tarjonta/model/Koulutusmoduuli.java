@@ -63,7 +63,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     private static Logger log = LoggerFactory.getLogger(Koulutusmoduuli.class);
 
-    @OneToMany(mappedBy = "ylamoduuli")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ylamoduuli")
     private Set<KoulutusSisaltyvyys> sisaltyvyysList = new HashSet<KoulutusSisaltyvyys>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "koulutusmoduuli")

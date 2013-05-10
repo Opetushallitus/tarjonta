@@ -242,17 +242,18 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public HaeHakukohteenLiitteetVastausTyyppi lueHakukohteenLiitteet(@WebParam(partName = "parameters", name = "haeHakukohteenLiitteetKysely", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") HaeHakukohteenLiitteetKyselyTyyppi parameters) {
-        HaeHakukohteenLiitteetVastausTyyppi vastaus = new HaeHakukohteenLiitteetVastausTyyppi();
-
-        List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
+    	//long t = System.currentTimeMillis();
+    	HaeHakukohteenLiitteetVastausTyyppi vastaus = new HaeHakukohteenLiitteetVastausTyyppi();
+    	Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
 
         ArrayList<HakukohdeLiiteTyyppi> liiteTyyppis = new ArrayList<HakukohdeLiiteTyyppi>();
 
-        for (HakukohdeLiite hakukohdeLiite : hakukohdes.get(0).getLiites()) {
+        for (HakukohdeLiite hakukohdeLiite : hakukohde.getLiites()) {
             liiteTyyppis.add(conversionService.convert(hakukohdeLiite, HakukohdeLiiteTyyppi.class));
         }
 
         vastaus.getHakukohteenLiitteet().addAll(liiteTyyppis);
+        //System.out.println("lueHakukohteenLiitteet("+parameters.getHakukohdeOid()+") -> "+(System.currentTimeMillis()-t)+" ms");
         return vastaus;
     }
 
@@ -563,6 +564,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     }
 
     public LueKoulutusVastausTyyppi lueKoulutus(LueKoulutusKyselyTyyppi kysely) {
+    	//long t = System.currentTimeMillis();
         log.debug("in LueKoulutusVastausTyyppi");
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(kysely.getOid());
 
@@ -597,6 +599,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             handleParentKomoto(parentKomo, komoto, result);
         }
 
+        //System.out.println("lueKoulutus(...) -> "+(System.currentTimeMillis()-t)+" ms");
+        
         return result;
     }
 
@@ -712,9 +716,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     @Override
     public LueHakukohdeVastausTyyppi lueHakukohde(LueHakukohdeKyselyTyyppi kysely) {
+    	//long t = System.currentTimeMillis();
 //		Hakukohde hakukohde = hakukohdeDAO.findBy("oid", kysely.getOid()).get(0);
-        List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(kysely.getOid());
-        Hakukohde hakukohde = hakukohdes.get(0);
+    	Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(kysely.getOid());
         HakukohdeTyyppi hakukohdeTyyppi = conversionService.convert(hakukohde, HakukohdeTyyppi.class);
         if (hakukohde.getHaku() != null) {
 
@@ -723,6 +727,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         
         LueHakukohdeVastausTyyppi vastaus = new LueHakukohdeVastausTyyppi();
         vastaus.setHakukohde(hakukohdeTyyppi);
+        //System.out.println("lueHakukohde(...) -> "+(System.currentTimeMillis()-t)+" ms");
         return vastaus;
     }
     //TODO: these helper methods implemented in CommonFrom/To Converters

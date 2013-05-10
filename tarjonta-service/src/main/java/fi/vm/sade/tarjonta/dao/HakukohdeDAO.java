@@ -35,14 +35,22 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     public List<Hakukohde> findOrphanHakukohteet();
 
-    List<Hakukohde> findHakukohdeWithDepenciesByOid(String oid);
-
     HakukohdeLiite findHakuKohdeLiiteById(String id);
 
     Valintakoe findValintaKoeById(String id);
 
     List<Valintakoe> findValintakoeByHakukohdeOid(String oid);
 
+    Hakukohde findHakukohdeByOid(String oid);
+
+    /**
+     * @deprecated {@link #findHakukohdeByOid(String)}
+     */
+    Hakukohde findHakukohdeWithDepenciesByOid(String oid);
+
+    /**
+     * @deprecated {@link #findHakukohdeByOid(String)}
+     */
     Hakukohde findHakukohdeWithKomotosByOid(String oid);
 
     void removeValintakoe(Valintakoe valintakoe);

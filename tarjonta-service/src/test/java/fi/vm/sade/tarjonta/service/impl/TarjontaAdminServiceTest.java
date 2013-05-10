@@ -243,9 +243,9 @@ public class TarjontaAdminServiceTest {
 
         hakukohde = this.hakukohdeDAO.insert(hakukohde);
 
-        List<Hakukohde> hakukohdes = this.hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohde.getOid());
+        Hakukohde hk = this.hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid());
 
-        List<Valintakoe> valintakoes = new ArrayList<Valintakoe>(hakukohdes.get(0).getValintakoes());
+        List<Valintakoe> valintakoes = new ArrayList<Valintakoe>(hk.getValintakoes());
 
         Long valintaKoeId = valintakoes.get(0).getId();
 
@@ -261,9 +261,9 @@ public class TarjontaAdminServiceTest {
         valintakoeList.add(updatedValintaKoe);
         hakukohdeDAO.updateValintakoe(valintakoeList,hakukohde.getOid());
 
-        hakukohdes = this.hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohde.getOid());
+        hk = this.hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid());
 
-        valintakoes = new ArrayList<Valintakoe>(hakukohdes.get(0).getValintakoes());
+        valintakoes = new ArrayList<Valintakoe>(hk.getValintakoes());
         log.info("Tyyppi uri : {}", valintakoes.get(0).getTyyppiUri());
         assertTrue(valintakoes.get(0).getTyyppiUri().equalsIgnoreCase(muokattuUri));
 
