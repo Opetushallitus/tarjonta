@@ -100,7 +100,7 @@ public abstract class AbstractGenerator {
     }
 
     public static int randomIntByRange(int lower, int higher) {
-        return nextInt(new Random(), lower, higher);
+        return nextInt(new Random(System.currentTimeMillis()), lower, higher);
     }
     
     private static int nextInt(Random r, int lower, int higher) {

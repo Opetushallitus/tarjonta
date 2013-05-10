@@ -16,20 +16,18 @@
 package fi.vm.sade.tarjonta.data.test;
 
 import com.google.common.base.Preconditions;
-import fi.vm.sade.tarjonta.data.test.modules.HakukohdeGenerator;
+import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.data.test.modules.HakuGenerator;
-import fi.vm.sade.tarjonta.data.test.modules.KomotoGenerator;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchCriteriaDTO;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchOidType;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +49,7 @@ public class DataUploader {
         "oppilaitostyyppi_19#1"
     };
     private static final Logger LOG = LoggerFactory.getLogger(DataUploader.class);
-    private static int MAX_KOMOTO_THREADS = 10;
+    private static int MAX_KOMOTO_THREADS = 5;
     @Autowired(required = true)
     private OrganisaatioService organisaatioService;
     @Autowired(required = true)
@@ -63,36 +61,49 @@ public class DataUploader {
     public DataUploader() {
     }
 
-    public void upload(final String organisationOid, final int loiItemCountPerOrganisation) throws InterruptedException {
-        Preconditions.checkNotNull(organisationOid, "Organisation OID cannot be null.");
+    public void upload(final int maxOrganisations, final int loiItemCountPerOrganisation) throws InterruptedException {
+        Preconditions.checkNotNull(maxOrganisations, "Organisation OID cannot be null.");
         HakuGenerator haku = new HakuGenerator(tarjotantaAdminService);
         final String hakuOid = haku.create();
-        List<OrganisaatioPerustietoType> filtteredOrgs = new ArrayList<OrganisaatioPerustietoType>();
+        Set<OrganisaatioPerustietoType> filtteredOrgs = new HashSet<OrganisaatioPerustietoType>();
 
         for (String oppilaitostyyppi : ACCEPTED_OPPILAITOSTYYPPIS) {
             OrganisaatioSearchCriteriaDTO search = new OrganisaatioSearchCriteriaDTO();
             search.setOppilaitosTyyppi(oppilaitostyyppi);
             filtteredOrgs.addAll(organisaatioService.searchBasicOrganisaatios(search));
         }
+        LOG.info("Loaded unique organisations : {}", filtteredOrgs.size());
+        LOG.info("Organisations filtered to the given limit : {}", maxOrganisations);
 
-        int orgIndex = 0;
+        boolean running = true;
 
-        while (orgIndex < filtteredOrgs.size()) {
+        Set<OrganisaatioPerustietoType> subOrgs = new HashSet<OrganisaatioPerustietoType>();
+        for (OrganisaatioPerustietoType t : filtteredOrgs) {
+            if (subOrgs.size() > maxOrganisations) {
+                break;
+            }
+            subOrgs.add(t); 
+        }
+
+        final Iterator<OrganisaatioPerustietoType> iterator = subOrgs.iterator();
+        while (running) {
             for (int i = 0; i < threads.length; i++) {
-                if (threads[i] == null || !threads[i].isAlive()) {
-                    final String organisaatioOid = filtteredOrgs.get(orgIndex).getOid();
+                if (!iterator.hasNext()) {
+                    LOG.info("Script ended.");
+                    running = false;
+                    break;
+                } else if (threads[i] == null || !threads[i].isAlive()) {
                     threads[i] = new ThreadedDataUploader("thread_" + i,
                             hakuOid,
                             tarjotantaAdminService,
                             tarjotantaPublicService,
                             loiItemCountPerOrganisation);
 
-                    threads[i].setOrganisationOid(organisaatioOid);
+                    threads[i].setOrganisationOid(iterator.next().getOid());
                     threads[i].start();
-                    orgIndex++;
                 }
             }
-            LOG.info("Waiting...");
+            LOG.info("Wait...");
             Thread.sleep((long) 10000);
             LOG.info("Go!");
         }

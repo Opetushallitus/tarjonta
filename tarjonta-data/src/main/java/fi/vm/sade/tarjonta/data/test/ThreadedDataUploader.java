@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
  * @author Jani Wilén
  */
 public class ThreadedDataUploader extends Thread {
+
     private static final Logger LOG = LoggerFactory.getLogger(ThreadedDataUploader.class);
     private String organisationOid;
     private String hakuOid;
@@ -39,32 +41,37 @@ public class ThreadedDataUploader extends Thread {
     private List<String> komotoOids;
 
     public ThreadedDataUploader(
-            String name,
+            String threadName,
             String hakuOid,
             TarjontaAdminService tarjontaAdminService,
             TarjontaPublicService tarjontaPublicService,
             int loiItemCountPerOrganisation) {
-        super(name);
+        super(threadName);
         this.hakuOid = hakuOid;
         this.maxKomotosPerOrganisation = loiItemCountPerOrganisation;
         this.komotoOids = new ArrayList<String>();
 
-        komoto = new KomotoGenerator(tarjontaAdminService, tarjontaPublicService);
+        komoto = new KomotoGenerator(threadName, tarjontaAdminService, tarjontaPublicService);
         hakukohde = new HakukohdeGenerator(tarjontaAdminService);
     }
 
     @Override
     public void run() {
+        long startTime = System.currentTimeMillis();
+
         LOG.info("Thread start {}", getName());
-        for (int i = 0; i < AbstractGenerator.randomIntByRange(1, maxKomotosPerOrganisation); i++) {
+        final int maxKomotos = AbstractGenerator.randomIntByRange(1, maxKomotosPerOrganisation);
+        for (int i = 0; i < maxKomotos; i++) {
             komotoOids.add(komoto.create(getOrganisationOid()));
         }
 
-        for (Integer koodiarvo : HakukohdeGenerator.HAKUKOHTEET_KOODISTO_ARVO) {
-            hakukohde.create(hakuOid, koodiarvo, komotoOids);
+        final int maxHakukohdes = AbstractGenerator.randomIntByRange(2, HakukohdeGenerator.HAKUKOHTEET_KOODISTO_ARVO.length - 1);
+        for (int i = 0; i < maxHakukohdes; i++) {
+            hakukohde.create(hakuOid, HakukohdeGenerator.HAKUKOHTEET_KOODISTO_ARVO[i], komotoOids);
         }
 
-        LOG.info("Thread end {}", getName());
+        long timePassed = System.currentTimeMillis() - startTime;
+        LOG.info("Thread end {}, time passed {} seconds", getName(), TimeUnit.MILLISECONDS.toSeconds(timePassed));
     }
 
     /**
