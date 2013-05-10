@@ -27,14 +27,12 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.DateField;
-import com.vaadin.ui.Field;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Window;
 
 import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.generic.common.I18N;
@@ -65,7 +63,6 @@ import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
-import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.AutocompleteTextField;
@@ -297,7 +294,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
 
         //disable or enable reguired validations
-        showOnlySelectedFormComponents();
+        //showOnlySelectedFormComponents();
     }
 
 
@@ -594,28 +591,28 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         return hl;
     }
 
-    private void showOnlySelectedFormComponents() {
-        //Show or hide form components.
-        final KoodiModel koulutusasteModel = koulutusModel.getKoulutusaste();
-
-        if (koulutusasteModel != null) {
-            for (Map.Entry<KoulutusasteType, Set<Component>> entry : selectedComponents.entrySet()) {
-                for (Component c : entry.getValue()) {
-                    //if the map key value matches to TK code 'koulutusaste'
-                    final boolean active = entry.getKey().getKoulutusaste().equals(koulutusasteModel.getKoodi());
-
-                    c.setVisible(active);
-                    c.setEnabled(active);
-
-                    //filter layouts
-                    if (c instanceof Field) {
-                        //disable or enable validation by selected component.
-                        ((Field) c).setRequired(active);
-                    }
-                }
-            }
-        }
-    }
+//    private void showOnlySelectedFormComponents() {
+//        //Show or hide form components.
+//        final KoodiModel koulutusasteModel = koulutusModel.getKoulutusaste();
+//
+//        if (koulutusasteModel != null) {
+//            for (Map.Entry<KoulutusasteType, Set<Component>> entry : selectedComponents.entrySet()) {
+//                for (Component c : entry.getValue()) {
+//                    //if the map key value matches to TK code 'koulutusaste'
+//                    final boolean active = entry.getKey().getKoulutusaste().equals(koulutusasteModel.getKoodi());
+//
+//                    c.setVisible(active);
+//                    c.setEnabled(active);
+//
+//                    //filter layouts
+//                    if (c instanceof Field) {
+//                        //disable or enable validation by selected component.
+//                        ((Field) c).setRequired(active);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     // Generic translatio helpers
     private String T(String key) {
