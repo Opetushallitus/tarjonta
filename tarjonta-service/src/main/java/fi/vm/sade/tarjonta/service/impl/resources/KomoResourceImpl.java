@@ -73,7 +73,7 @@ public class KomoResourceImpl implements KomoResource {
     public List<String> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
         LOG.info("/komo -- search(st={}, c={}, si={}, lmb={}, lms={})", new Object[] {searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
-        // TODO hard TarjontaTila == null (== all states ok)
+        // TarjontaTila == null (== all states ok)
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
         List<String> result = new ArrayList<String>();
@@ -84,22 +84,19 @@ public class KomoResourceImpl implements KomoResource {
 
     // GET /komo/OID/komoto?count=x&startIndex=x
     @Override
-    public List<String> getKomotosByKomotoOID(String oid, int count, int startIndex) {
+    public List<String> getKomotosByKomoOID(String oid, int count, int startIndex) {
         LOG.info("/komo/{}/komoto -- (si={}, c={})", new Object[] {oid, count, startIndex});
 
-        List<String> result = new ArrayList<String>();
+        List<String> result = koulutusmoduuliToteutusDAO.findOidsByKomoOid(oid, count, startIndex);
 
-        // TODO add paging
-        // TODO wery, wery, weeery inefficient... fixme!
-
-        Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
-        if (komo != null) {
-            Set<KoulutusmoduuliToteutus> komos = komo.getKoulutusmoduuliToteutusList();
-
-            for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : komos) {
-                result.add(koulutusmoduuliToteutus.getOid());
-            }
-        }
+//        Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
+//        if (komo != null) {
+//            Set<KoulutusmoduuliToteutus> komos = komo.getKoulutusmoduuliToteutusList();
+//
+//            for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : komos) {
+//                result.add(koulutusmoduuliToteutus.getOid());
+//            }
+//        }
 
         LOG.info("  result={}", result);
         return result;

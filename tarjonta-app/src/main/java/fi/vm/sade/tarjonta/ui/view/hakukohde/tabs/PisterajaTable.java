@@ -171,6 +171,16 @@ public class PisterajaTable extends GridLayout {
         }
     }
     
+    public void bindData(ValintakoeViewModel valintakoe) {
+        valintakoe.setPkAlinPM((String)(pkAlinPM.getValue()));
+        valintakoe.setPkYlinPM((String)(pkYlinPM.getValue()));
+        valintakoe.setPkAlinHyvaksyttyPM((String)(pkAlinHyvaksyttyPM.getValue()));
+        valintakoe.setLpAlinPM((String)(lpAlinPM.getValue()));
+        valintakoe.setLpYlinPM((String)(lpYlinPM.getValue()));
+        valintakoe.setLpAlinHyvaksyttyPM((String)(lpAlinHyvaksyttyPM.getValue()));
+        valintakoe.setKpAlinHyvaksyttyPM((String)(kpAlinHyvaksyttyPM.getValue()));
+    }
+    
     private boolean isLisapisteet() {
        return (valintakoe.getLpAlinHyvaksyttyPM() != null && !valintakoe.getLpAlinHyvaksyttyPM().isEmpty())
                || (valintakoe.getLpAlinPM() != null && !valintakoe.getLpAlinPM().isEmpty())

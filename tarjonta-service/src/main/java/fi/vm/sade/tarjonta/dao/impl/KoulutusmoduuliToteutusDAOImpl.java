@@ -196,7 +196,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
             if (pohjakoulutusvaatimusUri != null) {
                 criteria = criteria.and(komoto.pohjakoulutusvaatimus.eq(pohjakoulutusvaatimusUri));
             }
-       
+
             komotoRes = from(komoto).
                     join(komoto.koulutusmoduuli).fetch().
                     where(criteria).list(komoto);
@@ -255,9 +255,27 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         //TODO use constants
         Query q = getEntityManager().createQuery("select k.oid from KoulutusmoduuliToteutus k JOIN k.hakukohdes hk where hk.id= :hakukohdeId").setParameter("hakukohdeId", hakukohdeId);
         List<String> results = (List<String>) q.getResultList();
-        return results;        
+        return results;
     }
 
+    @Override
+    public List<String> findOidsByKomoOid(String oid, int count, int startIndex) {
+
+        QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        BooleanExpression whereExpr = komoto.koulutusmoduuli.oid.eq(oid);
+
+        JPAQuery q = from(komoto);
+        q = q.where(whereExpr);
+
+        if (count > 0) {
+            q = q.limit(count);
+        }
+        if (startIndex > 0) {
+            q.offset(startIndex);
+        }
+
+        return q.list(komoto.oid);
+    }
 
 }
 

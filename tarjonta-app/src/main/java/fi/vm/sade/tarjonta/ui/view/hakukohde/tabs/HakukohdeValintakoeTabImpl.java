@@ -100,6 +100,7 @@ public class HakukohdeValintakoeTabImpl extends AbstractEditLayoutView<Hakukohde
                     throw new Validator.InvalidValueException("");
                 }
                 if (this.formView.getValintakoeComponent().getForm().isValid()) {
+                    formView.getPisterajaTable().bindData(presenter.getModel().getSelectedValintaKoe());
                     presenter.getModel().getSelectedValintaKoe().setLisanayttoKuvaukset(formView.getLisanayttoKuvaukset());
                     presenter.getModel().getHakukohde().getValintaKokees().clear();
                     presenter.saveHakukohdeValintakoe(formView.getValintakoeComponent().getValintakokeenKuvaukset());
