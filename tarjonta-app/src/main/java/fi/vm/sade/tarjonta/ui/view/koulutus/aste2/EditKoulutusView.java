@@ -60,7 +60,7 @@ public class EditKoulutusView extends AbstractVerticalLayout {
     protected void buildLayout() {
 
         String organisaatioName = getOrganisaationNames();
-        String pkVaatimus = presenter.getModel().getKoulutusPerustiedotModel().getPohjakoulutusvaatimus();
+
         if (presenter.getModel().getKoulutusPerustiedotModel().isLoaded()) {
             title = UiUtil.label((AbsoluteLayout) null, T(LABEL_FORMAT_EDIT),
                     LabelStyleEnum.TEXT_RAW,

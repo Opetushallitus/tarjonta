@@ -184,7 +184,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     		@Override
     		public void buttonClick(Button.ClickEvent event) {
-                    SelectPohjakoulutusVaatimusDialog dialog = new SelectPohjakoulutusVaatimusDialog("200px","100px");
+                    SelectPohjakoulutusVaatimusDialog dialog = new SelectPohjakoulutusVaatimusDialog("280px","180px");
                     ShowKoulutusView.this.getWindow().addWindow(dialog);
     		}
     	}, StyleEnum.STYLE_BUTTON_PRIMARY);

@@ -363,7 +363,7 @@ public class ListKoulutusView extends VerticalLayout {
                         getWindow().showNotification(i18n.getMessage("yksiKopioitavaKoulutus"));
                     } else {
                            presenter.getModel().setSelectedKoulutusOid(valitutKoulutukset.get(0).getKoulutus().getKomotoOid());
-                                KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px", "500px",valitutKoulutukset.get(0).getKoulutus().getKoulutustyyppi());
+                                KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px", "550px",valitutKoulutukset.get(0).getKoulutus().getKoulutustyyppi());
 
                                 getWindow().addWindow(kopiointiDialog);
 

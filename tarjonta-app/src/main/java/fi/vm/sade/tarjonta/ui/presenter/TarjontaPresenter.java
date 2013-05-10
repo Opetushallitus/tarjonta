@@ -643,9 +643,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
     
 
-    public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustietoType> orgs) {
+    public void copyKoulutusToOrganizations(Collection<OrganisaatioPerustietoType> orgs,String pohjakoulutusVaatimus) {
         getTarjoaja().addSelectedOrganisations(orgs);
-        showCopyKoulutusPerustiedotEditView(getModel().getSelectedKoulutusOid(),orgs);
+        showCopyKoulutusPerustiedotEditView(getModel().getSelectedKoulutusOid(),orgs,pohjakoulutusVaatimus);
         getModel().getSelectedKoulutukset().clear();
     }
 
@@ -721,7 +721,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         getModel().getHakukohde().setKomotoOids(komotoOids);
     }
 
-    public void showCopyKoulutusPerustiedotEditView(final String koulutusOid, Collection<OrganisaatioPerustietoType> orgs) {
+    public void showCopyKoulutusPerustiedotEditView(final String koulutusOid, Collection<OrganisaatioPerustietoType> orgs,String pohjakoulutusVaatimus) {
 
 
         // If oid of koulutus is provided the koulutus is read from database
@@ -738,11 +738,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                     getModel().getTarjoajaModel().getOrganisationOidNamePairs().add(oidNamePair);
                 }
             }
-
+            getModel().getKoulutusPerustiedotModel().setOid("-1");
             getModel().getKoulutusPerustiedotModel().setTila(TarjontaTila.LUONNOS);
-
+            getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(pohjakoulutusVaatimus);
             showEditKoulutusView(koulutusOid, KoulutusActiveTab.PERUSTIEDOT);
-            getModel().getKoulutusPerustiedotModel().setOid(null);
+
         }
     }
 
@@ -776,7 +776,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
             getModel().getKoulutusPerustiedotModel().getKoulutuksenHakukohteet().clear();
             getModel().getKoulutusPerustiedotModel().setOpetuskieli(null);
-            getModel().getKoulutusPerustiedotModel().setOid(null);
+            getModel().getKoulutusPerustiedotModel().setOid("-1");
             getModel().getKoulutusPerustiedotModel().setSuunniteltuKesto(null);
             getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(pohjakoulutusVaatimus);
             getModel().getKoulutusPerustiedotModel().setKoulutuslaji(null);
@@ -1340,6 +1340,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      */
     public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
         KoulutusToisenAsteenPerustiedotViewModel koulutusModel = getModel().getKoulutusPerustiedotModel();
+        if (koulutusModel.getOid().equalsIgnoreCase("-1")) {
+            koulutusModel.setOid(null);
+        }
         koulutusModel.setViimeisinPaivittajaOid(UserFeature.get().getOid());
         if (koulutusModel.isLoaded()) {
             //update KOMOTO
@@ -1915,7 +1918,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                     LOG.debug("going to reload tabsheet");
                 }
             }
+            if (lisatiedotView != null) {
             this.lisatiedotView.getEditKoulutusLisatiedotForm().reBuildTabsheet();
+            }
         }
     }
     

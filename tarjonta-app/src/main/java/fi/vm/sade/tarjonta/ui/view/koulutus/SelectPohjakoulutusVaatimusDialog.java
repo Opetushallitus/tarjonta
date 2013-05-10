@@ -15,10 +15,7 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;/*
  * European Union Public Licence for more details.
  */
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.*;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
@@ -67,6 +64,7 @@ public class SelectPohjakoulutusVaatimusDialog extends Window {
 
     private VerticalLayout buildMainLayout() {
         VerticalLayout mainLayout = new VerticalLayout();
+        mainLayout.setMargin(true);
         mainLayout.setSizeFull();
         mainLayout.addComponent(buildPkVaatimusLayout());
         mainLayout.addComponent(buildBtnLayout());
@@ -79,13 +77,14 @@ public class SelectPohjakoulutusVaatimusDialog extends Window {
 
         kcPohjakoulutusvaatimus = buildKoodistoCombobox(KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI);
         layout.addComponent(kcPohjakoulutusvaatimus);
+        layout.setComponentAlignment(kcPohjakoulutusvaatimus, Alignment.MIDDLE_CENTER);
 
         return layout;
     }
 
     private HorizontalLayout buildBtnLayout() {
         HorizontalLayout hl = new HorizontalLayout();
-
+        hl.setSizeFull();
         peruutaBtn = UiUtil.button(null, _i18n.getMessage("peruutaBtn"), null);
         peruutaBtn.addListener(new Button.ClickListener() {
             @Override
@@ -95,16 +94,21 @@ public class SelectPohjakoulutusVaatimusDialog extends Window {
         });
 
         hl.addComponent(peruutaBtn);
+        hl.setComponentAlignment(peruutaBtn,Alignment.MIDDLE_LEFT);
 
         jatkaBtn = UiUtil.button(null, _i18n.getMessage("jatkaBtn"),null);
         jatkaBtn.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                presenter.showLisaaRinnakkainenToteutusEditView(presenter.getModel().getKoulutusPerustiedotModel().getOid(),(String)kcPohjakoulutusvaatimus.getValue());
+                String pkVaatimus = (String)kcPohjakoulutusvaatimus.getValue();
+                if (pkVaatimus != null && pkVaatimus.trim().length() > 0) {
+                presenter.showLisaaRinnakkainenToteutusEditView(presenter.getModel().getKoulutusPerustiedotModel().getOid(),pkVaatimus);
                 getParent().getWindow().removeWindow(SelectPohjakoulutusVaatimusDialog.this);
+                }
             }
         });
         hl.addComponent(jatkaBtn);
+        hl.setComponentAlignment(jatkaBtn,Alignment.MIDDLE_RIGHT);
 
         return hl;
     }
