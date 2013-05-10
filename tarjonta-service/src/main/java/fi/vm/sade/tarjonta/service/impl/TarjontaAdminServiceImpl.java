@@ -165,17 +165,15 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         List<Valintakoe> valintakoes = convertValintaKokees(hakukohteenValintakokeet);
 
-        List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
 
-        if (hakukohdes != null && hakukohdes.size() > 0) {
+        if (hakukohde != null) {
+        	
+            hakukohdeDAO.updateValintakoe(valintakoes, hakukohde.getOid());
 
-
-
-            hakukohdeDAO.updateValintakoe(valintakoes, hakukohdes.get(0).getOid());
-
-            hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
-            if (hakukohdes != null && hakukohdes.get(0).getValintakoes() != null) {
-                return convertValintakoeTyyppis(hakukohdes.get(0).getValintakoes());
+            hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(hakukohdeOid);
+            if (hakukohde != null && hakukohde.getValintakoes() != null) {
+                return convertValintakoeTyyppis(hakukohde.getValintakoes());
             } else {
                 return new ArrayList<ValintakoeTyyppi>();
             }
@@ -386,9 +384,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public void lisaaTaiPoistaKoulutuksiaHakukohteelle(@WebParam(partName = "parameters", name = "lisaaKoulutusHakukohteelle", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LisaaKoulutusHakukohteelleTyyppi parameters) {
-        List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
-        Hakukohde hakukohde = hakukohdes.get(0);
-
+    	Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
+ 
         if (parameters.isLisaa()) {
             hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(parameters.getKoulutusOids(), hakukohde));
             log.info("Adding {} koulutukses to hakukohde: {}", hakukohde.getKoulutusmoduuliToteutuses().size(), hakukohde.getOid());

@@ -58,7 +58,7 @@ public class KoulutusSisaltyvyys extends BaseEntity implements Serializable {
     @JoinColumn(name = PARENT_COLUMN_NAME)
     private Koulutusmoduuli ylamoduuli;
 
-    @ManyToMany
+    @ManyToMany(fetch=FetchType.LAZY)
     @JoinTable(name = TABLE_NAME + "_koulutus", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_" + ID_COLUMN_NAME, referencedColumnName = BaseEntity.ID_COLUMN_NAME), inverseJoinColumns =
     @JoinColumn(name = Koulutusmoduuli.TABLE_NAME + "_" + Koulutusmoduuli.ID_COLUMN_NAME, referencedColumnName = BaseEntity.ID_COLUMN_NAME))

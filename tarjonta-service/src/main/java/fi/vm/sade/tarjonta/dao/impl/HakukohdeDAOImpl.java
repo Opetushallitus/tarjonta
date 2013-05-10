@@ -15,18 +15,6 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import com.mysema.query.Tuple;
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.Expression;
-import com.mysema.query.types.expr.BooleanExpression;
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
-import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.model.util.CollectionUtils;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,9 +24,28 @@ import javax.persistence.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+
+import com.mysema.query.Tuple;
+import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.Expression;
+import com.mysema.query.types.expr.BooleanExpression;
+
+import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.QHakukohde;
+import fi.vm.sade.tarjonta.model.QHakukohdeLiite;
+import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.QValintakoe;
+import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.model.util.CollectionUtils;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
 
 /**
  */
@@ -127,16 +134,21 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     public Hakukohde findHakukohdeByOid(String oid) {
+    	return (Hakukohde) getEntityManager().createQuery("FROM "+Hakukohde.class.getName()+" WHERE oid=?")
+    			.setParameter(1, oid)
+    			.getSingleResult();
+    	/*
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         Hakukohde hakukohde = from(qHakukohde)
                 .where(qHakukohde.oid.trim().equalsIgnoreCase(oid))
                 .singleResult(qHakukohde);
-        return hakukohde;
+        return hakukohde;*/
     }
 
     @Override
     public Hakukohde findHakukohdeWithKomotosByOid(String oid) {
-        QHakukohde qHakukohde = QHakukohde.hakukohde;
+    	return findHakukohdeByOid(oid);
+    	/*QHakukohde qHakukohde = QHakukohde.hakukohde;
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
 
         Hakukohde hakukohde = from(qHakukohde, qKomoto)
@@ -144,30 +156,30 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
                 .where(qHakukohde.oid.trim().eq(oid.trim()))
                 .singleResult(qHakukohde);
 
-
-        return hakukohde;
-
+        return hakukohde;*/
     }
 
     @Override
-    public List<Hakukohde> findHakukohdeWithDepenciesByOid(String oid) {
-        QHakukohde qHakukohde = QHakukohde.hakukohde;
+    public Hakukohde findHakukohdeWithDepenciesByOid(String oid) {
+    	return findHakukohdeByOid(oid);
+    	/*QHakukohde qHakukohde = QHakukohde.hakukohde;
         QHaku qHaku = QHaku.haku;
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         QMonikielinenTeksti qMonikielinenTeksti = QMonikielinenTeksti.monikielinenTeksti;
-
-        List<Hakukohde> hakukohdes = from(qHakukohde, qHaku, qKomoto)
+    	
+        
+        return from(qHakukohde, qHaku, qKomoto)
                 .join(qHakukohde.haku, qHaku)
                 //.leftJoin(qHakukohde.koulutusmoduuliToteutuses,qKomoto)
                 .leftJoin(qHakukohde.valintaperusteKuvaus,qMonikielinenTeksti).fetch()
                 .where(qHakukohde.oid.eq(oid.trim()))
-                .list(qHakukohde);
+                .singleResult(qHakukohde);
 
-        log.info("findHakukohdeWithDepenciesByOid({}) --> result size = {}", oid, hakukohdes.size());
-
-        return hakukohdes;
+        //log.info("findHakukohdeWithDepenciesByOid({}) --> result size = {}", oid, hakukohdes.size());
+        return hakukohdes;*/
     }
 
+    /*
     private MonikielinenTeksti findLisatiedotToHakuKohde(Hakukohde hakukohde) {
         QMonikielinenTeksti qTekstis = QMonikielinenTeksti.monikielinenTeksti;
         QTekstiKaannos qKaannos = QTekstiKaannos.tekstiKaannos;
@@ -180,6 +192,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
                 .singleResult(qTekstis);
         return tekstis;
     }
+    */
 
     @Override
     public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely) {

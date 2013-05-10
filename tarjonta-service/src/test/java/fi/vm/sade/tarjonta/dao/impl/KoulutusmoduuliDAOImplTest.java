@@ -50,7 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-@Ignore
+//@Ignore
 public class KoulutusmoduuliDAOImplTest {
 
     private static final String LUKIOLINJA_URI = "uri_lukiolinja";

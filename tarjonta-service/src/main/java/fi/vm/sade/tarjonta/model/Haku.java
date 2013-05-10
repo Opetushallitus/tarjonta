@@ -49,6 +49,7 @@ public class Haku extends BaseEntity {
     public static final String HAUN_LOPPUMIS_PVM = "haunLoppumisPvm";
 
     @NotNull
+    @Column(unique=true)
     private String oid;
 
     @OneToOne(cascade = CascadeType.ALL)
