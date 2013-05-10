@@ -56,13 +56,13 @@ public class HakuGenerator extends AbstractGenerator {
     }
 
     public String create() {
-        HakuTyyppi createToteutus = createToteutus();
+        HakuTyyppi createToteutus = createHaku();
         tarjontaAdminService.lisaaHaku(createToteutus);
         LOG.info("hakukohde created : {}", createToteutus.getOid());
         return createToteutus.getOid();
     }
 
-    private HakuTyyppi createToteutus() {
+    private HakuTyyppi createHaku() {
         HakuTyyppi tyyppi = new HakuTyyppi();
         tyyppi.setOid(generateOid());
         tyyppi.setHaunTila(TarjontaTila.JULKAISTU);

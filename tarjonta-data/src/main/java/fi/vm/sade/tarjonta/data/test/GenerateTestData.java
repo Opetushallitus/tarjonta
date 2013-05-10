@@ -25,11 +25,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class GenerateTestData {
 
     /* Will create a small data for script testing. */
-    private static final String ORGANISATION_OID_SMALL = "1.2.246.562.10.44513634004";
-    /* HERE BE DRAGONS!!! - will generate a huge data, you've been warned.   */
-    private static final String ORGANISATION_OID_OPH = "1.2.246.562.10.00000000001";
+    private static final int MAX_ORGANISATIONS = 200;
     /* set how many LOI items you want for organisation */
-    private static final int MAX_KOMOTOS_PER_ORGANISATION = 5;
+    private static final int MAX_KOMOTOS_PER_ORGANISATION = 10;
 
     public GenerateTestData() {
     }
@@ -37,6 +35,6 @@ public class GenerateTestData {
     public static void main(final String[] args) throws InterruptedException {
         final ApplicationContext context = new ClassPathXmlApplicationContext("spring/context.xml");
         final DataUploader uploader = context.getBean(DataUploader.class);
-        uploader.upload(ORGANISATION_OID_OPH, MAX_KOMOTOS_PER_ORGANISATION);
+        uploader.upload(MAX_ORGANISATIONS, MAX_KOMOTOS_PER_ORGANISATION);
     }
 }

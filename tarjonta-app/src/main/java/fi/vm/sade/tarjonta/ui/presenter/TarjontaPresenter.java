@@ -52,9 +52,11 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.*;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchCriteriaDTO;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetKyselyTyyppi;
@@ -94,6 +96,7 @@ import fi.vm.sade.tarjonta.service.types.LueHakukohteenValintakoeTunnisteellaKys
 import fi.vm.sade.tarjonta.service.types.LueHakukohteenValintakoeTunnisteellaVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
@@ -921,22 +924,34 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
         return valintaKokeet;
     }
+    
+    private String cachedLiitteetOid = null;
+    private List<HakukohdeLiiteViewModel> cachedLiitteet = null;
 
-    public List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet() {
-        ArrayList<HakukohdeLiiteViewModel> liitteet = new ArrayList<HakukohdeLiiteViewModel>();
-        if (getModel().getHakukohde() != null && getModel().getHakukohde().getOid() != null) {
-            HaeHakukohteenLiitteetKyselyTyyppi kysely = new HaeHakukohteenLiitteetKyselyTyyppi();
-            kysely.setHakukohdeOid(getModel().getHakukohde().getOid());
-            HaeHakukohteenLiitteetVastausTyyppi vastaus = getTarjontaPublicService().lueHakukohteenLiitteet(kysely);
+    public synchronized List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet() {
+    	if (getModel().getHakukohde()==null || getModel().getHakukohde().getOid()==null) {
+    		return Collections.emptyList();
+    	}
+    	if (cachedLiitteetOid!=null
+    			&& cachedLiitteet!=null
+    			&& cachedLiitteetOid.equals(getModel().getHakukohde().getOid())) {
+    		return cachedLiitteet;
+    	}
+    	
+    	cachedLiitteetOid = getModel().getHakukohde().getOid();
+    	cachedLiitteet = new ArrayList<HakukohdeLiiteViewModel>();
+    	
+        HaeHakukohteenLiitteetKyselyTyyppi kysely = new HaeHakukohteenLiitteetKyselyTyyppi();
+        kysely.setHakukohdeOid(getModel().getHakukohde().getOid());
+        HaeHakukohteenLiitteetVastausTyyppi vastaus = getTarjontaPublicService().lueHakukohteenLiitteet(kysely);
 
-            for (HakukohdeLiiteTyyppi liiteTyyppi : vastaus.getHakukohteenLiitteet()) {
-                HakukohdeLiiteViewModel hakukohdeLiiteViewModel = HakukohdeLiiteTyyppiToViewModelConverter.convert(liiteTyyppi);
+        for (HakukohdeLiiteTyyppi liiteTyyppi : vastaus.getHakukohteenLiitteet()) {
+            HakukohdeLiiteViewModel hakukohdeLiiteViewModel = HakukohdeLiiteTyyppiToViewModelConverter.convert(liiteTyyppi);
 
-                liitteet.add(addTableFields(hakukohdeLiiteViewModel));
-            }
-
+            cachedLiitteet.add(addTableFields(hakukohdeLiiteViewModel));
         }
-        return liitteet;
+
+        return cachedLiitteet;
     }
 
     private HakukohdeLiiteViewModel addTableFields(HakukohdeLiiteViewModel hakukohdeLiiteViewModel) {
