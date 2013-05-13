@@ -162,13 +162,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private ErrorMessage errorView;
     private GridLayout painotettavatOppiaineet;
     private KoulutusasteTyyppi koulutusasteTyyppi;
-    
     private List<TextField> painotettavat = Lists.newArrayList();
 
     public List<TextField> getPainotettavat() {
         return painotettavat;
     }
-
     private boolean muuOsoite;
 
     /*
@@ -351,7 +349,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         painotus.getField().setNullSelectionAllowed(false);
         painotettavatOppiaineet.addComponent(painotus);
 
-        final TextField tf = uiBuilder.integerField(null, psi, "painokerroin", null, null, 1, 100,  T("validation.PerustiedotView.painokerroin.num"));
+        final TextField tf = uiBuilder.integerField(null, psi, "painokerroin", null, null, 1, 100, T("validation.PerustiedotView.painokerroin.num"));
         painotettavat.add(tf);
         // uiBuilder.textField(null, psi, "painokerroin", null, null);
         // tf.addValidator(new IntegerValidator(T("validation.PerustiedotView.painokerroin.num")));
@@ -471,37 +469,33 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
 
     private boolean setLiitteidenToimOsoite() {
-
         OsoiteDTO osoite = getOrganisaationPostiOsoite();
-        if (presenter.getModel().getHakukohde().getOsoiteRivi1() != null && presenter.getModel().getHakukohde().getPostinumero() != null ) {
+        if (presenter.getModel().getHakukohde().getOsoiteRivi1() != null && presenter.getModel().getHakukohde().getPostinumero() != null) {
 
             String hakukohdeOsoite = presenter.getModel().getHakukohde().getOsoiteRivi1().trim();
             String hakukohdePostinumero = presenter.getModel().getHakukohde().getPostinumero().trim();
-            if (osoite.getOsoite().trim().equalsIgnoreCase(hakukohdeOsoite) && osoite.getPostinumero().trim().equalsIgnoreCase(hakukohdePostinumero)) {
+            if (osoite != null && osoite.getOsoite() != null && osoite.getPostinumero() != null && osoite.getOsoite().trim().equalsIgnoreCase(hakukohdeOsoite) && osoite.getPostinumero().trim().equalsIgnoreCase(hakukohdePostinumero)) {
                 return false;
             } else {
                 return true;
             }
-
-
         } else {
             setOsoiteToOrganisaationPostiOsoite(osoite);
             return false;
         }
-
-
     }
 
     private void setOsoiteToOrganisaationPostiOsoite(OsoiteDTO osoite) {
-        if (osoite != null) {
+        Preconditions.checkNotNull(osoite, "OsoiteDTO object cannot be null.");
+
         presenter.getModel().getHakukohde().setOsoiteRivi1(osoite.getOsoite());
         presenter.getModel().getHakukohde().setPostinumero(osoite.getPostinumero());
         presenter.getModel().getHakukohde().setPostitoimipaikka(osoite.getPostitoimipaikka());
-        }
     }
 
     private OsoiteDTO getOrganisaationPostiOsoite() {
         OrganisaatioDTO organisaatioDTO = presenter.getSelectOrganisaatioModel();
+        
         OsoiteDTO returnValue = null;
         if (organisaatioDTO != null) {
             for (YhteystietoDTO yhteystietoDTO : organisaatioDTO.getYhteystiedot()) {
@@ -513,6 +507,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 }
             }
         }
+
+        Preconditions.checkNotNull(returnValue, "Organisation OsoiteDTO object cannot be null.");
+
         return returnValue;
     }
 

@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
-
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
@@ -26,6 +25,7 @@ import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
 import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.tarjonta.ui.view.ValintaperustekuvausRootView;
+import fi.vm.sade.vaadin.Oph;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -64,6 +64,7 @@ public class TarjontaWebApplication extends TarjontaApplication {
 
         window = new Window("Valitse");
         setMainWindow(window);
+        setTheme(Oph.THEME_NAME);
 
         developmentConfiguration();
         HorizontalLayout hl = new HorizontalLayout();
@@ -134,7 +135,7 @@ public class TarjontaWebApplication extends TarjontaApplication {
         hl.addComponent(btnKomoTest);
 
 
-        
+
         final Button btnIndexKoulutukset = new Button("Indeksoi koulutukset", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -143,7 +144,7 @@ public class TarjontaWebApplication extends TarjontaApplication {
                 String urlString = tarjontaBackendUrl.substring(0, tarjontaBackendUrl.indexOf("/services")) + "/rest/indexer/koulutukset?clear=true";
                 try {
                     LOG.debug("Indeksoi koulutukset: {}", urlString);
-                    
+
                     GetMethod get = new GetMethod(urlString);
                     httpClient.executeMethod(get);
                     String responseContent = new String(get.getResponseBodyAsString());
@@ -164,7 +165,7 @@ public class TarjontaWebApplication extends TarjontaApplication {
                 String urlString = tarjontaBackendUrl.substring(0, tarjontaBackendUrl.indexOf("/services")) + "/rest/indexer/hakukohteet?clear=true";
                 try {
                     LOG.debug("Indeksoi hakukohteet: {}", urlString);
-                    
+
                     GetMethod get = new GetMethod(urlString);
                     httpClient.executeMethod(get);
                     String responseContent = new String(get.getResponseBodyAsString());
@@ -178,7 +179,6 @@ public class TarjontaWebApplication extends TarjontaApplication {
         hl.addComponent(btnHakukohteet);
 
     }
-
     private HttpClient httpClient = new HttpClient();
 
     public void toTarjonta() {
@@ -203,11 +203,6 @@ public class TarjontaWebApplication extends TarjontaApplication {
      * Development configurations, no real use in production environment.
      */
     private void developmentConfiguration() {
-        if (developmentTheme != null && developmentTheme.length() > 0) {
-            //set a development theme.
-            setTheme(developmentTheme);
-        }
-
         if (developmentRedirect != null && developmentRedirect.length() > 0) {
             //This code block is only for making UI development little bit faster
             //Add the property to tarjonta-app.properties:
