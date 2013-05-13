@@ -166,8 +166,10 @@ public class SearchService {
             final List<String> queryParts, SolrQuery q) {
         // vuosi kausi
         if(vuosi!=null) {
-            String qVuosi = Integer.parseInt(vuosi) <= 0 ? "*" : vuosi;
+            String qVuosi = Integer.parseInt(vuosi) <= 0 ? null : vuosi;
             addQuery(qVuosi, queryParts, "%s:%s", Hakukohde.VUOSI_KOODI, qVuosi);
+            q.addFilterQuery(Joiner.on(" ").join(queryParts));
+            queryParts.clear();
         }
         addQuery(kausi, queryParts, "%s:%s", Hakukohde.KAUSI_KOODI, kausi);
         q.addFilterQuery(Joiner.on(" ").join(queryParts));

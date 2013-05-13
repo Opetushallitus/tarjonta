@@ -56,9 +56,9 @@ public class IndexingUtils {
 
     public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";
 
-    private static final String KEVAT = "Kevät";
+    private static final String KEVAT = "kausi_k#1";
 
-    private static final String SYKSY = "Syksy";
+    private static final String SYKSY = "kausi_s#1";
     
     /**
      * Extract components from the versioned koodi uri.
