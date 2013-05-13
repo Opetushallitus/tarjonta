@@ -361,7 +361,11 @@ public class ShowKoulutusViewTab extends CustomComponent {
      */
     private String getYhteyshenkilo() {
         KoulutusToisenAsteenPerustiedotViewModel koulutus = presenter.getModel().getKoulutusPerustiedotModel();
-        return koulutus.getYhtHenkKokoNimi() + " " + koulutus.getYhtHenkTitteli() + ", " + koulutus.getYhtHenkPuhelin() + ", " + koulutus.getYhtHenkEmail();
+        return getNonNull(koulutus.getYhtHenkKokoNimi()) + " " + getNonNull(koulutus.getYhtHenkTitteli()) + ", " + getNonNull(koulutus.getYhtHenkPuhelin()) + ", " + getNonNull(koulutus.getYhtHenkEmail());
+    }
+
+    private String getNonNull(String arvo) {
+        return arvo != null ? arvo : "";
     }
 
     private Container createHakukohdelistContainer(List<SimpleHakukohdeViewModel> hakukohdes) {
