@@ -57,6 +57,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
  */
 @Configurable
 @Component
+@Deprecated
 public class HakukohdeToSolrInputDocumentFunction implements
         Function<Hakukohde, List<SolrInputDocument>> {
 

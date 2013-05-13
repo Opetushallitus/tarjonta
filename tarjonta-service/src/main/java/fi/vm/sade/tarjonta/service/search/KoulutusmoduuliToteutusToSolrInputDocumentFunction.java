@@ -55,6 +55,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
  */
 @Configurable
 @Component
+@Deprecated
 public class KoulutusmoduuliToteutusToSolrInputDocumentFunction implements
 Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
 
@@ -100,7 +101,7 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
                 ? komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi() : komoto.getKoulutusmoduuli().getLukiolinja());
         addKoulutuskoodiTiedot(komotoDoc, komoto.getKoulutusmoduuli().getKoulutusKoodi());
         addTutkintonimikeTiedot(komotoDoc, komoto.getKoulutusmoduuli().getTutkintonimike());
-        add(komotoDoc, KAUSI_KOODI, IndexingUtils.parseKausi(komoto.getKoulutuksenAlkamisPvm()));
+        add(komotoDoc, KAUSI_KOODI, IndexingUtils.parseKausiKoodi(komoto.getKoulutuksenAlkamisPvm()));
         add(komotoDoc, VUOSI_KOODI, IndexingUtils.parseYear(komoto.getKoulutuksenAlkamisPvm()));
         add(komotoDoc, TILA_EN, komoto.getTila());
         add(komotoDoc, KOULUTUSMODUULI_OID, komoto.getKoulutusmoduuli().getOid());

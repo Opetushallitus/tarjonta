@@ -56,10 +56,12 @@ public class IndexingUtils {
 
     public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";
 
-    private static final String KEVAT = "kausi_k#1";
+    private static final String KEVAT = "kevat";
+    private static final String SYKSY = "syksy";
 
-    private static final String SYKSY = "kausi_s#1";
-    
+    private static final String KEVAT_URI = "kausi_k#1";
+    private static final String SYKSY_URI = "kausi_s#1";
+
     /**
      * Extract components from the versioned koodi uri.
      *
@@ -127,6 +129,15 @@ public class IndexingUtils {
         Calendar cal = Calendar.getInstance();
         cal.setTime(koulutuksenAlkamisPvm);
         return cal.get(Calendar.MONTH) < 7 ? KEVAT : SYKSY;
+    }
+
+    public static String parseKausiKoodi(Date koulutuksenAlkamisPvm) {
+        if (koulutuksenAlkamisPvm == null) {
+            return null;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(koulutuksenAlkamisPvm);
+        return cal.get(Calendar.MONTH) < 7 ? KEVAT_URI : SYKSY_URI;
     }
 
     public static String parseYear(Date koulutuksenAlkamisPvm) {

@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.search;
 
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.HAKUKOHDE_OIDS;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI_KOODI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_FI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_SV;
@@ -125,7 +126,8 @@ Function<KoulutusIndexEntity, List<SolrInputDocument>> {
                 ? koulutus.getKoulutusohjelmaKoodi() : koulutus.getLukiolinja());
         addKoulutuskoodiTiedot(komotoDoc, koulutus.getKoulutusKoodi());
         addTutkintonimikeTiedot(komotoDoc, koulutus.getTutkintonimike());
-        add(komotoDoc, KAUSI_KOODI, IndexingUtils.parseKausi(koulutus.getKoulutuksenAlkamisPvm()));
+        add(komotoDoc, KAUSI_KOODI, IndexingUtils.parseKausiKoodi(koulutus.getKoulutuksenAlkamisPvm()));
+        add(komotoDoc, KAUSI, IndexingUtils.parseKausi(koulutus.getKoulutuksenAlkamisPvm()));
         add(komotoDoc, VUOSI_KOODI, IndexingUtils.parseYear(koulutus.getKoulutuksenAlkamisPvm()));
         add(komotoDoc, TILA_EN, koulutus.getTila());
         add(komotoDoc, KOULUTUSMODUULI_OID, koulutus.getKoulutusmoduuliOid());
