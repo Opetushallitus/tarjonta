@@ -39,6 +39,8 @@ import static org.easymock.EasyMock.*;
 import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.google.common.collect.Lists;
+
 /**
  * UI helper tests.
  *
@@ -156,5 +158,29 @@ public class TarjontaUIHelperTest {
         assertEquals(BasicLanguage.FI, tuih.toLanguageEnum("kieli_"));
         assertEquals(BasicLanguage.FI, tuih.toLanguageEnum("e"));
 
+    }
+    
+    
+    @Test
+    public void testGetBestLanguageMatch(){
+        TarjontaUIHelper helper = new TarjontaUIHelper();
+        List<KoodiMetadataType> metas = Lists.newArrayList();
+        
+        metas.add(getKoodiMetaType(KieliType.EN, "en"));
+        metas.add(getKoodiMetaType(KieliType.FI, "fi"));
+        metas.add(getKoodiMetaType(KieliType.SV, "sv"));
+        
+        assertEquals("fi", helper.getBestLanguageMatch(metas, new Locale("fi")));
+        assertEquals("fi", helper.getBestLanguageMatch(metas, new Locale("FI")));
+        assertEquals("en", helper.getBestLanguageMatch(metas, new Locale("en")));
+        assertEquals("sv", helper.getBestLanguageMatch(metas, new Locale("sv")));
+        assertNotNull("fi", helper.getBestLanguageMatch(metas, new Locale("ee")));
+    }
+
+    private KoodiMetadataType getKoodiMetaType(KieliType kieli, String arvo) {
+        KoodiMetadataType type = new KoodiMetadataType();
+        type.setKieli(kieli);
+        type.setNimi(arvo);
+        return type;
     }
 }

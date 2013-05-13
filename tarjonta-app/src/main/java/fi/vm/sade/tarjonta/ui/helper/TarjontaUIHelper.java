@@ -30,6 +30,7 @@ import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 import net.sf.ehcache.CacheManager;
 
 import org.slf4j.Logger;
@@ -41,6 +42,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Common UI helpers, formatters and so forth.
@@ -185,7 +191,7 @@ public class TarjontaUIHelper {
         }
 
         StringBuilder result = new StringBuilder();
-        result.append(getConcatenatedNamesForGivenKoodiURI(hakukohdeNimi));
+        result.append(getBestLanguageMatchesForKoodi(hakukohdeNimi, locale));
         result.append(", ");
         result.append(getHakuKausiJaVuosi(hakuOid, locale));
         return result.toString();
@@ -205,24 +211,22 @@ public class TarjontaUIHelper {
         return hakuTiedot.toString();
     }
 
+    
     /**
-     * Load koodi with metadata, returns all languages concatenated.
+     * Load koodi with metadata, returns all values concatenated, usually (always?) there's only one type.
      *
      * @param hakukohdeUriVersioned
      * @return concatenated name from koodi's metadata getNimi()'s
      */
-    private String getConcatenatedNamesForGivenKoodiURI(String hakukohdeUriVersioned) {
-        LOG.debug("getConcatenatedNamesForGivenKoodiURI({})", hakukohdeUriVersioned);
+    private String getBestLanguageMatchesForKoodi(String hakukohdeUriVersioned, Locale locale) {
+        LOG.debug("getConcatenatedNamesForGivenKoodiURI({},{})", hakukohdeUriVersioned, locale);
 
         StringBuilder nimet = new StringBuilder();
         try {
             List<KoodiType> koodit = _koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder.latestKoodisByUris(getKoodiURI(hakukohdeUriVersioned)));
             for (KoodiType koodi : koodit) {
                 List<KoodiMetadataType> metas = koodi.getMetadata();
-                for (KoodiMetadataType meta : metas) {
-                    nimet.append(meta.getNimi());
-                    nimet.append(" ");
-                }
+                nimet.append(getBestLanguageMatch(metas, locale));
             }
         } catch (Exception e) {
             LOG.error("Koodi service not responding.", e);
@@ -230,6 +234,46 @@ public class TarjontaUIHelper {
         }
 
         return nimet.toString();
+    }
+
+
+    private static class ValueScore implements Comparable<ValueScore>{
+        public ValueScore(String value, int score) {
+            this.value = value;
+            this.score = score;
+        }
+
+        private String value;
+        private int score;
+        
+        @Override
+        public int compareTo(ValueScore o) {
+            return this.score-o.score;
+        }
+        
+    }
+    
+    
+    private final List<String> allLanguages = ImmutableList.of("fi","en","sv");
+    
+    public String getBestLanguageMatch(List<KoodiMetadataType> metas,
+            Locale locale) {
+        LinkedList<String> preferredLanguages = Lists.newLinkedList(allLanguages);
+        preferredLanguages.remove(locale.getLanguage().toLowerCase());
+        preferredLanguages.addFirst(locale.getLanguage().toLowerCase());
+        
+        List<ValueScore> values = Lists.newArrayList();
+        
+        for (KoodiMetadataType meta : metas) {
+            for(int i=0;i<preferredLanguages.size();i++) {
+                if(preferredLanguages.get(i).equalsIgnoreCase(meta.getKieli().toString())) {
+                    values.add(new ValueScore(meta.getNimi(), i));
+                }
+            }
+        }
+        
+        Collections.sort(values);
+        return values.get(0).value;
     }
 
     /**
