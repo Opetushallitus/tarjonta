@@ -746,36 +746,37 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
     
     private void prepareHakuAikas(HakuViewModel hvm) {
-    	if (hvm.getSisaisetHakuajat().isEmpty()) {
-    		ListaaHakuTyyppi lht = new ListaaHakuTyyppi();
-    		lht.setHakuOid(hvm.getHakuOid());
-    		List<HakuTyyppi> hakus = presenter.getTarjontaPublicService().listHaku(lht).getResponse();
-    		if (hakus.size()!=1) {
-    			LOG.warn("Hakua ei löytynyt: {}",hvm.getHakuOid());
-    		} else {
-    			hvm = new HakuViewModel(hakus.iterator().next());
-    		}
-    	}
-    	
     	BeanItemContainer<HakuaikaViewModel> container = new BeanItemContainer<HakuaikaViewModel>(HakuaikaViewModel.class);
-    	container.addAll(hvm.getSisaisetHakuajat());
-    	hakuAikaCombo.setReadOnly(false);
+
+    	if (hvm!=null) {
+        	if (hvm.getSisaisetHakuajat().isEmpty()) {
+        		ListaaHakuTyyppi lht = new ListaaHakuTyyppi();
+        		lht.setHakuOid(hvm.getHakuOid());
+        		List<HakuTyyppi> hakus = presenter.getTarjontaPublicService().listHaku(lht).getResponse();
+        		if (hakus.size()!=1) {
+        			LOG.warn("Hakua ei löytynyt: {}",hvm.getHakuOid());
+        		} else {
+        			hvm = new HakuViewModel(hakus.iterator().next());
+        		}
+        	}
+        	
+        	container.addAll(hvm.getSisaisetHakuajat());
+        	
+    	}
+
     	hakuAikaCombo.setContainerDataSource(container);
-    	
+
     	selectHakuAika(presenter.getModel().getHakukohde().getHakuaika(), hvm, false);
     }
     
     private void selectHakuAika(HakuaikaViewModel hvm, HakuViewModel hk, boolean initial) {
 		
-    	hakuAikaCombo.setReadOnly(false); // setValue ei toimi jos readonly
     	if (hk==null || hk.getSisaisetHakuajat().isEmpty()) {
     		hakuAikaCombo.setValue(null);
-        	hakuAikaCombo.setReadOnly(true);
         	hakuAikaCombo.setEnabled(false);
         } else if (hk.getSisaisetHakuajat().size()==1) {
     		hakuAikaCombo.setValue(hakuAikaCombo.getContainerDataSource().getItemIds().iterator().next());
-        	hakuAikaCombo.setReadOnly(true);
-        	hakuAikaCombo.setEnabled(true);
+        	hakuAikaCombo.setEnabled(false);
     	} else {
     		hakuAikaCombo.setValue(hvm);
         	hakuAikaCombo.setEnabled(true);
