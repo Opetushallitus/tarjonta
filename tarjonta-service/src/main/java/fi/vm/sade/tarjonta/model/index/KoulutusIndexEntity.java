@@ -2,6 +2,8 @@ package fi.vm.sade.tarjonta.model.index;
 
 import java.util.Date;
 
+import com.mysema.query.annotations.QueryProjection;
+
 import fi.vm.sade.tarjonta.model.TarjontaTila;
 
 /**
@@ -22,21 +24,13 @@ public class KoulutusIndexEntity {
     private String koulutusmoduuliOid;
     private String pohjakoulutusVaatimus;
 
+    @QueryProjection
     public KoulutusIndexEntity(String oid, String tarjoaja) {
         this.oid = oid;
         this.tarjoaja = tarjoaja;
     }
 
-    // select koulutusmoduulitoteutus.id, koulutusmoduulitoteutus.oid,
-    // koulutusmoduulitoteutus.koulutuksenAlkamisPvm,
-    // koulutusmoduulitoteutus.tila, koulutusmoduuli.koulutustyyppi,
-    // koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
-    // koulutusmoduuli.tutkintonimike, koulutusmoduuli.koulutustyyppi,
-    // koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi from
-    // KoulutusmoduuliToteutus koulutusmoduulitoteutus join
-    // koulutusmoduulitoteutus.koulutusmoduuli koulutusmoduuli where
-    // (koulutusmoduuli.lukiolinja is not NULL OR
-    // koulutusmoduuli.koulutusohjelmaKoodi is not NULL)
+    @QueryProjection
     public KoulutusIndexEntity(Long id, String oid, Date koulutuksenAlkamisPvm,
             TarjontaTila tila, String koulutusTyyppi,
             String koulutusmoduuliOid, String koulutusKoodi,

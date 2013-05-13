@@ -2,6 +2,8 @@ package fi.vm.sade.tarjonta.model.index;
 
 import java.util.Date;
 
+import com.mysema.query.annotations.QueryProjection;
+
 import fi.vm.sade.tarjonta.model.TarjontaTila;
 
 public class HakukohdeIndexEntity {
@@ -17,6 +19,7 @@ public class HakukohdeIndexEntity {
     private Long hakuId;
 
 
+    @QueryProjection
     public HakukohdeIndexEntity(Long id, String oid, String hakukohdeNimi, String hakukausiUri, Integer hakukausiVuosi, TarjontaTila tila, String hakutapaUri, Integer aloituspaikatLkm, Long hakuId) {
         this.id = id;
         this.oid = oid;
@@ -30,6 +33,7 @@ public class HakukohdeIndexEntity {
     }
 
     //hakukohde.id, hakukohde.oid
+    @QueryProjection
     public HakukohdeIndexEntity(long id, String oid) {
         this.id = id;
         this.oid = oid;
