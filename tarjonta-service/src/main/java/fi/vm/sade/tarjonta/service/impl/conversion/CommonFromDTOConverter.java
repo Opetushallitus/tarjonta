@@ -34,9 +34,12 @@ public class CommonFromDTOConverter {
     public static MonikielinenTeksti convertMonikielinenTekstiTyyppiToDomainValue(MonikielinenTekstiTyyppi monikielinenTekstiTyyppi) {
         MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
 
-        for (MonikielinenTekstiTyyppi.Teksti teksti:monikielinenTekstiTyyppi.getTeksti()) {
-            monikielinenTeksti.addTekstiKaannos(teksti.getKieliKoodi(),teksti.getValue());
+        if (monikielinenTekstiTyyppi!=null && monikielinenTekstiTyyppi.getTeksti()!=null) {
+            for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
+                monikielinenTeksti.addTekstiKaannos(teksti.getKieliKoodi(),teksti.getValue());
+            }
         }
+        
         return monikielinenTeksti;
     }
 
