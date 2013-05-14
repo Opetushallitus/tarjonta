@@ -61,7 +61,4 @@
         </property>
     </bean>
     
-    <bean id="hakukohdeSolrConverter" class="fi.vm.sade.tarjonta.service.search.HakukohdeToSolrInputDocumentFunction" ></bean>
-    <bean id="koulutusSolrConverter" class="fi.vm.sade.tarjonta.service.search.KoulutusmoduuliToteutusToSolrInputDocumentFunction" ></bean>
-
 </beans>

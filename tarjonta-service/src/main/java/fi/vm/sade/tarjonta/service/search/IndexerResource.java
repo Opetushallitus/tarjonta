@@ -50,10 +50,6 @@ public class IndexerResource {
     private KoulutusmoduuliToteutusDAO koulutusDao;
 
     @Autowired
-    private HakukohdeToSolrInputDocumentFunction hakukohdeSolrConverter;// = new HakukohdeToSolrInputDocumentFunction();
-    @Autowired
-    private KoulutusmoduuliToteutusToSolrInputDocumentFunction koulutusSolrConverter;// = new KoulutusmoduuliToteutusToSolrInputDocumentFunction();
-    @Autowired
     private IndexerDAO indexerDao;
     @Autowired
     HakukohdeIndexEntityToSolrDocument hakukohdeConverter;

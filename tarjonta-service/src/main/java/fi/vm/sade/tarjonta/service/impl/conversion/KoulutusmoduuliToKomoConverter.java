@@ -89,6 +89,8 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
         t.setUpdated(s.getUpdated());
         t.setVersion(s.getVersion() == null ? 0 : s.getVersion().intValue());
 
+        t.setKoulutusKoodiUri(s.getKoulutusKoodi());
+
         //
         // TODO check the efficiency of this... :(
         //

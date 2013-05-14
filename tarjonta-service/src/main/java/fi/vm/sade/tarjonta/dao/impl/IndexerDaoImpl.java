@@ -22,10 +22,24 @@ import javax.persistence.PersistenceContext;
 
 import org.springframework.stereotype.Repository;
 
+import com.mysema.query.BooleanBuilder;
+import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.Predicate;
+
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
+import fi.vm.sade.tarjonta.model.QHaku;
+import fi.vm.sade.tarjonta.model.QHakuaika;
+import fi.vm.sade.tarjonta.model.QHakukohde;
+import fi.vm.sade.tarjonta.model.QKoodistoUri;
+import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
+import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.index.HakuAikaIndexEntity;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
+import fi.vm.sade.tarjonta.model.index.QHakuAikaIndexEntity;
+import fi.vm.sade.tarjonta.model.index.QHakukohdeIndexEntity;
+import fi.vm.sade.tarjonta.model.index.QKoulutusIndexEntity;
 
 @Repository
 public class IndexerDaoImpl implements IndexerDAO {
@@ -36,67 +50,111 @@ public class IndexerDaoImpl implements IndexerDAO {
 
     @Override
     public List<HakukohdeIndexEntity> findAllHakukohteet() {
-        String q = "select NEW " + HakukohdeIndexEntity.class.getName() + "(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi, haku.hakukausiUri, haku.hakukausiVuosi, hakukohde.tila, haku.hakutapaUri, hakukohde.aloituspaikatLkm, haku.id) from Hakukohde as hakukohde join hakukohde.haku as haku";
-        return entityManager.createQuery(q, HakukohdeIndexEntity.class).getResultList();
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        final QHaku haku = QHaku.haku;
+        return q(hakukohde)
+                .join(hakukohde.haku, haku)
+                .list(
+                        (new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi,
+                                haku.hakukausiUri, haku.hakukausiVuosi, hakukohde.tila, haku.hakutapaUri,
+                                hakukohde.aloituspaikatLkm, haku.id)));
     }
 
     @Override
     public List<KoulutusIndexEntity> findKoulutusmoduuliToteutusesByHakukohdeId(Long hakukohdeId) { 
-        final String q="select NEW " + KoulutusIndexEntity.class.getName() + "(koulutusmoduulitoteutuses.oid, koulutusmoduulitoteutuses.tarjoaja) from Hakukohde as hakukohde join hakukohde.koulutusmoduuliToteutuses as koulutusmoduulitoteutuses where hakukohde.id= :hakukohdeId";
-        return entityManager.createQuery(q, KoulutusIndexEntity.class).setParameter("hakukohdeId", hakukohdeId).getResultList();
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        return q(hakukohde).join(hakukohde.koulutusmoduuliToteutuses, komoto).where(hakukohde.id.eq(hakukohdeId)).list(new QKoulutusIndexEntity(komoto.oid, komoto.tarjoaja));
     }
 
     @Override
     public HakukohdeIndexEntity findHakukohdeById(Long id) {
-        String HAKUKOHDE_BY_ID = "select NEW " + HakukohdeIndexEntity.class.getName() + "(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi, haku.hakukausiUri, haku.hakukausiVuosi, hakukohde.tila, haku.hakutapaUri, hakukohde.aloituspaikatLkm, haku.id) from Hakukohde as hakukohde join hakukohde.haku as haku where hakukohde.id = :hakukohdeId";
-        return entityManager.createQuery(HAKUKOHDE_BY_ID, HakukohdeIndexEntity.class).setParameter("hakukohdeId", id)
-                .getSingleResult();
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        final QHaku haku = QHaku.haku;
+        return q(hakukohde)
+                .join(hakukohde.haku, haku)
+                .where(hakukohde.id.eq(id))
+                .singleResult(
+                        (new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi,
+                                haku.hakukausiUri, haku.hakukausiVuosi, hakukohde.tila, haku.hakutapaUri,
+                                hakukohde.aloituspaikatLkm, haku.id)));
     }
 
     @Override
     public List<HakuAikaIndexEntity> findHakuajatForHaku(Long hakuId) {
-        final String HAKU_BY_ID = "select NEW " + HakuAikaIndexEntity.class.getName() +"(hakuaika.alkamisPvm, hakuaika.paattymisPvm) from Haku as haku join haku.hakuaikas as hakuaika where haku.id=:hakuId";
-        return entityManager.createQuery(HAKU_BY_ID, HakuAikaIndexEntity.class).setParameter("hakuId", hakuId)
-                .getResultList();
+        final QHaku haku = QHaku.haku;
+        final QHakuaika hakuaika = QHakuaika.hakuaika;
+        return q(haku)
+                .join(haku.hakuaikas, QHakuaika.hakuaika)
+                .where(haku.id.eq(hakuId))
+                .list(
+                        (new QHakuAikaIndexEntity(hakuaika.alkamisPvm, hakuaika.paattymisPvm)));
     }
     
     @Override
     public List<Long> findAllHakukohdeIds() {
-        String q = "select hakukohde.id from Hakukohde as hakukohde";
-        return entityManager.createQuery(q, Long.class).getResultList();
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        return q(hakukohde).list(hakukohde.id);
     }
     
     @Override
     public List<KoulutusIndexEntity> findAllKoulutukset() {
-        final String ALL_KOULUTUKSET = "select NEW " + KoulutusIndexEntity.class.getName() + "(koulutusmoduulitoteutus.id, koulutusmoduulitoteutus.oid, koulutusmoduulitoteutus.koulutuksenAlkamisPvm, koulutusmoduulitoteutus.tila, koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi, koulutusmoduuli.tutkintonimike, koulutusmoduuli.koulutustyyppi, koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, koulutusmoduulitoteutus.tarjoaja, koulutusmoduulitoteutus.pohjakoulutusvaatimus) from KoulutusmoduuliToteutus koulutusmoduulitoteutus join koulutusmoduulitoteutus.koulutusmoduuli koulutusmoduuli where (koulutusmoduuli.lukiolinja is not NULL OR koulutusmoduuli.koulutusohjelmaKoodi is not NULL)";
-        return entityManager.createQuery(ALL_KOULUTUKSET, KoulutusIndexEntity.class).getResultList();
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
+        return q(komoto)
+                .join(komoto.koulutusmoduuli, koulutusmoduuli)
+                .list(
+                        (new QKoulutusIndexEntity(komoto.id, komoto.oid, komoto.koulutuksenAlkamisPvm, komoto.tila,
+                                koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
+                                koulutusmoduuli.tutkintonimike, koulutusmoduuli.koulutustyyppi,
+                                koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, komoto.tarjoaja,
+                                komoto.pohjakoulutusvaatimus)));        
     }
 
     @Override
     public KoulutusIndexEntity findKoulutusById(Long koulutusmoduuliToteutusId) {
-        final String KOULUTUS_BY_ID = "select NEW " + KoulutusIndexEntity.class.getName() + "(koulutusmoduulitoteutus.id, koulutusmoduulitoteutus.oid, koulutusmoduulitoteutus.koulutuksenAlkamisPvm, koulutusmoduulitoteutus.tila, koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi, koulutusmoduuli.tutkintonimike, koulutusmoduuli.koulutustyyppi, koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, koulutusmoduulitoteutus.tarjoaja, koulutusmoduulitoteutus.pohjakoulutusvaatimus) from KoulutusmoduuliToteutus koulutusmoduulitoteutus join koulutusmoduulitoteutus.koulutusmoduuli koulutusmoduuli where (koulutusmoduuli.lukiolinja is not NULL OR koulutusmoduuli.koulutusohjelmaKoodi is not NULL) and koulutusmoduulitoteutus.id= :koulutusmoduuliToteutusId";
-        return entityManager.createQuery(KOULUTUS_BY_ID, KoulutusIndexEntity.class).setParameter("koulutusmoduuliToteutusId", koulutusmoduuliToteutusId)
-                .getSingleResult();
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
+        return q(komoto)
+                .join(komoto.koulutusmoduuli, koulutusmoduuli)
+                .where(komoto.id.eq(koulutusmoduuliToteutusId))
+                .singleResult(
+                        (new QKoulutusIndexEntity(komoto.id, komoto.oid, komoto.koulutuksenAlkamisPvm, komoto.tila,
+                                koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
+                                koulutusmoduuli.tutkintonimike, koulutusmoduuli.koulutustyyppi,
+                                koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, komoto.tarjoaja,
+                                komoto.pohjakoulutusvaatimus)));        
+    }
+
+    private BooleanBuilder bb(Predicate initial){
+        return new BooleanBuilder(initial);
+    }
+
+    private JPAQuery q(EntityPath<?> entityPath){
+        return new JPAQuery(entityManager).from(entityPath);
     }
 
     @Override
     public List<Long> findAllKoulutusIds() {
-        final String q="select koulutusmoduulitoteutus.id from KoulutusmoduuliToteutus koulutusmoduulitoteutus join koulutusmoduulitoteutus.koulutusmoduuli as koulutusmoduuli where (koulutusmoduuli.lukiolinja is not NULL OR koulutusmoduuli.koulutusohjelmaKoodi is not NULL)";
-        return entityManager.createQuery(q, Long.class).getResultList();
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
+        final Predicate where = bb(komo.lukiolinja.isNotNull()).or(komo.koulutusohjelmaKoodi.isNotNull()).getValue();
+        return q(komoto).join(komoto.koulutusmoduuli, komo).where(where).list(komoto.id);
     }
 
     @Override
     public List<HakukohdeIndexEntity> findhakukohteetByKoulutusmoduuliToteutusId(
             Long koulutusmoduuliToteutusId) {
-        String q="select NEW " + HakukohdeIndexEntity.class.getName() + "(hakukohde.id, hakukohde.oid) from KoulutusmoduuliToteutus koulutusmoduulitoteutus join koulutusmoduulitoteutus.hakukohdes as hakukohde where koulutusmoduulitoteutus.id= :koulutusmoduuliToteutusId";
-        return entityManager.createQuery(q, HakukohdeIndexEntity.class).setParameter("koulutusmoduuliToteutusId",  koulutusmoduuliToteutusId).getResultList();
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        return q(komoto).join(komoto.hakukohdes, hakukohde).where(komoto.id.eq(koulutusmoduuliToteutusId)).list(new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid));
     }
 
     @Override
     public List<String> findKoulutusLajisForKoulutus(
             Long koulutusmoduuliToteutusId) {
-        String q="select koulutuslajis.koodiUri from KoulutusmoduuliToteutus as koulutusmoduulitoteutus join koulutusmoduulitoteutus.koulutuslajis as koulutuslajis where koulutusmoduulitoteutus.id= :koulutusmoduulitoteutusId";
-        return entityManager.createQuery(q, String.class).setParameter("koulutusmoduulitoteutusId",  koulutusmoduuliToteutusId).getResultList();
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        
+        return q(komoto).join(komoto.koulutuslajis, QKoodistoUri.koodistoUri).where(komoto.id.eq(koulutusmoduuliToteutusId)).list(QKoodistoUri.koodistoUri.koodiUri);
     }
-
 }

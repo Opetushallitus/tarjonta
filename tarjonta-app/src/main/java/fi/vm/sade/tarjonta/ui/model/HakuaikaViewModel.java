@@ -44,7 +44,16 @@ public class HakuaikaViewModel {
     @Override
     public String toString() {
     	final DateFormat fmt = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, I18N.getLocale());
-    	return getHakuajanKuvaus()+" "+fmt.format(getAlkamisPvm())+" - "+fmt.format(getPaattymisPvm());
+    	StringBuffer ret = new StringBuffer();
+    	if (getHakuajanKuvaus()!=null) {
+    		ret.append(getHakuajanKuvaus())
+    			.append(' ');
+    	}
+    	ret.append(fmt.format(getAlkamisPvm()));
+    	ret.append(" - ");
+    	ret.append(fmt.format(getPaattymisPvm()));
+    	
+    	return ret.toString();
     }
     
     public String getHakuaikaOid() {

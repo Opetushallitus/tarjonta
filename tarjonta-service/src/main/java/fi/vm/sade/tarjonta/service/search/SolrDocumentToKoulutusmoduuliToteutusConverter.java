@@ -29,7 +29,7 @@ public class SolrDocumentToKoulutusmoduuliToteutusConverter {
     private KoulutusTulos convertKoulutus(SolrDocument koulutusDoc, SolrDocumentList solrOrgList) {
         KoulutusTulos tulos = new KoulutusTulos();
         KoulutusListausTyyppi koulutus = new KoulutusListausTyyppi();
-        koulutus.setAjankohta(koulutusDoc.getFieldValue(KAUSI_KOODI) + " " + koulutusDoc.getFieldValue(VUOSI_KOODI));
+        koulutus.setAjankohta(koulutusDoc.getFieldValue(KAUSI) + " " + koulutusDoc.getFieldValue(VUOSI_KOODI));
         koulutus.setKomotoOid("" + koulutusDoc.getFieldValue(OID));
         koulutus.setKoulutuskoodi(IndexingUtils.createKoodiTyyppi(KOULUTUSKOODI_URI, KOULUTUSKOODI_FI, KOULUTUSKOODI_SV, KOULUTUSKOODI_EN, koulutusDoc));
         koulutus.setKoulutusmoduuli("" + koulutusDoc.getFieldValue(KOULUTUSMODUULI_OID));
