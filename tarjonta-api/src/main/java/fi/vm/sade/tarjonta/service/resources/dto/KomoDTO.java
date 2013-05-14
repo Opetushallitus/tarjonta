@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * LOS
  *
  * @author mlyly
  */
@@ -58,6 +59,8 @@ public class KomoDTO implements Serializable {
     private Map<String, String> _koulutuksenRakenne;
     private Map<String, String> _jatkoOpintoMahdollisuudet;
     private Map<String, String> _tavoitteet;
+
+    private String _koulutusKoodiUri;
 
     // ------------------------------------------------------------------------------
     // Getters and setters
@@ -312,4 +315,13 @@ public class KomoDTO implements Serializable {
     public void setTavoitteet(Map<String, String> _tavoitteet) {
         this._tavoitteet = _tavoitteet;
     }
+
+    public String getKoulutusKoodiUri() {
+        return _koulutusKoodiUri;
+    }
+
+    public void setKoulutusKoodiUri(String _koulutusKoodiUri) {
+        this._koulutusKoodiUri = _koulutusKoodiUri;
+    }
+
 }
