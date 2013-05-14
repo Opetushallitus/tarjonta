@@ -578,7 +578,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 getModel().getHakukohde().setHakukohdeKoodistoNimi(hakukohdenimi);
                 hakukohdeView = new ShowHakukohdeViewImpl(hakukohdenimi, null, null);
                 getRootView().changeView(hakukohdeView);
-
             }
         }
     }

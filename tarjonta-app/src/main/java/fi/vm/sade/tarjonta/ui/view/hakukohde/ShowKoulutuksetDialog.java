@@ -6,13 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.vaadin.data.Container;
 import com.vaadin.data.util.HierarchicalContainer;
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18N;
@@ -22,62 +17,31 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTul
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
-import fi.vm.sade.vaadin.util.UiUtil;
+import fi.vm.sade.tarjonta.ui.view.common.ShowRelatedObjectsDialog;
 
-public class ShowKoulutuksetDialog extends VerticalLayout {
+public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
 
     private static final long serialVersionUID = 6521526287528256527L;
-    
-    public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListHakukohdeViewImpl.jarjestys.Organisaatio")};
-    public static final String COLUMN_A = "Kategoriat";
-    public static final String COLUMN_PVM = "Ajankohta";
-    public static final String COLUMN_TILA = "Tila";
     
     private CategoryTreeView koulutusTree;
     
     private List<KoulutusTulos> koulutukset;
     private HakukohdeTulos selectedHakukohde;
-    private TarjontaPresenter presenter;
     private transient I18NHelper i18n = new I18NHelper(this);
     
     public ShowKoulutuksetDialog(List<KoulutusTulos> koulutukset, HakukohdeTulos selectedHakukohde, TarjontaPresenter presenter) {
-        setSizeUndefined();
-        setWidth("700px");
+        super(presenter);
         this.koulutukset = koulutukset;
         this.selectedHakukohde = selectedHakukohde;
-        this.presenter = presenter;
         buildLayout();
     }
     
     private void buildLayout() {
-        Label dialogLabel = new Label();
-        dialogLabel.setValue(T("otsikko"));
-        addComponent(dialogLabel);
-        Label hakukohdeNimi = new Label();
-        hakukohdeNimi.setValue(resolveHakukohdeNimi());
-        addComponent(hakukohdeNimi);
-        
-        buildKoulutusTree();
-        
+        buildLayout(T("otsikko"), resolveHakukohdeNimi());
+        populateTree();
     }
     
-    private void buildKoulutusTree() {
-        koulutusTree = new CategoryTreeView();
-        addComponent(koulutusTree);
-        setExpandRatio(koulutusTree, 1f);
-        
-        koulutusTree.addContainerProperty(COLUMN_A, CaptionItem.class, new CaptionItem());
-        koulutusTree.addContainerProperty(COLUMN_PVM, String.class, "");
-        koulutusTree.addContainerProperty(COLUMN_TILA, String.class, "");
-        
-        koulutusTree.setColumnExpandRatio(COLUMN_A, 1f);
-        koulutusTree.setColumnExpandRatio(COLUMN_PVM, 0.3f);
-        koulutusTree.setColumnExpandRatio(COLUMN_TILA, 0.3f);
-        
-       populateTree();
-    }
-    
-    private void populateTree() {
+    protected void populateTree() {
        Set<Map.Entry<String, List<KoulutusTulos>>> set = createDataMap();
        HierarchicalContainer hc = new HierarchicalContainer();
        hc.addContainerProperty(COLUMN_A, CaptionItem.class, new CaptionItem());
@@ -88,23 +52,22 @@ public class ShowKoulutuksetDialog extends VerticalLayout {
            
            Object rootItem = hc.addItem();
            
-           hc.getContainerProperty(rootItem, COLUMN_A).setValue(new CaptionItem(e.getKey(), false, null));
+           hc.getContainerProperty(rootItem, COLUMN_A).setValue(new CaptionItem(e.getKey(), false));
            System.out.println("Added tarjoaja: " + e.getKey());
-           for (KoulutusTulos curKoulutus : e.getValue()) {
+           for (final KoulutusTulos curKoulutus : e.getValue()) {
                
                hc.addItem(curKoulutus);
                hc.setParent(curKoulutus, rootItem);
                CaptionItem ci = new CaptionItem(
                        TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), curKoulutus.getKoulutus().getNimi()).getValue(), 
-                       true, 
-                       curKoulutus);
+                       true);
                ci.getLinkButton().addListener( new Button.ClickListener() {
 
                    private static final long serialVersionUID = -4104837426848884996L;
 
                    @Override
                        public void buttonClick(ClickEvent event) {
-                           showSummaryView();
+                           showSummaryView(curKoulutus);
                        }
                    });
                hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(
@@ -123,9 +86,19 @@ public class ShowKoulutuksetDialog extends VerticalLayout {
        }
     }
     
-    private void showSummaryView() {
-        getParent().getWindow().removeWindow(getWindow());
-        presenter.showHakukohdeViewImpl(selectedHakukohde.getHakukohde().getOid());
+    private void showSummaryView(KoulutusTulos koulutus) {
+        final String komotoOid = koulutus.getKoulutus().getKoulutusmoduuliToteutus();
+
+        switch (koulutus.getKoulutus().getKoulutustyyppi()) {
+            case AMMATILLINEN_PERUSKOULUTUS:
+                presenter.closeHakukohdeRemovalDialog();
+                presenter.showShowKoulutusView(komotoOid);
+                break;
+            case LUKIOKOULUTUS:
+                presenter.closeHakukohdeRemovalDialog();
+                presenter.getLukioPresenter().showSummaryKoulutusView(komotoOid);
+                break;
+        }
     }
     
     private Set<Map.Entry<String, List<KoulutusTulos>>> createDataMap() {
@@ -162,47 +135,5 @@ public class ShowKoulutuksetDialog extends VerticalLayout {
         return I18N.getMessage(selectedHakukohde.getHakukohde().getKoulutuksenAlkamiskausiUri()) 
                 +  " " + selectedHakukohde.getHakukohde().getKoulutuksenAlkamisvuosi();
     }
-    
-    private String T(String key, Object... args) {
-        return i18n.getMessage(key, args);
-    }
-    
-    public class CaptionItem extends HorizontalLayout {
-
-        private static final long serialVersionUID = 312997606755010205L;
-        
-        private String caption;
-        private KoulutusTulos koulutus;
-        private Button linkButton;
-        
-        public CaptionItem() {
-            
-        }
-       
-        public CaptionItem(String caption, boolean withLink, KoulutusTulos koulutus) {
-            this.caption = caption;
-            this.koulutus = koulutus;
-            buildLayout(withLink);
-        }
-        
-        public Button getLinkButton() {
-            return linkButton;
-        }
-        
-        private void buildLayout(boolean withLink) {
-            if (withLink) {
-                linkButton = UiUtil.buttonLink(null, caption);
-                linkButton.setStyleName("link-row");
-                linkButton.setSizeUndefined();
-                linkButton.setHeight(7, Sizeable.UNITS_PIXELS);
-                addComponent(linkButton);
-            } else {
-                Label orgLabel = new Label();
-                orgLabel.setValue(caption);
-                addComponent(orgLabel);
-            }
-        }
-        
-    }   
 
 }

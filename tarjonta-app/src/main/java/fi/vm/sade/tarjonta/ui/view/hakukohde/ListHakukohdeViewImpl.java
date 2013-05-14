@@ -353,7 +353,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     public void closeDialog() {
         if (hakukohdeDialog != null) {
             getWindow().removeWindow(hakukohdeDialog);
+            hakukohdeDialog = null;
         }
-        
     }
 }
