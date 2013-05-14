@@ -14,17 +14,23 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
+ * LOI
  *
  * @author mlyly
  */
-public class KomotoDTO extends KomoDTO {
+public class KomotoDTO implements Serializable {
+
+    private String _oid;
+    private int _version;
+    private Date _updated;
+    private String _updateByOid;
+    private Date _created;
 
     private Date _koulutuksenAlkamisDate;
     private boolean _maksullisuus;
@@ -50,6 +56,13 @@ public class KomotoDTO extends KomoDTO {
     private List<String> _opetuskieletUris;
     private List<String> _opetusmuodotUris;
     private List<String> _teematUris;
+
+    private String _laajuusArvo;
+    private String _laajuusYksikkoUri;
+    private String _tarjoajaOid; // onko sama kuin organisaatioOid?
+    private String _tila;
+    private String _ulkoinenTunniste;
+    private String _koulutusAsteUri;
 
     public Date getKoulutuksenAlkamisDate() {
         return _koulutuksenAlkamisDate;
@@ -175,6 +188,31 @@ public class KomotoDTO extends KomoDTO {
         this._webLinkkis = webLinkkis;
     }
 
+    public String getUpdateByOid() {
+        return _updateByOid;
+    }
+
+    public void setUpdateByOid(String _updateByOid) {
+        this._updateByOid = _updateByOid;
+    }
+
+    public Date getCreated() {
+        return _created;
+    }
+
+    public void setCreated(Date _created) {
+        this._created = _created;
+    }
+
+    public Date getUpdated() {
+        return _updated;
+    }
+
+    public void setUpdated(Date _updated) {
+        this._updated = _updated;
+    }
+
+
     // -----------------------------------------
     // URI LISTS
     //
@@ -235,4 +273,67 @@ public class KomotoDTO extends KomoDTO {
         this._teematUris = teematUris;
     }
 
+    public String getKoulutusAsteUri() {
+        return _koulutusAsteUri;
+    }
+
+    public void setKoulutusAsteUri(String _koulutusAsteUri) {
+        this._koulutusAsteUri = _koulutusAsteUri;
+    }
+
+    public String getLaajuusArvo() {
+        return _laajuusArvo;
+    }
+
+    public void setLaajuusArvo(String _laajuusArvo) {
+        this._laajuusArvo = _laajuusArvo;
+    }
+
+    public String getLaajuusYksikkoUri() {
+        return _laajuusYksikkoUri;
+    }
+
+    public void setLaajuusYksikkoUri(String _laajuusYksikkoUri) {
+        this._laajuusYksikkoUri = _laajuusYksikkoUri;
+    }
+
+    public String getTarjoajaOid() {
+        return _tarjoajaOid;
+    }
+
+    public void setTarjoajaOid(String _tarjoajaOid) {
+        this._tarjoajaOid = _tarjoajaOid;
+    }
+
+    public String getTila() {
+        return _tila;
+    }
+
+    public void setTila(String _tila) {
+        this._tila = _tila;
+    }
+
+    public String getUlkoinenTunniste() {
+        return _ulkoinenTunniste;
+    }
+
+    public void setUlkoinenTunniste(String _ulkoinenTunniste) {
+        this._ulkoinenTunniste = _ulkoinenTunniste;
+    }
+
+    public int getVersion() {
+        return _version;
+    }
+
+    public void setVersion(int _version) {
+        this._version = _version;
+    }
+
+    public String getOid() {
+        return _oid;
+    }
+
+    public void setOid(String _oid) {
+        this._oid = _oid;
+    }
 }
