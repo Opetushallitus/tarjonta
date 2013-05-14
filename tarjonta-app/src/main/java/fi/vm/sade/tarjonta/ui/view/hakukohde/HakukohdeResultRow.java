@@ -153,7 +153,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
         } else if (selection.equals(i18n.getMessage(MenuBarActions.DELETE.key))) {
             showRemoveDialog();
         } else if (selection.equals(i18n.getMessage("naytaKoulutukset"))) {
-            tarjontaPresenter.showKoulutuksetForHakukohde(hakukohdeOid);
+            tarjontaPresenter.showKoulutuksetForHakukohde(hakukohde);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.PUBLISH.key))) {
             tarjontaPresenter.changeStateToPublished(hakukohdeOid, HAKUKOHDE);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {

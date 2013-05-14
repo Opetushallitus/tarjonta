@@ -1610,22 +1610,17 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     /**
      * Shows the koulutus objects for a hakukohde in the ListHakukohdeView.
      *
-     * @param oid
+     * @param hakukohde
      */
-    public void showKoulutuksetForHakukohde(String oid) {
+    public void showKoulutuksetForHakukohde(HakukohdeTulos hakukohde) {
        
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
-        kysely.getHakukohdeOids().add(oid);
+        //kysely.getHakukohdeOids().add(hakukohde);
+        kysely.getHakukohdeOids().add(hakukohde.getHakukohde().getOid());
         
         HaeKoulutuksetVastausTyyppi vastaus =  this.getTarjontaPublicService().haeKoulutukset(kysely);
         
-        
-        /*LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
-        kysely.setOid(oid);
-        
-        HakukohdeViewModel hakukohde = this.hakukohdeToDTOConverter
-                .convertDTOToHakukohdeViewMode(this.getTarjontaPublicService().lueHakukohde(kysely).getHakukohde());*/
-        this._hakukohdeListView.showKoulutuksetForHakukohde(vastaus.getKoulutusTulos());//appendKoulutuksetToList(hakukohde);
+        this._hakukohdeListView.showKoulutuksetForHakukohde(vastaus.getKoulutusTulos(), hakukohde);//appendKoulutuksetToList(hakukohde);
     }
 
     private void addOrganisaatioNameValuePair(String oid, String name) {
