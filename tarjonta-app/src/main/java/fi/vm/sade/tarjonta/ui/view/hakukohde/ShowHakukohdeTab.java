@@ -81,12 +81,12 @@ public class ShowHakukohdeTab extends CustomComponent {
         setCompositionRoot(mainLayout);
         buildPage(mainLayout);
     }
-    
+
     private OrganisaatioContext getContext() {
-    	if (context == null) {
+        if (context == null) {
             context = OrganisaatioContext.getContext(presenter.getTarjoaja().getSelectedOrganisationOid());
-    	}
-    	return context;
+        }
+        return context;
     }
 
     private void buildPage(VerticalLayout layout) {
@@ -129,6 +129,17 @@ public class ShowHakukohdeTab extends CustomComponent {
     private void buildLiiteLayout(VerticalLayout layout) {
         VerticalLayout liiteLayout = new VerticalLayout();
         liiteLayout.setMargin(true);
+        final List<HakukohdeLiiteViewModel> loadHakukohdeLiitteet = presenter.loadHakukohdeLiitteet();
+
+        Date lastUpdated = null;
+
+        //take the latest date
+        for (HakukohdeLiiteViewModel liite : loadHakukohdeLiitteet) {
+            if (lastUpdated == null || lastUpdated.before(liite.getViimeisinPaivitysPvm())) {
+                lastUpdated = liite.getViimeisinPaivitysPvm();
+            }
+        }
+
 
         liiteLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("liitteetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
                 new ClickListener() {
@@ -137,20 +148,14 @@ public class ShowHakukohdeTab extends CustomComponent {
                 presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
                         presenter.getModel().getHakukohde().getOid(), null, TarjontaPresenter.LIITTEET_TAB_SELECT);
             }
-        }, null, presenter.getPermission().userCanUpdateHakukohde(getContext())));
+        }, lastUpdated, presenter.getPermission().userCanUpdateHakukohde(getContext())));
 
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
         grid.setMargin(true);
         for (HakukohdeLiiteViewModel liite : presenter.loadHakukohdeLiitteet()) {
-
-            if (liite.getViimeisinPaivitysPvm() != null) {
-                Label lastUpdLbl = buildTallennettuLabel(liite.getViimeisinPaivitysPvm());
-                addTwoComponentsToGrid(grid, getOphH2Label(uiHelper.getKoodiNimi(liite.getLiitteenTyyppi(), I18N.getLocale())), lastUpdLbl);
-            } else {
-                addTwoColumnRowToGrid(grid, getOphH2Label(uiHelper.getKoodiNimi(liite.getLiitteenTyyppi(), I18N.getLocale())));
-            }
-            //addKoodiHeaderToGrid(grid,uiHelper.getKoodiNimi(liite.getLiitteenTyyppi(),I18N.getLocale()));
+            addTwoColumnRowToGrid(grid, getOphH2Label(uiHelper.getKoodiNimi(liite.getLiitteenTyyppi(), I18N.getLocale())));
+            addTwoColumnRowToGrid(grid, getRichTxtLbl(getLanguageString(liite.getLiitteenSanallinenKuvaus())));
             addItemToGrid(grid, "liiteoimMennessaLbl", getLiiteAika(liite));
             addItemToGrid(grid, "liiteToimOsoiteLbl", getLiiteOsoite(liite));
             if (liite.getSahkoinenToimitusOsoite() != null) {
@@ -158,8 +163,6 @@ public class ShowHakukohdeTab extends CustomComponent {
                 liiteSahkToimOsoiteLink.setTargetName("_blank");
                 addItemToGrid(grid, "sahkoinenToimOsoite", liiteSahkToimOsoiteLink);
             }
-
-            addTwoColumnRowToGrid(grid, getRichTxtLbl(getLanguageString(liite.getLiitteenSanallinenKuvaus())));
         }
         grid.setColumnExpandRatio(1, 1f);
         liiteLayout.addComponent(grid);
@@ -177,8 +180,6 @@ public class ShowHakukohdeTab extends CustomComponent {
         label.setStyleName(Oph.LABEL_H2);
         return label;
     }
-
-
 
     private void addTwoColumnRowToGrid(final GridLayout grid, final Component component) {
         if (grid != null) {
@@ -225,7 +226,7 @@ public class ShowHakukohdeTab extends CustomComponent {
         Label richTxtLbl = new Label(labelMsg);
         richTxtLbl.setContentMode(Label.CONTENT_XHTML);
         hl.addComponent(richTxtLbl);
-        hl.setMargin(true,false,false,false);
+        hl.setMargin(true, false, false, false);
         return hl;
     }
 
@@ -275,9 +276,15 @@ public class ShowHakukohdeTab extends CustomComponent {
 
         VerticalLayout valintakoeLayout = new VerticalLayout();
         valintakoeLayout.setMargin(true);
+        List<ValintakoeViewModel> loadHakukohdeValintaKokees = presenter.loadHakukohdeValintaKokees();
+        Date lastUpdated = null;
 
-
-
+        //take the latest date
+        for (ValintakoeViewModel valintakoe : loadHakukohdeValintaKokees) {
+            if (lastUpdated == null || lastUpdated.before(valintakoe.getViimeisinPaivitysPvm())) {
+                lastUpdated = valintakoe.getViimeisinPaivitysPvm();
+            }
+        }
 
         valintakoeLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("valintakokeetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
                 new ClickListener() {
@@ -286,7 +293,7 @@ public class ShowHakukohdeTab extends CustomComponent {
                 presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
                         presenter.getModel().getHakukohde().getOid(), null, TarjontaPresenter.VALINTAKOE_TAB_SELECT);
             }
-        }, null, presenter.getPermission().userCanUpdateHakukohde(getContext())));
+        }, lastUpdated, presenter.getPermission().userCanUpdateHakukohde(getContext())));
 
         VerticalLayout yetAnotherLayout = new VerticalLayout();
         yetAnotherLayout.setMargin(true);
@@ -311,19 +318,10 @@ public class ShowHakukohdeTab extends CustomComponent {
         }
 
 
-        for (ValintakoeViewModel valintakoe : presenter.loadHakukohdeValintaKokees()) {
-
+        for (ValintakoeViewModel valintakoe : loadHakukohdeValintaKokees) {
             final GridLayout grid = new GridLayout(2, 1);
-
             grid.setWidth("100%");
-
-            if (valintakoe.getViimeisinPaivitysPvm() != null) {
-                Label lastUpdLabel = buildTallennettuLabel(valintakoe.getViimeisinPaivitysPvm());
-                addTwoComponentsToGrid(grid, getHdrH2Label("valintakoeTitle"), lastUpdLabel);
-            } else {
-                addTwoColumnRowToGrid(grid, getHdrH2Label("valintakoeTitle"));
-            }
-
+            addTwoColumnRowToGrid(grid, getOphH2Label(uiHelper.getKoodiNimi(valintakoe.getValintakoeTyyppi(), I18N.getLocale())));
             addTwoColumnRowToGrid(grid, getRichTxtLbl(getLanguageString(valintakoe.getSanallisetKuvaukset())));
 
             addTwoColumnRowToGrid(grid, buildValintakoeAikaTable(valintakoe));
@@ -520,13 +518,7 @@ public class ShowHakukohdeTab extends CustomComponent {
 
     private void buildPerustiedotLayout(VerticalLayout layout) {
         VerticalLayout hdrLayout = new VerticalLayout();
-
         hdrLayout.setMargin(true);
-
-        Label lastUpdLbl = null;
-        if (presenter.getModel().getHakukohde().getViimeisinPaivitysPvm() != null) {
-            lastUpdLbl = buildTallennettuLabel(presenter.getModel().getHakukohde().getViimeisinPaivitysPvm());
-        }
         hdrLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("perustiedot"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
                 new ClickListener() {
             @Override
@@ -534,10 +526,7 @@ public class ShowHakukohdeTab extends CustomComponent {
                 presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
                         presenter.getModel().getHakukohde().getOid(), null, null);
             }
-        }, lastUpdLbl, presenter.getPermission().userCanUpdateHakukohde(getContext())));
-
-
-
+        }, presenter.getModel().getHakukohde().getViimeisinPaivitysPvm(), presenter.getPermission().userCanUpdateHakukohde(getContext())));
 
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
@@ -578,14 +567,14 @@ public class ShowHakukohdeTab extends CustomComponent {
         boolean isFirst = true;
         for (PainotettavaOppiaineViewModel painotettavaOppiaine : presenter.getModel().getHakukohde().getPainotettavat()) {
             if (painotettavaOppiaine.getOppiaine() != null && painotettavaOppiaine.getOppiaine().trim().length() > 0) {
-            if (!isFirst) {
-                sb.append(", ");
-            }
-            sb.append(uiHelper.getKoodiNimi(painotettavaOppiaine.getOppiaine()));
-            sb.append("( ");
-            sb.append(painotettavaOppiaine.getPainokerroin());
-            sb.append(" )");
-            isFirst = false;
+                if (!isFirst) {
+                    sb.append(", ");
+                }
+                sb.append(uiHelper.getKoodiNimi(painotettavaOppiaine.getOppiaine()));
+                sb.append("( ");
+                sb.append(painotettavaOppiaine.getPainokerroin());
+                sb.append(" )");
+                isFirst = false;
             }
         }
         return sb.toString();
@@ -605,14 +594,14 @@ public class ShowHakukohdeTab extends CustomComponent {
 
     private void addItemToGrid(final GridLayout grid,
             final String labelCaptionKey, final Object labelCaptionValue) {
-        addItemToGrid(grid, labelCaptionKey, new Label(labelCaptionValue==null ? null : labelCaptionValue.toString()));
+        addItemToGrid(grid, labelCaptionKey, new Label(labelCaptionValue == null ? null : labelCaptionValue.toString()));
     }
 
     private void addRichTextToGrid(final GridLayout grid,
             final String labelCaptionKey, final Object labelCaptionValue) {
 
 
-        Label lbl = new Label(labelCaptionValue==null ? null : labelCaptionValue.toString());
+        Label lbl = new Label(labelCaptionValue == null ? null : labelCaptionValue.toString());
         lbl.setContentMode(Label.CONTENT_XHTML);
 
         addItemToGrid(grid, labelCaptionKey, lbl);
@@ -672,6 +661,8 @@ public class ShowHakukohdeTab extends CustomComponent {
     }
 
     private String getLanguageString(List<KielikaannosViewModel> tekstit) {
+
+
         for (KielikaannosViewModel teksti : tekstit) {
             if (teksti.getKielikoodi().trim().equalsIgnoreCase(this.language)) {
                 return teksti.getNimi();
@@ -689,16 +680,17 @@ public class ShowHakukohdeTab extends CustomComponent {
         parent.addComponent(split);
     }
 
-    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, Label lastUpdatedLabel, boolean showButton) {
+    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, Date lastUpdatedLabel, boolean showButton) {
         HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
-        Label titleLabel = UiUtil.label(headerLayout, title);
+        final Label titleLabel = UiUtil.label(headerLayout, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
 
+        final Label buildTallennettuLabel = lastUpdatedLabel != null ? buildTallennettuLabel(lastUpdatedLabel) : null;
 
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);
-            if (lastUpdatedLabel != null) {
-                headerLayout.addComponent(lastUpdatedLabel);
+            if (buildTallennettuLabel != null) {
+                headerLayout.addComponent(buildTallennettuLabel);
             }
 
             Button btn = UiBuilder.buttonSmallPrimary(headerLayout, btnCaption, listener);
@@ -716,10 +708,9 @@ public class ShowHakukohdeTab extends CustomComponent {
                 });
             }
 
-            //headerLayout.setExpandRatio(btn, 1f);
             headerLayout.setComponentAlignment(btn, Alignment.TOP_RIGHT);
-            if (lastUpdatedLabel != null) {
-                headerLayout.setComponentAlignment(lastUpdatedLabel, Alignment.TOP_CENTER);
+            if (buildTallennettuLabel != null) {
+                headerLayout.setComponentAlignment(buildTallennettuLabel, Alignment.TOP_CENTER);
             }
         }
         return headerLayout;

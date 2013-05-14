@@ -39,6 +39,7 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.ui.enums.SelectedOrgModel;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
@@ -153,6 +154,12 @@ public class TarjontaLukioPresenter {
         // If koulutus OID is provided, the koulutus is read from database
         // before opening the KoulutusEditView.
 
+        if (komotoOid != null) {
+            presenter.readOrgTreeToTarjoajaByModel(SelectedOrgModel.TARJOAJA);
+        } else {
+            presenter.readOrgTreeToTarjoajaByModel(SelectedOrgModel.NAVIGATION);
+        }
+
         loadKomoto(komotoOid);
 
         setEditKoulutusView(new EditLukioKoulutusView(komotoOid, tab));
@@ -166,9 +173,9 @@ public class TarjontaLukioPresenter {
         loadKomoto(komotoOid);
         if (orgs != null && orgs.size() > 0) {
             presenter.getModel().getTarjoajaModel().getOrganisationOidNamePairs().clear();
-            for (OrganisaatioPerustietoType org:orgs) {
+            for (OrganisaatioPerustietoType org : orgs) {
                 OrganisationOidNamePair oidNamePair = new OrganisationOidNamePair();
-                oidNamePair.setOrganisation(org.getOid(),org.getNimiFi());
+                oidNamePair.setOrganisation(org.getOid(), org.getNimiFi());
                 presenter.getModel().getTarjoajaModel().getOrganisationOidNamePairs().add(oidNamePair);
             }
         }
@@ -206,12 +213,10 @@ public class TarjontaLukioPresenter {
             LueKoulutusVastausTyyppi koulutus = getPresenter().getKoulutusByOid(komotoOid);
             lukioKoulutusConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, I18N.getLocale());
         } else {
-            Preconditions.checkNotNull(getTarjontaModel().getTarjoajaModel().getSelectedOrganisationOid(), "Missing organisation OID.");
-            presenter.getTarjoaja().setSelectedResultRowOrganisationOid(null);
+            Preconditions.checkNotNull(getTarjontaModel().getTarjoajaModel().getSelectedOrganisationOid(), "Missing organisation OID.");   
             getPerustiedotModel().clearModel();
             getTarjontaModel().setKoulutusLukioKuvailevatTiedot(new KoulutusLukioKuvailevatTiedotViewModel());
         }
-        presenter.readNavigationOrgTreeToTarjoaja();
     }
 
     public void loadSelectedKomoData() {
@@ -263,11 +268,15 @@ public class TarjontaLukioPresenter {
             LOG.debug("No lukiolinja selected.");
         }
     }
+
     /**
      * Loading start date for created komoto from an existing relative komoto
+     *
      * @param koulutuskoodi
      */
     private void loadParentKomotoData(String koulutuskoodi) {
+       LOG.debug(koulutuskoodi);
+        
         KoulutusTulos komoto = presenter.findKomotoByKoulutuskoodiPohjakoulutus(koulutuskoodi, null);
         if (komoto != null) {
             LueKoulutusKyselyTyyppi lueKysely = new LueKoulutusKyselyTyyppi();
@@ -286,7 +295,7 @@ public class TarjontaLukioPresenter {
         LOG.debug("in loadKoulutuskoodis");
         HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
         kysely.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
-       
+
         //TODO: fix this
         //kysely.getOppilaitostyyppiUris().addAll(presenter.getOppilaitostyyppiUris());
         HaeKaikkiKoulutusmoduulitVastausTyyppi allKomoParents = tarjontaPublicService.haeKaikkiKoulutusmoduulit(kysely);
@@ -304,11 +313,11 @@ public class TarjontaLukioPresenter {
         KoulutusLukioPerustiedotViewModel perusModel = getPerustiedotModel();
         perusModel.setKomos(komos);
         perusModel.createCacheKomos(); //cache komos to map object
-        
+
         //koodisto service search result remapped to UI model objects.
         List<KoulutuskoodiModel> listaaKoulutuskoodit = kolutusKoodistoConverter.listaaKoulutukses(uris, I18N.getLocale());
         Collections.sort(listaaKoulutuskoodit, new BeanComparator("nimi"));
-        
+
         perusModel.getKoulutuskoodis().clear();
         perusModel.getKoulutuskoodis().addAll(listaaKoulutuskoodit);
     }
