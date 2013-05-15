@@ -36,14 +36,28 @@
     </filter-mapping>
     
     <filter>
+        <filter-name>sitemeshTarjontaApp</filter-name>
+        <filter-class>org.sitemesh.config.ConfigurableSiteMeshFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>sitemeshTarjontaApp</filter-name>
+        <url-pattern>/tarjontaapp/*</url-pattern>
+    </filter-mapping>
+    
+    <filter>
         <filter-name>sitemesh</filter-name>
         <filter-class>org.sitemesh.config.ConfigurableSiteMeshFilter</filter-class>
     </filter>
+    
     <filter-mapping>
         <filter-name>sitemesh</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/tarjontaapp/*</url-pattern>
+        <url-pattern>/hakuapp/*</url-pattern>
+        <url-pattern>/valintaapp/*</url-pattern>
+        <url-pattern>/adminaapp/*</url-pattern>
     </filter-mapping>
-
+    
     <!-- Tarjonta standalone -->
     <servlet>
         <servlet-name>tarjontaapp</servlet-name>
@@ -142,7 +156,7 @@
         <servlet-name>valintaapp</servlet-name>
         <url-pattern>/valintaapp/*</url-pattern>
     </servlet-mapping>
-     <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>valintaapp</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
