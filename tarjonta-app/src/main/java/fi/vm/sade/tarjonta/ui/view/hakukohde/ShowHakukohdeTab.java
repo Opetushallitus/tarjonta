@@ -49,6 +49,7 @@ import fi.vm.sade.tarjonta.ui.model.ValintakoeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.service.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
+import fi.vm.sade.tarjonta.ui.view.common.FormGridBuilder;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.ShowHakukohdeValintakoeRow;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
@@ -133,16 +134,19 @@ public class ShowHakukohdeTab extends CustomComponent {
 
         Date lastUpdated = null;
 
-        //take the latest date
+        //get the latest date
         for (HakukohdeLiiteViewModel liite : loadHakukohdeLiitteet) {
             if (lastUpdated == null || lastUpdated.before(liite.getViimeisinPaivitysPvm())) {
                 lastUpdated = liite.getViimeisinPaivitysPvm();
             }
         }
 
+         
+        
 
         liiteLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("liitteetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
                 new ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
             @Override
             public void buttonClick(ClickEvent clickEvent) {
                 presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
@@ -197,23 +201,6 @@ public class ShowHakukohdeTab extends CustomComponent {
         }
     }
 
-    private void addTwoComponentsToGrid(final GridLayout grid, final Component firstComponent, final Component secondComponent) {
-        if (grid != null) {
-            //Hack to add two column row to table dynamically
-            final HorizontalLayout hl = UiUtil.horizontalLayout(false,
-                    UiMarginEnum.RIGHT);
-
-            Label placeHolder = new Label("PLACEHOLDER");
-
-            grid.addComponent(placeHolder);
-            grid.removeComponent(placeHolder);
-            final int y = grid.getCursorY();
-            hl.addComponent(firstComponent);
-            hl.addComponent(secondComponent);
-            grid.addComponent(hl, 0, y, 1, y);
-        }
-    }
-
     private Label getHdrH2Label(String caption) {
         Label hdrLbl = new Label(i18n.getMessage(caption));
         hdrLbl.setStyleName(Oph.LABEL_H2);
@@ -223,6 +210,7 @@ public class ShowHakukohdeTab extends CustomComponent {
 
     private HorizontalLayout getRichTxtLbl(String labelMsg) {
         HorizontalLayout hl = new HorizontalLayout();
+        hl.setWidth(100, UNITS_PERCENTAGE);
         Label richTxtLbl = new Label(labelMsg);
         richTxtLbl.setContentMode(Label.CONTENT_XHTML);
         hl.addComponent(richTxtLbl);
@@ -279,7 +267,7 @@ public class ShowHakukohdeTab extends CustomComponent {
         List<ValintakoeViewModel> loadHakukohdeValintaKokees = presenter.loadHakukohdeValintaKokees();
         Date lastUpdated = null;
 
-        //take the latest date
+        //get the latest date
         for (ValintakoeViewModel valintakoe : loadHakukohdeValintaKokees) {
             if (lastUpdated == null || lastUpdated.before(valintakoe.getViimeisinPaivitysPvm())) {
                 lastUpdated = valintakoe.getViimeisinPaivitysPvm();

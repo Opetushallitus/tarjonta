@@ -31,10 +31,10 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author jani
  */
 @Configurable(preConstruction = true)
-public class TarjontaAdminPortletApplication extends TarjontaApplication {
+public class AdminApplication extends WebApplication {
 
     private static final long serialVersionUID = 4593403338621758659L;
-    private static final Logger LOG = LoggerFactory.getLogger(TarjontaAdminPortletApplication.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AdminApplication.class);
     private Window window;
     @Autowired
     private TarjontaKomoData tarjontaKomoData;

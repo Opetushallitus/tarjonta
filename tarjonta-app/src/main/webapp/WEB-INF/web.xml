@@ -34,22 +34,14 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    <filter>
-        <filter-name>sitemesh</filter-name>
-        <filter-class>org.sitemesh.config.ConfigurableSiteMeshFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>sitemesh</filter-name>
-        <url-pattern>/tarjontaapp/*</url-pattern>
-    </filter-mapping>
 
     <servlet>
-        <servlet-name>Vaadin Application Servlet</servlet-name>
+        <servlet-name>tarjontaapp</servlet-name>
         <servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
         <init-param>
             <description>Vaadin application class to start</description>
             <param-name>application</param-name>
-            <param-value>fi.vm.sade.tarjonta.ui.TarjontaWebApplication</param-value>
+            <param-value>fi.vm.sade.tarjonta.ui.TarjontaApplication</param-value>
         </init-param>
         <init-param>
             <description>Widget Set to Use</description>
@@ -63,13 +55,13 @@
         </init-param>
     </servlet>
 
-    <!-- standalone -->
+    <!-- Haku standalone -->
     <servlet>
-        <servlet-name>tarjontaapp</servlet-name>
+        <servlet-name>hakuapp</servlet-name>
         <servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
         <init-param>
             <param-name>application</param-name>
-            <param-value>fi.vm.sade.tarjonta.ui.TarjontaWebApplication</param-value>
+            <param-value>fi.vm.sade.tarjonta.ui.HakuApplication</param-value>
         </init-param>
         <init-param>
             <param-name>widgetset</param-name>
@@ -80,13 +72,83 @@
             <param-value>true</param-value>
         </init-param>
     </servlet>
+   
+
+
+    <!-- Valinta standalone -->
+    <servlet>
+        <servlet-name>valintaapp</servlet-name>
+        <servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
+        <init-param>
+            <param-name>application</param-name>
+            <param-value>fi.vm.sade.tarjonta.ui.ValintaApplication</param-value>
+        </init-param>
+        <init-param>
+            <param-name>widgetset</param-name>
+            <param-value>fi.vm.sade.widgetset.OPH</param-value>
+        </init-param>
+        <init-param>
+            <param-name>disable-xsrf-protection</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+    
+    
+    <!-- Valinta standalone -->
+    <servlet>
+        <servlet-name>adminapp</servlet-name>
+        <servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
+        <init-param>
+            <param-name>application</param-name>
+            <param-value>fi.vm.sade.tarjonta.ui.AdminApplication</param-value>
+        </init-param>
+        <init-param>
+            <param-name>widgetset</param-name>
+            <param-value>fi.vm.sade.widgetset.OPH</param-value>
+        </init-param>
+        <init-param>
+            <param-name>disable-xsrf-protection</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+    
     <servlet-mapping>
         <servlet-name>tarjontaapp</servlet-name>
         <url-pattern>/tarjontaapp/*</url-pattern>
     </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>hakuapp</servlet-name>
+        <url-pattern>/hakuapp/*</url-pattern>
+    </servlet-mapping>
+ 
+    <servlet-mapping>
+        <servlet-name>valintaapp</servlet-name>
+        <url-pattern>/valintaapp/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>adminapp</servlet-name>
+        <url-pattern>/adminapp/*</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>tarjontaapp</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
-
+    
+    <servlet-mapping>
+        <servlet-name>hakuapp</servlet-name>
+        <url-pattern>/VAADIN/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>valintaapp</servlet-name>
+        <url-pattern>/VAADIN/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>adminapp</servlet-name>
+        <url-pattern>/VAADIN/*</url-pattern>
+    </servlet-mapping>
 </web-app>
