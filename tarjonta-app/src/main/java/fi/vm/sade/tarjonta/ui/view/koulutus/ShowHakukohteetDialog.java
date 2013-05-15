@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
 import java.util.ArrayList;
@@ -22,6 +37,11 @@ import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.ShowRelatedObjectsDialog;
 import fi.vm.sade.vaadin.util.UiUtil;
 
+/**
+ * 
+ * @author Markus
+ *
+ */
 public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
     
     private static final long serialVersionUID = -4621899734019988734L;
@@ -80,7 +100,6 @@ public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
             Object rootItem = hc.addItem();
             
             hc.getContainerProperty(rootItem, COLUMN_A).setValue(new CaptionItem(e.getKey(), false));
-            System.out.println("Added tarjoaja: " + e.getKey());
             for (final HakukohdeTulos curHakukohde : e.getValue()) {
                 
                 hc.addItem(curHakukohde);
@@ -102,7 +121,6 @@ public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
                 hc.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getHakukohdeAjankohtaStr(curHakukohde));
                 hc.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(T(curHakukohde.getHakukohde().getTila().value()));
                 hc.setChildrenAllowed(curHakukohde, false);
-                System.out.println("Added hakukohde: " + curHakukohde.getHakukohde().getOid());
             }
         }
         
