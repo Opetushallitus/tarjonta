@@ -124,7 +124,7 @@ public class TestTarjontaSavu {
         }
         else
         {
-            doit.textClick(driver, "Ammatillinen peruskoulutus");
+            doit.textClick(driver, "Ammatillinen Peruskoulutus");
             doit.tauko(1);
             driver.findElement(By.xpath("(//div[@class = 'v-filterselect-button'])[8]")).click();
             doit.tauko(1);
@@ -411,11 +411,14 @@ public class TestTarjontaSavu {
         doit.tauko(1);
         t01 = doit.millis();
         doit.textClick(driver, "Luo uusi hakukohde");
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
-        		, doit.textElement(driver, "Olet luomassa uutta hakukohdetta seuraavista koulutuksista"));
-        t01 = doit.millisDiff(t01);
-        t01 = doit.millis();
-        doit.textClick(driver, "Jatka");
+        if (luokka)
+        {
+        	Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
+        			, doit.textElement(driver, "Olet luomassa uutta hakukohdetta seuraavista koulutuksista"));
+        	t01 = doit.millisDiff(t01);
+        	t01 = doit.millis();
+        	doit.textClick(driver, "Jatka");
+        }
         Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
         		, doit.textElement(driver, "tietoja hakemisesta"));
         t01 = doit.millisDiff(t01);
@@ -523,7 +526,6 @@ public class TestTarjontaSavu {
             doit.tauko(1);
         }
         
-
         // HAKUKOHTEEN POISTO
         t01 = doit.millis();
         doit.textClick(driver, "Hakukohteen perustiedot");
@@ -539,10 +541,27 @@ public class TestTarjontaSavu {
         doit.notPresentText(driver, "window_close"
                 , "Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO Close nakyy jo. Ei toimi.");
         t01 = doit.millis();
+        Boolean poista = false;
+        Boolean peruutaHakukohde = false;
+        skip = true;
+        while (skip)
+        {
+        	if (doit.isPresentText(driver, ">Poista<")) { skip = false; poista = true; }
+        	if (doit.isPresentText(driver, ">Peruuta hakukohde<")) { skip = false; peruutaHakukohde = true; }
+        	doit.tauko(1);
+        }
+        if (poista)
+        {
         driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='Poista']")).click();
-//        doit.textClick(driver, "Poista");
         Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi."
                 , doit.textElement(driver, "Haluatko varmasti poistaa seuraavan hakukohteen"));
+        }
+        if (peruutaHakukohde)
+        {
+            driver.findElement(By.xpath("//span[@class='v-menubar-menuitem-caption' and text()='Peruuta hakukohde']")).click();
+          Assert.assertNotNull("Running TarjontaHakukohteetSavu009 HAKUKOHTEEN POISTO ei toimi."
+                  , doit.textElement(driver, "Olet peruuttamassa hakukohdetta"));
+        }
         t01 = doit.millisDiff(t01);
         closeId = doit.idLike(driver, "window_close");
         WebElement close = driver.findElement(By.id(closeId));
