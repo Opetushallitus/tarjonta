@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.ui;
 import com.vaadin.Application;
 import com.vaadin.ui.Window;
 
-import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
 import fi.vm.sade.tarjonta.ui.view.ValintaperustekuvausRootView;
 import fi.vm.sade.vaadin.Oph;
 
@@ -27,11 +26,11 @@ import fi.vm.sade.vaadin.Oph;
  *
  * @author markus
  */
-public class ValintaPortletApplication extends AbstractSadePortletApplication {
+public class ValintaApplication extends WebApplication {
 
     private static final long serialVersionUID = -812459990170115083L;
     private Window window;
-    private static ThreadLocal<ValintaPortletApplication> tl = new ThreadLocal<ValintaPortletApplication>();
+    private static ThreadLocal<ValintaApplication> tl = new ThreadLocal<ValintaApplication>();
 
     @Override
     public synchronized void init() {
@@ -40,6 +39,7 @@ public class ValintaPortletApplication extends AbstractSadePortletApplication {
         initApplication();
     }
 
+    @Override
     protected void initApplication() {
         window = new ValintaperustekuvausRootView();
         setMainWindow(window);
@@ -62,7 +62,7 @@ public class ValintaPortletApplication extends AbstractSadePortletApplication {
         }
     }
 
-    public static ValintaPortletApplication getInstance() {
+    public static ValintaApplication getInstance() {
         return tl.get();
     }
 }

@@ -15,38 +15,51 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
+import com.github.wolfie.blackboard.Blackboard;
 import com.vaadin.Application;
 import com.vaadin.ui.Window;
-
 import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
-import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.vaadin.Oph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Main portlet application class for Haku management.
+ * The Application's "main" class for servlet and portlet implementation.
  *
- * @author markus
+ * @author jani
  */
-public class HakuPortletApplication extends AbstractSadePortletApplication {
-    private static final long serialVersionUID = -5438300477469075L;
-
+public class WebApplication extends AbstractSadePortletApplication {
+    
+    private static final long serialVersionUID = 4058508673680251653L;
+    private static final Logger LOG = LoggerFactory.getLogger(Application.class);
+    private static ThreadLocal<Application> tl = new ThreadLocal<Application>();
     private Window window;
-    private static ThreadLocal<HakuPortletApplication> tl = new ThreadLocal<HakuPortletApplication>();
-
+    
+    public WebApplication() {
+        super();
+        LOG.info("WebApplication()");
+    }
+    
+    @Override
+    protected void registerListeners(Blackboard blackboard) {
+        LOG.info("registerListeners()");
+    }
+    
     @Override
     public synchronized void init() {
         super.init();
         this.transactionStart(this, null);
+        
         initApplication();
     }
-
+    
     protected void initApplication() {
-        window = new HakuRootView();
+        window = new TarjontaRootView(true);
         setMainWindow(window);
         setTheme(Oph.THEME_NAME);
     }
-
+    
     @Override
     public void transactionStart(Application application, Object transactionData) {
         super.transactionStart(application, transactionData);
@@ -54,16 +67,17 @@ public class HakuPortletApplication extends AbstractSadePortletApplication {
             tl.set(this);
         }
     }
-
+    
     @Override
     public void transactionEnd(Application application, Object transactionData) {
         super.transactionEnd(application, transactionData);
+
         if (application == this) {
             tl.remove();
         }
     }
-
-    public static HakuPortletApplication getInstance() {
+    
+    public static Application getInstance() {
         return tl.get();
     }
 }

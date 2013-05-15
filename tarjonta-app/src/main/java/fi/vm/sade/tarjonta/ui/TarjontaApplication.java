@@ -15,70 +15,220 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
-import com.github.wolfie.blackboard.Blackboard;
-import com.vaadin.Application;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Window;
-import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
-import fi.vm.sade.generic.ui.feature.UserFeature;
+
+import fi.vm.sade.tarjonta.service.TarjontaAdminService;
+import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
+import fi.vm.sade.tarjonta.ui.view.HakuRootView;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
+import fi.vm.sade.tarjonta.ui.view.ValintaperustekuvausRootView;
 import fi.vm.sade.vaadin.Oph;
+
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
- * The Application's "main" class for servlet and portlet implementation.
+ * Tarjonta WEB application - used for testing and development. For development
+ * purposes the app has methods to switch between Haku and Tarjonta management
+ * apps.
  *
- * @author jani
+ * @author mlyly
  */
-public class TarjontaApplication extends AbstractSadePortletApplication {
-    
-    private static final long serialVersionUID = 4058508673680251653L;
+@Configurable(preConstruction = true)
+public class TarjontaApplication extends WebApplication {
+
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaApplication.class);
-    private static ThreadLocal<TarjontaApplication> tl = new ThreadLocal<TarjontaApplication>();
+    private static final long serialVersionUID = 7402559260126333807L;
     private Window window;
-    
-    public TarjontaApplication() {
-        super();
-        LOG.info("TarjontaApplication()");
-    }
-    
+    @Value("${tarjonta-app.dev.redirect:}")
+    private String developmentRedirect;
+    @Value("${tarjonta-app.dev.theme:}")
+    private String developmentTheme;
+    @Value("${tarjonta.public.webservice.url.backend}")
+    private String tarjontaBackendUrl;
+    @Autowired
+    private TarjontaAdminService tarjontaAdminService;
+    @Autowired
+    private TarjontaKomoData tarjontaKomoData;
+
     @Override
-    protected void registerListeners(Blackboard blackboard) {
-        LOG.info("registerListeners()");
-    }
-    
-    @Override
-    public synchronized void init() {
-        super.init();
-        this.transactionStart(this, null);
-        
-        initApplication();
-    }
-    
     protected void initApplication() {
-        window = new TarjontaRootView(true);
+        window = new Window("Valitse");
         setMainWindow(window);
         setTheme(Oph.THEME_NAME);
-    }
-    
-    @Override
-    public void transactionStart(Application application, Object transactionData) {
-        super.transactionStart(application, transactionData);
-        if (application == this) {
-            tl.set(this);
-        }
-    }
-    
-    @Override
-    public void transactionEnd(Application application, Object transactionData) {
-        super.transactionEnd(application, transactionData);
 
-        if (application == this) {
-            tl.remove();
+        developmentConfiguration();
+        HorizontalLayout hl = new HorizontalLayout();
+        window.addComponent(hl);
+
+        final Button tarjontaButton = new Button("Tarjontaan", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                toTarjonta();
+            }
+        });
+        hl.addComponent(tarjontaButton);
+
+        final Button hakuButton = new Button("Hakuihin", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                toHaku();
+            }
+        });
+        hl.addComponent(hakuButton);
+
+        final Button valitaButton = new Button("Valintaperustekuvaus", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                toValintaperustekuvaus();
+            }
+        });
+        hl.addComponent(valitaButton);
+
+
+        final Button btnKomo = new Button("Luo kaikki komot", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                try {
+                    LOG.debug("Luo komot event");
+                    tarjontaKomoData.preLoadAllKoodistot();
+                    tarjontaKomoData.createData(true);
+                } catch (Exception ex) {
+                    LOG.error("Failed to create KOMOs", ex);
+                }
+            }
+        });
+        hl.addComponent(btnKomo);
+
+        final Button btnKomoTest = new Button("Testaa komon luonti", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                try {
+                    LOG.debug("Luo komot event");
+                    tarjontaKomoData.preLoadAllKoodistot();
+                    tarjontaKomoData.createData(false);
+                } catch (Exception ex) {
+                    LOG.error("Failed to create KOMOs", ex);
+                }
+            }
+        });
+
+        hl.addComponent(btnKomoTest);
+
+
+
+        final Button btnIndexKoulutukset = new Button("Indeksoi koulutukset", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                String urlString = tarjontaBackendUrl.substring(0, tarjontaBackendUrl.indexOf("/services")) + "/rest/indexer/koulutukset?clear=true";
+                try {
+                    LOG.debug("Indeksoi koulutukset: {}", urlString);
+
+                    GetMethod get = new GetMethod(urlString);
+                    httpClient.executeMethod(get);
+                    String responseContent = new String(get.getResponseBodyAsString());
+                    LOG.debug("Indeksoi koulutukset done:{}", responseContent);
+                } catch (Throwable ex) {
+                    LOG.error("Failed to index koulutukset", ex);
+                }
+            }
+        });
+
+        hl.addComponent(btnIndexKoulutukset);
+
+        final Button btnHakukohteet = new Button("Indeksoi hakukohteet", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                String urlString = tarjontaBackendUrl.substring(0, tarjontaBackendUrl.indexOf("/services")) + "/rest/indexer/hakukohteet?clear=true";
+                try {
+                    LOG.debug("Indeksoi hakukohteet: {}", urlString);
+
+                    GetMethod get = new GetMethod(urlString);
+                    httpClient.executeMethod(get);
+                    String responseContent = new String(get.getResponseBodyAsString());
+                    LOG.debug("Indeksoi hakukophteet done:{}", responseContent);
+                } catch (Throwable ex) {
+                    LOG.error("Failed to index hakukohteet", ex);
+                }
+            }
+        });
+
+        hl.addComponent(btnHakukohteet);
+
+    }
+    private HttpClient httpClient = new HttpClient();
+
+    public void toTarjonta() {
+        this.removeWindow(window);
+        window = new TarjontaRootView(true);
+        setMainWindow(window);
+    }
+
+    public void toHaku() {
+        this.removeWindow(window);
+        window = new HakuRootView();
+        setMainWindow(window);
+    }
+
+    public void toValintaperustekuvaus() {
+        this.removeWindow(window);
+        window = new ValintaperustekuvausRootView();
+        setMainWindow(window);
+    }
+
+    /*
+     * Development configurations, no real use in production environment.
+     */
+    private void developmentConfiguration() {
+        if (developmentRedirect != null && developmentRedirect.length() > 0) {
+            //This code block is only for making UI development little bit faster
+            //Add the property to tarjonta-app.properties:
+            //
+            //tarjonta-app.dev.redirect=KOULUTUS
+
+            if (developmentRedirect.equalsIgnoreCase("VALINTA")) {
+                toValintaperustekuvaus();
+            } else if (developmentRedirect.equalsIgnoreCase("HAKU")) {
+                toHaku();
+            } else if (developmentRedirect.equalsIgnoreCase("KOULUTUS") || developmentRedirect.equalsIgnoreCase("TARJONTA")) {
+                toTarjonta();
+            }
         }
     }
-    
-    public static TarjontaApplication getInstance() {
-        return tl.get();
+
+    /**
+     * @return the tarjontaAdminService
+     */
+    public TarjontaAdminService getTarjontaAdminService() {
+        return tarjontaAdminService;
+    }
+
+    /**
+     * @param tarjontaAdminService the tarjontaAdminService to set
+     */
+    public void setTarjontaAdminService(TarjontaAdminService tarjontaAdminService) {
+        this.tarjontaAdminService = tarjontaAdminService;
     }
 }
