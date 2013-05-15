@@ -18,9 +18,7 @@ package fi.vm.sade.tarjonta.ui;
 import com.vaadin.Application;
 import com.vaadin.ui.Window;
 
-import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
-import fi.vm.sade.tarjonta.ui.view.HakuRootView;
-import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
+import fi.vm.sade.tarjonta.ui.view.ValintaperustekuvausRootView;
 import fi.vm.sade.vaadin.Oph;
 
 /**
@@ -28,11 +26,11 @@ import fi.vm.sade.vaadin.Oph;
  *
  * @author markus
  */
-public class HakuPortletApplication extends AbstractSadePortletApplication {
-    private static final long serialVersionUID = -5438300477469075L;
+public class ValintaApplication extends WebApplication {
 
+    private static final long serialVersionUID = -812459990170115083L;
     private Window window;
-    private static ThreadLocal<HakuPortletApplication> tl = new ThreadLocal<HakuPortletApplication>();
+    private static ThreadLocal<ValintaApplication> tl = new ThreadLocal<ValintaApplication>();
 
     @Override
     public synchronized void init() {
@@ -41,8 +39,9 @@ public class HakuPortletApplication extends AbstractSadePortletApplication {
         initApplication();
     }
 
+    @Override
     protected void initApplication() {
-        window = new HakuRootView();
+        window = new ValintaperustekuvausRootView();
         setMainWindow(window);
         setTheme(Oph.THEME_NAME);
     }
@@ -63,7 +62,7 @@ public class HakuPortletApplication extends AbstractSadePortletApplication {
         }
     }
 
-    public static HakuPortletApplication getInstance() {
+    public static ValintaApplication getInstance() {
         return tl.get();
     }
 }

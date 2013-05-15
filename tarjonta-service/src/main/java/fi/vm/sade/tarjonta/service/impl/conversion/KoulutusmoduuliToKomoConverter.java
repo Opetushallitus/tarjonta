@@ -14,8 +14,11 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
+import com.sun.jersey.api.spring.Autowire;
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
@@ -28,14 +31,20 @@ import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
+ * Conversion services for REST api.
  *
  * @author mlyly
  */
 public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<Koulutusmoduuli, KomoDTO>{
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusmoduuliToKomoConverter.class);
+
+    @Autowired
+    private KoulutusmoduuliDAO koulutusmoduuliDAO;
+
 
     @Override
     public KomoDTO convert(Koulutusmoduuli s) {
@@ -81,7 +90,28 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
         t.setUpdated(s.getUpdated());
         t.setVersion(s.getVersion() == null ? 0 : s.getVersion().intValue());
 
-        // // TODO convert, but efficiently! t.setYlaModuulit(null);
+        t.setKoulutusKoodiUri(s.getKoulutusKoodi());
+
+        //
+        // TODO check the efficiency of this... :(
+        //
+
+        List<String> ylaModuleOIDs = new ArrayList<String>();
+        List<String> alaModuleOIDs = new ArrayList<String>();
+
+        // TODO multiple parents?
+        Koulutusmoduuli parent = koulutusmoduuliDAO.findParentKomo(s);
+        if (parent != null) {
+            ylaModuleOIDs.add(parent.getOid());
+        }
+
+        // Get children
+        for (Koulutusmoduuli child : s.getAlamoduuliList()) {
+            alaModuleOIDs.add(child.getOid());
+        }
+
+        t.setYlaModuulit(ylaModuleOIDs);
+        t.setAlaModuulit(alaModuleOIDs);
 
         // LOG.debug("  --> {}", t);
 

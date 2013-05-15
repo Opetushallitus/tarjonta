@@ -59,14 +59,16 @@ public class KomotoGenerator extends AbstractGenerator {
     private TarjontaAdminService tarjontaAdminService;
     private List< Map.Entry<String, String>> komoPairs = new ArrayList< Map.Entry<String, String>>();
     private int komoIndex = 0;
+    private String threadName;
 
     public KomotoGenerator() {
         super(OID_TYPE);
     }
 
-    public KomotoGenerator(TarjontaAdminService tarjontaAdminService, TarjontaPublicService tarjontaPublicService) {
+    public KomotoGenerator(String threadName, TarjontaAdminService tarjontaAdminService, TarjontaPublicService tarjontaPublicService) {
         super(OID_TYPE);
         this.tarjontaAdminService = tarjontaAdminService;
+        this.threadName = threadName;
 
         HaeKoulutusmoduulitKyselyTyyppi tyyppi = new HaeKoulutusmoduulitKyselyTyyppi();
         tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
@@ -87,7 +89,7 @@ public class KomotoGenerator extends AbstractGenerator {
         Preconditions.checkNotNull(organisationOid, "Organisation OID cannot be null.");
         final LisaaKoulutusTyyppi createToteutus = createToteutus(organisationOid);
         tarjontaAdminService.lisaaKoulutus(createToteutus);
-        LOG.info("koulutus created : {}", createToteutus.getOid());
+        LOG.info("{} created by thread {}.", createToteutus.getOid(), threadName);
         return createToteutus.getOid();
     }
 
@@ -113,7 +115,7 @@ public class KomotoGenerator extends AbstractGenerator {
         tyyppi.setKoulutuksenAlkamisPaiva(DATE);
         KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
         koulutuksenKestoTyyppi.setArvo("999");
-        koulutuksenKestoTyyppi.setYksikko(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, "1"));
+        koulutuksenKestoTyyppi.setYksikko(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, "02"));
         tyyppi.setPainotus(new MonikielinenTekstiTyyppi());
         tyyppi.setKesto(koulutuksenKestoTyyppi);
         tyyppi.setPohjakoulutusvaatimus(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI, "er"));

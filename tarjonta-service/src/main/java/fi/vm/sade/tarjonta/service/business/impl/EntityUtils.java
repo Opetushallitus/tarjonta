@@ -15,8 +15,22 @@
  */
 package fi.vm.sade.tarjonta.service.business.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.base.Preconditions;
-import fi.vm.sade.tarjonta.model.Hakukohde;
+
 import fi.vm.sade.tarjonta.model.Kieliaine;
 import fi.vm.sade.tarjonta.model.Kielivalikoima;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
@@ -28,12 +42,18 @@ import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
+import fi.vm.sade.tarjonta.service.impl.conversion.CommonFromDTOConverter;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
-import fi.vm.sade.tarjonta.service.types.*;
-
-import java.util.*;
-
-import org.apache.commons.lang.StringUtils;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
+import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 
 /**
  *
@@ -83,17 +103,7 @@ public final class EntityUtils {
     }
 
     public static MonikielinenTeksti copyFields(MonikielinenTekstiTyyppi source, MonikielinenTeksti target) {
-
-        if (source == null) {
-            return null;
-        }
-
-        for (Teksti teksti : source.getTeksti()) {
-            target.addTekstiKaannos(teksti.getKieliKoodi(), teksti.getValue());
-        }
-
-        return target;
-
+    	return MonikielinenTeksti.merge(target, CommonFromDTOConverter.convertMonikielinenTekstiTyyppiToDomainValue(source));
     }
 
     private EntityUtils() {

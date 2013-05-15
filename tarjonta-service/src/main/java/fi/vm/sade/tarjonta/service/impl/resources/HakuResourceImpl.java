@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.resources.HakuResource;
@@ -15,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -35,73 +38,17 @@ public class HakuResourceImpl implements HakuResource {
     @Autowired
     private HakuDAO hakuDAO;
 
+    @Autowired
+    private HakukohdeDAO hakukohdeDAO;
+
     @Autowired(required = true)
     private ConversionService conversionService;
-
-//    // /haku/hello
-//    @Override
-//    public String hello() {
-//        LOG.info("hello()");
-//        return "hello";
-//    }
-//
-//    // /haku?...
-//    @Override
-//    public List<HakuTyyppi> search(String searchTerms,
-//                                   int count,
-//                                   int startIndex,
-//                                   int startPage,
-//                                   String language) {
-//        LOG.info("search(searchTerms={})", searchTerms);
-//
-//        List<HakuTyyppi> hakuTyyppiList = new ArrayList<HakuTyyppi>();
-//        List<Haku> hakus = null;
-//
-//        // TODO search spec from what?
-//        // TODO published?
-//
-//        if (searchTerms != null) {
-//            hakus = hakuDAO.findBySearchString(searchTerms, null);
-//        } else {
-//            hakus = hakuDAO.findAll();
-//        }
-//
-//        for (Haku haku : hakus) {
-//            hakuTyyppiList.add(conversionService.convert(haku, HakuTyyppi.class));
-//        }
-//
-//        return hakuTyyppiList;
-//    }
-//
-//    // /haku/{oid}
-//    @Override
-//    public HakuTyyppi getByOID(String oid, String language) {
-//        LOG.info("getByOID({})", oid);
-//
-//        Haku haku = hakuDAO.findByOid(oid);
-//        return conversionService.convert(haku, HakuTyyppi.class);
-//    }
-//
-//    // /haku/{oid}/hakukohde
-//    @Override
-//    public List<HakukohdeTyyppi> getByOIDHakukohde(String oid, String language) {
-//        LOG.info("getByOIDHakukohde(oid={}, language={})", oid, language);
-//
-//        List<HakukohdeTyyppi> result = new ArrayList<HakukohdeTyyppi>();
-//
-//        Haku haku = hakuDAO.findByOid(oid);
-//        for (Hakukohde hakukohde : haku.getHakukohdes()) {
-//            result.add(conversionService.convert(hakukohde, HakukohdeTyyppi.class));
-//        }
-//
-//        return result;
-//    }
 
     // /haku/hello
     @Override
     public String hello() {
         LOG.info("hello()");
-        return "hello";
+        return "Well Hello! " + new Date();
     }
 
     // /haku?...
@@ -109,8 +56,7 @@ public class HakuResourceImpl implements HakuResource {
     public List<String> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
         LOG.info("/haku -- search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
-        // TODO hardcoded JULKAISTU!
-        TarjontaTila tarjontaTila = TarjontaTila.JULKAISTU;
+        TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
         List<String> result = new ArrayList<String>();
         result.addAll(hakuDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
@@ -130,22 +76,42 @@ public class HakuResourceImpl implements HakuResource {
 
     // /haku/OID/hakukohde
     @Override
-    public List<String> getByOIDHakukohde(String oid) {
+    public List<String> getByOIDHakukohde(String oid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
         LOG.info("/haku/{}/hakukohde -- getByOIDHakukohde()", oid);
 
         List<String> result = new ArrayList<String>();
 
-        Haku h = hakuDAO.findByOid(oid);
-        if (h != null) {
-            // TODO fixme to be more efficient!
-            Set<Hakukohde> hakukohdes = h.getHakukohdes();
-            for (Hakukohde hakukohde : hakukohdes) {
-                result.add(hakukohde.getOid());
-            }
-        }
+        result = hakukohdeDAO.findByHakuOid(oid, searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince);
+
         LOG.info("  result={}", result);
         return result;
     }
 
+    // /haku/OID/hakukohdeWithName
+    @Override
+    public List<Map<String, String>> getByOIDHakukohdeExtra(String oid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
+        LOG.info("/haku/{}/hakukohdeWithName -- getByOIDHakukohdeExtra()", oid);
+
+        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+
+        // Get list of oids
+        List<String> hakukohdeOids = getByOIDHakukohde(oid, searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince);
+
+        // Loop the result
+        for (String hakukohdeOid : hakukohdeOids) {
+            Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(hakukohdeOid);
+
+            Map<String, String> row = new HashMap<String, String>();
+
+            row.put("oid", hakukohde.getOid());
+            row.put("nimiUri", hakukohde.getHakukohdeNimi());
+
+            // TODO resolve nimi uri :)
+
+            result.add(row);
+        }
+
+        return result;
+    }
 
 }

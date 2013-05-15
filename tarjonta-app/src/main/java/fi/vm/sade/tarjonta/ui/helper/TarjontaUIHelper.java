@@ -24,12 +24,15 @@ import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS;
 import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 import net.sf.ehcache.CacheManager;
 
 import org.slf4j.Logger;
@@ -41,6 +44,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Common UI helpers, formatters and so forth.
@@ -185,7 +193,7 @@ public class TarjontaUIHelper {
         }
 
         StringBuilder result = new StringBuilder();
-        result.append(getConcatenatedNamesForGivenKoodiURI(hakukohdeNimi));
+        result.append(getBestLanguageMatchesForKoodi(hakukohdeNimi, locale));
         result.append(", ");
         result.append(getHakuKausiJaVuosi(hakuOid, locale));
         return result.toString();
@@ -205,24 +213,22 @@ public class TarjontaUIHelper {
         return hakuTiedot.toString();
     }
 
+    
     /**
-     * Load koodi with metadata, returns all languages concatenated.
+     * Load koodi with metadata, returns all values concatenated, usually (always?) there's only one type.
      *
      * @param hakukohdeUriVersioned
      * @return concatenated name from koodi's metadata getNimi()'s
      */
-    private String getConcatenatedNamesForGivenKoodiURI(String hakukohdeUriVersioned) {
-        LOG.debug("getConcatenatedNamesForGivenKoodiURI({})", hakukohdeUriVersioned);
+    private String getBestLanguageMatchesForKoodi(String hakukohdeUriVersioned, Locale locale) {
+        LOG.debug("getConcatenatedNamesForGivenKoodiURI({},{})", hakukohdeUriVersioned, locale);
 
         StringBuilder nimet = new StringBuilder();
         try {
             List<KoodiType> koodit = _koodiService.searchKoodis(KoodiServiceSearchCriteriaBuilder.latestKoodisByUris(getKoodiURI(hakukohdeUriVersioned)));
             for (KoodiType koodi : koodit) {
                 List<KoodiMetadataType> metas = koodi.getMetadata();
-                for (KoodiMetadataType meta : metas) {
-                    nimet.append(meta.getNimi());
-                    nimet.append(" ");
-                }
+                nimet.append(getBestLanguageMatch(metas, locale));
             }
         } catch (Exception e) {
             LOG.error("Koodi service not responding.", e);
@@ -230,6 +236,46 @@ public class TarjontaUIHelper {
         }
 
         return nimet.toString();
+    }
+
+
+    private static class ValueScore implements Comparable<ValueScore>{
+        public ValueScore(String value, int score) {
+            this.value = value;
+            this.score = score;
+        }
+
+        private String value;
+        private int score;
+        
+        @Override
+        public int compareTo(ValueScore o) {
+            return this.score-o.score;
+        }
+        
+    }
+    
+    
+    private final List<String> allLanguages = ImmutableList.of("fi","en","sv");
+    
+    public String getBestLanguageMatch(List<KoodiMetadataType> metas,
+            Locale locale) {
+        LinkedList<String> preferredLanguages = Lists.newLinkedList(allLanguages);
+        preferredLanguages.remove(locale.getLanguage().toLowerCase());
+        preferredLanguages.addFirst(locale.getLanguage().toLowerCase());
+        
+        List<ValueScore> values = Lists.newArrayList();
+        
+        for (KoodiMetadataType meta : metas) {
+            for(int i=0;i<preferredLanguages.size();i++) {
+                if(preferredLanguages.get(i).equalsIgnoreCase(meta.getKieli().toString())) {
+                    values.add(new ValueScore(meta.getNimi(), i));
+                }
+            }
+        }
+        
+        Collections.sort(values);
+        return values.get(0).value;
     }
 
     /**
@@ -541,7 +587,7 @@ public class TarjontaUIHelper {
 
     /**
      * Get text for "closest" match for a given language.
-     * Actully this means exact match, if not found use FI.
+     * Actully this means exact match, if not found use fi, if not found use first existing
      *
      * @param locale
      * @param monikielinenTeksti
@@ -553,15 +599,24 @@ public class TarjontaUIHelper {
             teksti = searchTekstiTyyppiByLanguage(monikielinenTeksti.getTeksti(), locale);
         }
 
-        if (teksti == null || teksti.getKieliKoodi() == null || teksti.getValue() == null) {
-            //FI default fallback
-            final Locale locale1 = new Locale("FI");
+        
+        //fi default fallback
+        if ((teksti == null || teksti.getKieliKoodi() == null || teksti.getValue() == null) && !locale.getLanguage().equalsIgnoreCase("fi")) {
+            final Locale locale1 = new Locale("fi");
             teksti = searchTekstiTyyppiByLanguage(monikielinenTeksti.getTeksti(), locale1);
+        }
 
+        //get first existing
+        if (teksti == null || teksti.getKieliKoodi() == null || teksti.getValue() == null) {
+            //first existing
+            if(monikielinenTeksti.getTeksti().size()>0) {
+                teksti = monikielinenTeksti.getTeksti().get(0);
+            }
             if (teksti == null || teksti.getKieliKoodi() == null || teksti.getValue() == null) {
-                LOG.error("An invalid data error -´MonikielinenTekstiTyyppi object was missing Finnish language data.");
+                LOG.error("An invalid data error - MonikielinenTekstiTyyppi did not contain any tekstis.");
             }
         }
+
         return teksti;
     }
 
@@ -840,6 +895,83 @@ public class TarjontaUIHelper {
         LOG.info(" --> {}", result);
 
         return result;
+    }
+    
+    public String getKoulutusNimi(KoulutusTulos curKoulutus) {
+
+        List<KoodiType> koodis = null;
+        if (curKoulutus.getKoulutus().getPohjakoulutusVaatimus() != null) {
+            koodis = getKoodis(curKoulutus.getKoulutus().getPohjakoulutusVaatimus());
+        }
+        if (koodis == null) {
+            koodis = new ArrayList<KoodiType>();
+        }
+        if (curKoulutus.getKoulutus().getKoulutusohjelmakoodi() != null) {
+            return getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi()) + tryGetKoodistoLyhytNimi(koodis) ;
+        } else if (curKoulutus.getKoulutus().getKoulutuskoodi() != null) {
+            return getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi()) + tryGetKoodistoLyhytNimi(koodis);
+        }
+        return "";
+    }
+    
+    public String getKoulutuslaji(KoulutusTulos tulos ) {
+        List<String> uris = new ArrayList<String>();
+        if (tulos.getKoulutus().getKoulutuslaji() != null) {
+            uris.add(tulos.getKoulutus().getKoulutuslaji());
+
+            return getKoodiNimi(uris,I18N.getLocale());
+        }
+        return "";
+    }
+    
+    public String getAjankohtaStr(KoulutusTulos curKoulutus) {
+        
+        String[] ajankohtaParts = curKoulutus.getKoulutus().getAjankohta().split(" ");
+        if (ajankohtaParts.length < 2) {
+            return "";
+        }
+        return I18N.getMessage(ajankohtaParts[0]) + " " + ajankohtaParts[1];
+    }
+    
+    private String tryGetKoodistoLyhytNimi(Collection<KoodiType> koodis) {
+        if (koodis == null || koodis.size() < 1) {
+            return "";
+        }
+        List<KoodiType> koodisList = new ArrayList<KoodiType>(koodis);
+        KoodiType koodi = koodisList.get(0);
+
+        if (koodi != null) {
+        String retval = koodi.getKoodiArvo();
+
+        List<KoodiMetadataType> metas =  koodi.getMetadata();
+        Locale locale = I18N.getLocale();
+        for (KoodiMetadataType meta : metas) {
+            if (meta.getKieli().equals(KieliType.FI) && locale.getLanguage().equals("fi")) {
+                return ", " + meta.getLyhytNimi();
+            } else if (meta.getKieli().equals(KieliType.SV) && locale.getLanguage().equals("sv")) {
+                return ", "+  meta.getLyhytNimi();
+            }
+        }
+
+        return retval;
+        } else {
+            return "";
+        }
+    }
+    
+    /**
+     * Returns the name of the given koodi. 
+     *
+     * @param koodistoKoodiTyyppi the koodisto koodi given
+     * @return
+     */
+    public String getKoodiNimi(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
+        for (Nimi curNimi :koodistoKoodiTyyppi.getNimi()) {
+            if (curNimi.getKieli().equals(I18N.getLocale().getLanguage())) {
+                return curNimi.getValue();
+            }
+        }
+        return koodistoKoodiTyyppi.getNimi().get(0).getValue();
     }
 
 

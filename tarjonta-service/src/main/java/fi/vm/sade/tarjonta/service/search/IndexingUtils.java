@@ -30,6 +30,8 @@ import java.util.Locale;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
+import com.google.common.base.Preconditions;
+
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
@@ -54,10 +56,12 @@ public class IndexingUtils {
 
     public static final String KOODI_URI_AND_VERSION_SEPARATOR = "#";
 
-    private static final String KEVAT = "Kevät";
+    private static final String KEVAT = "kevat";
+    private static final String SYKSY = "syksy";
 
-    private static final String SYKSY = "Syksy";
-    
+    private static final String KEVAT_URI = "kausi_k#1";
+    private static final String SYKSY_URI = "kausi_s#1";
+
     /**
      * Extract components from the versioned koodi uri.
      *
@@ -125,6 +129,15 @@ public class IndexingUtils {
         Calendar cal = Calendar.getInstance();
         cal.setTime(koulutuksenAlkamisPvm);
         return cal.get(Calendar.MONTH) < 7 ? KEVAT : SYKSY;
+    }
+
+    public static String parseKausiKoodi(Date koulutuksenAlkamisPvm) {
+        if (koulutuksenAlkamisPvm == null) {
+            return null;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(koulutuksenAlkamisPvm);
+        return cal.get(Calendar.MONTH) < 7 ? KEVAT_URI : SYKSY_URI;
     }
 
     public static String parseYear(Date koulutuksenAlkamisPvm) {
@@ -197,18 +210,25 @@ public class IndexingUtils {
 
     private static MonikielinenTekstiTyyppi getNimiFromTarjoajaDoc(SolrDocument orgdoc) {
         MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
-        Teksti nimiFi = new Teksti();
-        nimiFi.setKieliKoodi("fi");
-        nimiFi.setValue("" + orgdoc.getFieldValue(ORG_NAME_FI));
-        nimi.getTeksti().add(nimiFi);
-        Teksti nimiSv = new Teksti();
-        nimiSv.setKieliKoodi("sv");
-        nimiSv.setValue("" + orgdoc.getFieldValue(ORG_NAME_SV));
-        nimi.getTeksti().add(nimiSv);
-        Teksti nimiEn = new Teksti();
-        nimiEn.setKieliKoodi("en");
-        nimiEn.setValue("" + orgdoc.getFieldValue(ORG_NAME_EN));
-        nimi.getTeksti().add(nimiEn);
+        if (orgdoc.getFieldValue(ORG_NAME_FI) != null) {
+            Teksti nimiFi = new Teksti();
+            nimiFi.setKieliKoodi("fi");
+            nimiFi.setValue(orgdoc.getFieldValue(ORG_NAME_FI).toString());
+            nimi.getTeksti().add(nimiFi);
+        }
+        if (orgdoc.getFieldValue(ORG_NAME_SV) != null) {
+            Teksti nimiSv = new Teksti();
+            nimiSv.setKieliKoodi("sv");
+            nimiSv.setValue(orgdoc.getFieldValue(ORG_NAME_SV).toString());
+            nimi.getTeksti().add(nimiSv);
+        }
+        if (orgdoc.getFieldValue(ORG_NAME_EN) != null) {
+            Teksti nimiEn = new Teksti();
+            nimiEn.setKieliKoodi("en");
+            nimiEn.setValue(orgdoc.getFieldValue(ORG_NAME_EN).toString());
+            nimi.getTeksti().add(nimiEn);
+        }
+        Preconditions.checkArgument(nimi.getTeksti().size()>0);
         return nimi;
     }
     

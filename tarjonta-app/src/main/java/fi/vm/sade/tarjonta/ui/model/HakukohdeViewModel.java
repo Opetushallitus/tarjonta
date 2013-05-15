@@ -1,13 +1,12 @@
 package fi.vm.sade.tarjonta.ui.model;
 
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.ArrayList;
 
 import com.google.common.collect.Lists;
+
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 public class HakukohdeViewModel extends BaseUIViewModel {
 
@@ -18,6 +17,7 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     private String hakukohdeKoodistoNimi;
     private String tunnisteKoodi;
     private HakuViewModel haku;
+    private HakuaikaViewModel hakuaika;
     private int aloitusPaikat;
     private int valinnoissaKaytettavatPaikat;
     private TarjontaTila tila;
@@ -106,6 +106,14 @@ public class HakukohdeViewModel extends BaseUIViewModel {
     public void setHakuOid(HakuViewModel hakuOid) {
         this.haku = hakuOid;
     }
+    
+    public HakuaikaViewModel getHakuaika() {
+		return hakuaika;
+	}
+    
+    public void setHakuaika(HakuaikaViewModel hakuaika) {
+		this.hakuaika = hakuaika;
+	}
 
     /**
      * @return the aloitusPaikat

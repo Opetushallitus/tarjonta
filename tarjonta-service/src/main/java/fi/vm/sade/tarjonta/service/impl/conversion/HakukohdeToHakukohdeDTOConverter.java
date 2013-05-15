@@ -15,22 +15,32 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
+import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
+import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
+ * Conversion for the REST services.
  *
  * @author mlyly
  */
 public class HakukohdeToHakukohdeDTOConverter  extends AbstractFromDomainConverter<Hakukohde, HakukohdeDTO> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeToHakukohdeDTOConverter.class);
+
+    @Autowired
+    private MonikielinenMetadataDAO monikielinenMetadataDAO;
 
     @Override
     public HakukohdeDTO convert(Hakukohde s) {
@@ -63,13 +73,28 @@ public class HakukohdeToHakukohdeDTOConverter  extends AbstractFromDomainConvert
         t.setValintojenAloituspaikatLkm(s.getValintojenAloituspaikatLkm() != null ? s.getValintojenAloituspaikatLkm().intValue() : 0);
         t.setYlinValintapistemaara(s.getYlinValintaPistemaara() != null ? s.getYlinValintaPistemaara().intValue() : 0);
 
-        LOG.warn("convert: SpecialHakukohde? already implemented? FIXME when it has been done!");
-        t.setSpecialHakukohde(false);
+        t.setKaytetaanHaunPaattymisenAikaa(s.isKaytetaanHaunPaattymisenAikaa());
+
+        if (s.getSoraKuvausKoodiUri() != null) {
+            t.setSorakuvaus(getMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(s.getSoraKuvausKoodiUri(),
+                    MetaCategory.SORA_KUVAUS.name())));
+        }
+
+        if (s.getValintaperustekuvausKoodiUri() != null) {
+            t.setValintaperustekuvaus(getMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(s.getSoraKuvausKoodiUri(),
+                    MetaCategory.VALINTAPERUSTEKUVAUS.name())));
+        }
 
         return t;
     }
 
 
+    /**
+     * Convert PainotettavaOppiaine to list of [ [ "oppiaine", "9.7"], ... ]
+     *
+     * @param s
+     * @return
+     */
     public List<List<String>> convert(Set<PainotettavaOppiaine> s) {
        List<List<String>> result = new ArrayList<List<String>>();
 
@@ -80,6 +105,22 @@ public class HakukohdeToHakukohdeDTOConverter  extends AbstractFromDomainConvert
 
            result.add(t);
        }
+
+        return result;
+    }
+
+    /**
+     * Extract metadata - key + category ("uri: soste-alue", "SORA") from many languages.
+     *
+     * @param metas
+     * @return map if language keyed translations
+     */
+    private Map<String, String> getMetadata(List<MonikielinenMetadata> metas) {
+        Map<String, String> result = new HashMap<String, String>();
+
+        for (MonikielinenMetadata monikielinenMetadata : metas) {
+            result.put(monikielinenMetadata.getKieli(), monikielinenMetadata.getArvo());
+        }
 
         return result;
     }

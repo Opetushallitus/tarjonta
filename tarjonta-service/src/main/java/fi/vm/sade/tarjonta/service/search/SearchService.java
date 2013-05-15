@@ -21,6 +21,7 @@ import java.util.Set;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.slf4j.Logger;
@@ -130,7 +131,7 @@ public class SearchService {
         orgQ.setQuery(orgQuery);
         orgQ.setRows(Integer.MAX_VALUE);
 
-        QueryResponse orgResponse = solr.query(orgQ);
+        QueryResponse orgResponse = solr.query(orgQ, METHOD.POST);
         return orgResponse;
     }
 
@@ -165,8 +166,10 @@ public class SearchService {
             final List<String> queryParts, SolrQuery q) {
         // vuosi kausi
         if(vuosi!=null) {
-            String qVuosi = Integer.parseInt(vuosi) <= 0 ? "*" : vuosi;
+            String qVuosi = Integer.parseInt(vuosi) <= 0 ? null : vuosi;
             addQuery(qVuosi, queryParts, "%s:%s", Hakukohde.VUOSI_KOODI, qVuosi);
+            q.addFilterQuery(Joiner.on(" ").join(queryParts));
+            queryParts.clear();
         }
         addQuery(kausi, queryParts, "%s:%s", Hakukohde.KAUSI_KOODI, kausi);
         q.addFilterQuery(Joiner.on(" ").join(queryParts));
@@ -200,6 +203,10 @@ public class SearchService {
                     nimi);
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
             queryParts.clear();
+        }
+        
+        if (kysely.getKoulutusKoodi() != null) {
+            q.addFilterQuery(String.format("%s:%s", Koulutus.KOULUTUSKOODI_URI, kysely.getKoulutusKoodi()));
         }
 
         // vuosi & kausi

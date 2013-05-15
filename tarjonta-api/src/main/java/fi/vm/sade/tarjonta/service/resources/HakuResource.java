@@ -7,6 +7,7 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Map;
 
 /**
  * REST services for haku's.
@@ -62,10 +63,42 @@ public interface HakuResource {
      * /haku/OID/hakukohde
      *
      * @param oid
-     * @return list of Hakukohde oid's
+     * @param searchTerms
+     * @param count
+     * @param startIndex
+     * @param lastModifiedBefore
+     * @param lastModifiedSince
+     * @return list of Haku's Hakokohde OIDs
      */
     @GET
     @Path("{oid}/hakukohde")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<String> getByOIDHakukohde(@PathParam("oid") String oid);
+    public List<String> getByOIDHakukohde(@PathParam("oid") String oid,
+            @QueryParam("searchTerms") String searchTerms,
+            @QueryParam("count") int count,
+            @QueryParam("startIndex") int startIndex,
+            @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
+            @QueryParam("lastModifiedSince") Date lastModifiedSince);
+
+    /**
+     * Same as "getByOIDHakukohde" but resolves the koodisto name for hakukohde...
+     *
+     * @param oid
+     * @param searchTerms
+     * @param count
+     * @param startIndex
+     * @param lastModifiedBefore
+     * @param lastModifiedSince
+     * @return
+     */
+    @GET
+    @Path("{oid}/hakukohdeWithName")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public List<Map<String, String>> getByOIDHakukohdeExtra(
+            @PathParam("oid") String oid,
+            @QueryParam("searchTerms") String searchTerms,
+            @QueryParam("count") int count,
+            @QueryParam("startIndex") int startIndex,
+            @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
+            @QueryParam("lastModifiedSince") Date lastModifiedSince);
 }

@@ -37,7 +37,6 @@ import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.QHaku;
-import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QTekstiKaannos;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
@@ -48,18 +47,10 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 @Repository
 public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuDAO {
 
-    private static final Logger log = LoggerFactory.getLogger(HakuDAOImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HakuDAOImpl.class);
 
     @Override
     public List<Haku> findHakukohdeHakus(Haku haku) {
-//        QHaku qHaku = QHaku.haku;
-//        QHakukohde qHakukohde = QHakukohde.hakukohde;
-//
-////        List<Haku> haut = from(qHaku, qHakukohde)
-//                .join(qHakukohde.haku, qHaku)
-//                .where(qHaku.oid.eq(haku.getOid()))
-//                .list(qHaku);
-
         return getEntityManager()
                 .createQuery("select h.haku from Hakukohde h where h.haku.oid = :oid")
                 .setParameter("oid", haku.getOid()).getResultList();

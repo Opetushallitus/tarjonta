@@ -255,13 +255,5 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         }
 
         return q.list(komo.oid);
-
-//        QCustomer customer = new QCustomer("c"); // alias for the CUSTOMER table
-//
-//        SQLTemplates dialect = new HSQLDBTemplates(); // SQL-dialect
-//        SQLQuery query = new SQLQueryImpl(connection, dialect);
-//        List<String> lastNames = query.from(customer)
-//        .where(customer.firstName.eq("Bob"))
-//        .list(customer.lastName);
     }
 }

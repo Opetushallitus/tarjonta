@@ -15,22 +15,17 @@
  */
 package fi.vm.sade.tarjonta.publication.impl;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.TarjontaTila;
-import fi.vm.sade.tarjonta.publication.PublicationDataService;
-import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
-import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.powermock.reflect.Whitebox;
 import org.springframework.test.context.ContextConfiguration;
@@ -40,6 +35,16 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
+
+import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.TarjontaTila;
+import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
+import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 
 /**
  *
@@ -424,12 +429,12 @@ public class PublicationDataServiceImplTest {
             em.persist(haku1);
             em.persist(hakukohde1);
         } else {
-            em.merge(komo1);
-            em.merge(komo2);
-            em.merge(komo3);
-            em.merge(komoto1);
-            em.merge(haku1);
-            em.merge(hakukohde1);
+        	komo1 = em.merge(komo1);
+        	komo2 = em.merge(komo2);
+        	komo3 = em.merge(komo3);
+            komoto1 = em.merge(komoto1);
+            haku1 = em.merge(haku1);
+            hakukohde1 = em.merge(hakukohde1);
         }
 
         flush();

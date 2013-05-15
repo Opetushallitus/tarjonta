@@ -184,7 +184,8 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
     		@Override
     		public void buttonClick(Button.ClickEvent event) {
-    			presenter.showLisaaRinnakkainenToteutusEditView(presenter.getModel().getKoulutusPerustiedotModel().getOid());
+                    SelectPohjakoulutusVaatimusDialog dialog = new SelectPohjakoulutusVaatimusDialog("280px","180px");
+                    ShowKoulutusView.this.getWindow().addWindow(dialog);
     		}
     	}, StyleEnum.STYLE_BUTTON_PRIMARY);
 

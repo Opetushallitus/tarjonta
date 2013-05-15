@@ -16,18 +16,20 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
-import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.enums.MetaCategory;
-import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
-import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
 import java.math.BigDecimal;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.Osoite;
+import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
+import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
 
 /**
  *
@@ -46,6 +48,13 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.setOid(s.getOid());
         hakukohde.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
         hakukohde.setLisatiedot(EntityUtils.copyFields(s.getLisatiedot()));
+        
+        if (s.getHakuaika()==null && s.getHaku().getHakuaikas().size()==1) {
+        	// jos hakuaikaa ei valittu ja vain yksi on tarjolla, näytetään se
+            hakukohde.setSisaisetHakuajat(CommonToDTOConverter.convertHakuaikaToSisaisetHakuAjat(s.getHaku().getHakuaikas().iterator().next()));
+        } else {
+            hakukohde.setSisaisetHakuajat(CommonToDTOConverter.convertHakuaikaToSisaisetHakuAjat(s.getHakuaika()));
+        }
         
         //TODO: hakukohde.setValintaPerusteidenKuvaukset(null);
         hakukohde.getHakukohteenKoulutusOidit().addAll(convertKoulutukses(s.getKoulutusmoduuliToteutuses()));

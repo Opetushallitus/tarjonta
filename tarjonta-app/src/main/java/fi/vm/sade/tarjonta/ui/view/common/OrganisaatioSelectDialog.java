@@ -12,6 +12,7 @@ import com.vaadin.ui.Window;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.koulutus.KoulutusKopiointiDialog;
@@ -71,11 +72,24 @@ public abstract class OrganisaatioSelectDialog extends Window {
     private static final String CHILD_TREE_PROPERTY = "childOrganisaatioButton";
     protected Button peruutaBtn; 
     protected Button jatkaBtn;
+    protected KoulutusasteTyyppi koulutusTyyppi;
     
     protected HashMap<String,OrganisaatioPerustietoType> selectedOrgs = new HashMap<String,OrganisaatioPerustietoType>();
     
     public OrganisaatioSelectDialog(String width,String height) {
         super();
+        _i18n = new I18NHelper(this);
+        setWidth(width);
+        setHeight(height);
+        setContent(buildMainLayout());
+        addElementsToTree(getOrganisaatioOids());
+        setModal(true);
+        setButtonListeners();
+    }
+
+    public OrganisaatioSelectDialog(String width,String height, KoulutusasteTyyppi tyyppi) {
+        super();
+        koulutusTyyppi = tyyppi;
         _i18n = new I18NHelper(this);
         setWidth(width);
         setHeight(height);

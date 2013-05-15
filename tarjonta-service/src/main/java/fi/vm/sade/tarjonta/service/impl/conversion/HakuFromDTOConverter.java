@@ -73,11 +73,7 @@ public class HakuFromDTOConverter extends AbstractToDomainConverter<HakuTyyppi, 
     private void convertSisaisetHaunAlkamisAjat(Haku mm, List<SisaisetHakuAjat> sisAjat) {
         if (sisAjat != null) {
         	for (SisaisetHakuAjat curHA : sisAjat) {
-        		Hakuaika aika = new Hakuaika();
-        		aika.setAlkamisPvm(curHA.getSisaisenHaunAlkamisPvm());
-        		aika.setPaattymisPvm(curHA.getSisaisenHaunPaattymisPvm());
-        		aika.setSisaisenHakuajanNimi(curHA.getHakuajanKuvaus());
-        		mm.addHakuaika(aika);
+        		mm.addHakuaika(CommonFromDTOConverter.convertSisaisetHakuAjatToHakuaika(curHA));
         	}
         }
     }

@@ -34,6 +34,8 @@ import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
@@ -238,7 +240,8 @@ public class Koulutus2asteConverter extends KoulutusConveter {
             model2Aste.setSuunniteltuKesto(koulutus.getKesto().getArvo());
             model2Aste.setSuunniteltuKestoTyyppi(koulutus.getKesto().getYksikko());
         }
-
+        
+        model2Aste.setKoulutusaste(convert(koulutus.getKoulutusaste()));
 
         if (koulutus.getPohjakoulutusvaatimus() != null) {
             model2Aste.setPohjakoulutusvaatimus(getUri(koulutus.getPohjakoulutusvaatimus()));
@@ -270,6 +273,12 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         koulutus.getNimi();
 
         return model2Aste;
+    }
+
+    private KoodiModel convert(KoodistoKoodiTyyppi koulutusaste) {
+        KoodiModel koulutusAste = new KoodiModel();
+        koulutusAste.setKoodistoUri(koulutusaste.getUri());
+        return koulutusAste;
     }
 
     public KoulutusLisatiedotModel createKoulutusLisatiedotViewModel(LueKoulutusVastausTyyppi lueKoulutus) {

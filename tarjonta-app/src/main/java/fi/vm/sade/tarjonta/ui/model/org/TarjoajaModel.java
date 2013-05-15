@@ -27,7 +27,7 @@ import java.util.List;
  * @author Jani Wilén
  */
 public class TarjoajaModel extends BaseUIViewModel {
-
+    
     private static final int SINGLE_ORGANISATION = 0;
     private static final long serialVersionUID = -7107381962666068440L;
     /*
@@ -45,7 +45,7 @@ public class TarjoajaModel extends BaseUIViewModel {
      *  OID is set when an result item was selected.
      */
     private String selectedResultRowOrganisationOid;
-
+    
     public TarjoajaModel() {
     }
 
@@ -56,13 +56,13 @@ public class TarjoajaModel extends BaseUIViewModel {
         if (organisationOidNamePairs == null) {
             organisationOidNamePairs = new ArrayList<OrganisationOidNamePair>();
         }
-
+        
         return organisationOidNamePairs;
     }
-
+    
     private List<OrganisationOidNamePair> checkSingleOrganisation() {
         final List<OrganisationOidNamePair> pair = getOrganisationOidNamePairs();
-
+        
         Preconditions.checkNotNull(pair, "Organisation list object cannot be null.");
         Preconditions.checkArgument(!pair.isEmpty(), "No organisation was selected.");
         Preconditions.checkArgument(!isMultiSelect(), "Too many organisations was selected. Organisation count : " + pair.size());
@@ -76,7 +76,7 @@ public class TarjoajaModel extends BaseUIViewModel {
      * @return List of organisations.
      */
     public String getSelectedOrganisationOid() {
-        return checkSingleOrganisation().get(SINGLE_ORGANISATION).getOrganisationOid();
+        return getSelectedOrganisation().getOrganisationOid();
     }
 
     /**
@@ -94,7 +94,7 @@ public class TarjoajaModel extends BaseUIViewModel {
      */
     public boolean isMultiSelect() {
         Collection<OrganisationOidNamePair> pairs = getOrganisationOidNamePairs();
-
+        
         return pairs.size() > 1 ? true : false;
     }
 
@@ -104,7 +104,7 @@ public class TarjoajaModel extends BaseUIViewModel {
     public void setOrganisationOidNamePairs(List<OrganisationOidNamePair> organisaatioOidNamePairs) {
         this.organisationOidNamePairs = organisaatioOidNamePairs;
     }
-
+    
     private void addOrganisation(OrganisationOidNamePair pair) {
         getOrganisationOidNamePairs().add(pair);
     }
@@ -154,6 +154,10 @@ public class TarjoajaModel extends BaseUIViewModel {
      * selectedResultRowOrganisationOid to set
      */
     public void setSelectedResultRowOrganisationOid(String selectedResultRowOrganisationOid) {
+        //set organisation as selected organisation
+        setSelectedOrganisationOid(selectedResultRowOrganisationOid);
+        
+        //store the value for other use.
         this.selectedResultRowOrganisationOid = selectedResultRowOrganisationOid;
     }
 
@@ -174,7 +178,7 @@ public class TarjoajaModel extends BaseUIViewModel {
             return getSelectedOrganisation().getOrganisationOid();
         }
     }
-
+    
     public void setSelectedOrganisationOid(String tarjoajaOid) {
         getOrganisationOidNamePairs().clear();
         OrganisationOidNamePair pair = new OrganisationOidNamePair();

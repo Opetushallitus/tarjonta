@@ -15,35 +15,43 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
+import com.github.wolfie.blackboard.Blackboard;
 import com.vaadin.Application;
-import com.vaadin.ui.Window;
-
 import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
-import fi.vm.sade.tarjonta.ui.view.ValintaperustekuvausRootView;
-import fi.vm.sade.vaadin.Oph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Main portlet application class for Haku management.
+ * The Application's "main" class for servlet and portlet implementation.
  *
- * @author markus
+ * @author jani
  */
-public class ValintaPortletApplication extends AbstractSadePortletApplication {
+public class WebApplication extends AbstractSadePortletApplication {
 
-    private static final long serialVersionUID = -812459990170115083L;
-    private Window window;
-    private static ThreadLocal<ValintaPortletApplication> tl = new ThreadLocal<ValintaPortletApplication>();
+    private static final long serialVersionUID = 4058508673680251653L;
+    private static final Logger LOG = LoggerFactory.getLogger(Application.class);
+    private static ThreadLocal<Application> tl = new ThreadLocal<Application>();
+
+    public WebApplication() {
+        super();
+        LOG.info("WebApplication()");
+    }
+
+    @Override
+    protected void registerListeners(Blackboard blackboard) {
+        LOG.info("registerListeners()");
+    }
 
     @Override
     public synchronized void init() {
         super.init();
         this.transactionStart(this, null);
+
         initApplication();
     }
 
     protected void initApplication() {
-        window = new ValintaperustekuvausRootView();
-        setMainWindow(window);
-        setTheme(Oph.THEME_NAME);
+        throw new RuntimeException("Uninitialized Vaadin window.");
     }
 
     @Override
@@ -57,12 +65,13 @@ public class ValintaPortletApplication extends AbstractSadePortletApplication {
     @Override
     public void transactionEnd(Application application, Object transactionData) {
         super.transactionEnd(application, transactionData);
+
         if (application == this) {
             tl.remove();
         }
     }
 
-    public static ValintaPortletApplication getInstance() {
+    public static Application getInstance() {
         return tl.get();
     }
 }

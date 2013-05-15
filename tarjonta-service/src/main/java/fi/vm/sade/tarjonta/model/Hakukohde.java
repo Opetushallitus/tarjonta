@@ -33,11 +33,11 @@ import javax.validation.constraints.NotNull;
 public class Hakukohde extends BaseEntity {
 
     private static final long serialVersionUID = -3320464257959195992L;
-    @Column(name = "oid")
+    @Column(name = "oid", unique=true)
     private String oid;
-    @ManyToMany(mappedBy = "hakukohdes", cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany(mappedBy = "hakukohdes", cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch=FetchType.LAZY)
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "hakukohde_id")
     private Set<Valintakoe> valintakoes = new HashSet<Valintakoe>();
     /**
@@ -78,12 +78,12 @@ public class Hakukohde extends BaseEntity {
     @ManyToOne
     @NotNull
     private Haku haku;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "lisatiedot_teksti_id")
     private MonikielinenTeksti lisatiedot;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<PainotettavaOppiaine> painotettavatOppiaineet = new HashSet<PainotettavaOppiaine>();
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "hakukohde")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "hakukohde")
     private Set<HakukohdeLiite> liites = new HashSet<HakukohdeLiite>();
     @Deprecated
     @OneToOne(cascade = CascadeType.ALL)
@@ -97,9 +97,20 @@ public class Hakukohde extends BaseEntity {
     private Double alinHyvaksyttavaKeskiarvo;
     @Column(name="viimPaivitysPvm")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdateDate;
+    private Date lastUpdateDate = new Date();
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
+    
+    @ManyToOne(optional=true, fetch=FetchType.LAZY)
+    private Hakuaika hakuaika;
+    
+    public Hakuaika getHakuaika() {
+		return hakuaika;
+	}
+    
+    public void setHakuaika(Hakuaika hakuaika) {
+		this.hakuaika = hakuaika;
+	}    
 
     /**
      * @return the koulutuses

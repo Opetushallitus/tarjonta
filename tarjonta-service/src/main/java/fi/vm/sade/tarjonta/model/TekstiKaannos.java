@@ -19,14 +19,19 @@ import fi.vm.sade.generic.model.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 /**
  *
  */
 @Entity
-@Table(name = "teksti_kaannos")
+@Table(
+	name = "teksti_kaannos",
+	uniqueConstraints = @UniqueConstraint(columnNames={"kieli_koodi", "teksti_id"})
+)
 public class TekstiKaannos extends BaseEntity {
 
     private static final long serialVersionUID = 8949181662473812771L;
@@ -37,18 +42,13 @@ public class TekstiKaannos extends BaseEntity {
     @Column(name = "arvo", length = 4096)
     private String arvo;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch=FetchType.LAZY)
     private MonikielinenTeksti teksti;
 
     /**
      * Constructor for JPA.
      */
-    protected TekstiKaannos() {
-    }
-
-    public TekstiKaannos(MonikielinenTeksti teksti, TekstiKaannos copyFrom) {
-        this(teksti, copyFrom.getKieliKoodi(), copyFrom.getArvo());
-    }
+    protected TekstiKaannos() {}
 
     public TekstiKaannos(MonikielinenTeksti teksti, String kieliKoodi, String arvo) {
         this.teksti = teksti;
@@ -63,6 +63,10 @@ public class TekstiKaannos extends BaseEntity {
     public String getArvo() {
         return arvo;
     }
+    
+    public void setArvo(String arvo) {
+		this.arvo = arvo;
+	}
 
     static String formatKieliKoodi(String value) {
         return value.trim();

@@ -94,7 +94,7 @@ public interface KomoResource {
     @GET
     @Path("{oid}/komoto")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<String> getKomotosByKomotoOID(
+    public List<String> getKomotosByKomoOID(
             @PathParam("oid") String oid,
             @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex);

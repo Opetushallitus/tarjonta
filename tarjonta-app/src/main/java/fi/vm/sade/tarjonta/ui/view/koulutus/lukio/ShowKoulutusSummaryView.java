@@ -464,7 +464,8 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                _presenter.showLisaaRinnakkainenToteutusEditView(_presenter.getModel().getKoulutusPerustiedotModel().getOid());
+                 getWindow().showNotification("Ei toteutettu");
+               // _presenter.showLisaaRinnakkainenToteutusEditView(_presenter.getModel().getKoulutusLukioPerustiedot().getKomotoOid(),null);
             }
         }, StyleEnum.STYLE_BUTTON_PRIMARY);
 

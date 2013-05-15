@@ -15,14 +15,13 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
-import java.util.List;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +40,24 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
+import fi.vm.sade.tarjonta.model.Pisteraja;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
+import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.types.*;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTyyppi;
 
 /**
  *
@@ -257,9 +268,9 @@ public class TarjontaPublicServiceTest {
 
     @Test
     public void testPisterajat()  {
-        List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(HAKUKOHDE_OID);
+    	Hakukohde hk = hakukohdeDAO.findHakukohdeByOid(HAKUKOHDE_OID);
         Valintakoe valintakoe = null;
-        for (Valintakoe valintakoe1 : hakukohdes.get(0).getValintakoes()) {
+        for (Valintakoe valintakoe1 : hk.getValintakoes()) {
             valintakoe = valintakoe1;
         }
         assertTrue(valintakoe.getPisterajat().size() > 0);
@@ -267,8 +278,8 @@ public class TarjontaPublicServiceTest {
 
     @Test
     public void testPainotettavatOppiaineet() {
-       List<Hakukohde> hakukohdes = hakukohdeDAO.findHakukohdeWithDepenciesByOid(HAKUKOHDE_OID);
-       assertTrue(hakukohdes.get(0).getPainotettavatOppiaineet().size() > 0);
+    	Hakukohde hk = hakukohdeDAO.findHakukohdeByOid(HAKUKOHDE_OID);
+       assertTrue(hk.getPainotettavatOppiaineet().size() > 0);
     }
 
     @Test

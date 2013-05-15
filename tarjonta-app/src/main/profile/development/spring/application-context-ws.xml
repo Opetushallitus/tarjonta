@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:cxf="http://cxf.apache.org/core"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+
+    <!-- AUTHENTICATION / AUTHORIZATION SUPPORT -->
+    <!--import resource="classpath:authentication-client.xml"/-->
+    
+    <bean id="organisaatioCasInterceptor" class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
+        <property name="webCasUrl" value="${web.url.cas}"/>
+        <property name="targetService" value="${cas.service.organisaatio-service}/j_spring_cas_security_check"/>
+        <property name="appClientUsername" value="${haku.app.username.to.usermanagement}"/>
+        <property name="appClientPassword" value="${haku.app.password.to.usermanagement}"/>
+    </bean>
+    
+    <bean id="oidCasInterceptor" class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
+        <property name="webCasUrl" value="${web.url.cas}"/>
+        <property name="targetService" value="${cas.service.oid-service}/j_spring_cas_security_check"/>
+        <property name="appClientUsername" value="${haku.app.username.to.usermanagement}"/>
+        <property name="appClientPassword" value="${haku.app.password.to.usermanagement}"/>
+    </bean>
+    
+    <bean id="tarjontaCasInterceptor" class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
+        <property name="webCasUrl" value="${web.url.cas}"/>
+        <property name="targetService" value="${cas.service.tarjonta-service}/j_spring_cas_security_check"/>
+        <property name="appClientUsername" value="${haku.app.username.to.usermanagement}"/>
+        <property name="appClientPassword" value="${haku.app.password.to.usermanagement}"/>
+    </bean>
+    
+    <bean id="koodistoCasInterceptor" class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
+        <property name="webCasUrl" value="${web.url.cas}"/>
+        <property name="targetService" value="${cas.service.koodisto-service}/j_spring_cas_security_check"/>
+        <property name="appClientUsername" value="${haku.app.username.to.usermanagement}"/>
+        <property name="appClientPassword" value="${haku.app.password.to.usermanagement}"/>
+    </bean>
+
+    <cxf:bus>
+        <cxf:outInterceptors>
+            <bean class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
+        </cxf:outInterceptors>
+    </cxf:bus>
+                      	 
+    <jaxws:client id="koodiPublicService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodiService"
+                  address="${koodi.public.webservice.url.backend:http://NO_KOODI_WEBSERVICE_URL_CONFIGURED}">
+        <!--jaxws:outInterceptors>
+            <ref bean="koodistoCasInterceptor" />
+        </jaxws:outInterceptors-->
+    </jaxws:client>     
+    
+    <jaxws:client id="koodistoPublicService"
+                  serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
+                  address="${koodisto.public.webservice.url.backend:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}">
+        <!--jaxws:outInterceptors>
+            <ref bean="koodistoCasInterceptor" />
+        </jaxws:outInterceptors-->
+    </jaxws:client>     
+
+    <jaxws:client id="oidService"
+                  serviceClass="fi.vm.sade.oid.service.OIDService"
+                  address="${oid.webservice.url.backend:http://NO_OID_WEBSERVICE_URL_CONFIGURED}">
+        <jaxws:outInterceptors>
+            <ref bean="oidCasInterceptor" />
+        </jaxws:outInterceptors>
+    </jaxws:client>     
+
+    <jaxws:client id="tarjontaAdminService"
+                  serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService"
+                  address="${tarjonta.admin.webservice.url.backend:http://NO_TARJONTA_ADMIN_WEBSERVICE_URL_CONFIGURED}">
+      <!--  <jaxws:outInterceptors>
+            <ref bean="tarjontaCasInterceptor" />
+        </jaxws:outInterceptors>  -->
+    </jaxws:client>     
+
+    <jaxws:client id="tarjontaPublicService"
+                  serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService"
+                  address="${tarjonta.public.webservice.url.backend:http://NO_TARJONTA_PUBLIC_WEBSERVICE_URL_CONFIGURED}">
+      <!--  <jaxws:outInterceptors>
+            <ref bean="tarjontaCasInterceptor" />
+        </jaxws:outInterceptors>   -->
+    </jaxws:client>     
+
+    <jaxws:client id="organisaatioService"
+                  serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
+                  address="${organisaatio.webservice.url.backend}">
+      <!--  <jaxws:outInterceptors>
+            <ref bean="organisaatioCasInterceptor" />
+        </jaxws:outInterceptors>     -->
+    </jaxws:client>     
+                  
+    <jaxws:client id="userService"
+                  serviceClass="fi.vm.sade.authentication.service.UserService"
+                  address="${user.webservice.url.backend:http://NO_ORGANISAATIO_WEBSERVICE_URL_CONFIGURED}"/>
+
+</beans>

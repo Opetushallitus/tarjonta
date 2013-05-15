@@ -23,6 +23,9 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import javax.persistence.EntityManager;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import static org.junit.Assert.*;
 
 /**
@@ -48,6 +51,7 @@ public class TestData {
     public TestData() {
     }
 
+    @Transactional
     public void initializeData(EntityManager em, TarjontaFixtures fixtures) {
         this.fixtures = fixtures;
         this.em = em;
@@ -126,15 +130,13 @@ public class TestData {
 
     private void check(int items, Hakukohde kohde) {
         Hakukohde k = em.find(Hakukohde.class, kohde.getId());
-        em.detach(k);
         assertEquals(items, k.getValintakoes().size());
     }
 
     protected void persist(Object o) {
         em.persist(o);
         em.flush();
-        em.detach(o);
-
+        
         //a quick check
         if (o instanceof Haku) {
             Haku haku = (Haku) o;

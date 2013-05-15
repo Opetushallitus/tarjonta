@@ -15,11 +15,19 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import fi.vm.sade.generic.model.BaseEntity;
 
 /**
  * Translatable texts with modest "metadata" properties.
@@ -30,23 +38,26 @@ public class MonikielinenTeksti extends BaseEntity {
 
     private static final long serialVersionUID = -8996615595354088586L;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "teksti",fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<TekstiKaannos> tekstis = new HashSet<TekstiKaannos>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "teksti",fetch = FetchType.LAZY, orphanRemoval = true)
+    @MapKey(name="kieliKoodi")
+    private Map<String, TekstiKaannos> tekstis = new HashMap<String, TekstiKaannos>();
 
-    public Set<TekstiKaannos> getTekstis() {
-        return Collections.unmodifiableSet(tekstis);
+    public Collection<TekstiKaannos> getTekstis() {
+        return Collections.unmodifiableCollection(tekstis.values());
     }
 
     public void addTekstiKaannos(String kieliKoodi, String teksti) {
-        tekstis.add(new TekstiKaannos(this, kieliKoodi, teksti));
+        tekstis.put(kieliKoodi, new TekstiKaannos(this, kieliKoodi, teksti));
     }
 
     public void setTekstiKaannos(String kieliKoodi, String teksti) {
-
-        final TekstiKaannos kaannos = new TekstiKaannos(this, kieliKoodi, teksti);
-        tekstis.remove(kaannos);
-        tekstis.add(new TekstiKaannos(this, kieliKoodi, teksti));
-
+    	TekstiKaannos kaannos = tekstis.get(kieliKoodi);
+    	if (kaannos==null) {
+    		addTekstiKaannos(kieliKoodi, teksti);
+    	} else {
+    		kaannos.setArvo(teksti);
+    		//kaannos.setVersion(null);
+    	}
     }
 
     /**
@@ -64,29 +75,47 @@ public class MonikielinenTeksti extends BaseEntity {
      * Clears all existing translations and inserts new values from given object.
      *
      * @param otherTeksti
-     */
+     * /
     public void updateFrom(MonikielinenTeksti otherTeksti) {
-
+    	
         tekstis.clear();
 
         for (TekstiKaannos t : otherTeksti.getTekstis()) {
-            tekstis.add(new TekstiKaannos(this, t));
+        	addTekstiKaannos(t.getKieliKoodi(), t.getArvo());
         }
 
-    }
+    }*/
 
     private TekstiKaannos findKaannos(String kieliKoodi) {
         final String koodi = TekstiKaannos.formatKieliKoodi(kieliKoodi);
-        for (TekstiKaannos t : tekstis) {
-            if (t.getKieliKoodi().equals(koodi)) {
-                return t;
-            }
-        }
-        return null;
+        return tekstis.get(koodi);
     }
 
     public boolean removeKaannos(String kieliKoodi) {
-        return tekstis.remove(new TekstiKaannos(this, kieliKoodi, kieliKoodi));
+        return tekstis.remove(kieliKoodi)!=null;
+    }
+    
+    /**
+     * Apumetodi monikielisten tekstien settereille; esim.:
+     * 
+     * <pre>
+     * void setFoo(MonikielinenTeksti foo) {
+     *     this.foo = MonikielinenTeksti.merge(this.foo, foo);
+     * }
+     * </pre>
+     */
+    public static MonikielinenTeksti merge(MonikielinenTeksti old, MonikielinenTeksti uus) {
+    	if (old==null) {
+    		return uus;
+    	}
+    	if (uus==null) {
+    		return null;
+    	}
+    	old.tekstis.keySet().retainAll(uus.tekstis.keySet());
+    	for (TekstiKaannos tk : uus.tekstis.values()) {
+    		old.setTekstiKaannos(tk.getKieliKoodi(), tk.getArvo());
+    	}
+    	return old;
     }
 
 }

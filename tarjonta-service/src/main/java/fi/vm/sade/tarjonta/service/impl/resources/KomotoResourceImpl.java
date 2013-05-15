@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.resources;
 
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.service.resources.KomotoResource;
@@ -90,6 +91,25 @@ public class KomotoResourceImpl implements KomotoResource {
         if (komoto != null) {
             result = conversionService.convert(komoto.getKoulutusmoduuli(), KomoDTO.class);
         }
+        LOG.info("  result={}", result);
+        return result;
+    }
+
+
+    // GET /komoto/{oid}/hakukohde
+    @Override
+    public List<String> getHakukohdesByKomotoOID(String oid) {
+        LOG.info("getHakukohdesByKomotoOID() -- /komoto/{}/hakukohde", oid);
+        List<String> result = new ArrayList<String>();
+
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
+        if (komoto != null) {
+            // TODO add spesific finder to get just these OIDs... not sure about the usage pattern of this service
+            for (Hakukohde hakukohde : komoto.getHakukohdes()) {
+                result.add(hakukohde.getOid());
+            }
+        }
+
         LOG.info("  result={}", result);
         return result;
     }

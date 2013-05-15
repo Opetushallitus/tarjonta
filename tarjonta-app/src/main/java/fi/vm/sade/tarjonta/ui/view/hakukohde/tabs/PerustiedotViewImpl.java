@@ -16,66 +16,83 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.ui.*;
-import com.vaadin.ui.AbstractSelect.Filtering;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.PropertysetItem;
-import com.vaadin.data.validator.DoubleValidator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import fi.vm.sade.generic.ui.component.CaptionFormatter;
-import fi.vm.sade.generic.ui.component.FieldValueFormatter;
-import fi.vm.sade.generic.ui.validation.ErrorMessage;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
-import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
-import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
-import fi.vm.sade.vaadin.constants.UiMarginEnum;
-import fi.vm.sade.vaadin.util.UiUtil;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import fi.vm.sade.koodisto.widget.KoodistoComponent;
-import fi.vm.sade.vaadin.constants.LabelStyleEnum;
-import fi.vm.sade.vaadin.constants.UiConstant;
-import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
-import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-
-import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
-
-import java.util.*;
-
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.data.util.PropertysetItem;
+import com.vaadin.data.validator.DoubleValidator;
+import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.AbstractSelect.Filtering;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.DateField;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.OptionGroup;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
+
+import fi.vm.sade.generic.common.I18N;
+import fi.vm.sade.generic.ui.component.CaptionFormatter;
+import fi.vm.sade.generic.ui.component.FieldValueFormatter;
+import fi.vm.sade.generic.ui.validation.ErrorMessage;
+import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.widget.KoodistoComponent;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
+import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
+import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
+import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
+import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.vaadin.constants.LabelStyleEnum;
+import fi.vm.sade.vaadin.constants.UiConstant;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
+import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
  * Hakukohde basic information.
  *
  * @author Tuomas Katva
+ * @author Timo Santasalo / Teknokala Ky
  */
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 @Configurable(preConstruction = true)
@@ -99,6 +116,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @NotNull(message = "{validation.Hakukohde.haku.notNull}")
     @PropertyId("hakuOid")
     private ComboBox hakuCombo;
+    
+    private ComboBox hakuAikaCombo;
+    
     @Min(value = 0, message = "{validation.Hakukohde.aloituspaikat.num}")
     @NotNull(message = "{ShowHakukohdeViewImpl.liitaUusiKoulutusDialogTitle}")
     @PropertyId("aloitusPaikat")
@@ -132,7 +152,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 //    LanguageTabSheet valintaPerusteidenKuvausTabs;
     private HakukohdeLisatiedotTabSheet lisatiedotTabs;
     private Label osoiteSelectLabel;
-    private Label serverMessage = new Label("");
+    //private Label serverMessage = new Label("");
     //Info buttons
     private Button upRightInfoButton;
     private Button downRightInfoButton;
@@ -142,13 +162,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private ErrorMessage errorView;
     private GridLayout painotettavatOppiaineet;
     private KoulutusasteTyyppi koulutusasteTyyppi;
-    
     private List<TextField> painotettavat = Lists.newArrayList();
 
     public List<TextField> getPainotettavat() {
         return painotettavat;
     }
-
     private boolean muuOsoite;
 
     /*
@@ -218,9 +236,11 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             }
         });
 
-        if (presenter != null && presenter.getModel() != null && presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getSelectedHakukohdeNimi() != null) {
-            hakukohteenNimiCombo.setValue(presenter.getModel().getHakukohde().getSelectedHakukohdeNimi());
-
+        if (presenter != null && presenter.getModel() != null && presenter.getModel().getHakukohde() != null) {
+        	if (presenter.getModel().getHakukohde().getSelectedHakukohdeNimi() != null) {
+                hakukohteenNimiCombo.setValue(presenter.getModel().getHakukohde().getSelectedHakukohdeNimi());
+        	}
+        	selectHakuAika(presenter.getModel().getHakukohde().getHakuaika(), presenter.getModel().getHakukohde().getHakuOid(), true);
         }
     }
 
@@ -251,6 +271,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         addItemToGrid("", buildErrorLayout());
         addItemToGrid("PerustiedotView.hakukohteenNimi", buildHakukode());
         addItemToGrid("PerustiedotView.hakuValinta", buildHakuCombo());
+        addItemToGrid("PerustiedotView.hakuaikaValinta", buildHakuaikaCombo());
 
         addItemToGrid("PerustiedotView.hakukelpoisuusVaatimukset", buildHakukelpoisuusVaatimukset());
 
@@ -323,13 +344,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private void addOppiaine(final PainotettavaOppiaineViewModel painotettava) {
         final PropertysetItem psi = new BeanItem(painotettava);
         //TODO change koodisto to oppiaine
-        System.out.println("uri:" + KoodistoURIHelper.KOODISTO_OPPIAINEET_URI);
         final KoodistoComponent painotus = uiBuilder.koodistoComboBox(null, KoodistoURIHelper.KOODISTO_OPPIAINEET_URI, psi, "oppiaine", T("PerusTiedotView.oppiainePrompt"), true);
         painotus.getField().setRequired(false);
         painotus.getField().setNullSelectionAllowed(false);
         painotettavatOppiaineet.addComponent(painotus);
 
-        final TextField tf = uiBuilder.integerField(null, psi, "painokerroin", null, null, 1, 100,  T("validation.PerustiedotView.painokerroin.num"));
+        final TextField tf = uiBuilder.integerField(null, psi, "painokerroin", null, null, 1, 100, T("validation.PerustiedotView.painokerroin.num"));
         painotettavat.add(tf);
         // uiBuilder.textField(null, psi, "painokerroin", null, null);
         // tf.addValidator(new IntegerValidator(T("validation.PerustiedotView.painokerroin.num")));
@@ -449,37 +469,33 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
 
     private boolean setLiitteidenToimOsoite() {
-
         OsoiteDTO osoite = getOrganisaationPostiOsoite();
-        if (presenter.getModel().getHakukohde().getOsoiteRivi1() != null && presenter.getModel().getHakukohde().getPostinumero() != null ) {
+        if (presenter.getModel().getHakukohde().getOsoiteRivi1() != null && presenter.getModel().getHakukohde().getPostinumero() != null) {
 
             String hakukohdeOsoite = presenter.getModel().getHakukohde().getOsoiteRivi1().trim();
             String hakukohdePostinumero = presenter.getModel().getHakukohde().getPostinumero().trim();
-            if (osoite.getOsoite().trim().equalsIgnoreCase(hakukohdeOsoite) && osoite.getPostinumero().trim().equalsIgnoreCase(hakukohdePostinumero)) {
+            if (osoite != null && osoite.getOsoite() != null && osoite.getPostinumero() != null && osoite.getOsoite().trim().equalsIgnoreCase(hakukohdeOsoite) && osoite.getPostinumero().trim().equalsIgnoreCase(hakukohdePostinumero)) {
                 return false;
             } else {
                 return true;
             }
-
-
         } else {
             setOsoiteToOrganisaationPostiOsoite(osoite);
             return false;
         }
-
-
     }
 
     private void setOsoiteToOrganisaationPostiOsoite(OsoiteDTO osoite) {
-        if (osoite != null) {
+        Preconditions.checkNotNull(osoite, "OsoiteDTO object cannot be null.");
+
         presenter.getModel().getHakukohde().setOsoiteRivi1(osoite.getOsoite());
         presenter.getModel().getHakukohde().setPostinumero(osoite.getPostinumero());
         presenter.getModel().getHakukohde().setPostitoimipaikka(osoite.getPostitoimipaikka());
-        }
     }
 
     private OsoiteDTO getOrganisaationPostiOsoite() {
         OrganisaatioDTO organisaatioDTO = presenter.getSelectOrganisaatioModel();
+        
         OsoiteDTO returnValue = null;
         if (organisaatioDTO != null) {
             for (YhteystietoDTO yhteystietoDTO : organisaatioDTO.getYhteystiedot()) {
@@ -491,6 +507,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 }
             }
         }
+
+        Preconditions.checkNotNull(returnValue, "Organisation OsoiteDTO object cannot be null.");
+
         return returnValue;
     }
 
@@ -717,10 +736,73 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     public void setSelectedHaku(HakuViewModel haku) {
         hakuCombo.setValue(haku);
     }
+    
+    @Override
+    public HakuaikaViewModel getSelectedHakuaika() {
+    	return (HakuaikaViewModel) hakuAikaCombo.getValue();
+    }
+    
+    private void prepareHakuAikas(HakuViewModel hvm) {
+    	BeanItemContainer<HakuaikaViewModel> container = new BeanItemContainer<HakuaikaViewModel>(HakuaikaViewModel.class);
+
+    	if (hvm!=null) {
+        	if (hvm.getSisaisetHakuajat().isEmpty()) {
+        		ListaaHakuTyyppi lht = new ListaaHakuTyyppi();
+        		lht.setHakuOid(hvm.getHakuOid());
+        		List<HakuTyyppi> hakus = presenter.getTarjontaPublicService().listHaku(lht).getResponse();
+        		if (hakus.size()!=1) {
+        			LOG.warn("Hakua ei löytynyt: {}",hvm.getHakuOid());
+        		} else {
+        			hvm = new HakuViewModel(hakus.iterator().next());
+        		}
+        	}
+        	
+        	container.addAll(hvm.getSisaisetHakuajat());
+        	
+    	}
+
+    	hakuAikaCombo.setContainerDataSource(container);
+
+    	selectHakuAika(presenter.getModel().getHakukohde().getHakuaika(), hvm, false);
+    }
+    
+    private void selectHakuAika(HakuaikaViewModel hvm, HakuViewModel hk, boolean initial) {
+		
+    	if (hk==null || hk.getSisaisetHakuajat().isEmpty()) {
+    		hakuAikaCombo.setValue(null);
+        	hakuAikaCombo.setEnabled(false);
+        } else if (hk.getSisaisetHakuajat().size()==1) {
+    		hakuAikaCombo.setValue(hakuAikaCombo.getContainerDataSource().getItemIds().iterator().next());
+        	hakuAikaCombo.setEnabled(false);
+    	} else {
+    		hakuAikaCombo.setValue(hvm);
+        	hakuAikaCombo.setEnabled(true);
+    	}
+
+
+    }
+    
+    private ComboBox buildHakuaikaCombo() {
+    	hakuAikaCombo = new ComboBox();
+    	hakuAikaCombo.setRequired(true);
+    	hakuAikaCombo.setEnabled(false);
+    	return hakuAikaCombo;
+    }
+    	 
 
     private ComboBox buildHakuCombo() {
         hakuCombo = new ComboBox();
+        hakuCombo.setImmediate(true);
+        hakuAikaCombo = new ComboBox();
+        
+        hakuCombo.addListener(new Property.ValueChangeListener() {
+			private static final long serialVersionUID = 1L;
 
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				prepareHakuAikas((HakuViewModel) hakuCombo.getValue());
+			}
+		});
 
 
         return hakuCombo;

@@ -15,15 +15,42 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.HAKUKOHDE_OIDS;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI_KOODI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KAUSI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_EN;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_SV;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSKOODI_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSLAJI_URIS;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSMODUULI_OID;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_EN;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_SV;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSTYYPPI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.OID;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_NAME_EN;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_NAME_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_NAME_SV;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_PATH;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.POHJAKOULUTUSVAATIMUS_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TEKSTIHAKU;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA_EN;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TUTKINTONIMIKE_EN;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TUTKINTONIMIKE_FI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TUTKINTONIMIKE_SV;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TUTKINTONIMIKE_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.VUOSI_KOODI;
+
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
-import fi.vm.sade.tarjonta.model.KoodistoUri;
 import org.apache.solr.common.SolrInputDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
@@ -31,23 +58,20 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.KoodistoService;
-import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
-import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
-import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.dao.IndexerDAO;
+import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
+import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
 import fi.vm.sade.tarjonta.service.search.SolrFields.Organisaatio;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
 
 /**
  * Convert "Koulutus" to {@link SolrInputDocument} so that it can be
@@ -55,8 +79,8 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
  */
 @Configurable
 @Component
-public class KoulutusmoduuliToteutusToSolrInputDocumentFunction implements
-Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
+public class KoulutusIndexEntityToSolrDocument implements
+Function<KoulutusIndexEntity, List<SolrInputDocument>> {
 
     @Autowired
     private OrganisaatioService organisaatioService;
@@ -66,23 +90,25 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
 
     @Autowired
     private KoodiService koodiService;
+    
+    @Autowired
+    private IndexerDAO indexerDao;
 
+    Logger logger = LoggerFactory.getLogger(getClass());
    
 
     @Override
-    public List<SolrInputDocument> apply(final KoulutusmoduuliToteutus komoto) {
-        Preconditions.checkNotNull(komoto);
-        //If the komoto is not a koulutusohjelma or lukiolinja komoto it is not index, becuse they are not
-        //shown in search
+    public List<SolrInputDocument> apply(final KoulutusIndexEntity koulutus) {
+        Preconditions.checkNotNull(koulutus);
         List<SolrInputDocument> docs = new ArrayList<SolrInputDocument>();
-        if (komoto.getKoulutusmoduuli().getLukiolinja() == null
-                && komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi() == null) {
-            return docs;
-        }
        
         final SolrInputDocument komotoDoc = new SolrInputDocument();
-        add(komotoDoc, OID, komoto.getOid());
-        OrganisaatioDTO org = organisaatioService.findByOid(komoto.getTarjoaja());
+        add(komotoDoc, OID, koulutus.getOid());
+        OrganisaatioDTO org = organisaatioService.findByOid(koulutus.getTarjoaja());
+        if(org==null) {
+            logger.warn("No org found for komoto: " + koulutus.getOid());
+            return Lists.newArrayList();
+        }
         addOrganisaatioTiedot(komotoDoc, org, docs);
         
         if (org != null && org.getParentOidPath() != null) {
@@ -96,42 +122,45 @@ Function<KoulutusmoduuliToteutus, List<SolrInputDocument>> {
             add(komotoDoc, ORG_PATH, org.getOid());
         }
         
-        addKoulutusohjelmaTiedot(komotoDoc, komoto.getKoulutusmoduuli().getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value()) 
-                ? komoto.getKoulutusmoduuli().getKoulutusohjelmaKoodi() : komoto.getKoulutusmoduuli().getLukiolinja());
-        addKoulutuskoodiTiedot(komotoDoc, komoto.getKoulutusmoduuli().getKoulutusKoodi());
-        addTutkintonimikeTiedot(komotoDoc, komoto.getKoulutusmoduuli().getTutkintonimike());
-        add(komotoDoc, KAUSI_KOODI, IndexingUtils.parseKausi(komoto.getKoulutuksenAlkamisPvm()));
-        add(komotoDoc, VUOSI_KOODI, IndexingUtils.parseYear(komoto.getKoulutuksenAlkamisPvm()));
-        add(komotoDoc, TILA_EN, komoto.getTila());
-        add(komotoDoc, KOULUTUSMODUULI_OID, komoto.getKoulutusmoduuli().getOid());
-        add(komotoDoc, KOULUTUSTYYPPI, komoto.getKoulutusmoduuli().getKoulutustyyppi());
-        add(komotoDoc, POHJAKOULUTUSVAATIMUS_URI, komoto.getPohjakoulutusvaatimus());
-        addKoulutuslajiUris(komotoDoc,komoto.getKoulutuslajis());
-        addHakukohdeOids(komotoDoc, komoto.getHakukohdes());
+        addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusTyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value()) 
+                ? koulutus.getKoulutusohjelmaKoodi() : koulutus.getLukiolinja());
+        addKoulutuskoodiTiedot(komotoDoc, koulutus.getKoulutusKoodi());
+        addTutkintonimikeTiedot(komotoDoc, koulutus.getTutkintonimike());
+        add(komotoDoc, KAUSI_KOODI, IndexingUtils.parseKausiKoodi(koulutus.getKoulutuksenAlkamisPvm()));
+        add(komotoDoc, KAUSI, IndexingUtils.parseKausi(koulutus.getKoulutuksenAlkamisPvm()));
+        add(komotoDoc, VUOSI_KOODI, IndexingUtils.parseYear(koulutus.getKoulutuksenAlkamisPvm()));
+        add(komotoDoc, TILA_EN, koulutus.getTila());
+        add(komotoDoc, KOULUTUSMODUULI_OID, koulutus.getKoulutusmoduuliOid());
+        add(komotoDoc, KOULUTUSTYYPPI, koulutus.getKoulutustyyppi());
+        add(komotoDoc, POHJAKOULUTUSVAATIMUS_URI, koulutus.getPohjakoulutusvaatimus());
+        
+        //XXX in DAO find koulutuslajiuris for koulutusmoduulitoteutus
+        addKoulutuslajiUris(komotoDoc, indexerDao.findKoulutusLajisForKoulutus(koulutus.getKoulutusId()));
+        
+        addHakukohdeOids(komotoDoc, indexerDao.findhakukohteetByKoulutusmoduuliToteutusId(koulutus.getKoulutusId()));
+        
         addTekstihaku(komotoDoc);
         docs.add(komotoDoc);
         return docs;
     }
 
-    private void addKoulutuslajiUris(SolrInputDocument doc,Set<KoodistoUri> koodistoUris) {
+    private void addKoulutuslajiUris(SolrInputDocument doc,List<String> koodistoUris) {
           if (koodistoUris == null) {
               return;
           }
 
-         List<KoodistoUri> uris = new ArrayList<KoodistoUri>(koodistoUris);
-        for (KoodistoUri uri:uris) {
-            add(doc,KOULUTUSLAJI_URIS,uri.getKoodiUri());
+        for (String uri: koodistoUris) {
+            add(doc,KOULUTUSLAJI_URIS,uri);
         }
     }
     
     private void addHakukohdeOids(SolrInputDocument komotoDoc,
-            Set<Hakukohde> hakukohdes) {
+            List<HakukohdeIndexEntity> hakukohdes) {
         if (hakukohdes == null) {
             return;
         }
         
-        List<Hakukohde> hakukohdeList = new ArrayList<Hakukohde>(hakukohdes);
-        for (Hakukohde curHakukohde : hakukohdeList) {
+        for (HakukohdeIndexEntity curHakukohde : hakukohdes) {
             add(komotoDoc, HAKUKOHDE_OIDS, curHakukohde.getOid());
         }
         

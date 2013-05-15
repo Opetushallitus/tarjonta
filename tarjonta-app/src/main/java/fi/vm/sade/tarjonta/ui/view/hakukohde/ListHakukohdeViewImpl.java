@@ -70,6 +70,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     public static final String[] ORDER_BY = new String[]{I18N.getMessage("ListHakukohdeViewImpl.jarjestys.Organisaatio")};
     public static final String COLUMN_A = "Kategoriat";
     public static final String COLUMN_PVM = "Ajankohta";
+    public static final String COLUMN_KOULUTUSLAJI = "Koulutuslaji";
     public static final String COLUMN_HAKUTAPA = "Hakutapa";
     public static final String COLUMN_ALOITUSPAIKAT = "Aloituspaikat";
     public static final String COLUMN_TILA = "Tila";
@@ -156,12 +157,14 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         categoryTree.addContainerProperty(COLUMN_PVM, String.class, "");
         categoryTree.addContainerProperty(COLUMN_HAKUTAPA, String.class, "");
         categoryTree.addContainerProperty(COLUMN_ALOITUSPAIKAT, String.class, "");
+        categoryTree.addContainerProperty(COLUMN_KOULUTUSLAJI,String.class,"");
         categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
 
         categoryTree.setColumnExpandRatio(COLUMN_A, 2.1f);
         categoryTree.setColumnExpandRatio(COLUMN_PVM, 0.3f);
         categoryTree.setColumnExpandRatio(COLUMN_HAKUTAPA, 0.3f);
         categoryTree.setColumnExpandRatio(COLUMN_ALOITUSPAIKAT, 0.1f);
+        categoryTree.setColumnExpandRatio(COLUMN_KOULUTUSLAJI,0.3f);
         categoryTree.setColumnExpandRatio(COLUMN_TILA, 0.3f);
 
 
@@ -196,6 +199,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
         hc.addContainerProperty(COLUMN_PVM, String.class, "");
         hc.addContainerProperty(COLUMN_HAKUTAPA, String.class, "");
         hc.addContainerProperty(COLUMN_ALOITUSPAIKAT, String.class, "");
+        hc.addContainerProperty(COLUMN_KOULUTUSLAJI,String.class,"");
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
 
         for (Map.Entry<String, List<HakukohdeTulos>> e : set) {
@@ -214,6 +218,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 hc.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
                 hc.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
                 hc.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getHakukohde().getAloituspaikat());
+                hc.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(_tarjontaUIHelper.getKoodiNimi(curHakukohde.getHakukohde().getHakukohteenKoulutuslaji()));
                 hc.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
 
                 hc.setChildrenAllowed(curHakukohde, false);
@@ -245,7 +250,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     /**
      * Returns the name of the hakukohde based on koodisto uri given.
      *
-     * @param koodiUri the koodisto uri given.
+     * @param koodistoKoodiTyyppi koodityyppi
      * @return
      */
     private String getKoodiNimi(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
@@ -279,19 +284,6 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
      */
     private HorizontalLayout buildMiddleResultLayout() {
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
-        /*poistaB = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("Poista"));
-        poistaB.addListener(new Button.ClickListener() {
-            private static final long serialVersionUID = 5833582377090856884L;
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                showRemoveDialog();
-            }
-        });
-        
-        //TODO when enabled add auth check!
-        poistaB.setEnabled(false);*/
-
         cbJarjestys = UiUtil.comboBox(layout, null, ORDER_BY);
         cbJarjestys.setWidth("300px");
         layout.setExpandRatio(cbJarjestys, 1f);
@@ -306,7 +298,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     
     /**
      * Showing the confirmation dialog for removing multiple hakukohde objects.
-     * @param haku
+     *
      */
     private void showRemoveDialog() {
         MultipleHakukohdeRemovalDialog removeDialog = new  MultipleHakukohdeRemovalDialog(T("removeQ"), T("removeYes"), T("removeNo"), presenter);
@@ -321,7 +313,7 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     }
 
     /**
-     * @param btnListenerMuokkaa( the btnLuoUusiKoulutus to set
+     * @param btnKopioiUudelleKaudelle
      */
     public void setBtnListenerMuokkaa(Button.ClickListener btnKopioiUudelleKaudelle) {
         this.lisaaHakuunB.addListener(btnKopioiUudelleKaudelle);
@@ -342,40 +334,12 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     }
 
     @Override
-    public void showKoulutuksetForHakukohde(List<KoulutusTulos> koulutukset) {
-        
-        
-        /*HierarchicalContainer hc = (HierarchicalContainer) (this.categoryTree.getContainerDataSource());
-        for (Object item : hc.getItemIds()) {
-            if (!(categoryTree.getContainerProperty(item, COLUMN_A).getValue() instanceof HakukohdeResultRow)) {
-                continue;
-            }
-            HakukohdeResultRow curRow = (HakukohdeResultRow) (categoryTree.getContainerProperty(item, COLUMN_A).getValue());
-            if (curRow.getHakukohde().getHakukohde() != null && curRow.getHakukohde().getHakukohde().getOid().equals(hakukohde.getOid())) {
-                addKoulutuksetToTree(item, hakukohde, hc);
-                return;
-            }
-        }*/
-    }
+    public void showKoulutuksetForHakukohde(List<KoulutusTulos> koulutukset, HakukohdeTulos hakukohde) {
+        ShowKoulutuksetDialog koulutusDialog = new ShowKoulutuksetDialog(koulutukset, hakukohde, presenter);
+        hakukohdeDialog = new TarjontaDialogWindow(koulutusDialog, T("koulutusDialog"));
+        getWindow().addWindow(hakukohdeDialog);
 
-    //TODO this has to be reimplemented now that solr does the searching!!!
-    //private void addKoulutuksetToTree(Object item, HakukohdeViewModel hakukohde, HierarchicalContainer hc) {
-        /*hc.setChildrenAllowed(item, true);
-        for (String komotoOid : hakukohde.getKomotoOids()) {
-            HakukohdeResultRow rowStyle = new HakukohdeResultRow();
-            hc.addItem(komotoOid);
-            hc.setParent(komotoOid, item);
-            LueKoulutusVastausTyyppi koulutus = presenter.getKoulutusByOid(komotoOid);
-            String koulutusNimi = "";
-            if (koulutus != null) {
-                koulutusNimi = getKoodiNimi(koulutus.getKoulutusKoodi().getUri()) + ", "
-                        + getKoodiNimi(koulutus.getKoulutusohjelmaKoodi().getUri());
-            }
-            hc.getContainerProperty(komotoOid, COLUMN_A).setValue(rowStyle.format(koulutusNimi, false));
-            hc.setChildrenAllowed(komotoOid, false);
-        }
-        this.categoryTree.setCollapsed(item, false);*/
-    //}
+    }
 
     @Override
     public void clearAllDataItems() {
@@ -388,5 +352,13 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
     
     private String T(String key, Object... args) {
         return i18n.getMessage(key, args);
+    }
+
+    @Override
+    public void closeDialog() {
+        if (hakukohdeDialog != null) {
+            getWindow().removeWindow(hakukohdeDialog);
+            hakukohdeDialog = null;
+        }
     }
 }

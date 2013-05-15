@@ -38,7 +38,8 @@ import javax.ws.rs.core.MediaType;
  * /komoto/hello
  * /komoto/{OID}
  * /komoto/{OID}/komo
- *
+ * /komoto/{OID}/hakukohde
+*
  * TODO
  * /komoto/{OID}/hakukohde
  * </pre>
@@ -102,4 +103,17 @@ public interface KomotoResource {
             @QueryParam("startIndex") int startIndex,
             @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
             @QueryParam("lastModifiedSince") Date lastModifiedSince);
+
+
+    /**
+     * Get list of Hakukohde OIDs that given komoto belongs to.
+     *
+     * @param oid
+     * @return
+     */
+    @GET
+    @Path("{oid}/hakukohde")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public List<String> getHakukohdesByKomotoOID(@PathParam("oid") String oid);
+
 }

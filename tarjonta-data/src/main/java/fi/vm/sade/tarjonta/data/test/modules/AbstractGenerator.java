@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,13 +57,12 @@ public abstract class AbstractGenerator {
             + "a commodo at, volutpat et ipsum. Etiam diam tellus";
     private String oidType;
 
-
     public AbstractGenerator(String oidType) {
         this.oidType = oidType;
     }
 
     protected synchronized String generateOid() {
-        long oid = IdFactory.geNextIdByType(oidType);        
+        long oid = IdFactory.geNextIdByType(oidType);
         final StringBuilder append = new StringBuilder(oidType).append(String.format(OID_FORMAT, oid)).append(FORMATTER.format(new Date()));
 
         //LOG.info("generate OID {}", strOid);
@@ -97,5 +97,15 @@ public abstract class AbstractGenerator {
         osoite.setPostitoimipaikka("ESPOON KAUPUNKI");
         osoite.setOsoiteRivi("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet odio eget metus porttitor rhoncus vitae at nisi.");
         return osoite;
+    }
+
+    public static int randomIntByRange(int lower, int higher) {
+        return nextInt(new Random(System.currentTimeMillis()), lower, higher);
+    }
+    
+    private static int nextInt(Random r, int lower, int higher) {
+        int ran = r.nextInt();
+        double x = (double) ran / Integer.MAX_VALUE * higher;
+        return (int) x + lower;
     }
 }

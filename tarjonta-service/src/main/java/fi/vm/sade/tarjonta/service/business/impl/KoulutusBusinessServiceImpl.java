@@ -192,14 +192,14 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         KoulutusmoduuliToteutus parentKomoto = (parentKomotos != null && !parentKomotos.isEmpty()) ? parentKomotos.get(0) : null;
         //If the komoto for the parentKomo already exists it is updated according to the values given in koulutus
         if (parentKomoto != null && parentKomo != null) {
-            parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
+            //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva()); koulutuksen alkamispäivä is no longer saved in parent komoto
             parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta()));
             this.koulutusmoduuliToteutusDAO.update(parentKomoto);
 
             //Start date is updated to siblings of the komoto given in koulutus. The start date is 
             //replicated to the children of the parent komoto to enable more efficient search based 
             //on start year and semester of komotos. 
-            handleChildKomos(parentKomo, moduuli, koulutus);
+            //handleChildKomos(parentKomo, moduuli, koulutus);
             //If there is not a komoto for the parentKomo, it is created here.    
         } else if (parentKomo != null) {
             parentKomoto = new KoulutusmoduuliToteutus();
@@ -208,7 +208,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             parentKomoto.setTila(EntityUtils.convertTila(koulutus.getTila()));
             parentKomoto.setKoulutusmoduuli(parentKomo);
             parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta()));
-            parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
+            //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
             parentKomoto.setPohjakoulutusvaatimus(koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null);
             parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
             this.koulutusmoduuliToteutusDAO.insert(parentKomoto);
@@ -250,7 +250,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     /*
      * updating the startDate to siblings of the komoto given in koulutus. 
      */
-    private void handleChildKomos(Koulutusmoduuli parentKomo, Koulutusmoduuli moduuli, KoulutusTyyppi koulutus) {
+    /*private void handleChildKomos(Koulutusmoduuli parentKomo, Koulutusmoduuli moduuli, KoulutusTyyppi koulutus) {
         for (Koulutusmoduuli curChildKomo : parentKomo.getAlamoduuliList()) {
 
             String pohjakoulutusUri = koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null;
@@ -266,7 +266,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
                 }
             }
         }
-    }
+    }*/
 
     private boolean isNew(BaseEntity e) {
         // no good

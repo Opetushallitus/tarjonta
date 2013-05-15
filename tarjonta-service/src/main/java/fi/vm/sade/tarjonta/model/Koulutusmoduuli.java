@@ -20,20 +20,21 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Entity;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
-import javax.persistence.*;
-import org.springframework.beans.factory.annotation.Required;
 
 /**
  * <p>
@@ -62,7 +63,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     private static Logger log = LoggerFactory.getLogger(Koulutusmoduuli.class);
 
-    @OneToMany(mappedBy = "ylamoduuli")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ylamoduuli")
     private Set<KoulutusSisaltyvyys> sisaltyvyysList = new HashSet<KoulutusSisaltyvyys>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "koulutusmoduuli")
@@ -507,7 +508,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     public void setKoulutuksenRakenne(MonikielinenTeksti koulutuksenRakenne) {
-        this.koulutuksenRakenne = koulutuksenRakenne;
+        this.koulutuksenRakenne = MonikielinenTeksti.merge(this.koulutuksenRakenne, koulutuksenRakenne);
     }
 
     public MonikielinenTeksti getJatkoOpintoMahdollisuudet() {
@@ -515,7 +516,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     public void setJatkoOpintoMahdollisuudet(MonikielinenTeksti jatkoOpintoMahdollisuudet) {
-        this.jatkoOpintoMahdollisuudet = jatkoOpintoMahdollisuudet;
+        this.jatkoOpintoMahdollisuudet = MonikielinenTeksti.merge(this.jatkoOpintoMahdollisuudet, jatkoOpintoMahdollisuudet);
     }
 
     /**
@@ -532,7 +533,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      * @see #getNimi()
      */
     public void setNimi(MonikielinenTeksti nimi) {
-        this.nimi = nimi;
+        this.nimi = MonikielinenTeksti.merge(this.nimi, nimi);
     }
 
     /**
@@ -546,7 +547,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      * @param tavoitteet the tavoitteet to set
      */
     public void setTavoitteet(MonikielinenTeksti tavoitteet) {
-        this.tavoitteet = tavoitteet;
+        this.tavoitteet = MonikielinenTeksti.merge(this.tavoitteet, tavoitteet);
     }
 
     /**

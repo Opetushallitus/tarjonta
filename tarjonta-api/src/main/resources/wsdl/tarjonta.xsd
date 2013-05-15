@@ -123,7 +123,12 @@
                         type="xs:string"
                         maxOccurs="1"
                         minOccurs="1"/>
-
+                        
+            <xs:element name="sisaisetHakuajat"
+            			minOccurs="0"
+            			maxOccurs="1"
+            			type="tns:SisaisetHakuAjat"/>
+            
             <xs:element name="hakukohteenHaunNimi"
                         type="tns:MonikielinenTekstiTyyppi"
                         maxOccurs="1"
@@ -629,6 +634,11 @@
 
     <xs:complexType name="SisaisetHakuAjat">
         <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="oid" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Yksilollinen tunniste haulle</xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element minOccurs="1" maxOccurs="1" name="hakuajanKuvaus" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>Haun sisaisen hakuajan kuvaus</xs:documentation>
@@ -670,6 +680,7 @@
             <xs:element name="Tarjoaja" type="tns:TarjoajaTyyppi"></xs:element>
             <xs:element name="hakuAlkamisPvm" type="xs:dateTime"></xs:element>
             <xs:element name="hakuPaattymisPvm" type="xs:dateTime"></xs:element>
+            <xs:element name="hakukohteenKoulutuslaji" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
         </xs:sequence>
     </xs:complexType>
     

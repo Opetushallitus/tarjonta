@@ -19,6 +19,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.RuntimeErrorException;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -48,6 +49,7 @@ public class Haku extends BaseEntity {
     public static final String HAUN_LOPPUMIS_PVM = "haunLoppumisPvm";
 
     @NotNull
+    @Column(unique=true)
     private String oid;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -117,7 +119,7 @@ public class Haku extends BaseEntity {
 
     @Column(name="viimPaivitysPvm")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdateDate;
+    private Date lastUpdateDate = new Date();
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
 
@@ -245,11 +247,7 @@ public class Haku extends BaseEntity {
     }
 
     public void setNimi(MonikielinenTeksti newNimi) {
-        if (this.nimi != null && newNimi != null) {
-            this.nimi.updateFrom(newNimi);
-        } else {
-            this.nimi = newNimi;
-        }
+    	nimi = MonikielinenTeksti.merge(nimi, newNimi);
     }
 
     private String getNimi(String kieliKoodi) {
