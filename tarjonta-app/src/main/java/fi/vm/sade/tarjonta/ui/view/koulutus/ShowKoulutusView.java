@@ -170,6 +170,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     		}
     	}, StyleEnum.STYLE_BUTTON_PRIMARY);
 
+    	/*
     	final Button siirraOsaksiToista = addNavigationButton(T("siirraOsaksiToistaKoulutusta"), new Button.ClickListener() {
     		private static final long serialVersionUID = 5019806363620874205L;
 
@@ -177,7 +178,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     		public void buttonClick(Button.ClickEvent event) {
     			getWindow().showNotification("Ei toteutettu");
     		}
-    	}, StyleEnum.STYLE_BUTTON_PRIMARY);
+    	}, StyleEnum.STYLE_BUTTON_PRIMARY);*/
 
     	final Button lisaaToteutus = addNavigationButton(T("lisaaToteutus"), new Button.ClickListener() {
     		private static final long serialVersionUID = 5019806363620874205L;
@@ -204,7 +205,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     						|| presenter.getModel().getKoulutusPerustiedotModel().getTila().equals(TarjontaTila.LUONNOS)) 
     					    && permissions.userCanDeleteKoulutus(context));
     	kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
-    	siirraOsaksiToista.setVisible(permissions.userCanMoveKoulutus(context));
+    	//siirraOsaksiToista.setVisible(permissions.userCanMoveKoulutus(context));
     	lisaaToteutus.setVisible(permissions.userCanAddKoulutusInstanceToKoulutus(context));
     }
 
