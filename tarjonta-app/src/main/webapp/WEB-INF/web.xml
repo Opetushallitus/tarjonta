@@ -41,7 +41,7 @@
         <init-param>
             <description>Vaadin application class to start</description>
             <param-name>application</param-name>
-            <param-value>fi.vm.sade.tarjonta.ui.TarjontaWebApplication</param-value>
+            <param-value>fi.vm.sade.tarjonta.ui.TarjontaApplication</param-value>
         </init-param>
         <init-param>
             <description>Widget Set to Use</description>
@@ -134,6 +134,21 @@
 
     <servlet-mapping>
         <servlet-name>tarjontaapp</servlet-name>
+        <url-pattern>/VAADIN/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>hakuapp</servlet-name>
+        <url-pattern>/VAADIN/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>valintaapp</servlet-name>
+        <url-pattern>/VAADIN/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>adminapp</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
 </web-app>
