@@ -60,6 +60,7 @@ import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import fi.vm.sade.generic.ui.feature.UserFeature;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
@@ -331,23 +332,6 @@ public class ListKoulutusView extends VerticalLayout {
         HorizontalLayout layout = UiUtil.horizontalLayout(true, UiMarginEnum.BOTTOM);
         layout.setSizeFull();
 
-        //Creating the create hakukohde button
-        //btnMuokkaa = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("muokkaa"));
-        //btnMuokkaa.setEnabled(false);
-        //btnPoista = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("poista"));
-        //btnPoista.setEnabled(false);
-        //btnPoista.addListener(new Button.ClickListener() {
-			
-			/**
-			 * 
-			 */
-	/*		private static final long serialVersionUID = 4580339518654622579L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				showRemoveDialog();
-			}
-		});*/
         btnSiirraJaKopioi = UiBuilder.buttonSmallSecodary(layout, i18n.getMessage("siirraTaiKopioi"));
         btnSiirraJaKopioi.setEnabled(false);
         btnSiirraJaKopioi.addListener(new Button.ClickListener() {
@@ -582,10 +566,6 @@ public class ListKoulutusView extends VerticalLayout {
         this.luoHakukohdeB.setEnabled(enabled);
         this.btnSiirraJaKopioi.setEnabled(enabled);
     }
-    /*
-    public void togglePoistaB(boolean b) {
-    	btnPoista.setEnabled(b);
-    }*/
 
     /**
      * Returns the name of the hakukohde based on koodisto uri given.
@@ -594,7 +574,7 @@ public class ListKoulutusView extends VerticalLayout {
      * @return
      */
     private String getKoodiNimi(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
-        String nimi = null;//presenter.getUiHelper().getKoodiNimi(koodistoKoodiTyyppi, I18N.getLocale());
+        String nimi = null;
         for (Nimi curNimi :koodistoKoodiTyyppi.getNimi()) {
             if (curNimi.getKieli().equals(I18N.getLocale().getLanguage())) {
                 return curNimi.getValue();
@@ -634,5 +614,11 @@ public class ListKoulutusView extends VerticalLayout {
 	
     private String T(String key, Object... args) {
         return i18n.getMessage(key, args);
+    }
+
+    public void showHakukohteetForKoulutus(List<HakukohdeTulos> hakukohdeTulos,
+            KoulutusTulos koulutus) {
+        
+        
     }
 }

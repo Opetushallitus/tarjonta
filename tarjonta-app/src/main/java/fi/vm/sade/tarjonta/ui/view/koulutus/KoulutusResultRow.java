@@ -173,6 +173,7 @@ public class KoulutusResultRow extends HorizontalLayout {
      *
      * @param selection the selection in the menu.
      */
+    @SuppressWarnings("incomplete-switch")
     private void menuItemClicked(String selection) {
         if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
             showSummaryView();
@@ -195,6 +196,8 @@ public class KoulutusResultRow extends HorizontalLayout {
             tarjontaPresenter.changeStateToPublished(koulutus.getKoulutus().getKomotoOid(), KOMOTO);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.CANCEL.key))) {
             showPeruutaDialog();
+        } else if (selection.equals(i18n.getMessage("naytaHakukohteet"))) {
+            tarjontaPresenter.showHakukohteetForKoulutus(koulutus);
         }
     }
     

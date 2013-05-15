@@ -64,6 +64,7 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitVastausTyyppi;
@@ -2267,5 +2268,13 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
     public void closeHakukohdeRemovalDialog() {
         getRootView().getSearchResultsView().getHakukohdeList().closeRemoveDialog();
+    }
+
+    public void showHakukohteetForKoulutus(KoulutusTulos koulutus) {
+        HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
+        kysely.getKoulutusOids().add(koulutus.getKoulutus().getKomotoOid());
+        
+        HaeHakukohteetVastausTyyppi vastaus =  this.getTarjontaPublicService().haeHakukohteet(kysely);
+        this.getRootView().getListKoulutusView().showHakukohteetForKoulutus(vastaus.getHakukohdeTulos(), koulutus);
     }
 }

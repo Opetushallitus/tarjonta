@@ -25,18 +25,23 @@ public abstract class ShowRelatedObjectsDialog extends VerticalLayout {
     protected transient I18NHelper i18n = new I18NHelper(this);
     
     public ShowRelatedObjectsDialog(TarjontaPresenter presenter) {
+        setSpacing(true);
         setSizeUndefined();
         setWidth("700px");
         this.presenter = presenter;
     }
     
     protected void buildLayout(String otsikko, String nimi) {
+        VerticalLayout vl = UiUtil.verticalLayout();
+        vl.setSpacing(true);
+        vl.setMargin(true, false, true, true);
         Label dialogLabel = new Label();
         dialogLabel.setValue(otsikko);
-        addComponent(dialogLabel);
+        vl.addComponent(dialogLabel);
         Label hakukohdeNimi = new Label();
         hakukohdeNimi.setValue(nimi);
-        addComponent(hakukohdeNimi);
+        vl.addComponent(hakukohdeNimi);
+        addComponent(vl);
         buildKoulutusTree();
     }
     

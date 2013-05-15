@@ -11,23 +11,18 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.view.common.ShowRelatedObjectsDialog;
 
 public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
 
     private static final long serialVersionUID = 6521526287528256527L;
     
-    private CategoryTreeView koulutusTree;
-    
     private List<KoulutusTulos> koulutukset;
     private HakukohdeTulos selectedHakukohde;
-    private transient I18NHelper i18n = new I18NHelper(this);
     
     public ShowKoulutuksetDialog(List<KoulutusTulos> koulutukset, HakukohdeTulos selectedHakukohde, TarjontaPresenter presenter) {
         super(presenter);
@@ -79,13 +74,14 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
            }
        }
        
-       koulutusTree.setContainerDataSource(hc);
+       tree.setContainerDataSource(hc);
        
        for (KoulutusTulos curTulos : koulutukset) {
-           koulutusTree.setCollapsed(koulutusTree.getParent(curTulos), false);
+           tree.setCollapsed(tree.getParent(curTulos), false);
        }
     }
     
+    @SuppressWarnings("incomplete-switch")
     private void showSummaryView(KoulutusTulos koulutus) {
         final String komotoOid = koulutus.getKoulutus().getKoulutusmoduuliToteutus();
 
