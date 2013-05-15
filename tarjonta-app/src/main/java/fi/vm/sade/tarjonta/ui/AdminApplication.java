@@ -87,7 +87,6 @@ public class AdminApplication extends WebApplication {
 
         hl.addComponent(btnKomoTest);
 
-
         final Button btnIndexKoulutukset = new Button("Indeksoi koulutukset", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -108,25 +107,6 @@ public class AdminApplication extends WebApplication {
         });
 
         hl.addComponent(btnIndexKoulutukset);
-
-        final Button btnHakukohteet = new Button("Indeksoi hakukohteet", new Button.ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                String urlString = tarjontaBackendUrl.substring(0, tarjontaBackendUrl.indexOf("/services")) + "/rest/indexer/hakukohteet?clear=true";
-                try {
-                    LOG.debug("Indeksoi hakukohteet: {}", urlString);
-
-                    GetMethod get = new GetMethod(urlString);
-                    httpClient.executeMethod(get);
-                    String responseContent = new String(get.getResponseBodyAsString());
-                    LOG.debug("Indeksoi hakukophteet done:{}", responseContent);
-                } catch (Throwable ex) {
-                    LOG.error("Failed to index hakukohteet", ex);
-                }
-            }
-        });
     }
 
     @Override
