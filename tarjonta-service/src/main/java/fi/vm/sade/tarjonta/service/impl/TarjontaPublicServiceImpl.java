@@ -611,13 +611,14 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         List<KoulutusmoduuliToteutus> parentList = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(parentKomo, komoto.getTarjoaja(), komoto.getPohjakoulutusvaatimus());
         KoulutusmoduuliToteutus parentKomoto = (parentList != null && !parentList.isEmpty()) ? parentList.get(0) : null;
         if (parentKomoto != null) {
-            GregorianCalendar greg = new GregorianCalendar();
+            //alkamispaiv no longer in parent
+            /*GregorianCalendar greg = new GregorianCalendar();
             greg.setTime(parentKomoto.getKoulutuksenAlkamisPvm());
             try {
                 result.setKoulutuksenAlkamisPaiva(DatatypeFactory.newInstance().newXMLGregorianCalendar(greg));
             } catch (Exception ex) {
                 result.setKoulutuksenAlkamisPaiva(null);
-            }
+            }*/
             result.setKoulutusohjelmanValinta(EntityUtils.copyFields(parentKomoto.getKoulutusohjelmanValinta()));
         }
     }

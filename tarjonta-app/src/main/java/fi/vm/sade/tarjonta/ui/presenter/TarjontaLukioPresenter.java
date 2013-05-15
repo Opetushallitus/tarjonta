@@ -263,7 +263,8 @@ public class TarjontaLukioPresenter {
             LOG.debug("Lukiolinjas list size : {}.", lukiolinjas);
             Collections.sort(lukiolinjas, new BeanComparator("nimi"));
             perustiedot.getLukiolinjas().addAll(lukiolinjas);
-            loadParentKomotoData(koulutuskoodiModel.getKoodistoUriVersio());
+            //NO PARENT KOMOTO DATA FOR LUKIO
+            //loadParentKomotoData(koulutuskoodiModel.getKoodistoUriVersio());
         } else {
             LOG.debug("No lukiolinja selected.");
         }
@@ -274,7 +275,7 @@ public class TarjontaLukioPresenter {
      *
      * @param koulutuskoodi
      */
-    private void loadParentKomotoData(String koulutuskoodi) {
+    /*private void loadParentKomotoData(String koulutuskoodi) {
        LOG.debug(koulutuskoodi);
         
         KoulutusTulos komoto = presenter.findKomotoByKoulutuskoodiPohjakoulutus(koulutuskoodi, null);
@@ -282,10 +283,11 @@ public class TarjontaLukioPresenter {
             LueKoulutusKyselyTyyppi lueKysely = new LueKoulutusKyselyTyyppi();
             lueKysely.setOid(komoto.getKoulutus().getKomotoOid());
             LueKoulutusVastausTyyppi lueVastaus = this.tarjontaPublicService.lueKoulutus(lueKysely);
-            Date koulutuksenAlkuPvm = lueVastaus.getKoulutuksenAlkamisPaiva() != null ? lueVastaus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null;
-            this.getPerustiedotModel().setKoulutuksenAlkamisPvm(koulutuksenAlkuPvm);
+            //ALKAMISPAIVA NO LONGER IN PARENT
+            //Date koulutuksenAlkuPvm = lueVastaus.getKoulutuksenAlkamisPaiva() != null ? lueVastaus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null;
+            //this.getPerustiedotModel().setKoulutuksenAlkamisPvm(koulutuksenAlkuPvm);
         }
-    }
+    }*/
 
     /**
      * Load and convert Koodisto service data to human readable format. The data

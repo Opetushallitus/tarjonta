@@ -1880,9 +1880,10 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                     LueKoulutusKyselyTyyppi lueKysely = new LueKoulutusKyselyTyyppi();
                     lueKysely.setOid(curTulos.getKoulutus().getKomotoOid());
                     LueKoulutusVastausTyyppi lueVastaus = getTarjontaPublicService().lueKoulutus(lueKysely);
-                    Date koulutuksenAlkuPvm = lueVastaus.getKoulutuksenAlkamisPaiva() != null ? lueVastaus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null;
+                    //KOULUTUKSEN ALKUPVM NO LONGER IN PARENT
+                    //Date koulutuksenAlkuPvm = lueVastaus.getKoulutuksenAlkamisPaiva() != null ? lueVastaus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null;
 
-                    getModel().getKoulutusPerustiedotModel().setKoulutuksenAlkamisPvm(koulutuksenAlkuPvm);
+                    //getModel().getKoulutusPerustiedotModel().setKoulutuksenAlkamisPvm(koulutuksenAlkuPvm);
                     getModel().setKoulutusLisatiedotModel(new KoulutusLisatiedotModel());
 
                     if (lueVastaus.getKoulutusohjelmanValinta() != null) {
