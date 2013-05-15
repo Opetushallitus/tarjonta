@@ -174,9 +174,9 @@ public class ListKoulutusView extends VerticalLayout {
         categoryTree.addContainerProperty(COLUMN_TILA, String.class, "");
         
         categoryTree.setColumnExpandRatio(COLUMN_A, 2.2f);
-        categoryTree.setColumnExpandRatio(COLUMN_TUTKINTONIMIKE, 0.5f);
+
         categoryTree.setColumnExpandRatio(COLUMN_PVM, 0.3f);
-        categoryTree.setColumnExpandRatio(COLUMN_KOULUTUSLAJI,0.3f);
+        categoryTree.setColumnExpandRatio(COLUMN_KOULUTUSLAJI,0.5f);
         categoryTree.setColumnExpandRatio(COLUMN_TILA, 0.3f);
 
         /**
@@ -201,7 +201,6 @@ public class ListKoulutusView extends VerticalLayout {
         KoulutusResultRow rowStyleDef = new KoulutusResultRow();
         
         hc.addContainerProperty(COLUMN_A, KoulutusResultRow.class, rowStyleDef.format("", false));
-        hc.addContainerProperty(COLUMN_TUTKINTONIMIKE, String.class, "");
         hc.addContainerProperty(COLUMN_PVM, String.class, "");
         hc.addContainerProperty(COLUMN_KOULUTUSLAJI,String.class,"");
         hc.addContainerProperty(COLUMN_TILA, String.class, "");
@@ -220,7 +219,6 @@ public class ListKoulutusView extends VerticalLayout {
                 hc.addItem(curKoulutus);
                 hc.setParent(curKoulutus, rootItem);
                 hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(rowStyleInner.format(getKoulutusNimi(curKoulutus), true));
-                hc.getContainerProperty(curKoulutus, COLUMN_TUTKINTONIMIKE).setValue(getKoulutusTutkintoNimike(curKoulutus));
                 hc.getContainerProperty(curKoulutus, COLUMN_PVM).setValue(getAjankohtaStr(curKoulutus));
                 hc.getContainerProperty(curKoulutus, COLUMN_KOULUTUSLAJI).setValue(getKoulutuslaji(curKoulutus));
                 hc.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(getTilaStr(curKoulutus.getKoulutus().getTila().name()));
