@@ -5,7 +5,7 @@
          id="WebApp_ID"
          version="2.5">
 
-    <display-name>Organisaatio Web Application</display-name>
+    <display-name>Tarjonta Web Application</display-name>
 
     <context-param>
         <description>Vaadin production mode</description>
@@ -34,7 +34,17 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    
+    <filter>
+        <filter-name>sitemesh</filter-name>
+        <filter-class>org.sitemesh.config.ConfigurableSiteMeshFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>sitemesh</filter-name>
+        <url-pattern>/tarjontaapp/*</url-pattern>
+    </filter-mapping>
 
+    <!-- Tarjonta standalone -->
     <servlet>
         <servlet-name>tarjontaapp</servlet-name>
         <servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
@@ -73,8 +83,6 @@
         </init-param>
     </servlet>
    
-
-
     <!-- Valinta standalone -->
     <servlet>
         <servlet-name>valintaapp</servlet-name>
@@ -116,22 +124,6 @@
         <servlet-name>tarjontaapp</servlet-name>
         <url-pattern>/tarjontaapp/*</url-pattern>
     </servlet-mapping>
-    
-    <servlet-mapping>
-        <servlet-name>hakuapp</servlet-name>
-        <url-pattern>/hakuapp/*</url-pattern>
-    </servlet-mapping>
- 
-    <servlet-mapping>
-        <servlet-name>valintaapp</servlet-name>
-        <url-pattern>/valintaapp/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>adminapp</servlet-name>
-        <url-pattern>/adminapp/*</url-pattern>
-    </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>tarjontaapp</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
@@ -139,14 +131,26 @@
     
     <servlet-mapping>
         <servlet-name>hakuapp</servlet-name>
+        <url-pattern>/hakuapp/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>hakuapp</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
-    
+ 
     <servlet-mapping>
+        <servlet-name>valintaapp</servlet-name>
+        <url-pattern>/valintaapp/*</url-pattern>
+    </servlet-mapping>
+     <servlet-mapping>
         <servlet-name>valintaapp</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
-    
+
+    <servlet-mapping>
+        <servlet-name>adminapp</servlet-name>
+        <url-pattern>/adminapp/*</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>adminapp</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>

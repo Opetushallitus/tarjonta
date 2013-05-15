@@ -17,10 +17,7 @@ package fi.vm.sade.tarjonta.ui;
 
 import com.github.wolfie.blackboard.Blackboard;
 import com.vaadin.Application;
-import com.vaadin.ui.Window;
 import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
-import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
-import fi.vm.sade.vaadin.Oph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,36 +27,33 @@ import org.slf4j.LoggerFactory;
  * @author jani
  */
 public class WebApplication extends AbstractSadePortletApplication {
-    
+
     private static final long serialVersionUID = 4058508673680251653L;
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
     private static ThreadLocal<Application> tl = new ThreadLocal<Application>();
-    private Window window;
-    
+
     public WebApplication() {
         super();
         LOG.info("WebApplication()");
     }
-    
+
     @Override
     protected void registerListeners(Blackboard blackboard) {
         LOG.info("registerListeners()");
     }
-    
+
     @Override
     public synchronized void init() {
         super.init();
         this.transactionStart(this, null);
-        
+
         initApplication();
     }
-    
+
     protected void initApplication() {
-        window = new TarjontaRootView(true);
-        setMainWindow(window);
-        setTheme(Oph.THEME_NAME);
+        throw new RuntimeException("Uninitialized Vaadin window.");
     }
-    
+
     @Override
     public void transactionStart(Application application, Object transactionData) {
         super.transactionStart(application, transactionData);
@@ -67,7 +61,7 @@ public class WebApplication extends AbstractSadePortletApplication {
             tl.set(this);
         }
     }
-    
+
     @Override
     public void transactionEnd(Application application, Object transactionData) {
         super.transactionEnd(application, transactionData);
@@ -76,7 +70,7 @@ public class WebApplication extends AbstractSadePortletApplication {
             tl.remove();
         }
     }
-    
+
     public static Application getInstance() {
         return tl.get();
     }
