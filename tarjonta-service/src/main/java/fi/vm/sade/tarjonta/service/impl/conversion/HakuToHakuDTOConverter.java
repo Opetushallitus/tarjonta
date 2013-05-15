@@ -51,6 +51,8 @@ public class HakuToHakuDTOConverter extends AbstractFromDomainConverter<Haku, Ha
         t.setNimi(convert(s.getNimi()));
         t.setTila(s.getTila() != null ? s.getTila().name() : null);
 
+        t.setSijoittelu(s.isSijoittelu());
+
         return t;
     }
 
