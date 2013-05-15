@@ -21,10 +21,13 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.loader.xls.TarjontaKomoData;
 import fi.vm.sade.vaadin.Oph;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
 /*
  *
@@ -38,6 +41,9 @@ public class AdminApplication extends WebApplication {
     private Window window;
     @Autowired
     private TarjontaKomoData tarjontaKomoData;
+    @Value("${tarjonta.public.webservice.url.backend}")
+    private String tarjontaBackendUrl;
+    private HttpClient httpClient = new HttpClient();
 
     @Override
     public void initApplication() {
@@ -80,6 +86,27 @@ public class AdminApplication extends WebApplication {
         });
 
         hl.addComponent(btnKomoTest);
+
+        final Button btnIndexKoulutukset = new Button("Indeksoi koulutukset", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                String urlString = tarjontaBackendUrl.substring(0, tarjontaBackendUrl.indexOf("/services")) + "/rest/indexer/koulutukset?clear=true";
+                try {
+                    LOG.debug("Indeksoi koulutukset: {}", urlString);
+
+                    GetMethod get = new GetMethod(urlString);
+                    httpClient.executeMethod(get);
+                    String responseContent = new String(get.getResponseBodyAsString());
+                    LOG.debug("Indeksoi koulutukset done:{}", responseContent);
+                } catch (Throwable ex) {
+                    LOG.error("Failed to index koulutukset", ex);
+                }
+            }
+        });
+
+        hl.addComponent(btnIndexKoulutukset);
     }
 
     @Override

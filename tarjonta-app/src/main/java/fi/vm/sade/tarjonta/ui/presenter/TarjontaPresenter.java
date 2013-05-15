@@ -64,6 +64,7 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
 import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitVastausTyyppi;
@@ -579,7 +580,6 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
                 getModel().getHakukohde().setHakukohdeKoodistoNimi(hakukohdenimi);
                 hakukohdeView = new ShowHakukohdeViewImpl(hakukohdenimi, null, null);
                 getRootView().changeView(hakukohdeView);
-
             }
         }
     }
@@ -1590,21 +1590,17 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     /**
      * Shows the koulutus objects for a hakukohde in the ListHakukohdeView.
      *
-     * @param oid
+     * @param hakukohde
      */
-    public void showKoulutuksetForHakukohde(String oid) {
+    public void showKoulutuksetForHakukohde(HakukohdeTulos hakukohde) {
+       
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
-        kysely.getHakukohdeOids().add(oid);
-
-        HaeKoulutuksetVastausTyyppi vastaus = this.getTarjontaPublicService().haeKoulutukset(kysely);
-
-
-        /*LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
-         kysely.setOid(oid);
+        //kysely.getHakukohdeOids().add(hakukohde);
+        kysely.getHakukohdeOids().add(hakukohde.getHakukohde().getOid());
         
-         HakukohdeViewModel hakukohde = this.hakukohdeToDTOConverter
-         .convertDTOToHakukohdeViewMode(this.getTarjontaPublicService().lueHakukohde(kysely).getHakukohde());*/
-        this._hakukohdeListView.showKoulutuksetForHakukohde(vastaus.getKoulutusTulos());//appendKoulutuksetToList(hakukohde);
+        HaeKoulutuksetVastausTyyppi vastaus =  this.getTarjontaPublicService().haeKoulutukset(kysely);
+        
+        this._hakukohdeListView.showKoulutuksetForHakukohde(vastaus.getKoulutusTulos(), hakukohde);//appendKoulutuksetToList(hakukohde);
     }
 
     private void addOrganisaatioNameValuePair(String oid, String name) {
@@ -2272,5 +2268,14 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
     public void closeHakukohdeRemovalDialog() {
         getRootView().getSearchResultsView().getHakukohdeList().closeRemoveDialog();
+    }
+
+    public void showHakukohteetForKoulutus(KoulutusTulos koulutus) {
+        HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
+        kysely.getKoulutusOids().add(koulutus.getKoulutus().getKomotoOid());
+        kysely.setKoulutuksenAlkamisvuosi(-1);
+        
+        HaeHakukohteetVastausTyyppi vastaus =  this.getTarjontaPublicService().haeHakukohteet(kysely);
+        this.getRootView().getListKoulutusView().showHakukohteetForKoulutus(vastaus.getHakukohdeTulos(), koulutus);
     }
 }

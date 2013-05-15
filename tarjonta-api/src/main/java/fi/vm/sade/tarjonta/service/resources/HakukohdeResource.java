@@ -8,6 +8,7 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Map;
 
 /**
  * REST service for hakukohde's.
@@ -113,4 +114,5 @@ public interface HakukohdeResource {
     @Path("{oid}/valintakoe")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public List<String> getValintakoesByHakukohdeOID(@PathParam("oid") String oid);
+
 }

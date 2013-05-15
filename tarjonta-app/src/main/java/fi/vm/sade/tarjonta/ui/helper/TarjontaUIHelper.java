@@ -24,6 +24,8 @@ import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import static fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS;
 import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
@@ -893,6 +895,83 @@ public class TarjontaUIHelper {
         LOG.info(" --> {}", result);
 
         return result;
+    }
+    
+    public String getKoulutusNimi(KoulutusTulos curKoulutus) {
+
+        List<KoodiType> koodis = null;
+        if (curKoulutus.getKoulutus().getPohjakoulutusVaatimus() != null) {
+            koodis = getKoodis(curKoulutus.getKoulutus().getPohjakoulutusVaatimus());
+        }
+        if (koodis == null) {
+            koodis = new ArrayList<KoodiType>();
+        }
+        if (curKoulutus.getKoulutus().getKoulutusohjelmakoodi() != null) {
+            return getKoodiNimi(curKoulutus.getKoulutus().getKoulutusohjelmakoodi()) + tryGetKoodistoLyhytNimi(koodis) ;
+        } else if (curKoulutus.getKoulutus().getKoulutuskoodi() != null) {
+            return getKoodiNimi(curKoulutus.getKoulutus().getKoulutuskoodi()) + tryGetKoodistoLyhytNimi(koodis);
+        }
+        return "";
+    }
+    
+    public String getKoulutuslaji(KoulutusTulos tulos ) {
+        List<String> uris = new ArrayList<String>();
+        if (tulos.getKoulutus().getKoulutuslaji() != null) {
+            uris.add(tulos.getKoulutus().getKoulutuslaji());
+
+            return getKoodiNimi(uris,I18N.getLocale());
+        }
+        return "";
+    }
+    
+    public String getAjankohtaStr(KoulutusTulos curKoulutus) {
+        
+        String[] ajankohtaParts = curKoulutus.getKoulutus().getAjankohta().split(" ");
+        if (ajankohtaParts.length < 2) {
+            return "";
+        }
+        return I18N.getMessage(ajankohtaParts[0]) + " " + ajankohtaParts[1];
+    }
+    
+    private String tryGetKoodistoLyhytNimi(Collection<KoodiType> koodis) {
+        if (koodis == null || koodis.size() < 1) {
+            return "";
+        }
+        List<KoodiType> koodisList = new ArrayList<KoodiType>(koodis);
+        KoodiType koodi = koodisList.get(0);
+
+        if (koodi != null) {
+        String retval = koodi.getKoodiArvo();
+
+        List<KoodiMetadataType> metas =  koodi.getMetadata();
+        Locale locale = I18N.getLocale();
+        for (KoodiMetadataType meta : metas) {
+            if (meta.getKieli().equals(KieliType.FI) && locale.getLanguage().equals("fi")) {
+                return ", " + meta.getLyhytNimi();
+            } else if (meta.getKieli().equals(KieliType.SV) && locale.getLanguage().equals("sv")) {
+                return ", "+  meta.getLyhytNimi();
+            }
+        }
+
+        return retval;
+        } else {
+            return "";
+        }
+    }
+    
+    /**
+     * Returns the name of the given koodi. 
+     *
+     * @param koodistoKoodiTyyppi the koodisto koodi given
+     * @return
+     */
+    public String getKoodiNimi(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
+        for (Nimi curNimi :koodistoKoodiTyyppi.getNimi()) {
+            if (curNimi.getKieli().equals(I18N.getLocale().getLanguage())) {
+                return curNimi.getValue();
+            }
+        }
+        return koodistoKoodiTyyppi.getNimi().get(0).getValue();
     }
 
 

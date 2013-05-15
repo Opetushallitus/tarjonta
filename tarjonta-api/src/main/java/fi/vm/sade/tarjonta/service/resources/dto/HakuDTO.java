@@ -40,6 +40,7 @@ public class HakuDTO implements Serializable {
     private String _udatedByOid;
     private Date _updated;
     private String _tila;
+    private boolean _sijoittelu;
 
     private Map<String, String> _nimi;
 
@@ -171,6 +172,14 @@ public class HakuDTO implements Serializable {
 
     public void setNimi(Map<String, String> _nimi) {
         this._nimi = _nimi;
+    }
+
+    public void setSijoittelu(boolean _sijoittelu) {
+        this._sijoittelu = _sijoittelu;
+    }
+
+    public boolean isSijoittelu() {
+        return _sijoittelu;
     }
 
 }

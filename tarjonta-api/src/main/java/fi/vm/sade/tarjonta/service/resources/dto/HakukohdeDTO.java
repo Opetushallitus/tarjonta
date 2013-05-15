@@ -45,11 +45,12 @@ public class HakukohdeDTO implements Serializable {
     private String _updatedByOid;
     private Date _liitteidenToimitusPvm;
     private Map<String, String> _lisatiedot;
-
-    // TODO Spesiaalit hakukohteet, hakukohteen muokkausnäytöllä!
-    private boolean _specialHakukohde = false;
+    private Map<String, String> _sorakuvaus;
+    private Map<String, String> _valintaperustekuvaus;
 
     private List<List<String>> _painotettavatOppiaineet;
+
+    private boolean _kaytetaanHaunPaattymisenAikaa;
 
     public String getOid() {
         return _oid;
@@ -211,11 +212,27 @@ public class HakukohdeDTO implements Serializable {
         return _painotettavatOppiaineet;
     }
 
-    public boolean isSpecialHakukohde() {
-        return _specialHakukohde;
+    public Map<String, String> getSorakuvaus() {
+        return _sorakuvaus;
     }
 
-    public void setSpecialHakukohde(boolean specialHakukohde) {
-        this._specialHakukohde = specialHakukohde;
+    public void setSorakuvaus(Map<String, String> _sorakuvaus) {
+        this._sorakuvaus = _sorakuvaus;
+    }
+
+    public Map<String, String> getValintaperustekuvaus() {
+        return _valintaperustekuvaus;
+    }
+
+    public void setValintaperustekuvaus(Map<String, String> _valintaperustekuvaus) {
+        this._valintaperustekuvaus = _valintaperustekuvaus;
+    }
+
+    public boolean isKaytetaanHaunPaattymisenAikaa() {
+        return _kaytetaanHaunPaattymisenAikaa;
+    }
+
+    public void setKaytetaanHaunPaattymisenAikaa(boolean _kaytetaanHaunPaattymisenAikaa) {
+        this._kaytetaanHaunPaattymisenAikaa = _kaytetaanHaunPaattymisenAikaa;
     }
 }
