@@ -2273,6 +2273,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public void showHakukohteetForKoulutus(KoulutusTulos koulutus) {
         HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
         kysely.getKoulutusOids().add(koulutus.getKoulutus().getKomotoOid());
+        kysely.setKoulutuksenAlkamisvuosi(-1);
         
         HaeHakukohteetVastausTyyppi vastaus =  this.getTarjontaPublicService().haeHakukohteet(kysely);
         this.getRootView().getListKoulutusView().showHakukohteetForKoulutus(vastaus.getHakukohdeTulos(), koulutus);

@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.ui.view.common;
 
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -31,7 +32,7 @@ public abstract class ShowRelatedObjectsDialog extends VerticalLayout {
         this.presenter = presenter;
     }
     
-    protected void buildLayout(String otsikko, String nimi) {
+    protected void buildLayout(String otsikko, String nimi, int pageSize) {
         VerticalLayout vl = UiUtil.verticalLayout();
         vl.setSpacing(true);
         vl.setMargin(true, false, true, true);
@@ -42,11 +43,12 @@ public abstract class ShowRelatedObjectsDialog extends VerticalLayout {
         hakukohdeNimi.setValue(nimi);
         vl.addComponent(hakukohdeNimi);
         addComponent(vl);
-        buildKoulutusTree();
+        buildKoulutusTree(pageSize);
     }
     
-    private void buildKoulutusTree() {
+    private void buildKoulutusTree(int pageSize) {
         tree = new CategoryTreeView();
+        tree.setPageLength(pageSize);
         addComponent(tree);
         setExpandRatio(tree, 1f);
         

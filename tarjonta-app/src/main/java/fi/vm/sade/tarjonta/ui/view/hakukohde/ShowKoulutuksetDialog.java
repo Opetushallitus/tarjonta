@@ -7,8 +7,10 @@ import java.util.Map;
 import java.util.Set;
 
 import com.vaadin.data.util.HierarchicalContainer;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTulos;
@@ -16,6 +18,7 @@ import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTul
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.ShowRelatedObjectsDialog;
+import fi.vm.sade.vaadin.util.UiUtil;
 
 public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
 
@@ -32,8 +35,24 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
     }
     
     private void buildLayout() {
-        buildLayout(T("otsikko"), resolveHakukohdeNimi());
+        buildLayout(T("otsikko"), resolveHakukohdeNimi(), koulutukset.size() + 3);
         populateTree();
+        VerticalLayout vl = new VerticalLayout();
+        vl.setMargin(true, false, true, false);
+        Button closeButton = UiUtil.button(vl, T("sulje"));
+        vl.setComponentAlignment(closeButton, Alignment.BOTTOM_CENTER);
+        closeButton.addListener(new Button.ClickListener() {
+
+            private static final long serialVersionUID = 5434303513332786046L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+               presenter.closeHakukohdeRemovalDialog();
+            }
+            
+        });
+        addComponent(vl);
+        setComponentAlignment(vl, Alignment.BOTTOM_CENTER);
     }
     
     protected void populateTree() {
@@ -67,7 +86,7 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
                    });
                hc.getContainerProperty(curKoulutus, COLUMN_A).setValue(
                        ci);
-               hc.getContainerProperty(curKoulutus, COLUMN_PVM).setValue(getKoulutusAjankohtaStr(curKoulutus));
+               hc.getContainerProperty(curKoulutus, COLUMN_PVM).setValue(presenter.getUiHelper().getAjankohtaStr(curKoulutus));
                hc.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(T(curKoulutus.getKoulutus().getTila().value()));
                hc.setChildrenAllowed(curKoulutus, false);
                System.out.println("Added koulutus: " + curKoulutus.getKoulutus().getKomotoOid());
@@ -117,15 +136,6 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
                 + ", " + getHakukohdeAjankohtaStr() 
                 + ", " + TarjontaUIHelper.getClosestMonikielinenTekstiTyyppiName(I18N.getLocale(), selectedHakukohde.getHakukohde().getTarjoaja().getNimi()).getValue();        
     }
-    
-    private String getKoulutusAjankohtaStr(KoulutusTulos curKoulutus) {
-        String[] ajankohtaParts = curKoulutus.getKoulutus().getAjankohta().split(" ");
-        if (ajankohtaParts.length < 2) {
-            return "";
-        }
-        return I18N.getMessage(ajankohtaParts[0]) + " " + ajankohtaParts[1];
-    }
-    
     
     private String getHakukohdeAjankohtaStr() {
         return I18N.getMessage(selectedHakukohde.getHakukohde().getKoulutuksenAlkamiskausiUri()) 
