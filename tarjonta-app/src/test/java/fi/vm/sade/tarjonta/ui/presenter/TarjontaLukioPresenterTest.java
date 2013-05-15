@@ -139,7 +139,7 @@ public class TarjontaLukioPresenterTest {
 
         tarjontaPresenter = new TarjontaPresenter();
         tarjontaPresenter.getNavigationOrganisation().setOrganisationOid(ORGANISAATIO_OID);
-        tarjontaPresenter.setRootView(new TarjontaRootView(false));
+        tarjontaPresenter.setRootView(new TarjontaRootView());
         instance = new TarjontaLukioPresenter();
 
         koulutusLukioConverter = new KoulutusLukioConverter();

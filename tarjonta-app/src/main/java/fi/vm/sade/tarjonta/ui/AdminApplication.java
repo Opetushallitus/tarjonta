@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @author jani
  */
 @Configurable(preConstruction = true)
-public class AdminApplication extends WebApplication {
+public class AdminApplication extends AbstractWebApplication {
 
     private static final long serialVersionUID = 4593403338621758659L;
     private static final Logger LOG = LoggerFactory.getLogger(AdminApplication.class);

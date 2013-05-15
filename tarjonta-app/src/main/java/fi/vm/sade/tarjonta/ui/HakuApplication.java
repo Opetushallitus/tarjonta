@@ -26,7 +26,7 @@ import fi.vm.sade.vaadin.Oph;
  *
  * @author markus
  */
-public class HakuApplication extends WebApplication {
+public class HakuApplication extends AbstractWebApplication {
     private static final long serialVersionUID = -5438300477469075L;
 
     private Window window;

@@ -26,7 +26,7 @@ import fi.vm.sade.vaadin.Oph;
  *
  * @author markus
  */
-public class ValintaApplication extends WebApplication {
+public class ValintaApplication extends AbstractWebApplication {
 
     private static final long serialVersionUID = -812459990170115083L;
     private Window window;

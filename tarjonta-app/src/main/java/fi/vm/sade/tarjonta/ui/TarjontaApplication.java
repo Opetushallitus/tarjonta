@@ -20,8 +20,6 @@ import com.vaadin.ui.Window;
 import fi.vm.sade.tarjonta.ui.view.TarjontaRootView;
 import fi.vm.sade.vaadin.Oph;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
@@ -32,15 +30,14 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author mlyly
  */
 @Configurable(preConstruction = true)
-public class TarjontaApplication extends WebApplication {
-
-    private static final Logger LOG = LoggerFactory.getLogger(TarjontaApplication.class);
+public class TarjontaApplication extends AbstractWebApplication {
     private static final long serialVersionUID = 7402559260126333807L;
-    private Window window;
+    private TarjontaRootView window;
 
     @Override
     protected void initApplication() {
-        window = new TarjontaRootView(true);
+        window = new TarjontaRootView();
+        window.init();
         setMainWindow(window);
         setTheme(Oph.THEME_NAME);
     }

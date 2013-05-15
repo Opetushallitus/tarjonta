@@ -26,13 +26,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author jani
  */
-public class WebApplication extends AbstractSadePortletApplication {
+public abstract class AbstractWebApplication extends AbstractSadePortletApplication {
 
     private static final long serialVersionUID = 4058508673680251653L;
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
     private static ThreadLocal<Application> tl = new ThreadLocal<Application>();
 
-    public WebApplication() {
+    public AbstractWebApplication() {
         super();
         LOG.info("WebApplication()");
     }
@@ -50,9 +50,7 @@ public class WebApplication extends AbstractSadePortletApplication {
         initApplication();
     }
 
-    protected void initApplication() {
-        throw new RuntimeException("Uninitialized Vaadin window.");
-    }
+    protected abstract void initApplication();
 
     @Override
     public void transactionStart(Application application, Object transactionData) {

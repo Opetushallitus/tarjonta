@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.ui.view;
 
+import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -72,14 +73,11 @@ public class TarjontaRootView extends Window {
     private VerticalLayout vlRight;
     private boolean isAttached = false;
 
-    public TarjontaRootView(boolean init) {
+    public TarjontaRootView() {
         super();
-        if (init) {
-            init();
-        }
     }
-
-    private void init() {
+    
+    public void init(){
         LOG.info("TarjontaView(): presenter={}", _presenter);
 
         // Fixi jrebelille...

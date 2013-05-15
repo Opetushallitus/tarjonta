@@ -30,25 +30,17 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
-    <filter-mapping>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
     
-    <filter>
-        <filter-name>sitemeshTarjontaApp</filter-name>
-        <filter-class>org.sitemesh.config.ConfigurableSiteMeshFilter</filter-class>
-    </filter>
-    
-    <filter-mapping>
-        <filter-name>sitemeshTarjontaApp</filter-name>
-        <url-pattern>/tarjontaapp/*</url-pattern>
-    </filter-mapping>
-    
+    <!-- add top javascript navigation stuff -->
     <filter>
         <filter-name>sitemesh</filter-name>
         <filter-class>org.sitemesh.config.ConfigurableSiteMeshFilter</filter-class>
     </filter>
+    
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
     
     <filter-mapping>
         <filter-name>sitemesh</filter-name>
@@ -88,10 +80,6 @@
             <param-value>fi.vm.sade.tarjonta.ui.HakuApplication</param-value>
         </init-param>
         <init-param>
-            <param-name>widgetset</param-name>
-            <param-value>fi.vm.sade.widgetset.OPH</param-value>
-        </init-param>
-        <init-param>
             <param-name>disable-xsrf-protection</param-name>
             <param-value>true</param-value>
         </init-param>
@@ -106,6 +94,7 @@
             <param-value>fi.vm.sade.tarjonta.ui.ValintaApplication</param-value>
         </init-param>
         <init-param>
+            <description>Widget Set to Use</description>
             <param-name>widgetset</param-name>
             <param-value>fi.vm.sade.widgetset.OPH</param-value>
         </init-param>
@@ -114,8 +103,7 @@
             <param-value>true</param-value>
         </init-param>
     </servlet>
-    
-    
+     
     <!-- Valinta standalone -->
     <servlet>
         <servlet-name>adminapp</servlet-name>
@@ -123,10 +111,6 @@
         <init-param>
             <param-name>application</param-name>
             <param-value>fi.vm.sade.tarjonta.ui.AdminApplication</param-value>
-        </init-param>
-        <init-param>
-            <param-name>widgetset</param-name>
-            <param-value>fi.vm.sade.widgetset.OPH</param-value>
         </init-param>
         <init-param>
             <param-name>disable-xsrf-protection</param-name>
@@ -137,36 +121,25 @@
     <servlet-mapping>
         <servlet-name>tarjontaapp</servlet-name>
         <url-pattern>/tarjontaapp/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>tarjontaapp</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
-    
+   
     <servlet-mapping>
         <servlet-name>hakuapp</servlet-name>
         <url-pattern>/hakuapp/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>hakuapp</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
- 
+
     <servlet-mapping>
         <servlet-name>valintaapp</servlet-name>
         <url-pattern>/valintaapp/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>valintaapp</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>adminapp</servlet-name>
         <url-pattern>/adminapp/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>adminapp</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
+
 </web-app>
