@@ -1,0 +1,9 @@
+tarjonta-selenium.oph-url=http://test-virkailija.oph.ware.fi
+tarjonta-selenium.oph-login-url=/cas/login
+tarjonta-selenium.tarjonta-url=/group/virkailijan-tyopoyta/tarjonta
+tarjonta-selenium.tarjonta-versio-url=/tarjonta-app/buildversion.txt
+tarjonta-selenium.qa=false
+tarjonta-selenium.reppu=true
+tarjonta-selenium.luokka=false
+tarjonta-selenium.username=ophadmin
+tarjonta-selenium.password=password

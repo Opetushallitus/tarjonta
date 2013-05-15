@@ -1,0 +1,9 @@
+tarjonta-selenium.oph-url=https://testi.virkailija.opintopolku.fi
+tarjonta-selenium.oph-login-url=/cas/login
+tarjonta-selenium.tarjonta-url=/group/virkailijan-tyopoyta/koulutuksen-toteutus-ja-hakukohde
+tarjonta-selenium.tarjonta-versio-url=/tarjonta-app/buildversion.txt
+tarjonta-selenium.qa=true
+tarjonta-selenium.reppu=false
+tarjonta-selenium.luokka=false
+tarjonta-selenium.username=ophadmin
+tarjonta-selenium.password=password

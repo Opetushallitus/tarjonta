@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>tarjonta</artifactId>
+        <groupId>fi.vm.sade.tarjonta</groupId>
+        <version>5.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>fi.vm.sade.tarjonta</groupId>
+    <artifactId>tarjonta-selenium</artifactId>
+    <!-- <packaging>war</packaging> -->
+    <name>Tarjonta :: SELENIUM</name>
+
+    <properties>
+      <skipTests>true</skipTests>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.4</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjrt</artifactId>
+                        <version>1.7.2 </version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjtools</artifactId>
+                        <version>1.7.2 </version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-aspects</artifactId>
+                        </aspectLibrary>
+                    </aspectLibraries>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.11</version>
+		        <configuration>
+        			<skipTests>${skipTests}</skipTests>
+                    <!-- To run tests: mvn clean test -DskipTests=false -->
+     		    </configuration>
+ 	        </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>generic-test-support</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Tarjonta :: API 
+        <dependency>
+            <groupId>fi.vm.sade.tarjonta</groupId>
+            <artifactId>tarjonta-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        -->
+
+        <!-- Rajapinnat :: YTJ :: API -->
+
+        <dependency>
+            <groupId>javax.portlet</groupId>
+            <artifactId>portlet-api</artifactId>
+            <scope>${portlet.scope}</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>generic-common</artifactId>
+            <version>${generic.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>dependencies-vaadin</artifactId>
+            <version>${generic.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>generic-vaadin-widgetset</artifactId>
+            <version>${generic.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>webapp-portal-decorator</artifactId>
+            <version>${generic.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+
+</project>
