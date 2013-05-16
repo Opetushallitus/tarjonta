@@ -15,9 +15,9 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
-import com.github.wolfie.blackboard.Blackboard;
 import com.vaadin.Application;
-import fi.vm.sade.generic.ui.app.AbstractSadePortletApplication;
+import com.vaadin.service.ApplicationContext;
+import fi.vm.sade.generic.ui.app.AbstractSadeApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jani
  */
-public abstract class AbstractWebApplication extends AbstractSadePortletApplication {
+public abstract class AbstractWebApplication extends AbstractSadeApplication implements ApplicationContext.TransactionListener {
 
     private static final long serialVersionUID = 4058508673680251653L;
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
@@ -35,11 +35,6 @@ public abstract class AbstractWebApplication extends AbstractSadePortletApplicat
     public AbstractWebApplication() {
         super();
         LOG.info("WebApplication()");
-    }
-
-    @Override
-    protected void registerListeners(Blackboard blackboard) {
-        LOG.info("registerListeners()");
     }
 
     @Override
@@ -54,7 +49,6 @@ public abstract class AbstractWebApplication extends AbstractSadePortletApplicat
 
     @Override
     public void transactionStart(Application application, Object transactionData) {
-        super.transactionStart(application, transactionData);
         if (application == this) {
             tl.set(this);
         }
@@ -62,8 +56,6 @@ public abstract class AbstractWebApplication extends AbstractSadePortletApplicat
 
     @Override
     public void transactionEnd(Application application, Object transactionData) {
-        super.transactionEnd(application, transactionData);
-
         if (application == this) {
             tl.remove();
         }

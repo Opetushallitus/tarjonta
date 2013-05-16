@@ -109,14 +109,4 @@ public class AdminApplication extends AbstractWebApplication {
         hl.addComponent(btnIndexKoulutukset);
     }
 
-    @Override
-    protected void registerListeners(Blackboard blackboard) {
-        LOG.debug("registerListeners()");
-    }
-
-    @Override
-    public synchronized void init() {
-        super.init();
-        LOG.debug("init()");
-    }
 }
