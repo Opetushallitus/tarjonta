@@ -11,7 +11,7 @@
 		
 		<property name="maven.repo" value="${user.home}/.m2/repository"/>
 		<property name="tomcat.name" value="tomcat_${oph.name}"/>
-		<property name="tomcat.home" value="/data00/oph/${oph.name}/apache-tomcat-7.0.29"/>
+		<property name="tomcat.home" value="/data00/oph/${oph.name}/tomcat"/>
 		<property name="ssh.keyfile" location="${user.home}/.ssh/id_rsa"/>
 		<property name="ssh.keypass" value=""/>
 
