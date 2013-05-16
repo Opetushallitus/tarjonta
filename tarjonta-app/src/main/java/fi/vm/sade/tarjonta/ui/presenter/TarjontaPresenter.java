@@ -1189,8 +1189,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         HakukohdeListausTyyppi wtf = new HakukohdeListausTyyppi();
         wtf.setOid(getModel().getHakukohde().getOid());
         tmp.setHakukohde(wtf);
-        getModel().getSelectedhakukohteet().add(tmp);
-        removeSelectedHakukohteet();
+        /*getModel().getSelectedhakukohteet().add(tmp);
+        removeSelectedHakukohteet();*/
+        this.removeHakukohde(tmp);
         getRootView().showMainView();
 
     }
