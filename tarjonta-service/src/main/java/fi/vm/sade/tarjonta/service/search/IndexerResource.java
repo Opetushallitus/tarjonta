@@ -208,6 +208,7 @@ public class IndexerResource {
             public void afterCommit() {
                 try {
                     solr.deleteById(localOids);
+                    solr.commit(true, true, false);
                 } catch (Exception e) {
                     throw new RuntimeException("indexing.error", e);
                 }
