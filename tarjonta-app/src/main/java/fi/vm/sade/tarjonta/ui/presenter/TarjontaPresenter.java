@@ -530,6 +530,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         req.setHakukohdeOid(hakukohdeOid);
         req.getKoulutusOids().add(getModel().getKoulutusPerustiedotModel().getOid());
         getTarjontaAdminService().lisaaTaiPoistaKoulutuksiaHakukohteelle(req);
+        HakukohdeTyyppi hakukohde = new HakukohdeTyyppi();
+        hakukohde.setOid(hakukohdeOid);
+        //getTarjontaAdminService().poistaHakukohde(hakukohde);
         showShowKoulutusView(getModel().getKoulutusPerustiedotModel().getOid());
     }
 
@@ -542,12 +545,17 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         req.getKoulutusOids().addAll(poistettavatKoulutukses);
         req.setLisaa(false);
         getTarjontaAdminService().lisaaTaiPoistaKoulutuksiaHakukohteelle(req);
+
+        HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
+        hakukohdeTyyppi.setOid(getModel().getHakukohde().getOid());
+        getTarjontaAdminService().poistaHakukohde(hakukohdeTyyppi);
         //If removing last koulutus from hakukohde then hakukohde is not valid
         //anymore, show main view instead
         if (hakukohdeKoulutusCount > 1) {
             showHakukohdeViewImpl(getModel().getHakukohde().getOid());
         } else {
-            showMainDefaultView();
+            reloadAndShowMainDefaultView();
+            //showMainDefaultView();
         }
     }
 
