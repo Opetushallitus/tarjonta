@@ -356,7 +356,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
 
     public void initHakukohdeForm(PerustiedotView hakuKohdePerustiedotView) {
         this.hakuKohdePerustiedotView = hakuKohdePerustiedotView;
-
+        if (getModel().getHakukohde() != null && getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite() != null && getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite().trim().length() > 0) {
+            getModel().getHakukohde().setSahkoinenToimitusSallittu(true);
+        }  else {
+            getModel().getHakukohde().setSahkoinenToimitusSallittu(false);
+        }
         ListHakuVastausTyyppi haut = getTarjontaPublicService().listHaku(new ListaaHakuTyyppi());
 
         this.hakuKohdePerustiedotView.initForm(getModel().getHakukohde());

@@ -87,7 +87,9 @@ public class HakukohdePerustiedotViewImpl extends AbstractEditLayoutView<Hakukoh
         hakukohde.getLisatiedot().clear();
         hakukohde.getLisatiedot().addAll(formView.getLisatiedot());
         hakukohde.setHakuaika(formView.getSelectedHakuaika());
-
+        if (!formView.isSahkoinenToimOsoiteChecked()) {
+           hakukohde.setLiitteidenSahkoinenToimitusOsoite("");
+        }
         // TODO call subform to perform validation (weigthed stdies can FAIL and still the save succeeds)
         // formView.validateExtraData();
 

@@ -209,6 +209,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         throw new RuntimeException("Can not figure out the type!");
     }
 
+    public boolean isSahkoinenToimOsoiteChecked() {
+        return myosSahkoinenToimitusSallittuCb.booleanValue();
+    }
+
     @Override
     public void setTunnisteKoodi(String tunnistekoodi) {
         tunnisteKoodiText.setValue(tunnistekoodi);
@@ -241,6 +245,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 hakukohteenNimiCombo.setValue(presenter.getModel().getHakukohde().getSelectedHakukohdeNimi());
         	}
         	selectHakuAika(presenter.getModel().getHakukohde().getHakuaika(), presenter.getModel().getHakukohde().getHakuOid(), true);
+
         }
     }
 
@@ -304,6 +309,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         return itemContainer;
     }
+
+
 
     private AbstractComponent buildPainotettavatOppiaineet() {
         final VerticalLayout lo = new VerticalLayout();
@@ -385,12 +392,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private void checkCheckboxes() {
         if (this.presenter != null && this.presenter.getModel().getHakukohde() != null) {
 
-            if (presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite() != null) {
-                myosSahkoinenToimitusSallittuCb.setValue(true);
+            if (presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite() != null && presenter.getModel().getHakukohde().getLiitteidenSahkoinenToimitusOsoite().trim().length() > 0) {
+                sahkoinenToimitusOsoiteText.setEnabled(true);
             } else {
-                myosSahkoinenToimitusSallittuCb.setValue(false);
+                sahkoinenToimitusOsoiteText.setEnabled(false);
             }
         }
+
     }
 
     private HorizontalLayout buildErrorLayout() {
@@ -604,7 +612,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         return verticalLayout;
     }
 
-    private CheckBox buildSahkoinenToimitusOsoiteCheckBox() {
+    private VerticalLayout buildSahkoinenToimitusOsoiteCheckBox() {
+        VerticalLayout vl = new VerticalLayout();
         myosSahkoinenToimitusSallittuCb = UiUtil.checkbox(null, null);
         myosSahkoinenToimitusSallittuCb.setImmediate(true);
         myosSahkoinenToimitusSallittuCb.setCaption(T("PerustiedotView.LiiteVoidaanToimittaaSahkoisestiCheckbox"));
@@ -622,8 +631,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 }
             }
         });
+        vl.addComponent(myosSahkoinenToimitusSallittuCb);
+        myosSahkoinenToimitusSallittuCb.setValue(true);
+        return vl;
 
-        return myosSahkoinenToimitusSallittuCb;
     }
 
     private GridLayout buildLiitteidenToimitusOsoite() {
