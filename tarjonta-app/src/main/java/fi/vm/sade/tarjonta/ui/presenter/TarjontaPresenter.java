@@ -19,7 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -110,7 +109,6 @@ import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.SelectedOrgModel;
-import static fi.vm.sade.tarjonta.ui.enums.SelectedOrgModel.TARJOAJA;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -681,12 +679,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         return nimi;
     }
 
-    /**
-     * Show koulutus overview view.
-     */
-    public void showShowKoulutusView() {
+    public void showShowKoulutusView(String koulutusOid) {
+        readKoulutusToModel(koulutusOid);
+        
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
-        String title = "";
+        String title;
         final KoulutusasteType koulutusaste = model.getSelectedKoulutusasteType();
         switch (koulutusaste) {
             case TOINEN_ASTE_AMMATILLINEN_KOULUTUS:
@@ -697,26 +694,19 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             case TOINEN_ASTE_LUKIO:
                 title = model.getKoulutuskoodiModel().getNimi();
                 break;
+            default:
+                throw new IllegalArgumentException(String.valueOf(koulutusaste));	
         }
 
         showKoulutusView = new ShowKoulutusView(title, null);
         getRootView().changeView(showKoulutusView);
     }
 
-    public void showShowKoulutusView(String koulutusOid) {
-        LOG.info("showShowKoulutusView()");
-
-        // If oid of koulutus is provided the koulutus is read from database
-        // before opening the ShowKoulutusView
-        if (koulutusOid != null) {
-
-            readKoulutusToModel(koulutusOid);
-
-        } else {
-            throw new RuntimeException("Application error - missing OID, cannot open ShowKoulutusView.");
-        }
-
-        showShowKoulutusView();
+    /**
+     * Show koulutus overview view.
+     */
+    public void showShowKoulutusView() {
+    	showShowKoulutusView(getModel().getKoulutusPerustiedotModel().getOid());
     }
 
     public void setKomotoOids(List<String> komotoOids) {
@@ -863,6 +853,9 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     private void readKoulutusToModel(final String koulutusOid) {
+    	
+    	System.err.println("READ KOULUTUS "+koulutusOid);
+    	
         LueKoulutusVastausTyyppi rawKoulutus = this.getKoulutusByOid(koulutusOid);
         try {
             KoulutusToisenAsteenPerustiedotViewModel koulutus;

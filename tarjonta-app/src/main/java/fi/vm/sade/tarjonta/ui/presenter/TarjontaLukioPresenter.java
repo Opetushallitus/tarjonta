@@ -139,10 +139,6 @@ public class TarjontaLukioPresenter {
         getPresenter().getRootView().getListKoulutusView().reload();
     }
 
-    public void showEditKoulutusView(final KoulutusActiveTab tab) {
-        showEditKoulutusView(tab);
-    }
-
     /**
      * Open lukiokoulutus edit view. When KOMOTO OID is provided to the method,
      * lukiokoulutus data is preloaded to the edit view form.

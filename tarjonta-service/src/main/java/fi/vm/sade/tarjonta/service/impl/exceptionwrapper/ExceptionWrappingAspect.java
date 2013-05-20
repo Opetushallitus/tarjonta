@@ -4,14 +4,13 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.generic.service.exception.AbstractFaultWrapper;
 import fi.vm.sade.generic.service.exception.SadeBusinessException;
 import fi.vm.sade.tarjonta.service.GenericFault;
-import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.types.GenericFaultInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Aspect
 public class ExceptionWrappingAspect extends AbstractFaultWrapper<GenericFault> {
@@ -47,7 +46,7 @@ public class ExceptionWrappingAspect extends AbstractFaultWrapper<GenericFault> 
     protected GenericFault createFaultInstance(Throwable ex) {
         String key = "";
         
-        if (ex.getClass().isAssignableFrom(SadeBusinessException.class)) {
+        if (ex instanceof SadeBusinessException) {
             key = ((SadeBusinessException) ex).getErrorKey();
         } else {
             key = ex.getClass().getName();

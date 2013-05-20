@@ -15,22 +15,25 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus.aste2;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.VerticalLayout;
+
 import fi.vm.sade.generic.ui.component.OphRichTextArea;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.LisatiedotTabSheet;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
-import java.util.HashSet;
-import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -56,6 +59,7 @@ public class EditLisatiedotTabSheet extends LisatiedotTabSheet {
         if (opetuskieliKoodiUri != null) {
             languageUris.add(opetuskieliKoodiUri); //only single language in 2aste
         }
+        
         languageUris.addAll(getModel().getKoulutusLisatiedotModel().getKielet());
 
         if (!languageUris.isEmpty()) {

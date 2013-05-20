@@ -15,26 +15,34 @@
  */
 package fi.vm.sade.tarjonta.service.business.impl;
 
-import java.util.*;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.generic.model.BaseEntity;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
-import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaVirheKoodi;
-import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 
 /**
  *
@@ -159,23 +167,71 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         return moduuli;
     }
+    
+    /**
+     * Filtteröi monikieliset tekstit, poistaen kaikki jotka ovat tyhjiä ja eri kuin opetuskieli.
+     * 
+     * @param pkt
+     */
+    private void filterKieliKoodis(PaivitaKoulutusTyyppi pkt) {
+    	Set<String> ret = new HashSet<String>();
+    	for (KoodistoKoodiTyyppi kkt : pkt.getOpetuskieli()) {
+    		ret.add(kkt.getUri());
+    	}
+    	
+    	List<MonikielinenTekstiTyyppi> mkts = new ArrayList<MonikielinenTekstiTyyppi>();
+    	
+    	try {
+    		// haetaan mkt:t looppaamalla getterit läpi (parempi olisi pitää mkt:t enum->string mapissa)
+			for (Method m : pkt.getClass().getMethods()) {
+				if (m.getName().startsWith("get")
+						&& m.getParameterTypes().length==0
+						&& m.getReturnType().equals(MonikielinenTekstiTyyppi.class)) {
+					MonikielinenTekstiTyyppi mtt = (MonikielinenTekstiTyyppi) m.invoke(pkt);
+					if (mtt!=null) {
+						mkts.add(mtt);
+						for (Teksti t : mtt.getTeksti()) {
+							if (t.getValue()!=null && t.getValue().trim().length()>0) {
+								ret.add(t.getKieliKoodi());
+							}
+						}
+					}
+					
+				}
+			}
+		} catch (Exception e) { // reflektiovirheitä varten, joita ei tietenkääns saisi tapahtua
+			throw new RuntimeException(e);
+		}
+        
+        for (MonikielinenTekstiTyyppi mtt : mkts) {
+        	for (Iterator<Teksti> i = mtt.getTeksti().iterator(); i.hasNext();) {
+        		Teksti t = i.next();
+        		if (!ret.contains(t.getKieliKoodi())) {
+        			i.remove();
+        		}
+        	}
+        }
 
+    }
+    
     @Override
     public KoulutusmoduuliToteutus updateKoulutus(PaivitaKoulutusTyyppi koulutus) {
 
         final String oid = koulutus.getOid();
         KoulutusmoduuliToteutus model = koulutusmoduuliToteutusDAO.findByOid(oid);
 
-        Koulutusmoduuli moduuli = model.getKoulutusmoduuli();
-        //Handling the creation or update of the parent (tutkinto) komoto
-        handleParentKomoto(koulutus, moduuli);
+        filterKieliKoodis(koulutus);
 
         if (model == null) {
             throw new TarjontaBusinessException(TarjontaVirheKoodi.OID_EI_OLEMASSA.value(), oid);
         }
-
+        
+        Koulutusmoduuli moduuli = model.getKoulutusmoduuli();
+        //Handling the creation or update of the parent (tutkinto) komoto
+        handleParentKomoto(koulutus, moduuli);
+        
         EntityUtils.copyFields(koulutus, model);
-
+        
         koulutusmoduuliToteutusDAO.update(model);
 
         return model;
@@ -193,7 +249,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         //If the komoto for the parentKomo already exists it is updated according to the values given in koulutus
         if (parentKomoto != null && parentKomo != null) {
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva()); koulutuksen alkamispäivä is no longer saved in parent komoto
-            parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta()));
+            parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
             this.koulutusmoduuliToteutusDAO.update(parentKomoto);
 
             //Start date is updated to siblings of the komoto given in koulutus. The start date is 
@@ -207,7 +263,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             parentKomoto.setTarjoaja(koulutus.getTarjoaja());
             parentKomoto.setTila(EntityUtils.convertTila(koulutus.getTila()));
             parentKomoto.setKoulutusmoduuli(parentKomo);
-            parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta()));
+            parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
             parentKomoto.setPohjakoulutusvaatimus(koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null);
             parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
