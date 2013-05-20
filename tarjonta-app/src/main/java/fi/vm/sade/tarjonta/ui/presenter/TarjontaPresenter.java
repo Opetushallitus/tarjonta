@@ -782,9 +782,11 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
             getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(pohjakoulutusVaatimus);
             getModel().getKoulutusPerustiedotModel().setKoulutuslaji(null);
             getModel().getKoulutusPerustiedotModel().setOpetusmuoto(null);
+            getModel().getKoulutusPerustiedotModel().setTila(null);
             getModel().setKoulutusLisatiedotModel(new KoulutusLisatiedotModel());
 
-            showEditKoulutusView(koulutusOid, KoulutusActiveTab.PERUSTIEDOT);
+            showEditKoulutusView(getModel().getKoulutusPerustiedotModel().getOid(), KoulutusActiveTab.PERUSTIEDOT);
+
         }
     }
 

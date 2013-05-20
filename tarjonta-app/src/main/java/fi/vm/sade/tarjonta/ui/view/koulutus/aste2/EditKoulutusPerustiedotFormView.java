@@ -283,7 +283,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         buildGridKestoRow(this, "SuunniteltuKesto");
 
         //only for 'Ammatillinen perustutkintoon johtava koulutus' -section
-        buildGridPainotus(this, "painotus");
+        //Removed because not needed... -> OVT-4560
+        //buildGridPainotus(this, "painotus");
         buildGridKoulutuslajiRow(this, "Koulutuslaji");
         buildGridOpetusmuotoRow(this, "Opetusmuoto");
         //buildGridPohjakoulutusvaatimusRow(this, "Pohjakoulutusvaatimus");

@@ -75,7 +75,7 @@ private static final Logger LOG = LoggerFactory.getLogger(PublishingService.clas
             throw new RuntimeException("TarjontaTila object cannot be null or empty.");
         }
 
-        if (oid == null) {
+        if (oid == null  || oid.equals("-1")) {
             //OID is null, when user tryes to add new data.
             LOG.debug("Buttons enabled for {} {}", sisalto, requiredState);
             return true;
