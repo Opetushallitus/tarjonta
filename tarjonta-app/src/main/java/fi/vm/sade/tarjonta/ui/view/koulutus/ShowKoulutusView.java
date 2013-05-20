@@ -18,8 +18,8 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.TreeSet;
 
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,7 @@ import com.vaadin.ui.Window;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusListausTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
@@ -93,9 +94,10 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         // language tabs
         final TabSheet tabs = new TabSheet();
 
-        final Set<String> languages = presenter.getModel()
-                .getKoulutusLisatiedotModel().getLisatiedot().keySet();
-
+        final Set<String> languages = new TreeSet<String>();
+        languages.addAll(presenter.getModel().getKoulutusLisatiedotModel().getLisatiedot().keySet());
+        languages.add(presenter.getModel().getKoulutusPerustiedotModel().getOpetuskieli());
+        
         if(languages.size()==0) {
             //no languages available, "add" fi 
             presenter.getModel().getKoulutusLisatiedotModel().getLisatiedot(suomiUri);
@@ -190,7 +192,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     		}
     	}, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-    	final Button esikatsele = addNavigationButton(T("esikatsele"), new Button.ClickListener() {
+    	/*final Button esikatsele = */addNavigationButton(T("esikatsele"), new Button.ClickListener() {
     		private static final long serialVersionUID = 5019806363620874205L;
 
     		@Override

@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import com.vaadin.ui.*;
-import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -20,7 +18,16 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.VerticalSplitPanel;
 
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
@@ -28,7 +35,6 @@ import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
-import fi.vm.sade.tarjonta.ui.model.KoulutusYhteyshenkiloViewModel;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
@@ -42,6 +48,7 @@ import fi.vm.sade.tarjonta.ui.view.common.CategoryTreeView;
 import fi.vm.sade.tarjonta.ui.view.common.FormGridBuilder;
 import fi.vm.sade.tarjonta.ui.view.common.FormGridBuilder.FieldInfo;
 import fi.vm.sade.vaadin.Oph;
+import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 
 /**
@@ -249,11 +256,11 @@ public class ShowKoulutusViewTab extends CustomComponent {
 
         layout.add(getTextRow("tutkinnonKoulutuksellisetJaAmmatillisetTavoitteet", getText(model.getKoulutusohjelmaModel().getTavoitteet())));
         layout.add(getTextRow("koulutuksenKoulutuksellisetJaAmmatillisetTavoitteet", getText(model.getKoulutuskoodiModel().getTavoitteet())));
-        layout.add(getXhtmlRow("koulutusohjelmanValinta", lisatietoForLang.getKoulutusohjelmanValinta()));
-        layout.add(getXhtmlRow("koulutuksenSisalto", lisatietoForLang.getSisalto()));
+        layout.add(getXhtmlRow("koulutusohjelmanValinta", lisatietoForLang==null ? null : lisatietoForLang.getKoulutusohjelmanValinta()));
+        layout.add(getXhtmlRow("koulutuksenSisalto", lisatietoForLang==null ? null : lisatietoForLang.getSisalto()));
         layout.add(getTextRow("koulutuksenRakenne", getText(model.getKoulutuskoodiModel().getKoulutuksenRakenne())));
-        layout.add(getXhtmlRow("tutkinnonKansainvalistyminen", lisatietoForLang.getKansainvalistyminen()));
-        layout.add(getXhtmlRow("tutkinnonSijoittuminenTyoelamaan", lisatietoForLang.getSijoittuminenTyoelamaan()));
+        layout.add(getXhtmlRow("tutkinnonKansainvalistyminen", lisatietoForLang==null ? null : lisatietoForLang.getKansainvalistyminen()));
+        layout.add(getXhtmlRow("tutkinnonSijoittuminenTyoelamaan", lisatietoForLang==null ? null : lisatietoForLang.getSijoittuminenTyoelamaan()));
         layout.add(getTextRow("ammattinimikkeet", uiHelper.getKoodiNimi(presenter.getModel().getKoulutusLisatiedotModel().getAmmattinimikkeet(), locale)));
         layout.add(getTextRow("jatkoOpintomahdollisuudet", getText(model.getKoulutuskoodiModel().getJatkoopintomahdollisuudet())));
     }

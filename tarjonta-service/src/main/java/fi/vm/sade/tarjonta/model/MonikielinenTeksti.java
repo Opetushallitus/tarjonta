@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.model;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
@@ -111,10 +112,18 @@ public class MonikielinenTeksti extends BaseEntity {
     	if (uus==null) {
     		return null;
     	}
-    	old.tekstis.keySet().retainAll(uus.tekstis.keySet());
+		
+    	// retainAll ei toiminut hibernaten lazy-collectionin kanssa - hibernaten bugi?
+    	for (Iterator<String> ki = old.tekstis.keySet().iterator(); ki.hasNext();) {
+			if (!uus.tekstis.containsKey(ki.next())) {
+				ki.remove();
+			}
+		}
+
     	for (TekstiKaannos tk : uus.tekstis.values()) {
     		old.setTekstiKaannos(tk.getKieliKoodi(), tk.getArvo());
     	}
+
     	return old;
     }
 
