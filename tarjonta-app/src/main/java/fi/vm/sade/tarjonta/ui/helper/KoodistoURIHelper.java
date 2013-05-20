@@ -83,14 +83,19 @@ public class KoodistoURIHelper {
      * Oppiaineet
      */
     public static String KOODISTO_OPPIAINEET_URI;
-
     /**
      * Hakukohde / valintakoe
      */
     public static String KOODISTO_VALINTAKOE_TYYPPI_URI;
 
+    /*
+     * For tutkinto dialog
+     */
     public static String KOODISTO_TARJONTA_KOULUTUSASTE;
-
+    /*
+     * For korkeakoulu
+     */
+    public static String KOODISTO_TEEMAT_URI;
 
     @Value("${koodisto-uris.valintakokeentyyppi}")
     public void setKoodistoValintakoetyyppiUri(String uri) {
@@ -247,4 +252,8 @@ public class KoodistoURIHelper {
         KOODISTO_LUKIODIPLOMIT_URI = lukiodiplomit;
     }
 
+    @Value("${koodisto-uris.teemat}")
+    public void setTeemat(String teemat) {
+        KOODISTO_TEEMAT_URI = teemat;
+    }
 }

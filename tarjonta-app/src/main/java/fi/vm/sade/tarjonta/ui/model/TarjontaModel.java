@@ -22,6 +22,8 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteetVastausTyyppi.HakukohdeTu
 import fi.vm.sade.tarjonta.service.types.HaeKoulutuksetVastausTyyppi.KoulutusTulos;
 
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.org.NavigationModel;
@@ -53,6 +55,11 @@ public class TarjontaModel extends BaseUIViewModel {
      * 2-aste lukiokoulutus
      */
     private KoulutusLukioPerustiedotViewModel koulutusLukioPerustiedot;
+    /*
+     * University
+     */
+    private KorkeakouluPerustiedotViewModel korkeakouluPerustiedot;
+    private KorkeakouluKuvailevatTiedotViewModel korkeakouluKuvailevatTiedot; 
     /*
      * Hakutulos
      */
@@ -332,5 +339,42 @@ public class TarjontaModel extends BaseUIViewModel {
         }
 
         return getRootOrganisaatioOid().equals(getNavigationModel().getOrganisationOid());
+    }
+
+    /**
+     * @return the koulutusLukioPerustiedot
+     */
+    public KorkeakouluPerustiedotViewModel getKorkeakouluPerustiedot() {
+        if (korkeakouluPerustiedot == null) {
+            setKorkeakouluPerustiedot(new KorkeakouluPerustiedotViewModel());
+        }
+
+        return korkeakouluPerustiedot;
+    }
+
+    /**
+     * @return the koulutusLukioKuvailevatTiedot
+     */
+    public KorkeakouluKuvailevatTiedotViewModel getKorkeakouluKuvailevatTiedot() {
+        //TODO have a map!
+        if (korkeakouluKuvailevatTiedot == null) {
+            setKorkeakouluKuvailevatTiedot(new KorkeakouluKuvailevatTiedotViewModel());
+        }
+
+        return korkeakouluKuvailevatTiedot;
+    }
+
+    /**
+     * @param korkeakouluKuvailevatTiedot the korkeakouluKuvailevatTiedot to set
+     */
+    public void setKorkeakouluKuvailevatTiedot(KorkeakouluKuvailevatTiedotViewModel korkeakouluKuvailevatTiedot) {
+        this.korkeakouluKuvailevatTiedot = korkeakouluKuvailevatTiedot;
+    }
+
+    /**
+     * @param korkeakouluPerustiedot the korkeakouluPerustiedot to set
+     */
+    public void setKorkeakouluPerustiedot(KorkeakouluPerustiedotViewModel korkeakouluPerustiedot) {
+        this.korkeakouluPerustiedot = korkeakouluPerustiedot;
     }
 }

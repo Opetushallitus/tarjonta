@@ -210,6 +210,8 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     private EditKoulutusLisatiedotToinenAsteView lisatiedotView;
     @Autowired(required = true)
     private TarjontaLukioPresenter lukioPresenter;
+    @Autowired(required = true)
+    private TarjontaKorkeakouluPresenter korkeakouluPresenter;
     public static final String VALINTAKOE_TAB_SELECT = "valintakokeet";
     public static final String LIITTEET_TAB_SELECT = "liitteet";
 
@@ -1606,13 +1608,13 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      * @param hakukohde
      */
     public void showKoulutuksetForHakukohde(HakukohdeTulos hakukohde) {
-       
+
         HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
         //kysely.getHakukohdeOids().add(hakukohde);
         kysely.getHakukohdeOids().add(hakukohde.getHakukohde().getOid());
-        
-        HaeKoulutuksetVastausTyyppi vastaus =  this.getTarjontaPublicService().haeKoulutukset(kysely);
-        
+
+        HaeKoulutuksetVastausTyyppi vastaus = this.getTarjontaPublicService().haeKoulutukset(kysely);
+
         this._hakukohdeListView.showKoulutuksetForHakukohde(vastaus.getKoulutusTulos(), hakukohde);//appendKoulutuksetToList(hakukohde);
     }
 
@@ -2288,8 +2290,22 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         HaeHakukohteetKyselyTyyppi kysely = new HaeHakukohteetKyselyTyyppi();
         kysely.getKoulutusOids().add(koulutus.getKoulutus().getKomotoOid());
         kysely.setKoulutuksenAlkamisvuosi(-1);
-        
-        HaeHakukohteetVastausTyyppi vastaus =  this.getTarjontaPublicService().haeHakukohteet(kysely);
+
+        HaeHakukohteetVastausTyyppi vastaus = this.getTarjontaPublicService().haeHakukohteet(kysely);
         this.getRootView().getListKoulutusView().showHakukohteetForKoulutus(vastaus.getHakukohdeTulos(), koulutus);
+    }
+
+    /**
+     * @return the korkeakouluPresenter
+     */
+    public TarjontaKorkeakouluPresenter getKorkeakouluPresenter() {
+        return korkeakouluPresenter;
+    }
+
+    /**
+     * @param korkeakouluPresenter the korkeakouluPresenter to set
+     */
+    public void setKorkeakouluPresenter(TarjontaKorkeakouluPresenter korkeakouluPresenter) {
+        this.korkeakouluPresenter = korkeakouluPresenter;
     }
 }

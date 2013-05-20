@@ -55,7 +55,6 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
     protected KoodiModel opintoala;
     protected KoodiModel pohjakoulutusvaatimus;
     protected KoodiModel koulutuslaji;
-   
     /*
      * From KOMO, but not koodi URIs (static labels)
      */
@@ -72,6 +71,12 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
      * Other info
      */
     public String koulutuskoodi; //6-numero koodi arvo
+    
+    /*
+     * Updated by
+     */
+    private Date viimeisinPaivitysPvm;
+    private String viimeisinPaivittajaOid;
 
     /**
      * @return the oid
@@ -318,5 +323,21 @@ public class KoulutusRelaatioModel extends BaseUIViewModel {
      */
     public void setKoulutuskoodi(String koulutuskoodi) {
         this.koulutuskoodi = koulutuskoodi;
+    }
+
+    public Date getViimeisinPaivitysPvm() {
+        return viimeisinPaivitysPvm;
+    }
+
+    public void setViimeisinPaivitysPvm(Date viimeisinPaivitysPvm) {
+        this.viimeisinPaivitysPvm = viimeisinPaivitysPvm;
+    }
+
+    public String getViimeisinPaivittajaOid() {
+        return viimeisinPaivittajaOid;
+    }
+
+    public void setViimeisinPaivittajaOid(String viimeisinPaivittajaOid) {
+        this.viimeisinPaivittajaOid = viimeisinPaivittajaOid;
     }
 }

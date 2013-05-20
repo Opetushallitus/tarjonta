@@ -64,6 +64,10 @@
     <bean id="tarjontaLukioPresenter" class="fi.vm.sade.tarjonta.ui.presenter.TarjontaLukioPresenter">
         <property name="presenter" ref="tarjontaPresenter" />
     </bean>
+    
+    <bean id="tarjontaKorkeakouluPresenter" class="fi.vm.sade.tarjonta.ui.presenter.TarjontaKorkeakouluPresenter">
+        <property name="presenter" ref="tarjontaPresenter" />
+    </bean>
 
     <bean id="tarjontaPresenter" class="fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter" scope="session">
         <aop:scoped-proxy/>
