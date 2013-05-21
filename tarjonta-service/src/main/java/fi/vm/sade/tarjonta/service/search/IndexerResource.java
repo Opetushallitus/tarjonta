@@ -238,7 +238,11 @@ public class IndexerResource {
                 Long hakukohdeId = hakukohdeIdt.get(j);
                 logger.info(j + ". Fetching hakukohde:" + hakukohdeId);
                 HakukohdeIndexEntity hakukohde = indexerDao.findHakukohdeById(hakukohdeId);
-                docs.addAll(hakukohdeConverter.apply(hakukohde));
+                if(hakukohde!=null) {
+                    docs.addAll(hakukohdeConverter.apply(hakukohde));
+                } else {
+                    logger.info("Could not find hakukohde with id:" + hakukohdeId); 
+                }
             }
            index += batch_size;
            logger.info("indexing:" + docs.size() + " docs");
