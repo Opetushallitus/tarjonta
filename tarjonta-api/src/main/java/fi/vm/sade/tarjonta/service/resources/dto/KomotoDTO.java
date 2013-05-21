@@ -64,6 +64,8 @@ public class KomotoDTO implements Serializable {
     private String _ulkoinenTunniste;
     private String _koulutusAsteUri;
 
+    private String _parentKomotoOid;
+
     public Date getKoulutuksenAlkamisDate() {
         return _koulutuksenAlkamisDate;
     }
@@ -336,4 +338,20 @@ public class KomotoDTO implements Serializable {
     public void setOid(String _oid) {
         this._oid = _oid;
     }
+
+    /**
+     * This is actually pretty sick...
+     *
+     * this komoto --> parent komo --> parent parent komo --> parent komoto with same pohjakoulutus and tarjoaja... at the moment
+     *
+     * @return
+     */
+    public String getParentKomotoOid() {
+        return _parentKomotoOid;
+    }
+
+    public void setParentKomotoOid(String _parentKomotoOid) {
+        this._parentKomotoOid = _parentKomotoOid;
+    }
+
 }

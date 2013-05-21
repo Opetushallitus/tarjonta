@@ -2,7 +2,6 @@ package fi.vm.sade.tarjonta.service.impl.resources;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.resources.HakuResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
@@ -19,7 +18,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * http://localhost:8181/tarjonta-service/rest/haku/hello
@@ -58,6 +56,11 @@ public class HakuResourceImpl implements HakuResource {
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
+        if (count <= 0) {
+            count = 100;
+            LOG.info("  autolimit search to {} entries!", count);
+        }
+
         List<String> result = new ArrayList<String>();
         result.addAll(hakuDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
         LOG.info("  result={}", result);
@@ -81,6 +84,11 @@ public class HakuResourceImpl implements HakuResource {
 
         List<String> result = new ArrayList<String>();
 
+        if (count <= 0) {
+            count = 100;
+            LOG.info("  autolimit search to {} entries!", count);
+        }
+
         result = hakukohdeDAO.findByHakuOid(oid, searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince);
 
         LOG.info("  result={}", result);
@@ -93,6 +101,11 @@ public class HakuResourceImpl implements HakuResource {
         LOG.info("/haku/{}/hakukohdeWithName -- getByOIDHakukohdeExtra()", oid);
 
         List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+
+        if (count <= 0) {
+            count = 100;
+            LOG.info("  autolimit search to {} entries!", count);
+        }
 
         // Get list of oids
         List<String> hakukohdeOids = getByOIDHakukohde(oid, searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince);
