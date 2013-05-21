@@ -45,6 +45,11 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
+        if (count <= 0) {
+            count = 100;
+            LOG.info("  autolimit search to {} entries!", count);
+        }
+
         List<String> result = new ArrayList<String>();
         result.addAll(hakukohdeDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
         LOG.info("  result={}", result);

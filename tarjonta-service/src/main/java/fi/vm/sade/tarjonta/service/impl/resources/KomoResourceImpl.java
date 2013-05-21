@@ -18,16 +18,12 @@ package fi.vm.sade.tarjonta.service.impl.resources;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.service.resources.KomoResource;
 import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class KomoResourceImpl implements KomoResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(KomoResourceImpl.class);
+
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
@@ -76,6 +73,11 @@ public class KomoResourceImpl implements KomoResource {
         // TarjontaTila == null (== all states ok)
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
+        if (count <= 0) {
+            count = 100;
+            LOG.info("  autolimit search to {} entries!", count);
+        }
+
         List<String> result = new ArrayList<String>();
         result.addAll(koulutusmoduuliDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
         LOG.info("  result={}", result);
@@ -87,16 +89,12 @@ public class KomoResourceImpl implements KomoResource {
     public List<String> getKomotosByKomoOID(String oid, int count, int startIndex) {
         LOG.info("/komo/{}/komoto -- (si={}, c={})", new Object[] {oid, count, startIndex});
 
-        List<String> result = koulutusmoduuliToteutusDAO.findOidsByKomoOid(oid, count, startIndex);
+        if (count <= 0) {
+            count = 100;
+            LOG.info("  autolimit search to {} entries!", count);
+        }
 
-//        Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
-//        if (komo != null) {
-//            Set<KoulutusmoduuliToteutus> komos = komo.getKoulutusmoduuliToteutusList();
-//
-//            for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : komos) {
-//                result.add(koulutusmoduuliToteutus.getOid());
-//            }
-//        }
+        List<String> result = koulutusmoduuliToteutusDAO.findOidsByKomoOid(oid, count, startIndex);
 
         LOG.info("  result={}", result);
         return result;

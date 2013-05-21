@@ -15,10 +15,16 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Conversion services for REST service.
@@ -28,6 +34,12 @@ import org.slf4j.LoggerFactory;
 public class KoulutusmoduuliToteutusToKomotoConverter extends AbstractFromDomainConverter<KoulutusmoduuliToteutus, KomotoDTO>{
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusmoduuliToKomoConverter.class);
+
+    @Autowired
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
+    @Autowired
+    private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
     @Override
     public KomotoDTO convert(KoulutusmoduuliToteutus s) {
@@ -80,6 +92,39 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends AbstractFromDomain
         // Relations
         //
         t.setKomoOid(s.getKoulutusmoduuli() != null ? s.getKoulutusmoduuli().getOid() : null);
+
+        //
+        // Get parent komo -> parent parent komo --> parent komoto with same tarjoaja and pohjakoulutusvaatimus
+        //
+        {
+            t.setParentKomotoOid(null);
+
+            // 1. Get "parent" komo
+            Koulutusmoduuli parentKomo = s.getKoulutusmoduuli();
+            if (parentKomo != null) {
+                LOG.debug("  1. parent komo = {}", parentKomo.getOid());
+
+                // 2. get "parent" parent komo
+                Koulutusmoduuli parentParentKomo = koulutusmoduuliDAO.findParentKomo(parentKomo);
+                if (parentParentKomo != null) {
+                    LOG.debug("  2. parent parent komo = {}", parentParentKomo.getOid());
+
+                    // Get komotos with same pohjakoulutus and tarjoaja
+                    List<KoulutusmoduuliToteutus> parentKomotos =
+                            koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(parentParentKomo, s.getTarjoaja(), s.getPohjakoulutusvaatimus());
+                    LOG.debug("  3. parent komotos = {}", parentKomotos);
+
+                    if (parentKomotos == null || parentKomotos.isEmpty()) {
+                        // NO PARENT KOMOTO
+                    } else {
+                        KoulutusmoduuliToteutus parentKomoto = parentKomotos.get(0);
+                        t.setParentKomotoOid(parentKomoto.getOid());
+                    }
+                }
+
+                LOG.debug("  4. ---> parent komoto = {}", t.getParentKomotoOid());
+            }
+        }
 
         return t;
     }

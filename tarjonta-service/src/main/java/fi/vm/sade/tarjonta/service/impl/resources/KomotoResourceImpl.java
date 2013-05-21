@@ -76,6 +76,11 @@ public class KomotoResourceImpl implements KomotoResource {
         // TODO hard coded, add param tarjonta tila + get the state!
         TarjontaTila tarjontaTila = TarjontaTila.JULKAISTU;
 
+        if (count <= 0) {
+            count = 100;
+            LOG.info("  autolimit search to {} entries!", count);
+        }
+
         List<String> result = new ArrayList<String>();
         result.addAll(koulutusmoduuliToteutusDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
         LOG.info("  result={}", result);
