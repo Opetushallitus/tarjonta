@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -218,13 +219,43 @@ public class ListHakukohdeViewImpl extends VerticalLayout implements ListHakukoh
                 hc.getContainerProperty(curHakukohde, COLUMN_PVM).setValue(getAjankohta(curHakukohde));
                 hc.getContainerProperty(curHakukohde, COLUMN_HAKUTAPA).setValue(getHakutapa(curHakukohde));
                 hc.getContainerProperty(curHakukohde, COLUMN_ALOITUSPAIKAT).setValue(curHakukohde.getHakukohde().getAloituspaikat());
-                hc.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(_tarjontaUIHelper.getKoodiNimi(curHakukohde.getHakukohde().getHakukohteenKoulutuslaji()));
+                hc.getContainerProperty(curHakukohde, COLUMN_KOULUTUSLAJI).setValue(getKoulutuslaji(curHakukohde.getHakukohde().getHakukohteenKoulutuslaji()));
                 hc.getContainerProperty(curHakukohde, COLUMN_TILA).setValue(getTilaStr(curHakukohde));
 
                 hc.setChildrenAllowed(curHakukohde, false);
             }
         }
         return hc;
+    }
+
+    private String getKoulutuslaji(MonikielinenTekstiTyyppi monikielinenTekstiTyyppi) {
+        String country = I18N.getLocale().getCountry();
+        String retval = "";
+        if (country.trim().equalsIgnoreCase("fi")) {
+
+            for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
+                if (teksti.getKieliKoodi().equalsIgnoreCase("fi")) {
+                    retval = teksti.getValue();
+                }
+            }
+            return  retval;
+        } else if (country.trim().equalsIgnoreCase("sv")) {
+            for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
+                if (teksti.getKieliKoodi().equalsIgnoreCase("sv")) {
+                    retval = teksti.getValue();
+                }
+            }
+            return retval;
+        }
+        else if (country.trim().equalsIgnoreCase("en")) {
+            for (MonikielinenTekstiTyyppi.Teksti teksti : monikielinenTekstiTyyppi.getTeksti()) {
+                if (teksti.getKieliKoodi().equalsIgnoreCase("en")) {
+                    retval = teksti.getValue();
+                }
+            }
+            return retval;
+        }
+        return retval;
     }
 
     private Object getHakutapa(HakukohdeTulos curHakukohde) {
