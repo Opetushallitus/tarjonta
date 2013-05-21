@@ -66,6 +66,9 @@ public class SolrFields {
         protected static final String ORG_PATH = "orgpath_ss";                                  //needed search (org restriction)
         protected static final String VUOSI_KOODI = "vuosikoodi_s";                             //this is used in search
         protected static final String KAUSI_KOODI= "kausikoodi_s";
+        protected static final String KOULUTUSLAJI_FI = "koulutuslajifi_s";    
+        protected static final String KOULUTUSLAJI_SV = "koulutuslajisv_s";
+        protected static final String KOULUTUSLAJI_EN = "koulutuslajien_s";    
         protected static final String KAUSI_FI = "kausifi_s";    
         protected static final String KAUSI_SV = "kausisv_s";
         protected static final String KAUSI_EN = "kausien_s";    

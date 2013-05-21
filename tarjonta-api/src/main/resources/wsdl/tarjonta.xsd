@@ -680,7 +680,7 @@
             <xs:element name="Tarjoaja" type="tns:TarjoajaTyyppi"></xs:element>
             <xs:element name="hakuAlkamisPvm" type="xs:dateTime"></xs:element>
             <xs:element name="hakuPaattymisPvm" type="xs:dateTime"></xs:element>
-            <xs:element name="hakukohteenKoulutuslaji" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
+            <xs:element name="hakukohteenKoulutuslaji" type="tns:MonikielinenTekstiTyyppi" minOccurs="0" maxOccurs="1"></xs:element>
         </xs:sequence>
     </xs:complexType>
     

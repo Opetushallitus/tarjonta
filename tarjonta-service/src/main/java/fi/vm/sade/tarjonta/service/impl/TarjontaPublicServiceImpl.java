@@ -341,19 +341,19 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     @Override
     public HaeHakukohteetVastausTyyppi haeHakukohteet(HaeHakukohteetKyselyTyyppi kysely) {
         HaeHakukohteetVastausTyyppi vastaus = this.searchService.haeHakukohteet(kysely);
-        if (vastaus != null && vastaus.getHakukohdeTulos() != null) {
-            for (HakukohdeTulos tulos : vastaus.getHakukohdeTulos()) {
-                HaeKoulutuksetKyselyTyyppi koulutusKysely = new HaeKoulutuksetKyselyTyyppi();
-                koulutusKysely.getHakukohdeOids().add(tulos.getHakukohde().getOid());
-                HaeKoulutuksetVastausTyyppi koulutusVastaus = searchService.haeKoulutukset(koulutusKysely);
-                log.info("GOT KOULUTUS : {0}", koulutusVastaus.getKoulutusTulos());
-                if (koulutusVastaus != null && koulutusVastaus.getKoulutusTulos() != null && koulutusVastaus.getKoulutusTulos().size() > 0) {
-                    log.info("GETTING KOULUTUSLAJI : {0}", koulutusVastaus.getKoulutusTulos().get(0).getKoulutus().getKoulutuslaji());
-                    //Get the first koulutuslaji because hakukohde should not have koulutukses with other koulutuslajis attached to it.
-                    tulos.getHakukohde().setHakukohteenKoulutuslaji(koulutusVastaus.getKoulutusTulos().get(0).getKoulutus().getKoulutuslaji());
-                }
-            }
-        }
+//        if (vastaus != null && vastaus.getHakukohdeTulos() != null) {
+//            for (HakukohdeTulos tulos : vastaus.getHakukohdeTulos()) {
+//                HaeKoulutuksetKyselyTyyppi koulutusKysely = new HaeKoulutuksetKyselyTyyppi();
+//                koulutusKysely.getHakukohdeOids().add(tulos.getHakukohde().getOid());
+//                HaeKoulutuksetVastausTyyppi koulutusVastaus = searchService.haeKoulutukset(koulutusKysely);
+//                log.info("GOT KOULUTUS : {0}", koulutusVastaus.getKoulutusTulos());
+//                if (koulutusVastaus != null && koulutusVastaus.getKoulutusTulos() != null && koulutusVastaus.getKoulutusTulos().size() > 0) {
+//                    log.info("GETTING KOULUTUSLAJI : {0}", koulutusVastaus.getKoulutusTulos().get(0).getKoulutus().getKoulutuslaji());
+//                    //Get the first koulutuslaji because hakukohde should not have koulutukses with other koulutuslajis attached to it.
+//                    tulos.getHakukohde().setHakukohteenKoulutuslaji(koulutusVastaus.getKoulutusTulos().get(0).getKoulutus().getKoulutuslaji());
+//                }
+//            }
+//        }
         return vastaus;
 
         //return new HaeHakukohteetVastausTyyppi();

@@ -28,6 +28,7 @@ import java.util.TreeMap;
 
 import javax.jws.WebParam;
 
+import org.apache.solr.client.solrj.SolrServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -498,7 +500,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Transactional(rollbackFor=Throwable.class, readOnly=false)
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
-        solrIndexer.indexKoulutus(getIndexedKoulutukset(toteutus));
+        solrIndexer.indexKoulutus(Lists.newArrayList(toteutus));
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
         LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
@@ -510,29 +512,31 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
         KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
-        solrIndexer.indexKoulutus(getIndexedKoulutukset(toteutus));
+        try {
+            solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
+        } catch (Throwable t) {
+            
+        }
+        Set<Hakukohde> hakukohteet = toteutus.getHakukohdes();
+        Set<Long> hakukohteenidt = Sets.newHashSet();
+        for(Hakukohde hk: hakukohteet) {
+            hakukohteenidt.add(hk.getId());
+        }
+        
+        try {
+            solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohteenidt));
+        } catch (SolrServerException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
         PaivitaKoulutusVastausTyyppi vastaus = new PaivitaKoulutusVastausTyyppi();
         return vastaus;
     }
 
-    private List<KoulutusmoduuliToteutus> getIndexedKoulutukset(
-            KoulutusmoduuliToteutus toteutus) {
-        List<KoulutusmoduuliToteutus> result = new ArrayList<KoulutusmoduuliToteutus>();
-        result.add(toteutus);
-        Koulutusmoduuli komo = toteutus.getKoulutusmoduuli();
-        Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
-        if (parentKomo == null) {
-            return result;
-        }
-        for (Koulutusmoduuli curChildKomo : parentKomo.getAlamoduuliList()) {
-            List<KoulutusmoduuliToteutus> siblings = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(curChildKomo, toteutus.getTarjoaja(), toteutus.getPohjakoulutusvaatimus());
-            if (siblings != null) {
-                result.addAll(siblings);
-            }
-        }
-        
-        return result;
-    }
 
     @Override
     @Transactional(rollbackFor=Throwable.class, readOnly=false)
