@@ -51,35 +51,39 @@ public class IndexerDaoImpl implements IndexerDAO {
     @Override
     public List<HakukohdeIndexEntity> findAllHakukohteet() {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
-        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QHaku haku = QHaku.haku;
         return q(hakukohde)
-                .join(hakukohde.haku, haku).join(hakukohde.koulutusmoduuliToteutuses, komoto)
+                .join(hakukohde.haku, haku)
                 .list(
-                        (new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi,
+                        new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi,
                                 haku.hakukausiUri, haku.hakukausiVuosi, hakukohde.tila, haku.hakutapaUri,
-                                hakukohde.aloituspaikatLkm, haku.id, komoto.koulutusaste)));
+                                hakukohde.aloituspaikatLkm, haku.id));
     }
 
     @Override
     public List<KoulutusIndexEntity> findKoulutusmoduuliToteutusesByHakukohdeId(Long hakukohdeId) { 
         final QHakukohde hakukohde = QHakukohde.hakukohde;
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        return q(hakukohde).join(hakukohde.koulutusmoduuliToteutuses, komoto).where(hakukohde.id.eq(hakukohdeId)).list(new QKoulutusIndexEntity(komoto.oid, komoto.tarjoaja));
+        final QKoodistoUri koodistoUri = QKoodistoUri.koodistoUri;
+
+        return q(hakukohde).join(hakukohde.koulutusmoduuliToteutuses, komoto).join(komoto.koulutuslajis, koodistoUri).where(hakukohde.id.eq(hakukohdeId)).list(new QKoulutusIndexEntity(komoto.oid, komoto.tarjoaja, koodistoUri.koodiUri));
     }
 
     @Override
     public HakukohdeIndexEntity findHakukohdeById(Long id) {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        final QKoodistoUri koodistoUri = QKoodistoUri.koodistoUri;
+        
+        
         final QHaku haku = QHaku.haku;
         return q(hakukohde)
-                .join(hakukohde.haku, haku).leftJoin(hakukohde.koulutusmoduuliToteutuses, komoto)
+                .join(hakukohde.haku, haku)
                 .where(hakukohde.id.eq(id))
                 .singleResult(
-                        (new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi,
+                        new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi,
                                 haku.hakukausiUri, haku.hakukausiVuosi, hakukohde.tila, haku.hakutapaUri,
-                                hakukohde.aloituspaikatLkm, haku.id, komoto.koulutusaste)));
+                                hakukohde.aloituspaikatLkm, haku.id)); 
     }
 
     @Override

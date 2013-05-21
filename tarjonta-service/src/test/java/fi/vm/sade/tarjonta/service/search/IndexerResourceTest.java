@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.solr.client.solrj.SolrServer;
@@ -67,13 +68,13 @@ public class IndexerResourceTest {
 
     private List<KoulutusIndexEntity> getHakukohdeKoulutukset(long id) {
         List<KoulutusIndexEntity> hakukohteenKoulutukset = Lists.newArrayList();
-        KoulutusIndexEntity koulutus = new KoulutusIndexEntity("koulutus-oid", "o-oid-12345");
+        KoulutusIndexEntity koulutus = new KoulutusIndexEntity("koulutus-oid", "o-oid-12345", "koulutusaste");
         hakukohteenKoulutukset.add(koulutus);
         return hakukohteenKoulutukset;
     }
 
     private HakukohdeIndexEntity getHakukohdeIndexEntity(long id) {
-        HakukohdeIndexEntity hie = new HakukohdeIndexEntity(id, "oid", "hakukohdenimi", "hakukausiUri", Integer.valueOf(2013), TarjontaTila.JULKAISTU,"hakutapaUri", Integer.valueOf(5), 2l, "koulutuslaji");
+        HakukohdeIndexEntity hie = new HakukohdeIndexEntity(id, "oid", "hakukohdenimi", "hakukausiUri", Integer.valueOf(2013), TarjontaTila.JULKAISTU,"hakutapaUri", Integer.valueOf(5), 2l);
         return hie;
     }
 

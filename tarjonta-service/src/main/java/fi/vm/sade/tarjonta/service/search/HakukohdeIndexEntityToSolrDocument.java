@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
+import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.index.HakuAikaIndexEntity;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
@@ -79,9 +81,11 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         addHakuajat(hakukohdeDoc, getHakuajat(hakukohde.getHakuId()));
         addTekstihaku(hakukohdeDoc);
         List<KoulutusIndexEntity> koulutuses = indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(hakukohde.getId());
+
         addKomotoOids(hakukohdeDoc, koulutuses);
+        addKoulutuslajit(hakukohdeDoc, koulutuses);
+
         docs.add(hakukohdeDoc);
-        addKoulutuslajit(hakukohdeDoc, hakukohde.getKoulutuslaji());
 
         if(koulutuses.size()>0) {
             final String tarjoaja = koulutuses.get(0).getTarjoaja();
@@ -181,12 +185,15 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         }
     }
 
-    private void addKoulutuslajit(SolrInputDocument doc, String koulutuslaji) {
-        if (koulutuslaji == null) {
+    private void addKoulutuslajit(SolrInputDocument doc, List<KoulutusIndexEntity> koulutuses) {
+        if (koulutuses == null || koulutuses.size()==0) {
             return;
         }
+        
+        KoulutusIndexEntity koulutus = koulutuses.get(0);
+        
 
-        KoodiType koodi = IndexingUtils.getKoodiByUriWithVersion(koulutuslaji, koodiService);
+        KoodiType koodi = IndexingUtils.getKoodiByUriWithVersion(koulutus.getKoulutuslaji(),  koodiService);
 
         if (koodi != null) {
             KoodiMetadataType metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
