@@ -81,7 +81,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         List<KoulutusIndexEntity> koulutuses = indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(hakukohde.getId());
         addKomotoOids(hakukohdeDoc, koulutuses);
         docs.add(hakukohdeDoc);
-        addKoulutuslajit(hakukohdeDoc, hakukohde.getHakutapaUri());
+        addKoulutuslajit(hakukohdeDoc, hakukohde.getKoulutuslaji());
 
         if(koulutuses.size()>0) {
             final String tarjoaja = koulutuses.get(0).getTarjoaja();
