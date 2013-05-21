@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.service.resources;
 import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import java.util.Date;
 import java.util.List;
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -41,7 +40,6 @@ import javax.ws.rs.core.MediaType;
  * @author mlyly
  */
 @Path("/komo")
-@CrossOriginResourceSharing(allowAllOrigins = true)
 public interface KomoResource {
 
     /**

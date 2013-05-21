@@ -3,7 +3,6 @@ package fi.vm.sade.tarjonta.service.resources;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import java.util.Date;
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -28,7 +27,6 @@ import java.util.Map;
  * @author mlyly
  */
 @Path("/hakukohde")
-@CrossOriginResourceSharing(allowAllOrigins = true)
 public interface HakukohdeResource {
 
     /**

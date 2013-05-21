@@ -9,6 +9,8 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import java.util.ArrayList;
+
+import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import java.util.List;
  * @see HakukohdeResource
  */
 @Transactional(readOnly = true)
+@CrossOriginResourceSharing(allowAllOrigins = true)
 public class HakukohdeResourceImpl implements HakukohdeResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResourceImpl.class);

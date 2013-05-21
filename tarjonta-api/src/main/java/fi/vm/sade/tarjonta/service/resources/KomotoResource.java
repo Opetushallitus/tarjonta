@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.service.resources;
 
 import java.util.List;
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 
 import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
@@ -49,7 +48,6 @@ import javax.ws.rs.core.MediaType;
  * @author mlyly
  */
 @Path("/komoto")
-@CrossOriginResourceSharing(allowAllOrigins = true)
 public interface KomotoResource {
 
     /**

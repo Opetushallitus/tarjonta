@@ -24,6 +24,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @see KomoResource for fuller docs.
  */
 @Transactional(readOnly = true)
+@CrossOriginResourceSharing(allowAllOrigins = true)
 public class KomoResourceImpl implements KomoResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(KomoResourceImpl.class);
