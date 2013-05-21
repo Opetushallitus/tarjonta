@@ -73,7 +73,7 @@ public class IndexerResourceTest {
     }
 
     private HakukohdeIndexEntity getHakukohdeIndexEntity(long id) {
-        HakukohdeIndexEntity hie = new HakukohdeIndexEntity(id, "oid", "hakukohdenimi", "hakukausiUri", Integer.valueOf(2013), TarjontaTila.JULKAISTU,"hakutapaUri", Integer.valueOf(5), 2l);
+        HakukohdeIndexEntity hie = new HakukohdeIndexEntity(id, "oid", "hakukohdenimi", "hakukausiUri", Integer.valueOf(2013), TarjontaTila.JULKAISTU,"hakutapaUri", Integer.valueOf(5), 2l, "koulutuslaji");
         return hie;
     }
 
@@ -97,7 +97,7 @@ public class IndexerResourceTest {
         indexer.indexHakukohde(hakukohteet);
         verify(hakukohteetServer, times(2)).commit(true, true, false);
         verify(hakukohteetServer, times(1)).add(any(Collection.class));
-        verify(koodiService, times(3)).searchKoodis(any(SearchKoodisCriteriaType.class));
+        verify(koodiService, times(4)).searchKoodis(any(SearchKoodisCriteriaType.class));
         verify(organisaatioService, times(1)).findByOid("o-oid-12345");
     }
 

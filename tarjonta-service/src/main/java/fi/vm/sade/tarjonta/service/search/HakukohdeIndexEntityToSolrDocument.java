@@ -15,31 +15,7 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ALOITUSPAIKAT;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUKOHTEEN_NIMI_EN;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUKOHTEEN_NIMI_FI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUKOHTEEN_NIMI_SV;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUKOHTEEN_NIMI_URI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTAPA_EN;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTAPA_FI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTAPA_SV;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAKUTAPA_URI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAUN_ALKAMISPVM;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAUN_PAATTYMISPVM;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_EN;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_FI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_KOODI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_SV;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUS_OIDS;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.OID;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ORG_NAME_EN;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ORG_NAME_FI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ORG_NAME_SV;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ORG_OID;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ORG_PATH;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.TEKSTIHAKU;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.TILA;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.VUOSI_KOODI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -105,6 +81,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         List<KoulutusIndexEntity> koulutuses = indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(hakukohde.getId());
         addKomotoOids(hakukohdeDoc, koulutuses);
         docs.add(hakukohdeDoc);
+        addKoulutuslajit(hakukohdeDoc, hakukohde.getHakutapaUri());
 
         if(koulutuses.size()>0) {
             final String tarjoaja = koulutuses.get(0).getTarjoaja();
@@ -201,6 +178,23 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
             add(doc, KAUSI_EN, metadata.getNimi());
             add(doc, KAUSI_KOODI,
                     koodi.getKoodiUri() + IndexingUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
+        }
+    }
+
+    private void addKoulutuslajit(SolrInputDocument doc, String koulutuslaji) {
+        if (koulutuslaji == null) {
+            return;
+        }
+
+        KoodiType koodi = IndexingUtils.getKoodiByUriWithVersion(koulutuslaji, koodiService);
+
+        if (koodi != null) {
+            KoodiMetadataType metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+            add(doc, KOULUTUSLAJI_FI, metadata.getNimi());
+            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
+            add(doc, KOULUTUSLAJI_SV, metadata.getNimi());
+            metadata = IndexingUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
+            add(doc, KOULUTUSLAJI_EN, metadata.getNimi());
         }
     }
 

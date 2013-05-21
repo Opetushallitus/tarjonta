@@ -43,6 +43,7 @@ public class SolrDocumentToHakukohdeConverter {
         hakukohde.setKoulutuksenAlkamiskausiUri("" + hakukohdeDoc.getFieldValue(KAUSI_FI));
         hakukohde.setKoulutuksenAlkamisvuosi("" + hakukohdeDoc.getFieldValue(VUOSI_KOODI));
         hakukohde.setNimi(createHakukohdeNimi(hakukohdeDoc));
+        hakukohde.setHakukohteenKoulutuslaji(createHakukohteenKoulutuslaji(hakukohdeDoc));
         hakukohde.setOid("" + hakukohdeDoc.getFieldValue(OID));
         hakukohde.setTila(IndexingUtils.createTila(hakukohdeDoc));
         hakukohde.setTarjoaja(IndexingUtils.createTarjoaja(hakukohdeDoc, solrOrgList));
@@ -53,6 +54,33 @@ public class SolrDocumentToHakukohdeConverter {
         return vastaus;
     }
     
+    private MonikielinenTekstiTyyppi createHakukohteenKoulutuslaji(
+            SolrDocument hakukohdeDoc) {
+        MonikielinenTekstiTyyppi nimi = new MonikielinenTekstiTyyppi();
+        if (hakukohdeDoc.getFieldValue(KOULUTUSLAJI_FI) != null) {
+            Teksti nimiFi = new Teksti();
+            nimiFi.setKieliKoodi("fi");
+            nimiFi.setValue(hakukohdeDoc.getFieldValue(KOULUTUSLAJI_FI)
+                    .toString());
+            nimi.getTeksti().add(nimiFi);
+        }
+        if (hakukohdeDoc.getFieldValue(KOULUTUSLAJI_SV) != null) {
+            Teksti nimiSv = new Teksti();
+            nimiSv.setKieliKoodi("sv");
+            nimiSv.setValue(hakukohdeDoc.getFieldValue(KOULUTUSLAJI_SV)
+                    .toString());
+            nimi.getTeksti().add(nimiSv);
+        }
+        if (hakukohdeDoc.getFieldValue(KOULUTUSLAJI_EN) != null) {
+            Teksti nimiEn = new Teksti();
+            nimiEn.setKieliKoodi("en");
+            nimiEn.setValue(hakukohdeDoc.getFieldValue(KOULUTUSLAJI_EN)
+                    .toString());
+            nimi.getTeksti().add(nimiEn);
+        }
+        return nimi;
+    }
+
     private Date parseDate(SolrDocument hakukohdeDoc, String dateField) {
         String pvmStr = "" + hakukohdeDoc.getFieldValue(dateField);
         if (!pvmStr.isEmpty()) {

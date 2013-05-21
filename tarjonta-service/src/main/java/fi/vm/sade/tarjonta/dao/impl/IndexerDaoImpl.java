@@ -51,13 +51,14 @@ public class IndexerDaoImpl implements IndexerDAO {
     @Override
     public List<HakukohdeIndexEntity> findAllHakukohteet() {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QHaku haku = QHaku.haku;
         return q(hakukohde)
-                .join(hakukohde.haku, haku)
+                .join(hakukohde.haku, haku).join(hakukohde.koulutusmoduuliToteutuses, komoto)
                 .list(
                         (new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi,
                                 haku.hakukausiUri, haku.hakukausiVuosi, hakukohde.tila, haku.hakutapaUri,
-                                hakukohde.aloituspaikatLkm, haku.id)));
+                                hakukohde.aloituspaikatLkm, haku.id, komoto.koulutusaste)));
     }
 
     @Override
@@ -70,14 +71,15 @@ public class IndexerDaoImpl implements IndexerDAO {
     @Override
     public HakukohdeIndexEntity findHakukohdeById(Long id) {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QHaku haku = QHaku.haku;
         return q(hakukohde)
-                .join(hakukohde.haku, haku)
+                .join(hakukohde.haku, haku).join(hakukohde.koulutusmoduuliToteutuses, komoto)
                 .where(hakukohde.id.eq(id))
                 .singleResult(
                         (new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi,
                                 haku.hakukausiUri, haku.hakukausiVuosi, hakukohde.tila, haku.hakutapaUri,
-                                hakukohde.aloituspaikatLkm, haku.id)));
+                                hakukohde.aloituspaikatLkm, haku.id, komoto.koulutusaste)));
     }
 
     @Override
