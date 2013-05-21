@@ -74,7 +74,7 @@ public class IndexerDaoImpl implements IndexerDAO {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QHaku haku = QHaku.haku;
         return q(hakukohde)
-                .join(hakukohde.haku, haku).join(hakukohde.koulutusmoduuliToteutuses, komoto)
+                .join(hakukohde.haku, haku).leftJoin(hakukohde.koulutusmoduuliToteutuses, komoto)
                 .where(hakukohde.id.eq(id))
                 .singleResult(
                         (new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi,
