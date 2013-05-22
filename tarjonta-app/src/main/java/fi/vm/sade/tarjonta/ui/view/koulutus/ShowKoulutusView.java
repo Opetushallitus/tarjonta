@@ -161,8 +161,8 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     		}
     	}, StyleEnum.STYLE_BUTTON_PRIMARY);
 
-
-    	final Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
+      /* Removed because functionality is not yet implemented OVT-4450 */
+    /*	final Button kopioiUudeksi = addNavigationButton(T(CommonTranslationKeys.KOPIOI_UUDEKSI), new Button.ClickListener() {
     		private static final long serialVersionUID = 5019806363620874205L;
 
     		@Override
@@ -170,7 +170,7 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     			KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px","500px",KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS );
     			getWindow().addWindow(kopiointiDialog);
     		}
-    	}, StyleEnum.STYLE_BUTTON_PRIMARY);
+    	}, StyleEnum.STYLE_BUTTON_PRIMARY);*/
 
     	/*
     	final Button siirraOsaksiToista = addNavigationButton(T("siirraOsaksiToistaKoulutusta"), new Button.ClickListener() {
@@ -191,22 +191,22 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
                     ShowKoulutusView.this.getWindow().addWindow(dialog);
     		}
     	}, StyleEnum.STYLE_BUTTON_PRIMARY);
-
-    	/*final Button esikatsele = */addNavigationButton(T("esikatsele"), new Button.ClickListener() {
+           /* Removed because functionality is not yet implemented OVT-4450 */
+    	/*addNavigationButton(T("esikatsele"), new Button.ClickListener() {
     		private static final long serialVersionUID = 5019806363620874205L;
 
     		@Override
     		public void buttonClick(Button.ClickEvent event) {
     			getWindow().showNotification("Ei toteutettu");
     		}
-    	}, StyleEnum.STYLE_BUTTON_PRIMARY);
+    	}, StyleEnum.STYLE_BUTTON_PRIMARY);*/
 
     	//check permissions
     	final TarjontaPermissionServiceImpl permissions = presenter.getPermission(); 
     	poista.setVisible((presenter.getModel().getKoulutusPerustiedotModel().getTila().equals(TarjontaTila.VALMIS) 
     						|| presenter.getModel().getKoulutusPerustiedotModel().getTila().equals(TarjontaTila.LUONNOS)) 
     					    && permissions.userCanDeleteKoulutus(context));
-    	kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
+//    	kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
     	//siirraOsaksiToista.setVisible(permissions.userCanMoveKoulutus(context));
     	lisaaToteutus.setVisible(permissions.userCanAddKoulutusInstanceToKoulutus(context));
     }
