@@ -236,12 +236,13 @@ public final class EntityUtils {
 
     private static void copyTarjottuKieli(List<KoodistoKoodiTyyppi> koodit, KoulutusmoduuliToteutus toKoulutus, Kieliaine aine) {
         if (koodit != null && !koodit.isEmpty()) {
-            Kielivalikoima tarjottuKieli = new Kielivalikoima();
-            tarjottuKieli.setKey(aine.name());
+            Set<String> lcs = new HashSet<String>();
             for (KoodistoKoodiTyyppi curKoodi : koodit) {
-                tarjottuKieli.addKieli(curKoodi.getUri());
+            	lcs.add(curKoodi.getUri());
             }
-            toKoulutus.addTarjottuKieli(tarjottuKieli);
+            toKoulutus.setKieliValikoima(aine.name(), lcs);
+        } else {
+            toKoulutus.setKieliValikoima(aine.name(), null);
         }
     }
 
@@ -519,7 +520,7 @@ public final class EntityUtils {
         return map;
     }
 
-    public static List<KoodistoKoodiTyyppi> copyFields(Set<Kielivalikoima> tarjotutKielet, Kieliaine aine) {
+    public static List<KoodistoKoodiTyyppi> copyFields(Collection<Kielivalikoima> tarjotutKielet, Kieliaine aine) {
         List<KoodistoKoodiTyyppi> kielet = new ArrayList<KoodistoKoodiTyyppi>();
         for (Kielivalikoima curKielivalikoima : tarjotutKielet) {
             if (curKielivalikoima.getKey().equals(aine.name())) {

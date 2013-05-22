@@ -124,7 +124,7 @@ public class TestTarjontaSavu {
         }
         else
         {
-            doit.textClick(driver, "Ammatillinen Peruskoulutus");
+            doit.textClick(driver, "Ammatillinen peruskoulutus");
             doit.tauko(1);
             driver.findElement(By.xpath("(//div[@class = 'v-filterselect-button'])[8]")).click();
             doit.tauko(1);

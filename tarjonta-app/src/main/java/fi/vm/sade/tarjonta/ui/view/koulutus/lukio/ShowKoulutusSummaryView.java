@@ -282,7 +282,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
         	.addText("kieliB2", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliB2(), null))
         	.addText("kieliB3", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieliB3(), null))
         	.addText("kieletMuu", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getKieletMuu(), null))
-        	.addText("luokiodiplomit", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getDiplomit(), null));
+        	.addText("lukiodiplomit", _tarjontaUIHelper.getKoodiNimi(kuvailevatTiedot.getDiplomit(), null));
 
         vl.addComponent(grid);
 
