@@ -135,8 +135,8 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
 
     private Component buildLukioDiplomit() {
         VerticalLayout kielivalinnat = new VerticalLayout();
-        UiBuilder.label(kielivalinnat, T("luokiodiplomit.label"), LabelStyleEnum.H2);
-        UiBuilder.label(kielivalinnat, T("luokiodiplomit.help"), LabelStyleEnum.TEXT);
+        UiBuilder.label(kielivalinnat, T("lukiodiplomit.label"), LabelStyleEnum.H2);
+        UiBuilder.label(kielivalinnat, T("lukiodiplomit.help"), LabelStyleEnum.TEXT);
         buildTokenField("diplomit", kielivalinnat, KoodistoURIHelper.KOODISTO_LUKIODIPLOMIT_URI);
         return kielivalinnat;
     }
