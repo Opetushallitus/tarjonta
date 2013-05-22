@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.ui.helper.conversion;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
@@ -24,13 +25,14 @@ import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
-import static fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper.LUKIO_KOODI_POHJAKOULUTUSVAATIMUS_URI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -58,6 +60,13 @@ public class KoulutusKoodistoConverter {
 
     public KoulutusKoodistoConverter() {
         super();
+    }
+    
+    public List<KoulutuskoodiModel> listaaKoulutukses(final KoulutusKoodistoModel model, final Locale locale) {
+        HashSet<String> setOfUri = Sets.<String>newHashSet();
+        setOfUri.add(model.getKoodistoUriVersio());
+        return  listaaKoulutukses(setOfUri, locale);
+
     }
 
     public List<KoulutuskoodiModel> listaaKoulutukses(final Set<String> koodiUris, final Locale locale) {

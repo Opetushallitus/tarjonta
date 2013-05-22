@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -40,9 +39,9 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
     /*
      * Data for comboxes (komo + lukiolinja) 
      */
-    private List<KoulutusmoduuliKoosteTyyppi> komos;
-    private Set<KoulutuskoodiModel> koulutuskoodis;
-    private Set<LukiolinjaModel> lukiolinjas;
+    protected List<KoulutusmoduuliKoosteTyyppi> komos;
+    protected Set<KoulutuskoodiModel> koulutuskoodis;
+    protected Set<LukiolinjaModel> lukiolinjas;
     protected LukiolinjaModel lukiolinja;
     /*
      * Other user selected form input data
@@ -57,9 +56,6 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
      */
     protected String opsuLinkki;
     protected YhteyshenkiloModel yhteyshenkilo;
-
-    private Date viimeisinPaivitysPvm;
-    private String viimeisinPaivittajaOid;
 
     /*
      * cache maps
@@ -404,19 +400,4 @@ public class KoulutusLukioPerustiedotViewModel extends KoulutusRelaatioModel {
         this.lukiolinja = lukiolinja;
     }
 
-    public Date getViimeisinPaivitysPvm() {
-        return viimeisinPaivitysPvm;
-    }
-
-    public void setViimeisinPaivitysPvm(Date viimeisinPaivitysPvm) {
-        this.viimeisinPaivitysPvm = viimeisinPaivitysPvm;
-    }
-
-    public String getViimeisinPaivittajaOid() {
-        return viimeisinPaivittajaOid;
-    }
-
-    public void setViimeisinPaivittajaOid(String viimeisinPaivittajaOid) {
-        this.viimeisinPaivittajaOid = viimeisinPaivittajaOid;
-    }
 }

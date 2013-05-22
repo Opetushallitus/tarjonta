@@ -31,6 +31,7 @@ public class HakukohdeValintakoeDialog extends TarjontaWindow {
 
     private static final String WINDOW_HEIGHT = "750px";
     private static final String WINDOW_WIDTH = "1000px";
+    private static final long serialVersionUID = 1893982332664363368L;
     private TarjontaPresenter presenter;
     private UiBuilder uiBuilder;
     private HakukohdeValintakoeViewImpl view;

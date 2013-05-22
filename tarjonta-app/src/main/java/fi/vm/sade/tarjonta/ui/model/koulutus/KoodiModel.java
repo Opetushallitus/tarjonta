@@ -20,5 +20,6 @@ package fi.vm.sade.tarjonta.ui.model.koulutus;
  * @author Jani Wilén
  */
 public class KoodiModel extends KoulutusKoodistoModel {
+    private static final long serialVersionUID = 5206439971427023855L;
 
 }

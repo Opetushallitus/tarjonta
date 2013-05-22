@@ -886,9 +886,8 @@ public class TarjontaUIHelper {
 
         // Get relations and filter only wanted koodisto koodis
         List<KoodiType> resultKoodis = _koodiService.listKoodiByRelation(koodiUriAndVersioType, alaKoodi, suhdeTyyppi);
-         LOG.info("resultKoodis : {}", koodiUriAndVersioType);
         for (KoodiType koodiType : resultKoodis) {
-             LOG.info("koodistos : {} == {}", koodiType.getKoodisto().getKoodistoUri(), koodistoUri);
+             LOG.debug("koodistos : {} == {}", koodiType.getKoodisto().getKoodistoUri(), koodistoUri);
             
             if (koodistoUri == null || koodiType.getKoodisto().getKoodistoUri().equals(koodistoUri)) {
                 result.add(koodiType);

@@ -26,6 +26,7 @@ import fi.vm.sade.vaadin.ui.OphAbstractNavigationLayout;
  * @author Tuomas Katva
  */
 public abstract class AbstractVerticalNavigationLayout extends OphAbstractNavigationLayout<VerticalLayout> {
+    private static final long serialVersionUID = -8461326675615530618L;
 
     private transient I18NHelper _i18n;
 

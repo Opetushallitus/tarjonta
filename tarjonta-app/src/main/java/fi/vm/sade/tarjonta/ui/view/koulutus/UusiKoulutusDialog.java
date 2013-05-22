@@ -11,6 +11,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.ui.helper.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatioSelectDialog;
+import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ValitseKoulutusDialog;
 import fi.vm.sade.vaadin.util.UiUtil;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
 /*
  *
@@ -57,6 +59,9 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
     private String KOULUTUSTYYPPI_AMM = "koulutustyyppi_1";
     private String KOULUTUSTYYPPI_KK = "koulutustyyppi_3";
     private String KOULUTUSTYYPPI_LUKIO = "koulutustyyppi_2";
+    
+    @Value("${tarjonta.showUnderConstruction:false}")
+    private boolean underConstraction;
 
     public UusiKoulutusDialog(String width, String height) {
         super(width, height);
@@ -102,9 +107,9 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                     errorView.addError(_i18n.getMessage("tarkistaOppilaitosJaKoulutusaste"));
                     return;
                 }
-                
+
                 logger.info("koulutusAsteCombo : {} == {}", koulutusAsteCombo.getValue(), KOULUTUSTYYPPI_AMM);
-                
+
                 if (koulutusAsteCombo.getValue() instanceof String
                         && ((String) koulutusAsteCombo.getValue()).contains(KOULUTUSTYYPPI_AMM)
                         && kcPohjakoulutusvaatimus.getValue() == null) {
@@ -115,10 +120,10 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                 if (presenter.checkOrganisaatioOppilaitosTyyppimatches(selectedOrgs.values())) {
                     presenter.setAllSelectedOrganisaatios(selectedOrgs.values());
 
-                    if (koulutusAsteCombo.getValue() instanceof String && ((String) koulutusAsteCombo.getValue()).contains(KOULUTUSTYYPPI_KK)) {
-                        presenter.getKorkeakouluPresenter().showKorkeakouluKoulutusEditView(selectedOrgs.values());
-                        logger.info("Korkeakoulu");
+                    if (underConstraction && koulutusAsteCombo.getValue() instanceof String && ((String) koulutusAsteCombo.getValue()).contains(KOULUTUSTYYPPI_KK)) {
                         getParent().removeWindow(UusiKoulutusDialog.this);
+                        ValitseKoulutusDialog dialog = new ValitseKoulutusDialog(selectedOrgs.values(), presenter, uiBuilder);
+                        dialog.windowOpen();
                     } else if (koulutusAsteCombo.getValue() instanceof String && ((String) koulutusAsteCombo.getValue()).contains(KOULUTUSTYYPPI_LUKIO)) {
                         presenter.getLukioPresenter().showLukioKoulutusEditView(selectedOrgs.values());
                         logger.info("lukiokoulutus()");

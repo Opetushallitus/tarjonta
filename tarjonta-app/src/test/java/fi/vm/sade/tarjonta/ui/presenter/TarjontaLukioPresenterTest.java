@@ -120,6 +120,7 @@ public class TarjontaLukioPresenterTest {
 
     @BeforeClass
     public static void setUpClass() {
+        
     }
 
     @AfterClass

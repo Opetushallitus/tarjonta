@@ -24,6 +24,7 @@ import com.vaadin.ui.Window;
  *
  */
 public class TarjontaDialogWindow extends Window {
+    private static final long serialVersionUID = -4799575435204256595L;
     
     public TarjontaDialogWindow(ComponentContainer content, String caption) {
         super();

@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.generic.ui.validation.ErrorMessage;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.TarjontaWindow;
@@ -29,6 +28,7 @@ public class HakukohdeLiiteetDialog extends TarjontaWindow {
 
     private static final String WINDOW_HEIGHT = "750px";
     private static final String WINDOW_WIDTH = "1000px";
+    private static final long serialVersionUID = -7357037259731478017L;
     private TarjontaPresenter presenter;
     private UiBuilder uiBuilder;
     private HakukohteenLiitteetViewImpl view;
