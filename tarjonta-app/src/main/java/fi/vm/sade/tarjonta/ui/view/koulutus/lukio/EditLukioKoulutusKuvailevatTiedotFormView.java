@@ -93,7 +93,7 @@ public class EditLukioKoulutusKuvailevatTiedotFormView extends VerticalLayout {
     }
 
     private void buildTokenField(final String name, final VerticalLayout vl, final String koodistoUri) {
-        final PropertysetItem psi = new BeanItem(presenter.getModel().getKoulutusLukioKuvailevatTiedot());
+        final PropertysetItem psi = new BeanItem<KoulutusLukioKuvailevatTiedotViewModel>(presenter.getModel().getKoulutusLukioKuvailevatTiedot());
         final OphTokenField tokenField = uiBuilder.koodistoTokenField(vl, koodistoUri, psi, name);
         tokenField.setFormatter(new OphTokenField.SelectedTokenToTextFormatter() {
             @Override

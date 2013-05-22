@@ -15,40 +15,18 @@
  */
 package fi.vm.sade.tarjonta.publication;
 
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.publication.types.ApplicationOptionType;
-import fi.vm.sade.tarjonta.publication.types.AttachmentCollectionType;
-import fi.vm.sade.tarjonta.publication.types.CodeSchemeType;
-import fi.vm.sade.tarjonta.publication.types.CodeValueType;
-import fi.vm.sade.tarjonta.publication.types.ExaminationEventType;
-import fi.vm.sade.tarjonta.publication.types.ExaminationLocationType;
-import fi.vm.sade.tarjonta.publication.types.ExtendedStringType;
-import fi.vm.sade.tarjonta.publication.types.LanguageSetType;
-import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadData;
-import fi.vm.sade.tarjonta.publication.types.LearningOpportunityInstanceType;
-
-import java.io.StringWriter;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-
-import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadDataType;
-import fi.vm.sade.tarjonta.publication.types.LocalizedTextType;
-import fi.vm.sade.tarjonta.publication.types.PostalAddress;
-import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType;
-import fi.vm.sade.tarjonta.publication.types.StatusSchemeType;
-import fi.vm.sade.tarjonta.publication.types.TypedDescriptionType;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -56,8 +34,46 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
+
 import org.joda.time.DateTime;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.KoodistoUri;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.Osoite;
+import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
+import fi.vm.sade.tarjonta.model.Pisteraja;
+import fi.vm.sade.tarjonta.model.TarjontaTila;
+import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
+import fi.vm.sade.tarjonta.publication.types.ApplicationOptionType;
+import fi.vm.sade.tarjonta.publication.types.AttachmentCollectionType;
+import fi.vm.sade.tarjonta.publication.types.CodeSchemeType;
+import fi.vm.sade.tarjonta.publication.types.CodeValueType;
+import fi.vm.sade.tarjonta.publication.types.ExaminationEventType;
+import fi.vm.sade.tarjonta.publication.types.ExaminationLocationType;
+import fi.vm.sade.tarjonta.publication.types.LanguageSetType;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadData;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadDataType;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunityInstanceType;
+import fi.vm.sade.tarjonta.publication.types.PostalAddress;
+import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType;
+import fi.vm.sade.tarjonta.publication.types.StatusSchemeType;
+import fi.vm.sade.tarjonta.publication.types.TypedDescriptionType;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 
 /**
  * Smoke tests writing Tarjonta data as "Publication XML". The output still
@@ -447,13 +463,10 @@ public class LearningOpportunityDataWriterTest {
     private KoulutusmoduuliToteutus createLukioKoulutusmoduuliToteutus(String aineKey, String[] kielis, String lukiodiplomi) {
 
         KoulutusmoduuliToteutus lukioKomoto = createKoulutusmoduuliToteutus();
-        
-        Kielivalikoima kieliV = new Kielivalikoima();
-        kieliV.setKey(aineKey);
+
         for(String curKieli : kielis) {
-        	kieliV.addKieli(curKieli);
+            lukioKomoto.getKieliValikoima(aineKey).setKielet(Collections.singleton(curKieli));
         }
-        lukioKomoto.addTarjottuKieli(kieliV);
         
         lukioKomoto.addLukiodiplomi(new KoodistoUri(lukiodiplomi));
         
