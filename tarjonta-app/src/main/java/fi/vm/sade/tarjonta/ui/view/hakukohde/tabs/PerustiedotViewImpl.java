@@ -151,7 +151,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     private OptionGroup osoiteSelectOptionGroup;
 //    LanguageTabSheet valintaPerusteidenKuvausTabs;
     private HakukohdeLisatiedotTabSheet lisatiedotTabs;
-    private Label osoiteSelectLabel;
+    //private Label osoiteSelectLabel;
     //private Label serverMessage = new Label("");
     //Info buttons
     private Button upRightInfoButton;
@@ -440,24 +440,18 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     }
 
-    private AbstractLayout buildOsoiteSelectLabel() {
-        VerticalLayout osoiteSelectLayout = new VerticalLayout();
-        osoiteSelectLayout.setSizeFull();
+    private Label buildOsoiteSelectLabel() {
+        //VerticalLayout osoiteSelectLayout = new VerticalLayout();
+        //osoiteSelectLayout.setSizeFull();
 
+    	return /*osoiteSelectLabel =*/ UiUtil.label((AbstractLayout) null, T("PerustiedotView.osoiteSelectLabel"), LabelStyleEnum.TEXT);
 
-        osoiteSelectLabel = new Label(T("PerustiedotView.osoiteSelectLabel"));
+        //osoiteSelectLabel = new Label(T("PerustiedotView.osoiteSelectLabel"));
         //osoiteSelectLayout.addComponent(osoiteSelectLabel);
 
-        osoiteSelectLayout.addComponent(osoiteSelectLabel);
+        //osoiteSelectLayout.addComponent(osoiteSelectLabel);
 
-
-
-
-
-
-
-
-        return osoiteSelectLayout;
+        //return osoiteSelectLayout;
     }
 
     private void enableOrDeEnableOsoite(boolean toEnableOrNot) {
