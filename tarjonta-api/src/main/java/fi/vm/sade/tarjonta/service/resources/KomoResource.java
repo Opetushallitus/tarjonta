@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.service.resources;
 
 import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import java.util.Date;
 import java.util.List;
 
@@ -75,7 +76,7 @@ public interface KomoResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<String> search(@QueryParam("searchTerms") String searchTerms,
+    public List<OidRDTO> search(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex,
             @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
@@ -92,7 +93,7 @@ public interface KomoResource {
     @GET
     @Path("{oid}/komoto")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<String> getKomotosByKomoOID(
+    public List<OidRDTO> getKomotosByKomoOID(
             @PathParam("oid") String oid,
             @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex);

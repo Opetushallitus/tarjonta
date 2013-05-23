@@ -515,7 +515,7 @@ public class KoulutusConveter {
                 m.setKielikoodi(teksti.getKieliKoodi());
                 m.setNimi(teksti.getValue());
             } else {
-                LOG.error("An invalid data error -´MonikielinenTekstiModel object was missing Finnish language data.");
+                LOG.warn("Maybe a data error - MonikielinenTekstiModel; has no requested content for locale: " + locale + " *AND* no FI fallback data!");
             }
         }
 

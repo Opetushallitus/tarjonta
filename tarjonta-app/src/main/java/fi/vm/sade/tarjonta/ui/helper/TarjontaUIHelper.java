@@ -91,9 +91,21 @@ public class TarjontaUIHelper {
 
     @Scheduled(cron = "0 */5 * * * ?")
     public void printCacheStats() {
-        LOG.debug("---------- printCacheStats(): " + this);
+        LOG.info("UI --- CACHE STATISTICS (name size/hits/misses)");
+
+        if (_cacheManager == null) {
+            LOG.info("  NO EHCACHE ... no stats!");
+            return;
+        }
+
         for (String cacheName : _cacheManager.getCacheNames()) {
-            LOG.debug("  {}", _cacheManager.getCache(cacheName).getStatistics());
+            LOG.info("UI ---    {} {}/{}/{}",
+                    new Object[] {
+                        cacheName,
+                        _cacheManager.getCache(cacheName).getSize(),
+                        _cacheManager.getCache(cacheName).getStatistics().getCacheHits(),
+                        _cacheManager.getCache(cacheName).getStatistics().getCacheMisses()
+                    });
         }
     }
 
@@ -213,7 +225,7 @@ public class TarjontaUIHelper {
         return hakuTiedot.toString();
     }
 
-    
+
     /**
      * Load koodi with metadata, returns all values concatenated, usually (always?) there's only one type.
      *
@@ -247,25 +259,25 @@ public class TarjontaUIHelper {
 
         private String value;
         private int score;
-        
+
         @Override
         public int compareTo(ValueScore o) {
             return this.score-o.score;
         }
-        
+
     }
-    
-    
+
+
     private final List<String> allLanguages = ImmutableList.of("fi","en","sv");
-    
+
     public String getBestLanguageMatch(List<KoodiMetadataType> metas,
             Locale locale) {
         LinkedList<String> preferredLanguages = Lists.newLinkedList(allLanguages);
         preferredLanguages.remove(locale.getLanguage().toLowerCase());
         preferredLanguages.addFirst(locale.getLanguage().toLowerCase());
-        
+
         List<ValueScore> values = Lists.newArrayList();
-        
+
         for (KoodiMetadataType meta : metas) {
             for(int i=0;i<preferredLanguages.size();i++) {
                 if(preferredLanguages.get(i).equalsIgnoreCase(meta.getKieli().toString())) {
@@ -273,7 +285,7 @@ public class TarjontaUIHelper {
                 }
             }
         }
-        
+
         Collections.sort(values);
         return values.get(0).value;
     }
@@ -599,7 +611,7 @@ public class TarjontaUIHelper {
             teksti = searchTekstiTyyppiByLanguage(monikielinenTeksti.getTeksti(), locale);
         }
 
-        
+
         //fi default fallback
         if ((teksti == null || teksti.getKieliKoodi() == null || teksti.getValue() == null) && !locale.getLanguage().equalsIgnoreCase("fi")) {
             final Locale locale1 = new Locale("fi");
@@ -683,7 +695,7 @@ public class TarjontaUIHelper {
             }
         }
 
-        LOG.warn("no text found by locale : " + locale.getLanguage());
+        LOG.debug("  --> no text found by locale : " + locale.getLanguage());
 
         return null;
     }
@@ -889,7 +901,7 @@ public class TarjontaUIHelper {
          LOG.info("resultKoodis : {}", koodiUriAndVersioType);
         for (KoodiType koodiType : resultKoodis) {
              LOG.info("koodistos : {} == {}", koodiType.getKoodisto().getKoodistoUri(), koodistoUri);
-            
+
             if (koodistoUri == null || koodiType.getKoodisto().getKoodistoUri().equals(koodistoUri)) {
                 result.add(koodiType);
             }
@@ -899,7 +911,7 @@ public class TarjontaUIHelper {
 
         return result;
     }
-    
+
     public String getKoulutusNimi(KoulutusTulos curKoulutus) {
 
         List<KoodiType> koodis = null;
@@ -916,7 +928,7 @@ public class TarjontaUIHelper {
         }
         return "";
     }
-    
+
     public String getKoulutuslaji(KoulutusTulos tulos ) {
         List<String> uris = new ArrayList<String>();
         if (tulos.getKoulutus().getKoulutuslaji() != null) {
@@ -926,16 +938,16 @@ public class TarjontaUIHelper {
         }
         return "";
     }
-    
+
     public String getAjankohtaStr(KoulutusTulos curKoulutus) {
-        
+
         String[] ajankohtaParts = curKoulutus.getKoulutus().getAjankohta().split(" ");
         if (ajankohtaParts.length < 2) {
             return "";
         }
         return I18N.getMessage(ajankohtaParts[0]) + " " + ajankohtaParts[1];
     }
-    
+
     private String tryGetKoodistoLyhytNimi(Collection<KoodiType> koodis) {
         if (koodis == null || koodis.size() < 1) {
             return "";
@@ -961,9 +973,9 @@ public class TarjontaUIHelper {
             return "";
         }
     }
-    
+
     /**
-     * Returns the name of the given koodi. 
+     * Returns the name of the given koodi.
      *
      * @param koodistoKoodiTyyppi the koodisto koodi given
      * @return
