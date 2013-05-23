@@ -174,8 +174,10 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
          */
         HorizontalLayout header = UiUtil.horizontalLayout();
         header.setSizeFull();
+        if (titleProperty != null) {
         Label pageLabel = UiUtil.label(header, T(titleProperty), LabelStyleEnum.H2);
         pageLabel.setSizeUndefined();
+
 
         labelDocumentStatus = UiUtil.label(layout, ""); //show document status
         labelDocumentStatus.setSizeUndefined();
@@ -186,6 +188,7 @@ public abstract class AbstractEditLayoutView<MODEL extends BaseUIViewModel, VIEW
         header.setExpandRatio(labelDocumentStatus, 1l);
         header.setComponentAlignment(labelDocumentStatus, Alignment.TOP_RIGHT);
         layout.addComponent(header);
+        }
         UiUtil.hr(layout);
     }
 

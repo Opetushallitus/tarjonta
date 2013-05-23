@@ -23,6 +23,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Preconditions;
@@ -63,6 +64,12 @@ public class UserContext implements InitializingBean {
         final User user = userProvider.getUser();
         log.debug("user:" + user);
         return user;
+    }
+
+    //Sami USE THIS!!!
+    public String getUserOid() {
+        Authentication auth = userProvider.getUser().getAuthentication();
+        return auth.getName();
     }
 
     /**

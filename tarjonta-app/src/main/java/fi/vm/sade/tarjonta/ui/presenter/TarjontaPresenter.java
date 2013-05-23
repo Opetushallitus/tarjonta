@@ -41,7 +41,6 @@ import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.authentication.service.types.dto.SearchConnectiveType;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.generic.ui.feature.UserFeature;
 import fi.vm.sade.generic.ui.portlet.security.User;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
@@ -229,13 +228,13 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public void saveHakuKohdePerustiedot() {
         LOG.info("Form saved");
         //checkHakuLiitetoimitusPvm();
-        User usr = UserFeature.get();
+        String userOid = userContext.getUserOid();
         if (getModel().getHakukohde().getOid() == null) {
 
             LOG.debug(getModel().getHakukohde().getHakukohdeNimi() + ", " + getModel().getHakukohde().getHakukohdeKoodistoNimi());
 
             HakukohdeTyyppi hakukohdeTyyppi = hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde());
-            hakukohdeTyyppi.setViimeisinPaivittajaOid(usr.getOid());
+            hakukohdeTyyppi.setViimeisinPaivittajaOid(userOid);
             getModel().getHakukohde().setOid(hakukohdeTyyppi.getOid());
 
 
@@ -1059,7 +1058,10 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         return hakukohdeNameUriModel;
     }
 
-    /**
+    public void setModelSelectedKoulutusOidAndNames(List<KoulutusOidNameViewModel> koulutusOidAndNames) {
+          getModel().setHakukohdeTitleKoulutukses(koulutusOidAndNames);
+     }
+     /**
      * Show hakukohde edit view.
      *
      * @param koulutusOids
@@ -1178,6 +1180,17 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
      */
     public List<HakukohdeTulos> getSelectedhakukohteet() {
         return getModel().getSelectedhakukohteet();
+    }
+
+    public List<KoulutusOidNameViewModel> getHakukohdeKoulutukses(String hakukohdeOid) {
+        HaeKoulutuksetKyselyTyyppi kyselyTyyppi = new HaeKoulutuksetKyselyTyyppi();
+        kyselyTyyppi.getHakukohdeOids().add(hakukohdeOid);
+        HaeKoulutuksetVastausTyyppi vastaus =  getTarjontaPublicService().haeKoulutukset(kyselyTyyppi);
+        if (vastaus.getKoulutusTulos() != null) {
+        return convertKoulutusToNameOidViewModel(vastaus.getKoulutusTulos());
+        } else {
+            return null;
+        }
     }
 
     public void loadHakukohdeHakuPvm() {
@@ -1331,7 +1344,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
         if (koulutusModel.getOid() != null && koulutusModel.getOid().equalsIgnoreCase("-1")) {
             koulutusModel.setOid(null);
         }
-        koulutusModel.setViimeisinPaivittajaOid(UserFeature.get().getOid());
+        koulutusModel.setViimeisinPaivittajaOid(userContext.getUserOid());
         if (koulutusModel.isLoaded()) {
             //update KOMOTO
             OrganisationOidNamePair selectedOrganisation = getModel().getTarjoajaModel().getSelectedOrganisation();

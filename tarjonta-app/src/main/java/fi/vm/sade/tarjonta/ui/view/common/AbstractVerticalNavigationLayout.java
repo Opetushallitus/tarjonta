@@ -19,13 +19,14 @@ package fi.vm.sade.tarjonta.ui.view.common;
 import com.vaadin.ui.VerticalLayout;
 //import fi.vm.sade.tarjonta.poc.ui.TarjontaPresenter;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.tarjonta.ui.layout.TarjontaAbstractNavigationLayout;
 import fi.vm.sade.vaadin.ui.OphAbstractNavigationLayout;
 
 /**
  *
  * @author Tuomas Katva
  */
-public abstract class AbstractVerticalNavigationLayout extends OphAbstractNavigationLayout<VerticalLayout> {
+public abstract class AbstractVerticalNavigationLayout extends TarjontaAbstractNavigationLayout<VerticalLayout> {
     private static final long serialVersionUID = -8461326675615530618L;
 
     private transient I18NHelper _i18n;
