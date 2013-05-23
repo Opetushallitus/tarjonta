@@ -9,19 +9,13 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
         http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
-
-    <!-- Conversion service -->
+    <!--
+      ### Conversion service
+    -->
     <bean id="conversionService"
           class="fi.vm.sade.generic.service.conversion.SadeConversionServiceFactoryBean">
         <property name="converters">
             <list>
-                <!--
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToDTOConverterFactory"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToDTOConverter"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaDTOToTutkintoOhjelmaConverter"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliDTOToKoulutusmoduuliConverter"/>
-                -->
-
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakuFromDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakuToDTOConverter"/>
 
@@ -40,23 +34,15 @@
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.ValintakoeFromDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.ValintakoeToDTOConverter"/>
 
-                <!--
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToteutusToDTOConverter"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.TutkintoOhjelmaToteutusDTOToModelConverter"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToteutusDTOToModelConverter"/>
-                -->
-
+                <!-- REST DTO's -->
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToKomoConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.KoulutusmoduuliToteutusToKomotoConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakuToHakuDTOConverter"/>
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeToHakukohdeDTOConverter"/>
-
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeToHakukohdeDTOConverter" />
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeLiiteToHakukohdeLiiteRDTOConverter"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.OsoiteToOsoiteRDTOConverter"/>
             </list>
         </property>
     </bean>
-
-
-
-
 
 </beans>

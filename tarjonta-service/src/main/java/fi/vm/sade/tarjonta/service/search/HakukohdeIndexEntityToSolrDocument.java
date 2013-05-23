@@ -97,6 +97,8 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
              " no orgnisation found with oid " + tarjoaja);
              return Lists.newArrayList();
              }
+        } else {
+            logger.warn("No koulutuses found, this should not be possible!");
         }
 
         
@@ -190,7 +192,11 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
             return;
         }
         
+        
         KoulutusIndexEntity koulutus = koulutuses.get(0);
+        if(koulutus.getKoulutuslaji()==null) {
+            return;
+        }
         
 
         KoodiType koodi = IndexingUtils.getKoodiByUriWithVersion(koulutus.getKoulutuslaji(),  koodiService);

@@ -14,21 +14,11 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import com.sun.jersey.api.spring.Autowire;
-import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.model.KoodistoUri;
-import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.TekstiKaannos;
-import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author mlyly
  */
-public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<Koulutusmoduuli, KomoDTO>{
+public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmoduuli, KomoDTO> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusmoduuliToKomoConverter.class);
 
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
 
     @Override
     public KomoDTO convert(Koulutusmoduuli s) {
@@ -59,10 +48,10 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
         // TODO convert, but efficiently! t.setAlaModuulit(null);
 
         t.setCreated(null);
-        t.setCreatedByOid(null);
+        t.setCreatedBy(null);
         t.setEqfLuokitusUri(s.getEqfLuokitus());
-        t.setJatkoOpintoMahdollisuudet(convert(s.getJatkoOpintoMahdollisuudet()));
-        t.setKoulutuksenRakenne(convert(s.getKoulutuksenRakenne()));
+        t.setJatkoOpintoMahdollisuudet(convertMonikielinenTekstiToMap(s.getJatkoOpintoMahdollisuudet()));
+        t.setKoulutuksenRakenne(convertMonikielinenTekstiToMap(s.getKoulutuksenRakenne()));
         t.setKoulutusAlaUri(s.getKoulutusala());
         t.setKoulutusAsteUri(s.getKoulutusAste());
         // TODO t.setKoulutusLuokitusKoodiUri(s.get); ??? waat
@@ -72,7 +61,7 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
         t.setLaajuusYksikkoUri(s.getLaajuusYksikko());
         t.setLukiolinjaUri(s.getLukiolinja()); // TODO onko?
         t.setModuuliTyyppi(s.getModuuliTyyppi() != null ? s.getModuuliTyyppi().name() : null);
-        t.setNimi(convert(s.getNimi()));
+        t.setNimi(convertMonikielinenTekstiToMap(s.getNimi()));
         t.setNqfLuokitusUri(s.getNqfLuokitus());
         t.setOid(s.getOid());
         t.setOpintoalaUri(s.getOpintoala());
@@ -81,13 +70,13 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
         t.setOrganisaatioOid(s.getOmistajaOrganisaatioOid());
         t.setTarjoajaOid(s.getOmistajaOrganisaatioOid());
 
-        t.setTavoitteet(convert(s.getTavoitteet()));
+        t.setTavoitteet(convertMonikielinenTekstiToMap(s.getTavoitteet()));
         t.setTila(s.getTila() != null ? s.getTila().name() : null);
         t.setTutkintoOhjelmanNimiUri(s.getTutkintoOhjelmanNimi());
         t.setTutkintonimikeUri(s.getTutkintonimike());
         t.setUlkoinenTunniste(s.getUlkoinenTunniste());
-        t.setUpdateByOid(null);
-        t.setUpdated(s.getUpdated());
+        t.setModifiedBy(null);
+        t.setModified(s.getUpdated());
         t.setVersion(s.getVersion() == null ? 0 : s.getVersion().intValue());
 
         t.setKoulutusKoodiUri(s.getKoulutusKoodi());
@@ -118,47 +107,7 @@ public class KoulutusmoduuliToKomoConverter extends AbstractFromDomainConverter<
         return t;
     }
 
-    public static List<String> convertKoodistoUris(Set<KoodistoUri> koodistoUris) {
-        if (koodistoUris == null) {
-            return null;
-        }
-
-        List<String> result = new ArrayList<String>();
-
-        for (KoodistoUri koodistoUri : koodistoUris) {
-            result.add(koodistoUri.getKoodiUri());
-        }
-
-        return result;
-    }
 
 
-    public static Map<String, String> convertWebLinkkis(Set<WebLinkki> s) {
-        if (s == null) {
-            return null;
-        }
-
-        Map<String, String> t = new HashMap<String, String>();
-
-        for (WebLinkki webLinkki : s) {
-            t.put(webLinkki.getTyyppi(), webLinkki.getUrl());
-        }
-
-        return t;
-    }
-
-    public static Map<String, String> convert(MonikielinenTeksti s) {
-        if (s == null) {
-            return null;
-        }
-
-        Map<String, String> t = new HashMap<String, String>();
-
-        for (TekstiKaannos tekstiKaannos : s.getTekstis()) {
-            t.put(tekstiKaannos.getKieliKoodi(), tekstiKaannos.getArvo());
-        }
-
-        return t;
-    }
 
 }

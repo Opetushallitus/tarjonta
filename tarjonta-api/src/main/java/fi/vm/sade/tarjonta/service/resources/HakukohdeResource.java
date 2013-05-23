@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.service.resources;
 
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import java.util.Date;
 
 import javax.ws.rs.*;
@@ -17,9 +18,11 @@ import java.util.Map;
  * /hakukohde/OID
  * /hakukohde/OID/haku
  * /hakukohde/OID/komoto
- * /hakukohde/OID/liite
+ *
  * /hakukohde/OID/paasykoe
  * /hakukohde/OID/valintakoe
+ *
+ *  REMOVED: /hakukohde/OID/liite
  * </pre>
  *
  * Internal documentation: http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
@@ -41,7 +44,7 @@ public interface HakukohdeResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<String> search(@QueryParam("searchTerms") String searchTerms,
+    public List<OidRDTO> search(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex,
             @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
@@ -78,18 +81,7 @@ public interface HakukohdeResource {
     @GET
     @Path("{oid}/komoto")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<String> getKomotosByHakukohdeOID(@PathParam("oid") String oid);
-
-    /**
-     * /hakukohde/{oid}/liite
-     *
-     * @param oid
-     * @return loaded list Liite's
-     */
-    @GET
-    @Path("{oid}/liite")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<String> getLiitesByHakukohdeOID(@PathParam("oid") String oid);
+    public List<OidRDTO> getKomotosByHakukohdeOID(@PathParam("oid") String oid);
 
     /**
      * /hakukohde/{oid}/paasykoe

@@ -19,6 +19,7 @@ import java.util.List;
 
 import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import java.util.Date;
 
 import javax.ws.rs.GET;
@@ -96,7 +97,7 @@ public interface KomotoResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<String> search(@QueryParam("searchTerms") String searchTerms,
+    public List<OidRDTO> search(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex,
             @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
@@ -112,6 +113,6 @@ public interface KomotoResource {
     @GET
     @Path("{oid}/hakukohde")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<String> getHakukohdesByKomotoOID(@PathParam("oid") String oid);
+    public List<OidRDTO> getHakukohdesByKomotoOID(@PathParam("oid") String oid);
 
 }

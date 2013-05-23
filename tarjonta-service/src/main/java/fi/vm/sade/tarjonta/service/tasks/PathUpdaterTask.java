@@ -62,7 +62,7 @@ public class PathUpdaterTask {
     private CacheManager _cacheManager;
 
     private void printCacheStats() {
-        LOG.warn("---------- printCacheStats(): " + this);
+        LOG.info("SERVICE --- CACHE STATISTICS (name size/hits/misses)");
 
         if (_cacheManager == null) {
             LOG.info("  NO EHCACHE ... no stats!");
@@ -70,7 +70,13 @@ public class PathUpdaterTask {
         }
 
         for (String cacheName : _cacheManager.getCacheNames()) {
-            LOG.warn("  {}", _cacheManager.getCache(cacheName).getStatistics());
+            LOG.info("SERVICE ---    {} {}/{}/{}",
+                    new Object[] {
+                        cacheName,
+                        _cacheManager.getCache(cacheName).getSize(),
+                        _cacheManager.getCache(cacheName).getStatistics().getCacheHits(),
+                        _cacheManager.getCache(cacheName).getStatistics().getCacheMisses()
+                    });
         }
     }
 

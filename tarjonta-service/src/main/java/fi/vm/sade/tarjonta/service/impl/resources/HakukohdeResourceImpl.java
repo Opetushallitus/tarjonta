@@ -3,10 +3,12 @@ package fi.vm.sade.tarjonta.service.impl.resources;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import java.util.ArrayList;
 
@@ -43,19 +45,18 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
     // /hakukohde?...
     @Override
-    public List<String> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
+    public List<OidRDTO> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
         LOG.info("/hakukohde -- search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
         if (count <= 0) {
             count = 100;
-            LOG.info("  autolimit search to {} entries!", count);
+            LOG.debug("  autolimit search to {} entries!", count);
         }
 
-        List<String> result = new ArrayList<String>();
-        result.addAll(hakukohdeDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
-        LOG.info("  result={}", result);
+        List<OidRDTO> result = HakuResourceImpl.convertOidList(hakukohdeDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
+        LOG.debug("  result={}", result);
         return result;
     }
 
@@ -66,7 +67,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
         HakukohdeDTO result = conversionService.convert(hakukohde, HakukohdeDTO.class);
-        LOG.info("  result={}", result);
+        LOG.debug("  result={}", result);
         return result;
     }
 
@@ -77,37 +78,37 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
         HakuDTO result = conversionService.convert(hakukohde.getHaku(), HakuDTO.class);
-        LOG.info("  result={}", result);
+        LOG.debug("  result={}", result);
         return result;
     }
 
     // /hakukohde/OID/komoto
     @Override
-    public List<String> getKomotosByHakukohdeOID(String oid) {
+    public List<OidRDTO> getKomotosByHakukohdeOID(String oid) {
         LOG.info("/hakukohde/{}/komoto -- getKomotosByHakukohdeOID()", oid);
 
-        // TODO fixme to be more efficient!
+        List<OidRDTO> result = new ArrayList<OidRDTO>();
+
+        // TODO fixme to be more efficient! Add a custom finder for this
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(oid);
-        List<String> result = new ArrayList<String>();
         for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
-            result.add(koulutusmoduuliToteutus.getOid());
+            result.add(new OidRDTO(koulutusmoduuliToteutus.getOid()));
         }
-        LOG.info("  result={}", result);
+        LOG.debug("  result={}", result);
         return result;
     }
 
-    @Override
-    public List<String> getLiitesByHakukohdeOID(String oid) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    // GET /hakukohde/{oid}/paasykoe
     @Override
     public List<String> getPaasykoesByHakukohdeOID(String oid) {
+        LOG.info("/hakukohde/{}/paasykoe -- getPaasykoesByHakukohdeOID()", oid);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    // GET /hakukohde/{oid}/valintakoe
     @Override
     public List<String> getValintakoesByHakukohdeOID(String oid) {
+        LOG.info("/hakukohde/{}/valintakoe -- getValintakoesByHakukohdeOID()", oid);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -14,29 +14,21 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 /**
- * LOI
+ * REST DTO for LOI / Komoto / Koulutusmoduulin toteutus
  *
  * @author mlyly
  */
-public class KomotoDTO implements Serializable {
-
-    private String _oid;
-    private int _version;
-    private Date _updated;
-    private String _updateByOid;
-    private Date _created;
+public class KomotoDTO extends BaseRDTO {
 
     private Date _koulutuksenAlkamisDate;
     private boolean _maksullisuus;
     private String _komoOid;
     private String _pohjakoulutusVaatimusUri;
-
     private Map<String, String> _arviointiKriteerit;
     private Map<String, String> _kansainvalistyminen;
     private Map<String, String> _kuvailevatTiedot;
@@ -48,7 +40,6 @@ public class KomotoDTO implements Serializable {
     private Map<String, String> _koulutusohjelmanValinta;
     private Map<String, String> _painotus;
     private Map<String, String> _webLinkkis;
-
     private List<String> _avainsanatUris;
     private List<String> _ammattinimikeUris;
     private List<String> _koulutuslajiUris;
@@ -56,14 +47,12 @@ public class KomotoDTO implements Serializable {
     private List<String> _opetuskieletUris;
     private List<String> _opetusmuodotUris;
     private List<String> _teematUris;
-
     private String _laajuusArvo;
     private String _laajuusYksikkoUri;
     private String _tarjoajaOid; // onko sama kuin organisaatioOid?
     private String _tila;
     private String _ulkoinenTunniste;
     private String _koulutusAsteUri;
-
     private String _parentKomotoOid;
 
     public Date getKoulutuksenAlkamisDate() {
@@ -101,7 +90,6 @@ public class KomotoDTO implements Serializable {
     // ------------------------------------------
     // Multilingual text data
     //
-
     public Map<String, String> getArviointiKriteerit() {
         return _arviointiKriteerit;
     }
@@ -190,35 +178,9 @@ public class KomotoDTO implements Serializable {
         this._webLinkkis = webLinkkis;
     }
 
-    public String getUpdateByOid() {
-        return _updateByOid;
-    }
-
-    public void setUpdateByOid(String _updateByOid) {
-        this._updateByOid = _updateByOid;
-    }
-
-    public Date getCreated() {
-        return _created;
-    }
-
-    public void setCreated(Date _created) {
-        this._created = _created;
-    }
-
-    public Date getUpdated() {
-        return _updated;
-    }
-
-    public void setUpdated(Date _updated) {
-        this._updated = _updated;
-    }
-
-
     // -----------------------------------------
     // URI LISTS
     //
-
     public List<String> getAvainsanatUris() {
         return _avainsanatUris;
     }
@@ -323,24 +285,8 @@ public class KomotoDTO implements Serializable {
         this._ulkoinenTunniste = _ulkoinenTunniste;
     }
 
-    public int getVersion() {
-        return _version;
-    }
-
-    public void setVersion(int _version) {
-        this._version = _version;
-    }
-
-    public String getOid() {
-        return _oid;
-    }
-
-    public void setOid(String _oid) {
-        this._oid = _oid;
-    }
-
     /**
-     * This is actually pretty sick...
+     * This is actually pretty sick(ish)...
      *
      * this komoto --> parent komo --> parent parent komo --> parent komoto with same pohjakoulutus and tarjoaja... at the moment
      *
@@ -353,5 +299,4 @@ public class KomotoDTO implements Serializable {
     public void setParentKomotoOid(String _parentKomotoOid) {
         this._parentKomotoOid = _parentKomotoOid;
     }
-
 }

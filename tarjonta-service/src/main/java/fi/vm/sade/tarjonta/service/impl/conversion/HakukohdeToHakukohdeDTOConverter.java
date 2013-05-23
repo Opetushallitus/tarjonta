@@ -14,13 +14,14 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteDTO;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,18 +30,26 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.convert.ConversionService;
 
 /**
  * Conversion for the REST services.
  *
  * @author mlyly
  */
-public class HakukohdeToHakukohdeDTOConverter  extends AbstractFromDomainConverter<Hakukohde, HakukohdeDTO> {
+public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohde, HakukohdeDTO> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeToHakukohdeDTOConverter.class);
 
     @Autowired
     private MonikielinenMetadataDAO monikielinenMetadataDAO;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    // @Autowired -- cannot do this, this bean is defined in "scope" of conversion beans creation...
+    private ConversionService conversionService;
 
     @Override
     public HakukohdeDTO convert(Hakukohde s) {
@@ -58,13 +67,13 @@ public class HakukohdeToHakukohdeDTOConverter  extends AbstractFromDomainConvert
         t.setHakukohdeKoodistoNimi(s.getHakukohdeKoodistoNimi());
         t.setHakukohdeNimiUri(s.getHakukohdeNimi());
         // t.set(s.getKoulutusmoduuliToteutuses());
-        t.setUpdated(s.getLastUpdateDate());
-        t.setUpdatedByOid(s.getLastUpdatedByOid());
+        t.setModified(s.getLastUpdateDate());
+        t.setModifiedBy(s.getLastUpdatedByOid());
         // t.set(s.getLiites());
         // t.set(s.getLiitteidenToimitusOsoite());
         t.setLiitteidenToimitusPvm(s.getLiitteidenToimitusPvm());
-        t.setLisatiedot(KoulutusmoduuliToKomoConverter.convert(s.getLisatiedot()));
-        t.setPainotettavatOppiaineet(convert(s.getPainotettavatOppiaineet()));
+        t.setLisatiedot(convertMonikielinenTekstiToMap(s.getLisatiedot()));
+        t.setPainotettavatOppiaineet(convertPainotettavatOppianeet(s.getPainotettavatOppiaineet()));
         t.setSahkoinenToimitusOsoite(s.getSahkoinenToimitusOsoite());
         t.setSoraKuvausKoodiUri(s.getSoraKuvausKoodiUri());
         t.setTila(s.getTila() != null ? s.getTila().name() : null);
@@ -85,7 +94,19 @@ public class HakukohdeToHakukohdeDTOConverter  extends AbstractFromDomainConvert
                     MetaCategory.VALINTAPERUSTEKUVAUS.name())));
         }
 
+
+        t.setLiitteet(convertLiitteet(s.getLiites()));
+
+
         return t;
+    }
+
+    private ConversionService getConversionService() {
+        if (conversionService == null) {
+            LOG.info("looking up ConversionService...");
+            conversionService = applicationContext.getBean(ConversionService.class);
+        }
+        return conversionService;
     }
 
 
@@ -95,19 +116,36 @@ public class HakukohdeToHakukohdeDTOConverter  extends AbstractFromDomainConvert
      * @param s
      * @return
      */
-    public List<List<String>> convert(Set<PainotettavaOppiaine> s) {
-       List<List<String>> result = new ArrayList<List<String>>();
+    private List<List<String>> convertPainotettavatOppianeet(Set<PainotettavaOppiaine> s) {
+        List<List<String>> result = new ArrayList<List<String>>();
 
-       for (PainotettavaOppiaine painotettavaOppiaine : s) {
-           List<String> t = new ArrayList<String>();
-           t.add(painotettavaOppiaine.getOppiaine());
-           t.add("" + painotettavaOppiaine.getPainokerroin());
+        for (PainotettavaOppiaine painotettavaOppiaine : s) {
+            List<String> t = new ArrayList<String>();
+            t.add(painotettavaOppiaine.getOppiaine());
+            t.add("" + painotettavaOppiaine.getPainokerroin());
 
-           result.add(t);
-       }
+            result.add(t);
+        }
 
         return result;
     }
+
+    /**
+     * Convert liite information.
+     *
+     * @param s
+     * @return
+     */
+    private List<HakukohdeLiiteDTO> convertLiitteet(Set<HakukohdeLiite> s) {
+        List<HakukohdeLiiteDTO> result = new ArrayList<HakukohdeLiiteDTO>();
+
+        for (HakukohdeLiite hakukohdeLiite : s) {
+            result.add(conversionService.convert(hakukohdeLiite, HakukohdeLiiteDTO.class));
+        }
+
+        return result;
+    }
+
 
     /**
      * Extract metadata - key + category ("uri: soste-alue", "SORA") from many languages.

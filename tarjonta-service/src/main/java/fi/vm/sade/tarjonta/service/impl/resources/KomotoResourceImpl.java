@@ -23,6 +23,7 @@ import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.service.resources.KomotoResource;
 import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,18 +36,17 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * /komoto, /komoto/hello, /komoto/OID, /komoto/OID/komo
- *
  * Internal documentation: http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
  *
  * @author mlyly
- * @see KomotoResource
+ * @see KomotoResource for more documentaton.
  */
 @Transactional(readOnly = true)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class KomotoResourceImpl implements KomotoResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(KomotoResourceImpl.class);
+
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
@@ -67,13 +67,13 @@ public class KomotoResourceImpl implements KomotoResource {
         LOG.info("getByOID() -- /komoto/{}", oid);
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         KomotoDTO result = conversionService.convert(komoto, KomotoDTO.class);
-        LOG.info("  result={}", result);
+        LOG.debug("  result={}", result);
         return result;
     }
 
     // GET /komoto?searchTerms=xxx etc.
     @Override
-    public List<String> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
+    public List<OidRDTO> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
         LOG.info("search() -- /komoto?st={}, c={}, si={}, lmb={}, lma={})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
         // TODO hard coded, add param tarjonta tila + get the state!
@@ -81,12 +81,12 @@ public class KomotoResourceImpl implements KomotoResource {
 
         if (count <= 0) {
             count = 100;
-            LOG.info("  autolimit search to {} entries!", count);
+            LOG.debug("  autolimit search to {} entries!", count);
         }
 
-        List<String> result = new ArrayList<String>();
-        result.addAll(koulutusmoduuliToteutusDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
-        LOG.info("  result={}", result);
+        List<OidRDTO> result =
+                HakuResourceImpl.convertOidList(koulutusmoduuliToteutusDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
+        LOG.debug("  result={}", result);
         return result;
     }
 
@@ -99,26 +99,26 @@ public class KomotoResourceImpl implements KomotoResource {
         if (komoto != null) {
             result = conversionService.convert(komoto.getKoulutusmoduuli(), KomoDTO.class);
         }
-        LOG.info("  result={}", result);
+        LOG.debug("  result={}", result);
         return result;
     }
 
 
     // GET /komoto/{oid}/hakukohde
     @Override
-    public List<String> getHakukohdesByKomotoOID(String oid) {
+    public List<OidRDTO> getHakukohdesByKomotoOID(String oid) {
         LOG.info("getHakukohdesByKomotoOID() -- /komoto/{}/hakukohde", oid);
-        List<String> result = new ArrayList<String>();
+        List<OidRDTO> result = new ArrayList<OidRDTO>();
 
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         if (komoto != null) {
             // TODO add spesific finder to get just these OIDs... not sure about the usage pattern of this service
             for (Hakukohde hakukohde : komoto.getHakukohdes()) {
-                result.add(hakukohde.getOid());
+                result.add(new OidRDTO(hakukohde.getOid()));
             }
         }
 
-        LOG.info("  result={}", result);
+        LOG.debug("  result={}", result);
         return result;
     }
 }
