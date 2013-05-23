@@ -206,34 +206,34 @@ public class TestTarjontaSavu {
         	doit.tauko(1);
         
         	// KOPIOI UUDEKSI
-        	t01 = doit.millis();
-        	doit.textClick(driver, "Kopioi uudeksi");
-        	Assert.assertNotNull("Running TarjontaSavu008 KOPIOI UUDEKSI ei toimi."
-        			, doit.textElement(driver, "koulutuksen toiseen organisaatioon"));
-        	t01 = doit.millisDiff(t01);
-        	closeId = doit.idLike(driver, "window_close");
-        	close = driver.findElement(By.id(closeId));
-        	Assert.assertNotNull("Running TarjontaSavu008 KOPIOI UUDEKSI ei toimi.", close);
-        	doit.tauko(1);
-        	close.click();
-        	doit.tauko(1);
-        	doit.notPresentText(driver, "window_close"
-        			, "Running TarjontaSavu008 KOPIOI UUDEKSI Close nakyy viela. Ei toimi.");
-        	System.out.println("Running TarjontaSavu008 KOPIOI UUDEKSI OK");
-        	doit.tauko(1);
+//        	t01 = doit.millis();
+//        	doit.textClick(driver, "Kopioi uudeksi");
+//        	Assert.assertNotNull("Running TarjontaSavu008 KOPIOI UUDEKSI ei toimi."
+//        			, doit.textElement(driver, "koulutuksen toiseen organisaatioon"));
+//        	t01 = doit.millisDiff(t01);
+//        	closeId = doit.idLike(driver, "window_close");
+//        	close = driver.findElement(By.id(closeId));
+//        	Assert.assertNotNull("Running TarjontaSavu008 KOPIOI UUDEKSI ei toimi.", close);
+//        	doit.tauko(1);
+//        	close.click();
+//        	doit.tauko(1);
+//        	doit.notPresentText(driver, "window_close"
+//        			, "Running TarjontaSavu008 KOPIOI UUDEKSI Close nakyy viela. Ei toimi.");
+//        	System.out.println("Running TarjontaSavu008 KOPIOI UUDEKSI OK");
+//        	doit.tauko(1);
         
         	// Lisaa rinnakkainen toteutus
-        	t01 = doit.millis();
-        	doit.textClick(driver, "rinnakkainen toteutus");
-        	Assert.assertNotNull("Running TarjontaSavu009 Lisaa rinnakkainen toteutus ei toimi."
-        			, doit.textElement(driver, "Valitse pohjakoulutus"));
-        	t01 = doit.millisDiff(t01);
-//        	doit.footerTest(driver, "Running TarjontaSavu009 Lisaa rinnakkainen toteutus footer ei toimi.", true);
-        	System.out.println("Running TarjontaSavu009 Lisaa rinnakkainen toteutus OK");
-            doit.tauko(1);
-        	t01 = doit.millis();
-            doit.textClick(driver, "Peruuta");
-            t01 = doit.millisDiff(t01);
+//        	t01 = doit.millis();
+//        	doit.textClick(driver, "rinnakkainen toteutus");
+//        	Assert.assertNotNull("Running TarjontaSavu009 Lisaa rinnakkainen toteutus ei toimi."
+//        			, doit.textElement(driver, "Valitse pohjakoulutus"));
+//        	t01 = doit.millisDiff(t01);
+//        	// doit.footerTest(driver, "Running TarjontaSavu009 Lisaa rinnakkainen toteutus footer ei toimi.", true);
+//        	System.out.println("Running TarjontaSavu009 Lisaa rinnakkainen toteutus OK");
+//            doit.tauko(1);
+//        	t01 = doit.millis();
+//            doit.textClick(driver, "Peruuta");
+//            t01 = doit.millisDiff(t01);
         }
         doit.tauko(1);
     	t01 = doit.millis();
