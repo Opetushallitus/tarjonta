@@ -116,9 +116,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @NotNull(message = "{validation.Hakukohde.haku.notNull}")
     @PropertyId("hakuOid")
     private ComboBox hakuCombo;
-    
+
     private ComboBox hakuAikaCombo;
-    
+
     @Min(value = 0, message = "{validation.Hakukohde.aloituspaikat.num}")
     @NotNull(message = "{ShowHakukohdeViewImpl.liitaUusiKoulutusDialogTitle}")
     @PropertyId("aloitusPaikat")
@@ -497,7 +497,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     private OsoiteDTO getOrganisaationPostiOsoite() {
         OrganisaatioDTO organisaatioDTO = presenter.getSelectOrganisaatioModel();
-        
+
         OsoiteDTO returnValue = null;
         if (organisaatioDTO != null) {
             for (YhteystietoDTO yhteystietoDTO : organisaatioDTO.getYhteystiedot()) {
@@ -509,6 +509,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 }
             }
         }
+
+        // TODO minkä organisaatiom postiosoite?
+        // FIXME minkä organisaatiom postiosoite?
+        // 1. Saako valita useamman koulutuksen?
+        // 2. Saavatko koulutukset kuulua useammalla tarjoajalle?
+        // 3. Entä saman "tarjoajan" eri aliorganisaatioita?
+        // 4. Mikä silloin olisi "oletus" toimitus-osoite?
 
         Preconditions.checkNotNull(returnValue, "Organisation OsoiteDTO object cannot be null.");
 
@@ -741,12 +748,12 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     public void setSelectedHaku(HakuViewModel haku) {
         hakuCombo.setValue(haku);
     }
-    
+
     @Override
     public HakuaikaViewModel getSelectedHakuaika() {
     	return (HakuaikaViewModel) hakuAikaCombo.getValue();
     }
-    
+
     private void prepareHakuAikas(HakuViewModel hvm) {
     	BeanItemContainer<HakuaikaViewModel> container = new BeanItemContainer<HakuaikaViewModel>(HakuaikaViewModel.class);
 
@@ -761,18 +768,18 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         			hvm = new HakuViewModel(hakus.iterator().next());
         		}
         	}
-        	
+
         	container.addAll(hvm.getSisaisetHakuajat());
-        	
+
     	}
 
     	hakuAikaCombo.setContainerDataSource(container);
 
     	selectHakuAika(presenter.getModel().getHakukohde().getHakuaika(), hvm, false);
     }
-    
+
     private void selectHakuAika(HakuaikaViewModel hvm, HakuViewModel hk, boolean initial) {
-		
+
     	if (hk==null || hk.getSisaisetHakuajat().isEmpty()) {
     		hakuAikaCombo.setValue(null);
         	hakuAikaCombo.setEnabled(false);
@@ -786,20 +793,20 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
 
     }
-    
+
     private ComboBox buildHakuaikaCombo() {
     	hakuAikaCombo = new ComboBox();
     	hakuAikaCombo.setRequired(true);
     	hakuAikaCombo.setEnabled(false);
     	return hakuAikaCombo;
     }
-    	 
+
 
     private ComboBox buildHakuCombo() {
         hakuCombo = new ComboBox();
         hakuCombo.setImmediate(true);
         hakuAikaCombo = new ComboBox();
-        
+
         hakuCombo.addListener(new Property.ValueChangeListener() {
 			private static final long serialVersionUID = 1L;
 

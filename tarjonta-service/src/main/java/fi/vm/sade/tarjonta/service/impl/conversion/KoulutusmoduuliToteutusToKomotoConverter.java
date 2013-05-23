@@ -31,7 +31,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author mlyly
  */
-public class KoulutusmoduuliToteutusToKomotoConverter extends AbstractFromDomainConverter<KoulutusmoduuliToteutus, KomotoDTO>{
+public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<KoulutusmoduuliToteutus, KomotoDTO> {
+
+// extends AbstractFromDomainConverter<KoulutusmoduuliToteutus, KomotoDTO>{
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusmoduuliToKomoConverter.class);
 
@@ -50,43 +52,44 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends AbstractFromDomain
 
         KomotoDTO t = new KomotoDTO();
 
-        t.setAmmattinimikeUris(KoulutusmoduuliToKomoConverter.convertKoodistoUris(s.getAmmattinimikes()));
-        t.setArviointiKriteerit(KoulutusmoduuliToKomoConverter.convert(s.getArviointikriteerit()));
-        t.setAvainsanatUris(KoulutusmoduuliToKomoConverter.convertKoodistoUris(s.getAvainsanas()));
+        t.setAmmattinimikeUris(convertKoodistoUrisToList(s.getAmmattinimikes()));
+        t.setArviointiKriteerit(convertMonikielinenTekstiToMap(s.getArviointikriteerit()));
+        t.setAvainsanatUris(convertKoodistoUrisToList(s.getAvainsanas()));
 
         // t.set(s.getHakukohdes()); TODO list OIDs
 
-        t.setKansainvalistyminen(KoulutusmoduuliToKomoConverter.convert(s.getKansainvalistyminen()));
+        t.setKansainvalistyminen(convertMonikielinenTekstiToMap(s.getKansainvalistyminen()));
         t.setKoulutuksenAlkamisDate(s.getKoulutuksenAlkamisPvm());
         t.setKoulutusAsteUri(s.getKoulutusaste());
-        t.setKoulutuslajiUris(KoulutusmoduuliToKomoConverter.convertKoodistoUris(s.getKoulutuslajis()));
-        t.setKoulutusohjelmanValinta(KoulutusmoduuliToKomoConverter.convert(s.getKoulutusohjelmanValinta()));
-        t.setKuvailevatTiedot(KoulutusmoduuliToKomoConverter.convert(s.getKuvailevatTiedot()));
-        t.setUpdated(s.getLastUpdateDate()); // TODO vai getUpdated() ???
-        t.setUpdateByOid(s.getLastUpdatedByOid());
-        t.setWebLinkkis(KoulutusmoduuliToKomoConverter.convertWebLinkkis(s.getLinkkis()));
-        t.setLoppukoeVaatimukset(KoulutusmoduuliToKomoConverter.convert(s.getLoppukoeVaatimukset()));
-        t.setLukiodiplomitUris(KoulutusmoduuliToKomoConverter.convertKoodistoUris(s.getLukiodiplomit()));
+        t.setKoulutuslajiUris(convertKoodistoUrisToList(s.getKoulutuslajis()));
+        t.setKoulutusohjelmanValinta(convertMonikielinenTekstiToMap(s.getKoulutusohjelmanValinta()));
+        t.setKuvailevatTiedot(convertMonikielinenTekstiToMap(s.getKuvailevatTiedot()));
+        t.setModified(s.getLastUpdateDate()); // TODO vai getUpdated() ???
+        t.setModifiedBy(s.getLastUpdatedByOid());
+        t.setWebLinkkis(convertWebLinkkisToMap(s.getLinkkis()));
+        t.setLoppukoeVaatimukset(convertMonikielinenTekstiToMap(s.getLoppukoeVaatimukset()));
+        t.setLukiodiplomitUris(convertKoodistoUrisToList(s.getLukiodiplomit()));
         t.setMaksullisuus(s.getMaksullisuus() != null);
-        t.setMaksullisuusKuvaus(KoulutusmoduuliToKomoConverter.convert(s.getMaksullisuusUrl()));
+        t.setMaksullisuusKuvaus(convertMonikielinenTekstiToMap(s.getMaksullisuusUrl()));
         t.setOid(s.getOid());
-        t.setOpetuskieletUris(KoulutusmoduuliToKomoConverter.convertKoodistoUris(s.getOpetuskielis()));
-        t.setOpetusmuodotUris(KoulutusmoduuliToKomoConverter.convertKoodistoUris(s.getOpetusmuotos()));
-        t.setPainotus(KoulutusmoduuliToKomoConverter.convert(s.getPainotus()));
+        t.setOpetuskieletUris(convertKoodistoUrisToList(s.getOpetuskielis()));
+        t.setOpetusmuodotUris(convertKoodistoUrisToList(s.getOpetusmuotos()));
+        t.setPainotus(convertMonikielinenTekstiToMap(s.getPainotus()));
         t.setPohjakoulutusVaatimusUri(s.getPohjakoulutusvaatimus());
-        t.setSijoittuminenTyoelamaan(KoulutusmoduuliToKomoConverter.convert(s.getSijoittuminenTyoelamaan()));
-        t.setSisalto(KoulutusmoduuliToKomoConverter.convert(s.getSisalto()));
+        t.setSijoittuminenTyoelamaan(convertMonikielinenTekstiToMap(s.getSijoittuminenTyoelamaan()));
+        t.setSisalto(convertMonikielinenTekstiToMap(s.getSisalto()));
         t.setLaajuusArvo(s.getSuunniteltuKestoArvo());
         t.setLaajuusYksikkoUri(s.getSuunniteltuKestoYksikko());
         t.setTarjoajaOid(s.getTarjoaja());
         // t.setTarjotutKieletUris(KoulutusmoduuliToKomoConverter.convert(s.getTarjotutKielet())); // KieliValikoima?
-        t.setTeematUris(KoulutusmoduuliToKomoConverter.convertKoodistoUris(s.getTeemas()));
+        t.setTeematUris(convertKoodistoUrisToList(s.getTeemas()));
         t.setTila(s.getTila() != null ? s.getTila().name() : null);
         t.setUlkoinenTunniste(s.getUlkoinenTunniste());
         // t.setUpdated(s.getUpdated()); // TODO POISTA "lastUpdateDate"
         t.setVersion((s.getVersion() != null) ? s.getVersion().intValue() : -1);
-        t.setYhteistyoMuidenToimijoidenKanssa(KoulutusmoduuliToKomoConverter.convert(s.getYhteistyoMuidenToimijoidenKanssa()));
-        // t.setYhteyshenkilos(KoulutusmoduuliToKomoConverter.convert(s.getYhteyshenkilos()));
+        t.setYhteistyoMuidenToimijoidenKanssa(convertMonikielinenTekstiToMap(s.getYhteistyoMuidenToimijoidenKanssa()));
+
+        // TODO t.setYhteyshenkilos(KoulutusmoduuliToKomoConverter.convert(s.getYhteyshenkilos()));
 
         //
         // Relations

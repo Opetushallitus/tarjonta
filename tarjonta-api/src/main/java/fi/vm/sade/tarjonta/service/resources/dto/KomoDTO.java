@@ -14,25 +14,17 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
-import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 /**
- * LOS
+ * REST DTO for LOS / Komo / Koulutusmoduuli.
  *
  * @author mlyly
  */
-public class KomoDTO implements Serializable {
+public class KomoDTO extends BaseRDTO {
 
-    private String _oid;
-    private int _version;
     private String _tila;
-    private Date _updated;
-    private String _updateByOid;
-    private Date _created;
-    private String _createdByOid;
     private List<String> _ylaModuulit;
     private List<String> _alaModuulit;
     private String _organisaatioOid;
@@ -51,35 +43,17 @@ public class KomoDTO implements Serializable {
     private String _tutkintonimikeUri;
     private String _koulutusTyyppiUri;
     private String _lukiolinjaUri;
-//    private String _oppilaitosTyyppi; ???
     private String _ulkoinenTunniste;
     private String _moduuliTyyppi;
-
     private Map<String, String> _nimi;
     private Map<String, String> _koulutuksenRakenne;
     private Map<String, String> _jatkoOpintoMahdollisuudet;
     private Map<String, String> _tavoitteet;
-
     private String _koulutusKoodiUri;
 
     // ------------------------------------------------------------------------------
     // Getters and setters
     //
-    public String getOid() {
-        return _oid;
-    }
-
-    public void setOid(String oid) {
-        this._oid = oid;
-    }
-
-    public int getVersion() {
-        return _version;
-    }
-
-    public void setVersion(int version) {
-        this._version = version;
-    }
 
     public String getTila() {
         return _tila;
@@ -87,38 +61,6 @@ public class KomoDTO implements Serializable {
 
     public void setTila(String tila) {
         this._tila = tila;
-    }
-
-    public Date getUpdated() {
-        return _updated;
-    }
-
-    public void setUpdated(Date updated) {
-        this._updated = updated;
-    }
-
-    public String getUpdateByOid() {
-        return _updateByOid;
-    }
-
-    public void setUpdateByOid(String updateByOid) {
-        this._updateByOid = updateByOid;
-    }
-
-    public Date getCreated() {
-        return _created;
-    }
-
-    public void setCreated(Date created) {
-        this._created = created;
-    }
-
-    public String getCreatedByOid() {
-        return _createdByOid;
-    }
-
-    public void setCreatedByOid(String createdByOid) {
-        this._createdByOid = createdByOid;
     }
 
     public List<String> getYlaModuulit() {
@@ -284,6 +226,7 @@ public class KomoDTO implements Serializable {
     // -----------------------------------------------
     // Multilanguage metadata
     //
+
     public Map<String, String> getNimi() {
         return _nimi;
     }
@@ -323,5 +266,4 @@ public class KomoDTO implements Serializable {
     public void setKoulutusKoodiUri(String _koulutusKoodiUri) {
         this._koulutusKoodiUri = _koulutusKoodiUri;
     }
-
 }

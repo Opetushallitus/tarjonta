@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.TarjontaTila;
 import fi.vm.sade.tarjonta.service.resources.KomoResource;
 import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,59 +48,57 @@ public class KomoResourceImpl implements KomoResource {
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-    @Autowired(required = true)
+    @Autowired
     private ConversionService conversionService;
 
     // GET /komo/hello
     @Override
     public String hello() {
-        LOG.info("hello() -- /komo/hello");
-        return "hello";
+        LOG.info("/komo/hello -- hello()");
+        return "Hello World! " + new Date();
     }
 
     // GET /komo/{oid}
     @Override
     public KomoDTO getByOID(String oid) {
-        LOG.info("getByOID() -- /komo/{}", oid);
+        LOG.info("/komo/}{} -- getByOID()", oid);
         Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
         KomoDTO result = conversionService.convert(komo, KomoDTO.class);
-        LOG.info("  result={}", result);
+        LOG.debug("  result={}", result);
         return result;
     }
 
     // GET /komo?searchTerms=xxx&count=x&startIndex=x&lastModifiedBefore=x&lastModifiedSince=x
     @Override
-    public List<String> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-        LOG.info("/komo -- search(st={}, c={}, si={}, lmb={}, lms={})", new Object[] {searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
+    public List<OidRDTO> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
+        LOG.info("/komo -- search(st={}, c={}, si={}, lmb={}, lms={})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
         // TarjontaTila == null (== all states ok)
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
         if (count <= 0) {
             count = 100;
-            LOG.info("  autolimit search to {} entries!", count);
+            LOG.debug("  autolimit search to {} entries!", count);
         }
 
-        List<String> result = new ArrayList<String>();
-        result.addAll(koulutusmoduuliDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
-        LOG.info("  result={}", result);
+        List<OidRDTO> result =
+                HakuResourceImpl.convertOidList(koulutusmoduuliDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
+        LOG.debug("  result={}", result);
         return result;
     }
 
     // GET /komo/OID/komoto?count=x&startIndex=x
     @Override
-    public List<String> getKomotosByKomoOID(String oid, int count, int startIndex) {
-        LOG.info("/komo/{}/komoto -- (si={}, c={})", new Object[] {oid, count, startIndex});
+    public List<OidRDTO> getKomotosByKomoOID(String oid, int count, int startIndex) {
+        LOG.info("/komo/{}/komoto -- (si={}, c={})", new Object[]{oid, count, startIndex});
 
         if (count <= 0) {
             count = 100;
-            LOG.info("  autolimit search to {} entries!", count);
+            LOG.debug("  autolimit search to {} entries!", count);
         }
 
-        List<String> result = koulutusmoduuliToteutusDAO.findOidsByKomoOid(oid, count, startIndex);
-
-        LOG.info("  result={}", result);
+        List<OidRDTO> result = HakuResourceImpl.convertOidList(koulutusmoduuliToteutusDAO.findOidsByKomoOid(oid, count, startIndex));
+        LOG.debug("  result={}", result);
         return result;
     }
-
 }
