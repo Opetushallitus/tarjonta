@@ -23,24 +23,26 @@ import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
 
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.ui.enums.SelectedOrgModel;
+import fi.vm.sade.tarjonta.ui.helper.RegexModelFilter;
+import fi.vm.sade.tarjonta.ui.helper.conversion.KorkeakouluConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KoulutuskoodiRowModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluKuvailevatTiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluPerustiedotView;
@@ -62,7 +64,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TarjontaKorkeakouluPresenter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TarjontaKorkeakouluPresenter.class);
+    private static transient final Logger LOG = LoggerFactory.getLogger(TarjontaKorkeakouluPresenter.class);
     @Autowired(required = true)
     protected OIDService oidService;
     @Autowired(required = true)
@@ -70,13 +72,14 @@ public class TarjontaKorkeakouluPresenter {
     @Autowired(required = true)
     private TarjontaPublicService tarjontaPublicService;
     @Autowired(required = true)
-    private KoulutusLukioConverter lukioKoulutusConverter;
+    private KorkeakouluConverter korkeakouluConverter;
     @Autowired(required = true)
     private KoulutusKoodistoConverter kolutusKoodistoConverter;
     private TarjontaPresenter presenter; //initialized in Spring xml configuration file.
     private EditKorkeakouluPerustiedotView perustiedotView;
     private EditKorkeakouluKuvailevatTiedotView kuvailevatTiedotView;
     private EditKorkeakouluView editKoulutusView;
+    private RegexModelFilter<KoulutuskoodiRowModel> filter;
 
     public TarjontaKorkeakouluPresenter() {
     }
@@ -94,19 +97,14 @@ public class TarjontaKorkeakouluPresenter {
         KorkeakouluPerustiedotViewModel perustiedot = getPerustiedotModel();
 
         if (perustiedot.isLoaded()) {//update KOMOTO
-            PaivitaKoulutusTyyppi paivita = lukioKoulutusConverter.createPaivitaLukioKoulutusTyyppi(getTarjontaModel(), perustiedot.getKomotoOid(), tila);
+            PaivitaKoulutusTyyppi paivita = korkeakouluConverter.createPaivitaLukioKoulutusTyyppi(getTarjontaModel(), perustiedot.getKomotoOid(), tila);
             tarjontaAdminService.paivitaKoulutus(paivita);
         } else { //insert new KOMOTO
             for (OrganisationOidNamePair pair : getTarjontaModel().getTarjoajaModel().getOrganisationOidNamePairs()) {
-                LisaaKoulutusTyyppi lisaa = lukioKoulutusConverter.createLisaaLukioKoulutusTyyppi(getTarjontaModel(), pair, tila);
+                LisaaKoulutusTyyppi lisaa = korkeakouluConverter.createLisaaLukioKoulutusTyyppi(getTarjontaModel(), pair, tila);
                 checkKoulutusmoduuli();
-                if (checkExistingKomoto(lisaa)) {
-                    tarjontaAdminService.lisaaKoulutus(lisaa);
-                    perustiedot.setKomotoOid(lisaa.getOid());
-                } else {
-                    LOG.debug("Unable to add koulutus because of the duplicate");
-                    throw new ExceptionMessage("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage");
-                }
+                tarjontaAdminService.lisaaKoulutus(lisaa);
+                perustiedot.setKomotoOid(lisaa.getOid());
             }
         }
     }
@@ -211,7 +209,7 @@ public class TarjontaKorkeakouluPresenter {
     private void loadKomoto(final String komotoOid) {
         if (komotoOid != null) {
             LueKoulutusVastausTyyppi koulutus = getPresenter().getKoulutusByOid(komotoOid);
-            lukioKoulutusConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, I18N.getLocale());
+            korkeakouluConverter.loadLueKoulutusVastausTyyppiToModel(getPresenter().getModel(), koulutus, I18N.getLocale());
         } else {
             Preconditions.checkNotNull(getTarjontaModel().getTarjoajaModel().getSelectedOrganisationOid(), "Missing organisation OID.");
             getPerustiedotModel().clearModel();
@@ -271,31 +269,13 @@ public class TarjontaKorkeakouluPresenter {
     }
 
     /**
-     * Loading start date for created komoto from an existing relative komoto
-     *
-     * @param koulutuskoodi
-     */
-    /*private void loadParentKomotoData(String koulutuskoodi) {
-     LOG.debug(koulutuskoodi);
-        
-     KoulutusTulos komoto = presenter.findKomotoByKoulutuskoodiPohjakoulutus(koulutuskoodi, null);
-     if (komoto != null) {
-     LueKoulutusKyselyTyyppi lueKysely = new LueKoulutusKyselyTyyppi();
-     lueKysely.setOid(komoto.getKoulutus().getKomotoOid());
-     LueKoulutusVastausTyyppi lueVastaus = this.tarjontaPublicService.lueKoulutus(lueKysely);
-     //ALKAMISPAIVA NO LONGER IN PARENT
-     //Date koulutuksenAlkuPvm = lueVastaus.getKoulutuksenAlkamisPaiva() != null ? lueVastaus.getKoulutuksenAlkamisPaiva().toGregorianCalendar().getTime() : null;
-     //this.getPerustiedotModel().setKoulutuksenAlkamisPvm(koulutuksenAlkuPvm);
-     }
-     }*/
-    /**
      * Load and convert Koodisto service data to human readable format. The data
      * is used in form combobox component.
      */
     public void loadKoulutuskoodis() {
         LOG.debug("in loadKoulutuskoodis");
         HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
-        kysely.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        kysely.setKoulutustyyppi(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS);
 
         //TODO: fix this
         //kysely.getOppilaitostyyppiUris().addAll(presenter.getOppilaitostyyppiUris());
@@ -354,21 +334,6 @@ public class TarjontaKorkeakouluPresenter {
         this.presenter = presenter;
     }
 
-    /*
-     * TODO checkExistingKomoto() fix this to support lukio. Now returns true always.
-     */
-    private boolean checkExistingKomoto(LisaaKoulutusTyyppi lisaaTyyppi) {
-        LOG.error("checkExistingKomoto method is still disabled!");
-//        TarkistaKoulutusKopiointiTyyppi kysely = new TarkistaKoulutusKopiointiTyyppi();
-//        kysely.setKoulutusAlkamisPvm(lisaaTyyppi.getKoulutuksenAlkamisPaiva());
-//        kysely.setKoulutusLuokitusKoodi(lisaaTyyppi.getKoulutusKoodi().getUri());
-//        kysely.setLukiolinjaKoodi(lisaaTyyppi.getLukiolinjaKoodi().getUri());
-//        kysely.setPohjakoulutus(lisaaTyyppi.getPohjakoulutusvaatimus().getUri());
-//        kysely.setTarjoajaOid(lisaaTyyppi.getTarjoaja());
-//        return tarjontaAdminService.tarkistaKoulutuksenKopiointi(kysely);
-        return true;
-    }
-
     /**
      * @return the perustiedotView
      */
@@ -411,7 +376,56 @@ public class TarjontaKorkeakouluPresenter {
         this.editKoulutusView = editKoulutusView;
     }
 
+    public void updateKoulutuskoodiToModel(final KoulutuskoodiRowModel rowModel) {
+        Preconditions.checkNotNull(rowModel, "KoulutuskoodiRowModel cannot be null.");
+        List<KoulutuskoodiModel> listaaKoulutukses = kolutusKoodistoConverter.listaaKoulutukses(rowModel, I18N.getLocale());
+
+        if (listaaKoulutukses.isEmpty()) {
+            Preconditions.checkNotNull(rowModel, "No KoulutuskoodiModel object found.");
+        }
+        presenter.getModel().getKorkeakouluPerustiedot().setKoulutuskoodiModel(listaaKoulutukses.get(0));
+    }
+
     public void showKorkeakouluKoulutusEditView(Collection<OrganisaatioPerustietoType> orgs) {
+        Preconditions.checkNotNull(orgs, "Collection of OrganisaatioPerustietoTypes cannot be null.");
         showEditKoulutusView(null, KoulutusActiveTab.PERUSTIEDOT);
+    }
+
+    /**
+     * Retrieves the koulutus objects for ListKoulutusView.
+     *
+     * @return the koulutus objects
+     */
+    public List<KoulutuskoodiRowModel> getKoulutusDataSource() {
+        ArrayList<KoulutuskoodiRowModel> results = Lists.<KoulutuskoodiRowModel>newArrayList();
+
+        String num = "";
+
+        for (int i = 0; i < 20; i++) {
+            KoulutuskoodiRowModel r = new KoulutuskoodiRowModel();
+            r.setKoodi(num += i);
+            r.setNimi("nimi asd adad ada adsadsasda da da asd asdd");
+            results.add(r);
+        }
+
+        return results;
+    }
+
+    public List<KoulutuskoodiRowModel> filterKoulutuskoodis() {
+        final String searchWord = getPerustiedotModel().getValitseKoulutus().getSearchWord();
+
+        if (searchWord == null || searchWord.isEmpty() || searchWord.length() < 2) {
+            LOG.debug("Search all items. param : '{}'", searchWord);
+            return getKoulutusDataSource();
+        }
+
+        if (filter == null) {
+            filter = new RegexModelFilter<KoulutuskoodiRowModel>();
+
+        }
+        final List<KoulutuskoodiRowModel> result = filter.filterByParams(getKoulutusDataSource(), searchWord);
+        LOG.debug("Result size  : {}, param : '{}' ", result.size(), searchWord);
+
+        return result;
     }
 }

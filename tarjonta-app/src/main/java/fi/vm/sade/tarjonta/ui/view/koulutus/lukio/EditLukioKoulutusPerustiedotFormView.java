@@ -72,7 +72,7 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.YhteyshenkiloViewForm;
 @FormView(matchFieldsBy = FormFieldMatch.ANNOTATION)
 public class EditLukioKoulutusPerustiedotFormView extends GridLayout {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditLukioKoulutusPerustiedotFormView.class);
+    private static transient final Logger LOG = LoggerFactory.getLogger(EditLukioKoulutusPerustiedotFormView.class);
     private static final String PROPERTY_PROMPT_SUFFIX = ".prompt";
     private static final long serialVersionUID = -8964329145514588760L;
     private transient I18NHelper _i18n;

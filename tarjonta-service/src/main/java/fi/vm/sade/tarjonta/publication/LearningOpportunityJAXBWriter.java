@@ -15,6 +15,34 @@
  */
 package fi.vm.sade.tarjonta.publication;
 
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fi.vm.sade.organisaatio.api.model.types.EmailDTO;
 import fi.vm.sade.organisaatio.api.model.types.HakutoimistoTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.KuvailevaTietoTyyppi;
@@ -30,49 +58,74 @@ import fi.vm.sade.organisaatio.api.model.types.SoMeLinkkiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.WwwDTO;
 import fi.vm.sade.organisaatio.api.model.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.namespace.QName;
-import javax.xml.bind.*;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-
-import fi.vm.sade.tarjonta.publication.types.*;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.Kielivalikoima;
+import fi.vm.sade.tarjonta.model.KoodistoUri;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.Osoite;
+import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
+import fi.vm.sade.tarjonta.model.Pisteraja;
+import fi.vm.sade.tarjonta.model.TarjontaTila;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
+import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
+import fi.vm.sade.tarjonta.model.WebLinkki;
+import fi.vm.sade.tarjonta.publication.types.AddressInfoSchemeType;
+import fi.vm.sade.tarjonta.publication.types.ApplicationOptionType;
+import fi.vm.sade.tarjonta.publication.types.ApplicationSystemRefType;
+import fi.vm.sade.tarjonta.publication.types.ApplicationSystemType;
+import fi.vm.sade.tarjonta.publication.types.AssessmentCollectionType;
+import fi.vm.sade.tarjonta.publication.types.AttachmentCollectionType;
+import fi.vm.sade.tarjonta.publication.types.AttachmentCollectionType.Attachment;
+import fi.vm.sade.tarjonta.publication.types.CodeSchemeType;
+import fi.vm.sade.tarjonta.publication.types.CodeValueCollectionType;
+import fi.vm.sade.tarjonta.publication.types.CodeValueType;
 import fi.vm.sade.tarjonta.publication.types.CodeValueType.Code;
+import fi.vm.sade.tarjonta.publication.types.CreditsType;
+import fi.vm.sade.tarjonta.publication.types.DescriptionType;
+import fi.vm.sade.tarjonta.publication.types.EducationDurationType;
+import fi.vm.sade.tarjonta.publication.types.EligibilityRequirementsType;
+import fi.vm.sade.tarjonta.publication.types.ExaminationEventType;
+import fi.vm.sade.tarjonta.publication.types.ExaminationLocationType;
+import fi.vm.sade.tarjonta.publication.types.ExtendedCodeLabelType;
+import fi.vm.sade.tarjonta.publication.types.ExtendedStringType;
+import fi.vm.sade.tarjonta.publication.types.FinalExaminationCollectionType;
+import fi.vm.sade.tarjonta.publication.types.ImageType;
+import fi.vm.sade.tarjonta.publication.types.LanguageSetType;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunityDownloadDataType;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunityInstanceRefType;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunityInstanceType;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunityProviderType;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunityProviderType.InstitutionInfo;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunitySpecificationRefType;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunitySpecificationType;
 import fi.vm.sade.tarjonta.publication.types.LearningOpportunitySpecificationType.Classification;
 import fi.vm.sade.tarjonta.publication.types.LearningOpportunitySpecificationType.Description;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.publication.types.AttachmentCollectionType.Attachment;
-import fi.vm.sade.tarjonta.publication.types.LearningOpportunityProviderType.InstitutionInfo;
+import fi.vm.sade.tarjonta.publication.types.LearningOpportunityTypeType;
+import fi.vm.sade.tarjonta.publication.types.ObjectFactory;
+import fi.vm.sade.tarjonta.publication.types.OrganizationRefType;
+import fi.vm.sade.tarjonta.publication.types.PersonSchemeType;
+import fi.vm.sade.tarjonta.publication.types.PersonType;
+import fi.vm.sade.tarjonta.publication.types.PostalAddress;
+import fi.vm.sade.tarjonta.publication.types.ProfessionCollectionType;
+import fi.vm.sade.tarjonta.publication.types.ProviderAddressType;
+import fi.vm.sade.tarjonta.publication.types.ScoreLimitsType;
+import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType;
 import fi.vm.sade.tarjonta.publication.types.SelectionCriterionsType.EntranceExaminations.Examination;
+import fi.vm.sade.tarjonta.publication.types.StatusSchemeType;
+import fi.vm.sade.tarjonta.publication.types.TypedDescriptionType;
+import fi.vm.sade.tarjonta.publication.types.WebLinkCollectionType;
 import fi.vm.sade.tarjonta.publication.types.WebLinkCollectionType.Link;
+import fi.vm.sade.tarjonta.publication.types.WeightedSubjectType;
 import fi.vm.sade.tarjonta.publication.utils.VersionedUri;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
-
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Implements {@link PublicationCollector.EventHandler} by writing all
@@ -479,7 +532,7 @@ public class LearningOpportunityJAXBWriter extends PublicationCollector.EventHan
     
     private void addKielivalikoimat(KoulutusmoduuliToteutus toteutus,
 			LearningOpportunityInstanceType instance) {
-		for (Kielivalikoima curValikoima : toteutus.getTarjotutKielet()) {
+		for (Kielivalikoima curValikoima : toteutus.getTarjotutKielet().values()) {
 			LanguageSetType curLangSet = new LanguageSetType();
 			curLangSet.setSubject(curValikoima.getKey());
 			curLangSet.setLanguages(toCodeValueCollection(curValikoima.getKielet()));

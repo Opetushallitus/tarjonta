@@ -16,18 +16,19 @@
 package fi.vm.sade.tarjonta.ui.model.koulutus.lukio;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
-import com.google.common.collect.Lists;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.google.common.collect.Maps;
 
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
 
@@ -42,13 +43,13 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
         this.tila = tila;
     }
     // diplomit
-    private List<String> diplomit = Lists.newArrayList();
+    private Set<String> diplomit = new TreeSet<String>();
     // kielet
-    private List<String> kieliA = Lists.newArrayList();
-    private List<String> kieliB1 = Lists.newArrayList();
-    private List<String> kieliB2 = Lists.newArrayList();
-    private List<String> kieliB3 = Lists.newArrayList();
-    private List<String> kieletMuu = Lists.newArrayList();
+    private Set<String> kieliA = new TreeSet<String>();
+    private Set<String> kieliB1 = new TreeSet<String>();
+    private Set<String> kieliB2 = new TreeSet<String>();
+    private Set<String> kieliB3 = new TreeSet<String>();
+    private Set<String> kieletMuu = new TreeSet<String>();
     // tekstikentät
     private Map<String, KoulutusLisatietoModel> tekstit = Maps.newHashMap();
 
@@ -64,7 +65,7 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
         super();
     }
 
-    public List<String> getDiplomit() {
+    public Set<String> getDiplomit() {
         return diplomit;
     }
 
@@ -72,48 +73,48 @@ public class KoulutusLukioKuvailevatTiedotViewModel extends BaseUIViewModel {
         return tekstit.keySet();
     }
 
-    public List<String> getKieletMuu() {
+    public Set<String> getKieletMuu() {
         return kieletMuu;
     }
 
-    public List<String> getKieliA() {
+    public Set<String> getKieliA() {
         return kieliA;
     }
 
-    public List<String> getKieliB1() {
+    public Set<String> getKieliB1() {
         return kieliB1;
     }
 
-    public List<String> getKieliB2() {
+    public Set<String> getKieliB2() {
         return kieliB2;
     }
 
-    public List<String> getKieliB3() {
+    public Set<String> getKieliB3() {
         return kieliB3;
     }
 
-    public void setDiplomit(List<String> diplomit) {
-        this.diplomit = diplomit;
+    public void setDiplomit(Collection<String> diplomit) {
+        this.diplomit = new TreeSet<String>(diplomit);
     }
 
-    public void setKieletMuu(List<String> kieletMuu) {
-        this.kieletMuu = kieletMuu;
+    public void setKieletMuu(Collection<String> kieletMuu) {
+        this.kieletMuu = new TreeSet<String>(kieletMuu);
     }
 
-    public void setKieliA(List<String> kieliA) {
-        this.kieliA = kieliA;
+    public void setKieliA(Collection<String> kieliA) {
+        this.kieliA = new TreeSet<String>(kieliA);
     }
 
-    public void setKieliB1(List<String> kieliB1) {
-        this.kieliB1 = kieliB1;
+    public void setKieliB1(Collection<String> kieliB1) {
+        this.kieliB1 = new TreeSet<String>(kieliB1);
     }
 
-    public void setKieliB2(List<String> kieliB2) {
-        this.kieliB2 = kieliB2;
+    public void setKieliB2(Collection<String> kieliB2) {
+        this.kieliB2 = new TreeSet<String>(kieliB2);
     }
 
-    public void setKieliB3(List<String> kieliB3) {
-        this.kieliB3 = kieliB3;
+    public void setKieliB3(Collection<String> kieliB3) {
+        this.kieliB3 = new TreeSet<String>(kieliB3);
     }
 
     /**

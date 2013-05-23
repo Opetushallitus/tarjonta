@@ -16,9 +16,6 @@
  */
 package fi.vm.sade.tarjonta.ui.view.hakukohde.tabs;
 
-import org.vaadin.addon.formbinder.FormFieldMatch;
-import org.vaadin.addon.formbinder.FormView;
-import org.vaadin.addon.formbinder.PropertyId;
 
 import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.ui.Button.ClickEvent;

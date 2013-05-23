@@ -231,7 +231,7 @@ public class TarjontaDataKoodistoHelper {
         final String alaKoodiUri = getKoodiUri(koodiRelaatio.getAlaArvoKoodisto(), koodiRelaatio.getKoodiAlaArvo());
         final SuhteenTyyppiType suhteenTyyppi = koodiRelaatio.getSuhteenTyyppi();
         try {
-            log.info("Trying to create relation with koodiUris [{}], suhteenTyyppi [{}]", ylaKoodiUri + ", " + alaKoodiUri, suhteenTyyppi.name());
+            //log.info("Trying to create relation with koodiUris [{}], suhteenTyyppi [{}]", ylaKoodiUri + ", " + alaKoodiUri, suhteenTyyppi.name());
             koodiAdminService.addRelationByAlakoodi(ylaKoodiUri, Collections.singletonList(alaKoodiUri), suhteenTyyppi);
         } catch (final Exception exp) {
             log.error("Unable to create relation with koodiUris [{}], exception [{}]", ylaKoodiUri + ", " + alaKoodiUri, exp.toString());

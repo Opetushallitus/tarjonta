@@ -13,20 +13,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
+package fi.vm.sade.tarjonta.ui.model.koulutus.kk;
 
-package fi.vm.sade.tarjonta.ui.view.common;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 
-import fi.vm.sade.vaadin.ui.OphAbstractDialogWindow;
 
 /**
  *
  * @author Jani Wilén
  */
-public abstract class AbstractDataTableDialog extends OphAbstractDialogWindow implements IDialogDataTable {
-    private static final long serialVersionUID = 8208912526880092482L;
+public class KoulutuskoodiRowModel extends KoulutusKoodistoModel {
 
-    public AbstractDataTableDialog(String winLabel, String topic, String message) {
-        super(winLabel, topic, message);
-    }
+    private static final long serialVersionUID = -333467651874245252L;
+    
 
+   
 }

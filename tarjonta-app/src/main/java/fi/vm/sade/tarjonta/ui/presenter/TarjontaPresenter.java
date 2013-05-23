@@ -1068,7 +1068,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     public void showHakukohdeEditView(List<String> koulutusOids, String hakukohdeOid, List<KoulutusOidNameViewModel> koulutusOidNameViewModels, String selectedTab) {
         LOG.info("showHakukohdeEditView()");
         //After the data has been initialized the form is created
-        editHakukohdeView = new EditHakukohdeView();
+        editHakukohdeView = new EditHakukohdeView(hakukohdeOid);
         if (hakukohdeOid == null) {
             getModel().setHakukohde(HakukohdeViewModel.create());
 

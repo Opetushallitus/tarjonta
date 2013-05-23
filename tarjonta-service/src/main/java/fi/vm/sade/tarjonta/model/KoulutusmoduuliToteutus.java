@@ -15,15 +15,35 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-import javax.persistence.*;
-import javax.validation.constraints.Size;
+
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import org.apache.commons.lang.StringUtils;
+
+import fi.vm.sade.generic.model.BaseEntity;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -139,8 +159,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private MonikielinenTeksti yhteistyoMuidenToimijoidenKanssa;
     
     //Lukiospesifeja kenttia
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<Kielivalikoima> tarjotutKielet = new HashSet<Kielivalikoima>();
+    @MapKey(name="key")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=true)
+    private Map<String, Kielivalikoima> tarjotutKielet = new HashMap<String, Kielivalikoima>();
     
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_lukiodiplomi", joinColumns =
@@ -426,22 +447,32 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         this.yhteyshenkilos.clear();
         this.yhteyshenkilos = yhteyshenkilos;
     }
-    
-    public Set<Kielivalikoima> getTarjotutKielet() {
-        return Collections.unmodifiableSet(tarjotutKielet);
-    }
 
-    public void addTarjottuKieli(Kielivalikoima tarjottuKieli) {
-        tarjotutKielet.add(tarjottuKieli);
-    }
-
-    public void removeTarjottuKieli(Kielivalikoima tarjottuKieli) {
-        tarjotutKielet.remove(tarjottuKieli);
+    public Map<String, Kielivalikoima> getTarjotutKielet() {
+		return Collections.unmodifiableMap(tarjotutKielet);
+	}
+    
+    public Kielivalikoima getKieliValikoima(String key) {
+    	Kielivalikoima ret = tarjotutKielet.get(key);
+    	if (ret==null) {
+    		ret = new Kielivalikoima();
+    		ret.setKey(key);
+    		tarjotutKielet.put(key, ret);
+    	}
+    	return ret;
     }
     
-    public void setTarjotutKielet(Set<Kielivalikoima> tarjotutKielet) {
-        this.tarjotutKielet.clear();
-        this.tarjotutKielet = tarjotutKielet;
+    public void setKieliValikoima(String key, Collection<String> codes) {
+    	if (codes!=null && !codes.isEmpty()) {
+    		getKieliValikoima(key).setKielet(codes);
+    	} else {
+    		// Map.remove ei toimi tässä (hibernaten "ominaisuus", pitäisi kutsua entitymanagerin removea jotta
+    		// poistuisi varmasti), siksi get ja set..
+    		Kielivalikoima kv = tarjotutKielet.get(key);
+    		if (kv!=null) {
+    			kv.setKielet(new ArrayList<String>());
+    		}
+    	}
     }
 
     /**

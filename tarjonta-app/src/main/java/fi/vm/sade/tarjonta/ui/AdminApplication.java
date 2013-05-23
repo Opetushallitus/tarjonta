@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui;
 
-import com.github.wolfie.blackboard.Blackboard;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Window;
@@ -43,6 +42,8 @@ public class AdminApplication extends AbstractWebApplication {
     private TarjontaKomoData tarjontaKomoData;
     @Value("${tarjonta.public.webservice.url.backend}")
     private String tarjontaBackendUrl;
+    @Value("${organisaatio.webservice.url.backend}")
+    private String organisaatioBackendUrl;
     private HttpClient httpClient = new HttpClient();
 
     @Override
@@ -89,7 +90,7 @@ public class AdminApplication extends AbstractWebApplication {
 
         final Button btnIndexKoulutukset = new Button("Indeksoi koulutukset", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
-
+            
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 String urlString = tarjontaBackendUrl.substring(0, tarjontaBackendUrl.indexOf("/services")) + "/rest/indexer/koulutukset?clear=true";
@@ -107,6 +108,48 @@ public class AdminApplication extends AbstractWebApplication {
         });
 
         hl.addComponent(btnIndexKoulutukset);
+
+        final Button btnIndexHakukohteet = new Button("Indeksoi hakukohteet", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                String urlString = tarjontaBackendUrl.substring(0, tarjontaBackendUrl.indexOf("/services")) + "/rest/indexer/hakukohteet?clear=true";
+                try {
+                    LOG.debug("Indeksoi hakukohteet: {}", urlString);
+
+                    GetMethod get = new GetMethod(urlString);
+                    httpClient.executeMethod(get);
+                    String responseContent = new String(get.getResponseBodyAsString());
+                    LOG.debug("Indeksoi koulutukset done:{}", responseContent);
+                } catch (Throwable ex) {
+                    LOG.error("Failed to index hakukohteet", ex);
+                }
+            }
+        });
+
+        hl.addComponent(btnIndexHakukohteet);
+        
+        final Button btnIndexOrganisaatiot = new Button("Indeksoi organisaatiot", new Button.ClickListener() {
+            private static final long serialVersionUID = 5019806363620874205L;
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                String urlString = organisaatioBackendUrl.substring(0, organisaatioBackendUrl.indexOf("/services")) + "/rest/indexer/start?clean=true";
+                try {
+                    LOG.error("Indeksoi organisaatiot: {}", urlString);
+
+                    GetMethod get = new GetMethod(urlString);
+                    httpClient.executeMethod(get);
+                    String responseContent = new String(get.getResponseBodyAsString());
+                    LOG.debug("Indeksoi organisaatiot done:{}", responseContent);
+                } catch (Throwable ex) {
+                    LOG.error("Failed to index organisaatiot", ex);
+                }
+            }
+        });
+
+        hl.addComponent(btnIndexOrganisaatiot);
     }
 
 }

@@ -34,6 +34,7 @@ import java.util.*;
  */
 @Configurable(preConstruction =  true)
 public class KoulutusKopiointiDialog extends OrganisaatioSelectDialog {
+    private static final long serialVersionUID = 5989896711603394196L;
 
 
     @Autowired(required = true)

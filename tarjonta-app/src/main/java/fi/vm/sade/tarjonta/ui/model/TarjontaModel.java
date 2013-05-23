@@ -59,7 +59,7 @@ public class TarjontaModel extends BaseUIViewModel {
      * University
      */
     private KorkeakouluPerustiedotViewModel korkeakouluPerustiedot;
-    private KorkeakouluKuvailevatTiedotViewModel korkeakouluKuvailevatTiedot; 
+    private KorkeakouluKuvailevatTiedotViewModel korkeakouluKuvailevatTiedot;
     /*
      * Hakutulos
      */
@@ -346,7 +346,7 @@ public class TarjontaModel extends BaseUIViewModel {
      */
     public KorkeakouluPerustiedotViewModel getKorkeakouluPerustiedot() {
         if (korkeakouluPerustiedot == null) {
-            setKorkeakouluPerustiedot(new KorkeakouluPerustiedotViewModel());
+            korkeakouluPerustiedot = new KorkeakouluPerustiedotViewModel();
         }
 
         return korkeakouluPerustiedot;
@@ -358,7 +358,7 @@ public class TarjontaModel extends BaseUIViewModel {
     public KorkeakouluKuvailevatTiedotViewModel getKorkeakouluKuvailevatTiedot() {
         //TODO have a map!
         if (korkeakouluKuvailevatTiedot == null) {
-            setKorkeakouluKuvailevatTiedot(new KorkeakouluKuvailevatTiedotViewModel());
+            korkeakouluKuvailevatTiedot = new KorkeakouluKuvailevatTiedotViewModel();
         }
 
         return korkeakouluKuvailevatTiedot;

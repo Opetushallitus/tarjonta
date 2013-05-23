@@ -74,11 +74,11 @@ public class EditKorkeakouluPerustiedotFormView extends GridLayout {
     private static final String PROPERTY_PROMPT_SUFFIX = ".prompt";
     private static final long serialVersionUID = -8964329145514588760L;
     private transient I18NHelper _i18n;
+    private transient UiBuilder uiBuilder;
+    private transient TarjontaUIHelper uiHelper;
     private KorkeakouluPerustiedotViewModel model;
     private TarjontaPresenter tarjontaPresenter;
     private TarjontaKorkeakouluPresenter korkeakouluPresenter;
-    private transient UiBuilder uiBuilder;
-    private transient TarjontaUIHelper uiHelper;
     private YhteyshenkiloViewForm yhteyshenkiloForm;
     private BeanItemContainer<KoulutuskoodiModel> bicKoulutuskoodi;
     private BeanItemContainer<KoulutusohjelmaModel> bicTutkintoohjelmas;

@@ -3,6 +3,7 @@ package fi.vm.sade.tarjonta.model;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;
@@ -10,7 +11,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import fi.vm.sade.generic.model.BaseEntity;
@@ -48,18 +48,14 @@ public class Kielivalikoima extends BaseEntity {
     }
 
     /**
-     * @param kieliUri the kieliUri to set
+     * @param uris Kieli-urit
      */
-    public void addKieli(String kieliUri) {
-        kielet.add(new KoodistoUri(kieliUri));
-    }
-
-    public void removeKieli(String kieliUri) {
-        kielet.remove(new KoodistoUri(kieliUri));
-    }
-
     public void setKielet(Collection<String> uris) {
-        kielet.clear();
+    	for (Iterator<KoodistoUri> i = kielet.iterator(); i.hasNext();) {
+    		if (!uris.contains(i.next().getKoodiUri())) {
+    			i.remove();
+    		}
+    	}
         for (String uri : uris) {
             kielet.add(new KoodistoUri(uri));
         }

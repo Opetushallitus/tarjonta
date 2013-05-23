@@ -32,6 +32,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
 public abstract class TarjontaWindow extends Window implements Window.CloseListener {
 
     public static final String WINDOW_TITLE_PROPERTY = "dialogTitle";
+    private static final long serialVersionUID = -4980885940929735113L;
     /**
      * Build the layout only if not only done before.
      */

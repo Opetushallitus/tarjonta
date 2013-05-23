@@ -43,40 +43,41 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
     /*
      * Data for comboxes (komo + tutkintoohjelma) 
      */
-    protected List<KoulutusmoduuliKoosteTyyppi> komos;
-    protected Set<KoulutuskoodiModel> koulutuskoodis;
-    protected Set<KoulutusohjelmaModel> tutkintoohjelmas;
-    protected KoulutusohjelmaModel tutkintoohjelma;
-    protected String tunniste; //tutkinto-ohjelman tunniste
+    private List<KoulutusmoduuliKoosteTyyppi> komos;
+    private Set<KoulutuskoodiModel> koulutuskoodis;
+    private Set<KoulutusohjelmaModel> tutkintoohjelmas;
+    private KoulutusohjelmaModel tutkintoohjelma;
+    private String tunniste; //tutkinto-ohjelman tunniste
     /*
      * Other user selected form input data
      */
-    protected Date koulutuksenAlkamisPvm;
-    protected String suunniteltuKesto;
-    protected String suunniteltuKestoTyyppi;
-    protected Set<String> opetuskielis;
-    protected Set<String> opetusmuodos;
+    private Date koulutuksenAlkamisPvm;
+    private String suunniteltuKesto;
+    private String suunniteltuKestoTyyppi;
+    private Set<String> opetuskielis;
+    private Set<String> opetusmuodos;
     /*
      * Link to opetussuunnitelma
      */
-    protected String opsuLinkki;
+    private String opsuLinkki;
     /*
      * KK
      */
-    protected Boolean opintojenMaksullisuus;
-    protected Set<String> pohjakoulutusvaatimukset;
-    protected Set<String> teemas;
+    private Boolean opintojenMaksullisuus;
+    private Set<String> pohjakoulutusvaatimukset;
+    private Set<String> teemas;
     /*
      * Contact persons
      */
-    protected YhteyshenkiloModel yhteyshenkilo;
-    protected YhteyshenkiloModel ectsKoordinaattori;
+    private YhteyshenkiloModel yhteyshenkilo;
+    private YhteyshenkiloModel ectsKoordinaattori;
 
     /*
      * cache maps
      */
-    public Map<String, List<KoulutusmoduuliKoosteTyyppi>> cacheKomoTutkinto;
-    public Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo;
+    private Map<String, List<KoulutusmoduuliKoosteTyyppi>> cacheKomoTutkinto;
+    private Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> cacheKomo;
+    private ValitseKoulutusModel valitseKoulutus;
 
     public KorkeakouluPerustiedotViewModel() {
         super();
@@ -478,5 +479,23 @@ public class KorkeakouluPerustiedotViewModel extends KoulutusRelaatioModel {
      */
     public void setTunniste(String tunniste) {
         this.tunniste = tunniste;
+    }
+
+    /**
+     * @return the valitseKoulutus
+     */
+    public ValitseKoulutusModel getValitseKoulutus() {
+        if (valitseKoulutus == null) {
+            valitseKoulutus = new ValitseKoulutusModel();
+        }
+
+        return valitseKoulutus;
+    }
+
+    /**
+     * @param valitseKoulutus the valitseKoulutus to set
+     */
+    public void setValitseKoulutus(ValitseKoulutusModel valitseKoulutus) {
+        this.valitseKoulutus = valitseKoulutus;
     }
 }
