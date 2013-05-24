@@ -87,9 +87,11 @@
     <jaxws:client id="koodistoAdminService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoAdminService"
                   address="${KoodistoAdminService.url:http://NO_KOODISTO_WEBSERVICE_URL_CONFIGURED}" />
-    <jaxws:client id="oidService"
-                  serviceClass="fi.vm.sade.oid.service.OIDService"
-                  address="${oid.webservice.url:http://NO_OID_WEBSERVICE_URL_CONFIGURED}"/>
+
+    <bean id="oidService" class="fi.vm.sade.oid.service.simple.OIDServiceSimpleImpl" />
+<!--
+DISABLED <jaxws:client id="oidService" serviceClass="fi.vm.sade.oid.service.OIDService" address="${oid.webservice.url:http://NO_OID_WEBSERVICE_URL_CONFIGURED}"/>
+-->
     <jaxws:client id="tarjontaAdminService"
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService"
                   address="${TarjontaAdminService.url:http://NO_TARJONTA_ADMIN_WEBSERVICE_URL_CONFIGURED}"/>
