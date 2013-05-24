@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.data.tarjontauploader;
 
 import fi.vm.sade.tarjonta.data.dto.AbstractReadableRow;
+import org.apache.commons.lang.StringUtils;
 
 public class Hakukohde extends AbstractReadableRow {
     private String alkamisvuosi;
@@ -96,6 +97,8 @@ public class Hakukohde extends AbstractReadableRow {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return (StringUtils.isBlank(alkamisvuosi) && StringUtils.isBlank(alkamiskausi) && StringUtils.isBlank(hakutyyppi) && StringUtils.isBlank(yhkoulu)
+                && StringUtils.isBlank(oppilaitosnumero) && StringUtils.isBlank(toimipisteJno) && StringUtils.isBlank(hakukohdekoodi)
+                && valinnanAloituspaikka == null && aloituspaikka == null && StringUtils.isBlank(valintakoe));
     }
 }

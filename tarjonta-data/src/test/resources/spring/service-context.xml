@@ -39,7 +39,7 @@
     </bean>
 
     <!-- CAS Http headers setting section, CXF interceptor adds mock http-headers to request -->
-    <bean id="koodistoCxfInterceptor" class="fi.vm.sade.tarjonta.data.util.KoodistoCxfInterceptor"/>
+    <bean id="koodistoCxfInterceptor" class="fi.vm.sade.tarjonta.data.util.AuthCxfInterceptor"/>
 
     <cxf:bus>
         <cxf:outInterceptors>

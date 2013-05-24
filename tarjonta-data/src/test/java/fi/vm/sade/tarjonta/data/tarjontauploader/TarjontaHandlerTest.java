@@ -10,6 +10,8 @@ import fi.vm.sade.organisaatio.api.model.types.*;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusHakukohteelleTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -46,9 +48,9 @@ public class TarjontaHandlerTest {
         when(koodiService.searchKoodisByKoodisto(searchKoodi)).thenReturn(Collections.singletonList(koodiType));
 
         organisaatioService = mock(OrganisaatioService.class);
-        final OrganisaatioPerustietoType oppilaitos = new OrganisaatioPerustietoType();
+        final OrganisaatioDTO oppilaitos = new OrganisaatioDTO();
         oppilaitos.setOid("1.3.3");
-        when(organisaatioService.searchBasicOrganisaatios(any(OrganisaatioSearchCriteriaDTO.class))).thenReturn(Collections.singletonList(oppilaitos));
+        when(organisaatioService.searchOrganisaatios(any(OrganisaatioSearchCriteriaDTO.class))).thenReturn(Collections.singletonList(oppilaitos));
         final OrganisaatioDTO toimipiste = new OrganisaatioDTO();
         final OsoiteDTO osoite = new OsoiteDTO();
         osoite.setOsoite("Katu 1");
@@ -57,14 +59,52 @@ public class TarjontaHandlerTest {
         osoite.setOsoiteTyyppi(OsoiteTyyppi.POSTI);
         toimipiste.getYhteystiedot().add(osoite);
         toimipiste.setOpetuspisteenJarjNro("01");
+        toimipiste.setOid("1.3.3.3");
         when(organisaatioService.findChildrenTo("1.3.3")).thenReturn(Collections.singletonList(toimipiste));
 
         handler = new TarjontaHandler(tarjontaPublicService, tarjontaAdminService, koodiService, organisaatioService);
     }
 
     @Test
-    public void testAddKoulutusmoduuliToteutusSuccessfully() {
-        handler.addKoulutus(new Koulutus());
+    public void testAddKoulutusSuccessfully() {
+        final Koulutus koulutus = new Koulutus();
+        koulutus.setPohjakoulutusvaatimus("PK");
+        koulutus.setOppilaitosnumero("01391");
+        koulutus.setToimipisteJno("01");
+        koulutus.setYhkoodi("1618");
+        koulutus.setKoulutus("351407");
+        koulutus.setKoulutusohjelma("0001");
+        koulutus.setPainotus("testi");
+        koulutus.setKoulutuslaji("N");
+        koulutus.setOpetuskieli("FI");
+        koulutus.setOpetusmuoto("L");
+        koulutus.setAlkamisvuosi("2014");
+        koulutus.setAlkamiskausi("K");
+        koulutus.setSuunniteltuKesto(3);
+        koulutus.setHakukohdekoodi("186");
+
+        handler.addKoulutus(koulutus, "ammatillinen_peruskoulutus");
+
+        // tarkista koulutuksen arvot rajapinnasta
+        final ArgumentCaptor<LisaaKoulutusTyyppi> koulutusTyyppi = ArgumentCaptor.forClass(LisaaKoulutusTyyppi.class);
+        verify(tarjontaAdminService, times(1)).lisaaKoulutus(koulutusTyyppi.capture());
+        assertEquals("1.2.246.562.5.01391_01_186_1618_0001", koulutusTyyppi.getValue().getOid());
+        assertEquals("PK", koulutusTyyppi.getValue().getPohjakoulutusvaatimus().getArvo());
+        assertEquals("351407", koulutusTyyppi.getValue().getKoulutusKoodi().getArvo());
+        assertEquals("0001", koulutusTyyppi.getValue().getKoulutusohjelmaKoodi().getArvo());
+        assertEquals("testi", koulutusTyyppi.getValue().getPainotus().getTeksti().get(0).getValue());
+        assertEquals("N", koulutusTyyppi.getValue().getKoulutuslaji().get(0).getArvo());
+        assertEquals("FI", koulutusTyyppi.getValue().getOpetuskieli().get(0).getArvo());
+        assertEquals("L", koulutusTyyppi.getValue().getOpetusmuoto().get(0).getArvo());
+        assertEquals("3", koulutusTyyppi.getValue().getKesto().getArvo());
+        assertEquals("1.3.3.3", koulutusTyyppi.getValue().getTarjoaja());
+
+        // tarkista kutsutaanko kouluksen liittämistä hakukohteelle
+        final ArgumentCaptor<LisaaKoulutusHakukohteelleTyyppi> lisaaKoulutusHakukohteelleTyyppi = ArgumentCaptor.forClass(LisaaKoulutusHakukohteelleTyyppi.class);
+        verify(tarjontaAdminService, times(1)).lisaaTaiPoistaKoulutuksiaHakukohteelle(lisaaKoulutusHakukohteelleTyyppi.capture());
+        assertEquals("1.2.246.562.5.01391_01_186_1618", lisaaKoulutusHakukohteelleTyyppi.getValue().getHakukohdeOid());
+        assertEquals(true, lisaaKoulutusHakukohteelleTyyppi.getValue().isLisaa());
+        assertEquals("1.2.246.562.5.01391_01_186_1618_0001", lisaaKoulutusHakukohteelleTyyppi.getValue().getKoulutusOids().get(0));
     }
 
     @Test

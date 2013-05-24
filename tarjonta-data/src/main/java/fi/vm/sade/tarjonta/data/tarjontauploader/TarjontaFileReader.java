@@ -20,7 +20,20 @@ import java.util.Set;
 public class TarjontaFileReader {
     private final Logger logger = LoggerFactory.getLogger(TarjontaFileReader.class);
     private static final Column[] KOULUTUS_COLUMNS = {
-            new Column("nimi", "NIMI", InputColumnType.STRING)
+            new Column("oppilaitosnumero", "OPPILAITOSNUMERO", InputColumnType.STRING),
+            new Column("toimipisteJno", "TOIMIPISTE", InputColumnType.STRING),
+            new Column("yhkoodi", "YHKOODI", InputColumnType.STRING),
+            new Column("koulutus", "KOULUTUS", InputColumnType.STRING),
+            new Column("koulutusohjelma", "KOULUTUSOHJELMA", InputColumnType.STRING),
+            new Column("painotus", "PAINOTUS", InputColumnType.STRING),
+            new Column("koulutuslaji", "KOULUTUSLAJI", InputColumnType.STRING),
+            new Column("pohjakoulutusvaatimus", "POHJAKOULUTUSVAATIMUS", InputColumnType.STRING),
+            new Column("opetuskieli", "OPETUSKIELI", InputColumnType.STRING),
+            new Column("opetusmuoto", "OPETUSMUOTO", InputColumnType.STRING),
+            new Column("alkamisvuosi", "ALKAMISVUOSI", InputColumnType.STRING),
+            new Column("alkamiskausi", "ALKAMISKAUSI", InputColumnType.STRING),
+            new Column("suunniteltuKesto", "SUUNNITELTU_KESTO", InputColumnType.INTEGER),
+            new Column("hakukohdekoodi", "HAKUKOHDEKOODI", InputColumnType.STRING)
     };
     private static final Column[] HAKUKOHDE_COLUMNS = {
             new Column("alkamisvuosi", "ALKAMISVUOSI", InputColumnType.STRING),
@@ -42,7 +55,7 @@ public class TarjontaFileReader {
         this.tarjontaHandler = tarjontaHandler;
     }
 
-    public void read(final TarjontaFileType type, final String filename, final String hakuOid) throws IOException {
+    public void read(final TarjontaFileType type, final String filename, final String args2) throws IOException {
         logger.info("Luetaan [{}] tiedostoa [{}]", type.name(), filename);
 
         final List<ErrorRow> errors = new ArrayList<ErrorRow>();
@@ -57,7 +70,7 @@ public class TarjontaFileReader {
                 for (final Koulutus koulutus : koulutukset) {
                     rivilaskuri++;
                     try {
-                        tarjontaHandler.addKoulutus(koulutus);
+                        tarjontaHandler.addKoulutus(koulutus, args2);
                     } catch (final Exception e) {
                         errors.add(new ErrorRow(e, rivilaskuri, koulutus));
                     }
@@ -73,8 +86,9 @@ public class TarjontaFileReader {
                 for (final Hakukohde hakukohde : hakukohteet) {
                     rivilaskuri++;
                     try {
-                        tarjontaHandler.addHakukohde(hakukohde, hakuOid);
+                        tarjontaHandler.addHakukohde(hakukohde, args2);
                     } catch (final Exception e) {
+                        logger.error("virhe lisättäessä hakukohdetta", e);
                         errors.add(new ErrorRow(e, rivilaskuri, hakukohde));
                     }
                 }
