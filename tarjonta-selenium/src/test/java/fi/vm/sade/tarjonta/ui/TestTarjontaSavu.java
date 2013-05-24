@@ -402,17 +402,28 @@ public class TestTarjontaSavu {
         doit.tauko(1);
         t01 = doit.millis();
         doit.textClick(driver, "Luo uusi hakukohde");
-        if (luokka)
+        Boolean a_scenario = false;
+        Boolean b_scenario = false;
+        String a_text = "Olet luomassa uutta hakukohdetta seuraavista koulutuksista";
+        String b_text = "Olet valinnut useita koulutuksia. Hakukohteeseen voi kuulua vain yksi";
+        Boolean skip2 = true;
+        while (skip2)
         {
-        Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
-        		, doit.textElement(driver, "Olet luomassa uutta hakukohdetta seuraavista koulutuksista"));
+        	if (doit.isPresentText(driver, a_text)) { a_scenario = true; skip2 = false; }
+        	if (doit.isPresentText(driver, b_text)) { b_scenario = true; skip2 = false; }
+        	doit.tauko(1);
         }
-        else
+        t01 = doit.millisDiff(t01);
+        if (a_scenario)
+        {
+        	Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
+        			, doit.textElement(driver, a_text));
+        }
+        if (b_scenario)
         {
             Assert.assertNotNull("Running TarjontaHakukohteetSavu004 LUO UUSI HAKUKOHDE ei toimi."
-            		, doit.textElement(driver, "Olet valinnut useita koulutuksia. Hakukohteeseen voi kuulua vain yksi"));
+            		, doit.textElement(driver, b_text));
         }        	
-        t01 = doit.millisDiff(t01);
         doit.tauko(1);
         String closeId = doit.idLike(driver, "window_close");
         driver.findElement(By.id(closeId)).click();
