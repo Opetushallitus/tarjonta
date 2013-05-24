@@ -149,6 +149,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
         if (selection.equals(i18n.getMessage(MenuBarActions.SHOW.key))) {
             openHakukohdeView();
         } else if (selection.equals(i18n.getMessage(MenuBarActions.EDIT.key))) {
+            tarjontaPresenter.getTarjoaja().setSelectedOrganisationOid(hakukohde.getHakukohde().getTarjoaja().getTarjoajaOid());
             tarjontaPresenter.showHakukohdeEditView(null, hakukohdeOid, null, null);
         } else if (selection.equals(i18n.getMessage(MenuBarActions.DELETE.key))) {
             showRemoveDialog();

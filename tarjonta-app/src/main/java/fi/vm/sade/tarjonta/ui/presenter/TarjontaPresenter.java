@@ -300,7 +300,7 @@ public class TarjontaPresenter implements CommonPresenter<TarjontaModel> {
     }
 
     public OrganisaatioDTO getSelectOrganisaatioModel() {
-        OrganisaatioDTO organisaatioDTO = organisaatioService.findByOid(getNavigationOrganisation().getOrganisationOid());
+        OrganisaatioDTO organisaatioDTO = organisaatioService.findByOid(getTarjoaja().getSelectedOrganisationOid());
         return organisaatioDTO;
     }
 
