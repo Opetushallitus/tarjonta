@@ -15,6 +15,9 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources;
 
+import fi.vm.sade.oid.service.ExceptionMessage;
+import fi.vm.sade.oid.service.OIDService;
+import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
@@ -25,6 +28,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,11 +55,19 @@ public class KomoResourceImpl implements KomoResource {
     @Autowired
     private ConversionService conversionService;
 
+    @Autowired
+    private OIDService oidService;
+
     // GET /komo/hello
     @Override
     public String hello() {
-        LOG.info("/komo/hello -- hello()");
-        return "Hello World! " + new Date();
+        try {
+            LOG.debug("/komo/hello -- hello()");
+            return "Well hello! Have a nice OID - " + oidService.newOid(NodeClassCode.TEKN_5);
+        } catch (ExceptionMessage ex) {
+            LOG.error("Failed", ex);
+            return "ERROR - SEE LOG";
+        }
     }
 
     // GET /komo/{oid}
