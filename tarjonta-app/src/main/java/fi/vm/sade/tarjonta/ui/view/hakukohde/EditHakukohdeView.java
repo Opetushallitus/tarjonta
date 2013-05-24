@@ -31,6 +31,8 @@ import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.*;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.util.UiUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -43,7 +45,8 @@ import java.util.List;
  */
 @Configurable(preConstruction = true)
 public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel, PerustiedotViewImpl> {
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(EditHakukohdeView.class);
     private static final long serialVersionUID = 8806220426371090907L;
     @Autowired
     private TarjontaPresenter presenter;
@@ -67,8 +70,11 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         setMargin(true);
         setHeight(-1, UNITS_PIXELS);
     }
-
+    /*
+     *  Prints out the hakukohde name and last update date and updater
+     */
     private void addTitleLayout() {
+        try {
         HorizontalLayout hl = new HorizontalLayout();
         hl.setSizeFull();
         if (presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getOid() != null) {
@@ -96,10 +102,17 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
         }
 
+        } catch (Exception exp) {
+            //No worries unable to create info layout, who cares. Log the exception and move on with your life
+            LOG.warn("Unable to create hakukohde update info layout: {0}",exp.toString());
+        }
     }
-
+     /*
+      * Prints out the hakukohde's attached koulutukset.
+      */
     private void addTopInfoMessage(String oid) {
 
+        try {
         VerticalLayout vl = new VerticalLayout();
 
         List<KoulutusOidNameViewModel> koulutusOidNameViewModels  = null;
@@ -127,6 +140,11 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         vl.addComponent(lbl);
         vl.setMargin(false,false,true,false);
         super.setTopInfoLayout(vl);
+        } catch (Exception exp) {
+            //No worries unable to create info layout, who cares. Log the exception and move on with your life
+            LOG.warn("Unable to create hakukohde koulutus info layout: {0}",exp.toString());
+
+        }
 
     }
 
