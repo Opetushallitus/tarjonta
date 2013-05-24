@@ -15,10 +15,12 @@
     <import resource="classpath:META-INF/cxf/cxf.xml" />
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
+    <bean id="oidService" class="fi.vm.sade.oid.service.simple.OIDServiceSimpleImpl" />
+
     <jaxws:client id="organisaatioService"
                    serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
                    address="${organisaatio.webservice.url.backend}"/>
-                   
+
     <jaxws:client id="koodiPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
                   address="${koodi.public.webservice.url.backend}"/>
@@ -26,7 +28,7 @@
     <jaxws:client id="koodistoPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
                   address="${koodisto.public.webservice.url.backend}"/>
-    
+
     <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl"/>
     <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicServiceImpl"/>
 
