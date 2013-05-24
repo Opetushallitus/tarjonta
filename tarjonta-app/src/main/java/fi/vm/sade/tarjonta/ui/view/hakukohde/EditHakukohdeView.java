@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
 import com.vaadin.data.Validator;
 import com.vaadin.ui.*;
+import fi.vm.sade.authentication.service.UserService;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
@@ -54,6 +55,8 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     private transient UiBuilder uiBuilder;
     @Autowired(required = true)
     private TarjontaUIHelper uiHelper;
+    @Autowired(required = true)
+    private UserService userService;
     private TabSheet tabs;
     private TabSheet.Tab perustiedotTab;
     private TabSheet.Tab liitteetTab;
@@ -88,7 +91,9 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
             SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
             tilaSb.append(sdf.format(presenter.getModel().getHakukohde().getViimeisinPaivitysPvm()));
             tilaSb.append(", ");
-            tilaSb.append(presenter.getModel().getHakukohde().getViimeisinPaivittaja());
+
+
+            tilaSb.append(tryGetViimPaivittaja(presenter.getModel().getHakukohde().getViimeisinPaivittaja()));
             tilaSb.append(")");
             Label tilaLbl = new Label(tilaSb.toString());
 
@@ -104,7 +109,16 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
         } catch (Exception exp) {
             //No worries unable to create info layout, who cares. Log the exception and move on with your life
-            LOG.warn("Unable to create hakukohde update info layout: {0}",exp.toString());
+            LOG.warn("Unable to create hakukohde update info layout: {}",exp.toString());
+        }
+    }
+
+    private String tryGetViimPaivittaja(String viimPaivittajaOid) {
+        try {
+            return userService.findByOid(viimPaivittajaOid).getKayttajatunnus();
+        } catch (Exception exp) {
+            LOG.warn("Unable to get user with oid : {} exception : {}",viimPaivittajaOid,exp.toString());
+            return viimPaivittajaOid;
         }
     }
      /*
@@ -142,7 +156,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         super.setTopInfoLayout(vl);
         } catch (Exception exp) {
             //No worries unable to create info layout, who cares. Log the exception and move on with your life
-            LOG.warn("Unable to create hakukohde koulutus info layout: {0}",exp.toString());
+            LOG.warn("Unable to create hakukohde koulutus info layout: {}",exp.toString());
 
         }
 
