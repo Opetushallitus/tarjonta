@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde;
 import com.vaadin.data.Validator;
 import com.vaadin.ui.*;
 import fi.vm.sade.authentication.service.UserService;
+import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
@@ -115,7 +116,14 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
     private String tryGetViimPaivittaja(String viimPaivittajaOid) {
         try {
-            return userService.findByOid(viimPaivittajaOid).getKayttajatunnus();
+            String userName = null;
+            HenkiloType henkilo = userService.findByOid(viimPaivittajaOid);
+            if (henkilo.getEtunimet() != null && henkilo.getSukunimi() != null) {
+                userName = henkilo.getEtunimet() + " " + henkilo.getSukunimi();
+            }  else {
+                userName = henkilo.getKayttajatunnus();
+            }
+            return userName;
         } catch (Exception exp) {
             LOG.warn("Unable to get user with oid : {} exception : {}",viimPaivittajaOid,exp.toString());
             return viimPaivittajaOid;
