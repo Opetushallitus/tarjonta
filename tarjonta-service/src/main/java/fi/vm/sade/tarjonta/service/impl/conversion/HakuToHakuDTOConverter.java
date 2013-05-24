@@ -14,19 +14,14 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
  * @author mlyly
  */
-public class HakuToHakuDTOConverter extends AbstractFromDomainConverter<Haku, HakuDTO> {
+public class HakuToHakuDTOConverter extends BaseRDTOConverter<Haku, HakuDTO> {
 
     @Override
     public HakuDTO convert(Haku s) {
@@ -46,25 +41,14 @@ public class HakuToHakuDTOConverter extends AbstractFromDomainConverter<Haku, Ha
         t.setKohdejoukkoUri(s.getKohdejoukkoUri());
         t.setKoulutuksenAlkamisVuosi(s.getKoulutuksenAlkamisVuosi());
         t.setKoulutuksenAlkamiskausiUri(s.getKoulutuksenAlkamiskausiUri());
-        t.setUpdated(s.getLastUpdateDate());
-        t.setUdatedByOid(s.getLastUpdatedByOid());
-        t.setNimi(convert(s.getNimi()));
+        t.setModified(s.getLastUpdateDate());
+        t.setModifiedBy(s.getLastUpdatedByOid());
+        t.setNimi(convertMonikielinenTekstiToMap(s.getNimi()));
         t.setTila(s.getTila() != null ? s.getTila().name() : null);
 
         t.setSijoittelu(s.isSijoittelu());
 
         return t;
     }
-
-    private Map<String, String> convert(MonikielinenTeksti s) {
-        Map<String, String> t = new HashMap<String, String>();
-
-        for (TekstiKaannos tekstiKaannos : s.getTekstis()) {
-            t.put(tekstiKaannos.getKieliKoodi(), tekstiKaannos.getArvo());
-        }
-
-        return t;
-    }
-
 
 }

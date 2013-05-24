@@ -449,6 +449,8 @@ public class ListKoulutusView extends VerticalLayout {
                         }
                     } else {
                         getWindow().removeWindow(createHakukohdeDialog);
+                        List<KoulutusOidNameViewModel> selectedKoulutusList = new ArrayList<KoulutusOidNameViewModel>(selectedKoulutukses);
+                        presenter.setModelSelectedKoulutusOidAndNames(selectedKoulutusList);
                         presenter.showHakukohdeEditView(koulutusNameViewModelToOidList(selectedKoulutukses), null, null,null);
                         
                     }

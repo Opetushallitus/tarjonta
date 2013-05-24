@@ -23,7 +23,16 @@ public class TarjontaFileReader {
             new Column("nimi", "NIMI", InputColumnType.STRING)
     };
     private static final Column[] HAKUKOHDE_COLUMNS = {
-            new Column("nimi", "NIMI", InputColumnType.STRING)
+            new Column("alkamisvuosi", "ALKAMISVUOSI", InputColumnType.STRING),
+            new Column("alkamiskausi", "ALKAMISKAUSI", InputColumnType.STRING),
+            new Column("hakutyyppi", "HAKUTYYPPI", InputColumnType.STRING),
+            new Column("yhkoulu", "YHKOULU", InputColumnType.STRING),
+            new Column("oppilaitosnumero", "OPPILAITOSNUMERO", InputColumnType.STRING),
+            new Column("toimipisteJno", "TOIMIPISTE", InputColumnType.STRING),
+            new Column("hakukohdekoodi", "HAKUKOHDEKOODI", InputColumnType.STRING),
+            new Column("valinnanAloituspaikka", "VALINNAN_ALOITUSPAIKKA", InputColumnType.INTEGER),
+            new Column("aloituspaikka", "ALOITUSPAIKKA", InputColumnType.INTEGER),
+            new Column("valintakoe", "VALINTAKOE", InputColumnType.STRING)
     };
 
     private TarjontaHandler tarjontaHandler;

@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.resources;
 
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import java.util.Date;
 
 import javax.ws.rs.*;
@@ -13,9 +14,10 @@ import java.util.Map;
  *
  * <pre>
  * /haku/hello
- * /haku  (?searchTerms...
+ * /haku  (?searchTerms... - list of { oid : xxx }
  * /haku/OID
- * /haku/OID/hakukohde
+ * /haku/OID/hakukohde - list of {oid : xxx}
+ * /haku/OID/hakukohdeWithName - list of {oid: xxx, fi: xxx, en: xxx} documents
  * </pre>
  *
  * @author mlyly
@@ -40,7 +42,7 @@ public interface HakuResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<String> search(@QueryParam("searchTerms") String searchTerms,
+    public List<OidRDTO> search(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex,
             @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
@@ -71,7 +73,7 @@ public interface HakuResource {
     @GET
     @Path("{oid}/hakukohde")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public List<String> getByOIDHakukohde(@PathParam("oid") String oid,
+    public List<OidRDTO> getByOIDHakukohde(@PathParam("oid") String oid,
             @QueryParam("searchTerms") String searchTerms,
             @QueryParam("count") int count,
             @QueryParam("startIndex") int startIndex,

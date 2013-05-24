@@ -73,6 +73,8 @@ public class TarjontaModel extends BaseUIViewModel {
     private ValintakoeAikaViewModel selectedValintakoeAika;
     private String selectedKoulutusOid;
     public KoulutusLukioKuvailevatTiedotViewModel koulutusLukioKuvailevatTiedot;
+
+    private List<KoulutusOidNameViewModel> hakukohdeTitleKoulutukses;
     private boolean selectedHakuStarted = false;
 
     public String getSelectedKoulutusOid() {
@@ -376,5 +378,13 @@ public class TarjontaModel extends BaseUIViewModel {
      */
     public void setKorkeakouluPerustiedot(KorkeakouluPerustiedotViewModel korkeakouluPerustiedot) {
         this.korkeakouluPerustiedot = korkeakouluPerustiedot;
+    }
+
+    public List<KoulutusOidNameViewModel> getHakukohdeTitleKoulutukses() {
+        return hakukohdeTitleKoulutukses;
+    }
+
+    public void setHakukohdeTitleKoulutukses(List<KoulutusOidNameViewModel> hakukohdeTitleKoulutukses) {
+        this.hakukohdeTitleKoulutukses = hakukohdeTitleKoulutukses;
     }
 }

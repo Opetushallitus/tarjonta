@@ -14,7 +14,6 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +23,8 @@ import java.util.Map;
  *
  * @author mlyly
  */
-public class HakukohdeDTO implements Serializable {
+public class HakukohdeDTO extends BaseRDTO {
 
-    private String _oid;
-    private int _version;
     private double _alinHyvaksyttavaKeskiarvo;
     private int _alinValintaPistemaara;
     private int _aloituspaikatLkm;
@@ -41,32 +38,13 @@ public class HakukohdeDTO implements Serializable {
     private String _soraKuvausKoodiUri;
     private String _tila;
     private String _valintaperustekuvausKoodiUri;
-    private Date _updated;
-    private String _updatedByOid;
     private Date _liitteidenToimitusPvm;
     private Map<String, String> _lisatiedot;
     private Map<String, String> _sorakuvaus;
     private Map<String, String> _valintaperustekuvaus;
-
     private List<List<String>> _painotettavatOppiaineet;
-
     private boolean _kaytetaanHaunPaattymisenAikaa;
-
-    public String getOid() {
-        return _oid;
-    }
-
-    public void setOid(String _oid) {
-        this._oid = _oid;
-    }
-
-    public int getVersion() {
-        return _version;
-    }
-
-    public void setVersion(int _version) {
-        this._version = _version;
-    }
+    private List<HakukohdeLiiteDTO> _liitteet;
 
     public double getAlinHyvaksyttavaKeskiarvo() {
         return _alinHyvaksyttavaKeskiarvo;
@@ -172,22 +150,6 @@ public class HakukohdeDTO implements Serializable {
         this._valintaperustekuvausKoodiUri = valintaperustekuvausKoodiUri;
     }
 
-    public Date getUpdated() {
-        return _updated;
-    }
-
-    public void setUpdated(Date updated) {
-        this._updated = updated;
-    }
-
-    public String getUpdatedByOid() {
-        return _updatedByOid;
-    }
-
-    public void setUpdatedByOid(String updatedByOid) {
-        this._updatedByOid = updatedByOid;
-    }
-
     public Date getLiitteidenToimitusPvm() {
         return _liitteidenToimitusPvm;
     }
@@ -234,5 +196,13 @@ public class HakukohdeDTO implements Serializable {
 
     public void setKaytetaanHaunPaattymisenAikaa(boolean _kaytetaanHaunPaattymisenAikaa) {
         this._kaytetaanHaunPaattymisenAikaa = _kaytetaanHaunPaattymisenAikaa;
+    }
+
+    public List<HakukohdeLiiteDTO> getLiitteet() {
+        return _liitteet;
+    }
+
+    public void setLiitteet(List<HakukohdeLiiteDTO> _liitteet) {
+        this._liitteet = _liitteet;
     }
 }

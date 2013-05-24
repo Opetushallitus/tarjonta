@@ -16,10 +16,8 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
 import com.vaadin.data.Validator;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
+import fi.vm.sade.authentication.service.UserService;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
@@ -27,25 +25,38 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.model.KoulutusOidNameViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractVerticalLayout;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.*;
+import fi.vm.sade.vaadin.Oph;
+import fi.vm.sade.vaadin.util.UiUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 /**
  *
  * @author Tuomas Katva
  */
-@Configurable
+@Configurable(preConstruction = true)
 public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel, PerustiedotViewImpl> {
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(EditHakukohdeView.class);
     private static final long serialVersionUID = 8806220426371090907L;
     @Autowired
     private TarjontaPresenter presenter;
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
+    @Autowired(required = true)
+    private TarjontaUIHelper uiHelper;
+    @Autowired(required = true)
+    private UserService userService;
     private TabSheet tabs;
     private TabSheet.Tab perustiedotTab;
     private TabSheet.Tab liitteetTab;
@@ -53,11 +64,102 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     private HakukohteenLiitteetTabImpl liitteet;
     private HakukohdeValintakoeTabImpl valintakokeet;
     private PerustiedotViewImpl perustiedot;
+
+    public static final String DATE_PATTERN = "dd.MM.yyyy";
     
     public EditHakukohdeView(String oid) {
         super(oid, SisaltoTyyppi.HAKUKOHDE);
+        addTopInfoMessage(oid);
         setMargin(true);
         setHeight(-1, UNITS_PIXELS);
+    }
+    /*
+     *  Prints out the hakukohde name and last update date and updater
+     */
+    private void addTitleLayout() {
+        try {
+        HorizontalLayout hl = new HorizontalLayout();
+        hl.setSizeFull();
+        if (presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getOid() != null) {
+           Label hakukohdeNameLbl = new Label(uiHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi()));
+            hakukohdeNameLbl.setStyleName(Oph.LABEL_H1);
+
+            StringBuilder tilaSb = new StringBuilder();
+            tilaSb.append("( ");
+            tilaSb.append(presenter.getModel().getHakukohde().getTila().value());
+            tilaSb.append(" ,tallennettu ");
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
+            tilaSb.append(sdf.format(presenter.getModel().getHakukohde().getViimeisinPaivitysPvm()));
+            tilaSb.append(", ");
+
+
+            tilaSb.append(tryGetViimPaivittaja(presenter.getModel().getHakukohde().getViimeisinPaivittaja()));
+            tilaSb.append(")");
+            Label tilaLbl = new Label(tilaSb.toString());
+
+
+            hl.addComponent(hakukohdeNameLbl);
+            hl.addComponent(tilaLbl);
+            hl.setComponentAlignment(hakukohdeNameLbl,Alignment.MIDDLE_LEFT);
+            hl.setComponentAlignment(tilaLbl,Alignment.MIDDLE_RIGHT);
+            hl.setMargin(false,false,true,false);
+            addComponent(hl);
+
+        }
+
+        } catch (Exception exp) {
+            //No worries unable to create info layout, who cares. Log the exception and move on with your life
+            LOG.warn("Unable to create hakukohde update info layout: {}",exp.toString());
+        }
+    }
+
+    private String tryGetViimPaivittaja(String viimPaivittajaOid) {
+        try {
+            return userService.findByOid(viimPaivittajaOid).getKayttajatunnus();
+        } catch (Exception exp) {
+            LOG.warn("Unable to get user with oid : {} exception : {}",viimPaivittajaOid,exp.toString());
+            return viimPaivittajaOid;
+        }
+    }
+     /*
+      * Prints out the hakukohde's attached koulutukset.
+      */
+    private void addTopInfoMessage(String oid) {
+
+        try {
+        VerticalLayout vl = new VerticalLayout();
+
+        List<KoulutusOidNameViewModel> koulutusOidNameViewModels  = null;
+        if (oid != null) {
+            koulutusOidNameViewModels =   presenter.getHakukohdeKoulutukses(oid);
+        } else {
+            koulutusOidNameViewModels = presenter.getModel().getHakukohdeTitleKoulutukses();
+        }
+        String labelTitle = "";
+        StringBuilder sb = new StringBuilder();
+        sb.append(getI18n().getMessage("valitutKoulutuksetTitle"));
+        sb.append(" ");
+        if (koulutusOidNameViewModels != null) {
+            int counter = 0;
+           for (KoulutusOidNameViewModel oidNameViewModel : koulutusOidNameViewModels) {
+               if (counter != 0) {
+                  sb.append(", ");
+               }
+               sb.append(oidNameViewModel.getKoulutusNimi());
+           }
+        }
+        labelTitle = sb.toString();
+        Label lbl = new Label(labelTitle);
+        lbl.setStyleName(Oph.LABEL_SMALL);
+        vl.addComponent(lbl);
+        vl.setMargin(false,false,true,false);
+        super.setTopInfoLayout(vl);
+        } catch (Exception exp) {
+            //No worries unable to create info layout, who cares. Log the exception and move on with your life
+            LOG.warn("Unable to create hakukohde koulutus info layout: {}",exp.toString());
+
+        }
+
     }
 
     public void enableValintakokeetTab() {
@@ -184,6 +286,8 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     protected void buildLayout(VerticalLayout layout) {
 
         super.buildLayout(layout);
+
+        addTitleLayout();
         String hakukohdeOid = null;
         if (presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getOid() != null) {
             hakukohdeOid = presenter.getModel().getHakukohde().getOid();
@@ -194,7 +298,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         layout.setMargin(false,false,true,false);
         VerticalLayout wrapperVl = new VerticalLayout();
         perustiedot = new PerustiedotViewImpl(presenter,uiBuilder);
-        buildFormLayout("perustiedot", presenter, wrapperVl, presenter.getModel().getHakukohde(), perustiedot);
+        buildFormLayout(null, presenter, wrapperVl, presenter.getModel().getHakukohde(), perustiedot);
 
         
         liitteet = new HakukohteenLiitteetTabImpl();

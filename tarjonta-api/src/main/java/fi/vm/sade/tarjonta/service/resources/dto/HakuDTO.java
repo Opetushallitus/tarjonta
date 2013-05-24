@@ -14,19 +14,15 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
-import java.io.Serializable;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Haku as REST DTO.
  *
  * @author mlyly
  */
-public class HakuDTO implements Serializable {
-
-    private String _oid;
-    private int _version;
+public class HakuDTO extends BaseRDTO {
 
     private String _hakukausiUri;
     private int _hakukausiVuosi;
@@ -37,8 +33,6 @@ public class HakuDTO implements Serializable {
     private String _kohdejoukkoUri;
     private int _koulutuksenAlkamisVuosi;
     private String _koulutuksenAlkamiskausiUri;
-    private String _udatedByOid;
-    private Date _updated;
     private String _tila;
     private boolean _sijoittelu;
 
@@ -50,22 +44,6 @@ public class HakuDTO implements Serializable {
 
 
     // Getters and setters
-
-    public String getOid() {
-        return _oid;
-    }
-
-    public void setOid(String _oid) {
-        this._oid = _oid;
-    }
-
-    public int getVersion() {
-        return _version;
-    }
-
-    public void setVersion(int _version) {
-        this._version = _version;
-    }
 
     public String getHakukausiUri() {
         return _hakukausiUri;
@@ -137,22 +115,6 @@ public class HakuDTO implements Serializable {
 
     public void setKoulutuksenAlkamiskausiUri(String koulutuksenAlkamiskausiUri) {
         this._koulutuksenAlkamiskausiUri = koulutuksenAlkamiskausiUri;
-    }
-
-    public String getUdatedByOid() {
-        return _udatedByOid;
-    }
-
-    public void setUdatedByOid(String udatedByOid) {
-        this._udatedByOid = udatedByOid;
-    }
-
-    public Date getUpdated() {
-        return _updated;
-    }
-
-    public void setUpdated(Date updated) {
-        this._updated = updated;
     }
 
     public String getTila() {

@@ -5,6 +5,7 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.resources.HakuResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import java.util.ArrayList;
 
@@ -45,28 +46,36 @@ public class HakuResourceImpl implements HakuResource {
     @Autowired(required = true)
     private ConversionService conversionService;
 
+    public static List<OidRDTO> convertOidList(List<String> oids) {
+        List<OidRDTO> result = new ArrayList<OidRDTO>();
+        for (String oid : oids) {
+            result.add(new OidRDTO(oid));
+        }
+        return result;
+    }
+
+
     // /haku/hello
     @Override
     public String hello() {
-        LOG.info("hello()");
+        LOG.info("/haku/hello -- hello()");
         return "Well Hello! " + new Date();
     }
 
     // /haku?...
     @Override
-    public List<String> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
+    public List<OidRDTO> search(String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
         LOG.info("/haku -- search({}, {}, {}, {}, {})", new Object[]{searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince});
 
         TarjontaTila tarjontaTila = null; // TarjontaTila.JULKAISTU;
 
         if (count <= 0) {
             count = 100;
-            LOG.info("  autolimit search to {} entries!", count);
+            LOG.debug("  autolimit search to {} entries!", count);
         }
 
-        List<String> result = new ArrayList<String>();
-        result.addAll(hakuDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
-        LOG.info("  result={}", result);
+        List<OidRDTO> result = convertOidList(hakuDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
+        LOG.debug("  result={}", result);
         return result;
     }
 
@@ -82,19 +91,17 @@ public class HakuResourceImpl implements HakuResource {
 
     // /haku/OID/hakukohde
     @Override
-    public List<String> getByOIDHakukohde(String oid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
+    public List<OidRDTO> getByOIDHakukohde(String oid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
         LOG.info("/haku/{}/hakukohde -- getByOIDHakukohde()", oid);
 
-        List<String> result = new ArrayList<String>();
 
         if (count <= 0) {
             count = 100;
-            LOG.info("  autolimit search to {} entries!", count);
+            LOG.debug("  autolimit search to {} entries!", count);
         }
 
-        result = hakukohdeDAO.findByHakuOid(oid, searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince);
-
-        LOG.info("  result={}", result);
+        List<OidRDTO> result = convertOidList(hakukohdeDAO.findByHakuOid(oid, searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince));
+        LOG.debug("  result={}", result);
         return result;
     }
 
@@ -107,14 +114,16 @@ public class HakuResourceImpl implements HakuResource {
 
         if (count <= 0) {
             count = 100;
-            LOG.info("  autolimit search to {} entries!", count);
+            LOG.debug("  autolimit search to {} entries!", count);
         }
 
         // Get list of oids
-        List<String> hakukohdeOids = getByOIDHakukohde(oid, searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince);
+        List<OidRDTO> hakukohdeOids = getByOIDHakukohde(oid, searchTerms, count, startIndex, lastModifiedBefore, lastModifiedSince);
 
         // Loop the result
-        for (String hakukohdeOid : hakukohdeOids) {
+        for (OidRDTO oidRDTO : hakukohdeOids) {
+            String hakukohdeOid = oidRDTO.getOid();
+
             Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithKomotosByOid(hakukohdeOid);
 
             Map<String, String> row = new HashMap<String, String>();
